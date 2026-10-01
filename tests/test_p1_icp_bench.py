@@ -552,7 +552,9 @@ def synth_cap(rid, i_e, rf_on=True, synthetic=True, stage="P1-S7", **over):
                                   "I_body_to_ground_continuous": True, "V_anode_channel": "HIGH_IMPEDANCE_ISOLATED",
                                   "V_icp_body_V": -5.0, "V_electron_collector_V": 20.0,
                                   "sign_convention_id": "SYNTH-SIGN", "unintended_ground_path_found": False,
-                                  "ground_path_check_id": "SYNTH-GND-CHECK"}
+                                  "ground_path_check_id": "SYNTH-GND-CHECK",
+                                  # A9.16 repair F2 (A9.8 P3Q-01): capacity records declare the Langmuir-probe state
+                                  "langmuir_probe_present": False}
     rec["collector"]["I_e_A"] = i_e
     rec["terminals"] = {"collector_supply": _meas(i_e),
                         "icp_body": _open(),
@@ -986,7 +988,10 @@ def test_a94_pinned_and_recorded(doc):
 
 
 def test_a94_answered_questions_moved(doc):
-    qs = {q["id"] for q in doc["open_owner_questions"]}
+    # A9.16 repair COR-01: open_owner_questions is the as-raised record read back by the immutable state-v4 builder;
+    # the questions still open are owner_questions_open_now (updated test: previously read open_owner_questions)
+    qs = set(doc["owner_questions_open_now"])
+    assert not ({"P1Q-10", "P1Q-13", "P1Q-14", "P1Q-15", "P1Q-16"} & {q["id"] for q in doc["open_owner_questions"]})
     assert not ({"P1Q-10", "P1Q-13", "P1Q-14", "P1Q-15", "P1Q-16"} & qs)          # P1Q-15/16 answered by A9.5
     # A9.16 step 1: P1Q-17 (A9.14), P1Q-18 / P1Q-20 (A9.8) and P1Q-19 (A9.10) are now owner-answered
     assert not ({"P1Q-17", "P1Q-18", "P1Q-19", "P1Q-20"} & qs)
@@ -1518,7 +1523,7 @@ def test_a95_eligibility_conditions(red):
     # A9.16 step 1: owner A9.10 P1Q-19 selected REQUIRE_REGISTERED_GE_CHANNEL -> NOT_EVALUATED_REGISTRATION
     assert ic5["status"] == "NOT_EVALUATED_REGISTRATION" and ic5["condition_met"] is None
     assert "u_I_e_cap_used_A" not in ic5
-    assert ic5["u_I_e_cap_registered_A"] == 1e-4 and ic5["p1q19_alternatives"]["agree"] is False
+    assert ic5["u_I_e_cap_registered_A"] == 1e-4 and ic5["p1q19_alternatives"]["registration_admissible"] is False
 
 
 def test_a95_exclusions_ground_path_sign_and_mixed(red):
@@ -1974,16 +1979,24 @@ def test_a96_derived_resolutions_and_open_questions(doc):
     res = {r["id"]: r for r in inc["derived_resolutions"]}
     for k in ("P1Q-19 (ext)", "P1Q-19 (below propagation)", "P1Q-21", "P1Q-22", "P1Q-23 (a)", "P1Q-23 (b)"):
         assert res[k]["disposition"] == "DERIVED" and res[k]["follows_from"], k
-    # A9.16 step 1: owner A9.10 P1Q-19 decided REQUIRE_REGISTERED_GE_CHANNEL (formerly TBD_OWNER)
-    assert res["P1Q-19 (require vs use larger)"]["disposition"] == "OWNER_DECIDED"
-    assert "REQUIRE_REGISTERED_GE_CHANNEL" in res["P1Q-19 (require vs use larger)"]["answer"]
+    # A9.16 step 1: owner A9.10 P1Q-19 decided REQUIRE_REGISTERED_GE_CHANNEL (formerly TBD_OWNER). A9.16 repair
+    # COR-01: 'disposition' keeps its as-raised TBD_OWNER (the immutable state-v4 builder accepts only DERIVED /
+    # TBD_OWNER); owner_decision carries the decision (updated test)
+    q19 = res["P1Q-19 (require vs use larger)"]
+    assert q19["disposition"] == "TBD_OWNER" and q19["owner_decision"]["status"] == "OWNER_DECIDED"
+    assert q19["owner_decision"]["owner_answer"] == "REQUIRE_REGISTERED_GE_CHANNEL"
+    assert q19["owner_decision"]["decision_json_sha256"] == \
+        "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544"
+    assert "REQUIRE_REGISTERED_GE_CHANNEL" in q19["answer"]
     assert "JCGM 100:2008 5.1.2" in res["P1Q-23 (a)"]["follows_from"]
     assert "5.2.2" in res["P1Q-23 (b)"]["follows_from"] and "F.2.2.1" in res["P1Q-19 (ext)"]["follows_from"]
     assert "A9_5_p1_closure_owner_decisions.json" in res["P1Q-21"]["follows_from"]
     g = inc["external_reference"]
     assert g["url"].startswith("https://www.bipm.org/") and len(g["fetched_pdf_sha256"]) == 64
     qs = {q["id"]: q for q in doc["open_owner_questions"]}
-    assert "P1Q-19" not in qs
+    assert "P1Q-19" not in doc["owner_questions_open_now"]          # as raised in open_owner_questions, now decided
+    cur = {c["id"]: c for c in doc["owner_question_status_current"]}
+    assert cur["P1Q-19"]["status_current"] == "OWNER_DECIDED" and "A9.10 P1Q-19" in cur["P1Q-19"]["decided_by_ids"]
     assert not ({"P1Q-21", "P1Q-22", "P1Q-23"} & set(qs))
     items = {i["id"]: i for i in doc["items"]}
     assert items["P1-IT-57"]["value"].startswith("OWNER_DECIDED") and items["P1-IT-52"]["value"].startswith("TBD")
@@ -2328,16 +2341,22 @@ def test_a96_p1q19_alternatives_side_by_side(red):
     on, off = _pair(tag="Q19")
     ic = _ic(red, on, off)
     alts = ic["p1q19_alternatives"]
-    assert alts["agree"] is True and ic["status"] == "EVALUATED_ENGINEERING_ONLY"
-    assert alts["REQUIRE_REGISTERED_GE_CHANNEL"] == alts["USE_LARGER_OF_REGISTERED_AND_CHANNEL"]
+    # A9.16 repair F9: the owner (A9.10 P1Q-19) selected REQUIRE_REGISTERED_GE_CHANNEL; the rejected alternative is
+    # never evaluated (no margin, no condition_met) - updated test, formerly both treatments were computed
+    assert alts["registration_admissible"] is True and ic["status"] == "EVALUATED_ENGINEERING_ONLY"
+    assert alts["REQUIRE_REGISTERED_GE_CHANNEL"]["status"] == "EVALUABLE"
+    rej = alts["USE_LARGER_OF_REGISTERED_AND_CHANNEL"]
+    assert rej["status"] == "NOT_OWNER_SELECTED_INFORMATIONAL"
+    assert not {"condition_met", "M_n", "M_n_lower", "u_I_e_cap_A"} & set(rej)
     ic = _ic(red, on, off, margin=dict(RULE, u_I_e_A=1e-4))
     alts = ic["p1q19_alternatives"]
-    # A9.16 step 1: owner A9.10 P1Q-19 = REQUIRE_REGISTERED_GE_CHANNEL (was TBD_OWNER)
-    assert alts["agree"] is False and ic["status"] == "NOT_EVALUATED_REGISTRATION"
+    assert alts["registration_admissible"] is False and ic["status"] == "NOT_EVALUATED_REGISTRATION"
     assert "REQUIRE_REGISTERED_GE_CHANNEL" in ic["reason"] and alts["owner_selected"] == "REQUIRE_REGISTERED_GE_CHANNEL"
-    assert alts["REQUIRE_REGISTERED_GE_CHANNEL"]["status"] == "NOT_EVALUATED"
-    assert alts["USE_LARGER_OF_REGISTERED_AND_CHANNEL"]["u_I_e_cap_A"] == pytest.approx(math.sqrt(2.0) * U1)
-    assert "M_n" not in ic
+    assert alts["REQUIRE_REGISTERED_GE_CHANNEL"]["status"] == "NOT_EVALUATED_REGISTRATION"
+    assert alts["u_channels_A"] == pytest.approx(math.sqrt(2.0) * U1)
+    rej = alts["USE_LARGER_OF_REGISTERED_AND_CHANNEL"]
+    assert rej["status"] == "NOT_OWNER_SELECTED_INFORMATIONAL" and not {"condition_met", "M_n", "M_n_lower"} & set(rej)
+    assert "M_n" not in ic and '"condition_met": true' not in json.dumps(alts).lower()
 
 
 def test_a96_p1q23_correlated_form(red):
@@ -2370,7 +2389,7 @@ _XL_SELF = 'P1'
 _XL_JSON = {
     "P1": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
     "P2": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
-    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
     "P4": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
     "MP": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
     "XE": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
@@ -2559,7 +2578,11 @@ def test_rfq_v2_coverage_equals_readiness_lines(doc, bld):
     m30 = [m for m in rfq["instrument_coverage"]["p1_measurements"] if m["id"] == "P1-M-30"][0]
     assert m30["disposition"] == "NP-CONDITIONAL-P3Q01" and m30["rfq_lines"] == []
     meas = {m["id"]: m for m in doc["measurements"]}
-    assert meas["P1-M-30"]["status"] == "CONDITIONAL (TBD_OWNER P3Q-01)" and "TBD_OWNER" in meas["P1-M-30"]["metrology_spec"]
+    # A9.16 repair F2 / COR-02: P1-M-30 is REQUIRED (A9.8 P3Q-01 option C); 'status' keeps the A9.6 text that the
+    # immutable RFQ v2 builder reads back, status_a9_16 governs (updated test)
+    assert meas["P1-M-30"]["status"] == "CONDITIONAL (TBD_OWNER P3Q-01)"
+    assert meas["P1-M-30"]["status_a9_16"].startswith("REQUIRED (A9.8 P3Q-01")
+    assert "TBD_OWNER" not in meas["P1-M-30"]["metrology_spec"] and "TH-L10" in meas["P1-M-30"]["metrology_spec"]
 
 
 

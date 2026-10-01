@@ -39,6 +39,11 @@ def rules():
 
 
 @pytest.fixture(scope="module")
+def fw(mod):
+    return mod.FW
+
+
+@pytest.fixture(scope="module")
 def app():
     return _load("p2_a9_16_application_under_test", LANE / "a9_16_application.py")
 
@@ -62,7 +67,10 @@ def _sha(rel):
     return hashlib.sha256((REPO / rel).read_bytes()).hexdigest()
 
 
-ZA = {"R_ohm": 1.0, "X_ohm": 80.0, "u_R_ohm": 0.1, "u_X_ohm": 1.0, "uncertainty_budget_id": "SYN-UB-A"}
+ZA = {"R_ohm": 1.0, "X_ohm": 80.0, "u_R_ohm": 0.1, "u_X_ohm": 1.0, "uncertainty_budget_id": "SYN-UB-A",
+      "operating_point_id": "SYN-OP-1", "configuration_id": "SYN-CFG-1"}
+# A9.16 repair COR-07: a ZM-B counts only with an explicit valid = True at the same operating point / configuration
+ZB = dict(ZA, valid=True)
 
 
 # ------------------------------------------------------------------------------------------------ pins / package
@@ -82,7 +90,7 @@ def test_p2_a9_16_decisions_pinned_and_cited(d, app):
     inc = d["a9_16_incorporation"]
     assert {x["question_id"] for x in inc["applied"]} == {"P2Q-01", "P2Q-02", "P2Q-03", "P2Q-04", "P2Q-06", "P2Q-07",
                                                            "P2Q-08", "P2Q-09", "P2Q-10", "P1Q-24", "ICPQ-11",
-                                                           "F6-OQ-02"}
+                                                           "F6-OQ-02", "ICPQ-10", "OQ-A910-06"}   # repair F1 / F5
     assert inc["owner_numbers_used"] == {"k_agreement": 2.0, "k_transition": 2.0, "k_loss": 2.0, "k_RF": 1.5,
                                          "continuous_RF_power_current_factor": 1.25,
                                          "thermal_dissipation_factor": 1.2}
@@ -101,7 +109,10 @@ def test_p2_a9_16_every_listed_test_exists(d, app):
 
 
 def test_p2_a9_16_questions_answered_and_items(d):
-    assert d["open_owner_questions"] == []
+    # A9.16 repair COR-01: open_owner_questions keeps the as-raised record read back by the immutable state-v4
+    # builder (text unchanged, no status); none is open now (updated test; step 1 emptied the list)
+    assert d["owner_questions_open_now"] == []
+    assert {q.get("status") for q in d["open_owner_questions"]} <= {None, "OPEN", "TBD_OWNER"}
     ans = {q["id"]: q for q in d["answered_owner_questions"]}
     assert set(ans) == {"P2Q-01", "P2Q-02", "P2Q-03", "P2Q-04", "P2Q-06", "P2Q-07", "P2Q-08", "P2Q-09", "P2Q-10"}
     assert ans["P2Q-02"]["answered_by"]["decision"] == "A9.8" and ans["P2Q-06"]["answered_by"]["decision"] == "A9.14"
@@ -128,23 +139,39 @@ def test_p2_a9_16_zm_b_missing_never_verifies_zm_a(rules):
         assert r["status"] == rules.ZM_B_MISSING_OR_INVALID and r["zm_a_independently_verified"] is False
         assert r["blocks_zm_b_stand_qualification"] is True
     with pytest.raises(rules.RuleError):
-        rules.method_agreement({k: v for k, v in ZA.items() if k != "uncertainty_budget_id"}, dict(ZA))
+        rules.method_agreement({k: v for k, v in ZA.items() if k != "uncertainty_budget_id"}, dict(ZB))
+
+
+def test_p2_a9_16_cor07_zm_b_needs_valid_true_and_same_point(rules):
+    """A9.16 repair COR-07: a ZM-B with no validity flag, or from a different operating point / configuration, never
+    makes ZM-A independently verified; ZM-A itself must name its operating point and configuration."""
+    for zb in (dict(ZA), dict(ZA, valid=None), dict(ZA, valid="yes"), dict(ZB, operating_point_id="SYN-OP-2"),
+               dict(ZB, configuration_id="SYN-CFG-2"), {k: v for k, v in ZB.items() if k != "operating_point_id"}):
+        r = rules.method_agreement(ZA, zb)
+        assert r["status"] == rules.ZM_B_MISSING_OR_INVALID, zb
+        assert r["zm_a_independently_verified"] is False and r["blocks_zm_b_stand_qualification"] is True
+        assert "z_R" not in r
+    assert "another operating_point_id" in rules.method_agreement(ZA, dict(ZB, operating_point_id="X"))["reason"]
+    for k in ("operating_point_id", "configuration_id"):
+        with pytest.raises(rules.RuleError):
+            rules.method_agreement({x: v for x, v in ZA.items() if x != k}, dict(ZB))
+    assert rules.method_agreement(ZA, dict(ZB))["status"] == rules.AGREEMENT
 
 
 def test_p2_a9_16_method_agreement_k2(rules):
-    ok = rules.method_agreement(ZA, dict(ZA, R_ohm=1.25, X_ohm=82.0, uncertainty_budget_id="B"))
+    ok = rules.method_agreement(ZA, dict(ZB, R_ohm=1.25, X_ohm=82.0, uncertainty_budget_id="B"))
     assert ok["status"] == rules.AGREEMENT and ok["zm_a_independently_verified"] is True
     assert ok["z_R"] == pytest.approx(0.25 / (0.1 * 2 ** 0.5)) and ok["k_agreement"] == 2.0
-    bad = rules.method_agreement(ZA, dict(ZA, R_ohm=1.3, uncertainty_budget_id="B"))      # z_R = 2.12 > 2
+    bad = rules.method_agreement(ZA, dict(ZB, R_ohm=1.3, uncertainty_budget_id="B"))      # z_R = 2.12 > 2
     assert bad["status"] == rules.METHOD_DISAGREEMENT and bad["averaged_value"] is None
     assert bad["raw_zm_a"]["R_ohm"] == 1.0 and bad["raw_zm_b"]["R_ohm"] == 1.3
     assert bad["blocks_zm_b_stand_qualification"] is True and bad["zm_a_independently_verified"] is False
-    badx = rules.method_agreement(ZA, dict(ZA, X_ohm=83.0, uncertainty_budget_id="B"))     # z_X = 2.12
+    badx = rules.method_agreement(ZA, dict(ZB, X_ohm=83.0, uncertainty_budget_id="B"))     # z_X = 2.12
     assert badx["status"] == rules.METHOD_DISAGREEMENT
-    corr = rules.method_agreement(ZA, dict(ZA, R_ohm=1.25, uncertainty_budget_id="B"), r_R=0.9)
+    corr = rules.method_agreement(ZA, dict(ZB, R_ohm=1.25, uncertainty_budget_id="B"), r_R=0.9)
     assert corr["status"] == rules.METHOD_DISAGREEMENT                                   # covariance-aware
     with pytest.raises(rules.RuleError):
-        rules.method_agreement(ZA, dict(ZA), r_R=1.5)
+        rules.method_agreement(ZA, dict(ZB), r_R=1.5)
 
 
 def test_p2_a9_16_reducer_zm_status(mod, case):
@@ -489,7 +516,7 @@ def test_p2_a9_16_rating_policy_stress_classes(mod):
     assert rows["RC-FT-I"]["candidate_minimum"]["value"] == pytest.approx(7.5)
     assert rows["RC-MATCH-EL"]["candidate_minimum"] == {"V_peak_V": 1500.0, "I_peak_A": 10.0,
                                                          "status": fw.CANDIDATE_STATUS}
-    assert rows["RC-HEAT"]["candidate_minimum"].startswith("TBD_OWNER")
+    assert rows["RC-HEAT"]["candidate_minimum"].startswith("TBD_AFTER_EVIDENCE")       # ICPQ-10 decided (repair F1)
     for r in rs["rows"]:
         assert r["rating_status"] == "TBD_AFTER_IMPEDANCE_MAP"
     # stricter supplier derating governs; never the product of two margins
@@ -516,8 +543,8 @@ def test_p2_a9_16_transient_below_manufacturer_rating(rules):
 
 # ------------------------------------------------------------------------------------------------ P2Q-06
 def test_p2_a9_16_zm_b_stand_rules(rules):
-    agree = rules.method_agreement(ZA, dict(ZA, R_ohm=1.1, uncertainty_budget_id="B"))
-    dis = rules.method_agreement(ZA, dict(ZA, R_ohm=1.5, uncertainty_budget_id="B"))
+    agree = rules.method_agreement(ZA, dict(ZB, R_ohm=1.1, uncertainty_budget_id="B"))
+    dis = rules.method_agreement(ZA, dict(ZB, R_ohm=1.5, uncertainty_budget_id="B"))
     miss = rules.method_agreement(ZA, None)
     q = rules.zm_b_stand_qualification([agree, agree])
     assert q["status"] == rules.ZM_B_STAND_QUALIFIED
@@ -564,3 +591,44 @@ def test_p2_a9_16_rules_hygiene():
         assert imports <= {"__future__", "importlib.util", "math", "pathlib", "copy"}, (name, imports)
         assert '"PASS"' not in src and "urllib" not in src and "subprocess" not in src
         assert not re.search(r"^\s*(?:from|import)\s+(?:abep_sim|archengine)", src, re.M)
+
+
+
+# ------------------------------------------------------------------ A9.16 repair lane: F1 (ICPQ-10) / F5 (OQ-A910-06)
+def test_p2_a9_16_icpq10_alternative_a_only(d, fw):
+    """A9.12 S5.1 ICPQ-10: alternative A, Q_ICP,bound = 1.20 x (P_fwd,max + P_d,max); 'Do not use 1.20 x 1.5 kW'. P2
+    records it OWNER_DECIDED, keeps B only as rejected history, RC-HEAT references the P3 bound rule and stays
+    TBD_AFTER_EVIDENCE; any heat_load_option other than A is refused."""
+    h = d["framework"]["heat_load_alternatives"]
+    assert h["status"] == "OWNER_DECIDED" and h["selected_alternative"] == "A"
+    assert h["decision"]["decision_json_sha256"] == "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d"
+    assert h["bound_rule"] == "docs/experiments/hall_icp/p3_coupled_thermal/p3_a9_16_rules.py::icp43_total_module_bound"
+    hist = {x["disposition"].split(" ")[0]: x["alternative"] for x in h["history_alternatives_as_raised"]}
+    assert hist["OWNER_REJECTED"].startswith("B:") and "1.5 kW" in hist["OWNER_REJECTED"]
+    items = {i["id"]: i for i in d["items"]}
+    assert "1.20 x (P_fwd,max + P_d,max)" in items["FW-19"]["value"] and items["FW-19"]["evidence_class"] is None
+    assert "TBD_OWNER" not in items["FW-19"]["value"]
+    idp = {x["id"]: x for x in d["interface_demands"]}["IDP2-22"]
+    assert idp["status"].startswith("ANSWERED: ICPQ-10 alternative A") and "except" not in idp["status"]
+    txt = json.dumps(d)
+    assert "neither selected" not in txt and "not applied by this lane" not in txt
+    env = {"data_classes": ["measured"], "coverage": {"complete": True}, "P_forward_W_at_RP_CPL": {"max": 400.0}}
+    for opt in (None, "A"):
+        heat = next(r for r in fw.rating_structure(env, heat_load_option=opt)["rows"] if r["id"] == "RC-HEAT")
+        assert heat["candidate_minimum"].startswith("TBD_AFTER_EVIDENCE") and "1.20 x 1.5 kW" in heat["owner_input_value"]
+    for bad in ("B", "1.20 x 1.5 kW", 1800.0):
+        with pytest.raises(fw.RatingInputError):
+            fw.rating_structure(env, heat_load_option=bad)
+    md = OUT_MD.read_text(encoding="utf-8")
+    assert "ICPQ-10 heat-load bound (OWNER_DECIDED" in md
+
+
+def test_p2_a9_16_oq_a910_06_owner_decided(d):
+    """A9.12 S5.8 OQ-A910-06: 600 W kept temporarily (four labels), superseded by the P2-derived RF thermal envelope;
+    P2 points to p3_a9_16_rules.rf_thermal_basis as the consumer of that envelope."""
+    out = {o["id"]: o for o in d["p2_outputs_later"]}["OQ-A910-06"]
+    assert out["status"].startswith("OWNER_DECIDED (A9.12 S5.8") and "rf_thermal_basis" in out["status"]
+    assert out["source"] == "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json"
+    rows = {o["question_id"]: o for o in d["owner_answers_applied"] if o.get("question_id")}
+    assert rows["OQ-A910-06"]["owner_answer"] == "YES_600W_TEMPORARY"
+    assert rows["ICPQ-10"]["owner_answer"] == "A_1_20_X_PFWD_PLUS_PD"

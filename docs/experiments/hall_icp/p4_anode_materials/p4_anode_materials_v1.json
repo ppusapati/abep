@@ -232,7 +232,7 @@
     "check": "no interface demand between the two packages"
    },
    "P3": {
-    "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
     "state": "MERGED",
     "pairs": [
      "XL-23",
@@ -1050,7 +1050,7 @@
     "electrically_loaded",
     "at_operating_temperature"
    ],
-   "tbd": "TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "tbd": "TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "id": "RQ-01-C",
@@ -1067,7 +1067,7 @@
     "electrically_loaded",
     "at_operating_temperature"
    ],
-   "tbd": "TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "tbd": "TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "id": "RQ-02-A",
@@ -1213,7 +1213,7 @@
     "bulk_property",
     "at_operating_temperature"
    ],
-   "tbd": "TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
+   "tbd": "TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
   },
   {
    "id": "RQ-06-C",
@@ -1229,7 +1229,7 @@
     "bulk_property",
     "at_operating_temperature"
    ],
-   "tbd": "TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
+   "tbd": "TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
   },
   {
    "id": "RQ-07-A",
@@ -1482,10 +1482,10 @@
   {
    "id": "IT-09",
    "item": "T_operating,anode",
-   "value": "TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED)",
+   "value": "TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED)",
    "units": "K",
    "basis": "requires the coupled anode thermal model (A9H-ANODE-02)",
-   "source": "the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED)",
+   "source": "the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED)",
    "evidence_class": "model-derived",
    "status": "TBD_AFTER_EVIDENCE",
    "freeze_point": "after-evidence"
@@ -1504,10 +1504,10 @@
   {
    "id": "IT-11",
    "item": "T_operating,collector",
-   "value": "TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED)",
+   "value": "TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED)",
    "units": "K",
    "basis": "requires Q_collector in the coupled model",
-   "source": "the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED)",
+   "source": "the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED)",
    "evidence_class": "model-derived",
    "status": "TBD_AFTER_EVIDENCE",
    "freeze_point": "after-evidence"
@@ -3291,7 +3291,7 @@
    "requirement": "RQ-01-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-ANODE",
@@ -3341,7 +3341,7 @@
     "PR-004"
    ],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "requirement RQ-06-A not evidenced (TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02))"
+   "reason": "requirement RQ-06-A not evidenced (TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02))"
   },
   {
    "application": "APP-ANODE",
@@ -3370,7 +3370,7 @@
    "requirement": "RQ-01-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-ANODE",
@@ -3423,7 +3423,7 @@
     "PR-017"
    ],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "requirement RQ-06-A not evidenced (TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02))"
+   "reason": "requirement RQ-06-A not evidenced (TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02))"
   },
   {
    "application": "APP-ANODE",
@@ -3452,7 +3452,7 @@
    "requirement": "RQ-01-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-ANODE",
@@ -3497,7 +3497,7 @@
    "requirement": "RQ-06-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
   },
   {
    "application": "APP-ANODE",
@@ -3524,7 +3524,7 @@
    "requirement": "RQ-01-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-ANODE",
@@ -3569,7 +3569,7 @@
    "requirement": "RQ-06-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
   },
   {
    "application": "APP-ANODE",
@@ -3596,7 +3596,7 @@
    "requirement": "RQ-01-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-ANODE",
@@ -3641,7 +3641,7 @@
    "requirement": "RQ-06-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
   },
   {
    "application": "APP-ANODE",
@@ -3668,7 +3668,7 @@
    "requirement": "RQ-01-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-ANODE",
@@ -3713,7 +3713,7 @@
    "requirement": "RQ-06-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
   },
   {
    "application": "APP-ANODE",
@@ -3740,7 +3740,7 @@
    "requirement": "RQ-01-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-ANODE",
@@ -3793,7 +3793,7 @@
     "PR-027"
    ],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "requirement RQ-06-A not evidenced (TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02))"
+   "reason": "requirement RQ-06-A not evidenced (TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02))"
   },
   {
    "application": "APP-ANODE",
@@ -3822,7 +3822,7 @@
    "requirement": "RQ-01-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-ANODE",
@@ -3867,7 +3867,7 @@
    "requirement": "RQ-06-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
   },
   {
    "application": "APP-ANODE",
@@ -3894,7 +3894,7 @@
    "requirement": "RQ-01-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-ANODE",
@@ -3939,7 +3939,7 @@
    "requirement": "RQ-06-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
   },
   {
    "application": "APP-ANODE",
@@ -3966,7 +3966,7 @@
    "requirement": "RQ-01-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-ANODE",
@@ -4011,7 +4011,7 @@
    "requirement": "RQ-06-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
   },
   {
    "application": "APP-ANODE",
@@ -4038,7 +4038,7 @@
    "requirement": "RQ-01-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-ANODE",
@@ -4083,7 +4083,7 @@
    "requirement": "RQ-06-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
   },
   {
    "application": "APP-ANODE",
@@ -4110,7 +4110,7 @@
    "requirement": "RQ-01-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-ANODE",
@@ -4155,7 +4155,7 @@
    "requirement": "RQ-06-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
   },
   {
    "application": "APP-ANODE",
@@ -4182,7 +4182,7 @@
    "requirement": "RQ-01-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-ANODE",
@@ -4227,7 +4227,7 @@
    "requirement": "RQ-06-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
   },
   {
    "application": "APP-ANODE",
@@ -4254,7 +4254,7 @@
    "requirement": "RQ-01-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-ANODE",
@@ -4299,7 +4299,7 @@
    "requirement": "RQ-06-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
   },
   {
    "application": "APP-ANODE",
@@ -4326,7 +4326,7 @@
    "requirement": "RQ-01-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-ANODE",
@@ -4371,7 +4371,7 @@
    "requirement": "RQ-06-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
   },
   {
    "application": "APP-ANODE",
@@ -4398,7 +4398,7 @@
    "requirement": "RQ-01-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-ANODE",
@@ -4443,7 +4443,7 @@
    "requirement": "RQ-06-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
   },
   {
    "application": "APP-ANODE",
@@ -4470,7 +4470,7 @@
    "requirement": "RQ-01-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-ANODE",
@@ -4515,7 +4515,7 @@
    "requirement": "RQ-06-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
   },
   {
    "application": "APP-ANODE",
@@ -4542,7 +4542,7 @@
    "requirement": "RQ-01-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-ANODE",
@@ -4587,7 +4587,7 @@
    "requirement": "RQ-06-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
   },
   {
    "application": "APP-ANODE",
@@ -4614,7 +4614,7 @@
    "requirement": "RQ-01-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-ANODE",
@@ -4659,7 +4659,7 @@
    "requirement": "RQ-06-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
   },
   {
    "application": "APP-ANODE",
@@ -4686,7 +4686,7 @@
    "requirement": "RQ-01-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-ANODE",
@@ -4731,7 +4731,7 @@
    "requirement": "RQ-06-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
   },
   {
    "application": "APP-ANODE",
@@ -4758,7 +4758,7 @@
    "requirement": "RQ-01-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-ANODE",
@@ -4803,7 +4803,7 @@
    "requirement": "RQ-06-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
   },
   {
    "application": "APP-ANODE",
@@ -4830,7 +4830,7 @@
    "requirement": "RQ-01-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced (ANODE_THERMAL_CLOSURE = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-ANODE",
@@ -4875,7 +4875,7 @@
    "requirement": "RQ-06-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (anode heat-removal path, A9H-ANODE-02)"
   },
   {
    "application": "APP-ANODE",
@@ -4902,7 +4902,7 @@
    "requirement": "RQ-01-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-COLLECTOR",
@@ -4952,7 +4952,7 @@
     "PR-004"
    ],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "requirement RQ-06-C not evidenced (TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector))"
+   "reason": "requirement RQ-06-C not evidenced (TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector))"
   },
   {
    "application": "APP-COLLECTOR",
@@ -4981,7 +4981,7 @@
    "requirement": "RQ-01-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5034,7 +5034,7 @@
     "PR-017"
    ],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "requirement RQ-06-C not evidenced (TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector))"
+   "reason": "requirement RQ-06-C not evidenced (TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector))"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5063,7 +5063,7 @@
    "requirement": "RQ-01-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5108,7 +5108,7 @@
    "requirement": "RQ-06-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5135,7 +5135,7 @@
    "requirement": "RQ-01-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5180,7 +5180,7 @@
    "requirement": "RQ-06-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5207,7 +5207,7 @@
    "requirement": "RQ-01-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5252,7 +5252,7 @@
    "requirement": "RQ-06-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5279,7 +5279,7 @@
    "requirement": "RQ-01-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5324,7 +5324,7 @@
    "requirement": "RQ-06-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5351,7 +5351,7 @@
    "requirement": "RQ-01-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5404,7 +5404,7 @@
     "PR-027"
    ],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "requirement RQ-06-C not evidenced (TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector))"
+   "reason": "requirement RQ-06-C not evidenced (TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector))"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5433,7 +5433,7 @@
    "requirement": "RQ-01-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5478,7 +5478,7 @@
    "requirement": "RQ-06-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5505,7 +5505,7 @@
    "requirement": "RQ-01-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5550,7 +5550,7 @@
    "requirement": "RQ-06-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5577,7 +5577,7 @@
    "requirement": "RQ-01-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5622,7 +5622,7 @@
    "requirement": "RQ-06-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5649,7 +5649,7 @@
    "requirement": "RQ-01-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5694,7 +5694,7 @@
    "requirement": "RQ-06-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5721,7 +5721,7 @@
    "requirement": "RQ-01-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5766,7 +5766,7 @@
    "requirement": "RQ-06-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5793,7 +5793,7 @@
    "requirement": "RQ-01-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5838,7 +5838,7 @@
    "requirement": "RQ-06-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5865,7 +5865,7 @@
    "requirement": "RQ-01-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5910,7 +5910,7 @@
    "requirement": "RQ-06-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5937,7 +5937,7 @@
    "requirement": "RQ-01-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5982,7 +5982,7 @@
    "requirement": "RQ-06-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -6009,7 +6009,7 @@
    "requirement": "RQ-01-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-COLLECTOR",
@@ -6054,7 +6054,7 @@
    "requirement": "RQ-06-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -6081,7 +6081,7 @@
    "requirement": "RQ-01-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-COLLECTOR",
@@ -6126,7 +6126,7 @@
    "requirement": "RQ-06-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -6153,7 +6153,7 @@
    "requirement": "RQ-01-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-COLLECTOR",
@@ -6198,7 +6198,7 @@
    "requirement": "RQ-06-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -6225,7 +6225,7 @@
    "requirement": "RQ-01-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-COLLECTOR",
@@ -6270,7 +6270,7 @@
    "requirement": "RQ-06-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -6297,7 +6297,7 @@
    "requirement": "RQ-01-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-COLLECTOR",
@@ -6342,7 +6342,7 @@
    "requirement": "RQ-06-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -6369,7 +6369,7 @@
    "requirement": "RQ-01-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-COLLECTOR",
@@ -6414,7 +6414,7 @@
    "requirement": "RQ-06-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -6441,7 +6441,7 @@
    "requirement": "RQ-01-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
+   "reason": "no property record; requirement: TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))"
   },
   {
    "application": "APP-COLLECTOR",
@@ -6486,7 +6486,7 @@
    "requirement": "RQ-06-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
+   "reason": "no property record; requirement: TBD_AFTER_EVIDENCE - requires the coupled solution of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED) (Q_collector)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -7036,7 +7036,7 @@
     "measure": "k(T) (e.g. laser flash + density + specific heat) on the procured lot up to above T_operating; joint / contact conductance of the anode-to-backplate and feed-tube joints for the P3 heat path",
     "instruments": "thermal diffusivity rig; instrumented joint test",
     "atmosphere_sequence": "vacuum",
-    "acceptance": "TBD (k required by the heat path of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))",
+    "acceptance": "TBD (k required by the heat path of the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED))",
     "register_links": []
    },
    {
@@ -7243,7 +7243,7 @@
   {
    "id": "ID-01",
    "direction": "P4 <- P3",
-   "counterpart": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (P3-IF-S07)",
+   "counterpart": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (P3-IF-S07)",
    "content": "T_operating of anode and collector (worst case, coupled), heat flux, gradients, 20 % heat-load margin applied (row 86)",
    "used_for": "CR-01 / CR-05 / CR-06 condition",
    "status": "TBD_AFTER_EVIDENCE (ANODE_THERMAL_CLOSURE and ICP_COUPLED_THERMAL UNRESOLVED; no PASS)",
@@ -7252,7 +7252,7 @@
     {
      "pair": "XL-24",
      "counterpart": "P3:P3-IF-S07",
-     "counterpart_path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "counterpart_path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "quantity": "T_operating of anode and collector (worst case, coupled; 20 % heat-load margin, row 86), heat flux, gradients -> P4 IT-09, IT-11",
      "units": "K; W/m2; K/m",
      "status": "TBD_AFTER_EVIDENCE (ANODE_THERMAL_CLOSURE and ICP_COUPLED_THERMAL UNRESOLVED; no PASS)"
@@ -7262,7 +7262,7 @@
   {
    "id": "ID-02",
    "direction": "P4 -> P3",
-   "counterpart": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (P3-IF-N05)",
+   "counterpart": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (P3-IF-N05)",
    "content": "k(T), density per candidate with provenance (PR-xxx); emissivity TBD - requires a sourced emissivity per candidate and surface state",
    "used_for": "anode / collector conduction and radiation nodes",
    "status": "DEFINED (k and density records); T_validated,continuous and emittance TBD_AFTER_EVIDENCE; FINAL_ANODE_MATERIAL OPEN",
@@ -7271,7 +7271,7 @@
     {
      "pair": "XL-23",
      "counterpart": "P3:P3-IF-N05",
-     "counterpart_path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "counterpart_path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "quantity": "per-candidate thermal conductivity and density with provenance (P4 property_records), validated continuous-use limits (CR-01) and emittances -> P3-M-04, P3-R-01, P3-R-04",
      "units": "W/(m*K); kg/m3; K; -",
      "status": "DEFINED (k and density records); T_validated,continuous and emittance TBD_AFTER_EVIDENCE; FINAL_ANODE_MATERIAL OPEN"
@@ -7314,16 +7314,16 @@
    "counterpart": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json (IF-P1-36)",
    "content": "measured collector bias / current, sheath energy estimate",
    "used_for": "CR-04 collector ion energy",
-   "status": "TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; sheath energy additionally TBD_OWNER P3Q-01)",
+   "status": "TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; sheath energy from the P1-M-30 Langmuir probe, A9.8 P3Q-01 option C cross-check)",
    "units": "V; A",
    "xref": [
     {
      "pair": "XL-25",
      "counterpart": "P1:IF-P1-36",
      "counterpart_path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
-     "quantity": "measured collector bias and current (P1-M-10, P1-M-11, P1-M-27) and the conditional sheath-edge plasma potential (P1-M-30) for the collector ion energy (P4 IT-19, CR-04)",
+     "quantity": "measured collector bias and current (P1-M-10, P1-M-11, P1-M-27) and the Langmuir-probe plasma potential near the collector (P1-M-30, A9.8 P3Q-01) for the collector ion energy (P4 IT-19, CR-04)",
      "units": "V; A",
-     "status": "TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; sheath energy additionally TBD_OWNER P3Q-01)"
+     "status": "TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; sheath energy from the P1-M-30 Langmuir probe, A9.8 P3Q-01 option C cross-check)"
     }
    ],
    "a9_16_note": "A9.12 P4-OQ-05: the collector-coupon bias magnitude / ion energy is derived from this measured P1 collector envelope and plasma / sheath evidence before any acceptance-bearing biased exposure"
@@ -7525,8 +7525,8 @@
    "sequenced_no": "S5.10",
    "answer": "STAGED",
    "owner_answer_verbatim": "10. S5.10 — P4-OQ-01 — USE A STAGED VALIDATION STANDARD FOR `T_validated,continuous`.\n\nAdopt a staged evidence hierarchy.\nStage 1 — coupon screening\nTest each candidate under the applicable service-representative combination of:\n\n* atmosphere/species;\n* temperature;\n* electrical bias/current condition;\n* exposure duration;\n* thermal cycling where applicable.\n\nAcceptance metrics shall be pre-registered and include the applicable electrical, oxidation/recession, mass-loss and surface/material criteria.\nThe highest temperature satisfying the pre-registered criteria for the pre-registered coupon exposure may be recorded as a coupon-supported provisional continuous-use limit for design screening.\nIt is not by itself a flight-life qualification.\nStage 2 — integrated replaceable-component confirmation\nConfirm the down-selected material in a replaceable anode/collector configuration on the H-1/ICP article under the applicable plasma, electrical and thermal environment.\nThe test shall demonstrate that the candidate remains within the pre-registered acceptance criteria at the intended continuous-use condition.\nOnly after this stage may the value be used as `T_validated,continuous` for the P3/LOCK-1 material-temperature closure.\nStage 3 — qualification/life evidence\nFull-duration or justified accelerated-life qualification remains separately required before a final flight-life claim.\nTherefore, do not equate melting point, short vendor exposure, generic air-use temperature or a brief coupon test with continuous-use validation.\nDecision: staged coupon screening → integrated replaceable-component confirmation → later flight/life qualification.",
-   "how_applied": "staged T_validated,continuous: stage 1 coupon screening under the service-representative combination of atmosphere / species, temperature, electrical bias / current, exposure duration and thermal cycling (where applicable) with pre-registered electrical, oxidation / recession, mass-loss and surface / material metrics -> the highest temperature meeting them is a COUPON_SUPPORTED_PROVISIONAL_LIMIT for design screening only; stage 2 integrated replaceable anode / collector confirmation of the down-selected material on the H-1 / ICP article in the applicable plasma, electrical and thermal environment -> only then T_VALIDATED_CONTINUOUS for the P3 / LOCK-1 material-temperature closure; stage 3 full-duration or justified accelerated-life qualification before a final flight-life claim; melting point, short vendor exposure, generic air-use temperature and a brief coupon test (shorter than the pre-registered exposure) are refused (NOT_CONTINUOUS_USE_VALIDATION); the CR-01 gate admits a T_validated_continuous record only at stage 2 or later",
-   "implemented_in": "p4_a9_16_rules.validation_stage_record, limit_use_check, gate_admissible_t_validated; p4_screening.evaluate_gate (CR-01 stage check); items IT-12 / IT-23; test plan stages ST-1..ST-3 (Q0/Q1, Q4, Q5); criteria CR-01 rule",
+   "how_applied": "staged T_validated,continuous: stage 1 coupon screening under the service-representative combination of atmosphere / species, temperature, electrical bias / current, exposure duration and thermal cycling (where applicable) with pre-registered electrical, oxidation / recession, mass-loss and surface / material metrics -> the highest temperature meeting them is a COUPON_SUPPORTED_PROVISIONAL_LIMIT for design screening only; stage 2 integrated replaceable anode / collector confirmation of the down-selected material on the H-1 / ICP article in the applicable plasma, electrical and thermal environment -> only then T_VALIDATED_CONTINUOUS for the P3 / LOCK-1 material-temperature closure; stage 3 full-duration or justified accelerated-life qualification before a final flight-life claim; melting point, short vendor exposure, generic air-use temperature and a brief coupon test (shorter than the pre-registered exposure) are refused (NOT_CONTINUOUS_USE_VALIDATION); the CR-01 gate admits a T_validated_continuous record only at stage 2 or later, proven by a referenced stage record (id + sha256) that validation_stage_record classifies to that stage, material and limit - a bare declaration is INCOMPLETE_EVIDENCE (A9.16 repair COR-06)",
+   "implemented_in": "p4_a9_16_rules.validation_stage_record, limit_use_check, gate_admissible_t_validated; p4_screening.evaluate_gate (CR-01 stage check, t_validated_stage_refusal); items IT-12 / IT-23; test plan stages ST-1..ST-3 (Q0/Q1, Q4, Q5); criteria CR-01 rule",
    "tests": [
     "test_p4_a9_16_stage_1_is_screening_only",
     "test_p4_a9_16_stage_2_needs_stage_1_and_article",
@@ -7707,8 +7707,10 @@
     "full-duration life test",
     "staged: coupon screening + in-H-1 replaceable-anode confirmation"
    ],
-   "status": "OWNER_DECIDED",
+   "status": "TBD_OWNER",
    "status_when_raised": "TBD_OWNER",
+   "status_current": "OWNER_DECIDED",
+   "status_note": "'status' is the status AS RAISED (read back unchanged by the immutable owner-question state-v4 builder); the question is answered - status_current / answer / decided_by govern (A9.16 repair COR-01)",
    "answer": "STAGED",
    "sequenced_no": "S5.10",
    "decided_by": "A9.12 P4-OQ-01 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
@@ -7723,8 +7725,10 @@
     "R8-C01..C09 plus named variants",
     "a reduced set"
    ],
-   "status": "OWNER_DECIDED",
+   "status": "TBD_OWNER",
    "status_when_raised": "TBD_OWNER",
+   "status_current": "OWNER_DECIDED",
+   "status_note": "'status' is the status AS RAISED (read back unchanged by the immutable owner-question state-v4 builder); the question is answered - status_current / answer / decided_by govern (A9.16 repair COR-01)",
    "answer": "BROAD_Q0_DOWNSELECT_Q1",
    "sequenced_no": "S5.11",
    "decided_by": "A9.12 P4-OQ-02 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
@@ -7738,8 +7742,10 @@
     "frozen at LOCK-1",
     "frozen at LOCK-2 after Q0 bench metrology capability"
    ],
-   "status": "OWNER_DECIDED",
+   "status": "TBD_OWNER",
    "status_when_raised": "TBD_OWNER",
+   "status_current": "OWNER_DECIDED",
+   "status_note": "'status' is the status AS RAISED (read back unchanged by the immutable owner-question state-v4 builder); the question is answered - status_current / answer / decided_by govern (A9.16 repair COR-01)",
    "answer": "LOCK_2_AFTER_METROLOGY_BEFORE_EXPOSURE",
    "sequenced_no": "S5.12",
    "decided_by": "A9.12 P4-OQ-03 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
@@ -7754,8 +7760,10 @@
     "measure on the ion-beam bench (TP-04) only",
     "both"
    ],
-   "status": "OWNER_DECIDED",
+   "status": "TBD_OWNER",
    "status_when_raised": "TBD_OWNER",
+   "status_current": "OWNER_DECIDED",
+   "status_note": "'status' is the status AS RAISED (read back unchanged by the immutable owner-question state-v4 builder); the question is answered - status_current / answer / decided_by govern (A9.16 repair COR-01)",
    "answer": "BOTH",
    "sequenced_no": "S5.13",
    "decided_by": "A9.12 P4-OQ-04 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
@@ -7770,13 +7778,16 @@
     "reuse the anode biased / floating set",
     "defer until P1 measures the collector bias"
    ],
-   "status": "OWNER_DECIDED",
+   "status": "TBD_OWNER",
    "status_when_raised": "TBD_OWNER",
+   "status_current": "OWNER_DECIDED",
+   "status_note": "'status' is the status AS RAISED (read back unchanged by the immutable owner-question state-v4 builder); the question is answered - status_current / answer / decided_by govern (A9.16 repair COR-01)",
    "answer": "NEGATIVE_BIAS_PLUS_FLOATING_CONTROL",
    "sequenced_no": "S5.14",
    "decided_by": "A9.12 P4-OQ-05 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
   }
  ],
+ "owner_questions_open_now": [],
  "a9_16_owner_rules": {
   "rules_module": "docs/experiments/hall_icp/p4_anode_materials/p4_a9_16_rules.py",
   "test": "tests/test_p4_a9_16_owner_rules.py",
@@ -8243,7 +8254,7 @@
     ]
    },
    {
-    "path": "docs/experiments/hall_icp/p1_icp_bench/ (P1 collector envelope P1-M-10 / P1-M-11 / P1-M-27 and P1-M-30 feed the collector-coupon bias magnitude; pair XL-25 text 'sheath energy additionally TBD_OWNER P3Q-01' is re-stated with P1 at the integration re-pin)",
+    "path": "docs/experiments/hall_icp/p1_icp_bench/ (P1 collector envelope P1-M-10 / P1-M-11 / P1-M-27 and P1-M-30 feed the collector-coupon bias magnitude; pair XL-25 re-stated with P1 by the A9.16 repair lane, F2: sheath energy from the P1-M-30 Langmuir probe, A9.8 P3Q-01 option C)",
     "rules": [
      "P4-OQ-05"
     ]

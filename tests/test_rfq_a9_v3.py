@@ -411,17 +411,31 @@ def test_oq_rfqv2_10_h1_build_to_print_package(mod, pk, lines, doc):
     assert h["owner_minimum_scope_verbatim"] == mod.H1FAB_SCOPE and all(h["owner_minimum_scope_coverage"].values())
     assert h["retained_in_house_verbatim"] == mod.H1FAB_IN_HOUSE
     assert not any(li["id"].startswith("H1-") for li in pk["RFQ3-MECH"]["line_items"])
+    # A9.16 repair F4 (updated test): the P1 engineering article is quoted against a P9e configuration-controlled
+    # drawing set (A9.10 OQ-RFQV2-10); the LOCK-1 release (A9.14 F5-OQ-04) is the flight-H-1 basis only
     for li in h["line_items"]:
-        assert li["quote_sheet"]["send_state"].startswith("SEND_ONLY_WITH_RELEASED_H1_DRAWINGS")
+        assert li["quote_sheet"]["send_state"].startswith("SEND_ONLY_WITH_CONTROLLED_H1_DRAWINGS")
         assert "purchase order NOT authorized" in li["quote_sheet"]["send_state"]
+        assert li["quote_sheet"]["freeze_gate"] != "LOCK-1", li["id"]
         if not li["option_line"]:
             assert str(li["qty"]).startswith("TBD")
-    assert mod.h1_fab_send_state(None)["state"] == "NOT_SENDABLE_DRAWING_NOT_RELEASED"
-    good = {"drawing_id": "H1-DWG-001", "revision": "A", "content_sha256": "a" * 64, "open_items": []}
-    assert mod.h1_fab_send_state(good)["state"] == "READY_TO_SEND_FOR_QUOTATION_BUILD_TO_PRINT"
-    for k, v in (("content_sha256", "not-a-hash"), ("revision", ""), ("open_items", ["anode material OPEN"])):
+    n02 = next(r for r in h["requirements"] if r["id"] == "RFQ3-H1FAB-N02")
+    assert n02["freeze_point"] == "P1-G0" and n02["value"]["configuration_control"] == "P9E_CONFIGURATION_CONTROLLED"
+    assert "LOCK-1" in n02["value"]["flight_h1_release_basis"] and "requires the H-1 release" not in json.dumps(n02)
+    assert mod.h1_fab_send_state(None)["state"] == "NOT_SENDABLE_DRAWING_NOT_CONTROLLED"
+    good = {"drawing_id": "H1-DWG-001", "revision": "A", "content_sha256": "a" * 64, "open_items": [],
+            "configuration_control": "P9E_CONFIGURATION_CONTROLLED"}
+    assert mod.h1_fab_send_state(good)["state"] == "READY_TO_SEND_FOR_QUOTATION_BUILD_TO_PRINT"     # no LOCK-1 needed
+    for k, v in (("content_sha256", "not-a-hash"), ("revision", ""), ("open_items", ["anode material OPEN"]),
+                 ("configuration_control", None)):
         bad = dict(good, **{k: v})
-        assert mod.h1_fab_send_state(bad)["state"] == "NOT_SENDABLE_DRAWING_NOT_RELEASED", k
+        assert mod.h1_fab_send_state(bad)["state"] == "NOT_SENDABLE_DRAWING_NOT_CONTROLLED", k
+    # the flight H-1 keeps the LOCK-1 release basis (A9.14 F5-OQ-04)
+    assert mod.h1_fab_send_state(good, article="FLIGHT")["state"] == "NOT_SENDABLE_DRAWING_NOT_RELEASED"
+    assert mod.h1_fab_send_state(dict(good, release="LOCK-1"), article="FLIGHT")["state"] == \
+        "READY_TO_SEND_FOR_QUOTATION_BUILD_TO_PRINT"
+    with pytest.raises(ValueError):
+        mod.h1_fab_send_state(good, article="OTHER")
     assert doc["instrument_coverage"]["not_procured_dispositions"]["NP-H1-BUILD"]["disposition"] == \
         "RESOLVED_TO_RFQ_LINES"
     anode = json.dumps(next(r for r in h["requirements"] if r["id"] == "RFQ3-H1FAB-N04")["value"])

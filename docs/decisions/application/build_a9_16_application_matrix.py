@@ -34,12 +34,85 @@ STATUSES = {
                                    "record-level parts applied where listed; code in A9.16 step 3",
     "PENDING_CI_CHANGE": "needs a CI workflow change (.github/workflows), outside every A9.16 step-1 allowed path",
     "BLOCKED": "cannot be applied yet (missing input or record outside the allowed paths; named in 'residual')",
+    "PARTIAL": "the decision's rule is recorded in the governing artifact but a named part it requires (a selection, a "
+               "registration) is still pending - not APPLIED until that part exists (named in 'residual')",
 }
 RESIDUAL_STATUSES = ("BLOCKED", "PENDING_STEP_2_MODEL_CHANGE", "PENDING_STEP_3_ARCHITECTURE", "PENDING_EVIDENCE",
                      "PENDING_CI_CHANGE", "OPEN_OWNER_QUESTION")
 
 INTEGRATION_COMMITS = {"repin": "5acdcde8be7d41cfb0d6c26b1ad7cb899d279871",
                        "records": "d681230d79e98de1f68085310950086e5e18048c"}
+# A9.16 repair lane (review findings F1-F11, COR-01..07): the commit that applied the decisions below. Every
+# application is verified at build time like a lane result (the question id must occur in the artifact).
+REPAIR_COMMIT = "REPAIR_COMMIT_PLACEHOLDER"
+REPAIR = [
+    # (question id, artifact, what) - F1 / F5
+    ("ICPQ-10", "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "F1: P2 records ICPQ-10 OWNER_DECIDED (A9.12 S5.1 alternative A); alternative B only as rejected history; RC-HEAT "
+     "references p3_a9_16_rules.icp43_total_module_bound and refuses any other heat_load_option"),
+    ("OQ-A910-06", "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "F5: P2 output OQ-A910-06 OWNER_DECIDED (A9.12 S5.8), P2 envelope consumed by p3_a9_16_rules.rf_thermal_basis"),
+    ("OQ-A910-06", "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+     "F5: open_register_status OQ-A910-06 OWNER_DECIDED (A9.12 S5.8)"),
+    # F2
+    ("P3Q-01", "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "F2: P1-M-30 REQUIRED Langmuir probe (matched diagnostic runs, calorimetry primary); capacity records exclude an "
+     "undeclared / unevidenced probe; XL-18 / XL-25 re-stated"),
+    ("P3Q-01", "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
+     "F2: XL-18 re-stated on the P3 side (P3-IF-N02)"),
+    ("P3Q-01", "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+     "F2: XL-25 re-stated on the P4 side (ID-06)"),
+    # F3
+    ("OD5", "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "F3: RVM-14 ICP-first sequence limited by registered dwell / thermal limits only; 120 s / 360 s kept for the "
+     "C1-selected variant's Xe booking"),
+    ("XA9Q-02", "docs/requirements/rvm_a9/rvm_a9_v1.json", "F3: 120 s / 360 s scoped to the C1 variant"),
+    # F4
+    ("OQ-RFQV2-10", "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+     "F4: RFQ3-H1FAB sent against the P9e configuration-controlled P1 engineering drawing set; LOCK-1 release kept for "
+     "the flight H-1 only (recorder reading for the owner to confirm)"),
+    # F6 / F11
+    ("MPQ-01", "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+     "F6: P-FL-C1 a configuration-scope zero (no C1 in hall_icp_neutralizer), not an owner Xe exclusion; XV2-02 and the "
+     "C1 sensitivity labelled A5 design-target placeholders"),
+    ("XA9Q-05", "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+     "F11: ICP-feed 'contingency' label traced to A9.1 HIQ-06; whether A9.15 changes it is open owner question XV3Q-01"),
+    # F9
+    ("P1Q-19", "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "F9: the rejected alternative is NOT_OWNER_SELECTED_INFORMATIONAL (no margin, no condition_met); docstrings "
+     "follow the owner choice"),
+    # F10
+    ("OQ-A907-01", "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+     "F10: C-S4 keeper ignition <= 3 dwells (1 + 2 retries) x 120 s = 360 s maximum booking"),
+    ("XA9Q-02", "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json", "F10: as above"),
+    # F8
+    ("OD5", "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+     "F8: AFC-SY-CTL-01 sequence OWNER_DECIDED, dwell / thermal limits PENDING_REGISTRATION"),
+    ("XA9Q-07", "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+     "F8: Xe rows re-pointed to xe_accounting_a9_v3 / mass_power_a9_v3 / state v5 (v2 / v4 sources marked history)"),
+    # COR-06 / COR-07
+    ("P4-OQ-01", "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+     "COR-06: CR-01 admits T_validated_continuous only with a referenced stage record (id + sha256) classified by "
+     "validation_stage_record; a bare declaration is INCOMPLETE_EVIDENCE"),
+    ("P2Q-01", "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "COR-07: method_agreement needs ZM-B valid = True at the same operating point / configuration"),
+    ("P2Q-03", "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json", "COR-07: as above"),
+]
+REPAIR_FIXES = [
+    {"id": "COR-01", "what": "immutable state-v4 builder reproduces again: P1 / P2 keep their as-raised "
+     "open_owner_questions (current status in owner_question_status_current / answered_owner_questions + "
+     "owner_questions_open_now), P1 derived_resolutions keep the as-raised disposition (owner_decision beside it), "
+     "P4 / RVM keep the as-raised status (status_current beside it), P3 v1 is the A9.6 package"},
+    {"id": "COR-02", "what": "immutable RFQ v2 builder reproduces again: P1-IT-36 and P1-M-30 keep the read-back "
+     "status / quantity text (status_a9_16 / quantity_a9_16 govern)"},
+    {"id": "COR-05", "what": "build_p3_coupled_thermal.py and its v1 outputs restored byte-identical (F0-profiled "
+     "source pinned through the parity pre-registration); every A9.16 P3 change moved to build_p3_coupled_thermal_v2.py "
+     "-> p3_coupled_thermal_v2.json / P3_COUPLED_THERMAL_V2.md, which the current-state consumers read"},
+    {"id": "COR-03", "what": "F4 regenerated (build_f4_plenum.py, build CPU 102 s): only its pin of the current H-1 "
+     "freeze candidate changed; --check and tests/test_design_f4_plenum.py::test_pins_hold pass"},
+    {"id": "COR-04", "what": "F7 / F8 NOT regenerated: its builder exceeds the 2-minute command limit (BLOCKED; pins "
+     "to F6 / H-1 / F4 stay stale until a run without that limit)"},
+]
 
 # ------------------------------------------------------------------------------------------------ lane results
 LANES = {
@@ -52,7 +125,7 @@ LANES = {
            ["P2Q-01", "P2Q-03", "P2Q-04", "P2Q-07", "P2Q-08", "P2Q-09", "P1Q-24", "P2Q-02", "ICPQ-11", "P2Q-10",
             "P2Q-06", "F6-OQ-02"]),
     "P3": ("c00f9b5c424feda2c653c87b3eb1b7d9d3a51009",
-           "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+           "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
            ["P3Q-01", "ICPQ-10", "OQ-A907-03", "OQ-A907-05", "OQ-A907-06", "OQ-A907-08", "OQ-A907-09", "OQ-A907-10",
             "OQ-A910-06", "P3Q-02", "ICPQ-03", "ICPQ-09"]),
     "P4": ("673c058c4dd0a52633470e1c4593ab41f99f7665",
@@ -104,6 +177,10 @@ STEP3 = {
     "OQ-F4-02": "F4: higher-pressure compression as the primary direction",
     "OQ-F4-04": "F4 / F7: flow-gap levers in the owner order (no requirement relaxation)",
     "OQ-F4-05": "orbit-resolved frozen atmosphere dataset (rule-1 versioned build) and its use in F4 / F7",
+    # A9.16 repair F7: only a state-v5 row / F9 annotation exists; the F4 / F7-F8 records that hold these decisions are
+    # not rebuilt (CPU limit) - not APPLIED
+    "OQ-F4-03": "F4 transient metrics accepted provisionally: annotation of the F4 record (F-lane regeneration)",
+    "OQ-F78-02": "F7 / F8: all admitted scenarios carried: annotation of the F7 / F8 records (F-lane regeneration)",
     "OQ-F78-01": "F7 / F8: HC-08 hard statewise T - D >= 0",
     "OQ-F78-03": "F7 / F8: ripple as a hard feed-quality constraint; Pareto (no weighted scalar)",
     "OQ-F78-04": "F7 / F8: REFERENCE/PARAMETRIC sourced spacecraft geometry for interim drag studies",
@@ -126,19 +203,21 @@ RESIDUAL = {
     "OQ-A907-09": [("BLOCKED", "environmental margin in the A9-07 revisions", "docs/hardware/h2_a9_revisions/**")],
     "OQ-A907-10": [("BLOCKED", "search allowance / SEARCH_SENSITIVE flag in the A9-07 revisions",
                     "docs/hardware/h2_a9_revisions/**")],
-    "OQ-A910-06": [("BLOCKED", "mass / power v3 carries OQ-A910-06 OPEN (600 W temporary RF heat allocation not "
-                    "recorded there)", "docs/budgets/mass_power_a9_v3/ (outside the allowed paths)")],
-    "ICPQ-10": [("BLOCKED", "P2 RC-HEAT row / heat_load_alternatives still TBD_OWNER (IDP2-22)",
-                 "docs/experiments/hall_icp/p2_impedance_map/ (outside the allowed paths)")],
-    "P3Q-01": [("BLOCKED", "XL-18 / XL-25 pair text 'TBD_OWNER (P3Q-01 OPEN ...)' still in P1 (IF-P1-34, P1-M-30); "
-                "P1 and P3 must restate it together", "docs/experiments/hall_icp/p1_icp_bench/ (outside the allowed "
-                                                       "paths)")],
+    "ICPQ-10": [("PENDING_EVIDENCE", "Q_ICP,bound value needs the registered P_fwd,max (complete P2 envelope) and "
+                 "the registered H-1 P_d,max (form decided; RC-HEAT TBD_AFTER_EVIDENCE)",
+                 "docs/experiments/hall_icp/p2_impedance_map/, p3_coupled_thermal/")],
+    "F5-OQ-02": [("PENDING_EVIDENCE", "the engineering channel point itself is not yet selected: H1F-CH-11 "
+                  "NOT_SELECTED_PENDING_FEMM (the non-performance selection rule and the ENGINEERING_FREEZE_CANDIDATE "
+                  "label are recorded)", "docs/hardware/h1_freeze_candidate/ (after the authorised FEMM analysis "
+                                         "points, F5-OQ-01)")],
     "P4-OQ-02": [("BLOCKED", "XL-27 pair text 'coupon shortlist TBD_OWNER P4 IT-17' must stay identical with RFQ v2 "
                   "IFD-17", "docs/procurement/rfq_a9_v2/ (immutable v2; outside the allowed paths)")],
     "F2-OQ-04": [("PENDING_STEP_3_ARCHITECTURE", "F2 lane F2-IF-08 status 'TBD_OWNER (F2-OQ-04)' stale",
                   "docs/design_synthesis/f2_filter/ (F-lane regeneration, step 3)")],
     "OQ-F4-03": [("BLOCKED", "F4 record annotation (provisional metric acceptance)", CPU_BLOCKED)],
     "OQ-F78-02": [("BLOCKED", "F7 / F8 record annotation (all admitted scenarios)", CPU_BLOCKED)],
+    "OQ-F78-04": [("BLOCKED", "F7 / F8 not regenerated in the repair lane (COR-04): its pins to F6 / H-1 / F4 are stale",
+                   CPU_BLOCKED)],
     "MQ-06": [("OPEN_OWNER_QUESTION", "controls-line allocation after the split: MPV3Q-01 (TBD_OWNER in state v5)",
                "docs/budgets/mass_power_a9_v3/")],
     "OQ-A907-07": [("PENDING_EVIDENCE", "flight C1 BOM / C1 Xe lines wait for C1 selection (not assumed, not excluded)",
@@ -162,9 +241,12 @@ NOT_APPLICABLE = {
 }
 SPECIAL = {
     "F0-OQ-01": ("BLOCKED", "thresholds (60 s / 10 s) already the preregistered values of scripts/perf/profile_baseline.py; "
-                 "the owner acceptance cannot be recorded in docs/performance/** (pins only in this step) nor in "
-                 "scripts/perf/** (outside the allowed paths); the baseline is also STALE (profiled P3 builder changed "
-                 "in c00f9b5)"),
+                 "the owner acceptance cannot be recorded in docs/performance/** (pins only; the baseline JSON is "
+                 "pinned by the parity pre-registration) nor in scripts/perf/** (outside the allowed paths); the "
+                 "baseline is CURRENT again (A9.16 repair COR-05: the profiled P3 builder is byte-identical to the "
+                 "measured source; A9.16 P3 changes live in build_p3_coupled_thermal_v2.py)"),
+    "F5-OQ-02": ("PARTIAL", "selection rule recorded (non-performance criteria, ENGINEERING_FREEZE_CANDIDATE); the "
+                 "engineering channel point is not yet selected (H1F-CH-11 NOT_SELECTED_PENDING_FEMM) - A9.16 repair F7"),
     "F0-OQ-02": ("BLOCKED", "dedicated unloaded-machine re-measurement (CPU, OS, Python, toolchain, thermal / power, "
                  "threads, workload hash) is an owner-machine action (A9.17); existing ADMITTED verdicts stay "
                  "parity-only; not recordable in docs/performance/** in this step (pins only)"),
@@ -220,6 +302,18 @@ def _locations(doc, qid, limit=4):
             out.append(p)
     walk(doc, "")
     return out
+
+
+def repair_applications():
+    apps = {}
+    for qid, art, what in REPAIR:
+        doc = json.loads((ROOT / art).read_text(encoding="utf-8"))
+        locs = _locations(doc, qid)
+        if not locs:
+            raise SystemExit(f"REPAIR: question id {qid} not found in {art} (repair application not verifiable)")
+        apps.setdefault(qid, []).append({"lane": "REPAIR", "artifact": art, "commit": REPAIR_COMMIT,
+                                         "status": "APPLIED", "record_locations": locs, "what": what})
+    return apps
 
 
 def lane_applications():
@@ -278,6 +372,7 @@ def overall(key, qid, applied):
 
 def build():
     lane = lane_applications()
+    rep = repair_applications()
     integ, a915_integ = integration_applications()
     entries = []
     for key in L.ORDER:
@@ -285,7 +380,7 @@ def build():
             continue
         for qid in L.decision_ids(key):
             a = L.answer(qid)
-            applied = lane.get(qid, []) + integ.get(qid, []) + EXTRA_APPS.get(qid, [])
+            applied = lane.get(qid, []) + rep.get(qid, []) + integ.get(qid, []) + EXTRA_APPS.get(qid, [])
             st, reason = overall(key, qid, applied)
             e = {"decision": key, "question_id": qid, "sequenced_no": a["sequenced_no"],
                  "decision_code": a["decision_code"], "decision_json": a["decision_json"],
@@ -340,6 +435,8 @@ def build():
                 "statuses never PASS; an application is listed only when its question id is locatable in the artifact",
         "pins": L.pins(),
         "integration_commits": INTEGRATION_COMMITS,
+        "repair_commit": REPAIR_COMMIT,
+        "repair_fixes": REPAIR_FIXES,
         "lane_commits": {k: v[0] for k, v in LANES.items()},
         "decision_id_counts": ids_by_dec,
         "counts": dict(sorted(counts.items())),
@@ -349,9 +446,13 @@ def build():
         "superseded_statements": [{"id": "A9.13 owner_statements.xenon",
                                    "text": L.LOADED["A9.13"]["doc"]["owner_statements"]["xenon"],
                                    "superseded_by": "A9.15 governing_rule"}],
-        "builders_check_summary": "see the A9.16 step-1 integration report: re-pinned M16 v4, H-1, F9; RVM, F6, state v5 "
-                                  "rebuilt; RFQ v2 / state v4 / decision dossier / perf baseline stale outside the "
-                                  "allowed paths; F1 / F4 / F7-F8 --check exceed 2 minutes (pins verified)",
+        "builders_check_summary": "A9.16 repair lane: state v4, RFQ v2, mass-power v2, Xe v2 and the F0 performance "
+                                  "baseline --check reproduce again (COR-01 / 02 / 05); P1, P2, P3 v1 + v2, P4, RVM, "
+                                  "mass-power v3, Xe v3, RFQ v3, state v5, M16 v4, H-1, F9 rebuilt; F4 regenerated "
+                                  "(COR-03); F7 / F8 not regenerated (COR-04: the build did not finish inside the "
+                                  "2-minute command limit) - its pins to F6 / H-1 / F4 stay stale and "
+                                  "tests/test_design_f7_f8_optimizer.py::test_pins_hold stays red until a run "
+                                  "without that limit",
     }
 
 

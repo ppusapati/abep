@@ -83,7 +83,7 @@ CONSUMED = {
     "A9REV": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
     "ICD": "schemas/interfaces/icp_neutralizer_icd_v1.json",
     "HWREQ": "docs/experiments/hardware/hardware_requirements_v1.json",
-    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
     "P4": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
     "MP2": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
     "M16": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",

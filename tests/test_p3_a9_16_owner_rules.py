@@ -17,7 +17,7 @@ import pytest
 
 REPO = Path(__file__).resolve().parents[1]
 LANE = REPO / "docs" / "experiments" / "hall_icp" / "p3_coupled_thermal"
-OUT_JSON = LANE / "p3_coupled_thermal_v1.json"
+OUT_JSON = LANE / "p3_coupled_thermal_v2.json"
 SYN = "SYNTHETIC_TEST_DATA_NOT_EVIDENCE"
 
 

@@ -82,7 +82,11 @@ def test_p1_a9_16_decisions_cited_by_path_sha_and_question(doc):
     pins = {p["path"]: p["sha256"] for p in doc["authority_pins"]}
     for d in doc["a9_16_incorporation"]["decisions"]:
         assert pins[d["json"]] == d["json_sha256"] and pins[d["verbatim"]] == d["verbatim_sha256"]
-    assert doc["open_owner_questions"] == []
+    # A9.16 repair COR-01: the as-raised questions stay in open_owner_questions (state-v4 read-back); none is open now
+    assert doc["owner_questions_open_now"] == []
+    cur = {c["id"]: c for c in doc["owner_question_status_current"]}
+    assert set(cur) == {q["id"] for q in doc["open_owner_questions"]}
+    assert all(c["status_current"] == "OWNER_DECIDED" and c["decided_by"] for c in cur.values())
     # every cited test exists
     src = open(__file__, encoding="utf-8").read() + open(os.path.join(ROOT, "tests", "test_p1_icp_bench.py"),
                                                         encoding="utf-8").read()
@@ -664,3 +668,48 @@ def test_p1_a9_16_campaign_report_schema_and_no_pass(red, camp):
     reg_keys = sc["$defs"]["campaign_bundle"]["properties"]["registrations"]["required"]
     assert {"sustainment_definition", "start_attempt_limits", "icp_geometry_matrix"} <= set(reg_keys)
     assert B._no_pass_anywhere({k: v for k, v in rep.items() if k != "raw_records"})
+
+
+
+# ------------------------------------------------------------------ A9.16 repair lane (F2, F9, COR-01 / COR-02)
+def test_p1_a9_16_f2_langmuir_probe_required_and_capacity_exclusion(red, doc):
+    """A9.8 S1.7 P3Q-01 option C: P1-M-30 is a REQUIRED Langmuir-probe diagnostic of the Ar P1 development campaign
+    (cross-check of the primary calorimetric Q_collector, matched diagnostic runs); a probe never contaminates an
+    ICP45_CAPACITY record unless its perturbation is shown negligible (undeclared state -> excluded too)."""
+    m30 = {m["id"]: m for m in doc["measurements"]}["P1-M-30"]
+    assert m30["status_a9_16"].startswith("REQUIRED (A9.8 P3Q-01 option C") and "Langmuir" in m30["quantity_a9_16"]
+    assert "PRIMARY Q_collector evidence" in m30["instrument_class"] and "matched DIAGNOSTIC runs" in \
+        m30["instrument_class"]
+    assert "or none if the calorimetric" not in json.dumps(doc)       # the rejected 'or none' framing is gone
+    xl = [p for p in doc["interface_demands"] if p["id"] in ("IF-P1-34", "IF-P1-36")]
+    assert len(xl) == 2 and "TBD_OWNER (P3Q-01" not in json.dumps(xl)
+    rec = B.synth_cap("SYN-PROBE", 0.5)
+    assert red.capacity_structural_reasons(rec) == []                  # probe declared absent
+    for cm in ({"langmuir_probe_present": True}, {"langmuir_probe_present": True,
+                                                   "probe_perturbation_negligible_evidence_id": "TBD"}):
+        r = copy.deepcopy(rec)
+        r["capacity_monitoring"].update(cm)
+        assert any("perturbation is negligible" in x for x in red.capacity_structural_reasons(r)), cm
+    r = copy.deepcopy(rec)
+    del r["capacity_monitoring"]["langmuir_probe_present"]
+    assert any("Langmuir-probe state not declared" in x for x in red.capacity_structural_reasons(r))
+    r = copy.deepcopy(rec)
+    r["capacity_monitoring"].update(langmuir_probe_present=True,
+                                    probe_perturbation_negligible_evidence_id="SYNTH-PROBE-PERTURBATION-STUDY")
+    assert red.capacity_structural_reasons(r) == []
+    applied = {a["id"] for a in doc["owner_answers_applied"]}
+    assert "A9.8 P3Q-01" in applied
+
+
+def test_p1_a9_16_repair_as_raised_readback_fields(doc):
+    """A9.16 repair COR-01 / COR-02: the fields the immutable state-v4 / RFQ v2 builders read back keep their as-raised
+    values; the current state is carried beside them and governs."""
+    assert [q["id"] for q in doc["open_owner_questions"]][:2] == ["P1Q-01", "P1Q-02"]
+    assert {q.get("status") for q in doc["open_owner_questions"]} <= {None, "OPEN", "TBD_OWNER"}
+    res = {r["id"]: r for r in doc["a9_6_incorporation"]["derived_resolutions"]}
+    assert {r["disposition"] for r in res.values()} <= {"DERIVED", "TBD_OWNER"}
+    it36 = {i["id"]: i for i in doc["items"]}["P1-IT-36"]
+    assert it36["status"].startswith("TBD (geometry / position / reference)")
+    assert it36["status_a9_16"].startswith("OWNER_DECIDED (A9.8 P1Q-09") and "status_note" in it36
+    md = open(os.path.join(DIR, "P1_ICP_BENCH.md"), encoding="utf-8").read()
+    assert "Owner questions open now: 0." in md and "OWNER_DECIDED (A9.8 P1Q-09" in md

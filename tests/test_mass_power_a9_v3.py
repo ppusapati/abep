@@ -34,7 +34,8 @@ V2 = {
         "88a4f0878ba388f8a792138ee5625f83a087fc069dd67049e883a96e0701481b",
     "abep_sim/bus_boundary_a9.py": "7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a",
 }
-DEC_SHA = {"A9.14": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+DEC_SHA = {"A9.12": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",     # A9.16 repair F5
+           "A9.14": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
            "A9.15": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309"}
 REQUIRED = [("A9.14", q) for q in ("MQ-01", "MQ-02", "MQ-03", "MQ-04", "MQ-05", "MQ-06", "MQ-07", "MQ-09", "MQ-10",
                                     "XA9Q-01", "OQ-A910-01", "MPQ-01", "MPQ-02", "OQ-A907-07", "XA9Q-07", "XV2Q-01",
@@ -354,3 +355,21 @@ def test_overall_gate_combination(h):
     assert h.rfp_power_gate_peak_sampled(ok, [(_rec(peak_sampled_W=1550.0), None)])["verdict"] == "NOT_EVALUABLE"
     plateau = [1000.0] * 100 + [1600.0] * 200 + [1000.0] * 100
     assert h.rfp_power_gate_peak_sampled(ok, [(_rec(peak_sampled_W=1600.0), plateau)])["verdict"] == "FAIL"
+
+
+
+def test_a9_16_repair_f5_f10_register_and_c1_dwell_wording():
+    """A9.16 repair F5: OQ-A910-06 is OWNER_DECIDED (A9.12 S5.8, 600 W temporary then the P2-derived envelope).
+    F10: the C1 keeper-ignition step books 3 dwells (1 + 2 retries) x 120 s = 360 s (A9.14 OQ-A907-01 / XA9Q-02); the
+    retired '120 s x 2 retries' reading survives only as the v2 history field."""
+    d = json.loads((REPO / "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json").read_text(encoding="utf-8"))
+    st = d["open_register_status"]["OQ-A910-06"]
+    assert st.startswith("OWNER_DECIDED (A9.12 S5.8") and "rf_thermal_basis" in st
+    step = [x for x in d["power"]["configurations"]["hall_c1_reference"]["phases"]["startup"]["steps"]
+            if x["step_id"] == "C-S4"][0]
+    assert "3 dwells (1 + 2 retries) x 120 s = 360 s" in step["name"] and "120 s x 2" not in step["name"]
+    assert "120 s x 2 retries" in step["name_v2"]
+    applied = {(a["key"], a["id"]) for a in d["owner_answers_applied"]}
+    assert {("A9.12", "OQ-A910-06"), ("A9.14", "OQ-A907-01"), ("A9.14", "XA9Q-02")} <= applied
+    txt = json.dumps({k: v for k, v in d.items() if k != "power"})
+    assert "OPEN (not this lane)" not in txt

@@ -400,12 +400,12 @@
    "sha256": "0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0"
   },
   "P3": {
-   "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
-   "sha256": "9e0f1764a813ee18d4be4528db2e15b04d6ff10654e8522d3f1c27a5a4fb48b9"
+   "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
+   "sha256": "26030a9fd7cdee2d7a9b0ef44b99b0fa843ef8b4560db17d7ad3d2e4f2c2cf20"
   },
   "P4": {
    "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
-   "sha256": "7bb0ae9c3f55c827fd6bf68e08b978c0e609332dc63185f6196eb0d5f72cc3d9"
+   "sha256": "ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412"
   },
   "MP2": {
    "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -413,7 +413,7 @@
   },
   "M16": {
    "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
-   "sha256": "356caf26f09a7c1bcaa339666605f0a5032e89c268346236c891932e552fb2e3"
+   "sha256": "1db1137ce1efdaeabb87ad59232f27478938e2036a806dbce51213f7cbc5e9c6"
   },
   "OQ4": {
    "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
@@ -421,7 +421,7 @@
   },
   "OQ5": {
    "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
-   "sha256": "f98478b251c496c006cc7b0529fbd101e6ce2aca99b672187d4debdbf6449f50"
+   "sha256": "19b4da540b1823c6d3bc1b93f4b673c798af3a519c75e4e055853dbe98c945da"
   },
   "PREREG": {
    "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
@@ -954,7 +954,7 @@
     {
      "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
      "pointer": "/rows/8/blocking_item",
-     "sha256": "356caf26f09a7c1bcaa339666605f0a5032e89c268346236c891932e552fb2e3"
+     "sha256": "1db1137ce1efdaeabb87ad59232f27478938e2036a806dbce51213f7cbc5e9c6"
     },
     {
      "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
@@ -1139,7 +1139,7 @@
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/interface_demands/2/status",
-     "sha256": "7bb0ae9c3f55c827fd6bf68e08b978c0e609332dc63185f6196eb0d5f72cc3d9"
+     "sha256": "ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412"
     }
    ],
    "basis": "row 75 / GD-02; H2-1 interface demand to H2-3 (annulus = channel h, d_mean); P4 ID-03 PENDING",
@@ -1168,7 +1168,7 @@
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/fixed_statuses/316L_FLIGHT_ANODE",
-     "sha256": "7bb0ae9c3f55c827fd6bf68e08b978c0e609332dc63185f6196eb0d5f72cc3d9"
+     "sha256": "ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412"
     }
    ],
    "basis": "A9.2 sec. 3: 316L allowed only as engineering / shakedown material, coupon candidate or low-temperature development component",
@@ -1189,12 +1189,12 @@
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/fixed_statuses/FINAL_ANODE_MATERIAL",
-     "sha256": "7bb0ae9c3f55c827fd6bf68e08b978c0e609332dc63185f6196eb0d5f72cc3d9"
+     "sha256": "ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412"
     },
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/final_material_status",
-     "sha256": "7bb0ae9c3f55c827fd6bf68e08b978c0e609332dc63185f6196eb0d5f72cc3d9"
+     "sha256": "ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412"
     },
     {
      "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
@@ -1240,9 +1240,9 @@
      "sha256": "b428565299c1c41487d9ffa50c174986d2d52c544539f89ca21b7bdbc2ae44fa"
     },
     {
-     "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "pointer": "/closure_statuses/ANODE_THERMAL_CLOSURE",
-     "sha256": "9e0f1764a813ee18d4be4528db2e15b04d6ff10654e8522d3f1c27a5a4fb48b9"
+     "sha256": "26030a9fd7cdee2d7a9b0ef44b99b0fa843ef8b4560db17d7ad3d2e4f2c2cf20"
     },
     {
      "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -1301,12 +1301,12 @@
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/findings",
-     "sha256": "7bb0ae9c3f55c827fd6bf68e08b978c0e609332dc63185f6196eb0d5f72cc3d9"
+     "sha256": "ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412"
     },
     {
-     "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "pointer": "/closure_statuses",
-     "sha256": "9e0f1764a813ee18d4be4528db2e15b04d6ff10654e8522d3f1c27a5a4fb48b9"
+     "sha256": "26030a9fd7cdee2d7a9b0ef44b99b0fa843ef8b4560db17d7ad3d2e4f2c2cf20"
     }
    ],
    "basis": "P4 findings; P3 closure statuses UNRESOLVED",
@@ -1756,7 +1756,7 @@
     {
      "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
      "pointer": "/rows/9/blocking_item",
-     "sha256": "356caf26f09a7c1bcaa339666605f0a5032e89c268346236c891932e552fb2e3"
+     "sha256": "1db1137ce1efdaeabb87ad59232f27478938e2036a806dbce51213f7cbc5e9c6"
     },
     {
      "path": "hallthruster_bridge/bfield/p5_vacuum_Br_centerline_1p6kW.csv",
@@ -2326,9 +2326,9 @@
      "sha256": "b428565299c1c41487d9ffa50c174986d2d52c544539f89ca21b7bdbc2ae44fa"
     },
     {
-     "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "pointer": "/closure_statuses/ICP_COUPLED_THERMAL",
-     "sha256": "9e0f1764a813ee18d4be4528db2e15b04d6ff10654e8522d3f1c27a5a4fb48b9"
+     "sha256": "26030a9fd7cdee2d7a9b0ef44b99b0fa843ef8b4560db17d7ad3d2e4f2c2cf20"
     }
    ],
    "basis": "A9-07 K4; A9.2 ICP_COUPLED_THERMAL",
@@ -2671,12 +2671,12 @@
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/candidates",
-     "sha256": "7bb0ae9c3f55c827fd6bf68e08b978c0e609332dc63185f6196eb0d5f72cc3d9"
+     "sha256": "ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412"
     },
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/candidate_screening_states",
-     "sha256": "7bb0ae9c3f55c827fd6bf68e08b978c0e609332dc63185f6196eb0d5f72cc3d9"
+     "sha256": "ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412"
     }
    ],
    "basis": "P4 framework (APP-ANODE)",
@@ -2778,9 +2778,9 @@
      "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03"
     },
     {
-     "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "pointer": "/closure_statuses",
-     "sha256": "9e0f1764a813ee18d4be4528db2e15b04d6ff10654e8522d3f1c27a5a4fb48b9"
+     "sha256": "26030a9fd7cdee2d7a9b0ef44b99b0fa843ef8b4560db17d7ad3d2e4f2c2cf20"
     }
    ],
    "basis": "A9.2 sec. 5-7 (no thermal PASS from a negligible-coupling calculation)",
@@ -4290,7 +4290,7 @@
   {
    "id": "IFS-P3-01",
    "direction": "H-1 -> P3",
-   "counterpart": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (P3-IF-N07)",
+   "counterpart": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (P3-IF-N07)",
    "quantity": "frozen H-1 geometry, surface-node map, conductances, emittances",
    "value": "TBD - design point TBD_OWNER (H1F-CH-11)",
    "units": "m; W/K; -",
@@ -4300,7 +4300,7 @@
   {
    "id": "IFD-P3-01",
    "direction": "H-1 <- P3",
-   "counterpart": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (P3-IF-S07 / S04)",
+   "counterpart": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (P3-IF-S07 / S04)",
    "quantity": "coupled T_operating of anode, coils, poles, walls; equivalent ICP heat into PO / BP",
    "value": "TBD_AFTER_EVIDENCE (ICP_COUPLED_THERMAL, ANODE_THERMAL_CLOSURE UNRESOLVED)",
    "units": "K; W",
@@ -4640,7 +4640,7 @@
    "source": {
     "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/243",
-    "sha256": "f98478b251c496c006cc7b0529fbd101e6ce2aca99b672187d4debdbf6449f50"
+    "sha256": "19b4da540b1823c6d3bc1b93f4b673c798af3a519c75e4e055853dbe98c945da"
    }
   },
   {
@@ -4650,7 +4650,7 @@
    "source": {
     "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/254",
-    "sha256": "f98478b251c496c006cc7b0529fbd101e6ce2aca99b672187d4debdbf6449f50"
+    "sha256": "19b4da540b1823c6d3bc1b93f4b673c798af3a519c75e4e055853dbe98c945da"
    }
   },
   {
@@ -4660,7 +4660,7 @@
    "source": {
     "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/255",
-    "sha256": "f98478b251c496c006cc7b0529fbd101e6ce2aca99b672187d4debdbf6449f50"
+    "sha256": "19b4da540b1823c6d3bc1b93f4b673c798af3a519c75e4e055853dbe98c945da"
    }
   },
   {
@@ -4670,7 +4670,7 @@
    "source": {
     "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/256",
-    "sha256": "f98478b251c496c006cc7b0529fbd101e6ce2aca99b672187d4debdbf6449f50"
+    "sha256": "19b4da540b1823c6d3bc1b93f4b673c798af3a519c75e4e055853dbe98c945da"
    }
   },
   {
@@ -4680,7 +4680,7 @@
    "source": {
     "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/257",
-    "sha256": "f98478b251c496c006cc7b0529fbd101e6ce2aca99b672187d4debdbf6449f50"
+    "sha256": "19b4da540b1823c6d3bc1b93f4b673c798af3a519c75e4e055853dbe98c945da"
    }
   },
   {
@@ -4690,7 +4690,7 @@
    "source": {
     "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/299",
-    "sha256": "f98478b251c496c006cc7b0529fbd101e6ce2aca99b672187d4debdbf6449f50"
+    "sha256": "19b4da540b1823c6d3bc1b93f4b673c798af3a519c75e4e055853dbe98c945da"
    }
   },
   {
@@ -4700,7 +4700,7 @@
    "source": {
     "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/343",
-    "sha256": "f98478b251c496c006cc7b0529fbd101e6ce2aca99b672187d4debdbf6449f50"
+    "sha256": "19b4da540b1823c6d3bc1b93f4b673c798af3a519c75e4e055853dbe98c945da"
    }
   },
   {
@@ -4710,7 +4710,7 @@
    "source": {
     "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/327",
-    "sha256": "f98478b251c496c006cc7b0529fbd101e6ce2aca99b672187d4debdbf6449f50"
+    "sha256": "19b4da540b1823c6d3bc1b93f4b673c798af3a519c75e4e055853dbe98c945da"
    }
   },
   {
@@ -4720,7 +4720,7 @@
    "source": {
     "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/328",
-    "sha256": "f98478b251c496c006cc7b0529fbd101e6ce2aca99b672187d4debdbf6449f50"
+    "sha256": "19b4da540b1823c6d3bc1b93f4b673c798af3a519c75e4e055853dbe98c945da"
    }
   },
   {
@@ -4730,7 +4730,7 @@
    "source": {
     "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/330",
-    "sha256": "f98478b251c496c006cc7b0529fbd101e6ce2aca99b672187d4debdbf6449f50"
+    "sha256": "19b4da540b1823c6d3bc1b93f4b673c798af3a519c75e4e055853dbe98c945da"
    }
   }
  ],
@@ -4746,7 +4746,7 @@
    "source": {
     "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
     "pointer": "/rows/8",
-    "sha256": "356caf26f09a7c1bcaa339666605f0a5032e89c268346236c891932e552fb2e3"
+    "sha256": "1db1137ce1efdaeabb87ad59232f27478938e2036a806dbce51213f7cbc5e9c6"
    }
   },
   {
@@ -4760,7 +4760,7 @@
    "source": {
     "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
     "pointer": "/rows/9",
-    "sha256": "356caf26f09a7c1bcaa339666605f0a5032e89c268346236c891932e552fb2e3"
+    "sha256": "1db1137ce1efdaeabb87ad59232f27478938e2036a806dbce51213f7cbc5e9c6"
    }
   },
   {
@@ -4774,7 +4774,7 @@
    "source": {
     "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
     "pointer": "/rows/12",
-    "sha256": "356caf26f09a7c1bcaa339666605f0a5032e89c268346236c891932e552fb2e3"
+    "sha256": "1db1137ce1efdaeabb87ad59232f27478938e2036a806dbce51213f7cbc5e9c6"
    }
   },
   {
@@ -4788,7 +4788,7 @@
    "source": {
     "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
     "pointer": "/rows/19",
-    "sha256": "356caf26f09a7c1bcaa339666605f0a5032e89c268346236c891932e552fb2e3"
+    "sha256": "1db1137ce1efdaeabb87ad59232f27478938e2036a806dbce51213f7cbc5e9c6"
    }
   },
   {
@@ -4802,7 +4802,7 @@
    "source": {
     "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
     "pointer": "/rows/20",
-    "sha256": "356caf26f09a7c1bcaa339666605f0a5032e89c268346236c891932e552fb2e3"
+    "sha256": "1db1137ce1efdaeabb87ad59232f27478938e2036a806dbce51213f7cbc5e9c6"
    }
   }
  ],

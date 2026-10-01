@@ -240,13 +240,21 @@ def limit_use_check(classified, use):
 
 
 def gate_admissible_t_validated(prop):
-    """For the p4_screening CR-01 gate: a T_validated_continuous property record is gate-admissible only with
-    'validation_stage' at stage 2 or later (A9.12 S5.10); returns (ok, reason)."""
+    """For the p4_screening CR-01 gate: a T_validated_continuous property record is gate-admissible only when its
+    attached 'validation_stage_record' classifies (validation_stage_record) at stage 2 or later AND equals the declared
+    'validation_stage' (A9.12 S5.10). A bare declaration is never enough (A9.16 repair COR-06; the sha256 reference is
+    checked by p4_screening.t_validated_stage_refusal). Returns (ok, reason)."""
     st = prop.get("validation_stage") if isinstance(prop, dict) else None
     if st not in (STAGE_2, STAGE_3):
         return False, (f"validation stage {st!r}: only stage-2 integrated replaceable-component confirmation (or "
                        "later) gives T_validated,continuous for the P3 / LOCK-1 closure (A9.12 P4-OQ-01); a stage-1 "
                        "coupon-supported provisional limit is screening only")
+    try:
+        c = validation_stage_record(prop.get("validation_stage_record"))
+    except RuleRefusal as e:
+        return False, f"declared {st} without an admissible stage record ({e.code}): a self-declaration is not evidence"
+    if c["stage"] != st:
+        return False, f"declared {st} but the stage record classifies as {c['stage']}"
     return True, ""
 
 

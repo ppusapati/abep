@@ -238,7 +238,7 @@
    "basis": "owner allocation (A5)",
    "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json xe_mass_allocation.cathode_flow_design_target_mg_s; copied in docs/hardware/h2/h2_2_cathode_integration/h2_2_cathode_integration_v1.json H22-42",
    "evidence_class": "owner-allocation",
-   "status": "FIXED_DESIGN_TERM (A5 design target, not a demonstrated flow)",
+   "status": "A5_DESIGN_TARGET_PLACEHOLDER: the A5 design-target flow (not a demonstrated or selected-hardware flow) used for the ground development / reference C1 booking; for a flight C1 it is replaced by the selected C1 hardware's qualified flow when C1 is selected (A9.15: C1 Xe derived from the selected C1 hardware)",
    "freeze_point": "after-evidence",
    "applies_to": {
     "configs": [
@@ -249,12 +249,14 @@
     ]
    },
    "note": "closes with the C1 measured spot-mode minimum flow (H22-50); the flow step of that search is row 92",
-   "v3_change": "value unchanged; flight scope conditional on C1 selection",
+   "v3_change": "value unchanged; flight scope conditional on C1 selection; labelled an A5 design-target placeholder (A9.16 repair F6)",
    "owner_answers_applied": [
     "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-    "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
+    "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+    "A9.15 governing_rule (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
    ],
-   "v3_scope": "flight use CONDITIONAL_ON_C1_FLIGHT_SELECTION (A9.14 OQ-A907-07 / MPQ-01 as amended by A9.15); ground (development / reference C1) use unchanged"
+   "v3_scope": "flight use CONDITIONAL_ON_C1_FLIGHT_SELECTION (A9.14 OQ-A907-07 / MPQ-01 as amended by A9.15); ground (development / reference C1) use unchanged",
+   "status_v2": "FIXED_DESIGN_TERM (A5 design target, not a demonstrated flow)"
   },
   {
    "id": "XV2-03",
@@ -803,7 +805,8 @@
     "A9.14 XA9Q-05 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
     "A9.15 XA9Q-05 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
    ],
-   "v3_scope": "G-XE stays a declared ICP-feed variant (CASE-3); A9.1 gas-mode baseline unchanged (A9.15 recorder note); an ICP Xe-path getter/filter only if the spec demonstrates the need (A9.14 XA9Q-05 as amended)"
+   "v3_scope": "G-XE stays a declared ICP-feed variant (CASE-3); A9.1 gas-mode baseline unchanged (A9.15 recorder note); an ICP Xe-path getter/filter only if the spec demonstrates the need (A9.14 XA9Q-05 as amended)",
+   "label_note": "'contingency' here is the owner's A9.1 HIQ-06 label of the dedicated ICP feed gas-mode variants (G-REUSE primary; G-ATM / G-XE 'separately declared contingency variants', docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md sha256 2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e); it qualifies the ICP feed choice only and never the RFP-required system Xe capability (A9.15); whether A9.15 changes this ICP-feed labelling is open owner question XV3Q-01"
   },
   {
    "id": "XV2-23",
@@ -1393,8 +1396,9 @@
      "G-ATM"
     ]
    },
-   "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "v3_change": "label note only (A9.16 repair F11)",
+   "owner_answers_applied": [],
+   "label_note": "'contingency' here is the owner's A9.1 HIQ-06 label of the dedicated ICP feed gas-mode variants (G-REUSE primary; G-ATM / G-XE 'separately declared contingency variants', docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md sha256 2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e); it qualifies the ICP feed choice only and never the RFP-required system Xe capability (A9.15); whether A9.15 changes this ICP-feed labelling is open owner question XV3Q-01"
   },
   {
    "id": "XV2-45",
@@ -1636,7 +1640,7 @@
    "name": "C1 keeper/cathode Xe",
    "formula": "not booked: no C1 in the ICP flight configuration",
    "fields": [],
-   "presence": "ABSENT_BY_OWNER_DECISION",
+   "presence": "ZERO_BY_SCOPE",
    "a9_08_term": "F-C1-CATHODE",
    "sources": [
     "docs/decisions/OD_2026_09_29_owner_answers_147.json row 46 ('no continuous C1-Xe cathode term'); docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-A902-04"
@@ -1646,8 +1650,14 @@
    "of_lines": [],
    "optional_entry": false,
    "note": null,
-   "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "v3_change": "relabelled: configuration-scope zero (no C1 in hall_icp_neutralizer), not an owner Xe exclusion (A9.16 repair F6)",
+   "owner_answers_applied": [
+    "A9.15 governing_rule (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+    "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+    "A9.15 XA9Q-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
+   ],
+   "presence_v2": "ABSENT_BY_OWNER_DECISION",
+   "scope_note": "CONFIGURATION_SCOPE_EXCLUSION: hall_icp_neutralizer contains no C1 by architecture, so no C1 Xe line exists in this configuration; this is not an owner Xe exclusion (A9.15: C1 Xe neither assumed nor excluded in advance; a C1 that does not require Xe gets no invented consumption). Flight C1 Xe is PENDING_C1_NOT_SELECTED in hall_c1_reference (C1-FL-* lines, CONDITIONAL_ON_C1_FLIGHT_SELECTION); the RFP-required system Xe capability is unaffected (A9.14 XA9Q-07 / A9.15)"
   },
   {
    "id": "P-FL-FUNC",
@@ -3052,7 +3062,8 @@
    "optional_entry": true,
    "note": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "label_note": "'contingency' here is the owner's A9.1 HIQ-06 label of the dedicated ICP feed gas-mode variants (G-REUSE primary; G-ATM / G-XE 'separately declared contingency variants', docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md sha256 2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e); it qualifies the ICP feed choice only and never the RFP-required system Xe capability (A9.15); whether A9.15 changes this ICP-feed labelling is open owner question XV3Q-01"
   },
   {
    "id": "OPT-FL-FLOWUNC-GXE",
@@ -3112,7 +3123,8 @@
    "optional_entry": true,
    "note": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "label_note": "'contingency' here is the owner's A9.1 HIQ-06 label of the dedicated ICP feed gas-mode variants (G-REUSE primary; G-ATM / G-XE 'separately declared contingency variants', docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md sha256 2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e); it qualifies the ICP feed choice only and never the RFP-required system Xe capability (A9.15); whether A9.15 changes this ICP-feed labelling is open owner question XV3Q-01"
   },
   {
    "id": "OPT-GT-GXE",
@@ -3151,7 +3163,8 @@
    "optional_entry": true,
    "note": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "label_note": "'contingency' here is the owner's A9.1 HIQ-06 label of the dedicated ICP feed gas-mode variants (G-REUSE primary; G-ATM / G-XE 'separately declared contingency variants', docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md sha256 2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e); it qualifies the ICP feed choice only and never the RFP-required system Xe capability (A9.15); whether A9.15 changes this ICP-feed labelling is open owner question XV3Q-01"
   },
   {
    "id": "OPT-GT-GATM",
@@ -3180,7 +3193,8 @@
    "optional_entry": true,
    "note": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "label_note": "'contingency' here is the owner's A9.1 HIQ-06 label of the dedicated ICP feed gas-mode variants (G-REUSE primary; G-ATM / G-XE 'separately declared contingency variants', docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md sha256 2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e); it qualifies the ICP feed choice only and never the RFP-required system Xe capability (A9.15); whether A9.15 changes this ICP-feed labelling is open owner question XV3Q-01"
   },
   {
    "id": "OPT-GT-P1-GXE-DIAG",
@@ -3694,7 +3708,7 @@
     },
     {
      "line": "P-FL-C1",
-     "presence": "ABSENT_BY_OWNER_DECISION",
+     "presence": "ZERO_BY_SCOPE",
      "kg": 0.0,
      "missing": []
     },
@@ -4588,7 +4602,7 @@
     },
     {
      "line": "P-FL-C1",
-     "presence": "ABSENT_BY_OWNER_DECISION",
+     "presence": "ZERO_BY_SCOPE",
      "kg": 0.0,
      "missing": []
     },
@@ -4753,7 +4767,7 @@
     },
     {
      "line": "P-FL-C1",
-     "presence": "ABSENT_BY_OWNER_DECISION",
+     "presence": "ZERO_BY_SCOPE",
      "kg": 0.0,
      "missing": []
     },
@@ -5716,29 +5730,28 @@
    ]
   },
   "c1_conditional_sensitivity": {
-   "label": "CONDITIONAL_SENSITIVITY_NOT_BOOKED: what a SELECTED flight C1 that requires Xe at the A5 design flow would take (A9.15: neither assumed nor excluded in advance)",
-   "keeper_term_kg_if_selected_and_xe": 5.4,
-   "flow_class_term_kg_if_selected_and_xe": 0.216,
+   "label": "A5_DESIGN_TARGET_PLACEHOLDER_SENSITIVITY_NOT_BOOKED: arithmetic on the A5 design-target flow (XV2-02) and firing-hours basis, NOT on selected C1 hardware and NOT an estimate of flight C1 Xe; the selected C1 hardware's qualified flow replaces it (A9.15: C1 Xe neither assumed nor excluded in advance; a C1 that does not require Xe gets no invented consumption; A9.16 repair F6)",
+   "placeholder_basis": {
+    "flow": "XV2-02 (A5 design target)",
+    "status": "A5_DESIGN_TARGET_PLACEHOLDER: the A5 design-target flow (not a demonstrated or selected-hardware flow) used for the ground development / reference C1 booking; for a flight C1 it is replaced by the selected C1 hardware's qualified flow when C1 is selected (A9.15: C1 Xe derived from the selected C1 hardware)"
+   },
+   "keeper_term_kg_if_selected_and_xe_at_a5_placeholder": 5.4,
+   "flow_class_term_kg_if_selected_and_xe_at_a5_placeholder": 0.216,
    "flow_ceiling_rows": [
     {
      "case_kg": 2.0,
-     "c1_flow_ceiling_mg_s_all_other_terms_zero": 0.0262591,
-     "a5_design_flow_mg_s": 0.1,
-     "design_flow_within_ceiling": false
+     "c1_flow_ceiling_mg_s_all_other_terms_zero": 0.0262591
     },
     {
      "case_kg": 5.0,
-     "c1_flow_ceiling_mg_s_all_other_terms_zero": 0.0716476,
-     "a5_design_flow_mg_s": 0.1,
-     "design_flow_within_ceiling": false
+     "c1_flow_ceiling_mg_s_all_other_terms_zero": 0.0716476
     },
     {
      "case_kg": 10.0,
-     "c1_flow_ceiling_mg_s_all_other_terms_zero": 0.147295,
-     "a5_design_flow_mg_s": 0.1,
-     "design_flow_within_ceiling": true
+     "c1_flow_ceiling_mg_s_all_other_terms_zero": 0.147295
     }
-   ]
+   ],
+   "flow_ceiling_note": "the C1 flow each loaded case could carry with every other flight term zero (arithmetic ceiling); no comparison with the A5 placeholder flow is made (the selected C1 hardware decides; A9.16 repair F6)"
   },
   "mass_share": {
    "label": "loaded Xe alone vs the row-44 0.25 screening cap on the 40 kg wet gate (row 5)",
@@ -6144,6 +6157,18 @@
     "A9.14 XV2Q-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
     "A9.15 XV2Q-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
    ]
+  },
+  {
+   "id": "XV3Q-01",
+   "status": "OPEN",
+   "by": [
+    "docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md HIQ-06 (sha256 2587ca6931f6)",
+    "A9.15 governing_rule (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
+   ],
+   "question": "A9.15 makes Xe an RFP-required system capability that must not be 'weakened into a contingency interpretation'. Does it also change the A9.1 HIQ-06 ICP gas-mode labels, where G-REUSE is primary and the dedicated G-ATM / G-XE ICP feeds are 'separately declared contingency variants'? (The A9.15 recorder note flagged this; Xe v3 keeps the A9.1 ICP-feed labels and scopes 'contingency' to the ICP feed choice only.)",
+   "a9_1_basis_verbatim": "The dedicated ICP gas port remains installed and capped so G-ATM and G-XE can be tested as separately declared contingency variants.",
+   "proposed": "none - owner call (no reading is chosen here; the A9.1 baseline stays as recorded until the owner answers)",
+   "needed_by": "LOCK-1"
   }
  ],
  "recorder_flags": [

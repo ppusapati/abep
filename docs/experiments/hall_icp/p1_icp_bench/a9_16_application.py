@@ -147,13 +147,23 @@ APPLIED = [
      "relevant I_d,max,H1 is a separate registration; never the 8.33 A ceiling",
      "p1_reducer._check_registration; p1_a9_16_rules.freeze_before_stage_reasons; p1_campaign",
      ["test_p1_a9_16_i_d_max_ar_registration"]),
+    ("A9.8", "P3Q-01", "S1.7", "C_BOTH_CALORIMETRY_PRIMARY",
+     "P1-M-30 is a REQUIRED Ar P1 development diagnostic: Langmuir probe near the collector (T_e, plasma potential) as "
+     "the independent sheath-model cross-check of the calorimetric collector energy balance, which stays the primary "
+     "Q_collector evidence; probe data in matched diagnostic runs; a probe present in an ICP45_CAPACITY record without "
+     "registered evidence that its perturbation is negligible (or an undeclared probe state) excludes that capacity "
+     "point; pairs XL-18 (P3) / XL-25 (P4) re-stated on both sides (A9.16 repair F2)",
+     "build_p1_icp_bench.measurements (P1-M-30), XL_PAIRS XL-18 / XL-25; p1_reducer.capacity_structural_reasons "
+     "(PROBE_PRESENT_KEY / PROBE_EVIDENCE_KEY)",
+     ["test_p1_a9_16_f2_langmuir_probe_required_and_capacity_exclusion"]),
     ("A9.10", "P1Q-08", "S3.6", "YES",
      "P1-S0..S5 = HI-ENG / HI-S1A; the P1-S6 topology-control sequence must name the signed HI-HOLDOUT-A record "
      "(hi_holdout_a_id) - required immediately before the first Hall-on reading, not earlier",
      "p1_reducer.reduce_topology_control (HOLDOUT_STAGE)", ["test_p1_a9_16_holdout_and_c1_absent"]),
     ("A9.10", "P1Q-19", "S3.7", "REQUIRE_REGISTERED_GE_CHANNEL",
      "u_I_e,registered < u(I_e,cap)_channels -> ICP-45 status NOT_EVALUATED_REGISTRATION (registration inadmissible, "
-     "never silently replaced by the larger value); the other alternative is still computed for transparency only",
+     "never silently replaced by the larger value); the rejected alternative is listed as "
+     "NOT_OWNER_SELECTED_INFORMATIONAL with no margin and no condition_met (never evaluated; A9.16 repair F9)",
      "p1_reducer.icp45a_evaluate (P1Q19_OWNER_SELECTED)",
      ["test_a96_p1q19_alternatives_side_by_side (updated)", "test_p1_a9_16_p1q19_owner_selected"]),
     ("A9.10", "P1Q-24", "S3.8", "K_LOSS_2_FAIL_CLOSED_CONFIRMED",
@@ -321,6 +331,51 @@ FAIL_CLOSED = [
 ]
 
 
+# ---------------------------------------------------------------- A9.16 repair COR-01 / COR-02: as-raised read-back
+# The immutable owner-question state-v4 builder reads P1 open_owner_questions (id / question / proposed_answer /
+# needed_by / status) and a9_6_incorporation.derived_resolutions[].disposition back and accepts only the dispositions
+# DERIVED / TBD_OWNER; the immutable RFQ v2 builder reads items[id=P1-IT-36].status. Those fields keep their AS-RAISED
+# values (the question record), and the current state is carried in separate keys. Neither builder is edited.
+AS_RAISED_QUESTIONS_NOTE = (
+    "open_owner_questions is the record of the owner questions AS RAISED by this package (text and as-raised status "
+    "unchanged; read back by the immutable owner-question state-v4 builder). Every one is answered by the owner "
+    "decisions of 2026-10-01: owner_question_status_current carries the current status and the deciding decision per "
+    "question; owner_questions_open_now lists the questions still open (none)")
+AS_RAISED_DISPOSITION_NOTE = (
+    "'disposition' is the disposition AS RAISED (TBD_OWNER under A9.6 sec. 7; read back unchanged by the immutable "
+    "state-v4 builder); the owner has since decided it - owner_decision governs")
+FROZEN_READBACK_STATUS = {
+    "P1-IT-36": "docs/procurement/rfq_a9_v2/build_rfq_a9_v2.py (immutable) reads items[id=P1-IT-36].status back into "
+                "rfq_a9_v2.json; 'status' keeps that A9.6 text and status_a9_16 carries the current status"}
+
+
+def owner_question_status_current(former):
+    """Per as-raised P1 question: current status and the deciding owner decision(s) (decision file + json sha256 +
+    question id). Raises when a question has no owner decision (nothing is silently marked answered)."""
+    out = []
+    for q in former:
+        hits = [r for r in APPLIED if r[1] == q["id"]]
+        if not hits:
+            raise SystemExit("A9.16: P1 question %s has no applied owner decision" % q["id"])
+        out.append({"id": q["id"], "status_as_raised": q.get("status", "OPEN (as raised)"),
+                    "status_current": "OWNER_DECIDED",
+                    "decided_by_ids": ["%s %s" % (d, qid) for d, qid, *_ in hits],
+                    "decided_by": [{"decision": d, "question_id": qid, "sequenced_no": sq, "owner_answer": code,
+                                    "decision_file": DEC[d][0], "decision_json_sha256": DEC[d][1],
+                                    "verbatim": DEC[d][2]} for d, qid, sq, code, *_ in hits]})
+    return out
+
+
+def p1q19_owner_decision(red):
+    d = "A9.10"
+    return {"status": "OWNER_DECIDED", "decided_by": "A9.10 P1Q-19 (S3.7)", "owner_answer": red.P1Q19_OWNER_SELECTED,
+            "decision_file": DEC[d][0], "decision_json_sha256": DEC[d][1], "verbatim": DEC[d][2],
+            "rule": "u_I_e,registered >= u(I_e,cap)_channels under the registered correlation treatment before the "
+                    "first P1-S7 point, else ICP-45 = NOT_EVALUATED_REGISTRATION; never silently replaced by the "
+                    "larger value; the alternative USE_LARGER_OF_REGISTERED_AND_CHANNEL is NOT_OWNER_SELECTED and is "
+                    "never evaluated"}
+
+
 def owner_answer_rows():
     rows = []
     for d, q, sq, code, how, where, tests in APPLIED:
@@ -353,7 +408,12 @@ def apply_item_updates(items_list):
                 if x["evidence_class"] is None and not str(val).startswith(("TBD", "PENDING")):
                     x["evidence_class"] = "owner-stated"      # the value is now the owner's decision text
             if status is not None:
-                x["status"] = status
+                if x["id"] in FROZEN_READBACK_STATUS:
+                    x["status_a9_16"] = status
+                    x["status_note"] = ("'status' = A9.6 text kept for the immutable read-back (" +
+                                        FROZEN_READBACK_STATUS[x["id"]] + "); status_a9_16 governs")
+                else:
+                    x["status"] = status
             x["source"] = (x["source"] or "") + "; " + j + " (sha256 " + js + ")"
             x["note"] = ((x["note"] + "; ") if x["note"] else "") + "A9.16 step 1: " + note
         out.append(x)

@@ -133,10 +133,16 @@ def test_a9_7_lane_questions_rows():
 
 
 def test_remaining_open_question_is_tbd_owner_without_answer():
+    # A9.16 repair F11 (updated test): XV3Q-01 (Xe v3: does A9.15 change the A9.1 HIQ-06 ICP-feed 'contingency'
+    # labels?) joins MPV3Q-01 as an open owner question - the A9.15 recorder flag is now tracked
     tbd = [r for r in ROWS if r["status"] == "TBD_OWNER"]
-    assert [r["id"] for r in tbd] == DOC["open_owner_questions"] == ["MPV3Q-01"]
-    assert "answer_pointer" not in tbd[0] and tbd[0]["blocks"] == ["BLOCKS_LOCK_1"]
-    assert DOC["counts"]["TBD_OWNER"] == DOC["tbd_owner_count"] == 1
+    assert [r["id"] for r in tbd] == DOC["open_owner_questions"] == ["MPV3Q-01", "XV3Q-01"]
+    for r in tbd:
+        assert "answer_pointer" not in r and r["blocks"] == ["BLOCKS_LOCK_1"]
+    assert DOC["counts"]["TBD_OWNER"] == DOC["tbd_owner_count"] == 2
+    xv3 = tbd[1]
+    assert xv3["source_ref"]["path"] == "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json"
+    assert "separately declared contingency variants" in xv3["classification_basis"]
 
 
 def test_no_pass_token_and_counts_consistent():

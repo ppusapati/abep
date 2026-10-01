@@ -122,8 +122,15 @@ ROW_RECORDS = {
         "baseline_start_sequence": ["establish gas / plenum / feed state", "set H-1 magnet state",
                                     "ignite / stabilize ICP", "verify electron-source / current condition",
                                     "apply Hall discharge voltage", "verify sustained Hall discharge"],
-        "attempts": "one initial attempt + at most two retries (3 dwells, <= 120 s each, 360 s maximum booking)",
-        "c1_variant": "a C1-selected variant uses its separately qualified heater / keeper sequence"}, None),
+        # A9.16 repair F3: OD5 limits the ICP-first atmospheric sequence only by 'registered dwell / thermal limits';
+        # the 120 s per-dwell cap / 360 s booking belong to the C1 ignition dwell for Xe booking (S9.1 XA9Q-02 /
+        # S8.15 OQ-A907-01, owner row 93 'H. Cathode C-1') and to the C1-selected variant only
+        "attempts": ("max 1 initial attempt + 2 retries under registered dwell / thermal limits (values registered from "
+                     "the actual hardware before P1-S6, A9.10 P1Q-02; NOT_EVALUATED_REGISTRATION until registered; no "
+                     "dwell number is set for the ICP-first sequence)"),
+        "c1_variant": ("a C1-selected variant uses its separately qualified heater / keeper sequence; its Xe booking "
+                       "uses 3 C1 ignition dwells (1 + 2 retries), each <= 120 s, 360 s maximum booking (A9.14 "
+                       "OQ-A907-01 / XA9Q-02; applies to the C1 variant only)")}, None),
     "RVM-17": (["OQ-A907-03", "OQ-A907-05", "OQ-A907-09", "OQ-A907-10"], {
         "bounding_corner": "physically admissible joint states only; 1.20 on dissipated loads, environmental loads by "
                            "the registered hot / cold envelope; >= 50 K never relaxed",
@@ -170,7 +177,12 @@ def apply(doc: dict) -> dict:
         r["open_readings"] = [_decided(o) if o["status"] == "TBD_OWNER" else o for o in r["open_readings"]]
     q = doc["open_owner_questions"][0]
     assert q["id"] == "RVMQ-01"
-    doc["open_owner_questions"] = [dict(q, status_when_raised=q["status"], status="OWNER_DECIDED",
+    # 'status' keeps the AS-RAISED value (the immutable state-v4 builder reads it back and accepts only OPEN /
+    # TBD_OWNER; A9.16 repair COR-01); status_current governs
+    doc["open_owner_questions"] = [dict(q, status_when_raised=q["status"], status=q["status"],
+                                        status_current="OWNER_DECIDED",
+                                        status_note="'status' = status AS RAISED (state-v4 read-back contract); "
+                                                    "answered by the owner - status_current / decision govern",
                                         decision=L.cite("RVMQ-01"),
                                         decision_code=L.answer("RVMQ-01")["decision_code"],
                                         answer_verbatim=L.answer("RVMQ-01")["verbatim_excerpt"])]

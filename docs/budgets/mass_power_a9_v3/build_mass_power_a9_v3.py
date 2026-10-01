@@ -73,6 +73,10 @@ V2 = {
 }
 BUS_MODULE = ("abep_sim/bus_boundary_a9.py", "7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a")
 DECISIONS = {
+    "A9.12": {"json": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+              "json_sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+              "md": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+              "md_sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62"},
     "A9.13": {"json": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
               "json_sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
               "md": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
@@ -262,6 +266,15 @@ def S() -> dict:
                        "YES: MATCHED SHAM MUST REPRODUCE THE LOCAL-MATCH PARASITICS. Provide mass/stiffness/thermal/"
                        "service-line equivalent as necessary for force-system equivalence. Book the local matching "
                        "hardware on AL-06 RF generator/matching, not AL-05."),
+        # A9.16 repair F5 / F10
+        "OQA91006": OD("A9.12", "OQ-A910-06",
+                       "Decision: YES — retain 600 W temporarily, then supersede it with the P2-derived RF thermal "
+                       "envelope."),
+        "OQA90701": OD("A9.14", "OQ-A907-01",
+                       "THREE ATTEMPTS. One initial C1 ignition attempt plus at most two retries = maximum three dwells "
+                       "per start."),
+        "XA9Q02": OD("A9.14", "XA9Q-02",
+                     "THREE DWELLS / 360 s MAXIMUM BOOKING. One attempt + two retries, each capped at 120 s."),
         "OQA91003": OD("A9.14", "OQ-A910-03",
                        "Only when the record satisfies the declared ≥100 kSa/s, ≥20 kHz measurement bandwidth, "
                        "anti-alias filtering, synchronized channels, no saturation and total-bus-power reconstruction "
@@ -661,6 +674,12 @@ APPLIED = [
     ("GOV", "RFP governs propellant capability; Xe hardware independent of C1 (xe_hardware_required)"),
     ("OQA91005", "local match on AL-06; GA-03 matched sham reproduces the local-match parasitics"),
     ("OQA91003", "power gate peak_sampled rule implemented in the new helper peak_sampled_gate_a9_v3.py"),
+    ("OQA91006", "open_register_status OQ-A910-06 OWNER_DECIDED: 600 W RF-path heat allocation kept temporarily (not a "
+                 "rating / operating point / ICP-43 bound / delivered power), superseded by the P2-derived RF thermal "
+                 "envelope (P2 supplies it, p3_a9_16_rules.rf_thermal_basis consumes it; A9.16 repair F5)"),
+    ("OQA90701", "hall_c1_reference start step C-S4 reworded: <= 3 dwells (1 + 2 retries) x 120 s = 360 s maximum "
+                 "booking (the retired v2 '120 s x 2 retries' shorthand kept as name_v2; A9.16 repair F10)"),
+    ("XA9Q02", "as above: three dwells, each capped at 120 s, 360 s maximum booking (A9.16 repair F10)"),
 ]
 
 
@@ -735,6 +754,16 @@ def build_doc() -> dict:
             x["v3_status"] = "decided: AL-C1 = selected C1 module CBE x 1.20, only when C1 is selected (MPQ-01)"
         v2_items.append(x)
     power = copy.deepcopy(v2["power"])
+    # A9.16 repair F10: the C1 keeper-ignition step carried the retired v2 '120 s x 2 retries' reading; the owner set
+    # three attempts (1 + 2 retries), each <= 120 s, 360 s maximum booking (A9.14 OQ-A907-01 / XA9Q-02)
+    c_s4 = [st for st in power["configurations"]["hall_c1_reference"]["phases"]["startup"]["steps"]
+            if st.get("step_id") == "C-S4"]
+    if len(c_s4) != 1 or "120 s x 2 retries" not in c_s4[0]["name"]:
+        raise MassError("v2 C-S4 keeper-ignition step text changed; review the A9.14 OQ-A907-01 / XA9Q-02 rewording")
+    c_s4[0]["name_v2"] = c_s4[0]["name"]
+    c_s4[0]["name"] = ("keeper ignition (pulsed 300-600 V class; <= 3 dwells (1 + 2 retries) x 120 s = 360 s maximum "
+                       "booking, A9.14 OQ-A907-01 / XA9Q-02; row 93)")
+    c_s4[0]["decisions"] = [cite(s["OQA90701"]), cite(s["XA9Q02"])]
     stale = "NOT_EVALUABLE for the gate (OQ-A910-03 OPEN, not implemented)"
     for cfg_p in power["configurations"].values():
         rule = cfg_p["phases"]["peak"]["rule"]
@@ -807,7 +836,10 @@ def build_doc() -> dict:
             "MQ-09": "OWNER_DECIDED", "MQ-10": "OWNER_DECIDED", "XA9Q-01": "OWNER_DECIDED",
             "XA9Q-07": "OWNER_DECIDED (amended by A9.15)", "XV2Q-01": "NOT_APPLICABLE", "MPQ-01": "OWNER_DECIDED "
             "(amended by A9.15)", "MPQ-02": "OWNER_DECIDED", "OQ-A910-01": "OWNER_DECIDED",
-            "OQ-A910-03": "OWNER_DECIDED", "OQ-A910-05": "OWNER_DECIDED", "OQ-A910-06": "OPEN (not this lane)",
+            "OQ-A910-03": "OWNER_DECIDED", "OQ-A910-05": "OWNER_DECIDED",
+            "OQ-A910-06": "OWNER_DECIDED (A9.12 S5.8 YES_600W_TEMPORARY: 600 W = 500 W x 1.20 kept temporarily as the "
+                          "RF-path heat allocation - not a rating / flight point / ICP-43 bound / delivered power - then "
+                          "superseded by the P2-derived RF thermal envelope; p3_a9_16_rules.rf_thermal_basis)",
             "MPV3Q-01": "OPEN"},
         "open_owner_questions": [
             {"id": "MPV3Q-01", "question": "MQ-06 splits row-54 'controls/harness 1.0 kg' into a harness line (row-60 "

@@ -153,11 +153,11 @@
   },
   "F4": {
    "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
-   "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+   "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
   },
   "F5": {
    "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
-   "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+   "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
   },
   "F6": {
    "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
@@ -181,15 +181,15 @@
   },
   "OQ5": {
    "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
-   "sha256": "f98478b251c496c006cc7b0529fbd101e6ce2aca99b672187d4debdbf6449f50"
+   "sha256": "19b4da540b1823c6d3bc1b93f4b673c798af3a519c75e4e055853dbe98c945da"
   },
   "MP3": {
    "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
-   "sha256": "311d41233254bbc7bc2afd24d19d6955f1e58584fbadec8e9803a7638f4e55d7"
+   "sha256": "875ba72423f9a6c3f47bbabe94a3a44410ffe70048a0f3586bbbfe7dbf9e1690"
   },
   "RVM": {
    "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-   "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+   "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
   },
   "MP2": {
    "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -197,11 +197,15 @@
   },
   "M16": {
    "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
-   "sha256": "356caf26f09a7c1bcaa339666605f0a5032e89c268346236c891932e552fb2e3"
+   "sha256": "1db1137ce1efdaeabb87ad59232f27478938e2036a806dbce51213f7cbc5e9c6"
   },
   "XE2": {
    "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
    "sha256": "ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a"
+  },
+  "XE3": {
+   "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+   "sha256": "d7b23b90e86221124fcbf04b6964e099213c5131d074cd078ba8aecc26b8ed9a"
   },
   "BUS": {
    "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
@@ -213,19 +217,19 @@
   },
   "P1": {
    "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
-   "sha256": "f8da7db8cd3d2d3d808e2c3d5fbcbc8aeb354b13e5308d23734728e39fef3ddd"
+   "sha256": "4c41b13c45b7f332845c1df12a1351e8925e721e14179f053bbb8c196f6f182a"
   },
   "P2": {
    "path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
-   "sha256": "3aa7743ce894101b86a4a0e4def8c58cc435f000064209abc7fdea4458049ca9"
+   "sha256": "cccf65b2d93a96b2640be6bfd933e6658c72f0fb4207ee444e9c052b2ff9e3da"
   },
   "P3": {
-   "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
-   "sha256": "9e0f1764a813ee18d4be4528db2e15b04d6ff10654e8522d3f1c27a5a4fb48b9"
+   "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
+   "sha256": "26030a9fd7cdee2d7a9b0ef44b99b0fa843ef8b4560db17d7ad3d2e4f2c2cf20"
   },
   "P4": {
    "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
-   "sha256": "7bb0ae9c3f55c827fd6bf68e08b978c0e609332dc63185f6196eb0d5f72cc3d9"
+   "sha256": "ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412"
   },
   "ENS": {
    "path": "hallthruster_bridge/ensemble/transport_ensemble_v0.json",
@@ -1829,7 +1833,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/search_variables/0",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     }
    ],
    "basis": "volume trades the mass proxy against shaft-frequency ripple attenuation; the plenum is not an orbit-scale buffer at <= 0.1 Pa (F4-05)",
@@ -1901,7 +1905,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -1934,7 +1938,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/0",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     }
    ],
    "basis": "F4-P-01 = F1 T_wall",
@@ -1979,7 +1983,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/5",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
@@ -2007,7 +2011,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/4",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     }
    ],
    "basis": "F4-P-05",
@@ -2053,12 +2057,12 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/findings/0/finding",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/findings/6/finding",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     },
     {
      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
@@ -2090,7 +2094,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/15",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     },
     {
      "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -2128,17 +2132,17 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/search_variables/1",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/pareto",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     },
     {
      "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
      "pointer": "/rows/4/blocking_item",
-     "sha256": "356caf26f09a7c1bcaa339666605f0a5032e89c268346236c891932e552fb2e3"
+     "sha256": "1db1137ce1efdaeabb87ad59232f27478938e2036a806dbce51213f7cbc5e9c6"
     }
    ],
    "basis": "F4 transient Pareto over (Kp, Ti, V, compressor, intake)",
@@ -2161,12 +2165,12 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/7",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/findings/8/finding",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     }
    ],
    "basis": "F4-P-08",
@@ -2188,7 +2192,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/8",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     }
    ],
    "basis": "F4-P-09",
@@ -2215,17 +2219,17 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/steady/conductance_demand",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/findings/2/finding",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/1",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     }
    ],
    "basis": "F4-03: the H2-3 analog IF-A5 pressure 5.74-1216 Pa lies above the compressor domain cap",
@@ -2248,12 +2252,12 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/68",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/9",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     }
    ],
    "basis": "F5 IFD-F4-01..05; F4-P-10",
@@ -2294,7 +2298,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/offered_to_h1",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     }
    ],
    "basis": "F4 transient Pareto members at the design state h200_f150 (single-state values; the all-state frontier is AFC-UP-PL-08)",
@@ -2347,7 +2351,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/0",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "A9.1 A9-03-planes; ICD ICP-01; H2-1 H21-09",
@@ -2393,7 +2397,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/1",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-1 H21-01 (intersection of A_CP and A_jd); A9-07 REV-12 nominal flow basis",
@@ -2445,7 +2449,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/2",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-1 H21-02",
@@ -2488,7 +2492,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/3",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-1 H21-03 (corners of H1F-CH-02 x H1F-CH-03)",
@@ -2526,7 +2530,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/4",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-1 H21-04 (corners of H1F-CH-02 x H1F-CH-03)",
@@ -2569,7 +2573,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/5",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-1 H21-05 (corners of H1F-CH-02 x H1F-CH-03)",
@@ -2607,7 +2611,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/6",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-1 H21-06 (corners of H1F-CH-02 x H1F-CH-03)",
@@ -2647,7 +2651,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/7",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "owner row 75 (H2-1 Q3)",
@@ -2685,7 +2689,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/8",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-1 H21-07 lower end",
@@ -2728,7 +2732,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/9",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-1 H21-08 = L/h window x h window",
@@ -2764,7 +2768,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/10",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "M16 v4 row 9 blocking item; no Hall performance criterion is available (credible set empty); A9.14 F5-OQ-01 / F5-OQ-02 (selection rule owner-given, point not yet selected)",
@@ -2782,7 +2786,7 @@
      {
       "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
       "pointer": "/rows/8/blocking_item",
-      "sha256": "356caf26f09a7c1bcaa339666605f0a5032e89c268346236c891932e552fb2e3"
+      "sha256": "1db1137ce1efdaeabb87ad59232f27478938e2036a806dbce51213f7cbc5e9c6"
      },
      {
       "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
@@ -2821,7 +2825,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/11",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "owner row 73: nominal sizing ~1.3 mg/s; characterization ~0.38-3.2 mg/s; no flight-qualification claim before measurement",
@@ -2858,7 +2862,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/12",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "owner row 135; prereg framework GD-03",
@@ -2896,7 +2900,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/13",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-1 H21-09; HW-H1-06",
@@ -2933,7 +2937,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/14",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "owner row 75: allowed only before score-bearing S1",
@@ -2970,7 +2974,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/15",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "row 75 / GD-02; H2-1 interface demand to H2-3 (annulus = channel h, d_mean); P4 ID-03 PENDING",
@@ -2998,7 +3002,7 @@
      {
       "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
       "pointer": "/interface_demands/2/status",
-      "sha256": "7bb0ae9c3f55c827fd6bf68e08b978c0e609332dc63185f6196eb0d5f72cc3d9"
+      "sha256": "ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412"
      }
     ]
    }
@@ -3016,7 +3020,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/16",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "A9.2 sec. 3: 316L allowed only as engineering / shakedown material, coupon candidate or low-temperature development component",
@@ -3035,7 +3039,7 @@
      {
       "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
       "pointer": "/fixed_statuses/316L_FLIGHT_ANODE",
-      "sha256": "7bb0ae9c3f55c827fd6bf68e08b978c0e609332dc63185f6196eb0d5f72cc3d9"
+      "sha256": "ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412"
      }
     ]
    }
@@ -3053,7 +3057,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/17",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "A9.2 sec. 3-4 (do not select W, Mo, Pt etc. merely for melting point); P4: every candidate INCOMPLETE_EVIDENCE",
@@ -3073,12 +3077,12 @@
      {
       "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
       "pointer": "/fixed_statuses/FINAL_ANODE_MATERIAL",
-      "sha256": "7bb0ae9c3f55c827fd6bf68e08b978c0e609332dc63185f6196eb0d5f72cc3d9"
+      "sha256": "ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412"
      },
      {
       "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
       "pointer": "/final_material_status",
-      "sha256": "7bb0ae9c3f55c827fd6bf68e08b978c0e609332dc63185f6196eb0d5f72cc3d9"
+      "sha256": "ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412"
      },
      {
       "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
@@ -3106,7 +3110,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/18",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "A9.2 sec. 4: thermal-design problem first; objective = reduce the actual anode operating temperature, then select a material with T_operating <= T_validated,continuous - 50 K",
@@ -3133,9 +3137,9 @@
       "sha256": "b428565299c1c41487d9ffa50c174986d2d52c544539f89ca21b7bdbc2ae44fa"
      },
      {
-      "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "pointer": "/closure_statuses/ANODE_THERMAL_CLOSURE",
-      "sha256": "9e0f1764a813ee18d4be4528db2e15b04d6ff10654e8522d3f1c27a5a4fb48b9"
+      "sha256": "26030a9fd7cdee2d7a9b0ef44b99b0fa843ef8b4560db17d7ad3d2e4f2c2cf20"
      },
      {
       "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -3158,7 +3162,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/19",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "row 87: allowable = validated continuous-use limit - 50 K; no new arbitrary anode limit (A9.2 sec. 4)",
@@ -3197,7 +3201,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/20",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "P4 findings; P3 closure statuses UNRESOLVED",
@@ -3214,12 +3218,12 @@
      {
       "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
       "pointer": "/findings",
-      "sha256": "7bb0ae9c3f55c827fd6bf68e08b978c0e609332dc63185f6196eb0d5f72cc3d9"
+      "sha256": "ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412"
      },
      {
-      "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "pointer": "/closure_statuses",
-      "sha256": "9e0f1764a813ee18d4be4528db2e15b04d6ff10654e8522d3f1c27a5a4fb48b9"
+      "sha256": "26030a9fd7cdee2d7a9b0ef44b99b0fa843ef8b4560db17d7ad3d2e4f2c2cf20"
      }
     ]
    }
@@ -3238,7 +3242,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/21",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-3 H23-11",
@@ -3273,7 +3277,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/22",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "owner row 81",
@@ -3306,7 +3310,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/23",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "HW-H1-10 (AOL-RC-01)",
@@ -3340,7 +3344,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/24",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "owner rows 74, 78; A9-07 REV-07",
@@ -3383,7 +3387,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/25",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-1 H21-12 (T2 + T3 provision); the H2-1 T2 option that owner row 74 accepted is defined with a single inner + single outer coil",
@@ -3428,7 +3432,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/26",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "owner row 74; H2-1 H21-13",
@@ -3506,7 +3510,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/27",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "row 79 removes the central bore; A9-07 REV-01 lumped-circuit recomputation (floor by h)",
@@ -3550,7 +3554,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/28",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-1 H21-11 (chamfer is shielded-thruster practice, SRC-MASMI p. 5)",
@@ -3593,7 +3597,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/29",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-1 RP-1 f_NI 2 lumped circuit",
@@ -3637,7 +3641,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/30",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "owner row 80: engineering factors until verified",
@@ -3678,7 +3682,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/31",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-1 H21-24; mass_power v2 A9B-16 evidence floor",
@@ -3730,7 +3734,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/32",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "owner row 82: traceable to coil current and temperature",
@@ -3767,7 +3771,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/33",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "owner row 84",
@@ -3799,7 +3803,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/34",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "M16 v4 row 10; hallthruster_bridge/bfield (P5 only)",
@@ -3816,7 +3820,7 @@
      {
       "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
       "pointer": "/rows/9/blocking_item",
-      "sha256": "356caf26f09a7c1bcaa339666605f0a5032e89c268346236c891932e552fb2e3"
+      "sha256": "1db1137ce1efdaeabb87ad59232f27478938e2036a806dbce51213f7cbc5e9c6"
      },
      {
       "path": "hallthruster_bridge/bfield/p5_vacuum_Br_centerline_1p6kW.csv",
@@ -3845,7 +3849,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/35",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-1 H21-16",
@@ -3894,7 +3898,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/36",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-1 H21-14",
@@ -3939,7 +3943,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/37",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "B headroom 1.5 (row 80) x H1F-BZ-03 upper end",
@@ -3979,7 +3983,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/38",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-1 bz_target_envelope",
@@ -4019,7 +4023,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/39",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "owner row 67; GD-11 (before HI-LOCK2); ICD ICP-31",
@@ -4065,7 +4069,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/40",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "row 78; HW-MC-02",
@@ -4105,7 +4109,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/41",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-1 lumped reluctance + explicit NI margin factor",
@@ -4154,7 +4158,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/42",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-1 coil_design cases RP-1 f_NI=1, f_NI=2, worst-case assumptions",
@@ -4201,7 +4205,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/43",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-1 interface demand to H2-4",
@@ -4240,7 +4244,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/44",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-1 H21-18 (copper 20 C f_NI 1 .. Ni-clad conductor at its class temperature, worst case)",
@@ -4287,7 +4291,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/45",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-1 interface demand to H2-4 (the window is a published analog supply rating, not a Vyovrinda supply)",
@@ -4326,7 +4330,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/46",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-1 (trim is a provision; its NI is not sized)",
@@ -4360,7 +4364,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/47",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "row 77; A9.14 OQ-A907-04 (S8.16)",
@@ -4397,7 +4401,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/48",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "owner row 77; REV-04",
@@ -4434,7 +4438,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/49",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "owner row 77",
@@ -4470,7 +4474,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/50",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "REV-04; row 86",
@@ -4516,7 +4520,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/51",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "A9-07 K4; A9.2 ICP_COUPLED_THERMAL",
@@ -4537,9 +4541,9 @@
       "sha256": "b428565299c1c41487d9ffa50c174986d2d52c544539f89ca21b7bdbc2ae44fa"
      },
      {
-      "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "pointer": "/closure_statuses/ICP_COUPLED_THERMAL",
-      "sha256": "9e0f1764a813ee18d4be4528db2e15b04d6ff10654e8522d3f1c27a5a4fb48b9"
+      "sha256": "26030a9fd7cdee2d7a9b0ef44b99b0fa843ef8b4560db17d7ad3d2e4f2c2cf20"
      }
     ]
    }
@@ -4560,7 +4564,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/52",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "A9.2 sec. 8: the two figures are different bases, never alternative estimates of the same mass; only the complete coil mass is booked",
@@ -4607,7 +4611,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/53",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-1 H21-27; follows the H1F-MC-02 arrangement (OPEN)",
@@ -4652,7 +4656,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/54",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "owner row 76",
@@ -4689,7 +4693,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/55",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "owner row 76",
@@ -4726,7 +4730,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/56",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "row 76 + row 86; uncoupled-sensitivity Curie check PI = FAIL (REV-44, reported UNRESOLVED)",
@@ -4766,7 +4770,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/57",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "row 76 + row 86",
@@ -4810,7 +4814,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/58",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "HW-H1-04",
@@ -4846,7 +4850,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/59",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "row 84; OQ-A907-08",
@@ -4890,7 +4894,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/60",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-1 materials O_O2_exposure",
@@ -4954,7 +4958,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/61",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "P4 framework (APP-ANODE)",
@@ -4970,12 +4974,12 @@
      {
       "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
       "pointer": "/candidates",
-      "sha256": "7bb0ae9c3f55c827fd6bf68e08b978c0e609332dc63185f6196eb0d5f72cc3d9"
+      "sha256": "ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412"
      },
      {
       "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
       "pointer": "/candidate_screening_states",
-      "sha256": "7bb0ae9c3f55c827fd6bf68e08b978c0e609332dc63185f6196eb0d5f72cc3d9"
+      "sha256": "ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412"
      }
     ]
    }
@@ -4996,7 +5000,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/62",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "owner row 86: >= 50 K below each validated continuous-use limit + 20 % heat-load margin",
@@ -5033,7 +5037,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/63",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "owner row 85; A9.12 OQ-A907-06 (S5.4): isolated mount + dedicated radiator",
@@ -5077,7 +5081,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/64",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "A9.2 sec. 5-7 (no thermal PASS from a negligible-coupling calculation)",
@@ -5097,9 +5101,9 @@
       "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03"
      },
      {
-      "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "pointer": "/closure_statuses",
-      "sha256": "9e0f1764a813ee18d4be4528db2e15b04d6ff10654e8522d3f1c27a5a4fb48b9"
+      "sha256": "26030a9fd7cdee2d7a9b0ef44b99b0fa843ef8b4560db17d7ad3d2e4f2c2cf20"
      }
     ]
    }
@@ -5118,7 +5122,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/65",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-1 H21-09; HW-H1-06; ICD standing fact 'nothing upstream of HALL_INLET_Z0 changes between configurations'",
@@ -5160,7 +5164,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/66",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "A9-07 REV-65 (no upstream pre-ionizer module in A9)",
@@ -5201,7 +5205,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/67",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-1 interface demand to H2-3 (= channel windows)",
@@ -5235,7 +5239,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/68",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "H2-3 pressure_budget (PENDING H2-1)",
@@ -5276,7 +5280,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/69",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "A9.7 F4 / F5",
@@ -5312,7 +5316,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/70",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "A9.1 A9-03-planes; REV-03 / REV-66",
@@ -5354,7 +5358,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/71",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "owner row 79",
@@ -5391,7 +5395,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/72",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "ICD ICP-02",
@@ -5426,7 +5430,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/73",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "ICD ID-13 (PARTIAL)",
@@ -5460,7 +5464,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/74",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "REV-17; ICD ICP-32 (unmagnetized ICP, no dedicated ICP magnet, v1)",
@@ -5505,7 +5509,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/75",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "ICD ICP-07",
@@ -5540,7 +5544,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/76",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "A9.2 sec. 5-6; ICD ICP-47",
@@ -5580,7 +5584,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/77",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "HW-H1-08; H2-1 H21-29",
@@ -6602,7 +6606,7 @@
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/fixed_statuses/FINAL_COLLECTOR_MATERIAL",
-     "sha256": "7bb0ae9c3f55c827fd6bf68e08b978c0e609332dc63185f6196eb0d5f72cc3d9"
+     "sha256": "ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412"
     }
    ],
    "basis": "A9.1 A9-03-collector: 316L for Ar engineering reproduction only",
@@ -6752,7 +6756,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/53",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "basis": "A9-02 A902-31; H1F-CO-14",
@@ -6829,7 +6833,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+     "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
@@ -7017,7 +7021,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rows/3/configurations/hall_icp_neutralizer",
-     "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+     "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
     }
    ],
    "basis": "mass_power v2 (A9-02 boundary)",
@@ -7201,7 +7205,7 @@
     {
      "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
      "pointer": "/lines/hall_icp_neutralizer/3",
-     "sha256": "311d41233254bbc7bc2afd24d19d6955f1e58584fbadec8e9803a7638f4e55d7"
+     "sha256": "875ba72423f9a6c3f47bbabe94a3a44410ffe70048a0f3586bbbfe7dbf9e1690"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
@@ -7309,7 +7313,7 @@
     {
      "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
      "pointer": "/lines/hall_icp_neutralizer/6",
-     "sha256": "311d41233254bbc7bc2afd24d19d6955f1e58584fbadec8e9803a7638f4e55d7"
+     "sha256": "875ba72423f9a6c3f47bbabe94a3a44410ffe70048a0f3586bbbfe7dbf9e1690"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
@@ -7357,7 +7361,7 @@
     {
      "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
      "pointer": "/lines/hall_icp_neutralizer/7",
-     "sha256": "311d41233254bbc7bc2afd24d19d6955f1e58584fbadec8e9803a7638f4e55d7"
+     "sha256": "875ba72423f9a6c3f47bbabe94a3a44410ffe70048a0f3586bbbfe7dbf9e1690"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
@@ -7453,7 +7457,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rows/5",
-     "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+     "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
     },
     {
      "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
@@ -7491,7 +7495,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rows/6",
-     "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+     "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
     }
    ],
    "basis": "owner row 53 (both evaluated; 40 kg stays the hard limit)",
@@ -7535,7 +7539,7 @@
     {
      "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
      "pointer": "/rollups/0",
-     "sha256": "311d41233254bbc7bc2afd24d19d6955f1e58584fbadec8e9803a7638f4e55d7"
+     "sha256": "875ba72423f9a6c3f47bbabe94a3a44410ffe70048a0f3586bbbfe7dbf9e1690"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
@@ -7635,9 +7639,9 @@
      "sha256": "8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c"
     },
     {
-     "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "pointer": "/heat_terms",
-     "sha256": "9e0f1764a813ee18d4be4528db2e15b04d6ff10654e8522d3f1c27a5a4fb48b9"
+     "sha256": "26030a9fd7cdee2d7a9b0ef44b99b0fa843ef8b4560db17d7ad3d2e4f2c2cf20"
     }
    ],
    "basis": "P3 heat terms Q_RF/match, Q_collector, Q_plume, Q_Hall->ICP",
@@ -7686,9 +7690,9 @@
    "value_label": "RULE",
    "source": [
     {
-     "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "pointer": "/closure_statuses/ANODE_THERMAL_CLOSURE",
-     "sha256": "9e0f1764a813ee18d4be4528db2e15b04d6ff10654e8522d3f1c27a5a4fb48b9"
+     "sha256": "26030a9fd7cdee2d7a9b0ef44b99b0fa843ef8b4560db17d7ad3d2e4f2c2cf20"
     },
     {
      "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
@@ -7722,7 +7726,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/0",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     }
    ],
    "basis": "UPSTREAM_ICD G-07",
@@ -7774,20 +7778,31 @@
      "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
      "pinned": true,
      "note": "A9.14 OD5 (S9.9)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+     "pointer": "/decisions/P1Q-02",
+     "sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+     "pinned": true,
+     "note": "A9.10 P1Q-02 (S3.1)"
     }
    ],
-   "basis": "A9.14 OD5 (S9.9); A9-02 template carried as the implementation reference",
+   "basis": "SEQUENCE OWNER_DECIDED (A9.14 OD5, S9.9); dwell / thermal limits PENDING_REGISTRATION from the actual hardware (A9.10 P1Q-02; no number set for the ICP-first sequence - the 120 s / 360 s C1 dwell booking applies to the C1-selected variant only); A9-02 template carried as the implementation reference",
    "freeze_status": "OPEN",
    "evidence_to_advance": [
     "measured start-up transient record (1 ms gate)",
-    "registered dwell / thermal limits"
+    "registered dwell / thermal limits (A9.10 P1Q-02)"
    ],
    "a9_16": {
     "decisions": [
      "A9.14 OD5 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
-     "A9.14 OQ-A907-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
+     "A9.14 OQ-A907-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+     "A9.10 P1Q-02 (docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544)"
     ],
-    "max_attempts": 3
+    "max_attempts": 3,
+    "sequence_status": "OWNER_DECIDED (A9.14 OD5)",
+    "dwell_thermal_limits": "PENDING_REGISTRATION (A9.10 P1Q-02; NOT_EVALUATED_REGISTRATION until registered)",
+    "why_open": "the decided sequence becomes a design value only with the registered dwell / thermal limits and the measured start-up transient (A9.16 repair F8)"
    }
   },
   {
@@ -7858,12 +7873,12 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/metric_definitions",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -7973,12 +7988,13 @@
     {
      "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
      "pointer": "/items/17",
-     "sha256": "ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a"
+     "sha256": "ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a",
+     "role": "HISTORY (A9.7 basis); the current source is listed in current_sources"
     },
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rows/9",
-     "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+     "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
@@ -8000,6 +8016,11 @@
      "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
      "pinned": true,
      "note": "A9.14 OD6 (S9.10)"
+    },
+    {
+     "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+     "pointer": "/propellant_policy",
+     "sha256": "d7b23b90e86221124fcbf04b6964e099213c5131d074cd078ba8aecc26b8ed9a"
     }
    ],
    "basis": "owner row 6; A9.15 governing_rule; A9.14 XA9Q-07 / OD6 as amended by A9.15; RFP content owner-stated, pending registration (AG-15)",
@@ -8015,8 +8036,12 @@
      "A9.14 OD6 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c); amended by A9.15 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309)"
     ],
     "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION",
-    "icp_gas_mode": "unchanged: A9.1 G-REUSE primary; G-XE a declared ICP-feed variant"
-   }
+    "icp_gas_mode": "unchanged: A9.1 G-REUSE primary; G-XE a declared ICP-feed variant",
+    "current_source_rule": "xe_accounting_a9_v3 / mass_power_a9_v3 / state v5 govern; the v2 / v4 sources are history (A9.16 repair F8)"
+   },
+   "current_sources": [
+    "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json/propellant_policy"
+   ]
   },
   {
    "id": "AFC-SY-XE-02",
@@ -8032,17 +8057,30 @@
     {
      "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
      "pointer": "/items/20",
-     "sha256": "ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a"
+     "sha256": "ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a",
+     "role": "HISTORY (A9.7 basis); the current source is listed in current_sources"
     },
     {
      "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
      "pointer": "/cases/CASE-1",
-     "sha256": "ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a"
+     "sha256": "ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a",
+     "role": "HISTORY (A9.7 basis); the current source is listed in current_sources"
+    },
+    {
+     "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+     "pointer": "/items/20",
+     "sha256": "d7b23b90e86221124fcbf04b6964e099213c5131d074cd078ba8aecc26b8ed9a"
     }
    ],
    "basis": "owner decision: Hall exhaust is never counted again as ICP propellant",
    "freeze_status": "FREEZE_CANDIDATE",
-   "evidence_to_advance": []
+   "evidence_to_advance": [],
+   "current_sources": [
+    "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json/items/20"
+   ],
+   "a9_16": {
+    "current_source_rule": "xe_accounting_a9_v3 / mass_power_a9_v3 / state v5 govern; the v2 / v4 sources are history (A9.16 repair F8)"
+   }
   },
   {
    "id": "AFC-SY-XE-03",
@@ -8062,7 +8100,8 @@
     {
      "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
      "pointer": "/items/29",
-     "sha256": "ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a"
+     "sha256": "ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a",
+     "role": "HISTORY (A9.7 basis); the current source is listed in current_sources"
     },
     {
      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
@@ -8074,7 +8113,8 @@
     {
      "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "pointer": "/rows/283/question",
-     "sha256": "6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67"
+     "sha256": "6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67",
+     "role": "HISTORY (A9.7 basis); the current source is listed in current_sources"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
@@ -8096,6 +8136,16 @@
      "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
      "pinned": true,
      "note": "A9.14 OQ-A910-01 (S8.27)"
+    },
+    {
+     "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+     "pointer": "/items/29",
+     "sha256": "d7b23b90e86221124fcbf04b6964e099213c5131d074cd078ba8aecc26b8ed9a"
+    },
+    {
+     "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+     "pointer": "/design_cases/loaded_split",
+     "sha256": "d7b23b90e86221124fcbf04b6964e099213c5131d074cd078ba8aecc26b8ed9a"
     }
    ],
    "basis": "owner row 48; A9.14 XA9Q-01 / MQ-09 / OQ-A910-01: LOADED Xe cases, M_loaded = M_mission_usable + M_reserve + M_residual (residual never added again)",
@@ -8106,8 +8156,13 @@
      "A9.14 XA9Q-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
      "A9.14 MQ-09 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
      "A9.14 OQ-A910-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
-    ]
-   }
+    ],
+    "current_source_rule": "xe_accounting_a9_v3 / mass_power_a9_v3 / state v5 govern; the v2 / v4 sources are history (A9.16 repair F8)"
+   },
+   "current_sources": [
+    "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json/items/29",
+    "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json/design_cases/loaded_split"
+   ]
   },
   {
    "id": "AFC-SY-XE-04",
@@ -8126,19 +8181,38 @@
     {
      "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
      "pointer": "/items/22",
-     "sha256": "ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a"
+     "sha256": "ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a",
+     "role": "HISTORY (A9.7 basis); the current source is listed in current_sources"
     },
     {
      "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
      "pointer": "/items/23",
-     "sha256": "ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a"
+     "sha256": "ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a",
+     "role": "HISTORY (A9.7 basis); the current source is listed in current_sources"
+    },
+    {
+     "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+     "pointer": "/items/22",
+     "sha256": "d7b23b90e86221124fcbf04b6964e099213c5131d074cd078ba8aecc26b8ed9a"
+    },
+    {
+     "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+     "pointer": "/items/23",
+     "sha256": "d7b23b90e86221124fcbf04b6964e099213c5131d074cd078ba8aecc26b8ed9a"
     }
    ],
    "basis": "XV2-23 ASSUMED_ENGINEERING_ALLOCATION; XV2-24 OWNER_BASIS",
    "freeze_status": "OPEN",
    "evidence_to_advance": [
     "measured mission mode profile (reserve revisit)"
-   ]
+   ],
+   "current_sources": [
+    "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json/items/22",
+    "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json/items/23"
+   ],
+   "a9_16": {
+    "current_source_rule": "xe_accounting_a9_v3 / mass_power_a9_v3 / state v5 govern; the v2 / v4 sources are history (A9.16 repair F8)"
+   }
   },
   {
    "id": "AFC-SY-XE-05",
@@ -8154,12 +8228,24 @@
     {
      "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
      "pointer": "/items/24",
-     "sha256": "ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a"
+     "sha256": "ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a",
+     "role": "HISTORY (A9.7 basis); the current source is listed in current_sources"
+    },
+    {
+     "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+     "pointer": "/items/24",
+     "sha256": "d7b23b90e86221124fcbf04b6964e099213c5131d074cd078ba8aecc26b8ed9a"
     }
    ],
    "basis": "OWNER_BASIS",
    "freeze_status": "FREEZE_CANDIDATE",
-   "evidence_to_advance": []
+   "evidence_to_advance": [],
+   "current_sources": [
+    "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json/items/24"
+   ],
+   "a9_16": {
+    "current_source_rule": "xe_accounting_a9_v3 / mass_power_a9_v3 / state v5 govern; the v2 / v4 sources are history (A9.16 repair F8)"
+   }
   },
   {
    "id": "AFC-SY-XE-06",
@@ -8174,12 +8260,14 @@
     {
      "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
      "pointer": "/items/27",
-     "sha256": "ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a"
+     "sha256": "ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a",
+     "role": "HISTORY (A9.7 basis); the current source is listed in current_sources"
     },
     {
      "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
      "pointer": "/items/28",
-     "sha256": "ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a"
+     "sha256": "ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a",
+     "role": "HISTORY (A9.7 basis); the current source is listed in current_sources"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
@@ -8194,6 +8282,16 @@
      "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
      "pinned": true,
      "note": "A9.14 OQ-RFQ-09 (S8.26)"
+    },
+    {
+     "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+     "pointer": "/items/27",
+     "sha256": "d7b23b90e86221124fcbf04b6964e099213c5131d074cd078ba8aecc26b8ed9a"
+    },
+    {
+     "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+     "pointer": "/items/28",
+     "sha256": "d7b23b90e86221124fcbf04b6964e099213c5131d074cd078ba8aecc26b8ed9a"
     }
    ],
    "basis": "Xe accounting; A9.14 XA9Q-06 / OQ-RFQ-09: 75-bar placeholder retired; suppliers propose MEOP and design / proof factors against the 323 K loaded-Xe cases; basis selected after comparing compliant certified quotations",
@@ -8205,8 +8303,13 @@
     "decisions": [
      "A9.14 XA9Q-06 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
      "A9.14 OQ-RFQ-09 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
-    ]
-   }
+    ],
+    "current_source_rule": "xe_accounting_a9_v3 / mass_power_a9_v3 / state v5 govern; the v2 / v4 sources are history (A9.16 repair F8)"
+   },
+   "current_sources": [
+    "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json/items/27",
+    "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json/items/28"
+   ]
   },
   {
    "id": "AFC-SY-XE-07",
@@ -8222,12 +8325,24 @@
     {
      "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
      "pointer": "/items/38",
-     "sha256": "ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a"
+     "sha256": "ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a",
+     "role": "HISTORY (A9.7 basis); the current source is listed in current_sources"
+    },
+    {
+     "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+     "pointer": "/items/38",
+     "sha256": "d7b23b90e86221124fcbf04b6964e099213c5131d074cd078ba8aecc26b8ed9a"
     }
    ],
    "basis": "SCREENING_CAP (not an entitlement)",
    "freeze_status": "FREEZE_CANDIDATE",
-   "evidence_to_advance": []
+   "evidence_to_advance": [],
+   "current_sources": [
+    "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json/items/38"
+   ],
+   "a9_16": {
+    "current_source_rule": "xe_accounting_a9_v3 / mass_power_a9_v3 / state v5 govern; the v2 / v4 sources are history (A9.16 repair F8)"
+   }
   },
   {
    "id": "AFC-SY-XE-08",
@@ -8246,17 +8361,19 @@
     {
      "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
      "pointer": "/lines/hall_icp_neutralizer/7",
-     "sha256": "c1a7875fdd0e27b3425cc02ba915ab61bcf9760ac032d294b69a887a91e78459"
+     "sha256": "c1a7875fdd0e27b3425cc02ba915ab61bcf9760ac032d294b69a887a91e78459",
+     "role": "HISTORY (A9.7 basis); the current source is listed in current_sources"
     },
     {
      "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "pointer": "/rows/245/question",
-     "sha256": "6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67"
+     "sha256": "6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67",
+     "role": "HISTORY (A9.7 basis); the current source is listed in current_sources"
     },
     {
      "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
      "pointer": "/lines/hall_icp_neutralizer/7",
-     "sha256": "311d41233254bbc7bc2afd24d19d6955f1e58584fbadec8e9803a7638f4e55d7"
+     "sha256": "875ba72423f9a6c3f47bbabe94a3a44410ffe70048a0f3586bbbfe7dbf9e1690"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
@@ -8264,6 +8381,11 @@
      "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
      "pinned": true,
      "note": "A9.14 MQ-05 (S8.10)"
+    },
+    {
+     "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+     "pointer": "/lines/hall_icp_neutralizer/7",
+     "sha256": "875ba72423f9a6c3f47bbabe94a3a44410ffe70048a0f3586bbbfe7dbf9e1690"
     }
    ],
    "basis": "A9.14 MQ-05: AL-08 = complete Xe storage / flow hardware (tank, regulator, valves, plumbing, mounting, thermal); planning floor replaced by quotations / design",
@@ -8274,8 +8396,12 @@
    "a9_16": {
     "decisions": [
      "A9.14 MQ-05 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
-    ]
-   }
+    ],
+    "current_source_rule": "xe_accounting_a9_v3 / mass_power_a9_v3 / state v5 govern; the v2 / v4 sources are history (A9.16 repair F8)"
+   },
+   "current_sources": [
+    "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json/lines/hall_icp_neutralizer/7"
+   ]
   }
  ],
  "freeze_rollup": {
@@ -8412,7 +8538,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/0/configurations",
-       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
       }
      },
      {
@@ -8428,7 +8554,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/1/configurations",
-       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
       }
      },
      {
@@ -8444,7 +8570,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/2/configurations",
-       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
       }
      },
      {
@@ -8460,7 +8586,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/3/configurations",
-       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
       }
      },
      {
@@ -8476,7 +8602,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/4/configurations",
-       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
       }
      },
      {
@@ -8492,7 +8618,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/5/configurations",
-       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
       }
      },
      {
@@ -8508,7 +8634,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/6/configurations",
-       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
       }
      },
      {
@@ -8524,7 +8650,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/7/configurations",
-       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
       }
      },
      {
@@ -8540,7 +8666,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/8/configurations",
-       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
       }
      },
      {
@@ -8556,7 +8682,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/9/configurations",
-       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
       }
      },
      {
@@ -8572,7 +8698,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/10/configurations",
-       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
       }
      },
      {
@@ -8588,7 +8714,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/11/configurations",
-       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
       }
      },
      {
@@ -8604,7 +8730,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/12/configurations",
-       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
       }
      },
      {
@@ -8620,7 +8746,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/13/configurations",
-       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
       }
      },
      {
@@ -8636,7 +8762,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/14/configurations",
-       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
       }
      },
      {
@@ -8652,7 +8778,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/15/configurations",
-       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
       }
      },
      {
@@ -8664,11 +8790,11 @@
        "hall_c1_reference": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
-      "blocking": "no determining evaluation with evidenced terms: p3_coupled_thermal_v1:fail_closed_evaluations [FRAMEWORK_EVALUATION]",
+      "blocking": "no determining evaluation with evidenced terms: p3_coupled_thermal_v2:fail_closed_evaluations [FRAMEWORK_EVALUATION]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/16/configurations",
-       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
       }
      },
      {
@@ -8684,7 +8810,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/17/configurations",
-       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
       }
      },
      {
@@ -8700,7 +8826,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/18/configurations",
-       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
       }
      }
     ],
@@ -8710,12 +8836,12 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/status_counts",
-     "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+     "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
     },
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rfp_document_in_repository",
-     "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+     "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
     }
    ],
    "evidence_plan_steps": [
@@ -8851,7 +8977,7 @@
     {
      "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
      "pointer": "/status",
-     "sha256": "f8da7db8cd3d2d3d808e2c3d5fbcbc8aeb354b13e5308d23734728e39fef3ddd"
+     "sha256": "4c41b13c45b7f332845c1df12a1351e8925e721e14179f053bbb8c196f6f182a"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
@@ -8891,9 +9017,9 @@
    "blocking_evidence": "P3 framework inputs TBD: ICP geometry P3-G-01..08, emittances, conductances, Q_RF/match and Q_collector from P1 / P2, Q_plume from Phase-1; no thermal PASS from a negligible-coupling calculation (A9.2)",
    "sources": [
     {
-     "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "pointer": "/closure_statuses",
-     "sha256": "9e0f1764a813ee18d4be4528db2e15b04d6ff10654e8522d3f1c27a5a4fb48b9"
+     "sha256": "26030a9fd7cdee2d7a9b0ef44b99b0fa843ef8b4560db17d7ad3d2e4f2c2cf20"
     },
     {
      "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
@@ -8941,9 +9067,9 @@
    "blocking_evidence": "anode heat-removal path design (A9.2 sec. 4 investigation list) and the measured deposited discharge-power fraction",
    "sources": [
     {
-     "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "pointer": "/closure_statuses/ANODE_THERMAL_CLOSURE",
-     "sha256": "9e0f1764a813ee18d4be4528db2e15b04d6ff10654e8522d3f1c27a5a4fb48b9"
+     "sha256": "26030a9fd7cdee2d7a9b0ef44b99b0fa843ef8b4560db17d7ad3d2e4f2c2cf20"
     },
     {
      "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
@@ -8986,12 +9112,12 @@
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/fixed_statuses",
-     "sha256": "7bb0ae9c3f55c827fd6bf68e08b978c0e609332dc63185f6196eb0d5f72cc3d9"
+     "sha256": "ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412"
     },
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/findings/0",
-     "sha256": "7bb0ae9c3f55c827fd6bf68e08b978c0e609332dc63185f6196eb0d5f72cc3d9"
+     "sha256": "ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412"
     }
    ],
    "evidence_plan_steps": [
@@ -9034,7 +9160,7 @@
     {
      "path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
      "pointer": "/status",
-     "sha256": "3aa7743ce894101b86a4a0e4def8c58cc435f000064209abc7fdea4458049ca9"
+     "sha256": "cccf65b2d93a96b2640be6bfd933e6658c72f0fb4207ee444e9c052b2ff9e3da"
     }
    ],
    "evidence_plan_steps": [
@@ -9159,7 +9285,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rows/5/configurations/hall_icp_neutralizer",
-     "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+     "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
@@ -9223,7 +9349,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/strict_mode",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
@@ -9349,12 +9475,12 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/article_freeze_state",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     },
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/freeze_rollup",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    ],
    "evidence_plan_steps": [
@@ -9392,7 +9518,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rfp_document_in_repository",
-     "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+     "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
     },
     {
      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
@@ -9768,7 +9894,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/checks/size_orifice_note",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     },
     {
      "path": "docs/interfaces/UPSTREAM_ICD.md",
@@ -11753,7 +11879,7 @@
     "source": {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     }
    },
    {
@@ -11763,7 +11889,7 @@
     "source": {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/1",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     }
    },
    {
@@ -11773,7 +11899,7 @@
     "source": {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     }
    },
    {
@@ -11783,7 +11909,7 @@
     "source": {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/3",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     }
    },
    {
@@ -11793,7 +11919,7 @@
     "source": {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/4",
-     "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
     }
    },
    {
@@ -11803,7 +11929,7 @@
     "source": {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    },
    {
@@ -11813,7 +11939,7 @@
     "source": {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/open_owner_questions/1",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    },
    {
@@ -11823,7 +11949,7 @@
     "source": {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    },
    {
@@ -11833,7 +11959,7 @@
     "source": {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/open_owner_questions/3",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    },
    {
@@ -11843,7 +11969,7 @@
     "source": {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/open_owner_questions/4",
-     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
+     "sha256": "9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0"
     }
    },
    {
@@ -11978,11 +12104,12 @@
    "source": {
     "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows",
-    "sha256": "f98478b251c496c006cc7b0529fbd101e6ce2aca99b672187d4debdbf6449f50"
+    "sha256": "19b4da540b1823c6d3bc1b93f4b673c798af3a519c75e4e055853dbe98c945da"
    },
-   "tbd_owner_count": 1,
+   "tbd_owner_count": 2,
    "open_owner_questions": [
-    "MPV3Q-01"
+    "MPV3Q-01",
+    "XV3Q-01"
    ],
    "status_of_rolled_up_questions": {
     "ICPQ-03": "ANSWERED_BY_A9_14",
@@ -12908,7 +13035,11 @@
   "AFC-SY-XE-01",
   "AFC-SY-XE-03",
   "AFC-SY-XE-06",
-  "AFC-SY-XE-08"
+  "AFC-SY-XE-08",
+  "AFC-SY-XE-02",
+  "AFC-SY-XE-04",
+  "AFC-SY-XE-05",
+  "AFC-SY-XE-07"
  ],
  "a9_16_evaluators": {
   "gate_closes": "docs/architecture/freeze_candidate/a9_16_f9.py:gate_closes (determining evidence only)",
@@ -13038,7 +13169,7 @@
   {
    "id": "F9-06",
    "evidence_class": "inferred",
-   "finding": "owner roll-up: 95 state v4 TBD_OWNER rows, 34 A9.7 lane questions (F0-F8, Rust), 4 new F9 questions; all answered by the owner (A9.8 .. A9.14, A9.15 amendments); state v5 TBD_OWNER: 1 (MPV3Q-01)"
+   "finding": "owner roll-up: 95 state v4 TBD_OWNER rows, 34 A9.7 lane questions (F0-F8, Rust), 4 new F9 questions; all answered by the owner (A9.8 .. A9.14, A9.15 amendments); state v5 TBD_OWNER: 2 (MPV3Q-01, XV3Q-01)"
   }
  ],
  "m16_impact": [

@@ -227,8 +227,8 @@
    },
    {
     "key": "P3",
-    "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
-    "identity": "p3_coupled_thermal_v1",
+    "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
+    "identity": "p3_coupled_thermal_v2",
     "lane": "fo_a9_6_p3_coupled_thermal"
    },
    {
@@ -2268,7 +2268,7 @@
    "v3_ref": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/12",
    "a9_6_implemented": [
     {
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "container": "items",
      "ids": [
       "P3-B-01",
@@ -2282,7 +2282,7 @@
      "counts_as_evidence": false
     },
     {
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "kind": "SOFTWARE",
      "paths": [
       "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py"
@@ -2331,7 +2331,7 @@
     },
     {
      "lane": "fo_a9_6_p3_coupled_thermal",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "how": "coupled H-1 / ICP thermal framework exists (software); thermal closure UNRESOLVED; blocking inputs P3-G/K/R (hardware), P1/P2 data",
      "stated_readiness_change": "none to maturity (framework only)"
     },
@@ -2370,13 +2370,13 @@
    "blocking_item": {
     "carried_from_v3": false,
     "text": "coupled H-1 / ICP thermal CLOSURE INPUTS: the P3 coupled model now exists as software (FRAMEWORK_IMPLEMENTED_INPUTS_TBD), but the ICP module geometry, conductances, ICP emittances and validated continuous-use limits it needs are TBD (A9.2 ICP_COUPLED_THERMAL = UNRESOLVED)",
-    "source": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "source": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
     "kind": "P3_INPUT",
     "items": [
      {
       "kind": "P3_INPUT",
       "id": "P3-G-01",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-G-01]",
       "state": "TBD",
       "detail": "axial standoff L of the ICP module datum IP-NEU downstream of IP-EXIT"
@@ -2384,7 +2384,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-G-02",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-G-02]",
       "state": "TBD",
       "detail": "ICP clear aperture radius r_ap (plume passage; open-tube coaxial first build, A9.3 OQ-VI-03)"
@@ -2392,7 +2392,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-G-03",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-G-03]",
       "state": "TBD",
       "detail": "ICP module outer radius r_mod (minimum necessary downstream obstruction, A9.2)"
@@ -2400,7 +2400,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-G-04",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-G-04]",
       "state": "TBD",
       "detail": "ICP module axial length H"
@@ -2408,7 +2408,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-G-05",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-G-05]",
       "state": "TBD",
       "detail": "open-frame support open-area fraction tau (A9.2 open-frame support; gray, direction-independent approximation in the engine)"
@@ -2416,7 +2416,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-G-06",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-G-06]",
       "state": "TBD",
       "detail": "ICP surface -> thermal node map (dielectric tube, antenna, collector, body, match) and the surfaces' zoning"
@@ -2424,7 +2424,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-G-07",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-G-07]",
       "state": "TBD",
       "detail": "collector geometry and position relative to the bore / plume (Takahashi-type ion collector)"
@@ -2432,7 +2432,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-K-01",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-K-01]",
       "state": "TBD",
       "detail": "conductance ICP body <-> KC-1 carrier (A9.2 objective: thermally isolated mounting)"
@@ -2440,7 +2440,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-K-02",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-K-02]",
       "state": "TBD",
       "detail": "conductance KC-1 carrier <-> H-1 (through the moving thrust platform)"
@@ -2448,7 +2448,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-K-03",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-K-03]",
       "state": "TBD",
       "detail": "conductance KC-1 carrier <-> stand / spacecraft boundary"
@@ -2456,7 +2456,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-K-04",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-K-04]",
       "state": "TBD",
       "detail": "conductance antenna <-> ICP body"
@@ -2464,7 +2464,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-K-05",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-K-05]",
       "state": "TBD",
       "detail": "conductance collector <-> ICP body (through its 350 V-class insulator)"
@@ -2472,7 +2472,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-K-06",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-K-06]",
       "state": "TBD",
       "detail": "conductance local match <-> ICP body / carrier (match on / immediately adjacent to the module, A9.2 OQ-A907-11)"
@@ -2480,7 +2480,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-R-01",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-R-01]",
       "state": "TBD",
       "detail": "ICP upstream-face (Hall-facing) hemispherical emittance"
@@ -2488,7 +2488,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-R-02",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-R-02]",
       "state": "TBD",
       "detail": "ICP outward-facing surfaces emittance (A9.2 objective: high-emittance outward surfaces)"
@@ -2496,7 +2496,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-R-03",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-R-03]",
       "state": "TBD",
       "detail": "ICP bore / dielectric tube emittance"
@@ -2504,7 +2504,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-R-04",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-R-04]",
       "state": "TBD",
       "detail": "collector emittance"
@@ -2512,7 +2512,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-M-04",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-M-04]",
       "state": "TBD",
       "detail": "validated continuous-use temperature limits of ICP parts (dielectric, antenna insulation, collector, feedthrough, match components, carrier interface) and of the H-1 anode"
@@ -2627,7 +2627,7 @@
     {
      "kind": "P3_INPUT",
      "id": "P3-P2-03",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "locator": "items[id=P3-P2-03]",
      "state": "TBD_AFTER_IMPEDANCE_MAP",
      "detail": "P_line/match,loss (line + local match, at the logged tuning state)"
@@ -2635,7 +2635,7 @@
     {
      "kind": "P3_INPUT",
      "id": "P3-P1-07",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "locator": "items[id=P3-P1-07]",
      "state": "TBD_AFTER_EVIDENCE",
      "detail": "ICP-module temperatures for model verification (antenna, dielectric, collector, match, H-1 inner / outer pole, sink)"
@@ -3230,7 +3230,7 @@
     {
      "kind": "P3_INPUT",
      "id": "P3-G-01",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "locator": "items[id=P3-G-01]",
      "state": "TBD",
      "detail": "axial standoff L of the ICP module datum IP-NEU downstream of IP-EXIT"
@@ -3238,7 +3238,7 @@
     {
      "kind": "P3_INPUT",
      "id": "P3-G-05",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "locator": "items[id=P3-G-05]",
      "state": "TBD",
      "detail": "open-frame support open-area fraction tau (A9.2 open-frame support; gray, direction-independent approximation in the engine)"
@@ -3423,7 +3423,7 @@
      "counts_as_evidence": false
     },
     {
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "container": "items",
      "ids": [
       "P3-B-01",
@@ -3506,7 +3506,7 @@
     },
     {
      "lane": "fo_a9_6_p3_coupled_thermal",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "how": "ICP-43 / ICP-47 now have calculators; values TBD; physical ICP not VERIFIED",
      "stated_readiness_change": "none to maturity (framework only)"
     },
@@ -3711,7 +3711,7 @@
     {
      "kind": "P3_INPUT",
      "id": "P3-G-07",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "locator": "items[id=P3-G-07]",
      "state": "TBD",
      "detail": "collector geometry and position relative to the bore / plume (Takahashi-type ion collector)"
@@ -4346,7 +4346,7 @@
      "counts_as_evidence": false
     },
     {
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "kind": "SOFTWARE",
      "paths": [
       "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py"
@@ -4378,7 +4378,7 @@
    "a9_6_lanes": [
     {
      "lane": "fo_a9_6_p3_coupled_thermal",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "how": "anode heat path is a network input; ANODE_THERMAL_CLOSURE UNRESOLVED (P4 merged: FINAL_ANODE_MATERIAL OPEN, no validated limit)",
      "stated_readiness_change": "none to maturity (framework only)"
     },

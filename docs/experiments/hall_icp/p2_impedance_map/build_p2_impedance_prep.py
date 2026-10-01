@@ -221,7 +221,7 @@ def rfq_coverage_check(rfq2):
 XLANE_PATHS = {
     "P1": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
     "P2": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
-    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
     "P4": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
     "MP": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
     "XE": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
@@ -2070,7 +2070,7 @@ def build_framework(oq_rows):
          "feedthrough (S-02), every local-match tuning state with its logged element positions (S-03), cold antenna "
          "(S-06), SOL standards' definitions (S-01) (P1 IF-P1-31)", XL_PAIRS["XL-07"][3], XL_PAIRS["XL-07"][4],
          ["XL-07"]),
-        ("IDP2-20", "P2 -> P3 coupled thermal (docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json "
+        ("IDP2-20", "P2 -> P3 coupled thermal (docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json "
          "P3-IF-N04)", "P_forward, P_reflected, P_line/match,loss and P_delivered envelopes (numeric only from "
          "verified-loss records; REFUSED values are passed as REFUSED and refused by P3), antenna current and cold "
          "antenna resistance as Q_RF/match inputs", XL_PAIRS["XL-20"][3], XL_PAIRS["XL-20"][4], ["XL-20"]),
@@ -2084,7 +2084,7 @@ def build_framework(oq_rows):
         ("IDP2-23", "P2 -> RFQ v2 (docs/procurement/rfq_a9_v2/rfq_a9_v2.json IFD-04)", "Z_antenna envelope from the "
          "hot map -> RF component ratings for the RFQ lines (rating_structure; candidates for owner selection only)",
          XL_PAIRS["XL-16"][3], XL_PAIRS["XL-16"][4], ["XL-16"]),
-        ("IDP2-24", "P3 coupled thermal -> P2 (docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json "
+        ("IDP2-24", "P3 coupled thermal -> P2 (docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json "
          "P3-IF-S06)", "module calorimetric energy balance (thermocouple map RF on / off) that fixes f_leaving; "
          "recorded with the hot map, never a thermal PASS", XL_PAIRS["XL-22"][3], XL_PAIRS["XL-22"][4], ["XL-22"]),
     ]
@@ -2177,8 +2177,17 @@ def render_framework_md(doc):
         L.append(f"| {_v(f['a9_6_sec14_item'])} | {_v(f['p2_behaviour'])} | {_v(f['applicability'])} |")
     L += ["", "Reducer changes:", ""] + [f"- {x}" for x in fw["reducer_changes"]]
     h = fw["heat_load_alternatives"]
-    L += ["", f"ICPQ-10 heat-load bound ({h['status']}): {h['question_text']} Alternatives: "
-          + "; ".join(h["alternatives"]) + f". {h['note']}.", "", "References (open access; sha256 of the file read):",
+    if "alternatives" in h:
+        L += ["", f"ICPQ-10 heat-load bound ({h['status']}): {h['question_text']} Alternatives: "
+              + "; ".join(h["alternatives"]) + f". {h['note']}."]
+    else:
+        L += ["", f"ICPQ-10 heat-load bound ({h['status']}, {h['decision']['decision']} {h['decision']['sequenced_no']}, "
+              f"`{h['decision']['decision_file']}` sha256 `{h['decision']['decision_json_sha256']}`): alternative "
+              f"{h['selected_alternative']} - {h['selected']}; evaluated by `{h['bound_rule']}`. {h['note']}. "
+              "Alternatives as raised (history): "
+              + "; ".join(f"{x['alternative']} -> {x['disposition']}" for x in h["history_alternatives_as_raised"])
+              + "."]
+    L += ["", "References (open access; sha256 of the file read):",
           "", "| id | citation | locators | sha256 | use |", "|---|---|---|---|---|"]
     for r in fw["references"]:
         L.append(f"| {r['id']} | {_v(r['citation'])} ({r['url']}) | {_v('; '.join(r['locators']))} | "
@@ -2431,13 +2440,12 @@ def render_md(doc):
     L += ["", "## (c) Owner answers applied", "", "| ref | how applied |", "|---|---|"]
     for o in doc["owner_answers_applied"]:
         L.append(f"| {_src(o['ref'])} | {_v(o['how'])} |")
-    L += ["", "## (d) Open owner questions (new)", ""]
-    if doc["open_owner_questions"]:
-        L += ["| id | question | proposed answer | needed by |", "|---|---|---|---|"]
-        for q in doc["open_owner_questions"]:
-            L.append(f"| {q['id']} | {_v(q['question'])} | {_v(q['proposed_answer'])} | {q['needed_by']} |")
-    else:
-        L.append("None open: every former P2 question is answered by the owner decisions of 2026-10-01 (below).")
+    L += ["", "## (d) Owner questions raised by P2 (all answered; none open now)", ""]
+    if doc.get("open_owner_questions_note"):
+        L += [doc["open_owner_questions_note"] + ".", ""]
+    n_open = len(doc.get("owner_questions_open_now", doc["open_owner_questions"]))
+    L.append(("None open: every P2 question is answered by the owner decisions of 2026-10-01 (below). " if not n_open
+              else "") + "Owner questions open now: %d." % n_open)
     L += ["", "Answered (A9.16 step 1):", "", "| id | question | answered by | decision file (json sha256) |",
           "|---|---|---|---|"]
     for q in doc["answered_owner_questions"]:
@@ -2481,8 +2489,9 @@ def render_md(doc):
 def a9_16_selfcheck():
     """SYNTHETIC checks of the A9.16 owner rules (labelled SYNTHETIC_TEST_DATA_NOT_EVIDENCE; no Vyovrinda value)."""
     out = []
-    za = {"R_ohm": 1.0, "X_ohm": 80.0, "u_R_ohm": 0.1, "u_X_ohm": 1.0, "uncertainty_budget_id": "SYN-UB-A"}
-    zb_ok = dict(za, R_ohm=1.2, X_ohm=81.0, uncertainty_budget_id="SYN-UB-B")
+    za = {"R_ohm": 1.0, "X_ohm": 80.0, "u_R_ohm": 0.1, "u_X_ohm": 1.0, "uncertainty_budget_id": "SYN-UB-A",
+          "operating_point_id": "SYN-OP-1", "configuration_id": "SYN-CFG-1"}
+    zb_ok = dict(za, R_ohm=1.2, X_ohm=81.0, uncertainty_budget_id="SYN-UB-B", valid=True)
     zb_bad = dict(zb_ok, R_ohm=1.5)
     a1, a2, a3 = (RULES.method_agreement(za, zb_ok), RULES.method_agreement(za, zb_bad),
                   RULES.method_agreement(za, None))

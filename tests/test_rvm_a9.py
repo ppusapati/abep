@@ -338,7 +338,10 @@ def test_open_questions_not_answered(doc):
     with pytest.raises(B.BuildError):   # an ANSWERED question cannot be carried as open
         B.oq(ctx, "OD1")
     assert [q["id"] for q in doc["open_owner_questions"]] == ["RVMQ-01"]
-    assert doc["open_owner_questions"][0]["status"] == "OWNER_DECIDED"          # A9.14 RVMQ-01 (S9.13)
+    # A9.14 RVMQ-01 (S9.13); A9.16 repair COR-01: 'status' keeps the as-raised value read back by the immutable
+    # state-v4 builder, status_current governs (updated test)
+    assert doc["open_owner_questions"][0]["status_current"] == "OWNER_DECIDED"
+    assert doc["open_owner_questions"][0]["status"] == "TBD_OWNER"
     assert doc["open_owner_questions"][0]["status_when_raised"] == "TBD_OWNER"
 
 
@@ -376,3 +379,14 @@ def test_no_forbidden_substrings():
         assert "xe_" + "ledger" not in text, p
     for p in LANE.glob("*.py"):   # no screening candidate is used as a source (the JSON only cites the v1 release)
         assert "sgb-" + "screen" not in p.read_text(encoding="utf-8"), p
+
+
+
+def test_rvm14_od5_atmospheric_sequence_has_no_c1_dwell_number(doc):
+    """A9.16 repair F3: OD5 (S9.9) limits the ICP-first atmospheric start only by registered dwell / thermal limits
+    (values from the actual hardware, A9.10 P1Q-02); the 120 s / 360 s numbers are the C1 ignition-dwell Xe booking of
+    S9.1 XA9Q-02 / S8.15 OQ-A907-01 and appear only for the C1-selected variant."""
+    r = {x["id"]: x for x in doc["rows"]}["RVM-14"]["a9_16"]
+    assert "registered dwell / thermal limits" in r["attempts"] and "P1Q-02" in r["attempts"]
+    assert "120 s" not in r["attempts"] and "360 s" not in r["attempts"]
+    assert "120 s" in r["c1_variant"] and "360 s" in r["c1_variant"] and "C1 variant only" in r["c1_variant"]

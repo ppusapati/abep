@@ -98,7 +98,7 @@ ARTIFACTS = {
            "fo_a9_6_p1_workflow_completion"),
     "P2": ("docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json", "id", "p2_impedance_prep_v1",
            "fo_a9_6_p2_framework_completion"),
-    "P3": ("docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json", "id", "p3_coupled_thermal_v1",
+    "P3": ("docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json", "id", "p3_coupled_thermal_v2",
            "fo_a9_6_p3_coupled_thermal"),
     "P4": ("docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json", "id", "p4_anode_materials_v1",
            "fo_a9_6_p4_anode_materials"),

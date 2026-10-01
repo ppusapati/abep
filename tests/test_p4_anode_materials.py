@@ -197,10 +197,9 @@ def test_gate_satisfied_and_violated_when_both_evidenced():
 def test_thermal_gate_unresolved_forces_incomplete():
     r = _req(criterion="CR-01", property="T_validated_continuous", kind="min_with_margin", value=50.0, unit="K",
              status="OWNER_GIVEN")
-    # A9.16 step 1 (A9.12 P4-OQ-01): a T_validated_continuous record is gate-admissible only at validation stage 2+,
-    # so the synthetic fixture now declares stage 2 (the margin rule itself is unchanged)
-    p = _prop(property="T_validated_continuous", value_si=2000.0, unit_si="K",
-              validation_stage="STAGE_2_INTEGRATED_REPLACEABLE_COMPONENT_CONFIRMATION")
+    # A9.16 step 1 (A9.12 P4-OQ-01): a T_validated_continuous record is gate-admissible only at validation stage 2+;
+    # A9.16 repair COR-06: the stage is proven by a referenced, classified stage record (the margin rule is unchanged)
+    p = _t_valid_prop(2000.0)
     assert S.evaluate_gate(r, p, thermal_closure_status="UNRESOLVED", operating_temperature=300.0)[0] == \
         "INCOMPLETE_EVIDENCE"
     assert S.evaluate_gate(r, p, thermal_closure_status="CLOSED_BY_EVIDENCE", operating_temperature=None)[0] == \
@@ -212,6 +211,63 @@ def test_thermal_gate_unresolved_forces_incomplete():
         == "GATE_SATISFIED_WITHIN_EVIDENCE_DOMAIN"
     assert S.evaluate_gate(r, p, thermal_closure_status="CLOSED_BY_EVIDENCE", operating_temperature=_top(1950.1))[0] \
         == "GATE_VIOLATED_BY_EVIDENCE"
+
+
+R4 = _load("p4_a9_16_rules_for_screening_tests", LANE / "p4_a9_16_rules.py")
+
+
+def _stage_records(t_limit_K):
+    """SYNTHETIC stage-1 -> stage-2 records (labelled fixtures, not data) classified by the owner-rule module."""
+    s1 = {"basis": R4.STAGE_1, "material": "CAND-X", "source": "SYNTHETIC fixture (not data)",
+          "preregistered_acceptance": "LOCK2-SYN", "T_limit_K": t_limit_K + 20.0, "criteria_met": True,
+          "conditions": {c: "REG-" + c for c in R4.STAGE_1_CONDITIONS},
+          "metrics": {m: "REG-" + m for m in R4.STAGE_1_METRICS},
+          "preregistered_exposure_duration_h": 100.0, "exposure_duration_h": 100.0}
+    s2 = {"basis": R4.STAGE_2, "material": "CAND-X", "source": "SYNTHETIC fixture (not data)",
+          "preregistered_acceptance": "LOCK2-SYN", "T_limit_K": t_limit_K, "criteria_met": True,
+          "stage_1_record": R4.validation_stage_record(s1), "down_selected": True,
+          "configuration": "REPLACEABLE_ANODE", "article": "H-1",
+          "environment": {e: "REG-" + e for e in R4.STAGE_2_ENVIRONMENT},
+          "at_intended_continuous_use_condition": True}
+    return s1, s2
+
+
+def _t_valid_prop(t_limit_K, record=None, **over):
+    rec = record if record is not None else _stage_records(t_limit_K)[1]
+    p = _prop(property="T_validated_continuous", value_si=t_limit_K, unit_si="K", material="CAND-X",
+              validation_stage="STAGE_2_INTEGRATED_REPLACEABLE_COMPONENT_CONFIRMATION",
+              validation_stage_record=rec, validation_stage_record_id="SYN-STAGE2-REC",
+              validation_stage_record_sha256=S.stage_record_sha256(rec))
+    p.update(over)
+    return p
+
+
+def test_cor06_t_validated_needs_classified_stage_record():
+    """A9.16 repair COR-06: a bare validation_stage declaration never admits T_validated_continuous; the referenced
+    record must exist, match its sha256 and classify (p4_a9_16_rules.validation_stage_record) to the declared stage 2 /
+    3, material and limit value."""
+    r = _req(criterion="CR-01", property="T_validated_continuous", kind="min_with_margin", value=50.0, unit="K",
+             status="OWNER_GIVEN")
+    ok = _t_valid_prop(2000.0)
+    assert S.evaluate_gate(r, ok, thermal_closure_status="CLOSED_BY_EVIDENCE", operating_temperature=_top(1900.0))[0] \
+        == "GATE_SATISFIED_WITHIN_EVIDENCE_DOMAIN"
+    s1, s2 = _stage_records(2000.0)
+    bad = [
+        _prop(property="T_validated_continuous", value_si=2000.0, unit_si="K",
+              validation_stage="STAGE_2_INTEGRATED_REPLACEABLE_COMPONENT_CONFIRMATION"),         # bare declaration
+        _t_valid_prop(2000.0, validation_stage_record_sha256="0" * 64),                          # sha mismatch
+        _t_valid_prop(2000.0, record=dict(s2, down_selected=False)),                              # not down-selected
+        _t_valid_prop(2000.0, record=dict(s2, stage_1_record=None)),                              # no stage-1 link
+        _t_valid_prop(2000.0, record=dict(s2, configuration="COUPON")),                           # not replaceable
+        _t_valid_prop(2020.0, record=s1),                                                         # a stage-1 record
+        _t_valid_prop(2000.0, material="CAND-Y"),                                                 # other material
+        _t_valid_prop(2000.0, value_si=2100.0),                                                   # other value
+        _t_valid_prop(2000.0, validation_stage="STAGE_3_QUALIFICATION_LIFE_EVIDENCE"),            # declared != record
+    ]
+    for p in bad:
+        out, why = S.evaluate_gate(r, p, thermal_closure_status="CLOSED_BY_EVIDENCE",
+                                   operating_temperature=_top(1900.0))
+        assert out == "INCOMPLETE_EVIDENCE", why
 
 
 def _top(v, **over):
@@ -385,7 +441,10 @@ def test_open_questions_new_and_tbd_owner(doc):
     existing = {r["id"] for r in state["rows"]}
     for q in doc["open_owner_questions"]:
         assert q["id"] not in existing and q["status_when_raised"] == "TBD_OWNER" and q["admissible_alternatives"]
-        assert q["status"] == "OWNER_DECIDED" and q["answer"] and "OD_2026_10_01_A9_12" in q["decided_by"]
+        # A9.16 repair COR-01: 'status' keeps the as-raised TBD_OWNER (read back by the immutable state-v4 builder);
+        # status_current carries OWNER_DECIDED (updated test)
+        assert q["status"] == "TBD_OWNER" and q["status_current"] == "OWNER_DECIDED"
+        assert q["answer"] and "OD_2026_10_01_A9_12" in q["decided_by"]
 
 
 def test_m16_no_readiness_change(doc):
@@ -430,7 +489,7 @@ _XL_SELF = 'P4'
 _XL_JSON = {
     "P1": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
     "P2": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
-    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
     "P4": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
     "MP": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
     "XE": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",

@@ -110,7 +110,8 @@
   "rule": "mutable lane deliverables: read at build time, ids checked (a missing id raises), never sha-pinned",
   "paths": [
    "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
-   "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json"
+   "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json"
   ]
  },
  "status_vocabulary": {
@@ -155,11 +156,11 @@
   "ANSWERED_BY_A9_9": 5,
   "DERIVED": 11,
   "SUPERSEDED": 14,
-  "TBD_OWNER": 1
+  "TBD_OWNER": 2
  },
- "tbd_owner_count": 1,
+ "tbd_owner_count": 2,
  "tbd_owner_blocks": {
-  "BLOCKS_LOCK_1": 1
+  "BLOCKS_LOCK_1": 2
  },
  "answered_this_step_by_decision": {
   "A9.8": 16,
@@ -603,7 +604,8 @@
   }
  ],
  "open_owner_questions": [
-  "MPV3Q-01"
+  "MPV3Q-01",
+  "XV3Q-01"
  ],
  "open_owner_questions_note": "TBD_OWNER rows: questions with no owner answer yet (raised since v4 or unanswered)",
  "compliance": [
@@ -9393,6 +9395,29 @@
     "BLOCKS_LOCK_1"
    ],
    "classification_basis": "MQ-06 split the row-54 controls/harness line; the controls allocation is a genuine owner allocation (no number invented)"
+  },
+  {
+   "no": 403,
+   "id": "XV3Q-01",
+   "kind": "lane_question",
+   "lane": "Xe accounting v3 (A9.16 repair lane)",
+   "source": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json open_owner_questions[id=XV3Q-01]",
+   "source_ref": {
+    "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+    "locator": "open_owner_questions[id=XV3Q-01]"
+   },
+   "question": "A9.15 makes Xe an RFP-required system capability that must not be 'weakened into a contingency interpretation'. Does it also change the A9.1 HIQ-06 ICP gas-mode labels, where G-REUSE is primary and the dedicated G-ATM / G-XE ICP feeds are 'separately declared contingency variants'? (The A9.15 recorder note flagged this; Xe v3 keeps the A9.1 ICP-feed labels and scopes 'contingency' to the ICP feed choice only.)",
+   "proposed": "none - owner call (no reading is chosen here; the A9.1 baseline stays as recorded until the owner answers)",
+   "needed_by": "LOCK-1",
+   "status": "TBD_OWNER",
+   "status_detail": "TBD_OWNER (raised since v4; no owner answer)",
+   "dependency": [
+    "OWNER_JUDGMENT"
+   ],
+   "blocks": [
+    "BLOCKS_LOCK_1"
+   ],
+   "classification_basis": "the A9.15 recorder note flags the A9.1 HIQ-06 ICP-feed labels to the owner; no owner answer exists, so no reading is chosen (A9.1 basis: The dedicated ICP gas port remains installed and capped so G-ATM and G-XE can be tested as separately declared contingency variants.)"
   }
  ]
 }

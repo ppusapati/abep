@@ -136,7 +136,7 @@ REFS = {
            "P1 ICP bench workflow (ICP-45 capacity, discharge-OFF)"),
     "P2": ("docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json", "id", "p2_impedance_prep_v1",
            "P2 impedance-map framework"),
-    "P3": ("docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json", "id", "p3_coupled_thermal_v1",
+    "P3": ("docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json", "id", "p3_coupled_thermal_v2",
            "P3 coupled-thermal framework"),
     "P4": ("docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json", "id", "p4_anode_materials_v1",
            "P4 anode / collector materials framework"),
@@ -1116,7 +1116,8 @@ def render_md(doc):
     a("## (d) Owner questions raised by this lane")
     a("")
     for q in doc["open_owner_questions"]:
-        a(f"- **{q['id']}** ({q['status']} {q.get('decision_code', '')}, needed by {q['needed_by']}): {q['question']} "
+        a(f"- **{q['id']}** (as raised {q['status']}; now {q.get('status_current', q['status'])} "
+          f"{q.get('decision_code', '')}, needed by {q['needed_by']}): {q['question']} "
           "Readings: " + " / ".join(q["admissible_readings"]) + f". Why new: {q['why_new']}.")
     a("")
     a("## (d2) A9.16 owner decisions applied")

@@ -25,7 +25,8 @@ Everything needed to ingest REAL P2 data later without further software work, on
     Monte Carlo (REF-JCGM101 6.4.8.4 Cholesky sampling, 7.6 estimate, 7.7.2 coverage interval);
   * impedance-map storage (p2_impedance_map_v1) with a canonical writer / reader and a content sha256;
   * rating-derivation STRUCTURE for the RF components: every output TBD_AFTER_EVIDENCE until a complete MEASURED
-    envelope exists and the owner inputs (ICPQ-10 heat-load bound, ICPQ-11 k_RF, P2Q-10 margins) are given;
+    envelope exists (owner inputs given: ICPQ-10 heat-load bound form A9.12 S5.1 alternative A, ICPQ-11 k_RF, P2Q-10
+    margins);
     RF_COMPONENT_RATINGS stays TBD_AFTER_IMPEDANCE_MAP in every case.
 
 A9.16 step 1 (owner decisions of 2026-10-01): the E/H / transition criteria form is k x combined step uncertainty with
@@ -119,6 +120,15 @@ CANDIDATE_STATUS = "REQUIRED_MINIMUM_UNDER_OWNER_POLICY_NOT_A_RATING"
 A914_RATING = ("owner A9.14 S9.6 P2Q-10 / S8.4 ICPQ-11 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json, "
                "sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)")
 ANTENNA_SEPARATE_QUALIFICATIONS = ("Paschen", "creepage / clearance", "combined RF + DC stress")
+# A9.16 repair F1: owner A9.12 S5.1 ICPQ-10 = alternative A. Q_ICP,bound = 1.20 x (P_fwd,max + P_d,max), P_fwd,max = the
+# maximum admitted RF forward-power operating point of the registered ICP / P2 envelope, P_d,max = the applicable
+# registered H-1 discharge-power bound; 'Do not use 1.20 x 1.5 kW' (the bus ceiling never becomes an ICP thermal bound).
+# The bound itself is evaluated (fail-closed) by the P3 rule below; P2 supplies P_fwd,max.
+ICPQ10_OWNER_ALTERNATIVE = "A"
+ICPQ10_RULE = "Q_ICP,bound = 1.20 x (P_fwd,max + P_d,max) (A9.12 S5.1 ICPQ-10 alternative A; never 1.20 x 1.5 kW)"
+ICPQ10_BOUND_RULE = "docs/experiments/hall_icp/p3_coupled_thermal/p3_a9_16_rules.py::icp43_total_module_bound"
+A912_ICPQ10 = ("owner A9.12 S5.1 ICPQ-10 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json, sha256 "
+               "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)")
 
 
 class FrameworkError(ValueError):
@@ -1325,7 +1335,9 @@ def rating_structure(envelope, *, k_rf=None, component_margins=None, heat_load_o
     per component id (number, or {stress_class: factor}) - the more stringent factor governs, never the product.
     ``k_rf`` may be omitted (owner value) and must otherwise equal 1.5. Start-up / reflected-power / transient stress is
     checked against the manufacturer's documented transient / peak rating by p2_a9_16_rules.transient_stress_check
-    (no factor). The heat-load bound RC-HEAT stays with ICPQ-10 (heat_load_option). RF_COMPONENT_RATINGS stays
+    (no factor). The heat-load bound RC-HEAT follows the owner's ICPQ-10 decision (A9.12 S5.1 alternative A,
+    Q_ICP,bound = 1.20 x (P_fwd,max + P_d,max), evaluated by p3_a9_16_rules.icp43_total_module_bound; heat_load_option
+    may only be omitted or 'A' - the rejected 1.20 x 1.5 kW form is refused). RF_COMPONENT_RATINGS stays
     TBD_AFTER_IMPEDANCE_MAP in every case (a candidate is not a rating)."""
     if k_rf is not None and _fin(k_rf, "k_rf") != K_RF:
         raise RatingInputError(f"k_rf {k_rf!r} != the owner-set k_RF = {K_RF} ({A914_RATING})")
@@ -1354,9 +1366,17 @@ def rating_structure(envelope, *, k_rf=None, component_margins=None, heat_load_o
                "envelope_value": env_v if env_v is not None else TBD_EVIDENCE, "owner_input": owner_q,
                "stress_class": sclass, "rating_status": RATING_STATUS}
         if owner_q == "ICPQ-10":
-            row["owner_input_value"] = heat_load_option if heat_load_option is not None else TBD_OWNER
-            row["candidate_minimum"] = TBD_OWNER + (" (ICPQ-10 heat-load bound: not applied by this lane; "
-                                                    "alternatives carried side by side in the package)")
+            # A9.12 S5.1: alternative A is the owner's decision; any other option (the rejected 1.20 x 1.5 kW bus-
+            # ceiling form B included) is refused, never carried as a live alternative
+            if heat_load_option is not None and heat_load_option != ICPQ10_OWNER_ALTERNATIVE:
+                raise RatingInputError(f"heat_load_option {heat_load_option!r}: ICPQ-10 is decided - alternative "
+                                       f"{ICPQ10_OWNER_ALTERNATIVE} only ({A912_ICPQ10}; 'Do not use 1.20 x 1.5 kW')")
+            row["owner_input_value"] = ICPQ10_RULE
+            row["owner_decision"] = A912_ICPQ10
+            row["bound_rule"] = ICPQ10_BOUND_RULE
+            row["candidate_minimum"] = TBD_EVIDENCE + (
+                " (ICPQ-10 decided, alternative A: needs the registered P_fwd,max of the complete measured ICP / P2 "
+                "envelope and the registered H-1 P_d,max; evaluated fail-closed by " + ICPQ10_BOUND_RULE + ")")
             rows.append(row)
             continue
         classes = sclass.split("+")

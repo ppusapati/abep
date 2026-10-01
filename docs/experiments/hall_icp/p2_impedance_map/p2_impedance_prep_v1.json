@@ -182,6 +182,18 @@
    "what": "owner A9.11 verbatim (governs over the json summary; A9.16 step 1)"
   },
   {
+   "key": "A912",
+   "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+   "what": "owner A9.12 (machine-readable; A9.16 step 1)"
+  },
+  {
+   "key": "A912MD",
+   "path": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+   "sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62",
+   "what": "owner A9.12 verbatim (governs over the json summary; A9.16 step 1)"
+  },
+  {
    "key": "A914",
    "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
    "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
@@ -463,7 +475,7 @@
     "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other back; a pin would be circular)"
    },
    "P3": {
-    "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
     "state": "MERGED",
     "pairs": [
      "XL-19",
@@ -2911,8 +2923,8 @@
    "id": "ICPQ-10",
    "what": "total ICP module heat-load bound (ICP-43)",
    "p2_supplies": "P_forward, P_delivered and P_line/match,loss envelope over the P1 stable region (mismatch_envelope)",
-   "status": "OPEN (owner call; not answered here)",
-   "source": "docs/budgets/owner_decisions/owner_questions_state_v3.json"
+   "status": "OWNER_DECIDED (A9.12 S5.1 alternative A: Q_ICP,bound = 1.20 x (P_fwd,max + P_d,max); P2 supplies P_fwd,max from the registered envelope; evaluated by p3_a9_16_rules.icp43_total_module_bound; never 1.20 x 1.5 kW)",
+   "source": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json"
   },
   {
    "id": "ICPQ-11",
@@ -2925,8 +2937,8 @@
    "id": "OQ-A910-06",
    "what": "interim 600 W RF-path heat-allocation basis of ICP-36",
    "p2_supplies": "P_delivered and P_line/match,loss envelope to re-derive ICP-36",
-   "status": "OPEN (owner call)",
-   "source": "docs/budgets/owner_decisions/owner_questions_state_v3.json"
+   "status": "OWNER_DECIDED (A9.12 S5.8: 600 W = 500 W x 1.20 kept temporarily as the RF-path heat allocation - not a rating, operating point, ICP-43 bound or delivered power; superseded by the P2-derived RF thermal envelope (P_delivered, line / match losses, antenna / plasma loading, uncertainty, x 1.20), consumed by p3_a9_16_rules.rf_thermal_basis)",
+   "source": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json"
   },
   {
    "id": "RF_COMPONENT_RATINGS",
@@ -4647,15 +4659,25 @@
   {
    "id": "FW-19",
    "name": "ICP module heat-load bound (ICP-43)",
-   "value": "TBD - requires the owner answer to ICPQ-10 (TBD_OWNER; both alternatives carried side by side in framework.heat_load_alternatives)",
+   "value": "TBD - requires the registered P_fwd,max (maximum admitted RF forward-power point of the complete measured ICP / P2 envelope) and the registered H-1 P_d,max; form OWNER_DECIDED by ICPQ-10 (A9.12 S5.1 alternative A): Q_ICP,bound = 1.20 x (P_fwd,max + P_d,max), evaluated fail-closed by p3_a9_16_rules.icp43_total_module_bound; never 1.20 x 1.5 kW",
    "units": "W",
    "basis": "ICP-43",
    "source": [
-    "ICPQ-10"
+    "ICPQ-10",
+    "A9.12 ICPQ-10 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json, sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
    ],
    "evidence_class": null,
    "status": "TBD",
-   "freeze_point": "after-evidence"
+   "freeze_point": "after-evidence",
+   "owner_answers_applied": [
+    {
+     "decision": "A9.12",
+     "question_id": "ICPQ-10",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+     "decision_json_sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+     "note": "alternative B (1.20 x 1.5 kW bus ceiling) rejected by the owner; history in framework.heat_load_alternatives"
+    }
+   ]
   },
   {
    "id": "FW-20",
@@ -4838,7 +4860,7 @@
     {
      "pair": "XL-19",
      "counterpart": "P3:P3-IF-N03",
-     "counterpart_path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "counterpart_path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "quantity": "location split of P_line/match,loss (share dissipated on the ICP module / moving platform, from the CAL-P2-02 / CAL-P2-03 two-ports) -> P3-P2-04",
      "units": "-",
      "status": "TBD_AFTER_IMPEDANCE_MAP (owning stage P2 two-port characterization; coupled thermal UNRESOLVED)"
@@ -4957,7 +4979,7 @@
   },
   {
    "id": "IDP2-20",
-   "direction": "P2 -> P3 coupled thermal (docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json P3-IF-N04)",
+   "direction": "P2 -> P3 coupled thermal (docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json P3-IF-N04)",
    "quantity": "P_forward, P_reflected, P_line/match,loss and P_delivered envelopes (numeric only from verified-loss records; REFUSED values are passed as REFUSED and refused by P3), antenna current and cold antenna resistance as Q_RF/match inputs",
    "units": "W; A; ohm",
    "status": "TBD_AFTER_IMPEDANCE_MAP (owning stage P2 hot map; coupled thermal UNRESOLVED)",
@@ -4965,7 +4987,7 @@
     {
      "pair": "XL-20",
      "counterpart": "P3:P3-IF-N04",
-     "counterpart_path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "counterpart_path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "quantity": "P_forward, P_reflected, P_line/match,loss and P_delivered (numeric only with loss_status VERIFIED; a REFUSED / TBD value is refused by p3_thermal_lib.q_rf_match, never reconstructed), antenna current, cold antenna resistance (CAL-P2-08) -> P3-P2-01, P3-P2-02, P3-P2-03, P3-P2-06, P3-P2-07",
      "units": "W; A; ohm",
      "status": "TBD_AFTER_IMPEDANCE_MAP (owning stage P2 hot map; coupled thermal UNRESOLVED)"
@@ -4994,7 +5016,7 @@
    "direction": "owner -> P2",
    "quantity": "ICPQ-10 (heat-load bound alternative), ICPQ-11 (k_RF), P2Q-10 (component margins), P2Q-09 (E/H criteria form), P2Q-03 (agreement rule), loss-check k (FW-09)",
    "units": "-",
-   "status": "ANSWERED except ICPQ-10: ICPQ-11 k_RF = 1.5 and P2Q-10 stress-class margins (A9.14), P2Q-09 k_transition = 2.0 and P2Q-03 k_agreement = 2.0 (A9.11), loss-check k = 2.0 (A9.10 P1Q-24); ICPQ-10 not applied by this lane (heat_load_option stays an explicit input)",
+   "status": "ANSWERED: ICPQ-10 alternative A (A9.12 S5.1; Q_ICP,bound = 1.20 x (P_fwd,max + P_d,max), never 1.20 x 1.5 kW), ICPQ-11 k_RF = 1.5 and P2Q-10 stress-class margins (A9.14), P2Q-09 k_transition = 2.0 and P2Q-03 k_agreement = 2.0 (A9.11), loss-check k = 2.0 (A9.10 P1Q-24)",
    "xref": []
   },
   {
@@ -5016,7 +5038,7 @@
   },
   {
    "id": "IDP2-24",
-   "direction": "P3 coupled thermal -> P2 (docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json P3-IF-S06)",
+   "direction": "P3 coupled thermal -> P2 (docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json P3-IF-S06)",
    "quantity": "module calorimetric energy balance (thermocouple map RF on / off) that fixes f_leaving; recorded with the hot map, never a thermal PASS",
    "units": "W; -",
    "status": "TBD_AFTER_EVIDENCE (owning stage P2 hot map; f_leaving = 0 only as an explicitly labelled bound)",
@@ -5024,7 +5046,7 @@
     {
      "pair": "XL-22",
      "counterpart": "P3:P3-IF-S06",
-     "counterpart_path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "counterpart_path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "quantity": "ICP-module calorimetric energy balance (thermocouple map with RF on / off, ICD ICP-36 verification) that fixes f_leaving (P3-P2-05)",
      "units": "W; -",
      "status": "TBD_AFTER_EVIDENCE (owning stage P2 hot map; f_leaving = 0 only as an explicitly labelled bound)"
@@ -5447,7 +5469,7 @@
     "sha256": "d8d8496f4141a7096496d3a893c95c3db524ca501055a26cc868fb35d0ae9327",
     "decision": "sec. 7"
    },
-   "how": "ICPQ-10, ICPQ-11, P2Q-03, P2Q-09 stay open (TBD_OWNER inputs); ICPQ-10 alternatives carried side by side; no answer selected [superseded 2026-10-01: ICPQ-11 by A9.14 S8.4, P2Q-03 / P2Q-09 by A9.11 S4.3 / S4.7 - see a9_16_incorporation; ICPQ-10 not applied by this lane]"
+   "how": "ICPQ-10, ICPQ-11, P2Q-03, P2Q-09 stay open (TBD_OWNER inputs); ICPQ-10 alternatives carried side by side; no answer selected [superseded 2026-10-01: ICPQ-11 by A9.14 S8.4, P2Q-03 / P2Q-09 by A9.11 S4.3 / S4.7 - see a9_16_incorporation; ICPQ-10 by A9.12 S5.1 (alternative A) - A9.16 repair F1]"
   },
   {
    "ref": {
@@ -5689,6 +5711,43 @@
   },
   {
    "ref": {
+    "kind": "A9.12",
+    "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+    "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+    "decision": "ICPQ-10",
+    "verbatim": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+    "verbatim_sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62"
+   },
+   "how": "APPLIED A9.16 step 1 (A_1_20_X_PFWD_PLUS_PD, S5.1 ICPQ-10): ICP-43 total-module bound Q_ICP,bound = 1.20 x (P_fwd,max + P_d,max): P_fwd,max = maximum admitted RF forward-power operating point of the registered ICP / P2 envelope (supplied by P2), P_d,max = applicable registered H-1 discharge-power bound; 'Do not use 1.20 x 1.5 kW' - alternative B is rejected (kept as history only) and a heat_load_option other than A is refused; RC-HEAT references p3_a9_16_rules.icp43_total_module_bound and stays TBD_AFTER_EVIDENCE until both inputs are registered (a thermal bounding rule, not a deposition statement; never a thermal PASS) [implemented in p2_framework.rating_structure (RC-HEAT, ICPQ10_*); a9_16_application.apply (framework.heat_load_alternatives, FW-19, IDP2-22, p2_outputs_later); tests test_p2_a9_16_icpq10_alternative_a_only, test_rating_structure_never_rates (updated)]",
+   "question_id": "ICPQ-10",
+   "sequenced_no": "S5.1",
+   "owner_answer": "A_1_20_X_PFWD_PLUS_PD",
+   "implemented_in": "p2_framework.rating_structure (RC-HEAT, ICPQ10_*); a9_16_application.apply (framework.heat_load_alternatives, FW-19, IDP2-22, p2_outputs_later)",
+   "tests": [
+    "test_p2_a9_16_icpq10_alternative_a_only",
+    "test_rating_structure_never_rates (updated)"
+   ]
+  },
+  {
+   "ref": {
+    "kind": "A9.12",
+    "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+    "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+    "decision": "OQ-A910-06",
+    "verbatim": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+    "verbatim_sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62"
+   },
+   "how": "APPLIED A9.16 step 1 (YES_600W_TEMPORARY, S5.8 OQ-A910-06): Q_RF,allocation = 500 W x 1.20 = 600 W kept as the present RF-path thermal allocation (not a component rating, not a demonstrated flight operating point, not the ICP-43 bound, not delivered RF power; P_line/match,loss additional); after the P2 map the RF thermal input is re-derived from the measured / verified envelope of P_delivered, line / match losses, antenna / plasma loading and uncertainty, with the 1.20 margin - P2 supplies that envelope and p3_a9_16_rules.rf_thermal_basis consumes it [implemented in a9_16_application.apply (p2_outputs_later OQ-A910-06); tests test_p2_a9_16_oq_a910_06_owner_decided]",
+   "question_id": "OQ-A910-06",
+   "sequenced_no": "S5.8",
+   "owner_answer": "YES_600W_TEMPORARY",
+   "implemented_in": "a9_16_application.apply (p2_outputs_later OQ-A910-06)",
+   "tests": [
+    "test_p2_a9_16_oq_a910_06_owner_decided"
+   ]
+  },
+  {
+   "ref": {
     "kind": "A9.15",
     "path": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
     "sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
@@ -5720,7 +5779,62 @@
    "tests": []
   }
  ],
- "open_owner_questions": [],
+ "open_owner_questions": [
+  {
+   "id": "P2Q-01",
+   "question": "Adopt ZM-A (V/I probe at the antenna terminals) as the primary Z_antenna method on the P1/P2 bench, with ZM-B (de-embedding) as the per-point cross-check and ZM-C (antenna current) for R?",
+   "proposed_answer": "yes (PROPOSED)",
+   "needed_by": "LOCK-1"
+  },
+  {
+   "id": "P2Q-02",
+   "question": "The owner's A9.3 RF package list does not name the V/I probe, VNA, calibration kits, attenuators, antenna-simulator load, antenna current probe or phase-stable test cables. Add them to the RF package, or to a separate RF-metrology package under the common interface document?",
+   "proposed_answer": "owner call; proposal: a separate RF-metrology package (different supplier speciality)",
+   "needed_by": "RFQ v2 dispatch"
+  },
+  {
+   "id": "P2Q-03",
+   "question": "Agreement rules for ZM-A vs ZM-B and for up/down sweeps (hysteresis): same normalized-statistic form as UB-RF-08 with a k frozen at LOCK-1?",
+   "proposed_answer": "owner call on the form; no value proposed",
+   "needed_by": "LOCK-1"
+  },
+  {
+   "id": "P2Q-04",
+   "question": "Hot-map tuning policy: re-tune for minimum reflected power at every point, plus fixed-tune sub-sweeps around representative points to inform the flight match implementation?",
+   "proposed_answer": "yes (PROPOSED)",
+   "needed_by": "LOCK-1"
+  },
+  {
+   "id": "P2Q-06",
+   "question": "On the thrust stand, rely on ZM-B (no V/I probe line across the stage) once the bench shows agreement, rather than routing a V/I probe line with a matched sham?",
+   "proposed_answer": "yes, conditional on the P2Q-03 bench agreement (PROPOSED)",
+   "needed_by": "LOCK-1"
+  },
+  {
+   "id": "P2Q-07",
+   "question": "Where no accredited scope exists for V/I-probe phase calibration at 13.56 MHz, accept an in-house procedure traceable through the VNA and its kit (MS-P2-03)?",
+   "proposed_answer": "owner call",
+   "needed_by": "LOCK-1"
+  },
+  {
+   "id": "P2Q-08",
+   "question": "Does the A9.3 ICPQ-06 isolator qualification ('wherever ICP plumbing bridges isolated potentials') also cover the ICP-34 pressure-sensing line when the ICP body floats or the collector is biased during P2?",
+   "proposed_answer": "yes where that line bridges isolated potentials (PROPOSED; same plumbing logic)",
+   "needed_by": "before the first biased / floating P2 point (S-11)"
+  },
+  {
+   "id": "P2Q-09",
+   "question": "Which recorded signals and step criteria constitute the 'electrical evidence of an ignition / mode transition' that turns an optically UNLIT record into UNCERTAIN (A9.4 P2Q-05): the HM-R06 indicators (step in reflected power / |Gamma| at fixed tuning, antenna-current step, collector / current-path response step, pressure step) with the same declared multiple of the combined uncertainty?",
+   "proposed_answer": "yes (PROPOSED): reuse the HM-R06 indicator set; form frozen at LOCK-1, multiple at LOCK-2, before the P2 map; each record states the basis (electrical_indicator_basis)",
+   "needed_by": "LOCK-1"
+  },
+  {
+   "id": "P2Q-10",
+   "question": "Rating margin policy for the RF components other than the antenna-circuit voltage (ICPQ-11): generator forward power, coupler / sensors, coax and connectors, vacuum feedthrough, local-match elements - one factor per component class applied to the complete measured P2 envelope maximum?",
+   "proposed_answer": "owner call; no value proposed (framework input FW-20, TBD_OWNER)",
+   "needed_by": "before any RF component rating is selected (after the complete P2 map)"
+  }
+ ],
  "historical_reuse": [
   {
    "path": "docs/evidence/rf_source/rf_evidence_matrix.json",
@@ -6214,7 +6328,7 @@
      "p2_framework.ladder_element_stress",
      "p2_framework.feedthrough_peaks_from_network"
     ],
-    "data_needed": "complete measured envelope; owner factors A9.14 ICPQ-11 / P2Q-10 given; ICPQ-10 heat-load bound an explicit input",
+    "data_needed": "complete measured envelope; owner factors A9.14 ICPQ-11 / P2Q-10 given; ICPQ-10 decided (A9.12 S5.1 alternative A; RC-HEAT via p3_a9_16_rules.icp43_total_module_bound with the registered P_fwd,max and P_d,max)",
     "status": "IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output)"
    }
   ],
@@ -6279,14 +6393,31 @@
   ],
   "heat_load_alternatives": {
    "owner_question": "ICPQ-10",
-   "status": "TBD_OWNER",
+   "status": "OWNER_DECIDED",
    "question_text": "Total ICP module heat-load bound (ICP-43): use 1.20 x (P_fwd,max + P_d,max) with P_d,max from the A9-02 discharge slot, or, if every score-bearing stand point is held inside the P_bus < 1.5 kW ceiling (row 108), the envelope 1.20 x 1.5 kW used for the stand by H2-6 H26-44?",
    "source": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
-   "alternatives": [
-    "A: bound from P_fwd,max (P2 envelope) and P_d,max (A9-02 discharge slot) as stated in the question",
-    "B: envelope tied to the P_bus < 1.5 kW ceiling (row 108) as stated in the question"
+   "selected_alternative": "A",
+   "selected": "Q_ICP,bound = 1.20 x (P_fwd,max + P_d,max): P_fwd,max = maximum admitted RF forward-power operating point of the registered ICP / P2 envelope; P_d,max = applicable registered H-1 discharge-power bound (A9.12 S5.1)",
+   "bound_rule": "docs/experiments/hall_icp/p3_coupled_thermal/p3_a9_16_rules.py::icp43_total_module_bound",
+   "decision": {
+    "decision": "A9.12",
+    "question_id": "ICPQ-10",
+    "sequenced_no": "S5.1",
+    "decision_file": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+    "decision_json_sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+    "verbatim": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md"
+   },
+   "history_alternatives_as_raised": [
+    {
+     "alternative": "A: bound from P_fwd,max (P2 envelope) and P_d,max (A9-02 discharge slot) as stated in the question",
+     "disposition": "OWNER_SELECTED (A9.12 S5.1)"
+    },
+    {
+     "alternative": "B: envelope tied to the P_bus < 1.5 kW ceiling (row 108) as stated in the question",
+     "disposition": "OWNER_REJECTED (A9.12 S5.1: 'Do not use 1.20 x 1.5 kW merely because 1.5 kW is the spacecraft/bus ceiling') - history only, never a live option; rating_structure refuses it"
+    }
    ],
-   "note": "carried side by side; neither selected; the factor and ceiling are the question's own text (copied from the pinned state v3)"
+   "note": "a deliberately conservative thermal bounding rule, not a statement that all electrical input power is deposited in one ICP component; replaced by measured coupled heat terms once P1 / P2 / P3 deposition and loss terms exist (the 20 % margin is not relaxed); never a thermal PASS"
   },
   "references": [
    {
@@ -6472,8 +6603,7 @@
     "what": "rating_structure without an envelope: every candidate TBD, RF_COMPONENT_RATINGS unchanged",
     "RF_COMPONENT_RATINGS": "TBD_AFTER_IMPEDANCE_MAP",
     "candidates": [
-     "TBD_AFTER_EVIDENCE",
-     "TBD_OWNER"
+     "TBD_AFTER_EVIDENCE"
     ],
     "ok": true,
     "evidence_status": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
@@ -6623,6 +6753,8 @@
    }
   }
  ],
+ "open_owner_questions_note": "open_owner_questions is the record of the P2 owner questions AS RAISED (text unchanged; read back by the immutable owner-question state-v4 builder). Every one is answered (answered_owner_questions, with the deciding decision file and json sha256); owner_questions_open_now lists the questions still open (none)",
+ "owner_questions_open_now": [],
  "a9_16_incorporation": {
   "step": "A9.16 step 1 (owner instruction 2026-10-01 'continue implementing them sequentially'), lane P2 IMPEDANCE MAP",
   "decisions": [
@@ -6646,6 +6778,13 @@
     "json_sha256": "d8baf59a5b92739698e29d893e89a30995559ee7167814c096dc24599679156c",
     "verbatim": "docs/decisions/OD_2026_10_01_A9_11_S4_P2_OWNER_DECISIONS.md",
     "verbatim_sha256": "4a9fd171abc6a63266a34e6a7c4cb25c4d67ed16615715e158902a57f7071a41"
+   },
+   {
+    "decision": "A9.12",
+    "json": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+    "json_sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+    "verbatim": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+    "verbatim_sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62"
    },
    {
     "decision": "A9.14",
@@ -6795,6 +6934,27 @@
     "implemented_in": "p2_a9_16_rules.geometry_point_check",
     "tests": [
      "test_p2_a9_16_geometry_inside_drawing_envelope"
+    ]
+   },
+   {
+    "decision": "A9.12",
+    "question_id": "ICPQ-10",
+    "sequenced_no": "S5.1",
+    "owner_answer": "A_1_20_X_PFWD_PLUS_PD",
+    "implemented_in": "p2_framework.rating_structure (RC-HEAT, ICPQ10_*); a9_16_application.apply (framework.heat_load_alternatives, FW-19, IDP2-22, p2_outputs_later)",
+    "tests": [
+     "test_p2_a9_16_icpq10_alternative_a_only",
+     "test_rating_structure_never_rates (updated)"
+    ]
+   },
+   {
+    "decision": "A9.12",
+    "question_id": "OQ-A910-06",
+    "sequenced_no": "S5.8",
+    "owner_answer": "YES_600W_TEMPORARY",
+    "implemented_in": "a9_16_application.apply (p2_outputs_later OQ-A910-06)",
+    "tests": [
+     "test_p2_a9_16_oq_a910_06_owner_decided"
     ]
    }
   ],

@@ -933,7 +933,7 @@
      "P1-S7H"
     ],
     "entry": [
-     "discharge-OFF capacity shown at the same registered H-1 point (a CLOSURE_VALID_CANDIDATE with M_n,LB > 0 under both P1Q-19 treatments); otherwise the row is OUT_OF_DOMAIN (entry not met)"
+     "discharge-OFF capacity shown at the same registered H-1 point (a CLOSURE_VALID_CANDIDATE with M_n,LB > 0 under the owner-selected P1Q-19 treatment, A9.10 REQUIRE_REGISTERED_GE_CHANNEL); otherwise the row is OUT_OF_DOMAIN (entry not met)"
     ],
     "exit": [
      "descriptive consistency rows (sustainment, closure, I_e,ICP vs I_d, potentials, RF power); never ICP45_CAPACITY and never I_e,cap (A9.4 P1Q-10; A9.6 sec. 2)"
@@ -1119,8 +1119,18 @@
    },
    {
     "id": "P1Q-19 (require vs use larger)",
-    "disposition": "OWNER_DECIDED",
-    "answer": "owner A9.10 P1Q-19 selected REQUIRE_REGISTERED_GE_CHANNEL: a registered u_I_e_A below the channel propagation makes the ICP-45 evaluation NOT_EVALUATED_REGISTRATION (both treatments ['REQUIRE_REGISTERED_GE_CHANNEL', 'USE_LARGER_OF_REGISTERED_AND_CHANNEL'] still computed side by side for transparency; the other never decides)",
+    "disposition": "TBD_OWNER",
+    "disposition_note": "'disposition' is the disposition AS RAISED (TBD_OWNER under A9.6 sec. 7; read back unchanged by the immutable state-v4 builder); the owner has since decided it - owner_decision governs",
+    "owner_decision": {
+     "status": "OWNER_DECIDED",
+     "decided_by": "A9.10 P1Q-19 (S3.7)",
+     "owner_answer": "REQUIRE_REGISTERED_GE_CHANNEL",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+     "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md",
+     "rule": "u_I_e,registered >= u(I_e,cap)_channels under the registered correlation treatment before the first P1-S7 point, else ICP-45 = NOT_EVALUATED_REGISTRATION; never silently replaced by the larger value; the alternative USE_LARGER_OF_REGISTERED_AND_CHANNEL is NOT_OWNER_SELECTED and is never evaluated"
+    },
+    "answer": "owner A9.10 P1Q-19 selected REQUIRE_REGISTERED_GE_CHANNEL: a registered u_I_e_A below the channel propagation makes the ICP-45 evaluation NOT_EVALUATED_REGISTRATION; the rejected alternative is never evaluated and never decides",
     "follows_from": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json (sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544) decisions.P1Q-19; verbatim docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md S3.7 (formerly TBD_OWNER under docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md sec. 7)",
     "implemented_in": "p1_reducer.icp45a_evaluate",
     "tests": [
@@ -1387,6 +1397,16 @@
     "implemented_in": "p1_reducer._check_registration; p1_a9_16_rules.freeze_before_stage_reasons; p1_campaign",
     "tests": [
      "test_p1_a9_16_i_d_max_ar_registration"
+    ]
+   },
+   {
+    "decision": "A9.8",
+    "question_id": "P3Q-01",
+    "sequenced_no": "S1.7",
+    "owner_answer": "C_BOTH_CALORIMETRY_PRIMARY",
+    "implemented_in": "build_p1_icp_bench.measurements (P1-M-30), XL_PAIRS XL-18 / XL-25; p1_reducer.capacity_structural_reasons (PROBE_PRESENT_KEY / PROBE_EVIDENCE_KEY)",
+    "tests": [
+     "test_p1_a9_16_f2_langmuir_probe_required_and_capacity_exclusion"
     ]
    },
    {
@@ -1986,7 +2006,7 @@
     "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other back; a pin would be circular)"
    },
    "P3": {
-    "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
     "state": "MERGED",
     "pairs": [
      "XL-17",
@@ -3010,10 +3030,12 @@
    "basis": "this lane (form) + published anchor; option A for capacity records owner decision A9.4 P1Q-10",
    "source": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json TK-13, TK-40; ICD ICP-21; docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json VI-EX-03; docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-10; docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json (sha256 e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f)",
    "evidence_class": null,
-   "status": "OWNER_DECIDED (A9.8 P1Q-09 DEDICATED_ISOLATED_TARGET_NO_CHAMBER_WALL); geometry registered at P1-G0 from the ICP module drawing",
+   "status": "TBD (geometry / position / reference); option A OWNER_DECIDED for ICP45_CAPACITY records (A9.4 P1Q-10)",
    "freeze_point": "after-evidence",
    "p1_gate": "P1-G0",
-   "note": "the reducer requires extraction.topology_id and electron_collecting_electrode on every record and refuses H1_ANODE with the Hall discharge OFF and anything but H1_ANODE with it ON; it refuses an ICP45_CAPACITY record whose sink is not DEDICATED_ELECTRON_COLLECTOR_TARGET (A9.4 P1Q-10); A9.16 step 1: option (B) chamber wall REFUSED for every record; ion collector biased negative w.r.t. the target; six metered terminals; OPEN_CIRCUIT_BY_CONSTRUCTION only physically verified"
+   "note": "the reducer requires extraction.topology_id and electron_collecting_electrode on every record and refuses H1_ANODE with the Hall discharge OFF and anything but H1_ANODE with it ON; it refuses an ICP45_CAPACITY record whose sink is not DEDICATED_ELECTRON_COLLECTOR_TARGET (A9.4 P1Q-10); A9.16 step 1: option (B) chamber wall REFUSED for every record; ion collector biased negative w.r.t. the target; six metered terminals; OPEN_CIRCUIT_BY_CONSTRUCTION only physically verified",
+   "status_a9_16": "OWNER_DECIDED (A9.8 P1Q-09 DEDICATED_ISOLATED_TARGET_NO_CHAMBER_WALL); geometry registered at P1-G0 from the ICP module drawing",
+   "status_note": "'status' = A9.6 text kept for the immutable read-back (docs/procurement/rfq_a9_v2/build_rfq_a9_v2.py (immutable) reads items[id=P1-IT-36].status back into rfq_a9_v2.json; 'status' keeps that A9.6 text and status_a9_16 carries the current status); status_a9_16 governs"
   },
   {
    "id": "P1-IT-37",
@@ -3873,16 +3895,19 @@
    "quantity": "plasma potential and electron temperature at the collector sheath edge (conditional)",
    "symbol": "V_p,coll, T_e,coll",
    "units": "V, eV",
-   "instrument_class": "TBD_OWNER (P3Q-01): probe diagnostic near the collector (e.g. Langmuir or emissive probe) or none if the calorimetric collector energy balance is accepted instead",
-   "reference_plane": "collector sheath edge (probe position TBD at P1-G0)",
+   "instrument_class": "Langmuir-probe diagnostic near the collector (OWNER_DECIDED A9.8 S1.7 P3Q-01 option C): independent sheath-model cross-check of the calorimetric collector energy balance, which stays the PRIMARY Q_collector evidence (calibrated temperatures, registered conductances / thermal mass, RF-ON / RF-OFF comparisons, collector-current / bias steps); taken in matched DIAGNOSTIC runs",
+   "reference_plane": "near the collector (probe position registered at P1-G0 from the ICP module drawing)",
    "sampling": "TBD - frozen at P1-G0 (PROPOSED: continuous logging on the common time base INS-18)",
    "uncertainty_sources": [
-    "TBD - requires the probe selection and its calibration (P3Q-01)"
+    "TBD - requires the selected probe and its calibration (registered at P1-G0)"
    ],
    "stages": "S4-S7",
    "status": "CONDITIONAL (TBD_OWNER P3Q-01)",
-   "note": "listed so that P3 Q_collector (P3-P1-04 / P3-P1-05, pair XL-18) and the P4 collector ion energy (IT-19, pair XL-25) have a named P1 channel; recorded only if the owner selects a probe diagnostic under P3Q-01; never assumed, never replaced by an analog value; no RFQ v2 line (disposition NP-CONDITIONAL-P3Q01)",
-   "metrology_spec": "TBD_OWNER - conditional on P3Q-01 (docs/experiments/hall_icp/p3_coupled_thermal/): no metrology specification until a probe diagnostic is selected; if the calorimetric alternative is accepted this channel is not recorded"
+   "note": "named P1 channel for P3 Q_collector (P3-P1-04 / P3-P1-05, pair XL-18) and the P4 collector ion energy (IT-19, pair XL-25); a probe present during an ICP45_CAPACITY record without registered evidence that its perturbation is negligible excludes that capacity point (p1_reducer.capacity_structural_reasons, capacity_monitoring.langmuir_probe_present); never assumed, never replaced by an analog value; RFQ v3 line TH-L10 (RFQ3-THRUST, P1_NEEDED); RFQ v2 disposition NP-CONDITIONAL-P3Q01 superseded by RFQ v3",
+   "metrology_spec": "TBD - Langmuir-probe metrology (probe geometry and position, I-V sweep range / resolution, calibration and uncertainty) registered at P1-G0 from the selected probe (A9.8 P3Q-01 option C; RFQ v3 line TH-L10); nothing is invented here",
+   "quantity_a9_16": "plasma potential and electron temperature near the collector (Langmuir probe; required Ar P1 development diagnostic)",
+   "status_a9_16": "REQUIRED (A9.8 P3Q-01 option C: Ar P1 development campaign; matched diagnostic runs; cross-check only)",
+   "readback_note": "'quantity' / 'status' = A9.6 text kept for the immutable RFQ v2 read-back (docs/procurement/rfq_a9_v2/build_rfq_a9_v2.py); quantity_a9_16 / status_a9_16 govern"
   }
  ],
  "derived_quantities": [
@@ -3997,9 +4022,9 @@
   },
   {
    "id": "P1-D-19",
-   "quantity": "P1Q-19 alternatives for the u(I_e,cap) used in M_n",
-   "formula": "registered u_I_e_A >= u(I_e,cap)_channels: both treatments identical, M_n with u_I_e_A; otherwise REQUIRE_REGISTERED_GE_CHANNEL -> NOT_EVALUATED, USE_LARGER_OF_REGISTERED_AND_CHANNEL -> M_n with u(I_e,cap)_channels; overall NOT_EVALUATED (TBD_OWNER) when they disagree",
-   "source": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md sec. 6-7; https://www.bipm.org/documents/20126/2071204/JCGM_100_2008_E.pdf 5.1.2 / 5.2.2"
+   "quantity": "u(I_e,cap) used in M_n under the owner P1Q-19 rule",
+   "formula": "owner A9.10 P1Q-19 REQUIRE_REGISTERED_GE_CHANNEL: registered u_I_e_A >= u(I_e,cap)_channels (under the registered correlation treatment) -> M_n with u_I_e_A; otherwise the registration is inadmissible and ICP-45 = NOT_EVALUATED_REGISTRATION (never replaced by the larger value; USE_LARGER_OF_REGISTERED_AND_CHANNEL is NOT_OWNER_SELECTED_INFORMATIONAL, never evaluated)",
+   "source": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md sec. 6-7; https://www.bipm.org/documents/20126/2071204/JCGM_100_2008_E.pdf 5.1.2 / 5.2.2; docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json decisions.P1Q-19"
   },
   {
    "id": "P1-D-11",
@@ -4701,7 +4726,7 @@
   {
    "id": "IF-P1-16",
    "direction": "to",
-   "counterpart": "P3 docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json P3-IF-N01 (and A9-07 as context)",
+   "counterpart": "P3 docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json P3-IF-N01 (and A9-07 as context)",
    "what": "measured collector / body currents and potentials, Hall I_d / V_d at consistency points, temperatures incl. H-1 poles and T_sink per run; the terminal currents are net signed currents (P1-IT-42) - the ion / electron particle-current split at the collector that Q_collector needs (P3-P1-01 / P3-P1-02) is not a P1 measurand and stays TBD_AFTER_EVIDENCE until registered",
    "units": "A; V; degC",
    "status": "TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; records only; ICP_COUPLED_THERMAL UNRESOLVED)",
@@ -4709,7 +4734,7 @@
     {
      "pair": "XL-17",
      "counterpart": "P3:P3-IF-N01",
-     "counterpart_path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "counterpart_path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "quantity": "P1 measured records for the coupled thermal model: collector current and potential (P1-M-10, P1-M-11, P1-M-27), ICP body current (P1-M-12), Hall I_d / V_d at consistency points (P1-M-14), module and H-1 pole temperatures and T_sink per run (P1-M-21) -> P3-P1-01, P3-P1-02, P3-P1-03, P3-P1-07, P3-P1-08",
      "units": "A; V; degC",
      "status": "TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; records only; ICP_COUPLED_THERMAL UNRESOLVED)"
@@ -4945,25 +4970,25 @@
   {
    "id": "IF-P1-34",
    "direction": "to",
-   "counterpart": "P3 docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json P3-IF-N02",
-   "what": "conditional P1-M-30 sheath-edge plasma potential / T_e for Q_collector, or the calorimetric alternative (P3Q-01)",
+   "counterpart": "P3 docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json P3-IF-N02",
+   "what": "P1-M-30 Langmuir-probe plasma potential / T_e near the collector as the sheath-model cross-check of the primary calorimetric Q_collector (A9.8 P3Q-01 option C)",
    "units": "V; eV",
-   "status": "TBD_OWNER (P3Q-01 OPEN; registration at P1-G0)",
+   "status": "OWNER_DECIDED (A9.8 P3Q-01 option C: calorimetry primary, Langmuir probe cross-check); probe position / calibration registered at P1-G0; readings TBD_AFTER_EVIDENCE",
    "xref": [
     {
      "pair": "XL-18",
      "counterpart": "P3:P3-IF-N02",
-     "counterpart_path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
-     "quantity": "plasma potential and electron temperature at the collector sheath edge (conditional P1 measurement P1-M-30) or an accepted calorimetric alternative -> P3-P1-04, P3-P1-05",
+     "counterpart_path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
+     "quantity": "plasma potential and electron temperature near the collector from the Langmuir probe P1-M-30 (required Ar P1 development diagnostic, matched diagnostic runs; sheath-model cross-check) beside the calorimetric collector energy balance (primary Q_collector evidence) -> P3-P1-04, P3-P1-05",
      "units": "V; eV",
-     "status": "TBD_OWNER (P3Q-01 OPEN; registration at P1-G0)"
+     "status": "OWNER_DECIDED (A9.8 P3Q-01 option C: calorimetry primary, Langmuir probe cross-check); probe position / calibration registered at P1-G0; readings TBD_AFTER_EVIDENCE"
     }
    ]
   },
   {
    "id": "IF-P1-35",
    "direction": "from",
-   "counterpart": "P3 docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json P3-IF-S05",
+   "counterpart": "P3 docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json P3-IF-S05",
    "what": "verification temperature set of the coupled thermal model (P1-M-21 channel list)",
    "units": "degC",
    "status": "DEFINED (channel list); readings TBD_AFTER_EVIDENCE; never a thermal PASS",
@@ -4971,7 +4996,7 @@
     {
      "pair": "XL-21",
      "counterpart": "P3:P3-IF-S05",
-     "counterpart_path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "counterpart_path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "quantity": "verification temperature set of the coupled model (P3-P1-07 -> P1-M-21 channels: antenna, dielectric, collector, match, H-1 inner / outer pole, sink)",
      "units": "degC",
      "status": "DEFINED (channel list); readings TBD_AFTER_EVIDENCE; never a thermal PASS"
@@ -4982,17 +5007,17 @@
    "id": "IF-P1-36",
    "direction": "to",
    "counterpart": "P4 docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json ID-06",
-   "what": "measured collector bias / current and the conditional sheath-edge plasma potential for the P4 collector ion energy",
+   "what": "measured collector bias / current and the P1-M-30 Langmuir-probe plasma potential near the collector for the P4 collector ion energy (A9.8 P3Q-01)",
    "units": "V; A",
-   "status": "TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; sheath energy additionally TBD_OWNER P3Q-01)",
+   "status": "TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; sheath energy from the P1-M-30 Langmuir probe, A9.8 P3Q-01 option C cross-check)",
    "xref": [
     {
      "pair": "XL-25",
      "counterpart": "P4:ID-06",
      "counterpart_path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
-     "quantity": "measured collector bias and current (P1-M-10, P1-M-11, P1-M-27) and the conditional sheath-edge plasma potential (P1-M-30) for the collector ion energy (P4 IT-19, CR-04)",
+     "quantity": "measured collector bias and current (P1-M-10, P1-M-11, P1-M-27) and the Langmuir-probe plasma potential near the collector (P1-M-30, A9.8 P3Q-01) for the collector ion energy (P4 IT-19, CR-04)",
      "units": "V; A",
-     "status": "TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; sheath energy additionally TBD_OWNER P3Q-01)"
+     "status": "TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; sheath energy from the P1-M-30 Langmuir probe, A9.8 P3Q-01 option C cross-check)"
     }
    ]
   },
@@ -5558,6 +5583,20 @@
    ]
   },
   {
+   "id": "A9.8 P3Q-01",
+   "kind": "owner decision (A9.16 step 1)",
+   "how_applied": "APPLIED (C_BOTH_CALORIMETRY_PRIMARY): P1-M-30 is a REQUIRED Ar P1 development diagnostic: Langmuir probe near the collector (T_e, plasma potential) as the independent sheath-model cross-check of the calorimetric collector energy balance, which stays the primary Q_collector evidence; probe data in matched diagnostic runs; a probe present in an ICP45_CAPACITY record without registered evidence that its perturbation is negligible (or an undeclared probe state) excludes that capacity point; pairs XL-18 (P3) / XL-25 (P4) re-stated on both sides (A9.16 repair F2) [decision docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json sha256 e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f, S1.7 P3Q-01; verbatim docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+   "decision_json_sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+   "question_id": "P3Q-01",
+   "sequenced_no": "S1.7",
+   "owner_answer": "C_BOTH_CALORIMETRY_PRIMARY",
+   "implemented_in": "build_p1_icp_bench.measurements (P1-M-30), XL_PAIRS XL-18 / XL-25; p1_reducer.capacity_structural_reasons (PROBE_PRESENT_KEY / PROBE_EVIDENCE_KEY)",
+   "tests": [
+    "test_p1_a9_16_f2_langmuir_probe_required_and_capacity_exclusion"
+   ]
+  },
+  {
    "id": "A9.10 P1Q-08",
    "kind": "owner decision (A9.16 step 1)",
    "how_applied": "APPLIED (YES): P1-S0..S5 = HI-ENG / HI-S1A; the P1-S6 topology-control sequence must name the signed HI-HOLDOUT-A record (hi_holdout_a_id) - required immediately before the first Hall-on reading, not earlier [decision docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544, S3.6 P1Q-08; verbatim docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md]",
@@ -5574,7 +5613,7 @@
   {
    "id": "A9.10 P1Q-19",
    "kind": "owner decision (A9.16 step 1)",
-   "how_applied": "APPLIED (REQUIRE_REGISTERED_GE_CHANNEL): u_I_e,registered < u(I_e,cap)_channels -> ICP-45 status NOT_EVALUATED_REGISTRATION (registration inadmissible, never silently replaced by the larger value); the other alternative is still computed for transparency only [decision docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544, S3.7 P1Q-19; verbatim docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md]",
+   "how_applied": "APPLIED (REQUIRE_REGISTERED_GE_CHANNEL): u_I_e,registered < u(I_e,cap)_channels -> ICP-45 status NOT_EVALUATED_REGISTRATION (registration inadmissible, never silently replaced by the larger value); the rejected alternative is listed as NOT_OWNER_SELECTED_INFORMATIONAL with no margin and no condition_met (never evaluated; A9.16 repair F9) [decision docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544, S3.7 P1Q-19; verbatim docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md]",
    "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
    "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
    "question_id": "P1Q-19",
@@ -5725,7 +5764,415 @@
    "tests": []
   }
  ],
- "open_owner_questions": [],
+ "open_owner_questions": [
+  {
+   "id": "P1Q-01",
+   "question": "Freeze the 'stable ICP operating region' criteria for the P1 -> P2 handoff: minimum dwell duration, maximum relative drift of I_e and P_refl (and Z where measured) over the dwell, maximum step/std (mode jump), minimum ignition success fraction?",
+   "proposed_answer": "owner call on the values; PROPOSED form as implemented by p1_reducer.classify_stable_region; values set after the first P1-S5 dwells are seen, before the P2 map",
+   "needed_by": "P1-G5"
+  },
+  {
+   "id": "P1Q-02",
+   "question": "Register the Hall start-attempt limits for OQ-VI-05 step 4 (maximum applied V_d, supply current limit, maximum attempt duration, number of attempts)?",
+   "proposed_answer": "owner call; PROPOSED: inside the H2-4 laboratory supply rating (current limit not above the 8.33 A stand ceiling) with values registered before P1-S6",
+   "needed_by": "P1-S6 entry"
+  },
+  {
+   "id": "P1Q-03",
+   "question": "Register the definition of a 'sustained Hall discharge' used in OQ-VI-05 steps 5 and 7 (current level above the recorded noise floor and minimum duration)?",
+   "proposed_answer": "owner call; PROPOSED form: I_d above the RF-on/plasma-off pickup floor of P1-M-22 for a registered minimum duration",
+   "needed_by": "P1-S6 entry"
+  },
+  {
+   "id": "P1Q-04",
+   "question": "Apply the A9.1 UBQ-06 abort rule (validated continuous-use limit - 50 K) also to the non-scoring P1 operation?",
+   "proposed_answer": "YES (protects the development hardware; costs no evidence)",
+   "needed_by": "P1-G0"
+  },
+  {
+   "id": "P1Q-05",
+   "question": "Minimum number of independent re-ignitions per surface point used for the P2 handoff?",
+   "proposed_answer": "owner call; PROPOSED at least 3 (analogy to HIQ-02 only)",
+   "needed_by": "P1-S5"
+  },
+  {
+   "id": "P1Q-06",
+   "question": "H-1 magnet state during the ICP-only stages P1-S3..S5: OFF only, or OFF plus the registered H-1 setting(s) (the fringe field in the ICP volume is not yet known, IDA7-17)?",
+   "proposed_answer": "both, as factor F6",
+   "needed_by": "P1-S3"
+  },
+  {
+   "id": "P1Q-07",
+   "question": "Which campaign produces the registered I_d,max,H1 (A9.3 OQ-A907-02) - H-1 with C1 (hall_c1_reference) in HI-AR, or another registered H-1 operation - and at which gate is it registered?",
+   "proposed_answer": "owner call; P1-S7 stays BLOCKED (surface only) until it exists",
+   "needed_by": "P1-S7 entry"
+  },
+  {
+   "id": "P1Q-08",
+   "question": "Do P1-S0..S5 (ICP only, Ar through the H-1 gas path, Hall discharge OFF) belong to the HI-ENG / HI-S1A module-bench envelope, so that HI-HOLDOUT-A is required only from P1-S6 on?",
+   "proposed_answer": "YES (no Hall-on reading occurs before P1-S6; A9.1 HIQ-04 binds the first Hall-on reading)",
+   "needed_by": "P1-S3"
+  },
+  {
+   "id": "P1Q-09",
+   "question": "A9.4 P1Q-10 fixes the dedicated, isolated, instrumented electron-collecting electrode (option A) for ICP45_CAPACITY records. Still open: its geometry / position, the V_collector reference and instrumented terminals (P1-IT-36), and whether option (B), the grounded chamber wall, may still be used for non-capacity ENGINEERING_SURFACE records in P1-S4?",
+   "proposed_answer": "ICP ion collector biased negative w.r.t. the target, V_collector referenced to the target, all terminals (collector_supply, icp_body, facility_ground, electron_collector, h1_body, hall_anode) metered or declared; (B) not used (one topology for surface and capacity keeps the records comparable); geometry and position owner call at P1-G0",
+   "needed_by": "P1-G0"
+  },
+  {
+   "id": "P1Q-11",
+   "question": "Pressure-match tolerance for RF-ON / RF-OFF facility-electron pairs (P1-IT-37)?",
+   "proposed_answer": "owner call; value set from the S2/S3 gauge repeatability before the first P1-S4 pair",
+   "needed_by": "P1-G0"
+  },
+  {
+   "id": "P1Q-12",
+   "question": "Define the ICP module connector / harness interface at IP-NEU in an ICD revision so an ICP_ORIFICED_VARIANT can reuse it (not an ICD v1 item)?",
+   "proposed_answer": "YES, in the LOCK-1 module drawings; P1 builds to a documented interim harness",
+   "needed_by": "LOCK-1"
+  },
+  {
+   "id": "P1Q-17",
+   "question": "Register the later acceptance / reverification level and procedure for the ICP body / collector insulation (A9.4 P1Q-14: 'an appropriately lower controlled level/procedure'; P1-IT-45)?",
+   "proposed_answer": "owner call; PROPOSED: a controlled DC level of about 2 x the 350 V nominal class, per the owner-stated ECSS guidance quoted in A9.4 (standard and clause not identified - verify), with the procedure frozen before any reverification",
+   "needed_by": "before any reverification after the initial DWV"
+  },
+  {
+   "id": "P1Q-18",
+   "question": "A9.5 P1Q-15 applies the instrument-adequacy rule (3 u_R > 0.02 |I_e,collector| -> NOT_EVALUATED_INSTRUMENT) 'at a candidate qualification point'. Recorder reading implemented: it is tested on the RF-ON ICP45_CAPACITY record (the candidate point); the matched RF-OFF record, whose collector current is the facility/background term and may be near zero, is tested only with the statistical and fractional closure using the I_scale,min floor; a fractional-only failure of the RF-OFF record that its instrument cannot resolve (3 u_R > 0.02 max(|I_e,collector|, I_scale,min)) is NOT_EVALUATED_INSTRUMENT, not an exclusion (consolidated verification MET-03). Confirm?",
+   "proposed_answer": "YES (otherwise every RF-OFF record with I_e,collector ~ 0 would be NOT_EVALUATED_INSTRUMENT by construction, which the I_scale,min floor exists to avoid)",
+   "needed_by": "before the first ICP45_CAPACITY record (P1-G0)"
+  },
+  {
+   "id": "P1Q-19",
+   "status": "TBD_OWNER",
+   "question": "(Remaining genuine choice; the 'zero = not available' part and the rule that a registered u_I_e_A below the GUM channel propagation is never used as it stands are now DERIVED, see derived_resolutions.) When the registered u_I_e_A is below the channel-propagated u(I_e,cap)_channels, should the preregistration be REQUIRE_REGISTERED_GE_CHANNEL (registration inadmissible -> NOT_EVALUATED) or USE_LARGER_OF_REGISTERED_AND_CHANNEL? Both are computed side by side (P1-D-19); ICP45 = NOT_EVALUATED while they disagree.",
+   "proposed_answer": "owner call; PROPOSED: REQUIRE_REGISTERED_GE_CHANNEL (the preregistration then carries a self-consistent value, frozen before the first P1-S7 point)",
+   "needed_by": "P1-S7 entry"
+  },
+  {
+   "id": "P1Q-20",
+   "status": "TBD_OWNER",
+   "question": "A9.5 states I_anode ~ 0 'by construction'. The reducer gives every OPEN_CIRCUIT_BY_CONSTRUCTION terminal (floating anode, open ICP body) I = 0 and u = 0. Should the insulation leakage recorded in the P1-S0 isolation / DWV test (P1-IT-44) be entered as a registered u(I_anode) instead of 0?",
+   "proposed_answer": "owner call; PROPOSED: YES when the recorded leakage at the operating potential is not negligible against u_R; register it as a u_zero_offset_A of the anode terminal",
+   "needed_by": "before the first ICP45_CAPACITY record (P1-G0)"
+  },
+  {
+   "id": "P1Q-24",
+   "status": "TBD_OWNER",
+   "question": "A two-port (small-signal S-parameter) line/match-loss characterization is now counted as verified in P1 only after an at-power loss-model verification in the P2 form (CAL-P2-09 calorimetric / CAL-P2-10 antenna simulator: |eta_meas - eta_pred| / u_c <= k), because the P1-S1 dummy-load coupler-vs-calorimeter cross-check tests the coupler, not the loss model (consolidated verification MET-02); without it P_delivered and C_e stay upper bounds. Register the coverage factor k of that check (never defaulted; the same k as the P2 loss verification, TBD_OWNER / LOCK-2), and confirm the fail-closed reading?",
+   "proposed_answer": "owner call on k; PROPOSED: one k for P1 and P2 frozen together (no value proposed here)",
+   "needed_by": "before the first P_RF_DELIVERED / C_e is reported from P1-S4"
+  }
+ ],
+ "open_owner_questions_note": "open_owner_questions is the record of the owner questions AS RAISED by this package (text and as-raised status unchanged; read back by the immutable owner-question state-v4 builder). Every one is answered by the owner decisions of 2026-10-01: owner_question_status_current carries the current status and the deciding decision per question; owner_questions_open_now lists the questions still open (none)",
+ "owner_question_status_current": [
+  {
+   "id": "P1Q-01",
+   "status_as_raised": "OPEN (as raised)",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.11 P1Q-01"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.11",
+     "question_id": "P1Q-01",
+     "sequenced_no": "S4.1",
+     "owner_answer": "FORM_FROZEN_VALUES_PREREGISTERED_BEFORE_P1_S5_HANDOFF",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_11_s4_p2_owner_decisions.json",
+     "decision_json_sha256": "d8baf59a5b92739698e29d893e89a30995559ee7167814c096dc24599679156c",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_11_S4_P2_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-02",
+   "status_as_raised": "OPEN (as raised)",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.10 P1Q-02"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.10",
+     "question_id": "P1Q-02",
+     "sequenced_no": "S3.1",
+     "owner_answer": "HARDWARE_DERIVED_LIMITS_BEFORE_P1_S6",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+     "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-03",
+   "status_as_raised": "OPEN (as raised)",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.10 P1Q-03"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.10",
+     "question_id": "P1Q-03",
+     "sequenced_no": "S3.2",
+     "owner_answer": "PREREGISTERED_CURRENT_AND_TIME_CRITERION",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+     "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-04",
+   "status_as_raised": "OPEN (as raised)",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.8 P1Q-04"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.8",
+     "question_id": "P1Q-04",
+     "sequenced_no": "S1.1",
+     "owner_answer": "YES",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+     "decision_json_sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-05",
+   "status_as_raised": "OPEN (as raised)",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.10 P1Q-05"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.10",
+     "question_id": "P1Q-05",
+     "sequenced_no": "S3.3",
+     "owner_answer": "MIN_3_INDEPENDENT_REIGNITIONS",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+     "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-06",
+   "status_as_raised": "OPEN (as raised)",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.10 P1Q-06"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.10",
+     "question_id": "P1Q-06",
+     "sequenced_no": "S3.4",
+     "owner_answer": "BOTH_AS_FACTOR_F6",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+     "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-07",
+   "status_as_raised": "OPEN (as raised)",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.10 P1Q-07"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.10",
+     "question_id": "P1Q-07",
+     "sequenced_no": "S3.5",
+     "owner_answer": "DEDICATED_H1_C1_CHARACTERIZATION",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+     "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-08",
+   "status_as_raised": "OPEN (as raised)",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.10 P1Q-08"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.10",
+     "question_id": "P1Q-08",
+     "sequenced_no": "S3.6",
+     "owner_answer": "YES",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+     "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-09",
+   "status_as_raised": "OPEN (as raised)",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.8 P1Q-09"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.8",
+     "question_id": "P1Q-09",
+     "sequenced_no": "S1.2",
+     "owner_answer": "DEDICATED_ISOLATED_TARGET_NO_CHAMBER_WALL",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+     "decision_json_sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-11",
+   "status_as_raised": "OPEN (as raised)",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.8 P1Q-11"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.8",
+     "question_id": "P1Q-11",
+     "sequenced_no": "S1.3",
+     "owner_answer": "DERIVE_FROM_INSTALLED_GAUGE",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+     "decision_json_sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-12",
+   "status_as_raised": "OPEN (as raised)",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.14 P1Q-12"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.14",
+     "question_id": "P1Q-12",
+     "sequenced_no": "S8.31",
+     "owner_answer": "YES_IP_NEU_LOCK1_ICD_INTERFACE",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-17",
+   "status_as_raised": "OPEN (as raised)",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.14 P1Q-17"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.14",
+     "question_id": "P1Q-17",
+     "sequenced_no": "S9.5",
+     "owner_answer": "REVERIFICATION_700V_DC_60S_TRIGGERED_ONLY",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-18",
+   "status_as_raised": "OPEN (as raised)",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.8 P1Q-18"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.8",
+     "question_id": "P1Q-18",
+     "sequenced_no": "S1.4",
+     "owner_answer": "CONFIRMED",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+     "decision_json_sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-19",
+   "status_as_raised": "TBD_OWNER",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.10 P1Q-19"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.10",
+     "question_id": "P1Q-19",
+     "sequenced_no": "S3.7",
+     "owner_answer": "REQUIRE_REGISTERED_GE_CHANNEL",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+     "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-20",
+   "status_as_raised": "TBD_OWNER",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.8 P1Q-20"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.8",
+     "question_id": "P1Q-20",
+     "sequenced_no": "S1.5",
+     "owner_answer": "YES",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+     "decision_json_sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-24",
+   "status_as_raised": "TBD_OWNER",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.10 P1Q-24"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.10",
+     "question_id": "P1Q-24",
+     "sequenced_no": "S3.8",
+     "owner_answer": "K_LOSS_2_FAIL_CLOSED_CONFIRMED",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+     "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md"
+    }
+   ]
+  }
+ ],
+ "owner_questions_open_now": [],
  "historical_reuse": [
   {
    "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",

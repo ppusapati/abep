@@ -127,6 +127,13 @@ RECORD_CLASSES_BY_HALL_STATE = {"OFF": (CAPACITY_LABEL, DIAGNOSTIC_LABEL, SURFAC
 CAPACITY_MONITORING_REQUIRED = ("h1_body_ground_config", "I_body_to_ground_continuous", "V_anode_channel",
                                 "V_icp_body_V", "V_electron_collector_V", "sign_convention_id",
                                 "unintended_ground_path_found", "ground_path_check_id")
+# A9.8 S1.7 P3Q-01 (option C; A9.16 repair F2): the Ar P1 development campaign carries a Langmuir probe near the collector
+# (P1-M-30, matched DIAGNOSTIC runs); a probe must not contaminate an ICP45_CAPACITY record unless its perturbation has
+# first been shown negligible. Every capacity record therefore declares capacity_monitoring.langmuir_probe_present
+# (true / false); true needs a registered probe_perturbation_negligible_evidence_id. Undeclared or unevidenced ->
+# EXCLUDED capacity point (kept with its reason), never silently admitted.
+PROBE_PRESENT_KEY = "langmuir_probe_present"
+PROBE_EVIDENCE_KEY = "probe_perturbation_negligible_evidence_id"
 H1_BODY_GROUND_CONFIG = "SINGLE_POINT_METERED_FACILITY_GROUND"
 V_ANODE_CHANNEL = "HIGH_IMPEDANCE_ISOLATED"
 CAPACITY_EXTRA_TERMINALS = ("h1_body",)     # I_body->ground (single metered return), measured continuously
@@ -816,6 +823,15 @@ def capacity_structural_reasons(rec):
         out.append("unintended ground path found or its check not recorded (capacity_monitoring."
                    "unintended_ground_path_found = %r, check %r; A9.5 P1Q-15 exclusion)"
                    % (cm.get("unintended_ground_path_found"), cm.get("ground_path_check_id")))
+    probe = cm.get(PROBE_PRESENT_KEY)
+    if not isinstance(probe, bool):
+        out.append("Langmuir-probe state not declared (capacity_monitoring.%s = %r must be true / false): a probe "
+                   "must not contaminate an ICP45 capacity record unless its perturbation is shown negligible "
+                   "(A9.8 P3Q-01)" % (PROBE_PRESENT_KEY, probe))
+    elif probe and not _ref_ok(cm.get(PROBE_EVIDENCE_KEY)):
+        out.append("Langmuir probe present during the ICP45 capacity record without registered evidence that its "
+                   "perturbation is negligible (capacity_monitoring.%s = %r; A9.8 P3Q-01: probe data belong to "
+                   "matched diagnostic runs)" % (PROBE_EVIDENCE_KEY, cm.get(PROBE_EVIDENCE_KEY)))
     return out
 
 
@@ -1938,34 +1954,37 @@ P1Q19_ALTERNATIVES = ("REQUIRE_REGISTERED_GE_CHANNEL", "USE_LARGER_OF_REGISTERED
 # OWNER A9.10 P1Q-19 (docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json decisions.P1Q-19):
 # REQUIRE_REGISTERED_GE_CHANNEL - u_I_e,registered >= u(I_e,cap)_channels before the first P1-S7 point, else the ICP-45
 # evaluation is NOT_EVALUATED_REGISTRATION; never silently replaced by the larger value during evaluation. The other
-# alternative is still computed for transparency only (never decides a status).
+# alternative (USE_LARGER_OF_REGISTERED_AND_CHANNEL) is NOT owner-selected: it is listed by name only, with no margin
+# and no condition_met, so that no evaluated larger-value margin can be read as a result (A9.16 repair F9).
 P1Q19_OWNER_SELECTED = P1Q19_ALTERNATIVES[0]
+P1Q19_NOT_SELECTED_STATUS = "NOT_OWNER_SELECTED_INFORMATIONAL"
 
 
 def _p1q19_alternatives(best, idm, k, ue, ud):
-    """P1Q-19 (TBD_OWNER part): both admissible treatments of a registered u_I_e_A are carried side by side.
-    DERIVED part: a registered u(I_e,cap) below the GUM propagation of its own channel uncertainties (JCGM 100:2008
-    5.1.2 / 5.2.2) is never used as it stands. Alternative A (REQUIRE_REGISTERED_GE_CHANNEL): the registration is
-    inadmissible -> NOT_EVALUATED; alternative B (USE_LARGER_OF_REGISTERED_AND_CHANNEL): M_n with the larger value.
-    When registered >= channel both alternatives are identical."""
+    """P1Q-19, OWNER_DECIDED by A9.10 S3.7: REQUIRE_REGISTERED_GE_CHANNEL. DERIVED part: a registered u(I_e,cap) below
+    the GUM propagation of its own channel uncertainties (JCGM 100:2008 5.1.2 / 5.2.2) is never used as it stands.
+    The owner-selected treatment: registered >= channel -> the registration is admissible and M_n uses it
+    (EVALUABLE); registered < channel -> the registration is inadmissible, NOT_EVALUATED_REGISTRATION, no M_n. The
+    rejected alternative USE_LARGER_OF_REGISTERED_AND_CHANNEL is never evaluated: it is reported as
+    NOT_OWNER_SELECTED_INFORMATIONAL without a margin or a condition_met (the owner: 'Do not silently replace it during
+    evaluation with the larger value')."""
     u_ch = best["u_I_e_cap_from_channels_A"]
     i_cap = best["I_e_cap_A"]
+    rejected = {"status": P1Q19_NOT_SELECTED_STATUS,
+                "note": "rejected by the owner (A9.10 P1Q-19 S3.7); never evaluated, never decides a status"}
+    common = {"u_registered_A": ue, "u_channels_A": u_ch, "u_channels_basis": best["u_I_e_cap_from_channels_basis"],
+              "owner_selected": P1Q19_OWNER_SELECTED}
     if ue >= u_ch:
         m = icp45a_margin(i_cap, idm, k, ue, ud)
         alt = {"u_I_e_cap_A": ue, "status": "EVALUABLE", "condition_met": bool(m["M_n_lower"] > 0.0)}
         alt.update(m)
-        return {"agree": True, "u_registered_A": ue, "u_channels_A": u_ch,
-                "u_channels_basis": best["u_I_e_cap_from_channels_basis"],
-                P1Q19_ALTERNATIVES[0]: dict(alt), P1Q19_ALTERNATIVES[1]: dict(alt)}
-    m_b = icp45a_margin(i_cap, idm, k, u_ch, ud)
-    alt_b = {"u_I_e_cap_A": u_ch, "status": "EVALUABLE", "condition_met": bool(m_b["M_n_lower"] > 0.0)}
-    alt_b.update(m_b)
-    alt_a = {"u_I_e_cap_A": None, "status": "NOT_EVALUATED", "condition_met": None,
-             "reason": "registered u_I_e_A = %.6g A < channel propagation %.6g A: registration inadmissible under "
-                       "this alternative" % (ue, u_ch)}
-    return {"agree": False, "u_registered_A": ue, "u_channels_A": u_ch,
-            "u_channels_basis": best["u_I_e_cap_from_channels_basis"],
-            P1Q19_ALTERNATIVES[0]: alt_a, P1Q19_ALTERNATIVES[1]: alt_b}
+        return dict(common, registration_admissible=True, **{P1Q19_ALTERNATIVES[0]: alt,
+                                                             P1Q19_ALTERNATIVES[1]: rejected})
+    alt_a = {"u_I_e_cap_A": None, "status": "NOT_EVALUATED_REGISTRATION", "condition_met": None,
+             "reason": "registered u_I_e_A = %.6g A < channel propagation %.6g A: registration inadmissible (owner "
+                       "A9.10 P1Q-19 REQUIRE_REGISTERED_GE_CHANNEL)" % (ue, u_ch)}
+    return dict(common, registration_admissible=False, **{P1Q19_ALTERNATIVES[0]: alt_a,
+                                                          P1Q19_ALTERNATIVES[1]: rejected})
 
 
 def icp45a_evaluate(records, registration=None, margin_rule=None, facility_checks=None, closure_rule=None):
@@ -1975,9 +1994,10 @@ def icp45a_evaluate(records, registration=None, margin_rule=None, facility_check
     uncertainties are available (u(I_k) of every channel; u_I_e_A and u_I_d_max_A of the margin rule, a zero value
     being no uncertainty statement - DERIVED P1Q-19 ext) and (4) I_d,max,H1 is registered from the H-1 envelope and
     measured behaviour (never the 8.33 A bench ceiling); until all four exist the status is exactly NOT_EVALUATED; never
-    PASS / FAIL. Per capacity point the outcome is one of POINT_OUTCOMES. The two admissible P1Q-19 treatments of a
-    registered u_I_e_A below the channel propagation are carried side by side; when they disagree the status is
-    NOT_EVALUATED (TBD_OWNER P1Q-19). Hall-ON records only feed the NEUTRALIZATION_CONSISTENCY list."""
+    PASS / FAIL. Per capacity point the outcome is one of POINT_OUTCOMES. A registered u_I_e_A below the channel
+    propagation makes the registration inadmissible: status NOT_EVALUATED_REGISTRATION (owner A9.10 P1Q-19
+    REQUIRE_REGISTERED_GE_CHANNEL; the larger value is never substituted). Hall-ON records only feed the
+    NEUTRALIZATION_CONSISTENCY list."""
     base = {"i_e_cap_definition": I_E_CAP_DEFINITION, "capacity_label": CAPACITY_LABEL,
             "consistency_label": CONSISTENCY_LABEL, "status_vocabulary": list(ICP45A_STATUSES),
             "point_outcome_vocabulary": list(POINT_OUTCOMES),
@@ -2039,12 +2059,11 @@ def icp45a_evaluate(records, registration=None, margin_rule=None, facility_check
     best = max(cands, key=lambda c: (c["I_e_cap_A"], c["record_id"]))
     i_cap = best["I_e_cap_A"]                       # signed; never clipped (A9.5 P1Q-16)
     alts = _p1q19_alternatives(best, idm, k, ue, ud)
-    alts["owner_selected"] = P1Q19_OWNER_SELECTED
     flags = []
     if i_cap < 0.0:
         flags.append("I_E_CAP_NEGATIVE: the RF-OFF (facility/background) collector current exceeds the RF-ON value; "
                      "reported signed, no absolute-value correction and no zero-clipping (A9.5 P1Q-16)")
-    if not alts["agree"]:
+    if not alts["registration_admissible"]:
         flags.append("REGISTERED_u_I_e_BELOW_CHANNEL_PROPAGATION: margin_rule.u_I_e_A = %.6g A < channel propagation "
                      "%.6g A (%s); owner A9.10 P1Q-19 REQUIRE_REGISTERED_GE_CHANNEL: the registration is inadmissible "
                      "and is never replaced by the larger value during evaluation"
@@ -2057,7 +2076,7 @@ def icp45a_evaluate(records, registration=None, margin_rule=None, facility_check
                  "p1q19_alternatives": alts,
                  "eligibility": dict(best["eligibility"], **{"3_required_margin_rule_uncertainties_available": True}),
                  "flags": flags})
-    if not alts["agree"]:
+    if not alts["registration_admissible"]:
         base.update({"status": "NOT_EVALUATED_REGISTRATION", "condition_met": None,
                      "reason": "owner A9.10 P1Q-19 REQUIRE_REGISTERED_GE_CHANNEL: the preregistered u_I_e_A = %.6g A is "
                                "below u(I_e,cap)_channels = %.6g A propagated from the calibrated channels under the "

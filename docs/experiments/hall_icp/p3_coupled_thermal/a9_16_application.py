@@ -1,6 +1,6 @@
 """A9.16 step 1 - owner decisions of 2026-10-01 applied to the P3 coupled-thermal package (lane P3 COUPLED THERMAL).
 
-Data + record module read by build_p3_coupled_thermal.py (deterministic; no I/O of its own). Each applied decision is
+Data + record module read by build_p3_coupled_thermal_v2.py (deterministic; no I/O of its own). Each applied decision is
 cited by its immutable decision file path, the sha256 of its machine-readable json and the question id; the VERBATIM
 .md of every decision was read in full and governs over the json 'summary' digest. The rules themselves are the pure
 functions of p3_a9_16_rules.py; every number the owner deferred to a later registration is a registration slot with a
@@ -186,11 +186,13 @@ OUT_OF_LANE = [
     ("docs/hardware/h2_a9_revisions/ (A9-07 uncoupled thermal rerun: bounding corners, search allowance / "
      "search_sensitive flag, mount-heat levers, provisional BN / ceramic-wire ratings, coating limit, environmental "
      "margin treatment)", ["OQ-A907-03", "OQ-A907-05", "OQ-A907-06", "OQ-A907-08", "OQ-A907-09", "OQ-A907-10"]),
-    ("docs/experiments/hall_icp/p1_icp_bench/build_p1_icp_bench.py (pair XL-18 status text 'TBD_OWNER (P3Q-01 OPEN; "
-     "registration at P1-G0)' and P1-M-30 'CONDITIONAL (TBD_OWNER P3Q-01)' - identical pair text on both sides, so "
-     "P3 keeps it until both sides are re-pinned together)", ["P3Q-01"]),
-    ("docs/experiments/hall_icp/p2_impedance_map/ (ICPQ-10 'not applied by this lane' in P2)", ["ICPQ-10"]),
-    ("docs/budgets/mass_power_a9_v2/ (OQ-A910-06 recorded OPEN)", ["OQ-A910-06"]),
+    ("docs/experiments/hall_icp/p1_icp_bench/build_p1_icp_bench.py (pair XL-18 and P1-M-30 re-stated together with "
+     "P3 by the A9.16 repair lane, F2: Langmuir probe REQUIRED for the Ar P1 campaign, calorimetry primary)",
+     ["P3Q-01"]),
+    ("docs/experiments/hall_icp/p2_impedance_map/ (ICPQ-10 applied by the A9.16 repair lane, F1: alternative A; "
+     "RC-HEAT references p3_a9_16_rules.icp43_total_module_bound)", ["ICPQ-10"]),
+    ("docs/budgets/mass_power_a9_v2/ (immutable v2 history keeps OQ-A910-06 OPEN; mass / power v3 and P2 record it "
+     "OWNER_DECIDED - A9.16 repair F5)", ["OQ-A910-06"]),
     ("docs/budgets/owner_decisions/owner_questions_state_v4.* (rows still TBD_OWNER)",
      ["P3Q-01", "P3Q-02", "ICPQ-10", "OQ-A907-03", "OQ-A907-05", "OQ-A907-06", "OQ-A907-08", "OQ-A907-09",
       "OQ-A907-10", "OQ-A910-06"]),

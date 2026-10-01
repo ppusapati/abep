@@ -25,7 +25,7 @@
   "No prices are recorded; no supplier is named, ranked or selected; catalogue data appear only as REFERENCE with the citation/URL and access record of the web track.",
   "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE: no configuration is a winner; no thrust, efficiency, discharge current, ICP electron current, impedance or plasma state is predicted. Never PASS: RF component ratings TBD_AFTER_IMPEDANCE_MAP; ICP_COUPLED_THERMAL UNRESOLVED; anode material OPEN; ICP electron-current capacity PENDING_ICP45 (ICP45 NOT_EVALUATED until I_d,max,H1 is registered).",
   "RFP-compliant propellant policy (A9.15): the official RFP governs propellant capability - the system supports both ambient atmospheric propellant (180-230 km) and Xenon propulsion capability with separate tanks/paths; Xe is an RFP-required system capability, not a C1 contingency; C1 Xe only if a selected C1 requires it, booked inside the system Xe architecture. The A9.1 ICP gas-mode baseline (G-REUSE primary) is unchanged.",
-  "A9.4 / A9.6: the owner / procurement may SEND the lines tagged P1_NEEDED for quotation (requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates). The H-1 build-to-print package is sent only with released H-1 drawings (A9.14 F5-OQ-04)."
+  "A9.4 / A9.6: the owner / procurement may SEND the lines tagged P1_NEEDED for quotation (requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates). The H-1 build-to-print package for the P1 article is sent only with the P9e configuration-controlled drawing set (drawing id, revision, content hash; A9.10 OQ-RFQV2-10); the LOCK-1 release (A9.14 F5-OQ-04) is the flight H-1 basis."
  ],
  "rfp_propellant_policy": {
   "decision": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
@@ -246,7 +246,7 @@
    "No prices are recorded; no supplier is named, ranked or selected; catalogue data appear only as REFERENCE with the citation/URL and access record of the web track.",
    "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE: no configuration is a winner; no thrust, efficiency, discharge current, ICP electron current, impedance or plasma state is predicted. Never PASS: RF component ratings TBD_AFTER_IMPEDANCE_MAP; ICP_COUPLED_THERMAL UNRESOLVED; anode material OPEN; ICP electron-current capacity PENDING_ICP45 (ICP45 NOT_EVALUATED until I_d,max,H1 is registered).",
    "RFP-compliant propellant policy (A9.15): the official RFP governs propellant capability - the system supports both ambient atmospheric propellant (180-230 km) and Xenon propulsion capability with separate tanks/paths; Xe is an RFP-required system capability, not a C1 contingency; C1 Xe only if a selected C1 requires it, booked inside the system Xe architecture. The A9.1 ICP gas-mode baseline (G-REUSE primary) is unchanged.",
-   "A9.4 / A9.6: the owner / procurement may SEND the lines tagged P1_NEEDED for quotation (requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates). The H-1 build-to-print package is sent only with released H-1 drawings (A9.14 F5-OQ-04)."
+   "A9.4 / A9.6: the owner / procurement may SEND the lines tagged P1_NEEDED for quotation (requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates). The H-1 build-to-print package for the P1 article is sent only with the P9e configuration-controlled drawing set (drawing id, revision, content hash; A9.10 OQ-RFQV2-10); the LOCK-1 release (A9.14 F5-OQ-04) is the flight H-1 basis."
   ],
   "items": [
    {
@@ -991,7 +991,7 @@
     "No prices are recorded; no supplier is named, ranked or selected; catalogue data appear only as REFERENCE with the citation/URL and access record of the web track.",
     "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE: no configuration is a winner; no thrust, efficiency, discharge current, ICP electron current, impedance or plasma state is predicted. Never PASS: RF component ratings TBD_AFTER_IMPEDANCE_MAP; ICP_COUPLED_THERMAL UNRESOLVED; anode material OPEN; ICP electron-current capacity PENDING_ICP45 (ICP45 NOT_EVALUATED until I_d,max,H1 is registered).",
     "RFP-compliant propellant policy (A9.15): the official RFP governs propellant capability - the system supports both ambient atmospheric propellant (180-230 km) and Xenon propulsion capability with separate tanks/paths; Xe is an RFP-required system capability, not a C1 contingency; C1 Xe only if a selected C1 requires it, booked inside the system Xe architecture. The A9.1 ICP gas-mode baseline (G-REUSE primary) is unchanged.",
-    "A9.4 / A9.6: the owner / procurement may SEND the lines tagged P1_NEEDED for quotation (requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates). The H-1 build-to-print package is sent only with released H-1 drawings (A9.14 F5-OQ-04)."
+    "A9.4 / A9.6: the owner / procurement may SEND the lines tagged P1_NEEDED for quotation (requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates). The H-1 build-to-print package for the P1 article is sent only with the P9e configuration-controlled drawing set (drawing id, revision, content hash; A9.10 OQ-RFQV2-10); the LOCK-1 release (A9.14 F5-OQ-04) is the flight H-1 basis."
    ],
    "line_items": [
     {
@@ -4328,7 +4328,7 @@
     "No prices are recorded; no supplier is named, ranked or selected; catalogue data appear only as REFERENCE with the citation/URL and access record of the web track.",
     "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE: no configuration is a winner; no thrust, efficiency, discharge current, ICP electron current, impedance or plasma state is predicted. Never PASS: RF component ratings TBD_AFTER_IMPEDANCE_MAP; ICP_COUPLED_THERMAL UNRESOLVED; anode material OPEN; ICP electron-current capacity PENDING_ICP45 (ICP45 NOT_EVALUATED until I_d,max,H1 is registered).",
     "RFP-compliant propellant policy (A9.15): the official RFP governs propellant capability - the system supports both ambient atmospheric propellant (180-230 km) and Xenon propulsion capability with separate tanks/paths; Xe is an RFP-required system capability, not a C1 contingency; C1 Xe only if a selected C1 requires it, booked inside the system Xe architecture. The A9.1 ICP gas-mode baseline (G-REUSE primary) is unchanged.",
-    "A9.4 / A9.6: the owner / procurement may SEND the lines tagged P1_NEEDED for quotation (requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates). The H-1 build-to-print package is sent only with released H-1 drawings (A9.14 F5-OQ-04)."
+    "A9.4 / A9.6: the owner / procurement may SEND the lines tagged P1_NEEDED for quotation (requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates). The H-1 build-to-print package for the P1 article is sent only with the P9e configuration-controlled drawing set (drawing id, revision, content hash; A9.10 OQ-RFQV2-10); the LOCK-1 release (A9.14 F5-OQ-04) is the flight H-1 basis."
    ],
    "line_items": [
     {
@@ -10038,7 +10038,7 @@
     "No prices are recorded; no supplier is named, ranked or selected; catalogue data appear only as REFERENCE with the citation/URL and access record of the web track.",
     "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE: no configuration is a winner; no thrust, efficiency, discharge current, ICP electron current, impedance or plasma state is predicted. Never PASS: RF component ratings TBD_AFTER_IMPEDANCE_MAP; ICP_COUPLED_THERMAL UNRESOLVED; anode material OPEN; ICP electron-current capacity PENDING_ICP45 (ICP45 NOT_EVALUATED until I_d,max,H1 is registered).",
     "RFP-compliant propellant policy (A9.15): the official RFP governs propellant capability - the system supports both ambient atmospheric propellant (180-230 km) and Xenon propulsion capability with separate tanks/paths; Xe is an RFP-required system capability, not a C1 contingency; C1 Xe only if a selected C1 requires it, booked inside the system Xe architecture. The A9.1 ICP gas-mode baseline (G-REUSE primary) is unchanged.",
-    "A9.4 / A9.6: the owner / procurement may SEND the lines tagged P1_NEEDED for quotation (requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates). The H-1 build-to-print package is sent only with released H-1 drawings (A9.14 F5-OQ-04)."
+    "A9.4 / A9.6: the owner / procurement may SEND the lines tagged P1_NEEDED for quotation (requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates). The H-1 build-to-print package for the P1 article is sent only with the P9e configuration-controlled drawing set (drawing id, revision, content hash; A9.10 OQ-RFQV2-10); the LOCK-1 release (A9.14 F5-OQ-04) is the flight H-1 basis."
    ],
    "line_items": [
     {
@@ -12310,7 +12310,7 @@
     "No prices are recorded; no supplier is named, ranked or selected; catalogue data appear only as REFERENCE with the citation/URL and access record of the web track.",
     "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE: no configuration is a winner; no thrust, efficiency, discharge current, ICP electron current, impedance or plasma state is predicted. Never PASS: RF component ratings TBD_AFTER_IMPEDANCE_MAP; ICP_COUPLED_THERMAL UNRESOLVED; anode material OPEN; ICP electron-current capacity PENDING_ICP45 (ICP45 NOT_EVALUATED until I_d,max,H1 is registered).",
     "RFP-compliant propellant policy (A9.15): the official RFP governs propellant capability - the system supports both ambient atmospheric propellant (180-230 km) and Xenon propulsion capability with separate tanks/paths; Xe is an RFP-required system capability, not a C1 contingency; C1 Xe only if a selected C1 requires it, booked inside the system Xe architecture. The A9.1 ICP gas-mode baseline (G-REUSE primary) is unchanged.",
-    "A9.4 / A9.6: the owner / procurement may SEND the lines tagged P1_NEEDED for quotation (requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates). The H-1 build-to-print package is sent only with released H-1 drawings (A9.14 F5-OQ-04)."
+    "A9.4 / A9.6: the owner / procurement may SEND the lines tagged P1_NEEDED for quotation (requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates). The H-1 build-to-print package for the P1 article is sent only with the P9e configuration-controlled drawing set (drawing id, revision, content hash; A9.10 OQ-RFQV2-10); the LOCK-1 release (A9.14 F5-OQ-04) is the flight H-1 basis."
    ],
    "line_items": [
     {
@@ -17724,7 +17724,7 @@
     "No prices are recorded; no supplier is named, ranked or selected; catalogue data appear only as REFERENCE with the citation/URL and access record of the web track.",
     "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE: no configuration is a winner; no thrust, efficiency, discharge current, ICP electron current, impedance or plasma state is predicted. Never PASS: RF component ratings TBD_AFTER_IMPEDANCE_MAP; ICP_COUPLED_THERMAL UNRESOLVED; anode material OPEN; ICP electron-current capacity PENDING_ICP45 (ICP45 NOT_EVALUATED until I_d,max,H1 is registered).",
     "RFP-compliant propellant policy (A9.15): the official RFP governs propellant capability - the system supports both ambient atmospheric propellant (180-230 km) and Xenon propulsion capability with separate tanks/paths; Xe is an RFP-required system capability, not a C1 contingency; C1 Xe only if a selected C1 requires it, booked inside the system Xe architecture. The A9.1 ICP gas-mode baseline (G-REUSE primary) is unchanged.",
-    "A9.4 / A9.6: the owner / procurement may SEND the lines tagged P1_NEEDED for quotation (requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates). The H-1 build-to-print package is sent only with released H-1 drawings (A9.14 F5-OQ-04)."
+    "A9.4 / A9.6: the owner / procurement may SEND the lines tagged P1_NEEDED for quotation (requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates). The H-1 build-to-print package for the P1 article is sent only with the P9e configuration-controlled drawing set (drawing id, revision, content hash; A9.10 OQ-RFQV2-10); the LOCK-1 release (A9.14 F5-OQ-04) is the flight H-1 basis."
    ],
    "line_items": [
     {
@@ -19534,7 +19534,7 @@
     "No prices are recorded; no supplier is named, ranked or selected; catalogue data appear only as REFERENCE with the citation/URL and access record of the web track.",
     "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE: no configuration is a winner; no thrust, efficiency, discharge current, ICP electron current, impedance or plasma state is predicted. Never PASS: RF component ratings TBD_AFTER_IMPEDANCE_MAP; ICP_COUPLED_THERMAL UNRESOLVED; anode material OPEN; ICP electron-current capacity PENDING_ICP45 (ICP45 NOT_EVALUATED until I_d,max,H1 is registered).",
     "RFP-compliant propellant policy (A9.15): the official RFP governs propellant capability - the system supports both ambient atmospheric propellant (180-230 km) and Xenon propulsion capability with separate tanks/paths; Xe is an RFP-required system capability, not a C1 contingency; C1 Xe only if a selected C1 requires it, booked inside the system Xe architecture. The A9.1 ICP gas-mode baseline (G-REUSE primary) is unchanged.",
-    "A9.4 / A9.6: the owner / procurement may SEND the lines tagged P1_NEEDED for quotation (requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates). The H-1 build-to-print package is sent only with released H-1 drawings (A9.14 F5-OQ-04)."
+    "A9.4 / A9.6: the owner / procurement may SEND the lines tagged P1_NEEDED for quotation (requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates). The H-1 build-to-print package for the P1 article is sent only with the P9e configuration-controlled drawing set (drawing id, revision, content hash; A9.10 OQ-RFQV2-10); the LOCK-1 release (A9.14 F5-OQ-04) is the flight H-1 basis."
    ],
    "line_items": [
     {
@@ -24308,7 +24308,7 @@
     "No prices are recorded; no supplier is named, ranked or selected; catalogue data appear only as REFERENCE with the citation/URL and access record of the web track.",
     "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE: no configuration is a winner; no thrust, efficiency, discharge current, ICP electron current, impedance or plasma state is predicted. Never PASS: RF component ratings TBD_AFTER_IMPEDANCE_MAP; ICP_COUPLED_THERMAL UNRESOLVED; anode material OPEN; ICP electron-current capacity PENDING_ICP45 (ICP45 NOT_EVALUATED until I_d,max,H1 is registered).",
     "RFP-compliant propellant policy (A9.15): the official RFP governs propellant capability - the system supports both ambient atmospheric propellant (180-230 km) and Xenon propulsion capability with separate tanks/paths; Xe is an RFP-required system capability, not a C1 contingency; C1 Xe only if a selected C1 requires it, booked inside the system Xe architecture. The A9.1 ICP gas-mode baseline (G-REUSE primary) is unchanged.",
-    "A9.4 / A9.6: the owner / procurement may SEND the lines tagged P1_NEEDED for quotation (requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates). The H-1 build-to-print package is sent only with released H-1 drawings (A9.14 F5-OQ-04)."
+    "A9.4 / A9.6: the owner / procurement may SEND the lines tagged P1_NEEDED for quotation (requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates). The H-1 build-to-print package for the P1 article is sent only with the P9e configuration-controlled drawing set (drawing id, revision, content hash; A9.10 OQ-RFQV2-10); the LOCK-1 release (A9.14 F5-OQ-04) is the flight H-1 basis."
    ],
    "package_file": "docs/procurement/rfq_a9_v3/packages/RFQ3-07_rf_metrology.md",
    "owner_minimum_scope_verbatim": [
@@ -24381,7 +24381,7 @@
     {
      "id": "H1-L01",
      "item": "Hall channel / body components (build-to-print)",
-     "qty": "TBD - requires the released H-1 drawing set (RFQ3-H1FAB-N02)",
+     "qty": "TBD - per the controlled P1 engineering drawing set (RFQ3-H1FAB-N02)",
      "basis": "A9.10 OQ-RFQV2-10; H2-1 / H2-3",
      "dispatch": "P1_NEEDED",
      "option_line": false,
@@ -24447,15 +24447,18 @@
        {
         "requirement": "RFQ3-H1FAB-N02",
         "v1_id": null,
-        "title": "released H-1 drawing set (send precondition)",
+        "title": "controlled H-1 drawing set of the P1 engineering article (send precondition)",
         "value": {
-         "drawing_id": "TBD - requires the H-1 release (F5 ENGINEERING_FREEZE_CANDIDATE -> LOCK-1)",
+         "drawing_id": "TBD - registered from the P9e configuration-controlled P1 engineering drawing set",
          "revision": "TBD",
          "content_sha256": "TBD",
-         "open_items": "explicit release blockers"
+         "configuration_control": "P9E_CONFIGURATION_CONTROLLED",
+         "open_items": "blockers for the quoted parts",
+         "flight_h1_release_basis": "LOCK-1 release (drawing id, revision, content hash; every OPEN / TBD item an explicit blocker; A9.14 F5-OQ-04) - the flight H-1 only",
+         "reading": "A9.16 repair F4 recorder reading for the owner to confirm: A9.10 S3.10 creates the package for 'the H2-1/H2-3 hardware required for the P1 article' and keeps configuration control in-house; it sets no LOCK-1 gate, so a LOCK-1 release is not required to quote the P1 engineering article"
         },
         "units": "-",
-        "freeze_point": "LOCK-1",
+        "freeze_point": "P1-G0",
         "status": "TBD"
        },
        {
@@ -24463,7 +24466,7 @@
         "v1_id": null,
         "title": "materials, dimensional inspection and material certification",
         "value": {
-         "material": "per released drawing",
+         "material": "per controlled drawing",
          "anode_material": "OPEN (A9.2); 316L REJECTED_AS_CURRENT_BASELINE",
          "certificates": "per part / heat lot",
          "inspection": "dimensional report vs drawing tolerances",
@@ -24474,9 +24477,9 @@
         "status": "OWNER_GIVEN"
        }
       ],
-      "freeze_gate": "LOCK-1",
+      "freeze_gate": "P1-G0",
       "acceptance": [
-       "incoming inspection in-house against the released drawing (dimensions, material certificate, visual); acceptance testing of the assembled H-1 stays in-house"
+       "incoming inspection in-house against the controlled drawing (dimensions, material certificate, visual); acceptance testing of the assembled H-1 stays in-house"
       ],
       "calibration_traceability": [
        "supplier inspection instruments calibrated (certificate reference on the inspection report)"
@@ -24484,13 +24487,13 @@
       "documentation": [
        "material certificates, dimensional inspection report, drawing id / revision / hash fabricated to, non-conformance reports"
       ],
-      "send_state": "SEND_ONLY_WITH_RELEASED_H1_DRAWINGS (drawing ID, revision, content hash; A9.14 F5-OQ-04); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
+      "send_state": "SEND_ONLY_WITH_CONTROLLED_H1_DRAWINGS (P1 engineering article: drawing ID, revision, content hash under P9e / Vyovrinda configuration control, A9.10 OQ-RFQV2-10; the LOCK-1 release of A9.14 F5-OQ-04 is the basis of the FLIGHT H-1, not a precondition for quoting P1 hardware); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
      }
     },
     {
      "id": "H1-L02",
-     "item": "anode and anode distributor / plenum (build-to-print; material per released drawing - anode material OPEN)",
-     "qty": "TBD - requires the released H-1 drawing set (RFQ3-H1FAB-N02)",
+     "item": "anode and anode distributor / plenum (build-to-print; material per controlled drawing - anode material OPEN)",
+     "qty": "TBD - per the controlled P1 engineering drawing set (RFQ3-H1FAB-N02)",
      "basis": "A9.10 OQ-RFQV2-10; H2-1 / H2-3",
      "dispatch": "P1_NEEDED",
      "option_line": false,
@@ -24556,15 +24559,18 @@
        {
         "requirement": "RFQ3-H1FAB-N02",
         "v1_id": null,
-        "title": "released H-1 drawing set (send precondition)",
+        "title": "controlled H-1 drawing set of the P1 engineering article (send precondition)",
         "value": {
-         "drawing_id": "TBD - requires the H-1 release (F5 ENGINEERING_FREEZE_CANDIDATE -> LOCK-1)",
+         "drawing_id": "TBD - registered from the P9e configuration-controlled P1 engineering drawing set",
          "revision": "TBD",
          "content_sha256": "TBD",
-         "open_items": "explicit release blockers"
+         "configuration_control": "P9E_CONFIGURATION_CONTROLLED",
+         "open_items": "blockers for the quoted parts",
+         "flight_h1_release_basis": "LOCK-1 release (drawing id, revision, content hash; every OPEN / TBD item an explicit blocker; A9.14 F5-OQ-04) - the flight H-1 only",
+         "reading": "A9.16 repair F4 recorder reading for the owner to confirm: A9.10 S3.10 creates the package for 'the H2-1/H2-3 hardware required for the P1 article' and keeps configuration control in-house; it sets no LOCK-1 gate, so a LOCK-1 release is not required to quote the P1 engineering article"
         },
         "units": "-",
-        "freeze_point": "LOCK-1",
+        "freeze_point": "P1-G0",
         "status": "TBD"
        },
        {
@@ -24572,7 +24578,7 @@
         "v1_id": null,
         "title": "materials, dimensional inspection and material certification",
         "value": {
-         "material": "per released drawing",
+         "material": "per controlled drawing",
          "anode_material": "OPEN (A9.2); 316L REJECTED_AS_CURRENT_BASELINE",
          "certificates": "per part / heat lot",
          "inspection": "dimensional report vs drawing tolerances",
@@ -24583,9 +24589,9 @@
         "status": "OWNER_GIVEN"
        }
       ],
-      "freeze_gate": "LOCK-1",
+      "freeze_gate": "P1-G0",
       "acceptance": [
-       "incoming inspection in-house against the released drawing (dimensions, material certificate, visual); acceptance testing of the assembled H-1 stays in-house"
+       "incoming inspection in-house against the controlled drawing (dimensions, material certificate, visual); acceptance testing of the assembled H-1 stays in-house"
       ],
       "calibration_traceability": [
        "supplier inspection instruments calibrated (certificate reference on the inspection report)"
@@ -24593,13 +24599,13 @@
       "documentation": [
        "material certificates, dimensional inspection report, drawing id / revision / hash fabricated to, non-conformance reports"
       ],
-      "send_state": "SEND_ONLY_WITH_RELEASED_H1_DRAWINGS (drawing ID, revision, content hash; A9.14 F5-OQ-04); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
+      "send_state": "SEND_ONLY_WITH_CONTROLLED_H1_DRAWINGS (P1 engineering article: drawing ID, revision, content hash under P9e / Vyovrinda configuration control, A9.10 OQ-RFQV2-10; the LOCK-1 release of A9.14 F5-OQ-04 is the basis of the FLIGHT H-1, not a precondition for quoting P1 hardware); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
      }
     },
     {
      "id": "H1-L03",
      "item": "gas-path interfaces of the H-1 Ar feed to the anode plenum (fittings / ports per drawing; the anode gas isolator is GAS-L13)",
-     "qty": "TBD - requires the released H-1 drawing set (RFQ3-H1FAB-N02)",
+     "qty": "TBD - per the controlled P1 engineering drawing set (RFQ3-H1FAB-N02)",
      "basis": "A9.10 OQ-RFQV2-10; H2-1 / H2-3",
      "dispatch": "P1_NEEDED",
      "option_line": false,
@@ -24665,15 +24671,18 @@
        {
         "requirement": "RFQ3-H1FAB-N02",
         "v1_id": null,
-        "title": "released H-1 drawing set (send precondition)",
+        "title": "controlled H-1 drawing set of the P1 engineering article (send precondition)",
         "value": {
-         "drawing_id": "TBD - requires the H-1 release (F5 ENGINEERING_FREEZE_CANDIDATE -> LOCK-1)",
+         "drawing_id": "TBD - registered from the P9e configuration-controlled P1 engineering drawing set",
          "revision": "TBD",
          "content_sha256": "TBD",
-         "open_items": "explicit release blockers"
+         "configuration_control": "P9E_CONFIGURATION_CONTROLLED",
+         "open_items": "blockers for the quoted parts",
+         "flight_h1_release_basis": "LOCK-1 release (drawing id, revision, content hash; every OPEN / TBD item an explicit blocker; A9.14 F5-OQ-04) - the flight H-1 only",
+         "reading": "A9.16 repair F4 recorder reading for the owner to confirm: A9.10 S3.10 creates the package for 'the H2-1/H2-3 hardware required for the P1 article' and keeps configuration control in-house; it sets no LOCK-1 gate, so a LOCK-1 release is not required to quote the P1 engineering article"
         },
         "units": "-",
-        "freeze_point": "LOCK-1",
+        "freeze_point": "P1-G0",
         "status": "TBD"
        },
        {
@@ -24681,7 +24690,7 @@
         "v1_id": null,
         "title": "materials, dimensional inspection and material certification",
         "value": {
-         "material": "per released drawing",
+         "material": "per controlled drawing",
          "anode_material": "OPEN (A9.2); 316L REJECTED_AS_CURRENT_BASELINE",
          "certificates": "per part / heat lot",
          "inspection": "dimensional report vs drawing tolerances",
@@ -24692,9 +24701,9 @@
         "status": "OWNER_GIVEN"
        }
       ],
-      "freeze_gate": "LOCK-1",
+      "freeze_gate": "P1-G0",
       "acceptance": [
-       "incoming inspection in-house against the released drawing (dimensions, material certificate, visual); acceptance testing of the assembled H-1 stays in-house"
+       "incoming inspection in-house against the controlled drawing (dimensions, material certificate, visual); acceptance testing of the assembled H-1 stays in-house"
       ],
       "calibration_traceability": [
        "supplier inspection instruments calibrated (certificate reference on the inspection report)"
@@ -24702,13 +24711,13 @@
       "documentation": [
        "material certificates, dimensional inspection report, drawing id / revision / hash fabricated to, non-conformance reports"
       ],
-      "send_state": "SEND_ONLY_WITH_RELEASED_H1_DRAWINGS (drawing ID, revision, content hash; A9.14 F5-OQ-04); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
+      "send_state": "SEND_ONLY_WITH_CONTROLLED_H1_DRAWINGS (P1 engineering article: drawing ID, revision, content hash under P9e / Vyovrinda configuration control, A9.10 OQ-RFQV2-10; the LOCK-1 release of A9.14 F5-OQ-04 is the basis of the FLIGHT H-1, not a precondition for quoting P1 hardware); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
      }
     },
     {
      "id": "H1-L04",
      "item": "ceramic / insulating components (per drawing; anode / discharge-path insulators meet RFQ3-HALLEL-N01)",
-     "qty": "TBD - requires the released H-1 drawing set (RFQ3-H1FAB-N02)",
+     "qty": "TBD - per the controlled P1 engineering drawing set (RFQ3-H1FAB-N02)",
      "basis": "A9.10 OQ-RFQV2-10; H2-1 / H2-3",
      "dispatch": "P1_NEEDED",
      "option_line": false,
@@ -24775,15 +24784,18 @@
        {
         "requirement": "RFQ3-H1FAB-N02",
         "v1_id": null,
-        "title": "released H-1 drawing set (send precondition)",
+        "title": "controlled H-1 drawing set of the P1 engineering article (send precondition)",
         "value": {
-         "drawing_id": "TBD - requires the H-1 release (F5 ENGINEERING_FREEZE_CANDIDATE -> LOCK-1)",
+         "drawing_id": "TBD - registered from the P9e configuration-controlled P1 engineering drawing set",
          "revision": "TBD",
          "content_sha256": "TBD",
-         "open_items": "explicit release blockers"
+         "configuration_control": "P9E_CONFIGURATION_CONTROLLED",
+         "open_items": "blockers for the quoted parts",
+         "flight_h1_release_basis": "LOCK-1 release (drawing id, revision, content hash; every OPEN / TBD item an explicit blocker; A9.14 F5-OQ-04) - the flight H-1 only",
+         "reading": "A9.16 repair F4 recorder reading for the owner to confirm: A9.10 S3.10 creates the package for 'the H2-1/H2-3 hardware required for the P1 article' and keeps configuration control in-house; it sets no LOCK-1 gate, so a LOCK-1 release is not required to quote the P1 engineering article"
         },
         "units": "-",
-        "freeze_point": "LOCK-1",
+        "freeze_point": "P1-G0",
         "status": "TBD"
        },
        {
@@ -24791,7 +24803,7 @@
         "v1_id": null,
         "title": "materials, dimensional inspection and material certification",
         "value": {
-         "material": "per released drawing",
+         "material": "per controlled drawing",
          "anode_material": "OPEN (A9.2); 316L REJECTED_AS_CURRENT_BASELINE",
          "certificates": "per part / heat lot",
          "inspection": "dimensional report vs drawing tolerances",
@@ -24827,9 +24839,9 @@
         "status": "OWNER_GIVEN"
        }
       ],
-      "freeze_gate": "LOCK-1",
+      "freeze_gate": "P1-G0",
       "acceptance": [
-       "incoming inspection in-house against the released drawing (dimensions, material certificate, visual); acceptance testing of the assembled H-1 stays in-house"
+       "incoming inspection in-house against the controlled drawing (dimensions, material certificate, visual); acceptance testing of the assembled H-1 stays in-house"
       ],
       "calibration_traceability": [
        "supplier inspection instruments calibrated (certificate reference on the inspection report)"
@@ -24837,13 +24849,13 @@
       "documentation": [
        "material certificates, dimensional inspection report, drawing id / revision / hash fabricated to, non-conformance reports"
       ],
-      "send_state": "SEND_ONLY_WITH_RELEASED_H1_DRAWINGS (drawing ID, revision, content hash; A9.14 F5-OQ-04); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
+      "send_state": "SEND_ONLY_WITH_CONTROLLED_H1_DRAWINGS (P1 engineering article: drawing ID, revision, content hash under P9e / Vyovrinda configuration control, A9.10 OQ-RFQV2-10; the LOCK-1 release of A9.14 F5-OQ-04 is the basis of the FLIGHT H-1, not a precondition for quoting P1 hardware); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
      }
     },
     {
      "id": "H1-L05",
      "item": "MC-1 magnetic-circuit mechanical parts (per drawing)",
-     "qty": "TBD - requires the released H-1 drawing set (RFQ3-H1FAB-N02)",
+     "qty": "TBD - per the controlled P1 engineering drawing set (RFQ3-H1FAB-N02)",
      "basis": "A9.10 OQ-RFQV2-10; H2-1 / H2-3",
      "dispatch": "P1_NEEDED",
      "option_line": false,
@@ -24909,15 +24921,18 @@
        {
         "requirement": "RFQ3-H1FAB-N02",
         "v1_id": null,
-        "title": "released H-1 drawing set (send precondition)",
+        "title": "controlled H-1 drawing set of the P1 engineering article (send precondition)",
         "value": {
-         "drawing_id": "TBD - requires the H-1 release (F5 ENGINEERING_FREEZE_CANDIDATE -> LOCK-1)",
+         "drawing_id": "TBD - registered from the P9e configuration-controlled P1 engineering drawing set",
          "revision": "TBD",
          "content_sha256": "TBD",
-         "open_items": "explicit release blockers"
+         "configuration_control": "P9E_CONFIGURATION_CONTROLLED",
+         "open_items": "blockers for the quoted parts",
+         "flight_h1_release_basis": "LOCK-1 release (drawing id, revision, content hash; every OPEN / TBD item an explicit blocker; A9.14 F5-OQ-04) - the flight H-1 only",
+         "reading": "A9.16 repair F4 recorder reading for the owner to confirm: A9.10 S3.10 creates the package for 'the H2-1/H2-3 hardware required for the P1 article' and keeps configuration control in-house; it sets no LOCK-1 gate, so a LOCK-1 release is not required to quote the P1 engineering article"
         },
         "units": "-",
-        "freeze_point": "LOCK-1",
+        "freeze_point": "P1-G0",
         "status": "TBD"
        },
        {
@@ -24925,7 +24940,7 @@
         "v1_id": null,
         "title": "materials, dimensional inspection and material certification",
         "value": {
-         "material": "per released drawing",
+         "material": "per controlled drawing",
          "anode_material": "OPEN (A9.2); 316L REJECTED_AS_CURRENT_BASELINE",
          "certificates": "per part / heat lot",
          "inspection": "dimensional report vs drawing tolerances",
@@ -24936,9 +24951,9 @@
         "status": "OWNER_GIVEN"
        }
       ],
-      "freeze_gate": "LOCK-1",
+      "freeze_gate": "P1-G0",
       "acceptance": [
-       "incoming inspection in-house against the released drawing (dimensions, material certificate, visual); acceptance testing of the assembled H-1 stays in-house"
+       "incoming inspection in-house against the controlled drawing (dimensions, material certificate, visual); acceptance testing of the assembled H-1 stays in-house"
       ],
       "calibration_traceability": [
        "supplier inspection instruments calibrated (certificate reference on the inspection report)"
@@ -24946,13 +24961,13 @@
       "documentation": [
        "material certificates, dimensional inspection report, drawing id / revision / hash fabricated to, non-conformance reports"
       ],
-      "send_state": "SEND_ONLY_WITH_RELEASED_H1_DRAWINGS (drawing ID, revision, content hash; A9.14 F5-OQ-04); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
+      "send_state": "SEND_ONLY_WITH_CONTROLLED_H1_DRAWINGS (P1 engineering article: drawing ID, revision, content hash under P9e / Vyovrinda configuration control, A9.10 OQ-RFQV2-10; the LOCK-1 release of A9.14 F5-OQ-04 is the basis of the FLIGHT H-1, not a precondition for quoting P1 hardware); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
      }
     },
     {
      "id": "H1-L06",
      "item": "coil formers and windings (plain ceramic-insulated copper baseline)",
-     "qty": "TBD - requires the released H-1 drawing set (RFQ3-H1FAB-N02)",
+     "qty": "TBD - per the controlled P1 engineering drawing set (RFQ3-H1FAB-N02)",
      "basis": "A9.10 OQ-RFQV2-10; H2-1 / H2-3",
      "dispatch": "P1_NEEDED",
      "option_line": false,
@@ -25019,15 +25034,18 @@
        {
         "requirement": "RFQ3-H1FAB-N02",
         "v1_id": null,
-        "title": "released H-1 drawing set (send precondition)",
+        "title": "controlled H-1 drawing set of the P1 engineering article (send precondition)",
         "value": {
-         "drawing_id": "TBD - requires the H-1 release (F5 ENGINEERING_FREEZE_CANDIDATE -> LOCK-1)",
+         "drawing_id": "TBD - registered from the P9e configuration-controlled P1 engineering drawing set",
          "revision": "TBD",
          "content_sha256": "TBD",
-         "open_items": "explicit release blockers"
+         "configuration_control": "P9E_CONFIGURATION_CONTROLLED",
+         "open_items": "blockers for the quoted parts",
+         "flight_h1_release_basis": "LOCK-1 release (drawing id, revision, content hash; every OPEN / TBD item an explicit blocker; A9.14 F5-OQ-04) - the flight H-1 only",
+         "reading": "A9.16 repair F4 recorder reading for the owner to confirm: A9.10 S3.10 creates the package for 'the H2-1/H2-3 hardware required for the P1 article' and keeps configuration control in-house; it sets no LOCK-1 gate, so a LOCK-1 release is not required to quote the P1 engineering article"
         },
         "units": "-",
-        "freeze_point": "LOCK-1",
+        "freeze_point": "P1-G0",
         "status": "TBD"
        },
        {
@@ -25035,7 +25053,7 @@
         "v1_id": null,
         "title": "materials, dimensional inspection and material certification",
         "value": {
-         "material": "per released drawing",
+         "material": "per controlled drawing",
          "anode_material": "OPEN (A9.2); 316L REJECTED_AS_CURRENT_BASELINE",
          "certificates": "per part / heat lot",
          "inspection": "dimensional report vs drawing tolerances",
@@ -25061,16 +25079,16 @@
           "measured resistance",
           "magnetic perturbation"
          ],
-         "winding_data": "TBD - requires the released MC-1 drawing"
+         "winding_data": "TBD - requires the controlled MC-1 drawing"
         },
         "units": "-",
         "freeze_point": "NOW",
         "status": "OWNER_GIVEN"
        }
       ],
-      "freeze_gate": "LOCK-1",
+      "freeze_gate": "P1-G0",
       "acceptance": [
-       "incoming inspection in-house against the released drawing (dimensions, material certificate, visual); acceptance testing of the assembled H-1 stays in-house"
+       "incoming inspection in-house against the controlled drawing (dimensions, material certificate, visual); acceptance testing of the assembled H-1 stays in-house"
       ],
       "calibration_traceability": [
        "supplier inspection instruments calibrated (certificate reference on the inspection report)"
@@ -25078,13 +25096,13 @@
       "documentation": [
        "material certificates, dimensional inspection report, drawing id / revision / hash fabricated to, non-conformance reports"
       ],
-      "send_state": "SEND_ONLY_WITH_RELEASED_H1_DRAWINGS (drawing ID, revision, content hash; A9.14 F5-OQ-04); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
+      "send_state": "SEND_ONLY_WITH_CONTROLLED_H1_DRAWINGS (P1 engineering article: drawing ID, revision, content hash under P9e / Vyovrinda configuration control, A9.10 OQ-RFQV2-10; the LOCK-1 release of A9.14 F5-OQ-04 is the basis of the FLIGHT H-1, not a precondition for quoting P1 hardware); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
      }
     },
     {
      "id": "H1-L07",
      "item": "thermal / mechanical mounting interfaces (per drawing; interface definition in-house)",
-     "qty": "TBD - requires the released H-1 drawing set (RFQ3-H1FAB-N02)",
+     "qty": "TBD - per the controlled P1 engineering drawing set (RFQ3-H1FAB-N02)",
      "basis": "A9.10 OQ-RFQV2-10; H2-1 / H2-3",
      "dispatch": "P1_NEEDED",
      "option_line": false,
@@ -25150,15 +25168,18 @@
        {
         "requirement": "RFQ3-H1FAB-N02",
         "v1_id": null,
-        "title": "released H-1 drawing set (send precondition)",
+        "title": "controlled H-1 drawing set of the P1 engineering article (send precondition)",
         "value": {
-         "drawing_id": "TBD - requires the H-1 release (F5 ENGINEERING_FREEZE_CANDIDATE -> LOCK-1)",
+         "drawing_id": "TBD - registered from the P9e configuration-controlled P1 engineering drawing set",
          "revision": "TBD",
          "content_sha256": "TBD",
-         "open_items": "explicit release blockers"
+         "configuration_control": "P9E_CONFIGURATION_CONTROLLED",
+         "open_items": "blockers for the quoted parts",
+         "flight_h1_release_basis": "LOCK-1 release (drawing id, revision, content hash; every OPEN / TBD item an explicit blocker; A9.14 F5-OQ-04) - the flight H-1 only",
+         "reading": "A9.16 repair F4 recorder reading for the owner to confirm: A9.10 S3.10 creates the package for 'the H2-1/H2-3 hardware required for the P1 article' and keeps configuration control in-house; it sets no LOCK-1 gate, so a LOCK-1 release is not required to quote the P1 engineering article"
         },
         "units": "-",
-        "freeze_point": "LOCK-1",
+        "freeze_point": "P1-G0",
         "status": "TBD"
        },
        {
@@ -25166,7 +25187,7 @@
         "v1_id": null,
         "title": "materials, dimensional inspection and material certification",
         "value": {
-         "material": "per released drawing",
+         "material": "per controlled drawing",
          "anode_material": "OPEN (A9.2); 316L REJECTED_AS_CURRENT_BASELINE",
          "certificates": "per part / heat lot",
          "inspection": "dimensional report vs drawing tolerances",
@@ -25177,9 +25198,9 @@
         "status": "OWNER_GIVEN"
        }
       ],
-      "freeze_gate": "LOCK-1",
+      "freeze_gate": "P1-G0",
       "acceptance": [
-       "incoming inspection in-house against the released drawing (dimensions, material certificate, visual); acceptance testing of the assembled H-1 stays in-house"
+       "incoming inspection in-house against the controlled drawing (dimensions, material certificate, visual); acceptance testing of the assembled H-1 stays in-house"
       ],
       "calibration_traceability": [
        "supplier inspection instruments calibrated (certificate reference on the inspection report)"
@@ -25187,13 +25208,13 @@
       "documentation": [
        "material certificates, dimensional inspection report, drawing id / revision / hash fabricated to, non-conformance reports"
       ],
-      "send_state": "SEND_ONLY_WITH_RELEASED_H1_DRAWINGS (drawing ID, revision, content hash; A9.14 F5-OQ-04); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
+      "send_state": "SEND_ONLY_WITH_CONTROLLED_H1_DRAWINGS (P1 engineering article: drawing ID, revision, content hash under P9e / Vyovrinda configuration control, A9.10 OQ-RFQV2-10; the LOCK-1 release of A9.14 F5-OQ-04 is the basis of the FLIGHT H-1, not a precondition for quoting P1 hardware); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
      }
     },
     {
      "id": "H1-L08",
      "item": "feedthrough / interface provisions on the H-1 article (per drawing)",
-     "qty": "TBD - requires the released H-1 drawing set (RFQ3-H1FAB-N02)",
+     "qty": "TBD - per the controlled P1 engineering drawing set (RFQ3-H1FAB-N02)",
      "basis": "A9.10 OQ-RFQV2-10; H2-1 / H2-3",
      "dispatch": "P1_NEEDED",
      "option_line": false,
@@ -25260,15 +25281,18 @@
        {
         "requirement": "RFQ3-H1FAB-N02",
         "v1_id": null,
-        "title": "released H-1 drawing set (send precondition)",
+        "title": "controlled H-1 drawing set of the P1 engineering article (send precondition)",
         "value": {
-         "drawing_id": "TBD - requires the H-1 release (F5 ENGINEERING_FREEZE_CANDIDATE -> LOCK-1)",
+         "drawing_id": "TBD - registered from the P9e configuration-controlled P1 engineering drawing set",
          "revision": "TBD",
          "content_sha256": "TBD",
-         "open_items": "explicit release blockers"
+         "configuration_control": "P9E_CONFIGURATION_CONTROLLED",
+         "open_items": "blockers for the quoted parts",
+         "flight_h1_release_basis": "LOCK-1 release (drawing id, revision, content hash; every OPEN / TBD item an explicit blocker; A9.14 F5-OQ-04) - the flight H-1 only",
+         "reading": "A9.16 repair F4 recorder reading for the owner to confirm: A9.10 S3.10 creates the package for 'the H2-1/H2-3 hardware required for the P1 article' and keeps configuration control in-house; it sets no LOCK-1 gate, so a LOCK-1 release is not required to quote the P1 engineering article"
         },
         "units": "-",
-        "freeze_point": "LOCK-1",
+        "freeze_point": "P1-G0",
         "status": "TBD"
        },
        {
@@ -25276,7 +25300,7 @@
         "v1_id": null,
         "title": "materials, dimensional inspection and material certification",
         "value": {
-         "material": "per released drawing",
+         "material": "per controlled drawing",
          "anode_material": "OPEN (A9.2); 316L REJECTED_AS_CURRENT_BASELINE",
          "certificates": "per part / heat lot",
          "inspection": "dimensional report vs drawing tolerances",
@@ -25312,9 +25336,9 @@
         "status": "OWNER_GIVEN"
        }
       ],
-      "freeze_gate": "LOCK-1",
+      "freeze_gate": "P1-G0",
       "acceptance": [
-       "incoming inspection in-house against the released drawing (dimensions, material certificate, visual); acceptance testing of the assembled H-1 stays in-house"
+       "incoming inspection in-house against the controlled drawing (dimensions, material certificate, visual); acceptance testing of the assembled H-1 stays in-house"
       ],
       "calibration_traceability": [
        "supplier inspection instruments calibrated (certificate reference on the inspection report)"
@@ -25322,13 +25346,13 @@
       "documentation": [
        "material certificates, dimensional inspection report, drawing id / revision / hash fabricated to, non-conformance reports"
       ],
-      "send_state": "SEND_ONLY_WITH_RELEASED_H1_DRAWINGS (drawing ID, revision, content hash; A9.14 F5-OQ-04); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
+      "send_state": "SEND_ONLY_WITH_CONTROLLED_H1_DRAWINGS (P1 engineering article: drawing ID, revision, content hash under P9e / Vyovrinda configuration control, A9.10 OQ-RFQV2-10; the LOCK-1 release of A9.14 F5-OQ-04 is the basis of the FLIGHT H-1, not a precondition for quoting P1 hardware); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
      }
     },
     {
      "id": "H1-L09",
      "item": "dimensional inspection reports and material certificates for every H1-L01..L08 part",
-     "qty": "TBD - requires the released H-1 drawing set (RFQ3-H1FAB-N02)",
+     "qty": "TBD - per the controlled P1 engineering drawing set (RFQ3-H1FAB-N02)",
      "basis": "A9.10 OQ-RFQV2-10; H2-1 / H2-3",
      "dispatch": "P1_NEEDED",
      "option_line": false,
@@ -25394,15 +25418,18 @@
        {
         "requirement": "RFQ3-H1FAB-N02",
         "v1_id": null,
-        "title": "released H-1 drawing set (send precondition)",
+        "title": "controlled H-1 drawing set of the P1 engineering article (send precondition)",
         "value": {
-         "drawing_id": "TBD - requires the H-1 release (F5 ENGINEERING_FREEZE_CANDIDATE -> LOCK-1)",
+         "drawing_id": "TBD - registered from the P9e configuration-controlled P1 engineering drawing set",
          "revision": "TBD",
          "content_sha256": "TBD",
-         "open_items": "explicit release blockers"
+         "configuration_control": "P9E_CONFIGURATION_CONTROLLED",
+         "open_items": "blockers for the quoted parts",
+         "flight_h1_release_basis": "LOCK-1 release (drawing id, revision, content hash; every OPEN / TBD item an explicit blocker; A9.14 F5-OQ-04) - the flight H-1 only",
+         "reading": "A9.16 repair F4 recorder reading for the owner to confirm: A9.10 S3.10 creates the package for 'the H2-1/H2-3 hardware required for the P1 article' and keeps configuration control in-house; it sets no LOCK-1 gate, so a LOCK-1 release is not required to quote the P1 engineering article"
         },
         "units": "-",
-        "freeze_point": "LOCK-1",
+        "freeze_point": "P1-G0",
         "status": "TBD"
        },
        {
@@ -25410,7 +25437,7 @@
         "v1_id": null,
         "title": "materials, dimensional inspection and material certification",
         "value": {
-         "material": "per released drawing",
+         "material": "per controlled drawing",
          "anode_material": "OPEN (A9.2); 316L REJECTED_AS_CURRENT_BASELINE",
          "certificates": "per part / heat lot",
          "inspection": "dimensional report vs drawing tolerances",
@@ -25421,9 +25448,9 @@
         "status": "OWNER_GIVEN"
        }
       ],
-      "freeze_gate": "LOCK-1",
+      "freeze_gate": "P1-G0",
       "acceptance": [
-       "incoming inspection in-house against the released drawing (dimensions, material certificate, visual); acceptance testing of the assembled H-1 stays in-house"
+       "incoming inspection in-house against the controlled drawing (dimensions, material certificate, visual); acceptance testing of the assembled H-1 stays in-house"
       ],
       "calibration_traceability": [
        "supplier inspection instruments calibrated (certificate reference on the inspection report)"
@@ -25431,7 +25458,7 @@
       "documentation": [
        "material certificates, dimensional inspection report, drawing id / revision / hash fabricated to, non-conformance reports"
       ],
-      "send_state": "SEND_ONLY_WITH_RELEASED_H1_DRAWINGS (drawing ID, revision, content hash; A9.14 F5-OQ-04); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
+      "send_state": "SEND_ONLY_WITH_CONTROLLED_H1_DRAWINGS (P1 engineering article: drawing ID, revision, content hash under P9e / Vyovrinda configuration control, A9.10 OQ-RFQV2-10; the LOCK-1 release of A9.14 F5-OQ-04 is the basis of the FLIGHT H-1, not a precondition for quoting P1 hardware); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
      }
     },
     {
@@ -25503,15 +25530,18 @@
        {
         "requirement": "RFQ3-H1FAB-N02",
         "v1_id": null,
-        "title": "released H-1 drawing set (send precondition)",
+        "title": "controlled H-1 drawing set of the P1 engineering article (send precondition)",
         "value": {
-         "drawing_id": "TBD - requires the H-1 release (F5 ENGINEERING_FREEZE_CANDIDATE -> LOCK-1)",
+         "drawing_id": "TBD - registered from the P9e configuration-controlled P1 engineering drawing set",
          "revision": "TBD",
          "content_sha256": "TBD",
-         "open_items": "explicit release blockers"
+         "configuration_control": "P9E_CONFIGURATION_CONTROLLED",
+         "open_items": "blockers for the quoted parts",
+         "flight_h1_release_basis": "LOCK-1 release (drawing id, revision, content hash; every OPEN / TBD item an explicit blocker; A9.14 F5-OQ-04) - the flight H-1 only",
+         "reading": "A9.16 repair F4 recorder reading for the owner to confirm: A9.10 S3.10 creates the package for 'the H2-1/H2-3 hardware required for the P1 article' and keeps configuration control in-house; it sets no LOCK-1 gate, so a LOCK-1 release is not required to quote the P1 engineering article"
         },
         "units": "-",
-        "freeze_point": "LOCK-1",
+        "freeze_point": "P1-G0",
         "status": "TBD"
        },
        {
@@ -25530,14 +25560,14 @@
           "measured resistance",
           "magnetic perturbation"
          ],
-         "winding_data": "TBD - requires the released MC-1 drawing"
+         "winding_data": "TBD - requires the controlled MC-1 drawing"
         },
         "units": "-",
         "freeze_point": "NOW",
         "status": "OWNER_GIVEN"
        }
       ],
-      "freeze_gate": "LOCK-1",
+      "freeze_gate": "P1-G0",
       "acceptance": [
        "used only on a recorded trigger (oxidation / supplier availability / manufacturing) with measured resistance and magnetic-perturbation evidence"
       ],
@@ -25547,7 +25577,7 @@
       "documentation": [
        "wire datasheet, cladding / insulation data, resistance per length"
       ],
-      "send_state": "SEND_ONLY_WITH_RELEASED_H1_DRAWINGS (drawing ID, revision, content hash; A9.14 F5-OQ-04); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
+      "send_state": "SEND_ONLY_WITH_CONTROLLED_H1_DRAWINGS (P1 engineering article: drawing ID, revision, content hash under P9e / Vyovrinda configuration control, A9.10 OQ-RFQV2-10; the LOCK-1 release of A9.14 F5-OQ-04 is the basis of the FLIGHT H-1, not a precondition for quoting P1 hardware); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
      }
     }
    ],
@@ -25557,7 +25587,7 @@
      "package": "RFQ3-H1FAB",
      "v1_id": null,
      "title": "build-to-print scope and in-house design authority",
-     "requirement": "Build-to-print fabrication of the H2-1 / H2-3 hardware required for the P1 H-1 article (precision machining, ceramic fabrication, winding or other specialist manufacturing), separate from the ICP mechanical package RFQ3-MECH. The supplier fabricates to the released drawings only; H-1 design authority, magnetic design, channel / anode design, interface definition, configuration control, final assembly / integration, instrumentation and acceptance testing remain in-house (P9e / Vyovrinda). No supplier design input changes a drawing without an in-house drawing revision.",
+     "requirement": "Build-to-print fabrication of the H2-1 / H2-3 hardware required for the P1 H-1 article (precision machining, ceramic fabrication, winding or other specialist manufacturing), separate from the ICP mechanical package RFQ3-MECH. The supplier fabricates to the controlled drawings only; H-1 design authority, magnetic design, channel / anode design, interface definition, configuration control, final assembly / integration, instrumentation and acceptance testing remain in-house (P9e / Vyovrinda). No supplier design input changes a drawing without an in-house drawing revision.",
      "value": {
       "scope_verbatim": [
        "Hall channel/body components",
@@ -25665,17 +25695,44 @@
      "id": "RFQ3-H1FAB-N02",
      "package": "RFQ3-H1FAB",
      "v1_id": null,
-     "title": "released H-1 drawing set (send precondition)",
-     "requirement": "The package is sent for quotation only with the released H-1 drawing set: drawing id, revision and content hash for every part; every item marked OPEN / TBD / TBD_AFTER_EVIDENCE remains an explicit release blocker and is never silently promoted (rule function h1_fab_send_state).",
+     "title": "controlled H-1 drawing set of the P1 engineering article (send precondition)",
+     "requirement": "The package is sent for quotation only with the drawing set of the P1 engineering H-1 article under P9e / Vyovrinda configuration control: drawing id, revision and content hash for every part; an item marked OPEN / TBD / TBD_AFTER_EVIDENCE on a quoted part blocks sending and is never silently promoted (rule function h1_fab_send_state, article P1_ENGINEERING). The LOCK-1 release basis of A9.14 F5-OQ-04 (F5 ENGINEERING_FREEZE_CANDIDATE -> LOCK-1) governs the FLIGHT H-1 drawing release, not the quotation of the P1 engineering hardware.",
      "value": {
-      "drawing_id": "TBD - requires the H-1 release (F5 ENGINEERING_FREEZE_CANDIDATE -> LOCK-1)",
+      "drawing_id": "TBD - registered from the P9e configuration-controlled P1 engineering drawing set",
       "revision": "TBD",
       "content_sha256": "TBD",
-      "open_items": "explicit release blockers"
+      "configuration_control": "P9E_CONFIGURATION_CONTROLLED",
+      "open_items": "blockers for the quoted parts",
+      "flight_h1_release_basis": "LOCK-1 release (drawing id, revision, content hash; every OPEN / TBD item an explicit blocker; A9.14 F5-OQ-04) - the flight H-1 only",
+      "reading": "A9.16 repair F4 recorder reading for the owner to confirm: A9.10 S3.10 creates the package for 'the H2-1/H2-3 hardware required for the P1 article' and keeps configuration control in-house; it sets no LOCK-1 gate, so a LOCK-1 release is not required to quote the P1 engineering article"
      },
      "units": "-",
-     "basis": "A9.14 F5-OQ-04",
+     "basis": "A9.10 OQ-RFQV2-10; A9.14 F5-OQ-04",
      "sources": [
+      {
+       "type": "owner_decision",
+       "key": "A9.10",
+       "id": "OQ-RFQV2-10",
+       "sequenced_no": "S3.10",
+       "answer": "SEPARATE_H1_FABRICATION_RFQ_IN_HOUSE_DESIGN",
+       "quote": "Create a dedicated H-1 fabrication/build-to-print RFQ package covering the H2-1/H2-3 hardware required for the P1 article, including as applicable:",
+       "path": "docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md",
+       "md_sha256": "6845f54a97192eaa934cc67d5f415c94e317707c97411353aa2325bf5f9b0491",
+       "json_path": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+       "json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544"
+      },
+      {
+       "type": "owner_decision",
+       "key": "A9.10",
+       "id": "OQ-RFQV2-10",
+       "sequenced_no": "S3.10",
+       "answer": "SEPARATE_H1_FABRICATION_RFQ_IN_HOUSE_DESIGN",
+       "quote": "configuration control",
+       "path": "docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md",
+       "md_sha256": "6845f54a97192eaa934cc67d5f415c94e317707c97411353aa2325bf5f9b0491",
+       "json_path": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+       "json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544"
+      },
       {
        "type": "owner_decision",
        "key": "A9.14",
@@ -25691,7 +25748,7 @@
      ],
      "evidence_class": null,
      "status": "TBD",
-     "freeze_point": "LOCK-1",
+     "freeze_point": "P1-G0",
      "applies_to": [
       "hall_c1_reference",
       "hall_icp_neutralizer"
@@ -25705,8 +25762,14 @@
      },
      "change_v3": {
       "type": "NEW",
-      "why": "A9.14 F5-OQ-04",
+      "why": "A9.10 OQ-RFQV2-10 (controlled P1 engineering drawing set; A9.14 F5-OQ-04 kept for the flight H-1; A9.16 repair F4)",
       "decisions": [
+       {
+        "key": "A9.10",
+        "id": "OQ-RFQV2-10",
+        "json_path": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+        "json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544"
+       },
        {
         "key": "A9.14",
         "id": "F5-OQ-04",
@@ -25721,7 +25784,7 @@
      "package": "RFQ3-H1FAB",
      "v1_id": null,
      "title": "coil winding wire",
-     "requirement": "Coil windings use plain ceramic-insulated copper (baseline). Ni-clad / Kulgrid wire is a contingency variant only (option line H1-O01), used only if oxidation, supplier availability or manufacturing demands it, and then only with measured resistance and magnetic-perturbation evidence (rule function coil_wire_variant). Conductor size, turns, insulation class and winding geometry per the released MC-1 drawing.",
+     "requirement": "Coil windings use plain ceramic-insulated copper (baseline). Ni-clad / Kulgrid wire is a contingency variant only (option line H1-O01), used only if oxidation, supplier availability or manufacturing demands it, and then only with measured resistance and magnetic-perturbation evidence (rule function coil_wire_variant). Conductor size, turns, insulation class and winding geometry per the controlled MC-1 drawing.",
      "value": {
       "baseline": "plain ceramic-insulated copper",
       "contingency": "Ni-clad / Kulgrid (H1-O01)",
@@ -25734,7 +25797,7 @@
        "measured resistance",
        "magnetic perturbation"
       ],
-      "winding_data": "TBD - requires the released MC-1 drawing"
+      "winding_data": "TBD - requires the controlled MC-1 drawing"
      },
      "units": "-",
      "basis": "A9.14 OQ-A907-04",
@@ -25784,9 +25847,9 @@
      "package": "RFQ3-H1FAB",
      "v1_id": null,
      "title": "materials, dimensional inspection and material certification",
-     "requirement": "Every part is made from the material and to the tolerances of its released drawing, with a material certificate per part / heat lot and a dimensional inspection report against the drawing. Material choices are design-authority items: the H-1 anode material is OPEN and 316L is REJECTED_AS_CURRENT_BASELINE for the design-representative / flight anode (A9.2) - the supplier proposes no substitute. For magnetic-circuit iron the supplier delivers the grade certificate and any temperature-dependent magnetic data it holds; the design authority uses 754 degC only as a necessary ceiling pending grade data (A9.14 F5-OQ-03), never as an operating limit or acceptance value. Ceramic / insulating parts on the anode / discharge path meet RFQ3-HALLEL-N01 as installed. No thermal PASS is inferred from any supplier statement (anode and coupled thermal closure UNRESOLVED).",
+     "requirement": "Every part is made from the material and to the tolerances of its controlled drawing, with a material certificate per part / heat lot and a dimensional inspection report against the drawing. Material choices are design-authority items: the H-1 anode material is OPEN and 316L is REJECTED_AS_CURRENT_BASELINE for the design-representative / flight anode (A9.2) - the supplier proposes no substitute. For magnetic-circuit iron the supplier delivers the grade certificate and any temperature-dependent magnetic data it holds; the design authority uses 754 degC only as a necessary ceiling pending grade data (A9.14 F5-OQ-03), never as an operating limit or acceptance value. Ceramic / insulating parts on the anode / discharge path meet RFQ3-HALLEL-N01 as installed. No thermal PASS is inferred from any supplier statement (anode and coupled thermal closure UNRESOLVED).",
      "value": {
-      "material": "per released drawing",
+      "material": "per controlled drawing",
       "anode_material": "OPEN (A9.2); 316L REJECTED_AS_CURRENT_BASELINE",
       "certificates": "per part / heat lot",
       "inspection": "dimensional report vs drawing tolerances",
@@ -25857,7 +25920,7 @@
    "v1_packages_folded_in": [],
    "acceptance": [
     {
-     "text": "in-house incoming inspection against the released drawing; acceptance testing of the assembled H-1 is in-house (A9.10 OQ-RFQV2-10)",
+     "text": "in-house incoming inspection against the controlled drawing; acceptance testing of the assembled H-1 is in-house (A9.10 OQ-RFQV2-10)",
      "carried_from": null
     }
    ],
@@ -25897,7 +25960,7 @@
     "No prices are recorded; no supplier is named, ranked or selected; catalogue data appear only as REFERENCE with the citation/URL and access record of the web track.",
     "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE: no configuration is a winner; no thrust, efficiency, discharge current, ICP electron current, impedance or plasma state is predicted. Never PASS: RF component ratings TBD_AFTER_IMPEDANCE_MAP; ICP_COUPLED_THERMAL UNRESOLVED; anode material OPEN; ICP electron-current capacity PENDING_ICP45 (ICP45 NOT_EVALUATED until I_d,max,H1 is registered).",
     "RFP-compliant propellant policy (A9.15): the official RFP governs propellant capability - the system supports both ambient atmospheric propellant (180-230 km) and Xenon propulsion capability with separate tanks/paths; Xe is an RFP-required system capability, not a C1 contingency; C1 Xe only if a selected C1 requires it, booked inside the system Xe architecture. The A9.1 ICP gas-mode baseline (G-REUSE primary) is unchanged.",
-    "A9.4 / A9.6: the owner / procurement may SEND the lines tagged P1_NEEDED for quotation (requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates). The H-1 build-to-print package is sent only with released H-1 drawings (A9.14 F5-OQ-04)."
+    "A9.4 / A9.6: the owner / procurement may SEND the lines tagged P1_NEEDED for quotation (requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates). The H-1 build-to-print package for the P1 article is sent only with the P9e configuration-controlled drawing set (drawing id, revision, content hash; A9.10 OQ-RFQV2-10); the LOCK-1 release (A9.14 F5-OQ-04) is the flight H-1 basis."
    ],
    "package_file": "docs/procurement/rfq_a9_v3/packages/RFQ3-08_h1_fabrication.md",
    "owner_minimum_scope_verbatim": [
@@ -25973,14 +26036,17 @@
     {
      "id": "RFQ3-H1FAB-N02",
      "v1_id": null,
-     "title": "released H-1 drawing set (send precondition)",
+     "title": "controlled H-1 drawing set of the P1 engineering article (send precondition)",
      "value": {
-      "drawing_id": "TBD - requires the H-1 release (F5 ENGINEERING_FREEZE_CANDIDATE -> LOCK-1)",
+      "drawing_id": "TBD - registered from the P9e configuration-controlled P1 engineering drawing set",
       "revision": "TBD",
       "content_sha256": "TBD",
-      "open_items": "explicit release blockers"
+      "configuration_control": "P9E_CONFIGURATION_CONTROLLED",
+      "open_items": "blockers for the quoted parts",
+      "flight_h1_release_basis": "LOCK-1 release (drawing id, revision, content hash; every OPEN / TBD item an explicit blocker; A9.14 F5-OQ-04) - the flight H-1 only",
+      "reading": "A9.16 repair F4 recorder reading for the owner to confirm: A9.10 S3.10 creates the package for 'the H2-1/H2-3 hardware required for the P1 article' and keeps configuration control in-house; it sets no LOCK-1 gate, so a LOCK-1 release is not required to quote the P1 engineering article"
      },
-     "freeze_point": "LOCK-1",
+     "freeze_point": "P1-G0",
      "dispatch": "P1_NEEDED"
     }
    ],
@@ -26604,73 +26670,73 @@
    "package": "RFQ3-H1FAB",
    "line_item": "H1-L01",
    "item": "Hall channel / body components (build-to-print)",
-   "qty": "TBD - requires the released H-1 drawing set (RFQ3-H1FAB-N02)",
+   "qty": "TBD - per the controlled P1 engineering drawing set (RFQ3-H1FAB-N02)",
    "option_line": false,
-   "send_state": "SEND_ONLY_WITH_RELEASED_H1_DRAWINGS (drawing ID, revision, content hash; A9.14 F5-OQ-04); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
+   "send_state": "SEND_ONLY_WITH_CONTROLLED_H1_DRAWINGS (P1 engineering article: drawing ID, revision, content hash under P9e / Vyovrinda configuration control, A9.10 OQ-RFQV2-10; the LOCK-1 release of A9.14 F5-OQ-04 is the basis of the FLIGHT H-1, not a precondition for quoting P1 hardware); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
   },
   {
    "package": "RFQ3-H1FAB",
    "line_item": "H1-L02",
-   "item": "anode and anode distributor / plenum (build-to-print; material per released drawing - anode material OPEN)",
-   "qty": "TBD - requires the released H-1 drawing set (RFQ3-H1FAB-N02)",
+   "item": "anode and anode distributor / plenum (build-to-print; material per controlled drawing - anode material OPEN)",
+   "qty": "TBD - per the controlled P1 engineering drawing set (RFQ3-H1FAB-N02)",
    "option_line": false,
-   "send_state": "SEND_ONLY_WITH_RELEASED_H1_DRAWINGS (drawing ID, revision, content hash; A9.14 F5-OQ-04); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
+   "send_state": "SEND_ONLY_WITH_CONTROLLED_H1_DRAWINGS (P1 engineering article: drawing ID, revision, content hash under P9e / Vyovrinda configuration control, A9.10 OQ-RFQV2-10; the LOCK-1 release of A9.14 F5-OQ-04 is the basis of the FLIGHT H-1, not a precondition for quoting P1 hardware); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
   },
   {
    "package": "RFQ3-H1FAB",
    "line_item": "H1-L03",
    "item": "gas-path interfaces of the H-1 Ar feed to the anode plenum (fittings / ports per drawing; the anode gas isolator is GAS-L13)",
-   "qty": "TBD - requires the released H-1 drawing set (RFQ3-H1FAB-N02)",
+   "qty": "TBD - per the controlled P1 engineering drawing set (RFQ3-H1FAB-N02)",
    "option_line": false,
-   "send_state": "SEND_ONLY_WITH_RELEASED_H1_DRAWINGS (drawing ID, revision, content hash; A9.14 F5-OQ-04); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
+   "send_state": "SEND_ONLY_WITH_CONTROLLED_H1_DRAWINGS (P1 engineering article: drawing ID, revision, content hash under P9e / Vyovrinda configuration control, A9.10 OQ-RFQV2-10; the LOCK-1 release of A9.14 F5-OQ-04 is the basis of the FLIGHT H-1, not a precondition for quoting P1 hardware); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
   },
   {
    "package": "RFQ3-H1FAB",
    "line_item": "H1-L04",
    "item": "ceramic / insulating components (per drawing; anode / discharge-path insulators meet RFQ3-HALLEL-N01)",
-   "qty": "TBD - requires the released H-1 drawing set (RFQ3-H1FAB-N02)",
+   "qty": "TBD - per the controlled P1 engineering drawing set (RFQ3-H1FAB-N02)",
    "option_line": false,
-   "send_state": "SEND_ONLY_WITH_RELEASED_H1_DRAWINGS (drawing ID, revision, content hash; A9.14 F5-OQ-04); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
+   "send_state": "SEND_ONLY_WITH_CONTROLLED_H1_DRAWINGS (P1 engineering article: drawing ID, revision, content hash under P9e / Vyovrinda configuration control, A9.10 OQ-RFQV2-10; the LOCK-1 release of A9.14 F5-OQ-04 is the basis of the FLIGHT H-1, not a precondition for quoting P1 hardware); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
   },
   {
    "package": "RFQ3-H1FAB",
    "line_item": "H1-L05",
    "item": "MC-1 magnetic-circuit mechanical parts (per drawing)",
-   "qty": "TBD - requires the released H-1 drawing set (RFQ3-H1FAB-N02)",
+   "qty": "TBD - per the controlled P1 engineering drawing set (RFQ3-H1FAB-N02)",
    "option_line": false,
-   "send_state": "SEND_ONLY_WITH_RELEASED_H1_DRAWINGS (drawing ID, revision, content hash; A9.14 F5-OQ-04); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
+   "send_state": "SEND_ONLY_WITH_CONTROLLED_H1_DRAWINGS (P1 engineering article: drawing ID, revision, content hash under P9e / Vyovrinda configuration control, A9.10 OQ-RFQV2-10; the LOCK-1 release of A9.14 F5-OQ-04 is the basis of the FLIGHT H-1, not a precondition for quoting P1 hardware); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
   },
   {
    "package": "RFQ3-H1FAB",
    "line_item": "H1-L06",
    "item": "coil formers and windings (plain ceramic-insulated copper baseline)",
-   "qty": "TBD - requires the released H-1 drawing set (RFQ3-H1FAB-N02)",
+   "qty": "TBD - per the controlled P1 engineering drawing set (RFQ3-H1FAB-N02)",
    "option_line": false,
-   "send_state": "SEND_ONLY_WITH_RELEASED_H1_DRAWINGS (drawing ID, revision, content hash; A9.14 F5-OQ-04); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
+   "send_state": "SEND_ONLY_WITH_CONTROLLED_H1_DRAWINGS (P1 engineering article: drawing ID, revision, content hash under P9e / Vyovrinda configuration control, A9.10 OQ-RFQV2-10; the LOCK-1 release of A9.14 F5-OQ-04 is the basis of the FLIGHT H-1, not a precondition for quoting P1 hardware); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
   },
   {
    "package": "RFQ3-H1FAB",
    "line_item": "H1-L07",
    "item": "thermal / mechanical mounting interfaces (per drawing; interface definition in-house)",
-   "qty": "TBD - requires the released H-1 drawing set (RFQ3-H1FAB-N02)",
+   "qty": "TBD - per the controlled P1 engineering drawing set (RFQ3-H1FAB-N02)",
    "option_line": false,
-   "send_state": "SEND_ONLY_WITH_RELEASED_H1_DRAWINGS (drawing ID, revision, content hash; A9.14 F5-OQ-04); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
+   "send_state": "SEND_ONLY_WITH_CONTROLLED_H1_DRAWINGS (P1 engineering article: drawing ID, revision, content hash under P9e / Vyovrinda configuration control, A9.10 OQ-RFQV2-10; the LOCK-1 release of A9.14 F5-OQ-04 is the basis of the FLIGHT H-1, not a precondition for quoting P1 hardware); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
   },
   {
    "package": "RFQ3-H1FAB",
    "line_item": "H1-L08",
    "item": "feedthrough / interface provisions on the H-1 article (per drawing)",
-   "qty": "TBD - requires the released H-1 drawing set (RFQ3-H1FAB-N02)",
+   "qty": "TBD - per the controlled P1 engineering drawing set (RFQ3-H1FAB-N02)",
    "option_line": false,
-   "send_state": "SEND_ONLY_WITH_RELEASED_H1_DRAWINGS (drawing ID, revision, content hash; A9.14 F5-OQ-04); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
+   "send_state": "SEND_ONLY_WITH_CONTROLLED_H1_DRAWINGS (P1 engineering article: drawing ID, revision, content hash under P9e / Vyovrinda configuration control, A9.10 OQ-RFQV2-10; the LOCK-1 release of A9.14 F5-OQ-04 is the basis of the FLIGHT H-1, not a precondition for quoting P1 hardware); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
   },
   {
    "package": "RFQ3-H1FAB",
    "line_item": "H1-L09",
    "item": "dimensional inspection reports and material certificates for every H1-L01..L08 part",
-   "qty": "TBD - requires the released H-1 drawing set (RFQ3-H1FAB-N02)",
+   "qty": "TBD - per the controlled P1 engineering drawing set (RFQ3-H1FAB-N02)",
    "option_line": false,
-   "send_state": "SEND_ONLY_WITH_RELEASED_H1_DRAWINGS (drawing ID, revision, content hash; A9.14 F5-OQ-04); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
+   "send_state": "SEND_ONLY_WITH_CONTROLLED_H1_DRAWINGS (P1 engineering article: drawing ID, revision, content hash under P9e / Vyovrinda configuration control, A9.10 OQ-RFQV2-10; the LOCK-1 release of A9.14 F5-OQ-04 is the basis of the FLIGHT H-1, not a precondition for quoting P1 hardware); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
   },
   {
    "package": "RFQ3-H1FAB",
@@ -26678,7 +26744,7 @@
    "item": "OPTION: Ni-clad / Kulgrid coil wire (contingency variant only)",
    "qty": "0 or 1 (option line; contingency only)",
    "option_line": true,
-   "send_state": "SEND_ONLY_WITH_RELEASED_H1_DRAWINGS (drawing ID, revision, content hash; A9.14 F5-OQ-04); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
+   "send_state": "SEND_ONLY_WITH_CONTROLLED_H1_DRAWINGS (P1 engineering article: drawing ID, revision, content hash under P9e / Vyovrinda configuration control, A9.10 OQ-RFQV2-10; the LOCK-1 release of A9.14 F5-OQ-04 is the basis of the FLIGHT H-1, not a precondition for quoting P1 hardware); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized"
   }
  ],
  "a9_6_sec13_coverage": [
@@ -30158,8 +30224,9 @@
     "id": "RFQ3-H1FAB-N02",
     "package": "RFQ3-H1FAB",
     "change": "NEW",
-    "why": "A9.14 F5-OQ-04",
+    "why": "A9.10 OQ-RFQV2-10 (controlled P1 engineering drawing set; A9.14 F5-OQ-04 kept for the flight H-1; A9.16 repair F4)",
     "decisions": [
+     "A9.10 OQ-RFQV2-10",
      "A9.14 F5-OQ-04"
     ],
     "dispatch": "P1_NEEDED"
@@ -34074,12 +34141,13 @@
    "requirement": "RFQ3-H1FAB-N02",
    "v1_id": null,
    "package": "RFQ3-H1FAB",
-   "title": "released H-1 drawing set (send precondition)",
+   "title": "controlled H-1 drawing set of the P1 engineering article (send precondition)",
    "sources": [
+    "A9.10 OQ-RFQV2-10",
     "A9.14 F5-OQ-04"
    ],
    "status": "TBD",
-   "freeze_point": "LOCK-1",
+   "freeze_point": "P1-G0",
    "dispatch": "P1_NEEDED",
    "change": "NEW"
   },
@@ -34507,6 +34575,7 @@
      "H1-L08",
      "H1-L09",
      "RFQ3-H1FAB-N01",
+     "RFQ3-H1FAB-N02",
      "RFQ3-H1FAB-N04"
     ]
    }
@@ -36571,7 +36640,7 @@
  ],
  "h3_h4_inputs": {
   "h3_procurement_gate": {
-   "state": "QUOTATION PACKAGES v3 READY FOR OWNER DISPATCH (P1 subset first; H-1 build-to-print only with released drawings); PURCHASE ORDERS, ADVANCE PAYMENTS AND BINDING COMMITMENTS NOT AUTHORIZED",
+   "state": "QUOTATION PACKAGES v3 READY FOR OWNER DISPATCH (P1 subset first; H-1 build-to-print only with the P9e configuration-controlled P1 drawing set); PURCHASE ORDERS, ADVANCE PAYMENTS AND BINDING COMMITMENTS NOT AUTHORIZED",
    "purchase_gate": "H3 procurement gate + frozen A9 interfaces (owner row 8; A9.1 A9-09 procurement restriction)",
    "packages": [
     {
@@ -36844,7 +36913,7 @@
    },
    {
     "id": "H4-RFQ3-05",
-    "test": "incoming inspection of H-1 build-to-print parts against the released drawing",
+    "test": "incoming inspection of H-1 build-to-print parts against the controlled drawing",
     "source": "A9.10 OQ-RFQV2-10"
    }
   ]

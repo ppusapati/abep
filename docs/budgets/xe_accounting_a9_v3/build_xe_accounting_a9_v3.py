@@ -134,6 +134,14 @@ def verify_pins() -> None:
         raise PinError("pinned immutable inputs changed: " + "; ".join(bad))
 
 
+def check_a91_basis() -> None:
+    """The A9.1 HIQ-06 basis quoted for XV3Q-01 / ICP_FEED_LABEL_NOTE is verbatim in the pinned A9.1 verbatim file."""
+    if _sha(A91_MD) != A91_MD_SHA256:
+        raise PinError(f"{A91_MD} changed")
+    if " ".join(A91_HIQ06.split()) not in " ".join((REPO / A91_MD).read_text(encoding="utf-8").split()):
+        raise BookingError("A9.1 HIQ-06 quote not found verbatim")
+
+
 def _load(rel: str):
     return json.loads((REPO / rel).read_text(encoding="utf-8"))
 
@@ -454,6 +462,11 @@ def build_items(v2: dict, s: dict) -> list:
                              "A9.15); ground (development / reference C1) use unchanged")
             x["owner_answers_applied"] = [cite(s["OQA90707"]), cite(s["MPQ01_A"])]
             x["v3_change"] = "value unchanged; flight scope conditional on C1 selection"
+            if iid == "XV2-02":
+                x["status_v2"] = x["status"]
+                x["status"] = XV2_02_PLACEHOLDER
+                x["owner_answers_applied"].append(cite(s["GOV_C1"]))
+                x["v3_change"] += "; labelled an A5 design-target placeholder (A9.16 repair F6)"
         elif iid in ("XV2-31", "XV2-32"):
             x["v3_scope"] = ("C1-specific getter/filter: AL-C1 only for a SELECTED C1 that needs it (A9.14 MPQ-01); "
                              "separate from the ICP Xe path (A9.14 XA9Q-05 as amended by A9.15)")
@@ -465,6 +478,10 @@ def build_items(v2: dict, s: dict) -> list:
                              "(A9.14 XA9Q-05 as amended)")
             x["owner_answers_applied"] = [cite(s["XA9Q05"]), cite(s["XA9Q05_A"])]
             x["v3_change"] = "scope note only"
+            x["label_note"] = ICP_FEED_LABEL_NOTE
+        elif iid == "XV2-44":
+            x["label_note"] = ICP_FEED_LABEL_NOTE
+            x["v3_change"] = "label note only (A9.16 repair F11)"
         out.append(x)
     proc = [("XV3-03", "ground-test system Xe-path purge Xe (non-C1; per campaign)", "purge"),
             ("XV3-04", "ground-test Xe conditioning (bake-out / flow-conditioning procedures) Xe", "conditioning"),
@@ -502,6 +519,30 @@ def build_items(v2: dict, s: dict) -> list:
 
 # ------------------------------------------------------------------------------------------------ ledger lines
 C1_FLIGHT_SPECIFIC = ("C1-FL-PURGE", "C1-FL-HEAT", "C1-FL-IGN", "C1-FL-KEEPER", "C1-FL-FLOWUNC")
+# A9.16 repair F6: P-FL-C1 is a CONFIGURATION-SCOPE zero (hall_icp_neutralizer contains no C1 by architecture), never an
+# owner Xe exclusion: A9.15 'do not assume or exclude C1 Xe in advance'; the flight C1 Xe of a selected C1 is the
+# pending C1-FL-* set of hall_c1_reference
+SCOPE_ZERO_LINES = {
+    "P-FL-C1": ("CONFIGURATION_SCOPE_EXCLUSION: hall_icp_neutralizer contains no C1 by architecture, so no C1 Xe line "
+                "exists in this configuration; this is not an owner Xe exclusion (A9.15: C1 Xe neither assumed nor "
+                "excluded in advance; a C1 that does not require Xe gets no invented consumption). Flight C1 Xe is "
+                "PENDING_C1_NOT_SELECTED in hall_c1_reference (C1-FL-* lines, CONDITIONAL_ON_C1_FLIGHT_SELECTION); the "
+                "RFP-required system Xe capability is unaffected (A9.14 XA9Q-07 / A9.15)")}
+# A9.16 repair F11: the 'contingency' label of the G-ATM / G-XE dedicated ICP feeds is the owner's own A9.1 HIQ-06 term
+# for ICP gas-mode variants; it qualifies the ICP feed choice only, never the RFP-required system Xe capability. Whether
+# A9.15 changes that ICP-feed labelling is an open owner question (XV3Q-01; A9.15 recorder note), not answered here.
+A91_MD = "docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
+A91_MD_SHA256 = "2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e"
+A91_HIQ06 = ("The dedicated ICP gas port remains installed and capped so G-ATM and G-XE can be tested as separately "
+             "declared contingency variants.")
+ICP_FEED_LABEL_NOTE = ("'contingency' here is the owner's A9.1 HIQ-06 label of the dedicated ICP feed gas-mode variants "
+                       "(G-REUSE primary; G-ATM / G-XE 'separately declared contingency variants', " + A91_MD + " sha256 "
+                       + A91_MD_SHA256 + "); it qualifies the ICP feed choice only and never the RFP-required system Xe "
+                       "capability (A9.15); whether A9.15 changes this ICP-feed labelling is open owner question XV3Q-01")
+XV2_02_PLACEHOLDER = ("A5_DESIGN_TARGET_PLACEHOLDER: the A5 design-target flow (not a demonstrated or selected-hardware "
+                      "flow) used for the ground development / reference C1 booking; for a flight C1 it is replaced by "
+                      "the selected C1 hardware's qualified flow when C1 is selected (A9.15: C1 Xe derived from the "
+                      "selected C1 hardware)")
 PROC_LINES = {"hall_icp_neutralizer": "P-GT-PROC", "hall_c1_reference": "C1-GT-PROC"}
 PROC_ITEMS = (("PURGE", "XV3-03", "purge"), ("COND", "XV3-04", "conditioning"), ("LINEFILL", "XV3-05", "line_fill"),
               ("VENDOR", "XV3-06", "vendor_procedures"))
@@ -529,6 +570,17 @@ def build_lines(v2: dict, s: dict) -> list:
                                           cite(s["GOV_C1"])]
             x["v3_change"] = ("flight C1-specific Xe: booked only for a selected C1 that requires Xe (inside the system "
                               "Xe architecture); not selected now -> pending, neither assumed nor excluded")
+        if "contingency" in x.get("name", "") and x.get("gas_mode") in ("G-ATM", "G-XE"):
+            x["label_note"] = ICP_FEED_LABEL_NOTE      # A9.16 repair F11 (A9.1 HIQ-06 ICP-feed label; XV3Q-01)
+        if x["id"] in SCOPE_ZERO_LINES:
+            if x["presence"] != "ABSENT_BY_OWNER_DECISION":
+                raise BookingError(f"{x['id']}: v2 presence changed ({x['presence']}); review the scope reading")
+            x["presence_v2"] = x["presence"]
+            x["presence"] = "ZERO_BY_SCOPE"
+            x["scope_note"] = SCOPE_ZERO_LINES[x["id"]]
+            x["owner_answers_applied"] = [cite(s["GOV_C1"]), cite(s["MPQ01_A"]), cite(s["XA9Q07_A"])]
+            x["v3_change"] = ("relabelled: configuration-scope zero (no C1 in hall_icp_neutralizer), not an owner Xe "
+                              "exclusion (A9.16 repair F6)")
         if x["id"] == "C1-FL-FLOWUNC":
             x["reserve_base_v2"] = x["reserve_base"]
             x["reserve_base"] = True
@@ -744,9 +796,7 @@ def design_cases(v2: dict, items: dict, evals: list, s: dict) -> dict:
         cap = sig6(sp["mission_usable_kg"])
         cf = sig6((cap - flowunc) / t_fire / 1e-6)
         agreement.append({"check": f"C1 flow ceiling {c} kg = v2 (LOADED, INSIDE)", "agrees": cf == v2ceil[c]})
-        ceil.append({"case_kg": c, "c1_flow_ceiling_mg_s_all_other_terms_zero": cf,
-                     "a5_design_flow_mg_s": items["XV2-02"]["value"],
-                     "design_flow_within_ceiling": items["XV2-02"]["value"] <= cf})
+        ceil.append({"case_kg": c, "c1_flow_ceiling_mg_s_all_other_terms_zero": cf})
     bad = [a["check"] for a in agreement if not a["agrees"]]
     if bad:
         raise BookingError("v3 does not reproduce the verified v2 LOADED tables: " + "; ".join(bad))
@@ -770,10 +820,17 @@ def design_cases(v2: dict, items: dict, evals: list, s: dict) -> dict:
         "headroom": {"label": "mission-usable cap per loaded case minus the closed flight terms (arithmetic; not an "
                               "allocation)", "rows": headroom},
         "c1_conditional_sensitivity": {
-            "label": "CONDITIONAL_SENSITIVITY_NOT_BOOKED: what a SELECTED flight C1 that requires Xe at the A5 design "
-                     "flow would take (A9.15: neither assumed nor excluded in advance)",
-            "keeper_term_kg_if_selected_and_xe": keeper, "flow_class_term_kg_if_selected_and_xe": flowunc,
-            "flow_ceiling_rows": ceil},
+            "label": "A5_DESIGN_TARGET_PLACEHOLDER_SENSITIVITY_NOT_BOOKED: arithmetic on the A5 design-target flow "
+                     "(XV2-02) and firing-hours basis, NOT on selected C1 hardware and NOT an estimate of flight C1 Xe; "
+                     "the selected C1 hardware's qualified flow replaces it (A9.15: C1 Xe neither assumed nor excluded "
+                     "in advance; a C1 that does not require Xe gets no invented consumption; A9.16 repair F6)",
+            "placeholder_basis": {"flow": "XV2-02 (A5 design target)", "status": XV2_02_PLACEHOLDER},
+            "keeper_term_kg_if_selected_and_xe_at_a5_placeholder": keeper,
+            "flow_class_term_kg_if_selected_and_xe_at_a5_placeholder": flowunc,
+            "flow_ceiling_rows": ceil,
+            "flow_ceiling_note": "the C1 flow each loaded case could carry with every other flight term zero "
+                                 "(arithmetic ceiling); no comparison with the A5 placeholder flow is made (the "
+                                 "selected C1 hardware decides; A9.16 repair F6)"},
         "mass_share": {"label": "loaded Xe alone vs the row-44 0.25 screening cap on the 40 kg wet gate (row 5)",
                        "rows": share},
         "v2_agreement": agreement,
@@ -818,6 +875,7 @@ def owner_answers_applied(s: dict) -> list:
 
 def build_doc() -> dict:
     verify_pins()
+    check_a91_basis()
     v2 = _load(V2["V2_JSON"][0])
     s = S()
     a9 = _load(A9_DECISION[0])
@@ -908,7 +966,17 @@ def build_doc() -> dict:
              "units": "bar", "status": "TBD_FROM_QUOTATIONS (no purchase, no supplier contact)"}],
         "owner_answers_applied": owner_answers_applied(s),
         "open_owner_questions": [
-            {"id": "XV2Q-01", "status": "NOT_APPLICABLE", "by": [cite(s["XV2Q01"]), cite(s["XV2Q01_A"])]}],
+            {"id": "XV2Q-01", "status": "NOT_APPLICABLE", "by": [cite(s["XV2Q01"]), cite(s["XV2Q01_A"])]},
+            {"id": "XV3Q-01", "status": "OPEN", "by": [A91_MD + " HIQ-06 (sha256 " + A91_MD_SHA256[:12] + ")",
+                                                       cite(s["GOV"])],
+             "question": "A9.15 makes Xe an RFP-required system capability that must not be 'weakened into a "
+                         "contingency interpretation'. Does it also change the A9.1 HIQ-06 ICP gas-mode labels, where "
+                         "G-REUSE is primary and the dedicated G-ATM / G-XE ICP feeds are 'separately declared "
+                         "contingency variants'? (The A9.15 recorder note flagged this; Xe v3 keeps the A9.1 ICP-feed "
+                         "labels and scopes 'contingency' to the ICP feed choice only.)",
+             "a9_1_basis_verbatim": A91_HIQ06,
+             "proposed": "none - owner call (no reading is chosen here; the A9.1 baseline stays as recorded until the "
+                         "owner answers)", "needed_by": "LOCK-1"}],
         "recorder_flags": [
             "XA9Q-04 reading: the 0.20 margin is applied to the full calculated ground total INCLUDING the explicitly "
             "booked purge / conditioning / line-fill / vendor lines (conservative literal reading of 'booked explicitly "
@@ -993,17 +1061,18 @@ def render_md(doc: dict) -> str:
                 [[r["scenario"], r["case_kg"], r["mission_usable_cap_kg"], r["headroom_for_TBD_terms_kg"], r["status"]]
                  for r in dc["headroom"]["rows"]])
     cs = dc["c1_conditional_sensitivity"]
-    L += [cs["label"] + f": keeper {cs['keeper_term_kg_if_selected_and_xe']} kg, flow class "
-          f"{cs['flow_class_term_kg_if_selected_and_xe']} kg.", ""]
-    L += _table(["case kg", "C1 flow ceiling mg/s (all else 0)", "A5 design flow", "within"],
-                [[r["case_kg"], r["c1_flow_ceiling_mg_s_all_other_terms_zero"], r["a5_design_flow_mg_s"],
-                  r["design_flow_within_ceiling"]] for r in cs["flow_ceiling_rows"]])
+    L += [cs["label"] + f": keeper {cs['keeper_term_kg_if_selected_and_xe_at_a5_placeholder']} kg, flow class "
+          f"{cs['flow_class_term_kg_if_selected_and_xe_at_a5_placeholder']} kg (A5 placeholder arithmetic).", ""]
+    L += _table(["case kg", "C1 flow ceiling mg/s (all else 0)"],
+                [[r["case_kg"], r["c1_flow_ceiling_mg_s_all_other_terms_zero"]] for r in cs["flow_ceiling_rows"]])
+    L += [cs["flow_ceiling_note"] + ".", ""]
     L += ["## Interfaces", ""]
     L += _table(["id", "dir", "to / from", "quantity", "status"],
                 [[x["id"], x["direction"], x["to"] if x["direction"] == "OUT" else x["from"], x["quantity"], x["status"]]
                  for x in doc["interface_demands"]])
     L += ["## Open questions and recorder flags", ""]
-    L += [f"* {q['id']}: {q['status']} ({'; '.join(q['by'])})" for q in doc["open_owner_questions"]]
+    L += [f"* {q['id']}: {q['status']} ({'; '.join(q['by'])})" + (f": {q['question']}" if q.get("question") else "")
+          for q in doc["open_owner_questions"]]
     L += [f"* flag: {f}" for f in doc["recorder_flags"]] + [""]
     return "\n".join(L)
 

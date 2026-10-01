@@ -289,3 +289,31 @@ def test_v2_ids_carried(d):
     assert {i["id"] for i in v2["items"]} <= ids3
     assert {x["id"] for x in v2["ledger_lines"]} <= {x["id"] for x in d["ledger_lines"]}
     assert all(i.get("owner_answers_applied") is not None for i in d["items"])
+
+
+
+def test_a9_16_repair_f6_f11_c1_scope_placeholder_and_icp_feed_label(d):
+    """A9.16 repair F6: P-FL-C1 is a configuration-scope zero (no C1 in hall_icp_neutralizer), not an owner Xe exclusion;
+    XV2-02 and the C1 sensitivity are A5 design-target placeholders (no within-ceiling verdict). F11: the ICP-feed
+    'contingency' label is the owner's A9.1 HIQ-06 term, and whether A9.15 changes it is open owner question XV3Q-01."""
+    ln = {x["id"]: x for x in d["ledger_lines"]}
+    p = ln["P-FL-C1"]
+    assert p["presence"] == "ZERO_BY_SCOPE" and p["presence_v2"] == "ABSENT_BY_OWNER_DECISION"
+    assert p["scope_note"].startswith("CONFIGURATION_SCOPE_EXCLUSION") and "PENDING_C1_NOT_SELECTED" in p["scope_note"]
+    for x in d["ledger_lines"]:
+        if "contingency" in x["name"] and x.get("gas_mode") in ("G-ATM", "G-XE"):
+            assert "A9.1 HIQ-06" in x["label_note"], x["id"]
+    it = {x["id"]: x for x in d["items"]}
+    assert it["XV2-02"]["status"].startswith("A5_DESIGN_TARGET_PLACEHOLDER") and "FIXED_DESIGN_TERM" in \
+        it["XV2-02"]["status_v2"]
+    cs = d["design_cases"]["c1_conditional_sensitivity"]
+    assert cs["label"].startswith("A5_DESIGN_TARGET_PLACEHOLDER_SENSITIVITY_NOT_BOOKED")
+    assert all(set(r) == {"case_kg", "c1_flow_ceiling_mg_s_all_other_terms_zero"} for r in cs["flow_ceiling_rows"])
+    for i in ("XV2-22", "XV2-44"):
+        assert "A9.1 HIQ-06" in it[i]["label_note"] and "XV3Q-01" in it[i]["label_note"]
+    q = {x["id"]: x for x in d["open_owner_questions"]}["XV3Q-01"]
+    assert q["status"] == "OPEN" and "separately declared contingency variants" in q["a9_1_basis_verbatim"]
+    a91 = (REPO / "docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md").read_text(encoding="utf-8")
+    assert " ".join(q["a9_1_basis_verbatim"].split()) in " ".join(a91.split())
+    md = (REPO / "docs/budgets/xe_accounting_a9_v3/XE_ACCOUNTING_A9_V3.md").read_text(encoding="utf-8")
+    assert "| within |" not in md and "XV3Q-01: OPEN" in md

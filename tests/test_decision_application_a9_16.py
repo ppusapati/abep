@@ -188,7 +188,30 @@ def test_f9_records():
     assert by["AFC-PR-ICP-05"]["freeze_status"] == "OPEN" and "0.05" in by["AFC-PR-ICP-05"]["value"]
     assert "G-REUSE" in by["AFC-PR-CL-07"]["value"]                         # A9.1 ICP gas mode unchanged
     assert all(q["status"] == "OWNER_DECIDED" for q in F9DOC["open_owner_questions"])
-    assert F9DOC["owner_question_rollup"]["state_v5"]["open_owner_questions"] == ["MPV3Q-01"]
+    # A9.16 repair F11: XV3Q-01 (A9.1 HIQ-06 ICP-feed labels vs A9.15) is tracked as an open owner question
+    assert F9DOC["owner_question_rollup"]["state_v5"]["open_owner_questions"] == ["MPV3Q-01", "XV3Q-01"]
+
+
+def test_f9_repair_f8_rollup_status_and_current_xe_sources():
+    """A9.16 repair F8: the F9 MD roll-up shows the state-v5 status of every as-raised question (the v4 table is
+    historical); the Xe rows cite xe_accounting_a9_v3 / mass_power_a9_v3 / state v5 as current sources; AFC-SY-CTL-01
+    records the OD5 sequence as decided and the dwell / thermal limits as pending registration."""
+    md = (ROOT / "docs/architecture/freeze_candidate/ARCHITECTURE_FREEZE_CANDIDATE.md").read_text(encoding="utf-8")
+    assert "Owner-question roll-up (not answered here)" not in md and "### State v4 TBD_OWNER (" not in md
+    assert "### Historical: state v4 TBD_OWNER as raised" in md and "| status (v5) |" in md
+    row335 = [ln for ln in md.splitlines() if ln.startswith("| 335 | XV2Q-01 |")][0]
+    assert "AMENDED_BY_A9_15" in row335
+    by = {r["id"]: r for r in F9DOC["parameters"]}
+    for rid in ("AFC-SY-XE-01", "AFC-SY-XE-03", "AFC-SY-XE-04", "AFC-SY-XE-06", "AFC-SY-XE-08"):
+        cur = by[rid]["current_sources"]
+        assert cur and all(c.startswith(("docs/budgets/xe_accounting_a9_v3/", "docs/budgets/mass_power_a9_v3/",
+                                         "docs/budgets/owner_decisions/owner_questions_state_v5.json")) for c in cur), rid
+        for x in by[rid]["source"]:
+            if isinstance(x, dict) and x["path"].endswith(("xe_accounting_a9_v2.json", "owner_questions_state_v4.json")):
+                assert x["role"].startswith("HISTORY"), rid
+    ctl = by["AFC-SY-CTL-01"]
+    assert ctl["basis"].startswith("SEQUENCE OWNER_DECIDED (A9.14 OD5")
+    assert ctl["a9_16"]["dwell_thermal_limits"].startswith("PENDING_REGISTRATION")
 
 
 # ------------------------------------------------------------------------------------------------ F6

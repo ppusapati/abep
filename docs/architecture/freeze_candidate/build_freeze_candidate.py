@@ -93,11 +93,12 @@ CONSUMED = {
     "MP2": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
     "M16": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
     "XE2": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+    "XE3": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",     # A9.16 repair F8 (current Xe ledger)
     "BUS": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
     "ICD": "schemas/interfaces/icp_neutralizer_icd_v1.json",
     "P1": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
     "P2": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
-    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
     "P4": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
     "ENS": "hallthruster_bridge/ensemble/transport_ensemble_v0.json",
     "VAL": "hallthruster_bridge/validation/VALIDATION_RELEASE_v1.json",
@@ -1679,17 +1680,23 @@ def render_md(doc: dict) -> str:
         L.append(f"| {s['id']} | {_fmt(s['evidence'], 220)} | {', '.join(s['addresses_gates'])} | "
                  f"{', '.join(s['depends_on']) or '-'} | {s['vehicle']} |")
     ro = doc["owner_question_rollup"]
-    L += ["", "## Owner-question roll-up (not answered here)", "", ro["rule"] + ".", "",
-          f"### New F9 questions", ""]
-    L += [f"- **{q['id']}** ({q['needed_by']}): {q['question']}" for q in doc["open_owner_questions"]]
-    L += ["", f"### A9.7 lane questions ({ro['a9_7_lane_question_count']})", "", "| lane | id | question |",
-          "|---|---|---|"]
-    L += [f"| {q['lane']} | {q['id']} | {_fmt(q['question'], 260)} |" for q in ro["a9_7_lane_questions"]]
-    L += ["", "Other existing open questions cited: " + "; ".join(
-        f"{q['id']}: {q['question']}" for q in ro["other_existing_open_questions_cited"]), "",
-          f"### State v4 TBD_OWNER ({ro['state_v4_tbd_owner_count']})", "", "| no | id | blocks | question |",
-          "|---|---|---|---|"]
-    L += [f"| {q['no']} | {q['id']} | {_fmt(q['blocks'], 40)} | {_fmt(q['question'], 200)} |"
+    v5s = ro.get("state_v5", {}).get("status_of_rolled_up_questions", {})
+    st5 = lambda qid: v5s.get(qid, "-")        # noqa: E731  (A9.16 repair F8: the v5 status is shown beside each row)
+    L += ["", "## Owner-question roll-up (questions as raised by the lanes; current status from state v5)", "",
+          ro["rule"] + ".", "", "Current status: state v5 " + str(ro.get("state_v5", {}).get("tbd_owner_count", "-"))
+          + " TBD_OWNER (" + ", ".join(ro.get("state_v5", {}).get("open_owner_questions", [])) + "); every other "
+          "question below is answered (status column).", "", f"### F9 questions (as raised)", ""]
+    L += [f"- **{q['id']}** ({q['needed_by']}; status {q.get('status', '-')}): {q['question']}"
+          for q in doc["open_owner_questions"]]
+    L += ["", f"### A9.7 lane questions as raised ({ro['a9_7_lane_question_count']})", "",
+          "| lane | id | status (v5) | question |", "|---|---|---|---|"]
+    L += [f"| {q['lane']} | {q['id']} | {st5(q['id'])} | {_fmt(q['question'], 260)} |"
+          for q in ro["a9_7_lane_questions"]]
+    L += ["", "Other existing questions cited (as raised): " + "; ".join(
+        f"{q['id']} [{st5(q['id'])}]: {q['question']}" for q in ro["other_existing_open_questions_cited"]), "",
+          f"### Historical: state v4 TBD_OWNER as raised ({ro['state_v4_tbd_owner_count']}) - status now from state v5",
+          "", "| no | id | blocks | status (v5) | question |", "|---|---|---|---|---|"]
+    L += [f"| {q['no']} | {q['id']} | {_fmt(q['blocks'], 40)} | {st5(q['id'])} | {_fmt(q['question'], 200)} |"
           for q in ro["state_v4_tbd_owner"]]
     L += ["", "## Findings", ""]
     L += [f"- **{f['id']}** ({f['evidence_class']}): {f['finding']}" for f in doc["findings"]]

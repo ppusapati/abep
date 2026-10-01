@@ -897,7 +897,10 @@ def test_rating_structure_never_rates(fw, red, case):
     fake = dict(env, data_classes=["measured"])
     rs2 = fw.rating_structure(fake)
     heat2 = next(r for r in rs2["rows"] if r["id"] == "RC-HEAT")
-    assert heat2["candidate_minimum"].startswith("TBD_OWNER")
+    # A9.16 repair F1: ICPQ-10 decided (A9.12 S5.1 alternative A) -> TBD_AFTER_EVIDENCE until P_fwd,max / P_d,max are
+    # registered (updated test; formerly TBD_OWNER)
+    assert heat2["candidate_minimum"].startswith("TBD_AFTER_EVIDENCE") and heat2["bound_rule"].endswith(
+        "p3_a9_16_rules.py::icp43_total_module_bound")
     gen2 = next(r for r in rs2["rows"] if r["id"] == "RC-GEN-PFWD")
     assert gen2["candidate_minimum"]["value"] == pytest.approx(1.25 * env["P_forward_W_at_RP_CPL"]["max"])
     rs3 = fw.rating_structure(fake, component_margins={"RC-GEN-PFWD": 1.3})
@@ -905,7 +908,7 @@ def test_rating_structure_never_rates(fw, red, case):
     assert gen["candidate_minimum"]["status"] == "REQUIRED_MINIMUM_UNDER_OWNER_POLICY_NOT_A_RATING"
     assert gen["candidate_minimum"]["value"] == pytest.approx(1.3 * env["P_forward_W_at_RP_CPL"]["max"])
     heat = next(r for r in rs3["rows"] if r["id"] == "RC-HEAT")
-    assert heat["candidate_minimum"].startswith("TBD_OWNER") and heat["owner_input"] == "ICPQ-10"
+    assert heat["candidate_minimum"].startswith("TBD_AFTER_EVIDENCE") and heat["owner_input"] == "ICPQ-10"
     assert rs3["RF_COMPONENT_RATINGS"] == "TBD_AFTER_IMPEDANCE_MAP"
     with pytest.raises(fw.RatingInputError):
         fw.rating_structure(fake, component_margins={"RC-GEN-PFWD": 0.9})
@@ -949,7 +952,11 @@ def test_package_framework_section(d, fw):
                          "REF-JCGM102"}
     for r in refs.values():
         assert re.fullmatch(r"[0-9a-f]{64}", r["sha256"]) and r["url"].startswith("https://") and r["locators"]
-    assert f["heat_load_alternatives"]["status"] == "TBD_OWNER" and len(f["heat_load_alternatives"]["alternatives"]) == 2
+    # A9.16 repair F1: ICPQ-10 decided - alternative A selected, B only as rejected history (updated test)
+    h = f["heat_load_alternatives"]
+    assert h["status"] == "OWNER_DECIDED" and h["selected_alternative"] == "A" and "alternatives" not in h
+    assert [x["disposition"].split(" ")[0] for x in h["history_alternatives_as_raised"]] == ["OWNER_SELECTED",
+                                                                                            "OWNER_REJECTED"]
     assert "IMPLEMENTED_FRAMEWORK_NOT_RUN_ON_DATA" in f["status"]
 
 
@@ -974,14 +981,14 @@ def test_a96_pins_items_questions_and_statuses(d):
     assert rows["ICPQ-10"]["status"] == rows["ICPQ-11"]["status"] == "OPEN"
     assert d["framework"]["heat_load_alternatives"]["question_text"] == rows["ICPQ-10"]["question"]
     qs = {q["id"] for q in d["answered_owner_questions"]}
-    assert "P2Q-10" in qs and "P2Q-10" not in rows and d["open_owner_questions"] == []
+    assert "P2Q-10" in qs and "P2Q-10" not in rows and d["owner_questions_open_now"] == []
     applied = {o["ref"]["decision"] for o in d["owner_answers_applied"]
                if isinstance(o["ref"], dict) and o["ref"].get("kind") == "A9.6"}
     assert {"sec. 9", "sec. 14", "sec. 5", "sec. 7"} <= applied
     ids = {x["id"]: x for x in d["interface_demands"]}
     for i in ("IDP2-19", "IDP2-20", "IDP2-21", "IDP2-22"):
         assert i in ids
-    assert "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json P3-IF-N04" in ids["IDP2-20"]["direction"]
+    assert "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json P3-IF-N04" in ids["IDP2-20"]["direction"]
     assert "PENDING docs/" not in ids["IDP2-20"]["direction"] + ids["IDP2-21"]["direction"]
     assert ids["IDP2-20"]["status"].startswith("TBD_AFTER_IMPEDANCE_MAP")
     assert d["a9_2_statuses_carried"]["RF component ratings"] == "TBD_AFTER_IMPEDANCE_MAP"

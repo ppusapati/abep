@@ -1,7 +1,14 @@
 #!/usr/bin/env python3
-"""P3 coupled H-1 / downstream-ICP thermal FRAMEWORK (lane fo_a9_6_p3_coupled_thermal, trigger
-T_A9_6_P3_COUPLED_THERMAL; owner directive A9.6 sec. 10; A9.2 icp_coupled_thermal, radiative_view_requirement,
-13W_pole_allowance, anode_approach).
+"""P3 coupled H-1 / downstream-ICP thermal FRAMEWORK, v2 = v1 + the owner decisions of 2026-10-01 (A9.16 step 1)
+(lane fo_a9_6_p3_coupled_thermal, trigger T_A9_6_P3_COUPLED_THERMAL; owner directive A9.6 sec. 10; A9.2
+icp_coupled_thermal, radiative_view_requirement, 13W_pole_allowance, anode_approach).
+
+Why a v2 file (A9.16 repair COR-05 / COR-01): build_p3_coupled_thermal.py is a profiled source of the F0 performance
+baseline (docs/performance/PERFORMANCE_BASELINE_98fbbb9.json, itself sha-pinned by the Rust parity pre-registration)
+and its v1 outputs are read back by the immutable state-v4 / RFQ v2 / mass-power v2 / Xe v2 builders. The v1 builder
+and its outputs therefore stay byte-identical to the A9.6 package (the as-raised record); every A9.16 change lives here
+and in p3_a9_16_rules.py / a9_16_application.py, and is written to p3_coupled_thermal_v2.json /
+P3_COUPLED_THERMAL_V2.md. The thermal library p3_thermal_lib.py is shared unchanged.
 
 Deterministic; numpy only (pinned); runs in a few seconds; no Julia.
 
@@ -19,15 +26,17 @@ What it does
   * runs the A9.2 radiative-view design-objective PARAMETRIC STUDY: ICP-induced change of the H-1 radiative view
     factors over a dimensionless ICP geometry grid (evaluation grid, not a design; H-1 at H2-5 range midpoints,
     analog/assumed) and the geometric plume interception of uniform-cone TEST distributions (not plume predictions);
-  * writes p3_coupled_thermal_v1.json and P3_COUPLED_THERMAL.md (generated from the JSON).
+  * writes p3_coupled_thermal_v2.json and P3_COUPLED_THERMAL_V2.md (generated from the JSON).
 
 What it is not: a thermal result, a thermal PASS (ICP_COUPLED_THERMAL and ANODE_THERMAL_CLOSURE stay UNRESOLVED), a
 Hall performance prediction (no Hall closure, no 0-D model; plume/discharge quantities are measured inputs, TBD),
-an ICP design, an answer to an open owner question, or a change to any H2 / ICD / P1 / P2 deliverable.
+an ICP design, an owner decision (A9.16 step 1 APPLIES the owner decisions A9.8 P3Q-01, A9.12 S5.1-S5.9 and
+A9.14 ICPQ-03 / ICPQ-09 as fail-closed rules in p3_a9_16_rules.py; A9.15 reviewed), or a change to any H2 / ICD / P1 /
+P2 deliverable.
 Not wired into archengine (goldens do not move).
 
-    python docs/experiments/hall_icp/p3_coupled_thermal/build_p3_coupled_thermal.py          # (re)write outputs
-    python docs/experiments/hall_icp/p3_coupled_thermal/build_p3_coupled_thermal.py --check  # exit 1 unless reproduced
+    python docs/experiments/hall_icp/p3_coupled_thermal/build_p3_coupled_thermal_v2.py          # (re)write outputs
+    python docs/experiments/hall_icp/p3_coupled_thermal/build_p3_coupled_thermal_v2.py --check  # exit 1 unless reproduced
 """
 from __future__ import annotations
 
@@ -42,10 +51,12 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[3]
 LANE_REL = "docs/experiments/hall_icp/p3_coupled_thermal"
-SCRIPT_REL = f"{LANE_REL}/build_p3_coupled_thermal.py"
+SCRIPT_REL = f"{LANE_REL}/build_p3_coupled_thermal_v2.py"
+V1_SCRIPT_REL = f"{LANE_REL}/build_p3_coupled_thermal.py"
 LIB_REL = f"{LANE_REL}/p3_thermal_lib.py"
-JSON_NAME = "p3_coupled_thermal_v1.json"
-MD_NAME = "P3_COUPLED_THERMAL.md"
+JSON_NAME = "p3_coupled_thermal_v2.json"
+V1_JSON_NAME = "p3_coupled_thermal_v1.json"
+MD_NAME = "P3_COUPLED_THERMAL_V2.md"
 TEST_REL = "tests/test_p3_coupled_thermal.py"
 BASE_COMMIT = "c33b22c78b14cd4d6a51ed9bd5de4e046bc98cae"
 DATE = "2026-09-30"
@@ -53,7 +64,7 @@ LANE = "fo_a9_6_p3_coupled_thermal"
 TRIGGER = "T_A9_6_P3_COUPLED_THERMAL"
 FREEZE_POINTS = ("NOW", "P1-G0", "LOCK-1", "LOCK-2", "after-evidence")
 ITEM_STATUSES = ("OWNER_GIVEN", "DEFINED", "PROPOSED", "TBD", "TBD_AFTER_EVIDENCE", "TBD_AFTER_IMPEDANCE_MAP",
-                 "TBD_OWNER", "PENDING", "ANALOG_EVALUATION_ONLY")
+                 "TBD_OWNER", "PENDING", "ANALOG_EVALUATION_ONLY", "OWNER_REJECTED")
 SUPPLIERS = ("P1", "P2", "hardware", "phase1_hall", "owner", "H2-5/A9-07 (analog)", "P4", "facility", "this lane")
 
 
@@ -66,6 +77,8 @@ def _load_module(name, rel):
 
 
 LIB = _load_module("p3_thermal_lib", LIB_REL)
+RULES = _load_module("p3_a9_16_rules", f"{LANE_REL}/p3_a9_16_rules.py")
+APP = _load_module("p3_a9_16_application", f"{LANE_REL}/a9_16_application.py")
 
 # ------------------------------------------------------------------------------------------------ pinned inputs
 DECISIONS = {
@@ -92,6 +105,7 @@ DECISIONS = {
     "A96MD": ("docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md",
               "c6ee26e57ea5ca559f4fa4e4a8809b1aa8f3a217e50c534b943fc3ad99240634", "A9.6 (verbatim; binds this lane)"),
 }
+DECISIONS.update(APP.decision_pins())  # A9.16 step 1: A9.8, A9.12, A9.14, A9.15 (json + verbatim md)
 DELIVERABLES = {
     "H25": ("docs/hardware/h2/h2_5_thermal_network/h2_5_thermal_network_v1.json",
             "68c5be61443d0ef1c7308c4aba265426137292dcf9363e57903e0a1f6c8bc083", "H2-5 thermal network v1 (H-1 side)"),
@@ -133,7 +147,7 @@ P2_IDS = ("RP-CPL", "RP-MIN", "RP-ANT", "HM-F01", "HM-R08", "HM-R09", "CAL-P2-02
 XLANE_PATHS = {
     "P1": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
     "P2": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
-    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
     "P4": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
     "MP": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
     "XE": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
@@ -158,10 +172,12 @@ XL_PAIRS = {  # pair: (counterpart package, counterpart id, quantity, units, sta
     'XL-18': (
         'P1',
         'IF-P1-34',
-        ('plasma potential and electron temperature at the collector sheath edge (conditional P1 measurement '
-         'P1-M-30) or an accepted calorimetric alternative -> P3-P1-04, P3-P1-05'),
+        ('plasma potential and electron temperature near the collector from the Langmuir probe P1-M-30 (required Ar '
+         'P1 development diagnostic, matched diagnostic runs; sheath-model cross-check) beside the calorimetric '
+         'collector energy balance (primary Q_collector evidence) -> P3-P1-04, P3-P1-05'),
         'V; eV',
-        'TBD_OWNER (P3Q-01 OPEN; registration at P1-G0)',
+        ('OWNER_DECIDED (A9.8 P3Q-01 option C: calorimetry primary, Langmuir probe cross-check); probe position / '
+         'calibration registered at P1-G0; readings TBD_AFTER_EVIDENCE'),
     ),
     'XL-19': (
         'P2',
@@ -429,7 +445,10 @@ def item(iid, name, value, units, basis, source, evidence_class, status, freeze_
         raise SystemExit(f"{iid}: freeze point {freeze_point}")
     if supplier not in SUPPLIERS:
         raise SystemExit(f"{iid}: supplier {supplier}")
-    if status.startswith("TBD") or status == "PENDING":
+    if status == "OWNER_REJECTED":
+        if not (isinstance(value, str) and value.startswith("REJECTED")) or evidence_class is not None:
+            raise SystemExit(f"{iid}: an owner-rejected alternative carries a 'REJECTED - ...' value, no evidence class")
+    elif status.startswith("TBD") or status == "PENDING":
         if not (isinstance(value, str) and value.startswith(("TBD", "PENDING"))):
             raise SystemExit(f"{iid}: TBD item must carry a 'TBD - requires ...' value")
         if evidence_class is not None:
@@ -516,9 +535,10 @@ def build_items(h25pm, a92, ans):
              "TBD - requires the mount design (isolators, 350 V class P1Q-14) and a measured / sourced joint "
              "conductance", "W/K", "pending", "A9.2 radiative_view_requirement; A9.4 P1Q-14", None, "TBD", "LOCK-1",
              "hardware", ["network", "Q_Hall->ICP (conductive)"], "icp_cond"),
-        item("P3-K-02", "conductance KC-1 carrier <-> H-1 (through the stand / moving platform)",
-             "TBD - requires the KC-1 / stand design; depends on the open owner question ICPQ-03 (moving platform)",
-             "W/K", "pending", "ICD ICP-06 / ICP-10; owner question ICPQ-03 (OPEN)", None, "TBD", "LOCK-1",
+        item("P3-K-02", "conductance KC-1 carrier <-> H-1 (through the moving thrust platform)",
+             "TBD - requires the KC-1 / moving-platform design (A9.14 ICPQ-03: both downstream modules and their "
+             "representative mounting on the moving thrust platform)",
+             "W/K", "pending", "ICD ICP-06 / ICP-10; A9.14 ICPQ-03 (S8.1)", None, "TBD", "LOCK-1",
              "hardware", ["network", "Q_Hall->ICP (conductive)"], "icp_cond"),
         item("P3-K-03", "conductance KC-1 carrier <-> stand / spacecraft boundary", "TBD - requires the KC-1 / "
              "stand design (ground) and the spacecraft thermal ICD (flight; owner row 85 cases)", "W/K", "pending",
@@ -549,13 +569,16 @@ def build_items(h25pm, a92, ans):
         item("P3-P1-03", "collector (surface) potential", f"{TBD_P1}: P1-M-10 V_collector (reference per P1-IT-36)",
              "V", "pending", "P1-M-10, P1-IT-36", None, "TBD_AFTER_EVIDENCE", "after-evidence", "P1", ["Q_collector"],
              "V_surface_V"),
-        item("P3-P1-04", "plasma potential at the collector sheath edge",
-             "TBD - requires a diagnostic not in the P1 measurement list (new owner question P3Q-01)", "V", "pending",
-             "P1 measurement list (no plasma-potential channel)", None, "TBD", "P1-G0", "P1", ["Q_collector"],
-             "V_plasma_V"),
-        item("P3-P1-05", "electron temperature at the collector sheath edge",
-             "TBD - requires a diagnostic not in the P1 measurement list (new owner question P3Q-01)", "eV",
-             "pending", "P1 measurement list (no T_e channel)", None, "TBD", "P1-G0", "P1", ["Q_collector"], "T_e_eV"),
+        item("P3-P1-04", "plasma potential at the collector sheath edge (sheath-model CROSS-CHECK route only)",
+             "TBD - requires the Langmuir probe near the collector in the Ar P1 campaign (A9.8 P3Q-01 option C: "
+             "cross-check of the calorimetric primary, preferably in matched diagnostic runs; registration at P1-G0)",
+             "V", "owner decision A9.8 P3Q-01", "A9.8 P3Q-01; P1 conditional channel P1-M-30", None, "TBD", "P1-G0",
+             "P1", ["Q_collector (cross-check)"], "V_plasma_V"),
+        item("P3-P1-05", "electron temperature at the collector sheath edge (sheath-model CROSS-CHECK route only)",
+             "TBD - requires the Langmuir probe near the collector in the Ar P1 campaign (A9.8 P3Q-01 option C: "
+             "cross-check only; never contaminates an ICP45 capacity record unless the probe perturbation is first "
+             "shown negligible)", "eV", "owner decision A9.8 P3Q-01", "A9.8 P3Q-01; P1 conditional channel P1-M-30",
+             None, "TBD", "P1-G0", "P1", ["Q_collector (cross-check)"], "T_e_eV"),
         item("P3-P1-06", "switch: surface energy terms (electron work function, ion neutralization) in Q_collector",
              "TBD - requires a cited source for the surface heat-transmission terms (from memory - verify) before the "
              "switch may be INCLUDED; EXCLUDED must be declared explicitly", "-", "pending",
@@ -565,6 +588,13 @@ def build_items(h25pm, a92, ans):
              "H-1 inner / outer pole, sink)", f"{TBD_P1}: P1-M-21 (records only; ICP_COUPLED_THERMAL = UNRESOLVED)",
              "degC", "pending", "P1-M-21, P1-IT-26", None, "TBD_AFTER_EVIDENCE", "after-evidence", "P1",
              ["verification"]),
+        item("P3-P1-09", "Q_collector PRIMARY evidence: calorimetric collector energy balance (calibrated temperature "
+             "measurements, registered thermal conductances / thermal mass, RF-ON / RF-OFF comparison, "
+             "collector-current / bias steps)", f"{TBD_P1}: calorimetric record per p3_a9_16_rules."
+             "q_collector_evidence (every element registered; missing -> INCOMPLETE_EVIDENCE)", "W",
+             "owner decision A9.8 P3Q-01 (option C, calorimetry primary)", "A9.8 P3Q-01; P1-M-21 temperatures, "
+             "P1-M-10 / P1-M-11 collector bias / current", None, "TBD_AFTER_EVIDENCE", "after-evidence", "P1",
+             ["Q_collector (primary)"]),
         item("P3-P1-08", "Hall discharge current / voltage at Hall-ON consistency points",
              f"{TBD_P1}: P1-M-14 (measured; never predicted)", "A, V", "pending", "P1-M-14", None,
              "TBD_AFTER_EVIDENCE", "after-evidence", "P1", ["Q_collector (Hall-ON)"]),
@@ -631,9 +661,11 @@ def build_items(h25pm, a92, ans):
     # ---- margins / rules / limits
     r86 = row(ans, 86)
     I += [
-        item("P3-M-01", "heat-load design margin applied to the ICP heat terms", 1.2, "-", "owner answer",
-             "owner row 86; ICD ICP-37", "owner-allocation", "OWNER_GIVEN", "NOW", "owner", ["network"],
-             note="whether it also applies to environmental loads is the open question OQ-A907-09 (not answered)"),
+        item("P3-M-01", "heat-load design margin applied to the internally DISSIPATED heat loads (discharge, RF / "
+             "match, coil, cathode, collector, plume interception, other dissipative)", 1.2, "-", "owner answer",
+             "owner row 86; ICD ICP-37; A9.12 OQ-A907-09 (S5.6)", "owner-allocation", "OWNER_GIVEN", "NOW", "owner",
+             ["network"], note="A9.12 OQ-A907-09: dissipated loads only; solar / albedo / outgoing-IR use the "
+             "registered hot / cold envelope (p3_a9_16_rules.apply_heat_load_margin); never a blanket 1.20"),
         item("P3-M-02", "minimum margin below each validated continuous-use temperature limit", 50.0, "K",
              "owner answer", "owner row 86; ICD ICP-37", "owner-allocation", "OWNER_GIVEN", "NOW", "owner",
              ["verification"]),
@@ -644,31 +676,73 @@ def build_items(h25pm, a92, ans):
              "TBD - requires the selected materials' validated continuous-use limits (CR-01 of " + P4_REF + ": "
              "T_validated,continuous TBD_AFTER_EVIDENCE for every candidate; owner row 87: no unsourced anode target)",
              "degC", "pending",
-             "owner rows 86, 87; ICD ICP-37", None, "TBD", "after-evidence", "P4", ["verification"]),
-        item("P3-M-05", "mounting-interface cases (temperature and allowable conducted heat)",
-             {"T_mount_degC": [20, 40, 60], "Q_mount_allowable_W": [25, 50, 100]}, "degC; W", "owner answer",
-             "owner row 85", "owner-allocation", "OWNER_GIVEN", "NOW", "owner", ["network"]),
+             "owner rows 86, 87; ICD ICP-37; A9.12 OQ-A907-05", None, "TBD", "after-evidence", "P4", ["verification"],
+             note="A9.12 OQ-A907-05: supplier ratings (BN guide value, ceramic wire) are SUPPLIER_PROVISIONAL only - "
+                  "screening / protection / sensitivity / down-selection; dependent margins UNRESOLVED"),
+        item("P3-M-05", "mounting-interface cases (temperature and allowable conducted heat; isolated mount + "
+             "dedicated radiator)",
+             {"T_mount_degC": [20, 40, 60], "Q_mount_allowable_W": [25, 50, 100],
+              "Q_mount_roles_W": {"governing_provisional": 50, "contingency_sensitivity": 100, "stretch": 25}},
+             "degC; W", "owner answer", "owner row 85; A9.12 OQ-A907-06 (S5.4)", "owner-allocation", "OWNER_GIVEN",
+             "NOW", "owner", ["network", "mount_heat_report"],
+             note=RULES.MOUNT_HEAT_LABEL + "; meeting only 100 W is not closed; 25 / 50 / 100 W always reported"),
+        item("P3-M-07", "exterior coating (Z-93-class or alternative) node limit T_op <= T_validated,continuous - 50 K",
+             "TBD - requires a sourced / validated continuous-use temperature for the actual selected coating / "
+             "substrate / application system (OPEN_COATING_LIMIT_NOT_SOURCED until then; no final thermal closure "
+             "relying on the coating)", "degC", "owner decision A9.12 OQ-A907-08 (S5.5)", "A9.12 OQ-A907-08; owner "
+             "row 84", None, "TBD", "after-evidence", "hardware", ["verification"]),
+        item("P3-M-08", "SEARCH_SENSITIVE screen: margin to the design ceiling after the registered search "
+             "allowance below which a result is labelled (label only)", 10.0, "K", "owner decision",
+             "A9.12 OQ-A907-10 (S5.7)", "owner-allocation", "OWNER_GIVEN", "NOW", "owner", ["verification"],
+             note="does not change status, does not replace 50 K, no 10 K requirement; independent bounding check "
+                  "before LOCK-1 use; the search allowance itself is registered by the A9-07 lane"),
         item("P3-M-06", "A9-07 uncoupled ICP-heat allowances into H-1 (PO / BP injection; comparison reference, not a "
              "limit)", "copied in a907_allowance_port (from the pinned A9-07 JSON)", "W", "model-derived",
              "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json recomputations.h25_thermal_rerun."
              "icp_heat_into_h1.min_allowance_W", "model-derived", "DEFINED", "NOW", "H2-5/A9-07 (analog)",
              ["A9-07 allowance port"], note="A9.2 13W_pole_allowance: design-driving warning, not grounds to reject A9"),
     ]
-    # ---- ICPQ-10 alternatives carried side by side (owner question OPEN)
+    # ---- ICPQ-10 decided (A9.12 S5.1: alternative A); OQ-A910-06 decided (A9.12 S5.8: 600 W temporary)
     I += [
-        item("P3-B-01", "ICP-43 total module heat-load bound, alternative A: 1.20 x (P_fwd,max + P_d,max)",
-             "TBD_OWNER - ICPQ-10 OPEN; P_fwd,max TBD_AFTER_IMPEDANCE_MAP, P_d,max TBD (A9.3 OQ-A907-02)", "W",
-             "owner question ICPQ-10 alternative A", "ICD ICP-43; owner row 86", None, "TBD_OWNER", "LOCK-1", "owner",
-             ["network (bounding)"]),
+        item("P3-B-01", "ICP-43 total module heat-load bound (A9.12 ICPQ-10 alternative A): "
+             "Q_ICP,bound = 1.20 x (P_fwd,max + P_d,max)",
+             "TBD_AFTER_IMPEDANCE_MAP - rule decided (A9.12 ICPQ-10); P_fwd,max = maximum admitted RF forward-power "
+             "operating point of the registered ICP / P2 envelope (TBD_AFTER_IMPEDANCE_MAP), P_d,max = registered H-1 "
+             "discharge-power bound (TBD, A9.3 OQ-A907-02); evaluated by p3_a9_16_rules.icp43_total_module_bound",
+             "W", "owner decision A9.12 ICPQ-10 (S5.1)", "ICD ICP-43; owner row 86; A9.12 ICPQ-10", None,
+             "TBD_AFTER_IMPEDANCE_MAP", "LOCK-1", "owner", ["network (bounding)"],
+             note="deliberately conservative bounding rule, not a deposition statement; replaced by measured coupled "
+                  "heat terms (same 1.20) once P1 / P2 / P3 deposition and loss terms exist"),
         item("P3-B-02", "ICP-43 total module heat-load bound, alternative B: 1.20 x 1.5 kW envelope (H2-6 H26-44)",
-             "TBD_OWNER - ICPQ-10 OPEN; arithmetic of the alternative if chosen: 1.2 x 1500 W = 1800 W (owner rows "
-             "86, 108)", "W", "owner question ICPQ-10 alternative B", "ICD ICP-43; owner rows 86, 108", None,
-             "TBD_OWNER", "LOCK-1", "owner", ["network (bounding)"]),
-        item("P3-B-03", "RF-path heat allocation basis ICP-36 (500 W x 1.2 = 600 W, allocation term, not a bound)",
-             "TBD_OWNER - OQ-A910-06 OPEN (keep 600 W or re-derive from P2); P_line/match,loss adds on top (A9.2)",
-             "W", "owner question OQ-A910-06", "ICD ICP-36", None, "TBD_OWNER", "LOCK-1", "owner",
-             ["Q_RF/match (allocation cross-check)"]),
+             "REJECTED - A9.12 ICPQ-10 selected alternative A; the 1.5 kW spacecraft / bus ceiling never silently "
+             "becomes an ICP thermal bound (icp43_total_module_bound refuses a bus-ceiling basis)", "W",
+             "owner decision A9.12 ICPQ-10 (S5.1)", "ICD ICP-43; owner rows 86, 108; A9.12 ICPQ-10", None,
+             "OWNER_REJECTED", "NOW", "owner", ["none (rejected alternative, kept as history)"]),
+        item("P3-B-03", "ICP RF-path thermal allocation Q_RF,allocation = 500 W x 1.20 (TEMPORARY until P2)",
+             RULES.Q_RF_ALLOCATION_W, "W", "owner decision A9.12 OQ-A910-06 (S5.8)", "ICD ICP-36; A9.12 OQ-A910-06",
+             "owner-allocation", "OWNER_GIVEN", "NOW", "owner", ["Q_RF/match (allocation cross-check)"],
+             note="; ".join(RULES.RF_ALLOCATION_LABELS) + "; P_line/match,loss additional where applicable; "
+                  "superseded after P2 by 1.20 x the verified P2 envelope (p3_a9_16_rules.rf_thermal_basis)"),
     ]
+    # ---- A9.12 OQ-A907-03 admissibility declaration and P3Q-02 correlation-plan registration slots
+    I += [
+        item("P3-A-01", "joint-state admissibility declaration of the bounding-corner factors (exclusions only for "
+             "MUTUALLY_EXCLUSIVE_STATES / KNOWN_CORRELATED_EXTREMES, each sourced; registered before the evaluation)",
+             "TBD - requires the registered bounding factors and their sourced exclusions "
+             "(NOT_EVALUATED_ADMISSIBILITY_TBD until registered)", "-", "owner decision A9.12 OQ-A907-03 (S5.2)",
+             "A9.12 OQ-A907-03", None, "TBD", "LOCK-1", "this lane", ["bounding cases"]),
+    ]
+    for n, (slot, what) in enumerate((
+            ("sensor_locations", "sensor (thermocouple) locations at the registered nodes"),
+            ("measurement_uncertainty", "measurement uncertainty of each sensor"),
+            ("comparison_quantities", "model-to-test comparison quantities (temperatures / thermal responses)"),
+            ("residual_band", "admissible correlation residual band"),
+            ("sensor_placement_contact_treatment", "treatment of sensor placement / contact uncertainty")), 1):
+        I.append(item(f"P3-C-0{n}", f"P3Q-02 correlation plan slot '{slot}': {what}",
+                      "TBD - registered before the correlation data are evaluated "
+                      "(NOT_EVALUATED_CORRELATION_PLAN_TBD until then; no value invented)", "-",
+                      "owner decision A9.12 P3Q-02 (S5.9)", "A9.12 P3Q-02", None, "TBD", "LOCK-1", "this lane",
+                      ["model class A correlation"]))
     # ---- numerics
     I += [
         item("P3-N-01", "ray-quadrature resolution (n_pos, n_u, n_phi) of the parametric study / verification",
@@ -983,6 +1057,12 @@ def build():
     existing_oq = {}
     for qid in ("ICPQ-03", "ICPQ-09", "ICPQ-10", "OQ-A907-06", "OQ-A907-09", "OQ-A907-10", "OQ-A910-06"):
         r = _find_oq(oq3, qid)
+        if qid in APP.DECIDED_OWNER_QUESTIONS:
+            dk, code = APP.DECIDED_OWNER_QUESTIONS[qid]
+            existing_oq[qid] = {"status": "OWNER_DECIDED", "status_v3_snapshot": r["status"],
+                                "question": r["question"], "answer": code, "decided_by": APP.cite(dk, qid),
+                                "p3_handling": APP.CARRIED_HANDLING[qid]}
+            continue
         existing_oq[qid] = {"status": r["status"], "question": r["question"],
                             "p3_handling": {
                                 "ICPQ-03": "carrier conduction path P3-K-02 carried for both mountings (platform / "
@@ -1003,7 +1083,13 @@ def build():
             raise SystemExit(f"M16 v3 row {k} missing")
     doc = {
         "schema": "p3_coupled_thermal_v1",
-        "id": "p3_coupled_thermal_v1",
+        "id": "p3_coupled_thermal_v2",
+        "supersedes_for_current_state": {
+            "path": f"{LANE_REL}/{V1_JSON_NAME}", "builder": V1_SCRIPT_REL,
+            "rule": "v1 is the A9.6 package as raised (frozen: its builder is an F0-profiled source pinned through the "
+                    "parity pre-registration, and the immutable state-v4 / RFQ v2 / mass-power v2 / Xe v2 builders "
+                    "read it back); v2 = v1 + the A9.16 owner decisions and governs the current P3 state "
+                    "(A9.16 repair COR-05 / COR-01)"},
         "lane": LANE, "trigger": TRIGGER, "date": DATE, "base_commit": BASE_COMMIT,
         "status": "FRAMEWORK_IMPLEMENTED_INPUTS_TBD",
         "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
@@ -1024,7 +1110,9 @@ def build():
             "not a Hall performance prediction: no Hall closure (credible set EMPTY), no 0-D model; beam current, ion "
             "energy, plume divergence and discharge current are measured inputs (TBD)",
             "not an ICP design: the geometry grid is an evaluation grid; no geometry is chosen",
-            "not an answer to any open owner question (existing ones carried; two new ones raised)",
+            "not an owner decision: the owner decisions A9.8 P3Q-01, A9.12 (ICPQ-10, OQ-A907-03/05/06/08/09/10, "
+            "OQ-A910-06, P3Q-02) and A9.14 (ICPQ-03, ICPQ-09) are APPLIED here as fail-closed rules "
+            "(a9_16_owner_rules); every number the owner deferred stays a registration slot",
             "not a change to H2-5, A9-07, the ICD, P1 or P2 (all read-only)",
             "not wired into abep_sim/archengine.py (goldens do not move)"],
         "decision_pins": [{"key": k, "path": p, "sha256": h, "role": r} for k, (p, h, r) in DECISIONS.items()],
@@ -1051,6 +1139,14 @@ def build():
                             "INCLUDED]", "source": "EXT-GOEBEL-KATZ-2008 Eq. (4.2-9), (4.2-10), (7.3-47), (7.3-61), "
                             "Appendix C; surface terms from memory - verify",
                             "inputs": ["P3-P1-01", "P3-P1-02", "P3-P1-03", "P3-P1-04", "P3-P1-05", "P3-P1-06"],
+                            "evidence_routes": {
+                                "primary": "CALORIMETRIC_ENERGY_BALANCE (P3-P1-09; p3_a9_16_rules.q_collector_evidence)",
+                                "cross_check": "PROBE_SHEATH_MODEL = this formula with the Langmuir-probe T_e / V_p "
+                                               "(P3-P1-04 / P3-P1-05), preferably matched diagnostic runs; never "
+                                               "replaces or is averaged with the primary",
+                                "icp45_rule": "a probe present during an ICP45 capacity record refuses the record "
+                                              "unless its perturbation was first shown negligible",
+                                "decision": "A9.8 P3Q-01 (S1.7) option C"},
                             "note": "Hall-ON: the discharge loop closes through the ICP ion collector (ICD ICP-22), "
                                     "so its ion current scales with I_d; ICP-45 capacity (discharge OFF, A9.4 P1Q-10): "
                                     "the dedicated electron-collecting electrode takes 2 T_e (+ acceleration) per "
@@ -1091,6 +1187,12 @@ def build():
                                for s in SUPPLIERS},
     }
     doc["interface_demands"] = interface_demands()
+    for e in doc["interface_demands"]["p3_needs"]:
+        if e["id"] == "P3-IF-N02":   # pair text is identical on both sides (P1 IF-P1-34 / P3 P3-IF-N02)
+            e["a9_16_note"] = ("P3Q-01 decided by A9.8 S1.7 (option C): calorimetry primary (P3-P1-09), the P1-M-30 "
+                               "Langmuir-probe pair is the cross-check route; XL-18 re-stated on both sides (A9.16 "
+                               "repair F2)")
+    doc["a9_16_owner_rules"] = a9_16_owner_rules(items)
     doc["owner_answers_applied"] = owner_answers_applied(ans)
     doc["open_owner_questions"] = open_owner_questions()
     doc["existing_open_owner_questions_carried"] = existing_oq
@@ -1158,8 +1260,10 @@ def interface_demands():
                   status="TBD_AFTER_EVIDENCE (Phase-1 measurements)"),
             _need("P3-IF-N09", "facility", "radiative sink temperature measured per run (owner row 131)",
                   ["P3-R-06"], "after-evidence", units="K", status="TBD_AFTER_EVIDENCE (measured per run)"),
-            _need("P3-IF-N10", "owner", "ICPQ-10 bound choice; P3Q-01; P3Q-02", ["P3-B-01", "P3-B-02", "P3-B-03"],
-                  "LOCK-1", units="W; -", status="TBD_OWNER (ICPQ-10, P3Q-01, P3Q-02 OPEN)"),
+            _need("P3-IF-N10", "owner", "ICPQ-10 bound choice; P3Q-01; P3Q-02; OQ-A910-06 RF allocation",
+                  ["P3-B-01", "P3-B-02", "P3-B-03", "P3-P1-09", "P3-C-01..05"], "LOCK-1", units="W; -",
+                  status="OWNER_DECIDED (A9.8 P3Q-01; A9.12 ICPQ-10, P3Q-02, OQ-A910-06); P_fwd,max / P_d,max and "
+                         "the correlation-plan slots TBD"),
         ],
         "p3_supplies": [
             _supply("P3-IF-S01", "ICD ICP-43 (total module heat load)", "the Q_RF/match + Q_collector + Q_plume "
@@ -1237,10 +1341,108 @@ def owner_answers_applied(ans):
     rows.append({"kind": "A9.6", "path": DECISIONS["A96"][0], "sha256": DECISIONS["A96"][1],
                  "decision": "sec. 10 P3 / summary.fixed_statuses",
                  "applied": "framework built now with every missing input TBD; no thermal PASS"})
+    rows += APP.owner_answers_applied_rows()
     return rows
 
 
+def _refusal(fn):
+    """Run one rule on the REGISTERED inputs; the expected outcome today is a fail-closed refusal (recorded)."""
+    try:
+        out = fn()
+    except RULES.RuleRefusal as e:
+        return {"status": e.code, "reason": str(e)}
+    raise SystemExit(f"A9.16 rule evaluated on unregistered inputs: fail-closed rule broken ({out})")
+
+
+def a9_16_owner_rules(items):
+    """A9.16 step 1 rule record: owner numbers, registration slots and the rules evaluated on the registered inputs
+    (every evaluation that needs a deferred / TBD input refuses; the refusal is the deliverable)."""
+    it = {i["id"]: i for i in items}
+
+    def reg(iid):  # the registered record of an item, as the rules read it (TBD stays TBD)
+        x = it[iid]
+        return {"value": x["value"], "units": x["units"], "source": x["source"],
+                "registration": iid if not str(x["value"]).startswith(("TBD", "PENDING")) else None}
+
+    return {
+        "rules_module": APP.RULES_REL, "test": APP.TEST_REL,
+        "rule": "pure fail-closed functions; owner numbers only as given; deferred numbers are registration slots "
+                "(NOT_EVALUATED_* / OPEN / INCOMPLETE_EVIDENCE); never a thermal PASS",
+        "owner_numbers": {"heat_load_margin_dissipated": RULES.HEAT_LOAD_MARGIN,
+                          "temperature_margin_K": RULES.TEMPERATURE_MARGIN_K,
+                          "mount_heat_allocation_W": RULES.MOUNT_HEAT_ALLOCATION_W,
+                          "search_sensitive_screen_K": RULES.SEARCH_SENSITIVE_SCREEN_K,
+                          "Q_RF_allocation_W_temporary": RULES.Q_RF_ALLOCATION_W,
+                          "source": APP.cite("A9.12", "owner_supplied_values") + "; owner row 86"},
+        "q_collector_evidence": {"primary_route": "CALORIMETRIC_ENERGY_BALANCE",
+                                 "primary_elements": list(RULES.CALORIMETRY_ELEMENTS),
+                                 "cross_check_route": "PROBE_SHEATH_MODEL (Langmuir probe near the collector, Ar P1 "
+                                                      "campaign; matched diagnostic runs preferred)",
+                                 "cross_check_criterion": "registration slot (NOT_EVALUATED_CROSS_CHECK_CRITERION_TBD)",
+                                 "icp45_probe_rule": "PROBE_PERTURBATION_NOT_SHOWN_NEGLIGIBLE refuses an ICP45 record",
+                                 "registered_evaluation": _refusal(lambda: RULES.q_collector_evidence(None)),
+                                 "decision": APP.cite("A9.8", "P3Q-01")},
+        "icp43_bound": {"formula": "Q_ICP,bound = 1.20 x (P_fwd,max + P_d,max)",
+                        "inputs": {"P_fwd,max": "P3-B-01 (registered ICP / P2 envelope; TBD_AFTER_IMPEDANCE_MAP)",
+                                   "P_d,max": "P3-H-06 / A9.3 OQ-A907-02 (registered H-1 discharge-power bound; TBD)"},
+                        "rejected": "1.20 x 1.5 kW (P3-B-02)",
+                        "registered_evaluation": _refusal(lambda: RULES.icp43_total_module_bound(
+                            reg("P3-B-01"), reg("P3-H-06"))),
+                        "decision": APP.cite("A9.12", "ICPQ-10")},
+        "bounding_corners": {"admissibility_declaration": "P3-A-01 (TBD)",
+                             "exclusion_reasons": list(RULES.EXCLUSION_REASONS),
+                             "per_case": ["1.20 on dissipated loads", "hot / cold environmental boundary",
+                                          "every temperature-limited node", ">= 50 K below T_validated,continuous"],
+                             "registered_evaluation": _refusal(lambda: RULES.admissible_corners({}, None)),
+                             "decision": APP.cite("A9.12", "OQ-A907-03")},
+        "node_limits": {"limit_classes": list(RULES.LIMIT_CLASSES),
+                        "provisional_allowed_uses": list(RULES.PROVISIONAL_ALLOWED_USES),
+                        "refused_uses_for_provisional": list(RULES.CLOSURE_USES),
+                        "coating_node": RULES.node_limit({"node": "EXTERIOR_COATING", "is_coating": True,
+                                                          "T_limit_C": None}),
+                        "decision": [APP.cite("A9.12", "OQ-A907-05"), APP.cite("A9.12", "OQ-A907-08")]},
+        "heat_load_margin": {"dissipated_categories": list(RULES.DISSIPATED_CATEGORIES),
+                             "environmental_categories": list(RULES.ENVIRONMENTAL_CATEGORIES),
+                             "environmental_treatment": "registered hot / cold envelope case; never x1.20; an "
+                                                        "inadequate bound is enlarged explicitly",
+                             "decision": APP.cite("A9.12", "OQ-A907-09")},
+        "mount_heat": {"allocations_W": RULES.MOUNT_HEAT_ALLOCATION_W, "label": RULES.MOUNT_HEAT_LABEL,
+                       "classifications": ["WITHIN_GOVERNING_ALLOCATION_CONDITIONAL",
+                                           "ONLY_WITHIN_100W_CONTINGENCY_NOT_CLOSED", "EXCEEDS_100W_CONTINGENCY"],
+                       "registered_evaluation": {"status": "INCOMPLETE_EVIDENCE",
+                                                 "reason": "no coupled mount-heat result (coupled_network "
+                                                           "INCOMPLETE_EVIDENCE)"},
+                       "decision": APP.cite("A9.12", "OQ-A907-06")},
+        "search_sensitive": {"screen_K": RULES.SEARCH_SENSITIVE_SCREEN_K,
+                             "independent_bound_methods": list(RULES.INDEPENDENT_BOUND_METHODS),
+                             "registered_evaluation": _refusal(lambda: RULES.search_sensitivity(
+                                 "INCOMPLETE_EVIDENCE", 0.0, None)),
+                             "decision": APP.cite("A9.12", "OQ-A907-10")},
+        "rf_allocation": dict(RULES.rf_allocation_record(),
+                              registered_total=_refusal(lambda: RULES.rf_thermal_basis(None, None)),
+                              decision=APP.cite("A9.12", "OQ-A910-06")),
+        "model_class": {"accepted": RULES.MODEL_CLASS_A + " (LOCK-1, conditional on correlation)",
+                        "correlation_plan_slots": {s: f"P3-C-0{n} (TBD)" for n, s in
+                                                   enumerate(RULES.CORRELATION_PLAN_SLOTS, 1)},
+                        "escalation": "ESCALATE_TO_FINER_MODEL_MANDATORY (multi-node / FE) before any LOCK-1 thermal "
+                                      "closure if correlation fails or gradients / hot spots are unrepresentable",
+                        "registered_evaluation": _refusal(lambda: RULES.correlation_plan_check(None)),
+                        "decision": APP.cite("A9.12", "P3Q-02")},
+        "out_of_lane": [{"path": p, "rules": r} for p, r in APP.OUT_OF_LANE],
+    }
+
+
 def open_owner_questions():
+    qs = _open_owner_questions_v1()
+    for q in qs:
+        dk, code = APP.DECIDED_OWNER_QUESTIONS[q["id"]]
+        q["status"] = "OWNER_DECIDED"
+        q["answer"] = code
+        q["decided_by"] = APP.cite(dk, q["id"])
+    return qs
+
+
+def _open_owner_questions_v1():
     return [
         {"id": "P3Q-01", "question": "Q_collector needs the plasma potential and electron temperature at the collector "
          "sheath edge (P3-P1-04/05), which are not in the P1 measurement list. Add a probe diagnostic (Langmuir or "
@@ -1368,15 +1570,29 @@ def render_md(doc):
           "| package | path | pairs | ids cited | check |", "|---|---|---|---|---|"]
     L += [f"| {k} | {v['path']} | {', '.join(v['pairs']) or '-'} | {', '.join(v['ids_cited']) or '-'} | {v['check']} |"
           for k, v in doc["merged_cross_lane"]["packages"].items()]
+    a = doc["a9_16_owner_rules"]
+    L += ["", "## A9.16 step 1 - owner rules applied (fail-closed)", "", f"Rules module `{a['rules_module']}`; tests "
+          f"`{a['test']}`. {a['rule']}.", "", "Owner numbers: " + _v(a["owner_numbers"]) + ".", "",
+          "| rule | record | evaluation on the registered inputs | decision |", "|---|---|---|---|"]
+    for k in ("q_collector_evidence", "icp43_bound", "bounding_corners", "node_limits", "heat_load_margin",
+              "mount_heat", "search_sensitive", "rf_allocation", "model_class"):
+        v = a[k]
+        ev = v.get("registered_evaluation") or v.get("registered_total") or v.get("coating_node")
+        body = {x: y for x, y in v.items() if x not in ("registered_evaluation", "registered_total", "decision")}
+        dec_ = v["decision"] if isinstance(v["decision"], str) else "; ".join(v["decision"])
+        L.append(f"| {k} | {_v(body)} | {_v(ev) if ev else '-'} | {dec_} |")
+    L += ["", "Rules that also bind artifacts outside this lane (not edited here; integration lane):", ""]
+    L += [f"- {o['path']}: {', '.join(o['rules'])}" for o in a["out_of_lane"]]
     L += ["", "## (c) Owner answers applied", "", "| source | id | applied |", "|---|---|---|"]
     for r in doc["owner_answers_applied"]:
         rid = f"row {r['row']}" if r["kind"] == "owner_row" else r["decision"]
-        L.append(f"| {r['kind']} `{r['path']}` | {rid} | {r['applied']} |")
-    L += ["", "## (d) Open owner questions (new)", ""]
+        src = f"{r['kind']} `{r['path']}`" + (f" (sha256 `{r['sha256']}`)" if r.get("verbatim_path") else "")
+        L.append(f"| {src} | {rid} | {r['applied']} |")
+    L += ["", "## (d) Owner questions raised by P3 (now decided)", ""]
     for q in doc["open_owner_questions"]:
-        L.append(f"- **{q['id']}** ({q['status']}, needed by {q['needed_by']}): {q['question']} Alternatives: " +
-                 "; ".join(q["alternatives"]) + ".")
-    L += ["", "Existing open questions carried (not answered here):", ""]
+        L.append(f"- **{q['id']}** ({q['status']}: {q.get('answer', '-')}; {q.get('decided_by', '-')}; needed by "
+                 f"{q['needed_by']}): {q['question']} Alternatives: " + "; ".join(q["alternatives"]) + ".")
+    L += ["", "Existing owner questions carried:", ""]
     for k, v in doc["existing_open_owner_questions_carried"].items():
         L.append(f"- {k} ({v['status']}): {v['p3_handling']}")
     L += ["", "## (e) Historical reuse", "", "| path | sha256 | use |", "|---|---|---|"]

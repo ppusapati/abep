@@ -80,6 +80,13 @@
   ],
   "decisions": [
    {
+    "key": "A9.12",
+    "json": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+    "json_sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+    "md": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+    "md_sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62"
+   },
+   {
     "key": "A9.13",
     "json": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
     "json_sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
@@ -5903,13 +5910,18 @@
        {
         "step_id": "C-S4",
         "event": "c1_keeper_ignition",
-        "name": "keeper ignition (pulsed 300-600 V class, <= 120 s x 2 retries dwell, row 93)",
+        "name": "keeper ignition (pulsed 300-600 V class; <= 3 dwells (1 + 2 retries) x 120 s = 360 s maximum booking, A9.14 OQ-A907-01 / XA9Q-02; row 93)",
         "on": [
          "c1_keeper",
          "c1_common_tie"
         ],
         "ledger_status": "PARTIAL_BOUNDARY",
-        "P_bus_lower_bound_W": 0.0
+        "P_bus_lower_bound_W": 0.0,
+        "name_v2": "keeper ignition (pulsed 300-600 V class, <= 120 s x 2 retries dwell, row 93)",
+        "decisions": [
+         "A9.14 OQ-A907-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+         "A9.14 XA9Q-02 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
+        ]
        },
        {
         "step_id": "C-S5",
@@ -6046,7 +6058,7 @@
   "OQ-A910-01": "OWNER_DECIDED",
   "OQ-A910-03": "OWNER_DECIDED",
   "OQ-A910-05": "OWNER_DECIDED",
-  "OQ-A910-06": "OPEN (not this lane)",
+  "OQ-A910-06": "OWNER_DECIDED (A9.12 S5.8 YES_600W_TEMPORARY: 600 W = 500 W x 1.20 kept temporarily as the RF-path heat allocation - not a rating / flight point / ICP-43 bound / delivered power - then superseded by the P2-derived RF thermal envelope; p3_a9_16_rules.rf_thermal_basis)",
   "MPV3Q-01": "OPEN"
  },
  "open_owner_questions": [
@@ -6339,6 +6351,42 @@
    "json_path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
    "json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
    "how_applied": "power gate peak_sampled rule implemented in the new helper peak_sampled_gate_a9_v3.py"
+  },
+  {
+   "key": "A9.12",
+   "id": "OQ-A910-06",
+   "sequenced_no": "S5.8",
+   "answer": "YES_600W_TEMPORARY",
+   "quote": "Decision: YES — retain 600 W temporarily, then supersede it with the P2-derived RF thermal envelope.",
+   "path": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+   "md_sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62",
+   "json_path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "json_sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+   "how_applied": "open_register_status OQ-A910-06 OWNER_DECIDED: 600 W RF-path heat allocation kept temporarily (not a rating / operating point / ICP-43 bound / delivered power), superseded by the P2-derived RF thermal envelope (P2 supplies it, p3_a9_16_rules.rf_thermal_basis consumes it; A9.16 repair F5)"
+  },
+  {
+   "key": "A9.14",
+   "id": "OQ-A907-01",
+   "sequenced_no": "S8.15",
+   "answer": "THREE_ATTEMPTS_ONE_PLUS_TWO_RETRIES",
+   "quote": "THREE ATTEMPTS. One initial C1 ignition attempt plus at most two retries = maximum three dwells per start.",
+   "path": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "json_path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "how_applied": "hall_c1_reference start step C-S4 reworded: <= 3 dwells (1 + 2 retries) x 120 s = 360 s maximum booking (the retired v2 '120 s x 2 retries' shorthand kept as name_v2; A9.16 repair F10)"
+  },
+  {
+   "key": "A9.14",
+   "id": "XA9Q-02",
+   "sequenced_no": "S9.1",
+   "answer": "THREE_DWELLS_MAX_360S",
+   "quote": "THREE DWELLS / 360 s MAXIMUM BOOKING. One attempt + two retries, each capped at 120 s.",
+   "path": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "json_path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "how_applied": "as above: three dwells, each capped at 120 s, 360 s maximum booking (A9.16 repair F10)"
   }
  ],
  "compliance": {

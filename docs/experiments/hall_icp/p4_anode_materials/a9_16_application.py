@@ -52,9 +52,11 @@ APPLIED = [
      "material-temperature closure; stage 3 full-duration or justified accelerated-life qualification before a final "
      "flight-life claim; melting point, short vendor exposure, generic air-use temperature and a brief coupon test "
      "(shorter than the pre-registered exposure) are refused (NOT_CONTINUOUS_USE_VALIDATION); the CR-01 gate admits a "
-     "T_validated_continuous record only at stage 2 or later",
+     "T_validated_continuous record only at stage 2 or later, proven by a referenced stage record (id + sha256) that "
+     "validation_stage_record classifies to that stage, material and limit - a bare declaration is INCOMPLETE_EVIDENCE "
+     "(A9.16 repair COR-06)",
      "p4_a9_16_rules.validation_stage_record, limit_use_check, gate_admissible_t_validated; p4_screening.evaluate_gate "
-     "(CR-01 stage check); items IT-12 / IT-23; test plan stages ST-1..ST-3 (Q0/Q1, Q4, Q5); criteria CR-01 rule",
+     "(CR-01 stage check, t_validated_stage_refusal); items IT-12 / IT-23; test plan stages ST-1..ST-3 (Q0/Q1, Q4, Q5); criteria CR-01 rule",
      ["test_p4_a9_16_stage_1_is_screening_only", "test_p4_a9_16_stage_2_needs_stage_1_and_article",
       "test_p4_a9_16_stage_3_life", "test_p4_a9_16_non_validation_bases_refused",
       "test_p4_a9_16_cr01_gate_requires_stage_2"]),
@@ -164,8 +166,8 @@ OUT_OF_LANE = [
      "sides; the Q0 matrix of A9.12 P4-OQ-02 now fixes the shortlist, so RFQ and P4 re-state XL-27 together at the "
      "integration re-pin; the RFQ v3 coupon lots follow the Q0 matrix and coating records)", ["P4-OQ-02"]),
     ("docs/experiments/hall_icp/p1_icp_bench/ (P1 collector envelope P1-M-10 / P1-M-11 / P1-M-27 and P1-M-30 feed the "
-     "collector-coupon bias magnitude; pair XL-25 text 'sheath energy additionally TBD_OWNER P3Q-01' is re-stated with "
-     "P1 at the integration re-pin)", ["P4-OQ-05"]),
+     "collector-coupon bias magnitude; pair XL-25 re-stated with P1 by the A9.16 repair lane, F2: sheath energy from the "
+     "P1-M-30 Langmuir probe, A9.8 P3Q-01 option C)", ["P4-OQ-05"]),
     ("docs/experiments/lifetime_ao/ (AO / lifetime register: a future revision adds filter erosion / recombination, "
      "F2-IF-09, and the LOCK-2 coupon thresholds)", ["F2-OQ-04", "P4-OQ-03"]),
     ("docs/design_synthesis/f2_filter/ (F2-IF-08 status 'TBD_OWNER (F2-OQ-04)' - now decided; P4 APP-FILTER exists)",

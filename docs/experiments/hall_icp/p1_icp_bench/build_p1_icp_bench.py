@@ -57,7 +57,7 @@ REPO = pathlib.Path(ROOT)
 XLANE_PATHS = {
     "P1": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
     "P2": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
-    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
     "P4": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
     "MP": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
     "XE": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
@@ -190,10 +190,12 @@ XL_PAIRS = {  # pair: (counterpart package, counterpart id, quantity, units, sta
     'XL-18': (
         'P3',
         'P3-IF-N02',
-        ('plasma potential and electron temperature at the collector sheath edge (conditional P1 measurement '
-         'P1-M-30) or an accepted calorimetric alternative -> P3-P1-04, P3-P1-05'),
+        ('plasma potential and electron temperature near the collector from the Langmuir probe P1-M-30 (required Ar '
+         'P1 development diagnostic, matched diagnostic runs; sheath-model cross-check) beside the calorimetric '
+         'collector energy balance (primary Q_collector evidence) -> P3-P1-04, P3-P1-05'),
         'V; eV',
-        'TBD_OWNER (P3Q-01 OPEN; registration at P1-G0)',
+        ('OWNER_DECIDED (A9.8 P3Q-01 option C: calorimetry primary, Langmuir probe cross-check); probe position / '
+         'calibration registered at P1-G0; readings TBD_AFTER_EVIDENCE'),
     ),
     'XL-21': (
         'P3',
@@ -206,10 +208,11 @@ XL_PAIRS = {  # pair: (counterpart package, counterpart id, quantity, units, sta
     'XL-25': (
         'P4',
         'ID-06',
-        ('measured collector bias and current (P1-M-10, P1-M-11, P1-M-27) and the conditional sheath-edge plasma '
-         'potential (P1-M-30) for the collector ion energy (P4 IT-19, CR-04)'),
+        ('measured collector bias and current (P1-M-10, P1-M-11, P1-M-27) and the Langmuir-probe plasma potential '
+         'near the collector (P1-M-30, A9.8 P3Q-01) for the collector ion energy (P4 IT-19, CR-04)'),
         'V; A',
-        'TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; sheath energy additionally TBD_OWNER P3Q-01)',
+        ('TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; sheath energy from the P1-M-30 Langmuir probe, A9.8 P3Q-01 '
+         'option C cross-check)'),
     ),
     'XL-36': (
         'XE',
@@ -1125,17 +1128,39 @@ MS_NONE = "none: state / event record, not a calibrated measurand (MS-M-01..05 d
 MS_OPT = ("none as an absolute measurand: relative optical-intensity indicator; its unlit threshold comes from the "
           "P1 dark/background, RF-powered known-unlit and known-lit records and is frozen before the P2 map (A9.4 "
           "P2Q-05); amplifier gain setting and dark offset recorded per block")
-MS_P3Q01 = ("TBD_OWNER - conditional on P3Q-01 (docs/experiments/hall_icp/p3_coupled_thermal/): no metrology "
-            "specification until a probe diagnostic is selected; if the calorimetric alternative is accepted this "
-            "channel is not recorded")
+MS_P3Q01 = ("TBD - Langmuir-probe metrology (probe geometry and position, I-V sweep range / resolution, calibration and "
+            "uncertainty) registered at P1-G0 from the selected probe (A9.8 P3Q-01 option C; RFQ v3 line TH-L10); "
+            "nothing is invented here")
 MS_BY_ID = {"P1-M-09": MS_NONE, "P1-M-23": MS_NONE, "P1-M-25": MS_NONE, "P1-M-28": MS_OPT, "P1-M-30": MS_P3Q01}
+
+
+# A9.16 repair COR-02 / F2: the immutable RFQ v2 builder reads measurements[].quantity / status back into
+# rfq_a9_v2.json. For a measurement whose text the owner decisions of 2026-10-01 changed, those two fields keep the
+# A9.6 text (the read-back contract) and the current text is carried in quantity_a9_16 / status_a9_16, which govern.
+FROZEN_READBACK_MEASUREMENTS = {
+    "P1-M-30": {"quantity": "plasma potential and electron temperature at the collector sheath edge (conditional)",
+                "status": "CONDITIONAL (TBD_OWNER P3Q-01)"},
+}
+READBACK_NOTE = ("'quantity' / 'status' = A9.6 text kept for the immutable RFQ v2 read-back "
+                 "(docs/procurement/rfq_a9_v2/build_rfq_a9_v2.py); quantity_a9_16 / status_a9_16 govern")
 
 
 def measurements():
     rows = _measurements()
     for r in rows:
         r["metrology_spec"] = MS_BY_ID.get(r["id"], MS_CAL)
+        old = FROZEN_READBACK_MEASUREMENTS.get(r["id"])
+        if old is not None:
+            r["quantity_a9_16"], r["status_a9_16"] = r["quantity"], r["status"]
+            r["quantity"], r["status"] = old["quantity"], old["status"]
+            r["readback_note"] = READBACK_NOTE
     return rows
+
+
+def _current(row):
+    """A measurement / item row as it reads NOW (the *_a9_16 fields govern over the frozen read-back fields)."""
+    return dict(row, quantity=row.get("quantity_a9_16", row.get("quantity")),
+                status=row.get("status_a9_16", row.get("status")))
 
 
 def _measurements():
@@ -1250,15 +1275,20 @@ def _measurements():
           "terminal absent from a capacity record -> the reducer refuses the record (incomplete); declared NOT_MEASURED "
           "or not continuous -> the capacity point is excluded (intentional return path unmeasured, A9.5 P1Q-15); "
           "enters the Kirchhoff closure P1-D-13"),
-        m("P1-M-30", "plasma potential and electron temperature at the collector sheath edge (conditional)",
-          "V_p,coll, T_e,coll", "V, eV", "TBD_OWNER (P3Q-01): probe diagnostic near the collector (e.g. Langmuir or "
-          "emissive probe) or none if the calorimetric collector energy balance is accepted instead",
-          "collector sheath edge (probe position TBD at P1-G0)", SAMP,
-          ["TBD - requires the probe selection and its calibration (P3Q-01)"], "S4-S7",
-          "CONDITIONAL (TBD_OWNER P3Q-01)",
-          "listed so that P3 Q_collector (P3-P1-04 / P3-P1-05, pair XL-18) and the P4 collector ion energy (IT-19, "
-          "pair XL-25) have a named P1 channel; recorded only if the owner selects a probe diagnostic under P3Q-01; "
-          "never assumed, never replaced by an analog value; no RFQ v2 line (disposition NP-CONDITIONAL-P3Q01)"),
+        m("P1-M-30", "plasma potential and electron temperature near the collector (Langmuir probe; required Ar P1 "
+          "development diagnostic)",
+          "V_p,coll, T_e,coll", "V, eV", "Langmuir-probe diagnostic near the collector (OWNER_DECIDED A9.8 S1.7 P3Q-01 "
+          "option C): independent sheath-model cross-check of the calorimetric collector energy balance, which stays "
+          "the PRIMARY Q_collector evidence (calibrated temperatures, registered conductances / thermal mass, RF-ON / "
+          "RF-OFF comparisons, collector-current / bias steps); taken in matched DIAGNOSTIC runs",
+          "near the collector (probe position registered at P1-G0 from the ICP module drawing)", SAMP,
+          ["TBD - requires the selected probe and its calibration (registered at P1-G0)"], "S4-S7",
+          "REQUIRED (A9.8 P3Q-01 option C: Ar P1 development campaign; matched diagnostic runs; cross-check only)",
+          "named P1 channel for P3 Q_collector (P3-P1-04 / P3-P1-05, pair XL-18) and the P4 collector ion energy "
+          "(IT-19, pair XL-25); a probe present during an ICP45_CAPACITY record without registered evidence that its "
+          "perturbation is negligible excludes that capacity point (p1_reducer.capacity_structural_reasons, "
+          "capacity_monitoring.langmuir_probe_present); never assumed, never replaced by an analog value; RFQ v3 line "
+          "TH-L10 (RFQ3-THRUST, P1_NEEDED); RFQ v2 disposition NP-CONDITIONAL-P3Q01 superseded by RFQ v3"),
     ]
 
 
@@ -1340,11 +1370,12 @@ def derived():
                     "point; envelope [min, max] of P_fwd, mdot_Ar,H1, p_chamber, V_collector over those TESTED points "
                     "(labelled ENVELOPE_OF_TESTED_POINTS_NOT_A_STABILITY_CLAIM_BETWEEN_POINTS); NOT_EVALUATED without "
                     "criteria", "source": A96_MD + " sec. 8; P2 IDP2-01"},
-        {"id": "P1-D-19", "quantity": "P1Q-19 alternatives for the u(I_e,cap) used in M_n",
-         "formula": "registered u_I_e_A >= u(I_e,cap)_channels: both treatments identical, M_n with u_I_e_A; otherwise "
-                    "REQUIRE_REGISTERED_GE_CHANNEL -> NOT_EVALUATED, USE_LARGER_OF_REGISTERED_AND_CHANNEL -> M_n with "
-                    "u(I_e,cap)_channels; overall NOT_EVALUATED (TBD_OWNER) when they disagree",
-         "source": A96_MD + " sec. 6-7; " + GUM["url"] + " 5.1.2 / 5.2.2"},
+        {"id": "P1-D-19", "quantity": "u(I_e,cap) used in M_n under the owner P1Q-19 rule",
+         "formula": "owner A9.10 P1Q-19 REQUIRE_REGISTERED_GE_CHANNEL: registered u_I_e_A >= u(I_e,cap)_channels (under "
+                    "the registered correlation treatment) -> M_n with u_I_e_A; otherwise the registration is "
+                    "inadmissible and ICP-45 = NOT_EVALUATED_REGISTRATION (never replaced by the larger value; "
+                    "USE_LARGER_OF_REGISTERED_AND_CHANNEL is NOT_OWNER_SELECTED_INFORMATIONAL, never evaluated)",
+         "source": A96_MD + " sec. 6-7; " + GUM["url"] + " 5.1.2 / 5.2.2; " + APP.DEC["A9.10"][0] + " decisions.P1Q-19"},
         {"id": "P1-D-11", "quantity": "I_e surface", "formula": "table of I_e against (P_RF, p, mdot, Z_ICP, "
          "V_collector)", "source": A93 + " OQ-A907-02"},
     ]
@@ -1750,12 +1781,14 @@ def interface_demands():
               "line bridges isolated potentials", "XL-08"),
         _pair("IF-P1-33", "from", "RFQ v2 " + RFQ2 + " IFD-02", "quoted capability ranges, calibration "
               "uncertainties and interfaces (none received; no supplier contact by this lane)", "XL-11"),
-        _pair("IF-P1-34", "to", "P3 " + XLANE_PATHS["P3"] + " P3-IF-N02", "conditional P1-M-30 sheath-edge plasma "
-              "potential / T_e for Q_collector, or the calorimetric alternative (P3Q-01)", "XL-18"),
+        _pair("IF-P1-34", "to", "P3 " + XLANE_PATHS["P3"] + " P3-IF-N02", "P1-M-30 Langmuir-probe plasma potential / "
+              "T_e near the collector as the sheath-model cross-check of the primary calorimetric Q_collector (A9.8 "
+              "P3Q-01 option C)", "XL-18"),
         _pair("IF-P1-35", "from", "P3 " + XLANE_PATHS["P3"] + " P3-IF-S05", "verification temperature set of the "
               "coupled thermal model (P1-M-21 channel list)", "XL-21"),
         _pair("IF-P1-36", "to", "P4 " + XLANE_PATHS["P4"] + " ID-06", "measured collector bias / current and the "
-              "conditional sheath-edge plasma potential for the P4 collector ion energy", "XL-25"),
+              "P1-M-30 Langmuir-probe plasma potential near the collector for the P4 collector ion energy (A9.8 "
+              "P3Q-01)", "XL-25"),
         _pair("IF-P1-37", "to", "Xe accounting v2 " + XLANE_PATHS["XE"] + " XV2-IF-06", "per-record gas state, "
               "dedicated-feed flag and measured diagnostic dedicated-feed flow (P1-M-19)", "XL-36"),
         _pair("IF-P1-38", "to", "mass / power v2 " + XLANE_PATHS["MP"] + " MPV2-ID-08", "C_e, C_e,DC and the I_e "
@@ -1906,9 +1939,11 @@ def owner_answers_applied():
 
 
 def open_questions():
-    """A9.16 step 1: every former P1 open question (P1Q-01..09, 11, 12, 17..20, 24) is answered by the owner decisions
-    of 2026-10-01 (owner_answers_applied, a9_16_incorporation); none remains open in this package."""
-    return []
+    """The P1 owner questions AS RAISED (text and as-raised status byte-identical to the A9.6 package). Every one is
+    answered by the owner decisions of 2026-10-01 (owner_question_status_current, owner_answers_applied,
+    a9_16_incorporation); none remains open. The as-raised list is kept because the immutable state-v4 and RFQ v2
+    builders read it back (A9.16 repair COR-01 / COR-02); the current status is owner_question_status_current."""
+    return _former_open_questions()
 
 
 def _former_open_questions():
@@ -2216,10 +2251,12 @@ def derived_resolutions():
          "follows_from": "JCGM 100:2008 5.1.2 Eq. (10) / 5.2.2 Eq. (13): the combined standard uncertainty of "
                          "I_on - I_off is fixed by its input uncertainties (and their registered correlation)",
          "implemented_in": "p1_reducer._p1q19_alternatives", "tests": ["test_a96_p1q19_alternatives_side_by_side"]},
-        {"id": "P1Q-19 (require vs use larger)", "disposition": "OWNER_DECIDED",
+        {"id": "P1Q-19 (require vs use larger)", "disposition": "TBD_OWNER",
+         "disposition_note": APP.AS_RAISED_DISPOSITION_NOTE,
+         "owner_decision": APP.p1q19_owner_decision(red),
          "answer": "owner A9.10 P1Q-19 selected %s: a registered u_I_e_A below the channel propagation makes the ICP-45 "
-                   "evaluation NOT_EVALUATED_REGISTRATION (both treatments %s still computed side by side for "
-                   "transparency; the other never decides)" % (red.P1Q19_OWNER_SELECTED, list(red.P1Q19_ALTERNATIVES)),
+                   "evaluation NOT_EVALUATED_REGISTRATION; the rejected alternative is never evaluated and never "
+                   "decides" % red.P1Q19_OWNER_SELECTED,
          "follows_from": APP.DEC["A9.10"][0] + " (sha256 " + APP.DEC["A9.10"][1] + ") decisions.P1Q-19; verbatim "
                          + APP.DEC["A9.10"][2] + " S3.7 (formerly TBD_OWNER under " + A96_MD + " sec. 7)",
          "implemented_in": "p1_reducer.icp45a_evaluate", "tests": ["test_a96_p1q19_alternatives_side_by_side",
@@ -2447,6 +2484,9 @@ def build_doc():
         "interface_demands": interface_demands(),
         "owner_answers_applied": owner_answers_applied(),
         "open_owner_questions": open_questions(),
+        "open_owner_questions_note": APP.AS_RAISED_QUESTIONS_NOTE,
+        "owner_question_status_current": APP.owner_question_status_current(open_questions()),
+        "owner_questions_open_now": [],
         "historical_reuse": historical_reuse(),
         "m16_impact": m16_impact(),
         "h3_h4_inputs": h3_h4(),
@@ -2627,7 +2667,17 @@ def build_schema():
                                                    "V_icp_body_V": num, "V_electron_collector_V": num,
                                                    "sign_convention_id": {"type": "string", "minLength": 1},
                                                    "unintended_ground_path_found": {"type": "boolean"},
-                                                   "ground_path_check_id": {"type": "string", "minLength": 1}}},
+                                                   "ground_path_check_id": {"type": "string", "minLength": 1},
+                                                   red.PROBE_PRESENT_KEY: {
+                                                       "type": "boolean",
+                                                       "description": "A9.8 P3Q-01: Langmuir probe present during "
+                                                                      "this capacity record; undeclared -> the point "
+                                                                      "is excluded"},
+                                                   red.PROBE_EVIDENCE_KEY: {
+                                                       "type": "string", "minLength": 1,
+                                                       "description": "registered evidence that the probe "
+                                                                      "perturbation is negligible; required when "
+                                                                      "the probe is present"}}},
             "hall_discharge_state": {"enum": list(red.HALL_STATES),
                                      "description": "discharge-supply OUTPUT state (P1-IT-40): ON = V_d applied; "
                                                     "OFF = output disabled and anode disconnected"},
@@ -2842,12 +2892,12 @@ def render_md(doc):
     L += ["- " + x for x in tc["interpretation"]] + [""]
     L += ["Observation vocabulary: " + ", ".join(tc["observation_vocabulary"]), ""]
     L += ["## 6. (a) Items / parameters", ""]
-    L += _table(doc["items"], [("id", "id"), ("name", "name"), ("value", "value"), ("units", "units"),
+    L += _table([_current(r) for r in doc["items"]], [("id", "id"), ("name", "name"), ("value", "value"), ("units", "units"),
                                ("basis", "basis"), ("source", "source"), ("evidence class", "evidence_class"),
                                ("status", "status"), ("freeze point", "freeze_point"), ("P1 gate", "p1_gate"),
                                ("note", "note")]) + [""]
     L += ["## 7. Measurement list", ""]
-    L += _table(doc["measurements"], [("id", "id"), ("quantity", "quantity"), ("symbol", "symbol"),
+    L += _table([_current(r) for r in doc["measurements"]], [("id", "id"), ("quantity", "quantity"), ("symbol", "symbol"),
                                       ("units", "units"), ("instrument class", "instrument_class"),
                                       ("reference plane", "reference_plane"), ("sampling", "sampling"),
                                       ("uncertainty sources", "uncertainty_sources"),
@@ -2882,10 +2932,14 @@ def render_md(doc):
     L += ["## 13. (c) Owner answers applied", ""]
     L += _table(doc["owner_answers_applied"], [("row / decision", "id"), ("kind", "kind"),
                                                ("how applied", "how_applied")]) + [""]
-    L += ["## 14. (d) Open owner questions (new)", ""]
-    L += _table(doc["open_owner_questions"], [("id", "id"), ("status", "status"), ("question", "question"),
-                                              ("proposed answer", "proposed_answer"), ("needed by", "needed_by")])
-    L += [""]
+    L += ["## 14. (d) Open owner questions: none open now (the P1 questions as raised, all answered)", "",
+          doc["open_owner_questions_note"], ""]
+    cur = {c["id"]: c for c in doc["owner_question_status_current"]}
+    L += _table([dict(q, status_raised=q.get("status", "OPEN (as raised)"), status_now=cur[q["id"]]["status_current"],
+                      decided=", ".join(cur[q["id"]]["decided_by_ids"])) for q in doc["open_owner_questions"]],
+                [("id", "id"), ("status as raised", "status_raised"), ("status now", "status_now"),
+                 ("decided by", "decided"), ("question", "question"), ("needed by", "needed_by")])
+    L += ["", "Owner questions open now: %d." % len(doc["owner_questions_open_now"]), ""]
     L += ["## 15. (e) Historical reuse", ""]
     L += _table(doc["historical_reuse"], [("path", "path"), ("sha256", "sha256"), ("reused", "reused"),
                                           ("not reused", "not_reused")]) + [""]
@@ -2923,7 +2977,9 @@ def render_md(doc):
                                           ("implementation", "implementation"), ("where", "where"),
                                           ("test", "test")]) + [""]
     L += ["### 19.5 Settled questions (A9.6 sec. 6-7)", ""]
-    L += _table(a6["derived_resolutions"], [("id", "id"), ("disposition", "disposition"), ("answer", "answer"),
+    L += _table([dict(r, disposition=r["disposition"] + (" as raised; now %s (%s)" % (
+        r["owner_decision"]["status"], r["owner_decision"]["decided_by"]) if "owner_decision" in r else ""))
+        for r in a6["derived_resolutions"]], [("id", "id"), ("disposition", "disposition"), ("answer", "answer"),
                                             ("follows from", "follows_from"), ("implemented in", "implemented_in"),
                                             ("tests", "tests")]) + [""]
     g = a6["external_reference"]

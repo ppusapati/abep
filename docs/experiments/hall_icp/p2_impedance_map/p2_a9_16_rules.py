@@ -44,6 +44,9 @@ AGREEMENT = "AGREEMENT_WITHIN_K"
 METHOD_DISAGREEMENT = "METHOD_DISAGREEMENT"
 ZM_B_MISSING_OR_INVALID = "ZM_B_MISSING_OR_INVALID"
 ZM_METHOD_FIELDS = ("R_ohm", "X_ohm", "u_R_ohm", "u_X_ohm", "uncertainty_budget_id")
+# A9.16 repair COR-07: a ZM-A / ZM-B comparison is only meaningful at the SAME registered operating point and
+# configuration; both records name them, and ZM-B must carry an explicit valid = True
+ZM_POINT_FIELDS = ("operating_point_id", "configuration_id")
 # ---- P2Q-03 up / down
 NO_HYSTERESIS = "NO_HYSTERESIS_RESOLVED_AT_REGISTERED_UNCERTAINTY"
 RESOLVED_HYSTERESIS = "RESOLVED_HYSTERESIS"
@@ -121,16 +124,31 @@ def method_agreement(zm_a, zm_b, *, r_R=None, r_X=None):
     dict {R_ohm, X_ohm, u_R_ohm, u_X_ohm, uncertainty_budget_id} (its individual budget). z_R = |R_A - R_B| /
     u_c(R_A - R_B), z_X likewise (r_R / r_X: established correlation, default 0); agreement needs both <= 2.0.
     METHOD_DISAGREEMENT keeps both raw values, never an average, and blocks ZM-B stand-only qualification. A missing or
-    invalid ZM-B (zm_b None or zm_b.valid is False) never makes ZM-A independently verified (A9.11 P2Q-01 / P2Q-03)."""
-    if not isinstance(zm_a, dict) or any(zm_a.get(k) is None for k in ZM_METHOD_FIELDS):
-        raise RuleError(f"ZM-A needs {ZM_METHOD_FIELDS} (its individual uncertainty budget; A9.11 P2Q-01)")
+    invalid ZM-B never makes ZM-A independently verified (A9.11 P2Q-01 / P2Q-03). Both records also name the registered
+    operating_point_id and configuration_id; ZM-B counts only with an explicit valid = True and the SAME operating
+    point and configuration as ZM-A - a ZM-B without a validity flag, flagged invalid, or from another point /
+    configuration is ZM_B_MISSING_OR_INVALID (A9.16 repair COR-07)."""
+    if not isinstance(zm_a, dict) or any(zm_a.get(k) is None for k in ZM_METHOD_FIELDS + ZM_POINT_FIELDS):
+        raise RuleError(f"ZM-A needs {ZM_METHOD_FIELDS + ZM_POINT_FIELDS} (its individual uncertainty budget and the "
+                        "registered operating point / configuration; A9.11 P2Q-01)")
     out = {"k_agreement": K_AGREEMENT, "raw_zm_a": dict(zm_a), "raw_zm_b": dict(zm_b) if isinstance(zm_b, dict) else None,
            "averaged_value": None, "averaging": "never (A9.11 P2Q-03)", "zm_a_independently_verified": False,
            "blocks_zm_b_stand_qualification": True}
-    if not isinstance(zm_b, dict) or zm_b.get("valid") is False or any(zm_b.get(k) is None for k in ZM_METHOD_FIELDS):
+    why = None
+    if not isinstance(zm_b, dict):
+        why = "ZM-B per-point cross-check missing"
+    elif zm_b.get("valid") is not True:
+        why = "ZM-B record carries no explicit valid = True (absent or false validity flag)"
+    elif any(zm_b.get(k) is None for k in ZM_METHOD_FIELDS + ZM_POINT_FIELDS):
+        why = "ZM-B record incomplete (needs %s)" % ", ".join(ZM_METHOD_FIELDS + ZM_POINT_FIELDS)
+    else:
+        diff = [k for k in ZM_POINT_FIELDS if zm_b[k] != zm_a[k]]
+        if diff:
+            why = "ZM-B is from another %s than ZM-A (%s)" % (
+                " / ".join(diff), "; ".join("%s: A %r, B %r" % (k, zm_a[k], zm_b[k]) for k in diff))
+    if why is not None:
         out.update(status=ZM_B_MISSING_OR_INVALID,
-                   reason="ZM-B per-point cross-check missing or invalid: ZM-A is reported but NOT independently "
-                          "verified impedance evidence (A9.11 P2Q-01)")
+                   reason=why + ": ZM-A is reported but NOT independently verified impedance evidence (A9.11 P2Q-01)")
         return out
     ua_r, ub_r = _num(zm_a["u_R_ohm"], "u_R_ohm(A)"), _num(zm_b["u_R_ohm"], "u_R_ohm(B)")
     ua_x, ub_x = _num(zm_a["u_X_ohm"], "u_X_ohm(A)"), _num(zm_b["u_X_ohm"], "u_X_ohm(B)")

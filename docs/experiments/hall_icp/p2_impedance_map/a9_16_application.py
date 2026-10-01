@@ -22,6 +22,10 @@ DEC = {
               "d8baf59a5b92739698e29d893e89a30995559ee7167814c096dc24599679156c",
               "docs/decisions/OD_2026_10_01_A9_11_S4_P2_OWNER_DECISIONS.md",
               "4a9fd171abc6a63266a34e6a7c4cb25c4d67ed16615715e158902a57f7071a41"),
+    "A9.12": ("docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+              "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+              "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+              "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62"),
     "A9.14": ("docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
               "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
               "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
@@ -31,7 +35,7 @@ DEC = {
               "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
               "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903"),
 }
-ORDER = ("A9.8", "A9.10", "A9.11", "A9.14", "A9.15")
+ORDER = ("A9.8", "A9.10", "A9.11", "A9.12", "A9.14", "A9.15")
 TEST_REL = "tests/test_p2_a9_16_owner_rules.py"
 
 
@@ -150,6 +154,24 @@ APPLIED = [
      "points inside it only; a point outside, on another revision or with an unbounded variable is refused (a test "
      "matrix never enlarges the envelope without a drawing revision); no envelope -> NOT_EVALUATED_REGISTRATION",
      "p2_a9_16_rules.geometry_point_check", ["test_p2_a9_16_geometry_inside_drawing_envelope"]),
+    # A9.16 repair (F1 / F5): the two A9.12 S5 answers that land in P2
+    ("A9.12", "ICPQ-10", "S5.1", "A_1_20_X_PFWD_PLUS_PD",
+     "ICP-43 total-module bound Q_ICP,bound = 1.20 x (P_fwd,max + P_d,max): P_fwd,max = maximum admitted RF forward-power "
+     "operating point of the registered ICP / P2 envelope (supplied by P2), P_d,max = applicable registered H-1 "
+     "discharge-power bound; 'Do not use 1.20 x 1.5 kW' - alternative B is rejected (kept as history only) and a "
+     "heat_load_option other than A is refused; RC-HEAT references p3_a9_16_rules.icp43_total_module_bound and stays "
+     "TBD_AFTER_EVIDENCE until both inputs are registered (a thermal bounding rule, not a deposition statement; never "
+     "a thermal PASS)",
+     "p2_framework.rating_structure (RC-HEAT, ICPQ10_*); a9_16_application.apply (framework.heat_load_alternatives, "
+     "FW-19, IDP2-22, p2_outputs_later)",
+     ["test_p2_a9_16_icpq10_alternative_a_only", "test_rating_structure_never_rates (updated)"]),
+    ("A9.12", "OQ-A910-06", "S5.8", "YES_600W_TEMPORARY",
+     "Q_RF,allocation = 500 W x 1.20 = 600 W kept as the present RF-path thermal allocation (not a component rating, "
+     "not a demonstrated flight operating point, not the ICP-43 bound, not delivered RF power; P_line/match,loss "
+     "additional); after the P2 map the RF thermal input is re-derived from the measured / verified envelope of "
+     "P_delivered, line / match losses, antenna / plasma loading and uncertainty, with the 1.20 margin - P2 supplies "
+     "that envelope and p3_a9_16_rules.rf_thermal_basis consumes it",
+     "a9_16_application.apply (p2_outputs_later OQ-A910-06)", ["test_p2_a9_16_oq_a910_06_owner_decided"]),
 ]
 
 NOT_APPLICABLE = [
@@ -181,6 +203,12 @@ ITEM_UPDATES = {
     "FW-18": (1.5, "OWNER_GIVEN", "A9.14", "ICPQ-11",
               "antenna-circuit voltage rating >= 1.5 x V_ant,peak at the worst measured P2 point; Paschen / creepage / "
               "combined RF+DC qualification separate"),
+    "FW-19": ("TBD - requires the registered P_fwd,max (maximum admitted RF forward-power point of the complete "
+              "measured ICP / P2 envelope) and the registered H-1 P_d,max; form OWNER_DECIDED by ICPQ-10 (A9.12 S5.1 "
+              "alternative A): Q_ICP,bound = 1.20 x (P_fwd,max + P_d,max), evaluated fail-closed by "
+              "p3_a9_16_rules.icp43_total_module_bound; never 1.20 x 1.5 kW", None, "A9.12", "ICPQ-10",
+              "alternative B (1.20 x 1.5 kW bus ceiling) rejected by the owner; history in "
+              "framework.heat_load_alternatives"),
     "FW-20": ("RF voltage 1.5 x; continuous RF power / current 1.25 x; thermal 1.20 x; transient below the "
               "manufacturer transient / peak rating (all on the measured envelope maximum)", "OWNER_GIVEN", "A9.14",
               "P2Q-10", "stress-class policy RF_RATING_POLICY_V1_5_PI_1_25_THERMAL_1_20"),
@@ -305,7 +333,8 @@ def _update_item(x):
     j, js, _m, _ms = DEC[dkey]
     if val is not None:
         x["value"] = val
-        x["evidence_class"] = "owner-stated"
+        if not (isinstance(val, str) and val.startswith("TBD")):
+            x["evidence_class"] = "owner-stated"       # a TBD form carries no value, so no evidence class
     if status is not None:
         x["status"] = status
     src = x.get("source")
@@ -349,8 +378,19 @@ def apply(doc, oq_rows):
     # instruments (P2Q-02)
     for i in d["instrument_list"]:
         i["procurement_package_a9_8"] = PROCUREMENT_PACKAGE[i["id"]]
-    # outputs later (ICPQ-11 answered; ICPQ-10 / OQ-A910-06 not in this lane's assignment)
+    # outputs later (ICPQ-11 answered by A9.14; ICPQ-10 / OQ-A910-06 answered by A9.12 S5.1 / S5.8 - repair F1 / F5)
     for o in d["p2_outputs_later"]:
+        if o["id"] == "ICPQ-10":
+            o["status"] = ("OWNER_DECIDED (A9.12 S5.1 alternative A: Q_ICP,bound = 1.20 x (P_fwd,max + P_d,max); P2 "
+                           "supplies P_fwd,max from the registered envelope; evaluated by "
+                           "p3_a9_16_rules.icp43_total_module_bound; never 1.20 x 1.5 kW)")
+            o["source"] = DEC["A9.12"][0]
+        if o["id"] == "OQ-A910-06":
+            o["status"] = ("OWNER_DECIDED (A9.12 S5.8: 600 W = 500 W x 1.20 kept temporarily as the RF-path heat "
+                           "allocation - not a rating, operating point, ICP-43 bound or delivered power; superseded by "
+                           "the P2-derived RF thermal envelope (P_delivered, line / match losses, antenna / plasma "
+                           "loading, uncertainty, x 1.20), consumed by p3_a9_16_rules.rf_thermal_basis)")
+            o["source"] = DEC["A9.12"][0]
         if o["id"] == "ICPQ-11":
             o["status"] = ("OWNER_GIVEN (A9.14 S8.4 K_RF_1_5: rated antenna-circuit voltage >= 1.5 x V_ant,peak at the "
                            "worst measured P2 mismatch / operating point; candidate only, rating "
@@ -358,9 +398,9 @@ def apply(doc, oq_rows):
             o["source"] = DEC["A9.14"][0]
     for x in d["interface_demands"]:
         if x["id"] == "IDP2-22":
-            x["status"] = ("ANSWERED except ICPQ-10: ICPQ-11 k_RF = 1.5 and P2Q-10 stress-class margins (A9.14), P2Q-09 "
-                           "k_transition = 2.0 and P2Q-03 k_agreement = 2.0 (A9.11), loss-check k = 2.0 (A9.10 P1Q-24); "
-                           "ICPQ-10 not applied by this lane (heat_load_option stays an explicit input)")
+            x["status"] = ("ANSWERED: ICPQ-10 alternative A (A9.12 S5.1; Q_ICP,bound = 1.20 x (P_fwd,max + P_d,max), "
+                           "never 1.20 x 1.5 kW), ICPQ-11 k_RF = 1.5 and P2Q-10 stress-class margins (A9.14), P2Q-09 "
+                           "k_transition = 2.0 and P2Q-03 k_agreement = 2.0 (A9.11), loss-check k = 2.0 (A9.10 P1Q-24)")
     # framework capability texts that named the questions as open
     for c in d["framework"]["capabilities"]:
         if c["a9_6_sec9_item"] == "E/H-mode transition detection":
@@ -369,13 +409,35 @@ def apply(doc, oq_rows):
                                 "hot-map reduction)")
         if c["a9_6_sec9_item"] == "rating derivation":
             c["data_needed"] = ("complete measured envelope; owner factors A9.14 ICPQ-11 / P2Q-10 given; ICPQ-10 "
-                                "heat-load bound an explicit input")
+                                "decided (A9.12 S5.1 alternative A; RC-HEAT via p3_a9_16_rules.icp43_total_module_bound "
+                                "with the registered P_fwd,max and P_d,max)")
         if c["a9_6_sec9_item"] == "RF line/match loss":
             c["data_needed"] = "two-port data + calorimetric check; k = k_loss = 2.0 (A9.10 P1Q-24)"
     for o in d["owner_answers_applied"]:
         if isinstance(o["ref"], dict) and o["ref"].get("kind") == "A9.6" and o["ref"].get("decision") == "sec. 7":
             o["how"] += (" [superseded 2026-10-01: ICPQ-11 by A9.14 S8.4, P2Q-03 / P2Q-09 by A9.11 S4.3 / S4.7 - see "
-                         "a9_16_incorporation; ICPQ-10 not applied by this lane]")
+                         "a9_16_incorporation; ICPQ-10 by A9.12 S5.1 (alternative A) - A9.16 repair F1]")
+    # ICPQ-10 heat-load bound: decided by the owner (A9.12 S5.1, alternative A); B kept only as rejected history
+    h = d["framework"]["heat_load_alternatives"]
+    as_raised = list(h["alternatives"])
+    d["framework"]["heat_load_alternatives"] = {
+        "owner_question": "ICPQ-10", "status": "OWNER_DECIDED", "question_text": h["question_text"],
+        "source": h["source"], "selected_alternative": "A",
+        "selected": "Q_ICP,bound = 1.20 x (P_fwd,max + P_d,max): P_fwd,max = maximum admitted RF forward-power operating "
+                    "point of the registered ICP / P2 envelope; P_d,max = applicable registered H-1 discharge-power "
+                    "bound (A9.12 S5.1)",
+        "bound_rule": "docs/experiments/hall_icp/p3_coupled_thermal/p3_a9_16_rules.py::icp43_total_module_bound",
+        "decision": {"decision": "A9.12", "question_id": "ICPQ-10", "sequenced_no": "S5.1",
+                     "decision_file": DEC["A9.12"][0], "decision_json_sha256": DEC["A9.12"][1],
+                     "verbatim": DEC["A9.12"][2]},
+        "history_alternatives_as_raised": [
+            {"alternative": as_raised[0], "disposition": "OWNER_SELECTED (A9.12 S5.1)"},
+            {"alternative": as_raised[1], "disposition": "OWNER_REJECTED (A9.12 S5.1: 'Do not use 1.20 x 1.5 kW merely "
+                                                         "because 1.5 kW is the spacecraft/bus ceiling') - history only, "
+                                                         "never a live option; rating_structure refuses it"}],
+        "note": "a deliberately conservative thermal bounding rule, not a statement that all electrical input power is "
+                "deposited in one ICP component; replaced by measured coupled heat terms once P1 / P2 / P3 deposition "
+                "and loss terms exist (the 20 % margin is not relaxed); never a thermal PASS"}
     d["owner_answers_applied"] += owner_answer_rows()
     # open questions: every former P2 question is answered (A9.8 / A9.11 / A9.14)
     answered = {"P2Q-01": ("A9.11", "S4.2"), "P2Q-02": ("A9.8", "S1.6"), "P2Q-03": ("A9.11", "S4.3"),
@@ -389,7 +451,14 @@ def apply(doc, oq_rows):
         "decision": answered[q["id"]][0], "sequenced_no": answered[q["id"]][1], "decision_file": DEC[answered[q["id"]][0]][0],
         "decision_json_sha256": DEC[answered[q["id"]][0]][1], "verbatim": DEC[answered[q["id"]][0]][2]})
         for q in former]
-    d["open_owner_questions"] = []
+    # A9.16 repair COR-01: open_owner_questions keeps the questions AS RAISED (unchanged; the immutable owner-question
+    # state-v4 builder reads them back); the current state is answered_owner_questions / owner_questions_open_now
+    d["open_owner_questions"] = former
+    d["open_owner_questions_note"] = (
+        "open_owner_questions is the record of the P2 owner questions AS RAISED (text unchanged; read back by the "
+        "immutable owner-question state-v4 builder). Every one is answered (answered_owner_questions, with the "
+        "deciding decision file and json sha256); owner_questions_open_now lists the questions still open (none)")
+    d["owner_questions_open_now"] = []
     for q in answered:
         if q in oq_rows:
             raise SystemExit("A9.16: %s collides with state v3" % q)

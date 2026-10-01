@@ -125,7 +125,10 @@ def test_p4_a9_16_questions_decided(APP, d):
     qs = {q["id"]: q for q in d["open_owner_questions"]}
     assert set(qs) == set(APP.DECIDED_OWNER_QUESTIONS)
     for qid, q in qs.items():
-        assert q["status"] == "OWNER_DECIDED" and q["answer"] == APP.DECIDED_OWNER_QUESTIONS[qid][2]
+        # A9.16 repair COR-01: as-raised 'status' kept for the state-v4 read-back; status_current governs
+        assert q["status_current"] == "OWNER_DECIDED" and q["answer"] == APP.DECIDED_OWNER_QUESTIONS[qid][2]
+        assert q["status"] == "TBD_OWNER" and q["status_note"]
+    assert d["owner_questions_open_now"] == []
 
 
 # ------------------------------------------------------------------------------------------------ P4-OQ-01 staged
@@ -203,11 +206,26 @@ def test_p4_a9_16_cr01_gate_requires_stage_2(R, S):
         q = dict(p, validation_stage=st) if st else p
         o, why = S.evaluate_gate(r, q, thermal_closure_status="CLOSED_BY_EVIDENCE", operating_temperature=top)
         assert o == "INCOMPLETE_EVIDENCE" and "stage" in why
+    # A9.16 repair COR-06 (updated test): a bare stage-2 / stage-3 declaration is no longer admitted; the property
+    # must reference a stage record (id + sha256) that classifies to that stage, material and limit
     for st in (R.STAGE_2, R.STAGE_3):
-        assert S.evaluate_gate(r, dict(p, validation_stage=st), thermal_closure_status="CLOSED_BY_EVIDENCE",
-                               operating_temperature=top)[0] == "GATE_SATISFIED_WITHIN_EVIDENCE_DOMAIN"
+        o, why = S.evaluate_gate(r, dict(p, validation_stage=st), thermal_closure_status="CLOSED_BY_EVIDENCE",
+                                 operating_temperature=top)
+        assert o == "INCOMPLETE_EVIDENCE" and "not evidence" in why
+    s1 = R.validation_stage_record(_s1(R, material="CAND-X", T_limit_K=1020.0))
+    s2 = _s2(R, s1, material="CAND-X", T_limit_K=1000.0)
+    s3 = {"basis": R.STAGE_3, "material": "CAND-X", "source": SYN, "preregistered_acceptance": "LOCK2-SYN",
+          "T_limit_K": 1000.0, "criteria_met": True, "stage_2_record": R.validation_stage_record(s2),
+          "life_basis": "FULL_DURATION"}
+    for st, rec in ((R.STAGE_2, s2), (R.STAGE_3, s3)):
+        q = dict(p, validation_stage=st, material="CAND-X", validation_stage_record=rec,
+                 validation_stage_record_id="SYN-REC", validation_stage_record_sha256=S.stage_record_sha256(rec))
+        assert S.evaluate_gate(r, q, thermal_closure_status="CLOSED_BY_EVIDENCE",
+                               operating_temperature=top)[0] == "GATE_SATISFIED_WITHIN_EVIDENCE_DOMAIN", st
+        assert R.gate_admissible_t_validated(q)[0] is True
     assert R.gate_admissible_t_validated({"validation_stage": R.STAGE_1})[0] is False
-    assert R.gate_admissible_t_validated({"validation_stage": R.STAGE_2})[0] is True
+    assert R.gate_admissible_t_validated({"validation_stage": R.STAGE_2})[0] is False          # bare declaration
+    assert R.gate_admissible_t_validated({"validation_stage": R.STAGE_3, "validation_stage_record": s2})[0] is False
 
 
 # ------------------------------------------------------------------------------------------------ P4-OQ-02 Q0 matrix

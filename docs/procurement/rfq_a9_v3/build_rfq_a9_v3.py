@@ -21,7 +21,8 @@ What v3 changes (owner decisions; the verbatim .md of each decision governs, quo
   * decisions that change RFQ lines directly although not named in the lane list: A9.8 P1Q-09 (dedicated isolated
     electron-collecting target becomes a required line), A9.8 P3Q-01 (Langmuir-probe cross-check line), A9.8 P1-IT-55
     (per-path DWV leakage limit), A9.14 P1Q-17 (700 V DC / 60 s triggered reverification), A9.14 F5-OQ-04 (released
-    H-1 drawing basis). A9.1 ICP gas-mode baseline (G-REUSE primary; G-XE a declared ICP-feed variant) is unchanged.
+    H-1 drawing basis of the FLIGHT H-1 at LOCK-1; the P1 engineering article is quoted against a P9e-controlled
+    drawing set, A9.10 OQ-RFQV2-10 - A9.16 repair F4). A9.1 ICP gas-mode baseline (G-REUSE primary; G-XE a declared ICP-feed variant) is unchanged.
 
 Rules implemented here
   * requirement and line ids are stable across revisions (v2 ids kept); new v3 ids carry the RFQ3- prefix; package ids
@@ -126,8 +127,12 @@ SEND_P1 = "READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase ord
 SEND_LATER = "LATER (sent with the later campaign set); purchase order NOT authorized"
 SEND_XE_INDICATIVE = ("INDICATIVE_QUOTATION_NOW (A9.14 OQ-RFQ-03; range options, range NOT frozen); purchase order NOT "
                       "authorized")
-SEND_H1FAB = ("SEND_ONLY_WITH_RELEASED_H1_DRAWINGS (drawing ID, revision, content hash; A9.14 F5-OQ-04); quotation / "
-              "specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized")
+SEND_H1FAB = ("SEND_ONLY_WITH_CONTROLLED_H1_DRAWINGS (P1 engineering article: drawing ID, revision, content hash under "
+              "P9e / Vyovrinda configuration control, A9.10 OQ-RFQV2-10; the LOCK-1 release of A9.14 F5-OQ-04 is the "
+              "basis of the FLIGHT H-1, not a precondition for quoting P1 hardware); quotation / specification only "
+              "(A9.10 OQ-RFQV2-10); purchase order NOT authorized")
+H1_ARTICLES = ("P1_ENGINEERING", "FLIGHT")
+H1_CONFIGURATION_CONTROL = "P9E_CONFIGURATION_CONTROLLED"
 
 PKG_RENAME = {"RFQ2-RF": "RFQ3-RF", "RFQ2-GAS": "RFQ3-GAS", "RFQ2-VAC": "RFQ3-VAC", "RFQ2-HALLEL": "RFQ3-HALLEL",
               "RFQ2-MECH": "RFQ3-MECH", "RFQ2-THRUST": "RFQ3-THRUST", "RFQ2-CIF": "RFQ3-CIF"}
@@ -468,18 +473,28 @@ def icp_xe_getter_requirement(g_xe_variant_declared: bool, spec=None) -> dict:
 _SHA_RE = re.compile(r"^[0-9a-f]{64}$")
 
 
-def h1_fab_send_state(drawing) -> dict:
-    """A9.10 OQ-RFQV2-10 + A9.14 F5-OQ-04: the build-to-print package is sent for quotation only with a released H-1
-    drawing set (drawing ID, revision, content hash) and no OPEN / TBD item silently promoted."""
+def h1_fab_send_state(drawing, article="P1_ENGINEERING") -> dict:
+    """A9.10 OQ-RFQV2-10: the build-to-print package for the P1 H-1 article is sent for quotation only with a drawing
+    set under P9e / Vyovrinda configuration control (drawing ID, revision, content hash; configuration_control =
+    P9E_CONFIGURATION_CONTROLLED) and no OPEN / TBD item on the quoted parts. A9.14 F5-OQ-04 (LOCK-1 release basis)
+    applies to the FLIGHT H-1 only: article = FLIGHT additionally needs release = LOCK-1. A9.16 repair F4: S3.10 sets
+    no LOCK-1 gate for quoting the P1 engineering hardware (recorder reading, for the owner to confirm)."""
+    if article not in H1_ARTICLES:
+        raise ValueError(f"article {article!r} not in {H1_ARTICLES}")
     d = drawing if isinstance(drawing, dict) else {}
     blockers = [k for k in ("drawing_id", "revision") if not d.get(k)]
     if not _SHA_RE.match(str(d.get("content_sha256", ""))):
         blockers.append("content_sha256")
+    if d.get("configuration_control") != H1_CONFIGURATION_CONTROL:
+        blockers.append("configuration_control (must be %s)" % H1_CONFIGURATION_CONTROL)
     if d.get("open_items"):
         blockers.append("open_items: " + ", ".join(map(str, d["open_items"])))
+    if article == "FLIGHT" and d.get("release") != "LOCK-1":
+        blockers.append("release (the flight H-1 needs the LOCK-1 release, A9.14 F5-OQ-04)")
     if blockers:
-        return {"state": "NOT_SENDABLE_DRAWING_NOT_RELEASED", "blockers": blockers}
-    return {"state": "READY_TO_SEND_FOR_QUOTATION_BUILD_TO_PRINT", "blockers": [],
+        return {"state": "NOT_SENDABLE_DRAWING_NOT_CONTROLLED" if article == "P1_ENGINEERING"
+                else "NOT_SENDABLE_DRAWING_NOT_RELEASED", "article": article, "blockers": blockers}
+    return {"state": "READY_TO_SEND_FOR_QUOTATION_BUILD_TO_PRINT", "article": article, "blockers": [],
             "note": "quotation only; no purchase order"}
 
 
@@ -721,6 +736,7 @@ def S():
         "P1Q-17": OD("A9.14", "P1Q-17", "REVERIFICATION = 700 V DC / 60 s."),
         "P1Q-17b": OD("A9.14", "P1Q-17", "This is not a routine pre-run test: use after repair, insulation-path "
                       "modification, suspected fault or other defined requalification trigger."),
+        "OQ-RFQV2-10e": OD("A9.10", "OQ-RFQV2-10", "configuration control"),
         "F5-OQ-04": OD("A9.14", "F5-OQ-04", "The released H-1 design must have drawing ID, revision and content hash. "
                        "No OPEN item is silently promoted merely because surrounding geometry is frozen."),
         "F5-OQ-03": OD("A9.14", "F5-OQ-03", "This is only a necessary ceiling, not the usable operating-temperature "
@@ -1092,33 +1108,46 @@ def apply_decisions(c: Ctx, s: dict) -> None:
     c.new_req("RFQ3-H1FAB", "RFQ3-H1FAB-N01", "build-to-print scope and in-house design authority",
               "Build-to-print fabrication of the H2-1 / H2-3 hardware required for the P1 H-1 article (precision "
               "machining, ceramic fabrication, winding or other specialist manufacturing), separate from the ICP "
-              "mechanical package RFQ3-MECH. The supplier fabricates to the released drawings only; H-1 design "
+              "mechanical package RFQ3-MECH. The supplier fabricates to the controlled drawings only; H-1 design "
               "authority, magnetic design, channel / anode design, interface definition, configuration control, final "
               "assembly / integration, instrumentation and acceptance testing remain in-house (P9e / Vyovrinda). No "
               "supplier design input changes a drawing without an in-house drawing revision.",
               {"scope_verbatim": list(H1FAB_SCOPE), "retained_in_house_verbatim": list(H1FAB_IN_HOUSE),
                "work_type": "build-to-print"}, "-", h1src, "owner-stated", "OWNER_GIVEN", "NOW", "P1_NEEDED",
               why="A9.10 OQ-RFQV2-10")
-    c.new_req("RFQ3-H1FAB", "RFQ3-H1FAB-N02", "released H-1 drawing set (send precondition)",
-              "The package is sent for quotation only with the released H-1 drawing set: drawing id, revision and "
-              "content hash for every part; every item marked OPEN / TBD / TBD_AFTER_EVIDENCE remains an explicit "
-              "release blocker and is never silently promoted (rule function h1_fab_send_state).",
-              {"drawing_id": "TBD - requires the H-1 release (F5 ENGINEERING_FREEZE_CANDIDATE -> LOCK-1)",
-               "revision": "TBD", "content_sha256": "TBD", "open_items": "explicit release blockers"},
-              "-", [s["F5-OQ-04"]], None, "TBD", "LOCK-1", "P1_NEEDED", why="A9.14 F5-OQ-04")
+    c.new_req("RFQ3-H1FAB", "RFQ3-H1FAB-N02", "controlled H-1 drawing set of the P1 engineering article (send "
+              "precondition)",
+              "The package is sent for quotation only with the drawing set of the P1 engineering H-1 article under "
+              "P9e / Vyovrinda configuration control: drawing id, revision and content hash for every part; an item "
+              "marked OPEN / TBD / TBD_AFTER_EVIDENCE on a quoted part blocks sending and is never silently promoted "
+              "(rule function h1_fab_send_state, article P1_ENGINEERING). The LOCK-1 release basis of A9.14 F5-OQ-04 "
+              "(F5 ENGINEERING_FREEZE_CANDIDATE -> LOCK-1) governs the FLIGHT H-1 drawing release, not the quotation of "
+              "the P1 engineering hardware.",
+              {"drawing_id": "TBD - registered from the P9e configuration-controlled P1 engineering drawing set",
+               "revision": "TBD", "content_sha256": "TBD", "configuration_control": H1_CONFIGURATION_CONTROL,
+               "open_items": "blockers for the quoted parts",
+               "flight_h1_release_basis": "LOCK-1 release (drawing id, revision, content hash; every OPEN / TBD item "
+                                          "an explicit blocker; A9.14 F5-OQ-04) - the flight H-1 only",
+               "reading": "A9.16 repair F4 recorder reading for the owner to confirm: A9.10 S3.10 creates the package "
+                          "for 'the H2-1/H2-3 hardware required for the P1 article' and keeps configuration control "
+                          "in-house; it sets no LOCK-1 gate, so a LOCK-1 release is not required to quote the P1 "
+                          "engineering article"},
+              "-", [s["OQ-RFQV2-10"], s["OQ-RFQV2-10e"], s["F5-OQ-04"]], None, "TBD", "P1-G0", "P1_NEEDED",
+              why="A9.10 OQ-RFQV2-10 (controlled P1 engineering drawing set; A9.14 F5-OQ-04 kept for the flight H-1; "
+                  "A9.16 repair F4)")
     c.new_req("RFQ3-H1FAB", "RFQ3-H1FAB-N03", "coil winding wire",
               "Coil windings use plain ceramic-insulated copper (baseline). Ni-clad / Kulgrid wire is a contingency "
               "variant only (option line H1-O01), used only if oxidation, supplier availability or manufacturing demands "
               "it, and then only with measured resistance and magnetic-perturbation evidence (rule function "
-              "coil_wire_variant). Conductor size, turns, insulation class and winding geometry per the released "
+              "coil_wire_variant). Conductor size, turns, insulation class and winding geometry per the controlled "
               "MC-1 drawing.",
               {"baseline": "plain ceramic-insulated copper", "contingency": "Ni-clad / Kulgrid (H1-O01)",
                "contingency_triggers": list(COIL_WIRE_TRIGGERS),
                "contingency_evidence": ["measured resistance", "magnetic perturbation"],
-               "winding_data": "TBD - requires the released MC-1 drawing"}, "-", [s["OQ-A907-04"]], "owner-stated",
+               "winding_data": "TBD - requires the controlled MC-1 drawing"}, "-", [s["OQ-A907-04"]], "owner-stated",
               "OWNER_GIVEN", "NOW", "P1_NEEDED", why="A9.14 OQ-A907-04")
     c.new_req("RFQ3-H1FAB", "RFQ3-H1FAB-N04", "materials, dimensional inspection and material certification",
-              "Every part is made from the material and to the tolerances of its released drawing, with a material "
+              "Every part is made from the material and to the tolerances of its controlled drawing, with a material "
               "certificate per part / heat lot and a dimensional inspection report against the drawing. Material "
               "choices are design-authority items: the H-1 anode material is OPEN and 316L is REJECTED_AS_CURRENT_"
               "BASELINE for the design-representative / flight anode (A9.2) - the supplier proposes no substitute. For "
@@ -1127,14 +1156,14 @@ def apply_decisions(c: Ctx, s: dict) -> None:
               "data (A9.14 F5-OQ-03), never as an operating limit or acceptance value. Ceramic / insulating parts on the "
               "anode / discharge path meet RFQ3-HALLEL-N01 as installed. No thermal PASS is inferred from any "
               "supplier statement (anode and coupled thermal closure UNRESOLVED).",
-              {"material": "per released drawing", "anode_material": "OPEN (A9.2); 316L REJECTED_AS_CURRENT_BASELINE",
+              {"material": "per controlled drawing", "anode_material": "OPEN (A9.2); 316L REJECTED_AS_CURRENT_BASELINE",
                "certificates": "per part / heat lot", "inspection": "dimensional report vs drawing tolerances",
                "thermal": "UNRESOLVED (never PASS)"}, "-", [s["OQ-RFQV2-10"], s["F5-OQ-03"]], "owner-stated",
               "OWNER_GIVEN", "NOW", "P1_NEEDED", why="A9.10 OQ-RFQV2-10 (+ A9.14 F5-OQ-03)")
-    h1_qty = "TBD - requires the released H-1 drawing set (RFQ3-H1FAB-N02)"
+    h1_qty = "TBD - per the controlled P1 engineering drawing set (RFQ3-H1FAB-N02)"
     h1_lines = [
         ("H1-L01", "Hall channel / body components (build-to-print)", ["Hall channel/body components"], []),
-        ("H1-L02", "anode and anode distributor / plenum (build-to-print; material per released drawing - anode "
+        ("H1-L02", "anode and anode distributor / plenum (build-to-print; material per controlled drawing - anode "
                    "material OPEN)", ["anode and anode distributor/plenum"], []),
         ("H1-L03", "gas-path interfaces of the H-1 Ar feed to the anode plenum (fittings / ports per drawing; the "
                    "anode gas isolator is GAS-L13)", ["gas-path interfaces"], []),
@@ -1151,7 +1180,7 @@ def apply_decisions(c: Ctx, s: dict) -> None:
         ("H1-L09", "dimensional inspection reports and material certificates for every H1-L01..L08 part",
          ["dimensional inspection and material certification"], []),
     ]
-    h1_qa = {"acceptance": ["incoming inspection in-house against the released drawing (dimensions, material "
+    h1_qa = {"acceptance": ["incoming inspection in-house against the controlled drawing (dimensions, material "
                             "certificate, visual); acceptance testing of the assembled H-1 stays in-house"],
              "calibration_traceability": ["supplier inspection instruments calibrated (certificate reference on the "
                                           "inspection report)"],
@@ -1568,7 +1597,9 @@ def _banner() -> list:
         "inside the system Xe architecture. The A9.1 ICP gas-mode baseline (G-REUSE primary) is unchanged.",
         "A9.4 / A9.6: the owner / procurement may SEND the lines tagged P1_NEEDED for quotation (requests for "
         "quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates). The "
-        "H-1 build-to-print package is sent only with released H-1 drawings (A9.14 F5-OQ-04).",
+        "H-1 build-to-print package for the P1 article is sent only with the P9e configuration-controlled drawing set "
+        "(drawing id, revision, content hash; A9.10 OQ-RFQV2-10); the LOCK-1 release (A9.14 F5-OQ-04) is the flight H-1 "
+        "basis.",
     ]
 
 
@@ -1645,7 +1676,7 @@ def _finish_packages(doc, s) -> None:
             p["owner_minimum_scope_source"] = {"key": "A9.10", "id": "OQ-RFQV2-10",
                                                "quote": s["OQ-RFQV2-10"]["quote"]}
             p["retained_in_house_verbatim"] = list(H1FAB_IN_HOUSE)
-            p["acceptance"] = [{"text": "in-house incoming inspection against the released drawing; acceptance testing "
+            p["acceptance"] = [{"text": "in-house incoming inspection against the controlled drawing; acceptance testing "
                                         "of the assembled H-1 is in-house (A9.10 OQ-RFQV2-10)", "carried_from": None}]
             p["calibration_traceability"] = [{"text": "supplier inspection instruments under calibration; certificate "
                                                       "references on every inspection report", "carried_from": None}]
@@ -1954,8 +1985,8 @@ def _top_level(doc, v2, c: Ctx, s) -> None:
     # H3 / H4
     h = doc["h3_h4_inputs"]
     h["h3_procurement_gate"] = {
-        "state": "QUOTATION PACKAGES v3 READY FOR OWNER DISPATCH (P1 subset first; H-1 build-to-print only with released "
-                 "drawings); PURCHASE ORDERS, ADVANCE PAYMENTS AND BINDING COMMITMENTS NOT AUTHORIZED",
+        "state": "QUOTATION PACKAGES v3 READY FOR OWNER DISPATCH (P1 subset first; H-1 build-to-print only with the "
+                 "P9e configuration-controlled P1 drawing set); PURCHASE ORDERS, ADVANCE PAYMENTS AND BINDING COMMITMENTS NOT AUTHORIZED",
         "purchase_gate": "H3 procurement gate + frozen A9 interfaces (owner row 8; A9.1 A9-09 procurement restriction)",
         "packages": [{"id": p["id"], "owner_family": p["owner_family"], "p1_needed_line_items": p["p1_needed_line_items"],
                       "open_items_blocking_po": [o["id"] for o in p["open_specification_items"]]}
@@ -1971,7 +2002,7 @@ def _top_level(doc, v2, c: Ctx, s) -> None:
                                      "load", "source": "A9.8 OQ-RFQV2-03"},
         {"id": "H4-RFQ3-04", "test": "V/I-probe magnitude / relative-phase calibration (accredited or in-house "
                                      "traceable) followed by CAL-P2-15", "source": "A9.11 P2Q-07"},
-        {"id": "H4-RFQ3-05", "test": "incoming inspection of H-1 build-to-print parts against the released drawing",
+        {"id": "H4-RFQ3-05", "test": "incoming inspection of H-1 build-to-print parts against the controlled drawing",
          "source": "A9.10 OQ-RFQV2-10"},
     ]
     doc["standing_facts"] = dict(doc["standing_facts"])

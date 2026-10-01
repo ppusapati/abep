@@ -321,11 +321,16 @@ def apply_rows(rows: list, ref, get) -> list:
                                                            "initial attempt + two retries under registered dwell / "
                                                            "thermal limits; a C1-selected variant uses its own "
                                                            "qualified heater / keeper sequence",
-         basis="A9.14 OD5 (S9.9); A9-02 template carried as the implementation reference",
+         basis="SEQUENCE OWNER_DECIDED (A9.14 OD5, S9.9); dwell / thermal limits PENDING_REGISTRATION from the actual "
+               "hardware (A9.10 P1Q-02; no number set for the ICP-first sequence - the 120 s / 360 s C1 dwell booking "
+               "applies to the C1-selected variant only); A9-02 template carried as the implementation reference",
          freeze_status="OPEN", evidence_to_advance=["measured start-up transient record (1 ms gate)",
-                                                    "registered dwell / thermal limits"])
-    r["source"] = r["source"] + [dsrc("OD5")]
-    note(r, ["OD5", "OQ-A907-01"], max_attempts=3)
+                                                    "registered dwell / thermal limits (A9.10 P1Q-02)"])
+    r["source"] = r["source"] + [dsrc("OD5"), dsrc("P1Q-02")]
+    note(r, ["OD5", "OQ-A907-01", "P1Q-02"], max_attempts=3, sequence_status="OWNER_DECIDED (A9.14 OD5)",
+         dwell_thermal_limits="PENDING_REGISTRATION (A9.10 P1Q-02; NOT_EVALUATED_REGISTRATION until registered)",
+         why_open="the decided sequence becomes a design value only with the registered dwell / thermal limits and "
+                  "the measured start-up transient (A9.16 repair F8)")
 
     r = by["AFC-SY-CTL-04"]
     _set(r, value="scheduled plenum setpoint baseline (fixed setpoint fallback); F4 transient metrics (2 % band, 60 s "
@@ -370,6 +375,46 @@ def apply_rows(rows: list, ref, get) -> list:
          freeze_status="OPEN", evidence_to_advance=["quotations / design CBE for the complete Xe hardware"])
     r["source"] = r["source"] + [ref("MP3", "/lines/hall_icp_neutralizer/7"), dsrc("MQ-05")]
     note(r, ["MQ-05"])
+
+    # A9.16 repair F8: the Xe rows are re-pointed to the current Xe accounting v3 / mass-power v3 (the v2 / state-v4
+    # sources stay listed as the A9.7 basis, marked history); a state-v4 row source gets its state-v5 row beside it
+    def _find(key, lst_ptr, field, value):
+        lst = get(key, lst_ptr)
+        hits = [i for i, x in enumerate(lst) if isinstance(x, dict) and x.get(field) == value]
+        if len(hits) != 1:
+            raise SystemExit(f"REFUSED: {key}{lst_ptr}: {field}={value!r} found {len(hits)} times")
+        return f"{lst_ptr}/{hits[0]}"
+    xe3_ptrs = {"AFC-SY-XE-01": ["/propellant_policy"], "AFC-SY-XE-02": [_find("XE3", "/items", "id", "XV2-21")],
+                "AFC-SY-XE-03": [_find("XE3", "/items", "id", "XV2-30"), "/design_cases/loaded_split"],
+                "AFC-SY-XE-04": [_find("XE3", "/items", "id", "XV2-23"), _find("XE3", "/items", "id", "XV2-24")],
+                "AFC-SY-XE-05": [_find("XE3", "/items", "id", "XV2-25")],
+                "AFC-SY-XE-06": [_find("XE3", "/items", "id", "XV2-28"), _find("XE3", "/items", "id", "XV2-29")],
+                "AFC-SY-XE-07": [_find("XE3", "/items", "id", "XV2-39")],
+                "AFC-SY-XE-08": [_find("MP3", "/lines/hall_icp_neutralizer", "line", "AL-08")]}
+    for rid, ptrs in xe3_ptrs.items():
+        r = by[rid]
+        key = "MP3" if rid == "AFC-SY-XE-08" else "XE3"
+        hist = []
+        for x in r["source"]:
+            if isinstance(x, dict) and x.get("path", "").endswith(("xe_accounting_a9_v2.json",
+                                                                  "mass_power_a9_v2.json",
+                                                                  "owner_questions_state_v4.json")):
+                x["role"] = "HISTORY (A9.7 basis); the current source is listed in current_sources"
+                hist.append(x["path"])
+        cur = [ref(key, p) for p in ptrs]
+        for x in r["source"]:
+            if isinstance(x, dict) and x.get("path", "").endswith("owner_questions_state_v4.json"):
+                rid4 = x.get("pointer", "")
+                v4row = get("OQ4", rid4) if rid4.startswith("/rows/") else None
+                if isinstance(v4row, dict) and v4row.get("id"):
+                    cur.append(ref("OQ5", _find("OQ5", "/rows", "id", v4row["id"])))
+        r["source"] = r["source"] + cur
+        r["current_sources"] = [c["path"] + c["pointer"] for c in cur]
+        r.setdefault("a9_16", {})["current_source_rule"] = (
+            "xe_accounting_a9_v3 / mass_power_a9_v3 / state v5 govern; the v2 / v4 sources are history (A9.16 "
+            "repair F8)")
+        if rid not in touched:
+            touched.append(rid)
     return touched
 
 

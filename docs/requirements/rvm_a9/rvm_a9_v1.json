@@ -305,9 +305,9 @@
   },
   {
    "key": "P3",
-   "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+   "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
    "identity": {
-    "id": "p3_coupled_thermal_v1"
+    "id": "p3_coupled_thermal_v2"
    },
    "role": "P3 coupled-thermal framework",
    "why": "mutable package: read at build time, identity checked, never pinned"
@@ -6068,8 +6068,8 @@
      "apply Hall discharge voltage",
      "verify sustained Hall discharge"
     ],
-    "attempts": "one initial attempt + at most two retries (3 dwells, <= 120 s each, 360 s maximum booking)",
-    "c1_variant": "a C1-selected variant uses its separately qualified heater / keeper sequence"
+    "attempts": "max 1 initial attempt + 2 retries under registered dwell / thermal limits (values registered from the actual hardware before P1-S6, A9.10 P1Q-02; NOT_EVALUATED_REGISTRATION until registered; no dwell number is set for the ICP-first sequence)",
+    "c1_variant": "a C1-selected variant uses its separately qualified heater / keeper sequence; its Xe booking uses 3 C1 ignition dwells (1 + 2 retries), each <= 120 s, 360 s maximum booking (A9.14 OQ-A907-01 / XA9Q-02; applies to the C1 variant only)"
    }
   },
   {
@@ -7014,12 +7014,12 @@
     "hall_icp_neutralizer": {
      "status": "NOT_EVALUATED",
      "rule": "R7-NOT-EVALUATED",
-     "reason": "no determining evaluation with evidenced terms: p3_coupled_thermal_v1:fail_closed_evaluations [FRAMEWORK_EVALUATION]",
+     "reason": "no determining evaluation with evidenced terms: p3_coupled_thermal_v2:fail_closed_evaluations [FRAMEWORK_EVALUATION]",
      "current_evidence_state": "FRAMEWORK RUN, FAIL-CLOSED - ICP_COUPLED_THERMAL UNRESOLVED and ANODE_THERMAL_CLOSURE UNRESOLVED; heat terms Q_Hall->ICP INCOMPLETE_EVIDENCE, Q_collector INCOMPLETE_EVIDENCE, Q_RF/match INCOMPLETE_EVIDENCE, Q_plume INCOMPLETE_EVIDENCE, coupled_network INCOMPLETE_EVIDENCE; 0 heat term(s) / network evaluated on evidenced inputs (every one refused as INCOMPLETE_EVIDENCE when 0); 6 analog / model-derived framework input(s) exist but are not evaluated terms; never a thermal PASS (A9.2, A9.6)",
      "artifacts": [
       {
-       "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
-       "id": "p3_coupled_thermal_v1:fail_closed_evaluations",
+       "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
+       "id": "p3_coupled_thermal_v2:fail_closed_evaluations",
        "role": "DETERMINING",
        "kind": "FRAMEWORK_EVALUATION",
        "evidence_state": "FRAMEWORK RUN, FAIL-CLOSED - ICP_COUPLED_THERMAL UNRESOLVED and ANODE_THERMAL_CLOSURE UNRESOLVED; heat terms Q_Hall->ICP INCOMPLETE_EVIDENCE, Q_collector INCOMPLETE_EVIDENCE, Q_RF/match INCOMPLETE_EVIDENCE, Q_plume INCOMPLETE_EVIDENCE, coupled_network INCOMPLETE_EVIDENCE; 0 heat term(s) / network evaluated on evidenced inputs (every one refused as INCOMPLETE_EVIDENCE when 0); 6 analog / model-derived framework input(s) exist but are not evaluated terms; never a thermal PASS (A9.2, A9.6)",
@@ -7062,12 +7062,12 @@
     "hall_c1_reference": {
      "status": "NOT_EVALUATED",
      "rule": "R7-NOT-EVALUATED",
-     "reason": "no determining evaluation with evidenced terms: p3_coupled_thermal_v1:fail_closed_evaluations [FRAMEWORK_EVALUATION]",
+     "reason": "no determining evaluation with evidenced terms: p3_coupled_thermal_v2:fail_closed_evaluations [FRAMEWORK_EVALUATION]",
      "current_evidence_state": "FRAMEWORK RUN, FAIL-CLOSED - ANODE_THERMAL_CLOSURE UNRESOLVED (shared H-1 anode; A9.2 anode_approach); the ICP heat terms do not apply to this configuration; the H-1 network is only method-checked against H2-5 (no temperatures reported); 0 heat term(s) / network evaluated on evidenced inputs (every one refused as INCOMPLETE_EVIDENCE when 0); 6 analog / model-derived framework input(s) exist but are not evaluated terms; never a thermal PASS (A9.2, A9.6)",
      "artifacts": [
       {
-       "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
-       "id": "p3_coupled_thermal_v1:fail_closed_evaluations",
+       "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
+       "id": "p3_coupled_thermal_v2:fail_closed_evaluations",
        "role": "DETERMINING",
        "kind": "FRAMEWORK_EVALUATION",
        "evidence_state": "FRAMEWORK RUN, FAIL-CLOSED - ANODE_THERMAL_CLOSURE UNRESOLVED (shared H-1 anode; A9.2 anode_approach); the ICP heat terms do not apply to this configuration; the H-1 network is only method-checked against H2-5 (no temperatures reported); 0 heat term(s) / network evaluated on evidenced inputs (every one refused as INCOMPLETE_EVIDENCE when 0); 6 analog / model-derived framework input(s) exist but are not evaluated terms; never a thermal PASS (A9.2, A9.6)",
@@ -7976,7 +7976,7 @@
   {
    "id": "RVM-ID-04",
    "direction": "RVM <- P3",
-   "counterpart": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (fail_closed_evaluations)",
+   "counterpart": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (fail_closed_evaluations)",
    "content": "coupled / anode thermal closure states (UNRESOLVED); consumed as RVM-17",
    "status": "CONSUMED"
   },
@@ -8467,10 +8467,12 @@
     "keep row 55 as is (R7 not an RFP clause or waived)",
     "re-base on the RFP clause (redundant PPU / RF electronics; mass and power impact)"
    ],
-   "status": "OWNER_DECIDED",
+   "status": "TBD_OWNER",
    "freeze_point": "after-evidence",
    "needed_by": "when the official RFP is obtained (row 1), before Milestone C",
    "status_when_raised": "TBD_OWNER",
+   "status_current": "OWNER_DECIDED",
+   "status_note": "'status' = status AS RAISED (state-v4 read-back contract); answered by the owner - status_current / decision govern",
    "decision": "A9.14 RVMQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
    "decision_code": "REBASE_ELECTRONICS_SENSOR_REDUNDANCY_NO_FULL_THRUSTER_DUPLICATION",
    "answer_verbatim": "13. S9.13 — RVMQ-01 — REBASE RVM-19 ON THE OFFICIAL RFP REDUNDANCY CLAUSE. The RFP says the system must cater to single-point failure for electronics and separately calls for redundancy at electronics and sensor level. RFP(1) Therefore:\n   * redundant/independent critical control, power-switching, telemetry and sensor paths are required where an individual failure would defeat the mission/safe state;\n   * the single-point-failure analysis must prove the implementation;\n   * the text does not by itself require duplicate thrusters, duplicate ICP modules or duplicate complete mechanical propulsion chains.\n\nRow-55 limited redundancy may therefore remain for the physical thruster/ICP hardware, but not as a waiver of electronics/sensor redundancy.\n `REBASE_ELECTRONICS_SENSOR_REDUNDANCY_NO_FULL_THRUSTER_DUPLICATION`."

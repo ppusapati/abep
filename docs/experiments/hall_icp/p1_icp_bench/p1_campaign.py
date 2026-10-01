@@ -174,7 +174,8 @@ WORKFLOW = [
      "reducer": "p1_reducer.reduce_topology_control"},
     {"id": "P1-W10", "name": "Hall-ON NEUTRALIZATION_CONSISTENCY after capacity", "stage_ids": ["P1-S7H"],
      "entry": ["discharge-OFF capacity shown at the same registered H-1 point (a CLOSURE_VALID_CANDIDATE with "
-               "M_n,LB > 0 under both P1Q-19 treatments); otherwise the row is OUT_OF_DOMAIN (entry not met)"],
+               "M_n,LB > 0 under the owner-selected P1Q-19 treatment, A9.10 REQUIRE_REGISTERED_GE_CHANNEL); otherwise "
+               "the row is OUT_OF_DOMAIN (entry not met)"],
      "exit": ["descriptive consistency rows (sustainment, closure, I_e,ICP vs I_d, potentials, RF power); never "
               "ICP45_CAPACITY and never I_e,cap (A9.4 P1Q-10; A9.6 sec. 2)"],
      "record_template": _tpl("icp_operating_point", red.OPERATING_POINT_REQUIRED),
@@ -313,7 +314,8 @@ def _walk_no_pass(obj, path="report"):
 
 def _capacity_shown_points(icp, margin_rule):
     """h1_point_ids at which discharge-OFF capacity is shown (P1-W10 entry): a CLOSURE_VALID_CANDIDATE whose own
-    M_n,LB > 0 under both P1Q-19 treatments, with the ICP-45 evaluation not NOT_EVALUATED."""
+    M_n,LB > 0 under the owner-selected P1Q-19 treatment (A9.10 REQUIRE_REGISTERED_GE_CHANNEL: admissible registration),
+    with the ICP-45 evaluation not NOT_EVALUATED."""
     if icp.get("status") not in ("EVALUATED_ENGINEERING_ONLY", "SYNTHETIC_TEST_ONLY_NOT_EVIDENCE"):
         return {}
     k = float(margin_rule["k_one_sided"])
@@ -321,7 +323,7 @@ def _capacity_shown_points(icp, margin_rule):
     for c in icp.get("candidates", []):
         alts = red._p1q19_alternatives(c, icp["I_d_max_H1_A"], k, float(margin_rule["u_I_e_A"]),
                                        float(margin_rule["u_I_d_max_A"]))
-        if alts["agree"] and alts[red.P1Q19_ALTERNATIVES[0]]["condition_met"] is True:
+        if alts["registration_admissible"] and alts[red.P1Q19_OWNER_SELECTED]["condition_met"] is True:
             shown.setdefault(c["h1_point_id"], []).append(c["record_id"])
     return shown
 

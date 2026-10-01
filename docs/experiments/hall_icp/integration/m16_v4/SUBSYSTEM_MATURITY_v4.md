@@ -227,8 +227,8 @@ Roll-up: {"execution_states": {"BLOCKED": 20, "SUPERSEDED_FOR_PRIMARY_LINE": 1},
 
 ### Row 13: thermal_control (BLOCKED)
 
-* now exists [FRAMEWORK]: `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json` P3-B-01, P3-B-02, P3-M-01, P3-M-02, P3-M-03 - coupled H-1 / ICP thermal framework: heat-load bound alternatives, owner margins
-* now exists [SOFTWARE]: `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json` docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py - coupled thermal network library (fail-closed on REFUSED inputs)
+* now exists [FRAMEWORK]: `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json` P3-B-01, P3-B-02, P3-M-01, P3-M-02, P3-M-03 - coupled H-1 / ICP thermal framework: heat-load bound alternatives, owner margins
+* now exists [SOFTWARE]: `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json` docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py - coupled thermal network library (fail-closed on REFUSED inputs)
 * now exists [BUDGET]: `docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json` A9B-30, MPV2-N05 - thermal-control hardware; active-cooling variant only
 * now exists [PLAN]: `docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json` P1-M-21 - temperatures recorded for the P3 model
 * now exists [REQUIREMENT_MATRIX]: `docs/requirements/rvm_a9/rvm_a9_v1.json` RVM-17 - thermal closure
@@ -297,7 +297,7 @@ Roll-up: {"execution_states": {"BLOCKED": 20, "SUPERSEDED_FOR_PRIMARY_LINE": 1},
 * now exists [PLAN]: `docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json` P1-S3, P1-S4, P1-S5, P1-S7, P1-S7H - ICP ignition map (G-REUSE), electron-current sweep, stable region, ICP-45A discharge-OFF capacity, Hall-ON NEUTRALIZATION_CONSISTENCY
 * now exists [SOFTWARE]: `docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json` docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py, docs/experiments/hall_icp/p1_icp_bench/p1_campaign.py - signed I_e,cap = I_RFON - I_RFOFF and Kirchhoff admission (fail-closed)
 * now exists [FRAMEWORK]: `docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json` ZM-A, ZM-B, ZM-C - Z_antenna measurement methods
-* now exists [FRAMEWORK]: `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json` P3-B-01, P3-B-02 - ICP-43 total module heat-load bound alternatives (TBD_OWNER)
+* now exists [FRAMEWORK]: `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json` P3-B-01, P3-B-02 - ICP-43 total module heat-load bound alternatives (TBD_OWNER)
 * now exists [FRAMEWORK]: `docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json` APP-COLLECTOR - collector material comparison (material OPEN)
 * now exists [BUDGET]: `docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json` A9B-17, A9B-18, MPV2-N01 - ICP head, collector / bias electrode, isolation hardware
 * now exists [LEDGER]: `docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json` P-FL-ICP-XE - dedicated ICP Xe line; A9.6 sec. 12: m_Xe,ICP = 0 under the primary G-REUSE mode
@@ -349,7 +349,7 @@ Roll-up: {"execution_states": {"BLOCKED": 20, "SUPERSEDED_FOR_PRIMARY_LINE": 1},
 ### Row 21: h1_anode_heat_path (BLOCKED)
 
 * now exists [FRAMEWORK]: `docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json` ID-01, ID-02 - P3 <-> P4 interface (T_operating, k(T))
-* now exists [SOFTWARE]: `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json` docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py - anode heat path is a network input of the coupled model
+* now exists [SOFTWARE]: `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json` docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py - anode heat path is a network input of the coupled model
 * now exists [BUDGET]: `docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json` MPV2-N03 - H-1 anode heat-removal path hardware line
 * now exists [REQUIREMENT_MATRIX]: `docs/requirements/rvm_a9/rvm_a9_v1.json` RVM-17 - thermal closure
 * evidence: none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware

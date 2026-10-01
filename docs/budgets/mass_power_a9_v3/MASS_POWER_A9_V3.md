@@ -192,6 +192,9 @@ Helper `docs/budgets/mass_power_a9_v3/peak_sampled_gate_a9_v3.py`; unchanged (im
 | A9.15 | governing_rule | TBD | RFP_COMPLIANT_PROPELLANT_POLICY | a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309 | RFP governs propellant capability; Xe hardware independent of C1 (xe_hardware_required) |
 | A9.14 | OQ-A910-05 | S8.30 | SHAM_MATCH_EQUIVALENT_LOCAL_MATCH_AL06 | c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c | local match on AL-06; GA-03 matched sham reproduces the local-match parasitics |
 | A9.14 | OQ-A910-03 | S8.29 | PEAK_SAMPLED_BELOW_LIMIT_SUFFICIENT_PASS_NOT_FAILURE_METRIC | c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c | power gate peak_sampled rule implemented in the new helper peak_sampled_gate_a9_v3.py |
+| A9.12 | OQ-A910-06 | S5.8 | YES_600W_TEMPORARY | 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d | open_register_status OQ-A910-06 OWNER_DECIDED: 600 W RF-path heat allocation kept temporarily (not a rating / operating point / ICP-43 bound / delivered power), superseded by the P2-derived RF thermal envelope (P2 supplies it, p3_a9_16_rules.rf_thermal_basis consumes it; A9.16 repair F5) |
+| A9.14 | OQ-A907-01 | S8.15 | THREE_ATTEMPTS_ONE_PLUS_TWO_RETRIES | c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c | hall_c1_reference start step C-S4 reworded: <= 3 dwells (1 + 2 retries) x 120 s = 360 s maximum booking (the retired v2 '120 s x 2 retries' shorthand kept as name_v2; A9.16 repair F10) |
+| A9.14 | XA9Q-02 | S9.1 | THREE_DWELLS_MAX_360S | c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c | as above: three dwells, each capped at 120 s, 360 s maximum booking (A9.16 repair F10) |
 
 ## Open questions and recorder flags
 

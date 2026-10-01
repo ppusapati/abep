@@ -60,7 +60,7 @@ Source: A9.15 governing_rule (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_
 | id | name | value | unit | status | v3 change |
 |---|---|---|---|---|---|
 | XV2-01 | C1 cathode firing-hours basis (flight cathode term) | 15000 | h | OWNER_BASIS (provisional per row 3) | value unchanged; flight scope conditional on C1 selection |
-| XV2-02 | C1 cathode Xe design flow | 0.1 | mg/s | FIXED_DESIGN_TERM (A5 design target, not a demonstrated flow) | value unchanged; flight scope conditional on C1 selection |
+| XV2-02 | C1 cathode Xe design flow | 0.1 | mg/s | A5_DESIGN_TARGET_PLACEHOLDER: the A5 design-target flow (not a demonstrated or selected-hardware flow) used for the ground development / reference C1 booking; for a flight C1 it is replaced by the selected C1 hardware's qualified flow when C1 is selected (A9.15: C1 Xe derived from the selected C1 hardware) | value unchanged; flight scope conditional on C1 selection; labelled an A5 design-target placeholder (A9.16 repair F6) |
 | XV2-03 | C1 cathode Xe upper test point (sensitivity only) | 0.15 | mg/s | SENSITIVITY_ONLY (A5: experimental upper test point, never the allocation) | carried unchanged from v2 |
 | XV2-04 | C1 steady-flow controller accuracy class (flow-uncertainty term) | 0.02 | 1 | OWNER_BASIS until S1a demonstrates a better class on Xe | value unchanged; flight scope conditional on C1 selection |
 | XV2-05 | C1 steady-flow controller full scale | 0.2 | mg/s | OWNER_BASIS (class); instrument selection PENDING A9-09 RFQ | value unchanged; flight scope conditional on C1 selection |
@@ -102,7 +102,7 @@ Source: A9.15 governing_rule (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_
 | XV2-41 | C1 ground cathode-flow setpoints (booking flow over the C1 Xe-on hours) | TBD - requires the C1 test procedure setpoints and the LOCK-2 schedule (flows under test, not the A5 flight design flow) | mg/s | TBD | carried unchanged from v2 |
 | XV2-42 | C1 ignition dwell bound per start (attempts x 120 s) | 360 | s | OWNER_DECIDED_MAXIMUM_BOOKING (A9.14 XA9Q-02; may later be tightened by evidence) | RA-DWELL resolved: 360 s maximum booking per start |
 | XV2-43 | P1 ICP bench Xe (Ar engineering reproduction, G-REUSE) | 0 | kg | ZERO_BY_SCOPE (Ar only; an activated diagnostic dedicated Xe feed is the separate optional entry OPT-GT-P1-GXE-DIAG) | carried unchanged from v2 |
-| XV2-44 | Xe in a G-ATM dedicated ICP feed | 0 | mg/s | ZERO_XE_BY_OWNER_DECISION (contingency variant) | carried unchanged from v2 |
+| XV2-44 | Xe in a G-ATM dedicated ICP feed | 0 | mg/s | ZERO_XE_BY_OWNER_DECISION (contingency variant) | label note only (A9.16 repair F11) |
 | XV2-45 | P1 diagnostic dedicated Xe ICP feed (only if activated): events, duration, flow | TBD - requires a labelled DIAGNOSTIC dedicated Xe feed actually activated in P1 with its flow measured and recorded per record (docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json (merged P1 bench) P1-M-19, pair XL-36) | 1; s; mg/s | TBD (OPTIONAL_NOT_ACTIVE) | carried unchanged from v2 |
 | XV3-01 | flight C1 selection state | NOT_SELECTED | state | OWNER_DECIDED (deferred until selected) | new |
 | XV3-02 | selected C1 hardware requires Xe (flight) | TBD_FROM_SELECTED_C1_HARDWARE | bool | TBD_FROM_SELECTED_C1_HARDWARE (neither assumed nor excluded) | new |
@@ -116,7 +116,7 @@ Source: A9.15 governing_rule (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_
 | id | config | ledger | phase | presence | formula | v3 change |
 |---|---|---|---|---|---|---|
 | P-FL-ICP-XE | hall_icp_neutralizer | FLIGHT | icp_feed | EXACT_ZERO_BY_OWNER_DECISION | m_Xe,ICP = 0 exactly (mdot_ICP,dedicated = 0; the Hall exhaust is never counted again as ICP propellant) | carried unchanged from v2 |
-| P-FL-C1 | hall_icp_neutralizer | FLIGHT | keeper_cathode | ABSENT_BY_OWNER_DECISION | not booked: no C1 in the ICP flight configuration | carried unchanged from v2 |
+| P-FL-C1 | hall_icp_neutralizer | FLIGHT | keeper_cathode | ZERO_BY_SCOPE | not booked: no C1 in the ICP flight configuration | relabelled: configuration-scope zero (no C1 in hall_icp_neutralizer), not an owner Xe exclusion (A9.16 repair F6) |
 | P-FL-FUNC | hall_icp_neutralizer | FLIGHT | xe_mode | PRESENT | N_xe_mode x t_xe_mode x mdot_xe_mode | RA-FUNC resolved: RFP-required Xe capability applies (the Xe-free NOT_APPLIED reading is retired) |
 | P-FL-HALL-START | hall_icp_neutralizer | FLIGHT | ignition | CONDITIONAL | N_starts x t_hall_ign x mdot_hall_ign | RA-FUNC resolved: RFP-required Xe capability applies (the Xe-free NOT_APPLIED reading is retired) |
 | P-FL-TRANSITION | hall_icp_neutralizer | FLIGHT | transition | PRESENT | N_transitions x t_transition x mdot_transition | RA-FUNC resolved: RFP-required Xe capability applies (the Xe-free NOT_APPLIED reading is retired) |
@@ -221,13 +221,15 @@ sensitivity axis over MEOP (not a MEOP choice; MEOP TBD_FROM_QUOTATIONS, A9.14 X
 | S3-FL-GATM | 5 | 4.08497 | 4.08497 | HEADROOM |
 | S3-FL-GATM | 10 | 8.16993 | 8.16993 | HEADROOM |
 
-CONDITIONAL_SENSITIVITY_NOT_BOOKED: what a SELECTED flight C1 that requires Xe at the A5 design flow would take (A9.15: neither assumed nor excluded in advance): keeper 5.4 kg, flow class 0.216 kg.
+A5_DESIGN_TARGET_PLACEHOLDER_SENSITIVITY_NOT_BOOKED: arithmetic on the A5 design-target flow (XV2-02) and firing-hours basis, NOT on selected C1 hardware and NOT an estimate of flight C1 Xe; the selected C1 hardware's qualified flow replaces it (A9.15: C1 Xe neither assumed nor excluded in advance; a C1 that does not require Xe gets no invented consumption; A9.16 repair F6): keeper 5.4 kg, flow class 0.216 kg (A5 placeholder arithmetic).
 
-| case kg | C1 flow ceiling mg/s (all else 0) | A5 design flow | within |
-|---|---|---|---|
-| 2 | 0.0262591 | 0.1 | False |
-| 5 | 0.0716476 | 0.1 | False |
-| 10 | 0.147295 | 0.1 | True |
+| case kg | C1 flow ceiling mg/s (all else 0) |
+|---|---|
+| 2 | 0.0262591 |
+| 5 | 0.0716476 |
+| 10 | 0.147295 |
+
+the C1 flow each loaded case could carry with every other flight term zero (arithmetic ceiling); no comparison with the A5 placeholder flow is made (the selected C1 hardware decides; A9.16 repair F6).
 
 ## Interfaces
 
@@ -240,5 +242,6 @@ CONDITIONAL_SENSITIVITY_NOT_BOOKED: what a SELECTED flight C1 that requires Xe a
 ## Open questions and recorder flags
 
 * XV2Q-01: NOT_APPLICABLE (A9.14 XV2Q-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f); A9.15 XV2Q-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a))
+* XV3Q-01: OPEN (docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md HIQ-06 (sha256 2587ca6931f6); A9.15 governing_rule (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)): A9.15 makes Xe an RFP-required system capability that must not be 'weakened into a contingency interpretation'. Does it also change the A9.1 HIQ-06 ICP gas-mode labels, where G-REUSE is primary and the dedicated G-ATM / G-XE ICP feeds are 'separately declared contingency variants'? (The A9.15 recorder note flagged this; Xe v3 keeps the A9.1 ICP-feed labels and scopes 'contingency' to the ICP feed choice only.)
 * flag: XA9Q-04 reading: the 0.20 margin is applied to the full calculated ground total INCLUDING the explicitly booked purge / conditioning / line-fill / vendor lines (conservative literal reading of 'booked explicitly before this margin'); flagged for owner confirmation, no number depends on it today (all TBD)
 * flag: the AL-08 planning floor (5.044 kg CBE floor) is the owner's figure (A9.14 MQ-05); whether its two-branch valve set already covers a selected C1 branch is decided when C1 is selected (mass / power v3)

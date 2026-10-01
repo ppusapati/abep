@@ -13,7 +13,8 @@ immutable (its committed JSON is pinned by sha256 here; v4 is never rebuilt by t
    and the A9.14 closing statement that keep 'Xe contingency-only for C1' are listed as superseded statements;
 4. the 34 + 2 + 4 A9.7 lane questions rolled up by the F9 freeze candidate (owner_question_rollup) are added as rows
    with their answers (A9.9 S2, A9.13 S6, A9.14 S7 / S10);
-5. a question raised since v4 by a lane package and still open (MPV3Q-01, mass/power v3) is added as TBD_OWNER.
+5. a question raised since v4 by a lane package and still open (MPV3Q-01, mass/power v3; XV3Q-01, Xe accounting v3 -
+   added by the A9.16 repair lane, F11) is added as TBD_OWNER.
 
 A v4 TBD_OWNER row with no owner answer stays TBD_OWNER. Nothing is answered here that the owner did not answer; every
 RFP-cited fact ('RFP(1)') is OWNER_STATED_PENDING_RFP_REGISTRATION (AG-15). Missing or unexpected ids raise.
@@ -43,6 +44,7 @@ SEQ_CSV = HERE / "owner_questions_sequenced_v1.csv"
 SEQ_MD = HERE / "OWNER_QUESTIONS_SEQUENCED_v1.md"
 F9 = ROOT / "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json"
 MP3 = ROOT / "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json"
+XE3 = ROOT / "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json"
 
 OUT_JSON = HERE / "owner_questions_state_v5.json"
 OUT_MD = HERE / "OWNER_QUESTIONS_STATE_v5.md"
@@ -166,6 +168,7 @@ def build():
     seq = sequenced()
     f9 = json.loads(F9.read_text(encoding="utf-8"))
     mp3 = json.loads(MP3.read_text(encoding="utf-8"))
+    xe3 = json.loads(XE3.read_text(encoding="utf-8"))
     answered_ids = {q for k in L.ORDER if k != "A9.15" for q in L.decision_ids(k)}
 
     rows = []
@@ -212,6 +215,21 @@ def build():
                      "classification_basis": "MQ-06 split the row-54 controls/harness line; the controls allocation "
                                              "is a genuine owner allocation (no number invented)"})
         nxt += 1
+    # A9.16 repair F11: the A9.15 recorder note flagged the A9.1 HIQ-06 ICP-feed 'contingency' labels to the owner;
+    # Xe accounting v3 raises it as XV3Q-01 (no reading chosen) - carried here as TBD_OWNER
+    for q in xe3["open_owner_questions"]:
+        if q["status"] != "OPEN":
+            continue
+        rows.append({"no": nxt, "id": q["id"], "kind": "lane_question", "lane": "Xe accounting v3 (A9.16 repair lane)",
+                     "source": f"{REL(XE3)} open_owner_questions[id={q['id']}]",
+                     "source_ref": {"path": REL(XE3), "locator": f"open_owner_questions[id={q['id']}]"},
+                     "question": q["question"], "proposed": q["proposed"], "needed_by": q["needed_by"],
+                     "status": "TBD_OWNER", "status_detail": "TBD_OWNER (raised since v4; no owner answer)",
+                     "dependency": ["OWNER_JUDGMENT"], "blocks": ["BLOCKS_LOCK_1"],
+                     "classification_basis": "the A9.15 recorder note flags the A9.1 HIQ-06 ICP-feed labels to the "
+                                             "owner; no owner answer exists, so no reading is chosen (A9.1 basis: "
+                                             + q["a9_1_basis_verbatim"] + ")"})
+        nxt += 1
     missing = sorted(answered_ids - used)
     if missing:
         raise SystemExit(f"owner answers with no state row: {missing}")
@@ -256,7 +274,7 @@ def build():
                  {"key": "sequenced_v1_md", "path": REL(SEQ_MD), "sha256": _sha(SEQ_MD)}] + L.pins(),
         "referenced_not_pinned": {
             "rule": "mutable lane deliverables: read at build time, ids checked (a missing id raises), never sha-pinned",
-            "paths": [REL(F9), REL(MP3)]},
+            "paths": [REL(F9), REL(MP3), REL(XE3)]},
         "status_vocabulary": vocab,
         "status_rule": ("'status' is canonical. A v4 TBD_OWNER row answered by A9.8 .. A9.14 keeps 'v4_status' and gets "
                         "ANSWERED_BY_A9_<n> or, where A9.15 amends the answer, AMENDED_BY_A9_15 (governing_reading = the "

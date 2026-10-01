@@ -53,7 +53,7 @@ QUANTITY_TYPES = ("measured", "digitized", "inferred", "reconstructed", "model-d
 ITEM_STATUSES = ("OWNER_GIVEN", "TBD", "TBD_OWNER", "TBD_AFTER_EVIDENCE", "PENDING", "REJECTED_AS_CURRENT_BASELINE",
                  "OPEN", "UNRESOLVED", "ALLOWED_ENGINEERING_ONLY", "CONTEXT_NOT_ADMISSIBLE")
 # merged A9.6 packages (cross-lane integration; ids checked at build time by xlane_check, never sha-pinned)
-P3_REF = ("the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json "
+P3_REF = ("the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json "
           "(supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED)")
 P3_TBD = "TBD_AFTER_EVIDENCE - requires the coupled solution of " + P3_REF
 MASS_REF = ("the merged mass / power v2 docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json (owner line allocations "
@@ -126,7 +126,7 @@ NEVER_PINNED = ("docs/orchestration/lane_registry_v1.json", "docs/orchestration/
 XLANE_PATHS = {
     "P1": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
     "P2": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
-    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
     "P4": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
     "MP": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
     "XE": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
@@ -159,10 +159,11 @@ XL_PAIRS = {  # pair: (counterpart package, counterpart id, quantity, units, sta
     'XL-25': (
         'P1',
         'IF-P1-36',
-        ('measured collector bias and current (P1-M-10, P1-M-11, P1-M-27) and the conditional sheath-edge plasma '
-         'potential (P1-M-30) for the collector ion energy (P4 IT-19, CR-04)'),
+        ('measured collector bias and current (P1-M-10, P1-M-11, P1-M-27) and the Langmuir-probe plasma potential '
+         'near the collector (P1-M-30, A9.8 P3Q-01) for the collector ion energy (P4 IT-19, CR-04)'),
         'V; A',
-        'TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; sheath energy additionally TBD_OWNER P3Q-01)',
+        ('TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; sheath energy from the P1-M-30 Langmuir probe, A9.8 P3Q-01 '
+         'option C cross-check)'),
     ),
     'XL-26': (
         'MP',
@@ -1230,12 +1231,20 @@ NEW_OPEN_QUESTIONS = [
 ]
 
 
+AS_RAISED_STATUS_NOTE = ("'status' is the status AS RAISED (read back unchanged by the immutable owner-question "
+                         "state-v4 builder); the question is answered - status_current / answer / decided_by govern "
+                         "(A9.16 repair COR-01)")
+
+
 def decided_questions():
     """The five P4 questions as raised (text unchanged), now OWNER_DECIDED by A9.12 (A9.16 step 1)."""
     out = []
     for q in NEW_OPEN_QUESTIONS:
         dk, seq, code = APP.DECIDED_OWNER_QUESTIONS[q["id"]]
-        out.append(dict(q, status="OWNER_DECIDED", status_when_raised="TBD_OWNER", answer=code, sequenced_no=seq,
+        # 'status' keeps the AS-RAISED value: the immutable state-v4 builder reads it back and accepts only
+        # OPEN / TBD_OWNER (A9.16 repair COR-01); the current status is status_current
+        out.append(dict(q, status="TBD_OWNER", status_when_raised="TBD_OWNER", status_current="OWNER_DECIDED",
+                        status_note=AS_RAISED_STATUS_NOTE, answer=code, sequenced_no=seq,
                         decided_by=APP.cite(dk, q["id"])))
     return out
 
@@ -1524,6 +1533,7 @@ def build_doc(pins):
                               for (i, d, c, t, u, s, un, xr) in INTERFACE_DEMANDS],
         "owner_answers_applied": build_owner_answers_applied(pins),
         "open_owner_questions": decided_questions(),
+        "owner_questions_open_now": [q["id"] for q in decided_questions() if q["status_current"] != "OWNER_DECIDED"],
         "a9_16_owner_rules": a9_16_owner_rules(),
         "historical_reuse": [{"path": v[0], "sha256": v[1], "use": v[2]} for _k, v in sorted(PINS.items())],
         "m16_impact": build_m16_impact(pins),
@@ -1654,10 +1664,12 @@ def render_md(doc):
                    [(o["decision"], ", ".join(o["covers_ids"]), o["owner_answer_verbatim"], o["how_applied"])
                     for o in doc["owner_answers_applied"]]), "",
           "## (d) Owner questions raised by this lane (now decided)", "",
-          md_table(["id", "question", "why", "related existing", "admissible alternatives", "status", "answer",
-                    "decided by"],
+          AS_RAISED_STATUS_NOTE + ". Owner questions open now: %d." % len(doc["owner_questions_open_now"]), "",
+          md_table(["id", "question", "why", "related existing", "admissible alternatives", "status as raised",
+                    "status now", "answer", "decided by"],
                    [(q["id"], q["question"], q["why"], q["related_existing_open"],
-                     "; ".join(q["admissible_alternatives"]), q["status"], q["answer"], q["decided_by"])
+                     "; ".join(q["admissible_alternatives"]), q["status"], q["status_current"], q["answer"],
+                     q["decided_by"])
                     for q in doc["open_owner_questions"]]), "",
           "## A9.16 step 1 owner rules (fail-closed; registered evaluations refuse today)", "",
           f"Rules module `{doc['a9_16_owner_rules']['rules_module']}`, test `{doc['a9_16_owner_rules']['test']}`. "

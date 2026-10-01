@@ -172,7 +172,7 @@ def test_diff_table_complete_and_row_13_repointed():
         assert d["blocking_item_changed"] == bool(r["blocking_item"] and not r["blocking_item"]["carried_from_v3"])
     repointed = [d["row"] for d in DOC["diff_v3_v4"] if d["blocking_item_changed"]]
     assert repointed == [13]
-    p3 = {i["id"]: i for i in _load("docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json")["items"]}
+    p3 = {i["id"]: i for i in _load("docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json")["items"]}
     for it in ROWS[12]["blocking_item"]["items"]:
         assert str(p3[it["id"]]["value"]).startswith("TBD"), it["id"]
 

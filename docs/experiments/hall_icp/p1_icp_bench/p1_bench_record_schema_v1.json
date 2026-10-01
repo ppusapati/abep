@@ -1064,6 +1064,15 @@
       "ground_path_check_id": {
        "type": "string",
        "minLength": 1
+      },
+      "langmuir_probe_present": {
+       "type": "boolean",
+       "description": "A9.8 P3Q-01: Langmuir probe present during this capacity record; undeclared -> the point is excluded"
+      },
+      "probe_perturbation_negligible_evidence_id": {
+       "type": "string",
+       "minLength": 1,
+       "description": "registered evidence that the probe perturbation is negligible; required when the probe is present"
       }
      }
     },
