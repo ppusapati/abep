@@ -2,7 +2,8 @@
 
 Authority: A9.17 WINDS / ORBIT / DATA_SIZE (docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json).
 The accessor tests run from the frozen files only (no HWM14, no gfortran, no pymsis). The HWM14 re-run tests need the
-verified NRL package in $ABEP_HWM14_DIR and gfortran; they are skipped with the reason otherwise.
+verified NRL package in $ABEP_HWM14_DIR and gfortran; without them they do not skip (CLAUDE.md rule 9) but branch inside
+the test and assert the documented refusal (check: re-run SKIPPED with the reason; runner: HWM14Unavailable).
 """
 import gzip
 import hashlib
@@ -262,7 +263,11 @@ def test_check_without_hwm14_skips_cleanly(monkeypatch):
 def test_check_with_hwm14_reruns():
     why = _hwm14_available()
     if why:
-        pytest.skip(f"HWM14 not available: {why}")
+        # HWM14 unavailable (CI): the re-run is SKIPPED with the same reason; the frozen-data checks still decide ok.
+        r = a2.check()
+        assert r["ok"], r["problems"]
+        assert r["hwm14_rerun"]["status"] == "SKIPPED" and r["hwm14_rerun"]["reason"] == why
+        return
     r = a2.check()
     assert r["ok"], r["problems"]
     rr = r["hwm14_rerun"]
@@ -274,7 +279,12 @@ def test_check_with_hwm14_reruns():
 def test_direct_hwm14_spot_checks_within_recorded_error(meta):
     why = _hwm14_available()
     if why:
-        pytest.skip(f"HWM14 not available: {why}")
+        # HWM14 unavailable: the direct runner refuses cleanly; the frozen accessor still answers within its domain.
+        with pytest.raises(a2.HWM14Unavailable):
+            a2.HWM14Runner()
+        w = a2.wind(200.0, 0.0, 12.0, 0.0, 80.0, v1.SCENARIO_ORDER[0])
+        assert math.isfinite(w["u_mer_m_s"]) and math.isfinite(w["u_zon_m_s"])
+        return
     runner = a2.HWM14Runner()
     try:
         rng = np.random.default_rng(99)
@@ -351,7 +361,9 @@ def test_hwm3_dwm07_height_statement_quotes_readme(meta):
 def test_hwm3_readme_quote_verbatim_in_nrl_package():
     why = _hwm14_available()
     if why:
-        pytest.skip(f"HWM14 not available: {why}")
+        # NRL package absent: the verbatim quote cannot be re-read here; the frozen statement must still carry it.
+        assert all(q in a2.NOT_PROVIDED["disturbance_wind_height_dependence"] for q in a2.DWM07_README_QUOTE)
+        return
     readme = open(os.path.join(a2.hwm14_dir(), "README.txt"), encoding="utf-8").read()
     norm = " ".join(readme.split())
     for q in a2.DWM07_README_QUOTE:

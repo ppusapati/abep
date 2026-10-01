@@ -1,8 +1,10 @@
 """Orbit-resolved frozen NRLMSIS 2.1 atmosphere (abep_sim/atmosphere_orbit.py, dataset atmosphere_msis21_orbit_v1).
 
 Authority: A9.13 S6.14 / OQ-F4-05 (versioned orbit-resolved dataset), A9.14 S9.7 / OD2 (statewise quantifier) and
-S9.8 / OD3 (design states from the dataset). The accessor tests run without pymsis; the producer re-run (check mode)
-and the direct-MSIS spot checks are skipped when pymsis is absent (CI pymsis-absent leg).
+S9.8 / OD3 (design states from the dataset). The accessor tests run without pymsis. The producer re-run (check mode)
+and the direct-MSIS comparisons branch inside the test on pymsis (no skips, CLAUDE.md rule 9): with pymsis they compare
+against live NRLMSIS 2.1; without it (CI pymsis-absent leg) they assert the clean NOT_RUN / ImportError refusal while the
+frozen-data checks still run.
 """
 import gzip
 import hashlib
@@ -150,7 +152,13 @@ def test_interpolation_validation_recorded_and_reported(meta):
 
 
 def test_direct_msis_spot_check(meta):
-    pytest.importorskip("pymsis")
+    if ao._pymsis_version() is None:
+        # pymsis absent: the direct evaluation refuses cleanly; the frozen accessor still answers.
+        with pytest.raises(ImportError):
+            ao.msis_points("ECSS_LT_MODERATE", [80.0], [200.0], [0.0], [0.0], [12.0])
+        st = ao.state(200.0, 0.0, 12.0, 0.0, 80.0, "ECSS_LT_MODERATE")
+        assert math.isfinite(st["rho_kg_m3"]) and st["rho_kg_m3"] > 0
+        return
     rng = np.random.default_rng(7)
     for s in ao.SCENARIO_ORDER:
         bound = meta["interpolation_validation"]["by_scenario"][s]["rho_kg_m3"]["max_abs_rel"]
@@ -260,13 +268,81 @@ def test_quantifier_fail_closed_and_inputs(design):
 
 # --- builder check ---------------------------------------------------------------------------------------------------
 def test_check_mode_reproduces_subset():
-    pytest.importorskip("pymsis")
-    import pymsis
-    if pymsis.__version__ != "0.13.0":
-        pytest.skip("check mode is defined for the recorded pymsis version")
+    pv = ao._pymsis_version()
     r = ao.check()
-    assert r["ok"], r["problems"]
+    rr = r["producer_rerun"]
     assert r["subset_rows"] > 1000
+    if pv is None:
+        # pymsis absent: frozen-data checks decide ok; the producer re-run is reported NOT_RUN with the reason.
+        assert r["ok"], r["problems"]
+        assert rr["status"] == "NOT_RUN" and "pymsis" in rr["reason"] and rr["rho_composition_check"] == "NOT_RUN"
+        assert r["subset_sha256"] is None
+    elif pv != "0.13.0":
+        # check mode is defined for the recorded pymsis version: any other version is a FAIL, never a pass
+        assert not r["ok"] and any(p.startswith(f"pymsis {pv} != recorded") for p in r["problems"])
+    else:
+        assert r["ok"], r["problems"]
+        assert rr["status"] == "RUN" and rr["rho_composition_check"] == "RUN" and rr["rows"] == r["subset_rows"]
+        assert rr["rows_input_differing"] == 0 and rr["rows_beyond_tolerance"] == 0
+        assert rr["max_abs_rel_diff"] <= ao.CHECK_REL_TOL and rr["rel_tol"] == ao.CHECK_REL_TOL
+        # byte identity is informational: it holds exactly when no row differs in text
+        assert rr["subset_sha256_matches_record"] == (rr["rows_text_differing"] == 0)
+        assert rr["subset_sha256_matches_record"] or any("not byte-identical" in n for n in r["notes"])
+
+
+def test_check_tolerance_is_float32_roundoff_and_declared():
+    # The producer re-run tolerance is a module constant with a measured basis (not read from the manifest) and stays at
+    # float32 round-off scale: 2 x 7.69e-6 (measured cross-rcpps) + 2 x 5e-7 (%.6e half unit).
+    assert ao.CHECK_RERUN_MEASURED_MAX_REL == 7.69e-6 and ao.CHECK_PRINT_HALF_UNIT_REL == 5e-7
+    assert ao.CHECK_REL_TOL == pytest.approx(1.638e-5, rel=1e-12) and ao.CHECK_REL_TOL < 2e-5
+    assert ao.FLOAT_FMT == "%.6e" and "rcpps" in ao.CHECK_TOLERANCE_BASIS
+    assert "rel_tol" not in json.dumps(json.load(open(ao.JSON_PATH)).get("check_subset", {}))
+    assert ao.DESIGN_V2_REL_TOL == 1e-12
+
+
+def test_compare_subset_enforces_tolerance_and_exact_inputs():
+    body = ao.read_csv_bytes().decode().splitlines()[1:]
+    stored = [body[i] for i in ao._check_subset_indices(len(body))][:5]
+    k = len(ao.OUT_COLS)
+
+    def bump(line, j, rel):
+        f = line.split(",")
+        f[-k + j] = ao._fmt(float(f[-k + j]) * (1 + rel))
+        return ",".join(f)
+
+    probs = []
+    r = ao._compare_subset(stored, list(stored), probs)
+    assert not probs and r["rows_text_differing"] == 0 and r["max_abs_rel_diff"] == 0.0
+    within = [bump(stored[0], 0, 5e-6)] + stored[1:]
+    probs = []
+    r = ao._compare_subset(stored, within, probs)
+    assert not probs and r["rows_text_differing"] == 1 and 0 < r["max_abs_rel_diff"] <= ao.CHECK_REL_TOL
+    beyond = [bump(stored[0], 4, 1e-4)] + stored[1:]
+    probs = []
+    r = ao._compare_subset(stored, beyond, probs)
+    assert r["rows_beyond_tolerance"] == 1 and any("CHECK_REL_TOL" in p for p in probs)
+    f = stored[1].split(",")
+    f[5] = "201.5"                                                   # an input column (alt_km) changed
+    probs = []
+    r = ao._compare_subset(stored, [stored[0], ",".join(f)] + stored[2:], probs)
+    assert r["rows_input_differing"] == 1 and any("input columns" in p for p in probs)
+
+
+def test_design_v2_compare_is_exact_except_float_roundoff(design_v2):
+    import copy
+    assert ao._design_v2_compare(design_v2, copy.deepcopy(design_v2))["ok"]
+    d = copy.deepcopy(design_v2)
+    d["states"][0]["rho_kg_m3"] *= 1 + 4e-16
+    r = ao._design_v2_compare(design_v2, d)
+    assert r["ok"] and r["floats_differing"] <= 1
+    d["states"][0]["rho_kg_m3"] = design_v2["states"][0]["rho_kg_m3"] * (1 + 1e-9)
+    assert not ao._design_v2_compare(design_v2, d)["ok"]
+    d = copy.deepcopy(design_v2)
+    d["states"][0]["state_id"] += "x"
+    assert not ao._design_v2_compare(design_v2, d)["ok"]
+    d = copy.deepcopy(design_v2)
+    d["states"].pop()
+    assert not ao._design_v2_compare(design_v2, d)["ok"]
 
 
 # --- repair lane ATM (review findings ATM-1..ATM-4) ------------------------------------------------------------------
@@ -302,8 +378,15 @@ def test_rho_metadata_excludes_no(meta):
     assert hashlib.sha256(ao.read_csv_bytes()).hexdigest() == meta["sha256"]
 
 
-def test_rho_composition_regression_direct():
-    pytest.importorskip("pymsis")
+def test_rho_composition_regression_direct(meta):
+    if ao._pymsis_version() is None:
+        # pymsis absent: the live regression refuses cleanly; the recorded (frozen) result still carries the finding.
+        with pytest.raises(ImportError):
+            ao._rho_composition_check()
+        rc = meta["rho_composition_check"]
+        assert rc["in_rho"]["NO"] is False and abs(rc["implied_mass_amu"]["NO"]) < ao.RHO_COEF_THRESHOLD_AMU
+        assert all(rc["in_rho"][k] is True for k in ("H", "ANOMALOUS_O"))
+        return
     rc = ao._rho_composition_check()
     assert rc["in_rho"]["NO"] is False and abs(rc["implied_mass_amu"]["NO"]) < ao.RHO_COEF_THRESHOLD_AMU
     assert rc["max_abs_rel_residual"] < 1e-5
@@ -500,7 +583,9 @@ def test_design_v2_contains_v1_extrema_within_refinement(design, design_v2):
 def test_design_v2_independent_of_code_default_orbit(monkeypatch, design_v2):
     monkeypatch.setattr(ao, "sso_inclination_deg", lambda alt_km: 60.0)    # a different code-default orbit
     assert ao.reachable_lat_max_deg() == 120.0
-    assert json.loads(json.dumps(ao.design_states_v2())) == design_v2
+    # exact structure / ids / labels; floats within float64 round-off (numpy SIMD dispatch is CPU-specific)
+    r = ao._design_v2_compare(design_v2, json.loads(json.dumps(ao.design_states_v2())))
+    assert r["ok"], r
     ao._CACHE.clear()
 
 

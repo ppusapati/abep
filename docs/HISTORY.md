@@ -2967,3 +2967,47 @@ not quotable performance. Tests: new `tests/test_golden_a9_18.py`; `tests/test_g
 (path only). Docs: `docs/ci/CI.md`, `docs/ci/PACKAGING.md` (golden file note). Not changed (other owners):
 `docs/traceability/RTM.md` / `build_rtm.py` still cite golden_v1.json as evidence. The dedicated performance-baseline rerun
 (A9.18 item 2) waits for the step-3 merge and is not part of this change.
+## 2026-10-01 — A9.17 CI repair: portable check mode for the orbit atmosphere (no extra skips; v1 data untouched)
+
+Cause of the red CI (both legs, since the orbit atmosphere landed):
+- **pymsis-present leg.** `test_check_mode_reproduces_subset` failed with "812 of 1204 recomputed subset rows differ"
+  on every GitHub runner. The wheel is the same here and in CI (pymsis 0.13.0 cp311 PyPI wheel, msis21f .so sha256
+  3bf5b39c…). That wheel evaluates NRLMSIS 2.1 in **single precision**: the stored values are exact float32 numbers. It
+  also forms reciprocals with `rcpps` plus one Newton step (39 sites, GCC `-mrecip` code). `rcpps` bits depend on the CPU
+  implementation (Intel vs AMD), so byte identity at `%.6e` only holds on the build CPU (Intel Xeon). That CPU re-runs
+  byte-identically, even with the glibc AVX512/AVX2/FMA dispatch masked.
+- **pymsis-absent leg / HWM14.** Three `importorskip("pymsis")` tests and three `pytest.skip` (HWM14 unavailable) tests
+  added extra skips, which break rule 9.
+
+Measurement (the tolerance basis). The 1204-row subset was re-run under qemu-x86_64 8.2.2. QEMU's TCG computes `rcpps` as
+an exact reciprocal, which gives a second `rcpps` implementation on the identical wheel. Against native Intel, on raw
+outputs: max relative difference 7.69e-6 (He/O, 125 float32 ulps); rho/N2/O2/Ar/N ≤ 3.96e-6 (≤ 65 ulps); T_K 0.
+960/1204 printed rows differ (CI: 812). This is float32 round-off amplified by the exponential profiles, not a model
+difference. Under qemu, the full `check()` with the new criterion returns OK (0 rows beyond tolerance).
+
+Changes (`abep_sim/atmosphere_orbit.py`). The tolerance lives in a code constant, never in the manifest.
+- The producer re-run passes when the input columns are byte-identical and every output column is within
+  `CHECK_REL_TOL` = 2 × 7.69e-6 + 2 × 5e-7 (the `%.6e` half unit, each side) = 1.638e-5.
+- Byte/hash identity is still reported (`producer_rerun.subset_sha256_matches_record`, plus a note), as information.
+- `check()` reports the max relative difference per column. A re-run beyond the tolerance is a FAIL; never widen the
+  tolerance.
+- Without pymsis, `check()` runs every frozen-data check and reports `producer_rerun.status = NOT_RUN` with the reason
+  (as v2 does for HWM14).
+- `_metadata` no longer imports pymsis. `build()` still requires the recorded version.
+
+Latent issue found and fixed in the same way. `check()` also compared `design_states_v2` byte-for-byte, and the test
+compared it with exact `==`. Neither had run in CI before: the branch was gated behind the failing subset, and the absent
+leg skipped. `design_states_v2` is pure float64 numpy, but numpy dispatches its SIMD kernels by CPU. With
+`NPY_DISABLE_CPU_FEATURES=X86_V4` (AVX2 kernels), 163 floats differ by ≤ 4.19e-16 relative, with identical
+structure/ids/labels. Under qemu (baseline-SSE numpy, non-FMA libm), 1299 floats differ by ≤ 1.42e-14. New rule: structure, ids, labels and all non-float values exact; floats within
+`DESIGN_V2_REL_TOL` = 1e-12; a note when not byte-identical.
+
+Tests. The pymsis/HWM14-dependent tests in `tests/test_atmosphere_orbit*.py` branch inside the test, following the
+existing `test_sim.py` pattern, instead of skipping:
+- Dependency present: same comparisons as before.
+- Dependency absent: they assert the clean refusal (`NOT_RUN` / `SKIPPED` with the reason, `ImportError` /
+  `HWM14Unavailable`) and the frozen-data results.
+- New dependency-free tests pin the tolerance constants and exercise the subset and design-v2 comparators.
+
+Unchanged: dataset identity (uncompressed CSV sha256 c0ce282e…6164), every file in `abep_sim/data/`, the v2 wind check
+(already tolerance-based).
