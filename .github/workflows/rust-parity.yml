@@ -1,0 +1,229 @@
+# OPTIONAL Rust CI for abep_core (owner decision A9.14 S10.4, RUST-OQ-02 = OPTIONAL_RUST_CI_MANDATORY_PARITY_ON_RUST_CHANGES;
+# docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md). Documentation: docs/ci/RUST_PARITY.md.
+#   - Normal CI (ci.yml) stays runnable without a Rust toolchain; this workflow is NOT a required status check.
+#   - When abep_core is built here, the parity suite runs: the record check, the pure-Rust unit tests, the
+#     extension-dependent pytest checks and the full development-seed comparison (scripts/verify_abep_core.py --dev
+#     --strict; never scored, never a verdict).
+#   - Fail-closed on unrecorded Rust changes (RUSTCI-1): when the provenance sources differ from the parity report's
+#     build_provenance, push / pull_request runs FAIL with UNRECORDED_SOURCE_CHANGE after the development smoke and never
+#     spend the v1 scoring seed. The FULL pre-registered parity campaign (docs/performance/abep_core/parity_prereg_v1.json,
+#     scoring seed, z = 5, aggregate 4) runs ONLY on workflow_dispatch with run_scoring_campaign = true, in one global
+#     concurrency group, never when the committed campaign_history already holds a non-ADMITTED v1 execution
+#     (decision_rules.no_retuning: only a code fix plus parity_prereg_v2 with a new seed follows a failure), and fails
+#     unless every kernel re-derives ADMITTED. Its report is uploaded only when the campaign actually wrote it, and must be
+#     committed whatever its verdict (campaign_seeds.development_rule: no execution may be discarded).
+#   - Python stays canonical (S10.3, PYTHON_CANONICAL_FOR_FROZEN_AND_SCORE_BEARING): nothing here rebuilds frozen data or
+#     goldens, and the CI-built binary is never served by abep_sim/design/tpmc_backend.py unless the committed report
+#     records exactly that binary.
+# Pins: Rust 1.94.1 = build_provenance.rustc of docs/performance/abep_core/parity_report_v1.json (checked below against the
+# report); maturin 1.15.0 = the version in the scratch build venv used for the recorded build (not recorded in the report;
+# abep_core/README.md allows >=1.5,<2); Python 3.11 = ci.yml PYTHON_VERSION and build_provenance.python (3.11.15).
+name: Rust parity (optional abep_core)
+
+on:
+  push:
+    branches: [main, claude/nifty-ramanujan-w68f9z]
+    paths:
+      - "abep_core/**"
+      - "abep_sim/design/tpmc_backend.py"
+      - "abep_sim/intake_tpmc.py"
+      - "scripts/verify_abep_core.py"
+      - "docs/performance/abep_core/**"
+      - ".github/workflows/rust-parity.yml"
+  pull_request:
+    paths:
+      - "abep_core/**"
+      - "abep_sim/design/tpmc_backend.py"
+      - "abep_sim/intake_tpmc.py"
+      - "scripts/verify_abep_core.py"
+      - "docs/performance/abep_core/**"
+      - ".github/workflows/rust-parity.yml"
+  workflow_dispatch:
+    inputs:
+      run_scoring_campaign:
+        description: "Spend the v1 scoring seed: run the FULL pre-registered parity campaign (only when the sources differ from the record; the report must then be committed whatever its verdict)"
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  # Scoring executions share ONE global group (never two in parallel, whatever the ref); everything else is per ref.
+  group: ${{ (github.event_name == 'workflow_dispatch' && inputs.run_scoring_campaign) && 'rust-parity-v1-scoring' || format('rust-parity-{0}', github.ref) }}
+  # A started scoring campaign is never cancelled half-way (it writes its report only at the end).
+  cancel-in-progress: false
+
+env:
+  PYTHON_VERSION: "3.11"
+  RUST_TOOLCHAIN: "1.94.1"
+  MATURIN_VERSION: "1.15.0"
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  CARGO_TERM_COLOR: never
+
+jobs:
+  parity:
+    name: abep_core build + parity (optional)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements-lock.txt
+
+      - name: Install locked dependencies (pymsis not needed)
+        run: |
+          grep -v '^pymsis' requirements-lock.txt > "$RUNNER_TEMP/requirements-no-pymsis.txt"
+          python -m pip install -r "$RUNNER_TEMP/requirements-no-pymsis.txt"
+          python -m pip install --no-deps -e .
+
+      - name: Sources vs the recorded build (no extension)
+        id: src
+        run: python scripts/verify_abep_core.py --source-status --github-output "$GITHUB_OUTPUT"
+
+      - name: Refuse a changed Python reference (a new pre-registration is required)
+        if: steps.src.outputs.reference_matches_prereg != 'true'
+        run: |
+          echo "::error::abep_sim/intake_tpmc.py differs from parity_prereg_v1 reference_implementation.sha256_at_registration: REFUSED_REFERENCE_CHANGED (needs parity_prereg_v2; no campaign is run)"
+          exit 1
+
+      - name: Refuse a committed v1 rerun after a recorded failure (no_retuning)
+        if: steps.src.outputs.v1_rerun_after_failure_on_record == 'true'
+        run: |
+          echo "::error::campaign_history records a v1 scoring execution after a non-ADMITTED v1 execution: REFUSED_V1_RERUN_AFTER_FAILURE (parity_prereg_v1 decision_rules.no_retuning: a code fix plus parity_prereg_v2 with a new scoring_master_seed is the only path)"
+          exit 1
+
+      - name: Parity record check (no Rust toolchain)
+        if: steps.src.outputs.sources_match_recorded_build == 'true'
+        run: python scripts/verify_abep_core.py --check
+
+      - name: Refuse a scoring request with nothing to score (the v1 seed is not spent)
+        if: (github.event_name == 'workflow_dispatch' && inputs.run_scoring_campaign) && steps.src.outputs.sources_match_recorded_build == 'true'
+        run: |
+          echo "::error::NOTHING_TO_SCORE: the sources match the committed record's build_provenance; no scoring execution is started"
+          exit 1
+
+      - name: Refuse a v1 scoring rerun after a recorded failure (no_retuning)
+        if: (github.event_name == 'workflow_dispatch' && inputs.run_scoring_campaign) && steps.src.outputs.v1_scoring_failure_on_record == 'true'
+        run: |
+          echo "::error::campaign_history already records a non-ADMITTED v1 scoring execution: REFUSED_V1_RERUN_AFTER_FAILURE (needs a code fix plus parity_prereg_v2 with a new scoring_master_seed; the v1 record stays)"
+          exit 1
+
+      - name: Install the pinned Rust toolchain (rustup)
+        run: |
+          rustup toolchain install "$RUST_TOOLCHAIN" --profile minimal --no-self-update
+          rustup default "$RUST_TOOLCHAIN"
+          rustc --version
+          cargo --version
+
+      - name: Toolchain equals the recorded build toolchain
+        run: |
+          python - <<'EOF'
+          import json, subprocess, sys
+          rec = json.load(open("docs/performance/abep_core/parity_report_v1.json"))["build_provenance"]["rustc"]
+          got = subprocess.run(["rustc", "--version"], capture_output=True, text=True, check=True).stdout.strip()
+          print("recorded:", rec); print("CI      :", got)
+          sys.exit(0 if got == rec else 1)
+          EOF
+
+      - name: Pure-Rust unit tests (cargo test --release --locked)
+        working-directory: abep_core
+        run: cargo test --release --locked
+
+      - name: Build abep_core into a scratch venv (never the repository environment)
+        run: |
+          python -m venv --system-site-packages "$RUNNER_TEMP/venv_rust"
+          "$RUNNER_TEMP/venv_rust/bin/python" -m pip install "maturin==$MATURIN_VERSION"
+          cd abep_core
+          VIRTUAL_ENV="$RUNNER_TEMP/venv_rust" PATH="$RUNNER_TEMP/venv_rust/bin:$PATH" maturin develop --release --locked
+
+      - name: Extension state (with the CI-built extension)
+        id: ext
+        run: |
+          "$RUNNER_TEMP/venv_rust/bin/python" scripts/verify_abep_core.py --source-status --github-output "$GITHUB_OUTPUT"
+          "$RUNNER_TEMP/venv_rust/bin/python" - <<'EOF'
+          from abep_sim.design import tpmc_backend as TB
+          import sys
+          print("rust_available:", TB.rust_available(), TB.rust_unavailable_reason() or "")
+          sys.exit(0 if TB.rust_available() else 1)
+          EOF
+
+      - name: Extension-dependent pytest - recorded binary (all real-extension branches)
+        if: steps.src.outputs.sources_match_recorded_build == 'true' && steps.ext.outputs.extension_is_recorded_build == 'true'
+        run: '"$RUNNER_TEMP/venv_rust/bin/python" -m pytest -q tests/test_tpmc_backend.py tests/test_rust_ci_workflow.py'
+
+      - name: Extension-dependent pytest - CI binary (not the recorded build; never served)
+        if: steps.src.outputs.sources_match_recorded_build != 'true' || steps.ext.outputs.extension_is_recorded_build != 'true'
+        run: |
+          # test_rust_state_real serves backend='rust' through the admission gate and test_report_rederives_and_is_consistent
+          # binds the installed extension sha256 to the record: both refuse a non-recorded binary by design (NOT_ADMITTED_BUILD).
+          # Their real-extension assertions run on the CI binary in test_rust_ci_workflow.py::test_real_extension_smoke_unadmitted_context.
+          "$RUNNER_TEMP/venv_rust/bin/python" -m pytest -q tests/test_tpmc_backend.py tests/test_rust_ci_workflow.py \
+            --deselect tests/test_tpmc_backend.py::test_rust_state_real \
+            --deselect tests/test_tpmc_backend.py::test_report_rederives_and_is_consistent
+
+      - name: Parity suite - full development comparison (development seed; not scored, not a verdict)
+        run: '"$RUNNER_TEMP/venv_rust/bin/python" scripts/verify_abep_core.py --dev --strict'
+
+      - name: Bitwise reproduction of the recorded numbers (only when CI rebuilt the recorded binary)
+        if: steps.src.outputs.sources_match_recorded_build == 'true' && steps.ext.outputs.extension_is_recorded_build == 'true'
+        run: '"$RUNNER_TEMP/venv_rust/bin/python" scripts/verify_abep_core.py --check --recompute 3'
+
+      - name: Note when the CI binary is not the recorded build
+        if: steps.src.outputs.sources_match_recorded_build == 'true' && steps.ext.outputs.extension_is_recorded_build != 'true'
+        run: echo "::notice::CI-built abep_core differs bitwise from build_provenance.extension_sha256 (expected across machines); tpmc_backend never serves it (NOT_ADMITTED_BUILD). The committed record and the development parity suite were checked."
+
+      - name: Unrecorded source change - fail closed (the v1 scoring seed is not spent)
+        if: steps.src.outputs.sources_match_recorded_build != 'true' && !(github.event_name == 'workflow_dispatch' && inputs.run_scoring_campaign)
+        run: |
+          echo "::error::UNRECORDED_SOURCE_CHANGE: the provenance sources differ from parity_report_v1 build_provenance. Run the pre-registered campaign (locally per abep_core/README.md, or workflow_dispatch with run_scoring_campaign) and commit the report; push / pull_request runs never spend the v1 scoring seed."
+          exit 1
+
+      - name: FULL pre-registered parity campaign (workflow_dispatch only; sources changed vs the recorded build)
+        id: campaign
+        if: steps.src.outputs.sources_match_recorded_build != 'true' && (github.event_name == 'workflow_dispatch' && inputs.run_scoring_campaign)
+        env:
+          HISTORY_BEFORE: ${{ steps.src.outputs.campaign_history_length }}
+        run: |
+          set +e
+          "$RUNNER_TEMP/venv_rust/bin/python" scripts/verify_abep_core.py
+          rc=$?
+          set -e
+          after=$(python -c "import json; print(len(json.load(open('docs/performance/abep_core/parity_report_v1.json'))['campaign_history']))")
+          echo "campaign exit $rc; campaign_history $HISTORY_BEFORE -> $after"
+          if [ "$after" -gt "$HISTORY_BEFORE" ]; then
+            mkdir -p "$RUNNER_TEMP/parity_campaign_record"
+            cp docs/performance/abep_core/parity_report_v1.json docs/performance/abep_core/parity_report_v1.md "$RUNNER_TEMP/parity_campaign_record/"
+            echo "report_written=true" >> "$GITHUB_OUTPUT"
+            python -c "import json; print('## v1 scoring execution (commit this report)'); print('\`\`\`json'); print(json.dumps(json.load(open('docs/performance/abep_core/parity_report_v1.json'))['campaign_history'][-1], indent=1)); print('\`\`\`')" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "report_written=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::The campaign did not write a report (refused or crashed before write_report); nothing is uploaded."
+          fi
+          exit $rc
+
+      - name: Upload the campaign report (only when the campaign wrote it; prereg - no scoring execution may be discarded)
+        if: always() && steps.campaign.outputs.report_written == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: abep_core-parity-report-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/parity_campaign_record/
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Campaign re-admits every kernel (fails otherwise)
+        if: steps.src.outputs.sources_match_recorded_build != 'true' && (github.event_name == 'workflow_dispatch' && inputs.run_scoring_campaign)
+        run: |
+          "$RUNNER_TEMP/venv_rust/bin/python" scripts/verify_abep_core.py --check
+          "$RUNNER_TEMP/venv_rust/bin/python" - <<'EOF'
+          import json, sys
+          v = json.load(open("docs/performance/abep_core/parity_report_v1.json"))["verdicts"]
+          print(json.dumps(v, indent=1))
+          sys.exit(0 if v and all(x == "ADMITTED" for x in v.values()) else 1)
+          EOF
+          echo "::warning::The committed parity report does not record this execution. Commit the uploaded report (JSON + MD) to put it on record; until then tpmc_backend refuses backend='rust' and ci.yml's test_report_rederives_and_is_consistent fails."
