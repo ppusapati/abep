@@ -354,3 +354,15 @@ def test_no_pending_lane_references_left():
     """STR-01: F5 references resolve to H1F-EX rows, not to a pending lane."""
     src = MODULE.read_text(encoding="utf-8")
     assert "F5 PENDING" not in src
+
+
+@pytest.mark.parametrize("bad", [0.0, -1000.0])
+def test_mass_refuses_non_positive_density(bad):
+    """PR #36 review: a zero / negative density would make the module mass <= 0 and rank as lightest."""
+    full = env(N_ant=2, r_ant=0.07, L_ant=0.05, d_ant=0.004, r_coll_in=0.02, r_coll_out=0.05, z_coll=0.1,
+               t_coll=0.002, t_bore=0.002, t_outer=0.002, t_up=0.003, t_down=0.003, tau_support=0.5)
+    vals, _ = F.validate_design_vector(full)
+    rho = {c: {"value": 1000.0, "units": "kg/m3", "evidence_class": SYN, "source": "t"} for c in F.MASS_COMPONENTS}
+    rho["antenna"] = {"value": bad, "units": "kg/m3", "evidence_class": SYN, "source": "t"}
+    with pytest.raises(F.F6Error):
+        F.mass_objective(vals, rho)

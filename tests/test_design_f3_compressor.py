@@ -306,3 +306,15 @@ def test_pareto_front_excludes_non_finite_objectives():
     nan_row = {"id": "nan_row", "outputs": {"P_out_Pa": 2.0, "mdot_delivered_total_kgps": float("nan"),
                                             "P_compressor_el_W": 0.5, "m_compressor_kg": 0.5}}
     assert cs.pareto_front([good, nan_row]) == ["good"]
+
+
+@pytest.mark.parametrize("bad", [float("nan"), float("inf"), 0.0, -4430.0, "x"])
+def test_rotor_density_evidence_must_be_finite_and_positive(bad):
+    """PR #36 review: a NaN / non-positive cited density never passes the strict evidence gate."""
+    defaults = cs.module_defaults()
+    ev = {f: {"value": defaults[f], "evidence_class": "measured", "source": "test fixture"}
+          for f, role in cs.FIELD_ROLES.items() if role[0] == cs.FIXED}
+    ev["rotor_density"] = {"value": bad, "evidence_class": "measured", "source": "test fixture"}
+    inlet = _inlet(label=cs.LABEL_INTERFACE, ev="model-derived")
+    b = [x for x in cs.strict_blockers(inlet, ev) if x["id"] == "P-TI64-DENSITY"]
+    assert b and b[0]["status"] == "NON_FINITE_OR_OUT_OF_DOMAIN"

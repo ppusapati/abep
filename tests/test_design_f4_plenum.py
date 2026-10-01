@@ -440,3 +440,13 @@ def test_compressor_plant_refuses_invalid_design(grid):
     d = dict(grid["T6-A1-U2-D0-Ti6Al4V"], rpm=-1.0)
     with pytest.raises(ValueError):
         pf.CompressorPlant.from_design(d)
+
+
+def test_transient_domain_reasons_include_thermal_limit():
+    """PR #36 review: a trajectory above the rotor service temperature is infeasible even when pressures and Gaede
+    ratios stay in domain (the steady paths already enforce R_THERMAL)."""
+    seg = {"p": np.array([0.01, 0.02]), "K_min": 2.0, "K_over_K0_max": 1.0, "p_stage_max_Pa": 0.05,
+           "p_inlet_max_Pa": 0.001, "T_comp_max_K": 400.0, "T_comp_limit_K": 600.0}
+    assert pf._domain_reasons([seg]) == []
+    hot = dict(seg, T_comp_max_K=650.0)
+    assert pf.R_THERMAL in pf._domain_reasons([seg, hot])

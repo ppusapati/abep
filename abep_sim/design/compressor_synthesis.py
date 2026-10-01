@@ -463,11 +463,24 @@ def strict_blockers(inlet: InletRecord, coefficient_evidence: Mapping[str, dict]
     if dens is None or dens.get("evidence_class") in (None, "assumed", "TBD") or not str(dens.get("source", "")).strip():
         out.append({"id": "P-TI64-DENSITY", "what": "rotor density", "status": "UNCITED_DB_PRIOR",
                     "needs": "cited density for the rotor alloy"})
+    elif not _positive_finite(dens.get("value")):          # NaN / inf / <= 0 never passes the gate (PR #36)
+        out.append({"id": "P-TI64-DENSITY", "what": "rotor density", "status": "NON_FINITE_OR_OUT_OF_DOMAIN",
+                    "needs": "a finite, positive cited density for the rotor alloy"})
     elif abs(float(dens["value"]) / DB["Ti6Al4V"].density - 1.0) > 1e-9:
         out.append({"id": "P-TI64-DENSITY", "what": "rotor density", "status": "MODULE_CANNOT_REPRESENT",
                     "needs": "the cited density differs from materials.DB, which DragCompressor reads; a materials "
                              "change is a model change (CLAUDE.md rule 2), outside this lane"})
     return out
+
+
+def _positive_finite(v) -> bool:
+    if isinstance(v, bool):
+        return False
+    try:
+        x = float(v)
+    except (TypeError, ValueError):
+        return False
+    return math.isfinite(x) and x > 0.0
 
 
 # ------------------------------------------------------------------------------------------------- mirror (checks)

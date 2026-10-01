@@ -689,10 +689,15 @@ UNLOCK = {
 
 
 def thrust_minus_drag(drag_intake_N: float | None, drag_intake_se_N: float | None = None, thrust: Mapping | None = None,
-                      spacecraft_drag: Mapping | None = None, repo: Path = REPO) -> dict:
+                      spacecraft_drag: Mapping | None = None, repo: Path = REPO, intake_drag: Mapping | None = None) -> dict:
     """T - D_spacecraft with D = D_intake (F1) + D_body (TBD unless supplied). Refused unless T comes from an admitted
-    Hall response (supplied record) AND the credible set is non-empty, and D_body is supplied."""
+    Hall response (supplied record) AND the credible set is non-empty, and D_body is supplied. The F1 intake drag is
+    PARAMETRIC (TBD surface scenario) unless a supplied ``intake_drag`` record replaces it; the composite is EVALUATED
+    only when T, D_body and D_intake all are (PR #36 review)."""
     hall = hall_response_status(repo)
+    di = supplied_objective("D_intake", intake_drag, "N")
+    if di is not None:
+        drag_intake_N, drag_intake_se_N = di["value"], None
     t = supplied_objective("T", thrust, "N")
     db = supplied_objective("D_body", spacecraft_drag, "N")
     missing = []
@@ -704,22 +709,26 @@ def thrust_minus_drag(drag_intake_N: float | None, drag_intake_se_N: float | Non
         t = None
     if db is None:
         missing.append("D_spacecraft: spacecraft body / array drag TBD (F1-ID-08)")
+    di_status = di["status"] if di is not None else (PARAMETRIC_ONLY if drag_intake_N is not None else NOT_EVALUATED)
     partial = {"D_intake_N": drag_intake_N, "D_intake_se_N": drag_intake_se_N,
-               "D_intake_status": PARAMETRIC_ONLY if drag_intake_N is not None else NOT_EVALUATED,
-               "D_intake_basis": "F1 intake-face drag (frozen TPMC surface / direct TPMC; surface scenario is a TBD "
-                                 "context axis), max over the five orbit states"}
+               "D_intake_status": di_status,
+               "D_intake_basis": (f"supplied intake-drag record ({di['source']})" if di is not None else
+                                  "F1 intake-face drag (frozen TPMC surface / direct TPMC; surface scenario is a TBD "
+                                  "context axis), max over the five orbit states")}
     if missing:
         return _obj("T_minus_D_spacecraft_N", NOT_EVALUATED, None, "N", reason="; ".join(missing),
                     unlock=[UNLOCK["T"], UNLOCK["D_spacecraft"]], partial=partial)
     if drag_intake_N is None:
         return _obj("T_minus_D_spacecraft_N", NOT_EVALUATED, None, "N", reason="intake drag not evaluated",
                     unlock=[UNLOCK["T"]], partial=partial)
-    st = SYNTHETIC_ONLY if SYNTHETIC_ONLY in (t["status"], db["status"]) else \
-        (EVALUATED if t["status"] == db["status"] == EVALUATED else PARAMETRIC_ONLY)
+    sts = (t["status"], db["status"], di_status)
+    st = SYNTHETIC_ONLY if SYNTHETIC_ONLY in sts else \
+        (EVALUATED if all(x == EVALUATED for x in sts) else PARAMETRIC_ONLY)
     val = t["value"] - (drag_intake_N + db["value"])
     return _obj("T_minus_D_spacecraft_N", st, val, "N",
                 evidence_class=SYN_CLASS if st == SYNTHETIC_ONLY else "model-derived",
-                source=f"T: {t['source']}; D_body: {db['source']}; D_intake: F1", partial=partial,
+                source=f"T: {t['source']}; D_body: {db['source']}; "
+                       f"D_intake: {di['source'] if di is not None else 'F1'}", partial=partial,
                 thrust_N=t["value"], drag_total_N=drag_intake_N + db["value"])
 
 
@@ -768,9 +777,17 @@ def bus_power(config: str, compressor_P_W: float | None, supplied: Mapping | Non
     if supplied is not None:
         steady, startup = supplied["steady"], supplied["startup"]
         gate = bb.rfp_power_gate(steady, startup)
-        classes = set(steady["load_evidence_classes"])
+        def _ledger_classes(led):
+            # every evidence class that enters P_bus: loads, slot efficiencies, front-end efficiency (PR #36 review)
+            c = set(led["load_evidence_classes"])
+            c |= {it["efficiency_evidence_class"] for it in led["items"]
+                  if it.get("efficiency") is not None and it.get("efficiency_evidence_class")}
+            if any(it.get("path") == "internal_bus" and it.get("state") != "OFF" for it in led["items"]):
+                c.add(led["front_end"]["evidence_class"] or "TBD")
+            return c
+        classes = _ledger_classes(steady)
         for s in startup:
-            classes |= set(s["load_evidence_classes"])
+            classes |= _ledger_classes(s)
         if steady["status"] != "COMPLETE":
             return _obj("P_bus_W", INCOMPLETE, None, "W", reason=f"supplied steady ledger {steady['status']}",
                         unlock=[UNLOCK["P_bus"]], gate_verdict=gate["verdict"],
@@ -1014,7 +1031,8 @@ def evaluate_system(upstream_row: Mapping | None, config: str, design: Mapping |
     pel = row.get("P_compressor_el_max_W")
     objs = {
         "T_minus_D_spacecraft_N": thrust_minus_drag(row.get("drag_intake_max_N"), row.get("drag_intake_max_se_N"),
-                                                    s.get("thrust"), s.get("spacecraft_drag"), repo),
+                                                    s.get("thrust"), s.get("spacecraft_drag"), repo,
+                                                    intake_drag=s.get("drag_intake_max")),
         "P_bus_W": bus_power(config, pel, s.get("bus"), repo),
         "m_wet_kg": wet_mass(config, {"AL-02": {"m_compressor_max_kg": row.get("m_compressor_max_kg"),
                                                  "status": LABEL_PARAMETRIC, "allocation_kg": 5.5}}

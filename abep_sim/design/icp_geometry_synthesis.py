@@ -597,6 +597,8 @@ def mass_objective(vals, materials):
             raise F6Error(f"mass: density record of {c} must have units kg/m3, a source and evidence class in "
                           f"{DENSITY_EVIDENCE}")
         _finite(m["value"], f"density {c}")
+        if not float(m["value"]) > 0.0:                    # a zero / negative density would rank as light (PR #36)
+            raise F6Error(f"mass: density of {c} must be > 0 kg/m3, got {m['value']!r}")
         syn = syn or m["evidence_class"] == SYN_CLASS
     if miss_geom or miss_mat:
         return _result(name, NOT_EVALUATED, reason="mass needs every component's geometry and a cited density",

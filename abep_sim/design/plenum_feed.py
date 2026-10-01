@@ -1096,7 +1096,9 @@ class TransientRun:
                 "K_min": float(np.min(cas["K_min"])), "K_over_K0_max": float(np.max(cas["K_over_K0_max"])),
                 "p_stage_max_Pa": float(np.max(cas["p_stage_max"])),
                 "p_inlet_max_Pa": float(np.max(p2["O"] + p2["N2"] + p2["O2"])),
-                "P_el_max_W": float(np.max(cas["P_el_W"]))}
+                "P_el_max_W": float(np.max(cas["P_el_W"])),
+                "T_comp_max_K": float(np.max(cas["T_comp_K"])),
+                "T_comp_limit_K": float(DB[self.plant.comp.rotor_material].T_max_K)}
 
 
 def settling_time(t: np.ndarray, y: np.ndarray, final: float, band: float = SETTLE_BAND):
@@ -1201,6 +1203,9 @@ def _domain_reasons(segs: list) -> list:
     if max(sg["p_stage_max_Pa"] for sg in segs) > P_DOMAIN_PA * (1 + 1e-12) or \
             max(sg["p_inlet_max_Pa"] for sg in segs) > P_DOMAIN_PA:
         out.append(R_STAGE_DOMAIN)
+    # thermal service limit along the trajectory, as on the steady paths (PR #36 review)
+    if any(sg["T_comp_max_K"] > sg["T_comp_limit_K"] for sg in segs):
+        out.append(R_THERMAL)
     return out
 
 

@@ -476,3 +476,36 @@ def test_hc03_gate_verdict_on_parametric_ledger_never_met():
     assert [x for x in out if x["id"] == "HC-03"][0]["status"] == ao.C_VIOLATED_PARAMETRIC
     out = ao.evaluate_constraints({"P_bus_W": {"status": ao.EVALUATED, "value": 1000.0, "gate_verdict": "PASS"}})
     assert [x for x in out if x["id"] == "HC-03"][0]["status"] == ao.C_MET
+
+
+def test_bus_power_counts_efficiency_evidence(monkeypatch):
+    """PR #36 review: measured loads with ASSUMED slot or front-end efficiencies never make P_bus EVALUATED."""
+    config = "hall_icp_neutralizer"
+    gm = {"sample_rate_Sa_s": 2e5, "bandwidth_Hz": 5e4, "anti_alias_documented": True, "synchronized": True,
+          "source": "x"}
+
+    def led(eff_ec, fe_ec):
+        loads = {s: {"P_W": 10.0, "evidence_class": "measured", "source": "x"} for s in bb.installed_slots(config)}
+        loads["icp_rf_source"]["plane"] = "generator_dc_input"
+        effs = {s: {"value": 0.9, "evidence_class": eff_ec, "source": "x", "path": "internal_bus"}
+                for s in bb.installed_slots(config)}
+        st = bb.ledger(config, loads, effs, {"value": 0.95, "evidence_class": fe_ec, "source": "x"},
+                       label="T", power_basis="p_bus_1ms_max", gate_measurement=gm)
+        return {"steady": st, "startup": [st], "source": "x"}
+
+    assert ao.bus_power(config, None, led("measured", "measured"), ROOT)["status"] == ao.EVALUATED
+    assert ao.bus_power(config, None, led("assumed", "measured"), ROOT)["status"] == ao.PARAMETRIC_ONLY
+    assert ao.bus_power(config, None, led("measured", "assumed"), ROOT)["status"] == ao.PARAMETRIC_ONLY
+
+
+def test_thrust_minus_drag_inherits_intake_drag_status(monkeypatch):
+    """PR #36 review: with admitted thrust and measured body drag, the F1 (parametric) intake drag keeps T - D
+    PARAMETRIC; only a supplied evaluated intake-drag record makes it EVALUATED."""
+    monkeypatch.setattr(ao, "hall_response_status", lambda repo=ROOT: {
+        "admitted_members": ["HYPOTHETICAL"], "credible_set": "NON_EMPTY", "p5_n2_v1_decision": None,
+        "sources": []})
+    t, db = _meas(0.03), _meas(0.002)
+    assert ao.thrust_minus_drag(0.01, 1e-5, t, db, ROOT)["status"] == ao.PARAMETRIC_ONLY
+    o = ao.thrust_minus_drag(0.01, 1e-5, t, db, ROOT, intake_drag=_meas(0.005))
+    assert o["status"] == ao.EVALUATED and o["value"] == pytest.approx(0.03 - 0.005 - 0.002)
+    assert ao.thrust_minus_drag(0.01, 1e-5, t, db, ROOT, intake_drag=_syn(0.005))["status"] == ao.SYNTHETIC_ONLY
