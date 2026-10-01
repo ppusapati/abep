@@ -2518,3 +2518,52 @@ but the code-default SSO family still set the only design-state envelope.
 - Unchanged, and hash-pinned in the tests: the dataset (uncompressed CSV sha256 c0ce282e…6164, container 71ce01c3…8ace)
   and the v1 design-state file (sha256 d8bd369b…a40). The existing `atmosphere_msis21_orbit_v1*` glob keeps v2 out of
   the installed package.
+
+## 2026-10-01 — A9.17 WINDS: atmosphere v2 with HWM14 neutral winds (`atmosphere_msis21_hwm14_orbit_v2`; v1 unchanged)
+
+Authority: `docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json` (sha256 9fd77c95…c3ad). Decision key
+WINDS (`AUTHORIZE_HWM14_ATMOSPHERE_V2_KEEP_V1_IMMUTABLE`); ORBIT and DATA_SIZE from the same record also apply. Status:
+**DESIGN_ENVELOPE_PARAMETRIC**. This is not a mission trajectory.
+
+- **Source.** HWM14 version HWM14.123114 comes from the NRL public repository
+  (`https://map.nrl.navy.mil/map/pub/nrl/HWM/HWM14/`). The package is `HWM14_ess224-sup-0002-supinfo.tgz` (sha256
+  4de451be…7978), Software S1 of Drob et al. 2015, ESS, doi:10.1002/2014EA000089. The register in `docs/evidence/hwm14/`
+  records the sha256 of every file, the CCMC page, the terms found, and why PyPI `pyhwm2014` 1.1 was rejected (no
+  coefficient files; built with `numpy.distutils`).
+  - The repository redistributes no HWM14 code or data. `fetch-hwm14` downloads the package and verifies every hash.
+  - Usage terms are not explicit: the package has no licence text, and the article is CC BY-NC-ND. Recorded as open
+    (TERMS_NOT_EXPLICIT, verify).
+- **Build validation.** gfortran 13.3.0, default flags. NRL's `checkhwm14` output is text-identical to the shipped
+  `Check/gfortran.txt`. Every build and every HWM14-enabled `check` repeats this comparison and refuses on any difference.
+- **Content.**
+  - (1) Node table on the v1 grid and v1 scenarios. The grid is imported from `atmosphere_orbit`. For each node it stores
+    the HWM14 total and quiet meridional/zonal wind, plus the exact HWM14 inputs: iyd, UT seconds, geodetic coordinates
+    and ap(2) = the scenario's ECSS Ap held constant as the 3-hour ap (0/15/45/240 → Kp 0/3/4.89/8.35).
+  - (2) DWM07 disturbance table on lat 5° × lon 15° × LST 1 h × the 8 v1 doy nodes (681,984 rows). The v1 grid alone gave
+    joint errors up to 143 m/s at ECSS short-term high, because DWM07 follows magnetic coordinates. DWM07 varies by
+    ≤ 6.7e-4 m/s between 180 and 230 km (measured).
+  - Thermodynamic state: v1 through its unchanged accessor, pinned by sha256 c0ce282e…6164. The NRLMSIS table is not
+    stored a second time.
+- **Measured interpolation error** (1500 random points per scenario vs direct HWM14), max |wind-vector error|: 5.6 / 4.9 /
+  7.6 / 14.4 m/s for LT low / moderate / high and ST high. The resulting error in the wind-inclusive relative speed is
+  ≤ 13.7 m/s; in the flow angle, ≤ 0.09°.
+- **API.**
+  - `wind`, `state`: v1 state plus winds. Out-of-domain inputs are refused.
+  - `relative_flow`: for a caller-supplied inertial ENU velocity, returns (a) relative speed and angles against the
+    co-rotating atmosphere and (b) the same with co-rotation + HWM14 wind.
+  - `orbit_states`: the v1 geometry. Inclination and LTAN are required inputs with no defaults, and the co-rotating
+    speed reproduces v1 within 1e-6 m/s.
+- **Storage.** Two deterministic gzip files (2.4 MB + 8.4 MB) plus a manifest. A rebuild is byte-identical, JSON
+  included. The files are excluded from the wheel through `pyproject` `exclude-package-data`.
+- **Open items.**
+  - `MANIFEST.in` still pulls the 28 KB manifest JSON into the sdist; it needs an `exclude` line, and that file is
+    outside this lane.
+  - `tests/test_atmosphere_orbit.py::test_not_wired_into_existing_modules` fails, because it forbids any
+    `atmosphere_orbit` reference outside v1 and v2 must import v1. The fix is to exempt `atmosphere_orbit_v2.py`; that
+    file is outside this lane.
+  - `tests/test_packaging.py` hard-codes v1 as the only repository-only dataset, so three of its tests fail:
+    `test_package_data_covers_abep_sim_data`, `test_orbit_dataset_excluded_from_distribution` and
+    `test_manifest_in_carries_data`, the last because of the new `.gz` suffix under `recursive-include`. The fix is to add
+    the v2 glob next to `REPO_ONLY_GLOB` and to `MANIFEST.in`; both files are outside this lane. Built with `python -m
+    build`: the wheel contains no v2 data; the sdist contains only the manifest JSON.
+  - No wind-specific design-state set exists, because the relative-flow extremes depend on the TBD orbit.

@@ -1,0 +1,804 @@
+{
+ "dataset_id": "atmosphere_msis21_hwm14_orbit_v2",
+ "labels": {
+  "dataset_status": "DESIGN_ENVELOPE_PARAMETRIC",
+  "mission_trajectory": false,
+  "requirement_input": false,
+  "orbit_inputs": "inclination / LTAN are caller-supplied PARAMETRIC inputs (no defaults)",
+  "real_orbit": "TBD from DRDO / spacecraft ICD / PDR mission definition; then a new dataset version"
+ },
+ "file": "atmosphere_msis21_hwm14_orbit_v2.csv.gz",
+ "sha256": "6d9e4f7a48682da759d970d79e1123bd81f5707220cc1b2b091254c2754b1969",
+ "sha256_definition": "sha256 of the UNCOMPRESSED CSV bytes (dataset identity)",
+ "bytes": 9608708,
+ "row_count": 116736,
+ "container": {
+  "file": "atmosphere_msis21_hwm14_orbit_v2.csv.gz",
+  "format": "gzip (RFC 1952), single member",
+  "mtime": 0,
+  "fname_in_header": false,
+  "flags": 0,
+  "xfl": 2,
+  "os_byte": 255,
+  "compresslevel": 9,
+  "deflate": "zlib raw deflate, wbits -15, memLevel 8, Z_DEFAULT_STRATEGY",
+  "writer": "abep_sim.atmosphere_orbit._gzip_bytes (shared with v1)",
+  "sha256": "03238acea56442b9a3d5554f5596bfe766d0654deacc43ff13482e8fe646629d",
+  "bytes": 2397141,
+  "zlib_version": "1.3",
+  "note": "container hash identifies the stored file; the dataset identity is the uncompressed-CSV sha256"
+ },
+ "distribution": {
+  "installed_package": "EXCLUDED (pyproject exclude-package-data + MANIFEST.in exclude)",
+  "repository_path": "abep_sim/data/atmosphere_msis21_hwm14_orbit_v2.csv.gz",
+  "disturbance_repository_path": "abep_sim/data/atmosphere_msis21_hwm14_orbit_v2.disturbance.csv.gz",
+  "when_absent": "the accessor raises FileNotFoundError naming the repository path; no fallback"
+ },
+ "composition": {
+  "thermodynamic_state": {
+   "dataset_id": "atmosphere_msis21_orbit_v1",
+   "csv_sha256": "c0ce282e99695be8cae0834270c5b9ff7853033255665abda7ec18c307566164",
+   "accessor": "abep_sim.atmosphere_orbit.state (unchanged, hash-verified on load)"
+  },
+  "winds": {
+   "node_table": "atmosphere_msis21_hwm14_orbit_v2.csv.gz",
+   "disturbance_table": "atmosphere_msis21_hwm14_orbit_v2.disturbance.csv.gz",
+   "model": "HWM14 HWM14.123114"
+  },
+  "why_not_duplicated": "A9.17 DATA_SIZE: the 17 MB NRLMSIS table is not stored twice; v2 rows carry the same grid keys as v1 rows (checked on load)"
+ },
+ "columns": [
+  "scenario",
+  "ap_hwm",
+  "iyd",
+  "doy",
+  "alt_km",
+  "lat_deg",
+  "lon_deg",
+  "lst_h",
+  "ut_h",
+  "ut_s",
+  "u_mer_m_s",
+  "u_zon_m_s",
+  "u_mer_quiet_m_s",
+  "u_zon_quiet_m_s"
+ ],
+ "units": {
+  "scenario": "ECSS scenario id (v1 SCENARIOS)",
+  "ap_hwm": "ap(2) passed to HWM14 (3-hour ap)",
+  "iyd": "YYDDD passed to HWM14 (YY = v1 EPOCH_YEAR mod 100)",
+  "doy": "day of year",
+  "alt_km": "km, geodetic",
+  "lat_deg": "deg, geodetic",
+  "lon_deg": "deg east, geodetic",
+  "lst_h": "h, local solar time = UT + lon/15",
+  "ut_h": "h, UT (v1 definition)",
+  "ut_s": "s, UT passed to HWM14 as sec (= ut_h * 3600)",
+  "u_mer_m_s": "m/s, HWM14 total meridional wind (+ northward), quiet + DWM07 disturbance at ap_hwm",
+  "u_zon_m_s": "m/s, HWM14 total zonal wind (+ eastward), quiet + DWM07 disturbance at ap_hwm",
+  "u_mer_quiet_m_s": "m/s, HWM14 quiet-time meridional wind (ap(2) = -1)",
+  "u_zon_quiet_m_s": "m/s, HWM14 quiet-time zonal wind (ap(2) = -1)"
+ },
+ "row_order": "as v1: scenario (v1 order), then doy, alt_km, lat_deg, lon_deg, lst_h (lst fastest)",
+ "float_format_wind": "%.4f",
+ "grid": {
+  "alt_km": [
+   180.0,
+   195.0,
+   215.0,
+   230.0
+  ],
+  "lat_deg": [
+   -90.0,
+   -80.0,
+   -70.0,
+   -60.0,
+   -50.0,
+   -40.0,
+   -30.0,
+   -20.0,
+   -10.0,
+   0.0,
+   10.0,
+   20.0,
+   30.0,
+   40.0,
+   50.0,
+   60.0,
+   70.0,
+   80.0,
+   90.0
+  ],
+  "lst_h": [
+   0.0,
+   3.0,
+   6.0,
+   9.0,
+   12.0,
+   15.0,
+   18.0,
+   21.0
+  ],
+  "lon_deg": [
+   0.0,
+   60.0,
+   120.0,
+   180.0,
+   240.0,
+   300.0
+  ],
+  "doy": [
+   1.0,
+   47.0,
+   92.0,
+   138.0,
+   184.0,
+   229.0,
+   275.0,
+   320.0
+  ]
+ },
+ "grid_source": "imported from abep_sim.atmosphere_orbit (AXES, _grid_points); identical to atmosphere_msis21_orbit_v1",
+ "scenarios": {
+  "ECSS_LT_LOW": {
+   "f107": 65.0,
+   "f107a": 65.0,
+   "ap": 0.0,
+   "label": "long-term (27+ days) low",
+   "row_ref": "Table 6-3 long-term Low column"
+  },
+  "ECSS_LT_MODERATE": {
+   "f107": 140.0,
+   "f107a": 140.0,
+   "ap": 15.0,
+   "label": "long-term (27+ days) moderate",
+   "row_ref": "Table 6-3 long-term Moderate column"
+  },
+  "ECSS_LT_HIGH": {
+   "f107": 250.0,
+   "f107a": 250.0,
+   "ap": 45.0,
+   "label": "long-term (27+ days) high",
+   "row_ref": "Table 6-3 long-term High column"
+  },
+  "ECSS_ST_HIGH": {
+   "f107": 300.0,
+   "f107a": 250.0,
+   "ap": 240.0,
+   "label": "short-term (daily) high",
+   "row_ref": "Table 6-3 short-term High column (F10.7 300, Ap 240); F10.7avg 250 from Annex G high-short-term case / clause 7.2.1 NOTE 5"
+  }
+ },
+ "scenario_order": [
+  "ECSS_LT_LOW",
+  "ECSS_LT_MODERATE",
+  "ECSS_LT_HIGH",
+  "ECSS_ST_HIGH"
+ ],
+ "drivers_source": {
+  "document": "ECSS-E-ST-10-04C Rev.1, Space engineering - Space environment, 15 June 2020",
+  "table": "Table 6-3: Reference fixed index values (clause 6.2.2b; NOTE 1: rounded numbers from solar cycle 23)",
+  "url": "https://ecss.nl/wp-content/uploads/2020/07/ECSS-E-ST-10-04C-Rev.1(15June2020).pdf",
+  "pdf_sha256_as_downloaded_2026_10_01": "c8bbbc139066eab8300665206b581a2d1b40a9b6ace6342831403078fc4204bc",
+  "access": "open download from ecss.nl",
+  "evidence_level": 4,
+  "quantity_type": "assumed (standardised reference index values; not a forecast of the mission epoch)"
+ },
+ "ap_input": {
+  "hwm14_argument": "ap(2) (current 3-hour ap); ap(1) = 0.0 (not used by HWM14)",
+  "value_passed": "the scenario's ECSS Table 6-3 Ap (same value as the NRLMSIS daily Ap of v1), held constant as the 3-hour ap: ECSS_LT_LOW 0, ECSS_LT_MODERATE 15, ECSS_LT_HIGH 45, ECSS_ST_HIGH 240",
+  "rationale": "v1 runs NRLMSIS with a constant ap history ([Ap]*7, daily-Ap mode); the same constant value is the only ap consistent with it. ECSS Table 6-3 gives no separate 3-hour ap for these scenarios",
+  "status": "assumed (model input convention; not a forecast). ap = 0 (ECSS_LT_LOW) still evaluates DWM07 at Kp = 0, which is not zero; the quiet-only part (ap(2) = -1) is stored separately",
+  "quiet_columns": "ap(2) = -1.0 (HWM14 quiet-time winds only; README: 'Call HWM14 with a negative value for AP(2)')",
+  "kp_from_ap": "DWM07 converts ap(2) to Kp internally (ap2kp); the values are recorded per scenario at build time",
+  "ignored_by_hwm14": "F10.7 and F10.7avg (README: 'The F107 and F107A arguments are ignored in this version'; 'The model currently contains no solar activity dependence'). The four scenarios therefore differ in wind only through ap"
+ },
+ "date_time": {
+  "epoch_year": 2027,
+  "iyd": "YYDDD with YY = epoch_year mod 100 (HWM14 uses mod(iyd,1000))",
+  "ut": "UT = (LST - lon/15) mod 24 h, sec = UT * 3600 (v1 convention)",
+  "status": "model assumption (climatological day of year; no calendar epoch)"
+ },
+ "coordinates": {
+  "alt": "geodetic km",
+  "lat": "geodetic deg",
+  "lon": "geodetic deg east",
+  "wind_frame": "local geodetic horizontal: meridional + northward, zonal + eastward"
+ },
+ "interpolation": {
+  "quantity": "wind components (linear values, not logs; winds change sign). Total wind = quiet part interpolated on the v1 grid (node table) + DWM07 disturbance part interpolated on the disturbance table",
+  "quiet_part": {
+   "alt_km": "cubic Lagrange through the 4 altitude nodes",
+   "lat_deg": "local cubic Lagrange (4 nearest nodes, clipped at the ends)",
+   "lst_h": "trigonometric interpolation, 8 equispaced nodes, period 24 h",
+   "lon_deg": "trigonometric interpolation, 6 equispaced nodes, period 360 deg",
+   "doy": "trigonometric interpolation, period 365 d, 8 integer-day nodes nearest to 1 + k*365/8; doy is warped piecewise-linearly onto the equispaced positions (<= 0.5 d) so nodes are reproduced exactly",
+   "scenario": "none (discrete)",
+   "weights": "abep_sim.atmosphere_orbit._axis_weights (identical separable weights to v1)"
+  },
+  "disturbance_part": {
+   "quantity": "DWM07 disturbance wind components = HWM14 total - quiet (linear values)",
+   "alt_km": "none: evaluated at DIST_ALT_KM; height-constancy over the v1 altitude nodes measured at build time",
+   "lat_deg": "local cubic Lagrange (4 nearest of 37 nodes, 5 deg step, clipped at the ends)",
+   "lon_deg": "periodic local cubic Lagrange (24 nodes, 15 deg step)",
+   "lst_h": "periodic local cubic Lagrange (24 nodes, 1 h step)",
+   "doy": "trigonometric interpolation, period 365 d, 8 integer-day nodes nearest to 1 + k*365/8; doy is warped piecewise-linearly onto the equispaced positions (<= 0.5 d) so nodes are reproduced exactly",
+   "scenario": "none (discrete)"
+  },
+  "node_table_total_columns": "stored HWM14 total winds at the v1 nodes (provenance + node check); the accessor's composed total reproduces them within the recorded node_reproduction tolerance",
+  "thermodynamic_state": "abep_sim.atmosphere_orbit.state (v1 accessor, unchanged)"
+ },
+ "domain": {
+  "alt_km": [
+   180.0,
+   230.0
+  ],
+  "lat_deg": [
+   -90.0,
+   90.0
+  ],
+  "lst_h": [
+   0.0,
+   24.0
+  ],
+  "lon_deg": [
+   -180.0,
+   360.0
+  ],
+  "doy": [
+   1.0,
+   365.0
+  ],
+  "out_of_domain": "ValueError (no extrapolation); unknown scenario: ValueError"
+ },
+ "relative_flow": {
+  "frame": "local east-north-up (ENU) at the state point; spherical Earth radius R_EARTH + alt (as v1); geodetic latitude used as geocentric (<= 0.2 deg, as v1)",
+  "v_sc": "caller-supplied INERTIAL spacecraft velocity in ENU (m/s)",
+  "corotation": "v_corot = OMEGA_E (R_EARTH + alt) cos(lat) east (mission_env OMEGA_E; v1 rigid co-rotation)",
+  "wind": "HWM14 total wind: zonal east, meridional north, vertical 0",
+  "a_corot": "v_rel = v_sc - v_corot",
+  "b_corot_wind": "v_rel = v_sc - v_corot - v_wind",
+  "angles": "relative to the caller's spacecraft velocity direction x = v_sc/|v_sc|; z' = local up made orthogonal to x; y = z' x x (left of track). angle_deg = angle(v_rel, x); yaw_deg = atan2(v_rel.y, v_rel.x); pitch_deg = atan2(v_rel.z', v_rel.x). v_rel is the spacecraft motion through the gas; the incoming flow seen on board is -v_rel. wind_vs_corot_angle_deg = angle between (a) and (b)",
+  "flux": "rho * |v_rel| (kg m-2 s-1) for (a) and (b)"
+ },
+ "orbit_coverage": {
+  "status": "CODE_DEFAULT / PARAMETRIC",
+  "requirement_input": false,
+  "dataset_status": "DESIGN_ENVELOPE_PARAMETRIC",
+  "sampler": "orbit_states(alt_km, inclination_deg, ltan_h, scenario, doy, ut_start_h, n_samples): every argument required, no defaults (A9.17 ORBIT)",
+  "grid_coverage": "all latitudes, local times, longitudes and days of year"
+ },
+ "not_provided": {
+  "vertical_wind": "HWM14 is a horizontal wind model; the vertical neutral wind is taken as 0 in the relative flow",
+  "solar_activity_dependence_of_winds": "HWM14 has none (F10.7 ignored); quiet-time winds identical in all scenarios",
+  "hwm14_model_uncertainty": "not quantified here (empirical climatology; storm-time and day-to-day variability are not represented); only the grid interpolation error is measured",
+  "disturbance_wind_height_dependence": "DWM07 is height-constant above ~225 km with an artificial cutoff below 125 km (README.txt MODEL LIMITATIONS); 180-230 km lies inside that transition",
+  "design_states": "no wind-specific design-state set: the relative-flow extremes depend on the (TBD) orbit; use orbit_states() over the caller's parametric orbit range"
+ },
+ "authority": {
+  "A9.17 WINDS": {
+   "path": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+   "sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
+   "decision_key": "WINDS",
+   "answer": "AUTHORIZE_HWM14_ATMOSPHERE_V2_KEEP_V1_IMMUTABLE",
+   "verbatim": {
+    "path": "docs/decisions/OD_2026_10_01_A9_17_DATA_ARTIFACT_OWNER_DECISIONS.md",
+    "sha256": "540212c0c8862528e549555244f0fd39f8f9c9272f84dfb450bfef9dc54eba13",
+    "quote": "The new atmosphere dataset should therefore carry both the Earth-corotating atmosphere result and the HWM14-corrected neutral-wind result, with HWM14 version, Ap input, date/time, coordinates and provenance recorded. Do not overwrite v1. Until the actual spacecraft orbit is registered, v2 remains a design-envelope/parametric dataset rather than a mission-specific frozen trajectory."
+   }
+  },
+  "A9.17 ORBIT": {
+   "path": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+   "sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
+   "decision_key": "ORBIT",
+   "answer": "ORBIT_INCLINATION_LTAN_TBD_FROM_OFFICIAL_MISSION_ICD"
+  },
+  "A9.17 DATA_SIZE": {
+   "path": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+   "sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
+   "decision_key": "DATA_SIZE",
+   "answer": "KEEP_DATA_ARTIFACT_EXCLUDE_FROM_INSTALL_WHERE_POSSIBLE"
+  },
+  "v1 open item": {
+   "id": "ATM-OI-01",
+   "dataset": "atmosphere_msis21_orbit_v1",
+   "relation": "resolved for v2 users by this dataset; v1 and its open item are unchanged"
+  },
+  "CLAUDE.md rule 1": "versioned new dataset; atmosphere_msis21_orbit_v1.* untouched"
+ },
+ "evidence": {
+  "evidence_level": 4,
+  "quantity_type": "model-derived (empirical climatology model output: HWM14)",
+  "uncertainty": "HWM14 climatological uncertainty not quantified here; recorded grid interpolation error (interpolation_validation); HWM14 cross-compiler spread ~1e-4 m/s (README)",
+  "applicability": "180-230 km geodetic, all latitudes / local times / longitudes / seasons, the four ECSS scenarios with the constant ap of ap_input only",
+  "validation_status": "HWM14 build reproduces NRL's reference test output (producer.nrl_reference_check); winds not independently validated by the project"
+ },
+ "build_command": "ABEP_HWM14_DIR=<dir> python -m abep_sim.atmosphere_orbit_v2 build",
+ "check_command": "python -m abep_sim.atmosphere_orbit_v2 check",
+ "fetch_command": "python -m abep_sim.atmosphere_orbit_v2 fetch-hwm14 <dir>",
+ "disturbance_file": {
+  "file": "atmosphere_msis21_hwm14_orbit_v2.disturbance.csv.gz",
+  "sha256": "040befc5ea02346ed86c4576332b4c51ff02583bd3a2cd37c0538195c5788609",
+  "sha256_definition": "sha256 of the UNCOMPRESSED CSV bytes",
+  "bytes": 42257246,
+  "row_count": 681984,
+  "container": {
+   "file": "atmosphere_msis21_hwm14_orbit_v2.disturbance.csv.gz",
+   "format": "gzip (RFC 1952), single member",
+   "mtime": 0,
+   "fname_in_header": false,
+   "flags": 0,
+   "xfl": 2,
+   "os_byte": 255,
+   "compresslevel": 9,
+   "deflate": "zlib raw deflate, wbits -15, memLevel 8, Z_DEFAULT_STRATEGY",
+   "writer": "abep_sim.atmosphere_orbit._gzip_bytes (shared with v1)",
+   "sha256": "0c27e740a75618e28818ac071f4156766c7839855ea0aecd06506c913d18fcec",
+   "bytes": 8368373,
+   "zlib_version": "1.3",
+   "note": "container hash identifies the stored file; the dataset identity is the uncompressed-CSV sha256"
+  },
+  "columns": [
+   "scenario",
+   "ap_hwm",
+   "iyd",
+   "doy",
+   "alt_km",
+   "lat_deg",
+   "lon_deg",
+   "lst_h",
+   "ut_s",
+   "u_mer_dist_m_s",
+   "u_zon_dist_m_s"
+  ],
+  "units": {
+   "ut_s": "s, UT passed to HWM14 as sec (= ut_h * 3600)",
+   "alt_km": "km, geodetic (evaluation altitude DIST_ALT_KM)",
+   "u_mer_dist_m_s": "m/s, DWM07 disturbance meridional wind (HWM14 total - quiet, + northward)",
+   "u_zon_dist_m_s": "m/s, DWM07 disturbance zonal wind (HWM14 total - quiet, + eastward)"
+  },
+  "row_order": "scenario (v1 order), then doy, lat_deg, lon_deg, lst_h (lst fastest)",
+  "grid": {
+   "doy": [
+    1.0,
+    47.0,
+    92.0,
+    138.0,
+    184.0,
+    229.0,
+    275.0,
+    320.0
+   ],
+   "lat_deg": [
+    -90.0,
+    -85.0,
+    -80.0,
+    -75.0,
+    -70.0,
+    -65.0,
+    -60.0,
+    -55.0,
+    -50.0,
+    -45.0,
+    -40.0,
+    -35.0,
+    -30.0,
+    -25.0,
+    -20.0,
+    -15.0,
+    -10.0,
+    -5.0,
+    0.0,
+    5.0,
+    10.0,
+    15.0,
+    20.0,
+    25.0,
+    30.0,
+    35.0,
+    40.0,
+    45.0,
+    50.0,
+    55.0,
+    60.0,
+    65.0,
+    70.0,
+    75.0,
+    80.0,
+    85.0,
+    90.0
+   ],
+   "lon_deg": [
+    0.0,
+    15.0,
+    30.0,
+    45.0,
+    60.0,
+    75.0,
+    90.0,
+    105.0,
+    120.0,
+    135.0,
+    150.0,
+    165.0,
+    180.0,
+    195.0,
+    210.0,
+    225.0,
+    240.0,
+    255.0,
+    270.0,
+    285.0,
+    300.0,
+    315.0,
+    330.0,
+    345.0
+   ],
+   "lst_h": [
+    0.0,
+    1.0,
+    2.0,
+    3.0,
+    4.0,
+    5.0,
+    6.0,
+    7.0,
+    8.0,
+    9.0,
+    10.0,
+    11.0,
+    12.0,
+    13.0,
+    14.0,
+    15.0,
+    16.0,
+    17.0,
+    18.0,
+    19.0,
+    20.0,
+    21.0,
+    22.0,
+    23.0
+   ]
+  },
+  "alt_km": 230.0,
+  "grid_trade": "Pre-build study (2026-10-01, this HWM14 build, ECSS_ST_HIGH = the largest disturbance winds, doy 172, 1500 random lat/lon/LST points, |error vector| of the interpolated DWM07 wind vs direct): grid lat 5 deg x lon 15 deg x LST 1 h with local cubic interpolation max 13.6 / p95 4.1 m/s (linear 44.8 / 18.8); 2.5 x 15 x 1 cubic 10.0 / 1.5; 2.5 x 10 x 0.5 cubic 1.9 / 0.4 (4M rows, rejected for size); 1 x 5 x 0.5 cubic 0.5 / 0.1. One-axis studies on the v1 grid: DWM07 varies by <= 5.5e-4 m/s between 180 and 230 km (height-constant), and the 8 v1 doy nodes with trigonometric interpolation reproduce its seasonal (subsolar-point) dependence within 0.4 m/s, while doy 1 vs 172 differ by up to 118 m/s. Chosen: lat 5 deg (37) x lon 15 deg (24) x LST 1 h (24) x the 8 v1 doy nodes x 4 scenarios = 681,984 rows at one altitude (DIST_ALT_KM). The joint error is measured at build time (interpolation_validation).",
+  "interpolation": {
+   "quantity": "DWM07 disturbance wind components = HWM14 total - quiet (linear values)",
+   "alt_km": "none: evaluated at DIST_ALT_KM; height-constancy over the v1 altitude nodes measured at build time",
+   "lat_deg": "local cubic Lagrange (4 nearest of 37 nodes, 5 deg step, clipped at the ends)",
+   "lon_deg": "periodic local cubic Lagrange (24 nodes, 15 deg step)",
+   "lst_h": "periodic local cubic Lagrange (24 nodes, 1 h step)",
+   "doy": "trigonometric interpolation, period 365 d, 8 integer-day nodes nearest to 1 + k*365/8; doy is warped piecewise-linearly onto the equispaced positions (<= 0.5 d) so nodes are reproduced exactly",
+   "scenario": "none (discrete)"
+  },
+  "altitude_independence_check": {
+   "doy": 1.0,
+   "altitudes_km": [
+    180.0,
+    195.0,
+    215.0,
+    230.0
+   ],
+   "n_points_per_scenario": 21312,
+   "max_abs_diff_vs_first_altitude_m_s": {
+    "ECSS_LT_LOW": 3.15e-05,
+    "ECSS_LT_MODERATE": 0.000184,
+    "ECSS_LT_HIGH": 0.0002978,
+    "ECSS_ST_HIGH": 0.0006675
+   },
+   "tolerance_m_s": 0.01
+  },
+  "check_subset": {
+   "stride": 97,
+   "n_rows": 7031,
+   "sha256": "18e08c502dcf6d434dc818976c4c088d41061b28273248cfc9332707627809c9"
+  }
+ },
+ "producer": {
+  "model": "HWM14 (quiet-time HWM14 + DWM07 disturbance winds)",
+  "version": "HWM14.123114",
+  "release": "31 Dec 2014 (README.txt VERSION HISTORY); hwm14.f90 header date July 8, 2014",
+  "reference": "Drob, D. P., et al. (2015), An update to the Horizontal Wind Model (HWM): The quiet time thermosphere, Earth and Space Science 2, 301-319, doi:10.1002/2014EA000089 (Software S1 = the .tgz above); DWM07: Emmert, J. T., et al. (2008), J. Geophys. Res. 113, doi:10.1029/2008JA013541",
+  "public_repository": "https://map.nrl.navy.mil/map/pub/nrl/HWM/HWM14/",
+  "package": {
+   "file": "HWM14_ess224-sup-0002-supinfo.tgz",
+   "url": "https://map.nrl.navy.mil/map/pub/nrl/HWM/HWM14/HWM14_ess224-sup-0002-supinfo.tgz",
+   "sha256": "4de451beeadef7b3ec3aa5b91129ea98866b9e7156cecf4be1343c33a6f57978",
+   "bytes": 216852
+  },
+  "files_sha256": {
+   "README.txt": "14b6e5e48d346ff034e2f6bfd7f26dc550945c9b90ad9661c7710e721ac89b15",
+   "hwm14.f90": "6bb4e031917b44c93201f0289ada8bf6f6d81eb3f292c89151c6937e2e7bf76e",
+   "hwm123114.bin": "6e445f8337c7efc815b7ff7f9f967d8a9a16b469d93df9c46e54930553beb906",
+   "dwm07b104i.dat": "f2b8eff002d55b0f6d49d202c73b7a9cb6685f2c6bb57f1291a2adc7aa07cf4f",
+   "gd2qd.dat": "6bb1f2384e30b409240ee92c32726ed2a3d73eb550c05e0969d1178032319804",
+   "checkhwm14.f90": "6a58eaafb065ffa9d34cfba409f865531b8cbe7c1a0ee274ca6c21fcbeb26091",
+   "makefile": "de8f0ddcfb1a24084342de89232c4407f6cf0436397cb7cd0561195753ab76cf",
+   "Check/gfortran.txt": "2b1d4f4f103be3531393c48bf32d034548babfb6c080549884cad9fd3a2c8652",
+   "Check/ifort.nopt.txt": "32f6e5b5a8b33ac8dffae73767296c36ae10105b613f43d01a6da27f7eb80bb5",
+   "Check/ifort.opt.txt": "e294e625690b22f0c988afc13a8556a583de95dc450d75ed3b0474001b4d0757"
+  },
+  "source_register": "docs/evidence/hwm14/hwm14_source_register_v1.json",
+  "compiler": "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "compiler_flags": [
+   "(none: gfortran default, -O0)"
+  ],
+  "nrl_reference_check": {
+   "driver": "checkhwm14.f90 (NRL test driver)",
+   "compile": [
+    "gfortran",
+    "checkhwm14.f90",
+    "hwm14.f90",
+    "-o",
+    "checkhwm14.exe"
+   ],
+   "output_sha256": "2b1d4f4f103be3531393c48bf32d034548babfb6c080549884cad9fd3a2c8652",
+   "comparisons": {
+    "Check/gfortran.txt": {
+     "identical_text": true,
+     "n_differing_lines": 0,
+     "n_numbers": 921,
+     "max_abs_numeric_diff": 0.0
+    },
+    "Check/ifort.nopt.txt": {
+     "identical_text": false,
+     "n_differing_lines": 18,
+     "n_numbers": 921,
+     "max_abs_numeric_diff": 0.0
+    },
+    "Check/ifort.opt.txt": {
+     "identical_text": false,
+     "n_differing_lines": 30,
+     "n_numbers": 921,
+     "max_abs_numeric_diff": 0.001
+    }
+   },
+   "passed": true,
+   "criterion": "output text identical to NRL Check/gfortran.txt (gfortran default flags); README.txt: compilers differ by ~1e-4 m/s, ifort -O0 and gfortran identical"
+  },
+  "driver": {
+   "source": "DRIVER_F90 in abep_sim/atmosphere_orbit_v2.py (project code)",
+   "sha256": "c9a8ba274bfc52a6debca9fe5a45c8250834dbe95e42b400435753d68ccea790",
+   "compile": [
+    "gfortran",
+    "hwm14.f90",
+    "hwm14_points.f90",
+    "-o",
+    "hwm14_points.exe"
+   ],
+   "precision": "HWM14 arguments and outputs are real(4); inputs are rounded to float32 by the Fortran list-directed read; outputs printed es16.8 then stored %.4f"
+  },
+  "runtime": {
+   "python": "3.11.15",
+   "numpy": "2.4.4",
+   "platform": "linux"
+  },
+  "kp_from_ap": {
+   "ECSS_LT_LOW": 0.0,
+   "ECSS_LT_MODERATE": 3.0,
+   "ECSS_LT_HIGH": 4.88888884,
+   "ECSS_ST_HIGH": 8.35416603
+  }
+ },
+ "year_independence_check": {
+  "iyd_years_compared": [
+   27,
+   31
+  ],
+  "max_abs_diff_m_s": 0.0,
+  "basis": "hwm14.f90 uses mod(iyd, 1000) only"
+ },
+ "node_reproduction": {
+  "stride": 7,
+  "max_abs_diff_m_s": {
+   "ECSS_LT_LOW": 0.0001,
+   "ECSS_LT_MODERATE": 0.0002,
+   "ECSS_LT_HIGH": 0.0003,
+   "ECSS_ST_HIGH": 0.0005
+  },
+  "expected": "<= DWM07 height variation (altitude_independence_check) + 1e-4 storage rounding"
+ },
+ "interpolation_validation": {
+  "seed": 20261002,
+  "n_points_per_scenario": 1500,
+  "method": "random points uniform in alt 180-230, lat -90..90, LST 0-24, lon 0-360, integer doy 1-365; accessor interpolation vs direct HWM14 (same build) at the same inputs. Relative flow: circular speed at the point, random horizontal direction; (b) speed / angle from interpolated vs direct winds",
+  "units": "m/s, deg",
+  "high_lat_split_deg": 60.0,
+  "by_scenario": {
+   "ECSS_LT_LOW": {
+    "u_mer_m_s": {
+     "max_abs": 5.2806,
+     "p95_abs": 1.1654
+    },
+    "u_zon_m_s": {
+     "max_abs": 3.4576,
+     "p95_abs": 1.4994
+    },
+    "u_mer_quiet_m_s": {
+     "max_abs": 5.282,
+     "p95_abs": 1.1622
+    },
+    "u_zon_quiet_m_s": {
+     "max_abs": 3.458,
+     "p95_abs": 1.5066
+    },
+    "vector_total": {
+     "max_abs": 5.5864,
+     "p95_abs": 1.8304
+    },
+    "vector_quiet": {
+     "max_abs": 5.5882,
+     "p95_abs": 1.8252
+    },
+    "vector_disturbance": {
+     "max_abs": 0.12234,
+     "p95_abs": 0.037154
+    },
+    "vector_total_abs_lat_le_60": {
+     "max_abs": 3.3962,
+     "p95_abs": 1.4879
+    },
+    "vector_total_abs_lat_gt_60": {
+     "max_abs": 5.5864,
+     "p95_abs": 2.228
+    },
+    "direct_wind_speed_max_m_s": 238.64,
+    "relative_speed_corot_wind_m_s": {
+     "max_abs": 5.5096,
+     "p95_abs": 1.3383
+    },
+    "flow_angle_corot_wind_deg": {
+     "max_abs": 0.025212,
+     "p95_abs": 0.010171
+    }
+   },
+   "ECSS_LT_MODERATE": {
+    "u_mer_m_s": {
+     "max_abs": 3.7912,
+     "p95_abs": 1.3138
+    },
+    "u_zon_m_s": {
+     "max_abs": 4.8076,
+     "p95_abs": 2.0769
+    },
+    "u_mer_quiet_m_s": {
+     "max_abs": 3.6156,
+     "p95_abs": 1.1731
+    },
+    "u_zon_quiet_m_s": {
+     "max_abs": 4.3774,
+     "p95_abs": 1.6387
+    },
+    "vector_total": {
+     "max_abs": 4.8838,
+     "p95_abs": 2.392
+    },
+    "vector_quiet": {
+     "max_abs": 4.5099,
+     "p95_abs": 1.9343
+    },
+    "vector_disturbance": {
+     "max_abs": 4.8447,
+     "p95_abs": 1.1565
+    },
+    "vector_total_abs_lat_le_60": {
+     "max_abs": 4.8838,
+     "p95_abs": 1.8359
+    },
+    "vector_total_abs_lat_gt_60": {
+     "max_abs": 4.8771,
+     "p95_abs": 2.8714
+    },
+    "direct_wind_speed_max_m_s": 357.4,
+    "relative_speed_corot_wind_m_s": {
+     "max_abs": 4.8425,
+     "p95_abs": 1.64
+    },
+    "flow_angle_corot_wind_deg": {
+     "max_abs": 0.033953,
+     "p95_abs": 0.01324
+    }
+   },
+   "ECSS_LT_HIGH": {
+    "u_mer_m_s": {
+     "max_abs": 4.1533,
+     "p95_abs": 1.4859
+    },
+    "u_zon_m_s": {
+     "max_abs": 7.5682,
+     "p95_abs": 2.4811
+    },
+    "u_mer_quiet_m_s": {
+     "max_abs": 2.9802,
+     "p95_abs": 1.2126
+    },
+    "u_zon_quiet_m_s": {
+     "max_abs": 3.8152,
+     "p95_abs": 1.5809
+    },
+    "vector_total": {
+     "max_abs": 7.5686,
+     "p95_abs": 2.7963
+    },
+    "vector_quiet": {
+     "max_abs": 4.614,
+     "p95_abs": 1.8554
+    },
+    "vector_disturbance": {
+     "max_abs": 7.0159,
+     "p95_abs": 2.1216
+    },
+    "vector_total_abs_lat_le_60": {
+     "max_abs": 7.5686,
+     "p95_abs": 2.3822
+    },
+    "vector_total_abs_lat_gt_60": {
+     "max_abs": 6.473,
+     "p95_abs": 3.4876
+    },
+    "direct_wind_speed_max_m_s": 401.44,
+    "relative_speed_corot_wind_m_s": {
+     "max_abs": 7.4595,
+     "p95_abs": 2.0375
+    },
+    "flow_angle_corot_wind_deg": {
+     "max_abs": 0.052199,
+     "p95_abs": 0.014232
+    }
+   },
+   "ECSS_ST_HIGH": {
+    "u_mer_m_s": {
+     "max_abs": 8.204,
+     "p95_abs": 2.6943
+    },
+    "u_zon_m_s": {
+     "max_abs": 14.269,
+     "p95_abs": 4.0394
+    },
+    "u_mer_quiet_m_s": {
+     "max_abs": 5.0687,
+     "p95_abs": 1.2266
+    },
+    "u_zon_quiet_m_s": {
+     "max_abs": 3.5601,
+     "p95_abs": 1.5633
+    },
+    "vector_total": {
+     "max_abs": 14.355,
+     "p95_abs": 4.5573
+    },
+    "vector_quiet": {
+     "max_abs": 5.5173,
+     "p95_abs": 1.8859
+    },
+    "vector_disturbance": {
+     "max_abs": 14.047,
+     "p95_abs": 4.5089
+    },
+    "vector_total_abs_lat_le_60": {
+     "max_abs": 14.355,
+     "p95_abs": 4.4303
+    },
+    "vector_total_abs_lat_gt_60": {
+     "max_abs": 9.3451,
+     "p95_abs": 4.6561
+    },
+    "direct_wind_speed_max_m_s": 579.62,
+    "relative_speed_corot_wind_m_s": {
+     "max_abs": 13.744,
+     "p95_abs": 3.2293
+    },
+    "flow_angle_corot_wind_deg": {
+     "max_abs": 0.086289,
+     "p95_abs": 0.023171
+    }
+   }
+  }
+ },
+ "check_subset": {
+  "stride": 97,
+  "n_rows": 1204,
+  "sha256": "4e00e2a7db2291f02428f890b69fa84450d710a8f15beed4eeeda8c3ad3298a1"
+ }
+}
