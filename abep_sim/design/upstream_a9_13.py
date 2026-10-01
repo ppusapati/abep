@@ -551,12 +551,11 @@ def reference_drag_fn(case_id: str, *, intake_projected_area_m2: float, intake_c
     def fn(st: Mapping) -> dict:
         if velocity_key not in st:
             raise A913RuleError(f"state {st.get('state_id')!r} carries no {velocity_key!r} (relative speed); use "
-                                "the orbit-resolved state set (orbit_states accessor)")
+                                "atmosphere_orbit.orbit_states")
         r = srd.reference_drag(case_id, rho_kg_m3=st["rho_kg_m3"], v_rel_m_s=st[velocity_key],
                                intake_projected_area_m2=intake_projected_area_m2, intake_cd=intake_cd,
                                intake_source=intake_source,
-                               atmosphere_state={"source": "orbit-resolved state (orbit_states accessor)",
-                                                "state_id": st["state_id"]},
+                               atmosphere_state={"source": "abep_sim.atmosphere_orbit", "state_id": st["state_id"]},
                                intake_accounting=intake_accounting)
         return {"value_N": r["D_total_N"], "status": VALUE_REFERENCE, "source": f"spacecraft_reference_drag {case_id}",
                 "state_id": st["state_id"], "freeze_status": r["freeze_status"], "flags": r["flags"]}
