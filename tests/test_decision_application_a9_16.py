@@ -318,7 +318,11 @@ def test_matrix_covers_every_decision_id_once():
     ids = [(e["decision"], e["question_id"]) for e in MXDOC["entries"]]
     assert len(ids) == len(set(ids))
     want = {(k, q) for k in L.ORDER if k != "A9.15" for q in L.decision_ids(k)} | {("A9.15", "A9.15 governing_rule")}
-    assert set(ids) == want and len(want) == 136
+    later = {("A9.17", q) for q in ("WINDS", "ORBIT", "DATA_SIZE", "SPUTTER", "RFP", "PERF")} | \
+        {("A9.18", q) for q in ("GOLDEN", "PERF_RERUN")}
+    assert set(MX.LATER_APPS) == later
+    want |= later
+    assert set(ids) == want and len(want) == 136 + 8
     for e in MXDOC["entries"]:
         assert e["status"] in MX.STATUSES
         for r in e["residual"]:
@@ -327,14 +331,38 @@ def test_matrix_covers_every_decision_id_once():
 
 
 def test_matrix_status_classes():
-    by = {e["question_id"]: e for e in MXDOC["entries"]}
+    """A9.16 finalize: step-2 (A9.9) and step-3 (A9.13) decisions are APPLIED only through a verified step-2 / step-3
+    application; the ones no commit applies are BLOCKED / PARTIAL with a stated reason (never PENDING after the steps)."""
+    by = {e["question_id"]: e for e in MXDOC["entries"] if e["decision"] not in ("A9.17", "A9.18")}
+    code_lanes = {"STEP2", "STEP3", "A9.13_DATA", "A9.17"}
     for q in L.decision_ids("A9.9"):
-        assert by[q]["status"] == "PENDING_STEP_2_MODEL_CHANGE"
+        e = by[q]
+        assert e["status"] in ("APPLIED", "PARTIAL"), q
+        assert any(a["lane"] == "STEP2" for a in e["applications"]), q
+    assert by["F1Q-04"]["status"] == "PARTIAL"
     for q in MX.STEP3:
-        assert by[q]["status"] == "PENDING_STEP_3_ARCHITECTURE" and L.decision_key_of(q) == "A9.13"
-    assert by["RUST-OQ-02"]["status"] == "PENDING_CI_CHANGE"
-    assert by["F0-OQ-01"]["status"] == by["F0-OQ-02"]["status"] == "BLOCKED"
+        assert L.decision_key_of(q) == "A9.13"
+        e = by[q]
+        if q in MX.STEP3_NOT_APPLIED:
+            assert e["status"] == "BLOCKED" and e["status_reason"], q
+        elif q in MX.STEP3_PARTIAL:
+            assert e["status"] == "PARTIAL", q
+        else:
+            assert e["status"] == "APPLIED", q
+            assert any(a["lane"] in code_lanes for a in e["applications"]), q
+    for e in MXDOC["entries"]:
+        assert e["status"] not in ("PENDING_STEP_2_MODEL_CHANGE", "PENDING_STEP_3_ARCHITECTURE", "PENDING_CI_CHANGE")
+        assert all(r["status"] not in ("PENDING_STEP_2_MODEL_CHANGE", "PENDING_STEP_3_ARCHITECTURE")
+                   for r in e["residual"])
+    assert by["RUST-OQ-02"]["status"] == "APPLIED"
+    assert any(a["artifact"] == ".github/workflows/rust-parity.yml" for a in by["RUST-OQ-02"]["applications"])
+    assert by["F0-OQ-01"]["status"] == by["F0-OQ-02"]["status"] == "APPLIED"
+    assert any("PERF_RERUN" in r["where"] for r in by["F0-OQ-02"]["residual"])
     assert by["RUST-OQ-01"]["status"] == "APPLIED"
+    later = {(e["decision"], e["question_id"]): e for e in MXDOC["entries"] if e["decision"] in ("A9.17", "A9.18")}
+    assert later[("A9.18", "PERF_RERUN")]["status"] == "BLOCKED"
+    assert later[("A9.18", "GOLDEN")]["status"] == "APPLIED"
+    assert any("golden_v2.json" in a["record_locations"] for a in later[("A9.18", "GOLDEN")]["applications"])
     for q in L.A915_AMENDED:
         assert by[q]["amended_by_a9_15"]
     assert by["A9.15 governing_rule"]["status"] == "APPLIED"
@@ -352,7 +380,12 @@ def test_matrix_applications_are_verifiable():
             assert (ROOT / a["artifact"]).exists(), a["artifact"]
             assert re.fullmatch(r"[0-9a-f]{40}", a["commit"]), a
             commits.add(a["commit"])
-            if a["status"] == "APPLIED" and a["lane"] != "INTEGRATION" and e["decision"] != "A9.15":
+            if a["status"] != "APPLIED" or a["lane"] == "INTEGRATION":
+                continue
+            if a["lane"] in ("STEP2", "STEP3", "A9.13_DATA", "A9.17", "A9.18"):
+                text = (ROOT / a["artifact"]).read_text(encoding="utf-8")
+                assert a["record_locations"] and all(t in text for t in a["record_locations"]), (e["question_id"], a)
+            elif e["decision"] != "A9.15":
                 assert MX._locations(_j(a["artifact"]), e["question_id"]), (e["question_id"], a["artifact"])
     for c in commits:
         r = subprocess.run(["git", "-C", str(ROOT), "cat-file", "-e", c + "^{commit}"], capture_output=True)
@@ -374,7 +407,11 @@ def test_matrix_repair_lane_truthful_statuses():
     PARTIAL (rule recorded, point not selected); ICPQ-10 / OQ-A910-06 / P3Q-01 carry the repair-lane applications and
     no 'outside the allowed paths' residual; COR-04 (F7 / F8 not regenerated) is stated."""
     by = {e["question_id"]: e for e in MXDOC["entries"]}
-    assert by["OQ-F4-03"]["status"] == by["OQ-F78-02"]["status"] == "PENDING_STEP_3_ARCHITECTURE"
+    # A9.16 finalize: S6.12 / S6.16 are applied in the step-3 design-layer code; their F-lane record annotations stay
+    # an explicit residual until the finalize design lane regenerates the records
+    for q in ("OQ-F4-03", "OQ-F78-02"):
+        assert by[q]["status"] == "APPLIED"
+        assert any(r["status"] == "PENDING_FINALIZE_DESIGN_REGEN" for r in by[q]["residual"]), q
     assert by["F5-OQ-02"]["status"] == "PARTIAL"
     assert any("NOT_SELECTED_PENDING_FEMM" in r["what"] for r in by["F5-OQ-02"]["residual"])
     for q in ("ICPQ-10", "OQ-A910-06", "P3Q-01", "P1Q-19", "OQ-RFQV2-10", "P4-OQ-01"):
@@ -385,4 +422,6 @@ def test_matrix_repair_lane_truthful_statuses():
     assert re.fullmatch(r"[0-9a-f]{40}", MXDOC["repair_commit"])
     fixes = {f["id"]: f["what"] for f in MXDOC["repair_fixes"]}
     assert set(fixes) >= {"COR-01", "COR-02", "COR-03", "COR-04", "COR-05"} and "2-minute" in fixes["COR-04"]
-    assert "STALE" not in by["F0-OQ-01"]["status_reason"] and "CURRENT again" in by["F0-OQ-01"]["status_reason"]
+    f0 = by["F0-OQ-01"]
+    assert f0["status"] == "APPLIED" and any(
+        a["artifact"].endswith("dedicated_baseline_2026_10_01/REGISTRATION.json") for a in f0["applications"])
