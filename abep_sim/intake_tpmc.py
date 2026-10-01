@@ -23,6 +23,7 @@ Momentum accounting (per unit incident flux):
 """
 from __future__ import annotations
 import math
+import numbers
 from dataclasses import dataclass
 import numpy as np
 from .constants import K_B, AMU
@@ -44,6 +45,50 @@ class IntakeGeometry:
     filter_open_frac: float = 0.7
     filter_transmission: float = 0.6   # thermal Clausing factor of the filter element
     filter_mass_per_m2: float = 0.8
+
+
+# --- input validation (owner decision A9.9 S2.5: MCC-05 / MCC-06 / MCC-07) -----------------------------------------
+# Every check runs before any particle is sampled or traced (and before the caller's RNG stream is consumed). Invalid
+# input raises ValueError explicitly; nothing is clipped, coerced or silently replaced by a default model.
+SCATTERING_MODELS = ("maxwell", "cll")      # the only admitted wall-scattering kernels (explicitly selected, recorded)
+
+
+def _check_scattering(scattering) -> str:
+    """MCC-06: an unrecognised wall-scattering model is an invalid configuration (never a silent Maxwell fallback)."""
+    if not isinstance(scattering, str) or scattering not in SCATTERING_MODELS:
+        raise ValueError(f"intake_tpmc: unknown wall-scattering model {scattering!r}; admitted models are "
+                         f"{SCATTERING_MODELS} (exact, case-sensitive; no fallback)")
+    return scattering
+
+
+def _check_hit_budget(name: str, value) -> int:
+    """MCC-05: hit budgets must be positive integers (a budget < 1 would never advance the trace loop)."""
+    if isinstance(value, bool) or not isinstance(value, numbers.Integral) or int(value) < 1:
+        raise ValueError(f"intake_tpmc: {name} must be a positive integer (>= 1), got {value!r}")
+    return int(value)
+
+
+def _check_unit_interval(name: str, value) -> float:
+    """MCC-07: accommodation coefficients must be finite and inside [0, 1] (rejected, never clipped)."""
+    if isinstance(value, bool) or not isinstance(value, numbers.Real):
+        raise ValueError(f"intake_tpmc: {name} must be a finite real number in [0, 1], got {value!r}")
+    x = float(value)
+    if not math.isfinite(x) or x < 0.0 or x > 1.0:
+        raise ValueError(f"intake_tpmc: {name} must be finite and inside [0, 1], got {value!r}")
+    return x
+
+
+def _check_accommodation(scattering: str, alpha, alpha_n=None, alpha_t=None):
+    """Validate the accommodation inputs for the selected kernel. Maxwell: alpha is the diffuse fraction (a
+    probability). CLL: alpha_n / alpha_t (each defaulting to alpha when None, as before) are the CLL coefficients."""
+    if scattering == "cll":
+        a_n = _check_unit_interval("CLL alpha_n" if alpha_n is not None else "CLL alpha (used as alpha_n)",
+                                   alpha if alpha_n is None else alpha_n)
+        a_t = _check_unit_interval("CLL alpha_t" if alpha_t is not None else "CLL alpha (used as alpha_t)",
+                                   alpha if alpha_t is None else alpha_t)
+        return a_n, a_t
+    _check_unit_interval("Maxwell alpha (diffuse fraction)", alpha)
+    return None, None
 
 
 def _drifting_maxwellian(rng, n, V, theta, T, m):
@@ -80,7 +125,10 @@ def _diffuse(rng, n, T_w, m, normal):
 
 
 def _cll(rng, v_in, normal, T_w, m, alpha_n, alpha_t):
-    """Cercignani-Lampis-Lord kernel (Lord 1991 sampling). normal points into the gas."""
+    """Cercignani-Lampis-Lord kernel (Lord 1991 sampling). normal points into the gas.
+    alpha_n / alpha_t must be finite and inside [0, 1] (MCC-07: rejected before sampling, never clipped)."""
+    _check_unit_interval("CLL alpha_n", alpha_n)
+    _check_unit_interval("CLL alpha_t", alpha_t)
     n = len(v_in)
     vmp = math.sqrt(2 * K_B * T_w / m)
     vn = (v_in * normal).sum(1)                         # negative (into wall)
@@ -101,7 +149,16 @@ def trace_channel(rng, v0, R, L, alpha, T_w, m, max_hits=200, scattering="maxwel
     """Trace molecules from the entrance plane through a cylindrical channel of radius R, length L.
     Returns (collected mask, final velocities, wall hits, back mask, unresolved fraction).
     Molecules still inside after the hit budget are NOT counted as collected: the budget doubles (to max_hits_cap)
-    until the unresolved fraction is <= unresolved_tol; any remainder is reported, never assigned."""
+    until the unresolved fraction is <= unresolved_tol; any remainder is reported, never assigned.
+    Inputs are validated before tracing (A9.9 S2.5): max_hits and max_hits_cap positive integers (MCC-05);
+    scattering exactly 'maxwell' or 'cll' (MCC-06); accommodation finite and inside [0, 1] (MCC-07)."""
+    scattering = _check_scattering(scattering)
+    max_hits = _check_hit_budget("max_hits", max_hits)
+    max_hits_cap = _check_hit_budget("max_hits_cap", max_hits_cap)
+    _check_accommodation(scattering, alpha, alpha_n, alpha_t)
+    if isinstance(unresolved_tol, bool) or not isinstance(unresolved_tol, numbers.Real) \
+            or not math.isfinite(float(unresolved_tol)) or float(unresolved_tol) < 0.0:
+        raise ValueError(f"intake_tpmc: unresolved_tol must be finite and >= 0, got {unresolved_tol!r}")
     n = len(v0)
     r = R * np.sqrt(rng.uniform(0, 1, n)); ph = rng.uniform(0, 2 * math.pi, n)
     p = np.stack([r * np.cos(ph), r * np.sin(ph), np.zeros(n)], axis=1)
@@ -149,19 +206,27 @@ def trace_channel(rng, v0, R, L, alpha, T_w, m, max_hits=200, scattering="maxwel
     return collected, v, hits, back, float(alive.mean())
 
 
+K_BACK_SCATTERING = "maxwell"    # kernel of the thermal back-trace (unchanged behaviour, now explicit and recorded)
+
+
 def clausing_transmission(rng, R, L, alpha, T_w, m, n=20000):
-    """Thermal molecules entering from the plenum side: fraction transmitted to the front (K_back)."""
+    """Thermal molecules entering from the plenum side: fraction transmitted to the front (K_back).
+    The back-trace uses the Maxwell kernel (explicitly selected; recorded as K_back_scattering by intake_response)."""
+    _check_accommodation("maxwell", alpha)
     vth = math.sqrt(K_B * T_w / m)
     # flux-weighted cosine entry from the back plane, travelling toward the front (negative z here -> flip)
     normal = np.tile(np.array([0, 0, 1.0]), (n, 1))
     v0 = _diffuse(rng, n, T_w, m, normal)
-    collected, _, _, _, unres = trace_channel(rng, v0, R, L, alpha, T_w, m)
+    collected, _, _, _, unres = trace_channel(rng, v0, R, L, alpha, T_w, m, scattering=K_BACK_SCATTERING)
     return float(collected.mean())
 
 
 def intake_response(geom: IntakeGeometry, atm: dict, alpha: float, theta_deg: float = 0.0,
                     n: int = 30000, seed: int = 0, scattering: str = "maxwell", species_mass: float | None = None) -> dict:
-    """eta_c, C_D, K_back, passive compression ratio, mass, for one geometry/surface/incidence."""
+    """eta_c, C_D, K_back, passive compression ratio, mass, for one geometry/surface/incidence.
+    scattering must be 'maxwell' or 'cll' (no fallback); alpha must be finite in [0, 1]; both checked before sampling."""
+    scattering = _check_scattering(scattering)
+    _check_accommodation(scattering, alpha)
     rng = np.random.default_rng(seed)
     m = species_mass or atm["m_mean"]; V = atm.get("V_rel", atm["V"]); T = atm["T"]
     R = geom.d_mm * 1e-3 / 2; L = geom.L_over_d * geom.d_mm * 1e-3
@@ -205,6 +270,7 @@ def intake_response(geom: IntakeGeometry, atm: dict, alpha: float, theta_deg: fl
     m_int = (m_sub + m_coat) * (1 + geom.support_mass_frac) + (geom.filter_mass_per_m2 * geom.area_m2 if geom.filter else 0.0)
     return {"eta_c": eta_c, "C_D": C_D, "K_back": K_back, "CR_passive": CR_passive, "eta_open": eta_open,
             "unresolved_fraction": unresolved, "converged": unresolved <= 1e-3, "scattering": scattering,
+            "K_back_scattering": K_BACK_SCATTERING,
             "mean_wall_hits": float(hits.mean()), "mass_kg": m_int, "alpha": alpha, "theta_deg": theta_deg,
             "L_over_d": geom.L_over_d, "phi": geom.phi, "d_mm": geom.d_mm}
 
@@ -213,6 +279,7 @@ def response_surface(atm: dict, L_over_d=(3, 5, 10, 20), phis=(0.8, 0.9), alphas
                      thetas=(0.0, 2.0, 5.0), n=15000, area_m2=0.5, species=None, scattering="maxwell"):
     """species: None -> mean molecular mass; otherwise a tuple like ("O","N2","O2") -> one surface per species
     (column 'species'), recombined downstream by mass fraction."""
+    scattering = _check_scattering(scattering)
     import itertools, pandas as pd
     from .constants import M_SPECIES
     rows = []

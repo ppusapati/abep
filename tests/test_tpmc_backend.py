@@ -230,9 +230,11 @@ def test_check_fails_on_source_drift(monkeypatch):
 
 
 def test_div04_max_hits_cap_documented_and_refused_for_rust():
-    """RUST-02: max_hits_cap = 0 runs in the reference; backend='rust' refuses it with a correct message."""
+    """RUST-02: backend='rust' refuses max_hits_cap = 0 with a correct message. Since A9.9 S2.5 (MCC-05) the reference
+    refuses it too (hit budgets must be positive integers), so the DIV-04 divergence is closed on the reference side."""
     v0 = REF._flux_weighted_entry(np.random.default_rng(3), 50, ATM["V"], 0.0, ATM["T"], M)
-    TB.trace_channel(np.random.default_rng(4), v0, R, 0.05, 0.5, 350.0, M, max_hits_cap=0)
+    with pytest.raises(ValueError, match="max_hits_cap"):
+        TB.trace_channel(np.random.default_rng(4), v0, R, 0.05, 0.5, 350.0, M, max_hits_cap=0)
     with pytest.raises(ValueError, match="DIV-04"):
         TB.trace_channel(np.random.default_rng(4), v0, R, 0.05, 0.5, 350.0, M, max_hits_cap=0, backend="rust")
     rep = json.load(open(REPORT))

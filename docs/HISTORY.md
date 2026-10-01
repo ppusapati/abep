@@ -2475,3 +2475,26 @@ at the 300 cm² bracket end 0.088 Pa; also all p_level 0.02 states). These are n
 benchmarks are carried unchanged; whether such results should be refused outright is an owner question.
 Golden impact: none (`python -m abep_sim.golden check` OK; converged numerics bit-identical, regression-tested against the
 pre-change loops in `tests/test_gaspath_convergence_g03_g05.py`).
+
+## 2026-10-01 — A9.9 S2.5 (F9-OQ-04): MCC-05/06/07 intake_tpmc input validation
+
+Owner decision A9.9 S2.5 (`docs/decisions/OD_2026_10_01_A9_9_S2_MODEL_CHANGE_OWNER_DECISIONS.md`, item 5; findings Rust
+parity DIV-01..DIV-04). `abep_sim/intake_tpmc.py` now validates its inputs before any particle is sampled or traced (the
+caller's RNG stream is not consumed on refusal); invalid input raises `ValueError`, nothing is clipped or defaulted.
+- MCC-05: `trace_channel` `max_hits` and `max_hits_cap` must be positive integers (bool, float, ≤ 0 rejected), so
+  `max_hits < 1` no longer loops forever; `unresolved_tol` must be finite and ≥ 0. `max_hits_cap = 0` (previously
+  accepted, DIV-04) is now refused by the reference as well; `tests/test_tpmc_backend.py::test_div04_*` updated accordingly.
+- MCC-06: `scattering` must be exactly `"maxwell"` or `"cll"` in `trace_channel`, `intake_response` and
+  `response_surface`; any other value (including `"Maxwell"`) raises instead of silently tracing Maxwell. The thermal
+  back-trace in `clausing_transmission` now selects Maxwell explicitly (`K_BACK_SCATTERING`, same behaviour as before),
+  and `intake_response` records it as `K_back_scattering` next to `scattering`.
+- MCC-07: accommodation coefficients must be finite and inside [0, 1]: CLL `alpha_n` / `alpha_t` (each defaulting to
+  `alpha`, as before) checked in `trace_channel` and again at the `_cll` kernel entry; the Maxwell diffuse fraction
+  `alpha` likewise. NaN / ±inf / out-of-range values are rejected, never clipped (the clip in `intake.collection` on the
+  frozen-surface path is unchanged and outside this change).
+Valid-input numerics are bit-identical (checked against the pre-change module for Maxwell and CLL `intake_response` and
+`trace_channel` cases); frozen `intake_surface_v1` untouched. Tests: `tests/test_intake_tpmc_input_validation.py`.
+Golden impact: none (`python -m abep_sim.golden check` OK). Downstream: the A9.7 Rust parity records pin the reference
+sha256 (`docs/performance/abep_core/parity_prereg_v1.json` / `parity_report_v1.json`), so `scripts/verify_abep_core.py
+--check` and two `tests/test_tpmc_backend.py` hash assertions now refuse (NOT_ADMITTED_BUILD) until those records are
+re-registered by their owning step; the `abep_sim/design/tpmc_backend.py` DIV-01..04 docstring is now historical.
