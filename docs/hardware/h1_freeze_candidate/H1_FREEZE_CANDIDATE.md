@@ -433,10 +433,10 @@ Consumed verified deliverables (sha256 at build time; `--check` reports drift):
 * `docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json` `b428565299c1c41487d9ffa50c174986d2d52c544539f89ca21b7bdbc2ae44fa`
 * `schemas/interfaces/icp_neutralizer_icd_v1.json` `8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c`
 * `docs/experiments/hardware/hardware_requirements_v1.json` `0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0`
-* `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json` `43910a675a82d00b977768b0e31606e9c98fca2eaf7e8e0bffe47b3f42f20ce8`
-* `docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json` `42ef3a3e2e3aea09bbf852520fc9c21c9d6c9c8a5c134d7e5360b429ee8afa06`
+* `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json` `9e0f1764a813ee18d4be4528db2e15b04d6ff10654e8522d3f1c27a5a4fb48b9`
+* `docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json` `7bb0ae9c3f55c827fd6bf68e08b978c0e609332dc63185f6196eb0d5f72cc3d9`
 * `docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json` `c1a7875fdd0e27b3425cc02ba915ab61bcf9760ac032d294b69a887a91e78459`
-* `docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json` `2bfed6ea9efaad075157ff3a4f757dd07bece7d6f71d78fddc67de989b882db4`
+* `docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json` `e136734daea71fb362f0481ebc0db52e6f34d70626c14389eff940ba84e234f9`
 * `docs/budgets/owner_decisions/owner_questions_state_v4.json` `6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67`
 * `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` `f082a6d3eabf07485d447ace927f69e8980acbcc8eff54d0cd21f196e20a0afe`
 * `hallthruster_bridge/ensemble/transport_ensemble_v0.json` `2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b`

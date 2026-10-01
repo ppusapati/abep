@@ -2381,7 +2381,7 @@
       "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
       "locator": "items[id=P3-K-02]",
       "state": "TBD",
-      "detail": "conductance KC-1 carrier <-> H-1 (through the stand / moving platform)"
+      "detail": "conductance KC-1 carrier <-> H-1 (through the moving thrust platform)"
      },
      {
       "kind": "P3_INPUT",
