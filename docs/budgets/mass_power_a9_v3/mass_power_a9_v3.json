@@ -3,7 +3,7 @@
  "id": "mass_power_a9_v3",
  "lane": "a9_16_step1_mass_power_xe_v3",
  "directive": "owner instruction 2026-10-01 'continue implementing them sequentially' (A9.16 step 1)",
- "title": "A9 mass + power integration v3: one MEV reading, 20 % system margin, rebased AL-04 / AL-07 / AL-08, controls / harness split, decided mappings, LOADED Xe, evidence-based dry / wet vs 40 kg",
+ "title": "A9 mass + power integration v3: one MEV reading, 20 % system margin, rebased AL-04 / AL-07 / AL-08, controls / harness split, decided mappings, LOADED Xe, evidence-based dry / wet vs 40 kg; A9.19 / A9.20: single flight configuration hall_icp_neutralizer, Xe contingency / emergency, C1 ground-only",
  "status": "DRAFT_DECISIONS_APPLIED_PENDING_INTEGRATION_VERIFICATION",
  "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
  "date": "2026-10-01",
@@ -21,6 +21,10 @@
   "rule": "v2 immutable history: read as data, never edited"
  },
  "configurations": {
+  "hall_icp_neutralizer": "FLIGHT CONFIGURATION (A9.19: one Hall accelerator + one RF/ICP electron-source / neutralizer, cathodeless / electrodeless, for both atmospheric gases and xenon; two supply modes with separate tanks / paths - ambient atmospheric primary, xenon contingency / emergency; no conventional hollow cathode). A9 investigation status unchanged: PRIMARY INVESTIGATION HYPOTHESIS (A9; A9.2 status INVESTIGATION_HYPOTHESIS)",
+  "hall_c1_reference": "RETIRED as a candidate flight configuration by A9.19; C1 is a GROUND-ONLY laboratory reference (A9.20: H-1 I_d,max,H1,Ar characterization per A9.10 S3.5; bench control in the C1-vs-ICP comparison); never flight hardware, never in the flight mass / power / Xe budgets; its pre-A9.19 column is kept only as labelled history (retired_flight_configuration_history)"
+ },
+ "configurations_pre_a9_19": {
   "hall_icp_neutralizer": "PRIMARY INVESTIGATION HYPOTHESIS (A9; A9.2 status INVESTIGATION_HYPOTHESIS)",
   "hall_c1_reference": "CONTROL / FALLBACK (A9; A9.2 status CONTROL_FALLBACK); separate column, never combined with the ICP in one flight installation (A9.1 OQ-A902-04)"
  },
@@ -33,7 +37,7 @@
  },
  "what_this_is_not": [
   "not a performance prediction (no thrust, discharge current, electron current, efficiency or plasma state)",
-  "not an architecture selection: no winner between hall_icp_neutralizer and hall_c1_reference",
+  "not an architecture ranking: the single flight configuration hall_icp_neutralizer is the owner's A9.19 decision, not a result of this budget; the retired hall_c1_reference column is history, never compared as a flight candidate",
   "not a CBE: every value is an owner MEV allocation, an owner-stated MEV planning floor or TBD",
   "not a margin relaxation: the 40 kg exceedance is reported with the redesign need (MQ-10)",
   "not a thermal, RF-rating, anode or ICP-capacity PASS; not a P_bus demonstration (every load TBD)"
@@ -106,6 +110,20 @@
     "json_sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
     "md": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
     "md_sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903"
+   },
+   {
+    "key": "A9.19",
+    "json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+    "json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+    "md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+    "md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749"
+   },
+   {
+    "key": "A9.20",
+    "json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+    "json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+    "md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+    "md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c"
    }
   ],
   "bus_boundary_module": {
@@ -169,24 +187,47 @@
    "citation_status": "REGISTERED_CLAUSE (AG-15 closure is the owner's; requirement_frozen stays false in the RVM, RVM-10)",
    "note": "the A9.15 rules text 'owner-stated RFP content, pending RFP registration' is the owner's wording as decided before the registration and is kept verbatim; the propellant content is now cited to the registered clauses above"
   },
+  "architecture": {
+   "hall_accelerators": 1,
+   "electron_source_neutralizer": "one RF/ICP electron-source/neutralizer (cathodeless/electrodeless) for both atmospheric gases and xenon",
+   "propellant_supply_modes": [
+    "ambient atmospheric propellant (primary)",
+    "xenon (contingency / emergency)"
+   ],
+   "conventional_hollow_cathode": "NONE in the thruster architecture",
+   "source": "A9.19 architecture (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)"
+  },
+  "xenon_role": {
+   "role": "CONTINGENCY_EMERGENCY",
+   "decision": "CONTINGENCY_AND_EMERGENCY - not a parallel/co-equal propellant; Xe capability is retained (the RFP requires the capability and describes the Xe input as 'an extra input system to take care any problems on board unforeseen problems', RFP-P17-05, with separate tanks RFP-P18-08), but its role is contingency",
+   "source": "A9.19 xenon_role (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+   "amends_a9_15": "the statements 'Xenon is an RFP-required system capability, not merely a contingency' and S9.10 'should not be weakened into a contingency interpretation' are superseded on the ROLE of Xe: Xe capability stays required (two separate supply modes/tanks), Xe is the contingency/emergency mode",
+   "rfp_clauses": [
+    "RFP-P17-05",
+    "RFP-P18-08"
+   ],
+   "al_08": "REQUIRED_RFP_XE_CAPABILITY, role CONTINGENCY_EMERGENCY"
+  },
+  "icp_feed_gas_baseline": "A9.1 unchanged: G-REUSE primary (m_Xe,ICP = 0), G-XE declared variant",
   "per_configuration": [
    {
     "configuration": "hall_icp_neutralizer",
     "AL-08": "REQUIRED_RFP_XE_CAPABILITY",
-    "xe_load": "REQUIRED_RFP_XE_CAPABILITY"
-   },
-   {
-    "configuration": "hall_c1_reference",
-    "AL-08": "REQUIRED_RFP_XE_CAPABILITY",
-    "xe_load": "REQUIRED_RFP_XE_CAPABILITY"
+    "xe_load": "REQUIRED_RFP_XE_CAPABILITY",
+    "xe_role": "CONTINGENCY_EMERGENCY",
+    "rfp_clauses": [
+     "RFP-P17-05",
+     "RFP-P18-08"
+    ],
+    "role_note": "Xe = contingency / emergency supply mode with its own tank / path feeding the same Hall accelerator and the same RF/ICP neutralizer (A9.19); capability required by the RFP"
    }
   ],
   "c1_xe_branch_now": {
-   "state": "PENDING_C1_NOT_SELECTED",
-   "in_AL08": null
+   "state": "NO_C1_XE_BRANCH_IN_FLIGHT (A9.19 / A9.20)",
+   "in_AL08": false
   },
   "al_c1_now": {
-   "state": "NOT_ALLOCATED_C1_NOT_SELECTED",
+   "state": "NOT_IN_FLIGHT_ARCHITECTURE_A9_19_A9_20",
    "kg": null
   }
  },
@@ -1111,7 +1152,7 @@
    "status": "TBD_OWNER (MPQ-01)",
    "freeze_point": "LOCK-1",
    "carried_from": null,
-   "v3_status": "decided: AL-C1 = selected C1 module CBE x 1.20, only when C1 is selected (MPQ-01)"
+   "v3_status": "RETIRED_FROM_FLIGHT (A9.19 / A9.20): no AL-C1 in the flight architecture; pre-A9.19 decision 'AL-C1 = selected C1 module CBE x 1.20, only when C1 is selected (MPQ-01)' is history"
   }
  ],
  "items_v3": [
@@ -1167,9 +1208,12 @@
    "evidence_class": null,
    "source": [
     "A9.14 MPQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-    "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
+    "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+    "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+    "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)"
    ],
-   "status": "NOT_ALLOCATED_C1_NOT_SELECTED (= selected C1 module CBE x 1.20 when selected)"
+   "status": "RETIRED_FROM_FLIGHT (A9.19 / A9.20): no AL-C1 in any flight roll-up; C1 is ground-only lab equipment",
+   "status_pre_a9_19": "NOT_ALLOCATED_C1_NOT_SELECTED (= selected C1 module CBE x 1.20 when selected)"
   },
   {
    "id": "MPV3-06",
@@ -1435,7 +1479,7 @@
    },
    {
     "line": "AL-07",
-    "name": "Hall PPU (incl. collector/bias supply; C1 heater/keeper/control electronics if C1 selected)",
+    "name": "Hall PPU (incl. collector/bias supply; no C1 electronics - C1 is ground-only, A9.19 / A9.20)",
     "row54_allocation_kg": 2.5,
     "allocation_source": [
      {
@@ -1465,10 +1509,12 @@
      "A9.14 MQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
      "A9.14 MQ-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
      "A9.14 MQ-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-     "A9.14 MPQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
+     "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+     "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)"
     ],
     "owner_mev_planning_floor_kg": 6.0,
     "rebase_rule": "6.0 kg MEV planning floor from the 5.0 kg lowest admissible PPU analog; replaced by the selected flight PPU CBE x 1.20; never covered by system margin",
+    "c1_electronics": "NOT_BOOKED: no C1 heater / keeper / control electronics in the flight AL-07 (A9.19 no hollow cathode; A9.20 C1 ground-only)",
     "value": {
      "value_kg": 6.0,
      "governs": "MEV_PLANNING_FLOOR",
@@ -1487,7 +1533,7 @@
    },
    {
     "line": "AL-08",
-    "name": "complete Xe storage/flow hardware: tank, regulator, valves, plumbing, mounting, thermal",
+    "name": "complete Xe storage/flow hardware: tank, regulator, valves, plumbing, mounting, thermal (REQUIRED_RFP_XE_CAPABILITY; role CONTINGENCY_EMERGENCY, A9.19)",
     "row54_allocation_kg": 1.5,
     "allocation_source": [
      {
@@ -1536,19 +1582,29 @@
      "A9.14 MQ-05 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
      "A9.14 MQ-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
      "A9.15 XA9Q-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
-     "A9.15 governing_rule (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
+     "A9.15 governing_rule (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+     "A9.19 xenon_role (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+     "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+     "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)"
     ],
     "owner_mev_planning_floor_kg": 6.0528,
     "rebase_rule": "complete Xe storage/flow hardware; 6.0528 kg MEV planning floor from the 5.044 kg incomplete CBE floor; quotations/design replace it",
     "c1_branch": {
-     "state": "PENDING_C1_NOT_SELECTED",
-     "in_AL08": null
+     "state": "NO_C1_XE_BRANCH_IN_FLIGHT (A9.19 / A9.20)",
+     "in_AL08": false
     },
     "rfp_required": {
      "configuration": "hall_icp_neutralizer",
      "AL-08": "REQUIRED_RFP_XE_CAPABILITY",
-     "xe_load": "REQUIRED_RFP_XE_CAPABILITY"
+     "xe_load": "REQUIRED_RFP_XE_CAPABILITY",
+     "xe_role": "CONTINGENCY_EMERGENCY",
+     "rfp_clauses": [
+      "RFP-P17-05",
+      "RFP-P18-08"
+     ],
+     "role_note": "Xe = contingency / emergency supply mode with its own tank / path feeding the same Hall accelerator and the same RF/ICP neutralizer (A9.19); capability required by the RFP"
     },
+    "xe_role": "CONTINGENCY_EMERGENCY",
     "value": {
      "value_kg": 6.0528,
      "governs": "MEV_PLANNING_FLOOR",
@@ -1635,449 +1691,6 @@
      ]
     },
     "evidence_class_of_value": "owner-allocation"
-   },
-   {
-    "line": "AL-HAR",
-    "name": "harness (row-60 rule until a routed harness exists; MQ-06)",
-    "row54_allocation_kg": null,
-    "allocation_source": [],
-    "evidence_floor_cbe_kg": null,
-    "floor_is_partial": null,
-    "floor_constituents": [],
-    "floor_arithmetic": null,
-    "cbe_kg": null,
-    "cbe_status": "TBD - no Vyovrinda design CBE exists yet",
-    "measured_kg": null,
-    "owner_answers_applied": [
-     "A9.14 MQ-06 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
-    ],
-    "allocation_status": "RULE: row 60 (5 % of nominal dry)",
-    "value": {
-     "value_kg": null,
-     "governs": "HARNESS_POLICY_ROW60 (computed in the roll-up)"
-    }
-   }
-  ],
-  "hall_c1_reference": [
-   {
-    "line": "AL-01",
-    "name": "intake/filter/duct",
-    "row54_allocation_kg": 3.5,
-    "allocation_source": [
-     {
-      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
-      "row": 54,
-      "covers_ids": [
-       "H27-Q7"
-      ],
-      "answer_sha256": "addfe38afdbd444fafdbc2cb6f75193bf2f90941d0361702061299ec3f232402"
-     }
-    ],
-    "evidence_floor_cbe_kg": null,
-    "floor_is_partial": null,
-    "floor_constituents": [],
-    "floor_arithmetic": "no verified evidence value exists for any constituent; comparison not possible",
-    "cbe_kg": null,
-    "cbe_status": "TBD - no Vyovrinda design CBE exists yet",
-    "measured_kg": null,
-    "owner_answers_applied": [
-     "A9.14 MQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
-    ],
-    "value": {
-     "value_kg": 3.5,
-     "governs": "ALLOCATION_MEV",
-     "candidates": [
-      {
-       "basis": "ALLOCATION_MEV",
-       "kg": 3.5
-      }
-     ]
-    },
-    "evidence_class_of_value": "owner-allocation"
-   },
-   {
-    "line": "AL-02",
-    "name": "compressor+drive",
-    "row54_allocation_kg": 5.5,
-    "allocation_source": [
-     {
-      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
-      "row": 54,
-      "covers_ids": [
-       "H27-Q7"
-      ],
-      "answer_sha256": "addfe38afdbd444fafdbc2cb6f75193bf2f90941d0361702061299ec3f232402"
-     }
-    ],
-    "evidence_floor_cbe_kg": null,
-    "floor_is_partial": null,
-    "floor_constituents": [],
-    "floor_arithmetic": "no verified evidence value exists for any constituent; comparison not possible",
-    "cbe_kg": null,
-    "cbe_status": "TBD - no Vyovrinda design CBE exists yet",
-    "measured_kg": null,
-    "owner_answers_applied": [
-     "A9.14 MQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
-    ],
-    "value": {
-     "value_kg": 5.5,
-     "governs": "ALLOCATION_MEV",
-     "candidates": [
-      {
-       "basis": "ALLOCATION_MEV",
-       "kg": 5.5
-      }
-     ]
-    },
-    "evidence_class_of_value": "owner-allocation"
-   },
-   {
-    "line": "AL-03",
-    "name": "plenum/feed",
-    "row54_allocation_kg": 1.0,
-    "allocation_source": [
-     {
-      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
-      "row": 54,
-      "covers_ids": [
-       "H27-Q7"
-      ],
-      "answer_sha256": "addfe38afdbd444fafdbc2cb6f75193bf2f90941d0361702061299ec3f232402"
-     }
-    ],
-    "evidence_floor_cbe_kg": null,
-    "floor_is_partial": null,
-    "floor_constituents": [],
-    "floor_arithmetic": "no verified evidence value exists for any constituent; comparison not possible",
-    "cbe_kg": null,
-    "cbe_status": "TBD - no Vyovrinda design CBE exists yet",
-    "measured_kg": null,
-    "owner_answers_applied": [
-     "A9.14 MQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
-    ],
-    "value": {
-     "value_kg": 1.0,
-     "governs": "ALLOCATION_MEV",
-     "candidates": [
-      {
-       "basis": "ALLOCATION_MEV",
-       "kg": 1.0
-      }
-     ]
-    },
-    "evidence_class_of_value": "owner-allocation"
-   },
-   {
-    "line": "AL-04",
-    "name": "Hall head+magnet (incl. anode heat-removal hardware, MPQ-02)",
-    "row54_allocation_kg": 3.0,
-    "allocation_source": [
-     {
-      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
-      "row": 54,
-      "covers_ids": [
-       "H27-Q7"
-      ],
-      "answer_sha256": "addfe38afdbd444fafdbc2cb6f75193bf2f90941d0361702061299ec3f232402"
-     }
-    ],
-    "evidence_floor_cbe_kg": 3.504,
-    "floor_is_partial": true,
-    "floor_constituents": [
-     {
-      "what": "MC-1 iron (H2-1 H21-24)",
-      "kg": 1.925,
-      "evidence_class": "model-derived",
-      "status": null
-     },
-     {
-      "what": "MC-1 copper (H2-1 H21-24)",
-      "kg": 1.579,
-      "evidence_class": "model-derived",
-      "status": null
-     },
-     {
-      "what": "channel ceramics, anode/distributor, body, fasteners",
-      "kg": null,
-      "evidence_class": null,
-      "status": "TBD - requires H-1 design masses (not supplied by A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: revises the H2 requirements; gives no design mass or drawing for this item; A9-10 re-evaluation))"
-     }
-    ],
-    "floor_arithmetic": "floor = 1.925 + 1.579 = 3.504 kg (magnetic parts only) > allocation 3.0 kg; gap at CBE = 0.504 kg; at row-57 MEV (x1.2) = 4.2048 kg, gap 1.2048 kg",
-    "cbe_kg": null,
-    "cbe_status": "TBD - no Vyovrinda design CBE exists yet",
-    "measured_kg": null,
-    "owner_answers_applied": [
-     "A9.14 MQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-     "A9.14 MQ-03 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-     "A9.14 MPQ-02 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
-    ],
-    "owner_mev_planning_floor_kg": 4.2048,
-    "rebase_rule": "AL-04 >= 1.20 x actual H-1 CBE once the design exists; 4.2048 kg is today's incomplete planning floor (magnetic parts only; channel/anode/body/fasteners TBD)",
-    "value": {
-     "value_kg": 4.2048,
-     "governs": "MEV_PLANNING_FLOOR",
-     "candidates": [
-      {
-       "basis": "ALLOCATION_MEV",
-       "kg": 3.0
-      },
-      {
-       "basis": "MEV_PLANNING_FLOOR",
-       "kg": 4.2048
-      }
-     ]
-    },
-    "evidence_class_of_value": "owner-stated MEV planning floor = 1.20 x analog / preliminary-design floor (not a CBE); constituent classes model-derived"
-   },
-   {
-    "line": "AL-07",
-    "name": "Hall PPU (incl. collector/bias supply; C1 heater/keeper/control electronics if C1 selected)",
-    "row54_allocation_kg": 2.5,
-    "allocation_source": [
-     {
-      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
-      "row": 54,
-      "covers_ids": [
-       "H27-Q7"
-      ],
-      "answer_sha256": "addfe38afdbd444fafdbc2cb6f75193bf2f90941d0361702061299ec3f232402"
-     }
-    ],
-    "evidence_floor_cbe_kg": 5.0,
-    "floor_is_partial": false,
-    "floor_constituents": [
-     {
-      "what": "lowest row-56-admissible measured PPU analog (SETS PPU, 100-500 W, secondary listing, verify)",
-      "kg": 5.0,
-      "evidence_class": "measured",
-      "status": null
-     }
-    ],
-    "floor_arithmetic": "floor = min(SETS 5.0, NG EM1 6.1, TAS Mk1 10.9) = 5.0 kg > allocation 2.5 kg; gap 2.5 kg (vs the H2-4 analog 6.1 kg: gap 3.6 kg). Widest scope-matched basket: Hall PPU 2.5 + controls/harness 1.0 = 3.5 kg < 5.0 kg, still below; adding RF generator/matching 1.5 kg (a function the analogs do not contain) gives 5.0 kg, equal to the lowest analog and below the H2-4 6.1 kg",
-    "cbe_kg": null,
-    "cbe_status": "TBD - no Vyovrinda design CBE exists yet",
-    "measured_kg": null,
-    "owner_answers_applied": [
-     "A9.14 MQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-     "A9.14 MQ-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-     "A9.14 MQ-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-     "A9.14 MPQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
-    ],
-    "owner_mev_planning_floor_kg": 6.0,
-    "rebase_rule": "6.0 kg MEV planning floor from the 5.0 kg lowest admissible PPU analog; replaced by the selected flight PPU CBE x 1.20; never covered by system margin",
-    "value": {
-     "value_kg": 6.0,
-     "governs": "MEV_PLANNING_FLOOR",
-     "candidates": [
-      {
-       "basis": "ALLOCATION_MEV",
-       "kg": 2.5
-      },
-      {
-       "basis": "MEV_PLANNING_FLOOR",
-       "kg": 6.0
-      }
-     ]
-    },
-    "evidence_class_of_value": "owner-stated MEV planning floor = 1.20 x analog / preliminary-design floor (not a CBE); constituent classes measured"
-   },
-   {
-    "line": "AL-08",
-    "name": "complete Xe storage/flow hardware: tank, regulator, valves, plumbing, mounting, thermal",
-    "row54_allocation_kg": 1.5,
-    "allocation_source": [
-     {
-      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
-      "row": 54,
-      "covers_ids": [
-       "H27-Q7"
-      ],
-      "answer_sha256": "addfe38afdbd444fafdbc2cb6f75193bf2f90941d0361702061299ec3f232402"
-     }
-    ],
-    "evidence_floor_cbe_kg": 5.044,
-    "floor_is_partial": true,
-    "floor_constituents": [
-     {
-      "what": "Xe tank low end (H2-7 H27-09; XS-XTA '<= 3.5 kg' catalogue, class assumed)",
-      "kg": 3.5,
-      "evidence_class": "inferred",
-      "status": null
-     },
-     {
-      "what": "Xe regulator low end (Moog XFC, H2-7 H27-11)",
-      "kg": 0.974,
-      "evidence_class": "inferred",
-      "status": null
-     },
-     {
-      "what": "Xe valves (H2-7 H27-12, 2 x (latch + PFCV))",
-      "kg": 0.57,
-      "evidence_class": "inferred",
-      "status": null
-     },
-     {
-      "what": "plumbing, mounting/thermal",
-      "kg": null,
-      "evidence_class": null,
-      "status": "TBD - requires Xe routing and tank mounting design (not supplied by A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: revises the H2 requirements; gives no design mass or drawing for this item; A9-10 re-evaluation))"
-     }
-    ],
-    "floor_arithmetic": "floor = 3.5 + 0.974 + 0.57 = 5.044 kg (= H2-7 ID-11 low end) > allocation 1.5 kg; gap 3.544 kg. Without any tank: 0.974 + 0.57 = 1.544 kg > 1.5 kg. A9 single-branch reading (A9B-10/11: 0.34 + 0.115 kg): 3.5 + 0.974 + 0.455 = 4.929 kg > 1.5 kg; without tank 1.429 kg, leaving 0.071 kg for tank, plumbing and mounting",
-    "cbe_kg": null,
-    "cbe_status": "TBD - no Vyovrinda design CBE exists yet",
-    "measured_kg": null,
-    "owner_answers_applied": [
-     "A9.14 MQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-     "A9.14 MQ-05 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-     "A9.14 MQ-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-     "A9.15 XA9Q-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
-     "A9.15 governing_rule (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
-    ],
-    "owner_mev_planning_floor_kg": 6.0528,
-    "rebase_rule": "complete Xe storage/flow hardware; 6.0528 kg MEV planning floor from the 5.044 kg incomplete CBE floor; quotations/design replace it",
-    "c1_branch": {
-     "state": "PENDING_C1_NOT_SELECTED",
-     "in_AL08": null
-    },
-    "rfp_required": {
-     "configuration": "hall_c1_reference",
-     "AL-08": "REQUIRED_RFP_XE_CAPABILITY",
-     "xe_load": "REQUIRED_RFP_XE_CAPABILITY"
-    },
-    "value": {
-     "value_kg": 6.0528,
-     "governs": "MEV_PLANNING_FLOOR",
-     "candidates": [
-      {
-       "basis": "ALLOCATION_MEV",
-       "kg": 1.5
-      },
-      {
-       "basis": "MEV_PLANNING_FLOOR",
-       "kg": 6.0528
-      }
-     ]
-    },
-    "evidence_class_of_value": "owner-stated MEV planning floor = 1.20 x analog / preliminary-design floor (not a CBE); constituent classes inferred"
-   },
-   {
-    "line": "AL-09",
-    "name": "controls / electronics / valve drivers / flight sensors (MQ-06 split; harness excluded)",
-    "row54_allocation_kg": null,
-    "allocation_source": [
-     {
-      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
-      "row": 54,
-      "covers_ids": [
-       "H27-Q7"
-      ],
-      "answer_sha256": "addfe38afdbd444fafdbc2cb6f75193bf2f90941d0361702061299ec3f232402"
-     }
-    ],
-    "evidence_floor_cbe_kg": null,
-    "floor_is_partial": null,
-    "floor_constituents": [],
-    "floor_arithmetic": "no verified evidence value exists for any constituent; comparison not possible",
-    "cbe_kg": null,
-    "cbe_status": "TBD - no Vyovrinda design CBE exists yet",
-    "measured_kg": null,
-    "owner_answers_applied": [
-     "A9.14 MQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-     "A9.14 MQ-06 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-     "A9.14 MQ-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
-    ],
-    "row54_combined_allocation_kg": 1.0,
-    "allocation_status": "TBD_OWNER (MPV3Q-01): row 54 gave 1.0 kg to controls+harness combined; MQ-06 splits the line but states no controls allocation; no number invented",
-    "value": {
-     "value_kg": null,
-     "governs": null
-    },
-    "evidence_class_of_value": null
-   },
-   {
-    "line": "AL-10",
-    "name": "structure/thermal (incl. ICP open-frame support/spacer, MPQ-02)",
-    "row54_allocation_kg": 2.5,
-    "allocation_source": [
-     {
-      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
-      "row": 54,
-      "covers_ids": [
-       "H27-Q7"
-      ],
-      "answer_sha256": "addfe38afdbd444fafdbc2cb6f75193bf2f90941d0361702061299ec3f232402"
-     }
-    ],
-    "evidence_floor_cbe_kg": null,
-    "floor_is_partial": null,
-    "floor_constituents": [],
-    "floor_arithmetic": "no verified evidence value exists for any constituent; comparison not possible",
-    "cbe_kg": null,
-    "cbe_status": "TBD - no Vyovrinda design CBE exists yet",
-    "measured_kg": null,
-    "owner_answers_applied": [
-     "A9.14 MQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-     "A9.14 MPQ-02 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
-    ],
-    "value": {
-     "value_kg": 2.5,
-     "governs": "ALLOCATION_MEV",
-     "candidates": [
-      {
-       "basis": "ALLOCATION_MEV",
-       "kg": 2.5
-      }
-     ]
-    },
-    "evidence_class_of_value": "owner-allocation"
-   },
-   {
-    "line": "AL-C1",
-    "name": "C1 module: cathode module, shield/mount, C1-specific getter/filter (MPQ-01 option c)",
-    "row54_allocation_kg": null,
-    "allocation_source": [],
-    "evidence_floor_cbe_kg": 0.2,
-    "floor_is_partial": true,
-    "floor_constituents": [
-     {
-      "what": "C1 cathode unit analog low end (A9B-C01)",
-      "kg": 0.2,
-      "evidence_class": "inferred",
-      "status": "PRELIMINARY (analog)"
-     },
-     {
-      "what": "C1 shield / O-isolation / mount (A9B-C02)",
-      "kg": null,
-      "evidence_class": null,
-      "status": "TBD - requires a flight C1 module design"
-     },
-     {
-      "what": "Xe cathode-line filter/getter (A9B-C05)",
-      "kg": null,
-      "evidence_class": null,
-      "status": "TBD - requires vendor/spec verification (row 51)"
-     }
-    ],
-    "floor_arithmetic": "floor = C1 cathode unit analog low end 0.2 kg (A9B-C01, H2-7 H27-16, inferred); shield/mount (A9B-C02) and filter/getter (A9B-C05) TBD; the C1 cathode Xe branch 0.285 kg (A9B-C04) is already inside the AL-08 floor (H2-7 H27-12 two-branch 0.57 kg) and C1 supplies (A9B-C03) inside the AL-07 PPU analogs: not added twice",
-    "cbe_kg": null,
-    "cbe_status": "TBD - no Vyovrinda design CBE exists yet",
-    "measured_kg": null,
-    "owner_answers_applied": [
-     "A9.14 MPQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-     "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
-     "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-     "A9.15 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
-    ],
-    "allocation_status": "NOT_ALLOCATED_C1_NOT_SELECTED",
-    "allocation_rule": "AL-C1 = selected C1 module CBE x 1.20 when C1 is selected (MPQ-01)",
-    "flight_integration": "DEFERRED_UNTIL_C1_SELECTED (A9.14 OQ-A907-07 as amended by A9.15)",
-    "v2_partial_floor_not_used": "the v2 C1 analog floor (cathode unit 0.2 kg) is not an AL-C1 value: no kg allocation before selection (MPQ-01)",
-    "value": {
-     "value_kg": null,
-     "governs": null
-    }
    },
    {
     "line": "AL-HAR",
@@ -2385,243 +1998,749 @@
      }
     }
    ],
-   "note": "PRIMARY investigation configuration"
-  },
+   "note": "FLIGHT configuration (A9.19: one Hall accelerator + one RF/ICP electron-source / neutralizer for both supply modes; no conventional hollow cathode; Xe supply mode = contingency / emergency)"
+  }
+ ],
+ "flight_rollup_vs_40kg": [
   {
-   "configuration": "hall_c1_reference",
-   "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)",
-   "parts": [
+   "configuration": "hall_icp_neutralizer",
+   "dry_known_kg": 40.7464421,
+   "wet_known_kg_by_loaded_case": {
+    "2.0": 42.7464421,
+    "5.0": 45.7464421,
+    "10.0": 50.7464421
+   },
+   "hard_40_wet_state_by_loaded_case": {
+    "2.0": "DOES_NOT_CLOSE",
+    "5.0": "DOES_NOT_CLOSE",
+    "10.0": "DOES_NOT_CLOSE"
+   },
+   "numerically_unchanged_vs_pre_a9_19": true,
+   "basis": "checked against the pre-A9.19 committed v3 values (commit f55abf6222c12f07c81c09194df9051e3a297d10): the ICP column never carried C1 mass, so removing the C1 bookings moves no flight number"
+  }
+ ],
+ "retired_flight_configuration_history": {
+  "label": "HISTORY - hall_c1_reference was retired as a candidate FLIGHT configuration by A9.19 (no conventional hollow cathode in the flight architecture); C1 is a ground-only laboratory reference (A9.20). The pre-A9.19 C1 column and its roll-up are kept for traceability only: never a flight roll-up, never compared or ranked against the flight configuration",
+  "by": [
+   "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+   "A9.19 A9 C1 CONTROL_FALLBACK (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+   "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)"
+  ],
+  "pre_a9_19_commit": "f55abf6222c12f07c81c09194df9051e3a297d10",
+  "lines": {
+   "hall_c1_reference": [
     {
      "line": "AL-01",
-     "used": "ALLOCATION_MEV",
-     "kg": 3.5
+     "name": "intake/filter/duct",
+     "row54_allocation_kg": 3.5,
+     "allocation_source": [
+      {
+       "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+       "row": 54,
+       "covers_ids": [
+        "H27-Q7"
+       ],
+       "answer_sha256": "addfe38afdbd444fafdbc2cb6f75193bf2f90941d0361702061299ec3f232402"
+      }
+     ],
+     "evidence_floor_cbe_kg": null,
+     "floor_is_partial": null,
+     "floor_constituents": [],
+     "floor_arithmetic": "no verified evidence value exists for any constituent; comparison not possible",
+     "cbe_kg": null,
+     "cbe_status": "TBD - no Vyovrinda design CBE exists yet",
+     "measured_kg": null,
+     "owner_answers_applied": [
+      "A9.14 MQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
+     ],
+     "value": {
+      "value_kg": 3.5,
+      "governs": "ALLOCATION_MEV",
+      "candidates": [
+       {
+        "basis": "ALLOCATION_MEV",
+        "kg": 3.5
+       }
+      ]
+     },
+     "evidence_class_of_value": "owner-allocation"
     },
     {
      "line": "AL-02",
-     "used": "ALLOCATION_MEV",
-     "kg": 5.5
+     "name": "compressor+drive",
+     "row54_allocation_kg": 5.5,
+     "allocation_source": [
+      {
+       "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+       "row": 54,
+       "covers_ids": [
+        "H27-Q7"
+       ],
+       "answer_sha256": "addfe38afdbd444fafdbc2cb6f75193bf2f90941d0361702061299ec3f232402"
+      }
+     ],
+     "evidence_floor_cbe_kg": null,
+     "floor_is_partial": null,
+     "floor_constituents": [],
+     "floor_arithmetic": "no verified evidence value exists for any constituent; comparison not possible",
+     "cbe_kg": null,
+     "cbe_status": "TBD - no Vyovrinda design CBE exists yet",
+     "measured_kg": null,
+     "owner_answers_applied": [
+      "A9.14 MQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
+     ],
+     "value": {
+      "value_kg": 5.5,
+      "governs": "ALLOCATION_MEV",
+      "candidates": [
+       {
+        "basis": "ALLOCATION_MEV",
+        "kg": 5.5
+       }
+      ]
+     },
+     "evidence_class_of_value": "owner-allocation"
     },
     {
      "line": "AL-03",
-     "used": "ALLOCATION_MEV",
-     "kg": 1.0
+     "name": "plenum/feed",
+     "row54_allocation_kg": 1.0,
+     "allocation_source": [
+      {
+       "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+       "row": 54,
+       "covers_ids": [
+        "H27-Q7"
+       ],
+       "answer_sha256": "addfe38afdbd444fafdbc2cb6f75193bf2f90941d0361702061299ec3f232402"
+      }
+     ],
+     "evidence_floor_cbe_kg": null,
+     "floor_is_partial": null,
+     "floor_constituents": [],
+     "floor_arithmetic": "no verified evidence value exists for any constituent; comparison not possible",
+     "cbe_kg": null,
+     "cbe_status": "TBD - no Vyovrinda design CBE exists yet",
+     "measured_kg": null,
+     "owner_answers_applied": [
+      "A9.14 MQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
+     ],
+     "value": {
+      "value_kg": 1.0,
+      "governs": "ALLOCATION_MEV",
+      "candidates": [
+       {
+        "basis": "ALLOCATION_MEV",
+        "kg": 1.0
+       }
+      ]
+     },
+     "evidence_class_of_value": "owner-allocation"
     },
     {
      "line": "AL-04",
-     "used": "MEV_PLANNING_FLOOR",
-     "kg": 4.2048
+     "name": "Hall head+magnet (incl. anode heat-removal hardware, MPQ-02)",
+     "row54_allocation_kg": 3.0,
+     "allocation_source": [
+      {
+       "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+       "row": 54,
+       "covers_ids": [
+        "H27-Q7"
+       ],
+       "answer_sha256": "addfe38afdbd444fafdbc2cb6f75193bf2f90941d0361702061299ec3f232402"
+      }
+     ],
+     "evidence_floor_cbe_kg": 3.504,
+     "floor_is_partial": true,
+     "floor_constituents": [
+      {
+       "what": "MC-1 iron (H2-1 H21-24)",
+       "kg": 1.925,
+       "evidence_class": "model-derived",
+       "status": null
+      },
+      {
+       "what": "MC-1 copper (H2-1 H21-24)",
+       "kg": 1.579,
+       "evidence_class": "model-derived",
+       "status": null
+      },
+      {
+       "what": "channel ceramics, anode/distributor, body, fasteners",
+       "kg": null,
+       "evidence_class": null,
+       "status": "TBD - requires H-1 design masses (not supplied by A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: revises the H2 requirements; gives no design mass or drawing for this item; A9-10 re-evaluation))"
+      }
+     ],
+     "floor_arithmetic": "floor = 1.925 + 1.579 = 3.504 kg (magnetic parts only) > allocation 3.0 kg; gap at CBE = 0.504 kg; at row-57 MEV (x1.2) = 4.2048 kg, gap 1.2048 kg",
+     "cbe_kg": null,
+     "cbe_status": "TBD - no Vyovrinda design CBE exists yet",
+     "measured_kg": null,
+     "owner_answers_applied": [
+      "A9.14 MQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+      "A9.14 MQ-03 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+      "A9.14 MPQ-02 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
+     ],
+     "owner_mev_planning_floor_kg": 4.2048,
+     "rebase_rule": "AL-04 >= 1.20 x actual H-1 CBE once the design exists; 4.2048 kg is today's incomplete planning floor (magnetic parts only; channel/anode/body/fasteners TBD)",
+     "value": {
+      "value_kg": 4.2048,
+      "governs": "MEV_PLANNING_FLOOR",
+      "candidates": [
+       {
+        "basis": "ALLOCATION_MEV",
+        "kg": 3.0
+       },
+       {
+        "basis": "MEV_PLANNING_FLOOR",
+        "kg": 4.2048
+       }
+      ]
+     },
+     "evidence_class_of_value": "owner-stated MEV planning floor = 1.20 x analog / preliminary-design floor (not a CBE); constituent classes model-derived"
     },
     {
      "line": "AL-07",
-     "used": "MEV_PLANNING_FLOOR",
-     "kg": 6.0
+     "name": "Hall PPU (incl. collector/bias supply; C1 heater/keeper/control electronics if C1 selected) - pre-A9.19 history",
+     "row54_allocation_kg": 2.5,
+     "allocation_source": [
+      {
+       "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+       "row": 54,
+       "covers_ids": [
+        "H27-Q7"
+       ],
+       "answer_sha256": "addfe38afdbd444fafdbc2cb6f75193bf2f90941d0361702061299ec3f232402"
+      }
+     ],
+     "evidence_floor_cbe_kg": 5.0,
+     "floor_is_partial": false,
+     "floor_constituents": [
+      {
+       "what": "lowest row-56-admissible measured PPU analog (SETS PPU, 100-500 W, secondary listing, verify)",
+       "kg": 5.0,
+       "evidence_class": "measured",
+       "status": null
+      }
+     ],
+     "floor_arithmetic": "floor = min(SETS 5.0, NG EM1 6.1, TAS Mk1 10.9) = 5.0 kg > allocation 2.5 kg; gap 2.5 kg (vs the H2-4 analog 6.1 kg: gap 3.6 kg). Widest scope-matched basket: Hall PPU 2.5 + controls/harness 1.0 = 3.5 kg < 5.0 kg, still below; adding RF generator/matching 1.5 kg (a function the analogs do not contain) gives 5.0 kg, equal to the lowest analog and below the H2-4 6.1 kg",
+     "cbe_kg": null,
+     "cbe_status": "TBD - no Vyovrinda design CBE exists yet",
+     "measured_kg": null,
+     "owner_answers_applied": [
+      "A9.14 MQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+      "A9.14 MQ-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+      "A9.14 MQ-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+      "A9.14 MPQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
+     ],
+     "owner_mev_planning_floor_kg": 6.0,
+     "rebase_rule": "6.0 kg MEV planning floor from the 5.0 kg lowest admissible PPU analog; replaced by the selected flight PPU CBE x 1.20; never covered by system margin",
+     "value": {
+      "value_kg": 6.0,
+      "governs": "MEV_PLANNING_FLOOR",
+      "candidates": [
+       {
+        "basis": "ALLOCATION_MEV",
+        "kg": 2.5
+       },
+       {
+        "basis": "MEV_PLANNING_FLOOR",
+        "kg": 6.0
+       }
+      ]
+     },
+     "evidence_class_of_value": "owner-stated MEV planning floor = 1.20 x analog / preliminary-design floor (not a CBE); constituent classes measured"
     },
     {
      "line": "AL-08",
-     "used": "MEV_PLANNING_FLOOR",
-     "kg": 6.0528
+     "name": "complete Xe storage/flow hardware: tank, regulator, valves, plumbing, mounting, thermal (pre-A9.19: C1 Xe branch inside if a selected C1 required Xe) - history",
+     "row54_allocation_kg": 1.5,
+     "allocation_source": [
+      {
+       "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+       "row": 54,
+       "covers_ids": [
+        "H27-Q7"
+       ],
+       "answer_sha256": "addfe38afdbd444fafdbc2cb6f75193bf2f90941d0361702061299ec3f232402"
+      }
+     ],
+     "evidence_floor_cbe_kg": 5.044,
+     "floor_is_partial": true,
+     "floor_constituents": [
+      {
+       "what": "Xe tank low end (H2-7 H27-09; XS-XTA '<= 3.5 kg' catalogue, class assumed)",
+       "kg": 3.5,
+       "evidence_class": "inferred",
+       "status": null
+      },
+      {
+       "what": "Xe regulator low end (Moog XFC, H2-7 H27-11)",
+       "kg": 0.974,
+       "evidence_class": "inferred",
+       "status": null
+      },
+      {
+       "what": "Xe valves (H2-7 H27-12, 2 x (latch + PFCV))",
+       "kg": 0.57,
+       "evidence_class": "inferred",
+       "status": null
+      },
+      {
+       "what": "plumbing, mounting/thermal",
+       "kg": null,
+       "evidence_class": null,
+       "status": "TBD - requires Xe routing and tank mounting design (not supplied by A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: revises the H2 requirements; gives no design mass or drawing for this item; A9-10 re-evaluation))"
+      }
+     ],
+     "floor_arithmetic": "floor = 3.5 + 0.974 + 0.57 = 5.044 kg (= H2-7 ID-11 low end) > allocation 1.5 kg; gap 3.544 kg. Without any tank: 0.974 + 0.57 = 1.544 kg > 1.5 kg. A9 single-branch reading (A9B-10/11: 0.34 + 0.115 kg): 3.5 + 0.974 + 0.455 = 4.929 kg > 1.5 kg; without tank 1.429 kg, leaving 0.071 kg for tank, plumbing and mounting",
+     "cbe_kg": null,
+     "cbe_status": "TBD - no Vyovrinda design CBE exists yet",
+     "measured_kg": null,
+     "owner_answers_applied": [
+      "A9.14 MQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+      "A9.14 MQ-05 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+      "A9.14 MQ-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+      "A9.15 XA9Q-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+      "A9.15 governing_rule (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
+     ],
+     "owner_mev_planning_floor_kg": 6.0528,
+     "rebase_rule": "complete Xe storage/flow hardware; 6.0528 kg MEV planning floor from the 5.044 kg incomplete CBE floor; quotations/design replace it",
+     "c1_branch": {
+      "state": "PENDING_C1_NOT_SELECTED (pre-A9.19 history)",
+      "in_AL08": null
+     },
+     "rfp_required": {
+      "configuration": "hall_c1_reference",
+      "AL-08": "REQUIRED_RFP_XE_CAPABILITY (pre-A9.19 history column)"
+     },
+     "value": {
+      "value_kg": 6.0528,
+      "governs": "MEV_PLANNING_FLOOR",
+      "candidates": [
+       {
+        "basis": "ALLOCATION_MEV",
+        "kg": 1.5
+       },
+       {
+        "basis": "MEV_PLANNING_FLOOR",
+        "kg": 6.0528
+       }
+      ]
+     },
+     "evidence_class_of_value": "owner-stated MEV planning floor = 1.20 x analog / preliminary-design floor (not a CBE); constituent classes inferred"
     },
     {
      "line": "AL-09",
-     "used": null,
-     "kg": null
+     "name": "controls / electronics / valve drivers / flight sensors (MQ-06 split; harness excluded)",
+     "row54_allocation_kg": null,
+     "allocation_source": [
+      {
+       "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+       "row": 54,
+       "covers_ids": [
+        "H27-Q7"
+       ],
+       "answer_sha256": "addfe38afdbd444fafdbc2cb6f75193bf2f90941d0361702061299ec3f232402"
+      }
+     ],
+     "evidence_floor_cbe_kg": null,
+     "floor_is_partial": null,
+     "floor_constituents": [],
+     "floor_arithmetic": "no verified evidence value exists for any constituent; comparison not possible",
+     "cbe_kg": null,
+     "cbe_status": "TBD - no Vyovrinda design CBE exists yet",
+     "measured_kg": null,
+     "owner_answers_applied": [
+      "A9.14 MQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+      "A9.14 MQ-06 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+      "A9.14 MQ-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
+     ],
+     "row54_combined_allocation_kg": 1.0,
+     "allocation_status": "TBD_OWNER (MPV3Q-01): row 54 gave 1.0 kg to controls+harness combined; MQ-06 splits the line but states no controls allocation; no number invented",
+     "value": {
+      "value_kg": null,
+      "governs": null
+     },
+     "evidence_class_of_value": null
     },
     {
      "line": "AL-10",
-     "used": "ALLOCATION_MEV",
-     "kg": 2.5
+     "name": "structure/thermal (incl. ICP open-frame support/spacer, MPQ-02)",
+     "row54_allocation_kg": 2.5,
+     "allocation_source": [
+      {
+       "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+       "row": 54,
+       "covers_ids": [
+        "H27-Q7"
+       ],
+       "answer_sha256": "addfe38afdbd444fafdbc2cb6f75193bf2f90941d0361702061299ec3f232402"
+      }
+     ],
+     "evidence_floor_cbe_kg": null,
+     "floor_is_partial": null,
+     "floor_constituents": [],
+     "floor_arithmetic": "no verified evidence value exists for any constituent; comparison not possible",
+     "cbe_kg": null,
+     "cbe_status": "TBD - no Vyovrinda design CBE exists yet",
+     "measured_kg": null,
+     "owner_answers_applied": [
+      "A9.14 MQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+      "A9.14 MPQ-02 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
+     ],
+     "value": {
+      "value_kg": 2.5,
+      "governs": "ALLOCATION_MEV",
+      "candidates": [
+       {
+        "basis": "ALLOCATION_MEV",
+        "kg": 2.5
+       }
+      ]
+     },
+     "evidence_class_of_value": "owner-allocation"
     },
     {
      "line": "AL-C1",
-     "used": null,
-     "kg": null
+     "name": "C1 module: cathode module, shield/mount, C1-specific getter/filter (MPQ-01 option c; HISTORY - retired from flight by A9.19 / A9.20)",
+     "row54_allocation_kg": null,
+     "allocation_source": [],
+     "evidence_floor_cbe_kg": 0.2,
+     "floor_is_partial": true,
+     "floor_constituents": [
+      {
+       "what": "C1 cathode unit analog low end (A9B-C01)",
+       "kg": 0.2,
+       "evidence_class": "inferred",
+       "status": "PRELIMINARY (analog)"
+      },
+      {
+       "what": "C1 shield / O-isolation / mount (A9B-C02)",
+       "kg": null,
+       "evidence_class": null,
+       "status": "TBD - requires a flight C1 module design"
+      },
+      {
+       "what": "Xe cathode-line filter/getter (A9B-C05)",
+       "kg": null,
+       "evidence_class": null,
+       "status": "TBD - requires vendor/spec verification (row 51)"
+      }
+     ],
+     "floor_arithmetic": "floor = C1 cathode unit analog low end 0.2 kg (A9B-C01, H2-7 H27-16, inferred); shield/mount (A9B-C02) and filter/getter (A9B-C05) TBD; the C1 cathode Xe branch 0.285 kg (A9B-C04) is already inside the AL-08 floor (H2-7 H27-12 two-branch 0.57 kg) and C1 supplies (A9B-C03) inside the AL-07 PPU analogs: not added twice",
+     "cbe_kg": null,
+     "cbe_status": "TBD - no Vyovrinda design CBE exists yet",
+     "measured_kg": null,
+     "owner_answers_applied": [
+      "A9.14 MPQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+      "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+      "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+      "A9.15 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+      "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+      "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)"
+     ],
+     "allocation_status": "NOT_ALLOCATED_C1_NOT_SELECTED (pre-A9.19 state)",
+     "a9_19_status": "RETIRED_FROM_FLIGHT: no AL-C1 in any flight roll-up (A9.19 no hollow cathode; A9.20 C1 ground-only lab reference)",
+     "allocation_rule": "AL-C1 = selected C1 module CBE x 1.20 when C1 is selected (MPQ-01)",
+     "flight_integration": "DEFERRED_UNTIL_C1_SELECTED (A9.14 OQ-A907-07 as amended by A9.15)",
+     "v2_partial_floor_not_used": "the v2 C1 analog floor (cathode unit 0.2 kg) is not an AL-C1 value: no kg allocation before selection (MPQ-01)",
+     "value": {
+      "value_kg": null,
+      "governs": null
+     }
     },
     {
      "line": "AL-HAR",
-     "used": "HARNESS_POLICY_ROW60",
-     "kg": 1.513557895,
-     "partial": true,
-     "note": "computed on the known non-harness part only"
-    }
-   ],
-   "nonharness_known_kg": 28.7576,
-   "harness_kg": 1.513557895,
-   "nominal_dry_known_kg": 30.2711579,
-   "system_margin_kg": 6.05423158,
-   "reserve_kg": 0.0,
-   "dry_known_kg": 36.32538948,
-   "lines_without_value": [
-    "AL-09",
-    "AL-C1"
-   ],
-   "tbd": [
-    "AL-01: owner MEV allocation, not a CBE (row 54; MQ-01)",
-    "AL-02: owner MEV allocation, not a CBE (row 54; MQ-01)",
-    "AL-03: owner MEV allocation, not a CBE (row 54; MQ-01)",
-    "AL-04: MEV planning floor from an analog / preliminary-design floor, not a CBE",
-    "AL-04: floor INCOMPLETE - channel ceramics, anode/distributor, body, fasteners",
-    "AL-07: MEV planning floor from an analog / preliminary-design floor, not a CBE",
-    "AL-08: MEV planning floor from an analog / preliminary-design floor, not a CBE",
-    "AL-08: floor INCOMPLETE - plumbing, mounting/thermal",
-    "AL-09: NO VALUE - TBD_OWNER (MPV3Q-01): row 54 gave 1.0 kg to controls+harness combined; MQ-06 splits the line but states no controls allocation; no number invented (excluded from the known part)",
-    "AL-10: owner MEV allocation, not a CBE (row 54; MQ-01)",
-    "AL-C1: NO VALUE - NOT_ALLOCATED_C1_NOT_SELECTED (excluded from the known part)",
-    "AL-HAR: harness by the row-60 rule until a routed harness exists (not a CBE)"
-   ],
-   "all_terms_resolved": false,
-   "wet": [
-    {
-     "xe_case_kg": 2.0,
-     "xe_loaded_kg": 2.0,
-     "residual_inside_case_kg": 0.0392157,
-     "residual_added_on_top_kg": 0.0,
-     "wet_known_kg": 38.32538948,
-     "reference": "HARD_40_WET",
-     "reference_kg": 40.0,
-     "comparator": "<",
-     "state": "NOT_EVALUABLE",
-     "margin_to_reference_kg": 1.67461052
-    },
-    {
-     "xe_case_kg": 2.0,
-     "xe_loaded_kg": 2.0,
-     "residual_inside_case_kg": 0.0392157,
-     "residual_added_on_top_kg": 0.0,
-     "wet_known_kg": 38.32538948,
-     "reference": "INTERNAL_34",
-     "reference_kg": 34.0,
-     "comparator": "<=",
-     "state": "DOES_NOT_CLOSE",
-     "exceedance_kg": 4.32538948,
-     "redesign_need": {
-      "nonharness_nominal_reduction_kg_at_least": 3.424266667,
-      "nonharness_nominal_max_kg": 25.33333333,
-      "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
-     }
-    },
-    {
-     "xe_case_kg": 2.0,
-     "xe_loaded_kg": 2.0,
-     "residual_inside_case_kg": 0.0392157,
-     "residual_added_on_top_kg": 0.0,
-     "wet_known_kg": 38.32538948,
-     "reference": "INTERNAL_36",
-     "reference_kg": 36.0,
-     "comparator": "<=",
-     "state": "DOES_NOT_CLOSE",
-     "exceedance_kg": 2.32538948,
-     "redesign_need": {
-      "nonharness_nominal_reduction_kg_at_least": 1.840933333,
-      "nonharness_nominal_max_kg": 26.91666667,
-      "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
-     }
-    },
-    {
-     "xe_case_kg": 5.0,
-     "xe_loaded_kg": 5.0,
-     "residual_inside_case_kg": 0.0980392,
-     "residual_added_on_top_kg": 0.0,
-     "wet_known_kg": 41.32538948,
-     "reference": "HARD_40_WET",
-     "reference_kg": 40.0,
-     "comparator": "<",
-     "state": "DOES_NOT_CLOSE",
-     "exceedance_kg": 1.32538948,
-     "redesign_need": {
-      "nonharness_nominal_reduction_kg_at_least": 1.049266667,
-      "nonharness_nominal_max_kg": 27.70833333,
-      "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
-     }
-    },
-    {
-     "xe_case_kg": 5.0,
-     "xe_loaded_kg": 5.0,
-     "residual_inside_case_kg": 0.0980392,
-     "residual_added_on_top_kg": 0.0,
-     "wet_known_kg": 41.32538948,
-     "reference": "INTERNAL_34",
-     "reference_kg": 34.0,
-     "comparator": "<=",
-     "state": "DOES_NOT_CLOSE",
-     "exceedance_kg": 7.32538948,
-     "redesign_need": {
-      "nonharness_nominal_reduction_kg_at_least": 5.799266667,
-      "nonharness_nominal_max_kg": 22.95833333,
-      "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
-     }
-    },
-    {
-     "xe_case_kg": 5.0,
-     "xe_loaded_kg": 5.0,
-     "residual_inside_case_kg": 0.0980392,
-     "residual_added_on_top_kg": 0.0,
-     "wet_known_kg": 41.32538948,
-     "reference": "INTERNAL_36",
-     "reference_kg": 36.0,
-     "comparator": "<=",
-     "state": "DOES_NOT_CLOSE",
-     "exceedance_kg": 5.32538948,
-     "redesign_need": {
-      "nonharness_nominal_reduction_kg_at_least": 4.215933333,
-      "nonharness_nominal_max_kg": 24.54166667,
-      "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
-     }
-    },
-    {
-     "xe_case_kg": 10.0,
-     "xe_loaded_kg": 10.0,
-     "residual_inside_case_kg": 0.196078,
-     "residual_added_on_top_kg": 0.0,
-     "wet_known_kg": 46.32538948,
-     "reference": "HARD_40_WET",
-     "reference_kg": 40.0,
-     "comparator": "<",
-     "state": "DOES_NOT_CLOSE",
-     "exceedance_kg": 6.32538948,
-     "redesign_need": {
-      "nonharness_nominal_reduction_kg_at_least": 5.0076,
-      "nonharness_nominal_max_kg": 23.75,
-      "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
-     }
-    },
-    {
-     "xe_case_kg": 10.0,
-     "xe_loaded_kg": 10.0,
-     "residual_inside_case_kg": 0.196078,
-     "residual_added_on_top_kg": 0.0,
-     "wet_known_kg": 46.32538948,
-     "reference": "INTERNAL_34",
-     "reference_kg": 34.0,
-     "comparator": "<=",
-     "state": "DOES_NOT_CLOSE",
-     "exceedance_kg": 12.32538948,
-     "redesign_need": {
-      "nonharness_nominal_reduction_kg_at_least": 9.7576,
-      "nonharness_nominal_max_kg": 19.0,
-      "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
-     }
-    },
-    {
-     "xe_case_kg": 10.0,
-     "xe_loaded_kg": 10.0,
-     "residual_inside_case_kg": 0.196078,
-     "residual_added_on_top_kg": 0.0,
-     "wet_known_kg": 46.32538948,
-     "reference": "INTERNAL_36",
-     "reference_kg": 36.0,
-     "comparator": "<=",
-     "state": "DOES_NOT_CLOSE",
-     "exceedance_kg": 10.32538948,
-     "redesign_need": {
-      "nonharness_nominal_reduction_kg_at_least": 8.174266667,
-      "nonharness_nominal_max_kg": 20.58333333,
-      "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+     "name": "harness (row-60 rule until a routed harness exists; MQ-06)",
+     "row54_allocation_kg": null,
+     "allocation_source": [],
+     "evidence_floor_cbe_kg": null,
+     "floor_is_partial": null,
+     "floor_constituents": [],
+     "floor_arithmetic": null,
+     "cbe_kg": null,
+     "cbe_status": "TBD - no Vyovrinda design CBE exists yet",
+     "measured_kg": null,
+     "owner_answers_applied": [
+      "A9.14 MQ-06 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
+     ],
+     "allocation_status": "RULE: row 60 (5 % of nominal dry)",
+     "value": {
+      "value_kg": null,
+      "governs": "HARNESS_POLICY_ROW60 (computed in the roll-up)"
      }
     }
-   ],
-   "note": "C1 reference / fallback: flight C1 integration DEFERRED_UNTIL_C1_SELECTED; AL-C1 and any C1 Xe branch have no value; not comparable with the ICP column; no ranking"
-  }
- ],
+   ]
+  },
+  "rollups": [
+   {
+    "configuration": "hall_c1_reference",
+    "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)",
+    "parts": [
+     {
+      "line": "AL-01",
+      "used": "ALLOCATION_MEV",
+      "kg": 3.5
+     },
+     {
+      "line": "AL-02",
+      "used": "ALLOCATION_MEV",
+      "kg": 5.5
+     },
+     {
+      "line": "AL-03",
+      "used": "ALLOCATION_MEV",
+      "kg": 1.0
+     },
+     {
+      "line": "AL-04",
+      "used": "MEV_PLANNING_FLOOR",
+      "kg": 4.2048
+     },
+     {
+      "line": "AL-07",
+      "used": "MEV_PLANNING_FLOOR",
+      "kg": 6.0
+     },
+     {
+      "line": "AL-08",
+      "used": "MEV_PLANNING_FLOOR",
+      "kg": 6.0528
+     },
+     {
+      "line": "AL-09",
+      "used": null,
+      "kg": null
+     },
+     {
+      "line": "AL-10",
+      "used": "ALLOCATION_MEV",
+      "kg": 2.5
+     },
+     {
+      "line": "AL-C1",
+      "used": null,
+      "kg": null
+     },
+     {
+      "line": "AL-HAR",
+      "used": "HARNESS_POLICY_ROW60",
+      "kg": 1.513557895,
+      "partial": true,
+      "note": "computed on the known non-harness part only"
+     }
+    ],
+    "nonharness_known_kg": 28.7576,
+    "harness_kg": 1.513557895,
+    "nominal_dry_known_kg": 30.2711579,
+    "system_margin_kg": 6.05423158,
+    "reserve_kg": 0.0,
+    "dry_known_kg": 36.32538948,
+    "lines_without_value": [
+     "AL-09",
+     "AL-C1"
+    ],
+    "tbd": [
+     "AL-01: owner MEV allocation, not a CBE (row 54; MQ-01)",
+     "AL-02: owner MEV allocation, not a CBE (row 54; MQ-01)",
+     "AL-03: owner MEV allocation, not a CBE (row 54; MQ-01)",
+     "AL-04: MEV planning floor from an analog / preliminary-design floor, not a CBE",
+     "AL-04: floor INCOMPLETE - channel ceramics, anode/distributor, body, fasteners",
+     "AL-07: MEV planning floor from an analog / preliminary-design floor, not a CBE",
+     "AL-08: MEV planning floor from an analog / preliminary-design floor, not a CBE",
+     "AL-08: floor INCOMPLETE - plumbing, mounting/thermal",
+     "AL-09: NO VALUE - TBD_OWNER (MPV3Q-01): row 54 gave 1.0 kg to controls+harness combined; MQ-06 splits the line but states no controls allocation; no number invented (excluded from the known part)",
+     "AL-10: owner MEV allocation, not a CBE (row 54; MQ-01)",
+     "AL-C1: NO VALUE - NOT_ALLOCATED_C1_NOT_SELECTED (pre-A9.19 state) (excluded from the known part)",
+     "AL-HAR: harness by the row-60 rule until a routed harness exists (not a CBE)"
+    ],
+    "all_terms_resolved": false,
+    "wet": [
+     {
+      "xe_case_kg": 2.0,
+      "xe_loaded_kg": 2.0,
+      "residual_inside_case_kg": 0.0392157,
+      "residual_added_on_top_kg": 0.0,
+      "wet_known_kg": 38.32538948,
+      "reference": "HARD_40_WET",
+      "reference_kg": 40.0,
+      "comparator": "<",
+      "state": "NOT_EVALUABLE",
+      "margin_to_reference_kg": 1.67461052
+     },
+     {
+      "xe_case_kg": 2.0,
+      "xe_loaded_kg": 2.0,
+      "residual_inside_case_kg": 0.0392157,
+      "residual_added_on_top_kg": 0.0,
+      "wet_known_kg": 38.32538948,
+      "reference": "INTERNAL_34",
+      "reference_kg": 34.0,
+      "comparator": "<=",
+      "state": "DOES_NOT_CLOSE",
+      "exceedance_kg": 4.32538948,
+      "redesign_need": {
+       "nonharness_nominal_reduction_kg_at_least": 3.424266667,
+       "nonharness_nominal_max_kg": 25.33333333,
+       "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+      }
+     },
+     {
+      "xe_case_kg": 2.0,
+      "xe_loaded_kg": 2.0,
+      "residual_inside_case_kg": 0.0392157,
+      "residual_added_on_top_kg": 0.0,
+      "wet_known_kg": 38.32538948,
+      "reference": "INTERNAL_36",
+      "reference_kg": 36.0,
+      "comparator": "<=",
+      "state": "DOES_NOT_CLOSE",
+      "exceedance_kg": 2.32538948,
+      "redesign_need": {
+       "nonharness_nominal_reduction_kg_at_least": 1.840933333,
+       "nonharness_nominal_max_kg": 26.91666667,
+       "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+      }
+     },
+     {
+      "xe_case_kg": 5.0,
+      "xe_loaded_kg": 5.0,
+      "residual_inside_case_kg": 0.0980392,
+      "residual_added_on_top_kg": 0.0,
+      "wet_known_kg": 41.32538948,
+      "reference": "HARD_40_WET",
+      "reference_kg": 40.0,
+      "comparator": "<",
+      "state": "DOES_NOT_CLOSE",
+      "exceedance_kg": 1.32538948,
+      "redesign_need": {
+       "nonharness_nominal_reduction_kg_at_least": 1.049266667,
+       "nonharness_nominal_max_kg": 27.70833333,
+       "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+      }
+     },
+     {
+      "xe_case_kg": 5.0,
+      "xe_loaded_kg": 5.0,
+      "residual_inside_case_kg": 0.0980392,
+      "residual_added_on_top_kg": 0.0,
+      "wet_known_kg": 41.32538948,
+      "reference": "INTERNAL_34",
+      "reference_kg": 34.0,
+      "comparator": "<=",
+      "state": "DOES_NOT_CLOSE",
+      "exceedance_kg": 7.32538948,
+      "redesign_need": {
+       "nonharness_nominal_reduction_kg_at_least": 5.799266667,
+       "nonharness_nominal_max_kg": 22.95833333,
+       "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+      }
+     },
+     {
+      "xe_case_kg": 5.0,
+      "xe_loaded_kg": 5.0,
+      "residual_inside_case_kg": 0.0980392,
+      "residual_added_on_top_kg": 0.0,
+      "wet_known_kg": 41.32538948,
+      "reference": "INTERNAL_36",
+      "reference_kg": 36.0,
+      "comparator": "<=",
+      "state": "DOES_NOT_CLOSE",
+      "exceedance_kg": 5.32538948,
+      "redesign_need": {
+       "nonharness_nominal_reduction_kg_at_least": 4.215933333,
+       "nonharness_nominal_max_kg": 24.54166667,
+       "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+      }
+     },
+     {
+      "xe_case_kg": 10.0,
+      "xe_loaded_kg": 10.0,
+      "residual_inside_case_kg": 0.196078,
+      "residual_added_on_top_kg": 0.0,
+      "wet_known_kg": 46.32538948,
+      "reference": "HARD_40_WET",
+      "reference_kg": 40.0,
+      "comparator": "<",
+      "state": "DOES_NOT_CLOSE",
+      "exceedance_kg": 6.32538948,
+      "redesign_need": {
+       "nonharness_nominal_reduction_kg_at_least": 5.0076,
+       "nonharness_nominal_max_kg": 23.75,
+       "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+      }
+     },
+     {
+      "xe_case_kg": 10.0,
+      "xe_loaded_kg": 10.0,
+      "residual_inside_case_kg": 0.196078,
+      "residual_added_on_top_kg": 0.0,
+      "wet_known_kg": 46.32538948,
+      "reference": "INTERNAL_34",
+      "reference_kg": 34.0,
+      "comparator": "<=",
+      "state": "DOES_NOT_CLOSE",
+      "exceedance_kg": 12.32538948,
+      "redesign_need": {
+       "nonharness_nominal_reduction_kg_at_least": 9.7576,
+       "nonharness_nominal_max_kg": 19.0,
+       "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+      }
+     },
+     {
+      "xe_case_kg": 10.0,
+      "xe_loaded_kg": 10.0,
+      "residual_inside_case_kg": 0.196078,
+      "residual_added_on_top_kg": 0.0,
+      "wet_known_kg": 46.32538948,
+      "reference": "INTERNAL_36",
+      "reference_kg": 36.0,
+      "comparator": "<=",
+      "state": "DOES_NOT_CLOSE",
+      "exceedance_kg": 10.32538948,
+      "redesign_need": {
+       "nonharness_nominal_reduction_kg_at_least": 8.174266667,
+       "nonharness_nominal_max_kg": 20.58333333,
+       "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+      }
+     }
+    ],
+    "note": "HISTORY - retired flight configuration (A9.19); pre-A9.19 note: C1 reference / fallback, flight C1 integration DEFERRED_UNTIL_C1_SELECTED, AL-C1 and any C1 Xe branch without value; never a flight roll-up now (C1 ground-only, A9.20)"
+   }
+  ]
+ },
+ "c1_mass_check": {
+  "owner_request": "check C1 mass",
+  "source": "A9.19 A9 C1 CONTROL_FALLBACK (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+  "flight": "no C1 kg was ever booked in a flight roll-up: AL-C1 had no value (A9.14 MPQ-01: no kg before selection) and the hall_icp_neutralizer column never contained C1 lines; after A9.19 / A9.20 there is no C1 line, no C1 electronics in AL-07 and no C1 Xe branch booked as a line in AL-08 in the flight architecture; however, the owner's AL-08 planning floor (H2-7, 5.044 kg, MQ-05) kept in the flight roll-up may still embed a two-branch valve set (0.57 kg) that v2 describes as including the C1 cathode Xe branch (see recorder_flags, owner observation); no number changes",
+  "v2_c1_evidence_floor_kg": 0.2,
+  "v2_c1_floor_is_partial": true,
+  "v2_c1_floor_arithmetic": "floor = C1 cathode unit analog low end 0.2 kg (A9B-C01, H2-7 H27-16, inferred); shield/mount (A9B-C02) and filter/getter (A9B-C05) TBD; the C1 cathode Xe branch 0.285 kg (A9B-C04) is already inside the AL-08 floor (H2-7 H27-12 two-branch 0.57 kg) and C1 supplies (A9B-C03) inside the AL-07 PPU analogs: not added twice",
+  "v2_c1_floor_constituents": [
+   {
+    "what": "C1 cathode unit analog low end (A9B-C01)",
+    "kg": 0.2,
+    "evidence_class": "inferred",
+    "status": "PRELIMINARY (analog)"
+   },
+   {
+    "what": "C1 shield / O-isolation / mount (A9B-C02)",
+    "kg": null,
+    "evidence_class": null,
+    "status": "TBD - requires a flight C1 module design"
+   },
+   {
+    "what": "Xe cathode-line filter/getter (A9B-C05)",
+    "kg": null,
+    "evidence_class": null,
+    "status": "TBD - requires vendor/spec verification (row 51)"
+   }
+  ],
+  "reading": "the v2 C1 figure is an incomplete analog floor (0.2 kg cathode-unit low end, inferred, PRELIMINARY; shield / mount and filter / getter TBD), never a CBE; it is ground lab-equipment information only now; the ground C1 module is weighed per serial on GA-01 (row 116)",
+  "flight_numbers_effect": "none (flight_rollup_vs_40kg.numerically_unchanged_vs_pre_a9_19)"
+ },
  "xe_v3_import": {
   "source": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
   "interface": "XV3-IF-01",
@@ -2664,8 +2783,7 @@
    "name": "intake (atmospheric collector / collimator)",
    "group": "atmospheric",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-01",
    "allocation_mapping": "OWNER_LINE",
@@ -2696,7 +2814,11 @@
    "v2_decisions": [],
    "v2_propagation": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "INSTALLED"
+   }
   },
   {
    "id": "A9B-02",
@@ -2704,8 +2826,7 @@
    "name": "protective / filter stage",
    "group": "atmospheric",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-01",
    "allocation_mapping": "OWNER_LINE",
@@ -2735,7 +2856,11 @@
    "v2_decisions": [],
    "v2_propagation": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "INSTALLED"
+   }
   },
   {
    "id": "A9B-03",
@@ -2743,8 +2868,7 @@
    "name": "atmospheric duct intake -> compressor",
    "group": "atmospheric",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-01",
    "allocation_mapping": "OWNER_LINE",
@@ -2774,7 +2898,11 @@
    "v2_decisions": [],
    "v2_propagation": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "INSTALLED"
+   }
   },
   {
    "id": "A9B-04",
@@ -2782,8 +2910,7 @@
    "name": "compressor incl. motor/drive and isolation valve",
    "group": "atmospheric",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-02",
    "allocation_mapping": "OWNER_LINE",
@@ -2815,7 +2942,11 @@
    "v2_decisions": [],
    "v2_propagation": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "INSTALLED"
+   }
   },
   {
    "id": "A9B-05",
@@ -2823,8 +2954,7 @@
    "name": "buffer / plenum vessel (atmospheric gas chamber)",
    "group": "atmospheric",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-03",
    "allocation_mapping": "OWNER_LINE",
@@ -2854,7 +2984,11 @@
    "v2_decisions": [],
    "v2_propagation": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "INSTALLED"
+   }
   },
   {
    "id": "A9B-06",
@@ -2862,8 +2996,7 @@
    "name": "atmospheric metering + isolation valves and feed line to H-1",
    "group": "atmospheric",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-03",
    "allocation_mapping": "OWNER_LINE",
@@ -2895,7 +3028,11 @@
    "v2_decisions": [],
    "v2_propagation": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "INSTALLED"
+   }
   },
   {
    "id": "A9B-07",
@@ -2903,8 +3040,7 @@
    "name": "Xe tank (stored-Xe subsystem; bounded Xe-capable mode, row 6)",
    "group": "xe",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-08",
    "allocation_mapping": "OWNER_LINE (A9.14 MQ-05: complete Xe storage/flow hardware in AL-08)",
@@ -2949,9 +3085,15 @@
    "owner_answers_applied": [
     "A9.14 MQ-05 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
     "A9.15 XA9Q-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
-    "A9.15 XV2Q-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
+    "A9.15 XV2Q-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+    "A9.19 xenon_role (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)"
    ],
-   "rfp_required_both_configurations": true
+   "rfp_required_flight_configuration": true,
+   "xe_role": "CONTINGENCY_EMERGENCY",
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "INSTALLED"
+   }
   },
   {
    "id": "A9B-08",
@@ -2959,8 +3101,7 @@
    "name": "Xe tank mounting and thermal hardware",
    "group": "xe",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-08",
    "allocation_mapping": "OWNER_MAPPING (A9.14 MQ-07: Xe mounting/thermal -> AL-08)",
@@ -2993,11 +3134,17 @@
    "owner_answers_applied": [
     "A9.14 MQ-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
     "A9.15 XA9Q-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
-    "A9.15 XV2Q-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
+    "A9.15 XV2Q-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+    "A9.19 xenon_role (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)"
    ],
    "allocation_line_v2": "AL-08",
    "allocation_mapping_v2": "PROPOSED_MAPPING (MQ-07)",
-   "rfp_required_both_configurations": true
+   "rfp_required_flight_configuration": true,
+   "xe_role": "CONTINGENCY_EMERGENCY",
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "INSTALLED"
+   }
   },
   {
    "id": "A9B-09",
@@ -3005,8 +3152,7 @@
    "name": "Xe pressure regulator",
    "group": "xe",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-08",
    "allocation_mapping": "OWNER_LINE (A9.14 MQ-05: complete Xe storage/flow hardware in AL-08)",
@@ -3051,9 +3197,15 @@
    "owner_answers_applied": [
     "A9.14 MQ-05 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
     "A9.15 XA9Q-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
-    "A9.15 XV2Q-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
+    "A9.15 XV2Q-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+    "A9.19 xenon_role (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)"
    ],
-   "rfp_required_both_configurations": true
+   "rfp_required_flight_configuration": true,
+   "xe_role": "CONTINGENCY_EMERGENCY",
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "INSTALLED"
+   }
   },
   {
    "id": "A9B-10",
@@ -3061,8 +3213,7 @@
    "name": "Xe high-pressure path: two independent series isolation valves (row 55)",
    "group": "xe",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-08",
    "allocation_mapping": "OWNER_LINE (A9.14 MQ-05: complete Xe storage/flow hardware in AL-08)",
@@ -3104,9 +3255,15 @@
    "owner_answers_applied": [
     "A9.14 MQ-05 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
     "A9.15 XA9Q-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
-    "A9.15 XV2Q-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
+    "A9.15 XV2Q-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+    "A9.19 xenon_role (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)"
    ],
-   "rfp_required_both_configurations": true
+   "rfp_required_flight_configuration": true,
+   "xe_role": "CONTINGENCY_EMERGENCY",
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "INSTALLED"
+   }
   },
   {
    "id": "A9B-11",
@@ -3114,8 +3271,7 @@
    "name": "Xe anode-feed proportional flow control (bounded Xe mode / Xe reference to the Hall anode)",
    "group": "xe",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-08",
    "allocation_mapping": "OWNER_LINE (A9.14 MQ-05: complete Xe storage/flow hardware in AL-08)",
@@ -3159,9 +3315,15 @@
    "owner_answers_applied": [
     "A9.14 MQ-05 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
     "A9.15 XA9Q-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
-    "A9.15 XV2Q-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
+    "A9.15 XV2Q-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+    "A9.19 xenon_role (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)"
    ],
-   "rfp_required_both_configurations": true
+   "rfp_required_flight_configuration": true,
+   "xe_role": "CONTINGENCY_EMERGENCY",
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "INSTALLED"
+   }
   },
   {
    "id": "A9B-12",
@@ -3169,8 +3331,7 @@
    "name": "Xe plumbing, filters, fittings, pressure transducers",
    "group": "xe",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-08",
    "allocation_mapping": "OWNER_MAPPING (A9.14 MQ-07: Xe plumbing -> AL-08)",
@@ -3203,11 +3364,17 @@
    "owner_answers_applied": [
     "A9.14 MQ-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
     "A9.15 XA9Q-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
-    "A9.15 XV2Q-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
+    "A9.15 XV2Q-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+    "A9.19 xenon_role (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)"
    ],
    "allocation_line_v2": "AL-08",
    "allocation_mapping_v2": "OWNER_LINE",
-   "rfp_required_both_configurations": true
+   "rfp_required_flight_configuration": true,
+   "xe_role": "CONTINGENCY_EMERGENCY",
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "INSTALLED"
+   }
   },
   {
    "id": "A9B-13",
@@ -3215,8 +3382,7 @@
    "name": "Xe propellant load (design case)",
    "group": "xe_propellant",
    "configurations": {
-    "hall_icp_neutralizer": "WET_TERM_XE_ACCOUNTING",
-    "hall_c1_reference": "WET_TERM_XE_ACCOUNTING"
+    "hall_icp_neutralizer": "WET_TERM_XE_ACCOUNTING"
    },
    "allocation_line": "-",
    "allocation_mapping": "Xe propellant term (design case / imported residual): wet roll-up only, never dry mass",
@@ -3250,11 +3416,17 @@
    "owner_answers_applied": [
     "A9.15 XA9Q-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
     "A9.15 XV2Q-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+    "A9.19 xenon_role (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
     "A9.14 XA9Q-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
     "A9.14 OQ-A910-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
    ],
-   "rfp_required_both_configurations": true,
-   "v3_status": "LOADED Xe design cases 2 / 5 / 10 kg = mission usable + reserve + residual, one reading for both ledgers (A9.14 XA9Q-01 / OQ-A910-01); v1_status is history"
+   "rfp_required_flight_configuration": true,
+   "xe_role": "CONTINGENCY_EMERGENCY",
+   "v3_status": "LOADED Xe design cases 2 / 5 / 10 kg = mission usable + reserve + residual, one reading for both ledgers (A9.14 XA9Q-01 / OQ-A910-01); v1_status is history",
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "WET_TERM_XE_ACCOUNTING",
+    "hall_c1_reference": "WET_TERM_XE_ACCOUNTING"
+   }
   },
   {
    "id": "A9B-14",
@@ -3262,8 +3434,7 @@
    "name": "Xe residual (unusable) - a sub-line inside the LOADED case, never added again",
    "group": "xe_propellant",
    "configurations": {
-    "hall_icp_neutralizer": "WET_TERM_XE_ACCOUNTING",
-    "hall_c1_reference": "WET_TERM_XE_ACCOUNTING"
+    "hall_icp_neutralizer": "WET_TERM_XE_ACCOUNTING"
    },
    "allocation_line": "-",
    "allocation_mapping": "Xe propellant term (design case / imported residual): wet roll-up only, never dry mass",
@@ -3296,10 +3467,16 @@
    "owner_answers_applied": [
     "A9.15 XA9Q-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
     "A9.15 XV2Q-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+    "A9.19 xenon_role (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
     "A9.14 MQ-09 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
     "A9.14 OQ-A910-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
    ],
-   "rfp_required_both_configurations": true
+   "rfp_required_flight_configuration": true,
+   "xe_role": "CONTINGENCY_EMERGENCY",
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "WET_TERM_XE_ACCOUNTING",
+    "hall_c1_reference": "WET_TERM_XE_ACCOUNTING"
+   }
   },
   {
    "id": "A9B-15",
@@ -3307,8 +3484,7 @@
    "name": "Hall head: channel walls, anode / gas distributor, body, fasteners",
    "group": "hall",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-04",
    "allocation_mapping": "OWNER_LINE",
@@ -3346,7 +3522,11 @@
    ],
    "v2_propagation": "316L_FLIGHT_ANODE = REJECTED_AS_CURRENT_BASELINE; FINAL_ANODE_MATERIAL = OPEN; anode mass TBD - requires the P4 material trade and the anode heat-removal design (merged P4 docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json (FINAL_ANODE_MATERIAL OPEN)); no material is selected here",
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "INSTALLED"
+   }
   },
   {
    "id": "A9B-16",
@@ -3354,8 +3534,7 @@
    "name": "magnetic circuit MC-1: FeCo-2V inner / pure-iron outer, ceramic-insulated Cu coils",
    "group": "hall",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-04",
    "allocation_mapping": "OWNER_LINE",
@@ -3401,7 +3580,11 @@
    ],
    "v2_propagation": "MC-1 floor books the complete-coil copper 1.579 kg (H2-1 H21-24; ~1.58 kg per A9.2) + iron 1.925 kg; the 0.136 kg 60 W fixed-NI basis is a sensitivity basis only and is never booked (A9.2 coil_mass_correction)",
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "INSTALLED"
+   }
   },
   {
    "id": "A9B-17",
@@ -3409,8 +3592,7 @@
    "name": "ICP neutralizer head: dielectric discharge tube/chamber, RF antenna/coil, antenna shield, floating body, IP-NEU mount, capped dedicated gas port",
    "group": "icp",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "NOT_INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-05",
    "allocation_mapping": "OWNER_LINE",
@@ -3451,7 +3633,11 @@
    ],
    "v2_propagation": "open-tube coaxial first build (A9.3 OQ-VI-03); radiative-view-factor objective (open-frame support, A9.2); capped dedicated gas port retained (A9.3 OQ-RFQ-10); ICP body floating (row 70); mass TBD - requires a flight ICP module design",
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "NOT_INSTALLED"
+   }
   },
   {
    "id": "A9B-18",
@@ -3459,8 +3645,7 @@
    "name": "electron-extraction collector / bias electrode hardware (electrode, isolators, leads)",
    "group": "icp",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "NOT_INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-05",
    "allocation_mapping": "OWNER_MAPPING (A9.14 MQ-07: collector/bias electrode -> AL-05)",
@@ -3502,7 +3687,11 @@
     "A9.14 MQ-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
    ],
    "allocation_line_v2": "AL-05",
-   "allocation_mapping_v2": "PROPOSED_MAPPING (MQ-07)"
+   "allocation_mapping_v2": "PROPOSED_MAPPING (MQ-07)",
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "NOT_INSTALLED"
+   }
   },
   {
    "id": "A9B-19",
@@ -3510,8 +3699,7 @@
    "name": "flight 13.56 MHz RF generator (power amplifier / supply)",
    "group": "icp",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "NOT_INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-06",
    "allocation_mapping": "OWNER_LINE",
@@ -3550,7 +3738,11 @@
    ],
    "v2_propagation": "flight source = FLIGHT_REPRESENTATIVE_DC_RF_SOURCE (A9.3 OQ-RFQ-06), design/supplier TBD; the mains-powered laboratory generator is GROUND/FACILITY_ONLY (GA-02) and never in the flight BOM or P_bus; RF_COMPONENT_RATINGS = TBD_AFTER_IMPEDANCE_MAP",
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "NOT_INSTALLED"
+   }
   },
   {
    "id": "A9B-20",
@@ -3558,8 +3750,7 @@
    "name": "local RF matching network hardware on / immediately adjacent to the ICP module (A9.2)",
    "group": "icp",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "NOT_INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-06",
    "allocation_mapping": "OWNER_MAPPING (A9.14 OQ-A910-05: local matching hardware -> AL-06 (not AL-05))",
@@ -3600,7 +3791,11 @@
     "A9.14 OQ-A910-05 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
    ],
    "allocation_line_v2": "AL-06",
-   "allocation_mapping_v2": "OWNER_LINE"
+   "allocation_mapping_v2": "OWNER_LINE",
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "NOT_INSTALLED"
+   }
   },
   {
    "id": "A9B-21",
@@ -3608,8 +3803,7 @@
    "name": "RF feedthrough and coax / transmission line to the ICP antenna",
    "group": "icp",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "NOT_INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-06",
    "allocation_mapping": "OWNER_MAPPING (A9.14 MQ-07: RF feedthrough/coax/local match -> AL-06)",
@@ -3645,7 +3839,11 @@
     "A9.14 MQ-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
    ],
    "allocation_line_v2": "AL-06",
-   "allocation_mapping_v2": "PROPOSED_MAPPING (MQ-07)"
+   "allocation_mapping_v2": "PROPOSED_MAPPING (MQ-07)",
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "NOT_INSTALLED"
+   }
   },
   {
    "id": "A9B-22",
@@ -3653,8 +3851,7 @@
    "name": "collector / bias supply (floating, V/I readback)",
    "group": "icp",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "NOT_INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-07",
    "allocation_mapping": "OWNER_MAPPING (A9.14 MQ-07: collector/bias supply -> AL-07)",
@@ -3696,7 +3893,11 @@
     "A9.14 MQ-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
    ],
    "allocation_line_v2": "AL-07",
-   "allocation_mapping_v2": "PROPOSED_MAPPING (MQ-07)"
+   "allocation_mapping_v2": "PROPOSED_MAPPING (MQ-07)",
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "NOT_INSTALLED"
+   }
   },
   {
    "id": "A9B-25",
@@ -3704,8 +3905,7 @@
    "name": "Hall PPU: discharge supply + per-coil magnet supplies (row 110 partition)",
    "group": "power",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-07",
    "allocation_mapping": "OWNER_LINE",
@@ -3743,7 +3943,11 @@
    "v2_decisions": [],
    "v2_propagation": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "INSTALLED"
+   }
   },
   {
    "id": "A9B-26",
@@ -3751,8 +3955,7 @@
    "name": "flow/valve drivers, housekeeping electronics, reserved DC port",
    "group": "control",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-09",
    "allocation_mapping": "OWNER_MAPPING (A9.14 MQ-07: valve drivers -> controls portion of AL-09)",
@@ -3791,7 +3994,11 @@
     "A9.14 MQ-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
    ],
    "allocation_line_v2": "AL-09",
-   "allocation_mapping_v2": "PROPOSED_MAPPING (MQ-07)"
+   "allocation_mapping_v2": "PROPOSED_MAPPING (MQ-07)",
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "INSTALLED"
+   }
   },
   {
    "id": "A9B-27",
@@ -3799,8 +4006,7 @@
    "name": "control / FDIR electronics",
    "group": "control",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-09",
    "allocation_mapping": "OWNER_MAPPING (A9.14 MQ-06: electronics/controls -> separate controls line AL-09)",
@@ -3837,7 +4043,11 @@
     "A9.14 MQ-06 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
    ],
    "allocation_line_v2": "AL-09",
-   "allocation_mapping_v2": "OWNER_LINE"
+   "allocation_mapping_v2": "OWNER_LINE",
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "INSTALLED"
+   }
   },
   {
    "id": "A9B-28",
@@ -3845,8 +4055,7 @@
    "name": "harness",
    "group": "control",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-HAR",
    "allocation_mapping": "OWNER_MAPPING (A9.14 MQ-06: harness -> its own line (row-60 rule))",
@@ -3880,7 +4089,11 @@
     "A9.14 MQ-06 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
    ],
    "allocation_line_v2": "AL-09",
-   "allocation_mapping_v2": "OWNER_LINE"
+   "allocation_mapping_v2": "OWNER_LINE",
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "INSTALLED"
+   }
   },
   {
    "id": "A9B-29",
@@ -3888,8 +4101,7 @@
    "name": "flight sensors / telemetry subset (ICP telemetry added, C1 telemetry TM-03 dropped)",
    "group": "control",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-09",
    "allocation_mapping": "OWNER_MAPPING (A9.14 MQ-07: flight sensors -> controls portion of AL-09)",
@@ -3926,7 +4138,11 @@
     "A9.14 MQ-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
    ],
    "allocation_line_v2": "AL-09",
-   "allocation_mapping_v2": "PROPOSED_MAPPING (MQ-07)"
+   "allocation_mapping_v2": "PROPOSED_MAPPING (MQ-07)",
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "INSTALLED"
+   }
   },
   {
    "id": "A9B-30",
@@ -3934,8 +4150,7 @@
    "name": "thermal-control hardware (radiators, heaters, MLI, heat paths)",
    "group": "structure_thermal",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-10",
    "allocation_mapping": "OWNER_LINE",
@@ -3972,7 +4187,11 @@
    ],
    "v2_propagation": "ANODE_THERMAL_CLOSURE = UNRESOLVED; ICP_COUPLED_THERMAL = UNRESOLVED; thermal hardware mass TBD - requires the coupled thermal model with Q_Hall->ICP, Q_collector, Q_RF/match, Q_plume and the ICP view-factor effect (merged P3 docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (inputs TBD; ICP_COUPLED_THERMAL / ANODE_THERMAL_CLOSURE UNRESOLVED)); no thermal PASS",
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "INSTALLED"
+   }
   },
   {
    "id": "A9B-31",
@@ -3980,8 +4199,7 @@
    "name": "propulsion-module structure, brackets, spacecraft interface, downstream coaxial ICP mount",
    "group": "structure_thermal",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-10",
    "allocation_mapping": "OWNER_LINE",
@@ -4014,7 +4232,11 @@
    ],
    "v2_propagation": "downstream coaxial ICP mount (hall_icp_neutralizer only) designed to the radiative-view objective (open-frame, Hall-to-ICP axial spacing); mass TBD",
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "INSTALLED"
+   }
   },
   {
    "id": "A9B-23",
@@ -4022,8 +4244,7 @@
    "name": "ICP gas-feed flow control (flow_control_icp_feed)",
    "group": "icp",
    "configurations": {
-    "hall_icp_neutralizer": "VARIANT_ONLY",
-    "hall_c1_reference": "NOT_INSTALLED"
+    "hall_icp_neutralizer": "VARIANT_ONLY"
    },
    "allocation_line": null,
    "allocation_mapping": "VARIANT (booked only when G-ATM or G-XE is installed/used)",
@@ -4059,7 +4280,11 @@
    ],
    "v2_propagation": "quote-option only (A9.3 OQ-RFQ-10); if G-ATM / G-XE is activated, mdot_ICP,dedicated is booked in the corresponding ledger and a gas isolator applies where the line bridges isolated potentials (MPV2-N06)",
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "VARIANT_ONLY",
+    "hall_c1_reference": "NOT_INSTALLED"
+   }
   },
   {
    "id": "A9B-24",
@@ -4067,8 +4292,7 @@
    "name": "ICP assist magnet",
    "group": "icp",
    "configurations": {
-    "hall_icp_neutralizer": "VARIANT_ONLY",
-    "hall_c1_reference": "NOT_INSTALLED"
+    "hall_icp_neutralizer": "VARIANT_ONLY"
    },
    "allocation_line": null,
    "allocation_mapping": "VARIANT (new controlled variant with booked mass/power)",
@@ -4100,7 +4324,11 @@
    "v2_decisions": [],
    "v2_propagation": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "VARIANT_ONLY",
+    "hall_c1_reference": "NOT_INSTALLED"
+   }
   },
   {
    "id": "A9B-C01",
@@ -4109,10 +4337,10 @@
    "group": "c1",
    "configurations": {
     "hall_icp_neutralizer": "NOT_INSTALLED",
-    "hall_c1_reference": "DEFERRED_UNTIL_C1_SELECTED (A9.14 OQ-A907-07 as amended by A9.15)"
+    "ground_lab_reference": "GROUND_ONLY_LAB_EQUIPMENT (A9.20)"
    },
-   "allocation_line": "AL-C1",
-   "allocation_mapping": "OWNER_MAPPING (A9.14 MPQ-01: cathode module -> AL-C1 (only when C1 is selected))",
+   "allocation_line": "GROUND_ONLY_LAB_EQUIPMENT",
+   "allocation_mapping": "GROUND_ONLY_LAB_EQUIPMENT (A9.20): C1 is a ground-only laboratory reference (H-1 I_d,max,H1,Ar characterization per A9.10 S3.5; bench control in the C1-vs-ICP comparison); never flight hardware, never in the flight mass / power / Xe budgets; no conventional hollow cathode in the flight architecture (A9.19)",
    "power_slots_a9": [],
    "m16_row": 11,
    "columns": {
@@ -4151,17 +4379,26 @@
    ],
    "v2_decisions": [],
    "v2_propagation": null,
-   "v3_change": "allocation mapping decided by the owner",
+   "v3_change": "A9.19 / A9.20: ground-only lab equipment (pre-A9.19 flight mapping kept as history)",
    "owner_answers_applied": [
     "A9.14 MPQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+    "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+    "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)",
     "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
     "A9.15 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
    ],
    "allocation_line_v2": "AL-C1",
    "allocation_mapping_v2": "PROPOSED_MAPPING (MPQ-01; no owner allocation)",
+   "allocation_line_pre_a9_19": "AL-C1",
+   "allocation_mapping_pre_a9_19": "A9.14 MPQ-01: cathode module -> AL-C1 (only when C1 is selected)",
+   "classification": "GROUND_ONLY_LAB_EQUIPMENT",
    "configurations_v2": {
     "hall_icp_neutralizer": "NOT_INSTALLED",
     "hall_c1_reference": "INSTALLED"
+   },
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "NOT_INSTALLED",
+    "hall_c1_reference": "DEFERRED_UNTIL_C1_SELECTED (A9.14 OQ-A907-07 as amended by A9.15)"
    }
   },
   {
@@ -4171,10 +4408,10 @@
    "group": "c1",
    "configurations": {
     "hall_icp_neutralizer": "NOT_INSTALLED",
-    "hall_c1_reference": "DEFERRED_UNTIL_C1_SELECTED (A9.14 OQ-A907-07 as amended by A9.15)"
+    "ground_lab_reference": "GROUND_ONLY_LAB_EQUIPMENT (A9.20)"
    },
-   "allocation_line": "AL-C1",
-   "allocation_mapping": "OWNER_MAPPING (A9.14 MPQ-01: shield/mount -> AL-C1 (only when C1 is selected))",
+   "allocation_line": "GROUND_ONLY_LAB_EQUIPMENT",
+   "allocation_mapping": "GROUND_ONLY_LAB_EQUIPMENT (A9.20): C1 is a ground-only laboratory reference (H-1 I_d,max,H1,Ar characterization per A9.10 S3.5; bench control in the C1-vs-ICP comparison); never flight hardware, never in the flight mass / power / Xe budgets; no conventional hollow cathode in the flight architecture (A9.19)",
    "power_slots_a9": [],
    "m16_row": 11,
    "columns": {
@@ -4202,17 +4439,26 @@
    ],
    "v2_decisions": [],
    "v2_propagation": null,
-   "v3_change": "allocation mapping decided by the owner",
+   "v3_change": "A9.19 / A9.20: ground-only lab equipment (pre-A9.19 flight mapping kept as history)",
    "owner_answers_applied": [
     "A9.14 MPQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+    "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+    "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)",
     "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
     "A9.15 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
    ],
    "allocation_line_v2": "AL-C1",
    "allocation_mapping_v2": "PROPOSED_MAPPING (MPQ-01; no owner allocation)",
+   "allocation_line_pre_a9_19": "AL-C1",
+   "allocation_mapping_pre_a9_19": "A9.14 MPQ-01: shield/mount -> AL-C1 (only when C1 is selected)",
+   "classification": "GROUND_ONLY_LAB_EQUIPMENT",
    "configurations_v2": {
     "hall_icp_neutralizer": "NOT_INSTALLED",
     "hall_c1_reference": "INSTALLED"
+   },
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "NOT_INSTALLED",
+    "hall_c1_reference": "DEFERRED_UNTIL_C1_SELECTED (A9.14 OQ-A907-07 as amended by A9.15)"
    }
   },
   {
@@ -4222,10 +4468,10 @@
    "group": "c1",
    "configurations": {
     "hall_icp_neutralizer": "NOT_INSTALLED",
-    "hall_c1_reference": "DEFERRED_UNTIL_C1_SELECTED (A9.14 OQ-A907-07 as amended by A9.15)"
+    "ground_lab_reference": "GROUND_ONLY_LAB_EQUIPMENT (A9.20)"
    },
-   "allocation_line": "AL-07",
-   "allocation_mapping": "OWNER_MAPPING (A9.14 MPQ-01: C1 heater/keeper/control electronics -> AL-07)",
+   "allocation_line": "GROUND_ONLY_LAB_EQUIPMENT",
+   "allocation_mapping": "GROUND_ONLY_LAB_EQUIPMENT (A9.20): C1 is a ground-only laboratory reference (H-1 I_d,max,H1,Ar characterization per A9.10 S3.5; bench control in the C1-vs-ICP comparison); never flight hardware, never in the flight mass / power / Xe budgets; no conventional hollow cathode in the flight architecture (A9.19)",
    "power_slots_a9": [
     "c1_heater",
     "c1_keeper",
@@ -4263,17 +4509,26 @@
     "A93:OQ-A907-02"
    ],
    "v2_propagation": "hall_c1_reference flight fallback supplies (heater, keeper 300-600 V pulsed class row 89, common tie); mass inside the AL-07 PPU analog scope or AL-C1 (MPQ-01)",
-   "v3_change": "allocation mapping decided by the owner",
+   "v3_change": "A9.19 / A9.20: ground-only lab equipment (pre-A9.19 flight mapping kept as history)",
    "owner_answers_applied": [
     "A9.14 MPQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+    "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+    "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)",
     "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
     "A9.15 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
    ],
    "allocation_line_v2": "AL-C1",
    "allocation_mapping_v2": "PROPOSED_MAPPING (MPQ-01; no owner allocation)",
+   "allocation_line_pre_a9_19": "AL-07",
+   "allocation_mapping_pre_a9_19": "A9.14 MPQ-01: C1 heater/keeper/control electronics -> AL-07",
+   "classification": "GROUND_ONLY_LAB_EQUIPMENT",
    "configurations_v2": {
     "hall_icp_neutralizer": "NOT_INSTALLED",
     "hall_c1_reference": "INSTALLED"
+   },
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "NOT_INSTALLED",
+    "hall_c1_reference": "DEFERRED_UNTIL_C1_SELECTED (A9.14 OQ-A907-07 as amended by A9.15)"
    }
   },
   {
@@ -4283,10 +4538,10 @@
    "group": "c1",
    "configurations": {
     "hall_icp_neutralizer": "NOT_INSTALLED",
-    "hall_c1_reference": "DEFERRED_UNTIL_C1_SELECTED (A9.14 OQ-A907-07 as amended by A9.15)"
+    "ground_lab_reference": "GROUND_ONLY_LAB_EQUIPMENT (A9.20)"
    },
-   "allocation_line": "AL-08",
-   "allocation_mapping": "OWNER_MAPPING (A9.14 MPQ-01: C1 Xe branch -> AL-08 (only for a selected C1 that requires Xe; A9.15))",
+   "allocation_line": "GROUND_ONLY_LAB_EQUIPMENT",
+   "allocation_mapping": "GROUND_ONLY_LAB_EQUIPMENT (A9.20): C1 is a ground-only laboratory reference (H-1 I_d,max,H1,Ar characterization per A9.10 S3.5; bench control in the C1-vs-ICP comparison); never flight hardware, never in the flight mass / power / Xe budgets; no conventional hollow cathode in the flight architecture (A9.19)",
    "power_slots_a9": [],
    "m16_row": 8,
    "columns": {
@@ -4320,18 +4575,26 @@
    ],
    "v2_decisions": [],
    "v2_propagation": null,
-   "v3_change": "allocation mapping decided by the owner",
+   "v3_change": "A9.19 / A9.20: ground-only lab equipment (pre-A9.19 flight mapping kept as history)",
    "owner_answers_applied": [
     "A9.14 MPQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-    "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+    "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+    "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)",
     "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
     "A9.15 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
    ],
    "allocation_line_v2": "AL-C1",
    "allocation_mapping_v2": "PROPOSED_MAPPING (MPQ-01; no owner allocation)",
+   "allocation_line_pre_a9_19": "AL-08",
+   "allocation_mapping_pre_a9_19": "A9.14 MPQ-01: C1 Xe branch -> AL-08 (only for a selected C1 that requires Xe; A9.15)",
+   "classification": "GROUND_ONLY_LAB_EQUIPMENT",
    "configurations_v2": {
     "hall_icp_neutralizer": "NOT_INSTALLED",
     "hall_c1_reference": "INSTALLED"
+   },
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "NOT_INSTALLED",
+    "hall_c1_reference": "DEFERRED_UNTIL_C1_SELECTED (A9.14 OQ-A907-07 as amended by A9.15)"
    }
   },
   {
@@ -4341,10 +4604,10 @@
    "group": "c1",
    "configurations": {
     "hall_icp_neutralizer": "NOT_INSTALLED",
-    "hall_c1_reference": "DEFERRED_UNTIL_C1_SELECTED (A9.14 OQ-A907-07 as amended by A9.15)"
+    "ground_lab_reference": "GROUND_ONLY_LAB_EQUIPMENT (A9.20)"
    },
-   "allocation_line": "AL-C1",
-   "allocation_mapping": "OWNER_MAPPING (A9.14 MPQ-01: C1-specific getter/filter -> AL-C1 (only when C1 is selected))",
+   "allocation_line": "GROUND_ONLY_LAB_EQUIPMENT",
+   "allocation_mapping": "GROUND_ONLY_LAB_EQUIPMENT (A9.20): C1 is a ground-only laboratory reference (H-1 I_d,max,H1,Ar characterization per A9.10 S3.5; bench control in the C1-vs-ICP comparison); never flight hardware, never in the flight mass / power / Xe budgets; no conventional hollow cathode in the flight architecture (A9.19)",
    "power_slots_a9": [
     "filter_getter"
    ],
@@ -4372,17 +4635,26 @@
    "a9_1_decisions": [],
    "v2_decisions": [],
    "v2_propagation": null,
-   "v3_change": "allocation mapping decided by the owner",
+   "v3_change": "A9.19 / A9.20: ground-only lab equipment (pre-A9.19 flight mapping kept as history)",
    "owner_answers_applied": [
     "A9.14 MPQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+    "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+    "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)",
     "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
     "A9.15 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
    ],
    "allocation_line_v2": "AL-C1",
    "allocation_mapping_v2": "PROPOSED_MAPPING (MPQ-01; no owner allocation)",
+   "allocation_line_pre_a9_19": "AL-C1",
+   "allocation_mapping_pre_a9_19": "A9.14 MPQ-01: C1-specific getter/filter -> AL-C1 (only when C1 is selected)",
+   "classification": "GROUND_ONLY_LAB_EQUIPMENT",
    "configurations_v2": {
     "hall_icp_neutralizer": "NOT_INSTALLED",
     "hall_c1_reference": "INSTALLED"
+   },
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "NOT_INSTALLED",
+    "hall_c1_reference": "DEFERRED_UNTIL_C1_SELECTED (A9.14 OQ-A907-07 as amended by A9.15)"
    }
   },
   {
@@ -4392,10 +4664,10 @@
    "group": "c1",
    "configurations": {
     "hall_icp_neutralizer": "NOT_INSTALLED",
-    "hall_c1_reference": "DEFERRED_UNTIL_C1_SELECTED (A9.14 OQ-A907-07 as amended by A9.15)"
+    "ground_lab_reference": "GROUND_ONLY_LAB_EQUIPMENT (A9.20)"
    },
-   "allocation_line": "-",
-   "allocation_mapping": "Xe propellant term: inside the Xe design case of scenario FL-C1 (A9 Xe ledger); never dry mass",
+   "allocation_line": "GROUND_ONLY_LAB_EQUIPMENT",
+   "allocation_mapping": "GROUND_ONLY_LAB_EQUIPMENT (A9.20): C1 is a ground-only laboratory reference (H-1 I_d,max,H1,Ar characterization per A9.10 S3.5; bench control in the C1-vs-ICP comparison); never flight hardware, never in the flight mass / power / Xe budgets; no conventional hollow cathode in the flight architecture (A9.19)",
    "power_slots_a9": [],
    "m16_row": 6,
    "columns": {
@@ -4423,15 +4695,27 @@
    ],
    "v2_decisions": [],
    "v2_propagation": null,
-   "v3_change": "flight C1 Xe term pending C1 selection (neither assumed nor excluded)",
+   "v3_change": "A9.19 / A9.20: ground-only lab equipment (pre-A9.19 flight mapping kept as history)",
    "owner_answers_applied": [
+    "A9.14 MPQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+    "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+    "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)",
     "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
     "A9.15 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
     "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
    ],
+   "allocation_line_v2": "-",
+   "allocation_mapping_v2": "Xe propellant term: inside the Xe design case of scenario FL-C1 (A9 Xe ledger); never dry mass",
+   "allocation_line_pre_a9_19": "-",
+   "allocation_mapping_pre_a9_19": "A9.14 MPQ-01: C1 cathode Xe design term (wet term, pending C1 selection; A9.15)",
+   "classification": "GROUND_ONLY_LAB_EQUIPMENT",
    "configurations_v2": {
     "hall_icp_neutralizer": "NOT_INSTALLED",
     "hall_c1_reference": "WET_TERM_XE_ACCOUNTING"
+   },
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "NOT_INSTALLED",
+    "hall_c1_reference": "DEFERRED_UNTIL_C1_SELECTED (A9.14 OQ-A907-07 as amended by A9.15)"
    }
   },
   {
@@ -4441,10 +4725,10 @@
    "group": "c1",
    "configurations": {
     "hall_icp_neutralizer": "NOT_INSTALLED",
-    "hall_c1_reference": "DEFERRED_UNTIL_C1_SELECTED (A9.14 OQ-A907-07 as amended by A9.15)"
+    "ground_lab_reference": "GROUND_ONLY_LAB_EQUIPMENT (A9.20)"
    },
-   "allocation_line": "AL-09",
-   "allocation_mapping": "RECORDER_MAPPING_FLAGGED: C1 telemetry = flight sensors -> controls portion of AL-09 by the A9.14 MQ-07 rule (MPQ-01 option c names no line for it)",
+   "allocation_line": "GROUND_ONLY_LAB_EQUIPMENT",
+   "allocation_mapping": "GROUND_ONLY_LAB_EQUIPMENT (A9.20): C1 is a ground-only laboratory reference (H-1 I_d,max,H1,Ar characterization per A9.10 S3.5; bench control in the C1-vs-ICP comparison); never flight hardware, never in the flight mass / power / Xe budgets; no conventional hollow cathode in the flight architecture (A9.19)",
    "power_slots_a9": [],
    "m16_row": 15,
    "columns": {
@@ -4470,17 +4754,26 @@
    ],
    "v2_decisions": [],
    "v2_propagation": null,
-   "v3_change": "mapped by the MQ-07 sensor rule (flagged)",
+   "v3_change": "A9.19 / A9.20: ground-only lab equipment (pre-A9.19 flight mapping kept as history)",
    "owner_answers_applied": [
     "A9.14 MQ-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+    "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+    "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)",
     "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
     "A9.15 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
    ],
    "allocation_line_v2": "AL-C1",
    "allocation_mapping_v2": "PROPOSED_MAPPING (MPQ-01; no owner allocation)",
+   "allocation_line_pre_a9_19": "AL-09",
+   "allocation_mapping_pre_a9_19": "A9.14 MQ-07: C1 telemetry = flight sensors -> controls portion of AL-09 (recorder mapping, flagged)",
+   "classification": "GROUND_ONLY_LAB_EQUIPMENT",
    "configurations_v2": {
     "hall_icp_neutralizer": "NOT_INSTALLED",
     "hall_c1_reference": "INSTALLED"
+   },
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "NOT_INSTALLED",
+    "hall_c1_reference": "DEFERRED_UNTIL_C1_SELECTED (A9.14 OQ-A907-07 as amended by A9.15)"
    }
   },
   {
@@ -4489,8 +4782,7 @@
    "name": "upstream RF pre-ionization source (mass_bom v1 item 'rf_source')",
    "group": "removed",
    "configurations": {
-    "hall_icp_neutralizer": "REMOVED_PREIONIZER_ONLY",
-    "hall_c1_reference": "REMOVED_PREIONIZER_ONLY"
+    "hall_icp_neutralizer": "REMOVED_PREIONIZER_ONLY"
    },
    "allocation_line": null,
    "allocation_mapping": "OWNER_LINE",
@@ -4521,7 +4813,11 @@
    "v2_decisions": [],
    "v2_propagation": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "REMOVED_PREIONIZER_ONLY",
+    "hall_c1_reference": "REMOVED_PREIONIZER_ONLY"
+   }
   },
   {
    "id": "A9B-R02",
@@ -4529,8 +4825,7 @@
    "name": "pre-ionizer RF generator (mass_bom v1 item 'rf_generator')",
    "group": "removed",
    "configurations": {
-    "hall_icp_neutralizer": "REMOVED_PREIONIZER_ONLY",
-    "hall_c1_reference": "REMOVED_PREIONIZER_ONLY"
+    "hall_icp_neutralizer": "REMOVED_PREIONIZER_ONLY"
    },
    "allocation_line": null,
    "allocation_mapping": "OWNER_LINE",
@@ -4561,7 +4856,11 @@
    "v2_decisions": [],
    "v2_propagation": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "REMOVED_PREIONIZER_ONLY",
+    "hall_c1_reference": "REMOVED_PREIONIZER_ONLY"
+   }
   },
   {
    "id": "A9B-R03",
@@ -4569,8 +4868,7 @@
    "name": "pre-ionizer matching network (mass_bom v1 item 'rf_matching_network')",
    "group": "removed",
    "configurations": {
-    "hall_icp_neutralizer": "REMOVED_PREIONIZER_ONLY",
-    "hall_c1_reference": "REMOVED_PREIONIZER_ONLY"
+    "hall_icp_neutralizer": "REMOVED_PREIONIZER_ONLY"
    },
    "allocation_line": null,
    "allocation_mapping": "OWNER_LINE",
@@ -4601,7 +4899,11 @@
    "v2_decisions": [],
    "v2_propagation": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "REMOVED_PREIONIZER_ONLY",
+    "hall_c1_reference": "REMOVED_PREIONIZER_ONLY"
+   }
   },
   {
    "id": "A9B-R04",
@@ -4609,8 +4911,7 @@
    "name": "ECR pre-ionization source (mass_bom v1 item 'ecr_source')",
    "group": "removed",
    "configurations": {
-    "hall_icp_neutralizer": "REMOVED_PREIONIZER_ONLY",
-    "hall_c1_reference": "REMOVED_PREIONIZER_ONLY"
+    "hall_icp_neutralizer": "REMOVED_PREIONIZER_ONLY"
    },
    "allocation_line": null,
    "allocation_mapping": "OWNER_LINE",
@@ -4641,7 +4942,11 @@
    "v2_decisions": [],
    "v2_propagation": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "REMOVED_PREIONIZER_ONLY",
+    "hall_c1_reference": "REMOVED_PREIONIZER_ONLY"
+   }
   },
   {
    "id": "A9B-R05",
@@ -4649,8 +4954,7 @@
    "name": "ECR microwave source (mass_bom v1 item 'microwave_source')",
    "group": "removed",
    "configurations": {
-    "hall_icp_neutralizer": "REMOVED_PREIONIZER_ONLY",
-    "hall_c1_reference": "REMOVED_PREIONIZER_ONLY"
+    "hall_icp_neutralizer": "REMOVED_PREIONIZER_ONLY"
    },
    "allocation_line": null,
    "allocation_mapping": "OWNER_LINE",
@@ -4681,7 +4985,11 @@
    "v2_decisions": [],
    "v2_propagation": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "REMOVED_PREIONIZER_ONLY",
+    "hall_c1_reference": "REMOVED_PREIONIZER_ONLY"
+   }
   },
   {
    "id": "A9B-R06",
@@ -4689,8 +4997,7 @@
    "name": "ECR transmission line (mass_bom v1 item 'waveguide')",
    "group": "removed",
    "configurations": {
-    "hall_icp_neutralizer": "REMOVED_PREIONIZER_ONLY",
-    "hall_c1_reference": "REMOVED_PREIONIZER_ONLY"
+    "hall_icp_neutralizer": "REMOVED_PREIONIZER_ONLY"
    },
    "allocation_line": null,
    "allocation_mapping": "OWNER_LINE",
@@ -4721,7 +5028,11 @@
    "v2_decisions": [],
    "v2_propagation": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "REMOVED_PREIONIZER_ONLY",
+    "hall_c1_reference": "REMOVED_PREIONIZER_ONLY"
+   }
   },
   {
    "id": "A9B-R07",
@@ -4729,8 +5040,7 @@
    "name": "ECR resonance magnets (mass_bom v1 item 'ecr_magnets')",
    "group": "removed",
    "configurations": {
-    "hall_icp_neutralizer": "REMOVED_PREIONIZER_ONLY",
-    "hall_c1_reference": "REMOVED_PREIONIZER_ONLY"
+    "hall_icp_neutralizer": "REMOVED_PREIONIZER_ONLY"
    },
    "allocation_line": null,
    "allocation_mapping": "OWNER_LINE",
@@ -4761,7 +5071,11 @@
    "v2_decisions": [],
    "v2_propagation": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "REMOVED_PREIONIZER_ONLY",
+    "hall_c1_reference": "REMOVED_PREIONIZER_ONLY"
+   }
   },
   {
    "id": "A9B-R08",
@@ -4769,8 +5083,7 @@
    "name": "reserved RF pre-ionizer interface provision at IP-UP/IP-DN (H2-7 R17)",
    "group": "removed",
    "configurations": {
-    "hall_icp_neutralizer": "REMOVED_PREIONIZER_ONLY",
-    "hall_c1_reference": "REMOVED_PREIONIZER_ONLY"
+    "hall_icp_neutralizer": "REMOVED_PREIONIZER_ONLY"
    },
    "allocation_line": null,
    "allocation_mapping": "OWNER_LINE",
@@ -4803,7 +5116,11 @@
    "v2_decisions": [],
    "v2_propagation": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "REMOVED_PREIONIZER_ONLY",
+    "hall_c1_reference": "REMOVED_PREIONIZER_ONLY"
+   }
   },
   {
    "id": "MPV2-N01",
@@ -4811,8 +5128,7 @@
    "name": "ICP body / collector isolation hardware (isolators, standoffs, isolated feedthroughs): 350 V operating class, >= 525 V design-withstand basis, initial 1.05 kV DC / 60 s passive-insulation DWV where applicable",
    "group": "icp",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "NOT_INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-05",
    "allocation_mapping": "OWNER_MAPPING (A9.14 MPQ-02: ICP isolation hardware -> AL-05)",
@@ -4846,7 +5162,11 @@
     "A9.14 MPQ-02 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
    ],
    "allocation_line_v2": "AL-05",
-   "allocation_mapping_v2": "PROPOSED_MAPPING (MPQ-02)"
+   "allocation_mapping_v2": "PROPOSED_MAPPING (MPQ-02)",
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "NOT_INSTALLED"
+   }
   },
   {
    "id": "MPV2-N02",
@@ -4854,8 +5174,7 @@
    "name": "flight RF protection and sensing electronics: forward/reflected power monitoring on the generator / 50-ohm side of the local match, mismatch interlock, arc detection where feasible, thermal monitoring, automatic RF reduction/shutdown",
    "group": "icp",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "NOT_INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-06",
    "allocation_mapping": "OWNER_MAPPING (A9.14 MPQ-02: RF protection/sensing electronics -> AL-06)",
@@ -4892,7 +5211,11 @@
     "A9.14 MPQ-02 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
    ],
    "allocation_line_v2": "AL-06",
-   "allocation_mapping_v2": "PROPOSED_MAPPING (MPQ-02)"
+   "allocation_mapping_v2": "PROPOSED_MAPPING (MPQ-02)",
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "NOT_INSTALLED"
+   }
   },
   {
    "id": "MPV2-N03",
@@ -4900,8 +5223,7 @@
    "name": "H-1 anode heat-removal path hardware (backplate conduction, support/feed-tube conduction, spreading, radiative area)",
    "group": "hall",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-04",
    "allocation_mapping": "OWNER_MAPPING (A9.14 MPQ-02: anode heat-removal hardware -> AL-04)",
@@ -4935,7 +5257,11 @@
     "A9.14 MPQ-02 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
    ],
    "allocation_line_v2": "AL-04",
-   "allocation_mapping_v2": "PROPOSED_MAPPING (MPQ-02)"
+   "allocation_mapping_v2": "PROPOSED_MAPPING (MPQ-02)",
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "INSTALLED"
+   }
   },
   {
    "id": "MPV2-N04",
@@ -4943,8 +5269,7 @@
    "name": "ICP open-frame support / radiative-view hardware and Hall-to-ICP axial spacer",
    "group": "structure",
    "configurations": {
-    "hall_icp_neutralizer": "INSTALLED",
-    "hall_c1_reference": "NOT_INSTALLED"
+    "hall_icp_neutralizer": "INSTALLED"
    },
    "allocation_line": "AL-10",
    "allocation_mapping": "OWNER_MAPPING (A9.14 MPQ-02: ICP open-frame support/spacer -> AL-10)",
@@ -4979,7 +5304,11 @@
     "A9.14 MPQ-02 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
    ],
    "allocation_line_v2": "AL-10",
-   "allocation_mapping_v2": "PROPOSED_MAPPING (MPQ-02)"
+   "allocation_mapping_v2": "PROPOSED_MAPPING (MPQ-02)",
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "INSTALLED",
+    "hall_c1_reference": "NOT_INSTALLED"
+   }
   },
   {
    "id": "MPV2-N05",
@@ -4987,8 +5316,7 @@
    "name": "active cooling hardware (pump / fan / TEC) - only if passive heat removal fails",
    "group": "thermal",
    "configurations": {
-    "hall_icp_neutralizer": "VARIANT_ONLY",
-    "hall_c1_reference": "VARIANT_ONLY"
+    "hall_icp_neutralizer": "VARIANT_ONLY"
    },
    "allocation_line": null,
    "allocation_mapping": "VARIANT (booked only when the active_cooling variant is declared)",
@@ -5020,7 +5348,11 @@
    ],
    "v2_propagation": "new line (A9.2 .. A9.6 propagation)",
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "VARIANT_ONLY",
+    "hall_c1_reference": "VARIANT_ONLY"
+   }
   },
   {
    "id": "MPV2-N06",
@@ -5028,8 +5360,7 @@
    "name": "gas isolator on a dedicated ICP feed line bridging isolated potentials (~1 kV DC representative-gas development qualification)",
    "group": "icp",
    "configurations": {
-    "hall_icp_neutralizer": "VARIANT_ONLY",
-    "hall_c1_reference": "NOT_INSTALLED"
+    "hall_icp_neutralizer": "VARIANT_ONLY"
    },
    "allocation_line": null,
    "allocation_mapping": "VARIANT (G-ATM / G-XE only; none where both ends float at the same potential)",
@@ -5060,14 +5391,23 @@
    ],
    "v2_propagation": "new line (A9.2 .. A9.6 propagation)",
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "configurations_pre_a9_19": {
+    "hall_icp_neutralizer": "VARIANT_ONLY",
+    "hall_c1_reference": "NOT_INSTALLED"
+   }
   }
  ],
  "ground_article_only": [
   {
    "id": "GA-01",
    "item": "C1 reference module (external C1, row 79) on the kinematic carrier KC-1",
-   "rule": "ground/test article; measured mass/CG per serial and configuration (ICD ICP-08, row 116)"
+   "rule": "ground/test article; measured mass/CG per serial and configuration (ICD ICP-08, row 116)",
+   "a9_20_rule": "GROUND_ONLY laboratory reference (A9.20): registers I_d,max,H1,Ar on H-1 independently of the ICP (A9.10 S3.5) and is the bench control in the C1-vs-ICP comparison; its hardware (BOM A9B-C01..C07) is GROUND_ONLY_LAB_EQUIPMENT, measured per serial on the ground article, never flight mass / power / Xe",
+   "owner_answers_applied": [
+    "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)",
+    "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)"
+   ]
   },
   {
    "id": "GA-02",
@@ -5605,444 +5945,449 @@
       }
      ]
     }
-   },
-   "hall_c1_reference": {
-    "installed_slots": [
-     "hall_discharge",
-     "hall_magnet_inner",
-     "hall_magnet_outer",
-     "hall_magnet_trim",
-     "c1_heater",
-     "c1_keeper",
-     "c1_common_tie",
-     "filter_getter",
-     "flow_control_atmospheric",
-     "flow_control_xe",
-     "compressor",
-     "thermal_control",
-     "housekeeping_controls",
-     "reserved_dc_port"
-    ],
-    "variant_options_not_installed": [
-     "active_cooling"
-    ],
-    "slots": [
-     {
-      "slot": "hall_discharge",
-      "group": "hall",
-      "rows": [
-       110
-      ],
-      "load_plane": "anode-cathode(-common) terminals at H-1, V_d x I_d time-averaged; discharge supply fed from the internal bus",
-      "envelope": "HALL_AND_ELECTRON_SOURCE (inside 1350 W - P_common - P_other,active; no fixed split, A9.1 OQ-A902-03)",
-      "ALLOCATION_W": null,
-      "allocation_rule": "no per-slot owner allocation exists: the slot sits in the envelope named; A9.1 OQ-A902-03 forbids a fixed Hall/ICP split",
-      "CBE_W": null,
-      "MEASURED_W": null,
-      "status": "TBD - requires the registered H-1 operating envelope and a measured flight-representative discharge supply (row 113); no Hall closure or 0-D number is used",
-      "first_on_step": "C-S5",
-      "peak_class_event": "hall_discharge_ignition",
-      "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
+   }
+  },
+  "retired_flight_configuration_history": {
+   "label": "HISTORY - hall_c1_reference retired as a flight configuration by A9.19 (C1 ground-only, A9.20); its C1 slots (heater / keeper / common tie) are never flight P_bus loads",
+   "configurations": {
+    "hall_c1_reference": {
+     "installed_slots": [
+      "hall_discharge",
+      "hall_magnet_inner",
+      "hall_magnet_outer",
+      "hall_magnet_trim",
+      "c1_heater",
+      "c1_keeper",
+      "c1_common_tie",
+      "filter_getter",
+      "flow_control_atmospheric",
+      "flow_control_xe",
+      "compressor",
+      "thermal_control",
+      "housekeeping_controls",
+      "reserved_dc_port"
+     ],
+     "variant_options_not_installed": [
+      "active_cooling"
+     ],
+     "slots": [
+      {
+       "slot": "hall_discharge",
+       "group": "hall",
+       "rows": [
+        110
+       ],
+       "load_plane": "anode-cathode(-common) terminals at H-1, V_d x I_d time-averaged; discharge supply fed from the internal bus",
+       "envelope": "HALL_AND_ELECTRON_SOURCE (inside 1350 W - P_common - P_other,active; no fixed split, A9.1 OQ-A902-03)",
+       "ALLOCATION_W": null,
+       "allocation_rule": "no per-slot owner allocation exists: the slot sits in the envelope named; A9.1 OQ-A902-03 forbids a fixed Hall/ICP split",
+       "CBE_W": null,
+       "MEASURED_W": null,
+       "status": "TBD - requires the registered H-1 operating envelope and a measured flight-representative discharge supply (row 113); no Hall closure or 0-D number is used",
+       "first_on_step": "C-S5",
+       "peak_class_event": "hall_discharge_ignition",
+       "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
+      },
+      {
+       "slot": "hall_magnet_inner",
+       "group": "hall",
+       "rows": [
+        110
+       ],
+       "load_plane": "inner-coil terminals (I^2 R), current-controlled supply per coil (H2-1 H21-27)",
+       "envelope": "HALL_AND_ELECTRON_SOURCE (inside 1350 W - P_common - P_other,active; no fixed split, A9.1 OQ-A902-03)",
+       "ALLOCATION_W": null,
+       "allocation_rule": "no per-slot owner allocation exists: the slot sits in the envelope named; A9.1 OQ-A902-03 forbids a fixed Hall/ICP split",
+       "CBE_W": null,
+       "MEASURED_W": null,
+       "status": "TBD - requires the frozen H-1 coil (A9-07 IDA7-01); context only: RP-1 as sized 5.164 W at 20 degC for the coil set (model-derived), H25-08 0-60 W evaluation range (assumed); bases not reconciled",
+       "first_on_step": "C-S3",
+       "peak_class_event": "magnet_ramp",
+       "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
+      },
+      {
+       "slot": "hall_magnet_outer",
+       "group": "hall",
+       "rows": [
+        110
+       ],
+       "load_plane": "outer-coil terminals (I^2 R), current-controlled supply per coil (H2-1 H21-27)",
+       "envelope": "HALL_AND_ELECTRON_SOURCE (inside 1350 W - P_common - P_other,active; no fixed split, A9.1 OQ-A902-03)",
+       "ALLOCATION_W": null,
+       "allocation_rule": "no per-slot owner allocation exists: the slot sits in the envelope named; A9.1 OQ-A902-03 forbids a fixed Hall/ICP split",
+       "CBE_W": null,
+       "MEASURED_W": null,
+       "status": "TBD - requires the frozen H-1 coil (A9-07 IDA7-01); see hall_magnet_inner context",
+       "first_on_step": "C-S3",
+       "peak_class_event": null,
+       "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
+      },
+      {
+       "slot": "hall_magnet_trim",
+       "group": "hall",
+       "rows": [
+        110
+       ],
+       "load_plane": "trim-coil terminals (I^2 R), current-controlled supply per coil (H2-1 H21-27); passed as 0 W explicitly when the trim coil is unpowered",
+       "envelope": "HALL_AND_ELECTRON_SOURCE (inside 1350 W - P_common - P_other,active; no fixed split, A9.1 OQ-A902-03)",
+       "ALLOCATION_W": null,
+       "allocation_rule": "no per-slot owner allocation exists: the slot sits in the envelope named; A9.1 OQ-A902-03 forbids a fixed Hall/ICP split",
+       "CBE_W": null,
+       "MEASURED_W": null,
+       "status": "TBD - requires the frozen H-1 coil and trim-coil use (0 W explicitly when unpowered)",
+       "first_on_step": "C-S3",
+       "peak_class_event": null,
+       "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
+      },
+      {
+       "slot": "c1_heater",
+       "group": "c1",
+       "rows": [
+        110,
+        112
+       ],
+       "load_plane": "C1 heater terminals in the evaluated step; reduced/disabled only after keeper/discharge are stable per cathode procedure (row 112)",
+       "envelope": "HALL_AND_ELECTRON_SOURCE (inside 1350 W - P_common - P_other,active; no fixed split, A9.1 OQ-A902-03)",
+       "ALLOCATION_W": null,
+       "allocation_rule": "no per-slot owner allocation exists: the slot sits in the envelope named; A9.1 OQ-A902-03 forbids a fixed Hall/ICP split",
+       "CBE_W": null,
+       "MEASURED_W": null,
+       "status": "TBD - requires the C1 procedure heater power (A9.1 SEQ-heater); no conservative booked power exists, so the ledger stays incomplete (a TBD heater is never assumed off)",
+       "first_on_step": "C-S2",
+       "peak_class_event": "c1_heater_preheat",
+       "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
+      },
+      {
+       "slot": "c1_keeper",
+       "group": "c1",
+       "rows": [
+        89,
+        110
+       ],
+       "load_plane": "C1 keeper terminals; includes the current-limited pulsed ignition (300-600 V class, row 89) as a start-up transient: its bus draw enters the gate as P_bus,1ms,max through the pulse (A9.1 OQ-A902-01; the unaveraged peak is a protection record only); the pulse energy (row 89 'recorded pulse energy') is a measurement record, not a ledger field: the A9-04 DQ-HI-PBUS chain (INS-02, one DC channel per slot) defines no pulse-energy record yet (LOCK-1 item)",
+       "envelope": "HALL_AND_ELECTRON_SOURCE (inside 1350 W - P_common - P_other,active; no fixed split, A9.1 OQ-A902-03)",
+       "ALLOCATION_W": null,
+       "allocation_rule": "no per-slot owner allocation exists: the slot sits in the envelope named; A9.1 OQ-A902-03 forbids a fixed Hall/ICP split",
+       "CBE_W": null,
+       "MEASURED_W": null,
+       "status": "TBD - requires the C1 keeper operating point and the pulsed-ignition (300-600 V class, row 89) record",
+       "first_on_step": "C-S4",
+       "peak_class_event": "c1_keeper_ignition",
+       "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
+      },
+      {
+       "slot": "c1_common_tie",
+       "group": "c1",
+       "rows": [
+        91
+       ],
+       "load_plane": "DC bus draw of the isolated, selectable cathode-common/bleeder network (selector, active bias if selected, V/I measurement); the passively dissipated V x I across the tie is a measured diagnostic supplied by the discharge circuit and is NOT added again (value TBD, row 91)",
+       "envelope": "HALL_AND_ELECTRON_SOURCE (inside 1350 W - P_common - P_other,active; no fixed split, A9.1 OQ-A902-03)",
+       "ALLOCATION_W": null,
+       "allocation_rule": "no per-slot owner allocation exists: the slot sits in the envelope named; A9.1 OQ-A902-03 forbids a fixed Hall/ICP split",
+       "CBE_W": null,
+       "MEASURED_W": null,
+       "status": "TBD - requires the cathode-common network design (row 91)",
+       "first_on_step": "C-S4",
+       "peak_class_event": null,
+       "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
+      },
+      {
+       "slot": "filter_getter",
+       "group": "c1",
+       "rows": [
+        51
+       ],
+       "load_plane": "Xe cathode-line filter/getter heater terminals (<= 17 W class only after vendor/spec verification, row 51); C1/Xe branch only",
+       "envelope": "COMMON_300W (row 114; A9.1 OQ-A902-02)",
+       "ALLOCATION_W": null,
+       "allocation_rule": "no per-slot owner allocation exists: the slot sits in the envelope named; A9.1 OQ-A902-03 forbids a fixed Hall/ICP split",
+       "CBE_W": null,
+       "MEASURED_W": null,
+       "status": "TBD - requires vendor/spec verification (row 51: <= 17 W class only after verification)",
+       "first_on_step": "C-S2",
+       "peak_class_event": null,
+       "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
+      },
+      {
+       "slot": "flow_control_atmospheric",
+       "group": "common",
+       "rows": [
+        110
+       ],
+       "load_plane": "atmospheric-path metering/isolation valve driver outputs",
+       "envelope": "COMMON_300W (row 114; A9.1 OQ-A902-02)",
+       "ALLOCATION_W": null,
+       "allocation_rule": "no per-slot owner allocation exists: the slot sits in the envelope named; A9.1 OQ-A902-03 forbids a fixed Hall/ICP split",
+       "CBE_W": null,
+       "MEASURED_W": null,
+       "status": "TBD - requires the atmospheric valve driver design",
+       "first_on_step": "C-S1",
+       "peak_class_event": null,
+       "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
+      },
+      {
+       "slot": "flow_control_xe",
+       "group": "common",
+       "rows": [
+        90,
+        110
+       ],
+       "load_plane": "Xe-path valve/flow-controller driver outputs (incl. the two series isolation valves, row 90)",
+       "envelope": "COMMON_300W (row 114; A9.1 OQ-A902-02)",
+       "ALLOCATION_W": null,
+       "allocation_rule": "no per-slot owner allocation exists: the slot sits in the envelope named; A9.1 OQ-A902-03 forbids a fixed Hall/ICP split",
+       "CBE_W": null,
+       "MEASURED_W": null,
+       "status": "TBD - requires the Xe valve driver design (incl. the two series isolation valves, row 90)",
+       "first_on_step": "C-S2",
+       "peak_class_event": null,
+       "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
+      },
+      {
+       "slot": "compressor",
+       "group": "common",
+       "rows": [
+        22
+       ],
+       "load_plane": "compressor motor-drive electrical input; TBD gives PARTIAL_BOUNDARY until the ICD supplies it (row 22)",
+       "envelope": "COMMON_300W (row 114; A9.1 OQ-A902-02)",
+       "ALLOCATION_W": null,
+       "allocation_rule": "no per-slot owner allocation exists: the slot sits in the envelope named; A9.1 OQ-A902-03 forbids a fixed Hall/ICP split",
+       "CBE_W": null,
+       "MEASURED_W": null,
+       "status": "TBD - requires the compressor ICD (row 22)",
+       "first_on_step": "C-S1",
+       "peak_class_event": "compressor_spinup",
+       "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
+      },
+      {
+       "slot": "thermal_control",
+       "group": "common",
+       "rows": [
+        114
+       ],
+       "load_plane": "propulsion-subsystem heaters / active thermal control terminals in the evaluated step",
+       "envelope": "COMMON_300W / CONTROLS_THERMAL_50W (row 114; A9.1 OQ-A902-02)",
+       "ALLOCATION_W": null,
+       "allocation_rule": "no per-slot owner allocation exists: the slot sits in the envelope named; A9.1 OQ-A902-03 forbids a fixed Hall/ICP split",
+       "CBE_W": null,
+       "MEASURED_W": null,
+       "status": "TBD - requires the coupled thermal model (merged P3 docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (inputs TBD; ICP_COUPLED_THERMAL / ANODE_THERMAL_CLOSURE UNRESOLVED)); ICP_COUPLED_THERMAL and ANODE_THERMAL_CLOSURE UNRESOLVED",
+       "first_on_step": "C-S0",
+       "peak_class_event": null,
+       "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
+      },
+      {
+       "slot": "housekeeping_controls",
+       "group": "common",
+       "rows": [
+        114
+       ],
+       "load_plane": "propulsion controller, PPU control electronics, sensors, telemetry/command interface, AND the explicitly booked no-load/quiescent draw of energised-but-idle supplies and of the front end (the per-slot P/eta model gives 0 W for a 0 W output)",
+       "envelope": "COMMON_300W / CONTROLS_THERMAL_50W (row 114; A9.1 OQ-A902-02)",
+       "ALLOCATION_W": null,
+       "allocation_rule": "no per-slot owner allocation exists: the slot sits in the envelope named; A9.1 OQ-A902-03 forbids a fixed Hall/ICP split",
+       "CBE_W": null,
+       "MEASURED_W": null,
+       "status": "TBD - requires the controller design incl. the explicitly booked quiescent draw of energised-idle supplies and the front end (module limitation)",
+       "first_on_step": "C-S0",
+       "peak_class_event": null,
+       "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
+      },
+      {
+       "slot": "reserved_dc_port",
+       "group": "reserved",
+       "rows": [
+        110
+       ],
+       "load_plane": "reserved DC port output; stated explicitly (0 W when unused)",
+       "envelope": "OTHER_ACTIVE (inside 1350 W as P_other,active; outside the 300 W common allocation unless reallocated)",
+       "ALLOCATION_W": 0.0,
+       "allocation_rule": "declared unused (0 W explicit, row 110)",
+       "CBE_W": null,
+       "MEASURED_W": null,
+       "status": "declared unused",
+       "first_on_step": null,
+       "peak_class_event": null,
+       "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
+      }
+     ],
+     "phases": {
+      "steady": {
+       "ledger_status": "PARTIAL_BOUNDARY",
+       "P_bus_W": null,
+       "P_bus_lower_bound_W": 0.0,
+       "tbd_count": 26,
+       "design_allocation_1350W": "NOT_EVALUABLE",
+       "a5_1300W_context": "NOT_EVALUABLE",
+       "common_300W": "NOT_EVALUABLE",
+       "controls_thermal_50W": "NOT_EVALUABLE",
+       "icp_available_check": null
+      },
+      "startup": {
+       "template": "bus_boundary_a9.SEQUENCE_TEMPLATES (PROPOSED, row 112)",
+       "sequence_status": "RULES_NOT_EVALUABLE",
+       "violations": [],
+       "not_evaluable_rules": 6,
+       "dependent_rises": [],
+       "steps": [
+        {
+         "step_id": "C-S0",
+         "event": null,
+         "name": "standby",
+         "on": [
+          "housekeeping_controls",
+          "thermal_control"
+         ],
+         "ledger_status": "INCOMPLETE_EVIDENCE",
+         "P_bus_lower_bound_W": 0.0
+        },
+        {
+         "step_id": "C-S1",
+         "event": "compressor_spinup",
+         "name": "compressor spin-up / plenum fill",
+         "on": [
+          "compressor",
+          "flow_control_atmospheric"
+         ],
+         "ledger_status": "PARTIAL_BOUNDARY",
+         "P_bus_lower_bound_W": 0.0
+        },
+        {
+         "step_id": "C-S2",
+         "event": "c1_heater_preheat",
+         "name": "C1 Xe purge + heater preheat (Xe booked, row 42; dwell cap row 93)",
+         "on": [
+          "flow_control_xe",
+          "filter_getter",
+          "c1_heater"
+         ],
+         "ledger_status": "PARTIAL_BOUNDARY",
+         "P_bus_lower_bound_W": 0.0
+        },
+        {
+         "step_id": "C-S3",
+         "event": "magnet_ramp",
+         "name": "magnet ramp to setpoint",
+         "on": [
+          "hall_magnet_inner",
+          "hall_magnet_outer",
+          "hall_magnet_trim"
+         ],
+         "ledger_status": "PARTIAL_BOUNDARY",
+         "P_bus_lower_bound_W": 0.0
+        },
+        {
+         "step_id": "C-S4",
+         "event": "c1_keeper_ignition",
+         "name": "keeper ignition (pulsed 300-600 V class; <= 3 dwells (1 + 2 retries) x 120 s = 360 s maximum booking, A9.14 OQ-A907-01 / XA9Q-02; row 93)",
+         "on": [
+          "c1_keeper",
+          "c1_common_tie"
+         ],
+         "ledger_status": "PARTIAL_BOUNDARY",
+         "P_bus_lower_bound_W": 0.0,
+         "name_v2": "keeper ignition (pulsed 300-600 V class, <= 120 s x 2 retries dwell, row 93)",
+         "decisions": [
+          "A9.14 OQ-A907-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+          "A9.14 XA9Q-02 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
+         ]
+        },
+        {
+         "step_id": "C-S5",
+         "event": "hall_discharge_ignition",
+         "name": "Hall discharge ignition (heater still on)",
+         "on": [
+          "hall_discharge"
+         ],
+         "ledger_status": "PARTIAL_BOUNDARY",
+         "P_bus_lower_bound_W": 0.0
+        },
+        {
+         "step_id": "C-S6",
+         "event": null,
+         "name": "keeper/discharge stable -> heater reduced/disabled per cathode procedure",
+         "on": [],
+         "ledger_status": "PARTIAL_BOUNDARY",
+         "P_bus_lower_bound_W": 0.0
+        },
+        {
+         "step_id": "C-S7",
+         "event": null,
+         "name": "steady",
+         "on": [],
+         "ledger_status": "PARTIAL_BOUNDARY",
+         "P_bus_lower_bound_W": 0.0
+        }
+       ]
+      },
+      "peak": {
+       "events": {
+        "compressor_spinup": "compressor",
+        "c1_heater_preheat": "c1_heater",
+        "c1_keeper_ignition": "c1_keeper",
+        "magnet_ramp": "hall_magnet_inner",
+        "hall_discharge_ignition": "hall_discharge"
+       },
+       "rule": "start-up peaks enter the gate only as P_bus,1ms,max (A9.1 OQ-A902-01); the unaveraged sampled peak is a protection record, evaluated under A9.14 OQ-A910-03 by power.peak_sampled_rule_v3 (one-sided sufficient PASS only on a conformant record; >= 1500 W -> the 1 ms maximum decides); at most one peak-class load commanded to rise per step (A9.1 SEQ-peaks)",
+       "values": "TBD (no measured transient record exists)",
+       "rule_v2": "start-up peaks enter the gate only as P_bus,1ms,max (A9.1 OQ-A902-01); the unaveraged sampled peak is a protection record, NOT_EVALUABLE for the gate (OQ-A910-03 OPEN, not implemented); at most one peak-class load commanded to rise per step (A9.1 SEQ-peaks)"
+      }
      },
-     {
-      "slot": "hall_magnet_inner",
-      "group": "hall",
+     "rfp_gate_1ms": {
+      "verdict": "NOT_EVALUABLE",
       "rows": [
-       110
-      ],
-      "load_plane": "inner-coil terminals (I^2 R), current-controlled supply per coil (H2-1 H21-27)",
-      "envelope": "HALL_AND_ELECTRON_SOURCE (inside 1350 W - P_common - P_other,active; no fixed split, A9.1 OQ-A902-03)",
-      "ALLOCATION_W": null,
-      "allocation_rule": "no per-slot owner allocation exists: the slot sits in the envelope named; A9.1 OQ-A902-03 forbids a fixed Hall/ICP split",
-      "CBE_W": null,
-      "MEASURED_W": null,
-      "status": "TBD - requires the frozen H-1 coil (A9-07 IDA7-01); context only: RP-1 as sized 5.164 W at 20 degC for the coil set (model-derived), H25-08 0-60 W evaluation range (assumed); bases not reconciled",
-      "first_on_step": "C-S3",
-      "peak_class_event": "magnet_ramp",
-      "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
-     },
-     {
-      "slot": "hall_magnet_outer",
-      "group": "hall",
-      "rows": [
-       110
-      ],
-      "load_plane": "outer-coil terminals (I^2 R), current-controlled supply per coil (H2-1 H21-27)",
-      "envelope": "HALL_AND_ELECTRON_SOURCE (inside 1350 W - P_common - P_other,active; no fixed split, A9.1 OQ-A902-03)",
-      "ALLOCATION_W": null,
-      "allocation_rule": "no per-slot owner allocation exists: the slot sits in the envelope named; A9.1 OQ-A902-03 forbids a fixed Hall/ICP split",
-      "CBE_W": null,
-      "MEASURED_W": null,
-      "status": "TBD - requires the frozen H-1 coil (A9-07 IDA7-01); see hall_magnet_inner context",
-      "first_on_step": "C-S3",
-      "peak_class_event": null,
-      "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
-     },
-     {
-      "slot": "hall_magnet_trim",
-      "group": "hall",
-      "rows": [
-       110
-      ],
-      "load_plane": "trim-coil terminals (I^2 R), current-controlled supply per coil (H2-1 H21-27); passed as 0 W explicitly when the trim coil is unpowered",
-      "envelope": "HALL_AND_ELECTRON_SOURCE (inside 1350 W - P_common - P_other,active; no fixed split, A9.1 OQ-A902-03)",
-      "ALLOCATION_W": null,
-      "allocation_rule": "no per-slot owner allocation exists: the slot sits in the envelope named; A9.1 OQ-A902-03 forbids a fixed Hall/ICP split",
-      "CBE_W": null,
-      "MEASURED_W": null,
-      "status": "TBD - requires the frozen H-1 coil and trim-coil use (0 W explicitly when unpowered)",
-      "first_on_step": "C-S3",
-      "peak_class_event": null,
-      "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
-     },
-     {
-      "slot": "c1_heater",
-      "group": "c1",
-      "rows": [
-       110,
-       112
-      ],
-      "load_plane": "C1 heater terminals in the evaluated step; reduced/disabled only after keeper/discharge are stable per cathode procedure (row 112)",
-      "envelope": "HALL_AND_ELECTRON_SOURCE (inside 1350 W - P_common - P_other,active; no fixed split, A9.1 OQ-A902-03)",
-      "ALLOCATION_W": null,
-      "allocation_rule": "no per-slot owner allocation exists: the slot sits in the envelope named; A9.1 OQ-A902-03 forbids a fixed Hall/ICP split",
-      "CBE_W": null,
-      "MEASURED_W": null,
-      "status": "TBD - requires the C1 procedure heater power (A9.1 SEQ-heater); no conservative booked power exists, so the ledger stays incomplete (a TBD heater is never assumed off)",
-      "first_on_step": "C-S2",
-      "peak_class_event": "c1_heater_preheat",
-      "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
-     },
-     {
-      "slot": "c1_keeper",
-      "group": "c1",
-      "rows": [
-       89,
-       110
-      ],
-      "load_plane": "C1 keeper terminals; includes the current-limited pulsed ignition (300-600 V class, row 89) as a start-up transient: its bus draw enters the gate as P_bus,1ms,max through the pulse (A9.1 OQ-A902-01; the unaveraged peak is a protection record only); the pulse energy (row 89 'recorded pulse energy') is a measurement record, not a ledger field: the A9-04 DQ-HI-PBUS chain (INS-02, one DC channel per slot) defines no pulse-energy record yet (LOCK-1 item)",
-      "envelope": "HALL_AND_ELECTRON_SOURCE (inside 1350 W - P_common - P_other,active; no fixed split, A9.1 OQ-A902-03)",
-      "ALLOCATION_W": null,
-      "allocation_rule": "no per-slot owner allocation exists: the slot sits in the envelope named; A9.1 OQ-A902-03 forbids a fixed Hall/ICP split",
-      "CBE_W": null,
-      "MEASURED_W": null,
-      "status": "TBD - requires the C1 keeper operating point and the pulsed-ignition (300-600 V class, row 89) record",
-      "first_on_step": "C-S4",
-      "peak_class_event": "c1_keeper_ignition",
-      "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
-     },
-     {
-      "slot": "c1_common_tie",
-      "group": "c1",
-      "rows": [
-       91
-      ],
-      "load_plane": "DC bus draw of the isolated, selectable cathode-common/bleeder network (selector, active bias if selected, V/I measurement); the passively dissipated V x I across the tie is a measured diagnostic supplied by the discharge circuit and is NOT added again (value TBD, row 91)",
-      "envelope": "HALL_AND_ELECTRON_SOURCE (inside 1350 W - P_common - P_other,active; no fixed split, A9.1 OQ-A902-03)",
-      "ALLOCATION_W": null,
-      "allocation_rule": "no per-slot owner allocation exists: the slot sits in the envelope named; A9.1 OQ-A902-03 forbids a fixed Hall/ICP split",
-      "CBE_W": null,
-      "MEASURED_W": null,
-      "status": "TBD - requires the cathode-common network design (row 91)",
-      "first_on_step": "C-S4",
-      "peak_class_event": null,
-      "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
-     },
-     {
-      "slot": "filter_getter",
-      "group": "c1",
-      "rows": [
-       51
-      ],
-      "load_plane": "Xe cathode-line filter/getter heater terminals (<= 17 W class only after vendor/spec verification, row 51); C1/Xe branch only",
-      "envelope": "COMMON_300W (row 114; A9.1 OQ-A902-02)",
-      "ALLOCATION_W": null,
-      "allocation_rule": "no per-slot owner allocation exists: the slot sits in the envelope named; A9.1 OQ-A902-03 forbids a fixed Hall/ICP split",
-      "CBE_W": null,
-      "MEASURED_W": null,
-      "status": "TBD - requires vendor/spec verification (row 51: <= 17 W class only after verification)",
-      "first_on_step": "C-S2",
-      "peak_class_event": null,
-      "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
-     },
-     {
-      "slot": "flow_control_atmospheric",
-      "group": "common",
-      "rows": [
-       110
-      ],
-      "load_plane": "atmospheric-path metering/isolation valve driver outputs",
-      "envelope": "COMMON_300W (row 114; A9.1 OQ-A902-02)",
-      "ALLOCATION_W": null,
-      "allocation_rule": "no per-slot owner allocation exists: the slot sits in the envelope named; A9.1 OQ-A902-03 forbids a fixed Hall/ICP split",
-      "CBE_W": null,
-      "MEASURED_W": null,
-      "status": "TBD - requires the atmospheric valve driver design",
-      "first_on_step": "C-S1",
-      "peak_class_event": null,
-      "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
-     },
-     {
-      "slot": "flow_control_xe",
-      "group": "common",
-      "rows": [
-       90,
-       110
-      ],
-      "load_plane": "Xe-path valve/flow-controller driver outputs (incl. the two series isolation valves, row 90)",
-      "envelope": "COMMON_300W (row 114; A9.1 OQ-A902-02)",
-      "ALLOCATION_W": null,
-      "allocation_rule": "no per-slot owner allocation exists: the slot sits in the envelope named; A9.1 OQ-A902-03 forbids a fixed Hall/ICP split",
-      "CBE_W": null,
-      "MEASURED_W": null,
-      "status": "TBD - requires the Xe valve driver design (incl. the two series isolation valves, row 90)",
-      "first_on_step": "C-S2",
-      "peak_class_event": null,
-      "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
-     },
-     {
-      "slot": "compressor",
-      "group": "common",
-      "rows": [
-       22
-      ],
-      "load_plane": "compressor motor-drive electrical input; TBD gives PARTIAL_BOUNDARY until the ICD supplies it (row 22)",
-      "envelope": "COMMON_300W (row 114; A9.1 OQ-A902-02)",
-      "ALLOCATION_W": null,
-      "allocation_rule": "no per-slot owner allocation exists: the slot sits in the envelope named; A9.1 OQ-A902-03 forbids a fixed Hall/ICP split",
-      "CBE_W": null,
-      "MEASURED_W": null,
-      "status": "TBD - requires the compressor ICD (row 22)",
-      "first_on_step": "C-S1",
-      "peak_class_event": "compressor_spinup",
-      "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
-     },
-     {
-      "slot": "thermal_control",
-      "group": "common",
-      "rows": [
-       114
-      ],
-      "load_plane": "propulsion-subsystem heaters / active thermal control terminals in the evaluated step",
-      "envelope": "COMMON_300W / CONTROLS_THERMAL_50W (row 114; A9.1 OQ-A902-02)",
-      "ALLOCATION_W": null,
-      "allocation_rule": "no per-slot owner allocation exists: the slot sits in the envelope named; A9.1 OQ-A902-03 forbids a fixed Hall/ICP split",
-      "CBE_W": null,
-      "MEASURED_W": null,
-      "status": "TBD - requires the coupled thermal model (merged P3 docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (inputs TBD; ICP_COUPLED_THERMAL / ANODE_THERMAL_CLOSURE UNRESOLVED)); ICP_COUPLED_THERMAL and ANODE_THERMAL_CLOSURE UNRESOLVED",
-      "first_on_step": "C-S0",
-      "peak_class_event": null,
-      "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
-     },
-     {
-      "slot": "housekeeping_controls",
-      "group": "common",
-      "rows": [
-       114
-      ],
-      "load_plane": "propulsion controller, PPU control electronics, sensors, telemetry/command interface, AND the explicitly booked no-load/quiescent draw of energised-but-idle supplies and of the front end (the per-slot P/eta model gives 0 W for a 0 W output)",
-      "envelope": "COMMON_300W / CONTROLS_THERMAL_50W (row 114; A9.1 OQ-A902-02)",
-      "ALLOCATION_W": null,
-      "allocation_rule": "no per-slot owner allocation exists: the slot sits in the envelope named; A9.1 OQ-A902-03 forbids a fixed Hall/ICP split",
-      "CBE_W": null,
-      "MEASURED_W": null,
-      "status": "TBD - requires the controller design incl. the explicitly booked quiescent draw of energised-idle supplies and the front end (module limitation)",
-      "first_on_step": "C-S0",
-      "peak_class_event": null,
-      "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
-     },
-     {
-      "slot": "reserved_dc_port",
-      "group": "reserved",
-      "rows": [
-       110
-      ],
-      "load_plane": "reserved DC port output; stated explicitly (0 W when unused)",
-      "envelope": "OTHER_ACTIVE (inside 1350 W as P_other,active; outside the 300 W common allocation unless reallocated)",
-      "ALLOCATION_W": 0.0,
-      "allocation_rule": "declared unused (0 W explicit, row 110)",
-      "CBE_W": null,
-      "MEASURED_W": null,
-      "status": "declared unused",
-      "first_on_step": null,
-      "peak_class_event": null,
-      "efficiency": "TBD (path internal_bus: row 111 / A9.1 OQ-A902-06 default; TBD - requires the selected supply / converter efficiency at this load (measured or cited))"
-     }
-    ],
-    "phases": {
-     "steady": {
-      "ledger_status": "PARTIAL_BOUNDARY",
-      "P_bus_W": null,
-      "P_bus_lower_bound_W": 0.0,
-      "tbd_count": 26,
-      "design_allocation_1350W": "NOT_EVALUABLE",
-      "a5_1300W_context": "NOT_EVALUABLE",
-      "common_300W": "NOT_EVALUABLE",
-      "controls_thermal_50W": "NOT_EVALUABLE",
-      "icp_available_check": null
-     },
-     "startup": {
-      "template": "bus_boundary_a9.SEQUENCE_TEMPLATES (PROPOSED, row 112)",
-      "sequence_status": "RULES_NOT_EVALUABLE",
-      "violations": [],
-      "not_evaluable_rules": 6,
-      "dependent_rises": [],
-      "steps": [
        {
-        "step_id": "C-S0",
-        "event": null,
-        "name": "standby",
-        "on": [
-         "housekeeping_controls",
-         "thermal_control"
-        ],
-        "ledger_status": "INCOMPLETE_EVIDENCE",
-        "P_bus_lower_bound_W": 0.0
+        "role": "steady",
+        "label": "C-S7",
+        "verdict": "NOT_EVALUABLE",
+        "status": "PARTIAL_BOUNDARY"
        },
        {
-        "step_id": "C-S1",
-        "event": "compressor_spinup",
-        "name": "compressor spin-up / plenum fill",
-        "on": [
-         "compressor",
-         "flow_control_atmospheric"
-        ],
-        "ledger_status": "PARTIAL_BOUNDARY",
-        "P_bus_lower_bound_W": 0.0
+        "role": "startup",
+        "label": "C-S0",
+        "verdict": "NOT_EVALUABLE",
+        "status": "INCOMPLETE_EVIDENCE"
        },
        {
-        "step_id": "C-S2",
-        "event": "c1_heater_preheat",
-        "name": "C1 Xe purge + heater preheat (Xe booked, row 42; dwell cap row 93)",
-        "on": [
-         "flow_control_xe",
-         "filter_getter",
-         "c1_heater"
-        ],
-        "ledger_status": "PARTIAL_BOUNDARY",
-        "P_bus_lower_bound_W": 0.0
+        "role": "startup",
+        "label": "C-S1",
+        "verdict": "NOT_EVALUABLE",
+        "status": "PARTIAL_BOUNDARY"
        },
        {
-        "step_id": "C-S3",
-        "event": "magnet_ramp",
-        "name": "magnet ramp to setpoint",
-        "on": [
-         "hall_magnet_inner",
-         "hall_magnet_outer",
-         "hall_magnet_trim"
-        ],
-        "ledger_status": "PARTIAL_BOUNDARY",
-        "P_bus_lower_bound_W": 0.0
+        "role": "startup",
+        "label": "C-S2",
+        "verdict": "NOT_EVALUABLE",
+        "status": "PARTIAL_BOUNDARY"
        },
        {
-        "step_id": "C-S4",
-        "event": "c1_keeper_ignition",
-        "name": "keeper ignition (pulsed 300-600 V class; <= 3 dwells (1 + 2 retries) x 120 s = 360 s maximum booking, A9.14 OQ-A907-01 / XA9Q-02; row 93)",
-        "on": [
-         "c1_keeper",
-         "c1_common_tie"
-        ],
-        "ledger_status": "PARTIAL_BOUNDARY",
-        "P_bus_lower_bound_W": 0.0,
-        "name_v2": "keeper ignition (pulsed 300-600 V class, <= 120 s x 2 retries dwell, row 93)",
-        "decisions": [
-         "A9.14 OQ-A907-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-         "A9.14 XA9Q-02 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
-        ]
+        "role": "startup",
+        "label": "C-S3",
+        "verdict": "NOT_EVALUABLE",
+        "status": "PARTIAL_BOUNDARY"
        },
        {
-        "step_id": "C-S5",
-        "event": "hall_discharge_ignition",
-        "name": "Hall discharge ignition (heater still on)",
-        "on": [
-         "hall_discharge"
-        ],
-        "ledger_status": "PARTIAL_BOUNDARY",
-        "P_bus_lower_bound_W": 0.0
+        "role": "startup",
+        "label": "C-S4",
+        "verdict": "NOT_EVALUABLE",
+        "status": "PARTIAL_BOUNDARY"
        },
        {
-        "step_id": "C-S6",
-        "event": null,
-        "name": "keeper/discharge stable -> heater reduced/disabled per cathode procedure",
-        "on": [],
-        "ledger_status": "PARTIAL_BOUNDARY",
-        "P_bus_lower_bound_W": 0.0
+        "role": "startup",
+        "label": "C-S5",
+        "verdict": "NOT_EVALUABLE",
+        "status": "PARTIAL_BOUNDARY"
        },
        {
-        "step_id": "C-S7",
-        "event": null,
-        "name": "steady",
-        "on": [],
-        "ledger_status": "PARTIAL_BOUNDARY",
-        "P_bus_lower_bound_W": 0.0
+        "role": "startup",
+        "label": "C-S6",
+        "verdict": "NOT_EVALUABLE",
+        "status": "PARTIAL_BOUNDARY"
        }
       ]
-     },
-     "peak": {
-      "events": {
-       "compressor_spinup": "compressor",
-       "c1_heater_preheat": "c1_heater",
-       "c1_keeper_ignition": "c1_keeper",
-       "magnet_ramp": "hall_magnet_inner",
-       "hall_discharge_ignition": "hall_discharge"
-      },
-      "rule": "start-up peaks enter the gate only as P_bus,1ms,max (A9.1 OQ-A902-01); the unaveraged sampled peak is a protection record, evaluated under A9.14 OQ-A910-03 by power.peak_sampled_rule_v3 (one-sided sufficient PASS only on a conformant record; >= 1500 W -> the 1 ms maximum decides); at most one peak-class load commanded to rise per step (A9.1 SEQ-peaks)",
-      "values": "TBD (no measured transient record exists)",
-      "rule_v2": "start-up peaks enter the gate only as P_bus,1ms,max (A9.1 OQ-A902-01); the unaveraged sampled peak is a protection record, NOT_EVALUABLE for the gate (OQ-A910-03 OPEN, not implemented); at most one peak-class load commanded to rise per step (A9.1 SEQ-peaks)"
      }
-    },
-    "rfp_gate_1ms": {
-     "verdict": "NOT_EVALUABLE",
-     "rows": [
-      {
-       "role": "steady",
-       "label": "C-S7",
-       "verdict": "NOT_EVALUABLE",
-       "status": "PARTIAL_BOUNDARY"
-      },
-      {
-       "role": "startup",
-       "label": "C-S0",
-       "verdict": "NOT_EVALUABLE",
-       "status": "INCOMPLETE_EVIDENCE"
-      },
-      {
-       "role": "startup",
-       "label": "C-S1",
-       "verdict": "NOT_EVALUABLE",
-       "status": "PARTIAL_BOUNDARY"
-      },
-      {
-       "role": "startup",
-       "label": "C-S2",
-       "verdict": "NOT_EVALUABLE",
-       "status": "PARTIAL_BOUNDARY"
-      },
-      {
-       "role": "startup",
-       "label": "C-S3",
-       "verdict": "NOT_EVALUABLE",
-       "status": "PARTIAL_BOUNDARY"
-      },
-      {
-       "role": "startup",
-       "label": "C-S4",
-       "verdict": "NOT_EVALUABLE",
-       "status": "PARTIAL_BOUNDARY"
-      },
-      {
-       "role": "startup",
-       "label": "C-S5",
-       "verdict": "NOT_EVALUABLE",
-       "status": "PARTIAL_BOUNDARY"
-      },
-      {
-       "role": "startup",
-       "label": "C-S6",
-       "verdict": "NOT_EVALUABLE",
-       "status": "PARTIAL_BOUNDARY"
-      }
-     ]
     }
    }
   },
@@ -6078,9 +6423,10 @@
   "MQ-09": "OWNER_DECIDED",
   "MQ-10": "OWNER_DECIDED",
   "XA9Q-01": "OWNER_DECIDED",
-  "XA9Q-07": "OWNER_DECIDED (amended by A9.15)",
+  "XA9Q-07": "OWNER_DECIDED (amended by A9.15; Xe role contingency / emergency by A9.19)",
   "XV2Q-01": "NOT_APPLICABLE",
-  "MPQ-01": "OWNER_DECIDED (amended by A9.15)",
+  "MPQ-01": "OWNER_DECIDED (amended by A9.15; C1 flight parts superseded by A9.19 / A9.20: no C1 in flight)",
+  "OQ-A907-07": "SUPERSEDED_BY_A9_19_A9_20 (no flight C1; C1 ground-only)",
   "MPQ-02": "OWNER_DECIDED",
   "OQ-A910-01": "OWNER_DECIDED",
   "OQ-A910-03": "OWNER_DECIDED",
@@ -6098,8 +6444,8 @@
   }
  ],
  "recorder_flags": [
-  "A9B-C07 (C1 keeper/heater flight telemetry) mapped to the controls portion of AL-09 by the MQ-07 sensor rule; MPQ-01 option (c) names no line for it",
-  "the AL-08 planning floor is the owner's 5.044 kg H2-7 figure (two-branch valve set); whether it already covers a selected C1 Xe branch is decided when C1 is selected (not added twice now)",
+  "A9B-C07 (C1 keeper/heater telemetry): its pre-A9.19 recorder mapping to AL-09 (MQ-07 sensor rule) is history; it is GROUND_ONLY_LAB_EQUIPMENT now (A9.20)",
+  "FOR THE OWNER (observation, nothing changed): the AL-08 planning floor is the owner's 5.044 kg H2-7 figure (MQ-05) and stays as decided; v2 describes its H2-7 two-branch valve set (0.57 kg) as including the C1 cathode Xe branch (v2 AL-C1 floor arithmetic, c1_mass_check); with no flight C1 after A9.19 / A9.20, whether AL-08 is re-based to a single-branch set is for the owner / quotations (v2 records the single-branch reading arithmetic in its AL-08 floor_arithmetic); no number is changed here",
   "INTERNAL_34 / INTERNAL_36 (row 53) carried as internal references beside the 40 kg hard gate"
  ],
  "owner_answers_applied": [
@@ -6245,7 +6591,7 @@
    "md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
    "json_path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
    "json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
-   "how_applied": "option (c): AL-C1 only for a selected C1 (no kg now); C1 electronics -> AL-07; C1 Xe branch -> AL-08"
+   "how_applied": "pre-A9.19 option (c) (AL-C1 only for a selected C1; C1 electronics -> AL-07; C1 Xe branch -> AL-08) is SUPERSEDED for flight by A9.19 / A9.20: kept only in the history column and as allocation_line_pre_a9_19 of the ground-only C1 BOM items"
   },
   {
    "key": "A9.15",
@@ -6257,7 +6603,7 @@
    "md_sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903",
    "json_path": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
    "json_sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
-   "how_applied": "C1 Xe branch neither assumed nor excluded in advance (c1_xe_branch_booking)"
+   "how_applied": "pre-A9.19 'C1 Xe neither assumed nor excluded' superseded for flight by A9.19 / A9.20 (c1_xe_branch_booking now books no flight C1 Xe branch and refuses one)"
   },
   {
    "key": "A9.14",
@@ -6281,7 +6627,7 @@
    "md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
    "json_path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
    "json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
-   "how_applied": "C1 BOM items DEFERRED_UNTIL_C1_SELECTED in the C1 flight column"
+   "how_applied": "pre-A9.19 'DEFERRED_UNTIL_C1_SELECTED' kept as configurations_pre_a9_19 history; superseded by A9.19 / A9.20 (C1 never flight)"
   },
   {
    "key": "A9.15",
@@ -6293,7 +6639,7 @@
    "md_sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903",
    "json_path": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
    "json_sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
-   "how_applied": "deferral reason restated (not because Xe is contingency-only)"
+   "how_applied": "deferral reason restated pre-A9.19 (history); superseded by A9.19 / A9.20"
   },
   {
    "key": "A9.14",
@@ -6414,6 +6760,98 @@
    "json_path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
    "json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
    "how_applied": "as above: three dwells, each capped at 120 s, 360 s maximum booking (A9.16 repair F10)"
+  },
+  {
+   "key": "A9.19",
+   "id": "architecture",
+   "sequenced_no": null,
+   "answer": {
+    "hall_accelerators": 1,
+    "electron_source_neutralizer": "one RF/ICP electron-source/neutralizer (cathodeless/electrodeless) for both atmospheric gases and xenon",
+    "propellant_supply_modes": [
+     "ambient atmospheric propellant (primary)",
+     "xenon (contingency / emergency)"
+    ],
+    "conventional_hollow_cathode": "NONE in the thruster architecture"
+   },
+   "quote": "One Hall accelerator. One RF/ICP electron-source/neutralizer. Two propellant supply modes. No conventional hollow cathode.",
+   "path": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+   "json_path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "how_applied": "single flight configuration hall_icp_neutralizer (one Hall + one RF/ICP neutralizer for both supply modes; two supply modes with separate tanks / paths; no conventional hollow cathode): CONFIGS, lines, rollups and power carry it only"
+  },
+  {
+   "key": "A9.19",
+   "id": "xenon_role",
+   "sequenced_no": null,
+   "answer": "CONTINGENCY_AND_EMERGENCY - not a parallel/co-equal propellant; Xe capability is retained (the RFP requires the capability and describes the Xe input as 'an extra input system to take care any problems on board unforeseen problems', RFP-P17-05, with separate tanks RFP-P18-08), but its role is contingency",
+   "quote": "xenon is not a parllel gas its just a contigency and emergency gas. so our thruster architecture should be cathode/electrodless for both the atmosphere gases and xenon",
+   "path": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+   "json_path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "how_applied": "AL-08 = REQUIRED_RFP_XE_CAPABILITY with role CONTINGENCY_EMERGENCY (xe_hardware_required); Xe BOM items carry xe_role; loaded cases 2 / 5 / 10 kg unchanged (Xe accounting v3)"
+  },
+  {
+   "key": "A9.19",
+   "id": "A9.15",
+   "sequenced_no": null,
+   "answer": "the statements 'Xenon is an RFP-required system capability, not merely a contingency' and S9.10 'should not be weakened into a contingency interpretation' are superseded on the ROLE of Xe: Xe capability stays required (two separate supply modes/tanks), Xe is the contingency/emergency mode",
+   "quote": "xenon is not a parllel gas its just a contigency and emergency gas.",
+   "path": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+   "json_path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "how_applied": "A9.15 'Xe not a contingency' superseded on the ROLE of Xe (propellant_policy.xenon_role); the RFP capability rule kept"
+  },
+  {
+   "key": "A9.19",
+   "id": "A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07",
+   "sequenced_no": null,
+   "answer": "no C1 flight variant: the flight architecture has no conventional hollow cathode; AL-C1 and C1 Xe/electronics bookings are removed from the flight architecture",
+   "quote": "No conventional hollow cathode.",
+   "path": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+   "json_path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "how_applied": "AL-C1, the C1 electronics in AL-07 and the C1 Xe branch in AL-08 removed from every flight roll-up (al_c1_allocation / c1_xe_branch_booking refuse a flight C1)"
+  },
+  {
+   "key": "A9.19",
+   "id": "A9 C1 CONTROL_FALLBACK",
+   "sequenced_no": null,
+   "answer": "C1 is not a flight fallback; hall_c1_reference is no longer a candidate flight configuration (its ground/laboratory role is an open recorder question to the owner)",
+   "quote": "our thruster architecture should be cathode/electrodless for both the atmosphere gases and xenon check C1 mass",
+   "path": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+   "json_path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "how_applied": "hall_c1_reference retired as a flight configuration: its pre-A9.19 column, roll-up and power configuration kept only as labelled history (retired_flight_configuration_history); c1_mass_check answers 'check C1 mass'"
+  },
+  {
+   "key": "A9.20",
+   "id": "answer",
+   "sequenced_no": null,
+   "answer": "owner chose the recommended option: C1 is a ground-only laboratory reference (registers I_d,max,H1,Ar on H-1 independently of the ICP per A9.10 S3.5, and serves as the bench control in the C1-vs-ICP comparison); never flight hardware; never in the flight mass/power/Xe budgets",
+   "quote": "Options offered: \"Ground-only reference (Recommended)\" / \"Remove C1 entirely\".",
+   "path": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+   "md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+   "json_path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+   "json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+   "how_applied": "C1 = GROUND_ONLY laboratory reference: BOM A9B-C01..C07 -> GROUND_ONLY_LAB_EQUIPMENT; GA-01 a9_20_rule"
+  },
+  {
+   "key": "A9.20",
+   "id": "answer",
+   "sequenced_no": null,
+   "answer": "owner chose the recommended option: C1 is a ground-only laboratory reference (registers I_d,max,H1,Ar on H-1 independently of the ICP per A9.10 S3.5, and serves as the bench control in the C1-vs-ICP comparison); never flight hardware; never in the flight mass/power/Xe budgets",
+   "quote": "will go with your recommended",
+   "path": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+   "md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+   "json_path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+   "json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+   "how_applied": "owner chose the recommended option (ground-only reference)"
   }
  ],
  "compliance": {
