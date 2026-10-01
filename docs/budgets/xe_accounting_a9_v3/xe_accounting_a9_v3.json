@@ -3,7 +3,7 @@
  "id": "xe_accounting_a9_v3",
  "version": "3.0.0",
  "lane": "a9_16_step1_mass_power_xe_v3",
- "authorization": "owner instruction 2026-10-01 'continue implementing them sequentially' (A9.16 step 1); decisions A9.14 / A9.15 (A9.13 Xe wording superseded)",
+ "authorization": "owner instruction 2026-10-01 'continue implementing them sequentially' (A9.16 step 1); decisions A9.14 / A9.15 (A9.13 Xe wording superseded); A9.19 / A9.20 applied (single Hall + ICP neutralizer flight architecture, Xe contingency / emergency role, C1 ground-only)",
  "revision_of": {
   "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
   "sha256": "ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a",
@@ -30,7 +30,8 @@
  "what_this_is_not": [
   "not a Xe allocation: no mission Xe load is frozen (row 48)",
   "not a prediction of thrust, discharge current, neutralizer current or plasma state (no Hall closure admitted; credible set EMPTY; 0-D Hall superseded; v1.2-v1.6 withdrawn)",
-  "not a C1 selection: flight C1 stays NOT_SELECTED; its Xe is neither assumed nor excluded",
+  "not a flight C1 accounting: there is no flight C1 (A9.19 no hollow cathode; A9.20 C1 ground-only); C1 Xe appears only in the ground-test ledger",
+  "not a Xe-case selection: the 2 kg sizing remark is a recorder observation for the owner",
   "not a change of the A9.1 ICP gas-mode baseline (G-REUSE primary, m_Xe,ICP = 0; G-XE a declared variant)",
   "not a ranking and not a compliance statement: no winner, no PASS",
   "not wired into archengine (goldens do not move); v1 / A9-08 / v2 Xe deliverables unchanged"
@@ -74,6 +75,20 @@
     "json_sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
     "md": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
     "md_sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903"
+   },
+   {
+    "key": "A9.19",
+    "json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+    "json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+    "md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+    "md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749"
+   },
+   {
+    "key": "A9.20",
+    "json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+    "json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+    "md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+    "md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c"
    }
   ],
   "a9": {
@@ -95,6 +110,48 @@
    "presence or absence of C1 never removes system Xe capability",
    "two separate propellant tanks/paths: ambient air and Xenon (owner-stated RFP content, pending RFP registration)"
   ],
+  "architecture": {
+   "hall_accelerators": 1,
+   "electron_source_neutralizer": "one RF/ICP electron-source/neutralizer (cathodeless/electrodeless) for both atmospheric gases and xenon",
+   "propellant_supply_modes": [
+    "ambient atmospheric propellant (primary)",
+    "xenon (contingency / emergency)"
+   ],
+   "conventional_hollow_cathode": "NONE in the thruster architecture",
+   "source": "A9.19 architecture (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+   "flight_configuration": "hall_icp_neutralizer (the only flight configuration)",
+   "retired_flight_configuration": "hall_c1_reference (A9.19; history only)"
+  },
+  "xenon_role": {
+   "role": "CONTINGENCY_EMERGENCY",
+   "decision": "CONTINGENCY_AND_EMERGENCY - not a parallel/co-equal propellant; Xe capability is retained (the RFP requires the capability and describes the Xe input as 'an extra input system to take care any problems on board unforeseen problems', RFP-P17-05, with separate tanks RFP-P18-08), but its role is contingency",
+   "source": "A9.19 xenon_role (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+   "rfp_clauses": [
+    {
+     "id": "RFP-P17-05",
+     "page": 17,
+     "section": "Part III 1(A)iv row 3 Thruster",
+     "text": "Capability to ionize N2, atomic oxygen in same thruster and It should have capability to use Xe as propellant, an extra input system to take care any problems on board unforeseen problems.",
+     "path": "docs/requirements/rfp_official/rfp_registration_v1.json"
+    },
+    {
+     "id": "RFP-P18-08",
+     "page": 18,
+     "section": "Part III 2 Propellant for propulsion system",
+     "text": "Compatible for using Ambient air (at the functional orbit altitude of 180-230km) and Xenon as propellant. Two separate propellant tanks for ambient air and xenon.",
+     "path": "docs/requirements/rfp_official/rfp_registration_v1.json"
+    }
+   ],
+   "capability": "REQUIRED (RFP-P17-05 / RFP-P18-08; A9.15 capability rules kept)",
+   "normal_atmospheric_operation": "no cathode Xe flow (no hollow cathode, A9.19); ICP feed G-REUSE m_Xe,ICP = 0 exactly (A9.1, unchanged)",
+   "contingency_emergency_mode": "Xe supplied from its own tank / path to the same Hall accelerator and the same RF/ICP neutralizer (A9.19); its flight terms stay TBD (no duty defined; totals REFUSED)"
+  },
+  "superseded_wording_a9_19": {
+   "A9.15 rules[0]": "Xe is an RFP-required system capability, not a contingency",
+   "A9.15 amendments.OD6 (role part)": "S9.10: 'air + Xe' = the system provides both ambient-air and Xenon operating capability; never a contingency interpretation",
+   "superseded_on": "the ROLE of xenon only (capability stays required)",
+   "superseded_by": "A9.19 A9.15 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)"
+  },
   "superseded_wording": {
    "A9.13 owner_statements.xenon": "the RFP expects ambient-air operation and Xe capability; Xe stays contingency-only for C1, while the propulsion system still needs the RFP-required Xe capability",
    "A9.14": "the 'Xe contingency-only for C1' wording in S8.17 / S8.21 / S8.33 / S8.35 / S9.3 / S9.10",
@@ -102,26 +159,22 @@
   },
   "per_configuration": [
    {
-    "configuration": "hall_c1_reference",
-    "xe_propulsion_capability": "PRESENT_RFP_REQUIRED",
-    "xe_free_reading": "NOT_APPLICABLE (A9.14 XV2Q-01 + A9.15)",
-    "storage_paths": "separate ambient-air and Xe propellant paths (A9.15, owner-stated RFP content pending RFP registration AG-15)",
-    "independent_of_c1": true
-   },
-   {
     "configuration": "hall_icp_neutralizer",
     "xe_propulsion_capability": "PRESENT_RFP_REQUIRED",
-    "xe_free_reading": "NOT_APPLICABLE (A9.14 XV2Q-01 + A9.15)",
-    "storage_paths": "separate ambient-air and Xe propellant paths (A9.15, owner-stated RFP content pending RFP registration AG-15)",
+    "xe_role": "CONTINGENCY_EMERGENCY (A9.19: contingency / emergency supply mode, not a parallel co-equal propellant)",
+    "xe_free_reading": "NOT_APPLICABLE (A9.14 XV2Q-01 + A9.15; capability kept by A9.19)",
+    "storage_paths": "two separate supply modes with separate tanks / paths: ambient atmospheric propellant (primary) and xenon (contingency / emergency) (A9.19; RFP-P18-08 registered)",
+    "electron_source": "one RF/ICP electron-source / neutralizer for both supply modes; no conventional hollow cathode (A9.19)",
+    "normal_atmospheric_operation_cathode_xe": "NONE (no hollow cathode; ICP feed baseline G-REUSE, m_Xe,ICP = 0 exactly; A9.19 / A9.1)",
     "independent_of_c1": true
    }
   ],
   "c1_flight_xe_now": {
-   "state": "PENDING_C1_NOT_SELECTED",
-   "booked": null,
-   "rule": "neither assumed nor excluded in advance (A9.15 MPQ-01); flight C1 integration deferred until C1 is selected (A9.14 OQ-A907-07 as amended)"
+   "state": "NO_C1_IN_FLIGHT_ARCHITECTURE",
+   "booked": false,
+   "rule": "no flight C1 Xe: C1 is a ground-only laboratory reference (A9.20) and the flight architecture has no hollow cathode (A9.19); C1 Xe is booked only in the ground-test ledger (S2-GT-C1)"
   },
-  "ground_reference_c1": "development / reference C1 = A9 'heated Xe-fed LaB6 C1' control; its ground Xe lines stay booked (A9.14 OQ-A907-07: development/reference C1 work continues)",
+  "ground_reference_c1": "GROUND_ONLY laboratory reference (A9.20) = A9 'heated Xe-fed LaB6 C1': registers I_d,max,H1,Ar on H-1 (A9.10 S3.5) and is the bench control in the C1-vs-ICP comparison; its ground Xe lines stay booked (S2-GT-C1); never flight hardware, never in the flight Xe budget",
   "icp_gas_mode_baseline_unchanged": "A9.1: G-REUSE primary (m_Xe,ICP = 0 exactly); G-XE a declared ICP-feed variant (CASE-3); A9.15 recorder note",
   "icp_xe_getter": {
    "state": "NOT_REQUIRED_BY_DEFAULT",
@@ -195,8 +248,11 @@
  },
  "cases": {
   "CASE-1": "PRIMARY hall_icp_neutralizer, G-REUSE: m_Xe,ICP = 0 exactly; flight Xe for the RFP-required Hall Xe-capable mode family (own tank / path); ground-test Xe; P1 bench Ar-only",
-  "CASE-2": "REFERENCE hall_c1_reference: RFP-required Hall Xe-mode family; flight C1-specific lines pending C1 selection; ground C1 (development / reference) lines booked",
+  "CASE-2": "GROUND-ONLY LABORATORY REFERENCE hall_c1_reference (A9.20): ground C1 lines booked (S2-GT-C1); its flight column was retired by A9.19 and is kept only as history (retired_flight_configuration_history)",
   "CASE-3": "OPTIONAL entries: G-XE contingency (flight/ground), G-ATM (0 Xe), P1 diagnostic dedicated Xe; zero (absent) in every primary scenario"
+ },
+ "cases_pre_a9_19": {
+  "CASE-2": "REFERENCE hall_c1_reference: RFP-required Hall Xe-mode family; flight C1-specific lines pending C1 selection; ground C1 (development / reference) lines booked"
  },
  "items": [
   {
@@ -220,12 +276,14 @@
      "FLIGHT"
     ]
    },
-   "v3_change": "value unchanged; flight scope conditional on C1 selection",
+   "v3_change": "value unchanged; ground-only scope (A9.19 / A9.20)",
    "owner_answers_applied": [
     "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-    "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
+    "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+    "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+    "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)"
    ],
-   "v3_scope": "flight use CONDITIONAL_ON_C1_FLIGHT_SELECTION (A9.14 OQ-A907-07 / MPQ-01 as amended by A9.15); ground (development / reference C1) use unchanged"
+   "v3_scope": "GROUND_ONLY (A9.20): C1 is a ground-only laboratory reference; no flight use (A9.19: no conventional hollow cathode in the flight architecture); ground lab-reference use unchanged (the pre-A9.19 flight scope 'CONDITIONAL_ON_C1_FLIGHT_SELECTION' is history)"
   },
   {
    "id": "XV2-02",
@@ -249,13 +307,15 @@
     ]
    },
    "note": "closes with the C1 measured spot-mode minimum flow (H22-50); the flow step of that search is row 92",
-   "v3_change": "value unchanged; flight scope conditional on C1 selection; labelled an A5 design-target placeholder (A9.16 repair F6)",
+   "v3_change": "value unchanged; ground-only scope (A9.19 / A9.20); labelled an A5 design-target placeholder (A9.16 repair F6)",
    "owner_answers_applied": [
     "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
     "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+    "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+    "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)",
     "A9.15 governing_rule (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
    ],
-   "v3_scope": "flight use CONDITIONAL_ON_C1_FLIGHT_SELECTION (A9.14 OQ-A907-07 / MPQ-01 as amended by A9.15); ground (development / reference C1) use unchanged",
+   "v3_scope": "GROUND_ONLY (A9.20): C1 is a ground-only laboratory reference; no flight use (A9.19: no conventional hollow cathode in the flight architecture); ground lab-reference use unchanged (the pre-A9.19 flight scope 'CONDITIONAL_ON_C1_FLIGHT_SELECTION' is history)",
    "status_v2": "FIXED_DESIGN_TERM (A5 design target, not a demonstrated flow)"
   },
   {
@@ -304,12 +364,14 @@
      "GROUND_TEST"
     ]
    },
-   "v3_change": "value unchanged; flight scope conditional on C1 selection",
+   "v3_change": "value unchanged; ground-only scope (A9.19 / A9.20)",
    "owner_answers_applied": [
     "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-    "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
+    "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+    "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+    "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)"
    ],
-   "v3_scope": "flight use CONDITIONAL_ON_C1_FLIGHT_SELECTION (A9.14 OQ-A907-07 / MPQ-01 as amended by A9.15); ground (development / reference C1) use unchanged"
+   "v3_scope": "GROUND_ONLY (A9.20): C1 is a ground-only laboratory reference; no flight use (A9.19: no conventional hollow cathode in the flight architecture); ground lab-reference use unchanged (the pre-A9.19 flight scope 'CONDITIONAL_ON_C1_FLIGHT_SELECTION' is history)"
   },
   {
    "id": "XV2-05",
@@ -333,12 +395,14 @@
      "GROUND_TEST"
     ]
    },
-   "v3_change": "value unchanged; flight scope conditional on C1 selection",
+   "v3_change": "value unchanged; ground-only scope (A9.19 / A9.20)",
    "owner_answers_applied": [
     "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-    "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
+    "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+    "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+    "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)"
    ],
-   "v3_scope": "flight use CONDITIONAL_ON_C1_FLIGHT_SELECTION (A9.14 OQ-A907-07 / MPQ-01 as amended by A9.15); ground (development / reference C1) use unchanged"
+   "v3_scope": "GROUND_ONLY (A9.20): C1 is a ground-only laboratory reference; no flight use (A9.19: no conventional hollow cathode in the flight architecture); ground lab-reference use unchanged (the pre-A9.19 flight scope 'CONDITIONAL_ON_C1_FLIGHT_SELECTION' is history)"
   },
   {
    "id": "XV2-06",
@@ -442,12 +506,14 @@
    },
    "requires": "the selected C1 vendor/design-qualified ignition flow (row 93; OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation); OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))",
    "v2_counterpart": "TBD_AFTER_EVIDENCE - requires quotations / vendor data requested through docs/procurement/rfq_a9_v2/rfq_a9_v2.json (merged RFQ v2; quotation only) (IFD-15, pair XL-35; none received, no purchase)",
-   "v3_change": "value unchanged; flight scope conditional on C1 selection",
+   "v3_change": "value unchanged; ground-only scope (A9.19 / A9.20)",
    "owner_answers_applied": [
     "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-    "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
+    "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+    "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+    "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)"
    ],
-   "v3_scope": "flight use CONDITIONAL_ON_C1_FLIGHT_SELECTION (A9.14 OQ-A907-07 / MPQ-01 as amended by A9.15); ground (development / reference C1) use unchanged"
+   "v3_scope": "GROUND_ONLY (A9.20): C1 is a ground-only laboratory reference; no flight use (A9.19: no conventional hollow cathode in the flight architecture); ground lab-reference use unchanged (the pre-A9.19 flight scope 'CONDITIONAL_ON_C1_FLIGHT_SELECTION' is history)"
   },
   {
    "id": "XV2-10",
@@ -473,12 +539,14 @@
    },
    "requires": "the selected C1 vendor/design-qualified purge flow and duration (row 93; OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation))",
    "v2_counterpart": "TBD_AFTER_EVIDENCE - requires quotations / vendor data requested through docs/procurement/rfq_a9_v2/rfq_a9_v2.json (merged RFQ v2; quotation only) (IFD-15, pair XL-35; none received, no purchase)",
-   "v3_change": "value unchanged; flight scope conditional on C1 selection",
+   "v3_change": "value unchanged; ground-only scope (A9.19 / A9.20)",
    "owner_answers_applied": [
     "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-    "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
+    "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+    "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+    "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)"
    ],
-   "v3_scope": "flight use CONDITIONAL_ON_C1_FLIGHT_SELECTION (A9.14 OQ-A907-07 / MPQ-01 as amended by A9.15); ground (development / reference C1) use unchanged"
+   "v3_scope": "GROUND_ONLY (A9.20): C1 is a ground-only laboratory reference; no flight use (A9.19: no conventional hollow cathode in the flight architecture); ground lab-reference use unchanged (the pre-A9.19 flight scope 'CONDITIONAL_ON_C1_FLIGHT_SELECTION' is history)"
   },
   {
    "id": "XV2-11",
@@ -504,12 +572,14 @@
    },
    "requires": "the selected C1 heater procedure and the H-1/C-1 start sequence with Xe logged per phase (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation))",
    "v2_counterpart": "TBD_AFTER_EVIDENCE - requires quotations / vendor data requested through docs/procurement/rfq_a9_v2/rfq_a9_v2.json (merged RFQ v2; quotation only) (IFD-15, pair XL-35; none received, no purchase)",
-   "v3_change": "value unchanged; flight scope conditional on C1 selection",
+   "v3_change": "value unchanged; ground-only scope (A9.19 / A9.20)",
    "owner_answers_applied": [
     "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-    "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
+    "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+    "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+    "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)"
    ],
-   "v3_scope": "flight use CONDITIONAL_ON_C1_FLIGHT_SELECTION (A9.14 OQ-A907-07 / MPQ-01 as amended by A9.15); ground (development / reference C1) use unchanged"
+   "v3_scope": "GROUND_ONLY (A9.20): C1 is a ground-only laboratory reference; no flight use (A9.19: no conventional hollow cathode in the flight architecture); ground lab-reference use unchanged (the pre-A9.19 flight scope 'CONDITIONAL_ON_C1_FLIGHT_SELECTION' is history)"
   },
   {
    "id": "XV2-12",
@@ -1051,12 +1121,14 @@
    },
    "requires": "vendor/spec verification of the selected filter/getter (row 51; OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))",
    "v2_counterpart": "TBD_AFTER_EVIDENCE - requires quotations / vendor data requested through docs/procurement/rfq_a9_v2/rfq_a9_v2.json (merged RFQ v2; quotation only) (IFD-15, pair XL-35; none received, no purchase)",
-   "v3_change": "scope restated (value TBD unchanged)",
+   "v3_change": "scope restated: ground-only (value TBD unchanged)",
    "owner_answers_applied": [
     "A9.14 MPQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-    "A9.15 XA9Q-05 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
+    "A9.15 XA9Q-05 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+    "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+    "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)"
    ],
-   "v3_scope": "C1-specific getter/filter: AL-C1 only for a SELECTED C1 that needs it (A9.14 MPQ-01); separate from the ICP Xe path (A9.14 XA9Q-05 as amended by A9.15)"
+   "v3_scope": "C1-specific getter/filter: GROUND_ONLY_LAB_EQUIPMENT (A9.20; C1 never flight, no AL-C1 in any flight roll-up, A9.19); separate from the ICP Xe path (A9.14 XA9Q-05 as amended by A9.15)"
   },
   {
    "id": "XV2-32",
@@ -1082,12 +1154,14 @@
    },
    "requires": "vendor/spec verification (OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation)); mass booked by A9-06 (OPEN after A9-06 (docs/budgets/mass_a9/mass_a9_v1.json, merged: owner allocations and evidence floors, no hardware CBE; A9-10 re-evaluation))",
    "v2_counterpart": "TBD_AFTER_EVIDENCE - stored-Xe hardware masses exchanged with docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json (merged mass / power v2) (MPV2-ID-16, pair XL-32; no CBE, owner line allocation AL-08 only)",
-   "v3_change": "scope restated (value TBD unchanged)",
+   "v3_change": "scope restated: ground-only (value TBD unchanged)",
    "owner_answers_applied": [
     "A9.14 MPQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-    "A9.15 XA9Q-05 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
+    "A9.15 XA9Q-05 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+    "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+    "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)"
    ],
-   "v3_scope": "C1-specific getter/filter: AL-C1 only for a SELECTED C1 that needs it (A9.14 MPQ-01); separate from the ICP Xe path (A9.14 XA9Q-05 as amended by A9.15)"
+   "v3_scope": "C1-specific getter/filter: GROUND_ONLY_LAB_EQUIPMENT (A9.20; C1 never flight, no AL-C1 in any flight roll-up, A9.19); separate from the ICP Xe path (A9.14 XA9Q-05 as amended by A9.15)"
   },
   {
    "id": "XV2-33",
@@ -1432,56 +1506,57 @@
    "id": "XV3-01",
    "a9_08_item": null,
    "name": "flight C1 selection state",
-   "value": "NOT_SELECTED",
-   "value_display": "NOT_SELECTED",
+   "value": "GROUND_ONLY_NEVER_FLIGHT",
+   "value_display": "GROUND_ONLY_NEVER_FLIGHT (A9.20)",
+   "value_pre_a9_19": "NOT_SELECTED",
    "unit": "state",
    "kind": "state",
-   "basis": "owner decision: flight C1 integration deferred until C1 is selected",
-   "source": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md (A9.14 OQ-A907-07; amended by A9.15)",
+   "basis": "owner decisions: no conventional hollow cathode in the flight architecture (A9.19); C1 is a ground-only laboratory reference, never flight hardware (A9.20)",
+   "source": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md (A9.20); docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md (A9.19)",
    "evidence_class": "owner-allocation",
-   "status": "OWNER_DECIDED (deferred until selected)",
-   "freeze_point": "after-evidence",
+   "status": "OWNER_DECIDED (A9.19 / A9.20; supersedes the A9.14 OQ-A907-07 / A9.15 'deferred until selected' state)",
+   "freeze_point": "NOW",
    "applies_to": {
     "configs": [
      "hall_c1_reference"
     ],
     "ledgers": [
-     "FLIGHT"
+     "GROUND_TEST"
     ]
    },
    "owner_answers_applied": [
     "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-    "A9.15 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
+    "A9.15 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+    "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+    "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)"
    ],
-   "v3_change": "new"
+   "v3_change": "A9.19 / A9.20: C1 ground-only, never flight"
   },
   {
    "id": "XV3-02",
    "a9_08_item": null,
    "name": "selected C1 hardware requires Xe (flight)",
    "value": null,
-   "value_display": "TBD_FROM_SELECTED_C1_HARDWARE",
+   "value_display": "NOT_APPLICABLE - no flight C1 (A9.19 / A9.20); the ground lab-reference C1 is heated Xe-fed (A9) and its Xe is booked in the ground-test ledger only",
    "unit": "bool",
    "kind": "state",
-   "basis": "A9.15 governing rule (derived from the selected C1 hardware)",
-   "source": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md (A9.15)",
+   "basis": "A9.19 / A9.20 (supersede the A9.15 'derived from the selected C1 hardware' flight path)",
+   "source": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md (A9.20)",
    "evidence_class": "none",
-   "status": "TBD_FROM_SELECTED_C1_HARDWARE (neither assumed nor excluded)",
-   "freeze_point": "after-evidence",
-   "requires": "C1 selection as a flight fallback and the selected hardware's Xe requirement",
+   "status": "NOT_APPLICABLE (A9.19 / A9.20)",
+   "status_pre_a9_19": "TBD_FROM_SELECTED_C1_HARDWARE",
+   "freeze_point": "NOW",
    "applies_to": {
-    "configs": [
-     "hall_c1_reference"
-    ],
-    "ledgers": [
-     "FLIGHT"
-    ]
+    "configs": [],
+    "ledgers": []
    },
    "owner_answers_applied": [
     "A9.15 governing_rule (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
-    "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
+    "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+    "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+    "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)"
    ],
-   "v3_change": "new"
+   "v3_change": "A9.19 / A9.20: not applicable (no flight C1)"
   },
   {
    "id": "XV3-03",
@@ -1657,7 +1732,7 @@
     "A9.15 XA9Q-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
    ],
    "presence_v2": "ABSENT_BY_OWNER_DECISION",
-   "scope_note": "CONFIGURATION_SCOPE_EXCLUSION: hall_icp_neutralizer contains no C1 by architecture, so no C1 Xe line exists in this configuration; this is not an owner Xe exclusion (A9.15: C1 Xe neither assumed nor excluded in advance; a C1 that does not require Xe gets no invented consumption). Flight C1 Xe is PENDING_C1_NOT_SELECTED in hall_c1_reference (C1-FL-* lines, CONDITIONAL_ON_C1_FLIGHT_SELECTION); the RFP-required system Xe capability is unaffected (A9.14 XA9Q-07 / A9.15)"
+   "scope_note": "CONFIGURATION_SCOPE_EXCLUSION: hall_icp_neutralizer contains no C1 by architecture, so no C1 Xe line exists in this configuration. Since A9.19 the flight architecture has NO conventional hollow cathode (one Hall + one RF/ICP electron-source / neutralizer for both supply modes) and C1 is a ground-only laboratory reference (A9.20): no cathode Xe flow exists in normal atmospheric operation or in the Xe contingency / emergency mode. The pre-A9.19 reading (flight C1 Xe PENDING_C1_NOT_SELECTED in hall_c1_reference) is history (retired_flight_configuration_history). The RFP-required system Xe capability is unaffected (A9.14 XA9Q-07 / A9.15; role contingency / emergency, A9.19)"
   },
   {
    "id": "P-FL-FUNC",
@@ -2143,482 +2218,6 @@
    "a9_08_term": "G-TRANSITION",
    "sources": [
     "docs/decisions/OD_2026_09_29_owner_answers_147.json row 42"
-   ],
-   "kind": "product",
-   "reserve_base": true,
-   "of_lines": [],
-   "optional_entry": false,
-   "note": null,
-   "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
-  },
-  {
-   "id": "C1-FL-PURGE",
-   "case": "CASE-2",
-   "configuration": "hall_c1_reference",
-   "gas_mode": null,
-   "ledger": "FLIGHT",
-   "phase": "purge",
-   "name": "C1 Xe purge before heating",
-   "formula": "N_starts x t_purge x mdot_purge",
-   "fields": [
-    {
-     "name": "N_starts",
-     "item": "XV2-14",
-     "unit": "1"
-    },
-    {
-     "name": "t_purge",
-     "item": "XV2-10",
-     "unit": "s"
-    },
-    {
-     "name": "mdot_purge",
-     "item": "XV2-10",
-     "unit": "mg/s"
-    }
-   ],
-   "presence": "CONDITIONAL_ON_C1_FLIGHT_SELECTION",
-   "a9_08_term": "F-C1-PURGE",
-   "sources": [
-    "docs/decisions/OD_2026_09_29_owner_answers_147.json row 42; docs/decisions/OD_2026_09_29_owner_answers_147.json row 93"
-   ],
-   "kind": "product",
-   "reserve_base": true,
-   "of_lines": [],
-   "optional_entry": false,
-   "note": null,
-   "v3_change": "flight C1-specific Xe: booked only for a selected C1 that requires Xe (inside the system Xe architecture); not selected now -> pending, neither assumed nor excluded",
-   "owner_answers_applied": [
-    "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-    "A9.15 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
-    "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
-    "A9.15 governing_rule (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
-   ],
-   "presence_v2": "PRESENT"
-  },
-  {
-   "id": "C1-FL-HEAT",
-   "case": "CASE-2",
-   "configuration": "hall_c1_reference",
-   "gas_mode": null,
-   "ledger": "FLIGHT",
-   "phase": "preheat",
-   "name": "C1 heating/start (preheat under Xe flow)",
-   "formula": "N_starts x t_preheat x mdot_preheat",
-   "fields": [
-    {
-     "name": "N_starts",
-     "item": "XV2-14",
-     "unit": "1"
-    },
-    {
-     "name": "t_preheat",
-     "item": "XV2-11",
-     "unit": "s"
-    },
-    {
-     "name": "mdot_preheat",
-     "item": "XV2-11",
-     "unit": "mg/s"
-    }
-   ],
-   "presence": "CONDITIONAL_ON_C1_FLIGHT_SELECTION",
-   "a9_08_term": "F-C1-PREHEAT",
-   "sources": [
-    "docs/decisions/OD_2026_09_29_owner_answers_147.json row 42 ('No unbooked preheat flow'); docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.SEQ-heater"
-   ],
-   "kind": "product",
-   "reserve_base": true,
-   "of_lines": [],
-   "optional_entry": false,
-   "note": null,
-   "v3_change": "flight C1-specific Xe: booked only for a selected C1 that requires Xe (inside the system Xe architecture); not selected now -> pending, neither assumed nor excluded",
-   "owner_answers_applied": [
-    "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-    "A9.15 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
-    "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
-    "A9.15 governing_rule (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
-   ],
-   "presence_v2": "PRESENT"
-  },
-  {
-   "id": "C1-FL-IGN",
-   "case": "CASE-2",
-   "configuration": "hall_c1_reference",
-   "gas_mode": null,
-   "ledger": "FLIGHT",
-   "phase": "ignition",
-   "name": "C1 keeper ignition dwell at the protocol bound (<= 120 s per attempt)",
-   "formula": "N_starts x n_attempts x t_dwell_max x mdot_ign (n_attempts x t_dwell_max <= 3 x 120 s = 360 s per start)",
-   "fields": [
-    {
-     "name": "N_starts",
-     "item": "XV2-14",
-     "unit": "1"
-    },
-    {
-     "name": "n_attempts",
-     "item": "XV2-08",
-     "unit": "1"
-    },
-    {
-     "name": "t_dwell_max",
-     "item": "XV2-07",
-     "unit": "s"
-    },
-    {
-     "name": "mdot_ign",
-     "item": "XV2-09",
-     "unit": "mg/s"
-    }
-   ],
-   "presence": "CONDITIONAL_ON_C1_FLIGHT_SELECTION",
-   "a9_08_term": "F-C1-IGN",
-   "sources": [
-    "docs/decisions/OD_2026_09_29_owner_answers_147.json row 93"
-   ],
-   "kind": "product",
-   "reserve_base": true,
-   "of_lines": [],
-   "optional_entry": false,
-   "note": "booked at the protocol bound (upper bound per start), not an expected dwell; n_attempts = 3 (A9.14 XA9Q-02)",
-   "v3_change": "flight C1-specific Xe: booked only for a selected C1 that requires Xe (inside the system Xe architecture); not selected now -> pending, neither assumed nor excluded",
-   "owner_answers_applied": [
-    "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-    "A9.15 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
-    "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
-    "A9.15 governing_rule (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
-    "A9.14 XA9Q-02 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
-   ],
-   "presence_v2": "PRESENT"
-  },
-  {
-   "id": "C1-FL-KEEPER",
-   "case": "CASE-2",
-   "configuration": "hall_c1_reference",
-   "gas_mode": null,
-   "ledger": "FLIGHT",
-   "phase": "keeper_cathode",
-   "name": "C1 keeper/cathode steady Xe flow over the firing hours",
-   "formula": "mdot_cathode x t_firing",
-   "fields": [
-    {
-     "name": "mdot_cathode",
-     "item": "XV2-02",
-     "unit": "mg/s"
-    },
-    {
-     "name": "t_firing",
-     "item": "XV2-01",
-     "unit": "h"
-    }
-   ],
-   "presence": "CONDITIONAL_ON_C1_FLIGHT_SELECTION",
-   "a9_08_term": "F-C1-CATHODE",
-   "sources": [
-    "docs/decisions/OD_2026_09_29_owner_answers_147.json row 42; docs/decisions/OD_2026_09_29_owner_answers_147.json row 46; docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json control_fallback"
-   ],
-   "kind": "product",
-   "reserve_base": true,
-   "of_lines": [],
-   "optional_entry": false,
-   "note": null,
-   "v3_change": "flight C1-specific Xe: booked only for a selected C1 that requires Xe (inside the system Xe architecture); not selected now -> pending, neither assumed nor excluded",
-   "owner_answers_applied": [
-    "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-    "A9.15 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
-    "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
-    "A9.15 governing_rule (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
-   ],
-   "presence_v2": "PRESENT"
-  },
-  {
-   "id": "C1-FL-FLOWUNC",
-   "case": "CASE-2",
-   "configuration": "hall_c1_reference",
-   "gas_mode": null,
-   "ledger": "FLIGHT",
-   "phase": "uncertainty",
-   "name": "C1 steady-flow controller +-2 % FS class term (row 96, additive)",
-   "formula": "u_FS x FS x t_firing",
-   "fields": [
-    {
-     "name": "u_FS",
-     "item": "XV2-04",
-     "unit": "1"
-    },
-    {
-     "name": "FS",
-     "item": "XV2-05",
-     "unit": "mg/s"
-    },
-    {
-     "name": "t_firing",
-     "item": "XV2-01",
-     "unit": "h"
-    }
-   ],
-   "presence": "CONDITIONAL_ON_C1_FLIGHT_SELECTION",
-   "a9_08_term": "F-C1-FLOWUNC",
-   "sources": [
-    "docs/decisions/OD_2026_09_29_owner_answers_147.json row 96; docs/decisions/OD_2026_09_29_owner_answers_147.json row 125"
-   ],
-   "kind": "product",
-   "reserve_base": true,
-   "of_lines": [],
-   "optional_entry": false,
-   "note": null,
-   "v3_change": "flight C1-specific Xe: booked only for a selected C1 that requires Xe (inside the system Xe architecture); not selected now -> pending, neither assumed nor excluded; RA-FLOWUNC resolved: additive and inside the reserve base",
-   "owner_answers_applied": [
-    "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-    "A9.15 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
-    "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
-    "A9.15 governing_rule (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
-    "A9.14 XA9Q-03 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
-   ],
-   "presence_v2": "PRESENT",
-   "reserve_base_v2": "RA-FLOWUNC"
-  },
-  {
-   "id": "C1-FL-TRANSITION",
-   "case": "CASE-2",
-   "configuration": "hall_c1_reference",
-   "gas_mode": null,
-   "ledger": "FLIGHT",
-   "phase": "transition",
-   "name": "Xe-to-atmosphere transition",
-   "formula": "N_transitions x t_transition x mdot_transition",
-   "fields": [
-    {
-     "name": "N_transitions",
-     "item": "XV2-16",
-     "unit": "1"
-    },
-    {
-     "name": "t_transition",
-     "item": "XV2-16",
-     "unit": "s"
-    },
-    {
-     "name": "mdot_transition",
-     "item": "XV2-16",
-     "unit": "mg/s"
-    }
-   ],
-   "presence": "PRESENT",
-   "a9_08_term": "F-TRANSITION",
-   "sources": [
-    "docs/decisions/OD_2026_09_29_owner_answers_147.json row 42"
-   ],
-   "kind": "product",
-   "reserve_base": true,
-   "of_lines": [],
-   "optional_entry": false,
-   "note": null,
-   "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
-  },
-  {
-   "id": "C1-FL-FALLBACK",
-   "case": "CASE-2",
-   "configuration": "hall_c1_reference",
-   "gas_mode": null,
-   "ledger": "FLIGHT",
-   "phase": "fallback",
-   "name": "Hall Xe fallback operation (atmospheric path unavailable)",
-   "formula": "t_fallback_max x mdot_fallback",
-   "fields": [
-    {
-     "name": "t_fallback_max",
-     "item": "XV2-17",
-     "unit": "h"
-    },
-    {
-     "name": "mdot_fallback",
-     "item": "XV2-17",
-     "unit": "mg/s"
-    }
-   ],
-   "presence": "PRESENT",
-   "a9_08_term": "F-XE-FALLBACK-OP",
-   "sources": [
-    "docs/decisions/OD_2026_09_29_owner_answers_147.json row 42"
-   ],
-   "kind": "product",
-   "reserve_base": true,
-   "of_lines": [],
-   "optional_entry": false,
-   "note": "the C1 configuration as fallback to the ICP is an architecture choice, not an in-flight term (OQ-A902-04)",
-   "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
-  },
-  {
-   "id": "C1-FL-FUNC",
-   "case": "CASE-2",
-   "configuration": "hall_c1_reference",
-   "gas_mode": null,
-   "ledger": "FLIGHT",
-   "phase": "xe_mode",
-   "name": "Hall bounded functional Xe-capable mode (row 6)",
-   "formula": "N_xe_mode x t_xe_mode x mdot_xe_mode",
-   "fields": [
-    {
-     "name": "N_xe_mode",
-     "item": "XV2-18",
-     "unit": "1"
-    },
-    {
-     "name": "t_xe_mode",
-     "item": "XV2-18",
-     "unit": "h"
-    },
-    {
-     "name": "mdot_xe_mode",
-     "item": "XV2-18",
-     "unit": "mg/s"
-    }
-   ],
-   "presence": "PRESENT",
-   "a9_08_term": "F-XE-FUNCTIONAL",
-   "sources": [
-    "docs/decisions/OD_2026_09_29_owner_answers_147.json row 6"
-   ],
-   "kind": "product",
-   "reserve_base": true,
-   "of_lines": [],
-   "optional_entry": false,
-   "note": null,
-   "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
-  },
-  {
-   "id": "C1-FL-HALL-START",
-   "case": "CASE-2",
-   "configuration": "hall_c1_reference",
-   "gas_mode": null,
-   "ledger": "FLIGHT",
-   "phase": "ignition",
-   "name": "Hall discharge ignition on Xe (if used)",
-   "formula": "N_starts x t_hall_ign x mdot_hall_ign",
-   "fields": [
-    {
-     "name": "N_starts",
-     "item": "XV2-14",
-     "unit": "1"
-    },
-    {
-     "name": "t_hall_ign",
-     "item": "XV2-15",
-     "unit": "s"
-    },
-    {
-     "name": "mdot_hall_ign",
-     "item": "XV2-15",
-     "unit": "mg/s"
-    }
-   ],
-   "presence": "CONDITIONAL",
-   "a9_08_term": "F-HALL-XE-START",
-   "sources": [
-    "docs/decisions/OD_2026_09_29_owner_answers_147.json row 42"
-   ],
-   "kind": "product",
-   "reserve_base": true,
-   "of_lines": [],
-   "optional_entry": false,
-   "note": null,
-   "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
-  },
-  {
-   "id": "C1-FL-PEAK",
-   "case": "CASE-2",
-   "configuration": "hall_c1_reference",
-   "gas_mode": null,
-   "ledger": "FLIGHT",
-   "phase": "xe_peak",
-   "name": "Xe-augmented peak (only if the RFP permits)",
-   "formula": "N_peak x t_peak x mdot_peak",
-   "fields": [
-    {
-     "name": "N_peak",
-     "item": "XV2-19",
-     "unit": "1"
-    },
-    {
-     "name": "t_peak",
-     "item": "XV2-19",
-     "unit": "h"
-    },
-    {
-     "name": "mdot_peak",
-     "item": "XV2-19",
-     "unit": "mg/s"
-    }
-   ],
-   "presence": "CONDITIONAL",
-   "a9_08_term": "F-XE-PEAK",
-   "sources": [
-    "docs/decisions/OD_2026_09_29_owner_answers_147.json row 4; docs/decisions/OD_2026_09_29_owner_answers_147.json row 26"
-   ],
-   "kind": "product",
-   "reserve_base": true,
-   "of_lines": [],
-   "optional_entry": false,
-   "note": null,
-   "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
-  },
-  {
-   "id": "C1-FL-FLOWUNC-OTHER",
-   "case": "CASE-2",
-   "configuration": "hall_c1_reference",
-   "gas_mode": null,
-   "ledger": "FLIGHT",
-   "phase": "uncertainty",
-   "name": "flow-class uncertainty of the Hall-side Xe flows",
-   "formula": "u_class x (sum of the Hall-side Xe lines)",
-   "fields": [
-    {
-     "name": "u_class",
-     "item": "XV2-20",
-     "unit": "1"
-    }
-   ],
-   "presence": "PRESENT",
-   "a9_08_term": "F-XE-FLOWUNC-OTHER",
-   "sources": [
-    "docs/decisions/OD_2026_09_29_owner_answers_147.json row 96"
-   ],
-   "kind": "fraction_of_lines",
-   "reserve_base": true,
-   "of_lines": [
-    "C1-FL-FUNC",
-    "C1-FL-HALL-START",
-    "C1-FL-TRANSITION",
-    "C1-FL-FALLBACK",
-    "C1-FL-PEAK"
-   ],
-   "optional_entry": false,
-   "note": null,
-   "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
-  },
-  {
-   "id": "C1-FL-ICP-XE",
-   "case": "CASE-2",
-   "configuration": "hall_c1_reference",
-   "gas_mode": null,
-   "ledger": "FLIGHT",
-   "phase": "icp_feed",
-   "name": "ICP Xe",
-   "formula": "not booked: no ICP in the C1 configuration",
-   "fields": [],
-   "presence": "ABSENT_BY_OWNER_DECISION",
-   "a9_08_term": "F-ICP-XE",
-   "sources": [
-    "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-A902-04"
    ],
    "kind": "product",
    "reserve_base": true,
@@ -3536,38 +3135,12 @@
    "axes_v2": []
   },
   {
-   "id": "S2-FL-C1",
-   "case": "CASE-2",
-   "ledger": "FLIGHT",
-   "configuration": "hall_c1_reference",
-   "gas_mode": null,
-   "role": "C1 reference flight configuration: flight C1 integration DEFERRED until C1 is selected (A9.14 OQ-A907-07 as amended by A9.15); RFP-required system Xe capability present",
-   "lines": [
-    "C1-FL-PURGE",
-    "C1-FL-HEAT",
-    "C1-FL-IGN",
-    "C1-FL-KEEPER",
-    "C1-FL-FLOWUNC",
-    "C1-FL-TRANSITION",
-    "C1-FL-FALLBACK",
-    "C1-FL-FUNC",
-    "C1-FL-HALL-START",
-    "C1-FL-PEAK",
-    "C1-FL-FLOWUNC-OTHER",
-    "C1-FL-ICP-XE"
-   ],
-   "axes_v2": [
-    "RA-DWELL",
-    "RA-FLOWUNC"
-   ]
-  },
-  {
    "id": "S2-GT-C1",
    "case": "CASE-2",
    "ledger": "GROUND_TEST",
    "configuration": "hall_c1_reference",
    "gas_mode": null,
-   "role": "C1 reference ground test (HIQ-01: in every block)",
+   "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): C1 registers I_d,max,H1,Ar on H-1 independently of the ICP (A9.10 S3.5) and is the bench control in the C1-vs-ICP comparison; ground-test Xe only, never flight",
    "lines": [
     "C1-GT-PURGE",
     "C1-GT-HEAT",
@@ -3586,7 +3159,8 @@
    ],
    "axes_v2": [
     "RA-DWELL"
-   ]
+   ],
+   "role_pre_a9_19": "C1 reference ground test (HIQ-01: in every block)"
   },
   {
    "id": "S3-FL-GXE",
@@ -4037,228 +3611,6 @@
      "P-GT-PROC-VENDOR"
     ],
     "rule": "supply = (calculated test consumption + explicit procedure lines) x 1.20 (A9.14 XA9Q-04); no reserve / residual rule for ground-test Xe"
-   }
-  },
-  {
-   "scenario": "S2-FL-C1",
-   "lines": [
-    {
-     "line": "C1-FL-PURGE",
-     "presence": "CONDITIONAL_ON_C1_FLIGHT_SELECTION",
-     "kg": null,
-     "missing": [
-      {
-       "field": "flight C1 selection / selected C1 Xe requirement",
-       "item": "XV3-01, XV3-02",
-       "requires": "PENDING_C1_NOT_SELECTED: neither assumed nor excluded in advance (A9.15 MPQ-01); flight C1 integration deferred until C1 is selected (A9.14 OQ-A907-07 as amended)"
-      }
-     ]
-    },
-    {
-     "line": "C1-FL-HEAT",
-     "presence": "CONDITIONAL_ON_C1_FLIGHT_SELECTION",
-     "kg": null,
-     "missing": [
-      {
-       "field": "flight C1 selection / selected C1 Xe requirement",
-       "item": "XV3-01, XV3-02",
-       "requires": "PENDING_C1_NOT_SELECTED: neither assumed nor excluded in advance (A9.15 MPQ-01); flight C1 integration deferred until C1 is selected (A9.14 OQ-A907-07 as amended)"
-      }
-     ]
-    },
-    {
-     "line": "C1-FL-IGN",
-     "presence": "CONDITIONAL_ON_C1_FLIGHT_SELECTION",
-     "kg": null,
-     "missing": [
-      {
-       "field": "flight C1 selection / selected C1 Xe requirement",
-       "item": "XV3-01, XV3-02",
-       "requires": "PENDING_C1_NOT_SELECTED: neither assumed nor excluded in advance (A9.15 MPQ-01); flight C1 integration deferred until C1 is selected (A9.14 OQ-A907-07 as amended)"
-      }
-     ]
-    },
-    {
-     "line": "C1-FL-KEEPER",
-     "presence": "CONDITIONAL_ON_C1_FLIGHT_SELECTION",
-     "kg": null,
-     "missing": [
-      {
-       "field": "flight C1 selection / selected C1 Xe requirement",
-       "item": "XV3-01, XV3-02",
-       "requires": "PENDING_C1_NOT_SELECTED: neither assumed nor excluded in advance (A9.15 MPQ-01); flight C1 integration deferred until C1 is selected (A9.14 OQ-A907-07 as amended)"
-      }
-     ]
-    },
-    {
-     "line": "C1-FL-FLOWUNC",
-     "presence": "CONDITIONAL_ON_C1_FLIGHT_SELECTION",
-     "kg": null,
-     "missing": [
-      {
-       "field": "flight C1 selection / selected C1 Xe requirement",
-       "item": "XV3-01, XV3-02",
-       "requires": "PENDING_C1_NOT_SELECTED: neither assumed nor excluded in advance (A9.15 MPQ-01); flight C1 integration deferred until C1 is selected (A9.14 OQ-A907-07 as amended)"
-      }
-     ]
-    },
-    {
-     "line": "C1-FL-TRANSITION",
-     "presence": "PRESENT",
-     "kg": null,
-     "missing": [
-      {
-       "field": "N_transitions",
-       "item": "XV2-16",
-       "requires": "H-1 transition measurement with Xe logged per phase and the operations concept"
-      },
-      {
-       "field": "t_transition",
-       "item": "XV2-16",
-       "requires": "H-1 transition measurement with Xe logged per phase and the operations concept"
-      },
-      {
-       "field": "mdot_transition",
-       "item": "XV2-16",
-       "requires": "H-1 transition measurement with Xe logged per phase and the operations concept"
-      }
-     ]
-    },
-    {
-     "line": "C1-FL-FALLBACK",
-     "presence": "PRESENT",
-     "kg": null,
-     "missing": [
-      {
-       "field": "t_fallback_max",
-       "item": "XV2-17",
-       "requires": "the FDIR fallback policy and an H-1 Xe operating point measured on the actual H-1"
-      },
-      {
-       "field": "mdot_fallback",
-       "item": "XV2-17",
-       "requires": "the FDIR fallback policy and an H-1 Xe operating point measured on the actual H-1"
-      }
-     ]
-    },
-    {
-     "line": "C1-FL-FUNC",
-     "presence": "PRESENT",
-     "kg": null,
-     "missing": [
-      {
-       "field": "N_xe_mode",
-       "item": "XV2-18",
-       "requires": "the official RFP wording (row 1) and an owner bound on the Xe-mode duration, plus an H-1 Xe operating point measured on the actual H-1"
-      },
-      {
-       "field": "t_xe_mode",
-       "item": "XV2-18",
-       "requires": "the official RFP wording (row 1) and an owner bound on the Xe-mode duration, plus an H-1 Xe operating point measured on the actual H-1"
-      },
-      {
-       "field": "mdot_xe_mode",
-       "item": "XV2-18",
-       "requires": "the official RFP wording (row 1) and an owner bound on the Xe-mode duration, plus an H-1 Xe operating point measured on the actual H-1"
-      }
-     ]
-    },
-    {
-     "line": "C1-FL-HALL-START",
-     "presence": "CONDITIONAL",
-     "kg": null,
-     "missing": [
-      {
-       "field": "N_starts",
-       "item": "XV2-14",
-       "requires": "the mission operations concept (eclipse/duty cycling, anomaly restarts) and FDIR restart policy"
-      },
-      {
-       "field": "t_hall_ign",
-       "item": "XV2-15",
-       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
-      },
-      {
-       "field": "mdot_hall_ign",
-       "item": "XV2-15",
-       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
-      }
-     ]
-    },
-    {
-     "line": "C1-FL-PEAK",
-     "presence": "CONDITIONAL",
-     "kg": null,
-     "missing": [
-      {
-       "field": "N_peak",
-       "item": "XV2-19",
-       "requires": "the official RFP (row 1) permitting Xe for the 25 mN capability, and a measured H-1 Xe peak point"
-      },
-      {
-       "field": "t_peak",
-       "item": "XV2-19",
-       "requires": "the official RFP (row 1) permitting Xe for the 25 mN capability, and a measured H-1 Xe peak point"
-      },
-      {
-       "field": "mdot_peak",
-       "item": "XV2-19",
-       "requires": "the official RFP (row 1) permitting Xe for the 25 mN capability, and a measured H-1 Xe peak point"
-      }
-     ]
-    },
-    {
-     "line": "C1-FL-FLOWUNC-OTHER",
-     "presence": "PRESENT",
-     "kg": null,
-     "missing": [
-      {
-       "field": "u_class",
-       "item": "XV2-20",
-       "requires": "the anode-side / ICP-feed Xe flow controller selection and its Xe calibration (OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))"
-      },
-      {
-       "field": "sum of",
-       "lines": [
-        "C1-FL-FUNC",
-        "C1-FL-HALL-START",
-        "C1-FL-TRANSITION",
-        "C1-FL-FALLBACK",
-        "C1-FL-PEAK"
-       ]
-      }
-     ]
-    },
-    {
-     "line": "C1-FL-ICP-XE",
-     "presence": "ABSENT_BY_OWNER_DECISION",
-     "kg": 0.0,
-     "missing": []
-    }
-   ],
-   "booking": {
-    "status": "REFUSED_TBD_INPUTS",
-    "tbd_lines": [
-     "C1-FL-PURGE",
-     "C1-FL-HEAT",
-     "C1-FL-IGN",
-     "C1-FL-KEEPER",
-     "C1-FL-FLOWUNC",
-     "C1-FL-TRANSITION",
-     "C1-FL-FALLBACK",
-     "C1-FL-FUNC",
-     "C1-FL-HALL-START",
-     "C1-FL-PEAK",
-     "C1-FL-FLOWUNC-OTHER"
-    ],
-    "totals": null,
-    "floors_closed_terms_only": {
-     "mission_usable_kg": 0.0,
-     "reserve_kg": 0.0,
-     "usable_incl_reserve_kg": 0.0,
-     "residual_sub_line_kg": 0.0,
-     "loaded_kg": 0.0
-    }
    }
   },
   {
@@ -5656,30 +5008,6 @@
      "status": "HEADROOM"
     },
     {
-     "scenario": "S2-FL-C1",
-     "case_kg": 2.0,
-     "closed_mission_usable_kg": 0.0,
-     "mission_usable_cap_kg": 1.63399,
-     "headroom_for_TBD_terms_kg": 1.63399,
-     "status": "HEADROOM"
-    },
-    {
-     "scenario": "S2-FL-C1",
-     "case_kg": 5.0,
-     "closed_mission_usable_kg": 0.0,
-     "mission_usable_cap_kg": 4.08497,
-     "headroom_for_TBD_terms_kg": 4.08497,
-     "status": "HEADROOM"
-    },
-    {
-     "scenario": "S2-FL-C1",
-     "case_kg": 10.0,
-     "closed_mission_usable_kg": 0.0,
-     "mission_usable_cap_kg": 8.16993,
-     "headroom_for_TBD_terms_kg": 8.16993,
-     "status": "HEADROOM"
-    },
-    {
      "scenario": "S3-FL-GXE",
      "case_kg": 2.0,
      "closed_mission_usable_kg": 0.0,
@@ -5730,6 +5058,7 @@
    ]
   },
   "c1_conditional_sensitivity": {
+   "a9_19_status": "HISTORY_ONLY: no flight C1 exists after A9.19 / A9.20 (C1 ground-only); this pre-A9.19 flight-C1 placeholder arithmetic is kept as history and is never booked in a flight accounting",
    "label": "A5_DESIGN_TARGET_PLACEHOLDER_SENSITIVITY_NOT_BOOKED: arithmetic on the A5 design-target flow (XV2-02) and firing-hours basis, NOT on selected C1 hardware and NOT an estimate of flight C1 Xe; the selected C1 hardware's qualified flow replaces it (A9.15: C1 Xe neither assumed nor excluded in advance; a C1 that does not require Xe gets no invented consumption; A9.16 repair F6)",
    "placeholder_basis": {
     "flow": "XV2-02 (A5 design target)",
@@ -5777,6 +5106,21 @@
      "screening_cap_row44": 0.25,
      "xe_load_alone_reaches_screening_cap": true
     }
+   ]
+  },
+  "sizing_observation_a9_19": {
+   "label": "RECORDER_OBSERVATION_FOR_OWNER_NOT_A_SELECTION",
+   "observation": "with the A9.19 contingency / emergency-only role of xenon (not a parallel co-equal propellant; no cathode Xe in normal atmospheric operation; ICP feed G-REUSE m_Xe,ICP = 0), the 2 kg loaded case is the natural sizing case among the owner-defined 2 / 5 / 10 kg loaded cases",
+   "cases_kept_as_recorded": [
+    2.0,
+    5.0,
+    10.0
+   ],
+   "case_status": "all three owner-defined LOADED cases are kept unchanged (owner row 48; A9.14 XA9Q-01); no mission Xe load is frozen and no case is selected here",
+   "why_only_an_observation": "the Xe contingency / emergency duty (hours, thrust, events) is not defined by the owner; the flight terms P-FL-FUNC / P-FL-FALLBACK / P-FL-TRANSITION stay TBD and every flight total stays REFUSED; selecting a case is an owner decision",
+   "by": [
+    "A9.19 xenon_role (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+    "A9.14 XA9Q-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
    ]
   },
   "v2_agreement": [
@@ -5854,6 +5198,757 @@
    }
   ]
  },
+ "retired_flight_configuration_history": {
+  "label": "HISTORY - hall_c1_reference was retired as a candidate FLIGHT configuration by A9.19 (no conventional hollow cathode in the flight architecture); C1 is a ground-only laboratory reference (A9.20). These pre-A9.19 flight lines / scenario / evaluation are kept for traceability only and never enter a flight Xe budget",
+  "by": [
+   "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+   "A9.19 A9 C1 CONTROL_FALLBACK (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
+   "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)"
+  ],
+  "ledger_lines": [
+   {
+    "id": "C1-FL-PURGE",
+    "case": "CASE-2",
+    "configuration": "hall_c1_reference",
+    "gas_mode": null,
+    "ledger": "FLIGHT",
+    "phase": "purge",
+    "name": "C1 Xe purge before heating",
+    "formula": "N_starts x t_purge x mdot_purge",
+    "fields": [
+     {
+      "name": "N_starts",
+      "item": "XV2-14",
+      "unit": "1"
+     },
+     {
+      "name": "t_purge",
+      "item": "XV2-10",
+      "unit": "s"
+     },
+     {
+      "name": "mdot_purge",
+      "item": "XV2-10",
+      "unit": "mg/s"
+     }
+    ],
+    "presence": "CONDITIONAL_ON_C1_FLIGHT_SELECTION",
+    "a9_08_term": "F-C1-PURGE",
+    "sources": [
+     "docs/decisions/OD_2026_09_29_owner_answers_147.json row 42; docs/decisions/OD_2026_09_29_owner_answers_147.json row 93"
+    ],
+    "kind": "product",
+    "reserve_base": true,
+    "of_lines": [],
+    "optional_entry": false,
+    "note": null,
+    "v3_change": "flight C1-specific Xe: booked only for a selected C1 that requires Xe (inside the system Xe architecture); not selected now -> pending, neither assumed nor excluded",
+    "owner_answers_applied": [
+     "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+     "A9.15 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+     "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+     "A9.15 governing_rule (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
+    ],
+    "presence_v2": "PRESENT",
+    "a9_19_status": "HISTORY_RETIRED_FLIGHT_CONFIGURATION (A9.19); never in the flight Xe budget (A9.20)"
+   },
+   {
+    "id": "C1-FL-HEAT",
+    "case": "CASE-2",
+    "configuration": "hall_c1_reference",
+    "gas_mode": null,
+    "ledger": "FLIGHT",
+    "phase": "preheat",
+    "name": "C1 heating/start (preheat under Xe flow)",
+    "formula": "N_starts x t_preheat x mdot_preheat",
+    "fields": [
+     {
+      "name": "N_starts",
+      "item": "XV2-14",
+      "unit": "1"
+     },
+     {
+      "name": "t_preheat",
+      "item": "XV2-11",
+      "unit": "s"
+     },
+     {
+      "name": "mdot_preheat",
+      "item": "XV2-11",
+      "unit": "mg/s"
+     }
+    ],
+    "presence": "CONDITIONAL_ON_C1_FLIGHT_SELECTION",
+    "a9_08_term": "F-C1-PREHEAT",
+    "sources": [
+     "docs/decisions/OD_2026_09_29_owner_answers_147.json row 42 ('No unbooked preheat flow'); docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.SEQ-heater"
+    ],
+    "kind": "product",
+    "reserve_base": true,
+    "of_lines": [],
+    "optional_entry": false,
+    "note": null,
+    "v3_change": "flight C1-specific Xe: booked only for a selected C1 that requires Xe (inside the system Xe architecture); not selected now -> pending, neither assumed nor excluded",
+    "owner_answers_applied": [
+     "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+     "A9.15 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+     "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+     "A9.15 governing_rule (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
+    ],
+    "presence_v2": "PRESENT",
+    "a9_19_status": "HISTORY_RETIRED_FLIGHT_CONFIGURATION (A9.19); never in the flight Xe budget (A9.20)"
+   },
+   {
+    "id": "C1-FL-IGN",
+    "case": "CASE-2",
+    "configuration": "hall_c1_reference",
+    "gas_mode": null,
+    "ledger": "FLIGHT",
+    "phase": "ignition",
+    "name": "C1 keeper ignition dwell at the protocol bound (<= 120 s per attempt)",
+    "formula": "N_starts x n_attempts x t_dwell_max x mdot_ign (n_attempts x t_dwell_max <= 3 x 120 s = 360 s per start)",
+    "fields": [
+     {
+      "name": "N_starts",
+      "item": "XV2-14",
+      "unit": "1"
+     },
+     {
+      "name": "n_attempts",
+      "item": "XV2-08",
+      "unit": "1"
+     },
+     {
+      "name": "t_dwell_max",
+      "item": "XV2-07",
+      "unit": "s"
+     },
+     {
+      "name": "mdot_ign",
+      "item": "XV2-09",
+      "unit": "mg/s"
+     }
+    ],
+    "presence": "CONDITIONAL_ON_C1_FLIGHT_SELECTION",
+    "a9_08_term": "F-C1-IGN",
+    "sources": [
+     "docs/decisions/OD_2026_09_29_owner_answers_147.json row 93"
+    ],
+    "kind": "product",
+    "reserve_base": true,
+    "of_lines": [],
+    "optional_entry": false,
+    "note": "booked at the protocol bound (upper bound per start), not an expected dwell; n_attempts = 3 (A9.14 XA9Q-02)",
+    "v3_change": "flight C1-specific Xe: booked only for a selected C1 that requires Xe (inside the system Xe architecture); not selected now -> pending, neither assumed nor excluded",
+    "owner_answers_applied": [
+     "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+     "A9.15 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+     "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+     "A9.15 governing_rule (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+     "A9.14 XA9Q-02 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
+    ],
+    "presence_v2": "PRESENT",
+    "a9_19_status": "HISTORY_RETIRED_FLIGHT_CONFIGURATION (A9.19); never in the flight Xe budget (A9.20)"
+   },
+   {
+    "id": "C1-FL-KEEPER",
+    "case": "CASE-2",
+    "configuration": "hall_c1_reference",
+    "gas_mode": null,
+    "ledger": "FLIGHT",
+    "phase": "keeper_cathode",
+    "name": "C1 keeper/cathode steady Xe flow over the firing hours",
+    "formula": "mdot_cathode x t_firing",
+    "fields": [
+     {
+      "name": "mdot_cathode",
+      "item": "XV2-02",
+      "unit": "mg/s"
+     },
+     {
+      "name": "t_firing",
+      "item": "XV2-01",
+      "unit": "h"
+     }
+    ],
+    "presence": "CONDITIONAL_ON_C1_FLIGHT_SELECTION",
+    "a9_08_term": "F-C1-CATHODE",
+    "sources": [
+     "docs/decisions/OD_2026_09_29_owner_answers_147.json row 42; docs/decisions/OD_2026_09_29_owner_answers_147.json row 46; docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json control_fallback"
+    ],
+    "kind": "product",
+    "reserve_base": true,
+    "of_lines": [],
+    "optional_entry": false,
+    "note": null,
+    "v3_change": "flight C1-specific Xe: booked only for a selected C1 that requires Xe (inside the system Xe architecture); not selected now -> pending, neither assumed nor excluded",
+    "owner_answers_applied": [
+     "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+     "A9.15 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+     "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+     "A9.15 governing_rule (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
+    ],
+    "presence_v2": "PRESENT",
+    "a9_19_status": "HISTORY_RETIRED_FLIGHT_CONFIGURATION (A9.19); never in the flight Xe budget (A9.20)"
+   },
+   {
+    "id": "C1-FL-FLOWUNC",
+    "case": "CASE-2",
+    "configuration": "hall_c1_reference",
+    "gas_mode": null,
+    "ledger": "FLIGHT",
+    "phase": "uncertainty",
+    "name": "C1 steady-flow controller +-2 % FS class term (row 96, additive)",
+    "formula": "u_FS x FS x t_firing",
+    "fields": [
+     {
+      "name": "u_FS",
+      "item": "XV2-04",
+      "unit": "1"
+     },
+     {
+      "name": "FS",
+      "item": "XV2-05",
+      "unit": "mg/s"
+     },
+     {
+      "name": "t_firing",
+      "item": "XV2-01",
+      "unit": "h"
+     }
+    ],
+    "presence": "CONDITIONAL_ON_C1_FLIGHT_SELECTION",
+    "a9_08_term": "F-C1-FLOWUNC",
+    "sources": [
+     "docs/decisions/OD_2026_09_29_owner_answers_147.json row 96; docs/decisions/OD_2026_09_29_owner_answers_147.json row 125"
+    ],
+    "kind": "product",
+    "reserve_base": true,
+    "of_lines": [],
+    "optional_entry": false,
+    "note": null,
+    "v3_change": "flight C1-specific Xe: booked only for a selected C1 that requires Xe (inside the system Xe architecture); not selected now -> pending, neither assumed nor excluded; RA-FLOWUNC resolved: additive and inside the reserve base",
+    "owner_answers_applied": [
+     "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+     "A9.15 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+     "A9.15 MPQ-01 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+     "A9.15 governing_rule (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+     "A9.14 XA9Q-03 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
+    ],
+    "presence_v2": "PRESENT",
+    "reserve_base_v2": "RA-FLOWUNC",
+    "a9_19_status": "HISTORY_RETIRED_FLIGHT_CONFIGURATION (A9.19); never in the flight Xe budget (A9.20)"
+   },
+   {
+    "id": "C1-FL-TRANSITION",
+    "case": "CASE-2",
+    "configuration": "hall_c1_reference",
+    "gas_mode": null,
+    "ledger": "FLIGHT",
+    "phase": "transition",
+    "name": "Xe-to-atmosphere transition",
+    "formula": "N_transitions x t_transition x mdot_transition",
+    "fields": [
+     {
+      "name": "N_transitions",
+      "item": "XV2-16",
+      "unit": "1"
+     },
+     {
+      "name": "t_transition",
+      "item": "XV2-16",
+      "unit": "s"
+     },
+     {
+      "name": "mdot_transition",
+      "item": "XV2-16",
+      "unit": "mg/s"
+     }
+    ],
+    "presence": "PRESENT",
+    "a9_08_term": "F-TRANSITION",
+    "sources": [
+     "docs/decisions/OD_2026_09_29_owner_answers_147.json row 42"
+    ],
+    "kind": "product",
+    "reserve_base": true,
+    "of_lines": [],
+    "optional_entry": false,
+    "note": null,
+    "v3_change": "carried unchanged from v2",
+    "owner_answers_applied": [],
+    "a9_19_status": "HISTORY_RETIRED_FLIGHT_CONFIGURATION (A9.19); never in the flight Xe budget (A9.20)"
+   },
+   {
+    "id": "C1-FL-FALLBACK",
+    "case": "CASE-2",
+    "configuration": "hall_c1_reference",
+    "gas_mode": null,
+    "ledger": "FLIGHT",
+    "phase": "fallback",
+    "name": "Hall Xe fallback operation (atmospheric path unavailable)",
+    "formula": "t_fallback_max x mdot_fallback",
+    "fields": [
+     {
+      "name": "t_fallback_max",
+      "item": "XV2-17",
+      "unit": "h"
+     },
+     {
+      "name": "mdot_fallback",
+      "item": "XV2-17",
+      "unit": "mg/s"
+     }
+    ],
+    "presence": "PRESENT",
+    "a9_08_term": "F-XE-FALLBACK-OP",
+    "sources": [
+     "docs/decisions/OD_2026_09_29_owner_answers_147.json row 42"
+    ],
+    "kind": "product",
+    "reserve_base": true,
+    "of_lines": [],
+    "optional_entry": false,
+    "note": "the C1 configuration as fallback to the ICP is an architecture choice, not an in-flight term (OQ-A902-04)",
+    "v3_change": "carried unchanged from v2",
+    "owner_answers_applied": [],
+    "a9_19_status": "HISTORY_RETIRED_FLIGHT_CONFIGURATION (A9.19); never in the flight Xe budget (A9.20)"
+   },
+   {
+    "id": "C1-FL-FUNC",
+    "case": "CASE-2",
+    "configuration": "hall_c1_reference",
+    "gas_mode": null,
+    "ledger": "FLIGHT",
+    "phase": "xe_mode",
+    "name": "Hall bounded functional Xe-capable mode (row 6)",
+    "formula": "N_xe_mode x t_xe_mode x mdot_xe_mode",
+    "fields": [
+     {
+      "name": "N_xe_mode",
+      "item": "XV2-18",
+      "unit": "1"
+     },
+     {
+      "name": "t_xe_mode",
+      "item": "XV2-18",
+      "unit": "h"
+     },
+     {
+      "name": "mdot_xe_mode",
+      "item": "XV2-18",
+      "unit": "mg/s"
+     }
+    ],
+    "presence": "PRESENT",
+    "a9_08_term": "F-XE-FUNCTIONAL",
+    "sources": [
+     "docs/decisions/OD_2026_09_29_owner_answers_147.json row 6"
+    ],
+    "kind": "product",
+    "reserve_base": true,
+    "of_lines": [],
+    "optional_entry": false,
+    "note": null,
+    "v3_change": "carried unchanged from v2",
+    "owner_answers_applied": [],
+    "a9_19_status": "HISTORY_RETIRED_FLIGHT_CONFIGURATION (A9.19); never in the flight Xe budget (A9.20)"
+   },
+   {
+    "id": "C1-FL-HALL-START",
+    "case": "CASE-2",
+    "configuration": "hall_c1_reference",
+    "gas_mode": null,
+    "ledger": "FLIGHT",
+    "phase": "ignition",
+    "name": "Hall discharge ignition on Xe (if used)",
+    "formula": "N_starts x t_hall_ign x mdot_hall_ign",
+    "fields": [
+     {
+      "name": "N_starts",
+      "item": "XV2-14",
+      "unit": "1"
+     },
+     {
+      "name": "t_hall_ign",
+      "item": "XV2-15",
+      "unit": "s"
+     },
+     {
+      "name": "mdot_hall_ign",
+      "item": "XV2-15",
+      "unit": "mg/s"
+     }
+    ],
+    "presence": "CONDITIONAL",
+    "a9_08_term": "F-HALL-XE-START",
+    "sources": [
+     "docs/decisions/OD_2026_09_29_owner_answers_147.json row 42"
+    ],
+    "kind": "product",
+    "reserve_base": true,
+    "of_lines": [],
+    "optional_entry": false,
+    "note": null,
+    "v3_change": "carried unchanged from v2",
+    "owner_answers_applied": [],
+    "a9_19_status": "HISTORY_RETIRED_FLIGHT_CONFIGURATION (A9.19); never in the flight Xe budget (A9.20)"
+   },
+   {
+    "id": "C1-FL-PEAK",
+    "case": "CASE-2",
+    "configuration": "hall_c1_reference",
+    "gas_mode": null,
+    "ledger": "FLIGHT",
+    "phase": "xe_peak",
+    "name": "Xe-augmented peak (only if the RFP permits)",
+    "formula": "N_peak x t_peak x mdot_peak",
+    "fields": [
+     {
+      "name": "N_peak",
+      "item": "XV2-19",
+      "unit": "1"
+     },
+     {
+      "name": "t_peak",
+      "item": "XV2-19",
+      "unit": "h"
+     },
+     {
+      "name": "mdot_peak",
+      "item": "XV2-19",
+      "unit": "mg/s"
+     }
+    ],
+    "presence": "CONDITIONAL",
+    "a9_08_term": "F-XE-PEAK",
+    "sources": [
+     "docs/decisions/OD_2026_09_29_owner_answers_147.json row 4; docs/decisions/OD_2026_09_29_owner_answers_147.json row 26"
+    ],
+    "kind": "product",
+    "reserve_base": true,
+    "of_lines": [],
+    "optional_entry": false,
+    "note": null,
+    "v3_change": "carried unchanged from v2",
+    "owner_answers_applied": [],
+    "a9_19_status": "HISTORY_RETIRED_FLIGHT_CONFIGURATION (A9.19); never in the flight Xe budget (A9.20)"
+   },
+   {
+    "id": "C1-FL-FLOWUNC-OTHER",
+    "case": "CASE-2",
+    "configuration": "hall_c1_reference",
+    "gas_mode": null,
+    "ledger": "FLIGHT",
+    "phase": "uncertainty",
+    "name": "flow-class uncertainty of the Hall-side Xe flows",
+    "formula": "u_class x (sum of the Hall-side Xe lines)",
+    "fields": [
+     {
+      "name": "u_class",
+      "item": "XV2-20",
+      "unit": "1"
+     }
+    ],
+    "presence": "PRESENT",
+    "a9_08_term": "F-XE-FLOWUNC-OTHER",
+    "sources": [
+     "docs/decisions/OD_2026_09_29_owner_answers_147.json row 96"
+    ],
+    "kind": "fraction_of_lines",
+    "reserve_base": true,
+    "of_lines": [
+     "C1-FL-FUNC",
+     "C1-FL-HALL-START",
+     "C1-FL-TRANSITION",
+     "C1-FL-FALLBACK",
+     "C1-FL-PEAK"
+    ],
+    "optional_entry": false,
+    "note": null,
+    "v3_change": "carried unchanged from v2",
+    "owner_answers_applied": [],
+    "a9_19_status": "HISTORY_RETIRED_FLIGHT_CONFIGURATION (A9.19); never in the flight Xe budget (A9.20)"
+   },
+   {
+    "id": "C1-FL-ICP-XE",
+    "case": "CASE-2",
+    "configuration": "hall_c1_reference",
+    "gas_mode": null,
+    "ledger": "FLIGHT",
+    "phase": "icp_feed",
+    "name": "ICP Xe",
+    "formula": "not booked: no ICP in the C1 configuration",
+    "fields": [],
+    "presence": "ABSENT_BY_OWNER_DECISION",
+    "a9_08_term": "F-ICP-XE",
+    "sources": [
+     "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-A902-04"
+    ],
+    "kind": "product",
+    "reserve_base": true,
+    "of_lines": [],
+    "optional_entry": false,
+    "note": null,
+    "v3_change": "carried unchanged from v2",
+    "owner_answers_applied": [],
+    "a9_19_status": "HISTORY_RETIRED_FLIGHT_CONFIGURATION (A9.19); never in the flight Xe budget (A9.20)"
+   }
+  ],
+  "scenarios": [
+   {
+    "id": "S2-FL-C1",
+    "case": "CASE-2",
+    "ledger": "FLIGHT",
+    "configuration": "hall_c1_reference",
+    "gas_mode": null,
+    "role": "HISTORY_RETIRED_FLIGHT_CONFIGURATION: hall_c1_reference was retired as a candidate flight configuration by A9.19 (no conventional hollow cathode in the flight architecture); C1 is a ground-only laboratory reference (A9.20); never in the flight Xe budget",
+    "lines": [
+     "C1-FL-PURGE",
+     "C1-FL-HEAT",
+     "C1-FL-IGN",
+     "C1-FL-KEEPER",
+     "C1-FL-FLOWUNC",
+     "C1-FL-TRANSITION",
+     "C1-FL-FALLBACK",
+     "C1-FL-FUNC",
+     "C1-FL-HALL-START",
+     "C1-FL-PEAK",
+     "C1-FL-FLOWUNC-OTHER",
+     "C1-FL-ICP-XE"
+    ],
+    "axes_v2": [
+     "RA-DWELL",
+     "RA-FLOWUNC"
+    ],
+    "role_pre_a9_19": "C1 reference flight configuration: flight C1 integration DEFERRED until C1 is selected (A9.14 OQ-A907-07 as amended by A9.15); RFP-required system Xe capability present"
+   }
+  ],
+  "evaluations": [
+   {
+    "scenario": "S2-FL-C1",
+    "lines": [
+     {
+      "line": "C1-FL-PURGE",
+      "presence": "CONDITIONAL_ON_C1_FLIGHT_SELECTION",
+      "kg": null,
+      "missing": [
+       {
+        "field": "flight C1 selection / selected C1 Xe requirement (pre-A9.19 history)",
+        "item": "XV3-01, XV3-02",
+        "requires": "NONE - hall_c1_reference was retired as a flight configuration by A9.19 and C1 is ground-only (A9.20); the pre-A9.19 state was PENDING_C1_NOT_SELECTED (neither assumed nor excluded, A9.15)"
+       }
+      ]
+     },
+     {
+      "line": "C1-FL-HEAT",
+      "presence": "CONDITIONAL_ON_C1_FLIGHT_SELECTION",
+      "kg": null,
+      "missing": [
+       {
+        "field": "flight C1 selection / selected C1 Xe requirement (pre-A9.19 history)",
+        "item": "XV3-01, XV3-02",
+        "requires": "NONE - hall_c1_reference was retired as a flight configuration by A9.19 and C1 is ground-only (A9.20); the pre-A9.19 state was PENDING_C1_NOT_SELECTED (neither assumed nor excluded, A9.15)"
+       }
+      ]
+     },
+     {
+      "line": "C1-FL-IGN",
+      "presence": "CONDITIONAL_ON_C1_FLIGHT_SELECTION",
+      "kg": null,
+      "missing": [
+       {
+        "field": "flight C1 selection / selected C1 Xe requirement (pre-A9.19 history)",
+        "item": "XV3-01, XV3-02",
+        "requires": "NONE - hall_c1_reference was retired as a flight configuration by A9.19 and C1 is ground-only (A9.20); the pre-A9.19 state was PENDING_C1_NOT_SELECTED (neither assumed nor excluded, A9.15)"
+       }
+      ]
+     },
+     {
+      "line": "C1-FL-KEEPER",
+      "presence": "CONDITIONAL_ON_C1_FLIGHT_SELECTION",
+      "kg": null,
+      "missing": [
+       {
+        "field": "flight C1 selection / selected C1 Xe requirement (pre-A9.19 history)",
+        "item": "XV3-01, XV3-02",
+        "requires": "NONE - hall_c1_reference was retired as a flight configuration by A9.19 and C1 is ground-only (A9.20); the pre-A9.19 state was PENDING_C1_NOT_SELECTED (neither assumed nor excluded, A9.15)"
+       }
+      ]
+     },
+     {
+      "line": "C1-FL-FLOWUNC",
+      "presence": "CONDITIONAL_ON_C1_FLIGHT_SELECTION",
+      "kg": null,
+      "missing": [
+       {
+        "field": "flight C1 selection / selected C1 Xe requirement (pre-A9.19 history)",
+        "item": "XV3-01, XV3-02",
+        "requires": "NONE - hall_c1_reference was retired as a flight configuration by A9.19 and C1 is ground-only (A9.20); the pre-A9.19 state was PENDING_C1_NOT_SELECTED (neither assumed nor excluded, A9.15)"
+       }
+      ]
+     },
+     {
+      "line": "C1-FL-TRANSITION",
+      "presence": "PRESENT",
+      "kg": null,
+      "missing": [
+       {
+        "field": "N_transitions",
+        "item": "XV2-16",
+        "requires": "H-1 transition measurement with Xe logged per phase and the operations concept"
+       },
+       {
+        "field": "t_transition",
+        "item": "XV2-16",
+        "requires": "H-1 transition measurement with Xe logged per phase and the operations concept"
+       },
+       {
+        "field": "mdot_transition",
+        "item": "XV2-16",
+        "requires": "H-1 transition measurement with Xe logged per phase and the operations concept"
+       }
+      ]
+     },
+     {
+      "line": "C1-FL-FALLBACK",
+      "presence": "PRESENT",
+      "kg": null,
+      "missing": [
+       {
+        "field": "t_fallback_max",
+        "item": "XV2-17",
+        "requires": "the FDIR fallback policy and an H-1 Xe operating point measured on the actual H-1"
+       },
+       {
+        "field": "mdot_fallback",
+        "item": "XV2-17",
+        "requires": "the FDIR fallback policy and an H-1 Xe operating point measured on the actual H-1"
+       }
+      ]
+     },
+     {
+      "line": "C1-FL-FUNC",
+      "presence": "PRESENT",
+      "kg": null,
+      "missing": [
+       {
+        "field": "N_xe_mode",
+        "item": "XV2-18",
+        "requires": "the official RFP wording (row 1) and an owner bound on the Xe-mode duration, plus an H-1 Xe operating point measured on the actual H-1"
+       },
+       {
+        "field": "t_xe_mode",
+        "item": "XV2-18",
+        "requires": "the official RFP wording (row 1) and an owner bound on the Xe-mode duration, plus an H-1 Xe operating point measured on the actual H-1"
+       },
+       {
+        "field": "mdot_xe_mode",
+        "item": "XV2-18",
+        "requires": "the official RFP wording (row 1) and an owner bound on the Xe-mode duration, plus an H-1 Xe operating point measured on the actual H-1"
+       }
+      ]
+     },
+     {
+      "line": "C1-FL-HALL-START",
+      "presence": "CONDITIONAL",
+      "kg": null,
+      "missing": [
+       {
+        "field": "N_starts",
+        "item": "XV2-14",
+        "requires": "the mission operations concept (eclipse/duty cycling, anomaly restarts) and FDIR restart policy"
+       },
+       {
+        "field": "t_hall_ign",
+        "item": "XV2-15",
+        "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
+       },
+       {
+        "field": "mdot_hall_ign",
+        "item": "XV2-15",
+        "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
+       }
+      ]
+     },
+     {
+      "line": "C1-FL-PEAK",
+      "presence": "CONDITIONAL",
+      "kg": null,
+      "missing": [
+       {
+        "field": "N_peak",
+        "item": "XV2-19",
+        "requires": "the official RFP (row 1) permitting Xe for the 25 mN capability, and a measured H-1 Xe peak point"
+       },
+       {
+        "field": "t_peak",
+        "item": "XV2-19",
+        "requires": "the official RFP (row 1) permitting Xe for the 25 mN capability, and a measured H-1 Xe peak point"
+       },
+       {
+        "field": "mdot_peak",
+        "item": "XV2-19",
+        "requires": "the official RFP (row 1) permitting Xe for the 25 mN capability, and a measured H-1 Xe peak point"
+       }
+      ]
+     },
+     {
+      "line": "C1-FL-FLOWUNC-OTHER",
+      "presence": "PRESENT",
+      "kg": null,
+      "missing": [
+       {
+        "field": "u_class",
+        "item": "XV2-20",
+        "requires": "the anode-side / ICP-feed Xe flow controller selection and its Xe calibration (OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))"
+       },
+       {
+        "field": "sum of",
+        "lines": [
+         "C1-FL-FUNC",
+         "C1-FL-HALL-START",
+         "C1-FL-TRANSITION",
+         "C1-FL-FALLBACK",
+         "C1-FL-PEAK"
+        ]
+       }
+      ]
+     },
+     {
+      "line": "C1-FL-ICP-XE",
+      "presence": "ABSENT_BY_OWNER_DECISION",
+      "kg": 0.0,
+      "missing": []
+     }
+    ],
+    "booking": {
+     "status": "REFUSED_TBD_INPUTS",
+     "tbd_lines": [
+      "C1-FL-PURGE",
+      "C1-FL-HEAT",
+      "C1-FL-IGN",
+      "C1-FL-KEEPER",
+      "C1-FL-FLOWUNC",
+      "C1-FL-TRANSITION",
+      "C1-FL-FALLBACK",
+      "C1-FL-FUNC",
+      "C1-FL-HALL-START",
+      "C1-FL-PEAK",
+      "C1-FL-FLOWUNC-OTHER"
+     ],
+     "totals": null,
+     "floors_closed_terms_only": {
+      "mission_usable_kg": 0.0,
+      "reserve_kg": 0.0,
+      "usable_incl_reserve_kg": 0.0,
+      "residual_sub_line_kg": 0.0,
+      "loaded_kg": 0.0
+     }
+    }
+   }
+  ]
+ },
  "interface_demands": [
   {
    "id": "XV3-IF-01",
@@ -5894,7 +5989,7 @@
    "md_sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903",
    "json_path": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
    "json_sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
-   "how_applied": "governing rule for every Xe line: the RFP requires air + Xe capability; Xe is never a contingency"
+   "how_applied": "governing rule for every Xe line: the RFP requires air + Xe capability (kept); the A9.15 'never a contingency' ROLE wording is superseded by A9.19 (Xe = contingency / emergency supply mode)"
   },
   {
    "key": "A9.15",
@@ -5906,7 +6001,7 @@
    "md_sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903",
    "json_path": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
    "json_sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
-   "how_applied": "flight C1 Xe lines pending C1 selection; no C1 Xe invented; system Xe capability independent of C1"
+   "how_applied": "system Xe capability independent of C1 (kept); the A9.15 flight-C1 Xe path is superseded by A9.19 / A9.20 (no flight C1; C1 Xe only in the ground-test ledger)"
   },
   {
    "key": "A9.14",
@@ -5966,7 +6061,7 @@
    "md_sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903",
    "json_path": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
    "json_sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
-   "how_applied": "dual-propellant capability: separate ambient-air and Xe operating modes / paths (no premix assumed)"
+   "how_applied": "dual-propellant capability: separate ambient-air and Xe operating modes / paths (no premix assumed); the 'not a contingency interpretation' part is superseded on the ROLE of Xe by A9.19"
   },
   {
    "key": "A9.14",
@@ -6147,6 +6242,98 @@
    "json_path": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
    "json_sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
    "how_applied": "getter need is an engineering / vendor requirement, not a policy choice"
+  },
+  {
+   "key": "A9.19",
+   "id": "architecture",
+   "sequenced_no": null,
+   "answer": {
+    "hall_accelerators": 1,
+    "electron_source_neutralizer": "one RF/ICP electron-source/neutralizer (cathodeless/electrodeless) for both atmospheric gases and xenon",
+    "propellant_supply_modes": [
+     "ambient atmospheric propellant (primary)",
+     "xenon (contingency / emergency)"
+    ],
+    "conventional_hollow_cathode": "NONE in the thruster architecture"
+   },
+   "quote": "One Hall accelerator. One RF/ICP electron-source/neutralizer. Two propellant supply modes. No conventional hollow cathode.",
+   "path": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+   "json_path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "how_applied": "propellant_policy.architecture: one Hall accelerator + one RF/ICP electron-source / neutralizer for both supply modes; two supply modes (separate tanks / paths); no conventional hollow cathode; the single flight configuration is hall_icp_neutralizer (xe_system_capability refuses hall_c1_reference)"
+  },
+  {
+   "key": "A9.19",
+   "id": "xenon_role",
+   "sequenced_no": null,
+   "answer": "CONTINGENCY_AND_EMERGENCY - not a parallel/co-equal propellant; Xe capability is retained (the RFP requires the capability and describes the Xe input as 'an extra input system to take care any problems on board unforeseen problems', RFP-P17-05, with separate tanks RFP-P18-08), but its role is contingency",
+   "quote": "xenon is not a parllel gas its just a contigency and emergency gas. so our thruster architecture should be cathode/electrodless for both the atmosphere gases and xenon",
+   "path": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+   "json_path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "how_applied": "propellant_policy.xenon_role = CONTINGENCY_EMERGENCY (capability still RFP-required, RFP-P17-05 / RFP-P18-08); no cathode Xe in normal atmospheric operation; sizing_observation_a9_19 (2 kg loaded case = natural sizing case: recorder OBSERVATION, not a selection; 2 / 5 / 10 kg kept as recorded)"
+  },
+  {
+   "key": "A9.19",
+   "id": "A9.15",
+   "sequenced_no": null,
+   "answer": "the statements 'Xenon is an RFP-required system capability, not merely a contingency' and S9.10 'should not be weakened into a contingency interpretation' are superseded on the ROLE of Xe: Xe capability stays required (two separate supply modes/tanks), Xe is the contingency/emergency mode",
+   "quote": "xenon is not a parllel gas its just a contigency and emergency gas.",
+   "path": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+   "json_path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "how_applied": "A9.15 'Xe is an RFP-required system capability, not a contingency' superseded on the ROLE of Xe (propellant_policy.superseded_wording_a9_19); the capability rules stay"
+  },
+  {
+   "key": "A9.19",
+   "id": "A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07",
+   "sequenced_no": null,
+   "answer": "no C1 flight variant: the flight architecture has no conventional hollow cathode; AL-C1 and C1 Xe/electronics bookings are removed from the flight architecture",
+   "quote": "No conventional hollow cathode.",
+   "path": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+   "json_path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "how_applied": "flight C1 lines C1-FL-* and scenario S2-FL-C1 removed from the flight accounting (kept as labelled history in retired_flight_configuration_history); c1_flight_xe_booking refuses a flight C1; XV3-01 = GROUND_ONLY_NEVER_FLIGHT, XV3-02 NOT_APPLICABLE; P-FL-C1 scope note restated"
+  },
+  {
+   "key": "A9.19",
+   "id": "A9 C1 CONTROL_FALLBACK",
+   "sequenced_no": null,
+   "answer": "C1 is not a flight fallback; hall_c1_reference is no longer a candidate flight configuration (its ground/laboratory role is an open recorder question to the owner)",
+   "quote": "our thruster architecture should be cathode/electrodless for both the atmosphere gases and xenon check C1 mass",
+   "path": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+   "json_path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "how_applied": "hall_c1_reference is no longer a candidate flight configuration (CASE-2 restated; history only)"
+  },
+  {
+   "key": "A9.20",
+   "id": "answer",
+   "sequenced_no": null,
+   "answer": "owner chose the recommended option: C1 is a ground-only laboratory reference (registers I_d,max,H1,Ar on H-1 independently of the ICP per A9.10 S3.5, and serves as the bench control in the C1-vs-ICP comparison); never flight hardware; never in the flight mass/power/Xe budgets",
+   "quote": "Options offered: \"Ground-only reference (Recommended)\" / \"Remove C1 entirely\".",
+   "path": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+   "md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+   "json_path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+   "json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+   "how_applied": "C1 = GROUND_ONLY laboratory reference: S2-GT-C1 ground-test Xe kept (A9.10 S3.5 I_d,max,H1,Ar characterization; C1-vs-ICP bench control); never in the flight Xe budget"
+  },
+  {
+   "key": "A9.20",
+   "id": "answer",
+   "sequenced_no": null,
+   "answer": "owner chose the recommended option: C1 is a ground-only laboratory reference (registers I_d,max,H1,Ar on H-1 independently of the ICP per A9.10 S3.5, and serves as the bench control in the C1-vs-ICP comparison); never flight hardware; never in the flight mass/power/Xe budgets",
+   "quote": "will go with your recommended",
+   "path": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+   "md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+   "json_path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+   "json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+   "how_applied": "owner chose the recommended option (ground-only reference)"
   }
  ],
  "open_owner_questions": [
@@ -6168,12 +6355,14 @@
    "question": "A9.15 makes Xe an RFP-required system capability that must not be 'weakened into a contingency interpretation'. Does it also change the A9.1 HIQ-06 ICP gas-mode labels, where G-REUSE is primary and the dedicated G-ATM / G-XE ICP feeds are 'separately declared contingency variants'? (The A9.15 recorder note flagged this; Xe v3 keeps the A9.1 ICP-feed labels and scopes 'contingency' to the ICP feed choice only.)",
    "a9_1_basis_verbatim": "The dedicated ICP gas port remains installed and capped so G-ATM and G-XE can be tested as separately declared contingency variants.",
    "proposed": "none - owner call (no reading is chosen here; the A9.1 baseline stays as recorded until the owner answers)",
-   "needed_by": "LOCK-1"
+   "needed_by": "LOCK-1",
+   "a9_19_recorder_note": "A9.19 supersedes the A9.15 'not a contingency' premise of this question on the ROLE of xenon (Xe = contingency / emergency) and leaves the A9.1 ICP feed-gas baseline unchanged (G-REUSE primary, G-XE declared variant); the recorder therefore sees no remaining conflict with the A9.1 HIQ-06 labels, but closing XV3Q-01 is the owner's call (status kept OPEN)"
   }
  ],
  "recorder_flags": [
   "XA9Q-04 reading: the 0.20 margin is applied to the full calculated ground total INCLUDING the explicitly booked purge / conditioning / line-fill / vendor lines (conservative literal reading of 'booked explicitly before this margin'); flagged for owner confirmation, no number depends on it today (all TBD)",
-  "the AL-08 planning floor (5.044 kg CBE floor) is the owner's figure (A9.14 MQ-05); whether its two-branch valve set already covers a selected C1 branch is decided when C1 is selected (mass / power v3)"
+  "the AL-08 planning floor (5.044 kg CBE floor) is the owner's figure (A9.14 MQ-05) and is kept unchanged; its H2-7 two-branch valve set was described in mass / power v2 as including the C1 cathode Xe branch - with no flight C1 after A9.19 / A9.20 whether the floor should be re-based is an owner / quotation matter (mass / power v3 recorder flag; no number changed here)",
+  "A9.19 sizing: the 2 kg loaded case as the natural sizing case is a recorder OBSERVATION for the owner (design_cases.sizing_observation_a9_19), not a selection"
  ],
  "compliance": {
   "no_new_numbers": "every number is owner-given, copied from the pinned v2 / NIST snapshot, or arithmetic on those; TBD stays TBD",

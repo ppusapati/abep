@@ -6,6 +6,10 @@ AL-07 / AL-08 planning floors, the controls / harness split, the decided BOM map
 added again, the evidence-based dry / wet totals vs 40 kg with every TBD and the redesign need (no margin relaxation),
 C1 option (c) and the RFP-required Xe hardware in both configurations, and the new peak_sampled gate helper
 (OQ-A910-03) with its refusals.
+A9.19 / A9.20: the single flight configuration hall_icp_neutralizer (no conventional hollow cathode), no AL-C1 / C1
+electronics / C1 Xe branch in any flight roll-up, the pre-A9.19 C1 column kept only as labelled history, C1 BOM items
+GROUND_ONLY_LAB_EQUIPMENT, AL-08 REQUIRED_RFP_XE_CAPABILITY with role CONTINGENCY_EMERGENCY, flight roll-ups
+numerically unchanged vs the pre-A9.19 commit.
 Run: python -m pytest -q tests/test_mass_power_a9_v3.py
 """
 from __future__ import annotations
@@ -36,11 +40,15 @@ V2 = {
 }
 DEC_SHA = {"A9.12": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",     # A9.16 repair F5
            "A9.14": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
-           "A9.15": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309"}
+           "A9.15": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
+           "A9.19": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+           "A9.20": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6"}
 REQUIRED = [("A9.14", q) for q in ("MQ-01", "MQ-02", "MQ-03", "MQ-04", "MQ-05", "MQ-06", "MQ-07", "MQ-09", "MQ-10",
                                     "XA9Q-01", "OQ-A910-01", "MPQ-01", "MPQ-02", "OQ-A907-07", "XA9Q-07", "XV2Q-01",
                                     "OQ-A910-05", "OQ-A910-03")] + \
-           [("A9.15", q) for q in ("governing_rule", "MPQ-01", "OQ-A907-07", "XA9Q-07", "XV2Q-01")]
+           [("A9.15", q) for q in ("governing_rule", "MPQ-01", "OQ-A907-07", "XA9Q-07", "XV2Q-01")] + \
+           [("A9.19", q) for q in ("architecture", "xenon_role", "A9.15", "A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07",
+                                    "A9 C1 CONTROL_FALLBACK")] + [("A9.20", "answer")]
 
 
 def _sha(p: Path) -> str:
@@ -70,11 +78,13 @@ def d():
 
 
 def _roll(d, cfg):
-    return next(r for r in d["rollups"] if r["configuration"] == cfg)
+    rr = d["rollups"] + d["retired_flight_configuration_history"]["rollups"]
+    return next(r for r in rr if r["configuration"] == cfg)
 
 
 def _line(d, cfg, lid):
-    return next(x for x in d["lines"][cfg] if x["line"] == lid)
+    ll = dict(d["lines"], **d["retired_flight_configuration_history"]["lines"])
+    return next(x for x in ll[cfg] if x["line"] == lid)
 
 
 def test_builder_check_reproduces():
@@ -161,7 +171,7 @@ def test_no_margin_relaxation_refused(m):
 
 # ------------------------------------------------------------------------------------ MQ-03 / 04 / 05 / 06
 def test_rebased_planning_floors(d):
-    for cfg in ("hall_icp_neutralizer", "hall_c1_reference"):
+    for cfg in ("hall_icp_neutralizer", "hall_c1_reference"):           # flight column + the history column
         for lid, kg in (("AL-04", 4.2048), ("AL-07", 6.0), ("AL-08", 6.0528)):
             ln = _line(d, cfg, lid)
             assert ln["value"]["value_kg"] == kg and ln["value"]["governs"] == "MEV_PLANNING_FLOOR"
@@ -188,12 +198,17 @@ def test_bom_mappings_exact(d):
     bom = {x["id"]: x for x in d["bom"]}
     want = {"A9B-18": "AL-05", "A9B-22": "AL-07", "A9B-21": "AL-06", "A9B-20": "AL-06", "A9B-26": "AL-09",
             "A9B-29": "AL-09", "A9B-27": "AL-09", "A9B-28": "AL-HAR", "A9B-08": "AL-08", "A9B-12": "AL-08",
-            "MPV2-N01": "AL-05", "MPV2-N02": "AL-06", "MPV2-N03": "AL-04", "MPV2-N04": "AL-10",
-            "A9B-C01": "AL-C1", "A9B-C02": "AL-C1", "A9B-C05": "AL-C1", "A9B-C03": "AL-07", "A9B-C04": "AL-08"}
+            "MPV2-N01": "AL-05", "MPV2-N02": "AL-06", "MPV2-N03": "AL-04", "MPV2-N04": "AL-10"}
     for iid, line in want.items():
         assert bom[iid]["allocation_line"] == line, iid
         assert bom[iid]["allocation_mapping"].startswith("OWNER_MAPPING"), iid
     assert not any("PROPOSED_MAPPING" in x["allocation_mapping"] for x in d["bom"] if x["allocation_mapping"])
+    # A9.19 / A9.20: the pre-A9.19 C1 flight mappings survive only as history
+    pre = {"A9B-C01": "AL-C1", "A9B-C02": "AL-C1", "A9B-C05": "AL-C1", "A9B-C03": "AL-07", "A9B-C04": "AL-08",
+           "A9B-C07": "AL-09"}
+    for iid, line in pre.items():
+        assert bom[iid]["allocation_line_pre_a9_19"] == line, iid
+        assert bom[iid]["allocation_line"] == "GROUND_ONLY_LAB_EQUIPMENT", iid
 
 
 # ------------------------------------------------------------------------------------ Xe (LOADED, RFP) and C1
@@ -220,36 +235,82 @@ def test_xe_import_refuses_non_loaded(m, monkeypatch):
         m.import_xe(m.S())
 
 
-def test_xe_hardware_rfp_required_both_configs(m, d):
-    for cfg in m.CONFIGS:
-        assert m.xe_hardware_required(cfg)["AL-08"] == "REQUIRED_RFP_XE_CAPABILITY"
-        assert _line(d, cfg, "AL-08")["value"]["value_kg"] == 6.0528
-    with pytest.raises(m.MassError):
-        m.xe_hardware_required("xe_free")
+def test_xe_hardware_rfp_required_flight_config_contingency_role(m, d):
+    assert m.CONFIGS == ("hall_icp_neutralizer",)
+    r = m.xe_hardware_required("hall_icp_neutralizer")
+    assert r["AL-08"] == "REQUIRED_RFP_XE_CAPABILITY" and r["xe_role"] == "CONTINGENCY_EMERGENCY"
+    assert set(r["rfp_clauses"]) == {"RFP-P17-05", "RFP-P18-08"}
+    al08 = _line(d, "hall_icp_neutralizer", "AL-08")
+    assert al08["value"]["value_kg"] == 6.0528 and al08["xe_role"] == "CONTINGENCY_EMERGENCY"
+    assert al08["c1_branch"] == {"state": "NO_C1_XE_BRANCH_IN_FLIGHT (A9.19 / A9.20)", "in_AL08": False}
+    for bad in ("xe_free", "hall_c1_reference"):
+        with pytest.raises(m.MassError):
+            m.xe_hardware_required(bad)
     bom = {x["id"]: x for x in d["bom"]}
-    assert bom["A9B-07"]["configurations"]["hall_icp_neutralizer"] == "INSTALLED"
-    assert bom["A9B-07"]["rfp_required_both_configurations"] is True
+    assert bom["A9B-07"]["configurations"] == {"hall_icp_neutralizer": "INSTALLED"}
+    assert bom["A9B-07"]["rfp_required_flight_configuration"] is True and bom["A9B-07"]["xe_role"] == XE_ROLE
     assert d["open_register_status"]["XV2Q-01"] == "NOT_APPLICABLE"
+    xr = d["propellant_policy"]["xenon_role"]
+    assert xr["role"] == "CONTINGENCY_EMERGENCY" and "A9.19 xenon_role" in xr["source"]
+    assert "G-REUSE primary" in d["propellant_policy"]["icp_feed_gas_baseline"]
 
 
-def test_c1_option_c_no_kg_now(m, d):
-    assert m.al_c1_allocation(False) == {"state": "NOT_ALLOCATED_C1_NOT_SELECTED", "kg": None}
-    assert m.al_c1_allocation(True)["state"] == "TBD_SELECTED_C1_MODULE_CBE_REQUIRED"
-    assert m.al_c1_allocation(True, 0.5)["kg"] == 0.6
+XE_ROLE = "CONTINGENCY_EMERGENCY"
+
+
+def test_c1_never_flight_ground_only(m, d):
+    assert m.al_c1_allocation() == {"state": "NOT_IN_FLIGHT_ARCHITECTURE_A9_19_A9_20", "kg": None}
+    for bad in ((True,), (False, 0.5), ("yes",)):
+        with pytest.raises(m.MassError):
+            m.al_c1_allocation(*bad)
+    assert m.c1_xe_branch_booking() == {"state": "NO_C1_XE_BRANCH_IN_FLIGHT (A9.19 / A9.20)", "in_AL08": False}
     with pytest.raises(m.MassError):
-        m.al_c1_allocation(False, 0.5)
+        m.c1_xe_branch_booking(True)
+    # no C1 in any flight line / roll-up / power configuration
+    assert set(d["lines"]) == {"hall_icp_neutralizer"} and [r["configuration"] for r in d["rollups"]] == \
+        ["hall_icp_neutralizer"]
+    assert "AL-C1" not in {x["line"] for x in d["lines"]["hall_icp_neutralizer"]}
+    al07 = _line(d, "hall_icp_neutralizer", "AL-07")
+    assert al07["c1_electronics"].startswith("NOT_BOOKED") and "C1 heater" not in al07["name"]
+    assert set(d["power"]["configurations"]) == {"hall_icp_neutralizer"}
+    flight = json.dumps({"lines": d["lines"], "rollups": d["rollups"], "power": d["power"]["configurations"]})
+    assert "c1_heater" not in flight and "c1_keeper" not in flight
     with pytest.raises(m.MassError):
-        m.al_c1_allocation("yes")
-    assert m.c1_xe_branch_booking(False)["state"] == "PENDING_C1_NOT_SELECTED"
-    assert m.c1_xe_branch_booking(True, True)["state"] == "BOOKED_IN_AL08"
-    assert m.c1_xe_branch_booking(True, False)["state"] == "NO_C1_XE_BRANCH"
-    with pytest.raises(m.MassError):
-        m.c1_xe_branch_booking(False, True)
-    c1 = _line(d, "hall_c1_reference", "AL-C1")
-    assert c1["value"]["value_kg"] is None and "DEFERRED_UNTIL_C1_SELECTED" in c1["flight_integration"]
-    assert "AL-C1" in _roll(d, "hall_c1_reference")["lines_without_value"]
+        m.build_lines(json.loads(json.dumps({"lines": {}})), m.S(), ("hall_c1_reference",))
+    # C1 BOM items are ground-only lab equipment
     bom = {x["id"]: x for x in d["bom"]}
-    assert bom["A9B-C01"]["configurations"]["hall_c1_reference"].startswith("DEFERRED_UNTIL_C1_SELECTED")
+    for iid in ("A9B-C01", "A9B-C02", "A9B-C03", "A9B-C04", "A9B-C05", "A9B-C06", "A9B-C07"):
+        assert bom[iid]["allocation_line"] == "GROUND_ONLY_LAB_EQUIPMENT" and bom[iid]["classification"] == \
+            "GROUND_ONLY_LAB_EQUIPMENT", iid
+        assert bom[iid]["configurations"] == {"hall_icp_neutralizer": "NOT_INSTALLED",
+                                              "ground_lab_reference": "GROUND_ONLY_LAB_EQUIPMENT (A9.20)"}, iid
+    ga = {g["id"]: g for g in d["ground_article_only"]}
+    assert "GROUND_ONLY" in ga["GA-01"]["a9_20_rule"]
+    items = {i["id"]: i for i in d["items_v3"]}
+    assert items["MPV3-05"]["status"].startswith("RETIRED_FROM_FLIGHT") and items["MPV3-05"]["value"] is None
+
+
+def test_c1_history_column_labelled_and_unchanged(d):
+    h = d["retired_flight_configuration_history"]
+    assert h["label"].startswith("HISTORY") and h["pre_a9_19_commit"] == "f55abf6222c12f07c81c09194df9051e3a297d10"
+    c1 = _line(d, "hall_c1_reference", "AL-C1")
+    assert c1["value"]["value_kg"] is None and c1["a9_19_status"].startswith("RETIRED_FROM_FLIGHT")
+    r = _roll(d, "hall_c1_reference")
+    assert r["note"].startswith("HISTORY") and "AL-C1" in r["lines_without_value"]
+    assert r["nonharness_known_kg"] == 28.7576 and abs(r["dry_known_kg"] - 36.32538948) < 1e-9
+    assert d["configurations"]["hall_c1_reference"].startswith("RETIRED")
+    assert "hall_c1_reference" in d["power"]["retired_flight_configuration_history"]["configurations"]
+
+
+def test_flight_rollup_unchanged_and_c1_mass_check(d):
+    f = d["flight_rollup_vs_40kg"]
+    assert [x["configuration"] for x in f] == ["hall_icp_neutralizer"]
+    assert f[0]["dry_known_kg"] == 40.7464421 and f[0]["numerically_unchanged_vs_pre_a9_19"] is True
+    assert f[0]["wet_known_kg_by_loaded_case"] == {"2.0": 42.7464421, "5.0": 45.7464421, "10.0": 50.7464421}
+    assert set(f[0]["hard_40_wet_state_by_loaded_case"].values()) == {"DOES_NOT_CLOSE"}
+    c = d["c1_mass_check"]
+    assert c["owner_request"] == "check C1 mass" and c["v2_c1_evidence_floor_kg"] == 0.2
+    assert c["v2_c1_floor_is_partial"] is True and "A9.19" in c["source"]
 
 
 def test_local_match_al06_and_sham(d):
@@ -271,10 +332,10 @@ def test_evidence_based_totals_vs_40kg(d):
         assert abs(w["exceedance_kg"] - (w["wet_known_kg"] - 40.0)) < 1e-9
         need = w["redesign_need"]["nonharness_nominal_reduction_kg_at_least"]
         assert abs(need - (32.2576 - (40.0 - c) * 0.95 / 1.2)) < 1e-6
-    c1 = _roll(d, "hall_c1_reference")
+    c1 = _roll(d, "hall_c1_reference")                                      # history column (pre-A9.19)
     c1hard = {w["xe_case_kg"]: w["state"] for w in c1["wet"] if w["reference"] == "HARD_40_WET"}
     assert c1hard == {2.0: "NOT_EVALUABLE", 5.0: "DOES_NOT_CLOSE", 10.0: "DOES_NOT_CLOSE"}
-    for rr in d["rollups"]:
+    for rr in d["rollups"] + d["retired_flight_configuration_history"]["rollups"]:
         assert rr["tbd"] and rr["all_terms_resolved"] is False
         assert "CLOSES" not in {w["state"] for w in rr["wet"]}
 
@@ -365,7 +426,8 @@ def test_a9_16_repair_f5_f10_register_and_c1_dwell_wording():
     d = json.loads((REPO / "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json").read_text(encoding="utf-8"))
     st = d["open_register_status"]["OQ-A910-06"]
     assert st.startswith("OWNER_DECIDED (A9.12 S5.8") and "rf_thermal_basis" in st
-    step = [x for x in d["power"]["configurations"]["hall_c1_reference"]["phases"]["startup"]["steps"]
+    hist = d["power"]["retired_flight_configuration_history"]["configurations"]          # A9.19: history only
+    step = [x for x in hist["hall_c1_reference"]["phases"]["startup"]["steps"]
             if x["step_id"] == "C-S4"][0]
     assert "3 dwells (1 + 2 retries) x 120 s = 360 s" in step["name"] and "120 s x 2" not in step["name"]
     assert "120 s x 2 retries" in step["name_v2"]
