@@ -1,0 +1,2117 @@
+{
+ "schema": "abep.a9_7.f2_filter_stage.v1",
+ "id": "F2_FILTER_STAGE_V1",
+ "title": "A9.7 F2 - explicit filter-stage interface (intake exit -> compressor inlet)",
+ "lane": "fo_a9_7_f2_filter_stage",
+ "directive": "docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md sec. F2",
+ "date": "2026-10-01",
+ "base_commit": "1c9d7a648cd4ce739e587248693271e5115698e1",
+ "generated_by": "docs/design_synthesis/f2_filter/build_f2_filter.py",
+ "module": "abep_sim/design/filter_stage.py",
+ "companion_document": "docs/design_synthesis/f2_filter/F2_FILTER_STAGE.md",
+ "test": "tests/test_design_f2_filter.py",
+ "status": "INTERFACE_IMPLEMENTED_NO_FILTER_DESIGN_NO_SELECTION",
+ "a9_status": "INVESTIGATION_HYPOTHESIS (architecture); filter concept OPEN",
+ "what_this_is_not": [
+  "not a filter design, sizing or selection; no concept is ranked",
+  "not evidence: demonstration cases use normalized unit inputs; the placeholder case is a labelled parametric sensitivity",
+  "not a change to the production path: abep_sim/intake.py, intake_tpmc.py, system.py are unmodified and UPSTREAM_ICD G-01 stays open there; goldens do not move",
+  "no PASS, SELECTED, WINNER or QUALIFIED status anywhere"
+ ],
+ "pins": {
+  "A97_MD": {
+   "path": "docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md",
+   "sha256": "fb51328d6fe07a6eaf257ef9ef9592cb0c0039ae3e8cf04ef0420007c985b129",
+   "role": "owner directive A9.7 (verbatim)"
+  },
+  "A97": {
+   "path": "docs/decisions/OD_2026_10_01_A9_7_architecture_freeze_design_synthesis.json",
+   "sha256": "3199a670c901967ae4dca930022470b024cac14b263335da0adc3d423c37f372",
+   "role": "owner directive A9.7"
+  },
+  "ANS": {
+   "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+   "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
+   "role": "147 owner answers (machine-readable)"
+  }
+ },
+ "referenced_not_pinned": [
+  {
+   "path": "abep_sim/intake_tpmc.py",
+   "why": "placeholder filter defaults and law (mutable module; locations recorded by search)"
+  },
+  {
+   "path": "abep_sim/intake.py",
+   "why": "IntakeParams.filter and the production-path filter mass"
+  },
+  {
+   "path": "abep_sim/system.py",
+   "why": "BOM filter line"
+  },
+  {
+   "path": "abep_sim/mass_bom.py",
+   "why": "filter BOM item (TBD record)"
+  },
+  {
+   "path": "docs/interfaces/UPSTREAM_ICD.md",
+   "why": "IF-A1 / IF-A2 fields, gap G-01, open questions 1 and 5"
+  },
+  {
+   "path": "schemas/interfaces/upstream_icd_v1.json",
+   "why": "IF-A2 field definitions"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+   "why": "A9B-02 protective / filter stage; AL-01 allocation"
+  },
+  {
+   "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
+   "why": "M16 row 2 'filter'"
+  },
+  {
+   "path": "docs/experiments/hall_icp/p4_anode_materials/p4_screening.py",
+   "why": "AO / material evidence vocabulary"
+  },
+  {
+   "path": "docs/experiments/lifetime_ao/ao_lifetime_register_v5.json",
+   "why": "AO / lifetime mechanisms AOL-M01..M11"
+  },
+  {
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "why": "RVM-08 atmospheric propellant, RVM-09 nascent O"
+  },
+  {
+   "path": "docs/EVIDENCE.md",
+   "why": "evidence levels 1-7 and quantity types"
+  }
+ ],
+ "vocabulary": {
+  "quantity_types": [
+   "measured",
+   "digitized",
+   "inferred",
+   "reconstructed",
+   "model-derived",
+   "assumed",
+   "owner-allocation",
+   "owner-stated",
+   "published analog",
+   "qualitative",
+   "definition",
+   "published convention"
+  ],
+  "ev_statuses": [
+   "EVIDENCED",
+   "MODEL_DERIVED",
+   "OWNER_GIVEN",
+   "DEFINITION",
+   "TBD",
+   "PLACEHOLDER_NOT_A_FLIGHT_DESIGN"
+  ],
+  "usable_statuses": [
+   "EVIDENCED",
+   "MODEL_DERIVED",
+   "OWNER_GIVEN",
+   "DEFINITION"
+  ],
+  "ao_gate_outcomes": [
+   "INCOMPLETE_EVIDENCE",
+   "OUT_OF_DOMAIN",
+   "GATE_VIOLATED_BY_EVIDENCE",
+   "GATE_SATISFIED_WITHIN_EVIDENCE_DOMAIN"
+  ],
+  "surrogate_labels": [
+   "NO_ATOMIC_O",
+   "DEDICATED_AO_SOURCE",
+   "NONE"
+  ],
+  "protection_targets": [
+   "particulates_debris",
+   "sputter_wear_products",
+   "atomic_oxygen_to_downstream_surfaces",
+   "ambient_charged_particles",
+   "filter_self_contamination"
+  ],
+  "incidences": [
+   "diffuse_thermal",
+   "hyperthermal_directed"
+  ],
+  "result_statuses": [
+   "NUMERIC",
+   "NO_FILTER_IDENTITY",
+   "REFUSED_TBD",
+   "OUT_OF_DOMAIN",
+   "NONPHYSICAL_INPUT"
+  ],
+  "result_labels": [
+   "EVIDENCE_BASED",
+   "PARAMETRIC_SENSITIVITY_NOT_EVIDENCE",
+   "NORMALIZED_UNIT_INPUT_NOT_A_PHYSICAL_STATE"
+  ],
+  "never_emitted_as_status": [
+   "PASS",
+   "SELECTED",
+   "WINNER",
+   "QUALIFIED"
+  ]
+ },
+ "interface_model": {
+  "per_species_direction": "for d in {forward (inlet face), backflow (outlet face)}: transmitted + reflected + captured + converted = 1; reflected derived = 1 - tau - capture - conversion (refused if negative); lost = captured + converted",
+  "products": "converted mass of s is added to its product species (CONVERSION_PRODUCTS) and routed to the outlet face with product_to_outlet (TBD), the rest to the inlet face",
+  "outlet": "gross_downstream = forward transmitted + backflow reflected + products to outlet; net_downstream = gross_downstream - backflow incident; gross_upstream = forward reflected + backflow transmitted + products to inlet",
+  "pressure": "free molecular only (Kn > 0.5): C_s = alpha_s A cbar_s / 4; dp_s = (mdot_net,s / m_s) k T / C_s",
+  "mass": "face area x areal mass",
+  "fail_closed": "evidence mode refuses (REFUSED_TBD) when any needed record is TBD, a placeholder or assumed; OUT_OF_DOMAIN for Kn <= 0.5 or an incidence mismatch; numbers with TBD inputs only through a SensitivityCase (label PARAMETRIC_SENSITIVITY_NOT_EVIDENCE)",
+  "none_option": "FilterStage.none(): definitional identity for trade studies",
+  "conservation_tolerance": 1e-12
+ },
+ "items": [
+  {
+   "id": "face_area_m2",
+   "value": "TBD",
+   "units": "m^2",
+   "basis": "filter face area (geometry)",
+   "source": "TBD",
+   "evidence_class": "TBD",
+   "status": "TBD"
+  },
+  {
+   "id": "areal_mass_kg_m2",
+   "value": "TBD",
+   "units": "kg/m^2",
+   "basis": "areal mass of the element incl. frame (design + sourced densities, or weighed)",
+   "source": "TBD",
+   "evidence_class": "TBD",
+   "status": "TBD"
+  },
+  {
+   "id": "tau_f.O",
+   "value": "TBD",
+   "units": "-",
+   "basis": "forward transmission for O at the declared forward incidence (measured on the element, or model-derived from a defined geometry within its domain)",
+   "source": "TBD",
+   "evidence_class": "TBD",
+   "status": "TBD"
+  },
+  {
+   "id": "capture_f.O",
+   "value": "TBD",
+   "units": "-",
+   "basis": "forward capture fraction for O (adsorption / deposition; steady-state evidence)",
+   "source": "TBD",
+   "evidence_class": "TBD",
+   "status": "TBD"
+  },
+  {
+   "id": "conversion_f.O",
+   "value": "TBD",
+   "units": "-",
+   "basis": "forward conversion fraction for O (O recombination to O2; dedicated AO evidence)",
+   "source": "TBD",
+   "evidence_class": "TBD",
+   "status": "TBD"
+  },
+  {
+   "id": "tau_b.O",
+   "value": "TBD",
+   "units": "-",
+   "basis": "backflow transmission for O (diffuse incidence from the plenum side)",
+   "source": "TBD",
+   "evidence_class": "TBD",
+   "status": "TBD"
+  },
+  {
+   "id": "capture_b.O",
+   "value": "TBD",
+   "units": "-",
+   "basis": "backflow capture fraction for O",
+   "source": "TBD",
+   "evidence_class": "TBD",
+   "status": "TBD"
+  },
+  {
+   "id": "conversion_b.O",
+   "value": "TBD",
+   "units": "-",
+   "basis": "backflow conversion fraction for O (O recombination to O2)",
+   "source": "TBD",
+   "evidence_class": "TBD",
+   "status": "TBD"
+  },
+  {
+   "id": "alpha_conductance.O",
+   "value": "TBD",
+   "units": "-",
+   "basis": "diffuse-incidence transmission probability for O for the conductance law",
+   "source": "TBD",
+   "evidence_class": "TBD",
+   "status": "TBD"
+  },
+  {
+   "id": "product_to_outlet_f.O",
+   "value": "TBD",
+   "units": "-",
+   "basis": "routing of forward conversion products to the outlet face for O",
+   "source": "TBD",
+   "evidence_class": "TBD",
+   "status": "TBD"
+  },
+  {
+   "id": "product_to_outlet_b.O",
+   "value": "TBD",
+   "units": "-",
+   "basis": "routing of backflow conversion products to the outlet face for O",
+   "source": "TBD",
+   "evidence_class": "TBD",
+   "status": "TBD"
+  },
+  {
+   "id": "tau_f.N2",
+   "value": "TBD",
+   "units": "-",
+   "basis": "forward transmission for N2 at the declared forward incidence (measured on the element, or model-derived from a defined geometry within its domain)",
+   "source": "TBD",
+   "evidence_class": "TBD",
+   "status": "TBD"
+  },
+  {
+   "id": "capture_f.N2",
+   "value": "TBD",
+   "units": "-",
+   "basis": "forward capture fraction for N2 (adsorption / deposition; steady-state evidence)",
+   "source": "TBD",
+   "evidence_class": "TBD",
+   "status": "TBD"
+  },
+  {
+   "id": "conversion_f.N2",
+   "value": "TBD",
+   "units": "-",
+   "basis": "forward conversion fraction for N2: no conversion channel is modelled, so only an evidenced 0 is admissible (otherwise a channel must be added to CONVERSION_PRODUCTS)",
+   "source": "TBD",
+   "evidence_class": "TBD",
+   "status": "TBD"
+  },
+  {
+   "id": "tau_b.N2",
+   "value": "TBD",
+   "units": "-",
+   "basis": "backflow transmission for N2 (diffuse incidence from the plenum side)",
+   "source": "TBD",
+   "evidence_class": "TBD",
+   "status": "TBD"
+  },
+  {
+   "id": "capture_b.N2",
+   "value": "TBD",
+   "units": "-",
+   "basis": "backflow capture fraction for N2",
+   "source": "TBD",
+   "evidence_class": "TBD",
+   "status": "TBD"
+  },
+  {
+   "id": "conversion_b.N2",
+   "value": "TBD",
+   "units": "-",
+   "basis": "backflow conversion fraction for N2: no conversion channel modelled; only an evidenced 0 is admissible",
+   "source": "TBD",
+   "evidence_class": "TBD",
+   "status": "TBD"
+  },
+  {
+   "id": "alpha_conductance.N2",
+   "value": "TBD",
+   "units": "-",
+   "basis": "diffuse-incidence transmission probability for N2 for the conductance law",
+   "source": "TBD",
+   "evidence_class": "TBD",
+   "status": "TBD"
+  },
+  {
+   "id": "tau_f.O2",
+   "value": "TBD",
+   "units": "-",
+   "basis": "forward transmission for O2 at the declared forward incidence (measured on the element, or model-derived from a defined geometry within its domain)",
+   "source": "TBD",
+   "evidence_class": "TBD",
+   "status": "TBD"
+  },
+  {
+   "id": "capture_f.O2",
+   "value": "TBD",
+   "units": "-",
+   "basis": "forward capture fraction for O2 (adsorption / deposition; steady-state evidence)",
+   "source": "TBD",
+   "evidence_class": "TBD",
+   "status": "TBD"
+  },
+  {
+   "id": "conversion_f.O2",
+   "value": "TBD",
+   "units": "-",
+   "basis": "forward conversion fraction for O2: no conversion channel is modelled, so only an evidenced 0 is admissible (otherwise a channel must be added to CONVERSION_PRODUCTS)",
+   "source": "TBD",
+   "evidence_class": "TBD",
+   "status": "TBD"
+  },
+  {
+   "id": "tau_b.O2",
+   "value": "TBD",
+   "units": "-",
+   "basis": "backflow transmission for O2 (diffuse incidence from the plenum side)",
+   "source": "TBD",
+   "evidence_class": "TBD",
+   "status": "TBD"
+  },
+  {
+   "id": "capture_b.O2",
+   "value": "TBD",
+   "units": "-",
+   "basis": "backflow capture fraction for O2",
+   "source": "TBD",
+   "evidence_class": "TBD",
+   "status": "TBD"
+  },
+  {
+   "id": "conversion_b.O2",
+   "value": "TBD",
+   "units": "-",
+   "basis": "backflow conversion fraction for O2: no conversion channel modelled; only an evidenced 0 is admissible",
+   "source": "TBD",
+   "evidence_class": "TBD",
+   "status": "TBD"
+  },
+  {
+   "id": "alpha_conductance.O2",
+   "value": "TBD",
+   "units": "-",
+   "basis": "diffuse-incidence transmission probability for O2 for the conductance law",
+   "source": "TBD",
+   "evidence_class": "TBD",
+   "status": "TBD"
+  },
+  {
+   "id": "knudsen_criterion",
+   "value": 0.5,
+   "units": "-",
+   "basis": "free-molecular laws (transmission probability, conductance) applied only for Kn > 0.5; otherwise OUT_OF_DOMAIN",
+   "source": "R. G. Livesey, 'Flow of gases through tubes and orifices', ch. 2 in J. M. Lafferty (ed.), Foundations of Vacuum Science and Technology, Wiley 1998, ISBN 0-471-17593-5, Table 2.1 (molecular Kn > 0.5)",
+   "evidence_class": "published convention",
+   "status": "EVIDENCED"
+  },
+  {
+   "id": "conductance_law",
+   "value": "C_s = alpha_s * A * cbar_s / 4; cbar_s = sqrt(8 k T / (pi m_s))",
+   "units": "m^3/s",
+   "basis": "free molecular; dp_s = Q_s / C_s for the net throughput",
+   "source": "LIVESEY1998 Eqs. 2.14-2.15 and Sec. 2.2",
+   "evidence_class": "model-derived",
+   "status": "MODEL_DERIVED"
+  },
+  {
+   "id": "conversion_channels",
+   "value": {
+    "O": {
+     "O2": 1.0
+    }
+   },
+   "units": "mass yield",
+   "basis": "definitional stoichiometry O + O -> O2; fraction converted is TBD",
+   "source": "definition",
+   "evidence_class": "definition",
+   "status": "DEFINITION"
+  },
+  {
+   "id": "AL-01_allocation_share",
+   "value": "TBD",
+   "units": "kg",
+   "basis": "owner row 54 allocates 3.5 kg to 'intake/filter/duct' jointly (allocation, not a CBE); no filter share is defined",
+   "source": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 54",
+   "evidence_class": "owner-allocation",
+   "status": "TBD"
+  }
+ ],
+ "cole_table_2_5": {
+  "source": "R. G. Livesey 1998 (Lafferty (ed.), Foundations of Vacuum Science and Technology, Wiley), Table 2.5 'Transmission Probabilities for Cylindrical Tubes', column alpha (Cole [11]); transcribed from the open PDF accessed 2026-10-01 (see source register LIVESEY1998)",
+  "rows": [
+   {
+    "l_over_d": 0.05,
+    "alpha": 0.952399
+   },
+   {
+    "l_over_d": 0.15,
+    "alpha": 0.869928
+   },
+   {
+    "l_over_d": 0.25,
+    "alpha": 0.801271
+   },
+   {
+    "l_over_d": 0.35,
+    "alpha": 0.74341
+   },
+   {
+    "l_over_d": 0.45,
+    "alpha": 0.694044
+   },
+   {
+    "l_over_d": 0.5,
+    "alpha": 0.671984
+   },
+   {
+    "l_over_d": 0.6,
+    "alpha": 0.632228
+   },
+   {
+    "l_over_d": 0.7,
+    "alpha": 0.597364
+   },
+   {
+    "l_over_d": 0.8,
+    "alpha": 0.566507
+   },
+   {
+    "l_over_d": 0.9,
+    "alpha": 0.538975
+   },
+   {
+    "l_over_d": 1.0,
+    "alpha": 0.514231
+   },
+   {
+    "l_over_d": 1.5,
+    "alpha": 0.420055
+   },
+   {
+    "l_over_d": 2.0,
+    "alpha": 0.356572
+   },
+   {
+    "l_over_d": 2.5,
+    "alpha": 0.310525
+   },
+   {
+    "l_over_d": 3.0,
+    "alpha": 0.275438
+   },
+   {
+    "l_over_d": 3.5,
+    "alpha": 0.247735
+   },
+   {
+    "l_over_d": 4.0,
+    "alpha": 0.225263
+   },
+   {
+    "l_over_d": 4.5,
+    "alpha": 0.206641
+   },
+   {
+    "l_over_d": 5.0,
+    "alpha": 0.190941
+   },
+   {
+    "l_over_d": 10.0,
+    "alpha": 0.109304
+   },
+   {
+    "l_over_d": 15.0,
+    "alpha": 0.076912
+   },
+   {
+    "l_over_d": 20.0,
+    "alpha": 0.059422
+   },
+   {
+    "l_over_d": 25.0,
+    "alpha": 0.048448
+   },
+   {
+    "l_over_d": 30.0,
+    "alpha": 0.040913
+   },
+   {
+    "l_over_d": 35.0,
+    "alpha": 0.035415
+   },
+   {
+    "l_over_d": 40.0,
+    "alpha": 0.031225
+   },
+   {
+    "l_over_d": 45.0,
+    "alpha": 0.027925
+   },
+   {
+    "l_over_d": 50.0,
+    "alpha": 0.025258
+   },
+   {
+    "l_over_d": 500.0,
+    "alpha": 0.002646
+   }
+  ],
+  "use": "cole_transmission_probability(l/d); exact at tabulated points, log-log interpolation between, refusal outside [0.05, 500]"
+ },
+ "repository_placeholders": {
+  "rule": "recorded as PLACEHOLDER_NOT_A_FLIGHT_DESIGN; never used silently",
+  "values_read_from_IntakeGeometry_defaults": {
+   "filter": false,
+   "filter_open_frac": 0.7,
+   "filter_transmission": 0.6,
+   "filter_mass_per_m2": 0.8,
+   "area_m2": 0.5,
+   "T_wall_K": 350.0
+  },
+  "filter_enabled_anywhere": "no (scan of abep_sim/ (excluding design/) and scripts/ for 'filter=True' / '.filter = True')",
+  "records": [
+   {
+    "id": "PH-01",
+    "location": "abep_sim/intake_tpmc.py:43",
+    "file": "abep_sim/intake_tpmc.py",
+    "text": "filter: bool = False",
+    "value": "False",
+    "units": "-",
+    "what": "IntakeGeometry.filter switch (filter branch of the direct TPMC); default off",
+    "source": "none in the repository (unsourced)",
+    "evidence_class": "assumed",
+    "status": "PLACEHOLDER_NOT_A_FLIGHT_DESIGN",
+    "used_by_f2": "never silently; only through filter_stage.placeholder_sensitivity_case (label PARAMETRIC_SENSITIVITY / PLACEHOLDER_NOT_A_FLIGHT_DESIGN)"
+   },
+   {
+    "id": "PH-02",
+    "location": "abep_sim/intake_tpmc.py:44",
+    "file": "abep_sim/intake_tpmc.py",
+    "text": "filter_open_frac: float = 0.7",
+    "value": "0.7",
+    "units": "-",
+    "what": "open-area fraction of the filter element; multiplies eta_c and the passive-compression area",
+    "source": "none in the repository (unsourced)",
+    "evidence_class": "assumed",
+    "status": "PLACEHOLDER_NOT_A_FLIGHT_DESIGN",
+    "used_by_f2": "never silently; only through filter_stage.placeholder_sensitivity_case (label PARAMETRIC_SENSITIVITY / PLACEHOLDER_NOT_A_FLIGHT_DESIGN)"
+   },
+   {
+    "id": "PH-03",
+    "location": "abep_sim/intake_tpmc.py:45",
+    "file": "abep_sim/intake_tpmc.py",
+    "text": "filter_transmission: float = 0.6",
+    "value": "0.6",
+    "units": "-",
+    "what": "'thermal Clausing factor of the filter element' (code comment); no source",
+    "source": "none in the repository (unsourced)",
+    "evidence_class": "assumed",
+    "status": "PLACEHOLDER_NOT_A_FLIGHT_DESIGN",
+    "used_by_f2": "never silently; only through filter_stage.placeholder_sensitivity_case (label PARAMETRIC_SENSITIVITY / PLACEHOLDER_NOT_A_FLIGHT_DESIGN)"
+   },
+   {
+    "id": "PH-04",
+    "location": "abep_sim/intake_tpmc.py:46",
+    "file": "abep_sim/intake_tpmc.py",
+    "text": "filter_mass_per_m2: float = 0.8",
+    "value": "0.8",
+    "units": "kg/m^2",
+    "what": "filter areal mass; no source",
+    "source": "none in the repository (unsourced)",
+    "evidence_class": "assumed",
+    "status": "PLACEHOLDER_NOT_A_FLIGHT_DESIGN",
+    "used_by_f2": "never silently; only through filter_stage.placeholder_sensitivity_case (label PARAMETRIC_SENSITIVITY / PLACEHOLDER_NOT_A_FLIGHT_DESIGN)"
+   },
+   {
+    "id": "PH-05",
+    "location": "abep_sim/intake_tpmc.py:193",
+    "file": "abep_sim/intake_tpmc.py",
+    "text": "eta_c *= geom.filter_open_frac * geom.filter_transmission ** 0.5",
+    "value": "law",
+    "units": "-",
+    "what": "forward law 'hyperthermal, mostly transmitted' (code comment): eta_c x open_frac x transmission^0.5; no source",
+    "source": "none in the repository (unsourced)",
+    "evidence_class": "assumed",
+    "status": "PLACEHOLDER_NOT_A_FLIGHT_DESIGN",
+    "used_by_f2": "never silently; only through filter_stage.placeholder_sensitivity_case (label PARAMETRIC_SENSITIVITY / PLACEHOLDER_NOT_A_FLIGHT_DESIGN)"
+   },
+   {
+    "id": "PH-06",
+    "location": "abep_sim/intake_tpmc.py:194",
+    "file": "abep_sim/intake_tpmc.py",
+    "text": "K_back *= geom.filter_transmission",
+    "value": "law",
+    "units": "-",
+    "what": "backflow law: K_back x transmission; no source",
+    "source": "none in the repository (unsourced)",
+    "evidence_class": "assumed",
+    "status": "PLACEHOLDER_NOT_A_FLIGHT_DESIGN",
+    "used_by_f2": "never silently; only through filter_stage.placeholder_sensitivity_case (label PARAMETRIC_SENSITIVITY / PLACEHOLDER_NOT_A_FLIGHT_DESIGN)"
+   },
+   {
+    "id": "PH-07",
+    "location": "abep_sim/intake_tpmc.py:195",
+    "file": "abep_sim/intake_tpmc.py",
+    "text": "phi_eff = geom.phi * geom.filter_open_frac",
+    "value": "law",
+    "units": "-",
+    "what": "effective open fraction for the passive compression ratio",
+    "source": "none in the repository (unsourced)",
+    "evidence_class": "assumed",
+    "status": "PLACEHOLDER_NOT_A_FLIGHT_DESIGN",
+    "used_by_f2": "never silently; only through filter_stage.placeholder_sensitivity_case (label PARAMETRIC_SENSITIVITY / PLACEHOLDER_NOT_A_FLIGHT_DESIGN)"
+   },
+   {
+    "id": "PH-08",
+    "location": "abep_sim/intake_tpmc.py:205",
+    "file": "abep_sim/intake_tpmc.py",
+    "text": "(geom.filter_mass_per_m2 * geom.area_m2 if geom.filter else 0.0)",
+    "value": "law",
+    "units": "kg",
+    "what": "filter mass added to the intake mass (direct TPMC)",
+    "source": "none in the repository (unsourced)",
+    "evidence_class": "assumed",
+    "status": "PLACEHOLDER_NOT_A_FLIGHT_DESIGN",
+    "used_by_f2": "never silently; only through filter_stage.placeholder_sensitivity_case (label PARAMETRIC_SENSITIVITY / PLACEHOLDER_NOT_A_FLIGHT_DESIGN)"
+   },
+   {
+    "id": "PH-09",
+    "location": "abep_sim/intake.py:29",
+    "file": "abep_sim/intake.py",
+    "text": "filter: bool = False",
+    "value": "False",
+    "units": "-",
+    "what": "IntakeParams.filter switch (production path); default off",
+    "source": "none in the repository (unsourced)",
+    "evidence_class": "assumed",
+    "status": "PLACEHOLDER_NOT_A_FLIGHT_DESIGN",
+    "used_by_f2": "never silently; only through filter_stage.placeholder_sensitivity_case (label PARAMETRIC_SENSITIVITY / PLACEHOLDER_NOT_A_FLIGHT_DESIGN)"
+   },
+   {
+    "id": "PH-10",
+    "location": "abep_sim/intake.py:71",
+    "file": "abep_sim/intake.py",
+    "text": "m_int += 0.8 * intake.area_m2",
+    "value": "0.8",
+    "units": "kg/m^2",
+    "what": "production path adds filter MASS only (no flow effect: UPSTREAM_ICD G-01)",
+    "source": "none in the repository (unsourced)",
+    "evidence_class": "assumed",
+    "status": "PLACEHOLDER_NOT_A_FLIGHT_DESIGN",
+    "used_by_f2": "never silently; only through filter_stage.placeholder_sensitivity_case (label PARAMETRIC_SENSITIVITY / PLACEHOLDER_NOT_A_FLIGHT_DESIGN)"
+   },
+   {
+    "id": "PH-11",
+    "location": "abep_sim/system.py:309",
+    "file": "abep_sim/system.py",
+    "text": "\"filter\": 0.8 * cfg.intake.area_m2 if cfg.intake.filter else 0.0",
+    "value": "0.8",
+    "units": "kg/m^2",
+    "what": "BOM filter line in system.evaluate",
+    "source": "none in the repository (unsourced)",
+    "evidence_class": "assumed",
+    "status": "PLACEHOLDER_NOT_A_FLIGHT_DESIGN",
+    "used_by_f2": "never silently; only through filter_stage.placeholder_sensitivity_case (label PARAMETRIC_SENSITIVITY / PLACEHOLDER_NOT_A_FLIGHT_DESIGN)"
+   }
+  ],
+  "related_unsourced_priors_not_used": [
+   "abep_sim/aochem.py RECOMB_GAMMA and EROSION_YIELD_CM3_PER_ATOM ('literature-class priors' without per-entry sources): not filter values, not used by F2"
+  ]
+ },
+ "candidate_concepts": [
+  {
+   "id": "FC-00",
+   "name": "no filter stage ('none')",
+   "function": "trade-study reference: definitional identity (tau = 1, nothing lost, no pressure effect, zero mass)",
+   "sources": [],
+   "evidence": "definition",
+   "interface_status": "NUMERIC by definition (FilterStage.none)",
+   "admissibility": "TBD_OWNER (F2-OQ-03): the RFP chain names a filter (RVM-08, secondary transcription)",
+   "ao_applicability": "not applicable (no element)",
+   "candidate_status": "LISTED_ONLY_NO_SELECTION"
+  },
+  {
+   "id": "FC-01",
+   "name": "inlet grid system at the collector entrance",
+   "function": "stated: 'to stop the particles at the entrance of the collector'. Whether 'particles' means contaminant particulates or gas molecules (a backflow-limiting grid) is not stated: AMBIGUOUS",
+   "sources": [
+    {
+     "id": "DICARA2007",
+     "locator": "Sec. E 'Collector Design', p. 5",
+     "quote": "a higher surface area of 0.6m2 was allocated to the collector intake, to take into account the grid system used to stop the particles at the entrance of the collector, and an extra design margin"
+    },
+    {
+     "id": "ANDREUSSI2022",
+     "locator": "p. 17",
+     "quote": "A grid system was used to stop the particles at the inlet."
+    }
+   ],
+   "evidence": "level 5, qualitative; the 0.6 m2 vs 0.15 m2 area allocation combines the grid and a design margin and cannot be separated (no transmission, mass or material given)",
+   "interface_status": "all F2 interface parameters TBD (FilterStage.tbd): apply() refuses in evidence mode",
+   "ao_applicability": "INCOMPLETE_EVIDENCE (no material stated)",
+   "candidate_status": "LISTED_ONLY_NO_SELECTION"
+  },
+  {
+   "id": "FC-02",
+   "name": "perforated plate / multi-hole molecular screen (generic vacuum element)",
+   "function": "geometric screen in free-molecular flow; its conductance follows from hole geometry (filter_stage.perforated_plate_alpha: open fraction x Cole alpha(l/d))",
+   "sources": [
+    {
+     "id": "LIVESEY1998",
+     "locator": "Eqs. 2.14-2.15, Table 2.1, Table 2.5",
+     "quote": "conductance of a duct ... is given by the entrance aperture conductance multiplied by the transmission probability"
+    }
+   ],
+   "evidence": "level 4 model for the diffuse-incidence transmission and conductance of a defined geometry; capture, conversion (O recombination), mass and protection efficiency are not given by it",
+   "interface_status": "alpha_conductance and diffuse tau can be MODEL_DERIVED once a geometry is defined; capture / conversion / mass / Kn remain TBD -> apply() refuses",
+   "ao_applicability": "INCOMPLETE_EVIDENCE (material OPEN)",
+   "candidate_status": "LISTED_ONLY_NO_SELECTION"
+  },
+  {
+   "id": "FC-03",
+   "name": "wire-mesh protective screen ('splinter shield') ahead of a rotating pump stage",
+   "function": "keeps solid objects out of a turbomolecular rotor (relevant analog for the F3 compressor rotor); costs conductance",
+   "sources": [
+    {
+     "id": "PFEIFFER_TMP_SCREEN",
+     "locator": "protective screens / splinter shields",
+     "quote": "Foreign objects falling into the turbopump rotor can cause irreparable damage. ... fit a splinter shield or protective screen in the inlet flange of the turbopump. ... the pumping speed to be reduced - by up to 30% depending on the gas type."
+    }
+   ],
+   "evidence": "level 5 published analog (ground pump, supplier statement): 'up to 30 %' pumping-speed reduction depending on gas; not transferable as a flight value",
+   "interface_status": "all F2 interface parameters TBD (FilterStage.tbd): apply() refuses in evidence mode",
+   "ao_applicability": "INCOMPLETE_EVIDENCE",
+   "candidate_status": "LISTED_ONLY_NO_SELECTION"
+  },
+  {
+   "id": "FC-04",
+   "name": "charged-particle (ion) filter ahead of the neutral path",
+   "function": "separates charged particles from neutrals (ground instrument precedent); for ABEP it would reject ambient ions / electrons; the need is not evaluated here",
+   "sources": [
+    {
+     "id": "ANDREUSSI2022",
+     "locator": "p. 44 (DISCOVERER facility detection system)",
+     "quote": "The detection system is composed of four stages: an ion filter used to separate charged particles from the neutral ones, followed by an ioniser, a time-of-flight and an analyser."
+    }
+   ],
+   "evidence": "level 5, qualitative, ground diagnostic instrument (not a propellant-path element)",
+   "interface_status": "all F2 interface parameters TBD (FilterStage.tbd): apply() refuses in evidence mode; ambient charged-particle flux at IF-A1 is TBD",
+   "ao_applicability": "INCOMPLETE_EVIDENCE",
+   "candidate_status": "LISTED_ONLY_NO_SELECTION"
+  },
+  {
+   "id": "FC-05",
+   "name": "thick collimating grid passing only near-axial velocities",
+   "function": "direction filter (ground AO-source precedent); a honeycomb intake already acts similarly",
+   "sources": [
+    {
+     "id": "ANDREUSSI2022",
+     "locator": "p. 42 (JAXA AO source)",
+     "quote": "The source has a compact design, with a transverse magnetic field and a thick grid in front to filter only the particles with an axial velocity."
+    }
+   ],
+   "evidence": "level 5, qualitative, facility device",
+   "interface_status": "all F2 interface parameters TBD (FilterStage.tbd): apply() refuses in evidence mode (forward incidence hyperthermal_directed)",
+   "ao_applicability": "INCOMPLETE_EVIDENCE",
+   "candidate_status": "LISTED_ONLY_NO_SELECTION"
+  },
+  {
+   "id": "FC-06",
+   "name": "catalytic atomic-O recombination element (deliberate O -> O2 conversion)",
+   "function": "would protect downstream surfaces from atomic O by converting it; conflicts with the owner row-102 baseline (inert / low-recombination lining, preserve the representative atomic-O fraction)",
+   "sources": [],
+   "source_status": "TBD - no open-literature source for an ABEP filter of this kind was located in this lane; abep_sim/aochem.py RECOMB_GAMMA values carry no per-entry source and are not used",
+   "evidence": "none",
+   "interface_status": "all F2 interface parameters TBD (FilterStage.tbd): apply() refuses in evidence mode",
+   "ao_applicability": "INCOMPLETE_EVIDENCE",
+   "candidate_status": "LISTED_ONLY_NO_SELECTION (admissibility TBD_OWNER, F2-OQ-02)"
+  },
+  {
+   "id": "FC-07",
+   "name": "Xe cathode-line filter / getter (owner row 51)",
+   "function": "Xe purity for the C1 LaB6 branch - Xe path, NOT the atmospheric filter stage",
+   "sources": [
+    {
+     "id": "owner row 51",
+     "locator": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+     "quote": "include the filter/getter with explicit <=17 W-class load only after vendor/spec verification"
+    }
+   ],
+   "evidence": "owner-stated scope",
+   "interface_status": "out of F2 scope (listed to avoid confusion)",
+   "ao_applicability": "not applicable",
+   "candidate_status": "OUT_OF_SCOPE_XE_PATH"
+  }
+ ],
+ "source_register": {
+  "LIVESEY1998": {
+   "citation": "R. G. Livesey, 'Flow of gases through tubes and orifices', chapter 2 in J. M. Lafferty (ed.), Foundations of Vacuum Science and Technology, John Wiley & Sons, 1998, ISBN 0-471-17593-5, pp. 81-140",
+   "url": "https://atomoptics-nas.uoregon.edu/~tbrown/files/strontium_vacuum_system/Research%20Papers/Livesey_mod.pdf",
+   "accessed": "2026-10-01",
+   "retrieved_pdf_sha256": "9afa467667464ef5a06a6e5fece4e87cf01ce2979312a9999e1cecce89445d0b",
+   "access": "openly reachable PDF (scan with text layer) on a university server; copyright Wiley; short quotations and a numeric table transcription only",
+   "locators": {
+    "Table 2.1 (p. 82)": "Molecular Kn > 0.5; Transitional 0.5 > Kn > 0.01; Continuum Kn < 0.01",
+    "Sec. 2.2 (p. 86)": "conductance of a duct = entrance aperture conductance multiplied by the transmission probability (Eq. 2.14); aperture conductance Eq. 2.15 (rate of impingement over the aperture area, i.e. A cbar / 4)",
+    "Sec. 2.2 (p. 86) text": "'If N2 molecules arrive at the entrance plane of a duct then the number of these which reach the exit plane is N2 alpha, and N2 (1 - alpha) return to the entrance. Similarly, of N1 molecules striking the exit plane (from a downstream chamber), N1 alpha reach the entrance.'",
+    "Table 2.5 (p. 89)": "transmission probabilities for cylindrical tubes, Cole [11] column, l/d 0.05 - 500"
+   },
+   "evidence_level": 4,
+   "quantity_type": "model-derived (tabulated computation) / published convention"
+  },
+  "ANDREUSSI2022": {
+   "citation": "T. Andreussi, E. Ferrato, V. Giannetti, 'A review of air-breathing electric propulsion: from mission studies to technology verification', J. Electr. Propuls. 1:31 (2022)",
+   "doi": "10.1007/s44205-022-00024-9",
+   "url": "https://link.springer.com/content/pdf/10.1007/s44205-022-00024-9.pdf",
+   "accessed": "2026-10-01",
+   "retrieved_pdf_sha256": "490ca6f6b763fe4ee1089d9815d4075a94223ec74d577f61d67986708c3ce3b7",
+   "access": "open access, CC BY 4.0 (statement on p. 1)",
+   "evidence_level": 5,
+   "quantity_type": "qualitative (review / secondary)"
+  },
+  "DICARA2007": {
+   "citation": "D. Di Cara, J. Gonzalez del Amo, A. Santovincenzo, B. Carnicero Dominguez, M. Arcioni, A. Caldwell, I. Roma, 'RAM Electric Propulsion for Low Earth Orbit Operation: an ESA study', 30th International Electric Propulsion Conference, Florence, IEPC-2007-162 (2007)",
+   "url": "https://electricrocket.org/IEPC/IEPC-2007-162.pdf",
+   "accessed": "2026-10-01",
+   "retrieved_pdf_sha256": "5b738b6c3f4f478b0f82fdf0ec2b406435c21845385469b09aad43660428e960",
+   "access": "open (ERPS IEPC archive)",
+   "evidence_level": 5,
+   "quantity_type": "qualitative (system concept study)"
+  },
+  "PFEIFFER_TMP_SCREEN": {
+   "citation": "Pfeiffer Vacuum, 'The 10 Most Common Mistakes When Using Turbomolecular Vacuum Pumps and How to Avoid Them' (knowledge web page), section on protective screens / splinter shields",
+   "url": "https://www.pfeiffervacuum.com/be/en/knowledge/mistakes-using-turbomolecular-vacuum-pumps.html",
+   "accessed": "2026-10-01",
+   "retrieved_pdf_sha256": null,
+   "access": "open web page read through a fetch-tool summary (quotes as returned by the tool; verify against the page); no contact with the supplier",
+   "evidence_level": 5,
+   "quantity_type": "published analog (ground vacuum pump; supplier statement)"
+  }
+ },
+ "demonstration_cases": [
+  {
+   "id": "DC-01",
+   "what": "FC-00 no-filter identity on a normalized inlet",
+   "result": {
+    "status": "NO_FILTER_IDENTITY",
+    "label": "NORMALIZED_UNIT_INPUT_NOT_A_PHYSICAL_STATE",
+    "stage_id": "F2-NONE",
+    "concept_id": "FC-00",
+    "missing": [],
+    "overrides_used": [],
+    "assumptions": [],
+    "species": {
+     "O": {
+      "incident_forward_kgps": 1.0,
+      "incident_back_kgps": 0.0,
+      "forward": {
+       "transmitted": 1.0,
+       "reflected": 0.0,
+       "captured": 0.0,
+       "converted": 0.0
+      },
+      "backflow": {
+       "transmitted": 0.0,
+       "reflected": 0.0,
+       "captured": 0.0,
+       "converted": 0.0
+      },
+      "fractions_forward": {
+       "transmitted": 1.0,
+       "reflected": 0.0,
+       "captured": 0.0,
+       "converted": 0.0,
+       "lost": 0.0,
+       "sum": 1.0
+      },
+      "fractions_backflow": {
+       "transmitted": 1.0,
+       "reflected": 0.0,
+       "captured": 0.0,
+       "converted": 0.0,
+       "lost": 0.0,
+       "sum": 1.0
+      },
+      "produced_to_outlet_kgps": 0.0,
+      "produced_to_inlet_kgps": 0.0,
+      "gross_downstream_kgps": 1.0,
+      "gross_upstream_kgps": 0.0,
+      "net_downstream_kgps": 1.0,
+      "species_balance_residual_kgps": 0.0,
+      "conductance_m3_s": "INFINITE_NO_ELEMENT",
+      "delta_p_Pa": 0.0,
+      "delta_p_per_net_kgps_Pa": 0.0
+     },
+     "N2": {
+      "incident_forward_kgps": 1.0,
+      "incident_back_kgps": 0.0,
+      "forward": {
+       "transmitted": 1.0,
+       "reflected": 0.0,
+       "captured": 0.0,
+       "converted": 0.0
+      },
+      "backflow": {
+       "transmitted": 0.0,
+       "reflected": 0.0,
+       "captured": 0.0,
+       "converted": 0.0
+      },
+      "fractions_forward": {
+       "transmitted": 1.0,
+       "reflected": 0.0,
+       "captured": 0.0,
+       "converted": 0.0,
+       "lost": 0.0,
+       "sum": 1.0
+      },
+      "fractions_backflow": {
+       "transmitted": 1.0,
+       "reflected": 0.0,
+       "captured": 0.0,
+       "converted": 0.0,
+       "lost": 0.0,
+       "sum": 1.0
+      },
+      "produced_to_outlet_kgps": 0.0,
+      "produced_to_inlet_kgps": 0.0,
+      "gross_downstream_kgps": 1.0,
+      "gross_upstream_kgps": 0.0,
+      "net_downstream_kgps": 1.0,
+      "species_balance_residual_kgps": 0.0,
+      "conductance_m3_s": "INFINITE_NO_ELEMENT",
+      "delta_p_Pa": 0.0,
+      "delta_p_per_net_kgps_Pa": 0.0
+     },
+     "O2": {
+      "incident_forward_kgps": 1.0,
+      "incident_back_kgps": 0.0,
+      "forward": {
+       "transmitted": 1.0,
+       "reflected": 0.0,
+       "captured": 0.0,
+       "converted": 0.0
+      },
+      "backflow": {
+       "transmitted": 0.0,
+       "reflected": 0.0,
+       "captured": 0.0,
+       "converted": 0.0
+      },
+      "fractions_forward": {
+       "transmitted": 1.0,
+       "reflected": 0.0,
+       "captured": 0.0,
+       "converted": 0.0,
+       "lost": 0.0,
+       "sum": 1.0
+      },
+      "fractions_backflow": {
+       "transmitted": 1.0,
+       "reflected": 0.0,
+       "captured": 0.0,
+       "converted": 0.0,
+       "lost": 0.0,
+       "sum": 1.0
+      },
+      "produced_to_outlet_kgps": 0.0,
+      "produced_to_inlet_kgps": 0.0,
+      "gross_downstream_kgps": 1.0,
+      "gross_upstream_kgps": 0.0,
+      "net_downstream_kgps": 1.0,
+      "species_balance_residual_kgps": 0.0,
+      "conductance_m3_s": "INFINITE_NO_ELEMENT",
+      "delta_p_Pa": 0.0,
+      "delta_p_per_net_kgps_Pa": 0.0
+     }
+    },
+    "totals": {
+     "incident_kgps": 3.0,
+     "captured_kgps": 0.0,
+     "converted_kgps": 0.0,
+     "produced_kgps": 0.0,
+     "gross_downstream_kgps": 3.0,
+     "gross_upstream_kgps": 0.0,
+     "mass_balance_residual_kgps": 0.0,
+     "converted_minus_produced_kgps": 0.0
+    },
+    "composition_net_downstream": {
+     "mass_fraction": {
+      "O": 0.333333333333,
+      "N2": 0.333333333333,
+      "O2": 0.333333333333
+     },
+     "mole_fraction": {
+      "O": 0.48275862069,
+      "N2": 0.275862068966,
+      "O2": 0.241379310345
+     }
+    },
+    "mass_kg": 0.0,
+    "regime": {
+     "regime": "no element",
+     "knudsen_number": null,
+     "criterion": "not applicable (identity)"
+    },
+    "protection": [],
+    "materials": [],
+    "notes": []
+   },
+   "f3_record": {
+    "interface": "IF-A2 filter -> compressor",
+    "status": "NO_FILTER_IDENTITY",
+    "label": "NORMALIZED_UNIT_INPUT_NOT_A_PHYSICAL_STATE",
+    "mdot_s_net_downstream_kgps": {
+     "O": 1.0,
+     "N2": 1.0,
+     "O2": 1.0
+    },
+    "mdot_s_gross_downstream_kgps": {
+     "O": 1.0,
+     "N2": 1.0,
+     "O2": 1.0
+    },
+    "w_s_mass": {
+     "O": 0.333333333333,
+     "N2": 0.333333333333,
+     "O2": 0.333333333333
+    },
+    "x_s_mole": {
+     "O": 0.48275862069,
+     "N2": 0.275862068966,
+     "O2": 0.241379310345
+    },
+    "delta_p_s_Pa": {
+     "O": 0.0,
+     "N2": 0.0,
+     "O2": 0.0
+    },
+    "conductance_s_m3_s": {
+     "O": "INFINITE_NO_ELEMENT",
+     "N2": "INFINITE_NO_ELEMENT",
+     "O2": "INFINITE_NO_ELEMENT"
+    },
+    "filter_flow_effect_applied": false,
+    "filter_retained_mass_rate_kgps": 0.0,
+    "mass_kg": 0.0,
+    "overrides_used": []
+   }
+  },
+  {
+   "id": "DC-02",
+   "what": "any listed concept with TBD parameters, evidence mode: fail closed",
+   "result": {
+    "status": "REFUSED_TBD",
+    "label": "NORMALIZED_UNIT_INPUT_NOT_A_PHYSICAL_STATE",
+    "n_missing": 27,
+    "missing_parameters": [
+     "face_area_m2",
+     "areal_mass_kg_m2",
+     "tau_f.O",
+     "capture_f.O",
+     "conversion_f.O",
+     "tau_b.O",
+     "capture_b.O",
+     "conversion_b.O",
+     "alpha_conductance.O",
+     "product_to_outlet_f.O",
+     "product_to_outlet_b.O",
+     "tau_f.N2",
+     "capture_f.N2",
+     "conversion_f.N2",
+     "tau_b.N2",
+     "capture_b.N2",
+     "conversion_b.N2",
+     "alpha_conductance.N2",
+     "tau_f.O2",
+     "capture_f.O2",
+     "conversion_f.O2",
+     "tau_b.O2",
+     "capture_b.O2",
+     "conversion_b.O2",
+     "alpha_conductance.O2",
+     "knudsen_number",
+     "T_gas_K"
+    ]
+   },
+   "f3_record": {
+    "interface": "IF-A2 filter -> compressor",
+    "status": "NOT_EVALUATED",
+    "reason": "REFUSED_TBD",
+    "missing": [
+     {
+      "parameter": "face_area_m2",
+      "status": "TBD",
+      "requires": "filter face area (geometry)"
+     },
+     {
+      "parameter": "areal_mass_kg_m2",
+      "status": "TBD",
+      "requires": "areal mass of the element incl. frame (design + sourced densities, or weighed)"
+     },
+     {
+      "parameter": "tau_f.O",
+      "status": "TBD",
+      "requires": "forward transmission for O at the declared forward incidence (measured on the element, or model-derived from a defined geometry within its domain)"
+     },
+     {
+      "parameter": "capture_f.O",
+      "status": "TBD",
+      "requires": "forward capture fraction for O (adsorption / deposition; steady-state evidence)"
+     },
+     {
+      "parameter": "conversion_f.O",
+      "status": "TBD",
+      "requires": "forward conversion fraction for O (O recombination to O2; dedicated AO evidence)"
+     },
+     {
+      "parameter": "tau_b.O",
+      "status": "TBD",
+      "requires": "backflow transmission for O (diffuse incidence from the plenum side)"
+     },
+     {
+      "parameter": "capture_b.O",
+      "status": "TBD",
+      "requires": "backflow capture fraction for O"
+     },
+     {
+      "parameter": "conversion_b.O",
+      "status": "TBD",
+      "requires": "backflow conversion fraction for O (O recombination to O2)"
+     },
+     {
+      "parameter": "alpha_conductance.O",
+      "status": "TBD",
+      "requires": "diffuse-incidence transmission probability for O for the conductance law"
+     },
+     {
+      "parameter": "product_to_outlet_f.O",
+      "status": "TBD",
+      "requires": "routing of forward conversion products to the outlet face for O"
+     },
+     {
+      "parameter": "product_to_outlet_b.O",
+      "status": "TBD",
+      "requires": "routing of backflow conversion products to the outlet face for O"
+     },
+     {
+      "parameter": "tau_f.N2",
+      "status": "TBD",
+      "requires": "forward transmission for N2 at the declared forward incidence (measured on the element, or model-derived from a defined geometry within its domain)"
+     },
+     {
+      "parameter": "capture_f.N2",
+      "status": "TBD",
+      "requires": "forward capture fraction for N2 (adsorption / deposition; steady-state evidence)"
+     },
+     {
+      "parameter": "conversion_f.N2",
+      "status": "TBD",
+      "requires": "forward conversion fraction for N2: no conversion channel is modelled, so only an evidenced 0 is admissible (otherwise a channel must be added to CONVERSION_PRODUCTS)"
+     },
+     {
+      "parameter": "tau_b.N2",
+      "status": "TBD",
+      "requires": "backflow transmission for N2 (diffuse incidence from the plenum side)"
+     },
+     {
+      "parameter": "capture_b.N2",
+      "status": "TBD",
+      "requires": "backflow capture fraction for N2"
+     },
+     {
+      "parameter": "conversion_b.N2",
+      "status": "TBD",
+      "requires": "backflow conversion fraction for N2: no conversion channel modelled; only an evidenced 0 is admissible"
+     },
+     {
+      "parameter": "alpha_conductance.N2",
+      "status": "TBD",
+      "requires": "diffuse-incidence transmission probability for N2 for the conductance law"
+     },
+     {
+      "parameter": "tau_f.O2",
+      "status": "TBD",
+      "requires": "forward transmission for O2 at the declared forward incidence (measured on the element, or model-derived from a defined geometry within its domain)"
+     },
+     {
+      "parameter": "capture_f.O2",
+      "status": "TBD",
+      "requires": "forward capture fraction for O2 (adsorption / deposition; steady-state evidence)"
+     },
+     {
+      "parameter": "conversion_f.O2",
+      "status": "TBD",
+      "requires": "forward conversion fraction for O2: no conversion channel is modelled, so only an evidenced 0 is admissible (otherwise a channel must be added to CONVERSION_PRODUCTS)"
+     },
+     {
+      "parameter": "tau_b.O2",
+      "status": "TBD",
+      "requires": "backflow transmission for O2 (diffuse incidence from the plenum side)"
+     },
+     {
+      "parameter": "capture_b.O2",
+      "status": "TBD",
+      "requires": "backflow capture fraction for O2"
+     },
+     {
+      "parameter": "conversion_b.O2",
+      "status": "TBD",
+      "requires": "backflow conversion fraction for O2: no conversion channel modelled; only an evidenced 0 is admissible"
+     },
+     {
+      "parameter": "alpha_conductance.O2",
+      "status": "TBD",
+      "requires": "diffuse-incidence transmission probability for O2 for the conductance law"
+     },
+     {
+      "parameter": "knudsen_number",
+      "status": "TBD",
+      "requires": "Knudsen number at the filter (mean free path from the IF-A1 state and sourced collision cross sections; characteristic dimension of the element)"
+     },
+     {
+      "parameter": "T_gas_K",
+      "status": "TBD",
+      "requires": "gas temperature at the filter (IF-A1)"
+     }
+    ],
+    "label": "NORMALIZED_UNIT_INPUT_NOT_A_PHYSICAL_STATE"
+   },
+   "backflow_coupling": {
+    "status": "REFUSED_TBD",
+    "label": "EVIDENCE_BASED",
+    "missing": [
+     {
+      "parameter": "face_area_m2",
+      "status": "TBD",
+      "requires": "filter face area (geometry)"
+     },
+     {
+      "parameter": "tau_b.O",
+      "status": "TBD",
+      "requires": "backflow transmission for O (diffuse incidence from the plenum side)"
+     },
+     {
+      "parameter": "capture_b.O",
+      "status": "TBD",
+      "requires": "backflow capture fraction for O"
+     },
+     {
+      "parameter": "conversion_b.O",
+      "status": "TBD",
+      "requires": "backflow conversion fraction for O (O recombination to O2)"
+     },
+     {
+      "parameter": "alpha_conductance.O",
+      "status": "TBD",
+      "requires": "diffuse-incidence transmission probability for O for the conductance law"
+     },
+     {
+      "parameter": "tau_b.N2",
+      "status": "TBD",
+      "requires": "backflow transmission for N2 (diffuse incidence from the plenum side)"
+     },
+     {
+      "parameter": "capture_b.N2",
+      "status": "TBD",
+      "requires": "backflow capture fraction for N2"
+     },
+     {
+      "parameter": "conversion_b.N2",
+      "status": "TBD",
+      "requires": "backflow conversion fraction for N2: no conversion channel modelled; only an evidenced 0 is admissible"
+     },
+     {
+      "parameter": "alpha_conductance.N2",
+      "status": "TBD",
+      "requires": "diffuse-incidence transmission probability for N2 for the conductance law"
+     },
+     {
+      "parameter": "tau_b.O2",
+      "status": "TBD",
+      "requires": "backflow transmission for O2 (diffuse incidence from the plenum side)"
+     },
+     {
+      "parameter": "capture_b.O2",
+      "status": "TBD",
+      "requires": "backflow capture fraction for O2"
+     },
+     {
+      "parameter": "conversion_b.O2",
+      "status": "TBD",
+      "requires": "backflow conversion fraction for O2: no conversion channel modelled; only an evidenced 0 is admissible"
+     },
+     {
+      "parameter": "alpha_conductance.O2",
+      "status": "TBD",
+      "requires": "diffuse-incidence transmission probability for O2 for the conductance law"
+     },
+     {
+      "parameter": "T_gas_K",
+      "status": "TBD",
+      "requires": "gas temperature at the filter"
+     }
+    ]
+   }
+  },
+  {
+   "id": "DC-03",
+   "what": "repository placeholder law as an explicit labelled sensitivity case (PARAMETRIC_SENSITIVITY / PLACEHOLDER_NOT_A_FLIGHT_DESIGN)",
+   "case": {
+    "case_id": "SC-PLACEHOLDER-REPO-FILTER",
+    "label": "PARAMETRIC_SENSITIVITY / PLACEHOLDER_NOT_A_FLIGHT_DESIGN (repository filter defaults)",
+    "rationale": "reproduces the unsourced repository filter law (abep_sim/intake_tpmc.py IntakeGeometry filter_* defaults) so its effect can be bounded; not evidence, not a flight design",
+    "regime_assumption": "free_molecular",
+    "temperature_override_K": 350.0
+   },
+   "result": {
+    "status": "NUMERIC",
+    "label": "PARAMETRIC_SENSITIVITY_NOT_EVIDENCE",
+    "stage_id": "F2-PLACEHOLDER",
+    "concept_id": "FC-REPO",
+    "missing": [],
+    "overrides_used": [
+     {
+      "parameter": "face_area_m2",
+      "value": 0.5,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "areal_mass_kg_m2",
+      "value": 0.8,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "tau_f.O",
+      "value": 0.542217668469,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "capture_f.O",
+      "value": 0.0,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "conversion_f.O",
+      "value": 0.0,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "tau_b.O",
+      "value": 0.6,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "capture_b.O",
+      "value": 0.0,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "conversion_b.O",
+      "value": 0.0,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "alpha_conductance.O",
+      "value": 0.6,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "tau_f.N2",
+      "value": 0.542217668469,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "capture_f.N2",
+      "value": 0.0,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "conversion_f.N2",
+      "value": 0.0,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "tau_b.N2",
+      "value": 0.6,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "capture_b.N2",
+      "value": 0.0,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "conversion_b.N2",
+      "value": 0.0,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "alpha_conductance.N2",
+      "value": 0.6,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "tau_f.O2",
+      "value": 0.542217668469,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "capture_f.O2",
+      "value": 0.0,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "conversion_f.O2",
+      "value": 0.0,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "tau_b.O2",
+      "value": 0.6,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "capture_b.O2",
+      "value": 0.0,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "conversion_b.O2",
+      "value": 0.0,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "alpha_conductance.O2",
+      "value": 0.6,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     }
+    ],
+    "assumptions": [
+     {
+      "what": "gas temperature",
+      "value_K": 350.0,
+      "basis": "sensitivity override"
+     },
+     {
+      "what": "flow regime",
+      "value": "free_molecular",
+      "basis": "sensitivity case regime_assumption"
+     }
+    ],
+    "species": {
+     "O": {
+      "incident_forward_kgps": 1.0,
+      "incident_back_kgps": 0.0,
+      "forward": {
+       "transmitted": 0.542217668469,
+       "reflected": 0.457782331531,
+       "captured": 0.0,
+       "converted": 0.0
+      },
+      "backflow": {
+       "transmitted": 0.0,
+       "reflected": 0.0,
+       "captured": 0.0,
+       "converted": 0.0
+      },
+      "fractions_forward": {
+       "transmitted": 0.542217668469,
+       "reflected": 0.457782331531,
+       "captured": 0.0,
+       "converted": 0.0,
+       "lost": 0.0,
+       "sum": 1.0
+      },
+      "fractions_backflow": {
+       "transmitted": 0.6,
+       "reflected": 0.4,
+       "captured": 0.0,
+       "converted": 0.0,
+       "lost": 0.0,
+       "sum": 1.0
+      },
+      "produced_to_outlet_kgps": 0.0,
+      "produced_to_inlet_kgps": 0.0,
+      "gross_downstream_kgps": 0.542217668469,
+      "gross_upstream_kgps": 0.457782331531,
+      "net_downstream_kgps": 0.542217668469,
+      "species_balance_residual_kgps": 0.0,
+      "conductance_m3_s": 51.0413842488,
+      "delta_p_per_net_kgps_Pa": 3563.36083967,
+      "delta_p_Pa": 1932.1172064
+     },
+     "N2": {
+      "incident_forward_kgps": 1.0,
+      "incident_back_kgps": 0.0,
+      "forward": {
+       "transmitted": 0.542217668469,
+       "reflected": 0.457782331531,
+       "captured": 0.0,
+       "converted": 0.0
+      },
+      "backflow": {
+       "transmitted": 0.0,
+       "reflected": 0.0,
+       "captured": 0.0,
+       "converted": 0.0
+      },
+      "fractions_forward": {
+       "transmitted": 0.542217668469,
+       "reflected": 0.457782331531,
+       "captured": 0.0,
+       "converted": 0.0,
+       "lost": 0.0,
+       "sum": 1.0
+      },
+      "fractions_backflow": {
+       "transmitted": 0.6,
+       "reflected": 0.4,
+       "captured": 0.0,
+       "converted": 0.0,
+       "lost": 0.0,
+       "sum": 1.0
+      },
+      "produced_to_outlet_kgps": 0.0,
+      "produced_to_inlet_kgps": 0.0,
+      "gross_downstream_kgps": 0.542217668469,
+      "gross_upstream_kgps": 0.457782331531,
+      "net_downstream_kgps": 0.542217668469,
+      "species_balance_residual_kgps": 0.0,
+      "conductance_m3_s": 38.5836597986,
+      "delta_p_per_net_kgps_Pa": 2693.64760382,
+      "delta_p_Pa": 1460.54332342
+     },
+     "O2": {
+      "incident_forward_kgps": 1.0,
+      "incident_back_kgps": 0.0,
+      "forward": {
+       "transmitted": 0.542217668469,
+       "reflected": 0.457782331531,
+       "captured": 0.0,
+       "converted": 0.0
+      },
+      "backflow": {
+       "transmitted": 0.0,
+       "reflected": 0.0,
+       "captured": 0.0,
+       "converted": 0.0
+      },
+      "fractions_forward": {
+       "transmitted": 0.542217668469,
+       "reflected": 0.457782331531,
+       "captured": 0.0,
+       "converted": 0.0,
+       "lost": 0.0,
+       "sum": 1.0
+      },
+      "fractions_backflow": {
+       "transmitted": 0.6,
+       "reflected": 0.4,
+       "captured": 0.0,
+       "converted": 0.0,
+       "lost": 0.0,
+       "sum": 1.0
+      },
+      "produced_to_outlet_kgps": 0.0,
+      "produced_to_inlet_kgps": 0.0,
+      "gross_downstream_kgps": 0.542217668469,
+      "gross_upstream_kgps": 0.457782331531,
+      "net_downstream_kgps": 0.542217668469,
+      "species_balance_residual_kgps": 0.0,
+      "conductance_m3_s": 36.0917089235,
+      "delta_p_per_net_kgps_Pa": 2519.67661355,
+      "delta_p_Pa": 1366.21317869
+     }
+    },
+    "totals": {
+     "incident_kgps": 3.0,
+     "captured_kgps": 0.0,
+     "converted_kgps": 0.0,
+     "produced_kgps": 0.0,
+     "gross_downstream_kgps": 1.62665300541,
+     "gross_upstream_kgps": 1.37334699459,
+     "mass_balance_residual_kgps": 0.0,
+     "converted_minus_produced_kgps": 0.0
+    },
+    "composition_net_downstream": {
+     "mass_fraction": {
+      "O": 0.333333333333,
+      "N2": 0.333333333333,
+      "O2": 0.333333333333
+     },
+     "mole_fraction": {
+      "O": 0.48275862069,
+      "N2": 0.275862068966,
+      "O2": 0.241379310345
+     }
+    },
+    "mass_kg": 0.4,
+    "regime": {
+     "regime": "free_molecular",
+     "knudsen_number": null,
+     "criterion": "ASSUMED free molecular (sensitivity case; Kn not established)"
+    },
+    "protection": [],
+    "materials": [],
+    "notes": [
+     "sensitivity case SC-PLACEHOLDER-REPO-FILTER: reproduces the unsourced repository filter law (abep_sim/intake_tpmc.py IntakeGeometry filter_* defaults) so its effect can be bounded; not evidence, not a flight design"
+    ]
+   },
+   "f3_record": {
+    "interface": "IF-A2 filter -> compressor",
+    "status": "NUMERIC",
+    "label": "PARAMETRIC_SENSITIVITY_NOT_EVIDENCE",
+    "mdot_s_net_downstream_kgps": {
+     "O": 0.542217668469,
+     "N2": 0.542217668469,
+     "O2": 0.542217668469
+    },
+    "mdot_s_gross_downstream_kgps": {
+     "O": 0.542217668469,
+     "N2": 0.542217668469,
+     "O2": 0.542217668469
+    },
+    "w_s_mass": {
+     "O": 0.333333333333,
+     "N2": 0.333333333333,
+     "O2": 0.333333333333
+    },
+    "x_s_mole": {
+     "O": 0.48275862069,
+     "N2": 0.275862068966,
+     "O2": 0.241379310345
+    },
+    "delta_p_s_Pa": {
+     "O": 1932.1172064,
+     "N2": 1460.54332342,
+     "O2": 1366.21317869
+    },
+    "conductance_s_m3_s": {
+     "O": 51.0413842488,
+     "N2": 38.5836597986,
+     "O2": 36.0917089235
+    },
+    "filter_flow_effect_applied": true,
+    "filter_retained_mass_rate_kgps": 0.0,
+    "mass_kg": 0.4,
+    "overrides_used": [
+     {
+      "parameter": "face_area_m2",
+      "value": 0.5,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "areal_mass_kg_m2",
+      "value": 0.8,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "tau_f.O",
+      "value": 0.542217668469,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "capture_f.O",
+      "value": 0.0,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "conversion_f.O",
+      "value": 0.0,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "tau_b.O",
+      "value": 0.6,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "capture_b.O",
+      "value": 0.0,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "conversion_b.O",
+      "value": 0.0,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "alpha_conductance.O",
+      "value": 0.6,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "tau_f.N2",
+      "value": 0.542217668469,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "capture_f.N2",
+      "value": 0.0,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "conversion_f.N2",
+      "value": 0.0,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "tau_b.N2",
+      "value": 0.6,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "capture_b.N2",
+      "value": 0.0,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "conversion_b.N2",
+      "value": 0.0,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "alpha_conductance.N2",
+      "value": 0.6,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "tau_f.O2",
+      "value": 0.542217668469,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "capture_f.O2",
+      "value": 0.0,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "conversion_f.O2",
+      "value": 0.0,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "tau_b.O2",
+      "value": 0.6,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "capture_b.O2",
+      "value": 0.0,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "conversion_b.O2",
+      "value": 0.0,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     },
+     {
+      "parameter": "alpha_conductance.O2",
+      "value": 0.6,
+      "replaces_status": "TBD",
+      "replaces_value": null
+     }
+    ]
+   },
+   "f1_record": {
+    "interface": "IF-A1 intake <- filter (return)",
+    "status": "NUMERIC",
+    "label": "PARAMETRIC_SENSITIVITY_NOT_EVIDENCE",
+    "mdot_s_gross_upstream_kgps": {
+     "O": 0.457782331531,
+     "N2": 0.457782331531,
+     "O2": 0.457782331531
+    }
+   },
+   "backflow_coupling": {
+    "status": "NUMERIC",
+    "label": "PARAMETRIC_SENSITIVITY_NOT_EVIDENCE",
+    "species": {
+     "O": {
+      "to_upstream": 0.6,
+      "reflected_to_plenum": 0.4,
+      "captured": 0.0,
+      "converted": 0.0,
+      "conductance_m3_s": 51.0413842488
+     },
+     "N2": {
+      "to_upstream": 0.6,
+      "reflected_to_plenum": 0.4,
+      "captured": 0.0,
+      "converted": 0.0,
+      "conductance_m3_s": 38.5836597986
+     },
+     "O2": {
+      "to_upstream": 0.6,
+      "reflected_to_plenum": 0.4,
+      "captured": 0.0,
+      "converted": 0.0,
+      "conductance_m3_s": 36.0917089235
+     }
+    },
+    "overrides_used": [
+     "face_area_m2",
+     "areal_mass_kg_m2",
+     "tau_f.O",
+     "capture_f.O",
+     "conversion_f.O",
+     "tau_b.O",
+     "capture_b.O",
+     "conversion_b.O",
+     "alpha_conductance.O",
+     "tau_f.N2",
+     "capture_f.N2",
+     "conversion_f.N2",
+     "tau_b.N2",
+     "capture_b.N2",
+     "conversion_b.N2",
+     "alpha_conductance.N2",
+     "tau_f.O2",
+     "capture_f.O2",
+     "conversion_f.O2",
+     "tau_b.O2",
+     "capture_b.O2",
+     "conversion_b.O2",
+     "alpha_conductance.O2"
+    ]
+   }
+  },
+  {
+   "id": "DC-04",
+   "what": "incidence mismatch (tau_f declared for diffuse_thermal, inlet hyperthermal)",
+   "result": {
+    "status": "OUT_OF_DOMAIN",
+    "missing": [
+     {
+      "parameter": "forward_incidence",
+      "status": "OUT_OF_DOMAIN",
+      "requires": "tau_f records valid for diffuse_thermal; inlet is hyperthermal_directed"
+     }
+    ]
+   }
+  }
+ ],
+ "interface_demands": [
+  {
+   "id": "F2-IF-01",
+   "direction": "F2 <- F1",
+   "counterpart": "PENDING abep_sim/design/intake_synthesis.py",
+   "content": "per-species mass flow arriving at the filter inlet face (IF-A1), forward incidence (diffuse_thermal | hyperthermal_directed), gas temperature, Knudsen number at the filter (mean free path and characteristic dimension), intake exit area, evidence labels",
+   "units": "kg/s; K; -; m^2",
+   "status": "PENDING (F1 lane)"
+  },
+  {
+   "id": "F2-IF-02",
+   "direction": "F2 -> F1",
+   "counterpart": "PENDING abep_sim/design/intake_synthesis.py",
+   "content": "FilterResult.to_f1_record(): per-species gross mass flow returned upstream (forward reflection + backflow transmission + upstream conversion products); it changes the intake back-pressure and K_back seen by F1",
+   "units": "kg/s",
+   "status": "DEFINED (numbers only when apply is NUMERIC)"
+  },
+  {
+   "id": "F2-IF-03",
+   "direction": "F2 -> F3",
+   "counterpart": "PENDING abep_sim/design/compressor_synthesis.py",
+   "content": "FilterResult.to_f3_record(): per-species net / gross mass flow at the compressor inlet, w_s / x_s, conductance and pressure difference per species, retained mass rate, filter_flow_effect_applied, filter mass, labels and overrides (UPSTREAM_ICD IF-A2 fields)",
+   "units": "kg/s; -; m^3/s; Pa; kg",
+   "status": "DEFINED (NOT_EVALUATED while any input is TBD)"
+  },
+  {
+   "id": "F2-IF-04",
+   "direction": "F2 <- F3",
+   "counterpart": "PENDING abep_sim/design/compressor_synthesis.py",
+   "content": "compressor inlet face area, per-species backstreaming flux from the compressor inlet, wear / debris emission of the rotor (protection target sputter_wear_products), particulate tolerance of the rotor (what the filter must stop)",
+   "units": "m^2; kg/s; -",
+   "status": "TBD_AFTER_EVIDENCE"
+  },
+  {
+   "id": "F2-IF-05",
+   "direction": "F2 <-> F4",
+   "counterpart": "PENDING fo_a9_7_f4_plenum_feed (path not assigned in this base)",
+   "content": "FilterStage.backflow_coupling(): per unit mass flow arriving at the outlet face, fractions to upstream / reflected to plenum / captured / converted, and C_s; F4 returns the downstream incident flux per species (InletState.mdot_back_incident_kgps, required, never defaulted)",
+   "units": "-; m^3/s; kg/s",
+   "status": "DEFINED (numbers only when the records are usable)"
+  },
+  {
+   "id": "F2-IF-06",
+   "direction": "F2 -> F7",
+   "counterpart": "PENDING fo_a9_7_f7_f8_coupled_optimizer",
+   "content": "x_filter design-vector component: concept id + geometry design variables; result labels propagate (a sensitivity label is never a design value)",
+   "units": "-",
+   "status": "DEFINED"
+  },
+  {
+   "id": "F2-IF-07",
+   "direction": "F2 -> mass budget",
+   "counterpart": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json (A9B-02, AL-01)",
+   "content": "filter mass = areal mass x face area (TBD); AL-01 3.5 kg covers intake/filter/duct jointly",
+   "units": "kg",
+   "status": "TBD_AFTER_EVIDENCE"
+  },
+  {
+   "id": "F2-IF-08",
+   "direction": "F2 -> P4 materials",
+   "counterpart": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+   "content": "an APP-FILTER application (O / AO exposure at filter temperature, recombination probability and erosion yield criteria) would be needed; P4 today screens APP-ANODE and APP-COLLECTOR only",
+   "units": "-",
+   "status": "TBD_OWNER (F2-OQ-04)"
+  },
+  {
+   "id": "F2-IF-09",
+   "direction": "F2 -> AO / lifetime register",
+   "counterpart": "docs/experiments/lifetime_ao/ao_lifetime_register_v5.json",
+   "content": "no AOL mechanism covers a filter element (AOL-M01..M11); a future register revision would add filter erosion / recombination and filter-emitted contamination",
+   "units": "-",
+   "status": "TBD_AFTER_EVIDENCE"
+  },
+  {
+   "id": "F2-IF-10",
+   "direction": "F2 -> upstream ICD",
+   "counterpart": "docs/interfaces/UPSTREAM_ICD.md IF-A1 / IF-A2, gap G-01",
+   "content": "this design-layer interface supplies a separate filter element with its own transmission; the production path (intake.collection) is unchanged, so G-01 stays open there (moving it is a model change: UPSTREAM_ICD open question 1)",
+   "units": "-",
+   "status": "DEFINED"
+  },
+  {
+   "id": "F2-IF-11",
+   "direction": "F2 -> F0",
+   "counterpart": "PENDING docs/performance/",
+   "content": "the filter stage is O(n_species) arithmetic; not a profiling hotspot, not a Rust candidate",
+   "units": "-",
+   "status": "DEFINED"
+  }
+ ],
+ "open_owner_questions": [
+  {
+   "id": "F2-OQ-01",
+   "question": "Which protection functions must the RFP filter stage provide (particulates / debris, compressor wear products, atomic O to downstream surfaces, ambient charged particles, backflow limitation), and against which quantitative acceptance?",
+   "why": "the RFP chain names a filter but no function or acceptance is recorded in the repository; every capture efficiency is TBD",
+   "status": "TBD_OWNER"
+  },
+  {
+   "id": "F2-OQ-02",
+   "question": "Is a deliberately catalytic (O -> O2 converting) filter element admissible, given owner row 102 (inert / low-recombination lining baseline to preserve the representative atomic-O fraction)?",
+   "why": "FC-06 would trade downstream AO protection against the delivered species state",
+   "status": "TBD_OWNER"
+  },
+  {
+   "id": "F2-OQ-03",
+   "question": "May trade studies carry 'no filter' (FC-00) as an admissible architecture option, or only as a reference bound because the RFP chain names a filter stage?",
+   "why": "the RFP architecture text is recorded only as a secondary transcription (RVM-08, verify)",
+   "status": "TBD_OWNER"
+  },
+  {
+   "id": "F2-OQ-04",
+   "question": "Where does the filter sit (ahead of the intake collimator, in the intake chamber, or at the compressor inlet), and should P4 add an APP-FILTER application for its material?",
+   "why": "placement fixes the forward incidence (hyperthermal vs thermalised), the face area and the O exposure; P4 screens only anode and collector",
+   "status": "TBD_OWNER"
+  }
+ ],
+ "related_existing_open_questions": [
+  {
+   "ref": "docs/interfaces/UPSTREAM_ICD.md sec. 9 question 1 (G-01)",
+   "topic": "filter as a separate element on the production path (model change; could move goldens)",
+   "relation": "not answered here; F2 is design-layer"
+  },
+  {
+   "ref": "docs/interfaces/UPSTREAM_ICD.md sec. 9 question 5 (G-11)",
+   "topic": "contamination scope",
+   "relation": "F2 protection targets use it; not answered here"
+  },
+  {
+   "ref": "owner_questions_state_v4 XA9Q-05",
+   "topic": "Xe getter for a G-XE ICP feed",
+   "relation": "Xe path; out of F2 scope"
+  }
+ ],
+ "owner_answers_applied": [
+  {
+   "row": 54,
+   "covers_ids": [
+    "H27-Q7"
+   ],
+   "answer_sha256": "addfe38afdbd444fafdbc2cb6f75193bf2f90941d0361702061299ec3f232402",
+   "how_applied": "AL-01 'intake/filter/duct' 3.5 kg is a joint allocation, not a CBE; filter mass stays TBD"
+  },
+  {
+   "row": 102,
+   "covers_ids": [
+    "GP-D03"
+   ],
+   "answer_sha256": "22d2ffa98a73864204e51ee917d9205954e471db509feb4fc9f3c29628e0ca64",
+   "how_applied": "never assume O survival: O capture / conversion on the filter are TBD; catalytic concept FC-06 flagged (F2-OQ-02)"
+  },
+  {
+   "row": 132,
+   "covers_ids": [
+    "HWQ-11"
+   ],
+   "answer_sha256": "fe6f23c2ddd4576561340e4bfd661b503f231e46af053c9c39d08f17067fb92f",
+   "how_applied": "material AO evidence from N2 + O2 exposure is labelled NO_ATOMIC_O and is never AO proof (MaterialApplicability refuses it)"
+  },
+  {
+   "row": 51,
+   "covers_ids": [
+    "R6-Q4"
+   ],
+   "answer_sha256": "ec3f3518a86c8e3f3b7be54d574dbbbb31d060960c34a1144f396bb04951c2a7",
+   "how_applied": "the Xe cathode-line filter / getter is a Xe-path item (FC-07, out of F2 scope)"
+  }
+ ],
+ "m16_impact": [
+  {
+   "m16_row": 2,
+   "key": "filter",
+   "how_touched": "an explicit design-layer filter-stage interface, placeholder register and concept list now exist (software / documentation only)",
+   "readiness_change": "NONE - row stays BLOCKED; no filter concept, geometry, material or measured property exists; framework implementation is not evidence"
+  }
+ ],
+ "findings": [
+  "The repository's only filter numbers (open fraction 0.7, transmission 0.6, 0.8 kg/m2, the open_frac x transmission^0.5 forward law) are unsourced and the filter is disabled everywhere; they are recorded as PLACEHOLDER_NOT_A_FLIGHT_DESIGN.",
+  "No open-literature ABEP source located here gives a filter transmission, capture efficiency, mass or material; the ESA RAM-EP study mentions a grid 'to stop the particles' without numbers.",
+  "Free-molecular conductance of a defined geometric screen is model-derivable (Livesey / Cole); capture, O conversion and protection efficiency are not, so every real concept fails closed today.",
+  "The 'none' option is the exact identity; whether it is admissible against the RFP chain is an owner question."
+ ]
+}
