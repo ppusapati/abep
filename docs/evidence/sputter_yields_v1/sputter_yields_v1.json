@@ -1,10 +1,10 @@
 {
  "id": "sputter_yields_v1",
- "version": "1.0",
+ "version": "1.1",
  "date": "2026-10-01",
  "base_commit": "5497be14befa95dd87b58a3d42d4ab1c8235fcf5",
  "generated_by": "docs/evidence/sputter_yields_v1/build_sputter_yields_v1.py (--check reproduces JSON and MD exactly) from docs/evidence/sputter_yields_v1/sputter_yield_inputs_v1.json",
- "inputs_sha256": "3f7d20898a97ea2ab39f3f70524397f58aeb0118846729faebf16bb93f1bdcdf",
+ "inputs_sha256": "c28fef6a4d8dc478ba551e8ca842b69943edcf9ab96151edb2c21a348aa3af8e",
  "companion_document": "docs/evidence/sputter_yields_v1/SPUTTER_YIELDS_V1.md",
  "test": "tests/test_sputter_yields_v1.py",
  "status": "EVIDENCE REGISTER ONLY. Not wired into any simulator module. No alloy or coating sputter yield exists in this register; no molecular-ion (N2+, O2+) number exists in this register. Every numeric yield is an elemental-target literature or semi-empirical value usable only as a prior bound / for test-matrix selection / comparison / model initialisation (S5.13), never as a candidate value, and never as a CR-04 recession or life input.",
@@ -39,6 +39,43 @@
    ]
   }
  ],
+ "screening_guardbands": {
+  "status": "OWNER_DEFINED_SCREENING_GUARDBANDS",
+  "E_screen_factor": 1.1,
+  "F_worst": 1.25,
+  "definition": "E_screen = 1.1 x E_threshold; F_worst = 1.25",
+  "decision": {
+   "id": "A9.17",
+   "decision_key": "SPUTTER",
+   "answer": "FREEZE_SPUTTER_SCREEN_1_10_AND_1_25_PROSPECTIVELY",
+   "json": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+   "json_sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
+   "verbatim_md": "docs/decisions/OD_2026_10_01_A9_17_DATA_ARTIFACT_OWNER_DECISIONS.md",
+   "verbatim_md_sha256": "540212c0c8862528e549555244f0fd39f8f9c9272f84dfb450bfef9dc54eba13",
+   "verbatim_quote": "We can freeze those values now for the next rebuild as owner-defined screening guardbands: `E_screen = 1.10 × E_threshold` and `F_worst = 1.25`. Regenerate the sputter register from the unchanged source data after this decision. These are screening/down-selection factors only, not P4 material-acceptance, lifetime, or qualification thresholds; those remain governed by the pre-exposure P4 rule already established in S5.12. No later adjustment merely because a material passes or fails."
+  },
+  "use_in_this_register": {
+   "E_screen_factor": "E_screen = E_screen_factor x E_threshold (the printed APID fit Eth): TRIM.SP points with E < E_screen are reported but excluded from the APID-reproduction screen (CHK-APID-REPRODUCTION)",
+   "F_worst": "screen tolerance: the worst fit/TRIM.SP factor max(r, 1/r) over the points with E >= E_screen must be <= F_worst, otherwise the build fails as a transcription / formula-reading error"
+  },
+  "scope": "SCREENING / DOWN-SELECTION ONLY. Never a P4 material-acceptance, lifetime, erosion or qualification threshold; those are frozen at LOCK-2 after metrology commissioning, before exposure (S5.12, A9.12 P4-OQ-03). In this register no material passes or fails on these factors.",
+  "provenance_history": "The first build carrying these factors (commit 1d595ad, SPUTTER-1 repair) used the same values as lane-chosen builder constants (APID_NEAR_THRESHOLD = 1.1, APID_REPRO_TOL_FACTOR = 1.25) selected AFTER the lane had seen the TRIM.SP / APID data. That build's screening results are therefore NOT pre-registered evidence and are not represented as such. A9.17 freezes the values as owner constants; this regeneration applies them prospectively to the unchanged source data. No value was adjusted after seeing whether any row or material passes.",
+  "preregistration_status": "FIRST_BUILD_NOT_PREREGISTERED__THIS_REGENERATION_PROSPECTIVE",
+  "first_build": {
+   "commit": "1d595ad5fbf28f4c60819b78b266d2d46d116eb0",
+   "inputs_sha256": "3f7d20898a97ea2ab39f3f70524397f58aeb0118846729faebf16bb93f1bdcdf",
+   "register_json_sha256": "083d5a74aab8336d2f3a37ada563ce74e4e271af3344f6df5ef1e838005d3392",
+   "register_md_sha256": "27d30a687820d87b87f00fd448a4254355660c7ada6a7da0ab50c60ec8e7fac9"
+  },
+  "regenerated_vs_first_build": {
+   "first_build_commit": "1d595ad5fbf28f4c60819b78b266d2d46d116eb0",
+   "first_build_register_json_sha256": "083d5a74aab8336d2f3a37ada563ce74e4e271af3344f6df5ef1e838005d3392",
+   "rows_compared": 4,
+   "differences": [],
+   "result": "IDENTICAL",
+   "note": "reported only; no factor, transcription or status is adjusted because a row or material passes or fails (A9.17)"
+  }
+ },
  "read_only_references": [
   {
    "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
@@ -83,7 +120,8 @@
   "REACTIVE_PROJECTILES: for N and/or O on Fe, Mo, Ni, W the source compilation had to refit the surface binding energy (best-fit Us 1.20x to 2.30x the Table 1 value); generic Table-1 evaluations for elements without N/O data (Al, Cr, Ir, Nb, Pt, Rh, Ru, Ti) are unvalidated for these projectiles (evidence level 6).",
   "CHEMICAL_EROSION: for O on carbon (isotropic graphite control) physical-sputtering values are a lower bound only.",
   "NO_ENERGY_DOMAIN: the reporting grid is a tabulation grid, not a sheath energy; CR-04 'sheath_energy_range' is not registered.",
-  "NO_ACCEPTANCE: thresholds are set at LOCK-2 (S5.12); this register sets none."
+  "NO_ACCEPTANCE: thresholds are set at LOCK-2 (S5.12); this register sets none.",
+  "SCREENING_GUARDBANDS_ONLY: E_screen = 1.1 x E_threshold and F_worst = 1.25 are owner-defined screening / down-selection guardbands (A9.17, docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json sha256 9fd77c95c2f3..., key SPUTTER); never P4 material-acceptance, lifetime or qualification thresholds (S5.12 governs those). The first build that used these values (commit 1d595ad) chose them after seeing the data and is NOT pre-registered evidence; this regeneration applies them prospectively."
  ],
  "species_required": [
   "N+",
@@ -4083,6 +4121,12 @@
   {
    "id": "CHK-APID-REPRODUCTION",
    "what": "IAEA APID 7B fit formula (report p. 18, PDF p. 20) with the printed parameters vs the TRIM.SP points the fits were made to (<= 1 keV); gate: worst factor <= 1.25 for E >= 1.1 Eth",
+   "guardbands": {
+    "E_screen_factor": 1.1,
+    "F_worst": 1.25,
+    "status": "OWNER_DEFINED_SCREENING_GUARDBANDS",
+    "decision": "A9.17 SPUTTER"
+   },
    "rows": [
     {
      "id": "APID-2.1.2.6",

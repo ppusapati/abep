@@ -3,6 +3,71 @@
  "purpose": "Hand-transcribed inputs for docs/evidence/sputter_yields_v1/build_sputter_yields_v1.py. Every number below was read by the lane from the cited page image (or, for atomic weights, from the cited web table) on the stated date. Nothing here is an alloy or coating value. The builder derives the register JSON and MD from this file only; it refuses missing or unknown fields.",
  "date": "2026-10-01",
  "base_commit": "5497be14befa95dd87b58a3d42d4ab1c8235fcf5",
+ "screening_guardbands": {
+  "status": "OWNER_DEFINED_SCREENING_GUARDBANDS",
+  "E_screen_factor": 1.1,
+  "F_worst": 1.25,
+  "decision": {
+   "id": "A9.17",
+   "decision_key": "SPUTTER",
+   "answer": "FREEZE_SPUTTER_SCREEN_1_10_AND_1_25_PROSPECTIVELY",
+   "json": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+   "json_sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
+   "verbatim_md": "docs/decisions/OD_2026_10_01_A9_17_DATA_ARTIFACT_OWNER_DECISIONS.md",
+   "verbatim_md_sha256": "540212c0c8862528e549555244f0fd39f8f9c9272f84dfb450bfef9dc54eba13",
+   "verbatim_quote": "We can freeze those values now for the next rebuild as owner-defined screening guardbands: `E_screen = 1.10 × E_threshold` and `F_worst = 1.25`. Regenerate the sputter register from the unchanged source data after this decision. These are screening/down-selection factors only, not P4 material-acceptance, lifetime, or qualification thresholds; those remain governed by the pre-exposure P4 rule already established in S5.12. No later adjustment merely because a material passes or fails."
+  },
+  "use_in_this_register": {
+   "E_screen_factor": "E_screen = E_screen_factor x E_threshold (the printed APID fit Eth): TRIM.SP points with E < E_screen are reported but excluded from the APID-reproduction screen (CHK-APID-REPRODUCTION)",
+   "F_worst": "screen tolerance: the worst fit/TRIM.SP factor max(r, 1/r) over the points with E >= E_screen must be <= F_worst, otherwise the build fails as a transcription / formula-reading error"
+  },
+  "scope": "SCREENING / DOWN-SELECTION ONLY. Never a P4 material-acceptance, lifetime, erosion or qualification threshold; those are frozen at LOCK-2 after metrology commissioning, before exposure (S5.12, A9.12 P4-OQ-03). In this register no material passes or fails on these factors.",
+  "provenance_history": "The first build carrying these factors (commit 1d595ad, SPUTTER-1 repair) used the same values as lane-chosen builder constants (APID_NEAR_THRESHOLD = 1.1, APID_REPRO_TOL_FACTOR = 1.25) selected AFTER the lane had seen the TRIM.SP / APID data. That build's screening results are therefore NOT pre-registered evidence and are not represented as such. A9.17 freezes the values as owner constants; this regeneration applies them prospectively to the unchanged source data. No value was adjusted after seeing whether any row or material passes.",
+  "first_build": {
+   "commit": "1d595ad5fbf28f4c60819b78b266d2d46d116eb0",
+   "inputs_sha256": "3f7d20898a97ea2ab39f3f70524397f58aeb0118846729faebf16bb93f1bdcdf",
+   "register_json_sha256": "083d5a74aab8336d2f3a37ada563ce74e4e271af3344f6df5ef1e838005d3392",
+   "register_md_sha256": "27d30a687820d87b87f00fd448a4254355660c7ada6a7da0ab50c60ec8e7fac9",
+   "screening_outcomes": {
+    "note": "copied from the first-build register (register_json_sha256 above): apid_fits_transcribed and CHK-APID-REPRODUCTION; used only for the regenerated-vs-first-build comparison, never to change a factor",
+    "chk_apid_reproduction_pass": true,
+    "rows": [
+     {
+      "id": "APID-2.1.2.6",
+      "reproduction": "NO_TRIM_TABLE_TRANSCRIBED",
+      "excluded_below_E_screen_eV": [],
+      "worst_factor_E_ge_E_screen": null
+     },
+     {
+      "id": "APID-2.1.2.7",
+      "reproduction": "REPRODUCED_AWAY_FROM_THRESHOLD",
+      "excluded_below_E_screen_eV": [
+       45
+      ],
+      "worst_factor_E_ge_E_screen": 1.15
+     },
+     {
+      "id": "APID-2.1.3.6",
+      "reproduction": "REPRODUCED_AWAY_FROM_THRESHOLD",
+      "excluded_below_E_screen_eV": [
+       47,
+       48,
+       50
+      ],
+      "worst_factor_E_ge_E_screen": 1.16
+     },
+     {
+      "id": "APID-2.1.3.7",
+      "reproduction": "REPRODUCED_AWAY_FROM_THRESHOLD",
+      "excluded_below_E_screen_eV": [
+       50
+      ],
+      "worst_factor_E_ge_E_screen": 1.09
+     }
+    ]
+   }
+  }
+ },
  "decisions": [
   {
    "id": "A9.12",

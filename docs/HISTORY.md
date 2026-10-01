@@ -2466,3 +2466,16 @@ steps (experiment/procurement/budget records; A9.9 production-model changes; A9.
 - **Optional Rust parity CI** `.github/workflows/rust-parity.yml` (A9.14 S10.4); not a required check.
 - **Reference spacecraft drag basis** (A9.13 S6.18), labelled REFERENCE/PARAMETRIC, not the flight spacecraft.
 - **Species-resolved sputter-yield evidence register** `docs/evidence/sputter_yields_v1/` (A9.12 S5.13).
+
+## 2026-10-01 — A9.17 sputter register regenerated under owner screening guardbands
+
+Owner A9.17 (`docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json`, sha256 `9fd77c95…`, decision key
+SPUTTER = FREEZE_SPUTTER_SCREEN_1_10_AND_1_25_PROSPECTIVELY). `docs/evidence/sputter_yields_v1/` register v1.1:
+E_screen = 1.10 × E_threshold and F_worst = 1.25 are now owner constants in the builder inputs (`screening_guardbands`,
+cross-checked against the decision's `owner_supplied_values` and sha256-pinned), replacing the lane-chosen builder
+constants of the first build (1d595ad). Those values had been chosen after seeing the data, so the first build's results
+are not pre-registered evidence; this regeneration applies the factors prospectively. Screening/down-selection only (the
+APID-reproduction screen); never P4 material acceptance, lifetime or qualification (S5.12). Source data unchanged: the
+inputs differ from the first build only by the inserted provenance block (a test restores the first-build sha256 by
+removing it). Regenerated screening outcomes vs first build: IDENTICAL (4 APID rows, 0 differences); all records,
+coverage cells and other checks unchanged. Minor fix: the CHK-MASS-RATIOS caption count is derived from the inputs.
