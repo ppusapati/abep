@@ -42,6 +42,20 @@ def test_immutable_history_builders_reproduce(builder, ok):
     assert r.returncode == 0 and ok in r.stdout, (builder, r.stdout[-600:], r.stderr[-600:])
 
 
+def test_profile_baseline_check_reports_historical_source_drift():
+    """The A9.7 harness --check passes while reporting the authorised post-measurement source changes explicitly
+    (HISTORICAL_SOURCE_DRIFT, path + old/new sha256, docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_9.json);
+    it never re-measures timings and an unrecorded drift still fails."""
+    r = subprocess.run([sys.executable, str(ROOT / "scripts/perf/profile_baseline.py"), "--check"], capture_output=True,
+                       text=True, cwd=ROOT, timeout=110)
+    assert r.returncode == 0, (r.stdout[-600:], r.stderr[-600:])
+    rec = json.loads((ROOT / "docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_9.json").read_text())
+    for d in rec["drifted_files"]:
+        if _sha(d["path"]) != d["old_sha256_a9_7"]:
+            assert f"HISTORICAL_SOURCE_DRIFT {d['path']} old_sha256={d['old_sha256_a9_7']}" in r.stdout
+    assert "A9.18 PERF_RERUN" in r.stdout
+
+
 def test_p3_v1_builder_is_the_f0_profiled_source():
     prof = {s["path"]: s["sha256"] for s in json.loads(PERF.read_text(encoding="utf-8"))["profiled_sources"]}
     assert _sha(P3_V1_BUILDER) == prof[P3_V1_BUILDER]

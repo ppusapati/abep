@@ -204,12 +204,15 @@ def build() -> tuple[dict, dict]:
     findings = [
         {"id": "F3-01", "finding": f"no design with drag stages is feasible: {n_drag_clip} of {n_drag_designs} "
          "drag-stage design evaluations have an unclipped Gaede K < 1 (throughput above the stage capacity S0 p at "
-         "the code-default channel h, w, L, xi; the module silently reports K = 1). Feasible drag-stage designs: "
+         "the code-default channel h, w, L, xi; since A9.9 S2.5 / MCC-02 the module reports the unclipped K and flags "
+         "the stage OUT_OF_MODEL_DOMAIN_STAGE_CAPACITY instead of silently using K = 1). Feasible drag-stage designs: "
          f"{drag_feasible}. Agrees with the down-selection drag-only probe (S_required / S0 ~ 1e3)",
          "evidence_class": "model-derived (from assumed code-default coefficients)"},
         {"id": "F3-02", "finding": f"rotor stress: with the cited Ti-6Al-4V A-basis Fty 827 MPa and the module safety "
-         f"factor 2 (uncited), sigma = rho u^2 caps the tip speed at {ti_u_allow:.4g} m/s; the module's own rotor_ok "
-         f"(uncited DB yield 880 MPa) allows {db_u_allow:.4g} m/s, so size_for can return rotors this search rejects. "
+         f"factor 2 (uncited), sigma = rho u^2 caps the tip speed at {ti_u_allow:.4g} m/s; the module's legacy "
+         f"sensitivity tip-speed cap (uncited DB yield 880 MPa; since A9.9 S2.3 not a qualification: rotor_ok is False "
+         f"without a registered strength basis) allows {db_u_allow:.4g} m/s, so size_for in PARAMETRIC_SENSITIVITY "
+         "mode can return rotors this search rejects. "
          "Both are below the 500 m/s published TMP practice (Al alloys)",
          "evidence_class": "inferred (cited allowable) + assumed (safety factor, density)"},
         {"id": "F3-03", "finding": f"evidence domain: every stage outlet is capped at 0.1 Pa (free-molecular, "

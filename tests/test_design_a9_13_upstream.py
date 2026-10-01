@@ -217,7 +217,7 @@ def test_transitional_candidate_is_never_consumed():
 
 # ================================================================================================= S6.9 / D-05 rotor gate
 def test_rotor_acceptance_only_through_registered_basis():
-    r = cs.evaluate_design(_design(), _inlet())
+    r = cs.evaluate_design(_design(u=200.0), _inlet())   # A9.16 re-pin: ia=2 is now the 0.237 m^2 inlet bound
     assert r["status"] == cs.ST_FEASIBLE
     assert r["diagnostics"]["stress_case"] == cs.STRESS_CASE_LEGACY            # labelled legacy sensitivity
     assert r["rotor_structural_acceptance"] == rs.Q_NOT_EVALUATED_MATERIAL_BASIS

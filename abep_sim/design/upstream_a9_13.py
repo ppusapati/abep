@@ -22,7 +22,7 @@ Owner decisions implemented here (immutable records; the verbatim .md governs; c
                        quality) against the requirement derived from the required thrust and a VALIDATED H-1 map;
                        NOT_EVALUATED until that map exists; no fixed mg/s gate (0.38-3.2 mg/s = coverage only)
     S6.22 / F9-OQ-03   a gate closes only on determining evidence: never a PASS / MET on assumptions or parametrics
-  A9.14 S9.7 / OD2     statewise envelope quantifier (abep_sim.atmosphere_orbit.statewise_quantifier)
+  A9.14 S9.7 / OD2     statewise envelope quantifier (abep_sim.statewise.statewise_quantifier)
   A9.15                RFP propellant policy: ambient air AND Xe capability, two separate propellant tanks / paths
   A9.19 / A9.20        (abep_sim/design/a9_19_architecture.py) amend A9.15 on the ROLE of Xe: two supply modes
                        AIR_PRIMARY / XE_CONTINGENCY; the HC-10 Xe path role is CONTINGENCY_EMERGENCY; no hollow cathode
@@ -452,7 +452,7 @@ def ripple_feed_quality(ripple_frac: float | None, ripple_status: str, h1: H1Tol
 
 # ================================================================================================= statewise quantifier
 def _quantify(states, margin_fn, requirement_id):
-    from ..atmosphere_orbit import statewise_quantifier          # local import: frozen dataset loads lazily
+    from ..statewise import statewise_quantifier                 # pure; reads no repository-only data
     return statewise_quantifier(states, margin_fn, requirement_id)
 
 

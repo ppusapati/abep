@@ -652,6 +652,9 @@ def run_chain(atm: dict, dv: dict, convention: str) -> dict:
                        for s in md_in)
     detail["compressor"] = {"mode": dv["compressor.mode"], "turbo_rows": cres["turbo_rows"], "n_stages": cres["n_stages"],
                             "rpm": float(cres["rpm"]), "sized": cres["sized"], "rotor_ok": bool(cres["rotor_ok"]),
+                            "rotor_qualification": cres.get("rotor_qualification"),
+                            "sizing_mode": cres.get("sizing_mode"),
+                            "rotor_within_legacy_sensitivity_cap": cres.get("rotor_within_legacy_sensitivity_cap"),
                             "p_out_Pa": cres["p_out_Pa"], "CR_active": cres["CR_active"],
                             "CR_by_species": dict(cres["CR_by_species"]), "T_comp_K": cres["T_comp_K"],
                             "P_el_W": cres["P_el_W"], "recirculation_fixed_point_residual": recirc_resid}
@@ -679,8 +682,15 @@ def run_chain(atm: dict, dv: dict, convention: str) -> dict:
                             "own tolerance)")
     if cres["sized"] is False:
         infeasible.append("DragCompressor.size_for found no design reaching the setpoint")
-    if not cres["rotor_ok"]:
-        infeasible.append("rotor tip speed above the material stress limit (rotor_ok False)")
+    # A9.9 S2.3 / MCC-03: rotor_ok is True only on a PASS against a registered strength basis. FAIL against a registered
+    # basis is infeasible; with no registered basis (NOT_EVALUATED_*) the run is PARAMETRIC_SENSITIVITY exploration,
+    # screened against the labelled legacy tip-speed cap (rotor_within_legacy_sensitivity_cap), never a qualified rotor.
+    rq = cres.get("rotor_qualification")
+    if rq == "FAIL":
+        infeasible.append("rotor FAIL against its registered strength basis (A9.9 S2.3)")
+    elif not cres["rotor_ok"] and not cres.get("rotor_within_legacy_sensitivity_cap", False):
+        infeasible.append("rotor tip speed above the legacy sensitivity cap (PARAMETRIC_SENSITIVITY screen; no "
+                          "registered strength basis, A9.9 S2.3)")
     bracket_hit = None
     p_resid = None
     if dv["valve.mode"] == "pressure_setpoint" and not model_errors:

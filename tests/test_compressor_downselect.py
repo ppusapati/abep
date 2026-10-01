@@ -124,9 +124,10 @@ def test_envelope_matches_w1_closure(doc):
     s = doc["requirement_summary"]
     assert s["candidate_cases"] == 9 * len(closed)
     assert 2.3 < s["CR_required_self_consistent"]["min"] < 2.4
-    assert 141 < s["CR_required_self_consistent"]["max"] < 143
-    assert 0.029 < s["mdot_valve_bracket_kgps"]["min"] * 1e6 < 0.031
-    assert 3.13 < s["mdot_valve_bracket_kgps"]["max"] * 1e6 < 3.15
+    # re-pinned after the A9.9 step-2 model changes + A9.16 regeneration of the W1 closure (DC-S25-G10 no longer closes)
+    assert 151 < s["CR_required_self_consistent"]["max"] < 153
+    assert 0.027 < s["mdot_valve_bracket_kgps"]["min"] * 1e6 < 0.029
+    assert 2.91 < s["mdot_valve_bracket_kgps"]["max"] * 1e6 < 2.93
 
 
 def test_matrix_complete_and_eliminations_explicit(doc):

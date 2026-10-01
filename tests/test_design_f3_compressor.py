@@ -155,7 +155,7 @@ def test_mirror_reproduces_module_cascade():
 
 
 def test_feasible_design_outputs_and_species():
-    r = cs.evaluate_design(_design(nt=2, ia=2, u=150.0), _inlet())
+    r = cs.evaluate_design(_design(nt=2, ia=2, u=200.0), _inlet())
     assert r["status"] == cs.ST_FEASIBLE and not r["reasons"]
     o = r["outputs"]
     for k in ("P_out_Pa", "mdot_delivered_kgps", "x_s_out_partial_pressure", "P_compressor_el_W", "m_compressor_kg",
@@ -257,7 +257,8 @@ def test_builder_check_reproduces_committed_outputs():
 def test_committed_study_labels_and_structure(main_doc):
     d = main_doc
     assert d["schema"] == cs.SCHEMA and d["status"].startswith("PARAMETRIC_SENSITIVITY")
-    assert d["strict_mode"]["status"] == cs.ST_NOT_EVALUATED and d["strict_mode"]["blockers"]
+    # A9.9 S2.3 / D-05: no registered rotor basis -> NOT_EVALUATED_MATERIAL_BASIS (cs._not_evaluated_status)
+    assert d["strict_mode"]["status"] == cs.ST_NOT_EVALUATED_MATERIAL_BASIS and d["strict_mode"]["blockers"]
     assert d["compliance"]["single_optimum_declared"] is False and d["compliance"]["pass_declared"] is False
     for p in d["parameters"]:
         assert p["source"] and p["evidence_class"] and p["status"]
@@ -266,7 +267,7 @@ def test_committed_study_labels_and_structure(main_doc):
     for x in d["interface_demands"]:
         assert "PENDING" not in x["path"]                              # integration pass: real paths + ids
     assert d["open_owner_questions"] and d["m16_impact"][0]["state_after"] == "BLOCKED"
-    assert len(d["cases"]) == 36
+    assert len(d["cases"]) == 27      # 3 W1-closed candidates x 9 cases (A9.16 regeneration; DC-S25-G10 no longer closes)
     for c in d["cases"]:
         assert c["label"] == cs.LABEL_PARAMETRIC
         assert set(c["pareto_ids"]) <= set(c["pareto_with_S_ids"])

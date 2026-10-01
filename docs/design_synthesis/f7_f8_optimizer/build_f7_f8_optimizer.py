@@ -52,7 +52,7 @@ TEST_REL = "tests/test_design_f7_f8_optimizer.py"
 BASE_COMMIT = "1bcfe0e4ba2242ebd8deaf1263fa98d85f75f631"
 SIG = 7
 N_MC = 100
-OWNER_FLOW_RANGE_MGPS = (0.38, 3.2)       # owner row 73 ground characterization range (via F4 requirement sweep)
+OWNER_FLOW_RANGE_MGPS = (0.38, 3.2)       # characterization COVERAGE only (A9.13 S6.21; owner row 73 range), never a gate
 
 PINNED = (
     "docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md",
@@ -139,6 +139,17 @@ def pareto_rows(pars):
     return out
 
 
+def _f4_single_frontier() -> str:
+    """F4-01 single-setpoint all-state frontier as stated by the committed F4 record (read, never hard-coded)."""
+    import re
+    f4 = json.loads((REPO / "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json").read_text(encoding="utf-8"))
+    txt = next(f["finding"] for f in f4["findings"] if f["id"] == "F4-01")
+    m = re.search(r"WALL-G0\) is ([0-9.eE+-]+) mg/s", txt)
+    if m is None:
+        raise SystemExit("REFUSED: F4-01 no longer states the single-setpoint frontier")
+    return m.group(1)
+
+
 def pareto_summary(inp, pars):
     rows = []
     for (sc, filt, wall), par in sorted(pars.items()):
@@ -149,7 +160,7 @@ def pareto_summary(inp, pars):
                          best["design_id"] if best else None,
                          sum(1 for m in b["members"] if m["mdot_delivered_min_kgps"] * 1e6 >= OWNER_FLOW_RANGE_MGPS[0])])
     cols = ["context_id", "scenario", "filter", "wall", "P_set_Pa", "n_evaluated", "n_feasible", "n_pareto",
-            "frontier_mdot_delivered_min_mgps", "frontier_attained_by", "n_pareto_ge_0.38_mgps"]
+            "frontier_mdot_delivered_min_mgps", "frontier_attained_by", "n_pareto_reaching_coverage_0.38_mgps"]
     return {"columns": cols, "rows": rows}
 
 
@@ -245,7 +256,7 @@ def parameters():
         P.append({"id": pid, "value": value, "units": units, "basis": basis, "source": source,
                   "evidence_class": ec, "status": status})
     p("F78-P-01", list(ao.UPSTREAM_TARGETS_PA), "Pa", "plenum set pressures evaluated (F4 requirement sweep up to the "
-      "0.1 Pa free-molecular domain cap; above it everything is INFEASIBLE_OUT_OF_DOMAIN in F3/F4)",
+      "0.1 Pa free-molecular domain cap; above it everything is NOT_EVALUATED_OUT_OF_DOMAIN in F3/F4, A9.13 S6.8)",
       f"{ao.F4_REL} requirement_sweep; F3 P-MOLECULAR-LIMIT", "TBD (requirement)", "CONTEXT_AXIS")
     p("F78-P-02", list(ao.VOLUMES_M3), "m^3", "plenum volume grid", f"{ao.F4_REL} search_variables x_plenum.V",
       "assumed", "SEARCHED (F4 grid)")
@@ -268,9 +279,10 @@ def parameters():
     p("F78-P-10", ro.ELASTICITY_STEP, "-", "relative central-difference step of the compressor elasticities "
       "(numerical setting, not an uncertainty)", "abep_sim/design/robust_optimizer.py", "numerical-setting",
       "STUDY_SETTING")
-    p("F78-P-11", OWNER_FLOW_RANGE_MGPS, "mg/s", "owner ground-characterization flow range used only to COUNT "
-      "Pareto members reaching it (context, not a requirement)", f"{ao.F4_REL} requirement_sweep.mdot_req_basis "
-      "(owner row 73)", "owner-allocation", "CONTEXT_ONLY")
+    p("F78-P-11", OWNER_FLOW_RANGE_MGPS, "mg/s", "characterization coverage range (A9.13 S6.21: 0.38 mg/s and "
+      "~1.3 mg/s are not requirements; no fixed flight mass-flow gate) used only to COUNT Pareto members reaching its "
+      "lower end (coverage, never PASS / FAIL)", f"{ao.F4_REL} requirement_sweep.mdot_req_basis "
+      "(owner row 73; A9.13 S6.21)", "owner-allocation", "CHARACTERIZATION_COVERAGE_ONLY")
     p("F78-P-12", "TBD", "N", "spacecraft body / array drag D_body", "none (F1-ID-08)", "TBD", "TBD")
     p("F78-P-13", "TBD", "N", "thrust T of H-1 on the delivered feed", f"{ao.ENS_REL} (members = [])", "TBD",
       "NOT_EVALUATED (no admitted Hall response map)")
@@ -362,9 +374,10 @@ def findings(inp, f7sum, totals, sysd, f8, pars):
     F.append({"id": "F78-02", "evidence_class": "model-derived", "finding":
               f"nominal context (filter none, WALL-G0): the all-state delivered-flow frontier is "
               f"{best['frontier_mdot_delivered_min_mgps']} mg/s ({best['scenario']}, P_set {best['P_set_Pa']} Pa, "
-              f"{best['frontier_attained_by']}); Pareto members reaching the owner ground-characterization lower end "
-              f"0.38 mg/s at every state: {sum(r['n_pareto_ge_0.38_mgps'] for r in rows)} (all contexts). Consistent "
-              "with F4-01 (single-setpoint frontier 0.1027 mg/s)"})
+              f"{best['frontier_attained_by']}); Pareto members reaching the lower end of the 0.38-3.2 mg/s "
+              f"characterization coverage (A9.13 S6.21: coverage only, not a requirement or gate) at every state: "
+              f"{sum(r['n_pareto_reaching_coverage_0.38_mgps'] for r in rows)} (all contexts). Compare F4-01 (single-setpoint "
+              f"frontier {_f4_single_frontier()} mg/s)"})
     byP = Counter()
     for r in rows:
         if r["n_pareto"]:
@@ -468,15 +481,24 @@ def robust_section(f8):
 
 
 def assemble(inp, blocks, pars, f7sum, totals, sysd, f8):
+    _f4 = json.loads((REPO / "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json").read_text(encoding="utf-8"))
+    n_union = len(next(v["value"] for v in _f4["search_variables"] if v["id"] == "x_compressor"))
+    _f3d = json.loads((REPO / "docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json").read_text(encoding="utf-8"))
+    _inv = {v: k for k, v in _f3d["reason_codes"].items()}
+    _indep = {_inv[r] for r in ("ROTOR_MATERIAL_ALLOWABLE_TBD", "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+                                "TIP_SPEED_ABOVE_PUBLISHED_TMP_PRACTICE")}
+    n_gate = sum(1 for i, x in enumerate(_f3d["design_grid"]) if x["N_drag"] == 0 and x["rotor_material"] == "Ti6Al4V"
+                 and all(not (set(c["status_by_design"][i].split(",")) & _indep) for c in _f3d["cases"].values()))
     lim = [
         "INT-01 (consolidated verification round 1): x_compressor is searched only over the union of the F3 per-case "
-        "Pareto ids (32 designs, as in F4), and those F3 fronts were built on the down-selection envelope inlets, not "
-        "on the F1-coupled states coupled here. F3's inlet-independent gates (N_drag = 0, Ti-6Al-4V, cited tip speed "
-        "<= 305.5 m/s) admit 48 designs. Every F7 upstream Pareto set and the F8 robust set are therefore 'Pareto "
-        "within the F3 front-union subset': the consolidated-verification evidence for INT-01 (a re-run over all 48) "
-        "reports 9 of the 10 nominal contexts changing (members added, and some committed members dominated by an "
-        "excluded design, e.g. T4-A0-U2-D0). Searching "
-        "all 48 designs is an open follow-up; no set here is a Pareto set over the admissible compressor space",
+        f"Pareto ids ({n_union} designs, as in F4), and those F3 fronts were built on the down-selection envelope "
+        "inlets, not on the F1-coupled states coupled here. F3's inlet-independent gates (N_drag = 0, Ti-6Al-4V, cited "
+        f"tip speed <= 305.5 m/s) admit {n_gate} designs (A9.16: hub-ratio coverage included). Every F7 upstream "
+        "Pareto set and the F8 robust set are therefore 'Pareto within the F3 front-union subset': the A9.7 "
+        "consolidated-verification evidence for INT-01 (a re-run over the then 48 gate-passing designs) reported 9 of "
+        "the 10 nominal contexts changing (members added, and some committed members dominated by an excluded design, "
+        f"e.g. T4-A0-U2-D0). Searching all {n_gate} designs is an open follow-up; no set here is a Pareto set over the "
+        "admissible compressor space",
         "every upstream number inherits PARAMETRIC_SENSITIVITY inputs: uncited DragCompressor coefficients (F3), "
         "parametric filter cases (F2/F4), the assumed isothermal 350 K chain (F4-P-01), the parametric leak (F4-P-05)",
         "steady operating points only in the F7 search; transient quality enters as the open-loop ripple transfer "
@@ -602,14 +624,14 @@ def render_md(doc: dict) -> str:
     for o in doc["upstream_objectives"]:
         L.append(f"| {o['key']} | {o['sense']} | {o['units']} | {o['definition']} |")
     L += ["", "## Upstream Pareto summary (nominal context: filter none, WALL-G0)", "",
-          "| scenario | P_set [Pa] | evaluated | feasible | Pareto | frontier [mg/s] | >= 0.38 mg/s |",
+          "| scenario | P_set [Pa] | evaluated | feasible | Pareto | frontier [mg/s] | >= 0.38 mg/s (coverage only) |",
           "|---|---|---|---|---|---|---|"]
     cols = doc["upstream_pareto_summary"]["columns"]
     for r in doc["upstream_pareto_summary"]["rows"]:
         d = dict(zip(cols, r))
         if d["filter"] == "F4-FIL-NONE" and d["wall"] == "WALL-G0" and d["n_feasible"]:
             L.append(f"| {d['scenario']} | {d['P_set_Pa']} | {d['n_evaluated']} | {d['n_feasible']} | {d['n_pareto']} | "
-                     f"{_f(d['frontier_mdot_delivered_min_mgps'])} | {d['n_pareto_ge_0.38_mgps']} |")
+                     f"{_f(d['frontier_mdot_delivered_min_mgps'])} | {d['n_pareto_reaching_coverage_0.38_mgps']} |")
     L += ["", "## System objectives (every vector)", "", "| objective | status | reason | unlock |", "|---|---|---|---|"]
     for k, o in doc["system_evaluation_exemplar"]["objectives"].items():
         L.append(f"| {k} | {o['status']} | {o['reason']} | {' / '.join(o['unlock'] or [])} |")

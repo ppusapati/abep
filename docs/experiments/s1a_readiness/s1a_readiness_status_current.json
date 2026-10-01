@@ -455,7 +455,7 @@
         {
           "path": "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json",
           "what": "W1 feed-state closure (DRAFT): 32 test points labelled GROUND_QUALIFICATION_POINT: 28 Phase-1 knee-ladder points with status 'PROPOSED (candidate-conditional)' and 4 Phase-2 OP2 points with status 'TBD - requires the measured Phase-1 knee'; each point carries numeric T_feed values alongside a T_feed_ground entry 'TBD - requires owner decision DI-1.10'; precursor only",
-          "sha256": "ff6e15db449151b5cf790088b4641504bd435a48de2d4c6235bf83625d508ef9"
+          "sha256": "15df06dab2f8e912b2d06eed9016d502b0d8255d8980fef38d00ca669ec1ac09"
         },
         {
           "path": "docs/architecture_comparison/feed_envelope/feed_envelope_v1.json",

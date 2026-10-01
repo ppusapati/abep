@@ -18,105 +18,10 @@
  "freeze_rule": "FROZEN_REFERENCE_FLIGHT_ARCHITECTURE only when architecture-level gates have sufficient evidence; until then INVESTIGATION_HYPOTHESIS",
  "deliverable_status": "FREEZE_CANDIDATE_DEFINITION (not frozen, not a design release, no winner, no PASS)",
  "configuration": {
-  "flight": "hall_icp_neutralizer",
-  "flight_configurations": [
-   "hall_icp_neutralizer"
-  ],
-  "flight_architecture": {
-   "configuration": "hall_icp_neutralizer",
-   "hall_accelerators": 1,
-   "electron_source_neutralizer": {
-    "count": 1,
-    "kind": "RF/ICP (13.56 MHz) electron source / neutralizer, cathodeless / electrodeless",
-    "serves_supply_modes": [
-     "AIR_PRIMARY",
-     "XE_CONTINGENCY"
-    ]
-   },
-   "supply_modes": [
-    {
-     "mode": "AIR_PRIMARY",
-     "role": "PRIMARY",
-     "propellant": "ambient atmospheric propellant (180-230 km)",
-     "path": [
-      "intake",
-      "filter",
-      "compressor",
-      "atmospheric_gas_chamber",
-      "valve"
-     ]
-    },
-    {
-     "mode": "XE_CONTINGENCY",
-     "role": "CONTINGENCY_EMERGENCY",
-     "propellant": "xenon",
-     "path": [
-      "xe_tank",
-      "valve"
-     ],
-     "note": "capability required by the RFP (RFP-P17-05 extra input system; RFP-P18-08 separate tank); role contingency / emergency, not a parallel co-equal propellant (A9.19)"
-    }
-   ],
-   "separate_tanks": true,
-   "conventional_hollow_cathode": "NONE",
-   "icp_feed_gas_baseline": {
-    "primary": "G-REUSE",
-    "declared_variant": "G-XE",
-    "status": "UNCHANGED (A9.1; A9.19 does not alter the ICP feed-gas baseline)"
-   },
-   "c1": {
-    "status": "GROUND_ONLY_LAB_EQUIPMENT",
-    "uses": [
-     "H-1 I_d,max,H1,Ar characterization (A9.10 S3.5, independent of the ICP)",
-     "bench control in the C1-vs-ICP comparison"
-    ],
-    "never": [
-     "flight hardware",
-     "flight mass budget",
-     "flight power budget",
-     "flight Xe budget",
-     "flight fallback / candidate flight configuration"
-    ],
-    "authority": "A9.20 (C1_GROUND_ONLY_LABORATORY_REFERENCE); A9.19 amends 'A9 C1 CONTROL_FALLBACK'"
-   },
-   "verbatim": [
-    "One Hall accelerator.",
-    "One RF/ICP electron-source/neutralizer.",
-    "Two propellant supply modes.",
-    "No conventional hollow cathode."
-   ],
-   "status": "OWNER_DECIDED_ARCHITECTURE_DEFINITION (A9 investigation; not a flight baseline, not a PASS)"
-  },
-  "ground_reference": {
-   "configuration": "hall_c1_reference",
-   "label": "GROUND_REFERENCE",
-   "c1_status": "GROUND_ONLY_LAB_EQUIPMENT",
-   "flight_candidate": false,
-   "uses": [
-    "H-1 I_d,max,H1,Ar characterization (A9.10 S3.5, independent of the ICP)",
-    "bench control in the C1-vs-ICP comparison"
-   ]
-  },
+  "primary": "hall_icp_neutralizer",
+  "control_fallback": "hall_c1_reference",
   "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
-  "rule": "the candidate is defined for the single flight configuration (one Hall + one RF/ICP neutralizer, two supply modes AIR_PRIMARY / XE_CONTINGENCY, no conventional hollow cathode; A9.19); hall_c1_reference is not a flight candidate and appears only as the labelled GROUND_REFERENCE (C1 ground-only laboratory reference, never in flight mass / power / Xe budgets; A9.20)",
-  "authority": [
-   {
-    "decision": "A9.19",
-    "md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
-    "md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
-    "json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
-    "json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
-    "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY"
-   },
-   {
-    "decision": "A9.20",
-    "md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
-    "md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
-    "json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
-    "json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
-    "decision_code": "C1_GROUND_ONLY_LABORATORY_REFERENCE"
-   }
-  ]
+  "rule": "the candidate is defined for the primary configuration; C1 rows that differ are carried by the cited deliverables (RVM / mass_power v2 / bus boundary) as the CONTROL_FALLBACK reference"
  },
  "what_this_is_not": [
   "not a frozen architecture and not FROZEN_REFERENCE_FLIGHT_ARCHITECTURE",
@@ -219,22 +124,6 @@
   "A915_MD": {
    "path": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
    "sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903"
-  },
-  "A919": {
-   "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
-   "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16"
-  },
-  "A919_MD": {
-   "path": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
-   "sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749"
-  },
-  "A920": {
-   "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
-   "sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6"
-  },
-  "A920_MD": {
-   "path": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
-   "sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c"
   }
  },
  "consumed": {
@@ -252,23 +141,23 @@
   },
   "F2": {
    "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
-   "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+   "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
   },
   "F3": {
    "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
-   "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+   "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
   },
   "F3D": {
    "path": "docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json",
-   "sha256": "a559776da6c10c2bb8c1eb66fbff308a7b3634c62275bdd39c17d77e4055d8a1"
+   "sha256": "2353460e8087c5d0911d3b7774cd02440e7c93dfb26629b2bf3c5d25e000980f"
   },
   "F4": {
    "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
-   "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+   "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
   },
   "F5": {
    "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
-   "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+   "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
   },
   "F6": {
    "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
@@ -276,15 +165,15 @@
   },
   "F78": {
    "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
-   "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+   "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
   },
   "F7P": {
    "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
-   "sha256": "b8ba34d60c8ae997dea87cdf3c99ce626c0174f1027e8f7b4622c6ad719ad525"
+   "sha256": "df06ffeb060b109568dd76794dad91d5374a3b04c9d28c130f066b457a705c08"
   },
   "F8R": {
    "path": "docs/design_synthesis/f7_f8_optimizer/f8_robust_candidates_v1.json",
-   "sha256": "67a0279989756e0a125970f3d08668ccb9570d780b35f0e699a656824907ff1f"
+   "sha256": "4232edffeb07ee6c09ad0fbf11e934ab06bdc49693d225924905cce69cfdb489"
   },
   "OQ4": {
    "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
@@ -308,7 +197,7 @@
   },
   "M16": {
    "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
-   "sha256": "1db1137ce1efdaeabb87ad59232f27478938e2036a806dbce51213f7cbc5e9c6"
+   "sha256": "7599d59576ca9b9c8215b6fad7de1548c727f872df20adc0f076034ddb0a0582"
   },
   "XE2": {
    "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
@@ -328,11 +217,11 @@
   },
   "P1": {
    "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
-   "sha256": "bc01860e119db9bb799fc04dd2afa44e833dd885b25a5820d7246047fbde6d37"
+   "sha256": "4c41b13c45b7f332845c1df12a1351e8925e721e14179f053bbb8c196f6f182a"
   },
   "P2": {
    "path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
-   "sha256": "4a2789957ab42ca31562926910c15668be0b63e5b87608cfec5025883938ae94"
+   "sha256": "cccf65b2d93a96b2640be6bfd933e6658c72f0fb4207ee444e9c052b2ff9e3da"
   },
   "P3": {
    "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
@@ -533,290 +422,542 @@
    "rule": "candidates nominally feasible in EVERY surface scenario (fail closed), compared on worst-case objectives over the scenario set plus the minimum TPMC P_feasible; per set pressure; a set, never a winner; evidence-gate statuses unchanged (gate_snapshot before == after)",
    "members": [
     {
-     "design_id": "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.001|P0.01",
+     "design_id": "A0.25_Ld10_phi0.9|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01",
+     "intake": "A0.25_Ld10_phi0.9",
+     "area_m2": 0.25,
+     "L_over_d": 10.0,
+     "phi": 0.9,
+     "filter": "F4-FIL-NONE",
+     "compressor": "T6-A2-U2-D0-Ti6Al4V-H0.5",
+     "V_m3": 0.001,
+     "P_set_Pa": 0.01,
+     "mdot_delivered_min_kgps": 1.523801e-08,
+     "drag_intake_max_N": 0.01058755,
+     "P_compressor_el_max_W": 10.14031,
+     "m_compressor_max_kg": 12.5685,
+     "intake_wall_area_m2": 4.5,
+     "plenum_V_m3": 0.001,
+     "P_feasible_tpmc_min": 1.0
+    },
+    {
+     "design_id": "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|P0.01",
      "intake": "A0.25_Ld3_phi0.8",
      "area_m2": 0.25,
      "L_over_d": 3.0,
      "phi": 0.8,
      "filter": "F4-FIL-NONE",
-     "compressor": "T6-A1-U2-D0-Ti6Al4V",
+     "compressor": "T6-A0-U2-D0-Ti6Al4V-H0.75",
      "V_m3": 0.001,
      "P_set_Pa": 0.01,
-     "mdot_delivered_min_kgps": 8.134276e-09,
+     "mdot_delivered_min_kgps": 7.101047e-09,
      "drag_intake_max_N": 0.01044394,
-     "P_compressor_el_max_W": 9.586583,
-     "m_compressor_max_kg": 10.90722,
+     "P_compressor_el_max_W": 9.229227,
+     "m_compressor_max_kg": 7.48849,
      "intake_wall_area_m2": 1.2,
      "plenum_V_m3": 0.001,
-     "ripple_transfer_shaft": 0.95743,
      "P_feasible_tpmc_min": 1.0
     },
     {
-     "design_id": "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.01|P0.01",
+     "design_id": "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.001|P0.01",
      "intake": "A0.25_Ld3_phi0.8",
      "area_m2": 0.25,
      "L_over_d": 3.0,
      "phi": 0.8,
      "filter": "F4-FIL-NONE",
-     "compressor": "T6-A1-U2-D0-Ti6Al4V",
-     "V_m3": 0.01,
+     "compressor": "T6-A1-U2-D0-Ti6Al4V-H0.25",
+     "V_m3": 0.001,
      "P_set_Pa": 0.01,
-     "mdot_delivered_min_kgps": 8.134276e-09,
+     "mdot_delivered_min_kgps": 8.754536e-09,
      "drag_intake_max_N": 0.01044394,
-     "P_compressor_el_max_W": 9.586583,
+     "P_compressor_el_max_W": 9.594151,
      "m_compressor_max_kg": 10.90722,
      "intake_wall_area_m2": 1.2,
-     "plenum_V_m3": 0.01,
-     "ripple_transfer_shaft": 0.3148104,
+     "plenum_V_m3": 0.001,
      "P_feasible_tpmc_min": 1.0
     },
     {
-     "design_id": "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.1|P0.01",
+     "design_id": "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01",
      "intake": "A0.25_Ld3_phi0.8",
      "area_m2": 0.25,
      "L_over_d": 3.0,
      "phi": 0.8,
      "filter": "F4-FIL-NONE",
-     "compressor": "T6-A1-U2-D0-Ti6Al4V",
-     "V_m3": 0.1,
+     "compressor": "T6-A1-U2-D0-Ti6Al4V-H0.5",
+     "V_m3": 0.001,
      "P_set_Pa": 0.01,
-     "mdot_delivered_min_kgps": 8.134276e-09,
+     "mdot_delivered_min_kgps": 1.09637e-08,
      "drag_intake_max_N": 0.01044394,
-     "P_compressor_el_max_W": 9.586583,
+     "P_compressor_el_max_W": 9.627535,
      "m_compressor_max_kg": 10.90722,
      "intake_wall_area_m2": 1.2,
-     "plenum_V_m3": 0.1,
-     "ripple_transfer_shaft": 0.03314922,
+     "plenum_V_m3": 0.001,
      "P_feasible_tpmc_min": 1.0
     },
     {
-     "design_id": "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.001|P0.01",
+     "design_id": "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A2-U1-D0-Ti6Al4V-H0.75|V0.001|P0.01",
+     "intake": "A0.25_Ld3_phi0.8",
+     "area_m2": 0.25,
+     "L_over_d": 3.0,
+     "phi": 0.8,
+     "filter": "F4-FIL-NONE",
+     "compressor": "T6-A2-U1-D0-Ti6Al4V-H0.75",
+     "V_m3": 0.001,
+     "P_set_Pa": 0.01,
+     "mdot_delivered_min_kgps": 7.968321e-09,
+     "drag_intake_max_N": 0.01044394,
+     "P_compressor_el_max_W": 9.537498,
+     "m_compressor_max_kg": 12.5685,
+     "intake_wall_area_m2": 1.2,
+     "plenum_V_m3": 0.001,
+     "P_feasible_tpmc_min": 1.0
+    },
+    {
+     "design_id": "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.25|V0.001|P0.01",
+     "intake": "A0.25_Ld3_phi0.8",
+     "area_m2": 0.25,
+     "L_over_d": 3.0,
+     "phi": 0.8,
+     "filter": "F4-FIL-NONE",
+     "compressor": "T6-A2-U2-D0-Ti6Al4V-H0.25",
+     "V_m3": 0.001,
+     "P_set_Pa": 0.01,
+     "mdot_delivered_min_kgps": 1.206766e-08,
+     "drag_intake_max_N": 0.01044394,
+     "P_compressor_el_max_W": 9.78379,
+     "m_compressor_max_kg": 12.5685,
+     "intake_wall_area_m2": 1.2,
+     "plenum_V_m3": 0.001,
+     "P_feasible_tpmc_min": 1.0
+    },
+    {
+     "design_id": "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01",
+     "intake": "A0.25_Ld3_phi0.8",
+     "area_m2": 0.25,
+     "L_over_d": 3.0,
+     "phi": 0.8,
+     "filter": "F4-FIL-NONE",
+     "compressor": "T6-A2-U2-D0-Ti6Al4V-H0.5",
+     "V_m3": 0.001,
+     "P_set_Pa": 0.01,
+     "mdot_delivered_min_kgps": 1.465276e-08,
+     "drag_intake_max_N": 0.01044394,
+     "P_compressor_el_max_W": 9.834154,
+     "m_compressor_max_kg": 12.5685,
+     "intake_wall_area_m2": 1.2,
+     "plenum_V_m3": 0.001,
+     "P_feasible_tpmc_min": 1.0
+    },
+    {
+     "design_id": "A0.25_Ld3_phi0.9|F4-FIL-NONE|T5-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01",
      "intake": "A0.25_Ld3_phi0.9",
      "area_m2": 0.25,
      "L_over_d": 3.0,
      "phi": 0.9,
      "filter": "F4-FIL-NONE",
-     "compressor": "T6-A1-U2-D0-Ti6Al4V",
+     "compressor": "T5-A2-U2-D0-Ti6Al4V-H0.5",
      "V_m3": 0.001,
      "P_set_Pa": 0.01,
-     "mdot_delivered_min_kgps": 8.403918e-09,
+     "mdot_delivered_min_kgps": 4.499364e-10,
      "drag_intake_max_N": 0.01040334,
-     "P_compressor_el_max_W": 9.632097,
+     "P_compressor_el_max_W": 9.668935,
+     "m_compressor_max_kg": 10.62209,
+     "intake_wall_area_m2": 1.35,
+     "plenum_V_m3": 0.001,
+     "P_feasible_tpmc_min": 1.0
+    },
+    {
+     "design_id": "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U1-D0-Ti6Al4V-H0.75|V0.001|P0.01",
+     "intake": "A0.25_Ld3_phi0.9",
+     "area_m2": 0.25,
+     "L_over_d": 3.0,
+     "phi": 0.9,
+     "filter": "F4-FIL-NONE",
+     "compressor": "T6-A1-U1-D0-Ti6Al4V-H0.75",
+     "V_m3": 0.001,
+     "P_set_Pa": 0.01,
+     "mdot_delivered_min_kgps": 2.933262e-09,
+     "drag_intake_max_N": 0.01040334,
+     "P_compressor_el_max_W": 9.331351,
      "m_compressor_max_kg": 10.90722,
      "intake_wall_area_m2": 1.35,
      "plenum_V_m3": 0.001,
-     "ripple_transfer_shaft": 0.9620205,
      "P_feasible_tpmc_min": 1.0
     },
     {
-     "design_id": "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.01|P0.01",
+     "design_id": "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.001|P0.01",
      "intake": "A0.25_Ld3_phi0.9",
      "area_m2": 0.25,
      "L_over_d": 3.0,
      "phi": 0.9,
      "filter": "F4-FIL-NONE",
-     "compressor": "T6-A1-U2-D0-Ti6Al4V",
-     "V_m3": 0.01,
+     "compressor": "T6-A1-U2-D0-Ti6Al4V-H0.25",
+     "V_m3": 0.001,
      "P_set_Pa": 0.01,
-     "mdot_delivered_min_kgps": 8.403918e-09,
+     "mdot_delivered_min_kgps": 9.046324e-09,
      "drag_intake_max_N": 0.01040334,
-     "P_compressor_el_max_W": 9.632097,
+     "P_compressor_el_max_W": 9.64062,
      "m_compressor_max_kg": 10.90722,
      "intake_wall_area_m2": 1.35,
-     "plenum_V_m3": 0.01,
-     "ripple_transfer_shaft": 0.3323811,
+     "plenum_V_m3": 0.001,
      "P_feasible_tpmc_min": 1.0
     },
     {
-     "design_id": "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.1|P0.01",
+     "design_id": "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01",
      "intake": "A0.25_Ld3_phi0.9",
      "area_m2": 0.25,
      "L_over_d": 3.0,
      "phi": 0.9,
      "filter": "F4-FIL-NONE",
-     "compressor": "T6-A1-U2-D0-Ti6Al4V",
-     "V_m3": 0.1,
+     "compressor": "T6-A1-U2-D0-Ti6Al4V-H0.5",
+     "V_m3": 0.001,
      "P_set_Pa": 0.01,
-     "mdot_delivered_min_kgps": 8.403918e-09,
+     "mdot_delivered_min_kgps": 1.133642e-08,
      "drag_intake_max_N": 0.01040334,
-     "P_compressor_el_max_W": 9.632097,
+     "P_compressor_el_max_W": 9.677633,
      "m_compressor_max_kg": 10.90722,
      "intake_wall_area_m2": 1.35,
-     "plenum_V_m3": 0.1,
-     "ripple_transfer_shaft": 0.03521991,
+     "plenum_V_m3": 0.001,
      "P_feasible_tpmc_min": 1.0
     },
     {
-     "design_id": "A0.25_Ld5_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.001|P0.01",
+     "design_id": "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A2-U1-D0-Ti6Al4V-H0.75|V0.001|P0.01",
+     "intake": "A0.25_Ld3_phi0.9",
+     "area_m2": 0.25,
+     "L_over_d": 3.0,
+     "phi": 0.9,
+     "filter": "F4-FIL-NONE",
+     "compressor": "T6-A2-U1-D0-Ti6Al4V-H0.75",
+     "V_m3": 0.001,
+     "P_set_Pa": 0.01,
+     "mdot_delivered_min_kgps": 8.267615e-09,
+     "drag_intake_max_N": 0.01040334,
+     "P_compressor_el_max_W": 9.589594,
+     "m_compressor_max_kg": 12.5685,
+     "intake_wall_area_m2": 1.35,
+     "plenum_V_m3": 0.001,
+     "P_feasible_tpmc_min": 1.0
+    },
+    {
+     "design_id": "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.25|V0.001|P0.01",
+     "intake": "A0.25_Ld3_phi0.9",
+     "area_m2": 0.25,
+     "L_over_d": 3.0,
+     "phi": 0.9,
+     "filter": "F4-FIL-NONE",
+     "compressor": "T6-A2-U2-D0-Ti6Al4V-H0.25",
+     "V_m3": 0.001,
+     "P_set_Pa": 0.01,
+     "mdot_delivered_min_kgps": 1.25348e-08,
+     "drag_intake_max_N": 0.01040334,
+     "P_compressor_el_max_W": 9.842368,
+     "m_compressor_max_kg": 12.5685,
+     "intake_wall_area_m2": 1.35,
+     "plenum_V_m3": 0.001,
+     "P_feasible_tpmc_min": 1.0
+    },
+    {
+     "design_id": "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01",
+     "intake": "A0.25_Ld3_phi0.9",
+     "area_m2": 0.25,
+     "L_over_d": 3.0,
+     "phi": 0.9,
+     "filter": "F4-FIL-NONE",
+     "compressor": "T6-A2-U2-D0-Ti6Al4V-H0.5",
+     "V_m3": 0.001,
+     "P_set_Pa": 0.01,
+     "mdot_delivered_min_kgps": 1.523135e-08,
+     "drag_intake_max_N": 0.01040334,
+     "P_compressor_el_max_W": 9.897397,
+     "m_compressor_max_kg": 12.5685,
+     "intake_wall_area_m2": 1.35,
+     "plenum_V_m3": 0.001,
+     "P_feasible_tpmc_min": 1.0
+    },
+    {
+     "design_id": "A0.25_Ld5_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01",
      "intake": "A0.25_Ld5_phi0.9",
      "area_m2": 0.25,
      "L_over_d": 5.0,
      "phi": 0.9,
      "filter": "F4-FIL-NONE",
-     "compressor": "T6-A1-U2-D0-Ti6Al4V",
+     "compressor": "T6-A1-U2-D0-Ti6Al4V-H0.5",
      "V_m3": 0.001,
      "P_set_Pa": 0.01,
-     "mdot_delivered_min_kgps": 8.409471e-09,
+     "mdot_delivered_min_kgps": 1.134189e-08,
      "drag_intake_max_N": 0.0104758,
-     "P_compressor_el_max_W": 9.750941,
+     "P_compressor_el_max_W": 9.802569,
      "m_compressor_max_kg": 10.90722,
      "intake_wall_area_m2": 2.25,
      "plenum_V_m3": 0.001,
-     "ripple_transfer_shaft": 0.9708024,
      "P_feasible_tpmc_min": 1.0
     },
     {
-     "design_id": "A0.25_Ld5_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.01|P0.01",
+     "design_id": "A0.25_Ld5_phi0.9|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01",
      "intake": "A0.25_Ld5_phi0.9",
      "area_m2": 0.25,
      "L_over_d": 5.0,
      "phi": 0.9,
      "filter": "F4-FIL-NONE",
-     "compressor": "T6-A1-U2-D0-Ti6Al4V",
-     "V_m3": 0.01,
+     "compressor": "T6-A2-U2-D0-Ti6Al4V-H0.5",
+     "V_m3": 0.001,
      "P_set_Pa": 0.01,
-     "mdot_delivered_min_kgps": 8.409471e-09,
+     "mdot_delivered_min_kgps": 1.523734e-08,
      "drag_intake_max_N": 0.0104758,
-     "P_compressor_el_max_W": 9.750941,
-     "m_compressor_max_kg": 10.90722,
+     "P_compressor_el_max_W": 10.02274,
+     "m_compressor_max_kg": 12.5685,
      "intake_wall_area_m2": 2.25,
-     "plenum_V_m3": 0.01,
-     "ripple_transfer_shaft": 0.3751453,
+     "plenum_V_m3": 0.001,
      "P_feasible_tpmc_min": 1.0
     },
     {
-     "design_id": "A0.25_Ld5_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.1|P0.01",
-     "intake": "A0.25_Ld5_phi0.9",
-     "area_m2": 0.25,
-     "L_over_d": 5.0,
+     "design_id": "A0.5_Ld3_phi0.8|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01",
+     "intake": "A0.5_Ld3_phi0.8",
+     "area_m2": 0.5,
+     "L_over_d": 3.0,
+     "phi": 0.8,
+     "filter": "F4-FIL-NONE",
+     "compressor": "T6-A2-U2-D0-Ti6Al4V-H0.5",
+     "V_m3": 0.001,
+     "P_set_Pa": 0.01,
+     "mdot_delivered_min_kgps": 1.767558e-08,
+     "drag_intake_max_N": 0.02088789,
+     "P_compressor_el_max_W": 10.21288,
+     "m_compressor_max_kg": 12.5685,
+     "intake_wall_area_m2": 2.4,
+     "plenum_V_m3": 0.001,
+     "P_feasible_tpmc_min": 1.0
+    },
+    {
+     "design_id": "A0.5_Ld3_phi0.9|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01",
+     "intake": "A0.5_Ld3_phi0.9",
+     "area_m2": 0.5,
+     "L_over_d": 3.0,
      "phi": 0.9,
      "filter": "F4-FIL-NONE",
-     "compressor": "T6-A1-U2-D0-Ti6Al4V",
-     "V_m3": 0.1,
+     "compressor": "T6-A2-U2-D0-Ti6Al4V-H0.5",
+     "V_m3": 0.001,
      "P_set_Pa": 0.01,
-     "mdot_delivered_min_kgps": 8.409471e-09,
-     "drag_intake_max_N": 0.0104758,
-     "P_compressor_el_max_W": 9.750941,
-     "m_compressor_max_kg": 10.90722,
-     "intake_wall_area_m2": 2.25,
-     "plenum_V_m3": 0.1,
-     "ripple_transfer_shaft": 0.04043713,
-     "P_feasible_tpmc_min": 1.0
+     "mdot_delivered_min_kgps": 1.809056e-08,
+     "drag_intake_max_N": 0.02080668,
+     "P_compressor_el_max_W": 10.27587,
+     "m_compressor_max_kg": 12.5685,
+     "intake_wall_area_m2": 2.7,
+     "plenum_V_m3": 0.001,
+     "P_feasible_tpmc_min": 0.93
     }
    ],
    "per_member_f7_extremes": {
-    "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.001|P0.01": {
+    "A0.25_Ld10_phi0.9|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01": {
      "T_comp_max_K": [
-      315.653,
-      316.549
+      316.259,
+      317.996
      ],
      "xO_flow": [
-      0.414581,
-      0.663919
+      0.418719,
+      0.679596
      ],
-     "kn_upper_min": 5.90312
+     "kn_upper_min": 4.82751
     },
-    "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.01|P0.01": {
+    "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|P0.01": {
      "T_comp_max_K": [
-      315.653,
-      316.549
+      314.894,
+      315.693
      ],
      "xO_flow": [
-      0.414581,
-      0.663919
+      0.411034,
+      0.658188
      ],
-     "kn_upper_min": 5.90312
+     "kn_upper_min": 6.67097
     },
-    "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.1|P0.01": {
+    "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.001|P0.01": {
      "T_comp_max_K": [
-      315.653,
-      316.549
+      315.67,
+      316.577
      ],
      "xO_flow": [
-      0.414581,
-      0.663919
+      0.414999,
+      0.664262
      ],
-     "kn_upper_min": 5.90312
+     "kn_upper_min": 5.89123
     },
-    "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.001|P0.01": {
+    "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01": {
      "T_comp_max_K": [
-      315.683,
-      316.662
+      315.74,
+      316.691
      ],
      "xO_flow": [
-      0.413365,
-      0.662407
+      0.416525,
+      0.665508
      ],
-     "kn_upper_min": 5.70758
+     "kn_upper_min": 5.84884
     },
-    "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.01|P0.01": {
+    "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A2-U1-D0-Ti6Al4V-H0.75|V0.001|P0.01": {
      "T_comp_max_K": [
-      315.683,
-      316.662
+      315.693,
+      316.596
      ],
      "xO_flow": [
-      0.413365,
-      0.662407
+      0.415852,
+      0.665655
      ],
-     "kn_upper_min": 5.70758
+     "kn_upper_min": 5.70938
     },
-    "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.1|P0.01": {
+    "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.25|V0.001|P0.01": {
      "T_comp_max_K": [
-      315.683,
-      316.662
+      316.105,
+      317.077
      ],
      "xO_flow": [
-      0.413365,
-      0.662407
+      0.418443,
+      0.667725
      ],
-     "kn_upper_min": 5.70758
+     "kn_upper_min": 5.64929
     },
-    "A0.25_Ld5_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.001|P0.01": {
+    "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01": {
      "T_comp_max_K": [
-      315.683,
-      316.96
+      316.212,
+      317.231
      ],
      "xO_flow": [
-      0.413236,
-      0.670738
+      0.420158,
+      0.669078
      ],
-     "kn_upper_min": 5.33966
+     "kn_upper_min": 5.61127
     },
-    "A0.25_Ld5_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.01|P0.01": {
+    "A0.25_Ld3_phi0.9|F4-FIL-NONE|T5-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01": {
      "T_comp_max_K": [
-      315.683,
-      316.96
+      316.371,
+      316.818
      ],
      "xO_flow": [
-      0.413236,
-      0.670738
+      0.433193,
+      0.662842
      ],
-     "kn_upper_min": 5.33966
+     "kn_upper_min": 5.41961
     },
-    "A0.25_Ld5_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.1|P0.01": {
+    "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U1-D0-Ti6Al4V-H0.75|V0.001|P0.01": {
      "T_comp_max_K": [
-      315.683,
-      316.96
+      315.637,
+      316.072
      ],
      "xO_flow": [
-      0.413236,
-      0.670738
+      0.428529,
+      0.659663
      ],
-     "kn_upper_min": 5.33966
+     "kn_upper_min": 5.81174
+    },
+    "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.001|P0.01": {
+     "T_comp_max_K": [
+      315.7,
+      316.693
+     ],
+     "xO_flow": [
+      0.413769,
+      0.662743
+     ],
+     "kn_upper_min": 5.69535
+    },
+    "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01": {
+     "T_comp_max_K": [
+      315.773,
+      316.816
+     ],
+     "xO_flow": [
+      0.415244,
+      0.663962
+     ],
+     "kn_upper_min": 5.65167
+    },
+    "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A2-U1-D0-Ti6Al4V-H0.75|V0.001|P0.01": {
+     "T_comp_max_K": [
+      315.729,
+      316.727
+     ],
+     "xO_flow": [
+      0.41456,
+      0.66418
+     ],
+     "kn_upper_min": 5.50665
+    },
+    "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.25|V0.001|P0.01": {
+     "T_comp_max_K": [
+      316.148,
+      317.224
+     ],
+     "xO_flow": [
+      0.417065,
+      0.666215
+     ],
+     "kn_upper_min": 5.44466
+    },
+    "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01": {
+     "T_comp_max_K": [
+      316.259,
+      317.389
+     ],
+     "xO_flow": [
+      0.418725,
+      0.667548
+     ],
+     "kn_upper_min": 5.40537
+    },
+    "A0.25_Ld5_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01": {
+     "T_comp_max_K": [
+      315.773,
+      317.129
+     ],
+     "xO_flow": [
+      0.415116,
+      0.67193
+     ],
+     "kn_upper_min": 5.29718
+    },
+    "A0.25_Ld5_phi0.9|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01": {
+     "T_comp_max_K": [
+      316.259,
+      317.703
+     ],
+     "xO_flow": [
+      0.418605,
+      0.675045
+     ],
+     "kn_upper_min": 5.10927
+    },
+    "A0.5_Ld3_phi0.8|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01": {
+     "T_comp_max_K": [
+      316.458,
+      318.178
+     ],
+     "xO_flow": [
+      0.412724,
+      0.659897
+     ],
+     "kn_upper_min": 4.61453
+    },
+    "A0.5_Ld3_phi0.9|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01": {
+     "T_comp_max_K": [
+      316.492,
+      318.335
+     ],
+     "xO_flow": [
+      0.411713,
+      0.658366
+     ],
+     "kn_upper_min": 4.4905
     }
    },
-   "n_members": 9,
+   "n_members": 18,
    "n_all_scenario_feasible": {
-    "0.01": 15
+    "0.01": 53
    },
    "source": {
     "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
     "pointer": "/robust/robust_pareto_by_P_set",
-    "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+    "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
    }
   },
   "nominal_pareto_union": {
-   "n_members": 1233,
+   "n_members": 1217,
    "value_sets": {
     "area_m2": [
      0.25,
@@ -833,34 +974,77 @@
      0.9
     ],
     "compressor": [
-     "T2-A1-U1-D0-Ti6Al4V",
-     "T2-A1-U2-D0-Ti6Al4V",
-     "T2-A2-U0-D0-Ti6Al4V",
-     "T2-A2-U1-D0-Ti6Al4V",
-     "T3-A1-U1-D0-Ti6Al4V",
-     "T3-A1-U2-D0-Ti6Al4V",
-     "T3-A2-U0-D0-Ti6Al4V",
-     "T3-A2-U1-D0-Ti6Al4V",
-     "T4-A1-U1-D0-Ti6Al4V",
-     "T4-A1-U2-D0-Ti6Al4V",
-     "T4-A2-U0-D0-Ti6Al4V",
-     "T4-A2-U1-D0-Ti6Al4V",
-     "T5-A0-U2-D0-Ti6Al4V",
-     "T5-A1-U1-D0-Ti6Al4V",
-     "T5-A1-U2-D0-Ti6Al4V",
-     "T5-A2-U0-D0-Ti6Al4V",
-     "T5-A2-U1-D0-Ti6Al4V",
-     "T6-A0-U2-D0-Ti6Al4V",
-     "T6-A1-U0-D0-Ti6Al4V",
-     "T6-A1-U1-D0-Ti6Al4V",
-     "T6-A1-U2-D0-Ti6Al4V",
-     "T6-A2-U0-D0-Ti6Al4V",
-     "T6-A2-U1-D0-Ti6Al4V"
+     "T1-A2-U2-D0-Ti6Al4V-H0.5",
+     "T2-A1-U1-D0-Ti6Al4V-H0.5",
+     "T2-A1-U1-D0-Ti6Al4V-H0.75",
+     "T2-A1-U2-D0-Ti6Al4V-H0.5",
+     "T2-A2-U0-D0-Ti6Al4V-H0.75",
+     "T2-A2-U1-D0-Ti6Al4V-H0.25",
+     "T2-A2-U1-D0-Ti6Al4V-H0.5",
+     "T2-A2-U1-D0-Ti6Al4V-H0.75",
+     "T2-A2-U2-D0-Ti6Al4V-H0.25",
+     "T2-A2-U2-D0-Ti6Al4V-H0.5",
+     "T3-A0-U2-D0-Ti6Al4V-H0.75",
+     "T3-A1-U1-D0-Ti6Al4V-H0.25",
+     "T3-A1-U1-D0-Ti6Al4V-H0.5",
+     "T3-A1-U1-D0-Ti6Al4V-H0.75",
+     "T3-A1-U2-D0-Ti6Al4V-H0.25",
+     "T3-A1-U2-D0-Ti6Al4V-H0.5",
+     "T3-A2-U0-D0-Ti6Al4V-H0.75",
+     "T3-A2-U1-D0-Ti6Al4V-H0.25",
+     "T3-A2-U1-D0-Ti6Al4V-H0.5",
+     "T3-A2-U1-D0-Ti6Al4V-H0.75",
+     "T3-A2-U2-D0-Ti6Al4V-H0.25",
+     "T3-A2-U2-D0-Ti6Al4V-H0.5",
+     "T4-A0-U2-D0-Ti6Al4V-H0.75",
+     "T4-A1-U0-D0-Ti6Al4V-H0.75",
+     "T4-A1-U1-D0-Ti6Al4V-H0.25",
+     "T4-A1-U1-D0-Ti6Al4V-H0.5",
+     "T4-A1-U1-D0-Ti6Al4V-H0.75",
+     "T4-A1-U2-D0-Ti6Al4V-H0.25",
+     "T4-A1-U2-D0-Ti6Al4V-H0.5",
+     "T4-A2-U0-D0-Ti6Al4V-H0.5",
+     "T4-A2-U0-D0-Ti6Al4V-H0.75",
+     "T4-A2-U1-D0-Ti6Al4V-H0.25",
+     "T4-A2-U1-D0-Ti6Al4V-H0.5",
+     "T4-A2-U1-D0-Ti6Al4V-H0.75",
+     "T4-A2-U2-D0-Ti6Al4V-H0.25",
+     "T4-A2-U2-D0-Ti6Al4V-H0.5",
+     "T5-A0-U2-D0-Ti6Al4V-H0.75",
+     "T5-A1-U0-D0-Ti6Al4V-H0.75",
+     "T5-A1-U1-D0-Ti6Al4V-H0.25",
+     "T5-A1-U1-D0-Ti6Al4V-H0.5",
+     "T5-A1-U1-D0-Ti6Al4V-H0.75",
+     "T5-A1-U2-D0-Ti6Al4V-H0.25",
+     "T5-A1-U2-D0-Ti6Al4V-H0.5",
+     "T5-A2-U0-D0-Ti6Al4V-H0.25",
+     "T5-A2-U0-D0-Ti6Al4V-H0.5",
+     "T5-A2-U0-D0-Ti6Al4V-H0.75",
+     "T5-A2-U1-D0-Ti6Al4V-H0.25",
+     "T5-A2-U1-D0-Ti6Al4V-H0.5",
+     "T5-A2-U1-D0-Ti6Al4V-H0.75",
+     "T5-A2-U2-D0-Ti6Al4V-H0.25",
+     "T5-A2-U2-D0-Ti6Al4V-H0.5",
+     "T6-A0-U2-D0-Ti6Al4V-H0.25",
+     "T6-A0-U2-D0-Ti6Al4V-H0.5",
+     "T6-A0-U2-D0-Ti6Al4V-H0.75",
+     "T6-A1-U0-D0-Ti6Al4V-H0.75",
+     "T6-A1-U1-D0-Ti6Al4V-H0.25",
+     "T6-A1-U1-D0-Ti6Al4V-H0.5",
+     "T6-A1-U1-D0-Ti6Al4V-H0.75",
+     "T6-A1-U2-D0-Ti6Al4V-H0.25",
+     "T6-A1-U2-D0-Ti6Al4V-H0.5",
+     "T6-A2-U0-D0-Ti6Al4V-H0.25",
+     "T6-A2-U0-D0-Ti6Al4V-H0.5",
+     "T6-A2-U0-D0-Ti6Al4V-H0.75",
+     "T6-A2-U1-D0-Ti6Al4V-H0.25",
+     "T6-A2-U1-D0-Ti6Al4V-H0.5",
+     "T6-A2-U1-D0-Ti6Al4V-H0.75",
+     "T6-A2-U2-D0-Ti6Al4V-H0.25",
+     "T6-A2-U2-D0-Ti6Al4V-H0.5"
     ],
     "V_m3": [
-     0.001,
-     0.01,
-     0.1
+     0.001
     ],
     "P_set_Pa": [
      0.005,
@@ -873,7 +1057,7 @@
    "source": {
     "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
     "pointer": "/contexts",
-    "sha256": "b8ba34d60c8ae997dea87cdf3c99ce626c0174f1027e8f7b4622c6ad719ad525"
+    "sha256": "df06ffeb060b109568dd76794dad91d5374a3b04c9d28c130f066b457a705c08"
    },
    "check": "equals the F8 survivor set (f8_robust_candidates_v1 rows)"
   },
@@ -909,7 +1093,8 @@
    "value": {
     "kind": "PARETO_SET",
     "robust_set_values": [
-     0.25
+     0.25,
+     0.5
     ],
     "nominal_pareto_union_values": [
      0.25,
@@ -925,18 +1110,18 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
      "pointer": "/contexts",
-     "sha256": "b8ba34d60c8ae997dea87cdf3c99ce626c0174f1027e8f7b4622c6ad719ad525",
+     "sha256": "df06ffeb060b109568dd76794dad91d5374a3b04c9d28c130f066b457a705c08",
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/7/finding",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     },
     {
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
@@ -963,7 +1148,8 @@
     "kind": "PARETO_SET",
     "robust_set_values": [
      3.0,
-     5.0
+     5.0,
+     10.0
     ],
     "nominal_pareto_union_values": [
      3.0,
@@ -980,12 +1166,12 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
      "pointer": "/contexts",
-     "sha256": "b8ba34d60c8ae997dea87cdf3c99ce626c0174f1027e8f7b4622c6ad719ad525",
+     "sha256": "df06ffeb060b109568dd76794dad91d5374a3b04c9d28c130f066b457a705c08",
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
@@ -1026,12 +1212,12 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
      "pointer": "/contexts",
-     "sha256": "b8ba34d60c8ae997dea87cdf3c99ce626c0174f1027e8f7b4622c6ad719ad525",
+     "sha256": "df06ffeb060b109568dd76794dad91d5374a3b04c9d28c130f066b457a705c08",
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
@@ -1070,7 +1256,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/design_vector/blocks/0/variables/1",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     }
    ],
    "basis": "F1-02; F7 collapses d",
@@ -1146,7 +1332,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/1/question",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     }
    ],
    "basis": "no measured accommodation for any Vyovrinda surface",
@@ -1179,7 +1365,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/9/finding",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -1234,25 +1420,25 @@
     "kind": "PARETO_SET",
     "robust_set_range_N": [
      0.0104033,
-     0.0104758
+     0.0208879
     ],
     "hard_constraint": "HC-09 intake-face drag <= 25 mN (necessary, not sufficient; below the limit on PARAMETRIC values for every nominal Pareto evaluation, so sensitivity only: never counted as met)"
    },
    "units": "N",
    "tolerance": "TPMC statistical SE ~1e-4 relative (F8-02); the TBD surface scenario dominates",
    "evidence_class": "model-derived",
-   "evidence_note": "HC-09 MET_ON_PARAMETRIC_VALUES_SENSITIVITY_ONLY_NOT_MET in hall_c1_reference: 4218, hall_icp_neutralizer: 4218 evaluations (F7; a parametric value is sensitivity information only and never counts as a met hard constraint)",
+   "evidence_note": "HC-09 MET_ON_PARAMETRIC_VALUES_SENSITIVITY_ONLY_NOT_MET in hall_c1_reference: 3945, hall_icp_neutralizer: 3945 evaluations (F7; a parametric value is sensitivity information only and never counts as a met hard constraint)",
    "value_label": "PARETO_SET",
    "source": [
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/hard_constraints/8",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     }
    ],
    "basis": "F8 worst case over the 10 scenarios; spacecraft body / array drag excluded (TBD, OQ-F78-04)",
@@ -1303,17 +1489,17 @@
     {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/candidate_concepts",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     },
     {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     },
     {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -1365,7 +1551,7 @@
     {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/open_owner_questions/3",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -1399,12 +1585,12 @@
     {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/items/2",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     },
     {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/items/14",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     }
    ],
    "basis": "F2 interface model; no open-literature ABEP filter numbers located",
@@ -1428,7 +1614,7 @@
     {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/items/26",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     }
    ],
    "basis": "F2 interface model",
@@ -1448,12 +1634,12 @@
     {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/items/0",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     },
     {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/items/1",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     }
    ],
    "basis": "no concept",
@@ -1475,7 +1661,7 @@
     {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/candidate_concepts/1/ao_applicability",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     },
     {
      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
@@ -1507,7 +1693,7 @@
     {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/repository_placeholders/rule",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md",
@@ -1540,18 +1726,18 @@
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/findings/0/finding",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
      "pointer": "/contexts",
-     "sha256": "b8ba34d60c8ae997dea87cdf3c99ce626c0174f1027e8f7b4622c6ad719ad525",
+     "sha256": "df06ffeb060b109568dd76794dad91d5374a3b04c9d28c130f066b457a705c08",
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     }
    ],
    "basis": "F3 bounded design search; F7 / F8 Pareto",
@@ -1570,40 +1756,148 @@
    "value": {
     "kind": "PARETO_SET",
     "robust_set": {
-     "T6-A1-U2-D0-Ti6Al4V": {
+     "T5-A2-U2-D0-Ti6Al4V-H0.5": {
+      "N_turbo": 5,
+      "A_turbo_m2": 0.2369348826,
+      "R_turbo_m": 0.3171092672,
+      "u_tip_turbo_mps": 299.6228144,
+      "rpm": 9022.716819,
+      "N_drag": 0,
+      "rotor_material": "Ti6Al4V"
+     },
+     "T6-A0-U2-D0-Ti6Al4V-H0.75": {
+      "N_turbo": 6,
+      "A_turbo_m2": 0.1128299365,
+      "R_turbo_m": 0.2865155563,
+      "u_tip_turbo_mps": 290.0115167,
+      "rpm": 9665.813689,
+      "N_drag": 0,
+      "rotor_material": "Ti6Al4V"
+     },
+     "T6-A1-U1-D0-Ti6Al4V-H0.75": {
       "N_turbo": 6,
       "A_turbo_m2": 0.1963495408,
-      "R_turbo_m": 0.25,
-      "u_tip_turbo_mps": 278.5398163,
-      "rpm": 10639.43727,
+      "R_turbo_m": 0.377964473,
+      "u_tip_turbo_mps": 258.3213882,
+      "rpm": 6526.506396,
+      "N_drag": 0,
+      "rotor_material": "Ti6Al4V"
+     },
+     "T6-A1-U2-D0-Ti6Al4V-H0.25": {
+      "N_turbo": 6,
+      "A_turbo_m2": 0.1963495408,
+      "R_turbo_m": 0.2581988897,
+      "u_tip_turbo_mps": 281.1155735,
+      "rpm": 10396.85333,
+      "N_drag": 0,
+      "rotor_material": "Ti6Al4V"
+     },
+     "T6-A1-U2-D0-Ti6Al4V-H0.5": {
+      "N_turbo": 6,
+      "A_turbo_m2": 0.1963495408,
+      "R_turbo_m": 0.2886751346,
+      "u_tip_turbo_mps": 290.6899682,
+      "rpm": 9615.946745,
+      "N_drag": 0,
+      "rotor_material": "Ti6Al4V"
+     },
+     "T6-A2-U1-D0-Ti6Al4V-H0.75": {
+      "N_turbo": 6,
+      "A_turbo_m2": 0.2369348826,
+      "R_turbo_m": 0.4151934916,
+      "u_tip_turbo_mps": 273.9158431,
+      "rpm": 6299.962976,
+      "N_drag": 0,
+      "rotor_material": "Ti6Al4V"
+     },
+     "T6-A2-U2-D0-Ti6Al4V-H0.25": {
+      "N_turbo": 6,
+      "A_turbo_m2": 0.2369348826,
+      "R_turbo_m": 0.2836311511,
+      "u_tip_turbo_mps": 289.1053541,
+      "rpm": 9733.602108,
+      "N_drag": 0,
+      "rotor_material": "Ti6Al4V"
+     },
+     "T6-A2-U2-D0-Ti6Al4V-H0.5": {
+      "N_turbo": 6,
+      "A_turbo_m2": 0.2369348826,
+      "R_turbo_m": 0.3171092672,
+      "u_tip_turbo_mps": 299.6228144,
+      "rpm": 9022.716819,
       "N_drag": 0,
       "rotor_material": "Ti6Al4V"
      }
     },
     "nominal_pareto_union_ids": [
-     "T2-A1-U1-D0-Ti6Al4V",
-     "T2-A1-U2-D0-Ti6Al4V",
-     "T2-A2-U0-D0-Ti6Al4V",
-     "T2-A2-U1-D0-Ti6Al4V",
-     "T3-A1-U1-D0-Ti6Al4V",
-     "T3-A1-U2-D0-Ti6Al4V",
-     "T3-A2-U0-D0-Ti6Al4V",
-     "T3-A2-U1-D0-Ti6Al4V",
-     "T4-A1-U1-D0-Ti6Al4V",
-     "T4-A1-U2-D0-Ti6Al4V",
-     "T4-A2-U0-D0-Ti6Al4V",
-     "T4-A2-U1-D0-Ti6Al4V",
-     "T5-A0-U2-D0-Ti6Al4V",
-     "T5-A1-U1-D0-Ti6Al4V",
-     "T5-A1-U2-D0-Ti6Al4V",
-     "T5-A2-U0-D0-Ti6Al4V",
-     "T5-A2-U1-D0-Ti6Al4V",
-     "T6-A0-U2-D0-Ti6Al4V",
-     "T6-A1-U0-D0-Ti6Al4V",
-     "T6-A1-U1-D0-Ti6Al4V",
-     "T6-A1-U2-D0-Ti6Al4V",
-     "T6-A2-U0-D0-Ti6Al4V",
-     "T6-A2-U1-D0-Ti6Al4V"
+     "T1-A2-U2-D0-Ti6Al4V-H0.5",
+     "T2-A1-U1-D0-Ti6Al4V-H0.5",
+     "T2-A1-U1-D0-Ti6Al4V-H0.75",
+     "T2-A1-U2-D0-Ti6Al4V-H0.5",
+     "T2-A2-U0-D0-Ti6Al4V-H0.75",
+     "T2-A2-U1-D0-Ti6Al4V-H0.25",
+     "T2-A2-U1-D0-Ti6Al4V-H0.5",
+     "T2-A2-U1-D0-Ti6Al4V-H0.75",
+     "T2-A2-U2-D0-Ti6Al4V-H0.25",
+     "T2-A2-U2-D0-Ti6Al4V-H0.5",
+     "T3-A0-U2-D0-Ti6Al4V-H0.75",
+     "T3-A1-U1-D0-Ti6Al4V-H0.25",
+     "T3-A1-U1-D0-Ti6Al4V-H0.5",
+     "T3-A1-U1-D0-Ti6Al4V-H0.75",
+     "T3-A1-U2-D0-Ti6Al4V-H0.25",
+     "T3-A1-U2-D0-Ti6Al4V-H0.5",
+     "T3-A2-U0-D0-Ti6Al4V-H0.75",
+     "T3-A2-U1-D0-Ti6Al4V-H0.25",
+     "T3-A2-U1-D0-Ti6Al4V-H0.5",
+     "T3-A2-U1-D0-Ti6Al4V-H0.75",
+     "T3-A2-U2-D0-Ti6Al4V-H0.25",
+     "T3-A2-U2-D0-Ti6Al4V-H0.5",
+     "T4-A0-U2-D0-Ti6Al4V-H0.75",
+     "T4-A1-U0-D0-Ti6Al4V-H0.75",
+     "T4-A1-U1-D0-Ti6Al4V-H0.25",
+     "T4-A1-U1-D0-Ti6Al4V-H0.5",
+     "T4-A1-U1-D0-Ti6Al4V-H0.75",
+     "T4-A1-U2-D0-Ti6Al4V-H0.25",
+     "T4-A1-U2-D0-Ti6Al4V-H0.5",
+     "T4-A2-U0-D0-Ti6Al4V-H0.5",
+     "T4-A2-U0-D0-Ti6Al4V-H0.75",
+     "T4-A2-U1-D0-Ti6Al4V-H0.25",
+     "T4-A2-U1-D0-Ti6Al4V-H0.5",
+     "T4-A2-U1-D0-Ti6Al4V-H0.75",
+     "T4-A2-U2-D0-Ti6Al4V-H0.25",
+     "T4-A2-U2-D0-Ti6Al4V-H0.5",
+     "T5-A0-U2-D0-Ti6Al4V-H0.75",
+     "T5-A1-U0-D0-Ti6Al4V-H0.75",
+     "T5-A1-U1-D0-Ti6Al4V-H0.25",
+     "T5-A1-U1-D0-Ti6Al4V-H0.5",
+     "T5-A1-U1-D0-Ti6Al4V-H0.75",
+     "T5-A1-U2-D0-Ti6Al4V-H0.25",
+     "T5-A1-U2-D0-Ti6Al4V-H0.5",
+     "T5-A2-U0-D0-Ti6Al4V-H0.25",
+     "T5-A2-U0-D0-Ti6Al4V-H0.5",
+     "T5-A2-U0-D0-Ti6Al4V-H0.75",
+     "T5-A2-U1-D0-Ti6Al4V-H0.25",
+     "T5-A2-U1-D0-Ti6Al4V-H0.5",
+     "T5-A2-U1-D0-Ti6Al4V-H0.75",
+     "T5-A2-U2-D0-Ti6Al4V-H0.25",
+     "T5-A2-U2-D0-Ti6Al4V-H0.5",
+     "T6-A0-U2-D0-Ti6Al4V-H0.25",
+     "T6-A0-U2-D0-Ti6Al4V-H0.5",
+     "T6-A0-U2-D0-Ti6Al4V-H0.75",
+     "T6-A1-U0-D0-Ti6Al4V-H0.75",
+     "T6-A1-U1-D0-Ti6Al4V-H0.25",
+     "T6-A1-U1-D0-Ti6Al4V-H0.5",
+     "T6-A1-U1-D0-Ti6Al4V-H0.75",
+     "T6-A1-U2-D0-Ti6Al4V-H0.25",
+     "T6-A1-U2-D0-Ti6Al4V-H0.5",
+     "T6-A2-U0-D0-Ti6Al4V-H0.25",
+     "T6-A2-U0-D0-Ti6Al4V-H0.5",
+     "T6-A2-U0-D0-Ti6Al4V-H0.75",
+     "T6-A2-U1-D0-Ti6Al4V-H0.25",
+     "T6-A2-U1-D0-Ti6Al4V-H0.5",
+     "T6-A2-U1-D0-Ti6Al4V-H0.75",
+     "T6-A2-U2-D0-Ti6Al4V-H0.25",
+     "T6-A2-U2-D0-Ti6Al4V-H0.5"
     ]
    },
    "units": "-; m^2; m; m/s; rpm",
@@ -1614,18 +1908,18 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
      "pointer": "/contexts",
-     "sha256": "b8ba34d60c8ae997dea87cdf3c99ce626c0174f1027e8f7b4622c6ad719ad525",
+     "sha256": "df06ffeb060b109568dd76794dad91d5374a3b04c9d28c130f066b457a705c08",
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json",
      "pointer": "/design_grid",
-     "sha256": "a559776da6c10c2bb8c1eb66fbff308a7b3634c62275bdd39c17d77e4055d8a1"
+     "sha256": "2353460e8087c5d0911d3b7774cd02440e7c93dfb26629b2bf3c5d25e000980f"
     }
    ],
    "basis": "F3 grid decoded from F3 design ids",
@@ -1650,12 +1944,12 @@
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/materials_excluded",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/open_owner_questions/3",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     }
    ],
    "basis": "F3 evidence rule (ROTOR_MATERIAL_ALLOWABLE_TBD gate)",
@@ -1683,12 +1977,12 @@
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/findings/1/finding",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json",
@@ -1719,12 +2013,12 @@
    "value": {
     "kind": "PARETO_SET",
     "robust_set_range_W": [
-     9.58658,
-     9.75094
+     9.22923,
+     10.2759
     ],
     "nominal_pareto_range_W": [
-     8.378346,
-     14.27457
+     8.36703,
+     16.09038
     ]
    },
    "units": "W",
@@ -1736,17 +2030,17 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/efficiency_basis",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/5",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     }
    ],
    "basis": "DragCompressor model through F3 / F4 / F7",
@@ -1764,12 +2058,12 @@
    "value": {
     "kind": "PARETO_SET",
     "robust_set_range_kg": [
-     10.9072,
-     10.9072
+     7.48849,
+     12.5685
     ],
     "nominal_pareto_range_kg": [
-     4.229072,
-     18.28933
+     2.836417,
+     12.5685
     ],
     "AL-02_allocation_kg": 5.5
    },
@@ -1781,17 +2075,17 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/mass_basis",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/6",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     },
     {
      "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -1820,12 +2114,12 @@
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/parameters/0",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     }
    ],
    "basis": "model evidence domain, not a design value; PROPOSED W1 setpoint 0.2 Pa lies outside it (F3-03)",
@@ -1843,8 +2137,8 @@
    "value": {
     "kind": "PARETO_SET",
     "robust_set_range_K": [
-     315.653,
-     316.96
+     314.894,
+     318.335
     ]
    },
    "units": "K",
@@ -1856,13 +2150,13 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
      "pointer": "/contexts",
-     "sha256": "b8ba34d60c8ae997dea87cdf3c99ce626c0174f1027e8f7b4622c6ad719ad525",
+     "sha256": "df06ffeb060b109568dd76794dad91d5374a3b04c9d28c130f066b457a705c08",
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/thermal_basis",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     }
    ],
    "basis": "F7 nominal-context rows of the robust members",
@@ -1879,8 +2173,8 @@
    "value": {
     "kind": "PARETO_SET",
     "robust_set_range": [
-     0.413236,
-     0.670738
+     0.411034,
+     0.679596
     ]
    },
    "units": "-",
@@ -1891,13 +2185,13 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
      "pointer": "/contexts",
-     "sha256": "b8ba34d60c8ae997dea87cdf3c99ce626c0174f1027e8f7b4622c6ad719ad525",
+     "sha256": "df06ffeb060b109568dd76794dad91d5374a3b04c9d28c130f066b457a705c08",
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/findings/3/finding",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     }
    ],
    "basis": "the delivered flow keeps the inlet composition; the outlet partial-pressure composition is O-depleted (F3-04)",
@@ -1915,14 +2209,10 @@
    "value": {
     "kind": "PARETO_SET",
     "robust_set_values": [
-     0.001,
-     0.01,
-     0.1
+     0.001
     ],
     "nominal_pareto_union_values": [
-     0.001,
-     0.01,
-     0.1
+     0.001
     ]
    },
    "units": "m^3",
@@ -1933,18 +2223,18 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
      "pointer": "/contexts",
-     "sha256": "b8ba34d60c8ae997dea87cdf3c99ce626c0174f1027e8f7b4622c6ad719ad525",
+     "sha256": "df06ffeb060b109568dd76794dad91d5374a3b04c9d28c130f066b457a705c08",
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/search_variables/0",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     }
    ],
    "basis": "volume trades the mass proxy against shaft-frequency ripple attenuation; the plenum is not an orbit-scale buffer at <= 0.1 Pa (F4-05)",
@@ -1981,18 +2271,18 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
      "pointer": "/contexts",
-     "sha256": "b8ba34d60c8ae997dea87cdf3c99ce626c0174f1027e8f7b4622c6ad719ad525",
+     "sha256": "df06ffeb060b109568dd76794dad91d5374a3b04c9d28c130f066b457a705c08",
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/2/finding",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     }
    ],
    "basis": "robust members exist only at P_set 0.01 Pa; all-state-feasible contexts exist for 0.005-0.1 Pa",
@@ -2016,7 +2306,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -2049,7 +2339,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/0",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     }
    ],
    "basis": "F4-P-01 = F1 T_wall",
@@ -2094,12 +2384,12 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/5",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/10/finding",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     }
    ],
    "basis": "F4-P-06; owner GP-D03",
@@ -2107,7 +2397,7 @@
    "evidence_to_advance": [
     "coupon / witness evidence of the selected lining (GP-D03)"
    ],
-   "note": "robust members lose feasibility in most scenarios under WALL-TI64-DB (F8-04)"
+   "note": "robust members lose feasibility in 2-5 of the 10 surface scenarios under WALL-TI64-DB (F8-04)"
   },
   {
    "id": "AFC-UP-PL-07",
@@ -2122,7 +2412,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/4",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     }
    ],
    "basis": "F4-P-05",
@@ -2139,11 +2429,11 @@
    "value": {
     "kind": "PARETO_SET",
     "robust_set_worst_case_range_mg_s": [
-     0.00813428,
-     0.00840947
+     0.000449936,
+     0.0180906
     ],
-    "all_state_single_setpoint_frontier_mg_s": 0.1027382,
-    "all_state_scheduled_frontier_mg_s": 0.142955,
+    "all_state_single_setpoint_frontier_mg_s": 0.1100573,
+    "all_state_scheduled_frontier_mg_s": 0.13075,
     "owner_ground_characterization_range_mg_s": [
      0.38,
      3.2
@@ -2158,22 +2448,22 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/1/finding",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/findings/0/finding",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/findings/6/finding",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     },
     {
      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
@@ -2205,7 +2495,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/15",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     },
     {
      "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -2243,17 +2533,17 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/search_variables/1",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/pareto",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     },
     {
      "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
      "pointer": "/rows/4/blocking_item",
-     "sha256": "1db1137ce1efdaeabb87ad59232f27478938e2036a806dbce51213f7cbc5e9c6"
+     "sha256": "7599d59576ca9b9c8215b6fad7de1548c727f872df20adc0f076034ddb0a0582"
     }
    ],
    "basis": "F4 transient Pareto over (Kp, Ti, V, compressor, intake)",
@@ -2276,12 +2566,12 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/7",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/findings/8/finding",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     }
    ],
    "basis": "F4-P-08",
@@ -2303,7 +2593,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/8",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     }
    ],
    "basis": "F4-P-09",
@@ -2330,17 +2620,17 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/steady/conductance_demand",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/findings/2/finding",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/1",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     }
    ],
    "basis": "F4-03: the H2-3 analog IF-A5 pressure 5.74-1216 Pa lies above the compressor domain cap",
@@ -2363,12 +2653,12 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/68",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/9",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     }
    ],
    "basis": "F5 IFD-F4-01..05; F4-P-10",
@@ -2385,14 +2675,14 @@
    "name": "feed-state records offered to H-1 (mdot_s, P, T, x_s, transient quality)",
    "value": {
     "kind": "PARETO_SET",
-    "n_records": 185,
+    "n_records": 463,
     "P_range_Pa": [
      0.005,
      0.05
     ],
     "mdot_total_range_mg_s_design_state": [
-     0.101854,
-     0.446803
+     0.0702635,
+     0.549203
     ],
     "T_K": [
      350.0
@@ -2409,7 +2699,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/offered_to_h1",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     }
    ],
    "basis": "F4 transient Pareto members at the design state h200_f150 (single-state values; the all-state frontier is AFC-UP-PL-08)",
@@ -2462,7 +2752,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/0",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "A9.1 A9-03-planes; ICD ICP-01; H2-1 H21-09",
@@ -2508,7 +2798,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/1",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-1 H21-01 (intersection of A_CP and A_jd); A9-07 REV-12 nominal flow basis",
@@ -2560,7 +2850,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/2",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-1 H21-02",
@@ -2603,7 +2893,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/3",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-1 H21-03 (corners of H1F-CH-02 x H1F-CH-03)",
@@ -2641,7 +2931,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/4",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-1 H21-04 (corners of H1F-CH-02 x H1F-CH-03)",
@@ -2653,7 +2943,7 @@
    "origin": {
     "lane": "F5 fo_a9_7_f5_h1_freeze_candidate",
     "id": "H1F-CH-05",
-    "n_origin_sources": 4,
+    "n_origin_sources": 2,
     "origin_sources": [
      {
       "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
@@ -2664,16 +2954,6 @@
       "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
       "pointer": "/revision_register/0/new/value",
       "sha256": "b428565299c1c41487d9ffa50c174986d2d52c544539f89ca21b7bdbc2ae44fa"
-     },
-     {
-      "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
-      "pointer": "/",
-      "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16"
-     },
-     {
-      "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
-      "pointer": "/",
-      "sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6"
      }
     ]
    }
@@ -2694,7 +2974,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/5",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-1 H21-05 (corners of H1F-CH-02 x H1F-CH-03)",
@@ -2732,7 +3012,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/6",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-1 H21-06 (corners of H1F-CH-02 x H1F-CH-03)",
@@ -2772,7 +3052,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/7",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "owner row 75 (H2-1 Q3)",
@@ -2810,7 +3090,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/8",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-1 H21-07 lower end",
@@ -2853,7 +3133,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/9",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-1 H21-08 = L/h window x h window",
@@ -2889,7 +3169,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/10",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "M16 v4 row 9 blocking item; no Hall performance criterion is available (credible set empty); A9.14 F5-OQ-01 / F5-OQ-02 (selection rule owner-given, point not yet selected)",
@@ -2907,7 +3187,7 @@
      {
       "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
       "pointer": "/rows/8/blocking_item",
-      "sha256": "1db1137ce1efdaeabb87ad59232f27478938e2036a806dbce51213f7cbc5e9c6"
+      "sha256": "7599d59576ca9b9c8215b6fad7de1548c727f872df20adc0f076034ddb0a0582"
      },
      {
       "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
@@ -2946,7 +3226,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/11",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "owner row 73: nominal sizing ~1.3 mg/s; characterization ~0.38-3.2 mg/s; no flight-qualification claim before measurement",
@@ -2983,7 +3263,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/12",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "owner row 135; prereg framework GD-03",
@@ -3021,7 +3301,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/13",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-1 H21-09; HW-H1-06",
@@ -3058,7 +3338,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/14",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "owner row 75: allowed only before score-bearing S1",
@@ -3095,7 +3375,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/15",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "row 75 / GD-02; H2-1 interface demand to H2-3 (annulus = channel h, d_mean); P4 ID-03 PENDING",
@@ -3141,7 +3421,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/16",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "A9.2 sec. 3: 316L allowed only as engineering / shakedown material, coupon candidate or low-temperature development component",
@@ -3178,7 +3458,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/17",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "A9.2 sec. 3-4 (do not select W, Mo, Pt etc. merely for melting point); P4: every candidate INCOMPLETE_EVIDENCE",
@@ -3231,7 +3511,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/18",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "A9.2 sec. 4: thermal-design problem first; objective = reduce the actual anode operating temperature, then select a material with T_operating <= T_validated,continuous - 50 K",
@@ -3283,7 +3563,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/19",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "row 87: allowable = validated continuous-use limit - 50 K; no new arbitrary anode limit (A9.2 sec. 4)",
@@ -3322,7 +3602,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/20",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "P4 findings; P3 closure statuses UNRESOLVED",
@@ -3363,7 +3643,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/21",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-3 H23-11",
@@ -3398,7 +3678,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/22",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "owner row 81",
@@ -3431,7 +3711,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/23",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "HW-H1-10 (AOL-RC-01)",
@@ -3465,7 +3745,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/24",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "owner rows 74, 78; A9-07 REV-07",
@@ -3508,7 +3788,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/25",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-1 H21-12 (T2 + T3 provision); the H2-1 T2 option that owner row 74 accepted is defined with a single inner + single outer coil",
@@ -3553,7 +3833,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/26",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "owner row 74; H2-1 H21-13",
@@ -3631,7 +3911,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/27",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "row 79 removes the central bore; A9-07 REV-01 lumped-circuit recomputation (floor by h)",
@@ -3675,7 +3955,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/28",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-1 H21-11 (chamfer is shielded-thruster practice, SRC-MASMI p. 5)",
@@ -3718,7 +3998,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/29",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-1 RP-1 f_NI 2 lumped circuit",
@@ -3762,7 +4042,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/30",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "owner row 80: engineering factors until verified",
@@ -3803,7 +4083,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/31",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-1 H21-24; mass_power v2 A9B-16 evidence floor",
@@ -3855,7 +4135,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/32",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "owner row 82: traceable to coil current and temperature",
@@ -3892,7 +4172,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/33",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "owner row 84",
@@ -3924,7 +4204,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/34",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "M16 v4 row 10; hallthruster_bridge/bfield (P5 only)",
@@ -3941,7 +4221,7 @@
      {
       "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
       "pointer": "/rows/9/blocking_item",
-      "sha256": "1db1137ce1efdaeabb87ad59232f27478938e2036a806dbce51213f7cbc5e9c6"
+      "sha256": "7599d59576ca9b9c8215b6fad7de1548c727f872df20adc0f076034ddb0a0582"
      },
      {
       "path": "hallthruster_bridge/bfield/p5_vacuum_Br_centerline_1p6kW.csv",
@@ -3970,7 +4250,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/35",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-1 H21-16",
@@ -4019,7 +4299,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/36",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-1 H21-14",
@@ -4064,7 +4344,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/37",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "B headroom 1.5 (row 80) x H1F-BZ-03 upper end",
@@ -4104,7 +4384,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/38",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-1 bz_target_envelope",
@@ -4144,7 +4424,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/39",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "owner row 67; GD-11 (before HI-LOCK2); ICD ICP-31",
@@ -4190,7 +4470,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/40",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "row 78; HW-MC-02",
@@ -4230,7 +4510,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/41",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-1 lumped reluctance + explicit NI margin factor",
@@ -4279,7 +4559,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/42",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-1 coil_design cases RP-1 f_NI=1, f_NI=2, worst-case assumptions",
@@ -4326,7 +4606,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/43",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-1 interface demand to H2-4",
@@ -4365,7 +4645,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/44",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-1 H21-18 (copper 20 C f_NI 1 .. Ni-clad conductor at its class temperature, worst case)",
@@ -4412,7 +4692,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/45",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-1 interface demand to H2-4 (the window is a published analog supply rating, not a Vyovrinda supply)",
@@ -4451,7 +4731,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/46",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-1 (trim is a provision; its NI is not sized)",
@@ -4485,7 +4765,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/47",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "row 77; A9.14 OQ-A907-04 (S8.16)",
@@ -4522,7 +4802,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/48",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "owner row 77; REV-04",
@@ -4559,7 +4839,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/49",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "owner row 77",
@@ -4595,7 +4875,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/50",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "REV-04; row 86",
@@ -4641,7 +4921,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/51",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "A9-07 K4; A9.2 ICP_COUPLED_THERMAL",
@@ -4685,7 +4965,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/52",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "A9.2 sec. 8: the two figures are different bases, never alternative estimates of the same mass; only the complete coil mass is booked",
@@ -4732,7 +5012,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/53",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-1 H21-27; follows the H1F-MC-02 arrangement (OPEN)",
@@ -4777,7 +5057,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/54",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "owner row 76",
@@ -4814,7 +5094,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/55",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "owner row 76",
@@ -4851,7 +5131,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/56",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "row 76 + row 86; uncoupled-sensitivity Curie check PI = FAIL (REV-44, reported UNRESOLVED)",
@@ -4891,7 +5171,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/57",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "row 76 + row 86",
@@ -4935,7 +5215,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/58",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "HW-H1-04",
@@ -4971,7 +5251,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/59",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "row 84; OQ-A907-08",
@@ -5015,7 +5295,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/60",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-1 materials O_O2_exposure",
@@ -5079,7 +5359,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/61",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "P4 framework (APP-ANODE)",
@@ -5121,7 +5401,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/62",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "owner row 86: >= 50 K below each validated continuous-use limit + 20 % heat-load margin",
@@ -5158,7 +5438,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/63",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "owner row 85; A9.12 OQ-A907-06 (S5.4): isolated mount + dedicated radiator",
@@ -5202,7 +5482,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/64",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "A9.2 sec. 5-7 (no thermal PASS from a negligible-coupling calculation)",
@@ -5243,7 +5523,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/65",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-1 H21-09; HW-H1-06; ICD standing fact 'nothing upstream of HALL_INLET_Z0 changes between configurations'",
@@ -5285,7 +5565,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/66",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "A9-07 REV-65 (no upstream pre-ionizer module in A9)",
@@ -5326,7 +5606,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/67",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-1 interface demand to H2-3 (= channel windows)",
@@ -5360,7 +5640,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/68",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "H2-3 pressure_budget (PENDING H2-1)",
@@ -5401,7 +5681,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/69",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "A9.7 F4 / F5",
@@ -5437,7 +5717,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/70",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "A9.1 A9-03-planes; REV-03 / REV-66",
@@ -5479,16 +5759,16 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/71",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
-   "basis": "owner row 79; A9.19 (no conventional hollow cathode in flight: the ICP neutralizer is the only electron source); A9.20 (C1 ground-only, mounted off H-1 on the bench)",
+   "basis": "owner row 79",
    "freeze_status": "FREEZE_CANDIDATE",
    "evidence_to_advance": [],
    "origin": {
     "lane": "F5 fo_a9_7_f5_h1_freeze_candidate",
     "id": "H1F-EX-02",
-    "n_origin_sources": 4,
+    "n_origin_sources": 2,
     "origin_sources": [
      {
       "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
@@ -5499,16 +5779,6 @@
       "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
       "pointer": "/revision_register/2/new/requirement",
       "sha256": "b428565299c1c41487d9ffa50c174986d2d52c544539f89ca21b7bdbc2ae44fa"
-     },
-     {
-      "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
-      "pointer": "/",
-      "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16"
-     },
-     {
-      "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
-      "pointer": "/",
-      "sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6"
      }
     ]
    }
@@ -5526,7 +5796,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/72",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "ICD ICP-02",
@@ -5561,7 +5831,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/73",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "ICD ID-13 (PARTIAL)",
@@ -5595,7 +5865,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/74",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "REV-17; ICD ICP-32 (unmagnetized ICP, no dedicated ICP magnet, v1)",
@@ -5607,7 +5877,7 @@
    "origin": {
     "lane": "F5 fo_a9_7_f5_h1_freeze_candidate",
     "id": "H1F-EX-05",
-    "n_origin_sources": 5,
+    "n_origin_sources": 3,
     "origin_sources": [
      {
       "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
@@ -5623,16 +5893,6 @@
       "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
       "pointer": "/interface_demands/12/status",
       "sha256": "8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c"
-     },
-     {
-      "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
-      "pointer": "/",
-      "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16"
-     },
-     {
-      "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
-      "pointer": "/",
-      "sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6"
      }
     ]
    }
@@ -5650,7 +5910,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/75",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "ICD ICP-07",
@@ -5685,7 +5945,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/76",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "A9.2 sec. 5-6; ICD ICP-47",
@@ -5725,7 +5985,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/77",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "HW-H1-08; H2-1 H21-29",
@@ -6618,7 +6878,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/hard_constraints/4",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     }
    ],
    "basis": "I_e,cap = I_on - I_off (discharge OFF, signed; A9.4 P1Q-10 / A9.5 P1Q-16)",
@@ -6897,7 +7157,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/53",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "basis": "A9-02 A902-31; H1F-CO-14",
@@ -7180,8 +7440,8 @@
    "value": {
     "kind": "PARETO_SET",
     "nominal_pareto_range_W": [
-     8.378346,
-     14.27457
+     8.36703,
+     16.09038
     ],
     "official_ledger": "TBD"
    },
@@ -7193,7 +7453,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/system_evaluation/parametric_P_bus_lower_bound_W_range",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     },
     {
      "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
@@ -7862,12 +8122,12 @@
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/thermal_basis",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/0",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     }
    ],
    "basis": "UPSTREAM_ICD G-07",
@@ -7892,7 +8152,7 @@
    "units": "-",
    "tolerance": "n/a (decision / rule)",
    "evidence_class": "owner-allocation",
-   "evidence_note": "owner baseline atmospheric start sequence; maximum one initial attempt + two retries under registered dwell / thermal limits; no C1-selected flight variant (A9.19: no conventional hollow cathode; the C1 heater / keeper sequence is a ground bench item, A9.20)",
+   "evidence_note": "owner baseline atmospheric start sequence; maximum one initial attempt + two retries under registered dwell / thermal limits; a C1-selected variant uses its own qualified heater / keeper sequence",
    "source": [
     {
      "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -7926,23 +8186,9 @@
      "sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
      "pinned": true,
      "note": "A9.10 P1Q-02 (S3.1)"
-    },
-    {
-     "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
-     "pointer": "/",
-     "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
-     "pinned": true,
-     "note": "A9.19 A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY (verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)"
-    },
-    {
-     "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
-     "pointer": "/",
-     "sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
-     "pinned": true,
-     "note": "A9.20 C1_GROUND_ONLY_LABORATORY_REFERENCE (verbatim docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md sha256 2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c)"
     }
    ],
-   "basis": "SEQUENCE OWNER_DECIDED (A9.14 OD5, S9.9); dwell / thermal limits PENDING_REGISTRATION from the actual hardware (A9.10 P1Q-02; no number set for the ICP-first sequence - the 120 s / 360 s C1 dwell booking applies to the ground-only C1 bench reference, never to flight (A9.20)); A9-02 template carried as the implementation reference",
+   "basis": "SEQUENCE OWNER_DECIDED (A9.14 OD5, S9.9); dwell / thermal limits PENDING_REGISTRATION from the actual hardware (A9.10 P1Q-02; no number set for the ICP-first sequence - the 120 s / 360 s C1 dwell booking applies to the C1-selected variant only); A9-02 template carried as the implementation reference",
    "freeze_status": "OPEN",
    "evidence_to_advance": [
     "measured start-up transient record (1 ms gate)",
@@ -7958,15 +8204,6 @@
     "sequence_status": "OWNER_DECIDED (A9.14 OD5)",
     "dwell_thermal_limits": "PENDING_REGISTRATION (A9.10 P1Q-02; NOT_EVALUATED_REGISTRATION until registered)",
     "why_open": "the decided sequence becomes a design value only with the registered dwell / thermal limits and the measured start-up transient (A9.16 repair F8)"
-   },
-   "a9_19": {
-    "decisions": [
-     "A9.19",
-     "A9.20"
-    ],
-    "flight_start_variants": [
-     "ICP_NEUTRALIZER_BASELINE"
-    ]
    }
   },
   {
@@ -8037,12 +8274,12 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/metric_definitions",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -8136,7 +8373,7 @@
    "section": "SYSTEM",
    "subsection": "xe",
    "name": "Xe functional scope",
-   "value": "RFP-required Xenon propulsion capability (RFP-P17-05 'an extra input system to take care any problems on board unforeseen problems'; RFP-P18-08 two separate tanks) provided as the XE_CONTINGENCY supply mode (contingency / emergency role, A9.19) of the single Hall + single RF/ICP neutralizer; ambient atmospheric propellant (180-230 km) is the AIR_PRIMARY mode; separate ambient-air and Xe tanks / paths (not a premix); no hollow cathode and no C1 Xe branch in flight (A9.20: C1 ground-only); events, duration and flow TBD",
+   "value": "RFP-required system Xenon propulsion capability in both configurations, independent of C1: the system supports ambient atmospheric propellant (180-230 km) AND Xenon as separate selectable operating modes with separate ambient-air and Xe tanks / paths (not a premix); Xe is not a contingency; events, duration and flow TBD",
    "units": "-",
    "tolerance": "n/a (decision / rule)",
    "evidence_class": "owner-allocation",
@@ -8185,23 +8422,9 @@
      "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
      "pointer": "/propellant_policy",
      "sha256": "d7b23b90e86221124fcbf04b6964e099213c5131d074cd078ba8aecc26b8ed9a"
-    },
-    {
-     "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
-     "pointer": "/",
-     "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
-     "pinned": true,
-     "note": "A9.19 A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY (verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)"
-    },
-    {
-     "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
-     "pointer": "/",
-     "sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
-     "pinned": true,
-     "note": "A9.20 C1_GROUND_ONLY_LABORATORY_REFERENCE (verbatim docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md sha256 2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c)"
     }
    ],
-   "basis": "owner row 6; A9.15 governing_rule; A9.14 XA9Q-07 / OD6 as amended by A9.15; RFP content owner-stated, pending registration (AG-15); A9.19 amends A9.15 on the ROLE of Xe (contingency / emergency; capability required)",
+   "basis": "owner row 6; A9.15 governing_rule; A9.14 XA9Q-07 / OD6 as amended by A9.15; RFP content owner-stated, pending registration (AG-15)",
    "freeze_status": "TBD_AFTER_EVIDENCE",
    "evidence_to_advance": [
     "mission mode profile (XV2-18 events / duration / flow)",
@@ -8219,19 +8442,7 @@
    },
    "current_sources": [
     "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json/propellant_policy"
-   ],
-   "a9_19": {
-    "decisions": [
-     "A9.19",
-     "A9.20"
-    ],
-    "supply_modes": [
-     "AIR_PRIMARY",
-     "XE_CONTINGENCY"
-    ],
-    "xe_path_role": "CONTINGENCY_EMERGENCY",
-    "icp_gas_mode": "UNCHANGED (A9.1; A9.19 does not alter the ICP feed-gas baseline)"
-   }
+   ]
   },
   {
    "id": "AFC-SY-XE-02",
@@ -8710,7 +8921,7 @@
  "architecture_gates": [
   {
    "id": "AG-01",
-   "gate": "RVM rows (27 system requirements; flight configuration hall_icp_neutralizer, C1 column if any = ground reference)",
+   "gate": "RVM rows (27 system requirements, both configurations)",
    "current_status": "hall_icp_neutralizer: NOT_EVALUATED 24, INCOMPLETE_EVIDENCE 3; hall_c1_reference: NOT_EVALUATED 24, INCOMPLETE_EVIDENCE 3",
    "evidence_sufficient_for_freeze": false,
    "blocking_evidence": {
@@ -8721,7 +8932,7 @@
       "requirement_frozen": false,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_c1_reference": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1:HI-ABS [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-TABS [PLAN_OR_FRAMEWORK], transport_ensemble_v0:members [VALIDATED_ANALYSIS]",
@@ -8737,7 +8948,7 @@
       "requirement_frozen": false,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_c1_reference": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1:DQ-HI-TABS [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-SUST [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:HI-ABS [PLAN_OR_FRAMEWORK], transport_ensemble_v0:members [VALIDATED_ANALYSIS]",
@@ -8753,7 +8964,7 @@
       "requirement_frozen": false,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_c1_reference": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1:HI-ABS [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-TABS [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PBUS [PLAN_OR_FRAMEWORK], transport_ensemble_v0:members [VALIDATED_ANALYSIS]",
@@ -8769,7 +8980,7 @@
       "requirement_frozen": false,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_c1_reference": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: fo_a9_6_mass_power_integration_v2:power.configurations.hall_icp_neutralizer.rfp_gate_1ms [BUDGET_EVALUATION], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PBUS [PLAN_OR_FRAMEWORK]",
@@ -8785,7 +8996,7 @@
       "requirement_frozen": true,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_c1_reference": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: fo_a9_6_mass_power_integration_v2:power.configurations.hall_icp_neutralizer.phases.steady.design_allocation_1350W [BUDGET_EVALUATION], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PALLOC [PLAN_OR_FRAMEWORK]",
@@ -8801,7 +9012,7 @@
       "requirement_frozen": false,
       "status": {
        "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
-       "ground_reference (hall_c1_reference)": "INCOMPLETE_EVIDENCE"
+       "hall_c1_reference": "INCOMPLETE_EVIDENCE"
       },
       "rule": "R6-INCOMPLETE",
       "blocking": "evaluation run with evidenced terms but inconclusive: fo_a9_6_mass_power_integration_v2:rollups[hall_icp_neutralizer] (3 evidenced term(s))",
@@ -8817,7 +9028,7 @@
       "requirement_frozen": true,
       "status": {
        "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
-       "ground_reference (hall_c1_reference)": "INCOMPLETE_EVIDENCE"
+       "hall_c1_reference": "INCOMPLETE_EVIDENCE"
       },
       "rule": "R6-INCOMPLETE",
       "blocking": "evaluation run with evidenced terms but inconclusive: fo_a9_6_mass_power_integration_v2:rollups[hall_icp_neutralizer] (3 evidenced term(s))",
@@ -8833,7 +9044,7 @@
       "requirement_frozen": false,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_c1_reference": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1:HI-CMP [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-SUST [PLAN_OR_FRAMEWORK], transport_ensemble_v0:members [VALIDATED_ANALYSIS]",
@@ -8849,7 +9060,7 @@
       "requirement_frozen": false,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_c1_reference": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1:HI-AO [PLAN_OR_FRAMEWORK], transport_ensemble_v0:members [VALIDATED_ANALYSIS]",
@@ -8865,7 +9076,7 @@
       "requirement_frozen": false,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_c1_reference": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1:HI-CMP [PLAN_OR_FRAMEWORK]",
@@ -8881,7 +9092,7 @@
       "requirement_frozen": false,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_c1_reference": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1 [PLAN_OR_FRAMEWORK]",
@@ -8897,7 +9108,7 @@
       "requirement_frozen": false,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_c1_reference": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: ao_lifetime_register_v5:AOL-LF-02 [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-LIFE [PLAN_OR_FRAMEWORK], transport_ensemble_v0:members [VALIDATED_ANALYSIS], hall_icp_validation_inputs_v1:VI-LF-05 [PLAN_OR_FRAMEWORK]",
@@ -8913,7 +9124,7 @@
       "requirement_frozen": false,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_c1_reference": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: transport_ensemble_v0:members [VALIDATED_ANALYSIS], A9_01_hall_icp_prereg_framework_v1:DQ-HI-LIFE [PLAN_OR_FRAMEWORK]",
@@ -8929,7 +9140,7 @@
       "requirement_frozen": false,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_c1_reference": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1:DQ-HI-IGN [PLAN_OR_FRAMEWORK], hall_icp_validation_inputs_v1:VI-SU-01 [PLAN_OR_FRAMEWORK], hall_icp_validation_inputs_v1:VI-SU-02 [PLAN_OR_FRAMEWORK]",
@@ -8945,7 +9156,7 @@
       "requirement_frozen": false,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_c1_reference": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: p1_icp_bench_v1:P1-S7 [PLAN_OR_FRAMEWORK], icp_neutralizer_icd_v1:ICP-45 [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-ECAP [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-VCPL [PLAN_OR_FRAMEWORK]",
@@ -8961,7 +9172,7 @@
       "requirement_frozen": false,
       "status": {
        "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
-       "ground_reference (hall_c1_reference)": "INCOMPLETE_EVIDENCE"
+       "hall_c1_reference": "INCOMPLETE_EVIDENCE"
       },
       "rule": "R6-INCOMPLETE",
       "blocking": "evaluation run with evidenced terms but inconclusive: p4_anode_materials_v1:candidate_screening_states (21 evidenced term(s))",
@@ -8977,7 +9188,7 @@
       "requirement_frozen": true,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_c1_reference": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: p3_coupled_thermal_v2:fail_closed_evaluations [FRAMEWORK_EVALUATION]",
@@ -8993,7 +9204,7 @@
       "requirement_frozen": false,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_c1_reference": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: RFQ_A9_V2 [PROCUREMENT]",
@@ -9009,7 +9220,7 @@
       "requirement_frozen": false,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_c1_reference": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: bus_power_boundary_a9_v1 [PLAN_OR_FRAMEWORK]",
@@ -9025,7 +9236,7 @@
       "requirement_frozen": false,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_c1_reference": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P18-12:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]",
@@ -9041,7 +9252,7 @@
       "requirement_frozen": false,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_c1_reference": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P19-04:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT], ao_lifetime_register_v5:AOL-EX-01 [PLAN_OR_FRAMEWORK]",
@@ -9057,7 +9268,7 @@
       "requirement_frozen": false,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_c1_reference": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: ao_lifetime_register_v5:AOL-EX-01 [PLAN_OR_FRAMEWORK], rfp_registration_v1:RFP-P19-06-b:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT], A9_01_hall_icp_prereg_framework_v1:HI-ABS [PLAN_OR_FRAMEWORK], rfp_registration_v1:RFP-P19-06-d:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]",
@@ -9073,7 +9284,7 @@
       "requirement_frozen": false,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_c1_reference": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P20-01:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]",
@@ -9089,7 +9300,7 @@
       "requirement_frozen": false,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_c1_reference": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P20-03:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT], A9_01_hall_icp_prereg_framework_v1:HI-AO [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-SUST [PLAN_OR_FRAMEWORK], transport_ensemble_v0:members [VALIDATED_ANALYSIS]",
@@ -9105,7 +9316,7 @@
       "requirement_frozen": false,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_c1_reference": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P20-04:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]",
@@ -9121,7 +9332,7 @@
       "requirement_frozen": false,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_c1_reference": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P30-01:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT], rfp_registration_v1:RFP-P27-01:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]",
@@ -9137,7 +9348,7 @@
       "requirement_frozen": true,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_c1_reference": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: p3_coupled_thermal_v2 [PLAN_OR_FRAMEWORK]",
@@ -9205,7 +9416,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/T",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     }
    ],
    "evidence_plan_steps": [
@@ -9295,12 +9506,12 @@
     {
      "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
      "pointer": "/status",
-     "sha256": "bc01860e119db9bb799fc04dd2afa44e833dd885b25a5820d7246047fbde6d37"
+     "sha256": "4c41b13c45b7f332845c1df12a1351e8925e721e14179f053bbb8c196f6f182a"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/I_e_margin",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     }
    ],
    "evidence_plan_steps": [
@@ -9348,7 +9559,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/Q_reject",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     }
    ],
    "evidence_plan_steps": [
@@ -9478,7 +9689,7 @@
     {
      "path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
      "pointer": "/status",
-     "sha256": "4a2789957ab42ca31562926910c15668be0b63e5b87608cfec5025883938ae94"
+     "sha256": "cccf65b2d93a96b2640be6bfd933e6658c72f0fb4207ee444e9c052b2ff9e3da"
     }
    ],
    "evidence_plan_steps": [
@@ -9564,7 +9775,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/P_bus",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     }
    ],
    "evidence_plan_steps": [
@@ -9608,7 +9819,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/m_wet",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     }
    ],
    "evidence_plan_steps": [
@@ -9659,7 +9870,7 @@
      3.2
     ],
     "characterization_coverage_role": "CHARACTERIZATION_COVERAGE_ONLY_NOT_A_PASS_FAIL_REQUIREMENT",
-    "engineering_warning": "the parametric upstream frontier (0.1027382 mg/s all-state, single setpoint) is low relative to the ground-characterization envelope: an engineering warning, not a demonstrated requirement failure (A9.13 owner_statements.flight_flow_requirement)",
+    "engineering_warning": "the parametric upstream frontier (0.1100573 mg/s all-state, single setpoint) is low relative to the ground-characterization envelope: an engineering warning, not a demonstrated requirement failure (A9.13 owner_statements.flight_flow_requirement)",
     "evaluator": "a9_16_f9.ag12_feed_state_sufficiency (fail closed; refuses a fixed mg/s gate)",
     "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
    },
@@ -9667,17 +9878,17 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/strict_mode",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/strict_mode/status",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/1",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -9737,12 +9948,12 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/D_spacecraft",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/hard_constraints/7",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -9793,12 +10004,12 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/article_freeze_state",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     },
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/freeze_rollup",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    ],
    "evidence_plan_steps": [
@@ -10131,24 +10342,25 @@
    "finding": "F3-01 silent Gaede clipping",
    "module": "abep_sim/compressor.py DragCompressor._run_once",
    "issue": "K = max(min(K, K0), 1.0) hides an overloaded stage (throughput above S0 p): the module reports K = 1 instead of a non-convergence / overload status (CLAUDE.md rule 3: no silent fallbacks)",
-   "magnitude": "15552 of 15552 drag-stage design evaluations in F3 have an unclipped K < 1 (F3-01)",
+   "magnitude": "46656 of 46656 drag-stage design evaluations in F3 have an unclipped K < 1 (F3-01)",
    "golden_impact": "unknown: a status flag alone does not change values; refusing clipped states would move any golden that passes through a clipped stage (to be checked at implementation)",
    "owner_question": "F9-OQ-04 (new)",
    "sources": [
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/findings/0",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/gates/6",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     },
     {
      "path": "abep_sim/compressor.py",
-     "locator": "K_diag = max(min(K_raw, K0), 1.0)",
-     "sha256": "7a8dfe5b64d269474863410f6e42a886c6d3f57015c05491880d65251dfafc75"
+     "locator": "# MCC-02 (owner decision A9.9 S2.5, finding F3-01): Gaede stage-capacity domain.",
+     "sha256": "7a8dfe5b64d269474863410f6e42a886c6d3f57015c05491880d65251dfafc75",
+     "note": "the clip quoted in 'issue' (K = max(min(K, K0), 1.0)) was removed by the A9.9 S2.5 step-2 change; the locator points at its replacement"
     }
    ],
    "required": [
@@ -10168,14 +10380,14 @@
    "finding": "F3-02 uncited rotor allowable",
    "module": "abep_sim/compressor.py DragCompressor.u_max (rotor_ok) with abep_sim/materials.py DB yield",
    "issue": "the module's tip-speed cap uses an uncited DB yield (880 MPa for Ti-6Al-4V) and an uncited safety factor 2.0; with the cited A-basis Fty 827 MPa the cap is 305.5 m/s vs the module's 315.2 m/s, so size_for can return rotors the F3 search rejects",
-   "magnitude": "rotor stress: with the cited Ti-6Al-4V A-basis Fty 827 MPa and the module safety factor 2 (uncited), sigma = rho u^2 caps the tip speed at 305.5 m/s; the module's own rotor_ok (uncited DB yield 880 MPa) allows 315.2 m/s, so size_for can return rotors this search rejects. Both are below the 500 m/s published TMP practice (Al alloys)",
+   "magnitude": "rotor stress: with the cited Ti-6Al-4V A-basis Fty 827 MPa and the module safety factor 2 (uncited), sigma = rho u^2 caps the tip speed at 305.5 m/s; the module's legacy sensitivity tip-speed cap (uncited DB yield 880 MPa; since A9.9 S2.3 not a qualification: rotor_ok is False without a registered strength basis) allows 315.2 m/s, so size_for in PARAMETRIC_SENSITIVITY mode can return rotors this search rejects. Both are below the 500 m/s published TMP practice (Al alloys)",
    "golden_impact": "possible (size_for results near the cap change); to be checked at implementation",
    "owner_question": "OQ-F3-01 (existing, allowable basis) + F9-OQ-04 (new, model change)",
    "sources": [
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/findings/1",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     },
     {
      "path": "abep_sim/compressor.py",
@@ -10205,14 +10417,14 @@
    "finding": "F4 / UPSTREAM_ICD G-05 orifice sizing bracket",
    "module": "abep_sim/reservoir.py size_orifice_for_pressure",
    "issue": "60-step bisection in [1e-8, 3e-2] m^2 with no residual: an unreachable target returns the bracket end with no flag; at low plenum targets the F4 A_eq exceeds 3e-2 m^2 (F4 does not use the routine for sizing)",
-   "magnitude": "reservoir.size_orifice_for_pressure (60-step bisection in [1e-8, 3e-2] m^2, no residual: ICD G-05) vs the F4 90-step log bisection (residual reported). At low plenum targets the F4 A_eq exceeds 3e-2 m^2 and that routine would silently return the bracket end: F4 does not use it for sizing",
+   "magnitude": "reservoir.size_orifice_for_pressure (60-step bisection in [1e-8, 3e-2] m^2) vs the F4 90-step log bisection (residual reported). Since the A9.9 S2.4 G-05 change the routine reports its pressure residual, bracketing and convergence status (report=True; reported above at the check point); at low plenum targets the F4 A_eq exceeds 3e-2 m^2, where the routine reports bracketed False / MODEL_NOT_CONVERGED instead of a silent bracket end. F4 still does not use it for sizing (its bracket is too narrow)",
    "golden_impact": "none if only a convergence flag / residual is added; values unchanged (UPSTREAM_ICD sec. 9 Q7)",
    "owner_question": "UPSTREAM_ICD sec. 9 question 7 (existing: convergence flags G-03 to G-05)",
    "sources": [
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/checks/size_orifice_note",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     },
     {
      "path": "docs/interfaces/UPSTREAM_ICD.md",
@@ -12117,7 +12329,7 @@
     "source": {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     }
    },
    {
@@ -12127,7 +12339,7 @@
     "source": {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/open_owner_questions/1",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     }
    },
    {
@@ -12137,7 +12349,7 @@
     "source": {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     }
    },
    {
@@ -12147,7 +12359,7 @@
     "source": {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/open_owner_questions/3",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     }
    },
    {
@@ -12157,7 +12369,7 @@
     "source": {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     }
    },
    {
@@ -12167,7 +12379,7 @@
     "source": {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/open_owner_questions/1",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     }
    },
    {
@@ -12177,7 +12389,7 @@
     "source": {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     }
    },
    {
@@ -12187,7 +12399,7 @@
     "source": {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/open_owner_questions/3",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     }
    },
    {
@@ -12197,7 +12409,7 @@
     "source": {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     }
    },
    {
@@ -12207,7 +12419,7 @@
     "source": {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/1",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     }
    },
    {
@@ -12217,7 +12429,7 @@
     "source": {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     }
    },
    {
@@ -12227,7 +12439,7 @@
     "source": {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/3",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     }
    },
    {
@@ -12237,7 +12449,7 @@
     "source": {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/4",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620"
     }
    },
    {
@@ -12247,7 +12459,7 @@
     "source": {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    },
    {
@@ -12257,7 +12469,7 @@
     "source": {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/open_owner_questions/1",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    },
    {
@@ -12267,7 +12479,7 @@
     "source": {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    },
    {
@@ -12277,7 +12489,7 @@
     "source": {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/open_owner_questions/3",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    },
    {
@@ -12287,7 +12499,7 @@
     "source": {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/open_owner_questions/4",
-     "sha256": "4428cc8db9a4a31abd686fbf7f81d7a00267ca2cd41918dda833981a581ec62a"
+     "sha256": "315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d"
     }
    },
    {
@@ -12337,7 +12549,7 @@
     "source": {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     }
    },
    {
@@ -12347,7 +12559,7 @@
     "source": {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/1",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     }
    },
    {
@@ -12357,7 +12569,7 @@
     "source": {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     }
    },
    {
@@ -12367,7 +12579,7 @@
     "source": {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/3",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f"
     }
    },
    {
@@ -12584,7 +12796,7 @@
   {
    "id": "F9-OQ-02",
    "question": "Set the delivered-flow requirement at the H-1 inlet that the proposed architecture gate AG-12 (UG-FLOW) is scored against (owner row 73 gives a sizing flow ~1.3 mg/s and a characterization range 0.38-3.2 mg/s, neither a flight requirement): which value, at which orbit states / averaging?",
-   "why_new": "no requirement exists; F4 / F7 report a parametric all-state frontier of 0.1027 mg/s and OQ-F4-04 asks only which lever to study",
+   "why_new": "no requirement exists; F4 / F7 report a parametric all-state frontier of 0.1101 mg/s and OQ-F4-04 asks only which lever to study",
    "needed_by": "LOCK-1 (before any upstream freeze)",
    "status": "OWNER_DECIDED",
    "status_when_raised": "TBD_OWNER",
@@ -13359,86 +13571,6 @@
   "AFC-SY-XE-05",
   "AFC-SY-XE-07"
  ],
- "a9_19_owner_answers_applied": [
-  {
-   "decision": "A9.19",
-   "question_id": "architecture",
-   "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
-   "decision_json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
-   "decision_json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
-   "decision_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
-   "decision_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
-   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
-   "record_ids": [
-    "configuration"
-   ],
-   "how_applied": "flight configuration = hall_icp_neutralizer only (one Hall + one RF/ICP neutralizer, two supply modes AIR_PRIMARY / XE_CONTINGENCY, no conventional hollow cathode); control_fallback hall_c1_reference removed",
-   "tests": [
-    "tests/test_architecture_freeze_candidate.py",
-    "tests/test_design_a9_19_architecture.py"
-   ]
-  },
-  {
-   "decision": "A9.19",
-   "question_id": "xenon_role",
-   "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
-   "decision_json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
-   "decision_json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
-   "decision_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
-   "decision_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
-   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
-   "record_ids": [
-    "AFC-SY-XE-01"
-   ],
-   "how_applied": "Xe = XE_CONTINGENCY supply mode (contingency / emergency role; capability required by RFP-P17-05 / RFP-P18-08; separate tanks / paths); amends the A9.15 'not a contingency' wording on the ROLE of Xe only",
-   "tests": [
-    "tests/test_architecture_freeze_candidate.py",
-    "tests/test_design_a9_19_architecture.py"
-   ]
-  },
-  {
-   "decision": "A9.19",
-   "question_id": "amends A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07",
-   "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
-   "decision_json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
-   "decision_json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
-   "decision_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
-   "decision_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
-   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
-   "record_ids": [
-    "AFC-SY-CTL-01"
-   ],
-   "how_applied": "no C1-selected flight start variant",
-   "tests": [
-    "tests/test_architecture_freeze_candidate.py",
-    "tests/test_design_a9_19_architecture.py"
-   ]
-  },
-  {
-   "decision": "A9.20",
-   "question_id": "c1_role",
-   "decision_code": "C1_GROUND_ONLY_LABORATORY_REFERENCE",
-   "decision_json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
-   "decision_json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
-   "decision_md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
-   "decision_md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
-   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
-   "record_ids": [
-    "configuration.ground_reference",
-    "AG-01 RVM rows",
-    "AFC-SY-CTL-01"
-   ],
-   "how_applied": "C1 = GROUND_ONLY_LAB_EQUIPMENT: hall_c1_reference carried only as the labelled GROUND_REFERENCE (I_d,max,H1,Ar characterization, A9.10 S3.5; C1-vs-ICP bench control); never flight hardware or in flight budgets",
-   "tests": [
-    "tests/test_architecture_freeze_candidate.py",
-    "tests/test_design_a9_19_architecture.py"
-   ]
-  }
- ],
- "a9_19_touched_parameters": [
-  "AFC-SY-XE-01",
-  "AFC-SY-CTL-01"
- ],
  "a9_16_evaluators": {
   "gate_closes": "docs/architecture/freeze_candidate/a9_16_f9.py:gate_closes (determining evidence only)",
   "ag12": "docs/architecture/freeze_candidate/a9_16_f9.py:ag12_feed_state_sufficiency (NOT_EVALUATED today)",
@@ -13547,12 +13679,12 @@
   {
    "id": "F9-02",
    "evidence_class": "model-derived (PARAMETRIC_SENSITIVITY inputs)",
-   "finding": "upstream Pareto: robust set 9 members (all at P_set 0.01 Pa, filter context none, compressor T6-A1-U2-D0-Ti6Al4V); nominal-context Pareto union 1233 members; carried as sets, no representative selected (F9-OQ-01)"
+   "finding": "upstream Pareto: robust set 18 members (all at P_set 0.01 Pa, filter context none, compressor T5-A2-U2-D0-Ti6Al4V-H0.5, T6-A0-U2-D0-Ti6Al4V-H0.75, T6-A1-U1-D0-Ti6Al4V-H0.75, T6-A1-U2-D0-Ti6Al4V-H0.25, T6-A1-U2-D0-Ti6Al4V-H0.5, T6-A2-U1-D0-Ti6Al4V-H0.75, T6-A2-U2-D0-Ti6Al4V-H0.25, T6-A2-U2-D0-Ti6Al4V-H0.5); nominal-context Pareto union 1217 members; carried as sets, no representative selected (F9-OQ-01)"
   },
   {
    "id": "F9-03",
    "evidence_class": "model-derived (PARAMETRIC_SENSITIVITY inputs)",
-   "finding": "upstream flow gap: robust worst-case delivered flow [0.00813428, 0.00840947] mg/s and all-state frontier 0.1027 mg/s, low relative to the 0.38-3.2 mg/s ground-characterization coverage (row 73): an engineering warning, not a demonstrated requirement failure; 0.38 and ~1.3 mg/s are not flight requirements and AG-12 is the statewise feed-state sufficiency gate (A9.13 F9-OQ-02)"
+   "finding": "upstream flow gap: robust worst-case delivered flow [0.000449936, 0.0180906] mg/s and all-state frontier 0.1101 mg/s, low relative to the 0.38-3.2 mg/s ground-characterization coverage (row 73): an engineering warning, not a demonstrated requirement failure; 0.38 and ~1.3 mg/s are not flight requirements and AG-12 is the statewise feed-state sufficiency gate (A9.13 F9-OQ-02)"
   },
   {
    "id": "F9-04",
