@@ -2450,3 +2450,19 @@ RFP-compliant propellant policy: the official RFP governs propellant capability;
 propellant and Xenon propulsion capability; C1 Xe, if any, comes from the selected C1 hardware and is booked inside the system
 Xe architecture. It amends the earlier "Xe contingency-only for C1" wording. A9.16 applies the decisions in three sequential
 steps (experiment/procurement/budget records; A9.9 production-model changes; A9.13 architecture code).
+
+## 2026-10-01 — A9.16 parallel lanes merged (new files only)
+
+- **Orbit-resolved frozen atmosphere `atmosphere_msis21_orbit_v1`** (CLAUDE.md rule 1 versioned build, authorised by
+  A9.13 S6.14; implements A9.14 S9.7/S9.8). NRLMSIS 2.1 via pymsis 0.13.0 over 180/195/215/230 km x latitude x local
+  time x longitude x day of year, four ECSS-E-ST-10-04C Rev.1 Table 6-3 solar/geomagnetic scenarios (no interpolation
+  between scenarios); 116,736 rows. Log-space interpolation, worst error vs direct MSIS 2.3 % (rho) / 3.2 % (major
+  species). Out-of-domain queries raise. Includes frozen design states (179) and a statewise quantifier where an orbit
+  average never hides a violation. No winds (NRLMSIS has none; owner question). The orbit-averaged
+  `atmosphere_msis21_v1` is unchanged and nothing existing imports the new module. Review fix: late-year (doy 321-365)
+  orbit sampling no longer refused.
+- **Transitional-regime compressor model** `abep_sim/compressor_transitional.py` (A9.13 S6.8): drag-channel stages,
+  open-literature sources in `docs/evidence/compressor_transitional/`; always `CANDIDATE_NOT_ADMITTED`.
+- **Optional Rust parity CI** `.github/workflows/rust-parity.yml` (A9.14 S10.4); not a required check.
+- **Reference spacecraft drag basis** (A9.13 S6.18), labelled REFERENCE/PARAMETRIC, not the flight spacecraft.
+- **Species-resolved sputter-yield evidence register** `docs/evidence/sputter_yields_v1/` (A9.12 S5.13).
