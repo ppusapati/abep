@@ -3,7 +3,7 @@
 - RFP DTDF/06/13516/DSP/ABEP/X/L/M/01: Online invitation of bids (two bids system) for grant-in-aid project under Technology Development Fund scheme titled AIR BREATHING SPACE BASED PROPULSION (ELECTRIC) FOR VLEO
 - Issuer: Government of India, Ministry of Defence, DRDO, Directorate of Technology Development Fund (DTDF); 40 pages; sha256 `a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00` (20118082 bytes)
 - Provenance: PDF uploaded by the owner into the execution session on 2026-10-01 (file name 'RFP.pdf'); original distribution channel per the document: DefProc portal (www.defproc.gov.in)
-- Status: REGISTERED_BY_HASH_PDF_NOT_COMMITTED (the PDF is identified by hash, not committed)
+- Status: REGISTERED_BY_HASH_PDF_CONTROLLED_EXTERNALLY (the PDF is identified by hash, not committed)
 - Not in the document: bid due / closing date (the RFP refers to the tender document on DefProc for important dates, Part I note 5); the 05 Oct 2026 date in CLAUDE.md is therefore NOT verified by this file
 
 ## Requirement-bearing clauses (verbatim transcription)

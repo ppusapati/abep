@@ -1,6 +1,6 @@
 {
  "schema": "rfp_registration_v1",
- "status": "REGISTERED_BY_HASH_PDF_NOT_COMMITTED",
+ "status": "REGISTERED_BY_HASH_PDF_CONTROLLED_EXTERNALLY",
  "document": {
   "title": "Online invitation of bids (two bids system) for grant-in-aid project under Technology Development Fund scheme titled AIR BREATHING SPACE BASED PROPULSION (ELECTRIC) FOR VLEO",
   "rfp_number": "DTDF/06/13516/DSP/ABEP/X/L/M/01",
@@ -11,6 +11,13 @@
   "pdf_creation_date_metadata": "2026-09-08T12:10:27Z (pdfinfo CreationDate of the supplied file)",
   "provenance": "PDF uploaded by the owner into the execution session on 2026-10-01 (file name 'RFP.pdf'); original distribution channel per the document: DefProc portal (www.defproc.gov.in)",
   "committed_to_repository": false,
+  "original_filename_as_received": "RFP.pdf",
+  "retrieval": {
+   "source": "owner upload into the execution session (original channel: DefProc portal per the document)",
+   "date": "2026-10-01"
+  },
+  "pdf_storage": "controlled project evidence store (owner A9.17 RFP: the binary is not redistributed in the public repository; this record carries identity, hash, page count and the requirement extraction)",
+  "authority": "authoritative requirement source for propellant capability and all RFP requirements (owner A9.15, A9.17)",
   "not_in_document": [
    "bid due / closing date (the RFP refers to the tender document on DefProc for important dates, Part I note 5); the 05 Oct 2026 date in CLAUDE.md is therefore NOT verified by this file"
   ]

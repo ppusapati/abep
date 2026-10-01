@@ -1,6 +1,6 @@
 """Official RFP registration (AG-15, owner A9.13 S6.22): identity of the owner-supplied RFP PDF and a page-referenced
 verbatim transcription of its requirement-bearing clauses. The PDF itself is identified by sha256; it is not committed
-(public repository; owner decision pending). Transcribed from the page images on 2026-10-01; 'transcription' is the
+(public repository; owner A9.17: PDF kept in the controlled project evidence store). Transcribed from the page images on 2026-10-01; 'transcription' is the
 evidence class of every text below (human-read from scanned pages, not OCR).
 
     python docs/requirements/rfp_official/rfp_clauses_v1.py          # write rfp_registration_v1.{json,md}
@@ -28,6 +28,12 @@ DOCUMENT = {
     "provenance": "PDF uploaded by the owner into the execution session on 2026-10-01 (file name 'RFP.pdf'); original "
                   "distribution channel per the document: DefProc portal (www.defproc.gov.in)",
     "committed_to_repository": False,
+    "original_filename_as_received": "RFP.pdf",
+    "retrieval": {"source": "owner upload into the execution session (original channel: DefProc portal per the document)",
+                  "date": "2026-10-01"},
+    "pdf_storage": "controlled project evidence store (owner A9.17 RFP: the binary is not redistributed in the public "
+                   "repository; this record carries identity, hash, page count and the requirement extraction)",
+    "authority": "authoritative requirement source for propellant capability and all RFP requirements (owner A9.15, A9.17)",
     "not_in_document": ["bid due / closing date (the RFP refers to the tender document on DefProc for important dates, "
                         "Part I note 5); the 05 Oct 2026 date in CLAUDE.md is therefore NOT verified by this file"],
 }
@@ -103,7 +109,7 @@ NEW_REQUIREMENTS_NOT_IN_RVM_CHECK = [
 def build():
     return {
         "schema": "rfp_registration_v1",
-        "status": "REGISTERED_BY_HASH_PDF_NOT_COMMITTED",
+        "status": "REGISTERED_BY_HASH_PDF_CONTROLLED_EXTERNALLY",
         "document": DOCUMENT,
         "evidence_class": "transcription (human-read from the scanned page images of the registered PDF)",
         "clauses": [{"id": i, "page": p, "section": s, "text": t} for i, p, s, t in CLAUSES],
