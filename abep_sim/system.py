@@ -101,8 +101,14 @@ def evaluate(cfg: Config) -> dict:
         cres = comp.size_for(cmp_["p_passive_Pa"], md_in, CR_target=cr_needed)
         res = Reservoir(wall_material=cfg.reservoir_material, upstream_material=cfg.rotor_material if cfg.rotor_material in ("Ti6Al4V", "Al6061") else "Al2O3_anodised",
                         upstream_collisions=10.0 * cres["turbo_rows"] + 50.0 * cres["n_stages"], T_K=min(max(cres["T_comp_K"], 300.0), 500.0))
-        size_orifice_for_pressure(res, cres["delivered_kgps"], min(p_target, cres["p_out_Pa"]))
+        orf = size_orifice_for_pressure(res, cres["delivered_kgps"], min(p_target, cres["p_out_Pa"]), report=True)
         rs = res.steady_state(cres["delivered_kgps"])
+        # G-03..G-05 (owner decision A9.9 S2.4): every gas-path solver must converge (and the orifice target must be
+        # bracketed) for the record to be admissible; otherwise the raw state is kept but flagged MODEL_NOT_CONVERGED
+        # and the compressor branch is not feasible (fail closed). Converged numerics are untouched.
+        nc = [n for n, ok in (("compressor_recirculation", cres["converged"]), ("orifice_sizing", orf["converged"]),
+                              ("reservoir_steady_state", rs["converged"])) if not ok]
+        gaspath_converged = not nc
         mdot_air = sum(rs["mdot_anode"].values())
         p_in = rs["p_total_Pa"]
         comp_mass = cres["mass_kg"]; comp_power = cres["P_el_W"]
@@ -114,9 +120,17 @@ def evaluate(cfg: Config) -> dict:
                "comp_CR_O": cres["CR_by_species"].get("O", 1.0), "comp_CR_N2": cres["CR_by_species"].get("N2", 1.0),
                "comp_T_K": cres["T_comp_K"], "res_p_Pa": rs["p_total_Pa"], "res_tau_ms": rs["residence_time_s"] * 1e3,
                "res_wall_collisions": rs["wall_collisions_reservoir"], "gamma_wall": rs["gamma_wall"],
-               "p_target_Pa": p_target, "cr_needed": cr_needed}
+               "p_target_Pa": p_target, "cr_needed": cr_needed,
+               "comp_converged": cres["converged"], "comp_iterations": cres["iterations"], "comp_residual": cres["residual"],
+               "res_converged": rs["converged"], "res_iterations": rs["iterations"], "res_residual": rs["residual"],
+               "res_balance_residual_rel": rs["balance_residual_rel"],
+               "orifice_converged": orf["converged"], "orifice_bracketed": orf["bracketed"],
+               "orifice_p_residual_rel": orf["p_residual_rel"],
+               "gaspath_converged": gaspath_converged,
+               "gaspath_status": "CONVERGED" if gaspath_converged else "MODEL_NOT_CONVERGED",
+               "gaspath_not_converged": nc}
         cmp_ = {**cmp_, "p_out_Pa": p_in, "comp_power_W": comp_power, "comp_mass_kg": comp_mass,
-                "active_ratio": cres["CR_active"], "comp_feasible": cres["sized"] and cres["rotor_ok"], "mdot_net": mdot_air}
+                "active_ratio": cres["CR_active"], "comp_feasible": cres["sized"] and cres["rotor_ok"] and gaspath_converged, "mdot_net": mdot_air}
     atm_in = {**atm, "fO": inlet["fO"], "fN2": inlet["fN2"], "fO2": inlet["fO2"],
               "diss_sink_J_per_kg": inlet["diss_sink_J_per_kg"]}
     ao = ao_flux(atm)

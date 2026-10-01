@@ -2450,3 +2450,28 @@ RFP-compliant propellant policy: the official RFP governs propellant capability;
 propellant and Xenon propulsion capability; C1 Xe, if any, comes from the selected C1 hardware and is booked inside the system
 Xe architecture. It amends the earlier "Xe contingency-only for C1" wording. A9.16 applies the decisions in three sequential
 steps (experiment/procurement/budget records; A9.9 production-model changes; A9.13 architecture code).
+
+## 2026-10-01 — A9.9 S2.4 (UPSTREAM_ICD-Q7): G-03..G-05 gas-path convergence flags
+
+Owner decision A9.9 S2.4 (`docs/decisions/OD_2026_10_01_A9_9_S2_MODEL_CHANGE_OWNER_DECISIONS.md`, item 4). Production
+gas-path solvers now report convergence explicitly; reaching an iteration limit or a bracket endpoint is not convergence.
+- G-03 `DragCompressor.run()`: `converged`, `iterations`, `residual` (max_s |Q_leak − Q_recirc| / ṁ_s vs 1e-4),
+  `solver_status` CONVERGED / MODEL_NOT_CONVERGED (DIRECT_EVALUATION when `self_consistent=False`); `size_for()` carries
+  the selected run's fields (search unchanged).
+- G-04 `Reservoir.steady_state()`: `converged`, `iterations`, `residual` (fixed-point step vs 1e-6),
+  `balance_residual_rel` (per-species mass balance at the returned state / total inflow), `solver_status`.
+- G-05 `size_orifice_for_pressure(..., report=True)`: final pressure and relative residual, `bracketed`/`reachable`
+  (p(3e-2 m²) ≤ p_target ≤ p(1e-8 m²)), inner steady-state convergence, `converged` (bracketed ∧ |resid| ≤ 1e-6 ∧ inner
+  converged), `solver_status`; the default call still returns the area, and the record is left on `res.orifice_sizing`.
+- Callers: `system.evaluate` emits `comp_/res_/orifice_*` convergence fields and `gaspath_status`; a non-converged gas path
+  makes `compressor_feasible` False (fail closed). `archengine.gas_path_state` carries `gaspath_status` /
+  `gaspath_not_converged`; `close_architecture` refuses gas states with a non-converged compressor-recirculation or
+  reservoir fixed point (rule 3; status MODEL_NOT_CONVERGED if no admissible gas state remains) and carries an unmet
+  orifice setpoint (a converged reservoir state at the bracket-end area; p_in is that actual pressure) onto the result as
+  `gaspath_status` / `evidence_admissible=False`. `arch_compare.UpstreamState.from_gas_path` refuses non-converged states.
+Finding while implementing: the orifice setpoint is unbracketed at many default archengine gas states (e.g. area 1.3 m²,
+p_level 0.05 Pa — the golden architecture-closure/mission design point: target min(p_target, p_out) ≈ 0.0065 Pa, reservoir
+at the 300 cm² bracket end 0.088 Pa; also all p_level 0.02 states). These are now flagged, not refused, so the golden
+benchmarks are carried unchanged; whether such results should be refused outright is an owner question.
+Golden impact: none (`python -m abep_sim.golden check` OK; converged numerics bit-identical, regression-tested against the
+pre-change loops in `tests/test_gaspath_convergence_g03_g05.py`).

@@ -68,26 +68,42 @@ class DragCompressor:
     def _cbar(self, m):
         return math.sqrt(8 * K_B * self.T_gas_K / (math.pi * m))
 
+    # G-03 (owner decision A9.9 S2.4): the recirculation fixed point is reported explicitly. Reaching the
+    # iteration limit is NOT convergence.
+    RECIRC_MAX_ITER = 40
+    RECIRC_RTOL = 1e-4
+
     def run(self, p_in_Pa: float, mdot_species: dict, self_consistent: bool = True) -> dict:
         """Operating point with leakage solved self-consistently (document 16, item 13): the leak path returns gas
         from the outlet to the inlet, so the machine's throughput is (captured + recirculated). Iterate
         Q_through = Q_captured + Q_leak(p_out(Q_through)) to a fixed point; delivered = captured (steady state:
-        everything captured eventually leaves through the outlet), but p_out and CR are those at the higher throughput."""
+        everything captured eventually leaves through the outlet), but p_out and CR are those at the higher throughput.
+
+        Convergence (G-03): the result carries ``converged`` (bool), ``iterations`` (number of machine
+        evaluations), ``residual`` (final max_s |Q_leak,s - Q_recirc,s| / max(mdot_s, 1e-15), compared with
+        RECIRC_RTOL) and ``solver_status`` ('CONVERGED', 'MODEL_NOT_CONVERGED' or 'DIRECT_EVALUATION' when
+        self_consistent=False). A non-converged result keeps its raw last-iterate state for diagnostics but must
+        not be admitted as a valid operating point."""
         if not self_consistent:
-            return self._run_once(p_in_Pa, mdot_species)
+            r = self._run_once(p_in_Pa, mdot_species)
+            r.update({"converged": True, "iterations": 1, "residual": 0.0, "solver_status": "DIRECT_EVALUATION"})
+            return r
         recirc = {s: 0.0 for s in mdot_species}
-        r = None
-        for _ in range(40):
+        r = None; converged = False; it = 0; resid = float("nan")
+        for _ in range(self.RECIRC_MAX_ITER):
             through = {s: mdot_species[s] + recirc[s] for s in mdot_species}
-            r = self._run_once(p_in_Pa, through)
+            r = self._run_once(p_in_Pa, through); it += 1
             new = {s: max(r["leak_kgps"][s], 0.0) for s in mdot_species}
-            if all(abs(new[s] - recirc[s]) <= 1e-4 * max(mdot_species[s], 1e-15) for s in mdot_species):
-                recirc = new; break
+            resid = max((abs(new[s] - recirc[s]) / max(mdot_species[s], 1e-15) for s in mdot_species), default=0.0)
+            if all(abs(new[s] - recirc[s]) <= self.RECIRC_RTOL * max(mdot_species[s], 1e-15) for s in mdot_species):
+                recirc = new; converged = True; break
             recirc = {s: 0.5 * (recirc[s] + new[s]) for s in mdot_species}
         r["recirculated_kgps"] = recirc
         r["recirculation_frac"] = sum(recirc.values()) / max(sum(mdot_species.values()), 1e-30)
         r["delivered_kgps"] = dict(mdot_species)          # steady state: outflow = captured inflow
         r["leak_kgps"] = recirc
+        r.update({"converged": converged, "iterations": it, "residual": resid,
+                  "solver_status": "CONVERGED" if converged else "MODEL_NOT_CONVERGED"})
         return r
 
     def _run_once(self, p_in_Pa: float, mdot_species: dict) -> dict:
@@ -161,7 +177,11 @@ class DragCompressor:
     def size_for(self, p_in_Pa: float, mdot_species: dict, CR_target: float, rpm_max: float = 90000.0,
                  max_turbo_rows: int = 6, max_drag_stages: int = 4) -> dict:
         """Search turbo rows, then drag stages, then rpm (<= rotor stress limit) for the lightest machine
-        reaching CR_target. Drag stages are only useful once Q/p is small (p >~ 1 Pa)."""
+        reaching CR_target. Drag stages are only useful once Q/p is small (p >~ 1 Pa).
+
+        G-03: the search itself is unchanged; the returned record carries the convergence fields of the selected
+        run() (``converged``, ``iterations``, ``residual``, ``solver_status``). Callers must treat
+        ``converged=False`` (``solver_status='MODEL_NOT_CONVERGED'``) as not admissible."""
         rpm_cap = min(rpm_max, self.rpm_limit())
         best = None
         for rows in range(1, max_turbo_rows + 1):

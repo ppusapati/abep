@@ -213,6 +213,13 @@ class UpstreamState:
         type is refused (nothing is dropped silently)."""
         if not isinstance(gas, Mapping):
             raise SpecError("gas-path state must be a mapping")
+        # G-03..G-05 (A9.9 S2.4): a non-converged gas-path state is refused (fail closed). The convergence labels
+        # are consumed here and not carried into the upstream state, so converged fingerprints are unchanged.
+        status = gas.get("gaspath_status", "CONVERGED")
+        if status != "CONVERGED":
+            raise SpecError(f"gas-path state not admissible: gaspath_status={status!r} "
+                            f"(not converged: {gas.get('gaspath_not_converged', '')!r})")
+        gas = {k: v for k, v in gas.items() if k not in ("gaspath_status", "gaspath_not_converged")}
         q = {k: v for k, v in gas.items() if isinstance(v, Real) and not isinstance(v, bool)}
         labels = {k: v for k, v in gas.items() if isinstance(v, str)}
         other = sorted(str(k) for k in gas if k not in q and k not in labels)

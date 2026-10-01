@@ -590,12 +590,20 @@ def close_architecture(a: dict, gas_fn, sc, dc: DesignConstraints | None = None,
     if not a["valid"]:
         return {"architecture": name, "valid": False, "status": "INCOMPATIBLE", "reason": a["reason"]}
     vars_ = _variables(a); keys = list(vars_)
-    best = None; n_eval = 0; n_model_err = 0; n_infeasible = 0; last_err = ""; reject = {}
+    best = None; n_eval = 0; n_model_err = 0; n_infeasible = 0; last_err = ""; reject = {}; n_gas_nc = 0
     def rej(k):
         reject[k] = reject.get(k, 0) + 1
     for area in gas_vars["area"]:
         for p_level in gas_vars["p_level"]:
             gas = gas_fn(area, p_level)
+            # G-03..G-05 (A9.9 S2.4). States without the flag are synthetic (not produced by the gas-path model).
+            # A non-converged compressor-recirculation or reservoir fixed point is a half-converged state (rule 3):
+            # refused. An orifice sizing that did not reach / bracket its pressure setpoint leaves a converged
+            # reservoir state at the bracket-end area (p_in is that actual pressure, not the setpoint); it is
+            # carried, explicitly flagged, onto the result (gaspath_status / evidence_admissible), never silently.
+            gas_nc = {t for t in str(gas.get("gaspath_not_converged", "")).split(",") if t}
+            if gas.get("gaspath_status", "CONVERGED") != "CONVERGED" and (gas_nc - {"orifice_sizing"} or not gas_nc):
+                n_gas_nc += 1; rej("MODEL_NOT_CONVERGED"); continue
             atm = atmosphere(gas["alt"], gas["solar"])
             D_sc0 = spacecraft_drag(sc, atm["rho"], atm.get("V_rel", atm["V"]), gas["area"], gas["C_D"])["D_total_N"]
             D_sc = D_sc0
@@ -744,9 +752,14 @@ def close_architecture(a: dict, gas_fn, sc, dc: DesignConstraints | None = None,
                             "ledger": ledger, "resid": resid, "cal": cal, "cal_x": cal_x, "P_mag": P_mag, "A_arr": A_arr, "m_arr": m_arr,
                             "bom": bom, "life_items": life_items, "life_sys": life_sys, "xe_kg": xe_kg, "area": area, "p_level": p_level, "stm": stm}
     if best is None:
-        status = "MODEL_ERROR" if (n_eval == 0 and n_model_err > 0) else "INFEASIBLE"
+        n_gas = len(gas_vars["area"]) * len(gas_vars["p_level"])
+        if n_gas > 0 and n_gas_nc == n_gas:
+            status = "MODEL_NOT_CONVERGED"          # no admissible gas-path state at all: not evidence of infeasibility
+        else:
+            status = "MODEL_ERROR" if (n_eval == 0 and n_model_err > 0) else "INFEASIBLE"
         return {"architecture": name, "valid": True, "feasible": False, "status": status, "family": ac.family,
-                "reason": (f"model error: {last_err}" if status == "MODEL_ERROR" else "no candidate satisfies constraints: " + ", ".join(f"{k}={v}" for k, v in reject.items())),
+                "reason": (f"model error: {last_err}" if status == "MODEL_ERROR" else
+                           "gas-path solvers did not converge at any gas state (G-03..G-05)" if status == "MODEL_NOT_CONVERGED" else "no candidate satisfies constraints: " + ", ".join(f"{k}={v}" for k, v in reject.items())),
                 "n_eval": n_eval, "n_model_err": n_model_err,
                 "best_envelope_ratio": best_env[0] if best_env else None, "best_envelope_point": best_env[1] if best_env else None,
                 "_candidates": cands if keep_candidates else None}
@@ -783,6 +796,11 @@ def close_architecture(a: dict, gas_fn, sc, dc: DesignConstraints | None = None,
            "firing_hours_for_xe": firing_hours, "_candidates": cands if keep_candidates else None,
            "A_array_m2": best["A_arr"], "m_array_kg": best["m_arr"], "m_system_kg": bom["mev_kg"] + best["m_arr"],
            **{k: pr[k] for k in ("eta_b", "Te_eV", "sustained", "onset", "space_charge_limited", "eta_pit", "T0_K", "kind") if k in pr}}
+    # G-05 carry (A9.9 S2.4): the winning gas state's solver status travels with the result; a result built on a
+    # non-converged gas-path record is not admissible as valid evidence.
+    out["gaspath_status"] = gas.get("gaspath_status", "NOT_REPORTED")
+    out["gaspath_not_converged"] = gas.get("gaspath_not_converged", "")
+    out["evidence_admissible"] = out["gaspath_status"] == "CONVERGED"
     out["thrust_min_ok"] = (dc.T_min_mN is None) or (T * 1e3 >= dc.T_min_mN)
     out["thrust_max_ok"] = (dc.T_max_mN is None) or (T * 1e3 <= dc.T_max_mN)
     out["mass_ok"] = (dc.m_max_kg is None) or (bom["mev_kg"] <= dc.m_max_kg)
@@ -888,4 +906,8 @@ def gas_path_state(area_m2=0.7, alpha=0.8, L_over_d=5, alt=200, solar="mean", bl
             "fO2": r["fO2_inlet"], "comp_power": r["P_comp_W"], "comp_mass": r["m_comp_kg"], "intake_mass": r["m_intake_kg"],
             "eta_c": r["eta_c"], "C_D": r["C_D"], "area": area_m2, "ao_flux": r["ao_flux_m2s"], "alt": alt, "solar": solar,
             "blade_life_h": blade_life(li)["coating_life_h"], "intake_life_h": 1e6 if intake_life(li)["coating_ok"] else 5000.0,
-            "atmosphere": r["atm_source"]}
+            "atmosphere": r["atm_source"],
+            # G-03..G-05 (A9.9 S2.4): convergence of the gas-path solvers travels with the state; close_architecture
+            # refuses a non-converged state (fail closed).
+            # (strings only: downstream consumers such as arch_compare accept numbers and labels)
+            "gaspath_status": r["gaspath_status"], "gaspath_not_converged": ",".join(r["gaspath_not_converged"])}
