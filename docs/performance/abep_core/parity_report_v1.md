@@ -68,12 +68,17 @@ Rule: |mean_rust - mean_py| <= z sqrt(se_py^2 + se_rust^2), z = 5.0; per observa
 
 ## Measured speed-up (informational; not an admission criterion)
 
-| workload | python median wall s | rust median wall s | speed-up wall | python median CPU s | rust median CPU s | speed-up CPU |
-|---|---|---|---|---|---|---|
-| W1_tpmc_trace_channel | 0.1486 | 0.01638 | 9.1x | 0.1388 | 0.01623 | 8.6x |
-| W2_response_point_kernel | 0.3148 | 0.03561 | 8.8x | 0.3105 | 0.03538 | 8.8x |
+| path | workload | python median wall s | rust median wall s | speed-up wall | python median CPU s | rust median CPU s | speed-up CPU |
+|---|---|---|---|---|---|---|---|
+| kernel-only (gate bypassed) | W1_tpmc_trace_channel | 0.1347 | 0.01830 | 7.4x | 0.1281 | 0.01795 | 7.1x |
+| kernel-only (gate bypassed) | W2_response_point_kernel | 0.3189 | 0.03514 | 9.1x | 0.3162 | 0.03514 | 9.0x |
+| served (admission-gated) | W1_tpmc_trace_channel | 0.1200 | 0.01590 | 7.5x | 0.1199 | 0.01590 | 7.5x |
+| served (admission-gated) | W2_response_point_kernel | 0.3430 | 0.03565 | 9.6x | 0.3400 | 0.03565 | 9.5x |
 
-W1 is the F0 workload `tpmc_trace_channel` (F0 recorded Python median 0.1205 s on a shared machine); W2 adds the Clausing back-trace (the TPMC part of one intake_response point). one untimed call per backend and workload before the timed repeats; load average [0.8486328125, 0.49267578125, 0.61376953125]. Machine-specific runtimes, not physics.
+Kernel-only path: kernel-only: timed inside parity_campaign_unadmitted(), so the per-call admission gate (RUST-01) is bypassed; see speedup_served_path for the backend as served to consumers.
+Served path: served: timed through the admission-gated backend (cached admission check, RUST-R1-01); one-time full admission validation 0.0302 s (first backend='rust' call per process), cached gate 43.3 us per call (W1_tpmc_trace_channel: 2 calls, W2_response_point_kernel: 3 calls); the timed repeats follow an untimed warm-up, so they pay only the cached per-call gate; the cold validation is paid once per process (and again whenever the report, the extension or a listed source changes on disk).
+
+W1 is the F0 workload `tpmc_trace_channel` (F0 recorded Python median 0.1205 s on a shared machine); W2 adds the Clausing back-trace (the TPMC part of one intake_response point). one untimed call per backend and workload before the timed repeats; load average [0.90576171875, 0.64404296875, 1.0537109375]. Machine-specific runtimes, not physics.
 
 ## Build provenance
 
@@ -88,9 +93,9 @@ W1 is the F0 workload `tpmc_trace_channel` (F0 recorded Python median 0.1205 s o
 - python: 3.11.15
 - numpy: 2.4.4
 - platform: Linux 6.18.44-fc-v50 x86_64
-- git_head: fddd66d7fccb54ed261793dc6ff435ace4a6102d
+- git_head: 86018a8fa77bda89709b7a9e5e5a30cf66640e74
 - git_dirty: False
-- source sha256: `abep_core/Cargo.toml` cfb3054985ea94cc, `abep_core/Cargo.lock` 5d1ae2c3c0e4092b, `abep_core/pyproject.toml` 309994da507b37a6, `abep_core/src/lib.rs` 2d8cf0e117bed74b, `abep_core/src/rng.rs` eadfe1a0417353f2, `abep_core/src/tpmc.rs` 96867112eee01ab0, `abep_sim/design/tpmc_backend.py` 9a2f08a68ba2087d, `abep_sim/intake_tpmc.py` ea0100b96f9066b2
+- source sha256: `abep_core/Cargo.toml` cfb3054985ea94cc, `abep_core/Cargo.lock` 5d1ae2c3c0e4092b, `abep_core/pyproject.toml` 309994da507b37a6, `abep_core/src/lib.rs` 2d8cf0e117bed74b, `abep_core/src/rng.rs` eadfe1a0417353f2, `abep_core/src/tpmc.rs` 96867112eee01ab0, `abep_sim/design/tpmc_backend.py` 364219ad3495ad22, `abep_sim/intake_tpmc.py` ea0100b96f9066b2
 
 ## Documented divergences (inputs outside the reference's handled domain)
 
@@ -104,7 +109,7 @@ W1 is the F0 workload `tpmc_trace_channel` (F0 recorded Python median 0.1205 s o
 - RUST-ID-01 (rust -> F0, fo_a9_7_f0_profiling (docs/performance/PERFORMANCE_BASELINE_98fbbb9.json, F0-ID-02)): parity record supplied: pre-registered tolerance (parity_prereg_v1.json) and per-kernel verdicts (this report); cite them in any post-port baseline [SUPPLIED]
 - RUST-ID-02 (F0 -> rust (response), fo_a9_7_f0_profiling (F0-ID-01; scripts/perf/profile_baseline.py)): F0 asks for its harness to be re-run on the Rust-enabled tree with the same keys. The harness calls abep_sim.intake_tpmc directly and has no backend switch (it is outside this lane's paths); this report times the identical tpmc_trace_channel workload (W1) under both backends in one session instead. Re-running the harness itself is left to F0 / the consolidated verification [PARTIAL]
 - RUST-ID-03 (rust -> F1, fo_a9_7_f1_intake_synthesis (abep_sim/design/intake_synthesis.py)): F1 calls intake_tpmc.intake_response directly and is unchanged. Should F1 ever opt in, it must call abep_sim/design/tpmc_backend.py with backend='rust' explicitly, only for kernels ADMITTED here, label every such result backend=rust (non-authoritative) and keep the Python path reproducing it; intake_response itself (momentum / mass bookkeeping) is not ported [OPEN]
-- RUST-ID-04 (rust -> F7/F8, fo_a9_7_f7_f8_coupled_optimizer (PENDING; path not in this base)): no Rust kernel enters the coupled or robust optimizer by default; any use goes through tpmc_backend with an explicit backend argument recorded in the result provenance [OPEN]
+- RUST-ID-04 (rust -> F7/F8, abep_sim/design/architecture_optimizer.py (fo_a9_7_f7_f8_coupled_optimizer; tpmc_backend_policy in docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json)): no Rust kernel enters the coupled or robust optimizer by default; any use goes through tpmc_backend with an explicit backend argument recorded in the result provenance (F7/F8 reads this report's verdicts for its tpmc_backend_policy and invokes no TPMC: tpmc_invoked_by_f7_f8 = false) [CONSUMED]
 - RUST-ID-05 (rust -> consolidated verification, fo_a9_7_consolidated_verification): verify with `python scripts/verify_abep_core.py --check` (no build needed) and, with the extension built from the recorded sources, `--check --recompute 3` (bitwise reproduction of stored numbers); the verdict stands only for the recorded source hashes [OPEN]
 - RUST-ID-06 (golden / frozen data -> rust, abep_sim/data/intake_surface_v1.* and abep_sim/golden.py): frozen intake surface and goldens are built with the Python reference only (CLAUDE.md rule 1); the Rust backend is never used to regenerate them [RESPECTED]
 
@@ -123,6 +128,7 @@ W1 is the F0 workload `tpmc_trace_channel` (F0 recorded Python median 0.1205 s o
 |---|---|---|---|---|
 | 1 | 2026-10-01T04:52:48Z | ee87fe7f4baa | 20261001 | K1_entry=ADMITTED, K2_diffuse=ADMITTED, K3_cll=ADMITTED, K4_trace=ADMITTED, K5_clausing=ADMITTED |
 | 2 | 2026-10-01T08:15:47Z | fddd66d7fccb | 20261001 | K1_entry=ADMITTED, K2_diffuse=ADMITTED, K3_cll=ADMITTED, K4_trace=ADMITTED, K5_clausing=ADMITTED |
+| 3 | 2026-10-01T09:46:29Z | 86018a8fa77b | 20261001 | K1_entry=ADMITTED, K2_diffuse=ADMITTED, K3_cll=ADMITTED, K4_trace=ADMITTED, K5_clausing=ADMITTED |
 
 ## Commands
 

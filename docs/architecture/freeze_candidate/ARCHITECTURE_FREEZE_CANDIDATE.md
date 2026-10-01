@@ -649,7 +649,7 @@ Pinned (immutable, sha256 verified):
 Consumed (sha256 at build time; drift reported by `--check`):
 
 - `docs/performance/PERFORMANCE_BASELINE_98fbbb9.json` 93145d612f03fcd62da7ea7e0d61d8bfca767429dd6117203b417758a0d8c672
-- `docs/performance/abep_core/parity_report_v1.json` 9d6ff37343f1d77a56e8288d2463864c3414326b2e758724f2b08606049796ca
+- `docs/performance/abep_core/parity_report_v1.json` 09cf58a9dac3aea1aed2e3a343310d189c980a78ec699a75f7bc494c161418f8
 - `docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json` dc0bfce93a0dc14cd03f8c76410d273649c1453c1c55f3e0f0c9bae0691146c7
 - `docs/design_synthesis/f2_filter/f2_filter_stage_v1.json` 4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808
 - `docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json` fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd

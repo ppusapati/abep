@@ -54,7 +54,7 @@ F0-01: the 'addressable' column and the findings' 'addressable <= X s' are inter
 | 7 | compressor_size_for | 1 | 1 | 0.85 | 0.85 |
 | 8 | p3_view_factors_verify | 0.8518 | 0.9633 | 0.09 | 0.09 |
 
-The measured Rust wall speed-ups are in docs/performance/abep_core/parity_report_v1.json (section speedup; time removed = 1 - 1/speed-up), e.g. 5.44x on W1 = tpmc_trace_channel (81.6 % removed) against an interpreter-only share of 0.6652 at campaign 2026-10-01T04:52:48Z.
+The measured Rust wall speed-ups are in docs/performance/abep_core/parity_report_v1.json (sections speedup and speedup_served_path; time removed = 1 - 1/speed-up). Latest campaign 2026-10-01T09:46:29Z: W1 = tpmc_trace_channel 7.36x kernel-only (admission gate bypassed; 86.4 % removed), 7.55x through the served, admission-gated backend (86.8 % removed), against an interpreter-only share of 0.6652. (The first campaign, 2026-10-01T04:52:48Z, recorded 5.44x kernel-only on W1; that report version is at commit e2aeb3f, the current report keeps only verdicts and source hashes of earlier campaigns.)
 
 F0-02: the 'usage' of the TPMC PORT_CANDIDATE is the frozen_intake_surface_build reference workload, which CLAUDE.md rule 1 and RUST-ID-06 forbid running with the Rust backend, and no current consumer opts in to the Rust backend (F1 calls intake_tpmc.intake_response directly, RUST-ID-03 OPEN; F7 / F8 run no TPMC). The admitted kernels therefore have no consumer today; the F1 synthesis search (the real use) is not quantified here. A re-based judgement needs the F1 / F7 search point counts x the measured per-point cost.
 
@@ -86,7 +86,7 @@ F0-03: the per-workload 'interpreter share' in the workload table is the sum of 
 - Scaling probe p3_view_factors_verify: 8.0x more work cost 9.286x more time (time/work 1.161): array work dominates.
 - Per-call costs for budgeting the A9.7 synthesis searches (machine-specific runtimes, not physics): tpmc_intake_response 0.2919835 s per response point; compressor_size_for 0.0042712 s per size_for call; compressor_run 0.0016324 s per run call; system_evaluate_gas_path 0.0088014 s per evaluation; uq_modular_run_uq 0.8668265 s per paired sample; uq6_robust_design 0.0252247 s per MC sample.
 
-Robust design search: abep_sim.uq6.robust_design (legacy phase-6 routine over the superseded 0-D Hall chain); A9.7 F8 robust optimizer: PENDING (lane fo_a9_7_f7_f8_coupled_optimizer; not in base).
+Robust design search: abep_sim.uq6.robust_design (legacy phase-6 routine over the superseded 0-D Hall chain); A9.7 F8 robust optimizer: PENDING (lane fo_a9_7_f7_f8_coupled_optimizer; not in base) (as measured; now merged: abep_sim/design/robust_optimizer.py, see 'Cross-lane resolution (consolidated verification round 2)').
 
 ## Workloads
 
@@ -179,7 +179,7 @@ Robust design search: abep_sim.uq6.robust_design (legacy phase-6 routine over th
 - workload: exhaustive turbo-rows x drag-stages x rpm search (default bounds) with the exact inputs that golden case gas_path A0.7 passes (captured in-process from system.evaluate)
 - params: `{"calls": 20}`
 - wall s per repeat [0.0854, 0.0854, 0.0875]; CPU s [0.3351, 0.0989, 0.0863]; load avg before/after [1.08, 1.08]
-- reference workload `uq6_pareto_default` (200 units): abep_sim/uq6.py pareto(n_designs=200) and monte_carlo6(n=200) defaults: one system.evaluate -> one size_for per design/sample; the F3 synthesis search is PENDING abep_sim/design/compressor_synthesis.py. EXTRAPOLATED: median seconds per call x 200.
+- reference workload `uq6_pareto_default` (200 units): abep_sim/uq6.py pareto(n_designs=200) and monte_carlo6(n=200) defaults: one system.evaluate -> one size_for per design/sample; the F3 synthesis search is PENDING abep_sim/design/compressor_synthesis.py. EXTRAPOLATED: median seconds per call x 200. (PENDING as measured; the named lane is merged, see 'Cross-lane resolution (consolidated verification round 2)'.)
 - port judgement: **NOT_A_BOTTLENECK**
 - cProfile: 443741 calls, overhead ratio 3.136; tottime fractions {"interpreter_builtin": 0.1872, "library_python_wrapper": 0.0, "native_array_call": 0.0, "project_python": 0.8127, "stdlib_python": 0.0002}
 
@@ -296,7 +296,7 @@ Robust design search: abep_sim.uq6.robust_design (legacy phase-6 routine over th
 - params: `{"n_mc": 3, "seed": 5}`
 - wall s per repeat [0.0762, 0.0747, 0.0757]; CPU s [0.0761, 0.0746, 0.0754]; load avg before/after [1.16, 1.16]
 - physics note: drives the superseded 0-D Hall closure (plasma_devices / archengine Hall branch); absolute Hall results are withdrawn (CLAUDE.md 'Superseded / withdrawn') - timed only, outputs never quoted
-- reference workload `robust_design_default_per_candidate` (60 units): abep_sim/uq6.py robust_design(n_mc=60) default, per candidate (candidate count is set by the caller; F8 robust optimisation is PENDING, lane fo_a9_7_f7_f8_coupled_optimizer). EXTRAPOLATED: median seconds per sample x 60 (one candidate).
+- reference workload `robust_design_default_per_candidate` (60 units): abep_sim/uq6.py robust_design(n_mc=60) default, per candidate (candidate count is set by the caller; F8 robust optimisation is PENDING, lane fo_a9_7_f7_f8_coupled_optimizer). EXTRAPOLATED: median seconds per sample x 60 (one candidate). (PENDING as measured; the named lane is merged, see 'Cross-lane resolution (consolidated verification round 2)'.)
 - port judgement: **NOT_A_BOTTLENECK**; DEFER_PORT: drives the superseded 0-D Hall closure (plasma_devices / archengine Hall branch); absolute Hall results are withdrawn (CLAUDE.md 'Superseded / withdrawn') - timed only, outputs never quoted; porting a driver of withdrawn physics adds no decision value - re-profile the F7/F8 driver once it exists
 - cProfile: 168032 calls, overhead ratio 2.577; tottime fractions {"interpreter_builtin": 0.1066, "library_python_wrapper": 0.2086, "native_array_call": 0.039, "project_python": 0.6403, "stdlib_python": 0.0056}
 
@@ -390,15 +390,28 @@ Robust design search: abep_sim.uq6.robust_design (legacy phase-6 routine over th
 
 ## Interface demands
 
-| id | direction | counterparty | demand | status |
-|---|---|---|---|---|
-| F0-ID-01 | F0 -> rust | fo_a9_7_rust_kernels (PENDING abep_core/) | port only workloads ranked PORT_CANDIDATE without a DEFER qualifier; keep a Python wrapper with identical I/O; re-run this harness (same commands) on the Rust-enabled tree and report the same keys | OPEN |
-| F0-ID-02 | rust -> F0 | fo_a9_7_rust_kernels (PENDING abep_core/) | for every admitted kernel: the preregistered numerical tolerance and the Python-reference vs Rust parity record, so the post-port baseline can cite them | PENDING |
-| F0-ID-03 | F1 -> F0 | fo_a9_7_f1_intake_synthesis (PENDING abep_sim/design/intake_synthesis.py) | the number of intake_response / response_surface points and the particle count per candidate of the F1 Pareto search, so the TPMC usage weight can be replaced by the real F1 call count | PENDING |
-| F0-ID-04 | F3 -> F0 | fo_a9_7_f3_compressor_synthesis (PENDING abep_sim/design/compressor_synthesis.py) | the number of DragCompressor.run evaluations per F3 design search | PENDING |
-| F0-ID-05 | F7/F8 -> F0 | fo_a9_7_f7_f8_coupled_optimizer (path not yet registered) | the F7/F8 driver entry point and sample counts; the UQ / robust-design workloads here time legacy drivers of withdrawn 0-D Hall physics and must be re-profiled on the new driver before any port decision | PENDING |
-| F0-ID-06 | F6 -> F0 | fo_a9_7_f6_icp_geometry (PENDING abep_sim/design/icp_geometry_synthesis.py) | view-factor calls per ICP geometry candidate and their resolution (the F6 search waits for P1/P2 evidence) | PENDING |
-| F0-ID-07 | F0 -> F1/F3/F6/F7 | all A9.7 synthesis lanes | measured per-call costs (median_wall_s_per_unit) for budgeting search sizes; values are machine-specific runtimes, never physics inputs | SUPPLIED |
+Counterparty and status as recorded in the pinned JSON at measurement time; the last column resolves them against the merged lanes (section 'Cross-lane resolution (consolidated verification round 2)').
+
+| id | direction | counterparty (as measured) | demand | status (as measured) | resolution (round 2) |
+|---|---|---|---|---|---|
+| F0-ID-01 | F0 -> rust | fo_a9_7_rust_kernels (PENDING abep_core/) | port only workloads ranked PORT_CANDIDATE without a DEFER qualifier; keep a Python wrapper with identical I/O; re-run this harness (same commands) on the Rust-enabled tree and report the same keys | OPEN | abep_core/ + abep_sim/design/tpmc_backend.py (fo_a9_7_rust_kernels, merged): PARTIAL: TPMC kernels ported behind the explicit Python wrapper (K1_entry ADMITTED, K2_diffuse ADMITTED, K3_cll ADMITTED, K4_trace ADMITTED, K5_clausing ADMITTED); re-running this harness on the Rust-enabled tree is RUST-ID-02 PARTIAL |
+| F0-ID-02 | rust -> F0 | fo_a9_7_rust_kernels (PENDING abep_core/) | for every admitted kernel: the preregistered numerical tolerance and the Python-reference vs Rust parity record, so the post-port baseline can cite them | PENDING | docs/performance/abep_core/parity_prereg_v1.json; docs/performance/abep_core/parity_report_v1.json: SUPPLIED (RUST-ID-01 SUPPLIED): pre-registered tolerance and per-kernel parity verdicts |
+| F0-ID-03 | F1 -> F0 | fo_a9_7_f1_intake_synthesis (PENDING abep_sim/design/intake_synthesis.py) | the number of intake_response / response_surface points and the particle count per candidate of the F1 Pareto search, so the TPMC usage weight can be replaced by the real F1 call count | PENDING | abep_sim/design/intake_synthesis.py; docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json: PARTIAL: 503 direct intake_response runs per F1 build (direct_runs) at 3000 particles each (F1-P-12), 144 geometry candidates; the frozen-surface point count per candidate is not recorded by F1 (OPEN); F1 does not opt in to the Rust backend (RUST-ID-03) |
+| F0-ID-04 | F3 -> F0 | fo_a9_7_f3_compressor_synthesis (PENDING abep_sim/design/compressor_synthesis.py) | the number of DragCompressor.run evaluations per F3 design search | PENDING | abep_sim/design/compressor_synthesis.py; docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json: SUPPLIED: 19440 design evaluations over 36 cases (one DragCompressor.run(self_consistent=True) plus one _run_once re-check each, evaluate_design), plus 108 size_for comparisons |
+| F0-ID-05 | F7/F8 -> F0 | fo_a9_7_f7_f8_coupled_optimizer (path not yet registered) | the F7/F8 driver entry point and sample counts; the UQ / robust-design workloads here time legacy drivers of withdrawn 0-D Hall physics and must be re-profiled on the new driver before any port decision | PENDING | abep_sim/design/architecture_optimizer.py + robust_optimizer.py (driver docs/design_synthesis/f7_f8_optimizer/build_f7_f8_optimizer.py): PARTIAL: entry points and counts supplied (600 upstream contexts, 2764800 upstream design evaluations, 1233 robust survivors, 100 TPMC-statistics MC draws per (candidate, scenario), tpmc_invoked_by_f7_f8 = False); re-profiling the new driver is OPEN |
+| F0-ID-06 | F6 -> F0 | fo_a9_7_f6_icp_geometry (PENDING abep_sim/design/icp_geometry_synthesis.py) | view-factor calls per ICP geometry candidate and their resolution (the F6 search waits for P1/P2 evidence) | PENDING | abep_sim/design/icp_geometry_synthesis.py; docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json (F6-IF-S05): PARTIAL: F6 supplies a P3 ray / view-factor workload (96 envelopes x 4 emitters at (16, 32, 64) plus 8 at (32, 64, 128)) for profiling (Rust order item 6) [AVAILABLE (builder)]; not profiled by F0 (OPEN) |
+| F0-ID-07 | F0 -> F1/F3/F6/F7 | all A9.7 synthesis lanes | measured per-call costs (median_wall_s_per_unit) for budgeting search sizes; values are machine-specific runtimes, never physics inputs | SUPPLIED | unchanged |
+
+## Cross-lane resolution (consolidated verification round 2)
+
+The JSON is pinned by the parity pre-registration, so its PENDING counterparties and the PENDING notes in the robust-design line and the uq6 / robust-design reference-workload texts stay as measured. They are superseded here: every named lane is merged. Counts are read at render time from the lane deliverables (machine-specific call counts, never physics inputs).
+
+- F0-ID-01: abep_core/ + abep_sim/design/tpmc_backend.py (fo_a9_7_rust_kernels, merged) -> PARTIAL: TPMC kernels ported behind the explicit Python wrapper (K1_entry ADMITTED, K2_diffuse ADMITTED, K3_cll ADMITTED, K4_trace ADMITTED, K5_clausing ADMITTED); re-running this harness on the Rust-enabled tree is RUST-ID-02 PARTIAL
+- F0-ID-02: docs/performance/abep_core/parity_prereg_v1.json; docs/performance/abep_core/parity_report_v1.json -> SUPPLIED (RUST-ID-01 SUPPLIED): pre-registered tolerance and per-kernel parity verdicts
+- F0-ID-03: abep_sim/design/intake_synthesis.py; docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json -> PARTIAL: 503 direct intake_response runs per F1 build (direct_runs) at 3000 particles each (F1-P-12), 144 geometry candidates; the frozen-surface point count per candidate is not recorded by F1 (OPEN); F1 does not opt in to the Rust backend (RUST-ID-03)
+- F0-ID-04: abep_sim/design/compressor_synthesis.py; docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json -> SUPPLIED: 19440 design evaluations over 36 cases (one DragCompressor.run(self_consistent=True) plus one _run_once re-check each, evaluate_design), plus 108 size_for comparisons
+- F0-ID-05: abep_sim/design/architecture_optimizer.py + robust_optimizer.py (driver docs/design_synthesis/f7_f8_optimizer/build_f7_f8_optimizer.py) -> PARTIAL: entry points and counts supplied (600 upstream contexts, 2764800 upstream design evaluations, 1233 robust survivors, 100 TPMC-statistics MC draws per (candidate, scenario), tpmc_invoked_by_f7_f8 = False); re-profiling the new driver is OPEN
+- F0-ID-06: abep_sim/design/icp_geometry_synthesis.py; docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json (F6-IF-S05) -> PARTIAL: F6 supplies a P3 ray / view-factor workload (96 envelopes x 4 emitters at (16, 32, 64) plus 8 at (32, 64, 128)) for profiling (Rust order item 6) [AVAILABLE (builder)]; not profiled by F0 (OPEN)
 
 ## Open owner questions (new)
 
