@@ -197,7 +197,10 @@ def test_gate_satisfied_and_violated_when_both_evidenced():
 def test_thermal_gate_unresolved_forces_incomplete():
     r = _req(criterion="CR-01", property="T_validated_continuous", kind="min_with_margin", value=50.0, unit="K",
              status="OWNER_GIVEN")
-    p = _prop(property="T_validated_continuous", value_si=2000.0, unit_si="K")
+    # A9.16 step 1 (A9.12 P4-OQ-01): a T_validated_continuous record is gate-admissible only at validation stage 2+,
+    # so the synthetic fixture now declares stage 2 (the margin rule itself is unchanged)
+    p = _prop(property="T_validated_continuous", value_si=2000.0, unit_si="K",
+              validation_stage="STAGE_2_INTEGRATED_REPLACEABLE_COMPONENT_CONFIRMATION")
     assert S.evaluate_gate(r, p, thermal_closure_status="UNRESOLVED", operating_temperature=300.0)[0] == \
         "INCOMPLETE_EVIDENCE"
     assert S.evaluate_gate(r, p, thermal_closure_status="CLOSED_BY_EVIDENCE", operating_temperature=None)[0] == \
@@ -376,10 +379,13 @@ def test_owner_answers_copied_verbatim(doc):
 
 
 def test_open_questions_new_and_tbd_owner(doc):
+    """Raised as new TBD_OWNER questions (ids absent from state v3); A9.16 step 1: all five are now OWNER_DECIDED by
+    A9.12 (S5.10..S5.14), the question text kept and the raised status recorded."""
     state = json.loads((REPO / B.PINS["OQ3"][0]).read_text(encoding="utf-8"))
     existing = {r["id"] for r in state["rows"]}
     for q in doc["open_owner_questions"]:
-        assert q["id"] not in existing and q["status"] == "TBD_OWNER" and q["admissible_alternatives"]
+        assert q["id"] not in existing and q["status_when_raised"] == "TBD_OWNER" and q["admissible_alternatives"]
+        assert q["status"] == "OWNER_DECIDED" and q["answer"] and "OD_2026_10_01_A9_12" in q["decided_by"]
 
 
 def test_m16_no_readiness_change(doc):

@@ -16,8 +16,11 @@ What it does
     the property are evidenced, otherwise INCOMPLETE_EVIDENCE; no weighted scalar; no selection; final material OPEN;
   * writes p4_anode_materials_v1.json and P4_ANODE_MATERIALS.md (generated from the JSON).
 
+A9.16 step 1 (2026-10-01) applies the owner decisions A9.12 P4-OQ-01..05 (S5.10..S5.14) and A9.13 F2-OQ-04 (S6.6,
+APP-FILTER) as fail-closed rules (p4_a9_16_rules.py, a9_16_application.py); A9.15 reviewed (no Xe contingency text).
+
 What it is not: a material selection, a thermal result, an anode or collector temperature, a life prediction, a PASS
-of any kind, a procurement, or an answer to any open owner question. Not wired into archengine (goldens do not move).
+of any kind, or a procurement. Not wired into archengine (goldens do not move).
 
     python docs/experiments/hall_icp/p4_anode_materials/build_p4_anode_materials.py          # (re)write outputs
     python docs/experiments/hall_icp/p4_anode_materials/build_p4_anode_materials.py --check  # exit 1 unless reproduced
@@ -63,6 +66,19 @@ _spec = importlib.util.spec_from_file_location("p4_screening", str(HERE / "p4_sc
 SCR = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(SCR)
 
+
+def _load_local(name, fname):
+    sp = importlib.util.spec_from_file_location(name, str(HERE / fname))
+    m = importlib.util.module_from_spec(sp)
+    sys.modules[name] = m
+    sp.loader.exec_module(m)
+    return m
+
+
+RULES = _load_local("p4_a9_16_rules", "p4_a9_16_rules.py")
+APP = _load_local("p4_a9_16_application", "a9_16_application.py")
+A916_DATE = "2026-10-01"
+
 # ------------------------------------------------------------------------------------------------ pinned inputs
 PINS = {
     "A9": ("docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
@@ -96,6 +112,7 @@ PINS = {
     "EVID": ("docs/EVIDENCE.md", "a2950352141890c12ad33e66766cd003215c807cb29203d21df090349ab90b61",
              "evidence rules (CLAUDE.md rule 10)"),
 }
+PINS.update(APP.decision_pins())  # A9.16 step 1: A9.12, A9.13, A9.15 (json + verbatim md)
 NEVER_PINNED = ("docs/orchestration/lane_registry_v1.json", "docs/orchestration/trigger_registry_v1.json",
                 "docs/orchestration/fired_triggers.jsonl", "docs/orchestration/trigger_ledger_v2.jsonl",
                 "docs/orchestration/runtime_state.json")
@@ -377,7 +394,21 @@ APPLICATIONS = {
                       "service": "ion-collecting bias electrode inside the downstream ICP source (the analog drives it "
                                  "negative; sputtering / deposition observed, TK-71); Ar engineering, then N2, then "
                                  "O2-bearing"},
+    # A9.13 S6.6 F2-OQ-04 (A9.16 step 1): the baseline intake filter is a P4 application; no filter material
+    # candidate is defined anywhere (F2 lane F2-IF-08), so its candidate set is TBD and no gate cell is generated
+    "APP-FILTER": {"name": "baseline intake filter element (intake / channel array -> filter -> compressor inlet)",
+                   "thermal_status_key": "FILTER_THERMAL_STATE",
+                   "blockers": ["filter material / geometry not defined (F2 lane F2-IF-08)",
+                                "filter acceptance slots not registered before LOCK-1 (A9.13 S6.3)"],
+                   "service": "particulate / debris protection of the compressor while preserving the atmospheric "
+                              "propellant: N2 and atomic O transmitted (AO is not a contaminant to remove), "
+                              "inert / low-recombination baseline (A9.13 S6.3 / S6.4); downstream of the primary "
+                              "intake / collimator, upstream of the compressor; axial location, area and thermal state "
+                              "are design variables (A9.13 S6.6)",
+                   "candidate_scope": "TBD_AFTER_EVIDENCE - no filter material candidate is defined (none invented)"},
 }
+APP_SUFFIX = {"APP-ANODE": "A", "APP-COLLECTOR": "C", "APP-FILTER": "F"}
+ELECTRODE_APPS = ["APP-ANODE", "APP-COLLECTOR"]
 
 # ------------------------------------------------------------------------------------------------ property records
 # (id, candidate, property, value_str, unit_reported, si_factor, unit_si, T_C, source_id, locator, verbatim_row,
@@ -484,7 +515,11 @@ CRITERIA = [
      "rule": "T_operating <= T_validated,continuous - 50 K (owner row 87; A9.2 anode_approach; row 86 for every ICP "
              "module material incl. the collector, ICD); T_validated,continuous must come from the selected "
              "material's oxidation / electrical / creep data in the service condition; melting range and supplier "
-             "air ratings are NOT a validated continuous-use limit; no new arbitrary limit",
+             "air ratings are NOT a validated continuous-use limit; no new arbitrary limit. A9.12 P4-OQ-01 (staged): "
+             "stage 1 coupon screening gives a coupon-supported provisional limit (design screening only); only stage "
+             "2 integrated replaceable anode / collector confirmation on the H-1 / ICP article gives "
+             "T_validated,continuous for P3 / LOCK-1; stage 3 qualification / life evidence before a flight-life "
+             "claim; the gate admits only stage 2 or later",
      "domain": ["O_bearing_plasma_service", "electrically_loaded", "at_operating_temperature"]},
     {"id": "CR-02", "name": "oxidation behaviour (retention of electrical conduction)",
      "property": "resistance_rise_fraction_after_exposure", "unit_si": "1", "kind": "max",
@@ -526,7 +561,47 @@ CRITERIA = [
              "locator, quantity type, evidence level, applicability domain and admissibility; 'verify' / snippet "
              "values are never admissible for a gate",
      "domain": []},
+    # ---- A9.13 S6.6 F2-OQ-04 APP-FILTER criteria (owner list: AO / O exposure, erosion, catalytic / recombination
+    # behaviour, particulate retention, thermal cycling, transmission / conductance effects); acceptance values are
+    # pre-registered before LOCK-1 from the contamination environment, H-1 feed requirement and measured filter
+    # material / geometry (A9.13 S6.3) - none here
+    {"id": "CR-10", "name": "AO / O exposure and erosion (filter)", "property": "filter_ao_erosion_recession_at_fluence",
+     "unit_si": "m", "kind": "max",
+     "rule": "erosion / recession of the filter element at the derived AO / O fluence <= the pre-registered AO "
+             "erosion / material-durability limit (A9.13 S6.3 / S6.6); only a dedicated AO source counts, N2+O2 "
+             "surrogate data are NO_ATOMIC_O (row 132)",
+     "domain": ["atomic_O_exposure", "filter_service_condition"]},
+    {"id": "CR-11", "name": "catalytic / recombination behaviour (O recombination / conversion probability, filter)",
+     "property": "o_recombination_conversion_probability", "unit_si": "1", "kind": "max",
+     "rule": "O recombination / conversion probability <= the pre-registered limit; the baseline is inert / "
+             "low-recombination and preserves the representative atmospheric O fraction (A9.13 S6.4); a catalytic "
+             "O -> O2 element is a separately labelled research variant only",
+     "domain": ["atomic_O_exposure", "filter_service_condition"]},
+    {"id": "CR-12", "name": "particulate retention (capture efficiency vs registered contaminant class, filter)",
+     "property": "capture_efficiency_vs_contaminant_class", "unit_si": "1", "kind": "min",
+     "rule": "capture efficiency per registered contaminant / particle class >= the pre-registered value, with the "
+             "retained contaminant capacity recorded (A9.13 S6.3); compressor wear products are not credited",
+     "domain": ["registered_contaminant_class", "filter_service_condition"]},
+    {"id": "CR-13", "name": "thermal cycling (filter)", "property": "filter_thermal_cycling_degradation_metric",
+     "unit_si": "1", "kind": "max",
+     "rule": "degradation after the pre-registered thermal cycling over the filter's registered thermal-state range "
+             "<= the pre-registered limit (thermal state is a design variable, A9.13 S6.6)",
+     "domain": ["thermal_cycling", "filter_service_condition"]},
+    {"id": "CR-14", "name": "transmission (species-resolved propellant transmission, filter)",
+     "property": "species_resolved_propellant_transmission", "unit_si": "1", "kind": "min",
+     "rule": "species-resolved forward transmission (N2, O, ...) >= the pre-registered value (A9.13 S6.3 / S6.19); "
+             "the filter owns its transmission, never hidden in the intake efficiency",
+     "domain": ["species_resolved_flow", "filter_service_condition"]},
+    {"id": "CR-15", "name": "conductance / pressure-loss effects (filter)", "property": "filter_conductance",
+     "unit_si": "m3/s", "kind": "min",
+     "rule": "conductance >= the value the AG-12 feed-state sufficiency closure requires (pressure-loss / conductance "
+             "penalty, A9.13 S6.3 / S6.21)",
+     "domain": ["registered_flow_regime", "filter_service_condition"]},
 ]
+_FILTER_CRITERIA = ("CR-10", "CR-11", "CR-12", "CR-13", "CR-14", "CR-15")
+for _c in CRITERIA:
+    _c["applies_to"] = (["APP-ANODE", "APP-COLLECTOR", "APP-FILTER"] if _c["id"] == "CR-09" else
+                        ["APP-FILTER"] if _c["id"] in _FILTER_CRITERIA else list(ELECTRODE_APPS))
 GATED = [c for c in CRITERIA if c["kind"] is not None]
 
 REQ_TBD = {
@@ -534,13 +609,15 @@ REQ_TBD = {
                             "(ANODE_THERMAL_CLOSURE = UNRESOLVED; " + P3_REF + ")",
     ("CR-01", "APP-COLLECTOR"): "TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is "
                                 "not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; " + P3_REF + ")",
-    ("CR-02", "APP-ANODE"): "TBD_OWNER - resistance-rise threshold and exposure are pre-registered before exposure "
-                            "(R8 note; P4-OQ-03)",
-    ("CR-02", "APP-COLLECTOR"): "TBD_OWNER - as APP-ANODE, plus the collector bias polarity for coupons (P4-OQ-05)",
+    ("CR-02", "APP-ANODE"): "TBD - resistance-rise threshold and exposure frozen at LOCK-2 after metrology "
+                            "commissioning, before any acceptance-bearing exposure (A9.12 P4-OQ-03; "
+                            "NOT_EVALUATED_LOCK2_TBD)",
+    ("CR-02", "APP-COLLECTOR"): "TBD - as APP-ANODE (LOCK-2, A9.12 P4-OQ-03); collector coupons negative-biased + "
+                                "floating control, bias magnitude from P1 evidence (A9.12 P4-OQ-05)",
     ("CR-03", "APP-ANODE"): "TBD - requires the AO fluence at the anode over the life basis (derivation not in the "
-                            "repository) and a pre-registered acceptance (P4-OQ-03)",
-    ("CR-03", "APP-COLLECTOR"): "TBD - requires the AO fluence at the collector location and a pre-registered "
-                                "acceptance",
+                            "repository) and the LOCK-2 acceptance (A9.12 P4-OQ-03)",
+    ("CR-03", "APP-COLLECTOR"): "TBD - requires the AO fluence at the collector location and the LOCK-2 acceptance "
+                                "(A9.12 P4-OQ-03)",
     ("CR-04", "APP-ANODE"): "TBD - requires the ion flux / energy at the anode and the allowable recession (H-1 anode "
                             "drawing, A9H-ANODE-01/02)",
     ("CR-04", "APP-COLLECTOR"): "TBD - requires the measured collector bias / sheath energy (P1; analog value is "
@@ -555,15 +632,26 @@ REQ_TBD = {
     ("CR-08", "APP-ANODE"): "TBD - requires the anode geometry (part mass inside AL-04 of " + MASS_REF + ")",
     ("CR-08", "APP-COLLECTOR"): "TBD - requires the collector geometry (part mass inside AL-05 of " + MASS_REF + ")",
 }
+_FILTER_TBD = ("TBD - pre-registered before LOCK-1 from the defined contamination environment, the H-1 feed "
+               "requirement and the measured filter material / geometry (A9.13 S6.3; "
+               "NOT_EVALUATED_FILTER_ACCEPTANCE_TBD); no number invented")
+REQ_TBD.update({
+    ("CR-10", "APP-FILTER"): _FILTER_TBD + " - AO erosion / material durability",
+    ("CR-11", "APP-FILTER"): _FILTER_TBD + " - O recombination / conversion probability",
+    ("CR-12", "APP-FILTER"): _FILTER_TBD + " - capture efficiency vs registered contaminant class",
+    ("CR-13", "APP-FILTER"): _FILTER_TBD + " - thermal-cycling range (filter thermal state is a design variable)",
+    ("CR-14", "APP-FILTER"): _FILTER_TBD + " - species-resolved propellant transmission",
+    ("CR-15", "APP-FILTER"): _FILTER_TBD + " - pressure-loss / conductance penalty (AG-12 feed-state closure)",
+})
 
 
 def build_requirements():
     reqs = []
     for c in GATED:
-        for app in APPLICATIONS:
+        for app in c["applies_to"]:
             is_margin = c["id"] == "CR-01"
             reqs.append({
-                "id": f"RQ-{c['id'][3:]}-{'A' if app == 'APP-ANODE' else 'C'}",
+                "id": f"RQ-{c['id'][3:]}-{APP_SUFFIX[app]}",
                 "criterion": c["id"], "application": app, "property": c["property"], "kind": c["kind"],
                 "value": 50.0 if is_margin else None, "unit": c["unit_si"],
                 "status": "OWNER_GIVEN" if is_margin else "TBD",
@@ -700,6 +788,11 @@ def build_fixed_statuses(pins):
         "FINAL_COLLECTOR_MATERIAL": {"status": "OPEN",
                                      "source": "A9.1 decisions.A9-03-collector: " + col},
         "ANODE_BASELINE": {"status": "OPEN", "source": "A9.2 decisions.anode_approach"},
+        "FINAL_FILTER_MATERIAL": {"status": "OPEN",
+                                  "source": "A9.13 F2-OQ-04 (S6.6): APP-FILTER added to P4; no filter material defined"},
+        "FILTER_THERMAL_STATE": {"status": "OPEN",
+                                 "source": "A9.13 F2-OQ-04 (S6.6): axial location, area and thermal state remain "
+                                           "design variables until geometry is frozen"},
     }
 
 
@@ -747,25 +840,42 @@ def build_items(pins, h2_val):
         ("IT-11", "T_operating,collector", P3_TBD, "K", "requires Q_collector in the coupled model",
          P3_REF, "model-derived", "TBD_AFTER_EVIDENCE", "after-evidence"),
         ("IT-12", "T_validated,continuous per candidate", "TBD_AFTER_EVIDENCE", "K",
-         "requires coupon exposure in the service condition (TP-01); no datasheet air rating or melting range "
-         "counts", "test plan TP-01", "measured", "TBD_AFTER_EVIDENCE", "after-evidence"),
-        ("IT-13", "resistance-rise acceptance threshold and exposure duration", "TBD_OWNER", "1; h",
-         "pre-registered before any exposure", "R8 proposed_coupon_candidates.notes; P4-OQ-03", "owner-allocation",
-         "TBD_OWNER", "LOCK-1"),
-        ("IT-14", "coupon bias configuration", "biased AND floating coupons", "-", r106["owner_answer_verbatim"],
-         f"{A} row 106", "owner-stated", "OWNER_GIVEN", "NOW"),
+         "A9.12 P4-OQ-01 staged: only stage 2 (integrated replaceable anode / collector confirmation on the H-1 / ICP "
+         "article, Q4) gives T_validated,continuous for P3 / LOCK-1; a stage-1 coupon result (Q0 / Q1, TP-01) is a "
+         "coupon-supported provisional limit for design screening only; no datasheet air rating, melting range, "
+         "short vendor exposure or brief coupon test counts", "test plan TP-01; " + APP.cite("A9.12", "P4-OQ-01"),
+         "measured", "TBD_AFTER_EVIDENCE", "after-evidence"),
+        ("IT-13", "resistance-rise threshold, mass-loss / recession limits, sputter / erosion acceptance, exposure "
+         "duration / fluence, uncertainty treatment, acceptance / rejection logic",
+         "TBD - frozen at LOCK-2 after metrology commissioning (IT-24), before any acceptance-bearing exposure "
+         "(NOT_EVALUATED_LOCK2_TBD; candidate coupon performance never sets them)", "1; h",
+         "A9.12 P4-OQ-03 (LOCK-2 alternative)", "R8 proposed_coupon_candidates.notes; " +
+         APP.cite("A9.12", "P4-OQ-03"), "owner-allocation", "TBD", "LOCK-2"),
+        ("IT-14", "coupon bias configuration", "anode coupons: biased AND floating (row 106); collector coupons: "
+         "NEGATIVE-biased (ion-collecting service polarity, frozen) AND floating matched control (A9.12 P4-OQ-05)",
+         "-", r106["owner_answer_verbatim"] + " | A9.12 S5.14: negative-bias collector set + floating control; "
+         "polarity frozen; bias magnitude from P1 evidence", f"{A} row 106; " + APP.cite("A9.12", "P4-OQ-05"),
+         "owner-stated", "OWNER_GIVEN", "NOW"),
         ("IT-15", "atomic-O exposure", "dedicated AO source; N2+O2 surrogate labelled NO_ATOMIC_O", "-",
          r132["owner_answer_verbatim"], f"{A} row 132", "owner-stated", "OWNER_GIVEN", "NOW"),
         ("IT-16", "witness coupons / holders", "non-functional exchangeable items", "-", r134["owner_answer_verbatim"],
          f"{A} row 134", "owner-stated", "OWNER_GIVEN", "NOW"),
-        ("IT-17", "coupon shortlist (variants of R8-C02 / C03, optional R8-matrix rows)", "TBD_OWNER", "-",
-         "row 106 fixes the bias configuration and 'shortlisted O-resistant candidates' but names no list",
-         "P4-OQ-02", "owner-allocation", "TBD_OWNER", "LOCK-1"),
+        ("IT-17", "Q0 coupon screening matrix (R8-C01..C09 with the owner's named variants; reserve list)",
+         "Q0 matrix per A9.12 P4-OQ-02 (a9_16_owner_rules.q0_matrix): C01 316L reference control; C02 IN600 / IN625 / "
+         "Haynes 230 (+ X-750 if readily available; no generic Hastelloy); C03 IN601 / Haynes 214 / one specified "
+         "FeCrAl grade; C04 Rh-coated 316L; C05 Pt-clad / plated 316L; C06 Cr-plated 316L; C07 IrO2 / RuO2 MMO (exact "
+         "system + substrate); C08 bare W negative / reference control; C09 specified isotropic graphite control; Ti, "
+         "TiN / ZrN, bulk Cu, bulk Ir reserve only", "-",
+         "A9.12 S5.11: broad Q0, evidence-based down-selection before Q1", APP.cite("A9.12", "P4-OQ-02"),
+         "owner-stated", "OWNER_GIVEN", "NOW"),
         ("IT-18", "AO fluence at anode / collector over the life basis", "TBD - requires an AO flux derivation at "
          "the electrode locations (not in the repository)", "atoms/m2", "input to CR-03", "-", "model-derived",
          "TBD", "after-evidence"),
-        ("IT-19", "ion species / energy at the collector", "TBD - requires P1 measured collector bias (ICD ICP-21; "
-         "analog value analog-only)", "eV", "input to CR-04", "P1 measured data from " + P1_REF + " (none recorded yet; "
+        ("IT-19", "ion species / energy at the collector (and the collector-coupon bias magnitude)",
+         "TBD - requires the measured P1 collector operating envelope and plasma / sheath evidence (ICD ICP-21; analog "
+         "value analog-only; A9.12 P4-OQ-05: the coupon bias magnitude is derived from it, never invented)", "eV",
+         "input to CR-04 and the acceptance-bearing negative-bias collector coupons",
+         "P1 measured data from " + P1_REF + " (none recorded yet; "
          "the sheath-edge plasma potential is conditional on P3Q-01)", "measured", "TBD_AFTER_EVIDENCE",
          "after-evidence"),
         ("IT-20", "allowable electrode-path resistance", "TBD - requires the V_d / collector V-I budget", "ohm",
@@ -774,9 +884,45 @@ def build_items(pins, h2_val):
          "AL-05 of " + MASS_REF + " requires the part geometry (no part allocation exists)", "kg", "input to CR-08",
          MASS_REF, "owner-allocation", "TBD", "LOCK-1"),
         ("IT-22", "sputter-yield data for candidates", "TBD - requires species-resolved yields (open elemental "
-         "compilation NIFS_DATA_23 located, not digitized; alloys / coatings need measurement or acquisition, "
-         "P4-OQ-04)", "atoms/ion", "input to CR-04", "NIFS_DATA_23 (located only)", "digitized", "TBD",
-         "after-evidence"),
+         "compilation NIFS_DATA_23 located, not digitized); A9.12 P4-OQ-04 BOTH: lawful acquisition of N+ / N2+ / O+ / "
+         "O2+ yields (priors / matrix selection / comparison / model initialisation) AND project ion-beam measurement "
+         "of the down-selected candidates (candidate-specific evidence); no silent elemental substitution for alloys / "
+         "coatings", "atoms/ion", "input to CR-04", "NIFS_DATA_23 (located only); " + APP.cite("A9.12", "P4-OQ-04"),
+         "digitized", "TBD", "after-evidence"),
+        # ---- A9.16 step 1 registration slots (owner fixed the form; numbers / declarations deferred)
+        ("IT-23", "staged evidence hierarchy for T_validated,continuous", "ST-1 coupon screening -> "
+         "COUPON_SUPPORTED_PROVISIONAL_LIMIT (screening only); ST-2 integrated replaceable anode / collector "
+         "confirmation on H-1 / ICP -> T_VALIDATED_CONTINUOUS (P3 / LOCK-1); ST-3 qualification / life -> "
+         "FLIGHT_LIFE_QUALIFIED_LIMIT", "-", "A9.12 S5.10", APP.cite("A9.12", "P4-OQ-01"), "owner-stated",
+         "OWNER_GIVEN", "NOW"),
+        ("IT-24", "Q0 / Q1 metrology commissioning (resistance repeatability / resolution, mass-change detection "
+         "limit, profilometry / recession resolution, SEM / XPS where applicable, coupon-to-coupon / process "
+         "repeatability, AO / ion dosimetry)", "TBD - commissioned on standards / blanks / controls / sacrificial "
+         "coupons before LOCK-2 (NOT_EVALUATED_METROLOGY_COMMISSIONING_TBD)", "-", "A9.12 S5.12",
+         APP.cite("A9.12", "P4-OQ-03"), "measured", "TBD_AFTER_EVIDENCE", "LOCK-2"),
+        ("IT-25", "sputter-data acquisition routes", "library access, inter-library loan, publisher purchase, "
+         "institutional subscription, other legitimate licensed route (authorized; not performed by this lane)", "-",
+         "A9.12 S5.13", APP.cite("A9.12", "P4-OQ-04"), "owner-stated", "OWNER_GIVEN", "NOW"),
+        ("IT-26", "FeCrAl grade (Q0-C03-FECRAL)", "TBD - one explicitly specified grade declared before admission "
+         "(NOT_ADMITTED_GRADE_TBD)", "-", "A9.12 S5.11", APP.cite("A9.12", "P4-OQ-02"), "owner-allocation", "TBD",
+         "LOCK-2"),
+        ("IT-27", "isotropic graphite grade (Q0-C09 control)", "TBD - specified grade declared before admission "
+         "(NOT_ADMITTED_GRADE_TBD)", "-", "A9.12 S5.11", APP.cite("A9.12", "P4-OQ-02"), "owner-allocation", "TBD",
+         "LOCK-2"),
+        ("IT-28", "IrO2 / RuO2 MMO coating system and substrate (Q0-C07)", "TBD - exact coating system and substrate "
+         "declared with the full coating record (NOT_ADMITTED_COATING_SYSTEM_TBD)", "-", "A9.12 S5.11",
+         APP.cite("A9.12", "P4-OQ-02"), "owner-allocation", "TBD", "LOCK-2"),
+        ("IT-29", "collector-coupon bias polarity", "NEGATIVE (ion-collecting service condition) + FLOATING matched "
+         "control; frozen", "-", "A9.12 S5.14", APP.cite("A9.12", "P4-OQ-05"), "owner-stated", "OWNER_GIVEN", "NOW"),
+        ("IT-30", "baseline filter placement and recombination class (APP-FILTER)", RULES.FILTER_PLACEMENT +
+         "; inert / low-recombination baseline; catalytic O -> O2 only as a separate research variant", "-",
+         "A9.13 S6.6 / S6.4 / S6.3", APP.cite("A9.13", "F2-OQ-04"), "owner-stated", "OWNER_GIVEN", "NOW"),
+        ("IT-31", "APP-FILTER acceptance (capture efficiency vs contaminant class, species-resolved transmission, "
+         "pressure-loss / conductance penalty, O recombination / conversion probability, retained capacity, AO "
+         "erosion / durability, AG-12 effect)", "TBD - pre-registered before LOCK-1 from the contamination "
+         "environment, H-1 feed requirement and measured filter material / geometry "
+         "(NOT_EVALUATED_FILTER_ACCEPTANCE_TBD)", "-", "A9.13 S6.3", APP.cite("A9.13", "F2-OQ-04"),
+         "owner-allocation", "TBD", "LOCK-1"),
     ]
     out = []
     for (iid, name, val, unit, basis, src, qt, st, fp) in it:
@@ -796,6 +942,8 @@ def run_screening(reqs, props, fixed):
     states = {}
     for app, ad in APPLICATIONS.items():
         tstat = fixed[ad["thermal_status_key"]]["status"]
+        if app not in ELECTRODE_APPS:
+            continue  # APP-FILTER: candidate set TBD_AFTER_EVIDENCE (no filter material is defined; none invented)
         for cid, *_ in CANDIDATES:
             outs = []
             for r in [r for r in reqs if r["application"] == app]:
@@ -870,23 +1018,37 @@ def build_coverage(props, links):
 
 
 TEST_PLAN = [
+    {"id": "TP-00", "criterion": "CR-09", "populates": "metrology capability (LOCK-2 input)",
+     "measure": "commissioning of the Q0 / Q1 metrology: resistance repeatability / resolution, mass-change detection "
+                "limit, profilometry / recession resolution, SEM / XPS capability where applicable, coupon-to-coupon "
+                "/ process repeatability, AO / ion exposure dosimetry - on standards, blanks, controls or sacrificial "
+                "commissioning coupons only; then LOCK-2 freezes the acceptance before any acceptance-bearing "
+                "exposure; an unresolvable criterion -> NOT_EVALUATED_METROLOGY (never widened) (A9.12 P4-OQ-03)",
+     "instruments": "4-wire micro-ohmmeter; balance; profilometer; SEM / XPS; AO / ion dosimetry",
+     "atmosphere_sequence": "-", "acceptance": "commissioning record complete (p4_a9_16_rules.metrology_commissioning)",
+     "register_links": ["AOL-RC-02", "AOL-PM-02"]},
     {"id": "TP-01", "criterion": "CR-01", "populates": "T_validated_continuous",
-     "measure": "long-duration coupon exposure at controlled temperature steps in the service atmosphere with the "
-                "coupon electrically loaded (electron-collecting for anode coupons; bias polarity for collector "
-                "coupons TBD_OWNER, P4-OQ-05); in-situ 4-wire resistance and adjacent thermocouple; the highest step "
-                "at which the pre-registered CR-02 / CR-03 acceptance holds for the pre-registered duration is the "
-                "validated continuous-use temperature for that condition",
+     "measure": "STAGE 1 (A9.12 P4-OQ-01): long-duration coupon exposure at controlled temperature steps in the "
+                "service-representative atmosphere / species with the coupon electrically loaded (electron-collecting "
+                "biased + floating for anode coupons, row 106; NEGATIVE-biased + floating control for collector "
+                "coupons, A9.12 P4-OQ-05, bias magnitude from the measured P1 collector envelope), pre-registered "
+                "exposure duration and thermal cycling where applicable; in-situ 4-wire resistance and adjacent "
+                "thermocouple; the highest step at which the pre-registered (LOCK-2) acceptance holds for the "
+                "pre-registered exposure is a COUPON-SUPPORTED PROVISIONAL limit (design screening only); "
+                "T_validated,continuous needs STAGE 2 (Q4)",
      "instruments": "coupon thermocouples (AOL-CX-07); 4-wire resistance (AOL-RC-02 method); bias supply V/I",
      "atmosphere_sequence": "Ar (engineering only) -> N2 -> N2+O2 up to the delivered O2 fraction (label NO_ATOMIC_O) "
                             "-> dedicated AO source (row 132)",
-     "acceptance": "TBD_OWNER (pre-registered before exposure, P4-OQ-01 / P4-OQ-03)",
+     "acceptance": "TBD - LOCK-2 registration before any acceptance-bearing exposure (A9.12 P4-OQ-01 / P4-OQ-03; "
+                   "NOT_EVALUATED_LOCK2_TBD)",
      "register_links": ["AOL-EX-02", "AOL-CX-07"]},
     {"id": "TP-02", "criterion": "CR-02", "populates": "resistance_rise_fraction_after_exposure",
      "measure": "4-wire sheet / contact resistance before, during and after exposure; oxide thickness and phase "
-                "(SEM / XPS); mass by the dehydrated protocol; biased AND floating coupons of each shortlisted "
-                "material (row 106)",
+                "(SEM / XPS); mass by the dehydrated protocol; anode coupons biased AND floating (row 106); "
+                "collector coupons NEGATIVE-biased AND floating control (A9.12 P4-OQ-05); Q0 matrix per A9.12 "
+                "P4-OQ-02",
      "instruments": "4-wire micro-ohmmeter; SEM / XPS; balance (AOL-PM-02)",
-     "atmosphere_sequence": "as TP-01", "acceptance": "TBD_OWNER (P4-OQ-03)",
+     "atmosphere_sequence": "as TP-01", "acceptance": "TBD - LOCK-2 (A9.12 P4-OQ-03; NOT_EVALUATED_LOCK2_TBD)",
      "register_links": ["AOL-EX-02", "AOL-WC-02", "AOL-RC-01", "AOL-RC-02", "AOL-PM-02"]},
     {"id": "TP-03", "criterion": "CR-03", "populates": "ao_degradation_metric_at_fluence",
      "measure": "exposure in a dedicated atomic-O source with measured fluence (and a fluence witness), at the "
@@ -896,12 +1058,17 @@ TEST_PLAN = [
      "atmosphere_sequence": "dedicated AO source only (row 132)", "acceptance": "TBD_OWNER",
      "register_links": ["AOL-EX-02"]},
     {"id": "TP-04", "criterion": "CR-04", "populates": "sputter_recession_over_life",
-     "measure": "species-resolved yield vs ion energy (N+, N2+, O+, O2+, Xe+; Ar+ engineering only) from literature "
-                "(elemental targets) or ion-beam coupon measurement (alloys, coatings); in-thruster / in-ICP witness "
-                "coupons for recession and deposition on the H-1 front face and ICP dielectric",
+     "measure": "species-resolved yield vs ion energy (N+, N2+, O+, O2+, Xe+; Ar+ engineering only; Xe+ because Xe "
+                "is an RFP-required propellant capability, A9.15) - A9.12 P4-OQ-04 BOTH: lawfully acquired literature "
+                "yields for prior bounds / test-matrix selection / comparison / model initialisation, AND project "
+                "ion-beam measurement of the down-selected candidates at the relevant species / energy / angle / "
+                "material (candidate-specific evidence); no silent elemental substitution for alloys / coatings; "
+                "in-thruster / in-ICP witness coupons for recession and deposition on the H-1 front face and ICP "
+                "dielectric",
      "instruments": "ion source with energy / species control or published data; profilometer; witness holders "
                     "(exchangeable, row 134)",
-     "atmosphere_sequence": "ion-beam bench; then H-1 / ICP witness positions (ICD)", "acceptance": "TBD_OWNER",
+     "atmosphere_sequence": "ion-beam bench; then H-1 / ICP witness positions (ICD)",
+     "acceptance": "TBD - LOCK-2 sputtering / erosion acceptance (A9.12 P4-OQ-03)",
      "register_links": ["AOL-WC-02"]},
     {"id": "TP-05", "criterion": "CR-05", "populates": "electrical_resistivity",
      "measure": "4-wire bulk resistivity vs temperature up to above T_operating on the procured heat / lot "
@@ -926,14 +1093,62 @@ TEST_PLAN = [
                 "file sha256, evidence class, applicability domain; excluded records kept with the reason",
      "instruments": "-", "atmosphere_sequence": "-", "acceptance": "record rule (fail closed)", "register_links": []},
 ]
+# ---- A9.13 S6.6 F2-OQ-04: APP-FILTER tests (owner list); acceptance pre-registered before LOCK-1 (S6.3)
+_FILTER_ACC = "TBD - pre-registered before LOCK-1 (A9.13 S6.3; NOT_EVALUATED_FILTER_ACCEPTANCE_TBD)"
+TEST_PLAN += [
+    {"id": "TP-10", "criterion": "CR-10", "populates": "filter_ao_erosion_recession_at_fluence",
+     "measure": "AO / O exposure of filter-element coupons in a dedicated AO source with measured fluence at the "
+                "registered filter thermal state; erosion / recession and mass change",
+     "instruments": "AO source with fluence witness; profilometer / balance", "atmosphere_sequence":
+     "dedicated AO source (row 132); N2+O2 surrogate labelled NO_ATOMIC_O", "acceptance": _FILTER_ACC,
+     "register_links": ["AOL-EX-02"]},
+    {"id": "TP-11", "criterion": "CR-11", "populates": "o_recombination_conversion_probability",
+     "measure": "catalytic / recombination behaviour: O recombination / conversion probability of the filter "
+                "material / geometry (species-conversion measurement)", "instruments": "AO source; species-resolved "
+     "downstream measurement", "atmosphere_sequence": "dedicated AO source", "acceptance": _FILTER_ACC,
+     "register_links": []},
+    {"id": "TP-12", "criterion": "CR-12", "populates": "capture_efficiency_vs_contaminant_class",
+     "measure": "particulate retention: capture efficiency per registered contaminant / particle class and retained "
+                "contaminant capacity", "instruments": "particle source / counter (per registered class)",
+     "atmosphere_sequence": "-", "acceptance": _FILTER_ACC, "register_links": []},
+    {"id": "TP-13", "criterion": "CR-13", "populates": "filter_thermal_cycling_degradation_metric",
+     "measure": "thermal cycling over the registered filter thermal-state range; integrity / transmission after "
+                "cycling", "instruments": "thermal-cycling rig; metallography", "atmosphere_sequence": "vacuum",
+     "acceptance": _FILTER_ACC, "register_links": []},
+    {"id": "TP-14", "criterion": "CR-14", "populates": "species_resolved_propellant_transmission",
+     "measure": "species-resolved forward (and, where relevant, reverse) transmission of the filter element",
+     "instruments": "molecular-flow transmission rig (species-resolved)", "atmosphere_sequence": "N2, O-bearing",
+     "acceptance": _FILTER_ACC, "register_links": []},
+    {"id": "TP-15", "criterion": "CR-15", "populates": "filter_conductance",
+     "measure": "conductance / pressure-loss penalty of the filter element in the registered flow regime",
+     "instruments": "conductance rig; calibrated gauges", "atmosphere_sequence": "N2",
+     "acceptance": _FILTER_ACC + " (AG-12 feed-state closure)", "register_links": []},
+]
 QUAL_STAGES = [
-    {"id": "Q0", "name": "screening coupons (bench, per shortlisted material)", "tests": ["TP-02", "TP-05", "TP-06",
-                                                                                          "TP-08"]},
-    {"id": "Q1", "name": "electrically loaded plasma coupons, biased and floating (row 106)", "tests": ["TP-01",
-                                                                                                      "TP-02"]},
+    {"id": "Q0", "name": "broad screening coupons (bench) over the owner Q0 matrix (A9.12 P4-OQ-02); validation "
+                         "stage ST-1", "tests": ["TP-00", "TP-02", "TP-05", "TP-06", "TP-08"]},
+    {"id": "Q1", "name": "electrically loaded plasma coupons for Q0 survivors only (pre-registered screening "
+                         "criteria): anode biased + floating (row 106), collector negative-biased + floating "
+                         "(A9.12 P4-OQ-05); validation stage ST-1 (coupon-supported provisional limit)",
+     "tests": ["TP-01", "TP-02"]},
     {"id": "Q2", "name": "dedicated atomic-O coupons (row 132)", "tests": ["TP-03"]},
     {"id": "Q3", "name": "fabrication / joining / thermal cycling", "tests": ["TP-07"]},
-    {"id": "Q4", "name": "in-H-1 / in-ICP witness and replaceable-anode metrology", "tests": ["TP-02", "TP-04"]},
+    {"id": "Q4", "name": "in-H-1 / in-ICP witness and replaceable anode / collector confirmation (validation stage "
+                         "ST-2: the only source of T_validated,continuous for P3 / LOCK-1)", "tests": ["TP-01", "TP-02",
+                                                                                                       "TP-04"]},
+    {"id": "Q5", "name": "qualification / life evidence (validation stage ST-3: full-duration or justified "
+                         "accelerated life before a flight-life claim)", "tests": ["TP-01", "TP-02", "TP-04"]},
+    {"id": "QF", "name": "APP-FILTER material programme (A9.13 F2-OQ-04)", "tests": ["TP-10", "TP-11", "TP-12",
+                                                                                      "TP-13", "TP-14", "TP-15"]},
+]
+VALIDATION_STAGES = [
+    {"id": "ST-1", "stage": "STAGE_1_COUPON_SCREENING", "qual_stages": ["Q0", "Q1"],
+     "result": "COUPON_SUPPORTED_PROVISIONAL_LIMIT", "usable_for": ["design_screening"]},
+    {"id": "ST-2", "stage": "STAGE_2_INTEGRATED_REPLACEABLE_COMPONENT_CONFIRMATION", "qual_stages": ["Q4"],
+     "result": "T_VALIDATED_CONTINUOUS", "usable_for": ["design_screening", "p3_lock1_material_temperature_closure"]},
+    {"id": "ST-3", "stage": "STAGE_3_QUALIFICATION_LIFE_EVIDENCE", "qual_stages": ["Q5"],
+     "result": "FLIGHT_LIFE_QUALIFIED_LIMIT",
+     "usable_for": ["design_screening", "p3_lock1_material_temperature_closure", "final_flight_life_claim"]},
 ]
 
 INTERFACE_DEMANDS = [  # (id, direction, counterpart, content, used_for, status, units, xref pairs)
@@ -963,7 +1178,19 @@ INTERFACE_DEMANDS = [  # (id, direction, counterpart, content, used_for, status,
      "INCOMPLETE_EVIDENCE for every candidate and application", "RVM state", "DEFINED", "-", []),
     ("ID-11", "P4 -> M16", PINS["M16V3"][0], "rows 18, 20, 21: framework implemented; readiness unchanged",
      "m16_impact", "DEFINED", "-", []),
+    ("ID-12", "P4 <-> F2 filter", APP.F2_REL + " (F2-IF-08)", "APP-FILTER (A9.13 F2-OQ-04): filter material / "
+     "geometry, thermal-state range and contamination classes from F2; P4 returns the CR-10..CR-15 evidence (AO / O "
+     "erosion, recombination, retention, thermal cycling, transmission, conductance)", "APP-FILTER; test plan "
+     "TP-10..TP-15", "TBD_AFTER_EVIDENCE (no filter material defined; acceptance pre-registered before LOCK-1)", "-",
+     []),
 ]
+A9_16_IFD_NOTES = {
+    "ID-06": "A9.12 P4-OQ-05: the collector-coupon bias magnitude / ion energy is derived from this measured P1 "
+             "collector envelope and plasma / sheath evidence before any acceptance-bearing biased exposure",
+    "ID-09": "A9.12 P4-OQ-02 fixes the Q0 coupon matrix (a9_16_owner_rules.q0_matrix); the XL-27 pair text "
+             "'coupon shortlist TBD_OWNER P4 IT-17' is identical on both sides and is re-stated with RFQ at the "
+             "integration re-pin",
+}
 
 NEW_OPEN_QUESTIONS = [
     {"id": "P4-OQ-01", "question": "Evidence standard for 'T_validated,continuous' of an anode / collector material: "
@@ -1001,6 +1228,16 @@ NEW_OPEN_QUESTIONS = [
      "admissible_alternatives": ["add a negative-bias set", "reuse the anode biased / floating set",
                                  "defer until P1 measures the collector bias"], "status": "TBD_OWNER"},
 ]
+
+
+def decided_questions():
+    """The five P4 questions as raised (text unchanged), now OWNER_DECIDED by A9.12 (A9.16 step 1)."""
+    out = []
+    for q in NEW_OPEN_QUESTIONS:
+        dk, seq, code = APP.DECIDED_OWNER_QUESTIONS[q["id"]]
+        out.append(dict(q, status="OWNER_DECIDED", status_when_raised="TBD_OWNER", answer=code, sequenced_no=seq,
+                        decided_by=APP.cite(dk, q["id"])))
+    return out
 
 
 def check_existing_ids(pins):
@@ -1055,7 +1292,25 @@ def build_owner_answers_applied(pins):
                 "covers_ids": ["fo_a9_6_p4_anode_materials"],
                 "owner_answer_verbatim": json.dumps(pins["A96"]["summary"]["fixed_statuses"], sort_keys=True),
                 "how_applied": "fixed_statuses block; criteria list = sec. 10 list; no final selection"})
+    for row in APP.owner_answers_applied_rows():
+        row["owner_answer_verbatim"] = verbatim_section(pins, row["kind"], row["sequenced_no"], row["question_id"])
+        out.append(row)
     return out
+
+
+def verbatim_section(pins, kind, seq, qid):
+    """The owner's verbatim answer text for one question, cut from the pinned verbatim .md (fails if absent)."""
+    md = pins[kind.replace(".", "") + "_MD"]
+    if kind == "A9.15":
+        i = md.find("RFP-COMPLIANT PROPELLANT POLICY\n")
+        if i < 0:
+            raise BuildError("A9.15 verbatim policy text missing")
+        return md[i:].strip()
+    m = re.search(r"^\d+\. " + re.escape(seq) + r" \u2014 " + re.escape(qid) + r" \u2014 .*?^Decision: [^\n]*",
+                  md, re.S | re.M)
+    if m is None:
+        raise BuildError(f"{kind} {seq} {qid}: verbatim section not found")
+    return m.group(0).strip()
 
 
 def build_m16_impact(pins):
@@ -1069,6 +1324,117 @@ def build_m16_impact(pins):
                     "readiness_change": "NONE - no row becomes READY / VERIFIED; framework implementation is not "
                                         "material evidence (A9.6 sec. 16)"})
     return out
+
+
+def q0_disposition(cid):
+    """A9.12 P4-OQ-02 disposition of one P4 candidate (owner Q0 matrix / reserve / not listed)."""
+    for e in RULES.Q0_MATRIX:
+        if e[6] == cid:
+            d = {"q0_id": e[0], "role": e[3], "r8_coupon": e[1], "material": e[2]}
+            if e[4] == "exact_grade":
+                d["admission"] = "NOT_ADMITTED_GRADE_TBD (grade declared before admission)"
+            elif e[4] == "availability":
+                d["admission"] = "NOT_ADMITTED_AVAILABILITY_TBD (only if readily available)"
+            elif e[4] == "coating_system_and_substrate":
+                d["admission"] = "NOT_ADMITTED_COATING_SYSTEM_TBD (exact coating system + substrate)"
+            elif e[5]:
+                d["admission"] = ("NOT_ADMITTED_COATING_RECORD_INCOMPLETE (composition, thickness, deposition "
+                                  "process, substrate, surface preparation, lot / process provenance)")
+            else:
+                d["admission"] = "Q0_LISTED (no declaration outstanding; lot / heat certificate per TP-09)"
+            return d
+    for e in RULES.GENERIC_GRADE_REFUSED:
+        if e[3] == cid:
+            return {"q0_id": e[0], "role": "NOT_ADMITTED", "material": e[2],
+                    "admission": "NOT_ADMITTED_EXACT_GRADE_REQUIRED (no generic Hastelloy)"}
+    for e in RULES.RESERVE:
+        if e[2] == cid:
+            return {"q0_id": e[0], "role": "RESERVE", "material": e[1],
+                    "admission": "RESERVE_ONLY_NOT_IN_BASELINE_CAMPAIGN (specific hypothesis / need before "
+                                 "activation)"}
+    return {"q0_id": None, "role": "NOT_IN_OWNER_Q0_MATRIX", "material": None,
+            "admission": "NOT_IN_OWNER_Q0_MATRIX (no owner disposition; not added)"}
+
+
+def _refusal(fn):
+    """Run one rule on the REGISTERED inputs; the expected outcome today is a fail-closed refusal (recorded)."""
+    try:
+        out = fn()
+    except RULES.RuleRefusal as e:
+        return {"status": e.code, "reason": str(e)}
+    raise BuildError(f"A9.16 rule evaluated on unregistered inputs: fail-closed rule broken ({out})")
+
+
+def a9_16_owner_rules():
+    """A9.16 step 1 rule record: owner forms, registration slots and the rules evaluated on today's registered
+    inputs (every evaluation that needs a deferred / TBD input refuses; the refusal is the deliverable)."""
+    q0 = [{"q0_id": e[0], "r8_coupon": e[1], "material": e[2], "role": e[3], "declaration_needed": e[4],
+           "coating_record_required": e[5], "candidate": e[6],
+           "registered_admission": _refusal(lambda e=e: RULES.q0_admission(e[0], None)) if (e[4] or e[5]) else
+           {"status": "Q0_LISTED", "reason": "no declaration outstanding"}} for e in RULES.Q0_MATRIX]
+    return {
+        "rules_module": APP.RULES_REL, "test": APP.TEST_REL, "applied": A916_DATE,
+        "rule": "pure fail-closed functions; owner forms only as given; deferred numbers / declarations are "
+                "registration slots (NOT_EVALUATED_* / NOT_ADMITTED_* / INCOMPLETE_EVIDENCE); no selection; never PASS",
+        "staged_validation": {"stages": VALIDATION_STAGES, "stage_1_conditions": list(RULES.STAGE_1_CONDITIONS),
+                              "stage_1_metrics": list(RULES.STAGE_1_METRICS),
+                              "stage_2_environment": list(RULES.STAGE_2_ENVIRONMENT),
+                              "never_validation": list(RULES.NON_VALIDATION_BASES),
+                              "cr01_gate_stages": list(SCR.T_VALIDATED_GATE_STAGES),
+                              "registered_evaluation": _refusal(lambda: RULES.validation_stage_record(
+                                  {"basis": RULES.STAGE_1, "material": "any Q0 entry", "source": "none yet",
+                                   "preregistered_acceptance": "TBD", "T_limit_K": None})),
+                              "decision": APP.cite("A9.12", "P4-OQ-01")},
+        "q0_matrix": {"entries": q0,
+                      "generic_grade_refused": [{"q0_id": e[0], "material": e[2], "candidate": e[3],
+                                                 "registered_admission": _refusal(lambda e=e: RULES.q0_entry(e[0]))}
+                                                for e in RULES.GENERIC_GRADE_REFUSED],
+                      "reserve": [{"id": e[0], "material": e[1], "candidate": e[2],
+                                   "registered_activation": _refusal(lambda e=e: RULES.reserve_activation(e[0]))}
+                                  for e in RULES.RESERVE],
+                      "not_in_owner_matrix": [c[0] for c in CANDIDATES
+                                              if q0_disposition(c[0])["role"] == "NOT_IN_OWNER_Q0_MATRIX"],
+                      "coating_record_fields": list(RULES.COATING_RECORD_FIELDS),
+                      "q1_rule": "only Q0 survivors meeting the pre-registered (LOCK-2) screening criteria "
+                                 "(p4_a9_16_rules.q1_admission)",
+                      "decision": APP.cite("A9.12", "P4-OQ-02")},
+        "lock2": {"metrology_slots": list(RULES.METROLOGY_SLOTS),
+                  "commissioning_articles": list(RULES.COMMISSIONING_ARTICLES),
+                  "threshold_slots": list(RULES.LOCK2_THRESHOLD_SLOTS),
+                  "threshold_metrology": RULES.THRESHOLD_METROLOGY,
+                  "registered_commissioning": _refusal(lambda: RULES.metrology_commissioning(None)),
+                  "registered_freeze": _refusal(lambda: RULES.lock2_freeze(None, None)),
+                  "inadequate_metrology": "NOT_EVALUATED_METROLOGY (criterion never widened)",
+                  "decision": APP.cite("A9.12", "P4-OQ-03")},
+        "sputter_data": {"acquisition_species": list(RULES.ACQUISITION_SPECIES),
+                         "lawful_routes": list(RULES.LAWFUL_ROUTES),
+                         "literature_uses": list(RULES.LITERATURE_USES),
+                         "candidate_specific_evidence": "PROJECT_ION_BEAM_MEASUREMENT of the down-selected candidate",
+                         "elemental_substitution": "refused for alloys / coatings without a registered NOT_MATERIAL "
+                                                   "assessment; then an explicit proxy for literature uses only",
+                         "acquired_records": [], "project_measurements": [],
+                         "decision": APP.cite("A9.12", "P4-OQ-04")},
+        "collector_coupons": {"sets": list(RULES.COLLECTOR_SETS), "polarity": RULES.COLLECTOR_POLARITY,
+                              "bias_magnitude": "TBD - from the measured P1 collector envelope + plasma / sheath "
+                                                "evidence (ID-06, IT-19)",
+                              "registered_evaluation": _refusal(lambda: RULES.collector_coupon_exposure(
+                                  {"set": "NEGATIVE_BIAS_ION_COLLECTING", "polarity": "NEGATIVE",
+                                   "acceptance_bearing": True, "p1_complete": False})),
+                              "pre_p1_biased_exposure": "ENGINEERING_ONLY_FIXTURE_PROCESS_VERIFICATION",
+                              "decision": APP.cite("A9.12", "P4-OQ-05")},
+        "app_filter": {"placement": RULES.FILTER_PLACEMENT, "baseline": RULES.FILTER_BASELINE,
+                       "tests": list(RULES.FILTER_TESTS), "criteria": list(_FILTER_CRITERIA),
+                       "catalytic_variant": {"label": RULES.FILTER_CATALYTIC_VARIANT,
+                                             "requires_own": list(RULES.CATALYTIC_VARIANT_REQUIREMENTS)},
+                       "acceptance_slots": list(RULES.FILTER_ACCEPTANCE_SLOTS),
+                       "registered_acceptance": _refusal(lambda: RULES.filter_acceptance(None)),
+                       "candidates": "TBD_AFTER_EVIDENCE - no filter material defined (F2-IF-08); none invented",
+                       "decision": APP.cite("A9.13", "F2-OQ-04")},
+        "a9_15_review": {"result": "no text in P4 restricts Xe to a C1 contingency; Xe+ retained in CR-04 / TP-04 as an "
+                                   "RFP-required propellant species; ICP gas-mode baseline unchanged",
+                         "decision": APP.cite("A9.15", "RFP-COMPLIANT PROPELLANT POLICY")},
+        "out_of_lane": [{"path": p, "rules": r} for p, r in APP.OUT_OF_LANE],
+    }
 
 
 def build_doc(pins):
@@ -1105,6 +1471,7 @@ def build_doc(pins):
             "owner_status": owner,
             "note": ("A9.2: not selected merely for melting point" if cid in ("CAND-05", "CAND-08", "CAND-10")
                      else None),
+            "q0_disposition": q0_disposition(cid),
         })
     doc = {
         "schema": "p4_anode_materials_v1", "id": "p4_anode_materials_v1",
@@ -1112,10 +1479,13 @@ def build_doc(pins):
         "lane": LANE, "trigger": TRIGGER, "date": DATE, "base_commit": BASE_COMMIT,
         "generated_by": SCRIPT_REL, "screening_module": SCREEN_REL, "companion_document": f"{LANE_REL}/{MD_NAME}",
         "test": TEST_REL,
-        "status": "FRAMEWORK_IMPLEMENTED - NO MATERIAL SELECTED; every gate INCOMPLETE_EVIDENCE",
+        "status": "FRAMEWORK_IMPLEMENTED - NO MATERIAL SELECTED; every gate INCOMPLETE_EVIDENCE; owner decisions "
+                  "A9.12 P4-OQ-01..05 and A9.13 F2-OQ-04 APPLIED (A9.16 step 1)",
+        "a9_16_step": {"date": A916_DATE, "decisions": [APP.DEC[k][0] for k in APP.ORDER]},
         "what_this_is_not": ["a material selection or ranking", "a weighted score", "a thermal result or an anode / "
                              "collector temperature", "a life prediction", "a PASS of any kind",
-                             "a procurement or purchase", "an answer to any open owner question"],
+                             "a procurement or purchase", "an owner decision (the A9.12 / A9.13 decisions are "
+                             "applied as fail-closed rules; every deferred number stays a registration slot)"],
         "fixed_statuses": fixed,
         "a9_status": pins["A92"]["decisions"]["a9_10_statuses"],
         "pins": {k: {"path": v[0], "sha256": v[1], "role": v[2]} for k, v in sorted(PINS.items())},
@@ -1130,6 +1500,8 @@ def build_doc(pins):
             "a property whose applicability domain does not cover the requirement domain gives OUT_OF_DOMAIN "
             "(distinct from a violation)",
             "CR-01 is INCOMPLETE_EVIDENCE while the thermal closure of the application is UNRESOLVED",
+            "CR-01 admits a T_validated_continuous record only at validation stage 2 or 3 (A9.12 P4-OQ-01)",
+            "APP-FILTER (A9.13 F2-OQ-04) has no candidate set yet: requirements listed, no gate cell generated",
             "no weighted scalar; no ranking; a satisfied gate is GATE_SATISFIED_WITHIN_EVIDENCE_DOMAIN, never PASS",
             "final material OPEN for every application (final_material_status)",
             "synthetic evidence refused; never mixed with published / measured records",
@@ -1144,12 +1516,15 @@ def build_doc(pins):
         "final_material_status": finals,
         "evidence_coverage": build_coverage(props, links),
         "pareto_views": build_pareto(props),
-        "test_plan": {"tests": TEST_PLAN, "qualification_stages": QUAL_STAGES},
-        "interface_demands": [{"id": i, "direction": d, "counterpart": c, "content": t, "used_for": u, "status": s,
-                               "units": un, "xref": [xref(p) for p in xr]}
+        "test_plan": {"tests": TEST_PLAN, "qualification_stages": QUAL_STAGES,
+                      "validation_stages": VALIDATION_STAGES},
+        "interface_demands": [dict({"id": i, "direction": d, "counterpart": c, "content": t, "used_for": u,
+                                    "status": s, "units": un, "xref": [xref(p) for p in xr]},
+                                   **({"a9_16_note": A9_16_IFD_NOTES[i]} if i in A9_16_IFD_NOTES else {}))
                               for (i, d, c, t, u, s, un, xr) in INTERFACE_DEMANDS],
         "owner_answers_applied": build_owner_answers_applied(pins),
-        "open_owner_questions": NEW_OPEN_QUESTIONS,
+        "open_owner_questions": decided_questions(),
+        "a9_16_owner_rules": a9_16_owner_rules(),
         "historical_reuse": [{"path": v[0], "sha256": v[1], "use": v[2]} for _k, v in sorted(PINS.items())],
         "m16_impact": build_m16_impact(pins),
         "findings": [
@@ -1164,6 +1539,10 @@ def build_doc(pins):
             "T_operating while ANODE_THERMAL_CLOSURE is UNRESOLVED",
             "sputtering: no yield value is carried; NIFS-DATA-23 is located (elemental targets, graphical) but not "
             "digitized",
+            "A9.16 step 1: P4-OQ-01..05 decided (A9.12) and applied - staged validation, owner Q0 matrix, LOCK-2 "
+            "after metrology, sputter data BOTH, collector negative-bias + floating; APP-FILTER added (A9.13 "
+            "F2-OQ-04); every deferred number / grade / coating system / bias magnitude / filter acceptance is a "
+            "registration slot that refuses today",
         ],
     }
     SCR.assert_no_forbidden_status(doc)
@@ -1198,9 +1577,12 @@ def render_md(doc):
         md_table(["id", "criterion", "property", "unit", "gate kind", "rule"],
                  [(c["id"], c["name"], c["property"], c["unit_si"], c["kind"], c["rule"]) for c in doc["criteria"]]),
         "", "## Candidates (no selection; order is the R8 order, not a ranking)", "",
-        md_table(["id", "material", "family", "R8 coupon", "R8 status (research only)", "rows", "owner status"],
+        md_table(["id", "material", "family", "R8 coupon", "R8 status (research only)", "rows", "owner status",
+                  "Q0 disposition (A9.12 P4-OQ-02)"],
                  [(c["id"], c["name"], c["family"], c["r8_coupon_id"], c["r8_matrix_status_research_only"],
-                   c["row_population"], "; ".join(f"{k}: {v}" for k, v in c["owner_status"].items()) or c["note"])
+                   c["row_population"], "; ".join(f"{k}: {v}" for k, v in c["owner_status"].items()) or c["note"],
+                   f"{c['q0_disposition']['q0_id'] or '-'} {c['q0_disposition']['role']}: "
+                   f"{c['q0_disposition']['admission']}")
                   for c in doc["candidates"]]),
         "", "## Requirements (per criterion and application)", "",
         md_table(["id", "criterion", "application", "value", "unit", "status", "TBD"],
@@ -1223,7 +1605,12 @@ def render_md(doc):
     for app in doc["applications"]:
         L.append(f"### {app}")
         L.append("")
-        crits = [c["id"] for c in doc["criteria"] if c["kind"] is not None]
+        crits = [c["id"] for c in doc["criteria"] if c["kind"] is not None and app in c["applies_to"]]
+        if not any(m["application"] == app for m in doc["gate_matrix"]):
+            L += [f"No gate cell: {doc['applications'][app].get('candidate_scope', 'no candidate')}. Criteria "
+                  f"{', '.join(crits)}; requirements all TBD (see the requirements table).", "",
+                  f"Final material ({app}): **{doc['final_material_status'][app]}**.", ""]
+            continue
         rows = []
         for c in doc["candidates"]:
             cells = {m["criterion"]: m["outcome"] for m in doc["gate_matrix"]
@@ -1247,10 +1634,16 @@ def render_md(doc):
                     for t in doc["test_plan"]["tests"]]), "",
           md_table(["stage", "name", "tests"], [(q["id"], q["name"], ", ".join(q["tests"]))
                                                 for q in doc["test_plan"]["qualification_stages"]]), "",
+          "### Validation stages for T_validated,continuous (A9.12 P4-OQ-01)", "",
+          md_table(["id", "stage", "qualification stages", "result", "usable for"],
+                   [(v["id"], v["stage"], ", ".join(v["qual_stages"]), v["result"], ", ".join(v["usable_for"]))
+                    for v in doc["test_plan"]["validation_stages"]]), "",
           "## (b) Interface demands", "",
-          md_table(["id", "direction", "counterpart", "content", "used for", "units", "status", "pairs"],
+          md_table(["id", "direction", "counterpart", "content", "used for", "units", "status", "pairs",
+                    "A9.16 note"],
                    [(i["id"], i["direction"], i["counterpart"], i["content"], i["used_for"], i["units"], i["status"],
-                     ", ".join(x["pair"] + " -> " + x["counterpart"] for x in i["xref"]) or "-")
+                     ", ".join(x["pair"] + " -> " + x["counterpart"] for x in i["xref"]) or "-",
+                     i.get("a9_16_note"))
                     for i in doc["interface_demands"]]), "",
           "### Merged cross-lane references", "", doc["merged_cross_lane"]["rule"], "",
           md_table(["package", "path", "pairs", "ids cited", "check"],
@@ -1260,10 +1653,42 @@ def render_md(doc):
           md_table(["decision", "covers", "verbatim", "how applied"],
                    [(o["decision"], ", ".join(o["covers_ids"]), o["owner_answer_verbatim"], o["how_applied"])
                     for o in doc["owner_answers_applied"]]), "",
-          "## (d) Open owner questions (new only)", "",
-          md_table(["id", "question", "why", "related existing", "admissible alternatives", "status"],
+          "## (d) Owner questions raised by this lane (now decided)", "",
+          md_table(["id", "question", "why", "related existing", "admissible alternatives", "status", "answer",
+                    "decided by"],
                    [(q["id"], q["question"], q["why"], q["related_existing_open"],
-                     "; ".join(q["admissible_alternatives"]), q["status"]) for q in doc["open_owner_questions"]]), "",
+                     "; ".join(q["admissible_alternatives"]), q["status"], q["answer"], q["decided_by"])
+                    for q in doc["open_owner_questions"]]), "",
+          "## A9.16 step 1 owner rules (fail-closed; registered evaluations refuse today)", "",
+          f"Rules module `{doc['a9_16_owner_rules']['rules_module']}`, test `{doc['a9_16_owner_rules']['test']}`. "
+          + doc["a9_16_owner_rules"]["rule"] + ".", "",
+          "### Q0 matrix (A9.12 P4-OQ-02)", "",
+          md_table(["Q0 id", "R8", "material", "role", "declaration needed", "coating record", "candidate",
+                    "registered admission"],
+                   [(e["q0_id"], e["r8_coupon"], e["material"], e["role"], e["declaration_needed"],
+                     e["coating_record_required"], e["candidate"], e["registered_admission"]["status"])
+                    for e in doc["a9_16_owner_rules"]["q0_matrix"]["entries"]]), "",
+          "Refused: " + "; ".join(f"{e['material']} ({e['registered_admission']['status']})" for e in
+                                  doc["a9_16_owner_rules"]["q0_matrix"]["generic_grade_refused"]) + ". Reserve: " +
+          "; ".join(f"{e['material']} ({e['registered_activation']['status']})" for e in
+                    doc["a9_16_owner_rules"]["q0_matrix"]["reserve"]) + ". Not in the owner matrix: " +
+          ", ".join(doc["a9_16_owner_rules"]["q0_matrix"]["not_in_owner_matrix"]) + ".", "",
+          "### Registered evaluations", "",
+          md_table(["rule", "registered evaluation", "decision"],
+                   [("staged validation", doc["a9_16_owner_rules"]["staged_validation"]["registered_evaluation"]
+                     ["status"], doc["a9_16_owner_rules"]["staged_validation"]["decision"]),
+                    ("metrology commissioning", doc["a9_16_owner_rules"]["lock2"]["registered_commissioning"]
+                     ["status"], doc["a9_16_owner_rules"]["lock2"]["decision"]),
+                    ("LOCK-2 freeze", doc["a9_16_owner_rules"]["lock2"]["registered_freeze"]["status"],
+                     doc["a9_16_owner_rules"]["lock2"]["decision"]),
+                    ("collector coupon (acceptance-bearing, biased)",
+                     doc["a9_16_owner_rules"]["collector_coupons"]["registered_evaluation"]["status"],
+                     doc["a9_16_owner_rules"]["collector_coupons"]["decision"]),
+                    ("APP-FILTER acceptance", doc["a9_16_owner_rules"]["app_filter"]["registered_acceptance"]
+                     ["status"], doc["a9_16_owner_rules"]["app_filter"]["decision"])]), "",
+          "### Out of lane (listed, not edited here)", "",
+          md_table(["path", "rules"], [(o["path"], ", ".join(o["rules"]))
+                                       for o in doc["a9_16_owner_rules"]["out_of_lane"]]), "",
           "## (e) Historical reuse (pinned, sha256)", "",
           md_table(["path", "sha256", "use"], [(h["path"], h["sha256"], h["use"]) for h in doc["historical_reuse"]]),
           "", "## (f) M16 impact", "",

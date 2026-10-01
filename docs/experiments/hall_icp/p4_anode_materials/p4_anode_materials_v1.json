@@ -10,7 +10,15 @@
  "screening_module": "docs/experiments/hall_icp/p4_anode_materials/p4_screening.py",
  "companion_document": "docs/experiments/hall_icp/p4_anode_materials/P4_ANODE_MATERIALS.md",
  "test": "tests/test_p4_anode_materials.py",
- "status": "FRAMEWORK_IMPLEMENTED - NO MATERIAL SELECTED; every gate INCOMPLETE_EVIDENCE",
+ "status": "FRAMEWORK_IMPLEMENTED - NO MATERIAL SELECTED; every gate INCOMPLETE_EVIDENCE; owner decisions A9.12 P4-OQ-01..05 and A9.13 F2-OQ-04 APPLIED (A9.16 step 1)",
+ "a9_16_step": {
+  "date": "2026-10-01",
+  "decisions": [
+   "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+   "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json"
+  ]
+ },
  "what_this_is_not": [
   "a material selection or ranking",
   "a weighted score",
@@ -18,7 +26,7 @@
   "a life prediction",
   "a PASS of any kind",
   "a procurement or purchase",
-  "an answer to any open owner question"
+  "an owner decision (the A9.12 / A9.13 decisions are applied as fail-closed rules; every deferred number stays a registration slot)"
  ],
  "fixed_statuses": {
   "316L_FLIGHT_ANODE": {
@@ -44,6 +52,14 @@
   "ANODE_BASELINE": {
    "status": "OPEN",
    "source": "A9.2 decisions.anode_approach"
+  },
+  "FINAL_FILTER_MATERIAL": {
+   "status": "OPEN",
+   "source": "A9.13 F2-OQ-04 (S6.6): APP-FILTER added to P4; no filter material defined"
+  },
+  "FILTER_THERMAL_STATE": {
+   "status": "OPEN",
+   "source": "A9.13 F2-OQ-04 (S6.6): axial location, area and thermal state remain design variables until geometry is frozen"
   }
  },
  "a9_status": {
@@ -68,6 +84,36 @@
    "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
    "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
    "role": "owner decisions A9.1"
+  },
+  "A912": {
+   "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+   "role": "owner A9.12 (machine-readable; A9.16 step 1)"
+  },
+  "A912_MD": {
+   "path": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+   "sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62",
+   "role": "owner A9.12 verbatim (governs over the json summary; A9.16 step 1)"
+  },
+  "A913": {
+   "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+   "sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+   "role": "owner A9.13 (machine-readable; A9.16 step 1)"
+  },
+  "A913_MD": {
+   "path": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
+   "sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf",
+   "role": "owner A9.13 verbatim (governs over the json summary; A9.16 step 1)"
+  },
+  "A915": {
+   "path": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
+   "sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
+   "role": "owner A9.15 (machine-readable; A9.16 step 1)"
+  },
+  "A915_MD": {
+   "path": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
+   "sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903",
+   "role": "owner A9.15 verbatim (governs over the json summary; A9.16 step 1)"
   },
   "A92": {
    "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
@@ -280,6 +326,8 @@
   "a hard gate is applied only when both the requirement and the property value are evidenced; otherwise INCOMPLETE_EVIDENCE",
   "a property whose applicability domain does not cover the requirement domain gives OUT_OF_DOMAIN (distinct from a violation)",
   "CR-01 is INCOMPLETE_EVIDENCE while the thermal closure of the application is UNRESOLVED",
+  "CR-01 admits a T_validated_continuous record only at validation stage 2 or 3 (A9.12 P4-OQ-01)",
+  "APP-FILTER (A9.13 F2-OQ-04) has no candidate set yet: requirements listed, no gate cell generated",
   "no weighted scalar; no ranking; a satisfied gate is GATE_SATISFIED_WITHIN_EVIDENCE_DOMAIN, never PASS",
   "final material OPEN for every application (final_material_status)",
   "synthetic evidence refused; never mixed with published / measured records",
@@ -302,6 +350,16 @@
     "ICP-21 material TBD (A9.1 A9-03-collector)"
    ],
    "service": "ion-collecting bias electrode inside the downstream ICP source (the analog drives it negative; sputtering / deposition observed, TK-71); Ar engineering, then N2, then O2-bearing"
+  },
+  "APP-FILTER": {
+   "name": "baseline intake filter element (intake / channel array -> filter -> compressor inlet)",
+   "thermal_status_key": "FILTER_THERMAL_STATE",
+   "blockers": [
+    "filter material / geometry not defined (F2 lane F2-IF-08)",
+    "filter acceptance slots not registered before LOCK-1 (A9.13 S6.3)"
+   ],
+   "service": "particulate / debris protection of the compressor while preserving the atmospheric propellant: N2 and atomic O transmitted (AO is not a contaminant to remove), inert / low-recombination baseline (A9.13 S6.3 / S6.4); downstream of the primary intake / collimator, upstream of the compressor; axial location, area and thermal state are design variables (A9.13 S6.6)",
+   "candidate_scope": "TBD_AFTER_EVIDENCE - no filter material candidate is defined (none invented)"
   }
  },
  "criteria": [
@@ -311,11 +369,15 @@
    "property": "T_validated_continuous",
    "unit_si": "K",
    "kind": "min_with_margin",
-   "rule": "T_operating <= T_validated,continuous - 50 K (owner row 87; A9.2 anode_approach; row 86 for every ICP module material incl. the collector, ICD); T_validated,continuous must come from the selected material's oxidation / electrical / creep data in the service condition; melting range and supplier air ratings are NOT a validated continuous-use limit; no new arbitrary limit",
+   "rule": "T_operating <= T_validated,continuous - 50 K (owner row 87; A9.2 anode_approach; row 86 for every ICP module material incl. the collector, ICD); T_validated,continuous must come from the selected material's oxidation / electrical / creep data in the service condition; melting range and supplier air ratings are NOT a validated continuous-use limit; no new arbitrary limit. A9.12 P4-OQ-01 (staged): stage 1 coupon screening gives a coupon-supported provisional limit (design screening only); only stage 2 integrated replaceable anode / collector confirmation on the H-1 / ICP article gives T_validated,continuous for P3 / LOCK-1; stage 3 qualification / life evidence before a flight-life claim; the gate admits only stage 2 or later",
    "domain": [
     "O_bearing_plasma_service",
     "electrically_loaded",
     "at_operating_temperature"
+   ],
+   "applies_to": [
+    "APP-ANODE",
+    "APP-COLLECTOR"
    ]
   },
   {
@@ -329,6 +391,10 @@
     "O_bearing_plasma_service",
     "electrically_loaded",
     "at_operating_temperature"
+   ],
+   "applies_to": [
+    "APP-ANODE",
+    "APP-COLLECTOR"
    ]
   },
   {
@@ -341,6 +407,10 @@
    "domain": [
     "atomic_O_exposure",
     "at_operating_temperature"
+   ],
+   "applies_to": [
+    "APP-ANODE",
+    "APP-COLLECTOR"
    ]
   },
   {
@@ -353,6 +423,10 @@
    "domain": [
     "species_resolved_ions",
     "sheath_energy_range"
+   ],
+   "applies_to": [
+    "APP-ANODE",
+    "APP-COLLECTOR"
    ]
   },
   {
@@ -365,6 +439,10 @@
    "domain": [
     "bulk_property",
     "at_operating_temperature"
+   ],
+   "applies_to": [
+    "APP-ANODE",
+    "APP-COLLECTOR"
    ]
   },
   {
@@ -377,6 +455,10 @@
    "domain": [
     "bulk_property",
     "at_operating_temperature"
+   ],
+   "applies_to": [
+    "APP-ANODE",
+    "APP-COLLECTOR"
    ]
   },
   {
@@ -389,6 +471,10 @@
    "domain": [
     "fabrication_trial",
     "thermal_cycling"
+   ],
+   "applies_to": [
+    "APP-ANODE",
+    "APP-COLLECTOR"
    ]
   },
   {
@@ -400,6 +486,10 @@
    "rule": "part mass (density x CAD volume) within the anode (AL-04) / ICP module (AL-05) allocation; the density limit follows from the allocation and the geometry",
    "domain": [
     "bulk_property"
+   ],
+   "applies_to": [
+    "APP-ANODE",
+    "APP-COLLECTOR"
    ]
   },
   {
@@ -409,7 +499,102 @@
    "unit_si": null,
    "kind": null,
    "rule": "record rule, not a gate: every value carries source id, URL/access date or pinned repository path, locator, quantity type, evidence level, applicability domain and admissibility; 'verify' / snippet values are never admissible for a gate",
-   "domain": []
+   "domain": [],
+   "applies_to": [
+    "APP-ANODE",
+    "APP-COLLECTOR",
+    "APP-FILTER"
+   ]
+  },
+  {
+   "id": "CR-10",
+   "name": "AO / O exposure and erosion (filter)",
+   "property": "filter_ao_erosion_recession_at_fluence",
+   "unit_si": "m",
+   "kind": "max",
+   "rule": "erosion / recession of the filter element at the derived AO / O fluence <= the pre-registered AO erosion / material-durability limit (A9.13 S6.3 / S6.6); only a dedicated AO source counts, N2+O2 surrogate data are NO_ATOMIC_O (row 132)",
+   "domain": [
+    "atomic_O_exposure",
+    "filter_service_condition"
+   ],
+   "applies_to": [
+    "APP-FILTER"
+   ]
+  },
+  {
+   "id": "CR-11",
+   "name": "catalytic / recombination behaviour (O recombination / conversion probability, filter)",
+   "property": "o_recombination_conversion_probability",
+   "unit_si": "1",
+   "kind": "max",
+   "rule": "O recombination / conversion probability <= the pre-registered limit; the baseline is inert / low-recombination and preserves the representative atmospheric O fraction (A9.13 S6.4); a catalytic O -> O2 element is a separately labelled research variant only",
+   "domain": [
+    "atomic_O_exposure",
+    "filter_service_condition"
+   ],
+   "applies_to": [
+    "APP-FILTER"
+   ]
+  },
+  {
+   "id": "CR-12",
+   "name": "particulate retention (capture efficiency vs registered contaminant class, filter)",
+   "property": "capture_efficiency_vs_contaminant_class",
+   "unit_si": "1",
+   "kind": "min",
+   "rule": "capture efficiency per registered contaminant / particle class >= the pre-registered value, with the retained contaminant capacity recorded (A9.13 S6.3); compressor wear products are not credited",
+   "domain": [
+    "registered_contaminant_class",
+    "filter_service_condition"
+   ],
+   "applies_to": [
+    "APP-FILTER"
+   ]
+  },
+  {
+   "id": "CR-13",
+   "name": "thermal cycling (filter)",
+   "property": "filter_thermal_cycling_degradation_metric",
+   "unit_si": "1",
+   "kind": "max",
+   "rule": "degradation after the pre-registered thermal cycling over the filter's registered thermal-state range <= the pre-registered limit (thermal state is a design variable, A9.13 S6.6)",
+   "domain": [
+    "thermal_cycling",
+    "filter_service_condition"
+   ],
+   "applies_to": [
+    "APP-FILTER"
+   ]
+  },
+  {
+   "id": "CR-14",
+   "name": "transmission (species-resolved propellant transmission, filter)",
+   "property": "species_resolved_propellant_transmission",
+   "unit_si": "1",
+   "kind": "min",
+   "rule": "species-resolved forward transmission (N2, O, ...) >= the pre-registered value (A9.13 S6.3 / S6.19); the filter owns its transmission, never hidden in the intake efficiency",
+   "domain": [
+    "species_resolved_flow",
+    "filter_service_condition"
+   ],
+   "applies_to": [
+    "APP-FILTER"
+   ]
+  },
+  {
+   "id": "CR-15",
+   "name": "conductance / pressure-loss effects (filter)",
+   "property": "filter_conductance",
+   "unit_si": "m3/s",
+   "kind": "min",
+   "rule": "conductance >= the value the AG-12 feed-state sufficiency closure requires (pressure-loss / conductance penalty, A9.13 S6.3 / S6.21)",
+   "domain": [
+    "registered_flow_regime",
+    "filter_service_condition"
+   ],
+   "applies_to": [
+    "APP-FILTER"
+   ]
   }
  ],
  "candidates": [
@@ -427,7 +612,14 @@
     "APP-ANODE": "REJECTED_AS_CURRENT_BASELINE for the flight / design-representative anode; ALLOWED_ENGINEERING_ONLY (engineering / shakedown, coupon, low-temperature development) - A9.2 anode_316L, row 106",
     "APP-COLLECTOR": "ALLOWED_ENGINEERING_ONLY for Ar engineering reproduction; flight collector material not frozen - A9.1 A9-03-collector"
    },
-   "note": null
+   "note": null,
+   "q0_disposition": {
+    "q0_id": "Q0-C01",
+    "role": "ENGINEERING_REFERENCE_CONTROL_ONLY",
+    "r8_coupon": "R8-C01",
+    "material": "316L",
+    "admission": "Q0_LISTED (no declaration outstanding; lot / heat certificate per TP-09)"
+   }
   },
   {
    "id": "CAND-02A",
@@ -440,7 +632,14 @@
    "origin": "repository evidence (web track R8)",
    "row_population": "DATASHEET_BULK_PROPERTIES_ONLY",
    "owner_status": {},
-   "note": null
+   "note": null,
+   "q0_disposition": {
+    "q0_id": "Q0-C02-IN600",
+    "role": "CANDIDATE",
+    "r8_coupon": "R8-C02",
+    "material": "INCONEL alloy 600",
+    "admission": "Q0_LISTED (no declaration outstanding; lot / heat certificate per TP-09)"
+   }
   },
   {
    "id": "CAND-02B",
@@ -453,7 +652,14 @@
    "origin": "repository evidence (web track R8)",
    "row_population": "UNPOPULATED",
    "owner_status": {},
-   "note": null
+   "note": null,
+   "q0_disposition": {
+    "q0_id": "Q0-C02-IN625",
+    "role": "CANDIDATE",
+    "r8_coupon": "R8-C02",
+    "material": "INCONEL alloy 625",
+    "admission": "Q0_LISTED (no declaration outstanding; lot / heat certificate per TP-09)"
+   }
   },
   {
    "id": "CAND-02C",
@@ -466,7 +672,14 @@
    "origin": "repository evidence (web track R8)",
    "row_population": "UNPOPULATED",
    "owner_status": {},
-   "note": null
+   "note": null,
+   "q0_disposition": {
+    "q0_id": "Q0-C02-H230",
+    "role": "CANDIDATE",
+    "r8_coupon": "R8-C02",
+    "material": "Haynes 230",
+    "admission": "Q0_LISTED (no declaration outstanding; lot / heat certificate per TP-09)"
+   }
   },
   {
    "id": "CAND-02D",
@@ -479,7 +692,14 @@
    "origin": "repository evidence (web track R8)",
    "row_population": "UNPOPULATED",
    "owner_status": {},
-   "note": null
+   "note": null,
+   "q0_disposition": {
+    "q0_id": "Q0-C02-X750",
+    "role": "ADDITIONAL_COMPARISON_IF_READILY_AVAILABLE",
+    "r8_coupon": "R8-C02",
+    "material": "INCONEL alloy X-750",
+    "admission": "NOT_ADMITTED_AVAILABILITY_TBD (only if readily available)"
+   }
   },
   {
    "id": "CAND-02E",
@@ -492,7 +712,13 @@
    "origin": "repository evidence (web track R8)",
    "row_population": "UNPOPULATED",
    "owner_status": {},
-   "note": null
+   "note": null,
+   "q0_disposition": {
+    "q0_id": "Q0-C02-HASTELLOY",
+    "role": "NOT_ADMITTED",
+    "material": "Hastelloy (generic, no exact grade)",
+    "admission": "NOT_ADMITTED_EXACT_GRADE_REQUIRED (no generic Hastelloy)"
+   }
   },
   {
    "id": "CAND-03A",
@@ -505,7 +731,14 @@
    "origin": "repository evidence (web track R8)",
    "row_population": "DATASHEET_BULK_PROPERTIES_ONLY",
    "owner_status": {},
-   "note": null
+   "note": null,
+   "q0_disposition": {
+    "q0_id": "Q0-C03-IN601",
+    "role": "CANDIDATE",
+    "r8_coupon": "R8-C03",
+    "material": "INCONEL alloy 601",
+    "admission": "Q0_LISTED (no declaration outstanding; lot / heat certificate per TP-09)"
+   }
   },
   {
    "id": "CAND-03B",
@@ -518,7 +751,14 @@
    "origin": "repository evidence (web track R8)",
    "row_population": "UNPOPULATED",
    "owner_status": {},
-   "note": null
+   "note": null,
+   "q0_disposition": {
+    "q0_id": "Q0-C03-FECRAL",
+    "role": "CANDIDATE",
+    "r8_coupon": "R8-C03",
+    "material": "FeCrAl (one explicitly specified grade)",
+    "admission": "NOT_ADMITTED_GRADE_TBD (grade declared before admission)"
+   }
   },
   {
    "id": "CAND-03C",
@@ -531,7 +771,14 @@
    "origin": "repository evidence (web track R8)",
    "row_population": "UNPOPULATED",
    "owner_status": {},
-   "note": null
+   "note": null,
+   "q0_disposition": {
+    "q0_id": "Q0-C03-H214",
+    "role": "CANDIDATE",
+    "r8_coupon": "R8-C03",
+    "material": "Haynes 214",
+    "admission": "Q0_LISTED (no declaration outstanding; lot / heat certificate per TP-09)"
+   }
   },
   {
    "id": "CAND-04",
@@ -544,7 +791,14 @@
    "origin": "repository evidence (web track R8)",
    "row_population": "UNPOPULATED",
    "owner_status": {},
-   "note": null
+   "note": null,
+   "q0_disposition": {
+    "q0_id": "Q0-C04",
+    "role": "CANDIDATE",
+    "r8_coupon": "R8-C04",
+    "material": "Rh-coated 316L",
+    "admission": "NOT_ADMITTED_COATING_RECORD_INCOMPLETE (composition, thickness, deposition process, substrate, surface preparation, lot / process provenance)"
+   }
   },
   {
    "id": "CAND-05",
@@ -557,7 +811,14 @@
    "origin": "repository evidence (web track R8)",
    "row_population": "UNPOPULATED",
    "owner_status": {},
-   "note": "A9.2: not selected merely for melting point"
+   "note": "A9.2: not selected merely for melting point",
+   "q0_disposition": {
+    "q0_id": "Q0-C05",
+    "role": "CANDIDATE",
+    "r8_coupon": "R8-C05",
+    "material": "Pt-clad / plated 316L",
+    "admission": "NOT_ADMITTED_COATING_RECORD_INCOMPLETE (composition, thickness, deposition process, substrate, surface preparation, lot / process provenance)"
+   }
   },
   {
    "id": "CAND-06",
@@ -570,7 +831,14 @@
    "origin": "repository evidence (web track R8)",
    "row_population": "UNPOPULATED",
    "owner_status": {},
-   "note": null
+   "note": null,
+   "q0_disposition": {
+    "q0_id": "Q0-C06",
+    "role": "CANDIDATE",
+    "r8_coupon": "R8-C06",
+    "material": "Cr-plated 316L",
+    "admission": "NOT_ADMITTED_COATING_RECORD_INCOMPLETE (composition, thickness, deposition process, substrate, surface preparation, lot / process provenance)"
+   }
   },
   {
    "id": "CAND-07",
@@ -583,7 +851,14 @@
    "origin": "repository evidence (web track R8)",
    "row_population": "UNPOPULATED",
    "owner_status": {},
-   "note": null
+   "note": null,
+   "q0_disposition": {
+    "q0_id": "Q0-C07",
+    "role": "CANDIDATE",
+    "r8_coupon": "R8-C07",
+    "material": "IrO2 / RuO2-type conductive-oxide / MMO coating",
+    "admission": "NOT_ADMITTED_COATING_SYSTEM_TBD (exact coating system + substrate)"
+   }
   },
   {
    "id": "CAND-08",
@@ -596,7 +871,14 @@
    "origin": "repository evidence (web track R8)",
    "row_population": "UNPOPULATED",
    "owner_status": {},
-   "note": "A9.2: not selected merely for melting point"
+   "note": "A9.2: not selected merely for melting point",
+   "q0_disposition": {
+    "q0_id": "Q0-C08",
+    "role": "NEGATIVE_REFERENCE_CONTROL_ONLY",
+    "r8_coupon": "R8-C08",
+    "material": "bare tungsten",
+    "admission": "Q0_LISTED (no declaration outstanding; lot / heat certificate per TP-09)"
+   }
   },
   {
    "id": "CAND-09",
@@ -609,7 +891,14 @@
    "origin": "repository evidence (web track R8)",
    "row_population": "UNPOPULATED",
    "owner_status": {},
-   "note": null
+   "note": null,
+   "q0_disposition": {
+    "q0_id": "Q0-C09",
+    "role": "REFERENCE_CONTROL",
+    "r8_coupon": "R8-C09",
+    "material": "isotropic graphite (specified grade)",
+    "admission": "NOT_ADMITTED_GRADE_TBD (grade declared before admission)"
+   }
   },
   {
    "id": "CAND-10",
@@ -622,7 +911,13 @@
    "origin": "repository evidence (web track R8)",
    "row_population": "UNPOPULATED",
    "owner_status": {},
-   "note": "A9.2: not selected merely for melting point"
+   "note": "A9.2: not selected merely for melting point",
+   "q0_disposition": {
+    "q0_id": null,
+    "role": "NOT_IN_OWNER_Q0_MATRIX",
+    "material": null,
+    "admission": "NOT_IN_OWNER_Q0_MATRIX (no owner disposition; not added)"
+   }
   },
   {
    "id": "CAND-11",
@@ -635,7 +930,13 @@
    "origin": "repository evidence (web track R8)",
    "row_population": "UNPOPULATED",
    "owner_status": {},
-   "note": null
+   "note": null,
+   "q0_disposition": {
+    "q0_id": "RES-CU",
+    "role": "RESERVE",
+    "material": "bulk copper",
+    "admission": "RESERVE_ONLY_NOT_IN_BASELINE_CAMPAIGN (specific hypothesis / need before activation)"
+   }
   },
   {
    "id": "CAND-12",
@@ -648,7 +949,13 @@
    "origin": "repository evidence (web track R8)",
    "row_population": "UNPOPULATED",
    "owner_status": {},
-   "note": null
+   "note": null,
+   "q0_disposition": {
+    "q0_id": "RES-IR",
+    "role": "RESERVE",
+    "material": "bulk iridium",
+    "admission": "RESERVE_ONLY_NOT_IN_BASELINE_CAMPAIGN (specific hypothesis / need before activation)"
+   }
   },
   {
    "id": "CAND-13",
@@ -661,7 +968,13 @@
    "origin": "repository evidence (web track R8)",
    "row_population": "UNPOPULATED",
    "owner_status": {},
-   "note": null
+   "note": null,
+   "q0_disposition": {
+    "q0_id": "RES-TI",
+    "role": "RESERVE",
+    "material": "titanium",
+    "admission": "RESERVE_ONLY_NOT_IN_BASELINE_CAMPAIGN (specific hypothesis / need before activation)"
+   }
   },
   {
    "id": "CAND-14",
@@ -674,7 +987,13 @@
    "origin": "repository evidence (web track R8)",
    "row_population": "UNPOPULATED",
    "owner_status": {},
-   "note": null
+   "note": null,
+   "q0_disposition": {
+    "q0_id": "RES-TIN-ZRN",
+    "role": "RESERVE",
+    "material": "TiN / ZrN coatings",
+    "admission": "RESERVE_ONLY_NOT_IN_BASELINE_CAMPAIGN (specific hypothesis / need before activation)"
+   }
   },
   {
    "id": "CAND-15",
@@ -687,7 +1006,13 @@
    "origin": "repository evidence (web track R8)",
    "row_population": "UNPOPULATED",
    "owner_status": {},
-   "note": null
+   "note": null,
+   "q0_disposition": {
+    "q0_id": null,
+    "role": "NOT_IN_OWNER_Q0_MATRIX",
+    "material": null,
+    "admission": "NOT_IN_OWNER_Q0_MATRIX (no owner disposition; not added)"
+   }
   },
   {
    "id": "CAND-16",
@@ -700,7 +1025,13 @@
    "origin": "repository evidence (web track R8)",
    "row_population": "UNPOPULATED",
    "owner_status": {},
-   "note": null
+   "note": null,
+   "q0_disposition": {
+    "q0_id": null,
+    "role": "NOT_IN_OWNER_Q0_MATRIX",
+    "material": null,
+    "admission": "NOT_IN_OWNER_Q0_MATRIX (no owner disposition; not added)"
+   }
   }
  ],
  "requirements": [
@@ -753,7 +1084,7 @@
     "electrically_loaded",
     "at_operating_temperature"
    ],
-   "tbd": "TBD_OWNER - resistance-rise threshold and exposure are pre-registered before exposure (R8 note; P4-OQ-03)"
+   "tbd": "TBD - resistance-rise threshold and exposure frozen at LOCK-2 after metrology commissioning, before any acceptance-bearing exposure (A9.12 P4-OQ-03; NOT_EVALUATED_LOCK2_TBD)"
   },
   {
    "id": "RQ-02-C",
@@ -770,7 +1101,7 @@
     "electrically_loaded",
     "at_operating_temperature"
    ],
-   "tbd": "TBD_OWNER - as APP-ANODE, plus the collector bias polarity for coupons (P4-OQ-05)"
+   "tbd": "TBD - as APP-ANODE (LOCK-2, A9.12 P4-OQ-03); collector coupons negative-biased + floating control, bias magnitude from P1 evidence (A9.12 P4-OQ-05)"
   },
   {
    "id": "RQ-03-A",
@@ -786,7 +1117,7 @@
     "atomic_O_exposure",
     "at_operating_temperature"
    ],
-   "tbd": "TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and a pre-registered acceptance (P4-OQ-03)"
+   "tbd": "TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "id": "RQ-03-C",
@@ -802,7 +1133,7 @@
     "atomic_O_exposure",
     "at_operating_temperature"
    ],
-   "tbd": "TBD - requires the AO fluence at the collector location and a pre-registered acceptance"
+   "tbd": "TBD - requires the AO fluence at the collector location and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "id": "RQ-04-A",
@@ -961,6 +1292,102 @@
     "bulk_property"
    ],
    "tbd": "TBD - requires the collector geometry (part mass inside AL-05 of the merged mass / power v2 docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json (owner line allocations AL-04 anode, AL-05 ICP module; interface MPV2-ID-03))"
+  },
+  {
+   "id": "RQ-10-F",
+   "criterion": "CR-10",
+   "application": "APP-FILTER",
+   "property": "filter_ao_erosion_recession_at_fluence",
+   "kind": "max",
+   "value": null,
+   "unit": "m",
+   "status": "TBD",
+   "source": "",
+   "domain": [
+    "atomic_O_exposure",
+    "filter_service_condition"
+   ],
+   "tbd": "TBD - pre-registered before LOCK-1 from the defined contamination environment, the H-1 feed requirement and the measured filter material / geometry (A9.13 S6.3; NOT_EVALUATED_FILTER_ACCEPTANCE_TBD); no number invented - AO erosion / material durability"
+  },
+  {
+   "id": "RQ-11-F",
+   "criterion": "CR-11",
+   "application": "APP-FILTER",
+   "property": "o_recombination_conversion_probability",
+   "kind": "max",
+   "value": null,
+   "unit": "1",
+   "status": "TBD",
+   "source": "",
+   "domain": [
+    "atomic_O_exposure",
+    "filter_service_condition"
+   ],
+   "tbd": "TBD - pre-registered before LOCK-1 from the defined contamination environment, the H-1 feed requirement and the measured filter material / geometry (A9.13 S6.3; NOT_EVALUATED_FILTER_ACCEPTANCE_TBD); no number invented - O recombination / conversion probability"
+  },
+  {
+   "id": "RQ-12-F",
+   "criterion": "CR-12",
+   "application": "APP-FILTER",
+   "property": "capture_efficiency_vs_contaminant_class",
+   "kind": "min",
+   "value": null,
+   "unit": "1",
+   "status": "TBD",
+   "source": "",
+   "domain": [
+    "registered_contaminant_class",
+    "filter_service_condition"
+   ],
+   "tbd": "TBD - pre-registered before LOCK-1 from the defined contamination environment, the H-1 feed requirement and the measured filter material / geometry (A9.13 S6.3; NOT_EVALUATED_FILTER_ACCEPTANCE_TBD); no number invented - capture efficiency vs registered contaminant class"
+  },
+  {
+   "id": "RQ-13-F",
+   "criterion": "CR-13",
+   "application": "APP-FILTER",
+   "property": "filter_thermal_cycling_degradation_metric",
+   "kind": "max",
+   "value": null,
+   "unit": "1",
+   "status": "TBD",
+   "source": "",
+   "domain": [
+    "thermal_cycling",
+    "filter_service_condition"
+   ],
+   "tbd": "TBD - pre-registered before LOCK-1 from the defined contamination environment, the H-1 feed requirement and the measured filter material / geometry (A9.13 S6.3; NOT_EVALUATED_FILTER_ACCEPTANCE_TBD); no number invented - thermal-cycling range (filter thermal state is a design variable)"
+  },
+  {
+   "id": "RQ-14-F",
+   "criterion": "CR-14",
+   "application": "APP-FILTER",
+   "property": "species_resolved_propellant_transmission",
+   "kind": "min",
+   "value": null,
+   "unit": "1",
+   "status": "TBD",
+   "source": "",
+   "domain": [
+    "species_resolved_flow",
+    "filter_service_condition"
+   ],
+   "tbd": "TBD - pre-registered before LOCK-1 from the defined contamination environment, the H-1 feed requirement and the measured filter material / geometry (A9.13 S6.3; NOT_EVALUATED_FILTER_ACCEPTANCE_TBD); no number invented - species-resolved propellant transmission"
+  },
+  {
+   "id": "RQ-15-F",
+   "criterion": "CR-15",
+   "application": "APP-FILTER",
+   "property": "filter_conductance",
+   "kind": "min",
+   "value": null,
+   "unit": "m3/s",
+   "status": "TBD",
+   "source": "",
+   "domain": [
+    "registered_flow_regime",
+    "filter_service_condition"
+   ],
+   "tbd": "TBD - pre-registered before LOCK-1 from the defined contamination environment, the H-1 feed requirement and the measured filter material / geometry (A9.13 S6.3; NOT_EVALUATED_FILTER_ACCEPTANCE_TBD); no number invented - pressure-loss / conductance penalty (AG-12 feed-state closure)"
   }
  ],
  "items": [
@@ -1090,30 +1517,30 @@
    "item": "T_validated,continuous per candidate",
    "value": "TBD_AFTER_EVIDENCE",
    "units": "K",
-   "basis": "requires coupon exposure in the service condition (TP-01); no datasheet air rating or melting range counts",
-   "source": "test plan TP-01",
+   "basis": "A9.12 P4-OQ-01 staged: only stage 2 (integrated replaceable anode / collector confirmation on the H-1 / ICP article, Q4) gives T_validated,continuous for P3 / LOCK-1; a stage-1 coupon result (Q0 / Q1, TP-01) is a coupon-supported provisional limit for design screening only; no datasheet air rating, melting range, short vendor exposure or brief coupon test counts",
+   "source": "test plan TP-01; A9.12 P4-OQ-01 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)",
    "evidence_class": "measured",
    "status": "TBD_AFTER_EVIDENCE",
    "freeze_point": "after-evidence"
   },
   {
    "id": "IT-13",
-   "item": "resistance-rise acceptance threshold and exposure duration",
-   "value": "TBD_OWNER",
+   "item": "resistance-rise threshold, mass-loss / recession limits, sputter / erosion acceptance, exposure duration / fluence, uncertainty treatment, acceptance / rejection logic",
+   "value": "TBD - frozen at LOCK-2 after metrology commissioning (IT-24), before any acceptance-bearing exposure (NOT_EVALUATED_LOCK2_TBD; candidate coupon performance never sets them)",
    "units": "1; h",
-   "basis": "pre-registered before any exposure",
-   "source": "R8 proposed_coupon_candidates.notes; P4-OQ-03",
+   "basis": "A9.12 P4-OQ-03 (LOCK-2 alternative)",
+   "source": "R8 proposed_coupon_candidates.notes; A9.12 P4-OQ-03 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)",
    "evidence_class": "owner-allocation",
-   "status": "TBD_OWNER",
-   "freeze_point": "LOCK-1"
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
   },
   {
    "id": "IT-14",
    "item": "coupon bias configuration",
-   "value": "biased AND floating coupons",
+   "value": "anode coupons: biased AND floating (row 106); collector coupons: NEGATIVE-biased (ion-collecting service polarity, frozen) AND floating matched control (A9.12 P4-OQ-05)",
    "units": "-",
-   "basis": "Use 316L only as the H-1 engineering baseline. Test both biased and floating coupons across the shortlisted O-resistant candidates so electrochemical/bias effects can be separated. Flight anode material remains open until coupon evidence.",
-   "source": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 106",
+   "basis": "Use 316L only as the H-1 engineering baseline. Test both biased and floating coupons across the shortlisted O-resistant candidates so electrochemical/bias effects can be separated. Flight anode material remains open until coupon evidence. | A9.12 S5.14: negative-bias collector set + floating control; polarity frozen; bias magnitude from P1 evidence",
+   "source": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 106; A9.12 P4-OQ-05 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)",
    "evidence_class": "owner-stated",
    "status": "OWNER_GIVEN",
    "freeze_point": "NOW"
@@ -1142,14 +1569,14 @@
   },
   {
    "id": "IT-17",
-   "item": "coupon shortlist (variants of R8-C02 / C03, optional R8-matrix rows)",
-   "value": "TBD_OWNER",
+   "item": "Q0 coupon screening matrix (R8-C01..C09 with the owner's named variants; reserve list)",
+   "value": "Q0 matrix per A9.12 P4-OQ-02 (a9_16_owner_rules.q0_matrix): C01 316L reference control; C02 IN600 / IN625 / Haynes 230 (+ X-750 if readily available; no generic Hastelloy); C03 IN601 / Haynes 214 / one specified FeCrAl grade; C04 Rh-coated 316L; C05 Pt-clad / plated 316L; C06 Cr-plated 316L; C07 IrO2 / RuO2 MMO (exact system + substrate); C08 bare W negative / reference control; C09 specified isotropic graphite control; Ti, TiN / ZrN, bulk Cu, bulk Ir reserve only",
    "units": "-",
-   "basis": "row 106 fixes the bias configuration and 'shortlisted O-resistant candidates' but names no list",
-   "source": "P4-OQ-02",
-   "evidence_class": "owner-allocation",
-   "status": "TBD_OWNER",
-   "freeze_point": "LOCK-1"
+   "basis": "A9.12 S5.11: broad Q0, evidence-based down-selection before Q1",
+   "source": "A9.12 P4-OQ-02 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)",
+   "evidence_class": "owner-stated",
+   "status": "OWNER_GIVEN",
+   "freeze_point": "NOW"
   },
   {
    "id": "IT-18",
@@ -1164,10 +1591,10 @@
   },
   {
    "id": "IT-19",
-   "item": "ion species / energy at the collector",
-   "value": "TBD - requires P1 measured collector bias (ICD ICP-21; analog value analog-only)",
+   "item": "ion species / energy at the collector (and the collector-coupon bias magnitude)",
+   "value": "TBD - requires the measured P1 collector operating envelope and plasma / sheath evidence (ICD ICP-21; analog value analog-only; A9.12 P4-OQ-05: the coupon bias magnitude is derived from it, never invented)",
    "units": "eV",
-   "basis": "input to CR-04",
+   "basis": "input to CR-04 and the acceptance-bearing negative-bias collector coupons",
    "source": "P1 measured data from the merged P1 bench docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json (P1-M-10, P1-M-11, P1-M-27; conditional P1-M-30) (none recorded yet; the sheath-edge plasma potential is conditional on P3Q-01)",
    "evidence_class": "measured",
    "status": "TBD_AFTER_EVIDENCE",
@@ -1198,13 +1625,112 @@
   {
    "id": "IT-22",
    "item": "sputter-yield data for candidates",
-   "value": "TBD - requires species-resolved yields (open elemental compilation NIFS_DATA_23 located, not digitized; alloys / coatings need measurement or acquisition, P4-OQ-04)",
+   "value": "TBD - requires species-resolved yields (open elemental compilation NIFS_DATA_23 located, not digitized); A9.12 P4-OQ-04 BOTH: lawful acquisition of N+ / N2+ / O+ / O2+ yields (priors / matrix selection / comparison / model initialisation) AND project ion-beam measurement of the down-selected candidates (candidate-specific evidence); no silent elemental substitution for alloys / coatings",
    "units": "atoms/ion",
    "basis": "input to CR-04",
-   "source": "NIFS_DATA_23 (located only)",
+   "source": "NIFS_DATA_23 (located only); A9.12 P4-OQ-04 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)",
    "evidence_class": "digitized",
    "status": "TBD",
    "freeze_point": "after-evidence"
+  },
+  {
+   "id": "IT-23",
+   "item": "staged evidence hierarchy for T_validated,continuous",
+   "value": "ST-1 coupon screening -> COUPON_SUPPORTED_PROVISIONAL_LIMIT (screening only); ST-2 integrated replaceable anode / collector confirmation on H-1 / ICP -> T_VALIDATED_CONTINUOUS (P3 / LOCK-1); ST-3 qualification / life -> FLIGHT_LIFE_QUALIFIED_LIMIT",
+   "units": "-",
+   "basis": "A9.12 S5.10",
+   "source": "A9.12 P4-OQ-01 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)",
+   "evidence_class": "owner-stated",
+   "status": "OWNER_GIVEN",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "IT-24",
+   "item": "Q0 / Q1 metrology commissioning (resistance repeatability / resolution, mass-change detection limit, profilometry / recession resolution, SEM / XPS where applicable, coupon-to-coupon / process repeatability, AO / ion dosimetry)",
+   "value": "TBD - commissioned on standards / blanks / controls / sacrificial coupons before LOCK-2 (NOT_EVALUATED_METROLOGY_COMMISSIONING_TBD)",
+   "units": "-",
+   "basis": "A9.12 S5.12",
+   "source": "A9.12 P4-OQ-03 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)",
+   "evidence_class": "measured",
+   "status": "TBD_AFTER_EVIDENCE",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "IT-25",
+   "item": "sputter-data acquisition routes",
+   "value": "library access, inter-library loan, publisher purchase, institutional subscription, other legitimate licensed route (authorized; not performed by this lane)",
+   "units": "-",
+   "basis": "A9.12 S5.13",
+   "source": "A9.12 P4-OQ-04 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)",
+   "evidence_class": "owner-stated",
+   "status": "OWNER_GIVEN",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "IT-26",
+   "item": "FeCrAl grade (Q0-C03-FECRAL)",
+   "value": "TBD - one explicitly specified grade declared before admission (NOT_ADMITTED_GRADE_TBD)",
+   "units": "-",
+   "basis": "A9.12 S5.11",
+   "source": "A9.12 P4-OQ-02 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)",
+   "evidence_class": "owner-allocation",
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "IT-27",
+   "item": "isotropic graphite grade (Q0-C09 control)",
+   "value": "TBD - specified grade declared before admission (NOT_ADMITTED_GRADE_TBD)",
+   "units": "-",
+   "basis": "A9.12 S5.11",
+   "source": "A9.12 P4-OQ-02 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)",
+   "evidence_class": "owner-allocation",
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "IT-28",
+   "item": "IrO2 / RuO2 MMO coating system and substrate (Q0-C07)",
+   "value": "TBD - exact coating system and substrate declared with the full coating record (NOT_ADMITTED_COATING_SYSTEM_TBD)",
+   "units": "-",
+   "basis": "A9.12 S5.11",
+   "source": "A9.12 P4-OQ-02 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)",
+   "evidence_class": "owner-allocation",
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "IT-29",
+   "item": "collector-coupon bias polarity",
+   "value": "NEGATIVE (ion-collecting service condition) + FLOATING matched control; frozen",
+   "units": "-",
+   "basis": "A9.12 S5.14",
+   "source": "A9.12 P4-OQ-05 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)",
+   "evidence_class": "owner-stated",
+   "status": "OWNER_GIVEN",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "IT-30",
+   "item": "baseline filter placement and recombination class (APP-FILTER)",
+   "value": "intake / channel array -> filter -> compressor inlet; inert / low-recombination baseline; catalytic O -> O2 only as a separate research variant",
+   "units": "-",
+   "basis": "A9.13 S6.6 / S6.4 / S6.3",
+   "source": "A9.13 F2-OQ-04 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
+   "evidence_class": "owner-stated",
+   "status": "OWNER_GIVEN",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "IT-31",
+   "item": "APP-FILTER acceptance (capture efficiency vs contaminant class, species-resolved transmission, pressure-loss / conductance penalty, O recombination / conversion probability, retained capacity, AO erosion / durability, AG-12 effect)",
+   "value": "TBD - pre-registered before LOCK-1 from the contamination environment, H-1 feed requirement and measured filter material / geometry (NOT_EVALUATED_FILTER_ACCEPTANCE_TBD)",
+   "units": "-",
+   "basis": "A9.13 S6.3",
+   "source": "A9.13 F2-OQ-04 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
+   "evidence_class": "owner-allocation",
+   "status": "TBD",
+   "freeze_point": "LOCK-1"
   }
  ],
  "property_records": [
@@ -2774,7 +3300,7 @@
    "requirement": "RQ-02-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - resistance-rise threshold and exposure are pre-registered before exposure (R8 note; P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - resistance-rise threshold and exposure frozen at LOCK-2 after metrology commissioning, before any acceptance-bearing exposure (A9.12 P4-OQ-03; NOT_EVALUATED_LOCK2_TBD)"
   },
   {
    "application": "APP-ANODE",
@@ -2783,7 +3309,7 @@
    "requirement": "RQ-03-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and a pre-registered acceptance (P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-ANODE",
@@ -2853,7 +3379,7 @@
    "requirement": "RQ-02-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - resistance-rise threshold and exposure are pre-registered before exposure (R8 note; P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - resistance-rise threshold and exposure frozen at LOCK-2 after metrology commissioning, before any acceptance-bearing exposure (A9.12 P4-OQ-03; NOT_EVALUATED_LOCK2_TBD)"
   },
   {
    "application": "APP-ANODE",
@@ -2862,7 +3388,7 @@
    "requirement": "RQ-03-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and a pre-registered acceptance (P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-ANODE",
@@ -2935,7 +3461,7 @@
    "requirement": "RQ-02-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - resistance-rise threshold and exposure are pre-registered before exposure (R8 note; P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - resistance-rise threshold and exposure frozen at LOCK-2 after metrology commissioning, before any acceptance-bearing exposure (A9.12 P4-OQ-03; NOT_EVALUATED_LOCK2_TBD)"
   },
   {
    "application": "APP-ANODE",
@@ -2944,7 +3470,7 @@
    "requirement": "RQ-03-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and a pre-registered acceptance (P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-ANODE",
@@ -3007,7 +3533,7 @@
    "requirement": "RQ-02-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - resistance-rise threshold and exposure are pre-registered before exposure (R8 note; P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - resistance-rise threshold and exposure frozen at LOCK-2 after metrology commissioning, before any acceptance-bearing exposure (A9.12 P4-OQ-03; NOT_EVALUATED_LOCK2_TBD)"
   },
   {
    "application": "APP-ANODE",
@@ -3016,7 +3542,7 @@
    "requirement": "RQ-03-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and a pre-registered acceptance (P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-ANODE",
@@ -3079,7 +3605,7 @@
    "requirement": "RQ-02-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - resistance-rise threshold and exposure are pre-registered before exposure (R8 note; P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - resistance-rise threshold and exposure frozen at LOCK-2 after metrology commissioning, before any acceptance-bearing exposure (A9.12 P4-OQ-03; NOT_EVALUATED_LOCK2_TBD)"
   },
   {
    "application": "APP-ANODE",
@@ -3088,7 +3614,7 @@
    "requirement": "RQ-03-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and a pre-registered acceptance (P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-ANODE",
@@ -3151,7 +3677,7 @@
    "requirement": "RQ-02-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - resistance-rise threshold and exposure are pre-registered before exposure (R8 note; P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - resistance-rise threshold and exposure frozen at LOCK-2 after metrology commissioning, before any acceptance-bearing exposure (A9.12 P4-OQ-03; NOT_EVALUATED_LOCK2_TBD)"
   },
   {
    "application": "APP-ANODE",
@@ -3160,7 +3686,7 @@
    "requirement": "RQ-03-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and a pre-registered acceptance (P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-ANODE",
@@ -3223,7 +3749,7 @@
    "requirement": "RQ-02-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - resistance-rise threshold and exposure are pre-registered before exposure (R8 note; P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - resistance-rise threshold and exposure frozen at LOCK-2 after metrology commissioning, before any acceptance-bearing exposure (A9.12 P4-OQ-03; NOT_EVALUATED_LOCK2_TBD)"
   },
   {
    "application": "APP-ANODE",
@@ -3232,7 +3758,7 @@
    "requirement": "RQ-03-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and a pre-registered acceptance (P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-ANODE",
@@ -3305,7 +3831,7 @@
    "requirement": "RQ-02-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - resistance-rise threshold and exposure are pre-registered before exposure (R8 note; P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - resistance-rise threshold and exposure frozen at LOCK-2 after metrology commissioning, before any acceptance-bearing exposure (A9.12 P4-OQ-03; NOT_EVALUATED_LOCK2_TBD)"
   },
   {
    "application": "APP-ANODE",
@@ -3314,7 +3840,7 @@
    "requirement": "RQ-03-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and a pre-registered acceptance (P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-ANODE",
@@ -3377,7 +3903,7 @@
    "requirement": "RQ-02-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - resistance-rise threshold and exposure are pre-registered before exposure (R8 note; P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - resistance-rise threshold and exposure frozen at LOCK-2 after metrology commissioning, before any acceptance-bearing exposure (A9.12 P4-OQ-03; NOT_EVALUATED_LOCK2_TBD)"
   },
   {
    "application": "APP-ANODE",
@@ -3386,7 +3912,7 @@
    "requirement": "RQ-03-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and a pre-registered acceptance (P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-ANODE",
@@ -3449,7 +3975,7 @@
    "requirement": "RQ-02-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - resistance-rise threshold and exposure are pre-registered before exposure (R8 note; P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - resistance-rise threshold and exposure frozen at LOCK-2 after metrology commissioning, before any acceptance-bearing exposure (A9.12 P4-OQ-03; NOT_EVALUATED_LOCK2_TBD)"
   },
   {
    "application": "APP-ANODE",
@@ -3458,7 +3984,7 @@
    "requirement": "RQ-03-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and a pre-registered acceptance (P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-ANODE",
@@ -3521,7 +4047,7 @@
    "requirement": "RQ-02-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - resistance-rise threshold and exposure are pre-registered before exposure (R8 note; P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - resistance-rise threshold and exposure frozen at LOCK-2 after metrology commissioning, before any acceptance-bearing exposure (A9.12 P4-OQ-03; NOT_EVALUATED_LOCK2_TBD)"
   },
   {
    "application": "APP-ANODE",
@@ -3530,7 +4056,7 @@
    "requirement": "RQ-03-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and a pre-registered acceptance (P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-ANODE",
@@ -3593,7 +4119,7 @@
    "requirement": "RQ-02-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - resistance-rise threshold and exposure are pre-registered before exposure (R8 note; P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - resistance-rise threshold and exposure frozen at LOCK-2 after metrology commissioning, before any acceptance-bearing exposure (A9.12 P4-OQ-03; NOT_EVALUATED_LOCK2_TBD)"
   },
   {
    "application": "APP-ANODE",
@@ -3602,7 +4128,7 @@
    "requirement": "RQ-03-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and a pre-registered acceptance (P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-ANODE",
@@ -3665,7 +4191,7 @@
    "requirement": "RQ-02-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - resistance-rise threshold and exposure are pre-registered before exposure (R8 note; P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - resistance-rise threshold and exposure frozen at LOCK-2 after metrology commissioning, before any acceptance-bearing exposure (A9.12 P4-OQ-03; NOT_EVALUATED_LOCK2_TBD)"
   },
   {
    "application": "APP-ANODE",
@@ -3674,7 +4200,7 @@
    "requirement": "RQ-03-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and a pre-registered acceptance (P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-ANODE",
@@ -3737,7 +4263,7 @@
    "requirement": "RQ-02-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - resistance-rise threshold and exposure are pre-registered before exposure (R8 note; P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - resistance-rise threshold and exposure frozen at LOCK-2 after metrology commissioning, before any acceptance-bearing exposure (A9.12 P4-OQ-03; NOT_EVALUATED_LOCK2_TBD)"
   },
   {
    "application": "APP-ANODE",
@@ -3746,7 +4272,7 @@
    "requirement": "RQ-03-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and a pre-registered acceptance (P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-ANODE",
@@ -3809,7 +4335,7 @@
    "requirement": "RQ-02-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - resistance-rise threshold and exposure are pre-registered before exposure (R8 note; P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - resistance-rise threshold and exposure frozen at LOCK-2 after metrology commissioning, before any acceptance-bearing exposure (A9.12 P4-OQ-03; NOT_EVALUATED_LOCK2_TBD)"
   },
   {
    "application": "APP-ANODE",
@@ -3818,7 +4344,7 @@
    "requirement": "RQ-03-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and a pre-registered acceptance (P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-ANODE",
@@ -3881,7 +4407,7 @@
    "requirement": "RQ-02-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - resistance-rise threshold and exposure are pre-registered before exposure (R8 note; P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - resistance-rise threshold and exposure frozen at LOCK-2 after metrology commissioning, before any acceptance-bearing exposure (A9.12 P4-OQ-03; NOT_EVALUATED_LOCK2_TBD)"
   },
   {
    "application": "APP-ANODE",
@@ -3890,7 +4416,7 @@
    "requirement": "RQ-03-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and a pre-registered acceptance (P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-ANODE",
@@ -3953,7 +4479,7 @@
    "requirement": "RQ-02-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - resistance-rise threshold and exposure are pre-registered before exposure (R8 note; P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - resistance-rise threshold and exposure frozen at LOCK-2 after metrology commissioning, before any acceptance-bearing exposure (A9.12 P4-OQ-03; NOT_EVALUATED_LOCK2_TBD)"
   },
   {
    "application": "APP-ANODE",
@@ -3962,7 +4488,7 @@
    "requirement": "RQ-03-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and a pre-registered acceptance (P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-ANODE",
@@ -4025,7 +4551,7 @@
    "requirement": "RQ-02-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - resistance-rise threshold and exposure are pre-registered before exposure (R8 note; P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - resistance-rise threshold and exposure frozen at LOCK-2 after metrology commissioning, before any acceptance-bearing exposure (A9.12 P4-OQ-03; NOT_EVALUATED_LOCK2_TBD)"
   },
   {
    "application": "APP-ANODE",
@@ -4034,7 +4560,7 @@
    "requirement": "RQ-03-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and a pre-registered acceptance (P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-ANODE",
@@ -4097,7 +4623,7 @@
    "requirement": "RQ-02-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - resistance-rise threshold and exposure are pre-registered before exposure (R8 note; P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - resistance-rise threshold and exposure frozen at LOCK-2 after metrology commissioning, before any acceptance-bearing exposure (A9.12 P4-OQ-03; NOT_EVALUATED_LOCK2_TBD)"
   },
   {
    "application": "APP-ANODE",
@@ -4106,7 +4632,7 @@
    "requirement": "RQ-03-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and a pre-registered acceptance (P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-ANODE",
@@ -4169,7 +4695,7 @@
    "requirement": "RQ-02-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - resistance-rise threshold and exposure are pre-registered before exposure (R8 note; P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - resistance-rise threshold and exposure frozen at LOCK-2 after metrology commissioning, before any acceptance-bearing exposure (A9.12 P4-OQ-03; NOT_EVALUATED_LOCK2_TBD)"
   },
   {
    "application": "APP-ANODE",
@@ -4178,7 +4704,7 @@
    "requirement": "RQ-03-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and a pre-registered acceptance (P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-ANODE",
@@ -4241,7 +4767,7 @@
    "requirement": "RQ-02-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - resistance-rise threshold and exposure are pre-registered before exposure (R8 note; P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - resistance-rise threshold and exposure frozen at LOCK-2 after metrology commissioning, before any acceptance-bearing exposure (A9.12 P4-OQ-03; NOT_EVALUATED_LOCK2_TBD)"
   },
   {
    "application": "APP-ANODE",
@@ -4250,7 +4776,7 @@
    "requirement": "RQ-03-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and a pre-registered acceptance (P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-ANODE",
@@ -4313,7 +4839,7 @@
    "requirement": "RQ-02-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - resistance-rise threshold and exposure are pre-registered before exposure (R8 note; P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - resistance-rise threshold and exposure frozen at LOCK-2 after metrology commissioning, before any acceptance-bearing exposure (A9.12 P4-OQ-03; NOT_EVALUATED_LOCK2_TBD)"
   },
   {
    "application": "APP-ANODE",
@@ -4322,7 +4848,7 @@
    "requirement": "RQ-03-A",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and a pre-registered acceptance (P4-OQ-03)"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the anode over the life basis (derivation not in the repository) and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-ANODE",
@@ -4385,7 +4911,7 @@
    "requirement": "RQ-02-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - as APP-ANODE, plus the collector bias polarity for coupons (P4-OQ-05)"
+   "reason": "no property record; requirement: TBD - as APP-ANODE (LOCK-2, A9.12 P4-OQ-03); collector coupons negative-biased + floating control, bias magnitude from P1 evidence (A9.12 P4-OQ-05)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -4394,7 +4920,7 @@
    "requirement": "RQ-03-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and a pre-registered acceptance"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -4464,7 +4990,7 @@
    "requirement": "RQ-02-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - as APP-ANODE, plus the collector bias polarity for coupons (P4-OQ-05)"
+   "reason": "no property record; requirement: TBD - as APP-ANODE (LOCK-2, A9.12 P4-OQ-03); collector coupons negative-biased + floating control, bias magnitude from P1 evidence (A9.12 P4-OQ-05)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -4473,7 +4999,7 @@
    "requirement": "RQ-03-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and a pre-registered acceptance"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -4546,7 +5072,7 @@
    "requirement": "RQ-02-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - as APP-ANODE, plus the collector bias polarity for coupons (P4-OQ-05)"
+   "reason": "no property record; requirement: TBD - as APP-ANODE (LOCK-2, A9.12 P4-OQ-03); collector coupons negative-biased + floating control, bias magnitude from P1 evidence (A9.12 P4-OQ-05)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -4555,7 +5081,7 @@
    "requirement": "RQ-03-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and a pre-registered acceptance"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -4618,7 +5144,7 @@
    "requirement": "RQ-02-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - as APP-ANODE, plus the collector bias polarity for coupons (P4-OQ-05)"
+   "reason": "no property record; requirement: TBD - as APP-ANODE (LOCK-2, A9.12 P4-OQ-03); collector coupons negative-biased + floating control, bias magnitude from P1 evidence (A9.12 P4-OQ-05)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -4627,7 +5153,7 @@
    "requirement": "RQ-03-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and a pre-registered acceptance"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -4690,7 +5216,7 @@
    "requirement": "RQ-02-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - as APP-ANODE, plus the collector bias polarity for coupons (P4-OQ-05)"
+   "reason": "no property record; requirement: TBD - as APP-ANODE (LOCK-2, A9.12 P4-OQ-03); collector coupons negative-biased + floating control, bias magnitude from P1 evidence (A9.12 P4-OQ-05)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -4699,7 +5225,7 @@
    "requirement": "RQ-03-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and a pre-registered acceptance"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -4762,7 +5288,7 @@
    "requirement": "RQ-02-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - as APP-ANODE, plus the collector bias polarity for coupons (P4-OQ-05)"
+   "reason": "no property record; requirement: TBD - as APP-ANODE (LOCK-2, A9.12 P4-OQ-03); collector coupons negative-biased + floating control, bias magnitude from P1 evidence (A9.12 P4-OQ-05)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -4771,7 +5297,7 @@
    "requirement": "RQ-03-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and a pre-registered acceptance"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -4834,7 +5360,7 @@
    "requirement": "RQ-02-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - as APP-ANODE, plus the collector bias polarity for coupons (P4-OQ-05)"
+   "reason": "no property record; requirement: TBD - as APP-ANODE (LOCK-2, A9.12 P4-OQ-03); collector coupons negative-biased + floating control, bias magnitude from P1 evidence (A9.12 P4-OQ-05)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -4843,7 +5369,7 @@
    "requirement": "RQ-03-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and a pre-registered acceptance"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -4916,7 +5442,7 @@
    "requirement": "RQ-02-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - as APP-ANODE, plus the collector bias polarity for coupons (P4-OQ-05)"
+   "reason": "no property record; requirement: TBD - as APP-ANODE (LOCK-2, A9.12 P4-OQ-03); collector coupons negative-biased + floating control, bias magnitude from P1 evidence (A9.12 P4-OQ-05)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -4925,7 +5451,7 @@
    "requirement": "RQ-03-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and a pre-registered acceptance"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -4988,7 +5514,7 @@
    "requirement": "RQ-02-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - as APP-ANODE, plus the collector bias polarity for coupons (P4-OQ-05)"
+   "reason": "no property record; requirement: TBD - as APP-ANODE (LOCK-2, A9.12 P4-OQ-03); collector coupons negative-biased + floating control, bias magnitude from P1 evidence (A9.12 P4-OQ-05)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -4997,7 +5523,7 @@
    "requirement": "RQ-03-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and a pre-registered acceptance"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5060,7 +5586,7 @@
    "requirement": "RQ-02-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - as APP-ANODE, plus the collector bias polarity for coupons (P4-OQ-05)"
+   "reason": "no property record; requirement: TBD - as APP-ANODE (LOCK-2, A9.12 P4-OQ-03); collector coupons negative-biased + floating control, bias magnitude from P1 evidence (A9.12 P4-OQ-05)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5069,7 +5595,7 @@
    "requirement": "RQ-03-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and a pre-registered acceptance"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5132,7 +5658,7 @@
    "requirement": "RQ-02-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - as APP-ANODE, plus the collector bias polarity for coupons (P4-OQ-05)"
+   "reason": "no property record; requirement: TBD - as APP-ANODE (LOCK-2, A9.12 P4-OQ-03); collector coupons negative-biased + floating control, bias magnitude from P1 evidence (A9.12 P4-OQ-05)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5141,7 +5667,7 @@
    "requirement": "RQ-03-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and a pre-registered acceptance"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5204,7 +5730,7 @@
    "requirement": "RQ-02-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - as APP-ANODE, plus the collector bias polarity for coupons (P4-OQ-05)"
+   "reason": "no property record; requirement: TBD - as APP-ANODE (LOCK-2, A9.12 P4-OQ-03); collector coupons negative-biased + floating control, bias magnitude from P1 evidence (A9.12 P4-OQ-05)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5213,7 +5739,7 @@
    "requirement": "RQ-03-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and a pre-registered acceptance"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5276,7 +5802,7 @@
    "requirement": "RQ-02-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - as APP-ANODE, plus the collector bias polarity for coupons (P4-OQ-05)"
+   "reason": "no property record; requirement: TBD - as APP-ANODE (LOCK-2, A9.12 P4-OQ-03); collector coupons negative-biased + floating control, bias magnitude from P1 evidence (A9.12 P4-OQ-05)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5285,7 +5811,7 @@
    "requirement": "RQ-03-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and a pre-registered acceptance"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5348,7 +5874,7 @@
    "requirement": "RQ-02-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - as APP-ANODE, plus the collector bias polarity for coupons (P4-OQ-05)"
+   "reason": "no property record; requirement: TBD - as APP-ANODE (LOCK-2, A9.12 P4-OQ-03); collector coupons negative-biased + floating control, bias magnitude from P1 evidence (A9.12 P4-OQ-05)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5357,7 +5883,7 @@
    "requirement": "RQ-03-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and a pre-registered acceptance"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5420,7 +5946,7 @@
    "requirement": "RQ-02-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - as APP-ANODE, plus the collector bias polarity for coupons (P4-OQ-05)"
+   "reason": "no property record; requirement: TBD - as APP-ANODE (LOCK-2, A9.12 P4-OQ-03); collector coupons negative-biased + floating control, bias magnitude from P1 evidence (A9.12 P4-OQ-05)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5429,7 +5955,7 @@
    "requirement": "RQ-03-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and a pre-registered acceptance"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5492,7 +6018,7 @@
    "requirement": "RQ-02-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - as APP-ANODE, plus the collector bias polarity for coupons (P4-OQ-05)"
+   "reason": "no property record; requirement: TBD - as APP-ANODE (LOCK-2, A9.12 P4-OQ-03); collector coupons negative-biased + floating control, bias magnitude from P1 evidence (A9.12 P4-OQ-05)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5501,7 +6027,7 @@
    "requirement": "RQ-03-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and a pre-registered acceptance"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5564,7 +6090,7 @@
    "requirement": "RQ-02-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - as APP-ANODE, plus the collector bias polarity for coupons (P4-OQ-05)"
+   "reason": "no property record; requirement: TBD - as APP-ANODE (LOCK-2, A9.12 P4-OQ-03); collector coupons negative-biased + floating control, bias magnitude from P1 evidence (A9.12 P4-OQ-05)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5573,7 +6099,7 @@
    "requirement": "RQ-03-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and a pre-registered acceptance"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5636,7 +6162,7 @@
    "requirement": "RQ-02-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - as APP-ANODE, plus the collector bias polarity for coupons (P4-OQ-05)"
+   "reason": "no property record; requirement: TBD - as APP-ANODE (LOCK-2, A9.12 P4-OQ-03); collector coupons negative-biased + floating control, bias magnitude from P1 evidence (A9.12 P4-OQ-05)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5645,7 +6171,7 @@
    "requirement": "RQ-03-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and a pre-registered acceptance"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5708,7 +6234,7 @@
    "requirement": "RQ-02-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - as APP-ANODE, plus the collector bias polarity for coupons (P4-OQ-05)"
+   "reason": "no property record; requirement: TBD - as APP-ANODE (LOCK-2, A9.12 P4-OQ-03); collector coupons negative-biased + floating control, bias magnitude from P1 evidence (A9.12 P4-OQ-05)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5717,7 +6243,7 @@
    "requirement": "RQ-03-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and a pre-registered acceptance"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5780,7 +6306,7 @@
    "requirement": "RQ-02-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - as APP-ANODE, plus the collector bias polarity for coupons (P4-OQ-05)"
+   "reason": "no property record; requirement: TBD - as APP-ANODE (LOCK-2, A9.12 P4-OQ-03); collector coupons negative-biased + floating control, bias magnitude from P1 evidence (A9.12 P4-OQ-05)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5789,7 +6315,7 @@
    "requirement": "RQ-03-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and a pre-registered acceptance"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5852,7 +6378,7 @@
    "requirement": "RQ-02-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - as APP-ANODE, plus the collector bias polarity for coupons (P4-OQ-05)"
+   "reason": "no property record; requirement: TBD - as APP-ANODE (LOCK-2, A9.12 P4-OQ-03); collector coupons negative-biased + floating control, bias magnitude from P1 evidence (A9.12 P4-OQ-05)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5861,7 +6387,7 @@
    "requirement": "RQ-03-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and a pre-registered acceptance"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5924,7 +6450,7 @@
    "requirement": "RQ-02-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD_OWNER - as APP-ANODE, plus the collector bias polarity for coupons (P4-OQ-05)"
+   "reason": "no property record; requirement: TBD - as APP-ANODE (LOCK-2, A9.12 P4-OQ-03); collector coupons negative-biased + floating control, bias magnitude from P1 evidence (A9.12 P4-OQ-05)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -5933,7 +6459,7 @@
    "requirement": "RQ-03-C",
    "property_records": [],
    "outcome": "INCOMPLETE_EVIDENCE",
-   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and a pre-registered acceptance"
+   "reason": "no property record; requirement: TBD - requires the AO fluence at the collector location and the LOCK-2 acceptance (A9.12 P4-OQ-03)"
   },
   {
    "application": "APP-COLLECTOR",
@@ -6029,7 +6555,8 @@
  },
  "final_material_status": {
   "APP-ANODE": "OPEN",
-  "APP-COLLECTOR": "OPEN"
+  "APP-COLLECTOR": "OPEN",
+  "APP-FILTER": "OPEN"
  },
  "evidence_coverage": {
   "CAND-01": {
@@ -6046,7 +6573,7 @@
     "CR-07"
    ],
    "gated_criteria_with_admissible_evidence": 0,
-   "gated_criteria_total": 8
+   "gated_criteria_total": 14
   },
   "CAND-02A": {
    "datasheet_properties_populated": [
@@ -6060,21 +6587,21 @@
     "CR-02"
    ],
    "gated_criteria_with_admissible_evidence": 0,
-   "gated_criteria_total": 8
+   "gated_criteria_total": 14
   },
   "CAND-02B": {
    "datasheet_properties_populated": [],
    "gate_admissible_properties": [],
    "qualitative_evidence_criteria": [],
    "gated_criteria_with_admissible_evidence": 0,
-   "gated_criteria_total": 8
+   "gated_criteria_total": 14
   },
   "CAND-02C": {
    "datasheet_properties_populated": [],
    "gate_admissible_properties": [],
    "qualitative_evidence_criteria": [],
    "gated_criteria_with_admissible_evidence": 0,
-   "gated_criteria_total": 8
+   "gated_criteria_total": 14
   },
   "CAND-02D": {
    "datasheet_properties_populated": [],
@@ -6083,7 +6610,7 @@
     "CR-02"
    ],
    "gated_criteria_with_admissible_evidence": 0,
-   "gated_criteria_total": 8
+   "gated_criteria_total": 14
   },
   "CAND-02E": {
    "datasheet_properties_populated": [],
@@ -6092,7 +6619,7 @@
     "CR-02"
    ],
    "gated_criteria_with_admissible_evidence": 0,
-   "gated_criteria_total": 8
+   "gated_criteria_total": 14
   },
   "CAND-03A": {
    "datasheet_properties_populated": [
@@ -6106,21 +6633,21 @@
     "CR-02"
    ],
    "gated_criteria_with_admissible_evidence": 0,
-   "gated_criteria_total": 8
+   "gated_criteria_total": 14
   },
   "CAND-03B": {
    "datasheet_properties_populated": [],
    "gate_admissible_properties": [],
    "qualitative_evidence_criteria": [],
    "gated_criteria_with_admissible_evidence": 0,
-   "gated_criteria_total": 8
+   "gated_criteria_total": 14
   },
   "CAND-03C": {
    "datasheet_properties_populated": [],
    "gate_admissible_properties": [],
    "qualitative_evidence_criteria": [],
    "gated_criteria_with_admissible_evidence": 0,
-   "gated_criteria_total": 8
+   "gated_criteria_total": 14
   },
   "CAND-04": {
    "datasheet_properties_populated": [],
@@ -6129,7 +6656,7 @@
     "CR-02"
    ],
    "gated_criteria_with_admissible_evidence": 0,
-   "gated_criteria_total": 8
+   "gated_criteria_total": 14
   },
   "CAND-05": {
    "datasheet_properties_populated": [],
@@ -6138,7 +6665,7 @@
     "CR-02"
    ],
    "gated_criteria_with_admissible_evidence": 0,
-   "gated_criteria_total": 8
+   "gated_criteria_total": 14
   },
   "CAND-06": {
    "datasheet_properties_populated": [],
@@ -6147,7 +6674,7 @@
     "CR-02"
    ],
    "gated_criteria_with_admissible_evidence": 0,
-   "gated_criteria_total": 8
+   "gated_criteria_total": 14
   },
   "CAND-07": {
    "datasheet_properties_populated": [],
@@ -6156,7 +6683,7 @@
     "CR-02"
    ],
    "gated_criteria_with_admissible_evidence": 0,
-   "gated_criteria_total": 8
+   "gated_criteria_total": 14
   },
   "CAND-08": {
    "datasheet_properties_populated": [],
@@ -6165,7 +6692,7 @@
     "CR-02"
    ],
    "gated_criteria_with_admissible_evidence": 0,
-   "gated_criteria_total": 8
+   "gated_criteria_total": 14
   },
   "CAND-09": {
    "datasheet_properties_populated": [],
@@ -6176,7 +6703,7 @@
     "CR-04"
    ],
    "gated_criteria_with_admissible_evidence": 0,
-   "gated_criteria_total": 8
+   "gated_criteria_total": 14
   },
   "CAND-10": {
    "datasheet_properties_populated": [],
@@ -6185,7 +6712,7 @@
     "CR-02"
    ],
    "gated_criteria_with_admissible_evidence": 0,
-   "gated_criteria_total": 8
+   "gated_criteria_total": 14
   },
   "CAND-11": {
    "datasheet_properties_populated": [],
@@ -6194,7 +6721,7 @@
     "CR-02"
    ],
    "gated_criteria_with_admissible_evidence": 0,
-   "gated_criteria_total": 8
+   "gated_criteria_total": 14
   },
   "CAND-12": {
    "datasheet_properties_populated": [],
@@ -6203,7 +6730,7 @@
     "CR-02"
    ],
    "gated_criteria_with_admissible_evidence": 0,
-   "gated_criteria_total": 8
+   "gated_criteria_total": 14
   },
   "CAND-13": {
    "datasheet_properties_populated": [],
@@ -6212,7 +6739,7 @@
     "CR-04"
    ],
    "gated_criteria_with_admissible_evidence": 0,
-   "gated_criteria_total": 8
+   "gated_criteria_total": 14
   },
   "CAND-14": {
    "datasheet_properties_populated": [],
@@ -6221,14 +6748,14 @@
     "CR-02"
    ],
    "gated_criteria_with_admissible_evidence": 0,
-   "gated_criteria_total": 8
+   "gated_criteria_total": 14
   },
   "CAND-15": {
    "datasheet_properties_populated": [],
    "gate_admissible_properties": [],
    "qualitative_evidence_criteria": [],
    "gated_criteria_with_admissible_evidence": 0,
-   "gated_criteria_total": 8
+   "gated_criteria_total": 14
   },
   "CAND-16": {
    "datasheet_properties_populated": [],
@@ -6237,7 +6764,7 @@
     "CR-02"
    ],
    "gated_criteria_with_admissible_evidence": 0,
-   "gated_criteria_total": 8
+   "gated_criteria_total": 14
   }
  },
  "pareto_views": [
@@ -6427,13 +6954,26 @@
  "test_plan": {
   "tests": [
    {
+    "id": "TP-00",
+    "criterion": "CR-09",
+    "populates": "metrology capability (LOCK-2 input)",
+    "measure": "commissioning of the Q0 / Q1 metrology: resistance repeatability / resolution, mass-change detection limit, profilometry / recession resolution, SEM / XPS capability where applicable, coupon-to-coupon / process repeatability, AO / ion exposure dosimetry - on standards, blanks, controls or sacrificial commissioning coupons only; then LOCK-2 freezes the acceptance before any acceptance-bearing exposure; an unresolvable criterion -> NOT_EVALUATED_METROLOGY (never widened) (A9.12 P4-OQ-03)",
+    "instruments": "4-wire micro-ohmmeter; balance; profilometer; SEM / XPS; AO / ion dosimetry",
+    "atmosphere_sequence": "-",
+    "acceptance": "commissioning record complete (p4_a9_16_rules.metrology_commissioning)",
+    "register_links": [
+     "AOL-RC-02",
+     "AOL-PM-02"
+    ]
+   },
+   {
     "id": "TP-01",
     "criterion": "CR-01",
     "populates": "T_validated_continuous",
-    "measure": "long-duration coupon exposure at controlled temperature steps in the service atmosphere with the coupon electrically loaded (electron-collecting for anode coupons; bias polarity for collector coupons TBD_OWNER, P4-OQ-05); in-situ 4-wire resistance and adjacent thermocouple; the highest step at which the pre-registered CR-02 / CR-03 acceptance holds for the pre-registered duration is the validated continuous-use temperature for that condition",
+    "measure": "STAGE 1 (A9.12 P4-OQ-01): long-duration coupon exposure at controlled temperature steps in the service-representative atmosphere / species with the coupon electrically loaded (electron-collecting biased + floating for anode coupons, row 106; NEGATIVE-biased + floating control for collector coupons, A9.12 P4-OQ-05, bias magnitude from the measured P1 collector envelope), pre-registered exposure duration and thermal cycling where applicable; in-situ 4-wire resistance and adjacent thermocouple; the highest step at which the pre-registered (LOCK-2) acceptance holds for the pre-registered exposure is a COUPON-SUPPORTED PROVISIONAL limit (design screening only); T_validated,continuous needs STAGE 2 (Q4)",
     "instruments": "coupon thermocouples (AOL-CX-07); 4-wire resistance (AOL-RC-02 method); bias supply V/I",
     "atmosphere_sequence": "Ar (engineering only) -> N2 -> N2+O2 up to the delivered O2 fraction (label NO_ATOMIC_O) -> dedicated AO source (row 132)",
-    "acceptance": "TBD_OWNER (pre-registered before exposure, P4-OQ-01 / P4-OQ-03)",
+    "acceptance": "TBD - LOCK-2 registration before any acceptance-bearing exposure (A9.12 P4-OQ-01 / P4-OQ-03; NOT_EVALUATED_LOCK2_TBD)",
     "register_links": [
      "AOL-EX-02",
      "AOL-CX-07"
@@ -6443,10 +6983,10 @@
     "id": "TP-02",
     "criterion": "CR-02",
     "populates": "resistance_rise_fraction_after_exposure",
-    "measure": "4-wire sheet / contact resistance before, during and after exposure; oxide thickness and phase (SEM / XPS); mass by the dehydrated protocol; biased AND floating coupons of each shortlisted material (row 106)",
+    "measure": "4-wire sheet / contact resistance before, during and after exposure; oxide thickness and phase (SEM / XPS); mass by the dehydrated protocol; anode coupons biased AND floating (row 106); collector coupons NEGATIVE-biased AND floating control (A9.12 P4-OQ-05); Q0 matrix per A9.12 P4-OQ-02",
     "instruments": "4-wire micro-ohmmeter; SEM / XPS; balance (AOL-PM-02)",
     "atmosphere_sequence": "as TP-01",
-    "acceptance": "TBD_OWNER (P4-OQ-03)",
+    "acceptance": "TBD - LOCK-2 (A9.12 P4-OQ-03; NOT_EVALUATED_LOCK2_TBD)",
     "register_links": [
      "AOL-EX-02",
      "AOL-WC-02",
@@ -6471,10 +7011,10 @@
     "id": "TP-04",
     "criterion": "CR-04",
     "populates": "sputter_recession_over_life",
-    "measure": "species-resolved yield vs ion energy (N+, N2+, O+, O2+, Xe+; Ar+ engineering only) from literature (elemental targets) or ion-beam coupon measurement (alloys, coatings); in-thruster / in-ICP witness coupons for recession and deposition on the H-1 front face and ICP dielectric",
+    "measure": "species-resolved yield vs ion energy (N+, N2+, O+, O2+, Xe+; Ar+ engineering only; Xe+ because Xe is an RFP-required propellant capability, A9.15) - A9.12 P4-OQ-04 BOTH: lawfully acquired literature yields for prior bounds / test-matrix selection / comparison / model initialisation, AND project ion-beam measurement of the down-selected candidates at the relevant species / energy / angle / material (candidate-specific evidence); no silent elemental substitution for alloys / coatings; in-thruster / in-ICP witness coupons for recession and deposition on the H-1 front face and ICP dielectric",
     "instruments": "ion source with energy / species control or published data; profilometer; witness holders (exchangeable, row 134)",
     "atmosphere_sequence": "ion-beam bench; then H-1 / ICP witness positions (ICD)",
-    "acceptance": "TBD_OWNER",
+    "acceptance": "TBD - LOCK-2 sputtering / erosion acceptance (A9.12 P4-OQ-03)",
     "register_links": [
      "AOL-WC-02"
     ]
@@ -6530,13 +7070,76 @@
     "atmosphere_sequence": "-",
     "acceptance": "record rule (fail closed)",
     "register_links": []
+   },
+   {
+    "id": "TP-10",
+    "criterion": "CR-10",
+    "populates": "filter_ao_erosion_recession_at_fluence",
+    "measure": "AO / O exposure of filter-element coupons in a dedicated AO source with measured fluence at the registered filter thermal state; erosion / recession and mass change",
+    "instruments": "AO source with fluence witness; profilometer / balance",
+    "atmosphere_sequence": "dedicated AO source (row 132); N2+O2 surrogate labelled NO_ATOMIC_O",
+    "acceptance": "TBD - pre-registered before LOCK-1 (A9.13 S6.3; NOT_EVALUATED_FILTER_ACCEPTANCE_TBD)",
+    "register_links": [
+     "AOL-EX-02"
+    ]
+   },
+   {
+    "id": "TP-11",
+    "criterion": "CR-11",
+    "populates": "o_recombination_conversion_probability",
+    "measure": "catalytic / recombination behaviour: O recombination / conversion probability of the filter material / geometry (species-conversion measurement)",
+    "instruments": "AO source; species-resolved downstream measurement",
+    "atmosphere_sequence": "dedicated AO source",
+    "acceptance": "TBD - pre-registered before LOCK-1 (A9.13 S6.3; NOT_EVALUATED_FILTER_ACCEPTANCE_TBD)",
+    "register_links": []
+   },
+   {
+    "id": "TP-12",
+    "criterion": "CR-12",
+    "populates": "capture_efficiency_vs_contaminant_class",
+    "measure": "particulate retention: capture efficiency per registered contaminant / particle class and retained contaminant capacity",
+    "instruments": "particle source / counter (per registered class)",
+    "atmosphere_sequence": "-",
+    "acceptance": "TBD - pre-registered before LOCK-1 (A9.13 S6.3; NOT_EVALUATED_FILTER_ACCEPTANCE_TBD)",
+    "register_links": []
+   },
+   {
+    "id": "TP-13",
+    "criterion": "CR-13",
+    "populates": "filter_thermal_cycling_degradation_metric",
+    "measure": "thermal cycling over the registered filter thermal-state range; integrity / transmission after cycling",
+    "instruments": "thermal-cycling rig; metallography",
+    "atmosphere_sequence": "vacuum",
+    "acceptance": "TBD - pre-registered before LOCK-1 (A9.13 S6.3; NOT_EVALUATED_FILTER_ACCEPTANCE_TBD)",
+    "register_links": []
+   },
+   {
+    "id": "TP-14",
+    "criterion": "CR-14",
+    "populates": "species_resolved_propellant_transmission",
+    "measure": "species-resolved forward (and, where relevant, reverse) transmission of the filter element",
+    "instruments": "molecular-flow transmission rig (species-resolved)",
+    "atmosphere_sequence": "N2, O-bearing",
+    "acceptance": "TBD - pre-registered before LOCK-1 (A9.13 S6.3; NOT_EVALUATED_FILTER_ACCEPTANCE_TBD)",
+    "register_links": []
+   },
+   {
+    "id": "TP-15",
+    "criterion": "CR-15",
+    "populates": "filter_conductance",
+    "measure": "conductance / pressure-loss penalty of the filter element in the registered flow regime",
+    "instruments": "conductance rig; calibrated gauges",
+    "atmosphere_sequence": "N2",
+    "acceptance": "TBD - pre-registered before LOCK-1 (A9.13 S6.3; NOT_EVALUATED_FILTER_ACCEPTANCE_TBD) (AG-12 feed-state closure)",
+    "register_links": []
    }
   ],
   "qualification_stages": [
    {
     "id": "Q0",
-    "name": "screening coupons (bench, per shortlisted material)",
+    "name": "broad screening coupons (bench) over the owner Q0 matrix (A9.12 P4-OQ-02); validation stage ST-1",
     "tests": [
+     "TP-00",
      "TP-02",
      "TP-05",
      "TP-06",
@@ -6545,7 +7148,7 @@
    },
    {
     "id": "Q1",
-    "name": "electrically loaded plasma coupons, biased and floating (row 106)",
+    "name": "electrically loaded plasma coupons for Q0 survivors only (pre-registered screening criteria): anode biased + floating (row 106), collector negative-biased + floating (A9.12 P4-OQ-05); validation stage ST-1 (coupon-supported provisional limit)",
     "tests": [
      "TP-01",
      "TP-02"
@@ -6567,10 +7170,71 @@
    },
    {
     "id": "Q4",
-    "name": "in-H-1 / in-ICP witness and replaceable-anode metrology",
+    "name": "in-H-1 / in-ICP witness and replaceable anode / collector confirmation (validation stage ST-2: the only source of T_validated,continuous for P3 / LOCK-1)",
     "tests": [
+     "TP-01",
      "TP-02",
      "TP-04"
+    ]
+   },
+   {
+    "id": "Q5",
+    "name": "qualification / life evidence (validation stage ST-3: full-duration or justified accelerated life before a flight-life claim)",
+    "tests": [
+     "TP-01",
+     "TP-02",
+     "TP-04"
+    ]
+   },
+   {
+    "id": "QF",
+    "name": "APP-FILTER material programme (A9.13 F2-OQ-04)",
+    "tests": [
+     "TP-10",
+     "TP-11",
+     "TP-12",
+     "TP-13",
+     "TP-14",
+     "TP-15"
+    ]
+   }
+  ],
+  "validation_stages": [
+   {
+    "id": "ST-1",
+    "stage": "STAGE_1_COUPON_SCREENING",
+    "qual_stages": [
+     "Q0",
+     "Q1"
+    ],
+    "result": "COUPON_SUPPORTED_PROVISIONAL_LIMIT",
+    "usable_for": [
+     "design_screening"
+    ]
+   },
+   {
+    "id": "ST-2",
+    "stage": "STAGE_2_INTEGRATED_REPLACEABLE_COMPONENT_CONFIRMATION",
+    "qual_stages": [
+     "Q4"
+    ],
+    "result": "T_VALIDATED_CONTINUOUS",
+    "usable_for": [
+     "design_screening",
+     "p3_lock1_material_temperature_closure"
+    ]
+   },
+   {
+    "id": "ST-3",
+    "stage": "STAGE_3_QUALIFICATION_LIFE_EVIDENCE",
+    "qual_stages": [
+     "Q5"
+    ],
+    "result": "FLIGHT_LIFE_QUALIFIED_LIMIT",
+    "usable_for": [
+     "design_screening",
+     "p3_lock1_material_temperature_closure",
+     "final_flight_life_claim"
     ]
    }
   ]
@@ -6661,7 +7325,8 @@
      "units": "V; A",
      "status": "TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; sheath energy additionally TBD_OWNER P3Q-01)"
     }
-   ]
+   ],
+   "a9_16_note": "A9.12 P4-OQ-05: the collector-coupon bias magnitude / ion energy is derived from this measured P1 collector envelope and plasma / sheath evidence before any acceptance-bearing biased exposure"
   },
   {
    "id": "ID-07",
@@ -6709,7 +7374,8 @@
      "units": "-",
      "status": "DEFINED (RFQ2-MECH ME-L03, ME-L04, option ME-O01; coupon shortlist TBD_OWNER P4 IT-17; AO-source hardware NOT_IN_THIS_REVISION NIR-05)"
     }
-   ]
+   ],
+   "a9_16_note": "A9.12 P4-OQ-02 fixes the Q0 coupon matrix (a9_16_owner_rules.q0_matrix); the XL-27 pair text 'coupon shortlist TBD_OWNER P4 IT-17' is identical on both sides and is re-stated with RFQ at the integration re-pin"
   },
   {
    "id": "ID-10",
@@ -6728,6 +7394,16 @@
    "content": "rows 18, 20, 21: framework implemented; readiness unchanged",
    "used_for": "m16_impact",
    "status": "DEFINED",
+   "units": "-",
+   "xref": []
+  },
+  {
+   "id": "ID-12",
+   "direction": "P4 <-> F2 filter",
+   "counterpart": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json (F2-IF-08)",
+   "content": "APP-FILTER (A9.13 F2-OQ-04): filter material / geometry, thermal-state range and contamination classes from F2; P4 returns the CR-10..CR-15 evidence (AO / O erosion, recombination, retention, thermal cycling, transmission, conductance)",
+   "used_for": "APP-FILTER; test plan TP-10..TP-15",
+   "status": "TBD_AFTER_EVIDENCE (no filter material defined; acceptance pre-registered before LOCK-1)",
    "units": "-",
    "xref": []
   }
@@ -6834,6 +7510,190 @@
    ],
    "owner_answer_verbatim": "{\"316L_FLIGHT_ANODE\": \"REJECTED_AS_CURRENT_BASELINE\", \"ANODE_THERMAL_CLOSURE\": \"UNRESOLVED\", \"FINAL_ANODE_MATERIAL\": \"OPEN\", \"ICP_COUPLED_THERMAL\": \"UNRESOLVED\", \"RF_COMPONENT_RATINGS\": \"TBD_AFTER_IMPEDANCE_MAP\"}",
    "how_applied": "fixed_statuses block; criteria list = sec. 10 list; no final selection"
+  },
+  {
+   "decision": "A9.12 P4-OQ-01",
+   "kind": "A9.12",
+   "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+   "verbatim_path": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+   "verbatim_sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62",
+   "question_id": "P4-OQ-01",
+   "covers_ids": [
+    "P4-OQ-01"
+   ],
+   "sequenced_no": "S5.10",
+   "answer": "STAGED",
+   "owner_answer_verbatim": "10. S5.10 — P4-OQ-01 — USE A STAGED VALIDATION STANDARD FOR `T_validated,continuous`.\n\nAdopt a staged evidence hierarchy.\nStage 1 — coupon screening\nTest each candidate under the applicable service-representative combination of:\n\n* atmosphere/species;\n* temperature;\n* electrical bias/current condition;\n* exposure duration;\n* thermal cycling where applicable.\n\nAcceptance metrics shall be pre-registered and include the applicable electrical, oxidation/recession, mass-loss and surface/material criteria.\nThe highest temperature satisfying the pre-registered criteria for the pre-registered coupon exposure may be recorded as a coupon-supported provisional continuous-use limit for design screening.\nIt is not by itself a flight-life qualification.\nStage 2 — integrated replaceable-component confirmation\nConfirm the down-selected material in a replaceable anode/collector configuration on the H-1/ICP article under the applicable plasma, electrical and thermal environment.\nThe test shall demonstrate that the candidate remains within the pre-registered acceptance criteria at the intended continuous-use condition.\nOnly after this stage may the value be used as `T_validated,continuous` for the P3/LOCK-1 material-temperature closure.\nStage 3 — qualification/life evidence\nFull-duration or justified accelerated-life qualification remains separately required before a final flight-life claim.\nTherefore, do not equate melting point, short vendor exposure, generic air-use temperature or a brief coupon test with continuous-use validation.\nDecision: staged coupon screening → integrated replaceable-component confirmation → later flight/life qualification.",
+   "how_applied": "staged T_validated,continuous: stage 1 coupon screening under the service-representative combination of atmosphere / species, temperature, electrical bias / current, exposure duration and thermal cycling (where applicable) with pre-registered electrical, oxidation / recession, mass-loss and surface / material metrics -> the highest temperature meeting them is a COUPON_SUPPORTED_PROVISIONAL_LIMIT for design screening only; stage 2 integrated replaceable anode / collector confirmation of the down-selected material on the H-1 / ICP article in the applicable plasma, electrical and thermal environment -> only then T_VALIDATED_CONTINUOUS for the P3 / LOCK-1 material-temperature closure; stage 3 full-duration or justified accelerated-life qualification before a final flight-life claim; melting point, short vendor exposure, generic air-use temperature and a brief coupon test (shorter than the pre-registered exposure) are refused (NOT_CONTINUOUS_USE_VALIDATION); the CR-01 gate admits a T_validated_continuous record only at stage 2 or later",
+   "implemented_in": "p4_a9_16_rules.validation_stage_record, limit_use_check, gate_admissible_t_validated; p4_screening.evaluate_gate (CR-01 stage check); items IT-12 / IT-23; test plan stages ST-1..ST-3 (Q0/Q1, Q4, Q5); criteria CR-01 rule",
+   "tests": [
+    "test_p4_a9_16_stage_1_is_screening_only",
+    "test_p4_a9_16_stage_2_needs_stage_1_and_article",
+    "test_p4_a9_16_stage_3_life",
+    "test_p4_a9_16_non_validation_bases_refused",
+    "test_p4_a9_16_cr01_gate_requires_stage_2"
+   ],
+   "step": "A9.16 step 1"
+  },
+  {
+   "decision": "A9.12 P4-OQ-02",
+   "kind": "A9.12",
+   "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+   "verbatim_path": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+   "verbatim_sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62",
+   "question_id": "P4-OQ-02",
+   "covers_ids": [
+    "P4-OQ-02"
+   ],
+   "sequenced_no": "S5.11",
+   "answer": "BROAD_Q0_DOWNSELECT_Q1",
+   "owner_answer_verbatim": "11. S5.11 — P4-OQ-02 — USE A BROAD Q0 SCREEN, THEN DOWN-SELECT FOR Q1.\n\nDo not put every material variant through the full electrically loaded Q1 campaign.\nQ0 screening matrix:\nInclude the R8-C01..C09 families with these dispositions:\n\n* R8-C01: 316L — engineering/reference control only.\n* R8-C02 chromia-forming Ni alloys: IN600, IN625 and Haynes 230. Include X-750 as an additional Q0 comparison if readily available. Do not test unspecified generic “Hastelloy”; an exact grade must be declared before admission.\n* R8-C03 alumina-forming candidates: IN601, Haynes 214 and one explicitly specified FeCrAl grade.\n* R8-C04: Rh-coated 316L candidate.\n* R8-C05: Pt-clad/plated 316L candidate.\n* R8-C06: Cr-plated 316L candidate.\n* R8-C07: IrO2/RuO2-type conductive-oxide/MMO candidate with the exact coating system and substrate declared.\n* R8-C08: bare tungsten retained only as a negative/reference-control material where useful; not restored as the baseline anode candidate.\n* R8-C09: specified isotropic graphite retained as a reference/control coupon.\n\nDo not add Ti, TiN/ZrN, bulk Cu or bulk Ir to the baseline Q0/Q1 campaign now. Keep them as reserve candidates that require a specific hypothesis/need before activation.\nQ1:\nAdvance only the Q0 survivors that meet the pre-registered screening criteria. Q1 then performs electrically loaded plasma exposure under the applicable biased/floating configurations.\nEach coating candidate shall record coating composition, thickness, deposition process, substrate, surface preparation and lot/process provenance. A coating family name alone is insufficient.\nDecision: broad R8-C01..C09 Q0 screening with the named variants above; evidence-based down-selection before Q1.",
+   "how_applied": "Q0 matrix exactly as the owner listed it: R8-C01 316L engineering / reference control only; R8-C02 IN600, IN625, Haynes 230 (+ X-750 as an additional comparison only if readily available; generic Hastelloy refused until an exact grade is declared); R8-C03 IN601, Haynes 214 and ONE explicitly specified FeCrAl grade (grade TBD, declared before admission); R8-C04 Rh-coated 316L; R8-C05 Pt-clad / plated 316L; R8-C06 Cr-plated 316L; R8-C07 IrO2 / RuO2-type MMO with the exact coating system and substrate declared; R8-C08 bare W negative / reference control only (not restored as baseline anode candidate); R8-C09 specified isotropic graphite reference / control (grade declared); Ti, TiN / ZrN, bulk Cu, bulk Ir reserve only (specific hypothesis / need before activation, outside the baseline campaign); Mo / TZM, ZrB2 / HfB2 / SiC and Hf / Zr are not in the owner Q0 matrix; Q1 admits only Q0 survivors meeting the pre-registered screening criteria; every coating records composition, thickness, deposition process, substrate, surface preparation and lot / process provenance",
+   "implemented_in": "p4_a9_16_rules.Q0_MATRIX, RESERVE, q0_admission, reserve_activation, q1_admission; candidates[].q0_disposition; a9_16_owner_rules.q0_matrix; item IT-17; QUAL_STAGES Q0 / Q1",
+   "tests": [
+    "test_p4_a9_16_q0_matrix_exact",
+    "test_p4_a9_16_q0_declarations_refused",
+    "test_p4_a9_16_coating_record_required",
+    "test_p4_a9_16_reserve_and_not_listed",
+    "test_p4_a9_16_q1_only_q0_survivors"
+   ],
+   "step": "A9.16 step 1"
+  },
+  {
+   "decision": "A9.12 P4-OQ-03",
+   "kind": "A9.12",
+   "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+   "verbatim_path": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+   "verbatim_sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62",
+   "question_id": "P4-OQ-03",
+   "covers_ids": [
+    "P4-OQ-03"
+   ],
+   "sequenced_no": "S5.12",
+   "answer": "LOCK_2_AFTER_METROLOGY_BEFORE_EXPOSURE",
+   "owner_answer_verbatim": "12. S5.12 — P4-OQ-03 — FREEZE NUMERICAL ACCEPTANCE THRESHOLDS AT LOCK-2 AFTER METROLOGY COMMISSIONING, BEFORE ACCEPTANCE-BEARING EXPOSURE.\n\nSelect the LOCK-2 alternative.\nFirst establish the actual Q0/Q1 measurement capability, including:\n\n* resistance repeatability/resolution;\n* mass-change detection limit;\n* profilometry/recession resolution;\n* SEM/XPS capability where applicable;\n* coupon-to-coupon/process repeatability;\n* AO/ion exposure dosimetry capability.\n\nThis metrology commissioning may use standards, blanks, controls or sacrificial commissioning coupons.\nThen, before any acceptance-bearing candidate exposure is performed, freeze:\n\n* allowable resistance-rise threshold;\n* mass-loss/recession limits;\n* sputtering/erosion acceptance;\n* required exposure duration/fluence;\n* applicable uncertainty treatment;\n* acceptance/rejection logic.\n\nDo not use the performance of the candidate coupons themselves to choose thresholds that they subsequently have to pass.\nIf the metrology capability is inadequate to resolve the desired acceptance criterion, return `NOT_EVALUATED_METROLOGY`; do not widen the material acceptance criterion simply to fit the instrument.\nDecision: LOCK-2 after metrology commissioning, but before acceptance-bearing coupon exposure.",
+   "how_applied": "LOCK-2: first commission the Q0 / Q1 metrology (resistance repeatability / resolution, mass-change detection limit, profilometry / recession resolution, SEM / XPS where applicable, coupon-to-coupon / process repeatability, AO / ion dosimetry) on standards, blanks, controls or sacrificial commissioning coupons only; then, before ANY acceptance-bearing candidate exposure, freeze the resistance-rise threshold, mass-loss / recession limits, sputtering / erosion acceptance, exposure duration / fluence, uncertainty treatment and acceptance / rejection logic; thresholds derived from candidate coupon performance are refused; a criterion the metrology cannot resolve returns NOT_EVALUATED_METROLOGY and is never widened; any post-freeze change refused",
+   "implemented_in": "p4_a9_16_rules.metrology_commissioning, lock2_freeze, threshold_revision; items IT-13 / IT-24; requirements CR-02 / CR-03 / CR-04 tbd text; test plan TP-00",
+   "tests": [
+    "test_p4_a9_16_lock2_requires_commissioning",
+    "test_p4_a9_16_lock2_refuses_candidate_derived_thresholds",
+    "test_p4_a9_16_lock2_metrology_never_widened",
+    "test_p4_a9_16_lock2_before_acceptance_exposure"
+   ],
+   "step": "A9.16 step 1"
+  },
+  {
+   "decision": "A9.12 P4-OQ-04",
+   "kind": "A9.12",
+   "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+   "verbatim_path": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+   "verbatim_sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62",
+   "question_id": "P4-OQ-04",
+   "covers_ids": [
+    "P4-OQ-04"
+   ],
+   "sequenced_no": "S5.13",
+   "answer": "BOTH",
+   "owner_answer_verbatim": "13. S5.13 — P4-OQ-04 — DO BOTH: ACQUIRE THE BEST AVAILABLE SPECIES-RESOLVED DATA AND MEASURE PROJECT CANDIDATES.\n\nAuthorize lawful acquisition through:\n\n* library access;\n* inter-library loan;\n* publisher purchase;\n* institutional subscriptions;\n* other legitimate licensed routes\n\nof species-resolved sputtering-yield information for the relevant N+, N2+, O+ and O2+ interactions where available.\nIn parallel, use the project ion-beam/materials test route for the down-selected candidate materials/coatings where published evidence is absent, non-representative or insufficient.\nLiterature data shall be used for:\n\n* prior bounds;\n* test-matrix selection;\n* comparison;\n* model initialization.\n\nProject measurements shall provide candidate-specific evidence under the relevant ion species/energy/angle/material condition.\nDo not silently substitute elemental-target literature yields for an alloy/coating where composition or surface chemistry materially changes the interaction.\nDecision: BOTH — lawful data acquisition plus candidate-specific measurement.",
+   "how_applied": "BOTH: lawful acquisition (library, inter-library loan, publisher purchase, institutional subscription, other legitimate licensed route) of species-resolved N+ / N2+ / O+ / O2+ sputter yields where available, used for prior bounds, test-matrix selection, comparison and model initialisation only; in parallel project ion-beam measurement of the down-selected candidates gives the candidate-specific evidence at the relevant species / energy / angle / material condition; an elemental-target yield is never silently substituted for an alloy / coating (refused without a registered NOT_MATERIAL assessment; even then an explicitly labelled proxy for literature uses only); no acquisition is performed by this lane (no contact, no purchase)",
+   "implemented_in": "p4_a9_16_rules.sputter_record_use; items IT-22 / IT-25; test plan TP-04",
+   "tests": [
+    "test_p4_a9_16_sputter_literature_uses_only",
+    "test_p4_a9_16_sputter_elemental_substitution_refused",
+    "test_p4_a9_16_sputter_species_resolved_and_lawful"
+   ],
+   "step": "A9.16 step 1"
+  },
+  {
+   "decision": "A9.12 P4-OQ-05",
+   "kind": "A9.12",
+   "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+   "verbatim_path": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+   "verbatim_sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62",
+   "question_id": "P4-OQ-05",
+   "covers_ids": [
+    "P4-OQ-05"
+   ],
+   "sequenced_no": "S5.14",
+   "answer": "NEGATIVE_BIAS_PLUS_FLOATING_CONTROL",
+   "owner_answer_verbatim": "14. S5.14 — P4-OQ-05 — ADD THE NEGATIVE-BIAS COLLECTOR SET AND RETAIN A FLOATING CONTROL.\n\nThe collector material coupon programme shall include the actual service polarity:\n\n* negative-biased collector coupons, representing the ion-collecting collector condition; and\n* floating coupons as the matched control/reference.\n\nThe polarity is therefore frozen now.\nDo not invent the numerical collector-bias voltage for the material test campaign.\nThe bias magnitude and relevant ion-energy exposure shall be derived from the measured P1 collector operating envelope and associated plasma/sheath evidence before the acceptance-bearing biased exposure is run.\nWhere Q0 screening needs an electrical-bias capability before P1 is complete, it may verify the fixture/process, but such exposure shall remain engineering-only and shall not be represented as the final service-condition qualification.\nDecision: negative-bias + floating collector coupon sets; numerical bias from P1 evidence.",
+   "how_applied": "collector coupon programme = negative-biased (ion-collecting service polarity) set + floating matched control; polarity frozen NEGATIVE now; the bias magnitude / ion energy is derived from the measured P1 collector operating envelope and plasma / sheath evidence before any acceptance-bearing biased exposure (NOT_EVALUATED_BIAS_MAGNITUDE_TBD_P1 until then; never invented); a pre-P1 biased Q0 exposure is fixture / process verification, ENGINEERING_ONLY, never the final service-condition qualification; the anode pair of row 106 (biased + floating) is unchanged",
+   "implemented_in": "p4_a9_16_rules.collector_coupon_exposure; items IT-14 / IT-19; test plan TP-01 / TP-02; ID-06 note",
+   "tests": [
+    "test_p4_a9_16_collector_polarity_frozen",
+    "test_p4_a9_16_collector_bias_from_p1"
+   ],
+   "step": "A9.16 step 1"
+  },
+  {
+   "decision": "A9.12 OQ-A907-05",
+   "kind": "A9.12",
+   "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+   "verbatim_path": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+   "verbatim_sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62",
+   "question_id": "OQ-A907-05",
+   "covers_ids": [
+    "OQ-A907-05"
+   ],
+   "sequenced_no": "S5.3",
+   "answer": "PROVISIONAL_ONLY",
+   "owner_answer_verbatim": "3. S5.3 — OQ-A907-05 — ACCEPT SUPPLIER RATINGS AS PROVISIONAL LIMITS ONLY.\nSupplier continuous-use ratings such as the present BN guide value and ceramic-wire rating may be used as provisional development limits until project-specific validation exists.\nThey may be used for:\n   * preliminary thermal screening;\n   * equipment protection;\n   * design sensitivity;\n   * procurement down-selection.\nThey shall not independently establish `T_validated,continuous` for flight/design closure.\nAny thermal result whose margin depends on such an unvalidated supplier value remains `UNRESOLVED` / conditional.\nReplace each provisional value with the applicable qualified material/component limit once P4, supplier qualification data or project testing provides it.\nDecision: YES — provisional only; no flight/design closure from provisional ratings.",
+   "how_applied": "context for P4-OQ-01: a supplier continuous-use rating is never a P4 validation stage (SUPPLIER_CONTINUOUS_RATING refused by validation_stage_record); P4 stage-2 / stage-3 limits are the qualified material limits that replace provisional values (the provisional-limit rule itself is applied in the P3 lane)",
+   "implemented_in": "p4_a9_16_rules.NON_VALIDATION_BASES",
+   "tests": [
+    "test_p4_a9_16_non_validation_bases_refused"
+   ],
+   "step": "A9.16 step 1"
+  },
+  {
+   "decision": "A9.13 F2-OQ-04",
+   "kind": "A9.13",
+   "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+   "sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+   "verbatim_path": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
+   "verbatim_sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf",
+   "question_id": "F2-OQ-04",
+   "covers_ids": [
+    "F2-OQ-04"
+   ],
+   "sequenced_no": "S6.6",
+   "answer": "COMPRESSOR_INLET_PLUS_APP_FILTER",
+   "owner_answer_verbatim": "6. S6.6 — F2-OQ-04 — PLACE THE BASELINE FILTER BETWEEN THE INTAKE AND COMPRESSOR; ADD `APP-FILTER` TO P4.\nBaseline placement:\nintake/channel array → filter → compressor inlet\nPlace it downstream of the primary intake/collimator and upstream of the compressor so it protects the compressor without becoming the primary hyperthermal capture surface.\nThe exact axial location, area and thermal state remain design variables until geometry is frozen.\nAdd `APP-FILTER` to the P4 materials programme with applicable:\n   * AO/O exposure;\n   * erosion;\n   * catalytic/recombination behavior;\n   * particulate retention;\n   * thermal cycling;\n   * transmission/conductance effects.\nDecision: compressor-inlet filter; YES to `APP-FILTER`.",
+   "how_applied": "APP-FILTER added as a third P4 application: baseline filter at intake / channel array -> filter -> compressor inlet (downstream of the primary intake / collimator, upstream of the compressor; axial location, area and thermal state remain design variables), inert / low-recombination baseline (S6.4; a catalytic O -> O2 element is only a separately labelled research variant with its own conversion, flow, qualification and H-1 map); filter criteria CR-10..CR-15 (AO / O exposure and erosion, catalytic / recombination behaviour, particulate retention, thermal cycling, transmission and conductance effects) and tests TP-10..TP-15; filter acceptance slots pre-registered before LOCK-1 from the contamination environment, H-1 feed requirement and measured filter material / geometry (S6.3; NOT_EVALUATED_FILTER_ACCEPTANCE_TBD); no filter material candidate is invented (candidate set TBD_AFTER_EVIDENCE, F2 lane F2-IF-08)",
+   "implemented_in": "APPLICATIONS['APP-FILTER']; CRITERIA CR-10..CR-15; requirements RQ-10-F..RQ-15-F; TEST_PLAN TP-10..TP-15; p4_a9_16_rules.filter_material_role, filter_acceptance; interface ID-12",
+   "tests": [
+    "test_p4_a9_16_app_filter_present",
+    "test_p4_a9_16_filter_baseline_inert_catalytic_variant",
+    "test_p4_a9_16_filter_acceptance_slots"
+   ],
+   "step": "A9.16 step 1"
+  },
+  {
+   "decision": "A9.15 RFP-COMPLIANT PROPELLANT POLICY",
+   "kind": "A9.15",
+   "path": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
+   "sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
+   "verbatim_path": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
+   "verbatim_sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903",
+   "question_id": "RFP-COMPLIANT PROPELLANT POLICY",
+   "covers_ids": [
+    "RFP-COMPLIANT PROPELLANT POLICY"
+   ],
+   "sequenced_no": "-",
+   "answer": "RFP_GOVERNS_AIR_AND_XE",
+   "owner_answer_verbatim": "RFP-COMPLIANT PROPELLANT POLICY\nThe ABEP system shall support both:\n\n* ambient atmospheric propellant in the 180–230 km operating range; and\n* Xenon propulsion capability.\n\nXenon is therefore an RFP-required system capability, not merely a contingency introduced by our internal architecture.\nC1 is an internal architecture element, not an RFP requirement. If the selected C1 implementation requires Xenon, its Xe requirement shall be included in the system Xe architecture and accounting. If C1 does not require Xe, no separate C1 Xe consumption shall be invented.\nThe presence or absence of C1 shall not remove the system-level Xenon capability required by the RFP.\nThis means I would revise the relevant S8/S9 answers accordingly:\n\n* S8.17 / OQ-A907-07: C1 flight integration may still be deferred until C1 is selected, but not because Xe is contingency-only.\n* S8.21 / XA9Q-07: YES — Xe capability applies to the `hall_icp_neutralizer` flight configuration because the RFP requires it.\n* S8.33 / MPQ-01: if C1 is selected and requires Xe, its C1-specific branch is booked within the RFP-compliant Xe system; do not assume or exclude C1 Xe in advance.\n* S8.35 / XV2Q-01: becomes NOT APPLICABLE, because the system is not Xe-free under the RFP.\n* S9.3 / XA9Q-05: whether the ICP Xe path needs a getter/filter remains an engineering/vendor requirement, not a policy choice.\n* S9.10 / OD6: “air + Xe” means the system must provide both ambient-air and Xenon operating capability; it should not be weakened into a contingency interpretation.\n\nAnd the statement I made earlier should be replaced with:\nThe official RFP is the sole governing basis for propellant capability. The system shall support both ambient atmospheric propellant and Xenon. C1-specific Xe requirements, if any, are derived from the selected C1 hardware and integrated into that RFP-compliant Xe architecture; no independent policy shall restrict or override the RFP.\nThat is the rule I will use for all further ABEP decisions.",
+   "how_applied": "reviewed: the P4 package carries no text that restricts Xe to a C1 contingency; Xe+ stays in the CR-04 / TP-04 sputter species set because Xe is an RFP-required system propellant capability (ambient air AND Xe), not a contingency; the ICP gas-mode baseline (A9.1 G-REUSE primary, G-XE declared variant) is unchanged; no C1 Xe is invented or excluded here",
+   "implemented_in": "criteria CR-04; TEST_PLAN TP-04",
+   "tests": [
+    "test_p4_a9_16_no_xe_contingency_text"
+   ],
+   "step": "A9.16 step 1"
   }
  ],
  "open_owner_questions": [
@@ -6847,7 +7707,11 @@
     "full-duration life test",
     "staged: coupon screening + in-H-1 replaceable-anode confirmation"
    ],
-   "status": "TBD_OWNER"
+   "status": "OWNER_DECIDED",
+   "status_when_raised": "TBD_OWNER",
+   "answer": "STAGED",
+   "sequenced_no": "S5.10",
+   "decided_by": "A9.12 P4-OQ-01 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
   },
   {
    "id": "P4-OQ-02",
@@ -6859,7 +7723,11 @@
     "R8-C01..C09 plus named variants",
     "a reduced set"
    ],
-   "status": "TBD_OWNER"
+   "status": "OWNER_DECIDED",
+   "status_when_raised": "TBD_OWNER",
+   "answer": "BROAD_Q0_DOWNSELECT_Q1",
+   "sequenced_no": "S5.11",
+   "decided_by": "A9.12 P4-OQ-02 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
   },
   {
    "id": "P4-OQ-03",
@@ -6870,7 +7738,11 @@
     "frozen at LOCK-1",
     "frozen at LOCK-2 after Q0 bench metrology capability"
    ],
-   "status": "TBD_OWNER"
+   "status": "OWNER_DECIDED",
+   "status_when_raised": "TBD_OWNER",
+   "answer": "LOCK_2_AFTER_METROLOGY_BEFORE_EXPOSURE",
+   "sequenced_no": "S5.12",
+   "decided_by": "A9.12 P4-OQ-03 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
   },
   {
    "id": "P4-OQ-04",
@@ -6882,7 +7754,11 @@
     "measure on the ion-beam bench (TP-04) only",
     "both"
    ],
-   "status": "TBD_OWNER"
+   "status": "OWNER_DECIDED",
+   "status_when_raised": "TBD_OWNER",
+   "answer": "BOTH",
+   "sequenced_no": "S5.13",
+   "decided_by": "A9.12 P4-OQ-04 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
   },
   {
    "id": "P4-OQ-05",
@@ -6894,9 +7770,517 @@
     "reuse the anode biased / floating set",
     "defer until P1 measures the collector bias"
    ],
-   "status": "TBD_OWNER"
+   "status": "OWNER_DECIDED",
+   "status_when_raised": "TBD_OWNER",
+   "answer": "NEGATIVE_BIAS_PLUS_FLOATING_CONTROL",
+   "sequenced_no": "S5.14",
+   "decided_by": "A9.12 P4-OQ-05 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
   }
  ],
+ "a9_16_owner_rules": {
+  "rules_module": "docs/experiments/hall_icp/p4_anode_materials/p4_a9_16_rules.py",
+  "test": "tests/test_p4_a9_16_owner_rules.py",
+  "applied": "2026-10-01",
+  "rule": "pure fail-closed functions; owner forms only as given; deferred numbers / declarations are registration slots (NOT_EVALUATED_* / NOT_ADMITTED_* / INCOMPLETE_EVIDENCE); no selection; never PASS",
+  "staged_validation": {
+   "stages": [
+    {
+     "id": "ST-1",
+     "stage": "STAGE_1_COUPON_SCREENING",
+     "qual_stages": [
+      "Q0",
+      "Q1"
+     ],
+     "result": "COUPON_SUPPORTED_PROVISIONAL_LIMIT",
+     "usable_for": [
+      "design_screening"
+     ]
+    },
+    {
+     "id": "ST-2",
+     "stage": "STAGE_2_INTEGRATED_REPLACEABLE_COMPONENT_CONFIRMATION",
+     "qual_stages": [
+      "Q4"
+     ],
+     "result": "T_VALIDATED_CONTINUOUS",
+     "usable_for": [
+      "design_screening",
+      "p3_lock1_material_temperature_closure"
+     ]
+    },
+    {
+     "id": "ST-3",
+     "stage": "STAGE_3_QUALIFICATION_LIFE_EVIDENCE",
+     "qual_stages": [
+      "Q5"
+     ],
+     "result": "FLIGHT_LIFE_QUALIFIED_LIMIT",
+     "usable_for": [
+      "design_screening",
+      "p3_lock1_material_temperature_closure",
+      "final_flight_life_claim"
+     ]
+    }
+   ],
+   "stage_1_conditions": [
+    "atmosphere_species",
+    "temperature",
+    "electrical_bias_current_condition",
+    "exposure_duration",
+    "thermal_cycling"
+   ],
+   "stage_1_metrics": [
+    "electrical",
+    "oxidation_recession",
+    "mass_loss",
+    "surface_material"
+   ],
+   "stage_2_environment": [
+    "plasma_environment",
+    "electrical_environment",
+    "thermal_environment"
+   ],
+   "never_validation": [
+    "MELTING_POINT",
+    "SHORT_VENDOR_EXPOSURE",
+    "GENERIC_AIR_USE_TEMPERATURE",
+    "BRIEF_COUPON_TEST",
+    "SUPPLIER_CONTINUOUS_RATING"
+   ],
+   "cr01_gate_stages": [
+    "STAGE_2_INTEGRATED_REPLACEABLE_COMPONENT_CONFIRMATION",
+    "STAGE_3_QUALIFICATION_LIFE_EVIDENCE"
+   ],
+   "registered_evaluation": {
+    "status": "NOT_EVALUATED_ACCEPTANCE_NOT_PREREGISTERED",
+    "reason": "NOT_EVALUATED_ACCEPTANCE_NOT_PREREGISTERED: STAGE_1_COUPON_SCREENING: missing ['preregistered_acceptance']"
+   },
+   "decision": "A9.12 P4-OQ-01 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
+  },
+  "q0_matrix": {
+   "entries": [
+    {
+     "q0_id": "Q0-C01",
+     "r8_coupon": "R8-C01",
+     "material": "316L",
+     "role": "ENGINEERING_REFERENCE_CONTROL_ONLY",
+     "declaration_needed": null,
+     "coating_record_required": false,
+     "candidate": "CAND-01",
+     "registered_admission": {
+      "status": "Q0_LISTED",
+      "reason": "no declaration outstanding"
+     }
+    },
+    {
+     "q0_id": "Q0-C02-IN600",
+     "r8_coupon": "R8-C02",
+     "material": "INCONEL alloy 600",
+     "role": "CANDIDATE",
+     "declaration_needed": null,
+     "coating_record_required": false,
+     "candidate": "CAND-02A",
+     "registered_admission": {
+      "status": "Q0_LISTED",
+      "reason": "no declaration outstanding"
+     }
+    },
+    {
+     "q0_id": "Q0-C02-IN625",
+     "r8_coupon": "R8-C02",
+     "material": "INCONEL alloy 625",
+     "role": "CANDIDATE",
+     "declaration_needed": null,
+     "coating_record_required": false,
+     "candidate": "CAND-02B",
+     "registered_admission": {
+      "status": "Q0_LISTED",
+      "reason": "no declaration outstanding"
+     }
+    },
+    {
+     "q0_id": "Q0-C02-H230",
+     "r8_coupon": "R8-C02",
+     "material": "Haynes 230",
+     "role": "CANDIDATE",
+     "declaration_needed": null,
+     "coating_record_required": false,
+     "candidate": "CAND-02C",
+     "registered_admission": {
+      "status": "Q0_LISTED",
+      "reason": "no declaration outstanding"
+     }
+    },
+    {
+     "q0_id": "Q0-C02-X750",
+     "r8_coupon": "R8-C02",
+     "material": "INCONEL alloy X-750",
+     "role": "ADDITIONAL_COMPARISON_IF_READILY_AVAILABLE",
+     "declaration_needed": "availability",
+     "coating_record_required": false,
+     "candidate": "CAND-02D",
+     "registered_admission": {
+      "status": "NOT_ADMITTED_AVAILABILITY_TBD",
+      "reason": "NOT_ADMITTED_AVAILABILITY_TBD: X-750 is an additional Q0 comparison only if readily available (evidence of availability required)"
+     }
+    },
+    {
+     "q0_id": "Q0-C03-IN601",
+     "r8_coupon": "R8-C03",
+     "material": "INCONEL alloy 601",
+     "role": "CANDIDATE",
+     "declaration_needed": null,
+     "coating_record_required": false,
+     "candidate": "CAND-03A",
+     "registered_admission": {
+      "status": "Q0_LISTED",
+      "reason": "no declaration outstanding"
+     }
+    },
+    {
+     "q0_id": "Q0-C03-H214",
+     "r8_coupon": "R8-C03",
+     "material": "Haynes 214",
+     "role": "CANDIDATE",
+     "declaration_needed": null,
+     "coating_record_required": false,
+     "candidate": "CAND-03C",
+     "registered_admission": {
+      "status": "Q0_LISTED",
+      "reason": "no declaration outstanding"
+     }
+    },
+    {
+     "q0_id": "Q0-C03-FECRAL",
+     "r8_coupon": "R8-C03",
+     "material": "FeCrAl (one explicitly specified grade)",
+     "role": "CANDIDATE",
+     "declaration_needed": "exact_grade",
+     "coating_record_required": false,
+     "candidate": "CAND-03B",
+     "registered_admission": {
+      "status": "NOT_ADMITTED_GRADE_TBD",
+      "reason": "NOT_ADMITTED_GRADE_TBD: FeCrAl (one explicitly specified grade): the grade must be explicitly declared before admission (none is invented)"
+     }
+    },
+    {
+     "q0_id": "Q0-C04",
+     "r8_coupon": "R8-C04",
+     "material": "Rh-coated 316L",
+     "role": "CANDIDATE",
+     "declaration_needed": null,
+     "coating_record_required": true,
+     "candidate": "CAND-04",
+     "registered_admission": {
+      "status": "NOT_ADMITTED_COATING_RECORD_INCOMPLETE",
+      "reason": "NOT_ADMITTED_COATING_RECORD_INCOMPLETE: Rh-coated 316L: coating record lacks ['coating_composition', 'thickness', 'deposition_process', 'substrate', 'surface_preparation', 'lot_process_provenance']; a coating family name alone is insufficient"
+     }
+    },
+    {
+     "q0_id": "Q0-C05",
+     "r8_coupon": "R8-C05",
+     "material": "Pt-clad / plated 316L",
+     "role": "CANDIDATE",
+     "declaration_needed": null,
+     "coating_record_required": true,
+     "candidate": "CAND-05",
+     "registered_admission": {
+      "status": "NOT_ADMITTED_COATING_RECORD_INCOMPLETE",
+      "reason": "NOT_ADMITTED_COATING_RECORD_INCOMPLETE: Pt-clad / plated 316L: coating record lacks ['coating_composition', 'thickness', 'deposition_process', 'substrate', 'surface_preparation', 'lot_process_provenance']; a coating family name alone is insufficient"
+     }
+    },
+    {
+     "q0_id": "Q0-C06",
+     "r8_coupon": "R8-C06",
+     "material": "Cr-plated 316L",
+     "role": "CANDIDATE",
+     "declaration_needed": null,
+     "coating_record_required": true,
+     "candidate": "CAND-06",
+     "registered_admission": {
+      "status": "NOT_ADMITTED_COATING_RECORD_INCOMPLETE",
+      "reason": "NOT_ADMITTED_COATING_RECORD_INCOMPLETE: Cr-plated 316L: coating record lacks ['coating_composition', 'thickness', 'deposition_process', 'substrate', 'surface_preparation', 'lot_process_provenance']; a coating family name alone is insufficient"
+     }
+    },
+    {
+     "q0_id": "Q0-C07",
+     "r8_coupon": "R8-C07",
+     "material": "IrO2 / RuO2-type conductive-oxide / MMO coating",
+     "role": "CANDIDATE",
+     "declaration_needed": "coating_system_and_substrate",
+     "coating_record_required": true,
+     "candidate": "CAND-07",
+     "registered_admission": {
+      "status": "NOT_ADMITTED_COATING_SYSTEM_TBD",
+      "reason": "NOT_ADMITTED_COATING_SYSTEM_TBD: IrO2 / RuO2 MMO: the exact coating system and substrate must be declared"
+     }
+    },
+    {
+     "q0_id": "Q0-C08",
+     "r8_coupon": "R8-C08",
+     "material": "bare tungsten",
+     "role": "NEGATIVE_REFERENCE_CONTROL_ONLY",
+     "declaration_needed": null,
+     "coating_record_required": false,
+     "candidate": "CAND-08",
+     "registered_admission": {
+      "status": "Q0_LISTED",
+      "reason": "no declaration outstanding"
+     }
+    },
+    {
+     "q0_id": "Q0-C09",
+     "r8_coupon": "R8-C09",
+     "material": "isotropic graphite (specified grade)",
+     "role": "REFERENCE_CONTROL",
+     "declaration_needed": "exact_grade",
+     "coating_record_required": false,
+     "candidate": "CAND-09",
+     "registered_admission": {
+      "status": "NOT_ADMITTED_GRADE_TBD",
+      "reason": "NOT_ADMITTED_GRADE_TBD: isotropic graphite (specified grade): the grade must be explicitly declared before admission (none is invented)"
+     }
+    }
+   ],
+   "generic_grade_refused": [
+    {
+     "q0_id": "Q0-C02-HASTELLOY",
+     "material": "Hastelloy (generic, no exact grade)",
+     "candidate": "CAND-02E",
+     "registered_admission": {
+      "status": "NOT_ADMITTED_EXACT_GRADE_REQUIRED",
+      "reason": "NOT_ADMITTED_EXACT_GRADE_REQUIRED: Hastelloy (generic, no exact grade): no unspecified generic Hastelloy; an exact grade must be declared before admission (A9.12 S5.11)"
+     }
+    }
+   ],
+   "reserve": [
+    {
+     "id": "RES-TI",
+     "material": "titanium",
+     "candidate": "CAND-13",
+     "registered_activation": {
+      "status": "RESERVE_ONLY_NOT_IN_BASELINE_CAMPAIGN",
+      "reason": "RESERVE_ONLY_NOT_IN_BASELINE_CAMPAIGN: titanium: no registered specific hypothesis / need"
+     }
+    },
+    {
+     "id": "RES-TIN-ZRN",
+     "material": "TiN / ZrN coatings",
+     "candidate": "CAND-14",
+     "registered_activation": {
+      "status": "RESERVE_ONLY_NOT_IN_BASELINE_CAMPAIGN",
+      "reason": "RESERVE_ONLY_NOT_IN_BASELINE_CAMPAIGN: TiN / ZrN coatings: no registered specific hypothesis / need"
+     }
+    },
+    {
+     "id": "RES-CU",
+     "material": "bulk copper",
+     "candidate": "CAND-11",
+     "registered_activation": {
+      "status": "RESERVE_ONLY_NOT_IN_BASELINE_CAMPAIGN",
+      "reason": "RESERVE_ONLY_NOT_IN_BASELINE_CAMPAIGN: bulk copper: no registered specific hypothesis / need"
+     }
+    },
+    {
+     "id": "RES-IR",
+     "material": "bulk iridium",
+     "candidate": "CAND-12",
+     "registered_activation": {
+      "status": "RESERVE_ONLY_NOT_IN_BASELINE_CAMPAIGN",
+      "reason": "RESERVE_ONLY_NOT_IN_BASELINE_CAMPAIGN: bulk iridium: no registered specific hypothesis / need"
+     }
+    }
+   ],
+   "not_in_owner_matrix": [
+    "CAND-10",
+    "CAND-15",
+    "CAND-16"
+   ],
+   "coating_record_fields": [
+    "coating_composition",
+    "thickness",
+    "deposition_process",
+    "substrate",
+    "surface_preparation",
+    "lot_process_provenance"
+   ],
+   "q1_rule": "only Q0 survivors meeting the pre-registered (LOCK-2) screening criteria (p4_a9_16_rules.q1_admission)",
+   "decision": "A9.12 P4-OQ-02 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
+  },
+  "lock2": {
+   "metrology_slots": [
+    "resistance_repeatability_resolution",
+    "mass_change_detection_limit",
+    "profilometry_recession_resolution",
+    "sem_xps_capability",
+    "coupon_to_coupon_process_repeatability",
+    "ao_ion_exposure_dosimetry"
+   ],
+   "commissioning_articles": [
+    "standard",
+    "blank",
+    "control",
+    "sacrificial_commissioning_coupon"
+   ],
+   "threshold_slots": [
+    "resistance_rise_threshold",
+    "mass_loss_recession_limits",
+    "sputtering_erosion_acceptance",
+    "exposure_duration_fluence",
+    "uncertainty_treatment",
+    "acceptance_rejection_logic"
+   ],
+   "threshold_metrology": {
+    "resistance_rise_threshold": "resistance_repeatability_resolution",
+    "mass_loss_recession_limits": "mass_change_detection_limit",
+    "sputtering_erosion_acceptance": "profilometry_recession_resolution",
+    "exposure_duration_fluence": "ao_ion_exposure_dosimetry"
+   },
+   "registered_commissioning": {
+    "status": "NOT_EVALUATED_METROLOGY_COMMISSIONING_TBD",
+    "reason": "NOT_EVALUATED_METROLOGY_COMMISSIONING_TBD: no metrology commissioning record"
+   },
+   "registered_freeze": {
+    "status": "NOT_EVALUATED_METROLOGY_COMMISSIONING_TBD",
+    "reason": "NOT_EVALUATED_METROLOGY_COMMISSIONING_TBD: LOCK-2 follows metrology commissioning"
+   },
+   "inadequate_metrology": "NOT_EVALUATED_METROLOGY (criterion never widened)",
+   "decision": "A9.12 P4-OQ-03 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
+  },
+  "sputter_data": {
+   "acquisition_species": [
+    "N+",
+    "N2+",
+    "O+",
+    "O2+"
+   ],
+   "lawful_routes": [
+    "library_access",
+    "inter_library_loan",
+    "publisher_purchase",
+    "institutional_subscription",
+    "other_legitimate_licensed_route"
+   ],
+   "literature_uses": [
+    "prior_bounds",
+    "test_matrix_selection",
+    "comparison",
+    "model_initialization"
+   ],
+   "candidate_specific_evidence": "PROJECT_ION_BEAM_MEASUREMENT of the down-selected candidate",
+   "elemental_substitution": "refused for alloys / coatings without a registered NOT_MATERIAL assessment; then an explicit proxy for literature uses only",
+   "acquired_records": [],
+   "project_measurements": [],
+   "decision": "A9.12 P4-OQ-04 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
+  },
+  "collector_coupons": {
+   "sets": [
+    "NEGATIVE_BIAS_ION_COLLECTING",
+    "FLOATING_MATCHED_CONTROL"
+   ],
+   "polarity": "NEGATIVE",
+   "bias_magnitude": "TBD - from the measured P1 collector envelope + plasma / sheath evidence (ID-06, IT-19)",
+   "registered_evaluation": {
+    "status": "NOT_EVALUATED_BIAS_MAGNITUDE_TBD_P1",
+    "reason": "NOT_EVALUATED_BIAS_MAGNITUDE_TBD_P1: acceptance-bearing biased exposure before the P1 collector envelope exists"
+   },
+   "pre_p1_biased_exposure": "ENGINEERING_ONLY_FIXTURE_PROCESS_VERIFICATION",
+   "decision": "A9.12 P4-OQ-05 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
+  },
+  "app_filter": {
+   "placement": "intake / channel array -> filter -> compressor inlet",
+   "baseline": "INERT_LOW_RECOMBINATION",
+   "tests": [
+    "ao_o_exposure",
+    "erosion",
+    "catalytic_recombination_behavior",
+    "particulate_retention",
+    "thermal_cycling",
+    "transmission_conductance_effects"
+   ],
+   "criteria": [
+    "CR-10",
+    "CR-11",
+    "CR-12",
+    "CR-13",
+    "CR-14",
+    "CR-15"
+   ],
+   "catalytic_variant": {
+    "label": "CATALYTIC_O_TO_O2_RESEARCH_VARIANT",
+    "requires_own": [
+     "species_conversion_measurement",
+     "flow_conductance_measurement",
+     "thermal_material_qualification",
+     "h1_performance_map_on_converted_composition"
+    ]
+   },
+   "acceptance_slots": [
+    "capture_efficiency_vs_contaminant_class",
+    "species_resolved_propellant_transmission",
+    "pressure_loss_conductance_penalty",
+    "o_recombination_conversion_probability",
+    "retained_contaminant_capacity",
+    "ao_erosion_material_durability",
+    "ag12_feed_state_effect"
+   ],
+   "registered_acceptance": {
+    "status": "NOT_EVALUATED_FILTER_ACCEPTANCE_TBD",
+    "reason": "NOT_EVALUATED_FILTER_ACCEPTANCE_TBD: filter acceptance slots ['capture_efficiency_vs_contaminant_class', 'species_resolved_propellant_transmission', 'pressure_loss_conductance_penalty', 'o_recombination_conversion_probability', 'retained_contaminant_capacity', 'ao_erosion_material_durability', 'ag12_feed_state_effect'] not registered before LOCK-1"
+   },
+   "candidates": "TBD_AFTER_EVIDENCE - no filter material defined (F2-IF-08); none invented",
+   "decision": "A9.13 F2-OQ-04 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)"
+  },
+  "a9_15_review": {
+   "result": "no text in P4 restricts Xe to a C1 contingency; Xe+ retained in CR-04 / TP-04 as an RFP-required propellant species; ICP gas-mode baseline unchanged",
+   "decision": "A9.15 RFP-COMPLIANT PROPELLANT POLICY (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309)"
+  },
+  "out_of_lane": [
+   {
+    "path": "docs/procurement/rfq_a9_v2/ (pair XL-27 text 'coupon shortlist TBD_OWNER P4 IT-17' - identical pair text on both sides; the Q0 matrix of A9.12 P4-OQ-02 now fixes the shortlist, so RFQ and P4 re-state XL-27 together at the integration re-pin; the RFQ v3 coupon lots follow the Q0 matrix and coating records)",
+    "rules": [
+     "P4-OQ-02"
+    ]
+   },
+   {
+    "path": "docs/experiments/hall_icp/p1_icp_bench/ (P1 collector envelope P1-M-10 / P1-M-11 / P1-M-27 and P1-M-30 feed the collector-coupon bias magnitude; pair XL-25 text 'sheath energy additionally TBD_OWNER P3Q-01' is re-stated with P1 at the integration re-pin)",
+    "rules": [
+     "P4-OQ-05"
+    ]
+   },
+   {
+    "path": "docs/experiments/lifetime_ao/ (AO / lifetime register: a future revision adds filter erosion / recombination, F2-IF-09, and the LOCK-2 coupon thresholds)",
+    "rules": [
+     "F2-OQ-04",
+     "P4-OQ-03"
+    ]
+   },
+   {
+    "path": "docs/design_synthesis/f2_filter/ (F2-IF-08 status 'TBD_OWNER (F2-OQ-04)' - now decided; P4 APP-FILTER exists)",
+    "rules": [
+     "F2-OQ-04"
+    ]
+   },
+   {
+    "path": "docs/budgets/owner_decisions/owner_questions_state_v4.* (rows still TBD_OWNER)",
+    "rules": [
+     "P4-OQ-01",
+     "P4-OQ-02",
+     "P4-OQ-03",
+     "P4-OQ-04",
+     "P4-OQ-05",
+     "F2-OQ-04"
+    ]
+   },
+   {
+    "path": "docs/experiments/hall_icp/integration/ (M16 v4 rows 18 / 20 / 21: framework only, readiness unchanged)",
+    "rules": [
+     "P4-OQ-01",
+     "P4-OQ-02"
+    ]
+   }
+  ]
+ },
  "historical_reuse": [
   {
    "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
@@ -6907,6 +8291,36 @@
    "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
    "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
    "use": "owner decisions A9.1"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+   "use": "owner A9.12 (machine-readable; A9.16 step 1)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+   "sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62",
+   "use": "owner A9.12 verbatim (governs over the json summary; A9.16 step 1)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+   "sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+   "use": "owner A9.13 (machine-readable; A9.16 step 1)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
+   "sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf",
+   "use": "owner A9.13 verbatim (governs over the json summary; A9.16 step 1)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
+   "sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
+   "use": "owner A9.15 (machine-readable; A9.16 step 1)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
+   "sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903",
+   "use": "owner A9.15 verbatim (governs over the json summary; A9.16 step 1)"
   },
   {
    "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
@@ -6999,6 +8413,7 @@
   "bulk datasheet properties populated only for 316L, INCONEL 600 and INCONEL 601; every other row is UNPOPULATED apart from qualitative R8 evidence",
   "Cleveland-Cliffs 316/316L bulletin gives a melting range of 1371-1399 degC (PR-005); the H2 A9 revisions quote about 1375-1400 degC 'from memory - verify' (not edited here; for the consolidated verification)",
   "H2 A9 uncoupled anode sensitivity (not below 1190 degC) is context only; it is never used as T_operating while ANODE_THERMAL_CLOSURE is UNRESOLVED",
-  "sputtering: no yield value is carried; NIFS-DATA-23 is located (elemental targets, graphical) but not digitized"
+  "sputtering: no yield value is carried; NIFS-DATA-23 is located (elemental targets, graphical) but not digitized",
+  "A9.16 step 1: P4-OQ-01..05 decided (A9.12) and applied - staged validation, owner Q0 matrix, LOCK-2 after metrology, sputter data BOTH, collector negative-bias + floating; APP-FILTER added (A9.13 F2-OQ-04); every deferred number / grade / coating system / bias magnitude / filter acceptance is a registration slot that refuses today"
  ]
 }

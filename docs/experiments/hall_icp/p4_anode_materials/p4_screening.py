@@ -11,6 +11,8 @@ Rules implemented here (owner A9.2 sec. 3-4, A9.6 sec. 10, owner rows 86/87/106)
     T_operating is a quantity record in K with evidence class and source; while ANODE_THERMAL_CLOSURE (anode) or
     ICP_COUPLED_THERMAL (collector) is UNRESOLVED (or any other status) the gate is INCOMPLETE_EVIDENCE whatever numbers
     are supplied;
+  * a T_validated_continuous property is gate-admissible only at validation stage 2 or 3 (A9.12 P4-OQ-01, A9.16
+    step 1): a stage-1 coupon-supported provisional limit, a melting point or a supplier rating never closes CR-01;
   * non-finite numbers are never evidence; applicability domains are non-empty lists of strings;
   * a satisfied gate is reported as GATE_SATISFIED_WITHIN_EVIDENCE_DOMAIN, never PASS; a candidate whose gates are all
     satisfied is NOT_SCREENED_OUT, never SELECTED;
@@ -42,6 +44,12 @@ RESOLVED_THERMAL_STATUSES = ("CLOSED_BY_EVIDENCE",)
 T_OPERATING_FIELDS = ("value_si", "unit_si", "evidence_class", "source")
 T_OPERATING_EVIDENCE_CLASSES = ("measured", "model-derived")
 FINAL_MATERIAL_STATUS = "OPEN"
+# A9.12 S5.10 P4-OQ-01 (A9.16 step 1): a T_validated_continuous record is gate-admissible only at validation stage 2
+# (integrated replaceable anode / collector confirmation on the H-1 / ICP article) or stage 3 (qualification / life);
+# a stage-1 coupon-supported provisional limit is design screening only (same strings as p4_a9_16_rules.STAGES)
+T_VALIDATED_PROPERTY = "T_validated_continuous"
+T_VALIDATED_GATE_STAGES = ("STAGE_2_INTEGRATED_REPLACEABLE_COMPONENT_CONFIRMATION",
+                           "STAGE_3_QUALIFICATION_LIFE_EVIDENCE")
 PARETO_LABEL = "INFORMATIONAL_NOT_A_SELECTION"
 NOT_COMPARABLE = "NOT_COMPARABLE_INCOMPLETE_EVIDENCE"
 
@@ -155,6 +163,10 @@ def evaluate_gate(req, prop, thermal_closure_status=None, operating_temperature=
                                                                                       f"property {prop['id']}"):
         return "OUT_OF_DOMAIN", (f"property domain {sorted(prop['domain'])} does not cover requirement domain "
                                  f"{sorted(req['domain'])}")
+    if prop["property"] == T_VALIDATED_PROPERTY and prop.get("validation_stage") not in T_VALIDATED_GATE_STAGES:
+        return "INCOMPLETE_EVIDENCE", (f"property {prop['id']}: validation stage {prop.get('validation_stage')!r} - only "
+                                       "stage 2 (integrated replaceable-component confirmation) or later gives "
+                                       "T_validated,continuous (A9.12 P4-OQ-01); stage 1 is screening only")
     if req["kind"] == "min_with_margin":
         if thermal_closure_status is None:
             raise ScreeningError(f"gate {req['id']}: thermal closure status must be supplied (no default)")
