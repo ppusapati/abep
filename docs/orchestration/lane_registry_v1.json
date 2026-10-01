@@ -1308,6 +1308,72 @@
    "kind": "follow_on",
    "title": "A9.6 implementation-first: cross-lane integration (replace PENDING references between P1/P2/P3/P4/mass-power/Xe/RFQ with real ids; interface-demand reconciliation)",
    "verification": "deferred to fo_a9_6_consolidated_verification (A9.6 sec. 17-18)"
+  },
+  {
+   "id": "fo_a9_7_f0_profiling",
+   "kind": "follow_on",
+   "title": "A9.7 design synthesis: F0 performance baseline PERFORMANCE_BASELINE_98fbbb9.json",
+   "verification": "deferred to fo_a9_7_consolidated_verification"
+  },
+  {
+   "id": "fo_a9_7_f1_intake_synthesis",
+   "kind": "follow_on",
+   "title": "A9.7 design synthesis: F1 intake geometry synthesis (Pareto)",
+   "verification": "deferred to fo_a9_7_consolidated_verification"
+  },
+  {
+   "id": "fo_a9_7_f2_filter_stage",
+   "kind": "follow_on",
+   "title": "A9.7 design synthesis: F2 explicit filter-stage interface",
+   "verification": "deferred to fo_a9_7_consolidated_verification"
+  },
+  {
+   "id": "fo_a9_7_f3_compressor_synthesis",
+   "kind": "follow_on",
+   "title": "A9.7 design synthesis: F3 compressor geometry synthesis (species-resolved, Pareto)",
+   "verification": "deferred to fo_a9_7_consolidated_verification"
+  },
+  {
+   "id": "fo_a9_7_f4_plenum_feed",
+   "kind": "follow_on",
+   "title": "A9.7 design synthesis: F4 transient plenum/feed synthesis",
+   "verification": "deferred to fo_a9_7_consolidated_verification"
+  },
+  {
+   "id": "fo_a9_7_f5_h1_freeze_candidate",
+   "kind": "follow_on",
+   "title": "A9.7 design synthesis: F5 H-1 design closure (freeze candidate)",
+   "verification": "deferred to fo_a9_7_consolidated_verification"
+  },
+  {
+   "id": "fo_a9_7_f6_icp_geometry",
+   "kind": "follow_on",
+   "title": "A9.7 design synthesis: F6 downstream ICP geometry synthesis (framework; search after P1/P2 evidence)",
+   "verification": "deferred to fo_a9_7_consolidated_verification"
+  },
+  {
+   "id": "fo_a9_7_f7_f8_coupled_optimizer",
+   "kind": "follow_on",
+   "title": "A9.7 design synthesis: F7 coupled architecture optimizer + F8 robust optimization (fail-closed)",
+   "verification": "deferred to fo_a9_7_consolidated_verification"
+  },
+  {
+   "id": "fo_a9_7_rust_kernels",
+   "kind": "follow_on",
+   "title": "A9.7 design synthesis: optional abep_core Rust kernels for measured hotspots (Python reference authoritative)",
+   "verification": "deferred to fo_a9_7_consolidated_verification"
+  },
+  {
+   "id": "fo_a9_7_f9_freeze_candidate",
+   "kind": "follow_on",
+   "title": "A9.7 design synthesis: F9 architecture freeze candidate (INVESTIGATION_HYPOTHESIS until gates have evidence)",
+   "verification": "deferred to fo_a9_7_consolidated_verification"
+  },
+  {
+   "id": "fo_a9_7_consolidated_verification",
+   "kind": "follow_on",
+   "title": "A9.7 design synthesis: one consolidated verification of the A9.7 batch",
+   "verification": "deferred to fo_a9_7_consolidated_verification"
   }
  ],
  "owner_dispositions": [
@@ -1423,6 +1489,18 @@
    },
    "decision_states": {
     "A9_6_IMPLEMENTATION_FIRST_DIRECTIVE_RECORDED": "approved"
+   },
+   "immutability": "never edited after commit; later owner amendments are new addendum files"
+  },
+  {
+   "id": "od_a9_7_design_synthesis",
+   "file": "docs/decisions/OD_2026_10_01_A9_7_architecture_freeze_design_synthesis.json",
+   "states": {
+    "pending": "no disposition file",
+    "approved": "decision A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS_RECORDED"
+   },
+   "decision_states": {
+    "A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS_RECORDED": "approved"
    },
    "immutability": "never edited after commit; later owner amendments are new addendum files"
   }
