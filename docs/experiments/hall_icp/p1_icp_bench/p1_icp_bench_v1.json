@@ -3167,11 +3167,11 @@
   {
    "id": "P1-IT-45",
    "name": "later acceptance / reverification of the ICP body / collector insulation",
-   "value": "TBD - requires an owner-registered lower controlled level / procedure (A9.4 P1Q-14: the 1.05 kV test is qualification-style and is not repeated before every campaign; requalification only after a fault or hardware modification; owner question P1Q-17)",
+   "value": "700 V DC / 60 s, current-limited, triggered only (owner development acceptance level, not ECSS)",
    "units": "V (DC), s",
    "basis": "owner decision (rule)",
    "source": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-14.no_repeated_hipot; docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json (sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
-   "evidence_class": null,
+   "evidence_class": "owner-stated",
    "status": "OWNER_DECIDED (A9.14 P1Q-17 REVERIFICATION_700V_DC_60S_TRIGGERED_ONLY)",
    "freeze_point": "after-evidence",
    "p1_gate": "before any reverification",
@@ -4090,8 +4090,8 @@
    "id": "P1-SI-05",
    "hazard": "HV between floating circuits and ground (collector, ICP body, Hall anode)",
    "function": "isolation per ICD ICP-23: 350 V operating class of owner row 81 for H-1 / discharge supply / isolation / diagnostics, extended by A9.4 P1Q-14 to the ICP body / collector circuits (vs Hall anode, H-1 body/common, facility ground, other isolated circuits); V_design,withstand >= 525 V; initial DWV 1.05 kV DC for 60 s on passive insulation paths and feedthrough assemblies where ratings permit, current-limited, sensitive electronics disconnected where necessary, leakage recorded, before first HV/RF operation, plus representative-pressure/gas testing for Paschen-risk paths; current-limited supplies; discharge-supply protection sized to the 8.33 A stand ceiling",
-   "threshold": "350 V operating; >= 525 V design withstand; 1.05 kV DC / 60 s initial DWV (A9.4 P1Q-14); leakage acceptance TBD; later reverification level TBD (P1-IT-45)",
-   "source": "ICD ICP-23; docs/decisions/OD_2026_09_29_owner_answers_147.json row 81; docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-14; docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json OQ-A907-02",
+   "threshold": "350 V operating; >= 525 V design withstand; 1.05 kV DC / 60 s initial DWV (A9.4 P1Q-14); leakage acceptance TBD; later reverification 700 V DC / 60 s, current-limited, triggered only (A9.14 P1Q-17 owner development acceptance level, not ECSS; P1-IT-45)",
+   "source": "ICD ICP-23; docs/decisions/OD_2026_09_29_owner_answers_147.json row 81; docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-14; docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json OQ-A907-02; docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json decisions.P1Q-17",
    "status": "OWNER_DECIDED (A9.4 P1Q-14); ICP-44 RF insulation OPEN"
   },
   {
@@ -4138,9 +4138,9 @@
    "id": "P1-SI-11",
    "hazard": "dielectric-withstand (hipot) testing itself: personnel HV exposure and insulation ageing by repeated proof stress",
    "function": "current-limited tester; sensitive electronics disconnected where necessary; the 1.05 kV DC / 60 s test is qualification-style and not repeated before each campaign; later reverification at a lower controlled level / procedure unless a fault or hardware modification requires requalification",
-   "threshold": "1.05 kV DC / 60 s initial (A9.4 P1Q-14); reverification level TBD (P1-IT-45)",
-   "source": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-14.initial_dwv, no_repeated_hipot",
-   "status": "OWNER_DECIDED (rule) / TBD (reverification level)"
+   "threshold": "1.05 kV DC / 60 s initial (A9.4 P1Q-14); reverification 700 V DC / 60 s, current-limited, triggered only (A9.14 P1Q-17 owner development acceptance level, not ECSS; P1-IT-45)",
+   "source": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-14.initial_dwv, no_repeated_hipot; docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json decisions.P1Q-17",
+   "status": "OWNER_DECIDED (A9.4 P1Q-14 rule; A9.14 P1Q-17 reverification level)"
   }
  ],
  "run_matrix": {

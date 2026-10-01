@@ -1410,8 +1410,10 @@ def safety():
          "representative-pressure/gas testing for Paschen-risk paths; current-limited supplies; discharge-supply "
          "protection sized to the 8.33 A stand ceiling",
          "threshold": "350 V operating; >= 525 V design withstand; 1.05 kV DC / 60 s initial DWV (A9.4 P1Q-14); "
-                      "leakage acceptance TBD; later reverification level TBD (P1-IT-45)",
-         "source": "ICD ICP-23; " + ANS + " row 81; " + A94 + " decisions.P1Q-14; " + A93 + " OQ-A907-02",
+                      "leakage acceptance TBD; later reverification 700 V DC / 60 s, current-limited, triggered only "
+                      "(A9.14 P1Q-17 owner development acceptance level, not ECSS; P1-IT-45)",
+         "source": "ICD ICP-23; " + ANS + " row 81; " + A94 + " decisions.P1Q-14; " + A93 + " OQ-A907-02; "
+                   + APP.DEC["A9.14"][0] + " decisions.P1Q-17",
          "status": "OWNER_DECIDED (A9.4 P1Q-14); ICP-44 RF insulation OPEN"},
         {"id": "P1-SI-06", "hazard": "gas line bridging isolated potentials", "function": "~1 kV DC representative "
          "gas/pressure qualification (flashover, leakage, breakdown, surface tracking, repeated exposure where "
@@ -1435,8 +1437,10 @@ def safety():
          "disconnected where necessary; the 1.05 kV DC / 60 s test is qualification-style and not repeated before "
          "each campaign; later reverification at a lower controlled level / procedure unless a fault or hardware "
          "modification requires requalification", "threshold": "1.05 kV DC / 60 s initial (A9.4 P1Q-14); "
-         "reverification level TBD (P1-IT-45)", "source": A94 + " decisions.P1Q-14.initial_dwv, no_repeated_hipot",
-         "status": "OWNER_DECIDED (rule) / TBD (reverification level)"},
+         "reverification 700 V DC / 60 s, current-limited, triggered only (A9.14 P1Q-17 owner development acceptance "
+         "level, not ECSS; P1-IT-45)", "source": A94 + " decisions.P1Q-14.initial_dwv, no_repeated_hipot; "
+         + APP.DEC["A9.14"][0] + " decisions.P1Q-17",
+         "status": "OWNER_DECIDED (A9.4 P1Q-14 rule; A9.14 P1Q-17 reverification level)"},
     ]
 
 
