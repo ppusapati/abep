@@ -282,4 +282,8 @@ Hall family (rule 8: no model/archengine change implied). New Hall→ICP work go
 **A9 state (2026-09-30):** A9-01..A9-10 verified on the execution branch; A9.1 (`OD_2026_09_30_A9_1_*`) and A9.2 (`OD_2026_09_30_A9_2_*`)
 applied. Binding statuses: RF matching LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT, RF ratings TBD_AFTER_IMPEDANCE_MAP, 316L anode
 REJECTED_AS_CURRENT_BASELINE, anode material OPEN, anode and coupled H-1/ICP thermal closure UNRESOLVED (never report an ICP
-thermal result as PASS), ICP capacity PENDING_ICP45, C1 CONTROL_FALLBACK. Open owner questions: `docs/budgets/owner_decisions/owner_questions_state_v2.*`.
+thermal result as PASS), ICP capacity PENDING_ICP45, C1 CONTROL_FALLBACK. Open owner questions: `docs/budgets/owner_decisions/owner_questions_state_v4.*` (v2/v3 immutable history).
+**A9.3-A9.6 (2026-09-30, execution branch):** P1 ICP bench, P2 impedance framework, P3 coupled-thermal and P4 materials frameworks,
+mass/power v2, Xe accounting v2, RFQ v2, RVM (`docs/requirements/rvm_a9/`), M16 v4; implementation-first batch verified once
+(A9.6 sec. 18). ICP-45 capacity is discharge-OFF, I_e,cap = I_on - I_off signed; ICP45 = NOT_EVALUATED until I_d,max,H1 is registered.
+Build order: P4, XE, P1, P2, P3, MP, RFQ, RVM, state v4, M16 v4. Never run the v1 consolidated-questions builder (it rewrites its xlsx).

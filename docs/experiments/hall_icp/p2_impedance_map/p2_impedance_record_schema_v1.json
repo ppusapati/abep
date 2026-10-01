@@ -299,7 +299,7 @@
   },
   "plasma_state": {
    "type": "object",
-   "description": "lit (boolean), mode (UNLIT, E_MODE, H_MODE, UNCERTAIN; UNLIT iff lit is false; UNCERTAIN is never reduced), optical_signal_V (INS-P2-10 photodiode), unlit_threshold_V and unlit_threshold_source (from the P1 registered procedure), threshold_basis {dark_background_record_id, rf_powered_known_unlit_record_id, known_lit_p1_record_id, frozen_before_p2_map}, photodiode_line_of_sight_ok, photodiode_saturated, electrical_ignition_or_mode_transition and electrical_indicator_basis (A9.4 P2Q-05; required for COLD_ANTENNA_POWERED_UNLIT and HOT_MAP, with antenna_current, factors.I_collector_A and factors.p_chamber_Pa recorded simultaneously). Phases DUMMY_LOAD, COLD_ANTENNA_POWERED_UNLIT must be unlit",
+   "description": "lit (boolean), mode (UNLIT, E_MODE, H_MODE, UNCERTAIN; UNLIT iff lit is false; UNCERTAIN is never reduced), optical_signal_V (INS-P2-10 photodiode), unlit_threshold_V and unlit_threshold_source (from the P1 registered procedure), threshold_basis {dark_background_record_id, rf_powered_known_unlit_record_id, known_lit_p1_record_id, frozen_before_p2_map}, photodiode_line_of_sight_ok, photodiode_saturated, electrical_ignition_or_mode_transition and electrical_indicator_basis, mode_indicator_basis (the registered HM-R06 E/H indicators; required with an E_MODE / H_MODE assignment) (A9.4 P2Q-05; required for COLD_ANTENNA_POWERED_UNLIT and HOT_MAP, with antenna_current, factors.I_collector_A and factors.p_chamber_Pa recorded simultaneously). Phases DUMMY_LOAD, COLD_ANTENNA_POWERED_UNLIT must be unlit",
    "x-units": "-; V",
    "x-reference-plane": null,
    "required": [
@@ -312,7 +312,8 @@
     "photodiode_line_of_sight_ok",
     "photodiode_saturated",
     "electrical_ignition_or_mode_transition",
-    "electrical_indicator_basis"
+    "electrical_indicator_basis",
+    "mode_indicator_basis"
    ],
    "properties": {
     "lit": {
@@ -391,6 +392,12 @@
      ]
     },
     "electrical_indicator_basis": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "mode_indicator_basis": {
      "type": [
       "string",
       "null"
@@ -531,9 +538,10 @@
     "vi_probe",
     "loss_bounds",
     "cold_references",
-    "antenna_current_probe"
+    "antenna_current_probe",
+    "loss_verification"
    ],
-   "description": "schema 'p2_calibration_set_v1': power_sensors {id: {CF_fwd, CF_ref, certificate}}; coupler {cal_id, plane RP-CPL, phase_calibrated, e00, e11, e10e01}; two_ports {line (RP-CPL->RP-MIN), match_states {tuning_state_id: two-port RP-MIN->RP-ANT}} with S11, S12, S21, S22, cal_id, phase_calibrated; vi_probe {cal_id, phase_calibrated, k_V, k_I, fixture_abcd, fixture_from_plane RP-VI, fixture_to_plane RP-ANT, amplitude_convention}; loss_bounds {id: {loss_fraction_max, source, evidence_class}}; cold_references {id: {R_cold_ohm, source_record_id, source_phase, unlit_verification, evidence_class, antenna_temperature_K} with source_phase in CAL-P2-08_VNA_UNPOWERED | COLD_ANTENNA_POWERED_UNLIT and a verified-unlit unlit_verification (cold_reference_from_reduced() builds it from a reduced powered-unlit record)}; antenna_current_probe {cal_id, k_mag, certificate} | null"
+   "description": "schema 'p2_calibration_set_v1': power_sensors {id: {CF_fwd, CF_ref, certificate}}; coupler {cal_id, plane RP-CPL, phase_calibrated, e00, e11, e10e01}; two_ports {line (RP-CPL->RP-MIN), match_states {tuning_state_id: two-port RP-MIN->RP-ANT}} with S11, S12, S21, S22, cal_id, phase_calibrated (+ positions for every match state: the element positions it was characterized at); vi_probe {cal_id, phase_calibrated, k_V, k_I, fixture_abcd, fixture_from_plane RP-VI, fixture_to_plane RP-ANT, amplitude_convention}; loss_bounds {id: {loss_fraction_max, source, evidence_class, verification}}; cold_references {id: {R_cold_ohm, source_record_id, source_phase, unlit_verification, evidence_class, antenna_temperature_K} with source_phase in CAL-P2-08_VNA_UNPOWERED | COLD_ANTENNA_POWERED_UNLIT and a verified-unlit unlit_verification (cold_reference_from_reduced() builds it from a reduced powered-unlit record)}; antenna_current_probe {cal_id, k_mag, certificate} | null; loss_verification {verification_id, status, method, evidence_record_ids, tuning_states, data_class, model_ref, comparison, k, k_registration_id, eta_measured, u_eta_measured, eta_predicted, u_eta_predicted, normalized_statistic, P_net_W, u_P_net_W, P_ref_load_W, u_P_ref_load_W} | null (status LOSS_MODEL_VERIFIED required for a reconstructed P_delivered; each loss bound carries 'verification' of the same form)"
   }
  }
 }

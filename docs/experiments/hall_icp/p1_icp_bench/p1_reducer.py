@@ -1,5 +1,5 @@
 """P1 ICP electron-source bench - pure, deterministic analysis reducer (lane fo_a9_p1_icp_bench, A9.3 P1;
-A9.4 incorporated by fo_a9_4_incorporation).
+A9.4 incorporated by fo_a9_4_incorporation; owner A9.5 P1Q-15 / P1Q-16 applied by fo_a9_5_closure_rule).
 
 What it does
 ------------
@@ -9,7 +9,15 @@ below by build_p1_icp_bench.py) and returns
   * RF-chain derived quantities |Gamma|, VSWR, P_RF,delivered = P_fwd - P_refl - P_line/match,loss   (A9.2 OQ-A907-11),
   * C_e = P_RF,delivered / I_e and C_e,DC = P_generator,input / I_e, each with its boundary label   (A9.3 OQ-RFQ-06),
   * Kirchhoff current-path closure residuals and the facility-electron contribution check,
-  * dwell (stability) metrics, and the OQ-VI-05 topology-control observation class.
+  * dwell (stability) metrics, and the OQ-VI-05 topology-control observation class,
+  * (A9.6 sec. 8 / 14, lane fo_a9_6_p1_workflow_completion) the remaining P1 stage reducers: reduce_readiness (P1-G0:
+    interlocks, 1.05 kV DC / 60 s DWV, ICPQ-06 gas lines only where potentials are bridged, Ar MFC rule),
+    reduce_rf_cold_checkout (dummy-load calorimetric cross-check z_x, verified line/match-loss characterizations,
+    installed unlit antenna), reduce_ignition (Ar, G-REUSE ignition map), stable_region_handoff (P2 IDP2-01 handoff),
+    the optical plasma-state class classify_plasma_state (UNLIT / E_MODE / H_MODE / UNCERTAIN, A9.4 P2Q-05), the
+    A9.6 sec. 2 magnitude form max(|I_e,collector|, I_scale,min), the DERIVED P1Q-22 outcome precedence, the
+    NOT_EVALUATED_UNCERTAINTY point outcome and the side-by-side P1Q-19 alternatives. p1_campaign.py strings all
+    stages into one campaign report.
 
 What it never does
 ------------------
@@ -22,22 +30,42 @@ What it never does
   measurement - Hall discharge supply OFF and PHYSICALLY disconnected from the H-1 anode, ICP operating, electrons
   extracted to a dedicated, isolated, instrumented electron-collecting electrode, gas / magnetic field / pressure /
   geometry of a registered H-1 operating condition, matched RF-OFF record - with
-  I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF (the A9.4 recorder reading of the incomplete verbatim formula),
-  subject to current-path closure and the registered uncertainty treatment. Only records registered as record_class
-  ICP45_CAPACITY are candidates; the capacity measurand is the dedicated electron-collector terminal current only
-  (current into the H-1 body, facility ground, chamber, floating anode or cable shields never counts). Hall-ON records
-  are NEUTRALIZATION_CONSISTENCY and never ICP45_CAPACITY: with the H-1 anode as the sink, current continuity makes the
-  ICP-supplied current equal to I_d, so they cannot show capacity. A capacity point whose Kirchhoff residual exceeds the
-  registered tolerance is invalid; without a registered tolerance no capacity point is admitted. Records without the
-  facility correction are excluded (never silently credited); synthetic records give arithmetic only
-  (SYNTHETIC_TEST_ONLY_NOT_EVIDENCE, condition_met None). Until I_d,max,H1 is registered from the H-1 envelope and
-  measured behaviour (never from the 8.33 A bench design ceiling) the ICP-45 result is exactly NOT_EVALUATED (never
-  PASS or FAIL; A9.4 execution_decisions.i_d_max_h1).
-* A capacity record (record_class ICP45_CAPACITY) is REFUSED (raised, not flagged) when the anode is not
-  DISCONNECTED_FLOATING (OPEN_CIRCUIT_BY_CONSTRUCTION), the discharge supply is not physically disconnected, V_anode is
-  not on a high-impedance isolated channel, or the H-1 body single-point metered facility-ground return current
-  (terminal h1_body) is not measured continuously (A9.4 P1Q-13). A METERED_RETURN anode is allowed only in a record
-  registered as a separate DIAGNOSTIC_VARIANT, which never feeds I_e,cap.
+  I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF (the A9.4 recorder reading, CONFIRMED by owner A9.5 P1Q-16;
+  docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json) using SIGNED currents under the same registered
+  convention: no absolute-value correction and no zero-clipping (a negative corrected value stays negative and is
+  reported as such). Only records registered as record_class ICP45_CAPACITY are candidates; the capacity measurand is
+  the dedicated electron-collector terminal current only (current into the H-1 body, facility ground, chamber, floating
+  anode or cable shields never counts). Hall-ON records are NEUTRALIZATION_CONSISTENCY and never ICP45_CAPACITY: with
+  the H-1 anode as the sink, current continuity makes the ICP-supplied current equal to I_d, so they cannot show
+  capacity. Records without the facility correction are excluded (never silently credited); synthetic records give
+  arithmetic only (SYNTHETIC_TEST_ONLY_NOT_EVIDENCE, condition_met None). Until I_d,max,H1 is registered from the H-1
+  envelope and measured behaviour (never from the 8.33 A bench design ceiling) the ICP-45 result is exactly
+  NOT_EVALUATED (never PASS or FAIL; A9.4 execution_decisions.i_d_max_h1).
+* Kirchhoff current closure of a capacity point is the OWNER rule A9.5 P1Q-15 (kirchhoff_closure): one global
+  convention (conventional current INTO the defined isolated electrical network is positive; every channel transformed
+  into it and declaring the registered convention id), R_I = sum_k I_k over every intentional terminal crossing the
+  network boundary, u_R = sqrt(sum_k u^2(I_k)) for independent channels (u(I_k) = calibration, zero/offset, resolution,
+  repeatability where applicable, registered RF-pickup contribution) or the full covariance form when a registered
+  correlation of the channels is supplied; closure-valid only if |R_I| <= 3 u_R AND |R_I| / max(I_e,collector,
+  I_scale,min) <= 0.02. The factor 3 and the 2 % are owner constants (never caller parameters; a closure_rule that
+  tries to set them is refused); I_scale,min is a REGISTERED instrument-capability floor with no default. An
+  unavailable channel is never set to zero: a terminal declared NOT_MEASURED (an intentional return path unmeasured)
+  or a channel without its uncertainty components excludes the point. If 3 u_R > 0.02 I_e,collector at the candidate
+  (RF-ON) capacity point the point is NOT_EVALUATED_INSTRUMENT - the tolerance is never widened.
+* A capacity record (record_class ICP45_CAPACITY) is REFUSED (raised) when it is incomplete or not a capacity
+  record at all: wrong stage, not the dedicated electron-collecting electrode, capacity_monitoring missing or not
+  the single-point metered H-1 body ground, V_anode not on a high-impedance isolated channel, a required terminal
+  absent from the record (A9.4 P1Q-10 / P1Q-13; CLAUDE.md rule 3). The A9.5 P1Q-15 exclusions are NOT refusals: an
+  anode not physically disconnected / floating, a terminal declared NOT_MEASURED or I_body->ground not measured
+  continuously (intentional return path unmeasured), an unintended ground path, a registered RF-ON / RF-OFF pair that
+  is not matched (field, values and match rule id kept), sign conventions that differ, missing u(I_k) and the
+  closure-test failures exclude that capacity point only; it stays in the raw record and in excluded_records /
+  capacity_point_outcomes with every reason, and the other points are still evaluated (recorder reading of A9.5 over
+  the A9.4 'refused' wording for the anode: owner question P1Q-21). A METERED_RETURN anode is otherwise allowed only
+  in a record registered as a separate DIAGNOSTIC_VARIANT, which never feeds I_e,cap. Mixed synthetic / measured
+  capacity candidates stay a refusal (PR #34).
+* Missing margin-rule uncertainties (u_I_e_A, u_I_d_max_A absent, None or not > 0) give ICP45 = NOT_EVALUATED with
+  eligibility condition (3) false (A9.5 P1Q-16 'until all four exist'), never a raise and never a default.
 * It never treats P_mains,in (laboratory generator mains input, GROUND/FACILITY_ONLY) as P_bus, and refuses any
   record field whose name reads as a bus quantity (any key that normalises to contain 'bus') and any
   generator.input_boundary text naming a bus.
@@ -87,22 +115,76 @@ SURFACE_LABEL = "ENGINEERING_SURFACE"
 RECORD_CLASSES = (CAPACITY_LABEL, CONSISTENCY_LABEL, DIAGNOSTIC_LABEL, SURFACE_LABEL)
 RECORD_CLASSES_BY_HALL_STATE = {"OFF": (CAPACITY_LABEL, DIAGNOSTIC_LABEL, SURFACE_LABEL),
                                 "ON": (CONSISTENCY_LABEL, DIAGNOSTIC_LABEL)}
-# capacity-record electrical monitoring (A9.4 P1Q-13); required object on every ICP45_CAPACITY record
+# capacity-record electrical monitoring (A9.4 P1Q-13); required object on every ICP45_CAPACITY record.
+# unintended_ground_path_found / ground_path_check_id: the recorded outcome and id of the check for any second
+# (unintended) ground path of the isolated network (A9.4 P1Q-13 'no second chassis / stand / coax / shield path';
+# A9.5 P1Q-15 exclusion 'an unintended ground path is found'); true -> the capacity point is excluded (kept with reason)
 CAPACITY_MONITORING_REQUIRED = ("h1_body_ground_config", "I_body_to_ground_continuous", "V_anode_channel",
-                                "V_icp_body_V", "V_electron_collector_V", "sign_convention_id")
+                                "V_icp_body_V", "V_electron_collector_V", "sign_convention_id",
+                                "unintended_ground_path_found", "ground_path_check_id")
 H1_BODY_GROUND_CONFIG = "SINGLE_POINT_METERED_FACILITY_GROUND"
 V_ANODE_CHANNEL = "HIGH_IMPEDANCE_ISOLATED"
 CAPACITY_EXTRA_TERMINALS = ("h1_body",)     # I_body->ground (single metered return), measured continuously
-# ICP-45 status vocabulary: NOT_EVALUATED is the only status before I_d,max,H1 is registered (A9.4)
+# ICP-45 status vocabulary: NOT_EVALUATED is the only status before I_d,max,H1 is registered (A9.4); it stays
+# NOT_EVALUATED whenever no admissible capacity point exists (A9.5 P1Q-16)
 ICP45A_STATUSES = ("NOT_EVALUATED", "SYNTHETIC_TEST_ONLY_NOT_EVIDENCE", "EVALUATED_ENGINEERING_ONLY")
+# per capacity point (RF-ON ICP45_CAPACITY record with its matched RF-OFF record) outcome vocabulary (A9.5 P1Q-15)
+# NOT_EVALUATED_UNCERTAINTY: a required channel uncertainty is missing (A9.6 sec. 14 bullet 7). NOT_EVALUATED_REGISTRATION
+# and OUT_OF_DOMAIN are assigned by the campaign driver (p1_campaign.py): I_d,max,H1 / its registered points or the
+# margin rule unknown; record outside a registered stage / operating domain - never a FAIL (A9.6 sec. 14 bullet 10)
+POINT_OUTCOMES = ("CLOSURE_VALID_CANDIDATE", "NOT_EVALUATED_INSTRUMENT", "NOT_EVALUATED_UNCERTAINTY",
+                  "NOT_EVALUATED_REGISTRATION", "EXCLUDED", "OUT_OF_DOMAIN")
+PRECEDENCE_NOTE = ("DERIVED (P1Q-22): A9.5 exclusions independent of the closure test first (EXCLUDED) -> missing "
+                   "u(I_k) (NOT_EVALUATED_UNCERTAINTY, A9.6 sec. 14) -> statistical failure |R_I| > 3 u_R (EXCLUDED; "
+                   "normalised to u_R, so not explainable by instrument inadequacy) -> 3 u_R > 0.02 |I_e,collector| "
+                   "at the RF-ON point, or 3 u_R > 0.02 max(|I_e,collector|, I_scale,min) at the matched RF-OFF record "
+                   "(NOT_EVALUATED_INSTRUMENT; fractional-only failures not decisive) -> fractional failure (EXCLUDED)")
+# ------------------------------------------------------------ A9.5 P1Q-15 Kirchhoff current-closure rule (owner)
+A95_REF = "docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json decisions.P1Q-15"
+# the one global convention for every ICP-45 capacity record (owner text, A9.5 P1Q-15)
+KIRCHHOFF_SIGN_CONVENTION = "CONVENTIONAL_CURRENT_INTO_THE_DEFINED_ISOLATED_ELECTRICAL_NETWORK_IS_POSITIVE"
+# owner constants: statistical closure |R_I| <= 3 u_R; fractional closure <= 0.02 (never caller parameters)
+CLOSURE_K_SIGMA = 3.0
+CLOSURE_FRACTION_MAX = 0.02
+# u(I_k) components of every MEASURED channel of a capacity record (A9.5 P1Q-15 'including: ...'); each is required.
+# Only 'repeatability where applicable' and 'any registered RF-pickup contribution' may be declared explicitly absent,
+# with the exact tokens below (never by omission); resolution must be a positive number.
+U_COMPONENTS = ("u_calibration_A", "u_zero_offset_A", "u_resolution_A", "u_repeatability_A", "u_rf_pickup_A")
+U_EXPLICIT_ABSENT = {"u_repeatability_A": "NOT_APPLICABLE", "u_rf_pickup_A": "NONE_REGISTERED"}
+CLOSURE_RULE_REQUIRED = ("rule_id", "sign_convention", "sign_convention_id", "I_scale_min_A", "I_scale_min_basis")
+CLOSURE_RULE_ALLOWED = CLOSURE_RULE_REQUIRED + ("covariance", "open_by_construction_terminals")
+# OPEN_CIRCUIT_BY_CONSTRUCTION in a capacity record (consolidated verification E2): the owner sanctions I = 0 by
+# construction only for the physically disconnected, floating H-1 anode (A9.5 P1Q-15 floating_anode; P1-IT-47). Any
+# other terminal may be declared open by construction only when it is listed, with its basis, in the registered
+# closure rule ('open_by_construction_terminals': [{'terminal', 'basis'}], registered at P1-G0); an intentional current
+# path (A9.6 sec. 5 'all intentional current paths instrumented') can never be registered as open. An unregistered
+# open-circuit declaration excludes the capacity point (never a silently zeroed channel).
+OPEN_BY_CONSTRUCTION_IMPLICIT = ("hall_anode",)
+INTENTIONAL_PATH_TERMINALS = ("collector_supply", "electron_collector", "h1_body", "facility_ground")
+COVARIANCE_REQUIRED = ("covariance_id", "terminals", "correlation")
+# A9.6 sec. 2 restates the A9.5 rule with magnitudes: max(|I_e,collector|, I_scale,min) and 3 u_R > 0.02 |I_e,collector|
+A96_REF = ("docs/decisions/OD_2026_09_30_A9_6_implementation_first_directive.json summary.p1q15_denominator; "
+           "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md sec. 2")
+A96_DENOMINATOR_FORM = "max(|I_e,collector|, I_scale,min); adequacy 3 u_R <= 0.02 |I_e,collector| (A9.6 sec. 2)"
 RF_REFERENCE_PLANE = "GENERATOR_50OHM_SIDE_OF_LOCAL_MATCH"
+# state of the RF measurement chain from the P1-S1 dummy-load calorimetric cross-check (A9.1 UBQ-04, UB-RF-08,
+# P1-IT-24): CROSS_CHECK_AGREES (every cross-check |z_x| <= k_x), EXCLUDED_INSTRUMENT (any |z_x| > k_x), NOT_EVALUATED
+# (no complete cross-check record)
+RF_CHAIN_STATUSES = ("CROSS_CHECK_AGREES", "EXCLUDED_INSTRUMENT", "NOT_EVALUATED")
+# A9.4 P2Q-05 plasma-state classes, exactly (the P2 reducer uses the same four)
+PLASMA_STATES = ("UNLIT", "E_MODE", "H_MODE", "UNCERTAIN")
+OPTICAL_REQUIRED = ("photodiode_channel_id", "optical_signal_V", "photodiode_line_of_sight_ok", "photodiode_saturated",
+                    "electrical_ignition_or_mode_transition")
+OPTICAL_NOT_RECORDED = "OPTICAL_NOT_RECORDED"
 LOSS_STATUSES = ("MEASURED", "FLAGGED_NOT_MEASURED")
 # a MEASURED line/match loss is de-embedded from the two-port data AT the recorded match setting; it is valid only up
 # to the residual |Gamma| limit of that characterization (P1-M-03, P1-IT-41)
 LOSS_MEASURED_REQUIRED = ("value_W", "source", "match_setting_id", "valid_max_gamma_abs")
 GENERATOR_CLASSES = ("GROUND_FACILITY_ONLY_MAINS",)
 REFUSED_GENERATOR_CLASSES = ("FLIGHT_REPRESENTATIVE_DC_RF_SOURCE",)
-TERMINAL_BASES = ("MEASURED", "OPEN_CIRCUIT_BY_CONSTRUCTION")
+# NOT_MEASURED: a terminal that exists but whose current is unavailable - declared, never silently zero (A9.5 P1Q-15);
+# it carries no I_A value and no Kirchhoff residual is formed with it
+TERMINAL_BASES = ("MEASURED", "OPEN_CIRCUIT_BY_CONSTRUCTION", "NOT_MEASURED")
 # Electron-extraction topology (the electrode that SINKS the extracted electrons; the ICP 'collector' is the
 # ion-collecting electrode inside the source, TK-13 / ICD ICP-21). Registered per run at P1-G0 (P1-IT-36, P1Q-09).
 EXTRACTION_ELECTRODES = ("DEDICATED_ELECTRON_COLLECTOR_TARGET", "CHAMBER_WALL_FACILITY_GROUND", "H1_ANODE")
@@ -119,7 +201,8 @@ REQUIRED_TERMINALS = {
     ("ON", "H1_ANODE"): ("collector_supply", "icp_body", "facility_ground", "hall_anode"),
 }
 # I_e sign convention (declared per record): I_e_A > 0 = net electrons extracted from the ICP; the collector_supply
-# terminal carries the same current, I_A = +I_e_A, as conventional current INTO the isolated network
+# terminal carries the same current, I_A = +I_e_A, as conventional current INTO the isolated network (the owner's
+# global convention, A9.5 P1Q-15 / KIRCHHOFF_SIGN_CONVENTION)
 I_E_SIGN_CONVENTION = "POSITIVE_ELECTRONS_EXTRACTED_FROM_ICP_EQUALS_COLLECTOR_SUPPLY_TERMINAL_INTO_NETWORK"
 ICP45A_CAPACITY_STAGES = ("P1-S4", "P1-S7")
 # Hall-ON follow-up after discharge-OFF capacity (A9.4 P1Q-10): stage P1-S7H
@@ -162,18 +245,22 @@ BOUNDARY_C_E_DC = {
                                    "power analyzer; GROUND/FACILITY_ONLY (A9.3 OQ-RFQ-06); includes laboratory "
                                    "AC/DC stages; NOT P_bus and never evidence for P_bus < 1.5 kW"),
 }
-I_E_CAP_DEFINITION = ("OWNER_DECIDED (A9.4 P1Q-10, CAPACITY_EXTRACTION_FORM): I_e,cap = I_e,collector,RFON - "
-                      "I_e,collector,RFOFF (recorder reading of the incomplete verbatim formula, A9.4 "
-                      "decisions.P1Q-10.definition_recorder_reading), subject to current-path closure and the registered "
-                      "uncertainty treatment; I_e,collector = current of the dedicated, isolated, instrumented "
-                      "electron-collecting electrode (terminal electron_collector, electrons collected = -I_A under the "
-                      "registered sign convention); eligible = record_class ICP45_CAPACITY, stage P1-S4 or P1-S7, Hall "
+I_E_CAP_DEFINITION = ("OWNER_DECIDED (A9.4 P1Q-10, CAPACITY_EXTRACTION_FORM; formula OWNER_CONFIRMED by A9.5 "
+                      "P1Q-16): I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF using SIGNED currents under the same "
+                      "registered current convention (no absolute-value correction, no zero-clipping; the RF-OFF term "
+                      "estimates facility/background electron collection); I_e,collector = current of the dedicated, "
+                      "isolated, instrumented electron-collecting electrode (terminal electron_collector, electrons "
+                      "collected = -I_A under the registered convention 'conventional current INTO the isolated network "
+                      "positive', A9.5 P1Q-15); eligible = record_class ICP45_CAPACITY, stage P1-S4 or P1-S7, Hall "
                       "discharge supply OFF and physically disconnected, anode floating (OPEN_CIRCUIT_BY_CONSTRUCTION), "
                       "gas_mode G-REUSE, P_fwd > 0, rf_pickup_check DONE, h1_point_id in the registration's "
-                      "registered_point_ids, matched RF-OFF ICP45_CAPACITY record (P1-D-07) and Kirchhoff residual "
-                      "within the registered tolerance for both records. Qualification I_e,cap >= I_d,max,H1 with the "
-                      "preregistered one-sided lower confidence bound on M_n = I_e,cap / I_d,max,H1 - 1 above zero. "
-                      "Hall-ON records are NEUTRALIZATION_CONSISTENCY, never ICP45_CAPACITY")
+                      "registered_point_ids, and ICP-45A evaluated only when (1) the capacity point passes the A9.5 "
+                      "Kirchhoff closure (|R_I| <= 3 u_R and |R_I| / max(I_e,collector, I_scale,min) <= 0.02, RF-ON and "
+                      "matched RF-OFF records), (2) the matched RF-OFF correction is valid (P1-D-07), (3) all required "
+                      "uncertainties are available (u(I_k) of every channel; u_I_e_A and u_I_d_max_A of the margin rule) "
+                      "and (4) I_d,max,H1 is registered; then the preregistered one-sided lower bound M_n,LB of "
+                      "M_n = I_e,cap / I_d,max,H1 - 1 must be > 0; until all four exist ICP45 = NOT_EVALUATED. Hall-ON "
+                      "records are NEUTRALIZATION_CONSISTENCY and never define I_e,cap")
 
 
 class P1RecordError(ValueError):
@@ -222,6 +309,11 @@ class CapacityConfigurationError(P1RecordError):
     outside a registered DIAGNOSTIC_VARIANT (A9.4 P1Q-13). Refused, never merely flagged."""
 
 
+class ClosureRuleError(P1RecordError):
+    """A closure_rule that tries to set or widen an owner constant (the factor 3, the 2 %), names another sign
+    convention than the owner's, or carries a malformed registered covariance (A9.5 P1Q-15)."""
+
+
 # ------------------------------------------------------------------------------------------------ helpers
 def _req(obj, keys, where):
     if not isinstance(obj, dict):
@@ -251,6 +343,13 @@ def _labels_ok(rec, where):
             bad.append(lab)
     if bad:
         raise LabelError("%s: P1 records are non-scoring; forbidden label(s) %s" % (where, bad))
+    # synthetic-data contamination (A9.6 sec. 14 'mixed synthetic/measured evidence -> refused'; consolidated
+    # verification SW-03): a record that carries a SYNTHETIC label is synthetic, whatever its boolean flag says
+    synth_labels = [lab for lab in labels if "SYNTHETIC" in str(lab).upper()]
+    if synth_labels and rec.get("synthetic") is not True:
+        raise LabelError("%s: label(s) %s mark a synthetic fixture but 'synthetic' = %r: flag and labels disagree - "
+                         "refused (a synthetic record is never measured evidence, A9.6 sec. 14)"
+                         % (where, synth_labels, rec.get("synthetic")))
 
 
 def _normalise_key(key):
@@ -312,20 +411,31 @@ def validate_operating_point(rec):
     if not isinstance(h1e["h1_body_state"], str) or not h1e["h1_body_state"].strip():
         raise MissingInputError("%s: h1_electrical.h1_body_state must be recorded (registered at P1-G0)" % rid)
     _num(h1e["V_anode_V"], rid + " h1_electrical.V_anode_V")
-    if h1e["anode_state"] not in ANODE_STATES_BY_HALL_STATE[rec["hall_discharge_state"]]:
+    rc = rec["record_class"]
+    if rc not in RECORD_CLASSES:
+        raise P1RecordError("%s: record_class %r not in %s" % (rid, rc, RECORD_CLASSES))
+    # A9.5 P1Q-15 lists 'the H-1 anode is not physically disconnected/floating in an ICP45_CAPACITY record' as an
+    # EXCLUSION of the capacity point (kept in the raw record with its reason). For an ICP45_CAPACITY record with the
+    # discharge supply OFF the anode / supply-connection configuration is therefore not refused here: it is checked by
+    # capacity_structural_reasons() and the point is excluded with that reason (recorder reading of A9.5 over the A9.4
+    # P1Q-13 'refused' wording, owner question P1Q-21). Every other record keeps the A9.4 refusal.
+    anode_exclusion_path = rc == CAPACITY_LABEL and rec["hall_discharge_state"] == "OFF"
+    if h1e["anode_state"] not in ANODE_STATES:
+        raise P1RecordError("%s: h1_electrical.anode_state %r not in %s" % (rid, h1e["anode_state"], ANODE_STATES))
+    if h1e["discharge_supply_connection"] not in SUPPLY_CONNECTIONS:
+        raise P1RecordError("%s: h1_electrical.discharge_supply_connection %r not in %s"
+                            % (rid, h1e["discharge_supply_connection"], SUPPLY_CONNECTIONS))
+    if not anode_exclusion_path and h1e["anode_state"] not in ANODE_STATES_BY_HALL_STATE[rec["hall_discharge_state"]]:
         raise P1RecordError("%s: h1_electrical.anode_state %r not allowed with the discharge supply %s (allowed %s; "
                             "P1-IT-39, P1Q-13)" % (rid, h1e["anode_state"], rec["hall_discharge_state"],
                                                    ANODE_STATES_BY_HALL_STATE[rec["hall_discharge_state"]]))
     want_conn = SUPPLY_CONNECTION_BY_HALL_STATE[rec["hall_discharge_state"]]
-    if h1e["discharge_supply_connection"] != want_conn:
+    if not anode_exclusion_path and h1e["discharge_supply_connection"] != want_conn:
         raise CapacityConfigurationError(
             "%s: h1_electrical.discharge_supply_connection %r with the discharge supply %s; required %s (A9.4 P1Q-13: "
             "never a commanded-zero supply left electrically attached)"
             % (rid, h1e["discharge_supply_connection"], rec["hall_discharge_state"], want_conn))
     # record class (A9.4 P1Q-10 / P1Q-13)
-    rc = rec["record_class"]
-    if rc not in RECORD_CLASSES:
-        raise P1RecordError("%s: record_class %r not in %s" % (rid, rc, RECORD_CLASSES))
     if rc not in RECORD_CLASSES_BY_HALL_STATE[rec["hall_discharge_state"]]:
         raise CapacityConfigurationError(
             "%s: record_class %r not allowed with the discharge supply %s (allowed %s; Hall-ON records are %s and "
@@ -337,7 +447,7 @@ def validate_operating_point(rec):
         if not isinstance(dreg, str) or not dreg.strip():
             raise MissingInputError("%s: a DIAGNOSTIC_VARIANT record needs its separate registration id "
                                     "(diagnostic_registration_id; A9.4 P1Q-13)" % rid)
-    if h1e["anode_state"] == "METERED_RETURN" and rc != DIAGNOSTIC_LABEL:
+    if h1e["anode_state"] == "METERED_RETURN" and rc != DIAGNOSTIC_LABEL and not anode_exclusion_path:
         raise CapacityConfigurationError(
             "%s: a METERED_RETURN anode is allowed only in a separately registered DIAGNOSTIC_VARIANT record, which "
             "never feeds I_e,cap (A9.4 P1Q-13); record_class is %r" % (rid, rc))
@@ -471,9 +581,21 @@ def validate_operating_point(rec):
         if not isinstance(t, dict) or t.get("basis") not in TERMINAL_BASES:
             raise MissingInputError("%s: current-path terminal '%s' missing or without basis %s (Kirchhoff closure "
                                     "needs every terminal of the isolated network)" % (rid, name, TERMINAL_BASES))
+    for name in sorted(terms):                  # every terminal, required or additional (A9.5: any other terminal)
+        t = terms[name]
+        if not isinstance(t, dict) or t.get("basis") not in TERMINAL_BASES:
+            raise MissingInputError("%s: terminal '%s' without basis %s" % (rid, name, TERMINAL_BASES))
+        if t["basis"] == "NOT_MEASURED":
+            # an unavailable channel is declared, never silently set to zero (A9.5 P1Q-15)
+            if t.get("I_A") is not None:
+                raise P1RecordError("%s: terminal '%s' declared NOT_MEASURED but carries I_A = %r; an unavailable "
+                                    "channel carries no value (never a silent zero, A9.5 P1Q-15)" % (rid, name, t["I_A"]))
+            continue
         _num(t.get("I_A"), "%s terminals.%s.I_A" % (rid, name))
         if t["basis"] == "OPEN_CIRCUIT_BY_CONSTRUCTION" and float(t["I_A"]) != 0.0:
             raise P1RecordError("%s: terminal '%s' declared open circuit but carries %r A" % (rid, name, t["I_A"]))
+    if terms["collector_supply"]["basis"] != "MEASURED":
+        raise MissingInputError("%s: terminal 'collector_supply' must be MEASURED (it carries I_e, P1-IT-42)" % rid)
     # the H-1 anode terminal basis follows the registered anode state
     want = ANODE_TERMINAL_BASIS[h1e["anode_state"]]
     if terms["hall_anode"]["basis"] != want:
@@ -487,23 +609,21 @@ def validate_operating_point(rec):
                             % (rid, i_e, cs, res, I_E_SIGN_CONVENTION))
     if rc == CAPACITY_LABEL:
         _check_capacity_record(rec, rid)
+    if "optical" in rec:                        # optional channel; when recorded it must be complete (P1-M-28)
+        classify_plasma_state(rec["optical"], rid + " optical")
     return None
 
 
 def _check_capacity_record(rec, rid):
-    """A9.4 P1Q-10 / P1Q-13 configuration of an ICP45_CAPACITY record; raises (refuses) on any violation."""
+    """A9.4 P1Q-10 / P1Q-13 configuration of an ICP45_CAPACITY record; raises (refuses) on any violation that makes
+    the record incomplete or not a capacity record. The A9.5 P1Q-15 exclusions (anode not physically disconnected /
+    floating; an intentional return path declared NOT_MEASURED or I_body->ground not measured continuously; an
+    unintended ground path found) are NOT refused here: they exclude the capacity point with its reason
+    (capacity_structural_reasons, kirchhoff_closure) and the record stays in the raw record. A terminal that is absent
+    from the record (not even declared NOT_MEASURED) is an incomplete record and is refused (CLAUDE.md rule 3)."""
     if rec["stage_id"] not in ICP45A_CAPACITY_STAGES:
         raise CapacityConfigurationError("%s: ICP45_CAPACITY records belong to the capacity stages %s, not %r"
                                          % (rid, ICP45A_CAPACITY_STAGES, rec["stage_id"]))
-    h1e = rec["h1_electrical"]
-    if h1e["anode_state"] != "DISCONNECTED_FLOATING":
-        raise CapacityConfigurationError("%s: capacity record with anode_state %r refused: the H-1 anode is physically "
-                                         "disconnected from the discharge supply and left floating "
-                                         "(OPEN_CIRCUIT_BY_CONSTRUCTION) during ICP-45 capacity measurements (A9.4 "
-                                         "P1Q-13)" % (rid, h1e["anode_state"]))
-    if rec["terminals"]["hall_anode"]["basis"] != "OPEN_CIRCUIT_BY_CONSTRUCTION":
-        raise CapacityConfigurationError("%s: capacity record: terminal hall_anode must be OPEN_CIRCUIT_BY_CONSTRUCTION"
-                                         % rid)
     if rec["extraction"]["electron_collecting_electrode"] != "DEDICATED_ELECTRON_COLLECTOR_TARGET":
         raise CapacityConfigurationError("%s: capacity record: electrons must be extracted to the dedicated, isolated, "
                                          "instrumented electron-collecting electrode (A9.4 P1Q-10); got %r"
@@ -521,9 +641,9 @@ def _check_capacity_record(rec, rid):
         raise CapacityConfigurationError("%s: H-1 body / magnetic circuit must have exactly one deliberate facility-"
                                          "ground connection through a metered return (%s); got %r"
                                          % (rid, H1_BODY_GROUND_CONFIG, cm["h1_body_ground_config"]))
-    if cm["I_body_to_ground_continuous"] is not True:
-        raise CapacityConfigurationError("%s: I_body->ground must be measured continuously during capacity records "
-                                         "(A9.4 P1Q-13)" % rid)
+    if not isinstance(cm["I_body_to_ground_continuous"], bool):
+        raise CapacityConfigurationError("%s: capacity_monitoring.I_body_to_ground_continuous must be recorded true or "
+                                         "false (A9.4 P1Q-13)" % rid)
     if cm["V_anode_channel"] != V_ANODE_CHANNEL:
         raise CapacityConfigurationError("%s: V_anode must be recorded on a %s channel (A9.4 P1Q-13); got %r"
                                          % (rid, V_ANODE_CHANNEL, cm["V_anode_channel"]))
@@ -532,44 +652,245 @@ def _check_capacity_record(rec, rid):
     if not isinstance(cm["sign_convention_id"], str) or not cm["sign_convention_id"].strip():
         raise CapacityConfigurationError("%s: capacity_monitoring.sign_convention_id must name the registered "
                                          "Kirchhoff sign convention" % rid)
+    if not isinstance(cm["unintended_ground_path_found"], bool):
+        raise CapacityConfigurationError("%s: capacity_monitoring.unintended_ground_path_found must be recorded true "
+                                         "or false (A9.5 P1Q-15 exclusion; A9.4 P1Q-13 single-point ground)" % rid)
+    if not isinstance(cm["ground_path_check_id"], str) or not cm["ground_path_check_id"].strip():
+        raise CapacityConfigurationError("%s: capacity_monitoring.ground_path_check_id must name the recorded "
+                                         "unintended-ground-path check" % rid)
     terms = rec["terminals"]
     for name in CAPACITY_EXTRA_TERMINALS + ("electron_collector",):
         t = terms.get(name)
-        if not isinstance(t, dict) or t.get("basis") != "MEASURED":
-            raise CapacityConfigurationError("%s: capacity record needs terminal %r with basis MEASURED (A9.4 P1Q-13: "
-                                             "I_body->ground measured continuously; dedicated collector current is "
-                                             "the capacity measurand)" % (rid, name))
-        _num(t.get("I_A"), "%s terminals.%s.I_A" % (rid, name))
+        if not isinstance(t, dict) or t.get("basis") not in ("MEASURED", "NOT_MEASURED"):
+            raise CapacityConfigurationError("%s: capacity record needs terminal %r declared MEASURED (or, if the "
+                                             "channel is unavailable, NOT_MEASURED - the point is then excluded, never "
+                                             "zeroed; A9.4 P1Q-13, A9.5 P1Q-15); got %r"
+                                             % (rid, name, t.get("basis") if isinstance(t, dict) else None))
+
+
+def capacity_structural_reasons(rec):
+    """A9.5 P1Q-15 structural exclusion reasons of an ICP45_CAPACITY record that do not need the closure rule: H-1
+    anode not physically disconnected / floating, an intentional return path unmeasured (a terminal declared
+    NOT_MEASURED, or I_body->ground not measured continuously) and an unintended ground path found. Returns a list of
+    reasons (empty = none). Pure; never raises for a validated record."""
+    h1e = rec["h1_electrical"]
+    out = []
+    if h1e["anode_state"] != "DISCONNECTED_FLOATING" or h1e["discharge_supply_connection"] != \
+            "PHYSICALLY_DISCONNECTED" or rec["terminals"]["hall_anode"]["basis"] != "OPEN_CIRCUIT_BY_CONSTRUCTION":
+        out.append("H-1 anode not physically disconnected / floating in an ICP45_CAPACITY record (anode_state %r, "
+                   "discharge supply %r, hall_anode basis %r; A9.5 P1Q-15 exclusion, A9.4 P1Q-13)"
+                   % (h1e["anode_state"], h1e["discharge_supply_connection"],
+                      rec["terminals"]["hall_anode"]["basis"]))
+    cm = rec.get("capacity_monitoring") or {}
+    if cm.get("I_body_to_ground_continuous") is not True:
+        out.append("intentional return path unmeasured: I_body->ground not measured continuously "
+                   "(capacity_monitoring.I_body_to_ground_continuous = %r; A9.5 P1Q-15, A9.4 P1Q-13)"
+                   % cm.get("I_body_to_ground_continuous"))
+    for name in sorted(rec["terminals"]):
+        if rec["terminals"][name]["basis"] == "NOT_MEASURED":
+            out.append("intentional return path unmeasured: terminal %r declared NOT_MEASURED; an unavailable "
+                       "channel is never set to zero (A9.5 P1Q-15)" % name)
+    if cm.get("unintended_ground_path_found") is not False:
+        out.append("unintended ground path found or its check not recorded (capacity_monitoring."
+                   "unintended_ground_path_found = %r, check %r; A9.5 P1Q-15 exclusion)"
+                   % (cm.get("unintended_ground_path_found"), cm.get("ground_path_check_id")))
+    return out
+
+
+# ------------------------------------------------------------------------------------------------ optical state
+# basis of a registered photodiode threshold: identical to p2_impedance_reducer.THRESHOLD_BASIS_FIELDS (A9.4 P2Q-05)
+THRESHOLD_BASIS_FIELDS = ("dark_background_record_id", "rf_powered_known_unlit_record_id", "known_lit_p1_record_id",
+                          "frozen_before_p2_map")
+
+
+def _ref_ok(x):
+    """A registered reference / basis string: non-empty and not a PENDING / TBD placeholder (same rule as P2)."""
+    return isinstance(x, str) and bool(x.strip()) and not x.strip().upper().startswith(("PENDING", "TBD"))
+
+
+def _threshold_basis_ok(tb):
+    if not isinstance(tb, dict):
+        return False
+    return all(_ref_ok(tb.get(k)) for k in THRESHOLD_BASIS_FIELDS[:3]) and tb.get("frozen_before_p2_map") is True
+
+
+def classify_plasma_state(obs, where="optical"):
+    """A9.4 P2Q-05 plasma-state class of a P1 record from its optical channel (P1-M-28, INS-P2-10) and the
+    simultaneous electrical corroboration; returns (state, reason) with state in PLASMA_STATES. No threshold is chosen
+    here: 'unlit_threshold' must be present and is either null (none registered yet - in P1 the dark / known-unlit /
+    known-lit records are the INPUTS of that threshold, so the state is UNCERTAIN) or {'threshold_id', 'threshold_V',
+    'basis'} with the P2 THRESHOLD_BASIS_FIELDS (a threshold without that basis is refused, as in P2).
+    Rules as in the P2 reducer: lost line of sight or saturation -> UNCERTAIN (never unlit evidence); below threshold
+    with electrical evidence of ignition / mode transition -> UNCERTAIN (never forced to UNLIT); lit without an
+    E_MODE / H_MODE assignment (lit_mode_assignment with mode_indicator_basis) -> UNCERTAIN. An incomplete optical
+    object raises (A9.6 sec. 14: unresolved plasma state -> UNCERTAIN, missing data -> never a state)."""
+    if not isinstance(obs, dict):
+        raise MissingInputError("%s: expected an object" % where)
+    _req(obs, OPTICAL_REQUIRED, where)
+    if "unlit_threshold" not in obs:
+        raise MissingInputError("%s: 'unlit_threshold' must be present (null when no threshold is registered yet; "
+                                "A9.4 P2Q-05)" % where)
+    for k in ("photodiode_line_of_sight_ok", "photodiode_saturated", "electrical_ignition_or_mode_transition"):
+        if not isinstance(obs[k], bool):
+            raise MissingInputError("%s.%s must be true or false" % (where, k))
+    if not isinstance(obs["photodiode_channel_id"], str) or not obs["photodiode_channel_id"].strip():
+        raise MissingInputError("%s.photodiode_channel_id must name the registered photodiode channel" % where)
+    sig = _num(obs["optical_signal_V"], where + ".optical_signal_V")
+    if obs["electrical_ignition_or_mode_transition"]:
+        b = obs.get("electrical_indicator_basis")
+        if not _ref_ok(b):
+            raise MissingInputError("%s: electrical evidence of ignition / mode transition needs "
+                                    "electrical_indicator_basis (reflected power, antenna current, collector / "
+                                    "current-path response, pressure; A9.4 P2Q-05)" % where)
+    mode = obs.get("lit_mode_assignment")
+    if mode is not None:
+        if mode not in ("E_MODE", "H_MODE"):
+            raise P1RecordError("%s.lit_mode_assignment %r not in (E_MODE, H_MODE, null)" % (where, mode))
+        mb = obs.get("mode_indicator_basis")
+        if not _ref_ok(mb):
+            raise MissingInputError("%s: lit_mode_assignment needs mode_indicator_basis (registered E/H indicators)"
+                                    % where)
+    thr = obs["unlit_threshold"]
+    if thr is not None:
+        _req(thr, ("threshold_id", "threshold_V", "basis"), where + ".unlit_threshold")
+        thr_v = _num(thr["threshold_V"], where + ".unlit_threshold.threshold_V")
+        # same A9.4 P2Q-05 provenance as the P2 reducer (THRESHOLD_BASIS_FIELDS; consolidated verification MET-05):
+        # a threshold without its dark / RF-powered known-unlit / known-lit record ids and frozen flag is refused
+        if not _ref_ok(thr["threshold_id"]) or not _threshold_basis_ok(thr["basis"]):
+            raise MissingInputError("%s.unlit_threshold: a registered threshold needs a non-PENDING threshold_id and its "
+                                    "A9.4 P2Q-05 basis %s (record ids, frozen = true); otherwise record "
+                                    "unlit_threshold = null (state UNCERTAIN)" % (where, list(THRESHOLD_BASIS_FIELDS)))
+    if obs["photodiode_line_of_sight_ok"] is not True:
+        return "UNCERTAIN", "photodiode line of sight lost: the optical record is not valid evidence (A9.4 P2Q-05)"
+    if obs["photodiode_saturated"] is not False:
+        return "UNCERTAIN", "photodiode saturated: the optical record is not valid evidence (A9.4 P2Q-05)"
+    if thr is None:
+        return "UNCERTAIN", ("no registered unlit threshold (A9.4 P2Q-05: established from P1 dark / known-unlit / "
+                             "known-lit records, frozen before the P2 map); state unresolved")
+    if sig < thr_v:
+        if obs["electrical_ignition_or_mode_transition"]:
+            return "UNCERTAIN", ("optical UNLIT but electrical evidence of ignition / mode transition (%s); never "
+                                 "forced to UNLIT (A9.4 P2Q-05)" % obs["electrical_indicator_basis"])
+        return "UNLIT", "optical signal below registered threshold %s; no electrical evidence of ignition" % (
+            thr["threshold_id"])
+    if mode is not None:
+        return mode, "optically lit; %s from %s" % (mode, obs["mode_indicator_basis"])
+    return "UNCERTAIN", "optically lit but no registered E_MODE / H_MODE assignment"
+
+
+def record_plasma_state(rec):
+    """(state, reason) of a record carrying an optional 'optical' object; OPTICAL_NOT_RECORDED when absent."""
+    if "optical" not in rec:
+        return OPTICAL_NOT_RECORDED, "no optical channel in this record"
+    return classify_plasma_state(rec["optical"], "record %r optical" % rec.get("record_id"))
 
 
 # ------------------------------------------------------------------------------------------------ derived quantities
-def derive_rf(rec):
-    """|Gamma|, VSWR and P_RF,delivered at the A9.2 reference plane. Arithmetic only."""
+def _check_loss_verification(lv):
+    """Campaign-mode line/match-loss verification state (A9.6 sec. 14 'unverified line loss -> no silently
+    reconstructed plasma power'): {'rf_chain_status': one of RF_CHAIN_STATUSES, 'verified_loss_ids': [...],
+    'characterizations': {id: {'match_setting_id', 'value_W', 'u_value_W', 'valid_max_gamma_abs'}}} produced by
+    reduce_rf_cold_checkout from the P1-S1 / P1-S2 records. Every verified id must carry its characterization row: a
+    record's MEASURED loss is compared with it (consolidated verification MET-01), never merely matched by id."""
+    _req(lv, ("rf_chain_status", "verified_loss_ids", "characterizations"), "loss_verification")
+    if lv["rf_chain_status"] not in RF_CHAIN_STATUSES:
+        raise P1RecordError("loss_verification.rf_chain_status %r not in %s" % (lv["rf_chain_status"],
+                                                                                 RF_CHAIN_STATUSES))
+    if not isinstance(lv["verified_loss_ids"], list):
+        raise MissingInputError("loss_verification.verified_loss_ids must be a list")
+    chars = lv["characterizations"]
+    if not isinstance(chars, dict):
+        raise MissingInputError("loss_verification.characterizations must be an object {characterization_id: row}")
+    for cid in lv["verified_loss_ids"]:
+        row = chars.get(cid)
+        _req(row, ("match_setting_id", "value_W", "u_value_W", "valid_max_gamma_abs"),
+             "loss_verification.characterizations[%r]" % cid)
+        _num(row["value_W"], "loss_verification.characterizations[%r].value_W" % cid, allow_negative=False)
+        _pos(row["u_value_W"], "loss_verification.characterizations[%r].u_value_W" % cid)
+        _num(row["valid_max_gamma_abs"], "loss_verification.characterizations[%r].valid_max_gamma_abs" % cid,
+             allow_negative=False)
+    return lv
+
+
+def _loss_unverified_reasons(rec, loss, lv, gamma):
+    """Why a record's MEASURED line/match loss is NOT a verified characterization (empty list = verified). Verified
+    only when a loss_verification state is supplied (never assumed: consolidated verification E1), the RF chain is
+    CROSS_CHECK_AGREES, the cited characterization is among the verified ids (P1-S1 dummy-load cross-check AND an
+    at-power loss-model verification, MET-02), and the record agrees with that characterization: same match setting
+    (P1-IT-41), loss value within the characterization's standard uncertainty, residual |Gamma| within its validity
+    limit (MET-01)."""
+    if lv is None:
+        return ["no loss_verification state supplied: a MEASURED loss is never taken as verified on the record's own "
+                "declaration (A9.6 sec. 14; run the RF cold checkout, p1_campaign.run_campaign)"]
+    if lv["rf_chain_status"] != "CROSS_CHECK_AGREES":
+        return ["RF chain status %s (P1-S1 calorimetric cross-check)" % lv["rf_chain_status"]]
+    cid = loss["source"]
+    if cid not in lv["verified_loss_ids"]:
+        return ["cited characterization %r is not a verified P1-S1/S2 line/match-loss characterization" % cid]
+    row = lv["characterizations"][cid]
+    why = []
+    if row["match_setting_id"] != rec["rf"]["match_setting_id"] or row["match_setting_id"] != loss["match_setting_id"]:
+        why.append("characterization %r is at match setting %r, the record at %r (loss valid only at its "
+                   "characterized match setting, P1-IT-41)" % (cid, row["match_setting_id"],
+                                                                 rec["rf"]["match_setting_id"]))
+    if abs(float(loss["value_W"]) - float(row["value_W"])) > float(row["u_value_W"]):
+        why.append("record loss %r W differs from characterization %r value %r W by more than its standard "
+                   "uncertainty %r W" % (loss["value_W"], cid, row["value_W"], row["u_value_W"]))
+    if gamma > float(row["valid_max_gamma_abs"]):
+        why.append("residual |Gamma| = %.6g exceeds the validity limit %r of characterization %r"
+                   % (gamma, row["valid_max_gamma_abs"], cid))
+    return why
+
+
+def derive_rf(rec, loss_verification=None):
+    """|Gamma|, VSWR and P_RF,delivered at the A9.2 reference plane. Arithmetic only.
+
+    A MEASURED loss counts (P_delivered_kind P_RF_DELIVERED) only with a supplied loss_verification state
+    (p1_campaign.run_campaign passes the one reduce_rf_cold_checkout forms) under which the record's loss is a verified
+    characterization and agrees with it (_loss_unverified_reasons). Without loss_verification, or when any check
+    fails, P_delivered is an explicitly labelled UPPER BOUND (never a silently reconstructed plasma power; A9.6 sec.
+    14). If the calorimetric cross-check failed, every RF-dependent derived quantity is EXCLUDED_INSTRUMENT (A9.1
+    UBQ-04; UB-RF-08)."""
     rf = rec["rf"]
     pf, pr = float(rf["P_fwd_W"]), float(rf["P_refl_W"])
     loss = rf["line_match_loss"]
     if not isinstance(loss, dict) or loss.get("status") not in LOSS_STATUSES:
         raise LineMatchLossError("record %r: line/match loss neither MEASURED nor FLAGGED_NOT_MEASURED"
                                  % rec.get("record_id"))
+    lv = _check_loss_verification(loss_verification) if loss_verification is not None else None
     if pf == 0.0:
         if pr != 0.0:
             raise RFConsistencyError("record %r: P_refl > 0 with P_fwd = 0" % rec.get("record_id"))
         return {"rf_state": "RF_OFF", "P_fwd_W": pf, "P_refl_W": pr, "gamma_abs": None, "VSWR": None,
                 "P_delivered_W": None, "P_delivered_kind": "RF_OFF_NOT_DEFINED", "reference_plane": RF_REFERENCE_PLANE,
+                "loss_unverified_reasons": [],
                 "note": "RF OFF: P_delivered, |Gamma|, VSWR and C_e are undefined"}
+    if lv is not None and lv["rf_chain_status"] == "EXCLUDED_INSTRUMENT":
+        return {"rf_state": "RF_ON", "P_fwd_W": pf, "P_refl_W": pr, "gamma_abs": None, "VSWR": None,
+                "P_delivered_W": None, "P_delivered_kind": "EXCLUDED_INSTRUMENT_RF_CROSS_CHECK",
+                "reference_plane": RF_REFERENCE_PLANE, "loss_unverified_reasons": [],
+                "note": "calorimetric cross-check |z_x| > k_x: RF-dependent quantities EXCLUDED_INSTRUMENT until "
+                        "resolved (A9.1 UBQ-04; UB-RF-08; P1-IT-24); raw P_fwd / P_refl readings kept"}
     gamma = math.sqrt(pr / pf)
     vswr = (1.0 + gamma) / (1.0 - gamma)
+    unverified = []
     if loss["status"] == "MEASURED":
+        unverified = _loss_unverified_reasons(rec, loss, lv, gamma)
+    if loss["status"] == "MEASURED" and not unverified:
         lw = float(loss["value_W"])
         if lw > pf - pr:
             raise RFConsistencyError("record %r: MEASURED line/match loss exceeds P_fwd - P_refl" % rec.get("record_id"))
         p_del = pf - pr - lw
         kind = "P_RF_DELIVERED"
+    elif loss["status"] == "MEASURED":
+        p_del = pf - pr
+        kind = "P_RF_DELIVERED_UPPER_BOUND_LOSS_UNVERIFIED"
     else:
         p_del = pf - pr
         kind = "P_RF_DELIVERED_UPPER_BOUND_LOSS_NOT_MEASURED"
     return {"rf_state": "RF_ON", "P_fwd_W": pf, "P_refl_W": pr, "gamma_abs": gamma, "VSWR": vswr,
             "P_delivered_W": p_del, "P_delivered_kind": kind, "reference_plane": RF_REFERENCE_PLANE,
+            "loss_unverified_reasons": unverified,
             "note": "P_fwd is never P_plasma (A9.2)"}
 
 
@@ -590,9 +911,15 @@ def electron_cost(rec, rf_derived):
     if rf_derived["P_delivered_kind"] == "P_RF_DELIVERED":
         out.update({"C_e_W_per_A": rf_derived["P_delivered_W"] / i_e, "C_e_kind": "C_e",
                     "C_e_boundary": BOUNDARY_C_E, "C_e_reason": None})
+    elif rf_derived["P_delivered_W"] is None:
+        out.update({"C_e_W_per_A": None, "C_e_kind": None, "C_e_boundary": None,
+                    "C_e_reason": "P_delivered %s: C_e not formed" % rf_derived["P_delivered_kind"]})
     else:
         out.update({"C_e_W_per_A": rf_derived["P_delivered_W"] / i_e, "C_e_kind": "C_e_UPPER_BOUND",
-                    "C_e_boundary": BOUNDARY_C_E_UPPER, "C_e_reason": "line/match loss flagged, not measured"})
+                    "C_e_boundary": BOUNDARY_C_E_UPPER,
+                    "C_e_reason": ("line/match loss flagged, not measured"
+                                   if rf_derived["P_delivered_kind"].endswith("NOT_MEASURED")
+                                   else "line/match loss characterization not verified (A9.6 sec. 14)")})
     out.update({"C_e_DC_W_per_A": float(gen["P_generator_input_W"]) / i_e,
                 "C_e_DC_boundary": BOUNDARY_C_E_DC[gen["generator_class"]],
                 "C_e_DC_input_boundary_as_recorded": gen["input_boundary"], "C_e_DC_reason": None})
@@ -600,69 +927,342 @@ def electron_cost(rec, rf_derived):
 
 
 def current_closure(rec):
-    """Kirchhoff closure of the isolated electrical network: sum of signed terminal currents (positive = conventional
-    current INTO the network) should vanish; residual normalised by the largest terminal magnitude."""
+    """DESCRIPTIVE Kirchhoff sum of the isolated electrical network (P1-D-06, every record): sum of signed terminal
+    currents (positive = conventional current INTO the network) and that sum normalised by the largest terminal
+    magnitude. Never an admission test: ICP45_CAPACITY points are admitted only by kirchhoff_closure (A9.5 P1Q-15).
+    A NOT_MEASURED terminal is never summed as zero (sum None, state NOT_EVALUABLE_UNMEASURED_CHANNEL); an all-zero
+    set of terminal currents is reported as such, never as 'closed'."""
     terms = rec["terminals"]
     names = sorted(terms)
+    unmeasured = [n for n in names if terms[n]["basis"] == "NOT_MEASURED"]
+    note = ("descriptive residual (P1-D-06); ICP45_CAPACITY admission uses the owner rule A9.5 P1Q-15 "
+            "(kirchhoff_closure: |R_I| <= 3 u_R and |R_I| / max(I_e,collector, I_scale,min) <= 0.02)")
+    if unmeasured:
+        return {"terminals": names, "sum_A": None, "scale_A": None, "residual_rel": None,
+                "unmeasured_terminals": unmeasured, "closure_state": "NOT_EVALUABLE_UNMEASURED_CHANNEL", "note": note}
     vals = np.array([float(terms[n]["I_A"]) for n in names], dtype=float)
     total = float(vals.sum())
     scale = float(np.max(np.abs(vals))) if vals.size else 0.0
     return {"terminals": names, "sum_A": total, "scale_A": scale,
-            "residual_rel": (total / scale) if scale > 0 else None,
-            "note": "descriptive residual; acceptance limit TBD - frozen at LOCK-2 from S1b-type readings "
-                    "(A9-04 UB-N-07 form)"}
+            "residual_rel": (total / scale) if scale > 0 else None, "unmeasured_terminals": [],
+            "closure_state": "COMPUTED" if scale > 0 else "ALL_TERMINAL_CURRENTS_ZERO_NOT_A_CLOSURE_RESULT",
+            "note": note}
+
+
+# ------------------------------------------------------------------------------------------------ A9.5 P1Q-15
+def _check_closure_rule(closure_rule):
+    """Registered inputs of the owner Kirchhoff rule (A9.5 P1Q-15): rule_id, the owner's sign convention and its
+    registration id, I_scale,min (instrument-capability denominator floor, > 0, with its basis; no default) and an
+    optional registered channel correlation (covariance form). The factor 3 and the 2 % are owner constants and are
+    never accepted from a caller (any other key is refused). Returns a normalised copy or raises."""
+    if not isinstance(closure_rule, dict):
+        raise MissingInputError("closure_rule: expected an object, got %r" % type(closure_rule).__name__)
+    extra = sorted(set(closure_rule) - set(CLOSURE_RULE_ALLOWED))
+    if extra:
+        raise ClosureRuleError("closure_rule keys %s refused: the statistical factor %g and the fractional limit %g are "
+                               "owner constants (%s) and are never set or widened by a caller; the registered inputs "
+                               "are %s" % (extra, CLOSURE_K_SIGMA, CLOSURE_FRACTION_MAX, A95_REF,
+                                           list(CLOSURE_RULE_ALLOWED)))
+    _req(closure_rule, CLOSURE_RULE_REQUIRED, "closure_rule")
+    if closure_rule["sign_convention"] != KIRCHHOFF_SIGN_CONVENTION:
+        raise ClosureRuleError("closure_rule.sign_convention %r is not the owner's global convention %s (%s)"
+                               % (closure_rule["sign_convention"], KIRCHHOFF_SIGN_CONVENTION, A95_REF))
+    for k in ("rule_id", "sign_convention_id", "I_scale_min_basis"):
+        if not isinstance(closure_rule[k], str) or not closure_rule[k].strip():
+            raise MissingInputError("closure_rule.%s must be a non-empty registered string" % k)
+    floor = _num(closure_rule["I_scale_min_A"], "closure_rule.I_scale_min_A", allow_negative=False)
+    if floor <= 0.0:
+        raise MissingInputError("closure_rule.I_scale_min_A must be > 0 (registered instrument-capability floor)")
+    out = dict(closure_rule)
+    out["I_scale_min_A"] = floor
+    cov = closure_rule.get("covariance")
+    if cov is not None:
+        _req(cov, COVARIANCE_REQUIRED, "closure_rule.covariance")
+        names = cov["terminals"]
+        if (not isinstance(names, list) or not names or len(set(names)) != len(names)
+                or not all(isinstance(n, str) and n.strip() for n in names)):
+            raise ClosureRuleError("closure_rule.covariance.terminals must be a non-empty list of distinct terminal "
+                                   "names")
+        rho = cov["correlation"]
+        if not isinstance(rho, list) or len(rho) != len(names) or not all(
+                isinstance(r, list) and len(r) == len(names) for r in rho):
+            raise ClosureRuleError("closure_rule.covariance.correlation must be a %dx%d matrix" % (len(names),
+                                                                                                   len(names)))
+        m = np.array([[_num(x, "closure_rule.covariance.correlation") for x in r] for r in rho], dtype=float)
+        if not np.allclose(m, m.T, rtol=0.0, atol=1e-12) or not np.allclose(np.diag(m), 1.0, rtol=0.0, atol=1e-12) \
+                or np.any(np.abs(m) > 1.0 + 1e-12):
+            raise ClosureRuleError("closure_rule.covariance.correlation must be symmetric with unit diagonal and "
+                                   "|r_ij| <= 1")
+        if float(np.min(np.linalg.eigvalsh(m))) < -1e-10:
+            raise ClosureRuleError("closure_rule.covariance.correlation is not positive semi-definite")
+        if not isinstance(cov["covariance_id"], str) or not cov["covariance_id"].strip():
+            raise MissingInputError("closure_rule.covariance.covariance_id must be the registered id")
+        out["covariance"] = {"covariance_id": cov["covariance_id"], "terminals": list(names),
+                             "correlation": m.tolist()}
+    obc = closure_rule.get("open_by_construction_terminals")
+    reg_open = {}
+    if obc is not None:
+        if not isinstance(obc, list):
+            raise ClosureRuleError("closure_rule.open_by_construction_terminals must be a list of {terminal, basis}")
+        for x in obc:
+            _req(x, ("terminal", "basis"), "closure_rule.open_by_construction_terminals[]")
+            name, basis = x["terminal"], x["basis"]
+            if not isinstance(name, str) or not name.strip() or not isinstance(basis, str) or not basis.strip():
+                raise ClosureRuleError("closure_rule.open_by_construction_terminals: terminal and basis must be "
+                                       "non-empty registered strings")
+            if name in INTENTIONAL_PATH_TERMINALS:
+                raise ClosureRuleError("closure_rule.open_by_construction_terminals: %r is an intentional current path "
+                                       "and must be measured or declared NOT_MEASURED (A9.6 sec. 5; A9.5 P1Q-15); it "
+                                       "is never registered as open by construction" % name)
+            if name in reg_open or name in OPEN_BY_CONSTRUCTION_IMPLICIT:
+                raise ClosureRuleError("closure_rule.open_by_construction_terminals: %r listed twice or implicit"
+                                       % name)
+            reg_open[name] = basis
+    out["open_by_construction_terminals"] = [{"terminal": k, "basis": reg_open[k]} for k in sorted(reg_open)]
+    return out
+
+
+def _channel_uncertainty(t, name):
+    """u(I_k) of one MEASURED channel: root-sum-square of its registered components (A9.5 P1Q-15). Returns
+    (u_A, components, None) or (None, None, reason) - a missing component never defaults to zero."""
+    u = t.get("uncertainty")
+    if not isinstance(u, dict):
+        return None, None, ("u(I_k) unavailable for terminal %r (no uncertainty object with %s): the point cannot be "
+                            "evaluated (A9.5 P1Q-15 / P1Q-16 condition 3)" % (name, list(U_COMPONENTS)))
+    parts, comps = [], {}
+    for c in U_COMPONENTS:
+        v = u.get(c)
+        if isinstance(v, str) and U_EXPLICIT_ABSENT.get(c) == v:
+            comps[c] = v
+            continue
+        if v is None or isinstance(v, (bool, str)) or not isinstance(v, (int, float)) or not math.isfinite(float(v)) \
+                or v < 0:
+            return None, None, ("u(I_k) unavailable for terminal %r: component %s is %r (required: a non-negative "
+                                "number%s); the point cannot be evaluated (A9.5 P1Q-15 / P1Q-16 condition 3)"
+                                % (name, c, v, (" or the explicit token %r" % U_EXPLICIT_ABSENT[c])
+                                   if c in U_EXPLICIT_ABSENT else ""))
+        comps[c] = float(v)
+        parts.append(float(v))
+    if comps["u_resolution_A"] <= 0.0:
+        return None, None, ("u(I_k) unavailable for terminal %r: u_resolution_A must be > 0 (channel resolution from "
+                            "its certificate)" % name)
+    return math.sqrt(sum(p * p for p in parts)), comps, None
+
+
+def kirchhoff_closure(rec, closure_rule):
+    """Owner Kirchhoff current-closure rule for one ICP45_CAPACITY record (A9.5 P1Q-15).
+
+    R_I = sum_k I_k over every terminal crossing the registered network boundary (signed, conventional current INTO
+    the network positive; OPEN_CIRCUIT_BY_CONSTRUCTION terminals contribute I = 0 and u = 0 by construction, e.g. the
+    floating H-1 anode, whose potential is still recorded). u_R = sqrt(sum_k u^2(I_k)) for independent channels, or
+    sqrt(sum_ij r_ij u(I_i) u(I_j)) with a registered correlation (full covariance form). closure_valid only if
+    |R_I| <= 3 u_R AND |R_I| / max(I_e,collector, I_scale,min) <= 0.02. instrument_adequate = 3 u_R <= 0.02
+    I_e,collector (applied by icp45a_candidates at the RF-ON candidate point). Structural reasons (sign conventions
+    differ, a NOT_MEASURED intentional return path or I_body->ground not continuous, missing u(I_k), unintended
+    ground path, H-1 anode not physically disconnected / floating) make the record non-evaluable; no residual is then
+    formed. Pure arithmetic on recorded values; never widens a tolerance."""
+    rule = _check_closure_rule(closure_rule)
+    rid = rec.get("record_id")
+    terms = rec["terminals"]
+    cm = rec.get("capacity_monitoring") or {}
+    reasons = []
+    u_reasons = []          # the subset of reasons that are 'uncertainty not available' (A9.6 sec. 14 bullet 7)
+    u_ok = True
+    if cm.get("sign_convention_id") != rule["sign_convention_id"]:
+        reasons.append("sign convention %r differs from the closure rule's registered convention %r (rule %r): "
+                       "residuals not comparable, capacity point invalid (A9.5 P1Q-15: current sign conventions "
+                       "differ)" % (cm.get("sign_convention_id"), rule["sign_convention_id"], rule["rule_id"]))
+    reasons += capacity_structural_reasons(rec)      # anode, unmeasured return paths, unintended ground path
+    reg_open = {x["terminal"]: x["basis"] for x in rule["open_by_construction_terminals"]}
+    for name in sorted(terms):
+        if terms[name]["basis"] == "OPEN_CIRCUIT_BY_CONSTRUCTION" and name not in OPEN_BY_CONSTRUCTION_IMPLICIT \
+                and name not in reg_open:
+            reasons.append("terminal %r declared OPEN_CIRCUIT_BY_CONSTRUCTION but not registered as open by "
+                           "construction in closure rule %r (only the floating H-1 anode is open by construction "
+                           "without registration, A9.5 P1Q-15; every intentional current path is measured or "
+                           "declared NOT_MEASURED, A9.6 sec. 5): never a silently zeroed channel"
+                           % (name, rule["rule_id"]))
+    channels = {}
+    for name in sorted(terms):
+        t = terms[name]
+        basis = t["basis"]
+        if basis == "OPEN_CIRCUIT_BY_CONSTRUCTION":
+            channels[name] = {"basis": basis, "I_A": 0.0, "u_A": 0.0, "u_basis": "ZERO_BY_CONSTRUCTION",
+                              "open_basis": (reg_open.get(name) or ("floating H-1 anode (A9.5 P1Q-15)"
+                                                                    if name in OPEN_BY_CONSTRUCTION_IMPLICIT
+                                                                    else "NOT_REGISTERED"))}
+        elif basis == "NOT_MEASURED":
+            channels[name] = {"basis": basis, "I_A": None, "u_A": None}     # reason from capacity_structural_reasons
+        else:
+            sc = t.get("sign_convention_id")
+            if not isinstance(sc, str) or not sc.strip():
+                reasons.append("terminal %r declares no sign_convention_id: the channel is not shown transformed "
+                               "into the registered convention; the point cannot be evaluated" % name)
+            elif sc != rule["sign_convention_id"]:
+                reasons.append("current sign conventions differ between channels: terminal %r in %r, registered %r "
+                               "(A9.5 P1Q-15)" % (name, sc, rule["sign_convention_id"]))
+            u, comps, why = _channel_uncertainty(t, name)
+            if why:
+                reasons.append(why)
+                u_reasons.append(why)
+                u_ok = False
+            channels[name] = {"basis": basis, "I_A": float(t["I_A"]), "u_A": u, "u_components": comps,
+                              "sign_convention_id": sc}
+    ec = terms.get("electron_collector")
+    if not isinstance(ec, dict) or ec.get("basis") != "MEASURED":
+        reasons.append("dedicated electron-collector terminal not MEASURED: I_e,collector unavailable")
+    out = {"record_id": rid, "rule_id": rule["rule_id"], "sign_convention": KIRCHHOFF_SIGN_CONVENTION,
+           "sign_convention_id": rule["sign_convention_id"], "k_sigma": CLOSURE_K_SIGMA,
+           "fraction_max": CLOSURE_FRACTION_MAX, "owner_source": A95_REF, "I_scale_min_A": rule["I_scale_min_A"],
+           "channels": channels, "uncertainties_available": u_ok,
+           "V_anode_V": float(rec["h1_electrical"]["V_anode_V"])}
+    if not reasons:
+        meas = [n for n in sorted(channels) if channels[n]["basis"] == "MEASURED"]
+        cov = rule.get("covariance")
+        if cov is None:
+            u_r = math.sqrt(sum(channels[n]["u_A"] ** 2 for n in meas))
+            method = "INDEPENDENT_CHANNELS: u_R = sqrt(sum_k u^2(I_k))"
+        else:
+            idx = {n: i for i, n in enumerate(cov["terminals"])}
+            missing = [n for n in meas if n not in idx]
+            if missing:
+                why = ("registered covariance %r does not cover measured terminal(s) %s: u_R cannot be evaluated"
+                       % (cov["covariance_id"], missing))
+                reasons.append(why)
+                u_reasons.append(why)
+                u_ok = False
+                out["uncertainties_available"] = False
+            else:
+                corr = np.array(cov["correlation"], dtype=float)
+                s = float(sum(corr[idx[a], idx[b]] * channels[a]["u_A"] * channels[b]["u_A"]
+                              for a in meas for b in meas))
+                if not s > 0.0:
+                    why = "combined covariance-form variance %r is not positive: u_R not available" % s
+                    reasons.append(why)
+                    u_reasons.append(why)
+                    u_ok = False
+                    out["uncertainties_available"] = False
+                u_r = math.sqrt(s) if s > 0.0 else None
+                method = ("FULL_COVARIANCE (registered %s): u_R^2 = sum_ij r_ij u(I_i) u(I_j)"
+                          % cov["covariance_id"])
+    if reasons:
+        out.update({"evaluable": False, "R_I_A": None, "u_R_A": None, "I_e_collector_A": None,
+                    "statistical_ok": None, "fractional_ok": None, "closure_valid": False,
+                    "instrument_adequate": None, "instrument_adequate_floored": None, "reasons": reasons,
+                    "uncertainty_reasons": u_reasons,
+                    "exclusion_reasons": [r_ for r_ in reasons if r_ not in u_reasons]})
+        return out
+    r_i = sum(channels[n]["I_A"] for n in sorted(channels))
+    i_col = -channels["electron_collector"]["I_A"]
+    # A9.6 sec. 2 (owner restatement of A9.5 P1Q-15): denominator max(|I_e,collector|, I_scale,min) and instrument
+    # adequacy against 0.02 |I_e,collector| - the magnitude of the signed collector current
+    i_col_mag = abs(i_col)
+    denom = max(i_col_mag, rule["I_scale_min_A"])
+    frac = abs(r_i) / denom
+    stat_ok = abs(r_i) <= CLOSURE_K_SIGMA * u_r
+    frac_ok = frac <= CLOSURE_FRACTION_MAX
+    fails = []
+    if not stat_ok:
+        fails.append("statistical closure fails: |R_I| = %.6g A > %g u_R = %.6g A (A9.5 P1Q-15)"
+                     % (abs(r_i), CLOSURE_K_SIGMA, CLOSURE_K_SIGMA * u_r))
+    if not frac_ok:
+        fails.append("fractional closure exceeds 2 %%: |R_I| / max(I_e,collector, I_scale,min) = %.6g > %g "
+                     "(A9.5 P1Q-15)" % (frac, CLOSURE_FRACTION_MAX))
+    out.update({"evaluable": True, "R_I_A": r_i, "u_R_A": u_r, "u_R_method": method, "I_e_collector_A": i_col,
+                "denominator_A": denom, "denominator_form": A96_DENOMINATOR_FORM, "fraction": frac,
+                "statistical_ok": stat_ok, "fractional_ok": frac_ok,
+                "closure_valid": stat_ok and frac_ok,
+                "instrument_adequate": CLOSURE_K_SIGMA * u_r <= CLOSURE_FRACTION_MAX * i_col_mag,
+                # the same test against the floored denominator of this record's own fractional closure: used for the
+                # matched RF-OFF record (P1Q-18 recorder reading; consolidated verification MET-03), whose fractional
+                # failure is not decisive when its instrument cannot resolve 2 % of max(|I_e,collector|, I_scale,min)
+                "instrument_adequate_floored": CLOSURE_K_SIGMA * u_r <= CLOSURE_FRACTION_MAX * denom,
+                "reasons": fails, "uncertainty_reasons": [], "exclusion_reasons": []})
+    return out
+
+
+def i_e_cap_signed(i_e_collector_rf_on_A, i_e_collector_rf_off_A):
+    """I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF (A9.4 P1Q-10; confirmed A9.5 P1Q-16): signed currents under
+    the same registered convention; no absolute-value correction and no zero-clipping (a negative result stays
+    negative)."""
+    return i_e_collector_rf_on_A - i_e_collector_rf_off_A
 
 
 FACILITY_MATCH_REQUIRED = ("criteria_id", "p_chamber_rel_tol")
+
+
+PAIR_MATCH_FIELDS = (("collector", "V_collector_V"), ("collector", "reference_potential"),
+                     ("flows", "mdot_Ar_H1_mg_s"), ("flows", "mdot_icp_dedicated_mg_s"),
+                     ("extraction", "topology_id"), ("extraction", "electron_collecting_electrode"),
+                     ("gas_mode",), ("record_class",), ("hall_discharge_state",), ("stage_id",), ("h1_point_id",),
+                     ("h1_electrical", "config_id"), ("h1_electrical", "anode_state"),
+                     ("h1_electrical", "discharge_supply_connection"))
+
+
+def _check_match_rule(match):
+    if match is None:
+        raise MissingInputError("facility-electron check: the pressure-match rule (criteria_id, p_chamber_rel_tol) "
+                                "is required - TBD, frozen at P1-G0 (P1-IT-37); no default")
+    _req(match, FACILITY_MATCH_REQUIRED, "facility match rule")
+    return _num(match["p_chamber_rel_tol"], "facility match rule p_chamber_rel_tol", allow_negative=False)
+
+
+def facility_pair_mismatches(rf_on, rf_off, match=None):
+    """Every reason why a registered RF-ON / RF-OFF pair is NOT matched under the registered match rule (P1-D-07,
+    P1-IT-37): RF-ON P_fwd <= 0, RF-OFF P_fwd != 0, any PAIR_MATCH_FIELDS difference, p_chamber outside the relative
+    tolerance. Returns (list of reasons, p_chamber relative deviation). A missing match rule or an invalid record is an
+    input error and raises; a mismatch is a finding (A9.5 P1Q-15: 'RF-ON/RF-OFF pairing is not matched' excludes the
+    capacity point, which stays in the raw record with this reason)."""
+    for r in (rf_on, rf_off):
+        validate_operating_point(r)
+    tol = _check_match_rule(match)
+    why = []
+    if float(rf_on["rf"]["P_fwd_W"]) <= 0.0:
+        why.append("facility-electron check: the RF-ON record has P_fwd = %r W" % rf_on["rf"]["P_fwd_W"])
+    if float(rf_off["rf"]["P_fwd_W"]) != 0.0:
+        why.append("facility-electron check: the RF-OFF record has P_fwd = %r W" % rf_off["rf"]["P_fwd_W"])
+    for path in PAIR_MATCH_FIELDS:
+        a, b = rf_on, rf_off
+        for k in path:
+            a = a.get(k) if isinstance(a, dict) else None
+            b = b.get(k) if isinstance(b, dict) else None
+        if a != b:
+            why.append("facility-electron check: %s differs between records (%r vs %r)" % (".".join(path), a, b))
+    p_on, p_off = float(rf_on["pressures"]["p_chamber_Pa"]), float(rf_off["pressures"]["p_chamber_Pa"])
+    p_ref = max(abs(p_on), abs(p_off))
+    p_dev = abs(p_on - p_off) / p_ref if p_ref > 0 else 0.0
+    if p_dev > tol:
+        why.append("facility-electron check: p_chamber differs by %.6g (relative) > tolerance %r of rule %r "
+                   "(%r vs %r Pa)" % (p_dev, tol, match["criteria_id"], p_on, p_off))
+    return why, p_dev
 
 
 def facility_electron_check(rf_on, rf_off, match=None):
     """Facility-electron contribution (P1-D-07): collector current with the ICP RF OFF at the same point divided by
     the current with RF ON. 'Same point' = identical V_collector and its reference, mdot_Ar,H1, mdot_ICP,dedicated,
     gas_mode, record_class, Hall discharge state, stage and extraction topology, and p_chamber within the caller-supplied relative
-    tolerance (match['p_chamber_rel_tol']; TBD - frozen at P1-G0, P1-IT-37; no default). Descriptive; no threshold."""
-    for r in (rf_on, rf_off):
-        validate_operating_point(r)
-    if match is None:
-        raise MissingInputError("facility-electron check: the pressure-match rule (criteria_id, p_chamber_rel_tol) "
-                                "is required - TBD, frozen at P1-G0 (P1-IT-37); no default")
-    _req(match, FACILITY_MATCH_REQUIRED, "facility match rule")
-    tol = _num(match["p_chamber_rel_tol"], "facility match rule p_chamber_rel_tol", allow_negative=False)
-    if float(rf_on["rf"]["P_fwd_W"]) <= 0.0:
-        raise P1RecordError("facility-electron check: the RF-ON record has P_fwd = %r W" % rf_on["rf"]["P_fwd_W"])
-    if float(rf_off["rf"]["P_fwd_W"]) != 0.0:
-        raise P1RecordError("facility-electron check: the RF-OFF record has P_fwd = %r W" % rf_off["rf"]["P_fwd_W"])
-    for path in (("collector", "V_collector_V"), ("collector", "reference_potential"),
-                 ("flows", "mdot_Ar_H1_mg_s"), ("flows", "mdot_icp_dedicated_mg_s"),
-                 ("extraction", "topology_id"), ("extraction", "electron_collecting_electrode"),
-                 ("gas_mode",), ("record_class",), ("hall_discharge_state",), ("stage_id",), ("h1_point_id",),
-                 ("h1_electrical", "config_id"), ("h1_electrical", "anode_state")):
-        a, b = rf_on, rf_off
-        for k in path:
-            a = a.get(k) if isinstance(a, dict) else None
-            b = b.get(k) if isinstance(b, dict) else None
-        if a != b:
-            raise P1RecordError("facility-electron check: %s differs between records (%r vs %r)"
-                                % (".".join(path), a, b))
-    p_on, p_off = float(rf_on["pressures"]["p_chamber_Pa"]), float(rf_off["pressures"]["p_chamber_Pa"])
-    p_ref = max(abs(p_on), abs(p_off))
-    p_dev = abs(p_on - p_off) / p_ref if p_ref > 0 else 0.0
-    if p_dev > tol:
-        raise P1RecordError("facility-electron check: p_chamber differs by %.6g (relative) > tolerance %r of rule %r "
-                            "(%r vs %r Pa)" % (p_dev, tol, match["criteria_id"], p_on, p_off))
+    tolerance (match['p_chamber_rel_tol']; TBD - frozen at P1-G0, P1-IT-37; no default). Descriptive; no threshold.
+    Called directly on a pair that is not matched it raises (the pair has no facility correction); the bundle reducer
+    instead records such a pair as NOT matched and excludes its capacity point with the reasons
+    (facility_pair_mismatches; A9.5 P1Q-15)."""
+    why, p_dev = facility_pair_mismatches(rf_on, rf_off, match)
+    if why:
+        raise P1RecordError("; ".join(why))
     i_on, i_off = float(rf_on["collector"]["I_e_A"]), float(rf_off["collector"]["I_e_A"])
     out = {"I_e_rf_on_A": i_on, "I_e_rf_off_A": i_off,
            "I_e_icp_corrected_A": i_on - i_off,
            "facility_fraction": (i_off / i_on) if i_on != 0 else None,
-           "p_chamber_rel_dev": p_dev, "match_rule_id": match["criteria_id"],
+           "p_chamber_rel_dev": p_dev, "match_rule_id": match["criteria_id"], "pair_matched": True,
            "records": [rf_on["record_id"], rf_off["record_id"]]}
     # A9.4 P1Q-10 capacity measurand: the dedicated electron-collector terminal current (electrons collected = -I_A
-    # under the registered sign convention), RF ON minus the matched RF OFF record
+    # under the registered sign convention), RF ON minus the matched RF OFF record, SIGNED (A9.5 P1Q-16: no
+    # absolute-value correction, no zero-clipping). Only MEASURED channels form it (never a NOT_MEASURED channel as 0).
     ec_on, ec_off = rf_on["terminals"].get("electron_collector"), rf_off["terminals"].get("electron_collector")
-    if isinstance(ec_on, dict) and isinstance(ec_off, dict):
+    if isinstance(ec_on, dict) and isinstance(ec_off, dict) and ec_on.get("basis") == "MEASURED" \
+            and ec_off.get("basis") == "MEASURED":
         c_on, c_off = -float(ec_on["I_A"]), -float(ec_off["I_A"])
         out.update({"I_e_collector_rf_on_A": c_on, "I_e_collector_rf_off_A": c_off,
-                    "I_e_collector_corrected_A": c_on - c_off})
+                    "I_e_collector_corrected_A": i_e_cap_signed(c_on, c_off)})
     return out
 
 
@@ -690,38 +1290,84 @@ def dwell_metrics(dwell):
     return out
 
 
+STABLE_CRITERIA_REQUIRED = ("criteria_id", "max_abs_drift_rel_I_e", "max_abs_drift_rel_P_refl", "max_step_over_std",
+                            "min_duration_s", "min_ignition_success_fraction")
+
+
+def check_stable_criteria(criteria):
+    """Owner stable-region criteria (P1Q-01): a registered criteria_id and finite, non-negative limits; the minimum
+    ignition success fraction lies in [0, 1]. Raises on anything else (a NaN limit would make every comparison false
+    and report WITHIN_OWNER_CRITERIA - consolidated verification SW-01). Returns a normalised copy."""
+    _req(criteria, STABLE_CRITERIA_REQUIRED, "criteria")
+    if not isinstance(criteria["criteria_id"], str) or not criteria["criteria_id"].strip():
+        raise MissingInputError("criteria.criteria_id must be a non-empty registered id")
+    out = {"criteria_id": criteria["criteria_id"]}
+    for k in STABLE_CRITERIA_REQUIRED[1:]:
+        out[k] = _num(criteria[k], "criteria." + k, allow_negative=False)
+    if out["min_ignition_success_fraction"] > 1.0:
+        raise P1RecordError("criteria.min_ignition_success_fraction = %r is not a fraction in [0, 1]"
+                            % out["min_ignition_success_fraction"])
+    return out
+
+
+def _check_ignition_counts(ignition):
+    _req(ignition, ("attempts", "successes"), "ignition")
+    a, n = ignition["attempts"], ignition["successes"]
+    for k, v in (("attempts", a), ("successes", n)):
+        if isinstance(v, bool) or not isinstance(v, int) or v < 0:
+            raise MissingInputError("ignition.%s must be a non-negative integer, got %r" % (k, v))
+    if n > a:
+        raise P1RecordError("ignition: successes %d > attempts %d" % (n, a))
+    return a, n
+
+
 def classify_stable_region(metrics, criteria=None, ignition=None):
-    """Apply OWNER-SUPPLIED stable-region criteria. Without criteria: NOT_EVALUATED (values are TBD / PROPOSED)."""
+    """Apply OWNER-SUPPLIED stable-region criteria. Without criteria: NOT_EVALUATED (values are TBD / PROPOSED).
+    Criteria and ignition counts are validated first (check_stable_criteria, integer 0 <= successes <= attempts);
+    zero attempts give no repeatability evidence and fail the ignition criterion."""
     if criteria is None:
         return {"verdict": "NOT_EVALUATED", "reason": "stable-region criteria not frozen (owner question P1Q-01)"}
-    _req(criteria, ("criteria_id", "max_abs_drift_rel_I_e", "max_abs_drift_rel_P_refl", "max_step_over_std",
-                    "min_duration_s", "min_ignition_success_fraction"), "criteria")
+    crit = check_stable_criteria(criteria)
     if ignition is None:
         raise MissingInputError("stable region: ignition repeatability record required with criteria")
-    _req(ignition, ("attempts", "successes"), "ignition")
+    attempts, successes = _check_ignition_counts(ignition)
     fails = []
-    if metrics["duration_s"] < float(criteria["min_duration_s"]):
+    dur = metrics.get("duration_s")
+    if dur is None or not math.isfinite(float(dur)) or float(dur) < crit["min_duration_s"]:
         fails.append("duration")
     for key, lim in (("I_e_A", "max_abs_drift_rel_I_e"), ("P_refl_W", "max_abs_drift_rel_P_refl")):
         m = metrics.get(key)
-        if m is None or m["drift_rel"] is None or abs(m["drift_rel"]) > float(criteria[lim]):
+        if m is None or m["drift_rel"] is None or not math.isfinite(m["drift_rel"]) or \
+                abs(m["drift_rel"]) > crit[lim]:
             fails.append("drift " + key)
-        if m is not None and m["max_step_over_std"] is not None and m["max_step_over_std"] > float(
-                criteria["max_step_over_std"]):
+        if m is not None and m["max_step_over_std"] is not None and (not math.isfinite(m["max_step_over_std"]) or
+                                                                     m["max_step_over_std"] > crit["max_step_over_std"]):
             fails.append("mode-jump " + key)
-    frac = ignition["successes"] / ignition["attempts"] if ignition["attempts"] else 0.0
-    if frac < float(criteria["min_ignition_success_fraction"]):
+    frac = successes / attempts if attempts else 0.0
+    if frac < crit["min_ignition_success_fraction"] or attempts == 0:
         fails.append("ignition repeatability")
     return {"verdict": "WITHIN_OWNER_CRITERIA" if not fails else "OUTSIDE_OWNER_CRITERIA",
-            "criteria_id": criteria["criteria_id"], "failed": fails, "ignition_success_fraction": frac,
+            "criteria_id": crit["criteria_id"], "failed": fails, "ignition_success_fraction": frac,
             "note": "engineering handoff classification for P2 only; not an architecture gate"}
 
 
 REGISTRATION_REQUIRED = ("registration_id", "I_d_max_H1_A", "basis", "source", "registered_point_ids")
-MARGIN_RULE_REQUIRED = ("rule_id", "k_one_sided", "u_I_e_A", "u_I_d_max_A")
+MARGIN_RULE_REQUIRED = ("rule_id", "k_one_sided", "alpha_one_sided", "k_basis")
+# owner alpha of the one-sided margin gate (P1-IT-29; A9.1 UBQ-02 / UBQ-07: 'one-sided lower confidence bound > 0;
+# one-sided alpha 0.05 per absolute gate'); k_one_sided may not be below the normal one-sided quantile of that alpha
+# (a registered t-basis can only give a larger k). Consolidated verification MET-04 / SW-10.
+MARGIN_ALPHA_ONE_SIDED = 0.05
+MARGIN_K_MIN = 1.6448536269514722      # Phi^-1(1 - 0.05), standard normal one-sided quantile (checked in the tests)
+MARGIN_K_ROUNDING_TOL = 5e-5            # a k quoted to 4-5 significant figures (1.6449 / 1.64485) is the same quantile
+# the margin rule's uncertainties are part of A9.5 P1Q-16 eligibility condition (3): when one is absent (key missing
+# or None) or not > 0 the result is ICP45 = NOT_EVALUATED with condition (3) false - never a hidden default, never a
+# raise (A9.5: 'until all four exist: ICP45 = NOT_EVALUATED'); a negative or non-numeric value is an input error
+MARGIN_RULE_UNCERTAINTIES = ("u_I_e_A", "u_I_d_max_A")
 
 
 def _check_registration(registration, margin_rule):
+    """Returns (I_d,max,H1, k_one_sided, u_I_e_A or None, u_I_d_max_A or None, reasons why a margin-rule
+    uncertainty is unavailable)."""
     _req(registration, REGISTRATION_REQUIRED, "registration")
     if registration["basis"] != REGISTRATION_BASIS:
         raise RegistrationError("I_d,max,H1 basis %r refused: only %s (the 8.33 A stand ceiling and the 7.5 A "
@@ -739,9 +1385,35 @@ def _check_registration(registration, margin_rule):
     if idm <= 0:
         raise RegistrationError("I_d,max,H1 must be > 0")
     k = _num(margin_rule["k_one_sided"], "margin_rule.k_one_sided", allow_negative=False)
-    ue = _num(margin_rule["u_I_e_A"], "margin_rule.u_I_e_A", allow_negative=False)
-    ud = _num(margin_rule["u_I_d_max_A"], "margin_rule.u_I_d_max_A", allow_negative=False)
-    return idm, k, ue, ud
+    alpha = _num(margin_rule["alpha_one_sided"], "margin_rule.alpha_one_sided", allow_negative=False)
+    if alpha != MARGIN_ALPHA_ONE_SIDED:
+        raise RegistrationError("margin_rule.alpha_one_sided = %r: the owner value is one-sided alpha %g per absolute "
+                                "gate (P1-IT-29; A9.1 UBQ-02 / UBQ-07); never set by a caller" % (alpha,
+                                                                                               MARGIN_ALPHA_ONE_SIDED))
+    if k < MARGIN_K_MIN - MARGIN_K_ROUNDING_TOL:
+        raise RegistrationError("margin_rule.k_one_sided = %r is below the one-sided normal quantile %.6f for alpha "
+                                "%g: the lower bound would not be a 95 %% one-sided bound (P1-IT-29; a registered "
+                                "t-basis can only increase k)" % (k, MARGIN_K_MIN, MARGIN_ALPHA_ONE_SIDED))
+    if not isinstance(margin_rule["k_basis"], str) or not margin_rule["k_basis"].strip():
+        raise MissingInputError("margin_rule.k_basis must state the distribution / effective degrees of freedom of k")
+    vals, why = [], []
+    for key in MARGIN_RULE_UNCERTAINTIES:
+        v = margin_rule.get(key)
+        if v is None:
+            vals.append(None)
+            why.append("margin_rule.%s not available (A9.5 P1Q-16 condition 3: all required uncertainties "
+                       "available)" % key)
+            continue
+        v = _num(v, "margin_rule." + key, allow_negative=False)
+        if v <= 0.0:
+            vals.append(None)
+            why.append("margin_rule.%s = %r: a zero standard uncertainty is not a valid uncertainty of a measured / "
+                       "registered current and is treated as not available (DERIVED P1Q-19 ext: JCGM 100:2008 F.2.2.1 - "
+                       "even identical repeated indications leave a non-zero resolution uncertainty); condition 3 not "
+                       "met" % (key, v))
+            continue
+        vals.append(v)
+    return idm, k, vals[0], vals[1], why
 
 
 def icp45a_margin(i_e_cap_A, idm, k, ue, ud):
@@ -752,87 +1424,225 @@ def icp45a_margin(i_e_cap_A, idm, k, ue, ud):
     return {"M_n": m_n, "u_M_n": u_m, "M_n_lower": m_n - k * u_m}
 
 
-CLOSURE_RULE_REQUIRED = ("rule_id", "residual_rel_tol", "sign_convention_id")
+def _point_eligibility(fc_ok, ev_on, ev_off, closure_ok):
+    return {"1_capacity_point_passes_current_closure": bool(closure_ok),
+            "2_matched_rf_off_correction_valid": bool(fc_ok),
+            "3_required_channel_uncertainties_available": bool(ev_on is not None and ev_off is not None
+                                                               and ev_on["uncertainties_available"]
+                                                               and ev_off["uncertainties_available"]),
+            "4_I_d_max_H1_registered": True}
 
 
-def _check_closure_rule(closure_rule):
-    """Registered Kirchhoff-closure tolerance for capacity points (A9.4 P1Q-13; value TBD - registered, never set
-    here). Returns the tolerance or raises."""
-    _req(closure_rule, CLOSURE_RULE_REQUIRED, "closure_rule")
-    tol = _num(closure_rule["residual_rel_tol"], "closure_rule.residual_rel_tol", allow_negative=False)
-    if not isinstance(closure_rule["sign_convention_id"], str) or not closure_rule["sign_convention_id"].strip():
-        raise MissingInputError("closure_rule.sign_convention_id must name the registered sign convention")
-    return tol
+def _add(lst, items):
+    for x in items:
+        if x not in lst:
+            lst.append(x)
 
 
-def icp45a_candidates(records, registration, facility_checks, closure_rule=None):
-    """Split validated operating-point records into I_e,cap CAPACITY candidates and exclusions (I_E_CAP_DEFINITION).
-    facility_checks: {rf_on_record_id: facility_electron_check(...) result}. closure_rule: registered Kirchhoff
-    tolerance (A9.4 P1Q-13); when None the closure of a candidate cannot be validated and it is excluded."""
+def isolation_class_reasons(rec):
+    """Recorded ICP body / collector potentials outside the registered 350 V operating class of the isolation (A9.4
+    P1Q-14; A9.6 sec. 5; consolidated verification E4). Returns reasons (empty = inside). A record outside the class is
+    OUT_OF_DOMAIN (campaign) / an excluded capacity point (reducer): the isolation is not qualified there - never a
+    FAIL and never evaluated as if it were."""
+    vals = [("collector.V_collector_V (reference %s)" % rec["collector"]["reference_potential"],
+             float(rec["collector"]["V_collector_V"]))]
+    cm = rec.get("capacity_monitoring")
+    if isinstance(cm, dict) and cm.get("V_icp_body_V") is not None and cm.get("V_electron_collector_V") is not None:
+        vb, vc = float(cm["V_icp_body_V"]), float(cm["V_electron_collector_V"])
+        vals += [("capacity_monitoring.V_icp_body_V", vb), ("capacity_monitoring.V_electron_collector_V", vc),
+                 ("V_electron_collector - V_icp_body", vc - vb)]
+    return ["%s = %r V outside the registered isolation operating class |V| <= %g V (A9.4 P1Q-14; A9.6 sec. 5): "
+            "OUT_OF_DOMAIN" % (name, v, ISOLATION_V_OPERATING_MAX_V) for name, v in vals
+            if abs(v) > ISOLATION_V_OPERATING_MAX_V]
+
+
+def _point_config_reasons(rec, pts):
+    why = list(isolation_class_reasons(rec))
+    if rec["stage_id"] not in ICP45A_CAPACITY_STAGES:
+        why.append("stage %r is not a capacity stage %s" % (rec["stage_id"], ICP45A_CAPACITY_STAGES))
+    if rec["extraction"]["electron_collecting_electrode"] != "DEDICATED_ELECTRON_COLLECTOR_TARGET":
+        why.append("electron sink %r is not the dedicated electron-collecting electrode (A9.4 P1Q-10)"
+                   % rec["extraction"]["electron_collecting_electrode"])
+    if rec["gas_mode"] != "G-REUSE":
+        why.append("gas_mode %r (a dedicated feed is diagnostic only, A9.3 OQ-RFQ-10)" % rec["gas_mode"])
+    if rec["rf_pickup_check"] != "DONE":
+        why.append("rf_pickup_check NOT_DONE")
+    if rec.get("h1_point_id") not in pts:
+        why.append("h1_point_id %r not a registered H-1 point" % rec.get("h1_point_id"))
+    return why
+
+
+def u_i_e_cap_channels(u_on, u_off, correlation=None):
+    """Standard uncertainty of I_e,cap = I_on - I_off from the two collector-channel standard uncertainties (DERIVED,
+    P1Q-23(b)): JCGM 100:2008 clause 5.2.2 Eq. (13)/(15) with sensitivities +1 and -1,
+    u^2 = u_on^2 + u_off^2 - 2 r u_on u_off; r is a REGISTERED RF-ON / RF-OFF correlation of the collector channel
+    ({'correlation_id', 'r'}, -1 <= r <= 1) or, when none is registered, r = 0 reported as an ASSUMPTION (clause 5.1.2
+    Eq. (10); clause 5.2.1: significant correlations must be taken into account). Returns (u, basis)."""
+    if correlation is None:
+        r, basis = 0.0, ("ASSUMPTION_INDEPENDENT_RF_ON_RF_OFF (r = 0; no registered correlation; JCGM 100:2008 5.1.2 "
+                         "Eq. (10); 5.2.1 requires a significant correlation to be taken into account once it is "
+                         "registered)")
+    else:
+        r = float(correlation["r"])
+        basis = ("REGISTERED_CORRELATION %s (r = %.6g; JCGM 100:2008 5.2.2 Eq. (13)/(15), sensitivities +1 / -1)"
+                 % (correlation["correlation_id"], r))
+    var = u_on ** 2 + u_off ** 2 - 2.0 * r * u_on * u_off
+    return (math.sqrt(var) if var > 0.0 else 0.0), basis
+
+
+def _check_correlation(corr):
+    """Optional registered RF-ON / RF-OFF collector-channel correlation (P1Q-23(b)); None when not registered."""
+    if corr is None:
+        return None
+    _req(corr, ("correlation_id", "r"), "margin_rule.rf_on_off_collector_correlation")
+    if not isinstance(corr["correlation_id"], str) or not corr["correlation_id"].strip():
+        raise MissingInputError("margin_rule.rf_on_off_collector_correlation.correlation_id must be the registered id")
+    r = _num(corr["r"], "margin_rule.rf_on_off_collector_correlation.r")
+    if r < -1.0 or r > 1.0:
+        raise RegistrationError("registered correlation r = %r outside [-1, 1] (JCGM 100:2008 5.2.2)" % r)
+    return {"correlation_id": corr["correlation_id"], "r": r}
+
+
+def icp45a_candidates(records, registration, facility_checks, closure_rule=None, correlation=None):
+    """Split validated operating-point records into I_e,cap CAPACITY candidates, NOT_EVALUATED_INSTRUMENT points,
+    NOT_EVALUATED_UNCERTAINTY points and exclusions (I_E_CAP_DEFINITION; A9.5 P1Q-15 / P1Q-16; A9.6 sec. 14).
+    facility_checks: {rf_on_record_id: facility_electron_check result, or a {'pair_matched': False,
+    'mismatch_reasons': [...]} entry for a registered pair that is not matched}. closure_rule: the registered inputs of
+    the owner Kirchhoff rule; when None no capacity point can be closure-validated and it is excluded. correlation: the
+    optional registered RF-ON / RF-OFF collector correlation (P1Q-23(b)). Every excluded point keeps its reasons (and,
+    where formed, its closure record).
+
+    A capacity point is an RF-ON ICP45_CAPACITY record. Outcome precedence (DERIVED, P1Q-22; PRECEDENCE_NOTE):
+    (i) an A9.5 P1Q-15 exclusion that does not depend on the closure test (pairing not matched / missing, anode not
+    floating, intentional return path unmeasured, unintended ground path, sign conventions differ, synthetic and
+    measured mixed, closure rule not registered, point not registered ...) -> EXCLUDED; (ii) otherwise a missing
+    channel uncertainty u(I_k) (or u_R not formable) -> NOT_EVALUATED_UNCERTAINTY (A9.6 sec. 14 'missing uncertainty ->
+    NOT_EVALUATED'); (iii) otherwise a STATISTICAL closure failure |R_I| > 3 u_R on the RF-ON or matched RF-OFF record ->
+    EXCLUDED (the test is normalised to the instrument's own u_R, so instrument inadequacy cannot explain it);
+    (iv) otherwise, if 3 u_R > 0.02 |I_e,collector| at the RF-ON point -> NOT_EVALUATED_INSTRUMENT, any fractional-only
+    failure kept as closure_test_results_not_decisive; (v) otherwise a fractional failure -> EXCLUDED; (vi) otherwise
+    CLOSURE_VALID_CANDIDATE. Returns (candidates, excluded, not_evaluated_instrument, not_evaluated_uncertainty)."""
     pts = set(registration["registered_point_ids"])
     by_id = {r["record_id"]: r for r in records}
-    tol = _check_closure_rule(closure_rule) if closure_rule is not None else None
-    cands, excluded = [], []
+    rule = _check_closure_rule(closure_rule) if closure_rule is not None else None
+    correlation = _check_correlation(correlation)
+    cands, excluded, instrument, uncert = [], [], [], []
     for rec in records:
-        why = []
-        if rec["record_class"] != CAPACITY_LABEL:
-            why.append("record_class %r is not %s (Hall-ON records are %s; diagnostic variants never feed I_e,cap)"
-                       % (rec["record_class"], CAPACITY_LABEL, CONSISTENCY_LABEL))
-        if rec["stage_id"] not in ICP45A_CAPACITY_STAGES:
-            why.append("stage %r is not a capacity stage %s" % (rec["stage_id"], ICP45A_CAPACITY_STAGES))
-        if rec["hall_discharge_state"] != "OFF":
-            why.append("Hall discharge supply ON: H-1 anode sink, current continuity bounds the ICP current by I_d; "
-                       "NEUTRALIZATION_CONSISTENCY record, not a capacity record")
-        if rec["extraction"]["electron_collecting_electrode"] != "DEDICATED_ELECTRON_COLLECTOR_TARGET":
-            why.append("electron sink %r is not the dedicated electron-collecting electrode (A9.4 P1Q-10)"
-                       % rec["extraction"]["electron_collecting_electrode"])
-        if rec["gas_mode"] != "G-REUSE":
-            why.append("gas_mode %r (a dedicated feed is diagnostic only, A9.3 OQ-RFQ-10)" % rec["gas_mode"])
-        if float(rec["rf"]["P_fwd_W"]) <= 0.0:
-            why.append("RF OFF (not ICP-supplied current)")
-        if rec["rf_pickup_check"] != "DONE":
-            why.append("rf_pickup_check NOT_DONE")
-        if rec.get("h1_point_id") not in pts:
-            why.append("h1_point_id %r not a registered H-1 point" % rec.get("h1_point_id"))
+        if rec["record_class"] != CAPACITY_LABEL or rec["hall_discharge_state"] != "OFF" or \
+                float(rec["rf"]["P_fwd_W"]) <= 0.0:
+            why = []
+            if rec["record_class"] != CAPACITY_LABEL:
+                why.append("record_class %r is not %s (Hall-ON records are %s; diagnostic variants never feed "
+                           "I_e,cap)" % (rec["record_class"], CAPACITY_LABEL, CONSISTENCY_LABEL))
+            if rec["hall_discharge_state"] != "OFF":
+                why.append("Hall discharge supply ON: H-1 anode sink, current continuity bounds the ICP current by "
+                           "I_d; NEUTRALIZATION_CONSISTENCY record, not a capacity record")
+            if float(rec["rf"]["P_fwd_W"]) <= 0.0:
+                why.append("RF OFF (not ICP-supplied current; an RF-OFF record is the facility/background term of a "
+                           "pair, not a capacity point)")
+            why += _point_config_reasons(rec, pts)
+            excluded.append({"record_id": rec["record_id"], "outcome": "EXCLUDED", "reasons": why})
+            continue
+        # from here on: an RF-ON ICP45_CAPACITY record = a capacity point (A9.5 P1Q-15 / P1Q-16)
+        struct, unc, stat_fails, frac_fails = _point_config_reasons(rec, pts), [], [], []
         fc = facility_checks.get(rec["record_id"])
-        if fc is None and not why:
-            why.append("no matched RF-OFF facility pair: facility-electron correction missing (P1-D-07)")
-        if fc is not None and not why and "I_e_collector_corrected_A" not in fc:
-            why.append("dedicated electron-collector current missing in the RF-ON / RF-OFF pair")
+        matched = fc is not None and fc.get("pair_matched") is not False
+        fc_ok = matched and "I_e_collector_corrected_A" in fc
+        off_id = fc["records"][1] if fc is not None else None
+        if fc is None:
+            struct.append("no matched RF-OFF facility pair: facility-electron correction missing; RF-ON/RF-OFF "
+                          "pairing not matched (P1-D-07; A9.5 P1Q-15 / P1Q-16 condition 2)")
+        elif not matched:
+            struct.append("RF-ON/RF-OFF pairing not matched with RF-OFF record %r under match rule %r (A9.5 P1Q-15 "
+                          "exclusion; P1-D-07, P1-IT-37): %s"
+                          % (off_id, fc.get("match_rule_id"), "; ".join(fc.get("mismatch_reasons") or [])))
+        elif not fc_ok:
+            struct.append("dedicated electron-collector current missing (or not MEASURED) in the RF-ON / RF-OFF pair")
+        if fc is not None and bool(by_id[off_id]["synthetic"]) != bool(rec["synthetic"]):
+            struct.append("synthetic and measured evidence mixed in the RF-ON / RF-OFF pair (A9.5 P1Q-15 exclusion)")
+        ev_on = ev_off = None
         closure = None
-        if not why:
-            off_id = fc["records"][1]
-            closure = {rec["record_id"]: current_closure(rec)["residual_rel"],
-                       off_id: current_closure(by_id[off_id])["residual_rel"]}
-            if tol is None:
-                why.append("Kirchhoff closure tolerance not registered (P1-IT-47): the capacity point cannot be "
-                           "validated (A9.4 P1Q-13)")
-            else:
-                # residuals are only comparable with the registered tolerance under the rule's own sign convention
-                conv = {rid_: (by_id[rid_].get("capacity_monitoring") or {}).get("sign_convention_id")
-                        for rid_ in closure}
-                off_conv = {k_: v_ for k_, v_ in conv.items() if v_ != closure_rule["sign_convention_id"]}
-                if off_conv:
-                    why.append("sign convention %s differs from the closure rule's registered convention %r (rule "
-                               "%r): residuals not comparable, capacity point invalid (A9.4 P1Q-13)"
-                               % (off_conv, closure_rule["sign_convention_id"], closure_rule["rule_id"]))
-            if tol is not None and not why:
-                # residual None = every terminal current is zero (the sum is then exactly zero: closed)
-                bad = {k_: v_ for k_, v_ in closure.items() if v_ is not None and abs(v_) > tol}
-                if bad:
-                    why.append("Kirchhoff residual beyond the registered tolerance %r (rule %r): capacity point "
-                               "invalid (A9.4 P1Q-13): %s" % (tol, closure_rule["rule_id"], bad))
-        if why:
-            excluded.append({"record_id": rec["record_id"], "reasons": why})
+        if rule is None:
+            struct.append("Kirchhoff closure rule not registered (P1-IT-47 / P1-IT-48: registered sign convention id "
+                          "and I_scale,min; A9.5 P1Q-15): the capacity point cannot be validated")
+            _add(struct, ["RF-ON record %r: %s" % (rec["record_id"], r_) for r_ in capacity_structural_reasons(rec)])
         else:
-            cands.append({"record_id": rec["record_id"], "label": CAPACITY_LABEL, "synthetic": rec["synthetic"],
-                          "h1_point_id": rec["h1_point_id"], "stage_id": rec["stage_id"],
-                          "electron_collecting_electrode": rec["extraction"]["electron_collecting_electrode"],
-                          "I_e_collector_rf_on_A": fc["I_e_collector_rf_on_A"],
-                          "I_e_collector_rf_off_A": fc["I_e_collector_rf_off_A"],
-                          "I_e_collector_corrected_A": fc["I_e_collector_corrected_A"],
-                          "closure_residual_rel": closure, "closure_rule_id": closure_rule["rule_id"]})
-    return cands, excluded
+            ev_on = kirchhoff_closure(rec, rule)
+            closure = {rec["record_id"]: ev_on}
+            evs = [("RF-ON", ev_on)]
+            if fc is not None:
+                ev_off = kirchhoff_closure(by_id[off_id], rule)
+                closure[off_id] = ev_off
+                evs.append(("matched RF-OFF" if matched else "paired (not matched) RF-OFF", ev_off))
+            for tag, ev in evs:
+                pre = "%s record %r: " % (tag, ev["record_id"])
+                if ev["evaluable"]:
+                    _add(stat_fails, [pre + r_ for r_ in ev["reasons"] if r_.startswith("statistical")])
+                    _add(frac_fails, [pre + r_ for r_ in ev["reasons"] if r_.startswith("fractional")])
+                else:
+                    _add(struct, [pre + r_ for r_ in ev["exclusion_reasons"]])
+                    _add(unc, [pre + r_ for r_ in ev["uncertainty_reasons"]])
+        closure_ok = ev_on is not None and ev_off is not None and ev_on["closure_valid"] and ev_off["closure_valid"]
+        elig = _point_eligibility(fc_ok, ev_on, ev_off, closure_ok)
+        entry = {"record_id": rec["record_id"], "rf_off_record_id": off_id, "closure": closure, "eligibility": elig}
+        msgs = []
+        if ev_on is not None and ev_on["instrument_adequate"] is False:
+            msgs.append("instrument adequacy: 3 u_R = %.6g A > 0.02 |I_e,collector| = %.6g A at this candidate "
+                        "qualification point: the instrumentation cannot establish the 2 %% closure; the tolerance "
+                        "is never widened (A9.5 P1Q-15; A9.6 sec. 2)"
+                        % (CLOSURE_K_SIGMA * ev_on["u_R_A"], CLOSURE_FRACTION_MAX * abs(ev_on["I_e_collector_A"])))
+        # matched RF-OFF record (P1Q-18 recorder reading, TBD_OWNER): no adequacy test of its own on a passing record,
+        # but a fractional-only failure that its instrument cannot resolve (3 u_R > 0.02 max(|I_e,collector|,
+        # I_scale,min)) is not decisive - NOT_EVALUATED_INSTRUMENT, never an EXCLUDED closure failure (MET-03)
+        if ev_off is not None and ev_off["instrument_adequate_floored"] is False and ev_off["fractional_ok"] is False:
+            msgs.append("instrument adequacy of the matched RF-OFF record %r: 3 u_R = %.6g A > 0.02 max(|I_e,collector|, "
+                        "I_scale,min) = %.6g A: its 2 %% closure cannot be resolved by the instrumentation, a "
+                        "fractional-only failure is not decisive (A9.5 P1Q-15; P1Q-18 recorder reading, TBD_OWNER; "
+                        "consolidated verification MET-03)"
+                        % (ev_off["record_id"], CLOSURE_K_SIGMA * ev_off["u_R_A"],
+                           CLOSURE_FRACTION_MAX * ev_off["denominator_A"]))
+        inadequate = bool(msgs)
+        inadequacy_msg = "; ".join(msgs) if inadequate else None
+        if struct:
+            reasons = struct + unc + stat_fails + frac_fails
+            if inadequate:
+                reasons.append("also " + inadequacy_msg)
+            entry.update({"outcome": "EXCLUDED", "reasons": reasons, "precedence": PRECEDENCE_NOTE})
+            excluded.append(entry)
+            continue
+        if unc:
+            entry.update({"outcome": "NOT_EVALUATED_UNCERTAINTY", "reasons": unc, "precedence": PRECEDENCE_NOTE})
+            uncert.append(entry)
+            continue
+        if stat_fails:
+            reasons = stat_fails + frac_fails + (["also " + inadequacy_msg] if inadequate else [])
+            entry.update({"outcome": "EXCLUDED", "reasons": reasons, "precedence": PRECEDENCE_NOTE})
+            excluded.append(entry)
+            continue
+        if inadequate:
+            entry.update({"outcome": "NOT_EVALUATED_INSTRUMENT", "reasons": [inadequacy_msg],
+                          "closure_test_results_not_decisive": frac_fails, "precedence": PRECEDENCE_NOTE})
+            instrument.append(entry)
+            continue
+        if frac_fails:
+            entry.update({"outcome": "EXCLUDED", "reasons": frac_fails, "precedence": PRECEDENCE_NOTE})
+            excluded.append(entry)
+            continue
+        c_on, c_off = fc["I_e_collector_rf_on_A"], fc["I_e_collector_rf_off_A"]
+        u_on = ev_on["channels"]["electron_collector"]["u_A"]
+        u_off = ev_off["channels"]["electron_collector"]["u_A"]
+        u_ch, u_ch_basis = u_i_e_cap_channels(u_on, u_off, correlation)
+        cands.append({"record_id": rec["record_id"], "label": CAPACITY_LABEL, "outcome": "CLOSURE_VALID_CANDIDATE",
+                      "synthetic": rec["synthetic"], "h1_point_id": rec["h1_point_id"], "stage_id": rec["stage_id"],
+                      "electron_collecting_electrode": rec["extraction"]["electron_collecting_electrode"],
+                      "rf_off_record_id": off_id,
+                      "I_e_collector_rf_on_A": c_on, "I_e_collector_rf_off_A": c_off,
+                      "I_e_collector_corrected_A": fc["I_e_collector_corrected_A"],
+                      "I_e_cap_A": i_e_cap_signed(c_on, c_off),
+                      "u_I_e_collector_rf_on_A": u_on, "u_I_e_collector_rf_off_A": u_off,
+                      "u_I_e_cap_from_channels_A": u_ch, "u_I_e_cap_from_channels_basis": u_ch_basis,
+                      "closure": closure, "closure_rule_id": rule["rule_id"], "eligibility": elig})
+    return cands, excluded, instrument, uncert
 
 
 def neutralization_consistency(records, facility_checks, registered_point_ids=None):
@@ -848,6 +1658,11 @@ def neutralization_consistency(records, facility_checks, registered_point_ids=No
         if rec["stage_id"] != ICP45A_CONSISTENCY_STAGE or float(rec["rf"]["P_fwd_W"]) <= 0.0:
             continue
         fc = facility_checks.get(rec["record_id"])
+        if fc is not None and fc.get("pair_matched") is False:
+            basis = "UNCORRECTED_RF_OFF_PAIR_NOT_MATCHED"
+            fc = None
+        else:
+            basis = "FACILITY_CORRECTED" if fc is not None else "UNCORRECTED_NO_RF_OFF_PAIR"
         i_icp = fc["I_e_icp_corrected_A"] if fc is not None else float(rec["collector"]["I_e_A"])
         i_d = abs(float(rec["terminals"]["hall_anode"]["I_A"]))
         cl = current_closure(rec)
@@ -855,8 +1670,7 @@ def neutralization_consistency(records, facility_checks, registered_point_ids=No
                      "h1_point_id": rec.get("h1_point_id"),
                      "at_registered_point": rec.get("h1_point_id") in pts,
                      "hall_discharge_sustained": rec["hall_discharge_sustained"],
-                     "I_e_icp_A": i_icp, "I_e_icp_basis": ("FACILITY_CORRECTED" if fc is not None
-                                                           else "UNCORRECTED_NO_RF_OFF_PAIR"),
+                     "I_e_icp_A": i_icp, "I_e_icp_basis": basis,
                      "I_d_anode_terminal_abs_A": i_d, "ratio_I_e_icp_to_I_d": (i_icp / i_d) if i_d > 0 else None,
                      "closure_residual_rel": cl["residual_rel"],
                      "V_collector_V": float(rec["collector"]["V_collector_V"]),
@@ -868,45 +1682,133 @@ def neutralization_consistency(records, facility_checks, registered_point_ids=No
     return rows
 
 
+P1Q19_ALTERNATIVES = ("REQUIRE_REGISTERED_GE_CHANNEL", "USE_LARGER_OF_REGISTERED_AND_CHANNEL")
+
+
+def _p1q19_alternatives(best, idm, k, ue, ud):
+    """P1Q-19 (TBD_OWNER part): both admissible treatments of a registered u_I_e_A are carried side by side.
+    DERIVED part: a registered u(I_e,cap) below the GUM propagation of its own channel uncertainties (JCGM 100:2008
+    5.1.2 / 5.2.2) is never used as it stands. Alternative A (REQUIRE_REGISTERED_GE_CHANNEL): the registration is
+    inadmissible -> NOT_EVALUATED; alternative B (USE_LARGER_OF_REGISTERED_AND_CHANNEL): M_n with the larger value.
+    When registered >= channel both alternatives are identical."""
+    u_ch = best["u_I_e_cap_from_channels_A"]
+    i_cap = best["I_e_cap_A"]
+    if ue >= u_ch:
+        m = icp45a_margin(i_cap, idm, k, ue, ud)
+        alt = {"u_I_e_cap_A": ue, "status": "EVALUABLE", "condition_met": bool(m["M_n_lower"] > 0.0)}
+        alt.update(m)
+        return {"agree": True, "u_registered_A": ue, "u_channels_A": u_ch,
+                "u_channels_basis": best["u_I_e_cap_from_channels_basis"],
+                P1Q19_ALTERNATIVES[0]: dict(alt), P1Q19_ALTERNATIVES[1]: dict(alt)}
+    m_b = icp45a_margin(i_cap, idm, k, u_ch, ud)
+    alt_b = {"u_I_e_cap_A": u_ch, "status": "EVALUABLE", "condition_met": bool(m_b["M_n_lower"] > 0.0)}
+    alt_b.update(m_b)
+    alt_a = {"u_I_e_cap_A": None, "status": "NOT_EVALUATED", "condition_met": None,
+             "reason": "registered u_I_e_A = %.6g A < channel propagation %.6g A: registration inadmissible under "
+                       "this alternative" % (ue, u_ch)}
+    return {"agree": False, "u_registered_A": ue, "u_channels_A": u_ch,
+            "u_channels_basis": best["u_I_e_cap_from_channels_basis"],
+            P1Q19_ALTERNATIVES[0]: alt_a, P1Q19_ALTERNATIVES[1]: alt_b}
+
+
 def icp45a_evaluate(records, registration=None, margin_rule=None, facility_checks=None, closure_rule=None):
     """ICP-45A (Ar, engineering-only) condition I_e,cap >= I_d,max,H1 with the one-sided lower bound of M_n above zero
-    (A9.1 ICP-45, UBQ-02; A9.3 OQ-A907-02; A9.4 P1Q-10). Status exactly NOT_EVALUATED until I_d,max,H1 is registered
-    from the H-1 envelope and measured behaviour (never the 8.33 A bench ceiling) AND eligible, facility-corrected,
-    closure-valid ICP45_CAPACITY records exist; never PASS / FAIL. Hall-ON records only feed the
-    NEUTRALIZATION_CONSISTENCY list."""
+    (A9.1 ICP-45, UBQ-02; A9.3 OQ-A907-02; A9.4 P1Q-10; A9.5 P1Q-15 / P1Q-16; A9.6 sec. 14). Eligible only when (1) the
+    capacity point passes the owner Kirchhoff closure, (2) the matched RF-OFF correction is valid, (3) all required
+    uncertainties are available (u(I_k) of every channel; u_I_e_A and u_I_d_max_A of the margin rule, a zero value
+    being no uncertainty statement - DERIVED P1Q-19 ext) and (4) I_d,max,H1 is registered from the H-1 envelope and
+    measured behaviour (never the 8.33 A bench ceiling); until all four exist the status is exactly NOT_EVALUATED; never
+    PASS / FAIL. Per capacity point the outcome is one of POINT_OUTCOMES. The two admissible P1Q-19 treatments of a
+    registered u_I_e_A below the channel propagation are carried side by side; when they disagree the status is
+    NOT_EVALUATED (TBD_OWNER P1Q-19). Hall-ON records only feed the NEUTRALIZATION_CONSISTENCY list."""
     base = {"i_e_cap_definition": I_E_CAP_DEFINITION, "capacity_label": CAPACITY_LABEL,
-            "consistency_label": CONSISTENCY_LABEL, "status_vocabulary": list(ICP45A_STATUSES)}
+            "consistency_label": CONSISTENCY_LABEL, "status_vocabulary": list(ICP45A_STATUSES),
+            "point_outcome_vocabulary": list(POINT_OUTCOMES),
+            "closure_owner_rule": {"source": A95_REF + "; " + A96_REF, "sign_convention": KIRCHHOFF_SIGN_CONVENTION,
+                                   "residual": "R_I = sum_k I_k", "k_sigma": CLOSURE_K_SIGMA,
+                                   "fraction_max": CLOSURE_FRACTION_MAX, "denominator": A96_DENOMINATOR_FORM,
+                                   "instrument_adequacy": "3 u_R <= 0.02 |I_e,collector| at the candidate point, "
+                                                          "else NOT_EVALUATED_INSTRUMENT",
+                                   "precedence": PRECEDENCE_NOTE}}
     facility_checks = facility_checks or {}
     if registration is None:
         base.update({"status": "NOT_EVALUATED", "condition_met": None,
+                     "eligibility": {"4_I_d_max_H1_registered": False},
                      "reason": "I_d,max,H1 not registered (A9.3 OQ-A907-02; A9.4 execution_decisions.i_d_max_h1: "
                                "established from the registered H-1 operating envelope and measured H-1 behaviour, "
-                               "never from the 8.33 A bench design ceiling); ICP45 = NOT_EVALUATED, not PASS or FAIL; "
-                               "the surface is reported instead",
+                               "never from the 8.33 A bench design ceiling); ICP45 = NOT_EVALUATED, not PASS or FAIL "
+                               "(A9.5 P1Q-16 condition 4); the surface is reported instead",
                      "neutralization_consistency": neutralization_consistency(records, facility_checks)})
         return base
-    idm, k, ue, ud = _check_registration(registration, margin_rule)
-    cands, excluded = icp45a_candidates(records, registration, facility_checks, closure_rule)
+    idm, k, ue, ud, margin_why = _check_registration(registration, margin_rule)
+    correlation = _check_correlation(margin_rule.get("rf_on_off_collector_correlation"))
+    cands, excluded, instrument, uncert = icp45a_candidates(records, registration, facility_checks, closure_rule,
+                                                            correlation)
+    points = [{"record_id": c["record_id"], "outcome": c["outcome"]} for c in cands]
+    points += [{"record_id": e["record_id"], "outcome": e["outcome"]} for e in instrument + uncert]
+    points += [{"record_id": e["record_id"], "outcome": e["outcome"]} for e in excluded if "eligibility" in e]
     base.update({"registration_id": registration["registration_id"], "rule_id": margin_rule["rule_id"],
                  "closure_rule_id": closure_rule["rule_id"] if closure_rule is not None else None,
-                 "I_d_max_H1_A": idm, "excluded_records": excluded,
+                 "I_d_max_H1_A": idm, "excluded_records": excluded, "not_evaluated_instrument_records": instrument,
+                 "not_evaluated_uncertainty_records": uncert,
+                 "rf_on_off_collector_correlation": correlation,
+                 "capacity_point_outcomes": sorted(points, key=lambda p: p["record_id"]),
                  "neutralization_consistency": neutralization_consistency(
                      records, facility_checks, registration["registered_point_ids"])})
     if not cands:
         base.update({"status": "NOT_EVALUATED", "condition_met": None,
-                     "reason": "no eligible facility-corrected, closure-valid ICP45_CAPACITY record (dedicated "
-                               "collector, discharge supply OFF and disconnected, floating anode, registered H-1 "
-                               "point, registered closure tolerance; see excluded_records); never a FAIL"})
+                     "reason": "no admissible ICP45_CAPACITY point: conditions (1) owner Kirchhoff closure, (2) matched "
+                               "RF-OFF correction, (3) required uncertainties are not all met at any point (dedicated "
+                               "collector, discharge supply OFF and disconnected, floating anode, registered H-1 point, "
+                               "registered closure rule; %d point(s) NOT_EVALUATED_INSTRUMENT, %d point(s) "
+                               "NOT_EVALUATED_UNCERTAINTY; see excluded_records)%s; ICP45 = NOT_EVALUATED (A9.5 "
+                               "P1Q-16), never a FAIL"
+                               % (len(instrument), len(uncert), ("; also condition (3): " + "; ".join(margin_why))
+                                  if margin_why else "")})
         return base
     if len({bool(c["synthetic"]) for c in cands}) > 1:
         raise P1RecordError("ICP45_CAPACITY candidates mix synthetic fixtures %s with measured records %s: refused "
                             "(a synthetic record must never suppress or substitute a measured evaluation)"
                             % (sorted(c["record_id"] for c in cands if c["synthetic"]),
                                sorted(c["record_id"] for c in cands if not c["synthetic"])))
-    best = max(cands, key=lambda c: (c["I_e_collector_corrected_A"], c["record_id"]))
-    i_cap = best["I_e_collector_corrected_A"]
+    if margin_why:
+        best = max(cands, key=lambda c: (c["I_e_cap_A"], c["record_id"]))
+        elig = dict(best["eligibility"])
+        elig["3_required_margin_rule_uncertainties_available"] = False
+        base.update({"status": "NOT_EVALUATED", "condition_met": None, "candidates": cands, "eligibility": elig,
+                     "reason": "A9.5 P1Q-16 condition (3) not met: %s; ICP45 = NOT_EVALUATED (never a FAIL; no hidden "
+                               "default)" % "; ".join(margin_why)})
+        return base
+    best = max(cands, key=lambda c: (c["I_e_cap_A"], c["record_id"]))
+    i_cap = best["I_e_cap_A"]                       # signed; never clipped (A9.5 P1Q-16)
+    alts = _p1q19_alternatives(best, idm, k, ue, ud)
+    flags = []
+    if i_cap < 0.0:
+        flags.append("I_E_CAP_NEGATIVE: the RF-OFF (facility/background) collector current exceeds the RF-ON value; "
+                     "reported signed, no absolute-value correction and no zero-clipping (A9.5 P1Q-16)")
+    if not alts["agree"]:
+        flags.append("REGISTERED_u_I_e_BELOW_CHANNEL_PROPAGATION: margin_rule.u_I_e_A = %.6g A < channel propagation "
+                     "%.6g A (%s); never used as it stands (DERIVED P1Q-19, JCGM 100:2008 5.1.2 / 5.2.2); the two "
+                     "admissible treatments are carried side by side (TBD_OWNER P1Q-19)"
+                     % (ue, best["u_I_e_cap_from_channels_A"], best["u_I_e_cap_from_channels_basis"]))
+    base.update({"I_e_cap_A": i_cap, "I_e_cap_record": best["record_id"], "candidates": cands,
+                 "u_I_e_cap_registered_A": ue, "u_I_e_cap_registered_basis": "margin_rule.u_I_e_A (preregistered, "
+                                                                            "P1-IT-29)",
+                 "u_I_e_cap_from_channels_A": best["u_I_e_cap_from_channels_A"],
+                 "u_I_e_cap_from_channels_basis": best["u_I_e_cap_from_channels_basis"],
+                 "p1q19_alternatives": alts,
+                 "eligibility": dict(best["eligibility"], **{"3_required_margin_rule_uncertainties_available": True}),
+                 "flags": flags})
+    if not alts["agree"]:
+        base.update({"status": "NOT_EVALUATED", "condition_met": None,
+                     "reason": "TBD_OWNER P1Q-19: the registered u_I_e_A is below the channel propagation and the two "
+                               "admissible treatments (%s) give different results; ICP45 = NOT_EVALUATED until the "
+                               "owner selects one (never a FAIL; no alternative selected artificially)"
+                               % ", ".join(P1Q19_ALTERNATIVES)})
+        return base
     base.update(icp45a_margin(i_cap, idm, k, ue, ud))
-    base.update({"I_e_cap_A": i_cap, "I_e_cap_record": best["record_id"], "candidates": cands})
+    base.update({"u_I_e_cap_used_A": ue, "u_I_e_cap_used_basis": "margin_rule.u_I_e_A (preregistered, P1-IT-29; not "
+                                                                  "below the channel propagation)"})
     if any(c["synthetic"] for c in cands):
         base.update({"status": "SYNTHETIC_TEST_ONLY_NOT_EVIDENCE", "condition_met": None,
                      "arithmetic_lower_bound_positive": bool(base["M_n_lower"] > 0.0),
@@ -915,9 +1817,10 @@ def icp45a_evaluate(records, registration=None, margin_rule=None, facility_check
     base.update({"status": "EVALUATED_ENGINEERING_ONLY", "condition_met": bool(base["M_n_lower"] > 0.0),
                  "evidence_class": REQUIRED_LABEL,
                  "note": "ICP-45A is Ar engineering-only evidence (A9.1); ICP-45N on N2 is still required before any "
-                         "score-bearing hall_icp_neutralizer point; I_e,cap definition OWNER_DECIDED (A9.4 P1Q-10); "
-                         "the Hall-ON follow-up (P1-S7H, NEUTRALIZATION_CONSISTENCY) must still show the capacity "
-                         "operates in the real Hall loop; never an architecture PASS"})
+                         "score-bearing hall_icp_neutralizer point; I_e,cap definition OWNER_DECIDED (A9.4 P1Q-10) and "
+                         "formula OWNER_CONFIRMED (A9.5 P1Q-16); condition_met = (M_n,LB > 0); the Hall-ON follow-up "
+                         "(P1-S7H, NEUTRALIZATION_CONSISTENCY) must still show the capacity operates in the real Hall "
+                         "loop; never an architecture PASS"})
     return base
 
 
@@ -929,21 +1832,38 @@ def _row_flags(rec, rf):
                      "(owner row 64; ICD ICP-17)")
     if rf["P_delivered_kind"] == "P_RF_DELIVERED_UPPER_BOUND_LOSS_NOT_MEASURED":
         flags.append("LINE_MATCH_LOSS_NOT_MEASURED: P_delivered and C_e are upper bounds")
+    if rf["P_delivered_kind"] == "P_RF_DELIVERED_UPPER_BOUND_LOSS_UNVERIFIED":
+        flags.append("LINE_MATCH_LOSS_UNVERIFIED: the MEASURED loss is not a verified P1-S1/S2 characterization under "
+                     "a CROSS_CHECK_AGREES RF chain with an at-power loss-model verification, or does not agree with "
+                     "it; P_delivered and C_e are upper bounds, no plasma power is reconstructed (A9.6 sec. 14): %s"
+                     % "; ".join(rf.get("loss_unverified_reasons") or []))
+    if rf["P_delivered_kind"] == "EXCLUDED_INSTRUMENT_RF_CROSS_CHECK":
+        flags.append("RF_EXCLUDED_INSTRUMENT: calorimetric cross-check failed; RF-dependent quantities excluded "
+                     "(A9.1 UBQ-04)")
     if rf["rf_state"] == "RF_OFF":
         flags.append("RF_OFF: facility / non-ICP current record (P1-D-07)")
     if float(rec["collector"]["I_e_A"]) < 0.0:
         flags.append("I_E_NEGATIVE: net ion collection at this bias, or a sensor orientation inconsistent with "
                      "the declared sign convention - verify before use")
+    unmeasured = sorted(n for n, t in rec["terminals"].items() if t["basis"] == "NOT_MEASURED")
+    if unmeasured:
+        flags.append("TERMINAL_NOT_MEASURED: %s declared unavailable; never summed as zero, no Kirchhoff residual "
+                     "formed (A9.5 P1Q-15)" % unmeasured)
+    iso = isolation_class_reasons(rec)
+    if iso:
+        flags.append("OUTSIDE_ISOLATION_CLASS: " + "; ".join(iso))
     if rec["synthetic"]:
         flags.append("SYNTHETIC_TEST_FIXTURE: not data")
     return flags
 
 
 def reduce_operating_points(records, registration=None, margin_rule=None, facility_pairs=None, facility_match=None,
-                            closure_rule=None):
+                            closure_rule=None, loss_verification=None):
     """Surface table + summaries for a list of 'icp_operating_point' records. facility_pairs = [[rf_on_id,
     rf_off_id], ...] (each checked with facility_electron_check under facility_match). closure_rule = registered
-    Kirchhoff tolerance for capacity points {rule_id, residual_rel_tol, sign_convention_id} (A9.4 P1Q-13; no default)."""
+    registered inputs of the owner Kirchhoff rule for capacity points {rule_id, sign_convention, sign_convention_id,
+    I_scale_min_A, I_scale_min_basis (, covariance)} (A9.5 P1Q-15; no default; the factor 3 and the 2 % are owner
+    constants, never inputs)."""
     if not isinstance(records, list) or not records:
         raise MissingInputError("reduce_operating_points: a non-empty list of records is required")
     rows = []
@@ -958,15 +1878,23 @@ def reduce_operating_points(records, registration=None, margin_rule=None, facili
     for pair in facility_pairs or []:
         if not isinstance(pair, (list, tuple)) or len(pair) != 2 or pair[0] not in by_id or pair[1] not in by_id:
             raise MissingInputError("facility pair %r refers to unknown records" % (pair,))
-        fac.append(facility_electron_check(by_id[pair[0]], by_id[pair[1]], facility_match))
+        # a registered pair that is NOT matched is a finding, not an abort (A9.5 P1Q-15: the capacity point is
+        # excluded and stays in the raw record with the mismatch reasons); a missing match rule still raises
+        why, p_dev = facility_pair_mismatches(by_id[pair[0]], by_id[pair[1]], facility_match)
+        if why:
+            fac.append({"records": [pair[0], pair[1]], "pair_matched": False, "match_rule_id": facility_match[
+                "criteria_id"], "p_chamber_rel_dev": p_dev, "mismatch_reasons": why})
+        else:
+            fac.append(facility_electron_check(by_id[pair[0]], by_id[pair[1]], facility_match))
     fac_by_on = {}
     for f in fac:
         if f["records"][0] in fac_by_on:
             raise P1RecordError("RF-ON record %r appears in more than one facility pair" % f["records"][0])
         fac_by_on[f["records"][0]] = f
     for rec in records:
-        rf = derive_rf(rec)
+        rf = derive_rf(rec, loss_verification)
         ce = electron_cost(rec, rf)
+        ps, ps_why = record_plasma_state(rec)
         cl = current_closure(rec)
         imp = rec["impedance"]
         ext = rec["extraction"]
@@ -997,6 +1925,8 @@ def reduce_operating_points(records, registration=None, margin_rule=None, facili
             "C_e_reason": ce["C_e_reason"],
             "C_e_DC_W_per_A": ce["C_e_DC_W_per_A"], "C_e_DC_boundary": ce["C_e_DC_boundary"],
             "closure_residual_rel": cl["residual_rel"], "closure_sum_A": cl["sum_A"],
+            "closure_state": cl["closure_state"],
+            "plasma_state": ps, "plasma_state_reason": ps_why,
             "rf_pickup_check": rec["rf_pickup_check"], "flags": _row_flags(rec, rf),
             "temperatures_C": dict(sorted(rec["temperatures"].items())),
             "thermal_status": "RECORDED_ONLY - ICP_COUPLED_THERMAL = UNRESOLVED (A9.2); never a thermal PASS",
@@ -1068,14 +1998,19 @@ def reduce_topology_control(seq):
             "note": "not a PASS/FAIL gate; 'Hall must not run without ICP' is NOT a requirement (A9.3 OQ-VI-05)"}
 
 
-def reduce(bundle, registration=None, margin_rule=None, stable_criteria=None, facility_match=None, closure_rule=None):
+def reduce(bundle, registration=None, margin_rule=None, stable_criteria=None, facility_match=None, closure_rule=None,
+           loss_verification=None):
     """Top-level reducer. bundle = {"operating_points": [...], "topology_control": [...] (optional),
     "dwells": [{"record_id", "dwell", "ignition"}] (optional), "facility_pairs": [[on_id, off_id]] (optional)}.
     facility_match = {"criteria_id", "p_chamber_rel_tol"} is required whenever facility_pairs are given (P1-IT-37);
-    closure_rule = {"rule_id", "residual_rel_tol", "sign_convention_id"} validates capacity points (P1-IT-47)."""
+    closure_rule = {"rule_id", "sign_convention", "sign_convention_id", "I_scale_min_A", "I_scale_min_basis"
+    (, "covariance")} carries the registered inputs of the owner Kirchhoff rule for capacity points (A9.5 P1Q-15;
+    P1-IT-47 / P1-IT-48). loss_verification = the RF cold-checkout state (reduce_rf_cold_checkout); without it every
+    MEASURED line/match loss is unverified and P_delivered / C_e are upper bounds (A9.6 sec. 14; consolidated
+    verification E1)."""
     _req(bundle, ("operating_points",), "bundle")
     ops = reduce_operating_points(bundle["operating_points"], registration, margin_rule,
-                                  bundle.get("facility_pairs"), facility_match, closure_rule)
+                                  bundle.get("facility_pairs"), facility_match, closure_rule, loss_verification)
     dwells = []
     for d in bundle.get("dwells") or []:
         _req(d, ("record_id", "dwell"), "dwell entry")
@@ -1086,3 +2021,659 @@ def reduce(bundle, registration=None, margin_rule=None, stable_criteria=None, fa
     return {"operating_points": ops, "facility_electron_checks": ops["facility_electron_checks"], "dwells": dwells,
             "topology_control": topo,
             "any_synthetic": ops["any_synthetic"] or any(t["synthetic"] for t in topo)}
+
+
+# ------------------------------------------------------------------------------------------------ A9.6 P1 workflow
+# Stage records added by fo_a9_6_p1_workflow_completion (A9.6 sec. 8): P1-G0 readiness, RF cold checkout, ignition,
+# stability dwell. Each has a reducer below; p1_campaign.run_campaign strings all stages together.
+RECORD_KINDS = ("p1_g0_readiness", "rf_cold_checkout", "ignition_attempt", "icp_operating_point", "stability_dwell",
+                "topology_control_sequence")
+COMMON_REQUIRED = ("schema", "record_kind", "record_id", "run_id", "stage_id", "timestamp_utc", "synthetic", "labels")
+# P1-G0 readiness (P1-S0 exit). Owner values: A9.4 P1Q-14 (350 V class, >= 525 V design withstand, 1.05 kV DC / 60 s
+# initial DWV, current-limited, leakage recorded); A9.3 ICPQ-06 (~1 kV representative-gas qualification ONLY for gas
+# lines that bridge isolated potentials); A9.3 OQ-RFQ-02 / A9.6 sec. 5 (one Ar MFC preferred, two overlapping only if
+# necessary); A9.3 OQ-RFQ-06 (GROUND/FACILITY_ONLY mains generator)
+A94_P1Q14 = "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-14"
+ISOLATION_V_OPERATING_MAX_V = 350.0
+ISOLATION_V_DESIGN_WITHSTAND_MIN_V = 525.0
+DWV_V_TEST_V = 1050.0
+DWV_DURATION_S = 60.0
+ICPQ06_CLASS_V = 1000.0     # A9.3 ICPQ-06 / A9.6 sec. 5 '~1 kV' representative-gas qualification class (owner wording)
+READINESS_INTERLOCK_IDS = tuple("P1-SI-%02d" % i for i in range(1, 12))     # = safety_interlocks ids of the plan
+READINESS_REGISTRATIONS = ("extraction_topology_id", "h1_electrical_config_id", "facility_match_rule_id",
+                           "closure_rule_id", "ignition_procedure_id", "time_base_id")
+READINESS_REQUIRED = COMMON_REQUIRED + ("interlocks", "isolation_class", "dwv_tests", "gas_lines", "ar_mfcs",
+                                        "ar_sweep_bounds_mg_s", "second_mfc_necessity", "generator_class",
+                                        "registrations")
+G0_STATUSES = ("G0_ENTRY_CONDITIONS_RECORDED", "G0_NOT_MET", "G0_NOT_EVALUATED_TBD")
+# RF cold checkout (P1-S1 dummy load, P1-S2 installed unlit antenna through the local match)
+COLD_KINDS = {"DUMMY_LOAD": "P1-S1", "INSTALLED_UNLIT_ANTENNA_VIA_LOCAL_MATCH": "P1-S2"}
+COLD_REQUIRED = COMMON_REQUIRED + ("checkout_kind", "rf", "generator", "loss_characterization", "rf_pickup_check")
+CROSS_CHECK_REQUIRED = ("method_id", "P_cal_W", "u_P_cal_W", "u_P_coupler_W")
+LOSS_CHAR_REQUIRED = ("characterization_id", "method", "match_setting_id", "value_W", "u_value_W",
+                      "valid_max_gamma_abs")
+LOSS_CHAR_METHODS = ("TWO_PORT_S_PARAMETER",)
+# at-power verification of the line/match-loss model (consolidated verification MET-02): the P1-S1 dummy-load
+# coupler-vs-calorimeter cross-check tests the coupler, not the loss model, so a two-port (small-signal) loss
+# characterization is 'verified' in P1 only with the same at-power check P2 requires (p2_framework.
+# verify_line_match_loss; P2 LOSS_VERIFICATION_METHODS): eta_meas = P_ref_load / P_net against the two-port prediction
+# eta_pred, |eta_meas - eta_pred| / sqrt(u^2(eta_meas) + u^2(eta_pred)) <= k with k REGISTERED (never defaulted; TBD_OWNER
+# P1Q-24, shared with the P2 loss check at LOCK-2). Without it P_delivered stays an upper bound.
+AT_POWER_METHODS = ("CAL-P2-09_calorimetric_at_power", "CAL-P2-10_antenna_simulator_at_power")
+AT_POWER_REQUIRED = ("verification_id", "method", "eta_pred", "u_eta_pred", "P_net_W", "u_P_net_W", "P_ref_load_W",
+                     "u_P_ref_load_W", "k", "k_registration_id", "evidence_record_ids", "tuning_states")
+AT_POWER_VERIFIED = "LOSS_MODEL_VERIFIED"
+CROSS_CHECK_K_X = 2.0       # owner value A9.1 UBQ-04 / UB-RF-08 (P1-IT-24, freeze LOCK-1)
+# ignition (P1-S3)
+IGNITION_REQUIRED = COMMON_REQUIRED + ("gas", "gas_mode", "hall_discharge_state", "ignition_procedure_id", "point_id",
+                                       "rf", "flows", "pressures", "ignited", "ignition_delay_s", "extinguished",
+                                       "optical", "h1_magnet_state")
+# stability dwell (P1-S5)
+DWELL_REQUIRED = COMMON_REQUIRED + ("operating_point_record_id", "ignition_point_id", "dwell")
+HANDOFF_STATUSES = ("NOT_EVALUATED", "REGION_OF_TESTED_POINTS_WITHIN_OWNER_CRITERIA", "NO_TESTED_POINT_WITHIN_CRITERIA")
+# evidence kind of the handoff (SW-R2-01): derived from the synthetic flags of the dwell and operating-point records it
+# is built from (same values as p1_campaign.EVIDENCE_KINDS); P2 admits a handoff only into a map of the same kind
+HANDOFF_EVIDENCE_KINDS = ("SYNTHETIC_TEST_ONLY", "MEASURED", "NO_RECORDS")
+HANDOFF_FACTORS = (("P_fwd_W", ("rf", "P_fwd_W")), ("mdot_Ar_H1_mg_s", ("flows", "mdot_Ar_H1_mg_s")),
+                   ("p_chamber_Pa", ("pressures", "p_chamber_Pa")), ("V_collector_V", ("collector", "V_collector_V")))
+
+
+def parse_utc(ts, where="timestamp_utc"):
+    """ISO-8601 timestamp -> timezone-aware UTC datetime (PR #35 review: records are ordered chronologically, never
+    by string). A trailing 'Z' is accepted; a naive (offset-less) or unparsable timestamp raises P1RecordError."""
+    import datetime as _dt
+    if not isinstance(ts, str) or not ts.strip():
+        raise P1RecordError("%s: timestamp_utc must be an ISO-8601 string with a UTC offset, got %r" % (where, ts))
+    t = ts.strip()
+    if t.endswith(("Z", "z")):
+        t = t[:-1] + "+00:00"
+    try:
+        d = _dt.datetime.fromisoformat(t)
+    except ValueError:
+        raise P1RecordError("%s: timestamp_utc %r is not ISO-8601" % (where, ts))
+    if d.tzinfo is None or d.utcoffset() is None:
+        raise P1RecordError("%s: timestamp_utc %r has no UTC offset (ambiguous ordering refused)" % (where, ts))
+    return d.astimezone(_dt.timezone.utc)
+
+
+def _no_duplicate_ids(items, key, where):
+    """PR #35 review: a list keyed by id must not repeat an id (a later entry must never silently replace an earlier,
+    possibly failed, safety result)."""
+    ids = [x.get(key) for x in items if isinstance(x, dict)]
+    dup = sorted({str(i) for i in ids if ids.count(i) > 1})
+    if dup:
+        raise P1RecordError("%s: duplicate %s %s - contradictory or repeated evidence refused (record one result "
+                            "per id)" % (where, key, dup))
+
+
+def _common(rec, kind, where):
+    _req(rec, COMMON_REQUIRED, where)
+    parse_utc(rec["timestamp_utc"], where)
+    if rec["schema"] != SCHEMA_ID or rec["record_kind"] != kind:
+        raise P1RecordError("%s: schema/record_kind %r/%r is not %s/%s" % (where, rec["schema"], rec["record_kind"],
+                                                                          SCHEMA_ID, kind))
+    if not isinstance(rec["synthetic"], bool):
+        raise MissingInputError("%s: 'synthetic' must be true or false" % where)
+    _labels_ok(rec, where)
+    _refuse_p_bus_claim(rec, where)
+
+
+def _pos(x, where):
+    """A standard uncertainty: a finite number > 0 (a zero standard uncertainty is not a valid uncertainty of a
+    measured quantity, JCGM 100:2008 F.2.2.1 - DERIVED P1Q-19 ext); raises otherwise."""
+    v = _num(x, where, allow_negative=False)
+    if v <= 0.0:
+        raise MissingInputError("%s = %r: a zero standard uncertainty is not available (JCGM 100:2008 F.2.2.1)"
+                                % (where, x))
+    return v
+
+
+def _rf_readings(rf, where):
+    _req(rf, ("reference_plane", "P_fwd_W", "P_refl_W", "match_setting_id"), where)
+    if rf["reference_plane"] != RF_REFERENCE_PLANE:
+        raise P1RecordError("%s: reference plane %r is not %s (A9.2 OQ-A907-11)" % (where, rf["reference_plane"],
+                                                                                   RF_REFERENCE_PLANE))
+    pf = _num(rf["P_fwd_W"], where + ".P_fwd_W", allow_negative=False)
+    pr = _num(rf["P_refl_W"], where + ".P_refl_W", allow_negative=False)
+    if (pf == 0.0 and pr > 0.0) or (pf > 0.0 and pr >= pf):
+        raise RFConsistencyError("%s: P_refl %r with P_fwd %r is not a physical passive-load reading" % (where, pr, pf))
+    return pf, pr
+
+
+def reduce_readiness(rec):
+    """P1-G0 readiness / safety record -> G0 status (G0_STATUSES; never PASS). deficiencies = recorded conditions that
+    contradict an owner rule; tbd = inputs the owner / evidence has not given yet (e.g. leakage acceptance, P1-IT-44).
+    Any deficiency -> G0_NOT_MET; else any TBD -> G0_NOT_EVALUATED_TBD; else G0_ENTRY_CONDITIONS_RECORDED."""
+    rid = "readiness %r" % (rec.get("record_id") if isinstance(rec, dict) else None)
+    _common(rec, "p1_g0_readiness", rid)
+    _req(rec, ("interlocks", "isolation_class", "dwv_tests", "gas_lines", "ar_mfcs"), rid)
+    for k in ("ar_sweep_bounds_mg_s", "second_mfc_necessity", "generator_class", "registrations"):
+        if k not in rec:
+            raise MissingInputError("%s: missing required key '%s' (null allowed only for the sweep bounds and the "
+                                    "second-MFC justification)" % (rid, k))
+    if rec["stage_id"] != "P1-S0":
+        raise P1RecordError("%s: readiness records belong to P1-S0 (gate P1-G0), not %r" % (rid, rec["stage_id"]))
+    defic, tbd, rows = [], [], {}
+    # interlocks
+    il = rec["interlocks"]
+    if not isinstance(il, list):
+        raise MissingInputError("%s: interlocks must be a list" % rid)
+    seen = {}
+    for x in il:
+        _req(x, ("interlock_id", "functional_test_done", "functional", "log_id"), rid + " interlock")
+    _no_duplicate_ids(il, "interlock_id", rid + " interlocks")
+    for x in il:
+        seen[x["interlock_id"]] = x
+    rows["interlocks"] = []
+    for i in READINESS_INTERLOCK_IDS:
+        x = seen.get(i)
+        if x is None:
+            defic.append("interlock %s: no functional-test record" % i)
+            rows["interlocks"].append({"interlock_id": i, "state": "MISSING"})
+            continue
+        ok = x["functional_test_done"] is True and x["functional"] is True
+        if not ok:
+            defic.append("interlock %s: functional test done = %r, functional = %r (log %r)"
+                         % (i, x["functional_test_done"], x["functional"], x["log_id"]))
+        rows["interlocks"].append({"interlock_id": i, "state": "FUNCTIONAL_TEST_RECORDED" if ok else "NOT_FUNCTIONAL",
+                                   "log_id": x["log_id"]})
+    # isolation class (A9.4 P1Q-14)
+    ic = rec["isolation_class"]
+    _req(ic, ("V_operating_max_V", "V_design_withstand_V"), rid + " isolation_class")
+    vop = _num(ic["V_operating_max_V"], rid + " isolation_class.V_operating_max_V", allow_negative=False)
+    vdw = _num(ic["V_design_withstand_V"], rid + " isolation_class.V_design_withstand_V", allow_negative=False)
+    if vop > ISOLATION_V_OPERATING_MAX_V:
+        defic.append("isolation class: V_operating,max %r V exceeds the 350 V operating class (%s)" % (vop, A94_P1Q14))
+    if vdw < ISOLATION_V_DESIGN_WITHSTAND_MIN_V:
+        defic.append("isolation class: V_design,withstand %r V below the >= 525 V design basis (%s)" % (vdw, A94_P1Q14))
+    # DWV (A9.4 P1Q-14 initial_dwv)
+    dwv = rec["dwv_tests"]
+    if not isinstance(dwv, list) or not dwv:
+        raise MissingInputError("%s: dwv_tests must be a non-empty list (every passive insulation path / feedthrough "
+                                "assembly, A9.4 P1Q-14)" % rid)
+    rows["dwv_tests"] = []
+    if isinstance(dwv, list):
+        _no_duplicate_ids(dwv, "path_id", rid + " dwv_tests")
+    for d in dwv:
+        _req(d, ("path_id", "applicable"), rid + " dwv_test")
+        if d["applicable"] is not True:
+            why = d.get("not_applicable_reason")
+            if d["applicable"] is not False or not isinstance(why, str) or not why.strip():
+                raise MissingInputError("%s: DWV path %r not applicable needs not_applicable_reason (A9.4: 'where "
+                                        "component ratings permit')" % (rid, d["path_id"]))
+            rows["dwv_tests"].append({"path_id": d["path_id"], "state": "NOT_APPLICABLE_RECORDED", "reason": why})
+            continue
+        _req(d, ("V_test_V", "duration_s", "current_limited", "leakage_A", "breakdown_or_flashover"),
+             rid + " dwv_test " + str(d["path_id"]))
+        if "leakage_acceptance" not in d:
+            raise MissingInputError("%s: DWV path %r: 'leakage_acceptance' must be present (null = not registered)"
+                                    % (rid, d["path_id"]))
+        v = _num(d["V_test_V"], rid + " dwv V_test_V", allow_negative=False)
+        t = _num(d["duration_s"], rid + " dwv duration_s", allow_negative=False)
+        leak = _num(d["leakage_A"], rid + " dwv leakage_A", allow_negative=False)
+        why = []
+        if v < DWV_V_TEST_V:
+            why.append("V_test %r V < 1.05 kV DC" % v)
+        if t < DWV_DURATION_S:
+            why.append("duration %r s < 60 s" % t)
+        if d["current_limited"] is not True:
+            why.append("not current-limited")
+        if d["breakdown_or_flashover"] is not False:
+            why.append("breakdown / flashover recorded")
+        acc = d["leakage_acceptance"]
+        state = "PERFORMED_AT_OWNER_LEVEL_LEAKAGE_RECORDED"
+        if acc is None:
+            tbd.append("DWV path %r: leakage acceptance not registered (P1-IT-44: TBD - requires the insulation-path / "
+                       "feedthrough ratings)" % d["path_id"])
+            state += "_ACCEPTANCE_TBD"
+        else:
+            _req(acc, ("criterion_id", "max_leakage_A"), rid + " dwv leakage_acceptance")
+            if leak > _num(acc["max_leakage_A"], rid + " dwv max_leakage_A", allow_negative=False):
+                why.append("leakage %r A above registered criterion %s" % (leak, acc["criterion_id"]))
+        for w in why:
+            defic.append("DWV path %r: %s (%s)" % (d["path_id"], w, A94_P1Q14))
+        rows["dwv_tests"].append({"path_id": d["path_id"], "V_test_V": v, "duration_s": t, "leakage_A": leak,
+                                  "state": "DEFICIENT" if why else state, "deficiencies": why})
+    # ICPQ-06 gas lines
+    gl = rec["gas_lines"]
+    if not isinstance(gl, list) or not gl:
+        raise MissingInputError("%s: gas_lines must list every ICP / H-1 gas line crossing the module (A9.3 ICPQ-06)"
+                                % rid)
+    rows["gas_lines"] = []
+    if isinstance(gl, list):
+        _no_duplicate_ids(gl, "line_id", rid + " gas_lines")
+    for g in gl:
+        _req(g, ("line_id", "bridges_isolated_potentials", "isolator_installed"), rid + " gas_line")
+        if "qualification" not in g:
+            raise MissingInputError("%s: gas line %r: 'qualification' must be present (null when none)"
+                                    % (rid, g["line_id"]))
+        for k in ("bridges_isolated_potentials", "isolator_installed"):
+            if not isinstance(g[k], bool):
+                raise MissingInputError("%s: gas line %r: %s must be true or false" % (rid, g["line_id"], k))
+        q = g["qualification"]
+        if g["bridges_isolated_potentials"]:
+            why, gtbd = [], []
+            if "service_gas" not in g:
+                raise MissingInputError("%s: gas line %r bridges isolated potentials: 'service_gas' must be present "
+                                        "(the representative gas of the qualification; null = not registered)"
+                                        % (rid, g["line_id"]))
+            if not g["isolator_installed"]:
+                why.append("bridges isolated potentials without a gas isolator")
+            if q is None:
+                why.append("no ~1 kV representative-gas qualification record")
+            else:
+                _req(q, ("qualification_id", "level_id", "V_test_V", "gas", "p_Pa", "breakdown_or_flashover"),
+                     rid + " gas_line qualification")
+                if "level_V" not in q:
+                    raise MissingInputError("%s: gas line %r qualification: 'level_V' (the value of the registered "
+                                            "level_id) must be present (null = not registered)" % (rid, g["line_id"]))
+                # consolidated verification E3: the qualification is checked as numbers, never as keys only
+                vq = _num(q["V_test_V"], rid + " gas_line qualification.V_test_V", allow_negative=False)
+                _num(q["p_Pa"], rid + " gas_line qualification.p_Pa", allow_negative=False)
+                if not isinstance(q["gas"], str) or not q["gas"].strip():
+                    raise MissingInputError("%s: gas line %r qualification.gas must name the test gas"
+                                            % (rid, g["line_id"]))
+                if q["breakdown_or_flashover"] is not False:
+                    why.append("breakdown / flashover in the qualification")
+                if q["level_V"] is None:
+                    gtbd.append("qualification level %r has no registered value (level_V): the ~1 kV representative-"
+                                "gas qualification cannot be evaluated" % q["level_id"])
+                else:
+                    lv_ = _num(q["level_V"], rid + " gas_line qualification.level_V", allow_negative=False)
+                    if vq < lv_:
+                        why.append("qualification V_test %r V below its registered level %r = %r V" % (vq, q["level_id"],
+                                                                                                    lv_))
+                    if lv_ < ICPQ06_CLASS_V:
+                        gtbd.append("registered level %r = %r V is below the owner ~1 kV DC class (A9.3 ICPQ-06): "
+                                    "adequacy of the level needs owner confirmation (no lower level is accepted "
+                                    "silently)" % (q["level_id"], lv_))
+                if g["service_gas"] is None:
+                    gtbd.append("service (representative) gas of the line not registered")
+                elif q["gas"] != g["service_gas"]:
+                    why.append("qualification gas %r is not the line's representative service gas %r"
+                               % (q["gas"], g["service_gas"]))
+            for w in why:
+                defic.append("gas line %r: %s (A9.3 ICPQ-06)" % (g["line_id"], w))
+            for w in gtbd:
+                tbd.append("gas line %r: %s (A9.3 ICPQ-06)" % (g["line_id"], w))
+            rows["gas_lines"].append({"line_id": g["line_id"], "isolator_required": True,
+                                      "state": ("DEFICIENT" if why else ("QUALIFICATION_TBD" if gtbd
+                                                                         else "QUALIFICATION_RECORDED")),
+                                      "qualification": q, "deficiencies": why, "tbd": gtbd,
+                                      "note": "owner class ~1 kV DC (A9.3 ICPQ-06); the level value is the registered "
+                                              "level_V of level_id; V_test_V >= level_V in the line's service gas"})
+        else:
+            rows["gas_lines"].append({"line_id": g["line_id"], "isolator_required": False,
+                                      "state": "NOT_REQUIRED_ICPQ_06_SAME_POTENTIAL",
+                                      "note": ("isolator installed although not required (recorded)"
+                                               if g["isolator_installed"] else "")})
+    # Ar metrology (A9.3 OQ-RFQ-02; A9.6 sec. 5)
+    mfcs = rec["ar_mfcs"]
+    if not isinstance(mfcs, list):
+        raise MissingInputError("%s: ar_mfcs must be a list" % rid)
+    rng = []
+    for mm in mfcs:
+        _req(mm, ("mfc_id", "range_min_mg_s", "range_max_mg_s"), rid + " ar_mfc")
+        lo = _num(mm["range_min_mg_s"], rid + " ar_mfc range_min_mg_s", allow_negative=False)
+        hi = _num(mm["range_max_mg_s"], rid + " ar_mfc range_max_mg_s", allow_negative=False)
+        if hi <= lo:
+            raise P1RecordError("%s: MFC %r range max <= min" % (rid, mm["mfc_id"]))
+        rng.append((lo, hi))
+    rng.sort()
+    if not rng:
+        defic.append("no Ar MFC recorded")
+    elif len(rng) > 2:
+        defic.append("%d Ar MFCs: A9.6 sec. 5 / A9.3 OQ-RFQ-02 allow one (preferred) or two overlapping ranges only if "
+                     "necessary; no four-range set" % len(rng))
+    elif len(rng) == 2:
+        nec = rec["second_mfc_necessity"]
+        if not isinstance(nec, str) or not nec.strip():
+            defic.append("second Ar MFC without the recorded necessity (one MFC cannot cover the P1 sweep)")
+        if rng[0][1] < rng[1][0]:
+            defic.append("the two Ar MFC ranges do not overlap (%r, %r)" % (rng[0], rng[1]))
+    sweep = rec["ar_sweep_bounds_mg_s"]
+    if sweep is None:
+        tbd.append("Ar sweep bounds not registered (run matrix F2; P1-IT-10 note): MFC coverage not evaluable")
+    else:
+        if not isinstance(sweep, list) or len(sweep) != 2:
+            raise MissingInputError("%s: ar_sweep_bounds_mg_s must be [lo, hi] or null" % rid)
+        slo = _num(sweep[0], rid + " sweep lo", allow_negative=False)
+        shi = _num(sweep[1], rid + " sweep hi", allow_negative=False)
+        if rng and not (rng[0][0] <= slo and max(h for _, h in rng) >= shi):
+            defic.append("Ar MFC range(s) %r do not cover the registered sweep [%r, %r] mg/s" % (rng, slo, shi))
+    # generator (A9.3 OQ-RFQ-06)
+    if rec["generator_class"] not in GENERATOR_CLASSES:
+        defic.append("generator class %r: P1 uses the GROUND/FACILITY_ONLY mains generator only (A9.3 OQ-RFQ-06)"
+                     % rec["generator_class"])
+    # registrations at P1-G0
+    reg = rec["registrations"]
+    if not isinstance(reg, dict):
+        raise MissingInputError("%s: registrations must be an object" % rid)
+    for k in READINESS_REGISTRATIONS:
+        v = reg.get(k)
+        if not isinstance(v, str) or not v.strip():
+            tbd.append("registration %s not recorded at P1-G0" % k)
+    status = "G0_NOT_MET" if defic else ("G0_NOT_EVALUATED_TBD" if tbd else "G0_ENTRY_CONDITIONS_RECORDED")
+    return {"record_id": rec["record_id"], "g0_status": status, "deficiencies": defic, "tbd": tbd, "rows": rows,
+            "registrations": {k: reg.get(k) for k in READINESS_REGISTRATIONS},
+            "note": "P1-G0 engineering readiness record; never a PASS; the leakage acceptance, sweep bounds and "
+                    "registrations are inputs, not chosen here"}
+
+
+def validate_cold_checkout(rec):
+    rid = "cold checkout %r" % (rec.get("record_id") if isinstance(rec, dict) else None)
+    _common(rec, "rf_cold_checkout", rid)
+    for k in COLD_REQUIRED[len(COMMON_REQUIRED):]:
+        if k not in rec:
+            raise MissingInputError("%s: missing required key '%s'" % (rid, k))
+    kind = rec["checkout_kind"]
+    if kind not in COLD_KINDS:
+        raise P1RecordError("%s: checkout_kind %r not in %s" % (rid, kind, list(COLD_KINDS)))
+    if rec["stage_id"] != COLD_KINDS[kind]:
+        raise P1RecordError("%s: %s belongs to stage %s, not %r" % (rid, kind, COLD_KINDS[kind], rec["stage_id"]))
+    pf, pr = _rf_readings(rec["rf"], rid + " rf")
+    gen = rec["generator"]
+    _req(gen, GENERATOR_REQUIRED, rid + " generator")
+    if gen["generator_class"] not in GENERATOR_CLASSES:
+        raise P1RecordError("%s: generator_class %r refused in P1 (A9.3 OQ-RFQ-06)" % (rid, gen["generator_class"]))
+    if rec["rf_pickup_check"] not in ("DONE", "NOT_DONE"):
+        raise P1RecordError("%s: rf_pickup_check must be DONE or NOT_DONE" % rid)
+    lc = rec["loss_characterization"]
+    if lc is not None:
+        _req(lc, LOSS_CHAR_REQUIRED, rid + " loss_characterization")
+        if lc["method"] not in LOSS_CHAR_METHODS:
+            raise P1RecordError("%s: loss characterization method %r not in %s (P1-M-03, P1-IT-41)"
+                                % (rid, lc["method"], LOSS_CHAR_METHODS))
+        _num(lc["value_W"], rid + " loss value_W", allow_negative=False)
+        _num(lc["valid_max_gamma_abs"], rid + " loss valid_max_gamma_abs", allow_negative=False)
+        _pos(lc["u_value_W"], rid + " loss u_value_W")
+        if lc.get("at_power_verification") is not None:
+            at_power_loss_check(lc["at_power_verification"], rid + " loss_characterization.at_power_verification")
+    if kind == "DUMMY_LOAD":
+        if pf <= 0.0:
+            raise P1RecordError("%s: a dummy-load checkout record needs RF ON (P_fwd > 0)" % rid)
+        cc = rec.get("calorimetric_cross_check")
+        _req(cc, CROSS_CHECK_REQUIRED, rid + " calorimetric_cross_check")
+        _num(cc["P_cal_W"], rid + " P_cal_W", allow_negative=False)
+        _pos(cc["u_P_cal_W"], rid + " u_P_cal_W")
+        _pos(cc["u_P_coupler_W"], rid + " u_P_coupler_W")
+    else:
+        for k in ("optical", "gas_flow_state", "unlit_procedure_id"):
+            if k not in rec or rec[k] is None:
+                raise MissingInputError("%s: an installed-antenna checkout record needs '%s' (A9.4 P2Q-05 optical "
+                                        "channel; registered unlit procedure)" % (rid, k))
+        if rec["gas_flow_state"] not in ("OFF", "FLOWING"):
+            raise P1RecordError("%s: gas_flow_state must be OFF or FLOWING" % rid)
+        classify_plasma_state(rec["optical"], rid + " optical")
+    return pf, pr
+
+
+def at_power_loss_check(v, where="at_power_verification"):
+    """At-power line/match-loss model verification (MET-02; same statistic as p2_framework.verify_line_match_loss):
+    returns {'status': LOSS_MODEL_VERIFIED | LOSS_MODEL_INCONSISTENT | NOT_EVALUATED, ...}. k is a registered owner value
+    (P1Q-24, TBD_OWNER); k null -> NOT_EVALUATED (never a default). Malformed inputs raise."""
+    _req(v, AT_POWER_REQUIRED[:8] + AT_POWER_REQUIRED[10:], where)
+    if "k" not in v or "k_registration_id" not in v:
+        raise MissingInputError("%s: 'k' and 'k_registration_id' must be present (null = not registered)" % where)
+    if v["method"] not in AT_POWER_METHODS:
+        raise P1RecordError("%s: method %r not in %s" % (where, v["method"], AT_POWER_METHODS))
+    ids = v["evidence_record_ids"]
+    if not isinstance(ids, list) or not ids or not all(_ref_ok(i) for i in ids):
+        raise MissingInputError("%s: evidence_record_ids must be a non-empty list of registered record ids (no "
+                                "PENDING / TBD placeholder; MET-06)" % where)
+    ts = v["tuning_states"]
+    if not isinstance(ts, list) or not ts or not all(isinstance(t, str) and t.strip() for t in ts):
+        raise MissingInputError("%s: tuning_states must list the match setting ids it covers" % where)
+    eta_p = _num(v["eta_pred"], where + ".eta_pred", allow_negative=False)
+    if eta_p > 1.0:
+        raise P1RecordError("%s.eta_pred = %r > 1 is not a passive two-port transmission" % (where, eta_p))
+    u_p = _pos(v["u_eta_pred"], where + ".u_eta_pred")
+    pn = _num(v["P_net_W"], where + ".P_net_W", allow_negative=False)
+    if pn <= 0.0:
+        raise P1RecordError("%s.P_net_W must be > 0" % where)
+    u_pn = _pos(v["u_P_net_W"], where + ".u_P_net_W")
+    pr = _num(v["P_ref_load_W"], where + ".P_ref_load_W", allow_negative=False)
+    u_pr = _pos(v["u_P_ref_load_W"], where + ".u_P_ref_load_W")
+    out = {"verification_id": v["verification_id"], "method": v["method"], "tuning_states": list(ts),
+           "evidence_record_ids": list(ids), "k_registration_id": v["k_registration_id"]}
+    if v["k"] is None:
+        out.update({"status": "NOT_EVALUATED", "reason": "k of the at-power loss check not registered (TBD_OWNER P1Q-24; "
+                                                         "never defaulted)"})
+        return out
+    k = _pos(v["k"], where + ".k")
+    if not _ref_ok(v["k_registration_id"]):
+        raise MissingInputError("%s: a supplied k needs its registered k_registration_id (not empty / PENDING / TBD; k "
+                                "stays TBD_OWNER P1Q-24 until registered, never defaulted - MET-06)" % where)
+    eta_m = pr / pn
+    u_m = eta_m * math.hypot(u_pr / pr if pr else 0.0, u_pn / pn)
+    stat = abs(eta_m - eta_p) / math.hypot(u_m, u_p)
+    out.update({"status": AT_POWER_VERIFIED if stat <= k else "LOSS_MODEL_INCONSISTENT", "eta_measured": eta_m,
+                "u_eta_measured": u_m, "eta_predicted": eta_p, "normalized_statistic": stat, "k": k})
+    return out
+
+
+def reduce_rf_cold_checkout(records):
+    """P1-S1 / P1-S2 records -> calorimetric cross-checks (z_x = (P_coupler - P_cal) / sqrt(u^2(P_coupler) +
+    u^2(P_cal)) with P_coupler = P_fwd - P_refl at the coupler plane, |z_x| <= k_x = 2: A9.1 UBQ-04, UB-RF-08,
+    P1-IT-24), the RF-chain status (RF_CHAIN_STATUSES), the line/match-loss characterizations with their verification
+    state (verified only under CROSS_CHECK_AGREES, with a registered u > 0 and an at-power loss-model verification
+    LOSS_MODEL_VERIFIED covering its match setting - at_power_loss_check, MET-02) and the installed-antenna optical
+    records (a powered 'unlit' record is valid only when optically UNLIT, A9.4 P2Q-05; in P1 without a frozen threshold
+    the state is UNCERTAIN and the record is a threshold INPUT, IDP2-17)."""
+    checks, chars, antenna = [], {}, []
+    cold_ids = set()
+    for rec in records:
+        pf, pr = validate_cold_checkout(rec)
+        cold_ids.add(rec["record_id"])
+        lc = rec["loss_characterization"]
+        if lc is not None:
+            prev = chars.get(lc["characterization_id"])
+            if prev is not None and (prev["value_W"], prev["match_setting_id"]) != (lc["value_W"],
+                                                                                    lc["match_setting_id"]):
+                raise P1RecordError("loss characterization %r recorded twice with different values"
+                                    % lc["characterization_id"])
+            chars[lc["characterization_id"]] = dict(lc, record_id=rec["record_id"])
+        if rec["checkout_kind"] == "DUMMY_LOAD":
+            cc = rec["calorimetric_cross_check"]
+            p_c = pf - pr
+            z = (p_c - float(cc["P_cal_W"])) / math.sqrt(float(cc["u_P_coupler_W"]) ** 2 + float(cc["u_P_cal_W"]) ** 2)
+            checks.append({"record_id": rec["record_id"], "method_id": cc["method_id"], "P_coupler_W": p_c,
+                           "P_cal_W": float(cc["P_cal_W"]), "z_x": z, "k_x": CROSS_CHECK_K_X,
+                           "within_k_x": abs(z) <= CROSS_CHECK_K_X})
+        else:
+            st, why = classify_plasma_state(rec["optical"], "record %r optical" % rec["record_id"])
+            antenna.append({"record_id": rec["record_id"], "match_setting_id": rec["rf"]["match_setting_id"],
+                            "P_fwd_W": pf, "P_refl_W": pr, "gas_flow_state": rec["gas_flow_state"],
+                            "unlit_procedure_id": rec["unlit_procedure_id"], "plasma_state": st,
+                            "plasma_state_reason": why, "valid_as_powered_unlit_record": st == "UNLIT",
+                            "photodiode_threshold_input": "IDP2-17 / IF-P1-23 input (A9.4 P2Q-05)",
+                            "rf_pickup_check": rec["rf_pickup_check"]})
+    if not checks:
+        status = "NOT_EVALUATED"
+    elif all(c["within_k_x"] for c in checks):
+        status = "CROSS_CHECK_AGREES"
+    else:
+        status = "EXCLUDED_INSTRUMENT"
+    loss_rows = []
+    for cid in sorted(chars):
+        c = chars[cid]
+        why = [] if status == "CROSS_CHECK_AGREES" else ["RF chain %s (P1-S1 calorimetric cross-check)" % status]
+        apv = c.get("at_power_verification")
+        ap = at_power_loss_check(apv) if apv is not None else None
+        if ap is None:
+            why.append("no at-power verification of the line/match-loss model (the dummy-load cross-check tests the "
+                       "coupler, not the loss; CAL-P2-09 / CAL-P2-10 form, k TBD_OWNER P1Q-24)")
+        elif ap["status"] != AT_POWER_VERIFIED:
+            why.append("at-power loss verification %r status %s%s" % (ap["verification_id"], ap["status"],
+                                                                      (": " + ap["reason"]) if ap.get("reason") else ""))
+        elif c["match_setting_id"] not in ap["tuning_states"]:
+            why.append("at-power loss verification %r does not cover match setting %r" % (ap["verification_id"],
+                                                                                           c["match_setting_id"]))
+        if ap is not None and ap["status"] == AT_POWER_VERIFIED:
+            # MET-06: the at-power check must verify THIS characterization - its predicted loss (1 - eta_pred) * P_net
+            # must agree with the characterization's value_W within the registered u_value_W (the same tolerance
+            # derive_rf applies to a record's loss), and its evidence must be P1-S1 / P1-S2 records of this bundle
+            loss_pred = (1.0 - ap["eta_predicted"]) * float(apv["P_net_W"])
+            if abs(loss_pred - float(c["value_W"])) > float(c["u_value_W"]):
+                why.append("at-power loss verification %r predicts a loss (1 - eta_pred) * P_net = %.6g W that "
+                           "contradicts characterization %r value_W %r W beyond u_value_W %r W (MET-06)"
+                           % (ap["verification_id"], loss_pred, cid, c["value_W"], c["u_value_W"]))
+            missing = [i for i in ap["evidence_record_ids"] if i not in cold_ids]
+            if missing:
+                why.append("at-power loss verification %r cites evidence records %s that are not P1-S1 / P1-S2 "
+                           "cold-checkout records of this bundle (MET-06)" % (ap["verification_id"], missing))
+        loss_rows.append({"characterization_id": cid, "record_id": c["record_id"],
+                          "match_setting_id": c["match_setting_id"], "value_W": float(c["value_W"]),
+                          "u_value_W": float(c["u_value_W"]), "valid_max_gamma_abs": float(c["valid_max_gamma_abs"]),
+                          "at_power_verification": ap, "verified": not why, "reasons": why})
+    verified = [r["characterization_id"] for r in loss_rows if r["verified"]]
+    return {"cross_checks": checks, "rf_chain_status": status, "loss_characterizations": loss_rows,
+            "verified_loss_ids": verified,
+            "characterizations": {r["characterization_id"]: {k: r[k] for k in ("match_setting_id", "value_W",
+                                                                                "u_value_W", "valid_max_gamma_abs")}
+                                  for r in loss_rows if r["verified"]},
+            "antenna_records": antenna,
+            "note": "engineering-only; reflected-power / VSWR trip thresholds are frozen from these records at P1-G2 "
+                    "(P1-IT-05); RF component ratings stay TBD_AFTER_IMPEDANCE_MAP"}
+
+
+def validate_ignition(rec):
+    rid = "ignition %r" % (rec.get("record_id") if isinstance(rec, dict) else None)
+    _common(rec, "ignition_attempt", rid)
+    for k in IGNITION_REQUIRED[len(COMMON_REQUIRED):]:
+        if k not in rec:
+            raise MissingInputError("%s: missing required key '%s'" % (rid, k))
+    if rec["stage_id"] != "P1-S3":
+        raise P1RecordError("%s: ignition records belong to P1-S3, not %r" % (rid, rec["stage_id"]))
+    if rec["gas"] not in P1_GASES:
+        raise P1RecordError("%s: gas %r outside P1 (Ar only)" % (rid, rec["gas"]))
+    if rec["hall_discharge_state"] != "OFF":
+        raise P1RecordError("%s: ICP ignition map is taken with the Hall discharge supply OFF (P1-S3)" % rid)
+    flows = rec["flows"]
+    _req(flows, FLOWS_REQUIRED, rid + " flows")
+    _num(flows["mdot_Ar_H1_mg_s"], rid + " mdot_Ar_H1_mg_s", allow_negative=False)
+    mded = _num(flows["mdot_icp_dedicated_mg_s"], rid + " mdot_icp_dedicated_mg_s", allow_negative=False)
+    if rec["gas_mode"] not in GAS_MODES:
+        raise GasModeError("%s: gas_mode %r not in %s" % (rid, rec["gas_mode"], GAS_MODES))
+    if rec["gas_mode"] == "G-REUSE" and mded != 0.0:
+        raise GasModeError("%s: G-REUSE requires mdot_ICP,dedicated = 0 (A9.1 HIQ-06; A9.3 OQ-RFQ-10)" % rid)
+    if rec["gas_mode"] == "DIAGNOSTIC_DEDICATED_FEED" and "DIAGNOSTIC_VARIABLE_NOT_BASELINE" not in rec["labels"]:
+        raise LabelError("%s: a dedicated ICP feed must be labelled DIAGNOSTIC_VARIABLE_NOT_BASELINE" % rid)
+    _req(rec["pressures"], PRESSURE_FIELDS, rid + " pressures")
+    _num(rec["pressures"]["p_chamber_Pa"], rid + " p_chamber_Pa", allow_negative=False)
+    pf, pr = _rf_readings(rec["rf"], rid + " rf")
+    if pf <= 0.0:
+        raise P1RecordError("%s: an ignition attempt needs P_fwd > 0" % rid)
+    for k in ("ignited", "extinguished"):
+        if not isinstance(rec[k], bool):
+            raise MissingInputError("%s: %s must be true or false" % (rid, k))
+    if rec["ignited"]:
+        _num(rec["ignition_delay_s"], rid + " ignition_delay_s", allow_negative=False)
+    elif rec["ignition_delay_s"] is not None:
+        raise P1RecordError("%s: no ignition but an ignition delay recorded" % rid)
+    for k in ("ignition_procedure_id", "point_id", "h1_magnet_state"):
+        if not isinstance(rec[k], str) or not rec[k].strip():
+            raise MissingInputError("%s: %s must be a registered non-empty string" % (rid, k))
+    return classify_plasma_state(rec["optical"], rid + " optical")
+
+
+def reduce_ignition(records):
+    """P1-S3 ignition map (descriptive, incl. non-ignition): one row per attempt and per registered point the attempts,
+    successes (recorded 'ignited') and success fraction (P1-D-09). The optical state is reported beside the recorded
+    ignition; a disagreement is flagged, never resolved here."""
+    rows, points = [], {}
+    for rec in records:
+        st, why = validate_ignition(rec)
+        flag = None
+        if rec["ignited"] and st == "UNLIT":
+            flag = "IGNITION_INDICATORS_DISAGREE: recorded ignition but optical state UNLIT"
+        if not rec["ignited"] and st in ("E_MODE", "H_MODE"):
+            flag = "IGNITION_INDICATORS_DISAGREE: no recorded ignition but optically lit (%s)" % st
+        rows.append({"record_id": rec["record_id"], "point_id": rec["point_id"],
+                     "P_fwd_W": float(rec["rf"]["P_fwd_W"]), "P_refl_W": float(rec["rf"]["P_refl_W"]),
+                     "match_setting_id": rec["rf"]["match_setting_id"],
+                     "mdot_Ar_H1_mg_s": float(rec["flows"]["mdot_Ar_H1_mg_s"]),
+                     "p_chamber_Pa": float(rec["pressures"]["p_chamber_Pa"]), "gas_mode": rec["gas_mode"],
+                     "h1_magnet_state": rec["h1_magnet_state"], "ignited": rec["ignited"],
+                     "ignition_delay_s": rec["ignition_delay_s"], "extinguished": rec["extinguished"],
+                     "plasma_state": st, "plasma_state_reason": why, "flag": flag})
+        p = points.setdefault(rec["point_id"], {"point_id": rec["point_id"], "attempts": 0, "successes": 0})
+        p["attempts"] += 1
+        p["successes"] += 1 if rec["ignited"] else 0
+    for p in points.values():
+        p["ignition_success_fraction"] = p["successes"] / p["attempts"]
+    rows.sort(key=lambda r: r["record_id"])
+    return {"attempts": rows, "points": [points[k] for k in sorted(points)],
+            "note": "descriptive ignition map incl. non-ignition regions; no verdict (P1-S3 exit)"}
+
+
+def validate_dwell(rec):
+    rid = "dwell %r" % (rec.get("record_id") if isinstance(rec, dict) else None)
+    _common(rec, "stability_dwell", rid)
+    _req(rec, DWELL_REQUIRED[len(COMMON_REQUIRED):], rid)
+    if rec["stage_id"] != "P1-S5":
+        raise P1RecordError("%s: stability dwells belong to P1-S5, not %r" % (rid, rec["stage_id"]))
+    return dwell_metrics(rec["dwell"])
+
+
+def stable_region_handoff(dwell_records, operating_points_by_id, ignition_points, criteria):
+    """P1-S5 stable-region determination and the P2 handoff record (IF-P1-01 -> IDP2-01; P2 gate S-10 / HM-R01).
+    Each dwell is classified only against OWNER criteria (P1Q-01; classify_stable_region) with the ignition
+    repeatability of its registered ignition point (P1-D-09). The region is the SET of tested points within the
+    criteria; its factor envelope is reported as the envelope of tested points, never as a stability claim between
+    them. Without criteria the status is NOT_EVALUATED and the raw metrics are handed over."""
+    if criteria is not None:
+        check_stable_criteria(criteria)
+    per = []
+    for rec in dwell_records:
+        m = validate_dwell(rec)
+        op = operating_points_by_id.get(rec["operating_point_record_id"])
+        ign = ignition_points.get(rec["ignition_point_id"])
+        entry = {"record_id": rec["record_id"], "operating_point_record_id": rec["operating_point_record_id"],
+                 "ignition_point_id": rec["ignition_point_id"], "metrics": m}
+        if op is None:
+            entry["verdict"] = {"verdict": "NOT_EVALUATED", "reason": "operating point %r not among the reduced "
+                                "records" % rec["operating_point_record_id"]}
+        elif criteria is None:
+            entry["verdict"] = classify_stable_region(m)
+        elif ign is None:
+            entry["verdict"] = {"verdict": "NOT_EVALUATED", "reason": "no ignition-repeatability record for point %r "
+                                "(P1-S3)" % rec["ignition_point_id"]}
+        else:
+            entry["verdict"] = classify_stable_region(m, criteria, ign)
+        per.append(entry)
+    within = [e for e in per if e["verdict"].get("verdict") == "WITHIN_OWNER_CRITERIA"]
+    srcs = list(dwell_records) + [operating_points_by_id[rec["operating_point_record_id"]] for rec in dwell_records
+                                  if rec["operating_point_record_id"] in operating_points_by_id]
+    flags = {bool(r["synthetic"]) for r in srcs}
+    if len(flags) > 1:
+        raise P1RecordError("stable-region handoff mixes synthetic fixtures %s with measured records %s: refused "
+                            "(SW-R2-01; synthetic data never mixes with measured data)"
+                            % (sorted({r["record_id"] for r in srcs if r["synthetic"]}),
+                               sorted({r["record_id"] for r in srcs if not r["synthetic"]})))
+    evidence_kind = "NO_RECORDS" if not flags else ("SYNTHETIC_TEST_ONLY" if flags.pop() else "MEASURED")
+    if criteria is None:
+        status = "NOT_EVALUATED"
+    elif within:
+        status = "REGION_OF_TESTED_POINTS_WITHIN_OWNER_CRITERIA"
+    else:
+        status = "NO_TESTED_POINT_WITHIN_CRITERIA"
+    env, pts = None, []
+    if within:
+        env = {}
+        for e in within:
+            op = operating_points_by_id[e["operating_point_record_id"]]
+            pts.append({"operating_point_record_id": op["record_id"], "match_setting_id": op["rf"]["match_setting_id"],
+                        "h1_point_id": op.get("h1_point_id"), "gas": op["gas"], "gas_mode": op["gas_mode"],
+                        "Z_ICP": ({"R_ohm": op["impedance"]["R_ohm"], "X_ohm": op["impedance"]["X_ohm"]}
+                                  if op["impedance"]["status"] == "MEASURED" else None),
+                        "factors": {name: float(op[a][b]) for name, (a, b) in HANDOFF_FACTORS}})
+        for name, _ in HANDOFF_FACTORS:
+            vals = [p["factors"][name] for p in pts]
+            env[name] = [min(vals), max(vals)]
+    return {"handoff": "IF-P1-01 -> P2 IDP2-01 (gate S-10, HM-R01)", "evidence_kind": evidence_kind, "status": status,
+            "criteria_id": criteria["criteria_id"] if criteria is not None else None,
+            "points_within_criteria": pts, "envelope_of_tested_points": env,
+            "envelope_note": "ENVELOPE_OF_TESTED_POINTS_NOT_A_STABILITY_CLAIM_BETWEEN_POINTS",
+            "dwells": per,
+            "note": "engineering handoff for P2 only; not an architecture gate; criteria are owner inputs (P1Q-01)"}

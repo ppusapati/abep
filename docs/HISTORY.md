@@ -2383,3 +2383,34 @@ ICP-45 stays NOT_EVALUATED until I_d,max,H1 is registered.
 Post-merge: 2340 passed / 5 skipped / 1 xfailed, golden OK, ci_checks 10/10. Protected artifacts are unchanged; the diff
 vs main is additive. Minors carried: stale PENDING RFQ references in P2, one leftover PROPOSED wording in P1-S4, and the
 INS-P2-10 source list, which cites A9.3 but not A9.4.
+Checkpoint 4 merged to main as eef8b85 (PR #34), using the A9.4 one-merge authorization. Codex raised two findings on the
+P1 reducer; both were fixed in ca36c9e before the merge. Paired capacity records must now match the closure rule's sign
+convention, and mixed synthetic/measured candidates are refused. Main reproduces 2342 / 5 / 1, golden OK and 10/10.
+
+## 2026-09-30 — A9.5 / A9.6: implementation-first batch and consolidated verification (execution branch; not on main)
+
+**A9.5 (P1Q-15/16):** the P1 reducer implements the owner's Kirchhoff closure rule and the signed I_e,cap = I_on - I_off.
+
+**A9.6 (implementation-first directive):** every currently authorized item was implemented, and then verified once.
+- **Existing packages completed:**
+  - P1 bench workflow: G0 through Hall-ON consistency, a campaign driver, fail-closed reducers.
+  - P2 impedance framework: Touchstone, SOL, de-embedding, GUM/MC uncertainty, E/H-mode detection, map storage,
+    the rating structure.
+  - RFQ v2 packages completed.
+- **New:**
+  - P3 coupled-thermal framework (no thermal PASS) and P4 anode/collector materials framework (no selection).
+  - Mass/power v2 and Xe accounting v2.
+  - A requirement-verification matrix: 19 rows x 2 configurations, 0 PASS.
+  - Owner-question state v4: 95 TBD_OWNER, each with its blocker and dependency.
+  - M16 v4: no state change.
+- **Cross-lane integration:** 42 interface pairs; circular sha pins removed.
+
+**Consolidated verification:** six dimensions (structural, physics/evidence, electrical, thermal, metrology,
+software).
+- 32 findings (23 major, 9 minor), repaired in three rounds.
+- Follow-up fixes MET-07-R1..R5 close every self-declared route by which the P2 line/match-loss check could turn an
+  inconsistent at-power check into a reconstructed P_delivered. One registered protocol per (method, loss model) now
+  fixes k, the uncertainties, the check power, the reference load and the application range.
+
+Final checks: 2657 passed / 5 skipped / 1 xfailed, golden OK, ci_checks 10/10, protected artifacts unchanged vs main
+eef8b85. No model, frozen dataset or golden changed. Build order: P4, XE, P1, P2, P3, MP, RFQ, RVM, state v4, M16 v4.

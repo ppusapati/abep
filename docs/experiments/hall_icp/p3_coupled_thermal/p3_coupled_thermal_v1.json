@@ -1,0 +1,5860 @@
+{
+ "schema": "p3_coupled_thermal_v1",
+ "id": "p3_coupled_thermal_v1",
+ "lane": "fo_a9_6_p3_coupled_thermal",
+ "trigger": "T_A9_6_P3_COUPLED_THERMAL",
+ "date": "2026-09-30",
+ "base_commit": "c33b22c78b14cd4d6a51ed9bd5de4e046bc98cae",
+ "status": "FRAMEWORK_IMPLEMENTED_INPUTS_TBD",
+ "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
+ "closure_statuses": {
+  "ICP_COUPLED_THERMAL": "UNRESOLVED",
+  "ANODE_THERMAL_CLOSURE": "UNRESOLVED",
+  "source": "A9.2 a9_10_statuses; A9.6 summary.fixed_statuses",
+  "a96_fixed_statuses": {
+   "316L_FLIGHT_ANODE": "REJECTED_AS_CURRENT_BASELINE",
+   "FINAL_ANODE_MATERIAL": "OPEN",
+   "ANODE_THERMAL_CLOSURE": "UNRESOLVED",
+   "ICP_COUPLED_THERMAL": "UNRESOLVED",
+   "RF_COMPONENT_RATINGS": "TBD_AFTER_IMPEDANCE_MAP"
+  }
+ },
+ "a9_2_statuses_carried": {
+  "Hall->ICP architecture": "INVESTIGATION_HYPOTHESIS",
+  "ICP electron-current capacity": "PENDING_ICP45",
+  "ICP RF power closure": "PENDING_HARDWARE",
+  "RF matching architecture": "LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT",
+  "RF component ratings": "TBD_AFTER_IMPEDANCE_MAP",
+  "316L flight anode": "REJECTED_AS_CURRENT_BASELINE",
+  "final anode material": "OPEN",
+  "anode thermal closure": "UNRESOLVED",
+  "coupled H-1/ICP thermal closure": "UNRESOLVED",
+  "C1 conventional reference": "CONTROL_FALLBACK"
+ },
+ "result_status_vocabulary": [
+  "COMPUTED_CONDITIONAL",
+  "NOT_EVALUATED",
+  "INCOMPLETE_EVIDENCE",
+  "OUT_OF_DOMAIN",
+  "NUMERICAL_FAILURE"
+ ],
+ "result_status_rule": "no result of this framework is ever PASS; computed values are COMPUTED_CONDITIONAL (with the list of non-measured inputs they are conditional on); refusals are INCOMPLETE_EVIDENCE (missing / TBD inputs), OUT_OF_DOMAIN (formula / geometry domain) or NUMERICAL_FAILURE (no convergence / energy balance not closed)",
+ "generated_by": "docs/experiments/hall_icp/p3_coupled_thermal/build_p3_coupled_thermal.py",
+ "library": "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py",
+ "companion_document": "docs/experiments/hall_icp/p3_coupled_thermal/P3_COUPLED_THERMAL.md",
+ "test": "tests/test_p3_coupled_thermal.py",
+ "what_this_is_not": [
+  "not a thermal result and not a thermal PASS: ICP_COUPLED_THERMAL = UNRESOLVED, ANODE_THERMAL_CLOSURE = UNRESOLVED (A9.2, A9.6)",
+  "not a Hall performance prediction: no Hall closure (credible set EMPTY), no 0-D model; beam current, ion energy, plume divergence and discharge current are measured inputs (TBD)",
+  "not an ICP design: the geometry grid is an evaluation grid; no geometry is chosen",
+  "not an answer to any open owner question (existing ones carried; two new ones raised)",
+  "not a change to H2-5, A9-07, the ICD, P1 or P2 (all read-only)",
+  "not wired into abep_sim/archengine.py (goldens do not move)"
+ ],
+ "decision_pins": [
+  {
+   "key": "A9",
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+   "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+   "role": "governing owner decision A9"
+  },
+  {
+   "key": "ANS",
+   "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+   "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
+   "role": "147 owner answers (machine-readable)"
+  },
+  {
+   "key": "PACK",
+   "path": "docs/decisions/OD_2026_09_29_OWNER_DECISION_PACK_147.md",
+   "sha256": "8736d88a64bf26bd06a332a68c2450a780f175fffafe5aca0625759133666976",
+   "role": "147 owner answers (verbatim pack)"
+  },
+  {
+   "key": "A91",
+   "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+   "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+   "role": "A9.1 follow-up owner decisions"
+  },
+  {
+   "key": "A92",
+   "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+   "role": "A9.2 A9-07 follow-up owner decisions"
+  },
+  {
+   "key": "A92MD",
+   "path": "docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+   "sha256": "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9",
+   "role": "A9.2 (verbatim)"
+  },
+  {
+   "key": "A93",
+   "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+   "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+   "role": "A9.3 post-A9 tier-1 owner decisions"
+  },
+  {
+   "key": "A94",
+   "path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+   "sha256": "b3d9a9f1ed5b76637b1508ca40fdd719b40f8184bdbc433804eeeb6119dc360d",
+   "role": "A9.4 P1/P2 owner decisions"
+  },
+  {
+   "key": "A95",
+   "path": "docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json",
+   "sha256": "c9e101f2c409c2d28ad256818c22f13ee801bc532d7e4ef470f375d7bb1fe1d3",
+   "role": "A9.5 P1 closure owner decisions"
+  },
+  {
+   "key": "A96",
+   "path": "docs/decisions/OD_2026_09_30_A9_6_implementation_first_directive.json",
+   "sha256": "d8d8496f4141a7096496d3a893c95c3db524ca501055a26cc868fb35d0ae9327",
+   "role": "A9.6 implementation-first directive"
+  },
+  {
+   "key": "A96MD",
+   "path": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md",
+   "sha256": "c6ee26e57ea5ca559f4fa4e4a8809b1aa8f3a217e50c534b943fc3ad99240634",
+   "role": "A9.6 (verbatim; binds this lane)"
+  }
+ ],
+ "deliverable_pins": [
+  {
+   "key": "H25",
+   "path": "docs/hardware/h2/h2_5_thermal_network/h2_5_thermal_network_v1.json",
+   "sha256": "68c5be61443d0ef1c7308c4aba265426137292dcf9363e57903e0a1f6c8bc083",
+   "role": "H2-5 thermal network v1 (H-1 side)"
+  },
+  {
+   "key": "H25PY",
+   "path": "docs/hardware/h2/h2_5_thermal_network/build_h2_5_thermal_network.py",
+   "sha256": "4e937fa97b104d1004765f5a8a3c624bf702375fb822b81bc97b979446aebbec",
+   "role": "H2-5 builder (imported read-only: assemble / solve / property functions)"
+  },
+  {
+   "key": "H2A9",
+   "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
+   "sha256": "b428565299c1c41487d9ffa50c174986d2d52c544539f89ca21b7bdbc2ae44fa",
+   "role": "A9-07 H2 revisions (uncoupled thermal rerun, ICP heat allowances, A9H-TH-01)"
+  },
+  {
+   "key": "ICD",
+   "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
+   "sha256": "8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c",
+   "role": "A9-03 ICP neutralizer ICD"
+  },
+  {
+   "key": "OQ3",
+   "path": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
+   "sha256": "1c2e74340852dfe8c58b1804c3cfda2bfbfb3bfb5d631aaebd715cf716b76af2",
+   "role": "owner-question state v3 (snapshot)"
+  },
+  {
+   "key": "M16",
+   "path": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json",
+   "sha256": "636cbd3318831f6f56e9833813c4d8c259aef7db3de1c6e503cccce14dade7e2",
+   "role": "M16 v3 subsystem maturity"
+  },
+  {
+   "key": "EVID",
+   "path": "docs/EVIDENCE.md",
+   "sha256": "a2950352141890c12ad33e66766cd003215c807cb29203d21df090349ab90b61",
+   "role": "evidence rules (CLAUDE.md rule 10)"
+  }
+ ],
+ "referenced_not_pinned": {
+  "paths": {
+   "P1": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+   "P2": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json"
+  },
+  "p1_ids": [
+   "P1-M-01",
+   "P1-M-02",
+   "P1-M-03",
+   "P1-M-07",
+   "P1-M-10",
+   "P1-M-11",
+   "P1-M-12",
+   "P1-M-14",
+   "P1-M-21",
+   "P1-M-27",
+   "P1-IT-26",
+   "P1-IT-36",
+   "P1-IT-42",
+   "P1-IT-19"
+  ],
+  "p2_ids": [
+   "RP-CPL",
+   "RP-MIN",
+   "RP-ANT",
+   "HM-F01",
+   "HM-R08",
+   "HM-R09",
+   "CAL-P2-02",
+   "CAL-P2-03",
+   "CAL-P2-08",
+   "INS-P2-09"
+  ],
+  "rule": "merged A9.6 packages that cite P3 back; referenced by id as read at the base commit; tests/test_p3_coupled_thermal.py checks the ids still exist"
+ },
+ "never_pinned": [
+  "docs/orchestration/lane_registry_v1.json",
+  "docs/orchestration/trigger_registry_v1.json",
+  "docs/orchestration/fired_triggers.jsonl",
+  "docs/orchestration/trigger_ledger_v2.jsonl",
+  "docs/orchestration/runtime_state.json"
+ ],
+ "merged_cross_lane": {
+  "rule": "values flow only P4 -> MP (candidate densities) and XE -> MP (Xe residual and headroom, both readings), and P1 / P2 -> RFQ (ids, item text and statuses of the instrument coverage); every other cross-lane reference is an id checked at build time. Rebuild in the order P4, XE, P1, P2, P3, MP, RFQ; a second pass of any package is a no-op",
+  "build_order": [
+   "P4",
+   "XE",
+   "P1",
+   "P2",
+   "P3",
+   "MP",
+   "RFQ"
+  ],
+  "packages": {
+   "P4": {
+    "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+    "state": "MERGED",
+    "pairs": [
+     "XL-23",
+     "XL-24"
+    ],
+    "ids_cited": [
+     "CR-01",
+     "IT-09",
+     "IT-11",
+     "property_records"
+    ],
+    "sha_pinned": false,
+    "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other back; a pin would be circular)"
+   },
+   "XE": {
+    "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+    "state": "MERGED",
+    "pairs": [],
+    "ids_cited": [],
+    "sha_pinned": false,
+    "check": "no interface demand between the two packages"
+   },
+   "P1": {
+    "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+    "state": "MERGED",
+    "pairs": [
+     "XL-17",
+     "XL-18",
+     "XL-21"
+    ],
+    "ids_cited": [
+     "P1-M-21",
+     "P1-M-30"
+    ],
+    "sha_pinned": false,
+    "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other back; a pin would be circular)"
+   },
+   "P2": {
+    "path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+    "state": "MERGED",
+    "pairs": [
+     "XL-19",
+     "XL-20",
+     "XL-22"
+    ],
+    "ids_cited": [
+     "CAL-P2-02",
+     "CAL-P2-03",
+     "CAL-P2-08"
+    ],
+    "sha_pinned": false,
+    "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other back; a pin would be circular)"
+   },
+   "MP": {
+    "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+    "state": "MERGED",
+    "pairs": [
+     "XL-28",
+     "XL-29"
+    ],
+    "ids_cited": [
+     "thermal_control"
+    ],
+    "sha_pinned": false,
+    "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other back; a pin would be circular)"
+   },
+   "RFQ": {
+    "path": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+    "state": "MERGED",
+    "pairs": [
+     "XL-42"
+    ],
+    "ids_cited": [
+     "RFQ2-MECH-N04"
+    ],
+    "sha_pinned": false,
+    "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other back; a pin would be circular)"
+   }
+  }
+ },
+ "external_sources": {
+  "EXT-HOWELL-CATALOG": {
+   "citation": "J. R. Howell, 'A Catalog of Radiation Heat Transfer Configuration Factors' (online edition), Section C: factors from finite areas to finite areas",
+   "access": "open web pages; equations are published as images; read 2026-09-30 and transcribed into docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py (docstrings name each entry); image sha256 recorded",
+   "entries": {
+    "C-40": {
+     "url": "https://www.thermalradiation.net/sectionc/C-40.html",
+     "title": "Disk to parallel coaxial disk of same radius",
+     "equation_image_sha256": "dc76abbe83d271d14768cf01366dfd47dfb4d3a9442a76f4bd83370f2a3d6169"
+    },
+    "C-41": {
+     "url": "https://www.thermalradiation.net/sectionc/C-41.html",
+     "title": "Disk to parallel coaxial disk of unequal radius",
+     "equation_image_sha256": "935ee94d671a8cad39b993bf7c425d6bb084b3f89a6bdd1dcd97742a8dce0301"
+    },
+    "C-52": {
+     "url": "https://www.thermalradiation.net/sectionc/C-52.html",
+     "title": "Ring to parallel coaxial ring",
+     "equation_image_sha256": "79975ce65626e631355faea0a99f633eb6fb90bea5cc06d7861329bafe619275"
+    },
+    "C-77": {
+     "url": "https://www.thermalradiation.net/sectionc/C-77.html",
+     "title": "Outer surface of cylinder to annular disk at end of cylinder",
+     "equation_image_sha256": "a9099e67b1ffb90f4a618e590c51fe1c29f8ed16210d1b442102a930d32672ad"
+    },
+    "C-80": {
+     "url": "https://www.thermalradiation.net/sectionc/C-80.html",
+     "title": "Disk in cylinder base or top to inside surface of right circular cylinder",
+     "equation_image_sha256": "2680447c40a27d1dbe1563f2b6bbf248073867d7b75bcae5ce6ac9127b422b85"
+    },
+    "C-81": {
+     "url": "https://www.thermalradiation.net/sectionc/C-81.html",
+     "title": "Inside surface of right cylinder to coaxial disk of same diameter separated from base of cylinder",
+     "equation_image_sha256": "29b3865aeaaa9086da61e995ad8829635d38b0d696d86d834f3c0b5294269f58"
+    }
+   },
+   "evidence_class": "published analog (closed-form geometry relations; exact for the stated configuration)"
+  },
+  "EXT-GOEBEL-KATZ-2008": {
+   "citation": "D. M. Goebel, I. Katz, 'Fundamentals of Electric Propulsion: Ion and Hall Thrusters', JPL Space Science and Technology Series, Jet Propulsion Laboratory / California Institute of Technology, March 2008",
+   "url": "https://descanso.jpl.nasa.gov/SciTechBook/series1/Goebel__cmprsd_opt.pdf",
+   "access": "full text, open (JPL DESCANSO); read 2026-09-30",
+   "sha256": "a373c8a26137b7c7cd989880c303c4f6c1f84f20a11a02770047f6ba4c249e4e",
+   "locators": {
+    "electron_energy_2Te": "Eq. (4.2-9), p. 95 (energy removed from the plasma per electron 2kTe/e + phi; derived in Appendix C, Eq. (C-2), p. 467); Eq. (7.3-47), p. 356 and Eq. (7.3-61), pp. 360-361 ('each electron deposits 2kTe/e to the anode for positive plasma potentials')",
+    "accelerating_sheath": "p. 356 ('If the plasma potential is negative relative to the anode ... the positive-going sheath potential accelerating electrons into the anode' increases the heating; Eq. (7.3-47) is then 'reasonable, but not worst-case')",
+    "ion_energy": "Eq. (4.2-10), p. 95 (ion energy kTe/2e (pre-sheath) + phi (sheath))",
+    "wall_power": "Eq. (7.3-45), p. 354 (secondary-electron cooling neglected, p. 355)"
+   },
+   "evidence_class": "published analog (textbook sheath energy-transmission relations; applicability to the ICP collector sheath is an assumption to be checked with P1 data)"
+  }
+ },
+ "heat_terms": {
+  "Q_RF/match": {
+   "function": "q_rf_match",
+   "formula": "Q = f_on_module P_line/match,loss + (1 - f_leaving) P_delivered; P_delivered = P_forward - P_reflected - P_line/match,loss (A9.2); P_forward is never P_plasma",
+   "inputs": [
+    "P3-P2-01",
+    "P3-P2-02",
+    "P3-P2-03",
+    "P3-P2-04",
+    "P3-P2-05"
+   ],
+   "optional_breakdown": "antenna ohmic I_ant,rms^2 R_ant,cold (P3-P2-06, P3-P2-07) with a consistency flag vs P_delivered",
+   "upstream_refusal": "a P2 value reported 'REFUSED - ...' (line/match loss model unverified) or NOT_AVAILABLE raises RefusedInputError (INCOMPLETE_EVIDENCE); it is never reconstructed from P_net; a declared-bound interval or a string is not a measured scalar (InputError); pair XL-20"
+  },
+  "Q_collector": {
+   "function": "q_collector",
+   "formula": "Q = I_e,coll (2 T_e + max(0, V_s - V_p)) + I_i,coll (T_e/2 + max(0, V_p - V_s)) [+ I_e phi_wf + I_i (E_iz - phi_wf) only if the switch is INCLUDED]",
+   "source": "EXT-GOEBEL-KATZ-2008 Eq. (4.2-9), (4.2-10), (7.3-47), (7.3-61), Appendix C; surface terms from memory - verify",
+   "inputs": [
+    "P3-P1-01",
+    "P3-P1-02",
+    "P3-P1-03",
+    "P3-P1-04",
+    "P3-P1-05",
+    "P3-P1-06"
+   ],
+   "note": "Hall-ON: the discharge loop closes through the ICP ion collector (ICD ICP-22), so its ion current scales with I_d; ICP-45 capacity (discharge OFF, A9.4 P1Q-10): the dedicated electron-collecting electrode takes 2 T_e (+ acceleration) per electron"
+  },
+  "Q_plume": {
+   "function": "plume_interception + q_plume",
+   "formula": "Q_s = alpha_E f_int,s I_beam E_ion,mean, f_int from the ray engine with the measured angular CDF",
+   "inputs": [
+    "P3-H-01",
+    "P3-H-02",
+    "P3-H-03",
+    "P3-H-04",
+    "P3-G-01..05",
+    "P3-G-07"
+   ],
+   "omitted_terms": [
+    "charge-exchange ions",
+    "fast neutrals",
+    "plume electrons",
+    "sputtered-atom deposition"
+   ]
+  },
+  "Q_Hall->ICP": {
+   "function": "q_hall_to_icp (+ exchange_between, network carrier links)",
+   "formula": "Q = Q_rad (net H-1 -> ICP, radiosity) + Q_cond,carrier + Q_plume",
+   "inputs": [
+    "P3-G-*",
+    "P3-R-*",
+    "P3-K-01",
+    "P3-K-02",
+    "Q_plume inputs"
+   ]
+  },
+  "H-1_view_change": {
+   "function": "h1_view_change / equivalent_heat_into_h1",
+   "formula": "Delta F_space per H-1 zone; equivalent heat = net radiative loss without ICP - with ICP at fixed temperatures (first order)",
+   "inputs": [
+    "P3-G-*",
+    "P3-R-*",
+    "H-1 temperatures (network)"
+   ]
+  },
+  "coupled_network": {
+   "function": "h25_coupled_network + solve_network",
+   "nodes_h1": [
+    "AN",
+    "WI",
+    "WO",
+    "PI",
+    "PO",
+    "BP",
+    "CI",
+    "CO",
+    "CB"
+   ],
+   "nodes_icp": "declared per design (e.g. ICP_BODY, ICP_DIELECTRIC, ICP_ANTENNA, ICP_COLLECTOR, ICP_MATCH, KC1_CARRIER) - no default set",
+   "coupling": "H-1 front radiators (AN / WI / WO through the exit aperture, PI face, PO front annulus and lateral) and ICP surfaces in one gray-diffuse radiosity enclosure closed by SPACE; H2-5 internal links, coil R(T) and remaining boundaries unchanged; carrier conduction links to H-1 BP or the mount",
+   "limitations": [
+    "ICP shading of H-1 solar / albedo / OLR loads not modelled",
+    "H-1 wall-end rings reradiating (not in H2-5)",
+    "open-frame bodies: gray direction-independent open-area fraction",
+    "diffuse gray surfaces; room-temperature emittances (H2-5 limitation)",
+    "lumped nodes; steady state only"
+   ]
+  }
+ },
+ "items": [
+  {
+   "id": "P3-G-01",
+   "name": "axial standoff L of the ICP module datum IP-NEU downstream of IP-EXIT",
+   "value": "TBD - requires the KC-1 / ICP module drawing (ICD ICP-02)",
+   "units": "m",
+   "basis": "pending",
+   "source": "ICD ICP-02",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-1",
+   "supplier": "hardware",
+   "used_by": [
+    "view factors",
+    "plume interception"
+   ],
+   "lib_key": "z_lo of the ICP body",
+   "note": ""
+  },
+  {
+   "id": "P3-G-02",
+   "name": "ICP clear aperture radius r_ap (plume passage; open-tube coaxial first build, A9.3 OQ-VI-03)",
+   "value": "TBD - requires the frozen H-1 channel OD and the measured plume divergence (ICD ICP-04)",
+   "units": "m",
+   "basis": "pending",
+   "source": "ICD ICP-04; A9.3 OQ-VI-03",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-1",
+   "supplier": "hardware",
+   "used_by": [
+    "view factors",
+    "plume interception"
+   ],
+   "lib_key": "r_in of the ICP body",
+   "note": ""
+  },
+  {
+   "id": "P3-G-03",
+   "name": "ICP module outer radius r_mod (minimum necessary downstream obstruction, A9.2)",
+   "value": "TBD - requires the module envelope (ICD ICP-07)",
+   "units": "m",
+   "basis": "pending",
+   "source": "ICD ICP-07; ICP-47",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-1",
+   "supplier": "hardware",
+   "used_by": [
+    "view factors"
+   ],
+   "lib_key": "r_out of the ICP body",
+   "note": ""
+  },
+  {
+   "id": "P3-G-04",
+   "name": "ICP module axial length H",
+   "value": "TBD - requires the module envelope (ICD ICP-07)",
+   "units": "m",
+   "basis": "pending",
+   "source": "ICD ICP-07",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-1",
+   "supplier": "hardware",
+   "used_by": [
+    "view factors",
+    "plume interception"
+   ],
+   "lib_key": null,
+   "note": ""
+  },
+  {
+   "id": "P3-G-05",
+   "name": "open-frame support open-area fraction tau (A9.2 open-frame support; gray, direction-independent approximation in the engine)",
+   "value": "TBD - requires the support drawing (ICD ICP-47)",
+   "units": "-",
+   "basis": "pending",
+   "source": "ICD ICP-47; A9.2 radiative_view_requirement",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-1",
+   "supplier": "hardware",
+   "used_by": [
+    "view factors"
+   ],
+   "lib_key": null,
+   "note": ""
+  },
+  {
+   "id": "P3-G-06",
+   "name": "ICP surface -> thermal node map (dielectric tube, antenna, collector, body, match) and the surfaces' zoning",
+   "value": "TBD - requires the ICP module drawing (ICD ICP-07, ICP-21, ICP-47)",
+   "units": "-",
+   "basis": "pending",
+   "source": "ICD ICP-07 / ICP-21 / ICP-47",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-1",
+   "supplier": "hardware",
+   "used_by": [
+    "network"
+   ],
+   "lib_key": "no default map: h25_coupled_network() refuses an unmapped surface",
+   "note": ""
+  },
+  {
+   "id": "P3-G-07",
+   "name": "collector geometry and position relative to the bore / plume (Takahashi-type ion collector)",
+   "value": "TBD - requires the ICP module design (ICD ICP-21)",
+   "units": "m",
+   "basis": "pending",
+   "source": "ICD ICP-21",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-1",
+   "supplier": "hardware",
+   "used_by": [
+    "view factors",
+    "Q_plume",
+    "Q_collector"
+   ],
+   "lib_key": null,
+   "note": ""
+  },
+  {
+   "id": "P3-G-08",
+   "name": "H-1 front-face radii and body length (R_pf, R_i, R_o, R_ow, R_b, L_b)",
+   "value": "TBD - requires the frozen H-1 geometry (PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/, docs/hardware/h2/h2_7_mechanical_bom/)",
+   "units": "m",
+   "basis": "pending",
+   "source": "H2-5 H25-12, H25-13, H25-14, H25-15, H25-18, H25-19 (analog / assumed ranges; the parametric study uses the range midpoints as an evaluation point only)",
+   "evidence_class": null,
+   "status": "PENDING",
+   "freeze_point": "LOCK-1",
+   "supplier": "H2-5/A9-07 (analog)",
+   "used_by": [
+    "view factors",
+    "network"
+   ],
+   "lib_key": null,
+   "note": ""
+  },
+  {
+   "id": "P3-R-01",
+   "name": "ICP upstream-face (Hall-facing) hemispherical emittance",
+   "value": "TBD - requires the selected face material / finish data and a sourced emittance per candidate and surface state (the merged P4 framework docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json carries no emittance record: TBD there, ID-02 / XL-23)",
+   "units": "-",
+   "basis": "pending",
+   "source": "ICD ICP-47",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "after-evidence",
+   "supplier": "P4",
+   "used_by": [
+    "network",
+    "Q_Hall->ICP"
+   ],
+   "lib_key": "icp_eps[<ICP>.up]",
+   "note": ""
+  },
+  {
+   "id": "P3-R-02",
+   "name": "ICP outward-facing surfaces emittance (A9.2 objective: high-emittance outward surfaces)",
+   "value": "TBD - requires the selected coating / finish and its temperature capability",
+   "units": "-",
+   "basis": "pending",
+   "source": "A9.2 radiative_view_requirement; ICD ICP-47",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "after-evidence",
+   "supplier": "hardware",
+   "used_by": [
+    "network"
+   ],
+   "lib_key": "icp_eps[<ICP>.outer], icp_eps[<ICP>.down]",
+   "note": ""
+  },
+  {
+   "id": "P3-R-03",
+   "name": "ICP bore / dielectric tube emittance",
+   "value": "TBD - requires the dielectric material selection",
+   "units": "-",
+   "basis": "pending",
+   "source": "ICD ICP-07",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "after-evidence",
+   "supplier": "hardware",
+   "used_by": [
+    "network"
+   ],
+   "lib_key": "icp_eps[<ICP>.bore]",
+   "note": ""
+  },
+  {
+   "id": "P3-R-04",
+   "name": "collector emittance",
+   "value": "TBD - requires the collector material (A9.1 A9-03-collector: not frozen; FINAL_COLLECTOR_MATERIAL OPEN in the merged P4 framework docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json; no emittance record there)",
+   "units": "-",
+   "basis": "pending",
+   "source": "A9.1 A9-03-collector",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "after-evidence",
+   "supplier": "P4",
+   "used_by": [
+    "network"
+   ],
+   "lib_key": null,
+   "note": ""
+  },
+  {
+   "id": "P3-R-05",
+   "name": "H-1 exterior emittances (BN walls, metal, anode, finish)",
+   "value": {
+    "eps_BN": 0.92,
+    "eps_metal": [
+     0.14,
+     0.38
+    ],
+    "eps_anode": [
+     0.14,
+     0.8
+    ]
+   },
+   "units": "-",
+   "basis": "analog",
+   "source": "H2-5 H25-26, H25-27, H25-28; finishes H2-5 FINISHES (EXT-HENNINGER1984)",
+   "evidence_class": "published analog",
+   "status": "ANALOG_EVALUATION_ONLY",
+   "freeze_point": "after-evidence",
+   "supplier": "H2-5/A9-07 (analog)",
+   "used_by": [
+    "network"
+   ],
+   "lib_key": null,
+   "note": "room-temperature / band values used as total hemispherical (H2-5 limitation, verify)"
+  },
+  {
+   "id": "P3-R-06",
+   "name": "facility radiative sink temperature (ground)",
+   "value": "TBD_AFTER_EVIDENCE - measured per run (owner row 131); ~300 K chamber walls are a planning case only, never a score-bearing input",
+   "units": "K",
+   "basis": "owner answer",
+   "source": "owner row 131",
+   "evidence_class": null,
+   "status": "TBD_AFTER_EVIDENCE",
+   "freeze_point": "after-evidence",
+   "supplier": "facility",
+   "used_by": [
+    "network"
+   ],
+   "lib_key": "T_space (ground)",
+   "note": ""
+  },
+  {
+   "id": "P3-R-07",
+   "name": "orbit radiative sink and environmental loads",
+   "value": "H2-5 orbit cases (deep space 0 K; NASA/TM-2001-211221 solar / albedo / OLR) - carried unchanged; ICP shading of H-1 environmental loads is NOT modelled (conservative for hot, non-conservative for cold cases)",
+   "units": "K; W/m2",
+   "basis": "analog",
+   "source": "H2-5 H25-37..42",
+   "evidence_class": "published analog",
+   "status": "ANALOG_EVALUATION_ONLY",
+   "freeze_point": "LOCK-1",
+   "supplier": "H2-5/A9-07 (analog)",
+   "used_by": [
+    "network"
+   ],
+   "lib_key": null,
+   "note": ""
+  },
+  {
+   "id": "P3-K-01",
+   "name": "conductance ICP body <-> KC-1 carrier (A9.2 objective: thermally isolated mounting)",
+   "value": "TBD - requires the mount design (isolators, 350 V class P1Q-14) and a measured / sourced joint conductance",
+   "units": "W/K",
+   "basis": "pending",
+   "source": "A9.2 radiative_view_requirement; A9.4 P1Q-14",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-1",
+   "supplier": "hardware",
+   "used_by": [
+    "network",
+    "Q_Hall->ICP (conductive)"
+   ],
+   "lib_key": "icp_cond",
+   "note": ""
+  },
+  {
+   "id": "P3-K-02",
+   "name": "conductance KC-1 carrier <-> H-1 (through the stand / moving platform)",
+   "value": "TBD - requires the KC-1 / stand design; depends on the open owner question ICPQ-03 (moving platform)",
+   "units": "W/K",
+   "basis": "pending",
+   "source": "ICD ICP-06 / ICP-10; owner question ICPQ-03 (OPEN)",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-1",
+   "supplier": "hardware",
+   "used_by": [
+    "network",
+    "Q_Hall->ICP (conductive)"
+   ],
+   "lib_key": "icp_cond",
+   "note": ""
+  },
+  {
+   "id": "P3-K-03",
+   "name": "conductance KC-1 carrier <-> stand / spacecraft boundary",
+   "value": "TBD - requires the KC-1 / stand design (ground) and the spacecraft thermal ICD (flight; owner row 85 cases)",
+   "units": "W/K",
+   "basis": "pending",
+   "source": "owner row 85; ICD ICP-06",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-1",
+   "supplier": "hardware",
+   "used_by": [
+    "network"
+   ],
+   "lib_key": "icp_cond / icp_fixed",
+   "note": ""
+  },
+  {
+   "id": "P3-K-04",
+   "name": "conductance antenna <-> ICP body",
+   "value": "TBD - requires the antenna mounting design",
+   "units": "W/K",
+   "basis": "pending",
+   "source": "ICD ICP-19 / ICP-44",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-1",
+   "supplier": "hardware",
+   "used_by": [
+    "network"
+   ],
+   "lib_key": "icp_cond",
+   "note": ""
+  },
+  {
+   "id": "P3-K-05",
+   "name": "conductance collector <-> ICP body (through its 350 V-class insulator)",
+   "value": "TBD - requires the collector insulator design (A9.4 P1Q-14)",
+   "units": "W/K",
+   "basis": "pending",
+   "source": "A9.4 P1Q-14; ICD ICP-21",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-1",
+   "supplier": "hardware",
+   "used_by": [
+    "network"
+   ],
+   "lib_key": "icp_cond",
+   "note": ""
+  },
+  {
+   "id": "P3-K-06",
+   "name": "conductance local match <-> ICP body / carrier (match on / immediately adjacent to the module, A9.2 OQ-A907-11)",
+   "value": "TBD - requires the selected match hardware and its mounting",
+   "units": "W/K",
+   "basis": "pending",
+   "source": "A9.2 OQ-A907-11; ICD ICP-13",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-1",
+   "supplier": "hardware",
+   "used_by": [
+    "network"
+   ],
+   "lib_key": "icp_cond",
+   "note": ""
+  },
+  {
+   "id": "P3-K-07",
+   "name": "H-1 internal conductances and mount (H2-5 links)",
+   "value": "H2-5 ranges (H25-30..33): mostly ASSUMED; G_mount first-ranked driver in H2-5 F4",
+   "units": "W/K; W/(m2 K)",
+   "basis": "analog",
+   "source": "H2-5 H25-30..H25-33",
+   "evidence_class": "assumed",
+   "status": "ANALOG_EVALUATION_ONLY",
+   "freeze_point": "LOCK-1",
+   "supplier": "H2-5/A9-07 (analog)",
+   "used_by": [
+    "network"
+   ],
+   "lib_key": null,
+   "note": ""
+  },
+  {
+   "id": "P3-P1-01",
+   "name": "ion current collected by the ICP ion-collecting electrode (particle-current magnitude)",
+   "value": "TBD_AFTER_EVIDENCE - requires P1 data: P1-M-11 (collector current, I_e > 0 = net electrons extracted, P1-IT-42) with P1-M-12 (body current); the ion / electron split at the electrode must be registered",
+   "units": "A",
+   "basis": "pending",
+   "source": "P1-M-11, P1-M-12, P1-IT-42",
+   "evidence_class": null,
+   "status": "TBD_AFTER_EVIDENCE",
+   "freeze_point": "after-evidence",
+   "supplier": "P1",
+   "used_by": [
+    "Q_collector"
+   ],
+   "lib_key": "I_ion_collected_A",
+   "note": ""
+  },
+  {
+   "id": "P3-P1-02",
+   "name": "electron current collected by a collecting electrode (particle-current magnitude)",
+   "value": "TBD_AFTER_EVIDENCE - requires P1 data: P1-M-27 (dedicated electron-collecting electrode, ICP45_CAPACITY records, discharge OFF, A9.4 P1Q-10) or P1-M-11 split",
+   "units": "A",
+   "basis": "pending",
+   "source": "P1-M-27, P1-M-11; A9.4 P1Q-10",
+   "evidence_class": null,
+   "status": "TBD_AFTER_EVIDENCE",
+   "freeze_point": "after-evidence",
+   "supplier": "P1",
+   "used_by": [
+    "Q_collector"
+   ],
+   "lib_key": "I_electron_collected_A",
+   "note": ""
+  },
+  {
+   "id": "P3-P1-03",
+   "name": "collector (surface) potential",
+   "value": "TBD_AFTER_EVIDENCE - requires P1 data: P1-M-10 V_collector (reference per P1-IT-36)",
+   "units": "V",
+   "basis": "pending",
+   "source": "P1-M-10, P1-IT-36",
+   "evidence_class": null,
+   "status": "TBD_AFTER_EVIDENCE",
+   "freeze_point": "after-evidence",
+   "supplier": "P1",
+   "used_by": [
+    "Q_collector"
+   ],
+   "lib_key": "V_surface_V",
+   "note": ""
+  },
+  {
+   "id": "P3-P1-04",
+   "name": "plasma potential at the collector sheath edge",
+   "value": "TBD - requires a diagnostic not in the P1 measurement list (new owner question P3Q-01)",
+   "units": "V",
+   "basis": "pending",
+   "source": "P1 measurement list (no plasma-potential channel)",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "P1-G0",
+   "supplier": "P1",
+   "used_by": [
+    "Q_collector"
+   ],
+   "lib_key": "V_plasma_V",
+   "note": ""
+  },
+  {
+   "id": "P3-P1-05",
+   "name": "electron temperature at the collector sheath edge",
+   "value": "TBD - requires a diagnostic not in the P1 measurement list (new owner question P3Q-01)",
+   "units": "eV",
+   "basis": "pending",
+   "source": "P1 measurement list (no T_e channel)",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "P1-G0",
+   "supplier": "P1",
+   "used_by": [
+    "Q_collector"
+   ],
+   "lib_key": "T_e_eV",
+   "note": ""
+  },
+  {
+   "id": "P3-P1-06",
+   "name": "switch: surface energy terms (electron work function, ion neutralization) in Q_collector",
+   "value": "TBD - requires a cited source for the surface heat-transmission terms (from memory - verify) before the switch may be INCLUDED; EXCLUDED must be declared explicitly",
+   "units": "-",
+   "basis": "pending",
+   "source": "this lane (p3_thermal_lib.q_collector)",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "P1-G0",
+   "supplier": "this lane",
+   "used_by": [
+    "Q_collector"
+   ],
+   "lib_key": "surface_energy_terms",
+   "note": ""
+  },
+  {
+   "id": "P3-P1-07",
+   "name": "ICP-module temperatures for model verification (antenna, dielectric, collector, match, H-1 inner / outer pole, sink)",
+   "value": "TBD_AFTER_EVIDENCE - requires P1 data: P1-M-21 (records only; ICP_COUPLED_THERMAL = UNRESOLVED)",
+   "units": "degC",
+   "basis": "pending",
+   "source": "P1-M-21, P1-IT-26",
+   "evidence_class": null,
+   "status": "TBD_AFTER_EVIDENCE",
+   "freeze_point": "after-evidence",
+   "supplier": "P1",
+   "used_by": [
+    "verification"
+   ],
+   "lib_key": null,
+   "note": ""
+  },
+  {
+   "id": "P3-P1-08",
+   "name": "Hall discharge current / voltage at Hall-ON consistency points",
+   "value": "TBD_AFTER_EVIDENCE - requires P1 data: P1-M-14 (measured; never predicted)",
+   "units": "A, V",
+   "basis": "pending",
+   "source": "P1-M-14",
+   "evidence_class": null,
+   "status": "TBD_AFTER_EVIDENCE",
+   "freeze_point": "after-evidence",
+   "supplier": "P1",
+   "used_by": [
+    "Q_collector (Hall-ON)"
+   ],
+   "lib_key": null,
+   "note": ""
+  },
+  {
+   "id": "P3-P2-01",
+   "name": "forward RF power at RP-CPL (generator / 50-ohm side of the local match)",
+   "value": "TBD_AFTER_IMPEDANCE_MAP - requires P2 data: P1-M-01 / P2 HM-F01",
+   "units": "W",
+   "basis": "pending",
+   "source": "P1-M-01; P2 RP-CPL, HM-F01; A9.2 rf_measurement_reference",
+   "evidence_class": null,
+   "status": "TBD_AFTER_IMPEDANCE_MAP",
+   "freeze_point": "after-evidence",
+   "supplier": "P2",
+   "used_by": [
+    "Q_RF/match"
+   ],
+   "lib_key": "P_forward_W",
+   "note": ""
+  },
+  {
+   "id": "P3-P2-02",
+   "name": "reflected RF power at RP-CPL",
+   "value": "TBD_AFTER_IMPEDANCE_MAP - requires P2 data: P1-M-02",
+   "units": "W",
+   "basis": "pending",
+   "source": "P1-M-02; P2 RP-CPL",
+   "evidence_class": null,
+   "status": "TBD_AFTER_IMPEDANCE_MAP",
+   "freeze_point": "after-evidence",
+   "supplier": "P2",
+   "used_by": [
+    "Q_RF/match"
+   ],
+   "lib_key": "P_reflected_W",
+   "note": ""
+  },
+  {
+   "id": "P3-P2-03",
+   "name": "P_line/match,loss (line + local match, at the logged tuning state)",
+   "value": "TBD_AFTER_IMPEDANCE_MAP - requires P2 data: P1-M-03; P2 HM-R08 from the CAL-P2-02 / CAL-P2-03 two-ports",
+   "units": "W",
+   "basis": "pending",
+   "source": "P1-M-03; P2 HM-R08, CAL-P2-02, CAL-P2-03",
+   "evidence_class": null,
+   "status": "TBD_AFTER_IMPEDANCE_MAP",
+   "freeze_point": "after-evidence",
+   "supplier": "P2",
+   "used_by": [
+    "Q_RF/match"
+   ],
+   "lib_key": "P_line_match_loss_W",
+   "note": ""
+  },
+  {
+   "id": "P3-P2-04",
+   "name": "share of P_line/match,loss dissipated on the ICP module / moving platform",
+   "value": "TBD_AFTER_IMPEDANCE_MAP - requires P2 data: split of the CAL-P2-02 (line RP-CPL -> RP-MIN) and CAL-P2-03 (match RP-MIN -> RP-ANT) losses by location",
+   "units": "-",
+   "basis": "pending",
+   "source": "P2 CAL-P2-02, CAL-P2-03, RP-MIN",
+   "evidence_class": null,
+   "status": "TBD_AFTER_IMPEDANCE_MAP",
+   "freeze_point": "after-evidence",
+   "supplier": "P2",
+   "used_by": [
+    "Q_RF/match"
+   ],
+   "lib_key": "f_line_match_loss_on_module",
+   "note": ""
+  },
+  {
+   "id": "P3-P2-05",
+   "name": "share of P_delivered leaving the ICP assembly (extracted electrons / plasma enthalpy, optical emission)",
+   "value": "TBD_AFTER_EVIDENCE - requires a module energy balance (thermocouple map with RF on/off, ICD ICP-36 verification); f = 0 (all delivered power dissipated on the module) is admissible only as an explicitly labelled bound",
+   "units": "-",
+   "basis": "pending",
+   "source": "ICD ICP-36 / ICP-43",
+   "evidence_class": null,
+   "status": "TBD_AFTER_EVIDENCE",
+   "freeze_point": "after-evidence",
+   "supplier": "P2",
+   "used_by": [
+    "Q_RF/match"
+   ],
+   "lib_key": "f_delivered_leaving_module",
+   "note": ""
+  },
+  {
+   "id": "P3-P2-06",
+   "name": "antenna RF current (rms)",
+   "value": "TBD_AFTER_IMPEDANCE_MAP - requires P2 data: P1-M-07; P2 INS-P2-09",
+   "units": "A",
+   "basis": "pending",
+   "source": "P1-M-07; P2 INS-P2-09",
+   "evidence_class": null,
+   "status": "TBD_AFTER_IMPEDANCE_MAP",
+   "freeze_point": "after-evidence",
+   "supplier": "P2",
+   "used_by": [
+    "Q_RF/match (antenna ohmic breakdown)"
+   ],
+   "lib_key": "I_antenna_rms_A",
+   "note": ""
+  },
+  {
+   "id": "P3-P2-07",
+   "name": "cold antenna resistance at the operating antenna temperature",
+   "value": "TBD_AFTER_IMPEDANCE_MAP - requires P2 data: CAL-P2-08",
+   "units": "ohm",
+   "basis": "pending",
+   "source": "P2 CAL-P2-08",
+   "evidence_class": null,
+   "status": "TBD_AFTER_IMPEDANCE_MAP",
+   "freeze_point": "after-evidence",
+   "supplier": "P2",
+   "used_by": [
+    "Q_RF/match (antenna ohmic breakdown)"
+   ],
+   "lib_key": "R_antenna_cold_ohm",
+   "note": ""
+  },
+  {
+   "id": "P3-P2-08",
+   "name": "RF generator / match conversion loss Q_gen and its location (module vs platform vs spacecraft)",
+   "value": "TBD - requires the selected generator's published efficiency or a measured DC-in / RF-out balance (ICD ICP-43); P_mains,in of the laboratory generator is GROUND/FACILITY_ONLY (A9.3 OQ-RFQ-06)",
+   "units": "W",
+   "basis": "pending",
+   "source": "ICD ICP-43; A9.3 OQ-RFQ-06",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-1",
+   "supplier": "P2",
+   "used_by": [
+    "network"
+   ],
+   "lib_key": null,
+   "note": ""
+  },
+  {
+   "id": "P3-H-01",
+   "name": "Hall ion beam current I_beam",
+   "value": "TBD_AFTER_EVIDENCE - requires Phase-1 Faraday-probe data (no Hall-closure or 0-D prediction may be used: credible Hall set EMPTY)",
+   "units": "A",
+   "basis": "pending",
+   "source": "CLAUDE.md gate 3; A9 evidence_sequence",
+   "evidence_class": null,
+   "status": "TBD_AFTER_EVIDENCE",
+   "freeze_point": "after-evidence",
+   "supplier": "phase1_hall",
+   "used_by": [
+    "Q_plume"
+   ],
+   "lib_key": "I_beam_A",
+   "note": ""
+  },
+  {
+   "id": "P3-H-02",
+   "name": "mean ion energy per unit charge of the intercepted plume (beam-current-weighted, sum_i I_i E_i / (Z_i e) / I_beam; p3_thermal_lib.E_ION_MEAN_DEFINITION)",
+   "value": "TBD_AFTER_EVIDENCE - requires Phase-1 RPA / E x B data (charge-state resolved where multiply charged ions are present)",
+   "units": "eV",
+   "basis": "pending",
+   "source": "A9 evidence_sequence",
+   "evidence_class": null,
+   "status": "TBD_AFTER_EVIDENCE",
+   "freeze_point": "after-evidence",
+   "supplier": "phase1_hall",
+   "used_by": [
+    "Q_plume"
+   ],
+   "lib_key": "E_ion_mean_eV",
+   "note": ""
+  },
+  {
+   "id": "P3-H-03",
+   "name": "plume angular current distribution (cumulative fraction vs angle)",
+   "value": "TBD_AFTER_EVIDENCE - requires a Phase-1 Faraday-probe angular sweep; the uniform-cone distributions of the parametric study are geometric test distributions, not predictions",
+   "units": "deg, -",
+   "basis": "pending",
+   "source": "A9 evidence_sequence",
+   "evidence_class": null,
+   "status": "TBD_AFTER_EVIDENCE",
+   "freeze_point": "after-evidence",
+   "supplier": "phase1_hall",
+   "used_by": [
+    "Q_plume"
+   ],
+   "lib_key": "cdf_table",
+   "note": ""
+  },
+  {
+   "id": "P3-H-04",
+   "name": "energy accommodation of intercepted plume ions",
+   "value": 1.0,
+   "units": "-",
+   "basis": "bound (all ion energy deposited); a measured value supersedes it",
+   "source": "this lane",
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1",
+   "supplier": "this lane",
+   "used_by": [
+    "Q_plume"
+   ],
+   "lib_key": "alpha_energy_accommodation",
+   "note": ""
+  },
+  {
+   "id": "P3-H-05",
+   "name": "H-1 discharge heat deposition fractions and discharge power (H-1 node loads)",
+   "value": "H2-5 H25-04..07 xenon-analog ranges; P_d bound H25-02 (air / N2 values unknown; measured in Phase 1)",
+   "units": "-; W",
+   "basis": "analog",
+   "source": "H2-5 H25-02, H25-04..H25-07",
+   "evidence_class": "inferred",
+   "status": "ANALOG_EVALUATION_ONLY",
+   "freeze_point": "after-evidence",
+   "supplier": "H2-5/A9-07 (analog)",
+   "used_by": [
+    "network"
+   ],
+   "lib_key": null,
+   "note": ""
+  },
+  {
+   "id": "P3-H-06",
+   "name": "I_d,max,H1 (registered H-1 maximum discharge current; ICP-45 requirement) and the 8.33 A stand ceiling (collector-circuit rating only)",
+   "value": "TBD - requires measured / registered H-1 operation (A9.3 OQ-A907-02); 8.33 A is not evidence that H-1 requires it",
+   "units": "A",
+   "basis": "pending",
+   "source": "A9.3 OQ-A907-02",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "after-evidence",
+   "supplier": "P1",
+   "used_by": [
+    "Q_collector (Hall-ON bound)"
+   ],
+   "lib_key": null,
+   "note": ""
+  },
+  {
+   "id": "P3-M-01",
+   "name": "heat-load design margin applied to the ICP heat terms",
+   "value": 1.2,
+   "units": "-",
+   "basis": "owner answer",
+   "source": "owner row 86; ICD ICP-37",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN",
+   "freeze_point": "NOW",
+   "supplier": "owner",
+   "used_by": [
+    "network"
+   ],
+   "lib_key": null,
+   "note": "whether it also applies to environmental loads is the open question OQ-A907-09 (not answered)"
+  },
+  {
+   "id": "P3-M-02",
+   "name": "minimum margin below each validated continuous-use temperature limit",
+   "value": 50.0,
+   "units": "K",
+   "basis": "owner answer",
+   "source": "owner row 86; ICD ICP-37",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN",
+   "freeze_point": "NOW",
+   "supplier": "owner",
+   "used_by": [
+    "verification"
+   ],
+   "lib_key": null,
+   "note": ""
+  },
+  {
+   "id": "P3-M-03",
+   "name": "score-bearing temperature abort",
+   "value": "validated continuous-use limit - 50 K",
+   "units": "K",
+   "basis": "owner decision",
+   "source": "A9.1 UBQ-06",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN",
+   "freeze_point": "NOW",
+   "supplier": "owner",
+   "used_by": [
+    "verification"
+   ],
+   "lib_key": null,
+   "note": ""
+  },
+  {
+   "id": "P3-M-04",
+   "name": "validated continuous-use temperature limits of ICP parts (dielectric, antenna insulation, collector, feedthrough, match components, carrier interface) and of the H-1 anode",
+   "value": "TBD - requires the selected materials' validated continuous-use limits (CR-01 of the merged P4 framework docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json: T_validated,continuous TBD_AFTER_EVIDENCE for every candidate; owner row 87: no unsourced anode target)",
+   "units": "degC",
+   "basis": "pending",
+   "source": "owner rows 86, 87; ICD ICP-37",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "after-evidence",
+   "supplier": "P4",
+   "used_by": [
+    "verification"
+   ],
+   "lib_key": null,
+   "note": ""
+  },
+  {
+   "id": "P3-M-05",
+   "name": "mounting-interface cases (temperature and allowable conducted heat)",
+   "value": {
+    "T_mount_degC": [
+     20,
+     40,
+     60
+    ],
+    "Q_mount_allowable_W": [
+     25,
+     50,
+     100
+    ]
+   },
+   "units": "degC; W",
+   "basis": "owner answer",
+   "source": "owner row 85",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN",
+   "freeze_point": "NOW",
+   "supplier": "owner",
+   "used_by": [
+    "network"
+   ],
+   "lib_key": null,
+   "note": ""
+  },
+  {
+   "id": "P3-M-06",
+   "name": "A9-07 uncoupled ICP-heat allowances into H-1 (PO / BP injection; comparison reference, not a limit)",
+   "value": "copied in a907_allowance_port (from the pinned A9-07 JSON)",
+   "units": "W",
+   "basis": "model-derived",
+   "source": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json recomputations.h25_thermal_rerun.icp_heat_into_h1.min_allowance_W",
+   "evidence_class": "model-derived",
+   "status": "DEFINED",
+   "freeze_point": "NOW",
+   "supplier": "H2-5/A9-07 (analog)",
+   "used_by": [
+    "A9-07 allowance port"
+   ],
+   "lib_key": null,
+   "note": "A9.2 13W_pole_allowance: design-driving warning, not grounds to reject A9"
+  },
+  {
+   "id": "P3-B-01",
+   "name": "ICP-43 total module heat-load bound, alternative A: 1.20 x (P_fwd,max + P_d,max)",
+   "value": "TBD_OWNER - ICPQ-10 OPEN; P_fwd,max TBD_AFTER_IMPEDANCE_MAP, P_d,max TBD (A9.3 OQ-A907-02)",
+   "units": "W",
+   "basis": "owner question ICPQ-10 alternative A",
+   "source": "ICD ICP-43; owner row 86",
+   "evidence_class": null,
+   "status": "TBD_OWNER",
+   "freeze_point": "LOCK-1",
+   "supplier": "owner",
+   "used_by": [
+    "network (bounding)"
+   ],
+   "lib_key": null,
+   "note": ""
+  },
+  {
+   "id": "P3-B-02",
+   "name": "ICP-43 total module heat-load bound, alternative B: 1.20 x 1.5 kW envelope (H2-6 H26-44)",
+   "value": "TBD_OWNER - ICPQ-10 OPEN; arithmetic of the alternative if chosen: 1.2 x 1500 W = 1800 W (owner rows 86, 108)",
+   "units": "W",
+   "basis": "owner question ICPQ-10 alternative B",
+   "source": "ICD ICP-43; owner rows 86, 108",
+   "evidence_class": null,
+   "status": "TBD_OWNER",
+   "freeze_point": "LOCK-1",
+   "supplier": "owner",
+   "used_by": [
+    "network (bounding)"
+   ],
+   "lib_key": null,
+   "note": ""
+  },
+  {
+   "id": "P3-B-03",
+   "name": "RF-path heat allocation basis ICP-36 (500 W x 1.2 = 600 W, allocation term, not a bound)",
+   "value": "TBD_OWNER - OQ-A910-06 OPEN (keep 600 W or re-derive from P2); P_line/match,loss adds on top (A9.2)",
+   "units": "W",
+   "basis": "owner question OQ-A910-06",
+   "source": "ICD ICP-36",
+   "evidence_class": null,
+   "status": "TBD_OWNER",
+   "freeze_point": "LOCK-1",
+   "supplier": "owner",
+   "used_by": [
+    "Q_RF/match (allocation cross-check)"
+   ],
+   "lib_key": null,
+   "note": ""
+  },
+  {
+   "id": "P3-N-01",
+   "name": "ray-quadrature resolution (n_pos, n_u, n_phi) of the parametric study / verification",
+   "value": {
+    "parametric": [
+     8,
+     16,
+     32
+    ],
+    "verification": [
+     16,
+     32,
+     64
+    ],
+    "h25_reproduction": [
+     8,
+     16,
+     32
+    ]
+   },
+   "units": "-",
+   "basis": "evaluation setting",
+   "source": "this lane (verification errors recorded in closed_form_verification)",
+   "evidence_class": "model-derived",
+   "status": "DEFINED",
+   "freeze_point": "NOW",
+   "supplier": "this lane",
+   "used_by": [
+    "view factors"
+   ],
+   "lib_key": null,
+   "note": ""
+  },
+  {
+   "id": "P3-N-02",
+   "name": "network solver convergence and energy-closure tolerances",
+   "value": {
+    "step_K": 1e-07,
+    "energy_closure_rel": 1e-06
+   },
+   "units": "K; -",
+   "basis": "evaluation setting",
+   "source": "this lane (p3_thermal_lib.solve_network)",
+   "evidence_class": "model-derived",
+   "status": "DEFINED",
+   "freeze_point": "NOW",
+   "supplier": "this lane",
+   "used_by": [
+    "network"
+   ],
+   "lib_key": null,
+   "note": ""
+  }
+ ],
+ "fail_closed_evaluations": {
+  "Q_RF/match": {
+   "status": "INCOMPLETE_EVIDENCE",
+   "missing": [
+    "P_forward_W",
+    "P_line_match_loss_W",
+    "P_reflected_W",
+    "f_delivered_leaving_module",
+    "f_line_match_loss_on_module"
+   ],
+   "items": [
+    "P3-P2-01",
+    "P3-P2-02",
+    "P3-P2-03",
+    "P3-P2-04",
+    "P3-P2-05"
+   ]
+  },
+  "Q_collector": {
+   "status": "INCOMPLETE_EVIDENCE",
+   "missing": [
+    "I_electron_collected_A",
+    "I_ion_collected_A",
+    "T_e_eV",
+    "V_plasma_V",
+    "V_surface_V"
+   ],
+   "items": [
+    "P3-P1-01",
+    "P3-P1-02",
+    "P3-P1-03",
+    "P3-P1-04",
+    "P3-P1-05"
+   ]
+  },
+  "Q_plume": {
+   "status": "INCOMPLETE_EVIDENCE",
+   "missing": [
+    "E_ion_mean_eV",
+    "I_beam_A"
+   ],
+   "items": [
+    "P3-H-01",
+    "P3-H-02"
+   ]
+  },
+  "Q_Hall->ICP": {
+   "status": "INCOMPLETE_EVIDENCE",
+   "missing": [
+    "geometry P3-G-01..08",
+    "emittances P3-R-01..04",
+    "conductances P3-K-01..06",
+    "Q_plume inputs"
+   ],
+   "note": "needs the enclosure (geometry + emittances) solved with ICP temperatures, the carrier conductance path and Q_plume"
+  },
+  "coupled_network": {
+   "status": "INCOMPLETE_EVIDENCE",
+   "missing": [
+    "ICP body geometry (P3-G-01..05)",
+    "surface -> node map (P3-G-06)",
+    "ICP emittances (P3-R-01..04)",
+    "ICP conductances (P3-K-01..06)",
+    "ICP heat terms (Q_RF/match, Q_collector, Q_plume)",
+    "measured facility sink per run (P3-R-06, ground)"
+   ],
+   "note": "h25_coupled_network() refuses unmapped surfaces / missing emissivities; solve_network() refuses non-convergence and non-closing energy balance"
+  }
+ },
+ "closed_form_verification": {
+  "data_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+  "resolution": [
+   16,
+   32,
+   64
+  ],
+  "tolerance_abs": 0.003,
+  "cases": [
+   {
+    "entry": "C-41",
+    "configuration_args": {
+     "r1": 0.5,
+     "r2": 0.8,
+     "a": 0.6
+    },
+    "closed_form": 0.579063,
+    "engine": 0.578918,
+    "abs_error": 0.000144,
+    "within_tol": true
+   },
+   {
+    "entry": "C-40",
+    "configuration_args": {
+     "r": 0.5,
+     "a": 0.6
+    },
+    "closed_form": 0.320572,
+    "engine": 0.320374,
+    "abs_error": 0.000198,
+    "within_tol": true
+   },
+   {
+    "entry": "C-52",
+    "configuration_args": {
+     "r1": 0.2,
+     "r2": 0.5,
+     "r3": 0.3,
+     "r4": 0.8,
+     "a": 0.6
+    },
+    "closed_form": 0.443936,
+    "engine": 0.444336,
+    "abs_error": 0.000399,
+    "within_tol": true
+   },
+   {
+    "entry": "C-77",
+    "configuration_args": {
+     "r1": 0.3,
+     "r2": 0.8,
+     "h": 0.4
+    },
+    "closed_form": 0.297742,
+    "engine": 0.297852,
+    "abs_error": 0.000109,
+    "within_tol": true
+   },
+   {
+    "entry": "C-80",
+    "configuration_args": {
+     "r1": 0.3,
+     "r2": 0.4,
+     "h": 1.0
+    },
+    "closed_form": 0.870798,
+    "engine": 0.870544,
+    "abs_error": 0.000254,
+    "within_tol": true
+   },
+   {
+    "entry": "C-81",
+    "configuration_args": {
+     "r": 0.4,
+     "h1": 0.5,
+     "h2": 0.3
+    },
+    "closed_form": 0.123471,
+    "engine": 0.123901,
+    "abs_error": 0.000431,
+    "within_tol": true
+   }
+  ],
+  "closed_form_consistency": {
+   "C-52_vs_C-41_disk_algebra_abs_diff": 0.0,
+   "C-40_vs_C-41_abs_diff": 0.0,
+   "C-80_vs_1_minus_C-41_abs_diff": 0.0
+  },
+  "summation_rule_max_abs_error": 0.0,
+  "reciprocity_max_rel_error_pairs_F_gt_1e-3": 0.00215,
+  "note": "summation holds by construction (every ray ends on a surface or SPACE); reciprocity is a quadrature check; enforce_reciprocity() symmetrizes before any radiosity solve"
+ },
+ "solver_verification": {
+  "data_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+  "parallel_plates_rel_error": 0.0,
+  "single_node_radiation_abs_error_K": 0.0,
+  "conduction_chain_abs_error_K": 0.0
+ },
+ "h25_reproduction_check": {
+  "evaluation_point": "H2-5 range midpoints of every uncertain input at P_d = 1350 W (H25-02 bound); temperatures NOT reported (method check only, not a thermal result)",
+  "cases": [
+   {
+    "case": "ground",
+    "finish": "bare_machined_stainless",
+    "max_abs_dT_K": 0.0
+   },
+   {
+    "case": "ground",
+    "finish": "z93_white_inorganic",
+    "max_abs_dT_K": 0.0
+   },
+   {
+    "case": "orbit_hot",
+    "finish": "bare_machined_stainless",
+    "max_abs_dT_K": 0.0
+   },
+   {
+    "case": "orbit_hot",
+    "finish": "z93_white_inorganic",
+    "max_abs_dT_K": 0.0
+   },
+   {
+    "case": "orbit_cold",
+    "finish": "bare_machined_stainless",
+    "max_abs_dT_K": 0.0
+   },
+   {
+    "case": "orbit_cold",
+    "finish": "z93_white_inorganic",
+    "max_abs_dT_K": 0.0
+   }
+  ],
+  "max_abs_dT_K": 0.0,
+  "aperture_split": "AN / WI / WO pseudo-surface areas A_k F_k->exit (H2-5 crossed-string factors) sum exactly to the aperture annulus area (planar-slot reciprocity), so the split is exact"
+ },
+ "radiative_view_parametric_study": {
+  "label": "PARAMETRIC_STUDY_NOT_A_DESIGN",
+  "status": "COMPUTED_CONDITIONAL",
+  "purpose": "A9.2 radiative-view-factor design objective (ICD ICP-47) as a parametric structure: open-frame support (tau), minimum obstruction (wall thickness), annular / open optical path (aperture), Hall-to-ICP spacing (L), module length (H); isolated mounting and high-emittance outward surfaces enter the network (P3-K-01, P3-R-02), not the view factors",
+  "h1_geometry": {
+   "values_m": {
+    "R_pf": 0.0355,
+    "R_i": 0.04,
+    "R_o": 0.05,
+    "R_ow": 0.0545,
+    "R_b": 0.08,
+    "L_b": 0.115,
+    "A_an": 0.0028274,
+    "A_WI": 0.021614,
+    "A_WO": 0.027018
+   },
+   "source_ids": {
+    "L_ch_m": "H25-12",
+    "h_ch_m": "H25-13",
+    "D_out_m": "H25-14",
+    "t_wall_m": "H25-15",
+    "D_body_m": "H25-18",
+    "L_body_m": "H25-19"
+   },
+   "basis": "H2-5 range midpoints (ECHT analog + assumed; PENDING H2-1 / H2-7): evaluation point only, not the H-1 design",
+   "evidence_class": "assumed"
+  },
+  "icp_model": "one coaxial annular body r_ap..r_ap+wall, z = L..L+H (open-tube coaxial first build, A9.3 OQ-VI-03); tau = geometric open-area fraction (gray, direction-independent)",
+  "grid": {
+   "L_over_Ro": [
+    0.5,
+    1.0,
+    2.0,
+    4.0
+   ],
+   "rap_over_Ro": [
+    1.0,
+    1.2,
+    1.5
+   ],
+   "wall_over_Ro": [
+    0.2,
+    0.6
+   ],
+   "H_over_Ro": [
+    1.0,
+    3.0
+   ],
+   "tau": [
+    0.0,
+    0.5
+   ]
+  },
+  "resolution": [
+   8,
+   16,
+   32
+  ],
+  "baseline_without_icp": {
+   "H1.PI_face": {
+    "F_to_SPACE": 1.0,
+    "area_m2": 0.003959
+   },
+   "H1.aperture": {
+    "F_to_SPACE": 1.0,
+    "area_m2": 0.002827
+   },
+   "H1.PO_face": {
+    "F_to_SPACE": 1.0,
+    "area_m2": 0.01077
+   },
+   "H1.PO_lateral": {
+    "F_to_SPACE": 1.0,
+    "area_m2": 0.05781
+   }
+  },
+  "rows": [
+   {
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.5293,
+     "F_to_SPACE": 0.4707,
+     "AF_to_ICP_m2": 0.002096
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.4282,
+     "F_to_SPACE": 0.5718,
+     "AF_to_ICP_m2": 0.001211
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.2534,
+     "F_to_SPACE": 0.7466,
+     "AF_to_ICP_m2": 0.002731
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.2646,
+     "F_to_SPACE": 0.7354,
+     "AF_to_ICP_m2": 0.001048
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.2141,
+     "F_to_SPACE": 0.7859,
+     "AF_to_ICP_m2": 0.0006054
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.1267,
+     "F_to_SPACE": 0.8733,
+     "AF_to_ICP_m2": 0.001365
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.7339,
+     "F_to_SPACE": 0.2661,
+     "AF_to_ICP_m2": 0.002906
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.5767,
+     "F_to_SPACE": 0.4233,
+     "AF_to_ICP_m2": 0.00163
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.3198,
+     "F_to_SPACE": 0.6802,
+     "AF_to_ICP_m2": 0.003446
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.3669,
+     "F_to_SPACE": 0.6331,
+     "AF_to_ICP_m2": 0.001453
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.2883,
+     "F_to_SPACE": 0.7117,
+     "AF_to_ICP_m2": 0.0008152
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.1599,
+     "F_to_SPACE": 0.8401,
+     "AF_to_ICP_m2": 0.001723
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.6162,
+     "F_to_SPACE": 0.3838,
+     "AF_to_ICP_m2": 0.00244
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.623,
+     "F_to_SPACE": 0.377,
+     "AF_to_ICP_m2": 0.001762
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.5552,
+     "F_to_SPACE": 0.4448,
+     "AF_to_ICP_m2": 0.005982
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.3081,
+     "F_to_SPACE": 0.6919,
+     "AF_to_ICP_m2": 0.00122
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.3115,
+     "F_to_SPACE": 0.6885,
+     "AF_to_ICP_m2": 0.0008808
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.2776,
+     "F_to_SPACE": 0.7224,
+     "AF_to_ICP_m2": 0.002991
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.8208,
+     "F_to_SPACE": 0.1792,
+     "AF_to_ICP_m2": 0.00325
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.7715,
+     "F_to_SPACE": 0.2285,
+     "AF_to_ICP_m2": 0.002181
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.6123,
+     "F_to_SPACE": 0.3877,
+     "AF_to_ICP_m2": 0.006598
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.4104,
+     "F_to_SPACE": 0.5896,
+     "AF_to_ICP_m2": 0.001625
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.3857,
+     "F_to_SPACE": 0.6143,
+     "AF_to_ICP_m2": 0.001091
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.3062,
+     "F_to_SPACE": 0.6938,
+     "AF_to_ICP_m2": 0.003299
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.5034,
+     "F_to_SPACE": 0.4966,
+     "AF_to_ICP_m2": 0.001993
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.4731,
+     "F_to_SPACE": 0.5269,
+     "AF_to_ICP_m2": 0.001338
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.3052,
+     "F_to_SPACE": 0.6948,
+     "AF_to_ICP_m2": 0.003288
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.2517,
+     "F_to_SPACE": 0.7483,
+     "AF_to_ICP_m2": 0.0009966
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.2366,
+     "F_to_SPACE": 0.7634,
+     "AF_to_ICP_m2": 0.0006689
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.1526,
+     "F_to_SPACE": 0.8474,
+     "AF_to_ICP_m2": 0.001644
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.7598,
+     "F_to_SPACE": 0.2402,
+     "AF_to_ICP_m2": 0.003008
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.6753,
+     "F_to_SPACE": 0.3247,
+     "AF_to_ICP_m2": 0.001909
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.4189,
+     "F_to_SPACE": 0.5811,
+     "AF_to_ICP_m2": 0.004514
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.3799,
+     "F_to_SPACE": 0.6201,
+     "AF_to_ICP_m2": 0.001504
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.3376,
+     "F_to_SPACE": 0.6624,
+     "AF_to_ICP_m2": 0.0009547
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.2095,
+     "F_to_SPACE": 0.7905,
+     "AF_to_ICP_m2": 0.002257
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.5581,
+     "F_to_SPACE": 0.4419,
+     "AF_to_ICP_m2": 0.00221
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.585,
+     "F_to_SPACE": 0.415,
+     "AF_to_ICP_m2": 0.001654
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.5981,
+     "F_to_SPACE": 0.4019,
+     "AF_to_ICP_m2": 0.006445
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.002441,
+     "F_to_SPACE": 0.9976,
+     "AF_to_ICP_m2": 0.0001411
+    }
+   },
+   {
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.2791,
+     "F_to_SPACE": 0.7209,
+     "AF_to_ICP_m2": 0.001105
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.2925,
+     "F_to_SPACE": 0.7075,
+     "AF_to_ICP_m2": 0.000827
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.2991,
+     "F_to_SPACE": 0.7009,
+     "AF_to_ICP_m2": 0.003222
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.001221,
+     "F_to_SPACE": 0.9988,
+     "AF_to_ICP_m2": 7.056e-05
+    }
+   },
+   {
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.8145,
+     "F_to_SPACE": 0.1855,
+     "AF_to_ICP_m2": 0.003225
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.7871,
+     "F_to_SPACE": 0.2129,
+     "AF_to_ICP_m2": 0.002225
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.7095,
+     "F_to_SPACE": 0.2905,
+     "AF_to_ICP_m2": 0.007644
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.002441,
+     "F_to_SPACE": 0.9976,
+     "AF_to_ICP_m2": 0.0001411
+    }
+   },
+   {
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.4072,
+     "F_to_SPACE": 0.5928,
+     "AF_to_ICP_m2": 0.001612
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.3936,
+     "F_to_SPACE": 0.6064,
+     "AF_to_ICP_m2": 0.001113
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.3547,
+     "F_to_SPACE": 0.6453,
+     "AF_to_ICP_m2": 0.003822
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.001221,
+     "F_to_SPACE": 0.9988,
+     "AF_to_ICP_m2": 7.056e-05
+    }
+   },
+   {
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.4341,
+     "F_to_SPACE": 0.5659,
+     "AF_to_ICP_m2": 0.001719
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.4473,
+     "F_to_SPACE": 0.5527,
+     "AF_to_ICP_m2": 0.001265
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.3896,
+     "F_to_SPACE": 0.6104,
+     "AF_to_ICP_m2": 0.004198
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.217,
+     "F_to_SPACE": 0.783,
+     "AF_to_ICP_m2": 0.0008593
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.2236,
+     "F_to_SPACE": 0.7764,
+     "AF_to_ICP_m2": 0.0006323
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.1948,
+     "F_to_SPACE": 0.8052,
+     "AF_to_ICP_m2": 0.002099
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.7563,
+     "F_to_SPACE": 0.2437,
+     "AF_to_ICP_m2": 0.002995
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.7163,
+     "F_to_SPACE": 0.2837,
+     "AF_to_ICP_m2": 0.002025
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.5718,
+     "F_to_SPACE": 0.4282,
+     "AF_to_ICP_m2": 0.006161
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.3782,
+     "F_to_SPACE": 0.6218,
+     "AF_to_ICP_m2": 0.001497
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.3582,
+     "F_to_SPACE": 0.6418,
+     "AF_to_ICP_m2": 0.001013
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.2859,
+     "F_to_SPACE": 0.7141,
+     "AF_to_ICP_m2": 0.00308
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.4614,
+     "F_to_SPACE": 0.5386,
+     "AF_to_ICP_m2": 0.001827
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.5127,
+     "F_to_SPACE": 0.4873,
+     "AF_to_ICP_m2": 0.00145
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.5615,
+     "F_to_SPACE": 0.4385,
+     "AF_to_ICP_m2": 0.00605
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.02295,
+     "F_to_SPACE": 0.9771,
+     "AF_to_ICP_m2": 0.001327
+    }
+   },
+   {
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.2307,
+     "F_to_SPACE": 0.7693,
+     "AF_to_ICP_m2": 0.0009134
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.2563,
+     "F_to_SPACE": 0.7437,
+     "AF_to_ICP_m2": 0.0007248
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.2808,
+     "F_to_SPACE": 0.7192,
+     "AF_to_ICP_m2": 0.003025
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.01147,
+     "F_to_SPACE": 0.9885,
+     "AF_to_ICP_m2": 0.0006633
+    }
+   },
+   {
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.7837,
+     "F_to_SPACE": 0.2163,
+     "AF_to_ICP_m2": 0.003103
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.7817,
+     "F_to_SPACE": 0.2183,
+     "AF_to_ICP_m2": 0.00221
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.7437,
+     "F_to_SPACE": 0.2563,
+     "AF_to_ICP_m2": 0.008013
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.02295,
+     "F_to_SPACE": 0.9771,
+     "AF_to_ICP_m2": 0.001327
+    }
+   },
+   {
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.3918,
+     "F_to_SPACE": 0.6082,
+     "AF_to_ICP_m2": 0.001551
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.3909,
+     "F_to_SPACE": 0.6091,
+     "AF_to_ICP_m2": 0.001105
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.3718,
+     "F_to_SPACE": 0.6282,
+     "AF_to_ICP_m2": 0.004006
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.01147,
+     "F_to_SPACE": 0.9885,
+     "AF_to_ICP_m2": 0.0006633
+    }
+   },
+   {
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.3506,
+     "F_to_SPACE": 0.6494,
+     "AF_to_ICP_m2": 0.001388
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.2656,
+     "F_to_SPACE": 0.7344,
+     "AF_to_ICP_m2": 0.000751
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.1758,
+     "F_to_SPACE": 0.8242,
+     "AF_to_ICP_m2": 0.001894
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.1753,
+     "F_to_SPACE": 0.8247,
+     "AF_to_ICP_m2": 0.000694
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.1328,
+     "F_to_SPACE": 0.8672,
+     "AF_to_ICP_m2": 0.0003755
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.08789,
+     "F_to_SPACE": 0.9121,
+     "AF_to_ICP_m2": 0.000947
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.4824,
+     "F_to_SPACE": 0.5176,
+     "AF_to_ICP_m2": 0.00191
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.3672,
+     "F_to_SPACE": 0.6328,
+     "AF_to_ICP_m2": 0.001038
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.2485,
+     "F_to_SPACE": 0.7515,
+     "AF_to_ICP_m2": 0.002678
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.2412,
+     "F_to_SPACE": 0.7588,
+     "AF_to_ICP_m2": 0.000955
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.1836,
+     "F_to_SPACE": 0.8164,
+     "AF_to_ICP_m2": 0.0005191
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.1243,
+     "F_to_SPACE": 0.8757,
+     "AF_to_ICP_m2": 0.001339
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.5034,
+     "F_to_SPACE": 0.4966,
+     "AF_to_ICP_m2": 0.001993
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.46,
+     "F_to_SPACE": 0.54,
+     "AF_to_ICP_m2": 0.001301
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.3643,
+     "F_to_SPACE": 0.6357,
+     "AF_to_ICP_m2": 0.003925
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.2517,
+     "F_to_SPACE": 0.7483,
+     "AF_to_ICP_m2": 0.0009966
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.23,
+     "F_to_SPACE": 0.77,
+     "AF_to_ICP_m2": 0.0006503
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.1821,
+     "F_to_SPACE": 0.8179,
+     "AF_to_ICP_m2": 0.001962
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.6353,
+     "F_to_SPACE": 0.3647,
+     "AF_to_ICP_m2": 0.002515
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.5615,
+     "F_to_SPACE": 0.4385,
+     "AF_to_ICP_m2": 0.001588
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.4312,
+     "F_to_SPACE": 0.5688,
+     "AF_to_ICP_m2": 0.004646
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.3176,
+     "F_to_SPACE": 0.6824,
+     "AF_to_ICP_m2": 0.001258
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.2808,
+     "F_to_SPACE": 0.7192,
+     "AF_to_ICP_m2": 0.0007938
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.2156,
+     "F_to_SPACE": 0.7844,
+     "AF_to_ICP_m2": 0.002323
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.3765,
+     "F_to_SPACE": 0.6235,
+     "AF_to_ICP_m2": 0.00149
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.3081,
+     "F_to_SPACE": 0.6919,
+     "AF_to_ICP_m2": 0.0008711
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.2075,
+     "F_to_SPACE": 0.7925,
+     "AF_to_ICP_m2": 0.002236
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.1882,
+     "F_to_SPACE": 0.8118,
+     "AF_to_ICP_m2": 0.0007452
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.1541,
+     "F_to_SPACE": 0.8459,
+     "AF_to_ICP_m2": 0.0004356
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.1038,
+     "F_to_SPACE": 0.8962,
+     "AF_to_ICP_m2": 0.001118
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.5415,
+     "F_to_SPACE": 0.4585,
+     "AF_to_ICP_m2": 0.002144
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.4473,
+     "F_to_SPACE": 0.5527,
+     "AF_to_ICP_m2": 0.001265
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.3008,
+     "F_to_SPACE": 0.6992,
+     "AF_to_ICP_m2": 0.003241
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.2708,
+     "F_to_SPACE": 0.7292,
+     "AF_to_ICP_m2": 0.001072
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.2236,
+     "F_to_SPACE": 0.7764,
+     "AF_to_ICP_m2": 0.0006323
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.1504,
+     "F_to_SPACE": 0.8496,
+     "AF_to_ICP_m2": 0.00162
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.4951,
+     "F_to_SPACE": 0.5049,
+     "AF_to_ICP_m2": 0.00196
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.4722,
+     "F_to_SPACE": 0.5278,
+     "AF_to_ICP_m2": 0.001335
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.4038,
+     "F_to_SPACE": 0.5962,
+     "AF_to_ICP_m2": 0.004351
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.2476,
+     "F_to_SPACE": 0.7524,
+     "AF_to_ICP_m2": 0.0009801
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.2361,
+     "F_to_SPACE": 0.7639,
+     "AF_to_ICP_m2": 0.0006675
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.2019,
+     "F_to_SPACE": 0.7981,
+     "AF_to_ICP_m2": 0.002175
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.6602,
+     "F_to_SPACE": 0.3398,
+     "AF_to_ICP_m2": 0.002614
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.6113,
+     "F_to_SPACE": 0.3887,
+     "AF_to_ICP_m2": 0.001728
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.4966,
+     "F_to_SPACE": 0.5034,
+     "AF_to_ICP_m2": 0.005351
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.3301,
+     "F_to_SPACE": 0.6699,
+     "AF_to_ICP_m2": 0.001307
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.3057,
+     "F_to_SPACE": 0.6943,
+     "AF_to_ICP_m2": 0.0008642
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.2483,
+     "F_to_SPACE": 0.7517,
+     "AF_to_ICP_m2": 0.002675
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.374,
+     "F_to_SPACE": 0.626,
+     "AF_to_ICP_m2": 0.001481
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.3452,
+     "F_to_SPACE": 0.6548,
+     "AF_to_ICP_m2": 0.0009761
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.2593,
+     "F_to_SPACE": 0.7407,
+     "AF_to_ICP_m2": 0.002794
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.187,
+     "F_to_SPACE": 0.813,
+     "AF_to_ICP_m2": 0.0007404
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.1726,
+     "F_to_SPACE": 0.8274,
+     "AF_to_ICP_m2": 0.000488
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.1296,
+     "F_to_SPACE": 0.8704,
+     "AF_to_ICP_m2": 0.001397
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.5952,
+     "F_to_SPACE": 0.4048,
+     "AF_to_ICP_m2": 0.002357
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.542,
+     "F_to_SPACE": 0.458,
+     "AF_to_ICP_m2": 0.001532
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.3994,
+     "F_to_SPACE": 0.6006,
+     "AF_to_ICP_m2": 0.004304
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.2976,
+     "F_to_SPACE": 0.7024,
+     "AF_to_ICP_m2": 0.001178
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.271,
+     "F_to_SPACE": 0.729,
+     "AF_to_ICP_m2": 0.0007662
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.1997,
+     "F_to_SPACE": 0.8003,
+     "AF_to_ICP_m2": 0.002152
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.4604,
+     "F_to_SPACE": 0.5396,
+     "AF_to_ICP_m2": 0.001823
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.4541,
+     "F_to_SPACE": 0.5459,
+     "AF_to_ICP_m2": 0.001284
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.4312,
+     "F_to_SPACE": 0.5688,
+     "AF_to_ICP_m2": 0.004646
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.008301,
+     "F_to_SPACE": 0.9917,
+     "AF_to_ICP_m2": 0.0004798
+    }
+   },
+   {
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.2302,
+     "F_to_SPACE": 0.7698,
+     "AF_to_ICP_m2": 0.0009115
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.2271,
+     "F_to_SPACE": 0.7729,
+     "AF_to_ICP_m2": 0.000642
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.2156,
+     "F_to_SPACE": 0.7844,
+     "AF_to_ICP_m2": 0.002323
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.00415,
+     "F_to_SPACE": 0.9958,
+     "AF_to_ICP_m2": 0.0002399
+    }
+   },
+   {
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.6816,
+     "F_to_SPACE": 0.3184,
+     "AF_to_ICP_m2": 0.002699
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.6509,
+     "F_to_SPACE": 0.3491,
+     "AF_to_ICP_m2": 0.00184
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.5713,
+     "F_to_SPACE": 0.4287,
+     "AF_to_ICP_m2": 0.006156
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.008301,
+     "F_to_SPACE": 0.9917,
+     "AF_to_ICP_m2": 0.0004798
+    }
+   },
+   {
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.3408,
+     "F_to_SPACE": 0.6592,
+     "AF_to_ICP_m2": 0.001349
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.3254,
+     "F_to_SPACE": 0.6746,
+     "AF_to_ICP_m2": 0.0009202
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.2856,
+     "F_to_SPACE": 0.7144,
+     "AF_to_ICP_m2": 0.003078
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.00415,
+     "F_to_SPACE": 0.9958,
+     "AF_to_ICP_m2": 0.0002399
+    }
+   },
+   {
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.1523,
+     "F_to_SPACE": 0.8477,
+     "AF_to_ICP_m2": 0.0006032
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.1279,
+     "F_to_SPACE": 0.8721,
+     "AF_to_ICP_m2": 0.0003617
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.09912,
+     "F_to_SPACE": 0.9009,
+     "AF_to_ICP_m2": 0.001068
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.07617,
+     "F_to_SPACE": 0.9238,
+     "AF_to_ICP_m2": 0.0003016
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.06396,
+     "F_to_SPACE": 0.936,
+     "AF_to_ICP_m2": 0.0001809
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.04956,
+     "F_to_SPACE": 0.9504,
+     "AF_to_ICP_m2": 0.000534
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.2129,
+     "F_to_SPACE": 0.7871,
+     "AF_to_ICP_m2": 0.0008429
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.1772,
+     "F_to_SPACE": 0.8228,
+     "AF_to_ICP_m2": 0.0005012
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.1426,
+     "F_to_SPACE": 0.8574,
+     "AF_to_ICP_m2": 0.001536
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.1064,
+     "F_to_SPACE": 0.8936,
+     "AF_to_ICP_m2": 0.0004214
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.08862,
+     "F_to_SPACE": 0.9114,
+     "AF_to_ICP_m2": 0.0002506
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.07129,
+     "F_to_SPACE": 0.9287,
+     "AF_to_ICP_m2": 0.0007681
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.2803,
+     "F_to_SPACE": 0.7197,
+     "AF_to_ICP_m2": 0.00111
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.2471,
+     "F_to_SPACE": 0.7529,
+     "AF_to_ICP_m2": 0.0006986
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.2017,
+     "F_to_SPACE": 0.7983,
+     "AF_to_ICP_m2": 0.002173
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.1401,
+     "F_to_SPACE": 0.8599,
+     "AF_to_ICP_m2": 0.0005548
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.1235,
+     "F_to_SPACE": 0.8765,
+     "AF_to_ICP_m2": 0.0003493
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.1008,
+     "F_to_SPACE": 0.8992,
+     "AF_to_ICP_m2": 0.001086
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.3408,
+     "F_to_SPACE": 0.6592,
+     "AF_to_ICP_m2": 0.001349
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.2964,
+     "F_to_SPACE": 0.7036,
+     "AF_to_ICP_m2": 0.000838
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.2441,
+     "F_to_SPACE": 0.7559,
+     "AF_to_ICP_m2": 0.002631
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.1704,
+     "F_to_SPACE": 0.8296,
+     "AF_to_ICP_m2": 0.0006747
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.1482,
+     "F_to_SPACE": 0.8518,
+     "AF_to_ICP_m2": 0.000419
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.1221,
+     "F_to_SPACE": 0.8779,
+     "AF_to_ICP_m2": 0.001315
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.1763,
+     "F_to_SPACE": 0.8237,
+     "AF_to_ICP_m2": 0.0006979
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.1558,
+     "F_to_SPACE": 0.8442,
+     "AF_to_ICP_m2": 0.0004404
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.1152,
+     "F_to_SPACE": 0.8848,
+     "AF_to_ICP_m2": 0.001242
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.08813,
+     "F_to_SPACE": 0.9119,
+     "AF_to_ICP_m2": 0.0003489
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.07788,
+     "F_to_SPACE": 0.9221,
+     "AF_to_ICP_m2": 0.0002202
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.05762,
+     "F_to_SPACE": 0.9424,
+     "AF_to_ICP_m2": 0.0006208
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.2583,
+     "F_to_SPACE": 0.7417,
+     "AF_to_ICP_m2": 0.001023
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.2266,
+     "F_to_SPACE": 0.7734,
+     "AF_to_ICP_m2": 0.0006406
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.1719,
+     "F_to_SPACE": 0.8281,
+     "AF_to_ICP_m2": 0.001852
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.1292,
+     "F_to_SPACE": 0.8708,
+     "AF_to_ICP_m2": 0.0005113
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.1133,
+     "F_to_SPACE": 0.8867,
+     "AF_to_ICP_m2": 0.0003203
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.08594,
+     "F_to_SPACE": 0.9141,
+     "AF_to_ICP_m2": 0.000926
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.2959,
+     "F_to_SPACE": 0.7041,
+     "AF_to_ICP_m2": 0.001172
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.2734,
+     "F_to_SPACE": 0.7266,
+     "AF_to_ICP_m2": 0.0007731
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.2285,
+     "F_to_SPACE": 0.7715,
+     "AF_to_ICP_m2": 0.002462
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.1479,
+     "F_to_SPACE": 0.8521,
+     "AF_to_ICP_m2": 0.0005858
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.1367,
+     "F_to_SPACE": 0.8633,
+     "AF_to_ICP_m2": 0.0003866
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.1143,
+     "F_to_SPACE": 0.8857,
+     "AF_to_ICP_m2": 0.001231
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.3779,
+     "F_to_SPACE": 0.6221,
+     "AF_to_ICP_m2": 0.001496
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.3442,
+     "F_to_SPACE": 0.6558,
+     "AF_to_ICP_m2": 0.0009733
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.2847,
+     "F_to_SPACE": 0.7153,
+     "AF_to_ICP_m2": 0.003067
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.189,
+     "F_to_SPACE": 0.811,
+     "AF_to_ICP_m2": 0.0007481
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.1721,
+     "F_to_SPACE": 0.8279,
+     "AF_to_ICP_m2": 0.0004867
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.1423,
+     "F_to_SPACE": 0.8577,
+     "AF_to_ICP_m2": 0.001534
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.209,
+     "F_to_SPACE": 0.791,
+     "AF_to_ICP_m2": 0.0008274
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.1841,
+     "F_to_SPACE": 0.8159,
+     "AF_to_ICP_m2": 0.0005205
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.144,
+     "F_to_SPACE": 0.856,
+     "AF_to_ICP_m2": 0.001552
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.1045,
+     "F_to_SPACE": 0.8955,
+     "AF_to_ICP_m2": 0.0004137
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.09204,
+     "F_to_SPACE": 0.908,
+     "AF_to_ICP_m2": 0.0002602
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.07202,
+     "F_to_SPACE": 0.928,
+     "AF_to_ICP_m2": 0.000776
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.3184,
+     "F_to_SPACE": 0.6816,
+     "AF_to_ICP_m2": 0.00126
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.291,
+     "F_to_SPACE": 0.709,
+     "AF_to_ICP_m2": 0.0008228
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.2275,
+     "F_to_SPACE": 0.7725,
+     "AF_to_ICP_m2": 0.002452
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.1592,
+     "F_to_SPACE": 0.8408,
+     "AF_to_ICP_m2": 0.0006302
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.1455,
+     "F_to_SPACE": 0.8545,
+     "AF_to_ICP_m2": 0.0004114
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.1138,
+     "F_to_SPACE": 0.8862,
+     "AF_to_ICP_m2": 0.001226
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.3174,
+     "F_to_SPACE": 0.6826,
+     "AF_to_ICP_m2": 0.001257
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.2939,
+     "F_to_SPACE": 0.7061,
+     "AF_to_ICP_m2": 0.0008311
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.2559,
+     "F_to_SPACE": 0.7441,
+     "AF_to_ICP_m2": 0.002757
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0009766,
+     "F_to_SPACE": 0.999,
+     "AF_to_ICP_m2": 5.645e-05
+    }
+   },
+   {
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.1587,
+     "F_to_SPACE": 0.8413,
+     "AF_to_ICP_m2": 0.0006283
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.147,
+     "F_to_SPACE": 0.853,
+     "AF_to_ICP_m2": 0.0004156
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.1279,
+     "F_to_SPACE": 0.8721,
+     "AF_to_ICP_m2": 0.001378
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0004883,
+     "F_to_SPACE": 0.9995,
+     "AF_to_ICP_m2": 2.823e-05
+    }
+   },
+   {
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.4268,
+     "F_to_SPACE": 0.5732,
+     "AF_to_ICP_m2": 0.00169
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.4009,
+     "F_to_SPACE": 0.5991,
+     "AF_to_ICP_m2": 0.001133
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.3394,
+     "F_to_SPACE": 0.6606,
+     "AF_to_ICP_m2": 0.003657
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0009766,
+     "F_to_SPACE": 0.999,
+     "AF_to_ICP_m2": 5.645e-05
+    }
+   },
+   {
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.2134,
+     "F_to_SPACE": 0.7866,
+     "AF_to_ICP_m2": 0.0008448
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.2004,
+     "F_to_SPACE": 0.7996,
+     "AF_to_ICP_m2": 0.0005667
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.1697,
+     "F_to_SPACE": 0.8303,
+     "AF_to_ICP_m2": 0.001828
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0004883,
+     "F_to_SPACE": 0.9995,
+     "AF_to_ICP_m2": 2.823e-05
+    }
+   },
+   {
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.04785,
+     "F_to_SPACE": 0.9521,
+     "AF_to_ICP_m2": 0.0001895
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.03809,
+     "F_to_SPACE": 0.9619,
+     "AF_to_ICP_m2": 0.0001077
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.0376,
+     "F_to_SPACE": 0.9624,
+     "AF_to_ICP_m2": 0.0004051
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.02393,
+     "F_to_SPACE": 0.9761,
+     "AF_to_ICP_m2": 9.473e-05
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.01904,
+     "F_to_SPACE": 0.981,
+     "AF_to_ICP_m2": 5.384e-05
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.0188,
+     "F_to_SPACE": 0.9812,
+     "AF_to_ICP_m2": 0.0002026
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.06641,
+     "F_to_SPACE": 0.9336,
+     "AF_to_ICP_m2": 0.0002629
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.05371,
+     "F_to_SPACE": 0.9463,
+     "AF_to_ICP_m2": 0.0001519
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.05176,
+     "F_to_SPACE": 0.9482,
+     "AF_to_ICP_m2": 0.0005577
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.0332,
+     "F_to_SPACE": 0.9668,
+     "AF_to_ICP_m2": 0.0001315
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.02686,
+     "F_to_SPACE": 0.9731,
+     "AF_to_ICP_m2": 7.593e-05
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.02588,
+     "F_to_SPACE": 0.9741,
+     "AF_to_ICP_m2": 0.0002788
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.1021,
+     "F_to_SPACE": 0.8979,
+     "AF_to_ICP_m2": 0.000404
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.09424,
+     "F_to_SPACE": 0.9058,
+     "AF_to_ICP_m2": 0.0002665
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.07812,
+     "F_to_SPACE": 0.9219,
+     "AF_to_ICP_m2": 0.0008418
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.05103,
+     "F_to_SPACE": 0.949,
+     "AF_to_ICP_m2": 0.000202
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.04712,
+     "F_to_SPACE": 0.9529,
+     "AF_to_ICP_m2": 0.0001332
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.03906,
+     "F_to_SPACE": 0.9609,
+     "AF_to_ICP_m2": 0.0004209
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.1206,
+     "F_to_SPACE": 0.8794,
+     "AF_to_ICP_m2": 0.0004775
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.1099,
+     "F_to_SPACE": 0.8901,
+     "AF_to_ICP_m2": 0.0003106
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.09229,
+     "F_to_SPACE": 0.9077,
+     "AF_to_ICP_m2": 0.0009944
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.0603,
+     "F_to_SPACE": 0.9397,
+     "AF_to_ICP_m2": 0.0002388
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.05493,
+     "F_to_SPACE": 0.9451,
+     "AF_to_ICP_m2": 0.0001553
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.04614,
+     "F_to_SPACE": 0.9539,
+     "AF_to_ICP_m2": 0.0004972
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.05518,
+     "F_to_SPACE": 0.9448,
+     "AF_to_ICP_m2": 0.0002185
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.05322,
+     "F_to_SPACE": 0.9468,
+     "AF_to_ICP_m2": 0.0001505
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.04541,
+     "F_to_SPACE": 0.9546,
+     "AF_to_ICP_m2": 0.0004893
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.02759,
+     "F_to_SPACE": 0.9724,
+     "AF_to_ICP_m2": 0.0001092
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.02661,
+     "F_to_SPACE": 0.9734,
+     "AF_to_ICP_m2": 7.524e-05
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.02271,
+     "F_to_SPACE": 0.9773,
+     "AF_to_ICP_m2": 0.0002446
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.08398,
+     "F_to_SPACE": 0.916,
+     "AF_to_ICP_m2": 0.0003325
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.0752,
+     "F_to_SPACE": 0.9248,
+     "AF_to_ICP_m2": 0.0002126
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.06592,
+     "F_to_SPACE": 0.9341,
+     "AF_to_ICP_m2": 0.0007103
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.04199,
+     "F_to_SPACE": 0.958,
+     "AF_to_ICP_m2": 0.0001663
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.0376,
+     "F_to_SPACE": 0.9624,
+     "AF_to_ICP_m2": 0.0001063
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.03296,
+     "F_to_SPACE": 0.967,
+     "AF_to_ICP_m2": 0.0003551
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.1108,
+     "F_to_SPACE": 0.8892,
+     "AF_to_ICP_m2": 0.0004388
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.1123,
+     "F_to_SPACE": 0.8877,
+     "AF_to_ICP_m2": 0.0003175
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.09277,
+     "F_to_SPACE": 0.9072,
+     "AF_to_ICP_m2": 0.0009996
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.05542,
+     "F_to_SPACE": 0.9446,
+     "AF_to_ICP_m2": 0.0002194
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.05615,
+     "F_to_SPACE": 0.9438,
+     "AF_to_ICP_m2": 0.0001588
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.04639,
+     "F_to_SPACE": 0.9536,
+     "AF_to_ICP_m2": 0.0004998
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.1396,
+     "F_to_SPACE": 0.8604,
+     "AF_to_ICP_m2": 0.0005529
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.1343,
+     "F_to_SPACE": 0.8657,
+     "AF_to_ICP_m2": 0.0003797
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.1133,
+     "F_to_SPACE": 0.8867,
+     "AF_to_ICP_m2": 0.001221
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.06982,
+     "F_to_SPACE": 0.9302,
+     "AF_to_ICP_m2": 0.0002764
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.06714,
+     "F_to_SPACE": 0.9329,
+     "AF_to_ICP_m2": 0.0001898
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.05664,
+     "F_to_SPACE": 0.9434,
+     "AF_to_ICP_m2": 0.0006103
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.06592,
+     "F_to_SPACE": 0.9341,
+     "AF_to_ICP_m2": 0.000261
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.07373,
+     "F_to_SPACE": 0.9263,
+     "AF_to_ICP_m2": 0.0002085
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.05713,
+     "F_to_SPACE": 0.9429,
+     "AF_to_ICP_m2": 0.0006156
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.03296,
+     "F_to_SPACE": 0.967,
+     "AF_to_ICP_m2": 0.0001305
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.03687,
+     "F_to_SPACE": 0.9631,
+     "AF_to_ICP_m2": 0.0001042
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.02856,
+     "F_to_SPACE": 0.9714,
+     "AF_to_ICP_m2": 0.0003078
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.1074,
+     "F_to_SPACE": 0.8926,
+     "AF_to_ICP_m2": 0.0004253
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.1089,
+     "F_to_SPACE": 0.8911,
+     "AF_to_ICP_m2": 0.0003079
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.08936,
+     "F_to_SPACE": 0.9106,
+     "AF_to_ICP_m2": 0.0009628
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.05371,
+     "F_to_SPACE": 0.9463,
+     "AF_to_ICP_m2": 0.0002127
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.05444,
+     "F_to_SPACE": 0.9456,
+     "AF_to_ICP_m2": 0.0001539
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.04468,
+     "F_to_SPACE": 0.9553,
+     "AF_to_ICP_m2": 0.0004814
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.1274,
+     "F_to_SPACE": 0.8726,
+     "AF_to_ICP_m2": 0.0005046
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.1294,
+     "F_to_SPACE": 0.8706,
+     "AF_to_ICP_m2": 0.0003659
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.1152,
+     "F_to_SPACE": 0.8848,
+     "AF_to_ICP_m2": 0.001242
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.06372,
+     "F_to_SPACE": 0.9363,
+     "AF_to_ICP_m2": 0.0002523
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.0647,
+     "F_to_SPACE": 0.9353,
+     "AF_to_ICP_m2": 0.0001829
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.05762,
+     "F_to_SPACE": 0.9424,
+     "AF_to_ICP_m2": 0.0006208
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "H1.PI_face": {
+     "F_to_ICP": 0.1689,
+     "F_to_SPACE": 0.8311,
+     "AF_to_ICP_m2": 0.0006689
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.1646,
+     "F_to_SPACE": 0.8354,
+     "AF_to_ICP_m2": 0.0004653
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.1475,
+     "F_to_SPACE": 0.8525,
+     "AF_to_ICP_m2": 0.001589
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   },
+   {
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "H1.PI_face": {
+     "F_to_ICP": 0.08447,
+     "F_to_SPACE": 0.9155,
+     "AF_to_ICP_m2": 0.0003344
+    },
+    "H1.aperture": {
+     "F_to_ICP": 0.08228,
+     "F_to_SPACE": 0.9177,
+     "AF_to_ICP_m2": 0.0002326
+    },
+    "H1.PO_face": {
+     "F_to_ICP": 0.07373,
+     "F_to_SPACE": 0.9263,
+     "AF_to_ICP_m2": 0.0007944
+    },
+    "H1.PO_lateral": {
+     "F_to_ICP": 0.0,
+     "F_to_SPACE": 1.0,
+     "AF_to_ICP_m2": 0.0
+    }
+   }
+  ],
+  "quadrature_error_estimate": {
+   "method": "corner rows of the grid re-run at the verification resolution [16, 32, 64]; abs_diff = |F(parametric) - F(verification)| of F_to_ICP per H-1 zone (PHYS-02)",
+   "resolution_parametric": [
+    8,
+    16,
+    32
+   ],
+   "resolution_verification": [
+    16,
+    32,
+    64
+   ],
+   "max_abs_diff": 0.009,
+   "rows": [
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PI_face",
+     "F_to_ICP_parametric": 0.7339,
+     "F_to_ICP_verification": 0.7323,
+     "abs_diff": 0.0016
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.aperture",
+     "F_to_ICP_parametric": 0.5767,
+     "F_to_ICP_verification": 0.5787,
+     "abs_diff": 0.0021
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PO_face",
+     "F_to_ICP_parametric": 0.3198,
+     "F_to_ICP_verification": 0.3261,
+     "abs_diff": 0.0063
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PO_lateral",
+     "F_to_ICP_parametric": 0.0,
+     "F_to_ICP_verification": 0.0,
+     "abs_diff": 0.0
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PI_face",
+     "F_to_ICP_parametric": 0.7563,
+     "F_to_ICP_verification": 0.7559,
+     "abs_diff": 0.00043
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.aperture",
+     "F_to_ICP_parametric": 0.7163,
+     "F_to_ICP_verification": 0.7253,
+     "abs_diff": 0.009
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PO_face",
+     "F_to_ICP_parametric": 0.5718,
+     "F_to_ICP_verification": 0.5723,
+     "abs_diff": 0.00055
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PO_lateral",
+     "F_to_ICP_parametric": 0.0,
+     "F_to_ICP_verification": 0.0003662,
+     "abs_diff": 0.00037
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PI_face",
+     "F_to_ICP_parametric": 0.06641,
+     "F_to_ICP_verification": 0.06287,
+     "abs_diff": 0.0035
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.aperture",
+     "F_to_ICP_parametric": 0.05371,
+     "F_to_ICP_verification": 0.05463,
+     "abs_diff": 0.00092
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PO_face",
+     "F_to_ICP_parametric": 0.05176,
+     "F_to_ICP_verification": 0.05231,
+     "abs_diff": 0.00055
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PO_lateral",
+     "F_to_ICP_parametric": 0.0,
+     "F_to_ICP_verification": 0.0,
+     "abs_diff": 0.0
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PI_face",
+     "F_to_ICP_parametric": 0.1074,
+     "F_to_ICP_verification": 0.1044,
+     "abs_diff": 0.0031
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.aperture",
+     "F_to_ICP_parametric": 0.1089,
+     "F_to_ICP_verification": 0.1018,
+     "abs_diff": 0.0071
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PO_face",
+     "F_to_ICP_parametric": 0.08936,
+     "F_to_ICP_verification": 0.08954,
+     "abs_diff": 0.00018
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PO_lateral",
+     "F_to_ICP_parametric": 0.0,
+     "F_to_ICP_verification": 0.0,
+     "abs_diff": 0.0
+    }
+   ],
+   "reading": "F values in 'rows' are printed to 4 significant figures but are indicative only to about +/- 0.009 absolute (quadrature); the consolidated-verification Monte Carlo check (PHYS-02) found errors up to ~0.005 absolute at this resolution - use the verification resolution for any design number"
+  },
+  "plume_geometric_interception": {
+   "label": "GEOMETRIC_TEST_DISTRIBUTION_NOT_A_PLUME_PREDICTION",
+   "distribution": "uniform current per solid angle inside a cone of the given half-angle, emitted identically from every point of the channel-exit annulus",
+   "rows": [
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 20.0,
+     "f_upstream_face": 0.21,
+     "f_bore": 0.3906,
+     "f_escape": 0.3994
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 40.0,
+     "f_upstream_face": 0.3799,
+     "f_bore": 0.4707,
+     "f_escape": 0.1494
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 60.0,
+     "f_upstream_face": 0.4399,
+     "f_bore": 0.4585,
+     "f_escape": 0.1016
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.2,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 20.0,
+     "f_upstream_face": 0.0,
+     "f_bore": 0.4771,
+     "f_escape": 0.5229
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.2,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 40.0,
+     "f_upstream_face": 0.09082,
+     "f_bore": 0.7017,
+     "f_escape": 0.2075
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.2,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 60.0,
+     "f_upstream_face": 0.2656,
+     "f_bore": 0.6387,
+     "f_escape": 0.0957
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 20.0,
+     "f_upstream_face": 0.0,
+     "f_bore": 0.2959,
+     "f_escape": 0.7041
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 40.0,
+     "f_upstream_face": 0.0,
+     "f_bore": 0.6812,
+     "f_escape": 0.3188
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 60.0,
+     "f_upstream_face": 0.07031,
+     "f_bore": 0.7778,
+     "f_escape": 0.1519
+    },
+    {
+     "L_over_Ro": 1.0,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 20.0,
+     "f_upstream_face": 0.3662,
+     "f_bore": 0.2671,
+     "f_escape": 0.3667
+    },
+    {
+     "L_over_Ro": 1.0,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 40.0,
+     "f_upstream_face": 0.4639,
+     "f_bore": 0.377,
+     "f_escape": 0.1592
+    },
+    {
+     "L_over_Ro": 1.0,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 60.0,
+     "f_upstream_face": 0.3545,
+     "f_bore": 0.3247,
+     "f_escape": 0.3208
+    },
+    {
+     "L_over_Ro": 1.0,
+     "rap_over_Ro": 1.2,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 20.0,
+     "f_upstream_face": 0.06543,
+     "f_bore": 0.457,
+     "f_escape": 0.4775
+    },
+    {
+     "L_over_Ro": 1.0,
+     "rap_over_Ro": 1.2,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 40.0,
+     "f_upstream_face": 0.3198,
+     "f_bore": 0.5132,
+     "f_escape": 0.167
+    },
+    {
+     "L_over_Ro": 1.0,
+     "rap_over_Ro": 1.2,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 60.0,
+     "f_upstream_face": 0.3076,
+     "f_bore": 0.4365,
+     "f_escape": 0.2559
+    },
+    {
+     "L_over_Ro": 1.0,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 20.0,
+     "f_upstream_face": 0.0,
+     "f_bore": 0.3535,
+     "f_escape": 0.6465
+    },
+    {
+     "L_over_Ro": 1.0,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 40.0,
+     "f_upstream_face": 0.0957,
+     "f_bore": 0.6479,
+     "f_escape": 0.2563
+    },
+    {
+     "L_over_Ro": 1.0,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 60.0,
+     "f_upstream_face": 0.231,
+     "f_bore": 0.5684,
+     "f_escape": 0.2007
+    },
+    {
+     "L_over_Ro": 2.0,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 20.0,
+     "f_upstream_face": 0.4819,
+     "f_bore": 0.2046,
+     "f_escape": 0.3135
+    },
+    {
+     "L_over_Ro": 2.0,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 40.0,
+     "f_upstream_face": 0.3218,
+     "f_bore": 0.27,
+     "f_escape": 0.4082
+    },
+    {
+     "L_over_Ro": 2.0,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 60.0,
+     "f_upstream_face": 0.2134,
+     "f_bore": 0.1343,
+     "f_escape": 0.6523
+    },
+    {
+     "L_over_Ro": 2.0,
+     "rap_over_Ro": 1.2,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 20.0,
+     "f_upstream_face": 0.3018,
+     "f_bore": 0.2979,
+     "f_escape": 0.4004
+    },
+    {
+     "L_over_Ro": 2.0,
+     "rap_over_Ro": 1.2,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 40.0,
+     "f_upstream_face": 0.3101,
+     "f_bore": 0.3467,
+     "f_escape": 0.3433
+    },
+    {
+     "L_over_Ro": 2.0,
+     "rap_over_Ro": 1.2,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 60.0,
+     "f_upstream_face": 0.2207,
+     "f_bore": 0.1924,
+     "f_escape": 0.5869
+    },
+    {
+     "L_over_Ro": 2.0,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 20.0,
+     "f_upstream_face": 0.06006,
+     "f_bore": 0.394,
+     "f_escape": 0.5459
+    },
+    {
+     "L_over_Ro": 2.0,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 40.0,
+     "f_upstream_face": 0.27,
+     "f_bore": 0.4438,
+     "f_escape": 0.2861
+    },
+    {
+     "L_over_Ro": 2.0,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 60.0,
+     "f_upstream_face": 0.2129,
+     "f_bore": 0.2729,
+     "f_escape": 0.5142
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 20.0,
+     "f_upstream_face": 0.334,
+     "f_bore": 0.2075,
+     "f_escape": 0.4585
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 40.0,
+     "f_upstream_face": 0.1704,
+     "f_bore": 0.07568,
+     "f_escape": 0.7539
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 60.0,
+     "f_upstream_face": 0.08008,
+     "f_bore": 0.03613,
+     "f_escape": 0.8838
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.2,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 20.0,
+     "f_upstream_face": 0.3262,
+     "f_bore": 0.2485,
+     "f_escape": 0.4253
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.2,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 40.0,
+     "f_upstream_face": 0.1885,
+     "f_bore": 0.1084,
+     "f_escape": 0.7031
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.2,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 60.0,
+     "f_upstream_face": 0.08789,
+     "f_bore": 0.05371,
+     "f_escape": 0.8584
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 20.0,
+     "f_upstream_face": 0.2891,
+     "f_bore": 0.2891,
+     "f_escape": 0.4219
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 40.0,
+     "f_upstream_face": 0.21,
+     "f_bore": 0.1685,
+     "f_escape": 0.6216
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.6,
+     "H_over_Ro": 3.0,
+     "cone_half_angle_deg": 60.0,
+     "f_upstream_face": 0.09521,
+     "f_bore": 0.07861,
+     "f_escape": 0.8262
+    }
+   ]
+  },
+  "limitations": [
+   "the channel-exit aperture is treated as a diffuse emitter / absorber (cavity radiation is not strictly diffuse)",
+   "coarse quadrature on the lateral zone (8 axial points): small F values are indicative",
+   "no H-1 thermal consequence is computed here (needs the network with ICP inputs)"
+  ],
+  "reading_rule": "F_to_ICP of a zone = share of its diffuse emission first intercepted by the ICP assembly (the ICP-induced loss of view to space); multiplied by the zone emittance and sigma (T^4 - T_ICP^4) it bounds the first-order change of that zone's rejection; the closure needs the full network with ICP temperatures (INCOMPLETE_EVIDENCE)"
+ },
+ "a907_allowance_port": {
+  "source": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json recomputations.h25_thermal_rerun.icp_heat_into_h1.min_allowance_W",
+  "sha256": "b428565299c1c41487d9ffa50c174986d2d52c544539f89ca21b7bdbc2ae44fa",
+  "LV-BASE": {
+   "PO": {
+    "min_over_nodes": 0.0,
+    "WI": 0.0,
+    "WO": 139.3,
+    "CI": 0.0,
+    "CO": 13.0
+   },
+   "BP": {
+    "min_over_nodes": 0.0,
+    "WI": 0.0,
+    "WO": 83.6,
+    "CI": 0.0,
+    "CO": 31.6
+   }
+  },
+  "evidence_class": "model-derived (uncoupled sensitivity; 0 W ICP heat, v1 exterior views)",
+  "comparison_rule": "P3 equivalent heat into H-1 (equivalent_heat_into_h1 + carrier conduction + plume back-flow) at PO / BP is to be reported beside these allowances, per node, as the ratio Q_equivalent / allowance; a ratio > 1 is a design-driving warning; a ratio <= 1 is NOT a closure (the allowances assume v1 exterior views, which the ICP changes); against a 0 W allowance the ratio is undefined and ANY positive equivalent heat is a design-driving warning (ZERO_ALLOWANCE_ALWAYS_WARNING) - status stays COMPUTED_CONDITIONAL / UNRESOLVED. No ratio is computed in this lane (heat terms TBD)",
+  "zero_allowance_nodes": {
+   "nodes_by_injection": {
+    "CI": [
+     "BP",
+     "PO"
+    ],
+    "WI": [
+     "BP",
+     "PO"
+    ]
+   },
+   "headroom_to_ceiling_K_with_0_W_icp_heat": {
+    "CI": {
+     "ground": -485.5,
+     "orbit_hot@T_mount=60C": -493.7
+    },
+    "WI": {
+     "ground": -16.6,
+     "orbit_hot@T_mount=60C": -21.6
+    }
+   },
+   "reading": "these nodes do not close even without ICP heat at LV-BASE (negative headroom in at least one case); they are the binding constraint, not the 13 W CO pole allowance"
+  },
+  "status": "NOT_EVALUATED (ICP temperatures and heat terms TBD)",
+  "a9_2_warning": "A9.2 13W_pole_allowance: the outer coil CO tolerates only about 13 W of ICP heat injected at PO at LV-BASE; design-driving warning, not grounds to reject A9. Binding constraint (TH-06): CI, WI have a 0 W allowance at LV-BASE - their headroom is already negative with 0 W of ICP heat (CI ground -485.5 K, orbit_hot@T_mount=60C -493.7 K; WI ground -16.6 K, orbit_hot@T_mount=60C -21.6 K), so any ICP heat reaching them is a design-driving warning"
+ },
+ "inputs_by_supplier": {
+  "P1": [
+   [
+    "P3-P1-01",
+    "after-evidence"
+   ],
+   [
+    "P3-P1-02",
+    "after-evidence"
+   ],
+   [
+    "P3-P1-03",
+    "after-evidence"
+   ],
+   [
+    "P3-P1-04",
+    "P1-G0"
+   ],
+   [
+    "P3-P1-05",
+    "P1-G0"
+   ],
+   [
+    "P3-P1-07",
+    "after-evidence"
+   ],
+   [
+    "P3-P1-08",
+    "after-evidence"
+   ],
+   [
+    "P3-H-06",
+    "after-evidence"
+   ]
+  ],
+  "P2": [
+   [
+    "P3-P2-01",
+    "after-evidence"
+   ],
+   [
+    "P3-P2-02",
+    "after-evidence"
+   ],
+   [
+    "P3-P2-03",
+    "after-evidence"
+   ],
+   [
+    "P3-P2-04",
+    "after-evidence"
+   ],
+   [
+    "P3-P2-05",
+    "after-evidence"
+   ],
+   [
+    "P3-P2-06",
+    "after-evidence"
+   ],
+   [
+    "P3-P2-07",
+    "after-evidence"
+   ],
+   [
+    "P3-P2-08",
+    "LOCK-1"
+   ]
+  ],
+  "hardware": [
+   [
+    "P3-G-01",
+    "LOCK-1"
+   ],
+   [
+    "P3-G-02",
+    "LOCK-1"
+   ],
+   [
+    "P3-G-03",
+    "LOCK-1"
+   ],
+   [
+    "P3-G-04",
+    "LOCK-1"
+   ],
+   [
+    "P3-G-05",
+    "LOCK-1"
+   ],
+   [
+    "P3-G-06",
+    "LOCK-1"
+   ],
+   [
+    "P3-G-07",
+    "LOCK-1"
+   ],
+   [
+    "P3-R-02",
+    "after-evidence"
+   ],
+   [
+    "P3-R-03",
+    "after-evidence"
+   ],
+   [
+    "P3-K-01",
+    "LOCK-1"
+   ],
+   [
+    "P3-K-02",
+    "LOCK-1"
+   ],
+   [
+    "P3-K-03",
+    "LOCK-1"
+   ],
+   [
+    "P3-K-04",
+    "LOCK-1"
+   ],
+   [
+    "P3-K-05",
+    "LOCK-1"
+   ],
+   [
+    "P3-K-06",
+    "LOCK-1"
+   ]
+  ],
+  "phase1_hall": [
+   [
+    "P3-H-01",
+    "after-evidence"
+   ],
+   [
+    "P3-H-02",
+    "after-evidence"
+   ],
+   [
+    "P3-H-03",
+    "after-evidence"
+   ]
+  ],
+  "owner": [
+   [
+    "P3-M-01",
+    "NOW"
+   ],
+   [
+    "P3-M-02",
+    "NOW"
+   ],
+   [
+    "P3-M-03",
+    "NOW"
+   ],
+   [
+    "P3-M-05",
+    "NOW"
+   ],
+   [
+    "P3-B-01",
+    "LOCK-1"
+   ],
+   [
+    "P3-B-02",
+    "LOCK-1"
+   ],
+   [
+    "P3-B-03",
+    "LOCK-1"
+   ]
+  ],
+  "H2-5/A9-07 (analog)": [
+   [
+    "P3-G-08",
+    "LOCK-1"
+   ],
+   [
+    "P3-R-05",
+    "after-evidence"
+   ],
+   [
+    "P3-R-07",
+    "LOCK-1"
+   ],
+   [
+    "P3-K-07",
+    "LOCK-1"
+   ],
+   [
+    "P3-H-05",
+    "after-evidence"
+   ],
+   [
+    "P3-M-06",
+    "NOW"
+   ]
+  ],
+  "P4": [
+   [
+    "P3-R-01",
+    "after-evidence"
+   ],
+   [
+    "P3-R-04",
+    "after-evidence"
+   ],
+   [
+    "P3-M-04",
+    "after-evidence"
+   ]
+  ],
+  "facility": [
+   [
+    "P3-R-06",
+    "after-evidence"
+   ]
+  ],
+  "this lane": [
+   [
+    "P3-P1-06",
+    "P1-G0"
+   ],
+   [
+    "P3-H-04",
+    "LOCK-1"
+   ],
+   [
+    "P3-N-01",
+    "NOW"
+   ],
+   [
+    "P3-N-02",
+    "NOW"
+   ]
+  ]
+ },
+ "interface_demands": {
+  "p3_needs": [
+   {
+    "id": "P3-IF-N01",
+    "from": "P1 docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json IF-P1-16",
+    "what": "collector ion / electron currents, collector potential, body current, Hall I_d / V_d at consistency points, module temperature records",
+    "items": [
+     "P3-P1-01",
+     "P3-P1-02",
+     "P3-P1-03",
+     "P3-P1-07",
+     "P3-P1-08"
+    ],
+    "freeze": "after-evidence",
+    "units": "A; V; degC",
+    "status": "TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; records only; ICP_COUPLED_THERMAL UNRESOLVED)",
+    "xref": [
+     {
+      "pair": "XL-17",
+      "counterpart": "P1:IF-P1-16",
+      "counterpart_path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+      "quantity": "P1 measured records for the coupled thermal model: collector current and potential (P1-M-10, P1-M-11, P1-M-27), ICP body current (P1-M-12), Hall I_d / V_d at consistency points (P1-M-14), module and H-1 pole temperatures and T_sink per run (P1-M-21) -> P3-P1-01, P3-P1-02, P3-P1-03, P3-P1-07, P3-P1-08",
+      "units": "A; V; degC",
+      "status": "TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; records only; ICP_COUPLED_THERMAL UNRESOLVED)"
+     }
+    ]
+   },
+   {
+    "id": "P3-IF-N02",
+    "from": "P1 docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json IF-P1-34 (registration at P1-G0; conditional P1-M-30)",
+    "what": "plasma potential and T_e at the collector sheath edge, or an accepted calorimetric alternative (P3Q-01)",
+    "items": [
+     "P3-P1-04",
+     "P3-P1-05"
+    ],
+    "freeze": "P1-G0",
+    "units": "V; eV",
+    "status": "TBD_OWNER (P3Q-01 OPEN; registration at P1-G0)",
+    "xref": [
+     {
+      "pair": "XL-18",
+      "counterpart": "P1:IF-P1-34",
+      "counterpart_path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+      "quantity": "plasma potential and electron temperature at the collector sheath edge (conditional P1 measurement P1-M-30) or an accepted calorimetric alternative -> P3-P1-04, P3-P1-05",
+      "units": "V; eV",
+      "status": "TBD_OWNER (P3Q-01 OPEN; registration at P1-G0)"
+     }
+    ]
+   },
+   {
+    "id": "P3-IF-N03",
+    "from": "P2 docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json IDP2-12",
+    "what": "location split of P_line/match,loss (on-module / moving-platform share)",
+    "items": [
+     "P3-P2-04"
+    ],
+    "freeze": "after-evidence (TBD_AFTER_IMPEDANCE_MAP)",
+    "units": "-",
+    "status": "TBD_AFTER_IMPEDANCE_MAP (owning stage P2 two-port characterization; coupled thermal UNRESOLVED)",
+    "xref": [
+     {
+      "pair": "XL-19",
+      "counterpart": "P2:IDP2-12",
+      "counterpart_path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+      "quantity": "location split of P_line/match,loss (share dissipated on the ICP module / moving platform, from the CAL-P2-02 / CAL-P2-03 two-ports) -> P3-P2-04",
+      "units": "-",
+      "status": "TBD_AFTER_IMPEDANCE_MAP (owning stage P2 two-port characterization; coupled thermal UNRESOLVED)"
+     }
+    ]
+   },
+   {
+    "id": "P3-IF-N04",
+    "from": "P2 docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json IDP2-20",
+    "what": "P_forward, P_reflected, P_line/match,loss, P_delivered (REFUSED values refused by q_rf_match), antenna current, cold antenna resistance",
+    "items": [
+     "P3-P2-01",
+     "P3-P2-02",
+     "P3-P2-03",
+     "P3-P2-06",
+     "P3-P2-07"
+    ],
+    "freeze": "after-evidence (TBD_AFTER_IMPEDANCE_MAP)",
+    "units": "W; A; ohm",
+    "status": "TBD_AFTER_IMPEDANCE_MAP (owning stage P2 hot map; coupled thermal UNRESOLVED)",
+    "xref": [
+     {
+      "pair": "XL-20",
+      "counterpart": "P2:IDP2-20",
+      "counterpart_path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+      "quantity": "P_forward, P_reflected, P_line/match,loss and P_delivered (numeric only with loss_status VERIFIED; a REFUSED / TBD value is refused by p3_thermal_lib.q_rf_match, never reconstructed), antenna current, cold antenna resistance (CAL-P2-08) -> P3-P2-01, P3-P2-02, P3-P2-03, P3-P2-06, P3-P2-07",
+      "units": "W; A; ohm",
+      "status": "TBD_AFTER_IMPEDANCE_MAP (owning stage P2 hot map; coupled thermal UNRESOLVED)"
+     }
+    ]
+   },
+   {
+    "id": "P3-IF-N05",
+    "from": "P4 docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json ID-02",
+    "what": "validated continuous-use limits, conductivities, densities and emittances of collector / anode candidates",
+    "items": [
+     "P3-M-04",
+     "P3-R-01",
+     "P3-R-04"
+    ],
+    "freeze": "after-evidence",
+    "units": "W/(m*K); kg/m3; K; -",
+    "status": "DEFINED (k and density records); T_validated,continuous and emittance TBD_AFTER_EVIDENCE; FINAL_ANODE_MATERIAL OPEN",
+    "xref": [
+     {
+      "pair": "XL-23",
+      "counterpart": "P4:ID-02",
+      "counterpart_path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+      "quantity": "per-candidate thermal conductivity and density with provenance (P4 property_records), validated continuous-use limits (CR-01) and emittances -> P3-M-04, P3-R-01, P3-R-04",
+      "units": "W/(m*K); kg/m3; K; -",
+      "status": "DEFINED (k and density records); T_validated,continuous and emittance TBD_AFTER_EVIDENCE; FINAL_ANODE_MATERIAL OPEN"
+     }
+    ]
+   },
+   {
+    "id": "P3-IF-N06",
+    "from": "RFQ v2 docs/procurement/rfq_a9_v2/rfq_a9_v2.json IFD-16 (RFQ2-MECH-N04)",
+    "what": "fabricator continuous-use temperature data of the ICP-part materials",
+    "items": [
+     "P3-M-04"
+    ],
+    "freeze": "after-evidence",
+    "units": "K",
+    "status": "TBD_AFTER_EVIDENCE (after quotations; ICP_COUPLED_THERMAL UNRESOLVED; never PASS)",
+    "xref": [
+     {
+      "pair": "XL-42",
+      "counterpart": "RFQ:IFD-16",
+      "counterpart_path": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+      "quantity": "ICP-part material continuous-use temperature data requested from the fabricator (RFQ2-MECH-N04) as material limits for the coupled thermal framework",
+      "units": "K",
+      "status": "TBD_AFTER_EVIDENCE (after quotations; ICP_COUPLED_THERMAL UNRESOLVED; never PASS)"
+     }
+    ]
+   },
+   {
+    "id": "P3-IF-N07",
+    "from": "hardware (KC-1 / ICP module drawing; H2-1 / H2-7 frozen H-1 geometry)",
+    "what": "standoff, aperture, envelope, open-frame fraction, surface-node map, collector position, conductances, emittances",
+    "items": [
+     "P3-G-01..08",
+     "P3-K-01..06",
+     "P3-R-02",
+     "P3-R-03"
+    ],
+    "freeze": "LOCK-1",
+    "units": "m; W/K; -",
+    "status": "TBD (hardware design; LOCK-1)",
+    "xref": []
+   },
+   {
+    "id": "P3-IF-N08",
+    "from": "Phase-1 Hall data",
+    "what": "I_beam, mean ion energy, angular current distribution (never predicted)",
+    "items": [
+     "P3-H-01",
+     "P3-H-02",
+     "P3-H-03"
+    ],
+    "freeze": "after-evidence",
+    "units": "A; eV; deg",
+    "status": "TBD_AFTER_EVIDENCE (Phase-1 measurements)",
+    "xref": []
+   },
+   {
+    "id": "P3-IF-N09",
+    "from": "facility",
+    "what": "radiative sink temperature measured per run (owner row 131)",
+    "items": [
+     "P3-R-06"
+    ],
+    "freeze": "after-evidence",
+    "units": "K",
+    "status": "TBD_AFTER_EVIDENCE (measured per run)",
+    "xref": []
+   },
+   {
+    "id": "P3-IF-N10",
+    "from": "owner",
+    "what": "ICPQ-10 bound choice; P3Q-01; P3Q-02",
+    "items": [
+     "P3-B-01",
+     "P3-B-02",
+     "P3-B-03"
+    ],
+    "freeze": "LOCK-1",
+    "units": "W; -",
+    "status": "TBD_OWNER (ICPQ-10, P3Q-01, P3Q-02 OPEN)",
+    "xref": []
+   }
+  ],
+  "p3_supplies": [
+   {
+    "id": "P3-IF-S01",
+    "to": "ICD ICP-43 (total module heat load)",
+    "what": "the Q_RF/match + Q_collector + Q_plume decomposition and the functions that evaluate it once inputs exist",
+    "units": "W",
+    "status": "DEFINED (functions); values TBD; never PASS",
+    "xref": []
+   },
+   {
+    "id": "P3-IF-S02",
+    "to": "ICD ICP-47 (radiative-view objective)",
+    "what": "view-factor calculator and the parametric structure over standoff / aperture / wall / length / open-area fraction",
+    "units": "-",
+    "status": "DEFINED (functions); geometry TBD at LOCK-1",
+    "xref": []
+   },
+   {
+    "id": "P3-IF-S03",
+    "to": "ICD ICP-37 / A9.1 UBQ-06",
+    "what": "node temperatures of the coupled network (once inputs exist) for the >= 50 K margin and abort checks; never a PASS by itself",
+    "units": "K",
+    "status": "TBD_AFTER_EVIDENCE (ICP_COUPLED_THERMAL UNRESOLVED)",
+    "xref": []
+   },
+   {
+    "id": "P3-IF-S04",
+    "to": "A9-07 / H2 (docs/hardware/h2_a9_revisions/, read-only)",
+    "what": "equivalent heat into H-1 PO / BP comparable with the A9-07 allowances (a907_allowance_port)",
+    "units": "W",
+    "status": "DEFINED (comparison structure); values TBD",
+    "xref": []
+   },
+   {
+    "id": "P3-IF-S05",
+    "to": "P1 docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json IF-P1-35",
+    "what": "the verification temperature set (P3-P1-07 -> P1-M-21 channels)",
+    "units": "degC",
+    "status": "DEFINED (channel list); readings TBD_AFTER_EVIDENCE; never a thermal PASS",
+    "xref": [
+     {
+      "pair": "XL-21",
+      "counterpart": "P1:IF-P1-35",
+      "counterpart_path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+      "quantity": "verification temperature set of the coupled model (P3-P1-07 -> P1-M-21 channels: antenna, dielectric, collector, match, H-1 inner / outer pole, sink)",
+      "units": "degC",
+      "status": "DEFINED (channel list); readings TBD_AFTER_EVIDENCE; never a thermal PASS"
+     }
+    ]
+   },
+   {
+    "id": "P3-IF-S06",
+    "to": "P2 docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json IDP2-24",
+    "what": "the calorimetric energy balance that fixes f_leaving (P3-P2-05)",
+    "units": "W; -",
+    "status": "TBD_AFTER_EVIDENCE (owning stage P2 hot map; f_leaving = 0 only as an explicitly labelled bound)",
+    "xref": [
+     {
+      "pair": "XL-22",
+      "counterpart": "P2:IDP2-24",
+      "counterpart_path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+      "quantity": "ICP-module calorimetric energy balance (thermocouple map with RF on / off, ICD ICP-36 verification) that fixes f_leaving (P3-P2-05)",
+      "units": "W; -",
+      "status": "TBD_AFTER_EVIDENCE (owning stage P2 hot map; f_leaving = 0 only as an explicitly labelled bound)"
+     }
+    ]
+   },
+   {
+    "id": "P3-IF-S07",
+    "to": "P4 docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json ID-01",
+    "what": "T_operating of anode and collector (coupled; row 86 margin), heat flux and gradients for the P4 CR-01 / CR-05 / CR-06 conditions",
+    "units": "K; W/m2; K/m",
+    "status": "TBD_AFTER_EVIDENCE (ANODE_THERMAL_CLOSURE and ICP_COUPLED_THERMAL UNRESOLVED; no PASS)",
+    "xref": [
+     {
+      "pair": "XL-24",
+      "counterpart": "P4:ID-01",
+      "counterpart_path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+      "quantity": "T_operating of anode and collector (worst case, coupled; 20 % heat-load margin, row 86), heat flux, gradients -> P4 IT-09, IT-11",
+      "units": "K; W/m2; K/m",
+      "status": "TBD_AFTER_EVIDENCE (ANODE_THERMAL_CLOSURE and ICP_COUPLED_THERMAL UNRESOLVED; no PASS)"
+     }
+    ]
+   },
+   {
+    "id": "P3-IF-S08",
+    "to": "mass / power v2 docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json MPV2-ID-01",
+    "what": "thermal-hardware mass from the coupled model (radiator / heaters / MLI / heat paths; any active-cooling variant)",
+    "units": "kg",
+    "status": "TBD_AFTER_EVIDENCE (ICP_COUPLED_THERMAL UNRESOLVED; no PASS)",
+    "xref": [
+     {
+      "pair": "XL-28",
+      "counterpart": "MP:MPV2-ID-01",
+      "counterpart_path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+      "quantity": "thermal-hardware mass (radiator / heaters / MLI / heat paths) and any active-cooling variant from the coupled H-1 / ICP thermal model",
+      "units": "kg",
+      "status": "TBD_AFTER_EVIDENCE (ICP_COUPLED_THERMAL UNRESOLVED; no PASS)"
+     }
+    ]
+   },
+   {
+    "id": "P3-IF-S09",
+    "to": "mass / power v2 docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json MPV2-ID-02",
+    "what": "thermal_control slot power (steady / start-up)",
+    "units": "W",
+    "status": "TBD_AFTER_EVIDENCE (ICP_COUPLED_THERMAL UNRESOLVED; no PASS)",
+    "xref": [
+     {
+      "pair": "XL-29",
+      "counterpart": "MP:MPV2-ID-02",
+      "counterpart_path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+      "quantity": "thermal_control slot power (steady / start-up) for the power ledger",
+      "units": "W",
+      "status": "TBD_AFTER_EVIDENCE (ICP_COUPLED_THERMAL UNRESOLVED; no PASS)"
+     }
+    ]
+   },
+   {
+    "id": "P3-IF-S10",
+    "to": "M16 v3 rows thermal_control / icp_neutralizer_head / h1_anode_heat_path",
+    "what": "framework status (m16_impact)",
+    "units": "-",
+    "status": "PROPOSED (no readiness change)",
+    "xref": []
+   },
+   {
+    "id": "P3-IF-S11",
+    "to": "system RVM (A9.6 sec. 15; parallel lane fo_a9_6_rvm, not merged in this base)",
+    "what": "thermal rows stay INCOMPLETE_EVIDENCE",
+    "units": "-",
+    "status": "PROPOSED",
+    "xref": []
+   }
+  ]
+ },
+ "owner_answers_applied": [
+  {
+   "kind": "owner_row",
+   "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+   "row": 70,
+   "covers_ids": [
+    "HWQ-07"
+   ],
+   "answer_sha256": "c3a16e9cb4b6eeb9fffaa608de106d35bd5d280cd133fbdbb22f64b5c72d9ef6",
+   "answer_verbatim": "OLD options are not adequate. Keep the ICP dielectric/body floating unless the validated circuit requires otherwise; control and measure the electron-extraction collector bias separately. Do not hard-ground the plasma body by default.",
+   "applied": "collector bias measured / controlled separately: its potential is an explicit Q_collector input (P3-P1-03)"
+  },
+  {
+   "kind": "owner_row",
+   "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+   "row": 72,
+   "covers_ids": [
+    "R4-Q7"
+   ],
+   "answer_sha256": "636a6486bc06cfc72140256b657391be623d75bd638fa246d666e015c900009f",
+   "answer_verbatim": "13.56 MHz. Size laboratory RF source and inline measurement chain for 0–500 W forward power initially, with directional-coupler forward/reflected measurements. Calorimetry is an independent cross-check, not the sole primary power measurement.",
+   "applied": "13.56 MHz; directional-coupler forward / reflected are the Q_RF/match inputs (P3-P2-01/02)"
+  },
+  {
+   "kind": "owner_row",
+   "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+   "row": 85,
+   "covers_ids": [
+    "H25-Q3"
+   ],
+   "answer_sha256": "d8e3aec526e2b6540e356702ede3c544ce92e2226b7bbf0add921834f866dbec",
+   "answer_verbatim": "Do not freeze one spacecraft sink number yet. Carry 20/40/60 °C mounting-interface cases and 25/50/100 W allowable conducted-heat cases in the model; freeze the actual ICD value at spacecraft/PDR interface definition.",
+   "applied": "20/40/60 degC mount and 25/50/100 W conducted-heat cases registered (P3-M-05)"
+  },
+  {
+   "kind": "owner_row",
+   "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+   "row": 86,
+   "covers_ids": [
+    "H25-Q4",
+    "H25-Q6"
+   ],
+   "answer_sha256": "e9d2eb1f07e6887e485220d86becc6d142197cc7f59cf8d1f7ecdbd5f6668427",
+   "answer_verbatim": "Require ≥50 K margin below each validated continuous-use material/insulation temperature limit plus 20% heat-load design margin. The current ~11.2 K BN-wall margin is not acceptable as a design closure.",
+   "applied": ">= 50 K margin and 1.2 heat-load margin registered (P3-M-01/02); never relaxed"
+  },
+  {
+   "kind": "owner_row",
+   "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+   "row": 87,
+   "covers_ids": [
+    "OQ-R8-4"
+   ],
+   "answer_sha256": "9d0d1a4d6faa257177a8522379d83f2225e472fa69e8cc94f40d285636ee704c",
+   "answer_verbatim": "NO unsourced fixed anode temperature target. Derive the allowable temperature from the selected anode material's oxidation/electrical/creep data and design for ≥50 K margin to its validated continuous-use limit.",
+   "applied": "no anode temperature target invented; ANODE_THERMAL_CLOSURE stays UNRESOLVED"
+  },
+  {
+   "kind": "owner_row",
+   "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+   "row": 108,
+   "covers_ids": [
+    "OQ-H24-01"
+   ],
+   "answer_sha256": "caedb1162f6ed6d8b661f7d41cd722d213bfaf262916ca3983cb0aba6594a0e0",
+   "answer_verbatim": "YES — apply <1.5 kW at the spacecraft-DC propulsion-system boundary. Conservatively require startup transients also to remain below 1.5 kW unless the official RFP explicitly permits a transient exception. Use a new A9/v2 boundary without modifying v1.",
+   "applied": "1.5 kW used only as the ICPQ-10 alternative-B arithmetic (P3-B-02), not chosen"
+  },
+  {
+   "kind": "owner_row",
+   "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+   "row": 131,
+   "covers_ids": [
+    "H26Q-08"
+   ],
+   "answer_sha256": "3e5d262d5c5e3d48f93d9040c40abb896a6e73aebc695bc47ea3d3bcc90124c8",
+   "answer_verbatim": "MEASURE actual facility wall/cryopanel radiative sink temperature per run. Use ~300 K chamber walls only as a planning case, never as an unmeasured score-bearing input.",
+   "applied": "facility sink measured per run; ~300 K only a planning case (P3-R-06)"
+  },
+  {
+   "kind": "owner_row",
+   "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+   "row": 133,
+   "covers_ids": [
+    "HWQ-12"
+   ],
+   "answer_sha256": "fb201bf6d359338130a261c50108b2541ad86de600e4b49c33c9a1140842c475",
+   "answer_verbatim": "YES — matched sham service lines in every compared configuration.",
+   "applied": "matched sham routing unaffected; the sham's thermal equivalence is OQ-A910-05 territory (not answered)"
+  },
+  {
+   "kind": "A9.2",
+   "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+   "decision": "icp_coupled_thermal",
+   "applied": "all five required terms implemented; status UNRESOLVED"
+  },
+  {
+   "kind": "A9.2",
+   "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+   "decision": "radiative_view_requirement",
+   "applied": "parametric study structure over the six objective parameters"
+  },
+  {
+   "kind": "A9.2",
+   "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+   "decision": "13W_pole_allowance",
+   "applied": "negligible-coupling assumption not used anywhere; A9-07 allowance port"
+  },
+  {
+   "kind": "A9.2",
+   "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+   "decision": "anode_approach",
+   "applied": "anode heat path stays a network input (H2-5 G_anode_mount); no material chosen"
+  },
+  {
+   "kind": "A9.2",
+   "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+   "decision": "anode_316L",
+   "applied": "316L REJECTED_AS_CURRENT_BASELINE carried; no anode material assumed"
+  },
+  {
+   "kind": "A9.2",
+   "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+   "decision": "rf_measurement_reference",
+   "applied": "P_delivered = P_forward - P_reflected - P_line/match,loss in q_rf_match; P_forward never used as plasma power"
+  },
+  {
+   "kind": "A9.2",
+   "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+   "decision": "OQ-A907-11",
+   "applied": "local match on / adjacent to the module: its loss is a module-side heat term"
+  },
+  {
+   "kind": "A9.2",
+   "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+   "decision": "rf_500W",
+   "applied": "500 W never used as a rating; only in the carried OQ-A910-06 allocation item"
+  },
+  {
+   "kind": "A9.2",
+   "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+   "decision": "a9_10_statuses",
+   "applied": "all ten statuses carried unchanged"
+  },
+  {
+   "kind": "A9.1",
+   "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+   "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+   "decision": "UBQ-06",
+   "applied": "abort at validated limit - 50 K registered (P3-M-03)"
+  },
+  {
+   "kind": "A9.1",
+   "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+   "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+   "decision": "A9-03-collector",
+   "applied": "collector material not frozen: its emittance / limit TBD (P3-R-04, P3-M-04)"
+  },
+  {
+   "kind": "A9.1",
+   "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+   "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+   "decision": "HIQ-06",
+   "applied": "G-REUSE primary: no dedicated ICP gas flow enters the thermal terms"
+  },
+  {
+   "kind": "A9.1",
+   "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+   "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+   "decision": "OQ-A902-03",
+   "applied": "no fixed Hall/ICP power split assumed"
+  },
+  {
+   "kind": "A9.3",
+   "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+   "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+   "decision": "OQ-VI-03",
+   "applied": "open-tube coaxial first build -> coaxial annular ICP body model"
+  },
+  {
+   "kind": "A9.3",
+   "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+   "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+   "decision": "OQ-A907-02",
+   "applied": "8.33 A stand ceiling only a rating; I_d,max,H1 TBD (P3-H-06)"
+  },
+  {
+   "kind": "A9.3",
+   "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+   "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+   "decision": "OQ-RFQ-06",
+   "applied": "laboratory mains generator GROUND/FACILITY_ONLY: P_mains,in never a P_bus input"
+  },
+  {
+   "kind": "A9.4",
+   "path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+   "sha256": "b3d9a9f1ed5b76637b1508ca40fdd719b40f8184bdbc433804eeeb6119dc360d",
+   "decision": "P1Q-10",
+   "applied": "capacity records discharge OFF: Q_collector for the dedicated electron collector"
+  },
+  {
+   "kind": "A9.4",
+   "path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+   "sha256": "b3d9a9f1ed5b76637b1508ca40fdd719b40f8184bdbc433804eeeb6119dc360d",
+   "decision": "P1Q-13",
+   "applied": "anode floating during capacity records: no discharge heat in that configuration"
+  },
+  {
+   "kind": "A9.4",
+   "path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+   "sha256": "b3d9a9f1ed5b76637b1508ca40fdd719b40f8184bdbc433804eeeb6119dc360d",
+   "decision": "P1Q-14",
+   "applied": "350 V class isolation of body / collector: conductance paths through isolators TBD"
+  },
+  {
+   "kind": "A9.5",
+   "path": "docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json",
+   "sha256": "c9e101f2c409c2d28ad256818c22f13ee801bc532d7e4ef470f375d7bb1fe1d3",
+   "decision": "P1Q-15",
+   "applied": "signed terminal currents stay in P1 records; Q_collector takes particle-current magnitudes whose split must be registered"
+  },
+  {
+   "kind": "A9.5",
+   "path": "docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json",
+   "sha256": "c9e101f2c409c2d28ad256818c22f13ee801bc532d7e4ef470f375d7bb1fe1d3",
+   "decision": "P1Q-16",
+   "applied": "I_e,cap signed formula untouched (not a thermal input)"
+  },
+  {
+   "kind": "A9.6",
+   "path": "docs/decisions/OD_2026_09_30_A9_6_implementation_first_directive.json",
+   "sha256": "d8d8496f4141a7096496d3a893c95c3db524ca501055a26cc868fb35d0ae9327",
+   "decision": "sec. 10 P3 / summary.fixed_statuses",
+   "applied": "framework built now with every missing input TBD; no thermal PASS"
+  }
+ ],
+ "open_owner_questions": [
+  {
+   "id": "P3Q-01",
+   "question": "Q_collector needs the plasma potential and electron temperature at the collector sheath edge (P3-P1-04/05), which are not in the P1 measurement list. Add a probe diagnostic (Langmuir or emissive probe near the collector) to P1, or accept a calorimetric collector energy balance (thermocouple map + registered conductances, RF on/off and current steps) as the Q_collector evidence instead?",
+   "alternatives": [
+    "A: probe diagnostic added at P1-G0 (sheath-term route)",
+    "B: calorimetric energy balance (direct heat route; sheath terms become a cross-check)",
+    "C: both (probe + calorimetry)"
+   ],
+   "status": "TBD_OWNER",
+   "needed_by": "P1-G0",
+   "blocks": [
+    "Q_collector",
+    "ICP-43"
+   ]
+  },
+  {
+   "id": "P3Q-02",
+   "question": "For the coupled thermal closure at LOCK-1, is the lumped H2-5 network coupled through this P3 radiosity enclosure the accepted model class, or is a finer (finite-element / multi-node) H-1 + ICP model required before any closure statement?",
+   "alternatives": [
+    "A: lumped network (this framework) + S1a thermocouple correlation",
+    "B: finer model required before closure"
+   ],
+   "status": "TBD_OWNER",
+   "needed_by": "LOCK-1",
+   "blocks": [
+    "ICP_COUPLED_THERMAL closure path"
+   ]
+  }
+ ],
+ "existing_open_owner_questions_carried": {
+  "ICPQ-03": {
+   "status": "OPEN",
+   "question": "Mount both downstream modules on the moving platform so plume-module forces are inside the measured system (ICP-10)?",
+   "p3_handling": "carrier conduction path P3-K-02 carried for both mountings (platform / fixed); no choice made"
+  },
+  "ICPQ-09": {
+   "status": "OPEN",
+   "question": "Plume interception by a Takahashi-type enclosing source is a real architecture consequence; report it inside the system boundary without correction (ICP-29)?",
+   "p3_handling": "plume interception is computed and reported inside the system boundary (Q_plume); the reporting decision stays the owner's"
+  },
+  "ICPQ-10": {
+   "status": "OPEN",
+   "question": "Total ICP module heat-load bound (ICP-43): use 1.20 x (P_fwd,max + P_d,max) with P_d,max from the A9-02 discharge slot, or, if every score-bearing stand point is held inside the P_bus < 1.5 kW ceiling (row 108), the envelope 1.20 x 1.5 kW used for the stand by H2-6 H26-44?",
+   "p3_handling": "both bounding alternatives carried side by side (P3-B-01, P3-B-02)"
+  },
+  "OQ-A907-06": {
+   "status": "OPEN",
+   "question": "Heat conducted into the spacecraft mount stays within the row-85 100 W case at the searched corners only for LV-ALL-ISO, LV-COIL+ISO, LV-OPEN+ISO, LV-RAD+ISO; with LV-ALL-ISO the inner coil still has margin -12.3 K to its design ceiling; lever sets closing every live node within 100 W: none. Pursue a thermally isolated mount with a dedicated thruster radiator as the design direction, and which row-85 allowable-heat case (25/50/100 W) governs the H-1 design?",
+   "p3_handling": "mount-heat lever choice not made; P3 reports carrier / mount heat"
+  },
+  "OQ-A907-09": {
+   "status": "OPEN",
+   "question": "Row 86 '20% heat-load design margin': this lane scales only the DISSIPATED loads (discharge fractions, coil I^2R, cathode) by 1.2 and keeps the environmental solar/albedo/OLR inputs at their v1 hot/cold bounds. Should the 20 % also apply to environmental loads?",
+   "p3_handling": "1.2 margin applied to dissipated ICP loads only; environmental application left open (P3-M-01)"
+  },
+  "OQ-A907-10": {
+   "status": "OPEN",
+   "question": "The thermal worst case is found by a local search plus a heuristic search allowance (not an upper bound). Within-limit results (for hall_icp_neutralizer: UNCOUPLED_SENSITIVITY_WITHIN_LIMIT, reported UNRESOLVED under A9.2 ICP_COUPLED_THERMAL) whose margin to the design ceiling after the allowance is below 10 K are flagged search_sensitive. Accept this PROPOSED reporting threshold, and require a global-optimisation or interval-bound check of every search-sensitive verdict before LOCK-1?",
+   "p3_handling": "no search allowance rule is changed; P3 does not produce closures"
+  },
+  "OQ-A910-06": {
+   "status": "OPEN",
+   "question": "Should ICP-36 keep 500 W x 1.2 = 600 W (row 72 delivered/operating capability x row 86 heat-load margin) as the RF-path heat-allocation basis of the ICP module thermal design (an allocation term, not a bound and not a component rating; P_line/match,loss added on top per A9.2 rf_measurement_reference), given that A9.2 rf_500W makes 500 W a delivered/operating investigation capability and not a rating?",
+   "p3_handling": "600 W allocation basis carried as P3-B-03 beside the P2-derived Q_RF/match formula"
+  }
+ },
+ "historical_reuse": [
+  {
+   "path": "docs/hardware/h2/h2_5_thermal_network/build_h2_5_thermal_network.py",
+   "sha256": "4e937fa97b104d1004765f5a8a3c624bf702375fb822b81bc97b979446aebbec",
+   "use": "H-1 side: assemble / solve / property functions imported read-only; the coupled adapter reproduces its solve with no ICP body"
+  },
+  {
+   "path": "docs/hardware/h2/h2_5_thermal_network/h2_5_thermal_network_v1.json",
+   "sha256": "68c5be61443d0ef1c7308c4aba265426137292dcf9363e57903e0a1f6c8bc083",
+   "use": "H-1 parameter ids and ranges (analog / assumed) for the evaluation geometry"
+  },
+  {
+   "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
+   "sha256": "b428565299c1c41487d9ffa50c174986d2d52c544539f89ca21b7bdbc2ae44fa",
+   "use": "A9-07 uncoupled ICP-heat allowances (PO / BP) and A9H-TH-01 requirement"
+  },
+  {
+   "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
+   "sha256": "8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c",
+   "use": "ICP-02, ICP-04, ICP-07, ICP-13, ICP-21, ICP-22, ICP-29, ICP-36, ICP-37, ICP-43, ICP-47"
+  },
+  {
+   "path": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json",
+   "sha256": "636cbd3318831f6f56e9833813c4d8c259aef7db3de1c6e503cccce14dade7e2",
+   "use": "rows thermal_control, icp_neutralizer_head, h1_anode_heat_path"
+  }
+ ],
+ "m16_impact": [
+  {
+   "row": 13,
+   "key": "thermal_control",
+   "proposed_change": "none to maturity (framework only)",
+   "note": "coupled H-1 / ICP thermal framework exists (software); thermal closure UNRESOLVED; blocking inputs P3-G/K/R (hardware), P1/P2 data",
+   "rule": "a row becomes READY / VERIFIED only under the repository's evidence rules; software completeness is not physical verification (A9.6 sec. 16)"
+  },
+  {
+   "row": 18,
+   "key": "icp_neutralizer_head",
+   "proposed_change": "none to maturity (framework only)",
+   "note": "ICP-43 / ICP-47 now have calculators; values TBD; physical ICP not VERIFIED",
+   "rule": "a row becomes READY / VERIFIED only under the repository's evidence rules; software completeness is not physical verification (A9.6 sec. 16)"
+  },
+  {
+   "row": 21,
+   "key": "h1_anode_heat_path",
+   "proposed_change": "none to maturity (framework only)",
+   "note": "anode heat path is a network input; ANODE_THERMAL_CLOSURE UNRESOLVED (P4 merged: FINAL_ANODE_MATERIAL OPEN, no validated limit)",
+   "rule": "a row becomes READY / VERIFIED only under the repository's evidence rules; software completeness is not physical verification (A9.6 sec. 16)"
+  }
+ ],
+ "compliance": {
+  "no_pass_status": true,
+  "closure_statuses_unresolved": true,
+  "no_hall_prediction": true,
+  "tbd_items_have_no_evidence_class": true,
+  "governance_files_not_pinned": true,
+  "archengine_untouched": true,
+  "outputs_regenerable": "python docs/experiments/hall_icp/p3_coupled_thermal/build_p3_coupled_thermal.py --check"
+ },
+ "serialization_note": "floats written to 6 significant digits; machine-precision residuals |x| < 1e-10 (solver / algebra cross-checks) are written as 0.0 - they are below 1e-10, not exactly zero (platform-independent outputs)"
+}

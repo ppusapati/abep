@@ -5,7 +5,7 @@ Checks: byte-for-byte reproduction by the builder; pins verified and governance 
 impedance / de-embedding / power-accounting math against closed-form cases on SYNTHETIC, clearly labelled data; every
 refusal path (missing calibration, no reference plane, uncalibrated phase, P_forward used as P_plasma, hot map before the
 P1 stable region); the mismatch envelope stays TBD_AFTER_IMPEDANCE_MAP; schema <-> reducer consistency; item / evidence
-discipline; no open item converted to PASS; no dependency on the parallel P1 / RFQ v2 lanes; owner A9.4 P2Q-05
+discipline; no open item converted to PASS; merged P1 / RFQ v2 ids cross-checked (A9.5 execution); owner A9.4 P2Q-05
 (photodiode required; UNLIT / E_MODE / H_MODE / UNCERTAIN) incorporated by fo_a9_4_incorporation.
 Run: python -m pytest -q tests/test_p2_impedance_prep.py
 """
@@ -75,12 +75,34 @@ def _series_shunt(zs, ys):
     return ((1 + 0j) + zs * ys, zs, ys, 1 + 0j)
 
 
+POS = {"C_series": "SYN-1", "C_shunt": "SYN-1"}
+LV_BASE = {"status": "LOSS_MODEL_VERIFIED", "method": "CAL-P2-09_calorimetric_at_power",
+           "evidence_record_ids": ["SYN-CALORIMETRY-01"], "data_class": "synthetic_test", "k": 2.0,
+           "k_registration_id": "SYN-K-REG-01"}
+
+
+def _lv(red, cal, model_ref, vid):
+    """A synthetic at-power loss verification consistent with the calibration set's own loss model (MET-07): the
+    prediction comes from red.loss_model_prediction, the measured eta equals it and the statistic is recomputed."""
+    eta, ref = red.loss_model_prediction(cal, model_ref)
+    kind = ref["kind"]
+    u_p = 0.01 if kind == "two_port" else 0.0
+    comp = red.LOSS_MODEL_KINDS[kind]
+    return dict(LV_BASE, verification_id=vid, model_ref=ref, comparison=comp,
+                tuning_states=[ref["tuning_state_id"]] if kind == "two_port" else [], eta_measured=eta,
+                u_eta_measured=0.01, eta_predicted=eta, u_eta_predicted=u_p,
+                P_net_W=100.0, u_P_net_W=0.0, P_ref_load_W=100.0 * eta, u_P_ref_load_W=1.0,
+                k_registration_id="SYN-K-REG-01" if kind == "two_port" else "SYN-K-REG-LB",
+                u_eta_predicted_basis_id="SYN-K-REG-01" if kind == "two_port" else "SYN-K-REG-LB",
+                normalized_statistic=red.loss_statistic(comp, eta, 0.01, eta, u_p))
+
+
 def _cal(red, line, match, e00=0j, e11=0j, e10e01=1 + 0j, fix=(1 + 0j, 0j, 0j, 1 + 0j)):
     def sp(abcd, a, b):
         s11, s12, s21, s22 = red.abcd_to_s(abcd, Z0)
         return {"from_plane": a, "to_plane": b, "S11": _c(s11), "S12": _c(s12), "S21": _c(s21), "S22": _c(s22),
-                "cal_id": "SYN-2P", "phase_calibrated": True}
-    return {"schema": red.CAL_SCHEMA_ID, "calibration_set_id": "SYN", "data_class": "synthetic_test", "f_Hz": 13.56e6,
+                "cal_id": "SYN-2P", "phase_calibrated": True, "positions": dict(POS)}
+    cal = {"schema": red.CAL_SCHEMA_ID, "calibration_set_id": "SYN", "data_class": "synthetic_test", "f_Hz": 13.56e6,
             "Z0_ohm": Z0, "power_sensors": {"PS": {"CF_fwd": 1.0, "CF_ref": 1.0, "certificate": "SYNTHETIC"}},
             "coupler": {"cal_id": "CPL", "plane": "RP-CPL", "phase_calibrated": True, "e00": _c(e00), "e11": _c(e11),
                         "e10e01": _c(e10e01)},
@@ -88,12 +110,28 @@ def _cal(red, line, match, e00=0j, e11=0j, e10e01=1 + 0j, fix=(1 + 0j, 0j, 0j, 1
             "vi_probe": {"cal_id": "VI", "phase_calibrated": True, "k_V": [1.0, 0.0], "k_I": [1.0, 0.0],
                          "fixture_abcd": [[_c(fix[0]), _c(fix[1])], [_c(fix[2]), _c(fix[3])]],
                          "fixture_from_plane": "RP-VI", "fixture_to_plane": "RP-ANT", "amplitude_convention": "peak"},
-            "loss_bounds": {"LB1": {"loss_fraction_max": 0.1, "source": "SYNTHETIC", "evidence_class": "assumed"}},
+            "loss_bounds": {"LB1": {"loss_fraction_max": 0.1, "source": "SYNTHETIC", "evidence_class": "assumed",
+                                    "verification": None}},
             "cold_references": {"CR1": {"R_cold_ohm": 1.5, "source_record_id": "SYN-COLD",
                                         "source_phase": "CAL-P2-08_VNA_UNPOWERED",
                                         "unlit_verification": {"basis": "SYNTHETIC CAL-P2-08 VNA record"},
-                                        "evidence_class": "measured", "antenna_temperature_K": 300.0}},
-            "antenna_current_probe": {"cal_id": "ACP", "k_mag": 1.0, "certificate": "SYNTHETIC"}}
+                                        "evidence_class": SYN, "antenna_temperature_K": 300.0}},
+            "antenna_current_probe": {"cal_id": "ACP", "k_mag": 1.0, "certificate": "SYNTHETIC"},
+            "loss_verification": None,
+            "loss_check_registrations": {"protocols": {
+                "SYN-K-REG-01": {"method": "CAL-P2-09_calorimetric_at_power", "model_key": "TS1", "Z_load_ohm": [Z0, 0.0], "k": 2.0,
+                                 "u_eta_pred": 0.01, "u_P_net_W": 0.0, "u_P_ref_load_W": 1.0,
+                                 "P_check_W": 100.0, "P_check_rel_tol": 0.02, "apply_P_net_range_W": [1e-3, 1e4],
+                     "source": "SYNTHETIC test protocol"},
+                "SYN-K-REG-LB": {"method": "CAL-P2-09_calorimetric_at_power", "model_key": "LB1", "k": 2.0,
+                                 "u_eta_pred": 0.0, "u_P_net_W": 0.0, "u_P_ref_load_W": 1.0,
+                                 "P_check_W": 100.0, "P_check_rel_tol": 0.02, "apply_P_net_range_W": [1e-3, 1e4],
+                     "source": "SYNTHETIC test protocol"}}}}
+    cal["loss_verification"] = _lv(red, cal, {"kind": "two_port", "tuning_state_id": "TS1", "Z_load_ohm": [Z0, 0.0],
+                                              "Z_load_basis": "SYNTHETIC reference load"}, "SYN-LV-01")
+    cal["loss_bounds"]["LB1"]["verification"] = _lv(red, cal, {"kind": "declared_bound", "loss_bound_id": "LB1"},
+                                                    "SYN-LV-LB1")
+    return cal
 
 
 def _rec(red, cal, z_ant, p_fwd=100.0, phase="DUMMY_LOAD"):
@@ -115,12 +153,14 @@ def _rec(red, cal, z_ant, p_fwd=100.0, phase="DUMMY_LOAD"):
             "coupler": {"P_sens_fwd_W": p_fwd, "P_sens_ref_W": p_fwd * abs(g_in) ** 2, "power_sensor_cal_id": "PS",
                         "reflection_raw": _c(m)},
             "vi_probe": {"V_raw": _c(a * v_a + b * i_a), "I_raw": _c(c * v_a + dd * i_a), "vi_cal_id": "VI"},
-            "match_state": {"tuning_state_id": "TS1", "positions": {}, "auto_tune": False, "loss_bound_id": "LB1"},
+            "match_state": {"tuning_state_id": "TS1", "positions": dict(POS), "auto_tune": False,
+                            "loss_bound_id": "LB1"},
             "factors": {k: None for k in red.REQUIRED_FACTOR_FIELDS},
             "plasma_state": {"lit": False, "mode": "UNLIT", "optical_signal_V": None, "unlit_threshold_V": None,
                              "unlit_threshold_source": None, "threshold_basis": None,
                              "photodiode_line_of_sight_ok": None, "photodiode_saturated": None,
-                             "electrical_ignition_or_mode_transition": None, "electrical_indicator_basis": None},
+                             "electrical_ignition_or_mode_transition": None, "electrical_indicator_basis": None,
+                             "mode_indicator_basis": None},
             "sweep": {"sweep_id": "S", "direction": "single", "index": 0}, "settling": {"dwell_s": None, "settled": None},
             "temperatures_K": {}, "cold_reference_id": None, "p1_stable_region_ref": None, "antenna_current": None}
 
@@ -135,10 +175,11 @@ def case(red):
 
 # ------------------------------------------------------------------------------------------------ reproduction / pins
 def test_builder_reproduces_outputs(mod):
-    js, md, sc = mod.render()
+    js, md, sc, ms = mod.render()
     assert OUT_JSON.read_text(encoding="utf-8") == js
     assert OUT_MD.read_text(encoding="utf-8") == md
     assert OUT_SCHEMA.read_text(encoding="utf-8") == sc
+    assert (LANE / "p2_impedance_map_schema_v1.json").read_text(encoding="utf-8") == ms
     assert mod.main(["--check"]) == 0
 
 
@@ -476,14 +517,63 @@ def test_new_questions_are_new_and_answerable(d):
         assert q["proposed_answer"] and q["needed_by"]
 
 
-def test_interface_demands_both_directions_and_pending_lanes(d):
+def test_interface_demands_both_directions_and_merged_lanes(d):
+    """A9.5 execution (carried A9.4 minor): the P1 bench and RFQ v2 packages are merged; stale 'PENDING <path>'
+    references are replaced by their real ids, which must exist in the merged files."""
     dirs = {x["direction"] for x in d["interface_demands"]}
     assert "P1 -> P2" in dirs and "P2 -> P1" in dirs
     assert any("RFQ v2" in x for x in dirs)
-    pend = {p["path"] for p in d["pending_lanes"]}
-    assert pend == {"docs/experiments/hall_icp/p1_icp_bench/", "docs/procurement/rfq_a9_v2/"}
+    assert "pending_lanes" not in d
+    merged = {p["path"] for p in d["merged_lanes"]}
+    assert merged == {"docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+                      "docs/procurement/rfq_a9_v2/rfq_a9_v2.json"}
+    txt = json.dumps(d) + OUT_MD.read_text(encoding="utf-8")
+    assert "PENDING docs/experiments/hall_icp/p1_icp_bench/" not in txt
+    assert "PENDING docs/procurement/rfq_a9_v2/" not in txt
+    rfq2 = (REPO / "docs/procurement/rfq_a9_v2/rfq_a9_v2.json").read_text(encoding="utf-8")
+    p1 = (REPO / "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json").read_text(encoding="utf-8")
     for inst in d["instrument_list"]:
-        assert inst["rfq_v2_line"].startswith("PENDING docs/procurement/rfq_a9_v2/")
+        v = inst["rfq_v2_line"]
+        assert "PENDING" not in v and v.endswith("(docs/procurement/rfq_a9_v2/rfq_a9_v2.json)"), inst["id"]
+        ids = re.findall(r"\b(?:RF|GAS|VAC|HE|ME|TH)-[LO]\d\d\b", v)
+        assert ids or v.startswith("no RFQ v2 line"), inst["id"]
+        for i in ids:
+            assert f'"{i}"' in rfq2, (inst["id"], i)
+    for i in d["merged_ids_cited"]["docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json"]:
+        assert f'"{i}"' in p1, i
+    for i in d["merged_ids_cited"]["docs/procurement/rfq_a9_v2/rfq_a9_v2.json"]:
+        assert f'"{i}"' in rfq2, i
+    idem = {x["id"]: x for x in d["interface_demands"]}
+    assert idem["IDP2-01"]["xref"][0]["counterpart"] == "P1:IF-P1-01"
+    assert idem["IDP2-17"]["xref"][0]["counterpart"] == "P1:IF-P1-23"
+    assert "TH-L07" in idem["IDP2-18"]["status"] and idem["IDP2-05"]["xref"][0]["counterpart"] == "RFQ:IFD-13"
+    assert d["rfq_v2_coverage_checked"]["INS-P2-04"] == ["RF-L13"]     # equals RFQ v2 instrument_coverage (XL-12)
+
+
+def test_a95_ins_p2_10_and_pins(d):
+    ins = {i["id"]: i for i in d["instrument_list"]}
+    p10 = ins["INS-P2-10"]
+    assert any(isinstance(s_, dict) and s_.get("kind") == "A9.4" and s_.get("decision") == "P2Q-05"
+               for s_ in p10["source"])
+    assert p10["evidence_class"] == "owner-stated" and "A9.4 P2Q-05" in p10["basis"]
+    for need in ("TH-L07", "TH-L08", "VAC-L07"):
+        assert need in p10["rfq_v2_line"], need
+    assert ins["INS-P2-02"]["rfq_v2_line"].startswith("RF-L02") and ins["INS-P2-11"]["rfq_v2_line"].startswith("RF-L11")
+    assert ins["INS-P2-04"]["rfq_v2_line"].startswith("RF-L13")      # RFQ v2 completion added the VNA line
+    items = {it["id"]: it for it in d["items"]}
+    assert items["INS-P2-10"]["evidence_class"] == "owner-stated"
+    pins = {p["path"]: p["sha256"] for p in d["decision_pins"] + d["deliverable_pins"]}
+    assert pins["docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json"] == \
+        "c9e101f2c409c2d28ad256818c22f13ee801bc532d7e4ef470f375d7bb1fe1d3"
+    assert pins["docs/decisions/OD_2026_09_30_A9_5_P1_CLOSURE_OWNER_DECISIONS.md"] == \
+        "9e49e923328441c1fc82afd3eb64c13d85fc818e8fe534576ada61a16fa525f3"
+    assert "docs/procurement/rfq_a9_v2/rfq_a9_v2.json" not in pins   # RFQ v2 reads P2: ids checked, a pin would be circular
+    assert not any("p1_icp_bench" in p_ for p_ in pins)                  # same follow-on lane: checked, not pinned
+    inc = d["a9_5_incorporation"]
+    assert inc["follow_on"] == "fo_a9_5_closure_rule" and inc["base_commit"] == \
+        "71f31b2a254fe01059b130b554b97c7584ae6b30"
+    applied = [o for o in d["owner_answers_applied"] if isinstance(o["ref"], dict) and o["ref"].get("kind") == "A9.5"]
+    assert applied and "INS-P2-10" in applied[0]["how"]
 
 
 def test_m16_rows_and_sections_present(d):
@@ -521,7 +611,8 @@ def test_no_winner_or_prediction_vocabulary(d):
 def test_lane_dir_contents():
     names = sorted(p.name for p in LANE.iterdir() if p.name != "__pycache__")
     assert names == sorted(["build_p2_impedance_prep.py", "p2_impedance_reducer.py", "p2_impedance_prep_v1.json",
-                            "P2_IMPEDANCE_PREP.md", "p2_impedance_record_schema_v1.json"])
+                            "P2_IMPEDANCE_PREP.md", "p2_impedance_record_schema_v1.json", "p2_framework.py",
+                            "p2_impedance_map_schema_v1.json"])
 
 
 # ------------------------------------------------------------------------------------------------ repair-round checks
@@ -661,7 +752,9 @@ def _hot(rec, sig=2.0, thr=0.5, mode="H_MODE", gas="Ar"):
     r["phase"], r["p1_stable_region_ref"] = "HOT_MAP", "P1-REGION-SYN"
     r["factors"].update({"gas": gas, "p_chamber_Pa": 0.01})
     _optical(r, sig, thr)
-    r["plasma_state"].update({"lit": mode != "UNLIT", "mode": mode})
+    r["plasma_state"].update({"lit": mode != "UNLIT", "mode": mode,
+                              "mode_indicator_basis": "SYNTH HM-R06 indicators" if mode in ("E_MODE", "H_MODE")
+                              else None})
     return r
 
 
@@ -819,9 +912,13 @@ def test_a94_classify_plasma_state(red):
     assert red.classify_plasma_state(dict(base, photodiode_line_of_sight_ok=False))[0] == "UNCERTAIN"
     assert red.classify_plasma_state(dict(base, photodiode_saturated=True))[0] == "UNCERTAIN"
     lit = dict(base, optical_signal_V=2.0)
-    assert red.classify_plasma_state(dict(lit, lit_mode_assignment="E_MODE"))[0] == "E_MODE"
-    assert red.classify_plasma_state(dict(lit, lit_mode_assignment="H_MODE"))[0] == "H_MODE"
+    mb = {"mode_indicator_basis": "SYNTH HM-R06 indicators"}
+    assert red.classify_plasma_state(dict(lit, lit_mode_assignment="E_MODE", **mb))[0] == "E_MODE"
+    assert red.classify_plasma_state(dict(lit, lit_mode_assignment="H_MODE", **mb))[0] == "H_MODE"
     assert red.classify_plasma_state(lit)[0] == "UNCERTAIN"
+    for bad in (None, "", "PENDING indicators"):                     # an E/H label needs its registered basis (MET-05)
+        with pytest.raises(red.PlasmaStateError):
+            red.classify_plasma_state(dict(lit, lit_mode_assignment="H_MODE", mode_indicator_basis=bad))
     with pytest.raises(red.PlasmaStateError):                         # threshold without its A9.4 basis
         red.classify_plasma_state(dict(base, threshold_basis=None))
     with pytest.raises(red.PlasmaStateError):
@@ -887,3 +984,92 @@ def test_a94_hot_map_classification_and_uncertain_refused(red, case):
     r = _hot(rec)
     r["antenna_current"] = None
     _raises(red, red.PlasmaStateError, r, {"SYN": cal})
+
+
+# ------------------------------------------------------------------ A9.6 cross-lane integration (fo_a9_6_cross_lane_integration)
+_XL_SELF = 'P2'
+_XL_JSON = {
+    "P1": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+    "P2": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "P4": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+    "MP": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+    "XE": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+    "RFQ": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+}
+_XL_MD = ['docs/experiments/hall_icp/p2_impedance_map/P2_IMPEDANCE_PREP.md']
+_XL_BUILDER = 'docs/experiments/hall_icp/p2_impedance_map/build_p2_impedance_prep.py'
+_XL_ROOT = __import__("pathlib").Path(__file__).resolve().parents[1]
+
+
+def _xl_load(k):
+    return __import__("json").loads((_XL_ROOT / _XL_JSON[k]).read_text(encoding="utf-8"))
+
+
+def _xl_demands(d):
+    ifd = d["interface_demands"]
+    return [e for v in ifd.values() for e in v] if isinstance(ifd, dict) else list(ifd)
+
+
+def _xl_builder():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("xl_builder_" + _XL_SELF.lower(), str(_XL_ROOT / _XL_BUILDER))
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    return m
+
+
+def test_xlane_pairs_reconciled_both_directions():
+    """A9.6 sec. 5-6: every cross-lane interface demand of this package has exactly one matching entry in the
+    counterpart package: same pair id, identical quantity / units / status text, mutual pointers; a single-pair entry
+    carries the pair's units and status itself; no pair status is a PASS."""
+    here = _xl_load(_XL_SELF)
+    n = 0
+    for e in _xl_demands(here):
+        for x in e.get("xref", []):
+            pkg, cid = x["counterpart"].split(":", 1)
+            assert x["counterpart_path"] == _XL_JSON[pkg]
+            there = _xl_demands(_xl_load(pkg))
+            match = [(f, y) for f in there if f["id"] == cid for y in f.get("xref", []) if y["pair"] == x["pair"]]
+            assert len(match) == 1, (x["pair"], x["counterpart"])
+            f, y = match[0]
+            assert y["counterpart"] == _XL_SELF + ":" + e["id"], x["pair"]
+            for k in ("quantity", "units", "status"):
+                assert y[k] == x[k], (x["pair"], k)
+            assert not x["status"].upper().startswith("PASS"), x["pair"]
+            if len(e["xref"]) == 1:
+                assert e["units"] == x["units"] and e["status"] == x["status"], e["id"]
+            n += 1
+    assert n >= 1
+
+
+def test_xlane_references_checked_not_pinned_not_stale():
+    """A9.6 sec. 18 'no stale references': no 'PENDING <merged package>' marker survives; every merged package is
+    recorded MERGED and never sha-pinned (packages read each other back: a pin would be circular); the builder's
+    build-time id check passes on the committed JSON and refuses a broken counterpart id."""
+    import copy
+    import hashlib
+    import re
+    doc = _xl_load(_XL_SELF)
+    txt = (_XL_ROOT / _XL_JSON[_XL_SELF]).read_text(encoding="utf-8") + "".join(
+        (_XL_ROOT / p).read_text(encoding="utf-8") for p in _XL_MD)
+    for k, p in _XL_JSON.items():
+        if k == _XL_SELF:
+            continue
+        d = p.rsplit("/", 1)[0]
+        assert re.search(r"PENDING[ :`'\"]*" + re.escape(d), txt) is None, d
+        sha = hashlib.sha256((_XL_ROOT / p).read_bytes()).hexdigest()
+        assert sha not in txt, "sha-pinned merged package " + p
+    rec = doc["merged_cross_lane"]
+    assert rec["build_order"] == ["P4", "XE", "P1", "P2", "P3", "MP", "RFQ"]
+    for k, v in rec["packages"].items():
+        assert v["state"] == "MERGED" and v["sha_pinned"] is False and v["path"] == _XL_JSON[k]
+    b = _xl_builder()
+    assert b.xlane_check(doc) == []
+    bad = copy.deepcopy(doc)
+    for e in _xl_demands(bad):
+        if e.get("xref"):
+            e["xref"][0]["counterpart"] = e["xref"][0]["counterpart"].split(":")[0] + ":NO-SUCH-ID"
+            break
+    assert b.xlane_check(bad)
+

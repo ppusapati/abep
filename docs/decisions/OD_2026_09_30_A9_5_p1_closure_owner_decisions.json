@@ -1,0 +1,56 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_HARDWARE_PIVOT_2026_09_30_A9_5_p1_closure_owner_decisions",
+ "decided_by": "owner",
+ "date": "2026-09-30",
+ "decision": "A9_5_P1_CLOSURE_DECISIONS_RECORDED",
+ "applies_to": "P1 ICP bench on main eef8b85 / execution branch f7d945b",
+ "parents": [
+  "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+  "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json"
+ ],
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_09_30_A9_5_P1_CLOSURE_OWNER_DECISIONS.md",
+  "sha256": "9e49e923328441c1fc82afd3eb64c13d85fc818e8fe534576ada61a16fa525f3"
+ },
+ "decisions": {
+  "P1Q-15": {
+   "status": "OWNER_DECIDED — KIRCHHOFF_CLOSURE_RULE",
+   "sign_convention": "one global convention for every ICP-45 capacity record: conventional current INTO the defined isolated electrical network is positive; every channel transformed into it before analysis",
+   "terms": "signed I_ecollector, I_H1,body, I_anode, I_facility, I_ICP,body and any other intentional terminal crossing the registered network boundary, where physically present/measurable",
+   "residual": "R_I = sum_k I_k",
+   "floating_anode": "I_anode ~ 0 by construction in the floating-anode ICP45_CAPACITY baseline; its potential is still recorded",
+   "no_silent_zero": "an unavailable current channel is never silently set to zero",
+   "uncertainty": "u_R = sqrt(sum_k u^2(I_k)) for independent calibrated channels, each u(I_k) including calibration, zero/offset, resolution, repeatability where applicable and any registered RF-pickup contribution; full covariance form when correlations are established",
+   "admission": "closure-valid only if |R_I| <= 3 u_R AND |R_I| / max(I_e,collector, I_scale,min) <= 0.02; I_scale,min is a small registered denominator floor from instrument capability (value registered, not set here)",
+   "instrument_adequacy": "if 3 u_R > 0.02 I_e,collector at a candidate qualification point, the point is NOT_EVALUATED_INSTRUMENT; the tolerance is never widened; the 2 % criterion is never relaxed after observing propulsion results",
+   "exclusions": [
+    "current sign conventions differ between channels",
+    "an intentional return path is unmeasured",
+    "an unintended ground path is found",
+    "|R_I| > 3 u_R",
+    "fractional closure exceeds 2 %",
+    "RF-ON/RF-OFF pairing not matched",
+    "synthetic and measured evidence mixed",
+    "H-1 anode not physically disconnected/floating in an ICP45_CAPACITY record"
+   ],
+   "excluded_points": "remain in the raw record with the exclusion reason"
+  },
+  "P1Q-16": {
+   "status": "OWNER_CONFIRMED — CAPACITY_FORMULA",
+   "formula": "I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF (the A9.4 recorder reading, confirmed; the verbatim block again lacks 'I_e,cap =' and the minus sign), signed currents under the same registered convention",
+   "rules": [
+    "the RF-OFF term estimates facility/background electron collection",
+    "no absolute-value correction",
+    "no zero-clipping",
+    "Hall-ON measurements remain NEUTRALIZATION_CONSISTENCY and never define I_e,cap"
+   ],
+   "evaluation": "M_n = I_e,cap / I_d,max,H1 - 1; ICP-45A eligible only when (1) the capacity point passes current closure, (2) the matched RF-OFF correction is valid, (3) all required uncertainties are available, (4) I_d,max,H1 is registered; then the preregistered one-sided lower bound M_n,LB > 0; until all four exist ICP45 = NOT_EVALUATED"
+  }
+ },
+ "execution": {
+  "instruction": "'fix all the issues' - apply P1Q-15/P1Q-16 to the P1 bench package and fix the carried A9.4 minors (P2 stale PENDING RFQ references, P1-S4 leftover PROPOSED collector wording, INS-P2-10 source list)",
+  "merge": "no merge to main is authorized by this addendum (the A9.4 one-merge authorization was consumed by PR #34)"
+ },
+ "immutability": "never edited after commit; later owner amendments are new addendum files"
+}

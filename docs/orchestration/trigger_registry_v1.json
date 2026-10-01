@@ -982,6 +982,174 @@
    "produces": "fo_a9_4_incorporation",
    "kind": "follow_on_launch",
    "note": "owner A9.4 2026-09-30 merge sequence step 2: update the P1/P2 generated artifacts mechanically"
+  },
+  {
+   "id": "T_A9_5_CLOSURE_RULE",
+   "prerequisites": [
+    {
+     "id": "fo_a9_4_incorporation",
+     "state": "verified"
+    },
+    {
+     "id": "od_a9_5_p1_closure",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_5_closure_rule",
+   "kind": "follow_on_launch",
+   "note": "owner A9.5 2026-09-30 'fix all the issues'"
+  },
+  {
+   "id": "T_A9_6_P3_COUPLED_THERMAL",
+   "prerequisites": [
+    {
+     "id": "od_a9_6_implementation_first",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_6_p3_coupled_thermal",
+   "kind": "follow_on_launch",
+   "note": "owner A9.6 implementation-first directive 2026-09-30; per-lane verification deferred to the consolidated campaign; wave 1 (disjoint paths)"
+  },
+  {
+   "id": "T_A9_6_P4_ANODE_MATERIALS",
+   "prerequisites": [
+    {
+     "id": "od_a9_6_implementation_first",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_6_p4_anode_materials",
+   "kind": "follow_on_launch",
+   "note": "owner A9.6 implementation-first directive 2026-09-30; per-lane verification deferred to the consolidated campaign; wave 1 (disjoint paths)"
+  },
+  {
+   "id": "T_A9_6_MASS_POWER_INTEGRATION",
+   "prerequisites": [
+    {
+     "id": "od_a9_6_implementation_first",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_6_mass_power_integration",
+   "kind": "follow_on_launch",
+   "note": "owner A9.6 implementation-first directive 2026-09-30; per-lane verification deferred to the consolidated campaign; wave 1 (disjoint paths)"
+  },
+  {
+   "id": "T_A9_6_XE_ACCOUNTING",
+   "prerequisites": [
+    {
+     "id": "od_a9_6_implementation_first",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_6_xe_accounting",
+   "kind": "follow_on_launch",
+   "note": "owner A9.6 implementation-first directive 2026-09-30; per-lane verification deferred to the consolidated campaign; wave 1 (disjoint paths)"
+  },
+  {
+   "id": "T_A9_6_RFQ_COMPLETION",
+   "prerequisites": [
+    {
+     "id": "od_a9_6_implementation_first",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_6_rfq_completion",
+   "kind": "follow_on_launch",
+   "note": "owner A9.6 implementation-first directive 2026-09-30; per-lane verification deferred to the consolidated campaign; wave 1 (disjoint paths)"
+  },
+  {
+   "id": "T_A9_6_P1_WORKFLOW_COMPLETION",
+   "prerequisites": [
+    {
+     "id": "od_a9_6_implementation_first",
+     "state": "approved"
+    },
+    {
+     "id": "fo_a9_5_closure_rule",
+     "state": "verified"
+    }
+   ],
+   "produces": "fo_a9_6_p1_workflow_completion",
+   "kind": "follow_on_launch",
+   "note": "owner A9.6 implementation-first directive 2026-09-30; per-lane verification deferred to the consolidated campaign; wave 2 (after A9.5, same paths)"
+  },
+  {
+   "id": "T_A9_6_P2_FRAMEWORK_COMPLETION",
+   "prerequisites": [
+    {
+     "id": "od_a9_6_implementation_first",
+     "state": "approved"
+    },
+    {
+     "id": "fo_a9_5_closure_rule",
+     "state": "verified"
+    }
+   ],
+   "produces": "fo_a9_6_p2_framework_completion",
+   "kind": "follow_on_launch",
+   "note": "owner A9.6 implementation-first directive 2026-09-30; per-lane verification deferred to the consolidated campaign; wave 2 (after A9.5, same paths)"
+  },
+  {
+   "id": "T_A9_6_RVM",
+   "prerequisites": [
+    {
+     "id": "od_a9_6_implementation_first",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_6_rvm",
+   "kind": "follow_on_launch",
+   "note": "owner A9.6 implementation-first directive 2026-09-30; per-lane verification deferred to the consolidated campaign; wave 3 (integration; launched operationally after waves 1-2 are implemented)"
+  },
+  {
+   "id": "T_A9_6_DECISION_PROPAGATION",
+   "prerequisites": [
+    {
+     "id": "od_a9_6_implementation_first",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_6_decision_propagation",
+   "kind": "follow_on_launch",
+   "note": "owner A9.6 implementation-first directive 2026-09-30; per-lane verification deferred to the consolidated campaign; wave 3 (integration; launched operationally after waves 1-2 are implemented)"
+  },
+  {
+   "id": "T_A9_6_M16_REFRESH",
+   "prerequisites": [
+    {
+     "id": "od_a9_6_implementation_first",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_6_m16_refresh",
+   "kind": "follow_on_launch",
+   "note": "owner A9.6 implementation-first directive 2026-09-30; per-lane verification deferred to the consolidated campaign; wave 3 (integration; launched operationally after waves 1-2 are implemented)"
+  },
+  {
+   "id": "T_A9_6_CONSOLIDATED_VERIFICATION",
+   "prerequisites": [
+    {
+     "id": "od_a9_6_implementation_first",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_6_consolidated_verification",
+   "kind": "follow_on_launch",
+   "note": "owner A9.6 implementation-first directive 2026-09-30; per-lane verification deferred to the consolidated campaign; launched only when all implementation lanes are implemented and integrated (sec. 18)"
+  },
+  {
+   "id": "T_A9_6_CROSS_LANE_INTEGRATION",
+   "prerequisites": [
+    {
+     "id": "od_a9_6_implementation_first",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_6_cross_lane_integration",
+   "kind": "follow_on_launch",
+   "note": "owner A9.6 implementation-first; wave 3 integration"
   }
  ]
 }

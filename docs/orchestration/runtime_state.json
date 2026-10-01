@@ -196,6 +196,63 @@
    "ci": "6/6 green on 4555c78",
    "post_merge_baseline_on_main": "full suite 2204 passed / 5 skipped / 1 xfailed, golden OK, ci_checks 10/10 at 20f14d8; tree identical to the execution branch head",
    "after": "clean post-A9 baseline. Next (owner sequence 2026-09-30): triage the 54 open owner questions -> P1 ICP bench (ICP-45) -> P2 impedance map -> P3 coupled thermal redesign -> P4 anode design; P1/P2 data precede any P3/P4 closure. Launch only on owner instruction. Any further merge to main needs a new owner approval."
+  },
+  "checkpoint_4_executed": {
+   "pr": "https://github.com/ppusapati/abep/pull/34",
+   "pr_head": "ca36c9ecb1608c9382218cb8409eaaa34473599d",
+   "merge_commit_on_main": "eef8b851fdf99d023eaea57951deddc5fca55778",
+   "utc": "2026-09-30",
+   "approval": "owner A9.4 merge_authorization (docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json): one merge of the A9.3 execution branch; consumed by this merge",
+   "review": "two Codex findings on the P1 reducer (closure sign convention; mixed synthetic/measured candidates) confirmed, fixed in ca36c9e with regression tests, threads replied and resolved",
+   "ci": "6/6 green on ca36c9e",
+   "post_merge_baseline_on_main": "full suite 2342 passed / 5 skipped / 1 xfailed, golden OK, ci_checks 10/10 at eef8b85",
+   "after": "any further merge to main needs a new owner approval"
+  }
+ },
+ "a9_6_implementation_first": {
+  "directive": "docs/decisions/OD_2026_09_30_A9_6_implementation_first_directive.json",
+  "main_baseline": "eef8b85 (protected; no merges in this phase)",
+  "lanes": {
+   "fo_a9_5_closure_rule": "VERIFIED (three lenses) and merged",
+   "fo_a9_6_p1_workflow_completion": "IMPLEMENTED (4ce0be3, wf_a4924b07-89f), merged; verification deferred",
+   "fo_a9_6_p2_framework_completion": "IMPLEMENTED (78ca691, wf_a4924b07-89f), merged; verification deferred",
+   "fo_a9_6_p3_coupled_thermal": "IMPLEMENTED (88f6969, wf_2715cb88-d09), merged; verification deferred",
+   "fo_a9_6_p4_anode_materials": "IMPLEMENTED (ba22927, wf_2715cb88-d09), merged; verification deferred",
+   "fo_a9_6_mass_power_integration": "IMPLEMENTED (263b2d2, wf_2715cb88-d09), merged; verification deferred",
+   "fo_a9_6_xe_accounting": "IMPLEMENTED (d192ae9, wf_2715cb88-d09), merged; verification deferred",
+   "fo_a9_6_rfq_completion": "IMPLEMENTED (d9ade4f, wf_2715cb88-d09), merged; verification deferred",
+   "fo_a9_6_cross_lane_integration": "IMPLEMENTED (0191675, wf_e6be9e5a-e5b), merged; 42 cross-lane pairs; build order P4,XE,P1,P2,P3,MP,RFQ",
+   "fo_a9_6_rvm": "IMPLEMENTED (c7529d8), merged; 19 rows x 2 configs: 0 PASS, 0 FAIL, 15 NOT_EVALUATED, 4 INCOMPLETE_EVIDENCE",
+   "fo_a9_6_decision_propagation": "IMPLEMENTED (f9c6870), merged; state v4 352 rows, 87 TBD_OWNER, 11 DERIVED, 0 OPEN",
+   "fo_a9_6_m16_refresh": "IMPLEMENTED (28f73b1, wf_016c8550-ee0), merged; M16 v4 20 BLOCKED + 1 SUPERSEDED, no state change; register +8 rows (lane-24 ODs, RVMQ-01)"
+  },
+  "integration_notes": [
+   "circular P1/P2 -> RFQ v2 sha pins replaced by id checks (RFQ v2 reads P1/P2 text)",
+   "hygiene: full suite 2541/5/1 after waves 1-2; all repo builders --check OK (the v1 consolidated-questions builder ignores --check and rewrites its xlsx: never run it; restored byte-identical)"
+  ],
+  "phase": "IMPLEMENTATION COMPLETE; CONSOLIDATED VERIFICATION PASSED (awaiting owner merge approval; no merge authorized)",
+  "consolidated_verification": {
+   "workflow": "wf_c77d6edf-6d5",
+   "dimensions": [
+    "structural",
+    "physics",
+    "electrical",
+    "thermal",
+    "metrology",
+    "software"
+   ],
+   "initial_findings": {
+    "major": 23,
+    "minor": 9,
+    "blocker": 0
+   },
+   "repair_rounds": 3,
+   "follow_up": "MET-07-R1..R5 (P2 line/match-loss check) fixed by the operator with regression tests; independent re-review FIXED at 83cd246",
+   "residuals_for_owner": [
+    "at-power loss-check evidence (calorimeter readings) and the calibration set (incl. the loss-check protocol registry) are trusted inputs: they must be frozen and sha256-registered at LOCK-2 (process control; the reducer cannot detect a fabricated measurement)",
+    "an INCONSISTENT two-port loss check for a tuning state does not block or flag later use of an independently verified declared bound for that state"
+   ],
+   "repo_checks": "full suite 2657 passed / 5 skipped / 1 xfailed; golden OK; ci_checks 10/10; protected historical artifacts unchanged vs main eef8b85"
   }
  }
 }

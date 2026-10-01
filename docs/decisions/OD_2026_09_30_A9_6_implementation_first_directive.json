@@ -1,0 +1,57 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_HARDWARE_PIVOT_2026_09_30_A9_6_implementation_first_directive",
+ "decided_by": "owner",
+ "date": "2026-09-30",
+ "decision": "A9_6_IMPLEMENTATION_FIRST_DIRECTIVE_RECORDED",
+ "parents": [
+  "docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json"
+ ],
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md",
+  "sha256": "c6ee26e57ea5ca559f4fa4e4a8809b1aa8f3a217e50c534b943fc3ad99240634"
+ },
+ "summary": {
+  "strategy": "implement all currently authorized work first on the execution branch; one consolidated verification at the end; no per-lane three-lens verification; per-integration hygiene only (affected unit tests, builder --check, syntax/schema validity)",
+  "main": "no merge to main in this phase; main eef8b85 is the protected post-A9.4 baseline; a new merge approval is requested only after the consolidated verification",
+  "p1q16": "definitive: I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF, signed algebraic currents; no absolute values, zero clipping, replacement of negative results, or Hall-ON capacity evidence",
+  "p1q15_denominator": "max(|I_e,collector|, I_scale,min); instrument adequacy 3 u_R > 0.02 |I_e,collector| -> NOT_EVALUATED_INSTRUMENT",
+  "stop_conditions": [
+   "a genuinely new owner decision is unavoidable",
+   "implementation would require inventing scientific evidence",
+   "implementation would require a purchase/payment/external commitment",
+   "a safety-critical ambiguity prevents even framework implementation",
+   "all currently implementable work is complete"
+  ],
+  "fixed_statuses": {
+   "316L_FLIGHT_ANODE": "REJECTED_AS_CURRENT_BASELINE",
+   "FINAL_ANODE_MATERIAL": "OPEN",
+   "ANODE_THERMAL_CLOSURE": "UNRESOLVED",
+   "ICP_COUPLED_THERMAL": "UNRESOLVED",
+   "RF_COMPONENT_RATINGS": "TBD_AFTER_IMPEDANCE_MAP"
+  },
+  "rvm_states": [
+   "PASS",
+   "FAIL",
+   "NOT_EVALUATED",
+   "OUT_OF_DOMAIN",
+   "INCOMPLETE_EVIDENCE",
+   "NUMERICAL_FAILURE"
+  ],
+  "unresolved_questions": "genuine design choices depending on P1/P2 data, measured I_d,max,H1, vendor quotations, material data, measured thermal coupling or facility capability stay TBD_OWNER (or the existing equivalent)"
+ },
+ "implementation_lanes": {
+  "fo_a9_6_p3_coupled_thermal": "P3 coupled thermal framework (sec. 10)",
+  "fo_a9_6_p4_anode_materials": "P4 anode/collector materials framework (sec. 10)",
+  "fo_a9_6_mass_power_integration": "mass BOM + power integration for the current architecture (sec. 11)",
+  "fo_a9_6_xe_accounting": "complete Xe accounting (sec. 12)",
+  "fo_a9_6_rfq_completion": "complete RFQ packages (sec. 13)",
+  "fo_a9_6_p1_workflow_completion": "complete P1 workflow + fail-closed reducer (sec. 8, 14)",
+  "fo_a9_6_p2_framework_completion": "complete P2 framework (sec. 9, 14)",
+  "fo_a9_6_rvm": "system requirement-verification matrix (sec. 15)",
+  "fo_a9_6_decision_propagation": "propagate decided questions; owner-question state v4 (sec. 5-7)",
+  "fo_a9_6_m16_refresh": "M16 refresh after implementation (sec. 16)",
+  "fo_a9_6_consolidated_verification": "one consolidated verification campaign (sec. 18)"
+ },
+ "immutability": "never edited after commit; later owner amendments are new addendum files"
+}

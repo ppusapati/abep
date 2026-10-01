@@ -1,0 +1,176 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "P2 ICP impedance map (p2_impedance_map_v1) and S-parameter set (p2_sparam_set_v1)",
+ "description": "Generated from p2_framework.py (MAP_HEADER_FIELDS, MAP_POINT_FIELDS, UNC_FIELDS). content_sha256 = sha256 of the canonical JSON (sorted keys, ASCII, separators ',' ':') of the document without content_sha256. rating_status is always TBD_AFTER_IMPEDANCE_MAP.",
+ "type": "object",
+ "required": [
+  "schema",
+  "map_id",
+  "data_class",
+  "evidence_status",
+  "evidence_tag",
+  "p1_stable_region_ref",
+  "calibration_set_ids",
+  "rating_status",
+  "framework",
+  "points",
+  "excluded_records",
+  "content_sha256"
+ ],
+ "properties": {
+  "schema": {
+   "const": "p2_impedance_map_v1"
+  },
+  "map_id": {
+   "type": "string"
+  },
+  "data_class": {
+   "enum": [
+    "measured",
+    "synthetic_test"
+   ]
+  },
+  "evidence_status": {
+   "type": "string"
+  },
+  "evidence_tag": {
+   "enum": [
+    "ENGINEERING_ONLY_NON_SCORING (A9.3 OQ-RFQ-02: Ar)",
+    "REQUIRED_ENGINEERING_CONTROL_NON_SCORING (A9.3 OQ-VI-05)",
+    "N2_STAGE (A9 evidence order)",
+    "O2_BEARING_NO_ATOMIC_O (A9 evidence order)",
+    "OTHER_GAS_UNCLASSIFIED_NON_SCORING",
+    "NO_GAS_NOT_APPLICABLE (calibration / dummy-load / unlit record)"
+   ]
+  },
+  "p1_stable_region_ref": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "calibration_set_ids": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "rating_status": {
+   "const": "TBD_AFTER_IMPEDANCE_MAP"
+  },
+  "framework": {
+   "const": "p2_impedance_framework_v1"
+  },
+  "points": {
+   "type": "array",
+   "items": {
+    "$ref": "#/$defs/point"
+   }
+  },
+  "excluded_records": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "record_id",
+     "refusal_class",
+     "reason"
+    ]
+   }
+  },
+  "content_sha256": {
+   "type": "string",
+   "pattern": "^[0-9a-f]{64}$"
+  }
+ },
+ "$defs": {
+  "point": {
+   "type": "object",
+   "required": [
+    "record_id",
+    "phase",
+    "data_class",
+    "evidence_tag",
+    "calibration_set_id",
+    "f_Hz",
+    "Z0_ohm",
+    "factors",
+    "match_state",
+    "plasma_state_class",
+    "sweep",
+    "Z_antenna",
+    "Z_antenna_primary_method",
+    "gamma_antenna_vs_Z0",
+    "at_RP_CPL",
+    "P_line_match_loss_W",
+    "P_delivered_W",
+    "loss_status",
+    "uncertainty"
+   ],
+   "properties": {
+    "uncertainty": {
+     "type": "object",
+     "required": [
+      "status"
+     ],
+     "description": "status EVALUATED with u_gamma_mag, u_VSWR, u_P_net_W, u_P_delivered_W, U_Z_antenna_ohm2, method, basis, or NOT_EVALUATED (missing uncertainty)"
+    },
+    "loss_status": {
+     "type": "string"
+    },
+    "Z_antenna": {
+     "type": "object"
+    }
+   }
+  },
+  "sparam_set": {
+   "type": "object",
+   "required": [
+    "schema",
+    "set_id",
+    "n_ports",
+    "Z0_ohm",
+    "from_plane",
+    "to_plane",
+    "cal_id",
+    "phase_calibrated",
+    "data_class",
+    "source_file",
+    "source_sha256",
+    "option",
+    "defaults_applied",
+    "tuning_state_id",
+    "positions",
+    "points"
+   ],
+   "properties": {
+    "schema": {
+     "const": "p2_sparam_set_v1"
+    },
+    "n_ports": {
+     "enum": [
+      1,
+      2
+     ]
+    },
+    "from_plane": {
+     "enum": [
+      "RP-GEN",
+      "RP-CPL",
+      "RP-MIN",
+      "RP-ANT"
+     ]
+    },
+    "to_plane": {
+     "enum": [
+      "RP-GEN",
+      "RP-CPL",
+      "RP-MIN",
+      "RP-ANT",
+      null
+     ]
+    }
+   }
+  }
+ }
+}
