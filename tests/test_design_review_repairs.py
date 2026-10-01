@@ -78,10 +78,11 @@ def test_f1_01_is_historical_against_the_fixed_production_code():
 
 # ------------------------------------------------------------------------------------- PHY-01 / PHY-03 downstream
 def test_compressor_downselect_and_f3_use_in_domain_w1_only():
-    w1 = _j("docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json")
+    # the A9.16 chain writes / reads *_v2 (SW-01: *_v1 is byte-identical pre-gate history, test_production_domain_repair)
+    w1 = _j("docs/architecture_comparison/feed_state_closure/feed_state_closure_v2.json")
     closed = sorted(c for c, v in w1["closure"].items() if v["status"] == "CLOSED")
     assert all(sp <= 0.1 for c in closed for sp in w1["closure"][c]["common_feasible_setpoints_Pa"])
-    cd = _j("docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json")
+    cd = _j("docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json")
     assert sorted(cd["requirement_envelope"]) == closed
     from abep_sim.design import compressor_synthesis as cs
     a = cd["requirement_summary"]["A_inlet_min_m2"]["0.25"]

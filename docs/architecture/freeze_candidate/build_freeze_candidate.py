@@ -2,7 +2,9 @@
 """A9.7 F9 - architecture freeze candidate (lane fo_a9_7_f9_freeze_candidate).
 
 ONE candidate definition of the A9 architecture under investigation (atmospheric path intake -> filter -> compressor
--> plenum / feed -> H-1 Hall -> downstream 13.56 MHz ICP neutralizer; C1 control / fallback) with three sections:
+-> plenum / feed -> H-1 Hall -> downstream 13.56 MHz ICP neutralizer; A9.19: one Hall + one RF/ICP neutralizer for both
+supply modes AIR_PRIMARY / XE_CONTINGENCY, no conventional hollow cathode; A9.20: C1 ground-only reference) with three
+sections:
 UPSTREAM (intake, filter, compressor, plenum, valves / feed), PROPULSION (H-1 geometry, magnetic circuit, anode
 approach, downstream ICP geometry, RF / match architecture, collector) and SYSTEM (PPU topology, power budget, mass
 budget, thermal interfaces, control / start sequence, Xe functionality). Every parameter carries
@@ -45,6 +47,7 @@ DATE = "2026-10-01"
 LANE = "fo_a9_7_f9_freeze_candidate"
 sys.path.insert(0, str(LANE_DIR))
 import a9_16_f9 as A16  # noqa: E402  (A9.16 step 1 owner-decision application, integration lane)
+import a9_19_f9 as A19  # noqa: E402  (A9.19 / A9.20 owner-decision application, design + experiments lane)
 
 # --------------------------------------------------------------------------------------------------------------------
 # inputs
@@ -70,6 +73,11 @@ PINS = {
 for _k in A16.L.ORDER:
     PINS["A" + _k[1:].replace(".", "")] = (A16.L.LOADED[_k]["json"], A16.L.LOADED[_k]["json_sha256"])
     PINS["A" + _k[1:].replace(".", "") + "_MD"] = (A16.L.LOADED[_k]["md"], A16.L.LOADED[_k]["md_sha256"])
+# A9.19 / A9.20 (immutable; json + verbatim md pinned in abep_sim/design/a9_19_architecture.py)
+for _k in ("A9.19", "A9.20"):
+    _d = A19.A.DECISIONS[_k]
+    PINS["A" + _k[1:].replace(".", "")] = (_d["json"], _d["json_sha256"])
+    PINS["A" + _k[1:].replace(".", "") + "_MD"] = (_d["md"], _d["md_sha256"])
 # Mutable / revisable inputs: read-only, sha256 recorded at build time (drift is reported by --check).
 CONSUMED = {
     # A9.7 lanes (all merged in the base of this lane)
@@ -152,8 +160,8 @@ A97_F9_BULLETS = {
     "thermal interfaces;": ("SYSTEM", "thermal_interfaces"), "control/start sequence;": ("SYSTEM", "control_start"),
     "Xe functionality.": ("SYSTEM", "xe"),
 }
-CONFIGURATION = "hall_icp_neutralizer"
-FALLBACK_CONFIGURATION = "hall_c1_reference"
+CONFIGURATION = A19.FLIGHT                        # A9.19: the single flight configuration
+GROUND_REFERENCE_CONFIGURATION = A19.GROUND_REFERENCE  # A9.20: C1 ground-only; label only, never a flight candidate
 
 _cache: dict = {}
 _sha: dict = {}
@@ -1103,14 +1111,15 @@ def build_gates() -> list:
     for i, r in enumerate(get("RVM", "/rows")):
         cfg = r["configurations"]
         rvm_rows.append({"id": r["id"], "title": r["title"], "requirement_frozen": r["requirement_frozen"],
-                         "status": {c: cfg[c]["status"] for c in (CONFIGURATION, FALLBACK_CONFIGURATION)},
+                         "status": A19.rvm_row_status(cfg),
                          "rule": cfg[CONFIGURATION]["rule"], "blocking": cfg[CONFIGURATION]["reason"],
                          "source": ref("RVM", f"/rows/{i}/configurations")})
     counts = get("RVM", "/status_counts")
     assert all(counts[c]["PASS"] == 0 for c in counts), "an RVM row is PASS: re-assess AG-01 by hand"
     cstr = "; ".join(c + ": " + ", ".join(f"{k} {v}" for k, v in counts[c].items() if v) for c in counts)
     frozen = sum(r["requirement_frozen"] for r in rvm_rows)
-    G("AG-01", f"RVM rows ({len(rvm_rows)} system requirements, both configurations)", cstr, False,
+    G("AG-01", f"RVM rows ({len(rvm_rows)} system requirements; flight configuration {CONFIGURATION}, C1 column "
+               "if any = ground reference)", cstr, False,
       {"rows": rvm_rows, "summary": f"no row is PASS ({cstr}); requirements frozen: {frozen} of {len(rvm_rows)} "
                                     "(official RFP not in the repository)"},
       [ref("RVM", "/status_counts"), ref("RVM", "/rfp_document_in_repository")],
@@ -1469,6 +1478,7 @@ def build() -> dict:
     build_propulsion_icp(rows)
     build_system(rows)
     a916_touched = A16.apply_rows(rows, ref, get)
+    a919_touched = A19.apply_rows(rows)
     ids = [r["id"] for r in rows]
     assert len(ids) == len(set(ids)), "duplicate parameter ids"
     covered = {(r["section"], r["subsection"]) for r in rows}
@@ -1529,11 +1539,7 @@ def build() -> dict:
         "frozen_reference_flight_architecture": status == "FROZEN_REFERENCE_FLIGHT_ARCHITECTURE",
         "freeze_rule": get("A97", "/summary/freeze_rule"),
         "deliverable_status": "FREEZE_CANDIDATE_DEFINITION (not frozen, not a design release, no winner, no PASS)",
-        "configuration": {"primary": CONFIGURATION, "control_fallback": FALLBACK_CONFIGURATION,
-                          "a9_status": get("A9", "/status"),
-                          "rule": "the candidate is defined for the primary configuration; C1 rows that differ are "
-                                  "carried by the cited deliverables (RVM / mass_power v2 / bus boundary) as the "
-                                  "CONTROL_FALLBACK reference"},
+        "configuration": A19.configuration_block(get("A9", "/status")),
         "what_this_is_not": [
             "not a frozen architecture and not FROZEN_REFERENCE_FLIGHT_ARCHITECTURE",
             "not a selection: Pareto sets are carried, no representative point is chosen (F9-OQ-01)",
@@ -1581,6 +1587,8 @@ def build() -> dict:
         "open_owner_questions": A16.answered_f9_questions(F9_QUESTIONS),
         "a9_16_owner_answers_applied": A16.owner_answers_applied(),
         "a9_16_touched_parameters": a916_touched,
+        "a9_19_owner_answers_applied": A19.owner_answers_applied(),
+        "a9_19_touched_parameters": a919_touched,
         "a9_16_evaluators": {
             "gate_closes": "docs/architecture/freeze_candidate/a9_16_f9.py:gate_closes (determining evidence only)",
             "ag12": "docs/architecture/freeze_candidate/a9_16_f9.py:ag12_feed_state_sufficiency (NOT_EVALUATED today)",
@@ -1625,8 +1633,11 @@ def render_md(doc: dict) -> str:
          f"`--check` verifies). Base commit `{doc['base_commit']}`.", "",
          f"**Architecture status: {doc['architecture_status']}** (frozen reference flight architecture: "
          f"{str(doc['frozen_reference_flight_architecture']).lower()}). Freeze rule (A9.7): {doc['freeze_rule']}.", "",
-         f"Configuration: primary `{doc['configuration']['primary']}`, control / fallback "
-         f"`{doc['configuration']['control_fallback']}`. {doc['deliverable_status']}.", "",
+         f"Flight configuration: `{doc['configuration']['flight']}` (one Hall + one RF/ICP neutralizer, supply modes "
+         f"{' / '.join(doc['configuration']['flight_architecture']['electron_source_neutralizer']['serves_supply_modes'])}"
+         f", no conventional hollow cathode; A9.19). Ground reference only: "
+         f"`{doc['configuration']['ground_reference']['configuration']}` "
+         f"({doc['configuration']['ground_reference']['c1_status']}; A9.20). {doc['deliverable_status']}.", "",
          "## What this is not", ""]
     L += [f"- {x}" for x in doc["what_this_is_not"]]
     L += ["", "## A9.2 statuses (verbatim)", "", "| item | status |", "|---|---|"]
@@ -1641,9 +1652,10 @@ def render_md(doc: dict) -> str:
         b = g["blocking_evidence"]
         L.append(f"- **{g['id']}**: {_fmt(b['summary'] if isinstance(b, dict) else b, 400)}")
     rv = doc["architecture_gates"][0]["blocking_evidence"]["rows"]
-    L += ["", "RVM rows (AG-01):", "", "| row | title | hall_icp_neutralizer | hall_c1_reference | frozen |",
-          "|---|---|---|---|---|"]
-    L += [f"| {r['id']} | {r['title']} | {r['status']['hall_icp_neutralizer']} | {r['status']['hall_c1_reference']} "
+    gcol = "ground_reference (hall_c1_reference)"
+    L += ["", "RVM rows (AG-01; C1 column = GROUND_REFERENCE, not a flight candidate):", "",
+          "| row | title | hall_icp_neutralizer (flight) | C1 ground reference | frozen |", "|---|---|---|---|---|"]
+    L += [f"| {r['id']} | {r['title']} | {r['status']['hall_icp_neutralizer']} | {r['status'].get(gcol, '-')} "
           f"| {str(r['requirement_frozen']).lower()} |" for r in rv]
     up = doc["upstream_pareto"]
     L += ["", "## Upstream Pareto sets (PARAMETRIC_SENSITIVITY)", "",
@@ -1719,6 +1731,10 @@ def render_md(doc: dict) -> str:
     L += [f"| {r['decision']} | {r['question_id']} | {r['decision_code']} | {_fmt(', '.join(r['record_ids']), 80)} | "
           f"{_fmt(r['how_applied'], 220)} |" for r in doc["a9_16_owner_answers_applied"]]
     L += ["", "Evaluators: " + "; ".join(f"{k}: {v}" for k, v in doc["a9_16_evaluators"].items()) + "."]
+    L += ["", "## A9.19 / A9.20 owner decisions applied", "", "| decision | item | records | how applied |",
+          "|---|---|---|---|"]
+    L += [f"| {r['decision']} | {r['question_id']} | {_fmt(', '.join(r['record_ids']), 80)} | "
+          f"{_fmt(r['how_applied'], 220)} |" for r in doc["a9_19_owner_answers_applied"]]
     L += ["", "## Inputs", "", "Pinned (immutable, sha256 verified):", ""]
     L += [f"- `{v['path']}` {v['sha256']}" for v in doc["pins"].values()]
     L += ["", "Consumed (sha256 at build time; drift reported by `--check`):", ""]

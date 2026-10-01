@@ -175,7 +175,8 @@ def reason_totals(pars):
 
 
 def stage_system(inp, pars):
-    """Full system evaluation of every nominal (filter none, WALL-G0) Pareto member, both configurations, and the
+    """Full system evaluation of every nominal (filter none, WALL-G0) Pareto member, every flight configuration
+    (ao.CONFIGURATIONS; A9.19 / A9.20: hall_icp_neutralizer only), and the
     full-system ranking attempt."""
     evals = {c: [] for c in ao.CONFIGURATIONS}
     exemplar = None
@@ -399,7 +400,8 @@ def findings(inp, f7sum, totals, sysd, f8, pars):
               f"system level: for all {sysd['evaluations_by_configuration']} nominal Pareto evaluations every system "
               "objective (T - D, P_bus, m_wet, Q_reject, I_e,cap - I_d,max, life) is NOT_EVALUATED and every RVM "
               "hard constraint except the intake-face drag bound HC-09 is NOT_EVALUATED (fail closed); full-system "
-              f"ranking {rk['status']} for both configurations (missing counts {rk.get('missing_counts')})"})
+              f"ranking {rk['status']} for every flight configuration {list(ao.CONFIGURATIONS)} (A9.19 / A9.20: C1 is a "
+              f"GROUND_REFERENCE, never evaluated as a flight candidate) (missing counts {rk.get('missing_counts')})"})
     F.append({"id": "F78-06", "evidence_class": "model-derived (code-default coefficients)", "finding":
               "P_bus: the official A9-02 ledger is PARTIAL_BOUNDARY (compressor load TBD, row 22) with lower bound "
               f"0 W; the parametric sensitivity ledger booking the F3/F4 compressor draw has lower bound "
