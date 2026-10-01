@@ -280,7 +280,8 @@
    "fo_a9_7_f5_h1_freeze_candidate": "IMPLEMENTED (3a1eb07)",
    "fo_a9_7_f6_icp_geometry": "IMPLEMENTED (99b755f)",
    "fo_a9_7_f4_plenum_feed": "IMPLEMENTED (d13708b)",
-   "fo_a9_7_rust_kernels": "IMPLEMENTED (e2aeb3f); K1-K5 ADMITTED under parity_prereg_v1 (optional, non-authoritative; 5.4-8.2x)"
+   "fo_a9_7_rust_kernels": "IMPLEMENTED (e2aeb3f); K1-K5 ADMITTED under parity_prereg_v1 (optional, non-authoritative; 5.4-8.2x)",
+   "fo_a9_7_f7_f8_coupled_optimizer": "IMPLEMENTED (89cafce)"
   },
   "hygiene": "after wave B: full suite 2813/5/1, golden OK, ci 10/10, editable install OK"
  }
