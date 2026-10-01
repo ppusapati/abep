@@ -25,8 +25,10 @@ RUST-OQ-02). They add exit codes only; no verdict rule, tolerance, seed or vecto
   python scripts/verify_abep_core.py --source-status [--github-output FILE]
                                                      prints whether the current PROVENANCE_SOURCES match the report's
                                                      build_provenance, whether the reference matches the prereg and
-                                                     whether the importable extension is the recorded binary; with
-                                                     --github-output also appends key=value lines to FILE; exit 0
+                                                     whether the importable extension is the recorded binary, the
+                                                     campaign_history length and whether a v1 scoring failure (or a
+                                                     v1 rerun after one) is on record; with --github-output also
+                                                     appends key=value lines to FILE; exit 0
   python scripts/verify_abep_core.py --dev --strict  full development comparison (development seed, never scored,
                                                      never written); exit 1 if any development check disagrees (a
                                                      regression smoke, not a verdict: it never admits a kernel)
@@ -962,7 +964,26 @@ def dev(only, limit, strict=False):
 
 
 SOURCE_STATUS_KEYS = ("sources_match_recorded_build", "reference_matches_prereg", "extension_importable",
-                      "extension_is_recorded_build")
+                      "extension_is_recorded_build", "v1_scoring_failure_on_record", "v1_rerun_after_failure_on_record")
+
+
+def scoring_history_flags(history, pre, prereg_sha256):
+    """CI entry point (RUSTCI-1): read the committed campaign_history against prereg decision_rules.no_retuning.
+
+    A v1 scoring execution is an entry with the pre-registered scoring_master_seed under this prereg's sha256. Returns
+    (any v1 execution with a non-ADMITTED kernel verdict, any v1 execution recorded after such a failure). Reads the
+    record only; it changes no verdict rule, tolerance, seed or vector."""
+    seed = pre["campaign_seeds"]["scoring_master_seed"]
+    failed = rerun = False
+    for h in history:
+        if h.get("master_seed") != seed or h.get("prereg_sha256") != prereg_sha256:
+            continue
+        if failed:
+            rerun = True
+        verdicts = h.get("verdicts") or {}
+        if not verdicts or any(v != "ADMITTED" for v in verdicts.values()):
+            failed = True
+    return failed, rerun
 
 
 def source_status(github_output=None):
@@ -984,12 +1005,16 @@ def source_status(github_output=None):
         "recorded_extension_sha256": bp.get("extension_sha256"),
         "extension_is_recorded_build": ext is not None and ext == bp.get("extension_sha256"),
         "recorded_verdicts": rep["verdicts"],
+        "campaign_history_length": len(rep["campaign_history"]),
     }
+    st["v1_scoring_failure_on_record"], st["v1_rerun_after_failure_on_record"] = scoring_history_flags(
+        rep["campaign_history"], pre, sha256_file(PREREG_REL))
     print(json.dumps(st, indent=1))
     if github_output:
         with open(github_output, "a") as fh:
             for key in SOURCE_STATUS_KEYS:
                 fh.write(f"{key}={'true' if st[key] else 'false'}\n")
+            fh.write(f"campaign_history_length={st['campaign_history_length']}\n")
     return 0
 
 
