@@ -197,7 +197,7 @@ SIZE_FOR_MAX_DRAG_STAGES = 4        # DragCompressor.size_for(max_drag_stages=4)
 OWNER_MASS_ALLOCATION_KG = 5.5      # row 54 (allocation, not CBE)
 LI2015_INLET_DIAMETER_M = 0.5       # reconstructed, verify (R1 thread)
 # compressor_downselect_v1.json requirement_summary.A_inlet_min_m2["0.25"] (min, max): PROPOSED b = 0.25 target
-A_INLET_MIN_B025_RANGE_M2 = (0.09785329371, 0.3766950753)
+A_INLET_MIN_B025_RANGE_M2 = (0.1128299365, 0.2369348826)
 
 CITED_VALUES = [
     _p("P-MOLECULAR-LIMIT", P_MOLECULAR_LIMIT_PA, "Pa",

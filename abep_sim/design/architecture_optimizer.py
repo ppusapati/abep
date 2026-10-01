@@ -19,7 +19,7 @@ What can be computed today (and is): the evaluable UPSTREAM sub-problem F1 -> F2
 filter gap-reflection coupling, Gaede compressor cascade, plenum held at a set pressure; every relation is the one
 abep_sim.design.plenum_feed uses, called, never copied) over the committed lane grids, giving a multi-objective Pareto
 set per (surface scenario, filter case, wall case, plenum set pressure) context (``upstream_context`` /
-``pareto_mask``). These are Pareto sets WITHIN THE F3 FRONT-UNION SUBSET of compressor designs (32 of the 48 designs
+``pareto_mask``). These are Pareto sets WITHIN THE F3 FRONT-UNION SUBSET of compressor designs (a subset of the designs
 that pass F3's inlet-independent gates; INT-01 limitation, recorded in F4 / F7 / F9), not over the admissible
 compressor space. Every Pareto member carries the list of NOT_EVALUATED system objectives. The full-system ranking
 (``rank_full_system``) is implemented (non-dominated sorting layers, no scalarisation, no winner) and REFUSES
@@ -241,8 +241,9 @@ def design_vector_blocks(repo: Path = REPO) -> list[dict]:
         _var("x_compressor.design_id", "x_compressor", "design", f4sv["x_compressor"]["value"], "-",
              "union of the F3 per-case Pareto ids (the compressor set F4 coupled; N_drag = 0 for every member: no "
              "drag-stage design is feasible, F3-01)", f"{F4_REL} search_variables x_compressor; {F3D_REL}",
-             "model-derived (PARAMETRIC_SENSITIVITY)", "SEARCHED (F3 front union only: 32 of the 48 designs passing F3's "
-             "inlet-independent gates; sets are Pareto within this subset, INT-01)")]
+             "model-derived (PARAMETRIC_SENSITIVITY)", f"SEARCHED (F3 front union only: {len(f4sv['x_compressor']['value'])} "
+             "designs, a subset of those passing F3's inlet-independent gates; sets are Pareto within this subset, "
+             "INT-01)")]
     for k in ("N_turbo", "A_turbo", "R_turbo", "N_drag", "R_rotor", "RPM", "h", "w", "L", "xi"):
         if k in sv:
             x = sv[k]

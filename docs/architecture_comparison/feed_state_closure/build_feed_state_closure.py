@@ -340,7 +340,9 @@ def compact(det: dict, atm: dict) -> dict:
     out = {"status": det["status"], "reasons": list(det["reasons"]),
            "eta_c": det["eta_c"], "CR_passive": det["CR_passive"], "p_plenum_Pa": det["p_plenum_Pa"],
            "compressor": {"turbo_rows": c["turbo_rows"], "n_stages": c["n_stages"], "rpm": c["rpm"],
-                          "sized": c["sized"], "rotor_ok": c["rotor_ok"], "CR_active": c["CR_active"],
+                          "sized": c["sized"], "rotor_ok": c["rotor_ok"],
+                          "rotor_qualification": c.get("rotor_qualification"), "sizing_mode": c.get("sizing_mode"),
+                          "CR_active": c["CR_active"],
                           "T_comp_K": c["T_comp_K"], "P_el_W": c["P_el_W"],
                           "T_clamp_active": not (300.0 <= c["T_comp_K"] <= 500.0)},
            "feed": None,
@@ -391,7 +393,8 @@ def self_consistent_backflow(fe, dv: dict, run: dict, setpoint: float) -> dict:
         else:
             hi = m
     r = at(hi)
-    if not r["rotor_ok"]:
+    # A9.9 S2.3: rotor_ok is True only on a registered-basis PASS; without a basis the legacy sensitivity cap screens
+    if r.get("rotor_qualification") == "FAIL" or (not r["rotor_ok"] and not r.get("rotor_within_legacy_sensitivity_cap")):
         raise FeedClosureError("self-consistent backflow state violates the rotor limit of the chain-sized machine")
     leak = F - run["feed"]["mdot_total_kgps"]           # chamber leak at the same chamber pressure (setpoint)
     mdot = (1.0 - hi) * F - leak
@@ -966,6 +969,14 @@ def findings(candidates, closure, valve_outlet, sens, sensitivity_rank) -> list[
         {"id": "FC-09", "where": "closed candidates",
          "finding": f"closed on the PROPOSED ladder: {closed}",
          "evidence_class": "model-derived", "handling": "test points derived only from closed candidates"},
+        {"id": "FC-10", "where": "abep_sim/compressor.py rotor qualification (A9.9 S2.3 / MCC-03)",
+         "finding": "no rotor-strength basis is registered, so every chain-sized compressor is sized in "
+                    "PARAMETRIC_SENSITIVITY mode: rotor_qualification NOT_EVALUATED_MATERIAL_BASIS, rotor_ok False, tip "
+                    "speed screened only against the labelled legacy sensitivity cap (uncited DB yield / factor 2.0). "
+                    "'CLOSED' is therefore closure under PARAMETRIC_SENSITIVITY inputs, never a qualified rotor",
+         "evidence_class": "model-derived",
+         "handling": "rotor_qualification and sizing_mode carried per ladder run; a registered basis (FAIL) would make "
+                     "the case infeasible"},
     ]
 
 

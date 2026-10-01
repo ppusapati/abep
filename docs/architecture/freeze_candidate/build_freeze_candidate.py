@@ -608,7 +608,7 @@ def build_upstream(rows: list, us: dict) -> None:
       fs="OPEN", adv=["H-1 required inlet pressure (H1F-IN-04)", "owner answer OQ-F4-01 (setpoint policy)",
                       "owner answer OQ-F4-02 (design direction at <= 0.1 Pa)"])
     P(rows, "AFC-UP-PL-03", S, "plenum", "setpoint policy across orbit states (single vs scheduled)",
-      "TBD - owner question OQ-F4-01 (single-setpoint frontier 0.1027 mg/s vs scheduled 0.143 mg/s, parametric)",
+      "TBD - owner question OQ-F4-01 (single-setpoint frontier 0.1101 mg/s vs scheduled 0.1308 mg/s, parametric)",
       units="-", tolerance="TBD", ec=None,
       sources=[ref("F4", find("F4", "/open_owner_questions", "id", "OQ-F4-01"))], basis="F4-01", fs="TBD_OWNER",
       adv=["owner answer OQ-F4-01"])
@@ -625,21 +625,22 @@ def build_upstream(rows: list, us: dict) -> None:
                         ref("F78", find("F78", "/findings", "id", "F8-04") + "/finding")],
       basis="F4-P-06; owner GP-D03", fs="TBD_AFTER_EVIDENCE",
       adv=["coupon / witness evidence of the selected lining (GP-D03)"],
-      note="robust members lose feasibility in most scenarios under WALL-TI64-DB (F8-04)")
+      note="robust members lose feasibility in 2-5 of the 10 surface scenarios under WALL-TI64-DB (F8-04)")
     P(rows, "AFC-UP-PL-07", S, "plenum", "plenum external leak area", "TBD - code default 5e-8 m^2 is a parametric case",
       units="m^2", tolerance="TBD", ec=None, sources=[ref("F4", find("F4", "/items", "id", "F4-P-05"))],
       basis="F4-P-05", fs="TBD_AFTER_EVIDENCE", adv=["leak specification / helium leak test of the plenum"])
     wc = [m["mdot_delivered_min_kgps"] * 1e6 for m in mem]
     P(rows, "AFC-UP-PL-08", S, "plenum", "delivered total flow offered by the upstream chain (min over orbit states)",
       {"kind": "PARETO_SET", "robust_set_worst_case_range_mg_s": _rng(wc),
-       "all_state_single_setpoint_frontier_mg_s": 0.1027382, "all_state_scheduled_frontier_mg_s": 0.142955,
+       "all_state_single_setpoint_frontier_mg_s": 0.1100573, "all_state_scheduled_frontier_mg_s": 0.13075,
        "owner_ground_characterization_range_mg_s": get("F78", find("F78", "/items", "id", "F78-P-11") + "/value"),
        "pareto_members_reaching_0.38_mg_s_at_every_state": 0},
       units="mg/s", tolerance=T_PARAM, ec="model-derived", label="PARAMETRIC_SENSITIVITY",
-      sources=[rob, cite("F78", find("F78", "/findings", "id", "F78-02") + "/finding", "0.1027382",
-                         "reaching the owner ground-characterization lower end 0.38 mg/s at every state: 0"),
-               cite("F4", find("F4", "/findings", "id", "F4-01") + "/finding", "0.143 mg/s"),
-               cite("F4", find("F4", "/findings", "id", "F4-07") + "/finding", "0.142955"), ans(73)],
+      sources=[rob, cite("F78", find("F78", "/findings", "id", "F78-02") + "/finding", "0.1100573",
+                         "characterization coverage (A9.13 S6.21: coverage only, not a requirement or gate) at every "
+                         "state: 0"),
+               cite("F4", find("F4", "/findings", "id", "F4-01") + "/finding", "0.1308 mg/s"),
+               cite("F4", find("F4", "/findings", "id", "F4-07") + "/finding", "0.13075"), ans(73)],
       basis="F4 / F7 frontiers under parametric inputs; the owner range (row 73) is characterization context, not a "
             "flight requirement", fs="OPEN",
       adv=[FLOWREQ, "owner answer OQ-F4-04 (lever: capture, operating states or feed requirement)", T12, ACCOM])
@@ -1169,11 +1170,11 @@ def build_gates() -> list:
     n_f3 = len(get("F3", "/strict_mode/blockers"))
     G("AG-12", "upstream delivered-flow closure (UG-FLOW, proposed F9 gate)",
       "NOT_EVALUATED (strict mode); parametric frontier below the owner characterization range", False,
-      f"all-state frontier 0.1027382 mg/s (single setpoint) and robust worst case {_rng(wc)} mg/s under parametric "
+      f"all-state frontier 0.1100573 mg/s (single setpoint) and robust worst case {_rng(wc)} mg/s under parametric "
       "inputs vs 0.38-3.2 mg/s characterization and ~1.3 mg/s nominal sizing (row 73); compressor coefficients "
       f"uncited (F3 MODE_STRICT {n_f3} blockers), accommodation TBD, filter TBD; the delivered-flow requirement "
       "itself is not set (F9-OQ-02)", [ref("F4", "/strict_mode"), cite("F3", "/strict_mode/status", "NOT_EVALUATED"),
-                     cite("F78", find("F78", "/findings", "id", "F78-02"), "0.1027382")], ["EP-08", "EP-09", "EP-14"])
+                     cite("F78", find("F78", "/findings", "id", "F78-02"), "0.1100573")], ["EP-08", "EP-09", "EP-14"])
     G("AG-13", "drag compensation T - D_spacecraft", "NOT_EVALUATED", False,
       "thrust (AG-02) and spacecraft body / array drag (no spacecraft geometry; OQ-F78-04); whether HC-08 is a hard "
       "constraint is OQ-F78-01", [ref("F78", "/unlock_evidence/D_spacecraft"),
@@ -1255,6 +1256,10 @@ def evidence_plan(gates: list) -> list:
 # model-change candidates (production-model issues found by A9.7 lanes)
 # --------------------------------------------------------------------------------------------------------------------
 def model_change_candidates() -> list:
+    _m = re.search(r"(\d+ of \d+) drag-stage", get("F3", find("F3", "/findings", "id", "F3-01") + "/finding"))
+    if _m is None:
+        raise SystemExit("REFUSED: F3-01 no longer states the drag-stage clipping count")
+    _f3_clip = _m.group(1)
     common = {"required": ["owner decision (authorize as a controlled model change, or keep the design-layer "
                            "workaround)", "docs/HISTORY.md entry (CLAUDE.md rules 1-2)",
                            "golden check after implementation; if goldens move, justify, regenerate, log"],
@@ -1273,14 +1278,16 @@ def model_change_candidates() -> list:
          "module": "abep_sim/compressor.py DragCompressor._run_once",
          "issue": "K = max(min(K, K0), 1.0) hides an overloaded stage (throughput above S0 p): the module reports "
                   "K = 1 instead of a non-convergence / overload status (CLAUDE.md rule 3: no silent fallbacks)",
-         "magnitude": "15552 of 15552 drag-stage design evaluations in F3 have an unclipped K < 1 (F3-01)",
+         "magnitude": f"{_f3_clip} drag-stage design evaluations in F3 have an unclipped K < 1 (F3-01)",
          "golden_impact": "unknown: a status flag alone does not change values; refusing clipped states would move "
                           "any golden that passes through a clipped stage (to be checked at implementation)",
          "owner_question": "F9-OQ-04 (new)",
-         "sources": [cite("F3", find("F3", "/findings", "id", "F3-01"), "15552 of 15552"),
+         "sources": [cite("F3", find("F3", "/findings", "id", "F3-01"), _f3_clip),
                      ref("F3", find("F3", "/gates", "id", "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_"
                                                          "CAPACITY")),
-                     tref("MOD_COMP", "K = max(min(K, K0), 1.0)")]},
+                     tref("MOD_COMP", "# MCC-02 (owner decision A9.9 S2.5, finding F3-01): Gaede stage-capacity domain.",
+                          "the clip quoted in 'issue' (K = max(min(K, K0), 1.0)) was removed by the A9.9 S2.5 step-2 "
+                          "change; the locator points at its replacement")]},
         {"id": "MCC-03", "finding": "F3-02 uncited rotor allowable",
          "module": "abep_sim/compressor.py DragCompressor.u_max (rotor_ok) with abep_sim/materials.py DB yield",
          "issue": "the module's tip-speed cap uses an uncited DB yield (880 MPa for Ti-6Al-4V) and an uncited safety "
@@ -1346,7 +1353,7 @@ F9_QUESTIONS = [
      "question": "Set the delivered-flow requirement at the H-1 inlet that the proposed architecture gate AG-12 "
                  "(UG-FLOW) is scored against (owner row 73 gives a sizing flow ~1.3 mg/s and a characterization "
                  "range 0.38-3.2 mg/s, neither a flight requirement): which value, at which orbit states / averaging?",
-     "why_new": "no requirement exists; F4 / F7 report a parametric all-state frontier of 0.1027 mg/s and OQ-F4-04 asks "
+     "why_new": "no requirement exists; F4 / F7 report a parametric all-state frontier of 0.1101 mg/s and OQ-F4-04 asks "
                 "only which lever to study",
      "needed_by": "LOCK-1 (before any upstream freeze)", "status": "TBD_OWNER"},
     {"id": "F9-OQ-03",
@@ -1490,7 +1497,7 @@ def build() -> dict:
         {"id": "F9-03", "evidence_class": "model-derived (PARAMETRIC_SENSITIVITY inputs)",
          "finding": "upstream flow gap: robust worst-case delivered flow "
                     f"{_rng([m['mdot_delivered_min_kgps'] * 1e6 for m in us['members']])} mg/s and all-state "
-                    "frontier 0.1027 mg/s, low relative to the 0.38-3.2 mg/s ground-characterization coverage (row 73): "
+                    "frontier 0.1101 mg/s, low relative to the 0.38-3.2 mg/s ground-characterization coverage (row 73): "
                     "an engineering warning, not a demonstrated requirement failure; 0.38 and ~1.3 mg/s are not flight "
                     "requirements and AG-12 is the statewise feed-state sufficiency gate (A9.13 F9-OQ-02)"},
         {"id": "F9-04", "evidence_class": "inferred",
@@ -1647,7 +1654,9 @@ def render_md(doc: dict) -> str:
     for m in up["robust_set"]["members"]:
         L.append(f"| `{m['design_id'].replace('|', ' / ')}` | {sig(m['mdot_delivered_min_kgps'] * 1e6, 4)} | "
                  f"{sig(m['drag_intake_max_N'] * 1e3, 4)} | {sig(m['P_compressor_el_max_W'], 4)} | "
-                 f"{sig(m['m_compressor_max_kg'], 4)} | {m['V_m3']} | {sig(m['ripple_transfer_shaft'], 4)} |")
+                 f"{sig(m['m_compressor_max_kg'], 4)} | {m['V_m3']} | "
+                 + (f"{sig(m['ripple_transfer_shaft'], 4)} |" if m.get("ripple_transfer_shaft") is not None else
+                    "not carried (reported constraint, not an objective; A9.16 step 3) |"))
     vs = up["nominal_pareto_union"]["value_sets"]
     L += ["", f"Nominal-context Pareto union: {up['nominal_pareto_union']['n_members']} members "
               f"({up['nominal_pareto_union']['check']}):", ""]

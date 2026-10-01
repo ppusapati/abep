@@ -566,8 +566,8 @@ def stage_checks(inp: dict) -> dict:
             ch = pf.Chain(r, inp["filters"][0], pc, pl)
             for P in (0.01, 0.02, 0.005):
                 op = pf.steady_operating_point(ch, P)
-                # inside the size_orifice_for_pressure bracket [1e-8, 3e-2] m^2 (outside it that routine returns a
-                # bracket end with no flag: ICD G-05)
+                # inside the size_orifice_for_pressure bracket [1e-8, 3e-2] m^2 (outside it that routine reports
+                # bracketed False / MODEL_NOT_CONVERGED since the A9.9 S2.4 G-05 change)
                 if op["status"] == pf.ST_FEASIBLE and op["a_eq_m2"] < SIZE_ORIFICE_BRACKET_M2[1]:
                     found = (ch, P, op)
                     break
@@ -582,9 +582,11 @@ def stage_checks(inp: dict) -> dict:
     rs = res.steady_state(mdot_in)
     c1 = abs(rs["p_total_Pa"] / P - 1.0)
     c1b = max(abs(rs["mdot_anode"][s] / op["offered"]["mdot_s_kgps"][s] - 1.0) for s in pf.SPECIES)
-    # (2) size_orifice_for_pressure (bisection in [1e-8, 3e-2] m^2, 60 steps, no residual returned: ICD G-05)
+    # (2) size_orifice_for_pressure (bisection in [1e-8, 3e-2] m^2, 60 steps; since A9.9 S2.4 / ICD G-05 it reports
+    # the pressure residual, bracketing and a convergence status with report=True)
     res2 = pl.reservoir(1e-6)
-    a2 = size_orifice_for_pressure(res2, mdot_in, P)
+    so = size_orifice_for_pressure(res2, mdot_in, P, report=True)
+    a2 = so["area_m2"]
     c2 = abs(a2 / op["a_eq_m2"] - 1.0)
     # (3) cascade mirror vs DragCompressor._run_once at the module convention (p_in split by number flow)
     pc = ch.plant
@@ -609,10 +611,14 @@ def stage_checks(inp: dict) -> dict:
                                            "with the compressor net inflow, feed orifice A_eq (K = 1), the plenum "
                                            "geometry and Ti6Al4V DB gamma: reproduces the F4 closed form",
             "size_orifice_for_pressure_rel_diff": c2,
-            "size_orifice_note": "reservoir.size_orifice_for_pressure (60-step bisection in [1e-8, 3e-2] m^2, no "
-                                 "residual: ICD G-05) vs the F4 90-step log bisection (residual reported). At low plenum "
-                                 "targets the F4 A_eq exceeds 3e-2 m^2 and that routine would silently return the "
-                                 "bracket end: F4 does not use it for sizing",
+            "size_orifice_for_pressure_report": {"p_residual_rel": so["p_residual_rel"], "bracketed": so["bracketed"],
+                                                 "converged": so["converged"], "solver_status": so["solver_status"]},
+            "size_orifice_note": "reservoir.size_orifice_for_pressure (60-step bisection in [1e-8, 3e-2] m^2) vs the F4 "
+                                 "90-step log bisection (residual reported). Since the A9.9 S2.4 G-05 change the routine "
+                                 "reports its pressure residual, bracketing and convergence status (report=True; "
+                                 "reported above at the check point); at low plenum targets the F4 A_eq exceeds 3e-2 m^2, "
+                                 "where the routine reports bracketed False / MODEL_NOT_CONVERGED instead of a silent "
+                                 "bracket end. F4 still does not use it for sizing (its bracket is too narrow)",
             "a_eq_m2_at_check_point": op["a_eq_m2"],
             "cascade_vs_run_once_rel_diff_max": c3,
             "f1_escape_probability_vs_phi_Kback_rel_diff_max": c4,
@@ -688,7 +694,7 @@ def findings(inp, agg, psf, basis, tr, par, sens, ov, conv, checks) -> list:
              if x["scheduled_setpoint"]["frontier_mdot_mgps"] is not None]
     smax = max(single, key=lambda t: t[2])
     shmax = max(sched, key=lambda t: t[2])
-    owner_lo = 0.38
+    owner_lo = 0.38     # lower end of the 0.38-3.2 mg/s characterization coverage (A9.13 S6.21: not a requirement)
     n_owner = sum(x["scheduled_setpoint"]["n_chains_meeting_mdot_req"][str(owner_lo)] for v in fr.values() for x in v)
     pmax_feasible = max(t[1] for t in single)
     # per-state frontier: binding state
@@ -735,17 +741,19 @@ def findings(inp, agg, psf, basis, tr, par, sens, ov, conv, checks) -> list:
     f = [
         {"id": "F4-01", "evidence_class": "model-derived (PARAMETRIC_SENSITIVITY inputs)",
          "finding": f"all-orbit-state deliverable flow is small: with one plenum setpoint for all five F1 orbit states "
-                    f"the frontier (max over the 48 F1 intake candidates x 32 F3 compressors, filter none, WALL-G0) is "
+                    f"the frontier (max over the 48 F1 intake candidates x {len(inp['f3_ids'])} F3 compressors, filter none, "
+                    f"WALL-G0) is "
                     f"{smax[2]:.4g} mg/s ({smax[0]}, P_req {smax[1]:g} Pa); with a setpoint scheduled per orbit state it "
-                    f"is {shmax[2]:.4g} mg/s ({shmax[0]}, P_req {shmax[1]:g} Pa). Chains meeting the lower end of the "
-                    f"owner ground characterization range ({owner_lo} mg/s, row 73) at every state: {n_owner}. "
+                    f"is {shmax[2]:.4g} mg/s ({shmax[0]}, P_req {shmax[1]:g} Pa). Chains reaching the lower end of the "
+                    f"0.38-3.2 mg/s characterization coverage ({owner_lo} mg/s; A9.13 S6.21: coverage only, not a "
+                    f"flight requirement or gate) at every state: {n_owner}. "
                     f"Single-state values reach {psmax:.4g} mg/s"},
         {"id": "F4-02", "evidence_class": "model-derived",
          "finding": f"the lowest-supply orbit state binds: the min-over-states flow is set by {bind.most_common(1)[0][0] if bind else 'n/a'} "
                     f"in {bind.most_common(1)[0][1] if bind else 0} of {sum(bind.values())} (scenario, P_req) cells "
                     f"with all states in domain (per_state_frontier)"},
         {"id": "F4-03", "evidence_class": "inferred (domain) + model-derived",
-         "finding": f"domain: every P_req > {pf.P_DOMAIN_PA:g} Pa is INFEASIBLE_OUT_OF_DOMAIN (F3 cap propagated); the "
+         "finding": f"domain: every P_req > {pf.P_DOMAIN_PA:g} Pa is {pf.ST_OOD} (A9.13 S6.8; F3 cap propagated); the "
                     f"highest P_req with an all-state-feasible chain is {pmax_feasible:g} Pa. The H2-3 analog IF-A5 "
                     f"pressure 5.74-1216 Pa (H23-06, ECHT-size illustration) lies entirely above the cap. To accept the "
                     f"feed at <= 0.1 Pa the whole downstream path must have a molecular conductance >= "
@@ -802,7 +810,20 @@ def findings(inp, agg, psf, basis, tr, par, sens, ov, conv, checks) -> list:
     return f
 
 
-def interface_demands() -> list:
+def f3_gate_counts() -> tuple[int, int]:
+    """(number of F3 grid designs passing F3's inlet-independent gates in every case with N_drag = 0 and Ti-6Al-4V,
+    number of grid designs) read from the committed F3 designs file (INT-01 counts; never hard-coded)."""
+    d = json.loads((REPO / F3D_REL).read_text(encoding="utf-8"))
+    inv = {v: k for k, v in d["reason_codes"].items()}
+    indep = {inv[r] for r in ("ROTOR_MATERIAL_ALLOWABLE_TBD", "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+                              "TIP_SPEED_ABOVE_PUBLISHED_TMP_PRACTICE")}
+    g = d["design_grid"]
+    n = sum(1 for i, x in enumerate(g) if x["N_drag"] == 0 and x["rotor_material"] == "Ti6Al4V"
+            and all(not (set(c["status_by_design"][i].split(",")) & indep) for c in d["cases"].values()))
+    return n, len(g)
+
+
+def interface_demands(n_union: int) -> list:
     return [
         {"id": "F4-ID-01", "direction": "F1 -> F4", "counterpart": "abep_sim/design/intake_synthesis.py (F1)",
          "content": "IF-A1 records per unit area (mdot_fwd, p_passive, T, K_back per species) and per-state F1 "
@@ -821,7 +842,7 @@ def interface_demands() -> list:
                     "(the InletState.mdot_back_incident_kgps definition); demand: evidenced capture / conversion / "
                     "transmission records (F2 all TBD)", "status": "DEFINED / DEMANDED"},
         {"id": "F4-ID-05", "direction": "F3 -> F4", "counterpart": "abep_sim/design/compressor_synthesis.py (IFD-F3-04)",
-         "content": "the compressor set = union of the F3 per-case Pareto ids (32 designs) from "
+         "content": f"the compressor set = union of the F3 per-case Pareto ids ({n_union} designs) from "
                     "f3_compressor_designs_v1.json; F3 domain cap 0.1 Pa, Kn limit and cross sections",
          "status": "CONSUMED"},
         {"id": "F4-ID-06", "direction": "F4 -> F3", "counterpart": "abep_sim/design/compressor_synthesis.py (IFD-F3-05)",
@@ -911,6 +932,7 @@ def metric_definitions() -> dict:
 
 
 def assemble(inp, agg, psf, basis, tr, par, sens, ov, conv, checks, offered) -> dict:
+    n_gate, _ = f3_gate_counts()
     sim_rows = [r for r in tr["rows"] if r["objectives"] is not None]
     rowmap = {r["id"]: r for r in tr["rows"]}
     pareto = []
@@ -950,9 +972,9 @@ def assemble(inp, agg, psf, basis, tr, par, sens, ov, conv, checks, offered) -> 
                           "at every event; mass conservation gate "
                           f"{pf.MASS_TOL:g} (linear invariants are preserved by linear multistep methods up to the nonlinear-solve tolerance)",
             "orbit_check": " ".join(pf.orbit_quasi_static.__doc__.split()),
-            "fail_closed": "targets above 0.1 Pa -> INFEASIBLE_OUT_OF_DOMAIN with no flow reported; any stage K outside "
-                           "[1, K0], stage / inlet pressure above 0.1 Pa or feed Kn upper bound below 0.5 -> "
-                           "INFEASIBLE_OUT_OF_DOMAIN (also along transient trajectories); compressor T above the DB "
+            "fail_closed": f"targets above 0.1 Pa -> {pf.ST_OOD} with no flow reported (A9.13 S6.8); any stage K "
+                           "outside [1, K0], stage / inlet pressure above 0.1 Pa or feed Kn upper bound below 0.5 -> "
+                           f"{pf.ST_OOD} (also along transient trajectories); compressor T above the DB "
                            "service limit, dead-head, valve saturation, non-settling -> INFEASIBLE; integrator failure / "
                            "conservation residual -> MODEL_ERROR",
             "statuses": [pf.ST_FEASIBLE, pf.ST_INFEASIBLE, pf.ST_OOD, pf.ST_MODEL_ERROR, pf.ST_NOT_EVALUATED],
@@ -973,7 +995,7 @@ def assemble(inp, agg, psf, basis, tr, par, sens, ov, conv, checks, offered) -> 
             {"id": "x_plenum.authority", "value": AUTHORITY, "units": "-", "basis": "F4-P-09", "source": "SRC-H23 H23-07",
              "evidence_class": "TBD", "status": "PARAMETRIC_SENSITIVITY"},
             {"id": "x_compressor", "value": inp["f3_ids"], "units": "-", "basis": "union of the F3 per-case Pareto ids "
-             "(a subset of the 48 designs passing F3's inlet-independent gates; INT-01 limitation)",
+             f"(a subset of the {f3_gate_counts()[0]} designs passing F3's inlet-independent gates; INT-01 limitation)",
              "source": "SRC-F3", "evidence_class": "model-derived (PARAMETRIC_SENSITIVITY)", "status": "INPUT_SET"},
             {"id": "x_intake", "value": {"area_m2": list(inp["areas"]), "candidates_d_collapsed": 48,
                                          "scenarios": list(inp["scenarios"]), "states": list(inp["states"])},
@@ -988,10 +1010,12 @@ def assemble(inp, agg, psf, basis, tr, par, sens, ov, conv, checks, offered) -> 
                            "PROPOSED setpoint ladder values 0.05, 0.1, 0.2, 1 Pa (feed_state_closure) and 10 Pa (inside the "
                            "H2-3 analog IF-A5 range)",
             "mdot_req_mgps": list(MDOT_REQ_MGPS),
-            "mdot_req_basis": "spans H23-02 delivered-flow range 0.0296-3.14 mg/s (model-derived) and owner row 73 ground "
-                              "characterization range 0.38-3.2 mg/s with nominal sizing 1.3 mg/s (context only, not a "
-                              "flight requirement)",
-            "status": "PARAMETRIC (the H-1 demand is TBD: F5 IFD-F4-01..05); feasibility regions, never a chosen value",
+            "mdot_req_basis": "spans H23-02 delivered-flow range 0.0296-3.14 mg/s (model-derived) and the 0.38-3.2 mg/s "
+                              "characterization coverage (A9.13 S6.21: 0.38 mg/s and ~1.3 mg/s are not requirements; "
+                              "coverage only, no fixed flight mass-flow gate)",
+            "status": "PARAMETRIC CHARACTERIZATION COVERAGE ONLY (A9.13 S6.21; the H-1 demand is TBD: F5 IFD-F4-01..05; "
+                      "AG-12 is statewise feed-state sufficiency, NOT_EVALUATED); feasibility regions, never a chosen "
+                      "value or a requirement",
             "feasibility_rule": "single setpoint: exists P_set >= P_req on the grid with every one of the five F1 orbit "
                                 "states FEASIBLE and min-over-states mdot >= mdot_req; scheduled setpoint: per state its "
                                 "own admissible P_set >= P_req, min over states of the per-state best flow >= mdot_req",
@@ -1031,12 +1055,12 @@ def assemble(inp, agg, psf, basis, tr, par, sens, ov, conv, checks, offered) -> 
         "numerical_convergence": conv,
         "checks": checks,
         "findings": findings(inp, agg, psf, basis, tr, par, sens, ov, conv, checks),
-        "interface_demands": interface_demands(),
+        "interface_demands": interface_demands(len(inp["f3_ids"])),
         "open_owner_questions": open_owner_questions(),
         "m16_impact": m16_impact(),
         "strict_mode": {"status": pf.ST_NOT_EVALUATED, "blockers": pf.strict_blockers()},
         "limitations": [
-            "INT-01 (consolidated verification round 1): the compressor search set is the union of the F3 per-case Pareto ids (32 designs), and those F3 fronts were built on the down-selection envelope inlets, not on the F1-coupled operating points used here. F3's inlet-independent gates (N_drag = 0, Ti-6Al-4V, cited tip speed <= 305.5 m/s) admit 48 designs; the 16 others are never evaluated. Every F4 Pareto set is therefore 'Pareto within the F3 front-union subset', not over the admissible compressor space: a design outside the subset can be non-dominated (or dominate a member) at the F1-coupled states",
+            f"INT-01 (consolidated verification round 1): the compressor search set is the union of the F3 per-case Pareto ids ({len(inp['f3_ids'])} designs), and those F3 fronts were built on the down-selection envelope inlets, not on the F1-coupled operating points used here. F3's inlet-independent gates (N_drag = 0, Ti-6Al-4V, cited tip speed <= 305.5 m/s) (A9.16: hub-ratio coverage included) admit {n_gate} designs; the {n_gate - len(inp['f3_ids'])} others are never evaluated. Every F4 Pareto set is therefore 'Pareto within the F3 front-union subset', not over the admissible compressor space: a design outside the subset can be non-dominated (or dominate a member) at the F1-coupled states",
             "isothermal chain at the F1 wall temperature (no gas energy balance; ICD G-07)",
             "free-molecular linear Gaede characteristic only (no transitional regime, no K < 1 branch, so no start-up "
             "from an empty plenum: start-up / Xe-to-air transition NOT_EVALUATED, IFD-F4-05 part)",
@@ -1157,15 +1181,16 @@ def render_md(doc: dict) -> str:
         A(f"| {v['id']} | {val} | {v['units']} | {v['basis']} | {v['status']} |")
     A("")
     rs = doc["requirement_sweep"]
-    A("## Requirement sweep (parametric)")
+    A("## Requirement sweep (parametric; characterization coverage only, A9.13 S6.21)")
     A("")
     A(f"P_req = {rs['P_req_Pa']} Pa; mdot_req = {rs['mdot_req_mgps']} mg/s. {rs['P_req_definition']}. "
       f"{rs['feasibility_rule']}.")
     A("")
     A("## Steady feasibility regions")
     A("")
+    n_f3 = len(next(v["value"] for v in doc["search_variables"] if v["id"] == "x_compressor"))
     A("The frontier is the largest mdot_req that is feasible at each P_req, taking the best chain over the 48 F1 "
-      "candidates and 32 F3 compressors. A requirement cell (P_req, mdot_req) is feasible only when mdot_req is at or "
+      f"candidates and {n_f3} F3 compressors. A requirement cell (P_req, mdot_req) is feasible only when mdot_req is at or "
       "below the frontier. The table gives flows in mg/s for a single setpoint (S) and for a scheduled setpoint (Sch). "
       "'-' means no chain is feasible at every state.")
     A("")
