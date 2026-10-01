@@ -20,6 +20,17 @@ Commands
                                                      requires bitwise-identical numbers (needs abep_core, same build)
   python scripts/verify_abep_core.py --render-md     re-render the MD from the JSON
 
+Non-interactive CI entry points (.github/workflows/rust-parity.yml, docs/ci/RUST_PARITY.md; owner A9.14 S10.4
+RUST-OQ-02). They add exit codes only; no verdict rule, tolerance, seed or vector changes:
+  python scripts/verify_abep_core.py --source-status [--github-output FILE]
+                                                     prints whether the current PROVENANCE_SOURCES match the report's
+                                                     build_provenance, whether the reference matches the prereg and
+                                                     whether the importable extension is the recorded binary; with
+                                                     --github-output also appends key=value lines to FILE; exit 0
+  python scripts/verify_abep_core.py --dev --strict  full development comparison (development seed, never scored,
+                                                     never written); exit 1 if any development check disagrees (a
+                                                     regression smoke, not a verdict: it never admits a kernel)
+
 The extension is built outside the repository environment (abep_core/README.md), e.g. into a scratch venv created
 with --system-site-packages; run this script with that venv's python.
 """
@@ -920,22 +931,65 @@ def campaign():
     return 0
 
 
-def dev(only, limit):
+def dev(only, limit, strict=False):
     pre = load_prereg()
     if not TB.rust_available():
         print(f"abep_core unavailable: {TB.rust_unavailable_reason()}")
+        return 2
+    if strict and (only or limit is not None):
+        print("--dev --strict runs the full development comparison; --only / --limit are not allowed with it")
         return 2
     master = pre["campaign_seeds"]["development_master_seed"]
     inv = {}
     with TB.parity_campaign_unadmitted():
         standalone_invariants(inv, master)
         results = run_vectors(pre, master, only=only, limit=limit, inv=inv)
+    bad = []
     for k in results:
         s = kernel_summary(k, results[k], inv, pre)
         print(k, "(DEVELOPMENT, not scored)", s["test_counts"], s["max_abs_z"],
               {o: round(a["abs_sum_z_over_sqrtN"] or 0, 2) for o, a in s["aggregate_bias"].items()},
               "inv rust ok:", all(r is None or r["rust"]["held"] for r in s["invariants"].values()),
               "inv py ok:", all(r is None or r["python"]["held"] for r in s["invariants"].values()))
+        if s["verdict"] != "ADMITTED":          # the scored verdict rule, applied to development data only (no verdict)
+            bad.append(k)
+    if strict:
+        if bad:
+            print(f"DEVELOPMENT_SMOKE_FAILED (development seed, not scored, not a verdict): {bad}")
+            return 1
+        print("DEVELOPMENT_SMOKE_OK (development seed, not scored, not a verdict; admits nothing)")
+    return 0
+
+
+SOURCE_STATUS_KEYS = ("sources_match_recorded_build", "reference_matches_prereg", "extension_importable",
+                      "extension_is_recorded_build")
+
+
+def source_status(github_output=None):
+    """CI entry point: compare the current sources, the reference and the importable extension with the record."""
+    pre = load_prereg()
+    rep = json.load(open(_p(REPORT_REL)))
+    bp = rep["build_provenance"]
+    current = {s: (sha256_file(s) if os.path.exists(_p(s)) else None) for s in PROVENANCE_SOURCES}
+    differing = sorted(s for s in PROVENANCE_SOURCES if current[s] != bp["source_sha256"].get(s))
+    mod, why = TB._load_rust()
+    ext = TB.extension_sha256(mod) if mod is not None else None
+    st = {
+        "sources_match_recorded_build": not differing,
+        "differing_sources": differing,
+        "reference_matches_prereg": current["abep_sim/intake_tpmc.py"] == pre["reference_implementation"]["sha256_at_registration"],
+        "extension_importable": mod is not None,
+        "extension_unavailable_reason": why,
+        "extension_sha256": ext,
+        "recorded_extension_sha256": bp.get("extension_sha256"),
+        "extension_is_recorded_build": ext is not None and ext == bp.get("extension_sha256"),
+        "recorded_verdicts": rep["verdicts"],
+    }
+    print(json.dumps(st, indent=1))
+    if github_output:
+        with open(github_output, "a") as fh:
+            for key in SOURCE_STATUS_KEYS:
+                fh.write(f"{key}={'true' if st[key] else 'false'}\n")
     return 0
 
 
@@ -1034,7 +1088,16 @@ def main(argv=None):
     ap.add_argument("--dev", action="store_true")
     ap.add_argument("--only", nargs="*")
     ap.add_argument("--limit", type=int)
+    ap.add_argument("--strict", action="store_true", help="with --dev: exit 1 on any development disagreement")
+    ap.add_argument("--source-status", action="store_true")
+    ap.add_argument("--github-output", help="with --source-status: append key=value lines to this file")
     a = ap.parse_args(argv)
+    if a.strict and not a.dev:
+        ap.error("--strict is only valid with --dev")
+    if a.github_output and not a.source_status:
+        ap.error("--github-output is only valid with --source-status")
+    if a.source_status:
+        return source_status(a.github_output)
     if a.check:
         return check(a.recompute)
     if a.render_md:
@@ -1043,7 +1106,7 @@ def main(argv=None):
             fh.write(render_md(rep))
         return 0
     if a.dev:
-        return dev(a.only, a.limit)
+        return dev(a.only, a.limit, a.strict)
     return campaign()
 
 
