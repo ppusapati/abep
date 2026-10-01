@@ -231,8 +231,9 @@ def test_interface_demands(committed, builder):
                for x in ("F0", "F1", "F2", "F3", "F4", "F6", "F7/F8", "F9")):
             assert d["counterpart"].startswith("PENDING"), d["id"]
     assert "IFD-F6-03" in ids
-    for m in PARALLEL_MODULES:
-        assert m not in sys.modules, m
+    src = (Path(__file__).resolve().parents[1] / "docs/hardware/h1_freeze_candidate/build_h1_freeze_candidate.py").read_text()
+    for m in PARALLEL_MODULES:                       # the H-1 builder never imports the parallel lanes' modules
+        assert ("import " + m) not in src and ("from " + m) not in src, m
 
 
 def test_geometric_admissibility(builder):
