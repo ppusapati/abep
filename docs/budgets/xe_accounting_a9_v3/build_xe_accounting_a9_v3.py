@@ -30,6 +30,21 @@ verbatim at build time and every question id must be an OWNER_DECIDED entry of t
   * NOT changed: the A9.1 ICP gas-mode baseline (G-REUSE primary, m_Xe,ICP = 0 exactly; G-XE a declared ICP-feed
     variant, CASE-3) - A9.15 recorder note.
 
+A9.19 / A9.20 layer (owner decisions 2026-10-01; verbatim .md governs; A9.19 amends A9.15 on the ROLE of xenon):
+  * A9.19: ONE Hall accelerator + ONE RF/ICP electron-source / neutralizer (cathodeless / electrodeless) for both the
+    atmospheric gases and xenon; TWO propellant supply modes with separate tanks / paths (RFP-P17-05, RFP-P18-08):
+    ambient atmospheric propellant (primary) and xenon (CONTINGENCY / EMERGENCY - not a parallel co-equal propellant;
+    the Xe capability itself stays RFP-required); NO conventional hollow cathode in the flight architecture -> no
+    cathode Xe flow in normal atmospheric operation; the A9.1 ICP feed-gas baseline (G-REUSE primary, G-XE declared
+    variant) is UNCHANGED;
+  * A9.19 + A9.20: hall_c1_reference is no longer a candidate FLIGHT configuration; its flight scenario S2-FL-C1 and
+    the C1 flight ledger lines (C1-FL-*) leave the flight accounting and are kept only as labelled history
+    (retired_flight_configuration_history); C1 (heated Xe-fed LaB6) is a GROUND-ONLY laboratory reference (A9.10 S3.5
+    I_d,max,H1,Ar characterization; bench control in the C1-vs-ICP comparison): its ground-test Xe lines stay booked
+    (S2-GT-C1), never in the flight Xe budget;
+  * the owner-defined 2 / 5 / 10 kg LOADED cases are kept as recorded; a recorder OBSERVATION (not a selection) notes
+    that with a contingency-only role the 2 kg loaded case is the natural sizing case.
+
 Every total with a TBD input stays REFUSED (CLAUDE.md rule 3); no number is invented; no PASS of anything.
 
     python docs/budgets/xe_accounting_a9_v3/build_xe_accounting_a9_v3.py          # (re)write JSON and Markdown
@@ -87,10 +102,28 @@ DECISIONS = {
               "json_sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
               "md": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
               "md_sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903"},
+    "A9.19": {"json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+              "json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+              "md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+              "md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749"},
+    "A9.20": {"json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+              "json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+              "md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+              "md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c"},
 }
+# registered official RFP clauses (A9.19 cites them for the Xe role and the two separate tanks); text verified at build
+RFP_REG = "docs/requirements/rfp_official/rfp_registration_v1.json"
+RFP_CLAUSES = {
+    "RFP-P17-05": "Capability to ionize N2, atomic oxygen in same thruster and It should have capability to use Xe as "
+                  "propellant, an extra input system to take care any problems on board unforeseen problems.",
+    "RFP-P18-08": "Compatible for using Ambient air (at the functional orbit altitude of 180-230km) and Xenon as "
+                  "propellant. Two separate propellant tanks for ambient air and xenon."}
 MASS_POWER_V3 = "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json"   # downstream consumer; never read here
 
-CONFIGS = ("hall_c1_reference", "hall_icp_neutralizer")
+CONFIGS = ("hall_c1_reference", "hall_icp_neutralizer")      # ledger configurations (C1: ground-only after A9.20)
+FLIGHT_CONFIGS = ("hall_icp_neutralizer",)                    # A9.19: the single flight configuration
+RETIRED_FLIGHT_CONFIGS = ("hall_c1_reference",)               # A9.19 / A9.20: history + ground-only lab reference
+XE_ROLE = "CONTINGENCY_EMERGENCY"                             # A9.19 (capability RFP-required; role contingency)
 LEDGERS = ("FLIGHT", "GROUND_TEST")
 ZERO_STATES = ("EXACT_ZERO_BY_OWNER_DECISION", "ABSENT_BY_OWNER_DECISION", "ZERO_BY_SCOPE",
                "ZERO_XE_BY_OWNER_DECISION")
@@ -171,6 +204,15 @@ def OD(key: str, qid: str, quote: str) -> dict:
             raise BookingError(f"A9.15 has no amendment {qid}")
         seq = None
         ans = "RFP_COMPLIANT_PROPELLANT_POLICY" if qid == "governing_rule" else js["amendments"][qid]
+    elif key in ("A9.19", "A9.20"):
+        # A9.19: a top-level decision field ('architecture', 'xenon_role') or an 'amends' key; A9.20: 'answer'
+        if qid in js.get("amends", {}):
+            ans = js["amends"][qid]
+        elif qid in ("architecture", "xenon_role", "answer", "decision") and qid in js:
+            ans = js[qid]
+        else:
+            raise BookingError(f"{key} has no field / amendment {qid}")
+        seq = None
     else:
         rec = js["decisions"].get(qid)
         if rec is None or rec.get("status") != "OWNER_DECIDED":
@@ -271,48 +313,60 @@ def S() -> dict:
         "XA9Q05_A": OD("A9.15", "XA9Q-05",
                        "S9.3 / XA9Q-05: whether the ICP Xe path needs a getter/filter remains an engineering/vendor "
                        "requirement, not a policy choice."),
+        # A9.19 / A9.20 (2026-10-01)
+        "A919_ARCH": OD("A9.19", "architecture",
+                        "One Hall accelerator. One RF/ICP electron-source/neutralizer. Two propellant supply modes. "
+                        "No conventional hollow cathode."),
+        "A919_XE": OD("A9.19", "xenon_role",
+                      "xenon is not a parllel gas its just a contigency and emergency gas. so our thruster architecture "
+                      "should be cathode/electrodless for both the atmosphere gases and xenon"),
+        "A919_A915": OD("A9.19", "A9.15",
+                        "xenon is not a parllel gas its just a contigency and emergency gas."),
+        "A919_C1": OD("A9.19", "A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07", "No conventional hollow cathode."),
+        "A919_CF": OD("A9.19", "A9 C1 CONTROL_FALLBACK",
+                      "our thruster architecture should be cathode/electrodless for both the atmosphere gases and "
+                      "xenon check C1 mass"),
+        "A920": OD("A9.20", "answer",
+                   "Options offered: \"Ground-only reference (Recommended)\" / \"Remove C1 entirely\"."),
+        "A920_V": OD("A9.20", "answer", "will go with your recommended"),
     }
 
 
 # ======================================================================== fail-closed rule functions (owner rules)
-def xe_system_capability(configuration: str, c1_selected=None, c1_requires_xe=None) -> dict:
-    """A9.15 / A9.14 XA9Q-07 + XV2Q-01: the RFP-required Xe propulsion capability (own tank and Xe path, separate from
-    the ambient-air path) applies to EVERY flight configuration; C1 selection or its Xe need never removes it."""
-    if configuration not in CONFIGS:
+def xe_system_capability(configuration: str) -> dict:
+    """A9.15 / A9.14 XA9Q-07 + XV2Q-01, role amended by A9.19: the RFP-required Xe propulsion capability (own tank and
+    Xe path, separate from the ambient-air path; RFP-P17-05 / RFP-P18-08) applies to the single flight configuration
+    hall_icp_neutralizer; its ROLE is the contingency / emergency supply mode (not a parallel co-equal propellant).
+    hall_c1_reference is no longer a flight configuration (A9.19) and is refused here."""
+    if configuration in RETIRED_FLIGHT_CONFIGS:
+        raise BookingError(f"{configuration} was retired as a flight configuration by A9.19 (C1 ground-only, A9.20)")
+    if configuration not in FLIGHT_CONFIGS:
         raise BookingError(f"unknown configuration {configuration!r}")
-    for name, v in (("c1_selected", c1_selected), ("c1_requires_xe", c1_requires_xe)):
-        if v is not None and not isinstance(v, bool):
-            raise BookingError(f"{name} must be a bool or None")
     return {"configuration": configuration, "xe_propulsion_capability": "PRESENT_RFP_REQUIRED",
-            "xe_free_reading": "NOT_APPLICABLE (A9.14 XV2Q-01 + A9.15)",
-            "storage_paths": "separate ambient-air and Xe propellant paths (A9.15, owner-stated RFP content pending "
-                             "RFP registration AG-15)",
+            "xe_role": XE_ROLE + " (A9.19: contingency / emergency supply mode, not a parallel co-equal propellant)",
+            "xe_free_reading": "NOT_APPLICABLE (A9.14 XV2Q-01 + A9.15; capability kept by A9.19)",
+            "storage_paths": "two separate supply modes with separate tanks / paths: ambient atmospheric propellant "
+                             "(primary) and xenon (contingency / emergency) (A9.19; RFP-P18-08 registered)",
+            "electron_source": "one RF/ICP electron-source / neutralizer for both supply modes; no conventional hollow "
+                               "cathode (A9.19)",
+            "normal_atmospheric_operation_cathode_xe": "NONE (no hollow cathode; ICP feed baseline G-REUSE, "
+                                                       "m_Xe,ICP = 0 exactly; A9.19 / A9.1)",
             "independent_of_c1": True}
 
 
-def c1_flight_xe_booking(c1_selected, c1_requires_xe=None) -> dict:
-    """A9.15 / A9.14 MPQ-01 + OQ-A907-07: flight C1-specific Xe is booked inside the system Xe architecture (AL-08 / this
-    accounting) ONLY when C1 is selected AND the selected hardware requires Xe; before selection it is neither assumed
-    nor excluded (a pending term: every total that would contain it is REFUSED); a selected C1 that needs no Xe gets
-    none (no C1 Xe consumption is invented)."""
+def c1_flight_xe_booking(c1_selected=False) -> dict:
+    """A9.19 / A9.20 (supersede the A9.14 MPQ-01 / OQ-A907-07 C1 flight path and the A9.15 'neither assumed nor
+    excluded' pending term): the flight architecture has NO conventional hollow cathode and C1 is a GROUND-ONLY
+    laboratory reference, never flight hardware and never in the flight Xe budget. No flight C1 Xe exists; a flight C1
+    selection is refused."""
     if not isinstance(c1_selected, bool):
         raise BookingError("c1_selected must be a bool (no default)")
-    if c1_requires_xe is not None and not isinstance(c1_requires_xe, bool):
-        raise BookingError("c1_requires_xe must be a bool or None")
-    if not c1_selected:
-        if c1_requires_xe is not None:
-            raise BookingError("a C1 Xe requirement exists only for a SELECTED C1 hardware (A9.15)")
-        return {"state": "PENDING_C1_NOT_SELECTED", "booked": None,
-                "rule": "neither assumed nor excluded in advance (A9.15 MPQ-01); flight C1 integration deferred until "
-                        "C1 is selected (A9.14 OQ-A907-07 as amended)"}
-    if c1_requires_xe is None:
-        return {"state": "TBD_FROM_SELECTED_C1_HARDWARE", "booked": None,
-                "rule": "the selected C1 hardware states whether it requires Xe (A9.15 governing rule)"}
-    if c1_requires_xe:
-        return {"state": "BOOKED_IN_SYSTEM_XE_ARCHITECTURE", "booked": True,
-                "rule": "C1 Xe branch inside AL-08 and the C1 Xe lines of this accounting (A9.14 MPQ-01, A9.15)"}
-    return {"state": "NO_C1_XE", "booked": False,
-            "rule": "no separate C1 Xe consumption is invented (A9.15 governing rule)"}
+    if c1_selected:
+        raise BookingError("C1 is never flight hardware (A9.20); the flight architecture has no conventional hollow "
+                           "cathode (A9.19): a flight C1 selection is refused")
+    return {"state": "NO_C1_IN_FLIGHT_ARCHITECTURE", "booked": False,
+            "rule": "no flight C1 Xe: C1 is a ground-only laboratory reference (A9.20) and the flight architecture has "
+                    "no hollow cathode (A9.19); C1 Xe is booked only in the ground-test ledger (S2-GT-C1)"}
 
 
 def ignition_booking_s(attempts: int = IGN_ATTEMPTS_MAX, dwell_s: float = IGN_DWELL_CAP_S, evidence=None) -> float:
@@ -458,20 +512,22 @@ def build_items(v2: dict, s: dict) -> list:
             x["owner_answers_applied"] = [cite(s["MQ09_F"])]
             x["v3_change"] = "residual reading fixed: inside the loaded case"
         elif iid in ("XV2-01", "XV2-02", "XV2-04", "XV2-05", "XV2-09", "XV2-10", "XV2-11"):
-            x["v3_scope"] = ("flight use CONDITIONAL_ON_C1_FLIGHT_SELECTION (A9.14 OQ-A907-07 / MPQ-01 as amended by "
-                             "A9.15); ground (development / reference C1) use unchanged")
-            x["owner_answers_applied"] = [cite(s["OQA90707"]), cite(s["MPQ01_A"])]
-            x["v3_change"] = "value unchanged; flight scope conditional on C1 selection"
+            x["v3_scope"] = ("GROUND_ONLY (A9.20): C1 is a ground-only laboratory reference; no flight use (A9.19: no "
+                             "conventional hollow cathode in the flight architecture); ground lab-reference use unchanged "
+                             "(the pre-A9.19 flight scope 'CONDITIONAL_ON_C1_FLIGHT_SELECTION' is history)")
+            x["owner_answers_applied"] = [cite(s["OQA90707"]), cite(s["MPQ01_A"]), cite(s["A919_C1"]), cite(s["A920"])]
+            x["v3_change"] = "value unchanged; ground-only scope (A9.19 / A9.20)"
             if iid == "XV2-02":
                 x["status_v2"] = x["status"]
                 x["status"] = XV2_02_PLACEHOLDER
                 x["owner_answers_applied"].append(cite(s["GOV_C1"]))
                 x["v3_change"] += "; labelled an A5 design-target placeholder (A9.16 repair F6)"
         elif iid in ("XV2-31", "XV2-32"):
-            x["v3_scope"] = ("C1-specific getter/filter: AL-C1 only for a SELECTED C1 that needs it (A9.14 MPQ-01); "
-                             "separate from the ICP Xe path (A9.14 XA9Q-05 as amended by A9.15)")
-            x["owner_answers_applied"] = [cite(s["MPQ01"]), cite(s["XA9Q05_A"])]
-            x["v3_change"] = "scope restated (value TBD unchanged)"
+            x["v3_scope"] = ("C1-specific getter/filter: GROUND_ONLY_LAB_EQUIPMENT (A9.20; C1 never flight, no AL-C1 in "
+                             "any flight roll-up, A9.19); separate from the ICP Xe path (A9.14 XA9Q-05 as amended by "
+                             "A9.15)")
+            x["owner_answers_applied"] = [cite(s["MPQ01"]), cite(s["XA9Q05_A"]), cite(s["A919_C1"]), cite(s["A920"])]
+            x["v3_change"] = "scope restated: ground-only (value TBD unchanged)"
         elif iid == "XV2-22":
             x["v3_scope"] = ("G-XE stays a declared ICP-feed variant (CASE-3); A9.1 gas-mode baseline unchanged (A9.15 "
                              "recorder note); an ICP Xe-path getter/filter only if the spec demonstrates the need "
@@ -488,21 +544,27 @@ def build_items(v2: dict, s: dict) -> list:
             ("XV3-05", "ground-test Xe line-fill Xe (facility + article line volumes)", "line_fill"),
             ("XV3-06", "ground-test Xe consumed by known vendor procedures (acceptance / start procedures)",
              "vendor_procedures")]
-    out.append({"id": "XV3-01", "a9_08_item": None, "name": "flight C1 selection state", "value": "NOT_SELECTED",
-                "value_display": "NOT_SELECTED", "unit": "state", "kind": "state",
-                "basis": "owner decision: flight C1 integration deferred until C1 is selected",
-                "source": f"{s['OQA90707']['path']} (A9.14 OQ-A907-07; amended by A9.15)",
-                "evidence_class": "owner-allocation", "status": "OWNER_DECIDED (deferred until selected)",
-                "freeze_point": "after-evidence", "applies_to": {"configs": ["hall_c1_reference"], "ledgers": ["FLIGHT"]},
-                "owner_answers_applied": [cite(s["OQA90707"]), cite(s["OQA90707_A"])], "v3_change": "new"})
+    out.append({"id": "XV3-01", "a9_08_item": None, "name": "flight C1 selection state",
+                "value": "GROUND_ONLY_NEVER_FLIGHT", "value_display": "GROUND_ONLY_NEVER_FLIGHT (A9.20)",
+                "value_pre_a9_19": "NOT_SELECTED", "unit": "state", "kind": "state",
+                "basis": "owner decisions: no conventional hollow cathode in the flight architecture (A9.19); C1 is a "
+                         "ground-only laboratory reference, never flight hardware (A9.20)",
+                "source": f"{s['A920']['path']} (A9.20); {s['A919_C1']['path']} (A9.19)",
+                "evidence_class": "owner-allocation", "status": "OWNER_DECIDED (A9.19 / A9.20; supersedes the A9.14 "
+                "OQ-A907-07 / A9.15 'deferred until selected' state)",
+                "freeze_point": "NOW", "applies_to": {"configs": ["hall_c1_reference"], "ledgers": ["GROUND_TEST"]},
+                "owner_answers_applied": [cite(s["OQA90707"]), cite(s["OQA90707_A"]), cite(s["A919_C1"]),
+                                          cite(s["A920"])],
+                "v3_change": "A9.19 / A9.20: C1 ground-only, never flight"})
     out.append({"id": "XV3-02", "a9_08_item": None, "name": "selected C1 hardware requires Xe (flight)",
-                "value": None, "value_display": "TBD_FROM_SELECTED_C1_HARDWARE", "unit": "bool", "kind": "state",
-                "basis": "A9.15 governing rule (derived from the selected C1 hardware)",
-                "source": f"{s['GOV_C1']['path']} (A9.15)", "evidence_class": "none",
-                "status": "TBD_FROM_SELECTED_C1_HARDWARE (neither assumed nor excluded)", "freeze_point": "after-evidence",
-                "requires": "C1 selection as a flight fallback and the selected hardware's Xe requirement",
-                "applies_to": {"configs": ["hall_c1_reference"], "ledgers": ["FLIGHT"]},
-                "owner_answers_applied": [cite(s["GOV_C1"]), cite(s["MPQ01_A"])], "v3_change": "new"})
+                "value": None, "value_display": "NOT_APPLICABLE - no flight C1 (A9.19 / A9.20); the ground lab-reference "
+                "C1 is heated Xe-fed (A9) and its Xe is booked in the ground-test ledger only", "unit": "bool",
+                "kind": "state", "basis": "A9.19 / A9.20 (supersede the A9.15 'derived from the selected C1 hardware' "
+                "flight path)", "source": f"{s['A920']['path']} (A9.20)", "evidence_class": "none",
+                "status": "NOT_APPLICABLE (A9.19 / A9.20)", "status_pre_a9_19": "TBD_FROM_SELECTED_C1_HARDWARE",
+                "freeze_point": "NOW", "applies_to": {"configs": [], "ledgers": []},
+                "owner_answers_applied": [cite(s["GOV_C1"]), cite(s["MPQ01_A"]), cite(s["A919_C1"]), cite(s["A920"])],
+                "v3_change": "A9.19 / A9.20: not applicable (no flight C1)"})
     for iid, name, cat in proc:
         out.append({"id": iid, "a9_08_item": None, "name": name, "value": None,
                     "value_display": "TBD - booked explicitly before the 20 % logistics margin (A9.14 XA9Q-04)",
@@ -524,10 +586,12 @@ C1_FLIGHT_SPECIFIC = ("C1-FL-PURGE", "C1-FL-HEAT", "C1-FL-IGN", "C1-FL-KEEPER", 
 # pending C1-FL-* set of hall_c1_reference
 SCOPE_ZERO_LINES = {
     "P-FL-C1": ("CONFIGURATION_SCOPE_EXCLUSION: hall_icp_neutralizer contains no C1 by architecture, so no C1 Xe line "
-                "exists in this configuration; this is not an owner Xe exclusion (A9.15: C1 Xe neither assumed nor "
-                "excluded in advance; a C1 that does not require Xe gets no invented consumption). Flight C1 Xe is "
-                "PENDING_C1_NOT_SELECTED in hall_c1_reference (C1-FL-* lines, CONDITIONAL_ON_C1_FLIGHT_SELECTION); the "
-                "RFP-required system Xe capability is unaffected (A9.14 XA9Q-07 / A9.15)")}
+                "exists in this configuration. Since A9.19 the flight architecture has NO conventional hollow cathode "
+                "(one Hall + one RF/ICP electron-source / neutralizer for both supply modes) and C1 is a ground-only "
+                "laboratory reference (A9.20): no cathode Xe flow exists in normal atmospheric operation or in the Xe "
+                "contingency / emergency mode. The pre-A9.19 reading (flight C1 Xe PENDING_C1_NOT_SELECTED in "
+                "hall_c1_reference) is history (retired_flight_configuration_history). The RFP-required system Xe "
+                "capability is unaffected (A9.14 XA9Q-07 / A9.15; role contingency / emergency, A9.19)")}
 # A9.16 repair F11: the 'contingency' label of the G-ATM / G-XE dedicated ICP feeds is the owner's own A9.1 HIQ-06 term
 # for ICP gas-mode variants; it qualifies the ICP feed choice only, never the RFP-required system Xe capability. Whether
 # A9.15 changes that ICP-feed labelling is an open owner question (XV3Q-01; A9.15 recorder note), not answered here.
@@ -634,9 +698,14 @@ def eval_line(ln: dict, items: dict, done: dict) -> dict:
         out["kg"] = 0.0
         return out
     if pres in PENDING_STATES:
-        st = c1_flight_xe_booking(items["XV3-01"]["value"] == "SELECTED", items["XV3-02"]["value"])
-        out["missing"].append({"field": "flight C1 selection / selected C1 Xe requirement", "item": "XV3-01, XV3-02",
-                               "requires": st["state"] + ": " + st["rule"]})
+        # only the retired hall_c1_reference flight column (history) still carries this pre-A9.19 state
+        if ln["configuration"] not in RETIRED_FLIGHT_CONFIGS:
+            raise BookingError(f"{ln['id']}: a C1 flight pending term outside the retired C1 flight column (A9.19)")
+        out["missing"].append({"field": "flight C1 selection / selected C1 Xe requirement (pre-A9.19 history)",
+                               "item": "XV3-01, XV3-02",
+                               "requires": "NONE - hall_c1_reference was retired as a flight configuration by A9.19 "
+                                           "and C1 is ground-only (A9.20); the pre-A9.19 state was "
+                                           "PENDING_C1_NOT_SELECTED (neither assumed nor excluded, A9.15)"})
         return out
     if ln["kind"] in ("product", "mass"):
         val = 1.0
@@ -700,8 +769,17 @@ def build_scenarios(v2: dict) -> list:
             pre = PROC_LINES[x["configuration"]]
             x["lines"] = x["lines"] + [f"{pre}-{t}" for t, _i, _c in PROC_ITEMS]
         if x["id"] == "S2-FL-C1":
-            x["role"] = ("C1 reference flight configuration: flight C1 integration DEFERRED until C1 is selected (A9.14 "
-                         "OQ-A907-07 as amended by A9.15); RFP-required system Xe capability present")
+            x["role_pre_a9_19"] = ("C1 reference flight configuration: flight C1 integration DEFERRED until C1 is "
+                                   "selected (A9.14 OQ-A907-07 as amended by A9.15); RFP-required system Xe capability "
+                                   "present")
+            x["role"] = ("HISTORY_RETIRED_FLIGHT_CONFIGURATION: hall_c1_reference was retired as a candidate flight "
+                         "configuration by A9.19 (no conventional hollow cathode in the flight architecture); C1 is a "
+                         "ground-only laboratory reference (A9.20); never in the flight Xe budget")
+        if x["id"] == "S2-GT-C1":
+            x["role_pre_a9_19"] = x.get("role")
+            x["role"] = ("GROUND_ONLY_LAB_REFERENCE (A9.20): C1 registers I_d,max,H1,Ar on H-1 independently of the ICP "
+                         "(A9.10 S3.5) and is the bench control in the C1-vs-ICP comparison; ground-test Xe only, never "
+                         "flight")
         out.append(x)
     return out
 
@@ -774,7 +852,7 @@ def design_cases(v2: dict, items: dict, evals: list, s: dict) -> dict:
     headroom = []
     for e in evals:
         sc = e["scenario"]
-        if not sc.split("-")[1] == "FL":
+        if not sc.split("-")[1] == "FL" or sc in RETIRED_FLIGHT_SCENARIOS:
             continue
         fl = e["booking"]["floors_closed_terms_only"]
         for c in cases:
@@ -820,6 +898,9 @@ def design_cases(v2: dict, items: dict, evals: list, s: dict) -> dict:
         "headroom": {"label": "mission-usable cap per loaded case minus the closed flight terms (arithmetic; not an "
                               "allocation)", "rows": headroom},
         "c1_conditional_sensitivity": {
+            "a9_19_status": "HISTORY_ONLY: no flight C1 exists after A9.19 / A9.20 (C1 ground-only); this pre-A9.19 "
+                            "flight-C1 placeholder arithmetic is kept as history and is never booked in a flight "
+                            "accounting",
             "label": "A5_DESIGN_TARGET_PLACEHOLDER_SENSITIVITY_NOT_BOOKED: arithmetic on the A5 design-target flow "
                      "(XV2-02) and firing-hours basis, NOT on selected C1 hardware and NOT an estimate of flight C1 Xe; "
                      "the selected C1 hardware's qualified flow replaces it (A9.15: C1 Xe neither assumed nor excluded "
@@ -833,19 +914,39 @@ def design_cases(v2: dict, items: dict, evals: list, s: dict) -> dict:
                                  "selected C1 hardware decides; A9.16 repair F6)"},
         "mass_share": {"label": "loaded Xe alone vs the row-44 0.25 screening cap on the 40 kg wet gate (row 5)",
                        "rows": share},
+        "sizing_observation_a9_19": {
+            "label": "RECORDER_OBSERVATION_FOR_OWNER_NOT_A_SELECTION",
+            "observation": "with the A9.19 contingency / emergency-only role of xenon (not a parallel co-equal "
+                           "propellant; no cathode Xe in normal atmospheric operation; ICP feed G-REUSE m_Xe,ICP = 0), "
+                           "the 2 kg loaded case is the natural sizing case among the owner-defined 2 / 5 / 10 kg "
+                           "loaded cases",
+            "cases_kept_as_recorded": cases,
+            "case_status": "all three owner-defined LOADED cases are kept unchanged (owner row 48; A9.14 XA9Q-01); no "
+                           "mission Xe load is frozen and no case is selected here",
+            "why_only_an_observation": "the Xe contingency / emergency duty (hours, thrust, events) is not defined by "
+                                       "the owner; the flight terms P-FL-FUNC / P-FL-FALLBACK / P-FL-TRANSITION stay TBD "
+                                       "and every flight total stays REFUSED; selecting a case is an owner decision",
+            "by": [cite(s["A919_XE"]), cite(s["XA9Q01"])]},
         "v2_agreement": agreement,
     }
 
 
 # ------------------------------------------------------------------------------------------------ document
+SUPERSEDED_FOR_FLIGHT_A9_19 = ("; superseded for flight by A9.19 / A9.20 (no flight C1; C1 Xe only in "
+                               "ground ledger S2-GT-C1)")
+SUPERSEDED_ROWS_A9_19 = ("OQA90707", "OQA90707_A", "MPQ01", "MPQ01_A")
+
 APPLIED = [
-    ("GOV", "governing rule for every Xe line: the RFP requires air + Xe capability; Xe is never a contingency"),
-    ("GOV_C1", "flight C1 Xe lines pending C1 selection; no C1 Xe invented; system Xe capability independent of C1"),
+    ("GOV", "governing rule for every Xe line: the RFP requires air + Xe capability (kept); the A9.15 'never a "
+            "contingency' ROLE wording is superseded by A9.19 (Xe = contingency / emergency supply mode)"),
+    ("GOV_C1", "system Xe capability independent of C1 (kept); the A9.15 flight-C1 Xe path is superseded by A9.19 / "
+               "A9.20 (no flight C1; C1 Xe only in the ground-test ledger)"),
     ("XA9Q07", "RA-FUNC resolved to APPLIES: hall_icp_neutralizer carries the Xe-capable mode family with its own tank"),
     ("XA9Q07_A", "as above (A9.15 amendment: because the RFP requires it, not as a C1 contingency)"),
     ("XV2Q01", "XV2Q-01 closed NOT_APPLICABLE; no Xe-free flight reading remains (ABSENT_UNDER_READING retired)"),
     ("XV2Q01_A", "as above (A9.15)"),
-    ("OD6_A", "dual-propellant capability: separate ambient-air and Xe operating modes / paths (no premix assumed)"),
+    ("OD6_A", "dual-propellant capability: separate ambient-air and Xe operating modes / paths (no premix assumed); "
+              "the 'not a contingency interpretation' part is superseded on the ROLE of Xe by A9.19"),
     ("XA9Q01", "RA-CASE resolved to LOADED; USABLE_RESIDUAL_ON_TOP retired (case_split_loaded refuses it)"),
     ("MQ09", "M_loaded = mission usable + reserve + residual"),
     ("MQ09_F", "residual a sub-line inside the case, never added again"),
@@ -855,12 +956,29 @@ APPLIED = [
     ("XA9Q03", "RA-FLOWUNC resolved: flow-class lines additive and inside the reserve base"),
     ("XA9Q04", "0.20 ground-test logistics margin; explicit purge / conditioning / line-fill / vendor lines (ground_supply)"),
     ("XA9Q06", "75-bar row removed from the MEOP axis; MEOP TBD_FROM_QUOTATIONS (meop_basis refuses the placeholder)"),
-    ("OQA90707", "flight C1 integration deferred until selected; ground (development / reference) C1 lines unchanged"),
-    ("OQA90707_A", "deferral reason restated: not because Xe is contingency-only"),
-    ("MPQ01", "a selected C1's Xe branch belongs inside AL-08 (mass / power v3) and inside this system accounting"),
-    ("MPQ01_A", "C1 Xe neither assumed nor excluded in advance (c1_flight_xe_booking)"),
+    ("OQA90707", "flight C1 integration deferred until selected; ground (development / reference) C1 lines unchanged"
+                 + SUPERSEDED_FOR_FLIGHT_A9_19),
+    ("OQA90707_A", "deferral reason restated: not because Xe is contingency-only" + SUPERSEDED_FOR_FLIGHT_A9_19),
+    ("MPQ01", "a selected C1's Xe branch belongs inside AL-08 (mass / power v3) and inside this system accounting"
+              + SUPERSEDED_FOR_FLIGHT_A9_19),
+    ("MPQ01_A", "C1 Xe neither assumed nor excluded in advance (c1_flight_xe_booking)" + SUPERSEDED_FOR_FLIGHT_A9_19),
     ("XA9Q05", "no default getter / filter on a G-XE ICP feed (icp_xe_getter)"),
     ("XA9Q05_A", "getter need is an engineering / vendor requirement, not a policy choice"),
+    ("A919_ARCH", "propellant_policy.architecture: one Hall accelerator + one RF/ICP electron-source / neutralizer for "
+                  "both supply modes; two supply modes (separate tanks / paths); no conventional hollow cathode; the "
+                  "single flight configuration is hall_icp_neutralizer (xe_system_capability refuses hall_c1_reference)"),
+    ("A919_XE", "propellant_policy.xenon_role = CONTINGENCY_EMERGENCY (capability still RFP-required, RFP-P17-05 / "
+                "RFP-P18-08); no cathode Xe in normal atmospheric operation; sizing_observation_a9_19 (2 kg loaded case "
+                "= natural sizing case: recorder OBSERVATION, not a selection; 2 / 5 / 10 kg kept as recorded)"),
+    ("A919_A915", "A9.15 'Xe is an RFP-required system capability, not a contingency' superseded on the ROLE of Xe "
+                  "(propellant_policy.superseded_wording_a9_19); the capability rules stay"),
+    ("A919_C1", "flight C1 lines C1-FL-* and scenario S2-FL-C1 removed from the flight accounting (kept as labelled "
+                "history in retired_flight_configuration_history); c1_flight_xe_booking refuses a flight C1; XV3-01 = "
+                "GROUND_ONLY_NEVER_FLIGHT, XV3-02 NOT_APPLICABLE; P-FL-C1 scope note restated"),
+    ("A919_CF", "hall_c1_reference is no longer a candidate flight configuration (CASE-2 restated; history only)"),
+    ("A920", "C1 = GROUND_ONLY laboratory reference: S2-GT-C1 ground-test Xe kept (A9.10 S3.5 I_d,max,H1,Ar "
+             "characterization; C1-vs-ICP bench control); never in the flight Xe budget"),
+    ("A920_V", "owner chose the recommended option (ground-only reference)"),
 ]
 
 
@@ -871,6 +989,54 @@ def owner_answers_applied(s: dict) -> list:
         r["how_applied"] = how
         out.append(r)
     return out
+
+
+RETIRED_FLIGHT_SCENARIOS = ("S2-FL-C1",)
+
+
+def rfp_clauses() -> list:
+    """The registered official RFP clauses A9.19 cites (RFP-P17-05 Xe 'extra input system'; RFP-P18-08 two separate
+    tanks). Text verified verbatim against the registration file at build time (fail closed)."""
+    reg = _load(RFP_REG)
+    found = {}
+
+    def walk(o):
+        if isinstance(o, dict):
+            if o.get("id") in RFP_CLAUSES:
+                found[o["id"]] = o
+            for v in o.values():
+                walk(v)
+        elif isinstance(o, list):
+            for v in o:
+                walk(v)
+    walk(reg)
+    out = []
+    for cid, txt in RFP_CLAUSES.items():
+        c = found.get(cid)
+        if c is None or _norm(c["text"]) != _norm(txt):
+            raise BookingError(f"registered RFP clause {cid} missing or changed in {RFP_REG}")
+        out.append({"id": cid, "page": c["page"], "section": c["section"], "text": c["text"], "path": RFP_REG})
+    return out
+
+
+def split_retired(lines: list, scen: list, evals: list) -> tuple:
+    """A9.19: hall_c1_reference FLIGHT lines / scenario / evaluation leave the flight accounting (labelled history)."""
+    keep_l, hist_l = [], []
+    for ln in lines:
+        if ln["configuration"] in RETIRED_FLIGHT_CONFIGS and ln["ledger"] == "FLIGHT":
+            ln = dict(ln, a9_19_status="HISTORY_RETIRED_FLIGHT_CONFIGURATION (A9.19); never in the flight Xe budget "
+                                       "(A9.20)")
+            hist_l.append(ln)
+        else:
+            keep_l.append(ln)
+    keep_s = [x for x in scen if x["id"] not in RETIRED_FLIGHT_SCENARIOS]
+    hist_s = [x for x in scen if x["id"] in RETIRED_FLIGHT_SCENARIOS]
+    keep_e = [x for x in evals if x["scenario"] not in RETIRED_FLIGHT_SCENARIOS]
+    hist_e = [x for x in evals if x["scenario"] in RETIRED_FLIGHT_SCENARIOS]
+    for sc in keep_s:
+        if any(lid in {h["id"] for h in hist_l} for lid in sc["lines"]):
+            raise BookingError(f"{sc['id']}: a retired C1 flight line is still in a current scenario")
+    return keep_l, hist_l, keep_s, hist_s, keep_e, hist_e
 
 
 def build_doc() -> dict:
@@ -893,11 +1059,14 @@ def build_doc() -> dict:
             raise BookingError(f"{sc['id']}: unknown lines {miss}")
     evals = evaluate(lines, idx, scen)
     dc = design_cases(v2, idx, evals, s)
-    caps = [xe_system_capability(c) for c in CONFIGS]
+    caps = [xe_system_capability(c) for c in FLIGHT_CONFIGS]
+    lines, hist_lines, scen, hist_scen, evals, hist_evals = split_retired(lines, scen, evals)
+    clauses = rfp_clauses()
     return {
         "schema": SCHEMA_ID, "id": SCHEMA_ID, "version": "3.0.0", "lane": "a9_16_step1_mass_power_xe_v3",
         "authorization": "owner instruction 2026-10-01 'continue implementing them sequentially' (A9.16 step 1); "
-                         "decisions A9.14 / A9.15 (A9.13 Xe wording superseded)",
+                         "decisions A9.14 / A9.15 (A9.13 Xe wording superseded); A9.19 / A9.20 applied (single Hall + "
+                         "ICP neutralizer flight architecture, Xe contingency / emergency role, C1 ground-only)",
         "revision_of": {"path": V2["V2_JSON"][0], "sha256": V2["V2_JSON"][1], "md": V2["V2_MD"][0],
                         "md_sha256": V2["V2_MD"][1], "builder": V2["V2_BUILDER"][0],
                         "builder_sha256": V2["V2_BUILDER"][1],
@@ -911,7 +1080,9 @@ def build_doc() -> dict:
             "not a Xe allocation: no mission Xe load is frozen (row 48)",
             "not a prediction of thrust, discharge current, neutralizer current or plasma state (no Hall closure "
             "admitted; credible set EMPTY; 0-D Hall superseded; v1.2-v1.6 withdrawn)",
-            "not a C1 selection: flight C1 stays NOT_SELECTED; its Xe is neither assumed nor excluded",
+            "not a flight C1 accounting: there is no flight C1 (A9.19 no hollow cathode; A9.20 C1 ground-only); C1 Xe "
+            "appears only in the ground-test ledger",
+            "not a Xe-case selection: the 2 kg sizing remark is a recorder observation for the owner",
             "not a change of the A9.1 ICP gas-mode baseline (G-REUSE primary, m_Xe,ICP = 0; G-XE a declared variant)",
             "not a ranking and not a compliance statement: no winner, no PASS",
             "not wired into archengine (goldens do not move); v1 / A9-08 / v2 Xe deliverables unchanged"],
@@ -924,14 +1095,32 @@ def build_doc() -> dict:
             "governing_rule": _decision("A9.15")[0]["governing_rule"],
             "source": cite(s["GOV"]),
             "rules": _decision("A9.15")[0]["rules"],
+            "architecture": dict(_decision("A9.19")[0]["architecture"], source=cite(s["A919_ARCH"]),
+                                 flight_configuration="hall_icp_neutralizer (the only flight configuration)",
+                                 retired_flight_configuration="hall_c1_reference (A9.19; history only)"),
+            "xenon_role": {"role": XE_ROLE, "decision": _decision("A9.19")[0]["xenon_role"],
+                           "source": cite(s["A919_XE"]), "rfp_clauses": clauses,
+                           "capability": "REQUIRED (RFP-P17-05 / RFP-P18-08; A9.15 capability rules kept)",
+                           "normal_atmospheric_operation": "no cathode Xe flow (no hollow cathode, A9.19); ICP feed "
+                                                           "G-REUSE m_Xe,ICP = 0 exactly (A9.1, unchanged)",
+                           "contingency_emergency_mode": "Xe supplied from its own tank / path to the same Hall "
+                                                         "accelerator and the same RF/ICP neutralizer (A9.19); its "
+                                                         "flight terms stay TBD (no duty defined; totals REFUSED)"},
+            "superseded_wording_a9_19": {
+                "A9.15 rules[0]": _decision("A9.15")[0]["rules"][0],
+                "A9.15 amendments.OD6 (role part)": _decision("A9.15")[0]["amendments"]["OD6"],
+                "superseded_on": "the ROLE of xenon only (capability stays required)",
+                "superseded_by": cite(s["A919_A915"])},
             "superseded_wording": {"A9.13 owner_statements.xenon": a913["owner_statements"]["xenon"],
                                    "A9.14": "the 'Xe contingency-only for C1' wording in S8.17 / S8.21 / S8.33 / S8.35 "
                                             "/ S9.3 / S9.10",
                                    "superseded_by": cite(s["GOV"])},
             "per_configuration": caps,
             "c1_flight_xe_now": c1_flight_xe_booking(False),
-            "ground_reference_c1": "development / reference C1 = A9 'heated Xe-fed LaB6 C1' control; its ground Xe lines "
-                                   "stay booked (A9.14 OQ-A907-07: development/reference C1 work continues)",
+            "ground_reference_c1": "GROUND_ONLY laboratory reference (A9.20) = A9 'heated Xe-fed LaB6 C1': registers "
+                                   "I_d,max,H1,Ar on H-1 (A9.10 S3.5) and is the bench control in the C1-vs-ICP "
+                                   "comparison; its ground Xe lines stay booked (S2-GT-C1); never flight hardware, never "
+                                   "in the flight Xe budget",
             "icp_gas_mode_baseline_unchanged": "A9.1: G-REUSE primary (m_Xe,ICP = 0 exactly); G-XE a declared ICP-feed "
                                                "variant (CASE-3); A9.15 recorder note",
             "icp_xe_getter": icp_xe_getter(True),
@@ -949,9 +1138,20 @@ def build_doc() -> dict:
         "cases": dict(v2["cases"], **{
             "CASE-1": "PRIMARY hall_icp_neutralizer, G-REUSE: m_Xe,ICP = 0 exactly; flight Xe for the RFP-required Hall "
                       "Xe-capable mode family (own tank / path); ground-test Xe; P1 bench Ar-only",
-            "CASE-2": "REFERENCE hall_c1_reference: RFP-required Hall Xe-mode family; flight C1-specific lines pending C1 "
-                      "selection; ground C1 (development / reference) lines booked"}),
+            "CASE-2": "GROUND-ONLY LABORATORY REFERENCE hall_c1_reference (A9.20): ground C1 lines booked (S2-GT-C1); "
+                      "its flight column was retired by A9.19 and is kept only as history "
+                      "(retired_flight_configuration_history)"}),
+        "cases_pre_a9_19": {"CASE-2": "REFERENCE hall_c1_reference: RFP-required Hall Xe-mode family; flight "
+                                      "C1-specific lines pending C1 selection; ground C1 (development / reference) "
+                                      "lines booked"},
         "items": items, "ledger_lines": lines, "scenarios": scen, "evaluations": evals, "design_cases": dc,
+        "retired_flight_configuration_history": {
+            "label": "HISTORY - hall_c1_reference was retired as a candidate FLIGHT configuration by A9.19 (no "
+                     "conventional hollow cathode in the flight architecture); C1 is a ground-only laboratory reference "
+                     "(A9.20). These pre-A9.19 flight lines / scenario / evaluation are kept for traceability only and "
+                     "never enter a flight Xe budget",
+            "by": [cite(s["A919_C1"]), cite(s["A919_CF"]), cite(s["A920"])],
+            "ledger_lines": hist_lines, "scenarios": hist_scen, "evaluations": hist_evals},
         "interface_demands": [
             {"id": "XV3-IF-01", "direction": "OUT", "from": SCHEMA_ID, "to": MASS_POWER_V3,
              "quantity": "LOADED Xe design cases 2 / 5 / 10 kg and their residual / reserve sub-lines "
@@ -976,13 +1176,22 @@ def build_doc() -> dict:
                          "labels and scopes 'contingency' to the ICP feed choice only.)",
              "a9_1_basis_verbatim": A91_HIQ06,
              "proposed": "none - owner call (no reading is chosen here; the A9.1 baseline stays as recorded until the "
-                         "owner answers)", "needed_by": "LOCK-1"}],
+                         "owner answers)", "needed_by": "LOCK-1",
+             "a9_19_recorder_note": "A9.19 supersedes the A9.15 'not a contingency' premise of this question on the "
+                                    "ROLE of xenon (Xe = contingency / emergency) and leaves the A9.1 ICP feed-gas "
+                                    "baseline unchanged (G-REUSE primary, G-XE declared variant); the recorder therefore "
+                                    "sees no remaining conflict with the A9.1 HIQ-06 labels, but closing XV3Q-01 is the "
+                                    "owner's call (status kept OPEN)"}],
         "recorder_flags": [
             "XA9Q-04 reading: the 0.20 margin is applied to the full calculated ground total INCLUDING the explicitly "
             "booked purge / conditioning / line-fill / vendor lines (conservative literal reading of 'booked explicitly "
             "before this margin'); flagged for owner confirmation, no number depends on it today (all TBD)",
-            "the AL-08 planning floor (5.044 kg CBE floor) is the owner's figure (A9.14 MQ-05); whether its two-branch "
-            "valve set already covers a selected C1 branch is decided when C1 is selected (mass / power v3)"],
+            "the AL-08 planning floor (5.044 kg CBE floor) is the owner's figure (A9.14 MQ-05) and is kept unchanged; "
+            "its H2-7 two-branch valve set was described in mass / power v2 as including the C1 cathode Xe branch - "
+            "with no flight C1 after A9.19 / A9.20 whether the floor should be re-based is an owner / quotation matter "
+            "(mass / power v3 recorder flag; no number changed here)",
+            "A9.19 sizing: the 2 kg loaded case as the natural sizing case is a recorder OBSERVATION for the owner "
+            "(design_cases.sizing_observation_a9_19), not a selection"],
         "compliance": {
             "no_new_numbers": "every number is owner-given, copied from the pinned v2 / NIST snapshot, or arithmetic "
                               "on those; TBD stays TBD",
@@ -1022,6 +1231,20 @@ def render_md(doc: dict) -> str:
     L += _table(["configuration", "Xe propulsion capability", "Xe-free reading", "independent of C1"],
                 [[c["configuration"], c["xe_propulsion_capability"], c["xe_free_reading"], c["independent_of_c1"]]
                  for c in doc["propellant_policy"]["per_configuration"]])
+    xr = doc["propellant_policy"]["xenon_role"]
+    L += ["## Architecture and xenon role (A9.19 / A9.20)", "",
+          f"* architecture: {doc['propellant_policy']['architecture']['hall_accelerators']} Hall accelerator; "
+          f"{doc['propellant_policy']['architecture']['electron_source_neutralizer']}; supply modes "
+          f"{'; '.join(doc['propellant_policy']['architecture']['propellant_supply_modes'])}; conventional hollow "
+          f"cathode: {doc['propellant_policy']['architecture']['conventional_hollow_cathode']} "
+          f"({doc['propellant_policy']['architecture']['source']})",
+          f"* xenon role: `{xr['role']}`; capability {xr['capability']}; normal atmospheric operation: "
+          f"{xr['normal_atmospheric_operation']}",
+          f"* superseded on the role of Xe: \"{doc['propellant_policy']['superseded_wording_a9_19']['A9.15 rules[0]']}\" "
+          f"({doc['propellant_policy']['superseded_wording_a9_19']['superseded_by']})"]
+    L += [f"* {c['id']} (p. {c['page']}, {c['section']}): \"{c['text']}\"" for c in xr["rfp_clauses"]]
+    so = doc["design_cases"]["sizing_observation_a9_19"]
+    L += [f"* **{so['label']}**: {so['observation']}. {so['case_status']}. {so['why_only_an_observation']}.", ""]
     L += [f"* flight C1 Xe now: `{doc['propellant_policy']['c1_flight_xe_now']['state']}` - "
           f"{doc['propellant_policy']['c1_flight_xe_now']['rule']}",
           f"* ground reference C1: {doc['propellant_policy']['ground_reference_c1']}",
@@ -1066,6 +1289,11 @@ def render_md(doc: dict) -> str:
     L += _table(["case kg", "C1 flow ceiling mg/s (all else 0)"],
                 [[r["case_kg"], r["c1_flow_ceiling_mg_s_all_other_terms_zero"]] for r in cs["flow_ceiling_rows"]])
     L += [cs["flow_ceiling_note"] + ".", ""]
+    h = doc["retired_flight_configuration_history"]
+    L += ["## Retired flight configuration (history; A9.19 / A9.20)", "", h["label"] + ".", ""]
+    L += _table(["scenario", "role", "status (pre-A9.19)", "TBD lines"],
+                [[e["scenario"], next(x["role"] for x in h["scenarios"] if x["id"] == e["scenario"]),
+                  e["booking"]["status"], ", ".join(e["booking"]["tbd_lines"])] for e in h["evaluations"]])
     L += ["## Interfaces", ""]
     L += _table(["id", "dir", "to / from", "quantity", "status"],
                 [[x["id"], x["direction"], x["to"] if x["direction"] == "OUT" else x["from"], x["quantity"], x["status"]]
