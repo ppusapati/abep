@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | machine-readable | [`feed_state_closure_v1.json`](feed_state_closure_v1.json), schema [`feed_state_closure_v1.schema.json`](feed_state_closure_v1.schema.json) |
-| status | **DRAFT for owner review** (version 1.1.0); every value not in the RFP is PROPOSED |
+| status | **DRAFT for owner review** (version 1.2.0); every value not in the RFP is PROPOSED |
 | lane | `fo_feed_state_closure` (trigger `T_PIVOT_FEED_STATE_CLOSURE`, owner disposition `od_hardware_pivot`, W1) |
 | milestone | supports **A**; what B and C need is in section 10 |
 | architectures | `hall_only`, `rf_hall`, `ecr_hall`: identical feed record (valve outlet, ICD IF-A5) |
@@ -19,20 +19,24 @@
 
 Area sizing rule **SR-DRAG** (PROPOSED): the intake-only free-molecular drag at the design case `alt200_mean` equals an RFP thrust level (12 or 25 mN, `abep_sim/constants.py` RFP), with C_D from the frozen TPMC surface. Common nominal inputs: Maxwell scattering, accommodation 1.0 (fully diffuse), 0° pointing, compressor `size_for` with code-default parameters and the `system.evaluate` turbo area/radius convention (CFRP rotor), buffer = `Reservoir` defaults with the `system.Config` wall material, valve in pressure-setpoint mode on the ladder [0.05, 0.1, 0.2, 0.3, 0.5, 1.0] Pa. Each input's source and evidence class is in `design_input_documents` (lane-16 `feed_design_inputs_v1` format, validated by the lane-16 contract).
 
+**Pressure domain (A9.13 S6.8).** A9.13 S6.8 / OQ-F3-03: above the 0.1 Pa free-molecular compressor domain every compressor / plenum result is NOT_EVALUATED_OUT_OF_DOMAIN; no extrapolated > 0.1 Pa result may be treated as a valid architecture point. Ladder setpoints above 0.1 Pa are therefore not run (`NOT_EVALUATED_OUT_OF_DOMAIN`), and an in-domain setpoint whose compressor outlet, plenum or valve-outlet pressure exceeds 0.1 Pa is withdrawn with the same status. Closure, the common feasible band, the sensitivities, the test points and the MFC range below use in-domain runs only; per-candidate out-of-domain runs are listed in `closure.<id>.out_of_domain_runs`.
+
 | candidate | sizing | L/d | φ | area [m²] | C_D | η_c (design case) | CR_passive | closure | nominal P_feed [Pa] | common feasible P_feed [Pa] |
 |---|---|---|---|---|---|---|---|---|---|---|
 | DC-S12-G03 | S12 (12 mN) | 3 | 0.9 | 0.6967 | 2.044 | 0.736 | 154.1 | **NOT_CLOSED_ON_LADDER** | — | — |
-| DC-S12-G10 | S12 (12 mN) | 10 | 0.9 | 0.6838 | 2.083 | 0.4511 | 233.4 | **CLOSED** | 0.1 | 0.1, 0.2, 0.3 |
-| DC-S12-G20 | S12 (12 mN) | 20 | 0.9 | 0.676 | 2.107 | 0.2783 | 260 | **CLOSED** | 0.05 | 0.05, 0.1, 0.2, 0.3 |
+| DC-S12-G10 | S12 (12 mN) | 10 | 0.9 | 0.6838 | 2.083 | 0.4511 | 233.4 | **NOT_CLOSED_ON_LADDER** | — | — |
+| DC-S12-G20 | S12 (12 mN) | 20 | 0.9 | 0.676 | 2.107 | 0.2783 | 260 | **CLOSED** | 0.05 | 0.05 |
 | DC-S25-G03 | S25 (25 mN) | 3 | 0.9 | 1.452 | 2.044 | 0.736 | 154.1 | **NOT_CLOSED_ON_LADDER** | — | — |
 | DC-S25-G10 | S25 (25 mN) | 10 | 0.9 | 1.425 | 2.083 | 0.4511 | 233.4 | **NOT_CLOSED_ON_LADDER** | — | — |
-| DC-S25-G20 | S25 (25 mN) | 20 | 0.9 | 1.408 | 2.107 | 0.2783 | 260 | **CLOSED** | 0.2 | 0.2, 0.3 |
+| DC-S25-G20 | S25 (25 mN) | 20 | 0.9 | 1.408 | 2.107 | 0.2783 | 260 | **NOT_CLOSED_ON_LADDER** | — | — |
 
 Candidates not closed on the ladder (no setpoint closes all nine cases), with the chain's reasons:
 
-- `DC-S12-G03`: DragCompressor.size_for found no design reaching the setpoint; size_orifice_for_pressure ended on its bracket (setpoint not reachable inside [1e-8, 3e-2] m^2; ICD G-05); valve setpoint above the compressor outlet pressure (system.evaluate would silently cap the target at p_out)
-- `DC-S25-G03`: DragCompressor.size_for found no design reaching the setpoint; valve setpoint above the compressor outlet pressure (system.evaluate would silently cap the target at p_out)
-- `DC-S25-G10`: DragCompressor.size_for found no design reaching the setpoint; size_orifice_for_pressure ended on its bracket (setpoint not reachable inside [1e-8, 3e-2] m^2; ICD G-05); valve setpoint above the compressor outlet pressure (system.evaluate would silently cap the target at p_out)
+- `DC-S12-G03`: DragCompressor.size_for found no design reaching the setpoint; NOT_EVALUATED_OUT_OF_DOMAIN (A9.13 S6.8): compressor-outlet / plenum / feed pressure above the 0.1 Pa free-molecular domain (run withdrawn); NOT_EVALUATED_OUT_OF_DOMAIN (A9.13 S6.8): valve setpoint above the 0.1 Pa free-molecular domain (not run); size_orifice_for_pressure ended on its bracket (setpoint not reachable inside [1e-8, 3e-2] m^2; ICD G-05); valve setpoint above the compressor outlet pressure (system.evaluate would silently cap the target at p_out)
+- `DC-S12-G10`: NOT_EVALUATED_OUT_OF_DOMAIN (A9.13 S6.8): compressor-outlet / plenum / feed pressure above the 0.1 Pa free-molecular domain (run withdrawn); NOT_EVALUATED_OUT_OF_DOMAIN (A9.13 S6.8): valve setpoint above the 0.1 Pa free-molecular domain (not run); size_orifice_for_pressure ended on its bracket (setpoint not reachable inside [1e-8, 3e-2] m^2; ICD G-05)
+- `DC-S25-G03`: DragCompressor.size_for found no design reaching the setpoint; NOT_EVALUATED_OUT_OF_DOMAIN (A9.13 S6.8): valve setpoint above the 0.1 Pa free-molecular domain (not run); valve setpoint above the compressor outlet pressure (system.evaluate would silently cap the target at p_out)
+- `DC-S25-G10`: NOT_EVALUATED_OUT_OF_DOMAIN (A9.13 S6.8): compressor-outlet / plenum / feed pressure above the 0.1 Pa free-molecular domain (run withdrawn); NOT_EVALUATED_OUT_OF_DOMAIN (A9.13 S6.8): valve setpoint above the 0.1 Pa free-molecular domain (not run); size_orifice_for_pressure ended on its bracket (setpoint not reachable inside [1e-8, 3e-2] m^2; ICD G-05)
+- `DC-S25-G20`: NOT_EVALUATED_OUT_OF_DOMAIN (A9.13 S6.8): compressor-outlet / plenum / feed pressure above the 0.1 Pa free-molecular domain (run withdrawn); NOT_EVALUATED_OUT_OF_DOMAIN (A9.13 S6.8): valve setpoint above the 0.1 Pa free-molecular domain (not run); size_orifice_for_pressure ended on its bracket (setpoint not reachable inside [1e-8, 3e-2] m^2; ICD G-05)
 
 ## 2. Design-input inventory
 
@@ -123,80 +127,27 @@ Nominal = candidate at its nominal setpoint; range = scenario set over the commo
 
 **Flow basis (FC-01).** The chain's ṁ is an UPPER BOUND: it feeds the compressor at the passive plenum pressure with the full forward flow, where the TPMC flux balance gives zero net collection. `SC-BACKFLOW` solves the plenum self-consistently for the chain-sized compressor (backflow ∝ p_plenum/p_passive, p_out = setpoint); its column gives that flow and b = p_plenum/p_passive. A larger compressor moves it toward the upper bound, so the bracket [SC-BACKFLOW, upper bound] is design-conditional, not a physical bound.
 
-### DC-S12-G10
-
-| case | ṁ [mg/s] (range) | ṁ SC-BACKFLOW [mg/s] (b) | CR req. | P_feed [Pa] (range) | T_feed [K] (range) | x_O (range) | x_N2 | x_O2 | P_el,comp [W] | T clamp | D_int [mN] | v_req [km/s] |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| alt180_low | 0.9387 (0.4693–1.344) | 0.3643 (0.612) | 13.3 | 0.1 (0.1–0.3) | 374.7 (349.1–473.6) | 0.449 (0.251–0.451) | 0.477 | 0.0738 | 32.8 | no | 16.5 | 17.6 |
-| alt180_mean | 1.268 (0.634–1.824) | 0.3406 (0.731) | 8.14 | 0.1 (0.1–0.3) | 349 (347.5–500) | 0.495 (0.306–0.496) | 0.454 | 0.0508 | 22.5 | no | 22.5 | 17.8 |
-| alt180_high | 1.617 (0.8085–1.877) | 0.6023 (0.628) | 7.35 | 0.1 (0.1–0.3) | 357.8 (342.7–500) | 0.534 (0.337–0.535) | 0.429 | 0.0372 | 26.1 | no | 28.9 **>25** | 17.9 |
-| alt200_low | 0.4278 (0.2139–0.6177) | 0.1802 (0.579) | 30.1 | 0.1 (0.1–0.3) | 381.1 (364.5–487.1) | 0.517 (0.211–0.52) | 0.403 | 0.0805 | 35.4 | no | 7.65 | 17.9 |
-| alt200_mean | 0.6675 (0.3337–0.9666) | 0.2006 (0.699) | 15.8 | 0.1 (0.1–0.3) | 352.2 (350.5–500) | 0.549 (0.272–0.55) | 0.392 | 0.0586 | 23.8 | no | 12 | 18 |
-| alt200_high | 0.9236 (0.4618–1.342) | 0.3203 (0.653) | 12.1 | 0.1 (0.1–0.3) | 368.4 (345.5–451.9) | 0.587 (0.345–0.588) | 0.373 | 0.0398 | 30.3 | no | 16.7 | 18.1 |
-| alt230_low | 0.1522 (0.07608–0.2224) | 0.04973 (0.673) | 69.8 | 0.1 (0.1–0.3) | 367.2 (356.9–448.8) | 0.579 (0.148–0.591) | 0.304 | 0.117 | 29.8 | no | 2.78 | 18.3 |
-| alt230_mean | 0.2947 (0.1473–0.4308) | 0.1622 (0.45) | 54 | 0.1 (0.1–0.3) | 417.5 (349.5–500) | 0.604 (0.173–0.611) | 0.313 | 0.0833 | 50 | no | 5.39 | 18.3 |
-| alt230_high | 0.4561 (0.228–0.6677) | 0.1841 (0.596) | 26.2 | 0.1 (0.1–0.3) | 377.4 (362–471.6) | 0.639 (0.282–0.644) | 0.303 | 0.0576 | 33.9 | no | 8.36 | 18.3 |
-
-Scenario members that lose closure in at least one case: `SEN-ALPHA-0.5`, `SEN-ROTOR-TI`.
-
 ### DC-S12-G20
 
 | case | ṁ [mg/s] (range) | ṁ SC-BACKFLOW [mg/s] (b) | CR req. | P_feed [Pa] (range) | T_feed [K] (range) | x_O (range) | x_N2 | x_O2 | P_el,comp [W] | T clamp | D_int [mN] | v_req [km/s] |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| alt180_low | 0.5751 (0.2876–1.036) | 0.08677 (0.849) | 4.3 | 0.05 (0.05–0.3) | 327.8 (327.8–500) | 0.459 (0.323–0.461) | 0.474 | 0.0668 | 14 | no | 16.5 | 28.7 |
-| alt180_mean | 0.7754 (0.3877–0.9751) | 0.2605 (0.664) | 4.02 | 0.05 (0.05–0.3) | 332.5 (326.9–414) | 0.505 (0.368–0.507) | 0.451 | 0.044 | 15.9 | no | 22.5 | 29 |
-| alt180_high | 0.9873 (0.4936–0.9873) | 0.1282 (0.87) | 2.38 | 0.05 (0.05–0.3) | 327.2 (321–438.3) | 0.552 (0.465–0.552) | 0.424 | 0.0242 | 13.8 | no | 28.9 **>25** | 29.3 |
-| alt200_low | 0.2612 (0.1306–0.4741) | 0.1075 (0.588) | 13.3 | 0.05 (0.05–0.3) | 346.6 (329.5–500) | 0.53 (0.285–0.534) | 0.399 | 0.0705 | 21.6 | no | 7.65 | 29.3 |
-| alt200_mean | 0.4071 (0.2035–0.741) | 0.05233 (0.871) | 5.7 | 0.05 (0.05–0.3) | 332.2 (328.7–444.3) | 0.57 (0.39–0.57) | 0.387 | 0.0436 | 15.8 | no | 12 | 29.5 |
-| alt200_high | 0.5626 (0.2813–0.7102) | 0.06822 (0.879) | 4.05 | 0.05 (0.05–0.3) | 326.9 (326.9–489.7) | 0.599 (0.434–0.601) | 0.37 | 0.0312 | 13.7 | no | 16.7 | 29.7 |
-| alt230_low | 0.09243 (0.04622–0.1696) | 0.02799 (0.697) | 30.3 | 0.05 (0.05–0.3) | 341 (336.2–488.8) | 0.6 (0.211–0.618) | 0.3 | 0.1 | 19.4 | no | 2.78 | 30.1 |
-| alt230_mean | 0.179 (0.08951–0.3286) | 0.02781 (0.845) | 12.9 | 0.05 (0.05–0.3) | 334.7 (330.7–447.3) | 0.633 (0.327–0.638) | 0.306 | 0.0611 | 16.8 | no | 5.39 | 30.1 |
-| alt230_high | 0.2769 (0.1384–0.5089) | 0.113 (0.592) | 11.9 | 0.05 (0.05–0.3) | 345.9 (329–500) | 0.654 (0.372–0.659) | 0.3 | 0.0461 | 21.3 | no | 8.37 | 30.2 |
+| alt180_low | 0.5751 (0.2876–1.036) | 0.08677 (0.849) | 4.3 | 0.05 (0.05–0.05) | 327.8 (327.8–339.7) | 0.459 (0.323–0.461) | 0.474 | 0.0668 | 14 | no | 16.5 | 28.7 |
+| alt180_mean | 0.7754 (0.3877–0.9751) | 0.2605 (0.664) | 4.02 | 0.05 (0.05–0.05) | 332.5 (326.9–333.6) | 0.505 (0.368–0.507) | 0.451 | 0.044 | 15.9 | no | 22.5 | 29 |
+| alt180_high | 0.9873 (0.4936–0.9873) | 0.1282 (0.87) | 2.38 | 0.05 (0.05–0.05) | 327.2 (321–333.6) | 0.552 (0.465–0.552) | 0.424 | 0.0242 | 13.8 | no | 28.9 **>25** | 29.3 |
+| alt200_low | 0.2612 (0.1306–0.4741) | 0.1075 (0.588) | 13.3 | 0.05 (0.05–0.05) | 346.6 (329.5–348.2) | 0.53 (0.285–0.534) | 0.399 | 0.0705 | 21.6 | no | 7.65 | 29.3 |
+| alt200_mean | 0.4071 (0.2035–0.741) | 0.05233 (0.871) | 5.7 | 0.05 (0.05–0.05) | 332.2 (328.7–344.7) | 0.57 (0.39–0.57) | 0.387 | 0.0436 | 15.8 | no | 12 | 29.5 |
+| alt200_high | 0.5626 (0.2813–0.7102) | 0.06822 (0.879) | 4.05 | 0.05 (0.05–0.05) | 326.9 (326.9–337.8) | 0.599 (0.434–0.601) | 0.37 | 0.0312 | 13.7 | no | 16.7 | 29.7 |
+| alt230_low | 0.09243 (0.04622–0.1696) | 0.02799 (0.697) | 30.3 | 0.05 (0.05–0.05) | 341 (336.2–354) | 0.6 (0.211–0.618) | 0.3 | 0.1 | 19.4 | no | 2.78 | 30.1 |
+| alt230_mean | 0.179 (0.08951–0.3286) | 0.02781 (0.845) | 12.9 | 0.05 (0.05–0.05) | 334.7 (330.7–345.4) | 0.633 (0.327–0.638) | 0.306 | 0.0611 | 16.8 | no | 5.39 | 30.1 |
+| alt230_high | 0.2769 (0.1384–0.5089) | 0.113 (0.592) | 11.9 | 0.05 (0.05–0.05) | 345.9 (329–346.2) | 0.654 (0.372–0.659) | 0.3 | 0.0461 | 21.3 | no | 8.37 | 30.2 |
 
 Scenario members that lose closure in at least one case: `SEN-ALPHA-0.5`, `SEN-ALPHA-0.8`.
-
-### DC-S25-G20
-
-| case | ṁ [mg/s] (range) | ṁ SC-BACKFLOW [mg/s] (b) | CR req. | P_feed [Pa] (range) | T_feed [K] (range) | x_O (range) | x_N2 | x_O2 | P_el,comp [W] | T clamp | D_int [mN] | v_req [km/s] |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| alt180_low | 1.198 (0.5991–2.159) | 0.597 (0.502) | 29.1 | 0.2 (0.2–0.3) | 484.8 (387.8–495.3) | 0.43 (0.143–0.436) | 0.483 | 0.0867 | 76.9 | no | 34.4 **>25** | 28.7 |
-| alt180_mean | 1.615 (0.8077–2.924) | 0.3723 (0.77) | 13.9 | 0.2 (0.2–0.3) | 399.5 (390.3–500) | 0.49 (0.258–0.49) | 0.456 | 0.0549 | 42.7 | no | 46.9 **>25** | 29 |
-| alt180_high | 2.057 (1.028–2.59) | 0.6989 (0.66) | 12.5 | 0.2 (0.2–0.3) | 420.2 (374.6–500) | 0.528 (0.284–0.529) | 0.431 | 0.0412 | 51 | no | 60.3 **>25** | 29.3 |
-| alt200_low | 0.5442 (0.2721–0.9878) | 0.2814 (0.483) | 64.6 | 0.2 (0.2–0.3) | 498 (399.1–500) | 0.486 (0.0973–0.498) | 0.411 | 0.103 | 82.1 | no | 15.9 | 29.3 |
-| alt200_mean | 0.8481 (0.424–1.544) | 0.292 (0.656) | 30.3 | 0.2 (0.2–0.3) | 422.9 (401.4–500) | 0.537 (0.198–0.538) | 0.396 | 0.0672 | 52.1 | no | 25 **>25** | 29.5 |
-| alt200_high | 1.172 (0.586–2.139) | 0.5333 (0.545) | 26.1 | 0.2 (0.2–0.3) | 460.7 (378–470.1) | 0.567 (0.211–0.573) | 0.378 | 0.055 | 67.2 | no | 34.8 **>25** | 29.7 |
-| alt230_low | 0.1926 (0.09628–0.2439) | 0.08571 (0.555) | 152 | 0.2 (0.2–0.3) | 456.4 (420.4–487.6) | 0.527 (0.0612–0.551) | 0.315 | 0.157 | 65.5 | no | 5.8 | 30.1 |
-| alt230_mean | 0.373 (0.1865–0.4723) | 0.1303 (0.651) | 67.1 | 0.2 (0.2–0.3) | 423.5 (401.3–500) | 0.583 (0.134–0.585) | 0.317 | 0.0996 | 52.4 | no | 11.2 | 30.1 |
-| alt230_high | 0.5769 (0.2884–1.06) | 0.2838 (0.508) | 55.3 | 0.2 (0.2–0.3) | 480.7 (438.1–500) | 0.608 (0.14–0.62) | 0.31 | 0.0823 | 75.2 | no | 17.4 | 30.2 |
-
-Scenario members that lose closure in at least one case: `SEN-ALPHA-0.5`, `SEN-ROTOR-TI`.
 
 D_int = intake-only drag (TPMC C_D, body drag excluded); v_req = D_int / ṁ is the Hall-free exhaust-velocity requirement for intake-drag compensation at the delivered (upper-bound) flow (momentum balance only, model-derived); at the SC-BACKFLOW flow it rises by 1/(delivered factor). CR req. = active compression ratio the compressor needs at the self-consistent plenum pressure.
 
 ## 5. Dominant sensitivities
 
 Per closed candidate, ranked first by the number of cases in which the variant loses closure (a variant that destroys closure is the most consequential), then by the largest relative change of ṁ over the cases that still close; the atmosphere scenario (altitude × solar) is listed as the reference spread. Composition (x_O) and feed temperature are ranked separately below each table. `SC-BACKFLOW` changes the total flow only (composition and temperature not re-evaluated: —).
-
-**DC-S12-G10**
-
-| rank | axis | variant | max Δṁ/ṁ | max Δx_O | max ΔT_feed [K] | cases losing closure |
-|---|---|---|---|---|---|---|
-| 1 | intake surface state | `SEN-ALPHA-0.5` | 0.464 | 0.0121 | 63.8 | 1 |
-| 2 | compressor rotor material | `SEN-ROTOR-TI` | 1.61e-06 | 0.0187 | 68 | 1 |
-| 3 | altitude x solar activity (scenario) | `SCEN-ATM` | 9.63 | 0.191 | 68.5 | 0 |
-| 4 | plenum backflow, self-consistent with the chain-sized compressor (FC-01) | `SC-BACKFLOW` | 0.731 | — | — | 0 |
-| 5 | plenum backflow (FC-01) | `SEN-BACKFLOW-0.5` | 0.5 | 0.0598 | 55.4 | 0 |
-| 6 | intake surface state | `SEN-ALPHA-0.8` | 0.168 | 0.00691 | 47.2 | 0 |
-| 7 | pointing | `SEN-THETA-5` | 0.167 | 0.0112 | 48.9 | 0 |
-| 8 | pointing | `SEN-THETA-2` | 0.0266 | 0.00168 | 4.24 | 0 |
-| 9 | gas-surface kernel | `SEN-CLL` | 0.00756 | 0.000434 | 0.67 | 0 |
-| 10 | valve setpoint | `SEN-SETPOINT-0.3` | 6.44e-05 | 0.123 | 151 | 0 |
-| 11 | valve setpoint | `SEN-SETPOINT-0.2` | 3.01e-05 | 0.0744 | 106 | 0 |
-| 12 | buffer wall material | `SEN-WALL-TI` | 4.75e-06 | 0.431 | 0 | 0 |
-| 13 | collected-flow composition convention | `SEN-SPECIES-RESOLVED` | 1.46e-06 | 0.0404 | 60 | 0 |
-| 14 | plenum gas temperature | `SEN-PLENUM-T-300` | 5.03e-07 | 0.00153 | 44.8 | 0 |
-
-Ranked by max Δx_O: `SEN-WALL-TI`, `SCEN-ATM`, `SEN-SETPOINT-0.3`, `SEN-SETPOINT-0.2`, `SEN-BACKFLOW-0.5` …; by max ΔT_feed: `SEN-SETPOINT-0.3`, `SEN-SETPOINT-0.2`, `SCEN-ATM`, `SEN-ROTOR-TI`, `SEN-ALPHA-0.5` ….
 
 **DC-S12-G20**
 
@@ -210,43 +161,20 @@ Ranked by max Δx_O: `SEN-WALL-TI`, `SCEN-ATM`, `SEN-SETPOINT-0.3`, `SEN-SETPOIN
 | 6 | pointing | `SEN-THETA-5` | 0.211 | 0.0166 | 7.84 | 0 |
 | 7 | pointing | `SEN-THETA-2` | 0.0327 | 0.0101 | 11.9 | 0 |
 | 8 | gas-surface kernel | `SEN-CLL` | 0.00372 | 4.93e-05 | 0.317 | 0 |
-| 9 | valve setpoint | `SEN-SETPOINT-0.3` | 0.000131 | 0.225 | 172 | 0 |
-| 10 | valve setpoint | `SEN-SETPOINT-0.2` | 7.55e-05 | 0.163 | 148 | 0 |
-| 11 | valve setpoint | `SEN-SETPOINT-0.1` | 2.77e-05 | 0.0615 | 53 | 0 |
-| 12 | buffer wall material | `SEN-WALL-TI` | 3.76e-06 | 0.389 | 0 | 0 |
-| 13 | collected-flow composition convention | `SEN-SPECIES-RESOLVED` | 3.72e-07 | 0.0502 | 17 | 0 |
-| 14 | compressor rotor material | `SEN-ROTOR-TI` | 2.87e-07 | 0.0184 | 12.8 | 0 |
-| 15 | plenum gas temperature | `SEN-PLENUM-T-300` | 2.01e-07 | 0.00918 | 8.99 | 0 |
+| 9 | buffer wall material | `SEN-WALL-TI` | 3.76e-06 | 0.389 | 0 | 0 |
+| 10 | collected-flow composition convention | `SEN-SPECIES-RESOLVED` | 3.72e-07 | 0.0502 | 17 | 0 |
+| 11 | compressor rotor material | `SEN-ROTOR-TI` | 2.87e-07 | 0.0184 | 12.8 | 0 |
+| 12 | plenum gas temperature | `SEN-PLENUM-T-300` | 2.01e-07 | 0.00918 | 8.99 | 0 |
 
-Ranked by max Δx_O: `SEN-WALL-TI`, `SEN-SETPOINT-0.3`, `SCEN-ATM`, `SEN-SETPOINT-0.2`, `SEN-SETPOINT-0.1` …; by max ΔT_feed: `SEN-SETPOINT-0.3`, `SEN-SETPOINT-0.2`, `SEN-SETPOINT-0.1`, `SCEN-ATM`, `SEN-BACKFLOW-0.5` ….
+Ranked by max Δx_O: `SEN-WALL-TI`, `SCEN-ATM`, `SEN-BACKFLOW-0.5`, `SEN-SPECIES-RESOLVED`, `SEN-ROTOR-TI` …; by max ΔT_feed: `SCEN-ATM`, `SEN-BACKFLOW-0.5`, `SEN-SPECIES-RESOLVED`, `SEN-ALPHA-0.5`, `SEN-ROTOR-TI` ….
 
-**DC-S25-G20**
-
-| rank | axis | variant | max Δṁ/ṁ | max Δx_O | max ΔT_feed [K] | cases losing closure |
-|---|---|---|---|---|---|---|
-| 1 | compressor rotor material | `SEN-ROTOR-TI` | 9.6e-07 | 0.0171 | 97 | 4 |
-| 2 | intake surface state | `SEN-ALPHA-0.5` | 0.838 | 0.0178 | 100 | 3 |
-| 3 | altitude x solar activity (scenario) | `SCEN-ATM` | 9.68 | 0.178 | 98.5 | 0 |
-| 4 | plenum backflow, self-consistent with the chain-sized compressor (FC-01) | `SC-BACKFLOW` | 0.77 | — | — | 0 |
-| 5 | plenum backflow (FC-01) | `SEN-BACKFLOW-0.5` | 0.5 | 0.0844 | 98.9 | 0 |
-| 6 | intake surface state | `SEN-ALPHA-0.8` | 0.267 | 0.0238 | 84.9 | 0 |
-| 7 | pointing | `SEN-THETA-5` | 0.211 | 0.018 | 92.7 | 0 |
-| 8 | pointing | `SEN-THETA-2` | 0.0327 | 0.00839 | 10.6 | 0 |
-| 9 | gas-surface kernel | `SEN-CLL` | 0.00372 | 0.000289 | 2.04 | 0 |
-| 10 | valve setpoint | `SEN-SETPOINT-0.3` | 2.65e-05 | 0.0454 | 100 | 0 |
-| 11 | buffer wall material | `SEN-WALL-TI` | 6.97e-06 | 0.467 | 0 | 0 |
-| 12 | plenum gas temperature | `SEN-PLENUM-T-300` | 1.65e-06 | 0.0134 | 91.8 | 0 |
-| 13 | collected-flow composition convention | `SEN-SPECIES-RESOLVED` | 2.14e-07 | 0.0492 | 13.4 | 0 |
-
-Ranked by max Δx_O: `SEN-WALL-TI`, `SCEN-ATM`, `SEN-BACKFLOW-0.5`, `SEN-SPECIES-RESOLVED`, `SEN-SETPOINT-0.3` …; by max ΔT_feed: `SEN-ALPHA-0.5`, `SEN-SETPOINT-0.3`, `SEN-BACKFLOW-0.5`, `SCEN-ATM`, `SEN-ROTOR-TI` ….
-
-Design axes (between candidates, design case): `DC-S12-G10` ṁ 0.6675 mg/s, x_O 0.549; `DC-S12-G20` ṁ 0.4071 mg/s, x_O 0.57; `DC-S25-G20` ṁ 0.8481 mg/s, x_O 0.537. ṁ scales linearly with the sizing thrust level and with (1 − backflow) (FC-01).
+Design axes (between candidates, design case): `DC-S12-G20` ṁ 0.4071 mg/s, x_O 0.57. ṁ scales linearly with the sizing thrust level and with (1 − backflow) (FC-01).
 
 ## 6. PROPOSED ground test points
 
 All flows are anode flows; the cathode (C-1, Xe) flow is outside this chain (lane 19). P_feed is the flight valve-outlet setpoint, recorded as a covariate (lane 25); T_feed on the ground is DI-1.10. sccm at 273.15 K / 101325 Pa (check each MFC's reference). Test points exist only for closed candidates.
 
-**Flight status (owner control C2, `docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A1_controls.json`).** `PROPOSED_FLIGHT_REPRESENTATIVE`: derived from an assumed (PROPOSED) intake/compressor/buffer/valve design candidate; reproducible on the ground with MFCs, pressure control and gas bottles; NOT a flight condition and never asserted as one until the owner freezes DI-1 (control C2). `GROUND_QUALIFICATION_POINT`: ground qualification point only: its flow is a scan level chosen to locate the Hall-only sustainment knee (Phase 1) or is set by the measured knee; the candidate-derived flow levels only bracket the scan range; it is NOT a flight-representative feed state and NOT a flight condition. Rule: valve_outlet records, their nominal and backflow_self_consistent states, Phase-2 OP1/OP3/OP5 and every Phase-3 point -> PROPOSED_FLIGHT_REPRESENTATIVE; Phase-1 knee ladder (L*, EXT, BFL) and Phase-2 OP2 (flow = measured Phase-1 knee) -> GROUND_QUALIFICATION_POINT. Counts: valve-outlet records PROPOSED_FLIGHT_REPRESENTATIVE 27, GROUND_QUALIFICATION_POINT 0; test points phase1_knee_N2: PROPOSED_FLIGHT_REPRESENTATIVE 0, GROUND_QUALIFICATION_POINT 21; phase2_common_condition: PROPOSED_FLIGHT_REPRESENTATIVE 9, GROUND_QUALIFICATION_POINT 3; phase3_absolute_demonstration: PROPOSED_FLIGHT_REPRESENTATIVE 54, GROUND_QUALIFICATION_POINT 0.
+**Flight status (owner control C2, `docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A1_controls.json`).** `PROPOSED_FLIGHT_REPRESENTATIVE`: derived from an assumed (PROPOSED) intake/compressor/buffer/valve design candidate; reproducible on the ground with MFCs, pressure control and gas bottles; NOT a flight condition and never asserted as one until the owner freezes DI-1 (control C2). `GROUND_QUALIFICATION_POINT`: ground qualification point only: its flow is a scan level chosen to locate the Hall-only sustainment knee (Phase 1) or is set by the measured knee; the candidate-derived flow levels only bracket the scan range; it is NOT a flight-representative feed state and NOT a flight condition. Rule: valve_outlet records, their nominal and backflow_self_consistent states, Phase-2 OP1/OP3/OP5 and every Phase-3 point -> PROPOSED_FLIGHT_REPRESENTATIVE; Phase-1 knee ladder (L*, EXT, BFL) and Phase-2 OP2 (flow = measured Phase-1 knee) -> GROUND_QUALIFICATION_POINT. Counts: valve-outlet records PROPOSED_FLIGHT_REPRESENTATIVE 9, GROUND_QUALIFICATION_POINT 0; test points phase1_knee_N2: PROPOSED_FLIGHT_REPRESENTATIVE 0, GROUND_QUALIFICATION_POINT 7; phase2_common_condition: PROPOSED_FLIGHT_REPRESENTATIVE 3, GROUND_QUALIFICATION_POINT 1; phase3_absolute_demonstration: PROPOSED_FLIGHT_REPRESENTATIVE 18, GROUND_QUALIFICATION_POINT 0.
 
 ### Phase 1 — Hall-only sustainment knee on N₂ (HW-0)
 
@@ -254,13 +182,6 @@ L1–L5 follow the lane-25 knee rule on the upper-bound flows; EXT is the upper 
 
 | id | ṁ_N2 [mg/s] | sccm N₂ | P_feed target [Pa] | trace | flight status |
 |---|---|---|---|---|---|
-| TP1-DC-S12-G10-L1 | 0.6675 | 32.06 | 0.1 | level 1/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
-| TP1-DC-S12-G10-L2 | 0.5387 | 25.87 | 0.1 | level 2/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
-| TP1-DC-S12-G10-L3 | 0.4098 | 19.68 | 0.1 | level 3/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
-| TP1-DC-S12-G10-L4 | 0.281 | 13.5 | 0.1 | level 4/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
-| TP1-DC-S12-G10-L5 | 0.1522 | 7.308 | 0.1 | level 5/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
-| TP1-DC-S12-G10-EXT | 1.617 | 77.67 | 0.1 | level upper extension (mdot_max = alt180_high) | GROUND_QUALIFICATION_POINT |
-| TP1-DC-S12-G10-BFL | 0.04973 | 2.389 | 0.1 | level backflow lower extension (mdot_bracket_lower = alt230_low) | GROUND_QUALIFICATION_POINT |
 | TP1-DC-S12-G20-L1 | 0.4071 | 19.55 | 0.05 | level 1/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
 | TP1-DC-S12-G20-L2 | 0.3284 | 15.77 | 0.05 | level 2/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
 | TP1-DC-S12-G20-L3 | 0.2498 | 12 | 0.05 | level 3/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
@@ -268,30 +189,15 @@ L1–L5 follow the lane-25 knee rule on the upper-bound flows; EXT is the upper 
 | TP1-DC-S12-G20-L5 | 0.09243 | 4.44 | 0.05 | level 5/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
 | TP1-DC-S12-G20-EXT | 0.9873 | 47.42 | 0.05 | level upper extension (mdot_max = alt180_high) | GROUND_QUALIFICATION_POINT |
 | TP1-DC-S12-G20-BFL | 0.02781 | 1.336 | 0.05 | level backflow lower extension (mdot_bracket_lower = alt230_mean) | GROUND_QUALIFICATION_POINT |
-| TP1-DC-S25-G20-L1 | 0.8481 | 40.73 | 0.2 | level 1/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
-| TP1-DC-S25-G20-L2 | 0.6842 | 32.86 | 0.2 | level 2/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
-| TP1-DC-S25-G20-L3 | 0.5203 | 24.99 | 0.2 | level 3/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
-| TP1-DC-S25-G20-L4 | 0.3564 | 17.12 | 0.2 | level 4/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
-| TP1-DC-S25-G20-L5 | 0.1926 | 9.249 | 0.2 | level 5/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
-| TP1-DC-S25-G20-EXT | 2.057 | 98.79 | 0.2 | level upper extension (mdot_max = alt180_high) | GROUND_QUALIFICATION_POINT |
-| TP1-DC-S25-G20-BFL | 0.08571 | 4.117 | 0.2 | level backflow lower extension (mdot_bracket_lower = alt230_low) | GROUND_QUALIFICATION_POINT |
 
 ### Phase 2 — common-condition comparison (HW-0 / HW-RF / HW-ECR)
 
 | id | point | gas | ṁ [mg/s] (upper bound) | ṁ backflow lower [mg/s] | composition | status | flight status |
 |---|---|---|---|---|---|---|---|
-| TP2-DC-S12-G10-OP1 | OP1 | N2 | 0.1522 | 0.04973 | N₂ | PROPOSED (candidate-conditional) | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP2-DC-S12-G10-OP2 | OP2 | N2 | — | — | N₂ | TBD - requires the measured Phase-1 knee | GROUND_QUALIFICATION_POINT |
-| TP2-DC-S12-G10-OP3 | OP3 | N2 | 0.6675 | 0.2006 | N₂ | PROPOSED (candidate-conditional) | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP2-DC-S12-G10-OP5 | OP5 | N2+O2 air surrogate | — | — | w_O2 0.492 / w_N2 0.508 | TBD (total flow = the measured Phase-1 knee); composition PROPOSED (candidate-conditional) | PROPOSED_FLIGHT_REPRESENTATIVE |
 | TP2-DC-S12-G20-OP1 | OP1 | N2 | 0.09243 | 0.02799 | N₂ | PROPOSED (candidate-conditional) | PROPOSED_FLIGHT_REPRESENTATIVE |
 | TP2-DC-S12-G20-OP2 | OP2 | N2 | — | — | N₂ | TBD - requires the measured Phase-1 knee | GROUND_QUALIFICATION_POINT |
 | TP2-DC-S12-G20-OP3 | OP3 | N2 | 0.4071 | 0.05233 | N₂ | PROPOSED (candidate-conditional) | PROPOSED_FLIGHT_REPRESENTATIVE |
 | TP2-DC-S12-G20-OP5 | OP5 | N2+O2 air surrogate | — | — | w_O2 0.492 / w_N2 0.508 | TBD (total flow = the measured Phase-1 knee); composition PROPOSED (candidate-conditional) | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP2-DC-S25-G20-OP1 | OP1 | N2 | 0.1926 | 0.08571 | N₂ | PROPOSED (candidate-conditional) | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP2-DC-S25-G20-OP2 | OP2 | N2 | — | — | N₂ | TBD - requires the measured Phase-1 knee | GROUND_QUALIFICATION_POINT |
-| TP2-DC-S25-G20-OP3 | OP3 | N2 | 0.8481 | 0.292 | N₂ | PROPOSED (candidate-conditional) | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP2-DC-S25-G20-OP5 | OP5 | N2+O2 air surrogate | — | — | w_O2 0.492 / w_N2 0.508 | TBD (total flow = the measured Phase-1 knee); composition PROPOSED (candidate-conditional) | PROPOSED_FLIGHT_REPRESENTATIVE |
 
 Lane-25 iso-power references OP2H and OP3H (`hall_only` only, V_hi) use the same feed as OP2 and OP3; they add no feed state and are cross-referenced on those records (`iso_power_reference`).
 
@@ -301,24 +207,6 @@ Flows are the upper-bound flight flows; the backflow-consistent total flow of ea
 
 | id | case | gas | ṁ_N2 [mg/s] | ṁ_O2 [mg/s] | sccm N₂ | sccm O₂ | ground/flight particle flow | flight x_O | ṁ backflow lower [mg/s] | flight status |
 |---|---|---|---|---|---|---|---|---|---|---|
-| TP3-DC-S12-G10-alt180_low-N2 | alt180_low | N2 | 0.9387 | — | 45.09 | — | — | 0.449 | 0.3643 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S12-G10-alt180_low-AIR | alt180_low | N2+O2 air surrogate | 0.5478 | 0.3909 | 26.31 | 16.43 | 0.776 | 0.449 | 0.3643 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S12-G10-alt180_mean-N2 | alt180_mean | N2 | 1.268 | — | 60.9 | — | — | 0.495 | 0.3406 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S12-G10-alt180_mean-AIR | alt180_mean | N2+O2 air surrogate | 0.7239 | 0.5441 | 34.77 | 22.87 | 0.752 | 0.495 | 0.3406 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S12-G10-alt180_high-N2 | alt180_high | N2 | 1.617 | — | 77.67 | — | — | 0.534 | 0.6023 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S12-G10-alt180_high-AIR | alt180_high | N2+O2 air surrogate | 0.8937 | 0.7234 | 42.92 | 30.4 | 0.733 | 0.534 | 0.6023 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S12-G10-alt200_low-N2 | alt200_low | N2 | 0.4278 | — | 20.55 | — | — | 0.517 | 0.1802 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S12-G10-alt200_low-AIR | alt200_low | N2+O2 air surrogate | 0.2182 | 0.2096 | 10.48 | 8.81 | 0.742 | 0.517 | 0.1802 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S12-G10-alt200_mean-N2 | alt200_mean | N2 | 0.6675 | — | 32.06 | — | — | 0.549 | 0.2006 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S12-G10-alt200_mean-AIR | alt200_mean | N2+O2 air surrogate | 0.3388 | 0.3287 | 16.27 | 13.81 | 0.725 | 0.549 | 0.2006 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S12-G10-alt200_high-N2 | alt200_high | N2 | 0.9236 | — | 44.36 | — | — | 0.587 | 0.3203 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S12-G10-alt200_high-AIR | alt200_high | N2+O2 air surrogate | 0.4567 | 0.4668 | 21.94 | 19.62 | 0.706 | 0.587 | 0.3203 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S12-G10-alt230_low-N2 | alt230_low | N2 | 0.1522 | — | 7.308 | — | — | 0.579 | 0.04973 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S12-G10-alt230_low-AIR | alt230_low | N2+O2 air surrogate | 0.06023 | 0.09194 | 2.893 | 3.864 | 0.71 | 0.579 | 0.04973 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S12-G10-alt230_mean-N2 | alt230_mean | N2 | 0.2947 | — | 14.15 | — | — | 0.604 | 0.1473 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S12-G10-alt230_mean-AIR | alt230_mean | N2+O2 air surrogate | 0.1224 | 0.1724 | 5.876 | 7.243 | 0.698 | 0.604 | 0.1473 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S12-G10-alt230_high-N2 | alt230_high | N2 | 0.4561 | — | 21.91 | — | — | 0.639 | 0.1841 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S12-G10-alt230_high-AIR | alt230_high | N2+O2 air surrogate | 0.1882 | 0.2679 | 9.039 | 11.26 | 0.68 | 0.639 | 0.1841 | PROPOSED_FLIGHT_REPRESENTATIVE |
 | TP3-DC-S12-G20-alt180_low-N2 | alt180_low | N2 | 0.5751 | — | 27.62 | — | — | 0.459 | 0.08677 | PROPOSED_FLIGHT_REPRESENTATIVE |
 | TP3-DC-S12-G20-alt180_low-AIR | alt180_low | N2+O2 air surrogate | 0.3356 | 0.2395 | 16.12 | 10.07 | 0.771 | 0.459 | 0.08677 | PROPOSED_FLIGHT_REPRESENTATIVE |
 | TP3-DC-S12-G20-alt180_mean-N2 | alt180_mean | N2 | 0.7754 | — | 37.24 | — | — | 0.505 | 0.2605 | PROPOSED_FLIGHT_REPRESENTATIVE |
@@ -337,28 +225,10 @@ Flows are the upper-bound flight flows; the backflow-consistent total flow of ea
 | TP3-DC-S12-G20-alt230_mean-AIR | alt230_mean | N2+O2 air surrogate | 0.07433 | 0.1047 | 3.57 | 4.4 | 0.684 | 0.633 | 0.02781 | PROPOSED_FLIGHT_REPRESENTATIVE |
 | TP3-DC-S12-G20-alt230_high-N2 | alt230_high | N2 | 0.2769 | — | 13.3 | — | — | 0.654 | 0.113 | PROPOSED_FLIGHT_REPRESENTATIVE |
 | TP3-DC-S12-G20-alt230_high-AIR | alt230_high | N2+O2 air surrogate | 0.1143 | 0.1626 | 5.488 | 6.835 | 0.673 | 0.654 | 0.113 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S25-G20-alt180_low-N2 | alt180_low | N2 | 1.198 | — | 57.55 | — | — | 0.43 | 0.597 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S25-G20-alt180_low-AIR | alt180_low | N2+O2 air surrogate | 0.6992 | 0.499 | 33.58 | 20.97 | 0.785 | 0.43 | 0.597 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S25-G20-alt180_mean-N2 | alt180_mean | N2 | 1.615 | — | 77.59 | — | — | 0.49 | 0.3723 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S25-G20-alt180_mean-AIR | alt180_mean | N2+O2 air surrogate | 0.9223 | 0.6932 | 44.3 | 29.13 | 0.755 | 0.49 | 0.3723 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S25-G20-alt180_high-N2 | alt180_high | N2 | 2.057 | — | 98.79 | — | — | 0.528 | 0.6989 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S25-G20-alt180_high-AIR | alt180_high | N2+O2 air surrogate | 1.137 | 0.9201 | 54.6 | 38.67 | 0.736 | 0.528 | 0.6989 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S25-G20-alt200_low-N2 | alt200_low | N2 | 0.5442 | — | 26.14 | — | — | 0.486 | 0.2721 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S25-G20-alt200_low-AIR | alt200_low | N2+O2 air surrogate | 0.2775 | 0.2667 | 13.33 | 11.21 | 0.757 | 0.486 | 0.2721 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S25-G20-alt200_mean-N2 | alt200_mean | N2 | 0.8481 | — | 40.73 | — | — | 0.537 | 0.292 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S25-G20-alt200_mean-AIR | alt200_mean | N2+O2 air surrogate | 0.4305 | 0.4176 | 20.67 | 17.55 | 0.731 | 0.537 | 0.292 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S25-G20-alt200_high-N2 | alt200_high | N2 | 1.172 | — | 56.29 | — | — | 0.567 | 0.5333 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S25-G20-alt200_high-AIR | alt200_high | N2+O2 air surrogate | 0.5796 | 0.5924 | 27.84 | 24.9 | 0.717 | 0.567 | 0.5333 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S25-G20-alt230_low-N2 | alt230_low | N2 | 0.1926 | — | 9.249 | — | — | 0.527 | 0.08571 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S25-G20-alt230_low-AIR | alt230_low | N2+O2 air surrogate | 0.07622 | 0.1164 | 3.661 | 4.89 | 0.736 | 0.527 | 0.08571 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S25-G20-alt230_mean-N2 | alt230_mean | N2 | 0.373 | — | 17.91 | — | — | 0.583 | 0.1303 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S25-G20-alt230_mean-AIR | alt230_mean | N2+O2 air surrogate | 0.1548 | 0.2181 | 7.437 | 9.167 | 0.708 | 0.583 | 0.1303 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S25-G20-alt230_high-N2 | alt230_high | N2 | 0.5769 | — | 27.71 | — | — | 0.608 | 0.2838 | PROPOSED_FLIGHT_REPRESENTATIVE |
-| TP3-DC-S25-G20-alt230_high-AIR | alt230_high | N2+O2 air surrogate | 0.238 | 0.3388 | 11.43 | 14.24 | 0.696 | 0.608 | 0.2838 | PROPOSED_FLIGHT_REPRESENTATIVE |
 
 ### MFC range requirement (input to W4)
 
-Over closed candidates ['DC-S12-G10', 'DC-S12-G20', 'DC-S25-G20'] (lower end = backflow-inclusive bracket, FC-01): anode ṁ 0.02781–2.924 mg/s (1.336–140.4 sccm N₂), O₂ up to 0.9201 mg/s (38.67 sccm). Accumulation headroom (FC-08, PROPOSED): ×1.733 → 5.067 mg/s.
+Over closed candidates ['DC-S12-G20'] (lower end = backflow-inclusive bracket, FC-01): anode ṁ 0.02781–1.036 mg/s (1.336–49.78 sccm N₂), O₂ up to 0.4417 mg/s (18.56 sccm). Accumulation headroom (FC-08, PROPOSED): ×1.733 → 1.796 mg/s.
 
 ## 7. Can atomic O be represented on the ground?
 
@@ -378,15 +248,15 @@ Over closed candidates ['DC-S12-G10', 'DC-S12-G20', 'DC-S25-G20'] (lower end = b
 
 | id | where | finding | evidence class | handling |
 |---|---|---|---|---|
-| FC-01 | `abep_sim/intake.py:compress; abep_sim/intake_tpmc.py CR_passive` | the chain delivers the full forward-transmitted flow eta_c x rhoV x A x (1 - backflow_frac) while feeding the compressor at the passive plenum pressure p_passive; p_passive is, by the TPMC flux balance (CR_passive = eta_c V / (c_bar/4 phi K_back)), the plenum state at which backflow equals inflow (zero net collection). backflow_frac is an independent input (default 0), so the delivered flow is an UPPER BOUND; with b = p_plenum/p_passive the net flow scales by (1 - b). Self-consistent estimate SC-BACKFLOW (chain-sized compressor fed at b p_passive with (1 - b) F, p_out = setpoint): b = 0.45-0.879, delivered flow x0.121-0.55 of the upper bound (all 27 closed candidate-cases close; required active CR 2.38-152). It is the largest non-atmosphere flow change in 2 of 3 closed candidates (DC-S12-G10, DC-S12-G20); elsewhere the largest is DC-S25-G20: SEN-ALPHA-0.5 (among cases that still close) | inferred | not fixed in the chain (module change outside this lane; DI-1.12); carried as the lower end of mdot_total_kgps_bracket, as sensitivity SEN-BACKFLOW-0.5, in the BFL Phase-1 point and in the MFC range |
+| FC-01 | `abep_sim/intake.py:compress; abep_sim/intake_tpmc.py CR_passive` | the chain delivers the full forward-transmitted flow eta_c x rhoV x A x (1 - backflow_frac) while feeding the compressor at the passive plenum pressure p_passive; p_passive is, by the TPMC flux balance (CR_passive = eta_c V / (c_bar/4 phi K_back)), the plenum state at which backflow equals inflow (zero net collection). backflow_frac is an independent input (default 0), so the delivered flow is an UPPER BOUND; with b = p_plenum/p_passive the net flow scales by (1 - b). Self-consistent estimate SC-BACKFLOW (chain-sized compressor fed at b p_passive with (1 - b) F, p_out = setpoint): b = 0.588-0.879, delivered flow x0.121-0.412 of the upper bound (all 9 closed candidate-cases close; required active CR 2.38-30.3). It is the largest non-atmosphere flow change in 1 of 1 closed candidates (DC-S12-G20) | inferred | not fixed in the chain (module change outside this lane; DI-1.12); carried as the lower end of mdot_total_kgps_bracket, as sensitivity SEN-BACKFLOW-0.5, in the BFL Phase-1 point and in the MFC range |
 | FC-02 | `abep_sim/intake_tpmc.py eta_c definition` | the frozen TPMC eta_c is the forward transmission into the plenum (eta_c = phi x eta_open x cos theta); for fully diffuse walls it reaches 0.74 at L/d 3 and 0.45 at L/d 10, whereas published diffuse intake designs report eta_c < 0.46 (LIT-03) and 0.28-0.45 (LIT-02) with backflow included; consistent with FC-01, not a validation of either | inferred | cross-check only |
-| FC-03 | `abep_sim/compressor.py DragCompressor (Gaede characteristic)` | closure requires compressor pumping speed well above the plenum volumetric flow Q/p ~ eta_c V A / CR_passive; short-channel intakes (high eta_c, low CR_passive) and large areas at code-default compressor parameters do not close on the setpoint ladder: ['DC-S12-G03', 'DC-S25-G03', 'DC-S25-G10'] | model-derived | reported per candidate (closure.failure_reasons) |
-| FC-04 | `abep_sim/system.py:evaluate chamber temperature convention` | T_feed = min(max(T_comp, 300), 500) K; the clamp is active in 0 nominal closed-candidate cases and in 7 of 257 closed sensitivity runs; there T_feed is a convention, not a thermal result | model-derived | flag compressor_T_clamp_active per case |
-| FC-05 | `abep_sim/reservoir.py O recombination; compressor stage count and temperature` | the valve-outlet atomic-O mole fraction is a design output, not an atmosphere property: nominal x_O 0.43-0.654 across closed candidates and cases, scenario range 0.0612-0.659 (setpoint, wall material, temperature) | model-derived | air-surrogate composition taken per case; MD section 7 |
-| FC-06 | `Hall-free momentum balance (intake-only drag)` | with area sized at 200 km mean, the intake-only drag exceeds the RFP maximum thrust (25 mN) at 7 closed candidate-cases: DC-S12-G10/alt180_high, DC-S12-G20/alt180_high, DC-S25-G20/alt180_high, DC-S25-G20/alt180_low, DC-S25-G20/alt180_mean, DC-S25-G20/alt200_high, DC-S25-G20/alt200_mean. If full drag compensation is required, it is impossible at those cases within the RFP thrust band whatever the thruster (body drag would add). Not an elimination: a sizing/design-case consequence for DI-1.1 | model-derived | reported per case (intake_drag.exceeds_RFP_thrust_max) |
+| FC-03 | `abep_sim/compressor.py DragCompressor (Gaede characteristic)` | closure requires compressor pumping speed well above the plenum volumetric flow Q/p ~ eta_c V A / CR_passive; short-channel intakes (high eta_c, low CR_passive) and large areas at code-default compressor parameters do not close on the setpoint ladder: ['DC-S12-G03', 'DC-S12-G10', 'DC-S25-G03', 'DC-S25-G10', 'DC-S25-G20'] | model-derived | reported per candidate (closure.failure_reasons) |
+| FC-04 | `abep_sim/system.py:evaluate chamber temperature convention` | T_feed = min(max(T_comp, 300), 500) K; the clamp is active in 0 nominal closed-candidate cases and in 0 of 86 closed sensitivity runs; there T_feed is a convention, not a thermal result | model-derived | flag compressor_T_clamp_active per case |
+| FC-05 | `abep_sim/reservoir.py O recombination; compressor stage count and temperature` | the valve-outlet atomic-O mole fraction is a design output, not an atmosphere property: nominal x_O 0.459-0.654 across closed candidates and cases, scenario range 0.211-0.659 (setpoint, wall material, temperature) | model-derived | air-surrogate composition taken per case; MD section 7 |
+| FC-06 | `Hall-free momentum balance (intake-only drag)` | with area sized at 200 km mean, the intake-only drag exceeds the RFP maximum thrust (25 mN) at 1 closed candidate-cases: DC-S12-G20/alt180_high. If full drag compensation is required, it is impossible at those cases within the RFP thrust band whatever the thruster (body drag would add). Not an elimination: a sizing/design-case consequence for DI-1.1 | model-derived | reported per case (intake_drag.exceeds_RFP_thrust_max) |
 | FC-07 | `abep_sim/intake.py:_tpmc_surface (lane 16 FE-08)` | the frozen TPMC surface was built at 200 km / F10.7 150; its speed-ratio dependence at the other eight cases is not characterised (lane 16 computed -17 %..+15 % in sqrt(T/m)) | model-derived | not propagated; TBD - requires TPMC surfaces at other states |
 | FC-08 | `chain scope (steady state)` | the chain is steady-state continuous collection = continuous firing; accumulate-and-fire operation (RFP firing > 15,000 h of 26,000 h) is not modelled and would raise the firing flow by up to 26,000/15,000 | assumed | MFC headroom only (union.accumulation_factor_upper) |
-| FC-09 | `closed candidates` | closed on the PROPOSED ladder: ['DC-S12-G10', 'DC-S12-G20', 'DC-S25-G20'] | model-derived | test points derived only from closed candidates |
+| FC-09 | `closed candidates` | closed on the PROPOSED ladder: ['DC-S12-G20'] | model-derived | test points derived only from closed candidates |
 | FC-10 | `abep_sim/compressor.py rotor qualification (A9.9 S2.3 / MCC-03)` | no rotor-strength basis is registered, so every chain-sized compressor is sized in PARAMETRIC_SENSITIVITY mode: rotor_qualification NOT_EVALUATED_MATERIAL_BASIS, rotor_ok False, tip speed screened only against the labelled legacy sensitivity cap (uncited DB yield / factor 2.0). 'CLOSED' is therefore closure under PARAMETRIC_SENSITIVITY inputs, never a qualified rotor | model-derived | rotor_qualification and sizing_mode carried per ladder run; a registered basis (FAIL) would make the case infeasible |
 
 ## 9. Owner decisions needed to freeze DI-1

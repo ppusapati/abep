@@ -30,8 +30,14 @@ def _inlet(p=0.013, label=cs.LABEL_PARAMETRIC, ev="assumed", **kw):
     return cs.InletRecord("t", dict(MD), p, 350.0, label, "test fixture", ev, **kw)
 
 
+# Fixed unit-test turbo areas (the F3 grid areas before the A9.13 S6.8 W1 domain gate re-pinned the data-derived
+# A_INLET_MIN_B025_RANGE_M2; review findings RVF-01 / PHY-01). The unit tests below exercise the module on a fixed
+# geometry; they must not move when the W1-derived search grid moves. SearchGrid() itself is tested separately.
+FIXTURE_A_TURBO_M2 = (0.1128299365, math.pi * 0.25 ** 2, 0.2369348826)
+
+
 def _design(nt=2, ia=1, u=250.0, nd=0, mat="Ti6Al4V"):
-    a = cs.SearchGrid().a_turbo_m2[ia]
+    a = FIXTURE_A_TURBO_M2[ia]
     r = cs.r_turbo_from_area(a)
     return {"id": "x", "N_turbo": nt, "A_turbo_m2": a, "R_turbo_m": r, "u_tip_turbo_mps": u,
             "rpm": cs.rpm_from_tip(u, r), "N_drag": nd, "rotor_material": mat}
@@ -120,7 +126,7 @@ def test_strict_mode_runs_once_evidence_is_supplied():
         ev["rotor_strength_basis_id"] = {"value": basis.basis_id, "evidence_class": "measured",
                                          "source": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE"}
         assert cs.strict_blockers(inlet, ev) == []
-        grid = cs.SearchGrid(n_turbo=(1, 2), a_turbo_m2=(cs.SearchGrid().a_turbo_m2[2],), n_tip_speeds=3,
+        grid = cs.SearchGrid(n_turbo=(1, 2), a_turbo_m2=(FIXTURE_A_TURBO_M2[2],), n_tip_speeds=3,
                              n_drag=(0,), hub_ratios=(0.5,))
         res = cs.synthesize(inlet, mode=cs.MODE_STRICT, grid=grid, coefficient_evidence=ev)
         assert res["status"] == "EVALUATED"
@@ -241,7 +247,7 @@ def test_size_for_comparison_does_not_touch_size_for():
     before = cs.module_defaults()
     res = cs.synthesize(_inlet(), grid=cs.SearchGrid(n_drag=(0,)))
     front = [r for r in res["designs"] if r["id"] in res["pareto_ids"]]
-    sf = cs.size_for_comparison(_inlet(), 5.0, cs.SearchGrid().a_turbo_m2[1], front)
+    sf = cs.size_for_comparison(_inlet(), 5.0, FIXTURE_A_TURBO_M2[1], front)
     assert sf["size_for"]["objective"].startswith("mass + 0.02")
     assert sf["gate_status"] in (cs.ST_FEASIBLE, cs.ST_REJECTED)
     assert cs.module_defaults() == before
@@ -267,7 +273,8 @@ def test_committed_study_labels_and_structure(main_doc):
     for x in d["interface_demands"]:
         assert "PENDING" not in x["path"]                              # integration pass: real paths + ids
     assert d["open_owner_questions"] and d["m16_impact"][0]["state_after"] == "BLOCKED"
-    assert len(d["cases"]) == 27      # 3 W1-closed candidates x 9 cases (A9.16 regeneration; DC-S25-G10 no longer closes)
+    # 1 W1-closed candidate x 9 cases: after the A9.13 S6.8 domain gate only DC-S12-G20 closes (RVF-01 / PHY-01)
+    assert len(d["cases"]) == 9
     for c in d["cases"]:
         assert c["label"] == cs.LABEL_PARAMETRIC
         assert set(c["pareto_ids"]) <= set(c["pareto_with_S_ids"])
@@ -358,3 +365,8 @@ def test_rotor_density_evidence_must_be_finite_and_positive(bad):
     inlet = _inlet(label=cs.LABEL_INTERFACE, ev="model-derived")
     b = [x for x in cs.strict_blockers(inlet, ev) if x["id"] == "P-TI64-DENSITY"]
     assert b and b[0]["status"] == "NON_FINITE_OR_OUT_OF_DOMAIN"
+
+
+def test_search_grid_areas_follow_the_downselect_pin():
+    g = cs.SearchGrid().a_turbo_m2
+    assert g[0] == cs.A_INLET_MIN_B025_RANGE_M2[0] and g[2] == cs.A_INLET_MIN_B025_RANGE_M2[1]

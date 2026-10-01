@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """A9.7 F3 compressor geometry synthesis study (follow-on fo_a9_7_f3_compressor_synthesis).
 
-Runs abep_sim/design/compressor_synthesis.py over the 36 W1 candidate-cases of the DI-1.4 compressor down-selection
+Runs abep_sim/design/compressor_synthesis.py over the W1 candidate-cases of the DI-1.4 compressor down-selection
 requirement envelope (taken as PARAMETRIC_SENSITIVITY inlet records; the F1/F2 records exist but the F3 fronts are not
 rebuilt on them - F4 / F7 couple F1 -> F2 -> F3 directly, see IFD-F3-01/02 and the INT-01 limitation), and
 writes:
@@ -34,6 +34,7 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
 from abep_sim.design import compressor_synthesis as cs  # noqa: E402
+from abep_sim.design import owner_state as ost  # noqa: E402
 
 OUT_DIR_REL = "docs/design_synthesis/f3_compressor"
 SCRIPT_REL = f"{OUT_DIR_REL}/build_f3_compressor.py"
@@ -312,6 +313,7 @@ def build() -> tuple[dict, dict]:
          "supplied (CFRP also subject to the AO policy OD-C3)?", "proposed_answer": "only with a cited A/B-basis "
          "allowable and an AO disposition", "needed_by": "next F3 revision"},
     ]
+    open_owner_questions = ost.apply_to_questions(open_owner_questions)       # RVF-02: v5 answer state applied
     m16_impact = [{"row": 3, "key": "compressor", "state_before": "BLOCKED", "state_after": "BLOCKED",
                    "change": "none: this artifact is a model-derived PARAMETRIC_SENSITIVITY screening under uncited code "
                              "defaults (counts_as_evidence false); the blocking inputs remain compressor_downselect "
@@ -426,7 +428,7 @@ def render_md(doc: dict) -> str:
     A("")
     A("Every coefficient that is not searched is an uncited code default (compressor_downselect CD-01). For that reason "
       "**MODE_STRICT returns NOT_EVALUATED**, and every number below is a **PARAMETRIC_SENSITIVITY** result. None of "
-      "them is a design value, a CBE or a PASS. The inlet records are the 36 W1 candidate-cases of the DI-1.4 "
+      f"them is a design value, a CBE or a PASS. The inlet records are the {len(doc['cases'])} W1 candidate-cases of the DI-1.4 "
       "requirement envelope, which are PROPOSED and model-derived. The F1/F2 interface records exist, but this study's "
       "fronts are not rebuilt on them; F4 and F7 couple F1 -> F2 -> F3 directly over the F3 front union (a "
       "restriction recorded as a limitation in F4 / F7 / F9).")
@@ -498,10 +500,13 @@ def render_md(doc: dict) -> str:
     for d in doc["interface_demands"]:
         A(f"| {d['id']} | {d['direction']} | {d['counterpart']} | {d['path']} | {d['what']} | {d['status']} |")
     A("")
-    A("## Open owner questions (new)")
+    A("## Owner questions raised by this lane")
+    A("")
+    A(f"Status from `{ost.OQ5_REL}` (as raised: TBD_OWNER).")
     A("")
     for q in doc["open_owner_questions"]:
-        A(f"- **{q['id']}**: {q['question']} Proposed: {q['proposed_answer']}. Needed by: {q['needed_by']}.")
+        A(f"- **{q['id']}** ({q['status']}): {q['question']} Proposed (as raised): {q['proposed_answer']}. "
+          f"Needed by: {q['needed_by']}.")
     A("")
     A("## M16 impact")
     A("")

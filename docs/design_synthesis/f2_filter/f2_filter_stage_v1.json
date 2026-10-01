@@ -722,7 +722,7 @@
    "sources": [],
    "evidence": "definition",
    "interface_status": "NUMERIC by definition (FilterStage.none)",
-   "admissibility": "TBD_OWNER (F2-OQ-03): the RFP chain names a filter (RVM-08, secondary transcription)",
+   "admissibility": "ANSWERED A9.13 S6.5 NO_FILTER_REFERENCE_ONLY (F2-OQ-03): reference bound only, never an admissible architecture option (the RFP chain names a filter stage)",
    "ao_applicability": "not applicable (no element)",
    "candidate_status": "LISTED_ONLY_NO_SELECTION"
   },
@@ -820,7 +820,7 @@
    "evidence": "none",
    "interface_status": "all F2 interface parameters TBD (FilterStage.tbd): apply() refuses in evidence mode",
    "ao_applicability": "INCOMPLETE_EVIDENCE",
-   "candidate_status": "LISTED_ONLY_NO_SELECTION (admissibility TBD_OWNER, F2-OQ-02)"
+   "candidate_status": "LISTED_ONLY_NO_SELECTION (admissibility ANSWERED A9.13 S6.4 CATALYTIC_NOT_BASELINE, F2-OQ-02: not the baseline)"
   },
   {
    "id": "FC-07",
@@ -2266,7 +2266,7 @@
    "counterpart": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
    "content": "an APP-FILTER application (O / AO exposure at filter temperature, recombination probability and erosion yield criteria) would be needed; P4 today screens APP-ANODE and APP-COLLECTOR only",
    "units": "-",
-   "status": "TBD_OWNER (F2-OQ-04)"
+   "status": "ANSWERED A9.13 S6.6 COMPRESSOR_INLET_PLUS_APP_FILTER (F2-OQ-04: filter at the compressor inlet; P4 adds APP-FILTER)"
   },
   {
    "id": "F2-IF-09",
@@ -2298,25 +2298,41 @@
    "id": "F2-OQ-01",
    "question": "Which protection functions must the RFP filter stage provide (particulates / debris, compressor wear products, atomic O to downstream surfaces, ambient charged particles, backflow limitation), and against which quantitative acceptance?",
    "why": "the RFP chain names a filter but no function or acceptance is recorded in the repository; every capture efficiency is TBD",
-   "status": "TBD_OWNER"
+   "status": "ANSWERED (A9.13 S6.3, decision code PARTICULATE_DEBRIS_PROTECTION)",
+   "status_as_raised": "TBD_OWNER",
+   "owner_decision": "A9.13 S6.3",
+   "decision_code": "PARTICULATE_DEBRIS_PROTECTION",
+   "owner_state_source": "docs/budgets/owner_decisions/owner_questions_state_v5.json rows[id=F2-OQ-01]"
   },
   {
    "id": "F2-OQ-02",
    "question": "Is a deliberately catalytic (O -> O2 converting) filter element admissible, given owner row 102 (inert / low-recombination lining baseline to preserve the representative atomic-O fraction)?",
    "why": "FC-06 would trade downstream AO protection against the delivered species state",
-   "status": "TBD_OWNER"
+   "status": "ANSWERED (A9.13 S6.4, decision code CATALYTIC_NOT_BASELINE)",
+   "status_as_raised": "TBD_OWNER",
+   "owner_decision": "A9.13 S6.4",
+   "decision_code": "CATALYTIC_NOT_BASELINE",
+   "owner_state_source": "docs/budgets/owner_decisions/owner_questions_state_v5.json rows[id=F2-OQ-02]"
   },
   {
    "id": "F2-OQ-03",
    "question": "May trade studies carry 'no filter' (FC-00) as an admissible architecture option, or only as a reference bound because the RFP chain names a filter stage?",
    "why": "the RFP architecture text is recorded only as a secondary transcription (RVM-08, verify)",
-   "status": "TBD_OWNER"
+   "status": "ANSWERED (A9.13 S6.5, decision code NO_FILTER_REFERENCE_ONLY)",
+   "status_as_raised": "TBD_OWNER",
+   "owner_decision": "A9.13 S6.5",
+   "decision_code": "NO_FILTER_REFERENCE_ONLY",
+   "owner_state_source": "docs/budgets/owner_decisions/owner_questions_state_v5.json rows[id=F2-OQ-03]"
   },
   {
    "id": "F2-OQ-04",
    "question": "Where does the filter sit (ahead of the intake collimator, in the intake chamber, or at the compressor inlet), and should P4 add an APP-FILTER application for its material?",
    "why": "placement fixes the forward incidence (hyperthermal vs thermalised), the face area and the O exposure; P4 screens only anode and collector",
-   "status": "TBD_OWNER"
+   "status": "ANSWERED (A9.13 S6.6, decision code COMPRESSOR_INLET_PLUS_APP_FILTER)",
+   "status_as_raised": "TBD_OWNER",
+   "owner_decision": "A9.13 S6.6",
+   "decision_code": "COMPRESSOR_INLET_PLUS_APP_FILTER",
+   "owner_state_source": "docs/budgets/owner_decisions/owner_questions_state_v5.json rows[id=F2-OQ-04]"
   }
  ],
  "related_existing_open_questions": [

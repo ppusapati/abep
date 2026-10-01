@@ -48,7 +48,7 @@ LANE16_SCRIPT_REL = "scripts/architecture/build_feed_envelope.py"
 DECISION_REL = "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json"
 LANE25_DRAFT_REL = "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json"
 SCHEMA_ID = "feed_state_closure_v1"
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 BASE_COMMIT = "510e464fb8e128e4cf3325572a4d36ad33a4899d"
 ARCHITECTURES = ("hall_only", "rf_hall", "ecr_hall")
 ALTITUDES_KM = (180.0, 200.0, 230.0)
@@ -71,6 +71,13 @@ GEOMETRIES = {
     "G20": {"L_over_d": 20.0, "phi": 0.9, "label": "long channels: lowest forward transmission, highest passive CR"},
 }
 SETPOINT_LADDER_PA = (0.05, 0.1, 0.2, 0.3, 0.5, 1.0)   # PROPOSED valve-outlet pressure ladder (0.05 = HISTORY v1.0 ref.)
+# A9.13 S6.8 / OQ-F3-03 (docs/decisions/OD_2026_10_01_A9_13_*; shared rule abep_sim/design/upstream_a9_13.py): above the
+# 0.1 Pa free-molecular compressor domain every result is NOT_EVALUATED_OUT_OF_DOMAIN and no extrapolated > 0.1 Pa
+# result is a valid architecture point. Ladder setpoints above the limit are not run; an in-domain setpoint whose
+# compressor outlet / plenum / feed pressure exceeds the limit is reclassified the same way. Neither ever closes.
+ST_OOD = "NOT_EVALUATED_OUT_OF_DOMAIN"
+S68_RULE = ("A9.13 S6.8 / OQ-F3-03: above the 0.1 Pa free-molecular compressor domain every compressor / plenum result "
+            "is NOT_EVALUATED_OUT_OF_DOMAIN; no extrapolated > 0.1 Pa result may be treated as a valid architecture point")
 NOMINAL_SCATTERING = "maxwell"
 NOMINAL_ACCOMMODATION = 1.0
 NOMINAL_OFF_AXIS_DEG = 0.0
@@ -342,7 +349,7 @@ def compact(det: dict, atm: dict) -> dict:
            "compressor": {"turbo_rows": c["turbo_rows"], "n_stages": c["n_stages"], "rpm": c["rpm"],
                           "sized": c["sized"], "rotor_ok": c["rotor_ok"],
                           "rotor_qualification": c.get("rotor_qualification"), "sizing_mode": c.get("sizing_mode"),
-                          "CR_active": c["CR_active"],
+                          "CR_active": c["CR_active"], "p_out_Pa": c["p_out_Pa"],
                           "T_comp_K": c["T_comp_K"], "P_el_W": c["P_el_W"],
                           "T_clamp_active": not (300.0 <= c["T_comp_K"] <= 500.0)},
            "feed": None,
@@ -356,6 +363,41 @@ def compact(det: dict, atm: dict) -> dict:
                        "O_survival": ch["O_survival"], "residence_time_s": ch["residence_time_s"],
                        "valve_area_m2": ch["anode_orifice_area_m2"], "A_eff_m2": f["A_eff_m2"]}
     return out
+
+
+def _u13():
+    from abep_sim.design import upstream_a9_13 as u13
+    assert u13.NOT_EVALUATED_OOD == ST_OOD and u13.P_FREE_MOLECULAR_LIMIT_PA == 0.1
+    return u13
+
+
+def ood_run(setpoint: float, p_max, reason: str) -> dict:
+    """Run record of a NOT_EVALUATED_OUT_OF_DOMAIN point (A9.13 S6.8): no state, flow or compressor value is offered."""
+    return {"status": ST_OOD, "reasons": [f"{ST_OOD} (A9.13 S6.8): {reason}"],
+            "pressure_domain": {"status": ST_OOD, "setpoint_Pa": setpoint, "p_max_Pa": p_max,
+                                "limit_Pa": _u13().P_FREE_MOLECULAR_LIMIT_PA, "rule": "A9.13 S6.8"},
+            "eta_c": None, "CR_passive": None, "p_plenum_Pa": None, "compressor": None, "feed": None,
+            "sc_inputs": None}
+
+
+def domain_gated_run(fe, atm: dict, dv: dict, convention: str, setpoint: float) -> dict:
+    """run_chain behind the A9.13 S6.8 pressure-domain gate. A setpoint above 0.1 Pa is not run at all; an in-domain
+    setpoint is run and reclassified NOT_EVALUATED_OUT_OF_DOMAIN when any pressure the chain touches (compressor outlet,
+    plenum, valve-outlet feed) exceeds 0.1 Pa. A MODEL_ERROR / INFEASIBLE run keeps its status (no state is offered)."""
+    u13 = _u13()
+    if u13.pressure_domain_status(setpoint) != u13.DOMAIN_IN:
+        return ood_run(setpoint, setpoint, "valve setpoint above the 0.1 Pa free-molecular domain (not run)")
+    r = compact(fe.run_chain(atm, dv, convention), atm)
+    ps = [setpoint, r["p_plenum_Pa"], r["compressor"]["p_out_Pa"]] + ([r["feed"]["p_feed_Pa"]] if r["feed"] else [])
+    ps = [float(p) for p in ps if p is not None and math.isfinite(float(p))]
+    p_max = max(ps)
+    st = u13.pressure_domain_status(p_max)
+    if st != u13.DOMAIN_IN and r["status"] == "OK":
+        return ood_run(setpoint, p_max, "compressor-outlet / plenum / feed pressure above the 0.1 Pa free-molecular "
+                                        "domain (run withdrawn)")
+    r["pressure_domain"] = {"status": st, "setpoint_Pa": setpoint, "p_max_Pa": p_max,
+                            "limit_Pa": u13.P_FREE_MOLECULAR_LIMIT_PA, "rule": "A9.13 S6.8"}
+    return r
 
 
 def self_consistent_backflow(fe, dv: dict, run: dict, setpoint: float) -> dict:
@@ -445,7 +487,7 @@ def build() -> dict:
         for sp in SETPOINT_LADDER_PA:
             doc = candidate_design_inputs(fe, d, c["id"], g, c["intake_area_m2"], c["area_source"], sp)
             dv = fe.validate_design_inputs(doc)
-            ladder[c["id"]][f"{sp:g}"] = {cid_: compact(fe.run_chain(atms[cid_], dv, CONVENTION), atms[cid_])
+            ladder[c["id"]][f"{sp:g}"] = {cid_: domain_gated_run(fe, atms[cid_], dv, CONVENTION, sp)
                                          for cid_ in atms}
 
     # --- closure: common feasible setpoint band; nominal = lowest ladder value closing all nine cases
@@ -458,6 +500,13 @@ def build() -> dict:
         closure[c["id"]] = {
             "status": "CLOSED" if ok_sp else "NOT_CLOSED_ON_LADDER",
             "common_feasible_setpoints_Pa": ok_sp,
+            "pressure_domain_rule": S68_RULE,
+            "in_domain_setpoints_Pa": [sp for sp in SETPOINT_LADDER_PA
+                                       if _u13().pressure_domain_status(sp) == _u13().DOMAIN_IN],
+            "out_of_domain_runs": {f"{sp:g}": sorted(k for k in atms
+                                                     if ladder[c["id"]][f"{sp:g}"][k]["status"] == ST_OOD)
+                                   for sp in SETPOINT_LADDER_PA
+                                   if any(ladder[c["id"]][f"{sp:g}"][k]["status"] == ST_OOD for k in atms)},
             "nominal_setpoint_Pa": ok_sp[0] if ok_sp else None,
             "nominal_rule": "PROPOSED: lowest ladder setpoint that closes the chain (status OK) in all nine cases "
                             "(least compressor work; highest atomic-O survival)",
@@ -487,7 +536,7 @@ def build() -> dict:
                 doc["inputs"][k] = {"value": v, "source": s["source"], "evidence_class": "assumed"}
             dv = fe.validate_design_inputs(doc)
             conv = s.get("convention", CONVENTION)
-            sens[c["id"]][s["id"]] = {k: compact(fe.run_chain(atms[k], dv, conv), atms[k]) for k in atms}
+            sens[c["id"]][s["id"]] = {k: domain_gated_run(fe, atms[k], dv, conv, sp) for k in atms}
 
     # --- valve-outlet states per closed candidate: nominal + scenario range
     from abep_sim.intake import IntakeParams, collection
@@ -1114,7 +1163,10 @@ def slim(r: dict) -> dict:
     """Run record as stored in the JSON (the full nominal state is in `valve_outlet`)."""
     c = r["compressor"]
     out = {"status": r["status"], "reasons": r["reasons"],
-           "compressor": {k: c[k] for k in ("turbo_rows", "n_stages", "rpm", "P_el_W", "T_comp_K")}}
+           "compressor": None if c is None else {k: c[k] for k in ("turbo_rows", "n_stages", "rpm", "P_el_W",
+                                                                    "T_comp_K")}}
+    if "pressure_domain" in r:
+        out["pressure_domain"] = r["pressure_domain"]
     f = r["feed"]
     if f is not None:
         out["feed"] = {"mdot_total_kgps": f["mdot_total_kgps"], "p_feed_Pa": f["p_feed_Pa"], "T_feed_K": f["T_feed_K"],
@@ -1176,6 +1228,12 @@ def render_md(doc: dict) -> str:
       "valve in pressure-setpoint mode on the ladder "
       f"{doc['design_axes']['setpoint_ladder_Pa']} Pa. Each input's source and evidence class is in "
       "`design_input_documents` (lane-16 `feed_design_inputs_v1` format, validated by the lane-16 contract).")
+    a("")
+    a(f"**Pressure domain (A9.13 S6.8).** {S68_RULE}. Ladder setpoints above 0.1 Pa are therefore not run "
+      f"(`{ST_OOD}`), and an in-domain setpoint whose compressor outlet, plenum or valve-outlet pressure exceeds "
+      f"0.1 Pa is withdrawn with the same status. Closure, the common feasible band, the sensitivities, the test "
+      "points and the MFC range below use in-domain runs only; per-candidate out-of-domain runs are listed in "
+      "`closure.<id>.out_of_domain_runs`.")
     a("")
     a("| candidate | sizing | L/d | φ | area [m²] | C_D | η_c (design case) | CR_passive | closure | nominal P_feed [Pa] | common feasible P_feed [Pa] |")
     a("|---|---|---|---|---|---|---|---|---|---|---|")

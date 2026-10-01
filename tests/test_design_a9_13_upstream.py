@@ -50,8 +50,14 @@ def _inlet(p=0.013, label=cs.LABEL_PARAMETRIC, ev="assumed"):
     return cs.InletRecord("t", dict(MD), p, 350.0, label, "test fixture", ev)
 
 
+# Fixed unit-test turbo areas (the F3 grid areas before the A9.13 S6.8 W1 domain gate re-pinned the data-derived
+# A_INLET_MIN_B025_RANGE_M2; review findings RVF-01 / PHY-01). The unit tests below exercise the module on a fixed
+# geometry; they must not move when the W1-derived search grid moves. SearchGrid() itself is tested separately.
+FIXTURE_A_TURBO_M2 = (0.1128299365, math.pi * 0.25 ** 2, 0.2369348826)
+
+
 def _design(nt=2, ia=2, u=150.0, nd=0, mat="Ti6Al4V", nu=0.0):
-    a = cs.SearchGrid().a_turbo_m2[ia]
+    a = FIXTURE_A_TURBO_M2[ia]
     r = cs.r_turbo_from_area(a, nu)
     return {"id": "x", "N_turbo": nt, "A_turbo_m2": a, "R_turbo_m": r, "u_tip_turbo_mps": u,
             "rpm": cs.rpm_from_tip(u, r), "N_drag": nd, "rotor_material": mat, **cs.hub_geometry(a, nu)}
@@ -217,7 +223,7 @@ def test_transitional_candidate_is_never_consumed():
 
 # ================================================================================================= S6.9 / D-05 rotor gate
 def test_rotor_acceptance_only_through_registered_basis():
-    r = cs.evaluate_design(_design(u=200.0), _inlet())   # A9.16 re-pin: ia=2 is now the 0.237 m^2 inlet bound
+    r = cs.evaluate_design(_design(u=200.0), _inlet())   # ia=2: the fixed 0.237 m^2 fixture area
     assert r["status"] == cs.ST_FEASIBLE
     assert r["diagnostics"]["stress_case"] == cs.STRESS_CASE_LEGACY            # labelled legacy sensitivity
     assert r["rotor_structural_acceptance"] == rs.Q_NOT_EVALUATED_MATERIAL_BASIS

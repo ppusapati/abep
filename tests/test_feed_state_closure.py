@@ -384,3 +384,87 @@ def test_schema_rejects_missing_or_wrong_flight_status(doc):
     bad = copy.deepcopy(doc)
     bad["test_points"]["phase1_knee_N2"][0]["flight_status"] = FS_FLIGHT
     assert validate(bad, schema)
+
+
+# --------------------------------------------------------------------------- A9.13 S6.8 pressure domain (RVF-01, PHY-01)
+P_DOMAIN = 0.1
+
+
+def _all_ladder_runs(doc):
+    for cid, by_sp in doc["ladder_runs"].items():
+        for sp, runs in by_sp.items():
+            for k, r in runs.items():
+                yield cid, float(sp), k, r
+
+
+def test_s6_8_no_out_of_domain_closure(doc):
+    """No candidate closes, and no common feasible setpoint lies, above the 0.1 Pa free-molecular domain."""
+    for cid, cl in doc["closure"].items():
+        assert all(sp <= P_DOMAIN for sp in cl["common_feasible_setpoints_Pa"]), cid
+        assert cl["nominal_setpoint_Pa"] is None or cl["nominal_setpoint_Pa"] <= P_DOMAIN
+        for k, sps in cl["per_case_feasible_setpoints_Pa"].items():
+            assert all(sp <= P_DOMAIN for sp in sps), (cid, k)
+        assert all(sp <= P_DOMAIN for sp in cl["in_domain_setpoints_Pa"])
+
+
+def test_s6_8_ladder_runs_above_limit_are_not_evaluated(doc):
+    seen_ood = 0
+    for cid, sp, k, r in _all_ladder_runs(doc):
+        if sp > P_DOMAIN:
+            assert r["status"] == "NOT_EVALUATED_OUT_OF_DOMAIN", (cid, sp, k)
+            assert r["feed"] is None and r["compressor"] is None
+        if r["status"] == "NOT_EVALUATED_OUT_OF_DOMAIN":
+            seen_ood += 1
+            assert r["pressure_domain"]["p_max_Pa"] > P_DOMAIN
+            assert any("S6.8" in x for x in r["reasons"])
+        if r["status"] == "OK":
+            # every pressure an in-domain closed run touches (incl. the compressor outlet) is <= 0.1 Pa
+            assert r["pressure_domain"]["status"] == "IN_FREE_MOLECULAR_DOMAIN"
+            assert r["pressure_domain"]["p_max_Pa"] <= P_DOMAIN
+            assert r["feed"]["p_feed_Pa"] <= P_DOMAIN * (1 + 1e-9)
+    assert seen_ood > 0
+
+
+def test_s6_8_sensitivities_and_test_points_in_domain(doc):
+    for cid, by_s in doc["sensitivity_runs"].items():
+        for sid, runs in by_s.items():
+            for k, r in runs.items():
+                if r["status"] == "OK":
+                    assert r["pressure_domain"]["p_max_Pa"] <= P_DOMAIN, (cid, sid, k)
+    for phase, tps in doc["test_points"].items():
+        for t in tps:
+            assert t["P_feed_target_Pa"] <= P_DOMAIN, t["id"]
+    for rows in doc["valve_outlet"].values():
+        for r in rows.values():
+            assert r["nominal"]["setpoint_Pa"] <= P_DOMAIN
+            assert r["scenario_range"]["p_feed_Pa"]["max"] <= P_DOMAIN * (1 + 1e-9)
+
+
+def test_s6_8_gate_withdraws_compressor_outlet_above_limit():
+    """Unit check of the gate: an in-domain setpoint whose compressor outlet exceeds 0.1 Pa is withdrawn; a setpoint
+    above 0.1 Pa is never run."""
+    mod = _load(DIR / "build_feed_state_closure.py", "_w1_gate")
+
+    class FakeFE:
+        calls = 0
+
+        def __init__(self, p_out):
+            self.p_out = p_out
+
+        def run_chain(self, atm, dv, conv):
+            FakeFE.calls += 1
+            return {"status": "OK", "reasons": [], "eta_c": 0.3, "CR_passive": 200.0, "p_plenum_Pa": 1e-3,
+                    "compressor": {"turbo_rows": 1, "n_stages": 0, "rpm": 1.0, "sized": True, "rotor_ok": True,
+                                   "CR_active": 2.0, "p_out_Pa": self.p_out, "T_comp_K": 350.0, "P_el_W": 1.0},
+                    "mdot_to_compressor_kgps": 1e-6, "w_s_to_compressor": {"O": 1.0},
+                    "feed": {"mdot_total_kgps": 1e-6, "mdot_s_kgps": {}, "p_feed_Pa": 0.05, "T_gas_K": 350.0,
+                             "w_s": {}, "x_s": {}, "A_eff_m2": 1.0},
+                    "chamber": {"O_survival": 1.0, "residence_time_s": 1.0, "anode_orifice_area_m2": 1e-6}}
+
+    r = mod.domain_gated_run(FakeFE(0.12), {}, {}, "c", 0.05)
+    assert r["status"] == "NOT_EVALUATED_OUT_OF_DOMAIN" and r["feed"] is None
+    r = mod.domain_gated_run(FakeFE(0.08), {}, {}, "c", 0.05)
+    assert r["status"] == "OK" and r["pressure_domain"]["p_max_Pa"] == 0.08
+    n = FakeFE.calls
+    r = mod.domain_gated_run(FakeFE(0.08), {}, {}, "c", 0.2)
+    assert r["status"] == "NOT_EVALUATED_OUT_OF_DOMAIN" and FakeFE.calls == n

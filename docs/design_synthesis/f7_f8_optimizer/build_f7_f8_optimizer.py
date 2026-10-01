@@ -3,7 +3,7 @@
 
 Runs abep_sim/design/architecture_optimizer.py (F7) and abep_sim/design/robust_optimizer.py (F8) on the committed
 lane deliverables (F1 IF-A1 records and species table, F2/F4 filter cases, F3 compressor front union, F4 plenum grid,
-F5 x_Hall windows, F6 x_ICP definition, P1-P4 frameworks, mass/power v2, the A9-02 bus boundary, the RVM) and writes
+F5 x_Hall windows, F6 x_ICP definition, P1-P4 frameworks, mass/power v3, the A9-02 bus boundary, the RVM) and writes
 
   f7_f8_optimizer_v1.json         design-vector blocks, parameters, upstream Pareto summary, system evaluation
                                   (every system objective evaluated or refused with its unlock evidence), fail-closed
@@ -61,13 +61,14 @@ PINNED = (
 )
 REFERENCED_NOT_PINNED = (
     (ao.F2_REL, "F2 filter-stage deliverable (filter cases are built through abep_sim/design/filter_stage.py)"),
-    (ao.MP_REL, "mass/power v2: slot TBD texts, allocations, wet roll-ups (mutable package; identity checked)"),
+    (ao.MP_REL, "mass/power v3 (A9.15-applied): slot TBD texts, allocations, wet roll-ups (mutable package; "
+                "identity checked)"),
     (ao.P1_REL, "P1 ICP bench (ICP-45 status, I_d,max,H1 TBD)"),
     (ao.P2_REL, "P2 impedance-map preparation (no data)"),
     (ao.P3_REL, "P3 coupled thermal framework (fail-closed evaluations, items)"),
     (ao.P4_REL, "P4 anode / collector materials (gate matrix, fixed statuses)"),
     (ao.RVM_REL, "RVM A9 (requirement rows behind HARD_CONSTRAINTS; hall_status)"),
-    (ao.RFQ_REL, "RFQ v2 (RF chain procurement architecture)"),
+    (ao.RFQ_REL, "RFQ v3 (RF chain procurement architecture, A9.15-applied)"),
     (ao.ENS_REL, "transport ensemble (admitted members: credible set)"),
     (ao.VAL_REL, "P5-N2 v1 validation release (decision)"),
     (ao.PARITY_REL, "abep_core parity report (TPMC backend policy only; no TPMC is run)"),
@@ -77,7 +78,7 @@ REFERENCED_NOT_PINNED = (
     ("abep_sim/bus_boundary_a9.py", "A9-02 bus boundary (called, never modified)"),
     (ao.F5_BUILDER_REL, "F5 geometric_admissibility (imported by path, read-only)"),
 )
-IDENTITY = {ao.MP_REL: "mass_power_a9_v2", ao.P3_REL: "p3_coupled_thermal_v1", ao.P4_REL: "p4_anode_materials_v1",
+IDENTITY = {ao.MP_REL: "mass_power_a9_v3", ao.P3_REL: "p3_coupled_thermal_v2", ao.P4_REL: "p4_anode_materials_v1",
             ao.RVM_REL: "rvm_a9_v1", ao.P1_REL: "p1_icp_bench_v1", ao.P2_REL: "p2_impedance_prep_v1"}
 
 
@@ -317,12 +318,12 @@ def interface_demands():
       "fail-closed objective contract (F6-IF-S01)", "CONSUMED (bounds TBD, not searchable)")
     d("F78-ID-11", "P1 -> F7", ao.P1_REL, "ICP-45A result and registered I_d,max,H1 for I_e,cap - I_d,max",
       "DEMANDED (NOT_EVALUATED)")
-    d("F78-ID-12", "P2 / RFQ v2 -> F7", f"{ao.P2_REL}; {ao.RFQ_REL}", "RF ratings, match loss, flight source "
+    d("F78-ID-12", "P2 / RFQ v3 -> F7", f"{ao.P2_REL}; {ao.RFQ_REL}", "RF ratings, match loss, flight source "
       "efficiency (x_RF)", "DEMANDED (TBD_AFTER_IMPEDANCE_MAP)")
     d("F78-ID-13", "P3 -> F7", ao.P3_REL, "solved coupled network for Q_reject and the 50 K margin", "DEMANDED "
       "(INCOMPLETE_EVIDENCE)")
     d("F78-ID-14", "P4 -> F7", ao.P4_REL, "material gate evidence for life / material indicators", "DEMANDED")
-    d("F78-ID-15", "mass/power v2 -> F7", ao.MP_REL, "A9-02 slot TBD texts, allocations, evidence floors, wet "
+    d("F78-ID-15", "mass/power v3 -> F7", ao.MP_REL, "A9-02 slot TBD texts, allocations, evidence floors, wet "
       "roll-ups; F7 returns design-parametric masses in a separate column (never merged)", "CONSUMED / PROVIDED")
     d("F78-ID-16", "F7/F8 -> F9", "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json (F9-ID-07)",
       "upstream Pareto sets per context, robust Pareto set, full-system ranking status REFUSED_INCOMPLETE with the "

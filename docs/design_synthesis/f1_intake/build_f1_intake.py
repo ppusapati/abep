@@ -29,6 +29,7 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
 from abep_sim.design import intake_synthesis as F1  # noqa: E402
+from abep_sim.design import owner_state as ost  # noqa: E402
 from abep_sim.constants import RFP  # noqa: E402
 
 OUT_DIR_REL = "docs/design_synthesis/f1_intake"
@@ -47,7 +48,8 @@ PINNED = (
 )
 REFERENCED_NOT_PINNED = (
     ("abep_sim/intake_tpmc.py", "called (intake_response, clausing_transmission, IntakeGeometry defaults); not modified"),
-    ("abep_sim/intake.py", "IntakeSurface recombination convention examined (finding F1-01); not modified, not called"),
+    ("abep_sim/intake.py", "IntakeSurface recombination convention examined (finding F1-01, since fixed in "
+                          "abep_sim/intake_tpmc.py by A9.9 S2.1); not modified, not called"),
     ("abep_sim/atmosphere.py", "frozen dataset lookups (atmosphere()); not modified"),
     ("abep_sim/constants.py", "species masses, RFP thrust envelope; not modified"),
     ("abep_sim/materials.py", "Al6061 density cross-check (2700, literature-class prior)"),
@@ -161,13 +163,16 @@ def summarize(res, spec):
     out = []
     b = res["species_recombination_bias"]
     out.append({"id": "F1-01", "evidence_class": "model-derived",
-                "finding": f"abep_sim.intake.IntakeSurface recombines species rows by MASS fraction, but each species row's C_D is "
-                           f"normalised by the mixture dynamic pressure of the build atmosphere (C_D_row = (m_s/m_mean) C_D_s) "
-                           f"and CR_passive is a number-density ratio (mole weighting applies). At {b['node']} the IntakeSurface "
-                           f"convention gives C_D x{b['C_D_ratio']:.4f} and CR_passive x{b['CR_ratio']:.4f} relative to the "
-                           f"species-consistent recombination used here",
-                "handling": "not fixed (module change outside this lane; goldens would move); this lane recombines from the "
-                            "species rows directly; owner question F1Q-01"})
+                "finding": f"HISTORICAL (pre-fix production code, before owner decision A9.9 S2.1): "
+                           f"abep_sim.intake.IntakeSurface recombined species rows by MASS fraction, although each species "
+                           f"row's C_D is normalised by the mixture dynamic pressure of the build atmosphere (C_D_row = "
+                           f"(m_s/m_mean) C_D_s) and CR_passive is a number-density ratio (mole weighting applies). At "
+                           f"{b['node']} that pre-fix convention gives C_D x{b['C_D_ratio']:.4f} and CR_passive "
+                           f"x{b['CR_ratio']:.4f} relative to the species-consistent recombination (this lane's value; "
+                           f"the ratios quantify the superseded convention, re-evaluated from the species rows)",
+                "handling": f"FIXED in production: abep_sim/intake_tpmc.py IntakeSurface now recombines the species rows by "
+                            f"their physical definitions (F1Q-01 {ost.status_label('F1Q-01')}); this lane recombines "
+                            f"from the species rows directly, consistent with the fixed production code"})
     out.append({"id": "F1-02", "evidence_class": "model-derived",
                 "finding": "in the free-molecular TPMC every output (eta_c, C_D, K_back, CR_passive) is invariant to the channel "
                            "diameter d at fixed L/d (trajectories scale with R and L), and the geometric wall area 2 phi A L/d is "
@@ -212,7 +217,8 @@ def summarize(res, spec):
     out.append({"id": "F1-08", "evidence_class": "model-derived",
                 "finding": f"relative collection loss per degree of pointing (secant 0-{spec.theta_hi_deg:g} deg, design case) "
                            f"spans {min(oa):.4f}-{max(oa):.4f} per deg across candidates and scenarios",
-                "handling": "objective; the pointing budget itself is TBD (F1Q-03)"})
+                "handling": "objective; the pointing budget is an AOCS-envelope requirement (F1Q-03 "
+                            f"{ost.status_label('F1Q-03')}); its value is not yet supplied"})
     dom = {vname: {sid: v["counts"]["DOMINATED"] + v["counts"]["NONDOMINATED_WITHIN_NOISE"] for sid, v in vw.items()}
            for vname, vw in views.items()}
     out.append({"id": "F1-10", "evidence_class": "model-derived",
@@ -227,7 +233,8 @@ def summarize(res, spec):
                 "finding": f"m_intake is TBD for every candidate (wall thickness, coating and support fraction have no evidence). "
                            f"Under the labelled PARAMETRIC_SENSITIVITY_CASE SC-CODE-DEFAULT it spans {min(m):.2f}-{max(m):.2f} kg "
                            f"over the grid. Mass dominance uses (wall area, frontal area), which implies mass dominance for ANY "
-                           f"positive structural parameters", "handling": "owner question F1Q-02"})
+                           f"positive structural parameters", "handling": f"F1Q-02 {ost.status_label('F1Q-02')}: labelled budgeting "
+                                                       "assumption, sourced before LOCK-1"})
     return out
 
 
@@ -398,7 +405,7 @@ def build(progress=None):
              "content": "intake area and geometry rows (VALUE | TOLERANCE | EVIDENCE_CLASS | SOURCE | FREEZE_STATUS): none "
                         "freezable from this lane (alpha, structure, pointing, p_ref TBD)", "status": "PROVIDED"},
         ],
-        "open_owner_questions": [
+        "open_owner_questions": ost.apply_to_questions([
             {"id": "F1Q-01", "question": "IntakeSurface recombines species rows by mass fraction although its C_D rows are "
                                          "normalised by the mixture q and CR_passive needs mole weighting (finding F1-01). "
                                          "Authorise a controlled model change (goldens move, HISTORY entry), or keep the "
@@ -418,7 +425,7 @@ def build(progress=None):
                                          "rebuild) to replace the bounded direct TPMC used here off the build state?",
              "why_new": "feed_state_closure listed FC-07 only as a to-reach-B item; this lane needs it for precision",
              "status": "TBD_OWNER"},
-        ],
+        ]),
         "m16_impact": [
             {"m16_row": 1, "key": "intake", "state_change": "none: design-synthesis screening, no measurement; provides the "
              "Pareto sets as input to the open DI-1.1 / DI-1.2 decisions (blocking item unchanged)"},
@@ -539,7 +546,9 @@ def render_md(doc) -> str:
     for d in doc["interface_demands"]:
         a(f"| {d['id']} | {d['direction']} | {d['counterpart']} | {d['status']} | {d['content']} |")
     a("")
-    a("## Open owner questions (new)")
+    a("## Owner questions raised by this lane")
+    a(f"Status from `{ost.OQ5_REL}` (as raised: TBD_OWNER).")
+    a("")
     for q in doc["open_owner_questions"]:
         a(f"- **{q['id']}** ({q['status']}): {q['question']} _Why new:_ {q['why_new']}.")
     a("")
