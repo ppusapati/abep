@@ -73,14 +73,14 @@
   }
  ],
  "pending_lanes": {
-  "F0": "PENDING docs/performance/ (fo_a9_7_f0_profiling)",
-  "F1": "PENDING abep_sim/design/intake_synthesis.py (fo_a9_7_f1_intake_synthesis)",
-  "F2": "PENDING abep_sim/design/filter_stage.py (fo_a9_7_f2_filter_stage)",
-  "F3": "PENDING abep_sim/design/compressor_synthesis.py (fo_a9_7_f3_compressor_synthesis)",
-  "F4": "PENDING fo_a9_7_f4_plenum_feed (path not yet assigned)",
-  "F5": "PENDING docs/hardware/h1_freeze_candidate/ (fo_a9_7_f5_h1_freeze_candidate)",
-  "F7_F8": "PENDING fo_a9_7_f7_f8_coupled_optimizer (path not yet assigned)",
-  "F9": "PENDING fo_a9_7_f9_freeze_candidate (path not yet assigned)"
+  "F0": "docs/performance/PERFORMANCE_BASELINE_98fbbb9.json (fo_a9_7_f0_profiling)",
+  "F1": "abep_sim/design/intake_synthesis.py (fo_a9_7_f1_intake_synthesis)",
+  "F2": "abep_sim/design/filter_stage.py (fo_a9_7_f2_filter_stage)",
+  "F3": "abep_sim/design/compressor_synthesis.py (fo_a9_7_f3_compressor_synthesis)",
+  "F4": "abep_sim/design/plenum_feed.py (fo_a9_7_f4_plenum_feed)",
+  "F5": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json (fo_a9_7_f5_h1_freeze_candidate; IFS-F6-01..05, IFD-F6-01..03)",
+  "F7_F8": "abep_sim/design/architecture_optimizer.py (fo_a9_7_f7_f8_coupled_optimizer; F78-ID-10)",
+  "F9": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json (fo_a9_7_f9_freeze_candidate; F9-ID-06)"
  },
  "design_vector": {
   "variables": [
@@ -94,7 +94,7 @@
      "lo": "TBD",
      "hi": "TBD",
      "status": "TBD",
-     "requires": "KC-1 / ICP module drawing (ICD ICP-02) and the H-1 exit-plane definition IP-EXIT (F5 PENDING docs/hardware/h1_freeze_candidate/)",
+     "requires": "KC-1 / ICP module drawing (ICD ICP-02) and the H-1 exit-plane definition IP-EXIT (F5 H1F-EX-01 FREEZE_CANDIDATE; standoff H1F-EX-03 TBD)",
      "evidence_class": null
     },
     "maps_to": [
@@ -116,7 +116,7 @@
      "lo": "TBD",
      "hi": "TBD",
      "status": "TBD",
-     "requires": "frozen H-1 channel OD (F5 PENDING) and the MEASURED plume angular distribution (P3-H-03, Phase-1 Faraday probe) (ICD ICP-04)",
+     "requires": "frozen H-1 channel OD (F5 H1F-EX-04 TBD_AFTER_EVIDENCE) and the MEASURED plume angular distribution (P3-H-03, Phase-1 Faraday probe) (ICD ICP-04)",
      "evidence_class": null
     },
     "maps_to": [
@@ -551,7 +551,7 @@
     "rankable": false,
     "reason_today": "no cited H-1 field model or measurement exists",
     "needs": [
-     "H-1 magnetic-circuit field B(r, z) including the downstream near field out to z >= L_standoff + L_module (F5 PENDING docs/hardware/h1_freeze_candidate/; measured B(z) or a cited magnetostatic model)",
+     "H-1 magnetic-circuit field B(r, z) including the downstream near field out to z >= L_standoff + L_module (F5 H1F-EX-05 TBD_AFTER_EVIDENCE: FEMM of MC-1 and a measured B map; a cited magnetostatic model)",
      "magnetic properties (relative permeability, any magnetised parts) of every ICP-module component (materials OPEN / TBD)",
      "a cited field solver or a measured field map with and without the ICP module at registered coil currents",
      "an owner-defined disturbance metric and threshold (F6-OQ-04)"
@@ -609,7 +609,7 @@
   },
   "search_demonstration": {
    "status": "REFUSED",
-   "reason": "bound of L_standoff is TBD (requires: KC-1 / ICP module drawing (ICD ICP-02) and the H-1 exit-plane definition IP-EXIT (F5 PENDING docs/hardware/h1_freeze_candidate/)); a TBD bound is never replaced by an assumed value (A9.7 optimizer_rule)"
+   "reason": "bound of L_standoff is TBD (requires: KC-1 / ICP module drawing (ICD ICP-02) and the H-1 exit-plane definition IP-EXIT (F5 H1F-EX-01 FREEZE_CANDIDATE; standoff H1F-EX-03 TBD)); a TBD bound is never replaced by an assumed value (A9.7 optimizer_rule)"
   }
  },
  "items": [
@@ -619,7 +619,7 @@
    "value": "TBD",
    "units": "m",
    "basis": "design variable (x_ICP)",
-   "source": "bounds require: KC-1 / ICP module drawing (ICD ICP-02) and the H-1 exit-plane definition IP-EXIT (F5 PENDING docs/hardware/h1_freeze_candidate/)",
+   "source": "bounds require: KC-1 / ICP module drawing (ICD ICP-02) and the H-1 exit-plane definition IP-EXIT (F5 H1F-EX-01 FREEZE_CANDIDATE; standoff H1F-EX-03 TBD)",
    "evidence_class": null,
    "status": "TBD",
    "note": "maps to P3-G-01; used by view_factor_obstruction, plume_interception_fraction, hall_b_field_disturbance"
@@ -630,7 +630,7 @@
    "value": "TBD",
    "units": "m",
    "basis": "design variable (x_ICP)",
-   "source": "bounds require: frozen H-1 channel OD (F5 PENDING) and the MEASURED plume angular distribution (P3-H-03, Phase-1 Faraday probe) (ICD ICP-04)",
+   "source": "bounds require: frozen H-1 channel OD (F5 H1F-EX-04 TBD_AFTER_EVIDENCE) and the MEASURED plume angular distribution (P3-H-03, Phase-1 Faraday probe) (ICD ICP-04)",
    "evidence_class": null,
    "status": "TBD",
    "note": "maps to P3-G-02; used by view_factor_obstruction, plume_interception_fraction, module_mass"
@@ -812,7 +812,7 @@
     "L_b": 0.115
    },
    "units": "m",
-   "basis": "evaluation point for the geometric screening only (not the H-1 design; F5 PENDING docs/hardware/h1_freeze_candidate/ (fo_a9_7_f5_h1_freeze_candidate))",
+   "basis": "evaluation point for the geometric screening only (not the H-1 design; F5 docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json (fo_a9_7_f5_h1_freeze_candidate; IFS-F6-01..05, IFD-F6-01..03))",
    "source": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json radiative_view_parametric_study.h1_geometry (H2-5 range midpoints (ECHT analog + assumed; PENDING H2-1 / H2-7): evaluation point only, not the H-1 design; ids D_body_m H25-18, D_out_m H25-14, L_body_m H25-19, L_ch_m H25-12, h_ch_m H25-13, t_wall_m H25-15)",
    "evidence_class": "assumed",
    "status": "ANALOG_EVALUATION_ONLY",
@@ -3872,18 +3872,18 @@
   "f6_needs": [
    {
     "id": "F6-IF-N01",
-    "from": "F5 PENDING docs/hardware/h1_freeze_candidate/ (fo_a9_7_f5_h1_freeze_candidate)",
+    "from": "F5 docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json (fo_a9_7_f5_h1_freeze_candidate; IFS-F6-01..05, IFD-F6-01..03)",
     "what": "frozen H-1 front-face geometry at IP-EXIT (R_pf, R_i, R_o, R_ow, R_b, L_b) as a non-assumed record",
     "units": "m",
-    "status": "PENDING",
+    "status": "TBD_AFTER_EVIDENCE (F5 H1F-EX-04 exit-face channel OD TBD; H1F-EX-06 keep-out TBD)",
     "unlocks": "view_factor_obstruction EVALUATED_GEOMETRIC; plume interception geometry"
    },
    {
     "id": "F6-IF-N02",
-    "from": "F5 PENDING docs/hardware/h1_freeze_candidate/ (fo_a9_7_f5_h1_freeze_candidate)",
+    "from": "F5 docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json (fo_a9_7_f5_h1_freeze_candidate; IFS-F6-01..05, IFD-F6-01..03)",
     "what": "H-1 magnetic-circuit field B(r, z) including the downstream near field to z >= L_standoff + L_module (measured or cited model) and the coil operating envelope",
     "units": "T",
-    "status": "PENDING",
+    "status": "TBD_AFTER_EVIDENCE (F5 H1F-EX-05 MC-1 stray field TBD)",
     "unlocks": "hall_b_field_disturbance"
    },
    {
@@ -3938,19 +3938,19 @@
   "f6_supplies": [
    {
     "id": "F6-IF-S01",
-    "to": "F7/F8 PENDING fo_a9_7_f7_f8_coupled_optimizer (path not yet assigned)",
+    "to": "F7/F8 abep_sim/design/architecture_optimizer.py (fo_a9_7_f7_f8_coupled_optimizer; F78-ID-10)",
     "what": "x_ICP definition (DESIGN_VARIABLES), the eight-objective vector with per-objective status, and the fail-closed Pareto semantics (REFUSED_INCOMPLETE)",
     "status": "DEFINED (framework); values TBD"
    },
    {
     "id": "F6-IF-S02",
-    "to": "F9 PENDING fo_a9_7_f9_freeze_candidate (path not yet assigned)",
+    "to": "F9 docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json (fo_a9_7_f9_freeze_candidate; F9-ID-06)",
     "what": "downstream ICP geometry parameter rows VALUE | TOLERANCE | EVIDENCE_CLASS | SOURCE | FREEZE_STATUS: all TBD (INVESTIGATION_HYPOTHESIS)",
     "status": "TBD"
    },
    {
     "id": "F6-IF-S03",
-    "to": "F5 PENDING docs/hardware/h1_freeze_candidate/ (fo_a9_7_f5_h1_freeze_candidate)",
+    "to": "F5 docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json (fo_a9_7_f5_h1_freeze_candidate; IFS-F6-01..05, IFD-F6-01..03)",
     "what": "view-factor obstruction of the H-1 front zones vs ICP envelope (screening rows) for the H-1 radiative design; demand that B(r, z) covers the ICP region",
     "status": "COMPUTED_CONDITIONAL (assumed H-1 geometry)"
    },
@@ -3962,13 +3962,13 @@
    },
    {
     "id": "F6-IF-S05",
-    "to": "F0 PENDING docs/performance/ (fo_a9_7_f0_profiling)",
+    "to": "F0 docs/performance/PERFORMANCE_BASELINE_98fbbb9.json (fo_a9_7_f0_profiling)",
     "what": "a P3 ray / view-factor workload (96 envelopes x 4 emitters at (16, 32, 64) plus 8 at (32, 64, 128)) for profiling (Rust order item 6)",
     "status": "AVAILABLE (builder)"
    },
    {
     "id": "F6-IF-S06",
-    "to": "F1 / F2 / F3 / F4 (PENDING abep_sim/design/intake_synthesis.py (fo_a9_7_f1_intake_synthesis); PENDING abep_sim/design/filter_stage.py (fo_a9_7_f2_filter_stage); PENDING abep_sim/design/compressor_synthesis.py (fo_a9_7_f3_compressor_synthesis); PENDING fo_a9_7_f4_plenum_feed (path not yet assigned))",
+    "to": "F1 / F2 / F3 / F4 (abep_sim/design/intake_synthesis.py (fo_a9_7_f1_intake_synthesis); abep_sim/design/filter_stage.py (fo_a9_7_f2_filter_stage); abep_sim/design/compressor_synthesis.py (fo_a9_7_f3_compressor_synthesis); abep_sim/design/plenum_feed.py (fo_a9_7_f4_plenum_feed))",
     "what": "no direct geometric interface; carried flag: the ICP gas feed is unbooked (A9 recorder flag) and the dedicated ICP gas port stays capped (A9.3 OQ-RFQ-10) - any ICP gas demand on the feed path comes from P1 records, not from F6",
     "status": "NO_INTERFACE_NOW"
    }

@@ -148,11 +148,12 @@ def perturbed(rec: pf.IntakeState, area: float, se: Mapping, z_m: Mapping, z_p: 
 def plant_with_overrides(design: Mapping, overrides: Mapping | None = None) -> pf.CompressorPlant:
     """CompressorPlant exactly as plenum_feed.CompressorPlant.from_design builds it, with FIXED coefficients overridden
     (identical to from_design when overrides is empty: test)."""
+    cs.validate_design(design)
     kw = cs.module_defaults()
     for f, v in (overrides or {}).items():
         if cs.FIELD_ROLES.get(f, (None,))[0] != cs.FIXED:
             raise ao.OptimizerError(f"only FIXED compressor coefficients can be perturbed, not {f}")
-        kw[f] = v
+        kw[f] = cs.validate_coefficient(f, v)
     kw.update({"turbo_rows": int(design["N_turbo"]), "turbo_area_m2": float(design["A_turbo_m2"]),
                "turbo_radius_m": float(design.get("R_turbo_m", cs.r_turbo_from_area(float(design["A_turbo_m2"])))),
                "n_stages": int(design["N_drag"]), "rpm": float(design["rpm"]),
@@ -334,17 +335,23 @@ def compressor_elasticities(inp: ao.UpstreamInputs, cand: Mapping, scenarios: Se
     fc = inp.filters[cand["filter"]]
     base_kw = cs.module_defaults()
     out = {}
+    nominal_ok: dict = {}
     for coef in fixed_coefficients():
         c0 = float(base_kw[coef])
         worst = {"mdot_min": 0.0, "P_el_max": 0.0, "m_comp_max": 0.0}
         flip = False
         for sc in scenarios:
             states = [inp.records[(cand["candidate"], sc, st)] for st in STATES]
+            if sc not in nominal_ok:
+                nominal_ok[sc] = bool(_state_eval(states, fc, plant_with_overrides(design), pl,
+                                                  cand["P_set_Pa"])["all_ok"][0])
             evs = [_state_eval(states, fc, plant_with_overrides(design, {coef: c0 * f}), pl, cand["P_set_Pa"])
                    for f in (1.0 - step, 1.0 + step)]
             oks = [bool(e["all_ok"][0]) for e in evs]
+            # OPT-06: a flip is any perturbed status that differs from the NOMINAL status (both-infeasible around a
+            # feasible nominal point is a knife edge and is flagged too)
+            flip = flip or any(o != nominal_ok[sc] for o in oks)
             if not all(oks):
-                flip = flip or any(oks)
                 continue
             for k in worst:
                 lo, hi = evs[0][k][0], evs[1][k][0]

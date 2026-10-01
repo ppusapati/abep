@@ -20,7 +20,7 @@ This is not: an ICP design or geometry selection; a ranking, winner or PASS; an 
 | module_mass | minimize | kg | NOT_EVALUATED | False | mass needs every component's geometry and a cited density |
 
 Pareto filter: **REFUSED_INCOMPLETE** - refuse to rank unless every required objective of every feasible candidate is rankable (EVALUATED / EVALUATED_GEOMETRIC); no subset ranking; never a winner.
-Search: **REFUSED** - bound of L_standoff is TBD (requires: KC-1 / ICP module drawing (ICD ICP-02) and the H-1 exit-plane definition IP-EXIT (F5 PENDING docs/hardware/h1_freeze_candidate/)); a TBD bound is never replaced by an assumed value (A9.7 optimizer_rule)
+Search: **REFUSED** - bound of L_standoff is TBD (requires: KC-1 / ICP module drawing (ICD ICP-02) and the H-1 exit-plane definition IP-EXIT (F5 H1F-EX-01 FREEZE_CANDIDATE; standoff H1F-EX-03 TBD)); a TBD bound is never replaced by an assumed value (A9.7 optimizer_rule)
 
 Pareto choice: REFUSE (fail closed): no subset ranking, no INCOMPLETE-flagged order; reason in the module docstring.
 
@@ -28,8 +28,8 @@ Pareto choice: REFUSE (fail closed): no subset ranking, no INCOMPLETE-flagged or
 
 | id | symbol | units | bounds require | maps to |
 |---|---|---|---|---|
-| F6-X-01 | L_standoff | m | KC-1 / ICP module drawing (ICD ICP-02) and the H-1 exit-plane definition IP-EXIT (F5 PENDING docs/hardware/h1_freeze_candidate/) | P3-G-01 |
-| F6-X-02 | r_aperture | m | frozen H-1 channel OD (F5 PENDING) and the MEASURED plume angular distribution (P3-H-03, Phase-1 Faraday probe) (ICD ICP-04) | P3-G-02 |
+| F6-X-01 | L_standoff | m | KC-1 / ICP module drawing (ICD ICP-02) and the H-1 exit-plane definition IP-EXIT (F5 H1F-EX-01 FREEZE_CANDIDATE; standoff H1F-EX-03 TBD) | P3-G-01 |
+| F6-X-02 | r_aperture | m | frozen H-1 channel OD (F5 H1F-EX-04 TBD_AFTER_EVIDENCE) and the MEASURED plume angular distribution (P3-H-03, Phase-1 Faraday probe) (ICD ICP-04) | P3-G-02 |
 | F6-X-03 | r_module | m | module envelope (ICD ICP-07, ICP-47) | P3-G-03 |
 | F6-X-04 | L_module | m | module envelope (ICD ICP-07) | P3-G-04 |
 | F6-X-05 | tau_support | - | support drawing (ICD ICP-47) | P3-G-05 |
@@ -188,8 +188,8 @@ Limitations:
 
 | id | name | value | units | evidence class | status | source |
 |---|---|---|---|---|---|---|
-| F6-X-01 | L_standoff: axial standoff of the ICP module upstream face downstream of IP-EXIT | TBD | m |  | TBD | bounds require: KC-1 / ICP module drawing (ICD ICP-02) and the H-1 exit-plane definition IP-EXIT (F5 PENDING docs/hardware/h1_freeze_candidate/) |
-| F6-X-02 | r_aperture: ICP clear aperture radius (plume passage; open-tube coaxial first build, A9.3 OQ-VI-03) | TBD | m |  | TBD | bounds require: frozen H-1 channel OD (F5 PENDING) and the MEASURED plume angular distribution (P3-H-03, Phase-1 Faraday probe) (ICD ICP-04) |
+| F6-X-01 | L_standoff: axial standoff of the ICP module upstream face downstream of IP-EXIT | TBD | m |  | TBD | bounds require: KC-1 / ICP module drawing (ICD ICP-02) and the H-1 exit-plane definition IP-EXIT (F5 H1F-EX-01 FREEZE_CANDIDATE; standoff H1F-EX-03 TBD) |
+| F6-X-02 | r_aperture: ICP clear aperture radius (plume passage; open-tube coaxial first build, A9.3 OQ-VI-03) | TBD | m |  | TBD | bounds require: frozen H-1 channel OD (F5 H1F-EX-04 TBD_AFTER_EVIDENCE) and the MEASURED plume angular distribution (P3-H-03, Phase-1 Faraday probe) (ICD ICP-04) |
 | F6-X-03 | r_module: ICP module envelope outer radius (minimum necessary downstream obstruction, A9.2) | TBD | m |  | TBD | bounds require: module envelope (ICD ICP-07, ICP-47) |
 | F6-X-04 | L_module: ICP module envelope axial length | TBD | m |  | TBD | bounds require: module envelope (ICD ICP-07) |
 | F6-X-05 | tau_support: open-frame support geometric open-area fraction (gray, direction-independent approximation of the P3 engine) | TBD | - |  | TBD | bounds require: support drawing (ICD ICP-47) |
@@ -215,8 +215,8 @@ Limitations:
 
 F6 needs:
 
-- F6-IF-N01 from F5 PENDING docs/hardware/h1_freeze_candidate/ (fo_a9_7_f5_h1_freeze_candidate): frozen H-1 front-face geometry at IP-EXIT (R_pf, R_i, R_o, R_ow, R_b, L_b) as a non-assumed record [m] - PENDING (unlocks view_factor_obstruction EVALUATED_GEOMETRIC; plume interception geometry)
-- F6-IF-N02 from F5 PENDING docs/hardware/h1_freeze_candidate/ (fo_a9_7_f5_h1_freeze_candidate): H-1 magnetic-circuit field B(r, z) including the downstream near field to z >= L_standoff + L_module (measured or cited model) and the coil operating envelope [T] - PENDING (unlocks hall_b_field_disturbance)
+- F6-IF-N01 from F5 docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json (fo_a9_7_f5_h1_freeze_candidate; IFS-F6-01..05, IFD-F6-01..03): frozen H-1 front-face geometry at IP-EXIT (R_pf, R_i, R_o, R_ow, R_b, L_b) as a non-assumed record [m] - TBD_AFTER_EVIDENCE (F5 H1F-EX-04 exit-face channel OD TBD; H1F-EX-06 keep-out TBD) (unlocks view_factor_obstruction EVALUATED_GEOMETRIC; plume interception geometry)
+- F6-IF-N02 from F5 docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json (fo_a9_7_f5_h1_freeze_candidate; IFS-F6-01..05, IFD-F6-01..03): H-1 magnetic-circuit field B(r, z) including the downstream near field to z >= L_standoff + L_module (measured or cited model) and the coil operating envelope [T] - TBD_AFTER_EVIDENCE (F5 H1F-EX-05 MC-1 stray field TBD) (unlocks hall_b_field_disturbance)
 - F6-IF-N03 from P1 docs/experiments/hall_icp/p1_icp_bench/: icp45a_evaluate result (status EVALUATED_ENGINEERING_ONLY) per BUILT ICP geometry, bound by geometry_id and p1_record_id; derive_rf P_RF_DELIVERED at the same capacity record [A; W] - TBD_AFTER_EVIDENCE (ICP45 NOT_EVALUATED; I_d,max,H1 not registered) (unlocks electron_current_capacity, rf_power_delivered)
 - F6-IF-N04 from P2 docs/experiments/hall_icp/p2_impedance_map/: validated MEASURED p2_impedance_map_v1 per built geometry (binding carries map content_sha256) [ohm; W] - TBD_AFTER_IMPEDANCE_MAP (unlocks rf_match_loss_fraction)
 - F6-IF-N05 from P3 docs/experiments/hall_icp/p3_coupled_thermal/ (P3-IF-N01 / N02 via P1): measured collector currents, T_e and V_plasma at the collector sheath edge (P3Q-01 OPEN) [A; eV; V] - TBD_AFTER_EVIDENCE (unlocks collector_heating)
@@ -226,12 +226,12 @@ F6 needs:
 
 F6 supplies:
 
-- F6-IF-S01 to F7/F8 PENDING fo_a9_7_f7_f8_coupled_optimizer (path not yet assigned): x_ICP definition (DESIGN_VARIABLES), the eight-objective vector with per-objective status, and the fail-closed Pareto semantics (REFUSED_INCOMPLETE) - DEFINED (framework); values TBD
-- F6-IF-S02 to F9 PENDING fo_a9_7_f9_freeze_candidate (path not yet assigned): downstream ICP geometry parameter rows VALUE | TOLERANCE | EVIDENCE_CLASS | SOURCE | FREEZE_STATUS: all TBD (INVESTIGATION_HYPOTHESIS) - TBD
-- F6-IF-S03 to F5 PENDING docs/hardware/h1_freeze_candidate/ (fo_a9_7_f5_h1_freeze_candidate): view-factor obstruction of the H-1 front zones vs ICP envelope (screening rows) for the H-1 radiative design; demand that B(r, z) covers the ICP region - COMPUTED_CONDITIONAL (assumed H-1 geometry)
+- F6-IF-S01 to F7/F8 abep_sim/design/architecture_optimizer.py (fo_a9_7_f7_f8_coupled_optimizer; F78-ID-10): x_ICP definition (DESIGN_VARIABLES), the eight-objective vector with per-objective status, and the fail-closed Pareto semantics (REFUSED_INCOMPLETE) - DEFINED (framework); values TBD
+- F6-IF-S02 to F9 docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json (fo_a9_7_f9_freeze_candidate; F9-ID-06): downstream ICP geometry parameter rows VALUE | TOLERANCE | EVIDENCE_CLASS | SOURCE | FREEZE_STATUS: all TBD (INVESTIGATION_HYPOTHESIS) - TBD
+- F6-IF-S03 to F5 docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json (fo_a9_7_f5_h1_freeze_candidate; IFS-F6-01..05, IFD-F6-01..03): view-factor obstruction of the H-1 front zones vs ICP envelope (screening rows) for the H-1 radiative design; demand that B(r, z) covers the ICP region - COMPUTED_CONDITIONAL (assumed H-1 geometry)
 - F6-IF-S04 to P3 docs/experiments/hall_icp/p3_coupled_thermal/: screening rows at the P3 verification resolution with a convergence check (complements the P3 parametric study; no P3 file changed) - COMPUTED_CONDITIONAL
-- F6-IF-S05 to F0 PENDING docs/performance/ (fo_a9_7_f0_profiling): a P3 ray / view-factor workload (96 envelopes x 4 emitters at (16, 32, 64) plus 8 at (32, 64, 128)) for profiling (Rust order item 6) - AVAILABLE (builder)
-- F6-IF-S06 to F1 / F2 / F3 / F4 (PENDING abep_sim/design/intake_synthesis.py (fo_a9_7_f1_intake_synthesis); PENDING abep_sim/design/filter_stage.py (fo_a9_7_f2_filter_stage); PENDING abep_sim/design/compressor_synthesis.py (fo_a9_7_f3_compressor_synthesis); PENDING fo_a9_7_f4_plenum_feed (path not yet assigned)): no direct geometric interface; carried flag: the ICP gas feed is unbooked (A9 recorder flag) and the dedicated ICP gas port stays capped (A9.3 OQ-RFQ-10) - any ICP gas demand on the feed path comes from P1 records, not from F6 - NO_INTERFACE_NOW
+- F6-IF-S05 to F0 docs/performance/PERFORMANCE_BASELINE_98fbbb9.json (fo_a9_7_f0_profiling): a P3 ray / view-factor workload (96 envelopes x 4 emitters at (16, 32, 64) plus 8 at (32, 64, 128)) for profiling (Rust order item 6) - AVAILABLE (builder)
+- F6-IF-S06 to F1 / F2 / F3 / F4 (abep_sim/design/intake_synthesis.py (fo_a9_7_f1_intake_synthesis); abep_sim/design/filter_stage.py (fo_a9_7_f2_filter_stage); abep_sim/design/compressor_synthesis.py (fo_a9_7_f3_compressor_synthesis); abep_sim/design/plenum_feed.py (fo_a9_7_f4_plenum_feed)): no direct geometric interface; carried flag: the ICP gas feed is unbooked (A9 recorder flag) and the dedicated ICP gas port stays capped (A9.3 OQ-RFQ-10) - any ICP gas demand on the feed path comes from P1 records, not from F6 - NO_INTERFACE_NOW
 
 ## New open owner questions
 

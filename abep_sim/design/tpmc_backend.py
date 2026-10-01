@@ -21,11 +21,26 @@ What this module is not: it is not wired into archengine, intake.py, the frozen 
 benchmark; nothing in the repository selects the Rust backend by default; no Rust result is authoritative.
 Documented divergences of the Rust backend (refusals for inputs the reference does not handle): max_hits < 1 (the
 reference never terminates), scattering other than 'maxwell' / 'cll' (the reference silently treats it as Maxwell),
-CLL accommodation outside [0, 1] (the reference raises or returns NaN).
+CLL accommodation outside [0, 1] (the reference raises or returns NaN). DIV-04 (recorded after registration, consolidated
+verification round 1, RUST-02; outside the registered comparison set): the Rust trace_channel refuses max_hits_cap < 1,
+whereas the reference accepts max_hits_cap = 0 (its hit-budget doubling then stops after max_hits steps). This wrapper
+refuses that input for backend='rust' with a correct message before the extension is called; the Python backend keeps
+the reference behaviour.
+
+Admission gate (consolidated verification round 1, RUST-01): backend='rust' is served only when (1) the parity report
+exists, (2) the importable extension's sha256 equals the report's build_provenance.extension_sha256, (3) every source
+file recorded in build_provenance.source_sha256 (abep_core sources, this wrapper, the Python reference) is unchanged,
+and (4) the called kernel's verdict is ADMITTED. Otherwise the call RAISES ``RustBackendNotAdmitted`` (label
+NOT_ADMITTED_BUILD); there is no fallback. The pre-registered parity campaign itself (scripts/verify_abep_core.py) runs
+the unadmitted build inside ``parity_campaign_unadmitted()``, which is its only legitimate use.
 """
 from __future__ import annotations
 
+import contextlib
+import hashlib
 import importlib
+import json
+import os
 
 import numpy as np
 
@@ -40,8 +55,126 @@ PARITY_PREREG = "docs/performance/abep_core/parity_prereg_v1.json"
 PARITY_REPORT = "docs/performance/abep_core/parity_report_v1.json"
 
 
+REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+KERNEL_IDS = {"flux_weighted_entry": "K1_entry", "diffuse": "K2_diffuse", "cll": "K3_cll",
+              "trace_channel": "K4_trace", "clausing_transmission": "K5_clausing"}
+NOT_ADMITTED_BUILD = "NOT_ADMITTED_BUILD"
+_UNADMITTED_ALLOWED = False
+
+
 class RustBackendUnavailable(RuntimeError):
     """backend='rust' was requested but the abep_core extension is not importable (never silently replaced)."""
+
+
+class RustBackendNotAdmitted(RuntimeError):
+    """backend='rust' was requested but the importable build / sources / kernel verdict do not match the parity report
+    (NOT_ADMITTED_BUILD; never silently replaced)."""
+
+
+@contextlib.contextmanager
+def parity_campaign_unadmitted():
+    """Allow the unadmitted extension ONLY inside the pre-registered parity campaign / its --recompute check."""
+    global _UNADMITTED_ALLOWED
+    prev = _UNADMITTED_ALLOWED
+    _UNADMITTED_ALLOWED = True
+    try:
+        yield
+    finally:
+        _UNADMITTED_ALLOWED = prev
+
+
+def _sha256(path: str) -> str | None:
+    try:
+        with open(path, "rb") as fh:
+            return hashlib.sha256(fh.read()).hexdigest()
+    except OSError:
+        return None
+
+
+def extension_sha256(mod) -> str | None:
+    """sha256 of the compiled extension file of an imported abep_core (None if it cannot be located)."""
+    p = _extension_path(mod)
+    return _sha256(p) if p else None
+
+
+def admission_status(mod, kernel: str | None = None) -> tuple[bool, str]:
+    """(admitted, reason) for serving ``kernel`` (a KERNEL_IDS value) from the imported extension ``mod``."""
+    try:
+        with open(os.path.join(REPO, PARITY_REPORT)) as fh:
+            rep = json.load(fh)
+    except (OSError, ValueError) as exc:
+        return False, f"parity report unavailable ({exc})"
+    bp = rep.get("build_provenance", {})
+    want = bp.get("extension_sha256")
+    got = extension_sha256(mod)
+    if not want or got != want:
+        return False, f"extension sha256 {got} != parity-report build {want}"
+    changed = [rel for rel, h in bp.get("source_sha256", {}).items() if _sha256(os.path.join(REPO, rel)) != h]
+    if changed:
+        return False, f"sources differ from the parity-report build: {changed}"
+    if kernel is not None and rep.get("verdicts", {}).get(kernel) != "ADMITTED":
+        return False, f"kernel {kernel} verdict {rep.get('verdicts', {}).get(kernel)!r} is not ADMITTED"
+    return True, "ADMITTED build (extension and sources match the parity report)"
+
+
+# RUST-R1-01: the full admission check (json-load of the parity report + sha256 of the sources and the extension) is
+# cached per process. The cache key is a stat fingerprint (path, st_mtime_ns, st_size, st_ino) of the parity report,
+# the extension file and every source listed in the report; any change re-runs the full sha256 validation, so a cached
+# verdict is never served for files that changed on disk since it was computed.
+_ADMISSION_CACHE: dict = {}
+
+
+def _stat_key(path: str):
+    try:
+        st = os.stat(path)
+    except OSError:
+        return (path, None)
+    return (path, st.st_mtime_ns, st.st_size, st.st_ino)
+
+
+def _extension_path(mod) -> str | None:
+    d = os.path.dirname(getattr(mod, "__file__", "") or "")
+    if not d or not os.path.isdir(d):
+        return None
+    so = sorted(f for f in os.listdir(d) if f.endswith((".so", ".pyd")))
+    return os.path.join(d, so[0]) if so else None
+
+
+def _report_sources(report_key) -> tuple:
+    """Source paths listed in the parity report's build provenance (re-read only when the report's stat changes)."""
+    hit = _ADMISSION_CACHE.get(("sources", report_key))
+    if hit is not None:
+        return hit
+    try:
+        with open(os.path.join(REPO, PARITY_REPORT)) as fh:
+            srcs = tuple(sorted(json.load(fh).get("build_provenance", {}).get("source_sha256", {})))
+    except (OSError, ValueError):
+        srcs = ()
+    _ADMISSION_CACHE[("sources", report_key)] = srcs
+    return srcs
+
+
+def admission_fingerprint(mod) -> tuple:
+    """Cheap stat fingerprint of everything admission_status reads (no hashing)."""
+    rk = _stat_key(os.path.join(REPO, PARITY_REPORT))
+    ext = _extension_path(mod)
+    return (rk, _stat_key(ext) if ext else None,
+            tuple(_stat_key(os.path.join(REPO, rel)) for rel in _report_sources(rk)))
+
+
+def admission_status_cached(mod, kernel: str | None = None) -> tuple[bool, str]:
+    """admission_status, re-validated in full only when the stat fingerprint of the report, the extension or a listed
+    source changes (once per process otherwise)."""
+    key = ("verdict", id(mod), kernel, admission_fingerprint(mod))
+    hit = _ADMISSION_CACHE.get(key)
+    if hit is None:
+        hit = admission_status(mod, kernel)
+        _ADMISSION_CACHE[key] = hit
+    return hit
+
+
+def clear_admission_cache() -> None:
+    _ADMISSION_CACHE.clear()
 
 
 def _load_rust():
@@ -69,7 +202,7 @@ def rust_unavailable_reason() -> str | None:
     return _load_rust()[1]
 
 
-def _check_backend(backend: str):
+def _check_backend(backend: str, fn: str | None = None):
     if backend not in BACKENDS:
         raise ValueError(f"tpmc_backend: backend must be one of {BACKENDS}, got {backend!r}")
     if backend == "rust":
@@ -78,6 +211,12 @@ def _check_backend(backend: str):
             raise RustBackendUnavailable(
                 f"tpmc_backend: backend='rust' requested but abep_core is unavailable ({why}). No fallback to the "
                 "Python reference is made; call with backend='python' to use the reference.")
+        if not _UNADMITTED_ALLOWED:
+            ok, why = admission_status_cached(mod, KERNEL_IDS.get(fn) if fn else None)
+            if not ok:
+                raise RustBackendNotAdmitted(
+                    f"tpmc_backend: backend='rust' refused ({NOT_ADMITTED_BUILD}: {why}). No fallback to the Python "
+                    "reference is made; call with backend='python' to use the reference.")
         return mod
     return None
 
@@ -99,7 +238,7 @@ def _as_rows(a, name):
 # --------------------------------------------------------------------------------------------------------------------
 def flux_weighted_entry(rng, n, V, theta, T, m, *, backend: str = DEFAULT_BACKEND):
     """Reference ``_flux_weighted_entry(rng, n, V, theta, T, m)``: float64 (n, 3) entry velocities."""
-    mod = _check_backend(backend)
+    mod = _check_backend(backend, "flux_weighted_entry")
     if mod is None:
         return _ref._flux_weighted_entry(rng, n, V, theta, T, m)
     return mod.flux_weighted_entry(rust_seed(rng), int(n), float(V), float(theta), float(T), float(m))
@@ -107,7 +246,7 @@ def flux_weighted_entry(rng, n, V, theta, T, m, *, backend: str = DEFAULT_BACKEN
 
 def diffuse(rng, n, T_w, m, normal, *, backend: str = DEFAULT_BACKEND):
     """Reference ``_diffuse(rng, n, T_w, m, normal)``: cosine-law re-emission about the (n, 3) unit normals."""
-    mod = _check_backend(backend)
+    mod = _check_backend(backend, "diffuse")
     if mod is None:
         return _ref._diffuse(rng, n, T_w, m, normal)
     nr = _as_rows(normal, "normal")
@@ -118,7 +257,7 @@ def diffuse(rng, n, T_w, m, normal, *, backend: str = DEFAULT_BACKEND):
 
 def cll(rng, v_in, normal, T_w, m, alpha_n, alpha_t, *, backend: str = DEFAULT_BACKEND):
     """Reference ``_cll(rng, v_in, normal, T_w, m, alpha_n, alpha_t)`` (normal points into the gas)."""
-    mod = _check_backend(backend)
+    mod = _check_backend(backend, "cll")
     if mod is None:
         return _ref._cll(rng, v_in, normal, T_w, m, alpha_n, alpha_t)
     return mod.cll(rust_seed(rng), _as_rows(v_in, "v_in"), _as_rows(normal, "normal"), float(T_w), float(m),
@@ -129,7 +268,11 @@ def trace_channel(rng, v0, R, L, alpha, T_w, m, max_hits=200, scattering="maxwel
                   unresolved_tol=1e-3, max_hits_cap=5000, *, backend: str = DEFAULT_BACKEND):
     """Reference ``trace_channel``: returns (collected mask, final velocities, wall hits, back mask, unresolved
     fraction) with the reference dtypes (bool, float64 (n,3), int64, bool, float)."""
-    mod = _check_backend(backend)
+    if backend == "rust" and int(max_hits_cap) < 1:
+        raise ValueError("tpmc_backend.trace_channel: backend='rust' refuses max_hits_cap < 1 (documented divergence "
+                         "DIV-04: the reference accepts max_hits_cap = 0 and stops after max_hits steps); use "
+                         "backend='python' for that input")
+    mod = _check_backend(backend, "trace_channel")
     if mod is None:
         return _ref.trace_channel(rng, v0, R, L, alpha, T_w, m, max_hits=max_hits, scattering=scattering,
                                   alpha_n=alpha_n, alpha_t=alpha_t, unresolved_tol=unresolved_tol,
@@ -144,7 +287,7 @@ def trace_channel(rng, v0, R, L, alpha, T_w, m, max_hits=200, scattering="maxwel
 
 def clausing_transmission(rng, R, L, alpha, T_w, m, n=20000, *, backend: str = DEFAULT_BACKEND):
     """Reference ``clausing_transmission``: K_back for thermal molecules entering from the plenum side."""
-    mod = _check_backend(backend)
+    mod = _check_backend(backend, "clausing_transmission")
     if mod is None:
         return _ref.clausing_transmission(rng, R, L, alpha, T_w, m, n=n)
     return float(mod.clausing_transmission(rust_seed(rng), float(R), float(L), float(alpha), float(T_w), float(m),
@@ -159,6 +302,8 @@ def backend_info() -> dict:
     if mod is None:
         info["rust_unavailable_reason"] = why
     else:
+        ok, reason = admission_status(mod)
         info.update({"abep_core_version": mod.__version__, "rng_algorithm": mod.RNG_ALGORITHM,
-                     "abep_core_file": getattr(mod, "__file__", None)})
+                     "abep_core_file": getattr(mod, "__file__", None), "build_admitted": ok,
+                     "build_admission_reason": reason})
     return info

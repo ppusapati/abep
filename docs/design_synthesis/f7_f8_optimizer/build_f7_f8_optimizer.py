@@ -312,7 +312,7 @@ def interface_demands():
     d("F78-ID-14", "P4 -> F7", ao.P4_REL, "material gate evidence for life / material indicators", "DEMANDED")
     d("F78-ID-15", "mass/power v2 -> F7", ao.MP_REL, "A9-02 slot TBD texts, allocations, evidence floors, wet "
       "roll-ups; F7 returns design-parametric masses in a separate column (never merged)", "CONSUMED / PROVIDED")
-    d("F78-ID-16", "F7/F8 -> F9", "PENDING docs/architecture/freeze_candidate/ (fo_a9_7_f9_freeze_candidate)",
+    d("F78-ID-16", "F7/F8 -> F9", "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json (F9-ID-07)",
       "upstream Pareto sets per context, robust Pareto set, full-system ranking status REFUSED_INCOMPLETE with the "
       "unlock evidence map; F9 carries sets, never a silently selected point", "PROVIDED")
     d("F78-ID-17", "F7/F8 -> F0", "docs/performance/", "workload: F7 steady sweeps + F8 Monte Carlo (CPU printed by "
@@ -469,6 +469,14 @@ def robust_section(f8):
 
 def assemble(inp, blocks, pars, f7sum, totals, sysd, f8):
     lim = [
+        "INT-01 (consolidated verification round 1): x_compressor is searched only over the union of the F3 per-case "
+        "Pareto ids (32 designs, as in F4), and those F3 fronts were built on the down-selection envelope inlets, not "
+        "on the F1-coupled states coupled here. F3's inlet-independent gates (N_drag = 0, Ti-6Al-4V, cited tip speed "
+        "<= 305.5 m/s) admit 48 designs. Every F7 upstream Pareto set and the F8 robust set are therefore 'Pareto "
+        "within the F3 front-union subset': the consolidated-verification evidence for INT-01 (a re-run over all 48) "
+        "reports 9 of the 10 nominal contexts changing (members added, and some committed members dominated by an "
+        "excluded design, e.g. T4-A0-U2-D0). Searching "
+        "all 48 designs is an open follow-up; no set here is a Pareto set over the admissible compressor space",
         "every upstream number inherits PARAMETRIC_SENSITIVITY inputs: uncited DragCompressor coefficients (F3), "
         "parametric filter cases (F2/F4), the assumed isothermal 350 K chain (F4-P-01), the parametric leak (F4-P-05)",
         "steady operating points only in the F7 search; transient quality enters as the open-loop ripple transfer "

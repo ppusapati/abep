@@ -199,7 +199,8 @@ def test_committed_outputs_consistent():
     tab = doc["species_table"]
     i_src, i_state = tab["columns"].index("source"), tab["columns"].index("state_id")
     assert all(r[i_state] == F1.DESIGN_STATE.id for r in tab["rows"] if r[i_src] == "FROZEN_SURFACE")
-    assert any(d["counterpart"] == "PENDING abep_sim/design/filter_stage.py" for d in doc["interface_demands"])
+    assert any(d["counterpart"].startswith("abep_sim/design/filter_stage.py") for d in doc["interface_demands"])
+    assert not any("PENDING" in d["counterpart"] for d in doc["interface_demands"])     # integration pass
 
 
 def test_lane_files_hygiene():
@@ -210,3 +211,42 @@ def test_lane_files_hygiene():
     imports = [ln for ln in (REPO / "abep_sim/design/intake_synthesis.py").read_text().splitlines()
                if ln.startswith(("import ", "from "))]
     assert not any(x in ln for ln in imports for x in ("filter_stage", "compressor_synthesis", "archengine"))
+
+
+# ------------------------------------------------------------------------- consolidated verification round 1
+@pytest.mark.parametrize("args", [(-5.0, 0.9, 1.0, 0.0, "maxwell", "N2"), (10.0, 1.5, 1.0, 0.0, "maxwell", "N2"),
+                                  (10.0, -0.2, 1.0, 0.0, "maxwell", "N2"), (10.0, 0.9, 1.7, 0.0, "maxwell", "N2"),
+                                  (10.0, 0.9, -0.3, 0.0, "maxwell", "N2"), (10.0, 0.9, 1.0, 95.0, "maxwell", "N2"),
+                                  (10.0, 0.9, 1.0, float("nan"), "maxwell", "N2"),
+                                  (10.0, 0.9, 1.0, 0.0, "specular", "N2"), (10.0, 0.9, 1.0, 0.0, "maxwell", "Ar")])
+def test_evaluator_refuses_out_of_domain_inputs(args):
+    """SW-04: no TPMC is run and no number returned outside the evaluator domain (no silent Maxwell fallback)."""
+    ev = F1.Evaluator(n_direct=50)
+    L, phi, alpha, theta, kern, sp = args
+    with pytest.raises(F1.IntakeInputError):
+        ev.point(F1.DESIGN_STATE, L, phi, alpha, theta, kern, sp)
+    assert ev.direct_runs == 0
+
+
+@pytest.mark.parametrize("bad", [(-0.5, 5.0, 10.0, 0.9), (0.5, 0.0, 10.0, 0.9), (0.5, 5.0, -1.0, 0.9),
+                                 (0.5, 5.0, 10.0, 1.2), (0.5, 5.0, 10.0, 0.0)])
+def test_geometry_candidate_refuses_invalid(bad):
+    with pytest.raises(F1.IntakeInputError):
+        F1.GeometryCandidate(*bad)
+
+
+def test_cache_keys_are_exact_states():
+    """SW-05 (CLAUDE.md rule 5): a 200.4 km state never shares a cache entry or seed with the 200 km design state."""
+    s = F1.OrbitState(200.4, 150.0)
+    assert s.id != F1.DESIGN_STATE.id and s.key != F1.DESIGN_STATE.key
+    assert F1.DESIGN_STATE.id == "h200_f150"
+    ev = F1.Evaluator(n_direct=50)
+    a = ev.atm(s)
+    b = ev.atm(F1.DESIGN_STATE)
+    assert a is not b and a["rho"] != b["rho"]
+
+
+def test_pareto_filter_non_finite_row_not_evaluated():
+    """OPT-04: a NaN objective is NOT_EVALUATED and never dominates a fully evaluated row."""
+    st = F1.pareto_filter([_row("good"), _row("nan_row", mdot_captured_kgps=2.0, drag_N=float("nan"))])
+    assert st == {"good": "NONDOMINATED", "nan_row": "NOT_EVALUATED_NON_FINITE_OBJECTIVE"}

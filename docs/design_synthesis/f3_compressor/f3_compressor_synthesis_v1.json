@@ -864,7 +864,7 @@
     "id": "INLET",
     "what": "inlet record DC-S12-G10/alt180_low",
     "status": "PARAMETRIC_SENSITIVITY",
-    "needs": "an F1/F2 interface record (PENDING abep_sim/design/intake_synthesis.py, PENDING abep_sim/design/filter_stage.py) with non-assumed evidence"
+    "needs": "an F1/F2 interface record (abep_sim/design/intake_synthesis.py F1-ID-03, abep_sim/design/filter_stage.py F2-IF-03) with non-assumed evidence"
    },
    {
     "id": "P-TI64-DENSITY",
@@ -889,7 +889,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S12-G10/cases/alt180_low (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 180.0,
@@ -1076,7 +1076,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S12-G10/cases/alt180_mean (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 180.0,
@@ -1262,7 +1262,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S12-G10/cases/alt180_high (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 180.0,
@@ -1447,7 +1447,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S12-G10/cases/alt200_low (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 200.0,
@@ -1638,7 +1638,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S12-G10/cases/alt200_mean (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 200.0,
@@ -1828,7 +1828,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S12-G10/cases/alt200_high (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 200.0,
@@ -2018,7 +2018,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S12-G10/cases/alt230_low (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 230.0,
@@ -2207,7 +2207,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S12-G10/cases/alt230_mean (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 230.0,
@@ -2398,7 +2398,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S12-G10/cases/alt230_high (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 230.0,
@@ -2589,7 +2589,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S12-G20/cases/alt180_low (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 180.0,
@@ -2791,7 +2791,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S12-G20/cases/alt180_mean (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 180.0,
@@ -2983,7 +2983,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S12-G20/cases/alt180_high (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 180.0,
@@ -3168,7 +3168,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S12-G20/cases/alt200_low (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 200.0,
@@ -3368,7 +3368,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S12-G20/cases/alt200_mean (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 200.0,
@@ -3567,7 +3567,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S12-G20/cases/alt200_high (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 200.0,
@@ -3763,7 +3763,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S12-G20/cases/alt230_low (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 230.0,
@@ -3966,7 +3966,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S12-G20/cases/alt230_mean (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 230.0,
@@ -4168,7 +4168,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S12-G20/cases/alt230_high (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 230.0,
@@ -4366,7 +4366,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S25-G10/cases/alt180_low (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 180.0,
@@ -4534,7 +4534,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S25-G10/cases/alt180_mean (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 180.0,
@@ -4702,7 +4702,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S25-G10/cases/alt180_high (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 180.0,
@@ -4820,7 +4820,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S25-G10/cases/alt200_low (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 200.0,
@@ -4936,7 +4936,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S25-G10/cases/alt200_mean (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 200.0,
@@ -5053,7 +5053,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S25-G10/cases/alt200_high (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 200.0,
@@ -5170,7 +5170,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S25-G10/cases/alt230_low (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 230.0,
@@ -5285,7 +5285,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S25-G10/cases/alt230_mean (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 230.0,
@@ -5401,7 +5401,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S25-G10/cases/alt230_high (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 230.0,
@@ -5517,7 +5517,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S25-G20/cases/alt180_low (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 180.0,
@@ -5705,7 +5705,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S25-G20/cases/alt180_mean (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 180.0,
@@ -5887,7 +5887,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S25-G20/cases/alt180_high (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 180.0,
@@ -6068,7 +6068,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S25-G20/cases/alt200_low (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 200.0,
@@ -6255,7 +6255,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S25-G20/cases/alt200_mean (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 200.0,
@@ -6441,7 +6441,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S25-G20/cases/alt200_high (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 200.0,
@@ -6625,7 +6625,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S25-G20/cases/alt230_low (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 230.0,
@@ -6806,7 +6806,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S25-G20/cases/alt230_mean (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 230.0,
@@ -6989,7 +6989,7 @@
     "T_K": 350.0,
     "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S25-G20/cases/alt230_high (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
-    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
     "extra": {
      "altitude_km": 230.0,
@@ -7204,23 +7204,23 @@
    "id": "IFD-F3-01",
    "direction": "requires",
    "counterpart": "F1 (fo_a9_7_f1_intake_synthesis)",
-   "path": "PENDING abep_sim/design/intake_synthesis.py",
-   "what": "intake-exit state per species (mdot_s, P, T) feeding F2; until it exists the study uses PARAMETRIC_SENSITIVITY inlets from the down-selection requirement envelope",
-   "status": "PENDING"
+   "path": "abep_sim/design/intake_synthesis.py (F1-ID-03)",
+   "what": "intake-exit state per species (mdot_s, P, T) feeding F2. The F1 records exist, but this study's fronts use PARAMETRIC_SENSITIVITY inlets from the down-selection requirement envelope; F4 (abep_sim/design/plenum_feed.py F4-ID-01/05) and F7 couple F1 -> F3 at the F1 states over the F3 front union only (INT-01 limitation recorded in F4 / F7 / F9)",
+   "status": "AVAILABLE_NOT_CONSUMED_BY_THIS_STUDY (coupled in F4 / F7)"
   },
   {
    "id": "IFD-F3-02",
    "direction": "requires",
    "counterpart": "F2 (fo_a9_7_f2_filter_stage)",
-   "path": "PENDING abep_sim/design/filter_stage.py",
-   "what": "filter-outlet record = compressor inlet: compressor_synthesis.InletRecord fields (mdot_kgps per O/N2/O2, p_total_Pa, T_K, source, evidence_class, label F1_F2_INTERFACE_RECORD); optional p_species_Pa must follow the DragCompressor convention (partial pressure proportional to number flow) or is refused",
-   "status": "PENDING"
+   "path": "abep_sim/design/filter_stage.py (F2-IF-03)",
+   "what": "filter-outlet record = compressor inlet: compressor_synthesis.InletRecord fields (mdot_kgps per O/N2/O2, p_total_Pa, T_K, source, evidence_class, label F1_F2_INTERFACE_RECORD); optional p_species_Pa must follow the DragCompressor convention (partial pressure proportional to number flow) or is refused. Every F2 filter record is TBD / PARAMETRIC (no evidenced filter); F4 couples the filter cases",
+   "status": "AVAILABLE_NOT_CONSUMED_BY_THIS_STUDY (F2 records TBD / PARAMETRIC; coupled in F4)"
   },
   {
    "id": "IFD-F3-03",
    "direction": "provides",
    "counterpart": "F1 / F2",
-   "path": "PENDING abep_sim/design/intake_synthesis.py; PENDING abep_sim/design/filter_stage.py",
+   "path": "abep_sim/design/intake_synthesis.py (F1-ID-04); abep_sim/design/filter_stage.py (F2-IF-04)",
    "what": "compressor inlet pumping speed S_turbo [m^3/s] per design (sets the plenum backflow / K_back coupling) and the GAEDE_CHARACTERISTIC_CLIPPED rejection (inlet pressure not self-consistent with the throughput)",
    "status": "AVAILABLE (PARAMETRIC_SENSITIVITY)"
   },
@@ -7228,7 +7228,7 @@
    "id": "IFD-F3-04",
    "direction": "provides",
    "counterpart": "F4 (fo_a9_7_f4_plenum_feed)",
-   "path": "PENDING F4 plenum/feed module (wave B; path not yet assigned)",
+   "path": "abep_sim/design/plenum_feed.py (F4-ID-05)",
    "what": "per design: P_out, mdot_s delivered, x_s,out (partial pressure) and delivered-flow x_s, T_gas and T_compressor, P_compressor",
    "status": "AVAILABLE (PARAMETRIC_SENSITIVITY)"
   },
@@ -7236,7 +7236,7 @@
    "id": "IFD-F3-05",
    "direction": "requires",
    "counterpart": "F4 (fo_a9_7_f4_plenum_feed)",
-   "path": "PENDING F4 plenum/feed module (wave B; path not yet assigned)",
+   "path": "abep_sim/design/plenum_feed.py (F4-ID-06)",
    "what": "downstream plenum back-pressure / feed-control boundary (DragCompressor computes P_out from a fixed inlet; a coupled plenum must close p_out against the H-1 demand)",
    "status": "TBD"
   },
@@ -7244,7 +7244,7 @@
    "id": "IFD-F3-06",
    "direction": "requires",
    "counterpart": "F5 (fo_a9_7_f5_h1_freeze_candidate)",
-   "path": "PENDING docs/hardware/h1_freeze_candidate/",
+   "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json (IFD-F3-01, IFD-F4-01..05: TBD)",
    "what": "H-1 inlet demand (mdot_s, P, T, x_s); the W1 setpoints used here are PROPOSED references only",
    "status": "TBD"
   },
@@ -7252,7 +7252,7 @@
    "id": "IFD-F3-07",
    "direction": "provides",
    "counterpart": "F0 (fo_a9_7_f0_profiling)",
-   "path": "PENDING docs/performance/",
+   "path": "docs/performance/PERFORMANCE_BASELINE_98fbbb9.json",
    "what": "compressor design-space search workload: 540 designs x 36 inlets via `python docs/design_synthesis/f3_compressor/build_f3_compressor.py` (a few CPU seconds); size_for comparison 108 calls",
    "status": "AVAILABLE"
   },

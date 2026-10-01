@@ -136,11 +136,12 @@ def _var(i, sym, name, units, kind, bound_source, maps_to, used_by):
 
 DESIGN_VARIABLES = (
     _var("F6-X-01", "L_standoff", "axial standoff of the ICP module upstream face downstream of IP-EXIT", "m",
-         "continuous", "KC-1 / ICP module drawing (ICD ICP-02) and the H-1 exit-plane definition IP-EXIT (F5 PENDING "
-         "docs/hardware/h1_freeze_candidate/)", ["P3-G-01"],
+         "continuous", "KC-1 / ICP module drawing (ICD ICP-02) and the H-1 exit-plane definition IP-EXIT (F5 "
+         "H1F-EX-01 FREEZE_CANDIDATE; standoff H1F-EX-03 TBD)", ["P3-G-01"],
          ["view_factor_obstruction", "plume_interception_fraction", "hall_b_field_disturbance"]),
     _var("F6-X-02", "r_aperture", "ICP clear aperture radius (plume passage; open-tube coaxial first build, A9.3 "
-         "OQ-VI-03)", "m", "continuous", "frozen H-1 channel OD (F5 PENDING) and the MEASURED plume angular "
+         "OQ-VI-03)", "m", "continuous", "frozen H-1 channel OD (F5 H1F-EX-04 TBD_AFTER_EVIDENCE) and the MEASURED "
+         "plume angular "
          "distribution (P3-H-03, Phase-1 Faraday probe) (ICD ICP-04)", ["P3-G-02"],
          ["view_factor_obstruction", "plume_interception_fraction", "module_mass"]),
     _var("F6-X-03", "r_module", "ICP module envelope outer radius (minimum necessary downstream obstruction, A9.2)",
@@ -405,7 +406,7 @@ def rf_matching_objective(p2_map, binding, geometry_id):
 # ---- Hall B-field disturbance
 B_FIELD_NEEDS = (
     "H-1 magnetic-circuit field B(r, z) including the downstream near field out to z >= L_standoff + L_module "
-    "(F5 PENDING docs/hardware/h1_freeze_candidate/; measured B(z) or a cited magnetostatic model)",
+    "(F5 H1F-EX-05 TBD_AFTER_EVIDENCE: FEMM of MC-1 and a measured B map; a cited magnetostatic model)",
     "magnetic properties (relative permeability, any magnetised parts) of every ICP-module component (materials "
     "OPEN / TBD)",
     "a cited field solver or a measured field map with and without the ICP module at registered coil currents",
@@ -437,7 +438,7 @@ RES_CONVERGENCE = (32, 64, 128)
 
 def h1_record_from_p3(p3_doc):
     """The H-1 evaluation geometry the P3 parametric study used (H2-5 range midpoints; evidence_class assumed):
-    an evaluation point, not the H-1 design (F5 PENDING)."""
+    an evaluation point, not the H-1 design (F5 H1F-EX-04 / H1F-EX-05 TBD_AFTER_EVIDENCE)."""
     g = p3_doc["radiative_view_parametric_study"]["h1_geometry"]
     return {"value": {k: g["values_m"][k] for k in H1_KEYS}, "units": "m", "evidence_class": g["evidence_class"],
             "source": P3_JSON_REL + " radiative_view_parametric_study.h1_geometry (" + g["basis"] + "; ids "
@@ -494,8 +495,8 @@ def vf_objective(vals, tbd, h1_rec, res=RES_SCREEN):
     if miss:
         return _result(name, NOT_EVALUATED, reason="design variables TBD: " + ", ".join(miss))
     if h1_rec is None:
-        return _result(name, NOT_EVALUATED, reason="no H-1 front geometry record (F5 PENDING "
-                       "docs/hardware/h1_freeze_candidate/)")
+        return _result(name, NOT_EVALUATED, reason="no H-1 front geometry record (F5 H1F-EX-04 exit-face channel "
+                       "OD TBD_AFTER_EVIDENCE, docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json)")
     r = view_factor_obstruction(vals, h1_rec, res)
     ec = h1_rec["evidence_class"]
     st = geometric_status(ec)
@@ -667,7 +668,10 @@ def evaluate(x, context=None, res=RES_SCREEN):
                        "note": "necessary condition only (AL-05 owner allocation, not a CBE; never a PASS)"}
     infeasible = alloc_check["status"] == "EXCEEDS_ALLOCATION"
     return {"geometry_id": gid, "status": "INFEASIBLE" if infeasible else "EVALUATED_VECTOR",
-            "hard_constraints": "VIOLATED" if infeasible else "SATISFIED_FOR_GIVEN_VARIABLES",
+            # OPT-05: an unevaluated allocation check is never worded as satisfied
+            "hard_constraints": "VIOLATED" if infeasible else (
+                "SATISFIED_FOR_GIVEN_VARIABLES" if alloc_check["status"] == "NOT_EXCEEDING_ALLOCATION"
+                else "NOT_EVALUATED (geometric hard constraints met; AL-05 allocation check NOT_EVALUATED)"),
             "tbd_variables": tbd, "objectives": objs, "al05_check": alloc_check,
             "not_rankable": [k for k, o in objs.items() if not o["rankable"]],
             "rankable": all(o["rankable"] for o in objs.values()) and not infeasible,
@@ -693,8 +697,15 @@ def nondominated(points, directions):
     """Indices of the non-dominated points (pure arithmetic; ties are all kept)."""
     if any(d not in ("minimize", "maximize") for d in directions):
         raise F6Error("directions must be minimize / maximize")
-    return [i for i, p in enumerate(points)
-            if not any(_dominates(q, p, directions) for j, q in enumerate(points) if j != i)]
+    # OPT-04: points with a non-finite component are excluded (never nondominated, never a dominator)
+    def _fin(v):
+        try:
+            return not isinstance(v, bool) and math.isfinite(float(v))
+        except (TypeError, ValueError):
+            return False
+    ok = [all(_fin(v) for v in p) for p in points]
+    return [i for i, p in enumerate(points) if ok[i]
+            and not any(_dominates(q, p, directions) for j, q in enumerate(points) if j != i and ok[j])]
 
 
 def pareto_filter(evaluations):

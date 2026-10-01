@@ -372,8 +372,10 @@ def upstream_sets() -> dict:
 
 def _hc09_note() -> str:
     cs = [c for c in get("F78", "/system_evaluation/constraint_status_counts") if c[1] == "HC-09"]
-    assert cs and all(c[2] == "MET_ON_SUPPLIED_VALUES" for c in cs), "HC-09 status changed in F7"
-    return "HC-09 MET_ON_SUPPLIED_VALUES in " + ", ".join(f"{c[0]}: {c[3]}" for c in cs) + " evaluations (F7)"
+    st = "MET_ON_PARAMETRIC_VALUES_SENSITIVITY_ONLY_NOT_MET"
+    assert cs and all(c[2] == st for c in cs), "HC-09 status changed in F7"
+    return (f"HC-09 {st} in " + ", ".join(f"{c[0]}: {c[3]}" for c in cs) + " evaluations (F7; a parametric value is "
+            "sensitivity information only and never counts as a met hard constraint)")
 
 
 def _rng(vals) -> list:
@@ -444,7 +446,8 @@ def build_upstream(rows: list, us: dict) -> None:
     drag = [m["drag_intake_max_N"] for m in mem]
     P(rows, "AFC-UP-IN-09", S, "intake", "intake-face drag of the robust set (max over orbit states)",
       {"kind": "PARETO_SET", "robust_set_range_N": _rng(drag), "hard_constraint": "HC-09 intake-face drag <= 25 mN "
-       "(necessary, not sufficient; MET_ON_SUPPLIED_VALUES for every nominal Pareto evaluation)"},
+       "(necessary, not sufficient; below the limit on PARAMETRIC values for every nominal Pareto evaluation, "
+       "so sensitivity only: never counted as met)"},
       units="N", tolerance="TPMC statistical SE ~1e-4 relative (F8-02); the TBD surface scenario dominates",
       ec_note=_hc09_note(),
       ec="model-derived", label="PARETO_SET", sources=[rob, ref("F78", find("F78", "/hard_constraints", "id", "HC-09"))],
@@ -870,9 +873,19 @@ def build_system(rows: list) -> None:
                                       ref("BUS", "/slots")],
       basis="A9-02 slot register; variants not installed: " + ", ".join(
           get("MP2", "/power/configurations/hall_icp_neutralizer/variant_options_not_installed")),
-      fs="FREEZE_CANDIDATE", label="RULE")
+      fs="OPEN", label="RULE",
+      adv=["H1F-MC-02 (coil arrangement) reaching FREEZE_CANDIDATE: the hall_magnet_trim slot and the one-slot-per-"
+           "coil split follow the OPEN coil arrangement (H1F-CO-14)"],
+      note="consolidated verification round 2 (PHY-03): the slot register is an A9-02 rule, but its Hall magnet slots "
+           "(inner / outer / trim) are contingent on H1F-MC-02 (OPEN), so the row is OPEN, not FREEZE_CANDIDATE")
     P(rows, "AFC-SY-PPU-04", S, "ppu", "Hall magnet supplies", busv("A902-31"), units="-", tolerance=T_RULE,
-      ec="owner-allocation", sources=[bus("A902-31")], basis="A9-02 A902-31", fs="FREEZE_CANDIDATE", label="RULE")
+      ec="assumed", ec_note="A902-31 evidence class 'n/a (rule)', source H2-1 H21-27 (assumed (requirement)); the "
+      "current-control / per-reading recording part is owner row 78 + HW-MC-02 (AFC-H1F-CO-01); the channel count "
+      "follows the OPEN coil arrangement H1F-MC-02 (AFC-H1F-CO-14)",
+      sources=[bus("A902-31"), ref("F5", find("F5", "/parameters", "id", "H1F-CO-14"))],
+      basis="A9-02 A902-31; H1F-CO-14", fs="OPEN", label="RULE",
+      adv=["H1F-MC-02 (coil arrangement) reaching FREEZE_CANDIDATE (owner decision or design evidence for single "
+           "coils per pole and the trim-coil provision)"])
     P(rows, "AFC-SY-PPU-05", S, "ppu", "RF quantity crossing the bus boundary", busv("A902-19"), units="-",
       tolerance=T_RULE, ec="owner-allocation", sources=[bus("A902-19"), ref("MP2", "/power/icp_rf_chain")],
       basis="A9-02 / A9.2", fs="FREEZE_CANDIDATE", label="RULE")
@@ -1501,6 +1514,11 @@ def build() -> dict:
         "what_this_is_not": [
             "not a frozen architecture and not FROZEN_REFERENCE_FLIGHT_ARCHITECTURE",
             "not a selection: Pareto sets are carried, no representative point is chosen (F9-OQ-01)",
+            "not a Pareto set over the admissible compressor space: the F7 / F8 sets (and every UPSTREAM PARETO_SET row "
+            "here) are Pareto within the F3 front-union subset (32 of the 48 designs passing F3's inlet-independent "
+            "gates; INT-01 limitation recorded in F4 / F7)",
+            "lane interface statuses quoted from F1..F7 are the lanes' own records after the A9.7 integration pass "
+            "(counterparts resolved to merged paths and record ids); F9-ID-01..08 record what F9 consumed",
             "no Hall performance number: credible Hall set empty, P5-N2 v1 INCONCLUSIVE; withdrawn 0-D results unused",
             "no PASS, no winner; no owner question answered",
             "no existing module, frozen dataset, decision, CLAUDE.md or HISTORY modified; not wired into archengine",

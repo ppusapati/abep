@@ -837,7 +837,8 @@ def interface_demands() -> list:
         {"id": "F4-ID-09", "direction": "F5 -> F4", "counterpart": "docs/hardware/h1_freeze_candidate/ (IFD-F4-06, IFD-F4-07)",
          "content": "Xe anode-feed mode and the contamination limit: NOT_EVALUATED here (Xe path not modelled; filter "
                     "'none' carries no protection function)", "status": "NOT_EVALUATED"},
-        {"id": "F4-ID-10", "direction": "F4 -> F7/F8", "counterpart": "PENDING fo_a9_7_f7_f8_coupled_optimizer",
+        {"id": "F4-ID-10", "direction": "F4 -> F7/F8", "counterpart": "abep_sim/design/architecture_optimizer.py; "
+         "abep_sim/design/robust_optimizer.py (F78-ID-07)",
          "content": "x_plenum = (V, Kp, Ti, f_valve, authority) and the API steady_operating_point / steady_sweep / "
                     "transient_case / orbit_quasi_static; MODE_STRICT refuses until the blockers close", "status": "AVAILABLE"},
         {"id": "F4-ID-11", "direction": "F4 -> F0", "counterpart": "docs/performance/",
@@ -846,7 +847,8 @@ def interface_demands() -> list:
         {"id": "F4-ID-12", "direction": "F4 <-> H2-3", "counterpart": "docs/hardware/h2/h2_3_gas_path_plenum/",
          "content": "plenum volume, metering-valve bandwidth / authority, wall recombination class (GP-D03), compressor "
                     "ripple (H23-17); F4 evaluates them parametrically", "status": "DEMANDED (TBD)"},
-        {"id": "F4-ID-13", "direction": "F4 -> F9", "counterpart": "PENDING fo_a9_7_f9_freeze_candidate",
+        {"id": "F4-ID-13", "direction": "F4 -> F9", "counterpart": "docs/architecture/freeze_candidate/"
+         "architecture_freeze_candidate_v1.json (F9-ID-04)",
          "content": "plenum / valve / feed rows: VALUE TBD, PARAMETRIC_SENSITIVITY ranges only", "status": "INFORMATIONAL"},
     ]
 
@@ -970,7 +972,8 @@ def assemble(inp, agg, psf, basis, tr, par, sens, ov, conv, checks, offered) -> 
              "status": "PARAMETRIC_SENSITIVITY"},
             {"id": "x_plenum.authority", "value": AUTHORITY, "units": "-", "basis": "F4-P-09", "source": "SRC-H23 H23-07",
              "evidence_class": "TBD", "status": "PARAMETRIC_SENSITIVITY"},
-            {"id": "x_compressor", "value": inp["f3_ids"], "units": "-", "basis": "union of the F3 per-case Pareto ids",
+            {"id": "x_compressor", "value": inp["f3_ids"], "units": "-", "basis": "union of the F3 per-case Pareto ids "
+             "(a subset of the 48 designs passing F3's inlet-independent gates; INT-01 limitation)",
              "source": "SRC-F3", "evidence_class": "model-derived (PARAMETRIC_SENSITIVITY)", "status": "INPUT_SET"},
             {"id": "x_intake", "value": {"area_m2": list(inp["areas"]), "candidates_d_collapsed": 48,
                                          "scenarios": list(inp["scenarios"]), "states": list(inp["states"])},
@@ -1033,6 +1036,7 @@ def assemble(inp, agg, psf, basis, tr, par, sens, ov, conv, checks, offered) -> 
         "m16_impact": m16_impact(),
         "strict_mode": {"status": pf.ST_NOT_EVALUATED, "blockers": pf.strict_blockers()},
         "limitations": [
+            "INT-01 (consolidated verification round 1): the compressor search set is the union of the F3 per-case Pareto ids (32 designs), and those F3 fronts were built on the down-selection envelope inlets, not on the F1-coupled operating points used here. F3's inlet-independent gates (N_drag = 0, Ti-6Al-4V, cited tip speed <= 305.5 m/s) admit 48 designs; the 16 others are never evaluated. Every F4 Pareto set is therefore 'Pareto within the F3 front-union subset', not over the admissible compressor space: a design outside the subset can be non-dominated (or dominate a member) at the F1-coupled states",
             "isothermal chain at the F1 wall temperature (no gas energy balance; ICD G-07)",
             "free-molecular linear Gaede characteristic only (no transitional regime, no K < 1 branch, so no start-up "
             "from an empty plenum: start-up / Xe-to-air transition NOT_EVALUATED, IFD-F4-05 part)",

@@ -83,17 +83,22 @@ CONSUMED = {
     "ENS": "hallthruster_bridge/ensemble/transport_ensemble_v0.json",
     "VAL": "hallthruster_bridge/validation/VALIDATION_RELEASE_v1.json",
 }
-# Parallel A9.7 lanes (other worktrees, not in this base): referenced only, never imported or read.
+# Parallel A9.7 lanes: referenced only, never imported or read by this builder. Counterpart paths and record ids were
+# resolved by the A9.7 cross-lane integration pass (consolidated verification round 1, STR-01 / INT-02); every lane
+# below is merged on the execution branch.
 PENDING_LANES = {
-    "F0": ("fo_a9_7_f0_profiling", "PENDING docs/performance/"),
-    "F1": ("fo_a9_7_f1_intake_synthesis", "PENDING abep_sim/design/intake_synthesis.py"),
-    "F2": ("fo_a9_7_f2_filter_stage", "PENDING abep_sim/design/filter_stage.py"),
-    "F3": ("fo_a9_7_f3_compressor_synthesis", "PENDING abep_sim/design/compressor_synthesis.py"),
-    "F4": ("fo_a9_7_f4_plenum_feed", "PENDING fo_a9_7_f4_plenum_feed (wave B; no path registered in this base)"),
-    "F6": ("fo_a9_7_f6_icp_geometry", "PENDING abep_sim/design/icp_geometry_synthesis.py"),
+    "F0": ("fo_a9_7_f0_profiling", "docs/performance/PERFORMANCE_BASELINE_98fbbb9.json"),
+    "F1": ("fo_a9_7_f1_intake_synthesis", "abep_sim/design/intake_synthesis.py (F1-ID-06; coupled through F4-ID-01)"),
+    "F2": ("fo_a9_7_f2_filter_stage", "abep_sim/design/filter_stage.py (F2-IF-05; coupled through F4-ID-03/04)"),
+    "F3": ("fo_a9_7_f3_compressor_synthesis", "abep_sim/design/compressor_synthesis.py (IFD-F3-06; coupled through "
+                                              "F4-ID-05)"),
+    "F4": ("fo_a9_7_f4_plenum_feed", "abep_sim/design/plenum_feed.py; docs/design_synthesis/f4_plenum/"
+                                     "f4_plenum_feed_v1.json (F4-ID-07..09)"),
+    "F6": ("fo_a9_7_f6_icp_geometry", "abep_sim/design/icp_geometry_synthesis.py (F6-IF-N01, N02, S03)"),
     "F7F8": ("fo_a9_7_f7_f8_coupled_optimizer",
-             "PENDING fo_a9_7_f7_f8_coupled_optimizer (wave C; no path registered in this base)"),
-    "F9": ("fo_a9_7_f9_freeze_candidate", "PENDING fo_a9_7_f9_freeze_candidate (wave C; no path registered in this base)"),
+             "abep_sim/design/architecture_optimizer.py (F78-ID-08, F78-ID-09)"),
+    "F9": ("fo_a9_7_f9_freeze_candidate", "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json "
+                                          "(F9-ID-05, F9-ID-11)"),
 }
 
 FREEZE_STATUSES = {
@@ -481,7 +486,12 @@ def build_parameters() -> list:
       sources=[h21_dp("H21-12"), ref("H21", "/magnetic_topology_options"), ans(74)],
       basis="H2-1 H21-12 (T2 + T3 provision); the H2-1 T2 option that owner row 74 accepted is defined with a single "
             "inner + single outer coil",
-      freeze_status="FREEZE_CANDIDATE", freeze_point="LOCK-1", source_status=get("H21", h21("H21-12", "status")))
+      freeze_status="OPEN", freeze_point="LOCK-1", source_status=get("H21", h21("H21-12", "status")),
+      evidence_to_freeze=["an owner decision or design evidence for the single-coil-per-pole arrangement and the "
+                          "trim-coil provision: owner rows 74 (T2 shielded) and 78 (EM only) do not decide them "
+                          "(consolidated verification round 1, PHY-01)", FEMM],
+      note="analog-practice choice (assumed); inner / outer arrangement follows the T2 option, but single coils per "
+           "pole and the trim-coil provision are not owner-given, so the row is OPEN, not FREEZE_CANDIDATE")
     P(rows, "H1F-MC-03", "unshielded (T1) replaceable pole-piece set",
       "engineering comparison only; never silently the score-bearing article; switching sets creates H-1'",
       units="-", tolerance=NO_TOL_RULE, evidence_class="owner-allocation",
@@ -579,12 +589,16 @@ def build_parameters() -> list:
     cases = get("H21", "/coil_design/cases")
     rp1_idx = [i for i, c in enumerate(cases) if c["name"].startswith("RP-1")]
     cur = {k: sorted(cases[i]["coils"][k]["chosen"]["I_A"] for i in rp1_idx) for k in ("inner", "outer")}
-    P(rows, "H1F-CO-01", "coil supply architecture",
-      "current-controlled supplies, one per coil (inner, outer, trim reserved); every coil current recorded per "
-      "reading with per-channel I and V telemetry", units="-", tolerance=NO_TOL_RULE, evidence_class="owner-allocation",
-      evidence_note="row 78 (EM only for traceable B(z)-versus-current control); channel count from H2-1 H21-27",
-      sources=[ans(78), h21_dp("H21-27"), ref("HWREQ", hwreq("HW-MC-02", "text"))],
-      basis="row 78; H2-1 H21-27; HW-MC-02", freeze_status="FREEZE_CANDIDATE", freeze_point="LOCK-1")
+    P(rows, "H1F-CO-01", "coil supply control rule",
+      "current-controlled coil supplies; every coil current recorded per reading with per-channel I and V telemetry",
+      units="-", tolerance=NO_TOL_RULE,
+      evidence_class="owner-allocation",
+      evidence_note="row 78 (EM only for traceable B(z)-versus-current control); HW-MC-02 current-control rule",
+      sources=[ans(78), ref("HWREQ", hwreq("HW-MC-02", "text"))],
+      basis="row 78; HW-MC-02", freeze_status="FREEZE_CANDIDATE", freeze_point="LOCK-1",
+      note="consolidated verification round 2 (PHY-03): the supply channel count (per coil, trim reserved), which "
+           "follows from the OPEN coil arrangement H1F-MC-02, was split out to H1F-CO-14 (OPEN); this row fixes only "
+           "the control and recording rule")
     P(rows, "H1F-CO-02", "total ampere-turns at the RP-1 anchor (f_NI 1 .. 2)", get("H21", h21("H21-17")),
       units="A-turns", tolerance=NO_TOL_ANCHOR, evidence_class="model-derived",
       sources=[h21_dp("H21-17"), ref("H21", "/coil_design/accuracy_limits")],
@@ -660,6 +674,18 @@ def build_parameters() -> list:
       basis="A9.2 sec. 8: the two figures are different bases, never alternative estimates of the same mass; only the "
             "complete coil mass is booked", freeze_status="OPEN", freeze_point="LOCK-1",
       evidence_to_freeze=[POINT, FEMM, "frozen H-1 coil (IDA7-01) and a weighed coil"])
+    P(rows, "H1F-CO-14", "coil supply channel count",
+      "one supply per coil: inner, outer, trim reserved (3 channels); contingent on the coil arrangement H1F-MC-02",
+      units="-", tolerance=NO_TOL_RULE, evidence_class="assumed",
+      evidence_note="H2-1 H21-27 (assumed (requirement), PRELIMINARY); owner rows 74 / 78 and HW-MC-02 give no "
+                    "channel count and no trim channel",
+      sources=[h21_dp("H21-27"), ref("HWREQ", hwreq("HW-MC-02", "text")), ans(78)],
+      basis="H2-1 H21-27; follows the H1F-MC-02 arrangement (OPEN)", freeze_status="OPEN", freeze_point="LOCK-1",
+      source_status=get("H21", h21("H21-27", "status")),
+      evidence_to_freeze=["H1F-MC-02 (coil arrangement) reaching FREEZE_CANDIDATE: an owner decision or design "
+                          "evidence for single coils per pole and the trim-coil provision", FEMM],
+      note="consolidated verification round 2 (PHY-03): split from H1F-CO-01; a channel count derived from an OPEN "
+           "arrangement is never an owner allocation")
 
     # ---------------- MA materials ----------------
     P(rows, "H1F-MA-01", "inner core / inner pole material family", "FeCo-2V (Hiperco 50 class) engineering baseline",
@@ -754,7 +780,7 @@ def build_parameters() -> list:
       sources=[ref("A97_MD", "", note="A9.7 F4: the final output offered to H-1 is mdot_s, P, T, x_s, transient "
                                       "quality, not merely total mass flow")],
       basis="A9.7 F4 / F5", freeze_status="TBD_AFTER_EVIDENCE", freeze_point="LOCK-1",
-      evidence_to_freeze=["F4 plenum / feed synthesis output (PENDING)", "H-1 inlet-state sensitivity measured in "
+      evidence_to_freeze=["F4 plenum / feed offered-state records with evidenced inputs (F4-ID-07; today PARAMETRIC_SENSITIVITY only)", "H-1 inlet-state sensitivity measured in "
                           "Phase 1 (no admitted Hall map can derive tolerances)"])
 
     # ---------------- EX exit plane ----------------
@@ -1005,7 +1031,7 @@ def build_document() -> dict:
     m16 = []
     for rown, contrib in ((9, "channel windows (CH-02..CH-10), design point TBD_OWNER (CH-11), x_Hall admissibility "
                               "interface for F7"),
-                          (10, "magnetic circuit items MC-01..MC-10, B(z) BZ-01..BZ-06, coil envelope CO-01..CO-13"),
+                          (10, "magnetic circuit items MC-01..MC-10, B(z) BZ-01..BZ-06, coil envelope CO-01..CO-14"),
                           (13, "TH-03 / EX-07 carried UNRESOLVED; no thermal verdict"),
                           (20, "AN-04 / AN-05 / MA-08: 316L REJECTED_AS_CURRENT_BASELINE, FINAL_ANODE_MATERIAL OPEN"),
                           (21, "AN-06 + anode_investigation AI-01..AI-08: heat path UNRESOLVED")):

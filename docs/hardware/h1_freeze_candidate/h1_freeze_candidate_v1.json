@@ -175,35 +175,35 @@
  "pending_parallel_lanes": {
   "F0": {
    "lane": "fo_a9_7_f0_profiling",
-   "reference": "PENDING docs/performance/"
+   "reference": "docs/performance/PERFORMANCE_BASELINE_98fbbb9.json"
   },
   "F1": {
    "lane": "fo_a9_7_f1_intake_synthesis",
-   "reference": "PENDING abep_sim/design/intake_synthesis.py"
+   "reference": "abep_sim/design/intake_synthesis.py (F1-ID-06; coupled through F4-ID-01)"
   },
   "F2": {
    "lane": "fo_a9_7_f2_filter_stage",
-   "reference": "PENDING abep_sim/design/filter_stage.py"
+   "reference": "abep_sim/design/filter_stage.py (F2-IF-05; coupled through F4-ID-03/04)"
   },
   "F3": {
    "lane": "fo_a9_7_f3_compressor_synthesis",
-   "reference": "PENDING abep_sim/design/compressor_synthesis.py"
+   "reference": "abep_sim/design/compressor_synthesis.py (IFD-F3-06; coupled through F4-ID-05)"
   },
   "F4": {
    "lane": "fo_a9_7_f4_plenum_feed",
-   "reference": "PENDING fo_a9_7_f4_plenum_feed (wave B; no path registered in this base)"
+   "reference": "abep_sim/design/plenum_feed.py; docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json (F4-ID-07..09)"
   },
   "F6": {
    "lane": "fo_a9_7_f6_icp_geometry",
-   "reference": "PENDING abep_sim/design/icp_geometry_synthesis.py"
+   "reference": "abep_sim/design/icp_geometry_synthesis.py (F6-IF-N01, N02, S03)"
   },
   "F7F8": {
    "lane": "fo_a9_7_f7_f8_coupled_optimizer",
-   "reference": "PENDING fo_a9_7_f7_f8_coupled_optimizer (wave C; no path registered in this base)"
+   "reference": "abep_sim/design/architecture_optimizer.py (F78-ID-08, F78-ID-09)"
   },
   "F9": {
    "lane": "fo_a9_7_f9_freeze_candidate",
-   "reference": "PENDING fo_a9_7_f9_freeze_candidate (wave C; no path registered in this base)"
+   "reference": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json (F9-ID-05, F9-ID-11)"
   }
  },
  "a9_7_f5_coverage": [
@@ -297,7 +297,8 @@
     "H1F-CO-10",
     "H1F-CO-11",
     "H1F-CO-12",
-    "H1F-CO-13"
+    "H1F-CO-13",
+    "H1F-CO-14"
    ]
   },
   {
@@ -1151,10 +1152,14 @@
     }
    ],
    "basis": "H2-1 H21-12 (T2 + T3 provision); the H2-1 T2 option that owner row 74 accepted is defined with a single inner + single outer coil",
-   "freeze_status": "FREEZE_CANDIDATE",
+   "freeze_status": "OPEN",
    "freeze_point": "LOCK-1",
    "status_in_source": "PRELIMINARY",
-   "evidence_to_freeze_candidate": []
+   "evidence_to_freeze_candidate": [
+    "an owner decision or design evidence for the single-coil-per-pole arrangement and the trim-coil provision: owner rows 74 (T2 shielded) and 78 (EM only) do not decide them (consolidated verification round 1, PHY-01)",
+    "FEMM-class axisymmetric magnetostatics of MC-1 with supplier B-H curves at the selected design point (M16 row 10 blocking item)"
+   ],
+   "note": "analog-practice choice (assumed); inner / outer arrangement follows the T2 option, but single coils per pole and the trim-coil provision are not owner-given, so the row is OPEN, not FREEZE_CANDIDATE"
   },
   {
    "id": "H1F-MC-03",
@@ -1630,12 +1635,12 @@
   {
    "id": "H1F-CO-01",
    "group": "CO",
-   "name": "coil supply architecture",
-   "value": "current-controlled supplies, one per coil (inner, outer, trim reserved); every coil current recorded per reading with per-channel I and V telemetry",
+   "name": "coil supply control rule",
+   "value": "current-controlled coil supplies; every coil current recorded per reading with per-channel I and V telemetry",
    "units": "-",
    "tolerance": "n/a (decision / rule)",
    "evidence_class": "owner-allocation",
-   "evidence_note": "row 78 (EM only for traceable B(z)-versus-current control); channel count from H2-1 H21-27",
+   "evidence_note": "row 78 (EM only for traceable B(z)-versus-current control); HW-MC-02 current-control rule",
    "source": [
     {
      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
@@ -1644,20 +1649,16 @@
      "note": "owner row 78"
     },
     {
-     "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
-     "pointer": "/design_parameters/26/value",
-     "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d"
-    },
-    {
      "path": "docs/experiments/hardware/hardware_requirements_v1.json",
      "pointer": "/requirements/23/text",
      "sha256": "0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0"
     }
    ],
-   "basis": "row 78; H2-1 H21-27; HW-MC-02",
+   "basis": "row 78; HW-MC-02",
    "freeze_status": "FREEZE_CANDIDATE",
    "freeze_point": "LOCK-1",
-   "evidence_to_freeze_candidate": []
+   "evidence_to_freeze_candidate": [],
+   "note": "consolidated verification round 2 (PHY-03): the supply channel count (per coil, trim reserved), which follows from the OPEN coil arrangement H1F-MC-02, was split out to H1F-CO-14 (OPEN); this row fixes only the control and recording rule"
   },
   {
    "id": "H1F-CO-02",
@@ -2023,6 +2024,43 @@
     "FEMM-class axisymmetric magnetostatics of MC-1 with supplier B-H curves at the selected design point (M16 row 10 blocking item)",
     "frozen H-1 coil (IDA7-01) and a weighed coil"
    ]
+  },
+  {
+   "id": "H1F-CO-14",
+   "group": "CO",
+   "name": "coil supply channel count",
+   "value": "one supply per coil: inner, outer, trim reserved (3 channels); contingent on the coil arrangement H1F-MC-02",
+   "units": "-",
+   "tolerance": "n/a (decision / rule)",
+   "evidence_class": "assumed",
+   "evidence_note": "H2-1 H21-27 (assumed (requirement), PRELIMINARY); owner rows 74 / 78 and HW-MC-02 give no channel count and no trim channel",
+   "source": [
+    {
+     "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
+     "pointer": "/design_parameters/26/value",
+     "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d"
+    },
+    {
+     "path": "docs/experiments/hardware/hardware_requirements_v1.json",
+     "pointer": "/requirements/23/text",
+     "sha256": "0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0"
+    },
+    {
+     "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+     "pointer": "/answers/77/owner_answer_verbatim",
+     "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
+     "note": "owner row 78"
+    }
+   ],
+   "basis": "H2-1 H21-27; follows the H1F-MC-02 arrangement (OPEN)",
+   "freeze_status": "OPEN",
+   "freeze_point": "LOCK-1",
+   "status_in_source": "PRELIMINARY",
+   "evidence_to_freeze_candidate": [
+    "H1F-MC-02 (coil arrangement) reaching FREEZE_CANDIDATE: an owner decision or design evidence for single coils per pole and the trim-coil provision",
+    "FEMM-class axisymmetric magnetostatics of MC-1 with supplier B-H curves at the selected design point (M16 row 10 blocking item)"
+   ],
+   "note": "consolidated verification round 2 (PHY-03): split from H1F-CO-01; a channel count derived from an OPEN arrangement is never an owner allocation"
   },
   {
    "id": "H1F-MA-01",
@@ -2481,7 +2519,7 @@
    "freeze_status": "TBD_AFTER_EVIDENCE",
    "freeze_point": "LOCK-1",
    "evidence_to_freeze_candidate": [
-    "F4 plenum / feed synthesis output (PENDING)",
+    "F4 plenum / feed offered-state records with evidenced inputs (F4-ID-07; today PARAMETRIC_SENSITIVITY only)",
     "H-1 inlet-state sensitivity measured in Phase 1 (no admitted Hall map can derive tolerances)"
    ]
   },
@@ -2704,8 +2742,8 @@
  ],
  "freeze_rollup": {
   "counts": {
-   "FREEZE_CANDIDATE": 24,
-   "OPEN": 26,
+   "FREEZE_CANDIDATE": 23,
+   "OPEN": 28,
    "TBD_AFTER_EVIDENCE": 20,
    "TBD_OWNER": 7
   },
@@ -2723,8 +2761,8 @@
     "TBD_OWNER": 1
    },
    "MC": {
-    "FREEZE_CANDIDATE": 6,
-    "OPEN": 3,
+    "FREEZE_CANDIDATE": 5,
+    "OPEN": 4,
     "TBD_AFTER_EVIDENCE": 1,
     "TBD_OWNER": 0
    },
@@ -2736,7 +2774,7 @@
    },
    "CO": {
     "FREEZE_CANDIDATE": 3,
-    "OPEN": 8,
+    "OPEN": 9,
     "TBD_AFTER_EVIDENCE": 1,
     "TBD_OWNER": 1
    },
@@ -2765,7 +2803,7 @@
     "TBD_OWNER": 1
    }
   },
-  "total": 77
+  "total": 78
  },
  "hall_response_domain": {
   "admitted_members": [],
@@ -3479,7 +3517,7 @@
   {
    "id": "IFD-F4-01",
    "direction": "H-1 <- F4",
-   "counterpart": "PENDING fo_a9_7_f4_plenum_feed (wave B; no path registered in this base)",
+   "counterpart": "abep_sim/design/plenum_feed.py; docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json (F4-ID-07..09)",
    "quantity": "species-resolved mass flow mdot_s (N2, O2, O, Xe) delivered at HALL_INLET_Z0",
    "value": "TBD - F4 output; context only: owner nominal sizing flow ~1.3 mg/s and characterization range ~0.38-3.2 mg/s total delivered (row 73, H1F-CH-12)",
    "units": "mg/s per species",
@@ -3489,7 +3527,7 @@
   {
    "id": "IFD-F4-02",
    "direction": "H-1 <- F4",
-   "counterpart": "PENDING fo_a9_7_f4_plenum_feed (wave B; no path registered in this base)",
+   "counterpart": "abep_sim/design/plenum_feed.py; docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json (F4-ID-07..09)",
    "quantity": "feed pressure P at IF-A5 / HALL_INLET_Z0",
    "value": "TBD - depends on the H-1 inlet conductance (H1F-IN-04), itself TBD",
    "units": "Pa",
@@ -3499,7 +3537,7 @@
   {
    "id": "IFD-F4-03",
    "direction": "H-1 <- F4",
-   "counterpart": "PENDING fo_a9_7_f4_plenum_feed (wave B; no path registered in this base)",
+   "counterpart": "abep_sim/design/plenum_feed.py; docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json (F4-ID-07..09)",
    "quantity": "feed temperature T at HALL_INLET_Z0",
    "value": "TBD",
    "units": "K",
@@ -3509,7 +3547,7 @@
   {
    "id": "IFD-F4-04",
    "direction": "H-1 <- F4",
-   "counterpart": "PENDING fo_a9_7_f4_plenum_feed (wave B; no path registered in this base)",
+   "counterpart": "abep_sim/design/plenum_feed.py; docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json (F4-ID-07..09)",
    "quantity": "species mole fractions x_s at HALL_INLET_Z0 (incl. atomic-O fraction after recombination; ground O2-bearing points labelled NO_ATOMIC_O)",
    "value": "TBD",
    "units": "-",
@@ -3519,7 +3557,7 @@
   {
    "id": "IFD-F4-05",
    "direction": "H-1 <- F4",
-   "counterpart": "PENDING fo_a9_7_f4_plenum_feed (wave B; no path registered in this base)",
+   "counterpart": "abep_sim/design/plenum_feed.py; docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json (F4-ID-07..09)",
    "quantity": "transient quality: settling after a flow-setpoint step, pressure ripple, composition drift, start-up / Xe-to-air transition transient",
    "value": "TBD - metric definitions requested from F4; acceptance tolerances cannot be derived by H-1 now (no admitted Hall response map); they need Phase-1 inlet-state sensitivity data",
    "units": "s; Pa; -",
@@ -3529,7 +3567,7 @@
   {
    "id": "IFD-F4-06",
    "direction": "H-1 <- F4",
-   "counterpart": "PENDING fo_a9_7_f4_plenum_feed (wave B; no path registered in this base)",
+   "counterpart": "abep_sim/design/plenum_feed.py; docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json (F4-ID-07..09)",
    "quantity": "Xe anode-feed flow in the bounded Xe mode (A9B-11 branch)",
    "value": "TBD",
    "units": "mg/s",
@@ -3539,7 +3577,7 @@
   {
    "id": "IFD-F4-07",
    "direction": "H-1 <- F4",
-   "counterpart": "PENDING fo_a9_7_f4_plenum_feed (wave B; no path registered in this base)",
+   "counterpart": "abep_sim/design/plenum_feed.py; docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json (F4-ID-07..09)",
    "quantity": "particulate / contamination limit at the distributor (filter function F2 carried through F4)",
    "value": "TBD",
    "units": "-",
@@ -3549,7 +3587,7 @@
   {
    "id": "IFS-F4-01",
    "direction": "H-1 -> F4",
-   "counterpart": "PENDING fo_a9_7_f4_plenum_feed (wave B; no path registered in this base)",
+   "counterpart": "abep_sim/design/plenum_feed.py; docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json (F4-ID-07..09)",
    "quantity": "inlet annulus geometry (h, d_mean windows at z = 0)",
    "value": {
     "h_mm": [
@@ -3568,7 +3606,7 @@
   {
    "id": "IFS-F4-02",
    "direction": "H-1 -> F4",
-   "counterpart": "PENDING fo_a9_7_f4_plenum_feed (wave B; no path registered in this base)",
+   "counterpart": "abep_sim/design/plenum_feed.py; docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json (F4-ID-07..09)",
    "quantity": "H-1 inlet conductance / back-pressure law",
    "value": "TBD - after the design point and distributor are frozen (H1F-IN-04)",
    "units": "m^3/s",
@@ -3578,7 +3616,7 @@
   {
    "id": "IFS-F4-03",
    "direction": "H-1 -> F4",
-   "counterpart": "PENDING fo_a9_7_f4_plenum_feed (wave B; no path registered in this base)",
+   "counterpart": "abep_sim/design/plenum_feed.py; docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json (F4-ID-07..09)",
    "quantity": "ground characterization flow range H-1 must be fed over (not a flight qualification)",
    "value": [
     0.38,
@@ -3591,7 +3629,7 @@
   {
    "id": "IFD-F1-01",
    "direction": "H-1 <- F1 (via F4)",
-   "counterpart": "PENDING abep_sim/design/intake_synthesis.py",
+   "counterpart": "abep_sim/design/intake_synthesis.py (F1-ID-06; coupled through F4-ID-01)",
    "quantity": "captured species flow feeding F3 / F4; no direct H-1 interface",
    "value": "n/a",
    "units": "-",
@@ -3601,7 +3639,7 @@
   {
    "id": "IFD-F2-01",
    "direction": "H-1 <- F2 (via F4)",
-   "counterpart": "PENDING abep_sim/design/filter_stage.py",
+   "counterpart": "abep_sim/design/filter_stage.py (F2-IF-05; coupled through F4-ID-03/04)",
    "quantity": "contamination / protection function relevant to the H-1 distributor and anode (IFD-F4-07)",
    "value": "TBD",
    "units": "-",
@@ -3611,7 +3649,7 @@
   {
    "id": "IFD-F3-01",
    "direction": "H-1 <- F3 (via F4)",
-   "counterpart": "PENDING abep_sim/design/compressor_synthesis.py",
+   "counterpart": "abep_sim/design/compressor_synthesis.py (IFD-F3-06; coupled through F4-ID-05)",
    "quantity": "compressor outlet composition x_s,out and temperature that F4 transforms into IFD-F4-03/04",
    "value": "TBD",
    "units": "-; K",
@@ -3621,7 +3659,7 @@
   {
    "id": "IFS-F6-01",
    "direction": "H-1 -> F6",
-   "counterpart": "PENDING abep_sim/design/icp_geometry_synthesis.py",
+   "counterpart": "abep_sim/design/icp_geometry_synthesis.py (F6-IF-N01, N02, S03)",
    "quantity": "IP-EXIT datum (z = L) and neutralizer-agnostic exit face",
    "value": "H1F-EX-01 / EX-02",
    "units": "-",
@@ -3631,7 +3669,7 @@
   {
    "id": "IFS-F6-02",
    "direction": "H-1 -> F6",
-   "counterpart": "PENDING abep_sim/design/icp_geometry_synthesis.py",
+   "counterpart": "abep_sim/design/icp_geometry_synthesis.py (F6-IF-N01, N02, S03)",
    "quantity": "channel OD window at IP-EXIT (plume source annulus)",
    "value": [
     57.31,
@@ -3644,7 +3682,7 @@
   {
    "id": "IFS-F6-03",
    "direction": "H-1 -> F6",
-   "counterpart": "PENDING abep_sim/design/icp_geometry_synthesis.py",
+   "counterpart": "abep_sim/design/icp_geometry_synthesis.py (F6-IF-N01, N02, S03)",
    "quantity": "MC-1 stray field in the ICP volume (Hall magnetic-field disturbance input)",
    "value": "TBD - FEMM + measured map (H1F-EX-05)",
    "units": "G",
@@ -3654,7 +3692,7 @@
   {
    "id": "IFS-F6-04",
    "direction": "H-1 -> F6",
-   "counterpart": "PENDING abep_sim/design/icp_geometry_synthesis.py",
+   "counterpart": "abep_sim/design/icp_geometry_synthesis.py (F6-IF-N01, N02, S03)",
    "quantity": "allowable B(z) field change epsilon_B caused by the ICP module",
    "value": "TBD - measured H-1 sensitivity (H1F-BZ-06, row 67)",
    "units": "-",
@@ -3664,7 +3702,7 @@
   {
    "id": "IFS-F6-05",
    "direction": "H-1 -> F6",
-   "counterpart": "PENDING abep_sim/design/icp_geometry_synthesis.py",
+   "counterpart": "abep_sim/design/icp_geometry_synthesis.py (F6-IF-N01, N02, S03)",
    "quantity": "H-1 exit-face radiating surfaces and temperatures for the view-factor objective",
    "value": "TBD - coupled model (H1F-EX-07)",
    "units": "m^2; K",
@@ -3674,7 +3712,7 @@
   {
    "id": "IFD-F6-01",
    "direction": "H-1 <- F6",
-   "counterpart": "PENDING abep_sim/design/icp_geometry_synthesis.py",
+   "counterpart": "abep_sim/design/icp_geometry_synthesis.py (F6-IF-N01, N02, S03)",
    "quantity": "axial standoff, aperture, envelope / keep-out of the ICP module (ICP-02/04/07)",
    "value": "TBD",
    "units": "mm",
@@ -3684,7 +3722,7 @@
   {
    "id": "IFD-F6-02",
    "direction": "H-1 <- F6",
-   "counterpart": "PENDING abep_sim/design/icp_geometry_synthesis.py",
+   "counterpart": "abep_sim/design/icp_geometry_synthesis.py (F6-IF-N01, N02, S03)",
    "quantity": "ICP module heat into H-1 (ICP-43) and view obstruction",
    "value": "TBD",
    "units": "W; -",
@@ -3694,7 +3732,7 @@
   {
    "id": "IFD-F6-03",
    "direction": "H-1 <- F6",
-   "counterpart": "PENDING abep_sim/design/icp_geometry_synthesis.py",
+   "counterpart": "abep_sim/design/icp_geometry_synthesis.py (F6-IF-N01, N02, S03)",
    "quantity": "ferromagnetic content of the ICP module near MC-1 (ICP-32: none in v1)",
    "value": "no dedicated ICP magnet (v1)",
    "units": "-",
@@ -3704,7 +3742,7 @@
   {
    "id": "IFS-F0-01",
    "direction": "H-1 -> F0",
-   "counterpart": "PENDING docs/performance/",
+   "counterpart": "docs/performance/PERFORMANCE_BASELINE_98fbbb9.json",
    "quantity": "F5 computational load",
    "value": "builder only (JSON reads and arithmetic, well under 10 s CPU); no hotspot to profile",
    "units": "s",
@@ -3714,7 +3752,7 @@
   {
    "id": "IFS-F7-01",
    "direction": "H-1 -> F7/F8",
-   "counterpart": "PENDING fo_a9_7_f7_f8_coupled_optimizer (wave C; no path registered in this base)",
+   "counterpart": "abep_sim/design/architecture_optimizer.py (F78-ID-08, F78-ID-09)",
    "quantity": "x_Hall bounds, constraints and admissibility function (x_hall_design_space)",
    "value": "see x_hall_design_space",
    "units": "mm",
@@ -3724,7 +3762,7 @@
   {
    "id": "IFS-F7-02",
    "direction": "H-1 -> F7/F8",
-   "counterpart": "PENDING fo_a9_7_f7_f8_coupled_optimizer (wave C; no path registered in this base)",
+   "counterpart": "abep_sim/design/architecture_optimizer.py (F78-ID-08, F78-ID-09)",
    "quantity": "Hall performance for any x_Hall (T, I_d, efficiency, Q_reject share)",
    "value": "NOT_EVALUATED - no admitted Hall response map (hall_response_domain)",
    "units": "mN; A; -; W",
@@ -3734,7 +3772,7 @@
   {
    "id": "IFS-F9-01",
    "direction": "H-1 -> F9",
-   "counterpart": "PENDING fo_a9_7_f9_freeze_candidate (wave C; no path registered in this base)",
+   "counterpart": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json (F9-ID-05, F9-ID-11)",
    "quantity": "H-1 geometry / magnetic circuit / anode approach rows (VALUE | TOLERANCE | EVIDENCE_CLASS | SOURCE | FREEZE_STATUS)",
    "value": "parameters",
    "units": "-",
@@ -3963,7 +4001,7 @@
    "v4_state": "BLOCKED",
    "proposed_state": "BLOCKED",
    "state_change": false,
-   "f5_contribution": "magnetic circuit items MC-01..MC-10, B(z) BZ-01..BZ-06, coil envelope CO-01..CO-13",
+   "f5_contribution": "magnetic circuit items MC-01..MC-10, B(z) BZ-01..BZ-06, coil envelope CO-01..CO-14",
    "source": {
     "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
     "pointer": "/rows/9",
@@ -4014,7 +4052,7 @@
   }
  ],
  "key_findings": [
-  "F5-K1 H-1 definition: 77 parameters; FREEZE_CANDIDATE 24, OPEN 26, TBD_AFTER_EVIDENCE 20, TBD_OWNER 7. The article is NOT frozen; every FREEZE_CANDIDATE is an owner-given decision, convention or rule.",
+  "F5-K1 H-1 definition: 78 parameters; FREEZE_CANDIDATE 23, OPEN 28, TBD_AFTER_EVIDENCE 20, TBD_OWNER 7. The article is NOT frozen; every FREEZE_CANDIDATE is an owner-given decision, convention or rule.",
   "F5-K2 the channel design point (h, d_mean, L) is TBD_OWNER: windows exist (xenon-derived rules, hypotheses for air species), but no Hall performance can discriminate inside them (credible set empty, P5-N2 v1 INCONCLUSIVE); selection needs FEMM + coupled thermal + owner (F5-OQ-01 / F5-OQ-02).",
   "F5-K3 magnetic circuit decided at topology level only (T2 shielded, EM-only, FeCo-2V inner / pure-iron outer, ceramic-insulated copper coils); all dimensions, ampere-turns, coil currents and B(z) are lumped-circuit values at the RP-1 calculation anchor or TBD pending FEMM.",
   "F5-K4 B(z): no Vyovrinda-specific evidence exists; the H-1 target is the H2-1 model-derived envelope and an inferred shape (OPEN); the P5 Peterson 2001 profile is a reference for P5 only and no P5 value is used.",

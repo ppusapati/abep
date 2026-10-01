@@ -408,3 +408,35 @@ def test_hygiene_new_files():
     # the builder's record of the size_orifice_for_pressure bracket matches the (unmodified) reservoir source
     assert "lo, hi = 1e-8, 3e-2" in (ROOT / "abep_sim/reservoir.py").read_text(encoding="utf-8")
     assert "SIZE_ORIFICE_BRACKET_M2 = (1e-8, 3e-2)" in BUILDER.read_text(encoding="utf-8")
+
+
+# ------------------------------------------------------------------------- consolidated verification round 1
+@pytest.mark.parametrize("bad", [(-0.01, 0.0), (0.0, 0.0), (0.01, -0.5), (0.01, 1.5), (float("nan"), 0.0)])
+def test_plenum_refuses_invalid_fields(bad):
+    """SW-06: a negative volume or an out-of-range recombination probability is refused at construction."""
+    with pytest.raises(ValueError):
+        pf.Plenum(bad[0], bad[1], "WALL-X", pf.RES_DEFAULTS["leak_area_m2"])
+
+
+def test_non_positive_target_refused_and_bisection_gate(recs, grid):
+    ch = pf.Chain(recs[("A0.5_Ld3_phi0.9", "maxwell_a1", "h200_f150")], pf.filter_none(), _plant(grid), _pl())
+    for t in (0.0, -1.0, float("nan")):
+        with pytest.raises(ValueError):
+            pf.steady_operating_point(ch, t)
+    assert bool(pf.bisection_failed(pf.A_EQ_BRACKET_M2[1], 0.0))          # bracket saturated -> refused
+    assert bool(pf.bisection_failed(1e-4, 1e-3))                           # residual above tolerance -> refused
+    assert not bool(pf.bisection_failed(1e-4, 1e-12))
+    assert pf.R_BISECTION in pf.MODEL_ERROR_REASONS and pf.REASONS[-1] == pf.R_BISECTION
+
+
+def test_pareto_ids_exclude_non_finite_objectives():
+    """OPT-04."""
+    rows = [{"id": "good", "status": pf.ST_FEASIBLE, "objectives": {"a": 1.0, "b": 1.0}},
+            {"id": "nan_row", "status": pf.ST_FEASIBLE, "objectives": {"a": 0.5, "b": float("nan")}}]
+    assert pf.pareto_ids(rows, ("a", "b")) == ["good"]
+
+
+def test_compressor_plant_refuses_invalid_design(grid):
+    d = dict(grid["T6-A1-U2-D0-Ti6Al4V"], rpm=-1.0)
+    with pytest.raises(ValueError):
+        pf.CompressorPlant.from_design(d)

@@ -358,36 +358,43 @@ def build(progress=None):
                                                  "scenario, theta)"},
         "findings": None,  # filled below
         "interface_demands": [
-            {"id": "F1-ID-01", "direction": "F1 -> F2", "counterpart": "PENDING abep_sim/design/filter_stage.py",
+            {"id": "F1-ID-01", "direction": "F1 -> F2", "counterpart": "abep_sim/design/filter_stage.py (F2-IF-01); "
+             "coupled in abep_sim/design/plenum_feed.py (F4-ID-01, F4-ID-03)",
              "content": "IF-A1 record per species (mdot_fwd, p_passive, T, x, K_back) at the intake exit plane; per unit area "
                         "in if_a1_interface.records_per_unit_area, absolute via if_a1_record()", "status": "PROVIDED"},
-            {"id": "F1-ID-02", "direction": "F2 -> F1", "counterpart": "PENDING abep_sim/design/filter_stage.py",
+            {"id": "F1-ID-02", "direction": "F2 -> F1", "counterpart": "abep_sim/design/filter_stage.py (F2-IF-02)",
              "content": "per-species forward and backflow transmission of the filter and its conductance: the filter changes "
                         "the plenum backflow (effective K_back) and so CR_passive / p_passive seen by the compressor; F1 "
                         "values are filter-less", "status": "DEMANDED"},
-            {"id": "F1-ID-03", "direction": "F1 -> F3", "counterpart": "PENDING abep_sim/design/compressor_synthesis.py",
+            {"id": "F1-ID-03", "direction": "F1 -> F3", "counterpart": "abep_sim/design/compressor_synthesis.py (IFD-F3-01: "
+             "the F3 study fronts use the down-selection envelope inlets, not these records); coupled F1 -> F3 in "
+             "abep_sim/design/plenum_feed.py (F4-ID-01, F4-ID-05)",
              "content": "inlet state candidates (through F2): per-species mdot, p_passive, T_wall, composition; burden "
                         "p_ref/p_passive per candidate", "status": "PROVIDED"},
-            {"id": "F1-ID-04", "direction": "F3 -> F1", "counterpart": "PENDING abep_sim/design/compressor_synthesis.py",
+            {"id": "F1-ID-04", "direction": "F3 -> F1", "counterpart": "abep_sim/design/compressor_synthesis.py (IFD-F3-03); "
+             "abep_sim/design/plenum_feed.py (F4-ID-02)",
              "content": "compressor inlet pressure / pumping speed actually achieved (fixes b = p_plenum/p_passive and the "
                         "net delivered flow (1 - b) mdot_fwd)", "status": "DEMANDED"},
-            {"id": "F1-ID-05", "direction": "F4 -> F1", "counterpart": "fo_a9_7_f4_plenum_feed (wave B; path not assigned)",
+            {"id": "F1-ID-05", "direction": "F4 -> F1", "counterpart": "abep_sim/design/plenum_feed.py (F4-ID-02)",
              "content": "reference feed pressure p_ref and feed temperature (TBD; F1 uses a parametric sweep)",
              "status": "DEMANDED"},
-            {"id": "F1-ID-06", "direction": "F5 -> F4 -> F1", "counterpart": "PENDING docs/hardware/h1_freeze_candidate/",
+            {"id": "F1-ID-06", "direction": "F5 -> F4 -> F1", "counterpart": "docs/hardware/h1_freeze_candidate/"
+             "h1_freeze_candidate_v1.json (IFD-F4-01..05, H1F-IN-04: TBD)",
              "content": "H-1 inlet / plenum interface requirement (mdot_s, P, T, x_s) from which p_ref follows",
              "status": "DEMANDED"},
-            {"id": "F1-ID-07", "direction": "F1 -> F7/F8", "counterpart": "fo_a9_7_f7_f8_coupled_optimizer (path not assigned)",
+            {"id": "F1-ID-07", "direction": "F1 -> F7/F8", "counterpart": "abep_sim/design/architecture_optimizer.py (F78-ID-01)",
              "content": "x_intake = (A, d, L/d, phi) Pareto sets per scenario, intake-face drag and C_D (reference A), mass "
                         "proxies, uncertainty axes alpha / kernel / theta / atmosphere", "status": "PROVIDED"},
-            {"id": "F1-ID-08", "direction": "F7 -> F1", "counterpart": "fo_a9_7_f7_f8_coupled_optimizer",
+            {"id": "F1-ID-08", "direction": "F7 -> F1", "counterpart": "abep_sim/design/architecture_optimizer.py (F78-ID-02)",
              "content": "spacecraft frontal area / body drag and AOCS pointing budget (drag closure beyond the intake face; "
                         "theta range)", "status": "DEMANDED"},
-            {"id": "F1-ID-09", "direction": "F1 <-> F0", "counterpart": "PENDING docs/performance/",
+            {"id": "F1-ID-09", "direction": "F1 <-> F0", "counterpart": "docs/performance/PERFORMANCE_BASELINE_98fbbb9.json; "
+             "docs/performance/abep_core/parity_report_v1.json (RUST-ID-03: F1 does not opt in to the Rust backend)",
              "content": "workload for profiling: the committed build runs direct TPMC (intake_response) at the counts in "
                         "direct_runs; F0 measurement decides whether a Rust TPMC kernel is admitted (A9.7 order 1-2)",
              "status": "PROVIDED / DEMANDED"},
-            {"id": "F1-ID-10", "direction": "F1 -> F9", "counterpart": "fo_a9_7_f9_freeze_candidate",
+            {"id": "F1-ID-10", "direction": "F1 -> F9", "counterpart": "docs/architecture/freeze_candidate/"
+             "architecture_freeze_candidate_v1.json (F9-ID-01)",
              "content": "intake area and geometry rows (VALUE | TOLERANCE | EVIDENCE_CLASS | SOURCE | FREEZE_STATUS): none "
                         "freezable from this lane (alpha, structure, pointing, p_ref TBD)", "status": "PROVIDED"},
         ],

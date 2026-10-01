@@ -511,7 +511,10 @@ def speedup(pre):
         return TB.clausing_transmission(rng, R, L, 0.8, g.T_wall_K, m, backend="rust")
 
     reps = pre["speedup_measurement"]["repeats"]
-    res = {}
+    res = {"measured_path": ("kernel-only: timed inside parity_campaign_unadmitted(), so the per-call admission gate "
+                             "(RUST-01) is bypassed; see speedup_served_path for the backend as served to consumers")
+           if TB._UNADMITTED_ALLOWED else
+           "served: timed through the admission-gated backend (cached admission check, RUST-R1-01)"}
     for wid, fn in (("W1_tpmc_trace_channel", w1), ("W2_response_point_kernel", w2)):
         rec = {}
         for b in ("python", "rust"):
@@ -537,6 +540,36 @@ def speedup(pre):
     return res
 
 
+GATED_CALLS = {"W1_tpmc_trace_channel": 2, "W2_response_point_kernel": 3}   # backend='rust' calls per workload run
+
+
+def served_speedup(pre):
+    """RUST-R1-01: re-time both workloads through the admission-gated (served) path once the report admits this build.
+    Records the one-time full admission validation (first call per process: report load + sha256 of sources and
+    extension) and the cached per-call gate cost, which every backend='rust' call pays."""
+    mod, why = TB._load_rust()
+    if mod is None:
+        return {"status": "NOT_MEASURED_ABEP_CORE_UNAVAILABLE", "reason": why}
+    TB.clear_admission_cache()
+    t0 = time.perf_counter()
+    ok, reason = TB.admission_status_cached(mod, "K4_trace")
+    cold = time.perf_counter() - t0
+    if not ok:
+        return {"status": "NOT_MEASURED_NOT_ADMITTED", "reason": reason}
+    per = []
+    for _ in range(200):
+        t0 = time.perf_counter()
+        TB.admission_status_cached(mod, "K4_trace")
+        per.append(time.perf_counter() - t0)
+    res = speedup(pre)
+    res.update({"status": "MEASURED", "gate_cold_first_call_s": cold,
+                "gate_cached_per_call_median_s": float(np.median(per)), "gated_calls_per_workload_run": GATED_CALLS,
+                "note": "the timed repeats follow an untimed warm-up, so they pay only the cached per-call gate; the "
+                        "cold validation is paid once per process (and again whenever the report, the extension or a "
+                        "listed source changes on disk)"})
+    return res
+
+
 # --------------------------------------------------------------------------------------------------------------------
 # provenance
 # --------------------------------------------------------------------------------------------------------------------
@@ -547,10 +580,16 @@ def _cmd(args):
         return None
 
 
+# Files whose sha256 binds the verdicts (RUST-ID-05). abep_sim/intake_tpmc.py (the Python reference) was added in
+# consolidated verification round 1 (STR-03); --check also compares it with the pre-registered reference sha256.
+PROVENANCE_SOURCES = ("abep_core/Cargo.toml", "abep_core/Cargo.lock", "abep_core/pyproject.toml", "abep_core/src/lib.rs",
+                      "abep_core/src/rng.rs", "abep_core/src/tpmc.rs", "abep_sim/design/tpmc_backend.py",
+                      "abep_sim/intake_tpmc.py")
+
+
 def build_provenance():
     mod, why = TB._load_rust()
-    src = ["abep_core/Cargo.toml", "abep_core/Cargo.lock", "abep_core/pyproject.toml", "abep_core/src/lib.rs",
-           "abep_core/src/rng.rs", "abep_core/src/tpmc.rs", "abep_sim/design/tpmc_backend.py"]
+    src = list(PROVENANCE_SOURCES)
     prov = {"source_sha256": {s: sha256_file(s) for s in src if os.path.exists(_p(s))}}
     cargo = os.path.expanduser("~/.cargo/bin")
     prov["rustc"] = _cmd([os.path.join(cargo, "rustc"), "--version"]) or _cmd(["rustc", "--version"])
@@ -699,9 +738,9 @@ def interface_section():
         {"id": "RUST-ID-03", "direction": "rust -> F1", "counterparty": "fo_a9_7_f1_intake_synthesis (abep_sim/design/intake_synthesis.py)",
          "demand": "F1 calls intake_tpmc.intake_response directly and is unchanged. Should F1 ever opt in, it must call abep_sim/design/tpmc_backend.py with backend='rust' explicitly, only for kernels ADMITTED here, label every such result backend=rust (non-authoritative) and keep the Python path reproducing it; intake_response itself (momentum / mass bookkeeping) is not ported",
          "status": "OPEN"},
-        {"id": "RUST-ID-04", "direction": "rust -> F7/F8", "counterparty": "fo_a9_7_f7_f8_coupled_optimizer (PENDING; path not in this base)",
-         "demand": "no Rust kernel enters the coupled or robust optimizer by default; any use goes through tpmc_backend with an explicit backend argument recorded in the result provenance",
-         "status": "OPEN"},
+        {"id": "RUST-ID-04", "direction": "rust -> F7/F8", "counterparty": "abep_sim/design/architecture_optimizer.py (fo_a9_7_f7_f8_coupled_optimizer; tpmc_backend_policy in docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json)",
+         "demand": "no Rust kernel enters the coupled or robust optimizer by default; any use goes through tpmc_backend with an explicit backend argument recorded in the result provenance (F7/F8 reads this report's verdicts for its tpmc_backend_policy and invokes no TPMC: tpmc_invoked_by_f7_f8 = false)",
+         "status": "CONSUMED"},
         {"id": "RUST-ID-05", "direction": "rust -> consolidated verification", "counterparty": "fo_a9_7_consolidated_verification",
          "demand": "verify with `python scripts/verify_abep_core.py --check` (no build needed) and, with the extension built from the recorded sources, `--check --recompute 3` (bitwise reproduction of stored numbers); the verdict stands only for the recorded source hashes",
          "status": "OPEN"},
@@ -751,7 +790,8 @@ def assemble(pre, results, invariants, spd, prov, master, history):
             "ADMITTED is not PASS: it admits an optional, explicitly selected backend inside the tested parity domain"],
         "documented_divergence": pre["documented_divergence"] + [
             {"id": "DIV-02", "statement": "scattering other than 'maxwell' / 'cll': the reference silently traces Maxwell; the Rust backend refuses (no silent fallback). Not in the comparison set (documented after registration; does not affect scoring)."},
-            {"id": "DIV-03", "statement": "CLL alpha_n or alpha_t outside [0, 1]: the reference raises (alpha_t) or returns NaN (alpha_n); the Rust backend refuses with ValueError. Not in the comparison set (documented after registration; does not affect scoring)."}],
+            {"id": "DIV-03", "statement": "CLL alpha_n or alpha_t outside [0, 1]: the reference raises (alpha_t) or returns NaN (alpha_n); the Rust backend refuses with ValueError. Not in the comparison set (documented after registration; does not affect scoring)."},
+            {"id": "DIV-04", "statement": "trace_channel max_hits_cap < 1: the reference accepts max_hits_cap = 0 (its hit-budget doubling then stops after max_hits steps); the Rust extension refuses it (its error text cites max_hits, which is inaccurate for the cap), and abep_sim/design/tpmc_backend.py refuses it for backend='rust' with a correct message before the extension is called. Not in the comparison set (recorded in consolidated verification round 1, RUST-02; does not affect scoring)."}],
         "campaign_history": history,
         "vectors": results,
     }
@@ -787,13 +827,24 @@ def render_md(rep):
             else:
                 L.append(f"| {k} | {iid} | {r['python']['held']} ({r['python']['n_checks']}) | {r['rust']['held']} ({r['rust']['n_checks']}) |")
     sp = rep["speedup"]
+    ss = rep.get("speedup_served_path") or {}
     L += ["", "## Measured speed-up (informational; not an admission criterion)", "",
-          "| workload | python median wall s | rust median wall s | speed-up wall | python median CPU s | rust median CPU s | speed-up CPU |",
-          "|---|---|---|---|---|---|---|"]
-    for wid in ("W1_tpmc_trace_channel", "W2_response_point_kernel"):
-        w = sp[wid]
-        L.append(f"| {wid} | {w['python']['median_wall_s']:.4f} | {w['rust']['median_wall_s']:.5f} | {w['speedup_wall']:.1f}x | "
-                 f"{w['python']['median_cpu_s']:.4f} | {w['rust']['median_cpu_s']:.5f} | {w['speedup_cpu']:.1f}x |")
+          "| path | workload | python median wall s | rust median wall s | speed-up wall | python median CPU s | rust median CPU s | speed-up CPU |",
+          "|---|---|---|---|---|---|---|---|"]
+    for label, src in (("kernel-only (gate bypassed)", sp), ("served (admission-gated)", ss)):
+        for wid in ("W1_tpmc_trace_channel", "W2_response_point_kernel"):
+            w = src.get(wid)
+            if not w:
+                continue
+            L.append(f"| {label} | {wid} | {w['python']['median_wall_s']:.4f} | {w['rust']['median_wall_s']:.5f} | {w['speedup_wall']:.1f}x | "
+                     f"{w['python']['median_cpu_s']:.4f} | {w['rust']['median_cpu_s']:.5f} | {w['speedup_cpu']:.1f}x |")
+    L += ["", f"Kernel-only path: {sp.get('measured_path', 'timed inside the parity campaign (admission gate bypassed)')}."]
+    if ss.get("status") == "MEASURED":
+        L += [f"Served path: {ss['measured_path']}; one-time full admission validation {ss['gate_cold_first_call_s']:.4f} s "
+              f"(first backend='rust' call per process), cached gate {ss['gate_cached_per_call_median_s'] * 1e6:.1f} us per call "
+              f"({', '.join(f'{k}: {v} calls' for k, v in ss['gated_calls_per_workload_run'].items())}); {ss['note']}."]
+    else:
+        L += [f"Served path: {ss.get('status', 'NOT_RECORDED')} ({ss.get('reason', 'campaign predates RUST-R1-01')})."]
     L += ["", f"W1 is the F0 workload `tpmc_trace_channel` (F0 recorded Python median "
           f"{sp['F0_recorded_python_tpmc_trace_channel_median_wall_s']} s on a shared machine); W2 adds the Clausing back-trace "
           f"(the TPMC part of one intake_response point). {sp['warm_up']}; load average {sp['load_average']}. Machine-specific "
@@ -843,12 +894,13 @@ def campaign():
     master = pre["campaign_seeds"]["scoring_master_seed"]
     t0 = time.time()
     inv = {}
-    print("standalone invariants ...", flush=True)
-    standalone_invariants(inv, master)
-    print("comparison vectors ...", flush=True)
-    results = run_vectors(pre, master, inv=inv)
-    print("speed-up ...", flush=True)
-    spd = speedup(pre)
+    with TB.parity_campaign_unadmitted():          # the campaign is what admits a build (RUST-01 gate)
+        print("standalone invariants ...", flush=True)
+        standalone_invariants(inv, master)
+        print("comparison vectors ...", flush=True)
+        results = run_vectors(pre, master, inv=inv)
+        print("speed-up ...", flush=True)
+        spd = speedup(pre)
     prov = build_provenance()
     history = []
     if os.path.exists(_p(REPORT_REL)):
@@ -858,6 +910,9 @@ def campaign():
         "utc": _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "git_head": prov.get("git_head"),
         "git_dirty": prov.get("git_dirty"), "master_seed": master, "prereg_sha256": rep["prereg"]["sha256"],
         "source_sha256": prov["source_sha256"], "verdicts": rep["verdicts"], "wall_s": round(time.time() - t0, 1)}]
+    write_report(rep)
+    print("speed-up through the served (admission-gated) path ...", flush=True)
+    rep["speedup_served_path"] = served_speedup(pre)
     write_report(rep)
     print(json.dumps(rep["verdicts"], indent=1))
     print(f"W1 speed-up {spd['W1_tpmc_trace_channel']['speedup_wall']:.1f}x, W2 {spd['W2_response_point_kernel']['speedup_wall']:.1f}x; "
@@ -872,8 +927,9 @@ def dev(only, limit):
         return 2
     master = pre["campaign_seeds"]["development_master_seed"]
     inv = {}
-    standalone_invariants(inv, master)
-    results = run_vectors(pre, master, only=only, limit=limit, inv=inv)
+    with TB.parity_campaign_unadmitted():
+        standalone_invariants(inv, master)
+        results = run_vectors(pre, master, only=only, limit=limit, inv=inv)
     for k in results:
         s = kernel_summary(k, results[k], inv, pre)
         print(k, "(DEVELOPMENT, not scored)", s["test_counts"], s["max_abs_z"],
@@ -924,15 +980,40 @@ def check(recompute=0):
         for k, s in rep["kernels"].items():
             if s["verdict"] == word:
                 errs.append(f"forbidden verdict word {word}")
+    # RUST-R1-01: the served (admission-gated) speed-up is recorded next to the kernel-only one
+    ss = rep.get("speedup_served_path")
+    if not ss:
+        errs.append("speedup_served_path missing (re-run the campaign: the served-path speed-up is not recorded)")
+    elif all(v == "ADMITTED" for v in rep["verdicts"].values()) and ss.get("status") != "MEASURED":
+        errs.append(f"speedup_served_path not measured although every kernel is ADMITTED ({ss.get('status')})")
+    if "kernel-only" not in str(rep["speedup"].get("measured_path", "")):
+        errs.append("speedup section does not state that it is the kernel-only (gate-bypassed) path")
     if open(_p(MD_REL)).read() != render_md(rep):
         errs.append("MD is not the rendering of the JSON (run --render-md)")
+    # RUST-01 / STR-03: the verdicts stand only for the recorded build. Always compare the current sources (and the
+    # installed extension when importable) with build_provenance, and the reference with its pre-registered sha256.
+    bp = rep["build_provenance"]
+    for rel in PROVENANCE_SOURCES:
+        if rel not in bp["source_sha256"]:
+            errs.append(f"{rel} is not in the recorded build provenance (re-run the campaign)")
+    for rel, h in bp["source_sha256"].items():
+        cur = sha256_file(rel) if os.path.exists(_p(rel)) else None
+        if cur != h:
+            errs.append(f"source {rel} differs from the recorded build (verdicts do not apply: NOT_ADMITTED_BUILD)")
+    if sha256_file("abep_sim/intake_tpmc.py") != pre["reference_implementation"]["sha256_at_registration"]:
+        errs.append("abep_sim/intake_tpmc.py differs from the pre-registered reference (verdicts do not apply)")
+    mod, _why = TB._load_rust()
+    if mod is not None and TB.extension_sha256(mod) != bp.get("extension_sha256"):
+        errs.append(f"installed abep_core extension sha256 {TB.extension_sha256(mod)} != recorded "
+                    f"{bp.get('extension_sha256')} (NOT_ADMITTED_BUILD)")
     if recompute:
         if not TB.rust_available():
             errs.append(f"--recompute needs abep_core: {TB.rust_unavailable_reason()}")
         elif build_provenance()["source_sha256"] != rep["build_provenance"]["source_sha256"]:
             errs.append("--recompute: abep_core sources differ from the recorded build")
         else:
-            got = run_vectors(pre, rep["campaign"]["master_seed"], limit=recompute, inv=None, progress=False)
+            with TB.parity_campaign_unadmitted():
+                got = run_vectors(pre, rep["campaign"]["master_seed"], limit=recompute, inv=None, progress=False)
             for k, rows in got.items():
                 for a, b in zip(rows, rep["vectors"][k]):
                     if json.loads(json.dumps(a["tests"])) != b["tests"]:

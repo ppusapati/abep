@@ -335,3 +335,22 @@ def test_no_pass_no_winner_no_forbidden_tokens():
     for p in (OUT_JSON, OUT_MD):
         t = p.read_text(encoding="utf-8")
         assert '"PASS"' not in t and '"status": "PASS' not in t and '"winner"' not in t and "SELECTED_DESIGN" not in t
+
+
+# ------------------------------------------------------------------------- consolidated verification round 1
+def test_nondominated_excludes_non_finite_points():
+    """OPT-04: a NaN point is never non-dominated and never dominates."""
+    assert F.nondominated([[1.0, 1.0], [0.5, float("nan")]], ["maximize", "maximize"]) == [0]
+
+
+def test_unevaluated_allocation_check_not_worded_satisfied(h1_assumed):
+    """OPT-05: hard_constraints never says SATISFIED while the AL-05 allocation check is NOT_EVALUATED."""
+    e = F.evaluate(env(), {"h1_front_geometry": h1_assumed})
+    assert e["al05_check"]["status"] == F.NOT_EVALUATED
+    assert not e["hard_constraints"].startswith("SATISFIED")
+
+
+def test_no_pending_lane_references_left():
+    """STR-01: F5 references resolve to H1F-EX rows, not to a pending lane."""
+    src = MODULE.read_text(encoding="utf-8")
+    assert "F5 PENDING" not in src

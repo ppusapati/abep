@@ -449,10 +449,16 @@ def strict_blockers(inlet: InletRecord, coefficient_evidence: Mapping[str, dict]
         if e is None or e.get("evidence_class") in (None, "assumed", "TBD") or not str(e.get("source", "")).strip():
             out.append({"id": f"C-{f}", "what": name, "status": "CODE_DEFAULT_UNCITED (assumed)",
                         "needs": f"non-assumed evidence (compressor_downselect test {test})"})
+        else:
+            try:
+                validate_coefficient(f, e.get("value"))
+            except SynthesisInputError as exc:
+                out.append({"id": f"C-{f}", "what": name, "status": "NON_FINITE_OR_OUT_OF_DOMAIN",
+                            "needs": f"a finite in-domain value ({exc})"})
     if inlet.label != LABEL_INTERFACE or inlet.evidence_class == "assumed":
         out.append({"id": "INLET", "what": f"inlet record {inlet.record_id}", "status": inlet.label,
-                    "needs": "an F1/F2 interface record (PENDING abep_sim/design/intake_synthesis.py, "
-                             "PENDING abep_sim/design/filter_stage.py) with non-assumed evidence"})
+                    "needs": "an F1/F2 interface record (abep_sim/design/intake_synthesis.py F1-ID-03, "
+                             "abep_sim/design/filter_stage.py F2-IF-03) with non-assumed evidence"})
     dens = ev.get("rotor_density")
     if dens is None or dens.get("evidence_class") in (None, "assumed", "TBD") or not str(dens.get("source", "")).strip():
         out.append({"id": "P-TI64-DENSITY", "what": "rotor density", "status": "UNCITED_DB_PRIOR",
@@ -511,13 +517,66 @@ def _finite(*xs) -> bool:
     return all(isinstance(x, (int, float)) and math.isfinite(x) for x in xs)
 
 
+# Physical domain of the FIXED DragCompressor coefficients (definitional bounds only, no evidence range implied):
+# 'pos' > 0, 'nonneg' >= 0, 'frac' in (0, 1]. Consolidated verification round 1 (SW-02): a non-finite or
+# out-of-domain coefficient is refused, never evaluated (a NaN safety factor used to fail the stress gate open).
+COEFFICIENT_DOMAIN = {
+    "turbo_kS": "pos", "turbo_kK": "pos", "turbo_blade_area_frac": "frac", "turbo_disc_thickness_m": "pos",
+    "rotor_radius_m": "pos", "h_mm": "pos", "w_mm": "pos", "L_per_stage_m": "pos", "xi": "frac",
+    "stress_safety": "pos", "leak_conductance_m3_s": "nonneg", "k_bear_W_per_rads": "nonneg", "eta_motor": "frac",
+    "P_ctrl_W": "nonneg", "rotor_disc_thickness_m": "pos", "stator_mass_factor": "nonneg",
+    "motor_kg_per_Nm": "nonneg", "bearing_kg": "nonneg", "conductance_to_sink_W_K": "pos", "T_sink_K": "pos",
+}
+
+
+def _real(v) -> float | None:
+    if isinstance(v, bool) or not isinstance(v, (int, float)):
+        return None
+    v = float(v)
+    return v if math.isfinite(v) else None
+
+
+def validate_coefficient(name: str, value) -> float:
+    """Refuse a non-finite or out-of-domain FIXED coefficient value (SynthesisInputError)."""
+    if FIELD_ROLES.get(name, (None,))[0] != FIXED:
+        raise SynthesisInputError(f"only FIXED coefficients can be overridden, not {name}")
+    v = _real(value)
+    dom = COEFFICIENT_DOMAIN[name]
+    if v is None or (dom == "pos" and not v > 0.0) or (dom == "nonneg" and not v >= 0.0) or \
+            (dom == "frac" and not 0.0 < v <= 1.0):
+        raise SynthesisInputError(f"coefficient {name}={value!r} is non-finite or outside its domain ({dom})")
+    return v
+
+
+def validate_design(design: Mapping) -> None:
+    """Refuse a malformed design vector (SW-03): rpm, A_turbo_m2 and R_turbo_m finite and > 0; N_turbo and N_drag
+    non-negative integers; rotor_material in materials.DB (an uncited DB material is rejected later by the
+    allowable gate, R_ALLOWABLE_TBD)."""
+    for k in ("rpm", "A_turbo_m2"):
+        v = _real(design.get(k))
+        if v is None or not v > 0.0:
+            raise SynthesisInputError(f"design {design.get('id')}: {k}={design.get(k)!r} must be finite and > 0")
+    if "R_turbo_m" in design:
+        v = _real(design["R_turbo_m"])
+        if v is None or not v > 0.0:
+            raise SynthesisInputError(f"design {design.get('id')}: R_turbo_m={design['R_turbo_m']!r} must be finite "
+                                      "and > 0")
+    for k in ("N_turbo", "N_drag"):
+        v = design.get(k)
+        if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(float(v)) or \
+                float(v) != int(v) or int(v) < 0:
+            raise SynthesisInputError(f"design {design.get('id')}: {k}={v!r} must be a non-negative integer")
+    if design.get("rotor_material") not in DB:
+        raise SynthesisInputError(f"design {design.get('id')}: rotor_material {design.get('rotor_material')!r} is "
+                                  "not in materials.DB")
+
+
 def build_compressor(design: Mapping, inlet: InletRecord, coefficient_overrides: Mapping[str, object] | None = None
                      ) -> DragCompressor:
+    validate_design(design)
     kw = module_defaults()
     for f, v in (coefficient_overrides or {}).items():
-        if FIELD_ROLES.get(f, (None,))[0] != FIXED:
-            raise SynthesisInputError(f"only FIXED coefficients can be overridden, not {f}")
-        kw[f] = v
+        kw[f] = validate_coefficient(f, v)
     a = float(design["A_turbo_m2"])
     r = float(design.get("R_turbo_m", r_turbo_from_area(a)))
     kw.update({"turbo_rows": int(design["N_turbo"]), "turbo_area_m2": a, "turbo_radius_m": r,
@@ -559,7 +618,7 @@ def evaluate_design(design: Mapping, inlet: InletRecord, mode: str = MODE_PARAME
         margin = allow / (comp.stress_safety * sigma) - 1.0
         diag.update({"allowable_Pa": allow, "safety_factor": comp.stress_safety, "stress_margin": margin,
                      "u_allow_with_sf_mps": math.sqrt(allow / (comp.stress_safety * rho))})
-        if margin < 0.0:
+        if not margin >= 0.0:                # fail closed: a NaN margin is never a pass (SW-02)
             reasons.append(R_STRESS)
     if u_t > U_TIP_PUBLISHED_MAX_MPS * (1.0 + 1e-12):
         reasons.append(R_TIP_DOMAIN)
@@ -656,7 +715,9 @@ def _dominates(a: Mapping, b: Mapping, objectives) -> bool:
 
 def pareto_front(records: list[dict], objectives=PRIMARY_OBJECTIVES) -> list[str]:
     """Ids of the non-dominated feasible records (weak Pareto dominance; ties are all kept). Deterministic order."""
-    feas = sorted((r for r in records if r.get("outputs")), key=lambda r: r["id"])
+    # OPT-04: records with a non-finite objective never enter dominance (fail closed)
+    feas = sorted((r for r in records if r.get("outputs") and
+                   all(_finite(r["outputs"].get(k)) for k, _ in objectives)), key=lambda r: r["id"])
     out = []
     for a in feas:
         if not any(_dominates(b["outputs"], a["outputs"], objectives) for b in feas if b is not a):

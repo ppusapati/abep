@@ -449,7 +449,7 @@ class FilterResult:
                 "notes": self.notes}
 
     def to_f3_record(self) -> dict:
-        """IF-A2 record for the compressor inlet (F3, PENDING abep_sim/design/compressor_synthesis.py)."""
+        """IF-A2 record for the compressor inlet (F3, abep_sim/design/compressor_synthesis.py IFD-F3-02)."""
         if not self.numeric:
             return {"interface": "IF-A2 filter -> compressor", "status": "NOT_EVALUATED", "reason": self.status,
                     "missing": self.missing, "label": self.label}
@@ -467,7 +467,7 @@ class FilterResult:
                 "mass_kg": self.mass_kg, "overrides_used": self.overrides_used}
 
     def to_f1_record(self) -> dict:
-        """Upstream return record for the intake (F1, PENDING abep_sim/design/intake_synthesis.py): what the filter
+        """Upstream return record for the intake (F1, abep_sim/design/intake_synthesis.py F1-ID-02): what the filter
         sends back toward the intake exit (forward reflection + backflow transmission + upstream products)."""
         if not self.numeric:
             return {"interface": "IF-A1 intake <- filter (return)", "status": "NOT_EVALUATED", "reason": self.status,
@@ -774,7 +774,7 @@ class FilterStage:
 
     # ---- F4 coupling ---------------------------------------------------------------------------------------------
     def backflow_coupling(self, T_gas_K: float | None, case: SensitivityCase | None = None) -> dict:
-        """Linear boundary coefficients for the plenum model (F4, PENDING fo_a9_7_f4_plenum_feed): per unit mass flow
+        """Linear boundary coefficients for the plenum model (F4, abep_sim/design/plenum_feed.py F4-ID-03): per unit mass flow
         arriving at the outlet face, the fractions transmitted upstream, reflected back to the plenum, captured and
         converted, plus the free-molecular conductance. Refuses (status REFUSED_TBD) when any record is unusable."""
         vals, missing, used = self._resolve(case)
