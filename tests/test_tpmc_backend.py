@@ -20,8 +20,10 @@ from abep_sim.constants import K_B, M_SPECIES
 from abep_sim.design import tpmc_backend as TB
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PREREG = os.path.join(ROOT, "docs/performance/abep_core/parity_prereg_v1.json")
-REPORT = os.path.join(ROOT, "docs/performance/abep_core/parity_report_v1.json")
+PREREG = os.path.join(ROOT, "docs/performance/abep_core/parity_prereg_v2.json")
+PREREG_V1 = os.path.join(ROOT, "docs/performance/abep_core/parity_prereg_v1.json")
+REPORT = os.path.join(ROOT, "docs/performance/abep_core/parity_report_v2.json")
+REPORT_V1 = os.path.join(ROOT, "docs/performance/abep_core/parity_report_v1.json")
 ATM = atmosphere(200.0, "mean")
 M = M_SPECIES["N2"]
 R = 5e-3
@@ -139,6 +141,29 @@ def test_prereg_frozen_values():
     import hashlib
     ref = hashlib.sha256(open(os.path.join(ROOT, "abep_sim/intake_tpmc.py"), "rb").read()).hexdigest()
     assert ref == pre["reference_implementation"]["sha256_at_registration"]
+
+
+V1_PREREG_SHA256 = "dd12856bc384cb96643ffb5f8cd4fbc7df1c4d1adcc619bd210ddfa26c8102a8"
+V1_REPORT_SHA256 = "09cf58a9dac3aea1aed2e3a343310d189c980a78ec699a75f7bc494c161418f8"
+
+
+def test_prereg_v2_reregistration_copies_v1():
+    """A9.14 S10.4: v2 re-pins the reference only; workloads, seeds, tolerance and rules are the v1 values unchanged."""
+    import hashlib
+    pre, v1 = json.load(open(PREREG)), json.load(open(PREREG_V1))
+    assert pre["id"] == "PARITY-PREREG-ABEP-CORE-TPMC-V2" and pre["schema"] == "abep_core_parity_prereg_v2"
+    assert pre["supersedes"]["sha256"] == V1_PREREG_SHA256 == hashlib.sha256(open(PREREG_V1, "rb").read()).hexdigest()
+    assert pre["supersedes"]["v1_report"]["sha256"] == V1_REPORT_SHA256
+    assert hashlib.sha256(open(REPORT_V1, "rb").read()).hexdigest() == V1_REPORT_SHA256     # v1 history untouched
+    for f in pre["copied_from_v1_unchanged"]["fields"]:
+        assert pre[f] == v1[f], f
+    assert pre["campaign_seeds"]["scoring_master_seed"] == 20261001
+    assert pre["reference_implementation"]["v1_sha256"] == v1["reference_implementation"]["sha256_at_registration"]
+    assert pre["reference_implementation"]["sha256_at_registration"] != pre["reference_implementation"]["v1_sha256"]
+    assert TB.PARITY_PREREG.endswith("parity_prereg_v2.json") and TB.PARITY_REPORT.endswith("parity_report_v2.json")
+    V = _load_verify()
+    assert V.PREREG_REL == "docs/performance/abep_core/parity_prereg_v2.json"
+    assert V.REPORT_REL == "docs/performance/abep_core/parity_report_v2.json"
 
 
 def test_report_rederives_and_is_consistent():
