@@ -3038,3 +3038,36 @@ ea0100b9... (v1 pin) to dcddf947..., so the v1 campaign refused (REFUSED_REFEREN
 - Open (outside this lane's paths): `.github/workflows/rust-parity.yml` and `tests/test_rust_ci_workflow.py` still read
   the v1 records (`test_source_status_entry_point` compares the v2 `--source-status` output with the v1 report and fails;
   the workflow's reference-pin step compares against `parity_prereg_v1`). They need re-pointing to v2 by the Rust-CI owner.
+
+## 2026-10-01 — Repair lane production_data_perf: S6.8 pressure domain in system.evaluate, golden Hall-calibration record, v1 W1/down-select history restored
+
+- **PHY-02 (model change, A9.13 S6.8).** `system.evaluate` (wrapped by `archengine.make_gas_fn`) now labels a gas state
+  `gaspath_domain_status = NOT_EVALUATED_OUT_OF_DOMAIN` (`gaspath_in_domain` False, `gaspath_out_of_domain` +
+  `free_molecular_pressure_limit_0.1Pa`, compressor branch infeasible) when the setpoint `p_target_Pa` or the operating
+  reservoir pressure exceeds the 0.1 Pa free-molecular limit (`system.P_FREE_MOLECULAR_LIMIT_PA`, equal to the design-layer
+  constants; the reservoir pressure is compared within the orifice solver's own `ORIFICE_P_RTOL`, so a converged 0.1 Pa
+  setpoint stays in domain). Before, 0.2 / 0.3 Pa states were `IN_DOMAIN`. New labels `gaspath_p_domain_max_Pa`,
+  `gaspath_p_domain_limit_Pa`, `comp_sizing_p_out_Pa`, `comp_sizing_p_out_above_limit`. **Open for the owner:** the
+  free-discharge outlet of the compressor sizing search (before the orifice throttles the reservoir to the setpoint) is
+  0.1013 Pa at every default-grid point, including the golden point; it is reported, not gated. Gating it would leave the
+  A9.18 grid with no admissible point (the golden would have to be re-decided). `golden check` stays OK (grid tops out at 0.1 Pa).
+- **PHY-06 (A9.18 item 1).** `golden.HALL_CALIBRATION_DOMAIN` (status `RECORDED_NOT_GATING_OWNER_CONFIRMATION_REQUESTED`)
+  states that the withdrawn 0-D Hall calibration envelope is not treated as part of the "registered model domain" for
+  golden purposes, and that every closed default-grid point is an extrapolation (selected point 0.667 above the Isp
+  envelope). `admissibility()` records `hall_calibration` / `hall_calibration_extrapolation`; the selection case and
+  provenance carry them. golden_v2 regenerated (`python -m abep_sim.golden generate`): only these labels and the provenance
+  code version are added; every value is unchanged (`check` before regeneration: OK).
+- **SW-01.** a403fd7 had overwritten the sha256-pinned `feed_state_closure_v1.json` and `compressor_downselect_v1.json`
+  (and their MDs). They are restored byte for byte from a403fd7^ (ff6e15db… / 79f6b28f…); the A9.16 regeneration is now
+  `feed_state_closure_v2.json` / `FEED_STATE_CLOSURE_v2.md` and `compressor_downselect_v2.json` /
+  `COMPRESSOR_DOWNSELECT_v2.md` (same schema ids). The down-select reads the v2 closure; F3 reads the v2 down-select
+  (SRC-DOWNSELECT citation updated); F2 / F4 / F7-F8 / F9 rebuilt for the new input pins only. The immutable H2,
+  M16-v2, phase-1 prereg and capability-demo builders are not re-pinned; `s1a_readiness_status_current.json`
+  regenerated against the restored v1 (back to the sha M16-v2 pins).
+- **SW-03 / PHY-07.** `test_orbit_dataset_excluded_from_distribution` checks imports of `abep_sim.atmosphere_orbit` with
+  `ast` instead of a substring; the immutable A9.16 application-matrix token in `upstream_a9_13.py` stays.
+- **SW-05.** `profile_baseline.source_drift` now fails a recorded file whose bytes differ from the last recorded
+  new sha256; later drift is recorded in chained addenda (`DRIFT_AFTER_A9_18_REPAIR.json`: system.py, golden.py).
+- **RVF-05.** `REGISTRATION_ADDENDUM_A9_18.json` supersedes the dedicated baseline's `ADMISSION_BASELINE_PERFORMANCE_ONLY`
+  label for current use (`HISTORICAL_FOR_EARLIER_CODE_STATE`, Rust admission blocked until the A9.18 PERF_RERUN) and
+  marks the baseline.md "shared machine" sentence as harness boilerplate (Windows CPU load 7 % / 1 %). Measured files untouched.

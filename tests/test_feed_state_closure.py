@@ -22,9 +22,9 @@ import pytest
 REPO = Path(__file__).resolve().parents[1]
 DIR = REPO / "docs" / "architecture_comparison" / "feed_state_closure"
 SCRIPT = DIR / "build_feed_state_closure.py"
-JSON_PATH = DIR / "feed_state_closure_v1.json"
+JSON_PATH = DIR / "feed_state_closure_v2.json"   # v2 = A9.16 regeneration; v1 is history (SW-01)
 SCHEMA_PATH = DIR / "feed_state_closure_v1.schema.json"
-MD_PATH = DIR / "FEED_STATE_CLOSURE.md"
+MD_PATH = DIR / "FEED_STATE_CLOSURE_v2.md"
 EVIDENCE = {"measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed"}
 CASES = {f"alt{a}_{l}" for a in (180, 200, 230) for l in ("low", "mean", "high")}
 FORBIDDEN_TOKENS = ("ensemble_member_id", "sgb-screen", "screening_candidate", "registration", "coil_shape",

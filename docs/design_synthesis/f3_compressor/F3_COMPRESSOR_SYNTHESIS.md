@@ -246,7 +246,7 @@ Strict mode: **NOT_EVALUATED_MATERIAL_BASIS** (23 blockers).
 
 - **SRC-CHIGGIATO2013**: P. Chiggiato, 'Vacuum Technology for Ion Sources', CERN Accelerator School: Ion Sources, CERN-2013-007 (2013); arXiv:1404.0960 (full_text, https://arxiv.org/pdf/1404.0960)
 - **SRC-NASA-HDBK-6025**: NASA-HDBK-6025, 'Guidelines for the Specification and Certification of Titanium Alloys for NASA Flight Applications' (approved 2014-04-24) (full_text, https://standards.nasa.gov/sites/default/files/standards/NASA/Baseline-w/CHANGE-1/1/Historical/NASA-HDBK-6025.pdf)
-- **SRC-DOWNSELECT**: repository: docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json (DI-1.4 compressor down-selection v1) (repository)
+- **SRC-DOWNSELECT**: repository: docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json (DI-1.4 compressor down-selection, v2 = A9.16 regeneration; v1 kept as history) (repository)
 - **SRC-R1-THREAD**: repository: docs/procurement/web_track_v1/threads/R1_compressor.json (Li 2015 evidence thread) (repository)
 - **SRC-OWNER-147**: repository: docs/decisions/OD_2026_09_29_owner_answers_147.json row 54 (v0 dry-mass allocation: compressor+drive 5.5 kg; 'allocations, not CBEs') (repository)
 - **SRC-COMPRESSOR-PY**: repository: abep_sim/compressor.py DragCompressor (dataclass defaults, run(), _run_once(), size_for()) (repository)

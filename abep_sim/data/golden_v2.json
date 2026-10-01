@@ -179,6 +179,7 @@
     "1": 0.05,
     "2": 0.1
    },
+   "hall_calibration_domain_status": "RECORDED_NOT_GATING_OWNER_CONFIRMATION_REQUESTED",
    "rule_id": "A9.18-SEL-1 FIRST_ADMISSIBLE_IN_DEFAULT_GRID_ORDER",
    "selected": {
     "area_m2": 0.7,
@@ -203,6 +204,7 @@
     },
     "A0.7_p0.05": {
      "admissible": true,
+     "hall_calibration": "extrapolation",
      "verdict": "ADMISSIBLE"
     }
    }
@@ -550,9 +552,11 @@
   ],
   "code_version": {
    "abep_sim_paths_differing_from_head_at_generation": [
-    "abep_sim/golden.py"
+    "abep_sim/design/compressor_synthesis.py",
+    "abep_sim/golden.py",
+    "abep_sim/system.py"
    ],
-   "git_head_at_generation": "f6531ffd31c2f45cf51db052afa6ede8ddaa221a",
+   "git_head_at_generation": "f676854606e0bfa89b378f3cd124fd62c125a806",
    "note": "the generating code is git_head_at_generation plus the listed working-tree paths (the commit that adds this file); the golden comparison, not this record, is the reproducibility gate"
   },
   "decision_records": [
@@ -597,6 +601,8 @@
     "gaspath_domain_status": "IN_DOMAIN",
     "gaspath_not_converged": "",
     "gaspath_status": "CONVERGED",
+    "hall_calibration": null,
+    "hall_calibration_extrapolation": null,
     "p_level": 0.05,
     "reason": "no candidate satisfies constraints: mission_envelope=25",
     "verdict": "CLOSURE_INFEASIBLE"
@@ -610,6 +616,8 @@
     "gaspath_domain_status": "IN_DOMAIN",
     "gaspath_not_converged": "",
     "gaspath_status": "CONVERGED",
+    "hall_calibration": null,
+    "hall_calibration_extrapolation": null,
     "p_level": 0.1,
     "reason": "no candidate satisfies constraints: mission_envelope=25",
     "verdict": "CLOSURE_INFEASIBLE"
@@ -639,6 +647,8 @@
     "gaspath_domain_status": "IN_DOMAIN",
     "gaspath_not_converged": "",
     "gaspath_status": "CONVERGED",
+    "hall_calibration": "extrapolation",
+    "hall_calibration_extrapolation": 0.6667819824909338,
     "p_level": 0.05,
     "reason": "",
     "verdict": "ADMISSIBLE"
@@ -652,6 +662,8 @@
     "gaspath_domain_status": "IN_DOMAIN",
     "gaspath_not_converged": "",
     "gaspath_status": "CONVERGED",
+    "hall_calibration": "extrapolation",
+    "hall_calibration_extrapolation": 0.666816142757401,
     "p_level": 0.1,
     "reason": "",
     "verdict": "ADMISSIBLE"
@@ -697,12 +709,20 @@
     "gaspath_domain_status": "IN_DOMAIN",
     "gaspath_not_converged": "",
     "gaspath_status": "CONVERGED",
+    "hall_calibration": "extrapolation",
+    "hall_calibration_extrapolation": 0.8762461759362119,
     "p_level": 0.1,
     "reason": "",
     "verdict": "ADMISSIBLE"
    }
   ],
   "generator": "python -m abep_sim.golden generate",
+  "hall_calibration_domain": {
+   "basis": "docs/decisions/OD_2026_10_01_A9_18_GOLDEN_AND_BASELINE_OWNER_DECISIONS.md item 1; CLAUDE.md withdrawn list",
+   "criterion": "0-D Hall calibration envelope (archengine.CALIBRATION['hall'], calibration_status)",
+   "statement": "The 0-D Hall closure and its calibration envelope are withdrawn (CLAUDE.md 'Superseded / withdrawn': all absolute Hall results of the 0-D closure, incl. the Marchioni calibration on an invented geometry). This golden is a reproducibility reference of a converged numerical state, not physics evidence, so the withdrawn envelope is not treated as part of the 'registered model domain' of A9.18 item 1 for golden purposes. The selected point carries calibration = 'extrapolation' (worst relative excursion recorded in cases.architecture_closure and in the grid scan); every closed point of the default grid is an extrapolation (provenance.full_grid_scan). If the owner rules the envelope part of the registered domain, SELECTION_RULE finds no admissible point and the golden must be re-decided; it is never re-picked silently.",
+   "status": "RECORDED_NOT_GATING_OWNER_CONFIRMATION_REQUESTED"
+  },
   "owner_decision": "A9.18 GOLDEN = NEW_ADMISSIBLE_CONVERGED_GOLDEN; RETAIN_OLD_AS_NONCONVERGED_REGRESSION_REFERENCE",
   "previous_design_point": {
    "area_m2": 1.3,

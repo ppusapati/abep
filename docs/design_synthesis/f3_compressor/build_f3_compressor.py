@@ -42,7 +42,7 @@ DESIGNS_NAME = "f3_compressor_designs_v1.json"
 MD_NAME = "F3_COMPRESSOR_SYNTHESIS.md"
 TEST_REL = "tests/test_design_f3_compressor.py"
 BASE_COMMIT = "1c9d7a648cd4ce739e587248693271e5115698e1"
-DOWNSELECT_REL = "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json"
+DOWNSELECT_REL = "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json"
 SIG = 10
 
 # Immutable inputs (owner decisions are immutable after commit; the versioned v1 deliverables are frozen by version).

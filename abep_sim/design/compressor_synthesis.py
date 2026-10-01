@@ -148,8 +148,8 @@ SOURCES = {
                 "quotation of a design-allowables handbook",
     },
     "SRC-DOWNSELECT": {
-        "citation": "repository: docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json "
-                    "(DI-1.4 compressor down-selection v1)",
+        "citation": "repository: docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json "
+                    "(DI-1.4 compressor down-selection, v2 = A9.16 regeneration; v1 kept as history)",
         "access_level": "repository",
         "note": "requirement envelope (W1 feed-state closure cases), CD-01..CD-08, EV-01..EV-20, T-1..T-9",
     },
@@ -196,7 +196,7 @@ SIZE_FOR_MAX_TURBO_ROWS = 6         # DragCompressor.size_for(max_turbo_rows=6) 
 SIZE_FOR_MAX_DRAG_STAGES = 4        # DragCompressor.size_for(max_drag_stages=4) default
 OWNER_MASS_ALLOCATION_KG = 5.5      # row 54 (allocation, not CBE)
 LI2015_INLET_DIAMETER_M = 0.5       # reconstructed, verify (R1 thread)
-# compressor_downselect_v1.json requirement_summary.A_inlet_min_m2["0.25"] (min, max): PROPOSED b = 0.25 target
+# compressor_downselect_v2.json requirement_summary.A_inlet_min_m2["0.25"] (min, max): PROPOSED b = 0.25 target
 A_INLET_MIN_B025_RANGE_M2 = (0.1128299365, 0.2369348826)
 
 CITED_VALUES = [

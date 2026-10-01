@@ -41,9 +41,9 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[3]
 OUT_DIR_REL = "docs/architecture_comparison/feed_state_closure"
 SCRIPT_REL = f"{OUT_DIR_REL}/build_feed_state_closure.py"
-JSON_NAME = "feed_state_closure_v1.json"
+JSON_NAME = "feed_state_closure_v2.json"   # v2 (A9.16 regeneration); v1 kept byte-identical as history
 SCHEMA_NAME = "feed_state_closure_v1.schema.json"
-MD_NAME = "FEED_STATE_CLOSURE.md"
+MD_NAME = "FEED_STATE_CLOSURE_v2.md"
 LANE16_SCRIPT_REL = "scripts/architecture/build_feed_envelope.py"
 DECISION_REL = "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json"
 LANE25_DRAFT_REL = "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json"

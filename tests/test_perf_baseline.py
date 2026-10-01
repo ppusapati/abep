@@ -10,6 +10,7 @@ Run: python -m pytest -q tests/test_perf_baseline.py
 from __future__ import annotations
 
 import importlib.util
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -115,6 +116,45 @@ def test_unrecorded_drift_still_fails(H, doc, monkeypatch, tmp_path):
     if drift:
         assert all("not recorded" in d["error"] for d in drift)
         assert H.check()
+
+
+def test_recorded_drift_changed_again_fails(H, doc, monkeypatch, tmp_path):
+    """SW-05: a recorded drift is not an allowance for any later change. A record whose new sha256 differs from the
+    current bytes (here: every recorded new sha256 replaced) fails --check."""
+    rec = json.loads(DRIFT_PATH.read_text())
+    stale = tmp_path / "stale_drift.json"
+    for d in rec["drifted_files"]:
+        d["new_sha256"] = "0" * 64
+    stale.write_text(json.dumps(rec))
+    monkeypatch.setattr(H, "DRIFT_REL", str(stale))
+    monkeypatch.setattr(H, "DRIFT_ADDENDA_REL", ())
+    drift = H.source_drift(doc)
+    assert drift
+    assert all("drifted again" in d["error"] for d in drift), drift
+    assert any("drifted again" in e for e in H.check())
+
+
+def test_drift_addendum_must_chain(H, doc, monkeypatch, tmp_path):
+    """An addendum entry whose old sha256 is not the previous record's new sha256 is an error (no gap in the chain)."""
+    drift0 = H.source_drift(doc)
+    assert drift0 and all("error" not in d for d in drift0)
+    p = drift0[0]["path"]
+    bad = tmp_path / "bad_addendum.json"
+    bad.write_text(json.dumps({"drifted_files": [{"path": p, "old_sha256": "1" * 64, "new_sha256": drift0[0]["new_sha256"]}]}))
+    monkeypatch.setattr(H, "DRIFT_ADDENDA_REL", tuple(H.DRIFT_ADDENDA_REL) + (str(bad),))
+    d = {x["path"]: x for x in H.source_drift(doc)}[p]
+    assert "does not chain" in d["error"]
+
+
+def test_drift_addenda_chain_to_current_bytes(H, doc):
+    """Every addendum record chains on the earlier record and ends at the current bytes (A9.18 PERF_RERUN still owed)."""
+    for rel in H.DRIFT_ADDENDA_REL:
+        add = json.loads((REPO / rel).read_text())
+        assert add["status"] == "HISTORICAL_SOURCE_DRIFT" and add["owner_rerun_required"] is True
+        assert add["rust_performance_admission"] == "BLOCKED_UNTIL_A9_18_PERF_RERUN"
+        for d in add["drifted_files"]:
+            assert d["new_sha256"] == hashlib.sha256((REPO / d["path"]).read_bytes()).hexdigest(), d["path"]
+    assert all("error" not in d for d in H.source_drift(doc))
 
 
 def test_md_reproduces(H, doc):
