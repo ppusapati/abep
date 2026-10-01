@@ -207,6 +207,20 @@
    "ci": "6/6 green on ca36c9e",
    "post_merge_baseline_on_main": "full suite 2342 passed / 5 skipped / 1 xfailed, golden OK, ci_checks 10/10 at eef8b85",
    "after": "any further merge to main needs a new owner approval"
+  },
+  "checkpoint_5_executed": {
+   "pr": "https://github.com/ppusapati/abep/pull/35",
+   "pr_head": "45ea2acae235739ffc7e06ff6cf9f856b4236598",
+   "merge_commit_on_main": "98fbbb9b1cf12d238ec845b5a6cbb6c3be92fd3b",
+   "utc": "2026-10-01",
+   "approval": "owner 2026-10-01 'Yes' to one merge of the A9.6 checkpoint; consumed by this merge",
+   "pre_merge_fixes": [
+    "P3 builder platform-independent serialization (CI NOT REPRODUCED from machine-precision residuals)",
+    "P1 readiness: duplicate ids refused; timestamps ordered by parsed UTC (Codex review, regression tests)"
+   ],
+   "ci": "6/6 green on 45ea2ac",
+   "post_merge_baseline_on_main": "full suite 2659 passed / 5 skipped / 1 xfailed, golden OK, ci_checks 10/10 at 98fbbb9; tree identical to the execution branch head",
+   "after": "any further merge to main needs a new owner approval"
   }
  },
  "a9_6_implementation_first": {
@@ -230,7 +244,7 @@
    "circular P1/P2 -> RFQ v2 sha pins replaced by id checks (RFQ v2 reads P1/P2 text)",
    "hygiene: full suite 2541/5/1 after waves 1-2; all repo builders --check OK (the v1 consolidated-questions builder ignores --check and rewrites its xlsx: never run it; restored byte-identical)"
   ],
-  "phase": "IMPLEMENTATION COMPLETE; CONSOLIDATED VERIFICATION PASSED (awaiting owner merge approval; no merge authorized)",
+  "phase": "MERGED TO MAIN (checkpoint 5, 98fbbb9)",
   "consolidated_verification": {
    "workflow": "wf_c77d6edf-6d5",
    "dimensions": [

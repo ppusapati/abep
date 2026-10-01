@@ -2414,3 +2414,10 @@ software).
 
 Final checks: 2657 passed / 5 skipped / 1 xfailed, golden OK, ci_checks 10/10, protected artifacts unchanged vs main
 eef8b85. No model, frozen dataset or golden changed. Build order: P4, XE, P1, P2, P3, MP, RFQ, RVM, state v4, M16 v4.
+Checkpoint 5 merged to main as 98fbbb9 (PR #35) on 2026-10-01 with owner approval (one merge). Fixed before the merge:
+- **P3 builder:** its serialization is now platform-independent. CI could not reproduce the outputs because they
+  carried machine-precision residuals.
+- **P1 readiness (two Codex findings):** duplicate interlock / DWV-path / gas-line ids are refused, and records are
+  ordered by parsed UTC timestamp.
+
+Main reproduces 2659 / 5 / 1, golden OK, ci_checks 10/10.
