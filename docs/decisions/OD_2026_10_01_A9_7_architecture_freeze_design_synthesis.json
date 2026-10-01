@@ -1,0 +1,59 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_HARDWARE_PIVOT_2026_10_01_A9_7_architecture_freeze_design_synthesis",
+ "decided_by": "owner",
+ "date": "2026-10-01",
+ "decision": "A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS_RECORDED",
+ "baseline": "main 98fbbb9",
+ "parents": [
+  "docs/decisions/OD_2026_09_30_A9_6_implementation_first_directive.json"
+ ],
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md",
+  "sha256": "fb51328d6fe07a6eaf257ef9ef9592cb0c0039ae3e8cf04ef0420007c985b129"
+ },
+ "summary": {
+  "objective": "converge to a physically defined ABEP reference architecture (no further framework construction for its own sake)",
+  "language": "Python stays authoritative (orchestrator, evidence/provenance, validation, gates, schemas/builders/decisions); HallThruster.jl stays the Hall solver; optional Rust package abep_core (PyO3/maturin) only for measured hotspots; a Rust kernel is admitted only when Python-reference vs Rust discrepancies on frozen golden vectors, edge cases and randomized domain points stay inside a preregistered tolerance; Python wrappers keep identical I/O and every Rust kernel can be switched off",
+  "never_port": [
+   "governance",
+   "evidence",
+   "RVM",
+   "ledgers",
+   "builders",
+   "HallThruster.jl"
+  ],
+  "rust_order": [
+   "TPMC particle tracing",
+   "intake geometry-grid generation",
+   "compressor design-space search",
+   "Monte-Carlo/full-chain UQ driver",
+   "mission propagation",
+   "P3 ray/view-factor sampling"
+  ],
+  "freeze_rule": "FROZEN_REFERENCE_FLIGHT_ARCHITECTURE only when architecture-level gates have sufficient evidence; until then INVESTIGATION_HYPOTHESIS",
+  "optimizer_rule": "hard constraints fail closed; a TBD evidence input is never converted into an assumed value to obtain an optimum; Pareto sets, not single optima; optimisation never changes evidence-gate status",
+  "f6_condition": "downstream ICP geometry search once P1/P2 evidence exists"
+ },
+ "implementation_lanes": {
+  "fo_a9_7_f0_profiling": "F0 performance baseline PERFORMANCE_BASELINE_98fbbb9.json",
+  "fo_a9_7_f1_intake_synthesis": "F1 intake geometry synthesis (Pareto)",
+  "fo_a9_7_f2_filter_stage": "F2 explicit filter-stage interface",
+  "fo_a9_7_f3_compressor_synthesis": "F3 compressor geometry synthesis (species-resolved, Pareto)",
+  "fo_a9_7_f4_plenum_feed": "F4 transient plenum/feed synthesis",
+  "fo_a9_7_f5_h1_freeze_candidate": "F5 H-1 design closure (freeze candidate)",
+  "fo_a9_7_f6_icp_geometry": "F6 downstream ICP geometry synthesis (framework; search after P1/P2 evidence)",
+  "fo_a9_7_f7_f8_coupled_optimizer": "F7 coupled architecture optimizer + F8 robust optimization (fail-closed)",
+  "fo_a9_7_rust_kernels": "optional abep_core Rust kernels for measured hotspots (Python reference authoritative)",
+  "fo_a9_7_f9_freeze_candidate": "F9 architecture freeze candidate (INVESTIGATION_HYPOTHESIS until gates have evidence)",
+  "fo_a9_7_consolidated_verification": "one consolidated verification of the A9.7 batch"
+ },
+ "recorder_notes": [
+  "Verification mode is not restated in A9.7; the A9.6 implementation-first pattern (hygiene per lane, one consolidated verification at the end) is applied. No merge to main is authorized by A9.7.",
+  "Rule 2 / goldens: existing abep_sim modules (intake, intake_tpmc, compressor.DragCompressor.size_for, reservoir) are not modified; the synthesis layer is new code (abep_sim/design/) that calls them, so golden benchmarks cannot move. The F3 'upgrade' is delivered as a new bounded design search beside size_for.",
+  "Rule 9: optional Rust comparisons must not add pytest skips; the Python reference path is always tested and the Rust parity check runs as a separate script/CI-optional step.",
+  "Evidence state that bounds what F5-F8 can compute today: the credible Hall set is empty and P5-N2 v1 is INCONCLUSIVE (no admitted Hall response map), so thrust T and T - D are NOT_EVALUATED for every design vector; ICP-45 is NOT_EVALUATED until I_d,max,H1 is registered and P1 data exist; the F6 geometry search needs P1/P2 evidence. These parts are implemented fail-closed and return NOT_EVALUATED, never an assumed value.",
+  "Formula lines with lost minus signs (F4 plenum balance) are recorded as the standard mass balance dm_s/dt = mdot_s,compressor - mdot_s,Hall - mdot_s,losses (recorder reading)."
+ ],
+ "immutability": "never edited after commit; later owner amendments are new addendum files"
+}

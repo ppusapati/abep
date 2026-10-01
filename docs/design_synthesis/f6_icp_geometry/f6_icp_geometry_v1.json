@@ -1,0 +1,4042 @@
+{
+ "schema": "abep_design_synthesis_f6_v1",
+ "id": "F6_ICP_GEOMETRY_v1",
+ "lane": "fo_a9_7_f6_icp_geometry",
+ "lane_key": "A9_7_F6",
+ "trigger": "T_A9_7_F6_ICP_GEOMETRY",
+ "directive": "docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md",
+ "date": "2026-10-01",
+ "base_commit": "1c9d7a648cd4ce739e587248693271e5115698e1",
+ "status": "FRAMEWORK_DEFINED; SEARCH_NOT_RUN (A9.7 F6: search once P1 / P2 evidence exists)",
+ "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
+ "architecture_status": "INVESTIGATION_HYPOTHESIS",
+ "generated_by": "python docs/design_synthesis/f6_icp_geometry/build_f6_icp_geometry.py",
+ "module": "abep_sim/design/icp_geometry_synthesis.py",
+ "test": "tests/test_design_f6_icp_geometry.py",
+ "companion_document": "F6_ICP_GEOMETRY.md",
+ "what_this_is_not": [
+  "an ICP design or geometry selection",
+  "a ranking, winner or PASS",
+  "an ICP-45 evaluation (NOT_EVALUATED)",
+  "a thermal result (ICP_COUPLED_THERMAL UNRESOLVED)",
+  "a Hall prediction",
+  "an archengine change (goldens do not move)"
+ ],
+ "decision_pins": [
+  {
+   "key": "A97_MD",
+   "path": "docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md",
+   "sha256": "fb51328d6fe07a6eaf257ef9ef9592cb0c0039ae3e8cf04ef0420007c985b129",
+   "role": "A9.7 verbatim owner directive (F6 section)"
+  },
+  {
+   "key": "A97_JSON",
+   "path": "docs/decisions/OD_2026_10_01_A9_7_architecture_freeze_design_synthesis.json",
+   "sha256": "3199a670c901967ae4dca930022470b024cac14b263335da0adc3d423c37f372",
+   "role": "A9.7 machine-readable record (f6_condition, optimizer_rule, recorder_notes)"
+  },
+  {
+   "key": "A9",
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+   "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+   "role": "A9 governing decision (Hall + downstream 13.56 MHz RF ICP neutralizer; INVESTIGATION_HYPOTHESIS)"
+  }
+ ],
+ "referenced_not_pinned": [
+  {
+   "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py",
+   "use": "view_factors, h1_body, Body, plume_interception_record, q_collector (imported by path, read-only)"
+  },
+  {
+   "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+   "use": "H-1 evaluation geometry (H2-5 range midpoints, assumed) and the dimensionless evaluation grid"
+  },
+  {
+   "path": "docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py",
+   "use": "icp45a_evaluate (capacity), derive_rf (P_RF,delivered), ICP45A_STATUSES (imported by path)"
+  },
+  {
+   "path": "docs/experiments/hall_icp/p2_impedance_map/p2_framework.py",
+   "use": "validate_map (p2_impedance_map_v1) (imported by path)"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+   "use": "MA-AL-05 owner v0 dry allocation 'ICP neutralizer'"
+  },
+  {
+   "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+   "use": "collector material candidates and cited densities (FINAL_COLLECTOR_MATERIAL OPEN)"
+  },
+  {
+   "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
+   "use": "M16 v4 rows 10, 13, 18, 19"
+  }
+ ],
+ "pending_lanes": {
+  "F0": "docs/performance/PERFORMANCE_BASELINE_98fbbb9.json (fo_a9_7_f0_profiling)",
+  "F1": "abep_sim/design/intake_synthesis.py (fo_a9_7_f1_intake_synthesis)",
+  "F2": "abep_sim/design/filter_stage.py (fo_a9_7_f2_filter_stage)",
+  "F3": "abep_sim/design/compressor_synthesis.py (fo_a9_7_f3_compressor_synthesis)",
+  "F4": "abep_sim/design/plenum_feed.py (fo_a9_7_f4_plenum_feed)",
+  "F5": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json (fo_a9_7_f5_h1_freeze_candidate; IFS-F6-01..05, IFD-F6-01..03)",
+  "F7_F8": "abep_sim/design/architecture_optimizer.py (fo_a9_7_f7_f8_coupled_optimizer; F78-ID-10)",
+  "F9": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json (fo_a9_7_f9_freeze_candidate; F9-ID-06)"
+ },
+ "design_vector": {
+  "variables": [
+   {
+    "id": "F6-X-01",
+    "symbol": "L_standoff",
+    "name": "axial standoff of the ICP module upstream face downstream of IP-EXIT",
+    "units": "m",
+    "kind": "continuous",
+    "bounds": {
+     "lo": "TBD",
+     "hi": "TBD",
+     "status": "TBD",
+     "requires": "KC-1 / ICP module drawing (ICD ICP-02) and the H-1 exit-plane definition IP-EXIT (F5 H1F-EX-01 FREEZE_CANDIDATE; standoff H1F-EX-03 TBD)",
+     "evidence_class": null
+    },
+    "maps_to": [
+     "P3-G-01"
+    ],
+    "used_by": [
+     "view_factor_obstruction",
+     "plume_interception_fraction",
+     "hall_b_field_disturbance"
+    ]
+   },
+   {
+    "id": "F6-X-02",
+    "symbol": "r_aperture",
+    "name": "ICP clear aperture radius (plume passage; open-tube coaxial first build, A9.3 OQ-VI-03)",
+    "units": "m",
+    "kind": "continuous",
+    "bounds": {
+     "lo": "TBD",
+     "hi": "TBD",
+     "status": "TBD",
+     "requires": "frozen H-1 channel OD (F5 H1F-EX-04 TBD_AFTER_EVIDENCE) and the MEASURED plume angular distribution (P3-H-03, Phase-1 Faraday probe) (ICD ICP-04)",
+     "evidence_class": null
+    },
+    "maps_to": [
+     "P3-G-02"
+    ],
+    "used_by": [
+     "view_factor_obstruction",
+     "plume_interception_fraction",
+     "module_mass"
+    ]
+   },
+   {
+    "id": "F6-X-03",
+    "symbol": "r_module",
+    "name": "ICP module envelope outer radius (minimum necessary downstream obstruction, A9.2)",
+    "units": "m",
+    "kind": "continuous",
+    "bounds": {
+     "lo": "TBD",
+     "hi": "TBD",
+     "status": "TBD",
+     "requires": "module envelope (ICD ICP-07, ICP-47)",
+     "evidence_class": null
+    },
+    "maps_to": [
+     "P3-G-03"
+    ],
+    "used_by": [
+     "view_factor_obstruction",
+     "module_mass"
+    ]
+   },
+   {
+    "id": "F6-X-04",
+    "symbol": "L_module",
+    "name": "ICP module envelope axial length",
+    "units": "m",
+    "kind": "continuous",
+    "bounds": {
+     "lo": "TBD",
+     "hi": "TBD",
+     "status": "TBD",
+     "requires": "module envelope (ICD ICP-07)",
+     "evidence_class": null
+    },
+    "maps_to": [
+     "P3-G-04"
+    ],
+    "used_by": [
+     "view_factor_obstruction",
+     "plume_interception_fraction",
+     "module_mass"
+    ]
+   },
+   {
+    "id": "F6-X-05",
+    "symbol": "tau_support",
+    "name": "open-frame support geometric open-area fraction (gray, direction-independent approximation of the P3 engine)",
+    "units": "-",
+    "kind": "continuous",
+    "bounds": {
+     "lo": "TBD",
+     "hi": "TBD",
+     "status": "TBD",
+     "requires": "support drawing (ICD ICP-47)",
+     "evidence_class": null
+    },
+    "maps_to": [
+     "P3-G-05"
+    ],
+    "used_by": [
+     "view_factor_obstruction",
+     "plume_interception_fraction",
+     "module_mass"
+    ]
+   },
+   {
+    "id": "F6-X-06",
+    "symbol": "N_ant",
+    "name": "antenna number of turns",
+    "units": "-",
+    "kind": "integer",
+    "bounds": {
+     "lo": "TBD",
+     "hi": "TBD",
+     "status": "TBD",
+     "requires": "ICP antenna design (P1 bench build; P2 impedance map per geometry)",
+     "evidence_class": null
+    },
+    "maps_to": [],
+    "used_by": [
+     "module_mass",
+     "rf_match_loss_fraction"
+    ]
+   },
+   {
+    "id": "F6-X-07",
+    "symbol": "r_ant",
+    "name": "antenna coil mean radius",
+    "units": "m",
+    "kind": "continuous",
+    "bounds": {
+     "lo": "TBD",
+     "hi": "TBD",
+     "status": "TBD",
+     "requires": "ICP antenna design (P1 bench build)",
+     "evidence_class": null
+    },
+    "maps_to": [],
+    "used_by": [
+     "module_mass",
+     "rf_match_loss_fraction"
+    ]
+   },
+   {
+    "id": "F6-X-08",
+    "symbol": "L_ant",
+    "name": "antenna axial length",
+    "units": "m",
+    "kind": "continuous",
+    "bounds": {
+     "lo": "TBD",
+     "hi": "TBD",
+     "status": "TBD",
+     "requires": "ICP antenna design (P1 bench build)",
+     "evidence_class": null
+    },
+    "maps_to": [],
+    "used_by": [
+     "rf_match_loss_fraction"
+    ]
+   },
+   {
+    "id": "F6-X-09",
+    "symbol": "d_ant",
+    "name": "antenna conductor diameter",
+    "units": "m",
+    "kind": "continuous",
+    "bounds": {
+     "lo": "TBD",
+     "hi": "TBD",
+     "status": "TBD",
+     "requires": "ICP antenna design (P1 bench build; P2 CAL-P2-08 cold resistance)",
+     "evidence_class": null
+    },
+    "maps_to": [],
+    "used_by": [
+     "module_mass"
+    ]
+   },
+   {
+    "id": "F6-X-10",
+    "symbol": "r_coll_in",
+    "name": "collector inner radius",
+    "units": "m",
+    "kind": "continuous",
+    "bounds": {
+     "lo": "TBD",
+     "hi": "TBD",
+     "status": "TBD",
+     "requires": "ICP collector design (ICD ICP-21; P3-G-07)",
+     "evidence_class": null
+    },
+    "maps_to": [
+     "P3-G-07"
+    ],
+    "used_by": [
+     "module_mass",
+     "collector_heating"
+    ]
+   },
+   {
+    "id": "F6-X-11",
+    "symbol": "r_coll_out",
+    "name": "collector outer radius",
+    "units": "m",
+    "kind": "continuous",
+    "bounds": {
+     "lo": "TBD",
+     "hi": "TBD",
+     "status": "TBD",
+     "requires": "ICP collector design (ICD ICP-21; P3-G-07)",
+     "evidence_class": null
+    },
+    "maps_to": [
+     "P3-G-07"
+    ],
+    "used_by": [
+     "module_mass",
+     "collector_heating"
+    ]
+   },
+   {
+    "id": "F6-X-12",
+    "symbol": "z_coll",
+    "name": "collector axial position from the ICP module upstream face",
+    "units": "m",
+    "kind": "continuous",
+    "bounds": {
+     "lo": "TBD",
+     "hi": "TBD",
+     "status": "TBD",
+     "requires": "ICP collector design (ICD ICP-21; P3-G-07)",
+     "evidence_class": null
+    },
+    "maps_to": [
+     "P3-G-07"
+    ],
+    "used_by": [
+     "collector_heating"
+    ]
+   },
+   {
+    "id": "F6-X-13",
+    "symbol": "t_coll",
+    "name": "collector thickness",
+    "units": "m",
+    "kind": "continuous",
+    "bounds": {
+     "lo": "TBD",
+     "hi": "TBD",
+     "status": "TBD",
+     "requires": "ICP collector design (ICD ICP-21)",
+     "evidence_class": null
+    },
+    "maps_to": [],
+    "used_by": [
+     "module_mass"
+    ]
+   },
+   {
+    "id": "F6-X-14",
+    "symbol": "t_bore",
+    "name": "bore (r = r_aperture) envelope shell thickness",
+    "units": "m",
+    "kind": "continuous",
+    "bounds": {
+     "lo": "TBD",
+     "hi": "TBD",
+     "status": "TBD",
+     "requires": "ICP module drawing (ICD ICP-07)",
+     "evidence_class": null
+    },
+    "maps_to": [],
+    "used_by": [
+     "module_mass"
+    ]
+   },
+   {
+    "id": "F6-X-15",
+    "symbol": "t_outer",
+    "name": "outer (r = r_module) envelope shell thickness",
+    "units": "m",
+    "kind": "continuous",
+    "bounds": {
+     "lo": "TBD",
+     "hi": "TBD",
+     "status": "TBD",
+     "requires": "ICP module drawing (ICD ICP-07)",
+     "evidence_class": null
+    },
+    "maps_to": [],
+    "used_by": [
+     "module_mass"
+    ]
+   },
+   {
+    "id": "F6-X-16",
+    "symbol": "t_up",
+    "name": "upstream (Hall-facing) end plate thickness",
+    "units": "m",
+    "kind": "continuous",
+    "bounds": {
+     "lo": "TBD",
+     "hi": "TBD",
+     "status": "TBD",
+     "requires": "ICP module drawing (ICD ICP-07, ICP-47)",
+     "evidence_class": null
+    },
+    "maps_to": [],
+    "used_by": [
+     "module_mass"
+    ]
+   },
+   {
+    "id": "F6-X-17",
+    "symbol": "t_down",
+    "name": "downstream end plate thickness",
+    "units": "m",
+    "kind": "continuous",
+    "bounds": {
+     "lo": "TBD",
+     "hi": "TBD",
+     "status": "TBD",
+     "requires": "ICP module drawing (ICD ICP-07)",
+     "evidence_class": null
+    },
+    "maps_to": [],
+    "used_by": [
+     "module_mass"
+    ]
+   }
+  ],
+  "hard_constraints": [
+   {
+    "id": "HC-01",
+    "rule": "every given length > 0, N_ant a positive integer, 0 <= tau_support < 1",
+    "basis": "geometric validity (P3 Body domain: 0 <= tau < 1)"
+   },
+   {
+    "id": "HC-02",
+    "rule": "r_module > r_aperture",
+    "basis": "annular envelope (P3 Body: r_in < r_out)"
+   },
+   {
+    "id": "HC-03",
+    "rule": "L_standoff > 0 (the ICP envelope lies wholly downstream of IP-EXIT, z_H1 <= 0)",
+    "basis": "no overlap with the H-1 body (P3 check_geometry)"
+   },
+   {
+    "id": "HC-04",
+    "rule": "r_aperture <= r_ant - d_ant/2 and r_ant + d_ant/2 <= r_module; L_ant <= L_module",
+    "basis": "antenna inside the module envelope (definition of the envelope, P3-G-03 / P3-G-04)"
+   },
+   {
+    "id": "HC-05",
+    "rule": "0 <= r_coll_in < r_coll_out <= r_module; 0 <= z_coll and z_coll + t_coll <= L_module",
+    "basis": "collector inside the module envelope (definition of the envelope)"
+   },
+   {
+    "id": "HC-06",
+    "rule": "every shell thickness < its available envelope dimension (t_bore + t_outer < r_module - r_aperture; t_up + t_down < L_module)",
+    "basis": "shells fit the envelope"
+   }
+  ],
+  "fail_closed": "a violated hard constraint returns INFEASIBLE with no objective values"
+ },
+ "objective_contract": {
+  "required_objectives": [
+   "electron_current_capacity",
+   "plume_interception_fraction",
+   "rf_match_loss_fraction",
+   "rf_power_delivered",
+   "hall_b_field_disturbance",
+   "view_factor_obstruction",
+   "collector_heating",
+   "module_mass"
+  ],
+  "status_vocabulary": [
+   "EVALUATED",
+   "EVALUATED_GEOMETRIC",
+   "EVALUATED_GEOMETRIC_CONDITIONAL",
+   "NOT_EVALUATED",
+   "TBD_AFTER_IMPEDANCE_MAP",
+   "TBD",
+   "SYNTHETIC_TEST_ONLY_NOT_EVIDENCE"
+  ],
+  "rankable_statuses": [
+   "EVALUATED",
+   "EVALUATED_GEOMETRIC"
+  ],
+  "pareto_status_vocabulary": [
+   "REFUSED_INCOMPLETE",
+   "REFUSED_NO_FEASIBLE_CANDIDATE",
+   "PARETO_SET_COMPUTED_NOT_A_SELECTION"
+  ],
+  "pareto_choice": "REFUSE (fail closed): no subset ranking, no INCOMPLETE-flagged order; reason in the module docstring"
+ },
+ "current_objective_state": {
+  "probe_vector": {
+   "geometry_id": "F6-STATE-PROBE",
+   "L_standoff": 0.05,
+   "r_aperture": 0.06,
+   "r_module": 0.09,
+   "L_module": 0.15,
+   "tau_support": 0.0
+  },
+  "probe_note": "probe geometry = one P3 grid point (L/R_o 1, r_ap/R_o 1.2, wall/R_o 0.6, H/R_o 3, tau 0) used only to exercise the evaluator; not a design",
+  "p1_icp45a_status_used": "NOT_EVALUATED",
+  "objectives": [
+   {
+    "objective": "electron_current_capacity",
+    "direction": "maximize",
+    "units": "A",
+    "source": "P1 icp45a_evaluate (docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py): I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF, OWNER_DECIDED A9.4 P1Q-10 / A9.5 P1Q-16",
+    "admission_rule": "EVALUATED only from a P1 result with status EVALUATED_ENGINEERING_ONLY bound to this geometry_id; NOT_EVALUATED otherwise (ICP45 NOT_EVALUATED until I_d,max,H1 is registered and P1 data exist)",
+    "status_today": "NOT_EVALUATED",
+    "rankable": false,
+    "reason_today": "P1 ICP45 status NOT_EVALUATED: I_d,max,H1 not registered (A9.3 OQ-A907-02; A9.4 execution_decisions.i_d_max_h1: established from the registered H-1 operating envelope and measured H-1 behaviour, never from the 8.33 A bench design ceiling); ICP45 = NOT_EVALUATED, not PASS or FAIL (A9.5 P1Q-16 condition 4); the surface is reported instead",
+    "needs": null
+   },
+   {
+    "objective": "plume_interception_fraction",
+    "direction": "minimize",
+    "units": "-",
+    "source": "P3 plume_interception_record (docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py): share of the H-1 channel-exit ion current first intercepted by the ICP assembly",
+    "admission_rule": "EVALUATED only with a MEASURED angular current distribution (P3-H-03, Phase-1 Faraday probe); a test / assumed distribution is NOT_EVALUATED; synthetic -> SYNTHETIC_TEST_ONLY_NOT_EVIDENCE",
+    "status_today": "NOT_EVALUATED",
+    "rankable": false,
+    "reason_today": "no MEASURED plume angular current distribution (P3-H-03 TBD_AFTER_EVIDENCE: Phase-1 Faraday-probe sweep)",
+    "needs": null
+   },
+   {
+    "objective": "rf_match_loss_fraction",
+    "direction": "minimize",
+    "units": "-",
+    "source": "P2 measured impedance map (docs/experiments/hall_icp/p2_impedance_map/p2_framework.py, p2_impedance_map_v1): worst-case P_line/match,loss / (P_line/match,loss + P_delivered) over the map's numeric points",
+    "admission_rule": "EVALUATED only from a validated MEASURED map bound to this geometry_id (binding carries the map content_sha256); TBD_AFTER_IMPEDANCE_MAP otherwise",
+    "status_today": "TBD_AFTER_IMPEDANCE_MAP",
+    "rankable": false,
+    "reason_today": "no P2 impedance map (RF ratings / matching TBD_AFTER_IMPEDANCE_MAP; P2 has no data)",
+    "needs": null
+   },
+   {
+    "objective": "rf_power_delivered",
+    "direction": "minimize",
+    "units": "W",
+    "source": "P1 derive_rf: P_RF,delivered at RP-CPL minus the VERIFIED line/match loss at the ICP45 capacity point",
+    "admission_rule": "EVALUATED only for kind P_RF_DELIVERED at the same record as the capacity objective; upper bounds and anything named as a bus quantity are refused (P_mains is never P_bus)",
+    "status_today": "NOT_EVALUATED",
+    "rankable": false,
+    "reason_today": "no P1 derive_rf record at an evaluated ICP45 capacity point",
+    "needs": null
+   },
+   {
+    "objective": "hall_b_field_disturbance",
+    "direction": "minimize",
+    "units": "-",
+    "source": "measured or cited-field-model record of the ICP-induced relative change of the H-1 magnetic field",
+    "admission_rule": "TBD unless a measured record or a cited field model (H-1 magnetic circuit B(r,z) incl. the downstream near field, ICP component permeabilities) bound to this geometry_id exists",
+    "status_today": "TBD",
+    "rankable": false,
+    "reason_today": "no cited H-1 field model or measurement exists",
+    "needs": [
+     "H-1 magnetic-circuit field B(r, z) including the downstream near field out to z >= L_standoff + L_module (F5 H1F-EX-05 TBD_AFTER_EVIDENCE: FEMM of MC-1 and a measured B map; a cited magnetostatic model)",
+     "magnetic properties (relative permeability, any magnetised parts) of every ICP-module component (materials OPEN / TBD)",
+     "a cited field solver or a measured field map with and without the ICP module at registered coil currents",
+     "an owner-defined disturbance metric and threshold (F6-OQ-04)"
+    ]
+   },
+   {
+    "objective": "view_factor_obstruction",
+    "direction": "minimize",
+    "units": "m2",
+    "source": "P3 view_factors (docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py): sum over the H-1 front zones of A_z F_z->ICP (diffuse radiative view lost to the ICP assembly)",
+    "admission_rule": "computed now (geometric); EVALUATED_GEOMETRIC only on a non-assumed H-1 front geometry record, EVALUATED_GEOMETRIC_CONDITIONAL (not rankable) on the assumed H2-5 evaluation geometry",
+    "status_today": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "rankable": false,
+    "reason_today": "geometric (diffuse gray view factors; no thermal consequence computed)",
+    "needs": null
+   },
+   {
+    "objective": "collector_heating",
+    "direction": "minimize",
+    "units": "W",
+    "source": "P3 q_collector (docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py): Goebel & Katz particle heating of the collector",
+    "admission_rule": "EVALUATED only when q_collector returns basis MEASURED_INPUTS_ONLY on P1 records bound to this geometry_id; NOT_EVALUATED otherwise (needs P1 collector currents and T_e / V_plasma, P3Q-01 OPEN)",
+    "status_today": "NOT_EVALUATED",
+    "rankable": false,
+    "reason_today": "no P1 collector records (I_e / I_i collected, T_e, V_plasma, V_surface; P3-IF-N01 / N02, P3Q-01 OPEN)",
+    "needs": null
+   },
+   {
+    "objective": "module_mass",
+    "direction": "minimize",
+    "units": "kg",
+    "source": "geometry x cited densities: sum_i A_i t_i rho_i (envelope shells) + antenna + collector",
+    "admission_rule": "EVALUATED only when every component has its geometry and a cited density record; NOT_EVALUATED otherwise (materials OPEN: FINAL_COLLECTOR_MATERIAL OPEN in P4; dielectric / housing / antenna materials TBD)",
+    "status_today": "NOT_EVALUATED",
+    "rankable": false,
+    "reason_today": "mass needs every component's geometry and a cited density",
+    "needs": null
+   }
+  ],
+  "pareto_demonstration": {
+   "status": "REFUSED_INCOMPLETE",
+   "missing": {
+    "F6-STATE-PROBE": [
+     "electron_current_capacity",
+     "plume_interception_fraction",
+     "rf_match_loss_fraction",
+     "rf_power_delivered",
+     "hall_b_field_disturbance",
+     "view_factor_obstruction",
+     "collector_heating",
+     "module_mass"
+    ]
+   },
+   "rule": "refuse to rank unless every required objective of every feasible candidate is rankable (EVALUATED / EVALUATED_GEOMETRIC); no subset ranking; never a winner"
+  },
+  "search_demonstration": {
+   "status": "REFUSED",
+   "reason": "bound of L_standoff is TBD (requires: KC-1 / ICP module drawing (ICD ICP-02) and the H-1 exit-plane definition IP-EXIT (F5 H1F-EX-01 FREEZE_CANDIDATE; standoff H1F-EX-03 TBD)); a TBD bound is never replaced by an assumed value (A9.7 optimizer_rule)"
+  }
+ },
+ "items": [
+  {
+   "id": "F6-X-01",
+   "name": "L_standoff: axial standoff of the ICP module upstream face downstream of IP-EXIT",
+   "value": "TBD",
+   "units": "m",
+   "basis": "design variable (x_ICP)",
+   "source": "bounds require: KC-1 / ICP module drawing (ICD ICP-02) and the H-1 exit-plane definition IP-EXIT (F5 H1F-EX-01 FREEZE_CANDIDATE; standoff H1F-EX-03 TBD)",
+   "evidence_class": null,
+   "status": "TBD",
+   "note": "maps to P3-G-01; used by view_factor_obstruction, plume_interception_fraction, hall_b_field_disturbance"
+  },
+  {
+   "id": "F6-X-02",
+   "name": "r_aperture: ICP clear aperture radius (plume passage; open-tube coaxial first build, A9.3 OQ-VI-03)",
+   "value": "TBD",
+   "units": "m",
+   "basis": "design variable (x_ICP)",
+   "source": "bounds require: frozen H-1 channel OD (F5 H1F-EX-04 TBD_AFTER_EVIDENCE) and the MEASURED plume angular distribution (P3-H-03, Phase-1 Faraday probe) (ICD ICP-04)",
+   "evidence_class": null,
+   "status": "TBD",
+   "note": "maps to P3-G-02; used by view_factor_obstruction, plume_interception_fraction, module_mass"
+  },
+  {
+   "id": "F6-X-03",
+   "name": "r_module: ICP module envelope outer radius (minimum necessary downstream obstruction, A9.2)",
+   "value": "TBD",
+   "units": "m",
+   "basis": "design variable (x_ICP)",
+   "source": "bounds require: module envelope (ICD ICP-07, ICP-47)",
+   "evidence_class": null,
+   "status": "TBD",
+   "note": "maps to P3-G-03; used by view_factor_obstruction, module_mass"
+  },
+  {
+   "id": "F6-X-04",
+   "name": "L_module: ICP module envelope axial length",
+   "value": "TBD",
+   "units": "m",
+   "basis": "design variable (x_ICP)",
+   "source": "bounds require: module envelope (ICD ICP-07)",
+   "evidence_class": null,
+   "status": "TBD",
+   "note": "maps to P3-G-04; used by view_factor_obstruction, plume_interception_fraction, module_mass"
+  },
+  {
+   "id": "F6-X-05",
+   "name": "tau_support: open-frame support geometric open-area fraction (gray, direction-independent approximation of the P3 engine)",
+   "value": "TBD",
+   "units": "-",
+   "basis": "design variable (x_ICP)",
+   "source": "bounds require: support drawing (ICD ICP-47)",
+   "evidence_class": null,
+   "status": "TBD",
+   "note": "maps to P3-G-05; used by view_factor_obstruction, plume_interception_fraction, module_mass"
+  },
+  {
+   "id": "F6-X-06",
+   "name": "N_ant: antenna number of turns",
+   "value": "TBD",
+   "units": "-",
+   "basis": "design variable (x_ICP)",
+   "source": "bounds require: ICP antenna design (P1 bench build; P2 impedance map per geometry)",
+   "evidence_class": null,
+   "status": "TBD",
+   "note": "maps to no P3 item; used by module_mass, rf_match_loss_fraction"
+  },
+  {
+   "id": "F6-X-07",
+   "name": "r_ant: antenna coil mean radius",
+   "value": "TBD",
+   "units": "m",
+   "basis": "design variable (x_ICP)",
+   "source": "bounds require: ICP antenna design (P1 bench build)",
+   "evidence_class": null,
+   "status": "TBD",
+   "note": "maps to no P3 item; used by module_mass, rf_match_loss_fraction"
+  },
+  {
+   "id": "F6-X-08",
+   "name": "L_ant: antenna axial length",
+   "value": "TBD",
+   "units": "m",
+   "basis": "design variable (x_ICP)",
+   "source": "bounds require: ICP antenna design (P1 bench build)",
+   "evidence_class": null,
+   "status": "TBD",
+   "note": "maps to no P3 item; used by rf_match_loss_fraction"
+  },
+  {
+   "id": "F6-X-09",
+   "name": "d_ant: antenna conductor diameter",
+   "value": "TBD",
+   "units": "m",
+   "basis": "design variable (x_ICP)",
+   "source": "bounds require: ICP antenna design (P1 bench build; P2 CAL-P2-08 cold resistance)",
+   "evidence_class": null,
+   "status": "TBD",
+   "note": "maps to no P3 item; used by module_mass"
+  },
+  {
+   "id": "F6-X-10",
+   "name": "r_coll_in: collector inner radius",
+   "value": "TBD",
+   "units": "m",
+   "basis": "design variable (x_ICP)",
+   "source": "bounds require: ICP collector design (ICD ICP-21; P3-G-07)",
+   "evidence_class": null,
+   "status": "TBD",
+   "note": "maps to P3-G-07; used by module_mass, collector_heating"
+  },
+  {
+   "id": "F6-X-11",
+   "name": "r_coll_out: collector outer radius",
+   "value": "TBD",
+   "units": "m",
+   "basis": "design variable (x_ICP)",
+   "source": "bounds require: ICP collector design (ICD ICP-21; P3-G-07)",
+   "evidence_class": null,
+   "status": "TBD",
+   "note": "maps to P3-G-07; used by module_mass, collector_heating"
+  },
+  {
+   "id": "F6-X-12",
+   "name": "z_coll: collector axial position from the ICP module upstream face",
+   "value": "TBD",
+   "units": "m",
+   "basis": "design variable (x_ICP)",
+   "source": "bounds require: ICP collector design (ICD ICP-21; P3-G-07)",
+   "evidence_class": null,
+   "status": "TBD",
+   "note": "maps to P3-G-07; used by collector_heating"
+  },
+  {
+   "id": "F6-X-13",
+   "name": "t_coll: collector thickness",
+   "value": "TBD",
+   "units": "m",
+   "basis": "design variable (x_ICP)",
+   "source": "bounds require: ICP collector design (ICD ICP-21)",
+   "evidence_class": null,
+   "status": "TBD",
+   "note": "maps to no P3 item; used by module_mass"
+  },
+  {
+   "id": "F6-X-14",
+   "name": "t_bore: bore (r = r_aperture) envelope shell thickness",
+   "value": "TBD",
+   "units": "m",
+   "basis": "design variable (x_ICP)",
+   "source": "bounds require: ICP module drawing (ICD ICP-07)",
+   "evidence_class": null,
+   "status": "TBD",
+   "note": "maps to no P3 item; used by module_mass"
+  },
+  {
+   "id": "F6-X-15",
+   "name": "t_outer: outer (r = r_module) envelope shell thickness",
+   "value": "TBD",
+   "units": "m",
+   "basis": "design variable (x_ICP)",
+   "source": "bounds require: ICP module drawing (ICD ICP-07)",
+   "evidence_class": null,
+   "status": "TBD",
+   "note": "maps to no P3 item; used by module_mass"
+  },
+  {
+   "id": "F6-X-16",
+   "name": "t_up: upstream (Hall-facing) end plate thickness",
+   "value": "TBD",
+   "units": "m",
+   "basis": "design variable (x_ICP)",
+   "source": "bounds require: ICP module drawing (ICD ICP-07, ICP-47)",
+   "evidence_class": null,
+   "status": "TBD",
+   "note": "maps to no P3 item; used by module_mass"
+  },
+  {
+   "id": "F6-X-17",
+   "name": "t_down: downstream end plate thickness",
+   "value": "TBD",
+   "units": "m",
+   "basis": "design variable (x_ICP)",
+   "source": "bounds require: ICP module drawing (ICD ICP-07)",
+   "evidence_class": null,
+   "status": "TBD",
+   "note": "maps to no P3 item; used by module_mass"
+  },
+  {
+   "id": "F6-P-01",
+   "name": "H-1 front-face evaluation geometry (R_pf, R_i, R_o, R_ow, R_b, L_b)",
+   "value": {
+    "R_pf": 0.0355,
+    "R_i": 0.04,
+    "R_o": 0.05,
+    "R_ow": 0.0545,
+    "R_b": 0.08,
+    "L_b": 0.115
+   },
+   "units": "m",
+   "basis": "evaluation point for the geometric screening only (not the H-1 design; F5 docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json (fo_a9_7_f5_h1_freeze_candidate; IFS-F6-01..05, IFD-F6-01..03))",
+   "source": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json radiative_view_parametric_study.h1_geometry (H2-5 range midpoints (ECHT analog + assumed; PENDING H2-1 / H2-7): evaluation point only, not the H-1 design; ids D_body_m H25-18, D_out_m H25-14, L_body_m H25-19, L_ch_m H25-12, h_ch_m H25-13, t_wall_m H25-15)",
+   "evidence_class": "assumed",
+   "status": "ANALOG_EVALUATION_ONLY",
+   "note": ""
+  },
+  {
+   "id": "F6-P-02",
+   "name": "owner v0 dry allocation AL-05 'ICP neutralizer'",
+   "value": 2.0,
+   "units": "kg",
+   "basis": "necessary-condition check of module mass; match mapping AL-05 vs AL-06 open (MQ-07)",
+   "source": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json items MA-AL-05 (row 54)",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_ALLOCATION (not a CBE)",
+   "note": ""
+  },
+  {
+   "id": "F6-P-03",
+   "name": "view-factor quadrature resolution (n_pos, n_u, n_phi)",
+   "value": [
+    16,
+    32,
+    64
+   ],
+   "units": "-",
+   "basis": "P3 verification resolution RES_VERIFY (P3 found ~0.009 absolute error at its parametric resolution (8, 16, 32)); convergence checked here against [32, 64, 128]",
+   "source": "docs/experiments/hall_icp/p3_coupled_thermal/build_p3_coupled_thermal.py RES_VERIFY",
+   "evidence_class": null,
+   "status": "DEFINED",
+   "note": "numerical setting, not a physical value"
+  },
+  {
+   "id": "F6-P-04",
+   "name": "geometric screening grid (dimensionless, x R_o)",
+   "value": {
+    "L_over_Ro": [
+     0.5,
+     1.0,
+     2.0,
+     4.0
+    ],
+    "rap_over_Ro": [
+     1.0,
+     1.2,
+     1.5
+    ],
+    "wall_over_Ro": [
+     0.2,
+     0.6
+    ],
+    "H_over_Ro": [
+     1.0,
+     3.0
+    ],
+    "tau": [
+     0.0,
+     0.5
+    ]
+   },
+   "units": "-",
+   "basis": "the P3 radiative-view evaluation grid reused verbatim (evaluation grid, not a design range)",
+   "source": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json radiative_view_parametric_study.grid",
+   "evidence_class": null,
+   "status": "DEFINED",
+   "note": "not a bound: the F6 search refuses until sourced bounds exist"
+  },
+  {
+   "id": "F6-P-05",
+   "name": "Pareto required objective set",
+   "value": [
+    "electron_current_capacity",
+    "plume_interception_fraction",
+    "rf_match_loss_fraction",
+    "rf_power_delivered",
+    "hall_b_field_disturbance",
+    "view_factor_obstruction",
+    "collector_heating",
+    "module_mass"
+   ],
+   "units": "-",
+   "basis": "A9.7 F6 'simultaneously evaluate' list (eight objectives); not caller-selectable",
+   "source": "docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md (F6)",
+   "evidence_class": null,
+   "status": "DEFINED",
+   "note": "definitions / directions await F6-OQ-01"
+  }
+ ],
+ "geometric_screening": {
+  "label": "GEOMETRIC_SCREENING_NOT_A_DESIGN",
+  "status": "COMPUTED_CONDITIONAL (H-1 geometry assumed; no ranking, no selection)",
+  "what": "view-factor obstruction of the H-1 front zones by the ICP envelope (P3 ray quadrature) and envelope shell areas vs geometry; module mass NOT_EVALUATED (materials and thicknesses TBD)",
+  "h1_geometry": {
+   "value": {
+    "R_pf": 0.0355,
+    "R_i": 0.04,
+    "R_o": 0.05,
+    "R_ow": 0.0545,
+    "R_b": 0.08,
+    "L_b": 0.115
+   },
+   "units": "m",
+   "evidence_class": "assumed",
+   "source": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json radiative_view_parametric_study.h1_geometry (H2-5 range midpoints (ECHT analog + assumed; PENDING H2-1 / H2-7): evaluation point only, not the H-1 design; ids D_body_m H25-18, D_out_m H25-14, L_body_m H25-19, L_ch_m H25-12, h_ch_m H25-13, t_wall_m H25-15)"
+  },
+  "grid": {
+   "L_over_Ro": [
+    0.5,
+    1.0,
+    2.0,
+    4.0
+   ],
+   "rap_over_Ro": [
+    1.0,
+    1.2,
+    1.5
+   ],
+   "wall_over_Ro": [
+    0.2,
+    0.6
+   ],
+   "H_over_Ro": [
+    1.0,
+    3.0
+   ],
+   "tau": [
+    0.0,
+    0.5
+   ]
+  },
+  "grid_source": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json radiative_view_parametric_study.grid",
+  "geometry_mapping": "L_standoff = L/R_o x R_o; r_aperture = r_ap/R_o x R_o; r_module = (r_ap + wall)/R_o x R_o; L_module = H/R_o x R_o; tau_support = tau",
+  "resolution": [
+   16,
+   32,
+   64
+  ],
+  "convergence_check": {
+   "resolution_screen": [
+    16,
+    32,
+    64
+   ],
+   "resolution_convergence": [
+    32,
+    64,
+    128
+   ],
+   "tolerance_abs_F": 0.01,
+   "max_abs_diff": 0.00258,
+   "status": "WITHIN_NUMERICAL_TOLERANCE",
+   "rows": [
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PI_face",
+     "F_screen": 0.7323,
+     "F_convergence": 0.7322,
+     "abs_diff": 9.92e-05
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.aperture",
+     "F_screen": 0.57874,
+     "F_convergence": 0.57899,
+     "abs_diff": 0.000252
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PO_face",
+     "F_screen": 0.32611,
+     "F_convergence": 0.32468,
+     "abs_diff": 0.00143
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PO_lateral",
+     "F_screen": 0.0,
+     "F_convergence": 0.0,
+     "abs_diff": 0.0
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PI_face",
+     "F_screen": 0.75592,
+     "F_convergence": 0.75609,
+     "abs_diff": 0.000168
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.aperture",
+     "F_screen": 0.72528,
+     "F_convergence": 0.72417,
+     "abs_diff": 0.00111
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PO_face",
+     "F_screen": 0.57233,
+     "F_convergence": 0.57124,
+     "abs_diff": 0.00108
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PO_lateral",
+     "F_screen": 0.00036621,
+     "F_convergence": 0.00054169,
+     "abs_diff": 0.000175
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PI_face",
+     "F_screen": 0.062866,
+     "F_convergence": 0.061028,
+     "abs_diff": 0.00184
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.aperture",
+     "F_screen": 0.054626,
+     "F_convergence": 0.056801,
+     "abs_diff": 0.00217
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PO_face",
+     "F_screen": 0.052307,
+     "F_convergence": 0.053024,
+     "abs_diff": 0.000717
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PO_lateral",
+     "F_screen": 0.0,
+     "F_convergence": 0.0,
+     "abs_diff": 0.0
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PI_face",
+     "F_screen": 0.10437,
+     "F_convergence": 0.10626,
+     "abs_diff": 0.00189
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.aperture",
+     "F_screen": 0.10181,
+     "F_convergence": 0.099228,
+     "abs_diff": 0.00258
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PO_face",
+     "F_screen": 0.089539,
+     "F_convergence": 0.08886,
+     "abs_diff": 0.000679
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PO_lateral",
+     "F_screen": 0.0,
+     "F_convergence": 0.0,
+     "abs_diff": 0.0
+    }
+   ]
+  },
+  "mass_relation": "m_module = sum_i A_i,net t_i rho_i (envelope shells: bore, outer, up, down) + N_ant 2 pi r_ant pi d_ant^2 / 4 rho_ant + pi (r_coll,out^2 - r_coll,in^2) t_coll rho_coll; t_i, rho_i, antenna and collector geometry TBD -> NOT_EVALUATED",
+  "al05_ceiling_reading": "al05_mean_areal_density_ceiling_kg_m2 = m_AL05 / sum_i A_i,net: the largest mean t x rho of the envelope shells if the WHOLE AL-05 allocation went to them (antenna, collector, local match, feedthroughs, gas port lower it); a ceiling, not a mass",
+  "rows": [
+   {
+    "geometry_id": "SCREEN-L0.5-A1.0-W0.2-H1.0-T0.0",
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.025,
+     "r_aperture": 0.05,
+     "r_module": 0.06,
+     "L_module": 0.05,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.00609,
+    "F_to_ICP": {
+     "H1.PI_face": 0.529,
+     "H1.aperture": 0.43,
+     "H1.PO_face": 0.258,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.041469,
+    "shell_area_net_m2": 0.041469,
+    "envelope_volume_m3": 0.00017279,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 48.23
+   },
+   {
+    "geometry_id": "SCREEN-L0.5-A1.0-W0.2-H1.0-T0.5",
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.025,
+     "r_aperture": 0.05,
+     "r_module": 0.06,
+     "L_module": 0.05,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.003045,
+    "F_to_ICP": {
+     "H1.PI_face": 0.264,
+     "H1.aperture": 0.215,
+     "H1.PO_face": 0.129,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.041469,
+    "shell_area_net_m2": 0.020735,
+    "envelope_volume_m3": 0.00017279,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 96.46
+   },
+   {
+    "geometry_id": "SCREEN-L0.5-A1.0-W0.2-H3.0-T0.0",
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.025,
+     "r_aperture": 0.05,
+     "r_module": 0.06,
+     "L_module": 0.15,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.008049,
+    "F_to_ICP": {
+     "H1.PI_face": 0.732,
+     "H1.aperture": 0.579,
+     "H1.PO_face": 0.326,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.11058,
+    "shell_area_net_m2": 0.11058,
+    "envelope_volume_m3": 0.00051836,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 18.09
+   },
+   {
+    "geometry_id": "SCREEN-L0.5-A1.0-W0.2-H3.0-T0.5",
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.025,
+     "r_aperture": 0.05,
+     "r_module": 0.06,
+     "L_module": 0.15,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.004025,
+    "F_to_ICP": {
+     "H1.PI_face": 0.366,
+     "H1.aperture": 0.289,
+     "H1.PO_face": 0.163,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.11058,
+    "shell_area_net_m2": 0.055292,
+    "envelope_volume_m3": 0.00051836,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 36.17
+   },
+   {
+    "geometry_id": "SCREEN-L0.5-A1.0-W0.6-H1.0-T0.0",
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.025,
+     "r_aperture": 0.05,
+     "r_module": 0.08,
+     "L_module": 0.05,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.0102,
+    "F_to_ICP": {
+     "H1.PI_face": 0.617,
+     "H1.aperture": 0.626,
+     "H1.PO_face": 0.555,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.065345,
+    "shell_area_net_m2": 0.065345,
+    "envelope_volume_m3": 0.00061261,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 30.61
+   },
+   {
+    "geometry_id": "SCREEN-L0.5-A1.0-W0.6-H1.0-T0.5",
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.025,
+     "r_aperture": 0.05,
+     "r_module": 0.08,
+     "L_module": 0.05,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.005098,
+    "F_to_ICP": {
+     "H1.PI_face": 0.308,
+     "H1.aperture": 0.313,
+     "H1.PO_face": 0.278,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.065345,
+    "shell_area_net_m2": 0.032673,
+    "envelope_volume_m3": 0.00061261,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 61.21
+   },
+   {
+    "geometry_id": "SCREEN-L0.5-A1.0-W0.6-H3.0-T0.0",
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.025,
+     "r_aperture": 0.05,
+     "r_module": 0.08,
+     "L_module": 0.15,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.01206,
+    "F_to_ICP": {
+     "H1.PI_face": 0.82,
+     "H1.aperture": 0.775,
+     "H1.PO_face": 0.614,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.14703,
+    "shell_area_net_m2": 0.14703,
+    "envelope_volume_m3": 0.0018378,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 13.6
+   },
+   {
+    "geometry_id": "SCREEN-L0.5-A1.0-W0.6-H3.0-T0.5",
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.025,
+     "r_aperture": 0.05,
+     "r_module": 0.08,
+     "L_module": 0.15,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.006029,
+    "F_to_ICP": {
+     "H1.PI_face": 0.41,
+     "H1.aperture": 0.387,
+     "H1.PO_face": 0.307,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.14703,
+    "shell_area_net_m2": 0.073513,
+    "envelope_volume_m3": 0.0018378,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 27.21
+   },
+   {
+    "geometry_id": "SCREEN-L0.5-A1.2-W0.2-H1.0-T0.0",
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.025,
+     "r_aperture": 0.06,
+     "r_module": 0.07,
+     "L_module": 0.05,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.006602,
+    "F_to_ICP": {
+     "H1.PI_face": 0.501,
+     "H1.aperture": 0.473,
+     "H1.PO_face": 0.305,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.049009,
+    "shell_area_net_m2": 0.049009,
+    "envelope_volume_m3": 0.0002042,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 40.81
+   },
+   {
+    "geometry_id": "SCREEN-L0.5-A1.2-W0.2-H1.0-T0.5",
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.025,
+     "r_aperture": 0.06,
+     "r_module": 0.07,
+     "L_module": 0.05,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.003301,
+    "F_to_ICP": {
+     "H1.PI_face": 0.25,
+     "H1.aperture": 0.236,
+     "H1.PO_face": 0.152,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.049009,
+    "shell_area_net_m2": 0.024504,
+    "envelope_volume_m3": 0.0002042,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 81.62
+   },
+   {
+    "geometry_id": "SCREEN-L0.5-A1.2-W0.2-H3.0-T0.0",
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.025,
+     "r_aperture": 0.06,
+     "r_module": 0.07,
+     "L_module": 0.15,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.009419,
+    "F_to_ICP": {
+     "H1.PI_face": 0.758,
+     "H1.aperture": 0.674,
+     "H1.PO_face": 0.419,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.13069,
+    "shell_area_net_m2": 0.13069,
+    "envelope_volume_m3": 0.00061261,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 15.3
+   },
+   {
+    "geometry_id": "SCREEN-L0.5-A1.2-W0.2-H3.0-T0.5",
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.025,
+     "r_aperture": 0.06,
+     "r_module": 0.07,
+     "L_module": 0.15,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.004709,
+    "F_to_ICP": {
+     "H1.PI_face": 0.379,
+     "H1.aperture": 0.337,
+     "H1.PO_face": 0.209,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.13069,
+    "shell_area_net_m2": 0.065345,
+    "envelope_volume_m3": 0.00061261,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 30.61
+   },
+   {
+    "geometry_id": "SCREEN-L0.5-A1.2-W0.6-H1.0-T0.0",
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.025,
+     "r_aperture": 0.06,
+     "r_module": 0.09,
+     "L_module": 0.05,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.01046,
+    "F_to_ICP": {
+     "H1.PI_face": 0.558,
+     "H1.aperture": 0.591,
+     "H1.PO_face": 0.595,
+     "H1.PO_lateral": 0.00293
+    },
+    "shell_area_gross_m2": 0.075398,
+    "shell_area_net_m2": 0.075398,
+    "envelope_volume_m3": 0.00070686,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 26.53
+   },
+   {
+    "geometry_id": "SCREEN-L0.5-A1.2-W0.6-H1.0-T0.5",
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.025,
+     "r_aperture": 0.06,
+     "r_module": 0.09,
+     "L_module": 0.05,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.00523,
+    "F_to_ICP": {
+     "H1.PI_face": 0.279,
+     "H1.aperture": 0.295,
+     "H1.PO_face": 0.297,
+     "H1.PO_lateral": 0.00146
+    },
+    "shell_area_gross_m2": 0.075398,
+    "shell_area_net_m2": 0.037699,
+    "envelope_volume_m3": 0.00070686,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 53.05
+   },
+   {
+    "geometry_id": "SCREEN-L0.5-A1.2-W0.6-H3.0-T0.0",
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.025,
+     "r_aperture": 0.06,
+     "r_module": 0.09,
+     "L_module": 0.15,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.01326,
+    "F_to_ICP": {
+     "H1.PI_face": 0.815,
+     "H1.aperture": 0.792,
+     "H1.PO_face": 0.707,
+     "H1.PO_lateral": 0.00293
+    },
+    "shell_area_gross_m2": 0.16965,
+    "shell_area_net_m2": 0.16965,
+    "envelope_volume_m3": 0.0021206,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 11.79
+   },
+   {
+    "geometry_id": "SCREEN-L0.5-A1.2-W0.6-H3.0-T0.5",
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.025,
+     "r_aperture": 0.06,
+     "r_module": 0.09,
+     "L_module": 0.15,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.00663,
+    "F_to_ICP": {
+     "H1.PI_face": 0.408,
+     "H1.aperture": 0.396,
+     "H1.PO_face": 0.354,
+     "H1.PO_lateral": 0.00146
+    },
+    "shell_area_gross_m2": 0.16965,
+    "shell_area_net_m2": 0.084823,
+    "envelope_volume_m3": 0.0021206,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 23.58
+   },
+   {
+    "geometry_id": "SCREEN-L0.5-A1.5-W0.2-H1.0-T0.0",
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.025,
+     "r_aperture": 0.075,
+     "r_module": 0.085,
+     "L_module": 0.05,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.007212,
+    "F_to_ICP": {
+     "H1.PI_face": 0.434,
+     "H1.aperture": 0.456,
+     "H1.PO_face": 0.388,
+     "H1.PO_lateral": 0.000366
+    },
+    "shell_area_gross_m2": 0.060319,
+    "shell_area_net_m2": 0.060319,
+    "envelope_volume_m3": 0.00025133,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 33.16
+   },
+   {
+    "geometry_id": "SCREEN-L0.5-A1.5-W0.2-H1.0-T0.5",
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.025,
+     "r_aperture": 0.075,
+     "r_module": 0.085,
+     "L_module": 0.05,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.003606,
+    "F_to_ICP": {
+     "H1.PI_face": 0.217,
+     "H1.aperture": 0.228,
+     "H1.PO_face": 0.194,
+     "H1.PO_lateral": 0.000183
+    },
+    "shell_area_gross_m2": 0.060319,
+    "shell_area_net_m2": 0.030159,
+    "envelope_volume_m3": 0.00025133,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 66.31
+   },
+   {
+    "geometry_id": "SCREEN-L0.5-A1.5-W0.2-H3.0-T0.0",
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.025,
+     "r_aperture": 0.075,
+     "r_module": 0.085,
+     "L_module": 0.15,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.01123,
+    "F_to_ICP": {
+     "H1.PI_face": 0.756,
+     "H1.aperture": 0.725,
+     "H1.PO_face": 0.572,
+     "H1.PO_lateral": 0.000366
+    },
+    "shell_area_gross_m2": 0.16085,
+    "shell_area_net_m2": 0.16085,
+    "envelope_volume_m3": 0.00075398,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 12.43
+   },
+   {
+    "geometry_id": "SCREEN-L0.5-A1.5-W0.2-H3.0-T0.5",
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.025,
+     "r_aperture": 0.075,
+     "r_module": 0.085,
+     "L_module": 0.15,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.005616,
+    "F_to_ICP": {
+     "H1.PI_face": 0.378,
+     "H1.aperture": 0.363,
+     "H1.PO_face": 0.286,
+     "H1.PO_lateral": 0.000183
+    },
+    "shell_area_gross_m2": 0.16085,
+    "shell_area_net_m2": 0.080425,
+    "envelope_volume_m3": 0.00075398,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 24.87
+   },
+   {
+    "geometry_id": "SCREEN-L0.5-A1.5-W0.6-H1.0-T0.0",
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.025,
+     "r_aperture": 0.075,
+     "r_module": 0.105,
+     "L_module": 0.05,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.01062,
+    "F_to_ICP": {
+     "H1.PI_face": 0.469,
+     "H1.aperture": 0.514,
+     "H1.PO_face": 0.556,
+     "H1.PO_lateral": 0.0228
+    },
+    "shell_area_gross_m2": 0.090478,
+    "shell_area_net_m2": 0.090478,
+    "envelope_volume_m3": 0.00084823,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 22.1
+   },
+   {
+    "geometry_id": "SCREEN-L0.5-A1.5-W0.6-H1.0-T0.5",
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.025,
+     "r_aperture": 0.075,
+     "r_module": 0.105,
+     "L_module": 0.05,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.00531,
+    "F_to_ICP": {
+     "H1.PI_face": 0.235,
+     "H1.aperture": 0.257,
+     "H1.PO_face": 0.278,
+     "H1.PO_lateral": 0.0114
+    },
+    "shell_area_gross_m2": 0.090478,
+    "shell_area_net_m2": 0.045239,
+    "envelope_volume_m3": 0.00084823,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 44.21
+   },
+   {
+    "geometry_id": "SCREEN-L0.5-A1.5-W0.6-H3.0-T0.0",
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.025,
+     "r_aperture": 0.075,
+     "r_module": 0.105,
+     "L_module": 0.15,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.01464,
+    "F_to_ICP": {
+     "H1.PI_face": 0.791,
+     "H1.aperture": 0.783,
+     "H1.PO_face": 0.741,
+     "H1.PO_lateral": 0.0228
+    },
+    "shell_area_gross_m2": 0.20358,
+    "shell_area_net_m2": 0.20358,
+    "envelope_volume_m3": 0.0025447,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 9.824
+   },
+   {
+    "geometry_id": "SCREEN-L0.5-A1.5-W0.6-H3.0-T0.5",
+    "L_over_Ro": 0.5,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.025,
+     "r_aperture": 0.075,
+     "r_module": 0.105,
+     "L_module": 0.15,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.00732,
+    "F_to_ICP": {
+     "H1.PI_face": 0.396,
+     "H1.aperture": 0.391,
+     "H1.PO_face": 0.37,
+     "H1.PO_lateral": 0.0114
+    },
+    "shell_area_gross_m2": 0.20358,
+    "shell_area_net_m2": 0.10179,
+    "envelope_volume_m3": 0.0025447,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 19.65
+   },
+   {
+    "geometry_id": "SCREEN-L1.0-A1.0-W0.2-H1.0-T0.0",
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.05,
+     "r_aperture": 0.05,
+     "r_module": 0.06,
+     "L_module": 0.05,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.004087,
+    "F_to_ICP": {
+     "H1.PI_face": 0.354,
+     "H1.aperture": 0.269,
+     "H1.PO_face": 0.179,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.041469,
+    "shell_area_net_m2": 0.041469,
+    "envelope_volume_m3": 0.00017279,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 48.23
+   },
+   {
+    "geometry_id": "SCREEN-L1.0-A1.0-W0.2-H1.0-T0.5",
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.05,
+     "r_aperture": 0.05,
+     "r_module": 0.06,
+     "L_module": 0.05,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.002044,
+    "F_to_ICP": {
+     "H1.PI_face": 0.177,
+     "H1.aperture": 0.135,
+     "H1.PO_face": 0.0894,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.041469,
+    "shell_area_net_m2": 0.020735,
+    "envelope_volume_m3": 0.00017279,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 96.46
+   },
+   {
+    "geometry_id": "SCREEN-L1.0-A1.0-W0.2-H3.0-T0.0",
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.05,
+     "r_aperture": 0.05,
+     "r_module": 0.06,
+     "L_module": 0.15,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.005645,
+    "F_to_ICP": {
+     "H1.PI_face": 0.482,
+     "H1.aperture": 0.369,
+     "H1.PO_face": 0.25,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.11058,
+    "shell_area_net_m2": 0.11058,
+    "envelope_volume_m3": 0.00051836,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 18.09
+   },
+   {
+    "geometry_id": "SCREEN-L1.0-A1.0-W0.2-H3.0-T0.5",
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.05,
+     "r_aperture": 0.05,
+     "r_module": 0.06,
+     "L_module": 0.15,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.002822,
+    "F_to_ICP": {
+     "H1.PI_face": 0.241,
+     "H1.aperture": 0.185,
+     "H1.PO_face": 0.125,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.11058,
+    "shell_area_net_m2": 0.055292,
+    "envelope_volume_m3": 0.00051836,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 36.17
+   },
+   {
+    "geometry_id": "SCREEN-L1.0-A1.0-W0.6-H1.0-T0.0",
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.05,
+     "r_aperture": 0.05,
+     "r_module": 0.08,
+     "L_module": 0.05,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.00724,
+    "F_to_ICP": {
+     "H1.PI_face": 0.504,
+     "H1.aperture": 0.459,
+     "H1.PO_face": 0.366,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.065345,
+    "shell_area_net_m2": 0.065345,
+    "envelope_volume_m3": 0.00061261,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 30.61
+   },
+   {
+    "geometry_id": "SCREEN-L1.0-A1.0-W0.6-H1.0-T0.5",
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.05,
+     "r_aperture": 0.05,
+     "r_module": 0.08,
+     "L_module": 0.05,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.00362,
+    "F_to_ICP": {
+     "H1.PI_face": 0.252,
+     "H1.aperture": 0.229,
+     "H1.PO_face": 0.183,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.065345,
+    "shell_area_net_m2": 0.032673,
+    "envelope_volume_m3": 0.00061261,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 61.21
+   },
+   {
+    "geometry_id": "SCREEN-L1.0-A1.0-W0.6-H3.0-T0.0",
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.05,
+     "r_aperture": 0.05,
+     "r_module": 0.08,
+     "L_module": 0.15,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.008742,
+    "F_to_ICP": {
+     "H1.PI_face": 0.632,
+     "H1.aperture": 0.559,
+     "H1.PO_face": 0.432,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.14703,
+    "shell_area_net_m2": 0.14703,
+    "envelope_volume_m3": 0.0018378,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 13.6
+   },
+   {
+    "geometry_id": "SCREEN-L1.0-A1.0-W0.6-H3.0-T0.5",
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.05,
+     "r_aperture": 0.05,
+     "r_module": 0.08,
+     "L_module": 0.15,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.004371,
+    "F_to_ICP": {
+     "H1.PI_face": 0.316,
+     "H1.aperture": 0.28,
+     "H1.PO_face": 0.216,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.14703,
+    "shell_area_net_m2": 0.073513,
+    "envelope_volume_m3": 0.0018378,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 27.21
+   },
+   {
+    "geometry_id": "SCREEN-L1.0-A1.2-W0.2-H1.0-T0.0",
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.05,
+     "r_aperture": 0.06,
+     "r_module": 0.07,
+     "L_module": 0.05,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.004584,
+    "F_to_ICP": {
+     "H1.PI_face": 0.375,
+     "H1.aperture": 0.313,
+     "H1.PO_face": 0.205,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.049009,
+    "shell_area_net_m2": 0.049009,
+    "envelope_volume_m3": 0.0002042,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 40.81
+   },
+   {
+    "geometry_id": "SCREEN-L1.0-A1.2-W0.2-H1.0-T0.5",
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.05,
+     "r_aperture": 0.06,
+     "r_module": 0.07,
+     "L_module": 0.05,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.002292,
+    "F_to_ICP": {
+     "H1.PI_face": 0.188,
+     "H1.aperture": 0.157,
+     "H1.PO_face": 0.103,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.049009,
+    "shell_area_net_m2": 0.024504,
+    "envelope_volume_m3": 0.0002042,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 81.62
+   },
+   {
+    "geometry_id": "SCREEN-L1.0-A1.2-W0.2-H3.0-T0.0",
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.05,
+     "r_aperture": 0.06,
+     "r_module": 0.07,
+     "L_module": 0.15,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.006666,
+    "F_to_ICP": {
+     "H1.PI_face": 0.542,
+     "H1.aperture": 0.452,
+     "H1.PO_face": 0.301,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.13069,
+    "shell_area_net_m2": 0.13069,
+    "envelope_volume_m3": 0.00061261,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 15.3
+   },
+   {
+    "geometry_id": "SCREEN-L1.0-A1.2-W0.2-H3.0-T0.5",
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.05,
+     "r_aperture": 0.06,
+     "r_module": 0.07,
+     "L_module": 0.15,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.003333,
+    "F_to_ICP": {
+     "H1.PI_face": 0.271,
+     "H1.aperture": 0.226,
+     "H1.PO_face": 0.151,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.13069,
+    "shell_area_net_m2": 0.065345,
+    "envelope_volume_m3": 0.00061261,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 30.61
+   },
+   {
+    "geometry_id": "SCREEN-L1.0-A1.2-W0.6-H1.0-T0.0",
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.05,
+     "r_aperture": 0.06,
+     "r_module": 0.09,
+     "L_module": 0.05,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.007665,
+    "F_to_ICP": {
+     "H1.PI_face": 0.494,
+     "H1.aperture": 0.472,
+     "H1.PO_face": 0.403,
+     "H1.PO_lateral": 0.00061
+    },
+    "shell_area_gross_m2": 0.075398,
+    "shell_area_net_m2": 0.075398,
+    "envelope_volume_m3": 0.00070686,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 26.53
+   },
+   {
+    "geometry_id": "SCREEN-L1.0-A1.2-W0.6-H1.0-T0.5",
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.05,
+     "r_aperture": 0.06,
+     "r_module": 0.09,
+     "L_module": 0.05,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.003833,
+    "F_to_ICP": {
+     "H1.PI_face": 0.247,
+     "H1.aperture": 0.236,
+     "H1.PO_face": 0.201,
+     "H1.PO_lateral": 0.000305
+    },
+    "shell_area_gross_m2": 0.075398,
+    "shell_area_net_m2": 0.037699,
+    "envelope_volume_m3": 0.00070686,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 53.05
+   },
+   {
+    "geometry_id": "SCREEN-L1.0-A1.2-W0.6-H3.0-T0.0",
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.05,
+     "r_aperture": 0.06,
+     "r_module": 0.09,
+     "L_module": 0.15,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.009739,
+    "F_to_ICP": {
+     "H1.PI_face": 0.661,
+     "H1.aperture": 0.611,
+     "H1.PO_face": 0.498,
+     "H1.PO_lateral": 0.00061
+    },
+    "shell_area_gross_m2": 0.16965,
+    "shell_area_net_m2": 0.16965,
+    "envelope_volume_m3": 0.0021206,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 11.79
+   },
+   {
+    "geometry_id": "SCREEN-L1.0-A1.2-W0.6-H3.0-T0.5",
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.05,
+     "r_aperture": 0.06,
+     "r_module": 0.09,
+     "L_module": 0.15,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.00487,
+    "F_to_ICP": {
+     "H1.PI_face": 0.33,
+     "H1.aperture": 0.305,
+     "H1.PO_face": 0.249,
+     "H1.PO_lateral": 0.000305
+    },
+    "shell_area_gross_m2": 0.16965,
+    "shell_area_net_m2": 0.084823,
+    "envelope_volume_m3": 0.0021206,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 23.58
+   },
+   {
+    "geometry_id": "SCREEN-L1.0-A1.5-W0.2-H1.0-T0.0",
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.05,
+     "r_aperture": 0.075,
+     "r_module": 0.085,
+     "L_module": 0.05,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.00527,
+    "F_to_ICP": {
+     "H1.PI_face": 0.374,
+     "H1.aperture": 0.346,
+     "H1.PO_face": 0.261,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.060319,
+    "shell_area_net_m2": 0.060319,
+    "envelope_volume_m3": 0.00025133,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 33.16
+   },
+   {
+    "geometry_id": "SCREEN-L1.0-A1.5-W0.2-H1.0-T0.5",
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.05,
+     "r_aperture": 0.075,
+     "r_module": 0.085,
+     "L_module": 0.05,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.002635,
+    "F_to_ICP": {
+     "H1.PI_face": 0.187,
+     "H1.aperture": 0.173,
+     "H1.PO_face": 0.13,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.060319,
+    "shell_area_net_m2": 0.030159,
+    "envelope_volume_m3": 0.00025133,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 66.31
+   },
+   {
+    "geometry_id": "SCREEN-L1.0-A1.5-W0.2-H3.0-T0.0",
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.05,
+     "r_aperture": 0.075,
+     "r_module": 0.085,
+     "L_module": 0.15,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.008182,
+    "F_to_ICP": {
+     "H1.PI_face": 0.596,
+     "H1.aperture": 0.534,
+     "H1.PO_face": 0.4,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.16085,
+    "shell_area_net_m2": 0.16085,
+    "envelope_volume_m3": 0.00075398,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 12.43
+   },
+   {
+    "geometry_id": "SCREEN-L1.0-A1.5-W0.2-H3.0-T0.5",
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.05,
+     "r_aperture": 0.075,
+     "r_module": 0.085,
+     "L_module": 0.15,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.004091,
+    "F_to_ICP": {
+     "H1.PI_face": 0.298,
+     "H1.aperture": 0.267,
+     "H1.PO_face": 0.2,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.16085,
+    "shell_area_net_m2": 0.080425,
+    "envelope_volume_m3": 0.00075398,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 24.87
+   },
+   {
+    "geometry_id": "SCREEN-L1.0-A1.5-W0.6-H1.0-T0.0",
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.05,
+     "r_aperture": 0.075,
+     "r_module": 0.105,
+     "L_module": 0.05,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.008236,
+    "F_to_ICP": {
+     "H1.PI_face": 0.459,
+     "H1.aperture": 0.46,
+     "H1.PO_face": 0.428,
+     "H1.PO_lateral": 0.00885
+    },
+    "shell_area_gross_m2": 0.090478,
+    "shell_area_net_m2": 0.090478,
+    "envelope_volume_m3": 0.00084823,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 22.1
+   },
+   {
+    "geometry_id": "SCREEN-L1.0-A1.5-W0.6-H1.0-T0.5",
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.05,
+     "r_aperture": 0.075,
+     "r_module": 0.105,
+     "L_module": 0.05,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.004118,
+    "F_to_ICP": {
+     "H1.PI_face": 0.229,
+     "H1.aperture": 0.23,
+     "H1.PO_face": 0.214,
+     "H1.PO_lateral": 0.00443
+    },
+    "shell_area_gross_m2": 0.090478,
+    "shell_area_net_m2": 0.045239,
+    "envelope_volume_m3": 0.00084823,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 44.21
+   },
+   {
+    "geometry_id": "SCREEN-L1.0-A1.5-W0.6-H3.0-T0.0",
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.05,
+     "r_aperture": 0.075,
+     "r_module": 0.105,
+     "L_module": 0.15,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.01115,
+    "F_to_ICP": {
+     "H1.PI_face": 0.68,
+     "H1.aperture": 0.647,
+     "H1.PO_face": 0.567,
+     "H1.PO_lateral": 0.00885
+    },
+    "shell_area_gross_m2": 0.20358,
+    "shell_area_net_m2": 0.20358,
+    "envelope_volume_m3": 0.0025447,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 9.824
+   },
+   {
+    "geometry_id": "SCREEN-L1.0-A1.5-W0.6-H3.0-T0.5",
+    "L_over_Ro": 1.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.05,
+     "r_aperture": 0.075,
+     "r_module": 0.105,
+     "L_module": 0.15,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.005574,
+    "F_to_ICP": {
+     "H1.PI_face": 0.34,
+     "H1.aperture": 0.324,
+     "H1.PO_face": 0.284,
+     "H1.PO_lateral": 0.00443
+    },
+    "shell_area_gross_m2": 0.20358,
+    "shell_area_net_m2": 0.10179,
+    "envelope_volume_m3": 0.0025447,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 19.65
+   },
+   {
+    "geometry_id": "SCREEN-L2.0-A1.0-W0.2-H1.0-T0.0",
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.1,
+     "r_aperture": 0.05,
+     "r_module": 0.06,
+     "L_module": 0.05,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.002028,
+    "F_to_ICP": {
+     "H1.PI_face": 0.151,
+     "H1.aperture": 0.126,
+     "H1.PO_face": 0.0997,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.041469,
+    "shell_area_net_m2": 0.041469,
+    "envelope_volume_m3": 0.00017279,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 48.23
+   },
+   {
+    "geometry_id": "SCREEN-L2.0-A1.0-W0.2-H1.0-T0.5",
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.1,
+     "r_aperture": 0.05,
+     "r_module": 0.06,
+     "L_module": 0.05,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.001014,
+    "F_to_ICP": {
+     "H1.PI_face": 0.0755,
+     "H1.aperture": 0.063,
+     "H1.PO_face": 0.0498,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.041469,
+    "shell_area_net_m2": 0.020735,
+    "envelope_volume_m3": 0.00017279,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 96.46
+   },
+   {
+    "geometry_id": "SCREEN-L2.0-A1.0-W0.2-H3.0-T0.0",
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.1,
+     "r_aperture": 0.05,
+     "r_module": 0.06,
+     "L_module": 0.15,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.002875,
+    "F_to_ICP": {
+     "H1.PI_face": 0.211,
+     "H1.aperture": 0.176,
+     "H1.PO_face": 0.143,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.11058,
+    "shell_area_net_m2": 0.11058,
+    "envelope_volume_m3": 0.00051836,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 18.09
+   },
+   {
+    "geometry_id": "SCREEN-L2.0-A1.0-W0.2-H3.0-T0.5",
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.1,
+     "r_aperture": 0.05,
+     "r_module": 0.06,
+     "L_module": 0.15,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.001438,
+    "F_to_ICP": {
+     "H1.PI_face": 0.105,
+     "H1.aperture": 0.0879,
+     "H1.PO_face": 0.0717,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.11058,
+    "shell_area_net_m2": 0.055292,
+    "envelope_volume_m3": 0.00051836,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 36.17
+   },
+   {
+    "geometry_id": "SCREEN-L2.0-A1.0-W0.6-H1.0-T0.0",
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.1,
+     "r_aperture": 0.05,
+     "r_module": 0.08,
+     "L_module": 0.05,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.004,
+    "F_to_ICP": {
+     "H1.PI_face": 0.276,
+     "H1.aperture": 0.248,
+     "H1.PO_face": 0.205,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.065345,
+    "shell_area_net_m2": 0.065345,
+    "envelope_volume_m3": 0.00061261,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 30.61
+   },
+   {
+    "geometry_id": "SCREEN-L2.0-A1.0-W0.6-H1.0-T0.5",
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.1,
+     "r_aperture": 0.05,
+     "r_module": 0.08,
+     "L_module": 0.05,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.002,
+    "F_to_ICP": {
+     "H1.PI_face": 0.138,
+     "H1.aperture": 0.124,
+     "H1.PO_face": 0.102,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.065345,
+    "shell_area_net_m2": 0.032673,
+    "envelope_volume_m3": 0.00061261,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 61.21
+   },
+   {
+    "geometry_id": "SCREEN-L2.0-A1.0-W0.6-H3.0-T0.0",
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.1,
+     "r_aperture": 0.05,
+     "r_module": 0.08,
+     "L_module": 0.15,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.004827,
+    "F_to_ICP": {
+     "H1.PI_face": 0.335,
+     "H1.aperture": 0.298,
+     "H1.PO_face": 0.247,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.14703,
+    "shell_area_net_m2": 0.14703,
+    "envelope_volume_m3": 0.0018378,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 13.6
+   },
+   {
+    "geometry_id": "SCREEN-L2.0-A1.0-W0.6-H3.0-T0.5",
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.1,
+     "r_aperture": 0.05,
+     "r_module": 0.08,
+     "L_module": 0.15,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.002413,
+    "F_to_ICP": {
+     "H1.PI_face": 0.168,
+     "H1.aperture": 0.149,
+     "H1.PO_face": 0.123,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.14703,
+    "shell_area_net_m2": 0.073513,
+    "envelope_volume_m3": 0.0018378,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 27.21
+   },
+   {
+    "geometry_id": "SCREEN-L2.0-A1.2-W0.2-H1.0-T0.0",
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.1,
+     "r_aperture": 0.06,
+     "r_module": 0.07,
+     "L_module": 0.05,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.002391,
+    "F_to_ICP": {
+     "H1.PI_face": 0.178,
+     "H1.aperture": 0.154,
+     "H1.PO_face": 0.116,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.049009,
+    "shell_area_net_m2": 0.049009,
+    "envelope_volume_m3": 0.0002042,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 40.81
+   },
+   {
+    "geometry_id": "SCREEN-L2.0-A1.2-W0.2-H1.0-T0.5",
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.1,
+     "r_aperture": 0.06,
+     "r_module": 0.07,
+     "L_module": 0.05,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.001196,
+    "F_to_ICP": {
+     "H1.PI_face": 0.0891,
+     "H1.aperture": 0.077,
+     "H1.PO_face": 0.058,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.049009,
+    "shell_area_net_m2": 0.024504,
+    "envelope_volume_m3": 0.0002042,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 81.62
+   },
+   {
+    "geometry_id": "SCREEN-L2.0-A1.2-W0.2-H3.0-T0.0",
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.1,
+     "r_aperture": 0.06,
+     "r_module": 0.07,
+     "L_module": 0.15,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.003506,
+    "F_to_ICP": {
+     "H1.PI_face": 0.257,
+     "H1.aperture": 0.224,
+     "H1.PO_face": 0.172,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.13069,
+    "shell_area_net_m2": 0.13069,
+    "envelope_volume_m3": 0.00061261,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 15.3
+   },
+   {
+    "geometry_id": "SCREEN-L2.0-A1.2-W0.2-H3.0-T0.5",
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.1,
+     "r_aperture": 0.06,
+     "r_module": 0.07,
+     "L_module": 0.15,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.001753,
+    "F_to_ICP": {
+     "H1.PI_face": 0.129,
+     "H1.aperture": 0.112,
+     "H1.PO_face": 0.086,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.13069,
+    "shell_area_net_m2": 0.065345,
+    "envelope_volume_m3": 0.00061261,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 30.61
+   },
+   {
+    "geometry_id": "SCREEN-L2.0-A1.2-W0.6-H1.0-T0.0",
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.1,
+     "r_aperture": 0.06,
+     "r_module": 0.09,
+     "L_module": 0.05,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.004427,
+    "F_to_ICP": {
+     "H1.PI_face": 0.297,
+     "H1.aperture": 0.273,
+     "H1.PO_face": 0.23,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.075398,
+    "shell_area_net_m2": 0.075398,
+    "envelope_volume_m3": 0.00070686,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 26.53
+   },
+   {
+    "geometry_id": "SCREEN-L2.0-A1.2-W0.6-H1.0-T0.5",
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.1,
+     "r_aperture": 0.06,
+     "r_module": 0.09,
+     "L_module": 0.05,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.002214,
+    "F_to_ICP": {
+     "H1.PI_face": 0.149,
+     "H1.aperture": 0.136,
+     "H1.PO_face": 0.115,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.075398,
+    "shell_area_net_m2": 0.037699,
+    "envelope_volume_m3": 0.00070686,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 53.05
+   },
+   {
+    "geometry_id": "SCREEN-L2.0-A1.2-W0.6-H3.0-T0.0",
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.1,
+     "r_aperture": 0.06,
+     "r_module": 0.09,
+     "L_module": 0.15,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.00554,
+    "F_to_ICP": {
+     "H1.PI_face": 0.376,
+     "H1.aperture": 0.343,
+     "H1.PO_face": 0.286,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.16965,
+    "shell_area_net_m2": 0.16965,
+    "envelope_volume_m3": 0.0021206,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 11.79
+   },
+   {
+    "geometry_id": "SCREEN-L2.0-A1.2-W0.6-H3.0-T0.5",
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.1,
+     "r_aperture": 0.06,
+     "r_module": 0.09,
+     "L_module": 0.15,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.00277,
+    "F_to_ICP": {
+     "H1.PI_face": 0.188,
+     "H1.aperture": 0.172,
+     "H1.PO_face": 0.143,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.16965,
+    "shell_area_net_m2": 0.084823,
+    "envelope_volume_m3": 0.0021206,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 23.58
+   },
+   {
+    "geometry_id": "SCREEN-L2.0-A1.5-W0.2-H1.0-T0.0",
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.1,
+     "r_aperture": 0.075,
+     "r_module": 0.085,
+     "L_module": 0.05,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.002926,
+    "F_to_ICP": {
+     "H1.PI_face": 0.209,
+     "H1.aperture": 0.186,
+     "H1.PO_face": 0.146,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.060319,
+    "shell_area_net_m2": 0.060319,
+    "envelope_volume_m3": 0.00025133,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 33.16
+   },
+   {
+    "geometry_id": "SCREEN-L2.0-A1.5-W0.2-H1.0-T0.5",
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.1,
+     "r_aperture": 0.075,
+     "r_module": 0.085,
+     "L_module": 0.05,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.001463,
+    "F_to_ICP": {
+     "H1.PI_face": 0.105,
+     "H1.aperture": 0.0928,
+     "H1.PO_face": 0.073,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.060319,
+    "shell_area_net_m2": 0.030159,
+    "envelope_volume_m3": 0.00025133,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 66.31
+   },
+   {
+    "geometry_id": "SCREEN-L2.0-A1.5-W0.2-H3.0-T0.0",
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.1,
+     "r_aperture": 0.075,
+     "r_module": 0.085,
+     "L_module": 0.15,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.004535,
+    "F_to_ICP": {
+     "H1.PI_face": 0.321,
+     "H1.aperture": 0.285,
+     "H1.PO_face": 0.228,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.16085,
+    "shell_area_net_m2": 0.16085,
+    "envelope_volume_m3": 0.00075398,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 12.43
+   },
+   {
+    "geometry_id": "SCREEN-L2.0-A1.5-W0.2-H3.0-T0.5",
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.1,
+     "r_aperture": 0.075,
+     "r_module": 0.085,
+     "L_module": 0.15,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.002267,
+    "F_to_ICP": {
+     "H1.PI_face": 0.161,
+     "H1.aperture": 0.143,
+     "H1.PO_face": 0.114,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.16085,
+    "shell_area_net_m2": 0.080425,
+    "envelope_volume_m3": 0.00075398,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 24.87
+   },
+   {
+    "geometry_id": "SCREEN-L2.0-A1.5-W0.6-H1.0-T0.0",
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.1,
+     "r_aperture": 0.075,
+     "r_module": 0.105,
+     "L_module": 0.05,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.005021,
+    "F_to_ICP": {
+     "H1.PI_face": 0.317,
+     "H1.aperture": 0.298,
+     "H1.PO_face": 0.26,
+     "H1.PO_lateral": 0.00214
+    },
+    "shell_area_gross_m2": 0.090478,
+    "shell_area_net_m2": 0.090478,
+    "envelope_volume_m3": 0.00084823,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 22.1
+   },
+   {
+    "geometry_id": "SCREEN-L2.0-A1.5-W0.6-H1.0-T0.5",
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.1,
+     "r_aperture": 0.075,
+     "r_module": 0.105,
+     "L_module": 0.05,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.00251,
+    "F_to_ICP": {
+     "H1.PI_face": 0.158,
+     "H1.aperture": 0.149,
+     "H1.PO_face": 0.13,
+     "H1.PO_lateral": 0.00107
+    },
+    "shell_area_gross_m2": 0.090478,
+    "shell_area_net_m2": 0.045239,
+    "envelope_volume_m3": 0.00084823,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 44.21
+   },
+   {
+    "geometry_id": "SCREEN-L2.0-A1.5-W0.6-H3.0-T0.0",
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.1,
+     "r_aperture": 0.075,
+     "r_module": 0.105,
+     "L_module": 0.15,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.00663,
+    "F_to_ICP": {
+     "H1.PI_face": 0.429,
+     "H1.aperture": 0.397,
+     "H1.PO_face": 0.342,
+     "H1.PO_lateral": 0.00214
+    },
+    "shell_area_gross_m2": 0.20358,
+    "shell_area_net_m2": 0.20358,
+    "envelope_volume_m3": 0.0025447,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 9.824
+   },
+   {
+    "geometry_id": "SCREEN-L2.0-A1.5-W0.6-H3.0-T0.5",
+    "L_over_Ro": 2.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.1,
+     "r_aperture": 0.075,
+     "r_module": 0.105,
+     "L_module": 0.15,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.003315,
+    "F_to_ICP": {
+     "H1.PI_face": 0.214,
+     "H1.aperture": 0.199,
+     "H1.PO_face": 0.171,
+     "H1.PO_lateral": 0.00107
+    },
+    "shell_area_gross_m2": 0.20358,
+    "shell_area_net_m2": 0.10179,
+    "envelope_volume_m3": 0.0025447,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 19.65
+   },
+   {
+    "geometry_id": "SCREEN-L4.0-A1.0-W0.2-H1.0-T0.0",
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.2,
+     "r_aperture": 0.05,
+     "r_module": 0.06,
+     "L_module": 0.05,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.0006686,
+    "F_to_ICP": {
+     "H1.PI_face": 0.0438,
+     "H1.aperture": 0.0374,
+     "H1.PO_face": 0.0361,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.041469,
+    "shell_area_net_m2": 0.041469,
+    "envelope_volume_m3": 0.00017279,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 48.23
+   },
+   {
+    "geometry_id": "SCREEN-L4.0-A1.0-W0.2-H1.0-T0.5",
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.2,
+     "r_aperture": 0.05,
+     "r_module": 0.06,
+     "L_module": 0.05,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.0003343,
+    "F_to_ICP": {
+     "H1.PI_face": 0.0219,
+     "H1.aperture": 0.0187,
+     "H1.PO_face": 0.0181,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.041469,
+    "shell_area_net_m2": 0.020735,
+    "envelope_volume_m3": 0.00017279,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 96.46
+   },
+   {
+    "geometry_id": "SCREEN-L4.0-A1.0-W0.2-H3.0-T0.0",
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.2,
+     "r_aperture": 0.05,
+     "r_module": 0.06,
+     "L_module": 0.15,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.000967,
+    "F_to_ICP": {
+     "H1.PI_face": 0.0629,
+     "H1.aperture": 0.0546,
+     "H1.PO_face": 0.0523,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.11058,
+    "shell_area_net_m2": 0.11058,
+    "envelope_volume_m3": 0.00051836,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 18.09
+   },
+   {
+    "geometry_id": "SCREEN-L4.0-A1.0-W0.2-H3.0-T0.5",
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.2,
+     "r_aperture": 0.05,
+     "r_module": 0.06,
+     "L_module": 0.15,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.0004835,
+    "F_to_ICP": {
+     "H1.PI_face": 0.0314,
+     "H1.aperture": 0.0273,
+     "H1.PO_face": 0.0262,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.11058,
+    "shell_area_net_m2": 0.055292,
+    "envelope_volume_m3": 0.00051836,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 36.17
+   },
+   {
+    "geometry_id": "SCREEN-L4.0-A1.0-W0.6-H1.0-T0.0",
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.2,
+     "r_aperture": 0.05,
+     "r_module": 0.08,
+     "L_module": 0.05,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.001531,
+    "F_to_ICP": {
+     "H1.PI_face": 0.0982,
+     "H1.aperture": 0.0924,
+     "H1.PO_face": 0.0817,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.065345,
+    "shell_area_net_m2": 0.065345,
+    "envelope_volume_m3": 0.00061261,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 30.61
+   },
+   {
+    "geometry_id": "SCREEN-L4.0-A1.0-W0.6-H1.0-T0.5",
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.2,
+     "r_aperture": 0.05,
+     "r_module": 0.08,
+     "L_module": 0.05,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.0007653,
+    "F_to_ICP": {
+     "H1.PI_face": 0.0491,
+     "H1.aperture": 0.0462,
+     "H1.PO_face": 0.0409,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.065345,
+    "shell_area_net_m2": 0.032673,
+    "envelope_volume_m3": 0.00061261,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 61.21
+   },
+   {
+    "geometry_id": "SCREEN-L4.0-A1.0-W0.6-H3.0-T0.0",
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.2,
+     "r_aperture": 0.05,
+     "r_module": 0.08,
+     "L_module": 0.15,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.001826,
+    "F_to_ICP": {
+     "H1.PI_face": 0.117,
+     "H1.aperture": 0.11,
+     "H1.PO_face": 0.0977,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.14703,
+    "shell_area_net_m2": 0.14703,
+    "envelope_volume_m3": 0.0018378,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 13.6
+   },
+   {
+    "geometry_id": "SCREEN-L4.0-A1.0-W0.6-H3.0-T0.5",
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.0,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.2,
+     "r_aperture": 0.05,
+     "r_module": 0.08,
+     "L_module": 0.15,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.0009132,
+    "F_to_ICP": {
+     "H1.PI_face": 0.0586,
+     "H1.aperture": 0.0548,
+     "H1.PO_face": 0.0488,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.14703,
+    "shell_area_net_m2": 0.073513,
+    "envelope_volume_m3": 0.0018378,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 27.21
+   },
+   {
+    "geometry_id": "SCREEN-L4.0-A1.2-W0.2-H1.0-T0.0",
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.2,
+     "r_aperture": 0.06,
+     "r_module": 0.07,
+     "L_module": 0.05,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.0008198,
+    "F_to_ICP": {
+     "H1.PI_face": 0.0524,
+     "H1.aperture": 0.0528,
+     "H1.PO_face": 0.043,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.049009,
+    "shell_area_net_m2": 0.049009,
+    "envelope_volume_m3": 0.0002042,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 40.81
+   },
+   {
+    "geometry_id": "SCREEN-L4.0-A1.2-W0.2-H1.0-T0.5",
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.2,
+     "r_aperture": 0.06,
+     "r_module": 0.07,
+     "L_module": 0.05,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.0004099,
+    "F_to_ICP": {
+     "H1.PI_face": 0.0262,
+     "H1.aperture": 0.0264,
+     "H1.PO_face": 0.0215,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.049009,
+    "shell_area_net_m2": 0.024504,
+    "envelope_volume_m3": 0.0002042,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 81.62
+   },
+   {
+    "geometry_id": "SCREEN-L4.0-A1.2-W0.2-H3.0-T0.0",
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.2,
+     "r_aperture": 0.06,
+     "r_module": 0.07,
+     "L_module": 0.15,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.001228,
+    "F_to_ICP": {
+     "H1.PI_face": 0.0787,
+     "H1.aperture": 0.0763,
+     "H1.PO_face": 0.065,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.13069,
+    "shell_area_net_m2": 0.13069,
+    "envelope_volume_m3": 0.00061261,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 15.3
+   },
+   {
+    "geometry_id": "SCREEN-L4.0-A1.2-W0.2-H3.0-T0.5",
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.2,
+     "r_aperture": 0.06,
+     "r_module": 0.07,
+     "L_module": 0.15,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.0006139,
+    "F_to_ICP": {
+     "H1.PI_face": 0.0394,
+     "H1.aperture": 0.0381,
+     "H1.PO_face": 0.0325,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.13069,
+    "shell_area_net_m2": 0.065345,
+    "envelope_volume_m3": 0.00061261,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 30.61
+   },
+   {
+    "geometry_id": "SCREEN-L4.0-A1.2-W0.6-H1.0-T0.0",
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.2,
+     "r_aperture": 0.06,
+     "r_module": 0.09,
+     "L_module": 0.05,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.001771,
+    "F_to_ICP": {
+     "H1.PI_face": 0.111,
+     "H1.aperture": 0.107,
+     "H1.PO_face": 0.0955,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.075398,
+    "shell_area_net_m2": 0.075398,
+    "envelope_volume_m3": 0.00070686,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 26.53
+   },
+   {
+    "geometry_id": "SCREEN-L4.0-A1.2-W0.6-H1.0-T0.5",
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.2,
+     "r_aperture": 0.06,
+     "r_module": 0.09,
+     "L_module": 0.05,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.0008855,
+    "F_to_ICP": {
+     "H1.PI_face": 0.0555,
+     "H1.aperture": 0.0536,
+     "H1.PO_face": 0.0477,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.075398,
+    "shell_area_net_m2": 0.037699,
+    "envelope_volume_m3": 0.00070686,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 53.05
+   },
+   {
+    "geometry_id": "SCREEN-L4.0-A1.2-W0.6-H3.0-T0.0",
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.2,
+     "r_aperture": 0.06,
+     "r_module": 0.09,
+     "L_module": 0.15,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.002179,
+    "F_to_ICP": {
+     "H1.PI_face": 0.137,
+     "H1.aperture": 0.131,
+     "H1.PO_face": 0.117,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.16965,
+    "shell_area_net_m2": 0.16965,
+    "envelope_volume_m3": 0.0021206,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 11.79
+   },
+   {
+    "geometry_id": "SCREEN-L4.0-A1.2-W0.6-H3.0-T0.5",
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.2,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.2,
+     "r_aperture": 0.06,
+     "r_module": 0.09,
+     "L_module": 0.15,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.001089,
+    "F_to_ICP": {
+     "H1.PI_face": 0.0687,
+     "H1.aperture": 0.0653,
+     "H1.PO_face": 0.0587,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.16965,
+    "shell_area_net_m2": 0.084823,
+    "envelope_volume_m3": 0.0021206,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 23.58
+   },
+   {
+    "geometry_id": "SCREEN-L4.0-A1.5-W0.2-H1.0-T0.0",
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.2,
+     "r_aperture": 0.075,
+     "r_module": 0.085,
+     "L_module": 0.05,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.001066,
+    "F_to_ICP": {
+     "H1.PI_face": 0.0681,
+     "H1.aperture": 0.0631,
+     "H1.PO_face": 0.0574,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.060319,
+    "shell_area_net_m2": 0.060319,
+    "envelope_volume_m3": 0.00025133,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 33.16
+   },
+   {
+    "geometry_id": "SCREEN-L4.0-A1.5-W0.2-H1.0-T0.5",
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.2,
+     "r_aperture": 0.075,
+     "r_module": 0.085,
+     "L_module": 0.05,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.0005332,
+    "F_to_ICP": {
+     "H1.PI_face": 0.0341,
+     "H1.aperture": 0.0316,
+     "H1.PO_face": 0.0287,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.060319,
+    "shell_area_net_m2": 0.030159,
+    "envelope_volume_m3": 0.00025133,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 66.31
+   },
+   {
+    "geometry_id": "SCREEN-L4.0-A1.5-W0.2-H3.0-T0.0",
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.2,
+     "r_aperture": 0.075,
+     "r_module": 0.085,
+     "L_module": 0.15,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.001666,
+    "F_to_ICP": {
+     "H1.PI_face": 0.104,
+     "H1.aperture": 0.102,
+     "H1.PO_face": 0.0895,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.16085,
+    "shell_area_net_m2": 0.16085,
+    "envelope_volume_m3": 0.00075398,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 12.43
+   },
+   {
+    "geometry_id": "SCREEN-L4.0-A1.5-W0.2-H3.0-T0.5",
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.2,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.2,
+     "r_aperture": 0.075,
+     "r_module": 0.085,
+     "L_module": 0.15,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.0008329,
+    "F_to_ICP": {
+     "H1.PI_face": 0.0522,
+     "H1.aperture": 0.0509,
+     "H1.PO_face": 0.0448,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.16085,
+    "shell_area_net_m2": 0.080425,
+    "envelope_volume_m3": 0.00075398,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 24.87
+   },
+   {
+    "geometry_id": "SCREEN-L4.0-A1.5-W0.6-H1.0-T0.0",
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.2,
+     "r_aperture": 0.075,
+     "r_module": 0.105,
+     "L_module": 0.05,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.00213,
+    "F_to_ICP": {
+     "H1.PI_face": 0.131,
+     "H1.aperture": 0.126,
+     "H1.PO_face": 0.117,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.090478,
+    "shell_area_net_m2": 0.090478,
+    "envelope_volume_m3": 0.00084823,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 22.1
+   },
+   {
+    "geometry_id": "SCREEN-L4.0-A1.5-W0.6-H1.0-T0.5",
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 1.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.2,
+     "r_aperture": 0.075,
+     "r_module": 0.105,
+     "L_module": 0.05,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.001065,
+    "F_to_ICP": {
+     "H1.PI_face": 0.0656,
+     "H1.aperture": 0.0628,
+     "H1.PO_face": 0.0583,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.090478,
+    "shell_area_net_m2": 0.045239,
+    "envelope_volume_m3": 0.00084823,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 44.21
+   },
+   {
+    "geometry_id": "SCREEN-L4.0-A1.5-W0.6-H3.0-T0.0",
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.0,
+    "x_m": {
+     "L_standoff": 0.2,
+     "r_aperture": 0.075,
+     "r_module": 0.105,
+     "L_module": 0.15,
+     "tau_support": 0.0
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.00273,
+    "F_to_ICP": {
+     "H1.PI_face": 0.168,
+     "H1.aperture": 0.164,
+     "H1.PO_face": 0.149,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.20358,
+    "shell_area_net_m2": 0.20358,
+    "envelope_volume_m3": 0.0025447,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 9.824
+   },
+   {
+    "geometry_id": "SCREEN-L4.0-A1.5-W0.6-H3.0-T0.5",
+    "L_over_Ro": 4.0,
+    "rap_over_Ro": 1.5,
+    "wall_over_Ro": 0.6,
+    "H_over_Ro": 3.0,
+    "tau": 0.5,
+    "x_m": {
+     "L_standoff": 0.2,
+     "r_aperture": 0.075,
+     "r_module": 0.105,
+     "L_module": 0.15,
+     "tau_support": 0.5
+    },
+    "vf_status": "EVALUATED_GEOMETRIC_CONDITIONAL",
+    "total_AF_to_ICP_m2": 0.001365,
+    "F_to_ICP": {
+     "H1.PI_face": 0.0838,
+     "H1.aperture": 0.0822,
+     "H1.PO_face": 0.0743,
+     "H1.PO_lateral": 0.0
+    },
+    "shell_area_gross_m2": 0.20358,
+    "shell_area_net_m2": 0.10179,
+    "envelope_volume_m3": 0.0025447,
+    "module_mass_status": "NOT_EVALUATED",
+    "al05_mean_areal_density_ceiling_kg_m2": 19.65
+   }
+  ],
+  "descriptive_summary_by_standoff": [
+   {
+    "L_over_Ro": 0.5,
+    "min_total_AF_to_ICP_m2": 0.003045,
+    "max_total_AF_to_ICP_m2": 0.01464,
+    "n": 24
+   },
+   {
+    "L_over_Ro": 1.0,
+    "min_total_AF_to_ICP_m2": 0.002044,
+    "max_total_AF_to_ICP_m2": 0.01115,
+    "n": 24
+   },
+   {
+    "L_over_Ro": 2.0,
+    "min_total_AF_to_ICP_m2": 0.001014,
+    "max_total_AF_to_ICP_m2": 0.00663,
+    "n": 24
+   },
+   {
+    "L_over_Ro": 4.0,
+    "min_total_AF_to_ICP_m2": 0.0003343,
+    "max_total_AF_to_ICP_m2": 0.00273,
+    "n": 24
+   }
+  ],
+  "reading_rule": "total_AF_to_ICP_m2 = sum over H-1 front zones (PI face, channel-exit aperture, PO face, PO lateral) of A_z F_z->ICP: the diffuse radiative view the ICP envelope takes from H-1. It is one of eight F6 objectives and never a ranking by itself; with tau > 0 the P3 gray open-frame approximation applies",
+  "limitations": [
+   "H-1 front geometry is the assumed H2-5 range-midpoint evaluation point (rounded to 0.1 mm in the P3 JSON); every number moves with the F5 freeze candidate",
+   "the ICP is one coaxial annular envelope body (open-tube coaxial first build); antenna, collector and internal surfaces are not separate radiating bodies",
+   "diffuse gray view factors only: no temperatures, no heat flows, no thermal PASS (ICP_COUPLED_THERMAL UNRESOLVED)",
+   "no plume interception: no measured angular distribution exists (P3 already reports test-cone geometry; not repeated)"
+  ]
+ },
+ "interface_demands": {
+  "f6_needs": [
+   {
+    "id": "F6-IF-N01",
+    "from": "F5 docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json (fo_a9_7_f5_h1_freeze_candidate; IFS-F6-01..05, IFD-F6-01..03)",
+    "what": "frozen H-1 front-face geometry at IP-EXIT (R_pf, R_i, R_o, R_ow, R_b, L_b) as a non-assumed record",
+    "units": "m",
+    "status": "TBD_AFTER_EVIDENCE (F5 H1F-EX-04 exit-face channel OD TBD; H1F-EX-06 keep-out TBD)",
+    "unlocks": "view_factor_obstruction EVALUATED_GEOMETRIC; plume interception geometry"
+   },
+   {
+    "id": "F6-IF-N02",
+    "from": "F5 docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json (fo_a9_7_f5_h1_freeze_candidate; IFS-F6-01..05, IFD-F6-01..03)",
+    "what": "H-1 magnetic-circuit field B(r, z) including the downstream near field to z >= L_standoff + L_module (measured or cited model) and the coil operating envelope",
+    "units": "T",
+    "status": "TBD_AFTER_EVIDENCE (F5 H1F-EX-05 MC-1 stray field TBD)",
+    "unlocks": "hall_b_field_disturbance"
+   },
+   {
+    "id": "F6-IF-N03",
+    "from": "P1 docs/experiments/hall_icp/p1_icp_bench/",
+    "what": "icp45a_evaluate result (status EVALUATED_ENGINEERING_ONLY) per BUILT ICP geometry, bound by geometry_id and p1_record_id; derive_rf P_RF_DELIVERED at the same capacity record",
+    "units": "A; W",
+    "status": "TBD_AFTER_EVIDENCE (ICP45 NOT_EVALUATED; I_d,max,H1 not registered)",
+    "unlocks": "electron_current_capacity, rf_power_delivered"
+   },
+   {
+    "id": "F6-IF-N04",
+    "from": "P2 docs/experiments/hall_icp/p2_impedance_map/",
+    "what": "validated MEASURED p2_impedance_map_v1 per built geometry (binding carries map content_sha256)",
+    "units": "ohm; W",
+    "status": "TBD_AFTER_IMPEDANCE_MAP",
+    "unlocks": "rf_match_loss_fraction"
+   },
+   {
+    "id": "F6-IF-N05",
+    "from": "P3 docs/experiments/hall_icp/p3_coupled_thermal/ (P3-IF-N01 / N02 via P1)",
+    "what": "measured collector currents, T_e and V_plasma at the collector sheath edge (P3Q-01 OPEN)",
+    "units": "A; eV; V",
+    "status": "TBD_AFTER_EVIDENCE",
+    "unlocks": "collector_heating"
+   },
+   {
+    "id": "F6-IF-N06",
+    "from": "Phase-1 Hall data (P3-H-03)",
+    "what": "measured angular current distribution of the H-1 plume (Faraday probe; never predicted)",
+    "units": "deg; -",
+    "status": "TBD_AFTER_EVIDENCE",
+    "unlocks": "plume_interception_fraction"
+   },
+   {
+    "id": "F6-IF-N07",
+    "from": "P4 docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json and RFQ / hardware",
+    "what": "selected materials and cited densities of dielectric, housing / shells, antenna conductor and collector (FINAL_COLLECTOR_MATERIAL OPEN)",
+    "units": "kg/m3",
+    "status": "TBD",
+    "unlocks": "module_mass"
+   },
+   {
+    "id": "F6-IF-N08",
+    "from": "hardware (KC-1 / ICP module drawing; ICD ICP-02, -04, -07, -21, -47)",
+    "what": "sourced bounds of every design variable F6-X-01..17",
+    "units": "m; -",
+    "status": "TBD (LOCK-1)",
+    "unlocks": "search (refused until then)"
+   }
+  ],
+  "f6_supplies": [
+   {
+    "id": "F6-IF-S01",
+    "to": "F7/F8 abep_sim/design/architecture_optimizer.py (fo_a9_7_f7_f8_coupled_optimizer; F78-ID-10)",
+    "what": "x_ICP definition (DESIGN_VARIABLES), the eight-objective vector with per-objective status, and the fail-closed Pareto semantics (REFUSED_INCOMPLETE)",
+    "status": "DEFINED (framework); values TBD"
+   },
+   {
+    "id": "F6-IF-S02",
+    "to": "F9 docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json (fo_a9_7_f9_freeze_candidate; F9-ID-06)",
+    "what": "downstream ICP geometry parameter rows VALUE | TOLERANCE | EVIDENCE_CLASS | SOURCE | FREEZE_STATUS: all TBD (INVESTIGATION_HYPOTHESIS)",
+    "status": "TBD"
+   },
+   {
+    "id": "F6-IF-S03",
+    "to": "F5 docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json (fo_a9_7_f5_h1_freeze_candidate; IFS-F6-01..05, IFD-F6-01..03)",
+    "what": "view-factor obstruction of the H-1 front zones vs ICP envelope (screening rows) for the H-1 radiative design; demand that B(r, z) covers the ICP region",
+    "status": "COMPUTED_CONDITIONAL (assumed H-1 geometry)"
+   },
+   {
+    "id": "F6-IF-S04",
+    "to": "P3 docs/experiments/hall_icp/p3_coupled_thermal/",
+    "what": "screening rows at the P3 verification resolution with a convergence check (complements the P3 parametric study; no P3 file changed)",
+    "status": "COMPUTED_CONDITIONAL"
+   },
+   {
+    "id": "F6-IF-S05",
+    "to": "F0 docs/performance/PERFORMANCE_BASELINE_98fbbb9.json (fo_a9_7_f0_profiling)",
+    "what": "a P3 ray / view-factor workload (96 envelopes x 4 emitters at (16, 32, 64) plus 8 at (32, 64, 128)) for profiling (Rust order item 6)",
+    "status": "AVAILABLE (builder)"
+   },
+   {
+    "id": "F6-IF-S06",
+    "to": "F1 / F2 / F3 / F4 (abep_sim/design/intake_synthesis.py (fo_a9_7_f1_intake_synthesis); abep_sim/design/filter_stage.py (fo_a9_7_f2_filter_stage); abep_sim/design/compressor_synthesis.py (fo_a9_7_f3_compressor_synthesis); abep_sim/design/plenum_feed.py (fo_a9_7_f4_plenum_feed))",
+    "what": "no direct geometric interface; carried flag: the ICP gas feed is unbooked (A9 recorder flag) and the dedicated ICP gas port stays capped (A9.3 OQ-RFQ-10) - any ICP gas demand on the feed path comes from P1 records, not from F6",
+    "status": "NO_INTERFACE_NOW"
+   }
+  ]
+ },
+ "open_owner_questions": [
+  {
+   "id": "F6-OQ-01",
+   "question": "Approve the F6 objective definitions and directions (eight objectives; worst-case P2 loss fraction as the matching metric; P_RF,delivered at the ICP45 capacity point as the RF power metric; sum A_z F_z->ICP as the view-factor metric) and the fail-closed Pareto rule (no subset ranking)?",
+   "status": "TBD_OWNER",
+   "blocks": "any F6 Pareto set"
+  },
+  {
+   "id": "F6-OQ-02",
+   "question": "Which source fixes the design-variable bounds F6-X-01..17: the KC-1 / ICP module drawing envelope at LOCK-1, or a registered P1 / P2 bench geometry matrix?",
+   "status": "TBD_OWNER",
+   "blocks": "search()"
+  },
+  {
+   "id": "F6-OQ-03",
+   "question": "P1 / P2 measure built geometries only. Does the owner want (a) a multi-geometry P1 / P2 bench matrix (each candidate built and measured) or (b) a separately validated model of I_e,cap and Z_antenna vs geometry? Without one, the F6 'search' is an evaluation over built geometries.",
+   "status": "TBD_OWNER",
+   "blocks": "geometry search beyond built articles"
+  },
+  {
+   "id": "F6-OQ-04",
+   "question": "Define the Hall magnetic-field disturbance metric (e.g. max |dB|/|B| in the acceleration region vs at IP-EXIT) and its acceptance threshold.",
+   "status": "TBD_OWNER",
+   "blocks": "hall_b_field_disturbance"
+  }
+ ],
+ "m16_impact": [
+  {
+   "row": 18,
+   "key": "icp_neutralizer_head",
+   "proposed_change": "none",
+   "note": "the v4 blocking item 'ICP module design ... no registered lane designs the ICP module' is now addressed by an F6 FRAMEWORK only; no ICP design exists (all bounds TBD)",
+   "rule": "no maturity change: software framework only; a row changes only under the repository evidence rules"
+  },
+  {
+   "row": 19,
+   "key": "flight_rf_chain",
+   "proposed_change": "none",
+   "note": "RF matching / power objectives wait on P2 / P1 (TBD_AFTER_IMPEDANCE_MAP)",
+   "rule": "no maturity change: software framework only; a row changes only under the repository evidence rules"
+  },
+  {
+   "row": 13,
+   "key": "thermal_control",
+   "proposed_change": "none",
+   "note": "view-factor obstruction screening is geometric only; ICP_COUPLED_THERMAL UNRESOLVED",
+   "rule": "no maturity change: software framework only; a row changes only under the repository evidence rules"
+  },
+  {
+   "row": 10,
+   "key": "magnetic_circuit",
+   "proposed_change": "none",
+   "note": "F6 adds the demand that the H-1 field model covers the ICP region (F6-IF-N02)",
+   "rule": "no maturity change: software framework only; a row changes only under the repository evidence rules"
+  }
+ ],
+ "compliance": {
+  "no_pass_status": true,
+  "no_winner": true,
+  "no_tbd_converted_to_value": true,
+  "archengine_untouched": true,
+  "p1_p2_p3_files_unmodified": true,
+  "deterministic": true,
+  "outputs_regenerable": "python docs/design_synthesis/f6_icp_geometry/build_f6_icp_geometry.py --check"
+ }
+}

@@ -1,0 +1,124 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_HARDWARE_PIVOT_2026_10_01_A9_8_s1_p1_start_owner_decisions",
+ "decided_by": "owner",
+ "date": "2026-10-01",
+ "decision": "A9_8_S1_P1_START_DECISIONS_RECORDED",
+ "applies_to": "group S1 of docs/budgets/owner_decisions/OWNER_QUESTIONS_SEQUENCED_v1.md (rows of owner_questions_state_v4) on execution branch claude/nifty-ramanujan-w68f9z",
+ "parents": [
+  "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+  "docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json",
+  "docs/decisions/OD_2026_09_30_A9_6_implementation_first_directive.json"
+ ],
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md",
+  "sha256": "8e770d0edf056a0402f6ec8c86a2a2feec169ab971fae788c7a9a620211e1aa0"
+ },
+ "decisions": {
+  "P1Q-04": {
+   "sequenced_no": "S1.1",
+   "status": "OWNER_DECIDED",
+   "answer": "YES",
+   "summary": "UBQ-06 thermal abort/derate at validated continuous-use limit - 50 K applies to ALL P1 operation, including non-scoring engineering runs"
+  },
+  "P1Q-09": {
+   "sequenced_no": "S1.2",
+   "status": "OWNER_DECIDED",
+   "answer": "DEDICATED_ISOLATED_TARGET_NO_CHAMBER_WALL",
+   "summary": "dedicated isolated instrumented electron-collecting target for ICP45_CAPACITY AND comparable P1-S4 engineering-surface records; planar/annular, on ICP axis, perpendicular, immediately downstream on a registered/adjustable axial datum; diameter/distance/supports from the actual ICP drawing registered at P1-G0 (no invented dimensions); 316L acceptable for the Ar engineering article only (flight material not frozen); ICP ion-collecting electrode biased negative w.r.t. the target, collector/reference potential recorded; terminals collector_supply, icp_body, facility_ground, electron_collector, h1_body, hall_anode metered; OPEN_CIRCUIT_BY_CONSTRUCTION only where physically verified; grounded chamber wall never used as electron collector"
+  },
+  "P1Q-11": {
+   "sequenced_no": "S1.3",
+   "status": "OWNER_DECIDED",
+   "answer": "DERIVE_FROM_INSTALLED_GAUGE",
+   "summary": "no fixed percentage now; tolerance from installed-gauge repeatability/uncertainty in P1-S2/P1-S3 commissioning, pre-registered before the first P1-S4 matched pair, fixed for the campaign, never widened after results; unmatched pair excluded per P1-IT-51"
+  },
+  "P1Q-18": {
+   "sequenced_no": "S1.4",
+   "status": "OWNER_DECIDED",
+   "answer": "CONFIRMED",
+   "summary": "full instrument-adequacy criterion 3 u_R > 0.02 |I_e,collector| on the RF-ON ICP45_CAPACITY candidate record; matched RF-OFF record uses the floor-based statistical/fractional closure with I_scale,min; a fractional-only RF-OFF resolution failure is NOT_EVALUATED_INSTRUMENT, not automatically an exclusion"
+  },
+  "P1Q-20": {
+   "sequenced_no": "S1.5",
+   "status": "OWNER_DECIDED",
+   "answer": "YES",
+   "summary": "measured P1-S0/DWV insulation leakage enters u(I_anode) as the zero-offset/leakage contribution whenever non-negligible vs the calibrated channel uncertainty; zero only when the measured/qualified leakage upper bound is demonstrably negligible; never silently default a measurable leakage to zero"
+  },
+  "P2Q-02": {
+   "sequenced_no": "S1.6",
+   "status": "OWNER_DECIDED",
+   "answer": "SEPARATE_RF_METROLOGY_PACKAGE",
+   "summary": "V/I probe, VNA, cal kits, fixed attenuators, antenna-simulator load, antenna current probe, phase-stable VNA cables and calibration accessories in a dedicated RF-metrology package under the common interface specification, separate from RF generation/matching"
+  },
+  "P3Q-01": {
+   "sequenced_no": "S1.7",
+   "status": "OWNER_DECIDED",
+   "answer": "C_BOTH_CALORIMETRY_PRIMARY",
+   "summary": "calorimetric collector energy balance is the primary Q_collector evidence (calibrated temperatures, registered conductances/thermal mass, RF-ON/OFF, collector-current/bias steps); Langmuir probe near the collector in the Ar P1 campaign as independent sheath-model cross-check (T_e, plasma potential), preferably in matched diagnostic runs; probe must not contaminate an ICP45 capacity record unless its perturbation is first shown negligible"
+  },
+  "OQ-RFQV2-01": {
+   "sequenced_no": "S1.8",
+   "status": "OWNER_DECIDED",
+   "answer": "NOT_MANDATORY_FOR_P1_AR",
+   "summary": "maker's Ar-specific certificate + in-house rate-of-rise/transfer verification accepted for the P1 Ar engineering campaign; ISO/IEC 17025/NABL desirable not mandatory; score-bearing flow keeps its stricter traceability"
+  },
+  "OQ-RFQV2-02": {
+   "sequenced_no": "S1.9",
+   "status": "OWNER_DECIDED",
+   "answer": "REQUEST_PUMPING_QUOTATIONS",
+   "summary": "RFQ2-VAC includes the P1 pumping train in quotation scope; no registered qualified pumping exists; an external facility (e.g. IIST) is acceptable only after documented, verified pumping speed, pressure range, gas compatibility, instrumentation and interface conductance"
+  },
+  "OQ-RFQV2-03": {
+   "sequenced_no": "S1.10",
+   "status": "OWNER_DECIDED",
+   "answer": "YES",
+   "summary": "one 50-ohm calorimetric dummy load may serve RF-L08/RF-L09 if the supplier separately certifies the RF load function (rating, return loss at 13.56 MHz) and the calorimetric method/calibration/uncertainty; the two acceptance functions stay separately verified in the evidence record"
+  },
+  "OQ-RFQV2-04": {
+   "sequenced_no": "S1.11",
+   "status": "OWNER_DECIDED",
+   "answer": "YES",
+   "summary": "RFQ-v2 supplier-speciality package allocation accepted as mapped; no architecture meaning inferred from procurement-package boundaries"
+  },
+  "OQ-RFQV2-05": {
+   "sequenced_no": "S1.12",
+   "status": "OWNER_DECIDED",
+   "answer": "INCLUDE_MAGNET_SUPPLY",
+   "summary": "HE-L02 / MC-1 lab magnet supply channel(s) in the P1 quotation set: current-controlled, floating where required, 4-wire remote sense, recorded I/V, final ratings from the MC-1 coil design; a verified existing supply may later replace it; quotation/specification only, no purchase"
+  },
+  "OQ-RFQV2-06": {
+   "sequenced_no": "S1.13",
+   "status": "OWNER_DECIDED",
+   "answer": "YES",
+   "summary": "350 V class / >= 525 V design withstand / 1.05 kV DC 60 s initial DWV applies to H-1 anode/discharge-supply isolation and feedthroughs exposed to that potential difference; closes row-81 margin for that DC isolation class only; RF antenna/matching insulation, Paschen-risk gas paths and combined RF+DC stress remain separately qualified"
+  },
+  "OQ-RFQV2-08": {
+   "sequenced_no": "S1.14",
+   "status": "OWNER_DECIDED",
+   "answer": "BOTH_SUPPLIER_AND_IN_HOUSE",
+   "summary": "supplier/factory DWV certificate where the rating permits, plus in-house current-limited 1.05 kV DC / 60 s DWV of the assembled insulation configuration before first HV/RF operation; sensitive electronics may be disconnected; record voltage, duration, leakage, pressure/gas condition, insulation path id, configuration, pass/fail observations"
+  },
+  "P1-IT-52": {
+   "sequenced_no": "S1.15",
+   "status": "OWNER_DECIDED",
+   "answer": "STAGE_DOMAINS_FROM_REAL_HARDWARE",
+   "summary": "each P1 stage's domain (P_fwd_W, p_chamber_Pa, mdot_Ar_H1_mg_s, V_collector_V as [min,max] under a unique domain_id) frozen before that stage's first record from procured/calibrated capability, P1-G0 safety limits and the pre-registered run matrix; 0-500 W is lab RF capability only; no numerical limits authorized now; outside-domain records are OUT_OF_DOMAIN, never FAIL"
+  },
+  "P1-IT-55": {
+   "sequenced_no": "S1.16",
+   "status": "OWNER_DECIDED",
+   "answer": "PER_PATH_DOCUMENTED_LEAKAGE_LIMIT",
+   "summary": "at 1.05 kV DC / 60 s every insulation path: no flashover/breakdown/tracking/disruptive discharge/protective trip and leakage below a per-path limit pre-registered before the test from the most restrictive documented component/feedthrough/insulator qualification or supplier acceptance spec, including assembled-system measurement uncertainty, never changed after the result; no documented basis -> path stays G0_NOT_EVALUATED_TBD (no generic uA limit); measured leakage also feeds P1Q-20 / P1-IT-49"
+  }
+ },
+ "recorder_notes": [
+  "S1.10 verbatim 'certifies/documentes' kept as written (read: certifies/documents)",
+  "no numerical value is created by this record: pressure-match tolerance, stage domains, collector geometry and per-path leakage limits remain registrations at P1-G0 / before the stage or test"
+ ],
+ "execution": {
+  "instruction": "record and apply the S1 answers to the affected artifacts in a later application step",
+  "merge": "no merge to main is authorized by this addendum"
+ },
+ "immutability": "never edited after commit; later owner amendments are new addendum files"
+}

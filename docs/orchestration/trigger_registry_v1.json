@@ -1150,6 +1150,138 @@
    "produces": "fo_a9_6_cross_lane_integration",
    "kind": "follow_on_launch",
    "note": "owner A9.6 implementation-first; wave 3 integration"
+  },
+  {
+   "id": "T_A9_7_F0_PROFILING",
+   "prerequisites": [
+    {
+     "id": "od_a9_7_design_synthesis",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_7_f0_profiling",
+   "kind": "follow_on_launch",
+   "note": "owner A9.7 2026-10-01; launched operationally in waves (F0/F1/F2/F3/F5/F6 -> F4/Rust -> F7/F8 -> F9 -> verification)"
+  },
+  {
+   "id": "T_A9_7_F1_INTAKE_SYNTHESIS",
+   "prerequisites": [
+    {
+     "id": "od_a9_7_design_synthesis",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_7_f1_intake_synthesis",
+   "kind": "follow_on_launch",
+   "note": "owner A9.7 2026-10-01; launched operationally in waves (F0/F1/F2/F3/F5/F6 -> F4/Rust -> F7/F8 -> F9 -> verification)"
+  },
+  {
+   "id": "T_A9_7_F2_FILTER_STAGE",
+   "prerequisites": [
+    {
+     "id": "od_a9_7_design_synthesis",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_7_f2_filter_stage",
+   "kind": "follow_on_launch",
+   "note": "owner A9.7 2026-10-01; launched operationally in waves (F0/F1/F2/F3/F5/F6 -> F4/Rust -> F7/F8 -> F9 -> verification)"
+  },
+  {
+   "id": "T_A9_7_F3_COMPRESSOR_SYNTHESIS",
+   "prerequisites": [
+    {
+     "id": "od_a9_7_design_synthesis",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_7_f3_compressor_synthesis",
+   "kind": "follow_on_launch",
+   "note": "owner A9.7 2026-10-01; launched operationally in waves (F0/F1/F2/F3/F5/F6 -> F4/Rust -> F7/F8 -> F9 -> verification)"
+  },
+  {
+   "id": "T_A9_7_F4_PLENUM_FEED",
+   "prerequisites": [
+    {
+     "id": "od_a9_7_design_synthesis",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_7_f4_plenum_feed",
+   "kind": "follow_on_launch",
+   "note": "owner A9.7 2026-10-01; launched operationally in waves (F0/F1/F2/F3/F5/F6 -> F4/Rust -> F7/F8 -> F9 -> verification)"
+  },
+  {
+   "id": "T_A9_7_F5_H1_FREEZE_CANDIDATE",
+   "prerequisites": [
+    {
+     "id": "od_a9_7_design_synthesis",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_7_f5_h1_freeze_candidate",
+   "kind": "follow_on_launch",
+   "note": "owner A9.7 2026-10-01; launched operationally in waves (F0/F1/F2/F3/F5/F6 -> F4/Rust -> F7/F8 -> F9 -> verification)"
+  },
+  {
+   "id": "T_A9_7_F6_ICP_GEOMETRY",
+   "prerequisites": [
+    {
+     "id": "od_a9_7_design_synthesis",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_7_f6_icp_geometry",
+   "kind": "follow_on_launch",
+   "note": "owner A9.7 2026-10-01; launched operationally in waves (F0/F1/F2/F3/F5/F6 -> F4/Rust -> F7/F8 -> F9 -> verification)"
+  },
+  {
+   "id": "T_A9_7_F7_F8_COUPLED_OPTIMIZER",
+   "prerequisites": [
+    {
+     "id": "od_a9_7_design_synthesis",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_7_f7_f8_coupled_optimizer",
+   "kind": "follow_on_launch",
+   "note": "owner A9.7 2026-10-01; launched operationally in waves (F0/F1/F2/F3/F5/F6 -> F4/Rust -> F7/F8 -> F9 -> verification)"
+  },
+  {
+   "id": "T_A9_7_RUST_KERNELS",
+   "prerequisites": [
+    {
+     "id": "od_a9_7_design_synthesis",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_7_rust_kernels",
+   "kind": "follow_on_launch",
+   "note": "owner A9.7 2026-10-01; launched operationally in waves (F0/F1/F2/F3/F5/F6 -> F4/Rust -> F7/F8 -> F9 -> verification)"
+  },
+  {
+   "id": "T_A9_7_F9_FREEZE_CANDIDATE",
+   "prerequisites": [
+    {
+     "id": "od_a9_7_design_synthesis",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_7_f9_freeze_candidate",
+   "kind": "follow_on_launch",
+   "note": "owner A9.7 2026-10-01; launched operationally in waves (F0/F1/F2/F3/F5/F6 -> F4/Rust -> F7/F8 -> F9 -> verification)"
+  },
+  {
+   "id": "T_A9_7_CONSOLIDATED_VERIFICATION",
+   "prerequisites": [
+    {
+     "id": "od_a9_7_design_synthesis",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_7_consolidated_verification",
+   "kind": "follow_on_launch",
+   "note": "owner A9.7 2026-10-01; launched operationally in waves (F0/F1/F2/F3/F5/F6 -> F4/Rust -> F7/F8 -> F9 -> verification)"
   }
  ]
 }

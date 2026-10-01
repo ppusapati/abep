@@ -1,0 +1,65 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_HARDWARE_PIVOT_2026_10_01_A9_9_s2_model_change_owner_decisions",
+ "decided_by": "owner",
+ "date": "2026-10-01",
+ "decision": "A9_9_S2_MODEL_CHANGE_DECISIONS_RECORDED",
+ "applies_to": "group S2 of docs/budgets/owner_decisions/OWNER_QUESTIONS_SEQUENCED_v1.md; production modules abep_sim/intake_tpmc.py (IntakeSurface, reference kernel), compressor.py, reservoir.py and the gas-path orifice sizing",
+ "parents": [
+  "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+  "docs/decisions/OD_2026_10_01_A9_7_architecture_freeze_design_synthesis.json"
+ ],
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_01_A9_9_S2_MODEL_CHANGE_OWNER_DECISIONS.md",
+  "sha256": "25458fb86c36a7357372a0e4cc7a7a7781c3600e0f401f6d89357c957d5542e0"
+ },
+ "decisions": {
+  "F1Q-01": {
+   "sequenced_no": "S2.1",
+   "status": "OWNER_DECIDED",
+   "answer": "YES_PRODUCTION_FIX",
+   "summary": "correct IntakeSurface species recombination in production (C_D species-consistent momentum/mixture-q; passive CR number/mole-based; collected flow from species-resolved efficiencies); F1-01 bias is a defect; regression tests pure species + mixtures; pre-fix result preserved; HISTORY; regenerate goldens and downstream F-lane artifacts; no compensating retune"
+  },
+  "F1Q-04": {
+   "sequenced_no": "S2.2",
+   "status": "OWNER_DECIDED",
+   "answer": "YES_AFTER_S2_1",
+   "summary": "versioned frozen intake surface v2 over the production envelope, built once after S2.1: species-resolved, Maxwell/CLL separate scenarios, deterministic seeds, registered convergence, unresolved-particle info, provenance/hashes, direct-TPMC cross-check at build and held-out states, fail closed outside domain, v1 retained; production references move v1->v2 only after verification"
+  },
+  "OQ-F3-01": {
+   "sequenced_no": "S2.3",
+   "status": "OWNER_DECIDED",
+   "answer": "REGISTERED_ROTOR_STRENGTH_BASIS_FAIL_CLOSED",
+   "summary": "rotor acceptance requires a registered strength basis (spec, product form, heat treatment, section, design temperature, cited statistical basis, yield and ultimate vs temperature, density, design/test factors, max speed, proof-spin basis); margins vs yield AND ultimate; without it rotor qualification is NOT_EVALUATED_MATERIAL_BASIS (PARAMETRIC_SENSITIVITY exploration allowed); factor 2.0 only as labelled legacy sensitivity; 827 MPa annealed plate not transferred to other product forms; structural factors and proof-spin registered before design freeze"
+  },
+  "UPSTREAM_ICD-Q7": {
+   "sequenced_no": "S2.4",
+   "status": "OWNER_DECIDED",
+   "answer": "YES_NOW",
+   "summary": "G-03 DragCompressor.run() converged/iterations/residual (iteration limit is not convergence); G-04 Reservoir.steady_state() converged/iterations/balance residual; G-05 size_orifice_for_pressure() pressure residual + bracketed/reachable; raw state kept; unconverged -> MODEL_NOT_CONVERGED, never admitted or propagated; converged solutions unchanged (unexpected change investigated, not golden-updated); tests + HISTORY"
+  },
+  "F9-OQ-04": {
+   "sequenced_no": "S2.5",
+   "status": "OWNER_DECIDED",
+   "answer": "YES_ALL_FIVE",
+   "summary": "MCC-02 report unclipped Gaede K, K<1 flagged out of domain and excluded (clipped only as labelled diagnostic); MCC-03 with S2.3, missing basis -> NOT_EVALUATED; MCC-05 max_hits/hit budgets validated positive integers, invalid rejected before tracing; MCC-06 unknown scattering model refused, Maxwell/CLL explicitly selected and recorded; MCC-07 CLL coefficients finite and in [0,1] else rejected before the kernel; each: tests, full golden suite, separate HISTORY entry, regenerate genuinely changed downstream artifacts, preserve old records, no retuning"
+  }
+ },
+ "model_change_authorization": {
+  "CLAUDE_md_rules": "rule 1 (frozen data rebuild: intake_surface v2, v1 retained) and rule 2 (goldens move -> justify, regenerate, log) are satisfied by this owner authorization plus the required HISTORY entries",
+  "sequence": [
+   "S2.4 G-03..G-05 flags (no intended numerical change)",
+   "S2.5 MCC-05/06/07 input validation",
+   "S2.3 + MCC-03 rotor strength basis",
+   "MCC-02 Gaede domain flag",
+   "S2.1 IntakeSurface recombination fix",
+   "S2.2 frozen intake surface v2 build + cross-check",
+   "regenerate goldens and downstream F-lane artifacts"
+  ]
+ },
+ "execution": {
+  "instruction": "implement after the A9.7 consolidated verification lands, as separate controlled changes each with tests and its own HISTORY entry",
+  "merge": "no merge to main is authorized by this addendum"
+ },
+ "immutability": "never edited after commit; later owner amendments are new addendum files"
+}

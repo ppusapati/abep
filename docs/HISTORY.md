@@ -2414,3 +2414,26 @@ software).
 
 Final checks: 2657 passed / 5 skipped / 1 xfailed, golden OK, ci_checks 10/10, protected artifacts unchanged vs main
 eef8b85. No model, frozen dataset or golden changed. Build order: P4, XE, P1, P2, P3, MP, RFQ, RVM, state v4, M16 v4.
+Checkpoint 5 merged to main as 98fbbb9 (PR #35) on 2026-10-01 with owner approval (one merge). Fixed before the merge:
+- **P3 builder:** its serialization is now platform-independent. CI could not reproduce the outputs because they
+  carried machine-precision residuals.
+- **P1 readiness (two Codex findings):** duplicate interlock / DWV-path / gas-line ids are refused, and records are
+  ordered by parsed UTC timestamp.
+
+Main reproduces 2659 / 5 / 1, golden OK, ci_checks 10/10.
+
+## 2026-10-01 — A9.7 consolidated verification; owner decisions A9.8–A9.11 (groups S1–S4)
+
+A9.7 consolidated verification (wf_ba93b973-628; dimensions structural, physics, optimization, rust, integration,
+software): 25 findings (14 blocker/major), repaired in two rounds, 0 blocker/major remaining. Notable repairs: stale
+cross-lane PENDING references resolved; H1F-MC-02 coil arrangement no longer FREEZE_CANDIDATE on an assumed basis;
+system constraints MET only on evaluated values; design-layer input validation (no silent Maxwell fallback). Post-merge
+(d63b113): 2901 passed / 5 skipped / 1 xfailed, golden OK, ci_checks 10/10; no production module, frozen dataset, golden
+or decision file changed. Triggers T_A9_7_* VERIFIED.
+
+The 135 open owner questions were sequenced (`docs/budgets/owner_decisions/OWNER_QUESTIONS_SEQUENCED_v1.md`). The owner
+answered groups S1 (A9.8, P1 start), S2 (A9.9, production-model changes), S3 (A9.10, later P1 stages) and S4 (A9.11,
+P2); records in `docs/decisions/OD_2026_10_01_A9_{8,9,10,11}_*`. Owner-supplied values: k_loss = k_agreement =
+k_transition = 2.0. A9.9 authorizes controlled model changes (IntakeSurface recombination, frozen intake surface v2,
+rotor strength basis, G-03..G-05 convergence flags, MCC-02/03/05/06/07); none is implemented yet, each will carry its own
+entry here.

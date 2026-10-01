@@ -207,6 +207,20 @@
    "ci": "6/6 green on ca36c9e",
    "post_merge_baseline_on_main": "full suite 2342 passed / 5 skipped / 1 xfailed, golden OK, ci_checks 10/10 at eef8b85",
    "after": "any further merge to main needs a new owner approval"
+  },
+  "checkpoint_5_executed": {
+   "pr": "https://github.com/ppusapati/abep/pull/35",
+   "pr_head": "45ea2acae235739ffc7e06ff6cf9f856b4236598",
+   "merge_commit_on_main": "98fbbb9b1cf12d238ec845b5a6cbb6c3be92fd3b",
+   "utc": "2026-10-01",
+   "approval": "owner 2026-10-01 'Yes' to one merge of the A9.6 checkpoint; consumed by this merge",
+   "pre_merge_fixes": [
+    "P3 builder platform-independent serialization (CI NOT REPRODUCED from machine-precision residuals)",
+    "P1 readiness: duplicate ids refused; timestamps ordered by parsed UTC (Codex review, regression tests)"
+   ],
+   "ci": "6/6 green on 45ea2ac",
+   "post_merge_baseline_on_main": "full suite 2659 passed / 5 skipped / 1 xfailed, golden OK, ci_checks 10/10 at 98fbbb9; tree identical to the execution branch head",
+   "after": "any further merge to main needs a new owner approval"
   }
  },
  "a9_6_implementation_first": {
@@ -230,7 +244,7 @@
    "circular P1/P2 -> RFQ v2 sha pins replaced by id checks (RFQ v2 reads P1/P2 text)",
    "hygiene: full suite 2541/5/1 after waves 1-2; all repo builders --check OK (the v1 consolidated-questions builder ignores --check and rewrites its xlsx: never run it; restored byte-identical)"
   ],
-  "phase": "IMPLEMENTATION COMPLETE; CONSOLIDATED VERIFICATION PASSED (awaiting owner merge approval; no merge authorized)",
+  "phase": "MERGED TO MAIN (checkpoint 5, 98fbbb9)",
   "consolidated_verification": {
    "workflow": "wf_c77d6edf-6d5",
    "dimensions": [
@@ -254,5 +268,35 @@
    ],
    "repo_checks": "full suite 2657 passed / 5 skipped / 1 xfailed; golden OK; ci_checks 10/10; protected historical artifacts unchanged vs main eef8b85"
   }
+ },
+ "a9_7_design_synthesis": {
+  "directive": "docs/decisions/OD_2026_10_01_A9_7_architecture_freeze_design_synthesis.json",
+  "main_baseline": "98fbbb9 (no merges authorized)",
+  "lanes": {
+   "fo_a9_7_f0_profiling": "VERIFIED (7ba1ff0)",
+   "fo_a9_7_f1_intake_synthesis": "VERIFIED (ff5c897)",
+   "fo_a9_7_f2_filter_stage": "VERIFIED (80a08b0)",
+   "fo_a9_7_f3_compressor_synthesis": "VERIFIED (d6f0a97)",
+   "fo_a9_7_f5_h1_freeze_candidate": "VERIFIED (3a1eb07)",
+   "fo_a9_7_f6_icp_geometry": "VERIFIED (99b755f)",
+   "fo_a9_7_f4_plenum_feed": "VERIFIED (d13708b)",
+   "fo_a9_7_rust_kernels": "VERIFIED (e2aeb3f); K1-K5 ADMITTED under parity_prereg_v1 (optional, non-authoritative; 5.4-8.2x)",
+   "fo_a9_7_f7_f8_coupled_optimizer": "VERIFIED (89cafce)",
+   "fo_a9_7_f9_freeze_candidate": "VERIFIED (232c1af); INVESTIGATION_HYPOTHESIS, 204 parameters"
+  },
+  "hygiene": "post-merge d63b113: full suite 2901/5/1, golden OK, ci 10/10, production modules / frozen data / decision files unchanged vs main 98fbbb9",
+  "phase": "VERIFIED; awaiting owner merge approval (checkpoint 6)",
+  "consolidated_verification": "wf_ba93b973-628: six dimensions, 25 findings (14 blocker/major), 2 repair rounds, 0 blocker/major remaining; repairs merged d63b113"
+ },
+ "owner_question_sequencing": {
+  "list": "docs/budgets/owner_decisions/OWNER_QUESTIONS_SEQUENCED_v1.md (135 questions, groups S1-S10)",
+  "answered": {
+   "S1": "A9.8 (16)",
+   "S2": "A9.9 (5)",
+   "S3": "A9.10 (10)",
+   "S4": "A9.11 (7)",
+   "S5": "A9.12 (14)"
+  },
+  "application": "A9.8/A9.10/A9.11 to P1/P2/P3/RFQ artifacts and the A9.9 production-model changes are pending (not yet implemented)"
  }
 }
