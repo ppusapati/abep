@@ -82,6 +82,41 @@ def test_builder_check_passes(H):
     assert H.check() == []
 
 
+DRIFT_PATH = REPO / "docs" / "performance" / "dedicated_baseline_2026_10_01" / "DRIFT_AFTER_A9_9.json"
+
+
+def test_historical_source_drift_is_reported_not_hidden(H, doc):
+    """Profiled sources changed after measurement under authorised model changes (A9.9 S2, A9.18 golden): the check
+    reports HISTORICAL_SOURCE_DRIFT with old/new sha256 instead of failing; timings stay untouched; the drift record
+    names every drifted file (incl. abep_sim/golden.py) and requires the owner rerun (A9.18 PERF_RERUN)."""
+    rec = json.loads(DRIFT_PATH.read_text())
+    assert rec["status"] == "HISTORICAL_SOURCE_DRIFT" and rec["owner_rerun_required"] is True
+    assert rec["rust_performance_admission"] == "BLOCKED_UNTIL_A9_18_PERF_RERUN" and "PERF_RERUN" in rec["statement"]
+    recorded = {d["path"]: d for d in rec["drifted_files"]}
+    assert "abep_sim/golden.py" in recorded
+    old = {s["path"]: s["sha256"] for s in doc["profiled_sources"]}
+    for p, d in recorded.items():
+        assert d["old_sha256_a9_7"] == old[p] and d["new_sha256"] != old[p]
+    drift = H.source_drift(doc)
+    assert all(d["status"] == "HISTORICAL_SOURCE_DRIFT" and "error" not in d for d in drift)
+    assert {d["path"] for d in drift} <= set(recorded)
+    lines = H.drift_report_lines(doc)
+    for d in drift:
+        assert any(d["path"] in ln and d["old_sha256"] in ln and d["new_sha256"] in ln for ln in lines)
+    if drift:
+        assert "PERF_RERUN" in lines[-1]
+
+
+def test_unrecorded_drift_still_fails(H, doc, monkeypatch, tmp_path):
+    empty = tmp_path / "empty_drift.json"
+    empty.write_text(json.dumps({"drifted_files": []}))
+    monkeypatch.setattr(H, "DRIFT_REL", str(empty))       # REPO / absolute path -> the absolute path
+    drift = H.source_drift(doc)
+    if drift:
+        assert all("not recorded" in d["error"] for d in drift)
+        assert H.check()
+
+
 def test_md_reproduces(H, doc):
     assert MD_PATH.read_text() == H.render_md(doc)
 

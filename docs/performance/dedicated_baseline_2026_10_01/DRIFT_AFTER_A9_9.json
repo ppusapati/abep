@@ -1,0 +1,158 @@
+{
+ "schema": "perf_baseline_source_drift_v1",
+ "id": "DRIFT_AFTER_A9_9",
+ "status": "HISTORICAL_SOURCE_DRIFT",
+ "recorded_utc_date": "2026-10-01",
+ "recorded_at_base_commit": "69b78e923d969d18f4ef3f8089997525eaa1a1e7",
+ "baselines_affected": [
+  {
+   "path": "docs/performance/PERFORMANCE_BASELINE_98fbbb9.json",
+   "label": "A9.7 F0 (shared CPU), historical measurement only (A9.17 PERF)",
+   "measured_head": "1c9d7a648cd4ce739e587248693271e5115698e1"
+  },
+  {
+   "path": "docs/performance/dedicated_baseline_2026_10_01/baseline.json",
+   "label": "dedicated owner-machine baseline 2026-10-01, historical for the earlier code state (A9.18 PERF_RERUN)",
+   "measured_head": "3257374d0613c5be2f55c673f0e18b0e157fdc63"
+  }
+ ],
+ "authority": {
+  "A9.9 S2 model changes": "docs/decisions/OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json",
+  "A9.18 GOLDEN and PERF_RERUN": "docs/decisions/OD_2026_10_01_A9_18_golden_and_baseline_owner_decisions.json"
+ },
+ "statement": "Profiled sources of both recorded performance baselines changed after measurement under authorised model changes (A9.9 S2 production-model changes, A9.9 review fixes, A9.18 golden replacement incl. abep_sim/golden.py). The recorded timings are NOT re-measured, NOT altered and NOT fabricated; they remain valid only for the code state they were measured on. The owner rerun of the identical dedicated procedure (A9.18 PERF_RERUN: RERUN_DEDICATED_BASELINE_AFTER_STEP3_MERGE_BEFORE_RUST_ADMISSION) is REQUIRED before any Rust performance admission; no performance claim may be made against the current code from these records.",
+ "owner_rerun_required": true,
+ "rust_performance_admission": "BLOCKED_UNTIL_A9_18_PERF_RERUN",
+ "hash_notes": "sha256 is over the file bytes as checked out. The dedicated baseline's sha256 values differ from A9.7's for every file, including unchanged ones, while its git_blob values equal A9.7's: the owner-machine checkout bytes differed (line endings), the git content was identical. git_blob is the cross-platform content identity; both are recorded.",
+ "drifted_files": [
+  {
+   "path": "abep_sim/intake_tpmc.py",
+   "old_sha256_a9_7": "ea0100b96f9066b20a5ca13832e27250773962c8ddda16dcf9ccaecef621288c",
+   "old_git_blob": "1132da7406dd084573c5763840d6b3af81c8e997",
+   "old_sha256_dedicated_2026_10_01": "f627011eb7257c70003321fe58839ddb5cc9219a36a8ec435e2012857cb49c8a",
+   "old_git_blob_dedicated_2026_10_01": "1132da7406dd084573c5763840d6b3af81c8e997",
+   "new_sha256": "dcddf947c273d71d2f030895cd8ea9916919f816401c20e30b7ca4d177172433",
+   "new_git_blob": "5954d0bc49d25d3ea55f6b0fcd4a340d2338b0d2",
+   "changed_by_commits": [
+    "f926445",
+    "530f348",
+    "1eb7875",
+    "153c013"
+   ]
+  },
+  {
+   "path": "abep_sim/intake.py",
+   "old_sha256_a9_7": "602df2bffde25d56c089b191e2559578890bfedbe43bc928630e3bbe8fc94cad",
+   "old_git_blob": "f577bf2d1e7a87c1eaaa5e1b77e258e83732071a",
+   "old_sha256_dedicated_2026_10_01": "cbd6a123989293808f3ca8498b91770b772ed28abc80fea862793a5837eeafe9",
+   "old_git_blob_dedicated_2026_10_01": "f577bf2d1e7a87c1eaaa5e1b77e258e83732071a",
+   "new_sha256": "d46c23af40d413094babbe9d2121238c7b6f768341ffb3789d3d50c1d0f66687",
+   "new_git_blob": "ada3d4a8c994b93be707489e90943d5ba6445357",
+   "changed_by_commits": [
+    "530f348",
+    "1eb7875"
+   ]
+  },
+  {
+   "path": "abep_sim/compressor.py",
+   "old_sha256_a9_7": "44d9dac86cac2ca889d051b7a0090fed81781b33f00293dedaf836f8ebb8da92",
+   "old_git_blob": "01f0d9714822b60a6840e38d94db0367307b3321",
+   "old_sha256_dedicated_2026_10_01": "b6a208dceaef9bed1098021dcf46d9a5de5ca0bb7624bca0990eb754232316b2",
+   "old_git_blob_dedicated_2026_10_01": "01f0d9714822b60a6840e38d94db0367307b3321",
+   "new_sha256": "7a8dfe5b64d269474863410f6e42a886c6d3f57015c05491880d65251dfafc75",
+   "new_git_blob": "6ffec028e2a40f00ba389e6e7c8fe6ccc7cda180",
+   "changed_by_commits": [
+    "1052253",
+    "5a8b77e",
+    "8a7530f"
+   ]
+  },
+  {
+   "path": "abep_sim/reservoir.py",
+   "old_sha256_a9_7": "da11cfd45372c56f726652eaff515312887f7fba81219a716e08762789105047",
+   "old_git_blob": "ff3e08487768a76472831e15d2016209925c864e",
+   "old_sha256_dedicated_2026_10_01": "82f28d663a5fe95adbf2a6cc9f71be8a7dcc253d977f635e33296657cd5b5006",
+   "old_git_blob_dedicated_2026_10_01": "ff3e08487768a76472831e15d2016209925c864e",
+   "new_sha256": "9a7894a47169f1d77e8c66a196002c5456e955b9eb72d81bb9e1440c90ae29af",
+   "new_git_blob": "2607a5cac2290da7357c93a7c9ad64f87e842353",
+   "changed_by_commits": [
+    "8a7530f"
+   ]
+  },
+  {
+   "path": "abep_sim/system.py",
+   "old_sha256_a9_7": "e9558f9ebaefcff51e8994e9cc480695d375a8c1db69cd72bbbf5b92c0e6b52e",
+   "old_git_blob": "0ce8be3c52d5f84907383d59e0b873b0e6459fe9",
+   "old_sha256_dedicated_2026_10_01": "d61a75991b3d240fbc37a6a93dbe53cf24c2376cc3dfe76d5932aceefbb4ff0e",
+   "old_git_blob_dedicated_2026_10_01": "0ce8be3c52d5f84907383d59e0b873b0e6459fe9",
+   "new_sha256": "8fa53acfa1595f06dc67cc19492c2074bb8e55dd823e6035ed1fa600f5d44525",
+   "new_git_blob": "3170d3e10e5bbe3971f69b968fb5465d33c7303e",
+   "changed_by_commits": [
+    "f926445",
+    "1052253",
+    "5a8b77e",
+    "8a7530f"
+   ]
+  },
+  {
+   "path": "abep_sim/archengine.py",
+   "old_sha256_a9_7": "f9767370af83aaaea60876632e3f2005484cb85097dd53efbaad3cbfd2397ea9",
+   "old_git_blob": "4747e755552ff3066cdf0e421863863cf7ceb07f",
+   "old_sha256_dedicated_2026_10_01": "72d478e3782a746ad4d1d7580ad172d7a7a2140d08cb39edbfb767356d85f504",
+   "old_git_blob_dedicated_2026_10_01": "4747e755552ff3066cdf0e421863863cf7ceb07f",
+   "new_sha256": "2968d1840373768c03c9e1fe8cf6d43e7e2545326107bbc5b16467ff1ee38e8e",
+   "new_git_blob": "e44e8cd92b2b1cdb6ed95f7f6a15f888dc0ac1a6",
+   "changed_by_commits": [
+    "f926445",
+    "1052253",
+    "8a7530f"
+   ]
+  },
+  {
+   "path": "abep_sim/uq6.py",
+   "old_sha256_a9_7": "a3a86ca736f61b557e77416ed35e7da5cb7de2874ef1f0bb00cdf93081108d34",
+   "old_git_blob": "d587e17078dc4201383424d19cc2e09afa3ac1ad",
+   "old_sha256_dedicated_2026_10_01": "d8ad7ff3aa9f8f7884c176efa27f13ab4ab7d0f1cb9aab41286aa2428879fb38",
+   "old_git_blob_dedicated_2026_10_01": "d587e17078dc4201383424d19cc2e09afa3ac1ad",
+   "new_sha256": "1904030d40925dba37eb65402acdf77c5ec517c97210043ce74605efc617cb87",
+   "new_git_blob": "f942b0afd059d9a46f1a322fd49a101a963b5d16",
+   "changed_by_commits": [
+    "f926445"
+   ]
+  },
+  {
+   "path": "abep_sim/mission5.py",
+   "old_sha256_a9_7": "50e3f70e3eaf3ef4b4736aa85c969c9484b6957e6b4b42f32c1a17fdd3c56b59",
+   "old_git_blob": "6739e85a36a74337ae6c33e381ba2bcdf34a85f4",
+   "old_sha256_dedicated_2026_10_01": "ea5ee2fa9fd108c9e2026b251cee88d4d7e294da72c913c469ca2b700e81a6b5",
+   "old_git_blob_dedicated_2026_10_01": "6739e85a36a74337ae6c33e381ba2bcdf34a85f4",
+   "new_sha256": "b559d188d29b51ec795bbb0de0d0c0d1842148c4d6f693edd738a71e45edb464",
+   "new_git_blob": "bf347bcdeb7f9fbcea5513439f31430ac6dade37",
+   "changed_by_commits": [
+    "f926445"
+   ]
+  },
+  {
+   "path": "abep_sim/golden.py",
+   "old_sha256_a9_7": "2d285faae53ae8a8466e571c992c12e36f0a29b9051d6fcbf1db8e453aaa5bb4",
+   "old_git_blob": "ce5a621e06aa40b95a710bea728f46d89430b8ce",
+   "old_sha256_dedicated_2026_10_01": "f48f8dd38ca7a215629c24c2d0cb2132d57143d68b6c72aebd66e2822a9bb5c1",
+   "old_git_blob_dedicated_2026_10_01": "ce5a621e06aa40b95a710bea728f46d89430b8ce",
+   "new_sha256": "0bf0f9229e5742272871b382116ae325cb04e05976ed23cc3b6885c7d0141bc5",
+   "new_git_blob": "c65e881697165ea208abafe92885f544c268179a",
+   "changed_by_commits": [
+    "0192a3f"
+   ]
+  }
+ ],
+ "unchanged_profiled_files": [
+  "abep_sim/uq_modular.py",
+  "abep_sim/mission_env.py",
+  "abep_sim/atmosphere.py",
+  "abep_sim/plasma_chem.py",
+  "abep_sim/plasma_devices.py",
+  "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py",
+  "docs/experiments/hall_icp/p3_coupled_thermal/build_p3_coupled_thermal.py"
+ ],
+ "check_behaviour": "scripts/perf/profile_baseline.py --check reports each drifted file as HISTORICAL_SOURCE_DRIFT (path, old and new sha256) and passes only if every drifted path is listed here with the baseline's old sha256; an unrecorded drift still fails. Timings are never re-measured by the check."
+}
