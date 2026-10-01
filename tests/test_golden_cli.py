@@ -3,7 +3,7 @@
 * unchanged tree   -> exit 0, last output line "OK";
 * moved golden     -> exit 1, one line per deviation.
 
-The perturbed case never touches the committed abep_sim/data/golden_v1.json: it writes a COPY with one value changed to
+The perturbed case never touches the committed abep_sim/data/golden_v2.json (A9.18; golden_v1.json is history): it writes a COPY with one value changed to
 pytest's tmp_path and, inside a subprocess, points the module attribute `GOLDEN_FILE` at that copy before executing the
 module's own `if __name__ == "__main__":` block (read verbatim from abep_sim/golden.py). No production knob is added.
 To keep CPU low that subprocess also restricts `CASES` to the cheap "atmosphere" case; the full CLI path is exercised by
@@ -19,7 +19,7 @@ import sys
 import textwrap
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-GOLDEN = os.path.join(ROOT, "abep_sim", "data", "golden_v1.json")
+GOLDEN = os.path.join(ROOT, "abep_sim", "data", "golden_v2.json")     # A9.18: golden.GOLDEN_FILE (v1 is history)
 
 
 def _sha(path: str) -> str:

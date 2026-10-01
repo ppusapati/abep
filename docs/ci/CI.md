@@ -101,6 +101,9 @@ Other options: `--list` names the checks, and `--only a,b` runs a subset (exit c
   line per deviation and exits 1 (owner decision 2026-09-27; `tests/test_golden_cli.py`). CI runs it as a plain step and
   gates on the exit code (rule 2). A moved golden is a model change and must be
   justified, regenerated and logged. CI never regenerates goldens.
+  Since A9.18 (2026-10-01) the reference file is `abep_sim/data/golden_v2.json` (`golden.GOLDEN_FILE`); `golden_v1.json`
+  is kept unchanged as history. The check also recomputes the `nonconverged_reference` fixture (the golden_v1 design
+  point, NONCONVERGED_REFERENCE / EXPECTED_NONCONVERGENCE) and fails if the solver stops refusing it.
 * **Clean tree.** After each job, `git status --porcelain` must be empty, so tests, goldens and checks must not rewrite
   committed files. Gitignored caches are allowed.
 * **Full history** (`fetch-depth: 0`) in both jobs, for the rule-9 reason above.
