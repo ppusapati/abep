@@ -2571,3 +2571,45 @@ Downstream (owned by other steps): design-synthesis F3 (`build_f3_compressor.py 
 sha256; its `stage_trace` mirror of the clipping is now historical and the production record supplies the unclipped
 K directly), F4 / F7-F8 builders and the freeze candidate (MCC-02 status), feed-envelope / feed-state-closure
 builders that read compressor records.
+
+## 2026-10-01 — A9.9 S2.1 F1Q-01: IntakeSurface species recombination by physical definitions
+
+Owner decision A9.9 S2.1 (`docs/decisions/OD_2026_10_01_A9_9_S2_MODEL_CHANGE_OWNER_DECISIONS.md`, item 1; finding F1-01
+of `docs/design_synthesis/f1_intake/`). `abep_sim.intake_tpmc.IntakeSurface` averaged every species row of the frozen
+species-resolved surface by MASS fraction. That is a model-consistency defect: each species row s was built by
+`intake_response(species_mass=m_s)` in the MIXTURE build atmosphere, so C_D_row,s = n_b Vz <dp_s> / (1/2 rho_b V^2) is
+normalised by the build-mixture q (C_D_row,s = (m_s/m_b) C_D,s), and CR_passive,s = n_plenum,s / n_inf,s is a
+number-density ratio. Now (derivation in the class docstring):
+C_D = sum_s w_s C_D,s = m_b sum_s (w_s/m_s) C_D_row,s (species-own coefficients on the mixture dynamic pressure);
+CR_passive = sum_s x_s CR_s (mole fractions); eta_c = sum_s w_s eta_c,s is the total collected / incident MASS flow
+(unchanged by construction) and the species-resolved efficiencies, collected mass/mole fractions are returned in
+`out["species"]`; `intake.collection` reports `mdot_collected_species` = eta_c,s w_s mdot_incident (sums to
+`mdot_collected`). Mixture K_back is weighted by the plenum effusion flux (x_s CR_s m_s^-1/2). m_b is the frozen
+build atmosphere (`frozen_surface_build_atmosphere()`: frozen NRLMSIS 200 km mean, use_msis=False); a test recovers it
+from the table's own solid-face identity to < 1e-8. A species-resolved table without m_b is refused (no default).
+Pre-fix vs post-fix at the F1-01 node (L/d 10, phi 0.9, alpha 1, theta 0, maxwell, build composition): C_D
+2.249551 -> 2.082565 (old/new x1.0802), CR_passive 248.6665 -> 233.4082 (x1.0654), eta_c 0.451111 unchanged — the
+F1-01 bias (x1.080 / x1.065) is removed exactly. Over all 240 frozen-grid nodes (both scatterings, build composition) the removed bias is C_D x1.0799-1.0821 and CR_passive x1.036-1.078.
+The pre-fix recombination is preserved as historical evidence in `IntakeSurface.call_legacy_mass_weighted` (never used
+by the production chain) and pinned in `tests/test_intake_surface_recombination.py`. Frozen `intake_surface_v1.*`
+unchanged; no coefficient retuned. The fixed-composition fallback for a call without fractions is unchanged.
+Golden impact (regenerated with `python -m abep_sim.golden generate`; old -> new):
+intake C_D (all six cases) -7.4 to -7.6 % (e.g. maxwell_a0.8_ld5.0 2.221152 -> 2.054908); eta_c / mdot unchanged.
+gas_path A0.7: C_D 2.221152 -> 2.054908, drag_mN 13.1022 -> 12.1216, p_in_Pa 0.0484925 -> 0.0500123,
+P_comp_W 16.590 -> 26.054, m_comp_kg 5.2064 -> 6.6652 (lower passive CR -> larger active ratio -> a different discrete
+compressor layout is sized), fO_inlet 0.426583 -> 0.416795, fO2_inlet 0.065843 -> 0.075631.
+gas_path A1.3: C_D same, drag_mN 24.3327 -> 22.5115, P_comp_W 13.7285 -> 13.4490, p_in_Pa 0.0883003 -> 0.0882068,
+fO_inlet / fO2_inlet ~1e-4 relative.
+accelerators (gas state from make_gas_fn): ecr_grids T_N 0.0299259 -> 0.0299443, P_acc_W 1456.93 -> 1455.54,
+life_h 6310.98 -> 6303.34, chi 0.48956 -> 0.49068; ecr_hall T_N 0.0203156 -> 0.0203223, chi 0.062219 -> 0.062335;
+ecr_nozzle T_N 0.00239815 -> 0.00239788, chi 0.198338 -> 0.198687 (all < 0.25 %).
+architecture_closure ext_hall_2p5kW: T_over_D_sc 1.73079 -> 1.84456 (+6.6 %, lower intake drag), T_mN 51.10994 ->
+51.11012, P_bus_W 2461.33 -> 2461.07, m_system_kg 108.789 -> 108.787, Q_waste_W 752.95 -> 752.67 (status unchanged).
+mission: mission_4000h D_mean_mN = T_mean_mN 30.765 -> 28.923, P_bus_mean_W 1765.80 -> 1698.88, P_bus_peak_W
+1844.09 -> 1776.57; map_T_N relative changes <= 2e-5. (hall / source_plasma entries differ only at ~1e-16 float noise
+from regeneration.) These are historical 0-D/withdrawn-Hall benchmarks: the moved absolute values remain non-quotable
+per CLAUDE.md "Superseded / withdrawn".
+Downstream (owned by other steps): design-synthesis F1 (F1-01 now FIXED in production; `species_c_d_recombination_bias`
+"IntakeSurface_convention" describes the legacy method), F3/F4/F7-F9 and the freeze candidate (MCC/F1 status, any
+artifact using `intake.collection` with use_tpmc), `scripts/architecture/build_feed_envelope.py` and the feed-state
+closure / feed-envelope artifacts (C_D, drag, passive CR, compressor sizing move). S2.2 (frozen surface v2) follows.

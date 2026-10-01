@@ -278,7 +278,7 @@ def intake_response(geom: IntakeGeometry, atm: dict, alpha: float, theta_deg: fl
 def response_surface(atm: dict, L_over_d=(3, 5, 10, 20), phis=(0.8, 0.9), alphas=(0.0, 0.2, 0.5, 0.8, 1.0),
                      thetas=(0.0, 2.0, 5.0), n=15000, area_m2=0.5, species=None, scattering="maxwell"):
     """species: None -> mean molecular mass; otherwise a tuple like ("O","N2","O2") -> one surface per species
-    (column 'species'), recombined downstream by mass fraction."""
+    (column 'species'), recombined downstream by IntakeSurface from the species definitions (A9.9 S2.1)."""
     scattering = _check_scattering(scattering)
     import itertools, pandas as pd
     from .constants import M_SPECIES
@@ -315,11 +315,51 @@ def build_frozen_surface(n: int = 20000, out: str | None = None) -> str:
     return out
 
 
-class IntakeSurface:
-    """Interpolating reduced-order model over (L/d, phi, alpha, theta). If the table is species-resolved, the
-    call takes mass fractions and recombines: eta_c and C_D mass-weighted, CR from mass-weighted flux balance."""
+def frozen_surface_build_atmosphere() -> dict:
+    """Free-stream state the frozen surface v1 was built at (intake_surface_v1.json: NRLMSIS 2.1, 200 km, F10.7 150,
+    orbit-averaged; build_frozen_surface calls atmosphere(200.0, "mean")). Read from the frozen atmosphere dataset
+    (use_msis=False) so it never depends on a live MSIS install. Its m_mean is the mixture mean molecular mass that
+    normalises every species row's C_D (see IntakeSurface); tests/test_intake_surface_recombination.py checks that the
+    table's own solid-face identity reproduces it."""
+    from .atmosphere import atmosphere
+    return atmosphere(200.0, "mean", use_msis=False)
 
-    def __init__(self, df):
+
+class IntakeSurface:
+    """Interpolating reduced-order model over (L/d, phi, alpha, theta).
+
+    If the table is species-resolved (column 'species' in O/N2/O2), the call takes free-stream MASS fractions w_s and
+    recombines the species rows by their physical definitions (owner decision A9.9 S2.1 / F1Q-01, finding F1-01).
+    Until 2026-10-01 every row was mass-fraction averaged; that was a model-consistency defect, not a convention.
+
+    Definitions used to build each species row s (intake_response with species_mass = m_s, run in the MIXTURE
+    build atmosphere: n_b, rho_b = n_b m_b, V_b; m_b = m_mean of the build state, see frozen_surface_build_atmosphere):
+      eta_c,s   = collected / incident number flux of species s (per unit aperture; mass-independent normalisation)
+      C_D_row,s = n_b Vz <dp_s> / (1/2 rho_b V_b^2)       <dp_s> = mean momentum transfer per molecule of mass m_s
+      CR_s      = n_plenum,s / n_inf,s                     (zero-net-flow flux balance with c_bar_s(T_wall))
+      K_back,s  = Clausing transmission of species-s plenum molecules
+
+    Derivation of the mixture (mole fractions x_s = (w_s/m_s) / sum_k (w_k/m_k), m_mix = sum_s x_s m_s):
+      * Drag. Species s alone (number density n_s = x_s n) exerts F_s/A = n_s Vz <dp_s>. Its own coefficient on its own
+        dynamic pressure q_s = 1/2 n_s m_s V^2 is C_D,s = Vz <dp_s> / (1/2 m_s V^2) = C_D_row,s * m_b / m_s (the row
+        is normalised by the build MIXTURE q, not by q_s). Total F = sum_s F_s and q = sum_s q_s = 1/2 rho V^2, so
+            C_D = F / (q A) = sum_s (q_s/q) C_D,s = sum_s w_s C_D,s = m_b * sum_s (w_s / m_s) C_D_row,s
+        (= sum_s x_s C_D_row,s * m_b / m_mix). The old mass-weighted sum_s w_s C_D_row,s over-weights heavy species.
+      * Passive compression. CR is a number-density ratio: n_plenum = sum_s CR_s n_inf,s = n sum_s x_s CR_s, so
+            CR_passive = sum_s x_s CR_s   (mole weighting; the old mass weighting is not the definition).
+      * Collection. Species-resolved collected mass flow mdot_c,s = eta_c,s rho_s V A = eta_c,s w_s mdot_incident; the
+        per-species efficiencies are returned unaggregated in out["species"] (with the collected mass and mole
+        fractions), and the mixture eta_c = sum_s mdot_c,s / mdot_incident = sum_s w_s eta_c,s is exactly the total
+        collected / incident MASS flow (the quantity intake.collection multiplies by the incident mass flux).
+      * K_back of the mixture: transmission probability of the plenum effusion flux, weighted by the per-species
+        effusion flux n_p,s c_bar_s / 4 at T_wall:  K = sum_s x_s CR_s m_s^-1/2 K_s / sum_s x_s CR_s m_s^-1/2.
+      * mass_kg is geometric (species-independent); the w-weighted mean is kept (identical rows -> identical value).
+    Pure species (w_s = 1): eta_c, CR_passive, K_back equal the species row exactly; C_D equals the species' own
+    coefficient C_D_row,s m_b/m_s (the row rescaled from the build-mixture q to the species q), which is what a gas of
+    that species alone experiences. Rows are at the build speed ratio (V_b, T_b); off-build states are S2.2 (v2).
+    """
+
+    def __init__(self, df, m_mean_build_kg: float | None = None):
         from scipy.interpolate import LinearNDInterpolator
         self.df = df
         self.species = sorted(df["species"].unique()) if "species" in df else ["mean"]
@@ -330,6 +370,16 @@ class IntakeSurface:
             self.f[sp] = {k: LinearNDInterpolator(pts, d[k].values, rescale=True) for k in ("eta_c", "C_D", "CR_passive", "K_back", "mass_kg")}
         self.bounds = {k: (df[k].min(), df[k].max()) for k in ("L_over_d", "phi", "alpha", "theta_deg")}
         self.max_unresolved = float(df["unresolved_fraction"].max()) if "unresolved_fraction" in df else None
+        self.m_mean_build_kg = None if m_mean_build_kg is None else float(m_mean_build_kg)
+        if self.species != ["mean"]:
+            from .constants import M_SPECIES
+            unknown = [s for s in self.species if s not in M_SPECIES]
+            if unknown:
+                raise ValueError(f"IntakeSurface: species {unknown} have no molecular mass in constants.M_SPECIES")
+            if self.m_mean_build_kg is None or not (math.isfinite(self.m_mean_build_kg) and self.m_mean_build_kg > 0):
+                raise ValueError("IntakeSurface: a species-resolved table needs m_mean_build_kg (mixture mean molecular "
+                                 "mass of the build atmosphere that normalises the C_D rows); no default is assumed")
+            self.m_s = {s: float(M_SPECIES[s]) for s in self.species}
 
     def in_bounds(self, L_over_d, phi, alpha, theta_deg=0.0) -> bool:
         return all(self.bounds[k][0] <= v <= self.bounds[k][1] for k, v in (("L_over_d", L_over_d), ("phi", phi), ("alpha", alpha), ("theta_deg", theta_deg)))
@@ -343,16 +393,46 @@ class IntakeSurface:
                 fractions = {"O": 0.45, "N2": 0.50, "O2": 0.05}
             else:
                 return {k: float(f(L_over_d, phi, alpha, theta_deg)) for k, f in self.f[sp].items()}
-        out = {k: 0.0 for k in ("eta_c", "C_D", "K_back", "mass_kg")}
-        cr_num = 0.0
+        tot = sum(fractions.get(s, 0.0) for s in self.species) or 1.0
+        w = {s: fractions.get(s, 0.0) / tot for s in self.species if fractions.get(s, 0.0) > 0}
+        rows = {s: {k: float(f(L_over_d, phi, alpha, theta_deg)) for k, f in self.f[s].items()} for s in w}
+        inv_m = {s: w[s] / self.m_s[s] for s in w}                 # w_s / m_s  (proportional to number density)
+        s_inv = sum(inv_m.values())
+        x = {s: inv_m[s] / s_inv for s in w}                        # mole fractions
+        mb = self.m_mean_build_kg
+        cd_s = {s: rows[s]["C_D"] * mb / self.m_s[s] for s in w}   # species' own C_D (own dynamic pressure)
+        C_D = sum(w[s] * cd_s[s] for s in w)                        # = mb * sum_s (w_s/m_s) C_D_row,s
+        CR = sum(x[s] * rows[s]["CR_passive"] for s in w)
+        eta_c = sum(w[s] * rows[s]["eta_c"] for s in w)             # total collected / incident mass flow
+        eff = {s: x[s] * rows[s]["CR_passive"] / math.sqrt(self.m_s[s]) for s in w}   # plenum effusion-flux weights
+        eff_tot = sum(eff.values())
+        K_back = (sum(eff[s] * rows[s]["K_back"] for s in w) / eff_tot) if eff_tot > 0 else float("nan")
+        mass_kg = sum(w[s] * rows[s]["mass_kg"] for s in w)
+        n_col = {s: x[s] * rows[s]["eta_c"] for s in w}             # collected number flux per incident molecule
+        n_col_tot = sum(n_col.values())
+        species = {s: {"eta_c": rows[s]["eta_c"], "C_D_row": rows[s]["C_D"], "C_D_species": cd_s[s],
+                       "CR_passive": rows[s]["CR_passive"], "K_back": rows[s]["K_back"],
+                       "mass_fraction": w[s], "mole_fraction": x[s],
+                       "collected_mass_fraction": (w[s] * rows[s]["eta_c"] / eta_c) if eta_c > 0 else float("nan"),
+                       "collected_mole_fraction": (n_col[s] / n_col_tot) if n_col_tot > 0 else float("nan")}
+                   for s in w}
+        return {"eta_c": eta_c, "C_D": C_D, "K_back": K_back, "mass_kg": mass_kg, "CR_passive": CR,
+                "species": species, "recombination": "species_consistent_v2_A9.9_S2.1"}
+
+    def call_legacy_mass_weighted(self, L_over_d, phi, alpha, theta_deg=0.0, fractions: dict | None = None):
+        """HISTORICAL EVIDENCE ONLY (pre-2026-10-01 recombination, owner decision A9.9 S2.1): every species row averaged
+        by mass fraction (C_D rows still normalised by the build-mixture q; CR mass- instead of mole-weighted). Kept so
+        the pre-fix values stay reproducible in tests and HISTORY; never used by the production chain."""
+        if not self.in_bounds(L_over_d, phi, alpha, theta_deg):
+            raise ValueError(f"intake ROM extrapolation: L/d={L_over_d}, phi={phi}, alpha={alpha}, theta={theta_deg} outside {self.bounds}")
+        out = {k: 0.0 for k in ("eta_c", "C_D", "K_back", "mass_kg", "CR_passive")}
         tot = sum(fractions.get(s, 0.0) for s in self.species) or 1.0
         for s in self.species:
-            w = fractions.get(s, 0.0) / tot
-            if w <= 0: continue
-            vals = {k: float(f(L_over_d, phi, alpha, theta_deg)) for k, f in self.f[s].items()}
-            for k in out: out[k] += w * vals[k]
-            cr_num += w * vals["CR_passive"]
-        out["CR_passive"] = cr_num
+            wt = fractions.get(s, 0.0) / tot
+            if wt <= 0:
+                continue
+            for k, f in self.f[s].items():
+                out[k] += wt * float(f(L_over_d, phi, alpha, theta_deg))
         return out
 
 
