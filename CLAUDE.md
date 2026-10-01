@@ -7,7 +7,7 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
 
 ## Rules (do not break these)
 1. **Frozen data is the reference behaviour.** `abep_sim/data/atmosphere_msis21_v1.*`, `intake_surface_v1.*`,
-   `golden_v1.json`, `rates/` carry hashes/provenance. Never regenerate them casually. Rebuild only on an intentional model
+   `golden_v2.json` (canonical since A9.18; `golden_v1.json` kept as history), `rates/` carry hashes/provenance. Never regenerate them casually. Rebuild only on an intentional model
    change, via `python -m abep_sim.atmosphere build`, `python -m abep_sim.intake_tpmc build`, `python -m abep_sim.golden generate`,
    and record why in docs/HISTORY.md.
 2. **Golden benchmarks must reproduce** (`python -m abep_sim.golden check` → OK). If a change moves them, it is a model
