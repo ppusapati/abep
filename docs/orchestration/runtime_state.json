@@ -268,5 +268,18 @@
    ],
    "repo_checks": "full suite 2657 passed / 5 skipped / 1 xfailed; golden OK; ci_checks 10/10; protected historical artifacts unchanged vs main eef8b85"
   }
+ },
+ "a9_7_design_synthesis": {
+  "directive": "docs/decisions/OD_2026_10_01_A9_7_architecture_freeze_design_synthesis.json",
+  "main_baseline": "98fbbb9 (no merges authorized)",
+  "lanes": {
+   "fo_a9_7_f0_profiling": "IMPLEMENTED (7ba1ff0)",
+   "fo_a9_7_f1_intake_synthesis": "IMPLEMENTED (ff5c897)",
+   "fo_a9_7_f2_filter_stage": "IMPLEMENTED (80a08b0)",
+   "fo_a9_7_f3_compressor_synthesis": "IMPLEMENTED (d6f0a97)",
+   "fo_a9_7_f5_h1_freeze_candidate": "IMPLEMENTED (3a1eb07)",
+   "fo_a9_7_f6_icp_geometry": "IMPLEMENTED (99b755f)"
+  },
+  "hygiene": "after wave A: full suite 2771/5/1, golden OK, ci 10/10"
  }
 }
