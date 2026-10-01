@@ -416,6 +416,16 @@ PINS = [
     (P1F, "84ba1c382dc609b3e83ad9803a57ba471dd892fd10a6a6149285701a45a65a28", "historical A5 Phase-1 framework"),
     (PMICD, "2470718e1decbde874d2362a997d1e2aaae54eb855d1ed179b930c3be6e7130e", "historical pre-ionizer module ICD"),
 ]
+def _load_sibling(fname, name):
+    spec = importlib.util.spec_from_file_location(name, os.path.join(HERE, fname))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+# A9.16 step 1 (owner decisions of 2026-10-01 A9.8 / A9.10 / A9.11 / A9.14 / A9.15): data module + rules module
+APP = _load_sibling("a9_16_application.py", "p1_a9_16_application_for_builder")
+PINS = PINS + APP.pins()
 GOVERNANCE_NOT_PINNED = ["docs/orchestration/lane_registry_v1.json", "docs/orchestration/trigger_registry_v1.json",
                          "docs/orchestration/trigger_ledger_v2.jsonl", "docs/orchestration/fired_triggers.jsonl",
                          "docs/orchestration/runtime_state.json"]
@@ -532,6 +542,11 @@ def it(i, name, value, units, basis, source, ev, status, fp, gate=None, note="")
 
 
 def items(ar):
+    """Items with the A9.16 step-1 owner decisions applied (a9_16_application.ITEM_UPDATES / NEW_ITEMS)."""
+    return APP.apply_item_updates(_items_base(ar))
+
+
+def _items_base(ar):
     tbd = "TBD - requires "
     return [
         it("P1-IT-01", "RF frequency", 13.56, "MHz", "owner answer", ANS + " row 72", "owner-allocation",
@@ -1887,10 +1902,16 @@ def owner_answers_applied():
         ("A9.6 sec. 14", A96_MD + " sec. 14", "APPLIED: fail-closed audit bullet by bullet with one explicit test each "
          "(a9_6_incorporation.fail_closed_audit); OUT_OF_DOMAIN outcome added, never counted as FAIL"),
     ]
-    return [{"id": r[0], "kind": r[1], "how_applied": r[2]} for r in rows]
+    return [{"id": r[0], "kind": r[1], "how_applied": r[2]} for r in rows] + APP.owner_answer_rows()
 
 
 def open_questions():
+    """A9.16 step 1: every former P1 open question (P1Q-01..09, 11, 12, 17..20, 24) is answered by the owner decisions
+    of 2026-10-01 (owner_answers_applied, a9_16_incorporation); none remains open in this package."""
+    return []
+
+
+def _former_open_questions():
     return [
         {"id": "P1Q-01", "question": "Freeze the 'stable ICP operating region' criteria for the P1 -> P2 handoff: "
          "minimum dwell duration, maximum relative drift of I_e and P_refl (and Z where measured) over the dwell, "
@@ -2195,11 +2216,14 @@ def derived_resolutions():
          "follows_from": "JCGM 100:2008 5.1.2 Eq. (10) / 5.2.2 Eq. (13): the combined standard uncertainty of "
                          "I_on - I_off is fixed by its input uncertainties (and their registered correlation)",
          "implemented_in": "p1_reducer._p1q19_alternatives", "tests": ["test_a96_p1q19_alternatives_side_by_side"]},
-        {"id": "P1Q-19 (require vs use larger)", "disposition": "TBD_OWNER",
-         "answer": "both admissible treatments %s computed side by side; ICP45 = NOT_EVALUATED while they disagree"
-                   % list(red.P1Q19_ALTERNATIVES),
-         "follows_from": A96_MD + " sec. 7 (a genuine preregistration design choice is not answered by the lane)",
-         "implemented_in": "p1_reducer.icp45a_evaluate", "tests": ["test_a96_p1q19_alternatives_side_by_side"]},
+        {"id": "P1Q-19 (require vs use larger)", "disposition": "OWNER_DECIDED",
+         "answer": "owner A9.10 P1Q-19 selected %s: a registered u_I_e_A below the channel propagation makes the ICP-45 "
+                   "evaluation NOT_EVALUATED_REGISTRATION (both treatments %s still computed side by side for "
+                   "transparency; the other never decides)" % (red.P1Q19_OWNER_SELECTED, list(red.P1Q19_ALTERNATIVES)),
+         "follows_from": APP.DEC["A9.10"][0] + " (sha256 " + APP.DEC["A9.10"][1] + ") decisions.P1Q-19; verbatim "
+                         + APP.DEC["A9.10"][2] + " S3.7 (formerly TBD_OWNER under " + A96_MD + " sec. 7)",
+         "implemented_in": "p1_reducer.icp45a_evaluate", "tests": ["test_a96_p1q19_alternatives_side_by_side",
+                                                                  "test_p1_a9_16_p1q19_owner_selected"]},
         {"id": "P1Q-21", "disposition": "DERIVED",
          "answer": "an ICP45_CAPACITY record whose H-1 anode is not physically disconnected / floating is an EXCLUDED "
                    "capacity point kept with its reason (the other points are still evaluated); non-capacity records "
@@ -2324,6 +2348,11 @@ def build_report_schema():
             "raw_record_index": {"type": "array", "items": idx},
             "raw_records": {"type": "array", "description": "every raw record of the bundle, verbatim"},
             "statements": {"type": "array", "items": s},
+            "owner_rules_a9_16": {"type": "object", "required": [
+                "thermal_protection", "thermal_status", "pressure_match_registration", "i_d_max_h1_ar_registration",
+                "stable_criteria_registration", "p1_s6_entry", "geometry_matrix",
+                "magnet_factor_f6_order_violations", "operating_domain_freeze_violations", "decisions"],
+                "description": "owner decisions A9.8 / A9.10 / A9.11 / A9.14 applied by A9.16 step 1 (never PASS)"},
         },
         "$defs": {"campaign_bundle": {
             "type": "object", "required": ["schema", "manifest", "registrations", "records"],
@@ -2374,6 +2403,8 @@ def build_doc():
         "a9_4_incorporation": a9_4_incorporation(),
         "a9_5_incorporation": a9_5_incorporation(),
         "a9_6_incorporation": a9_6_incorporation(),
+        "a9_16_incorporation": APP.incorporation(red, _campaign(), _load_sibling("p1_a9_16_rules.py",
+                                                                                 "p1_a9_16_rules_for_builder")),
         "merged_cross_references": [
             {"lane": "fo_a9_p2_impedance_prep", "path": P2_JSON, "state": "MERGED",
              "how": "P2 ids cited here are checked to exist at build time (not sha-pinned: same follow-on lane, "
@@ -2397,8 +2428,9 @@ def build_doc():
                               "(A9.3 OQ-RFQ-10)",
             "gas": "Ar only; label ENGINEERING_ONLY_NON_SCORING on every record; never counts toward DRDO atmospheric "
                    "requirements (owner row 36; A9.3 OQ-RFQ-02)",
-            "configurations": ["hall_icp_neutralizer (P1 builds its ICP module)", "hall_c1_reference (C1 "
-                               "disconnected in P1-S6; CONTROL_FALLBACK)"],
+            "configurations": ["hall_icp_neutralizer (P1 builds its ICP module)", "hall_c1_reference (C1 not "
+                               "installed or disconnected in P1-S6, A9.10 OQ-RFQV2-09; CONTROL_FALLBACK; C1 needed "
+                               "for the I_d,max,H1,Ar characterization gate, A9.10 P1Q-07)"],
             "outcome_vocabulary_note": "P1 produces engineering records only; the architecture outcome vocabulary "
                                        "(incl. NO_VIABLE_CASE) belongs to the later comparison",
         },
@@ -2427,8 +2459,10 @@ def build_doc():
                        "never PASS for ICP thermal, RF ratings or anode items",
                        "A9.6 sec. 14 fail-closed reducers: one explicit test per bullet (a9_6_incorporation."
                        "fail_closed_audit); OUT_OF_DOMAIN never counted as FAIL",
-                       "genuine owner choices stay TBD_OWNER (P1Q-19 remaining part, P1Q-20 and the other open "
-                       "questions); derived rules cite the decision or the published standard they follow from"],
+                       "the former open questions (P1Q-01..09, 11, 12, 17..20, 24) are answered by the owner "
+                       "decisions of 2026-10-01 (A9.8 / A9.10 / A9.11 / A9.14; a9_16_incorporation); every number "
+                       "the owner deferred stays a registration slot with a fail-closed refusal; derived rules cite "
+                       "the decision or the published standard they follow from"],
     }
     return doc
 
@@ -2471,10 +2505,16 @@ def _stage_defs(red):
         interlocks={"type": "array", "items": {"type": "object", "required": ["interlock_id", "functional_test_done",
                                                                               "functional", "log_id"]}},
         isolation_class={"type": "object", "required": ["V_operating_max_V", "V_design_withstand_V"]},
-        dwv_tests={"type": "array", "minItems": 1, "items": {"type": "object", "required": ["path_id", "applicable"],
-                                                             "properties": {"leakage_acceptance": {"anyOf": [
-                                                                 {"type": "null"}, {"type": "object", "required": [
-                                                                     "criterion_id", "max_leakage_A"]}]}}}},
+        dwv_tests={"type": "array", "minItems": 1, "items": {
+            "type": "object", "required": ["path_id", "applicable", "path_class"],
+            "properties": {"path_class": {"enum": list(red.DWV_PATH_CLASSES)},
+                           "test_configuration": {"const": red.DWV_TEST_CONFIGURATION},
+                           "leakage_acceptance": {"anyOf": [
+                               {"type": "null"}, {"type": "object", "required": list(red.LEAKAGE_ACCEPTANCE_REQUIRED)}]}},
+            "x-required-when-applicable": list(red.DWV_APPLICABLE_REQUIRED)}},
+        thermal_limits={"anyOf": [{"type": "null"}, {"type": "array", "items": {
+            "type": "object", "required": list(red.THERMAL_LIMIT_REQUIRED),
+            "properties": {"temperature_field": {"enum": list(red.THERMAL_LIMITED_FIELDS)}}}}]},
         gas_lines={"type": "array", "minItems": 1, "items": {"type": "object", "required": [
             "line_id", "bridges_isolated_potentials", "isolator_installed", "qualification"],
             "properties": {"service_gas": {"type": ["string", "null"],
@@ -2495,7 +2535,10 @@ def _stage_defs(red):
                            "V_design_withstand_V_min": red.ISOLATION_V_DESIGN_WITHSTAND_MIN_V,
                            "dwv_V_test_V_min": red.DWV_V_TEST_V, "dwv_duration_s_min": red.DWV_DURATION_S,
                            "required_interlocks": list(red.READINESS_INTERLOCK_IDS), "source": red.A94_P1Q14,
-                           "icpq06_class_V": red.ICPQ06_CLASS_V}}
+                           "icpq06_class_V": red.ICPQ06_CLASS_V,
+                           "dwv_required_path_classes": list(red.DWV_REQUIRED_PATH_CLASSES),
+                           "thermal_abort_margin_K": red.THERMAL_ABORT_MARGIN_K,
+                           "a9_16_source": red.A98_DWV + "; " + red.A98_REF + " decisions.P1Q-04"}}
     cold = {"type": "object", "required": list(red.COLD_REQUIRED), "properties": dict(
         common, record_kind={"const": "rf_cold_checkout"}, stage_id={"enum": sorted(set(red.COLD_KINDS.values()))},
         checkout_kind={"enum": list(red.COLD_KINDS)}, rf=rf,
@@ -2522,7 +2565,10 @@ def _stage_defs(red):
         gas_mode={"enum": list(red.GAS_MODES)}, hall_discharge_state={"const": "OFF"}, rf=rf,
         ignited={"type": "boolean"}, ignition_delay_s={"type": ["number", "null"]}, extinguished={"type": "boolean"},
         optical=_optical_def(red), point_id={"type": "string", "minLength": 1},
-        ignition_procedure_id={"type": "string", "minLength": 1}, h1_magnet_state={"type": "string", "minLength": 1})}
+        ignition_procedure_id={"type": "string", "minLength": 1}, h1_magnet_state={"enum": list(red.MAGNET_STATES)},
+        h1_magnet_field_setting_id={"type": "string", "minLength": 1},
+        h1_coil_currents_A={"type": "object", "minProperties": 1, "additionalProperties": num},
+        start_state={"enum": list(red.IGNITION_START_STATES)}, restart_condition_met={"type": "boolean"})}
     dw = {"type": "object", "required": list(red.DWELL_REQUIRED), "properties": dict(
         common, record_kind={"const": "stability_dwell"}, stage_id={"const": "P1-S5"},
         operating_point_record_id={"type": "string"}, ignition_point_id={"type": "string"},
@@ -2546,7 +2592,13 @@ def build_schema():
             "description": "signed terminal current, conventional current INTO the isolated network positive "
                            "(A9.5 P1Q-15); NOT_MEASURED = unavailable, carries no I_A (never a silent zero)",
             "properties": {"I_A": {"type": ["number", "null"]}, "basis": {"enum": list(red.TERMINAL_BASES)},
-                           "sign_convention_id": {"type": "string", "minLength": 1}, "uncertainty": unc},
+                           "sign_convention_id": {"type": "string", "minLength": 1}, "uncertainty": unc,
+                           red.OPEN_CIRCUIT_VERIFICATION_FIELD: {"type": "string", "minLength": 1},
+                           "leakage": {"type": "object", "required": list(red.LEAKAGE_REQUIRED),
+                                       "description": "owner A9.8 P1Q-20: measured DWV insulation-leakage term of an "
+                                                      "OPEN_CIRCUIT_BY_CONSTRUCTION terminal"}},
+            "x-required-when-open-circuit": [red.OPEN_CIRCUIT_VERIFICATION_FIELD,
+                                             "leakage (capacity closure; else NOT_EVALUATED_UNCERTAINTY)"],
             "x-I_A-required-unless-basis": "NOT_MEASURED"}
     op = {
         "type": "object",
@@ -2617,7 +2669,12 @@ def build_schema():
                            "description": "electron-extraction topology registered at P1-G0 (P1-IT-36): the "
                                           "electrode that sinks the extracted electrons",
                            "properties": {"topology_id": {"type": "string", "minLength": 1},
-                                          "electron_collecting_electrode": {"enum": list(red.EXTRACTION_ELECTRODES)}},
+                                          "electron_collecting_electrode": {"enum": list(red.EXTRACTION_ELECTRODES)},
+                                          red.TARGET_GEOMETRY_FIELD: {"type": "string", "minLength": 1}},
+                           "x-refused-electrodes": list(red.REFUSED_EXTRACTION_ELECTRODES),
+                           "x-dedicated-target-rules": "owner A9.8 P1Q-09: target_geometry_id registered at P1-G0; "
+                                                       "collector.reference_potential = " +
+                                                       red.DEDICATED_TARGET_REFERENCE + " and V_collector_V < 0",
                            "x-allowed-by-hall-state": {k: list(v) for k, v in
                                                        red.EXTRACTION_ELECTRODES_BY_HALL_STATE.items()}},
             "h1_point_id": {"type": "string", "minLength": 1,
@@ -2636,7 +2693,14 @@ def build_schema():
                              "additionalProperties": num},
             "rf_pickup_check": {"enum": ["DONE", "NOT_DONE"]},
             "optical": _optical_def(red),
+            "h1_magnet_state": {"enum": list(red.MAGNET_STATES),
+                                "description": "factor F6 (owner A9.10 P1Q-06): OFF first, then registered settings"},
+            "h1_magnet_field_setting_id": {"type": "string", "minLength": 1},
+            "h1_coil_currents_A": {"type": "object", "minProperties": 1, "additionalProperties": num},
+            "icp_geometry_id": {"type": "string", "minLength": 1,
+                                "description": "registered ICP geometry variant (owner A9.14 F6-OQ-03)"},
         },
+        "x-required-when-magnet-on": list(red.MAGNET_ON_REQUIRED),
         "propertyNames": no_pbus,
         "x-p-bus-screen": "the reducer refuses, at any nesting depth, every field name that normalises "
                           "(lower-case, alphanumerics only) to contain 'bus', and a generator.input_boundary text "
@@ -2648,12 +2712,18 @@ def build_schema():
             "schema": {"const": red.SCHEMA_ID}, "record_kind": {"const": "topology_control_sequence"},
             "gas": {"enum": list(red.P1_GASES)}, "classification": {"const": red.TOPOLOGY_CONTROL_LABEL},
             "c1_disconnected": {"const": True}, "hall_start_registration_id": {"type": "string", "minLength": 1},
+            "c1_configuration": {"enum": list(red.C1_CONFIGURATIONS)},
+            "c1_absence_record_id": {"type": "string", "minLength": 1},
+            "hi_holdout_a_id": {"type": "string", "minLength": 1},
             "labels": {"type": "array", "contains": {"const": red.REQUIRED_LABEL}},
             "steps": {"type": "array", "minItems": 7, "maxItems": 7, "items": {
                 "type": "object", "required": ["step", "text", "signals"],
                 "properties": {"step": {"type": "integer"}, "text": {"type": "string"},
                                "sustained_discharge_observed": {"type": "boolean"},
                                "sustainment_definition_id": {"type": "string"},
+                               "supply_enabled_connected": {"type": "boolean"},
+                               "artifact_or_transient_only": {"type": "boolean"},
+                               "interlock_invalidates": {"type": "boolean"},
                                "signals": {"type": "object", "required": list(red.SEQUENCE_SIGNALS)}}}},
         },
         "x-step-texts-verbatim": [{"step": n, "text": t} for n, t in red.SEQUENCE_STEPS],
@@ -2861,6 +2931,24 @@ def render_md(doc):
         g["citation"], g["url"], g["fetched_pdf_sha256"],
         "; ".join("%s %s" % kv for kv in g["clauses_used"].items())), ""]
     L += ["Not done here: " + " / ".join(a6["not_done_here"]), ""]
+    a16 = doc["a9_16_incorporation"]
+    L += ["## 20. A9.16 step 1 - owner decisions of 2026-10-01 applied", "", a16["step"] + ". " + a16["reading_rule"]
+          + ".", ""]
+    L += _table(a16["decisions"], [("decision", "decision"), ("json", "json"), ("json sha256", "json_sha256"),
+                                   ("verbatim", "verbatim")]) + [""]
+    L += ["### 20.1 Applied (decision / question id / owner answer)", ""]
+    L += _table(a16["applied"], [("decision", "decision"), ("question", "question_id"), ("seq", "sequenced_no"),
+                                 ("owner answer", "owner_answer"), ("implemented in", "implemented_in"),
+                                 ("tests", "tests")]) + [""]
+    L += ["### 20.2 Reviewed, not applicable to P1", ""]
+    L += _table(a16["not_applicable"], [("decision", "decision"), ("question ids", "question_ids"), ("why", "why")])
+    L += ["", "### 20.3 Registration slots (never filled with invented numbers)", ""]
+    L += ["- " + x for x in a16["registration_slots_not_filled"]] + [""]
+    L += ["Owner numbers used: " + ", ".join("%s = %s" % kv for kv in a16["owner_numbers_used"].items()), ""]
+    L += ["### 20.4 Fail-closed rules (one focused test each)", ""]
+    L += _table(a16["fail_closed"], [("case", "case"), ("outcome", "outcome"), ("test", "test")]) + [""]
+    L += ["Existing tests updated (behaviour changed by an owner decision): " + ", ".join(a16["existing_tests_updated"]),
+          "", "Statuses: " + a16["statuses_unchanged"], "", "Pinning: " + a16["pinning_note"], ""]
     L += ["## Pinned inputs (sha256)", ""]
     L += ["- `%s` - `%s` (%s)" % (p["path"], p["sha256"], p["role"]) for p in doc["authority_pins"]] + [""]
     L += ["Read but never pinned (mutable governance): " + "; ".join("`%s`" % g for g in
