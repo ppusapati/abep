@@ -39,6 +39,8 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[4]
+sys.path.insert(0, str(HERE))
+import a9_16_m16 as A16  # noqa: E402  (A9.16 step 1 owner-decision application, integration lane)
 
 
 def _rel(p: Path) -> str:
@@ -108,6 +110,8 @@ ARTIFACTS = {
     "RVM": ("docs/requirements/rvm_a9/rvm_a9_v1.json", "id", "rvm_a9_v1", "fo_a9_6_rvm"),
     "OQ4": ("docs/budgets/owner_decisions/owner_questions_state_v4.json", "id", "owner_questions_state_v4",
             "fo_a9_6_decision_propagation (+ register completion by fo_a9_6_m16_refresh)"),
+    "OQ5": ("docs/budgets/owner_decisions/owner_questions_state_v5.json", "id", "owner_questions_state_v5",
+            "A9.16 step 1 integration (owner answers A9.8 .. A9.15)"),
     "ICD": ("schemas/interfaces/icp_neutralizer_icd_v1.json", "id", "icp_neutralizer_icd_v1", "A9-03 (verified)"),
     "BUS": ("docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json", "id",
             "bus_power_boundary_a9_v1", "A9-02 (verified)"),
@@ -393,20 +397,20 @@ def rvm_register_reconciliation(ctx: Ctx) -> dict:
     compared with its v4 row; any disagreement (or a reading absent from v4) raises - the RVM must then be rebuilt with
     the current classification, never silently left stale."""
     v4 = {r["id"]: r for r in ctx.docs["OQ4"]["rows"]}
+    idx5 = A16.v5_index(ctx.docs["OQ5"])
     rows, bad = [], []
     for row in ctx.docs["RVM"]["rows"]:
         for o in row.get("open_readings", []):
-            r4 = v4.get(o["id"])
-            st4 = r4["status"] if r4 else None
-            agree = st4 is not None and st4 == o["status"]
-            rows.append({"rvm_row": row["id"], "id": o["id"], "rvm_status": o["status"], "state_v4_status": st4,
-                         "agrees": agree})
+            agree, st, reg = A16.reconcile_reading(o, v4, idx5)
+            rows.append({"rvm_row": row["id"], "id": o["id"], "rvm_status": o["status"], "register": reg,
+                         "register_status": st, "agrees": agree})
             if not agree:
-                bad.append(f"{row['id']} {o['id']}: RVM {o['status']!r} vs state v4 {st4!r}")
+                bad.append(f"{row['id']} {o['id']}: RVM {o['status']!r} vs {reg} {st!r}")
     if bad:
-        raise BuildError("RVM open readings disagree with owner-question state v4 (rebuild the RVM): " + "; ".join(bad))
-    return {"rule": "every RVM open reading has the same status as its row in owner_questions_state_v4 (S-01); "
-                    "checked after both are built (build order ... RVM, state v4, M16 v4)",
+        raise BuildError("RVM open readings disagree with the owner-question register (rebuild the RVM): " + "; ".join(bad))
+    return {"rule": "every RVM open reading agrees with the register it names (S-01): state v4 by status equality; "
+                    "state v5 (A9.16) OWNER_DECIDED matches ANSWERED_BY_A9_* / AMENDED_BY_A9_15; checked after both "
+                    "are built (build order: RVM, state v5, M16 v4)",
             "n_readings": len(rows), "all_agree": True, "rows": rows}
 
 
@@ -519,6 +523,8 @@ def build() -> dict:
         if r["waits_on"]:
             waits_c[r["waits_on"]] = waits_c.get(r["waits_on"], 0) + 1
     oq_ids = sorted({b["id"] for r in rows for b in r["contributing_blockers"] if b["kind"] == "OWNER_QUESTION"})
+    answered_since_v4 = A16.overlay_blockers(rows, A16.v5_index(ctx.docs["OQ5"]))
+    A16.apply_owner_role_map(rows)
     m16q = ctx.oq4.get("M16-V3-Q-01", [])
     if len(m16q) != 1 or m16q[0]["status"] != "TBD_OWNER":
         raise BuildError("M16-V3-Q-01 must be exactly one TBD_OWNER row in state v4")
@@ -556,7 +562,9 @@ def build() -> dict:
                          "the immutable H2-7 v1 builder globs that folder; OQ-A910-04 DERIVED in state v4)",
         "what_it_is_not": ["not a performance prediction", "not an architecture selection (no winner)",
                            "not a requirement verdict (see the RVM)", "not a change to v1 / v2 / v3",
-                           "not an owner decision: blocking-item selection, roles and latest decision points are PROPOSED",
+                           "not an owner decision itself: the blocking-item selection, roles and latest decision points "
+                           "were PROPOSED here and accepted by the owner (A9.14 M16-V3-Q-01); named persons come only "
+                           "from the project staffing ledger",
                            "software / framework completeness is not physical readiness"],
         "state_vocabulary": STATES, "waits_on_vocabulary": WAITS_ON,
         "implementation_kinds": SPEC.IMPLEMENTATION_KINDS, "blocker_kinds": SPEC.BLOCKER_KINDS,
@@ -598,7 +606,7 @@ def build() -> dict:
              "status": "OFFERED"},
             {"id": "M16V4-ID-07", "direction": "provides", "counterpart": "owner (M16-V3-Q-01)",
              "quantity": "PROPOSED blocking items, roles and latest decision points for acceptance; named engineers",
-             "status": "AWAITING_OWNER_DECISION"},
+             "status": "OWNER_DECIDED (A9.14 M16-V3-Q-01: accepted; names from the staffing ledger)"},
         ],
         "owner_answers_applied": [
             {"id": "owner row 140", "how_applied": "R-M16V4-05: READY needs a named responsible engineer; functional roles "
@@ -613,8 +621,15 @@ def build() -> dict:
             {"id": "A9.6 sec. 7", "how_applied": "no open owner question answered; blockers cite TBD_OWNER rows"},
         ],
         "open_owner_questions": [],
-        "open_owner_questions_note": "no new owner question: M16-V3-Q-01 (TBD_OWNER, state v4) is carried and covers "
-                                     "acceptance of the v4 blocking-item selection, roles and latest decision points",
+        "open_owner_questions_note": "no new owner question: M16-V3-Q-01 (TBD_OWNER in state v4) is answered by A9.14 "
+                                     "(state v5 ANSWERED_BY_A9_14)",
+        "a9_16_owner_answers_applied": A16.owner_answers_applied(),
+        "a9_16_owner_question_blockers_answered_since_v4": {
+            "ids": answered_since_v4,
+            "rule": "blockers are resolved against the immutable state v4 snapshot (historical); each OWNER_QUESTION "
+                    "blocker carries its state v5 status and decision; re-deriving the scheduler blocking items from "
+                    "the owner answers (what evidence each answer now waits on) is a follow-on M16 v5 refresh, not "
+                    "done here; no row changes state"},
         "historical_reuse": [{"path": p["path"], "sha256": p["sha256"], "use": p["role"]} for p in ctx.pins
                              if p["path"].startswith(("docs/experiments/hall_icp/integration/m16_v3",
                                                       "docs/budgets/subsystem_maturity"))],

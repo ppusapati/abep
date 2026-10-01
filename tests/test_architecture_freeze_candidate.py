@@ -120,7 +120,9 @@ def test_a92_statuses_verbatim(doc):
 
 def test_pareto_sets_carried_never_selected(doc):
     up = doc["upstream_pareto"]
-    assert up["representative"] == {"status": "TBD_OWNER", "owner_question": "F9-OQ-01", "selected": None}
+    # A9.13 F9-OQ-01 (owner decision): the robust set is carried, representative selection deferred
+    assert up["representative"]["status"] == "DEFERRED_BY_OWNER" and up["representative"]["selected"] is None
+    assert up["representative"]["owner_question"] == "F9-OQ-01" and up["carried_to_lock1_as_set"] is True
     f78 = _j("docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json")
     want = sorted(m["design_id"] for blk in f78["robust"]["robust_pareto_by_P_set"].values() for m in blk["members"])
     assert sorted(m["design_id"] for m in up["robust_set"]["members"]) == want
@@ -170,8 +172,9 @@ def test_owner_rollup_complete_and_unanswered(doc):
     assert new == ro["new_f9_questions"] and all(i.startswith("F9-OQ-") for i in new)
     assert not set(new) & (lane_ids | {r["id"] for r in v4["rows"]})
     for q in doc["open_owner_questions"]:
-        assert q["status"] == "TBD_OWNER"
-        assert "answer" not in q and "owner_answer" not in q
+        # A9.9 / A9.13 answered the four F9 questions (recorded, never answered by F9 itself)
+        assert q["status_when_raised"] == "TBD_OWNER" and q["status"] == "OWNER_DECIDED"
+        assert "answer" not in q and "owner_answer" not in q and q["answer_verbatim"]
 
 
 def test_model_change_candidates_need_owner_and_history(doc):
@@ -180,7 +183,8 @@ def test_model_change_candidates_need_owner_and_history(doc):
     for need in ("F1-01", "F3-01", "F3-02", "G-05", "DIV-01", "DIV-02", "DIV-03"):
         assert need in text, need
     for m in mcc:
-        assert m["status"] == "MODEL_CHANGE_CANDIDATE_PENDING_OWNER" and m["implemented_here"] is False
+        # A9.9 F1Q-01 / UPSTREAM_ICD-Q7 / F9-OQ-04 (owner decisions) authorised all candidates; step 2 implements
+        assert m["status"] == "OWNER_AUTHORISED_PENDING_STEP_2_MODEL_CHANGE" and m["implemented_here"] is False
         assert any("HISTORY" in x for x in m["required"]) and any("owner" in x for x in m["required"])
         assert m["owner_question"] and m["sources"]
 

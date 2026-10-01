@@ -33,6 +33,8 @@ LANE_DIR = REPO / "docs" / "hardware" / "h1_freeze_candidate"
 JSON_PATH = LANE_DIR / "h1_freeze_candidate_v1.json"
 MD_PATH = LANE_DIR / "H1_FREEZE_CANDIDATE.md"
 REL_SELF = "docs/hardware/h1_freeze_candidate/build_h1_freeze_candidate.py"
+sys.path.insert(0, str(LANE_DIR))
+import a9_16_h1 as A16  # noqa: E402  (A9.16 step 1 owner-decision application, integration lane)
 BASE_COMMIT = "1c9d7a648cd4ce739e587248693271e5115698e1"
 DATE = "2026-10-01"
 
@@ -64,6 +66,13 @@ PINS = {
             "68c5be61443d0ef1c7308c4aba265426137292dcf9363e57903e0a1f6c8bc083"),
     "H27": ("docs/hardware/h2/h2_7_mechanical_bom/h2_7_mechanical_bom_v1.json",
             "d1813e153af37ebd45cb2ead964ead6c53c756d1a82f93ea89346a83168d0630"),
+    # A9.16 step 1: owner decisions applied to this record (immutable decision files; verbatim .md governs)
+    "A912": (A16.L.DECISIONS["A9.12"][0], A16.L.DECISIONS["A9.12"][1]),
+    "A912_MD": (A16.L.LOADED["A9.12"]["md"], A16.L.LOADED["A9.12"]["md_sha256"]),
+    "A914": (A16.L.DECISIONS["A9.14"][0], A16.L.DECISIONS["A9.14"][1]),
+    "A914_MD": (A16.L.LOADED["A9.14"]["md"], A16.L.LOADED["A9.14"]["md_sha256"]),
+    "A915": (A16.L.DECISIONS["A9.15"][0], A16.L.DECISIONS["A9.15"][1]),
+    "A915_MD": (A16.L.LOADED["A9.15"]["md"], A16.L.LOADED["A9.15"]["md_sha256"]),
     "P5B16": ("hallthruster_bridge/bfield/p5_vacuum_Br_centerline_1p6kW.csv",
               "65216f4d713be929b9c59f101711301d933df7b2ae1ed3478b36aa3772926625"),
     "P5B30": ("hallthruster_bridge/bfield/p5_vacuum_Br_centerline_3p0kW.csv",
@@ -79,6 +88,7 @@ CONSUMED = {
     "MP2": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
     "M16": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
     "OQ4": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+    "OQ5": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "PREREG": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
     "ENS": "hallthruster_bridge/ensemble/transport_ensemble_v0.json",
     "VAL": "hallthruster_bridge/validation/VALIDATION_RELEASE_v1.json",
@@ -996,6 +1006,7 @@ def build_document() -> dict:
                          "response-domain statement must be revisited before rebuilding")
 
     params = build_parameters()
+    a916_touched = A16.apply_to_parameters(params, FEMM, COUPLED)
     ids = [p["id"] for p in params]
     assert len(ids) == len(set(ids))
 
@@ -1054,6 +1065,7 @@ def build_document() -> dict:
         "status": "DRAFT_IMPLEMENTATION_FIRST_PENDING_CONSOLIDATED_VERIFICATION",
         "architecture_status": "INVESTIGATION_HYPOTHESIS",
         "article_freeze_state": "NOT_FROZEN (OPEN / TBD items remain; FREEZE_CANDIDATE items are candidates only)",
+        "lock1_release": A16.lock1_release_status(params, None),
         "configuration_items": ["H-1", "MC-1"],
         "interface_planes": ["HALL_INLET_Z0", "IP-EXIT", "IP-NEU (datum owned by the ICD / F6)"],
         "standing_facts": {
@@ -1124,11 +1136,15 @@ def build_document() -> dict:
             "probe_evaluations": probe_rows,
         },
         "consistency_checks": consistency_checks(),
+        "femm_analysis_points": A16.femm_analysis_points(probe_rows),
         "interface_demands": interface_demands(),
-        "open_owner_questions": open_owner_questions(),
+        "open_owner_questions": A16.answered_open_questions(open_owner_questions()),
+        "a9_16_owner_answers_applied": A16.owner_answers_applied(),
+        "a9_16_touched_parameters": a916_touched,
         "existing_owner_questions_touched": [
-            {"id": q, "status": get("OQ4", find("OQ4", "/rows", "id", q) + "/status"),
-             "source": ref("OQ4", find("OQ4", "/rows", "id", q))}
+            {"id": q, "status": get("OQ5", find("OQ5", "/rows", "id", q) + "/status"),
+             "v4_status": get("OQ4", find("OQ4", "/rows", "id", q) + "/status"),
+             "source": ref("OQ5", find("OQ5", "/rows", "id", q))}
             for q in ("MQ-03", "OQ-A907-04", "OQ-A907-05", "OQ-A907-06", "OQ-A907-08", "P1Q-06", "OQ-RFQV2-10",
                       "P4-OQ-01", "P4-OQ-02", "P4-OQ-04")],
         "m16_impact": m16,
@@ -1289,9 +1305,10 @@ def key_findings(params: list, counts: dict) -> list:
         f"F5-K1 H-1 definition: {len(params)} parameters; FREEZE_CANDIDATE {counts['FREEZE_CANDIDATE']}, OPEN "
         f"{counts['OPEN']}, TBD_AFTER_EVIDENCE {counts['TBD_AFTER_EVIDENCE']}, TBD_OWNER {counts['TBD_OWNER']}. "
         "The article is NOT frozen; every FREEZE_CANDIDATE is an owner-given decision, convention or rule.",
-        "F5-K2 the channel design point (h, d_mean, L) is TBD_OWNER: windows exist (xenon-derived rules, hypotheses "
+        "F5-K2 the channel design point (h, d_mean, L) is not selected: windows exist (xenon-derived rules, hypotheses "
         "for air species), but no Hall performance can discriminate inside them (credible set empty, P5-N2 v1 "
-        "INCONCLUSIVE); selection needs FEMM + coupled thermal + owner (F5-OQ-01 / F5-OQ-02).",
+        "INCONCLUSIVE); the owner rule (A9.14 F5-OQ-01 / F5-OQ-02) selects an ENGINEERING_FREEZE_CANDIDATE point on "
+        "non-performance criteria after the authorised FEMM analysis points (FEMM_AUTHORISED_NOT_RUN).",
         "F5-K3 magnetic circuit decided at topology level only (T2 shielded, EM-only, FeCo-2V inner / pure-iron outer, "
         "ceramic-insulated copper coils); all dimensions, ampere-turns, coil currents and B(z) are lumped-circuit "
         "values at the RP-1 calculation anchor or TBD pending FEMM.",
@@ -1304,7 +1321,10 @@ def key_findings(params: list, counts: dict) -> list:
         "at RP-1 f_NI 2 (booked), 0.136 kg is the 60 W fixed-NI sensitivity basis and never the coil mass.",
         "F5-K7 inlet interface: H-1 needs mdot_s, P, T, x_s and transient quality from F4, all TBD; transient "
         "tolerances cannot be derived by H-1 today (no admitted Hall map) and need Phase-1 sensitivity data.",
-        "F5-K8 iron Curie discrepancy recorded (770 vs 754 degC between H2-1 and A9-07); not resolved here (F5-OQ-03).",
+        "F5-K8 iron Curie discrepancy recorded (770 vs 754 degC between H2-1 and A9-07); the owner uses 754 degC as the "
+        "conservative necessary ceiling, never the usable limit (A9.14 F5-OQ-03).",
+        "F5-K9 LOCK-1 release (A9.14 F5-OQ-04): RELEASE_BLOCKED - every non-FREEZE_CANDIDATE item is an explicit "
+        "blocker and the release needs the drawing id, revision and content hash.",
     ]
 
 
@@ -1463,10 +1483,27 @@ def render_md(doc: dict) -> str:
         a(f"| {x['id']} | {x['direction']} | {_fmt(x['counterpart'])} | {_fmt(x['quantity'])} | {_fmt(x['value'])} | "
           f"{_fmt(x['units'])} | {_fmt(x['status'])} | {x['freeze_point']} |")
     a("")
-    a("## Open owner questions (new)")
+    a("## Owner questions raised by F5 (answered by A9.14)")
     a("")
     for q in doc["open_owner_questions"]:
-        a(f"* **{q['id']}** {q['question']} *Proposed:* {q['proposed_answer']} (blocks: {', '.join(q['blocks'])})")
+        a(f"* **{q['id']}** {q['question']} *Proposed:* {q['proposed_answer']} (blocks: {', '.join(q['blocks'])}) "
+          f"**{q['status']}** {q['decision_code']} - {q['decision']}")
+    a("")
+    a("## A9.16 owner decisions applied")
+    a("")
+    lr = doc["lock1_release"]
+    a(f"LOCK-1 release: **{lr['status']}** ({lr['blocker_count']} blockers; missing drawing fields: "
+      f"{', '.join(lr['missing_drawing_fields']) or 'none'}). {lr['rule']}.")
+    a("")
+    fp = doc["femm_analysis_points"]
+    a(f"FEMM analysis points: **{fp['status']}** ({fp['role']}); authorised: "
+      + ", ".join(x["probe"] for x in fp["points"] if x["authorised_analysis_point"]) + ".")
+    a("")
+    a("| decision | question | code | records | how applied |")
+    a("|---|---|---|---|---|")
+    for r in doc["a9_16_owner_answers_applied"]:
+        a(f"| {r['decision']} | {r['question_id']} | {r['decision_code']} | {', '.join(r['record_ids'])} | "
+          f"{_fmt(r['how_applied'])} |")
     a("")
     a("Existing owner questions touched (not restated): " + ", ".join(
         f"{q['id']} ({q['status']})" for q in doc["existing_owner_questions_touched"]) + ".")

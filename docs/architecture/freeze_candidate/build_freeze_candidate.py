@@ -43,6 +43,8 @@ REL_TEST = "tests/test_architecture_freeze_candidate.py"
 BASE_COMMIT = "7800fe93e53898af1750f1394fdeb07b04e21c57"
 DATE = "2026-10-01"
 LANE = "fo_a9_7_f9_freeze_candidate"
+sys.path.insert(0, str(LANE_DIR))
+import a9_16_f9 as A16  # noqa: E402  (A9.16 step 1 owner-decision application, integration lane)
 
 # --------------------------------------------------------------------------------------------------------------------
 # inputs
@@ -64,6 +66,10 @@ PINS = {
     "ANS": ("docs/decisions/OD_2026_09_29_owner_answers_147.json",
             "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1"),
 }
+# A9.16 step 1: owner decisions A9.8 .. A9.15 (immutable; json + verbatim md pinned)
+for _k in A16.L.ORDER:
+    PINS["A" + _k[1:].replace(".", "")] = (A16.L.LOADED[_k]["json"], A16.L.LOADED[_k]["json_sha256"])
+    PINS["A" + _k[1:].replace(".", "") + "_MD"] = (A16.L.LOADED[_k]["md"], A16.L.LOADED[_k]["md_sha256"])
 # Mutable / revisable inputs: read-only, sha256 recorded at build time (drift is reported by --check).
 CONSUMED = {
     # A9.7 lanes (all merged in the base of this lane)
@@ -81,6 +87,8 @@ CONSUMED = {
     "F8R": "docs/design_synthesis/f7_f8_optimizer/f8_robust_candidates_v1.json",
     # A9 / A9.x deliverables
     "OQ4": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+    "OQ5": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "MP3": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
     "RVM": "docs/requirements/rvm_a9/rvm_a9_v1.json",
     "MP2": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
     "M16": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
@@ -1186,7 +1194,8 @@ def architecture_status(gates: list) -> str:
 
 
 EVIDENCE_PLAN = [
-    ("EP-01", "obtain the official RFP document (owner rows 1-2) and re-base the RVM requirement texts",
+    ("EP-01", "register the official RFP (owner rows 1-2; A9.13 AG-15: immutable provenance / sha256 in the repository "
+              "evidence system) and re-base the RVM requirement texts",
      ["AG-15", "AG-01"], [], "owner / legitimate portal route"),
     ("EP-02", "Phase-1 H-1 operation on N2 (hardware pivot): Hall-only sustainment knee; register I_d,max,H1, "
               "deposited anode power fraction and inlet conductance on the built article",
@@ -1219,10 +1228,12 @@ EVIDENCE_PLAN = [
      ["AG-11", "AG-01"], ["EP-05", "EP-06"], "docs/budgets/mass_power_a9_v2/"),
     ("EP-13", "conformant P_bus,1ms,max gate measurement over the start-up sequence and steady state",
      ["AG-10", "AG-09", "AG-01"], ["EP-02", "EP-03", "EP-08"], "A9-02 bus boundary"),
-    ("EP-14", "owner sets the delivered-flow requirement at the H-1 inlet (F9-OQ-02) and the lever for the flow gap "
-              "(OQ-F4-04)", ["AG-12"], [], "owner"),
-    ("EP-15", "spacecraft frontal geometry / drag basis (OQ-F78-04) and the T - D constraint definition (OQ-F78-01)",
-     ["AG-13"], [], "owner / spacecraft ICD"),
+    ("EP-14", "statewise performance-derived feed-state requirement from the measured / validated H-1 thrust-vs-feed "
+              "map (A9.13 F9-OQ-02), then capture / compression / feed improvements in the owner order (OQ-F4-04)",
+     ["AG-12"], ["EP-02", "EP-11"], "Phase-1 / Phase-3 H-1 measurement"),
+    ("EP-15", "actual host-spacecraft ICD (frontal geometry, arrays, attitude states, drag model, surface state) for "
+              "D_spacecraft; statewise T - D >= 0 (A9.13 OQ-F78-01 / OQ-F78-04)",
+     ["AG-13"], [], "spacecraft ICD"),
 ]
 
 
@@ -1449,6 +1460,7 @@ def build() -> dict:
     build_h1_from_f5(rows)
     build_propulsion_icp(rows)
     build_system(rows)
+    a916_touched = A16.apply_rows(rows, ref, get)
     ids = [r["id"] for r in rows]
     assert len(ids) == len(set(ids)), "duplicate parameter ids"
     covered = {(r["section"], r["subsection"]) for r in rows}
@@ -1457,7 +1469,7 @@ def build() -> dict:
         assert bullet in load("A97_MD"), bullet
         assert ss in covered, ss
         bullets_ok[bullet] = list(ss)
-    gates = build_gates()
+    gates = A16.apply_gates(build_gates(), ref)
     status = architecture_status(gates)
     plan = evidence_plan(gates)
     counts = {k: sum(r["freeze_status"] == k for r in rows) for k in FREEZE_STATUSES}
@@ -1465,7 +1477,7 @@ def build() -> dict:
     for r in rows:
         key = f"{r['section']}/{r['subsection']}"
         by_sec.setdefault(key, {k: 0 for k in FREEZE_STATUSES})[r["freeze_status"]] += 1
-    rollup = owner_rollup()
+    rollup = A16.rollup_v5(owner_rollup(), load("OQ5"), ref("OQ5", "/rows"))
     findings = [
         {"id": "F9-01", "evidence_class": "inferred",
          "finding": f"architecture status {status}: {sum(not g['evidence_sufficient_for_freeze'] for g in gates)} of "
@@ -1477,18 +1489,21 @@ def build() -> dict:
         {"id": "F9-03", "evidence_class": "model-derived (PARAMETRIC_SENSITIVITY inputs)",
          "finding": "upstream flow gap: robust worst-case delivered flow "
                     f"{_rng([m['mdot_delivered_min_kgps'] * 1e6 for m in us['members']])} mg/s and all-state "
-                    "frontier 0.1027 mg/s vs the owner characterization lower end 0.38 mg/s and nominal sizing ~1.3 "
-                    "mg/s (row 73); not a FAIL (strict mode NOT_EVALUATED; requirement not set, F9-OQ-02)"},
+                    "frontier 0.1027 mg/s, low relative to the 0.38-3.2 mg/s ground-characterization coverage (row 73): "
+                    "an engineering warning, not a demonstrated requirement failure; 0.38 and ~1.3 mg/s are not flight "
+                    "requirements and AG-12 is the statewise feed-state sufficiency gate (A9.13 F9-OQ-02)"},
         {"id": "F9-04", "evidence_class": "inferred",
          "finding": f"freeze-status roll-up over {len(rows)} parameters: {counts}; every FREEZE_CANDIDATE is an owner "
                     "decision, convention, rule or allocation; no computed performance value is a freeze candidate"},
         {"id": "F9-05", "evidence_class": "inferred",
-         "finding": "7 production-model issues registered as model-change candidates (MCC-01..07); none implemented "
-                    "here; each needs an owner decision and a HISTORY entry"},
+         "finding": "7 production-model issues registered as model-change candidates (MCC-01..07); all owner-"
+                    "authorised (A9.9 F1Q-01 / UPSTREAM_ICD-Q7 / F9-OQ-04); none implemented here "
+                    "(PENDING_STEP_2_MODEL_CHANGE, each with a HISTORY entry)"},
         {"id": "F9-06", "evidence_class": "inferred",
          "finding": f"owner roll-up: {rollup['state_v4_tbd_owner_count']} state v4 TBD_OWNER rows, "
                     f"{rollup['a9_7_lane_question_count']} A9.7 lane questions (F0-F8, Rust), {len(F9_QUESTIONS)} new "
-                    "F9 questions; none answered"},
+                    "F9 questions; all answered by the owner (A9.8 .. A9.14, A9.15 amendments); state v5 TBD_OWNER: "
+                    f"{rollup['state_v5']['tbd_owner_count']} ({', '.join(rollup['state_v5']['open_owner_questions'])})"},
     ]
     doc = {
         "schema": "architecture_freeze_candidate_v1",
@@ -1553,9 +1568,17 @@ def build() -> dict:
         "freeze_rollup": {"counts": counts, "by_subsection": by_sec, "total": len(rows)},
         "architecture_gates": gates,
         "evidence_plan": plan,
-        "model_change_candidates": model_change_candidates(),
+        "model_change_candidates": A16.apply_mcc(model_change_candidates()),
         "owner_question_rollup": rollup,
-        "open_owner_questions": F9_QUESTIONS,
+        "open_owner_questions": A16.answered_f9_questions(F9_QUESTIONS),
+        "a9_16_owner_answers_applied": A16.owner_answers_applied(),
+        "a9_16_touched_parameters": a916_touched,
+        "a9_16_evaluators": {
+            "gate_closes": "docs/architecture/freeze_candidate/a9_16_f9.py:gate_closes (determining evidence only)",
+            "ag12": "docs/architecture/freeze_candidate/a9_16_f9.py:ag12_feed_state_sufficiency (NOT_EVALUATED today)",
+            "ag13": "docs/architecture/freeze_candidate/a9_16_f9.py:ag13_statewise (NOT_EVALUATED today)",
+            "pending": "optimizer / model code changes of A9.13 are PENDING_STEP_3_ARCHITECTURE; A9.9 model changes "
+                       "PENDING_STEP_2_MODEL_CHANGE"},
         "interface_demands": interface_demands(),
         "findings": findings,
         "m16_impact": [{"m16_row": None, "state_change": "none - F9 consolidates lane outputs into one candidate "
@@ -1567,6 +1590,7 @@ def build() -> dict:
                        "pass_declared": False, "owner_question_answered": False, "julia_used": False,
                        "network_used": False, "deterministic": True, "new_pytest_skips": False},
     }
+    doc["upstream_pareto"] = A16.apply_upstream_pareto(doc["upstream_pareto"])
     return doc
 
 
@@ -1673,6 +1697,12 @@ def render_md(doc: dict) -> str:
     L += [f"| {d['id']} | {d['direction']} | {d['counterpart']} | {_fmt(d['content'], 200)} | {d['status']} |"
           for d in doc["interface_demands"]]
     L += ["", "## M16 impact", ""] + [f"- {m['state_change']}" for m in doc["m16_impact"]]
+    L += ["", "## A9.16 owner decisions applied", "",
+          f"State v5: {ro['state_v5']['tbd_owner_count']} TBD_OWNER ({', '.join(ro['state_v5']['open_owner_questions'])}). "
+          + ro["rule_v5"] + ".", "", "| decision | question | code | records | how applied |", "|---|---|---|---|---|"]
+    L += [f"| {r['decision']} | {r['question_id']} | {r['decision_code']} | {_fmt(', '.join(r['record_ids']), 80)} | "
+          f"{_fmt(r['how_applied'], 220)} |" for r in doc["a9_16_owner_answers_applied"]]
+    L += ["", "Evaluators: " + "; ".join(f"{k}: {v}" for k, v in doc["a9_16_evaluators"].items()) + "."]
     L += ["", "## Inputs", "", "Pinned (immutable, sha256 verified):", ""]
     L += [f"- `{v['path']}` {v['sha256']}" for v in doc["pins"].values()]
     L += ["", "Consumed (sha256 at build time; drift reported by `--check`):", ""]

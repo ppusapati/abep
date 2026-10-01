@@ -321,11 +321,15 @@ def test_open_questions_not_answered(doc):
     ctx = B.Ctx(B.load_pins(), B.load_refs())
     for r in doc["rows"]:
         for o in r["open_readings"]:
-            assert o["status"] in ("TBD_OWNER", "SUPERSEDED"), (r["id"], o["id"])
-            assert o["current_register"] == "docs/budgets/owner_decisions/owner_questions_state_v4.json"
-            if o["status"] == "TBD_OWNER":
-                assert "never answered" in o["handling"]
+            # A9.16 step 1: the owner answered every carried reading (A9.12 / A9.14, A9.15 amendments); the RVM records
+            # the decision and never answers anything itself
+            assert o["status"] in ("OWNER_DECIDED", "SUPERSEDED"), (r["id"], o["id"])
+            if o["status"] == "OWNER_DECIDED":
+                assert o["status_when_carried"] == "TBD_OWNER" and o["decision"]
+                assert o["current_register"] == "docs/budgets/owner_decisions/owner_questions_state_v5.json"
+                assert "answered by the owner" in o["handling"]
             else:                       # S-01: only an owner answer to the same question supersedes (OD13, row 3)
+                assert o["current_register"] == "docs/budgets/owner_decisions/owner_questions_state_v4.json"
                 assert (r["id"], o["id"]) == ("RVM-12", "OD13") and o["superseded_by"]["owner_row"] == 3
     demands = {d["id"]: d for d in doc["interface_demands"]}
     for dem in ("RVM-ID-08", "RVM-ID-10", "RVM-ID-11"):    # S-01 / PHYS-01: consumed downstream, never PENDING
@@ -334,7 +338,8 @@ def test_open_questions_not_answered(doc):
     with pytest.raises(B.BuildError):   # an ANSWERED question cannot be carried as open
         B.oq(ctx, "OD1")
     assert [q["id"] for q in doc["open_owner_questions"]] == ["RVMQ-01"]
-    assert doc["open_owner_questions"][0]["status"] == "TBD_OWNER"
+    assert doc["open_owner_questions"][0]["status"] == "OWNER_DECIDED"          # A9.14 RVMQ-01 (S9.13)
+    assert doc["open_owner_questions"][0]["status_when_raised"] == "TBD_OWNER"
 
 
 # ------------------------------------------------------------------------------------------ sections / hygiene

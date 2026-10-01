@@ -387,7 +387,7 @@ Roll-up: {"execution_states": {"BLOCKED": 20, "SUPERSEDED_FOR_PRIMARY_LINE": 1},
 | M16V4-ID-04 | consumes | docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json interface_demands[id=ID-11] | rows 18, 20, 21: framework implemented; readiness unchanged | APPLIED |
 | M16V4-ID-05 | consumes | docs/budgets/owner_decisions/owner_questions_state_v4.json (IF-V4-08) | owner-question ids used as blockers; each must be one TBD_OWNER row | APPLIED |
 | M16V4-ID-06 | provides | fo_a9_6_consolidated_verification (A9.6 sec. 18) | readiness rules R-M16V4-01..08, derive_state(), per-row blockers and the v3 -> v4 diff | OFFERED |
-| M16V4-ID-07 | provides | owner (M16-V3-Q-01) | PROPOSED blocking items, roles and latest decision points for acceptance; named engineers | AWAITING_OWNER_DECISION |
+| M16V4-ID-07 | provides | owner (M16-V3-Q-01) | PROPOSED blocking items, roles and latest decision points for acceptance; named engineers | OWNER_DECIDED (A9.14 M16-V3-Q-01: accepted; names from the staffing ledger) |
 
 ## Owner answers applied
 
@@ -401,7 +401,7 @@ Roll-up: {"execution_states": {"BLOCKED": 20, "SUPERSEDED_FOR_PRIMARY_LINE": 1},
 
 ## Open owner questions
 
-no new owner question: M16-V3-Q-01 (TBD_OWNER, state v4) is carried and covers acceptance of the v4 blocking-item selection, roles and latest decision points
+no new owner question: M16-V3-Q-01 (TBD_OWNER in state v4) is answered by A9.14 (state v5 ANSWERED_BY_A9_14)
 
 Owner-question v4 ids used as blockers: ICPQ-03, ICPQ-10, ICPQ-11, MPQ-01, MQ-04, OD12, OD14, OD2, OD3, OD6, OQ-A907-01, OQ-A907-03, OQ-A907-04, OQ-A907-05, OQ-A907-06, OQ-A907-07, OQ-A907-08, OQ-A907-09, OQ-A907-10, OQ-A910-05, OQ-A910-06, OQ-RFQ-04, OQ-RFQ-09, OQ-RFQV2-10, OQ-VI-04, P1Q-06, P1Q-07, P1Q-09, P2Q-01, P2Q-02, P2Q-03, P2Q-04, P2Q-07, P2Q-10, P3Q-01, P3Q-02, P4-OQ-01, P4-OQ-02, P4-OQ-03, P4-OQ-04, P4-OQ-05, RVMQ-01, XA9Q-01, XA9Q-03, XA9Q-06, XA9Q-07.
 

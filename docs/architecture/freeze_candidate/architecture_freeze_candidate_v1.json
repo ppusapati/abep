@@ -60,6 +60,70 @@
   "ANS": {
    "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
    "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1"
+  },
+  "A98": {
+   "path": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+   "sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f"
+  },
+  "A98_MD": {
+   "path": "docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md",
+   "sha256": "8e770d0edf056a0402f6ec8c86a2a2feec169ab971fae788c7a9a620211e1aa0"
+  },
+  "A99": {
+   "path": "docs/decisions/OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json",
+   "sha256": "b6010d9d2856ab21b15d49e477ade8246b9d6e90d4dfa1cc07c4468c10a1e47b"
+  },
+  "A99_MD": {
+   "path": "docs/decisions/OD_2026_10_01_A9_9_S2_MODEL_CHANGE_OWNER_DECISIONS.md",
+   "sha256": "25458fb86c36a7357372a0e4cc7a7a7781c3600e0f401f6d89357c957d5542e0"
+  },
+  "A910": {
+   "path": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+   "sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544"
+  },
+  "A910_MD": {
+   "path": "docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md",
+   "sha256": "6845f54a97192eaa934cc67d5f415c94e317707c97411353aa2325bf5f9b0491"
+  },
+  "A911": {
+   "path": "docs/decisions/OD_2026_10_01_A9_11_s4_p2_owner_decisions.json",
+   "sha256": "d8baf59a5b92739698e29d893e89a30995559ee7167814c096dc24599679156c"
+  },
+  "A911_MD": {
+   "path": "docs/decisions/OD_2026_10_01_A9_11_S4_P2_OWNER_DECISIONS.md",
+   "sha256": "4a9fd171abc6a63266a34e6a7c4cb25c4d67ed16615715e158902a57f7071a41"
+  },
+  "A912": {
+   "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d"
+  },
+  "A912_MD": {
+   "path": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+   "sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62"
+  },
+  "A913": {
+   "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+   "sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23"
+  },
+  "A913_MD": {
+   "path": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
+   "sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf"
+  },
+  "A914": {
+   "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c"
+  },
+  "A914_MD": {
+   "path": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07"
+  },
+  "A915": {
+   "path": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
+   "sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309"
+  },
+  "A915_MD": {
+   "path": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
+   "sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903"
   }
  },
  "consumed": {
@@ -93,11 +157,11 @@
   },
   "F5": {
    "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
-   "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+   "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
   },
   "F6": {
    "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
-   "sha256": "4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def"
+   "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
   },
   "F78": {
    "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
@@ -115,9 +179,17 @@
    "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
    "sha256": "6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67"
   },
+  "OQ5": {
+   "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+   "sha256": "f98478b251c496c006cc7b0529fbd101e6ce2aca99b672187d4debdbf6449f50"
+  },
+  "MP3": {
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "sha256": "311d41233254bbc7bc2afd24d19d6955f1e58584fbadec8e9803a7638f4e55d7"
+  },
   "RVM": {
    "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-   "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+   "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
   },
   "MP2": {
    "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -125,7 +197,7 @@
   },
   "M16": {
    "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
-   "sha256": "e136734daea71fb362f0481ebc0db52e6f34d70626c14389eff940ba84e234f9"
+   "sha256": "356caf26f09a7c1bcaa339666605f0a5032e89c268346236c891932e552fb2e3"
   },
   "XE2": {
    "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
@@ -691,11 +763,27 @@
    "check": "equals the F8 survivor set (f8_robust_candidates_v1 rows)"
   },
   "representative": {
-   "status": "TBD_OWNER",
+   "status": "DEFERRED_BY_OWNER",
    "owner_question": "F9-OQ-01",
-   "selected": null
+   "selected": null,
+   "decision": "A9.13 F9-OQ-01 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
+   "decision_code": "CARRY_SET_DEFER_REPRESENTATIVE"
   },
-  "label": "PARAMETRIC_SENSITIVITY"
+  "label": "PARAMETRIC_SENSITIVITY",
+  "carried_to_lock1_as_set": true,
+  "regenerate_before_freeze_after": [
+   "S2 production-model corrections (A9.9)",
+   "intake-surface v2",
+   "filter implementation / evidence",
+   "compressor search expanded beyond the inherited F3-front subset",
+   "T-1 / T-2 data",
+   "DI-1.3 surface evidence"
+  ],
+  "single_point_studies": "evaluate all remaining Pareto members, or label a selected member an engineering reference, not the frozen architecture",
+  "robust_rule_owner": {
+   "decision": "A9.13 OQ-F78-02 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
+   "rule": "robust over every presently admitted Maxwell / CLL and accommodation scenario until DI-1.3 narrows it (preregistered mapping)"
+  }
  },
  "parameters": [
   {
@@ -881,7 +969,7 @@
    "section": "UPSTREAM",
    "subsection": "intake",
    "name": "honeycomb structure: wall thickness, AO coating (thickness, density), support fraction, wall material",
-   "value": "TBD - no sourced Vyovrinda structural design; code defaults are a labelled parametric case only (F1-P-02..05)",
+   "value": "TBD - sourced / buildable intake structural definition required before LOCK-1; until then wall material / thickness, AO coating and support fraction only as labelled PARAMETRIC_SENSITIVITY budgeting assumptions (no CBE, no frozen mass, no structural qualification)",
    "units": "mm; um; kg m^-3; -",
    "tolerance": "TBD",
    "evidence_class": null,
@@ -900,13 +988,25 @@
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
      "pointer": "/open_owner_questions/1/question",
      "sha256": "dc0bfce93a0dc14cd03f8c76410d273649c1453c1c55f3e0f0c9bae0691146c7"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+     "pointer": "/decisions/F1Q-02",
+     "sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+     "pinned": true,
+     "note": "A9.13 F1Q-02 (S6.1)"
     }
    ],
-   "basis": "F1-P-02..05 TBD; Al 6061-T6 density is cited only if Al 6061 is chosen (F1-P-01)",
-   "freeze_status": "TBD_OWNER",
+   "basis": "F1-P-02..05 TBD; Al 6061-T6 density is cited only if Al 6061 is chosen (F1-P-01); A9.13 F1Q-02",
+   "freeze_status": "TBD_AFTER_EVIDENCE",
    "evidence_to_advance": [
-    "owner answer to F1Q-02 (sourced design or labelled budgeting assumption)"
-   ]
+    "sourced design: material, wall thickness, manufacturing method, support / frame geometry, AO protection, coating thickness / density, tolerances, mass calculation, structural / thermal evidence (before LOCK-1)"
+   ],
+   "a9_16": {
+    "decisions": [
+     "A9.13 F1Q-02 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)"
+    ]
+   }
   },
   {
    "id": "AFC-UP-IN-06",
@@ -946,7 +1046,7 @@
    "section": "UPSTREAM",
    "subsection": "intake",
    "name": "pointing budget theta (intake axis vs relative wind)",
-   "value": "TBD - evaluated at 0 deg and 5 deg (design state only)",
+   "value": "TBD - spacecraft / AOCS relative-wind pointing envelope (interface requirement); 0 / 2 / 5 deg are a sensitivity set only, 5 deg is not a validated maximum",
    "units": "deg",
    "tolerance": "TBD",
    "evidence_class": null,
@@ -965,13 +1065,27 @@
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/9/finding",
      "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+     "pointer": "/decisions/F1Q-03",
+     "sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+     "pinned": true,
+     "note": "A9.13 F1Q-03 (S6.2)"
     }
    ],
-   "basis": "no AOCS pointing budget in the repository",
-   "freeze_status": "TBD_OWNER",
+   "basis": "no AOCS pointing budget in the repository; A9.13 F1Q-03",
+   "freeze_status": "TBD_AFTER_EVIDENCE",
    "evidence_to_advance": [
-    "owner answer F1Q-03 / AOCS budget"
-   ]
+    "registered AOCS pointing envelope",
+    "intake surface v2 over that envelope (A9.9 F1Q-04, PENDING_STEP_2_MODEL_CHANGE); direct TPMC meanwhile; no extrapolation"
+   ],
+   "a9_16": {
+    "decisions": [
+     "A9.13 F1Q-03 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
+     "A9.9 F1Q-04 (docs/decisions/OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json sha256 b6010d9d2856ab21b15d49e477ade8246b9d6e90d4dfa1cc07c4468c10a1e47b)"
+    ]
+   }
   },
   {
    "id": "AFC-UP-IN-08",
@@ -1066,7 +1180,7 @@
    "section": "UPSTREAM",
    "subsection": "filter",
    "name": "filter concept",
-   "value": "TBD - no concept selected; FC-01..FC-07 LISTED_ONLY_NO_SELECTION; FC-00 'none' is a definitional reference whose admissibility is TBD_OWNER (F2-OQ-03)",
+   "value": "TBD - baseline function decided: non-propellant particulate / debris protection with high propellant transmission and low O recombination (inert / low-recombination, catalytic O->O2 only as a separate research variant; FC-00 'none' = analytical reference bound only); concept not selected",
    "units": "-",
    "tolerance": "TBD",
    "evidence_class": null,
@@ -1085,37 +1199,77 @@
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/open_owner_questions/0",
      "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+     "pointer": "/decisions/F2-OQ-01",
+     "sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+     "pinned": true,
+     "note": "A9.13 F2-OQ-01 (S6.3)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+     "pointer": "/decisions/F2-OQ-02",
+     "sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+     "pinned": true,
+     "note": "A9.13 F2-OQ-02 (S6.4)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+     "pointer": "/decisions/F2-OQ-03",
+     "sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+     "pinned": true,
+     "note": "A9.13 F2-OQ-03 (S6.5)"
     }
    ],
-   "basis": "A9.7 F2: unknown filter parameters stay evidence-labelled",
-   "freeze_status": "TBD_OWNER",
+   "basis": "A9.7 F2: unknown filter parameters stay evidence-labelled; A9.13 F2-OQ-01 / F2-OQ-02 / F2-OQ-03",
+   "freeze_status": "TBD_AFTER_EVIDENCE",
    "evidence_to_advance": [
-    "owner answers F2-OQ-01 (protection functions + acceptance) and F2-OQ-03 ('none' admissibility)",
-    "evidenced filter records (transmission, capture, conversion, mass) for a concept"
+    "quantitative filter acceptance pre-registered before LOCK-1 (capture efficiency vs particle class, species-resolved transmission, pressure-loss / conductance penalty, O recombination probability, retained capacity, AO erosion / durability, effect on AG-12)",
+    "evidenced filter records for a concept (P4 APP-FILTER)"
    ],
-   "note": "the F7 / F8 robust set is computed in the filter context F4-FIL-NONE only because the filter's protection benefit is NOT_EVALUATED (a flow-only comparison would score that TBD benefit as zero); this is not a filter decision"
+   "note": "the F7 / F8 robust set is computed in the filter context F4-FIL-NONE only because the filter's protection benefit is NOT_EVALUATED (a flow-only comparison would score that TBD benefit as zero); this is not a filter decision",
+   "a9_16": {
+    "decisions": [
+     "A9.13 F2-OQ-01 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
+     "A9.13 F2-OQ-02 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
+     "A9.13 F2-OQ-03 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)"
+    ]
+   }
   },
   {
    "id": "AFC-UP-FI-02",
    "section": "UPSTREAM",
    "subsection": "filter",
    "name": "filter placement (ahead of collimator / intake chamber / compressor inlet)",
-   "value": "TBD - owner question F2-OQ-04",
+   "value": "intake / channel array -> filter -> compressor inlet (downstream of the primary intake / collimator, upstream of the compressor); axial location, area and thermal state stay design variables",
    "units": "-",
-   "tolerance": "TBD",
-   "evidence_class": null,
+   "tolerance": "n/a (decision / rule)",
+   "evidence_class": "owner-allocation",
    "source": [
     {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/open_owner_questions/3",
      "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+     "pointer": "/decisions/F2-OQ-04",
+     "sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+     "pinned": true,
+     "note": "A9.13 F2-OQ-04 (S6.6)"
     }
    ],
-   "basis": "F2-OQ-04",
-   "freeze_status": "TBD_OWNER",
-   "evidence_to_advance": [
-    "owner answer F2-OQ-04"
-   ]
+   "basis": "A9.13 F2-OQ-04 (S6.6)",
+   "freeze_status": "FREEZE_CANDIDATE",
+   "evidence_to_advance": [],
+   "value_label": "RULE",
+   "a9_16": {
+    "decisions": [
+     "A9.13 F2-OQ-04 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)"
+    ],
+    "separate_element": "A9.13 UPSTREAM_ICD-Q1: the filter is a distinct production-path element (code change PENDING_STEP_3_ARCHITECTURE)"
+   }
   },
   {
    "id": "AFC-UP-FI-03",
@@ -1420,13 +1574,27 @@
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/open_owner_questions/0",
      "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json",
+     "pointer": "/decisions/OQ-F3-01",
+     "sha256": "b6010d9d2856ab21b15d49e477ade8246b9d6e90d4dfa1cc07c4468c10a1e47b",
+     "pinned": true,
+     "note": "A9.9 OQ-F3-01 (S2.3)"
     }
    ],
-   "basis": "F3-02; model-change candidate MCC-03 (production rotor_ok uses an uncited 880 MPa)",
-   "freeze_status": "TBD_OWNER",
+   "basis": "F3-02; model-change candidate MCC-03 (production rotor_ok uses an uncited 880 MPa); A9.9 OQ-F3-01 / F9-OQ-04 MCC-03: registered rotor-strength basis required (PENDING_STEP_2_MODEL_CHANGE)",
+   "freeze_status": "TBD_AFTER_EVIDENCE",
    "evidence_to_advance": [
-    "owner answer OQ-F3-01 (factor, product form, temperature)"
-   ]
+    "registered rotor-strength basis record (alloy spec, product form, heat treatment, section, design temperature, cited statistical allowable basis, yield and ultimate vs temperature, density, design / test factors, max speed, proof-spin basis); until then rotor qualification NOT_EVALUATED_MATERIAL_BASIS; factor 2.0 only a labelled legacy sensitivity case"
+   ],
+   "a9_16": {
+    "decisions": [
+     "A9.9 OQ-F3-01 (docs/decisions/OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json sha256 b6010d9d2856ab21b15d49e477ade8246b9d6e90d4dfa1cc07c4468c10a1e47b)",
+     "A9.9 F9-OQ-04 (docs/decisions/OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json sha256 b6010d9d2856ab21b15d49e477ade8246b9d6e90d4dfa1cc07c4468c10a1e47b)"
+    ],
+    "application_status": "PENDING_STEP_2_MODEL_CHANGE"
+   }
   },
   {
    "id": "AFC-UP-CO-05",
@@ -1725,22 +1893,33 @@
    "section": "UPSTREAM",
    "subsection": "plenum",
    "name": "setpoint policy across orbit states (single vs scheduled)",
-   "value": "TBD - owner question OQ-F4-01 (single-setpoint frontier 0.1027 mg/s vs scheduled 0.143 mg/s, parametric)",
+   "value": "orbit-state-scheduled plenum setpoint = baseline control architecture (schedule only on measurable / estimable flight states); fixed setpoint = robustness / degraded-mode fallback and comparison reference; the schedule itself not frozen until compressor / feed / H-1 validated domains exist",
    "units": "-",
-   "tolerance": "TBD",
-   "evidence_class": null,
+   "tolerance": "n/a (decision / rule)",
+   "evidence_class": "owner-allocation",
    "source": [
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/0",
      "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+     "pointer": "/decisions/OQ-F4-01",
+     "sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+     "pinned": true,
+     "note": "A9.13 OQ-F4-01 (S6.10)"
     }
    ],
-   "basis": "F4-01",
-   "freeze_status": "TBD_OWNER",
-   "evidence_to_advance": [
-    "owner answer OQ-F4-01"
-   ]
+   "basis": "A9.13 OQ-F4-01 (S6.10)",
+   "freeze_status": "FREEZE_CANDIDATE",
+   "evidence_to_advance": [],
+   "value_label": "RULE",
+   "a9_16": {
+    "decisions": [
+     "A9.13 OQ-F4-01 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)"
+    ]
+   }
   },
   {
    "id": "AFC-UP-PL-04",
@@ -1959,7 +2138,7 @@
     {
      "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
      "pointer": "/rows/4/blocking_item",
-     "sha256": "e136734daea71fb362f0481ebc0db52e6f34d70626c14389eff940ba84e234f9"
+     "sha256": "356caf26f09a7c1bcaa339666605f0a5032e89c268346236c891932e552fb2e3"
     }
    ],
    "basis": "F4 transient Pareto over (Kp, Ti, V, compressor, intake)",
@@ -2069,7 +2248,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/68",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
@@ -2168,7 +2347,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/0",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "A9.1 A9-03-planes; ICD ICP-01; H2-1 H21-09",
@@ -2214,7 +2393,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/1",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-1 H21-01 (intersection of A_CP and A_jd); A9-07 REV-12 nominal flow basis",
@@ -2266,7 +2445,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/2",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-1 H21-02",
@@ -2309,7 +2488,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/3",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-1 H21-03 (corners of H1F-CH-02 x H1F-CH-03)",
@@ -2347,7 +2526,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/4",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-1 H21-04 (corners of H1F-CH-02 x H1F-CH-03)",
@@ -2390,7 +2569,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/5",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-1 H21-05 (corners of H1F-CH-02 x H1F-CH-03)",
@@ -2428,7 +2607,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/6",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-1 H21-06 (corners of H1F-CH-02 x H1F-CH-03)",
@@ -2468,7 +2647,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/7",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "owner row 75 (H2-1 Q3)",
@@ -2506,7 +2685,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/8",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-1 H21-07 lower end",
@@ -2549,7 +2728,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/9",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-1 H21-08 = L/h window x h window",
@@ -2577,7 +2756,7 @@
    "section": "PROPULSION",
    "subsection": "h1_geometry",
    "name": "channel design point (h, d_mean, L)",
-   "value": "TBD - requires owner selection inside H1F-CH-02..CH-10 after FEMM and the coupled thermal closure",
+   "value": "TBD - engineering point to be selected on non-performance criteria (FEMM feasibility, thermal margin, packaging, mass, manufacturability, adjustable-anode / insert capability) after the authorised FEMM analysis points are run; not selected yet",
    "units": "mm",
    "tolerance": "TBD",
    "evidence_class": null,
@@ -2585,30 +2764,40 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/10",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
-   "basis": "M16 v4 row 9 blocking item; no Hall performance criterion is available (credible set empty)",
-   "freeze_status": "TBD_OWNER",
+   "basis": "M16 v4 row 9 blocking item; no Hall performance criterion is available (credible set empty); A9.14 F5-OQ-01 / F5-OQ-02 (selection rule owner-given, point not yet selected)",
+   "freeze_status": "TBD_AFTER_EVIDENCE",
    "evidence_to_advance": [
-    "FEMM-class axisymmetric magnetostatics of MC-1 with supplier B-H curves at the selected design point (M16 row 10 blocking item) at candidate points (new owner question F5-OQ-01)",
+    "FEMM-class axisymmetric magnetostatics of MC-1 with supplier B-H curves at the selected design point (M16 row 10 blocking item) at the authorised ANALYSIS_POINTS (femm_analysis_points)",
     "coupled H-1 / ICP thermal closure (A9.2 ICP_COUPLED_THERMAL; P3 framework inputs: ICP geometry, view factors, conductances; >= 50 K + 20 % rule, row 86)",
-    "owner selection on non-performance criteria (new owner question F5-OQ-02)"
+    "engineering-point selection record on the owner's non-performance criteria"
    ],
    "origin": {
     "lane": "F5 fo_a9_7_f5_h1_freeze_candidate",
     "id": "H1F-CH-11",
-    "n_origin_sources": 2,
+    "n_origin_sources": 4,
     "origin_sources": [
      {
       "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
       "pointer": "/rows/8/blocking_item",
-      "sha256": "e136734daea71fb362f0481ebc0db52e6f34d70626c14389eff940ba84e234f9"
+      "sha256": "356caf26f09a7c1bcaa339666605f0a5032e89c268346236c891932e552fb2e3"
      },
      {
       "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
       "pointer": "/design_parameters/0/value",
       "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d"
+     },
+     {
+      "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+      "pointer": "/decisions/F5-OQ-01",
+      "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c"
+     },
+     {
+      "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+      "pointer": "/decisions/F5-OQ-02",
+      "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c"
      }
     ]
    }
@@ -2632,7 +2821,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/11",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "owner row 73: nominal sizing ~1.3 mg/s; characterization ~0.38-3.2 mg/s; no flight-qualification claim before measurement",
@@ -2669,7 +2858,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/12",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "owner row 135; prereg framework GD-03",
@@ -2707,7 +2896,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/13",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-1 H21-09; HW-H1-06",
@@ -2744,7 +2933,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/14",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "owner row 75: allowed only before score-bearing S1",
@@ -2781,7 +2970,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/15",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "row 75 / GD-02; H2-1 interface demand to H2-3 (annulus = channel h, d_mean); P4 ID-03 PENDING",
@@ -2827,7 +3016,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/16",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "A9.2 sec. 3: 316L allowed only as engineering / shakedown material, coupon candidate or low-temperature development component",
@@ -2864,7 +3053,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/17",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "A9.2 sec. 3-4 (do not select W, Mo, Pt etc. merely for melting point); P4: every candidate INCOMPLETE_EVIDENCE",
@@ -2917,7 +3106,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/18",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "A9.2 sec. 4: thermal-design problem first; objective = reduce the actual anode operating temperature, then select a material with T_operating <= T_validated,continuous - 50 K",
@@ -2969,7 +3158,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/19",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "row 87: allowable = validated continuous-use limit - 50 K; no new arbitrary anode limit (A9.2 sec. 4)",
@@ -3008,7 +3197,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/20",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "P4 findings; P3 closure statuses UNRESOLVED",
@@ -3049,7 +3238,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/21",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-3 H23-11",
@@ -3084,7 +3273,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/22",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "owner row 81",
@@ -3117,7 +3306,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/23",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "HW-H1-10 (AOL-RC-01)",
@@ -3151,7 +3340,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/24",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "owner rows 74, 78; A9-07 REV-07",
@@ -3194,7 +3383,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/25",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-1 H21-12 (T2 + T3 provision); the H2-1 T2 option that owner row 74 accepted is defined with a single inner + single outer coil",
@@ -3239,7 +3428,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/26",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "owner row 74; H2-1 H21-13",
@@ -3317,7 +3506,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/27",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "row 79 removes the central bore; A9-07 REV-01 lumped-circuit recomputation (floor by h)",
@@ -3361,7 +3550,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/28",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-1 H21-11 (chamfer is shielded-thruster practice, SRC-MASMI p. 5)",
@@ -3404,7 +3593,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/29",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-1 RP-1 f_NI 2 lumped circuit",
@@ -3448,7 +3637,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/30",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "owner row 80: engineering factors until verified",
@@ -3489,7 +3678,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/31",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-1 H21-24; mass_power v2 A9B-16 evidence floor",
@@ -3497,13 +3686,13 @@
    "evidence_to_advance": [
     "owner selection of the channel design point (h, d_mean, L) inside the windows (M16 row 9 blocking item)",
     "FEMM-class axisymmetric magnetostatics of MC-1 with supplier B-H curves at the selected design point (M16 row 10 blocking item)",
-    "owner re-allocation of AL-04 (existing MQ-03: 3.0 kg allocation below the 3.504 kg floor)",
+    "AL-04 rebased by the owner (A9.14 MQ-03): AL-04 >= 1.20 x the actual H-1 CBE; 4.2048 kg MEV is today's incomplete planning floor (channel / anode / body / fasteners not yet included)",
     "weighed MC-1"
    ],
    "origin": {
     "lane": "F5 fo_a9_7_f5_h1_freeze_candidate",
     "id": "H1F-MC-08",
-    "n_origin_sources": 3,
+    "n_origin_sources": 4,
     "origin_sources": [
      {
       "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
@@ -3519,6 +3708,11 @@
       "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
       "pointer": "/rows/243/question",
       "sha256": "6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67"
+     },
+     {
+      "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+      "pointer": "/decisions/MQ-03",
+      "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c"
      }
     ]
    }
@@ -3536,7 +3730,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/32",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "owner row 82: traceable to coil current and temperature",
@@ -3573,7 +3767,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/33",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "owner row 84",
@@ -3605,7 +3799,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/34",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "M16 v4 row 10; hallthruster_bridge/bfield (P5 only)",
@@ -3622,7 +3816,7 @@
      {
       "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
       "pointer": "/rows/9/blocking_item",
-      "sha256": "e136734daea71fb362f0481ebc0db52e6f34d70626c14389eff940ba84e234f9"
+      "sha256": "356caf26f09a7c1bcaa339666605f0a5032e89c268346236c891932e552fb2e3"
      },
      {
       "path": "hallthruster_bridge/bfield/p5_vacuum_Br_centerline_1p6kW.csv",
@@ -3651,7 +3845,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/35",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-1 H21-16",
@@ -3700,20 +3894,19 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/36",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-1 H21-14",
    "freeze_status": "OPEN",
    "evidence_to_advance": [
     "owner selection of the channel design point (h, d_mean, L) inside the windows (M16 row 9 blocking item) (the criterion depends on h)",
-    "FEMM-class axisymmetric magnetostatics of MC-1 with supplier B-H curves at the selected design point (M16 row 10 blocking item)",
-    "owner acceptance of the criterion band (new owner question F5-OQ-05)"
+    "FEMM-class axisymmetric magnetostatics of MC-1 with supplier B-H curves at the selected design point (M16 row 10 blocking item)"
    ],
    "origin": {
     "lane": "F5 fo_a9_7_f5_h1_freeze_candidate",
     "id": "H1F-BZ-03",
-    "n_origin_sources": 2,
+    "n_origin_sources": 3,
     "origin_sources": [
      {
       "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
@@ -3724,6 +3917,11 @@
       "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
       "pointer": "/bz_target_envelope/rLe_rule_table_G",
       "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d"
+     },
+     {
+      "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+      "pointer": "/decisions/F5-OQ-05",
+      "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c"
      }
     ]
    }
@@ -3741,7 +3939,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/37",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "B headroom 1.5 (row 80) x H1F-BZ-03 upper end",
@@ -3781,7 +3979,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/38",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-1 bz_target_envelope",
@@ -3821,7 +4019,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/39",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "owner row 67; GD-11 (before HI-LOCK2); ICD ICP-31",
@@ -3867,7 +4065,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/40",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "row 78; HW-MC-02",
@@ -3907,7 +4105,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/41",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-1 lumped reluctance + explicit NI margin factor",
@@ -3956,7 +4154,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/42",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-1 coil_design cases RP-1 f_NI=1, f_NI=2, worst-case assumptions",
@@ -4003,7 +4201,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/43",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-1 interface demand to H2-4",
@@ -4042,7 +4240,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/44",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-1 H21-18 (copper 20 C f_NI 1 .. Ni-clad conductor at its class temperature, worst case)",
@@ -4089,7 +4287,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/45",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-1 interface demand to H2-4 (the window is a published analog supply rating, not a Vyovrinda supply)",
@@ -4128,7 +4326,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/46",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-1 (trim is a provision; its NI is not sized)",
@@ -4154,37 +4352,34 @@
    "section": "PROPULSION",
    "subsection": "magnetic_circuit",
    "name": "coil conductor: plain copper or Ni-clad copper (both ceramic-insulated)",
-   "value": "TBD - owner decision (existing OQ-A907-04); a Ni-clad conductor needs a measured magnetic perturbation",
+   "value": "plain ceramic-insulated copper (baseline); Ni-clad / Kulgrid copper only as a contingency variant if oxidation, supplier availability or manufacturing demands it, then with measured resistance and magnetic-perturbation evidence",
    "units": "-",
-   "tolerance": "TBD",
-   "evidence_class": null,
+   "tolerance": "n/a (decision / rule)",
+   "evidence_class": "owner-allocation",
    "source": [
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/47",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
-   "basis": "row 77; OQ-A907-04 (TBD_OWNER)",
-   "freeze_status": "TBD_OWNER",
-   "evidence_to_advance": [
-    "owner answer OQ-A907-04",
-    "wire quotation; measured perturbation if Ni-clad (HW-MC-12)"
-   ],
+   "basis": "row 77; A9.14 OQ-A907-04 (S8.16)",
+   "freeze_status": "FREEZE_CANDIDATE",
+   "evidence_to_advance": [],
    "origin": {
     "lane": "F5 fo_a9_7_f5_h1_freeze_candidate",
     "id": "H1F-CO-08",
     "n_origin_sources": 2,
     "origin_sources": [
      {
-      "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
-      "pointer": "/rows/254/status",
-      "sha256": "6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67"
-     },
-     {
       "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
       "pointer": "/answers/76/owner_answer_verbatim",
       "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1"
+     },
+     {
+      "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+      "pointer": "/decisions/OQ-A907-04",
+      "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c"
      }
     ]
    }
@@ -4202,7 +4397,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/48",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "owner row 77; REV-04",
@@ -4239,7 +4434,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/49",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "owner row 77",
@@ -4275,7 +4470,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/50",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "REV-04; row 86",
@@ -4287,7 +4482,7 @@
    "origin": {
     "lane": "F5 fo_a9_7_f5_h1_freeze_candidate",
     "id": "H1F-CO-11",
-    "n_origin_sources": 2,
+    "n_origin_sources": 3,
     "origin_sources": [
      {
       "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
@@ -4298,6 +4493,11 @@
       "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
       "pointer": "/answers/85/owner_answer_verbatim",
       "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1"
+     },
+     {
+      "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+      "pointer": "/decisions/OQ-A907-05",
+      "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d"
      }
     ]
    }
@@ -4316,7 +4516,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/51",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "A9-07 K4; A9.2 ICP_COUPLED_THERMAL",
@@ -4360,7 +4560,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/52",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "A9.2 sec. 8: the two figures are different bases, never alternative estimates of the same mass; only the complete coil mass is booked",
@@ -4407,7 +4607,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/53",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-1 H21-27; follows the H1F-MC-02 arrangement (OPEN)",
@@ -4452,7 +4652,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/54",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "owner row 76",
@@ -4489,7 +4689,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/55",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "owner row 76",
@@ -4526,7 +4726,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/56",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "row 76 + row 86; uncoupled-sensitivity Curie check PI = FAIL (REV-44, reported UNRESOLVED)",
@@ -4566,19 +4766,18 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/57",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "row 76 + row 86",
    "freeze_status": "TBD_AFTER_EVIDENCE",
    "evidence_to_advance": [
-    "sourced B_sat(T) of the pure-iron grade (HW-MC-13)",
-    "resolution of the iron Curie value discrepancy CC-07 (F5-OQ-03)"
+    "sourced B_sat(T) of the pure-iron grade (HW-MC-13)"
    ],
    "origin": {
     "lane": "F5 fo_a9_7_f5_h1_freeze_candidate",
     "id": "H1F-MA-04",
-    "n_origin_sources": 2,
+    "n_origin_sources": 3,
     "origin_sources": [
      {
       "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
@@ -4589,6 +4788,11 @@
       "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
       "pointer": "/materials/candidates/ARMCO_pure_iron/curie_C",
       "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d"
+     },
+     {
+      "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+      "pointer": "/decisions/F5-OQ-03",
+      "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c"
      }
     ]
    }
@@ -4606,7 +4810,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/58",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "HW-H1-04",
@@ -4642,7 +4846,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/59",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "row 84; OQ-A907-08",
@@ -4653,7 +4857,7 @@
    "origin": {
     "lane": "F5 fo_a9_7_f5_h1_freeze_candidate",
     "id": "H1F-MA-06",
-    "n_origin_sources": 2,
+    "n_origin_sources": 3,
     "origin_sources": [
      {
       "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
@@ -4664,6 +4868,11 @@
       "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
       "pointer": "/answers/83/owner_answer_verbatim",
       "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1"
+     },
+     {
+      "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+      "pointer": "/decisions/OQ-A907-08",
+      "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d"
      }
     ]
    }
@@ -4681,7 +4890,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/60",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-1 materials O_O2_exposure",
@@ -4745,7 +4954,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/61",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "P4 framework (APP-ANODE)",
@@ -4787,7 +4996,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/62",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "owner row 86: >= 50 K below each validated continuous-use limit + 20 % heat-load margin",
@@ -4816,7 +5025,7 @@
    "section": "SYSTEM",
    "subsection": "thermal_interfaces",
    "name": "spacecraft mounting-interface temperature and allowable conducted heat",
-   "value": "TBD - carried as cases 20/40/60 degC and 25/50/100 W; frozen at the spacecraft / PDR interface definition",
+   "value": "TBD - spacecraft thermal ICD; until it exists the owner allocation governs provisionally for steady heat conducted into the mount: 50 W governing, 100 W contingency / sensitivity ceiling only, 25 W stretch (a design meeting only 100 W is not thermally closed); 20 / 40 / 60 degC interface cases carried",
    "units": "degC; W",
    "tolerance": "TBD",
    "evidence_class": null,
@@ -4824,19 +5033,18 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/63",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
-   "basis": "owner row 85; existing OQ-A907-06",
-   "freeze_status": "TBD_OWNER",
+   "basis": "owner row 85; A9.12 OQ-A907-06 (S5.4): isolated mount + dedicated radiator",
+   "freeze_status": "TBD_AFTER_EVIDENCE",
    "evidence_to_advance": [
-    "spacecraft / PDR thermal ICD",
-    "owner answer OQ-A907-06"
+    "spacecraft / PDR thermal ICD (replaces the owner allocation)"
    ],
    "origin": {
     "lane": "F5 fo_a9_7_f5_h1_freeze_candidate",
     "id": "H1F-TH-02",
-    "n_origin_sources": 2,
+    "n_origin_sources": 3,
     "origin_sources": [
      {
       "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
@@ -4847,6 +5055,11 @@
       "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
       "pointer": "/rows/256/status",
       "sha256": "6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67"
+     },
+     {
+      "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+      "pointer": "/decisions/OQ-A907-06",
+      "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d"
      }
     ]
    }
@@ -4864,7 +5077,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/64",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "A9.2 sec. 5-7 (no thermal PASS from a negligible-coupling calculation)",
@@ -4905,7 +5118,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/65",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-1 H21-09; HW-H1-06; ICD standing fact 'nothing upstream of HALL_INLET_Z0 changes between configurations'",
@@ -4947,7 +5160,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/66",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "A9-07 REV-65 (no upstream pre-ionizer module in A9)",
@@ -4988,7 +5201,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/67",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-1 interface demand to H2-3 (= channel windows)",
@@ -5022,7 +5235,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/68",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "H2-3 pressure_budget (PENDING H2-1)",
@@ -5063,7 +5276,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/69",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "A9.7 F4 / F5",
@@ -5099,7 +5312,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/70",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "A9.1 A9-03-planes; REV-03 / REV-66",
@@ -5141,7 +5354,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/71",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "owner row 79",
@@ -5178,7 +5391,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/72",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "ICD ICP-02",
@@ -5213,7 +5426,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/73",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "ICD ID-13 (PARTIAL)",
@@ -5247,7 +5460,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/74",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "REV-17; ICD ICP-32 (unmagnetized ICP, no dedicated ICP magnet, v1)",
@@ -5292,7 +5505,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/75",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "ICD ICP-07",
@@ -5327,7 +5540,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/76",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "A9.2 sec. 5-6; ICD ICP-47",
@@ -5367,7 +5580,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/77",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "HW-H1-08; H2-1 H21-29",
@@ -5407,7 +5620,7 @@
     {
      "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
      "pointer": "/design_vector/variables/0",
-     "sha256": "4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def"
+     "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
     }
    ],
    "basis": "F6 framework (SEARCH_NOT_RUN: search once P1 / P2 evidence exists, A9.7 F6)",
@@ -5431,7 +5644,7 @@
     {
      "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
      "pointer": "/design_vector/variables/1",
-     "sha256": "4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def"
+     "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
     }
    ],
    "basis": "F6 framework (SEARCH_NOT_RUN: search once P1 / P2 evidence exists, A9.7 F6)",
@@ -5455,7 +5668,7 @@
     {
      "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
      "pointer": "/design_vector/variables/2",
-     "sha256": "4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def"
+     "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
     }
    ],
    "basis": "F6 framework (SEARCH_NOT_RUN: search once P1 / P2 evidence exists, A9.7 F6)",
@@ -5479,7 +5692,7 @@
     {
      "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
      "pointer": "/design_vector/variables/3",
-     "sha256": "4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def"
+     "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
     }
    ],
    "basis": "F6 framework (SEARCH_NOT_RUN: search once P1 / P2 evidence exists, A9.7 F6)",
@@ -5503,7 +5716,7 @@
     {
      "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
      "pointer": "/design_vector/variables/4",
-     "sha256": "4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def"
+     "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
     }
    ],
    "basis": "F6 framework (SEARCH_NOT_RUN: search once P1 / P2 evidence exists, A9.7 F6)",
@@ -5527,7 +5740,7 @@
     {
      "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
      "pointer": "/design_vector/variables/5",
-     "sha256": "4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def"
+     "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
     }
    ],
    "basis": "F6 framework (SEARCH_NOT_RUN: search once P1 / P2 evidence exists, A9.7 F6)",
@@ -5551,7 +5764,7 @@
     {
      "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
      "pointer": "/design_vector/variables/6",
-     "sha256": "4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def"
+     "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
     }
    ],
    "basis": "F6 framework (SEARCH_NOT_RUN: search once P1 / P2 evidence exists, A9.7 F6)",
@@ -5575,7 +5788,7 @@
     {
      "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
      "pointer": "/design_vector/variables/7",
-     "sha256": "4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def"
+     "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
     }
    ],
    "basis": "F6 framework (SEARCH_NOT_RUN: search once P1 / P2 evidence exists, A9.7 F6)",
@@ -5599,7 +5812,7 @@
     {
      "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
      "pointer": "/design_vector/variables/8",
-     "sha256": "4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def"
+     "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
     }
    ],
    "basis": "F6 framework (SEARCH_NOT_RUN: search once P1 / P2 evidence exists, A9.7 F6)",
@@ -5623,7 +5836,7 @@
     {
      "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
      "pointer": "/design_vector/variables/9",
-     "sha256": "4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def"
+     "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
     }
    ],
    "basis": "F6 framework (SEARCH_NOT_RUN: search once P1 / P2 evidence exists, A9.7 F6)",
@@ -5647,7 +5860,7 @@
     {
      "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
      "pointer": "/design_vector/variables/10",
-     "sha256": "4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def"
+     "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
     }
    ],
    "basis": "F6 framework (SEARCH_NOT_RUN: search once P1 / P2 evidence exists, A9.7 F6)",
@@ -5671,7 +5884,7 @@
     {
      "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
      "pointer": "/design_vector/variables/11",
-     "sha256": "4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def"
+     "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
     }
    ],
    "basis": "F6 framework (SEARCH_NOT_RUN: search once P1 / P2 evidence exists, A9.7 F6)",
@@ -5695,7 +5908,7 @@
     {
      "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
      "pointer": "/design_vector/variables/12",
-     "sha256": "4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def"
+     "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
     }
    ],
    "basis": "F6 framework (SEARCH_NOT_RUN: search once P1 / P2 evidence exists, A9.7 F6)",
@@ -5719,7 +5932,7 @@
     {
      "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
      "pointer": "/design_vector/variables/13",
-     "sha256": "4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def"
+     "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
     }
    ],
    "basis": "F6 framework (SEARCH_NOT_RUN: search once P1 / P2 evidence exists, A9.7 F6)",
@@ -5743,7 +5956,7 @@
     {
      "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
      "pointer": "/design_vector/variables/14",
-     "sha256": "4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def"
+     "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
     }
    ],
    "basis": "F6 framework (SEARCH_NOT_RUN: search once P1 / P2 evidence exists, A9.7 F6)",
@@ -5767,7 +5980,7 @@
     {
      "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
      "pointer": "/design_vector/variables/15",
-     "sha256": "4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def"
+     "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
     }
    ],
    "basis": "F6 framework (SEARCH_NOT_RUN: search once P1 / P2 evidence exists, A9.7 F6)",
@@ -5791,7 +6004,7 @@
     {
      "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
      "pointer": "/design_vector/variables/16",
-     "sha256": "4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def"
+     "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
     }
    ],
    "basis": "F6 framework (SEARCH_NOT_RUN: search once P1 / P2 evidence exists, A9.7 F6)",
@@ -5821,7 +6034,7 @@
     {
      "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
      "pointer": "/design_vector/variables/1/name",
-     "sha256": "4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def"
+     "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
     }
    ],
    "basis": "ICD ICP-32 OWNER_GIVEN",
@@ -5891,12 +6104,12 @@
     {
      "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
      "pointer": "/geometric_screening/mass_relation",
-     "sha256": "4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def"
+     "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
     },
     {
      "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
      "pointer": "/items/18",
-     "sha256": "4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def"
+     "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
     }
    ],
    "basis": "AL-05 ICP neutralizer 2.0 kg is an owner allocation (not a CBE)",
@@ -5910,28 +6123,42 @@
    "section": "PROPULSION",
    "subsection": "icp_geometry",
    "name": "Hall magnetic-field disturbance metric and threshold",
-   "value": "TBD - owner question F6-OQ-04",
+   "value": "delta_B_acc = max_ROI |B_H1+ICP - B_H1| / max_ROI |B_H1| over the preregistered H-1 acceleration-region ROI and relevant magnet states; provisional design requirement delta_B_acc <= 0.05 (owner engineering allocation, may be tightened, never relaxed post hoc); absolute stray field at IP-EXIT and through the ICP volume reported",
    "units": "-",
-   "tolerance": "TBD",
-   "evidence_class": null,
+   "tolerance": "n/a (decision / rule)",
+   "evidence_class": "owner-allocation",
    "source": [
     {
      "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
      "pointer": "/open_owner_questions/3",
-     "sha256": "4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def"
+     "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
     },
     {
      "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
      "pointer": "/items/30",
      "sha256": "8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "pointer": "/decisions/F6-OQ-04",
+     "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+     "pinned": true,
+     "note": "A9.14 F6-OQ-04 (S7.9)"
     }
    ],
-   "basis": "F6 objective hall_b_field_disturbance; ICD ICP-31 B(z) scan with the module installed",
-   "freeze_status": "TBD_OWNER",
+   "basis": "A9.14 F6-OQ-04 (S7.9)",
+   "freeze_status": "OPEN",
    "evidence_to_advance": [
-    "owner answer F6-OQ-04",
-    "FEMM of MC-1 covering the ICP region (F6-IF-N02)"
-   ]
+    "FEMM of MC-1 covering the ICP region (F6-IF-N02) to evaluate delta_B_acc",
+    "later H-1 sensitivity evidence (may tighten the provisional 0.05, never relax it)"
+   ],
+   "value_label": "RULE",
+   "a9_16": {
+    "decisions": [
+     "A9.14 F6-OQ-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
+    ],
+    "evaluation": "NOT_EVALUATED until FEMM of MC-1 covering the ICP region (F6-IF-N02)"
+   }
   },
   {
    "id": "AFC-PR-RF-01",
@@ -6289,8 +6516,8 @@
    "subsection": "collector",
    "name": "ICP body / collector isolation from Hall anode and cathode-common",
    "value": 350.0,
-   "units": "V (plus margin TBD)",
-   "tolerance": "margin TBD",
+   "units": "V (350 V operating class)",
+   "tolerance": "n/a (decision / rule)",
    "evidence_class": "owner-allocation",
    "source": [
     {
@@ -6304,13 +6531,34 @@
      "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
      "pinned": true,
      "note": "owner row 81"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+     "pointer": "/decisions/OQ-RFQV2-06",
+     "sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+     "pinned": true,
+     "note": "A9.8 OQ-RFQV2-06 (S1.13)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+     "pointer": "/decisions/OQ-RFQV2-08",
+     "sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+     "pinned": true,
+     "note": "A9.8 OQ-RFQV2-08 (S1.14)"
     }
    ],
-   "basis": "owner row 81 (350 V V_d end); margin and test voltage are LOCK-1 items",
-   "freeze_status": "TBD_OWNER",
-   "evidence_to_advance": [
-    "owner margin / test-voltage decision at LOCK-1 (OQ-RFQV2-06 / CIF-G04)"
-   ]
+   "basis": "owner row 81; A9.8 OQ-RFQV2-06 / OQ-RFQV2-08: >= 525 V design withstand, 1.05 kV DC / 60 s initial DWV (supplier certificate + in-house assembled test, per-path leakage limit pre-registered); RF, Paschen and combined RF+DC stress separately qualified",
+   "freeze_status": "FREEZE_CANDIDATE",
+   "evidence_to_advance": [],
+   "a9_16": {
+    "decisions": [
+     "A9.8 OQ-RFQV2-06 (docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json sha256 e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f)",
+     "A9.8 OQ-RFQV2-08 (docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json sha256 e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f)"
+    ],
+    "design_withstand_V_min": 525,
+    "initial_dwv": "1.05 kV DC / 60 s",
+    "reverification": "700 V DC / 60 s triggered only (A9.14 P1Q-17)"
+   }
   },
   {
    "id": "AFC-PR-CL-05",
@@ -6504,7 +6752,7 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/parameters/53",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "basis": "A9-02 A902-31; H1F-CO-14",
@@ -6566,10 +6814,10 @@
    "section": "SYSTEM",
    "subsection": "ppu",
    "name": "electronics redundancy policy",
-   "value": "limited redundancy (row 55)",
+   "value": "TBD - redundant / independent critical control, power-switching, telemetry and sensor paths where an individual failure would defeat the mission / safe state, proven by the single-point-failure analysis; no duplicate thrusters, ICP modules or complete mechanical chains required; row-55 limited redundancy remains for the physical thruster / ICP hardware only",
    "units": "-",
-   "tolerance": "n/a (decision / rule)",
-   "evidence_class": "owner-allocation",
+   "tolerance": "TBD",
+   "evidence_class": null,
    "source": [
     {
      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
@@ -6581,14 +6829,36 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+     "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "pointer": "/decisions/RVMQ-01",
+     "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+     "pinned": true,
+     "note": "A9.14 RVMQ-01 (S9.13)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "pointer": "/decisions/OD12",
+     "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+     "pinned": true,
+     "note": "A9.14 OD12 (S9.11)"
     }
    ],
-   "basis": "owner row 55; RVMQ-01 asks whether an RFP 'no single-point failure' clause re-bases it",
-   "freeze_status": "TBD_OWNER",
+   "basis": "owner row 55; A9.14 RVMQ-01 (S9.13) / OD12 (S9.11); RFP clause owner-stated, pending registration (AG-15)",
+   "freeze_status": "TBD_AFTER_EVIDENCE",
    "evidence_to_advance": [
-    "official RFP (owner row 1) and owner answer RVMQ-01"
-   ]
+    "single-point-failure / FMEA analysis of electronics and sensors",
+    "official RFP registered (AG-15)"
+   ],
+   "a9_16": {
+    "decisions": [
+     "A9.14 RVMQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+     "A9.14 OD12 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
+    ],
+    "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+   }
   },
   {
    "id": "AFC-SY-PWR-01",
@@ -6747,7 +7017,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rows/3/configurations/hall_icp_neutralizer",
-     "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+     "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
     }
    ],
    "basis": "mass_power v2 (A9-02 boundary)",
@@ -6910,9 +7180,9 @@
    "section": "SYSTEM",
    "subsection": "mass_budget",
    "name": "dry allocation AL-04 Hall head+magnet",
-   "value": 3.0,
-   "units": "kg",
-   "tolerance": "n/a (allocation, not a CBE)",
+   "value": 4.2048,
+   "units": "kg (MEV planning floor)",
+   "tolerance": "n/a (planning floor, not a CBE)",
    "evidence_class": "owner-allocation",
    "value_label": "ALLOCATION",
    "source": [
@@ -6927,14 +7197,31 @@
      "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
      "pinned": true,
      "note": "owner row 54"
+    },
+    {
+     "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+     "pointer": "/lines/hall_icp_neutralizer/3",
+     "sha256": "311d41233254bbc7bc2afd24d19d6955f1e58584fbadec8e9803a7638f4e55d7"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "pointer": "/decisions/MQ-03",
+     "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+     "pinned": true,
+     "note": "A9.14 MQ-03 (S8.8)"
     }
    ],
-   "basis": "owner row 54 v0 dry budget; line state ALLOCATION_BELOW_EVIDENCE_FLOOR; evidence floor 3.504 kg",
-   "freeze_status": "TBD_OWNER",
+   "basis": "A9.14 MQ-03: MEV planning floor (owner-stated); replaced by 1.20 x the actual CBE when it exists (mass / power v3)",
+   "freeze_status": "OPEN",
    "evidence_to_advance": [
-    "owner re-allocation (MQ-03)",
-    "CBE or weighed article for every line item"
-   ]
+    "CBE (then weighed article) for the line"
+   ],
+   "a9_16": {
+    "decisions": [
+     "A9.14 MQ-03 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+     "A9.14 MQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
+    ]
+   }
   },
   {
    "id": "AFC-SY-MASS-AL-05",
@@ -7001,9 +7288,9 @@
    "section": "SYSTEM",
    "subsection": "mass_budget",
    "name": "dry allocation AL-07 Hall PPU",
-   "value": 2.5,
-   "units": "kg",
-   "tolerance": "n/a (allocation, not a CBE)",
+   "value": 6.0,
+   "units": "kg (MEV planning floor)",
+   "tolerance": "n/a (planning floor, not a CBE)",
    "evidence_class": "owner-allocation",
    "value_label": "ALLOCATION",
    "source": [
@@ -7018,23 +7305,40 @@
      "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
      "pinned": true,
      "note": "owner row 54"
+    },
+    {
+     "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+     "pointer": "/lines/hall_icp_neutralizer/6",
+     "sha256": "311d41233254bbc7bc2afd24d19d6955f1e58584fbadec8e9803a7638f4e55d7"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "pointer": "/decisions/MQ-04",
+     "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+     "pinned": true,
+     "note": "A9.14 MQ-04 (S8.9)"
     }
    ],
-   "basis": "owner row 54 v0 dry budget; line state ALLOCATION_BELOW_EVIDENCE_FLOOR; evidence floor 5.0 kg",
-   "freeze_status": "TBD_OWNER",
+   "basis": "A9.14 MQ-04: MEV planning floor (owner-stated); replaced by 1.20 x the actual CBE when it exists (mass / power v3)",
+   "freeze_status": "OPEN",
    "evidence_to_advance": [
-    "owner re-allocation (MQ-04)",
-    "CBE or weighed article for every line item"
-   ]
+    "CBE (then weighed article) for the line"
+   ],
+   "a9_16": {
+    "decisions": [
+     "A9.14 MQ-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+     "A9.14 MQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
+    ]
+   }
   },
   {
    "id": "AFC-SY-MASS-AL-08",
    "section": "SYSTEM",
    "subsection": "mass_budget",
    "name": "dry allocation AL-08 Xe hardware",
-   "value": 1.5,
-   "units": "kg",
-   "tolerance": "n/a (allocation, not a CBE)",
+   "value": 6.0528,
+   "units": "kg (MEV planning floor)",
+   "tolerance": "n/a (planning floor, not a CBE)",
    "evidence_class": "owner-allocation",
    "value_label": "ALLOCATION",
    "source": [
@@ -7049,14 +7353,31 @@
      "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
      "pinned": true,
      "note": "owner row 54"
+    },
+    {
+     "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+     "pointer": "/lines/hall_icp_neutralizer/7",
+     "sha256": "311d41233254bbc7bc2afd24d19d6955f1e58584fbadec8e9803a7638f4e55d7"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "pointer": "/decisions/MQ-05",
+     "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+     "pinned": true,
+     "note": "A9.14 MQ-05 (S8.10)"
     }
    ],
-   "basis": "owner row 54 v0 dry budget; line state ALLOCATION_BELOW_EVIDENCE_FLOOR; evidence floor 5.044 kg",
-   "freeze_status": "TBD_OWNER",
+   "basis": "A9.14 MQ-05: MEV planning floor (owner-stated); replaced by 1.20 x the actual CBE when it exists (mass / power v3)",
+   "freeze_status": "OPEN",
    "evidence_to_advance": [
-    "owner re-allocation (MQ-05)",
-    "CBE or weighed article for every line item"
-   ]
+    "CBE (then weighed article) for the line"
+   ],
+   "a9_16": {
+    "decisions": [
+     "A9.14 MQ-05 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+     "A9.14 MQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
+    ]
+   }
   },
   {
    "id": "AFC-SY-MASS-AL-09",
@@ -7132,7 +7453,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rows/5",
-     "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+     "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
     },
     {
      "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
@@ -7170,7 +7491,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rows/6",
-     "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+     "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
     }
    ],
    "basis": "owner row 53 (both evaluated; 40 kg stays the hard limit)",
@@ -7183,12 +7504,18 @@
    "subsection": "mass_budget",
    "name": "dry roll-ups (allocations / with evidence floors) under the open margin readings",
    "value": {
-    "OWNER_V0_LITERAL|ALLOCATIONS": 28.0,
-    "OWNER_V0_LITERAL|WITH_EVIDENCE_FLOORS": 34.548,
-    "MQ01_MEV_LEVEL|ALLOCATIONS": 29.052632,
-    "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS": 40.746442,
-    "MQ01_CBE_LEVEL|ALLOCATIONS": 34.863158,
-    "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS": 44.788547
+    "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)",
+    "dry_known_kg": 40.7464421,
+    "system_margin_kg": 6.791073684,
+    "reserve_kg": 0.0,
+    "lines_without_value": [
+     "AL-09"
+    ],
+    "wet_vs_40kg": {
+     "2.0": "DOES_NOT_CLOSE",
+     "5.0": "DOES_NOT_CLOSE",
+     "10.0": "DOES_NOT_CLOSE"
+    }
    },
    "units": "kg (dry, known part)",
    "tolerance": "n/a (roll-up of allocations and floors; no CBE)",
@@ -7204,15 +7531,41 @@
      "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "pointer": "/rows/250/question",
      "sha256": "6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67"
+    },
+    {
+     "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+     "pointer": "/rollups/0",
+     "sha256": "311d41233254bbc7bc2afd24d19d6955f1e58584fbadec8e9803a7638f4e55d7"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "pointer": "/decisions/MQ-02",
+     "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+     "pinned": true,
+     "note": "A9.14 MQ-02 (S8.7)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "pointer": "/decisions/MQ-10",
+     "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+     "pinned": true,
+     "note": "A9.14 MQ-10 (S8.14)"
     }
    ],
-   "basis": "mass_power v2 roll-ups; MQ-01 / MQ-02 readings carried side by side",
-   "freeze_status": "TBD_OWNER",
+   "basis": "mass / power v3 single MEV reading (A9.14 MQ-01 / MQ-02 / MQ-10): 20 % system margin replaces the 4 kg reserve; mass closure by redesign, never by margin relaxation",
+   "freeze_status": "TBD_AFTER_EVIDENCE",
    "evidence_to_advance": [
-    "owner answers MQ-01, MQ-02, MQ-10",
-    "CBE for every BOM line"
+    "CBE for every BOM line",
+    "controls line AL-09 allocation (MPV3Q-01, TBD_OWNER)"
    ],
-   "note": "under the evidence-floor readings the dry mass alone can exceed 40 kg (MQ-10)"
+   "note": "evidence-based wet mass does not close against 40 kg at 2 / 5 / 10 kg loaded Xe (MQ-10: reduce actual CBE; no margin relaxation)",
+   "a9_16": {
+    "decisions": [
+     "A9.14 MQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+     "A9.14 MQ-02 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+     "A9.14 MQ-10 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
+    ]
+   }
   },
   {
    "id": "AFC-SY-TH-01",
@@ -7384,18 +7737,17 @@
    "subsection": "control_start",
    "name": "start-up sequence (hall_icp_neutralizer)",
    "value": [
-    "I-S0 standby",
-    "I-S1 compressor spin-up / plenum fill",
-    "I-S2 magnet ramp to setpoint",
-    "I-S3 ICP RF ignition on the Hall-feed gas (G-REUSE, no dedicated feed, A9.1 HIQ-06; no thermionic heater)",
-    "I-S4 collector/bias on (electron extraction)",
-    "I-S5 Hall discharge ignition with ICP electrons (row 24)",
-    "I-S6 steady"
+    "establish gas / plenum / feed state",
+    "set H-1 magnet state",
+    "ignite / stabilize ICP",
+    "verify electron-source / current condition",
+    "apply Hall discharge voltage",
+    "verify sustained Hall discharge"
    ],
    "units": "-",
    "tolerance": "n/a (decision / rule)",
-   "evidence_class": "assumed",
-   "evidence_note": "PROPOSED sequence template (row 112); sequence_status RULES_NOT_EVALUABLE (no measured transient)",
+   "evidence_class": "owner-allocation",
+   "evidence_note": "owner baseline atmospheric start sequence; maximum one initial attempt + two retries under registered dwell / thermal limits; a C1-selected variant uses its own qualified heater / keeper sequence",
    "source": [
     {
      "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -7415,14 +7767,28 @@
      "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
      "pinned": true,
      "note": "owner row 24"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "pointer": "/decisions/OD5",
+     "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+     "pinned": true,
+     "note": "A9.14 OD5 (S9.9)"
     }
    ],
-   "basis": "A9-02 SEQUENCE_TEMPLATES (PROPOSED)",
-   "freeze_status": "TBD_OWNER",
+   "basis": "A9.14 OD5 (S9.9); A9-02 template carried as the implementation reference",
+   "freeze_status": "OPEN",
    "evidence_to_advance": [
-    "owner acceptance of the template at LOCK-1",
-    "measured start-up transient record (1 ms gate)"
-   ]
+    "measured start-up transient record (1 ms gate)",
+    "registered dwell / thermal limits"
+   ],
+   "a9_16": {
+    "decisions": [
+     "A9.14 OD5 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+     "A9.14 OQ-A907-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
+    ],
+    "max_attempts": 3
+   }
   },
   {
    "id": "AFC-SY-CTL-02",
@@ -7484,10 +7850,10 @@
    "section": "SYSTEM",
    "subsection": "control_start",
    "name": "plenum pressure control and transient-quality metric basis",
-   "value": "TBD - setpoint policy OQ-F4-01 and metric definitions (2 % band, 60 s window, E0..E7 event sequence) OQ-F4-03",
+   "value": "scheduled plenum setpoint baseline (fixed setpoint fallback); F4 transient metrics (2 % band, 60 s window, E0..E7, orbit-modulation cases) accepted provisionally as the pre-LOCK-2 engineering framework, not final H-1 tolerances",
    "units": "-",
-   "tolerance": "TBD",
-   "evidence_class": null,
+   "tolerance": "n/a (decision / rule)",
+   "evidence_class": "owner-allocation",
    "source": [
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
@@ -7498,13 +7864,34 @@
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/metric_definitions",
      "sha256": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+     "pointer": "/decisions/OQ-F4-01",
+     "sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+     "pinned": true,
+     "note": "A9.13 OQ-F4-01 (S6.10)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+     "pointer": "/decisions/OQ-F4-03",
+     "sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+     "pinned": true,
+     "note": "A9.13 OQ-F4-03 (S6.12)"
     }
    ],
-   "basis": "F4",
-   "freeze_status": "TBD_OWNER",
+   "basis": "A9.13 OQ-F4-01 / OQ-F4-03",
+   "freeze_status": "OPEN",
    "evidence_to_advance": [
-    "owner answers OQ-F4-01, OQ-F4-03"
-   ]
+    "H-1 measured feed sensitivity at LOCK-2 (governs if tighter than the F4 metric)"
+   ],
+   "value_label": "RULE",
+   "a9_16": {
+    "decisions": [
+     "A9.13 OQ-F4-01 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
+     "A9.13 OQ-F4-03 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)"
+    ]
+   }
   },
   {
    "id": "AFC-SY-CTL-05",
@@ -7570,7 +7957,7 @@
    "section": "SYSTEM",
    "subsection": "xe",
    "name": "Xe functional scope",
-   "value": "bounded functional Xe-capable operating mode (beyond bookkeeping); events, duration and flow TBD",
+   "value": "RFP-required system Xenon propulsion capability in both configurations, independent of C1: the system supports ambient atmospheric propellant (180-230 km) AND Xenon as separate selectable operating modes with separate ambient-air and Xe tanks / paths (not a premix); Xe is not a contingency; events, duration and flow TBD",
    "units": "-",
    "tolerance": "n/a (decision / rule)",
    "evidence_class": "owner-allocation",
@@ -7591,15 +7978,45 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rows/9",
-     "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+     "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
+     "pointer": "/governing_rule",
+     "sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
+     "pinned": true,
+     "note": "A9.15 RFP-compliant propellant policy (governs every 'Xe contingency-only for C1' reading)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "pointer": "/decisions/XA9Q-07",
+     "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+     "pinned": true,
+     "note": "A9.14 XA9Q-07 (S8.21)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "pointer": "/decisions/OD6",
+     "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+     "pinned": true,
+     "note": "A9.14 OD6 (S9.10)"
     }
    ],
-   "basis": "owner row 6; RVM-10 NOT_EVALUATED",
+   "basis": "owner row 6; A9.15 governing_rule; A9.14 XA9Q-07 / OD6 as amended by A9.15; RFP content owner-stated, pending registration (AG-15)",
    "freeze_status": "TBD_AFTER_EVIDENCE",
    "evidence_to_advance": [
     "mission mode profile (XV2-18 events / duration / flow)",
     "demonstrated Xe-capable H-1 operation"
-   ]
+   ],
+   "a9_16": {
+    "decisions": [
+     "A9.15 governing_rule (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309)",
+     "A9.14 XA9Q-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c); amended by A9.15 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309)",
+     "A9.14 OD6 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c); amended by A9.15 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309)"
+    ],
+    "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+    "icp_gas_mode": "unchanged: A9.1 G-REUSE primary; G-XE a declared ICP-feed variant"
+   }
   },
   {
    "id": "AFC-SY-XE-02",
@@ -7658,13 +8075,39 @@
      "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "pointer": "/rows/283/question",
      "sha256": "6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "pointer": "/decisions/XA9Q-01",
+     "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+     "pinned": true,
+     "note": "A9.14 XA9Q-01 (S8.18)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "pointer": "/decisions/MQ-09",
+     "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+     "pinned": true,
+     "note": "A9.14 MQ-09 (S8.13)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "pointer": "/decisions/OQ-A910-01",
+     "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+     "pinned": true,
+     "note": "A9.14 OQ-A910-01 (S8.27)"
     }
    ],
-   "basis": "owner row 48 (no single mission load frozen); content LOADED vs USABLE is TBD_OWNER",
-   "freeze_status": "TBD_OWNER",
-   "evidence_to_advance": [
-    "owner answers OQ-A910-01 / XA9Q-01 / MQ-09"
-   ]
+   "basis": "owner row 48; A9.14 XA9Q-01 / MQ-09 / OQ-A910-01: LOADED Xe cases, M_loaded = M_mission_usable + M_reserve + M_residual (residual never added again)",
+   "freeze_status": "FREEZE_CANDIDATE",
+   "evidence_to_advance": [],
+   "a9_16": {
+    "decisions": [
+     "A9.14 XA9Q-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+     "A9.14 MQ-09 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+     "A9.14 OQ-A910-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
+    ]
+   }
   },
   {
    "id": "AFC-SY-XE-04",
@@ -7737,13 +8180,33 @@
      "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
      "pointer": "/items/28",
      "sha256": "ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "pointer": "/decisions/XA9Q-06",
+     "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+     "pinned": true,
+     "note": "A9.14 XA9Q-06 (S8.20)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "pointer": "/decisions/OQ-RFQ-09",
+     "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+     "pinned": true,
+     "note": "A9.14 OQ-RFQ-09 (S8.26)"
     }
    ],
-   "basis": "Xe accounting v2",
+   "basis": "Xe accounting; A9.14 XA9Q-06 / OQ-RFQ-09: 75-bar placeholder retired; suppliers propose MEOP and design / proof factors against the 323 K loaded-Xe cases; basis selected after comparing compliant certified quotations",
    "freeze_status": "TBD_AFTER_EVIDENCE",
    "evidence_to_advance": [
-    "tank selection (A9-09 RFQ) and design case content (OQ-A910-01)"
-   ]
+    "tank / regulator quotations (RFQ v3) and the selected certified solution"
+   ],
+   "a9_16": {
+    "decisions": [
+     "A9.14 XA9Q-06 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+     "A9.14 OQ-RFQ-09 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
+    ]
+   }
   },
   {
    "id": "AFC-SY-XE-07",
@@ -7772,8 +8235,8 @@
    "subsection": "xe",
    "name": "Xe hardware evidence floor vs AL-08 allocation",
    "value": {
-    "AL-08_allocation_kg": 1.5,
-    "evidence_floor_kg": 5.044
+    "AL-08_MEV_planning_floor_kg": 6.0528,
+    "evidence_floor_cbe_kg": 5.044
    },
    "units": "kg",
    "tolerance": "n/a (allocation, not a CBE)",
@@ -7789,46 +8252,63 @@
      "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "pointer": "/rows/245/question",
      "sha256": "6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67"
+    },
+    {
+     "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+     "pointer": "/lines/hall_icp_neutralizer/7",
+     "sha256": "311d41233254bbc7bc2afd24d19d6955f1e58584fbadec8e9803a7638f4e55d7"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "pointer": "/decisions/MQ-05",
+     "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+     "pinned": true,
+     "note": "A9.14 MQ-05 (S8.10)"
     }
    ],
-   "basis": "mass_power v2 AL-08 ALLOCATION_BELOW_EVIDENCE_FLOOR",
-   "freeze_status": "TBD_OWNER",
+   "basis": "A9.14 MQ-05: AL-08 = complete Xe storage / flow hardware (tank, regulator, valves, plumbing, mounting, thermal); planning floor replaced by quotations / design",
+   "freeze_status": "OPEN",
    "evidence_to_advance": [
-    "owner answer MQ-05"
-   ]
+    "quotations / design CBE for the complete Xe hardware"
+   ],
+   "a9_16": {
+    "decisions": [
+     "A9.14 MQ-05 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
+    ]
+   }
   }
  ],
  "freeze_rollup": {
   "counts": {
-   "FREEZE_CANDIDATE": 48,
-   "OPEN": 64,
-   "TBD_AFTER_EVIDENCE": 68,
-   "TBD_OWNER": 25
+   "FREEZE_CANDIDATE": 53,
+   "OPEN": 71,
+   "TBD_AFTER_EVIDENCE": 76,
+   "TBD_OWNER": 5
   },
   "by_subsection": {
    "UPSTREAM/intake": {
     "FREEZE_CANDIDATE": 0,
     "OPEN": 6,
-    "TBD_AFTER_EVIDENCE": 2,
-    "TBD_OWNER": 2
+    "TBD_AFTER_EVIDENCE": 4,
+    "TBD_OWNER": 0
    },
    "UPSTREAM/filter": {
-    "FREEZE_CANDIDATE": 2,
+    "FREEZE_CANDIDATE": 3,
     "OPEN": 0,
-    "TBD_AFTER_EVIDENCE": 3,
-    "TBD_OWNER": 2
+    "TBD_AFTER_EVIDENCE": 4,
+    "TBD_OWNER": 0
    },
    "UPSTREAM/compressor": {
     "FREEZE_CANDIDATE": 0,
     "OPEN": 8,
-    "TBD_AFTER_EVIDENCE": 0,
-    "TBD_OWNER": 1
+    "TBD_AFTER_EVIDENCE": 1,
+    "TBD_OWNER": 0
    },
    "UPSTREAM/plenum": {
-    "FREEZE_CANDIDATE": 1,
+    "FREEZE_CANDIDATE": 2,
     "OPEN": 4,
     "TBD_AFTER_EVIDENCE": 3,
-    "TBD_OWNER": 1
+    "TBD_OWNER": 0
    },
    "UPSTREAM/valves_feed": {
     "FREEZE_CANDIDATE": 1,
@@ -7839,8 +8319,8 @@
    "PROPULSION/h1_geometry": {
     "FREEZE_CANDIDATE": 8,
     "OPEN": 9,
-    "TBD_AFTER_EVIDENCE": 7,
-    "TBD_OWNER": 3
+    "TBD_AFTER_EVIDENCE": 8,
+    "TBD_OWNER": 2
    },
    "PROPULSION/anode": {
     "FREEZE_CANDIDATE": 4,
@@ -7849,28 +8329,28 @@
     "TBD_OWNER": 1
    },
    "PROPULSION/magnetic_circuit": {
-    "FREEZE_CANDIDATE": 10,
+    "FREEZE_CANDIDATE": 11,
     "OPEN": 16,
     "TBD_AFTER_EVIDENCE": 8,
-    "TBD_OWNER": 2
+    "TBD_OWNER": 1
    },
    "SYSTEM/thermal_interfaces": {
     "FREEZE_CANDIDATE": 2,
     "OPEN": 2,
-    "TBD_AFTER_EVIDENCE": 4,
-    "TBD_OWNER": 1
+    "TBD_AFTER_EVIDENCE": 5,
+    "TBD_OWNER": 0
    },
    "PROPULSION/icp_geometry": {
     "FREEZE_CANDIDATE": 2,
-    "OPEN": 0,
+    "OPEN": 1,
     "TBD_AFTER_EVIDENCE": 14,
-    "TBD_OWNER": 2
+    "TBD_OWNER": 1
    },
    "PROPULSION/collector": {
-    "FREEZE_CANDIDATE": 3,
+    "FREEZE_CANDIDATE": 4,
     "OPEN": 0,
     "TBD_AFTER_EVIDENCE": 7,
-    "TBD_OWNER": 1
+    "TBD_OWNER": 0
    },
    "PROPULSION/rf_match": {
     "FREEZE_CANDIDATE": 4,
@@ -7881,8 +8361,8 @@
    "SYSTEM/ppu": {
     "FREEZE_CANDIDATE": 2,
     "OPEN": 2,
-    "TBD_AFTER_EVIDENCE": 2,
-    "TBD_OWNER": 1
+    "TBD_AFTER_EVIDENCE": 3,
+    "TBD_OWNER": 0
    },
    "SYSTEM/power_budget": {
     "FREEZE_CANDIDATE": 2,
@@ -7892,21 +8372,21 @@
    },
    "SYSTEM/mass_budget": {
     "FREEZE_CANDIDATE": 1,
-    "OPEN": 8,
-    "TBD_AFTER_EVIDENCE": 0,
-    "TBD_OWNER": 4
+    "OPEN": 11,
+    "TBD_AFTER_EVIDENCE": 1,
+    "TBD_OWNER": 0
    },
    "SYSTEM/control_start": {
     "FREEZE_CANDIDATE": 3,
-    "OPEN": 0,
+    "OPEN": 2,
     "TBD_AFTER_EVIDENCE": 1,
-    "TBD_OWNER": 2
+    "TBD_OWNER": 0
    },
    "SYSTEM/xe": {
-    "FREEZE_CANDIDATE": 3,
-    "OPEN": 1,
+    "FREEZE_CANDIDATE": 4,
+    "OPEN": 2,
     "TBD_AFTER_EVIDENCE": 2,
-    "TBD_OWNER": 2
+    "TBD_OWNER": 0
    }
   },
   "total": 205
@@ -7932,7 +8412,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/0/configurations",
-       "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
       }
      },
      {
@@ -7948,7 +8428,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/1/configurations",
-       "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
       }
      },
      {
@@ -7964,7 +8444,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/2/configurations",
-       "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
       }
      },
      {
@@ -7980,7 +8460,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/3/configurations",
-       "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
       }
      },
      {
@@ -7996,7 +8476,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/4/configurations",
-       "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
       }
      },
      {
@@ -8012,7 +8492,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/5/configurations",
-       "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
       }
      },
      {
@@ -8028,7 +8508,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/6/configurations",
-       "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
       }
      },
      {
@@ -8044,7 +8524,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/7/configurations",
-       "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
       }
      },
      {
@@ -8060,7 +8540,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/8/configurations",
-       "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
       }
      },
      {
@@ -8076,7 +8556,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/9/configurations",
-       "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
       }
      },
      {
@@ -8092,7 +8572,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/10/configurations",
-       "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
       }
      },
      {
@@ -8108,7 +8588,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/11/configurations",
-       "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
       }
      },
      {
@@ -8124,7 +8604,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/12/configurations",
-       "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
       }
      },
      {
@@ -8140,7 +8620,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/13/configurations",
-       "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
       }
      },
      {
@@ -8156,7 +8636,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/14/configurations",
-       "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
       }
      },
      {
@@ -8172,7 +8652,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/15/configurations",
-       "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
       }
      },
      {
@@ -8188,7 +8668,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/16/configurations",
-       "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
       }
      },
      {
@@ -8204,7 +8684,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/17/configurations",
-       "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
       }
      },
      {
@@ -8220,7 +8700,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/18/configurations",
-       "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+       "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
       }
      }
     ],
@@ -8230,12 +8710,12 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/status_counts",
-     "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+     "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
     },
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rfp_document_in_repository",
-     "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+     "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
     }
    ],
    "evidence_plan_steps": [
@@ -8246,7 +8726,25 @@
     "EP-11",
     "EP-12",
     "EP-13"
-   ]
+   ],
+   "owner_approved": {
+    "decision": "A9.13 F9-OQ-03 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
+    "decision_code": "AG_01_15_APPROVED_DETERMINING_EVIDENCE"
+   },
+   "closure_standard": {
+    "kind": "requirement",
+    "determining_evidence": [
+     "OFFICIAL_SOURCE_DOCUMENT_REGISTERED"
+    ],
+    "never_determining": [
+     "ASSUMPTION",
+     "PARAMETRIC_SENSITIVITY",
+     "ANALOG_VALUE",
+     "CODE_DEFAULT",
+     "SUPPLIER_MARKETING_VALUE",
+     "EVIDENCE_SEEMS_SUFFICIENT"
+    ]
+   }
   },
   {
    "id": "AG-02",
@@ -8270,24 +8768,67 @@
     "EP-02",
     "EP-10",
     "EP-11"
-   ]
+   ],
+   "owner_approved": {
+    "decision": "A9.13 F9-OQ-03 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
+    "decision_code": "AG_01_15_APPROVED_DETERMINING_EVIDENCE"
+   },
+   "closure_standard": {
+    "kind": "validation",
+    "determining_evidence": [
+     "PREREGISTERED_HELD_OUT_PREDICTIVE_VALIDATION_ADMITTING_A_MEMBER"
+    ],
+    "never_determining": [
+     "ASSUMPTION",
+     "PARAMETRIC_SENSITIVITY",
+     "ANALOG_VALUE",
+     "CODE_DEFAULT",
+     "SUPPLIER_MARKETING_VALUE",
+     "EVIDENCE_SEEMS_SUFFICIENT"
+    ]
+   }
   },
   {
    "id": "AG-03",
-   "gate": "P5-N2 v1 validation outcome",
+   "gate": "Hall-transport validation (successor held-out predictive validation; P5-N2 v1 unchanged)",
    "current_status": "INCONCLUSIVE (permanent; promotable = [])",
    "evidence_sufficient_for_freeze": false,
-   "blocking_evidence": "v1 stays INCONCLUSIVE and is never rewritten; promotion needs genuinely new predictive evidence not used in selection (held-out hardware data, hardware pivot)",
+   "blocking_evidence": "P5-N2 v1 stays INCONCLUSIVE and is never rewritten; closure needs a separately preregistered successor held-out predictive validation that admits a Hall-transport member (A9.13 F9-OQ-03 AG-03 clarification)",
    "sources": [
     {
      "path": "hallthruster_bridge/validation/VALIDATION_RELEASE_v1.json",
      "pointer": "/decision",
      "sha256": "0a57a397883141be20196853b7d722404dc3cb20c72fba666121fd43507dc97c"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+     "pointer": "/decisions/F9-OQ-03",
+     "sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+     "pinned": true,
+     "note": "A9.13 F9-OQ-03 (S6.22)"
     }
    ],
    "evidence_plan_steps": [
     "EP-10"
-   ]
+   ],
+   "owner_approved": {
+    "decision": "A9.13 F9-OQ-03 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
+    "decision_code": "AG_01_15_APPROVED_DETERMINING_EVIDENCE"
+   },
+   "closure_standard": {
+    "kind": "validation",
+    "determining_evidence": [
+     "PREREGISTERED_HELD_OUT_PREDICTIVE_VALIDATION_ADMITTING_A_MEMBER"
+    ],
+    "never_determining": [
+     "ASSUMPTION",
+     "PARAMETRIC_SENSITIVITY",
+     "ANALOG_VALUE",
+     "CODE_DEFAULT",
+     "SUPPLIER_MARKETING_VALUE",
+     "EVIDENCE_SEEMS_SUFFICIENT"
+    ]
+   }
   },
   {
    "id": "AG-04",
@@ -8321,7 +8862,26 @@
    "evidence_plan_steps": [
     "EP-02",
     "EP-03"
-   ]
+   ],
+   "owner_approved": {
+    "decision": "A9.13 F9-OQ-03 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
+    "decision_code": "AG_01_15_APPROVED_DETERMINING_EVIDENCE"
+   },
+   "closure_standard": {
+    "kind": "performance",
+    "determining_evidence": [
+     "CORRELATED_VALIDATED_ANALYSIS_PERMITTED_BY_METHOD",
+     "MEASURED_TEST_EVIDENCE"
+    ],
+    "never_determining": [
+     "ASSUMPTION",
+     "PARAMETRIC_SENSITIVITY",
+     "ANALOG_VALUE",
+     "CODE_DEFAULT",
+     "SUPPLIER_MARKETING_VALUE",
+     "EVIDENCE_SEEMS_SUFFICIENT"
+    ]
+   }
   },
   {
    "id": "AG-05",
@@ -8352,7 +8912,26 @@
     "EP-04",
     "EP-05",
     "EP-06"
-   ]
+   ],
+   "owner_approved": {
+    "decision": "A9.13 F9-OQ-03 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
+    "decision_code": "AG_01_15_APPROVED_DETERMINING_EVIDENCE"
+   },
+   "closure_standard": {
+    "kind": "performance",
+    "determining_evidence": [
+     "CORRELATED_VALIDATED_ANALYSIS_PERMITTED_BY_METHOD",
+     "MEASURED_TEST_EVIDENCE"
+    ],
+    "never_determining": [
+     "ASSUMPTION",
+     "PARAMETRIC_SENSITIVITY",
+     "ANALOG_VALUE",
+     "CODE_DEFAULT",
+     "SUPPLIER_MARKETING_VALUE",
+     "EVIDENCE_SEEMS_SUFFICIENT"
+    ]
+   }
   },
   {
    "id": "AG-06",
@@ -8376,7 +8955,26 @@
    "evidence_plan_steps": [
     "EP-02",
     "EP-06"
-   ]
+   ],
+   "owner_approved": {
+    "decision": "A9.13 F9-OQ-03 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
+    "decision_code": "AG_01_15_APPROVED_DETERMINING_EVIDENCE"
+   },
+   "closure_standard": {
+    "kind": "performance",
+    "determining_evidence": [
+     "CORRELATED_VALIDATED_ANALYSIS_PERMITTED_BY_METHOD",
+     "MEASURED_TEST_EVIDENCE"
+    ],
+    "never_determining": [
+     "ASSUMPTION",
+     "PARAMETRIC_SENSITIVITY",
+     "ANALOG_VALUE",
+     "CODE_DEFAULT",
+     "SUPPLIER_MARKETING_VALUE",
+     "EVIDENCE_SEEMS_SUFFICIENT"
+    ]
+   }
   },
   {
    "id": "AG-07",
@@ -8399,7 +8997,26 @@
    "evidence_plan_steps": [
     "EP-07",
     "EP-06"
-   ]
+   ],
+   "owner_approved": {
+    "decision": "A9.13 F9-OQ-03 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
+    "decision_code": "AG_01_15_APPROVED_DETERMINING_EVIDENCE"
+   },
+   "closure_standard": {
+    "kind": "hardware",
+    "determining_evidence": [
+     "INSPECTED_WEIGHED_CERTIFIED_CONFIGURATION",
+     "MEASURED_TEST_EVIDENCE"
+    ],
+    "never_determining": [
+     "ASSUMPTION",
+     "PARAMETRIC_SENSITIVITY",
+     "ANALOG_VALUE",
+     "CODE_DEFAULT",
+     "SUPPLIER_MARKETING_VALUE",
+     "EVIDENCE_SEEMS_SUFFICIENT"
+    ]
+   }
   },
   {
    "id": "AG-08",
@@ -8423,7 +9040,26 @@
    "evidence_plan_steps": [
     "EP-03",
     "EP-04"
-   ]
+   ],
+   "owner_approved": {
+    "decision": "A9.13 F9-OQ-03 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
+    "decision_code": "AG_01_15_APPROVED_DETERMINING_EVIDENCE"
+   },
+   "closure_standard": {
+    "kind": "performance",
+    "determining_evidence": [
+     "CORRELATED_VALIDATED_ANALYSIS_PERMITTED_BY_METHOD",
+     "MEASURED_TEST_EVIDENCE"
+    ],
+    "never_determining": [
+     "ASSUMPTION",
+     "PARAMETRIC_SENSITIVITY",
+     "ANALOG_VALUE",
+     "CODE_DEFAULT",
+     "SUPPLIER_MARKETING_VALUE",
+     "EVIDENCE_SEEMS_SUFFICIENT"
+    ]
+   }
   },
   {
    "id": "AG-09",
@@ -8448,7 +9084,26 @@
     "EP-03",
     "EP-04",
     "EP-13"
-   ]
+   ],
+   "owner_approved": {
+    "decision": "A9.13 F9-OQ-03 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
+    "decision_code": "AG_01_15_APPROVED_DETERMINING_EVIDENCE"
+   },
+   "closure_standard": {
+    "kind": "performance",
+    "determining_evidence": [
+     "CORRELATED_VALIDATED_ANALYSIS_PERMITTED_BY_METHOD",
+     "MEASURED_TEST_EVIDENCE"
+    ],
+    "never_determining": [
+     "ASSUMPTION",
+     "PARAMETRIC_SENSITIVITY",
+     "ANALOG_VALUE",
+     "CODE_DEFAULT",
+     "SUPPLIER_MARKETING_VALUE",
+     "EVIDENCE_SEEMS_SUFFICIENT"
+    ]
+   }
   },
   {
    "id": "AG-10",
@@ -8473,7 +9128,26 @@
     "EP-03",
     "EP-08",
     "EP-13"
-   ]
+   ],
+   "owner_approved": {
+    "decision": "A9.13 F9-OQ-03 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
+    "decision_code": "AG_01_15_APPROVED_DETERMINING_EVIDENCE"
+   },
+   "closure_standard": {
+    "kind": "performance",
+    "determining_evidence": [
+     "CORRELATED_VALIDATED_ANALYSIS_PERMITTED_BY_METHOD",
+     "MEASURED_TEST_EVIDENCE"
+    ],
+    "never_determining": [
+     "ASSUMPTION",
+     "PARAMETRIC_SENSITIVITY",
+     "ANALOG_VALUE",
+     "CODE_DEFAULT",
+     "SUPPLIER_MARKETING_VALUE",
+     "EVIDENCE_SEEMS_SUFFICIENT"
+    ]
+   }
   },
   {
    "id": "AG-11",
@@ -8485,7 +9159,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rows/5/configurations/hall_icp_neutralizer",
-     "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+     "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
@@ -8495,14 +9169,56 @@
    ],
    "evidence_plan_steps": [
     "EP-12"
-   ]
+   ],
+   "owner_approved": {
+    "decision": "A9.13 F9-OQ-03 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
+    "decision_code": "AG_01_15_APPROVED_DETERMINING_EVIDENCE"
+   },
+   "closure_standard": {
+    "kind": "hardware",
+    "determining_evidence": [
+     "INSPECTED_WEIGHED_CERTIFIED_CONFIGURATION",
+     "MEASURED_TEST_EVIDENCE"
+    ],
+    "never_determining": [
+     "ASSUMPTION",
+     "PARAMETRIC_SENSITIVITY",
+     "ANALOG_VALUE",
+     "CODE_DEFAULT",
+     "SUPPLIER_MARKETING_VALUE",
+     "EVIDENCE_SEEMS_SUFFICIENT"
+    ]
+   }
   },
   {
    "id": "AG-12",
-   "gate": "upstream delivered-flow closure (UG-FLOW, proposed F9 gate)",
-   "current_status": "NOT_EVALUATED (strict mode); parametric frontier below the owner characterization range",
+   "gate": "statewise feed-state sufficiency (performance-derived; A9.13 F9-OQ-02)",
+   "current_status": "NOT_EVALUATED (validated H-1 thrust-versus-feed map does not exist)",
    "evidence_sufficient_for_freeze": false,
-   "blocking_evidence": "all-state frontier 0.1027382 mg/s (single setpoint) and robust worst case [0.00813428, 0.00840947] mg/s under parametric inputs vs 0.38-3.2 mg/s characterization and ~1.3 mg/s nominal sizing (row 73); compressor coefficients uncited (F3 MODE_STRICT 22 blockers), accommodation TBD, filter TBD; the delivered-flow requirement itself is not set (F9-OQ-02)",
+   "blocking_evidence": {
+    "summary": "NOT_EVALUATED until the validated H-1 thrust-versus-feed map exists; statewise feed-state sufficiency replaces the fixed 0.38 mg/s gate (0.38-3.2 mg/s = characterization coverage only)",
+    "rule": [
+     "for each required orbit / environment state: required drag-compensation thrust from the registered spacecraft drag basis",
+     "minimum feed state from the measured / validated H-1 map for the actual atmospheric composition within the admitted power / thermal envelope",
+     "upstream chain delivers at least that feed state"
+    ],
+    "feed_state_record": [
+     "mass flow",
+     "pressure",
+     "temperature",
+     "species composition",
+     "transient / ripple quality"
+    ],
+    "removed": "the 0.38 mg/s (and ~1.3 mg/s) fixed-number gate: not flight requirements",
+    "characterization_coverage_mg_s": [
+     0.38,
+     3.2
+    ],
+    "characterization_coverage_role": "CHARACTERIZATION_COVERAGE_ONLY_NOT_A_PASS_FAIL_REQUIREMENT",
+    "engineering_warning": "the parametric upstream frontier (0.1027382 mg/s all-state, single setpoint) is low relative to the ground-characterization envelope: an engineering warning, not a demonstrated requirement failure (A9.13 owner_statements.flight_flow_requirement)",
+    "evaluator": "a9_16_f9.ag12_feed_state_sufficiency (fail closed; refuses a fixed mg/s gate)",
+    "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+   },
    "sources": [
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
@@ -8518,20 +9234,61 @@
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/1",
      "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+     "pointer": "/decisions/F9-OQ-02",
+     "sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+     "pinned": true,
+     "note": "A9.13 F9-OQ-02 (S6.21)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+     "pointer": "/decisions/OQ-F4-04",
+     "sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+     "pinned": true,
+     "note": "A9.13 OQ-F4-04 (S6.13)"
     }
    ],
    "evidence_plan_steps": [
     "EP-08",
     "EP-09",
     "EP-14"
-   ]
+   ],
+   "owner_approved": {
+    "decision": "A9.13 F9-OQ-03 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
+    "decision_code": "AG_01_15_APPROVED_DETERMINING_EVIDENCE"
+   },
+   "closure_standard": {
+    "kind": "performance",
+    "determining_evidence": [
+     "CORRELATED_VALIDATED_ANALYSIS_PERMITTED_BY_METHOD",
+     "MEASURED_TEST_EVIDENCE"
+    ],
+    "never_determining": [
+     "ASSUMPTION",
+     "PARAMETRIC_SENSITIVITY",
+     "ANALOG_VALUE",
+     "CODE_DEFAULT",
+     "SUPPLIER_MARKETING_VALUE",
+     "EVIDENCE_SEEMS_SUFFICIENT"
+    ]
+   }
   },
   {
    "id": "AG-13",
-   "gate": "drag compensation T - D_spacecraft",
+   "gate": "statewise drag compensation T_available(state) - D_spacecraft(state) >= 0 (A9.13 OQ-F78-01)",
    "current_status": "NOT_EVALUATED",
    "evidence_sufficient_for_freeze": false,
-   "blocking_evidence": "thrust (AG-02) and spacecraft body / array drag (no spacecraft geometry; OQ-F78-04); whether HC-08 is a hard constraint is OQ-F78-01",
+   "blocking_evidence": {
+    "summary": "statewise T - D >= 0 at every required state; NOT_EVALUATED (no admitted thrust, no host-spacecraft ICD for D_spacecraft)",
+    "rule": "hard constraint at every required evaluated flight / environment state in the 180-230 km envelope, thrust and drag at the same state; worst-state and orbit-averaged margins reported additionally; the orbit average never hides a statewise deficit",
+    "missing": [
+     "thrust (AG-02)",
+     "actual host-spacecraft ICD for D_spacecraft (OQ-F78-04: sourced reference geometry is REFERENCE/PARAMETRIC only)"
+    ],
+    "evaluator": "a9_16_f9.ag13_statewise (fail closed)"
+   },
    "sources": [
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
@@ -8542,12 +9299,45 @@
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/hard_constraints/7",
      "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+     "pointer": "/decisions/OQ-F78-01",
+     "sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+     "pinned": true,
+     "note": "A9.13 OQ-F78-01 (S6.15)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+     "pointer": "/decisions/OQ-F78-04",
+     "sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+     "pinned": true,
+     "note": "A9.13 OQ-F78-04 (S6.18)"
     }
    ],
    "evidence_plan_steps": [
     "EP-11",
     "EP-15"
-   ]
+   ],
+   "owner_approved": {
+    "decision": "A9.13 F9-OQ-03 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
+    "decision_code": "AG_01_15_APPROVED_DETERMINING_EVIDENCE"
+   },
+   "closure_standard": {
+    "kind": "performance",
+    "determining_evidence": [
+     "CORRELATED_VALIDATED_ANALYSIS_PERMITTED_BY_METHOD",
+     "MEASURED_TEST_EVIDENCE"
+    ],
+    "never_determining": [
+     "ASSUMPTION",
+     "PARAMETRIC_SENSITIVITY",
+     "ANALOG_VALUE",
+     "CODE_DEFAULT",
+     "SUPPLIER_MARKETING_VALUE",
+     "EVIDENCE_SEEMS_SUFFICIENT"
+    ]
+   }
   },
   {
    "id": "AG-14",
@@ -8559,31 +9349,50 @@
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/article_freeze_state",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     },
     {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/freeze_rollup",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    ],
    "evidence_plan_steps": [
     "EP-05",
     "EP-06",
     "EP-07"
-   ]
+   ],
+   "owner_approved": {
+    "decision": "A9.13 F9-OQ-03 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
+    "decision_code": "AG_01_15_APPROVED_DETERMINING_EVIDENCE"
+   },
+   "closure_standard": {
+    "kind": "hardware",
+    "determining_evidence": [
+     "INSPECTED_WEIGHED_CERTIFIED_CONFIGURATION",
+     "MEASURED_TEST_EVIDENCE"
+    ],
+    "never_determining": [
+     "ASSUMPTION",
+     "PARAMETRIC_SENSITIVITY",
+     "ANALOG_VALUE",
+     "CODE_DEFAULT",
+     "SUPPLIER_MARKETING_VALUE",
+     "EVIDENCE_SEEMS_SUFFICIENT"
+    ]
+   }
   },
   {
    "id": "AG-15",
    "gate": "requirement basis (official RFP document)",
-   "current_status": "NOT_IN_REPOSITORY (secondary transcriptions only)",
+   "current_status": "BLOCKED_RFP_NOT_REGISTERED (owner states the RFP is available to the project; not in the repository)",
    "evidence_sufficient_for_freeze": false,
-   "blocking_evidence": "owner rows 1-2: obtain the canonical RFP; freeze no interpretation from secondary sources",
+   "blocking_evidence": "register the official RFP in the repository evidence system with immutable provenance / sha256 and re-base the RVM requirements against it; secondary transcriptions are not enough (A9.13 F9-OQ-03 AG-15 clarification); until then every RFP-cited owner statement is OWNER_STATED_PENDING_RFP_REGISTRATION",
    "sources": [
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rfp_document_in_repository",
-     "sha256": "578c998c388d6b998ae62865d3ca095a0122603438fc96d4e13e4204c692a50f"
+     "sha256": "d8a51b384ec6295787440ed00649c09577a83d1acb1c5c41de265a3eb826a13d"
     },
     {
      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
@@ -8591,17 +9400,42 @@
      "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
      "pinned": true,
      "note": "owner row 1"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+     "pointer": "/decisions/F9-OQ-03",
+     "sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+     "pinned": true,
+     "note": "A9.13 F9-OQ-03 (S6.22)"
     }
    ],
    "evidence_plan_steps": [
     "EP-01"
-   ]
+   ],
+   "owner_approved": {
+    "decision": "A9.13 F9-OQ-03 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
+    "decision_code": "AG_01_15_APPROVED_DETERMINING_EVIDENCE"
+   },
+   "closure_standard": {
+    "kind": "requirement",
+    "determining_evidence": [
+     "OFFICIAL_SOURCE_DOCUMENT_REGISTERED"
+    ],
+    "never_determining": [
+     "ASSUMPTION",
+     "PARAMETRIC_SENSITIVITY",
+     "ANALOG_VALUE",
+     "CODE_DEFAULT",
+     "SUPPLIER_MARKETING_VALUE",
+     "EVIDENCE_SEEMS_SUFFICIENT"
+    ]
+   }
   }
  ],
  "evidence_plan": [
   {
    "id": "EP-01",
-   "evidence": "obtain the official RFP document (owner rows 1-2) and re-base the RVM requirement texts",
+   "evidence": "register the official RFP (owner rows 1-2; A9.13 AG-15: immutable provenance / sha256 in the repository evidence system) and re-base the RVM requirement texts",
    "addresses_gates": [
     "AG-15",
     "AG-01"
@@ -8761,21 +9595,24 @@
   },
   {
    "id": "EP-14",
-   "evidence": "owner sets the delivered-flow requirement at the H-1 inlet (F9-OQ-02) and the lever for the flow gap (OQ-F4-04)",
+   "evidence": "statewise performance-derived feed-state requirement from the measured / validated H-1 thrust-vs-feed map (A9.13 F9-OQ-02), then capture / compression / feed improvements in the owner order (OQ-F4-04)",
    "addresses_gates": [
     "AG-12"
    ],
-   "depends_on": [],
-   "vehicle": "owner"
+   "depends_on": [
+    "EP-02",
+    "EP-11"
+   ],
+   "vehicle": "Phase-1 / Phase-3 H-1 measurement"
   },
   {
    "id": "EP-15",
-   "evidence": "spacecraft frontal geometry / drag basis (OQ-F78-04) and the T - D constraint definition (OQ-F78-01)",
+   "evidence": "actual host-spacecraft ICD (frontal geometry, arrays, attitude states, drag model, surface state) for D_spacecraft; statewise T - D >= 0 (A9.13 OQ-F78-01 / OQ-F78-04)",
    "addresses_gates": [
     "AG-13"
    ],
    "depends_on": [],
-   "vehicle": "owner / spacecraft ICD"
+   "vehicle": "spacecraft ICD"
   }
  ],
  "model_change_candidates": [
@@ -8838,8 +9675,12 @@
     "docs/HISTORY.md entry (CLAUDE.md rules 1-2)",
     "golden check after implementation; if goldens move, justify, regenerate, log"
    ],
-   "status": "MODEL_CHANGE_CANDIDATE_PENDING_OWNER",
-   "implemented_here": false
+   "status": "OWNER_AUTHORISED_PENDING_STEP_2_MODEL_CHANGE",
+   "implemented_here": false,
+   "owner_authorisation": {
+    "decision": "A9.9 F1Q-01 (docs/decisions/OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json sha256 b6010d9d2856ab21b15d49e477ade8246b9d6e90d4dfa1cc07c4468c10a1e47b)",
+    "decision_code": "YES_PRODUCTION_FIX"
+   }
   },
   {
    "id": "MCC-02",
@@ -8871,8 +9712,12 @@
     "docs/HISTORY.md entry (CLAUDE.md rules 1-2)",
     "golden check after implementation; if goldens move, justify, regenerate, log"
    ],
-   "status": "MODEL_CHANGE_CANDIDATE_PENDING_OWNER",
-   "implemented_here": false
+   "status": "OWNER_AUTHORISED_PENDING_STEP_2_MODEL_CHANGE",
+   "implemented_here": false,
+   "owner_authorisation": {
+    "decision": "A9.9 F9-OQ-04 (docs/decisions/OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json sha256 b6010d9d2856ab21b15d49e477ade8246b9d6e90d4dfa1cc07c4468c10a1e47b)",
+    "decision_code": "YES_ALL_FIVE"
+   }
   },
   {
    "id": "MCC-03",
@@ -8904,8 +9749,12 @@
     "docs/HISTORY.md entry (CLAUDE.md rules 1-2)",
     "golden check after implementation; if goldens move, justify, regenerate, log"
    ],
-   "status": "MODEL_CHANGE_CANDIDATE_PENDING_OWNER",
-   "implemented_here": false
+   "status": "OWNER_AUTHORISED_PENDING_STEP_2_MODEL_CHANGE",
+   "implemented_here": false,
+   "owner_authorisation": {
+    "decision": "A9.9 F9-OQ-04 (docs/decisions/OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json sha256 b6010d9d2856ab21b15d49e477ade8246b9d6e90d4dfa1cc07c4468c10a1e47b)",
+    "decision_code": "YES_ALL_FIVE"
+   }
   },
   {
    "id": "MCC-04",
@@ -8942,8 +9791,12 @@
     "docs/HISTORY.md entry (CLAUDE.md rules 1-2)",
     "golden check after implementation; if goldens move, justify, regenerate, log"
    ],
-   "status": "MODEL_CHANGE_CANDIDATE_PENDING_OWNER",
-   "implemented_here": false
+   "status": "OWNER_AUTHORISED_PENDING_STEP_2_MODEL_CHANGE",
+   "implemented_here": false,
+   "owner_authorisation": {
+    "decision": "A9.9 UPSTREAM_ICD-Q7 (docs/decisions/OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json sha256 b6010d9d2856ab21b15d49e477ade8246b9d6e90d4dfa1cc07c4468c10a1e47b)",
+    "decision_code": "YES_NOW"
+   }
   },
   {
    "id": "MCC-05",
@@ -8970,8 +9823,12 @@
     "docs/HISTORY.md entry (CLAUDE.md rules 1-2)",
     "golden check after implementation; if goldens move, justify, regenerate, log"
    ],
-   "status": "MODEL_CHANGE_CANDIDATE_PENDING_OWNER",
-   "implemented_here": false
+   "status": "OWNER_AUTHORISED_PENDING_STEP_2_MODEL_CHANGE",
+   "implemented_here": false,
+   "owner_authorisation": {
+    "decision": "A9.9 F9-OQ-04 (docs/decisions/OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json sha256 b6010d9d2856ab21b15d49e477ade8246b9d6e90d4dfa1cc07c4468c10a1e47b)",
+    "decision_code": "YES_ALL_FIVE"
+   }
   },
   {
    "id": "MCC-06",
@@ -8998,8 +9855,12 @@
     "docs/HISTORY.md entry (CLAUDE.md rules 1-2)",
     "golden check after implementation; if goldens move, justify, regenerate, log"
    ],
-   "status": "MODEL_CHANGE_CANDIDATE_PENDING_OWNER",
-   "implemented_here": false
+   "status": "OWNER_AUTHORISED_PENDING_STEP_2_MODEL_CHANGE",
+   "implemented_here": false,
+   "owner_authorisation": {
+    "decision": "A9.9 F9-OQ-04 (docs/decisions/OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json sha256 b6010d9d2856ab21b15d49e477ade8246b9d6e90d4dfa1cc07c4468c10a1e47b)",
+    "decision_code": "YES_ALL_FIVE"
+   }
   },
   {
    "id": "MCC-07",
@@ -9026,8 +9887,12 @@
     "docs/HISTORY.md entry (CLAUDE.md rules 1-2)",
     "golden check after implementation; if goldens move, justify, regenerate, log"
    ],
-   "status": "MODEL_CHANGE_CANDIDATE_PENDING_OWNER",
-   "implemented_here": false
+   "status": "OWNER_AUTHORISED_PENDING_STEP_2_MODEL_CHANGE",
+   "implemented_here": false,
+   "owner_authorisation": {
+    "decision": "A9.9 F9-OQ-04 (docs/decisions/OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json sha256 b6010d9d2856ab21b15d49e477ade8246b9d6e90d4dfa1cc07c4468c10a1e47b)",
+    "decision_code": "YES_ALL_FIVE"
+   }
   },
   {
    "id": "MCC-08",
@@ -9054,8 +9919,14 @@
     "docs/HISTORY.md entry (CLAUDE.md rules 1-2)",
     "golden check after implementation; if goldens move, justify, regenerate, log"
    ],
-   "status": "MODEL_CHANGE_CANDIDATE_PENDING_OWNER",
-   "implemented_here": false
+   "status": "OWNER_AUTHORISED_PENDING_STEP_2_MODEL_CHANGE",
+   "implemented_here": false,
+   "owner_authorisation": {
+    "decision": "A9.9 F9-OQ-04 (docs/decisions/OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json sha256 b6010d9d2856ab21b15d49e477ade8246b9d6e90d4dfa1cc07c4468c10a1e47b)",
+    "decision_code": "YES_ALL_FIVE",
+    "basis_verbatim": "`max_hits` and related hit-budget parameters shall have valid positive integer domains.",
+    "note": "not named in the F9-OQ-04 question; covered by the owner's MCC-05 answer on related hit-budget parameters (max_hits_cap)"
+   }
   }
  ],
  "owner_question_rollup": {
@@ -10932,7 +11803,7 @@
     "source": {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    },
    {
@@ -10942,7 +11813,7 @@
     "source": {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/open_owner_questions/1",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    },
    {
@@ -10952,7 +11823,7 @@
     "source": {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    },
    {
@@ -10962,7 +11833,7 @@
     "source": {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/open_owner_questions/3",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    },
    {
@@ -10972,7 +11843,7 @@
     "source": {
      "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
      "pointer": "/open_owner_questions/4",
-     "sha256": "4e92e75b4c028eee5abf67da69c84d809522434901625257f0264602d8a6daf7"
+     "sha256": "155d679519cade022f9d6d80ae1ea5d67fb3c4bb986a2682ea2c7e8394ea3664"
     }
    },
    {
@@ -10982,7 +11853,7 @@
     "source": {
      "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def"
+     "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
     }
    },
    {
@@ -10992,7 +11863,7 @@
     "source": {
      "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
      "pointer": "/open_owner_questions/1",
-     "sha256": "4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def"
+     "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
     }
    },
    {
@@ -11002,7 +11873,7 @@
     "source": {
      "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def"
+     "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
     }
    },
    {
@@ -11012,7 +11883,7 @@
     "source": {
      "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
      "pointer": "/open_owner_questions/3",
-     "sha256": "4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def"
+     "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
     }
    },
    {
@@ -11102,7 +11973,156 @@
    "F9-OQ-02",
    "F9-OQ-03",
    "F9-OQ-04"
-  ]
+  ],
+  "state_v5": {
+   "source": {
+    "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "pointer": "/rows",
+    "sha256": "f98478b251c496c006cc7b0529fbd101e6ce2aca99b672187d4debdbf6449f50"
+   },
+   "tbd_owner_count": 1,
+   "open_owner_questions": [
+    "MPV3Q-01"
+   ],
+   "status_of_rolled_up_questions": {
+    "ICPQ-03": "ANSWERED_BY_A9_14",
+    "ICPQ-08": "ANSWERED_BY_A9_14",
+    "ICPQ-09": "ANSWERED_BY_A9_14",
+    "ICPQ-10": "ANSWERED_BY_A9_12",
+    "ICPQ-11": "ANSWERED_BY_A9_14",
+    "OQ-VI-04": "ANSWERED_BY_A9_14",
+    "MQ-01": "ANSWERED_BY_A9_14",
+    "MQ-02": "ANSWERED_BY_A9_14",
+    "MQ-03": "ANSWERED_BY_A9_14",
+    "MQ-04": "ANSWERED_BY_A9_14",
+    "MQ-05": "ANSWERED_BY_A9_14",
+    "MQ-06": "ANSWERED_BY_A9_14",
+    "MQ-07": "ANSWERED_BY_A9_14",
+    "MQ-09": "ANSWERED_BY_A9_14",
+    "MQ-10": "ANSWERED_BY_A9_14",
+    "OQ-A907-01": "ANSWERED_BY_A9_14",
+    "OQ-A907-03": "ANSWERED_BY_A9_12",
+    "OQ-A907-04": "ANSWERED_BY_A9_14",
+    "OQ-A907-05": "ANSWERED_BY_A9_12",
+    "OQ-A907-06": "ANSWERED_BY_A9_12",
+    "OQ-A907-08": "ANSWERED_BY_A9_12",
+    "OQ-A907-09": "ANSWERED_BY_A9_12",
+    "OQ-A907-10": "ANSWERED_BY_A9_12",
+    "OQ-A907-07": "AMENDED_BY_A9_15",
+    "XA9Q-01": "ANSWERED_BY_A9_14",
+    "XA9Q-02": "ANSWERED_BY_A9_14",
+    "XA9Q-03": "ANSWERED_BY_A9_14",
+    "XA9Q-04": "ANSWERED_BY_A9_14",
+    "XA9Q-05": "AMENDED_BY_A9_15",
+    "XA9Q-06": "ANSWERED_BY_A9_14",
+    "XA9Q-07": "AMENDED_BY_A9_15",
+    "OQ-RFQ-01": "ANSWERED_BY_A9_14",
+    "OQ-RFQ-03": "ANSWERED_BY_A9_14",
+    "OQ-RFQ-04": "ANSWERED_BY_A9_14",
+    "OQ-RFQ-08": "ANSWERED_BY_A9_14",
+    "OQ-RFQ-09": "ANSWERED_BY_A9_14",
+    "OQ-A910-01": "ANSWERED_BY_A9_14",
+    "OQ-A910-02": "ANSWERED_BY_A9_14",
+    "OQ-A910-03": "ANSWERED_BY_A9_14",
+    "OQ-A910-05": "ANSWERED_BY_A9_14",
+    "OQ-A910-06": "ANSWERED_BY_A9_12",
+    "M16-V3-Q-01": "ANSWERED_BY_A9_14",
+    "P1Q-01": "ANSWERED_BY_A9_11",
+    "P1Q-02": "ANSWERED_BY_A9_10",
+    "P1Q-03": "ANSWERED_BY_A9_10",
+    "P1Q-04": "ANSWERED_BY_A9_8",
+    "P1Q-05": "ANSWERED_BY_A9_10",
+    "P1Q-06": "ANSWERED_BY_A9_10",
+    "P1Q-07": "ANSWERED_BY_A9_10",
+    "P1Q-08": "ANSWERED_BY_A9_10",
+    "P1Q-09": "ANSWERED_BY_A9_8",
+    "P1Q-11": "ANSWERED_BY_A9_8",
+    "P1Q-12": "ANSWERED_BY_A9_14",
+    "P1Q-17": "ANSWERED_BY_A9_14",
+    "P1Q-18": "ANSWERED_BY_A9_8",
+    "P1Q-19": "ANSWERED_BY_A9_10",
+    "P1Q-20": "ANSWERED_BY_A9_8",
+    "P1Q-24": "ANSWERED_BY_A9_10",
+    "P2Q-01": "ANSWERED_BY_A9_11",
+    "P2Q-02": "ANSWERED_BY_A9_8",
+    "P2Q-03": "ANSWERED_BY_A9_11",
+    "P2Q-04": "ANSWERED_BY_A9_11",
+    "P2Q-06": "ANSWERED_BY_A9_14",
+    "P2Q-07": "ANSWERED_BY_A9_11",
+    "P2Q-08": "ANSWERED_BY_A9_11",
+    "P2Q-09": "ANSWERED_BY_A9_11",
+    "P2Q-10": "ANSWERED_BY_A9_14",
+    "P3Q-01": "ANSWERED_BY_A9_8",
+    "P3Q-02": "ANSWERED_BY_A9_12",
+    "P4-OQ-01": "ANSWERED_BY_A9_12",
+    "P4-OQ-02": "ANSWERED_BY_A9_12",
+    "P4-OQ-03": "ANSWERED_BY_A9_12",
+    "P4-OQ-04": "ANSWERED_BY_A9_12",
+    "P4-OQ-05": "ANSWERED_BY_A9_12",
+    "MPQ-01": "AMENDED_BY_A9_15",
+    "MPQ-02": "ANSWERED_BY_A9_14",
+    "XV2Q-01": "AMENDED_BY_A9_15",
+    "OQ-RFQV2-01": "ANSWERED_BY_A9_8",
+    "OQ-RFQV2-02": "ANSWERED_BY_A9_8",
+    "OQ-RFQV2-03": "ANSWERED_BY_A9_8",
+    "OQ-RFQV2-04": "ANSWERED_BY_A9_8",
+    "OQ-RFQV2-05": "ANSWERED_BY_A9_8",
+    "OQ-RFQV2-06": "ANSWERED_BY_A9_8",
+    "OQ-RFQV2-08": "ANSWERED_BY_A9_8",
+    "OQ-RFQV2-09": "ANSWERED_BY_A9_10",
+    "OQ-RFQV2-10": "ANSWERED_BY_A9_10",
+    "P1-IT-52": "ANSWERED_BY_A9_8",
+    "P1-IT-55": "ANSWERED_BY_A9_8",
+    "OD2": "ANSWERED_BY_A9_14",
+    "OD3": "ANSWERED_BY_A9_14",
+    "OD5": "ANSWERED_BY_A9_14",
+    "OD6": "AMENDED_BY_A9_15",
+    "OD12": "ANSWERED_BY_A9_14",
+    "OD14": "ANSWERED_BY_A9_14",
+    "RVMQ-01": "ANSWERED_BY_A9_14",
+    "F0-OQ-01": "ANSWERED_BY_A9_14",
+    "F0-OQ-02": "ANSWERED_BY_A9_14",
+    "F1Q-01": "ANSWERED_BY_A9_9",
+    "F1Q-02": "ANSWERED_BY_A9_13",
+    "F1Q-03": "ANSWERED_BY_A9_13",
+    "F1Q-04": "ANSWERED_BY_A9_9",
+    "F2-OQ-01": "ANSWERED_BY_A9_13",
+    "F2-OQ-02": "ANSWERED_BY_A9_13",
+    "F2-OQ-03": "ANSWERED_BY_A9_13",
+    "F2-OQ-04": "ANSWERED_BY_A9_13",
+    "OQ-F3-01": "ANSWERED_BY_A9_9",
+    "OQ-F3-02": "ANSWERED_BY_A9_13",
+    "OQ-F3-03": "ANSWERED_BY_A9_13",
+    "OQ-F3-04": "ANSWERED_BY_A9_13",
+    "OQ-F4-01": "ANSWERED_BY_A9_13",
+    "OQ-F4-02": "ANSWERED_BY_A9_13",
+    "OQ-F4-03": "ANSWERED_BY_A9_13",
+    "OQ-F4-04": "ANSWERED_BY_A9_13",
+    "OQ-F4-05": "ANSWERED_BY_A9_13",
+    "F5-OQ-01": "ANSWERED_BY_A9_14",
+    "F5-OQ-02": "ANSWERED_BY_A9_14",
+    "F5-OQ-03": "ANSWERED_BY_A9_14",
+    "F5-OQ-04": "ANSWERED_BY_A9_14",
+    "F5-OQ-05": "ANSWERED_BY_A9_14",
+    "F6-OQ-01": "ANSWERED_BY_A9_14",
+    "F6-OQ-02": "ANSWERED_BY_A9_14",
+    "F6-OQ-03": "ANSWERED_BY_A9_14",
+    "F6-OQ-04": "ANSWERED_BY_A9_14",
+    "OQ-F78-01": "ANSWERED_BY_A9_13",
+    "OQ-F78-02": "ANSWERED_BY_A9_13",
+    "OQ-F78-03": "ANSWERED_BY_A9_13",
+    "OQ-F78-04": "ANSWERED_BY_A9_13",
+    "RUST-OQ-01": "ANSWERED_BY_A9_14",
+    "RUST-OQ-02": "ANSWERED_BY_A9_14",
+    "UPSTREAM_ICD-Q7": "ANSWERED_BY_A9_9",
+    "UPSTREAM_ICD-Q1": "ANSWERED_BY_A9_13",
+    "F9-OQ-01": "ANSWERED_BY_A9_13",
+    "F9-OQ-02": "ANSWERED_BY_A9_13",
+    "F9-OQ-03": "ANSWERED_BY_A9_13",
+    "F9-OQ-04": "ANSWERED_BY_A9_9"
+   }
+  },
+  "rule_v5": "answers come only from the owner (A9.8 .. A9.15, recorded in owner_questions_state_v5); this roll-up reports their status and answers nothing itself"
  },
  "open_owner_questions": [
   {
@@ -11110,30 +12130,792 @@
    "question": "Pareto representative rule for the upstream chain: carry the robust Pareto set (9 members at P_set 0.01 Pa: intake A 0.25 m^2, L/d 3-5, phi 0.8-0.9; compressor T6-A1-U2-D0-Ti6Al4V; V 0.001-0.1 m^3) to LOCK-1 as a set, or name a representative by an explicit rule (e.g. (a) maximum worst-case delivered flow, ties by minimum plenum volume; (b) minimum ripple transfer; (c) defer until T-1 / T-2 and DI-1.3 narrow the set)? No representative is selected by this lane.",
    "why_new": "A9.7 F9 allows a named representative only by an explicit rule that is itself an owner question",
    "needed_by": "LOCK-1",
-   "status": "TBD_OWNER"
+   "status": "OWNER_DECIDED",
+   "status_when_raised": "TBD_OWNER",
+   "decision": "A9.13 F9-OQ-01 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
+   "decision_code": "CARRY_SET_DEFER_REPRESENTATIVE",
+   "answer_verbatim": "20. S6.20 — F9-OQ-01 — CARRY THE ROBUST PARETO SET TO LOCK-1; DO NOT SELECT ONE REPRESENTATIVE YET.\n\nCarry a versioned robust Pareto set rather than a single upstream representative.\nThe currently reported nine-member set shall not be frozen verbatim because it must be regenerated after:\n\n* S2 production-model corrections;\n* intake-surface v2;\n* filter implementation/evidence;\n* the compressor search is expanded beyond the currently inherited F3-front subset;\n* T-1/T-2 data;\n* DI-1.3 surface evidence.\n\nOnly after those closures may an explicit representative-selection rule be proposed.\nUntil then downstream studies that require a single point shall either evaluate all remaining Pareto members or explicitly label a selected member as an engineering reference, not the frozen architecture.\nDecision: carry the set; defer representative selection."
   },
   {
    "id": "F9-OQ-02",
    "question": "Set the delivered-flow requirement at the H-1 inlet that the proposed architecture gate AG-12 (UG-FLOW) is scored against (owner row 73 gives a sizing flow ~1.3 mg/s and a characterization range 0.38-3.2 mg/s, neither a flight requirement): which value, at which orbit states / averaging?",
    "why_new": "no requirement exists; F4 / F7 report a parametric all-state frontier of 0.1027 mg/s and OQ-F4-04 asks only which lever to study",
    "needed_by": "LOCK-1 (before any upstream freeze)",
-   "status": "TBD_OWNER"
+   "status": "OWNER_DECIDED",
+   "status_when_raised": "TBD_OWNER",
+   "decision": "A9.13 F9-OQ-02 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
+   "decision_code": "PERFORMANCE_DERIVED_FEED_STATE",
+   "answer_verbatim": "21. S6.21 — F9-OQ-02 — DO NOT SET A FIXED FLIGHT MASS-FLOW REQUIREMENT; DERIVE IT FROM THE MEASURED H-1 THRUST MAP AND THE RFP DRAG-COMPENSATION REQUIREMENT.\n\nThere is no basis for setting `0.38 mg/s` as the flight requirement. Likewise, the existing approximately `1.3 mg/s` sizing value shall not become a flight requirement merely because it appears in an earlier design basis.\nThe official RFP instead defines the functional orbit and thrust requirement: 180–230 km, intake specification dependent on air density/solar activity, and 12–25 mN thrust for expected drag compensation. RFP(1)\nRedefine AG-12 as a feed-state sufficiency gate, not a fixed-number mass-flow gate.\nFor each required orbit/environment state:\n\n1. determine the required drag-compensation thrust from the registered spacecraft drag basis;\n2. use the measured/validated H-1 map for the actual atmospheric composition to determine the minimum feed state required to produce that thrust within the admitted power/thermal envelope;\n3. require the upstream chain to deliver at least that feed state.\n\nThe feed-state record shall include at least:\n\n* mass flow;\n* pressure;\n* temperature;\n* species composition;\n* applicable transient/ripple quality.\n\nUntil the validated H-1 thrust-versus-feed map exists, AG-12 remains `NOT_EVALUATED`.\nThe 0.38–3.2 mg/s ground range remains useful for characterization coverage but not as an architecture PASS/FAIL requirement.\nDecision: performance-derived, state-specific feed requirement; no arbitrary fixed mg/s flight gate.",
+   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
   },
   {
    "id": "F9-OQ-03",
    "question": "Approve the architecture-level gate list AG-01..AG-15 and the sufficiency criterion of each (e.g. RVM rows PASS by a DETERMINING measurement vs a weaker 'evidence sufficient for freeze') that moves the architecture from INVESTIGATION_HYPOTHESIS to FROZEN_REFERENCE_FLIGHT_ARCHITECTURE?",
    "why_new": "A9.7 F9 names the freeze rule but no register defines the gate set or its sufficiency criteria",
    "needed_by": "before Milestone B",
-   "status": "TBD_OWNER"
+   "status": "OWNER_DECIDED",
+   "status_when_raised": "TBD_OWNER",
+   "decision": "A9.13 F9-OQ-03 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
+   "decision_code": "AG_01_15_APPROVED_DETERMINING_EVIDENCE",
+   "answer_verbatim": "22. S6.22 — F9-OQ-03 — APPROVE AG-01…AG-15, WITH DETERMINING-EVIDENCE CLOSURE AND FOUR CLARIFICATIONS.\n\nApprove the architecture gate set AG-01 through AG-15 as the gate structure for moving from `INVESTIGATION_HYPOTHESIS` toward `FROZEN_REFERENCE_FLIGHT_ARCHITECTURE`.\nA gate closes only on determining evidence appropriate to that gate:\n\n* measured/test evidence for performance quantities;\n* correlated/validated analysis where the accepted methodology explicitly permits it;\n* inspected/weighed/certified configuration evidence for hardware/mass/material items;\n* official source documentation for requirements.\n\nAssumptions, parametric sensitivities, analog values, code defaults, supplier marketing values or \"evidence seems sufficient\" are not determining closure evidence.\nApply these clarifications:\nAG-03:\n Do not attempt to rewrite the immutable P5-N2 v1 `INCONCLUSIVE` result. That historical result stays unchanged. Closure requires a separately preregistered successor held-out predictive validation that admits a Hall-transport member.\nAG-12:\n Use the S6.21 performance-derived feed-state sufficiency rule, not 0.38 mg/s.\nAG-13:\n Use the S6.15 statewise `T - D_spacecraft >= 0` criterion.\nAG-15:\n The official RFP is now available to the project, but before this gate closes it must be placed/registered in the repository evidence system with immutable provenance/hash and the RVM requirements re-based against it. The repository may not continue relying only on secondary transcriptions.\nAll 15 gates must be closed before the architecture is labelled `FROZEN_REFERENCE_FLIGHT_ARCHITECTURE`; unresolved gates remain explicit blockers.\nDecision: AG-01…AG-15 APPROVED with the determining-evidence standard and clarifications above."
   },
   {
    "id": "F9-OQ-04",
    "question": "Model-change candidates MCC-02 (silent Gaede clipping), MCC-03 (uncited rotor allowable in rotor_ok) and MCC-05..MCC-07 (intake_tpmc reference: non-termination for max_hits < 1, silent Maxwell fallback for an unknown kernel, NaN / raise for CLL alpha outside [0, 1]): authorize each as a controlled model change (golden check, HISTORY entry), or keep the design-layer workarounds?",
    "why_new": "MCC-01 (F1Q-01) and MCC-04 (UPSTREAM_ICD Q7) already have owner questions; these five do not",
    "needed_by": "next production-model revision",
-   "status": "TBD_OWNER"
+   "status": "OWNER_DECIDED",
+   "status_when_raised": "TBD_OWNER",
+   "decision": "A9.9 F9-OQ-04 (docs/decisions/OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json sha256 b6010d9d2856ab21b15d49e477ade8246b9d6e90d4dfa1cc07c4468c10a1e47b)",
+   "decision_code": "YES_ALL_FIVE",
+   "answer_verbatim": "5. S2.5 — F9-OQ-04 — AUTHORISE ALL FIVE CONTROLLED FIXES.\nMCC-02 — Gaede clipping:\nFix. Preserve/report the unclipped Gaede characteristic. If the physical relation produces `K < 1`, do not silently convert that state into a valid `K = 1` compressor result. Flag it as outside the admitted model/stage-capacity domain and exclude it from valid design evidence. A clipped value may be retained only as a labelled diagnostic quantity.\nMCC-03 — rotor allowable fallback:\nFix together with S2.3. Remove the uncited generic material-DB yield as an implicit production acceptance criterion. Rotor qualification must use the registered strength-basis record. Missing structural evidence gives `NOT_EVALUATED`, not an assumed PASS.\nMCC-05 — `max_hits < 1` non-termination:\nFix. Validate the input before particle tracing. `max_hits` and related hit-budget parameters shall have valid positive integer domains. Invalid input shall be rejected explicitly; the routine must never hang or depend on accidental loop behaviour.\nMCC-06 — unknown scattering-model fallback:\nFix. An unrecognised wall-scattering model shall raise/refuse an invalid configuration. It shall never silently fall back to Maxwell. Maxwell and CLL must be explicitly selected and recorded.\nMCC-07 — invalid CLL accommodation coefficients:\nFix. Require finite CLL accommodation inputs inside their admitted physical interval [0,1] before simulation. NaN, infinity or out-of-range coefficients shall be rejected explicitly before entering the kernel; they shall not produce NaNs downstream or be silently clipped.\nFor all five changes:\n   * add focused unit/regression tests;\n   * run the complete golden suite;\n   * document each change separately in `docs/HISTORY.md`;\n   * regenerate downstream artifacts where results genuinely change;\n   * preserve old benchmark/provenance records;\n   * never retune unrelated parameters merely to reproduce the previous golden values.\nDecision: YES — all five controlled model fixes are authorised.",
+   "application_status": "PENDING_STEP_2_MODEL_CHANGE"
   }
  ],
+ "a9_16_owner_answers_applied": [
+  {
+   "decision": "A9.13",
+   "question_id": "F9-OQ-03",
+   "sequenced_no": "S6.22",
+   "decision_code": "AG_01_15_APPROVED_DETERMINING_EVIDENCE",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+   "decision_json_sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
+   "decision_md_sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "architecture_gates[*].owner_approved",
+    "AG-03",
+    "AG-12",
+    "AG-13",
+    "AG-15"
+   ],
+   "how_applied": "AG-01..AG-15 approved with the determining-evidence standard (gate_closes, fail closed); AG-03 successor held-out validation; AG-15 BLOCKED_RFP_NOT_REGISTERED",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.13",
+   "question_id": "F9-OQ-02",
+   "sequenced_no": "S6.21",
+   "decision_code": "PERFORMANCE_DERIVED_FEED_STATE",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+   "decision_json_sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
+   "decision_md_sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AG-12"
+   ],
+   "how_applied": "AG-12 = statewise feed-state sufficiency, NOT_EVALUATED until the validated H-1 thrust-vs-feed map; 0.38 mg/s gate removed, 0.38-3.2 mg/s coverage only (ag12_feed_state_sufficiency refuses a fixed gate)",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ],
+   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+  },
+  {
+   "decision": "A9.13",
+   "question_id": "OQ-F78-01",
+   "sequenced_no": "S6.15",
+   "decision_code": "HARD_STATEWISE",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+   "decision_json_sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
+   "decision_md_sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AG-13"
+   ],
+   "how_applied": "statewise T - D >= 0 (ag13_statewise; orbit average reported only)",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.13",
+   "question_id": "OQ-F78-04",
+   "sequenced_no": "S6.18",
+   "decision_code": "SOURCING_FOR_PARAMETRIC_ICD_FOR_CLOSURE",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+   "decision_json_sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
+   "decision_md_sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AG-13"
+   ],
+   "how_applied": "D_spacecraft NOT_EVALUATED for freeze until the actual ICD",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.13",
+   "question_id": "F9-OQ-01",
+   "sequenced_no": "S6.20",
+   "decision_code": "CARRY_SET_DEFER_REPRESENTATIVE",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+   "decision_json_sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
+   "decision_md_sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "upstream_pareto.representative"
+   ],
+   "how_applied": "robust Pareto set carried; no representative (DEFERRED_BY_OWNER)",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.13",
+   "question_id": "OQ-F78-02",
+   "sequenced_no": "S6.16",
+   "decision_code": "ALL_ADMITTED_SCENARIOS",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+   "decision_json_sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
+   "decision_md_sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "upstream_pareto.robust_rule_owner"
+   ],
+   "how_applied": "all admitted surface scenarios",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.9",
+   "question_id": "F9-OQ-04",
+   "sequenced_no": "S2.5",
+   "decision_code": "YES_ALL_FIVE",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json",
+   "decision_json_sha256": "b6010d9d2856ab21b15d49e477ade8246b9d6e90d4dfa1cc07c4468c10a1e47b",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_9_S2_MODEL_CHANGE_OWNER_DECISIONS.md",
+   "decision_md_sha256": "25458fb86c36a7357372a0e4cc7a7a7781c3600e0f401f6d89357c957d5542e0",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "MCC-02",
+    "MCC-03",
+    "MCC-05",
+    "MCC-06",
+    "MCC-07",
+    "MCC-08"
+   ],
+   "how_applied": "owner-authorised; PENDING_STEP_2_MODEL_CHANGE (not implemented here)",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.9",
+   "question_id": "F1Q-01",
+   "sequenced_no": "S2.1",
+   "decision_code": "YES_PRODUCTION_FIX",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json",
+   "decision_json_sha256": "b6010d9d2856ab21b15d49e477ade8246b9d6e90d4dfa1cc07c4468c10a1e47b",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_9_S2_MODEL_CHANGE_OWNER_DECISIONS.md",
+   "decision_md_sha256": "25458fb86c36a7357372a0e4cc7a7a7781c3600e0f401f6d89357c957d5542e0",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "MCC-01"
+   ],
+   "how_applied": "owner-authorised; PENDING_STEP_2_MODEL_CHANGE",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.9",
+   "question_id": "UPSTREAM_ICD-Q7",
+   "sequenced_no": "S2.4",
+   "decision_code": "YES_NOW",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json",
+   "decision_json_sha256": "b6010d9d2856ab21b15d49e477ade8246b9d6e90d4dfa1cc07c4468c10a1e47b",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_9_S2_MODEL_CHANGE_OWNER_DECISIONS.md",
+   "decision_md_sha256": "25458fb86c36a7357372a0e4cc7a7a7781c3600e0f401f6d89357c957d5542e0",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "MCC-04"
+   ],
+   "how_applied": "owner-authorised; PENDING_STEP_2_MODEL_CHANGE",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.13",
+   "question_id": "F1Q-02",
+   "sequenced_no": "S6.1",
+   "decision_code": "BUDGETING_ASSUMPTION_SOURCED_BEFORE_LOCK_1",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+   "decision_json_sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
+   "decision_md_sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-UP-IN-05"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.13",
+   "question_id": "F1Q-03",
+   "sequenced_no": "S6.2",
+   "decision_code": "AOCS_ENVELOPE_REQUIRED",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+   "decision_json_sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
+   "decision_md_sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-UP-IN-07"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.13",
+   "question_id": "F2-OQ-01",
+   "sequenced_no": "S6.3",
+   "decision_code": "PARTICULATE_DEBRIS_PROTECTION",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+   "decision_json_sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
+   "decision_md_sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-UP-FI-01"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ],
+   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+  },
+  {
+   "decision": "A9.13",
+   "question_id": "F2-OQ-02",
+   "sequenced_no": "S6.4",
+   "decision_code": "CATALYTIC_NOT_BASELINE",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+   "decision_json_sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
+   "decision_md_sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-UP-FI-01"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.13",
+   "question_id": "F2-OQ-03",
+   "sequenced_no": "S6.5",
+   "decision_code": "NO_FILTER_REFERENCE_ONLY",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+   "decision_json_sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
+   "decision_md_sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-UP-FI-01"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ],
+   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+  },
+  {
+   "decision": "A9.13",
+   "question_id": "F2-OQ-04",
+   "sequenced_no": "S6.6",
+   "decision_code": "COMPRESSOR_INLET_PLUS_APP_FILTER",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+   "decision_json_sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
+   "decision_md_sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-UP-FI-02"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.9",
+   "question_id": "OQ-F3-01",
+   "sequenced_no": "S2.3",
+   "decision_code": "REGISTERED_ROTOR_STRENGTH_BASIS_FAIL_CLOSED",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json",
+   "decision_json_sha256": "b6010d9d2856ab21b15d49e477ade8246b9d6e90d4dfa1cc07c4468c10a1e47b",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_9_S2_MODEL_CHANGE_OWNER_DECISIONS.md",
+   "decision_md_sha256": "25458fb86c36a7357372a0e4cc7a7a7781c3600e0f401f6d89357c957d5542e0",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-UP-CO-04"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.13",
+   "question_id": "OQ-F4-01",
+   "sequenced_no": "S6.10",
+   "decision_code": "SCHEDULED_BASELINE_FIXED_FALLBACK",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+   "decision_json_sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
+   "decision_md_sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-UP-PL-03"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.14",
+   "question_id": "F6-OQ-04",
+   "sequenced_no": "S7.9",
+   "decision_code": "DELTA_B_ACC_MAX_5_PERCENT_PROVISIONAL",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-PR-ICP-05"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.8",
+   "question_id": "OQ-RFQV2-06",
+   "sequenced_no": "S1.13",
+   "decision_code": "YES",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+   "decision_json_sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md",
+   "decision_md_sha256": "8e770d0edf056a0402f6ec8c86a2a2feec169ab971fae788c7a9a620211e1aa0",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-PR-CL-04"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.8",
+   "question_id": "OQ-RFQV2-08",
+   "sequenced_no": "S1.14",
+   "decision_code": "BOTH_SUPPLIER_AND_IN_HOUSE",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+   "decision_json_sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md",
+   "decision_md_sha256": "8e770d0edf056a0402f6ec8c86a2a2feec169ab971fae788c7a9a620211e1aa0",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-PR-CL-04"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.14",
+   "question_id": "RVMQ-01",
+   "sequenced_no": "S9.13",
+   "decision_code": "REBASE_ELECTRONICS_SENSOR_REDUNDANCY_NO_FULL_THRUSTER_DUPLICATION",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-SY-PPU-07"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ],
+   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+  },
+  {
+   "decision": "A9.14",
+   "question_id": "OD12",
+   "sequenced_no": "S9.11",
+   "decision_code": "GATE_IC_REDUNDANCY_AND_ATOMIC_O_REQUIREMENTS",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-SY-PPU-07"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ],
+   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+  },
+  {
+   "decision": "A9.14",
+   "question_id": "MQ-03",
+   "sequenced_no": "S8.8",
+   "decision_code": "REBASE_AL04_FROM_H1_CBE_NO_RESERVE_PATCH",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-SY-MASS-AL-04"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.14",
+   "question_id": "MQ-04",
+   "sequenced_no": "S8.9",
+   "decision_code": "REBASE_AL07_PPU_MIN_6KG_MEV_PLANNING_FLOOR",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-SY-MASS-AL-07"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.14",
+   "question_id": "MQ-05",
+   "sequenced_no": "S8.10",
+   "decision_code": "AL08_FULL_XE_SYSTEM_REBASE_FROM_CBE",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-SY-MASS-AL-08"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.14",
+   "question_id": "MQ-01",
+   "sequenced_no": "S8.6",
+   "decision_code": "MQ01_MEV_LEVEL",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-SY-MASS-ROLL"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.14",
+   "question_id": "MQ-02",
+   "sequenced_no": "S8.7",
+   "decision_code": "SYSTEM_MARGIN_20_PERCENT_REPLACES_4KG_RESERVE",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-SY-MASS-ROLL"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.14",
+   "question_id": "MQ-10",
+   "sequenced_no": "S8.14",
+   "decision_code": "MASS_CLOSURE_REQUIRES_REDESIGN_NOT_MARGIN_RELAXATION",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-SY-MASS-ROLL"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.14",
+   "question_id": "OD5",
+   "sequenced_no": "S9.9",
+   "decision_code": "ICP_FIRST_HALL_SECOND_MAX_3_ATTEMPTS",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-SY-CTL-01"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.13",
+   "question_id": "OQ-F4-03",
+   "sequenced_no": "S6.12",
+   "decision_code": "YES_PROVISIONAL",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+   "decision_json_sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
+   "decision_md_sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-SY-CTL-04"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.14",
+   "question_id": "XA9Q-07",
+   "sequenced_no": "S8.21",
+   "decision_code": "YES_XE_PROPULSION_CAPABILITY_BOTH_CONFIGURATIONS",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-SY-XE-01"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ],
+   "amended_by": {
+    "decision": "A9.15",
+    "decision_json": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
+    "decision_json_sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
+    "pointer": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json#/amendments/XA9Q-07",
+    "verbatim_excerpt": "S8.21 / XA9Q-07: YES — Xe capability applies to the `hall_icp_neutralizer` flight configuration because the RFP requires it."
+   },
+   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+  },
+  {
+   "decision": "A9.14",
+   "question_id": "OD6",
+   "sequenced_no": "S9.10",
+   "decision_code": "DUAL_PROPELLANT_SEPARATE_MODES_NOT_PREMIX",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-SY-XE-01"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ],
+   "amended_by": {
+    "decision": "A9.15",
+    "decision_json": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
+    "decision_json_sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
+    "pointer": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json#/amendments/OD6",
+    "verbatim_excerpt": "S9.10 / OD6: “air + Xe” means the system must provide both ambient-air and Xenon operating capability; it should not be weakened into a contingency interpretation."
+   },
+   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+  },
+  {
+   "decision": "A9.14",
+   "question_id": "XA9Q-01",
+   "sequenced_no": "S8.18",
+   "decision_code": "LOADED_XE_CASES",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-SY-XE-03"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.14",
+   "question_id": "MQ-09",
+   "sequenced_no": "S8.13",
+   "decision_code": "LOADED_CASE_INCLUDES_RESERVE_AND_RESIDUAL",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-SY-XE-03"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.14",
+   "question_id": "OQ-A910-01",
+   "sequenced_no": "S8.27",
+   "decision_code": "UNIFY_BOTH_LEDGERS_LOADED_XE",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-SY-XE-03"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.14",
+   "question_id": "XA9Q-06",
+   "sequenced_no": "S8.20",
+   "decision_code": "QUOTE_DERIVED_MEOP_AT_323K",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-SY-XE-06"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.14",
+   "question_id": "OQ-RFQ-09",
+   "sequenced_no": "S8.26",
+   "decision_code": "SUPPLIER_PROPOSES_MEOP_FINAL_AFTER_QUOTATIONS",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-SY-XE-06"
+   ],
+   "how_applied": "parameter row updated (value / basis / freeze status / evidence to advance) with the decision source",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.15",
+   "question_id": "A9.15 governing_rule",
+   "decision_code": "A9_15_RFP_COMPLIANT_PROPELLANT_POLICY",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
+   "decision_json_sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
+   "decision_md_sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "AFC-SY-XE-01",
+    "configuration"
+   ],
+   "how_applied": "Xe = RFP-required system capability in both configurations, separate air / Xe tanks and modes; C1 Xe only if a selected C1 needs it; ICP gas mode G-REUSE unchanged",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ],
+   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+  }
+ ],
+ "a9_16_touched_parameters": [
+  "AFC-UP-IN-05",
+  "AFC-UP-IN-07",
+  "AFC-UP-FI-01",
+  "AFC-UP-FI-02",
+  "AFC-UP-CO-04",
+  "AFC-UP-PL-03",
+  "AFC-PR-ICP-05",
+  "AFC-PR-CL-04",
+  "AFC-SY-PPU-07",
+  "AFC-SY-MASS-AL-04",
+  "AFC-SY-MASS-AL-07",
+  "AFC-SY-MASS-AL-08",
+  "AFC-SY-MASS-ROLL",
+  "AFC-SY-CTL-01",
+  "AFC-SY-CTL-04",
+  "AFC-SY-XE-01",
+  "AFC-SY-XE-03",
+  "AFC-SY-XE-06",
+  "AFC-SY-XE-08"
+ ],
+ "a9_16_evaluators": {
+  "gate_closes": "docs/architecture/freeze_candidate/a9_16_f9.py:gate_closes (determining evidence only)",
+  "ag12": "docs/architecture/freeze_candidate/a9_16_f9.py:ag12_feed_state_sufficiency (NOT_EVALUATED today)",
+  "ag13": "docs/architecture/freeze_candidate/a9_16_f9.py:ag13_statewise (NOT_EVALUATED today)",
+  "pending": "optimizer / model code changes of A9.13 are PENDING_STEP_3_ARCHITECTURE; A9.9 model changes PENDING_STEP_2_MODEL_CHANGE"
+ },
  "interface_demands": [
   {
    "id": "F9-ID-01",
@@ -11241,22 +13023,22 @@
   {
    "id": "F9-03",
    "evidence_class": "model-derived (PARAMETRIC_SENSITIVITY inputs)",
-   "finding": "upstream flow gap: robust worst-case delivered flow [0.00813428, 0.00840947] mg/s and all-state frontier 0.1027 mg/s vs the owner characterization lower end 0.38 mg/s and nominal sizing ~1.3 mg/s (row 73); not a FAIL (strict mode NOT_EVALUATED; requirement not set, F9-OQ-02)"
+   "finding": "upstream flow gap: robust worst-case delivered flow [0.00813428, 0.00840947] mg/s and all-state frontier 0.1027 mg/s, low relative to the 0.38-3.2 mg/s ground-characterization coverage (row 73): an engineering warning, not a demonstrated requirement failure; 0.38 and ~1.3 mg/s are not flight requirements and AG-12 is the statewise feed-state sufficiency gate (A9.13 F9-OQ-02)"
   },
   {
    "id": "F9-04",
    "evidence_class": "inferred",
-   "finding": "freeze-status roll-up over 205 parameters: {'FREEZE_CANDIDATE': 48, 'OPEN': 64, 'TBD_AFTER_EVIDENCE': 68, 'TBD_OWNER': 25}; every FREEZE_CANDIDATE is an owner decision, convention, rule or allocation; no computed performance value is a freeze candidate"
+   "finding": "freeze-status roll-up over 205 parameters: {'FREEZE_CANDIDATE': 53, 'OPEN': 71, 'TBD_AFTER_EVIDENCE': 76, 'TBD_OWNER': 5}; every FREEZE_CANDIDATE is an owner decision, convention, rule or allocation; no computed performance value is a freeze candidate"
   },
   {
    "id": "F9-05",
    "evidence_class": "inferred",
-   "finding": "7 production-model issues registered as model-change candidates (MCC-01..07); none implemented here; each needs an owner decision and a HISTORY entry"
+   "finding": "7 production-model issues registered as model-change candidates (MCC-01..07); all owner-authorised (A9.9 F1Q-01 / UPSTREAM_ICD-Q7 / F9-OQ-04); none implemented here (PENDING_STEP_2_MODEL_CHANGE, each with a HISTORY entry)"
   },
   {
    "id": "F9-06",
    "evidence_class": "inferred",
-   "finding": "owner roll-up: 95 state v4 TBD_OWNER rows, 34 A9.7 lane questions (F0-F8, Rust), 4 new F9 questions; none answered"
+   "finding": "owner roll-up: 95 state v4 TBD_OWNER rows, 34 A9.7 lane questions (F0-F8, Rust), 4 new F9 questions; all answered by the owner (A9.8 .. A9.14, A9.15 amendments); state v5 TBD_OWNER: 1 (MPV3Q-01)"
   }
  ],
  "m16_impact": [

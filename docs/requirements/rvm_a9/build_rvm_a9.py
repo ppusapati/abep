@@ -47,6 +47,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[2]
 LANE_REL = "docs/requirements/rvm_a9"
+sys.path.insert(0, str(HERE))
+import a9_16_rvm as A16  # noqa: E402  (A9.16 step 1 owner-decision application, integration lane)
 JSON_NAME = "rvm_a9_v1.json"
 MD_NAME = "RVM_A9.md"
 TEST_REL = "tests/test_rvm_a9.py"
@@ -101,6 +103,11 @@ PINS = {
             "7d77d2831214f3f3d96c8254ea43643ada15e7d1ce0685dec86a65eb79a8f65f",
             "historical lane-24 hard-gate matrix v1 (RFP records R1-R7, OD1-OD14)"),
 }
+for _k in ("A9.12", "A9.13", "A9.14", "A9.15"):
+    PINS["A" + _k[1:].replace(".", "")] = (
+        A16.L.LOADED[_k]["json"], A16.L.LOADED[_k]["json_sha256"], f"owner decisions {_k} (applied: A9.16 step 1)")
+    PINS["A" + _k[1:].replace(".", "") + "_MD"] = (A16.L.LOADED[_k]["md"], A16.L.LOADED[_k]["md_sha256"],
+                                                   f"owner decisions {_k} (verbatim; governs)")
 HISTORICAL_KEYS = ("RTM", "HGM", "R2")
 HISTORICAL_EXTRA = {
     "docs/traceability/RTM.md": "ce5b608a5079a86d1b2096f222266f558fab2ebdabc1aa8dfef3153076faa802",
@@ -973,6 +980,7 @@ def build_doc():
             "no_archengine_wiring": True, "pins_mutable_governance": False, "no_pass_row": True,
         },
     }
+    doc = A16.apply(doc)
     R.assert_status_vocabulary(doc)
     R.assert_no_pass_without_measurement(doc)
     for r in rows:
@@ -1105,11 +1113,21 @@ def render_md(doc):
     for d in doc["decisions_applied"]:
         a(f"- {d['decision_id']} `{d['key']}`: {_esc(d['how_applied'])}")
     a("")
-    a("## (d) Open owner questions (new in this lane)")
+    a("## (d) Owner questions raised by this lane")
     a("")
     for q in doc["open_owner_questions"]:
-        a(f"- **{q['id']}** ({q['status']}, needed by {q['needed_by']}): {q['question']} Readings: "
-          + " / ".join(q["admissible_readings"]) + f". Why new: {q['why_new']}.")
+        a(f"- **{q['id']}** ({q['status']} {q.get('decision_code', '')}, needed by {q['needed_by']}): {q['question']} "
+          "Readings: " + " / ".join(q["admissible_readings"]) + f". Why new: {q['why_new']}.")
+    a("")
+    a("## (d2) A9.16 owner decisions applied")
+    a("")
+    a(doc["a9_16_rfp_rule"] + ".")
+    a("")
+    for g in doc["a9_16_compliance_gates"]:
+        a(f"- compliance gate {g['id']} ({g['gate']}; {g['rvm_row']}): {g['status']}")
+    for r in doc["rows"]:
+        if "a9_16" in r:
+            a(f"- {r['id']}: " + _esc("; ".join(f"{k}: {v}" for k, v in r["a9_16"].items() if k != "decisions")))
     a("")
     a("## (e) Historical reuse")
     a("")

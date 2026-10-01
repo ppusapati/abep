@@ -231,10 +231,21 @@ def test_s01_rvm_open_readings_agree_with_state_v4():
     rvm = json.loads((ROOT / "docs/requirements/rvm_a9/rvm_a9_v1.json").read_text(encoding="utf-8"))
     v4 = {r["id"]: r for r in json.loads((ROOT / "docs/budgets/owner_decisions/owner_questions_state_v4.json")
                                         .read_text(encoding="utf-8"))["rows"]}
+    # A9.16 step 1: readings answered by the owner (A9.8 .. A9.15) name state v5 as their register and must be
+    # answered there; the others still agree with state v4 by status
+    v5 = {}
+    for r in json.loads((ROOT / "docs/budgets/owner_decisions/owner_questions_state_v5.json")
+                        .read_text(encoding="utf-8"))["rows"]:
+        if r.get("v4_status") == "TBD_OWNER" or r["status"] == "TBD_OWNER":
+            v5[r["id"]] = r
     n = 0
     for row in rvm["rows"]:
         for o in row.get("open_readings", []):
-            assert o["id"] in v4 and v4[o["id"]]["status"] == o["status"], (row["id"], o["id"])
+            if o["current_register"].endswith("owner_questions_state_v5.json"):
+                assert o["status"] == "OWNER_DECIDED" and v4[o["id"]]["status"] == "TBD_OWNER", (row["id"], o["id"])
+                assert v5[o["id"]]["status"].startswith(("ANSWERED_BY_A9_", "AMENDED_BY_A9_15")), (row["id"], o["id"])
+            else:
+                assert o["id"] in v4 and v4[o["id"]]["status"] == o["status"], (row["id"], o["id"])
             n += 1
     assert n > 0
     od13 = [o for r in rvm["rows"] if r["id"] == "RVM-12" for o in r["open_readings"] if o["id"] == "OD13"]
