@@ -2761,3 +2761,134 @@ D-09). Recorded separately from the S2.2 entry above, where it was first logged.
 evaluated the frozen surface at `min(off_axis_deg, 5)` and with accommodation clipped to [0, 1]; both now go to
 `IntakeSurface` as given, and anything outside the frozen domain raises. The same applies to the AO-aged accommodation in
 `mission5` (review fix D-08). Golden impact: none (all golden states are inside the domain).
+## 2026-10-01 — A9.17 DATA_SIZE / ORBIT applied to `atmosphere_msis21_orbit_v1` (storage + labels; content unchanged)
+
+Authority: `docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json` (sha256 9fd77c95…c3ad; verbatim
+`OD_2026_10_01_A9_17_DATA_ARTIFACT_OWNER_DECISIONS.md`, sha256 540212c0…ba13), decision keys DATA_SIZE and ORBIT.
+
+- **One canonical compressed copy.** The 17.2 MB `atmosphere_msis21_orbit_v1.csv` is replaced by
+  `atmosphere_msis21_orbit_v1.csv.gz` (4.6 MB; deterministic gzip: explicit header, MTIME 0, no file name, XFL 2, OS 255,
+  raw deflate level 9). The decompressed bytes are identical to the v1 CSV: sha256
+  c0ce282e99695be8cae0834270c5b9ff7853033255665abda7ec18c307566164, unchanged, checked byte-for-byte against the
+  committed blob. The manifest JSON now records both the uncompressed-CSV sha256 (`sha256`, the dataset identity) and
+  the container sha256 (`container.sha256` 71ce01c3…8ace, zlib 1.3). The accessor reads the .gz and verifies both hashes
+  on load. `build` writes the .gz. `check` verifies both hashes, re-encodes the CSV, and re-runs the pymsis subset (OK).
+  `correct-metadata` repacks a legacy CSV and applies errata E3/E4. No MSIS re-run was needed; the data did not change.
+- **Excluded from the installed package.** No installed production module imports `abep_sim.atmosphere_orbit`.
+  `pyproject.toml` package-data is now an explicit file list (the frozen orbit-averaged v1 atmosphere, intake surface,
+  goldens and rate tables still ship). `exclude-package-data` and `MANIFEST.in exclude` drop `atmosphere_msis21_orbit_v1*`;
+  a wheel and an sdist built locally were verified to omit the files. Without the data the accessor raises
+  FileNotFoundError naming `abep_sim/data/atmosphere_msis21_orbit_v1.csv.gz`; there is no fallback.
+- **Orbit labels.** The mission_env 96.3° / dawn-dusk orbit is labelled `CODE_DEFAULT / PARAMETRIC` (never a requirement
+  input; inclination and LTAN TBD from the official mission ICD). This applies to the manifest `orbit_coverage`,
+  `mission_env_orbit_assumption`, the `orbit_states` per-state status and the design-state rule and `orbit_basis`. The
+  design-states file was regenerated with **label changes only**: the 179 per-state records were kept verbatim, and the
+  content hash is pinned in the tests.
+- Open (not changed here): (1) the v1 design-state latitude bound (|lat| ≤ 83.75°) comes from the code-default SSO
+  family. Inclinations between ~83.75° and ~96.25° reach higher latitudes; the grid covers them, the design-state set
+  does not. (2) Per-state `interp_max_rel_err_rho` is null for the 26 interpolated boundary design states, a v1 build
+  ordering defect recorded in E4. Both are for the next design-state version.
+
+## 2026-10-01 — A9.17 ORBIT repair (PKG-1): versioned broad-envelope design-state set v2 (v1 files unchanged)
+
+Authority: `docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json` (sha256 9fd77c95…c3ad), decision key
+ORBIT ("Keep the atmosphere/design-state envelope broad enough until DRDO, the spacecraft ICD, or the PDR mission
+definition supplies the real inclination and LTAN"). Review finding PKG-1: the previous entry relabelled the 83.75° bound,
+but the code-default SSO family still set the only design-state envelope.
+
+- New file `abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json`, written by `python -m abep_sim.atmosphere_orbit
+  design-states-v2` (deterministic; refuses to overwrite a file with different content).
+  - Candidate pool: every doy / longitude / local-time node at every integer latitude −90…90°. All 19 latitude nodes are
+    included, poles too. Off-node latitudes use the accessor's own latitude interpolation, and each such state carries its
+    recorded interpolation error.
+  - The pool does not use `mission_env.sso_inclination_deg`: a test swaps that default and reproduces the file.
+  - Same selection rule as v1. The set has 196 states.
+  - The envelope now includes the polar extrema, e.g. T max 1824.27 K at −87° (v1: 1820.38 K).
+  - Refining the latitude step to 0.25° changes the extrema by ≤ 5.5e-4 relative (recorded in the file). v2 matches or
+    exceeds every v1 envelope extremum within that tolerance.
+- `load_design_states()` now defaults to v2; `load_design_states("v1")` returns the immutable v1 set. The manifest gains
+  `design_states_file_v2` and erratum E5, and `orbit_coverage.design_state_envelope.latitude_status` is RESOLVED. `check`
+  reproduces v2 byte for byte (OK).
+- Unchanged, and hash-pinned in the tests: the dataset (uncompressed CSV sha256 c0ce282e…6164, container 71ce01c3…8ace)
+  and the v1 design-state file (sha256 d8bd369b…a40). The existing `atmosphere_msis21_orbit_v1*` glob keeps v2 out of
+  the installed package.
+
+## 2026-10-01 — A9.17 WINDS: atmosphere v2 with HWM14 neutral winds (`atmosphere_msis21_hwm14_orbit_v2`; v1 unchanged)
+
+Authority: `docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json` (sha256 9fd77c95…c3ad). Decision key
+WINDS (`AUTHORIZE_HWM14_ATMOSPHERE_V2_KEEP_V1_IMMUTABLE`); ORBIT and DATA_SIZE from the same record also apply. Status:
+**DESIGN_ENVELOPE_PARAMETRIC**. This is not a mission trajectory.
+
+- **Source.** HWM14 version HWM14.123114 comes from the NRL public repository
+  (`https://map.nrl.navy.mil/map/pub/nrl/HWM/HWM14/`). The package is `HWM14_ess224-sup-0002-supinfo.tgz` (sha256
+  4de451be…7978), Software S1 of Drob et al. 2015, ESS, doi:10.1002/2014EA000089. The register in `docs/evidence/hwm14/`
+  records the sha256 of every file, the CCMC page, the terms found, and why PyPI `pyhwm2014` 1.1 was rejected (no
+  coefficient files; built with `numpy.distutils`).
+  - The repository redistributes no HWM14 code or data. `fetch-hwm14` downloads the package and verifies every hash.
+  - Usage terms are not explicit: the package has no licence text, and the article is CC BY-NC-ND. Recorded as open
+    (TERMS_NOT_EXPLICIT, verify).
+- **Build validation.** gfortran 13.3.0, default flags. NRL's `checkhwm14` output is text-identical to the shipped
+  `Check/gfortran.txt`. Every build and every HWM14-enabled `check` repeats this comparison and refuses on any difference.
+- **Content.**
+  - (1) Node table on the v1 grid and v1 scenarios. The grid is imported from `atmosphere_orbit`. For each node it stores
+    the HWM14 total and quiet meridional/zonal wind, plus the exact HWM14 inputs: iyd, UT seconds, geodetic coordinates
+    and ap(2) = the scenario's ECSS Ap held constant as the 3-hour ap (0/15/45/240 → Kp 0/3/4.89/8.35).
+  - (2) DWM07 disturbance table on lat 5° × lon 15° × LST 1 h × the 8 v1 doy nodes (681,984 rows). The v1 grid alone gave
+    joint errors up to 143 m/s at ECSS short-term high, because DWM07 follows magnetic coordinates. DWM07 varies by
+    ≤ 6.7e-4 m/s between 180 and 230 km (measured).
+  - Thermodynamic state: v1 through its unchanged accessor, pinned by sha256 c0ce282e…6164. The NRLMSIS table is not
+    stored a second time.
+- **Measured interpolation error** (1500 random points per scenario vs direct HWM14), max |wind-vector error|: 5.6 / 4.9 /
+  7.6 / 14.4 m/s for LT low / moderate / high and ST high. The resulting error in the wind-inclusive relative speed is
+  ≤ 13.7 m/s; in the flow angle, ≤ 0.09°.
+- **API.**
+  - `wind`, `state`: v1 state plus winds. Out-of-domain inputs are refused.
+  - `relative_flow`: for a caller-supplied inertial ENU velocity, returns (a) relative speed and angles against the
+    co-rotating atmosphere and (b) the same with co-rotation + HWM14 wind.
+  - `orbit_states`: the v1 geometry. Inclination and LTAN are required inputs with no defaults, and the co-rotating
+    speed reproduces v1 within 1e-6 m/s.
+- **Storage.** Two deterministic gzip files (2.4 MB + 8.4 MB) plus a manifest. A rebuild is byte-identical, JSON
+  included. The files are excluded from the wheel through `pyproject` `exclude-package-data`.
+- **Open items.**
+  - `MANIFEST.in` still pulls the 28 KB manifest JSON into the sdist; it needs an `exclude` line, and that file is
+    outside this lane.
+  - `tests/test_atmosphere_orbit.py::test_not_wired_into_existing_modules` fails, because it forbids any
+    `atmosphere_orbit` reference outside v1 and v2 must import v1. The fix is to exempt `atmosphere_orbit_v2.py`; that
+    file is outside this lane.
+  - `tests/test_packaging.py` hard-codes v1 as the only repository-only dataset, so three of its tests fail:
+    `test_package_data_covers_abep_sim_data`, `test_orbit_dataset_excluded_from_distribution` and
+    `test_manifest_in_carries_data`, the last because of the new `.gz` suffix under `recursive-include`. The fix is to add
+    the v2 glob next to `REPO_ONLY_GLOB` and to `MANIFEST.in`; both files are outside this lane. Built with `python -m
+    build`: the wheel contains no v2 data; the sdist contains only the manifest JSON.
+  - No wind-specific design-state set exists, because the relative-flow extremes depend on the TBD orbit.
+
+## 2026-10-01 — A9.17 WINDS repair: review findings HWM-2 / HWM-3 fixed (manifest rebuilt; wind tables byte-identical)
+
+Authority: `docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json` (sha256 9fd77c95…c3ad), decision key
+WINDS (`AUTHORIZE_HWM14_ATMOSPHERE_V2_KEEP_V1_IMMUTABLE`) and DATA_SIZE. These are repairs from the review of the A9.17 WINDS
+commit (dcd3ef9). They change text in the module and in the manifest JSON. HWM14 output is unchanged.
+
+- **HWM-3 (misquote).** `NOT_PROVIDED.disturbance_wind_height_dependence` claimed that DWM07 is height-constant only
+  above ~225 km and that 180-230 km "lies inside that transition". The README in the NRL package (sha256 14b6e5e4…9b15,
+  MODEL LIMITATIONS) says something different. Its exact words: the disturbed part "represents average disturbance winds
+  in the upper thermosphere (above 225 km)", and "The disturbance winds are assumed to be constant with height, with a
+  smooth artificial cutoff below 125 km". The entry now quotes those phrases verbatim (`DWM07_README_QUOTE`). It states
+  that DWM07 is height-constant by construction and that the README describes no transition. It also states that using
+  DWM07 unchanged at 180-225 km extrapolates beyond what the source model represents (verify; not quantified). When
+  HWM14 is available, a test checks the quotes against the NRL README.
+- **HWM-2 (false distribution claim).** The manifest claimed "EXCLUDED (pyproject exclude-package-data + MANIFEST.in
+  exclude)", but no such MANIFEST.in exclude exists. The `distribution` record now holds `installed_wheel` (excluded
+  through pyproject) and `sdist`. The `sdist` text says the two .csv.gz tables are not carried, and that at this build
+  MANIFEST.in had no v2 exclude, so the sdist carried the manifest JSON. A new `distribution_snapshot_at_build` is
+  computed from the real pyproject.toml/MANIFEST.in by `distribution_snapshot()`, a pure file inspection. Tests check the
+  statement against the snapshot. `check()` adds a note when the packaging files change after the build.
+- **Rebuild.** `ABEP_HWM14_DIR=<verified NRL package> python -m abep_sim.atmosphere_orbit_v2 build`. Both .csv.gz
+  containers are byte-identical to dcd3ef9 (same uncompressed-CSV sha256 6d9e4f7a…1969 / 040befc5…8609). Only the
+  manifest JSON changed. The NRL checkhwm14 output is again text-identical to `Check/gfortran.txt`.
+- **HWM-1 (red suite): not fixed in this lane.** The fix needs edits to `tests/test_atmosphere_orbit.py`,
+  `tests/test_packaging.py` and `MANIFEST.in`, and all three are outside this lane's allowed paths. Nothing inside the
+  allowed paths can fix it legitimately: the brief requires v2 to import the v1 grid, and the data paths are fixed. A
+  verified patch was handed to the orchestrator. It exempts `atmosphere_orbit_v2.py` and adds the v2 glob to
+  `REPO_ONLY_GLOBS` plus a `MANIFEST.in` exclude line. Do not merge until it is applied. Once that MANIFEST.in line is
+  added, the manifest JSON will no longer be in the sdist. The `sdist` statement records the state at build time, so it
+  stays true as a record of that build, and `check()` notes the change.

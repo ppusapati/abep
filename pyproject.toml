@@ -28,5 +28,13 @@ include = ["abep_sim", "abep_sim.*"]
 namespaces = false
 
 # Frozen reference data shipped with the package (CLAUDE.md rule 1): atmosphere, intake surface, goldens, rate tables.
+# Explicit file list (A9.17 DATA_SIZE, docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json): the
+# orbit-resolved atmosphere_msis21_orbit_v1.* (17 MB CSV, stored as .csv.gz) is repository evidence only. No installed
+# production module imports abep_sim.atmosphere_orbit, so it is not shipped; its accessor raises a clear error naming
+# the repository path when the data are absent.
 [tool.setuptools.package-data]
-abep_sim = ["data/*.json", "data/*.csv", "data/rates/*.dat", "data/rates/*.md"]
+abep_sim = ["data/atmosphere_msis21_v1.json", "data/atmosphere_msis21_v1.csv", "data/intake_surface_v1.json",
+            "data/intake_surface_v1.csv", "data/golden_v1.json", "data/rates/*.dat", "data/rates/*.md"]
+[tool.setuptools.exclude-package-data]
+# A9.17 WINDS + DATA_SIZE: the HWM14-wind atmosphere v2 (atmosphere_msis21_hwm14_orbit_v2.*) is repository evidence too.
+abep_sim = ["data/atmosphere_msis21_orbit_v1*", "data/atmosphere_msis21_hwm14_orbit_v2*"]

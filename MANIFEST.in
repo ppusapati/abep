@@ -2,3 +2,5 @@
 # package data in pyproject.toml; they are listed here too so an sdist built without VCS metadata still carries them.
 include README.md requirements-lock.txt
 recursive-include abep_sim/data *.json *.csv *.dat *.md
+# A9.17 DATA_SIZE: the orbit-resolved dataset (atmosphere_msis21_orbit_v1.*) is repository evidence, not distributed.
+exclude abep_sim/data/atmosphere_msis21_orbit_v1*
