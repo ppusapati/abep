@@ -22,7 +22,7 @@ Owner decisions implemented here (immutable records; the verbatim .md governs; c
                        quality) against the requirement derived from the required thrust and a VALIDATED H-1 map;
                        NOT_EVALUATED until that map exists; no fixed mg/s gate (0.38-3.2 mg/s = coverage only)
     S6.22 / F9-OQ-03   a gate closes only on determining evidence: never a PASS / MET on assumptions or parametrics
-  A9.14 S9.7 / OD2     statewise envelope quantifier (abep_sim.atmosphere_orbit.statewise_quantifier)
+  A9.14 S9.7 / OD2     statewise envelope quantifier (abep_sim.statewise.statewise_quantifier)
   A9.15                RFP propellant policy: ambient air AND Xe capability, two separate propellant tanks / paths
   A9.17                the official RFP is registered (docs/requirements/rfp_official/rfp_registration_v1.json) and is
                        the requirement source (clause ids RFP-Pnn-mm)
@@ -448,7 +448,7 @@ def ripple_feed_quality(ripple_frac: float | None, ripple_status: str, h1: H1Tol
 
 # ================================================================================================= statewise quantifier
 def _quantify(states, margin_fn, requirement_id):
-    from ..atmosphere_orbit import statewise_quantifier          # local import: frozen dataset loads lazily
+    from ..statewise import statewise_quantifier                 # pure; reads no repository-only data
     return statewise_quantifier(states, margin_fn, requirement_id)
 
 
@@ -551,11 +551,12 @@ def reference_drag_fn(case_id: str, *, intake_projected_area_m2: float, intake_c
     def fn(st: Mapping) -> dict:
         if velocity_key not in st:
             raise A913RuleError(f"state {st.get('state_id')!r} carries no {velocity_key!r} (relative speed); use "
-                                "atmosphere_orbit.orbit_states")
+                                "the orbit-resolved state set (orbit_states accessor)")
         r = srd.reference_drag(case_id, rho_kg_m3=st["rho_kg_m3"], v_rel_m_s=st[velocity_key],
                                intake_projected_area_m2=intake_projected_area_m2, intake_cd=intake_cd,
                                intake_source=intake_source,
-                               atmosphere_state={"source": "abep_sim.atmosphere_orbit", "state_id": st["state_id"]},
+                               atmosphere_state={"source": "orbit-resolved state (orbit_states accessor)",
+                                                "state_id": st["state_id"]},
                                intake_accounting=intake_accounting)
         return {"value_N": r["D_total_N"], "status": VALUE_REFERENCE, "source": f"spacecraft_reference_drag {case_id}",
                 "state_id": st["state_id"], "freeze_status": r["freeze_status"], "flags": r["flags"]}

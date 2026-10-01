@@ -315,7 +315,8 @@ def test_source_status_entry_point(tmp_path, capsys):
     assert set(lines) == set(V.SOURCE_STATUS_KEYS) | {"campaign_history_length"}
     for k in V.SOURCE_STATUS_KEYS:
         assert lines[k] == ("true" if st[k] else "false")
-    rep = json.load(open(REPORT))
+    # compare with the record the CLI reads (V.REPORT_REL; parity registration v2 since A9.14 S10.4), not the v1 record
+    rep = json.load(open(os.path.join(ROOT, V.REPORT_REL)))
     assert lines["campaign_history_length"] == str(len(rep["campaign_history"])) == str(st["campaign_history_length"])
     current = {s: V.sha256_file(s) for s in V.PROVENANCE_SOURCES}
     assert st["sources_match_recorded_build"] == (current == rep["build_provenance"]["source_sha256"])
