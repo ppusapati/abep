@@ -344,9 +344,10 @@ def run_campaign(bundle):
         valid[i] = r
         if res is not None:
             readiness.append(res)
-    # P1-G0: the latest readiness record governs (by timestamp_utc, then record_id)
+    # P1-G0: the latest readiness record governs (chronologically by parsed UTC timestamp, then record_id)
     g0 = None
-    g0_recs = sorted((valid[x["record_id"]]["timestamp_utc"], x["record_id"], x) for x in readiness)
+    g0_recs = sorted(((red.parse_utc(valid[x["record_id"]]["timestamp_utc"]), x["record_id"], x) for x in readiness),
+                     key=lambda t: (t[0], t[1]))
     if g0_recs:
         g0 = g0_recs[-1][2]
         g0_ts = g0_recs[-1][0]
@@ -358,7 +359,7 @@ def run_campaign(bundle):
             if not g0_met:
                 why.append("stage entry not met: P1-G0 status %s (every stage after P1-S0 needs "
                            "G0_ENTRY_CONDITIONS_RECORDED)" % (g0["g0_status"] if g0 else "NO_READINESS_RECORD"))
-            elif str(r["timestamp_utc"]) < str(g0_ts):
+            elif red.parse_utc(r["timestamp_utc"]) < g0_ts:
                 why.append("stage entry not met: record taken before the governing P1-G0 readiness record %r"
                            % g0["record_id"])
         if why:

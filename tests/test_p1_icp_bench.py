@@ -2743,3 +2743,35 @@ def test_met06_at_power_check_tied_to_characterization_and_registered_k(red, cam
     r["loss_characterization"]["at_power_verification"] = dict(AT_POWER, k=None, k_registration_id="TBD_OWNER")
     assert red.reduce_rf_cold_checkout([r])["verified_loss_ids"] == []
     assert red.reduce_rf_cold_checkout([synth_cold("DUMMY_LOAD", "SYNTH-S1-1")])["verified_loss_ids"] == ["SYNTH-LOSS-A"]
+
+
+def test_pr35_duplicate_readiness_ids_refused(red):
+    """PR #35 review: a repeated interlock / DWV path / gas-line id is refused, so a later passing duplicate can never
+    erase an earlier failed safety result."""
+    for key, lst, bad in (("interlock_id", "interlocks", {"functional": False}),
+                          ("path_id", "dwv_tests", {"breakdown_or_flashover": True}),
+                          ("line_id", "gas_lines", {})):
+        rec = synth_readiness(red)
+        first = dict(rec[lst][0], **bad)
+        rec[lst] = [first] + rec[lst]                                     # failed entry, then the passing one
+        with pytest.raises(red.P1RecordError, match="duplicate"):
+            red.reduce_readiness(rec)
+
+
+def test_pr35_timestamps_ordered_chronologically(red, camp):
+    """PR #35 review: readiness records are ordered by parsed UTC time, never by string; an offset-less timestamp is
+    refused. 2000-01-01T00:30:00+02:00 (= 1999-12-31T22:30Z) is EARLIER than 1999-12-31T23:00:00Z."""
+    assert red.parse_utc("2000-01-01T00:30:00+02:00") < red.parse_utc("1999-12-31T23:00:00Z")
+    for bad in ("1999-12-31T23:00:00", "not-a-time", "", None):
+        with pytest.raises(red.P1RecordError):
+            red.parse_utc(bad)
+    b = synth_bundle(red)
+    g0_ok = next(r for r in b["records"] if r["record_kind"] == "p1_g0_readiness")
+    g0_ok["timestamp_utc"] = "2000-01-01T00:30:00+02:00"                  # passing, but chronologically older
+    g0_fail = synth_readiness(red)
+    g0_fail.update(record_id="SYNTH-G0-LATER", timestamp_utc="1999-12-31T23:00:00Z")
+    g0_fail["interlocks"][0] = dict(g0_fail["interlocks"][0], functional=False)
+    b["records"].append(g0_fail)
+    rep = camp.run_campaign(b)
+    assert rep["readiness"]["governing_record_id"] == "SYNTH-G0-LATER"
+    assert rep["readiness"]["g0_status"] != "G0_ENTRY_CONDITIONS_RECORDED"

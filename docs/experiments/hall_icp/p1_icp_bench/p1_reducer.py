@@ -2078,8 +2078,37 @@ HANDOFF_FACTORS = (("P_fwd_W", ("rf", "P_fwd_W")), ("mdot_Ar_H1_mg_s", ("flows",
                    ("p_chamber_Pa", ("pressures", "p_chamber_Pa")), ("V_collector_V", ("collector", "V_collector_V")))
 
 
+def parse_utc(ts, where="timestamp_utc"):
+    """ISO-8601 timestamp -> timezone-aware UTC datetime (PR #35 review: records are ordered chronologically, never
+    by string). A trailing 'Z' is accepted; a naive (offset-less) or unparsable timestamp raises P1RecordError."""
+    import datetime as _dt
+    if not isinstance(ts, str) or not ts.strip():
+        raise P1RecordError("%s: timestamp_utc must be an ISO-8601 string with a UTC offset, got %r" % (where, ts))
+    t = ts.strip()
+    if t.endswith(("Z", "z")):
+        t = t[:-1] + "+00:00"
+    try:
+        d = _dt.datetime.fromisoformat(t)
+    except ValueError:
+        raise P1RecordError("%s: timestamp_utc %r is not ISO-8601" % (where, ts))
+    if d.tzinfo is None or d.utcoffset() is None:
+        raise P1RecordError("%s: timestamp_utc %r has no UTC offset (ambiguous ordering refused)" % (where, ts))
+    return d.astimezone(_dt.timezone.utc)
+
+
+def _no_duplicate_ids(items, key, where):
+    """PR #35 review: a list keyed by id must not repeat an id (a later entry must never silently replace an earlier,
+    possibly failed, safety result)."""
+    ids = [x.get(key) for x in items if isinstance(x, dict)]
+    dup = sorted({str(i) for i in ids if ids.count(i) > 1})
+    if dup:
+        raise P1RecordError("%s: duplicate %s %s - contradictory or repeated evidence refused (record one result "
+                            "per id)" % (where, key, dup))
+
+
 def _common(rec, kind, where):
     _req(rec, COMMON_REQUIRED, where)
+    parse_utc(rec["timestamp_utc"], where)
     if rec["schema"] != SCHEMA_ID or rec["record_kind"] != kind:
         raise P1RecordError("%s: schema/record_kind %r/%r is not %s/%s" % (where, rec["schema"], rec["record_kind"],
                                                                           SCHEMA_ID, kind))
@@ -2132,6 +2161,8 @@ def reduce_readiness(rec):
     seen = {}
     for x in il:
         _req(x, ("interlock_id", "functional_test_done", "functional", "log_id"), rid + " interlock")
+    _no_duplicate_ids(il, "interlock_id", rid + " interlocks")
+    for x in il:
         seen[x["interlock_id"]] = x
     rows["interlocks"] = []
     for i in READINESS_INTERLOCK_IDS:
@@ -2161,6 +2192,8 @@ def reduce_readiness(rec):
         raise MissingInputError("%s: dwv_tests must be a non-empty list (every passive insulation path / feedthrough "
                                 "assembly, A9.4 P1Q-14)" % rid)
     rows["dwv_tests"] = []
+    if isinstance(dwv, list):
+        _no_duplicate_ids(dwv, "path_id", rid + " dwv_tests")
     for d in dwv:
         _req(d, ("path_id", "applicable"), rid + " dwv_test")
         if d["applicable"] is not True:
@@ -2207,6 +2240,8 @@ def reduce_readiness(rec):
         raise MissingInputError("%s: gas_lines must list every ICP / H-1 gas line crossing the module (A9.3 ICPQ-06)"
                                 % rid)
     rows["gas_lines"] = []
+    if isinstance(gl, list):
+        _no_duplicate_ids(gl, "line_id", rid + " gas_lines")
     for g in gl:
         _req(g, ("line_id", "bridges_isolated_potentials", "isolator_installed"), rid + " gas_line")
         if "qualification" not in g:
