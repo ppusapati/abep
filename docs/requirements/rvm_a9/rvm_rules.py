@@ -24,6 +24,7 @@ ARTIFACT_KINDS = (
     "PLAN_OR_FRAMEWORK",      # test plan, pre-registration framework, ICD, schema, reducer: evaluates nothing
     "PUBLISHED_ANALOG",       # another device / another gas: context only
     "PROCUREMENT",            # RFQ package: never evidence of compliance
+    "VERIFICATION_ARTIFACT_ABSENT",  # RFP re-base: names what would verify a requirement for which no artifact exists
 )
 EVALUATING_KINDS = ("MEASUREMENT", "VALIDATED_ANALYSIS", "BUDGET_EVALUATION", "FRAMEWORK_EVALUATION")
 
