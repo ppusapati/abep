@@ -2475,6 +2475,25 @@ at the 300 cm² bracket end 0.088 Pa; also all p_level 0.02 states). These are n
 benchmarks are carried unchanged; whether such results should be refused outright is an owner question.
 Golden impact: none (`python -m abep_sim.golden check` OK; converged numerics bit-identical, regression-tested against the
 pre-change loops in `tests/test_gaspath_convergence_g03_g05.py`).
+Review fix (2026-10-01, findings D-02 / N2): the carry convention above ("flagged, not refused") let an orifice-unreached
+or Gaede-out-of-domain gas state win the search and return status 'OK' / feasible True with only `evidence_admissible =
+False`, which nothing read. `archengine.close_architecture` now fails closed by evidence class (`GAS_EVIDENCE_CLASSES`,
+`gas_evidence_class()`): OK > PARAMETRIC_SENSITIVITY (rotor not qualified, S2.3) > OUT_OF_MODEL_DOMAIN (MCC-02) >
+MODEL_NOT_CONVERGED (G-03..G-05, orifice included) > GASPATH_STATUS_NOT_REPORTED (synthetic state without labels). The
+nested search ranks by class first and objective second (also in the thermal runner-up fallback), so a non-admissible
+state never displaces an admissible one. A winner that is not class OK keeps its raw numbers for diagnostics but returns
+`status` = its class, `feasible` False, `closes_constraints` True, `evidence_class` / `evidence_reason` and
+`gas_states_by_evidence_class`. `propulsion_map` and `mission5.run_mission_generic` now carry `architecture_status`,
+`evidence_class`, `evidence_admissible`. Unreachable p_level grid values (e.g. 0.02 Pa below the ~0.047 Pa floor at
+0.7 m²) stay in the default grid but are reported per state and lose to admissible states. Golden impact:
+`architecture_closure/ext_hall_2p5kW/status` 'OK' -> 'MODEL_NOT_CONVERGED' (area 1.3 m², p_level 0.05 Pa: orifice
+unbracketed, also Gaede OUT_OF_MODEL_DOMAIN); this fix moves no number (the numbers moved by the S2.1 review fix below);
+the mission benchmark propagates that labelled diagnostic design. No admissible golden design point exists while no
+rotor-strength basis is registered; moving the golden design point is left to the owner. Existing tests changed because
+the owner decision changes the behaviour: `tests/test_sim.py::test_archengine_enumeration_and_closure` and
+`::test_v12_branches_execute_and_constraints_bind_inside_search` now expect the evidence-class status with feasible False
+and check `closes_constraints`; the conditional `if status == "OK"` checks in `tests/test_gaspath_convergence_g03_g05.py`
+and `tests/test_compressor_gaede_domain_mcc02.py` are now unconditional. Tests: `tests/test_a99_review_fixes.py`.
 
 ## 2026-10-01 — A9.9 S2.5 (F9-OQ-04): MCC-05/06/07 intake_tpmc input validation
 
@@ -2498,6 +2517,12 @@ Golden impact: none (`python -m abep_sim.golden check` OK). Downstream: the A9.7
 sha256 (`docs/performance/abep_core/parity_prereg_v1.json` / `parity_report_v1.json`), so `scripts/verify_abep_core.py
 --check` and two `tests/test_tpmc_backend.py` hash assertions now refuse (NOT_ADMITTED_BUILD) until those records are
 re-registered by their owning step; the `abep_sim/design/tpmc_backend.py` DIV-01..04 docstring is now historical.
+Review fix (2026-10-01, finding D-09): the owner asked for each S2.5 change to be documented separately; MCC-05,
+MCC-06 and MCC-07 now also have their own dated entries at the end of this file (this combined entry is kept as written).
+Finding N1 stays open downstream: the A9.7 parity pre-registration pins the `intake_tpmc.py` sha256, so
+`scripts/verify_abep_core.py --check` reports NOT_ADMITTED_BUILD and `tests/test_tpmc_backend.py::test_prereg_frozen_values`
+/ `::test_report_rederives_and_is_consistent` fail until the parity owner records an addendum / re-registration
+(`docs/performance/**` and `abep_core/` are outside this step).
 
 ## 2026-10-01 — A9.9 S2.3 + S2.5 MCC-03: registered rotor-strength basis for rotor structural acceptance
 
@@ -2537,6 +2562,15 @@ compressor mass, power and pressures, not `rotor_ok`, and the sizing cap is nume
 Downstream (owned by other steps): design-synthesis F3 (`module_rotor_ok_uncited_db_yield` now always False),
 `scripts/architecture/build_feed_envelope.py` and `docs/architecture_comparison/feed_state_closure` (rotor_ok False is
 reported as infeasible), freeze-candidate MCC-03 status.
+Review fix (2026-10-01, findings D-03 / N4, D-06 / N5): `archengine.gas_path_state` now carries `comp_sizing_mode`,
+`comp_rotor_qualification`, `comp_u_max_basis` (strings); `close_architecture` results report them and, while the rotor
+is NOT_EVALUATED_MATERIAL_BASIS, are labelled `status = PARAMETRIC_SENSITIVITY` with feasible False (see the S2.4 review
+fix); `arch_compare.UpstreamState.from_gas_path` carries them as labels (real-gas-state fingerprints change; no committed
+artifact pins one). `rotor_strength.qualify_rotor` refuses a non-finite, negative or non-numeric tip speed or rpm and
+NaN margins with `NOT_EVALUATED_OUT_OF_DOMAIN` (previously NaN gave margins +inf and PASS / rotor_ok True). Not done in
+this step (path owned by another step, finding D-05): `abep_sim/design/compressor_synthesis.py` still grants stress
+acceptance from `CITED_ALLOWABLES_PA` x `stress_safety` (yield only) instead of `qualify_rotor`. Golden impact: none
+from these items.
 
 ## 2026-10-01 — A9.9 S2.5 MCC-02: Gaede stage-capacity domain (no silent K clipping)
 
@@ -2571,6 +2605,9 @@ Downstream (owned by other steps): design-synthesis F3 (`build_f3_compressor.py 
 sha256; its `stage_trace` mirror of the clipping is now historical and the production record supplies the unclipped
 K directly), F4 / F7-F8 builders and the freeze candidate (MCC-02 status), feed-envelope / feed-state-closure
 builders that read compressor records.
+Review fix (2026-10-01, findings D-02 / N2): an out-of-domain winning gas state now returns `status =
+OUT_OF_MODEL_DOMAIN`, feasible False (no longer 'OK' with only `evidence_admissible = False`), and an in-domain state
+always wins over it in the search; see the S2.4 review fix.
 
 ## 2026-10-01 — A9.9 S2.1 F1Q-01: IntakeSurface species recombination by physical definitions
 
@@ -2613,8 +2650,39 @@ Downstream (owned by other steps): design-synthesis F1 (F1-01 now FIXED in produ
 "IntakeSurface_convention" describes the legacy method), F3/F4/F7-F9 and the freeze candidate (MCC/F1 status, any
 artifact using `intake.collection` with use_tpmc), `scripts/architecture/build_feed_envelope.py` and the feed-state
 closure / feed-envelope artifacts (C_D, drag, passive CR, compressor sizing move). S2.2 (frozen surface v2) follows.
+Review fix (2026-10-01, findings D-04 / N3, D-07 / N6): the third S2.1 requirement is now implemented in the chain.
+`system.evaluate` builds the compressor / reservoir inflow (gas-path physics) and the thruster inlet composition (both
+branches, through `aochem.inlet_composition`) from `intake.collection`'s `mdot_collected_species` (species-resolved
+eta_c,s) instead of splitting the total by free-stream mass fractions; the parametric intake (no species rows) keeps the
+free-stream split. New outputs `fO_collected`, `fN2_collected`, `fO2_collected`, `collected_composition_basis`. The total
+collected flow is unchanged. At 200 km mean, area 0.7 m², alpha 0.8, L/d 5 the collected O mass fraction is 0.440
+(free stream 0.461, -4.5 %), N2 0.527 (0.508). `IntakeSurface` on a species-resolved table now refuses a call without
+fractions (the hard-coded O 0.45 / N2 0.50 / O2 0.05 fallback is removed) and refuses non-finite, negative, non-numeric
+or all-zero fractions (previously zeros/NaN were returned and a negative fraction inflated the outputs);
+`uq6.evaluate_full` relied on the removed fallback and now passes the atmosphere's free-stream fractions explicitly.
+No coefficient retuned. Golden impact (regenerated with `python -m abep_sim.golden generate`; old -> new):
+gas_path A0.7: fO_inlet 0.416795 -> 0.397834, fO2_inlet 0.0756306 -> 0.0755668, p_in_Pa 0.0500123 -> 0.0498443,
+P_comp_W 26.0544 -> 26.6473, m_comp_kg 6.66525 -> 6.66722 (C_D, drag, eta_c, mdot unchanged).
+gas_path A1.3: fO_inlet 0.400743 -> 0.382565, fO2_inlet 0.0916825 -> 0.0908357, p_in_Pa 0.0882068 -> 0.0877604,
+P_comp_W 13.4490 -> 13.4792.
+accelerators (gas state from make_gas_fn, composition moves): ecr_grids T_N 0.0299443 -> 0.0300371, P_acc_W 1455.54 ->
+1454.33, I_beam_A 1.45325 -> 1.45204, P_hat 0.695243 -> 0.697233, chi 0.490685 -> 0.494153, f_cx 1.34075e-3 ->
+1.34047e-3, life_h 6303.34 -> 6278.59; ecr_hall T_N 0.0203223 -> 0.0205279, P_acc_W 913.768 -> 919.722, I_beam_A
+1.99867 -> 2.00838, P_neut_W 34.5975 -> 34.5513, chi 0.0623352 -> 0.0622771; ecr_nozzle T_N 2.39788e-3 -> 2.37458e-3,
+E_i_eV 23.8464 -> 23.7182, chi 0.198687 -> 0.198143.
+architecture_closure ext_hall_2p5kW: T_mN 51.1101 -> 51.2734, T_over_D_sc 1.84456 -> 1.85045, P_bus_W 2461.07 ->
+2458.73, P_jet_W 1272.47 -> 1269.04, Q_waste_W 752.670 -> 753.317, A_rad_m2 1.26371 -> 1.26510, CBE_kg 59.6941 ->
+59.6647, MEV_kg 69.7345 -> 69.7005, m_system_kg 108.787 -> 108.753, ledger_resid 0 -> 1.8e-16 (round-off, ATOL);
+status 'OK' -> 'MODEL_NOT_CONVERGED' (S2.4 review fix).
+mission: map_T_N 0.3: 4.57300e-3 -> 4.87754e-3 (+6.7 %), 0.45: 0.0141590 -> 0.0145528, 0.6: 0.0241975 -> 0.0245690,
+0.75: 0.0342445 -> 0.0345544, 0.9: 0.0443415 -> 0.0445677, 1.0: 0.0511101 -> 0.0512734, 1.15: 0.0613066 -> 0.0613703,
+1.3: 0.0715254 -> 0.0714882, 1.5: 0.0851279 -> 0.0849605; mission_4000h P_bus_mean_W 1698.88 -> 1693.56, P_bus_peak_W
+1776.57 -> 1770.63 (D_mean / T_mean / closure unchanged). Withdrawn-Hall benchmarks: values remain non-quotable.
+Downstream (owned by other steps; not regenerated here): every artifact built from `system.evaluate` / `gas_path_state`
+on the TPMC path (F3/F4/F7-F9, freeze candidate, feed-envelope / feed-state-closure, compressor downselect).
 
 ## 2026-10-01 — A9.9 S2.2 F1Q-04: intake surface v2 build specification (build BLOCKED) + v1 fail-closed domain
+
 What: new `abep_sim/intake_surface_v2_spec.py` records the v2 build specification required by owner decision A9.9 S2.2
 (species-resolved; Maxwell and CLL as separate scenarios; deterministic order-independent seeds `point_seed`; the
 unresolved-particle criterion of `intake_tpmc` plus the gate-5 cross-check tolerance; per-row unresolved/convergence
@@ -2633,3 +2701,38 @@ that is not in the table (previously dropped and renormalised away); `IntakeSurf
 states that the free-stream state is not a v1 axis. The fixed-composition fallback for a call without fractions is
 unchanged (out of scope here). Owner decisions: A9.9 S2.2, A9.13 S6.2. Golden impact: none (`golden check` OK); all
 in-domain values bit-identical.
+Review fix (2026-10-01, findings D-08, D-09): the intake.collection pointing/accommodation clamp removal (FE-01) now also
+has its own dated entry at the end of this file. `mission5.run_phase5` and `mission5.run_mission_generic` no longer pass
+`accommodation=min(alpha, 1.0)` for the AO-aged alpha: it goes to the intake unclipped and IntakeSurface refuses an
+out-of-domain value (surface_ageing_alpha is a convex blend of alpha0 and alpha_inf, so in-domain values are identical).
+Golden impact: none.
+
+## 2026-10-01 — A9.9 S2.5 MCC-05: positive-integer hit budgets in intake_tpmc (separate record)
+
+Owner decision A9.9 S2.5 MCC-05 ("document each change separately"; review finding D-09). Recorded separately from the
+combined MCC-05/06/07 entry above, which is kept as written. `intake_tpmc.trace_channel` validates `max_hits` and
+`max_hits_cap` as positive integers (bool, float, <= 0 rejected with ValueError) and `unresolved_tol` as finite >= 0
+before any particle is sampled, so `max_hits < 1` can no longer loop forever. `max_hits_cap = 0` (the DIV-04 reference
+behaviour) is refused by the reference too. Valid-input numerics bit-identical. Golden impact: none.
+
+## 2026-10-01 — A9.9 S2.5 MCC-06: explicit wall-scattering model selection in intake_tpmc (separate record)
+
+Owner decision A9.9 S2.5 MCC-06 (review finding D-09; see the combined entry above). `scattering` must be exactly
+"maxwell" or "cll" in `trace_channel`, `intake_response` and `response_surface`; anything else raises instead of tracing
+Maxwell silently. The thermal back-trace in `clausing_transmission` selects Maxwell explicitly (`K_BACK_SCATTERING`,
+same behaviour as before), recorded as `K_back_scattering`. Valid-input numerics bit-identical. Golden impact: none.
+
+## 2026-10-01 — A9.9 S2.5 MCC-07: CLL / Maxwell accommodation coefficients validated in intake_tpmc (separate record)
+
+Owner decision A9.9 S2.5 MCC-07 (review finding D-09; see the combined entry above). CLL `alpha_n` / `alpha_t` (each
+defaulting to `alpha`) and the Maxwell diffuse fraction `alpha` must be finite and inside [0, 1]; NaN, ±inf or
+out-of-range values raise in `trace_channel` and again at the `_cll` kernel entry, never clipped. Valid-input numerics
+bit-identical. Golden impact: none.
+
+## 2026-10-01 — A9.13 S6.2 / FE-01: intake.collection pointing and accommodation clamp removed (separate record)
+
+Owner decision A9.13 S6.2 ("never extrapolate silently beyond the frozen angular domain"; finding FE-01; review finding
+D-09). Recorded separately from the S2.2 entry above, where it was first logged. Until 2026-10-01 `intake.collection`
+evaluated the frozen surface at `min(off_axis_deg, 5)` and with accommodation clipped to [0, 1]; both now go to
+`IntakeSurface` as given, and anything outside the frozen domain raises. The same applies to the AO-aged accommodation in
+`mission5` (review fix D-08). Golden impact: none (all golden states are inside the domain).

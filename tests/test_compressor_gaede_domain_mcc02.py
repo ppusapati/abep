@@ -121,5 +121,7 @@ def test_archengine_flags_and_arch_compare_refuses_out_of_domain_state():
     A = {AE.arch_name(x): x for x in AE.enumerate_architectures()}
     r = AE.close_architecture(A["hall_internal+hall+lab6_xe"], lambda area, p: bad, Spacecraft(bus_frontal_m2=0.10, pointing_sigma_deg=0.5),
                               AE.DesignConstraints(2500.0), gas_vars={"area": [0.7], "p_level": [0.1]}, keep_candidates=False)
-    if r["status"] == "OK":
+    # review fix D-02/N2 (2026-10-01): excluded from valid design evidence, never status 'OK'
+    assert r["status"] in ("OUT_OF_MODEL_DOMAIN", "INFEASIBLE") and r["feasible"] is False
+    if r["status"] == "OUT_OF_MODEL_DOMAIN":
         assert r["gaspath_domain_status"] == "OUT_OF_MODEL_DOMAIN" and r["evidence_admissible"] is False

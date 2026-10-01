@@ -192,8 +192,9 @@ def test_archengine_carries_orifice_flag_and_arch_compare_refuses():
     assert flagged["gaspath_status"] == "MODEL_NOT_CONVERGED" and flagged["gaspath_not_converged"] == "orifice_sizing"
     r = AE.close_architecture(a, gf, sc, AE.DesignConstraints(2500.0), gas_vars={"area": [1.3], "p_level": [0.05]},
                               keep_candidates=False)
-    if r["status"] == "OK":
-        assert r["gaspath_status"] == "MODEL_NOT_CONVERGED" and r["evidence_admissible"] is False
+    # review fix D-02/N2 (2026-10-01): the orifice-unreached state is never reported as a successful solution
+    assert r["status"] == "MODEL_NOT_CONVERGED" and r["feasible"] is False
+    assert r["gaspath_status"] == "MODEL_NOT_CONVERGED" and r["evidence_admissible"] is False
     with pytest.raises(ac.SpecError, match="not admissible"):
         ac.UpstreamState.from_gas_path(flagged, "x")
     good = gf(0.7, 0.1)

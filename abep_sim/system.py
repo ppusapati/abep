@@ -84,16 +84,31 @@ def evaluate(cfg: Config) -> dict:
     cmp_ = compress(cfg.compressor, atm, col["mdot_collected"], col["eta_c"], col["passive_override"])
     mdot_air = cmp_["mdot_net"]
     p_in = cmp_["p_out_Pa"]
+    # Collected composition (owner decision A9.9 S2.1, review fix D-04/N3 2026-10-01): on the TPMC path the collected
+    # species flow comes from the species-resolved collection efficiencies (intake.collection mdot_collected_species),
+    # not from the free-stream mass fractions times one mass-weighted efficiency. The parametric intake path (no
+    # species rows) keeps the free-stream split. The total collected flow is unchanged (sum_s mdot_c,s = mdot_collected).
+    col_sp = col.get("mdot_collected_species")
+    if col_sp:
+        tot_sp = sum(col_sp.values())
+        if not (math.isfinite(tot_sp) and tot_sp > 0):
+            raise ValueError(f"species-resolved collected flow is not positive/finite: {col_sp}")
+        w_col = {s: col_sp.get(s, 0.0) / tot_sp for s in ("O", "N2", "O2")}
+        collected_composition_basis = "species_resolved_collection_A9.9_S2.1"
+    else:
+        w_col = {"O": atm["fO"], "N2": atm["fN2"], "O2": atm["fO2"]}
+        collected_composition_basis = "free_stream_mass_fractions_parametric_intake"
+    atm_col = {**atm, "fO": w_col["O"], "fN2": w_col["N2"], "fO2": w_col["O2"]}
 
     # AO chemistry: what the thruster actually receives after wall recombination
-    inlet = inlet_composition(atm, cfg.ao)
+    inlet = inlet_composition(atm_col, cfg.ao)
     gas = {}
     if cfg.gaspath_physics:
         from .compressor import DragCompressor
         from .reservoir import Reservoir, size_orifice_for_pressure
         p_min = card.p_min_Pa if card.stage1 is None else max(card.p_min_Pa, card.stage1.p_min_Pa)
         p_target = cfg.p_target_Pa if cfg.p_target_Pa is not None else cfg.p_margin_over_pmin * p_min
-        md_in = {"O": mdot_air * atm["fO"], "N2": mdot_air * atm["fN2"], "O2": mdot_air * atm["fO2"]}
+        md_in = {s: mdot_air * w_col[s] for s in ("O", "N2", "O2")}     # collected composition (S2.1, see above)
         comp = DragCompressor(turbo_area_m2=min(0.45, 0.9 * cfg.intake.area_m2 * cfg.intake.phi),
                               turbo_radius_m=min(0.45, math.sqrt(cfg.intake.area_m2 / math.pi)),
                               rotor_material=cfg.rotor_material)
@@ -396,6 +411,8 @@ def evaluate(cfg: Config) -> dict:
         "p_passive_Pa": cmp_["p_passive_Pa"], "passive_ratio": cmp_["passive_ratio"],
         "active_ratio": cmp_["active_ratio"],
         "fO_inlet": inlet["fO"], "fO2_inlet": inlet["fO2"], "O_survival": inlet["O_survival"],
+        "fO_collected": w_col["O"], "fN2_collected": w_col["N2"], "fO2_collected": w_col["O2"],
+        "collected_composition_basis": collected_composition_basis,
         "ao_flux_m2s": ao["ao_flux"], "ao_fluence_mission_m2": fl,
         "erosion_kapton_um": erosion_depth_um("kapton_HN", fl),
         "erosion_graphite_um": erosion_depth_um("graphite", fl),

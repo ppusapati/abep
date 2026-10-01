@@ -131,7 +131,10 @@ def evaluate_full(design: dict, x: dict | None = None, sc: Spacecraft | None = N
     alpha_end = min(surface_ageing_alpha(x["alpha0"], r["ao_fluence_mission_m2"], phi_c=x["phi_c"]), 1.0)
     from .intake import _tpmc_surface
     surf = _tpmc_surface(atm)
-    eta_end = surf(x["L_over_d"], x["phi_open"], alpha_end)["eta_c"]; eta0 = r["eta_c"]
+    # explicit free-stream mass fractions (review fix D-07/N6, 2026-10-01): the species-resolved surface no longer
+    # substitutes a hard-coded {O 0.45, N2 0.50, O2 0.05} when none are given
+    eta_end = surf(x["L_over_d"], x["phi_open"], alpha_end,
+                   fractions={"O": atm["fO"], "N2": atm["fN2"], "O2": atm["fO2"]})["eta_c"]; eta0 = r["eta_c"]
     T_end = r["T_air_mN"] * (eta_end / max(eta0, 1e-9)) * x["f107_season"]        # thrust ~ collected flow
     TD_sc_start = r["T_air_mN"] * x["f107_season"] / (d["D_total_N"] * 1e3)
     TD_sc_end = T_end / (d["D_total_N"] * 1e3)

@@ -408,17 +408,25 @@ class IntakeSurface:
     def __call__(self, L_over_d, phi, alpha, theta_deg=0.0, fractions: dict | None = None):
         if not self.in_bounds(L_over_d, phi, alpha, theta_deg):
             raise ValueError(f"intake ROM extrapolation: L/d={L_over_d}, phi={phi}, alpha={alpha}, theta={theta_deg} outside {self.bounds}")
-        if self.species == ["mean"] or not fractions:
-            sp = "mean" if "mean" in self.f else self.species[0]
-            if not fractions and "mean" not in self.f:
-                fractions = {"O": 0.45, "N2": 0.50, "O2": 0.05}
-            else:
-                return self._row(sp, L_over_d, phi, alpha, theta_deg)
+        if self.species == ["mean"]:
+            return self._row("mean", L_over_d, phi, alpha, theta_deg)
+        # Review fix D-07/N6 (2026-10-01, rule 3): a species-resolved table needs explicit free-stream mass fractions.
+        # Until then a call without fractions silently used a hard-coded {O 0.45, N2 0.50, O2 0.05}; all-zero
+        # fractions returned zeros / NaN; a negative fraction was dropped from w but still counted in the total.
+        if not fractions:
+            raise ValueError("intake ROM: a species-resolved table needs explicit free-stream mass fractions "
+                             f"{self.species} (no default composition is assumed)")
+        bad = {s: v for s, v in fractions.items()
+               if isinstance(v, bool) or not isinstance(v, numbers.Real) or not math.isfinite(v) or v < 0}
+        if bad:
+            raise ValueError(f"intake ROM: mass fractions must be finite and >= 0, got {bad}")
         foreign = [s for s, v in fractions.items() if s not in self.species and v > 0]
         if foreign:
             raise ValueError(f"intake ROM: species {foreign} with non-zero fraction are not in the frozen table "
                              f"{self.species} (no silent drop / renormalisation)")
-        tot = sum(fractions.get(s, 0.0) for s in self.species) or 1.0
+        tot = sum(fractions.get(s, 0.0) for s in self.species)
+        if not tot > 0:
+            raise ValueError(f"intake ROM: all mass fractions are zero for species {self.species}")
         w = {s: fractions.get(s, 0.0) / tot for s in self.species if fractions.get(s, 0.0) > 0}
         rows = {s: self._row(s, L_over_d, phi, alpha, theta_deg) for s in w}
         inv_m = {s: w[s] / self.m_s[s] for s in w}                 # w_s / m_s  (proportional to number density)

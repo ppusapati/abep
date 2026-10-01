@@ -248,12 +248,23 @@ def qualify_rotor(basis_id: Optional[str], rotor_material: str, tip_speed_mps: f
         out["rotor_qualification"] = Q_NOT_EVALUATED_OUT_OF_DOMAIN
         R.append(f"rotor temperature {T_rotor_K:.6g} K above the basis design temperature {b.design_temperature_K} K")
         return out
+    # Review fix D-06/N5 (2026-10-01): a non-finite or negative tip speed / rpm is outside the evaluable domain. Without
+    # this guard NaN gave sigma = NaN -> margins +inf and 'rpm > max' False -> PASS (fail open).
+    for nm, v in (("tip_speed_mps", tip_speed_mps), ("rpm", rpm)):
+        if not (isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v) and v >= 0):
+            out["rotor_qualification"] = Q_NOT_EVALUATED_OUT_OF_DOMAIN
+            R.append(f"{nm} must be finite and >= 0 (got {v!r})")
+            return out
     Fty, Ftu = allowables_at(b, b.design_temperature_K)
     sigma = b.density_kg_m3 * tip_speed_mps ** 2
     my = Fty / (b.factor_yield * sigma) - 1.0 if sigma > 0 else math.inf
     mu = Ftu / (b.factor_ultimate * sigma) - 1.0 if sigma > 0 else math.inf
     out.update({"margin_yield": my, "margin_ultimate": mu, "sigma_hoop_Pa": sigma,
                 "u_allow_registered_mps": tip_speed_allowable(b)})
+    if math.isnan(my) or math.isnan(mu) or my == -math.inf or mu == -math.inf:
+        out["rotor_qualification"] = Q_NOT_EVALUATED_OUT_OF_DOMAIN
+        R.append("margins not finite")
+        return out
     fails = []
     if my < 0:
         fails.append("yield margin negative")
