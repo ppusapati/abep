@@ -279,3 +279,67 @@ def test_frozen_and_score_bearing_paths_never_use_rust():
             assert "tpmc_backend" not in src and "abep_core" not in src, rel
     tb = (ROOT / "abep_sim/design/tpmc_backend.py").read_text(encoding="utf-8")
     assert 'DEFAULT_BACKEND = "python"' in tb
+
+
+# ------------------------------------------------------------------------------------------------ application matrix
+MX = _mod("docs/decisions/application/build_a9_16_application_matrix.py", "a916_matrix")
+MXDOC = MX.build()
+
+
+def test_matrix_outputs_current():
+    for path, text in MX.outputs(MXDOC).items():
+        assert path.read_text(encoding="utf-8") == text, path.name
+
+
+def test_matrix_covers_every_decision_id_once():
+    ids = [(e["decision"], e["question_id"]) for e in MXDOC["entries"]]
+    assert len(ids) == len(set(ids))
+    want = {(k, q) for k in L.ORDER if k != "A9.15" for q in L.decision_ids(k)} | {("A9.15", "A9.15 governing_rule")}
+    assert set(ids) == want and len(want) == 136
+    for e in MXDOC["entries"]:
+        assert e["status"] in MX.STATUSES
+        for r in e["residual"]:
+            assert r["status"] in MX.RESIDUAL_STATUSES
+    assert '"PASS"' not in json.dumps(MXDOC)
+
+
+def test_matrix_status_classes():
+    by = {e["question_id"]: e for e in MXDOC["entries"]}
+    for q in L.decision_ids("A9.9"):
+        assert by[q]["status"] == "PENDING_STEP_2_MODEL_CHANGE"
+    for q in MX.STEP3:
+        assert by[q]["status"] == "PENDING_STEP_3_ARCHITECTURE" and L.decision_key_of(q) == "A9.13"
+    assert by["RUST-OQ-02"]["status"] == "PENDING_CI_CHANGE"
+    assert by["F0-OQ-01"]["status"] == by["F0-OQ-02"]["status"] == "BLOCKED"
+    assert by["RUST-OQ-01"]["status"] == "APPLIED"
+    for q in L.A915_AMENDED:
+        assert by[q]["amended_by_a9_15"]
+    assert by["A9.15 governing_rule"]["status"] == "APPLIED"
+
+
+def test_matrix_applications_are_verifiable():
+    import subprocess
+    commits = set()
+    for e in MXDOC["entries"]:
+        if e["status"] == "APPLIED":
+            gov = [a for a in e["applications"] if a["status"] == "APPLIED"
+                   and not a["artifact"].endswith("owner_questions_state_v5.json")]
+            assert gov, e["question_id"]
+        for a in e["applications"]:
+            assert (ROOT / a["artifact"]).exists(), a["artifact"]
+            assert re.fullmatch(r"[0-9a-f]{40}", a["commit"]), a
+            commits.add(a["commit"])
+            if a["status"] == "APPLIED" and a["lane"] != "INTEGRATION" and e["decision"] != "A9.15":
+                assert MX._locations(_j(a["artifact"]), e["question_id"]), (e["question_id"], a["artifact"])
+    for c in commits:
+        r = subprocess.run(["git", "-C", str(ROOT), "cat-file", "-e", c + "^{commit}"], capture_output=True)
+        assert r.returncode == 0, c
+
+
+def test_matrix_refuses_unverifiable_lane_result(monkeypatch):
+    lanes = dict(MX.LANES)
+    c, art, q = lanes["P3"]
+    lanes["P3"] = (c, art, q + ["F5-OQ-01"])           # an id the P3 artifact never mentions
+    monkeypatch.setattr(MX, "LANES", lanes)
+    with pytest.raises(SystemExit):
+        MX.build()
