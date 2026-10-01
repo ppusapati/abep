@@ -1,0 +1,25 @@
+# ATMOSPHERE WINDS / ORBIT / DATA ARTIFACTS / RFP / PERFORMANCE BASELINE OWNER DECISIONS (A9.17) — verbatim record, 2026-10-01
+
+Recorded verbatim from the owner's message of 2026-10-01 (session chat), closing the four points raised after the A9.16
+parallel lanes. The bracketed link text is kept as written. Machine-readable companion:
+`OD_2026_10_01_A9_17_data_artifact_owner_decisions.json`. Immutable after commit; later amendments are new addenda.
+
+---
+
+Yes. I would close these four points now with the following owner decisions.
+
+1. Atmospheric winds — build v2 with HWM14, but keep the no-wind v1 immutable. HWM14 is publicly available: NASA CCMC explicitly marks the source code as publicly available/open, and NRL hosts the Fortran source and supporting data in its public repository. [NASA CCMC](https://kauai.ccmc.gsfc.nasa.gov/CMR/view/model/SimulationModel?resourceID=spase%3A%2F%2FCCMC%2FSimulationModel%2FHWM14%2F2014&utm_source=chatgpt.com)
+The new atmosphere dataset should therefore carry both the Earth-corotating atmosphere result and the HWM14-corrected neutral-wind result, with HWM14 version, Ap input, date/time, coordinates and provenance recorded. Do not overwrite v1. Until the actual spacecraft orbit is registered, v2 remains a design-envelope/parametric dataset rather than a mission-specific frozen trajectory.
+Decision: `AUTHORIZE_HWM14_ATMOSPHERE_V2_KEEP_V1_IMMUTABLE`.
+2. Inclination / LTAN — do not register 96.3° dawn-dusk as the mission orbit. The official RFP fixes the functional altitude at 180–230 km, but does not give an inclination or LTAN in the technical parameters. RFP(1) Therefore 96.3° and dawn-dusk remain explicitly `CODE_DEFAULT / PARAMETRIC`, not requirement inputs. Keep the atmosphere/design-state envelope broad enough until DRDO, the spacecraft ICD, or the PDR mission definition supplies the real inclination and LTAN. Once supplied, regenerate/narrow the orbit-resolved dataset under a new version; never reinterpret the old default as the real orbit.
+Decision: `ORBIT_INCLINATION_LTAN_TBD_FROM_OFFICIAL_MISSION_ICD`.
+3. 17 MB dataset + sputter thresholds — keep the frozen data, but don't bloat the installed package; freeze 1.10 and 1.25 prospectively as screening factors only. The 17 MB size is acceptable for an immutable design-data artifact, but I would not package it into the normal installed Python wheel/package unless runtime code genuinely requires it. Keep the deterministic builder, source/provenance manifest and SHA-256 in the repo; keep one canonical compressed frozen dataset as repository evidence, or an immutable referenced artifact if repeated versions start bloating Git history.
+For the sputter factors, because `1.10 × threshold energy` and `1.25 × worst-case` were originally chosen after looking at the data, the existing results must not be represented as preregistered evidence. We can freeze those values now for the next rebuild as owner-defined screening guardbands:
+`E_screen = 1.10 × E_threshold` and `F_worst = 1.25`.
+Regenerate the sputter register from the unchanged source data after this decision. These are screening/down-selection factors only, not P4 material-acceptance, lifetime, or qualification thresholds; those remain governed by the pre-exposure P4 rule already established in S5.12. No later adjustment merely because a material passes or fails.
+Decision: `KEEP_DATA_ARTIFACT_EXCLUDE_FROM_INSTALL_WHERE_POSSIBLE; FREEZE_SPUTTER_SCREEN_1_10_AND_1_25_PROSPECTIVELY`.
+4. RFP PDF + dedicated performance baseline — do not put the RFP binary in the public repo; do run the dedicated baseline. For the RFP, make the official document the authoritative requirement source, but I would not redistribute the 20 MB PDF inside the public GitHub repository unless redistribution rights are explicitly clear. Instead commit a provenance record containing the official filename/document identity, retrieval source, retrieval date, SHA-256, page count and the requirement extraction/RVM mapping. Keep the actual PDF in the controlled project evidence store. This gives us immutable traceability without unnecessarily republishing a procurement document.
+For performance, yes: run the dedicated baseline in the remote-control session using the already prepared prompt, with the machine otherwise idle. No A9/S2 builds, tests, browser-heavy work or other CPU-intensive work should run concurrently. Capture the before/after machine metadata already built into the procedure. That dedicated run becomes the admission baseline for Rust performance decisions; the earlier shared-CPU A9.7 numbers remain historical measurements only. Do not change the S10.1 thresholds after seeing the dedicated result.
+Decision: `RFP_HASH_PROVENANCE_IN_PUBLIC_REPO_PDF_CONTROLLED_EXTERNALLY; RUN_DEDICATED_PERFORMANCE_BASELINE_NOW`.
+
+The important sequencing is therefore: register these decisions → rebuild the atmosphere/sputter artifacts under the frozen rules → run the dedicated performance baseline → only then use those results for subsequent architecture or Rust-admission decisions.
