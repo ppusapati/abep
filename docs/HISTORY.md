@@ -2437,3 +2437,16 @@ P2); records in `docs/decisions/OD_2026_10_01_A9_{8,9,10,11}_*`. Owner-supplied 
 k_transition = 2.0. A9.9 authorizes controlled model changes (IntakeSurface recombination, frozen intake surface v2,
 rotor strength basis, G-03..G-05 convergence flags, MCC-02/03/05/06/07); none is implemented yet, each will carry its own
 entry here.
+
+## 2026-10-01 — Checkpoint 6 merged; owner decisions A9.12–A9.15; application step A9.16 launched
+
+Checkpoint 6 (A9.7 verified design synthesis + decision records A9.8–A9.12) merged to main as b1e5b76 (PR #36) with owner
+approval. Before the merge, five Codex review findings were fixed in the design layer (P_bus counts efficiency evidence; T − D
+inherits the intake-drag status; non-positive / non-finite densities refused; transient trajectories checked against the
+rotor service temperature), each with a regression test; all design builders reproduce unchanged.
+
+All 135 sequenced owner questions are now answered: S5 (A9.12), S6 (A9.13), S7–S10 (A9.14). A9.15 records the owner's
+RFP-compliant propellant policy: the official RFP governs propellant capability; the system supports ambient atmospheric
+propellant and Xenon propulsion capability; C1 Xe, if any, comes from the selected C1 hardware and is booked inside the system
+Xe architecture. It amends the earlier "Xe contingency-only for C1" wording. A9.16 applies the decisions in three sequential
+steps (experiment/procurement/budget records; A9.9 production-model changes; A9.13 architecture code).
