@@ -211,9 +211,21 @@
   "real_orbit": "TBD from the official mission definition (DRDO / spacecraft ICD / PDR mission definition); the RFP fixes only 180-230 km. Once supplied, a new orbit-resolved dataset version is built; this default is never reinterpreted as the real orbit",
   "dataset_grid_coverage": "full geodetic latitude band -90..90 deg, all local solar times, all longitudes, all days of year: any inclination and any LTAN lie inside the dataset",
   "design_state_envelope": {
-   "local_time": "all local times (LTAN-agnostic)",
-   "latitude": "|lat| <= reachable_lat_max_deg(), the max |latitude| of the CODE_DEFAULT SSO family over 180-230 km (83.6-83.75 deg); covers every inclination i with min(i, 180 - i) <= that bound",
-   "latitude_status": "PARAMETRIC bound inherited from the v1 design-state rule (content unchanged by A9.17); inclinations strictly between ~83.75 and ~96.25 deg reach higher latitudes, which the dataset grid covers but the v1 design-state set does not -- OPEN for the next design-state version / owner"
+   "current_set": "atmosphere_msis21_orbit_v1_design_states_v2.json",
+   "v2": {
+    "file": "atmosphere_msis21_orbit_v1_design_states_v2.json",
+    "status": "BROAD_ENVELOPE (A9.17 ORBIT)",
+    "local_time": "all local times (LTAN-agnostic)",
+    "latitude": "every integer geodetic latitude -90..90 deg (all 19 nodes, poles included; off-node latitudes via the accessor interpolation); independent of mission_env.sso_inclination_deg and of any inclination / LTAN",
+    "covers": "every inclination 0-180 deg and every LTAN, at the dataset grid resolution"
+   },
+   "v1": {
+    "file": "atmosphere_msis21_orbit_v1_design_states.json",
+    "status": "IMMUTABLE_V1_PARAMETRIC_BOUND (kept for traceability; not the broad envelope)",
+    "local_time": "all local times (LTAN-agnostic)",
+    "latitude": "|lat| <= reachable_lat_max_deg(), the max |latitude| of the CODE_DEFAULT SSO family over 180-230 km (83.6-83.75 deg); does not cover inclinations strictly between ~83.75 and ~96.25 deg or polar orbits"
+   },
+   "latitude_status": "RESOLVED by the versioned v2 set (all latitudes); the v1 set keeps its PARAMETRIC 83.75 deg bound unchanged (rule 1)"
   },
   "sso_inclination_deg_at_grid_alt": {
    "180": 96.25,
@@ -608,6 +620,27 @@
    "now": "the mission_env 96.3 deg / dawn-dusk orbit is labelled CODE_DEFAULT / PARAMETRIC, never a requirement input; inclination / LTAN TBD from the official mission ICD. Design-states file regenerated with label changes only (top-level rule / orbit_basis / authority; the 179 per-state records kept verbatim)",
    "data_file_changed": false,
    "known_v1_defect_not_changed": "per-state interp_max_rel_err_rho is null for the 26 interpolated latitude-boundary design states (build() generated them before interpolation_validation was written to the JSON); physical values unaffected; left as frozen, open for the next design-state version"
+  },
+  {
+   "id": "E5",
+   "date": "2026-10-01",
+   "decision": "A9.17 ORBIT",
+   "review_finding": "PKG-1",
+   "authority": {
+    "path": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+    "sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
+    "decision_key": "ORBIT"
+   },
+   "fields": [
+    "design_states_file_v2",
+    "orbit_coverage.design_state_envelope"
+   ],
+   "was": {
+    "design_state_envelope": "v1 set only, bounded at |lat| <= ~83.75 deg by the CODE_DEFAULT SSO family"
+   },
+   "now": "versioned broad-envelope design-state set atmosphere_msis21_orbit_v1_design_states_v2.json added (candidate pool = every grid doy / longitude / local-time node x every integer latitude -90..90 deg; independent of mission_env.sso_inclination_deg); v1 design-state file kept byte-identical",
+   "data_file_changed": false,
+   "resolves": "E4 open item (latitude bound) and, for new use, the per-state interp_max_rel_err_rho null defect: v2 is generated after interpolation_validation is in the manifest, so every off-node v2 state carries its scenario's recorded interpolation error and grid-node states carry 0.0"
   }
  ],
  "sha256_definition": "sha256 of the UNCOMPRESSED CSV bytes (dataset identity; unchanged by the A9.17 repack)",
@@ -629,7 +662,7 @@
   "note": "container hash identifies the stored file; the dataset identity is the uncompressed-CSV sha256 (field sha256). Another zlib build may encode the same CSV to different container bytes."
  },
  "distribution": {
-  "installed_package": "EXCLUDED: the .csv.gz, this manifest and the design-states file are not shipped in the abep-sim wheel/sdist (pyproject exclude-package-data + MANIFEST.in exclude); no installed production module imports abep_sim.atmosphere_orbit",
+  "installed_package": "EXCLUDED: the .csv.gz, this manifest and the design-states files are not shipped in the abep-sim wheel/sdist (pyproject exclude-package-data + MANIFEST.in exclude); no installed production module imports abep_sim.atmosphere_orbit",
   "repository_path": "abep_sim/data/atmosphere_msis21_orbit_v1.csv.gz",
   "when_absent": "the accessor raises FileNotFoundError naming the repository path; no fallback",
   "authority": {
@@ -641,6 +674,18 @@
     "path": "docs/decisions/OD_2026_10_01_A9_17_DATA_ARTIFACT_OWNER_DECISIONS.md",
     "sha256": "540212c0c8862528e549555244f0fd39f8f9c9272f84dfb450bfef9dc54eba13"
    }
+  }
+ },
+ "design_states_file_v2": {
+  "file": "atmosphere_msis21_orbit_v1_design_states_v2.json",
+  "sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+  "producer": "design_states_v2() on this dataset (A9.14 S9.8 OD3; A9.17 ORBIT broad envelope)",
+  "command": "python -m abep_sim.atmosphere_orbit design-states-v2",
+  "status": "CURRENT design-state set (broad envelope)",
+  "authority": {
+   "path": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+   "sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
+   "decision_key": "ORBIT"
   }
  }
 }

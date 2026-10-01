@@ -30,7 +30,12 @@ def meta():
 
 @pytest.fixture(scope="module")
 def design():
-    return ao.load_design_states()
+    return ao.load_design_states("v1")      # immutable v1 set (PARAMETRIC ~83.75 deg latitude bound)
+
+
+@pytest.fixture(scope="module")
+def design_v2():
+    return ao.load_design_states()          # default: v2 broad-envelope set (A9.17 ORBIT)
 
 
 # --- provenance / frozen data ----------------------------------------------------------------------------------------
@@ -423,3 +428,110 @@ def test_design_states_content_unchanged_by_labels(design):
     lats = [abs(s["lat_deg"]) for s in design["states"]]
     assert max(lats) == pytest.approx(design["reachable_lat_max_deg"])          # envelope still spans all LSTs
     assert {s["lst_h"] for s in design["states"]} >= {0.0, 3.0, 6.0, 15.0}
+
+
+# --- PKG-1 repair: versioned broad-envelope design-state set v2 (A9.17 ORBIT) ---------------------------------------
+# sha256 of the v1 design-state file as committed with the A9.17 labels (ab72fba); v2 must not touch it.
+V1_DESIGN_FILE_SHA256 = "d8bd369bf4aa4ae321ecced094f2c02356be67e2c3f4acbe70264f700b419a40"
+
+
+def test_v1_design_file_kept_immutable(meta):
+    raw = open(ao.DESIGN_PATH, "rb").read()
+    assert hashlib.sha256(raw).hexdigest() == V1_DESIGN_FILE_SHA256 == meta["design_states_file"]["sha256"]
+    assert meta["design_states_file_v2"]["file"] == os.path.basename(ao.DESIGN_V2_PATH)
+    assert meta["design_states_file_v2"]["file"] != meta["design_states_file"]["file"]
+
+
+def test_design_v2_file_hash_and_record(meta, design_v2):
+    raw = open(ao.DESIGN_V2_PATH, "rb").read()
+    rec = meta["design_states_file_v2"]
+    assert hashlib.sha256(raw).hexdigest() == rec["sha256"]
+    assert rec["authority"] == {"path": ao.A9_17_JSON, "sha256": ao.A9_17_SHA256, "decision_key": "ORBIT"}
+    assert design_v2["dataset_sha256"] == meta["sha256"] == V1_CSV_SHA256
+    assert design_v2["supersedes"]["sha256"] == V1_DESIGN_FILE_SHA256
+    assert design_v2["authority"]["A9.17 ORBIT"]["verbatim"]["quote"] in open(os.path.join(ROOT, ao.A9_17_MD)).read()
+
+
+def test_design_v2_envelope_is_broad(design_v2):
+    # PKG-1: the v2 pool spans the whole latitude band; the code-default SSO bound (~83.75 deg) does not limit it.
+    assert design_v2["latitude_band_deg"] == [-90.0, 90.0]
+    ob = design_v2["orbit_basis"]
+    assert ob["requirement_input"] is False and "BROAD_ENVELOPE" in ob["status"] and "all local times" in ob["local_time"]
+    assert "CODE_DEFAULT / PARAMETRIC" in ob["code_default_orbit"]
+    st = design_v2["states"]
+    assert max(abs(s["lat_deg"]) for s in st) > ao.reachable_lat_max_deg() + 1.0
+    assert all(s["interp_max_rel_err_rho"] is not None for s in st)
+    labels = {l for s in st for l in s["labels"]}
+    for sc in ao.SCENARIO_ORDER:
+        for a in ao.ALT_KM:
+            tag = f"[{sc},{a:g}km]"
+            for kind in ["NOMINAL_MEDIAN_RHO", "LST_PEAK", "LST_TROUGH"] + \
+                        [f"{m}_{q}" for q in ao.EXTREMA_QUANTITIES for m in ("MAX", "MIN")]:
+                assert kind + tag in labels, kind + tag
+    # envelope extrema bound the whole stored grid (all latitudes) and equal the extrema of the 1-deg latitude pool
+    L = ao.load()
+    grid = np.concatenate([L["grid"][sc].reshape(-1, len(ao.OUT_COLS)) for sc in ao.SCENARIO_ORDER])
+    pools = [ao._pool_arrays(L, sc, ia, ao.V2_LAT_DEG) for sc in ao.SCENARIO_ORDER for ia in range(len(ao.ALT_KM))]
+    for q, col in (("rho_kg_m3", 0), ("T_K", -1)):
+        mx = [s for s in st if f"ENVELOPE_MAX_{q}" in s["labels"]][0][q]
+        mn = [s for s in st if f"ENVELOPE_MIN_{q}" in s["labels"]][0][q]
+        assert mx >= grid[:, col].max() * (1 - 1e-12) and mn <= grid[:, col].min() * (1 + 1e-12)
+        assert mx == pytest.approx(max(P[q].max() for P in pools), rel=1e-12)
+        assert mn == pytest.approx(min(P[q].min() for P in pools), rel=1e-12)
+    assert [s for s in st if "ENVELOPE_MAX_T_K" in s["labels"]][0]["T_K"] > 1823.6     # v1 max 1820.38 (|lat| <= 83.75)
+    for q in ao.EXTREMA_QUANTITIES:
+        mx = [s for s in st if f"ENVELOPE_MAX_{q}" in s["labels"]][0]
+        mn = [s for s in st if f"ENVELOPE_MIN_{q}" in s["labels"]][0]
+        assert mx[q] == max(s[q] for s in st) and mn[q] == min(s[q] for s in st)
+
+
+def test_design_v2_contains_v1_extrema_within_refinement(design, design_v2):
+    # v1 searched an interpolated boundary at +/-83.75 deg; the v2 1-deg pool matches or exceeds every v1 envelope
+    # extremum up to the recorded latitude-refinement sensitivity.
+    tol = design_v2["lat_refinement_sensitivity"]["max_abs_rel_change_of_extrema"]
+    for q in ao.EXTREMA_QUANTITIES:
+        for m, sign in (("MAX", 1.0), ("MIN", -1.0)):
+            v1 = [s for s in design["states"] if f"ENVELOPE_{m}_{q}" in s["labels"]][0][q]
+            v2 = [s for s in design_v2["states"] if f"ENVELOPE_{m}_{q}" in s["labels"]][0][q]
+            assert sign * (v2 - v1) >= -abs(v1) * tol[q], (q, m, v1, v2)
+
+
+def test_design_v2_independent_of_code_default_orbit(monkeypatch, design_v2):
+    monkeypatch.setattr(ao, "sso_inclination_deg", lambda alt_km: 60.0)    # a different code-default orbit
+    assert ao.reachable_lat_max_deg() == 120.0
+    assert json.loads(json.dumps(ao.design_states_v2())) == design_v2
+    ao._CACHE.clear()
+
+
+def test_load_design_states_versions(tmp_path, monkeypatch):
+    with pytest.raises(ValueError):
+        ao.load_design_states("v3")
+    bad = tmp_path / "ds_v2.json"
+    bad.write_bytes(open(ao.DESIGN_V2_PATH, "rb").read().replace(b'"required": true', b'"required": false', 1))
+    monkeypatch.setattr(ao, "DESIGN_V2_PATH", str(bad))
+    with pytest.raises(RuntimeError, match="altered"):
+        ao.load_design_states("v2")
+    monkeypatch.setattr(ao, "DESIGN_V2_PATH", str(tmp_path / "absent.json"))
+    with pytest.raises(FileNotFoundError, match="no fallback"):
+        ao.load_design_states()
+
+
+def test_write_design_states_v2_refuses_overwrite(tmp_path, monkeypatch):
+    other = tmp_path / "ds_v2.json"
+    other.write_text("{}\n")
+    monkeypatch.setattr(ao, "DESIGN_V2_PATH", str(other))
+    before = open(ao.JSON_PATH, "rb").read()
+    with pytest.raises(RuntimeError, match="new version"):
+        ao.write_design_states_v2()
+    assert open(ao.JSON_PATH, "rb").read() == before and other.read_text() == "{}\n"
+    ao._CACHE.clear()
+
+
+def test_orbit_coverage_records_broad_envelope(meta):
+    env = meta["orbit_coverage"]["design_state_envelope"]
+    assert env["current_set"] == os.path.basename(ao.DESIGN_V2_PATH)
+    assert env["latitude_status"].startswith("RESOLVED") and "OPEN" not in env["latitude_status"]
+    assert "-90..90" in env["v2"]["latitude"] and "IMMUTABLE" in env["v1"]["status"]
+    e5 = {e["id"]: e for e in meta["errata"]}["E5"]
+    assert e5["data_file_changed"] is False and e5["authority"]["decision_key"] == "ORBIT"
+    assert e5["review_finding"] == "PKG-1"

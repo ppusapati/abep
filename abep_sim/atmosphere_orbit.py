@@ -22,13 +22,16 @@ from ECSS-E-ST-10-04C Rev.1 (15 June 2020) Table 6-3. Scenarios are discrete: th
   uncompressed CSV bytes -- the dataset identity, unchanged since v1 was built -- and of the .gz container) and is NOT
   shipped in the installed wheel/sdist (no installed production module imports this module); the 96.3 deg / dawn-dusk
   orbit of ``mission_env`` is a CODE_DEFAULT / PARAMETRIC value, never a requirement input (inclination and LTAN are TBD
-  from the official mission ICD).
+  from the official mission ICD). The design-state envelope is kept broad: the current set
+  ``atmosphere_msis21_orbit_v1_design_states_v2.json`` searches every doy / longitude / local-time node at every
+  integer latitude -90..90 deg, independent of the code-default orbit; the v1 design-state file (bounded at ~83.75 deg by that default) stays immutable.
 
 Usage (repository checkout only; the data files are not part of the installed package)::
 
     python -m abep_sim.atmosphere_orbit build   # regenerate the .csv.gz + JSON (rule 1: intentional rebuild only)
     python -m abep_sim.atmosphere_orbit check   # verify hashes and re-run a deterministic subset with pymsis
     python -m abep_sim.atmosphere_orbit correct-metadata   # apply ERRATA / storage / labels to the JSON (data untouched)
+    python -m abep_sim.atmosphere_orbit design-states-v2   # write the broad-envelope design-state set v2 (A9.17 ORBIT)
 
 Nothing in the existing simulator imports this module (it is not wired into atmosphere.py / mission_env.py).
 """
@@ -60,6 +63,11 @@ LEGACY_CSV_PATH = os.path.join(DATA_DIR, DATASET_ID + ".csv")
 REPO_DATA_PATH = "abep_sim/data/" + DATASET_ID + ".csv.gz"
 JSON_PATH = os.path.join(DATA_DIR, DATASET_ID + ".json")
 DESIGN_PATH = os.path.join(DATA_DIR, DATASET_ID + "_design_states.json")
+# Versioned broad-envelope design-state set (A9.17 ORBIT): candidate pool = every stored grid node, latitude -90..90 deg,
+# all local times; independent of the mission_env code-default orbit. DESIGN_PATH (v1) is kept immutable.
+DESIGN_V2_ID = DATASET_ID + "_design_states_v2"
+DESIGN_V2_PATH = os.path.join(DATA_DIR, DESIGN_V2_ID + ".json")
+DESIGN_V2_COMMAND = "python -m abep_sim.atmosphere_orbit design-states-v2"
 BUILD_COMMAND = "python -m abep_sim.atmosphere_orbit build"
 CHECK_COMMAND = "python -m abep_sim.atmosphere_orbit check"
 
@@ -227,6 +235,18 @@ ERRATA = (
                                     "latitude-boundary design states (build() generated them before "
                                     "interpolation_validation was written to the JSON); physical values unaffected; "
                                     "left as frozen, open for the next design-state version"},
+    {"id": "E5", "date": "2026-10-01", "decision": "A9.17 ORBIT", "review_finding": "PKG-1",
+     "authority": {"path": A9_17_JSON, "sha256": A9_17_SHA256, "decision_key": "ORBIT"},
+     "fields": ["design_states_file_v2", "orbit_coverage.design_state_envelope"],
+     "was": {"design_state_envelope": "v1 set only, bounded at |lat| <= ~83.75 deg by the CODE_DEFAULT SSO family"},
+     "now": "versioned broad-envelope design-state set " + DESIGN_V2_ID + ".json added (candidate pool = every grid "
+            "doy / longitude / local-time node x every integer latitude -90..90 deg; independent of "
+            "mission_env.sso_inclination_deg); v1 design-"
+            "state file kept byte-identical",
+     "data_file_changed": False,
+     "resolves": "E4 open item (latitude bound) and, for new use, the per-state interp_max_rel_err_rho null defect: "
+                 "v2 is generated after interpolation_validation is in the manifest, so every off-node v2 state "
+                 "carries its scenario's recorded interpolation error and grid-node states carry 0.0"},
 )
 
 # Rho composition regression: an independent, mass-table-free determination of which pymsis species MASS_DENSITY
@@ -349,7 +369,8 @@ def _missing_data_error() -> FileNotFoundError:
     return FileNotFoundError(
         f"{DATASET_ID} data files are not present at {DATA_DIR}. The dataset is repository evidence and is excluded "
         f"from the installed abep-sim wheel/sdist (A9.17 DATA_SIZE, {A9_17_JSON}): use a repository checkout, where it "
-        f"lives at {REPO_DATA_PATH} (+ {DATASET_ID}.json, {DATASET_ID}_design_states.json); in a checkout without it, "
+        f"lives at {REPO_DATA_PATH} (+ {DATASET_ID}.json, {DATASET_ID}_design_states.json, {DESIGN_V2_ID}.json); in a "
+        f"checkout without it, "
         f"rebuild with `{BUILD_COMMAND}`. There is no fallback dataset.")
 
 
@@ -394,7 +415,7 @@ def storage_fields(raw: bytes, gz: bytes) -> dict:
         "bytes_definition": "size of the uncompressed CSV in bytes",
         "container": _container_record(gz),
         "distribution": {
-            "installed_package": "EXCLUDED: the .csv.gz, this manifest and the design-states file are not shipped in "
+            "installed_package": "EXCLUDED: the .csv.gz, this manifest and the design-states files are not shipped in "
                                  "the abep-sim wheel/sdist (pyproject exclude-package-data + MANIFEST.in exclude); no "
                                  "installed production module imports abep_sim.atmosphere_orbit",
             "repository_path": REPO_DATA_PATH,
@@ -419,13 +440,21 @@ def orbit_coverage() -> dict:
         "dataset_grid_coverage": "full geodetic latitude band -90..90 deg, all local solar times, all longitudes, all "
                                  "days of year: any inclination and any LTAN lie inside the dataset",
         "design_state_envelope": {
-            "local_time": "all local times (LTAN-agnostic)",
-            "latitude": "|lat| <= reachable_lat_max_deg(), the max |latitude| of the CODE_DEFAULT SSO family over "
-                        "180-230 km (83.6-83.75 deg); covers every inclination i with min(i, 180 - i) <= that bound",
-            "latitude_status": "PARAMETRIC bound inherited from the v1 design-state rule (content unchanged by A9.17); "
-                               "inclinations strictly between ~83.75 and ~96.25 deg reach higher latitudes, which the "
-                               "dataset grid covers but the v1 design-state set does not -- OPEN for the next "
-                               "design-state version / owner"},
+            "current_set": os.path.basename(DESIGN_V2_PATH),
+            "v2": {"file": os.path.basename(DESIGN_V2_PATH), "status": "BROAD_ENVELOPE (A9.17 ORBIT)",
+                   "local_time": "all local times (LTAN-agnostic)",
+                   "latitude": "every integer geodetic latitude -90..90 deg (all 19 nodes, poles included; off-node "
+                               "latitudes via the accessor interpolation); independent of "
+                               "mission_env.sso_inclination_deg and of any inclination / LTAN",
+                   "covers": "every inclination 0-180 deg and every LTAN, at the dataset grid resolution"},
+            "v1": {"file": os.path.basename(DESIGN_PATH), "status": "IMMUTABLE_V1_PARAMETRIC_BOUND (kept for "
+                   "traceability; not the broad envelope)",
+                   "local_time": "all local times (LTAN-agnostic)",
+                   "latitude": "|lat| <= reachable_lat_max_deg(), the max |latitude| of the CODE_DEFAULT SSO family over "
+                               "180-230 km (83.6-83.75 deg); does not cover inclinations strictly between ~83.75 and "
+                               "~96.25 deg or polar orbits"},
+            "latitude_status": "RESOLVED by the versioned v2 set (all latitudes); the v1 set keeps its PARAMETRIC "
+                               "83.75 deg bound unchanged (rule 1)"},
         "sso_inclination_deg_at_grid_alt": {str(int(a)): round(sso_inclination_deg(a), 4) for a in ALT_KM},
         "authority": {"path": A9_17_JSON, "sha256": A9_17_SHA256, "decision_key": "ORBIT",
                       "answer": "ORBIT_INCLINATION_LTAN_TBD_FROM_OFFICIAL_MISSION_ICD"},
@@ -547,7 +576,9 @@ def build() -> dict:
         json.dump(meta, f, indent=1, sort_keys=False)
         f.write("\n")
     _CACHE.clear()
-    return meta
+    if os.path.exists(DESIGN_V2_PATH):
+        os.remove(DESIGN_V2_PATH)           # full intentional rebuild (rule 1): v2 is re-derived from the new dataset
+    return write_design_states_v2()
 
 
 def _authority() -> dict:
@@ -835,25 +866,16 @@ EXTREMA_QUANTITIES = ("rho_kg_m3", "x_O", "x_N2", "x_O2", "T_K")
 
 def reachable_lat_max_deg() -> float:
     """Max |latitude| reached by the CODE_DEFAULT / PARAMETRIC SSO family over 180-230 km
-    (mission_env.sso_inclination_deg); a parametric bound of the v1 design-state rule, not a requirement input."""
+    (mission_env.sso_inclination_deg); a parametric bound of the immutable v1 design-state rule only, not a requirement
+    input. The current design-state set (design_states_v2) does not use it."""
     return max(180.0 - sso_inclination_deg(a) for a in ALT_KM)
 
 
-def design_states() -> dict:
-    """S9.8 design-state set, derived from the frozen dataset only (no hand-picked F10.7/density points).
-
-    Candidate pool: every grid node with |lat| <= reachable_lat_max_deg() plus the interpolated latitude-boundary states
-    at +/- reachable_lat_max_deg() for every other node coordinate (the CODE_DEFAULT / PARAMETRIC SSO family of
-    mission_env reaches 83.6-83.75 deg, between the 80 and 90 deg nodes; it is not a requirement input). The pool is
-    LTAN-agnostic (all local times): inclination and LTAN are TBD from the official mission ICD (A9.17 ORBIT).
-    For every scenario x altitude node, the set contains: NOMINAL (state of median density), the max/min of rho, x_O, x_N2, x_O2, T, and LST_PEAK / LST_TROUGH (median-density state at the local time whose
-    lat/lon/season-mean density is highest / lowest). Envelope extrema over all scenarios and altitudes are included.
-    The mission nominal scenario is ECSS long-term moderate. Identical states are merged with all their labels.
-    """
-    L = load()
-    lat_r = reachable_lat_max_deg()
+def _select_design_states(L: dict, lat_nodes, boundary_lats) -> list:
+    """Design-state selection shared by the v1 and v2 sets. Candidate pool per scenario x altitude node: every grid node
+    whose latitude index is in ``lat_nodes`` plus the interpolated states at each latitude in ``boundary_lats`` (empty
+    for v2), for every doy / longitude / local-time node. Selection rule: see design_states()."""
     nd, na, nl, no, nt = L["shape"]
-    lat_nodes = [i for i, v in enumerate(LAT_DEG) if abs(v) <= lat_r]
     states: dict = {}
 
     def add(st, label):
@@ -875,8 +897,8 @@ def design_states() -> dict:
                     for ilt in range(nt):
                         for ila in lat_nodes:
                             pool.append(node_state(idoy, ia, ila, ilo, ilt, s))
-                        for sgn in (-1.0, 1.0):
-                            pool.append(state(alt, sgn * lat_r, LST_H[ilt], LON_DEG[ilo], DOY[idoy], s))
+                        for blat in boundary_lats:
+                            pool.append(state(alt, blat, LST_H[ilt], LON_DEG[ilo], DOY[idoy], s))
             rhos = np.array([p["rho_kg_m3"] for p in pool])
             order = np.argsort(rhos, kind="stable")
             add(pool[int(order[len(order) // 2])], f"NOMINAL_MEDIAN_RHO[{s},{alt:g}km]")
@@ -902,6 +924,115 @@ def design_states() -> dict:
     for st in out:
         st["required"] = True
         st["nominal_mission_scenario"] = st["scenario"] == NOMINAL_SCENARIO
+    return out
+
+
+# v2 latitude pool: every integer degree -90..90 (contains the 19 grid nodes). Off-node values come from the accessor's
+# own latitude interpolation (cubic in log, INTERPOLATION["lat_deg"]); the v1 rho minimum, for example, sits off-node
+# near -83.75 deg, ~1.5 % below the -80 deg node (direct NRLMSIS also has its minimum between the -80 and -90 deg
+# nodes there), so a node-only pool would not contain it.
+V2_LAT_STEP_DEG = 1.0
+V2_LAT_DEG = tuple(float(x) for x in np.arange(-90.0, 90.0 + 0.5 * V2_LAT_STEP_DEG, V2_LAT_STEP_DEG))
+
+
+def _pool_arrays(L: dict, scenario: str, ia: int, lats) -> dict:
+    """Vectorised candidate pool for one scenario x altitude node: all doy / lon / LST nodes x ``lats`` (latitude-only
+    interpolation of the log grid with the accessor's latitude weights; node latitudes are reproduced exactly).
+    Pool order: doy, lon, LST, lat (lat fastest)."""
+    lg = L["log_grid"][scenario][:, ia]                               # (doy, lat, lon, lst, col)
+    W = np.array([_axis_weights("lat_deg", float(x)) for x in lats])  # (n_lat_pool, n_lat_nodes)
+    v = np.exp(np.einsum("fl,dlotc->dotfc", W, lg))                    # (doy, lon, lst, lat_pool, col)
+    nd, no, nt, nf, nc = v.shape
+    v = v.reshape(-1, nc)
+    idx = np.indices((nd, no, nt, nf)).reshape(4, -1)
+    n = v[:, 1:1 + len(SPECIES)]
+    ntot = np.sum(n, axis=1)
+    out = {"rho_kg_m3": v[:, 0], "T_K": v[:, -1], "i_doy": idx[0], "i_lon": idx[1], "i_lst": idx[2], "i_lat": idx[3],
+           "lst_h": np.asarray(LST_H)[idx[2]]}
+    for q in ("O", "N2", "O2"):
+        out[f"x_{q}"] = n[:, SPECIES.index(q)] / ntot
+    return out
+
+
+def _select_design_states_v2(L: dict, lats) -> list:
+    """Selection rule of design_states() applied to the vectorised pool of _pool_arrays (stable orderings, as v1).
+    Each selected candidate is materialised with node_state (node latitude) or state (off-node latitude)."""
+    states: dict = {}
+
+    def mk(s, ia, P, k):
+        lat = float(lats[P["i_lat"][k]])
+        idoy, ilo, ilt = int(P["i_doy"][k]), int(P["i_lon"][k]), int(P["i_lst"][k])
+        if lat in LAT_DEG:
+            return node_state(idoy, ia, LAT_DEG.index(lat), ilo, ilt, s)
+        return state(ALT_KM[ia], lat, LST_H[ilt], LON_DEG[ilo], DOY[idoy], s)
+
+    def add(st, label):
+        key = (st["scenario"], st["alt_km"], round(st["lat_deg"], 6), st["lst_h"], st["lon_deg"], st["doy"])
+        if key not in states:
+            st = dict(st)
+            st["labels"] = []
+            st["state_id"] = "ds2:{}:alt{:g}:lat{:+.4f}:lst{:g}:lon{:g}:doy{:g}".format(*key)
+            states[key] = st
+        if label not in states[key]["labels"]:
+            states[key]["labels"].append(label)
+
+    env = {}
+    for s in SCENARIO_ORDER:
+        for ia, alt in enumerate(ALT_KM):
+            P = _pool_arrays(L, s, ia, lats)
+            order = np.argsort(P["rho_kg_m3"], kind="stable")
+            add(mk(s, ia, P, int(order[len(order) // 2])), f"NOMINAL_MEDIAN_RHO[{s},{alt:g}km]")
+            for q in EXTREMA_QUANTITIES:
+                for kind, fn in (("MAX", np.argmax), ("MIN", np.argmin)):
+                    k = int(fn(P[q]))
+                    st = mk(s, ia, P, k)
+                    add(st, f"{kind}_{q}[{s},{alt:g}km]")
+                    cur = env.get((kind, q))
+                    if cur is None or (kind == "MAX" and P[q][k] > cur[0]) or (kind == "MIN" and P[q][k] < cur[0]):
+                        env[(kind, q)] = (float(P[q][k]), st)
+            logr = np.log(P["rho_kg_m3"])
+            lm = {float(h): float(np.mean(logr[P["lst_h"] == h])) for h in LST_H}
+            for tag, lst_sel in (("LST_PEAK", max(lm, key=lm.get)), ("LST_TROUGH", min(lm, key=lm.get))):
+                sub = np.nonzero(P["lst_h"] == lst_sel)[0]
+                sub = sub[np.argsort(P["rho_kg_m3"][sub], kind="stable")]
+                add(mk(s, ia, P, int(sub[len(sub) // 2])), f"{tag}[{s},{alt:g}km]")
+    for (kind, q), (_, st) in sorted(env.items(), key=lambda kv: kv[0]):
+        add(st, f"ENVELOPE_{kind}_{q}")
+    out = sorted(states.values(), key=lambda d: d["state_id"])
+    for st in out:
+        st["required"] = True
+        st["nominal_mission_scenario"] = st["scenario"] == NOMINAL_SCENARIO
+    return out
+
+
+def _lat_refinement_sensitivity(L: dict, fine_step: float = 0.25) -> dict:
+    """Measured change of the per-scenario x altitude extrema when the v2 latitude pool step is refined from
+    V2_LAT_STEP_DEG to ``fine_step`` (same interpolant): max relative change per quantity (recorded in the v2 file)."""
+    fine = tuple(float(x) for x in np.arange(-90.0, 90.0 + 0.5 * fine_step, fine_step))
+    worst = {q: 0.0 for q in EXTREMA_QUANTITIES}
+    for s in SCENARIO_ORDER:
+        for ia in range(len(ALT_KM)):
+            a, b = _pool_arrays(L, s, ia, V2_LAT_DEG), _pool_arrays(L, s, ia, fine)
+            for q in EXTREMA_QUANTITIES:
+                worst[q] = max(worst[q], abs(b[q].max() / a[q].max() - 1.0), abs(b[q].min() / a[q].min() - 1.0))
+    return {"fine_step_deg": fine_step, "max_abs_rel_change_of_extrema": {q: float(f"{v:.3e}") for q, v in worst.items()}}
+
+
+def design_states() -> dict:
+    """S9.8 design-state set, derived from the frozen dataset only (no hand-picked F10.7/density points).
+
+    Candidate pool: every grid node with |lat| <= reachable_lat_max_deg() plus the interpolated latitude-boundary states
+    at +/- reachable_lat_max_deg() for every other node coordinate (the CODE_DEFAULT / PARAMETRIC SSO family of
+    mission_env reaches 83.6-83.75 deg, between the 80 and 90 deg nodes; it is not a requirement input). The pool is
+    LTAN-agnostic (all local times): inclination and LTAN are TBD from the official mission ICD (A9.17 ORBIT).
+    For every scenario x altitude node, the set contains: NOMINAL (state of median density), the max/min of rho, x_O, x_N2, x_O2, T, and LST_PEAK / LST_TROUGH (median-density state at the local time whose
+    lat/lon/season-mean density is highest / lowest). Envelope extrema over all scenarios and altitudes are included.
+    The mission nominal scenario is ECSS long-term moderate. Identical states are merged with all their labels.
+    """
+    L = load()
+    lat_r = reachable_lat_max_deg()
+    lat_nodes = [i for i, v in enumerate(LAT_DEG) if abs(v) <= lat_r]
+    out = _select_design_states(L, lat_nodes, (-lat_r, lat_r))
     return {"dataset_id": DATASET_ID, "dataset_sha256": L["meta"]["sha256"], "reachable_lat_max_deg": lat_r,
             "nominal_scenario": NOMINAL_SCENARIO,
             "orbit_basis": {"status": ORBIT_STATUS, "requirement_input": False,
@@ -918,14 +1049,104 @@ def _design_states_text() -> str:
     return json.dumps(design_states(), indent=1) + "\n"
 
 
-def load_design_states() -> dict:
-    """The frozen design-state set written at build time (hash-verified against the dataset metadata)."""
+# Verbatim sentence of the A9.17 ORBIT decision that the v2 set implements (from A9_17_MD, item 2).
+A9_17_ORBIT_QUOTE = ("Keep the atmosphere/design-state envelope broad enough until DRDO, the spacecraft ICD, or the PDR "
+                     "mission definition supplies the real inclination and LTAN.")
+
+
+def design_states_v2() -> dict:
+    """S9.8 design-state set v2 (A9.17 ORBIT broad envelope), derived from the frozen dataset only.
+
+    Candidate pool, for each scenario x altitude node: every doy, longitude and local-time grid node x every integer
+    geodetic latitude -90..90 deg (V2_LAT_DEG; contains all 19 latitude nodes, poles included; off-node latitudes are
+    evaluated with the accessor's latitude interpolation and carry its recorded error). There is no latitude bound: the
+    pool does not depend on mission_env.sso_inclination_deg or on any inclination / LTAN, so it covers every inclination
+    0-180 deg and every LTAN (inclination and LTAN are TBD from the official mission ICD; the 96.3 deg / dawn-dusk
+    mission_env orbit is CODE_DEFAULT / PARAMETRIC and is not used here). The measured effect of a finer latitude step
+    on the extrema is recorded under lat_refinement_sensitivity.
+    Selection rule (as v1): for every scenario x altitude node, NOMINAL (state of median density), the max/min of rho,
+    x_O, x_N2, x_O2, T, and LST_PEAK / LST_TROUGH (median-density state at the local time whose lat/lon/season-mean
+    density is highest / lowest); envelope extrema over all scenarios and altitudes. The mission nominal scenario is
+    ECSS long-term moderate. Identical states are merged with all their labels.
+    """
+    L = load()
+    out = _select_design_states_v2(L, V2_LAT_DEG)
+    v1_sha = L["meta"].get("design_states_file", {}).get("sha256")
+    return {"design_state_set_id": DESIGN_V2_ID, "version": "v2", "dataset_id": DATASET_ID,
+            "dataset_sha256": L["meta"]["sha256"], "latitude_band_deg": [LAT_DEG[0], LAT_DEG[-1]],
+            "latitude_pool_step_deg": V2_LAT_STEP_DEG, "lat_refinement_sensitivity": _lat_refinement_sensitivity(L),
+            "nominal_scenario": NOMINAL_SCENARIO,
+            "orbit_basis": {"status": "BROAD_ENVELOPE (inclination / LTAN TBD from the official mission ICD)",
+                            "requirement_input": False,
+                            "inclination_deg": "any (0-180): every geodetic latitude -90..90 deg (1 deg step) is in "
+                                               "the pool",
+                            "local_time": "all local times (LTAN-agnostic)",
+                            "code_default_orbit": "mission_env 96.3 deg / dawn-dusk is " + ORBIT_STATUS + "; not used "
+                                                  "to bound this set",
+                            "real_orbit": "TBD from DRDO / spacecraft ICD / PDR mission definition; once supplied, a new "
+                                          "dataset / design-state version narrows the envelope"},
+            "supersedes": {"file": os.path.basename(DESIGN_PATH), "sha256": v1_sha,
+                           "relation": "v1 is kept immutable (CLAUDE.md rule 1; A9.17 WINDS keeps v1 immutable). Its "
+                                       "candidate pool is bounded at |lat| <= reachable_lat_max_deg() (~83.75 deg) of "
+                                       "the CODE_DEFAULT SSO family, so it does not cover inclinations between ~83.75 "
+                                       "and ~96.25 deg or polar orbits; v2 is the broad-envelope set for new use"},
+            "authority": {"A9.14 S9.8 OD3": {"path": A9_14_JSON, "sha256": A9_14_SHA256},
+                          "A9.17 ORBIT": {"path": A9_17_JSON, "sha256": A9_17_SHA256, "decision_key": "ORBIT",
+                                          "answer": "ORBIT_INCLINATION_LTAN_TBD_FROM_OFFICIAL_MISSION_ICD",
+                                          "verbatim": {"path": A9_17_MD, "sha256": A9_17_MD_SHA256,
+                                                       "quote": A9_17_ORBIT_QUOTE}}},
+            "producer": DESIGN_V2_COMMAND,
+            "rule": inspect.cleandoc(design_states_v2.__doc__), "n_states": len(out), "states": out}
+
+
+def _design_states_v2_text() -> str:
+    _CACHE.clear()
+    return json.dumps(design_states_v2(), indent=1) + "\n"
+
+
+def _design_v2_record(text: str) -> dict:
+    return {"file": os.path.basename(DESIGN_V2_PATH), "sha256": hashlib.sha256(text.encode()).hexdigest(),
+            "producer": "design_states_v2() on this dataset (A9.14 S9.8 OD3; A9.17 ORBIT broad envelope)",
+            "command": DESIGN_V2_COMMAND, "status": "CURRENT design-state set (broad envelope)",
+            "authority": {"path": A9_17_JSON, "sha256": A9_17_SHA256, "decision_key": "ORBIT"}}
+
+
+def write_design_states_v2() -> dict:
+    """Write the v2 design-state file and record it in the manifest. Deterministic and idempotent; refuses to overwrite
+    an existing v2 file whose content differs (that is a new version, CLAUDE.md rule 1). The dataset is not touched."""
+    meta = json.load(open(JSON_PATH))
+    read_csv_bytes(meta)                                    # hash-verified dataset (fail closed)
+    text = _design_states_v2_text()
+    if os.path.exists(DESIGN_V2_PATH):
+        if open(DESIGN_V2_PATH, "rb").read() != text.encode():
+            raise RuntimeError(f"{DESIGN_V2_PATH} exists with different content; a changed design-state set is a new "
+                               "version, not an overwrite (CLAUDE.md rule 1)")
+    else:
+        with open(DESIGN_V2_PATH, "w", newline="\n") as f:
+            f.write(text)
+    meta["design_states_file_v2"] = _design_v2_record(text)
+    _write_json(meta)
+    return meta
+
+
+def load_design_states(version: str = "v2") -> dict:
+    """A frozen design-state set, hash-verified against the dataset metadata. ``version="v2"`` (default) is the broad
+    envelope set (all latitudes, all local times; A9.17 ORBIT). ``version="v1"`` is the immutable v1 set bounded by
+    the CODE_DEFAULT / PARAMETRIC SSO latitude (~83.75 deg); it is kept for traceability only."""
     meta = load()["meta"]
-    if not os.path.exists(DESIGN_PATH):
+    if version == "v2":
+        path, rec = DESIGN_V2_PATH, meta.get("design_states_file_v2")
+    elif version == "v1":
+        path, rec = DESIGN_PATH, meta.get("design_states_file")
+    else:
+        raise ValueError(f"design-state version {version!r} unknown (v1, v2)")
+    if not os.path.exists(path):
         raise _missing_data_error()
-    raw = open(DESIGN_PATH, "rb").read()
-    if hashlib.sha256(raw).hexdigest() != meta["design_states_file"]["sha256"]:
-        raise RuntimeError("design-states file altered (sha256 mismatch)")
+    if rec is None:
+        raise RuntimeError(f"design-state {version} is not recorded in {JSON_PATH}; run {DESIGN_V2_COMMAND}")
+    raw = open(path, "rb").read()
+    if hashlib.sha256(raw).hexdigest() != rec["sha256"]:
+        raise RuntimeError(f"design-states file {version} altered (sha256 mismatch)")
     d = json.loads(raw)
     if d["dataset_sha256"] != meta["sha256"]:
         raise RuntimeError("design-states file was produced from a different dataset")
@@ -1100,6 +1321,16 @@ def check() -> dict:
                     if not math.isclose(a[k], b[k], rel_tol=1e-9):
                         problems.append(f"design state {a['state_id']} {k} does not reproduce")
                         break
+    v2_raw = open(DESIGN_V2_PATH, "rb").read() if os.path.exists(DESIGN_V2_PATH) else b""
+    v2_rec = meta.get("design_states_file_v2") or {}
+    if hashlib.sha256(v2_raw).hexdigest() != v2_rec.get("sha256"):
+        problems.append("design-states v2 file hash differs from the metadata (or file / record missing)")
+    elif not problems:
+        if _design_states_v2_text().encode() != v2_raw:
+            problems.append("design states v2 do not reproduce byte-identically from the frozen dataset")
+        if {k: v for k, v in v2_rec.items() if k != "sha256"} != \
+                {k: v for k, v in json.loads(json.dumps(_design_v2_record(""))).items() if k != "sha256"}:
+            problems.append("design_states_file_v2 record differs from the module definition")
     if regen_sha != rec["sha256"]:
         problems.append("recomputed subset hash differs from the recorded subset hash")
     expected = _metadata(raw, gz, meta["row_count"])
@@ -1144,7 +1375,13 @@ def main(argv=None) -> int:
         print(f"{JSON_PATH}: errata {[e['id'] for e in meta['errata']]} applied; csv sha256 {meta['sha256']} unchanged; "
               f"container {meta['container']['file']} sha256 {meta['container']['sha256']}")
         return 0
-    print("usage: python -m abep_sim.atmosphere_orbit build | check | correct-metadata", file=sys.stderr)
+    if argv[:1] == ["design-states-v2"]:
+        meta = write_design_states_v2()
+        r = meta["design_states_file_v2"]
+        print(f"{DESIGN_V2_PATH}: sha256 {r['sha256']} (dataset csv sha256 {meta['sha256']} unchanged)")
+        return 0
+    print("usage: python -m abep_sim.atmosphere_orbit build | check | correct-metadata | design-states-v2",
+          file=sys.stderr)
     return 2
 
 

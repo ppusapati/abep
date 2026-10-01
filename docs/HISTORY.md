@@ -2494,3 +2494,27 @@ Authority: `docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.jso
   family. Inclinations between ~83.75° and ~96.25° reach higher latitudes; the grid covers them, the design-state set
   does not. (2) Per-state `interp_max_rel_err_rho` is null for the 26 interpolated boundary design states, a v1 build
   ordering defect recorded in E4. Both are for the next design-state version.
+
+## 2026-10-01 — A9.17 ORBIT repair (PKG-1): versioned broad-envelope design-state set v2 (v1 files unchanged)
+
+Authority: `docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json` (sha256 9fd77c95…c3ad), decision key
+ORBIT ("Keep the atmosphere/design-state envelope broad enough until DRDO, the spacecraft ICD, or the PDR mission
+definition supplies the real inclination and LTAN"). Review finding PKG-1: the previous entry relabelled the 83.75° bound,
+but the code-default SSO family still set the only design-state envelope.
+
+- New file `abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json`, written by `python -m abep_sim.atmosphere_orbit
+  design-states-v2` (deterministic; refuses to overwrite a file with different content).
+  - Candidate pool: every doy / longitude / local-time node at every integer latitude −90…90°. All 19 latitude nodes are
+    included, poles too. Off-node latitudes use the accessor's own latitude interpolation, and each such state carries its
+    recorded interpolation error.
+  - The pool does not use `mission_env.sso_inclination_deg`: a test swaps that default and reproduces the file.
+  - Same selection rule as v1. The set has 196 states.
+  - The envelope now includes the polar extrema, e.g. T max 1824.27 K at −87° (v1: 1820.38 K).
+  - Refining the latitude step to 0.25° changes the extrema by ≤ 5.5e-4 relative (recorded in the file). v2 matches or
+    exceeds every v1 envelope extremum within that tolerance.
+- `load_design_states()` now defaults to v2; `load_design_states("v1")` returns the immutable v1 set. The manifest gains
+  `design_states_file_v2` and erratum E5, and `orbit_coverage.design_state_envelope.latitude_status` is RESOLVED. `check`
+  reproduces v2 byte for byte (OK).
+- Unchanged, and hash-pinned in the tests: the dataset (uncompressed CSV sha256 c0ce282e…6164, container 71ce01c3…8ace)
+  and the v1 design-state file (sha256 d8bd369b…a40). The existing `atmosphere_msis21_orbit_v1*` glob keeps v2 out of
+  the installed package.
