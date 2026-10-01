@@ -12,6 +12,7 @@ from pathlib import Path
 
 import pytest
 
+from abep_sim import rotor_strength as rs
 from abep_sim.compressor import DragCompressor
 from abep_sim.design import compressor_synthesis as cs
 
@@ -34,6 +35,19 @@ def _design(nt=2, ia=1, u=250.0, nd=0, mat="Ti6Al4V"):
     r = cs.r_turbo_from_area(a)
     return {"id": "x", "N_turbo": nt, "A_turbo_m2": a, "R_turbo_m": r, "u_tip_turbo_mps": u,
             "rpm": cs.rpm_from_tip(u, r), "N_drag": nd, "rotor_material": mat}
+
+
+def _synthetic_basis(material="Ti6Al4V", bid="SYN-TEST-BASIS-F3"):
+    """A complete rotor-strength basis record made of SYNTHETIC test values (never evidence; registered only for the
+    duration of one test and unregistered in a finally block)."""
+    return rs.RotorStrengthBasis(
+        basis_id=bid, materials_db_key=material, material_spec="SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+        product_form="synthetic", condition="synthetic", section_thickness_range_m=(0.01, 0.1),
+        design_temperature_K=1000.0, allowable_basis="synthetic", allowable_source="SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+        allowables=(rs.AllowablePoint(200.0, 9.0e8, 1.0e9), rs.AllowablePoint(1000.0, 9.0e8, 1.0e9)),
+        density_kg_m3=cs.DB[material].density, density_source="SYNTHETIC_TEST_DATA_NOT_EVIDENCE", factor_yield=1.25,
+        factor_ultimate=1.5, factors_source="SYNTHETIC_TEST_DATA_NOT_EVIDENCE", max_design_speed_rpm=1.0e6,
+        proof_spin_basis="synthetic", registration="SYNTHETIC_TEST_DATA_NOT_EVIDENCE")
 
 
 @pytest.fixture(scope="module")
@@ -83,11 +97,13 @@ def test_inlet_record_validation():
 
 def test_strict_mode_refuses_with_code_defaults():
     res = cs.synthesize(_inlet(), mode=cs.MODE_STRICT)
-    assert res["status"] == cs.ST_NOT_EVALUATED and res["designs"] == [] and res["pareto_ids"] == []
+    # A9.9 S2.3 / MCC-03 (D-05): without a registered rotor-strength basis strict mode is NOT_EVALUATED_MATERIAL_BASIS
+    assert res["status"] == cs.ST_NOT_EVALUATED_MATERIAL_BASIS and res["designs"] == [] and res["pareto_ids"] == []
     ids = {b["id"] for b in res["blockers"]}
-    assert "INLET" in ids and "C-turbo_kK" in ids and "P-TI64-DENSITY" in ids
+    assert "INLET" in ids and "C-turbo_kK" in ids and "P-TI64-DENSITY" in ids and "ROTOR-STRENGTH-BASIS" in ids
     r = cs.evaluate_design(_design(), _inlet(), mode=cs.MODE_STRICT)
-    assert r["status"] == cs.ST_NOT_EVALUATED and r["outputs"] is None
+    assert r["status"] == cs.ST_NOT_EVALUATED_MATERIAL_BASIS and r["outputs"] is None
+    assert r["rotor_qualification"] == cs.ST_NOT_EVALUATED_MATERIAL_BASIS
 
 
 def test_strict_mode_runs_once_evidence_is_supplied():
@@ -96,12 +112,30 @@ def test_strict_mode_runs_once_evidence_is_supplied():
           for f, role in cs.FIELD_ROLES.items() if role[0] == cs.FIXED}
     ev["rotor_density"] = {"value": cs.DB["Ti6Al4V"].density, "evidence_class": "measured", "source": "test fixture"}
     inlet = _inlet(label=cs.LABEL_INTERFACE, ev="model-derived")
-    assert cs.strict_blockers(inlet, ev) == []
-    grid = cs.SearchGrid(n_turbo=(1, 2), a_turbo_m2=(cs.SearchGrid().a_turbo_m2[2],), n_tip_speeds=3, n_drag=(0,))
-    res = cs.synthesize(inlet, mode=cs.MODE_STRICT, grid=grid, coefficient_evidence=ev)
-    assert res["status"] == "EVALUATED"
-    assert all(r["status"] in (cs.ST_FEASIBLE_STRICT, cs.ST_REJECTED) for r in res["designs"])
-    assert res["feasible_ids"]
+    # every coefficient evidenced, but no registered rotor basis: only the material-basis blocker remains
+    assert [b["id"] for b in cs.strict_blockers(inlet, ev)] == ["ROTOR-STRENGTH-BASIS"]
+    basis = _synthetic_basis()
+    rs.register_basis(basis)
+    try:
+        ev["rotor_strength_basis_id"] = {"value": basis.basis_id, "evidence_class": "measured",
+                                         "source": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE"}
+        assert cs.strict_blockers(inlet, ev) == []
+        grid = cs.SearchGrid(n_turbo=(1, 2), a_turbo_m2=(cs.SearchGrid().a_turbo_m2[2],), n_tip_speeds=3,
+                             n_drag=(0,), hub_ratios=(0.5,))
+        res = cs.synthesize(inlet, mode=cs.MODE_STRICT, grid=grid, coefficient_evidence=ev)
+        assert res["status"] == "EVALUATED"
+        # no stock thickness on the designs: qualify_rotor cannot place them in the basis -> never accepted
+        assert all(r["status"] == cs.ST_NOT_EVALUATED_MATERIAL_BASIS or cs.R_TIP_DOMAIN in r["reasons"]
+                   or r["status"] == cs.ST_REJECTED for r in res["designs"])
+        assert not res["feasible_ids"]
+        designs = [dict(d, rotor_stock_thickness_m=0.05) for d in grid.designs()]
+        recs = [cs.evaluate_design(d, inlet, cs.MODE_STRICT, ev) for d in designs]
+        assert all(r["status"] in (cs.ST_FEASIBLE_STRICT, cs.ST_REJECTED) for r in recs)
+        feas = [r for r in recs if r["outputs"]]
+        assert feas and all(r["rotor_structural_acceptance"] == "PASS" for r in feas)
+        assert all(r["diagnostics"]["stress_case"] == cs.STRESS_CASE_REGISTERED for r in recs)
+    finally:
+        rs.unregister_basis(basis.basis_id)
 
 
 def test_assumed_inlet_must_be_labelled_parametric():
@@ -191,11 +225,16 @@ def test_pareto_front_is_non_dominated_and_complete():
     recs = {r["id"]: r for r in res["designs"]}
     front = [recs[i] for i in res["pareto_ids"]]
     assert front
+    # A9.13 S6.7: the front is formed over hub > 0 points; zero-hub points are the analytical bound (reported apart)
+    assert all(r["design"]["hub_ratio"] > 0 for r in front)
     for a in front:
         assert not any(cs._dominates(b["outputs"], a["outputs"], cs.PRIMARY_OBJECTIVES) for b in front if b is not a)
-    for i in set(res["feasible_ids"]) - set(res["pareto_ids"]):
+    hub_feas = {i for i in res["feasible_ids"] if recs[i]["design"]["hub_ratio"] > 0}
+    for i in hub_feas - set(res["pareto_ids"]):
         assert cs.is_dominated_by(recs[i]["outputs"], front)
     assert set(res["pareto_ids"]) <= set(res["pareto_with_S_ids"])
+    assert res["zero_hub_bound_pareto_ids"] and all(recs[i]["design"]["hub_ratio"] == 0.0
+                                                    for i in res["zero_hub_bound_pareto_ids"])
 
 
 def test_size_for_comparison_does_not_touch_size_for():

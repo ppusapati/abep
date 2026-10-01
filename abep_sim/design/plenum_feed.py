@@ -42,7 +42,7 @@ Physics (free-molecular throughout; every relation below is the one the called m
     Chiggiato 2013 Sec. 4.1.2); every stage K in [1, K0] (the characteristic is defined only there; F3 R_CLIP);
     feed-orifice Knudsen number upper bound (atomic-O cross section TBD, omitted) >= 0.5 (F3 P-KN-FREE-MOLECULAR);
     compressor lumped temperature <= materials.DB T_max (F3 R_THERMAL). A plenum target above the compressor's
-    admissible outlet is INFEASIBLE_OUT_OF_DOMAIN and is never extrapolated.
+    admissible outlet is NOT_EVALUATED_OUT_OF_DOMAIN (A9.13 S6.8) and is never extrapolated.
 
 Evidence discipline (CLAUDE.md rules 3, 4, 6, 10; docs/EVIDENCE.md; A9.7 F7 rule): MODE_STRICT refuses
 (NOT_EVALUATED, blockers listed) while any input is TBD or an uncited code default. MODE_PARAMETRIC runs on the
@@ -50,6 +50,22 @@ labelled code defaults / parametric cases and labels every output PARAMETRIC_SEN
 is TBD (F5 IFD-F4-01..05): it is a parametric requirement sweep and the output is a feasibility region, never a
 chosen requirement. Searches return Pareto sets with every infeasible point kept with its reasons; nothing is a
 winner, a selection or a PASS.
+
+A9.13 owner decisions applied (A9.16 step 3 design layer; docs/decisions/OD_2026_10_01_A9_13_*, json sha256 9afaca45...;
+the shared rules live in abep_sim/design/upstream_a9_13.py):
+  * S6.8 / OQ-F3-03: every compressor / plenum result touching a pressure above 0.1 Pa is NOT_EVALUATED_OUT_OF_DOMAIN
+    (``ST_OOD``); no flow / state is offered from it; the transitional candidate model is never consumed.
+  * S6.10 / OQ-F4-01: ``scheduled_operation`` runs the orbit-state-scheduled plenum setpoint (BASELINE control mode,
+    schedule on controller-available inputs only, never frozen) and ``compare_control_modes`` reports it next to the
+    fixed setpoint (fallback / degraded mode and comparison reference).
+  * S6.11 / OQ-F4-02: this module's <= 0.1 Pa high-conductance branch is the labelled sensitivity / fallback study; the
+    higher-pressure compression path is the primary direction (NOT_EVALUATED_OUT_OF_DOMAIN until S6.8 closes).
+  * S6.12 / OQ-F4-03: the transient metrics (2 % band, 60 s window, E0-E7, orbit modulation) are PROVISIONAL
+    (``TRANSIENT_FRAMEWORK``); ``feed_quality`` compares them with measured H-1 tolerances, which govern when tighter.
+  * S6.17 / OQ-F78-03: ripple is a hard feed-quality constraint, not a Pareto objective (``OBJECTIVES`` excludes it;
+    the value is still reported as ``ripple_transfer_shaft``).
+  * S6.5 / S6.19: the filter is a separate element (F2); 'none' (FC-00) is a reference bound only (``FilterCase.role``).
+  * S6.21 / F9-OQ-02: ``R_FLOW`` belongs to the parametric requirement sweep only; no fixed mg/s flight gate.
 """
 from __future__ import annotations
 
@@ -69,6 +85,7 @@ from ..materials import DB
 from ..reservoir import Reservoir
 from . import compressor_synthesis as cs
 from . import filter_stage as fs
+from . import upstream_a9_13 as u13
 
 SCHEMA = "f4_plenum_feed_v1"
 VERSION = "1.0.0"
@@ -82,7 +99,7 @@ LABEL_PARAMETRIC = "PARAMETRIC_SENSITIVITY"
 # ------------------------------------------------------------------------------------------------- statuses / reasons
 ST_FEASIBLE = "FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS"
 ST_INFEASIBLE = "INFEASIBLE"
-ST_OOD = "INFEASIBLE_OUT_OF_DOMAIN"
+ST_OOD = u13.NOT_EVALUATED_OOD             # A9.13 S6.8: above 0.1 Pa nothing is evaluated (was INFEASIBLE_OUT_OF_DOMAIN)
 ST_MODEL_ERROR = "MODEL_ERROR"
 ST_NOT_EVALUATED = "NOT_EVALUATED"
 FORBIDDEN_STATUS_WORDS = ("PASS", "SELECTED", "WINNER", "QUALIFIED", "OPTIMUM")
@@ -93,7 +110,7 @@ R_CHARACTERISTIC = "GAEDE_CHARACTERISTIC_OUTSIDE_K_1_TO_K0"                     
 R_KN_FEED = "FEED_ORIFICE_KNUDSEN_UPPER_BOUND_BELOW_FREE_MOLECULAR_LIMIT"           # OOD
 R_THERMAL = "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT"                  # infeasible
 R_DEADHEAD = "TARGET_AT_OR_ABOVE_DEAD_HEAD_PRESSURE"                                # infeasible
-R_FLOW = "DELIVERED_FLOW_BELOW_REQUIREMENT"                                         # infeasible
+R_FLOW = "DELIVERED_FLOW_BELOW_REQUIREMENT"     # parametric requirement sweep only (S6.21: no fixed mg/s flight gate)
 R_UPSTREAM_F1 = "F1_INTAKE_INFEASIBLE_AT_STATE"                                     # infeasible (propagated)
 R_NOT_SETTLED = "TRANSIENT_NOT_SETTLED_WITHIN_WINDOW"                               # infeasible (state not maintained)
 R_SATURATED = "VALVE_SATURATED_SETPOINT_NOT_MAINTAINED"                             # infeasible (state not maintained)
@@ -348,6 +365,11 @@ class FilterCase:
     areal_mass_kg_m2: float | None
     overrides: tuple = ()
     note: str = ""
+    role: str = fs.ROLE_BASELINE          # A9.13: FC-00 'none' carries fs.ROLE_REFERENCE_BOUND (reference only)
+
+    @property
+    def reference_bound_only(self) -> bool:
+        return self.role == fs.ROLE_REFERENCE_BOUND
 
     def coefficients(self, a: Mapping[str, float]) -> tuple[dict, dict]:
         """(D_s, E_s): delivered fraction of the forward ram flow and net backflow factor per incident molecule."""
@@ -388,12 +410,14 @@ def filter_case_from_stage(case_id: str, stage: fs.FilterStage, case: fs.Sensiti
     areal = None if stage.kind == "none" else (case.overrides.get("areal_mass_kg_m2") if case else None)
     return FilterCase(case_id=case_id, label=res.label, stage_id=stage.stage_id, t_f=t_f, r_f=r_f, t_b=t_b, r_b=r_b,
                       t_u=dict(t_b), r_u=dict(r_b), areal_mass_kg_m2=areal,
-                      overrides=tuple(sorted((u["parameter"], u["value"]) for u in res.overrides_used)), note=note)
+                      overrides=tuple(sorted((o["parameter"], o["value"]) for o in res.overrides_used)), note=note,
+                      role=stage.role)
 
 
 def filter_none() -> FilterCase:
     return filter_case_from_stage("F4-FIL-NONE", fs.FilterStage.none(), None,
-                                  note="F2 'none' definitional identity (admissibility vs the RFP chain: F2-OQ-03)")
+                                  note="F2 'none' definitional identity: FC-00 REFERENCE BOUND only, never an admissible "
+                                       "flight architecture (A9.13 S6.5)")
 
 
 def filter_parametric(tau: float) -> FilterCase:
@@ -423,7 +447,14 @@ def filter_placeholder() -> FilterCase:
 
 
 def filter_cases(taus=(0.9, 0.7, 0.5)) -> list[FilterCase]:
+    """Every F4 filter case: FC-00 'none' (REFERENCE BOUND only, A9.13 S6.5) plus the inert loss-free parametric
+    screens and the repository placeholder (both baseline-role PARAMETRIC_SENSITIVITY cases)."""
     return [filter_none()] + [filter_parametric(t) for t in taus] + [filter_placeholder()]
+
+
+def element_filter_cases(taus=(0.9, 0.7, 0.5)) -> list[FilterCase]:
+    """The filter cases that model an actual element between IF-A1 and IF-A2 (FC-00 excluded: reference bound only)."""
+    return [f for f in filter_cases(taus) if not f.reference_bound_only]
 
 
 # =================================================================================================== compressor plant
@@ -653,7 +684,7 @@ def steady_operating_point(chain: Chain, target_Pa: float, density_factor: float
                            ) -> dict:
     """Fully gated steady state with the plenum held at target_Pa (pressure regulation). Returns the record offered
     to H-1 (mdot_s, P, T, x_s) plus the domain / feasibility reasons. Never returns flows for a target above the
-    compressor's admissible outlet (INFEASIBLE_OUT_OF_DOMAIN)."""
+    compressor's admissible outlet (NOT_EVALUATED_OUT_OF_DOMAIN, A9.13 S6.8)."""
     reasons = []
     if chain.intake.f1_status != "FEASIBLE_AT_STATE":
         reasons.append(R_UPSTREAM_F1)
@@ -1176,8 +1207,11 @@ WINDOW_S = 60.0                 # observation window per event (metric definitio
 SETPOINT_STEP = 0.10            # relative setpoint step (up, then back down)
 FEED_PATH_STEP = 0.8            # parametric multiplicative step of the downstream feed-path conductance
 SUPPLY_STEP = 0.10              # parametric free-stream supply step (+/-), TBD (no time-resolved free stream)
-OBJECTIVES = ("V_m3", "valve_travel", "settling_max_s", "peak_deviation_max", "ripple_transfer_shaft",
-              "P_compressor_el_W")
+# A9.13 S6.17: ripple is a hard feed-quality constraint (``feed_quality``), not a Pareto objective; its value is still
+# reported in every case's objectives record under 'ripple_transfer_shaft'.
+OBJECTIVES = ("V_m3", "valve_travel", "settling_max_s", "peak_deviation_max", "P_compressor_el_W")
+REPORTED_NOT_OPTIMISED = ("ripple_transfer_shaft",)
+TRANSIENT_FRAMEWORK = dict(u13.F4_TRANSIENT_FRAMEWORK, settling_band_frac=SETTLE_BAND, observation_window_s=60.0)
 
 
 def event_sequence(design: IntakeState, r0: float, window_s: float = WINDOW_S) -> list:
@@ -1328,8 +1362,8 @@ def strict_blockers() -> list[dict]:
     return [
         {"id": "F3-STRICT", "what": "compressor coefficients", "status": "F3 MODE_STRICT NOT_EVALUATED (22 blockers)",
          "needs": "compressor_downselect T-1..T-9 evidence"},
-        {"id": "F2-FILTER", "what": "filter stage", "status": "every real concept TBD; 'none' admissibility F2-OQ-03",
-         "needs": "evidenced filter records or the owner's F2-OQ-03 disposition"},
+        {"id": "F2-FILTER", "what": "filter stage", "status": "every real concept TBD; 'none' (FC-00) is a reference "
+         "bound only (A9.13 S6.5)", "needs": "evidenced inert / low-recombination filter records (A9.13 S6.3 / S6.19)"},
         {"id": "F4-P-01", "what": "chain gas temperature", "status": "assumed (code default)", "needs": "H2-5 thermal"},
         {"id": "F4-P-05", "what": "plenum leak", "status": "TBD", "needs": "leak specification / test"},
         {"id": "F4-P-06", "what": "plenum wall gamma_O", "status": "TBD", "needs": "GP-D03 + coupon evidence"},
@@ -1339,6 +1373,10 @@ def strict_blockers() -> list[dict]:
         {"id": "F4-P-11", "what": "orbit-scale density modulation", "status": "TBD",
          "needs": "orbit-resolved free stream (not in the frozen dataset)"},
         {"id": "F4-P-18", "what": "compressor-inlet node volume", "status": "TBD", "needs": "duct geometry"},
+        {"id": "F4-H1-TOL", "what": "measured H-1 feed tolerances (pressure, flow, composition, ripple)",
+         "status": "TBD", "needs": "LOCK-2 H-1 feed-sensitivity measurement (A9.13 S6.12 / S6.17)"},
+        {"id": "F4-SCHEDULE", "what": "orbit-state setpoint schedule (baseline control mode)", "status": "NOT_FROZEN",
+         "needs": "validated compressor / feed / H-1 domains (A9.13 S6.10)"},
     ]
 
 
@@ -1379,3 +1417,86 @@ def pareto_ids(rows: list[dict], objectives) -> list[str]:
     vals = [r["objectives"] for r in feas]
     return [r["id"] for i, r in enumerate(feas)
             if not any(dominates(vals[j], vals[i], objectives) for j in range(len(feas)) if j != i)]
+
+
+# =================================================================================================== A9.13 S6.10 control
+NAV_ALTITUDE_INPUT = u13.ScheduleInput("nav:alt_km", "onboard_navigation_or_clock",
+                                     "onboard orbit determination (navigation solution); availability per the "
+                                     "spacecraft ICD (TBD)")
+
+
+def intake_controller_state(intake: IntakeState, inputs=(NAV_ALTITUDE_INPUT,)) -> dict:
+    """Controller-available view of an F1 orbit state: only declared inputs (altitude from navigation by default).
+    The intake's environment-truth quantities (density, composition, surface scenario) are never exposed."""
+    full = {"alt_km": intake.alt_km}
+    return u13.controller_view(full, list(inputs), {i.name: i.name.split(":", 1)[1] for i in inputs})
+
+
+def scheduled_operation(filt: FilterCase, plant: CompressorPlant, plenum: Plenum, intakes: list, control,
+                        controller_states: Mapping | None = None) -> dict:
+    """Steady operation at every orbit state under one control mode (A9.13 S6.10): ``control`` is an
+    upstream_a9_13.SetpointSchedule (BASELINE) or FixedSetpoint (fallback / reference). The setpoint of each state
+    comes from that state's controller-available view only; a setpoint above 0.1 Pa is NOT_EVALUATED_OUT_OF_DOMAIN
+    (S6.8), and nothing is offered from it. Every point carries the steady_operating_point gates."""
+    if not isinstance(control, (u13.SetpointSchedule, u13.FixedSetpoint)):
+        raise ValueError("control must be an upstream_a9_13.SetpointSchedule or FixedSetpoint")
+    rows = []
+    for it in intakes:
+        cst = (controller_states or {}).get(it.state) if controller_states else intake_controller_state(it)
+        if cst is None:
+            raise ValueError(f"no controller state for {it.state}")
+        sp = control.setpoint(cst)
+        row = {"state": it.state, "scenario": it.scenario, "candidate": it.candidate, "mode": control.mode,
+               "mode_role": u13.CONTROL_MODES[control.mode], "controller_state": dict(cst), "setpoint": sp}
+        if sp["setpoint_Pa"] is None:
+            row.update({"status": sp["status"], "reasons": [], "offered": None})
+        else:
+            op = steady_operating_point(Chain(it, filt, plant, plenum), sp["setpoint_Pa"])
+            row.update({"status": op["status"], "reasons": op["reasons"], "offered": op.get("offered"),
+                        "a_eq_m2": op.get("a_eq_m2"),
+                        "P_compressor_el_W": (op.get("compressor") or {}).get("P_el_W"),
+                        "domain": sp["domain"]})
+        rows.append(row)
+    ok = [r for r in rows if r["status"] == ST_FEASIBLE]
+    md = [r["offered"]["mdot_total_kgps"] for r in ok]
+    return {"mode": control.mode, "mode_role": u13.CONTROL_MODES[control.mode], "control": control.to_dict(),
+            "label": LABEL_PARAMETRIC, "rows": rows, "n_states": len(rows), "n_feasible": len(ok),
+            "all_states_feasible": len(ok) == len(rows),
+            "worst_state_mdot_kgps": min(md) if len(ok) == len(rows) and md else None,
+            "authority": u13.cite("A9.13")}
+
+
+def compare_control_modes(filt: FilterCase, plant: CompressorPlant, plenum: Plenum, intakes: list,
+                          schedule: "u13.SetpointSchedule", fixed: "u13.FixedSetpoint",
+                          controller_states: Mapping | None = None) -> dict:
+    """Baseline (scheduled) and fallback / reference (fixed) side by side; no mode is 'selected' here (S6.10)."""
+    if not isinstance(schedule, u13.SetpointSchedule) or not isinstance(fixed, u13.FixedSetpoint):
+        raise ValueError("compare_control_modes(schedule=SetpointSchedule, fixed=FixedSetpoint)")
+    a = scheduled_operation(filt, plant, plenum, intakes, schedule, controller_states)
+    b = scheduled_operation(filt, plant, plenum, intakes, fixed, controller_states)
+    return {"baseline": a, "fallback_reference": b, "schedule_status": schedule.status,
+            "rule": "A9.13 S6.10: scheduled setpoint = baseline control mode; fixed setpoint = fallback / degraded "
+                    "mode and comparison reference; the schedule is not frozen"}
+
+
+# =================================================================================================== A9.13 S6.12 / S6.17
+def feed_quality(case_result: Mapping, tolerances: Mapping[str, "u13.H1Tolerance"] | None = None) -> dict:
+    """Feed-quality constraints of one transient case against measured H-1 tolerances (S6.12 / S6.17): pressure
+    peak deviation and ripple. With a TBD tolerance the constraint is NOT_EVALUATED; F4's provisional 2 % band never
+    replaces a tighter measured H-1 limit. Values from this model are PARAMETRIC_SENSITIVITY."""
+    tol = dict(tolerances or {})
+    obj = case_result.get("objectives") or {}
+    pk = obj.get("peak_deviation_max")
+    rip = obj.get("ripple_transfer_shaft")
+    p_tol = tol.get("pressure") or u13.h1_tolerance_tbd("pressure")
+    r_tol = tol.get("ripple") or u13.h1_tolerance_tbd("ripple")
+    band = u13.governing_band("pressure", SETTLE_BAND, p_tol)
+    if p_tol.status == u13.VALUE_TBD or pk is None:
+        p_status = u13.C_NOT_EVALUATED
+    else:
+        p_status = u13.constraint_status(pk <= p_tol.value_frac, u13.combine_value_status([u13.VALUE_PARAMETRIC,
+                                                                                         p_tol.status]))
+    return {"framework": TRANSIENT_FRAMEWORK["status"], "pressure_band": band,
+            "pressure_peak_deviation": {"value_frac": pk, "status": p_status},
+            "ripple": u13.ripple_feed_quality(rip, u13.VALUE_PARAMETRIC if rip is not None else u13.VALUE_TBD, r_tol),
+            "authority": u13.cite("A9.13")}

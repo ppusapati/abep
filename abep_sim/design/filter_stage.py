@@ -39,9 +39,26 @@ Fail-closed rules
     usable only through ``placeholder_sensitivity_case`` - never silently.
   * Inlet states labelled other than EVIDENCE propagate their label to the outlet.
   * The 'none' option (``FilterStage.none``) is the definitional identity (no element): tau = 1, nothing lost, no
-    pressure effect, zero mass. It exists for trade studies; whether 'no filter' is admissible against the RFP chain
-    (intake -> filter -> compressor) is an owner question (F2-OQ-03).
+    pressure effect, zero mass. It exists for trade studies as the FC-00 reference bound only; the owner answered
+    F2-OQ-03 (A9.13 S6.5): never an admissible flight architecture under the RFP intake -> filter -> compressor chain.
   * Nothing here selects, ranks or declares a filter concept; no status is ever PASS / SELECTED / WINNER / QUALIFIED.
+
+A9.13 owner decisions applied (A9.16 step 3, design layer; docs/decisions/OD_2026_10_01_A9_13_*, json sha256
+9afaca45...; ids S6.3 / F2-OQ-01, S6.4 / F2-OQ-02, S6.5 / F2-OQ-03, S6.6 / F2-OQ-04, S6.19 / UPSTREAM_ICD-Q1):
+  * the filter is a SEPARATE production-path element between IF-A1 (intake / channel-array exit) and IF-A2
+    (compressor inlet) (``INTERFACE_POSITION``); its effect is never folded into the intake efficiency: every result
+    exposes species-resolved forward and reverse transmission, the conductance / pressure effect, species
+    conversion / recombination, the retained inventory, the thermal load, the material state and validity / domain
+    flags (``FilterResult``: ``retained_inventory``, ``thermal_load``, ``material_state``, ``validity_flags``);
+  * baseline role = protection against particulates / debris while preserving the atmospheric propellant, with an
+    inert / low-recombination element (``ROLE_BASELINE``). Atomic O is NOT a contaminant to be removed; compressor
+    wear products are not credited to this filter. A deliberately catalytic O -> O2 element exists only as the
+    labelled research variant ``ROLE_CATALYTIC_RESEARCH`` (never admissible as baseline; it needs its own species-
+    conversion, flow / conductance, thermal / material and converted-composition H-1 evidence);
+  * FC-00 / ``FilterStage.none`` is ``ROLE_REFERENCE_BOUND``: an ideal reference bound to quantify the filter cost,
+    never an admissible flight architecture (the RFP chain RFP-P16-02 contains intake -> filter -> compressor);
+  * APP-FILTER is a P4 materials application (S6.6); quantitative acceptance limits (capture, transmission,
+    pressure loss, O recombination, capacity, erosion) are pre-registered before LOCK-1 from evidence, never defaulted.
 """
 from __future__ import annotations
 
@@ -98,6 +115,36 @@ CONVERSION_PRODUCTS: dict[str, dict[str, float]] = {
 }
 
 CONSERVATION_TOL = 1e-12
+
+# A9.13 S6.3-S6.6 / S6.19 roles and interface position
+ROLE_BASELINE = "BASELINE_INERT_LOW_RECOMBINATION"
+ROLE_CATALYTIC_RESEARCH = "RESEARCH_VARIANT_CATALYTIC_NOT_BASELINE"
+ROLE_REFERENCE_BOUND = "REFERENCE_BOUND_FC00_NOT_ADMISSIBLE_FLIGHT_ARCHITECTURE"
+ROLES = (ROLE_BASELINE, ROLE_CATALYTIC_RESEARCH, ROLE_REFERENCE_BOUND)
+INTERFACE_POSITION = {"upstream_interface": "IF-A1 (intake / channel-array exit, downstream of the primary intake / "
+                                            "collimator)",
+                      "downstream_interface": "IF-A2 (compressor inlet)",
+                      "production_path_element": True, "folded_into_intake_efficiency": False,
+                      "basis": "A9.13 S6.6 / S6.19; RFP-P16-02 (Intake -> Filter -> Compressor)"}
+# the evidence a catalytic research variant needs (A9.13 S6.4) before any of its results is more than a sensitivity
+CATALYTIC_VARIANT_EVIDENCE = ("species-conversion measurement", "flow / conductance measurement",
+                              "thermal / material qualification", "H-1 performance map on the converted composition")
+BASELINE_PROTECTION_TARGETS = ("particulates_debris",)          # S6.3: intake-borne particulates, foreign debris,
+#                                                                 manufacturing / released particulates
+NOT_CREDITED_TARGETS = {
+    "atomic_oxygen_to_downstream_surfaces": "atomic O is propellant (RFP-P17-05), not a contaminant to be removed "
+                                            "in the baseline (A9.13 S6.3)",
+    "sputter_wear_products": "compressor wear products are downstream-generated: not credited to the intake filter "
+                             "unless backstream transport is demonstrated; a separate downstream guard / trap is "
+                             "defined if needed (A9.13 S6.3)",
+    "ambient_charged_particles": "not a baseline filter requirement unless a hazard analysis demonstrates the need "
+                                 "(A9.13 S6.3)",
+}
+# quantitative filter acceptance (A9.13 S6.3): pre-registered before LOCK-1 from evidence; none is defaulted here
+ACCEPTANCE_ITEMS = ("capture efficiency vs registered contaminant / particle class",
+                    "species-resolved propellant transmission", "pressure-loss / conductance penalty",
+                    "O recombination / conversion probability", "retained contaminant capacity",
+                    "AO erosion / material durability", "effect on AG-12 feed-state closure")
 
 
 class FilterStageError(ValueError):
@@ -285,7 +332,7 @@ class MaterialApplicability:
             raise FilterStageError("an AO gate outcome other than INCOMPLETE_EVIDENCE needs evidence_refs")
 
     def to_dict(self) -> dict:
-        return {"material": self.material, "application": "APP-FILTER (proposed; not a P4 application yet)",
+        return {"material": self.material, "application": "APP-FILTER (P4 materials application, A9.13 S6.6)",
                 "ao_compatibility": self.ao_compatibility, "surrogate_label": self.surrogate_label,
                 "o_recombination_probability": self.o_recombination_probability.to_dict(),
                 "ao_erosion_yield": self.ao_erosion_yield.to_dict(), "evidence_refs": list(self.evidence_refs),
@@ -367,10 +414,20 @@ class InletState:
     knudsen_number: float | None
     label: str
     provenance: str
+    # optional (A9.13 S6.19 thermal load): per-species energy flux arriving at the inlet face [W], from F1 / TPMC
+    incident_power_W: Mapping[str, float] | None = None
+    incident_power_source: str = ""
 
     def __post_init__(self):
         if self.label not in INLET_LABELS:
             raise FilterStageError(f"inlet label {self.label!r} not in {INLET_LABELS}")
+        if self.incident_power_W is not None:
+            if set(self.incident_power_W) != set(self.mdot_forward_kgps):
+                raise FilterStageError("incident_power_W must name the same species as the flows")
+            if any(not _finite(v) or v < 0.0 for v in self.incident_power_W.values()):
+                raise FilterStageError("incident_power_W values must be finite and >= 0")
+            if not self.incident_power_source.strip():
+                raise FilterStageError("incident_power_W needs incident_power_source")
         if self.incidence not in INCIDENCES:
             raise FilterStageError(f"incidence {self.incidence!r} not in {INCIDENCES}")
         if not self.provenance.strip() or not self.back_incident_basis.strip():
@@ -435,6 +492,14 @@ class FilterResult:
     protection: list = field(default_factory=list)
     materials: list = field(default_factory=list)
     notes: list = field(default_factory=list)
+    # A9.13 S6.19 element records (filled by FilterStage.apply for every outcome, numeric or refused)
+    role: str = ROLE_BASELINE
+    admissible_as_baseline: bool = False
+    interfaces: dict = field(default_factory=dict)
+    retained_inventory: dict = field(default_factory=dict)
+    thermal_load: dict = field(default_factory=dict)
+    material_state: dict = field(default_factory=dict)
+    validity_flags: dict = field(default_factory=dict)
 
     @property
     def numeric(self) -> bool:
@@ -446,13 +511,31 @@ class FilterResult:
                 "species": self.species, "totals": self.totals,
                 "composition_net_downstream": self.composition_net_downstream, "mass_kg": self.mass_kg,
                 "regime": self.regime, "protection": self.protection, "materials": self.materials,
-                "notes": self.notes}
+                "notes": self.notes, "role": self.role, "admissible_as_baseline": self.admissible_as_baseline,
+                "interfaces": self.interfaces, "retained_inventory": self.retained_inventory,
+                "thermal_load": self.thermal_load, "material_state": self.material_state,
+                "validity_flags": self.validity_flags}
+
+    def species_transmission(self) -> dict:
+        """Species-resolved forward and reverse (backflow) transmission fractions and the conductance / pressure
+        effect (A9.13 S6.19); NOT_EVALUATED when the stage refused."""
+        if not self.numeric:
+            return {"status": "NOT_EVALUATED", "reason": self.status, "missing": self.missing}
+        return {"status": self.status, "label": self.label, "species": {
+            s: {"forward_transmission": v["fractions_forward"]["transmitted"],
+                "reverse_transmission": v["fractions_backflow"]["transmitted"],
+                "forward_conversion": v["fractions_forward"]["converted"],
+                "reverse_conversion": v["fractions_backflow"]["converted"],
+                "forward_capture": v["fractions_forward"]["captured"],
+                "reverse_capture": v["fractions_backflow"]["captured"],
+                "conductance_m3_s": v["conductance_m3_s"], "delta_p_Pa": v["delta_p_Pa"]}
+            for s, v in self.species.items()}}
 
     def to_f3_record(self) -> dict:
         """IF-A2 record for the compressor inlet (F3, abep_sim/design/compressor_synthesis.py IFD-F3-02)."""
         if not self.numeric:
             return {"interface": "IF-A2 filter -> compressor", "status": "NOT_EVALUATED", "reason": self.status,
-                    "missing": self.missing, "label": self.label}
+                    "missing": self.missing, "label": self.label, "filter_role": self.role}
         return {"interface": "IF-A2 filter -> compressor", "status": self.status, "label": self.label,
                 "mdot_s_net_downstream_kgps": {s: v["net_downstream_kgps"] for s, v in self.species.items()},
                 "mdot_s_gross_downstream_kgps": {s: v["gross_downstream_kgps"] for s, v in self.species.items()},
@@ -464,7 +547,9 @@ class FilterResult:
                 "conductance_s_m3_s": {s: v["conductance_m3_s"] for s, v in self.species.items()},
                 "filter_flow_effect_applied": self.status == "NUMERIC",
                 "filter_retained_mass_rate_kgps": self.totals.get("captured_kgps"),
-                "mass_kg": self.mass_kg, "overrides_used": self.overrides_used}
+                "mass_kg": self.mass_kg, "overrides_used": self.overrides_used,
+                "filter_role": self.role, "admissible_as_baseline": self.admissible_as_baseline,
+                "validity_flags": self.validity_flags}
 
     def to_f1_record(self) -> dict:
         """Upstream return record for the intake (F1, abep_sim/design/intake_synthesis.py F1-ID-02): what the filter
@@ -493,10 +578,32 @@ class FilterStage:
     protection: tuple = ()
     materials: tuple = ()
     description: str = ""
+    # A9.13 S6.3-S6.6 / S6.19
+    role: str = ROLE_BASELINE
+    element_temperature_K: EV = field(default_factory=lambda: TBD(
+        "filter element temperature at the operating state (P3 coupled thermal network / measurement)", units="K"))
+    energy_accommodation: EV = field(default_factory=lambda: TBD(
+        "energy accommodation of the incident gas on the element (measured / sourced for the element material)"))
+    contaminant_capacity_kg: EV = field(default_factory=lambda: TBD(
+        "retained contaminant capacity (defined contamination environment + measured element retention; "
+        "pre-registered before LOCK-1, A9.13 S6.3)", units="kg"))
+    research_variant_evidence: tuple = ()      # (item, reference) pairs; catalytic research variant only
 
     def __post_init__(self):
         if self.kind not in ("none", "element"):
             raise FilterStageError("kind must be 'none' or 'element'")
+        if self.role not in ROLES:
+            raise FilterStageError(f"role {self.role!r} not in {ROLES}")
+        if (self.kind == "none") != (self.role == ROLE_REFERENCE_BOUND):
+            raise FilterStageError("only the no-element FC-00 case carries the reference-bound role, and it always "
+                                   "does (A9.13 S6.5)")
+        if self.research_variant_evidence and self.role != ROLE_CATALYTIC_RESEARCH:
+            raise FilterStageError("research_variant_evidence belongs to the catalytic research variant only")
+        for it in self.research_variant_evidence:
+            if not (isinstance(it, tuple) and len(it) == 2 and it[0] in CATALYTIC_VARIANT_EVIDENCE
+                    and isinstance(it[1], str) and it[1].strip()):
+                raise FilterStageError(f"research_variant_evidence entries are (item in {CATALYTIC_VARIANT_EVIDENCE}, "
+                                       "reference) pairs")
         if self.forward_incidence not in INCIDENCES:
             raise FilterStageError(f"forward_incidence must be one of {INCIDENCES}")
         if self.regime not in REGIMES:
@@ -534,17 +641,35 @@ class FilterStage:
         return cls(stage_id="F2-NONE", concept_id="FC-00", kind="none", transport=tr,
                    forward_incidence="diffuse_thermal",
                    face_area_m2=DEFINITION(0.0, "m^2", "no element"),
-                   areal_mass_kg_m2=DEFINITION(0.0, "kg/m^2", "no element"),
-                   description="no filter stage (trade-study reference; admissibility vs the RFP chain: F2-OQ-03)")
+                   areal_mass_kg_m2=DEFINITION(0.0, "kg/m^2", "no element"), role=ROLE_REFERENCE_BOUND,
+                   element_temperature_K=DEFINITION(0.0, "K", "no element (no element temperature)"),
+                   energy_accommodation=DEFINITION(0.0, "-", "no element: nothing absorbs energy"),
+                   contaminant_capacity_kg=DEFINITION(0.0, "kg", "no element: nothing is retained"),
+                   description="no filter stage: FC-00 ideal reference bound only (A9.13 S6.5), never an admissible "
+                               "flight architecture under the RFP intake -> filter -> compressor chain")
 
     @classmethod
     def tbd(cls, stage_id: str, concept_id: str, species=("O", "N2", "O2"),
             forward_incidence: str = "diffuse_thermal", description: str = "", protection=(),
-            materials=()) -> "FilterStage":
-        """A filter concept with every physical parameter TBD (fails closed in evidence mode)."""
+            materials=(), role: str = ROLE_BASELINE) -> "FilterStage":
+        """A filter concept with every physical parameter TBD (fails closed in evidence mode). Default role: the
+        inert / low-recombination baseline (A9.13 S6.4)."""
         return cls(stage_id=stage_id, concept_id=concept_id, kind="element",
                    transport={s: tbd_species_transport(s) for s in species}, forward_incidence=forward_incidence,
-                   protection=tuple(protection), materials=tuple(materials), description=description)
+                   protection=tuple(protection), materials=tuple(materials), description=description, role=role)
+
+    @classmethod
+    def catalytic_research_variant(cls, stage_id: str, concept_id: str, species=("O", "N2", "O2"),
+                                   forward_incidence: str = "diffuse_thermal", description: str = "",
+                                   materials=(), research_variant_evidence=()) -> "FilterStage":
+        """A deliberately catalytic O -> O2 element: a separately labelled research / contingency variant only (A9.13
+        S6.4). It never replaces the baseline composition; every result carries its role and is never admissible as
+        baseline."""
+        return cls(stage_id=stage_id, concept_id=concept_id, kind="element",
+                   transport={s: tbd_species_transport(s) for s in species}, forward_incidence=forward_incidence,
+                   materials=tuple(materials), role=ROLE_CATALYTIC_RESEARCH,
+                   research_variant_evidence=tuple(research_variant_evidence),
+                   description=description or "catalytic O -> O2 research variant (not baseline, A9.13 S6.4)")
 
     # ---- parameters ----------------------------------------------------------------------------------------------
     def parameters(self) -> dict[str, EV]:
@@ -578,7 +703,79 @@ class FilterStage:
 
     # ---- apply ---------------------------------------------------------------------------------------------------
     def apply(self, inlet: InletState, case: SensitivityCase | None = None) -> FilterResult:
-        """Outlet state per species, or a refusal. See the module docstring for the fail-closed rules."""
+        """Outlet state per species, or a refusal (see the module docstring for the fail-closed rules), annotated with
+        the A9.13 S6.19 element records: role, interfaces, retained inventory, thermal load, material state and
+        validity / domain flags."""
+        res = self._apply_core(inlet, case)
+        self._annotate(res, inlet)
+        return res
+
+    def _annotate(self, res: FilterResult, inlet: InletState) -> None:
+        res.role = self.role
+        # a baseline element is admissible as baseline only once its pre-registered acceptance is met by evidence
+        # (A9.13 S6.3): never claimed here. FC-00 and the catalytic variant are never admissible as baseline.
+        res.admissible_as_baseline = False
+        res.interfaces = dict(INTERFACE_POSITION)
+        cap_ev = self.contaminant_capacity_kg
+        captured = res.totals.get("captured_kgps") if res.numeric else None
+        res.retained_inventory = {
+            "propellant_capture_rate_kgps": captured,
+            "propellant_capture_status": "EVALUATED_FROM_STAGE_RECORDS" if captured is not None else "NOT_EVALUATED",
+            "contaminant_capture_rate": "TBD (contamination environment / particle classes not defined; A9.13 S6.3)",
+            "capacity_kg": cap_ev.to_dict(),
+            "inventory_over_time": "retained_inventory_kg(result, duration_s)",
+            "note": "compressor wear products are not credited to this filter (A9.13 S6.3)"}
+        res.thermal_load = self._thermal_load(res, inlet)
+        aos = sorted({m.ao_compatibility for m in self.materials}) or ["INCOMPLETE_EVIDENCE"]
+        res.material_state = {
+            "application": "APP-FILTER (P4, A9.13 S6.6)", "materials": [m.material for m in self.materials],
+            "ao_compatibility": aos, "element_temperature_K": self.element_temperature_K.to_dict(),
+            "erosion_state": "NOT_EVALUATED (AO erosion yield / fluence TBD per material)",
+            "final_material_status": "OPEN" if self.kind == "element" else "NOT_APPLICABLE_NO_ELEMENT"}
+        conv_o = None
+        if res.numeric and "O" in res.species:
+            conv_o = {d: res.species["O"][k]["converted"] for d, k in (("forward", "fractions_forward"),
+                                                                       ("reverse", "fractions_backflow"))}
+        res.validity_flags = {
+            "status": res.status, "label": res.label, "regime": res.regime or None,
+            "incidence_declared": self.forward_incidence, "incidence_inlet": inlet.incidence,
+            "species_resolved": True, "folded_into_intake_efficiency": False,
+            "reference_bound_only": self.role == ROLE_REFERENCE_BOUND,
+            "research_variant_only": self.role == ROLE_CATALYTIC_RESEARCH,
+            "research_variant_evidence_missing": [i for i in CATALYTIC_VARIANT_EVIDENCE
+                                                  if i not in {e[0] for e in self.research_variant_evidence}]
+            if self.role == ROLE_CATALYTIC_RESEARCH else [],
+            "o_conversion_fraction": conv_o,
+            "o_recombination_acceptance_limit": "TBD (pre-registered before LOCK-1 from evidence, A9.13 S6.3)",
+            "acceptance_items_preregistration_pending": list(ACCEPTANCE_ITEMS),
+            "baseline_protection_targets": list(BASELINE_PROTECTION_TARGETS),
+            "not_credited_targets": dict(NOT_CREDITED_TARGETS),
+            "f4_gap_model_supports_lossy_element": False}
+
+    def _thermal_load(self, res: FilterResult, inlet: InletState) -> dict:
+        """Absorbed thermal load bound: energy accommodation x incident energy flux, an UPPER bound on the gas-transfer
+        term (every incident molecule is counted as striking the element). Recombination heat is added only when the
+        conversion is zero; otherwise the load stays NOT_EVALUATED (the heat of O + O -> O2 is not sourced here)."""
+        if self.kind == "none":
+            return {"status": "NO_ELEMENT", "absorbed_upper_bound_W": 0.0}
+        need = []
+        if inlet.incident_power_W is None:
+            need.append("incident energy flux per species at the inlet face (F1 / TPMC)")
+        ea = self.energy_accommodation
+        if not ea.usable_as_evidence:
+            need.append(ea.requires or f"energy accommodation ({ea.status} is not usable evidence)")
+        if not res.numeric:
+            need.append(f"stage outcome {res.status}")
+        elif res.totals.get("converted_kgps", 0.0) > 0.0:
+            need.append("O recombination heat release (sourced) for the converted O flow")
+        if need:
+            return {"status": "NOT_EVALUATED", "requires": need}
+        inc = sum(inlet.incident_power_W.values())
+        return {"status": "UPPER_BOUND_GAS_TRANSFER", "absorbed_upper_bound_W": float(ea.value) * inc,
+                "incident_W": inc, "energy_accommodation": float(ea.value), "recombination_heat_W": 0.0,
+                "source": inlet.incident_power_source, "label": res.label}
+
+    def _apply_core(self, inlet: InletState, case: SensitivityCase | None = None) -> FilterResult:
         label = LABEL_EVIDENCE
         if inlet.label == "NORMALIZED_UNIT_INPUT":
             label = LABEL_NORMALIZED
@@ -802,7 +999,8 @@ class FilterStage:
                 "overrides_used": [u["parameter"] for u in used]}
 
     def to_dict(self) -> dict:
-        return {"stage_id": self.stage_id, "concept_id": self.concept_id, "kind": self.kind,
+        return {"stage_id": self.stage_id, "concept_id": self.concept_id, "kind": self.kind, "role": self.role,
+                "interfaces": dict(INTERFACE_POSITION),
                 "forward_incidence": self.forward_incidence, "regime": self.regime,
                 "description": self.description,
                 "parameters": {k: v.to_dict() for k, v in self.parameters().items()},
@@ -849,3 +1047,19 @@ def placeholder_sensitivity_case(stage: FilterStage) -> SensitivityCase:
         overrides=ov, regime_assumption="free_molecular", temperature_override_K=p["T_wall_K"],
         rationale="reproduces the unsourced repository filter law (abep_sim/intake_tpmc.py IntakeGeometry filter_* "
                   "defaults) so its effect can be bounded; not evidence, not a flight design")
+
+
+def retained_inventory_kg(result: FilterResult, duration_s: float) -> dict:
+    """Propellant mass retained by the element over ``duration_s`` at the result's capture rate, against the element's
+    capacity record (A9.13 S6.19 retained inventory). NOT_EVALUATED when the stage refused."""
+    if not _finite(duration_s) or duration_s < 0.0:
+        raise FilterStageError("duration_s must be finite and >= 0")
+    rate = result.retained_inventory.get("propellant_capture_rate_kgps")
+    if rate is None:
+        return {"status": "NOT_EVALUATED", "reason": result.status}
+    cap = result.retained_inventory.get("capacity_kg", {})
+    m = rate * duration_s
+    capv = cap.get("value")
+    return {"status": "EVALUATED_FROM_STAGE_RECORDS", "label": result.label, "retained_kg": m,
+            "capacity_kg": capv, "capacity_status": cap.get("status"),
+            "capacity_margin_kg": (capv - m) if isinstance(capv, (int, float)) else "NOT_EVALUATED (capacity TBD)"}

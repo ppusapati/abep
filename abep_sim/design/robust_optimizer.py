@@ -30,6 +30,15 @@ plus the minimum TPMC P_feasible; it never changes any evidence-gate status (``g
 Calls abep_sim.design.plenum_feed / architecture_optimizer; no existing module is modified; not wired into
 archengine; deterministic (seeded generators derived from stable ids). Nothing here is a design, a selection, a
 winner or a PASS.
+
+A9.13 owner decisions applied (A9.16 step 3 design layer; rules in abep_sim/design/upstream_a9_13.py):
+  * S6.16 / OQ-F78-02: ``scenario_robustness`` requires EVERY admitted Maxwell / CLL / accommodation scenario (the
+    admitted set is the scenario set of the evaluated contexts unless given); a subset is refused unless a
+    pre-registered DI-1.3 narrowing record is supplied (the full-range cases then stay as sensitivity records).
+  * S6.20 / F9-OQ-01: ``carried_robust_set`` wraps the robust members in a versioned RobustParetoSet; no
+    representative is selected.
+  * S6.5: the nominal filter context 'F4-FIL-NONE' (FC-00) is a REFERENCE BOUND context (``NOMINAL_FILTER_ROLE``);
+    its survivors bound the filter cost and are never an admissible flight architecture.
 """
 from __future__ import annotations
 
@@ -45,6 +54,7 @@ from . import architecture_optimizer as ao
 from . import compressor_synthesis as cs
 from . import intake_synthesis as isy
 from . import plenum_feed as pf
+from . import upstream_a9_13 as u13
 
 SCHEMA = "f8_robust_optimizer_v1"
 SPECIES = ao.SPECIES
@@ -53,6 +63,7 @@ N_MC_DEFAULT = 100
 SEED_BASE = 20261001
 ELASTICITY_STEP = 1e-3            # relative central-difference step (numerical setting, not an uncertainty)
 NOMINAL_FILTER = "F4-FIL-NONE"
+NOMINAL_FILTER_ROLE = "REFERENCE_BOUND_FC00_NOT_ADMISSIBLE"     # A9.13 S6.5
 NOMINAL_WALL = "WALL-G0"
 
 UQ_AXES = (
@@ -199,7 +210,9 @@ def survivors(pareto_by_context: Mapping, filt: str = NOMINAL_FILTER, wall: str 
             for m in block["members"]:
                 seen.setdefault(m["design_id"], {"design_id": m["design_id"], "candidate": m["candidate"],
                                                  "compressor": m["compressor"], "V_m3": m["V_m3"], "P_set_Pa": P,
-                                                 "filter": filt, "pareto_in": []})["pareto_in"].append(sc)
+                                                 "filter": filt, "pareto_in": [],
+                                                 "filter_context_role": NOMINAL_FILTER_ROLE if filt == NOMINAL_FILTER
+                                                 else "ARCHITECTURE_CONTEXT"})["pareto_in"].append(sc)
     out = sorted(seen.values(), key=lambda r: r["design_id"])
     for r in out:
         r["pareto_in"] = sorted(set(r["pareto_in"]))
@@ -207,9 +220,15 @@ def survivors(pareto_by_context: Mapping, filt: str = NOMINAL_FILTER, wall: str 
 
 
 def scenario_robustness(cands: Sequence[Mapping], contexts: Mapping, scenarios: Sequence[str],
-                        wall: str = NOMINAL_WALL) -> dict:
+                        wall: str = NOMINAL_WALL, admitted: Sequence[str] | None = None,
+                        narrowing_record: Mapping | None = None) -> dict:
     """Per candidate: nominal feasibility and objectives in every surface scenario (from F7 context arrays), count of
-    feasible scenarios and worst cases. contexts: {(scenario, filter, wall): upstream_context(...)}."""
+    feasible scenarios and worst cases. contexts: {(scenario, filter, wall): upstream_context(...)}.
+
+    A9.13 S6.16: ``scenarios`` must cover every admitted scenario (default: every scenario present in ``contexts``)
+    unless a pre-registered DI-1.3 ``narrowing_record`` is supplied (upstream_a9_13.require_all_admitted_scenarios)."""
+    adm = list(admitted) if admitted is not None else sorted({k[0] for k in contexts})
+    u13.require_all_admitted_scenarios(list(scenarios), adm, narrowing_record)
     out = {}
     for c in cands:
         per = {}
@@ -390,3 +409,10 @@ def robust_pareto(cands: Sequence[Mapping], scen: Mapping, mc: Mapping) -> dict:
                   "members": sorted(([{"design_id": d, **r} for (d, r), k in zip(items, mask) if k]),
                                     key=lambda r: r["design_id"])}
     return out
+
+
+def carried_robust_set(robust: Mapping, version: str, provenance: str, regenerated_after=()) -> "u13.RobustParetoSet":
+    """A9.13 S6.20: the union of the robust members over the set pressures, carried as a versioned set (no
+    representative; downstream single-point studies evaluate every member or label one an engineering reference)."""
+    ids = sorted({m["design_id"] for blk in robust.values() for m in blk["members"]})
+    return ao.robust_pareto_set(ids, version, provenance, regenerated_after)
