@@ -502,3 +502,130 @@ def test_changed_transcription_or_unmapped_clause_refused(tmp_path):
         RB.coverage(extra, [{"id": "RVM-X", "rfp_clauses": ["RFP-P18-04"], "related_rfp_clauses": []}])
     with pytest.raises(RB.RebaseError):
         RB.clause_record(REG, "RFP-P18-11", "< 40 kg wet")      # token not in the verbatim clause
+
+
+# ------------------------------------------------------------------------------------------ A9.19 / A9.20
+A19 = _load("a9_19_rvm_t", LANE / "a9_19_rvm.py")
+
+
+def test_a919_a920_pinned_and_cited(doc):
+    pins = {p["path"]: p["sha256"] for p in doc["pins"]}
+    for d in A19.DECISIONS.values():
+        assert pins[d["json"]] == d["json_sha256"] == hashlib.sha256((REPO / d["json"]).read_bytes()).hexdigest()
+        assert pins[d["md"]] == d["md_sha256"] == hashlib.sha256((REPO / d["md"]).read_bytes()).hexdigest()
+    got = {(e["decision"], e["question_id"]) for e in doc["a9_19_owner_answers_applied"]}
+    assert {("A9.19", "architecture"), ("A9.19", "xenon_role"), ("A9.19", "amends"), ("A9.20", "answer")} <= got
+    for e in doc["a9_19_owner_answers_applied"]:
+        d = A19.DECISIONS[e["decision"]]
+        assert e["decision_json_sha256"] == d["json_sha256"] and e["decision_md_sha256"] == d["md_sha256"]
+        assert e["record_ids"] and e["tests"] == ["tests/test_rvm_a9.py"]
+
+
+def test_a919_new_rows_traced_and_never_pass(doc):
+    by = {r["id"]: r for r in doc["rows"]}
+    r28, r29, r30 = by["RVM-28"], by["RVM-29"], by["RVM-30"]
+    # architecture: owner decision, traced verbatim to RFP-P17-05 / RFP-P18-08 (not presented as an RFP gate)
+    assert r28["requirement_origin"] == "OWNER_ALLOCATION" and r28["rfp_clauses"] == []
+    assert {"RFP-P17-05", "RFP-P18-08"} <= set(r28["related_rfp_clauses"])
+    assert {t["clause_id"]: t["verbatim"] for t in r28["rfp_trace"]} == {
+        "RFP-P17-05": CLAUSE["RFP-P17-05"]["text"], "RFP-P18-08": CLAUSE["RFP-P18-08"]["text"]}
+    assert r28["limit"]["value"] == [1, 1, 0] and "NO conventional hollow cathode" in r28["requirement_text"]
+    assert r28["requirement_basis"].startswith("OWNER_ARCHITECTURE_DECISION A9.19")
+    # two supply modes: RFP clauses (verbatim sources) + the owner's Xe role
+    assert r29["requirement_origin"] == "RFP_CLAUSE" and r29["rfp_clauses"] == ["RFP-P18-08", "RFP-P17-05"]
+    assert r29["requirement_frozen"] is False and "contingency / emergency" in r29["requirement_text"]
+    assert any(s["kind"] == "owner_decision" and s["key"] == "xenon_role" for s in r29["sources"])
+    # C1 ground-only, outside every flight budget
+    assert r30["requirement_origin"] == "OWNER_ALLOCATION" and r30["limit"]["value"] == 0
+    assert "S3.5" in r30["requirement_text"] and "bench control" in r30["requirement_text"]
+    cov = {c["clause_id"]: c for c in doc["rfp_rebase"]["clause_coverage"]}
+    assert "RVM-29" in cov["RFP-P18-08"]["rvm_rows"] and "RVM-29" in cov["RFP-P17-05"]["rvm_rows"]
+    assert "RVM-28" in cov["RFP-P17-05"]["related_rvm_rows"]
+    for r in (r28, r29, r30):
+        for c in B.CONFIGS:
+            assert r["configurations"][c]["status"] == "NOT_EVALUATED", (r["id"], c)   # no determining evidence
+        assert r["configuration_applicability"]["hall_c1_reference"].startswith("GROUND_ONLY_LABORATORY_REFERENCE")
+
+
+def test_a919_configuration_roles_and_row_records(doc):
+    assert doc["configurations"]["hall_icp_neutralizer"].startswith("FLIGHT ARCHITECTURE (A9.19)")
+    assert doc["configurations"]["hall_c1_reference"].startswith("GROUND_ONLY_LABORATORY_REFERENCE (A9.20)")
+    assert "CONTROL / FALLBACK" in doc["configurations_as_carried_a9_16"]["hall_c1_reference"]   # history kept
+    for r in doc["rows"]:
+        assert r["configurations"]["hall_c1_reference"]["applicability"].startswith("GROUND_ONLY_LABORATORY")
+    by = {r["id"]: r for r in doc["rows"]}
+    assert by["RVM-10"]["a9_19"]["xe_role"].startswith("CONTINGENCY_AND_EMERGENCY")
+    assert "never a contingency" in by["RVM-10"]["a9_16"]["air_plus_xe"]      # A9.16 record kept as history
+    assert "unchanged" in by["RVM-10"]["a9_19"]["icp_gas_mode"] and "G-REUSE primary" in by["RVM-10"]["a9_19"]["icp_gas_mode"]
+    assert by["RVM-14"]["a9_19"]["c1_variant"].startswith("NOT A FLIGHT VARIANT")
+    assert "NOT flight bus loads" in by["RVM-04"]["a9_19"]["c1_supplies"]
+    assert "not a flight fallback" in by["RVM-15"]["a9_19"]["hall_c1_reference"]
+
+
+def test_a919_recorder_proposal_is_not_a_requirement(doc):
+    props = doc["recorder_proposals_open_for_owner"]
+    assert [p["id"] for p in props] == ["RP-A919-01"]
+    p = props[0]
+    assert p["status"] == "RECORDER_PROPOSAL_OPEN_FOR_OWNER"
+    assert p["is_requirement"] is False and p["is_owner_decision"] is False
+    assert "I_e,cap >= I_d,max" in p["proposal"] and "W/A" in p["proposal"] and "N2 and on Xe" in p["proposal"]
+    assert "none proposed" in p["numbers"]
+    for r in doc["rows"]:                       # never carried as a row, limit or reading
+        assert "RP-A919-01" not in json.dumps({k: v for k, v in r.items() if k != "a9_19"}, ensure_ascii=False)
+        assert "go / no-go" not in r["requirement_text"]
+
+
+def test_a919_load_fails_closed(monkeypatch):
+    A19.load()
+    bad = {k: dict(v) for k, v in A19.VERBATIM.items()}
+    bad["A9.19"]["xenon_role"] = "xenon is a parallel co-equal propellant"
+    monkeypatch.setattr(A19, "VERBATIM", bad)
+    with pytest.raises(A19.A919Error):
+        A19.load()
+    monkeypatch.setattr(A19, "VERBATIM", {k: dict(v) for k, v in A19.VERBATIM.items()})
+    dec = {k: dict(v) for k, v in A19.DECISIONS.items()}
+    dec["A9.20"]["json_sha256"] = "0" * 64
+    monkeypatch.setattr(A19, "DECISIONS", dec)
+    with pytest.raises(A19.A919Error):
+        A19.load()
+
+
+def test_rv19_10_ground_reference_cells_not_applicable_and_v3_budget_evidence(doc):
+    """RV19-10: flight-architecture rows RVM-28..30 are never evaluated against the ground-only hall_c1_reference
+    (A9.19 / A9.20): the cell is the NOT_APPLICABLE_GROUND_REFERENCE marker only, never compliance evidence; RVM-30
+    evidence points at the v3 budgets, never at the immutable v2 budgets (which still book hall_c1_reference)."""
+    by = {r["id"]: r for r in doc["rows"]}
+    assert A19.NA_ROWS == ("RVM-28", "RVM-29", "RVM-30")
+    for rid in A19.NA_ROWS:
+        cell = by[rid]["configurations"]["hall_c1_reference"]
+        assert cell["applicability_marker"] == "NOT_APPLICABLE_GROUND_REFERENCE"
+        assert cell["counts_as_compliance_evidence"] is False
+        assert cell["status"] in R.STATUSES and cell["status"] != "PASS"
+        assert [a["kind"] for a in cell["artifacts"]] == ["NOT_APPLICABLE_GROUND_REFERENCE"]
+        assert not any(a["evaluated"] or a["meets"] is not None for a in cell["artifacts"])
+        assert "applicability_marker" not in by[rid]["configurations"]["hall_icp_neutralizer"]
+    # rows other than RVM-28..30 keep their (labelled ground-reference) C1 cells
+    others = [r for r in doc["rows"] if r["id"] not in A19.NA_ROWS]
+    assert all("applicability_marker" not in r["configurations"]["hall_c1_reference"] for r in others)
+    na = doc["a9_19_20"]["not_applicable_ground_reference_cells"]
+    assert [x["row"] for x in na] == list(A19.NA_ROWS)
+    # RVM-30 determining evidence: v3 budgets, never the immutable v2 budgets
+    arts = by["RVM-30"]["configurations"]["hall_icp_neutralizer"]["artifacts"]
+    det = [a for a in arts if a["role"] == "DETERMINING"]
+    assert {a["path"] for a in det} == {"docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+                                        "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json"}
+    assert not any("_a9_v2/" in a["path"] for a in arts)       # no v2 budget, no v2 RFQ cited on RVM-30
+    rfq = [a for a in arts if a["kind"] == "PROCUREMENT"]
+    assert [a["path"] for a in rfq] == ["docs/procurement/rfq_a9_v3/rfq_a9_v3.json"] and rfq[0]["role"] == "SUPPORTING"
+    assert any(e["decision"] == "A9.20" and e["question_id"] == "option" and "RVM-30" in e["record_ids"]
+               for e in doc["a9_19_owner_answers_applied"])
+
+
+def test_rv19_10_not_applicable_marker_never_mixed_with_evidence():
+    na = _a(kind="NOT_APPLICABLE_GROUND_REFERENCE")
+    assert R.assign_status([na], True)[0] == "NOT_EVALUATED"
+    assert R.is_not_applicable_cell([na]) and not R.is_not_applicable_cell([_a()])
+    with pytest.raises(R.RvmError):
+        R.assign_status([na, _a()], True)
+    with pytest.raises(R.RvmError):
+        R.assign_status([_a(kind="NOT_APPLICABLE_GROUND_REFERENCE", evaluated=True, in_domain=True)], True)

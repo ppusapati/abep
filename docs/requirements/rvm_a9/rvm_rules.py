@@ -25,7 +25,10 @@ ARTIFACT_KINDS = (
     "PUBLISHED_ANALOG",       # another device / another gas: context only
     "PROCUREMENT",            # RFQ package: never evidence of compliance
     "VERIFICATION_ARTIFACT_ABSENT",  # RFP re-base: names what would verify a requirement for which no artifact exists
+    "NOT_APPLICABLE_GROUND_REFERENCE",  # A9.19/A9.20: a flight-architecture row is not evaluated against the ground-only
+                                        # C1 laboratory reference (the cell is a marker, never compliance evidence)
 )
+NOT_APPLICABLE_KIND = "NOT_APPLICABLE_GROUND_REFERENCE"
 EVALUATING_KINDS = ("MEASUREMENT", "VALIDATED_ANALYSIS", "BUDGET_EVALUATION", "FRAMEWORK_EVALUATION")
 
 ARTIFACT_FIELDS = {
@@ -107,6 +110,9 @@ def assign_status(artifacts, requirement_frozen):
         raise RvmError("no artifacts: every row/configuration needs at least one determining artifact")
     for a in artifacts:
         validate_artifact(a)
+    na = [a for a in artifacts if a["kind"] == NOT_APPLICABLE_KIND]
+    if na and len(na) != len(artifacts):
+        raise RvmError("a NOT_APPLICABLE_GROUND_REFERENCE marker is never mixed with evidence artifacts")
     det = [a for a in artifacts if a["role"] == "DETERMINING"]
     if not det:
         raise RvmError("no DETERMINING artifact (a row must name what would verify it)")
@@ -145,6 +151,11 @@ def assign_status(artifacts, requirement_frozen):
     return ("NOT_EVALUATED", "R7-NOT-EVALUATED",
             "no determining evaluation with evidenced terms: " + ", ".join(
                 f"{a['id']} [{a['kind']}]" for a in det))
+
+
+def is_not_applicable_cell(artifacts):
+    """True iff the cell carries only the NOT_APPLICABLE_GROUND_REFERENCE marker (A9.19 / A9.20)."""
+    return bool(artifacts) and all(a["kind"] == NOT_APPLICABLE_KIND for a in artifacts)
 
 
 def floor_fail_check(readings, limit, strict):

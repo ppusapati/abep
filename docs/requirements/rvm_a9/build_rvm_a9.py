@@ -50,6 +50,7 @@ LANE_REL = "docs/requirements/rvm_a9"
 sys.path.insert(0, str(HERE))
 import a9_16_rvm as A16  # noqa: E402  (A9.16 step 1 owner-decision application, integration lane)
 import rfp_rebase as RB  # noqa: E402  (AG-15 re-base on the registered official RFP, A9.16 step 3)
+import a9_19_rvm as A19  # noqa: E402  (A9.19 / A9.20 owner decisions: flight architecture, Xe role, C1 ground-only)
 JSON_NAME = "rvm_a9_v1.json"
 MD_NAME = "RVM_A9.md"
 TEST_REL = "tests/test_rvm_a9.py"
@@ -109,6 +110,10 @@ for _k in ("A9.12", "A9.13", "A9.14", "A9.15"):
         A16.L.LOADED[_k]["json"], A16.L.LOADED[_k]["json_sha256"], f"owner decisions {_k} (applied: A9.16 step 1)")
     PINS["A" + _k[1:].replace(".", "") + "_MD"] = (A16.L.LOADED[_k]["md"], A16.L.LOADED[_k]["md_sha256"],
                                                    f"owner decisions {_k} (verbatim; governs)")
+for _k in ("A9.19", "A9.20"):
+    _d = A19.DECISIONS[_k]
+    PINS["A" + _k[1:].replace(".", "")] = (_d["json"], _d["json_sha256"], f"owner decision {_k} (applied: a9_19_rvm)")
+    PINS["A" + _k[1:].replace(".", "") + "_MD"] = (_d["md"], _d["md_sha256"], f"owner decision {_k} (verbatim; governs)")
 HISTORICAL_KEYS = ("RTM", "HGM", "R2")
 HISTORICAL_EXTRA = {
     "docs/traceability/RTM.md": "ce5b608a5079a86d1b2096f222266f558fab2ebdabc1aa8dfef3153076faa802",
@@ -145,6 +150,10 @@ REFS = {
            "A9.6 mass + power integration v2"),
     "XE": ("docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json", "id", "xe_accounting_a9_v2",
            "A9.6 Xe accounting v2"),
+    "MP3": ("docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json", "id", "mass_power_a9_v3",
+            "mass + power v3 (A9.16 step 1; to be refreshed for A9.19 / A9.20 by the budgets lane)"),
+    "XE3": ("docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json", "id", "xe_accounting_a9_v3",
+            "Xe accounting v3 (A9.16 step 1; to be refreshed for A9.19 / A9.20 by the budgets lane)"),
     "AOL": ("docs/experiments/lifetime_ao/ao_lifetime_register_v5.json", "schema", "ao_lifetime_register_v5",
             "AO / lifetime register v5"),
     "ENS": ("hallthruster_bridge/ensemble/transport_ensemble_v0.json", "schema", "transport_ensemble_v0",
@@ -154,6 +163,7 @@ REFS = {
     "OO2": ("docs/chemistry/o_o2/v0/channel_status_v0.json", "id", "o_o2_channel_status_v0",
             "O / O2 chemistry v0 channel status"),
     "RFQ2": ("docs/procurement/rfq_a9_v2/rfq_a9_v2.json", "id", "RFQ_A9_V2", "RFQ packages v2 (quotation only)"),
+    "RFQ3": ("docs/procurement/rfq_a9_v3/rfq_a9_v3.json", "id", "RFQ_A9_V3", "RFQ packages v3 (quotation only)"),
     "M16": ("docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json", "id", "subsystem_maturity_v3",
             "M16 subsystem maturity v3"),
 }
@@ -331,7 +341,7 @@ def plan(ctx, pkg, ident, role="DETERMINING", key="id", why=""):
     if obj_status:
         state += f"; item status {obj_status}"
     shown = REFS[pkg][2] if ident == "@doc" else f"{REFS[pkg][2]}:{ident}"
-    kind = "PROCUREMENT" if pkg == "RFQ2" else "PLAN_OR_FRAMEWORK"
+    kind = "PROCUREMENT" if pkg in ("RFQ2", "RFQ3") else "PLAN_OR_FRAMEWORK"
     a = _art(REFS[pkg][0], shown, role, kind, state)
     a["detail"] = {"name": name, "why": why}
     return a
@@ -665,6 +675,9 @@ def evaluate_rows(ctx, rows):
             cells[c] = {"status": status, "rule": rule, "reason": reason,
                         "current_evidence_state": " || ".join(a["evidence_state"] for a in det),
                         "artifacts": arts}
+            if R.is_not_applicable_cell(arts):
+                cells[c]["applicability_marker"] = R.NOT_APPLICABLE_KIND
+                cells[c]["counts_as_compliance_evidence"] = False
         rr = {k: v for k, v in r.items() if k != "artifacts"}
         rr["m16_rows"] = [m16_state(ctx, n) for n in r["m16_rows"]]
         rr["configurations"] = cells
@@ -932,7 +945,12 @@ def build_doc():
     refs = load_refs()
     ctx = Ctx(pins, refs)
     rows_mod = load_rows_module()
-    rows = evaluate_rows(ctx, rows_mod.build_rows(types.SimpleNamespace(**globals()), ctx))
+    ns = types.SimpleNamespace(**globals())
+    try:
+        new_rows = A19.build_rows(ns, ctx)
+    except A19.A919Error as e:
+        raise BuildError(str(e)) from e
+    rows = evaluate_rows(ctx, rows_mod.build_rows(ns, ctx) + new_rows)
     counts = {c: {s: sum(1 for r in rows if r["configurations"][c]["status"] == s) for s in R.STATUSES}
               for c in CONFIGS}
     a92 = pins["A92"]["decisions"]["a9_10_statuses"]
@@ -1007,7 +1025,17 @@ def build_doc():
     }
     doc = A16.apply(doc)
     try:
-        doc = RB.apply(doc, ctx.reg, RFP_BASIS)
+        doc = A19.apply(doc)
+    except A19.A919Error as e:
+        raise BuildError(str(e)) from e
+    rebase = dict(RB.REBASE)
+    rebase.update(A19.REBASE)
+    try:
+        RB.REBASE, saved = rebase, RB.REBASE
+        try:
+            doc = RB.apply(doc, ctx.reg, RFP_BASIS)
+        finally:
+            RB.REBASE = saved
     except RB.RebaseError as e:
         raise BuildError(str(e)) from e
     R.assert_status_vocabulary(doc)
@@ -1020,6 +1048,12 @@ def build_doc():
 
 
 # ------------------------------------------------------------------------------------------------ markdown
+def _cell_md(cell):
+    if cell.get("applicability_marker"):
+        return f"**{cell['applicability_marker']}** (never compliance evidence)"
+    return f"**{cell['status']}** ({cell['rule']})"
+
+
 def _esc(s):
     return str(s).replace("|", "\\|").replace("\n", " ")
 
@@ -1083,8 +1117,7 @@ def render_md(doc):
     for r in doc["rows"]:
         a(f"| {r['id']} | {_esc(r['title'])} | {_origin(r)} | {_esc(_limit(r['limit']))} | "
           f"{', '.join(r['verification_methods'])} | "
-          + " | ".join(f"**{r['configurations'][c]['status']}** ({r['configurations'][c]['rule']})"
-                       for c in CONFIGS) + " |")
+          + " | ".join(_cell_md(r["configurations"][c]) for c in CONFIGS) + " |")
     a("")
     a("## Status rules (applied in this order by `rvm_rules.assign_status`)")
     a("")
@@ -1129,7 +1162,11 @@ def render_md(doc):
               f"{', '.join(r['lane24_gates']) or '-'}")
         for c in CONFIGS:
             cell = r["configurations"][c]
-            a(f"- **{c}: {cell['status']}** (`{cell['rule']}`) - {cell['reason']}")
+            if cell.get("applicability_marker"):
+                a(f"- **{c}: {cell['applicability_marker']}** (vocabulary status {cell['status']}, "
+                  f"`{cell['rule']}`; never compliance evidence)")
+            else:
+                a(f"- **{c}: {cell['status']}** (`{cell['rule']}`) - {cell['reason']}")
             for art in cell["artifacts"]:
                 a(f"    - [{art['role']}/{art['kind']}] `{art['path']}` `{art['id']}`: {_esc(art['evidence_state'])}")
             for art in cell["artifacts"]:
@@ -1182,6 +1219,35 @@ def render_md(doc):
     for r in doc["rows"]:
         if "a9_16" in r:
             a(f"- {r['id']}: " + _esc("; ".join(f"{k}: {v}" for k, v in r["a9_16"].items() if k != "decisions")))
+    a("")
+    a("## (d2b) A9.19 / A9.20 owner decisions applied (flight architecture, Xe role, C1 ground-only)")
+    a("")
+    x = doc["a9_19_20"]
+    a(f"Decisions: {'; '.join(x['decisions'])}.")
+    a("")
+    a(f"- Flight architecture (A9.19): {x['flight_architecture']}.")
+    a(f"- Amends: {x['amends']}. Unchanged: {x['unchanged']}.")
+    for c in CONFIGS:
+        a(f"- `{c}`: {doc['configurations'][c]}")
+    a(f"- {x['a9_2_status_note']}.")
+    a(f"- {x['owner_open_note']}.")
+    for r in doc["rows"]:
+        if "a9_19" in r:
+            rest = {k: v for k, v in r["a9_19"].items() if k != "decisions"}
+            if rest:
+                a(f"- {r['id']}: " + _esc("; ".join(f"{k}: {v}" for k, v in rest.items())))
+    a("")
+    a("Owner answers applied (A9.19 / A9.20):")
+    a("")
+    for o in doc["a9_19_owner_answers_applied"]:
+        a(f"- {o['decision']} `{o['question_id']}` (json sha256 {o['decision_json_sha256'][:12]}..., verbatim md sha256 "
+          f"{o['decision_md_sha256'][:12]}...) -> {', '.join(o['record_ids'])}: {_esc(o['how_applied'])}")
+    a("")
+    a("### Recorder proposals open for the owner (NOT requirements, NOT owner decisions)")
+    a("")
+    for pr in doc["recorder_proposals_open_for_owner"]:
+        a(f"- **{pr['id']}** [{pr['status']}]: {_esc(pr['proposal'])} Why raised: {_esc(pr['why_raised'])} "
+          f"Numbers: {pr['numbers']}. Handling: {pr['handling']}.")
     a("")
     a("## (d3) RFP re-base (AG-15)")
     a("")
