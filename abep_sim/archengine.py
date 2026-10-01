@@ -800,7 +800,11 @@ def close_architecture(a: dict, gas_fn, sc, dc: DesignConstraints | None = None,
     # non-converged gas-path record is not admissible as valid evidence.
     out["gaspath_status"] = gas.get("gaspath_status", "NOT_REPORTED")
     out["gaspath_not_converged"] = gas.get("gaspath_not_converged", "")
-    out["evidence_admissible"] = out["gaspath_status"] == "CONVERGED"
+    # MCC-02 carry (A9.9 S2.5): a result built on a gas state outside the Gaede stage-capacity domain uses clipped-K
+    # compressor values, which are labelled diagnostics only: it is never admissible as valid design evidence.
+    out["gaspath_domain_status"] = gas.get("gaspath_domain_status", "NOT_REPORTED")
+    out["gaspath_out_of_domain"] = gas.get("gaspath_out_of_domain", "")
+    out["evidence_admissible"] = out["gaspath_status"] == "CONVERGED" and out["gaspath_domain_status"] == "IN_DOMAIN"
     out["thrust_min_ok"] = (dc.T_min_mN is None) or (T * 1e3 >= dc.T_min_mN)
     out["thrust_max_ok"] = (dc.T_max_mN is None) or (T * 1e3 <= dc.T_max_mN)
     out["mass_ok"] = (dc.m_max_kg is None) or (bom["mev_kg"] <= dc.m_max_kg)
@@ -910,4 +914,6 @@ def gas_path_state(area_m2=0.7, alpha=0.8, L_over_d=5, alt=200, solar="mean", bl
             # G-03..G-05 (A9.9 S2.4): convergence of the gas-path solvers travels with the state; close_architecture
             # refuses a non-converged state (fail closed).
             # (strings only: downstream consumers such as arch_compare accept numbers and labels)
-            "gaspath_status": r["gaspath_status"], "gaspath_not_converged": ",".join(r["gaspath_not_converged"])}
+            "gaspath_status": r["gaspath_status"], "gaspath_not_converged": ",".join(r["gaspath_not_converged"]),
+            # MCC-02 (A9.9 S2.5): Gaede stage-capacity domain of the compressor state (strings only, as above)
+            "gaspath_domain_status": r["gaspath_domain_status"], "gaspath_out_of_domain": ",".join(r["gaspath_out_of_domain"])}

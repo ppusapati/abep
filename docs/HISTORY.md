@@ -2537,3 +2537,37 @@ compressor mass, power and pressures, not `rotor_ok`, and the sizing cap is nume
 Downstream (owned by other steps): design-synthesis F3 (`module_rotor_ok_uncited_db_yield` now always False),
 `scripts/architecture/build_feed_envelope.py` and `docs/architecture_comparison/feed_state_closure` (rotor_ok False is
 reported as infeasible), freeze-candidate MCC-03 status.
+
+## 2026-10-01 — A9.9 S2.5 MCC-02: Gaede stage-capacity domain (no silent K clipping)
+
+Owner decision A9.9 S2.5 MCC-02 (`docs/decisions/OD_2026_10_01_A9_9_S2_MODEL_CHANGE_OWNER_DECISIONS.md`, item 5; finding
+F3-01; freeze-candidate MCC-02). `DragCompressor._run_once` previously replaced the linear Gaede characteristic
+K = K0 - (K0 - 1) Q / (S p) by `max(min(K, K0), 1.0)`, so a stage whose throughput exceeds its capacity S p (K < 1:
+the stage cannot pass the flow; no admitted steady state) was silently reported as a valid K = 1 stage.
+Now every turbo row and drag stage records, per species, the UNCLIPPED K together with K0, throughput, capacity and
+load ratio (`gaede_stages`, `gaede_K_unclipped` {stage: {species: K}}, `gaede_K_unclipped_min`). Any K_unclipped < 1
+sets `gaede_domain_ok = False`, `gaede_status = OUT_OF_MODEL_DOMAIN_STAGE_CAPACITY`, lists the offending
+`stage:species` in `gaede_out_of_domain`, and marks the clipped value as `K_clipped_diagnostic` with
+`gaede_clipped_values_are_diagnostic = True`: the cascade is still continued with K = 1 only so the raw state can be
+inspected; p_out / CR / power / leak / mass of such a record are labelled diagnostics, not a compressor result.
+In-domain stages propagate the unclipped K itself (bit-identical to before).
+Fail closed: `size_for` admits a layout only if it reaches CR_target with every stage/species in domain (an
+out-of-domain hit is counted in `n_rejected_out_of_gaede_domain` and the search continues at higher rpm); the unsized
+fallback carries its own `gaede_status`. `system.evaluate` (gas-path physics) reports `comp_gaede_*`,
+`gaspath_domain_status` (`IN_DOMAIN` / `OUT_OF_MODEL_DOMAIN`) and `gaspath_out_of_domain`, and `comp_feasible`
+(hence `chk_compressor_feasible`, `rfp_compliant`, `feasible`) requires the domain. `archengine.gas_path_state` carries
+the two domain labels; `close_architecture` keeps the G-05 carry convention (the closure is still computed, as a
+labelled diagnostic) but `evidence_admissible` now also requires `gaspath_domain_status == IN_DOMAIN` and the result
+reports `gaspath_domain_status` / `gaspath_out_of_domain`; `arch_compare.UpstreamState.from_gas_path` refuses an
+out-of-domain state (SpecError), and consumes the labels so in-domain fingerprints are unchanged.
+Observed: at the code-default compressor coefficients, the gas states at intake area 0.6 / 0.7 / 0.85 m² are sized
+in domain (turbo-only layouts); at area 1.3 m² (all p levels) no layout is in domain and the unsized fallback is
+OUT_OF_MODEL_DOMAIN_STAGE_CAPACITY (that state was already `MODEL_NOT_CONVERGED` via orifice sizing, G-05).
+No coefficient was retuned. Tests: `tests/test_compressor_gaede_domain_mcc02.py`; no existing test changed.
+Golden impact: none (`python -m abep_sim.golden check` OK) — the selected in-domain designs did not change, and the
+golden `gas_path/A1.3`, `architecture_closure` and `mission` benchmarks (area 1.3 m²) are now explicitly flagged
+diagnostic (`gaspath_domain_status = OUT_OF_MODEL_DOMAIN`, `evidence_admissible = False`) without numerical change.
+Downstream (owned by other steps): design-synthesis F3 (`build_f3_compressor.py --check` pins the `compressor.py`
+sha256; its `stage_trace` mirror of the clipping is now historical and the production record supplies the unclipped
+K directly), F4 / F7-F8 builders and the freeze candidate (MCC-02 status), feed-envelope / feed-state-closure
+builders that read compressor records.

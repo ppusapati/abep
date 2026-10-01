@@ -109,6 +109,11 @@ def evaluate(cfg: Config) -> dict:
         nc = [n for n, ok in (("compressor_recirculation", cres["converged"]), ("orifice_sizing", orf["converged"]),
                               ("reservoir_steady_state", rs["converged"])) if not ok]
         gaspath_converged = not nc
+        # MCC-02 (owner decision A9.9 S2.5): a compressor state with any stage/species outside the Gaede
+        # stage-capacity domain (unclipped K < 1) is outside the admitted model; its clipped values are diagnostics
+        # only and the compressor branch is not feasible (fail closed). Reported separately from convergence.
+        ood = ["compressor_gaede_stage_capacity"] if not cres["gaede_domain_ok"] else []
+        gaspath_in_domain = not ood
         mdot_air = sum(rs["mdot_anode"].values())
         p_in = rs["p_total_Pa"]
         comp_mass = cres["mass_kg"]; comp_power = cres["P_el_W"]
@@ -129,6 +134,14 @@ def evaluate(cfg: Config) -> dict:
                "gaspath_converged": gaspath_converged,
                "gaspath_status": "CONVERGED" if gaspath_converged else "MODEL_NOT_CONVERGED",
                "gaspath_not_converged": nc,
+               "comp_gaede_status": cres["gaede_status"], "comp_gaede_domain_ok": cres["gaede_domain_ok"],
+               "comp_gaede_out_of_domain": cres["gaede_out_of_domain"],
+               "comp_gaede_K_unclipped_min": cres["gaede_K_unclipped_min"],
+               "comp_gaede_K_unclipped": cres["gaede_K_unclipped"],
+               "comp_n_rejected_out_of_gaede_domain": cres["n_rejected_out_of_gaede_domain"],
+               "gaspath_in_domain": gaspath_in_domain,
+               "gaspath_domain_status": "IN_DOMAIN" if gaspath_in_domain else "OUT_OF_MODEL_DOMAIN",
+               "gaspath_out_of_domain": ood,
                # A9.9 S2.3 / MCC-03: rotor structural acceptance needs a registered rotor-strength basis. Without one
                # the compressor is a PARAMETRIC_SENSITIVITY result (mass/power from the labelled legacy tip-speed cap)
                # and the compressor branch is not feasible (fail closed).
@@ -136,7 +149,7 @@ def evaluate(cfg: Config) -> dict:
                "comp_rotor_qualification": cres["rotor_qualification"], "comp_rotor_ok": cres["rotor_ok"],
                "comp_rotor_within_legacy_sensitivity_cap": cres["rotor_within_legacy_sensitivity_cap"]}
         cmp_ = {**cmp_, "p_out_Pa": p_in, "comp_power_W": comp_power, "comp_mass_kg": comp_mass,
-                "active_ratio": cres["CR_active"], "comp_feasible": cres["sized"] and cres["rotor_ok"] and gaspath_converged, "mdot_net": mdot_air}
+                "active_ratio": cres["CR_active"], "comp_feasible": cres["sized"] and cres["rotor_ok"] and gaspath_converged and gaspath_in_domain, "mdot_net": mdot_air}
     atm_in = {**atm, "fO": inlet["fO"], "fN2": inlet["fN2"], "fO2": inlet["fO2"],
               "diss_sink_J_per_kg": inlet["diss_sink_J_per_kg"]}
     ao = ao_flux(atm)

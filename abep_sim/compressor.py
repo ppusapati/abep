@@ -126,7 +126,14 @@ class DragCompressor:
         evaluations), ``residual`` (final max_s |Q_leak,s - Q_recirc,s| / max(mdot_s, 1e-15), compared with
         RECIRC_RTOL) and ``solver_status`` ('CONVERGED', 'MODEL_NOT_CONVERGED' or 'DIRECT_EVALUATION' when
         self_consistent=False). A non-converged result keeps its raw last-iterate state for diagnostics but must
-        not be admitted as a valid operating point."""
+        not be admitted as a valid operating point.
+
+        Gaede domain (MCC-02, owner decision A9.9 S2.5): every record also carries the UNCLIPPED Gaede characteristic
+        per stage and species (``gaede_K_unclipped`` {stage: {species: K}}, ``gaede_stages`` with K0, throughput,
+        capacity and load ratio), ``gaede_domain_ok`` and ``gaede_status`` ('IN_DOMAIN' or
+        'OUT_OF_MODEL_DOMAIN_STAGE_CAPACITY'). Out of domain (some unclipped K < 1: throughput above stage capacity),
+        the cascade is continued with the clipped K = 1 only as a labelled diagnostic (``K_clipped_diagnostic``,
+        ``gaede_clipped_values_are_diagnostic``); such a record is not valid design evidence."""
         if not self_consistent:
             r = self._run_once(p_in_Pa, mdot_species)
             r.update({"converged": True, "iterations": 1, "residual": 0.0, "solver_status": "DIRECT_EVALUATION"})
@@ -149,6 +156,44 @@ class DragCompressor:
                   "solver_status": "CONVERGED" if converged else "MODEL_NOT_CONVERGED"})
         return r
 
+    # MCC-02 (owner decision A9.9 S2.5, finding F3-01): Gaede stage-capacity domain. The linear characteristic
+    # K = K0 - (K0 - 1) Q / (S p) gives K < 1 when the stage throughput Q exceeds its capacity S p: the stage cannot
+    # pass that flow and the model has no admitted steady state there. That state is NOT converted into a valid K = 1
+    # result: the unclipped K is preserved and reported, and the record is flagged out of the admitted model domain.
+    GAEDE_IN_DOMAIN = "IN_DOMAIN"
+    GAEDE_OUT_OF_DOMAIN = "OUT_OF_MODEL_DOMAIN_STAGE_CAPACITY"
+
+    @staticmethod
+    def _gaede_record(gaede: list, stage: str, species: str, K_raw: float, K0: float, Q: float, capacity: float) -> float:
+        """Record the unclipped Gaede characteristic of one stage/species and return the value propagated through
+        the cascade. In the admitted domain (1 <= K_raw <= K0) that is K_raw itself (bit-identical to before). Out
+        of domain (K_raw < 1) the propagated value is the clipped K = 1, which is a LABELLED DIAGNOSTIC only: every
+        quantity computed downstream of it is diagnostic and the record is flagged OUT_OF_MODEL_DOMAIN_STAGE_CAPACITY.
+        (K_raw > K0 would need Q < 0 and cannot occur for non-negative flows.)"""
+        in_domain = 1.0 <= K_raw <= K0
+        K_diag = max(min(K_raw, K0), 1.0)
+        gaede.append({"stage": stage, "species": species, "K_unclipped": K_raw, "K0": K0,
+                      "throughput_Pa_m3_s": Q, "capacity_Pa_m3_s": capacity,
+                      "load_ratio": Q / max(capacity, 1e-30), "in_domain": in_domain,
+                      "K_clipped_diagnostic": None if in_domain else K_diag})
+        return K_raw if in_domain else K_diag
+
+    @classmethod
+    def _gaede_summary(cls, gaede: list) -> dict:
+        out = [g for g in gaede if not g["in_domain"]]
+        by_stage = {}
+        for g in gaede:
+            by_stage.setdefault(g["stage"], {})[g["species"]] = g["K_unclipped"]
+        ok = not out
+        return {"gaede_domain_ok": ok,
+                "gaede_status": cls.GAEDE_IN_DOMAIN if ok else cls.GAEDE_OUT_OF_DOMAIN,
+                "gaede_K_unclipped": by_stage,
+                "gaede_K_unclipped_min": min((g["K_unclipped"] for g in gaede), default=float("nan")),
+                "gaede_out_of_domain": [f"{g['stage']}:{g['species']}" for g in out],
+                "gaede_stages": gaede,
+                # labelled diagnostic: p_out / CR / power / leak downstream of an overloaded stage use the clipped K
+                "gaede_clipped_values_are_diagnostic": not ok}
+
     def _run_once(self, p_in_Pa: float, mdot_species: dict) -> dict:
         """mdot_species: {species: kg/s} through the machine at inlet pressure p_in (partial pressures ∝ number flow)."""
         u = self.u
@@ -160,6 +205,7 @@ class DragCompressor:
         p_s_in = {s: p_in_Pa * nflow[s] / ntot for s in nflow}
         p_s = dict(p_s_in); K_total = {}
         P_gas = 0.0
+        gaede = []        # MCC-02: one record per stage x species, with the UNCLIPPED Gaede characteristic
         # turbomolecular first stage (same shaft speed in rpm; larger radius -> its own tip speed)
         u_t = self.turbo_radius_m * self.rpm * 2 * math.pi / 60.0
         S_t = self.turbo_kS * u_t * self.turbo_area_m2
@@ -168,8 +214,8 @@ class DragCompressor:
                 m = M_SPECIES[s]; cb = self._cbar(m)
                 K0 = math.exp(self.turbo_kK * u_t / cb)
                 Q = nflow[s] * K_B * self.T_gas_K
-                K = K0 - (K0 - 1.0) * Q / max(S_t * p_s[s], 1e-30)
-                K = max(min(K, K0), 1.0)
+                K_raw = K0 - (K0 - 1.0) * Q / max(S_t * p_s[s], 1e-30)
+                K = self._gaede_record(gaede, f"turbo_row_{row + 1}", s, K_raw, K0, Q, S_t * p_s[s])
                 p_mean = 0.5 * p_s[s] * (1 + K)
                 P_gas += p_mean * (u_t / cb) * (self.turbo_area_m2 * self.turbo_blade_area_frac * 2) * (2 / math.sqrt(math.pi)) * u_t
                 p_s[s] *= K
@@ -179,8 +225,8 @@ class DragCompressor:
                 m = M_SPECIES[s]; cb = self._cbar(m)
                 K0 = math.exp(2 * u * L / (cb * h) * self.xi)
                 Q = nflow[s] * K_B * self.T_gas_K                                  # Pa m^3/s
-                K = K0 - (K0 - 1.0) * Q / max(S0 * p_s[s], 1e-30)
-                K = max(min(K, K0), 1.0)
+                K_raw = K0 - (K0 - 1.0) * Q / max(S0 * p_s[s], 1e-30)
+                K = self._gaede_record(gaede, f"drag_stage_{st + 1}", s, K_raw, K0, Q, S0 * p_s[s])
                 # free-molecular shear on wetted area at mean channel pressure
                 p_mean = 0.5 * p_s[s] * (1 + K)
                 A_wet = 2 * L * w
@@ -218,7 +264,8 @@ class DragCompressor:
                 "CR_by_species": K_total, "delivered_kgps": delivered, "leak_kgps": leak,
                 "P_gas_W": P_gas, "P_bear_W": P_bear, "P_el_W": P_el, "torque_Nm": torque,
                 "mass_kg": mass, "T_comp_K": T,
-                "composition_out": {s: p_s[s] / p_out for s in p_s}}
+                "composition_out": {s: p_s[s] / p_out for s in p_s},
+                **self._gaede_summary(gaede)}
 
     def rpm_limit(self) -> float:
         r_max = max(self.rotor_radius_m, self.turbo_radius_m)
@@ -234,24 +281,37 @@ class DragCompressor:
         ``rotor_qualification='NOT_EVALUATED_MATERIAL_BASIS'``, ``rotor_ok=False``: such a result is exploration,
         never a qualified rotor.
 
-        G-03: the search itself is unchanged; the returned record carries the convergence fields of the selected
+        MCC-02 (A9.9 S2.5): only layouts whose every stage/species is inside the Gaede stage-capacity domain
+        (unclipped 1 <= K <= K0, ``gaede_domain_ok``) are admitted as sized designs; an out-of-domain state that meets
+        CR_target through clipped stages is counted (``n_rejected_out_of_gaede_domain``) and never selected. The
+        unsized fallback carries its own ``gaede_status`` (its values are clipped diagnostics when out of domain).
+
+        G-03: the search itself is otherwise unchanged; the returned record carries the convergence fields of the selected
         run() (``converged``, ``iterations``, ``residual``, ``solver_status``). Callers must treat
         ``converged=False`` (``solver_status='MODEL_NOT_CONVERGED'``) as not admissible."""
         rpm_cap = min(rpm_max, self.rpm_limit())
-        best = None
+        best = None; n_ood = 0
         for rows in range(1, max_turbo_rows + 1):
             for nst in range(0, max_drag_stages + 1):
                 for rpm in sorted(set(list(range(5000, int(rpm_cap) + 1, 2500)) + [int(rpm_cap)])):
                     self.turbo_rows, self.n_stages, self.rpm = rows, nst, rpm
                     r = self.run(p_in_Pa, mdot_species)
                     if r["CR_active"] >= CR_target:
+                        if not r["gaede_domain_ok"]:
+                            # MCC-02: a CR reached through an overloaded (clipped) stage is diagnostic, not a design;
+                            # keep searching this layout at higher rpm (capacity grows with tip speed)
+                            n_ood += 1
+                            continue
                         cand = {**r, "turbo_rows": rows, "n_stages": nst, "rpm": rpm, "sized": True}
                         if best is None or cand["mass_kg"] + 0.02 * cand["P_el_W"] < best["mass_kg"] + 0.02 * best["P_el_W"]:
                             best = cand
                         break
         if best:
             self.turbo_rows, self.n_stages, self.rpm = best["turbo_rows"], best["n_stages"], best["rpm"]
-            return best
+            return {**best, "n_rejected_out_of_gaede_domain": n_ood}
         self.turbo_rows, self.n_stages, self.rpm = max_turbo_rows, 0, int(rpm_cap)
         r = self.run(p_in_Pa, mdot_species)
-        return {**r, "turbo_rows": self.turbo_rows, "n_stages": 0, "rpm": self.rpm, "sized": False}
+        # Unsized fallback (CR target not reached by any in-domain layout). If it is itself outside the Gaede domain,
+        # its p_out / CR / power / mass are clipped-K diagnostics only (gaede_status says so).
+        return {**r, "turbo_rows": self.turbo_rows, "n_stages": 0, "rpm": self.rpm, "sized": False,
+                "n_rejected_out_of_gaede_domain": n_ood}

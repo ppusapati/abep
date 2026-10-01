@@ -219,7 +219,14 @@ class UpstreamState:
         if status != "CONVERGED":
             raise SpecError(f"gas-path state not admissible: gaspath_status={status!r} "
                             f"(not converged: {gas.get('gaspath_not_converged', '')!r})")
-        gas = {k: v for k, v in gas.items() if k not in ("gaspath_status", "gaspath_not_converged")}
+        # MCC-02 (A9.9 S2.5): a gas state outside the Gaede stage-capacity domain is refused likewise (clipped-K
+        # compressor values are diagnostics, never upstream evidence); its labels are consumed, not carried.
+        dstatus = gas.get("gaspath_domain_status", "IN_DOMAIN")
+        if dstatus != "IN_DOMAIN":
+            raise SpecError(f"gas-path state not admissible: gaspath_domain_status={dstatus!r} "
+                            f"(out of domain: {gas.get('gaspath_out_of_domain', '')!r})")
+        gas = {k: v for k, v in gas.items() if k not in ("gaspath_status", "gaspath_not_converged",
+                                                           "gaspath_domain_status", "gaspath_out_of_domain")}
         q = {k: v for k, v in gas.items() if isinstance(v, Real) and not isinstance(v, bool)}
         labels = {k: v for k, v in gas.items() if isinstance(v, str)}
         other = sorted(str(k) for k in gas if k not in q and k not in labels)
