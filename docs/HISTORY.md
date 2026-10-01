@@ -2498,3 +2498,42 @@ Golden impact: none (`python -m abep_sim.golden check` OK). Downstream: the A9.7
 sha256 (`docs/performance/abep_core/parity_prereg_v1.json` / `parity_report_v1.json`), so `scripts/verify_abep_core.py
 --check` and two `tests/test_tpmc_backend.py` hash assertions now refuse (NOT_ADMITTED_BUILD) until those records are
 re-registered by their owning step; the `abep_sim/design/tpmc_backend.py` DIV-01..04 docstring is now historical.
+
+## 2026-10-01 — A9.9 S2.3 + S2.5 MCC-03: registered rotor-strength basis for rotor structural acceptance
+
+Owner decision A9.9 S2.3 (OQ-F3-01) and S2.5 MCC-03 (`docs/decisions/OD_2026_10_01_A9_9_S2_MODEL_CHANGE_OWNER_DECISIONS.md`,
+items 3 and 5; A9.13 S6.9; findings F3-02 / MCC-03). New module `abep_sim/rotor_strength.py`: a `RotorStrengthBasis`
+record carrying every S2.3 minimum field (material spec, product form, condition, stock section range, design
+temperature, statistical allowable basis + citation, yield AND ultimate versus temperature, density from the same
+controlled definition, yield/ultimate design factors, max design speed, proof-spin basis or an explicit not-applicable
+reason, owner registration). `register_basis()` admits only complete records (no extrapolation of the allowable table,
+factors >= 1, Fty <= Ftu, no duplicate ids); `qualify_rotor()` computes margins on both yield and ultimate
+(sigma = rho u^2 at the largest tip speed, allowables at the registered design temperature) and fails closed:
+no / unregistered / incomplete basis, material mismatch (no transfer) or missing / out-of-range stock section give
+`NOT_EVALUATED_MATERIAL_BASIS`; rotor temperature above the basis design temperature gives `NOT_EVALUATED_OUT_OF_DOMAIN`;
+negative margins or speed above the registered maximum give `FAIL`. `rotor_ok` is True only for `PASS`.
+`REGISTRY` is empty: nothing has been registered. The cited Ti-6Al-4V annealed-plate 50.8–101.6 mm room-temperature
+A-basis values (Fty 827 MPa, Ftu 896 MPa; MMPDS-06 quoted by NASA-HDBK-6025 Sec. 3 p. 18) are carried only as
+`REFERENCE_RECORDS[...]` with status `INCOMPLETE_REFERENCE_NOT_REGISTERED`, never transferred and never qualifying.
+`abep_sim/compressor.py`: `DragCompressor` gains `rotor_strength_basis_id` / `rotor_stock_thickness_m` (set with
+`set_rotor_strength_basis()`; deliberately not dataclass fields, so the field-enumerating design-input contracts of
+lane 16 / F3 are unchanged — they are qualification evidence, not sizing coefficients); every
+`run()` / `size_for()` record carries `rotor_qualification`, `rotor_ok`, margins, `sizing_mode`, `u_max_basis`,
+`u_max_legacy_sensitivity_mps` and `rotor_within_legacy_sensitivity_cap`. Without a registered basis the machine is
+`sizing_mode = PARAMETRIC_SENSITIVITY`: the tip-speed / rpm cap is the old one (uncited `materials.DB` yield over the
+uncited `stress_safety = 2.0`), now explicitly labelled `LEGACY_CONSERVATIVE_SENSITIVITY` (`u_max_legacy_sensitivity()`);
+with a registered basis the cap is min(Fty/FS_y, Ftu/FS_u) at the design temperature. `abep_sim/system.py` (gas-path
+physics) reports `comp_rotor_qualification`, `comp_rotor_ok`, `comp_sizing_mode`, `comp_u_max_basis`; its
+`comp_feasible` already required `rotor_ok`, so every gas-path-physics evaluation now has `chk_compressor_feasible =
+False` and therefore `rfp_compliant` / `feasible` / `technical_compliant` False (fail closed) while compressor mass and
+power stay computed as a labelled parametric-sensitivity result. No coefficient was retuned.
+Behaviour change in an existing test: `tests/test_sim.py::test_compressor_pumping_speed_limit` no longer expects
+`rotor_ok` for the CFRP rotor (now `NOT_EVALUATED_MATERIAL_BASIS`, inside the legacy cap), and
+`tests/test_feed_envelope.py::test_design_conditional_chain[size_for]` now expects every case refused while the
+registry is empty (previously >= 1 OK case; the original assertions still run once a basis is registered). New tests:
+`tests/test_rotor_strength_basis.py` (synthetic, labelled test-fixture basis only).
+Golden impact: none (`python -m abep_sim.golden check` OK) — the golden gas-path / archengine / mission benchmarks use
+compressor mass, power and pressures, not `rotor_ok`, and the sizing cap is numerically unchanged without a basis.
+Downstream (owned by other steps): design-synthesis F3 (`module_rotor_ok_uncited_db_yield` now always False),
+`scripts/architecture/build_feed_envelope.py` and `docs/architecture_comparison/feed_state_closure` (rotor_ok False is
+reported as infeasible), freeze-candidate MCC-03 status.

@@ -185,7 +185,10 @@ def test_compressor_pumping_speed_limit():
     small = DragCompressor(turbo_area_m2=0.05, turbo_radius_m=0.12, rotor_material="Ti6Al4V").size_for(0.005, md, 5)
     big = DragCompressor(turbo_area_m2=0.45, turbo_radius_m=0.40, rotor_material="CFRP").size_for(0.005, md, 5)
     assert not small["sized"] and big["sized"]
-    assert big["CR_by_species"]["N2"] > big["CR_by_species"]["O"] and big["rotor_ok"]
+    # A9.9 S2.3 / MCC-03 (owner decision changes this behaviour): no registered rotor-strength basis exists, so the
+    # rotor is a PARAMETRIC_SENSITIVITY result inside the labelled legacy cap, never a qualified rotor_ok.
+    assert big["CR_by_species"]["N2"] > big["CR_by_species"]["O"] and big["rotor_within_legacy_sensitivity_cap"]
+    assert big["rotor_ok"] is False and big["rotor_qualification"] == "NOT_EVALUATED_MATERIAL_BASIS"
 
 
 def test_reservoir_mass_conservation_and_recombination():

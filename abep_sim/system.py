@@ -128,7 +128,13 @@ def evaluate(cfg: Config) -> dict:
                "orifice_p_residual_rel": orf["p_residual_rel"],
                "gaspath_converged": gaspath_converged,
                "gaspath_status": "CONVERGED" if gaspath_converged else "MODEL_NOT_CONVERGED",
-               "gaspath_not_converged": nc}
+               "gaspath_not_converged": nc,
+               # A9.9 S2.3 / MCC-03: rotor structural acceptance needs a registered rotor-strength basis. Without one
+               # the compressor is a PARAMETRIC_SENSITIVITY result (mass/power from the labelled legacy tip-speed cap)
+               # and the compressor branch is not feasible (fail closed).
+               "comp_sizing_mode": cres["sizing_mode"], "comp_u_max_basis": cres["u_max_basis"],
+               "comp_rotor_qualification": cres["rotor_qualification"], "comp_rotor_ok": cres["rotor_ok"],
+               "comp_rotor_within_legacy_sensitivity_cap": cres["rotor_within_legacy_sensitivity_cap"]}
         cmp_ = {**cmp_, "p_out_Pa": p_in, "comp_power_W": comp_power, "comp_mass_kg": comp_mass,
                 "active_ratio": cres["CR_active"], "comp_feasible": cres["sized"] and cres["rotor_ok"] and gaspath_converged, "mdot_net": mdot_air}
     atm_in = {**atm, "fO": inlet["fO"], "fN2": inlet["fN2"], "fO2": inlet["fO2"],

@@ -14,15 +14,22 @@ relative to the intake even before wall recombination. Power:
   gas drag torque:   tau_gas = sum_channels p_ch * (u / c_bar) * A_wet * 2/sqrt(pi)   (free-molecular shear)
   bearings:          P_bear = k_bear * omega                                    (magnetic ~ 1-3 W, ball ~ 5-15 W)
   motor:             P_el = (P_gas + P_bear) / eta_motor + P_ctrl
-Rotor stress: sigma_hoop ~ rho_rotor u^2  ->  u_max = sqrt(sigma_allow / rho)   (Al ~ 320 m/s, Ti ~ 450, CFRP ~ 600)
+Rotor stress: sigma_hoop ~ rho_rotor u^2. Structural acceptance (owner decision A9.9 S2.3 + MCC-03) is evaluated by
+  abep_sim.rotor_strength against a REGISTERED rotor-strength basis (product form, temperature, yield AND ultimate
+  allowables, design/test factors, max design speed, proof spin). With no registered basis the rotor is explored as
+  PARAMETRIC_SENSITIVITY only: rotor_qualification = NOT_EVALUATED_MATERIAL_BASIS and rotor_ok is False. The tip-speed
+  cap then comes from the labelled legacy/conservative sensitivity case u = sqrt(DB yield / (stress_safety rho))
+  (uncited DB yield, uncited factor 2.0), which is not a cited requirement.
 Mass: rotor (disc + channels), stator, motor (mass ∝ torque), bearings, housing.
 Temperature: lumped node, P_loss vs radiative+conductive sink.
 """
 from __future__ import annotations
 import math
 from dataclasses import dataclass
+from typing import Optional
 from .constants import K_B, M_SPECIES
 from .materials import DB
+from . import rotor_strength as RS
 
 
 @dataclass
@@ -44,6 +51,8 @@ class DragCompressor:
     L_per_stage_m: float = 0.35    # unwrapped channel length per stage
     xi: float = 0.6                # geometric efficiency of drag channel
     rotor_material: str = "Ti6Al4V"
+    # LEGACY/CONSERVATIVE SENSITIVITY factor only (uncited; A9.9 S2.3). Used solely for the PARAMETRIC_SENSITIVITY
+    # tip-speed cap when no rotor-strength basis is registered; never a qualification criterion.
     stress_safety: float = 2.0
     T_gas_K: float = 350.0
     leak_conductance_m3_s: float = 2e-4
@@ -57,13 +66,47 @@ class DragCompressor:
     conductance_to_sink_W_K: float = 0.4
     T_sink_K: float = 293.0
 
+    # A9.9 S2.3: id of a REGISTERED basis in abep_sim.rotor_strength.REGISTRY (None = none registered) and the actual
+    # rotor stock thickness/section the basis must cover. Deliberately NOT dataclass fields (unannotated class defaults):
+    # they are qualification evidence, not design/sizing coefficients, so the existing field-enumerating design-input
+    # contracts are not changed by this model change. Set per instance with set_rotor_strength_basis().
+    rotor_strength_basis_id = None
+    rotor_stock_thickness_m = None
+
+    def set_rotor_strength_basis(self, basis_id: Optional[str], stock_thickness_m: Optional[float]) -> "DragCompressor":
+        self.rotor_strength_basis_id = basis_id
+        self.rotor_stock_thickness_m = stock_thickness_m
+        return self
+
     @property
     def u(self) -> float:
         return self.rotor_radius_m * self.rpm * 2 * math.pi / 60.0
 
-    def u_max(self) -> float:
+    def u_max_legacy_sensitivity(self) -> float:
+        """LEGACY/CONSERVATIVE SENSITIVITY tip-speed cap: uncited materials.DB yield / (uncited stress_safety * rho).
+        Not a cited allowable and not a qualification basis (A9.9 S2.3 / MCC-03)."""
         m = DB[self.rotor_material]
         return math.sqrt(m.yield_MPa * 1e6 / (self.stress_safety * m.density))
+
+    def registered_basis(self):
+        return RS.get_registered(self.rotor_strength_basis_id)
+
+    def sizing_mode(self) -> str:
+        b = self.registered_basis()
+        ok = b is not None and not RS.basis_problems(b) and b.materials_db_key == self.rotor_material
+        return RS.SIZING_REGISTERED_BASIS if ok else RS.SIZING_PARAMETRIC_SENSITIVITY
+
+    def u_max(self) -> float:
+        """Tip-speed cap used for sizing: from the registered basis (both yield and ultimate at the design temperature)
+        when one applies to this rotor material, otherwise the labelled legacy sensitivity cap (see ``u_max_basis``)."""
+        if self.sizing_mode() == RS.SIZING_REGISTERED_BASIS:
+            return RS.tip_speed_allowable(self.registered_basis())
+        return self.u_max_legacy_sensitivity()
+
+    def u_max_basis(self) -> str:
+        if self.sizing_mode() == RS.SIZING_REGISTERED_BASIS:
+            return f"REGISTERED_BASIS:{self.rotor_strength_basis_id}"
+        return RS.LEGACY_SENSITIVITY_LABEL
 
     def _cbar(self, m):
         return math.sqrt(8 * K_B * self.T_gas_K / (math.pi * m))
@@ -162,7 +205,14 @@ class DragCompressor:
         # temperature (lumped)
         T = self.T_sink_K + (P_gas + P_bear * 0.5 + P_el - (P_gas + P_bear) ) / self.conductance_to_sink_W_K
         u_lim = self.u_max()
-        return {"u_mps": u, "u_turbo_mps": u_t, "u_max_mps": u_lim, "rotor_ok": max(u, u_t) <= u_lim,
+        u_leg = self.u_max_legacy_sensitivity()
+        # A9.9 S2.3 / MCC-03: structural acceptance only against a registered basis (fail closed otherwise)
+        q = RS.qualify_rotor(self.rotor_strength_basis_id, self.rotor_material, max(u, u_t), self.rpm, T,
+                             self.rotor_stock_thickness_m)
+        return {"u_mps": u, "u_turbo_mps": u_t, "u_max_mps": u_lim, "u_max_basis": self.u_max_basis(),
+                "sizing_mode": self.sizing_mode(), **q, "rotor_ok": q["rotor_ok"],
+                "u_max_legacy_sensitivity_mps": u_leg,
+                "rotor_within_legacy_sensitivity_cap": max(u, u_t) <= u_leg,
                 "S_turbo_m3_s": S_t, "S0_drag_m3_s": S0,
                 "p_in_Pa": p_in_Pa, "p_out_Pa": p_out, "CR_active": p_out / p_in_Pa,
                 "CR_by_species": K_total, "delivered_kgps": delivered, "leak_kgps": leak,
@@ -176,8 +226,13 @@ class DragCompressor:
 
     def size_for(self, p_in_Pa: float, mdot_species: dict, CR_target: float, rpm_max: float = 90000.0,
                  max_turbo_rows: int = 6, max_drag_stages: int = 4) -> dict:
-        """Search turbo rows, then drag stages, then rpm (<= rotor stress limit) for the lightest machine
+        """Search turbo rows, then drag stages, then rpm (<= rotor tip-speed cap) for the lightest machine
         reaching CR_target. Drag stages are only useful once Q/p is small (p >~ 1 Pa).
+
+        A9.9 S2.3 / MCC-03: the rpm cap comes from ``u_max()``; with no registered rotor-strength basis this is the
+        labelled legacy sensitivity cap and the record says ``sizing_mode='PARAMETRIC_SENSITIVITY'``,
+        ``rotor_qualification='NOT_EVALUATED_MATERIAL_BASIS'``, ``rotor_ok=False``: such a result is exploration,
+        never a qualified rotor.
 
         G-03: the search itself is unchanged; the returned record carries the convergence fields of the selected
         run() (``converged``, ``iterations``, ``residual``, ``solver_status``). Callers must treat
