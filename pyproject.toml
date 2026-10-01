@@ -34,7 +34,7 @@ namespaces = false
 # the repository path when the data are absent.
 [tool.setuptools.package-data]
 abep_sim = ["data/atmosphere_msis21_v1.json", "data/atmosphere_msis21_v1.csv", "data/intake_surface_v1.json",
-            "data/intake_surface_v1.csv", "data/golden_v1.json", "data/rates/*.dat", "data/rates/*.md"]
+            "data/intake_surface_v1.csv", "data/golden_v1.json", "data/golden_v2.json", "data/rates/*.dat", "data/rates/*.md"]
 [tool.setuptools.exclude-package-data]
 # A9.17 WINDS + DATA_SIZE: the HWM14-wind atmosphere v2 (atmosphere_msis21_hwm14_orbit_v2.*) is repository evidence too.
 abep_sim = ["data/atmosphere_msis21_orbit_v1*", "data/atmosphere_msis21_hwm14_orbit_v2*"]
