@@ -15,7 +15,9 @@ Authority (immutable owner record; cite path + json sha256 + decision key):
   caller inputs of the orbit sampler, never defaults (the mission_env 96.3 deg / dawn-dusk orbit is CODE_DEFAULT /
   PARAMETRIC).
 * A9.17 DATA_SIZE (same record): one canonical deterministic-gzip copy, builder + manifest + sha256 in the repository,
-  excluded from the installed wheel/sdist.
+  excluded from the installed wheel (pyproject exclude-package-data). The two .csv.gz tables are not in the sdist either;
+  the small manifest JSON is carried by the sdist unless MANIFEST.in excludes it (see the manifest's ``distribution`` and
+  ``distribution_snapshot_at_build``; finding HWM-2).
 
 Composition. v2 = the frozen NRLMSIS 2.1 state of ``atmosphere_msis21_orbit_v1`` (read through
 ``abep_sim.atmosphere_orbit``, hash-verified, unchanged) + a frozen HWM14 wind table on exactly the same grid and the same
@@ -64,6 +66,15 @@ GZ_PATH = os.path.join(DATA_DIR, DATASET_ID + ".csv.gz")
 DIST_GZ_PATH = os.path.join(DATA_DIR, DATASET_ID + ".disturbance.csv.gz")
 JSON_PATH = os.path.join(DATA_DIR, DATASET_ID + ".json")
 REPO_DATA_PATH = "abep_sim/data/" + DATASET_ID + ".csv.gz"
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PYPROJECT_EXCLUDE_GLOB = "data/" + DATASET_ID + "*"
+# Finding HWM-2: the sdist statement says what MANIFEST.in does, not what it should do. MANIFEST.in is outside the A9.17
+# WINDS lane; the actual state at build time is recorded in distribution_snapshot_at_build.
+SDIST_STATEMENT = ("the two .csv.gz tables are not carried (MANIFEST.in recursive-include abep_sim/data matches *.json "
+                   "*.csv *.dat *.md only). The manifest JSON is matched by *.json and is carried unless MANIFEST.in "
+                   "excludes it; at this build MANIFEST.in had no exclude line for this dataset, so the sdist carried "
+                   "the manifest JSON (distribution_snapshot_at_build; the exclude line is pending in a lane allowed "
+                   "to edit MANIFEST.in)")
 BUILD_COMMAND = "ABEP_HWM14_DIR=<dir> python -m abep_sim.atmosphere_orbit_v2 build"
 CHECK_COMMAND = "python -m abep_sim.atmosphere_orbit_v2 check"
 FETCH_COMMAND = "python -m abep_sim.atmosphere_orbit_v2 fetch-hwm14 <dir>"
@@ -217,13 +228,23 @@ LABELS = {"dataset_status": DATASET_STATUS, "mission_trajectory": False, "requir
           "orbit_inputs": "inclination / LTAN are caller-supplied PARAMETRIC inputs (no defaults)",
           "real_orbit": "TBD from DRDO / spacecraft ICD / PDR mission definition; then a new dataset version"}
 
+# Verbatim phrases of HWM14 README.txt lines 155-157 (HWM14_FILES["README.txt"]); checked against the file when HWM14 is
+# available (tests/test_atmosphere_orbit_v2.py). Finding HWM-3: the earlier paraphrase misquoted them.
+DWM07_README_QUOTE = ("represents average disturbance winds in the upper thermosphere (above 225 km)",
+                      "The disturbance winds are assumed to be constant with height, with a smooth artificial cutoff "
+                      "below 125 km")
+
 NOT_PROVIDED = {
     "vertical_wind": "HWM14 is a horizontal wind model; the vertical neutral wind is taken as 0 in the relative flow",
     "solar_activity_dependence_of_winds": "HWM14 has none (F10.7 ignored); quiet-time winds identical in all scenarios",
     "hwm14_model_uncertainty": "not quantified here (empirical climatology; storm-time and day-to-day variability are "
                                "not represented); only the grid interpolation error is measured",
-    "disturbance_wind_height_dependence": "DWM07 is height-constant above ~225 km with an artificial cutoff below 125 km "
-                                          "(README.txt MODEL LIMITATIONS); 180-230 km lies inside that transition",
+    "disturbance_wind_height_dependence": (
+        "HWM14 README.txt (MODEL LIMITATIONS, sha256 14b6e5e4...9b15): the DWM07 disturbed part '" + DWM07_README_QUOTE[0]
+        + "'; '" + DWM07_README_QUOTE[1] + "'. DWM07 is therefore height-constant by construction (the README describes no "
+        "transition at 180-230 km; measured variation over 180-230 km: disturbance_file.altitude_independence_check). "
+        "Per the README it represents average disturbance winds above 225 km; applying it unchanged at 180-225 km is an "
+        "applicability extrapolation of the source model (representativeness there not quantified; verify)"),
     "design_states": "no wind-specific design-state set: the relative-flow extremes depend on the (TBD) orbit; use "
                      "orbit_states() over the caller's parametric orbit range",
 }
@@ -555,6 +576,7 @@ def build(path: str | None = None) -> dict:
         meta["disturbance_file"]["altitude_independence_check"] = alt_check
         meta["producer"] = _source_record(runner)
         meta["year_independence_check"] = _year_independence(runner)
+        meta["distribution_snapshot_at_build"] = distribution_snapshot()
         _write_json(meta)                                  # provisional (hashes + grids) so the accessor can load
         meta["node_reproduction"] = _node_reproduction()
         meta["interpolation_validation"] = _interpolation_validation(runner)
@@ -583,7 +605,9 @@ def _metadata(raw: bytes, gz: bytes, n_rows: int) -> dict:
         "bytes": len(raw),
         "row_count": n_rows,
         "container": _container_record(gz),
-        "distribution": {"installed_package": "EXCLUDED (pyproject exclude-package-data + MANIFEST.in exclude)",
+        "distribution": {"installed_wheel": "EXCLUDED (pyproject.toml [tool.setuptools.exclude-package-data] "
+                                            "'" + PYPROJECT_EXCLUDE_GLOB + "'; no package-data glob matches it)",
+                         "sdist": SDIST_STATEMENT,
                          "repository_path": REPO_DATA_PATH,
                          "disturbance_repository_path": "abep_sim/data/" + os.path.basename(DIST_GZ_PATH),
                          "when_absent": "the accessor raises FileNotFoundError naming the repository path; no fallback"},
@@ -641,10 +665,47 @@ def _metadata(raw: bytes, gz: bytes, n_rows: int) -> dict:
 _CACHE: dict = {}
 
 
+def _manifest_in_patterns(text: str) -> tuple:
+    """(recursive-include patterns under abep_sim/data, exclude patterns) of a MANIFEST.in text."""
+    inc, exc = [], []
+    for ln in text.splitlines():
+        t = ln.split("#")[0].split()
+        if t[:2] == ["recursive-include", "abep_sim/data"]:
+            inc += t[2:]
+        elif t[:1] == ["exclude"]:
+            exc += t[1:]
+    return inc, exc
+
+
+def distribution_snapshot(root: str = REPO_ROOT) -> dict:
+    """What the repository's packaging files actually do with this dataset (pure file inspection, no build): wheel
+    exclusion from pyproject.toml, sdist membership from MANIFEST.in. Recorded at build time
+    (``distribution_snapshot_at_build``) and compared with the stored claim by the tests (finding HWM-2)."""
+    import fnmatch
+    import tomllib
+    pp_path, mi_path = os.path.join(root, "pyproject.toml"), os.path.join(root, "MANIFEST.in")
+    if not (os.path.exists(pp_path) and os.path.exists(mi_path)):
+        return {"status": "NOT_A_REPOSITORY_CHECKOUT"}
+    pp_bytes, mi_bytes = open(pp_path, "rb").read(), open(mi_path, "rb").read()
+    st = tomllib.loads(pp_bytes.decode())["tool"]["setuptools"]
+    inc, exc = _manifest_in_patterns(mi_bytes.decode())
+    out = {"status": "INSPECTED", "MANIFEST.in_sha256": hashlib.sha256(mi_bytes).hexdigest(),
+           "wheel_excluded": PYPROJECT_EXCLUDE_GLOB in st.get("exclude-package-data", {}).get("abep_sim", []),
+           "files": {}}
+    for f in (GZ_PATH, DIST_GZ_PATH, JSON_PATH):
+        name = os.path.basename(f)
+        rel = "data/" + name
+        out["files"][name] = {
+            "in_wheel_package_data": any(fnmatch.fnmatchcase(rel, g) for g in st["package-data"]["abep_sim"]),
+            "in_sdist": (any(fnmatch.fnmatchcase(name, g) for g in inc)
+                         and not any(fnmatch.fnmatchcase("abep_sim/" + rel, g) for g in exc))}
+    return out
+
+
 def _missing_data_error() -> FileNotFoundError:
     return FileNotFoundError(
-        f"{DATASET_ID} data files are not present at {DATA_DIR}. The dataset is repository evidence and is excluded from "
-        f"the installed abep-sim wheel/sdist (A9.17 DATA_SIZE, {A9_17_JSON}): use a repository checkout, where it lives "
+        f"{DATASET_ID} data files are not present at {DATA_DIR}. The dataset is repository evidence; its tables are not in "
+        f"the installed abep-sim wheel or the sdist (A9.17 DATA_SIZE, {A9_17_JSON}): use a repository checkout, where it lives "
         f"at {REPO_DATA_PATH} (+ {DATASET_ID}.disturbance.csv.gz, {DATASET_ID}.json). There is no fallback dataset.")
 
 
@@ -1064,6 +1125,12 @@ def check(path: str | None = None) -> dict:
     if p.get("files_sha256") != HWM14_FILES or p.get("package") != HWM14_TGZ or p.get("version") != HWM14_VERSION \
             or p.get("driver", {}).get("sha256") != DRIVER_SHA256 or not p.get("nrl_reference_check", {}).get("passed"):
         problems.append("producer record (HWM14 files / version / driver / NRL check) differs from the module definition")
+    snap_build, snap_now = meta.get("distribution_snapshot_at_build"), distribution_snapshot()
+    if not snap_build or snap_build.get("status") != "INSPECTED":
+        problems.append("distribution_snapshot_at_build missing (finding HWM-2)")
+    elif snap_now.get("status") == "INSPECTED" and snap_now != snap_build:
+        notes.append("packaging files changed since the build (distribution_snapshot differs from "
+                     "distribution_snapshot_at_build); the stored distribution statement describes the build-time state")
     rerun = {"status": "SKIPPED"}
     try:
         runner = HWM14Runner(path)

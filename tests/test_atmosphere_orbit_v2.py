@@ -291,3 +291,68 @@ def test_direct_hwm14_spot_checks_within_recorded_error(meta):
                 assert err <= 1.5 * tol
     finally:
         runner.close()
+
+
+# --- repair findings (A9.17 WINDS review: HWM-2, HWM-3) ---------------------------------------------------------------
+def test_hwm2_distribution_statement_matches_packaging_files(meta):
+    """HWM-2: the frozen distribution statement must describe what pyproject.toml / MANIFEST.in actually do. It must
+    never claim a MANIFEST.in exclude that does not exist (the original statement did)."""
+    d = meta["distribution"]
+    assert d == json.loads(json.dumps(a2._metadata(b"", b"", 0)["distribution"]))
+    assert "MANIFEST.in exclude)" not in json.dumps(d) and "installed_package" not in d
+    snap = meta["distribution_snapshot_at_build"]
+    assert snap["status"] == "INSPECTED" and snap["wheel_excluded"] is True
+    files = snap["files"]
+    for name in (os.path.basename(a2.GZ_PATH), os.path.basename(a2.DIST_GZ_PATH), os.path.basename(a2.JSON_PATH)):
+        assert files[name]["in_wheel_package_data"] is False, name
+    assert files[os.path.basename(a2.GZ_PATH)]["in_sdist"] is False
+    assert files[os.path.basename(a2.DIST_GZ_PATH)]["in_sdist"] is False
+    # The statement records the build-time state of the manifest JSON in the sdist; it must agree with the snapshot.
+    json_in_sdist = files[os.path.basename(a2.JSON_PATH)]["in_sdist"]
+    assert ("so the sdist carried the manifest JSON" in d["sdist"]) == json_in_sdist
+    assert "EXCLUDED" in d["installed_wheel"] and a2.PYPROJECT_EXCLUDE_GLOB in d["installed_wheel"]
+    # Current repository: the tables are never shipped; if MANIFEST.in is unchanged the snapshot is reproduced exactly.
+    now = a2.distribution_snapshot()
+    assert now["wheel_excluded"] is True
+    assert not any(v["in_wheel_package_data"] for v in now["files"].values())
+    assert not now["files"][os.path.basename(a2.GZ_PATH)]["in_sdist"]
+    assert not now["files"][os.path.basename(a2.DIST_GZ_PATH)]["in_sdist"]
+    if now["MANIFEST.in_sha256"] == snap["MANIFEST.in_sha256"]:
+        assert now == snap
+
+
+def test_hwm2_distribution_snapshot_sees_a_manifest_in_exclude(tmp_path):
+    """The snapshot inspects MANIFEST.in, so a later exclude line is detected (and not merely asserted in text)."""
+    for fn in ("pyproject.toml",):
+        (tmp_path / fn).write_bytes(open(os.path.join(ROOT, fn), "rb").read())
+    base = open(os.path.join(ROOT, "MANIFEST.in")).read()
+    (tmp_path / "MANIFEST.in").write_text(base)
+    assert a2.distribution_snapshot(str(tmp_path)) == a2.distribution_snapshot()
+    (tmp_path / "MANIFEST.in").write_text(base + "\nexclude abep_sim/data/atmosphere_msis21_hwm14_orbit_v2*\n")
+    snap = a2.distribution_snapshot(str(tmp_path))
+    assert not any(v["in_sdist"] for v in snap["files"].values())
+    assert a2.distribution_snapshot(str(tmp_path / "nowhere"))["status"] == "NOT_A_REPOSITORY_CHECKOUT"
+
+
+def test_hwm3_dwm07_height_statement_quotes_readme(meta):
+    """HWM-3: the DWM07 height limitation quotes the NRL README verbatim (height-constant by construction, cutoff below
+    125 km, representative above 225 km) and does not claim a 180-230 km 'transition'."""
+    txt = a2.NOT_PROVIDED["disturbance_wind_height_dependence"]
+    assert meta["not_provided"]["disturbance_wind_height_dependence"] == txt
+    for q in a2.DWM07_README_QUOTE:
+        assert q in txt
+    assert "inside that transition" not in txt and "height-constant above ~225 km" not in txt
+    assert "extrapolation" in txt and "verify" in txt
+    # The measured height-constancy supports the statement.
+    chk = meta["disturbance_file"]["altitude_independence_check"]
+    assert max(chk["max_abs_diff_vs_first_altitude_m_s"].values()) <= chk["tolerance_m_s"]
+
+
+def test_hwm3_readme_quote_verbatim_in_nrl_package():
+    why = _hwm14_available()
+    if why:
+        pytest.skip(f"HWM14 not available: {why}")
+    readme = open(os.path.join(a2.hwm14_dir(), "README.txt"), encoding="utf-8").read()
+    norm = " ".join(readme.split())
+    for q in a2.DWM07_README_QUOTE:
+        assert q in norm, q

@@ -29,7 +29,8 @@
   "note": "container hash identifies the stored file; the dataset identity is the uncompressed-CSV sha256"
  },
  "distribution": {
-  "installed_package": "EXCLUDED (pyproject exclude-package-data + MANIFEST.in exclude)",
+  "installed_wheel": "EXCLUDED (pyproject.toml [tool.setuptools.exclude-package-data] 'data/atmosphere_msis21_hwm14_orbit_v2*'; no package-data glob matches it)",
+  "sdist": "the two .csv.gz tables are not carried (MANIFEST.in recursive-include abep_sim/data matches *.json *.csv *.dat *.md only). The manifest JSON is matched by *.json and is carried unless MANIFEST.in excludes it; at this build MANIFEST.in had no exclude line for this dataset, so the sdist carried the manifest JSON (distribution_snapshot_at_build; the exclude line is pending in a lane allowed to edit MANIFEST.in)",
   "repository_path": "abep_sim/data/atmosphere_msis21_hwm14_orbit_v2.csv.gz",
   "disturbance_repository_path": "abep_sim/data/atmosphere_msis21_hwm14_orbit_v2.disturbance.csv.gz",
   "when_absent": "the accessor raises FileNotFoundError naming the repository path; no fallback"
@@ -272,7 +273,7 @@
   "vertical_wind": "HWM14 is a horizontal wind model; the vertical neutral wind is taken as 0 in the relative flow",
   "solar_activity_dependence_of_winds": "HWM14 has none (F10.7 ignored); quiet-time winds identical in all scenarios",
   "hwm14_model_uncertainty": "not quantified here (empirical climatology; storm-time and day-to-day variability are not represented); only the grid interpolation error is measured",
-  "disturbance_wind_height_dependence": "DWM07 is height-constant above ~225 km with an artificial cutoff below 125 km (README.txt MODEL LIMITATIONS); 180-230 km lies inside that transition",
+  "disturbance_wind_height_dependence": "HWM14 README.txt (MODEL LIMITATIONS, sha256 14b6e5e4...9b15): the DWM07 disturbed part 'represents average disturbance winds in the upper thermosphere (above 225 km)'; 'The disturbance winds are assumed to be constant with height, with a smooth artificial cutoff below 125 km'. DWM07 is therefore height-constant by construction (the README describes no transition at 180-230 km; measured variation over 180-230 km: disturbance_file.altitude_independence_check). Per the README it represents average disturbance winds above 225 km; applying it unchanged at 180-225 km is an applicability extrapolation of the source model (representativeness there not quantified; verify)",
   "design_states": "no wind-specific design-state set: the relative-flow extremes depend on the (TBD) orbit; use orbit_states() over the caller's parametric orbit range"
  },
  "authority": {
@@ -588,6 +589,25 @@
   ],
   "max_abs_diff_m_s": 0.0,
   "basis": "hwm14.f90 uses mod(iyd, 1000) only"
+ },
+ "distribution_snapshot_at_build": {
+  "status": "INSPECTED",
+  "MANIFEST.in_sha256": "dc99c902c80706f8ea8623b725065e9fea4380de1c467a9087876e89482319a9",
+  "wheel_excluded": true,
+  "files": {
+   "atmosphere_msis21_hwm14_orbit_v2.csv.gz": {
+    "in_wheel_package_data": false,
+    "in_sdist": false
+   },
+   "atmosphere_msis21_hwm14_orbit_v2.disturbance.csv.gz": {
+    "in_wheel_package_data": false,
+    "in_sdist": false
+   },
+   "atmosphere_msis21_hwm14_orbit_v2.json": {
+    "in_wheel_package_data": false,
+    "in_sdist": true
+   }
+  }
  },
  "node_reproduction": {
   "stride": 7,

@@ -2567,3 +2567,34 @@ WINDS (`AUTHORIZE_HWM14_ATMOSPHERE_V2_KEEP_V1_IMMUTABLE`); ORBIT and DATA_SIZE f
     the v2 glob next to `REPO_ONLY_GLOB` and to `MANIFEST.in`; both files are outside this lane. Built with `python -m
     build`: the wheel contains no v2 data; the sdist contains only the manifest JSON.
   - No wind-specific design-state set exists, because the relative-flow extremes depend on the TBD orbit.
+
+## 2026-10-01 — A9.17 WINDS repair: review findings HWM-2 / HWM-3 fixed (manifest rebuilt; wind tables byte-identical)
+
+Authority: `docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json` (sha256 9fd77c95…c3ad), decision key
+WINDS (`AUTHORIZE_HWM14_ATMOSPHERE_V2_KEEP_V1_IMMUTABLE`) and DATA_SIZE. These are repairs from the review of the A9.17 WINDS
+commit (dcd3ef9). They change text in the module and in the manifest JSON. HWM14 output is unchanged.
+
+- **HWM-3 (misquote).** `NOT_PROVIDED.disturbance_wind_height_dependence` claimed that DWM07 is height-constant only
+  above ~225 km and that 180-230 km "lies inside that transition". The README in the NRL package (sha256 14b6e5e4…9b15,
+  MODEL LIMITATIONS) says something different. Its exact words: the disturbed part "represents average disturbance winds
+  in the upper thermosphere (above 225 km)", and "The disturbance winds are assumed to be constant with height, with a
+  smooth artificial cutoff below 125 km". The entry now quotes those phrases verbatim (`DWM07_README_QUOTE`). It states
+  that DWM07 is height-constant by construction and that the README describes no transition. It also states that using
+  DWM07 unchanged at 180-225 km extrapolates beyond what the source model represents (verify; not quantified). When
+  HWM14 is available, a test checks the quotes against the NRL README.
+- **HWM-2 (false distribution claim).** The manifest claimed "EXCLUDED (pyproject exclude-package-data + MANIFEST.in
+  exclude)", but no such MANIFEST.in exclude exists. The `distribution` record now holds `installed_wheel` (excluded
+  through pyproject) and `sdist`. The `sdist` text says the two .csv.gz tables are not carried, and that at this build
+  MANIFEST.in had no v2 exclude, so the sdist carried the manifest JSON. A new `distribution_snapshot_at_build` is
+  computed from the real pyproject.toml/MANIFEST.in by `distribution_snapshot()`, a pure file inspection. Tests check the
+  statement against the snapshot. `check()` adds a note when the packaging files change after the build.
+- **Rebuild.** `ABEP_HWM14_DIR=<verified NRL package> python -m abep_sim.atmosphere_orbit_v2 build`. Both .csv.gz
+  containers are byte-identical to dcd3ef9 (same uncompressed-CSV sha256 6d9e4f7a…1969 / 040befc5…8609). Only the
+  manifest JSON changed. The NRL checkhwm14 output is again text-identical to `Check/gfortran.txt`.
+- **HWM-1 (red suite): not fixed in this lane.** The fix needs edits to `tests/test_atmosphere_orbit.py`,
+  `tests/test_packaging.py` and `MANIFEST.in`, and all three are outside this lane's allowed paths. Nothing inside the
+  allowed paths can fix it legitimately: the brief requires v2 to import the v1 grid, and the data paths are fixed. A
+  verified patch was handed to the orchestrator. It exempts `atmosphere_orbit_v2.py` and adds the v2 glob to
+  `REPO_ONLY_GLOBS` plus a `MANIFEST.in` exclude line. Do not merge until it is applied. Once that MANIFEST.in line is
+  added, the manifest JSON will no longer be in the sdist. The `sdist` statement records the state at build time, so it
+  stays true as a record of that build, and `check()` notes the change.
