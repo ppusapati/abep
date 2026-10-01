@@ -2613,3 +2613,23 @@ Downstream (owned by other steps): design-synthesis F1 (F1-01 now FIXED in produ
 "IntakeSurface_convention" describes the legacy method), F3/F4/F7-F9 and the freeze candidate (MCC/F1 status, any
 artifact using `intake.collection` with use_tpmc), `scripts/architecture/build_feed_envelope.py` and the feed-state
 closure / feed-envelope artifacts (C_D, drag, passive CR, compressor sizing move). S2.2 (frozen surface v2) follows.
+
+## 2026-10-01 — A9.9 S2.2 F1Q-04: intake surface v2 build specification (build BLOCKED) + v1 fail-closed domain
+What: new `abep_sim/intake_surface_v2_spec.py` records the v2 build specification required by owner decision A9.9 S2.2
+(species-resolved; Maxwell and CLL as separate scenarios; deterministic order-independent seeds `point_seed`; the
+unresolved-particle criterion of `intake_tpmc` plus the gate-5 cross-check tolerance; per-row unresolved/convergence
+information; provenance and hashes; direct-TPMC cross-check at build and held-out states; fail closed outside the domain;
+v1 retained unchanged; production switch only after verification). Its angular axis is `TBD_AOCS_POINTING_ENVELOPE`
+(A9.13 S6.2: v2 must cover the REGISTERED spacecraft/AOCS relative-wind pointing envelope, which is not registered), and
+the other axes (atmosphere state, L/d, phi, alpha, n_per_point) carry `TBD_REGISTRATION` — no grid values invented.
+`build_intake_surface_v2()` refuses (`BLOCKED_PENDING_AOCS_POINTING_ENVELOPE`). No surface was built; `intake_surface_v1.*`
+unchanged.
+v1 fail-closed check: `IntakeSurface` already refused (ValueError) any L/d, phi, alpha or theta outside the frozen bounds,
+including non-finite inputs; that is recorded, not changed. Behaviour changes (silent substitutions removed):
+`intake.collection` no longer evaluates `min(off_axis_deg, 5)` or clips accommodation to [0, 1] before the surface
+(finding FE-01; A9.13 S6.2 "never extrapolate silently beyond the frozen angular domain") — out-of-domain pointing or
+accommodation now raises; `IntakeSurface` refuses a non-finite interpolated value and a species with non-zero fraction
+that is not in the table (previously dropped and renormalised away); `IntakeSurface.domain()` reports the frozen axes and
+states that the free-stream state is not a v1 axis. The fixed-composition fallback for a call without fractions is
+unchanged (out of scope here). Owner decisions: A9.9 S2.2, A9.13 S6.2. Golden impact: none (`golden check` OK); all
+in-domain values bit-identical.

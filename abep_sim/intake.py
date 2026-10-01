@@ -63,8 +63,11 @@ def collection(intake: IntakeParams, atm: dict) -> dict:
     passive_override = None
     if intake.use_tpmc:
         fr = {"O": atm["fO"], "N2": atm["fN2"], "O2": atm["fO2"]}
-        r = _tpmc_surface(atm, intake.scattering)(intake.L_over_d, intake.phi, min(max(intake.accommodation, 0.0), 1.0),
-                                                 min(intake.off_axis_deg, 5.0), fractions=fr)
+        # No clamping (A9.13 S6.2 / S2.2 fail closed, finding FE-01): accommodation and pointing go to the frozen surface
+        # as given, and IntakeSurface refuses anything outside its frozen domain. Until 2026-10-01 off_axis_deg was
+        # silently evaluated at min(off_axis_deg, 5) and accommodation clipped to [0, 1].
+        r = _tpmc_surface(atm, intake.scattering)(intake.L_over_d, intake.phi, intake.accommodation,
+                                                 intake.off_axis_deg, fractions=fr)
         eta_c = r["eta_c"]; cd = r["C_D"]; passive_override = r["CR_passive"]
         species_rows = r.get("species")
         from .intake_tpmc import IntakeGeometry, intake_response

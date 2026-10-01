@@ -381,8 +381,29 @@ class IntakeSurface:
                                  "mass of the build atmosphere that normalises the C_D rows); no default is assumed")
             self.m_s = {s: float(M_SPECIES[s]) for s in self.species}
 
+    # Frozen domain (S2.2 / A9.13 S6.2 fail-closed check, 2026-10-01). The interpolation axes are refused outside the
+    # table bounds (unchanged since v1.3: a ValueError, never extrapolation); non-finite inputs fail the bounds test.
+    # The grid is a full tensor product, so the bounding box equals the interpolation hull; a non-finite interpolated
+    # value is nevertheless refused (_row) rather than passed on. The free-stream state is NOT an axis of v1: every row
+    # is at the single build state (frozen_surface_build_atmosphere); off-build use is the documented speed-ratio
+    # approximation of intake._tpmc_surface until surface v2 (abep_sim/intake_surface_v2_spec.py) is built.
+    AXES = ("L_over_d", "phi", "alpha", "theta_deg")
+
+    def domain(self) -> dict:
+        return {"axes": {k: [float(v) for v in self.bounds[k]] for k in self.AXES}, "species": list(self.species),
+                "atmosphere_state": "single build state (not an axis); off-build use is an approximation, see "
+                                    "intake_surface_v2_spec", "outside_domain": "ValueError (fail closed)"}
+
     def in_bounds(self, L_over_d, phi, alpha, theta_deg=0.0) -> bool:
         return all(self.bounds[k][0] <= v <= self.bounds[k][1] for k, v in (("L_over_d", L_over_d), ("phi", phi), ("alpha", alpha), ("theta_deg", theta_deg)))
+
+    def _row(self, sp, L_over_d, phi, alpha, theta_deg) -> dict:
+        r = {k: float(f(L_over_d, phi, alpha, theta_deg)) for k, f in self.f[sp].items()}
+        bad = [k for k, v in r.items() if not math.isfinite(v)]
+        if bad:
+            raise ValueError(f"intake ROM: non-finite {bad} for species {sp} at L/d={L_over_d}, phi={phi}, "
+                             f"alpha={alpha}, theta={theta_deg} (outside the interpolation hull; no extrapolation)")
+        return r
 
     def __call__(self, L_over_d, phi, alpha, theta_deg=0.0, fractions: dict | None = None):
         if not self.in_bounds(L_over_d, phi, alpha, theta_deg):
@@ -392,10 +413,14 @@ class IntakeSurface:
             if not fractions and "mean" not in self.f:
                 fractions = {"O": 0.45, "N2": 0.50, "O2": 0.05}
             else:
-                return {k: float(f(L_over_d, phi, alpha, theta_deg)) for k, f in self.f[sp].items()}
+                return self._row(sp, L_over_d, phi, alpha, theta_deg)
+        foreign = [s for s, v in fractions.items() if s not in self.species and v > 0]
+        if foreign:
+            raise ValueError(f"intake ROM: species {foreign} with non-zero fraction are not in the frozen table "
+                             f"{self.species} (no silent drop / renormalisation)")
         tot = sum(fractions.get(s, 0.0) for s in self.species) or 1.0
         w = {s: fractions.get(s, 0.0) / tot for s in self.species if fractions.get(s, 0.0) > 0}
-        rows = {s: {k: float(f(L_over_d, phi, alpha, theta_deg)) for k, f in self.f[s].items()} for s in w}
+        rows = {s: self._row(s, L_over_d, phi, alpha, theta_deg) for s in w}
         inv_m = {s: w[s] / self.m_s[s] for s in w}                 # w_s / m_s  (proportional to number density)
         s_inv = sum(inv_m.values())
         x = {s: inv_m[s] / s_inv for s in w}                        # mole fractions
