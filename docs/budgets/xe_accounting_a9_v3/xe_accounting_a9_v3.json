@@ -95,6 +95,33 @@
    "presence or absence of C1 never removes system Xe capability",
    "two separate propellant tanks/paths: ambient air and Xenon (owner-stated RFP content, pending RFP registration)"
   ],
+  "rfp_clauses": {
+   "registration": "docs/requirements/rfp_official/rfp_registration_v1.json",
+   "rfp_number": "DTDF/06/13516/DSP/ABEP/X/L/M/01",
+   "pdf_sha256": "a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00",
+   "clauses": [
+    {
+     "clause_id": "RFP-P18-08",
+     "page": 18,
+     "section": "Part III 2 Propellant for propulsion system",
+     "verbatim": "Compatible for using Ambient air (at the functional orbit altitude of 180-230km) and Xenon as propellant. Two separate propellant tanks for ambient air and xenon."
+    },
+    {
+     "clause_id": "RFP-P17-05",
+     "page": 17,
+     "section": "Part III 1(A)iv row 3 Thruster",
+     "verbatim": "Capability to ionize N2, atomic oxygen in same thruster and It should have capability to use Xe as propellant, an extra input system to take care any problems on board unforeseen problems."
+    },
+    {
+     "clause_id": "RFP-P16-02",
+     "page": 16,
+     "section": "Part III 1(A)ii Figure 1",
+     "verbatim": "Logical Block Diagram: Intake -> Filter -> Compressor -> Gas Chamber -> Valve -> Thruster (Ionization zone | Acceleration zone) -> Thrust; Xenon Gas -> Valve -> Thruster."
+    }
+   ],
+   "citation_status": "REGISTERED_CLAUSE (AG-15 closure is the owner's; requirement_frozen stays false in the RVM, RVM-10)",
+   "note": "the A9.15 rules text 'owner-stated RFP content, pending RFP registration' is the owner's wording as decided before the registration and is kept verbatim; the propellant content is now cited to the registered clauses above"
+  },
   "superseded_wording": {
    "A9.13 owner_statements.xenon": "the RFP expects ambient-air operation and Xe capability; Xe stays contingency-only for C1, while the propulsion system still needs the RFP-required Xe capability",
    "A9.14": "the 'Xe contingency-only for C1' wording in S8.17 / S8.21 / S8.33 / S8.35 / S9.3 / S9.10",
@@ -105,14 +132,14 @@
     "configuration": "hall_c1_reference",
     "xe_propulsion_capability": "PRESENT_RFP_REQUIRED",
     "xe_free_reading": "NOT_APPLICABLE (A9.14 XV2Q-01 + A9.15)",
-    "storage_paths": "separate ambient-air and Xe propellant paths (A9.15, owner-stated RFP content pending RFP registration AG-15)",
+    "storage_paths": "separate ambient-air and Xe propellant paths (A9.15; registered RFP clauses RFP-P18-08 / RFP-P17-05 / RFP-P16-02)",
     "independent_of_c1": true
    },
    {
     "configuration": "hall_icp_neutralizer",
     "xe_propulsion_capability": "PRESENT_RFP_REQUIRED",
     "xe_free_reading": "NOT_APPLICABLE (A9.14 XV2Q-01 + A9.15)",
-    "storage_paths": "separate ambient-air and Xe propellant paths (A9.15, owner-stated RFP content pending RFP registration AG-15)",
+    "storage_paths": "separate ambient-air and Xe propellant paths (A9.15; registered RFP clauses RFP-P18-08 / RFP-P17-05 / RFP-P16-02)",
     "independent_of_c1": true
    }
   ],

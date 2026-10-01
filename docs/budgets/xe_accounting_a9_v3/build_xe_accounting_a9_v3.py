@@ -275,6 +275,34 @@ def S() -> dict:
 
 
 # ======================================================================== fail-closed rule functions (owner rules)
+# registered official RFP clauses that carry the propellant policy (AG-15 registration; A9.16 repair RFP-06): read
+# from the registration record, verbatim text copied, value token checked (fail closed)
+RFP_REG_REL = "docs/requirements/rfp_official/rfp_registration_v1.json"
+RFP_PROPELLANT_CLAUSES = (("RFP-P18-08", "Two separate propellant tanks for ambient air and xenon"),
+                          ("RFP-P17-05", "capability to use Xe as propellant"),
+                          ("RFP-P16-02", "Xenon Gas -> Valve -> Thruster"))
+
+
+def rfp_propellant_clauses() -> dict:
+    import json as _json
+    from pathlib import Path as _Path
+    reg = _json.loads((_Path(__file__).resolve().parents[3] / RFP_REG_REL).read_text(encoding="utf-8"))
+    by = {c["id"]: c for c in reg["clauses"]}
+    out = []
+    for cid, tok in RFP_PROPELLANT_CLAUSES:
+        c = by.get(cid)
+        if c is None or tok not in c["text"]:
+            raise RuntimeError(f"registered RFP clause {cid} missing or token {tok!r} absent")
+        out.append({"clause_id": cid, "page": c["page"], "section": c["section"], "verbatim": c["text"]})
+    return {"registration": RFP_REG_REL, "rfp_number": reg["document"]["rfp_number"],
+            "pdf_sha256": reg["document"]["sha256"], "clauses": out,
+            "citation_status": "REGISTERED_CLAUSE (AG-15 closure is the owner's; requirement_frozen stays false in "
+                               "the RVM, RVM-10)",
+            "note": "the A9.15 rules text 'owner-stated RFP content, pending RFP registration' is the owner's wording "
+                    "as decided before the registration and is kept verbatim; the propellant content is now cited to "
+                    "the registered clauses above"}
+
+
 def xe_system_capability(configuration: str, c1_selected=None, c1_requires_xe=None) -> dict:
     """A9.15 / A9.14 XA9Q-07 + XV2Q-01: the RFP-required Xe propulsion capability (own tank and Xe path, separate from
     the ambient-air path) applies to EVERY flight configuration; C1 selection or its Xe need never removes it."""
@@ -285,8 +313,8 @@ def xe_system_capability(configuration: str, c1_selected=None, c1_requires_xe=No
             raise BookingError(f"{name} must be a bool or None")
     return {"configuration": configuration, "xe_propulsion_capability": "PRESENT_RFP_REQUIRED",
             "xe_free_reading": "NOT_APPLICABLE (A9.14 XV2Q-01 + A9.15)",
-            "storage_paths": "separate ambient-air and Xe propellant paths (A9.15, owner-stated RFP content pending "
-                             "RFP registration AG-15)",
+            "storage_paths": "separate ambient-air and Xe propellant paths (A9.15; registered RFP clauses RFP-P18-08 / "
+                             "RFP-P17-05 / RFP-P16-02)",
             "independent_of_c1": True}
 
 
@@ -924,6 +952,7 @@ def build_doc() -> dict:
             "governing_rule": _decision("A9.15")[0]["governing_rule"],
             "source": cite(s["GOV"]),
             "rules": _decision("A9.15")[0]["rules"],
+            "rfp_clauses": rfp_propellant_clauses(),
             "superseded_wording": {"A9.13 owner_statements.xenon": a913["owner_statements"]["xenon"],
                                    "A9.14": "the 'Xe contingency-only for C1' wording in S8.17 / S8.21 / S8.33 / S8.35 "
                                             "/ S9.3 / S9.10",
@@ -1018,7 +1047,11 @@ def render_md(doc: dict) -> str:
          "## RFP-compliant propellant policy (A9.15)", "", "> " + doc["propellant_policy"]["governing_rule"], "",
          f"Source: {doc['propellant_policy']['source']}. Superseded wording: A9.13 owner_statements.xenon "
          f"(\"{doc['propellant_policy']['superseded_wording']['A9.13 owner_statements.xenon']}\") and "
-         f"{doc['propellant_policy']['superseded_wording']['A9.14']}.", ""]
+         f"{doc['propellant_policy']['superseded_wording']['A9.14']}.", "",
+         "Registered RFP clauses (" + doc["propellant_policy"]["rfp_clauses"]["registration"] + "; "
+         + doc["propellant_policy"]["rfp_clauses"]["citation_status"] + "): "
+         + "; ".join(f"{c['clause_id']} (p. {c['page']}): \"{c['verbatim']}\""
+                     for c in doc["propellant_policy"]["rfp_clauses"]["clauses"]) + ".", ""]
     L += _table(["configuration", "Xe propulsion capability", "Xe-free reading", "independent of C1"],
                 [[c["configuration"], c["xe_propulsion_capability"], c["xe_free_reading"], c["independent_of_c1"]]
                  for c in doc["propellant_policy"]["per_configuration"]])

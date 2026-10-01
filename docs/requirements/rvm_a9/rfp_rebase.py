@@ -252,6 +252,28 @@ ITEMS = {
     "RVM-IT-20": ("RFP_CLAUSE", ["RFP-P19-01"]),
 }
 
+# A9.16 repair RFP-04: value token of each RFP_CLAUSE item checked against the registered verbatim clause text
+ITEM_TOKENS = {
+    "RVM-IT-01": {"RFP-P18-04": "180 to 230 km"}, "RVM-IT-02": {"RFP-P18-04": "180 to 230 km"},
+    "RVM-IT-03": {"RFP-P18-06": "12 mN to 25 mN"}, "RVM-IT-04": {"RFP-P18-06": "12 mN to 25 mN"},
+    "RVM-IT-06": {"RFP-P18-10": "<1500W"}, "RVM-IT-09": {"RFP-P18-11": "< 40kg"},
+    "RVM-IT-13": {"RFP-P19-01": "3 years (Approx 26000 hrs)"},
+    "RVM-IT-14": {"RFP-P19-01": "Ignition Time: More than 15000 hrs"},
+    "RVM-IT-17": {"RFP-P19-05": "minimum 75% IC"}, "RVM-IT-20": {"RFP-P19-01": "Ignition Time"},
+}
+RECORDED_STATUS = "REQUIREMENT_AS_RECORDED (verify against the official RFP)"
+REGISTERED_ITEM_STATUS = ("RFP_CLAUSE_REGISTERED (verbatim clause in the registration; AG-15 closure is the owner's, "
+                          "requirement not frozen)")
+ITEM_EXTRA = {
+    "RVM-IT-09": {"owner_reading": "OWNER_READING (DISC-02): wet incl. Xe + tank (owner row 5); the registered RFP "
+                                   "prints '< 40kg' (RFP-P18-11) without stating wet or dry; recorded for DRDO "
+                                   "clarification"},
+    "RVM-IT-17": {"subsystem_minima": {"space_qualified_thruster": "> 80 %", "intake_system": "> 80 %",
+                                       "compressor_and_storage": "> 60 %", "power_supply_electronics": "> 70 %"},
+                  "subsystem_minima_source": "RFP-P19-05 'Minimum Indigenization Desired' (carried by RVM-18; the "
+                                             "> 60 % statement of RFP-P18-03 is DISC-03)"},
+}
+
 COMPLIANCE_GATE_CLAUSES = {"CG-IC": ["RFP-P19-05", "RFP-P18-03"], "CG-SPF": ["RFP-P18-09", "RFP-P18-02"],
                            "CG-N2-AO": ["RFP-P17-05", "RFP-P17-02", "RFP-P20-03"]}
 
@@ -402,6 +424,20 @@ def apply(doc: dict, reg: dict, secondary_basis: str) -> dict:
             raise RebaseError(f"item {it['id']}: unknown clause")
         it["requirement_origin"] = o
         it["rfp_clauses" if o == "RFP_CLAUSE" else "related_rfp_clauses"] = list(cs)
+        if o == "RFP_CLAUSE":
+            toks = ITEM_TOKENS.get(it["id"])
+            if toks is None or set(toks) != set(cs):
+                raise RebaseError(f"item {it['id']}: RFP_CLAUSE item without checked clause tokens")
+            for src in it["source"]:
+                if src["kind"] in ("rfp_secondary_record", "repo_record"):
+                    src["rebase_role"] = "HISTORICAL_CROSS_REFERENCE_SUPERSEDED_BY_RFP_REGISTRATION"
+            it["source"] = [clause_record(reg, cid, toks[cid]) for cid in cs] + it["source"]
+            if it["status"] == RECORDED_STATUS:
+                it["status_as_carried"] = it["status"]
+                it["status"] = REGISTERED_ITEM_STATUS
+            it.update(ITEM_EXTRA.get(it["id"], {}))
+        elif it["id"] in ITEM_EXTRA:
+            raise RebaseError(f"item {it['id']}: extra fields only on RFP_CLAUSE items")
     for g in doc["a9_16_compliance_gates"]:
         g["rfp_clauses"] = list(COMPLIANCE_GATE_CLAUSES[g["id"]])
     cov = coverage(reg, doc["rows"])

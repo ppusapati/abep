@@ -317,3 +317,13 @@ def test_a9_16_repair_f6_f11_c1_scope_placeholder_and_icp_feed_label(d):
     assert " ".join(q["a9_1_basis_verbatim"].split()) in " ".join(a91.split())
     md = (REPO / "docs/budgets/xe_accounting_a9_v3/XE_ACCOUNTING_A9_V3.md").read_text(encoding="utf-8")
     assert "| within |" not in md and "XV3Q-01: OPEN" in md
+
+
+def test_propellant_policy_cites_registered_rfp_clauses():
+    """A9.16 repair RFP-06: the propellant policy cites the registered RFP clauses, no 'pending registration' wording."""
+    d = json.loads(JSON_PATH.read_text(encoding="utf-8"))
+    rc = d["propellant_policy"]["rfp_clauses"]
+    assert [c["clause_id"] for c in rc["clauses"]] == ["RFP-P18-08", "RFP-P17-05", "RFP-P16-02"]
+    assert "Two separate propellant tanks" in rc["clauses"][0]["verbatim"]
+    for c in d["propellant_policy"]["per_configuration"]:
+        assert "pending" not in c["storage_paths"] and "RFP-P18-08" in c["storage_paths"]

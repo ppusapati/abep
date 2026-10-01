@@ -325,20 +325,20 @@
   },
   {
    "key": "MP",
-   "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
    "identity": {
-    "id": "fo_a9_6_mass_power_integration_v2"
+    "id": "mass_power_a9_v3"
    },
-   "role": "A9.6 mass + power integration v2",
+   "role": "A9.16 mass + power v3 (A9.14 / A9.15 applied)",
    "why": "mutable package: read at build time, identity checked, never pinned"
   },
   {
    "key": "XE",
-   "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+   "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
    "identity": {
-    "id": "xe_accounting_a9_v2"
+    "id": "xe_accounting_a9_v3"
    },
-   "role": "A9.6 Xe accounting v2",
+   "role": "A9.16 Xe accounting v3 (A9.14 / A9.15 applied)",
    "why": "mutable package: read at build time, identity checked, never pinned"
   },
   {
@@ -379,11 +379,11 @@
   },
   {
    "key": "RFQ2",
-   "path": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
    "identity": {
-    "id": "RFQ_A9_V2"
+    "id": "RFQ_A9_V3"
    },
-   "role": "RFQ packages v2 (quotation only)",
+   "role": "RFQ packages v3 (quotation only; A9.16 owner-decision application)",
    "why": "mutable package: read at build time, identity checked, never pinned"
   },
   {
@@ -427,7 +427,7 @@
    "key": "ALTITUDE_ENVELOPE",
    "category": "rfp_registered",
    "title": "Altitude envelope 180-230 km",
-   "requirement_text": "Operate the ABEP propulsion system in very low Earth orbit over the altitude band 180-230 km: every required state of the frozen 180-230 km mission / environment dataset must satisfy the applicable hard requirements (A9.14 OD2); design atmosphere states come from the versioned orbit-resolved dataset (A9.14 OD3; pending its build).",
+   "requirement_text": "Operate the ABEP propulsion system in very low Earth orbit over the altitude band 180-230 km: every required state of the frozen 180-230 km mission / environment dataset must satisfy the applicable hard requirements (A9.14 OD2); design atmosphere states come from the versioned orbit-resolved dataset (A9.14 OD3; built as atmosphere_msis21_orbit_v1_design_states_v2, not yet consumed by the design-layer statewise evaluators).",
    "sources": [
     {
      "kind": "rfp_official_clause",
@@ -768,7 +768,22 @@
      "A9.14 OD3 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     ],
     "envelope_quantifier": "EVERY_REQUIRED_ENVIRONMENT_STATE_FAIL_CLOSED (worst state and orbit average reported additionally; an orbit average cannot conceal a statewise violation)",
-    "design_states": "PENDING_ORBIT_RESOLVED_DATASET_BUILD: nominal states and physical extrema of density / species / temperature / local time / solar activity from the versioned orbit-resolved frozen dataset (authorised by A9.13 OQ-F4-05) with provenance and hashes; no hand-picked points",
+    "design_states": "REGISTERED_NOT_YET_CONSUMED: atmosphere_msis21_orbit_v1_design_states_v2 (abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json; nominal states and physical extrema of density / species / temperature / local time / solar activity from the frozen orbit-resolved dataset atmosphere_msis21_orbit_v1, A9.17 ORBIT; no hand-picked points); the statewise evaluation over it is NOT_EVALUATED because the design-layer consumers still evaluate the five orbit-averaged ENVELOPE_STATES",
+    "design_state_set": {
+     "path": "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json",
+     "id": "atmosphere_msis21_orbit_v1_design_states_v2",
+     "sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+     "dataset_id": "atmosphere_msis21_orbit_v1",
+     "dataset_sha256": "c0ce282e99695be8cae0834270c5b9ff7853033255665abda7ec18c307566164",
+     "n_states": 196,
+     "n_required": 196,
+     "orbit_basis": "BROAD_ENVELOPE (inclination / LTAN TBD from the official mission ICD)"
+    },
+    "design_state_consumers_pending": [
+     "abep_sim/design/intake_synthesis.py ENVELOPE_STATES (h200_f150 + four alt x F10.7 corners of the orbit-averaged atmosphere_msis21_v1)",
+     "abep_sim/design/architecture_optimizer.py STATES = isy.ENVELOPE_STATES (F1-F8; HC-09 'every orbit state', AG-12 / AG-13 statewise constraints)"
+    ],
+    "statewise_status": "NOT_EVALUATED_STATE_MISSING (no design-state result exists for any registered state)",
     "evaluator": "docs/requirements/rvm_a9/a9_16_rvm.py:statewise_envelope"
    },
    "requirement_text_as_carried": "Operate the ABEP propulsion system in very low Earth orbit over the altitude band 180-230 km (the quantifier over the band and the atmosphere design states are open: lane-24 OD2 and OD3).",
@@ -1410,11 +1425,11 @@
        }
       },
       {
-       "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
-       "id": "xe_accounting_a9_v2:evaluations[S1-FL-PRIMARY]",
+       "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+       "id": "xe_accounting_a9_v3:evaluations[S1-FL-PRIMARY]",
        "role": "SUPPORTING",
        "kind": "BUDGET_EVALUATION",
-       "evidence_state": "XE ACCOUNTING (supporting; never a capability demonstration): S1-FL-PRIMARY {\"RA-FUNC\": \"APPLIES\"}: REFUSED_TBD_INPUTS; S1-FL-PRIMARY {\"RA-FUNC\": \"NOT_APPLIED\"}: COMPUTED_EXACT_ZERO",
+       "evidence_state": "XE ACCOUNTING (supporting; never a capability demonstration): S1-FL-PRIMARY (RA-FUNC APPLIES, RA-CASE LOADED): REFUSED_TBD_INPUTS (TBD lines 6)",
        "evaluated": true,
        "verified": false,
        "measured": false,
@@ -1556,11 +1571,11 @@
        }
       },
       {
-       "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
-       "id": "xe_accounting_a9_v2:evaluations[S2-FL-C1]",
+       "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+       "id": "xe_accounting_a9_v3:evaluations[S2-FL-C1]",
        "role": "SUPPORTING",
        "kind": "BUDGET_EVALUATION",
-       "evidence_state": "XE ACCOUNTING (supporting; never a capability demonstration): S2-FL-C1 {\"RA-DWELL\": \"ATTEMPTS_3\", \"RA-FLOWUNC\": \"INSIDE_RESERVE_BASE\"}: REFUSED_TBD_INPUTS; S2-FL-C1 {\"RA-DWELL\": \"ATTEMPTS_3\", \"RA-FLOWUNC\": \"OUTSIDE_RESERVE_BASE\"}: REFUSED_TBD_INPUTS; S2-FL-C1 {\"RA-DWELL\": \"ATTEMPTS_2\", \"RA-FLOWUNC\": \"INSIDE_RESERVE_BASE\"}: REFUSED_TBD_INPUTS; S2-FL-C1 {\"RA-DWELL\": \"ATTEMPTS_2\", \"RA-FLOWUNC\": \"OUTSIDE_RESERVE_BASE\"}: REFUSED_TBD_INPUTS",
+       "evidence_state": "XE ACCOUNTING (supporting; never a capability demonstration): S2-FL-C1 (RA-FUNC APPLIES, RA-CASE LOADED): REFUSED_TBD_INPUTS (TBD lines 11)",
        "evaluated": true,
        "verified": false,
        "measured": false,
@@ -1603,7 +1618,7 @@
    "key": "PBUS_LT_1500W_FULL_BUS",
    "category": "rfp_registered",
    "title": "< 1.5 kW full bus power (A9-02 boundary, steady and start-up, 1 ms window)",
-   "requirement_text": "P_bus,1ms,max = max_t (1/1 ms) integral P_bus dt < 1500 W at the spacecraft-DC propulsion boundary (every active load: Hall discharge, magnets, RF source / match, collector bias, C1 supplies, compressor, flow control, housekeeping, thermal), for steady state AND start-up transients unless the official RFP grants a transient exception.",
+   "requirement_text": "P_bus,1ms,max = max_t (1/1 ms) integral P_bus dt < 1500 W at the spacecraft-DC propulsion boundary (every active load: Hall discharge, magnets, RF source / match, collector bias, C1 supplies, compressor, flow control, housekeeping, thermal), for steady state AND start-up transients; the registered RFP prints only '<1500W' (RFP-P18-10) and grants no transient exception.",
    "sources": [
     {
      "kind": "rfp_official_clause",
@@ -1745,12 +1760,12 @@
     "hall_icp_neutralizer": {
      "status": "NOT_EVALUATED",
      "rule": "R7-NOT-EVALUATED",
-     "reason": "no determining evaluation with evidenced terms: fo_a9_6_mass_power_integration_v2:power.configurations.hall_icp_neutralizer.rfp_gate_1ms [BUDGET_EVALUATION], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PBUS [PLAN_OR_FRAMEWORK]",
+     "reason": "no determining evaluation with evidenced terms: mass_power_a9_v3:power.configurations.hall_icp_neutralizer.rfp_gate_1ms [BUDGET_EVALUATION], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PBUS [PLAN_OR_FRAMEWORK]",
      "current_evidence_state": "LEDGER EVALUATED, NOT_EVALUABLE - steady ledger PARTIAL_BOUNDARY, 22 TBD, P_bus lower bound 0.0 W; P_bus,1ms,max gate NOT_EVALUABLE in all 7 registered steps; slots with a CBE 0, measured 0 || PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK",
      "artifacts": [
       {
-       "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
-       "id": "fo_a9_6_mass_power_integration_v2:power.configurations.hall_icp_neutralizer.rfp_gate_1ms",
+       "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+       "id": "mass_power_a9_v3:power.configurations.hall_icp_neutralizer.rfp_gate_1ms",
        "role": "DETERMINING",
        "kind": "BUDGET_EVALUATION",
        "evidence_state": "LEDGER EVALUATED, NOT_EVALUABLE - steady ledger PARTIAL_BOUNDARY, 22 TBD, P_bus lower bound 0.0 W; P_bus,1ms,max gate NOT_EVALUABLE in all 7 registered steps; slots with a CBE 0, measured 0",
@@ -1892,12 +1907,12 @@
     "hall_c1_reference": {
      "status": "NOT_EVALUATED",
      "rule": "R7-NOT-EVALUATED",
-     "reason": "no determining evaluation with evidenced terms: fo_a9_6_mass_power_integration_v2:power.configurations.hall_c1_reference.rfp_gate_1ms [BUDGET_EVALUATION], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PBUS [PLAN_OR_FRAMEWORK]",
+     "reason": "no determining evaluation with evidenced terms: mass_power_a9_v3:power.configurations.hall_c1_reference.rfp_gate_1ms [BUDGET_EVALUATION], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PBUS [PLAN_OR_FRAMEWORK]",
      "current_evidence_state": "LEDGER EVALUATED, NOT_EVALUABLE - steady ledger PARTIAL_BOUNDARY, 26 TBD, P_bus lower bound 0.0 W; P_bus,1ms,max gate NOT_EVALUABLE in all 8 registered steps; slots with a CBE 0, measured 0 || PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK",
      "artifacts": [
       {
-       "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
-       "id": "fo_a9_6_mass_power_integration_v2:power.configurations.hall_c1_reference.rfp_gate_1ms",
+       "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+       "id": "mass_power_a9_v3:power.configurations.hall_c1_reference.rfp_gate_1ms",
        "role": "DETERMINING",
        "kind": "BUDGET_EVALUATION",
        "evidence_state": "LEDGER EVALUATED, NOT_EVALUABLE - steady ledger PARTIAL_BOUNDARY, 26 TBD, P_bus lower bound 0.0 W; P_bus,1ms,max gate NOT_EVALUABLE in all 8 registered steps; slots with a CBE 0, measured 0",
@@ -2110,12 +2125,12 @@
     "hall_icp_neutralizer": {
      "status": "NOT_EVALUATED",
      "rule": "R7-NOT-EVALUATED",
-     "reason": "no determining evaluation with evidenced terms: fo_a9_6_mass_power_integration_v2:power.configurations.hall_icp_neutralizer.phases.steady.design_allocation_1350W [BUDGET_EVALUATION], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PALLOC [PLAN_OR_FRAMEWORK]",
+     "reason": "no determining evaluation with evidenced terms: mass_power_a9_v3:power.configurations.hall_icp_neutralizer.phases.steady.design_allocation_1350W [BUDGET_EVALUATION], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PALLOC [PLAN_OR_FRAMEWORK]",
      "current_evidence_state": "ALLOCATION CHECK EVALUATED, NOT_EVALUABLE - 22 TBD loads; P_ICP,available = 1350 - P_common - P_Hall - P_other,active: NOT_EVALUABLE (upper bound 1350.0 W) || PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK",
      "artifacts": [
       {
-       "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
-       "id": "fo_a9_6_mass_power_integration_v2:power.configurations.hall_icp_neutralizer.phases.steady.design_allocation_1350W",
+       "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+       "id": "mass_power_a9_v3:power.configurations.hall_icp_neutralizer.phases.steady.design_allocation_1350W",
        "role": "DETERMINING",
        "kind": "BUDGET_EVALUATION",
        "evidence_state": "ALLOCATION CHECK EVALUATED, NOT_EVALUABLE - 22 TBD loads; P_ICP,available = 1350 - P_common - P_Hall - P_other,active: NOT_EVALUABLE (upper bound 1350.0 W)",
@@ -2202,12 +2217,12 @@
     "hall_c1_reference": {
      "status": "NOT_EVALUATED",
      "rule": "R7-NOT-EVALUATED",
-     "reason": "no determining evaluation with evidenced terms: fo_a9_6_mass_power_integration_v2:power.configurations.hall_c1_reference.phases.steady.design_allocation_1350W [BUDGET_EVALUATION]",
+     "reason": "no determining evaluation with evidenced terms: mass_power_a9_v3:power.configurations.hall_c1_reference.phases.steady.design_allocation_1350W [BUDGET_EVALUATION]",
      "current_evidence_state": "ALLOCATION CHECK EVALUATED, NOT_EVALUABLE - 26 TBD loads",
      "artifacts": [
       {
-       "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
-       "id": "fo_a9_6_mass_power_integration_v2:power.configurations.hall_c1_reference.phases.steady.design_allocation_1350W",
+       "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+       "id": "mass_power_a9_v3:power.configurations.hall_c1_reference.phases.steady.design_allocation_1350W",
        "role": "DETERMINING",
        "kind": "BUDGET_EVALUATION",
        "evidence_state": "ALLOCATION CHECK EVALUATED, NOT_EVALUABLE - 26 TBD loads",
@@ -2296,7 +2311,7 @@
    "key": "MASS_LT_40KG_WET",
    "category": "rfp_registered",
    "title": "< 40 kg wet (incl. Xe + tank)",
-   "requirement_text": "Total propulsion-system mass < 40 kg, read as the wet system including Xe and tank unless the official RFP defines it as dry (row 5); 20 % internal development margin (row 52).",
+   "requirement_text": "Total propulsion-system mass < 40 kg, read as the wet system including Xe and tank (owner row 5; the registered RFP prints '< 40kg' without wet / dry, RFP-P18-11, recorded as DISC-02 for DRDO clarification); 20 % internal development margin (row 52).",
    "sources": [
     {
      "kind": "rfp_official_clause",
@@ -2446,7 +2461,12 @@
      "decision": "A9.14 XA9Q-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c); amended by A9.15 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309)",
      "decision_code": "YES_XE_PROPULSION_CAPABILITY_BOTH_CONFIGURATIONS",
      "governing_reading": "S8.21 / XA9Q-07: YES — Xe capability applies to the `hall_icp_neutralizer` flight configuration because the RFP requires it.",
-     "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+     "rfp_citation_status": "REGISTERED_CLAUSE",
+     "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+     "rfp_clause_ids": [
+      "RFP-P18-11"
+     ],
+     "rfp_citation_note": "registered clause(s) RFP-P18-11 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
     },
     {
      "id": "OQ-A910-01",
@@ -2488,15 +2508,15 @@
     "hall_icp_neutralizer": {
      "status": "INCOMPLETE_EVIDENCE",
      "rule": "R6-INCOMPLETE",
-     "reason": "evaluation run with evidenced terms but inconclusive: fo_a9_6_mass_power_integration_v2:rollups[hall_icp_neutralizer] (3 evidenced term(s))",
-     "current_evidence_state": "BUDGET EVALUATED, INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; HARD_40_WET: floor-only 8.504-13.548 kg vs < 40.0 kg, exceeding in 0 of 24 readings; mixed allocation+floor basis DOES_NOT_CLOSE 14 / NOT_EVALUABLE 10; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 24 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
+     "reason": "evaluation run with evidenced terms but inconclusive: mass_power_a9_v3:rollups[hall_icp_neutralizer] (3 evidenced term(s))",
+     "current_evidence_state": "BUDGET EVALUATED (mass_power_a9_v3, A9.14 / A9.15 applied), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; HARD_40_WET: floor-only 13.548-13.548 kg vs < 40.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 40.75 kg; wet_known 42.75 / 45.75 / 50.75 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 3 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
      "artifacts": [
       {
-       "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
-       "id": "fo_a9_6_mass_power_integration_v2:rollups[hall_icp_neutralizer]",
+       "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+       "id": "mass_power_a9_v3:rollups[hall_icp_neutralizer]",
        "role": "DETERMINING",
        "kind": "BUDGET_EVALUATION",
-       "evidence_state": "BUDGET EVALUATED, INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; HARD_40_WET: floor-only 8.504-13.548 kg vs < 40.0 kg, exceeding in 0 of 24 readings; mixed allocation+floor basis DOES_NOT_CLOSE 14 / NOT_EVALUABLE 10; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 24 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
+       "evidence_state": "BUDGET EVALUATED (mass_power_a9_v3, A9.14 / A9.15 applied), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; HARD_40_WET: floor-only 13.548-13.548 kg vs < 40.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 40.75 kg; wet_known 42.75 / 45.75 / 50.75 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 3 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
        "evaluated": true,
        "verified": false,
        "measured": false,
@@ -2532,237 +2552,59 @@
           "lower_bound_verified": false,
           "floor_only_readings": [
            {
-            "reading": "MQ01_MEV_LEVEL|LOADED_XA9Q01|xe_case=2.0|XA9Q07_XE_BOOKED",
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=2.0",
             "floor_only_kg": 13.548
            },
            {
-            "reading": "MQ01_MEV_LEVEL|LOADED_XA9Q01|xe_case=2.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|LOADED_XA9Q01|xe_case=5.0|XA9Q07_XE_BOOKED",
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=5.0",
             "floor_only_kg": 13.548
            },
            {
-            "reading": "MQ01_MEV_LEVEL|LOADED_XA9Q01|xe_case=5.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|LOADED_XA9Q01|xe_case=10.0|XA9Q07_XE_BOOKED",
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=10.0",
             "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|LOADED_XA9Q01|xe_case=10.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|USABLE_MQ09|xe_case=2.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|USABLE_MQ09|xe_case=2.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|USABLE_MQ09|xe_case=5.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|USABLE_MQ09|xe_case=5.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|USABLE_MQ09|xe_case=10.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|USABLE_MQ09|xe_case=10.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|LOADED_XA9Q01|xe_case=2.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|LOADED_XA9Q01|xe_case=2.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|LOADED_XA9Q01|xe_case=5.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|LOADED_XA9Q01|xe_case=5.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|LOADED_XA9Q01|xe_case=10.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|LOADED_XA9Q01|xe_case=10.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|USABLE_MQ09|xe_case=2.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|USABLE_MQ09|xe_case=2.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|USABLE_MQ09|xe_case=5.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|USABLE_MQ09|xe_case=5.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|USABLE_MQ09|xe_case=10.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|USABLE_MQ09|xe_case=10.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
            }
           ],
           "floor_fail_check": {
            "exceeds_every_reading": false,
-           "n_readings": 24,
+           "n_readings": 3,
            "n_exceeding": 0,
-           "min_floor_kg": 8.504,
+           "min_floor_kg": 13.548,
            "max_floor_kg": 13.548
           },
           "mixed_basis_states": [
            {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=2.0",
-            "wet_known_kg": 31.052632,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=5.0",
-            "wet_known_kg": 34.052632,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=10.0",
-            "wet_known_kg": 39.052632,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=2.0",
-            "wet_known_kg": 31.092632,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=5.0",
-            "wet_known_kg": 34.152632,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=10.0",
-            "wet_known_kg": 39.252632,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=2.0",
-            "wet_known_kg": 42.746442,
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=2.0",
+            "dry_known_kg": 40.7464421,
+            "wet_known_kg": 42.7464421,
             "state": "DOES_NOT_CLOSE"
            },
            {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=5.0",
-            "wet_known_kg": 45.746442,
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=5.0",
+            "dry_known_kg": 40.7464421,
+            "wet_known_kg": 45.7464421,
             "state": "DOES_NOT_CLOSE"
            },
            {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=10.0",
-            "wet_known_kg": 50.746442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=2.0",
-            "wet_known_kg": 42.786442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=5.0",
-            "wet_known_kg": 45.846442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=10.0",
-            "wet_known_kg": 50.946442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=2.0",
-            "wet_known_kg": 36.863158,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=5.0",
-            "wet_known_kg": 39.863158,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=10.0",
-            "wet_known_kg": 44.863158,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=2.0",
-            "wet_known_kg": 36.903158,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=5.0",
-            "wet_known_kg": 39.963158,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=10.0",
-            "wet_known_kg": 45.063158,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=2.0",
-            "wet_known_kg": 46.788547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=5.0",
-            "wet_known_kg": 49.788547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=10.0",
-            "wet_known_kg": 54.788547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=2.0",
-            "wet_known_kg": 46.828547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=5.0",
-            "wet_known_kg": 49.888547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=10.0",
-            "wet_known_kg": 54.988547,
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=10.0",
+            "dry_known_kg": 40.7464421,
+            "wet_known_kg": 50.7464421,
             "state": "DOES_NOT_CLOSE"
            }
           ],
           "mixed_basis_counts": {
-           "DOES_NOT_CLOSE": 14,
-           "NOT_EVALUABLE": 10,
+           "DOES_NOT_CLOSE": 3,
+           "NOT_EVALUABLE": 0,
            "CLOSES": 0
           },
-          "fail_rule": "FAIL only if a VERIFIED lower-bound floor exceeds the limit under EVERY admissible open reading (MQ-01 A/B, XA9Q-01/MQ-09, the 2/5/10 kg Xe design cases, XA9Q-07); the mixed allocation + floor states are informational because owner allocations are not evidence and are the MQ-10 closure lever"
+          "v3_owner_reading": {
+           "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)",
+           "dry_known_kg": 40.7464421,
+           "lines_without_value": [
+            "AL-09"
+           ],
+           "all_terms_resolved": false
+          },
+          "fail_rule": "FAIL only if a VERIFIED lower-bound floor exceeds the limit under EVERY admissible reading (v3: the single owner reading MEV_LEVEL_EVIDENCE_BASED x LOADED x the 2/5/10 kg Xe design cases); the v3 roll-up states (owner MEV allocations + MEV planning floors) are recorded as current evidence state but are not verified lower bounds, so a DOES_NOT_CLOSE there is not a FAIL (MQ-10 redesign lever)"
          }
         ]
        }
@@ -2790,11 +2632,11 @@
        }
       },
       {
-       "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
-       "id": "xe_accounting_a9_v2:evaluations[S1-FL-PRIMARY]",
+       "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+       "id": "xe_accounting_a9_v3:evaluations[S1-FL-PRIMARY]",
        "role": "SUPPORTING",
        "kind": "BUDGET_EVALUATION",
-       "evidence_state": "XE ACCOUNTING (supporting; never a capability demonstration): S1-FL-PRIMARY {\"RA-FUNC\": \"APPLIES\"}: REFUSED_TBD_INPUTS; S1-FL-PRIMARY {\"RA-FUNC\": \"NOT_APPLIED\"}: COMPUTED_EXACT_ZERO",
+       "evidence_state": "XE ACCOUNTING (supporting; never a capability demonstration): S1-FL-PRIMARY (RA-FUNC APPLIES, RA-CASE LOADED): REFUSED_TBD_INPUTS (TBD lines 6)",
        "evaluated": true,
        "verified": false,
        "measured": false,
@@ -2812,15 +2654,15 @@
     "hall_c1_reference": {
      "status": "INCOMPLETE_EVIDENCE",
      "rule": "R6-INCOMPLETE",
-     "reason": "evaluation run with evidenced terms but inconclusive: fo_a9_6_mass_power_integration_v2:rollups[hall_c1_reference] (4 evidenced term(s))",
-     "current_evidence_state": "BUDGET EVALUATED, INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; HARD_40_WET: floor-only 13.748-13.748 kg vs < 40.0 kg, exceeding in 0 of 12 readings; mixed allocation+floor basis DOES_NOT_CLOSE 10 / NOT_EVALUABLE 14; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 12 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
+     "reason": "evaluation run with evidenced terms but inconclusive: mass_power_a9_v3:rollups[hall_c1_reference] (4 evidenced term(s))",
+     "current_evidence_state": "BUDGET EVALUATED (mass_power_a9_v3, A9.14 / A9.15 applied), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; HARD_40_WET: floor-only 13.748-13.748 kg vs < 40.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 36.33 kg; wet_known 38.33 / 41.33 / 46.33 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 2 / NOT_EVALUABLE 1 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 3 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
      "artifacts": [
       {
-       "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
-       "id": "fo_a9_6_mass_power_integration_v2:rollups[hall_c1_reference]",
+       "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+       "id": "mass_power_a9_v3:rollups[hall_c1_reference]",
        "role": "DETERMINING",
        "kind": "BUDGET_EVALUATION",
-       "evidence_state": "BUDGET EVALUATED, INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; HARD_40_WET: floor-only 13.748-13.748 kg vs < 40.0 kg, exceeding in 0 of 12 readings; mixed allocation+floor basis DOES_NOT_CLOSE 10 / NOT_EVALUABLE 14; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 12 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
+       "evidence_state": "BUDGET EVALUATED (mass_power_a9_v3, A9.14 / A9.15 applied), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; HARD_40_WET: floor-only 13.748-13.748 kg vs < 40.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 36.33 kg; wet_known 38.33 / 41.33 / 46.33 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 2 / NOT_EVALUABLE 1 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 3 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
        "evaluated": true,
        "verified": false,
        "measured": false,
@@ -2860,189 +2702,60 @@
           "lower_bound_verified": false,
           "floor_only_readings": [
            {
-            "reading": "MQ01_MEV_LEVEL|LOADED_XA9Q01|xe_case=2.0|XA9Q07_XE_BOOKED",
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=2.0",
             "floor_only_kg": 13.748
            },
            {
-            "reading": "MQ01_MEV_LEVEL|LOADED_XA9Q01|xe_case=5.0|XA9Q07_XE_BOOKED",
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=5.0",
             "floor_only_kg": 13.748
            },
            {
-            "reading": "MQ01_MEV_LEVEL|LOADED_XA9Q01|xe_case=10.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|USABLE_MQ09|xe_case=2.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|USABLE_MQ09|xe_case=5.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|USABLE_MQ09|xe_case=10.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|LOADED_XA9Q01|xe_case=2.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|LOADED_XA9Q01|xe_case=5.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|LOADED_XA9Q01|xe_case=10.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|USABLE_MQ09|xe_case=2.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|USABLE_MQ09|xe_case=5.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|USABLE_MQ09|xe_case=10.0|XA9Q07_XE_BOOKED",
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=10.0",
             "floor_only_kg": 13.748
            }
           ],
           "floor_fail_check": {
            "exceeds_every_reading": false,
-           "n_readings": 12,
+           "n_readings": 3,
            "n_exceeding": 0,
            "min_floor_kg": 13.748,
            "max_floor_kg": 13.748
           },
           "mixed_basis_states": [
            {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=2.0",
-            "wet_known_kg": 26.631579,
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=2.0",
+            "dry_known_kg": 36.32538948,
+            "wet_known_kg": 38.32538948,
             "state": "NOT_EVALUABLE"
            },
            {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=5.0",
-            "wet_known_kg": 29.631579,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=10.0",
-            "wet_known_kg": 34.631579,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=2.0",
-            "wet_known_kg": 26.671579,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=5.0",
-            "wet_known_kg": 29.731579,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=10.0",
-            "wet_known_kg": 34.831579,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=2.0",
-            "wet_known_kg": 38.628547,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=5.0",
-            "wet_known_kg": 41.628547,
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=5.0",
+            "dry_known_kg": 36.32538948,
+            "wet_known_kg": 41.32538948,
             "state": "DOES_NOT_CLOSE"
            },
            {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=10.0",
-            "wet_known_kg": 46.628547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=2.0",
-            "wet_known_kg": 38.668547,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=5.0",
-            "wet_known_kg": 41.728547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=10.0",
-            "wet_known_kg": 46.828547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=2.0",
-            "wet_known_kg": 31.557895,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=5.0",
-            "wet_known_kg": 34.557895,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=10.0",
-            "wet_known_kg": 39.557895,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=2.0",
-            "wet_known_kg": 31.597895,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=5.0",
-            "wet_known_kg": 34.657895,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=10.0",
-            "wet_known_kg": 39.757895,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=2.0",
-            "wet_known_kg": 41.786442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=5.0",
-            "wet_known_kg": 44.786442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=10.0",
-            "wet_known_kg": 49.786442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=2.0",
-            "wet_known_kg": 41.826442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=5.0",
-            "wet_known_kg": 44.886442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=10.0",
-            "wet_known_kg": 49.986442,
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=10.0",
+            "dry_known_kg": 36.32538948,
+            "wet_known_kg": 46.32538948,
             "state": "DOES_NOT_CLOSE"
            }
           ],
           "mixed_basis_counts": {
-           "DOES_NOT_CLOSE": 10,
-           "NOT_EVALUABLE": 14,
+           "DOES_NOT_CLOSE": 2,
+           "NOT_EVALUABLE": 1,
            "CLOSES": 0
           },
-          "fail_rule": "FAIL only if a VERIFIED lower-bound floor exceeds the limit under EVERY admissible open reading (MQ-01 A/B, XA9Q-01/MQ-09, the 2/5/10 kg Xe design cases, XA9Q-07); the mixed allocation + floor states are informational because owner allocations are not evidence and are the MQ-10 closure lever"
+          "v3_owner_reading": {
+           "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)",
+           "dry_known_kg": 36.32538948,
+           "lines_without_value": [
+            "AL-09",
+            "AL-C1"
+           ],
+           "all_terms_resolved": false
+          },
+          "fail_rule": "FAIL only if a VERIFIED lower-bound floor exceeds the limit under EVERY admissible reading (v3: the single owner reading MEV_LEVEL_EVIDENCE_BASED x LOADED x the 2/5/10 kg Xe design cases); the v3 roll-up states (owner MEV allocations + MEV planning floors) are recorded as current evidence state but are not verified lower bounds, so a DOES_NOT_CLOSE there is not a FAIL (MQ-10 redesign lever)"
          }
         ]
        }
@@ -3070,11 +2783,11 @@
        }
       },
       {
-       "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
-       "id": "xe_accounting_a9_v2:evaluations[S2-FL-C1]",
+       "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+       "id": "xe_accounting_a9_v3:evaluations[S2-FL-C1]",
        "role": "SUPPORTING",
        "kind": "BUDGET_EVALUATION",
-       "evidence_state": "XE ACCOUNTING (supporting; never a capability demonstration): S2-FL-C1 {\"RA-DWELL\": \"ATTEMPTS_3\", \"RA-FLOWUNC\": \"INSIDE_RESERVE_BASE\"}: REFUSED_TBD_INPUTS; S2-FL-C1 {\"RA-DWELL\": \"ATTEMPTS_3\", \"RA-FLOWUNC\": \"OUTSIDE_RESERVE_BASE\"}: REFUSED_TBD_INPUTS; S2-FL-C1 {\"RA-DWELL\": \"ATTEMPTS_2\", \"RA-FLOWUNC\": \"INSIDE_RESERVE_BASE\"}: REFUSED_TBD_INPUTS; S2-FL-C1 {\"RA-DWELL\": \"ATTEMPTS_2\", \"RA-FLOWUNC\": \"OUTSIDE_RESERVE_BASE\"}: REFUSED_TBD_INPUTS",
+       "evidence_state": "XE ACCOUNTING (supporting; never a capability demonstration): S2-FL-C1 (RA-FUNC APPLIES, RA-CASE LOADED): REFUSED_TBD_INPUTS (TBD lines 11)",
        "evaluated": true,
        "verified": false,
        "measured": false,
@@ -3207,7 +2920,12 @@
      "decision": "A9.14 XA9Q-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c); amended by A9.15 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309)",
      "decision_code": "YES_XE_PROPULSION_CAPABILITY_BOTH_CONFIGURATIONS",
      "governing_reading": "S8.21 / XA9Q-07: YES — Xe capability applies to the `hall_icp_neutralizer` flight configuration because the RFP requires it.",
-     "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+     "rfp_citation_status": "REGISTERED_CLAUSE",
+     "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+     "rfp_clause_ids": [
+      "RFP-P18-11"
+     ],
+     "rfp_citation_note": "registered clause(s) RFP-P18-11 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
     }
    ],
    "rtm_xref": [],
@@ -3233,15 +2951,15 @@
     "hall_icp_neutralizer": {
      "status": "INCOMPLETE_EVIDENCE",
      "rule": "R6-INCOMPLETE",
-     "reason": "evaluation run with evidenced terms but inconclusive: fo_a9_6_mass_power_integration_v2:rollups[hall_icp_neutralizer] (3 evidenced term(s))",
-     "current_evidence_state": "BUDGET EVALUATED, INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; INTERNAL_34: floor-only 8.504-13.548 kg vs <= 34.0 kg, exceeding in 0 of 24 readings; mixed allocation+floor basis DOES_NOT_CLOSE 22 / NOT_EVALUABLE 2; INTERNAL_36: floor-only 8.504-13.548 kg vs <= 36.0 kg, exceeding in 0 of 24 readings; mixed allocation+floor basis DOES_NOT_CLOSE 20 / NOT_EVALUABLE 4; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 48 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
+     "reason": "evaluation run with evidenced terms but inconclusive: mass_power_a9_v3:rollups[hall_icp_neutralizer] (3 evidenced term(s))",
+     "current_evidence_state": "BUDGET EVALUATED (mass_power_a9_v3, A9.14 / A9.15 applied), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; INTERNAL_34: floor-only 13.548-13.548 kg vs <= 34.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 40.75 kg; wet_known 42.75 / 45.75 / 50.75 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; INTERNAL_36: floor-only 13.548-13.548 kg vs <= 36.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 40.75 kg; wet_known 42.75 / 45.75 / 50.75 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 6 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
      "artifacts": [
       {
-       "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
-       "id": "fo_a9_6_mass_power_integration_v2:rollups[hall_icp_neutralizer]",
+       "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+       "id": "mass_power_a9_v3:rollups[hall_icp_neutralizer]",
        "role": "DETERMINING",
        "kind": "BUDGET_EVALUATION",
-       "evidence_state": "BUDGET EVALUATED, INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; INTERNAL_34: floor-only 8.504-13.548 kg vs <= 34.0 kg, exceeding in 0 of 24 readings; mixed allocation+floor basis DOES_NOT_CLOSE 22 / NOT_EVALUABLE 2; INTERNAL_36: floor-only 8.504-13.548 kg vs <= 36.0 kg, exceeding in 0 of 24 readings; mixed allocation+floor basis DOES_NOT_CLOSE 20 / NOT_EVALUABLE 4; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 48 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
+       "evidence_state": "BUDGET EVALUATED (mass_power_a9_v3, A9.14 / A9.15 applied), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; INTERNAL_34: floor-only 13.548-13.548 kg vs <= 34.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 40.75 kg; wet_known 42.75 / 45.75 / 50.75 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; INTERNAL_36: floor-only 13.548-13.548 kg vs <= 36.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 40.75 kg; wet_known 42.75 / 45.75 / 50.75 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 6 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
        "evaluated": true,
        "verified": false,
        "measured": false,
@@ -3277,237 +2995,59 @@
           "lower_bound_verified": false,
           "floor_only_readings": [
            {
-            "reading": "MQ01_MEV_LEVEL|LOADED_XA9Q01|xe_case=2.0|XA9Q07_XE_BOOKED",
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=2.0",
             "floor_only_kg": 13.548
            },
            {
-            "reading": "MQ01_MEV_LEVEL|LOADED_XA9Q01|xe_case=2.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|LOADED_XA9Q01|xe_case=5.0|XA9Q07_XE_BOOKED",
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=5.0",
             "floor_only_kg": 13.548
            },
            {
-            "reading": "MQ01_MEV_LEVEL|LOADED_XA9Q01|xe_case=5.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|LOADED_XA9Q01|xe_case=10.0|XA9Q07_XE_BOOKED",
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=10.0",
             "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|LOADED_XA9Q01|xe_case=10.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|USABLE_MQ09|xe_case=2.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|USABLE_MQ09|xe_case=2.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|USABLE_MQ09|xe_case=5.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|USABLE_MQ09|xe_case=5.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|USABLE_MQ09|xe_case=10.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|USABLE_MQ09|xe_case=10.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|LOADED_XA9Q01|xe_case=2.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|LOADED_XA9Q01|xe_case=2.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|LOADED_XA9Q01|xe_case=5.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|LOADED_XA9Q01|xe_case=5.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|LOADED_XA9Q01|xe_case=10.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|LOADED_XA9Q01|xe_case=10.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|USABLE_MQ09|xe_case=2.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|USABLE_MQ09|xe_case=2.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|USABLE_MQ09|xe_case=5.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|USABLE_MQ09|xe_case=5.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|USABLE_MQ09|xe_case=10.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|USABLE_MQ09|xe_case=10.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
            }
           ],
           "floor_fail_check": {
            "exceeds_every_reading": false,
-           "n_readings": 24,
+           "n_readings": 3,
            "n_exceeding": 0,
-           "min_floor_kg": 8.504,
+           "min_floor_kg": 13.548,
            "max_floor_kg": 13.548
           },
           "mixed_basis_states": [
            {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=2.0",
-            "wet_known_kg": 31.052632,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=5.0",
-            "wet_known_kg": 34.052632,
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=2.0",
+            "dry_known_kg": 40.7464421,
+            "wet_known_kg": 42.7464421,
             "state": "DOES_NOT_CLOSE"
            },
            {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=10.0",
-            "wet_known_kg": 39.052632,
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=5.0",
+            "dry_known_kg": 40.7464421,
+            "wet_known_kg": 45.7464421,
             "state": "DOES_NOT_CLOSE"
            },
            {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=2.0",
-            "wet_known_kg": 31.092632,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=5.0",
-            "wet_known_kg": 34.152632,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=10.0",
-            "wet_known_kg": 39.252632,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=2.0",
-            "wet_known_kg": 42.746442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=5.0",
-            "wet_known_kg": 45.746442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=10.0",
-            "wet_known_kg": 50.746442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=2.0",
-            "wet_known_kg": 42.786442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=5.0",
-            "wet_known_kg": 45.846442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=10.0",
-            "wet_known_kg": 50.946442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=2.0",
-            "wet_known_kg": 36.863158,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=5.0",
-            "wet_known_kg": 39.863158,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=10.0",
-            "wet_known_kg": 44.863158,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=2.0",
-            "wet_known_kg": 36.903158,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=5.0",
-            "wet_known_kg": 39.963158,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=10.0",
-            "wet_known_kg": 45.063158,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=2.0",
-            "wet_known_kg": 46.788547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=5.0",
-            "wet_known_kg": 49.788547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=10.0",
-            "wet_known_kg": 54.788547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=2.0",
-            "wet_known_kg": 46.828547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=5.0",
-            "wet_known_kg": 49.888547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=10.0",
-            "wet_known_kg": 54.988547,
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=10.0",
+            "dry_known_kg": 40.7464421,
+            "wet_known_kg": 50.7464421,
             "state": "DOES_NOT_CLOSE"
            }
           ],
           "mixed_basis_counts": {
-           "DOES_NOT_CLOSE": 22,
-           "NOT_EVALUABLE": 2,
+           "DOES_NOT_CLOSE": 3,
+           "NOT_EVALUABLE": 0,
            "CLOSES": 0
           },
-          "fail_rule": "FAIL only if a VERIFIED lower-bound floor exceeds the limit under EVERY admissible open reading (MQ-01 A/B, XA9Q-01/MQ-09, the 2/5/10 kg Xe design cases, XA9Q-07); the mixed allocation + floor states are informational because owner allocations are not evidence and are the MQ-10 closure lever"
+          "v3_owner_reading": {
+           "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)",
+           "dry_known_kg": 40.7464421,
+           "lines_without_value": [
+            "AL-09"
+           ],
+           "all_terms_resolved": false
+          },
+          "fail_rule": "FAIL only if a VERIFIED lower-bound floor exceeds the limit under EVERY admissible reading (v3: the single owner reading MEV_LEVEL_EVIDENCE_BASED x LOADED x the 2/5/10 kg Xe design cases); the v3 roll-up states (owner MEV allocations + MEV planning floors) are recorded as current evidence state but are not verified lower bounds, so a DOES_NOT_CLOSE there is not a FAIL (MQ-10 redesign lever)"
          },
          {
           "reference": "INTERNAL_36",
@@ -3531,237 +3071,59 @@
           "lower_bound_verified": false,
           "floor_only_readings": [
            {
-            "reading": "MQ01_MEV_LEVEL|LOADED_XA9Q01|xe_case=2.0|XA9Q07_XE_BOOKED",
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=2.0",
             "floor_only_kg": 13.548
            },
            {
-            "reading": "MQ01_MEV_LEVEL|LOADED_XA9Q01|xe_case=2.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|LOADED_XA9Q01|xe_case=5.0|XA9Q07_XE_BOOKED",
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=5.0",
             "floor_only_kg": 13.548
            },
            {
-            "reading": "MQ01_MEV_LEVEL|LOADED_XA9Q01|xe_case=5.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|LOADED_XA9Q01|xe_case=10.0|XA9Q07_XE_BOOKED",
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=10.0",
             "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|LOADED_XA9Q01|xe_case=10.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|USABLE_MQ09|xe_case=2.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|USABLE_MQ09|xe_case=2.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|USABLE_MQ09|xe_case=5.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|USABLE_MQ09|xe_case=5.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|USABLE_MQ09|xe_case=10.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|USABLE_MQ09|xe_case=10.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|LOADED_XA9Q01|xe_case=2.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|LOADED_XA9Q01|xe_case=2.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|LOADED_XA9Q01|xe_case=5.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|LOADED_XA9Q01|xe_case=5.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|LOADED_XA9Q01|xe_case=10.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|LOADED_XA9Q01|xe_case=10.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|USABLE_MQ09|xe_case=2.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|USABLE_MQ09|xe_case=2.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|USABLE_MQ09|xe_case=5.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|USABLE_MQ09|xe_case=5.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|USABLE_MQ09|xe_case=10.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.548
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|USABLE_MQ09|xe_case=10.0|XA9Q07_NO_XE_IN_ICP_FLIGHT",
-            "floor_only_kg": 8.504
            }
           ],
           "floor_fail_check": {
            "exceeds_every_reading": false,
-           "n_readings": 24,
+           "n_readings": 3,
            "n_exceeding": 0,
-           "min_floor_kg": 8.504,
+           "min_floor_kg": 13.548,
            "max_floor_kg": 13.548
           },
           "mixed_basis_states": [
            {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=2.0",
-            "wet_known_kg": 31.052632,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=5.0",
-            "wet_known_kg": 34.052632,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=10.0",
-            "wet_known_kg": 39.052632,
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=2.0",
+            "dry_known_kg": 40.7464421,
+            "wet_known_kg": 42.7464421,
             "state": "DOES_NOT_CLOSE"
            },
            {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=2.0",
-            "wet_known_kg": 31.092632,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=5.0",
-            "wet_known_kg": 34.152632,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=10.0",
-            "wet_known_kg": 39.252632,
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=5.0",
+            "dry_known_kg": 40.7464421,
+            "wet_known_kg": 45.7464421,
             "state": "DOES_NOT_CLOSE"
            },
            {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=2.0",
-            "wet_known_kg": 42.746442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=5.0",
-            "wet_known_kg": 45.746442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=10.0",
-            "wet_known_kg": 50.746442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=2.0",
-            "wet_known_kg": 42.786442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=5.0",
-            "wet_known_kg": 45.846442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=10.0",
-            "wet_known_kg": 50.946442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=2.0",
-            "wet_known_kg": 36.863158,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=5.0",
-            "wet_known_kg": 39.863158,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=10.0",
-            "wet_known_kg": 44.863158,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=2.0",
-            "wet_known_kg": 36.903158,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=5.0",
-            "wet_known_kg": 39.963158,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=10.0",
-            "wet_known_kg": 45.063158,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=2.0",
-            "wet_known_kg": 46.788547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=5.0",
-            "wet_known_kg": 49.788547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=10.0",
-            "wet_known_kg": 54.788547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=2.0",
-            "wet_known_kg": 46.828547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=5.0",
-            "wet_known_kg": 49.888547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=10.0",
-            "wet_known_kg": 54.988547,
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=10.0",
+            "dry_known_kg": 40.7464421,
+            "wet_known_kg": 50.7464421,
             "state": "DOES_NOT_CLOSE"
            }
           ],
           "mixed_basis_counts": {
-           "DOES_NOT_CLOSE": 20,
-           "NOT_EVALUABLE": 4,
+           "DOES_NOT_CLOSE": 3,
+           "NOT_EVALUABLE": 0,
            "CLOSES": 0
           },
-          "fail_rule": "FAIL only if a VERIFIED lower-bound floor exceeds the limit under EVERY admissible open reading (MQ-01 A/B, XA9Q-01/MQ-09, the 2/5/10 kg Xe design cases, XA9Q-07); the mixed allocation + floor states are informational because owner allocations are not evidence and are the MQ-10 closure lever"
+          "v3_owner_reading": {
+           "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)",
+           "dry_known_kg": 40.7464421,
+           "lines_without_value": [
+            "AL-09"
+           ],
+           "all_terms_resolved": false
+          },
+          "fail_rule": "FAIL only if a VERIFIED lower-bound floor exceeds the limit under EVERY admissible reading (v3: the single owner reading MEV_LEVEL_EVIDENCE_BASED x LOADED x the 2/5/10 kg Xe design cases); the v3 roll-up states (owner MEV allocations + MEV planning floors) are recorded as current evidence state but are not verified lower bounds, so a DOES_NOT_CLOSE there is not a FAIL (MQ-10 redesign lever)"
          }
         ]
        }
@@ -3771,15 +3133,15 @@
     "hall_c1_reference": {
      "status": "INCOMPLETE_EVIDENCE",
      "rule": "R6-INCOMPLETE",
-     "reason": "evaluation run with evidenced terms but inconclusive: fo_a9_6_mass_power_integration_v2:rollups[hall_c1_reference] (4 evidenced term(s))",
-     "current_evidence_state": "BUDGET EVALUATED, INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; INTERNAL_34: floor-only 13.748-13.748 kg vs <= 34.0 kg, exceeding in 0 of 12 readings; mixed allocation+floor basis DOES_NOT_CLOSE 18 / NOT_EVALUABLE 6; INTERNAL_36: floor-only 13.748-13.748 kg vs <= 36.0 kg, exceeding in 0 of 12 readings; mixed allocation+floor basis DOES_NOT_CLOSE 14 / NOT_EVALUABLE 10; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 24 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
+     "reason": "evaluation run with evidenced terms but inconclusive: mass_power_a9_v3:rollups[hall_c1_reference] (4 evidenced term(s))",
+     "current_evidence_state": "BUDGET EVALUATED (mass_power_a9_v3, A9.14 / A9.15 applied), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; INTERNAL_34: floor-only 13.748-13.748 kg vs <= 34.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 36.33 kg; wet_known 38.33 / 41.33 / 46.33 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; INTERNAL_36: floor-only 13.748-13.748 kg vs <= 36.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 36.33 kg; wet_known 38.33 / 41.33 / 46.33 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 6 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
      "artifacts": [
       {
-       "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
-       "id": "fo_a9_6_mass_power_integration_v2:rollups[hall_c1_reference]",
+       "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+       "id": "mass_power_a9_v3:rollups[hall_c1_reference]",
        "role": "DETERMINING",
        "kind": "BUDGET_EVALUATION",
-       "evidence_state": "BUDGET EVALUATED, INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; INTERNAL_34: floor-only 13.748-13.748 kg vs <= 34.0 kg, exceeding in 0 of 12 readings; mixed allocation+floor basis DOES_NOT_CLOSE 18 / NOT_EVALUABLE 6; INTERNAL_36: floor-only 13.748-13.748 kg vs <= 36.0 kg, exceeding in 0 of 12 readings; mixed allocation+floor basis DOES_NOT_CLOSE 14 / NOT_EVALUABLE 10; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 24 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
+       "evidence_state": "BUDGET EVALUATED (mass_power_a9_v3, A9.14 / A9.15 applied), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; INTERNAL_34: floor-only 13.748-13.748 kg vs <= 34.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 36.33 kg; wet_known 38.33 / 41.33 / 46.33 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; INTERNAL_36: floor-only 13.748-13.748 kg vs <= 36.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 36.33 kg; wet_known 38.33 / 41.33 / 46.33 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 6 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
        "evaluated": true,
        "verified": false,
        "measured": false,
@@ -3819,189 +3181,60 @@
           "lower_bound_verified": false,
           "floor_only_readings": [
            {
-            "reading": "MQ01_MEV_LEVEL|LOADED_XA9Q01|xe_case=2.0|XA9Q07_XE_BOOKED",
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=2.0",
             "floor_only_kg": 13.748
            },
            {
-            "reading": "MQ01_MEV_LEVEL|LOADED_XA9Q01|xe_case=5.0|XA9Q07_XE_BOOKED",
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=5.0",
             "floor_only_kg": 13.748
            },
            {
-            "reading": "MQ01_MEV_LEVEL|LOADED_XA9Q01|xe_case=10.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|USABLE_MQ09|xe_case=2.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|USABLE_MQ09|xe_case=5.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|USABLE_MQ09|xe_case=10.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|LOADED_XA9Q01|xe_case=2.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|LOADED_XA9Q01|xe_case=5.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|LOADED_XA9Q01|xe_case=10.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|USABLE_MQ09|xe_case=2.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|USABLE_MQ09|xe_case=5.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|USABLE_MQ09|xe_case=10.0|XA9Q07_XE_BOOKED",
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=10.0",
             "floor_only_kg": 13.748
            }
           ],
           "floor_fail_check": {
            "exceeds_every_reading": false,
-           "n_readings": 12,
+           "n_readings": 3,
            "n_exceeding": 0,
            "min_floor_kg": 13.748,
            "max_floor_kg": 13.748
           },
           "mixed_basis_states": [
            {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=2.0",
-            "wet_known_kg": 26.631579,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=5.0",
-            "wet_known_kg": 29.631579,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=10.0",
-            "wet_known_kg": 34.631579,
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=2.0",
+            "dry_known_kg": 36.32538948,
+            "wet_known_kg": 38.32538948,
             "state": "DOES_NOT_CLOSE"
            },
            {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=2.0",
-            "wet_known_kg": 26.671579,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=5.0",
-            "wet_known_kg": 29.731579,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=10.0",
-            "wet_known_kg": 34.831579,
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=5.0",
+            "dry_known_kg": 36.32538948,
+            "wet_known_kg": 41.32538948,
             "state": "DOES_NOT_CLOSE"
            },
            {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=2.0",
-            "wet_known_kg": 38.628547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=5.0",
-            "wet_known_kg": 41.628547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=10.0",
-            "wet_known_kg": 46.628547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=2.0",
-            "wet_known_kg": 38.668547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=5.0",
-            "wet_known_kg": 41.728547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=10.0",
-            "wet_known_kg": 46.828547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=2.0",
-            "wet_known_kg": 31.557895,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=5.0",
-            "wet_known_kg": 34.557895,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=10.0",
-            "wet_known_kg": 39.557895,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=2.0",
-            "wet_known_kg": 31.597895,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=5.0",
-            "wet_known_kg": 34.657895,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=10.0",
-            "wet_known_kg": 39.757895,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=2.0",
-            "wet_known_kg": 41.786442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=5.0",
-            "wet_known_kg": 44.786442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=10.0",
-            "wet_known_kg": 49.786442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=2.0",
-            "wet_known_kg": 41.826442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=5.0",
-            "wet_known_kg": 44.886442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=10.0",
-            "wet_known_kg": 49.986442,
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=10.0",
+            "dry_known_kg": 36.32538948,
+            "wet_known_kg": 46.32538948,
             "state": "DOES_NOT_CLOSE"
            }
           ],
           "mixed_basis_counts": {
-           "DOES_NOT_CLOSE": 18,
-           "NOT_EVALUABLE": 6,
+           "DOES_NOT_CLOSE": 3,
+           "NOT_EVALUABLE": 0,
            "CLOSES": 0
           },
-          "fail_rule": "FAIL only if a VERIFIED lower-bound floor exceeds the limit under EVERY admissible open reading (MQ-01 A/B, XA9Q-01/MQ-09, the 2/5/10 kg Xe design cases, XA9Q-07); the mixed allocation + floor states are informational because owner allocations are not evidence and are the MQ-10 closure lever"
+          "v3_owner_reading": {
+           "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)",
+           "dry_known_kg": 36.32538948,
+           "lines_without_value": [
+            "AL-09",
+            "AL-C1"
+           ],
+           "all_terms_resolved": false
+          },
+          "fail_rule": "FAIL only if a VERIFIED lower-bound floor exceeds the limit under EVERY admissible reading (v3: the single owner reading MEV_LEVEL_EVIDENCE_BASED x LOADED x the 2/5/10 kg Xe design cases); the v3 roll-up states (owner MEV allocations + MEV planning floors) are recorded as current evidence state but are not verified lower bounds, so a DOES_NOT_CLOSE there is not a FAIL (MQ-10 redesign lever)"
          },
          {
           "reference": "INTERNAL_36",
@@ -4029,189 +3262,60 @@
           "lower_bound_verified": false,
           "floor_only_readings": [
            {
-            "reading": "MQ01_MEV_LEVEL|LOADED_XA9Q01|xe_case=2.0|XA9Q07_XE_BOOKED",
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=2.0",
             "floor_only_kg": 13.748
            },
            {
-            "reading": "MQ01_MEV_LEVEL|LOADED_XA9Q01|xe_case=5.0|XA9Q07_XE_BOOKED",
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=5.0",
             "floor_only_kg": 13.748
            },
            {
-            "reading": "MQ01_MEV_LEVEL|LOADED_XA9Q01|xe_case=10.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|USABLE_MQ09|xe_case=2.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|USABLE_MQ09|xe_case=5.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|USABLE_MQ09|xe_case=10.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|LOADED_XA9Q01|xe_case=2.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|LOADED_XA9Q01|xe_case=5.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|LOADED_XA9Q01|xe_case=10.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|USABLE_MQ09|xe_case=2.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|USABLE_MQ09|xe_case=5.0|XA9Q07_XE_BOOKED",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|USABLE_MQ09|xe_case=10.0|XA9Q07_XE_BOOKED",
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=10.0",
             "floor_only_kg": 13.748
            }
           ],
           "floor_fail_check": {
            "exceeds_every_reading": false,
-           "n_readings": 12,
+           "n_readings": 3,
            "n_exceeding": 0,
            "min_floor_kg": 13.748,
            "max_floor_kg": 13.748
           },
           "mixed_basis_states": [
            {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=2.0",
-            "wet_known_kg": 26.631579,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=5.0",
-            "wet_known_kg": 29.631579,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=10.0",
-            "wet_known_kg": 34.631579,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=2.0",
-            "wet_known_kg": 26.671579,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=5.0",
-            "wet_known_kg": 29.731579,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=10.0",
-            "wet_known_kg": 34.831579,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=2.0",
-            "wet_known_kg": 38.628547,
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=2.0",
+            "dry_known_kg": 36.32538948,
+            "wet_known_kg": 38.32538948,
             "state": "DOES_NOT_CLOSE"
            },
            {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=5.0",
-            "wet_known_kg": 41.628547,
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=5.0",
+            "dry_known_kg": 36.32538948,
+            "wet_known_kg": 41.32538948,
             "state": "DOES_NOT_CLOSE"
            },
            {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=10.0",
-            "wet_known_kg": 46.628547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=2.0",
-            "wet_known_kg": 38.668547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=5.0",
-            "wet_known_kg": 41.728547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_MEV_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=10.0",
-            "wet_known_kg": 46.828547,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=2.0",
-            "wet_known_kg": 31.557895,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=5.0",
-            "wet_known_kg": 34.557895,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|LOADED_XA9Q01|xe_case=10.0",
-            "wet_known_kg": 39.557895,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=2.0",
-            "wet_known_kg": 31.597895,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=5.0",
-            "wet_known_kg": 34.657895,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|ALLOCATIONS|USABLE_MQ09|xe_case=10.0",
-            "wet_known_kg": 39.757895,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=2.0",
-            "wet_known_kg": 41.786442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=5.0",
-            "wet_known_kg": 44.786442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|LOADED_XA9Q01|xe_case=10.0",
-            "wet_known_kg": 49.786442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=2.0",
-            "wet_known_kg": 41.826442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=5.0",
-            "wet_known_kg": 44.886442,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MQ01_CBE_LEVEL|WITH_EVIDENCE_FLOORS|USABLE_MQ09|xe_case=10.0",
-            "wet_known_kg": 49.986442,
+            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=10.0",
+            "dry_known_kg": 36.32538948,
+            "wet_known_kg": 46.32538948,
             "state": "DOES_NOT_CLOSE"
            }
           ],
           "mixed_basis_counts": {
-           "DOES_NOT_CLOSE": 14,
-           "NOT_EVALUABLE": 10,
+           "DOES_NOT_CLOSE": 3,
+           "NOT_EVALUABLE": 0,
            "CLOSES": 0
           },
-          "fail_rule": "FAIL only if a VERIFIED lower-bound floor exceeds the limit under EVERY admissible open reading (MQ-01 A/B, XA9Q-01/MQ-09, the 2/5/10 kg Xe design cases, XA9Q-07); the mixed allocation + floor states are informational because owner allocations are not evidence and are the MQ-10 closure lever"
+          "v3_owner_reading": {
+           "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)",
+           "dry_known_kg": 36.32538948,
+           "lines_without_value": [
+            "AL-09",
+            "AL-C1"
+           ],
+           "all_terms_resolved": false
+          },
+          "fail_rule": "FAIL only if a VERIFIED lower-bound floor exceeds the limit under EVERY admissible reading (v3: the single owner reading MEV_LEVEL_EVIDENCE_BASED x LOADED x the 2/5/10 kg Xe design cases); the v3 roll-up states (owner MEV allocations + MEV planning floors) are recorded as current evidence state but are not verified lower bounds, so a DOES_NOT_CLOSE there is not a FAIL (MQ-10 redesign lever)"
          }
         ]
        }
@@ -4787,7 +3891,13 @@
      "status_when_carried": "TBD_OWNER",
      "decision": "A9.14 OD12 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
      "decision_code": "GATE_IC_REDUNDANCY_AND_ATOMIC_O_REQUIREMENTS",
-     "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+     "rfp_citation_status": "REGISTERED_CLAUSE",
+     "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+     "rfp_clause_ids": [
+      "RFP-P17-05",
+      "RFP-P17-02"
+     ],
+     "rfp_citation_note": "registered clause(s) RFP-P17-05, RFP-P17-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
     }
    ],
    "rtm_xref": [
@@ -4986,8 +4096,14 @@
      "A9.14 OD12 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     ],
     "compliance_gate": "N2_PLUS_ATOMIC_O_OPERATION_QUALIFICATION (A9.14 OD12)",
-    "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION",
-    "note": "the owner states the RFP requires ionizing N2 and nascent / atomic O (A9.13 S6.3, A9.15); pending RFP registration (AG-15)"
+    "rfp_citation_status": "REGISTERED_CLAUSE",
+    "note": "the owner's statement that the RFP requires ionizing N2 and nascent / atomic O (A9.13 S6.3, A9.15) is confirmed by the registered clauses RFP-P17-05 / RFP-P17-02 (AG-15 closure is the owner's)",
+    "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+    "rfp_clause_ids": [
+     "RFP-P17-05",
+     "RFP-P17-02"
+    ],
+    "rfp_citation_note": "registered clause(s) RFP-P17-05, RFP-P17-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
    },
    "requirement_origin": "RFP_CLAUSE",
    "rfp_clauses": [
@@ -5140,7 +4256,14 @@
      "decision": "A9.14 XA9Q-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c); amended by A9.15 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309)",
      "decision_code": "YES_XE_PROPULSION_CAPABILITY_BOTH_CONFIGURATIONS",
      "governing_reading": "S8.21 / XA9Q-07: YES — Xe capability applies to the `hall_icp_neutralizer` flight configuration because the RFP requires it.",
-     "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+     "rfp_citation_status": "REGISTERED_CLAUSE",
+     "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+     "rfp_clause_ids": [
+      "RFP-P18-08",
+      "RFP-P17-05",
+      "RFP-P16-02"
+     ],
+     "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
     },
     {
      "id": "XA9Q-01",
@@ -5166,7 +4289,14 @@
      "decision": "A9.14 OD6 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c); amended by A9.15 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309)",
      "decision_code": "DUAL_PROPELLANT_SEPARATE_MODES_NOT_PREMIX",
      "governing_reading": "S9.10 / OD6: “air + Xe” means the system must provide both ambient-air and Xenon operating capability; it should not be weakened into a contingency interpretation.",
-     "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+     "rfp_citation_status": "REGISTERED_CLAUSE",
+     "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+     "rfp_clause_ids": [
+      "RFP-P18-08",
+      "RFP-P17-05",
+      "RFP-P16-02"
+     ],
+     "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
     }
    ],
    "rtm_xref": [
@@ -5222,11 +4352,11 @@
        }
       },
       {
-       "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
-       "id": "xe_accounting_a9_v2:evaluations[S1-FL-PRIMARY]",
+       "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+       "id": "xe_accounting_a9_v3:evaluations[S1-FL-PRIMARY]",
        "role": "SUPPORTING",
        "kind": "BUDGET_EVALUATION",
-       "evidence_state": "XE ACCOUNTING (supporting; never a capability demonstration): S1-FL-PRIMARY {\"RA-FUNC\": \"APPLIES\"}: REFUSED_TBD_INPUTS; S1-FL-PRIMARY {\"RA-FUNC\": \"NOT_APPLIED\"}: COMPUTED_EXACT_ZERO",
+       "evidence_state": "XE ACCOUNTING (supporting; never a capability demonstration): S1-FL-PRIMARY (RA-FUNC APPLIES, RA-CASE LOADED): REFUSED_TBD_INPUTS (TBD lines 6)",
        "evaluated": true,
        "verified": false,
        "measured": false,
@@ -5270,11 +4400,11 @@
        }
       },
       {
-       "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
-       "id": "xe_accounting_a9_v2:evaluations[S2-FL-C1]",
+       "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+       "id": "xe_accounting_a9_v3:evaluations[S2-FL-C1]",
        "role": "SUPPORTING",
        "kind": "BUDGET_EVALUATION",
-       "evidence_state": "XE ACCOUNTING (supporting; never a capability demonstration): S2-FL-C1 {\"RA-DWELL\": \"ATTEMPTS_3\", \"RA-FLOWUNC\": \"INSIDE_RESERVE_BASE\"}: REFUSED_TBD_INPUTS; S2-FL-C1 {\"RA-DWELL\": \"ATTEMPTS_3\", \"RA-FLOWUNC\": \"OUTSIDE_RESERVE_BASE\"}: REFUSED_TBD_INPUTS; S2-FL-C1 {\"RA-DWELL\": \"ATTEMPTS_2\", \"RA-FLOWUNC\": \"INSIDE_RESERVE_BASE\"}: REFUSED_TBD_INPUTS; S2-FL-C1 {\"RA-DWELL\": \"ATTEMPTS_2\", \"RA-FLOWUNC\": \"OUTSIDE_RESERVE_BASE\"}: REFUSED_TBD_INPUTS",
+       "evidence_state": "XE ACCOUNTING (supporting; never a capability demonstration): S2-FL-C1 (RA-FUNC APPLIES, RA-CASE LOADED): REFUSED_TBD_INPUTS (TBD lines 11)",
        "evaluated": true,
        "verified": false,
        "measured": false,
@@ -5322,7 +4452,14 @@
     "air_plus_xe": "DUAL_PROPELLANT_CAPABILITY: separate selectable ambient-air and Xenon operating modes with separate tanks / paths (not a premix unless an experiment intentionally studies mixing); never a contingency interpretation",
     "configurations": "applies to hall_icp_neutralizer and hall_c1_reference; presence or absence of C1 never removes it; C1 Xe only if a selected C1 needs it, booked inside the system Xe accounting",
     "icp_gas_mode": "unchanged: A9.1 G-REUSE primary; G-XE a declared ICP-feed variant",
-    "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+    "rfp_citation_status": "REGISTERED_CLAUSE",
+    "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+    "rfp_clause_ids": [
+     "RFP-P18-08",
+     "RFP-P17-05",
+     "RFP-P16-02"
+    ],
+    "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
    },
    "requirement_text_as_carried": "Demonstrate a bounded functional Xe-capable operating mode beyond bookkeeping (need not be continuous nominal operation) and book every Xe use (PHASE_TOTAL_FLOW); Xe reference / health checks are labelled and never atmospheric evidence.",
    "requirement_origin": "RFP_CLAUSE",
@@ -5583,7 +4720,12 @@
      "status_when_carried": "TBD_OWNER",
      "decision": "A9.14 OQ-VI-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
      "decision_code": "LIFE_15000H_MIN_CYCLES_FROM_MISSION_PROFILE",
-     "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+     "rfp_citation_status": "REGISTERED_CLAUSE",
+     "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+     "rfp_clause_ids": [
+      "RFP-P19-01"
+     ],
+     "rfp_citation_note": "registered clause(s) RFP-P19-01 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
     },
     {
      "id": "OD13",
@@ -5597,7 +4739,7 @@
       "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
       "owner_answer_verbatim": "ENGINEERING BASIS — use mission life ≥26,280 h until the official wording is verified because it is the conservative interpretation of 'three years' versus 26,000 h. Retain >15,000 h firing as a provisional hard requirement until the official RFP confirms it."
      },
-     "handling": "superseded by an owner answer to the same question: owner row 3 retains > 15,000 h firing as a provisional hard requirement until the official RFP confirms it; the remaining verification of the wording is the owner action of row 1 (RVM-ID-12), not an open question; not an open question (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
+     "handling": "superseded by an owner answer to the same question: owner row 3 retains > 15,000 h firing as a provisional hard requirement; the registered RFP prints 'Ignition Time: More than 15000 hrs' (RFP-P19-01; label recorded as DISC-05); AG-15 closure of the wording is the owner's (RVM-ID-12), not an open question; not an open question (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     }
    ],
    "rtm_xref": [
@@ -5893,7 +5035,12 @@
     ],
     "icp_life_basis": ">= 15,000 h cumulative energized operating life (conservative design basis pending clarification); the literal RFP entry 'Ignition Time' > 15,000 h is preserved verbatim in the requirement record",
     "icp_cycles": "TBD from the frozen mission-mode profile (not invented)",
-    "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+    "rfp_citation_status": "REGISTERED_CLAUSE",
+    "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+    "rfp_clause_ids": [
+     "RFP-P19-01"
+    ],
+    "rfp_citation_note": "registered clause(s) RFP-P19-01 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
    },
    "requirement_origin": "RFP_CLAUSE",
    "rfp_clauses": [
@@ -5923,7 +5070,7 @@
    "key": "MISSION_LIFE_GE_26280H",
    "category": "rfp_registered",
    "title": "Mission-life basis >= 26,280 h",
-   "requirement_text": "Mission life >= 26,280 h (three years), the conservative engineering basis versus the repository's 26,000 h until the official wording is verified (row 3).",
+   "requirement_text": "Mission life >= 26,280 h (three years = 3 x 8,760 h), the conservative engineering basis (row 3) against the registered RFP wording '3 years (Approx 26000 hrs)' (RFP-P19-01; DISC-04).",
    "sources": [
     {
      "kind": "rfp_official_clause",
@@ -5966,7 +5113,7 @@
      "verbatim": "ENGINEERING BASIS — use mission life ≥26,280 h until the official wording is verified because it is the conservative interpretation of 'three years' versus 26,000 h. Retain >15,000 h firing as a provisional hard requirement until the official RFP confirms it."
     }
    ],
-   "requirement_basis": "RFP_CLAUSE RFP-P19-01 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...) (as carried: OWNER_ENGINEERING_BASIS (row 3) pending the official RFP wording)",
+   "requirement_basis": "RFP_CLAUSE RFP-P19-01 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...) (as carried: OWNER_ENGINEERING_BASIS (row 3; registered RFP-P19-01 '3 years (Approx 26000 hrs)', DISC-04))",
    "requirement_frozen": false,
    "limit": {
     "quantity": "mission life",
@@ -6193,7 +5340,7 @@
     "as_carried": {
      "category": "rfp_recorded",
      "title": "Mission-life basis >= 26,280 h",
-     "requirement_basis": "OWNER_ENGINEERING_BASIS (row 3) pending the official RFP wording"
+     "requirement_basis": "OWNER_ENGINEERING_BASIS (row 3; registered RFP-P19-01 '3 years (Approx 26000 hrs)', DISC-04)"
     },
     "requirement_frozen_note": "stays false: the RFP transcription is registered (AG-15 step) but AG-15 closes only by owner verification; interpretation readings are listed in rfp_rebase.discrepancies",
     "note": "the RFP prints '3 years (Approx 26000 hrs)'; 26,280 h (= 3 x 8,760 h) is the owner's conservative engineering basis (row 3), recorded as DISC-04"
@@ -6411,8 +5558,8 @@
        }
       },
       {
-       "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
-       "id": "fo_a9_6_mass_power_integration_v2:power.configurations.hall_icp_neutralizer.phases.startup",
+       "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+       "id": "mass_power_a9_v3:power.configurations.hall_icp_neutralizer.phases.startup",
        "role": "SUPPORTING",
        "kind": "BUDGET_EVALUATION",
        "evidence_state": "SEQUENCE RULES RULES_NOT_EVALUABLE (5 rules not evaluable; template bus_boundary_a9.SEQUENCE_TEMPLATES (PROPOSED, row 112))",
@@ -6547,8 +5694,8 @@
        }
       },
       {
-       "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
-       "id": "fo_a9_6_mass_power_integration_v2:power.configurations.hall_c1_reference.phases.startup",
+       "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+       "id": "mass_power_a9_v3:power.configurations.hall_c1_reference.phases.startup",
        "role": "SUPPORTING",
        "kind": "BUDGET_EVALUATION",
        "evidence_state": "SEQUENCE RULES RULES_NOT_EVALUABLE (6 rules not evaluable; template bus_boundary_a9.SEQUENCE_TEMPLATES (PROPOSED, row 112))",
@@ -6946,11 +6093,11 @@
        }
       },
       {
-       "path": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
-       "id": "RFQ_A9_V2",
+       "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+       "id": "RFQ_A9_V3",
        "role": "SUPPORTING",
        "kind": "PROCUREMENT",
-       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status COMPLETED_FOR_OWNER_DISPATCH_QUOTATION_ONLY (A9.6 sec. 13; consolidated verification pending)",
+       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status COMPLETED_FOR_OWNER_DISPATCH_QUOTATION_ONLY (A9.16 owner-decision application; integration lane re-pins and re-verifies cross-lane ids)",
        "evaluated": false,
        "verified": false,
        "measured": false,
@@ -6963,7 +6110,7 @@
        "lower_bound_verified": false,
        "exceeds_limit_every_reading": null,
        "detail": {
-        "name": "A9 RFQ packages v2 - split by supplier speciality (quotations only; no purchase orders)",
+        "name": "A9 RFQ packages v3 - owner decisions A9.8 / A9.10 / A9.11 / A9.14 / A9.15 applied (quotations only; no purchase orders)",
         "why": "hardware not procured"
        }
       },
@@ -7063,11 +6210,11 @@
        }
       },
       {
-       "path": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
-       "id": "RFQ_A9_V2",
+       "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+       "id": "RFQ_A9_V3",
        "role": "SUPPORTING",
        "kind": "PROCUREMENT",
-       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status COMPLETED_FOR_OWNER_DISPATCH_QUOTATION_ONLY (A9.6 sec. 13; consolidated verification pending)",
+       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status COMPLETED_FOR_OWNER_DISPATCH_QUOTATION_ONLY (A9.16 owner-decision application; integration lane re-pins and re-verifies cross-lane ids)",
        "evaluated": false,
        "verified": false,
        "measured": false,
@@ -7080,7 +6227,7 @@
        "lower_bound_verified": false,
        "exceeds_limit_every_reading": null,
        "detail": {
-        "name": "A9 RFQ packages v2 - split by supplier speciality (quotations only; no purchase orders)",
+        "name": "A9 RFQ packages v3 - owner decisions A9.8 / A9.10 / A9.11 / A9.14 / A9.15 applied (quotations only; no purchase orders)",
         "why": "hardware not procured"
        }
       }
@@ -7249,7 +6396,15 @@
      "status_when_carried": "TBD_OWNER",
      "decision": "A9.14 OD12 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
      "decision_code": "GATE_IC_REDUNDANCY_AND_ATOMIC_O_REQUIREMENTS",
-     "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+     "rfp_citation_status": "REGISTERED_CLAUSE",
+     "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+     "rfp_clause_ids": [
+      "RFP-P17-02",
+      "RFP-P19-04",
+      "RFP-P19-06",
+      "RFP-P19-02"
+     ],
+     "rfp_citation_note": "registered clause(s) RFP-P17-02, RFP-P19-04, RFP-P19-06, RFP-P19-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
     }
    ],
    "rtm_xref": [
@@ -7865,7 +7020,13 @@
      "status_when_carried": "TBD_OWNER",
      "decision": "A9.14 OD12 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
      "decision_code": "GATE_IC_REDUNDANCY_AND_ATOMIC_O_REQUIREMENTS",
-     "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+     "rfp_citation_status": "REGISTERED_CLAUSE",
+     "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+     "rfp_clause_ids": [
+      "RFP-P19-05",
+      "RFP-P18-03"
+     ],
+     "rfp_citation_note": "registered clause(s) RFP-P19-05, RFP-P18-03 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
     }
    ],
    "rtm_xref": [
@@ -7877,15 +7038,15 @@
     "hall_icp_neutralizer": {
      "status": "NOT_EVALUATED",
      "rule": "R7-NOT-EVALUATED",
-     "reason": "no determining evaluation with evidenced terms: RFQ_A9_V2 [PROCUREMENT]",
-     "current_evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status COMPLETED_FOR_OWNER_DISPATCH_QUOTATION_ONLY (A9.6 sec. 13; consolidated verification pending)",
+     "reason": "no determining evaluation with evidenced terms: RFQ_A9_V3 [PROCUREMENT]",
+     "current_evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status COMPLETED_FOR_OWNER_DISPATCH_QUOTATION_ONLY (A9.16 owner-decision application; integration lane re-pins and re-verifies cross-lane ids)",
      "artifacts": [
       {
-       "path": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
-       "id": "RFQ_A9_V2",
+       "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+       "id": "RFQ_A9_V3",
        "role": "DETERMINING",
        "kind": "PROCUREMENT",
-       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status COMPLETED_FOR_OWNER_DISPATCH_QUOTATION_ONLY (A9.6 sec. 13; consolidated verification pending)",
+       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status COMPLETED_FOR_OWNER_DISPATCH_QUOTATION_ONLY (A9.16 owner-decision application; integration lane re-pins and re-verifies cross-lane ids)",
        "evaluated": false,
        "verified": false,
        "measured": false,
@@ -7898,7 +7059,7 @@
        "lower_bound_verified": false,
        "exceeds_limit_every_reading": null,
        "detail": {
-        "name": "A9 RFQ packages v2 - split by supplier speciality (quotations only; no purchase orders)",
+        "name": "A9 RFQ packages v3 - owner decisions A9.8 / A9.10 / A9.11 / A9.14 / A9.15 applied (quotations only; no purchase orders)",
         "why": "quotation-only packages; no part selected"
        }
       }
@@ -7907,15 +7068,15 @@
     "hall_c1_reference": {
      "status": "NOT_EVALUATED",
      "rule": "R7-NOT-EVALUATED",
-     "reason": "no determining evaluation with evidenced terms: RFQ_A9_V2 [PROCUREMENT]",
-     "current_evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status COMPLETED_FOR_OWNER_DISPATCH_QUOTATION_ONLY (A9.6 sec. 13; consolidated verification pending)",
+     "reason": "no determining evaluation with evidenced terms: RFQ_A9_V3 [PROCUREMENT]",
+     "current_evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status COMPLETED_FOR_OWNER_DISPATCH_QUOTATION_ONLY (A9.16 owner-decision application; integration lane re-pins and re-verifies cross-lane ids)",
      "artifacts": [
       {
-       "path": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
-       "id": "RFQ_A9_V2",
+       "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+       "id": "RFQ_A9_V3",
        "role": "DETERMINING",
        "kind": "PROCUREMENT",
-       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status COMPLETED_FOR_OWNER_DISPATCH_QUOTATION_ONLY (A9.6 sec. 13; consolidated verification pending)",
+       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status COMPLETED_FOR_OWNER_DISPATCH_QUOTATION_ONLY (A9.16 owner-decision application; integration lane re-pins and re-verifies cross-lane ids)",
        "evaluated": false,
        "verified": false,
        "measured": false,
@@ -7928,7 +7089,7 @@
        "lower_bound_verified": false,
        "exceeds_limit_every_reading": null,
        "detail": {
-        "name": "A9 RFQ packages v2 - split by supplier speciality (quotations only; no purchase orders)",
+        "name": "A9 RFQ packages v3 - owner decisions A9.8 / A9.10 / A9.11 / A9.14 / A9.15 applied (quotations only; no purchase orders)",
         "why": "quotation-only packages; no part selected"
        }
       }
@@ -7948,7 +7109,13 @@
      "power_electronics": "> 70 %"
     },
     "source_discrepancy": "the RFP contains a > 60 % statement on one page and a more specific minimum 75 % project-deliverable target with subsystem targets; the stricter / more specific targets are used internally and the discrepancy is recorded for DRDO clarification",
-    "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+    "rfp_citation_status": "REGISTERED_CLAUSE",
+    "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+    "rfp_clause_ids": [
+     "RFP-P19-05",
+     "RFP-P18-03"
+    ],
+    "rfp_citation_note": "registered clause(s) RFP-P19-05, RFP-P18-03 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
    },
    "requirement_text_as_carried": "Total indigenous content >= 75 % (subsystem minima thruster 0.80, intake 0.80, compressor 0.60, PSE 0.70 exist only in in-repo code, R2; not found in any accessed source).",
    "requirement_origin": "RFP_CLAUSE",
@@ -7970,7 +7137,7 @@
      "category": "rfp_recorded",
      "title": "Indigenous content >= 75 % total",
      "requirement_basis": "SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false)",
-     "requirement_text": "Total indigenous content >= 75 % (project target) with subsystem targets thruster > 80 %, intake > 80 %, compressor / storage > 60 %, power electronics > 70 % (A9.14 OD12, owner-stated RFP content pending registration; the RFP's > 60 % statement is a recorded discrepancy for DRDO clarification)."
+     "requirement_text": "Total indigenous content >= 75 % (project target) with subsystem targets thruster > 80 %, intake > 80 %, compressor / storage > 60 %, power electronics > 70 % (A9.14 OD12; registered RFP-P19-05; the RFP's > 60 % statement RFP-P18-03 is a recorded discrepancy DISC-03 for DRDO clarification)."
     },
     "requirement_frozen_note": "stays false: the RFP transcription is registered (AG-15 step) but AG-15 closes only by owner verification; interpretation readings are listed in rfp_rebase.discrepancies"
    }
@@ -8054,7 +7221,13 @@
      "status_when_carried": "TBD_OWNER",
      "decision": "A9.14 OD12 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
      "decision_code": "GATE_IC_REDUNDANCY_AND_ATOMIC_O_REQUIREMENTS",
-     "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+     "rfp_citation_status": "REGISTERED_CLAUSE",
+     "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+     "rfp_clause_ids": [
+      "RFP-P18-09",
+      "RFP-P18-02"
+     ],
+     "rfp_citation_note": "registered clause(s) RFP-P18-09, RFP-P18-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
     }
    ],
    "rtm_xref": [
@@ -8140,12 +7313,18 @@
      "A9.14 RVMQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
      "A9.14 OD12 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     ],
-    "rebased_on": "RFP electronics single-point-failure clause and electronics / sensor redundancy clause (owner-stated, pending registration)",
+    "rebased_on": "RFP electronics single-point-failure clause RFP-P18-09 and electronics / sensor redundancy clause RFP-P18-02 (registered, verbatim in rfp_registration_v1)",
     "compliance_gate": "SINGLE_POINT_FAILURE_FMEA_ELECTRONICS_SENSORS (A9.14 OD12)",
     "required": "redundant / independent critical control, power-switching, telemetry and sensor paths where an individual failure would defeat the mission / safe state, proven by the single-point-failure analysis",
     "not_required": "duplicate thrusters, duplicate ICP modules or duplicate complete mechanical propulsion chains",
     "row55": "limited redundancy may remain for the physical thruster / ICP hardware, never as a waiver of electronics / sensor redundancy",
-    "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+    "rfp_citation_status": "REGISTERED_CLAUSE",
+    "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+    "rfp_clause_ids": [
+     "RFP-P18-09",
+     "RFP-P18-02"
+    ],
+    "rfp_citation_note": "registered clause(s) RFP-P18-09, RFP-P18-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
    },
    "requirement_text_as_carried": "'Redundancy per RFP: no single-point failure in electronics' is recorded only in a code docstring (R7, unverified). Owner row 55 sets limited redundancy (dual series isolation on the high-pressure Xe path, critical sensing / FDIR redundancy; no duplicated thruster, ICP or full PPU at this stage). Both are carried side by side; see RVMQ-01.",
    "requirement_origin": "RFP_CLAUSE",
@@ -8168,7 +7347,7 @@
      "category": "rfp_inferred_from_repo_text",
      "title": "No single-point failure in electronics (recorded; verify) vs limited redundancy (row 55)",
      "requirement_basis": "RFP_INFERRED_FROM_REPO_TEXT (R7) - verify against the RFP document",
-     "requirement_text": "Electronics and sensors: no single-point failure that defeats the mission / safe state (RFP clause, owner-stated pending registration): redundant / independent critical control, power-switching, telemetry and sensor paths, proven by a single-point-failure / FMEA analysis; duplicate thrusters, ICP modules or complete mechanical chains are not required (A9.14 RVMQ-01)."
+     "requirement_text": "Electronics and sensors: no single-point failure that defeats the mission / safe state (registered RFP clauses RFP-P18-09 / RFP-P18-02): redundant / independent critical control, power-switching, telemetry and sensor paths, proven by a single-point-failure / FMEA analysis; duplicate thrusters, ICP modules or complete mechanical chains are not required (A9.14 RVMQ-01)."
     },
     "requirement_frozen_note": "stays false: the RFP transcription is registered (AG-15 step) but AG-15 closes only by owner verification; interpretation readings are listed in rfp_rebase.discrepancies"
    }
@@ -9973,13 +9152,25 @@
    "basis": "RFP as recorded",
    "source": [
     {
+     "kind": "rfp_official_clause",
+     "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+     "clause_id": "RFP-P18-04",
+     "page": 18,
+     "section": "Part III 2 Functional Orbit altitude",
+     "verbatim": "180 to 230 km",
+     "rfp_number": "DTDF/06/13516/DSP/ABEP/X/L/M/01",
+     "pdf_sha256": "a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00",
+     "evidence_class": "transcription (human-read from the scanned page images of the registered PDF)"
+    },
+    {
      "kind": "rfp_secondary_record",
      "path": "docs/procurement/web_track_v1/threads/R2_rfp.json",
      "locator": "clauses[topic='(d) Altitude']",
      "quote": "orbital altitudes ranging between 180 km and 230 km",
      "source_locator": "S1 para 4",
      "ambiguous": true,
-     "note": "secondary transcription (news); the official RFP was not obtained (R2 rfp_obtained false); verify against RFP document"
+     "note": "secondary transcription (news); the official RFP was not obtained (R2 rfp_obtained false); verify against RFP document",
+     "rebase_role": "HISTORICAL_CROSS_REFERENCE_SUPERSEDED_BY_RFP_REGISTRATION"
     },
     {
      "kind": "repo_record",
@@ -9987,17 +9178,19 @@
      "locator": "rfp.recorded_in[id=R1]",
      "ref": "CLAUDE.md, section 'What this is'",
      "text_as_recorded": "RFP DTDF/06/13516/DSP/ABEP/X/L/M/01; bid close 05 Oct 2026. RFP envelope: 180–230 km, 12–25 mN, < 1.5 kW, < 40 kg, 26,000 h mission, > 15,000 h firing, Hall preferred, air + Xe.",
-     "note": "in-repo transcription; verify against RFP"
+     "note": "in-repo transcription; verify against RFP",
+     "rebase_role": "HISTORICAL_CROSS_REFERENCE_SUPERSEDED_BY_RFP_REGISTRATION"
     }
    ],
    "evidence_class": "requirement-as-recorded",
-   "status": "REQUIREMENT_AS_RECORDED (verify against the official RFP)",
+   "status": "RFP_CLAUSE_REGISTERED (verbatim clause in the registration; AG-15 closure is the owner's, requirement not frozen)",
    "freeze_point": "after-evidence",
-   "note": "freezes when the official RFP is obtained (row 1)",
+   "note": "",
    "requirement_origin": "RFP_CLAUSE",
    "rfp_clauses": [
     "RFP-P18-04"
-   ]
+   ],
+   "status_as_carried": "REQUIREMENT_AS_RECORDED (verify against the official RFP)"
   },
   {
    "id": "RVM-IT-02",
@@ -10007,13 +9200,25 @@
    "basis": "RFP as recorded",
    "source": [
     {
+     "kind": "rfp_official_clause",
+     "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+     "clause_id": "RFP-P18-04",
+     "page": 18,
+     "section": "Part III 2 Functional Orbit altitude",
+     "verbatim": "180 to 230 km",
+     "rfp_number": "DTDF/06/13516/DSP/ABEP/X/L/M/01",
+     "pdf_sha256": "a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00",
+     "evidence_class": "transcription (human-read from the scanned page images of the registered PDF)"
+    },
+    {
      "kind": "rfp_secondary_record",
      "path": "docs/procurement/web_track_v1/threads/R2_rfp.json",
      "locator": "clauses[topic='(d) Altitude']",
      "quote": "orbital altitudes ranging between 180 km and 230 km",
      "source_locator": "S1 para 4",
      "ambiguous": true,
-     "note": "secondary transcription (news); the official RFP was not obtained (R2 rfp_obtained false); verify against RFP document"
+     "note": "secondary transcription (news); the official RFP was not obtained (R2 rfp_obtained false); verify against RFP document",
+     "rebase_role": "HISTORICAL_CROSS_REFERENCE_SUPERSEDED_BY_RFP_REGISTRATION"
     },
     {
      "kind": "repo_record",
@@ -10021,17 +9226,19 @@
      "locator": "rfp.recorded_in[id=R1]",
      "ref": "CLAUDE.md, section 'What this is'",
      "text_as_recorded": "RFP DTDF/06/13516/DSP/ABEP/X/L/M/01; bid close 05 Oct 2026. RFP envelope: 180–230 km, 12–25 mN, < 1.5 kW, < 40 kg, 26,000 h mission, > 15,000 h firing, Hall preferred, air + Xe.",
-     "note": "in-repo transcription; verify against RFP"
+     "note": "in-repo transcription; verify against RFP",
+     "rebase_role": "HISTORICAL_CROSS_REFERENCE_SUPERSEDED_BY_RFP_REGISTRATION"
     }
    ],
    "evidence_class": "requirement-as-recorded",
-   "status": "REQUIREMENT_AS_RECORDED (verify against the official RFP)",
+   "status": "RFP_CLAUSE_REGISTERED (verbatim clause in the registration; AG-15 closure is the owner's, requirement not frozen)",
    "freeze_point": "after-evidence",
    "note": "",
    "requirement_origin": "RFP_CLAUSE",
    "rfp_clauses": [
     "RFP-P18-04"
-   ]
+   ],
+   "status_as_carried": "REQUIREMENT_AS_RECORDED (verify against the official RFP)"
   },
   {
    "id": "RVM-IT-03",
@@ -10040,6 +9247,17 @@
    "units": "mN",
    "basis": "owner reading of '12-25 mN' (row 4)",
    "source": [
+    {
+     "kind": "rfp_official_clause",
+     "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+     "clause_id": "RFP-P18-06",
+     "page": 18,
+     "section": "Part III 2 Thrust Requirement",
+     "verbatim": "12 mN to 25 mN (From expected drag to compensate)",
+     "rfp_number": "DTDF/06/13516/DSP/ABEP/X/L/M/01",
+     "pdf_sha256": "a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00",
+     "evidence_class": "transcription (human-read from the scanned page images of the registered PDF)"
+    },
     {
      "kind": "owner_answer",
      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
@@ -10067,6 +9285,17 @@
    "units": "mN",
    "basis": "owner reading (rows 4, 27)",
    "source": [
+    {
+     "kind": "rfp_official_clause",
+     "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+     "clause_id": "RFP-P18-06",
+     "page": 18,
+     "section": "Part III 2 Thrust Requirement",
+     "verbatim": "12 mN to 25 mN (From expected drag to compensate)",
+     "rfp_number": "DTDF/06/13516/DSP/ABEP/X/L/M/01",
+     "pdf_sha256": "a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00",
+     "evidence_class": "transcription (human-read from the scanned page images of the registered PDF)"
+    },
     {
      "kind": "owner_answer",
      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
@@ -10133,13 +9362,25 @@
    "basis": "RFP as recorded; row 108",
    "source": [
     {
+     "kind": "rfp_official_clause",
+     "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+     "clause_id": "RFP-P18-10",
+     "page": 18,
+     "section": "Part III 2 Power",
+     "verbatim": "<1500W",
+     "rfp_number": "DTDF/06/13516/DSP/ABEP/X/L/M/01",
+     "pdf_sha256": "a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00",
+     "evidence_class": "transcription (human-read from the scanned page images of the registered PDF)"
+    },
+    {
      "kind": "rfp_secondary_record",
      "path": "docs/procurement/web_track_v1/threads/R2_rfp.json",
      "locator": "clauses[topic='(d) Power']",
      "quote": "strict power budget of less than 1,500 W",
      "source_locator": "S1 para 6",
      "ambiguous": true,
-     "note": "secondary transcription (news); the official RFP was not obtained (R2 rfp_obtained false); verify against RFP document"
+     "note": "secondary transcription (news); the official RFP was not obtained (R2 rfp_obtained false); verify against RFP document",
+     "rebase_role": "HISTORICAL_CROSS_REFERENCE_SUPERSEDED_BY_RFP_REGISTRATION"
     },
     {
      "kind": "owner_answer",
@@ -10153,13 +9394,14 @@
     }
    ],
    "evidence_class": "requirement-as-recorded",
-   "status": "REQUIREMENT_AS_RECORDED (verify against the official RFP)",
+   "status": "RFP_CLAUSE_REGISTERED (verbatim clause in the registration; AG-15 closure is the owner's, requirement not frozen)",
    "freeze_point": "after-evidence",
    "note": "",
    "requirement_origin": "RFP_CLAUSE",
    "rfp_clauses": [
     "RFP-P18-10"
-   ]
+   ],
+   "status_as_carried": "REQUIREMENT_AS_RECORDED (verify against the official RFP)"
   },
   {
    "id": "RVM-IT-07",
@@ -10236,11 +9478,22 @@
   },
   {
    "id": "RVM-IT-09",
-   "name": "wet mass limit incl. Xe + tank (strict '<')",
+   "name": "mass limit (strict '<'); owner wet reading incl. Xe + tank",
    "value": 40,
    "units": "kg",
-   "basis": "RFP as recorded; row 5",
+   "basis": "RFP '< 40kg' (wet / dry not stated, DISC-02); OWNER_READING row 5: wet incl. Xe + tank",
    "source": [
+    {
+     "kind": "rfp_official_clause",
+     "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+     "clause_id": "RFP-P18-11",
+     "page": 18,
+     "section": "Part III 2 Mass",
+     "verbatim": "< 40kg",
+     "rfp_number": "DTDF/06/13516/DSP/ABEP/X/L/M/01",
+     "pdf_sha256": "a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00",
+     "evidence_class": "transcription (human-read from the scanned page images of the registered PDF)"
+    },
     {
      "kind": "rfp_secondary_record",
      "path": "docs/procurement/web_track_v1/threads/R2_rfp.json",
@@ -10248,7 +9501,8 @@
      "quote": "maintain a total mass under 40 kg",
      "source_locator": "S1 para 6 (news paraphrase; RFP clause not seen)",
      "ambiguous": true,
-     "note": "secondary transcription (news); the official RFP was not obtained (R2 rfp_obtained false); verify against RFP document"
+     "note": "secondary transcription (news); the official RFP was not obtained (R2 rfp_obtained false); verify against RFP document",
+     "rebase_role": "HISTORICAL_CROSS_REFERENCE_SUPERSEDED_BY_RFP_REGISTRATION"
     },
     {
      "kind": "owner_answer",
@@ -10264,13 +9518,15 @@
     }
    ],
    "evidence_class": "requirement-as-recorded",
-   "status": "REQUIREMENT_AS_RECORDED (verify against the official RFP)",
+   "status": "RFP_CLAUSE_REGISTERED (verbatim clause in the registration; AG-15 closure is the owner's, requirement not frozen)",
    "freeze_point": "after-evidence",
    "note": "",
    "requirement_origin": "RFP_CLAUSE",
    "rfp_clauses": [
     "RFP-P18-11"
-   ]
+   ],
+   "status_as_carried": "REQUIREMENT_AS_RECORDED (verify against the official RFP)",
+   "owner_reading": "OWNER_READING (DISC-02): wet incl. Xe + tank (owner row 5); the registered RFP prints '< 40kg' (RFP-P18-11) without stating wet or dry; recorded for DRDO clarification"
   },
   {
    "id": "RVM-IT-10",
@@ -10362,6 +9618,17 @@
    "basis": "row 3",
    "source": [
     {
+     "kind": "rfp_official_clause",
+     "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+     "clause_id": "RFP-P19-01",
+     "page": 19,
+     "section": "Part III 2 Life Cycle and Maintainability",
+     "verbatim": "Mission life: 3 years (Approx 26000 hrs). Ignition Time: More than 15000 hrs",
+     "rfp_number": "DTDF/06/13516/DSP/ABEP/X/L/M/01",
+     "pdf_sha256": "a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00",
+     "evidence_class": "transcription (human-read from the scanned page images of the registered PDF)"
+    },
+    {
      "kind": "owner_answer",
      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
      "row": 3,
@@ -10373,7 +9640,7 @@
     }
    ],
    "evidence_class": "owner-stated",
-   "status": "OWNER_GIVEN (engineering basis until the RFP is verified)",
+   "status": "OWNER_GIVEN (conservative engineering basis = 3 x 8,760 h; the RFP prints '3 years (Approx 26000 hrs)', DISC-04)",
    "freeze_point": "after-evidence",
    "note": "",
    "requirement_origin": "RFP_CLAUSE",
@@ -10388,6 +9655,17 @@
    "units": "h",
    "basis": "row 3",
    "source": [
+    {
+     "kind": "rfp_official_clause",
+     "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+     "clause_id": "RFP-P19-01",
+     "page": 19,
+     "section": "Part III 2 Life Cycle and Maintainability",
+     "verbatim": "Mission life: 3 years (Approx 26000 hrs). Ignition Time: More than 15000 hrs",
+     "rfp_number": "DTDF/06/13516/DSP/ABEP/X/L/M/01",
+     "pdf_sha256": "a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00",
+     "evidence_class": "transcription (human-read from the scanned page images of the registered PDF)"
+    },
     {
      "kind": "owner_answer",
      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
@@ -10404,7 +9682,8 @@
      "locator": "rfp.recorded_in[id=R1]",
      "ref": "CLAUDE.md, section 'What this is'",
      "text_as_recorded": "RFP DTDF/06/13516/DSP/ABEP/X/L/M/01; bid close 05 Oct 2026. RFP envelope: 180–230 km, 12–25 mN, < 1.5 kW, < 40 kg, 26,000 h mission, > 15,000 h firing, Hall preferred, air + Xe.",
-     "note": "in-repo transcription; verify against RFP"
+     "note": "in-repo transcription; verify against RFP",
+     "rebase_role": "HISTORICAL_CROSS_REFERENCE_SUPERSEDED_BY_RFP_REGISTRATION"
     }
    ],
    "evidence_class": "owner-stated",
@@ -10474,23 +9753,43 @@
    "basis": "RFP as recorded (secondary)",
    "source": [
     {
+     "kind": "rfp_official_clause",
+     "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+     "clause_id": "RFP-P19-05",
+     "page": 19,
+     "section": "Part III 3 Indigenous Content",
+     "verbatim": "The firm should provide a detailed plan for achieving the minimum 75% IC in the project deliverables. Minimum Indigenization Desired: 1. Space Qualified Thruster >80%; 2. Intake system >80%; 3. Compressor and Storage >60%; 4. Power Supply Electronics >70%.",
+     "rfp_number": "DTDF/06/13516/DSP/ABEP/X/L/M/01",
+     "pdf_sha256": "a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00",
+     "evidence_class": "transcription (human-read from the scanned page images of the registered PDF)"
+    },
+    {
      "kind": "rfp_secondary_record",
      "path": "docs/procurement/web_track_v1/threads/R2_rfp.json",
      "locator": "clauses[topic='(d) Indigenous content']",
      "quote": "minimum of 75 percent",
      "source_locator": "S1 para 8",
      "ambiguous": false,
-     "note": "secondary transcription (news); the official RFP was not obtained (R2 rfp_obtained false); verify against RFP document"
+     "note": "secondary transcription (news); the official RFP was not obtained (R2 rfp_obtained false); verify against RFP document",
+     "rebase_role": "HISTORICAL_CROSS_REFERENCE_SUPERSEDED_BY_RFP_REGISTRATION"
     }
    ],
    "evidence_class": "requirement-as-recorded",
-   "status": "REQUIREMENT_AS_RECORDED (verify against the official RFP)",
+   "status": "RFP_CLAUSE_REGISTERED (verbatim clause in the registration; AG-15 closure is the owner's, requirement not frozen)",
    "freeze_point": "after-evidence",
    "note": "",
    "requirement_origin": "RFP_CLAUSE",
    "rfp_clauses": [
     "RFP-P19-05"
-   ]
+   ],
+   "status_as_carried": "REQUIREMENT_AS_RECORDED (verify against the official RFP)",
+   "subsystem_minima": {
+    "space_qualified_thruster": "> 80 %",
+    "intake_system": "> 80 %",
+    "compressor_and_storage": "> 60 %",
+    "power_supply_electronics": "> 70 %"
+   },
+   "subsystem_minima_source": "RFP-P19-05 'Minimum Indigenization Desired' (carried by RVM-18; the > 60 % statement of RFP-P18-03 is DISC-03)"
   },
   {
    "id": "RVM-IT-18",
@@ -10561,6 +9860,17 @@
    "basis": "row 46",
    "source": [
     {
+     "kind": "rfp_official_clause",
+     "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+     "clause_id": "RFP-P19-01",
+     "page": 19,
+     "section": "Part III 2 Life Cycle and Maintainability",
+     "verbatim": "Mission life: 3 years (Approx 26000 hrs). Ignition Time: More than 15000 hrs",
+     "rfp_number": "DTDF/06/13516/DSP/ABEP/X/L/M/01",
+     "pdf_sha256": "a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00",
+     "evidence_class": "transcription (human-read from the scanned page images of the registered PDF)"
+    },
+    {
      "kind": "owner_answer",
      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
      "row": 46,
@@ -10584,16 +9894,16 @@
  "interface_demands": [
   {
    "id": "RVM-ID-01",
-   "direction": "RVM <- mass/power v2",
-   "counterpart": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json (MPV2-ID-11)",
-   "content": "mass rows: < 40 kg wet and 34 / 36 kg from the roll-ups (no CBE); power rows: < 1.5 kW and 1.35 kW from the A9 ledger (all loads TBD); consumed as RVM-04 / -05 / -06 / -07",
+   "direction": "RVM <- mass/power v3",
+   "counterpart": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json (rollups, lines, power)",
+   "content": "mass rows: < 40 kg wet and 34 / 36 kg from the v3 single-owner-reading roll-ups (no CBE); power rows: < 1.5 kW and 1.35 kW from the A9 ledger (all loads TBD); consumed as RVM-04 / -05 / -06 / -07 (v2, MPV2-ID-11, is immutable history)",
    "status": "CONSUMED"
   },
   {
    "id": "RVM-ID-02",
-   "direction": "RVM <- Xe accounting v2",
-   "counterpart": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json (XV2-IF-09)",
-   "content": "Xe accounting states (REFUSED totals with TBD inputs) as SUPPORTING evidence of RVM-03 / -06 / -10; never a Xe-capability demonstration",
+   "direction": "RVM <- Xe accounting v3",
+   "counterpart": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json (evaluations, reading_axes_resolved)",
+   "content": "Xe accounting states (REFUSED totals with TBD inputs) as SUPPORTING evidence of RVM-03 / -06 / -10; never a Xe-capability demonstration (v2, XV2-IF-09, is immutable history)",
    "status": "CONSUMED"
   },
   {
@@ -10662,9 +9972,9 @@
   {
    "id": "RVM-ID-12",
    "direction": "RVM <- official RFP",
-   "counterpart": "owner rows 1-2 (legitimate owner / portal route)",
-   "content": "the canonical RFP PDF with sha256: every RVM row with requirement_frozen = false re-derives its basis",
-   "status": "AWAITING_OWNER_ACTION"
+   "counterpart": "owner rows 1-2 (legitimate owner / portal route); registered in docs/requirements/rfp_official/rfp_registration_v1.json",
+   "content": "the canonical RFP PDF with sha256 is registered with a verbatim clause transcription and every row is re-based on it (rfp_rebase); AG-15 closure (requirement_frozen = true on RFP rows) is the owner's",
+   "status": "REGISTERED_BY_HASH; AG-15 CLOSURE AWAITING_OWNER_ACTION"
   }
  ],
  "owner_answers_applied": [
@@ -11100,6 +10410,7 @@
    "status": "TBD_OWNER",
    "freeze_point": "after-evidence",
    "needed_by": "when the official RFP is obtained (row 1), before Milestone C",
+   "current_note": "as raised; the official RFP is now registered: 'Must cater to single point failure for electronics' (RFP-P18-09) and 'redundancy in Electronics level and sensor level if any' (RFP-P18-02); answered by the owner (A9.14 S9.13 RVMQ-01: RVM-19 re-based on those clauses)",
    "status_when_raised": "TBD_OWNER",
    "status_current": "OWNER_DECIDED",
    "status_note": "'status' = status AS RAISED (state-v4 read-back contract); answered by the owner - status_current / decision govern",
@@ -11433,7 +10744,8 @@
    ]
   }
  ],
- "a9_16_rfp_rule": "'RFP(1)' cites the official RFP held by the owner; the document is not registered in the repository (AG-15), so every RFP-cited fact is OWNER_STATED_PENDING_RFP_REGISTRATION; requirement_frozen stays false for every RFP row until AG-15 closes",
+ "a9_16_rfp_rule_as_applied": "'RFP(1)' cites the official RFP held by the owner; the document is not registered in the repository (AG-15), so every RFP-cited fact is OWNER_STATED_PENDING_RFP_REGISTRATION; requirement_frozen stays false for every RFP row until AG-15 closes",
+ "a9_16_rfp_rule": "the official RFP is registered by hash with a verbatim clause transcription (docs/requirements/rfp_official/rfp_registration_v1.json, A9.17 RFP); RFP-cited facts carry rfp_citation_status REGISTERED_CLAUSE with the registered clause ids (the step-1 label OWNER_STATED_PENDING_RFP_REGISTRATION is kept as rfp_citation_status_as_applied history); AG-15 closure is the owner's, so requirement_frozen stays false for every RFP row until the owner closes AG-15",
  "a9_16_owner_answers_applied": [
   {
    "decision": "A9.14",
@@ -11488,7 +10800,16 @@
    "tests": [
     "tests/test_rvm_a9.py"
    ],
-   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+   "rfp_citation_status": "REGISTERED_CLAUSE",
+   "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+   "rfp_clause_ids": [
+    "RFP-P18-08",
+    "RFP-P16-02",
+    "RFP-P17-03",
+    "RFP-P17-04",
+    "RFP-P19-03"
+   ],
+   "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P16-02, RFP-P17-03, RFP-P17-04, RFP-P19-03 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
   },
   {
    "decision": "A9.14",
@@ -11507,7 +10828,13 @@
    "tests": [
     "tests/test_rvm_a9.py"
    ],
-   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+   "rfp_citation_status": "REGISTERED_CLAUSE",
+   "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+   "rfp_clause_ids": [
+    "RFP-P17-05",
+    "RFP-P17-02"
+   ],
+   "rfp_citation_note": "registered clause(s) RFP-P17-05, RFP-P17-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
   },
   {
    "decision": "A9.14",
@@ -11533,7 +10860,14 @@
     "pointer": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json#/amendments/XA9Q-07",
     "verbatim_excerpt": "S8.21 / XA9Q-07: YES — Xe capability applies to the `hall_icp_neutralizer` flight configuration because the RFP requires it."
    },
-   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+   "rfp_citation_status": "REGISTERED_CLAUSE",
+   "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+   "rfp_clause_ids": [
+    "RFP-P18-08",
+    "RFP-P17-05",
+    "RFP-P16-02"
+   ],
+   "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
   },
   {
    "decision": "A9.14",
@@ -11577,7 +10911,14 @@
     "pointer": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json#/amendments/OD6",
     "verbatim_excerpt": "S9.10 / OD6: “air + Xe” means the system must provide both ambient-air and Xenon operating capability; it should not be weakened into a contingency interpretation."
    },
-   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+   "rfp_citation_status": "REGISTERED_CLAUSE",
+   "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+   "rfp_clause_ids": [
+    "RFP-P18-08",
+    "RFP-P17-05",
+    "RFP-P16-02"
+   ],
+   "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
   },
   {
    "decision": "A9.14",
@@ -11596,7 +10937,12 @@
    "tests": [
     "tests/test_rvm_a9.py"
    ],
-   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+   "rfp_citation_status": "REGISTERED_CLAUSE",
+   "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+   "rfp_clause_ids": [
+    "RFP-P19-01"
+   ],
+   "rfp_citation_note": "registered clause(s) RFP-P19-01 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
   },
   {
    "decision": "A9.14",
@@ -11759,7 +11105,13 @@
    "tests": [
     "tests/test_rvm_a9.py"
    ],
-   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+   "rfp_citation_status": "REGISTERED_CLAUSE",
+   "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+   "rfp_clause_ids": [
+    "RFP-P19-05",
+    "RFP-P18-03"
+   ],
+   "rfp_citation_note": "registered clause(s) RFP-P19-05, RFP-P18-03 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
   },
   {
    "decision": "A9.14",
@@ -11778,7 +11130,13 @@
    "tests": [
     "tests/test_rvm_a9.py"
    ],
-   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+   "rfp_citation_status": "REGISTERED_CLAUSE",
+   "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+   "rfp_clause_ids": [
+    "RFP-P18-09",
+    "RFP-P18-02"
+   ],
+   "rfp_citation_note": "registered clause(s) RFP-P18-09, RFP-P18-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
   },
   {
    "decision": "A9.14",
@@ -11797,7 +11155,13 @@
    "tests": [
     "tests/test_rvm_a9.py"
    ],
-   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+   "rfp_citation_status": "REGISTERED_CLAUSE",
+   "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+   "rfp_clause_ids": [
+    "RFP-P18-09",
+    "RFP-P18-02"
+   ],
+   "rfp_citation_note": "registered clause(s) RFP-P18-09, RFP-P18-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
   },
   {
    "decision": "A9.15",
@@ -11815,7 +11179,14 @@
    "tests": [
     "tests/test_rvm_a9.py"
    ],
-   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+   "rfp_citation_status": "REGISTERED_CLAUSE",
+   "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+   "rfp_clause_ids": [
+    "RFP-P18-08",
+    "RFP-P17-05",
+    "RFP-P16-02"
+   ],
+   "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
   }
  ],
  "rfp_rebase": {

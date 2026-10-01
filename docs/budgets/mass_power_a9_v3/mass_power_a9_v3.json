@@ -142,6 +142,33 @@
  "propellant_policy": {
   "governing_rule": "The official RFP is the sole governing basis for propellant capability. The system shall support both ambient atmospheric propellant (180-230 km) and Xenon propulsion capability. C1-specific Xe requirements, if any, are derived from the selected C1 hardware and integrated into that RFP-compliant Xe architecture; no independent policy shall restrict or override the RFP.",
   "source": "A9.15 governing_rule (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)",
+  "rfp_clauses": {
+   "registration": "docs/requirements/rfp_official/rfp_registration_v1.json",
+   "rfp_number": "DTDF/06/13516/DSP/ABEP/X/L/M/01",
+   "pdf_sha256": "a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00",
+   "clauses": [
+    {
+     "clause_id": "RFP-P18-08",
+     "page": 18,
+     "section": "Part III 2 Propellant for propulsion system",
+     "verbatim": "Compatible for using Ambient air (at the functional orbit altitude of 180-230km) and Xenon as propellant. Two separate propellant tanks for ambient air and xenon."
+    },
+    {
+     "clause_id": "RFP-P17-05",
+     "page": 17,
+     "section": "Part III 1(A)iv row 3 Thruster",
+     "verbatim": "Capability to ionize N2, atomic oxygen in same thruster and It should have capability to use Xe as propellant, an extra input system to take care any problems on board unforeseen problems."
+    },
+    {
+     "clause_id": "RFP-P16-02",
+     "page": 16,
+     "section": "Part III 1(A)ii Figure 1",
+     "verbatim": "Logical Block Diagram: Intake -> Filter -> Compressor -> Gas Chamber -> Valve -> Thruster (Ionization zone | Acceleration zone) -> Thrust; Xenon Gas -> Valve -> Thruster."
+    }
+   ],
+   "citation_status": "REGISTERED_CLAUSE (AG-15 closure is the owner's; requirement_frozen stays false in the RVM, RVM-10)",
+   "note": "the A9.15 rules text 'owner-stated RFP content, pending RFP registration' is the owner's wording as decided before the registration and is kept verbatim; the propellant content is now cited to the registered clauses above"
+  },
   "per_configuration": [
    {
     "configuration": "hall_icp_neutralizer",

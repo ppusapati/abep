@@ -502,3 +502,103 @@ def test_changed_transcription_or_unmapped_clause_refused(tmp_path):
         RB.coverage(extra, [{"id": "RVM-X", "rfp_clauses": ["RFP-P18-04"], "related_rfp_clauses": []}])
     with pytest.raises(RB.RebaseError):
         RB.clause_record(REG, "RFP-P18-11", "< 40 kg wet")      # token not in the verbatim clause
+
+
+# ------------------------------------------------------------------------------------------------ A9.16 repair lane
+def _rvm():
+    return json.loads(OUT_JSON.read_text(encoding="utf-8"))
+
+
+def test_rfp01_reads_a915_applied_v3_packages():
+    """RFP-01: the RVM evaluates the A9.15-applied v3 budgets (no retired XA9Q-07 / USABLE / CBE-level readings) and
+    records the v3 DOES_NOT_CLOSE as evidence state without turning it into a FAIL."""
+    assert B.REFS["MP"][0].endswith("mass_power_a9_v3.json") and B.REFS["MP"][2] == "mass_power_a9_v3"
+    assert B.REFS["XE"][0].endswith("xe_accounting_a9_v3.json") and B.REFS["XE"][2] == "xe_accounting_a9_v3"
+    assert B.REFS["RFQ2"][2] == "RFQ_A9_V3"
+    d = _rvm()
+    text = json.dumps(d)
+    for retired in ("XA9Q07_NO_XE_IN_ICP_FLIGHT", "USABLE_MQ09", "MQ01_CBE_LEVEL", "COMPUTED_EXACT_ZERO"):
+        assert retired not in text, retired
+    by = {r["id"]: r for r in d["rows"]}
+    cell = by["RVM-06"]["configurations"]["hall_icp_neutralizer"]
+    assert cell["status"] == "INCOMPLETE_EVIDENCE"
+    assert "mass_power_a9_v3" in cell["current_evidence_state"]
+    assert "DOES_NOT_CLOSE 3" in cell["current_evidence_state"]
+    an = next(a for a in cell["artifacts"] if a.get("detail", {}).get("analyses"))["detail"]["analyses"][0]
+    assert {m["state"] for m in an["mixed_basis_states"]} == {"DOES_NOT_CLOSE"}
+    assert [m["wet_known_kg"] > 40 for m in an["mixed_basis_states"]] == [True, True, True]
+    assert an["lower_bound_verified"] is False
+    assert all(r["reading"].startswith("MEV_LEVEL_EVIDENCE_BASED|LOADED|") for r in an["floor_only_readings"])
+    xe_states = [a["evidence_state"] for c in by["RVM-10"]["configurations"].values() for a in c["artifacts"]
+                 if a["path"].endswith("xe_accounting_a9_v3.json")]
+    assert xe_states and all("RA-FUNC APPLIES" in s for s in xe_states)
+    ids = {i["id"]: i for i in d["interface_demands"]}
+    assert "v3" in ids["RVM-ID-01"]["direction"] and "v3" in ids["RVM-ID-02"]["direction"]
+    for rid in ("RVM-15", "RVM-18"):
+        paths = {a["path"] for c in by[rid]["configurations"].values() for a in c["artifacts"]}
+        assert "docs/procurement/rfq_a9_v2/rfq_a9_v2.json" not in paths
+
+
+def test_rfp03_rvf04_rfp_citation_status_follows_registration():
+    """RFP-03 / RVF-04: no step-1 'pending registration' citation status survives; registered clause ids cited; the
+    step-1 label is history; requirement_frozen stays false (AG-15 is the owner's)."""
+    d = _rvm()
+
+    def walk(o):
+        if isinstance(o, dict):
+            if "rfp_citation_status" in o:
+                yield o
+            for v in o.values():
+                yield from walk(v)
+        elif isinstance(o, list):
+            for v in o:
+                yield from walk(v)
+
+    recs = list(walk({k: d[k] for k in ("rows", "a9_16_owner_answers_applied")}))
+    assert recs
+    for r in recs:
+        assert r["rfp_citation_status"] == "REGISTERED_CLAUSE", r
+        assert r["rfp_clause_ids"] and all(c.startswith("RFP-P") for c in r["rfp_clause_ids"])
+        assert r["rfp_citation_status_as_applied"] == "OWNER_STATED_PENDING_RFP_REGISTRATION"
+    by = {r["id"]: r for r in d["rows"]}
+    assert by["RVM-09"]["a9_16"]["rfp_clause_ids"] == ["RFP-P17-05", "RFP-P17-02"]
+    assert "pending" not in by["RVM-09"]["a9_16"]["note"]
+    assert "RFP-P18-09" in by["RVM-19"]["a9_16"]["rebased_on"] and "pending" not in by["RVM-19"]["a9_16"]["rebased_on"]
+    assert "not registered" not in d["a9_16_rfp_rule"] and "registered by hash" in d["a9_16_rfp_rule"]
+    assert "requirement_frozen stays false" in d["a9_16_rfp_rule"]
+    assert all(r["requirement_frozen"] is False for r in d["rows"] if r["requirement_origin"] == "RFP_CLAUSE")
+
+
+def test_rfp04_items_rebased_on_registered_clauses():
+    d = _rvm()
+    for it in d["items"]:
+        assert it["status"] != "REQUIREMENT_AS_RECORDED (verify against the official RFP)", it["id"]
+        assert "official RFP is obtained" not in it["note"]
+        if it["requirement_origin"] != "RFP_CLAUSE":
+            continue
+        first = it["source"][0]
+        assert first["kind"] == "rfp_official_clause" and first["clause_id"] in it["rfp_clauses"], it["id"]
+        for s in it["source"]:
+            if s["kind"] in ("rfp_secondary_record", "repo_record"):
+                assert s["rebase_role"] == "HISTORICAL_CROSS_REFERENCE_SUPERSEDED_BY_RFP_REGISTRATION"
+    by = {i["id"]: i for i in d["items"]}
+    assert by["RVM-IT-09"]["owner_reading"].startswith("OWNER_READING (DISC-02)")
+    assert by["RVM-IT-17"]["subsystem_minima"] == {"space_qualified_thruster": "> 80 %", "intake_system": "> 80 %",
+                                                   "compressor_and_storage": "> 60 %",
+                                                   "power_supply_electronics": "> 70 %"}
+    assert "until the RFP is verified" not in by["RVM-IT-13"]["status"] and "DISC-04" in by["RVM-IT-13"]["status"]
+
+
+def test_rfp05_row_texts_reworded_against_registered_clauses():
+    d = _rvm()
+    by = {r["id"]: r for r in d["rows"]}
+    assert "RFP-P18-10" in by["RVM-04"]["requirement_text"]
+    assert "grants a transient" not in by["RVM-04"]["requirement_text"]
+    assert "DISC-02" in by["RVM-06"]["requirement_text"]
+    assert "DISC-04" in by["RVM-13"]["requirement_text"]
+    assert "until the official wording" not in by["RVM-13"]["requirement_text"]
+    q = d["open_owner_questions"][0]
+    assert q["question"].startswith("If the official RFP confirms")            # as raised, kept
+    assert "RFP-P18-09" in q["current_note"] and "RFP-P18-02" in q["current_note"]
+    ids = {i["id"]: i for i in d["interface_demands"]}
+    assert ids["RVM-ID-12"]["status"].startswith("REGISTERED_BY_HASH")

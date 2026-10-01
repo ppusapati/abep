@@ -373,3 +373,11 @@ def test_a9_16_repair_f5_f10_register_and_c1_dwell_wording():
     assert {("A9.12", "OQ-A910-06"), ("A9.14", "OQ-A907-01"), ("A9.14", "XA9Q-02")} <= applied
     txt = json.dumps({k: v for k, v in d.items() if k != "power"})
     assert "OPEN (not this lane)" not in txt
+
+
+def test_propellant_policy_cites_registered_rfp_clauses():
+    """A9.16 repair RFP-06: the A9.15 propellant policy cites the registered RFP clauses."""
+    d = json.loads(JSON_PATH.read_text(encoding="utf-8"))
+    rc = d["propellant_policy"]["rfp_clauses"]
+    assert [c["clause_id"] for c in rc["clauses"]] == ["RFP-P18-08", "RFP-P17-05", "RFP-P16-02"]
+    assert rc["pdf_sha256"] == "a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00"

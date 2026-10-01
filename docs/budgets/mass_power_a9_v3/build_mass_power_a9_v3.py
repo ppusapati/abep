@@ -335,6 +335,34 @@ def al_c1_allocation(c1_selected, c1_module_cbe_kg=None) -> dict:
     return {"state": "ALLOCATED_FROM_SELECTED_C1_CBE", "kg": rk(_kg(c1_module_cbe_kg, "C1 module CBE") * 1.2)}
 
 
+# registered official RFP clauses that carry the propellant policy (AG-15 registration; A9.16 repair RFP-06): read
+# from the registration record, verbatim text copied, value token checked (fail closed)
+RFP_REG_REL = "docs/requirements/rfp_official/rfp_registration_v1.json"
+RFP_PROPELLANT_CLAUSES = (("RFP-P18-08", "Two separate propellant tanks for ambient air and xenon"),
+                          ("RFP-P17-05", "capability to use Xe as propellant"),
+                          ("RFP-P16-02", "Xenon Gas -> Valve -> Thruster"))
+
+
+def rfp_propellant_clauses() -> dict:
+    import json as _json
+    from pathlib import Path as _Path
+    reg = _json.loads((_Path(__file__).resolve().parents[3] / RFP_REG_REL).read_text(encoding="utf-8"))
+    by = {c["id"]: c for c in reg["clauses"]}
+    out = []
+    for cid, tok in RFP_PROPELLANT_CLAUSES:
+        c = by.get(cid)
+        if c is None or tok not in c["text"]:
+            raise RuntimeError(f"registered RFP clause {cid} missing or token {tok!r} absent")
+        out.append({"clause_id": cid, "page": c["page"], "section": c["section"], "verbatim": c["text"]})
+    return {"registration": RFP_REG_REL, "rfp_number": reg["document"]["rfp_number"],
+            "pdf_sha256": reg["document"]["sha256"], "clauses": out,
+            "citation_status": "REGISTERED_CLAUSE (AG-15 closure is the owner's; requirement_frozen stays false in "
+                               "the RVM, RVM-10)",
+            "note": "the A9.15 rules text 'owner-stated RFP content, pending RFP registration' is the owner's wording "
+                    "as decided before the registration and is kept verbatim; the propellant content is now cited to "
+                    "the registered clauses above"}
+
+
 def c1_xe_branch_booking(c1_selected, c1_requires_xe=None) -> dict:
     """A9.14 MPQ-01 + A9.15: a C1 Xe branch is booked inside AL-08 only for a selected C1 that requires Xe; before
     selection it is neither assumed nor excluded; a selected C1 that needs no Xe gets no branch."""
@@ -818,6 +846,7 @@ def build_doc() -> dict:
             "closure_rule": "CLOSES only when every term is resolved (CBE / measured) and the reference is met; "
                             "DOES_NOT_CLOSE when the known part already reaches the reference; otherwise NOT_EVALUABLE"},
         "propellant_policy": {"governing_rule": _decision("A9.15")[0]["governing_rule"], "source": cite(s["GOV"]),
+                              "rfp_clauses": rfp_propellant_clauses(),
                               "per_configuration": [xe_hardware_required(c) for c in CONFIGS],
                               "c1_xe_branch_now": c1_xe_branch_booking(False), "al_c1_now": al_c1_allocation(False)},
         "items_v2": v2_items, "items_v3": new_items,
@@ -894,6 +923,9 @@ def render_md(d: dict) -> str:
           "## RFP-compliant propellant policy (A9.15)", "", "> " + d["propellant_policy"]["governing_rule"], "",
           f"AL-08 and the Xe load are `REQUIRED_RFP_XE_CAPABILITY` in both configurations; C1 Xe branch now: "
           f"`{d['propellant_policy']['c1_xe_branch_now']['state']}`; AL-C1 now: `{d['propellant_policy']['al_c1_now']['state']}`.",
+          "", "Registered RFP clauses (" + d["propellant_policy"]["rfp_clauses"]["registration"] + "): "
+          + "; ".join(f"{c['clause_id']} (p. {c['page']}): \"{c['verbatim']}\""
+                      for c in d["propellant_policy"]["rfp_clauses"]["clauses"]) + ".",
           "", "## Owner budget reference (MQ-02)", ""]
     b = d["budget_reference"]
     L += [b["label"] + ".", "",

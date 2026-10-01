@@ -4,7 +4,9 @@ Record-level application (row statuses are still assigned by rvm_rules.assign_st
   A9.14 OD2 (S9.7)     statewise envelope quantifier: every required state of the frozen 180-230 km mission /
                        environment dataset satisfies the hard requirements; worst state and orbit average reported too
   A9.14 OD3 (S9.8)     design atmosphere states from the versioned orbit-resolved frozen dataset (authorised by A9.13
-                       OQ-F4-05; PENDING its build); no hand-picked F10.7 / density points
+                       OQ-F4-05; built: atmosphere_msis21_orbit_v1_design_states_v2, A9.17); no hand-picked F10.7 /
+                       density points. The statewise evaluation over that set is NOT_EVALUATED here: the design-layer
+                       consumers still evaluate the five orbit-averaged ENVELOPE_STATES (A9.16 repair RVF-03)
   A9.14 OD6 (S9.10) + A9.15   'air + Xe' = the system provides BOTH ambient-air and Xenon operating capability (separate
                        selectable modes, separate tanks / paths, not a premix); never a contingency reading
   A9.14 XA9Q-07 + A9.15       Xe capability applies to hall_icp_neutralizer (and hall_c1_reference), independent of C1
@@ -19,10 +21,16 @@ Record-level application (row statuses are still assigned by rvm_rules.assign_st
                        preserved); restart / cycle count from the frozen mission profile (TBD, not invented)
   A9.14 OD5 / OQ-A907-01 / XA9Q-02, XA9Q-01, A9.12 OQ-A907-03 / -05 / -09 / -10: open readings of rows carried as
                        OWNER_DECIDED with their decision.
-Every RFP-cited fact is OWNER_STATED_PENDING_RFP_REGISTRATION (AG-15); requirement_frozen stays false for RFP rows.
+RFP citations (A9.16 repair RFP-03 / RVF-04): the official RFP is registered by hash with a verbatim clause transcription
+(docs/requirements/rfp_official/rfp_registration_v1.json, A9.17 RFP), so every RFP-cited fact of a re-based row carries
+rfp_citation_status REGISTERED_CLAUSE with the clause ids (registered_rfp_citations, run after the rfp_rebase); the
+step-1 label OWNER_STATED_PENDING_RFP_REGISTRATION is kept as history (rfp_citation_status_as_applied). AG-15 closure is
+the owner's, so requirement_frozen stays false for RFP rows.
 """
 from __future__ import annotations
 
+import hashlib
+import json
 import sys
 from pathlib import Path
 
@@ -31,6 +39,17 @@ sys.path.insert(0, str(ROOT / "docs" / "decisions" / "application"))
 import a9_16_lib as L  # noqa: E402
 
 ARTIFACT = "docs/requirements/rvm_a9/rvm_a9_v1.json"
+# A9.14 S9.8 OD3 design-state set, built from the frozen orbit-resolved dataset (A9.17 ORBIT; rule-1 frozen data, read
+# only). The design-layer statewise evaluators (abep_sim/design: intake_synthesis ENVELOPE_STATES -> F1-F8 architecture
+# optimizer, HC-09 / AG-12 / AG-13) do not consume it yet (A9.16 repair RVF-03)
+DESIGN_STATES_REL = "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json"
+DESIGN_STATES_ID = "atmosphere_msis21_orbit_v1_design_states_v2"
+DESIGN_CONSUMERS_PENDING = ("abep_sim/design/intake_synthesis.py ENVELOPE_STATES (h200_f150 + four alt x F10.7 corners "
+                            "of the orbit-averaged atmosphere_msis21_v1)",
+                            "abep_sim/design/architecture_optimizer.py STATES = isy.ENVELOPE_STATES (F1-F8; HC-09 "
+                            "'every orbit state', AG-12 / AG-13 statewise constraints)")
+REGISTRATION_REL = "docs/requirements/rfp_official/rfp_registration_v1.json"
+REGISTERED = "REGISTERED_CLAUSE"
 TEST = "tests/test_rvm_a9.py"
 V5 = "docs/budgets/owner_decisions/owner_questions_state_v5.json"
 STATEWISE_STATUSES = ("NOT_EVALUATED_DESIGN_STATES_NOT_REGISTERED", "NOT_EVALUATED_STATE_MISSING",
@@ -52,6 +71,22 @@ def statewise_envelope(required_states: list | None, results: dict, comparator) 
     out = {"status": "STATEWISE_VIOLATION" if bad else "ALL_REQUIRED_STATES_SATISFIED", "violating_states": bad,
            "worst_state_value": min(vals), "orbit_average_value": sum(vals) / len(vals)}
     return out
+
+
+def design_state_set() -> dict:
+    """The built A9.14 OD3 design-state set (identity, sha256, size), read from the frozen file; fails closed."""
+    p = ROOT / DESIGN_STATES_REL
+    if not p.exists():
+        raise RuntimeError(f"design-state set missing: {DESIGN_STATES_REL}")
+    raw = p.read_bytes()
+    d = json.loads(raw)
+    if d.get("design_state_set_id") != DESIGN_STATES_ID:
+        raise RuntimeError(f"design-state set identity changed: {d.get('design_state_set_id')!r}")
+    if d["n_states"] != len(d["states"]) or not d["states"]:
+        raise RuntimeError("design-state set state count inconsistent")
+    return {"path": DESIGN_STATES_REL, "id": DESIGN_STATES_ID, "sha256": hashlib.sha256(raw).hexdigest(),
+            "dataset_id": d["dataset_id"], "dataset_sha256": d["dataset_sha256"], "n_states": d["n_states"],
+            "n_required": sum(1 for x in d["states"] if x.get("required")), "orbit_basis": d["orbit_basis"]["status"]}
 
 
 def ignition_requirement_class(source_text_has_rfp_clause: bool) -> str:
@@ -81,21 +116,27 @@ ROW_RECORDS = {
     "RVM-01": (["OD2", "OD3"], {
         "envelope_quantifier": "EVERY_REQUIRED_ENVIRONMENT_STATE_FAIL_CLOSED (worst state and orbit average reported "
                                "additionally; an orbit average cannot conceal a statewise violation)",
-        "design_states": "PENDING_ORBIT_RESOLVED_DATASET_BUILD: nominal states and physical extrema of density / species "
-                         "/ temperature / local time / solar activity from the versioned orbit-resolved frozen dataset "
-                         "(authorised by A9.13 OQ-F4-05) with provenance and hashes; no hand-picked points",
+        "design_states": "REGISTERED_NOT_YET_CONSUMED: " + DESIGN_STATES_ID + " (" + DESIGN_STATES_REL + "; nominal "
+                         "states and physical extrema of density / species / temperature / local time / solar activity "
+                         "from the frozen orbit-resolved dataset atmosphere_msis21_orbit_v1, A9.17 ORBIT; no hand-picked "
+                         "points); the statewise evaluation over it is NOT_EVALUATED because the design-layer consumers "
+                         "still evaluate the five orbit-averaged ENVELOPE_STATES",
+        "design_state_set": "@design_state_set",
+        "design_state_consumers_pending": list(DESIGN_CONSUMERS_PENDING),
+        "statewise_status": "NOT_EVALUATED_STATE_MISSING (no design-state result exists for any registered state)",
         "evaluator": "docs/requirements/rvm_a9/a9_16_rvm.py:statewise_envelope"},
         "Operate the ABEP propulsion system in very low Earth orbit over the altitude band 180-230 km: every required "
         "state of the frozen 180-230 km mission / environment dataset must satisfy the applicable hard requirements "
-        "(A9.14 OD2); design atmosphere states come from the versioned orbit-resolved dataset (A9.14 OD3; pending its "
-        "build)."),
+        "(A9.14 OD2); design atmosphere states come from the versioned orbit-resolved dataset (A9.14 OD3; built as "
+        "atmosphere_msis21_orbit_v1_design_states_v2, not yet consumed by the design-layer statewise evaluators)."),
     "RVM-08": (["OD12"], {"compliance_gate": "N2_PLUS_ATOMIC_O_OPERATION_QUALIFICATION (A9.14 OD12): evidence that the "
                                              "same propulsion architecture ionizes / operates on the required atmospheric "
                                              "species, not only Ar / Xe"}, None),
     "RVM-09": (["OD12"], {"compliance_gate": "N2_PLUS_ATOMIC_O_OPERATION_QUALIFICATION (A9.14 OD12)",
                           "rfp_citation_status": L.RFP_PENDING,
-                          "note": "the owner states the RFP requires ionizing N2 and nascent / atomic O (A9.13 S6.3, "
-                                  "A9.15); pending RFP registration (AG-15)"}, None),
+                          "note": "the owner's statement that the RFP requires ionizing N2 and nascent / atomic O "
+                                  "(A9.13 S6.3, A9.15) is confirmed by the registered clauses RFP-P17-05 / RFP-P17-02 "
+                                  "(AG-15 closure is the owner's)"}, None),
     "RVM-10": (["XA9Q-07", "XA9Q-01", "OD6"], {
         "propellant_policy": "A9.15 governing rule: " + L.a915_governing_statement(),
         "air_plus_xe": "DUAL_PROPELLANT_CAPABILITY: separate selectable ambient-air and Xenon operating modes with "
@@ -145,11 +186,11 @@ ROW_RECORDS = {
                               "used internally and the discrepancy is recorded for DRDO clarification",
         "rfp_citation_status": L.RFP_PENDING},
         "Total indigenous content >= 75 % (project target) with subsystem targets thruster > 80 %, intake > 80 %, "
-        "compressor / storage > 60 %, power electronics > 70 % (A9.14 OD12, owner-stated RFP content pending "
-        "registration; the RFP's > 60 % statement is a recorded discrepancy for DRDO clarification)."),
+        "compressor / storage > 60 %, power electronics > 70 % (A9.14 OD12; registered RFP-P19-05; the RFP's > 60 % "
+        "statement RFP-P18-03 is a recorded discrepancy DISC-03 for DRDO clarification)."),
     "RVM-19": (["RVMQ-01", "OD12"], {
-        "rebased_on": "RFP electronics single-point-failure clause and electronics / sensor redundancy clause "
-                      "(owner-stated, pending registration)",
+        "rebased_on": "RFP electronics single-point-failure clause RFP-P18-09 and electronics / sensor redundancy "
+                      "clause RFP-P18-02 (registered, verbatim in rfp_registration_v1)",
         "compliance_gate": "SINGLE_POINT_FAILURE_FMEA_ELECTRONICS_SENSORS (A9.14 OD12)",
         "required": "redundant / independent critical control, power-switching, telemetry and sensor paths where an "
                     "individual failure would defeat the mission / safe state, proven by the single-point-failure "
@@ -158,8 +199,8 @@ ROW_RECORDS = {
         "row55": "limited redundancy may remain for the physical thruster / ICP hardware, never as a waiver of "
                  "electronics / sensor redundancy",
         "rfp_citation_status": L.RFP_PENDING},
-        "Electronics and sensors: no single-point failure that defeats the mission / safe state (RFP clause, owner-stated "
-        "pending registration): redundant / independent critical control, power-switching, telemetry and sensor paths, "
+        "Electronics and sensors: no single-point failure that defeats the mission / safe state (registered RFP clauses "
+        "RFP-P18-09 / RFP-P18-02): redundant / independent critical control, power-switching, telemetry and sensor paths, "
         "proven by a single-point-failure / FMEA analysis; duplicate thrusters, ICP modules or complete mechanical chains "
         "are not required (A9.14 RVMQ-01)."),
 }
@@ -170,6 +211,8 @@ def apply(doc: dict) -> dict:
     for rid, (qids, rec, text) in ROW_RECORDS.items():
         r = by[rid]
         r["a9_16"] = {"decisions": [L.cite(q) for q in qids], **rec}
+        if r["a9_16"].get("design_state_set") == "@design_state_set":
+            r["a9_16"]["design_state_set"] = design_state_set()
         if text:
             r["requirement_text_as_carried"] = r["requirement_text"]
             r["requirement_text"] = text
@@ -194,10 +237,57 @@ def apply(doc: dict) -> dict:
         {"id": "CG-N2-AO", "gate": "N2 + nascent / atomic O operation qualification", "rvm_row": "RVM-08 / RVM-09",
          "status": "NOT_EVALUATED", "decision": L.cite("OD12")},
     ]
-    doc["a9_16_rfp_rule"] = L.RFP_PENDING_NOTE + "; requirement_frozen stays false for every RFP row until AG-15 closes"
+    doc["a9_16_rfp_rule_as_applied"] = (L.RFP_PENDING_NOTE + "; requirement_frozen stays false for every RFP row until "
+                                        "AG-15 closes")
+    doc["a9_16_rfp_rule"] = ("the official RFP is registered by hash with a verbatim clause transcription (" +
+                             REGISTRATION_REL + ", A9.17 RFP); RFP-cited facts carry rfp_citation_status " + REGISTERED +
+                             " with the registered clause ids (the step-1 label " + L.RFP_PENDING + " is kept as "
+                             "rfp_citation_status_as_applied history); AG-15 closure is the owner's, so "
+                             "requirement_frozen stays false for every RFP row until the owner closes AG-15")
     doc["a9_16_owner_answers_applied"] = (
         [L.applied_row(q, ARTIFACT, [rid], "row a9_16 record; open reading OWNER_DECIDED", [TEST])
          for rid, (qids, _, _) in ROW_RECORDS.items() for q in qids]
         + [L.a915_row(ARTIFACT, ["RVM-10"], "'air + Xe' = both ambient-air and Xenon operating capability, separate "
                       "tanks / modes, both configurations; never a contingency reading", [TEST])])
+    return doc
+
+
+def _row_clauses(r: dict) -> list:
+    return list(r.get("rfp_clauses") or r.get("related_rfp_clauses") or [])
+
+
+def _registered(rec: dict, clauses: list, where: str) -> None:
+    if rec.get("rfp_citation_status") != L.RFP_PENDING:
+        return
+    if not clauses:
+        raise RuntimeError(f"{where}: an RFP-cited fact maps to no registered clause")
+    rec["rfp_citation_status_as_applied"] = L.RFP_PENDING
+    rec["rfp_citation_status"] = REGISTERED
+    rec["rfp_clause_ids"] = list(clauses)
+    rec["rfp_citation_note"] = ("registered clause(s) " + ", ".join(clauses) + " (" + REGISTRATION_REL + "); AG-15 "
+                                "closure is the owner's, requirement_frozen stays false")
+
+
+def registered_rfp_citations(doc: dict) -> dict:
+    """A9.16 repair RFP-03 / RVF-04: after the rfp_rebase, every step-1 'OWNER_STATED_PENDING_RFP_REGISTRATION' label
+    on a re-based row (a9_16 record, owner-decided open readings) and in a9_16_owner_answers_applied becomes
+    REGISTERED_CLAUSE with the row's registered clause ids (determining clauses, else related clauses); the step-1 label
+    is kept as rfp_citation_status_as_applied. Fails closed if a label maps to no clause or one survives."""
+    if "rfp_rebase" not in doc:
+        raise RuntimeError("registered_rfp_citations runs after the rfp_rebase")
+    by = {r["id"]: r for r in doc["rows"]}
+    for r in doc["rows"]:
+        cl = _row_clauses(r)
+        if "a9_16" in r:
+            _registered(r["a9_16"], cl, r["id"] + " a9_16")
+        for o in r["open_readings"]:
+            _registered(o, cl, r["id"] + " " + o["id"])
+    for a in doc["a9_16_owner_answers_applied"]:
+        cl = []
+        for rid in a["record_ids"]:
+            cl += [c for c in _row_clauses(by[rid]) if c not in cl]
+        _registered(a, cl, "a9_16_owner_answers_applied " + a["question_id"])
+    left = json.dumps({k: doc[k] for k in ("rows", "a9_16_owner_answers_applied")})
+    if '"rfp_citation_status": "' + L.RFP_PENDING + '"' in left:
+        raise RuntimeError("an OWNER_STATED_PENDING_RFP_REGISTRATION citation status survived the re-base")
     return doc
