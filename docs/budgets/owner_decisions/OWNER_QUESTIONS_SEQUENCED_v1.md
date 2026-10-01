@@ -5,7 +5,7 @@
 | Group | Topic | Count | Answered |
 |---|---|---|---|
 | S1 | Blocks the start of P1 (answer first) | 16 | 16 |
-| S2 | Production-model change decisions (move goldens / need a HISTORY entry) | 5 | 0 |
+| S2 | Production-model change decisions (move goldens / need a HISTORY entry) | 5 | 5 |
 | S3 | Blocks a later P1 stage | 10 | 0 |
 | S4 | Blocks P2 | 7 | 0 |
 | S5 | Blocks P3 / P4 | 14 | 0 |
@@ -40,11 +40,11 @@
 
 | # | ID | Question | Proposed | Source | Owner answer |
 |---|---|---|---|---|---|
-| S2.1 | F1Q-01 | IntakeSurface recombines species rows by mass fraction although its C_D rows are normalised by the mixture q and CR_passive needs mole weighting (finding F1-01). Authorise a controlled model change (goldens move, HISTORY entry), or keep the production convention and use the species-consistent recombination only in the design-synthesis layer? |  | A9.7 F1 | OPEN |
-| S2.2 | F1Q-04 | Authorise a frozen intake surface v2 at the envelope states (CLAUDE.md rule 1 rebuild) to replace the bounded direct TPMC used here off the build state? |  | A9.7 F1 | OPEN |
-| S2.3 | OQ-F3-01 | Safety factor and allowable basis for the compressor rotor: the module uses an uncited factor 2.0; the only cited allowable accessed is the Ti-6Al-4V annealed-plate A-basis Fty 827 MPa (MMPDS-06 via NASA-HDBK-6025, room temperature). Which factor and which product-form / temperature allowable govern? |  | A9.7 F3 | OPEN |
-| S2.4 | UPSTREAM_ICD-Q7 | Convergence flags (G-03 to G-05): the owner decides when to add them to the gas-path modules |  | A9.7 existing ICD | OPEN |
-| S2.5 | F9-OQ-04 | Model-change candidates MCC-02 (silent Gaede clipping), MCC-03 (uncited rotor allowable in rotor_ok) and MCC-05..MCC-07 (intake_tpmc reference: non-termination for max_hits < 1, silent Maxwell fallback for an unknown kernel, NaN / raise for CLL alpha outside [0, 1]): authorize each as a controlled model change (golden check, HISTORY entry), or keep the design-layer workarounds? |  | A9.7 F9 | OPEN |
+| S2.1 | F1Q-01 | IntakeSurface recombines species rows by mass fraction although its C_D rows are normalised by the mixture q and CR_passive needs mole weighting (finding F1-01). Authorise a controlled model change (goldens move, HISTORY entry), or keep the production convention and use the species-consistent recombination only in the design-synthesis layer? |  | A9.7 F1 | YES_PRODUCTION_FIX (OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json) |
+| S2.2 | F1Q-04 | Authorise a frozen intake surface v2 at the envelope states (CLAUDE.md rule 1 rebuild) to replace the bounded direct TPMC used here off the build state? |  | A9.7 F1 | YES_AFTER_S2_1 (OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json) |
+| S2.3 | OQ-F3-01 | Safety factor and allowable basis for the compressor rotor: the module uses an uncited factor 2.0; the only cited allowable accessed is the Ti-6Al-4V annealed-plate A-basis Fty 827 MPa (MMPDS-06 via NASA-HDBK-6025, room temperature). Which factor and which product-form / temperature allowable govern? |  | A9.7 F3 | REGISTERED_ROTOR_STRENGTH_BASIS_FAIL_CLOSED (OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json) |
+| S2.4 | UPSTREAM_ICD-Q7 | Convergence flags (G-03 to G-05): the owner decides when to add them to the gas-path modules |  | A9.7 existing ICD | YES_NOW (OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json) |
+| S2.5 | F9-OQ-04 | Model-change candidates MCC-02 (silent Gaede clipping), MCC-03 (uncited rotor allowable in rotor_ok) and MCC-05..MCC-07 (intake_tpmc reference: non-termination for max_hits < 1, silent Maxwell fallback for an unknown kernel, NaN / raise for CLL alpha outside [0, 1]): authorize each as a controlled model change (golden check, HISTORY entry), or keep the design-layer workarounds? |  | A9.7 F9 | YES_ALL_FIVE (OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json) |
 
 ## S3 - Blocks a later P1 stage
 
