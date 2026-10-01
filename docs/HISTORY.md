@@ -2761,3 +2761,30 @@ D-09). Recorded separately from the S2.2 entry above, where it was first logged.
 evaluated the frozen surface at `min(off_axis_deg, 5)` and with accommodation clipped to [0, 1]; both now go to
 `IntakeSurface` as given, and anything outside the frozen domain raises. The same applies to the AO-aged accommodation in
 `mission5` (review fix D-08). Golden impact: none (all golden states are inside the domain).
+
+## 2026-10-01 — A9.14 S10.4: abep_core parity re-registration v2 (reference re-pin after A9.9)
+
+Owner decisions A9.14 S10.4 RUST-OQ-02 (`OPTIONAL_RUST_CI_MANDATORY_PARITY_ON_RUST_CHANGES`) and S10.3 RUST-OQ-01
+(`PYTHON_CANONICAL_FOR_FROZEN_AND_SCORE_BEARING`), `docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md`
+(json sha256 c6c00b7f...); trigger A9.9 S2.5 MCC-05/06/07 and S2.1 F1Q-01
+(`docs/decisions/OD_2026_10_01_A9_9_S2_MODEL_CHANGE_OWNER_DECISIONS.md`, json sha256 b6010d9d...). Closes downstream
+finding N1 of the S2.5 entry. The A9.9 changes moved the canonical reference `abep_sim/intake_tpmc.py` from sha256
+ea0100b9... (v1 pin) to dcddf947..., so the v1 campaign refused (REFUSED_REFERENCE_CHANGED) and `verify_abep_core
+--check` / the Rust admission gate reported NOT_ADMITTED_BUILD.
+- `docs/performance/abep_core/parity_prereg_v2.json` (sha256 98be24c1...) committed on its own (ce5b445) before any v2
+  comparison: workloads, vectors, n, seeds (scoring 20261001), observables, exact invariants and tolerance
+  |delta| <= 5 sqrt(se_py^2 + se_rust^2) / aggregate bound 4.0 copied unchanged from v1 (sha256 dd12856b...); only the
+  reference pin changes. Records why (A9.9 reference change; step-2 bit-identity of valid-input trace numerics, commit
+  153c013) and why the v1 seed is kept (no parameter change, no NOT_ADMITTED verdict to follow).
+- `scripts/verify_abep_core.py` and `abep_sim/design/tpmc_backend.py` read v2 (48ce61b, committed before the campaign so
+  the recorded wrapper sha256 is final); `parity_prereg_v1.json` / `parity_report_v1.*` are unchanged history.
+- Campaign (abep_core rebuilt from the unchanged sources with rustc 1.94.1 / maturin 1.15.0; extension sha256 eb586f03...,
+  identical to the v1 build): wall time 110.3 s (K4 69.0 s, K5 34.8 s). Verdicts K1_entry, K2_diffuse, K3_cll, K4_trace,
+  K5_clausing all ADMITTED (0 OUTSIDE, 0 DISAGREE_EXACT, every aggregate <= 1.38, every exact invariant held in both
+  backends). Informational v1 cross-check: all 4709 stored test numbers equal v1 bitwise for both backends. Measured
+  speed-up (informational, shared machine, load ~5): kernel-only W1 7.5x / W2 10.1x; served path W1 8.2x / W2 9.0x.
+- ADMITTED keeps its v1 meaning: optional, explicitly selected `backend='rust'` inside the tested parity domain; default
+  stays `python`; frozen data, goldens and score-bearing evidence come from the Python reference (A9.14 S10.3).
+- Open (outside this lane's paths): `.github/workflows/rust-parity.yml` and `tests/test_rust_ci_workflow.py` still read
+  the v1 records (`test_source_status_entry_point` compares the v2 `--source-status` output with the v1 report and fails;
+  the workflow's reference-pin step compares against `parity_prereg_v1`). They need re-pointing to v2 by the Rust-CI owner.
