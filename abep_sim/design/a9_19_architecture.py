@@ -181,17 +181,42 @@ def hollow_cathode_elements(elements: Iterable) -> list[str]:
     return hits
 
 
+# RV19-11: content a flight budget line carries that is C1-related but NOT a listed hollow-cathode element. These are
+# made visible (never silently passed) and reported in a non-clean check state; the budgets lane owns their removal.
+#   CONDITIONAL_NOT_BOOKED: a provision worded "if C1 selected" (A9.20: C1 is never selected for flight -> books nothing)
+#                           or a c1_branch record whose state is *NOT_SELECTED with nothing in the line.
+#   EMBEDDED_IN_FLOOR:      the budget states elsewhere that a C1 cathode Xe branch mass is already inside a flight line's
+#                           evidence floor (an inferred analog floor, not a listed element): needs re-attribution.
+C1_BOOKING_CONDITIONAL = "CONDITIONAL_NOT_BOOKED"
+C1_BOOKING_EMBEDDED = "EMBEDDED_IN_FLOOR"
+C1_FLAGGED_BOOKINGS = (C1_BOOKING_CONDITIONAL, C1_BOOKING_EMBEDDED)
+CHECK_CLEAN = "NO_HOLLOW_CATHODE_ELEMENT_LISTED"
+CHECK_FLAGGED = "NO_HOLLOW_CATHODE_ELEMENT_LISTED_C1_PROVISIONS_FLAGGED_PENDING_BUDGET_REFRESH"
+_C1_CONDITIONAL_RE = re.compile(r"if\s+c-?1\s+(is\s+)?selected", re.I)
+
+
+def is_conditional_c1_text(text) -> bool:
+    return isinstance(text, str) and bool(_C1_CONDITIONAL_RE.search(text))
+
+
 def refuse_hollow_cathode_elements(config: str, elements: Iterable) -> dict:
     """A9.19: no conventional hollow cathode in the flight architecture. Refuses a flight configuration that lists any
-    hollow-cathode element; returns the checked record otherwise."""
+    hollow-cathode element; returns the checked record otherwise. Elements carrying ``booking`` in C1_FLAGGED_BOOKINGS
+    (conditional / embedded C1 provisions, RV19-11) are not refusals but are reported and make the check non-clean."""
     require_flight_configuration(config)
     els = list(elements)
-    hits = hollow_cathode_elements(els)
+
+    def _flagged(e):
+        return isinstance(e, Mapping) and e.get("booking") in C1_FLAGGED_BOOKINGS
+
+    flagged = [e for e in els if _flagged(e)]
+    hits = hollow_cathode_elements([e for e in els if not _flagged(e)])
     if hits:
         raise ArchitectureRuleError(f"REFUSED: hollow-cathode element(s) {hits} in flight configuration {config!r} "
                                     "(A9.19: no conventional hollow cathode; A9.20: C1 ground-only)")
     return {"configuration": config, "n_elements": len(els), "hollow_cathode_elements": [],
-            "check": "NO_HOLLOW_CATHODE_ELEMENT_LISTED", "authority": cite("A9.19", "A9.20")}
+            "c1_provisions_flagged": [dict(e) for e in flagged],
+            "check": CHECK_FLAGGED if flagged else CHECK_CLEAN, "authority": cite("A9.19", "A9.20")}
 
 
 def classify_gas(gas) -> str:

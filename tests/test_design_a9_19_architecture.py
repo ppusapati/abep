@@ -67,7 +67,9 @@ def test_no_hollow_cathode_element_in_flight_configuration():
     els = ao.flight_configuration_elements("hall_icp_neutralizer")
     assert a919.refuse_hollow_cathode_elements("hall_icp_neutralizer", els)["hollow_cathode_elements"] == []
     ev = ao.evaluate_system(None, "hall_icp_neutralizer")
-    assert ev["hollow_cathode_check"] == "NO_HOLLOW_CATHODE_ELEMENT_LISTED"
+    rec = a919.refuse_hollow_cathode_elements("hall_icp_neutralizer", els)
+    assert ev["hollow_cathode_check"] == rec["check"]
+    assert ev["hollow_cathode_check"] == (a919.CHECK_FLAGGED if ev["c1_provisions_flagged"] else a919.CHECK_CLEAN)
     # every hollow-cathode marker is refused in a flight configuration
     for bad in ("c1_heater", "c1_keeper", "AL-C1", "hollow cathode", "LaB6 emitter", {"id": "X", "name": "C1"},
                 {"id": "C-1"}, "cathode_heater", "C1 Xe branch"):
@@ -125,3 +127,52 @@ def test_applied_row_cites_decision_hashes():
     assert r["decision_md_sha256"] == a919.DECISIONS["A9.19"]["md_sha256"]
     with pytest.raises(a919.ArchitectureRuleError):
         a919.applied_row("A9.15", "x", [], "")
+
+
+def test_rv19_11_elements_read_mass_power_v3_content():
+    """RV19-11: the refusal reads the current mass/power v3 package (not the immutable v2 history) and sees line
+    content (floor constituents, c1_branch, the C1 branch embedded in the AL-08 floor), not line names only."""
+    assert ao.MP_V3_REL == "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json"
+    els = ao.flight_configuration_elements("hall_icp_neutralizer")
+    srcs = {e.get("source", "").split(" ")[0] for e in els if e.get("kind") != "power_slot"}
+    assert srcs == {ao.MP_V3_REL}
+    mp = json.loads((ROOT / ao.MP_V3_REL).read_text(encoding="utf-8"))
+    lines = mp["lines"]["hall_icp_neutralizer"]
+    assert {e["id"] for e in els if e["kind"] == "mass_line"} == {ln["line"] for ln in lines}
+    n_fc = sum(len(ln.get("floor_constituents") or []) for ln in lines)
+    assert sum(e["kind"] == "floor_constituent" for e in els) == n_fc
+    assert sum(e["kind"] == "c1_branch" for e in els) == sum("c1_branch" in ln for ln in lines)
+    # any embedded C1 branch is quoted from the ground reference's own text (kg present there, never invented)
+    gtxt = json.dumps(mp["lines"].get("hall_c1_reference", []))
+    for e in els:
+        if e.get("booking") == a919.C1_BOOKING_EMBEDDED:
+            assert f"C1 cathode Xe branch {e['kg']:g} kg" in gtxt
+    # every flagged item is either a conditional 'if C1 selected' / NOT_SELECTED provision or an embedded floor branch
+    rec = a919.refuse_hollow_cathode_elements("hall_icp_neutralizer", els)
+    for e in rec["c1_provisions_flagged"]:
+        assert e["booking"] in a919.C1_FLAGGED_BOOKINGS
+        if e["booking"] == a919.C1_BOOKING_CONDITIONAL and e["kind"] != "c1_branch":
+            assert a919.is_conditional_c1_text(e["name"])
+    assert rec["check"] != "PASS"
+
+
+def test_rv19_11_booked_c1_content_refused():
+    """A booked C1 element inside a flight line (unconditional name, floor constituent, selected c1_branch) is refused;
+    a conditional or NOT_SELECTED provision is flagged, never silently passed."""
+    base = {"line": "AL-99", "name": "Hall PPU", "floor_constituents": []}
+    flag = ao._line_hc_elements(dict(base, name="Hall PPU (C1 heater/keeper electronics if C1 selected)"),
+                                "hall_icp_neutralizer")
+    rec = a919.refuse_hollow_cathode_elements("hall_icp_neutralizer", flag)
+    assert rec["check"] == a919.CHECK_FLAGGED and len(rec["c1_provisions_flagged"]) == 1
+    for bad in (dict(base, name="Hall PPU (C1 heater/keeper electronics)"),
+                dict(base, floor_constituents=[{"what": "C1 cathode unit analog", "kg": 0.2}]),
+                dict(base, c1_branch={"state": "C1_SELECTED", "in_AL08": 0.285}),
+                dict(base, c1_branch={"state": "PENDING_C1_NOT_SELECTED", "in_AL08": 0.285})):
+        with pytest.raises(a919.ArchitectureRuleError, match="hollow-cathode"):
+            a919.refuse_hollow_cathode_elements("hall_icp_neutralizer",
+                                                ao._line_hc_elements(bad, "hall_icp_neutralizer"))
+    ok = ao._line_hc_elements(dict(base, c1_branch={"state": "PENDING_C1_NOT_SELECTED", "in_AL08": None}),
+                              "hall_icp_neutralizer")
+    assert a919.refuse_hollow_cathode_elements("hall_icp_neutralizer", ok)["check"] == a919.CHECK_FLAGGED
+    clean = ao._line_hc_elements(base, "hall_icp_neutralizer")
+    assert a919.refuse_hollow_cathode_elements("hall_icp_neutralizer", clean)["check"] == a919.CHECK_CLEAN

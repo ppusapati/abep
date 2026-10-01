@@ -126,6 +126,9 @@ P2_REL = "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json"
 P3_REL = "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json"
 P4_REL = "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json"
 MP_REL = "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json"
+# RV19-11: the A9.19 hollow-cathode refusal reads the current mass / power package (v3), never the immutable v2
+# history (the other v2 readers are the F7/F8 identity-pinned inputs and stay unchanged here)
+MP_V3_REL = "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json"
 RFQ_REL = "docs/procurement/rfq_a9_v2/rfq_a9_v2.json"
 RVM_REL = "docs/requirements/rvm_a9/rvm_a9_v1.json"
 ENS_REL = "hallthruster_bridge/ensemble/transport_ensemble_v0.json"
@@ -1139,13 +1142,59 @@ def evaluate_constraints(values: Mapping) -> list[dict]:
     return out
 
 
+def _line_hc_elements(ln: Mapping, config: str) -> list[dict]:
+    """Every name-bearing item of one v3 budget line: the line itself, each floor constituent and the c1_branch record.
+    A name worded as a conditional C1 provision ('if C1 selected') is flagged CONDITIONAL_NOT_BOOKED (A9.20: never
+    selected for flight); a c1_branch is flagged only while it is *NOT_SELECTED and books nothing, else it is a C1
+    element (refused)."""
+    lid = ln.get("line")
+    name = ln.get("name", ln.get("owner_name"))
+    el = {"id": lid, "name": name, "kind": "mass_line", "source": f"{MP_V3_REL} lines.{config}.{lid}"}
+    if a919.is_conditional_c1_text(name) and a919.hollow_cathode_elements([name]):
+        el["booking"] = a919.C1_BOOKING_CONDITIONAL
+    out = [el]
+    for i, fc in enumerate(ln.get("floor_constituents") or []):
+        what = fc.get("what")
+        e = {"id": f"{lid}.floor[{i}]", "name": what, "kind": "floor_constituent", "kg": fc.get("kg"),
+             "source": f"{MP_V3_REL} lines.{config}.{lid}.floor_constituents[{i}]"}
+        if a919.is_conditional_c1_text(what) and a919.hollow_cathode_elements([what]):
+            e["booking"] = a919.C1_BOOKING_CONDITIONAL
+        out.append(e)
+    br = ln.get("c1_branch")
+    if br is not None:
+        st = str(br.get("state"))
+        e = {"id": f"{lid}.c1_branch", "name": f"C1 branch ({st})", "kind": "c1_branch", "state": st,
+             "in_line": br.get("in_AL08"), "source": f"{MP_V3_REL} lines.{config}.{lid}.c1_branch"}
+        if "NOT_SELECTED" in st and not br.get("in_AL08"):
+            e["booking"] = a919.C1_BOOKING_CONDITIONAL
+        out.append(e)
+    return out
+
+
+_EMBEDDED_C1_RE = re.compile(r"C1 cathode Xe branch ([0-9.]+) kg \(([^)]*)\) is already inside the (AL-\d+) floor")
+
+
 def flight_configuration_elements(config: str, repo: Path = REPO) -> list[dict]:
-    """Every element a flight configuration books: the A9-02 installed power slots and the mass / power v2 BOM lines.
+    """Every element a flight configuration books: the A9-02 installed power slots and the mass / power v3 lines with
+    their floor constituents and C1-branch records (RV19-11: v3, not the immutable v2 history; content, not line names
+    only). A C1 cathode branch that the ground reference's own C1 line states is already inside a flight line's floor
+    is surfaced as an EMBEDDED_IN_FLOOR element (kg quoted from that text, never invented).
     A9.19: the hollow-cathode refusal is applied to this list (evaluate_system)."""
     a919.require_flight_configuration(config)
+    mp = read_json(MP_V3_REL, repo)
     els = [{"id": s, "kind": "power_slot"} for s in bb.installed_slots(config)]
-    els += [{"id": ln["line"], "name": ln["owner_name"], "kind": "mass_line"}
-            for ln in read_json(MP_REL, repo)["lines"][config]]
+    flight_lines = mp["lines"][config]
+    for ln in flight_lines:
+        els += _line_hc_elements(ln, config)
+    present = {ln.get("line") for ln in flight_lines}
+    for gcfg in GROUND_REFERENCE_CONFIGURATIONS:
+        for ln in mp["lines"].get(gcfg, []):
+            m = _EMBEDDED_C1_RE.search(str(ln.get("floor_arithmetic", "")))
+            if m and m.group(3) in present:
+                els.append({"id": f"{m.group(3)}.embedded_c1_cathode_xe_branch", "name": "C1 cathode Xe branch",
+                            "kind": "embedded_floor_branch", "kg": float(m.group(1)), "ref": m.group(2),
+                            "booking": a919.C1_BOOKING_EMBEDDED,
+                            "source": f"{MP_V3_REL} lines.{gcfg}.{ln.get('line')}.floor_arithmetic"})
     return els
 
 
@@ -1204,6 +1253,7 @@ def evaluate_system(upstream_row: Mapping | None, config: str, design: Mapping |
     ne = [SYSTEM_OBJECTIVE_CODE[k] for k, v in objs.items() if v["status"] != EVALUATED]
     return {"configuration": config, "design_id": row.get("design_id"), "objectives": objs, "constraints": cons,
             "propellant_paths": prop, "hollow_cathode_check": hc["check"],
+            "c1_provisions_flagged": [e["id"] for e in hc["c1_provisions_flagged"]],
             "system_not_evaluated": ne,
             "constraints_not_evaluated": [c["id"] for c in cons if c["status"] == C_NOT_EVALUATED],
             "constraints_violated": [c["id"] for c in cons if c["status"] == C_VIOLATED]}
