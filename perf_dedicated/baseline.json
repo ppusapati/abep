@@ -1,0 +1,3678 @@
+{
+ "schema": "abep_performance_baseline_v1",
+ "lane": "fo_a9_7_f0_profiling",
+ "directive": "docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md (sec. F0)",
+ "mode": "full",
+ "base_commit_label": "98fbbb9",
+ "base_commit_note": "main 98fbbb9 = A9.7 protected baseline. Every profiled source file is byte-identical between 98fbbb9 and the measured HEAD (checked at generation, recorded per file); later commits only add docs and the empty abep_sim/design package, which is not profiled.",
+ "measured_head": "3257374d0613c5be2f55c673f0e18b0e157fdc63",
+ "generated_utc_date": "2026-10-01",
+ "commands": {
+  "full": "python scripts/perf/profile_baseline.py",
+  "quick": "python scripts/perf/profile_baseline.py --quick --out-json <path> [--only <ids>]",
+  "check": "python scripts/perf/profile_baseline.py --check",
+  "render_md": "python scripts/perf/profile_baseline.py --render-md",
+  "rederive": "python scripts/perf/profile_baseline.py --rederive",
+  "test": "python -m pytest -q tests/test_perf_baseline.py"
+ },
+ "environment": {
+  "cpu_model": "Intel64 Family 6 Model 167 Stepping 1, GenuineIntel",
+  "logical_cpus": 16,
+  "cpus_available_to_process": null,
+  "machine": "AMD64",
+  "os": "Windows 11",
+  "python": "3.13.14",
+  "python_implementation": "CPython",
+  "numpy": "2.4.4",
+  "scipy": "1.17.1",
+  "pandas": "3.0.2",
+  "blas": {
+   "blas": {
+    "name": "scipy-openblas",
+    "version": "0.3.31.188.0",
+    "openblas configuration": "OpenBLAS 0.3.31.188.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY Haswell MAX_THREADS=24"
+   },
+   "lapack": {
+    "name": "scipy-openblas",
+    "version": "0.3.31.188.0",
+    "openblas configuration": "OpenBLAS 0.3.31.188.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY Haswell MAX_THREADS=24"
+   }
+  },
+  "thread_env": {
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1",
+   "MKL_NUM_THREADS": "1"
+  },
+  "loadavg_at_start": [
+   -1.0,
+   -1.0,
+   -1.0
+  ],
+  "concurrency_note": "measured on a shared machine; other A9.7 lane worktrees may run concurrently - per-workload 1-minute load averages are recorded; treat timings as +-tens of percent, ranking as order-of-magnitude"
+ },
+ "profiled_sources": [
+  {
+   "path": "abep_sim/intake_tpmc.py",
+   "sha256": "f627011eb7257c70003321fe58839ddb5cc9219a36a8ec435e2012857cb49c8a",
+   "git_blob": "1132da7406dd084573c5763840d6b3af81c8e997",
+   "identical_to_98fbbb9": true
+  },
+  {
+   "path": "abep_sim/intake.py",
+   "sha256": "cbd6a123989293808f3ca8498b91770b772ed28abc80fea862793a5837eeafe9",
+   "git_blob": "f577bf2d1e7a87c1eaaa5e1b77e258e83732071a",
+   "identical_to_98fbbb9": true
+  },
+  {
+   "path": "abep_sim/compressor.py",
+   "sha256": "b6a208dceaef9bed1098021dcf46d9a5de5ca0bb7624bca0990eb754232316b2",
+   "git_blob": "01f0d9714822b60a6840e38d94db0367307b3321",
+   "identical_to_98fbbb9": true
+  },
+  {
+   "path": "abep_sim/reservoir.py",
+   "sha256": "82f28d663a5fe95adbf2a6cc9f71be8a7dcc253d977f635e33296657cd5b5006",
+   "git_blob": "ff3e08487768a76472831e15d2016209925c864e",
+   "identical_to_98fbbb9": true
+  },
+  {
+   "path": "abep_sim/system.py",
+   "sha256": "d61a75991b3d240fbc37a6a93dbe53cf24c2376cc3dfe76d5932aceefbb4ff0e",
+   "git_blob": "0ce8be3c52d5f84907383d59e0b873b0e6459fe9",
+   "identical_to_98fbbb9": true
+  },
+  {
+   "path": "abep_sim/archengine.py",
+   "sha256": "72d478e3782a746ad4d1d7580ad172d7a7a2140d08cb39edbfb767356d85f504",
+   "git_blob": "4747e755552ff3066cdf0e421863863cf7ceb07f",
+   "identical_to_98fbbb9": true
+  },
+  {
+   "path": "abep_sim/uq_modular.py",
+   "sha256": "d2e7f80311b5ed7241ab3286b5acf6a4dcdf902188044a57813576f8b0eedce1",
+   "git_blob": "178a08d0933c03f8a4064ac09ddca0028e7049c1",
+   "identical_to_98fbbb9": true
+  },
+  {
+   "path": "abep_sim/uq6.py",
+   "sha256": "d8ad7ff3aa9f8f7884c176efa27f13ab4ab7d0f1cb9aab41286aa2428879fb38",
+   "git_blob": "d587e17078dc4201383424d19cc2e09afa3ac1ad",
+   "identical_to_98fbbb9": true
+  },
+  {
+   "path": "abep_sim/mission_env.py",
+   "sha256": "669e21f193b4f058060010cd37c847d475196600cfa80eae86811d0555b9809a",
+   "git_blob": "e69dc49c51165b9011399f4fb398ec88b3c98fe8",
+   "identical_to_98fbbb9": true
+  },
+  {
+   "path": "abep_sim/mission5.py",
+   "sha256": "ea5ee2fa9fd108c9e2026b251cee88d4d7e294da72c913c469ca2b700e81a6b5",
+   "git_blob": "6739e85a36a74337ae6c33e381ba2bcdf34a85f4",
+   "identical_to_98fbbb9": true
+  },
+  {
+   "path": "abep_sim/atmosphere.py",
+   "sha256": "272b6a8f7ea56d0f4df6df59e07e42d55b888e32e2689a6d217d82c3a93d13d1",
+   "git_blob": "61a848f113a1605d68e9b932959ff9bfd2488fb0",
+   "identical_to_98fbbb9": true
+  },
+  {
+   "path": "abep_sim/plasma_chem.py",
+   "sha256": "60b5a6024158c9d27bfaee6b7f548858e360c909d87a1b659bf335feac0f8ac5",
+   "git_blob": "e37c5983913a98790a76ba2cff5f97267deae5cd",
+   "identical_to_98fbbb9": true
+  },
+  {
+   "path": "abep_sim/plasma_devices.py",
+   "sha256": "f74f804c70cb34c736742abcd7b1a323e9a624c6d7e5045633f6417886c51853",
+   "git_blob": "7a75cd7eb8a3e7076758731e3d2c400949e4867a",
+   "identical_to_98fbbb9": true
+  },
+  {
+   "path": "abep_sim/golden.py",
+   "sha256": "f48f8dd38ca7a215629c24c2d0cb2132d57143d68b6c72aebd66e2822a9bb5c1",
+   "git_blob": "ce5a621e06aa40b95a710bea728f46d89430b8ce",
+   "identical_to_98fbbb9": true
+  },
+  {
+   "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py",
+   "sha256": "d22abebe23d3dba88366b425da0384dfe5ab19853e0a0451376d46ae17c2d3c5",
+   "git_blob": "eacc79363806182cee2530fbca9011f6b943d484",
+   "identical_to_98fbbb9": true
+  },
+  {
+   "path": "docs/experiments/hall_icp/p3_coupled_thermal/build_p3_coupled_thermal.py",
+   "sha256": "8fafdd0cf41f8352c0d3fd26101c6a08006e0d02a531e58a42e7142e8bd620e6",
+   "git_blob": "1b66daa7db34426285f8a9e6c58e74394ec1bb95",
+   "identical_to_98fbbb9": true
+  }
+ ],
+ "workload_spec_sha256": "138511a6af4095696d55835daaea28196bef5297d2f870ae013fdf46891fde46",
+ "parameters": [
+  {
+   "id": "F0-P-01",
+   "value": 3,
+   "units": "repeats",
+   "basis": "A9.7 F0 lane brief: median of >= 3 repeats (full mode); quick mode is a smoke run",
+   "source": "scripts/perf/profile_baseline.py",
+   "evidence_class": "assumed (harness choice, not physics evidence)",
+   "status": "DEFINED"
+  },
+  {
+   "id": "F0-P-02",
+   "value": 60.0,
+   "units": "s",
+   "basis": "addressable interpreter time of the reference workload above which a native port is a candidate (preregistered before the full run)",
+   "source": "scripts/perf/profile_baseline.py",
+   "evidence_class": "assumed (harness choice, not physics evidence)",
+   "status": "DEFINED"
+  },
+  {
+   "id": "F0-P-03",
+   "value": 10.0,
+   "units": "s",
+   "basis": "below: not a bottleneck",
+   "source": "scripts/perf/profile_baseline.py",
+   "evidence_class": "assumed (harness choice, not physics evidence)",
+   "status": "DEFINED"
+  },
+  {
+   "id": "F0-P-04",
+   "value": 15,
+   "units": "functions",
+   "basis": "cProfile rows kept per list",
+   "source": "scripts/perf/profile_baseline.py",
+   "evidence_class": "assumed (harness choice, not physics evidence)",
+   "status": "DEFINED"
+  },
+  {
+   "id": "F0-P-05",
+   "value": "cleared before every repeat",
+   "units": "-",
+   "basis": "archengine _ION_CACHE/_NEUT_CACHE/_GAS_CACHE (pure functions of their keys, rule 5): cold-solver timing; frozen data files warmed once untimed",
+   "source": "scripts/perf/profile_baseline.py",
+   "evidence_class": "assumed (harness choice, not physics evidence)",
+   "status": "DEFINED"
+  }
+ ],
+ "workloads": [
+  {
+   "id": "tpmc_trace_channel",
+   "category": "tpmc_particle_tracing",
+   "entry_point": "abep_sim.intake_tpmc.trace_channel (forward trace; entry from _flux_weighted_entry)",
+   "description": "forward test-particle trace through one honeycomb channel, 200 km mean NRLMSIS (frozen), mean molecular mass, L/d 5, d 10 mm, Maxwell alpha 0.8, theta 0",
+   "params": {
+    "n": 20000,
+    "L_over_d": 5.0,
+    "alpha": 0.8,
+    "seed": 11
+   },
+   "unit_of_work": "particles",
+   "covered_by": "intake_response_surface_reduced",
+   "reference": null,
+   "scaling_probe": {
+    "points": [
+     {
+      "n": 2000,
+      "median_wall_s": 0.0175
+     },
+     {
+      "n": 20000,
+      "median_wall_s": 0.0491
+     }
+    ],
+    "work_ratio": 10.0,
+    "time_ratio": 2.806,
+    "time_ratio_over_work_ratio": 0.281,
+    "reading": "close to 1: cost scales with array size (numpy-level work dominates); well below 1: fixed per-call / per-step interpreter overhead dominates"
+   },
+   "repeats": 3,
+   "wall_s": [
+    0.0543,
+    0.0523,
+    0.0503
+   ],
+   "cpu_s": [
+    0.0469,
+    0.0625,
+    0.0469
+   ],
+   "median_wall_s": 0.0523,
+   "median_cpu_s": 0.0469,
+   "cpu_over_wall": 0.897,
+   "units_of_work": 20000,
+   "median_wall_s_per_unit": 2.6e-06,
+   "loadavg_1min_before_after": [
+    -1.0,
+    -1.0
+   ],
+   "output_fingerprint": {
+    "collected_frac": 0.76515,
+    "mean_wall_hits": 5.8624,
+    "unresolved": 0.0
+   },
+   "deterministic_across_repeats": true,
+   "profile": {
+    "profiled_wall_s": 0.0579,
+    "total_function_calls": 30180,
+    "function_calls_per_profiled_s": 520995.2,
+    "tottime_fractions": {
+     "project_python": 0.0,
+     "interpreter_builtin": 0.0267,
+     "stdlib_python": 0.6608,
+     "library_python_wrapper": 0.2086,
+     "native_array_call": 0.1039
+    },
+    "interpreter_level_fraction": 0.6875,
+    "numpy_level_fraction": 0.3125,
+    "top_by_cumulative": [
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:99(trace_channel)",
+      "ncalls": 1,
+      "tottime_s": 0.023,
+      "cumtime_s": 0.0529,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:67(_diffuse)",
+      "ncalls": 103,
+      "tottime_s": 0.0105,
+      "cumtime_s": 0.0266,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "site-packages/numpy/_core/numeric.py:1567(cross)",
+      "ncalls": 309,
+      "tottime_s": 0.0047,
+      "cumtime_s": 0.0127,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/_core/numeric.py:1493(moveaxis)",
+      "ncalls": 927,
+      "tottime_s": 0.0018,
+      "cumtime_s": 0.0068,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:58(_flux_weighted_entry)",
+      "ncalls": 1,
+      "tottime_s": 0.0029,
+      "cumtime_s": 0.0049,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "site-packages/numpy/_core/numeric.py:1431(normalize_axis_tuple)",
+      "ncalls": 1854,
+      "tottime_s": 0.0027,
+      "cumtime_s": 0.0041,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'reduce' of 'numpy.ufunc' objects>",
+      "ncalls": 524,
+      "tottime_s": 0.0038,
+      "cumtime_s": 0.0038,
+      "class": "native_array_call"
+     },
+     {
+      "function": "site-packages/numpy/linalg/_linalg.py:2598(norm)",
+      "ncalls": 206,
+      "tottime_s": 0.001,
+      "cumtime_s": 0.0032,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:49(_drifting_maxwellian)",
+      "ncalls": 1,
+      "tottime_s": 0.0019,
+      "cumtime_s": 0.0019,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<method 'sum' of 'numpy.ndarray' objects>",
+      "ncalls": 104,
+      "tottime_s": 0.0001,
+      "cumtime_s": 0.0012,
+      "class": "native_array_call"
+     },
+     {
+      "function": "site-packages/numpy/_core/_methods.py:47(_sum)",
+      "ncalls": 104,
+      "tottime_s": 0.0,
+      "cumtime_s": 0.0011,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/_core/shape_base.py:378(stack)",
+      "ncalls": 104,
+      "tottime_s": 0.0008,
+      "cumtime_s": 0.0009,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/_core/numeric.py:1480(<genexpr>)",
+      "ncalls": 3708,
+      "tottime_s": 0.0005,
+      "cumtime_s": 0.0007,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'astype' of 'numpy.ndarray' objects>",
+      "ncalls": 618,
+      "tottime_s": 0.0007,
+      "cumtime_s": 0.0007,
+      "class": "native_array_call"
+     },
+     {
+      "function": "<built-in method builtins.len>",
+      "ncalls": 6596,
+      "tottime_s": 0.0006,
+      "cumtime_s": 0.0006,
+      "class": "interpreter_builtin"
+     }
+    ],
+    "top_by_tottime": [
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:99(trace_channel)",
+      "ncalls": 1,
+      "tottime_s": 0.023,
+      "cumtime_s": 0.0529,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:67(_diffuse)",
+      "ncalls": 103,
+      "tottime_s": 0.0105,
+      "cumtime_s": 0.0266,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "site-packages/numpy/_core/numeric.py:1567(cross)",
+      "ncalls": 309,
+      "tottime_s": 0.0047,
+      "cumtime_s": 0.0127,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'reduce' of 'numpy.ufunc' objects>",
+      "ncalls": 524,
+      "tottime_s": 0.0038,
+      "cumtime_s": 0.0038,
+      "class": "native_array_call"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:58(_flux_weighted_entry)",
+      "ncalls": 1,
+      "tottime_s": 0.0029,
+      "cumtime_s": 0.0049,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "site-packages/numpy/_core/numeric.py:1431(normalize_axis_tuple)",
+      "ncalls": 1854,
+      "tottime_s": 0.0027,
+      "cumtime_s": 0.0041,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:49(_drifting_maxwellian)",
+      "ncalls": 1,
+      "tottime_s": 0.0019,
+      "cumtime_s": 0.0019,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "site-packages/numpy/_core/numeric.py:1493(moveaxis)",
+      "ncalls": 927,
+      "tottime_s": 0.0018,
+      "cumtime_s": 0.0068,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/linalg/_linalg.py:2598(norm)",
+      "ncalls": 206,
+      "tottime_s": 0.001,
+      "cumtime_s": 0.0032,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/_core/shape_base.py:378(stack)",
+      "ncalls": 104,
+      "tottime_s": 0.0008,
+      "cumtime_s": 0.0009,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'astype' of 'numpy.ndarray' objects>",
+      "ncalls": 618,
+      "tottime_s": 0.0007,
+      "cumtime_s": 0.0007,
+      "class": "native_array_call"
+     },
+     {
+      "function": "<built-in method builtins.len>",
+      "ncalls": 6596,
+      "tottime_s": 0.0006,
+      "cumtime_s": 0.0006,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "site-packages/numpy/_core/numeric.py:1480(<genexpr>)",
+      "ncalls": 3708,
+      "tottime_s": 0.0005,
+      "cumtime_s": 0.0007,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<built-in method numpy.lib.array_utils.normalize_axis_index>",
+      "ncalls": 2889,
+      "tottime_s": 0.0004,
+      "cumtime_s": 0.0004,
+      "class": "native_array_call"
+     },
+     {
+      "function": "<method 'transpose' of 'numpy.ndarray' objects>",
+      "ncalls": 927,
+      "tottime_s": 0.0003,
+      "cumtime_s": 0.0003,
+      "class": "native_array_call"
+     }
+    ],
+    "project_hotspots_by_tottime": [],
+    "cprofile_overhead_ratio": 1.107
+   },
+   "port_judgement": {
+    "judgement": "COVERED_BY",
+    "covered_by": "intake_response_surface_reduced",
+    "basis": "kernel-level measurement; ranked through the workload that calls it (avoids double counting)"
+   }
+  },
+  {
+   "id": "tpmc_intake_response",
+   "category": "tpmc_particle_tracing",
+   "entry_point": "abep_sim.intake_tpmc.intake_response",
+   "description": "one response point = forward trace (n particles) + Clausing back-transmission (fixed n=20000 in clausing_transmission) + momentum/mass bookkeeping; L/d 5, phi 0.85, alpha 0.8, theta 0",
+   "params": {
+    "n": 20000,
+    "L_over_d": 5.0,
+    "alpha": 0.8,
+    "seed": 0
+   },
+   "unit_of_work": "response points",
+   "covered_by": "intake_response_surface_reduced",
+   "reference": null,
+   "repeats": 3,
+   "wall_s": [
+    0.1334,
+    0.1215,
+    0.1193
+   ],
+   "cpu_s": [
+    0.1406,
+    0.125,
+    0.1094
+   ],
+   "median_wall_s": 0.1215,
+   "median_cpu_s": 0.125,
+   "cpu_over_wall": 1.029,
+   "units_of_work": 1,
+   "median_wall_s_per_unit": 0.1214991,
+   "loadavg_1min_before_after": [
+    -1.0,
+    -1.0
+   ],
+   "output_fingerprint": {
+    "CR_passive": 159.400064787,
+    "C_D": 2.05412702173,
+    "K_back": 0.24835,
+    "eta_c": 0.64362,
+    "mean_wall_hits": 6.09425,
+    "unresolved_fraction": 0.0
+   },
+   "deterministic_across_repeats": true,
+   "profile": {
+    "profiled_wall_s": 0.1384,
+    "total_function_calls": 71732,
+    "function_calls_per_profiled_s": 518282.8,
+    "tottime_fractions": {
+     "project_python": 0.0,
+     "interpreter_builtin": 0.0257,
+     "stdlib_python": 0.6525,
+     "library_python_wrapper": 0.213,
+     "native_array_call": 0.1088
+    },
+    "interpreter_level_fraction": 0.6782,
+    "numpy_level_fraction": 0.3218,
+    "top_by_cumulative": [
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:162(intake_response)",
+      "ncalls": 1,
+      "tottime_s": 0.0002,
+      "cumtime_s": 0.1383,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:99(trace_channel)",
+      "ncalls": 2,
+      "tottime_s": 0.0564,
+      "cumtime_s": 0.1305,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:152(clausing_transmission)",
+      "ncalls": 1,
+      "tottime_s": 0.0,
+      "cumtime_s": 0.0757,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:67(_diffuse)",
+      "ncalls": 245,
+      "tottime_s": 0.029,
+      "cumtime_s": 0.0688,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "site-packages/numpy/_core/numeric.py:1567(cross)",
+      "ncalls": 735,
+      "tottime_s": 0.012,
+      "cumtime_s": 0.0309,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/_core/numeric.py:1493(moveaxis)",
+      "ncalls": 2205,
+      "tottime_s": 0.0043,
+      "cumtime_s": 0.0159,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'reduce' of 'numpy.ufunc' objects>",
+      "ncalls": 1240,
+      "tottime_s": 0.0098,
+      "cumtime_s": 0.0098,
+      "class": "native_array_call"
+     },
+     {
+      "function": "site-packages/numpy/_core/numeric.py:1431(normalize_axis_tuple)",
+      "ncalls": 4410,
+      "tottime_s": 0.0063,
+      "cumtime_s": 0.0097,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/linalg/_linalg.py:2598(norm)",
+      "ncalls": 490,
+      "tottime_s": 0.0026,
+      "cumtime_s": 0.0083,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:58(_flux_weighted_entry)",
+      "ncalls": 1,
+      "tottime_s": 0.0029,
+      "cumtime_s": 0.0048,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<method 'sum' of 'numpy.ndarray' objects>",
+      "ncalls": 245,
+      "tottime_s": 0.0002,
+      "cumtime_s": 0.0029,
+      "class": "native_array_call"
+     },
+     {
+      "function": "site-packages/numpy/_core/_methods.py:47(_sum)",
+      "ncalls": 245,
+      "tottime_s": 0.0001,
+      "cumtime_s": 0.0027,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/_core/shape_base.py:378(stack)",
+      "ncalls": 246,
+      "tottime_s": 0.002,
+      "cumtime_s": 0.0022,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:49(_drifting_maxwellian)",
+      "ncalls": 1,
+      "tottime_s": 0.0018,
+      "cumtime_s": 0.0018,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<method 'astype' of 'numpy.ndarray' objects>",
+      "ncalls": 1470,
+      "tottime_s": 0.0017,
+      "cumtime_s": 0.0017,
+      "class": "native_array_call"
+     }
+    ],
+    "top_by_tottime": [
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:99(trace_channel)",
+      "ncalls": 2,
+      "tottime_s": 0.0564,
+      "cumtime_s": 0.1305,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:67(_diffuse)",
+      "ncalls": 245,
+      "tottime_s": 0.029,
+      "cumtime_s": 0.0688,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "site-packages/numpy/_core/numeric.py:1567(cross)",
+      "ncalls": 735,
+      "tottime_s": 0.012,
+      "cumtime_s": 0.0309,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'reduce' of 'numpy.ufunc' objects>",
+      "ncalls": 1240,
+      "tottime_s": 0.0098,
+      "cumtime_s": 0.0098,
+      "class": "native_array_call"
+     },
+     {
+      "function": "site-packages/numpy/_core/numeric.py:1431(normalize_axis_tuple)",
+      "ncalls": 4410,
+      "tottime_s": 0.0063,
+      "cumtime_s": 0.0097,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/_core/numeric.py:1493(moveaxis)",
+      "ncalls": 2205,
+      "tottime_s": 0.0043,
+      "cumtime_s": 0.0159,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:58(_flux_weighted_entry)",
+      "ncalls": 1,
+      "tottime_s": 0.0029,
+      "cumtime_s": 0.0048,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "site-packages/numpy/linalg/_linalg.py:2598(norm)",
+      "ncalls": 490,
+      "tottime_s": 0.0026,
+      "cumtime_s": 0.0083,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/_core/shape_base.py:378(stack)",
+      "ncalls": 246,
+      "tottime_s": 0.002,
+      "cumtime_s": 0.0022,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:49(_drifting_maxwellian)",
+      "ncalls": 1,
+      "tottime_s": 0.0018,
+      "cumtime_s": 0.0018,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<method 'astype' of 'numpy.ndarray' objects>",
+      "ncalls": 1470,
+      "tottime_s": 0.0017,
+      "cumtime_s": 0.0017,
+      "class": "native_array_call"
+     },
+     {
+      "function": "<built-in method builtins.len>",
+      "ncalls": 15683,
+      "tottime_s": 0.0014,
+      "cumtime_s": 0.0014,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "site-packages/numpy/_core/numeric.py:1480(<genexpr>)",
+      "ncalls": 8820,
+      "tottime_s": 0.0012,
+      "cumtime_s": 0.0017,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<built-in method numpy.lib.array_utils.normalize_axis_index>",
+      "ncalls": 6871,
+      "tottime_s": 0.0009,
+      "cumtime_s": 0.0009,
+      "class": "native_array_call"
+     },
+     {
+      "function": "<method 'transpose' of 'numpy.ndarray' objects>",
+      "ncalls": 2205,
+      "tottime_s": 0.0006,
+      "cumtime_s": 0.0006,
+      "class": "native_array_call"
+     }
+    ],
+    "project_hotspots_by_tottime": [],
+    "cprofile_overhead_ratio": 1.139
+   },
+   "port_judgement": {
+    "judgement": "COVERED_BY",
+    "covered_by": "intake_response_surface_reduced",
+    "basis": "kernel-level measurement; ranked through the workload that calls it (avoids double counting)"
+   }
+  },
+  {
+   "id": "intake_response_surface_reduced",
+   "category": "intake_response_surface",
+   "entry_point": "abep_sim.intake_tpmc.response_surface",
+   "description": "reduced product grid of the frozen-build axes (all four L/d, three alphas spanning 0..1, one phi, theta 0, species N2) at the frozen-build particle count",
+   "params": {
+    "L_over_d": [
+     3,
+     5,
+     10,
+     20
+    ],
+    "phis": [
+     0.8
+    ],
+    "alphas": [
+     0.0,
+     0.5,
+     1.0
+    ],
+    "thetas": [
+     0.0
+    ],
+    "species": [
+     "N2"
+    ],
+    "n": 20000
+   },
+   "unit_of_work": "response points",
+   "covered_by": null,
+   "reference": {
+    "id": "frozen_intake_surface_build",
+    "units_of_work": 360,
+    "basis": "abep_sim/intake_tpmc.py build_frozen_surface: response_surface defaults 4 L/d x 2 phi x 5 alpha x 3 theta x 3 species = 360 points at n=20000 (python -m abep_sim.intake_tpmc build)",
+    "method": "EXTRAPOLATED: median seconds per reduced-grid point x 360 (per-point cost varies with L/d, alpha, theta and species mass; the reduced grid samples L/d and alpha only); checked against one direct measurement (frozen_intake_surface_build)"
+   },
+   "repeats": 3,
+   "wall_s": [
+    3.5509,
+    3.5439,
+    3.5543
+   ],
+   "cpu_s": [
+    3.5469,
+    3.5312,
+    3.5625
+   ],
+   "median_wall_s": 3.5509,
+   "median_cpu_s": 3.5469,
+   "cpu_over_wall": 0.999,
+   "units_of_work": 12,
+   "median_wall_s_per_unit": 0.2959119,
+   "loadavg_1min_before_after": [
+    -1.0,
+    -1.0
+   ],
+   "output_fingerprint": {
+    "max_unresolved": 0.0002,
+    "points": 12,
+    "sum_C_D": 32.93023868,
+    "sum_eta_c": 7.67972
+   },
+   "deterministic_across_repeats": true,
+   "profile": {
+    "profiled_wall_s": 4.2936,
+    "total_function_calls": 2720702,
+    "function_calls_per_profiled_s": 633660.4,
+    "tottime_fractions": {
+     "project_python": 0.0,
+     "interpreter_builtin": 0.0317,
+     "stdlib_python": 0.6082,
+     "library_python_wrapper": 0.2472,
+     "native_array_call": 0.1129
+    },
+    "interpreter_level_fraction": 0.6399,
+    "numpy_level_fraction": 0.3601,
+    "top_by_cumulative": [
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:212(response_surface)",
+      "ncalls": 1,
+      "tottime_s": 0.0002,
+      "cumtime_s": 4.2931,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:162(intake_response)",
+      "ncalls": 12,
+      "tottime_s": 0.0017,
+      "cumtime_s": 4.2921,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:99(trace_channel)",
+      "ncalls": 24,
+      "tottime_s": 1.6913,
+      "cumtime_s": 4.1961,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:152(clausing_transmission)",
+      "ncalls": 12,
+      "tottime_s": 0.0002,
+      "cumtime_s": 2.4284,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:67(_diffuse)",
+      "ncalls": 9303,
+      "tottime_s": 0.8592,
+      "cumtime_s": 2.2763,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "site-packages/numpy/_core/numeric.py:1567(cross)",
+      "ncalls": 27909,
+      "tottime_s": 0.4163,
+      "cumtime_s": 1.1292,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/_core/numeric.py:1493(moveaxis)",
+      "ncalls": 83727,
+      "tottime_s": 0.1663,
+      "cumtime_s": 0.6094,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/_core/numeric.py:1431(normalize_axis_tuple)",
+      "ncalls": 167454,
+      "tottime_s": 0.2386,
+      "cumtime_s": 0.3702,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'reduce' of 'numpy.ufunc' objects>",
+      "ncalls": 46706,
+      "tottime_s": 0.2993,
+      "cumtime_s": 0.2993,
+      "class": "native_array_call"
+     },
+     {
+      "function": "site-packages/numpy/linalg/_linalg.py:2598(norm)",
+      "ncalls": 18606,
+      "tottime_s": 0.0889,
+      "cumtime_s": 0.2641,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'sum' of 'numpy.ndarray' objects>",
+      "ncalls": 9306,
+      "tottime_s": 0.006,
+      "cumtime_s": 0.0883,
+      "class": "native_array_call"
+     },
+     {
+      "function": "site-packages/numpy/_core/_methods.py:47(_sum)",
+      "ncalls": 9306,
+      "tottime_s": 0.0032,
+      "cumtime_s": 0.0823,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/_core/shape_base.py:378(stack)",
+      "ncalls": 9315,
+      "tottime_s": 0.066,
+      "cumtime_s": 0.0736,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/_core/numeric.py:1480(<genexpr>)",
+      "ncalls": 334908,
+      "tottime_s": 0.0448,
+      "cumtime_s": 0.0653,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:58(_flux_weighted_entry)",
+      "ncalls": 12,
+      "tottime_s": 0.0366,
+      "cumtime_s": 0.0596,
+      "class": "stdlib_python"
+     }
+    ],
+    "top_by_tottime": [
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:99(trace_channel)",
+      "ncalls": 24,
+      "tottime_s": 1.6913,
+      "cumtime_s": 4.1961,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:67(_diffuse)",
+      "ncalls": 9303,
+      "tottime_s": 0.8592,
+      "cumtime_s": 2.2763,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "site-packages/numpy/_core/numeric.py:1567(cross)",
+      "ncalls": 27909,
+      "tottime_s": 0.4163,
+      "cumtime_s": 1.1292,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'reduce' of 'numpy.ufunc' objects>",
+      "ncalls": 46706,
+      "tottime_s": 0.2993,
+      "cumtime_s": 0.2993,
+      "class": "native_array_call"
+     },
+     {
+      "function": "site-packages/numpy/_core/numeric.py:1431(normalize_axis_tuple)",
+      "ncalls": 167454,
+      "tottime_s": 0.2386,
+      "cumtime_s": 0.3702,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/_core/numeric.py:1493(moveaxis)",
+      "ncalls": 83727,
+      "tottime_s": 0.1663,
+      "cumtime_s": 0.6094,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/linalg/_linalg.py:2598(norm)",
+      "ncalls": 18606,
+      "tottime_s": 0.0889,
+      "cumtime_s": 0.2641,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/_core/shape_base.py:378(stack)",
+      "ncalls": 9315,
+      "tottime_s": 0.066,
+      "cumtime_s": 0.0736,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'astype' of 'numpy.ndarray' objects>",
+      "ncalls": 55818,
+      "tottime_s": 0.0551,
+      "cumtime_s": 0.0551,
+      "class": "native_array_call"
+     },
+     {
+      "function": "<built-in method builtins.len>",
+      "ncalls": 595529,
+      "tottime_s": 0.0526,
+      "cumtime_s": 0.0526,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "site-packages/numpy/_core/numeric.py:1480(<genexpr>)",
+      "ncalls": 334908,
+      "tottime_s": 0.0448,
+      "cumtime_s": 0.0653,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:58(_flux_weighted_entry)",
+      "ncalls": 12,
+      "tottime_s": 0.0366,
+      "cumtime_s": 0.0596,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<built-in method numpy.lib.array_utils.normalize_axis_index>",
+      "ncalls": 260633,
+      "tottime_s": 0.0348,
+      "cumtime_s": 0.0348,
+      "class": "native_array_call"
+     },
+     {
+      "function": "<method 'transpose' of 'numpy.ndarray' objects>",
+      "ncalls": 83727,
+      "tottime_s": 0.0252,
+      "cumtime_s": 0.0252,
+      "class": "native_array_call"
+     },
+     {
+      "function": "<built-in method builtins.isinstance>",
+      "ncalls": 186638,
+      "tottime_s": 0.0239,
+      "cumtime_s": 0.0239,
+      "class": "interpreter_builtin"
+     }
+    ],
+    "project_hotspots_by_tottime": [],
+    "cprofile_overhead_ratio": 1.209
+   },
+   "port_judgement": {
+    "reference_workload_id": "frozen_intake_surface_build",
+    "reference_workload_s": 106.53,
+    "reference_workload_s_measured": 145.93,
+    "interpreter_level_fraction": 0.6399,
+    "addressable_interpreter_s_upper_bound": 68.17,
+    "judgement": "PORT_CANDIDATE",
+    "thresholds_s": {
+     "port": 60.0,
+     "marginal": 10.0
+    }
+   }
+  },
+  {
+   "id": "compressor_size_for",
+   "category": "compressor_search",
+   "entry_point": "abep_sim.compressor.DragCompressor.size_for",
+   "description": "exhaustive turbo-rows x drag-stages x rpm search (default bounds) with the exact inputs that golden case gas_path A0.7 passes (captured in-process from system.evaluate)",
+   "params": {
+    "calls": 20
+   },
+   "unit_of_work": "size_for calls",
+   "covered_by": null,
+   "reference": {
+    "id": "uq6_pareto_default",
+    "units_of_work": 200,
+    "basis": "abep_sim/uq6.py pareto(n_designs=200) and monte_carlo6(n=200) defaults: one system.evaluate -> one size_for per design/sample; the F3 synthesis search is PENDING abep_sim/design/compressor_synthesis.py",
+    "method": "EXTRAPOLATED: median seconds per call x 200"
+   },
+   "repeats": 3,
+   "wall_s": [
+    0.0461,
+    0.0463,
+    0.0468
+   ],
+   "cpu_s": [
+    0.0469,
+    0.0469,
+    0.0469
+   ],
+   "median_wall_s": 0.0463,
+   "median_cpu_s": 0.0469,
+   "cpu_over_wall": 1.013,
+   "units_of_work": 20,
+   "median_wall_s_per_unit": 0.0023146,
+   "loadavg_1min_before_after": [
+    -1.0,
+    -1.0
+   ],
+   "output_fingerprint": {
+    "CR_active": 7.11573980571,
+    "P_el_W": 16.5903674311,
+    "mass_kg": 5.2064,
+    "n_stages": 0,
+    "rpm": 9188,
+    "sized": true,
+    "turbo_rows": 3
+   },
+   "deterministic_across_repeats": true,
+   "profile": {
+    "profiled_wall_s": 0.1351,
+    "total_function_calls": 423741,
+    "function_calls_per_profiled_s": 3135533.4,
+    "tottime_fractions": {
+     "project_python": 0.0,
+     "interpreter_builtin": 0.2742,
+     "stdlib_python": 0.7258,
+     "library_python_wrapper": 0.0,
+     "native_array_call": 0.0
+    },
+    "interpreter_level_fraction": 1.0,
+    "numpy_level_fraction": 0.0,
+    "top_by_cumulative": [
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:161(size_for)",
+      "ncalls": 20,
+      "tottime_s": 0.0021,
+      "cumtime_s": 0.135,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:71(run)",
+      "ncalls": 1600,
+      "tottime_s": 0.0076,
+      "cumtime_s": 0.1327,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:93(_run_once)",
+      "ncalls": 2500,
+      "tottime_s": 0.0745,
+      "cumtime_s": 0.118,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:68(_cbar)",
+      "ncalls": 43500,
+      "tottime_s": 0.0095,
+      "cumtime_s": 0.0133,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<built-in method builtins.max>",
+      "ncalls": 115420,
+      "tottime_s": 0.0101,
+      "cumtime_s": 0.0101,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method math.sqrt>",
+      "ncalls": 89520,
+      "tottime_s": 0.0085,
+      "cumtime_s": 0.0085,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method builtins.all>",
+      "ncalls": 2500,
+      "tottime_s": 0.0014,
+      "cumtime_s": 0.0053,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<method 'get' of 'dict' objects>",
+      "ncalls": 43500,
+      "tottime_s": 0.0051,
+      "cumtime_s": 0.0051,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method math.exp>",
+      "ncalls": 43500,
+      "tottime_s": 0.0046,
+      "cumtime_s": 0.0046,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:84(<genexpr>)",
+      "ncalls": 9300,
+      "tottime_s": 0.0029,
+      "cumtime_s": 0.004,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<built-in method builtins.min>",
+      "ncalls": 43520,
+      "tottime_s": 0.004,
+      "cumtime_s": 0.004,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method builtins.sum>",
+      "ncalls": 8200,
+      "tottime_s": 0.0015,
+      "cumtime_s": 0.0015,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<method 'values' of 'dict' objects>",
+      "ncalls": 8200,
+      "tottime_s": 0.0012,
+      "cumtime_s": 0.0012,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:64(u_max)",
+      "ncalls": 2520,
+      "tottime_s": 0.0008,
+      "cumtime_s": 0.001,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:60(u)",
+      "ncalls": 2500,
+      "tottime_s": 0.0006,
+      "cumtime_s": 0.0006,
+      "class": "stdlib_python"
+     }
+    ],
+    "top_by_tottime": [
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:93(_run_once)",
+      "ncalls": 2500,
+      "tottime_s": 0.0745,
+      "cumtime_s": 0.118,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<built-in method builtins.max>",
+      "ncalls": 115420,
+      "tottime_s": 0.0101,
+      "cumtime_s": 0.0101,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:68(_cbar)",
+      "ncalls": 43500,
+      "tottime_s": 0.0095,
+      "cumtime_s": 0.0133,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<built-in method math.sqrt>",
+      "ncalls": 89520,
+      "tottime_s": 0.0085,
+      "cumtime_s": 0.0085,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:71(run)",
+      "ncalls": 1600,
+      "tottime_s": 0.0076,
+      "cumtime_s": 0.1327,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<method 'get' of 'dict' objects>",
+      "ncalls": 43500,
+      "tottime_s": 0.0051,
+      "cumtime_s": 0.0051,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method math.exp>",
+      "ncalls": 43500,
+      "tottime_s": 0.0046,
+      "cumtime_s": 0.0046,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method builtins.min>",
+      "ncalls": 43520,
+      "tottime_s": 0.004,
+      "cumtime_s": 0.004,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:84(<genexpr>)",
+      "ncalls": 9300,
+      "tottime_s": 0.0029,
+      "cumtime_s": 0.004,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:161(size_for)",
+      "ncalls": 20,
+      "tottime_s": 0.0021,
+      "cumtime_s": 0.135,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<built-in method builtins.sum>",
+      "ncalls": 8200,
+      "tottime_s": 0.0015,
+      "cumtime_s": 0.0015,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method builtins.all>",
+      "ncalls": 2500,
+      "tottime_s": 0.0014,
+      "cumtime_s": 0.0053,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<method 'values' of 'dict' objects>",
+      "ncalls": 8200,
+      "tottime_s": 0.0012,
+      "cumtime_s": 0.0012,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:64(u_max)",
+      "ncalls": 2520,
+      "tottime_s": 0.0008,
+      "cumtime_s": 0.001,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:60(u)",
+      "ncalls": 2500,
+      "tottime_s": 0.0006,
+      "cumtime_s": 0.0006,
+      "class": "stdlib_python"
+     }
+    ],
+    "project_hotspots_by_tottime": [],
+    "cprofile_overhead_ratio": 2.918
+   },
+   "port_judgement": {
+    "reference_workload_id": "uq6_pareto_default",
+    "reference_workload_s": 0.46,
+    "reference_workload_s_measured": null,
+    "interpreter_level_fraction": 1.0,
+    "addressable_interpreter_s_upper_bound": 0.46,
+    "judgement": "NOT_A_BOTTLENECK",
+    "thresholds_s": {
+     "port": 60.0,
+     "marginal": 10.0
+    }
+   }
+  },
+  {
+   "id": "compressor_run",
+   "category": "compressor_search",
+   "entry_point": "abep_sim.compressor.DragCompressor.run (self-consistent leak iteration)",
+   "description": "repeated operating-point evaluations at the golden gas_path A0.7 inputs and default geometry",
+   "params": {
+    "calls": 500
+   },
+   "unit_of_work": "run calls",
+   "covered_by": "compressor_size_for",
+   "reference": null,
+   "repeats": 3,
+   "wall_s": [
+    0.3993,
+    0.4078,
+    0.3874
+   ],
+   "cpu_s": [
+    0.3906,
+    0.4062,
+    0.3906
+   ],
+   "median_wall_s": 0.3993,
+   "median_cpu_s": 0.3906,
+   "cpu_over_wall": 0.978,
+   "units_of_work": 500,
+   "median_wall_s_per_unit": 0.0007985,
+   "loadavg_1min_before_after": [
+    -1.0,
+    -1.0
+   ],
+   "output_fingerprint": {
+    "P_el_W": 153.599080631,
+    "calls": 500,
+    "sum_CR_active": 500.0
+   },
+   "deterministic_across_repeats": true,
+   "profile": {
+    "profiled_wall_s": 1.1834,
+    "total_function_calls": 3783002,
+    "function_calls_per_profiled_s": 3196630.1,
+    "tottime_fractions": {
+     "project_python": 0.0,
+     "interpreter_builtin": 0.2736,
+     "stdlib_python": 0.7264,
+     "library_python_wrapper": 0.0,
+     "native_array_call": 0.0
+    },
+    "interpreter_level_fraction": 1.0,
+    "numpy_level_fraction": 0.0,
+    "top_by_cumulative": [
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:71(run)",
+      "ncalls": 500,
+      "tottime_s": 0.051,
+      "cumtime_s": 1.1829,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:93(_run_once)",
+      "ncalls": 20000,
+      "tottime_s": 0.6918,
+      "cumtime_s": 1.1041,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:68(_cbar)",
+      "ncalls": 420000,
+      "tottime_s": 0.0925,
+      "cumtime_s": 0.1284,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<built-in method builtins.max>",
+      "ncalls": 1020500,
+      "tottime_s": 0.091,
+      "cumtime_s": 0.091,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method math.sqrt>",
+      "ncalls": 860000,
+      "tottime_s": 0.0806,
+      "cumtime_s": 0.0806,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<method 'get' of 'dict' objects>",
+      "ncalls": 420000,
+      "tottime_s": 0.0474,
+      "cumtime_s": 0.0474,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method math.exp>",
+      "ncalls": 420000,
+      "tottime_s": 0.0447,
+      "cumtime_s": 0.0447,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method builtins.min>",
+      "ncalls": 420000,
+      "tottime_s": 0.0388,
+      "cumtime_s": 0.0388,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method builtins.all>",
+      "ncalls": 20000,
+      "tottime_s": 0.0052,
+      "cumtime_s": 0.0179,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:84(<genexpr>)",
+      "ncalls": 40000,
+      "tottime_s": 0.0127,
+      "cumtime_s": 0.0167,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:64(u_max)",
+      "ncalls": 20000,
+      "tottime_s": 0.0066,
+      "cumtime_s": 0.0084,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<built-in method builtins.sum>",
+      "ncalls": 41000,
+      "tottime_s": 0.0077,
+      "cumtime_s": 0.0077,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<method 'values' of 'dict' objects>",
+      "ncalls": 41000,
+      "tottime_s": 0.0062,
+      "cumtime_s": 0.0062,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:60(u)",
+      "ncalls": 20000,
+      "tottime_s": 0.0045,
+      "cumtime_s": 0.0045,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<built-in method builtins.abs>",
+      "ncalls": 20000,
+      "tottime_s": 0.0021,
+      "cumtime_s": 0.0021,
+      "class": "interpreter_builtin"
+     }
+    ],
+    "top_by_tottime": [
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:93(_run_once)",
+      "ncalls": 20000,
+      "tottime_s": 0.6918,
+      "cumtime_s": 1.1041,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:68(_cbar)",
+      "ncalls": 420000,
+      "tottime_s": 0.0925,
+      "cumtime_s": 0.1284,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<built-in method builtins.max>",
+      "ncalls": 1020500,
+      "tottime_s": 0.091,
+      "cumtime_s": 0.091,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method math.sqrt>",
+      "ncalls": 860000,
+      "tottime_s": 0.0806,
+      "cumtime_s": 0.0806,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:71(run)",
+      "ncalls": 500,
+      "tottime_s": 0.051,
+      "cumtime_s": 1.1829,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<method 'get' of 'dict' objects>",
+      "ncalls": 420000,
+      "tottime_s": 0.0474,
+      "cumtime_s": 0.0474,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method math.exp>",
+      "ncalls": 420000,
+      "tottime_s": 0.0447,
+      "cumtime_s": 0.0447,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method builtins.min>",
+      "ncalls": 420000,
+      "tottime_s": 0.0388,
+      "cumtime_s": 0.0388,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:84(<genexpr>)",
+      "ncalls": 40000,
+      "tottime_s": 0.0127,
+      "cumtime_s": 0.0167,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<built-in method builtins.sum>",
+      "ncalls": 41000,
+      "tottime_s": 0.0077,
+      "cumtime_s": 0.0077,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:64(u_max)",
+      "ncalls": 20000,
+      "tottime_s": 0.0066,
+      "cumtime_s": 0.0084,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<method 'values' of 'dict' objects>",
+      "ncalls": 41000,
+      "tottime_s": 0.0062,
+      "cumtime_s": 0.0062,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method builtins.all>",
+      "ncalls": 20000,
+      "tottime_s": 0.0052,
+      "cumtime_s": 0.0179,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:60(u)",
+      "ncalls": 20000,
+      "tottime_s": 0.0045,
+      "cumtime_s": 0.0045,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<built-in method builtins.abs>",
+      "ncalls": 20000,
+      "tottime_s": 0.0021,
+      "cumtime_s": 0.0021,
+      "class": "interpreter_builtin"
+     }
+    ],
+    "project_hotspots_by_tottime": [],
+    "cprofile_overhead_ratio": 2.964
+   },
+   "port_judgement": {
+    "judgement": "COVERED_BY",
+    "covered_by": "compressor_size_for",
+    "basis": "kernel-level measurement; ranked through the workload that calls it (avoids double counting)"
+   }
+  },
+  {
+   "id": "system_evaluate_gas_path",
+   "category": "whole_system_evaluation",
+   "entry_point": "abep_sim.system.evaluate (golden case gas_path A0.7)",
+   "description": "Config('hall_1stage', 200 km, mean, TPMC intake A 0.7 m2 alpha 0.8 L/d 5, ratio 2000, Vd 275, gaspath_physics=True) exactly as abep_sim/golden.py case_gas_path",
+   "params": {
+    "area": 0.7,
+    "calls": 20
+   },
+   "unit_of_work": "evaluations",
+   "covered_by": null,
+   "reference": {
+    "id": "uq6_monte_carlo_default",
+    "units_of_work": 200,
+    "basis": "abep_sim/uq6.py monte_carlo6(n=200) default (one system.evaluate per sample; that path also enables plasma/engineering physics, so this is a lower bound per sample)",
+    "method": "EXTRAPOLATED: median seconds per evaluation x 200"
+   },
+   "repeats": 3,
+   "wall_s": [
+    0.0979,
+    0.0869,
+    0.0988
+   ],
+   "cpu_s": [
+    0.0938,
+    0.0781,
+    0.0938
+   ],
+   "median_wall_s": 0.0979,
+   "median_cpu_s": 0.0938,
+   "cpu_over_wall": 0.957,
+   "units_of_work": 20,
+   "median_wall_s_per_unit": 0.0048963,
+   "loadavg_1min_before_after": [
+    -1.0,
+    -1.0
+   ],
+   "output_fingerprint": {
+    "C_D": 2.22115234151,
+    "P_comp_W": 16.5903674311,
+    "drag_mN": 13.1022272594,
+    "eta_c": 0.643894588016,
+    "mdot_air_mgps": 0.975342595772,
+    "p_in_Pa": 0.048492535879
+   },
+   "deterministic_across_repeats": true,
+   "profile": {
+    "profiled_wall_s": 0.2394,
+    "total_function_calls": 680621,
+    "function_calls_per_profiled_s": 2843186.4,
+    "tottime_fractions": {
+     "project_python": 0.0,
+     "interpreter_builtin": 0.2303,
+     "stdlib_python": 0.7639,
+     "library_python_wrapper": 0.0043,
+     "native_array_call": 0.0016
+    },
+    "interpreter_level_fraction": 0.9942,
+    "numpy_level_fraction": 0.0059,
+    "top_by_cumulative": [
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/system.py:79(evaluate)",
+      "ncalls": 20,
+      "tottime_s": 0.0008,
+      "cumtime_s": 0.239,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:161(size_for)",
+      "ncalls": 20,
+      "tottime_s": 0.0023,
+      "cumtime_s": 0.1381,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:71(run)",
+      "ncalls": 1600,
+      "tottime_s": 0.0077,
+      "cumtime_s": 0.1356,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:93(_run_once)",
+      "ncalls": 2500,
+      "tottime_s": 0.0764,
+      "cumtime_s": 0.1205,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/reservoir.py:43(steady_state)",
+      "ncalls": 1220,
+      "tottime_s": 0.0466,
+      "cumtime_s": 0.0896,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/reservoir.py:84(size_orifice_for_pressure)",
+      "ncalls": 20,
+      "tottime_s": 0.0009,
+      "cumtime_s": 0.0892,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<built-in method builtins.all>",
+      "ncalls": 28180,
+      "tottime_s": 0.0069,
+      "cumtime_s": 0.025,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/reservoir.py:64(<genexpr>)",
+      "ncalls": 53680,
+      "tottime_s": 0.013,
+      "cumtime_s": 0.0176,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:68(_cbar)",
+      "ncalls": 43500,
+      "tottime_s": 0.0098,
+      "cumtime_s": 0.0136,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/reservoir.py:36(_cbar)",
+      "ncalls": 37820,
+      "tottime_s": 0.0093,
+      "cumtime_s": 0.0129,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<built-in method builtins.max>",
+      "ncalls": 144920,
+      "tottime_s": 0.0128,
+      "cumtime_s": 0.0128,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method math.sqrt>",
+      "ncalls": 128840,
+      "tottime_s": 0.0123,
+      "cumtime_s": 0.0123,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake.py:61(collection)",
+      "ncalls": 20,
+      "tottime_s": 0.0001,
+      "cumtime_s": 0.0083,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:270(__call__)",
+      "ncalls": 20,
+      "tottime_s": 0.0066,
+      "cumtime_s": 0.0081,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/reservoir.py:39(conductance)",
+      "ncalls": 10980,
+      "tottime_s": 0.0024,
+      "cumtime_s": 0.0059,
+      "class": "stdlib_python"
+     }
+    ],
+    "top_by_tottime": [
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:93(_run_once)",
+      "ncalls": 2500,
+      "tottime_s": 0.0764,
+      "cumtime_s": 0.1205,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/reservoir.py:43(steady_state)",
+      "ncalls": 1220,
+      "tottime_s": 0.0466,
+      "cumtime_s": 0.0896,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/reservoir.py:64(<genexpr>)",
+      "ncalls": 53680,
+      "tottime_s": 0.013,
+      "cumtime_s": 0.0176,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<built-in method builtins.max>",
+      "ncalls": 144920,
+      "tottime_s": 0.0128,
+      "cumtime_s": 0.0128,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method math.sqrt>",
+      "ncalls": 128840,
+      "tottime_s": 0.0123,
+      "cumtime_s": 0.0123,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:68(_cbar)",
+      "ncalls": 43500,
+      "tottime_s": 0.0098,
+      "cumtime_s": 0.0136,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/reservoir.py:36(_cbar)",
+      "ncalls": 37820,
+      "tottime_s": 0.0093,
+      "cumtime_s": 0.0129,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:71(run)",
+      "ncalls": 1600,
+      "tottime_s": 0.0077,
+      "cumtime_s": 0.1356,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<built-in method builtins.all>",
+      "ncalls": 28180,
+      "tottime_s": 0.0069,
+      "cumtime_s": 0.025,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:270(__call__)",
+      "ncalls": 20,
+      "tottime_s": 0.0066,
+      "cumtime_s": 0.0081,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<method 'get' of 'dict' objects>",
+      "ncalls": 48720,
+      "tottime_s": 0.0057,
+      "cumtime_s": 0.0057,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method math.exp>",
+      "ncalls": 46020,
+      "tottime_s": 0.005,
+      "cumtime_s": 0.005,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method builtins.min>",
+      "ncalls": 43700,
+      "tottime_s": 0.0041,
+      "cumtime_s": 0.0041,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method builtins.sum>",
+      "ncalls": 14340,
+      "tottime_s": 0.0033,
+      "cumtime_s": 0.0039,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:84(<genexpr>)",
+      "ncalls": 9300,
+      "tottime_s": 0.0029,
+      "cumtime_s": 0.0041,
+      "class": "stdlib_python"
+     }
+    ],
+    "project_hotspots_by_tottime": [],
+    "cprofile_overhead_ratio": 2.445
+   },
+   "port_judgement": {
+    "reference_workload_id": "uq6_monte_carlo_default",
+    "reference_workload_s": 0.98,
+    "reference_workload_s_measured": null,
+    "interpreter_level_fraction": 0.9942,
+    "addressable_interpreter_s_upper_bound": 0.97,
+    "judgement": "NOT_A_BOTTLENECK",
+    "thresholds_s": {
+     "port": 60.0,
+     "marginal": 10.0
+    }
+   }
+  },
+  {
+   "id": "archengine_close_architecture",
+   "category": "whole_system_evaluation",
+   "entry_point": "abep_sim.archengine.close_architecture (golden cases architecture_closure and mission)",
+   "description": "nested constrained closure of hall_internal+hall+lab6_xe at 2.5 kW, area 1.3, p_level 0.05, arrays sized, mission envelope; solver caches cleared before every repeat (cold)",
+   "params": {},
+   "unit_of_work": "closures",
+   "covered_by": null,
+   "physics_note": "drives the superseded 0-D Hall closure (plasma_devices / archengine Hall branch); absolute Hall results are withdrawn (CLAUDE.md 'Superseded / withdrawn') - timed only, outputs never quoted",
+   "reference": {
+    "id": "golden_check",
+    "units_of_work": 2,
+    "basis": "abep_sim/golden.py: case_architecture_closure and case_mission each run this closure once per python -m abep_sim.golden check (CLAUDE.md rule 2 gate)",
+    "method": "EXTRAPOLATED: median seconds x 2 (the second call shares no cache in a cold process only if caches are cleared; in practice it is warm, so this is an upper bound)"
+   },
+   "repeats": 3,
+   "wall_s": [
+    7.1726,
+    7.0854,
+    7.1034
+   ],
+   "cpu_s": [
+    7.0781,
+    7.0625,
+    7.0625
+   ],
+   "median_wall_s": 7.1034,
+   "median_cpu_s": 7.0625,
+   "cpu_over_wall": 0.994,
+   "units_of_work": 1,
+   "median_wall_s_per_unit": 7.1034387,
+   "loadavg_1min_before_after": [
+    -1.0,
+    -1.0
+   ],
+   "output_fingerprint": {
+    "P_bus_W": 2461.33127254,
+    "T_mN": 51.1099381374,
+    "ledger_resid": 0.0,
+    "status": "OK",
+    "x_L_ch": 0.12,
+    "x_Vd": 300.0
+   },
+   "deterministic_across_repeats": true,
+   "profile": {
+    "profiled_wall_s": 17.3337,
+    "total_function_calls": 44241789,
+    "function_calls_per_profiled_s": 2552353.8,
+    "tottime_fractions": {
+     "project_python": 0.0,
+     "interpreter_builtin": 0.198,
+     "stdlib_python": 0.6433,
+     "library_python_wrapper": 0.0709,
+     "native_array_call": 0.0877
+    },
+    "interpreter_level_fraction": 0.8413,
+    "numpy_level_fraction": 0.1586,
+    "top_by_cumulative": [
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/archengine.py:572(close_architecture)",
+      "ncalls": 1,
+      "tottime_s": 0.0013,
+      "cumtime_s": 17.3335,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/archengine.py:442(_propulsion)",
+      "ncalls": 69,
+      "tottime_s": 0.0012,
+      "cumtime_s": 17.2771,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_devices.py:512(hall_run_coupled)",
+      "ncalls": 69,
+      "tottime_s": 0.0015,
+      "cumtime_s": 17.272,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_devices.py:364(hall_discharge_transient)",
+      "ncalls": 69,
+      "tottime_s": 0.0114,
+      "cumtime_s": 17.2679,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_devices.py:417(T_of_n)",
+      "ncalls": 9415,
+      "tottime_s": 0.738,
+      "cumtime_s": 17.0626,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_devices.py:443(g)",
+      "ncalls": 9277,
+      "tottime_s": 0.0234,
+      "cumtime_s": 16.9941,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_devices.py:398(balance)",
+      "ncalls": 898749,
+      "tottime_s": 3.0225,
+      "cumtime_s": 16.2564,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/archengine.py:695(_at)",
+      "ncalls": 44,
+      "tottime_s": 0.0003,
+      "cumtime_s": 11.0108,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_devices.py:390(rates)",
+      "ncalls": 898887,
+      "tottime_s": 2.5548,
+      "cumtime_s": 10.5968,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_chem.py:61(k_rate)",
+      "ncalls": 3595824,
+      "tottime_s": 2.9176,
+      "cumtime_s": 6.7095,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "site-packages/numpy/lib/_function_base_impl.py:1538(interp)",
+      "ncalls": 898956,
+      "tottime_s": 0.786,
+      "cumtime_s": 2.6762,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<built-in method numpy._core._multiarray_umath.interp>",
+      "ncalls": 898956,
+      "tottime_s": 1.3902,
+      "cumtime_s": 1.3902,
+      "class": "native_array_call"
+     },
+     {
+      "function": "<built-in method builtins.sum>",
+      "ncalls": 1782199,
+      "tottime_s": 0.7511,
+      "cumtime_s": 1.159,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_chem.py:75(eps_c)",
+      "ncalls": 2696661,
+      "tottime_s": 0.759,
+      "cumtime_s": 1.0352,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<built-in method math.exp>",
+      "ncalls": 6302445,
+      "tottime_s": 0.6755,
+      "cumtime_s": 0.6755,
+      "class": "interpreter_builtin"
+     }
+    ],
+    "top_by_tottime": [
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_devices.py:398(balance)",
+      "ncalls": 898749,
+      "tottime_s": 3.0225,
+      "cumtime_s": 16.2564,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_chem.py:61(k_rate)",
+      "ncalls": 3595824,
+      "tottime_s": 2.9176,
+      "cumtime_s": 6.7095,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_devices.py:390(rates)",
+      "ncalls": 898887,
+      "tottime_s": 2.5548,
+      "cumtime_s": 10.5968,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<built-in method numpy._core._multiarray_umath.interp>",
+      "ncalls": 898956,
+      "tottime_s": 1.3902,
+      "cumtime_s": 1.3902,
+      "class": "native_array_call"
+     },
+     {
+      "function": "site-packages/numpy/lib/_function_base_impl.py:1538(interp)",
+      "ncalls": 898956,
+      "tottime_s": 0.786,
+      "cumtime_s": 2.6762,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_chem.py:75(eps_c)",
+      "ncalls": 2696661,
+      "tottime_s": 0.759,
+      "cumtime_s": 1.0352,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<built-in method builtins.sum>",
+      "ncalls": 1782199,
+      "tottime_s": 0.7511,
+      "cumtime_s": 1.159,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_devices.py:417(T_of_n)",
+      "ncalls": 9415,
+      "tottime_s": 0.738,
+      "cumtime_s": 17.0626,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<built-in method math.exp>",
+      "ncalls": 6302445,
+      "tottime_s": 0.6755,
+      "cumtime_s": 0.6755,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method builtins.max>",
+      "ncalls": 5408477,
+      "tottime_s": 0.5619,
+      "cumtime_s": 0.5619,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<method 'get' of 'dict' objects>",
+      "ncalls": 3600459,
+      "tottime_s": 0.4642,
+      "cumtime_s": 0.4642,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method math.sqrt>",
+      "ncalls": 3547085,
+      "tottime_s": 0.4132,
+      "cumtime_s": 0.4132,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_devices.py:402(<genexpr>)",
+      "ncalls": 3526708,
+      "tottime_s": 0.4069,
+      "cumtime_s": 0.4069,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_devices.py:356(_sheath_drop)",
+      "ncalls": 898749,
+      "tottime_s": 0.3436,
+      "cumtime_s": 0.4737,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/materials.py:58(see_yield)",
+      "ncalls": 902268,
+      "tottime_s": 0.3316,
+      "cumtime_s": 0.4297,
+      "class": "stdlib_python"
+     }
+    ],
+    "project_hotspots_by_tottime": [],
+    "cprofile_overhead_ratio": 2.44
+   },
+   "port_judgement": {
+    "reference_workload_id": "golden_check",
+    "reference_workload_s": 14.21,
+    "reference_workload_s_measured": null,
+    "interpreter_level_fraction": 0.8413,
+    "addressable_interpreter_s_upper_bound": 11.95,
+    "judgement": "MARGINAL",
+    "thresholds_s": {
+     "port": 60.0,
+     "marginal": 10.0
+    },
+    "qualifier": "DEFER_PORT: drives the superseded 0-D Hall closure (plasma_devices / archengine Hall branch); absolute Hall results are withdrawn (CLAUDE.md 'Superseded / withdrawn') - timed only, outputs never quoted; porting a driver of withdrawn physics adds no decision value - re-profile the F7/F8 driver once it exists"
+   }
+  },
+  {
+   "id": "uq_modular_run_uq",
+   "category": "uq_monte_carlo",
+   "entry_point": "abep_sim.uq_modular.run_uq",
+   "description": "one batch of paired samples (each sample re-runs propulsion at mean / solar-min / solar-max captured flow with shared prior draws) for hall_internal+hall+lab6_xe, Vd 300, L_ch 0.20, area 1.0, p_level 0.05, A_array 6, P_cap 1500 (tests/test_sim.py test_v131_modular_uq_runs)",
+   "params": {
+    "n": 6,
+    "seed": 1
+   },
+   "unit_of_work": "paired samples",
+   "covered_by": null,
+   "physics_note": "drives the superseded 0-D Hall closure (plasma_devices / archengine Hall branch); absolute Hall results are withdrawn (CLAUDE.md 'Superseded / withdrawn') - timed only, outputs never quoted",
+   "reference": {
+    "id": "run_uq_default",
+    "units_of_work": 200,
+    "basis": "abep_sim/uq_modular.py run_uq(n=200) default",
+    "method": "EXTRAPOLATED: median seconds per sample x 200"
+   },
+   "repeats": 3,
+   "wall_s": [
+    3.929,
+    2.4797,
+    2.4799
+   ],
+   "cpu_s": [
+    2.8594,
+    2.4844,
+    2.4844
+   ],
+   "median_wall_s": 2.4799,
+   "median_cpu_s": 2.4844,
+   "cpu_over_wall": 1.002,
+   "units_of_work": 6,
+   "median_wall_s_per_unit": 0.4133227,
+   "loadavg_1min_before_after": [
+    -1.0,
+    -1.0
+   ],
+   "output_fingerprint": {
+    "P_close": 0.0,
+    "P_ignite": 1.0,
+    "n": 6,
+    "ratio_q50": 0.884677110319,
+    "sum_T_mN": 197.681854948
+   },
+   "deterministic_across_repeats": true,
+   "profile": {
+    "profiled_wall_s": 6.0153,
+    "total_function_calls": 15496566,
+    "function_calls_per_profiled_s": 2576190.5,
+    "tottime_fractions": {
+     "project_python": 0.0,
+     "interpreter_builtin": 0.1978,
+     "stdlib_python": 0.6424,
+     "library_python_wrapper": 0.072,
+     "native_array_call": 0.0878
+    },
+    "interpreter_level_fraction": 0.8402,
+    "numpy_level_fraction": 0.1598,
+    "top_by_cumulative": [
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/uq_modular.py:87(run_uq)",
+      "ncalls": 1,
+      "tottime_s": 0.0002,
+      "cumtime_s": 6.0151,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/uq_modular.py:38(evaluate_sample)",
+      "ncalls": 6,
+      "tottime_s": 0.0002,
+      "cumtime_s": 6.0034,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/archengine.py:442(_propulsion)",
+      "ncalls": 24,
+      "tottime_s": 0.0005,
+      "cumtime_s": 5.9437,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_devices.py:512(hall_run_coupled)",
+      "ncalls": 24,
+      "tottime_s": 0.0006,
+      "cumtime_s": 5.9418,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_devices.py:364(hall_discharge_transient)",
+      "ncalls": 24,
+      "tottime_s": 0.0038,
+      "cumtime_s": 5.9403,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_devices.py:417(T_of_n)",
+      "ncalls": 3216,
+      "tottime_s": 0.2538,
+      "cumtime_s": 5.8735,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_devices.py:443(g)",
+      "ncalls": 3168,
+      "tottime_s": 0.0074,
+      "cumtime_s": 5.843,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_devices.py:398(balance)",
+      "ncalls": 312888,
+      "tottime_s": 1.0412,
+      "cumtime_s": 5.5906,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/uq_modular.py:57(run)",
+      "ncalls": 18,
+      "tottime_s": 0.0001,
+      "cumtime_s": 4.4926,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_devices.py:390(rates)",
+      "ncalls": 312936,
+      "tottime_s": 0.8703,
+      "cumtime_s": 3.6422,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_chem.py:61(k_rate)",
+      "ncalls": 1251840,
+      "tottime_s": 1.0053,
+      "cumtime_s": 2.3163,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "site-packages/numpy/lib/_function_base_impl.py:1538(interp)",
+      "ncalls": 312960,
+      "tottime_s": 0.2717,
+      "cumtime_s": 0.9261,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<built-in method numpy._core._multiarray_umath.interp>",
+      "ncalls": 312960,
+      "tottime_s": 0.4822,
+      "cumtime_s": 0.4822,
+      "class": "native_array_call"
+     },
+     {
+      "function": "<built-in method builtins.sum>",
+      "ncalls": 624051,
+      "tottime_s": 0.2629,
+      "cumtime_s": 0.4117,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_chem.py:75(eps_c)",
+      "ncalls": 938808,
+      "tottime_s": 0.26,
+      "cumtime_s": 0.3533,
+      "class": "stdlib_python"
+     }
+    ],
+    "top_by_tottime": [
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_devices.py:398(balance)",
+      "ncalls": 312888,
+      "tottime_s": 1.0412,
+      "cumtime_s": 5.5906,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_chem.py:61(k_rate)",
+      "ncalls": 1251840,
+      "tottime_s": 1.0053,
+      "cumtime_s": 2.3163,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_devices.py:390(rates)",
+      "ncalls": 312936,
+      "tottime_s": 0.8703,
+      "cumtime_s": 3.6422,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<built-in method numpy._core._multiarray_umath.interp>",
+      "ncalls": 312960,
+      "tottime_s": 0.4822,
+      "cumtime_s": 0.4822,
+      "class": "native_array_call"
+     },
+     {
+      "function": "site-packages/numpy/lib/_function_base_impl.py:1538(interp)",
+      "ncalls": 312960,
+      "tottime_s": 0.2717,
+      "cumtime_s": 0.9261,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<built-in method builtins.sum>",
+      "ncalls": 624051,
+      "tottime_s": 0.2629,
+      "cumtime_s": 0.4117,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_chem.py:75(eps_c)",
+      "ncalls": 938808,
+      "tottime_s": 0.26,
+      "cumtime_s": 0.3533,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_devices.py:417(T_of_n)",
+      "ncalls": 3216,
+      "tottime_s": 0.2538,
+      "cumtime_s": 5.8735,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<built-in method math.exp>",
+      "ncalls": 2204168,
+      "tottime_s": 0.234,
+      "cumtime_s": 0.234,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method builtins.max>",
+      "ncalls": 1911524,
+      "tottime_s": 0.1933,
+      "cumtime_s": 0.1933,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<method 'get' of 'dict' objects>",
+      "ncalls": 1263635,
+      "tottime_s": 0.1631,
+      "cumtime_s": 0.1631,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_devices.py:402(<genexpr>)",
+      "ncalls": 1230048,
+      "tottime_s": 0.1486,
+      "cumtime_s": 0.1486,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<built-in method math.sqrt>",
+      "ncalls": 1238354,
+      "tottime_s": 0.1411,
+      "cumtime_s": 0.1411,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/plasma_devices.py:356(_sheath_drop)",
+      "ncalls": 312888,
+      "tottime_s": 0.1126,
+      "cumtime_s": 0.1531,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/materials.py:58(see_yield)",
+      "ncalls": 314112,
+      "tottime_s": 0.1125,
+      "cumtime_s": 0.1464,
+      "class": "stdlib_python"
+     }
+    ],
+    "project_hotspots_by_tottime": [],
+    "cprofile_overhead_ratio": 2.426
+   },
+   "port_judgement": {
+    "reference_workload_id": "run_uq_default",
+    "reference_workload_s": 82.66,
+    "reference_workload_s_measured": null,
+    "interpreter_level_fraction": 0.8402,
+    "addressable_interpreter_s_upper_bound": 69.45,
+    "judgement": "PORT_CANDIDATE",
+    "thresholds_s": {
+     "port": 60.0,
+     "marginal": 10.0
+    },
+    "qualifier": "DEFER_PORT: drives the superseded 0-D Hall closure (plasma_devices / archengine Hall branch); absolute Hall results are withdrawn (CLAUDE.md 'Superseded / withdrawn') - timed only, outputs never quoted; porting a driver of withdrawn physics adds no decision value - re-profile the F7/F8 driver once it exists"
+   }
+  },
+  {
+   "id": "uq6_robust_design",
+   "category": "robust_design_search",
+   "entry_point": "abep_sim.uq6.robust_design (only robust-design routine in the base; A9.7 F7/F8 optimizer not yet built)",
+   "description": "one candidate design (area 0.7, L_ch 0.20, Vd 275, xe_aug_h 500, hall_1stage) through monte_carlo6 (correlated priors, full chain + mission ROM)",
+   "params": {
+    "n_mc": 3,
+    "seed": 5
+   },
+   "unit_of_work": "MC samples",
+   "covered_by": null,
+   "physics_note": "drives the superseded 0-D Hall closure (plasma_devices / archengine Hall branch); absolute Hall results are withdrawn (CLAUDE.md 'Superseded / withdrawn') - timed only, outputs never quoted",
+   "reference": {
+    "id": "robust_design_default_per_candidate",
+    "units_of_work": 60,
+    "basis": "abep_sim/uq6.py robust_design(n_mc=60) default, per candidate (candidate count is set by the caller; F8 robust optimisation is PENDING, lane fo_a9_7_f7_f8_coupled_optimizer)",
+    "method": "EXTRAPOLATED: median seconds per sample x 60 (one candidate)"
+   },
+   "repeats": 3,
+   "wall_s": [
+    0.0416,
+    0.0382,
+    0.0378
+   ],
+   "cpu_s": [
+    0.0469,
+    0.0312,
+    0.0469
+   ],
+   "median_wall_s": 0.0382,
+   "median_cpu_s": 0.0469,
+   "cpu_over_wall": 1.226,
+   "units_of_work": 3,
+   "median_wall_s_per_unit": 0.0127413,
+   "loadavg_1min_before_after": [
+    -1.0,
+    -1.0
+   ],
+   "output_fingerprint": {
+    "P_compliant": 0.0,
+    "P_mission_ok": 0.0,
+    "TD_sc_end_p10": 1.47475335095
+   },
+   "deterministic_across_repeats": true,
+   "profile": {
+    "profiled_wall_s": 0.0756,
+    "total_function_calls": 159738,
+    "function_calls_per_profiled_s": 2111567.9,
+    "tottime_fractions": {
+     "project_python": 0.0,
+     "interpreter_builtin": 0.1625,
+     "stdlib_python": 0.586,
+     "library_python_wrapper": 0.2073,
+     "native_array_call": 0.0443
+    },
+    "interpreter_level_fraction": 0.7485,
+    "numpy_level_fraction": 0.2516,
+    "top_by_cumulative": [
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/uq6.py:235(robust_design)",
+      "ncalls": 1,
+      "tottime_s": 0.0,
+      "cumtime_s": 0.0754,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/uq6.py:164(monte_carlo6)",
+      "ncalls": 1,
+      "tottime_s": 0.0001,
+      "cumtime_s": 0.0726,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/uq6.py:91(evaluate_full)",
+      "ncalls": 3,
+      "tottime_s": 0.0003,
+      "cumtime_s": 0.0706,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/system.py:79(evaluate)",
+      "ncalls": 3,
+      "tottime_s": 0.0004,
+      "cumtime_s": 0.0677,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/thermal.py:103(size_radiator)",
+      "ncalls": 3,
+      "tottime_s": 0.0002,
+      "cumtime_s": 0.0316,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/thermal.py:52(solve_network)",
+      "ncalls": 156,
+      "tottime_s": 0.0122,
+      "cumtime_s": 0.0312,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:161(size_for)",
+      "ncalls": 3,
+      "tottime_s": 0.0004,
+      "cumtime_s": 0.0187,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:71(run)",
+      "ncalls": 235,
+      "tottime_s": 0.0011,
+      "cumtime_s": 0.0182,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:93(_run_once)",
+      "ncalls": 340,
+      "tottime_s": 0.0103,
+      "cumtime_s": 0.0162,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/reservoir.py:43(steady_state)",
+      "ncalls": 183,
+      "tottime_s": 0.0069,
+      "cumtime_s": 0.0132,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/reservoir.py:84(size_orifice_for_pressure)",
+      "ncalls": 3,
+      "tottime_s": 0.0001,
+      "cumtime_s": 0.0132,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "site-packages/numpy/linalg/_linalg.py:363(solve)",
+      "ncalls": 724,
+      "tottime_s": 0.0038,
+      "cumtime_s": 0.0089,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<built-in method builtins.sum>",
+      "ncalls": 3668,
+      "tottime_s": 0.0024,
+      "cumtime_s": 0.0043,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method builtins.all>",
+      "ncalls": 4299,
+      "tottime_s": 0.0011,
+      "cumtime_s": 0.0039,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "site-packages/numpy/_core/fromnumeric.py:2207(clip)",
+      "ncalls": 724,
+      "tottime_s": 0.0006,
+      "cumtime_s": 0.0029,
+      "class": "library_python_wrapper"
+     }
+    ],
+    "top_by_tottime": [
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/thermal.py:52(solve_network)",
+      "ncalls": 156,
+      "tottime_s": 0.0122,
+      "cumtime_s": 0.0312,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:93(_run_once)",
+      "ncalls": 340,
+      "tottime_s": 0.0103,
+      "cumtime_s": 0.0162,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/reservoir.py:43(steady_state)",
+      "ncalls": 183,
+      "tottime_s": 0.0069,
+      "cumtime_s": 0.0132,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "site-packages/numpy/linalg/_linalg.py:363(solve)",
+      "ncalls": 724,
+      "tottime_s": 0.0038,
+      "cumtime_s": 0.0089,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<built-in method builtins.sum>",
+      "ncalls": 3668,
+      "tottime_s": 0.0024,
+      "cumtime_s": 0.0043,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:270(__call__)",
+      "ncalls": 6,
+      "tottime_s": 0.0021,
+      "cumtime_s": 0.0026,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/reservoir.py:64(<genexpr>)",
+      "ncalls": 8052,
+      "tottime_s": 0.0019,
+      "cumtime_s": 0.0026,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<built-in method builtins.max>",
+      "ncalls": 20766,
+      "tottime_s": 0.0018,
+      "cumtime_s": 0.0018,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method math.sqrt>",
+      "ncalls": 18590,
+      "tottime_s": 0.0017,
+      "cumtime_s": 0.0017,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "site-packages/numpy/_core/_methods.py:96(_clip)",
+      "ncalls": 724,
+      "tottime_s": 0.0015,
+      "cumtime_s": 0.0015,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/reservoir.py:36(_cbar)",
+      "ncalls": 5673,
+      "tottime_s": 0.0014,
+      "cumtime_s": 0.0019,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/compressor.py:68(_cbar)",
+      "ncalls": 5895,
+      "tottime_s": 0.0013,
+      "cumtime_s": 0.0018,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/thermal.py:75(<genexpr>)",
+      "ncalls": 5792,
+      "tottime_s": 0.0013,
+      "cumtime_s": 0.0013,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<method 'reduce' of 'numpy.ufunc' objects>",
+      "ncalls": 771,
+      "tottime_s": 0.0013,
+      "cumtime_s": 0.0013,
+      "class": "native_array_call"
+     },
+     {
+      "function": "<method 'get' of 'dict' objects>",
+      "ncalls": 9584,
+      "tottime_s": 0.0012,
+      "cumtime_s": 0.0012,
+      "class": "interpreter_builtin"
+     }
+    ],
+    "project_hotspots_by_tottime": [],
+    "cprofile_overhead_ratio": 1.979
+   },
+   "port_judgement": {
+    "reference_workload_id": "robust_design_default_per_candidate",
+    "reference_workload_s": 0.76,
+    "reference_workload_s_measured": null,
+    "interpreter_level_fraction": 0.7485,
+    "addressable_interpreter_s_upper_bound": 0.57,
+    "judgement": "NOT_A_BOTTLENECK",
+    "thresholds_s": {
+     "port": 60.0,
+     "marginal": 10.0
+    },
+    "qualifier": "DEFER_PORT: drives the superseded 0-D Hall closure (plasma_devices / archengine Hall branch); absolute Hall results are withdrawn (CLAUDE.md 'Superseded / withdrawn') - timed only, outputs never quoted; porting a driver of withdrawn physics adds no decision value - re-profile the F7/F8 driver once it exists"
+   }
+  },
+  {
+   "id": "mission_run_generic",
+   "category": "mission_propagation",
+   "entry_point": "abep_sim.mission5.run_mission_generic -> abep_sim.mission_env.propagate",
+   "description": "secular J2 / energy-balance propagator (orbit-averaged: no intra-orbit resolution, so 'one orbit-day' = 24 h / dt_h steps) with TPMC-ROM intake and AO ageing per step; golden case_mission set-up (closure result reused, propulsion map, P_bus_max 2500 W)",
+   "params": {
+    "hours": 26000.0,
+    "dt_h": 6.0
+   },
+   "unit_of_work": "propagator steps",
+   "covered_by": null,
+   "physics_note": "drives the superseded 0-D Hall closure (plasma_devices / archengine Hall branch); absolute Hall results are withdrawn (CLAUDE.md 'Superseded / withdrawn') - timed only, outputs never quoted (the closure feeds the thrust map)",
+   "reference": {
+    "id": "rfp_mission_26000h",
+    "units_of_work": 4333,
+    "basis": "abep_sim/constants.py RFP.mission_hours = 26000 h at dt_h 6 (run_mission_generic default)",
+    "method": "MEASURED directly (the full-mode workload is the 26000 h mission)"
+   },
+   "setup_note": "closure computed once in set-up (untimed) unless archengine_close_architecture ran first",
+   "repeats": 3,
+   "wall_s": [
+    2.2348,
+    2.1952,
+    2.2185
+   ],
+   "cpu_s": [
+    2.2188,
+    2.1875,
+    2.2188
+   ],
+   "median_wall_s": 2.2185,
+   "median_cpu_s": 2.2188,
+   "cpu_over_wall": 1.0,
+   "units_of_work": 4333,
+   "median_wall_s_per_unit": 0.000512,
+   "loadavg_1min_before_after": [
+    -1.0,
+    -1.0
+   ],
+   "output_fingerprint": {
+    "D_mean_mN": 36.5823333642,
+    "T_mean_mN": 36.5823333642,
+    "fired_hours": 25998.0,
+    "min_alt_km": 200.0,
+    "mission_closed": true
+   },
+   "deterministic_across_repeats": true,
+   "profile": {
+    "profiled_wall_s": 2.7764,
+    "total_function_calls": 1620099,
+    "function_calls_per_profiled_s": 583527.0,
+    "tottime_fractions": {
+     "project_python": 0.0,
+     "interpreter_builtin": 0.036,
+     "stdlib_python": 0.6713,
+     "library_python_wrapper": 0.2003,
+     "native_array_call": 0.0924
+    },
+    "interpreter_level_fraction": 0.7073,
+    "numpy_level_fraction": 0.2927,
+    "top_by_cumulative": [
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/mission5.py:118(run_mission_generic)",
+      "ncalls": 1,
+      "tottime_s": 0.0003,
+      "cumtime_s": 2.7763,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/mission_env.py:131(propagate)",
+      "ncalls": 1,
+      "tottime_s": 0.0353,
+      "cumtime_s": 2.7754,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/mission5.py:130(drag_fn)",
+      "ncalls": 4333,
+      "tottime_s": 0.0203,
+      "cumtime_s": 2.6347,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake.py:61(collection)",
+      "ncalls": 4333,
+      "tottime_s": 0.0271,
+      "cumtime_s": 1.7515,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:270(__call__)",
+      "ncalls": 4333,
+      "tottime_s": 1.3757,
+      "cumtime_s": 1.7162,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/mission_env.py:81(spacecraft_drag)",
+      "ncalls": 4333,
+      "tottime_s": 0.0126,
+      "cumtime_s": 0.7655,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/mission_env.py:74(pointing_factors)",
+      "ncalls": 4333,
+      "tottime_s": 0.2365,
+      "cumtime_s": 0.7529,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "site-packages/numpy/lib/_function_base_impl.py:4052(percentile)",
+      "ncalls": 4333,
+      "tottime_s": 0.0162,
+      "cumtime_s": 0.3773,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/lib/_function_base_impl.py:4500(_quantile_unchecked)",
+      "ncalls": 4333,
+      "tottime_s": 0.0061,
+      "cumtime_s": 0.3359,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/lib/_function_base_impl.py:3815(_ureduce)",
+      "ncalls": 4335,
+      "tottime_s": 0.0086,
+      "cumtime_s": 0.3299,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/lib/_function_base_impl.py:4639(_quantile_ureduce_func)",
+      "ncalls": 4333,
+      "tottime_s": 0.006,
+      "cumtime_s": 0.3192,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/lib/_function_base_impl.py:4714(_quantile)",
+      "ncalls": 4333,
+      "tottime_s": 0.0518,
+      "cumtime_s": 0.3087,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/lib/_stride_tricks_impl.py:514(broadcast_arrays)",
+      "ncalls": 64995,
+      "tottime_s": 0.107,
+      "cumtime_s": 0.2858,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/lib/_stride_tricks_impl.py:446(_broadcast_shape)",
+      "ncalls": 64995,
+      "tottime_s": 0.1008,
+      "cumtime_s": 0.1081,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/transient.py:77(_atm_at)",
+      "ncalls": 4333,
+      "tottime_s": 0.0175,
+      "cumtime_s": 0.0907,
+      "class": "stdlib_python"
+     }
+    ],
+    "top_by_tottime": [
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:270(__call__)",
+      "ncalls": 4333,
+      "tottime_s": 1.3757,
+      "cumtime_s": 1.7162,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/mission_env.py:74(pointing_factors)",
+      "ncalls": 4333,
+      "tottime_s": 0.2365,
+      "cumtime_s": 0.7529,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "site-packages/numpy/lib/_stride_tricks_impl.py:514(broadcast_arrays)",
+      "ncalls": 64995,
+      "tottime_s": 0.107,
+      "cumtime_s": 0.2858,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/lib/_stride_tricks_impl.py:446(_broadcast_shape)",
+      "ncalls": 64995,
+      "tottime_s": 0.1008,
+      "cumtime_s": 0.1081,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<built-in method numpy.array>",
+      "ncalls": 259981,
+      "tottime_s": 0.0707,
+      "cumtime_s": 0.0707,
+      "class": "native_array_call"
+     },
+     {
+      "function": "<method 'reduce' of 'numpy.ufunc' objects>",
+      "ncalls": 34696,
+      "tottime_s": 0.0589,
+      "cumtime_s": 0.0589,
+      "class": "native_array_call"
+     },
+     {
+      "function": "site-packages/numpy/lib/_function_base_impl.py:4714(_quantile)",
+      "ncalls": 4333,
+      "tottime_s": 0.0518,
+      "cumtime_s": 0.3087,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/transient.py:59(_grid_state)",
+      "ncalls": 12999,
+      "tottime_s": 0.0482,
+      "cumtime_s": 0.0637,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<method 'partition' of 'numpy.ndarray' objects>",
+      "ncalls": 4334,
+      "tottime_s": 0.0456,
+      "cumtime_s": 0.0456,
+      "class": "native_array_call"
+     },
+     {
+      "function": "site-packages/numpy/_core/_ufunc_config.py:496(inner)",
+      "ncalls": 4333,
+      "tottime_s": 0.0399,
+      "cumtime_s": 0.0464,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/mission_env.py:131(propagate)",
+      "ncalls": 1,
+      "tottime_s": 0.0353,
+      "cumtime_s": 2.7754,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "site-packages/numpy/lib/_function_base_impl.py:4679(_get_indexes)",
+      "ncalls": 4333,
+      "tottime_s": 0.0296,
+      "cumtime_s": 0.0754,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake.py:61(collection)",
+      "ncalls": 4333,
+      "tottime_s": 0.0271,
+      "cumtime_s": 1.7515,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/mission5.py:140(thrust_fn)",
+      "ncalls": 4333,
+      "tottime_s": 0.0238,
+      "cumtime_s": 0.0651,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/abep_sim/intake_tpmc.py:268(<genexpr>)",
+      "ncalls": 21665,
+      "tottime_s": 0.0236,
+      "cumtime_s": 0.0236,
+      "class": "stdlib_python"
+     }
+    ],
+    "project_hotspots_by_tottime": [],
+    "cprofile_overhead_ratio": 1.251
+   },
+   "port_judgement": {
+    "reference_workload_id": "rfp_mission_26000h",
+    "reference_workload_s": 2.22,
+    "reference_workload_s_measured": null,
+    "interpreter_level_fraction": 0.7073,
+    "addressable_interpreter_s_upper_bound": 1.57,
+    "judgement": "NOT_A_BOTTLENECK",
+    "thresholds_s": {
+     "port": 60.0,
+     "marginal": 10.0
+    },
+    "qualifier": "DEFER_PORT: drives the superseded 0-D Hall closure (plasma_devices / archengine Hall branch); absolute Hall results are withdrawn (CLAUDE.md 'Superseded / withdrawn') - timed only, outputs never quoted (the closure feeds the thrust map); porting a driver of withdrawn physics adds no decision value - re-profile the F7/F8 driver once it exists"
+   }
+  },
+  {
+   "id": "p3_view_factors_verify",
+   "category": "p3_view_factor",
+   "entry_point": "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py::view_factors",
+   "description": "full two-body enclosure of the P3 builder's closed_form_verification() (SYNTHETIC normalized geometry, every zone emits; 7 zones) at the verification resolution RES_VERIFY read from docs/experiments/hall_icp/p3_coupled_thermal/build_p3_coupled_thermal.py",
+   "params": {
+    "res": [
+     16,
+     32,
+     64
+    ],
+    "res_source": "RES_VERIFY",
+    "emitting_zones": [
+     "H.up",
+     "H.down",
+     "H.outer",
+     "I.up",
+     "I.down",
+     "I.outer",
+     "I.bore"
+    ]
+   },
+   "unit_of_work": "view_factors calls",
+   "covered_by": null,
+   "reference": {
+    "id": "p3_closed_form_verification",
+    "units_of_work": 1,
+    "basis": "build_p3_coupled_thermal.py closed_form_verification(): this full-enclosure call plus six single-emitter calls (one emitting zone each) at RES_VERIFY; the parametric study runs at RES_STUDY and is not extrapolated here",
+    "method": "EXTRAPOLATED: median seconds per full-enclosure call x 1 (the six single-emitter calls of the same function are not included)"
+   },
+   "scaling_probe": {
+    "points": [
+     {
+      "res": [
+       8,
+       16,
+       32
+      ],
+      "median_wall_s": 0.0051
+     },
+     {
+      "res": [
+       16,
+       32,
+       64
+      ],
+      "median_wall_s": 0.022
+     }
+    ],
+    "work_ratio": 8.0,
+    "time_ratio": 4.314,
+    "time_ratio_over_work_ratio": 0.539,
+    "reading": "close to 1: cost scales with array size (numpy-level work dominates); well below 1: fixed per-call / per-step interpreter overhead dominates"
+   },
+   "repeats": 3,
+   "wall_s": [
+    0.0245,
+    0.0221,
+    0.0224
+   ],
+   "cpu_s": [
+    0.0156,
+    0.0312,
+    0.0156
+   ],
+   "median_wall_s": 0.0224,
+   "median_cpu_s": 0.0156,
+   "cpu_over_wall": 0.698,
+   "units_of_work": 1,
+   "median_wall_s_per_unit": 0.0223792,
+   "loadavg_1min_before_after": [
+    -1.0,
+    -1.0
+   ],
+   "output_fingerprint": {
+    "F_H.down_I.up": 0.515014648438,
+    "rays_per_call": 229376,
+    "reciprocity_max_rel": 0.00215053763441,
+    "summation_max_abs": 0.0,
+    "surfaces": 7
+   },
+   "deterministic_across_repeats": true,
+   "profile": {
+    "profiled_wall_s": 0.0231,
+    "total_function_calls": 2258,
+    "function_calls_per_profiled_s": 97697.3,
+    "tottime_fractions": {
+     "project_python": 0.0,
+     "interpreter_builtin": 0.0065,
+     "stdlib_python": 0.8522,
+     "library_python_wrapper": 0.0804,
+     "native_array_call": 0.0609
+    },
+    "interpreter_level_fraction": 0.8587,
+    "numpy_level_fraction": 0.1413,
+    "top_by_cumulative": [
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:496(view_factors)",
+      "ncalls": 1,
+      "tottime_s": 0.0001,
+      "cumtime_s": 0.023,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:420(trace)",
+      "ncalls": 7,
+      "tottime_s": 0.002,
+      "cumtime_s": 0.0202,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:367(_first_hits)",
+      "ncalls": 7,
+      "tottime_s": 0.0171,
+      "cumtime_s": 0.0174,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:464(emit_zone)",
+      "ncalls": 7,
+      "tottime_s": 0.0002,
+      "cumtime_s": 0.0027,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "site-packages/numpy/_core/shape_base.py:378(stack)",
+      "ncalls": 14,
+      "tottime_s": 0.0009,
+      "cumtime_s": 0.0009,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/_core/fromnumeric.py:48(_wrapfunc)",
+      "ncalls": 21,
+      "tottime_s": 0.0,
+      "cumtime_s": 0.0008,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'repeat' of 'numpy.ndarray' objects>",
+      "ncalls": 28,
+      "tottime_s": 0.0007,
+      "cumtime_s": 0.0007,
+      "class": "native_array_call"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:455(_dirs_cosine)",
+      "ncalls": 7,
+      "tottime_s": 0.0003,
+      "cumtime_s": 0.0006,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "site-packages/numpy/_core/fromnumeric.py:437(repeat)",
+      "ncalls": 7,
+      "tottime_s": 0.0,
+      "cumtime_s": 0.0005,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/lib/_shape_base_impl.py:1199(tile)",
+      "ncalls": 21,
+      "tottime_s": 0.0001,
+      "cumtime_s": 0.0003,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/_core/fromnumeric.py:2436(any)",
+      "ncalls": 63,
+      "tottime_s": 0.0,
+      "cumtime_s": 0.0003,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/lib/_function_base_impl.py:5050(meshgrid)",
+      "ncalls": 7,
+      "tottime_s": 0.0,
+      "cumtime_s": 0.0003,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "site-packages/numpy/_core/numeric.py:323(full)",
+      "ncalls": 35,
+      "tottime_s": 0.0002,
+      "cumtime_s": 0.0003,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'reduce' of 'numpy.ufunc' objects>",
+      "ncalls": 77,
+      "tottime_s": 0.0002,
+      "cumtime_s": 0.0002,
+      "class": "native_array_call"
+     },
+     {
+      "function": "site-packages/numpy/_core/fromnumeric.py:86(_wrapreduction_any_all)",
+      "ncalls": 63,
+      "tottime_s": 0.0001,
+      "cumtime_s": 0.0002,
+      "class": "library_python_wrapper"
+     }
+    ],
+    "top_by_tottime": [
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:367(_first_hits)",
+      "ncalls": 7,
+      "tottime_s": 0.0171,
+      "cumtime_s": 0.0174,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:420(trace)",
+      "ncalls": 7,
+      "tottime_s": 0.002,
+      "cumtime_s": 0.0202,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "site-packages/numpy/_core/shape_base.py:378(stack)",
+      "ncalls": 14,
+      "tottime_s": 0.0009,
+      "cumtime_s": 0.0009,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'repeat' of 'numpy.ndarray' objects>",
+      "ncalls": 28,
+      "tottime_s": 0.0007,
+      "cumtime_s": 0.0007,
+      "class": "native_array_call"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:455(_dirs_cosine)",
+      "ncalls": 7,
+      "tottime_s": 0.0003,
+      "cumtime_s": 0.0006,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<method 'reduce' of 'numpy.ufunc' objects>",
+      "ncalls": 77,
+      "tottime_s": 0.0002,
+      "cumtime_s": 0.0002,
+      "class": "native_array_call"
+     },
+     {
+      "function": "site-packages/numpy/_core/numeric.py:323(full)",
+      "ncalls": 35,
+      "tottime_s": 0.0002,
+      "cumtime_s": 0.0003,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:464(emit_zone)",
+      "ncalls": 7,
+      "tottime_s": 0.0002,
+      "cumtime_s": 0.0027,
+      "class": "stdlib_python"
+     },
+     {
+      "function": "<method 'searchsorted' of 'numpy.ndarray' objects>",
+      "ncalls": 7,
+      "tottime_s": 0.0002,
+      "cumtime_s": 0.0002,
+      "class": "native_array_call"
+     },
+     {
+      "function": "site-packages/numpy/lib/_shape_base_impl.py:1199(tile)",
+      "ncalls": 21,
+      "tottime_s": 0.0001,
+      "cumtime_s": 0.0003,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<built-in method numpy.zeros>",
+      "ncalls": 28,
+      "tottime_s": 0.0001,
+      "cumtime_s": 0.0001,
+      "class": "native_array_call"
+     },
+     {
+      "function": "site-packages/numpy/lib/_stride_tricks_impl.py:373(_broadcast_to)",
+      "ncalls": 14,
+      "tottime_s": 0.0001,
+      "cumtime_s": 0.0001,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'copy' of 'numpy.ndarray' objects>",
+      "ncalls": 21,
+      "tottime_s": 0.0001,
+      "cumtime_s": 0.0001,
+      "class": "native_array_call"
+     },
+     {
+      "function": "site-packages/numpy/_core/fromnumeric.py:86(_wrapreduction_any_all)",
+      "ncalls": 63,
+      "tottime_s": 0.0001,
+      "cumtime_s": 0.0002,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "D:/Company/Vyovrinda/DRDO RFP/2026_DRDO_788433_1/brain stroming/simulation code/V2.5/abep_repo/abep-perf-baseline/docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:496(view_factors)",
+      "ncalls": 1,
+      "tottime_s": 0.0001,
+      "cumtime_s": 0.023,
+      "class": "stdlib_python"
+     }
+    ],
+    "project_hotspots_by_tottime": [],
+    "cprofile_overhead_ratio": 1.031
+   },
+   "port_judgement": {
+    "reference_workload_id": "p3_closed_form_verification",
+    "reference_workload_s": 0.02,
+    "reference_workload_s_measured": null,
+    "interpreter_level_fraction": 0.8587,
+    "addressable_interpreter_s_upper_bound": 0.02,
+    "judgement": "NOT_A_BOTTLENECK",
+    "thresholds_s": {
+     "port": 60.0,
+     "marginal": 10.0
+    },
+    "scaling_time_over_work": 0.539
+   }
+  },
+  {
+   "id": "frozen_intake_surface_build",
+   "category": "intake_response_surface",
+   "entry_point": "abep_sim.intake_tpmc.response_surface (exact computation of build_frozen_surface)",
+   "description": "the complete frozen intake-surface computation (360 points, n=20000, species O/N2/O2); no file is written; one repeat only (checks the reduced-grid extrapolation)",
+   "params": {
+    "n": 20000
+   },
+   "unit_of_work": "response points",
+   "covered_by": "intake_response_surface_reduced",
+   "reference": null,
+   "repeats_override": 1,
+   "cprofile": false,
+   "repeats": 1,
+   "wall_s": [
+    145.9335
+   ],
+   "cpu_s": [
+    145.7812
+   ],
+   "median_wall_s": 145.9335,
+   "median_cpu_s": 145.7812,
+   "cpu_over_wall": 0.999,
+   "units_of_work": 360,
+   "median_wall_s_per_unit": 0.4053709,
+   "loadavg_1min_before_after": [
+    -1.0,
+    -1.0
+   ],
+   "output_fingerprint": {
+    "points": 360,
+    "sum_C_D": 891.771620444,
+    "sum_eta_c": 234.436885564
+   },
+   "deterministic_across_repeats": true,
+   "port_judgement": {
+    "judgement": "COVERED_BY",
+    "covered_by": "intake_response_surface_reduced",
+    "basis": "kernel-level measurement; ranked through the workload that calls it (avoids double counting)"
+   }
+  }
+ ],
+ "ranking": [
+  {
+   "id": "uq_modular_run_uq",
+   "category": "uq_monte_carlo",
+   "addressable_interpreter_s_upper_bound": 69.45,
+   "reference_workload_s": 82.66,
+   "judgement": "PORT_CANDIDATE",
+   "deferred": true,
+   "rank": 1
+  },
+  {
+   "id": "intake_response_surface_reduced",
+   "category": "intake_response_surface",
+   "addressable_interpreter_s_upper_bound": 68.17,
+   "reference_workload_s": 106.53,
+   "judgement": "PORT_CANDIDATE",
+   "deferred": false,
+   "rank": 2
+  },
+  {
+   "id": "archengine_close_architecture",
+   "category": "whole_system_evaluation",
+   "addressable_interpreter_s_upper_bound": 11.95,
+   "reference_workload_s": 14.21,
+   "judgement": "MARGINAL",
+   "deferred": true,
+   "rank": 3
+  },
+  {
+   "id": "mission_run_generic",
+   "category": "mission_propagation",
+   "addressable_interpreter_s_upper_bound": 1.57,
+   "reference_workload_s": 2.22,
+   "judgement": "NOT_A_BOTTLENECK",
+   "deferred": true,
+   "rank": 4
+  },
+  {
+   "id": "system_evaluate_gas_path",
+   "category": "whole_system_evaluation",
+   "addressable_interpreter_s_upper_bound": 0.97,
+   "reference_workload_s": 0.98,
+   "judgement": "NOT_A_BOTTLENECK",
+   "deferred": false,
+   "rank": 5
+  },
+  {
+   "id": "uq6_robust_design",
+   "category": "robust_design_search",
+   "addressable_interpreter_s_upper_bound": 0.57,
+   "reference_workload_s": 0.76,
+   "judgement": "NOT_A_BOTTLENECK",
+   "deferred": true,
+   "rank": 6
+  },
+  {
+   "id": "compressor_size_for",
+   "category": "compressor_search",
+   "addressable_interpreter_s_upper_bound": 0.46,
+   "reference_workload_s": 0.46,
+   "judgement": "NOT_A_BOTTLENECK",
+   "deferred": false,
+   "rank": 7
+  },
+  {
+   "id": "p3_view_factors_verify",
+   "category": "p3_view_factor",
+   "addressable_interpreter_s_upper_bound": 0.02,
+   "reference_workload_s": 0.02,
+   "judgement": "NOT_A_BOTTLENECK",
+   "deferred": false,
+   "rank": 8
+  }
+ ],
+ "rust_order_comparison": [
+  {
+   "a9_7_position": 1,
+   "a9_7_item": "TPMC particle-tracing kernel",
+   "f0_category": "tpmc_particle_tracing",
+   "f0_rank": 2,
+   "f0_judgement": "PORT_CANDIDATE",
+   "f0_deferred": false,
+   "via": "tpmc_trace_channel is a kernel of intake_response_surface_reduced (COVERED_BY); rank shown is that workload's"
+  },
+  {
+   "a9_7_position": 2,
+   "a9_7_item": "large intake geometry-grid generation",
+   "f0_category": "intake_response_surface",
+   "f0_rank": 2,
+   "f0_judgement": "PORT_CANDIDATE",
+   "f0_deferred": false,
+   "via": null
+  },
+  {
+   "a9_7_position": 3,
+   "a9_7_item": "compressor design-space search",
+   "f0_category": "compressor_search",
+   "f0_rank": 7,
+   "f0_judgement": "NOT_A_BOTTLENECK",
+   "f0_deferred": false,
+   "via": null
+  },
+  {
+   "a9_7_position": 4,
+   "a9_7_item": "Monte-Carlo/full-chain UQ driver",
+   "f0_category": "uq_monte_carlo",
+   "f0_rank": 1,
+   "f0_judgement": "PORT_CANDIDATE",
+   "f0_deferred": true,
+   "via": null
+  },
+  {
+   "a9_7_position": 5,
+   "a9_7_item": "mission propagation",
+   "f0_category": "mission_propagation",
+   "f0_rank": 4,
+   "f0_judgement": "NOT_A_BOTTLENECK",
+   "f0_deferred": true,
+   "via": null
+  },
+  {
+   "a9_7_position": 6,
+   "a9_7_item": "P3 ray/view-factor sampling",
+   "f0_category": "p3_view_factor",
+   "f0_rank": 8,
+   "f0_judgement": "NOT_A_BOTTLENECK",
+   "f0_deferred": false,
+   "via": null
+  }
+ ],
+ "robust_design_search_status": {
+  "exists_in_base": true,
+  "routine": "abep_sim.uq6.robust_design (legacy phase-6 routine over the superseded 0-D Hall chain)",
+  "a9_7_f8_robust_optimizer": "PENDING (lane fo_a9_7_f7_f8_coupled_optimizer; not in base)"
+ },
+ "findings": [
+  "1. uq_modular_run_uq: reference workload run_uq_default ~ 82.66 s; interpreter-level share 0.8402; addressable <= 69.45 s -> PORT_CANDIDATE (DEFER: legacy driver of withdrawn physics); hotspots ",
+  "2. intake_response_surface_reduced: reference workload frozen_intake_surface_build ~ 106.53 s; interpreter-level share 0.6399; addressable <= 68.17 s -> PORT_CANDIDATE; hotspots ",
+  "3. archengine_close_architecture: reference workload golden_check ~ 14.21 s; interpreter-level share 0.8413; addressable <= 11.95 s -> MARGINAL (DEFER: legacy driver of withdrawn physics); hotspots ",
+  "4. mission_run_generic: reference workload rfp_mission_26000h ~ 2.22 s; interpreter-level share 0.7073; addressable <= 1.57 s -> NOT_A_BOTTLENECK (DEFER: legacy driver of withdrawn physics); hotspots ",
+  "5. system_evaluate_gas_path: reference workload uq6_monte_carlo_default ~ 0.98 s; interpreter-level share 0.9942; addressable <= 0.97 s -> NOT_A_BOTTLENECK; hotspots ",
+  "6. uq6_robust_design: reference workload robust_design_default_per_candidate ~ 0.76 s; interpreter-level share 0.7485; addressable <= 0.57 s -> NOT_A_BOTTLENECK (DEFER: legacy driver of withdrawn physics); hotspots ",
+  "7. compressor_size_for: reference workload uq6_pareto_default ~ 0.46 s; interpreter-level share 1.0; addressable <= 0.46 s -> NOT_A_BOTTLENECK; hotspots ",
+  "8. p3_view_factors_verify: reference workload p3_closed_form_verification ~ 0.02 s; interpreter-level share 0.8587; addressable <= 0.02 s -> NOT_A_BOTTLENECK; hotspots ",
+  "Frozen intake-surface build measured once at 145.9335 s vs 106.53 s extrapolated from the reduced grid (ratio 1.37).",
+  "Scaling probe tpmc_trace_channel: 10.0x more work cost 2.806x more time (time/work 0.281): fixed per-step / per-call interpreter overhead is a large share at the smaller size.",
+  "Scaling probe p3_view_factors_verify: 8.0x more work cost 4.314x more time (time/work 0.539): fixed per-step / per-call interpreter overhead is a large share at the smaller size.",
+  "Per-call costs for budgeting the A9.7 synthesis searches (machine-specific runtimes, not physics): tpmc_intake_response 0.1214991 s per response point; compressor_size_for 0.0023146 s per size_for call; compressor_run 0.0007985 s per run call; system_evaluate_gas_path 0.0048963 s per evaluation; uq_modular_run_uq 0.4133227 s per paired sample; uq6_robust_design 0.0127413 s per MC sample."
+ ],
+ "interface_demands": [
+  {
+   "id": "F0-ID-01",
+   "direction": "F0 -> rust",
+   "counterparty": "fo_a9_7_rust_kernels (PENDING abep_core/)",
+   "demand": "port only workloads ranked PORT_CANDIDATE without a DEFER qualifier; keep a Python wrapper with identical I/O; re-run this harness (same commands) on the Rust-enabled tree and report the same keys",
+   "status": "OPEN"
+  },
+  {
+   "id": "F0-ID-02",
+   "direction": "rust -> F0",
+   "counterparty": "fo_a9_7_rust_kernels (PENDING abep_core/)",
+   "demand": "for every admitted kernel: the preregistered numerical tolerance and the Python-reference vs Rust parity record, so the post-port baseline can cite them",
+   "status": "PENDING"
+  },
+  {
+   "id": "F0-ID-03",
+   "direction": "F1 -> F0",
+   "counterparty": "fo_a9_7_f1_intake_synthesis (PENDING abep_sim/design/intake_synthesis.py)",
+   "demand": "the number of intake_response / response_surface points and the particle count per candidate of the F1 Pareto search, so the TPMC usage weight can be replaced by the real F1 call count",
+   "status": "PENDING"
+  },
+  {
+   "id": "F0-ID-04",
+   "direction": "F3 -> F0",
+   "counterparty": "fo_a9_7_f3_compressor_synthesis (PENDING abep_sim/design/compressor_synthesis.py)",
+   "demand": "the number of DragCompressor.run evaluations per F3 design search",
+   "status": "PENDING"
+  },
+  {
+   "id": "F0-ID-05",
+   "direction": "F7/F8 -> F0",
+   "counterparty": "fo_a9_7_f7_f8_coupled_optimizer (path not yet registered)",
+   "demand": "the F7/F8 driver entry point and sample counts; the UQ / robust-design workloads here time legacy drivers of withdrawn 0-D Hall physics and must be re-profiled on the new driver before any port decision",
+   "status": "PENDING"
+  },
+  {
+   "id": "F0-ID-06",
+   "direction": "F6 -> F0",
+   "counterparty": "fo_a9_7_f6_icp_geometry (PENDING abep_sim/design/icp_geometry_synthesis.py)",
+   "demand": "view-factor calls per ICP geometry candidate and their resolution (the F6 search waits for P1/P2 evidence)",
+   "status": "PENDING"
+  },
+  {
+   "id": "F0-ID-07",
+   "direction": "F0 -> F1/F3/F6/F7",
+   "counterparty": "all A9.7 synthesis lanes",
+   "demand": "measured per-call costs (median_wall_s_per_unit) for budgeting search sizes; values are machine-specific runtimes, never physics inputs",
+   "status": "SUPPLIED"
+  }
+ ],
+ "open_owner_questions": [
+  {
+   "id": "F0-OQ-01",
+   "question": "Accept the preregistered port thresholds (PORT_CANDIDATE >= 60 s, MARGINAL >= 10 s of addressable interpreter time per reference workload) or set others before the Rust lane selects kernels?",
+   "default_if_unanswered": "thresholds as registered; Rust lane may not port a NOT_A_BOTTLENECK workload"
+  },
+  {
+   "id": "F0-OQ-02",
+   "question": "Should the baseline be re-measured on a dedicated (unloaded) machine before a Rust kernel is admitted, given that this run shared the CPU with other A9.7 lanes?",
+   "default_if_unanswered": "rankings are used as order-of-magnitude only; the Rust lane re-measures Python vs Rust on the same machine in one session"
+  }
+ ],
+ "m16_impact": [
+  {
+   "m16_row": null,
+   "state_change": "none - F0 measures software runtime only; no requirement, evidence or gate status changes"
+  }
+ ],
+ "what_this_is_not": [
+  "physics evidence of any kind",
+  "a performance requirement or acceptance criterion",
+  "a quotation of any Hall, thrust or mission result (several workloads drive withdrawn 0-D Hall physics; outputs appear only as determinism fingerprints)",
+  "a port decision (the Rust lane decides within the A9.7 admission rules)"
+ ],
+ "total_harness_wall_s": 234.4
+}
