@@ -589,12 +589,16 @@ def build_parameters() -> list:
     cases = get("H21", "/coil_design/cases")
     rp1_idx = [i for i, c in enumerate(cases) if c["name"].startswith("RP-1")]
     cur = {k: sorted(cases[i]["coils"][k]["chosen"]["I_A"] for i in rp1_idx) for k in ("inner", "outer")}
-    P(rows, "H1F-CO-01", "coil supply architecture",
-      "current-controlled supplies, one per coil (inner, outer, trim reserved); every coil current recorded per "
-      "reading with per-channel I and V telemetry", units="-", tolerance=NO_TOL_RULE, evidence_class="owner-allocation",
-      evidence_note="row 78 (EM only for traceable B(z)-versus-current control); channel count from H2-1 H21-27",
-      sources=[ans(78), h21_dp("H21-27"), ref("HWREQ", hwreq("HW-MC-02", "text"))],
-      basis="row 78; H2-1 H21-27; HW-MC-02", freeze_status="FREEZE_CANDIDATE", freeze_point="LOCK-1")
+    P(rows, "H1F-CO-01", "coil supply control rule",
+      "current-controlled coil supplies; every coil current recorded per reading with per-channel I and V telemetry",
+      units="-", tolerance=NO_TOL_RULE,
+      evidence_class="owner-allocation",
+      evidence_note="row 78 (EM only for traceable B(z)-versus-current control); HW-MC-02 current-control rule",
+      sources=[ans(78), ref("HWREQ", hwreq("HW-MC-02", "text"))],
+      basis="row 78; HW-MC-02", freeze_status="FREEZE_CANDIDATE", freeze_point="LOCK-1",
+      note="consolidated verification round 2 (PHY-03): the supply channel count (per coil, trim reserved), which "
+           "follows from the OPEN coil arrangement H1F-MC-02, was split out to H1F-CO-14 (OPEN); this row fixes only "
+           "the control and recording rule")
     P(rows, "H1F-CO-02", "total ampere-turns at the RP-1 anchor (f_NI 1 .. 2)", get("H21", h21("H21-17")),
       units="A-turns", tolerance=NO_TOL_ANCHOR, evidence_class="model-derived",
       sources=[h21_dp("H21-17"), ref("H21", "/coil_design/accuracy_limits")],
@@ -670,6 +674,18 @@ def build_parameters() -> list:
       basis="A9.2 sec. 8: the two figures are different bases, never alternative estimates of the same mass; only the "
             "complete coil mass is booked", freeze_status="OPEN", freeze_point="LOCK-1",
       evidence_to_freeze=[POINT, FEMM, "frozen H-1 coil (IDA7-01) and a weighed coil"])
+    P(rows, "H1F-CO-14", "coil supply channel count",
+      "one supply per coil: inner, outer, trim reserved (3 channels); contingent on the coil arrangement H1F-MC-02",
+      units="-", tolerance=NO_TOL_RULE, evidence_class="assumed",
+      evidence_note="H2-1 H21-27 (assumed (requirement), PRELIMINARY); owner rows 74 / 78 and HW-MC-02 give no "
+                    "channel count and no trim channel",
+      sources=[h21_dp("H21-27"), ref("HWREQ", hwreq("HW-MC-02", "text")), ans(78)],
+      basis="H2-1 H21-27; follows the H1F-MC-02 arrangement (OPEN)", freeze_status="OPEN", freeze_point="LOCK-1",
+      source_status=get("H21", h21("H21-27", "status")),
+      evidence_to_freeze=["H1F-MC-02 (coil arrangement) reaching FREEZE_CANDIDATE: an owner decision or design "
+                          "evidence for single coils per pole and the trim-coil provision", FEMM],
+      note="consolidated verification round 2 (PHY-03): split from H1F-CO-01; a channel count derived from an OPEN "
+           "arrangement is never an owner allocation")
 
     # ---------------- MA materials ----------------
     P(rows, "H1F-MA-01", "inner core / inner pole material family", "FeCo-2V (Hiperco 50 class) engineering baseline",
@@ -1015,7 +1031,7 @@ def build_document() -> dict:
     m16 = []
     for rown, contrib in ((9, "channel windows (CH-02..CH-10), design point TBD_OWNER (CH-11), x_Hall admissibility "
                               "interface for F7"),
-                          (10, "magnetic circuit items MC-01..MC-10, B(z) BZ-01..BZ-06, coil envelope CO-01..CO-13"),
+                          (10, "magnetic circuit items MC-01..MC-10, B(z) BZ-01..BZ-06, coil envelope CO-01..CO-14"),
                           (13, "TH-03 / EX-07 carried UNRESOLVED; no thermal verdict"),
                           (20, "AN-04 / AN-05 / MA-08: 316L REJECTED_AS_CURRENT_BASELINE, FINAL_ANODE_MATERIAL OPEN"),
                           (21, "AN-06 + anode_investigation AI-01..AI-08: heat path UNRESOLVED")):

@@ -93,11 +93,8 @@ def _sha256(path: str) -> str | None:
 
 def extension_sha256(mod) -> str | None:
     """sha256 of the compiled extension file of an imported abep_core (None if it cannot be located)."""
-    d = os.path.dirname(getattr(mod, "__file__", "") or "")
-    if not d or not os.path.isdir(d):
-        return None
-    so = sorted(f for f in os.listdir(d) if f.endswith((".so", ".pyd")))
-    return _sha256(os.path.join(d, so[0])) if so else None
+    p = _extension_path(mod)
+    return _sha256(p) if p else None
 
 
 def admission_status(mod, kernel: str | None = None) -> tuple[bool, str]:
@@ -118,6 +115,66 @@ def admission_status(mod, kernel: str | None = None) -> tuple[bool, str]:
     if kernel is not None and rep.get("verdicts", {}).get(kernel) != "ADMITTED":
         return False, f"kernel {kernel} verdict {rep.get('verdicts', {}).get(kernel)!r} is not ADMITTED"
     return True, "ADMITTED build (extension and sources match the parity report)"
+
+
+# RUST-R1-01: the full admission check (json-load of the parity report + sha256 of the sources and the extension) is
+# cached per process. The cache key is a stat fingerprint (path, st_mtime_ns, st_size, st_ino) of the parity report,
+# the extension file and every source listed in the report; any change re-runs the full sha256 validation, so a cached
+# verdict is never served for files that changed on disk since it was computed.
+_ADMISSION_CACHE: dict = {}
+
+
+def _stat_key(path: str):
+    try:
+        st = os.stat(path)
+    except OSError:
+        return (path, None)
+    return (path, st.st_mtime_ns, st.st_size, st.st_ino)
+
+
+def _extension_path(mod) -> str | None:
+    d = os.path.dirname(getattr(mod, "__file__", "") or "")
+    if not d or not os.path.isdir(d):
+        return None
+    so = sorted(f for f in os.listdir(d) if f.endswith((".so", ".pyd")))
+    return os.path.join(d, so[0]) if so else None
+
+
+def _report_sources(report_key) -> tuple:
+    """Source paths listed in the parity report's build provenance (re-read only when the report's stat changes)."""
+    hit = _ADMISSION_CACHE.get(("sources", report_key))
+    if hit is not None:
+        return hit
+    try:
+        with open(os.path.join(REPO, PARITY_REPORT)) as fh:
+            srcs = tuple(sorted(json.load(fh).get("build_provenance", {}).get("source_sha256", {})))
+    except (OSError, ValueError):
+        srcs = ()
+    _ADMISSION_CACHE[("sources", report_key)] = srcs
+    return srcs
+
+
+def admission_fingerprint(mod) -> tuple:
+    """Cheap stat fingerprint of everything admission_status reads (no hashing)."""
+    rk = _stat_key(os.path.join(REPO, PARITY_REPORT))
+    ext = _extension_path(mod)
+    return (rk, _stat_key(ext) if ext else None,
+            tuple(_stat_key(os.path.join(REPO, rel)) for rel in _report_sources(rk)))
+
+
+def admission_status_cached(mod, kernel: str | None = None) -> tuple[bool, str]:
+    """admission_status, re-validated in full only when the stat fingerprint of the report, the extension or a listed
+    source changes (once per process otherwise)."""
+    key = ("verdict", id(mod), kernel, admission_fingerprint(mod))
+    hit = _ADMISSION_CACHE.get(key)
+    if hit is None:
+        hit = admission_status(mod, kernel)
+        _ADMISSION_CACHE[key] = hit
+    return hit
+
+
+def clear_admission_cache() -> None:
+    _ADMISSION_CACHE.clear()
 
 
 def _load_rust():
@@ -155,7 +212,7 @@ def _check_backend(backend: str, fn: str | None = None):
                 f"tpmc_backend: backend='rust' requested but abep_core is unavailable ({why}). No fallback to the "
                 "Python reference is made; call with backend='python' to use the reference.")
         if not _UNADMITTED_ALLOWED:
-            ok, why = admission_status(mod, KERNEL_IDS.get(fn) if fn else None)
+            ok, why = admission_status_cached(mod, KERNEL_IDS.get(fn) if fn else None)
             if not ok:
                 raise RustBackendNotAdmitted(
                     f"tpmc_backend: backend='rust' refused ({NOT_ADMITTED_BUILD}: {why}). No fallback to the Python "

@@ -303,3 +303,24 @@ def test_coil_mass_correction_carried(committed):
     assert v["complete_coil_copper_estimate_kg_RP1_fNI2"] == 1.579
     assert v["sensitivity_basis_60W_fixed_NI_kg_NOT_coil_mass"] == 0.136
     assert by_id["H1F-MC-08"]["value"]["total_kg"] == 3.504
+
+
+def test_no_freeze_candidate_depends_on_open_row(committed):
+    """PHY-03: a FREEZE_CANDIDATE row never names (in value, basis or evidence note) an H1F row that is not itself a
+    FREEZE_CANDIDATE, and the coil-supply channel count (from the OPEN coil arrangement MC-02) is not owner-given."""
+    import re
+    by_id = {p["id"]: p for p in committed["parameters"]}
+    for p in committed["parameters"]:
+        if p["freeze_status"] != "FREEZE_CANDIDATE":
+            continue
+        txt = json.dumps([p["value"], p["basis"], p.get("evidence_note", "")])
+        deps = set(re.findall(r"H1F-[A-Z]{2}-\d\d", txt)) - {p["id"]}
+        assert all(by_id[d]["freeze_status"] == "FREEZE_CANDIDATE" for d in deps), (p["id"], deps)
+        h21 = [s for s in p["source"] if "h2_1_hall_chamber_magnet" in s["path"]]
+        assert not any(s["pointer"].startswith(f"/design_parameters/{i}/") for s in h21 for i in (26,)), p["id"]
+    assert by_id["H1F-MC-02"]["freeze_status"] == "OPEN"
+    co14 = by_id["H1F-CO-14"]
+    assert co14["freeze_status"] == "OPEN" and co14["evidence_class"] == "assumed"
+    assert "trim" in co14["value"] and "H1F-MC-02" in co14["value"]
+    co01 = by_id["H1F-CO-01"]
+    assert co01["freeze_status"] == "FREEZE_CANDIDATE" and "trim" not in co01["value"]

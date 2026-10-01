@@ -962,15 +962,28 @@ def evaluate_constraints(values: Mapping) -> list[dict]:
     MET_ON_PARAMETRIC_VALUES_SENSITIVITY_ONLY_NOT_MET / VIOLATED_ON_PARAMETRIC_VALUES_SENSITIVITY_ONLY and never
     counts as satisfied (A9.7: a TBD is never converted to an assumed value to obtain an optimum). Anything else is
     NOT_EVALUATED. HC-03 uses the A9-02 gate verdict when one is carried (PASS -> met, FAIL -> violated,
-    NOT_EVALUABLE -> not evaluated)."""
+    NOT_EVALUABLE -> not evaluated) only on an EVALUATED or SYNTHETIC ledger; on a PARAMETRIC_SENSITIVITY_ONLY ledger the
+    verdict maps to the parametric sensitivity statuses, and on any other status to NOT_EVALUATED."""
     out = []
     for c in HARD_CONSTRAINTS:
         rec = values.get(c["objective"])
         st, basis = C_NOT_EVALUATED, "no evaluable value (fail closed: never counted as satisfied)"
         if rec is not None and c["id"] == "HC-03" and rec.get("gate_verdict") is not None:
             gv = rec["gate_verdict"]
-            st = {"PASS": C_MET, "FAIL": C_VIOLATED}.get(gv, C_NOT_EVALUATED)
-            basis = f"bus_boundary_a9.rfp_power_gate verdict {gv}"
+            vst = rec.get("status")
+            if vst in (EVALUATED, SYNTHETIC_ONLY):
+                st = {"PASS": C_MET, "FAIL": C_VIOLATED}.get(gv, C_NOT_EVALUATED)
+                basis = f"bus_boundary_a9.rfp_power_gate verdict {gv} ({vst})"
+            elif vst == PARAMETRIC_ONLY:
+                # the gate ignores evidence class: on assumed / parametric loads its verdict is a sensitivity
+                # comparison only and never counts as satisfied (fail closed; OPT-04)
+                st = {"PASS": C_MET_PARAMETRIC, "FAIL": C_VIOLATED_PARAMETRIC}.get(gv, C_NOT_EVALUATED)
+                basis = (f"bus_boundary_a9.rfp_power_gate verdict {gv} on {vst} ledger values: sensitivity "
+                         "comparison only, never counted as satisfied (fail closed)")
+            else:
+                st = C_NOT_EVALUATED
+                basis = (f"bus_boundary_a9.rfp_power_gate verdict {gv} but value status {vst}: "
+                         "not evaluable (fail closed)")
         elif rec is not None and rec.get("status") in (EVALUATED, PARAMETRIC_ONLY, SYNTHETIC_ONLY) and \
                 rec.get("value") is not None and math.isfinite(float(rec["value"])):
             ok = _cmp(rec["value"], c["comparator"], c["limit"])

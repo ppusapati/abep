@@ -873,9 +873,19 @@ def build_system(rows: list) -> None:
                                       ref("BUS", "/slots")],
       basis="A9-02 slot register; variants not installed: " + ", ".join(
           get("MP2", "/power/configurations/hall_icp_neutralizer/variant_options_not_installed")),
-      fs="FREEZE_CANDIDATE", label="RULE")
+      fs="OPEN", label="RULE",
+      adv=["H1F-MC-02 (coil arrangement) reaching FREEZE_CANDIDATE: the hall_magnet_trim slot and the one-slot-per-"
+           "coil split follow the OPEN coil arrangement (H1F-CO-14)"],
+      note="consolidated verification round 2 (PHY-03): the slot register is an A9-02 rule, but its Hall magnet slots "
+           "(inner / outer / trim) are contingent on H1F-MC-02 (OPEN), so the row is OPEN, not FREEZE_CANDIDATE")
     P(rows, "AFC-SY-PPU-04", S, "ppu", "Hall magnet supplies", busv("A902-31"), units="-", tolerance=T_RULE,
-      ec="owner-allocation", sources=[bus("A902-31")], basis="A9-02 A902-31", fs="FREEZE_CANDIDATE", label="RULE")
+      ec="assumed", ec_note="A902-31 evidence class 'n/a (rule)', source H2-1 H21-27 (assumed (requirement)); the "
+      "current-control / per-reading recording part is owner row 78 + HW-MC-02 (AFC-H1F-CO-01); the channel count "
+      "follows the OPEN coil arrangement H1F-MC-02 (AFC-H1F-CO-14)",
+      sources=[bus("A902-31"), ref("F5", find("F5", "/parameters", "id", "H1F-CO-14"))],
+      basis="A9-02 A902-31; H1F-CO-14", fs="OPEN", label="RULE",
+      adv=["H1F-MC-02 (coil arrangement) reaching FREEZE_CANDIDATE (owner decision or design evidence for single "
+           "coils per pole and the trim-coil provision)"])
     P(rows, "AFC-SY-PPU-05", S, "ppu", "RF quantity crossing the bus boundary", busv("A902-19"), units="-",
       tolerance=T_RULE, ec="owner-allocation", sources=[bus("A902-19"), ref("MP2", "/power/icp_rf_chain")],
       basis="A9-02 / A9.2", fs="FREEZE_CANDIDATE", label="RULE")

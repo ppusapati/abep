@@ -217,3 +217,26 @@ def test_code_hygiene():
         assert "xe" + "_ledger" not in src, p.name
     bsrc = BUILDER.read_text(encoding="utf-8")
     assert "import abep_sim" not in bsrc and "from abep_sim" not in bsrc and "archengine import" not in bsrc
+
+
+def test_no_freeze_candidate_depends_on_open_row(doc):
+    """PHY-03: no FREEZE_CANDIDATE row names an OPEN (non-FREEZE_CANDIDATE) H1F / AFC row, and the Hall magnet supply
+    count / trim slot (contingent on the OPEN coil arrangement H1F-MC-02) is not a freeze candidate."""
+    import re
+    rows = doc["parameters"]
+    st = {r["id"]: r["freeze_status"] for r in rows}
+    f5 = {p["id"]: p["freeze_status"] for p in _j("docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json")["parameters"]}
+    for r in rows:
+        if r["freeze_status"] != "FREEZE_CANDIDATE":
+            continue
+        txt = json.dumps([r["value"], r["basis"], r.get("evidence_note", "")])
+        for d in set(re.findall(r"H1F-[A-Z]{2}-\d\d", txt)):
+            assert f5.get(d) in (None, "FREEZE_CANDIDATE"), (r["id"], d)
+        for d in set(re.findall(r"AFC-[A-Z0-9]+(?:-[A-Z0-9]+)*-\d\d", txt)) - {r["id"]}:
+            assert st.get(d) in (None, "FREEZE_CANDIDATE"), (r["id"], d)
+        srcs = json.dumps(r["source"])
+        assert '"pointer": "/items/30' not in srcs, r["id"]          # A902-31 (H21-27, assumed (requirement))
+    for pid in ("AFC-SY-PPU-03", "AFC-SY-PPU-04", "AFC-H1F-CO-14", "AFC-H1F-MC-02"):
+        assert st[pid] != "FREEZE_CANDIDATE", pid
+    ppu4 = next(r for r in rows if r["id"] == "AFC-SY-PPU-04")
+    assert ppu4["evidence_class"] == "assumed"

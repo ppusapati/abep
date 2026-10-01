@@ -35,8 +35,8 @@
   "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json": "dc0bfce93a0dc14cd03f8c76410d273649c1453c1c55f3e0f0c9bae0691146c7",
   "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd",
   "docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json": "a559776da6c10c2bb8c1eb66fbff308a7b3634c62275bdd39c17d77e4055d8a1",
-  "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json": "75eb63615eb2e73065d70fb43640e47da2d86283a46aa66ce17bd9ef47f029cf",
-  "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json": "7f1da752d755de00bff4376c4f949b2c26fa80071e7399bf04aaf2f24707d037",
+  "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json": "79d1b302229e3e4a2af06f8dfba6449409b99cb3fff2eae72897c764e194b0b6",
+  "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json": "a22aef5be8aa842b54385b57f469846c76f2d3d480684aa7bb03f8d3dae2d009",
   "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json": "4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def"
  },
  "referenced_not_pinned": [
@@ -878,7 +878,7 @@
       "symbol": "77 H-1 parameters",
       "value": {
        "FREEZE_CANDIDATE": 23,
-       "OPEN": 27,
+       "OPEN": 28,
        "TBD_AFTER_EVIDENCE": 20,
        "TBD_OWNER": 7
       },
@@ -10093,7 +10093,7 @@
     "rule": "< 1500 W",
     "status": "NOT_EVALUATED",
     "value_status": "NOT_EVALUATED",
-    "basis": "bus_boundary_a9.rfp_power_gate verdict NOT_EVALUABLE"
+    "basis": "bus_boundary_a9.rfp_power_gate verdict NOT_EVALUABLE but value status NOT_EVALUATED: not evaluable (fail closed)"
    },
    {
     "id": "HC-04",

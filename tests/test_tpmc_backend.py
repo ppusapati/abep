@@ -237,3 +237,29 @@ def test_div04_max_hits_cap_documented_and_refused_for_rust():
         TB.trace_channel(np.random.default_rng(4), v0, R, 0.05, 0.5, 350.0, M, max_hits_cap=0, backend="rust")
     rep = json.load(open(REPORT))
     assert "DIV-04" in {d["id"] for d in rep["documented_divergence"]}
+
+
+def test_admission_gate_cached_and_revalidated_on_change(monkeypatch, tmp_path):
+    """RUST-R1-01: the full admission check (report load + sha256 of sources and extension) runs once per process and
+    again only when the stat fingerprint of the report, the extension or a listed source changes."""
+    repo = tmp_path / "repo"
+    (repo / "docs/performance/abep_core").mkdir(parents=True)
+    src = repo / "src.rs"
+    src.write_text("fn main() {}\n")
+    fake = _fake_extension(tmp_path)
+    so = os.path.join(os.path.dirname(fake.__file__), "abep_core.cpython-311-x86_64-linux-gnu.so")
+    rep = {"build_provenance": {"extension_sha256": TB._sha256(so), "source_sha256": {"src.rs": TB._sha256(str(src))}},
+           "verdicts": {"K4_trace": "ADMITTED"}}
+    (repo / TB.PARITY_REPORT).write_text(json.dumps(rep))
+    monkeypatch.setattr(TB, "REPO", str(repo))
+    TB.clear_admission_cache()
+    calls = []
+    real = TB.admission_status
+    monkeypatch.setattr(TB, "admission_status", lambda m, k=None: calls.append(k) or real(m, k))
+    for _ in range(5):
+        assert TB.admission_status_cached(fake, "K4_trace")[0]
+    assert len(calls) == 1                                   # validated once, then served from the cache
+    src.write_text("fn main() { changed(); }\n")             # source drift on disk -> fingerprint changes
+    ok, why = TB.admission_status_cached(fake, "K4_trace")
+    assert not ok and "src.rs" in why and len(calls) == 2
+    TB.clear_admission_cache()

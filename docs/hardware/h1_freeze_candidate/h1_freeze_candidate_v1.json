@@ -297,7 +297,8 @@
     "H1F-CO-10",
     "H1F-CO-11",
     "H1F-CO-12",
-    "H1F-CO-13"
+    "H1F-CO-13",
+    "H1F-CO-14"
    ]
   },
   {
@@ -1634,12 +1635,12 @@
   {
    "id": "H1F-CO-01",
    "group": "CO",
-   "name": "coil supply architecture",
-   "value": "current-controlled supplies, one per coil (inner, outer, trim reserved); every coil current recorded per reading with per-channel I and V telemetry",
+   "name": "coil supply control rule",
+   "value": "current-controlled coil supplies; every coil current recorded per reading with per-channel I and V telemetry",
    "units": "-",
    "tolerance": "n/a (decision / rule)",
    "evidence_class": "owner-allocation",
-   "evidence_note": "row 78 (EM only for traceable B(z)-versus-current control); channel count from H2-1 H21-27",
+   "evidence_note": "row 78 (EM only for traceable B(z)-versus-current control); HW-MC-02 current-control rule",
    "source": [
     {
      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
@@ -1648,20 +1649,16 @@
      "note": "owner row 78"
     },
     {
-     "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
-     "pointer": "/design_parameters/26/value",
-     "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d"
-    },
-    {
      "path": "docs/experiments/hardware/hardware_requirements_v1.json",
      "pointer": "/requirements/23/text",
      "sha256": "0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0"
     }
    ],
-   "basis": "row 78; H2-1 H21-27; HW-MC-02",
+   "basis": "row 78; HW-MC-02",
    "freeze_status": "FREEZE_CANDIDATE",
    "freeze_point": "LOCK-1",
-   "evidence_to_freeze_candidate": []
+   "evidence_to_freeze_candidate": [],
+   "note": "consolidated verification round 2 (PHY-03): the supply channel count (per coil, trim reserved), which follows from the OPEN coil arrangement H1F-MC-02, was split out to H1F-CO-14 (OPEN); this row fixes only the control and recording rule"
   },
   {
    "id": "H1F-CO-02",
@@ -2027,6 +2024,43 @@
     "FEMM-class axisymmetric magnetostatics of MC-1 with supplier B-H curves at the selected design point (M16 row 10 blocking item)",
     "frozen H-1 coil (IDA7-01) and a weighed coil"
    ]
+  },
+  {
+   "id": "H1F-CO-14",
+   "group": "CO",
+   "name": "coil supply channel count",
+   "value": "one supply per coil: inner, outer, trim reserved (3 channels); contingent on the coil arrangement H1F-MC-02",
+   "units": "-",
+   "tolerance": "n/a (decision / rule)",
+   "evidence_class": "assumed",
+   "evidence_note": "H2-1 H21-27 (assumed (requirement), PRELIMINARY); owner rows 74 / 78 and HW-MC-02 give no channel count and no trim channel",
+   "source": [
+    {
+     "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
+     "pointer": "/design_parameters/26/value",
+     "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d"
+    },
+    {
+     "path": "docs/experiments/hardware/hardware_requirements_v1.json",
+     "pointer": "/requirements/23/text",
+     "sha256": "0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0"
+    },
+    {
+     "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+     "pointer": "/answers/77/owner_answer_verbatim",
+     "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
+     "note": "owner row 78"
+    }
+   ],
+   "basis": "H2-1 H21-27; follows the H1F-MC-02 arrangement (OPEN)",
+   "freeze_status": "OPEN",
+   "freeze_point": "LOCK-1",
+   "status_in_source": "PRELIMINARY",
+   "evidence_to_freeze_candidate": [
+    "H1F-MC-02 (coil arrangement) reaching FREEZE_CANDIDATE: an owner decision or design evidence for single coils per pole and the trim-coil provision",
+    "FEMM-class axisymmetric magnetostatics of MC-1 with supplier B-H curves at the selected design point (M16 row 10 blocking item)"
+   ],
+   "note": "consolidated verification round 2 (PHY-03): split from H1F-CO-01; a channel count derived from an OPEN arrangement is never an owner allocation"
   },
   {
    "id": "H1F-MA-01",
@@ -2709,7 +2743,7 @@
  "freeze_rollup": {
   "counts": {
    "FREEZE_CANDIDATE": 23,
-   "OPEN": 27,
+   "OPEN": 28,
    "TBD_AFTER_EVIDENCE": 20,
    "TBD_OWNER": 7
   },
@@ -2740,7 +2774,7 @@
    },
    "CO": {
     "FREEZE_CANDIDATE": 3,
-    "OPEN": 8,
+    "OPEN": 9,
     "TBD_AFTER_EVIDENCE": 1,
     "TBD_OWNER": 1
    },
@@ -2769,7 +2803,7 @@
     "TBD_OWNER": 1
    }
   },
-  "total": 77
+  "total": 78
  },
  "hall_response_domain": {
   "admitted_members": [],
@@ -3967,7 +4001,7 @@
    "v4_state": "BLOCKED",
    "proposed_state": "BLOCKED",
    "state_change": false,
-   "f5_contribution": "magnetic circuit items MC-01..MC-10, B(z) BZ-01..BZ-06, coil envelope CO-01..CO-13",
+   "f5_contribution": "magnetic circuit items MC-01..MC-10, B(z) BZ-01..BZ-06, coil envelope CO-01..CO-14",
    "source": {
     "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
     "pointer": "/rows/9",
@@ -4018,7 +4052,7 @@
   }
  ],
  "key_findings": [
-  "F5-K1 H-1 definition: 77 parameters; FREEZE_CANDIDATE 23, OPEN 27, TBD_AFTER_EVIDENCE 20, TBD_OWNER 7. The article is NOT frozen; every FREEZE_CANDIDATE is an owner-given decision, convention or rule.",
+  "F5-K1 H-1 definition: 78 parameters; FREEZE_CANDIDATE 23, OPEN 28, TBD_AFTER_EVIDENCE 20, TBD_OWNER 7. The article is NOT frozen; every FREEZE_CANDIDATE is an owner-given decision, convention or rule.",
   "F5-K2 the channel design point (h, d_mean, L) is TBD_OWNER: windows exist (xenon-derived rules, hypotheses for air species), but no Hall performance can discriminate inside them (credible set empty, P5-N2 v1 INCONCLUSIVE); selection needs FEMM + coupled thermal + owner (F5-OQ-01 / F5-OQ-02).",
   "F5-K3 magnetic circuit decided at topology level only (T2 shielded, EM-only, FeCo-2V inner / pure-iron outer, ceramic-insulated copper coils); all dimensions, ampere-turns, coil currents and B(z) are lumped-circuit values at the RP-1 calculation anchor or TBD pending FEMM.",
   "F5-K4 B(z): no Vyovrinda-specific evidence exists; the H-1 target is the H2-1 model-derived envelope and an inferred shape (OPEN); the P5 Peterson 2001 profile is a reference for P5 only and no P5 value is used.",

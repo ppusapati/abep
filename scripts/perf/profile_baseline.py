@@ -11,7 +11,7 @@ seeded workloads of the existing simulator entry points, unmodified:
   whole-system evaluation        abep_sim.system.evaluate (golden case gas_path) and abep_sim.archengine.close_architecture
                                  (golden cases architecture_closure / mission)
   UQ Monte Carlo                 abep_sim.uq_modular.run_uq (one batch of paired mean / solar-min / solar-max samples)
-  robust design search           abep_sim.uq6.robust_design (the only robust-design routine in the base; F7/F8 PENDING)
+  robust design search           abep_sim.uq6.robust_design (legacy routine; the A9.7 F8 robust optimizer is abep_sim/design/robust_optimizer.py)
   mission propagation            abep_sim.mission5.run_mission_generic -> abep_sim.mission_env.propagate
   P3 ray / view factors          docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.view_factors at the
                                  builder's verification resolution RES_VERIFY
@@ -899,6 +899,94 @@ def _f(x):
     return "-" if x is None else (f"{x:.4g}" if isinstance(x, float) else str(x))
 
 
+PARITY_REPORT_REL = "docs/performance/abep_core/parity_report_v1.json"
+F1_JSON_REL = "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json"
+F3_JSON_REL = "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json"
+F6_JSON_REL = "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json"
+F78_JSON_REL = "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json"
+RESOLUTION_HEAD = "Cross-lane resolution (consolidated verification round 2)"
+
+
+def _lane_json(rel):
+    try:
+        return json.loads((REPO / rel).read_text())
+    except (OSError, ValueError):
+        return None
+
+
+def rust_speedup_example(by_id):
+    """F0-R1-01: the speed-up example is read from the current parity report at render time (never hard-coded), so it
+    cannot dangle when the campaign is re-run; the historical first-campaign value is cited by commit."""
+    rep = _lane_json(PARITY_REPORT_REL)
+    fr = ((by_id.get("tpmc_trace_channel") or {}).get("profile") or {}).get("tottime_fractions") or {}
+    io = fr.get("project_python", 0.0) + fr.get("interpreter_builtin", 0.0) + fr.get("stdlib_python", 0.0)
+    if not rep or "speedup" not in rep:
+        return f"The measured Rust wall speed-ups are not available ({PARITY_REPORT_REL} missing or without a speedup section)."
+    sp = rep["speedup"].get("W1_tpmc_trace_channel", {}).get("speedup_wall")
+    ss = (rep.get("speedup_served_path") or {}).get("W1_tpmc_trace_channel", {}).get("speedup_wall")
+    utc = (rep.get("campaign_history") or [{}])[-1].get("utc")
+    txt = (f"The measured Rust wall speed-ups are in {PARITY_REPORT_REL} (sections speedup and speedup_served_path; "
+           f"time removed = 1 - 1/speed-up). Latest campaign {utc}: W1 = tpmc_trace_channel {sp:.2f}x kernel-only "
+           f"(admission gate bypassed; {100 * (1 - 1 / sp):.1f} % removed)")
+    if ss:
+        txt += f", {ss:.2f}x through the served, admission-gated backend ({100 * (1 - 1 / ss):.1f} % removed)"
+    else:
+        txt += "; the served-path speed-up is not recorded"
+    txt += (f", against an interpreter-only share of {io:.4f}. (The first campaign, 2026-10-01T04:52:48Z, recorded 5.44x "
+            "kernel-only on W1; that report version is at commit e2aeb3f, the current report keeps only verdicts and "
+            "source hashes of earlier campaigns.)")
+    return txt
+
+
+def cross_lane_resolution():
+    """F0-ID-01..06 resolved against the merged lanes at render time (the pinned F0 JSON keeps the as-measured PENDING
+    counterparties; the parity pre-registration pins its sha256). Counts are read from the lane deliverables."""
+    rep, f1, f3, f6, f78 = (_lane_json(r) for r in (PARITY_REPORT_REL, F1_JSON_REL, F3_JSON_REL, F6_JSON_REL, F78_JSON_REL))
+    out = {}
+    if rep:
+        rid = {d["id"]: d for d in rep.get("interface_demands", [])}
+        verd = ", ".join(f"{k} {v}" for k, v in rep.get("verdicts", {}).items())
+        out["F0-ID-01"] = ("abep_core/ + abep_sim/design/tpmc_backend.py (fo_a9_7_rust_kernels, merged)",
+                           f"PARTIAL: TPMC kernels ported behind the explicit Python wrapper ({verd}); re-running this "
+                           f"harness on the Rust-enabled tree is RUST-ID-02 {rid.get('RUST-ID-02', {}).get('status')}")
+        out["F0-ID-02"] = ("docs/performance/abep_core/parity_prereg_v1.json; " + PARITY_REPORT_REL,
+                           f"SUPPLIED (RUST-ID-01 {rid.get('RUST-ID-01', {}).get('status')}): pre-registered tolerance "
+                           "and per-kernel parity verdicts")
+    if f1:
+        n_part = next((i.get("value") for i in f1.get("items", []) if i.get("id") == "F1-P-12"), None)
+        out["F0-ID-03"] = ("abep_sim/design/intake_synthesis.py; " + F1_JSON_REL,
+                           f"PARTIAL: {f1.get('direct_runs')} direct intake_response runs per F1 build (direct_runs) at "
+                           f"{n_part} particles each (F1-P-12), {f1.get('design_space', {}).get('n_candidates')} geometry "
+                           "candidates; the frozen-surface point count per candidate is not recorded by F1 (OPEN); F1 "
+                           "does not opt in to the Rust backend (RUST-ID-03)")
+    if f3:
+        cases = f3.get("cases", [])
+        n_des = sum(c.get("n_designs", 0) for c in cases)
+        n_sf = sum(len(c.get("size_for_comparison", [])) for c in cases)
+        out["F0-ID-04"] = ("abep_sim/design/compressor_synthesis.py; " + F3_JSON_REL,
+                           f"SUPPLIED: {n_des} design evaluations over {len(cases)} cases (one "
+                           "DragCompressor.run(self_consistent=True) plus one _run_once re-check each, evaluate_design), "
+                           f"plus {n_sf} size_for comparisons")
+    if f78:
+        rows = f78.get("upstream_pareto_summary", {}).get("rows", [])
+        cols = f78.get("upstream_pareto_summary", {}).get("columns", [])
+        n_ev = sum(r[cols.index("n_evaluated")] for r in rows) if "n_evaluated" in cols else None
+        n_mc = next((i.get("value") for i in f78.get("items", []) if i.get("id") == "F78-P-08"), None)
+        out["F0-ID-05"] = ("abep_sim/design/architecture_optimizer.py + robust_optimizer.py (driver "
+                           "docs/design_synthesis/f7_f8_optimizer/build_f7_f8_optimizer.py)",
+                           f"PARTIAL: entry points and counts supplied ({len(rows)} upstream contexts, {n_ev} upstream "
+                           f"design evaluations, {f78.get('robust', {}).get('survivors')} robust survivors, {n_mc} TPMC-"
+                           "statistics MC draws per (candidate, scenario), tpmc_invoked_by_f7_f8 = "
+                           f"{f78.get('tpmc_backend_policy', {}).get('tpmc_invoked_by_f7_f8')}); re-profiling the new "
+                           "driver is OPEN")
+    if f6:
+        s05 = next((d for d in f6.get("interface_demands", {}).get("f6_supplies", []) if d.get("id") == "F6-IF-S05"), None)
+        if s05:
+            out["F0-ID-06"] = ("abep_sim/design/icp_geometry_synthesis.py; " + F6_JSON_REL + " (F6-IF-S05)",
+                               f"PARTIAL: F6 supplies {s05.get('what')} [{s05.get('status')}]; not profiled by F0 (OPEN)")
+    return out
+
+
 def basis_correction_lines(doc):
     """F0-01 / F0-02 / F0-03 corrections, derived only from the committed measured records (no new timing)."""
     by_id = {w["id"]: w for w in doc["workloads"]}
@@ -920,9 +1008,7 @@ def basis_correction_lines(doc):
         iw = io + fr.get("library_python_wrapper", 0.0)
         L.append(f"| {r['rank']} | {r['id']} | {_f(round(io, 4))} | {_f(round(iw, 4))} | "
                  f"{_f(r['reference_workload_s'])} | {_f(round(r['reference_workload_s'] * iw, 2))} |")
-    L += ["", "The measured Rust wall speed-ups are in docs/performance/abep_core/parity_report_v1.json (section "
-          "speedup; time removed = 1 - 1/speed-up), e.g. 5.44x on W1 = tpmc_trace_channel (81.6 % removed) against an "
-          "interpreter-only share of 0.6652 at campaign 2026-10-01T04:52:48Z."]
+    L += [""] + [rust_speedup_example(by_id)]
     L += ["", "F0-02: the 'usage' of the TPMC PORT_CANDIDATE is the frozen_intake_surface_build reference workload, which "
           "CLAUDE.md rule 1 and RUST-ID-06 forbid running with the Rust backend, and no current consumer opts in to the "
           "Rust backend (F1 calls intake_tpmc.intake_response directly, RUST-ID-03 OPEN; F7 / F8 run no TPMC). The "
@@ -973,7 +1059,8 @@ def render_md(doc):
                  f"{_f(r['f0_deferred'])} | {_f(r.get('via'))} |")
     L += ["", "## Findings", ""] + [f"- {x}" for x in doc["findings"]]
     rd = doc["robust_design_search_status"]
-    L += ["", f"Robust design search: {rd['routine']}; A9.7 F8 robust optimizer: {rd['a9_7_f8_robust_optimizer']}.", "",
+    L += ["", f"Robust design search: {rd['routine']}; A9.7 F8 robust optimizer: {rd['a9_7_f8_robust_optimizer']} "
+          f"(as measured; now merged: abep_sim/design/robust_optimizer.py, see '{RESOLUTION_HEAD}').", "",
           "## Workloads", "",
           "| workload | units | repeats | median wall s | median CPU s | CPU/wall | s per unit | interpreter share | numpy share | deterministic |",
           "|---|---|---|---|---|---|---|---|---|---|"]
@@ -992,7 +1079,9 @@ def render_md(doc):
             L.append(f"- physics note: {w['physics_note']}")
         if w.get("reference"):
             ref = w["reference"]
-            L.append(f"- reference workload `{ref['id']}` ({_f(ref['units_of_work'])} units): {ref['basis']}. {ref['method']}.")
+            L.append(f"- reference workload `{ref['id']}` ({_f(ref['units_of_work'])} units): {ref['basis']}. {ref['method']}."
+                     + (f" (PENDING as measured; the named lane is merged, see '{RESOLUTION_HEAD}'.)"
+                        if "PENDING" in ref["basis"] else ""))
         j = w["port_judgement"]
         L.append(f"- port judgement: **{j['judgement']}**" + (f" ({j.get('covered_by')})" if j.get("covered_by") else "")
                  + (f"; {j['qualifier']}" if j.get("qualifier") else "") + (f"; {j['basis']}" if j.get("basis") else ""))
@@ -1022,9 +1111,23 @@ def render_md(doc):
           "## Parameters", "", "| id | value | units | basis | evidence class |", "|---|---|---|---|---|"]
     for p in doc["parameters"]:
         L.append(f"| {p['id']} | {p['value']} | {p['units']} | {p['basis']} | {p['evidence_class']} |")
-    L += ["", "## Interface demands", "", "| id | direction | counterparty | demand | status |", "|---|---|---|---|---|"]
+    res = cross_lane_resolution()
+    L += ["", "## Interface demands", "",
+          "Counterparty and status as recorded in the pinned JSON at measurement time; the last column resolves them "
+          f"against the merged lanes (section '{RESOLUTION_HEAD}').", "",
+          "| id | direction | counterparty (as measured) | demand | status (as measured) | resolution (round 2) |",
+          "|---|---|---|---|---|---|"]
     for d in doc["interface_demands"]:
-        L.append(f"| {d['id']} | {d['direction']} | {d['counterparty']} | {d['demand']} | {d['status']} |")
+        r = res.get(d["id"])
+        rtxt = f"{r[0]}: {r[1]}" if r else "unchanged"
+        L.append(f"| {d['id']} | {d['direction']} | {d['counterparty']} | {d['demand']} | {d['status']} | {rtxt} |")
+    L += ["", f"## {RESOLUTION_HEAD}", "",
+          "The JSON is pinned by the parity pre-registration, so its PENDING counterparties and the PENDING notes in the "
+          "robust-design line and the uq6 / robust-design reference-workload texts stay as measured. They are superseded "
+          "here: every named lane is merged. Counts are read at render time from the lane deliverables (machine-specific "
+          "call counts, never physics inputs).", ""]
+    for i in sorted(res):
+        L.append(f"- {i}: {res[i][0]} -> {res[i][1]}")
     L += ["", "## Open owner questions (new)", ""]
     L += [f"- **{q['id']}**: {q['question']} Default if unanswered: {q['default_if_unanswered']}." for q in
           doc["open_owner_questions"]]

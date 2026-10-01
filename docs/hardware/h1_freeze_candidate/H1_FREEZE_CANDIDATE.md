@@ -48,12 +48,12 @@ Evidence classes: measured, digitized, inferred, reconstructed, model-derived, a
 | AN anode geometry, material and heat path | 4 | 1 | 5 | 1 |
 | MC magnetic circuit geometry | 5 | 4 | 1 | 0 |
 | BZ B(z) target / profile | 0 | 3 | 2 | 1 |
-| CO coil operating envelope | 3 | 8 | 1 | 1 |
+| CO coil operating envelope | 3 | 9 | 1 | 1 |
 | MA materials under investigation | 2 | 1 | 4 | 1 |
 | TH thermal rules and closures touching H-1 | 1 | 1 | 0 | 1 |
 | IN inlet / plenum interface (HALL_INLET_Z0) | 2 | 1 | 2 | 0 |
 | EX exit plane IP-EXIT | 2 | 0 | 5 | 1 |
-| **total** | 23 | 27 | 20 | 7 |
+| **total** | 23 | 28 | 20 | 7 |
 
 A9.7 F5 bullet coverage:
 
@@ -61,7 +61,7 @@ A9.7 F5 bullet coverage:
 * `anode geometry;` -> H1F-AN-01, H1F-AN-02, H1F-AN-03, H1F-AN-04, H1F-AN-05, H1F-AN-06, H1F-AN-07, H1F-AN-08, H1F-AN-09, H1F-AN-10, H1F-AN-11
 * `magnetic circuit geometry;` -> H1F-MC-01, H1F-MC-02, H1F-MC-03, H1F-MC-04, H1F-MC-05, H1F-MC-06, H1F-MC-07, H1F-MC-08, H1F-MC-09, H1F-MC-10
 * `B(z) target/profile;` -> H1F-BZ-01, H1F-BZ-02, H1F-BZ-03, H1F-BZ-04, H1F-BZ-05, H1F-BZ-06
-* `coil operating envelope;` -> H1F-CO-01, H1F-CO-02, H1F-CO-03, H1F-CO-04, H1F-CO-05, H1F-CO-06, H1F-CO-07, H1F-CO-08, H1F-CO-09, H1F-CO-10, H1F-CO-11, H1F-CO-12, H1F-CO-13
+* `coil operating envelope;` -> H1F-CO-01, H1F-CO-02, H1F-CO-03, H1F-CO-04, H1F-CO-05, H1F-CO-06, H1F-CO-07, H1F-CO-08, H1F-CO-09, H1F-CO-10, H1F-CO-11, H1F-CO-12, H1F-CO-13, H1F-CO-14
 * `materials under investigation;` -> H1F-AN-01, H1F-AN-02, H1F-AN-03, H1F-AN-04, H1F-AN-05, H1F-AN-06, H1F-AN-07, H1F-AN-08, H1F-AN-09, H1F-AN-10, H1F-AN-11, H1F-MA-01, H1F-MA-02, H1F-MA-03, H1F-MA-04, H1F-MA-05, H1F-MA-06, H1F-MA-07, H1F-MA-08
 * `inlet/plenum interface;` -> H1F-IN-01, H1F-IN-02, H1F-IN-03, H1F-IN-04, H1F-IN-05
 * `exit plane IP-EXIT.` -> H1F-EX-01, H1F-EX-02, H1F-EX-03, H1F-EX-04, H1F-EX-05, H1F-EX-06, H1F-EX-07, H1F-EX-08
@@ -132,7 +132,7 @@ A9.7 F5 bullet coverage:
 
 | id | parameter | VALUE | units | TOLERANCE | EVIDENCE_CLASS | SOURCE | FREEZE_STATUS | freeze point |
 |---|---|---|---|---|---|---|---|---|
-| H1F-CO-01 | coil supply architecture | current-controlled supplies, one per coil (inner, outer, trim reserved); every coil current recorded per reading with per-channel I and V telemetry | - | n/a (decision / rule) | owner-allocation (row 78 (EM only for traceable B(z)-versus-current control); channel count from H2-1 H21-27) | `docs/decisions/OD_2026_09_29_owner_answers_147.json` /answers/77/owner_answer_verbatim (owner row 78); `docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json` /design_parameters/26/value; `docs/experiments/hardware/hardware_requirements_v1.json` /requirements/23/text | **FREEZE_CANDIDATE** | LOCK-1 |
+| H1F-CO-01 | coil supply control rule | current-controlled coil supplies; every coil current recorded per reading with per-channel I and V telemetry | - | n/a (decision / rule) | owner-allocation (row 78 (EM only for traceable B(z)-versus-current control); HW-MC-02 current-control rule) | `docs/decisions/OD_2026_09_29_owner_answers_147.json` /answers/77/owner_answer_verbatim (owner row 78); `docs/experiments/hardware/hardware_requirements_v1.json` /requirements/23/text | **FREEZE_CANDIDATE** | LOCK-1 |
 | H1F-CO-02 | total ampere-turns at the RP-1 anchor (f_NI 1 .. 2) | [520.2, 1040.0] | A-turns | n/a (value at the RP-1 calculation anchor, not a design point) | model-derived | `docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json` /design_parameters/16/value; `docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json` /coil_design/accuracy_limits | **OPEN** | LOCK-1 |
 | H1F-CO-03 | per-coil current over the RP-1 cases (chosen gauges) | {"inner_A": [0.5767, 2.936], "outer_A": [1.04, 5.072]} | A | n/a (value at the RP-1 calculation anchor, not a design point) | model-derived | `docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json` /coil_design/cases/0/coils; `docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json` /coil_design/cases/1/coils; `docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json` /coil_design/cases/2/coils | **OPEN** | LOCK-1 |
 | H1F-CO-04 | highest coil terminal voltage over the RP-1 cases (Ni-clad conductor at its 1000 F class) | 11.51 | V | n/a (value at the RP-1 calculation anchor, not a design point) | model-derived | `docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json` /interface_demands/5/value | **OPEN** | LOCK-1 |
@@ -145,6 +145,7 @@ A9.7 F5 bullet coverage:
 | H1F-CO-11 | coil design temperature ceiling | {"continuous_limit_C (supplier, not validated)": 537.778, "design_ceiling_C": 487.778} | degC | n/a (decision / rule) | assumed (supplier continuous rating (MCQ-EM-03) minus the row-86 50 K margin; the supplier rating is not validated (OQ-A907-05 provisional)) | `docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json` /revision_register/3/new/value; `docs/decisions/OD_2026_09_29_owner_answers_147.json` /answers/85/owner_answer_verbatim (owner row 86) | **OPEN** | LOCK-1 |
 | H1F-CO-12 | coil thermal node closure | UNRESOLVED | - | n/a (decision / rule) | model-derived (A9-07 inner coil CI is the design-driving node; every hall_icp_neutralizer result is an uncoupled sensitivity reported UNRESOLVED) | `docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json` /key_findings/3; `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json` /closure_statuses/ICP_COUPLED_THERMAL | **OPEN** | LOCK-1 |
 | H1F-CO-13 | coil copper mass basis (A9.2 sec. 8 coil-mass correction) | {"complete_coil_copper_estimate_kg_RP1_fNI2": 1.579, "sensitivity_basis_60W_fixed_NI_kg_NOT_coil_mass": 0.136} | kg | n/a (value at the RP-1 calculation anchor, not a design point) | model-derived | `docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json` /decisions/coil_mass_correction; `docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json` /coil_mass_correction; `docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json` /key_findings/11 | **OPEN** | LOCK-1 |
+| H1F-CO-14 | coil supply channel count | one supply per coil: inner, outer, trim reserved (3 channels); contingent on the coil arrangement H1F-MC-02 | - | n/a (decision / rule) | assumed (H2-1 H21-27 (assumed (requirement), PRELIMINARY); owner rows 74 / 78 and HW-MC-02 give no channel count and no trim channel) | `docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json` /design_parameters/26/value; `docs/experiments/hardware/hardware_requirements_v1.json` /requirements/23/text; `docs/decisions/OD_2026_09_29_owner_answers_147.json` /answers/77/owner_answer_verbatim (owner row 78) | **OPEN** | LOCK-1 |
 
 ### MA - materials under investigation
 
@@ -231,6 +232,7 @@ A9.7 F5 bullet coverage:
 | H1F-CO-11 | OPEN | coil EIS thermal-endurance qualification (HW-MC-07) and the sacrificial-coil cycle (HW-MC-16); hot-spot offset measurement (HW-MC-14) |
 | H1F-CO-12 | OPEN | coupled H-1 / ICP thermal closure (A9.2 ICP_COUPLED_THERMAL; P3 framework inputs: ICP geometry, view factors, conductances; >= 50 K + 20 % rule, row 86); FEMM-sized winding window; validated coil rating |
 | H1F-CO-13 | OPEN | owner selection of the channel design point (h, d_mean, L) inside the windows (M16 row 9 blocking item); FEMM-class axisymmetric magnetostatics of MC-1 with supplier B-H curves at the selected design point (M16 row 10 blocking item); frozen H-1 coil (IDA7-01) and a weighed coil |
+| H1F-CO-14 | OPEN | H1F-MC-02 (coil arrangement) reaching FREEZE_CANDIDATE: an owner decision or design evidence for single coils per pole and the trim-coil provision; FEMM-class axisymmetric magnetostatics of MC-1 with supplier B-H curves at the selected design point (M16 row 10 blocking item) |
 | H1F-MA-03 | TBD_AFTER_EVIDENCE | sourced B_sat(T) / B-H vs temperature of the selected FeCo-2V grade (HW-MC-13); coupled H-1 / ICP thermal closure (A9.2 ICP_COUPLED_THERMAL; P3 framework inputs: ICP geometry, view factors, conductances; >= 50 K + 20 % rule, row 86) |
 | H1F-MA-04 | TBD_AFTER_EVIDENCE | sourced B_sat(T) of the pure-iron grade (HW-MC-13); resolution of the iron Curie value discrepancy CC-07 (F5-OQ-03) |
 | H1F-MA-05 | TBD_OWNER | owner decision lane 17 Q6; N/O coupon evidence (lane 32 H1-H4); wall thermal margin under the coupled model (A9-07 K2: BN inner wall UNRESOLVED against the 850 degC design ceiling = 900 degC oxidizing guide - 50 K) |
@@ -392,14 +394,14 @@ Existing owner questions touched (not restated): MQ-03 (TBD_OWNER), OQ-A907-04 (
 | row | key | v4 state | proposed | change | F5 contribution |
 |---|---|---|---|---|---|
 | 9 | hall_chamber | BLOCKED | BLOCKED | False | channel windows (CH-02..CH-10), design point TBD_OWNER (CH-11), x_Hall admissibility interface for F7 |
-| 10 | magnetic_circuit | BLOCKED | BLOCKED | False | magnetic circuit items MC-01..MC-10, B(z) BZ-01..BZ-06, coil envelope CO-01..CO-13 |
+| 10 | magnetic_circuit | BLOCKED | BLOCKED | False | magnetic circuit items MC-01..MC-10, B(z) BZ-01..BZ-06, coil envelope CO-01..CO-14 |
 | 13 | thermal_control | BLOCKED | BLOCKED | False | TH-03 / EX-07 carried UNRESOLVED; no thermal verdict |
 | 20 | h1_anode_material | BLOCKED | BLOCKED | False | AN-04 / AN-05 / MA-08: 316L REJECTED_AS_CURRENT_BASELINE, FINAL_ANODE_MATERIAL OPEN |
 | 21 | h1_anode_heat_path | BLOCKED | BLOCKED | False | AN-06 + anode_investigation AI-01..AI-08: heat path UNRESOLVED |
 
 ## Key findings
 
-* F5-K1 H-1 definition: 77 parameters; FREEZE_CANDIDATE 23, OPEN 27, TBD_AFTER_EVIDENCE 20, TBD_OWNER 7. The article is NOT frozen; every FREEZE_CANDIDATE is an owner-given decision, convention or rule.
+* F5-K1 H-1 definition: 78 parameters; FREEZE_CANDIDATE 23, OPEN 28, TBD_AFTER_EVIDENCE 20, TBD_OWNER 7. The article is NOT frozen; every FREEZE_CANDIDATE is an owner-given decision, convention or rule.
 * F5-K2 the channel design point (h, d_mean, L) is TBD_OWNER: windows exist (xenon-derived rules, hypotheses for air species), but no Hall performance can discriminate inside them (credible set empty, P5-N2 v1 INCONCLUSIVE); selection needs FEMM + coupled thermal + owner (F5-OQ-01 / F5-OQ-02).
 * F5-K3 magnetic circuit decided at topology level only (T2 shielded, EM-only, FeCo-2V inner / pure-iron outer, ceramic-insulated copper coils); all dimensions, ampere-turns, coil currents and B(z) are lumped-circuit values at the RP-1 calculation anchor or TBD pending FEMM.
 * F5-K4 B(z): no Vyovrinda-specific evidence exists; the H-1 target is the H2-1 model-derived envelope and an inferred shape (OPEN); the P5 Peterson 2001 profile is a reference for P5 only and no P5 value is used.

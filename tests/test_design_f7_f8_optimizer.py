@@ -454,3 +454,25 @@ def test_elasticity_flip_flags_knife_edge_against_nominal(monkeypatch, inp):
             "P_set_Pa": 0.01}
     out = ro.compressor_elasticities(inp, cand, [sc])
     assert out and all(v["status_flip_within_step"] for v in out.values())
+
+
+def test_hc03_gate_verdict_on_parametric_ledger_never_met():
+    """OPT-04: a non-synthetic bus ledger built from assumed loads gives a P_bus PARAMETRIC_SENSITIVITY_ONLY record;
+    the A9-02 gate verdict (which ignores evidence class) must not turn HC-03 into MET_ON_SUPPLIED_VALUES."""
+    L = _syn_ledgers("hall_icp_neutralizer", 1.0, measured=False)
+    L["synthetic"] = False
+    ev = ao.evaluate_system({"design_id": "x"}, "hall_icp_neutralizer", supplied={"bus": L})
+    hc03 = [c for c in ev["constraints"] if c["id"] == "HC-03"]
+    assert len(hc03) == 1
+    c = hc03[0]
+    assert c["value_status"] == ao.PARAMETRIC_ONLY
+    assert c["status"] != ao.C_MET
+    assert c["status"] in (ao.C_MET_PARAMETRIC, ao.C_VIOLATED_PARAMETRIC, ao.C_NOT_EVALUATED)
+    # direct: a parametric record carrying a PASS verdict maps to the parametric sensitivity status
+    out = ao.evaluate_constraints({"P_bus_W": {"status": ao.PARAMETRIC_ONLY, "value": 1000.0, "gate_verdict": "PASS"}})
+    hc = [x for x in out if x["id"] == "HC-03"][0]
+    assert hc["status"] == ao.C_MET_PARAMETRIC
+    out = ao.evaluate_constraints({"P_bus_W": {"status": ao.PARAMETRIC_ONLY, "value": 2000.0, "gate_verdict": "FAIL"}})
+    assert [x for x in out if x["id"] == "HC-03"][0]["status"] == ao.C_VIOLATED_PARAMETRIC
+    out = ao.evaluate_constraints({"P_bus_W": {"status": ao.EVALUATED, "value": 1000.0, "gate_verdict": "PASS"}})
+    assert [x for x in out if x["id"] == "HC-03"][0]["status"] == ao.C_MET
