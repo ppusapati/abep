@@ -798,7 +798,7 @@
  },
  "apid_fit_params": {
   "source": "SRC-IAEA-APID-7B",
-  "formula_locator": "report p. 18 (PDF p. 20): Y(E0) = 0.5 q (E0/Eth - 1)^mu ln(1 + 1.2288 eps) / { [lambda + (E0/Eth - 1)^mu] [eps + 0.1728 sqrt(eps) + 0.008 eps^0.1504] }, eps = E0 * eps_L",
+  "formula_locator": "report p. 18 (PDF p. 20): Y(E0) = 0.5 q (E0/Eth - 1)^mu ln(1 + 1.2288 eps) / { lambda + (E0/Eth - 1)^mu [eps + 0.1728 sqrt(eps) + 0.008 eps^0.1504] }, eps = E0 * eps_L; the bracket multiplies only the threshold term (E0/Eth - 1)^mu, not lambda (corrected reading 2026-10-01, page image re-read; the v1 reading divided by (lambda + x) * bracket)",
   "rows": [
    {
     "id": "APID-2.1.2.6",

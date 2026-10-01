@@ -50,18 +50,50 @@ CAPTION_KEYS = ("id", "projectile", "target", "figure", "report_page", "pdf_page
 APID_KEYS = ("id", "projectile", "target", "pdf_page", "lambda", "q", "mu", "eps_L_per_eV", "Eth_eV", "avg_error_pct",
              "Emax_eV", "comments")
 AR_KEYS = ("id", "source", "provides", "lawful_route", "relevant_cells_text", "applies_to")
+# optional keys (allowed but not required); every other key is rejected (fail closed)
+TOP_OPTIONAL = ("purpose",)
+SOURCE_OPTIONAL = ("abstract_statement", "same_file_as", "scope_note")
+AR_OPTIONAL = ("priority_note",)
+TRIM_KEYS = ("id", "projectile", "target", "locator", "header", "angles_deg", "rows", "flags")
+DECISION_KEYS = ("id", "json", "json_sha256", "verbatim_md", "question_ids", "applied")
+READ_ONLY_REF_KEYS = ("path", "sha256_at_base_commit", "ids_used", "note")
+BLOCK_KEYS = {"atomic_weights": ("source", "values"),
+              "nifs_table1": ("source", "locator", "columns", "rows"),
+              "nifs_worked_example": ("source", "locator", "projectile", "target", "energy_eV", "printed_yield",
+                                      "printed_Eth_eV", "note"),
+              "nifs_formula_reading": ("source", "locator", "alpha_branch_note", "threshold_note"),
+              "nifs_caption_fits": ("source", "note", "rows", "w_inconsistency_note"),
+              "trim_tables": ("source", "note", "tables"),
+              "apid_fit_params": ("source", "formula_locator", "rows")}
+# blocks whose numbers are transcribed into or evaluated by this register: their source must be OPEN
+NUMERIC_BLOCKS = ("atomic_weights", "nifs_table1", "nifs_worked_example", "nifs_caption_fits", "trim_tables",
+                  "apid_fit_params")
+# owner A9.12 S5.11 (P4-OQ-02) Q0 matrix candidates, as registered in the read-only P4 register
+Q0_CANDIDATES = ("CAND-01", "CAND-02A", "CAND-02B", "CAND-02C", "CAND-02D", "CAND-03A", "CAND-03B", "CAND-03C",
+                 "CAND-04", "CAND-05", "CAND-06", "CAND-07", "CAND-08", "CAND-09")
+APID_NEAR_THRESHOLD = 1.1      # points with E < 1.1 Eth are reported but excluded from the reproduction gate
+APID_REPRO_TOL_FACTOR = 1.25   # printed average fit errors are 7-15 %; a larger factor means a transcription / reading error
+IDENTITY_W_TOL = 0.005         # captions print W as k * Us; Table 1 prints W to two decimals
 TOL_WORKED_EXAMPLE = 0.02      # relative, see nifs_worked_example.note
 TOL_MASS_RATIO = 0.006         # captions print A to two decimals
 
 # ------------------------------------------------------------------------------------------------ input handling
 
 
-def _require(obj: dict, keys, where: str) -> None:
+def _require(obj: dict, keys, where: str, optional=()) -> None:
+    """Fail closed: every required key present, and no key outside required + optional."""
     if not isinstance(obj, dict):
         raise ValueError(f"{where}: expected an object")
     missing = [k for k in keys if k not in obj]
     if missing:
         raise ValueError(f"{where}: missing required field(s) {missing}")
+    unknown = sorted(set(obj) - set(keys) - set(optional))
+    if unknown:
+        raise ValueError(f"{where}: unknown field(s) {unknown}")
+
+
+def _finite_nonneg(v) -> bool:
+    return isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v) and v >= 0
 
 
 def _sha256(path: Path) -> str:
@@ -78,12 +110,24 @@ def load_inputs(path: Path = INPUTS) -> dict:
 
 
 def validate_inputs(d: dict) -> None:
-    _require(d, TOP_KEYS, "inputs")
+    _require(d, TOP_KEYS, "inputs", TOP_OPTIONAL)
+    for blk, keys in BLOCK_KEYS.items():
+        _require(d[blk], keys, blk)
+    for dec in d["decisions"]:
+        _require(dec, DECISION_KEYS, f"decision {dec.get('id') if isinstance(dec, dict) else dec}")
+    for ref in d["read_only_references"]:
+        _require(ref, READ_ONLY_REF_KEYS, f"read-only reference {ref.get('path') if isinstance(ref, dict) else ref}")
+    for sp in d["species_context_not_assessed"]:
+        _require(sp, ("species", "why"), "species_context_not_assessed entry")
+    for s in d["search_log"]:
+        _require(s, ("query", "result"), "search_log entry")
+    for s in d["access_log"]:
+        _require(s, ("url", "result"), "access_log entry")
     if tuple(d["species_required"]) != REQUIRED_SPECIES:
         raise ValueError(f"species_required must be exactly {REQUIRED_SPECIES} (owner P4-OQ-04)")
     src_ids = set()
     for s in d["sources"]:
-        _require(s, SOURCE_KEYS, f"source {s.get('id')}")
+        _require(s, SOURCE_KEYS, f"source {s.get('id')}", SOURCE_OPTIONAL)
         if s["access"] not in ACCESS_TYPES:
             raise ValueError(f"source {s['id']}: access {s['access']!r} not in {sorted(ACCESS_TYPES)}")
         if s["evidence_level"] not in range(1, 8):
@@ -96,21 +140,36 @@ def validate_inputs(d: dict) -> None:
         sid = d[blk].get("source")
         if sid not in src_ids:
             raise ValueError(f"{blk}: unknown or missing source {sid!r}")
+    access = {s["id"]: s["access"] for s in d["sources"]}
+    for blk in NUMERIC_BLOCKS:
+        if access[d[blk]["source"]] != "OPEN":
+            raise ValueError(f"{blk}: numbers transcribed from source {d[blk]['source']} with access "
+                             f"{access[d[blk]['source']]!r}; only OPEN sources may carry numbers")
     for row in d["nifs_caption_fits"]["rows"]:
         _require(row, CAPTION_KEYS, f"caption fit {row.get('id')}")
     for row in d["apid_fit_params"]["rows"]:
         _require(row, APID_KEYS, f"APID row {row.get('id')}")
     for t in d["trim_tables"]["tables"]:
-        _require(t, ("id", "projectile", "target", "locator", "header", "angles_deg", "rows", "flags"), f"TRIM {t.get('id')}")
+        _require(t, TRIM_KEYS, f"TRIM {t.get('id')}")
         for r in t["rows"]:
             if len(r) != 1 + len(t["angles_deg"]):
                 raise ValueError(f"TRIM {t['id']}: row {r} does not match angles {t['angles_deg']}")
+            if not (_finite_nonneg(r[0]) and r[0] > 0):
+                raise ValueError(f"TRIM {t['id']}: energy {r[0]!r} must be a positive finite number")
+            for v in r[1:]:
+                if v is not None and not _finite_nonneg(v):
+                    raise ValueError(f"TRIM {t['id']}: yield {v!r} at {r[0]} eV must be finite and non-negative (or null)")
     for q in d["q0_matrix"]:
         _require(q, Q0_KEYS, f"q0 row {q.get('p4_candidate')}")
         if q["material_class"] not in MATERIAL_CLASSES:
             raise ValueError(f"q0 {q['p4_candidate']}: material_class {q['material_class']!r}")
+    cands = [q["p4_candidate"] for q in d["q0_matrix"]]
+    if len(cands) != len(set(cands)) or set(cands) != set(Q0_CANDIDATES):
+        raise ValueError(f"q0_matrix candidates {sorted(cands)} must be exactly the 14 S5.11 candidates "
+                         f"{list(Q0_CANDIDATES)}, each once")
     for a in d["acquisition_requests"]:
-        _require(a, AR_KEYS, f"acquisition request {a.get('id')}")
+        _require(a, AR_KEYS, f"acquisition request {a.get('id')}", AR_OPTIONAL)
+        _require(a["applies_to"], ("candidates", "species"), f"acquisition request {a['id']} applies_to")
         if a["source"] is not None and a["source"] not in src_ids:
             raise ValueError(f"{a['id']}: unknown source {a['source']}")
     for el in d["nifs_table1"]["rows"]:
@@ -124,7 +183,7 @@ def validate_inputs(d: dict) -> None:
 def verify_decision_pins(d: dict) -> list:
     out = []
     for dec in d["decisions"]:
-        _require(dec, ("id", "json", "json_sha256", "verbatim_md", "question_ids", "applied"), f"decision {dec.get('id')}")
+        _require(dec, DECISION_KEYS, f"decision {dec.get('id')}")
         p = ROOT / dec["json"]
         if not p.is_file():
             raise ValueError(f"decision file missing: {dec['json']}")
@@ -166,12 +225,23 @@ def yamamura_tawara(E: float, Z1: int, M1: float, Z2: int, M2: float, Us: float,
 
 
 def apid_fit(E: float, lam: float, q: float, mu: float, epsL: float, Eth: float) -> float:
-    """IAEA APID 7B report p. 18 fit formula, as read by this lane (used only for the reproduction check)."""
+    """IAEA APID 7B report p. 18 (PDF p. 20) fit formula (used only for the reproduction check):
+
+    Y = 0.5 q x ln(1 + 1.2288 eps) / (lambda + x [eps + 0.1728 sqrt(eps) + 0.008 eps^0.1504]),  x = (E/Eth - 1)^mu,
+    eps = E eps_L. The bracket multiplies only the threshold term x, not lambda."""
+    for name, v in (("E", E), ("lambda", lam), ("q", q), ("mu", mu), ("eps_L", epsL), ("Eth", Eth)):
+        if not (isinstance(v, (int, float)) and math.isfinite(v) and v > 0):
+            raise ValueError(f"apid_fit: {name} must be a positive finite number, got {v!r}")
     if E <= Eth:
         return 0.0
     x = (E / Eth - 1.0) ** mu
     e = E * epsL
-    return 0.5 * q * x * math.log(1.0 + 1.2288 * e) / ((lam + x) * (e + 0.1728 * math.sqrt(e) + 0.008 * e ** 0.1504))
+    w = e + 0.1728 * math.sqrt(e) + 0.008 * e ** 0.1504
+    return 0.5 * q * x * math.log(1.0 + 1.2288 * e) / (lam + x * w)
+
+
+def _worst_factor(pts):
+    return max((max(p["ratio"], 1.0 / p["ratio"]) for p in pts if p["ratio"] > 0), default=None)
 
 
 def _r(x: float, n: int = 4):
@@ -198,6 +268,11 @@ def build(d: dict) -> dict:
     us_span = f"{min(fitted):.2f}x to {max(fitted):.2f}x"
     no_data_els = sorted(el for el in t1 if el != "Au" and not any(r["target"] == el for r in d["nifs_caption_fits"]["rows"]))
     fit_els = sorted({r["target"] for r in d["nifs_caption_fits"]["rows"] if r["best_fit_Us"]})
+
+    def is_identity(row):
+        us_t, q_t, w_t, s_t = t1[row["target"]]
+        return (not row["best_fit_Us"] and row["Us_eV"] == us_t and row["Q"] == q_t and row["s"] == s_t
+                and abs(row["W_factor_of_Us"] * row["Us_eV"] - w_t) <= IDENTITY_W_TOL)
 
     def yt(proj, targ, E, Us, Q, W, s):
         return yamamura_tawara(E, zn[proj], aw[proj], zn[targ], aw[targ], Us, Q, W, s)
@@ -261,7 +336,8 @@ def build(d: dict) -> dict:
                          "below_formula_threshold": all(v["below_threshold"] for v in ys.values()),
                          "Eth_eV": _r(ys["W_table1"]["Eth_eV"])})
             if g["Y"] > 0 and min(yv) > 0:
-                gen_vs_fit.append({"combo": f"{p_}+ -> {t_}", "E_eV": E, "generic_over_fit": _r(g["Y"] / max(yv), 3)})
+                gen_vs_fit.append({"combo": f"{p_}+ -> {t_}", "E_eV": E, "generic_over_fit": _r(g["Y"] / max(yv), 3),
+                                   "identity_row": is_identity(row)})
         records.append({
             "id": "YT-FIT-" + row["id"], "kind": "YAMAMURA_TAWARA_CAPTION_FIT", "source": d["nifs_caption_fits"]["source"],
             "locator": f"NIFS-DATA-23 {row['figure']} caption, report p. {row['report_page']} (PDF p. {row['pdf_page']})",
@@ -277,7 +353,8 @@ def build(d: dict) -> dict:
             "transformation_chain": "measured yields (legend refs) -> NIFS-DATA-23 best fit -> caption parameters read from page image -> Eq. (15) evaluated by this builder at the reporting grid",
             "use": "ELEMENTAL_PRIOR_BOUND_ONLY"})
     # Yamamura-Tawara generic Table-1 parameters for every listed element (N and O projectiles)
-    fit_combos = {(r["projectile"], r["target"]) for r in d["nifs_caption_fits"]["rows"]}
+    fit_combos = {(r["projectile"], r["target"]) for r in d["nifs_caption_fits"]["rows"] if not is_identity(r)}
+    ident_set = {(r["projectile"], r["target"]) for r in d["nifs_caption_fits"]["rows"] if is_identity(r)}
     for el in sorted(t1):
         if el == "Au":
             continue  # validation target only
@@ -295,18 +372,26 @@ def build(d: dict) -> dict:
                 "projectile": p_ + "+", "target": el + " (pure element)", "target_element": el,
                 "parameters_as_printed": {"Us_eV": us_t, "Q": Q_t, "W": W_t, "s": s_t},
                 "energy_range_eV": [min(grid), max(grid)], "angles_deg": [0], "values": vals,
-                "has_combination_specific_fit": has_fit,
+                "has_combination_specific_fit": has_fit, "caption_uses_table1_parameters": (p_, el) in ident_set,
                 "evidence_level": 6, "evidence_class": "model-derived",
                 "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; "
                                      + ("a combination-specific best fit exists (see YT-FIT record) and differs" if has_fit
+                                        else "the figure caption for this combination prints the Table 1 parameters themselves (identity, not a refit; see YT-FIT record and caption remark)" if (p_, el) in ident_set
                                         else "no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile"),
                 "uncertainty": f"large and unquantified: where measured N/O data exist the source had to refit Us ({us_span} the Table 1 value), see CHK-GENERIC-VS-FIT",
                 "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
                 "use": "ELEMENTAL_PRIOR_BOUND_ONLY"})
-    rs = [g["generic_over_fit"] for g in gen_vs_fit]
+    rs = [g["generic_over_fit"] for g in gen_vs_fit if not g["identity_row"]]
+    if not rs:
+        raise ValueError("CHK-GENERIC-VS-FIT: no refitted caption combination above threshold")
+    refit_combos = sorted({f"{r['projectile']}+ -> {r['target']}" for r in d["nifs_caption_fits"]["rows"] if not is_identity(r)})
+    ident_combos = sorted({f"{r['projectile']}+ -> {r['target']}" for r in d["nifs_caption_fits"]["rows"] if is_identity(r)})
     checks.append({"id": "CHK-GENERIC-VS-FIT",
-                   "what": "Table-1 generic yield / caption-fit yield (max of W readings) for the 8 N/O combinations with measured data, over the reporting grid where both are above threshold",
-                   "ratio_min": min(rs), "ratio_max": max(rs), "points": gen_vs_fit,
+                   "what": f"Table-1 generic yield / caption-fit yield (max of W readings) for the {len(refit_combos)} N/O combinations whose caption parameters are refitted, over the reporting grid where both are above threshold",
+                   "ratio_min": min(rs), "ratio_max": max(rs), "refitted_combinations": refit_combos,
+                   "identity_combinations_excluded": ident_combos,
+                   "identity_rule": f"caption row with best_fit_Us false, Us, Q and s equal to Table 1 and |k * Us - W_table1| <= {IDENTITY_W_TOL} eV: the caption curve is the Table-1 evaluation itself, so its points (ratio about 1) carry identity_row = true and are excluded from ratio_min / ratio_max",
+                   "points": gen_vs_fit,
                    "reading": "the generic Table-1 evaluation is not a reliable N/O prior: it departs from the data-fitted curve by the ratio range shown, mostly upward (the fits raise Us for N/O)",
                    "pass": None})
     # YT caption fit vs TRIM.SP on common points
@@ -339,20 +424,30 @@ def build(d: dict) -> dict:
             for r in t["rows"]:
                 if r[1] and row["Eth_eV"] < r[0] <= row["Emax_eV"] and r[0] <= 1000:
                     y = apid_fit(r[0], row["lambda"], row["q"], row["mu"], row["eps_L_per_eV"], row["Eth_eV"])
-                    pts.append({"E_eV": r[0], "TRIM_SP": r[1], "fit_as_read": _r(y), "ratio": _r(y / r[1], 3)})
-        worst = max((max(p["ratio"], 1.0 / p["ratio"]) for p in pts if p["ratio"] > 0), default=None)
+                    pts.append({"E_eV": r[0], "TRIM_SP": r[1], "fit": _r(y), "ratio": _r(y / r[1], 3),
+                                "near_threshold": r[0] < APID_NEAR_THRESHOLD * row["Eth_eV"]})
+        worst_all = _worst_factor(pts)
+        worst_away = _worst_factor([p for p in pts if not p["near_threshold"]])
+        if worst_away is not None and worst_away > APID_REPRO_TOL_FACTOR:
+            raise ValueError(f"{row['id']}: printed APID fit does not reproduce TRIM.SP away from threshold "
+                             f"(worst factor {worst_away:.3f} > {APID_REPRO_TOL_FACTOR}); transcription or formula error")
         apid_rows.append({"id": row["id"], "projectile": row["projectile"] + "+", "target": row["target"],
                           "parameters_as_printed": {k: row[k] for k in ("lambda", "q", "mu", "eps_L_per_eV", "Eth_eV",
                                                                          "avg_error_pct", "Emax_eV")},
                           "comments_as_printed": row["comments"], "locator": f"IAEA APID 7B PDF p. {row['pdf_page']}",
                           "reproduction_check_vs_TRIM_SP": pts,
-                          "worst_factor": _r(worst, 3) if worst else None,
-                          "status": "NOT_USED_NUMERICALLY" + ("_REPRODUCTION_FAILED" if worst and worst > 1.5 else "")})
+                          "worst_factor_all_points": _r(worst_all, 3) if worst_all else None,
+                          "worst_factor_E_ge_1p1_Eth": _r(worst_away, 3) if worst_away else None,
+                          "reproduction": "NO_TRIM_TABLE_TRANSCRIBED" if not pts else "REPRODUCED_AWAY_FROM_THRESHOLD",
+                          "status": "NOT_USED_NUMERICALLY",
+                          "status_reason": "the fit is an analytic fit to TRIM.SP calculated points (source comment); it adds no evidence independent of the TRIM.SP calculations, which are carried as records where transcribed"})
     checks.append({"id": "CHK-APID-REPRODUCTION",
-                   "what": "IAEA APID 7B fit formula (as read by this lane) with the printed parameters vs the TRIM.SP points the fits were made to (<= 1 keV)",
-                   "rows": [{"id": r["id"], "worst_factor": r["worst_factor"], "status": r["status"]} for r in apid_rows],
-                   "reading": "the lane's reading of the printed formula / parameters does not reproduce the calculated points at low energy (the printed eps_L values also differ from the Lindhard value, which the source says was sometimes freed); the APID fits are therefore transcribed with their qualitative comments only and never evaluated as priors",
-                   "pass": None})
+                   "what": f"IAEA APID 7B fit formula (report p. 18, PDF p. 20) with the printed parameters vs the TRIM.SP points the fits were made to (<= 1 keV); gate: worst factor <= {APID_REPRO_TOL_FACTOR} for E >= {APID_NEAR_THRESHOLD} Eth",
+                   "rows": [{"id": r["id"], "worst_factor_all_points": r["worst_factor_all_points"],
+                             "worst_factor_E_ge_1p1_Eth": r["worst_factor_E_ge_1p1_Eth"],
+                             "reproduction": r["reproduction"], "status": r["status"]} for r in apid_rows],
+                   "reading": "the printed fits reproduce the TRIM.SP points they were fitted to, consistent with the printed average errors, except within a few eV of the fitted threshold (fitted Eth slightly above the TRIM.SP onset); they are still not evaluated as priors because they carry no information beyond the TRIM.SP calculations",
+                   "pass": True})
 
     # coverage matrix
     rec_by_el = {}
@@ -415,10 +510,16 @@ def build(d: dict) -> dict:
             "applies_when": "candidate survives Q0 and is down-selected for Q1 (S5.11); S5.13 'project ion-beam / materials test route for the down-selected candidate materials / coatings'",
             "acceptance": "TBD at LOCK-2 after metrology commissioning (S5.12); never set from candidate performance"})
 
+    # numeric_values_used is derived: sources cited by a numeric record, plus the atomic-weight source the evaluations use
+    access = {s["id"]: s["access"] for s in d["sources"]}
+    numeric_src = {r["source"] for r in records} | {d["atomic_weights"]["source"]}
+    bad = sorted(sid for sid in numeric_src if access.get(sid) != "OPEN")
+    if bad:
+        raise ValueError(f"numeric records cite non-OPEN or unknown source(s) {bad}")
     sources = []
     for s in d["sources"]:
         o = dict(s)
-        o["numeric_values_used"] = s["id"] in {"SRC-IPP-9-132", "SRC-NIFS-DATA-23", "SRC-CIAAW-2024"}
+        o["numeric_values_used"] = s["id"] in numeric_src
         sources.append(o)
 
     reg = {
@@ -564,7 +665,7 @@ def render_md(reg: dict) -> str:
         if r["kind"] != "YAMAMURA_TAWARA_GENERIC_TABLE1":
             continue
         cells = ["below Eth" if v["below_formula_threshold"] else _fmt(v["Y"]) for v in r["values"]]
-        a(f"| {r['target_element']} | {r['projectile']} | " + " | ".join(cells) + f" | {'yes' if r['has_combination_specific_fit'] else 'no'} |")
+        a(f"| {r['target_element']} | {r['projectile']} | " + " | ".join(cells) + f" | {'yes' if r['has_combination_specific_fit'] else ('identity (caption = Table 1)' if r['caption_uses_table1_parameters'] else 'no')} |")
     a("")
     a("## 5. Consistency checks")
     a("")
@@ -575,11 +676,16 @@ def render_md(reg: dict) -> str:
         elif c["id"] == "CHK-MASS-RATIOS":
             a(f"- **{c['id']}** ({c['what']}): max |difference| {c['max_abs_difference']} (tolerance {c['tolerance']}).")
         elif c["id"] == "CHK-GENERIC-VS-FIT":
-            a(f"- **{c['id']}**: generic / fit ratio {c['ratio_min']} to {c['ratio_max']} over {len(c['points'])} points. {c['reading']}.")
+            n_ref = sum(1 for p in c["points"] if not p["identity_row"])
+            a(f"- **{c['id']}**: generic / fit ratio {c['ratio_min']} to {c['ratio_max']} over {n_ref} points of the refitted "
+              f"combinations ({', '.join(c['refitted_combinations'])}); identity combinations excluded: "
+              f"{', '.join(c['identity_combinations_excluded']) or 'none'}. {c['reading']}.")
         elif c["id"] == "CHK-YT-FIT-VS-TRIM":
             a(f"- **{c['id']}**: " + "; ".join(f"{p['combo']} {p['E_eV']} eV: " + ("YT below its threshold, TRIM " + _fmt(p['TRIM_SP']) if p["YT_below_formula_threshold"] else f"YT/TRIM {p['YT_over_TRIM']}") for p in c["points"]) + f". {c['reading']}.")
         elif c["id"] == "CHK-APID-REPRODUCTION":
-            a(f"- **{c['id']}**: " + "; ".join(f"{r['id']} worst factor {r['worst_factor']} ({r['status']})" for r in c["rows"]) + f". {c['reading']}.")
+            a(f"- **{c['id']}** ({c['what']}): " + "; ".join(
+                f"{r['id']} {r['reproduction']}, worst factor {_fmt(r['worst_factor_E_ge_1p1_Eth'])} for E >= 1.1 Eth "
+                f"({_fmt(r['worst_factor_all_points'])} incl. near-threshold points), {r['status']}" for r in c["rows"]) + f". {c['reading']}.")
     a("")
     a("IAEA APID 7B printed comments (qualitative evidence carried):")
     a("")

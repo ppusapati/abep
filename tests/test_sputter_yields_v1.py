@@ -199,3 +199,113 @@ def test_values_finite_and_nonnegative(reg):
             for k in ("Y_atoms_per_ion", "Y", "Y_min", "Y_max"):
                 if k in v:
                     assert isinstance(v[k], (int, float)) and math.isfinite(v[k]) and v[k] >= 0, (r["id"], v)
+
+
+# ---------------------------------------------------------------- repair round (SPUTTER-1..3)
+
+def test_apid_fit_is_printed_formula(b):
+    """SPUTTER-1: IAEA APID 7B report p. 18: the bracket multiplies only the threshold term, not lambda."""
+    lam, q, mu, el, eth = 1.6012e-02, 4.9256, 1.8338, 8.882e-07, 46.767   # APID-2.1.3.6 N -> W (PDF p. 54)
+    E = 100.0
+    x = (E / eth - 1.0) ** mu
+    e = E * el
+    w = e + 0.1728 * math.sqrt(e) + 0.008 * e ** 0.1504
+    assert b.apid_fit(E, lam, q, mu, el, eth) == pytest.approx(0.5 * q * x * math.log(1 + 1.2288 * e) / (lam + x * w))
+    assert b.apid_fit(E, lam, q, mu, el, eth) == pytest.approx(0.0172, rel=0.10)   # TRIM.SP 1.72e-2
+    assert b.apid_fit(40.0, lam, q, mu, el, eth) == 0.0
+    with pytest.raises(ValueError):
+        b.apid_fit(100.0, 0.0, q, mu, el, eth)
+
+
+def test_apid_fit_reproduces_trim_o_w(b, inputs):
+    """SPUTTER-1: APID-2.1.3.7 (O -> W) reproduces TRIM-O-W within 10 % at 100-1000 eV."""
+    row = next(r for r in inputs["apid_fit_params"]["rows"] if r["id"] == "APID-2.1.3.7")
+    t = next(t for t in inputs["trim_tables"]["tables"] if t["id"] == "TRIM-O-W")
+    n = 0
+    for r in t["rows"]:
+        if 100 <= r[0] <= 1000 and r[1]:
+            y = b.apid_fit(r[0], row["lambda"], row["q"], row["mu"], row["eps_L_per_eV"], row["Eth_eV"])
+            assert y / r[1] == pytest.approx(1.0, abs=0.10), r
+            n += 1
+    assert n >= 4
+
+
+def test_apid_register_statuses_true(reg):
+    """SPUTTER-1: no false 'reproduction failed' claim; the stated reason is that the fits add no independent evidence."""
+    txt = json.dumps(reg)
+    assert "REPRODUCTION_FAILED" not in txt and "freed" not in txt
+    assert "REPRODUCTION_FAILED" not in (DIR / "SPUTTER_YIELDS_V1.md").read_text(encoding="utf-8")
+    for r in reg["apid_fits_transcribed"]:
+        assert r["status"] == "NOT_USED_NUMERICALLY" and "TRIM.SP" in r["status_reason"]
+        if r["reproduction_check_vs_TRIM_SP"]:
+            assert r["reproduction"] == "REPRODUCED_AWAY_FROM_THRESHOLD"
+            assert r["worst_factor_E_ge_1p1_Eth"] <= 1.25
+    chk = next(c for c in reg["consistency_checks"] if c["id"] == "CHK-APID-REPRODUCTION")
+    assert chk["pass"] is True
+
+
+def test_apid_misread_parameters_raise(b, inputs):
+    """SPUTTER-1: the reproduction is a gate, so a mis-transcribed parameter fails the build."""
+    bad = copy.deepcopy(inputs)
+    next(r for r in bad["apid_fit_params"]["rows"] if r["id"] == "APID-2.1.3.7")["lambda"] = 1.173
+    with pytest.raises(ValueError, match="does not reproduce"):
+        b.build(bad)
+
+
+@pytest.mark.parametrize("where", ["top", "source", "q0", "caption", "trim", "block", "ar", "decision"])
+def test_unknown_fields_raise(b, inputs, where):
+    """SPUTTER-2: the builder fails closed on unknown / typo fields."""
+    bad = copy.deepcopy(inputs)
+    target = {"top": bad, "source": bad["sources"][0], "q0": bad["q0_matrix"][0],
+              "caption": bad["nifs_caption_fits"]["rows"][0], "trim": bad["trim_tables"]["tables"][0],
+              "block": bad["nifs_table1"], "ar": bad["acquisition_requests"][0], "decision": bad["decisions"][0]}[where]
+    target["typo_field"] = 1
+    with pytest.raises(ValueError, match="unknown field"):
+        b.validate_inputs(bad)
+
+
+def test_q0_candidate_set_enforced_by_builder(b, inputs):
+    """SPUTTER-2: a dropped or duplicated Q0 candidate is rejected (not 52 cells silently)."""
+    bad = copy.deepcopy(inputs)
+    bad["q0_matrix"] = bad["q0_matrix"][:-1]
+    with pytest.raises(ValueError, match="14 S5.11 candidates"):
+        b.validate_inputs(bad)
+    bad = copy.deepcopy(inputs)
+    bad["q0_matrix"][-1] = copy.deepcopy(bad["q0_matrix"][0])
+    with pytest.raises(ValueError, match="14 S5.11 candidates"):
+        b.validate_inputs(bad)
+
+
+@pytest.mark.parametrize("value", [-5, float("nan"), float("inf"), "0.1", True])
+def test_trim_values_must_be_finite_nonnegative(b, inputs, value):
+    """SPUTTER-2: negative / non-finite / non-numeric TRIM yields raise in the builder."""
+    bad = copy.deepcopy(inputs)
+    bad["trim_tables"]["tables"][0]["rows"][0][1] = value
+    with pytest.raises(ValueError):
+        b.validate_inputs(bad)
+
+
+def test_numeric_values_used_is_derived(reg, inputs, b):
+    """SPUTTER-2: numeric_values_used follows the record sources; a non-OPEN numeric source raises."""
+    used = {r["source"] for r in reg["records"]} | {inputs["atomic_weights"]["source"]}
+    for s in reg["sources"]:
+        assert s["numeric_values_used"] is (s["id"] in used), s["id"]
+    for sid in ("SRC-IPP-9-132", "SRC-NIFS-DATA-23", "SRC-CIAAW-2024", "SRC-IAEA-APID-7B"):
+        bad = copy.deepcopy(inputs)
+        next(s for s in bad["sources"] if s["id"] == sid)["access"] = "PAYWALLED_ACQUISITION_NEEDED"
+        with pytest.raises(ValueError, match="OPEN"):
+            b.validate_inputs(bad)
+
+
+def test_generic_vs_fit_excludes_identity_rows(reg):
+    """SPUTTER-3: the O -> C caption uses Table 1 itself; it is labelled identity and excluded from the spread."""
+    chk = next(c for c in reg["consistency_checks"] if c["id"] == "CHK-GENERIC-VS-FIT")
+    assert chk["identity_combinations_excluded"] == ["O+ -> C"]
+    assert "O+ -> C" not in chk["refitted_combinations"]
+    ident = [p for p in chk["points"] if p["identity_row"]]
+    assert ident and all(p["combo"] == "O+ -> C" for p in ident)
+    refit = [p["generic_over_fit"] for p in chk["points"] if not p["identity_row"]]
+    assert chk["ratio_min"] == min(refit) and chk["ratio_max"] == max(refit)
+    assert chk["ratio_min"] > 1.0
+    gen = next(r for r in reg["records"] if r["id"] == "YT-GEN-O-C")
+    assert gen["has_combination_specific_fit"] is False and gen["caption_uses_table1_parameters"] is True

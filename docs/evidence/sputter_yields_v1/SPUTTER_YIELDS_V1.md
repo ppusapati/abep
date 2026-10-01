@@ -122,7 +122,7 @@ tabulation grid for the semi-empirical evaluations only. It is NOT a sheath ener
 | Al | N+ | 0.0844 | 0.228 | 0.428 | 0.565 | 0.747 | 0.994 | no |
 | Al | O+ | 0.0807 | 0.23 | 0.446 | 0.595 | 0.798 | 1.08 | no |
 | C | N+ | 1.89e-07 | 0.0179 | 0.0812 | 0.136 | 0.216 | 0.33 | no |
-| C | O+ | below Eth | 0.0176 | 0.0831 | 0.141 | 0.227 | 0.352 | yes |
+| C | O+ | below Eth | 0.0176 | 0.0831 | 0.141 | 0.227 | 0.352 | identity (caption = Table 1) |
 | Cr | N+ | 0.073 | 0.207 | 0.403 | 0.542 | 0.733 | 1.01 | no |
 | Cr | O+ | 0.0777 | 0.223 | 0.44 | 0.594 | 0.809 | 1.12 | no |
 | Fe | N+ | 0.0535 | 0.157 | 0.312 | 0.422 | 0.575 | 0.796 | yes |
@@ -150,9 +150,9 @@ tabulation grid for the semi-empirical evaluations only. It is NOT a sheath ener
 
 - **CHK-YT-WORKED-EXAMPLE** (NIFS-DATA-23 sec. 7: 1 keV He -> Au): printed 0.14, computed 0.1392 (residual -0.55%, tolerance 2%); Eth printed 54.0 eV, computed 54.45 eV.
 - **CHK-MASS-RATIOS** (CIAAW atomic weights vs caption A = M2/M1 (8 captions)): max |difference| 0.00487 (tolerance 0.006).
-- **CHK-GENERIC-VS-FIT**: generic / fit ratio 1.0 to 52.7 over 44 points. the generic Table-1 evaluation is not a reliable N/O prior: it departs from the data-fitted curve by the ratio range shown, mostly upward (the fits raise Us for N/O).
+- **CHK-GENERIC-VS-FIT**: generic / fit ratio 1.24 to 52.7 over 39 points of the refitted combinations (N+ -> Fe, N+ -> Mo, N+ -> Ni, N+ -> W, O+ -> Mo, O+ -> Ni, O+ -> W); identity combinations excluded: O+ -> C. the generic Table-1 evaluation is not a reliable N/O prior: it departs from the data-fitted curve by the ratio range shown, mostly upward (the fits raise Us for N/O).
 - **CHK-YT-FIT-VS-TRIM**: O+ -> C 50 eV: YT below its threshold, TRIM 6.56e-05; O+ -> C 100 eV: YT/TRIM 3.84; O+ -> C 300 eV: YT/TRIM 2.05; O+ -> C 1000 eV: YT/TRIM 1.64; N+ -> W 50 eV: YT below its threshold, TRIM 5.7e-05; N+ -> W 100 eV: YT/TRIM 0.0489; N+ -> W 200 eV: YT/TRIM 0.234; N+ -> W 300 eV: YT/TRIM 0.31; N+ -> W 500 eV: YT/TRIM 0.397; N+ -> W 1000 eV: YT/TRIM 0.489; O+ -> W 50 eV: YT below its threshold, TRIM 0.000363; O+ -> W 100 eV: YT/TRIM 0.0234; O+ -> W 200 eV: YT/TRIM 0.173; O+ -> W 300 eV: YT/TRIM 0.248; O+ -> W 500 eV: YT/TRIM 0.329; O+ -> W 1000 eV: YT/TRIM 0.439. model-to-model spread for the same elemental target and projectile; it is a lower limit of the prior-bound width, not an error estimate.
-- **CHK-APID-REPRODUCTION**: APID-2.1.2.6 worst factor None (NOT_USED_NUMERICALLY); APID-2.1.2.7 worst factor 110.0 (NOT_USED_NUMERICALLY_REPRODUCTION_FAILED); APID-2.1.3.6 worst factor 252.0 (NOT_USED_NUMERICALLY_REPRODUCTION_FAILED); APID-2.1.3.7 worst factor 74.5 (NOT_USED_NUMERICALLY_REPRODUCTION_FAILED). the lane's reading of the printed formula / parameters does not reproduce the calculated points at low energy (the printed eps_L values also differ from the Lindhard value, which the source says was sometimes freed); the APID fits are therefore transcribed with their qualitative comments only and never evaluated as priors.
+- **CHK-APID-REPRODUCTION** (IAEA APID 7B fit formula (report p. 18, PDF p. 20) with the printed parameters vs the TRIM.SP points the fits were made to (<= 1 keV); gate: worst factor <= 1.25 for E >= 1.1 Eth): APID-2.1.2.6 NO_TRIM_TABLE_TRANSCRIBED, worst factor - for E >= 1.1 Eth (- incl. near-threshold points), NOT_USED_NUMERICALLY; APID-2.1.2.7 REPRODUCED_AWAY_FROM_THRESHOLD, worst factor 1.15 for E >= 1.1 Eth (3.39 incl. near-threshold points), NOT_USED_NUMERICALLY; APID-2.1.3.6 REPRODUCED_AWAY_FROM_THRESHOLD, worst factor 1.16 for E >= 1.1 Eth (19.7 incl. near-threshold points), NOT_USED_NUMERICALLY; APID-2.1.3.7 REPRODUCED_AWAY_FROM_THRESHOLD, worst factor 1.09 for E >= 1.1 Eth (1.09 incl. near-threshold points), NOT_USED_NUMERICALLY. the printed fits reproduce the TRIM.SP points they were fitted to, consistent with the printed average errors, except within a few eV of the fitted threshold (fitted Eth slightly above the TRIM.SP onset); they are still not evaluated as priors because they carry no information beyond the TRIM.SP calculations.
 
 IAEA APID 7B printed comments (qualitative evidence carried):
 

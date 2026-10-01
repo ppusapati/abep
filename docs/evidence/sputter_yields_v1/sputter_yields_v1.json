@@ -4,7 +4,7 @@
  "date": "2026-10-01",
  "base_commit": "5497be14befa95dd87b58a3d42d4ab1c8235fcf5",
  "generated_by": "docs/evidence/sputter_yields_v1/build_sputter_yields_v1.py (--check reproduces JSON and MD exactly) from docs/evidence/sputter_yields_v1/sputter_yield_inputs_v1.json",
- "inputs_sha256": "052dd97d054e731684fc8a3f0a54cb1286c159b5ea407d0974abc52aa487f25a",
+ "inputs_sha256": "3f7d20898a97ea2ab39f3f70524397f58aeb0118846729faebf16bb93f1bdcdf",
  "companion_document": "docs/evidence/sputter_yields_v1/SPUTTER_YIELDS_V1.md",
  "test": "tests/test_sputter_yields_v1.py",
  "status": "EVIDENCE REGISTER ONLY. Not wired into any simulator module. No alloy or coating sputter yield exists in this register; no molecular-ion (N2+, O2+) number exists in this register. Every numeric yield is an elemental-target literature or semi-empirical value usable only as a prior bound / for test-matrix selection / comparison / model initialisation (S5.13), never as a candidate value, and never as a CR-04 recession or life input.",
@@ -1465,6 +1465,7 @@
     }
    ],
    "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
    "evidence_level": 6,
    "evidence_class": "model-derived",
    "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
@@ -1538,6 +1539,7 @@
     }
    ],
    "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
    "evidence_level": 6,
    "evidence_class": "model-derived",
    "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
@@ -1611,6 +1613,7 @@
     }
    ],
    "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
    "evidence_level": 6,
    "evidence_class": "model-derived",
    "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
@@ -1683,10 +1686,11 @@
      "Eth_eV": 50.4
     }
    ],
-   "has_combination_specific_fit": true,
+   "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": true,
    "evidence_level": 6,
    "evidence_class": "model-derived",
-   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; a combination-specific best fit exists (see YT-FIT record) and differs",
+   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; the figure caption for this combination prints the Table 1 parameters themselves (identity, not a refit; see YT-FIT record and caption remark)",
    "uncertainty": "large and unquantified: where measured N/O data exist the source had to refit Us (1.20x to 2.30x the Table 1 value), see CHK-GENERIC-VS-FIT",
    "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
    "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
@@ -1757,6 +1761,7 @@
     }
    ],
    "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
    "evidence_level": 6,
    "evidence_class": "model-derived",
    "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
@@ -1830,6 +1835,7 @@
     }
    ],
    "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
    "evidence_level": 6,
    "evidence_class": "model-derived",
    "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
@@ -1903,6 +1909,7 @@
     }
    ],
    "has_combination_specific_fit": true,
+   "caption_uses_table1_parameters": false,
    "evidence_level": 6,
    "evidence_class": "model-derived",
    "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; a combination-specific best fit exists (see YT-FIT record) and differs",
@@ -1976,6 +1983,7 @@
     }
    ],
    "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
    "evidence_level": 6,
    "evidence_class": "model-derived",
    "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
@@ -2049,6 +2057,7 @@
     }
    ],
    "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
    "evidence_level": 6,
    "evidence_class": "model-derived",
    "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
@@ -2122,6 +2131,7 @@
     }
    ],
    "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
    "evidence_level": 6,
    "evidence_class": "model-derived",
    "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
@@ -2195,6 +2205,7 @@
     }
    ],
    "has_combination_specific_fit": true,
+   "caption_uses_table1_parameters": false,
    "evidence_level": 6,
    "evidence_class": "model-derived",
    "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; a combination-specific best fit exists (see YT-FIT record) and differs",
@@ -2268,6 +2279,7 @@
     }
    ],
    "has_combination_specific_fit": true,
+   "caption_uses_table1_parameters": false,
    "evidence_level": 6,
    "evidence_class": "model-derived",
    "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; a combination-specific best fit exists (see YT-FIT record) and differs",
@@ -2341,6 +2353,7 @@
     }
    ],
    "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
    "evidence_level": 6,
    "evidence_class": "model-derived",
    "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
@@ -2414,6 +2427,7 @@
     }
    ],
    "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
    "evidence_level": 6,
    "evidence_class": "model-derived",
    "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
@@ -2487,6 +2501,7 @@
     }
    ],
    "has_combination_specific_fit": true,
+   "caption_uses_table1_parameters": false,
    "evidence_level": 6,
    "evidence_class": "model-derived",
    "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; a combination-specific best fit exists (see YT-FIT record) and differs",
@@ -2560,6 +2575,7 @@
     }
    ],
    "has_combination_specific_fit": true,
+   "caption_uses_table1_parameters": false,
    "evidence_level": 6,
    "evidence_class": "model-derived",
    "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; a combination-specific best fit exists (see YT-FIT record) and differs",
@@ -2633,6 +2649,7 @@
     }
    ],
    "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
    "evidence_level": 6,
    "evidence_class": "model-derived",
    "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
@@ -2706,6 +2723,7 @@
     }
    ],
    "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
    "evidence_level": 6,
    "evidence_class": "model-derived",
    "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
@@ -2779,6 +2797,7 @@
     }
    ],
    "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
    "evidence_level": 6,
    "evidence_class": "model-derived",
    "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
@@ -2852,6 +2871,7 @@
     }
    ],
    "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
    "evidence_level": 6,
    "evidence_class": "model-derived",
    "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
@@ -2925,6 +2945,7 @@
     }
    ],
    "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
    "evidence_level": 6,
    "evidence_class": "model-derived",
    "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
@@ -2998,6 +3019,7 @@
     }
    ],
    "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
    "evidence_level": 6,
    "evidence_class": "model-derived",
    "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
@@ -3071,6 +3093,7 @@
     }
    ],
    "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
    "evidence_level": 6,
    "evidence_class": "model-derived",
    "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
@@ -3144,6 +3167,7 @@
     }
    ],
    "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
    "evidence_level": 6,
    "evidence_class": "model-derived",
    "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
@@ -3217,6 +3241,7 @@
     }
    ],
    "has_combination_specific_fit": true,
+   "caption_uses_table1_parameters": false,
    "evidence_level": 6,
    "evidence_class": "model-derived",
    "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; a combination-specific best fit exists (see YT-FIT record) and differs",
@@ -3290,6 +3315,7 @@
     }
    ],
    "has_combination_specific_fit": true,
+   "caption_uses_table1_parameters": false,
    "evidence_level": 6,
    "evidence_class": "model-derived",
    "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; a combination-specific best fit exists (see YT-FIT record) and differs",
@@ -3318,8 +3344,11 @@
    ],
    "locator": "IAEA APID 7B PDF p. 45",
    "reproduction_check_vs_TRIM_SP": [],
-   "worst_factor": null,
-   "status": "NOT_USED_NUMERICALLY"
+   "worst_factor_all_points": null,
+   "worst_factor_E_ge_1p1_Eth": null,
+   "reproduction": "NO_TRIM_TABLE_TRANSCRIBED",
+   "status": "NOT_USED_NUMERICALLY",
+   "status_reason": "the fit is an analytic fit to TRIM.SP calculated points (source comment); it adds no evidence independent of the TRIM.SP calculations, which are carried as records where transcribed"
   },
   {
    "id": "APID-2.1.2.7",
@@ -3343,54 +3372,65 @@
     {
      "E_eV": 45,
      "TRIM_SP": 2.56e-05,
-     "fit_as_read": 0.001069,
-     "ratio": 41.8
+     "fit": 7.563e-06,
+     "ratio": 0.295,
+     "near_threshold": true
     },
     {
      "E_eV": 50,
      "TRIM_SP": 6.56e-05,
-     "fit_as_read": 0.007236,
-     "ratio": 110.0
+     "fit": 6.1e-05,
+     "ratio": 0.93,
+     "near_threshold": false
     },
     {
      "E_eV": 60,
      "TRIM_SP": 0.000287,
-     "fit_as_read": 0.02378,
-     "ratio": 82.9
+     "fit": 0.000322,
+     "ratio": 1.12,
+     "near_threshold": false
     },
     {
      "E_eV": 70,
      "TRIM_SP": 0.000779,
-     "fit_as_read": 0.03772,
-     "ratio": 48.4
+     "fit": 0.0008181,
+     "ratio": 1.05,
+     "near_threshold": false
     },
     {
      "E_eV": 100,
      "TRIM_SP": 0.00459,
-     "fit_as_read": 0.0633,
-     "ratio": 13.8
+     "fit": 0.004021,
+     "ratio": 0.876,
+     "near_threshold": false
     },
     {
      "E_eV": 150,
      "TRIM_SP": 0.018,
-     "fit_as_read": 0.08688,
-     "ratio": 4.83
+     "fit": 0.01561,
+     "ratio": 0.867,
+     "near_threshold": false
     },
     {
      "E_eV": 300,
      "TRIM_SP": 0.0685,
-     "fit_as_read": 0.1278,
-     "ratio": 1.87
+     "fit": 0.07346,
+     "ratio": 1.07,
+     "near_threshold": false
     },
     {
      "E_eV": 1000,
      "TRIM_SP": 0.215,
-     "fit_as_read": 0.2145,
-     "ratio": 0.998
+     "fit": 0.2066,
+     "ratio": 0.961,
+     "near_threshold": false
     }
    ],
-   "worst_factor": 110.0,
-   "status": "NOT_USED_NUMERICALLY_REPRODUCTION_FAILED"
+   "worst_factor_all_points": 3.39,
+   "worst_factor_E_ge_1p1_Eth": 1.15,
+   "reproduction": "REPRODUCED_AWAY_FROM_THRESHOLD",
+   "status": "NOT_USED_NUMERICALLY",
+   "status_reason": "the fit is an analytic fit to TRIM.SP calculated points (source comment); it adds no evidence independent of the TRIM.SP calculations, which are carried as records where transcribed"
   },
   {
    "id": "APID-2.1.3.6",
@@ -3413,102 +3453,121 @@
     {
      "E_eV": 47,
      "TRIM_SP": 9.3e-06,
-     "fit_as_read": 0.0001616,
-     "ratio": 17.4
+     "fit": 4.727e-07,
+     "ratio": 0.0508,
+     "near_threshold": true
     },
     {
      "E_eV": 48,
      "TRIM_SP": 1.82e-05,
-     "fit_as_read": 0.003238,
-     "ratio": 178.0
+     "fit": 1.025e-05,
+     "ratio": 0.563,
+     "near_threshold": true
     },
     {
      "E_eV": 50,
      "TRIM_SP": 5.7e-05,
-     "fit_as_read": 0.01438,
-     "ratio": 252.0
+     "fit": 6.245e-05,
+     "ratio": 1.1,
+     "near_threshold": true
     },
     {
      "E_eV": 52,
      "TRIM_SP": 0.000135,
-     "fit_as_read": 0.02464,
-     "ratio": 183.0
+     "fit": 0.0001568,
+     "ratio": 1.16,
+     "near_threshold": false
     },
     {
      "E_eV": 55,
      "TRIM_SP": 0.00036,
-     "fit_as_read": 0.03489,
-     "ratio": 96.9
+     "fit": 0.0003789,
+     "ratio": 1.05,
+     "near_threshold": false
     },
     {
      "E_eV": 60,
      "TRIM_SP": 0.000973,
-     "fit_as_read": 0.04425,
-     "ratio": 45.5
+     "fit": 0.0009758,
+     "ratio": 1.0,
+     "near_threshold": false
     },
     {
      "E_eV": 70,
      "TRIM_SP": 0.00326,
-     "fit_as_read": 0.05409,
-     "ratio": 16.6
+     "fit": 0.003082,
+     "ratio": 0.945,
+     "near_threshold": false
     },
     {
      "E_eV": 80,
      "TRIM_SP": 0.007,
-     "fit_as_read": 0.06088,
-     "ratio": 8.7
+     "fit": 0.00644,
+     "ratio": 0.92,
+     "near_threshold": false
     },
     {
      "E_eV": 90,
      "TRIM_SP": 0.0117,
-     "fit_as_read": 0.0667,
-     "ratio": 5.7
+     "fit": 0.01097,
+     "ratio": 0.937,
+     "near_threshold": false
     },
     {
      "E_eV": 100,
      "TRIM_SP": 0.0172,
-     "fit_as_read": 0.07205,
-     "ratio": 4.19
+     "fit": 0.01648,
+     "ratio": 0.958,
+     "near_threshold": false
     },
     {
      "E_eV": 120,
      "TRIM_SP": 0.0277,
-     "fit_as_read": 0.08187,
-     "ratio": 2.96
+     "fit": 0.02946,
+     "ratio": 1.06,
+     "near_threshold": false
     },
     {
      "E_eV": 140,
      "TRIM_SP": 0.0399,
-     "fit_as_read": 0.09092,
-     "ratio": 2.28
+     "fit": 0.04356,
+     "ratio": 1.09,
+     "near_threshold": false
     },
     {
      "E_eV": 200,
      "TRIM_SP": 0.0757,
-     "fit_as_read": 0.1151,
-     "ratio": 1.52
+     "fit": 0.08295,
+     "ratio": 1.1,
+     "near_threshold": false
     },
     {
      "E_eV": 300,
      "TRIM_SP": 0.132,
-     "fit_as_read": 0.149,
-     "ratio": 1.13
+     "fit": 0.1315,
+     "ratio": 0.996,
+     "near_threshold": false
     },
     {
      "E_eV": 500,
      "TRIM_SP": 0.213,
-     "fit_as_read": 0.2038,
-     "ratio": 0.957
+     "fit": 0.1964,
+     "ratio": 0.922,
+     "near_threshold": false
     },
     {
      "E_eV": 1000,
      "TRIM_SP": 0.339,
-     "fit_as_read": 0.3046,
-     "ratio": 0.899
+     "fit": 0.3025,
+     "ratio": 0.892,
+     "near_threshold": false
     }
    ],
-   "worst_factor": 252.0,
-   "status": "NOT_USED_NUMERICALLY_REPRODUCTION_FAILED"
+   "worst_factor_all_points": 19.7,
+   "worst_factor_E_ge_1p1_Eth": 1.16,
+   "reproduction": "REPRODUCED_AWAY_FROM_THRESHOLD",
+   "status": "NOT_USED_NUMERICALLY",
+   "status_reason": "the fit is an analytic fit to TRIM.SP calculated points (source comment); it adds no evidence independent of the TRIM.SP calculations, which are carried as records where transcribed"
   },
   {
    "id": "APID-2.1.3.7",
@@ -3532,42 +3591,51 @@
     {
      "E_eV": 50,
      "TRIM_SP": 0.000363,
-     "fit_as_read": 0.02705,
-     "ratio": 74.5
+     "fit": 0.0003625,
+     "ratio": 0.999,
+     "near_threshold": true
     },
     {
      "E_eV": 100,
      "TRIM_SP": 0.0217,
-     "fit_as_read": 0.1744,
-     "ratio": 8.04
+     "fit": 0.02267,
+     "ratio": 1.04,
+     "near_threshold": false
     },
     {
      "E_eV": 200,
      "TRIM_SP": 0.09,
-     "fit_as_read": 0.2549,
-     "ratio": 2.83
+     "fit": 0.08519,
+     "ratio": 0.947,
+     "near_threshold": false
     },
     {
      "E_eV": 300,
      "TRIM_SP": 0.152,
-     "fit_as_read": 0.306,
-     "ratio": 2.01
+     "fit": 0.1495,
+     "ratio": 0.984,
+     "near_threshold": false
     },
     {
      "E_eV": 500,
      "TRIM_SP": 0.245,
-     "fit_as_read": 0.3744,
-     "ratio": 1.53
+     "fit": 0.2545,
+     "ratio": 1.04,
+     "near_threshold": false
     },
     {
      "E_eV": 1000,
      "TRIM_SP": 0.371,
-     "fit_as_read": 0.4705,
-     "ratio": 1.27
+     "fit": 0.4062,
+     "ratio": 1.09,
+     "near_threshold": false
     }
    ],
-   "worst_factor": 74.5,
-   "status": "NOT_USED_NUMERICALLY_REPRODUCTION_FAILED"
+   "worst_factor_all_points": 1.09,
+   "worst_factor_E_ge_1p1_Eth": 1.09,
+   "reproduction": "REPRODUCED_AWAY_FROM_THRESHOLD",
+   "status": "NOT_USED_NUMERICALLY",
+   "status_reason": "the fit is an analytic fit to TRIM.SP calculated points (source comment); it adds no evidence independent of the TRIM.SP calculations, which are carried as records where transcribed"
   }
  ],
  "consistency_checks": [
@@ -3591,229 +3659,286 @@
   },
   {
    "id": "CHK-GENERIC-VS-FIT",
-   "what": "Table-1 generic yield / caption-fit yield (max of W readings) for the 8 N/O combinations with measured data, over the reporting grid where both are above threshold",
-   "ratio_min": 1.0,
+   "what": "Table-1 generic yield / caption-fit yield (max of W readings) for the 7 N/O combinations whose caption parameters are refitted, over the reporting grid where both are above threshold",
+   "ratio_min": 1.24,
    "ratio_max": 52.7,
+   "refitted_combinations": [
+    "N+ -> Fe",
+    "N+ -> Mo",
+    "N+ -> Ni",
+    "N+ -> W",
+    "O+ -> Mo",
+    "O+ -> Ni",
+    "O+ -> W"
+   ],
+   "identity_combinations_excluded": [
+    "O+ -> C"
+   ],
+   "identity_rule": "caption row with best_fit_Us false, Us, Q and s equal to Table 1 and |k * Us - W_table1| <= 0.005 eV: the caption curve is the Table-1 evaluation itself, so its points (ratio about 1) carry identity_row = true and are excluded from ratio_min / ratio_max",
    "points": [
     {
      "combo": "O+ -> C",
      "E_eV": 100,
-     "generic_over_fit": 1.0
+     "generic_over_fit": 1.0,
+     "identity_row": true
     },
     {
      "combo": "O+ -> C",
      "E_eV": 200,
-     "generic_over_fit": 1.0
+     "generic_over_fit": 1.0,
+     "identity_row": true
     },
     {
      "combo": "O+ -> C",
      "E_eV": 300,
-     "generic_over_fit": 1.0
+     "generic_over_fit": 1.0,
+     "identity_row": true
     },
     {
      "combo": "O+ -> C",
      "E_eV": 500,
-     "generic_over_fit": 1.0
+     "generic_over_fit": 1.0,
+     "identity_row": true
     },
     {
      "combo": "O+ -> C",
      "E_eV": 1000,
-     "generic_over_fit": 1.0
+     "generic_over_fit": 1.0,
+     "identity_row": true
     },
     {
      "combo": "N+ -> Fe",
      "E_eV": 50,
-     "generic_over_fit": 1.69
+     "generic_over_fit": 1.69,
+     "identity_row": false
     },
     {
      "combo": "N+ -> Fe",
      "E_eV": 100,
-     "generic_over_fit": 1.42
+     "generic_over_fit": 1.42,
+     "identity_row": false
     },
     {
      "combo": "N+ -> Fe",
      "E_eV": 200,
-     "generic_over_fit": 1.32
+     "generic_over_fit": 1.32,
+     "identity_row": false
     },
     {
      "combo": "N+ -> Fe",
      "E_eV": 300,
-     "generic_over_fit": 1.29
+     "generic_over_fit": 1.29,
+     "identity_row": false
     },
     {
      "combo": "N+ -> Fe",
      "E_eV": 500,
-     "generic_over_fit": 1.27
+     "generic_over_fit": 1.27,
+     "identity_row": false
     },
     {
      "combo": "N+ -> Fe",
      "E_eV": 1000,
-     "generic_over_fit": 1.24
+     "generic_over_fit": 1.24,
+     "identity_row": false
     },
     {
      "combo": "N+ -> Ni",
      "E_eV": 50,
-     "generic_over_fit": 2.23
+     "generic_over_fit": 2.23,
+     "identity_row": false
     },
     {
      "combo": "N+ -> Ni",
      "E_eV": 100,
-     "generic_over_fit": 1.68
+     "generic_over_fit": 1.68,
+     "identity_row": false
     },
     {
      "combo": "N+ -> Ni",
      "E_eV": 200,
-     "generic_over_fit": 1.51
+     "generic_over_fit": 1.51,
+     "identity_row": false
     },
     {
      "combo": "N+ -> Ni",
      "E_eV": 300,
-     "generic_over_fit": 1.45
+     "generic_over_fit": 1.45,
+     "identity_row": false
     },
     {
      "combo": "N+ -> Ni",
      "E_eV": 500,
-     "generic_over_fit": 1.41
+     "generic_over_fit": 1.41,
+     "identity_row": false
     },
     {
      "combo": "N+ -> Ni",
      "E_eV": 1000,
-     "generic_over_fit": 1.37
+     "generic_over_fit": 1.37,
+     "identity_row": false
     },
     {
      "combo": "O+ -> Ni",
      "E_eV": 50,
-     "generic_over_fit": 52.7
+     "generic_over_fit": 52.7,
+     "identity_row": false
     },
     {
      "combo": "O+ -> Ni",
      "E_eV": 100,
-     "generic_over_fit": 7.0
+     "generic_over_fit": 7.0,
+     "identity_row": false
     },
     {
      "combo": "O+ -> Ni",
      "E_eV": 200,
-     "generic_over_fit": 4.16
+     "generic_over_fit": 4.16,
+     "identity_row": false
     },
     {
      "combo": "O+ -> Ni",
      "E_eV": 300,
-     "generic_over_fit": 3.56
+     "generic_over_fit": 3.56,
+     "identity_row": false
     },
     {
      "combo": "O+ -> Ni",
      "E_eV": 500,
-     "generic_over_fit": 3.13
+     "generic_over_fit": 3.13,
+     "identity_row": false
     },
     {
      "combo": "O+ -> Ni",
      "E_eV": 1000,
-     "generic_over_fit": 2.81
+     "generic_over_fit": 2.81,
+     "identity_row": false
     },
     {
      "combo": "N+ -> Mo",
      "E_eV": 100,
-     "generic_over_fit": 11.7
+     "generic_over_fit": 11.7,
+     "identity_row": false
     },
     {
      "combo": "N+ -> Mo",
      "E_eV": 200,
-     "generic_over_fit": 4.45
+     "generic_over_fit": 4.45,
+     "identity_row": false
     },
     {
      "combo": "N+ -> Mo",
      "E_eV": 300,
-     "generic_over_fit": 3.52
+     "generic_over_fit": 3.52,
+     "identity_row": false
     },
     {
      "combo": "N+ -> Mo",
      "E_eV": 500,
-     "generic_over_fit": 2.94
+     "generic_over_fit": 2.94,
+     "identity_row": false
     },
     {
      "combo": "N+ -> Mo",
      "E_eV": 1000,
-     "generic_over_fit": 2.55
+     "generic_over_fit": 2.55,
+     "identity_row": false
     },
     {
      "combo": "O+ -> Mo",
      "E_eV": 50,
-     "generic_over_fit": 2.86
+     "generic_over_fit": 2.86,
+     "identity_row": false
     },
     {
      "combo": "O+ -> Mo",
      "E_eV": 100,
-     "generic_over_fit": 1.63
+     "generic_over_fit": 1.63,
+     "identity_row": false
     },
     {
      "combo": "O+ -> Mo",
      "E_eV": 200,
-     "generic_over_fit": 1.41
+     "generic_over_fit": 1.41,
+     "identity_row": false
     },
     {
      "combo": "O+ -> Mo",
      "E_eV": 300,
-     "generic_over_fit": 1.35
+     "generic_over_fit": 1.35,
+     "identity_row": false
     },
     {
      "combo": "O+ -> Mo",
      "E_eV": 500,
-     "generic_over_fit": 1.3
+     "generic_over_fit": 1.3,
+     "identity_row": false
     },
     {
      "combo": "O+ -> Mo",
      "E_eV": 1000,
-     "generic_over_fit": 1.26
+     "generic_over_fit": 1.26,
+     "identity_row": false
     },
     {
      "combo": "N+ -> W",
      "E_eV": 100,
-     "generic_over_fit": 11.4
+     "generic_over_fit": 11.4,
+     "identity_row": false
     },
     {
      "combo": "N+ -> W",
      "E_eV": 200,
-     "generic_over_fit": 2.99
+     "generic_over_fit": 2.99,
+     "identity_row": false
     },
     {
      "combo": "N+ -> W",
      "E_eV": 300,
-     "generic_over_fit": 2.37
+     "generic_over_fit": 2.37,
+     "identity_row": false
     },
     {
      "combo": "N+ -> W",
      "E_eV": 500,
-     "generic_over_fit": 2.03
+     "generic_over_fit": 2.03,
+     "identity_row": false
     },
     {
      "combo": "N+ -> W",
      "E_eV": 1000,
-     "generic_over_fit": 1.8
+     "generic_over_fit": 1.8,
+     "identity_row": false
     },
     {
      "combo": "O+ -> W",
      "E_eV": 100,
-     "generic_over_fit": 26.2
+     "generic_over_fit": 26.2,
+     "identity_row": false
     },
     {
      "combo": "O+ -> W",
      "E_eV": 200,
-     "generic_over_fit": 4.19
+     "generic_over_fit": 4.19,
+     "identity_row": false
     },
     {
      "combo": "O+ -> W",
      "E_eV": 300,
-     "generic_over_fit": 3.1
+     "generic_over_fit": 3.1,
+     "identity_row": false
     },
     {
      "combo": "O+ -> W",
      "E_eV": 500,
-     "generic_over_fit": 2.52
+     "generic_over_fit": 2.52,
+     "identity_row": false
     },
     {
      "combo": "O+ -> W",
      "E_eV": 1000,
-     "generic_over_fit": 2.16
+     "generic_over_fit": 2.16,
+     "identity_row": false
     }
    ],
    "reading": "the generic Table-1 evaluation is not a reliable N/O prior: it departs from the data-fitted curve by the ratio range shown, mostly upward (the fits raise Us for N/O)",
@@ -3957,31 +4082,39 @@
   },
   {
    "id": "CHK-APID-REPRODUCTION",
-   "what": "IAEA APID 7B fit formula (as read by this lane) with the printed parameters vs the TRIM.SP points the fits were made to (<= 1 keV)",
+   "what": "IAEA APID 7B fit formula (report p. 18, PDF p. 20) with the printed parameters vs the TRIM.SP points the fits were made to (<= 1 keV); gate: worst factor <= 1.25 for E >= 1.1 Eth",
    "rows": [
     {
      "id": "APID-2.1.2.6",
-     "worst_factor": null,
+     "worst_factor_all_points": null,
+     "worst_factor_E_ge_1p1_Eth": null,
+     "reproduction": "NO_TRIM_TABLE_TRANSCRIBED",
      "status": "NOT_USED_NUMERICALLY"
     },
     {
      "id": "APID-2.1.2.7",
-     "worst_factor": 110.0,
-     "status": "NOT_USED_NUMERICALLY_REPRODUCTION_FAILED"
+     "worst_factor_all_points": 3.39,
+     "worst_factor_E_ge_1p1_Eth": 1.15,
+     "reproduction": "REPRODUCED_AWAY_FROM_THRESHOLD",
+     "status": "NOT_USED_NUMERICALLY"
     },
     {
      "id": "APID-2.1.3.6",
-     "worst_factor": 252.0,
-     "status": "NOT_USED_NUMERICALLY_REPRODUCTION_FAILED"
+     "worst_factor_all_points": 19.7,
+     "worst_factor_E_ge_1p1_Eth": 1.16,
+     "reproduction": "REPRODUCED_AWAY_FROM_THRESHOLD",
+     "status": "NOT_USED_NUMERICALLY"
     },
     {
      "id": "APID-2.1.3.7",
-     "worst_factor": 74.5,
-     "status": "NOT_USED_NUMERICALLY_REPRODUCTION_FAILED"
+     "worst_factor_all_points": 1.09,
+     "worst_factor_E_ge_1p1_Eth": 1.09,
+     "reproduction": "REPRODUCED_AWAY_FROM_THRESHOLD",
+     "status": "NOT_USED_NUMERICALLY"
     }
    ],
-   "reading": "the lane's reading of the printed formula / parameters does not reproduce the calculated points at low energy (the printed eps_L values also differ from the Lindhard value, which the source says was sometimes freed); the APID fits are therefore transcribed with their qualitative comments only and never evaluated as priors",
-   "pass": null
+   "reading": "the printed fits reproduce the TRIM.SP points they were fitted to, consistent with the printed average errors, except within a few eV of the fitted threshold (fitted Eth slightly above the TRIM.SP onset); they are still not evaluated as priors because they carry no information beyond the TRIM.SP calculations",
+   "pass": true
   }
  ],
  "q0_matrix": [
