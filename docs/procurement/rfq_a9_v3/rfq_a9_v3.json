@@ -53,6 +53,10 @@
    ],
    "role": "Xe = CONTINGENCY / EMERGENCY supply mode (not a parallel co-equal propellant); Xe capability, separate tank / path and flow control stay required (RFP-P17-05, RFP-P18-08)",
    "flight_architecture": "one Hall accelerator + one RF/ICP electron-source/neutralizer (cathodeless / electrodeless) serving both atmospheric gases and Xe; two propellant supply modes with separate tanks / paths: ambient atmospheric propellant (primary) and Xe (contingency / emergency supply mode; capability retained as the RFP requires); no conventional hollow cathode (A9.19)",
+   "rfq3_gas_n03_applies_to": [
+    "hall_icp_neutralizer"
+   ],
+   "rfq3_gas_n03_scope_note": "the RFP flight Xe capability applies to the flight configuration only (A9.19 / A9.20); hall_c1_reference is listed only under configuration_roles as GROUND_ONLY (the A9.15 both-configuration scope is kept in before_a9_19)",
    "amends": "A9.15 on the ROLE of Xe only (capability unchanged)"
   },
   "a9_20_c1_role": {
@@ -4855,7 +4859,6 @@
           "GAS-L11"
          ],
          "applies_to": [
-          "hall_c1_reference",
           "hall_icp_neutralizer"
          ],
          "separate_tanks": "ambient air and Xenon (RFP; ambient-air storage is not in this RFQ revision, NIR-07)",
@@ -5006,7 +5009,6 @@
           "GAS-L11"
          ],
          "applies_to": [
-          "hall_c1_reference",
           "hall_icp_neutralizer"
          ],
          "separate_tanks": "ambient air and Xenon (RFP; ambient-air storage is not in this RFQ revision, NIR-07)",
@@ -5132,7 +5134,6 @@
           "GAS-L11"
          ],
          "applies_to": [
-          "hall_c1_reference",
           "hall_icp_neutralizer"
          ],
          "separate_tanks": "ambient air and Xenon (RFP; ambient-air storage is not in this RFQ revision, NIR-07)",
@@ -5508,7 +5509,6 @@
           "GAS-L11"
          ],
          "applies_to": [
-          "hall_c1_reference",
           "hall_icp_neutralizer"
          ],
          "separate_tanks": "ambient air and Xenon (RFP; ambient-air storage is not in this RFQ revision, NIR-07)",
@@ -5638,7 +5638,6 @@
           "GAS-L11"
          ],
          "applies_to": [
-          "hall_c1_reference",
           "hall_icp_neutralizer"
          ],
          "separate_tanks": "ambient air and Xenon (RFP; ambient-air storage is not in this RFQ revision, NIR-07)",
@@ -5763,7 +5762,6 @@
           "GAS-L11"
          ],
          "applies_to": [
-          "hall_c1_reference",
           "hall_icp_neutralizer"
          ],
          "separate_tanks": "ambient air and Xenon (RFP; ambient-air storage is not in this RFQ revision, NIR-07)",
@@ -5869,7 +5867,6 @@
           "GAS-L11"
          ],
          "applies_to": [
-          "hall_c1_reference",
           "hall_icp_neutralizer"
          ],
          "separate_tanks": "ambient air and Xenon (RFP; ambient-air storage is not in this RFQ revision, NIR-07)",
@@ -6211,7 +6208,6 @@
           "GAS-L11"
          ],
          "applies_to": [
-          "hall_c1_reference",
           "hall_icp_neutralizer"
          ],
          "separate_tanks": "ambient air and Xenon (RFP; ambient-air storage is not in this RFQ revision, NIR-07)",
@@ -9766,7 +9762,7 @@
      "package": "RFQ3-GAS",
      "v1_id": null,
      "title": "RFP-compliant propellant policy: system Xe propulsion capability",
-     "requirement": "The official RFP is the sole governing basis for propellant capability: the system supports both ambient atmospheric propellant (180-230 km) and Xenon propulsion capability, with separate ambient-air and Xe propellant tanks / paths. The Xe storage and flow-control hardware quoted here (Xe tank GAS-L08, PMU GAS-L09, FCU GAS-L10, series isolation valves GAS-L11, anode-path MFC GAS-L04) is the RFP-required system Xe capability and is in scope for BOTH configurations, including hall_icp_neutralizer; it is not a C1 contingency. A9.19: Xe is the contingency / emergency supply mode of the single Hall + RF/ICP neutralizer flight architecture (not a parallel co-equal propellant); its capability, separate tank / path and flow control stay required. C1 is GROUND-ONLY laboratory equipment (A9.20): the C1 Xe hardware (GAS-L05, GAS-L06, GAS-L15) is quoted only for the ground C1 laboratory branch and never enters the flight Xe accounting; the presence or absence of C1 never removes the system Xe capability (rule function xe_capability_scope). The ICP gas-mode baseline of A9.1 (G-REUSE primary, m_Xe,ICP = 0; G-XE a declared ICP-feed variant) is unchanged.",
+     "requirement": "The official RFP is the sole governing basis for propellant capability: the system supports both ambient atmospheric propellant (180-230 km) and Xenon propulsion capability, with separate ambient-air and Xe propellant tanks / paths. The Xe storage and flow-control hardware quoted here (Xe tank GAS-L08, PMU GAS-L09, FCU GAS-L10, series isolation valves GAS-L11, anode-path MFC GAS-L04) is the RFP-required system Xe capability and is in scope for the flight configuration hall_icp_neutralizer (A9.19; hall_c1_reference is a ground-only laboratory reference, A9.20); it is not a C1 contingency. A9.19: Xe is the contingency / emergency supply mode of the single Hall + RF/ICP neutralizer flight architecture (not a parallel co-equal propellant); its capability, separate tank / path and flow control stay required. C1 is GROUND-ONLY laboratory equipment (A9.20): the C1 Xe hardware (GAS-L05, GAS-L06, GAS-L15) is quoted only for the ground C1 laboratory branch and never enters the flight Xe accounting; the presence or absence of C1 never removes the system Xe capability (rule function xe_capability_scope). The ICP gas-mode baseline of A9.1 (G-REUSE primary, m_Xe,ICP = 0; G-XE a declared ICP-feed variant) is unchanged.",
      "value": {
       "system_xe_lines": [
        "GAS-L04",
@@ -9776,7 +9772,6 @@
        "GAS-L11"
       ],
       "applies_to": [
-       "hall_c1_reference",
        "hall_icp_neutralizer"
       ],
       "separate_tanks": "ambient air and Xenon (RFP; ambient-air storage is not in this RFQ revision, NIR-07)",
@@ -9968,7 +9963,6 @@
      "status": "OWNER_GIVEN",
      "freeze_point": "NOW",
      "applies_to": [
-      "hall_c1_reference",
       "hall_icp_neutralizer"
      ],
      "note": null,
@@ -10027,6 +10021,10 @@
       ]
      },
      "before_a9_19": {
+      "applies_to": [
+       "hall_c1_reference",
+       "hall_icp_neutralizer"
+      ],
       "requirement": "The official RFP is the sole governing basis for propellant capability: the system supports both ambient atmospheric propellant (180-230 km) and Xenon propulsion capability, with separate ambient-air and Xe propellant tanks / paths. The Xe storage and flow-control hardware quoted here (Xe tank GAS-L08, PMU GAS-L09, FCU GAS-L10, series isolation valves GAS-L11, anode-path MFC GAS-L04) is the RFP-required system Xe capability and is in scope for BOTH configurations, including hall_icp_neutralizer; it is not a C1 contingency. C1 is an internal architecture element: C1 Xe hardware (GAS-L05, GAS-L06, GAS-L15) is quoted only for a selected C1 that requires Xe and is then booked inside the system Xe architecture (AL-08 / Xe accounting); no C1 Xe is invented or excluded in advance; the presence or absence of C1 never removes the system Xe capability (rule function xe_capability_scope). The ICP gas-mode baseline of A9.1 (G-REUSE primary, m_Xe,ICP = 0; G-XE a declared ICP-feed variant) is unchanged.",
       "value": {
        "system_xe_lines": [

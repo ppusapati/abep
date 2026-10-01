@@ -531,7 +531,9 @@ def test_a915_system_xe_capability_both_configurations(mod, reqs, lines, doc):
             if rid in ("RFQ-07-R01", "RFQ-07-R02", "RFQ-07-R04", "RFQ-07-R06", "RFQ-07-R05", "RFQ-07-R09"):
                 assert "hall_icp_neutralizer" in reqs[rid]["applies_to"], (lid, rid)
     n03 = reqs["RFQ3-GAS-N03"]
-    assert n03["applies_to"] == ["hall_c1_reference", "hall_icp_neutralizer"]
+    # A9.15 scope (both configurations) kept as history; A9.19 / A9.20 amend it to the flight configuration (RV19-07)
+    assert n03["before_a9_19"]["applies_to"] == ["hall_c1_reference", "hall_icp_neutralizer"]
+    assert n03["applies_to"] == ["hall_icp_neutralizer"]
     assert "not a C1 contingency" in n03["requirement"]
     r27 = reqs["RFQ-07-R09"]["requirement"]
     assert "serves the ground comparison" not in r27 and "hall_icp_neutralizer" in r27
@@ -703,6 +705,22 @@ def test_a919_xe_contingency_role_capability_retained(mod, reqs, doc):
     assert roles["hall_c1_reference"].startswith("GROUND_ONLY_LABORATORY_REFERENCE")
     assert reqs["RFQ-07-R07"]["value"] == 0.0                     # G-REUSE primary unchanged
     assert any("A9.19" in b and "no conventional hollow cathode" in b for b in doc["banner"])
+
+
+def test_rv19_07_system_xe_capability_applies_to_flight_configuration_only(mod, reqs, doc):
+    """RV19-07: after A9.19 / A9.20 the RFP flight Xe capability (RFQ3-GAS-N03) applies to the flight configuration
+    hall_icp_neutralizer only; hall_c1_reference appears only under configuration_roles as GROUND_ONLY."""
+    n03 = reqs["RFQ3-GAS-N03"]
+    assert mod.FLIGHT_CONFIGS == ("hall_icp_neutralizer",)
+    assert n03["applies_to"] == ["hall_icp_neutralizer"]
+    assert n03["value"]["applies_to"] == ["hall_icp_neutralizer"]
+    assert "hall_c1_reference" not in n03["applies_to"] + n03["value"]["applies_to"]
+    assert n03["value"]["configuration_roles"]["hall_c1_reference"].startswith("GROUND_ONLY_LABORATORY_REFERENCE")
+    assert "BOTH configurations" not in n03["requirement"]
+    assert "in scope for the flight configuration hall_icp_neutralizer" in n03["requirement"]
+    assert n03["before_a9_19"]["value"]["applies_to"] == ["hall_c1_reference", "hall_icp_neutralizer"]
+    pol = doc["rfp_propellant_policy"]["a9_19_xe_role"]
+    assert pol["rfq3_gas_n03_applies_to"] == ["hall_icp_neutralizer"]
 
 
 def test_a919_a920_single_record_decisions_fail_closed(mod):

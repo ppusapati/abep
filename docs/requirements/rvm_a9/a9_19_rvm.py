@@ -128,6 +128,21 @@ def source(key: str, field: str) -> dict:
             "text": VERBATIM[key][field]}
 
 
+NA_ROWS = ("RVM-28", "RVM-29", "RVM-30")   # flight-architecture rows: hall_c1_reference cell = NA marker (RV19-10)
+
+
+def na_ground_reference(B, rid: str) -> dict:
+    """The only artifact of a hall_c1_reference cell on a flight-architecture row (RV19-10): the ground-only C1
+    laboratory reference is not evaluated against flight-architecture requirements (A9.19 / A9.20). Non-evaluating,
+    never compliance evidence; rvm_rules refuses to mix it with evidence artifacts."""
+    d = DECISIONS["A9.20"]
+    return B._art(d["json"], f"A9.20:{rid}:NOT_APPLICABLE_GROUND_REFERENCE", "DETERMINING",
+                  "NOT_APPLICABLE_GROUND_REFERENCE",
+                  "NOT_APPLICABLE_GROUND_REFERENCE - hall_c1_reference is a ground-only laboratory reference (A9.20), "
+                  "not a flight configuration (A9.19); this flight-architecture requirement is not evaluated against "
+                  "it and the cell is never compliance evidence")
+
+
 # ------------------------------------------------------------------------------------------------ rows
 def build_rows(B, ctx) -> list:
     """RVM-28..RVM-30 (A9.19 / A9.20). Called by build_rvm_a9.build_doc with the builder module as B."""
@@ -139,8 +154,8 @@ def build_rows(B, ctx) -> list:
     ctx.rfp("RFP-P18-08", "Two separate propellant tanks for ambient air and xenon")
     rows = []
 
-    def cells(fn_icp, fn_c1):
-        return {"hall_icp_neutralizer": fn_icp(), "hall_c1_reference": fn_c1()}
+    def cells(fn_icp, rid):
+        return {"hall_icp_neutralizer": fn_icp(), "hall_c1_reference": [na_ground_reference(B, rid)]}
 
     # RVM-28 ---------------------------------------------------------------------------------------- architecture
     arch_absent = lambda: absent(  # noqa: E731
@@ -178,7 +193,7 @@ def build_rows(B, ctx) -> list:
         "artifacts": cells(
             lambda: [arch_absent(), plan(ctx, "ICD", "@doc", role="SUPPORTING", why="one ICP neutralizer interface"),
                      plan(ctx, "P1", "P1-S7", role="SUPPORTING", why="ICP-45A capacity (PENDING_ICP45)")],
-            lambda: [arch_absent()]),
+            "RVM-28"),
     })
     # RVM-29 ---------------------------------------------------------------------------------------- supply modes
     sup_absent = lambda: absent(  # noqa: E731
@@ -213,7 +228,7 @@ def build_rows(B, ctx) -> list:
         "artifacts": cells(
             lambda: [sup_absent(), B.probe_xe(ctx, "hall_icp_neutralizer"),
                      plan(ctx, "FSC", "@doc", role="SUPPORTING", why="delivered atmospheric feed state (primary mode)")],
-            lambda: [sup_absent()]),
+            "RVM-29"),
     })
     # RVM-30 ---------------------------------------------------------------------------------------- C1 ground-only
     rows.append({
@@ -233,20 +248,23 @@ def build_rows(B, ctx) -> list:
         "limit": {"quantity": "C1 mass / power / Xe booked in flight budgets", "comparator": "==", "value": 0,
                   "units": "kg / W / kg"},
         "verification_methods": ["inspection"],
-        "verification_note": "inspection of the flight mass / power and Xe accounting refreshed for A9.19 / A9.20 (a "
-                             "separate budgets lane; the immutable v2 budgets still book hall_c1_reference as history) "
+        "verification_note": "inspection of the flight mass / power and Xe accounting v3 (mass_power_a9_v3 / "
+                             "xe_accounting_a9_v3) refreshed for A9.19 / A9.20 by the budgets lane (the immutable v2 "
+                             "budgets still book hall_c1_reference and are history only, never evidence here) "
                              "and of the RFQ v3 classification RFQ3-HALLEL-N03 (procurement, never evidence)",
         "open_readings": [], "rtm_xref": [], "lane24_gates": [], "m16_rows": [],
         "configuration_applicability": {"hall_icp_neutralizer": "FLIGHT budgets must exclude C1 (A9.20)",
                                         "hall_c1_reference": CELL_APPLICABILITY_C1},
         "artifacts": cells(
-            lambda: [plan(ctx, "MP", "@doc", why="flight mass / power roll-up to be refreshed without C1 (A9.19 / "
-                                                 "A9.20); v2 is immutable history"),
-                     plan(ctx, "XE", "@doc", why="flight Xe accounting to be refreshed without C1 Xe (A9.19 / A9.20)"),
-                     plan(ctx, "RFQ2", "@doc", role="SUPPORTING", why="RFQ v3 RFQ3-HALLEL-N03 classifies every C1 "
-                                                                      "line GROUND_ONLY_LAB_EQUIPMENT")],
-            lambda: [plan(ctx, "PRE", "@doc", why="ground / laboratory C1 reference: H-1 characterization and C1-vs-ICP "
-                                                  "bench control (labelled, never flight)")]),
+            lambda: [plan(ctx, "MP3", "@doc", why="flight mass / power v3, to be refreshed for A9.19 / A9.20 without C1 "
+                                                  "(budgets lane); the immutable v2 still books hall_c1_reference as "
+                                                  "history and is not evidence here"),
+                     plan(ctx, "XE3", "@doc", why="flight Xe accounting v3, to be refreshed for A9.19 / A9.20 without C1 "
+                                                  "Xe (budgets lane); the immutable v2 is history, not evidence here"),
+                     plan(ctx, "RFQ3", "RFQ3-HALLEL-N03", role="SUPPORTING",
+                          why="RFQ v3 RFQ3-HALLEL-N03 classifies every C1 line GROUND_ONLY_LAB_EQUIPMENT "
+                              "(procurement, never evidence)")],
+            "RVM-30"),
     })
     return rows
 
@@ -334,6 +352,11 @@ def applied_entries() -> list:
           "no C1 flight variant: C1 supplies, the C1 15,000 h cathode basis, the C1 ignition-dwell Xe booking and the "
           "C1 CONTROL_FALLBACK sizing are recorded as non-flight; hall_c1_reference is not a candidate flight "
           "configuration"),
+        e("A9.20", "option", ["RVM-28", "RVM-29", "RVM-30"],
+          "hall_c1_reference cells of the flight-architecture rows RVM-28..30 are NOT_APPLICABLE_GROUND_REFERENCE "
+          "markers (no flight requirement is evaluated against the ground-only C1 reference); RVM-30 evidence points at "
+          "the v3 budgets (mass_power_a9_v3 / xe_accounting_a9_v3) refreshed for A9.19 / A9.20, never at the "
+          "immutable v2 budgets (repair RV19-10)"),
         e("A9.20", "answer", ["RVM-30", "configurations", "RVM-10", "RVM-15"],
           "new row RVM-30: C1 ground-only laboratory reference (H-1 I_d,max,H1,Ar characterization A9.10 S3.5; C1-vs-ICP "
           "bench control); never flight hardware, never in the flight mass / power / Xe budgets; hall_c1_reference "
@@ -354,6 +377,10 @@ def apply(doc: dict) -> dict:
                             **rec}
     for rid in ("RVM-28", "RVM-29", "RVM-30"):
         by[rid]["a9_19"] = {"decisions": [cite("A9.19"), cite("A9.20")], "added": APPLY_DATE}
+    for rid in NA_ROWS:
+        cell = by[rid]["configurations"]["hall_c1_reference"]
+        if cell.get("applicability_marker") != "NOT_APPLICABLE_GROUND_REFERENCE":
+            raise A919Error(f"{rid}: hall_c1_reference cell is not the NOT_APPLICABLE_GROUND_REFERENCE marker")
     for r in doc["rows"]:
         r["configurations"]["hall_c1_reference"]["applicability"] = CELL_APPLICABILITY_C1
     doc["configurations_as_carried_a9_16"] = doc["configurations"]
@@ -368,6 +395,11 @@ def apply(doc: dict) -> dict:
         "a9_2_status_note": "a9_2_statuses_carried['C1 conventional reference'] = CONTROL_FALLBACK is immutable A9.2 "
                             "history; A9.19 removes C1 as a flight fallback and A9.20 makes it ground-only",
         "rows_added": ["RVM-28", "RVM-29", "RVM-30"], "rows_recorded": sorted(ROW_RECORDS),
+        "not_applicable_ground_reference_cells": [{"row": rid, "configuration": "hall_c1_reference",
+                                                   "marker": "NOT_APPLICABLE_GROUND_REFERENCE"} for rid in NA_ROWS],
+        "na_note": "flight-architecture rows RVM-28..30 are not evaluated against the ground-only hall_c1_reference "
+                   "(RV19-10); the cell keeps a vocabulary status (rvm_rules, R7) but carries applicability_marker "
+                   "NOT_APPLICABLE_GROUND_REFERENCE and counts_as_compliance_evidence = false",
         "owner_open_note": "A9.20 verbatim also asks 'is it good to remove hollow cathode' - recorded for the owner, "
                            "not answered here (see recorder_proposals_open_for_owner)",
         "downstream": "docs/requirements/rfp_official/rfp_registration_v1.json rvm_mapping is rebuilt from this RVM by "

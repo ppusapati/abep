@@ -150,6 +150,10 @@ REFS = {
            "A9.6 mass + power integration v2"),
     "XE": ("docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json", "id", "xe_accounting_a9_v2",
            "A9.6 Xe accounting v2"),
+    "MP3": ("docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json", "id", "mass_power_a9_v3",
+            "mass + power v3 (A9.16 step 1; to be refreshed for A9.19 / A9.20 by the budgets lane)"),
+    "XE3": ("docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json", "id", "xe_accounting_a9_v3",
+            "Xe accounting v3 (A9.16 step 1; to be refreshed for A9.19 / A9.20 by the budgets lane)"),
     "AOL": ("docs/experiments/lifetime_ao/ao_lifetime_register_v5.json", "schema", "ao_lifetime_register_v5",
             "AO / lifetime register v5"),
     "ENS": ("hallthruster_bridge/ensemble/transport_ensemble_v0.json", "schema", "transport_ensemble_v0",
@@ -159,6 +163,7 @@ REFS = {
     "OO2": ("docs/chemistry/o_o2/v0/channel_status_v0.json", "id", "o_o2_channel_status_v0",
             "O / O2 chemistry v0 channel status"),
     "RFQ2": ("docs/procurement/rfq_a9_v2/rfq_a9_v2.json", "id", "RFQ_A9_V2", "RFQ packages v2 (quotation only)"),
+    "RFQ3": ("docs/procurement/rfq_a9_v3/rfq_a9_v3.json", "id", "RFQ_A9_V3", "RFQ packages v3 (quotation only)"),
     "M16": ("docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json", "id", "subsystem_maturity_v3",
             "M16 subsystem maturity v3"),
 }
@@ -336,7 +341,7 @@ def plan(ctx, pkg, ident, role="DETERMINING", key="id", why=""):
     if obj_status:
         state += f"; item status {obj_status}"
     shown = REFS[pkg][2] if ident == "@doc" else f"{REFS[pkg][2]}:{ident}"
-    kind = "PROCUREMENT" if pkg == "RFQ2" else "PLAN_OR_FRAMEWORK"
+    kind = "PROCUREMENT" if pkg in ("RFQ2", "RFQ3") else "PLAN_OR_FRAMEWORK"
     a = _art(REFS[pkg][0], shown, role, kind, state)
     a["detail"] = {"name": name, "why": why}
     return a
@@ -670,6 +675,9 @@ def evaluate_rows(ctx, rows):
             cells[c] = {"status": status, "rule": rule, "reason": reason,
                         "current_evidence_state": " || ".join(a["evidence_state"] for a in det),
                         "artifacts": arts}
+            if R.is_not_applicable_cell(arts):
+                cells[c]["applicability_marker"] = R.NOT_APPLICABLE_KIND
+                cells[c]["counts_as_compliance_evidence"] = False
         rr = {k: v for k, v in r.items() if k != "artifacts"}
         rr["m16_rows"] = [m16_state(ctx, n) for n in r["m16_rows"]]
         rr["configurations"] = cells
@@ -1040,6 +1048,12 @@ def build_doc():
 
 
 # ------------------------------------------------------------------------------------------------ markdown
+def _cell_md(cell):
+    if cell.get("applicability_marker"):
+        return f"**{cell['applicability_marker']}** (never compliance evidence)"
+    return f"**{cell['status']}** ({cell['rule']})"
+
+
 def _esc(s):
     return str(s).replace("|", "\\|").replace("\n", " ")
 
@@ -1103,8 +1117,7 @@ def render_md(doc):
     for r in doc["rows"]:
         a(f"| {r['id']} | {_esc(r['title'])} | {_origin(r)} | {_esc(_limit(r['limit']))} | "
           f"{', '.join(r['verification_methods'])} | "
-          + " | ".join(f"**{r['configurations'][c]['status']}** ({r['configurations'][c]['rule']})"
-                       for c in CONFIGS) + " |")
+          + " | ".join(_cell_md(r["configurations"][c]) for c in CONFIGS) + " |")
     a("")
     a("## Status rules (applied in this order by `rvm_rules.assign_status`)")
     a("")
@@ -1149,7 +1162,11 @@ def render_md(doc):
               f"{', '.join(r['lane24_gates']) or '-'}")
         for c in CONFIGS:
             cell = r["configurations"][c]
-            a(f"- **{c}: {cell['status']}** (`{cell['rule']}`) - {cell['reason']}")
+            if cell.get("applicability_marker"):
+                a(f"- **{c}: {cell['applicability_marker']}** (vocabulary status {cell['status']}, "
+                  f"`{cell['rule']}`; never compliance evidence)")
+            else:
+                a(f"- **{c}: {cell['status']}** (`{cell['rule']}`) - {cell['reason']}")
             for art in cell["artifacts"]:
                 a(f"    - [{art['role']}/{art['kind']}] `{art['path']}` `{art['id']}`: {_esc(art['evidence_state'])}")
             for art in cell["artifacts"]:

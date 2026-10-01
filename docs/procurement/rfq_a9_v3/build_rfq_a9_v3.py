@@ -1541,6 +1541,9 @@ CONFIGURATION_ROLES = {
 }
 
 
+FLIGHT_CONFIGS = ("hall_icp_neutralizer",)   # A9.19 / A9.20: the only flight configuration
+
+
 def c1_equipment_class(line_id: str) -> str:
     """A9.19 / A9.20: every C1 line (cathode, heater, keeper, C1 Xe branch, C1 getter option) is ground-only laboratory
     equipment; no C1 line is flight hardware. Unknown ids raise (fail closed)."""
@@ -1651,13 +1654,22 @@ def apply_a9_19_20(c: Ctx, s: dict) -> None:
            "of C1 never removes the system Xe capability (rule function xe_capability_scope).")
     if old not in n03["requirement"]:
         raise ValueError("RFQ3-GAS-N03: unexpected text")
+    old_scope = "is in scope for BOTH configurations, including hall_icp_neutralizer;"
+    if old_scope not in n03["requirement"]:
+        raise ValueError("RFQ3-GAS-N03: unexpected scope text")
     v = copy.deepcopy(n03["value"])
     v["xe_role"] = "CONTINGENCY_AND_EMERGENCY supply mode (A9.19); capability retained (RFP-P17-05, RFP-P18-08)"
+    # RV19-07: the RFP flight Xe capability applies to the flight configuration only (A9.19 / A9.20);
+    # hall_c1_reference stays only under configuration_roles as GROUND_ONLY
+    v["applies_to"] = list(FLIGHT_CONFIGS)
     v["c1_xe_lines_ground_only"] = v.pop("c1_xe_lines_conditional")
     v["configuration_roles"] = dict(CONFIGURATION_ROLES)
     _amend_new_req(c, "RFQ3-GAS-N03", arch + xe + ground, "A9.19: Xe = contingency / emergency supply mode; A9.20: C1 "
                                                           "Xe lines ground-only",
+                   applies_to=list(FLIGHT_CONFIGS),
                    requirement=n03["requirement"].replace(
+                       old_scope, "is in scope for the flight configuration hall_icp_neutralizer (A9.19; "
+                                  "hall_c1_reference is a ground-only laboratory reference, A9.20);").replace(
                        old, "it is not a C1 contingency. A9.19: Xe is the contingency / emergency supply mode of the "
                             "single Hall + RF/ICP neutralizer flight architecture (not a parallel co-equal propellant); "
                             "its capability, separate tank / path and flow control stay required. C1 is GROUND-ONLY "
@@ -2016,6 +2028,10 @@ def _top_level(doc, v2, c: Ctx, s) -> None:
             "role": "Xe = CONTINGENCY / EMERGENCY supply mode (not a parallel co-equal propellant); Xe capability, "
                     "separate tank / path and flow control stay required (RFP-P17-05, RFP-P18-08)",
             "flight_architecture": FLIGHT_ARCHITECTURE_A919,
+            "rfq3_gas_n03_applies_to": list(FLIGHT_CONFIGS),
+            "rfq3_gas_n03_scope_note": "the RFP flight Xe capability applies to the flight configuration only "
+                                       "(A9.19 / A9.20); hall_c1_reference is listed only under configuration_roles "
+                                       "as GROUND_ONLY (the A9.15 both-configuration scope is kept in before_a9_19)",
             "amends": "A9.15 on the ROLE of Xe only (capability unchanged)"},
         "a9_20_c1_role": {
             "decision": DECISIONS["A9.20"]["json"], "json_sha256": DECISIONS["A9.20"]["json_sha256"],

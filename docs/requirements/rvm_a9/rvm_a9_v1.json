@@ -55,7 +55,8 @@
   "PLAN_OR_FRAMEWORK",
   "PUBLISHED_ANALOG",
   "PROCUREMENT",
-  "VERIFICATION_ARTIFACT_ABSENT"
+  "VERIFICATION_ARTIFACT_ABSENT",
+  "NOT_APPLICABLE_GROUND_REFERENCE"
  ],
  "artifact_roles": [
   "DETERMINING",
@@ -366,6 +367,24 @@
    "why": "mutable package: read at build time, identity checked, never pinned"
   },
   {
+   "key": "MP3",
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "identity": {
+    "id": "mass_power_a9_v3"
+   },
+   "role": "mass + power v3 (A9.16 step 1; to be refreshed for A9.19 / A9.20 by the budgets lane)",
+   "why": "mutable package: read at build time, identity checked, never pinned"
+  },
+  {
+   "key": "XE3",
+   "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+   "identity": {
+    "id": "xe_accounting_a9_v3"
+   },
+   "role": "Xe accounting v3 (A9.16 step 1; to be refreshed for A9.19 / A9.20 by the budgets lane)",
+   "why": "mutable package: read at build time, identity checked, never pinned"
+  },
+  {
    "key": "AOL",
    "path": "docs/experiments/lifetime_ao/ao_lifetime_register_v5.json",
    "identity": {
@@ -408,6 +427,15 @@
     "id": "RFQ_A9_V2"
    },
    "role": "RFQ packages v2 (quotation only)",
+   "why": "mutable package: read at build time, identity checked, never pinned"
+  },
+  {
+   "key": "RFQ3",
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "identity": {
+    "id": "RFQ_A9_V3"
+   },
+   "role": "RFQ packages v3 (quotation only)",
    "why": "mutable package: read at build time, identity checked, never pinned"
   },
   {
@@ -10212,15 +10240,15 @@
     "hall_c1_reference": {
      "status": "NOT_EVALUATED",
      "rule": "R7-NOT-EVALUATED",
-     "reason": "no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P17-05:A9_19_ARCHITECTURE:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]",
-     "current_evidence_state": "NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: inspection of the frozen flight design baseline (Milestone C) showing exactly one Hall accelerator, one RF/ICP electron-source/neutralizer serving both the atmospheric and the Xe supply modes, and no conventional hollow cathode; plus the ICP-45 discharge-OFF capacity and Xe-mode operation records of that one ICP",
+     "reason": "no determining evaluation with evidenced terms: A9.20:RVM-28:NOT_APPLICABLE_GROUND_REFERENCE [NOT_APPLICABLE_GROUND_REFERENCE]",
+     "current_evidence_state": "NOT_APPLICABLE_GROUND_REFERENCE - hall_c1_reference is a ground-only laboratory reference (A9.20), not a flight configuration (A9.19); this flight-architecture requirement is not evaluated against it and the cell is never compliance evidence",
      "artifacts": [
       {
-       "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
-       "id": "rfp_registration_v1:RFP-P17-05:A9_19_ARCHITECTURE:NO_VERIFICATION_ARTIFACT",
+       "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+       "id": "A9.20:RVM-28:NOT_APPLICABLE_GROUND_REFERENCE",
        "role": "DETERMINING",
-       "kind": "VERIFICATION_ARTIFACT_ABSENT",
-       "evidence_state": "NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: inspection of the frozen flight design baseline (Milestone C) showing exactly one Hall accelerator, one RF/ICP electron-source/neutralizer serving both the atmospheric and the Xe supply modes, and no conventional hollow cathode; plus the ICP-45 discharge-OFF capacity and Xe-mode operation records of that one ICP",
+       "kind": "NOT_APPLICABLE_GROUND_REFERENCE",
+       "evidence_state": "NOT_APPLICABLE_GROUND_REFERENCE - hall_c1_reference is a ground-only laboratory reference (A9.20), not a flight configuration (A9.19); this flight-architecture requirement is not evaluated against it and the cell is never compliance evidence",
        "evaluated": false,
        "verified": false,
        "measured": false,
@@ -10231,13 +10259,11 @@
        "evidenced_terms": 0,
        "numerical_failure": false,
        "lower_bound_verified": false,
-       "exceeds_limit_every_reading": null,
-       "detail": {
-        "name": "RFP-P17-05 (Part III 1(A)iv row 3 Thruster, p. 17)",
-        "why": "inspection of the frozen flight design baseline (Milestone C) showing exactly one Hall accelerator, one RF/ICP electron-source/neutralizer serving both the atmospheric and the Xe supply modes, and no conventional hollow cathode; plus the ICP-45 discharge-OFF capacity and Xe-mode operation records of that one ICP"
-       }
+       "exceeds_limit_every_reading": null
       }
      ],
+     "applicability_marker": "NOT_APPLICABLE_GROUND_REFERENCE",
+     "counts_as_compliance_evidence": false,
      "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
    },
@@ -10421,15 +10447,15 @@
     "hall_c1_reference": {
      "status": "NOT_EVALUATED",
      "rule": "R7-NOT-EVALUATED",
-     "reason": "no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P18-08:A9_19_SUPPLY_MODES:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]",
-     "current_evidence_state": "NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: inspection of the frozen flight feed-system design showing separate ambient-air and Xe tanks / paths feeding the one Hall + ICP, a mode-selection record (atmospheric primary, Xe contingency / emergency) and a demonstrated, booked Xe contingency-mode operation",
+     "reason": "no determining evaluation with evidenced terms: A9.20:RVM-29:NOT_APPLICABLE_GROUND_REFERENCE [NOT_APPLICABLE_GROUND_REFERENCE]",
+     "current_evidence_state": "NOT_APPLICABLE_GROUND_REFERENCE - hall_c1_reference is a ground-only laboratory reference (A9.20), not a flight configuration (A9.19); this flight-architecture requirement is not evaluated against it and the cell is never compliance evidence",
      "artifacts": [
       {
-       "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
-       "id": "rfp_registration_v1:RFP-P18-08:A9_19_SUPPLY_MODES:NO_VERIFICATION_ARTIFACT",
+       "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+       "id": "A9.20:RVM-29:NOT_APPLICABLE_GROUND_REFERENCE",
        "role": "DETERMINING",
-       "kind": "VERIFICATION_ARTIFACT_ABSENT",
-       "evidence_state": "NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: inspection of the frozen flight feed-system design showing separate ambient-air and Xe tanks / paths feeding the one Hall + ICP, a mode-selection record (atmospheric primary, Xe contingency / emergency) and a demonstrated, booked Xe contingency-mode operation",
+       "kind": "NOT_APPLICABLE_GROUND_REFERENCE",
+       "evidence_state": "NOT_APPLICABLE_GROUND_REFERENCE - hall_c1_reference is a ground-only laboratory reference (A9.20), not a flight configuration (A9.19); this flight-architecture requirement is not evaluated against it and the cell is never compliance evidence",
        "evaluated": false,
        "verified": false,
        "measured": false,
@@ -10440,13 +10466,11 @@
        "evidenced_terms": 0,
        "numerical_failure": false,
        "lower_bound_verified": false,
-       "exceeds_limit_every_reading": null,
-       "detail": {
-        "name": "RFP-P18-08 (Part III 2 Propellant for propulsion system, p. 18)",
-        "why": "inspection of the frozen flight feed-system design showing separate ambient-air and Xe tanks / paths feeding the one Hall + ICP, a mode-selection record (atmospheric primary, Xe contingency / emergency) and a demonstrated, booked Xe contingency-mode operation"
-       }
+       "exceeds_limit_every_reading": null
       }
      ],
+     "applicability_marker": "NOT_APPLICABLE_GROUND_REFERENCE",
+     "counts_as_compliance_evidence": false,
      "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
    },
@@ -10541,7 +10565,7 @@
    "verification_methods": [
     "inspection"
    ],
-   "verification_note": "inspection of the flight mass / power and Xe accounting refreshed for A9.19 / A9.20 (a separate budgets lane; the immutable v2 budgets still book hall_c1_reference as history) and of the RFQ v3 classification RFQ3-HALLEL-N03 (procurement, never evidence)",
+   "verification_note": "inspection of the flight mass / power and Xe accounting v3 (mass_power_a9_v3 / xe_accounting_a9_v3) refreshed for A9.19 / A9.20 by the budgets lane (the immutable v2 budgets still book hall_c1_reference and are history only, never evidence here) and of the RFQ v3 classification RFQ3-HALLEL-N03 (procurement, never evidence)",
    "open_readings": [],
    "rtm_xref": [],
    "lane24_gates": [],
@@ -10554,15 +10578,15 @@
     "hall_icp_neutralizer": {
      "status": "NOT_EVALUATED",
      "rule": "R7-NOT-EVALUATED",
-     "reason": "no determining evaluation with evidenced terms: fo_a9_6_mass_power_integration_v2 [PLAN_OR_FRAMEWORK], xe_accounting_a9_v2 [PLAN_OR_FRAMEWORK]",
-     "current_evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_IMPLEMENTATION_FIRST_PENDING_CONSOLIDATED_VERIFICATION || PLANNED / FRAMEWORK ONLY - nothing measured; package status PARAMETRIC_XE_ACCOUNTING_V2 - every total with a TBD input REFUSED; open owner questions carried as side-by-side readings; nothing frozen; no winner; no PASS",
+     "reason": "no determining evaluation with evidenced terms: mass_power_a9_v3 [PLAN_OR_FRAMEWORK], xe_accounting_a9_v3 [PLAN_OR_FRAMEWORK]",
+     "current_evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_DECISIONS_APPLIED_PENDING_INTEGRATION_VERIFICATION || PLANNED / FRAMEWORK ONLY - nothing measured; package status PARAMETRIC_XE_ACCOUNTING_V3 - owner decisions applied; every total with a TBD input REFUSED; nothing frozen; no winner; no PASS",
      "artifacts": [
       {
-       "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
-       "id": "fo_a9_6_mass_power_integration_v2",
+       "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+       "id": "mass_power_a9_v3",
        "role": "DETERMINING",
        "kind": "PLAN_OR_FRAMEWORK",
-       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_IMPLEMENTATION_FIRST_PENDING_CONSOLIDATED_VERIFICATION",
+       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_DECISIONS_APPLIED_PENDING_INTEGRATION_VERIFICATION",
        "evaluated": false,
        "verified": false,
        "measured": false,
@@ -10575,16 +10599,16 @@
        "lower_bound_verified": false,
        "exceeds_limit_every_reading": null,
        "detail": {
-        "name": "A9 mass + power integration v2: BOM per configuration (allocation / evidence floor / CBE / measured), dry and wet roll-ups under every open reading, A9 bus-boundary power allocation",
-        "why": "flight mass / power roll-up to be refreshed without C1 (A9.19 / A9.20); v2 is immutable history"
+        "name": "A9 mass + power integration v3: one MEV reading, 20 % system margin, rebased AL-04 / AL-07 / AL-08, controls / harness split, decided mappings, LOADED Xe, evidence-based dry / wet vs 40 kg",
+        "why": "flight mass / power v3, to be refreshed for A9.19 / A9.20 without C1 (budgets lane); the immutable v2 still books hall_c1_reference as history and is not evidence here"
        }
       },
       {
-       "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
-       "id": "xe_accounting_a9_v2",
+       "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+       "id": "xe_accounting_a9_v3",
        "role": "DETERMINING",
        "kind": "PLAN_OR_FRAMEWORK",
-       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status PARAMETRIC_XE_ACCOUNTING_V2 - every total with a TBD input REFUSED; open owner questions carried as side-by-side readings; nothing frozen; no winner; no PASS",
+       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status PARAMETRIC_XE_ACCOUNTING_V3 - owner decisions applied; every total with a TBD input REFUSED; nothing frozen; no winner; no PASS",
        "evaluated": false,
        "verified": false,
        "measured": false,
@@ -10597,16 +10621,16 @@
        "lower_bound_verified": false,
        "exceeds_limit_every_reading": null,
        "detail": {
-        "name": "A9.6 Xe accounting v2",
-        "why": "flight Xe accounting to be refreshed without C1 Xe (A9.19 / A9.20)"
+        "name": "Xe accounting v3 (A9.16 step 1; to be refreshed for A9.19 / A9.20 by the budgets lane)",
+        "why": "flight Xe accounting v3, to be refreshed for A9.19 / A9.20 without C1 Xe (budgets lane); the immutable v2 is history, not evidence here"
        }
       },
       {
-       "path": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
-       "id": "RFQ_A9_V2",
+       "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+       "id": "RFQ_A9_V3:RFQ3-HALLEL-N03",
        "role": "SUPPORTING",
        "kind": "PROCUREMENT",
-       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status COMPLETED_FOR_OWNER_DISPATCH_QUOTATION_ONLY (A9.6 sec. 13; consolidated verification pending)",
+       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status COMPLETED_FOR_OWNER_DISPATCH_QUOTATION_ONLY (A9.16 owner-decision application; integration lane re-pins and re-verifies cross-lane ids); item status OWNER_GIVEN",
        "evaluated": false,
        "verified": false,
        "measured": false,
@@ -10619,8 +10643,8 @@
        "lower_bound_verified": false,
        "exceeds_limit_every_reading": null,
        "detail": {
-        "name": "A9 RFQ packages v2 - split by supplier speciality (quotations only; no purchase orders)",
-        "why": "RFQ v3 RFQ3-HALLEL-N03 classifies every C1 line GROUND_ONLY_LAB_EQUIPMENT"
+        "name": "C1 = GROUND_ONLY_LAB_EQUIPMENT (no flight C1)",
+        "why": "RFQ v3 RFQ3-HALLEL-N03 classifies every C1 line GROUND_ONLY_LAB_EQUIPMENT (procurement, never evidence)"
        }
       }
      ]
@@ -10628,15 +10652,15 @@
     "hall_c1_reference": {
      "status": "NOT_EVALUATED",
      "rule": "R7-NOT-EVALUATED",
-     "reason": "no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1 [PLAN_OR_FRAMEWORK]",
-     "current_evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK",
+     "reason": "no determining evaluation with evidenced terms: A9.20:RVM-30:NOT_APPLICABLE_GROUND_REFERENCE [NOT_APPLICABLE_GROUND_REFERENCE]",
+     "current_evidence_state": "NOT_APPLICABLE_GROUND_REFERENCE - hall_c1_reference is a ground-only laboratory reference (A9.20), not a flight configuration (A9.19); this flight-architecture requirement is not evaluated against it and the cell is never compliance evidence",
      "artifacts": [
       {
-       "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-       "id": "A9_01_hall_icp_prereg_framework_v1",
+       "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+       "id": "A9.20:RVM-30:NOT_APPLICABLE_GROUND_REFERENCE",
        "role": "DETERMINING",
-       "kind": "PLAN_OR_FRAMEWORK",
-       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK",
+       "kind": "NOT_APPLICABLE_GROUND_REFERENCE",
+       "evidence_state": "NOT_APPLICABLE_GROUND_REFERENCE - hall_c1_reference is a ground-only laboratory reference (A9.20), not a flight configuration (A9.19); this flight-architecture requirement is not evaluated against it and the cell is never compliance evidence",
        "evaluated": false,
        "verified": false,
        "measured": false,
@@ -10647,13 +10671,11 @@
        "evidenced_terms": 0,
        "numerical_failure": false,
        "lower_bound_verified": false,
-       "exceeds_limit_every_reading": null,
-       "detail": {
-        "name": "A9-01 Hall->ICP pre-registration framework (stages, DQ-HI-*)",
-        "why": "ground / laboratory C1 reference: H-1 characterization and C1-vs-ICP bench control (labelled, never flight)"
-       }
+       "exceeds_limit_every_reading": null
       }
      ],
+     "applicability_marker": "NOT_APPLICABLE_GROUND_REFERENCE",
+     "counts_as_compliance_evidence": false,
      "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
    },
@@ -12565,6 +12587,24 @@
    "RVM-14",
    "RVM-15"
   ],
+  "not_applicable_ground_reference_cells": [
+   {
+    "row": "RVM-28",
+    "configuration": "hall_c1_reference",
+    "marker": "NOT_APPLICABLE_GROUND_REFERENCE"
+   },
+   {
+    "row": "RVM-29",
+    "configuration": "hall_c1_reference",
+    "marker": "NOT_APPLICABLE_GROUND_REFERENCE"
+   },
+   {
+    "row": "RVM-30",
+    "configuration": "hall_c1_reference",
+    "marker": "NOT_APPLICABLE_GROUND_REFERENCE"
+   }
+  ],
+  "na_note": "flight-architecture rows RVM-28..30 are not evaluated against the ground-only hall_c1_reference (RV19-10); the cell keeps a vocabulary status (rvm_rules, R7) but carries applicability_marker NOT_APPLICABLE_GROUND_REFERENCE and counts_as_compliance_evidence = false",
   "owner_open_note": "A9.20 verbatim also asks 'is it good to remove hollow cathode' - recorded for the owner, not answered here (see recorder_proposals_open_for_owner)",
   "downstream": "docs/requirements/rfp_official/rfp_registration_v1.json rvm_mapping is rebuilt from this RVM by its own builder (rfp_clauses_v1.py; outside this lane)"
  },
@@ -12641,6 +12681,25 @@
     "configurations"
    ],
    "how_applied": "no C1 flight variant: C1 supplies, the C1 15,000 h cathode basis, the C1 ignition-dwell Xe booking and the C1 CONTROL_FALLBACK sizing are recorded as non-flight; hall_c1_reference is not a candidate flight configuration",
+   "tests": [
+    "tests/test_rvm_a9.py"
+   ]
+  },
+  {
+   "decision": "A9.20",
+   "question_id": "option",
+   "decision_code": "C1_GROUND_ONLY_LABORATORY_REFERENCE",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+   "decision_json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+   "decision_md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+   "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "record_ids": [
+    "RVM-28",
+    "RVM-29",
+    "RVM-30"
+   ],
+   "how_applied": "hall_c1_reference cells of the flight-architecture rows RVM-28..30 are NOT_APPLICABLE_GROUND_REFERENCE markers (no flight requirement is evaluated against the ground-only C1 reference); RVM-30 evidence points at the v3 budgets (mass_power_a9_v3 / xe_accounting_a9_v3) refreshed for A9.19 / A9.20, never at the immutable v2 budgets (repair RV19-10)",
    "tests": [
     "tests/test_rvm_a9.py"
    ]

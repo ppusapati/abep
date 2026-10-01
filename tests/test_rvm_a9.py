@@ -588,3 +588,44 @@ def test_a919_load_fails_closed(monkeypatch):
     monkeypatch.setattr(A19, "DECISIONS", dec)
     with pytest.raises(A19.A919Error):
         A19.load()
+
+
+def test_rv19_10_ground_reference_cells_not_applicable_and_v3_budget_evidence(doc):
+    """RV19-10: flight-architecture rows RVM-28..30 are never evaluated against the ground-only hall_c1_reference
+    (A9.19 / A9.20): the cell is the NOT_APPLICABLE_GROUND_REFERENCE marker only, never compliance evidence; RVM-30
+    evidence points at the v3 budgets, never at the immutable v2 budgets (which still book hall_c1_reference)."""
+    by = {r["id"]: r for r in doc["rows"]}
+    assert A19.NA_ROWS == ("RVM-28", "RVM-29", "RVM-30")
+    for rid in A19.NA_ROWS:
+        cell = by[rid]["configurations"]["hall_c1_reference"]
+        assert cell["applicability_marker"] == "NOT_APPLICABLE_GROUND_REFERENCE"
+        assert cell["counts_as_compliance_evidence"] is False
+        assert cell["status"] in R.STATUSES and cell["status"] != "PASS"
+        assert [a["kind"] for a in cell["artifacts"]] == ["NOT_APPLICABLE_GROUND_REFERENCE"]
+        assert not any(a["evaluated"] or a["meets"] is not None for a in cell["artifacts"])
+        assert "applicability_marker" not in by[rid]["configurations"]["hall_icp_neutralizer"]
+    # rows other than RVM-28..30 keep their (labelled ground-reference) C1 cells
+    others = [r for r in doc["rows"] if r["id"] not in A19.NA_ROWS]
+    assert all("applicability_marker" not in r["configurations"]["hall_c1_reference"] for r in others)
+    na = doc["a9_19_20"]["not_applicable_ground_reference_cells"]
+    assert [x["row"] for x in na] == list(A19.NA_ROWS)
+    # RVM-30 determining evidence: v3 budgets, never the immutable v2 budgets
+    arts = by["RVM-30"]["configurations"]["hall_icp_neutralizer"]["artifacts"]
+    det = [a for a in arts if a["role"] == "DETERMINING"]
+    assert {a["path"] for a in det} == {"docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+                                        "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json"}
+    assert not any("_a9_v2/" in a["path"] for a in arts)       # no v2 budget, no v2 RFQ cited on RVM-30
+    rfq = [a for a in arts if a["kind"] == "PROCUREMENT"]
+    assert [a["path"] for a in rfq] == ["docs/procurement/rfq_a9_v3/rfq_a9_v3.json"] and rfq[0]["role"] == "SUPPORTING"
+    assert any(e["decision"] == "A9.20" and e["question_id"] == "option" and "RVM-30" in e["record_ids"]
+               for e in doc["a9_19_owner_answers_applied"])
+
+
+def test_rv19_10_not_applicable_marker_never_mixed_with_evidence():
+    na = _a(kind="NOT_APPLICABLE_GROUND_REFERENCE")
+    assert R.assign_status([na], True)[0] == "NOT_EVALUATED"
+    assert R.is_not_applicable_cell([na]) and not R.is_not_applicable_cell([_a()])
+    with pytest.raises(R.RvmError):
+        R.assign_status([na, _a()], True)
+    with pytest.raises(R.RvmError):
+        R.assign_status([_a(kind="NOT_APPLICABLE_GROUND_REFERENCE", evaluated=True, in_domain=True)], True)
