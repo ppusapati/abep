@@ -1,0 +1,120 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_HARDWARE_PIVOT_2026_10_01_A9_12_s5_p3_p4_owner_decisions",
+ "decided_by": "owner",
+ "date": "2026-10-01",
+ "decision": "A9_12_S5_P3_P4_DECISIONS_RECORDED",
+ "applies_to": "group S5 of docs/budgets/owner_decisions/OWNER_QUESTIONS_SEQUENCED_v1.md (rows of owner_questions_state_v4) on execution branch claude/nifty-ramanujan-w68f9z",
+ "parents": [
+  "docs/decisions/OD_2026_10_01_A9_11_s4_p2_owner_decisions.json"
+ ],
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+  "sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62"
+ },
+ "decisions": {
+  "ICPQ-10": {
+   "sequenced_no": "S5.1",
+   "status": "OWNER_DECIDED",
+   "answer": "A_1_20_X_PFWD_PLUS_PD",
+   "summary": "ICP-43 Q_ICP,bound = 1.20 x (P_fwd,max from the registered ICP/P2 envelope + registered H-1 P_d,max); never 1.20 x 1.5 kW; a conservative bounding rule; replaced by measured coupled heat terms later, 20 % margin never relaxed"
+  },
+  "OQ-A907-03": {
+   "sequenced_no": "S5.2",
+   "status": "OWNER_DECIDED",
+   "answer": "BOUNDING_CORNER_ADMISSIBLE_JOINT_STATES",
+   "summary": ">= 50 K rule at the worst admissible joint corner (no mutually exclusive / known-correlated extreme combinations), dissipated-load margin + environmental hot/cold bound at every temperature-limited node; analog ranges replaced by measured deposition data; 50 K never relaxed"
+  },
+  "OQ-A907-05": {
+   "sequenced_no": "S5.3",
+   "status": "OWNER_DECIDED",
+   "answer": "PROVISIONAL_ONLY",
+   "summary": "supplier ratings (BN guide value, ceramic wire) are provisional development limits for screening, equipment protection, sensitivity and down-selection only; never T_validated,continuous; dependent results stay UNRESOLVED/conditional; replaced by qualified limits from P4/supplier qualification/testing"
+  },
+  "OQ-A907-06": {
+   "sequenced_no": "S5.4",
+   "status": "OWNER_DECIDED",
+   "answer": "ISOLATED_MOUNT_RADIATOR_50W_PROVISIONAL",
+   "summary": "thermally isolated H-1 mount + dedicated radiator/rejection path; owner allocation until the spacecraft thermal ICD exists: 50 W governing (provisional), 100 W contingency/sensitivity only, 25 W stretch; meeting only 100 W is not closed; 25/50/100 W sensitivities kept reported; 50 W is an owner allocation, not a spacecraft requirement"
+  },
+  "OQ-A907-08": {
+   "sequenced_no": "S5.5",
+   "status": "OWNER_DECIDED",
+   "answer": "YES_COATING_NODE_LIMIT",
+   "summary": "exterior coating gets its own node limit T_op <= T_validated,continuous - 50 K once sourced/validated for the actual coating/substrate/application system; until then OPEN and no final thermal PASS relying on it; sensitivities retained"
+  },
+  "OQ-A907-09": {
+   "sequenced_no": "S5.6",
+   "status": "OWNER_DECIDED",
+   "answer": "DISSIPATED_ONLY",
+   "summary": "20 % margin on internally dissipated loads only (discharge, RF/match, coil, cathode, other); environmental loads via registered hot/cold envelope, optical-property/geometry ranges and adverse joint case; an inadequate environmental bound is enlarged explicitly, never by a global 20 %"
+  },
+  "OQ-A907-10": {
+   "sequenced_no": "S5.7",
+   "status": "OWNER_DECIDED",
+   "answer": "YES_10K_SEARCH_SENSITIVE",
+   "summary": "margin to design ceiling after the search allowance < 10 K -> SEARCH_SENSITIVE (screening label only: no status change, not replacing 50 K, no new requirement); independent bounding check (global optimisation / interval / exhaustive admissible grid / demonstrated bound) before LOCK-1 use; more adverse result governs; allowance never increased after the outcome"
+  },
+  "OQ-A910-06": {
+   "sequenced_no": "S5.8",
+   "status": "OWNER_DECIDED",
+   "answer": "YES_600W_TEMPORARY",
+   "summary": "Q_RF,allocation = 500 W x 1.20 = 600 W retained temporarily (not a rating, not a flight point, not the ICP-43 bound, not delivered power), P_line/match,loss additional; superseded after P2 by the measured P_delivered / loss / loading envelope with uncertainty plus the 20 % margin"
+  },
+  "P3Q-02": {
+   "sequenced_no": "S5.9",
+   "status": "OWNER_DECIDED",
+   "answer": "A_LUMPED_PLUS_CORRELATION_CONDITIONAL",
+   "summary": "lumped H2-5 network + P3 radiosity enclosure accepted as the initial LOCK-1 model class; closure requires correlation to the integrated test article with pre-registered sensor locations, uncertainty, comparison quantities, residual band and placement/contact treatment; failure or unrepresentable gradients/hot spots -> mandatory finer multi-node/FE model before LOCK-1 thermal closure; finer local models allowed earlier"
+  },
+  "P4-OQ-01": {
+   "sequenced_no": "S5.10",
+   "status": "OWNER_DECIDED",
+   "answer": "STAGED",
+   "summary": "stage 1 coupon screening under service-representative species/temperature/bias/duration/cycling with pre-registered metrics -> coupon-supported provisional limit (screening only); stage 2 replaceable anode/collector confirmation on the H-1/ICP article -> only then T_validated,continuous for P3/LOCK-1; stage 3 full-duration or justified accelerated life qualification for flight-life claims; melting point / vendor / air-use / brief coupon data never equal validation"
+  },
+  "P4-OQ-02": {
+   "sequenced_no": "S5.11",
+   "status": "OWNER_DECIDED",
+   "answer": "BROAD_Q0_DOWNSELECT_Q1",
+   "summary": "Q0: C01 316L reference control; C02 IN600, IN625, Haynes 230 (+ X-750 if readily available; no generic Hastelloy without exact grade); C03 IN601, Haynes 214, one specified FeCrAl grade; C04 Rh-coated 316L; C05 Pt-clad/plated 316L; C06 Cr-plated 316L; C07 IrO2/RuO2 MMO with exact system and substrate; C08 bare W negative/reference control only; C09 specified isotropic graphite control; Ti, TiN/ZrN, bulk Cu, bulk Ir reserve only; Q1 only for Q0 survivors under pre-registered criteria; coatings record composition, thickness, process, substrate, preparation, lot"
+  },
+  "P4-OQ-03": {
+   "sequenced_no": "S5.12",
+   "status": "OWNER_DECIDED",
+   "answer": "LOCK_2_AFTER_METROLOGY_BEFORE_EXPOSURE",
+   "summary": "commission Q0/Q1 metrology first (resistance, mass, profilometry, SEM/XPS, repeatability, dosimetry; standards/blanks/sacrificial coupons allowed), then freeze resistance-rise, mass-loss/recession, sputter/erosion, duration/fluence, uncertainty treatment and logic before any acceptance-bearing exposure; candidate performance never used to set thresholds; inadequate metrology -> NOT_EVALUATED_METROLOGY, never widened"
+  },
+  "P4-OQ-04": {
+   "sequenced_no": "S5.13",
+   "status": "OWNER_DECIDED",
+   "answer": "BOTH",
+   "summary": "lawful acquisition (library, ILL, publisher purchase, institutional subscription, licensed routes) of species-resolved N+/N2+/O+/O2+ sputtering yields for priors, matrix selection, comparison, model initialisation, plus project ion-beam measurement of down-selected candidates; elemental yields never silently substituted for alloys/coatings"
+  },
+  "P4-OQ-05": {
+   "sequenced_no": "S5.14",
+   "status": "OWNER_DECIDED",
+   "answer": "NEGATIVE_BIAS_PLUS_FLOATING_CONTROL",
+   "summary": "collector coupons: negative-biased (ion-collecting service polarity) + floating matched control; polarity frozen now; bias magnitude/ion energy from measured P1 collector envelope and sheath evidence before acceptance-bearing biased exposure; pre-P1 biased Q0 exposure is fixture/process verification, engineering-only"
+  }
+ },
+ "owner_supplied_values": {
+  "mount_heat_allocation_W": {
+   "governing_provisional": 50,
+   "contingency_sensitivity": 100,
+   "stretch": 25
+  },
+  "search_sensitive_screen_K": 10,
+  "Q_RF_allocation_W_temporary": 600,
+  "heat_load_margin_dissipated": 1.2
+ },
+ "recorder_notes": [
+  "S5.4's 50 W is an owner design allocation, not a spacecraft requirement; replaced by the spacecraft thermal ICD",
+  "no merge to main was approved in this message; checkpoint 6 merge approval is still pending"
+ ],
+ "execution": {
+  "instruction": "apply to the P3/P4/thermal artifacts in the decision-application step",
+  "merge": "no merge to main is authorized by this addendum"
+ },
+ "immutability": "never edited after commit; later owner amendments are new addendum files"
+}

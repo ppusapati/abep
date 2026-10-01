@@ -294,7 +294,8 @@
    "S1": "A9.8 (16)",
    "S2": "A9.9 (5)",
    "S3": "A9.10 (10)",
-   "S4": "A9.11 (7)"
+   "S4": "A9.11 (7)",
+   "S5": "A9.12 (14)"
   },
   "application": "A9.8/A9.10/A9.11 to P1/P2/P3/RFQ artifacts and the A9.9 production-model changes are pending (not yet implemented)"
  }
