@@ -50,6 +50,7 @@ LANE_REL = "docs/requirements/rvm_a9"
 sys.path.insert(0, str(HERE))
 import a9_16_rvm as A16  # noqa: E402  (A9.16 step 1 owner-decision application, integration lane)
 import rfp_rebase as RB  # noqa: E402  (AG-15 re-base on the registered official RFP, A9.16 step 3)
+import a9_19_rvm as A19  # noqa: E402  (A9.19 / A9.20 owner decisions: flight architecture, Xe role, C1 ground-only)
 JSON_NAME = "rvm_a9_v1.json"
 MD_NAME = "RVM_A9.md"
 TEST_REL = "tests/test_rvm_a9.py"
@@ -109,6 +110,10 @@ for _k in ("A9.12", "A9.13", "A9.14", "A9.15"):
         A16.L.LOADED[_k]["json"], A16.L.LOADED[_k]["json_sha256"], f"owner decisions {_k} (applied: A9.16 step 1)")
     PINS["A" + _k[1:].replace(".", "") + "_MD"] = (A16.L.LOADED[_k]["md"], A16.L.LOADED[_k]["md_sha256"],
                                                    f"owner decisions {_k} (verbatim; governs)")
+for _k in ("A9.19", "A9.20"):
+    _d = A19.DECISIONS[_k]
+    PINS["A" + _k[1:].replace(".", "")] = (_d["json"], _d["json_sha256"], f"owner decision {_k} (applied: a9_19_rvm)")
+    PINS["A" + _k[1:].replace(".", "") + "_MD"] = (_d["md"], _d["md_sha256"], f"owner decision {_k} (verbatim; governs)")
 HISTORICAL_KEYS = ("RTM", "HGM", "R2")
 HISTORICAL_EXTRA = {
     "docs/traceability/RTM.md": "ce5b608a5079a86d1b2096f222266f558fab2ebdabc1aa8dfef3153076faa802",
@@ -380,7 +385,46 @@ def probe_hall_analysis(ctx):
     return a
 
 
+# A9.19 / A9.20: hall_c1_reference is no longer a candidate flight configuration (C1 ground-only). Once the v3 flight
+# budgets (mass_power_a9_v3 / xe_accounting_a9_v3, refreshed by the budgets lane) retire its column to history, no flight
+# budget evaluates it any more: the ground-reference cell of every row whose evidence is a flight budget becomes the
+# NOT_APPLICABLE_GROUND_REFERENCE marker (never compliance evidence), exactly as on RVM-28..30. While the budgets still
+# carry the column, nothing changes. Fail closed if the two budgets disagree or the retirement is not labelled.
+C1_CFG = "hall_c1_reference"
+C1_FLIGHT_XE_SCENARIO = "S2-FL-C1"
+RETIRED_KEY = "_c1_retired_from_flight_budget"
+RETIRED_BASIS = ("the v3 flight budgets (mass_power_a9_v3 / xe_accounting_a9_v3) retire hall_c1_reference to history "
+                 "(A9.19 single flight configuration; A9.20 C1 ground-only): no flight budget evaluates this cell")
+
+
+def c1_retired_from_flight_budgets(ctx):
+    mp, xe = ctx.r["MP"], ctx.r["XE"]
+    mp_ret = C1_CFG not in mp["lines"]
+    if mp_ret:
+        hist = mp.get("retired_flight_configuration_history") or {}
+        if C1_CFG not in (hist.get("lines") or {}) or C1_CFG in mp["power"]["configurations"]:
+            raise BuildError("mass/power v3 drops hall_c1_reference without a labelled retired-history column")
+        if any(p["configuration"] == C1_CFG for p in mp["propellant_policy"]["per_configuration"]):
+            raise BuildError("mass/power v3 retires hall_c1_reference but still carries its propellant policy")
+    xe_ret = not any(e["scenario"] == C1_FLIGHT_XE_SCENARIO for e in xe["evaluations"])
+    if xe_ret and not str((xe.get("architecture") or {}).get("retired_flight_configuration", "")).startswith(C1_CFG):
+        raise BuildError("Xe v3 drops the flight C1 scenario without labelling hall_c1_reference retired")
+    if mp_ret != xe_ret:
+        raise BuildError("mass/power v3 and Xe v3 disagree on whether hall_c1_reference is a flight configuration")
+    return mp_ret
+
+
+def _retired(ctx, cfg, what):
+    """Sentinel for a flight-budget probe of the retired ground reference (replaced by evaluate_rows)."""
+    if cfg == C1_CFG and c1_retired_from_flight_budgets(ctx):
+        return {RETIRED_KEY: what}
+    return None
+
+
 def probe_power(ctx, cfg):
+    ret = _retired(ctx, cfg, "power")
+    if ret:
+        return ret
     mp = ctx.r["MP"]
     pc = mp["power"]["configurations"][cfg]
     gate = pc["rfp_gate_1ms"]
@@ -401,6 +445,9 @@ def probe_power(ctx, cfg):
 
 
 def probe_alloc(ctx, cfg):
+    ret = _retired(ctx, cfg, "allocation")
+    if ret:
+        return ret
     mp = ctx.r["MP"]
     st = mp["power"]["configurations"][cfg]["phases"]["steady"]
     v = st["design_allocation_1350W"]
@@ -419,6 +466,9 @@ def probe_alloc(ctx, cfg):
 
 
 def probe_startup(ctx, cfg):
+    ret = _retired(ctx, cfg, "startup")
+    if ret:
+        return ret
     mp = ctx.r["MP"]
     su = mp["power"]["configurations"][cfg]["phases"]["startup"]
     if su["violations"]:
@@ -489,6 +539,9 @@ def mass_analysis(ctx, cfg, reference):
 
 
 def probe_mass(ctx, cfg, references):
+    ret = _retired(ctx, cfg, "mass")
+    if ret:
+        return ret
     mp = ctx.r["MP"]
     analyses = [mass_analysis(ctx, cfg, ref) for ref in references]
     n_floor = len(analyses[0]["evidence_floors"])
@@ -521,6 +574,9 @@ def probe_mass(ctx, cfg, references):
 
 
 def probe_xe(ctx, cfg):
+    ret = _retired(ctx, cfg, "xe")
+    if ret:
+        return ret
     xe = ctx.r["XE"]
     scen = {"hall_icp_neutralizer": ("S1-FL-PRIMARY",), "hall_c1_reference": ("S2-FL-C1",)}[cfg]
     rows = []
@@ -677,12 +733,23 @@ def evaluate_rows(ctx, rows):
         cells = {}
         for c in CONFIGS:
             arts = r["artifacts"][c]
+            retired = [a[RETIRED_KEY] for a in arts if RETIRED_KEY in a]
+            if retired:
+                if c != C1_CFG:
+                    raise BuildError(f"{r['id']}: only {C1_CFG} can be retired from the flight budgets")
+                arts = [A19.na_ground_reference(sys.modules[__name__], r["id"])]
             status, rule, reason = R.assign_status([{k: v for k, v in a.items() if k != "detail"} for a in arts],
                                                    r["requirement_frozen"])
             det = [a for a in arts if a["role"] == "DETERMINING"]
             cells[c] = {"status": status, "rule": rule, "reason": reason,
                         "current_evidence_state": " || ".join(a["evidence_state"] for a in det),
                         "artifacts": arts}
+            if R.is_not_applicable_cell(arts):
+                cells[c]["applicability_marker"] = R.NOT_APPLICABLE_KIND
+                cells[c]["counts_as_compliance_evidence"] = False
+            if retired:
+                cells[c]["not_applicable_basis"] = RETIRED_BASIS
+                cells[c]["retired_flight_budget_probes"] = sorted(set(retired))
         rr = {k: v for k, v in r.items() if k != "artifacts"}
         rr["m16_rows"] = [m16_state(ctx, n) for n in r["m16_rows"]]
         rr["configurations"] = cells
@@ -958,7 +1025,12 @@ def build_doc():
     refs = load_refs()
     ctx = Ctx(pins, refs)
     rows_mod = load_rows_module()
-    rows = evaluate_rows(ctx, rows_mod.build_rows(types.SimpleNamespace(**globals()), ctx))
+    ns = types.SimpleNamespace(**globals())
+    try:
+        new_rows = A19.build_rows(ns, ctx)
+    except A19.A919Error as e:
+        raise BuildError(str(e)) from e
+    rows = evaluate_rows(ctx, rows_mod.build_rows(ns, ctx) + new_rows)
     counts = {c: {s: sum(1 for r in rows if r["configurations"][c]["status"] == s) for s in R.STATUSES}
               for c in CONFIGS}
     a92 = pins["A92"]["decisions"]["a9_10_statuses"]
@@ -1033,7 +1105,17 @@ def build_doc():
     }
     doc = A16.apply(doc)
     try:
-        doc = RB.apply(doc, ctx.reg, RFP_BASIS)
+        doc = A19.apply(doc)
+    except A19.A919Error as e:
+        raise BuildError(str(e)) from e
+    rebase = dict(RB.REBASE)
+    rebase.update(A19.REBASE)
+    try:
+        RB.REBASE, saved = rebase, RB.REBASE
+        try:
+            doc = RB.apply(doc, ctx.reg, RFP_BASIS)
+        finally:
+            RB.REBASE = saved
     except RB.RebaseError as e:
         raise BuildError(str(e)) from e
     try:
@@ -1050,6 +1132,12 @@ def build_doc():
 
 
 # ------------------------------------------------------------------------------------------------ markdown
+def _cell_md(cell):
+    if cell.get("applicability_marker"):
+        return f"**{cell['applicability_marker']}** (never compliance evidence)"
+    return f"**{cell['status']}** ({cell['rule']})"
+
+
 def _esc(s):
     return str(s).replace("|", "\\|").replace("\n", " ")
 
@@ -1113,8 +1201,7 @@ def render_md(doc):
     for r in doc["rows"]:
         a(f"| {r['id']} | {_esc(r['title'])} | {_origin(r)} | {_esc(_limit(r['limit']))} | "
           f"{', '.join(r['verification_methods'])} | "
-          + " | ".join(f"**{r['configurations'][c]['status']}** ({r['configurations'][c]['rule']})"
-                       for c in CONFIGS) + " |")
+          + " | ".join(_cell_md(r["configurations"][c]) for c in CONFIGS) + " |")
     a("")
     a("## Status rules (applied in this order by `rvm_rules.assign_status`)")
     a("")
@@ -1159,7 +1246,11 @@ def render_md(doc):
               f"{', '.join(r['lane24_gates']) or '-'}")
         for c in CONFIGS:
             cell = r["configurations"][c]
-            a(f"- **{c}: {cell['status']}** (`{cell['rule']}`) - {cell['reason']}")
+            if cell.get("applicability_marker"):
+                a(f"- **{c}: {cell['applicability_marker']}** (vocabulary status {cell['status']}, "
+                  f"`{cell['rule']}`; never compliance evidence)")
+            else:
+                a(f"- **{c}: {cell['status']}** (`{cell['rule']}`) - {cell['reason']}")
             for art in cell["artifacts"]:
                 a(f"    - [{art['role']}/{art['kind']}] `{art['path']}` `{art['id']}`: {_esc(art['evidence_state'])}")
             for art in cell["artifacts"]:
@@ -1227,6 +1318,35 @@ def render_md(doc):
     for r in doc["rows"]:
         if "a9_16" in r:
             a(f"- {r['id']}: " + _esc("; ".join(f"{k}: {v}" for k, v in r["a9_16"].items() if k != "decisions")))
+    a("")
+    a("## (d2b) A9.19 / A9.20 owner decisions applied (flight architecture, Xe role, C1 ground-only)")
+    a("")
+    x = doc["a9_19_20"]
+    a(f"Decisions: {'; '.join(x['decisions'])}.")
+    a("")
+    a(f"- Flight architecture (A9.19): {x['flight_architecture']}.")
+    a(f"- Amends: {x['amends']}. Unchanged: {x['unchanged']}.")
+    for c in CONFIGS:
+        a(f"- `{c}`: {doc['configurations'][c]}")
+    a(f"- {x['a9_2_status_note']}.")
+    a(f"- {x['owner_open_note']}.")
+    for r in doc["rows"]:
+        if "a9_19" in r:
+            rest = {k: v for k, v in r["a9_19"].items() if k != "decisions"}
+            if rest:
+                a(f"- {r['id']}: " + _esc("; ".join(f"{k}: {v}" for k, v in rest.items())))
+    a("")
+    a("Owner answers applied (A9.19 / A9.20):")
+    a("")
+    for o in doc["a9_19_owner_answers_applied"]:
+        a(f"- {o['decision']} `{o['question_id']}` (json sha256 {o['decision_json_sha256'][:12]}..., verbatim md sha256 "
+          f"{o['decision_md_sha256'][:12]}...) -> {', '.join(o['record_ids'])}: {_esc(o['how_applied'])}")
+    a("")
+    a("### Recorder proposals open for the owner (NOT requirements, NOT owner decisions)")
+    a("")
+    for pr in doc["recorder_proposals_open_for_owner"]:
+        a(f"- **{pr['id']}** [{pr['status']}]: {_esc(pr['proposal'])} Why raised: {_esc(pr['why_raised'])} "
+          f"Numbers: {pr['numbers']}. Handling: {pr['handling']}.")
     a("")
     a("## (d3) RFP re-base (AG-15)")
     a("")
