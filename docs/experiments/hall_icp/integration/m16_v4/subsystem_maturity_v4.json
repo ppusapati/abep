@@ -331,7 +331,7 @@
     {
      "lane": "fo_a9_6_rvm",
      "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-     "how": "requirement rows RVM-01, RVM-08, RVM-09 (status per configuration in rvm_requirement_status)",
+     "how": "requirement rows RVM-01, RVM-08, RVM-09, RVM-22 (status per configuration in rvm_requirement_status)",
      "stated_readiness_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
     }
    ],
@@ -419,7 +419,15 @@
     },
     {
      "rvm_row": "RVM-09",
-     "title": "Ionise nascent (atomic) O (recorded as an RFP statement; verify)",
+     "title": "Ionise N2 and nascent (atomic) O in the same thruster (RFP-P17-05, RFP-P17-02)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-22",
+     "title": "RFP test approach 4.1 a-d (AO-beam coating tests; rarefied-gas intake erosion; EM / QM force, Isp, efficiency; expert-committee-approved test plan) and ground demonstration",
      "status": {
       "hall_icp_neutralizer": "NOT_EVALUATED",
       "hall_c1_reference": "NOT_EVALUATED"
@@ -530,7 +538,7 @@
     },
     {
      "rvm_row": "RVM-09",
-     "title": "Ionise nascent (atomic) O (recorded as an RFP statement; verify)",
+     "title": "Ionise N2 and nascent (atomic) O in the same thruster (RFP-P17-05, RFP-P17-02)",
      "status": {
       "hall_icp_neutralizer": "NOT_EVALUATED",
       "hall_c1_reference": "NOT_EVALUATED"
@@ -1443,7 +1451,7 @@
     {
      "lane": "fo_a9_6_rvm",
      "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-     "how": "requirement rows RVM-01, RVM-02, RVM-03, RVM-08, RVM-09, RVM-11, RVM-12, RVM-13 (status per configuration in rvm_requirement_status)",
+     "how": "requirement rows RVM-01, RVM-02, RVM-03, RVM-08, RVM-09, RVM-11, RVM-12, RVM-13, RVM-22, RVM-24, RVM-26 (status per configuration in rvm_requirement_status)",
      "stated_readiness_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
     }
    ],
@@ -1555,7 +1563,7 @@
     },
     {
      "rvm_row": "RVM-09",
-     "title": "Ionise nascent (atomic) O (recorded as an RFP statement; verify)",
+     "title": "Ionise N2 and nascent (atomic) O in the same thruster (RFP-P17-05, RFP-P17-02)",
      "status": {
       "hall_icp_neutralizer": "NOT_EVALUATED",
       "hall_c1_reference": "NOT_EVALUATED"
@@ -1571,7 +1579,7 @@
     },
     {
      "rvm_row": "RVM-12",
-     "title": "> 15,000 h firing (provisional hard requirement)",
+     "title": "'Ignition Time: More than 15000 hrs' (RFP-P19-01, literal); design basis >= 15,000 h cumulative energized operation",
      "status": {
       "hall_icp_neutralizer": "NOT_EVALUATED",
       "hall_c1_reference": "NOT_EVALUATED"
@@ -1580,6 +1588,30 @@
     {
      "rvm_row": "RVM-13",
      "title": "Mission-life basis >= 26,280 h",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-22",
+     "title": "RFP test approach 4.1 a-d (AO-beam coating tests; rarefied-gas intake erosion; EM / QM force, Isp, efficiency; expert-committee-approved test plan) and ground demonstration",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-24",
+     "title": "Exit criterion: EM of the ABEP system + qualified electric thruster with O and N2 as propellant at milestone 4 (partial success)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-26",
+     "title": "Micro-newton-level thrust measurement system; UHV test facility and low-thrust measurement setup (Part IV(B), no waivers)",
      "status": {
       "hall_icp_neutralizer": "NOT_EVALUATED",
       "hall_c1_reference": "NOT_EVALUATED"
@@ -1970,7 +2002,7 @@
    "rvm_requirement_status": [
     {
      "rvm_row": "RVM-12",
-     "title": "> 15,000 h firing (provisional hard requirement)",
+     "title": "'Ignition Time: More than 15000 hrs' (RFP-P19-01, literal); design basis >= 15,000 h cumulative energized operation",
      "status": {
       "hall_icp_neutralizer": "NOT_EVALUATED",
       "hall_c1_reference": "NOT_EVALUATED"
@@ -2096,7 +2128,7 @@
     {
      "lane": "fo_a9_6_rvm",
      "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-     "how": "requirement rows RVM-02, RVM-03, RVM-04, RVM-05, RVM-06, RVM-07, RVM-14, RVM-19 (status per configuration in rvm_requirement_status)",
+     "how": "requirement rows RVM-02, RVM-03, RVM-04, RVM-05, RVM-06, RVM-07, RVM-14, RVM-19, RVM-20 (status per configuration in rvm_requirement_status)",
      "stated_readiness_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
     }
    ],
@@ -2248,7 +2280,15 @@
     },
     {
      "rvm_row": "RVM-19",
-     "title": "No single-point failure in electronics (recorded; verify) vs limited redundancy (row 55)",
+     "title": "Electronics: cater to single-point failure (RFP-P18-09); redundancy at electronics and sensor level (RFP-P18-02)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-20",
+     "title": "MIL-1553B interface with the satellite onboard computer + discrete thruster interface + hardware drivers inside the propulsion system",
      "status": {
       "hall_icp_neutralizer": "NOT_EVALUATED",
       "hall_c1_reference": "NOT_EVALUATED"
@@ -2350,7 +2390,7 @@
     {
      "lane": "fo_a9_6_rvm",
      "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-     "how": "requirement rows RVM-17 (status per configuration in rvm_requirement_status)",
+     "how": "requirement rows RVM-17, RVM-21, RVM-27 (status per configuration in rvm_requirement_status)",
      "stated_readiness_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
     }
    ],
@@ -2674,6 +2714,22 @@
       "hall_icp_neutralizer": "NOT_EVALUATED",
       "hall_c1_reference": "NOT_EVALUATED"
      }
+    },
+    {
+     "rvm_row": "RVM-21",
+     "title": "Environmental qualification (ENTEST): launch vibration / shock (PSLV / SSLV or DRDO-decided LV), AO erosion, radiation, thermal, ThermoVac, 3-year VLEO life",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-27",
+     "title": "Steady heat conducted into the spacecraft mounting interface <= 50 W (A9.12 S5.4 provisional owner allocation; 100 W contingency, 25 W stretch)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
     }
    ],
    "execution_state": "BLOCKED",
@@ -2743,7 +2799,7 @@
     {
      "lane": "fo_a9_6_rvm",
      "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-     "how": "requirement rows RVM-14, RVM-19 (status per configuration in rvm_requirement_status)",
+     "how": "requirement rows RVM-14, RVM-19, RVM-20 (status per configuration in rvm_requirement_status)",
      "stated_readiness_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
     }
    ],
@@ -2839,7 +2895,15 @@
     },
     {
      "rvm_row": "RVM-19",
-     "title": "No single-point failure in electronics (recorded; verify) vs limited redundancy (row 55)",
+     "title": "Electronics: cater to single-point failure (RFP-P18-09); redundancy at electronics and sensor level (RFP-P18-02)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-20",
+     "title": "MIL-1553B interface with the satellite onboard computer + discrete thruster interface + hardware drivers inside the propulsion system",
      "status": {
       "hall_icp_neutralizer": "NOT_EVALUATED",
       "hall_c1_reference": "NOT_EVALUATED"
@@ -3176,7 +3240,7 @@
     {
      "lane": "fo_a9_6_rvm",
      "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-     "how": "requirement rows RVM-06, RVM-07 (status per configuration in rvm_requirement_status)",
+     "how": "requirement rows RVM-06, RVM-07, RVM-21, RVM-27 (status per configuration in rvm_requirement_status)",
      "stated_readiness_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
     }
    ],
@@ -3310,6 +3374,22 @@
      "status": {
       "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
       "hall_c1_reference": "INCOMPLETE_EVIDENCE"
+     }
+    },
+    {
+     "rvm_row": "RVM-21",
+     "title": "Environmental qualification (ENTEST): launch vibration / shock (PSLV / SSLV or DRDO-decided LV), AO erosion, radiation, thermal, ThermoVac, 3-year VLEO life",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-27",
+     "title": "Steady heat conducted into the spacecraft mounting interface <= 50 W (A9.12 S5.4 provisional owner allocation; 100 W contingency, 25 W stretch)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
      }
     }
    ],
@@ -3755,7 +3835,7 @@
     },
     {
      "rvm_row": "RVM-12",
-     "title": "> 15,000 h firing (provisional hard requirement)",
+     "title": "'Ignition Time: More than 15000 hrs' (RFP-P19-01, literal); design basis >= 15,000 h cumulative energized operation",
      "status": {
       "hall_icp_neutralizer": "NOT_EVALUATED",
       "hall_c1_reference": "NOT_EVALUATED"
@@ -4299,7 +4379,7 @@
    "rvm_requirement_status": [
     {
      "rvm_row": "RVM-12",
-     "title": "> 15,000 h firing (provisional hard requirement)",
+     "title": "'Ignition Time: More than 15000 hrs' (RFP-P19-01, literal); design basis >= 15,000 h cumulative energized operation",
      "status": {
       "hall_icp_neutralizer": "NOT_EVALUATED",
       "hall_c1_reference": "NOT_EVALUATED"
