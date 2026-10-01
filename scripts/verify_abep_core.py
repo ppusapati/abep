@@ -547,10 +547,16 @@ def _cmd(args):
         return None
 
 
+# Files whose sha256 binds the verdicts (RUST-ID-05). abep_sim/intake_tpmc.py (the Python reference) was added in
+# consolidated verification round 1 (STR-03); --check also compares it with the pre-registered reference sha256.
+PROVENANCE_SOURCES = ("abep_core/Cargo.toml", "abep_core/Cargo.lock", "abep_core/pyproject.toml", "abep_core/src/lib.rs",
+                      "abep_core/src/rng.rs", "abep_core/src/tpmc.rs", "abep_sim/design/tpmc_backend.py",
+                      "abep_sim/intake_tpmc.py")
+
+
 def build_provenance():
     mod, why = TB._load_rust()
-    src = ["abep_core/Cargo.toml", "abep_core/Cargo.lock", "abep_core/pyproject.toml", "abep_core/src/lib.rs",
-           "abep_core/src/rng.rs", "abep_core/src/tpmc.rs", "abep_sim/design/tpmc_backend.py"]
+    src = list(PROVENANCE_SOURCES)
     prov = {"source_sha256": {s: sha256_file(s) for s in src if os.path.exists(_p(s))}}
     cargo = os.path.expanduser("~/.cargo/bin")
     prov["rustc"] = _cmd([os.path.join(cargo, "rustc"), "--version"]) or _cmd(["rustc", "--version"])
@@ -751,7 +757,8 @@ def assemble(pre, results, invariants, spd, prov, master, history):
             "ADMITTED is not PASS: it admits an optional, explicitly selected backend inside the tested parity domain"],
         "documented_divergence": pre["documented_divergence"] + [
             {"id": "DIV-02", "statement": "scattering other than 'maxwell' / 'cll': the reference silently traces Maxwell; the Rust backend refuses (no silent fallback). Not in the comparison set (documented after registration; does not affect scoring)."},
-            {"id": "DIV-03", "statement": "CLL alpha_n or alpha_t outside [0, 1]: the reference raises (alpha_t) or returns NaN (alpha_n); the Rust backend refuses with ValueError. Not in the comparison set (documented after registration; does not affect scoring)."}],
+            {"id": "DIV-03", "statement": "CLL alpha_n or alpha_t outside [0, 1]: the reference raises (alpha_t) or returns NaN (alpha_n); the Rust backend refuses with ValueError. Not in the comparison set (documented after registration; does not affect scoring)."},
+            {"id": "DIV-04", "statement": "trace_channel max_hits_cap < 1: the reference accepts max_hits_cap = 0 (its hit-budget doubling then stops after max_hits steps); the Rust extension refuses it (its error text cites max_hits, which is inaccurate for the cap), and abep_sim/design/tpmc_backend.py refuses it for backend='rust' with a correct message before the extension is called. Not in the comparison set (recorded in consolidated verification round 1, RUST-02; does not affect scoring)."}],
         "campaign_history": history,
         "vectors": results,
     }
@@ -843,12 +850,13 @@ def campaign():
     master = pre["campaign_seeds"]["scoring_master_seed"]
     t0 = time.time()
     inv = {}
-    print("standalone invariants ...", flush=True)
-    standalone_invariants(inv, master)
-    print("comparison vectors ...", flush=True)
-    results = run_vectors(pre, master, inv=inv)
-    print("speed-up ...", flush=True)
-    spd = speedup(pre)
+    with TB.parity_campaign_unadmitted():          # the campaign is what admits a build (RUST-01 gate)
+        print("standalone invariants ...", flush=True)
+        standalone_invariants(inv, master)
+        print("comparison vectors ...", flush=True)
+        results = run_vectors(pre, master, inv=inv)
+        print("speed-up ...", flush=True)
+        spd = speedup(pre)
     prov = build_provenance()
     history = []
     if os.path.exists(_p(REPORT_REL)):
@@ -872,8 +880,9 @@ def dev(only, limit):
         return 2
     master = pre["campaign_seeds"]["development_master_seed"]
     inv = {}
-    standalone_invariants(inv, master)
-    results = run_vectors(pre, master, only=only, limit=limit, inv=inv)
+    with TB.parity_campaign_unadmitted():
+        standalone_invariants(inv, master)
+        results = run_vectors(pre, master, only=only, limit=limit, inv=inv)
     for k in results:
         s = kernel_summary(k, results[k], inv, pre)
         print(k, "(DEVELOPMENT, not scored)", s["test_counts"], s["max_abs_z"],
@@ -926,13 +935,30 @@ def check(recompute=0):
                 errs.append(f"forbidden verdict word {word}")
     if open(_p(MD_REL)).read() != render_md(rep):
         errs.append("MD is not the rendering of the JSON (run --render-md)")
+    # RUST-01 / STR-03: the verdicts stand only for the recorded build. Always compare the current sources (and the
+    # installed extension when importable) with build_provenance, and the reference with its pre-registered sha256.
+    bp = rep["build_provenance"]
+    for rel in PROVENANCE_SOURCES:
+        if rel not in bp["source_sha256"]:
+            errs.append(f"{rel} is not in the recorded build provenance (re-run the campaign)")
+    for rel, h in bp["source_sha256"].items():
+        cur = sha256_file(rel) if os.path.exists(_p(rel)) else None
+        if cur != h:
+            errs.append(f"source {rel} differs from the recorded build (verdicts do not apply: NOT_ADMITTED_BUILD)")
+    if sha256_file("abep_sim/intake_tpmc.py") != pre["reference_implementation"]["sha256_at_registration"]:
+        errs.append("abep_sim/intake_tpmc.py differs from the pre-registered reference (verdicts do not apply)")
+    mod, _why = TB._load_rust()
+    if mod is not None and TB.extension_sha256(mod) != bp.get("extension_sha256"):
+        errs.append(f"installed abep_core extension sha256 {TB.extension_sha256(mod)} != recorded "
+                    f"{bp.get('extension_sha256')} (NOT_ADMITTED_BUILD)")
     if recompute:
         if not TB.rust_available():
             errs.append(f"--recompute needs abep_core: {TB.rust_unavailable_reason()}")
         elif build_provenance()["source_sha256"] != rep["build_provenance"]["source_sha256"]:
             errs.append("--recompute: abep_core sources differ from the recorded build")
         else:
-            got = run_vectors(pre, rep["campaign"]["master_seed"], limit=recompute, inv=None, progress=False)
+            with TB.parity_campaign_unadmitted():
+                got = run_vectors(pre, rep["campaign"]["master_seed"], limit=recompute, inv=None, progress=False)
             for k, rows in got.items():
                 for a, b in zip(rows, rep["vectors"][k]):
                     if json.loads(json.dumps(a["tests"])) != b["tests"]:

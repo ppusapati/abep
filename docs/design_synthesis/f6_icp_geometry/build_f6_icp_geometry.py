@@ -64,14 +64,16 @@ REFERENCED_NOT_PINNED = (
     ("docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json", "M16 v4 rows 10, 13, 18, 19"),
 )
 PENDING_LANES = {
-    "F0": "PENDING docs/performance/ (fo_a9_7_f0_profiling)",
-    "F1": "PENDING abep_sim/design/intake_synthesis.py (fo_a9_7_f1_intake_synthesis)",
-    "F2": "PENDING abep_sim/design/filter_stage.py (fo_a9_7_f2_filter_stage)",
-    "F3": "PENDING abep_sim/design/compressor_synthesis.py (fo_a9_7_f3_compressor_synthesis)",
-    "F4": "PENDING fo_a9_7_f4_plenum_feed (path not yet assigned)",
-    "F5": "PENDING docs/hardware/h1_freeze_candidate/ (fo_a9_7_f5_h1_freeze_candidate)",
-    "F7_F8": "PENDING fo_a9_7_f7_f8_coupled_optimizer (path not yet assigned)",
-    "F9": "PENDING fo_a9_7_f9_freeze_candidate (path not yet assigned)",
+    "F0": "docs/performance/PERFORMANCE_BASELINE_98fbbb9.json (fo_a9_7_f0_profiling)",
+    "F1": "abep_sim/design/intake_synthesis.py (fo_a9_7_f1_intake_synthesis)",
+    "F2": "abep_sim/design/filter_stage.py (fo_a9_7_f2_filter_stage)",
+    "F3": "abep_sim/design/compressor_synthesis.py (fo_a9_7_f3_compressor_synthesis)",
+    "F4": "abep_sim/design/plenum_feed.py (fo_a9_7_f4_plenum_feed)",
+    "F5": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json (fo_a9_7_f5_h1_freeze_candidate; IFS-F6-01..05, "
+          "IFD-F6-01..03)",
+    "F7_F8": "abep_sim/design/architecture_optimizer.py (fo_a9_7_f7_f8_coupled_optimizer; F78-ID-10)",
+    "F9": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json (fo_a9_7_f9_freeze_candidate; "
+          "F9-ID-06)",
 }
 CONV_TOL_ABS_F = 0.01      # acceptance of the screening-resolution F_to_ICP vs the convergence resolution (numerical)
 
@@ -236,11 +238,13 @@ def interface_demands():
         "f6_needs": [
             {"id": "F6-IF-N01", "from": "F5 " + PENDING_LANES["F5"], "what": "frozen H-1 front-face geometry at "
              "IP-EXIT (R_pf, R_i, R_o, R_ow, R_b, L_b) as a non-assumed record", "units": "m",
-             "status": "PENDING", "unlocks": "view_factor_obstruction EVALUATED_GEOMETRIC; plume interception "
+             "status": "TBD_AFTER_EVIDENCE (F5 H1F-EX-04 exit-face channel OD TBD; H1F-EX-06 keep-out TBD)",
+             "unlocks": "view_factor_obstruction EVALUATED_GEOMETRIC; plume interception "
              "geometry"},
             {"id": "F6-IF-N02", "from": "F5 " + PENDING_LANES["F5"], "what": "H-1 magnetic-circuit field B(r, z) "
              "including the downstream near field to z >= L_standoff + L_module (measured or cited model) and the coil "
-             "operating envelope", "units": "T", "status": "PENDING", "unlocks": "hall_b_field_disturbance"},
+             "operating envelope", "units": "T", "status": "TBD_AFTER_EVIDENCE (F5 H1F-EX-05 MC-1 stray field TBD)",
+             "unlocks": "hall_b_field_disturbance"},
             {"id": "F6-IF-N03", "from": "P1 " + p1, "what": "icp45a_evaluate result (status EVALUATED_ENGINEERING_ONLY) "
              "per BUILT ICP geometry, bound by geometry_id and p1_record_id; derive_rf P_RF_DELIVERED at the same "
              "capacity record", "units": "A; W", "status": "TBD_AFTER_EVIDENCE (ICP45 NOT_EVALUATED; I_d,max,H1 "

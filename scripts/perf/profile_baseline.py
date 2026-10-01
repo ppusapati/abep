@@ -600,8 +600,15 @@ def measure(w, repeats, do_profile=True):
 
 # ------------------------------------------------------------------------------------------------ judgement
 def judge(w, rec, by_id):
-    """Port-candidate judgement from measured quantities only. Gain x usage = interpreter-level share (cProfile tottime,
-    upper bound of what a native kernel removes) x extrapolated/measured seconds of the stated reference workload."""
+    """Port-candidate judgement from measured quantities only. Gain x usage = interpreter-level share (cProfile tottime)
+    x extrapolated/measured seconds of the stated reference workload.
+
+    Basis correction (consolidated verification round 1, F0-01): the interpreter-level share is project + builtin +
+    stdlib only; it EXCLUDES library_python_wrapper (numpy / pandas / scipy Python wrappers), which a native kernel
+    also removes. The value stored under the historical key 'addressable_interpreter_s_upper_bound' is therefore an
+    interpreter-only ESTIMATE, not an upper bound (the measured Rust speed-ups exceed it). The key and the committed
+    JSON are kept unchanged because docs/performance/abep_core/parity_prereg_v1.json pins the JSON's sha256; the
+    rendered MD states the correction and the wrapper-inclusive estimate (render_md, basis_correction_lines)."""
     if w.get("covered_by"):
         return {"judgement": "COVERED_BY", "covered_by": w["covered_by"],
                 "basis": "kernel-level measurement; ranked through the workload that calls it (avoids double counting)"}
@@ -892,6 +899,44 @@ def _f(x):
     return "-" if x is None else (f"{x:.4g}" if isinstance(x, float) else str(x))
 
 
+def basis_correction_lines(doc):
+    """F0-01 / F0-02 / F0-03 corrections, derived only from the committed measured records (no new timing)."""
+    by_id = {w["id"]: w for w in doc["workloads"]}
+    L = ["", "## Basis correction (consolidated verification round 1)", "",
+         "F0-01: the 'addressable' column and the findings' 'addressable <= X s' are interpreter-only estimates "
+         "(project + builtin + stdlib tottime share), not upper bounds: the share excludes library_python_wrapper "
+         "(numpy cross / moveaxis / norm wrappers, about 21-25 % of tottime in the TPMC workloads), which a native "
+         "kernel also removes. The measured Rust speed-ups (parity report) exceed the interpreter-only share. Even the "
+         "wrapper-inclusive share below is an estimate, not a bound (operator arithmetic booked as project_python and "
+         "native calls a port can fuse also move). Rankings and PORT_CANDIDATE judgements do not change (the order "
+         "and thresholds hold under either share). The committed JSON is unchanged because the parity pre-registration "
+         "pins its sha256.", "",
+         "| rank | workload | interpreter-only share (stored fractions summed once) | incl. library wrappers | "
+         "reference workload s | estimate incl. wrappers s |", "|---|---|---|---|---|---|"]
+    for r in doc["ranking"]:
+        w = by_id[r["id"]]
+        fr = (w.get("profile") or {}).get("tottime_fractions") or {}
+        io = fr.get("project_python", 0.0) + fr.get("interpreter_builtin", 0.0) + fr.get("stdlib_python", 0.0)
+        iw = io + fr.get("library_python_wrapper", 0.0)
+        L.append(f"| {r['rank']} | {r['id']} | {_f(round(io, 4))} | {_f(round(iw, 4))} | "
+                 f"{_f(r['reference_workload_s'])} | {_f(round(r['reference_workload_s'] * iw, 2))} |")
+    L += ["", "The measured Rust wall speed-ups are in docs/performance/abep_core/parity_report_v1.json (section "
+          "speedup; time removed = 1 - 1/speed-up), e.g. 5.44x on W1 = tpmc_trace_channel (81.6 % removed) against an "
+          "interpreter-only share of 0.6652 at campaign 2026-10-01T04:52:48Z."]
+    L += ["", "F0-02: the 'usage' of the TPMC PORT_CANDIDATE is the frozen_intake_surface_build reference workload, which "
+          "CLAUDE.md rule 1 and RUST-ID-06 forbid running with the Rust backend, and no current consumer opts in to the "
+          "Rust backend (F1 calls intake_tpmc.intake_response directly, RUST-ID-03 OPEN; F7 / F8 run no TPMC). The "
+          "admitted kernels therefore have no consumer today; the F1 synthesis search (the real use) is not quantified "
+          "here. A re-based judgement needs the F1 / F7 search point counts x the measured per-point cost.", "",
+          "F0-03: the per-workload 'interpreter share' in the workload table is the sum of individually rounded "
+          "fractions and can exceed 1 by rounding (e.g. 1.0001); the table above sums the stored fractions once. "
+          "Workloads with CPU above wall reflect library / BLAS threads or background contention, not speed-up (see "
+          "Method notes): " + "; ".join(
+              f"{w['id']} CPU/wall {w['cpu_over_wall']} (repeats CPU s {w['cpu_s']} vs wall s {w['wall_s']})"
+              for w in doc["workloads"] if (w.get("cpu_over_wall") or 0) > 1.05) + "."]
+    return L
+
+
 def render_md(doc):
     e = doc["environment"]
     L = [f"# Performance baseline {doc['base_commit_label']} (A9.7 F0: profile before porting)", "",
@@ -909,14 +954,18 @@ def render_md(doc):
           f"- thread env: {e['thread_env']}; load average at start {e['loadavg_at_start']}",
           f"- {e['concurrency_note']}", f"- total harness wall time: {doc['total_harness_wall_s']} s", "",
           "## Ranking (expected gain x usage)", "",
-          "Gain x usage = interpreter-level share of cProfile tottime (upper bound of what a native kernel can remove) "
-          "x seconds of the stated reference workload. Thresholds: PORT_CANDIDATE >= "
+          "Gain x usage = interpreter-level share of cProfile tottime x seconds of the stated reference workload. The "
+          "interpreter-level share excludes the library Python wrappers, so the 'addressable' figure is an "
+          "interpreter-only estimate, NOT an upper bound of what a native kernel can remove (see 'Basis correction' "
+          "below; the JSON key keeps its historical name '..._upper_bound'). Thresholds: PORT_CANDIDATE >= "
           f"{PORT_THRESHOLD_S:g} s, MARGINAL >= {MARGINAL_THRESHOLD_S:g} s (harness choices, owner question F0-OQ-01).", "",
-          "| rank | workload | category | reference workload s | addressable s (upper bound) | judgement | deferred |",
+          "| rank | workload | category | reference workload s | addressable s (interpreter-only estimate, not an "
+          "upper bound) | judgement | deferred |",
           "|---|---|---|---|---|---|---|"]
     for r in doc["ranking"]:
         L.append(f"| {r['rank']} | {r['id']} | {r['category']} | {_f(r['reference_workload_s'])} | "
                  f"{_f(r['addressable_interpreter_s_upper_bound'])} | {r['judgement']} | {'yes' if r['deferred'] else 'no'} |")
+    L += basis_correction_lines(doc)
     L += ["", "## A9.7 Rust admission order vs measured rank", "",
           "| A9.7 position | item | F0 rank | F0 judgement | deferred | note |", "|---|---|---|---|---|---|"]
     for r in doc["rust_order_comparison"]:

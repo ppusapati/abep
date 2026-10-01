@@ -223,14 +223,16 @@ def test_interface_demands(committed, builder):
         assert q in joined, q
     for d in f4:
         assert isinstance(d["value"], str) and d["value"].startswith("TBD"), d["id"]
-        assert d["counterpart"].startswith("PENDING"), d["id"]
+        assert d["counterpart"].startswith("abep_sim/design/plenum_feed.py"), d["id"]     # integration pass
     dirs = {d["direction"] for d in committed["interface_demands"]}
     assert "H-1 -> F4" in dirs and "H-1 -> F6" in dirs and "H-1 <- F6" in dirs
     for d in committed["interface_demands"]:
         if any(d["direction"].endswith(x) or f"<- {x} " in d["direction"] or f"-> {x}" in d["direction"]
                for x in ("F0", "F1", "F2", "F3", "F4", "F6", "F7/F8", "F9")):
-            assert d["counterpart"].startswith("PENDING"), d["id"]
+            assert "PENDING" not in d["counterpart"], d["id"]          # resolved to real paths + record ids
     assert "IFD-F6-03" in ids
+    mc02 = next(p for p in committed["parameters"] if p["id"] == "H1F-MC-02")
+    assert mc02["freeze_status"] == "OPEN"            # PHY-01: assumed analog choice, not owner-given
     src = (Path(__file__).resolve().parents[1] / "docs/hardware/h1_freeze_candidate/build_h1_freeze_candidate.py").read_text()
     for m in PARALLEL_MODULES:                       # the H-1 builder never imports the parallel lanes' modules
         assert ("import " + m) not in src and ("from " + m) not in src, m

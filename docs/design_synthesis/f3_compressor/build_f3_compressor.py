@@ -2,7 +2,8 @@
 """A9.7 F3 compressor geometry synthesis study (follow-on fo_a9_7_f3_compressor_synthesis).
 
 Runs abep_sim/design/compressor_synthesis.py over the 36 W1 candidate-cases of the DI-1.4 compressor down-selection
-requirement envelope (taken as PARAMETRIC_SENSITIVITY inlet records: the F1/F2 interface records are PENDING), and
+requirement envelope (taken as PARAMETRIC_SENSITIVITY inlet records; the F1/F2 records exist but the F3 fronts are not
+rebuilt on them - F4 / F7 couple F1 -> F2 -> F3 directly, see IFD-F3-01/02 and the INT-01 limitation), and
 writes:
   f3_compressor_synthesis_v1.json   parameters, search variables, sources, strict-mode result, per-case summaries,
                                     Pareto fronts (full records), size_for() comparison, findings, interface demands,
@@ -94,7 +95,8 @@ def inlet_cases() -> list[tuple[cs.InletRecord, dict]]:
                 source=f"{DOWNSELECT_REL}#requirement_envelope/{cand}/cases/{case_id} (forward_flow_to_compressor_kgps x "
                        "w_s_inlet, p_passive_Pa, T_plenum_K)",
                 evidence_class="model-derived",
-                status=f"{v['status']}; {v['evidence_class']}; PARAMETRIC_SENSITIVITY inlet (F1/F2 records PENDING)",
+                status=f"{v['status']}; {v['evidence_class']}; PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not "
+                       "the F1/F2 records)",
                 extra={"altitude_km": c["altitude_km"], "solar_level": c["solar_level"], "setpoint_Pa": c["setpoint_Pa"],
                        "CR_required_upper_bound_flow_basis": c["CR_required"]["upper_bound_flow_basis"],
                        "CR_required_self_consistent_backflow": c["CR_required"]["self_consistent_backflow"]})
@@ -245,34 +247,38 @@ def build() -> tuple[dict, dict]:
 
     interface_demands = [
         {"id": "IFD-F3-01", "direction": "requires", "counterpart": "F1 (fo_a9_7_f1_intake_synthesis)",
-         "path": "PENDING abep_sim/design/intake_synthesis.py",
-         "what": "intake-exit state per species (mdot_s, P, T) feeding F2; until it exists the study uses "
-                 "PARAMETRIC_SENSITIVITY inlets from the down-selection requirement envelope", "status": "PENDING"},
+         "path": "abep_sim/design/intake_synthesis.py (F1-ID-03)",
+         "what": "intake-exit state per species (mdot_s, P, T) feeding F2. The F1 records exist, but this study's "
+                 "fronts use PARAMETRIC_SENSITIVITY inlets from the down-selection requirement envelope; F4 "
+                 "(abep_sim/design/plenum_feed.py F4-ID-01/05) and F7 couple F1 -> F3 at the F1 states over the "
+                 "F3 front union only (INT-01 limitation recorded in F4 / F7 / F9)",
+         "status": "AVAILABLE_NOT_CONSUMED_BY_THIS_STUDY (coupled in F4 / F7)"},
         {"id": "IFD-F3-02", "direction": "requires", "counterpart": "F2 (fo_a9_7_f2_filter_stage)",
-         "path": "PENDING abep_sim/design/filter_stage.py",
+         "path": "abep_sim/design/filter_stage.py (F2-IF-03)",
          "what": "filter-outlet record = compressor inlet: compressor_synthesis.InletRecord fields (mdot_kgps per O/N2/O2, "
                  "p_total_Pa, T_K, source, evidence_class, label F1_F2_INTERFACE_RECORD); optional p_species_Pa must "
-                 "follow the DragCompressor convention (partial pressure proportional to number flow) or is refused",
-         "status": "PENDING"},
+                 "follow the DragCompressor convention (partial pressure proportional to number flow) or is refused. "
+                 "Every F2 filter record is TBD / PARAMETRIC (no evidenced filter); F4 couples the filter cases",
+         "status": "AVAILABLE_NOT_CONSUMED_BY_THIS_STUDY (F2 records TBD / PARAMETRIC; coupled in F4)"},
         {"id": "IFD-F3-03", "direction": "provides", "counterpart": "F1 / F2",
-         "path": "PENDING abep_sim/design/intake_synthesis.py; PENDING abep_sim/design/filter_stage.py",
+         "path": "abep_sim/design/intake_synthesis.py (F1-ID-04); abep_sim/design/filter_stage.py (F2-IF-04)",
          "what": "compressor inlet pumping speed S_turbo [m^3/s] per design (sets the plenum backflow / K_back "
                  "coupling) and the GAEDE_CHARACTERISTIC_CLIPPED rejection (inlet pressure not self-consistent with the "
                  "throughput)", "status": "AVAILABLE (PARAMETRIC_SENSITIVITY)"},
         {"id": "IFD-F3-04", "direction": "provides", "counterpart": "F4 (fo_a9_7_f4_plenum_feed)",
-         "path": "PENDING F4 plenum/feed module (wave B; path not yet assigned)",
+         "path": "abep_sim/design/plenum_feed.py (F4-ID-05)",
          "what": "per design: P_out, mdot_s delivered, x_s,out (partial pressure) and delivered-flow x_s, T_gas and "
                  "T_compressor, P_compressor", "status": "AVAILABLE (PARAMETRIC_SENSITIVITY)"},
         {"id": "IFD-F3-05", "direction": "requires", "counterpart": "F4 (fo_a9_7_f4_plenum_feed)",
-         "path": "PENDING F4 plenum/feed module (wave B; path not yet assigned)",
+         "path": "abep_sim/design/plenum_feed.py (F4-ID-06)",
          "what": "downstream plenum back-pressure / feed-control boundary (DragCompressor computes P_out from a fixed "
                  "inlet; a coupled plenum must close p_out against the H-1 demand)", "status": "TBD"},
         {"id": "IFD-F3-06", "direction": "requires", "counterpart": "F5 (fo_a9_7_f5_h1_freeze_candidate)",
-         "path": "PENDING docs/hardware/h1_freeze_candidate/",
+         "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json (IFD-F3-01, IFD-F4-01..05: TBD)",
          "what": "H-1 inlet demand (mdot_s, P, T, x_s); the W1 setpoints used here are PROPOSED references only",
          "status": "TBD"},
         {"id": "IFD-F3-07", "direction": "provides", "counterpart": "F0 (fo_a9_7_f0_profiling)",
-         "path": "PENDING docs/performance/",
+         "path": "docs/performance/PERFORMANCE_BASELINE_98fbbb9.json",
          "what": f"compressor design-space search workload: {len(design_grid)} designs x {n_cases} inlets via "
                  f"`python {SCRIPT_REL}` (a few CPU seconds); size_for comparison {len(sizefor_all)} calls",
          "status": "AVAILABLE"},
@@ -418,7 +424,9 @@ def render_md(doc: dict) -> str:
     A("Every coefficient that is not searched is an uncited code default (compressor_downselect CD-01). For that reason "
       "**MODE_STRICT returns NOT_EVALUATED**, and every number below is a **PARAMETRIC_SENSITIVITY** result. None of "
       "them is a design value, a CBE or a PASS. The inlet records are the 36 W1 candidate-cases of the DI-1.4 "
-      "requirement envelope, which are PROPOSED and model-derived. The F1/F2 interface records are still PENDING.")
+      "requirement envelope, which are PROPOSED and model-derived. The F1/F2 interface records exist, but this study's "
+      "fronts are not rebuilt on them; F4 and F7 couple F1 -> F2 -> F3 directly over the F3 front union (a "
+      "restriction recorded as a limitation in F4 / F7 / F9).")
     A("")
     A("## Search variables (A9.7 list)")
     A("")

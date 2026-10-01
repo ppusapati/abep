@@ -58,7 +58,7 @@ Filter cases (F2 API):
 | x_plenum.Ti | [0.3, 3.0] | s | integral time (one decade) | SEARCHED |
 | x_plenum.f_valve | 1.0 | Hz | F4-P-08 nominal parametric; sensitivity [0.1, 10.0] | PARAMETRIC_SENSITIVITY |
 | x_plenum.authority | 3.0 | - | F4-P-09 | PARAMETRIC_SENSITIVITY |
-| x_compressor | 32 F3 designs | - | union of the F3 per-case Pareto ids | INPUT_SET |
+| x_compressor | 32 F3 designs | - | union of the F3 per-case Pareto ids (a subset of the 48 designs passing F3's inlet-independent gates; INT-01 limitation) | INPUT_SET |
 | x_intake | {'area_m2': [0.25, 0.5, 0.75, 1.0, 1.25, 1.5], 'candidates_d_collapsed': 48, 'scenarios': ['maxwell_a0', 'maxwell_a0.2', 'maxwell_a0.5', 'maxwell_a0.8', 'maxwell_a1', 'cll_a0', 'cll_a0.2', 'cll_a0.5', 'cll_a0.8', 'cll_a1'], 'states': ['h200_f150', 'h180_f70', 'h180_f230', 'h230_f70', 'h230_f230']} | - | every F1 candidate (d-invariant, F1-02) x F1 surface scenario x F1 orbit state | INPUT_SET |
 
 ## Requirement sweep (parametric)
@@ -489,10 +489,10 @@ Objectives (all minimized): ['V_m3', 'valve_travel', 'settling_max_s', 'peak_dev
 | F4-ID-07 | F4 -> F5 | docs/hardware/h1_freeze_candidate/ (IFD-F4-01..05) | offered state records (mdot_s, P, T, x_s, transient quality with metric definitions) for the Pareto members, and feasibility regions over the parametric requirement sweep | PROVIDED (PARAMETRIC_SENSITIVITY) |
 | F4-ID-08 | F5 -> F4 | docs/hardware/h1_freeze_candidate/ (IFS-F4-02, H1F-IN-04) | H-1 inlet conductance / back-pressure law; F4 derives the minimum downstream conductance compatible with the compressor domain (conductance_demand) | DEMANDED (TBD) |
 | F4-ID-09 | F5 -> F4 | docs/hardware/h1_freeze_candidate/ (IFD-F4-06, IFD-F4-07) | Xe anode-feed mode and the contamination limit: NOT_EVALUATED here (Xe path not modelled; filter 'none' carries no protection function) | NOT_EVALUATED |
-| F4-ID-10 | F4 -> F7/F8 | PENDING fo_a9_7_f7_f8_coupled_optimizer | x_plenum = (V, Kp, Ti, f_valve, authority) and the API steady_operating_point / steady_sweep / transient_case / orbit_quasi_static; MODE_STRICT refuses until the blockers close | AVAILABLE |
+| F4-ID-10 | F4 -> F7/F8 | abep_sim/design/architecture_optimizer.py; abep_sim/design/robust_optimizer.py (F78-ID-07) | x_plenum = (V, Kp, Ti, f_valve, authority) and the API steady_operating_point / steady_sweep / transient_case / orbit_quasi_static; MODE_STRICT refuses until the blockers close | AVAILABLE |
 | F4-ID-11 | F4 -> F0 | docs/performance/ | workload: vectorized steady sweeps (seconds) and the LSODA transient cases (~0.1 s each); candidate Rust hotspot only if profiling shows it | INFORMATIONAL |
 | F4-ID-12 | F4 <-> H2-3 | docs/hardware/h2/h2_3_gas_path_plenum/ | plenum volume, metering-valve bandwidth / authority, wall recombination class (GP-D03), compressor ripple (H23-17); F4 evaluates them parametrically | DEMANDED (TBD) |
-| F4-ID-13 | F4 -> F9 | PENDING fo_a9_7_f9_freeze_candidate | plenum / valve / feed rows: VALUE TBD, PARAMETRIC_SENSITIVITY ranges only | INFORMATIONAL |
+| F4-ID-13 | F4 -> F9 | docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json (F9-ID-04) | plenum / valve / feed rows: VALUE TBD, PARAMETRIC_SENSITIVITY ranges only | INFORMATIONAL |
 
 ## Open owner questions (new)
 
@@ -509,6 +509,7 @@ Objectives (all minimized): ['V_m3', 'valve_travel', 'settling_max_s', 'peak_dev
 
 ## Limitations
 
+- INT-01 (consolidated verification round 1): the compressor search set is the union of the F3 per-case Pareto ids (32 designs), and those F3 fronts were built on the down-selection envelope inlets, not on the F1-coupled operating points used here. F3's inlet-independent gates (N_drag = 0, Ti-6Al-4V, cited tip speed <= 305.5 m/s) admit 48 designs; the 16 others are never evaluated. Every F4 Pareto set is therefore 'Pareto within the F3 front-union subset', not over the admissible compressor space: a design outside the subset can be non-dominated (or dominate a member) at the F1-coupled states
 - isothermal chain at the F1 wall temperature (no gas energy balance; ICD G-07)
 - free-molecular linear Gaede characteristic only (no transitional regime, no K < 1 branch, so no start-up from an empty plenum: start-up / Xe-to-air transition NOT_EVALUATED, IFD-F4-05 part)
 - compressor-inlet node quasi-steady (inlet volume TBD); compressor speed constant (no rpm control)

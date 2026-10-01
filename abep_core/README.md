@@ -23,6 +23,17 @@ Same physics, same flight / tie / hit-budget-doubling rules, same outputs and dt
 (xoshiro256++ seeded by SplitMix64, implemented in `src/rng.rs` without external RNG crates, so a seed always gives the
 same stream).
 
+Exceptions (documented divergences; refusals for inputs outside the registered comparison set, listed in the parity
+report): DIV-01 `max_hits < 1`, DIV-02 unknown scattering kernel, DIV-03 CLL accommodation outside [0, 1], and DIV-04
+`max_hits_cap < 1` (the reference accepts `max_hits_cap = 0`; the extension refuses it with a message that wrongly
+cites `max_hits`; `tpmc_backend.py` refuses it for `backend="rust"` with a correct message before the extension is
+called). "Same outputs" holds only inside the comparison set.
+
+Admission is bound to the recorded build: `tpmc_backend.py` serves `backend="rust"` only when the installed
+extension's sha256 and every recorded source sha256 (these sources, the wrapper and the Python reference) match the
+parity report's `build_provenance` and the kernel's verdict is ADMITTED (else `RustBackendNotAdmitted`,
+NOT_ADMITTED_BUILD); `scripts/verify_abep_core.py --check` fails on any such mismatch.
+
 ## What it is not
 
 * Not authoritative. `abep_sim/intake_tpmc.py` is the reference; every Rust result is reproducible with it.

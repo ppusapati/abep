@@ -225,8 +225,7 @@ def test_committed_study_labels_and_structure(main_doc):
     dirs = {x["direction"] for x in d["interface_demands"]}
     assert dirs == {"requires", "provides"}
     for x in d["interface_demands"]:
-        if "PENDING" in x["path"]:
-            assert x["path"].startswith("PENDING")
+        assert "PENDING" not in x["path"]                              # integration pass: real paths + ids
     assert d["open_owner_questions"] and d["m16_impact"][0]["state_after"] == "BLOCKED"
     assert len(d["cases"]) == 36
     for c in d["cases"]:
@@ -270,3 +269,40 @@ def test_hygiene_new_files():
     t = Path(__file__).read_text(encoding="utf-8")
     assert "pytest." + "skip" not in t and "mark." + "skip" not in t and "xfa" + "il" not in t
     assert "archengine" not in MODULE.read_text(encoding="utf-8").split('"""', 2)[2]
+
+
+# ------------------------------------------------------------------------- consolidated verification round 1
+def test_nan_or_out_of_domain_coefficient_refused_never_fails_open():
+    """SW-02: a NaN safety factor used to make the stress gate fail open (even in strict mode)."""
+    ev = {"stress_safety": {"value": float("nan"), "evidence_class": "measured", "source": "x"}}
+    with pytest.raises(cs.SynthesisInputError):
+        cs.evaluate_design(_design(nt=1, ia=0, u=300.0), _inlet(), coefficient_evidence=ev)
+    for f, v in (("h_mm", float("nan")), ("w_mm", -1.0), ("xi", 1.5), ("eta_motor", 0.0), ("L_per_stage_m", 0.0)):
+        with pytest.raises(cs.SynthesisInputError):
+            cs.validate_coefficient(f, v)
+    blk = cs.strict_blockers(_inlet(label=cs.LABEL_INTERFACE, ev="measured"), ev)
+    assert any(b["id"] == "C-stress_safety" and b["status"] == "NON_FINITE_OR_OUT_OF_DOMAIN" for b in blk)
+
+
+@pytest.mark.parametrize("bad", [{"rpm": -9410.76}, {"rpm": 0.0}, {"rpm": float("nan")}, {"N_drag": -3},
+                                 {"N_turbo": -2}, {"N_turbo": 1.5}, {"rotor_material": "Unobtainium"},
+                                 {"A_turbo_m2": 0.0}, {"R_turbo_m": -0.1}])
+def test_invalid_design_vector_refused(bad):
+    """SW-03: an invalid design vector is refused with SynthesisInputError (never FEASIBLE, never a bare error)."""
+    d = dict(_design(), **bad)
+    with pytest.raises(cs.SynthesisInputError):
+        cs.evaluate_design(d, _inlet())
+
+
+def test_stress_gate_written_fail_closed():
+    src = MODULE.read_text(encoding="utf-8")
+    assert "if not margin >= 0.0:" in src
+
+
+def test_pareto_front_excludes_non_finite_objectives():
+    """OPT-04: a NaN objective never joins the front or knocks out a fully evaluated record."""
+    good = {"id": "good", "outputs": {"P_out_Pa": 1.0, "mdot_delivered_total_kgps": 1.0, "P_compressor_el_W": 1.0,
+                                      "m_compressor_kg": 1.0}}
+    nan_row = {"id": "nan_row", "outputs": {"P_out_Pa": 2.0, "mdot_delivered_total_kgps": float("nan"),
+                                            "P_compressor_el_W": 0.5, "m_compressor_kg": 0.5}}
+    assert cs.pareto_front([good, nan_row]) == ["good"]

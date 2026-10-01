@@ -10,6 +10,8 @@ Configuration: primary `hall_icp_neutralizer`, control / fallback `hall_c1_refer
 
 - not a frozen architecture and not FROZEN_REFERENCE_FLIGHT_ARCHITECTURE
 - not a selection: Pareto sets are carried, no representative point is chosen (F9-OQ-01)
+- not a Pareto set over the admissible compressor space: the F7 / F8 sets (and every UPSTREAM PARETO_SET row here) are Pareto within the F3 front-union subset (32 of the 48 designs passing F3's inlet-independent gates; INT-01 limitation recorded in F4 / F7)
+- lane interface statuses quoted from F1..F7 are the lanes' own records after the A9.7 integration pass (counterparts resolved to merged paths and record ids); F9-ID-01..08 record what F9 consumed
 - no Hall performance number: credible Hall set empty, P5-N2 v1 INCONCLUSIVE; withdrawn 0-D results unused
 - no PASS, no winner; no owner question answered
 - no existing module, frozen dataset, decision, CLAUDE.md or HISTORY modified; not wired into archengine
@@ -118,7 +120,7 @@ Nominal-context Pareto union: 1233 members (equals the F8 survivor set (f8_robus
 
 ## Candidate definition
 
-Freeze-status roll-up (204 parameters): {"FREEZE_CANDIDATE": 51, "OPEN": 60, "TBD_AFTER_EVIDENCE": 68, "TBD_OWNER": 25}.
+Freeze-status roll-up (204 parameters): {"FREEZE_CANDIDATE": 50, "OPEN": 61, "TBD_AFTER_EVIDENCE": 68, "TBD_OWNER": 25}.
 
 ### UPSTREAM
 
@@ -228,7 +230,7 @@ Freeze-status roll-up (204 parameters): {"FREEZE_CANDIDATE": 51, "OPEN": 60, "TB
 | id | parameter | VALUE | TOLERANCE | EVIDENCE_CLASS | SOURCE | FREEZE_STATUS |
 |---|---|---|---|---|---|---|
 | AFC-H1F-MC-01 | magnetic topology | T2 magnetically shielded; MC-1 electromagnet only (no permanent-magnet assistance on H-1) - | n/a (decision / rule) | owner-allocation | docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json#/parameters/24 | FREEZE_CANDIDATE |
-| AFC-H1F-MC-02 | coil arrangement | single inner coil + single concentric outer coil + trim-coil provision (winding space + reserved supply channel) - | n/a (decision / rule) | assumed | docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json#/parameters/25 | FREEZE_CANDIDATE |
+| AFC-H1F-MC-02 | coil arrangement | single inner coil + single concentric outer coil + trim-coil provision (winding space + reserved supply channel) - | n/a (decision / rule) | assumed | docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json#/parameters/25 | OPEN |
 | AFC-H1F-MC-03 | unshielded (T1) replaceable pole-piece set | engineering comparison only; never silently the score-bearing article; switching sets creates H-1' - | n/a (decision / rule) | owner-allocation | docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json#/parameters/26 | FREEZE_CANDIDATE |
 | AFC-H1F-MC-04 | inner core: solid (no cathode bore); inner-coil solid-core floor on d_mean | {"7.758": {"nominal_assumptions": 40.0, "upper_assumptions_own_width_capability_f_NI_1": 48.0, "worst_case_assumptions": 48.0}, "9.333": {"nominal_... mm | n/a (window, not a design point; the point tole... | model-derived | docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json#/parameters/27 | OPEN |
 | AFC-H1F-MC-05 | pole-piece geometry including chamfered downstream wall edges (shielding) | TBD - requires a shielded-topology FEMM design at the design point mm | TBD | - | docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json#/parameters/28 | TBD_AFTER_EVIDENCE |
@@ -284,8 +286,8 @@ Freeze-status roll-up (204 parameters): {"FREEZE_CANDIDATE": 51, "OPEN": 60, "TB
 
 | id | parameter | VALUE | TOLERANCE | EVIDENCE_CLASS | SOURCE | FREEZE_STATUS |
 |---|---|---|---|---|---|---|
-| AFC-F6-X-01 | L_standoff: axial standoff of the ICP module upstream face downstream of IP-EXIT | TBD - bounds TBD; requires KC-1 / ICP module drawing (ICD ICP-02) and the H-1 exit-plane definition IP-EXIT (F5 PENDING docs/hardware/h1_freeze_can... m | TBD | - | docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json#/design_vector/variables/0 | TBD_AFTER_EVIDENCE |
-| AFC-F6-X-02 | r_aperture: ICP clear aperture radius (plume passage; open-tube coaxial first build, A9... | TBD - bounds TBD; requires frozen H-1 channel OD (F5 PENDING) and the MEASURED plume angular distribution (P3-H-03, Phase-1 Faraday probe) (ICD ICP... m | TBD | - | docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json#/design_vector/variables/1 | TBD_AFTER_EVIDENCE |
+| AFC-F6-X-01 | L_standoff: axial standoff of the ICP module upstream face downstream of IP-EXIT | TBD - bounds TBD; requires KC-1 / ICP module drawing (ICD ICP-02) and the H-1 exit-plane definition IP-EXIT (F5 H1F-EX-01 FREEZE_CANDIDATE; standof... m | TBD | - | docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json#/design_vector/variables/0 | TBD_AFTER_EVIDENCE |
+| AFC-F6-X-02 | r_aperture: ICP clear aperture radius (plume passage; open-tube coaxial first build, A9... | TBD - bounds TBD; requires frozen H-1 channel OD (F5 H1F-EX-04 TBD_AFTER_EVIDENCE) and the MEASURED plume angular distribution (P3-H-03, Phase-1 Fa... m | TBD | - | docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json#/design_vector/variables/1 | TBD_AFTER_EVIDENCE |
 | AFC-F6-X-03 | r_module: ICP module envelope outer radius (minimum necessary downstream obstruction, A... | TBD - bounds TBD; requires module envelope (ICD ICP-07, ICP-47) m | TBD | - | docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json#/design_vector/variables/2 | TBD_AFTER_EVIDENCE |
 | AFC-F6-X-04 | L_module: ICP module envelope axial length | TBD - bounds TBD; requires module envelope (ICD ICP-07) m | TBD | - | docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json#/design_vector/variables/3 | TBD_AFTER_EVIDENCE |
 | AFC-F6-X-05 | tau_support: open-frame support geometric open-area fraction (gray, direction-independe... | TBD - bounds TBD; requires support drawing (ICD ICP-47) - | TBD | - | docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json#/design_vector/variables/4 | TBD_AFTER_EVIDENCE |
@@ -604,7 +606,7 @@ Other existing open questions cited: UPSTREAM_ICD-Q7: Convergence flags (G-03 to
 - **F9-01** (inferred): architecture status INVESTIGATION_HYPOTHESIS: 15 of 15 architecture-level gates lack sufficient evidence (none has it)
 - **F9-02** (model-derived (PARAMETRIC_SENSITIVITY inputs)): upstream Pareto: robust set 9 members (all at P_set 0.01 Pa, filter context none, compressor T6-A1-U2-D0-Ti6Al4V); nominal-context Pareto union 1233 members; carried as sets, no representative selected (F9-OQ-01)
 - **F9-03** (model-derived (PARAMETRIC_SENSITIVITY inputs)): upstream flow gap: robust worst-case delivered flow [0.00813428, 0.00840947] mg/s and all-state frontier 0.1027 mg/s vs the owner characterization lower end 0.38 mg/s and nominal sizing ~1.3 mg/s (row 73); not a FAIL (strict mode NOT_EVALUATED; requirement not set, F9-OQ-02)
-- **F9-04** (inferred): freeze-status roll-up over 204 parameters: {'FREEZE_CANDIDATE': 51, 'OPEN': 60, 'TBD_AFTER_EVIDENCE': 68, 'TBD_OWNER': 25}; every FREEZE_CANDIDATE is an owner decision, convention, rule or allocation; no computed performance value is a freeze candidate
+- **F9-04** (inferred): freeze-status roll-up over 204 parameters: {'FREEZE_CANDIDATE': 50, 'OPEN': 61, 'TBD_AFTER_EVIDENCE': 68, 'TBD_OWNER': 25}; every FREEZE_CANDIDATE is an owner decision, convention, rule or allocation; no computed performance value is a freeze candidate
 - **F9-05** (inferred): 7 production-model issues registered as model-change candidates (MCC-01..07); none implemented here; each needs an owner decision and a HISTORY entry
 - **F9-06** (inferred): owner roll-up: 95 state v4 TBD_OWNER rows, 34 A9.7 lane questions (F0-F8, Rust), 4 new F9 questions; none answered
 
@@ -646,14 +648,14 @@ Consumed (sha256 at build time; drift reported by `--check`):
 
 - `docs/performance/PERFORMANCE_BASELINE_98fbbb9.json` 93145d612f03fcd62da7ea7e0d61d8bfca767429dd6117203b417758a0d8c672
 - `docs/performance/abep_core/parity_report_v1.json` c0b772c9f3760b061b28d879d140b85f0bbd0a621882bc502d4239a7300d9cd5
-- `docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json` 7f131140cc11299bc366976a3007f8b113ea1dfe78429534b1afbab7d3a089d9
-- `docs/design_synthesis/f2_filter/f2_filter_stage_v1.json` 53b843c81abb503b0704021227f214579d7402aa9b6fe26940bcd943537964cc
-- `docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json` 0204e143ee01362ff615eb4ed7290d06f072fb60a4836ec63e2ca3b270d50ed9
+- `docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json` dc0bfce93a0dc14cd03f8c76410d273649c1453c1c55f3e0f0c9bae0691146c7
+- `docs/design_synthesis/f2_filter/f2_filter_stage_v1.json` 4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808
+- `docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json` fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd
 - `docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json` a559776da6c10c2bb8c1eb66fbff308a7b3634c62275bdd39c17d77e4055d8a1
-- `docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json` 4254e6d4dae0db02e96d388f4b23f474b5e1764c546e58ea0ff5502fc8246215
-- `docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json` 8ea86cd61662bbd8b04ae4e0ea781e0e4ff78daaa56b94e01d4a79511b9137ba
-- `docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json` d7e5cca5cf445406151ade9acc48345bb2f0f490b44e1627a28744c4ac2ed909
-- `docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json` 92835976dd9b12a00c7d4cd4bb80664be73ff79678d36215f80dfb62e94d502a
+- `docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json` 6c54b8e2b4aa26ff920e9126b9977584bef0bfb43ed110d881efb8352432c745
+- `docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json` faa14dcb6c70ae0557699cbaf2ef3d086b3e26178069f00e1e6aa48e1a637829
+- `docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json` 4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def
+- `docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json` 06dddbea0b9bd413e57e10cfba88e8cfae3a376e39b560c895ec0ba496944c5e
 - `docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json` b8ba34d60c8ae997dea87cdf3c99ce626c0174f1027e8f7b4622c6ad719ad525
 - `docs/design_synthesis/f7_f8_optimizer/f8_robust_candidates_v1.json` 67a0279989756e0a125970f3d08668ccb9570d780b35f0e699a656824907ff1f
 - `docs/budgets/owner_decisions/owner_questions_state_v4.json` 6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67

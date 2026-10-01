@@ -26,9 +26,9 @@ Base commit label **98fbbb9**; measured HEAD `1c9d7a648cd4ce739e587248693271e511
 
 ## Ranking (expected gain x usage)
 
-Gain x usage = interpreter-level share of cProfile tottime (upper bound of what a native kernel can remove) x seconds of the stated reference workload. Thresholds: PORT_CANDIDATE >= 60 s, MARGINAL >= 10 s (harness choices, owner question F0-OQ-01).
+Gain x usage = interpreter-level share of cProfile tottime x seconds of the stated reference workload. The interpreter-level share excludes the library Python wrappers, so the 'addressable' figure is an interpreter-only estimate, NOT an upper bound of what a native kernel can remove (see 'Basis correction' below; the JSON key keeps its historical name '..._upper_bound'). Thresholds: PORT_CANDIDATE >= 60 s, MARGINAL >= 10 s (harness choices, owner question F0-OQ-01).
 
-| rank | workload | category | reference workload s | addressable s (upper bound) | judgement | deferred |
+| rank | workload | category | reference workload s | addressable s (interpreter-only estimate, not an upper bound) | judgement | deferred |
 |---|---|---|---|---|---|---|
 | 1 | intake_response_surface_reduced | intake_response_surface | 244.7 | 148.8 | PORT_CANDIDATE | no |
 | 2 | uq_modular_run_uq | uq_monte_carlo | 173.4 | 148 | PORT_CANDIDATE | yes |
@@ -38,6 +38,27 @@ Gain x usage = interpreter-level share of cProfile tottime (upper bound of what 
 | 6 | uq6_robust_design | robust_design_search | 1.51 | 1.14 | NOT_A_BOTTLENECK | yes |
 | 7 | compressor_size_for | compressor_search | 0.85 | 0.85 | NOT_A_BOTTLENECK | no |
 | 8 | p3_view_factors_verify | p3_view_factor | 0.09 | 0.08 | NOT_A_BOTTLENECK | no |
+
+## Basis correction (consolidated verification round 1)
+
+F0-01: the 'addressable' column and the findings' 'addressable <= X s' are interpreter-only estimates (project + builtin + stdlib tottime share), not upper bounds: the share excludes library_python_wrapper (numpy cross / moveaxis / norm wrappers, about 21-25 % of tottime in the TPMC workloads), which a native kernel also removes. The measured Rust speed-ups (parity report) exceed the interpreter-only share. Even the wrapper-inclusive share below is an estimate, not a bound (operator arithmetic booked as project_python and native calls a port can fuse also move). Rankings and PORT_CANDIDATE judgements do not change (the order and thresholds hold under either share). The committed JSON is unchanged because the parity pre-registration pins its sha256.
+
+| rank | workload | interpreter-only share (stored fractions summed once) | incl. library wrappers | reference workload s | estimate incl. wrappers s |
+|---|---|---|---|---|---|
+| 1 | intake_response_surface_reduced | 0.608 | 0.861 | 244.7 | 210.7 |
+| 2 | uq_modular_run_uq | 0.8537 | 0.9311 | 173.4 | 161.4 |
+| 3 | archengine_close_architecture | 0.8528 | 0.9292 | 28.96 | 26.91 |
+| 4 | mission_run_generic | 0.6941 | 0.9127 | 5.11 | 4.66 |
+| 5 | system_evaluate_gas_path | 0.9925 | 0.9983 | 1.76 | 1.76 |
+| 6 | uq6_robust_design | 0.7525 | 0.9611 | 1.51 | 1.45 |
+| 7 | compressor_size_for | 1 | 1 | 0.85 | 0.85 |
+| 8 | p3_view_factors_verify | 0.8518 | 0.9633 | 0.09 | 0.09 |
+
+The measured Rust wall speed-ups are in docs/performance/abep_core/parity_report_v1.json (section speedup; time removed = 1 - 1/speed-up), e.g. 5.44x on W1 = tpmc_trace_channel (81.6 % removed) against an interpreter-only share of 0.6652 at campaign 2026-10-01T04:52:48Z.
+
+F0-02: the 'usage' of the TPMC PORT_CANDIDATE is the frozen_intake_surface_build reference workload, which CLAUDE.md rule 1 and RUST-ID-06 forbid running with the Rust backend, and no current consumer opts in to the Rust backend (F1 calls intake_tpmc.intake_response directly, RUST-ID-03 OPEN; F7 / F8 run no TPMC). The admitted kernels therefore have no consumer today; the F1 synthesis search (the real use) is not quantified here. A re-based judgement needs the F1 / F7 search point counts x the measured per-point cost.
+
+F0-03: the per-workload 'interpreter share' in the workload table is the sum of individually rounded fractions and can exceed 1 by rounding (e.g. 1.0001); the table above sums the stored fractions once. Workloads with CPU above wall reflect library / BLAS threads or background contention, not speed-up (see Method notes): compressor_size_for CPU/wall 1.158 (repeats CPU s [0.3351, 0.0989, 0.0863] vs wall s [0.0854, 0.0854, 0.0875]).
 
 ## A9.7 Rust admission order vs measured rank
 

@@ -83,17 +83,22 @@ CONSUMED = {
     "ENS": "hallthruster_bridge/ensemble/transport_ensemble_v0.json",
     "VAL": "hallthruster_bridge/validation/VALIDATION_RELEASE_v1.json",
 }
-# Parallel A9.7 lanes (other worktrees, not in this base): referenced only, never imported or read.
+# Parallel A9.7 lanes: referenced only, never imported or read by this builder. Counterpart paths and record ids were
+# resolved by the A9.7 cross-lane integration pass (consolidated verification round 1, STR-01 / INT-02); every lane
+# below is merged on the execution branch.
 PENDING_LANES = {
-    "F0": ("fo_a9_7_f0_profiling", "PENDING docs/performance/"),
-    "F1": ("fo_a9_7_f1_intake_synthesis", "PENDING abep_sim/design/intake_synthesis.py"),
-    "F2": ("fo_a9_7_f2_filter_stage", "PENDING abep_sim/design/filter_stage.py"),
-    "F3": ("fo_a9_7_f3_compressor_synthesis", "PENDING abep_sim/design/compressor_synthesis.py"),
-    "F4": ("fo_a9_7_f4_plenum_feed", "PENDING fo_a9_7_f4_plenum_feed (wave B; no path registered in this base)"),
-    "F6": ("fo_a9_7_f6_icp_geometry", "PENDING abep_sim/design/icp_geometry_synthesis.py"),
+    "F0": ("fo_a9_7_f0_profiling", "docs/performance/PERFORMANCE_BASELINE_98fbbb9.json"),
+    "F1": ("fo_a9_7_f1_intake_synthesis", "abep_sim/design/intake_synthesis.py (F1-ID-06; coupled through F4-ID-01)"),
+    "F2": ("fo_a9_7_f2_filter_stage", "abep_sim/design/filter_stage.py (F2-IF-05; coupled through F4-ID-03/04)"),
+    "F3": ("fo_a9_7_f3_compressor_synthesis", "abep_sim/design/compressor_synthesis.py (IFD-F3-06; coupled through "
+                                              "F4-ID-05)"),
+    "F4": ("fo_a9_7_f4_plenum_feed", "abep_sim/design/plenum_feed.py; docs/design_synthesis/f4_plenum/"
+                                     "f4_plenum_feed_v1.json (F4-ID-07..09)"),
+    "F6": ("fo_a9_7_f6_icp_geometry", "abep_sim/design/icp_geometry_synthesis.py (F6-IF-N01, N02, S03)"),
     "F7F8": ("fo_a9_7_f7_f8_coupled_optimizer",
-             "PENDING fo_a9_7_f7_f8_coupled_optimizer (wave C; no path registered in this base)"),
-    "F9": ("fo_a9_7_f9_freeze_candidate", "PENDING fo_a9_7_f9_freeze_candidate (wave C; no path registered in this base)"),
+             "abep_sim/design/architecture_optimizer.py (F78-ID-08, F78-ID-09)"),
+    "F9": ("fo_a9_7_f9_freeze_candidate", "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json "
+                                          "(F9-ID-05, F9-ID-11)"),
 }
 
 FREEZE_STATUSES = {
@@ -481,7 +486,12 @@ def build_parameters() -> list:
       sources=[h21_dp("H21-12"), ref("H21", "/magnetic_topology_options"), ans(74)],
       basis="H2-1 H21-12 (T2 + T3 provision); the H2-1 T2 option that owner row 74 accepted is defined with a single "
             "inner + single outer coil",
-      freeze_status="FREEZE_CANDIDATE", freeze_point="LOCK-1", source_status=get("H21", h21("H21-12", "status")))
+      freeze_status="OPEN", freeze_point="LOCK-1", source_status=get("H21", h21("H21-12", "status")),
+      evidence_to_freeze=["an owner decision or design evidence for the single-coil-per-pole arrangement and the "
+                          "trim-coil provision: owner rows 74 (T2 shielded) and 78 (EM only) do not decide them "
+                          "(consolidated verification round 1, PHY-01)", FEMM],
+      note="analog-practice choice (assumed); inner / outer arrangement follows the T2 option, but single coils per "
+           "pole and the trim-coil provision are not owner-given, so the row is OPEN, not FREEZE_CANDIDATE")
     P(rows, "H1F-MC-03", "unshielded (T1) replaceable pole-piece set",
       "engineering comparison only; never silently the score-bearing article; switching sets creates H-1'",
       units="-", tolerance=NO_TOL_RULE, evidence_class="owner-allocation",

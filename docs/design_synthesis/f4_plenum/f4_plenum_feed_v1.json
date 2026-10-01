@@ -30,8 +30,8 @@
   "docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md": "fb51328d6fe07a6eaf257ef9ef9592cb0c0039ae3e8cf04ef0420007c985b129",
   "docs/decisions/OD_2026_10_01_A9_7_architecture_freeze_design_synthesis.json": "3199a670c901967ae4dca930022470b024cac14b263335da0adc3d423c37f372",
   "docs/decisions/OD_2026_09_29_owner_answers_147.json": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
-  "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json": "7f131140cc11299bc366976a3007f8b113ea1dfe78429534b1afbab7d3a089d9",
-  "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json": "0204e143ee01362ff615eb4ed7290d06f072fb60a4836ec63e2ca3b270d50ed9",
+  "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json": "dc0bfce93a0dc14cd03f8c76410d273649c1453c1c55f3e0f0c9bae0691146c7",
+  "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd",
   "docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json": "a559776da6c10c2bb8c1eb66fbff308a7b3634c62275bdd39c17d77e4055d8a1",
   "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json": "8ea86cd61662bbd8b04ae4e0ea781e0e4ff78daaa56b94e01d4a79511b9137ba",
   "docs/hardware/h2/h2_3_gas_path_plenum/h2_3_gas_path_plenum_v1.json": "f32b05bd03aad2a09a1d9b90ee5f9423e733e6ea4cb94814c92b500590d43a7b"
@@ -152,7 +152,8 @@
    "VALVE_SATURATED_SETPOINT_NOT_MAINTAINED",
    "TRAJECTORY_PLENUM_PRESSURE_ABOVE_DOMAIN",
    "INTEGRATOR_FAILED",
-   "MASS_CONSERVATION_RESIDUAL_ABOVE_TOLERANCE"
+   "MASS_CONSERVATION_RESIDUAL_ABOVE_TOLERANCE",
+   "ORIFICE_AREA_BISECTION_RESIDUAL_ABOVE_TOLERANCE_OR_BRACKET_SATURATED"
   ]
  },
  "items": [
@@ -436,7 +437,7 @@
     "T6-A2-U1-D0-Ti6Al4V"
    ],
    "units": "-",
-   "basis": "union of the F3 per-case Pareto ids",
+   "basis": "union of the F3 per-case Pareto ids (a subset of the 48 designs passing F3's inlet-independent gates; INT-01 limitation)",
    "source": "SRC-F3",
    "evidence_class": "model-derived (PARAMETRIC_SENSITIVITY)",
    "status": "INPUT_SET"
@@ -52668,7 +52669,7 @@
   {
    "id": "F4-ID-10",
    "direction": "F4 -> F7/F8",
-   "counterpart": "PENDING fo_a9_7_f7_f8_coupled_optimizer",
+   "counterpart": "abep_sim/design/architecture_optimizer.py; abep_sim/design/robust_optimizer.py (F78-ID-07)",
    "content": "x_plenum = (V, Kp, Ti, f_valve, authority) and the API steady_operating_point / steady_sweep / transient_case / orbit_quasi_static; MODE_STRICT refuses until the blockers close",
    "status": "AVAILABLE"
   },
@@ -52689,7 +52690,7 @@
   {
    "id": "F4-ID-13",
    "direction": "F4 -> F9",
-   "counterpart": "PENDING fo_a9_7_f9_freeze_candidate",
+   "counterpart": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json (F9-ID-04)",
    "content": "plenum / valve / feed rows: VALUE TBD, PARAMETRIC_SENSITIVITY ranges only",
    "status": "INFORMATIONAL"
   }
@@ -52808,6 +52809,7 @@
   ]
  },
  "limitations": [
+  "INT-01 (consolidated verification round 1): the compressor search set is the union of the F3 per-case Pareto ids (32 designs), and those F3 fronts were built on the down-selection envelope inlets, not on the F1-coupled operating points used here. F3's inlet-independent gates (N_drag = 0, Ti-6Al-4V, cited tip speed <= 305.5 m/s) admit 48 designs; the 16 others are never evaluated. Every F4 Pareto set is therefore 'Pareto within the F3 front-union subset', not over the admissible compressor space: a design outside the subset can be non-dominated (or dominate a member) at the F1-coupled states",
   "isothermal chain at the F1 wall temperature (no gas energy balance; ICD G-07)",
   "free-molecular linear Gaede characteristic only (no transitional regime, no K < 1 branch, so no start-up from an empty plenum: start-up / Xe-to-air transition NOT_EVALUATED, IFD-F4-05 part)",
   "compressor-inlet node quasi-steady (inlet volume TBD); compressor speed constant (no rpm control)",

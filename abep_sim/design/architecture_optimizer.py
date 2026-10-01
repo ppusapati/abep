@@ -17,9 +17,11 @@ CLOSED: a constraint that cannot be evaluated is NOT_EVALUATED and never counts 
 
 What can be computed today (and is): the evaluable UPSTREAM sub-problem F1 -> F2 -> F3 -> F4 (intake TPMC records,
 filter gap-reflection coupling, Gaede compressor cascade, plenum held at a set pressure; every relation is the one
-abep_sim.design.plenum_feed uses, called, never copied) over the committed lane grids, giving a genuine multi-objective
-Pareto set per (surface scenario, filter case, wall case, plenum set pressure) context (``upstream_context`` /
-``pareto_mask``). Every Pareto member carries the list of NOT_EVALUATED system objectives. The full-system ranking
+abep_sim.design.plenum_feed uses, called, never copied) over the committed lane grids, giving a multi-objective Pareto
+set per (surface scenario, filter case, wall case, plenum set pressure) context (``upstream_context`` /
+``pareto_mask``). These are Pareto sets WITHIN THE F3 FRONT-UNION SUBSET of compressor designs (32 of the 48 designs
+that pass F3's inlet-independent gates; INT-01 limitation, recorded in F4 / F7 / F9), not over the admissible
+compressor space. Every Pareto member carries the list of NOT_EVALUATED system objectives. The full-system ranking
 (``rank_full_system``) is implemented (non-dominated sorting layers, no scalarisation, no winner) and REFUSES
 (REFUSED_INCOMPLETE) while any system objective of any candidate is not EVALUATED; it is exercised by the tests with
 synthetic fixtures labelled SYNTHETIC_TEST_DATA_NOT_EVIDENCE, and a synthetic-only ranking is labelled as such
@@ -109,14 +111,20 @@ SYNTHETIC_ONLY = "SYNTHETIC_TEST_ONLY_NOT_EVIDENCE"
 OBJECTIVE_STATUSES = (EVALUATED, PARAMETRIC_ONLY, INCOMPLETE, NOT_EVALUATED, SYNTHETIC_ONLY)
 RANKABLE_CLASSES = ("measured", "digitized", "inferred", "reconstructed", "model-derived")
 
-C_MET = "MET_ON_SUPPLIED_VALUES"
+C_MET = "MET_ON_SUPPLIED_VALUES"                           # only on an EVALUATED (or, in a synthetic-only ranking,
+#                                                            SYNTHETIC) value or an A9-02 gate verdict
 C_VIOLATED = "VIOLATED"
 C_NOT_EVALUATED = "NOT_EVALUATED"
-CONSTRAINT_STATUSES = (C_MET, C_VIOLATED, C_NOT_EVALUATED)
+# A9.7 consolidated verification round 1 (OPT-01 / SW-01): a comparison on a parametric / assumed / allocation value is
+# sensitivity information only. It is reported under its own status and never counts as MET (fail closed).
+C_MET_PARAMETRIC = "MET_ON_PARAMETRIC_VALUES_SENSITIVITY_ONLY_NOT_MET"
+C_VIOLATED_PARAMETRIC = "VIOLATED_ON_PARAMETRIC_VALUES_SENSITIVITY_ONLY"
+CONSTRAINT_STATUSES = (C_MET, C_VIOLATED, C_NOT_EVALUATED, C_MET_PARAMETRIC, C_VIOLATED_PARAMETRIC)
 
 RANK_REFUSED_INCOMPLETE = "REFUSED_INCOMPLETE"
 RANK_REFUSED_NO_FEASIBLE = "REFUSED_NO_FEASIBLE_CANDIDATE"
 RANK_REFUSED_MIXED = "REFUSED_MIXED_SYNTHETIC_AND_EVIDENCE"
+RANK_REFUSED_PARAMETRIC_UPSTREAM = "REFUSED_PARAMETRIC_UPSTREAM_OBJECTIVE"
 RANK_COMPUTED = "PARETO_LAYERS_COMPUTED_NOT_A_SELECTION"
 RANK_COMPUTED_SYNTHETIC = "PARETO_LAYERS_COMPUTED_SYNTHETIC_TEST_ONLY_NOT_EVIDENCE"
 RANK_STATUSES = (RANK_REFUSED_INCOMPLETE, RANK_REFUSED_NO_FEASIBLE, RANK_REFUSED_MIXED, RANK_COMPUTED,
@@ -209,7 +217,8 @@ def design_vector_blocks(repo: Path = REPO) -> list[dict]:
         _var("x_compressor.design_id", "x_compressor", "design", f4sv["x_compressor"]["value"], "-",
              "union of the F3 per-case Pareto ids (the compressor set F4 coupled; N_drag = 0 for every member: no "
              "drag-stage design is feasible, F3-01)", f"{F4_REL} search_variables x_compressor; {F3D_REL}",
-             "model-derived (PARAMETRIC_SENSITIVITY)", "SEARCHED (F3 front union)")]
+             "model-derived (PARAMETRIC_SENSITIVITY)", "SEARCHED (F3 front union only: 32 of the 48 designs passing F3's "
+             "inlet-independent gates; sets are Pareto within this subset, INT-01)")]
     for k in ("N_turbo", "A_turbo", "R_turbo", "N_drag", "R_rotor", "RPM", "h", "w", "L", "xi"):
         if k in sv:
             x = sv[k]
@@ -641,6 +650,20 @@ def hall_response_status(repo: Path = REPO) -> dict:
             "p5_n2_v1_decision": dec, "sources": [ENS_REL, VAL_REL]}
 
 
+def hall_gated_thrust(name: str, rec: Mapping | None, repo: Path = REPO) -> dict | None:
+    """Route a supplied thrust record through the same admitted-Hall-member check as thrust_minus_drag (OPT-01): a
+    non-synthetic thrust record is refused (NOT_EVALUATED) while the credible Hall set is EMPTY, so HC-01 / HC-02
+    can never be met on a Hall performance prediction without an admitted transport member."""
+    if rec is None or rec["status"] == SYNTHETIC_ONLY:
+        return rec
+    hall = hall_response_status(repo)
+    if hall["admitted_members"]:
+        return rec
+    return _obj(name, NOT_EVALUATED, None, rec.get("units", "N"), reason=f"a {rec['status']} thrust record was "
+                f"supplied but the credible Hall set is EMPTY (no admitted transport member: refused)",
+                unlock=[UNLOCK["T"]], refused_supplied_status=rec["status"])
+
+
 UNLOCK = {
     "T": "an ADMITTED Hall transport member (credible set non-empty: a screening candidate promoted by pre-registered "
          "predictive evidence, CLAUDE.md next-work 1/3) AND a design-specific Hall map (own H-1 geometry and B(z), "
@@ -883,6 +906,17 @@ def life_material_indicators(design: Mapping | None = None, repo: Path = REPO) -
                 unlock=[UNLOCK["life"]], indicators=ind)
 
 
+def _life_material(design: Mapping | None, supplied: Mapping | None, repo: Path = REPO) -> dict:
+    """The life / material indicator set; a supplied closed assessment record sets its status (synthetic stays
+    SYNTHETIC_TEST_ONLY_NOT_EVIDENCE, assumed / allocation stays PARAMETRIC_SENSITIVITY_ONLY)."""
+    lm = life_material_indicators(design, repo)
+    so = supplied_objective("life_material", supplied, "-")
+    if so is None:
+        return lm
+    return dict(lm, status=so["status"], value=so["value"], evidence_class=so["evidence_class"],
+                source=so["source"], reason=so["reason"], supplied=True)
+
+
 SYSTEM_OBJECTIVES = (
     ("T_minus_D_spacecraft_N", "max"), ("P_bus_W", "min"), ("m_wet_kg", "min"), ("Q_reject_W", "min"),
     ("I_e_cap_minus_I_d_max_A", "max"),
@@ -922,9 +956,13 @@ def _cmp(v: float, comparator: str, limit: float) -> bool:
 
 def evaluate_constraints(values: Mapping) -> list[dict]:
     """Fail-closed hard constraints. ``values``: objective name -> objective record (status + value) or None.
-    A constraint is MET_ON_SUPPLIED_VALUES or VIOLATED only on an EVALUATED / PARAMETRIC / SYNTHETIC numeric value
-    (the label travels with it); anything else is NOT_EVALUATED and never counts as satisfied. HC-03 uses the A9-02
-    gate verdict when one is carried (PASS -> met, FAIL -> violated, NOT_EVALUABLE -> not evaluated)."""
+    A constraint is MET_ON_SUPPLIED_VALUES or VIOLATED only on an EVALUATED or SYNTHETIC numeric value (the label
+    travels with it; rank_full_system never lets synthetic and evidence meet). On a PARAMETRIC_SENSITIVITY_ONLY value
+    (assumed, owner-allocation, code-default or parametric inputs) the comparison is reported as
+    MET_ON_PARAMETRIC_VALUES_SENSITIVITY_ONLY_NOT_MET / VIOLATED_ON_PARAMETRIC_VALUES_SENSITIVITY_ONLY and never
+    counts as satisfied (A9.7: a TBD is never converted to an assumed value to obtain an optimum). Anything else is
+    NOT_EVALUATED. HC-03 uses the A9-02 gate verdict when one is carried (PASS -> met, FAIL -> violated,
+    NOT_EVALUABLE -> not evaluated)."""
     out = []
     for c in HARD_CONSTRAINTS:
         rec = values.get(c["objective"])
@@ -934,9 +972,15 @@ def evaluate_constraints(values: Mapping) -> list[dict]:
             st = {"PASS": C_MET, "FAIL": C_VIOLATED}.get(gv, C_NOT_EVALUATED)
             basis = f"bus_boundary_a9.rfp_power_gate verdict {gv}"
         elif rec is not None and rec.get("status") in (EVALUATED, PARAMETRIC_ONLY, SYNTHETIC_ONLY) and \
-                rec.get("value") is not None:
-            st = C_MET if _cmp(rec["value"], c["comparator"], c["limit"]) else C_VIOLATED
-            basis = f"value {rec['value']:.6g} {c['units']} ({rec['status']})"
+                rec.get("value") is not None and math.isfinite(float(rec["value"])):
+            ok = _cmp(rec["value"], c["comparator"], c["limit"])
+            if rec["status"] == PARAMETRIC_ONLY:
+                st = C_MET_PARAMETRIC if ok else C_VIOLATED_PARAMETRIC
+                basis = (f"value {rec['value']:.6g} {c['units']} ({rec['status']}): sensitivity comparison only, "
+                         "never counted as satisfied (fail closed)")
+            else:
+                st = C_MET if ok else C_VIOLATED
+                basis = f"value {rec['value']:.6g} {c['units']} ({rec['status']})"
         out.append({"id": c["id"], "rvm": c["rvm"], "quantity": c["quantity"],
                     "rule": f"{c['comparator']} {c['limit']:g} {c['units']}", "status": st,
                     "value_status": None if rec is None else rec.get("status"), "basis": basis})
@@ -947,7 +991,9 @@ def evaluate_system(upstream_row: Mapping | None, config: str, design: Mapping |
                     supplied: Mapping | None = None, repo: Path = REPO) -> dict:
     """Every system objective of one design vector (upstream sub-vector from an F7 row; x_Hall / x_ICP / x_RF /
     x_thermal through the supplied records) and the fail-closed hard constraints. ``supplied`` keys: thrust,
-    thrust_capability, spacecraft_drag, bus (ledgers), m_wet, Q_reject, I_e_margin, thermal_margin, firing_life."""
+    thrust_capability, spacecraft_drag, bus (ledgers), m_wet, Q_reject, I_e_margin, thermal_margin, firing_life,
+    life_material (a record {value, evidence_class, source} standing for a closed life / material assessment),
+    drag_intake_max (a record replacing the row's parametric F1 intake-drag value for HC-09)."""
     if config not in CONFIGURATIONS:
         raise OptimizerError(f"unknown configuration {config!r}")
     s = dict(supplied or {})
@@ -962,15 +1008,19 @@ def evaluate_system(upstream_row: Mapping | None, config: str, design: Mapping |
                              if row.get("m_compressor_max_kg") is not None else None, s.get("m_wet"), repo),
         "Q_reject_W": heat_rejection(pel, s.get("Q_reject"), repo),
         "I_e_cap_minus_I_d_max_A": electron_margin(config, s.get("I_e_margin"), repo),
-        "life_material": life_material_indicators(design, repo),
+        "life_material": _life_material(design, s.get("life_material"), repo),
     }
     cvals = dict(objs)
     for k, name, units in (("thrust", "thrust_N", "N"), ("thrust_capability", "thrust_capability_N", "N"),
                            ("thermal_margin", "thermal_margin_K", "K"), ("firing_life", "firing_life_h", "h")):
         cvals[name] = supplied_objective(name, s.get(k), units)
+        if k in ("thrust", "thrust_capability"):
+            cvals[name] = hall_gated_thrust(name, cvals[name], repo)
     if row.get("drag_intake_max_N") is not None:
         cvals["drag_intake_max_N"] = _obj("drag_intake_max_N", PARAMETRIC_ONLY, row["drag_intake_max_N"], "N",
                                           "model-derived", "F1 (TPMC) at a TBD surface scenario")
+    if s.get("drag_intake_max") is not None:     # a supplied (e.g. measured / synthetic) intake-drag record
+        cvals["drag_intake_max_N"] = supplied_objective("drag_intake_max_N", s["drag_intake_max"], "N")
     cons = evaluate_constraints(cvals)
     ne = [SYSTEM_OBJECTIVE_CODE[k] for k, v in objs.items() if v["status"] != EVALUATED]
     return {"configuration": config, "design_id": row.get("design_id"), "objectives": objs, "constraints": cons,
@@ -996,33 +1046,67 @@ def nondominated_layers(F: np.ndarray, senses: Sequence[str]) -> np.ndarray:
     return layer
 
 
+def _upstream_value(ev: Mapping, key: str) -> tuple[float | None, str | None]:
+    """An upstream objective for the full-system ranking must carry its status (OPT-03): either a record
+    {value, status} in ev['upstream'][key], or a bare number with its status in ev['upstream_status'][key]. A bare
+    number without a status is treated as unlabelled (None) and refused."""
+    v = (ev.get("upstream") or {}).get(key)
+    if isinstance(v, Mapping):
+        return v.get("value"), v.get("status")
+    return v, (ev.get("upstream_status") or {}).get(key)
+
+
 def rank_full_system(evaluations: Sequence[Mapping], upstream_objectives: Sequence[str] = ()) -> dict:
     """Full-system ranking over evaluated design vectors: non-dominated sorting layers of the system objectives (plus
     optional upstream objective keys present in each record's 'upstream'), after removing vectors that VIOLATE a hard
-    constraint or have one NOT_EVALUATED (fail closed). REFUSED_INCOMPLETE when ANY record has a system objective that
-    is not EVALUATED / synthetic (no subset ranking: ranking only what happens to be measurable would bias the set);
-    REFUSED_MIXED when synthetic and evidence records meet; a synthetic-only ranking is labelled
-    SYNTHETIC_TEST_ONLY_NOT_EVIDENCE. Never a winner: layer 1 is a set."""
+    constraint or have one not MET on rankable values (fail closed). REFUSED_INCOMPLETE when ANY record has a system
+    objective that is not EVALUATED / synthetic, including the life / material indicator set (no subset ranking:
+    ranking only what happens to be measurable would bias the set); REFUSED_MIXED when synthetic and evidence records
+    meet, in the objectives OR in the values a hard constraint was met on; REFUSED_PARAMETRIC_UPSTREAM when a ranked
+    upstream objective is not EVALUATED / synthetic (the committed upstream values are PARAMETRIC_SENSITIVITY). A
+    synthetic-only ranking is labelled SYNTHETIC_TEST_ONLY_NOT_EVIDENCE. Never a winner: layer 1 is a set.
+
+    life_material is a gate, not a Pareto axis: it is an indicator set with no scalar (its life scalar is HC-07,
+    firing life > 15,000 h); the ranking refuses until it is EVALUATED (or synthetic in a synthetic-only test)."""
     if not evaluations:
         return {"status": RANK_REFUSED_NO_FEASIBLE, "reason": "no candidate supplied", "layers": {}}
     missing = {}
     kinds = set()
     for ev in evaluations:
-        for name, _ in SYSTEM_OBJECTIVES:
+        for name in [n for n, _ in SYSTEM_OBJECTIVES] + ["life_material"]:
             o = ev["objectives"][name]
-            if o["status"] not in (EVALUATED, SYNTHETIC_ONLY) or o["value"] is None:
+            ok_value = name == "life_material" or o["value"] is not None
+            if o["status"] not in (EVALUATED, SYNTHETIC_ONLY) or not ok_value:
                 missing.setdefault(name, 0)
                 missing[name] += 1
             else:
                 kinds.add(o["status"])
     if missing:
         return {"status": RANK_REFUSED_INCOMPLETE,
-                "reason": "system objectives not EVALUATED for some or all candidates (fail closed, no subset "
-                          "ranking)", "missing_counts": missing, "n_candidates": len(evaluations),
-                "unlock": {k: v for k, v in UNLOCK.items()}, "layers": {}}
-    if kinds == {EVALUATED, SYNTHETIC_ONLY}:
-        return {"status": RANK_REFUSED_MIXED, "reason": "synthetic test data and evidence never meet in one ranking",
+                "reason": "system objectives (incl. the life / material indicator gate) not EVALUATED for some or "
+                          "all candidates (fail closed, no subset ranking)", "missing_counts": missing,
+                "n_candidates": len(evaluations), "unlock": {k: v for k, v in UNLOCK.items()}, "layers": {}}
+    bad_up = {}
+    for ev in evaluations:
+        for k in upstream_objectives:
+            v, st = _upstream_value(ev, k)
+            if st not in (EVALUATED, SYNTHETIC_ONLY) or v is None or not math.isfinite(float(v)):
+                bad_up.setdefault(k, set()).add(str(st))
+            else:
+                kinds.add(st)
+    if bad_up:
+        return {"status": RANK_REFUSED_PARAMETRIC_UPSTREAM,
+                "reason": "a ranked upstream objective is not EVALUATED / synthetic (PARAMETRIC_SENSITIVITY or "
+                          "unlabelled values never enter an evidence ranking; rank them in the labelled F7 upstream "
+                          "Pareto sets instead)", "upstream_statuses": {k: sorted(v) for k, v in bad_up.items()},
                 "layers": {}}
+    for ev in evaluations:
+        for c in ev["constraints"]:
+            if c["status"] == C_MET and c.get("value_status") in (EVALUATED, SYNTHETIC_ONLY):
+                kinds.add(c["value_status"])
+    if kinds == {EVALUATED, SYNTHETIC_ONLY}:
+        return {"status": RANK_REFUSED_MIXED, "reason": "synthetic test data and evidence never meet in one ranking "
+                "(objectives, ranked upstream values and the values hard constraints were met on)", "layers": {}}
     synthetic = kinds == {SYNTHETIC_ONLY}
     admissible, excluded = [], []
     for ev in evaluations:
@@ -1030,12 +1114,12 @@ def rank_full_system(evaluations: Sequence[Mapping], upstream_objectives: Sequen
         (excluded if bad else admissible).append((ev, bad))
     if not admissible:
         return {"status": RANK_REFUSED_NO_FEASIBLE, "reason": "every candidate violates a hard constraint or has one "
-                "NOT_EVALUATED (fail closed)", "excluded": [{"design_id": e["design_id"], "constraints": b}
-                                                             for e, b in excluded], "layers": {}}
+                "not met on rankable values (NOT_EVALUATED or parametric only; fail closed)",
+                "excluded": [{"design_id": e["design_id"], "constraints": b} for e, b in excluded], "layers": {}}
     keys = [k for k, _ in SYSTEM_OBJECTIVES] + list(upstream_objectives)
     senses = [s for _, s in SYSTEM_OBJECTIVES] + [OBJ_SENSE[k] for k in upstream_objectives]
     F = np.array([[ev["objectives"][k]["value"] for k, _ in SYSTEM_OBJECTIVES] +
-                  [ev["upstream"][k] for k in upstream_objectives] for ev, _ in admissible], dtype=float)
+                  [_upstream_value(ev, k)[0] for k in upstream_objectives] for ev, _ in admissible], dtype=float)
     lay = nondominated_layers(F, senses)
     layers: dict = {}
     for (ev, _), l in zip(admissible, lay):
@@ -1045,6 +1129,7 @@ def rank_full_system(evaluations: Sequence[Mapping], upstream_objectives: Sequen
     return {"status": RANK_COMPUTED_SYNTHETIC if synthetic else RANK_COMPUTED,
             "label": SYNTHETIC_ONLY if synthetic else "NOT_A_SELECTION (Pareto layers; no winner)",
             "objectives": keys, "senses": senses, "layers": layers,
+            "life_material": "gate only (indicator set, no scalar axis; its life scalar is HC-07)",
             "excluded": [{"design_id": e["design_id"], "constraints": b} for e, b in excluded]}
 
 

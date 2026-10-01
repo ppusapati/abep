@@ -100,10 +100,12 @@ R_SATURATED = "VALVE_SATURATED_SETPOINT_NOT_MAINTAINED"                         
 R_TRAJ_DOMAIN = "TRAJECTORY_PLENUM_PRESSURE_ABOVE_DOMAIN"                           # OOD
 R_INTEGRATOR = "INTEGRATOR_FAILED"                                                  # model error
 R_CONSERVATION = "MASS_CONSERVATION_RESIDUAL_ABOVE_TOLERANCE"                       # model error
+R_BISECTION = "ORIFICE_AREA_BISECTION_RESIDUAL_ABOVE_TOLERANCE_OR_BRACKET_SATURATED"  # model error (SW-06)
 OOD_REASONS = (R_TARGET_ABOVE_DOMAIN, R_STAGE_DOMAIN, R_CHARACTERISTIC, R_KN_FEED, R_TRAJ_DOMAIN)
-MODEL_ERROR_REASONS = (R_INTEGRATOR, R_CONSERVATION)
+MODEL_ERROR_REASONS = (R_INTEGRATOR, R_CONSERVATION, R_BISECTION)
+# R_BISECTION appended last so the existing REASON_BITS are unchanged
 REASONS = (R_TARGET_ABOVE_DOMAIN, R_STAGE_DOMAIN, R_CHARACTERISTIC, R_KN_FEED, R_THERMAL, R_DEADHEAD, R_FLOW,
-           R_UPSTREAM_F1, R_NOT_SETTLED, R_SATURATED, R_TRAJ_DOMAIN, R_INTEGRATOR, R_CONSERVATION)
+           R_UPSTREAM_F1, R_NOT_SETTLED, R_SATURATED, R_TRAJ_DOMAIN, R_INTEGRATOR, R_CONSERVATION, R_BISECTION)
 
 
 def status_from_reasons(reasons) -> str:
@@ -129,6 +131,7 @@ ATOL_SCALED = 1e-11                              # solve_ivp absolute tolerance 
 MASS_TOL = 1e-6                                  # |mass residual| / throughput (CLAUDE.md rule 4 gate for F4)
 BISECT_ITERS = 90                                # log-area bisection steps (relative bracket width < 1e-12)
 A_EQ_BRACKET_M2 = (1e-12, 1e2)                   # orifice-equivalent area search bracket (residual reported)
+BISECT_RTOL = 1e-6                               # gate on the bisection residual |p/target - 1| (numerics, SW-06)
 INTEGRATOR_METHOD = "LSODA"                      # stiff-safe (automatic stiff BDF switching; scipy solve_ivp)
 INTEGRATOR_REFERENCE = "BDF"                     # independent stiff method of the convergence check
 
@@ -432,6 +435,7 @@ class CompressorPlant:
 
     @classmethod
     def from_design(cls, design: Mapping, T_K: float = T_CHAIN_K) -> "CompressorPlant":
+        cs.validate_design(design)
         kw = cs.module_defaults()
         kw.update({"turbo_rows": int(design["N_turbo"]), "turbo_area_m2": float(design["A_turbo_m2"]),
                    "turbo_radius_m": float(design.get("R_turbo_m", cs.r_turbo_from_area(float(design["A_turbo_m2"])))),
@@ -520,6 +524,21 @@ class Plenum:
     leak_area_m2: float               # parametric case value (Reservoir code default)
     T_K: float = T_CHAIN_K
 
+    def __post_init__(self):
+        """Refuse a malformed plenum (SW-06): V > 0, 0 <= gamma <= 1, leak >= 0, T > 0, all finite."""
+        def _f(name, v):
+            if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(float(v)):
+                raise ValueError(f"Plenum.{name}={v!r} must be a finite number")
+            return float(v)
+        if not _f("volume_m3", self.volume_m3) > 0.0:
+            raise ValueError("Plenum.volume_m3 must be > 0")
+        if not 0.0 <= _f("gamma_wall", self.gamma_wall) <= 1.0:
+            raise ValueError("Plenum.gamma_wall must be in [0, 1]")
+        if not _f("leak_area_m2", self.leak_area_m2) >= 0.0:
+            raise ValueError("Plenum.leak_area_m2 must be >= 0")
+        if not _f("T_K", self.T_K) > 0.0:
+            raise ValueError("Plenum.T_K must be > 0")
+
     @property
     def wall_area_m2(self) -> float:
         r = (self.volume_m3 / (2.0 * math.pi)) ** (1.0 / 3.0)
@@ -594,8 +613,11 @@ def solve_pressures(co: Mapping, a_eq, k_rec: float, leak: Mapping, feed_c: Mapp
 
 def area_for_pressure(co, target_Pa, k_rec, leak, feed_c):
     """Orifice-equivalent area holding the plenum at target (vectorized log bisection; p3_total is strictly
-    decreasing in a_eq). Returns (a_eq, p_deadhead, residual_rel, ok) where ok = target strictly below dead-head."""
+    decreasing in a_eq). Returns (a_eq, p_deadhead, residual_rel, ok) where ok = target strictly below dead-head.
+    A non-finite or non-positive target is refused (ValueError). Callers gate the residual with bisection_failed()."""
     target = np.asarray(target_Pa, dtype=float)
+    if not np.all(np.isfinite(target)) or np.any(target <= 0.0):
+        raise ValueError("plenum target pressure must be finite and > 0")
     p_dead = sum(solve_pressures(co, 0.0, k_rec, leak, feed_c)[0].values())
     p_dead = np.broadcast_to(np.asarray(p_dead, dtype=float), np.broadcast_shapes(np.shape(p_dead), target.shape))
     ok = target < p_dead
@@ -611,6 +633,15 @@ def area_for_pressure(co, target_Pa, k_rec, leak, feed_c):
     p = sum(solve_pressures(co, a, k_rec, leak, feed_c)[0].values())
     resid = np.abs(p / np.where(target > 0, target, 1.0) - 1.0)
     return a, p_dead, resid, ok
+
+
+def bisection_failed(a_eq, resid):
+    """True where the orifice-area bisection did not converge to BISECT_RTOL or saturated at the search bracket
+    (fail closed: no operating point is offered from such a solution, SW-06)."""
+    a_eq = np.asarray(a_eq, dtype=float)
+    resid = np.asarray(resid, dtype=float)
+    sat = (a_eq >= A_EQ_BRACKET_M2[1] * (1.0 - 1e-9)) | (a_eq <= A_EQ_BRACKET_M2[0] * (1.0 + 1e-9))
+    return ~(resid <= BISECT_RTOL) | sat
 
 
 def lambda_upper_m(p3: Mapping[str, float], T_K: float) -> float:
@@ -640,6 +671,10 @@ def steady_operating_point(chain: Chain, target_Pa: float, density_factor: float
     rec = {"target_Pa": target_Pa, "p_deadhead_Pa": p_dead, "a_eq_m2": a, "bisection_residual_rel": resid}
     if not ok:
         reasons.append(R_DEADHEAD)
+        rec.update({"status": status_from_reasons(reasons), "reasons": reasons, "offered": None})
+        return rec
+    if bool(bisection_failed(a, resid)):
+        reasons.append(R_BISECTION)
         rec.update({"status": status_from_reasons(reasons), "reasons": reasons, "offered": None})
         return rec
     rec.update(_operating_record(chain, co, a, k_rec, leak, fc))
@@ -791,6 +826,8 @@ def steady_sweep(side: dict, plant: CompressorPlant, plenum: Plenum, targets_Pa,
     a, p_dead, resid, ok = area_for_pressure(co, tgt, k_rec, leak, fc)
     a = np.broadcast_to(a, bits.shape)
     bits |= np.where(~above & ~ok, REASON_BITS[R_DEADHEAD], 0)
+    bis_bad = np.broadcast_to(bisection_failed(a, resid), bits.shape)
+    bits |= np.where(~above & ok & bis_bad, REASON_BITS[R_BISECTION], 0)
     p3, p2 = solve_pressures(co, a, k_rec, leak, fc)
     Q = {s: (co[s]["A_c"] * p2[s] - p3[s]) / co[s]["B_c"] for s in SPECIES}
     cas = cascade_arrays(plant, p2, Q)
@@ -799,7 +836,7 @@ def steady_sweep(side: dict, plant: CompressorPlant, plenum: Plenum, targets_Pa,
     T = T_CHAIN_K
     denom = sum(p3[s] / (K_B * T) * SIGMA_C_M2[s] for s in SIGMA_C_M2)
     kn = (1.0 / (math.sqrt(2.0) * denom)) / np.sqrt(4.0 * a / math.pi)
-    live = ~above & ok
+    live = ~above & ok & ~bis_bad
     bits |= np.where(live & char_bad, REASON_BITS[R_CHARACTERISTIC], 0)
     bits |= np.where(live & stage_bad, REASON_BITS[R_STAGE_DOMAIN], 0)
     bits |= np.where(live & (kn < KN_MIN), REASON_BITS[R_KN_FEED], 0)
@@ -888,6 +925,8 @@ class TransientRun:
         a, p_dead, resid, ok = area_for_pressure(co, r0_Pa, self.k_rec, leak_d, fc_d)
         if not bool(ok):
             raise ValueError("design setpoint at or above dead-head: no steady operating point to start from")
+        if bool(bisection_failed(a, resid)):
+            raise ValueError("design setpoint orifice-area bisection did not converge (R_BISECTION)")
         self.a_ss = float(a)
         self.a_max = ctrl.authority * self.a_ss
         self.u_ff = 1.0 / ctrl.authority
@@ -1320,9 +1359,18 @@ def dominates(a: Mapping, b: Mapping, objectives) -> bool:
     return better
 
 
+def _finite_obj(v) -> bool:
+    try:
+        return v is not None and not isinstance(v, bool) and math.isfinite(float(v))
+    except (TypeError, ValueError):
+        return False
+
+
 def pareto_ids(rows: list[dict], objectives) -> list[str]:
     """Non-dominated feasible rows (all objectives minimized; ties all kept). Deterministic (sorted by id)."""
-    feas = sorted((r for r in rows if r["status"] == ST_FEASIBLE), key=lambda r: r["id"])
+    # OPT-04: a row with a non-finite objective never enters dominance (fail closed)
+    feas = sorted((r for r in rows if r["status"] == ST_FEASIBLE and
+                   all(_finite_obj(r["objectives"].get(k)) for k in objectives)), key=lambda r: r["id"])
     vals = [r["objectives"] for r in feas]
     return [r["id"] for i, r in enumerate(feas)
             if not any(dominates(vals[j], vals[i], objectives) for j in range(len(feas)) if j != i)]

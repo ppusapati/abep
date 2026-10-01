@@ -165,7 +165,8 @@ def test_system_objectives_refused_today(inp, small_ctx):
         assert all(o["unlock"] for o in ev["objectives"].values())
         assert ev["system_not_evaluated"] == list(ao.SYSTEM_NOT_EVALUATED_CODES)
         st = {c["id"]: c["status"] for c in ev["constraints"]}
-        assert st.pop("HC-09") == ao.C_MET                       # intake-face drag <= 25 mN (parametric value)
+        # intake-face drag <= 25 mN on a parametric value: sensitivity only, never MET (OPT-01)
+        assert st.pop("HC-09") == ao.C_MET_PARAMETRIC
         assert set(st.values()) == {ao.C_NOT_EVALUATED}
         pb = ev["objectives"]["P_bus_W"]
         assert pb["official_status"] == "PARTIAL_BOUNDARY" and pb["official_lower_bound_W"] == 0.0
@@ -210,7 +211,8 @@ def _syn_eval(row, thrust, pbus_scale, mwet, design_id, measured_bus=False):
     sup = {"thrust": _syn(thrust), "thrust_capability": _syn(0.03), "spacecraft_drag": _syn(0.002),
            "bus": _syn_ledgers("hall_icp_neutralizer", pbus_scale, measured_bus),
            "m_wet": dict(_syn(mwet), all_terms_resolved=True), "Q_reject": _syn(300.0), "I_e_margin": _syn(1.0),
-           "thermal_margin": _syn(60.0), "firing_life": _syn(16000.0)}
+           "thermal_margin": _syn(60.0), "firing_life": _syn(16000.0), "life_material": _syn(1.0),
+           "drag_intake_max": _syn(0.005)}
     ev = ao.evaluate_system(row, "hall_icp_neutralizer", supplied=sup)
     ev["design_id"] = design_id
     return ev
@@ -223,7 +225,7 @@ def test_full_system_ranking_code_path_with_synthetic_fixtures(small_ctx):
     c = _syn_eval(row, 0.024, 1.5, 29.0, "SYN-C")             # trades with A
     d = _syn_eval(row, 0.010, 1.0, 30.0, "SYN-D")             # violates HC-01 (12 mN) -> excluded
     for ev in (a, b, c, d):
-        assert all(o["status"] == ao.SYNTHETIC_ONLY for k, o in ev["objectives"].items() if k != "life_material")
+        assert all(o["status"] == ao.SYNTHETIC_ONLY for o in ev["objectives"].values())
     r = ao.rank_full_system([a, b, c, d])
     assert r["status"] == ao.RANK_COMPUTED_SYNTHETIC and r["label"] == ao.SYNTHETIC_ONLY
     assert r["layers"][1] == ["SYN-A", "SYN-C"] and r["layers"][2] == ["SYN-B"]
@@ -313,7 +315,9 @@ def test_committed_structure_and_labels(main_doc):
     for w in ao.FORBIDDEN_STATUS_WORDS:
         assert f'"status": "{w}' not in text
     assert all(i["direction"] for i in d["interface_demands"])
-    assert any("PENDING docs/architecture/freeze_candidate/" in i["counterpart"] for i in d["interface_demands"])
+    assert any("docs/architecture/freeze_candidate/" in i["counterpart"] for i in d["interface_demands"])
+    assert not any("PENDING" in i["counterpart"] for i in d["interface_demands"])          # integration pass
+    assert any(x.startswith("INT-01") for x in d["limitations"])
 
 
 def test_committed_pareto_members_and_reproduction(inp):
@@ -358,3 +362,95 @@ def test_hygiene_new_files():
         assert "archengine" not in code
     for name in (JSON_MAIN, JSON_PARETO, JSON_ROBUST):
         json.loads(name.read_text(encoding="utf-8"))
+
+
+# ------------------------------------------------------------------------- consolidated verification round 1
+def _meas(v):
+    return {"value": v, "evidence_class": "measured", "source": "TEST_FIXTURE_NOT_EVIDENCE"}
+
+
+def test_model_derived_thrust_never_meets_hc01_hc02_while_credible_set_empty(small_ctx):
+    """OPT-01: thrust records are routed through the admitted-Hall-member check."""
+    row = _row(small_ctx)
+    sup = {"thrust": {"value": 0.03, "evidence_class": "model-derived", "source": "x"},
+           "thrust_capability": {"value": 0.03, "evidence_class": "model-derived", "source": "x"},
+           "firing_life": {"value": 2e4, "evidence_class": "assumed", "source": "x"},
+           "thermal_margin": {"value": 80.0, "evidence_class": "assumed", "source": "x"}}
+    ev = ao.evaluate_system(row, "hall_icp_neutralizer", supplied=sup)
+    st = {c["id"]: c["status"] for c in ev["constraints"]}
+    assert st["HC-01"] == st["HC-02"] == ao.C_NOT_EVALUATED
+    assert st["HC-06"] == st["HC-07"] == ao.C_MET_PARAMETRIC
+    assert ao.C_MET not in st.values()
+
+
+def _evidence_eval(monkeypatch, row, design_id, cons_rec):
+    monkeypatch.setattr(ao, "hall_response_status", lambda repo=ROOT: {
+        "admitted_members": ["HYPOTHETICAL"], "credible_set": "NON_EMPTY", "p5_n2_v1_decision": None,
+        "sources": []})
+    sup = {"thrust": _meas(0.02), "thrust_capability": _meas(0.03), "spacecraft_drag": _meas(0.002),
+           "bus": _syn_ledgers("hall_icp_neutralizer", 1.0, measured=True),
+           "m_wet": dict(_meas(30.0), all_terms_resolved=True), "Q_reject": _meas(300.0), "I_e_margin": _meas(1.0),
+           "thermal_margin": cons_rec(60.0), "firing_life": cons_rec(16000.0), "life_material": _meas(1.0),
+           "drag_intake_max": _meas(0.005)}
+    ev = ao.evaluate_system(row, "hall_icp_neutralizer", supplied=sup)
+    ev["design_id"] = design_id
+    return ev
+
+
+def test_assumed_or_synthetic_constraint_values_never_admit_to_evidence_ranking(monkeypatch, small_ctx):
+    """OPT-01 / SW-01: HC-06 / HC-07 on assumed values are not met; on synthetic values the ranking refuses MIXED."""
+    row = _row(small_ctx)
+    a = _evidence_eval(monkeypatch, row, "A", lambda v: {"value": v, "evidence_class": "assumed", "source": "x"})
+    st = {c["id"]: c["status"] for c in a["constraints"]}
+    assert st["HC-06"] == st["HC-07"] == ao.C_MET_PARAMETRIC
+    assert {v for k, v in st.items() if k not in ("HC-06", "HC-07")} == {ao.C_MET}
+    r = ao.rank_full_system([a])
+    assert r["status"] == ao.RANK_REFUSED_NO_FEASIBLE
+    s = _evidence_eval(monkeypatch, row, "S", _syn)
+    assert ao.rank_full_system([s])["status"] == ao.RANK_REFUSED_MIXED
+
+
+def test_ranking_refuses_while_life_material_not_evaluated(monkeypatch, small_ctx):
+    """OPT-02: life / material is a ranking gate."""
+    row = _row(small_ctx)
+    a = _syn_eval(row, 0.020, 1.0, 30.0, "SYN-A")
+    a["objectives"]["life_material"] = ao.life_material_indicators()
+    r = ao.rank_full_system([a])
+    assert r["status"] == ao.RANK_REFUSED_INCOMPLETE and r["missing_counts"] == {"life_material": 1}
+
+
+def test_ranking_refuses_unlabelled_or_parametric_upstream_objectives(small_ctx):
+    """OPT-03: upstream objectives need a status; parametric ones never enter an evidence or synthetic ranking."""
+    row = _row(small_ctx)
+    a = _syn_eval(row, 0.020, 1.0, 30.0, "SYN-A")
+    b = _syn_eval(row, 0.020, 1.0, 30.0, "SYN-B")
+    a["upstream"], b["upstream"] = {"P_compressor_el_max_W": 10.0}, {"P_compressor_el_max_W": 5.0}
+    r = ao.rank_full_system([a, b], upstream_objectives=["P_compressor_el_max_W"])
+    assert r["status"] == ao.RANK_REFUSED_PARAMETRIC_UPSTREAM
+    a["upstream"] = {"P_compressor_el_max_W": {"value": 10.0, "status": ao.PARAMETRIC_ONLY}}
+    b["upstream"] = {"P_compressor_el_max_W": {"value": 5.0, "status": ao.PARAMETRIC_ONLY}}
+    assert ao.rank_full_system([a, b], upstream_objectives=["P_compressor_el_max_W"])["status"] == \
+        ao.RANK_REFUSED_PARAMETRIC_UPSTREAM
+    a["upstream"] = {"P_compressor_el_max_W": {"value": 10.0, "status": ao.SYNTHETIC_ONLY}}
+    b["upstream"] = {"P_compressor_el_max_W": {"value": 5.0, "status": ao.SYNTHETIC_ONLY}}
+    r = ao.rank_full_system([a, b], upstream_objectives=["P_compressor_el_max_W"])
+    assert r["status"] == ao.RANK_COMPUTED_SYNTHETIC and r["layers"] == {1: ["SYN-B"], 2: ["SYN-A"]}
+
+
+def test_elasticity_flip_flags_knife_edge_against_nominal(monkeypatch, inp):
+    """OPT-06: both perturbations infeasible around a feasible nominal point is a status flip (was silently skipped)."""
+    cid = next(iter(inp.designs))
+    defaults = pf.cs.module_defaults()
+    fixed = [k for k, v in pf.cs.FIELD_ROLES.items() if v[0] == pf.cs.FIXED]
+
+    def fake_eval(states, fc, plant, pl, P, side=None):
+        nominal = all(getattr(plant.comp, k) == defaults[k] for k in fixed)
+        one = np.array([1.0])
+        return {"all_ok": np.array([nominal]), "mdot_min": one, "P_el_max": one, "m_comp_max": one}
+    monkeypatch.setattr(ro, "_state_eval", fake_eval)
+    sc = next(iter({k[1] for k in inp.records}))
+    cand_id = next(k[0] for k in inp.records if k[1] == sc)
+    cand = {"compressor": cid, "V_m3": 0.01, "filter": next(iter(inp.filters)), "candidate": cand_id,
+            "P_set_Pa": 0.01}
+    out = ro.compressor_elasticities(inp, cand, [sc])
+    assert out and all(v["status_flip_within_step"] for v in out.values())

@@ -284,7 +284,8 @@ def test_record_content():
     assert {"F2 <- F1", "F2 -> F1", "F2 -> F3", "F2 <- F3", "F2 <-> F4"} <= dirs
     for x in d["interface_demands"]:
         if "F1" in x["direction"] or "F3" in x["direction"]:
-            assert x["counterpart"].startswith("PENDING")
+            assert x["counterpart"].startswith("abep_sim/design/")      # integration pass: real paths + record ids
+        assert "PENDING" not in x["counterpart"]
     statuses = []
 
     def walk(o):

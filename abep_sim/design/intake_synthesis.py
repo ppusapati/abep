@@ -89,14 +89,55 @@ REFERENCES = {
 # --------------------------------------------------------------------------------------------------------------------
 # orbit states
 # --------------------------------------------------------------------------------------------------------------------
+class IntakeInputError(ValueError):
+    """An F1 evaluation input is outside the supported domain (refused, never repaired or silently remapped)."""
+
+
+def validate_point(L_over_d, phi, alpha, theta_deg, scattering, species) -> None:
+    """Domain of the F1 evaluator (SW-04): scattering in KERNELS (intake_tpmc treats any other string as Maxwell, so an
+    unknown kernel would be a silent fallback, rule 3), species in SPECIES, finite L/d > 0, 0 < phi <= 1,
+    0 <= alpha <= 1, finite |theta| < 90 deg."""
+    if scattering not in KERNELS:
+        raise IntakeInputError(f"scattering kernel {scattering!r} not in {KERNELS}")
+    if species not in SPECIES:
+        raise IntakeInputError(f"species {species!r} not in {SPECIES}")
+
+    def _f(name, v):
+        if isinstance(v, bool) or not isinstance(v, (int, float, np.floating, np.integer)) or \
+                not math.isfinite(float(v)):
+            raise IntakeInputError(f"{name}={v!r} must be a finite number")
+        return float(v)
+    if not _f("L_over_d", L_over_d) > 0.0:
+        raise IntakeInputError(f"L_over_d={L_over_d!r} must be > 0")
+    if not 0.0 < _f("phi", phi) <= 1.0:
+        raise IntakeInputError(f"phi={phi!r} must be in (0, 1]")
+    if not 0.0 <= _f("alpha", alpha) <= 1.0:
+        raise IntakeInputError(f"alpha={alpha!r} must be in [0, 1]")
+    if not abs(_f("theta_deg", theta_deg)) < 90.0:
+        raise IntakeInputError(f"theta_deg={theta_deg!r} must satisfy |theta| < 90")
+
+
 @dataclass(frozen=True)
 class OrbitState:
     alt_km: float
     f107: float
 
+    def __post_init__(self):
+        for k in ("alt_km", "f107"):
+            v = getattr(self, k)
+            if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(float(v)) or \
+                    not float(v) > 0.0:
+                raise IntakeInputError(f"OrbitState.{k}={v!r} must be finite and > 0")
+
     @property
     def id(self) -> str:
-        return f"h{int(round(self.alt_km))}_f{int(round(self.f107))}"
+        """Exact-value identifier (CLAUDE.md rule 5, consolidated verification SW-05): h200_f150 for integer states,
+        h200.4_f150 otherwise, so caches keyed on it are pure functions of the evaluated point."""
+        return f"h{float(self.alt_km):.12g}_f{float(self.f107):.12g}"
+
+    @property
+    def key(self) -> tuple:
+        return (float(self.alt_km), float(self.f107))
 
     def atm(self) -> dict:
         a = atmosphere(float(self.alt_km), float(self.f107))
@@ -255,9 +296,9 @@ class Evaluator:
         self.direct_runs = 0
 
     def atm(self, state: OrbitState) -> dict:
-        if state.id not in self._atm:
-            self._atm[state.id] = state.atm()
-        return self._atm[state.id]
+        if state.key not in self._atm:
+            self._atm[state.key] = state.atm()
+        return self._atm[state.key]
 
     def _cd_se(self, C: float, n: int) -> float:
         if self.cd_rel_sd_at_n is None:
@@ -268,9 +309,10 @@ class Evaluator:
     def direct_core(self, state: OrbitState, L_over_d, alpha, theta_deg, scattering, species, n=None, seed=None):
         """One direct TPMC run at phi = 1 (pure channel response). phi enters intake_response only linearly / not at all
         (eta_c = phi eta_open cos(theta); C_D = phi C_open + (1 - phi) C_solid; CR_passive and K_back phi-independent)."""
+        validate_point(L_over_d, 1.0, alpha, theta_deg, scattering, species)
         n = int(n or self.n_direct)
         seed = stable_seed(state.id, L_over_d, alpha, theta_deg, scattering, species, n, base=self.seed_base) if seed is None else seed
-        key = (state.id, float(L_over_d), float(alpha), float(theta_deg), scattering, species, n, seed)
+        key = (state.key, float(L_over_d), float(alpha), float(theta_deg), scattering, species, n, seed)
         if key not in self._direct_cache:
             atm = self.atm(state)
             g = IntakeGeometry(area_m2=DEFAULT_GEOMETRY.area_m2, d_mm=DEFAULT_GEOMETRY.d_mm, L_over_d=float(L_over_d), phi=1.0)
@@ -281,7 +323,8 @@ class Evaluator:
         return self._direct_cache[key]
 
     def point(self, state: OrbitState, L_over_d, phi, alpha, theta_deg, scattering, species) -> SpeciesPoint:
-        key = (state.id, float(L_over_d), float(phi), float(alpha), float(theta_deg), scattering, species)
+        validate_point(L_over_d, phi, alpha, theta_deg, scattering, species)
+        key = (state.key, float(L_over_d), float(phi), float(alpha), float(theta_deg), scattering, species)
         if key in self._cache:
             return self._cache[key]
         m_s = M_SPECIES[species]
@@ -331,6 +374,16 @@ class GeometryCandidate:
     d_mm: float
     L_over_d: float
     phi: float
+
+    def __post_init__(self):
+        for k in ("area_m2", "d_mm", "L_over_d"):
+            v = getattr(self, k)
+            if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(float(v)) or \
+                    not float(v) > 0.0:
+                raise IntakeInputError(f"GeometryCandidate.{k}={v!r} must be finite and > 0")
+        if isinstance(self.phi, bool) or not isinstance(self.phi, (int, float)) or \
+                not math.isfinite(float(self.phi)) or not 0.0 < float(self.phi) <= 1.0:
+            raise IntakeInputError(f"GeometryCandidate.phi={self.phi!r} must be in (0, 1]")
 
     @property
     def id(self) -> str:
@@ -565,11 +618,22 @@ def pareto_filter(rows: list[dict], objectives=OBJECTIVES, z: float = 2.0) -> di
        DOMINATED                   dominated by at least one row significantly
     Pareto dominance: a dominates b iff a is no worse in every objective and strictly better in at least one. Ties
     (identical vectors) never dominate each other. O(N^2); no scalarisation, no weights, no selection."""
-    feas = [r for r in rows if r.get("feasible")]
+    def _finite_row(r):
+        def _fin(v):
+            try:
+                return v is not None and not isinstance(v, bool) and math.isfinite(float(v))
+            except (TypeError, ValueError):
+                return False
+        return all(_fin(r.get(k)) for k, _s, _u in objectives)
+    # OPT-04: a feasible row with a non-finite objective is NOT_EVALUATED and never enters dominance (fail closed)
+    feas = [r for r in rows if r.get("feasible") and _finite_row(r)]
     status = {}
     for r in rows:
         if not r.get("feasible"):
             status[r["candidate"]] = "INFEASIBLE"
+            continue
+        if not _finite_row(r):
+            status[r["candidate"]] = "NOT_EVALUATED_NON_FINITE_OBJECTIVE"
             continue
         doms = [o for o in feas if o is not r and _dominates(o, r, objectives)]
         if not doms:
@@ -586,7 +650,8 @@ def pareto_filter(rows: list[dict], objectives=OBJECTIVES, z: float = 2.0) -> di
 # --------------------------------------------------------------------------------------------------------------------
 IF_A1_RECORD_SCHEMA = {
     "record": "f1_if_a1_intake_exit_v1",
-    "interface": "IF-A1 intake -> filter (docs/interfaces/UPSTREAM_ICD.md); consumer PENDING abep_sim/design/filter_stage.py (F2)",
+    "interface": "IF-A1 intake -> filter (docs/interfaces/UPSTREAM_ICD.md); consumers abep_sim/design/filter_stage.py "
+                 "(F2-IF-01) and abep_sim/design/plenum_feed.py (F4-ID-01)",
     "plane": "intake exit plane = back face of the channel array (plenum side), upstream of any filter",
     "fields_per_species": {
         "mdot_fwd_kgps": "forward-transmitted (captured) mass flow eta_c,s rho_s V A; the delivered flow when the plenum is "

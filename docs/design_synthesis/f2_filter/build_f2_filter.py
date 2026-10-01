@@ -280,7 +280,8 @@ def concepts() -> list:
 def normalized_inlet(incidence: str) -> fs.InletState:
     return fs.InletState(
         mdot_forward_kgps={s: 1.0 for s in SPECIES}, mdot_back_incident_kgps={s: 0.0 for s in SPECIES},
-        back_incident_basis="normalized demonstration: no downstream incident flux (F4 plenum PENDING); not a state",
+        back_incident_basis="normalized demonstration: no downstream incident flux (the coupled plenum flux is "
+                            "abep_sim/design/plenum_feed.py, F4-ID-03/04); not a state",
         T_gas_K=None, incidence=incidence, knudsen_number=None, label="NORMALIZED_UNIT_INPUT",
         provenance="unit mass flow per species (1 kg/s each) to expose fractions; not an IF-A1 state")
 
@@ -356,32 +357,34 @@ def parameter_template() -> list:
 
 def interface_demands() -> list:
     return [
-        {"id": "F2-IF-01", "direction": "F2 <- F1", "counterpart": "PENDING abep_sim/design/intake_synthesis.py",
+        {"id": "F2-IF-01", "direction": "F2 <- F1", "counterpart": "abep_sim/design/intake_synthesis.py (F1-ID-01; IF-A1 "
+                                                                    "records if_a1_record())",
          "content": "per-species mass flow arriving at the filter inlet face (IF-A1), forward incidence "
                     "(diffuse_thermal | hyperthermal_directed), gas temperature, Knudsen number at the filter (mean "
                     "free path and characteristic dimension), intake exit area, evidence labels",
-         "units": "kg/s; K; -; m^2", "status": "PENDING (F1 lane)"},
-        {"id": "F2-IF-02", "direction": "F2 -> F1", "counterpart": "PENDING abep_sim/design/intake_synthesis.py",
+         "units": "kg/s; K; -; m^2", "status": "PROVIDED BY F1 (F1-ID-01); consumed through F4 (F4-ID-01, F4-ID-03)"},
+        {"id": "F2-IF-02", "direction": "F2 -> F1", "counterpart": "abep_sim/design/intake_synthesis.py (F1-ID-02)",
          "content": "FilterResult.to_f1_record(): per-species gross mass flow returned upstream (forward reflection + "
                     "backflow transmission + upstream conversion products); it changes the intake back-pressure "
                     "and K_back seen by F1", "units": "kg/s", "status": "DEFINED (numbers only when apply is NUMERIC)"},
-        {"id": "F2-IF-03", "direction": "F2 -> F3", "counterpart": "PENDING abep_sim/design/compressor_synthesis.py",
+        {"id": "F2-IF-03", "direction": "F2 -> F3", "counterpart": "abep_sim/design/compressor_synthesis.py (IFD-F3-02)",
          "content": "FilterResult.to_f3_record(): per-species net / gross mass flow at the compressor inlet, "
                     "w_s / x_s, conductance and pressure difference per species, retained mass rate, "
                     "filter_flow_effect_applied, filter mass, labels and overrides (UPSTREAM_ICD IF-A2 fields)",
          "units": "kg/s; -; m^3/s; Pa; kg", "status": "DEFINED (NOT_EVALUATED while any input is TBD)"},
-        {"id": "F2-IF-04", "direction": "F2 <- F3", "counterpart": "PENDING abep_sim/design/compressor_synthesis.py",
+        {"id": "F2-IF-04", "direction": "F2 <- F3", "counterpart": "abep_sim/design/compressor_synthesis.py (IFD-F3-03)",
          "content": "compressor inlet face area, per-species backstreaming flux from the compressor inlet, wear / "
                     "debris emission of the rotor (protection target sputter_wear_products), particulate tolerance "
                     "of the rotor (what the filter must stop)", "units": "m^2; kg/s; -",
          "status": "TBD_AFTER_EVIDENCE"},
-        {"id": "F2-IF-05", "direction": "F2 <-> F4", "counterpart": "PENDING fo_a9_7_f4_plenum_feed (path not "
-                                                                    "assigned in this base)",
+        {"id": "F2-IF-05", "direction": "F2 <-> F4", "counterpart": "abep_sim/design/plenum_feed.py (F4-ID-03, "
+                                                                    "F4-ID-04)",
          "content": "FilterStage.backflow_coupling(): per unit mass flow arriving at the outlet face, fractions to "
                     "upstream / reflected to plenum / captured / converted, and C_s; F4 returns the downstream "
                     "incident flux per species (InletState.mdot_back_incident_kgps, required, never defaulted)",
          "units": "-; m^3/s; kg/s", "status": "DEFINED (numbers only when the records are usable)"},
-        {"id": "F2-IF-06", "direction": "F2 -> F7", "counterpart": "PENDING fo_a9_7_f7_f8_coupled_optimizer",
+        {"id": "F2-IF-06", "direction": "F2 -> F7", "counterpart": "abep_sim/design/architecture_optimizer.py (F78-ID-03, "
+                                                                  "context axis)",
          "content": "x_filter design-vector component: concept id + geometry design variables; result labels "
                     "propagate (a sensitivity label is never a design value)", "units": "-", "status": "DEFINED"},
         {"id": "F2-IF-07", "direction": "F2 -> mass budget",
@@ -403,7 +406,7 @@ def interface_demands() -> list:
          "content": "this design-layer interface supplies a separate filter element with its own transmission; "
                     "the production path (intake.collection) is unchanged, so G-01 stays open there (moving it is a "
                     "model change: UPSTREAM_ICD open question 1)", "units": "-", "status": "DEFINED"},
-        {"id": "F2-IF-11", "direction": "F2 -> F0", "counterpart": "PENDING docs/performance/",
+        {"id": "F2-IF-11", "direction": "F2 -> F0", "counterpart": "docs/performance/PERFORMANCE_BASELINE_98fbbb9.json",
          "content": "the filter stage is O(n_species) arithmetic; not a profiling hotspot, not a Rust candidate",
          "units": "-", "status": "DEFINED"},
     ]

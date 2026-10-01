@@ -150,7 +150,7 @@ Non-dominated groups (A m^2, L/d, phi; d values tie, F1-02), listed in grid orde
 - **F1-09** (assumed): m_intake is TBD for every candidate (wall thickness, coating and support fraction have no evidence). Under the labelled PARAMETRIC_SENSITIVITY_CASE SC-CODE-DEFAULT it spans 0.66-29.85 kg over the grid. Mass dominance uses (wall area, frontal area), which implies mass dominance for ANY positive structural parameters. Handling: owner question F1Q-02.
 
 ## IF-A1 record for F2 (filter stage)
-Record `f1_if_a1_intake_exit_v1`; IF-A1 intake -> filter (docs/interfaces/UPSTREAM_ICD.md); consumer PENDING abep_sim/design/filter_stage.py (F2). Plane: intake exit plane = back face of the channel array (plenum side), upstream of any filter.
+Record `f1_if_a1_intake_exit_v1`; IF-A1 intake -> filter (docs/interfaces/UPSTREAM_ICD.md); consumers abep_sim/design/filter_stage.py (F2-IF-01) and abep_sim/design/plenum_feed.py (F4-ID-01). Plane: intake exit plane = back face of the channel array (plenum side), upstream of any filter.
 - `mdot_fwd_kgps`: forward-transmitted (captured) mass flow eta_c,s rho_s V A; the delivered flow when the plenum is pumped to p_s << p_passive,s (UPPER BOUND on net flow)
 - `mdot_fwd_se_kgps`: TPMC statistical standard error
 - `p_passive_Pa`: zero-net-flow (stagnation) partial pressure n_s,inf CR_passive,s k T; UPPER BOUND on the plenum partial pressure
@@ -164,16 +164,16 @@ Record `f1_if_a1_intake_exit_v1`; IF-A1 intake -> filter (docs/interfaces/UPSTRE
 ## Interface demands
 | id | direction | counterpart | status | content |
 |---|---|---|---|---|
-| F1-ID-01 | F1 -> F2 | PENDING abep_sim/design/filter_stage.py | PROVIDED | IF-A1 record per species (mdot_fwd, p_passive, T, x, K_back) at the intake exit plane; per unit area in if_a1_interface.records_per_unit_area, absolute via if_a1_record() |
-| F1-ID-02 | F2 -> F1 | PENDING abep_sim/design/filter_stage.py | DEMANDED | per-species forward and backflow transmission of the filter and its conductance: the filter changes the plenum backflow (effective K_back) and so CR_passive / p_passive seen by the compressor; F1 values are filter-less |
-| F1-ID-03 | F1 -> F3 | PENDING abep_sim/design/compressor_synthesis.py | PROVIDED | inlet state candidates (through F2): per-species mdot, p_passive, T_wall, composition; burden p_ref/p_passive per candidate |
-| F1-ID-04 | F3 -> F1 | PENDING abep_sim/design/compressor_synthesis.py | DEMANDED | compressor inlet pressure / pumping speed actually achieved (fixes b = p_plenum/p_passive and the net delivered flow (1 - b) mdot_fwd) |
-| F1-ID-05 | F4 -> F1 | fo_a9_7_f4_plenum_feed (wave B; path not assigned) | DEMANDED | reference feed pressure p_ref and feed temperature (TBD; F1 uses a parametric sweep) |
-| F1-ID-06 | F5 -> F4 -> F1 | PENDING docs/hardware/h1_freeze_candidate/ | DEMANDED | H-1 inlet / plenum interface requirement (mdot_s, P, T, x_s) from which p_ref follows |
-| F1-ID-07 | F1 -> F7/F8 | fo_a9_7_f7_f8_coupled_optimizer (path not assigned) | PROVIDED | x_intake = (A, d, L/d, phi) Pareto sets per scenario, intake-face drag and C_D (reference A), mass proxies, uncertainty axes alpha / kernel / theta / atmosphere |
-| F1-ID-08 | F7 -> F1 | fo_a9_7_f7_f8_coupled_optimizer | DEMANDED | spacecraft frontal area / body drag and AOCS pointing budget (drag closure beyond the intake face; theta range) |
-| F1-ID-09 | F1 <-> F0 | PENDING docs/performance/ | PROVIDED / DEMANDED | workload for profiling: the committed build runs direct TPMC (intake_response) at the counts in direct_runs; F0 measurement decides whether a Rust TPMC kernel is admitted (A9.7 order 1-2) |
-| F1-ID-10 | F1 -> F9 | fo_a9_7_f9_freeze_candidate | PROVIDED | intake area and geometry rows (VALUE | TOLERANCE | EVIDENCE_CLASS | SOURCE | FREEZE_STATUS): none freezable from this lane (alpha, structure, pointing, p_ref TBD) |
+| F1-ID-01 | F1 -> F2 | abep_sim/design/filter_stage.py (F2-IF-01); coupled in abep_sim/design/plenum_feed.py (F4-ID-01, F4-ID-03) | PROVIDED | IF-A1 record per species (mdot_fwd, p_passive, T, x, K_back) at the intake exit plane; per unit area in if_a1_interface.records_per_unit_area, absolute via if_a1_record() |
+| F1-ID-02 | F2 -> F1 | abep_sim/design/filter_stage.py (F2-IF-02) | DEMANDED | per-species forward and backflow transmission of the filter and its conductance: the filter changes the plenum backflow (effective K_back) and so CR_passive / p_passive seen by the compressor; F1 values are filter-less |
+| F1-ID-03 | F1 -> F3 | abep_sim/design/compressor_synthesis.py (IFD-F3-01: the F3 study fronts use the down-selection envelope inlets, not these records); coupled F1 -> F3 in abep_sim/design/plenum_feed.py (F4-ID-01, F4-ID-05) | PROVIDED | inlet state candidates (through F2): per-species mdot, p_passive, T_wall, composition; burden p_ref/p_passive per candidate |
+| F1-ID-04 | F3 -> F1 | abep_sim/design/compressor_synthesis.py (IFD-F3-03); abep_sim/design/plenum_feed.py (F4-ID-02) | DEMANDED | compressor inlet pressure / pumping speed actually achieved (fixes b = p_plenum/p_passive and the net delivered flow (1 - b) mdot_fwd) |
+| F1-ID-05 | F4 -> F1 | abep_sim/design/plenum_feed.py (F4-ID-02) | DEMANDED | reference feed pressure p_ref and feed temperature (TBD; F1 uses a parametric sweep) |
+| F1-ID-06 | F5 -> F4 -> F1 | docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json (IFD-F4-01..05, H1F-IN-04: TBD) | DEMANDED | H-1 inlet / plenum interface requirement (mdot_s, P, T, x_s) from which p_ref follows |
+| F1-ID-07 | F1 -> F7/F8 | abep_sim/design/architecture_optimizer.py (F78-ID-01) | PROVIDED | x_intake = (A, d, L/d, phi) Pareto sets per scenario, intake-face drag and C_D (reference A), mass proxies, uncertainty axes alpha / kernel / theta / atmosphere |
+| F1-ID-08 | F7 -> F1 | abep_sim/design/architecture_optimizer.py (F78-ID-02) | DEMANDED | spacecraft frontal area / body drag and AOCS pointing budget (drag closure beyond the intake face; theta range) |
+| F1-ID-09 | F1 <-> F0 | docs/performance/PERFORMANCE_BASELINE_98fbbb9.json; docs/performance/abep_core/parity_report_v1.json (RUST-ID-03: F1 does not opt in to the Rust backend) | PROVIDED / DEMANDED | workload for profiling: the committed build runs direct TPMC (intake_response) at the counts in direct_runs; F0 measurement decides whether a Rust TPMC kernel is admitted (A9.7 order 1-2) |
+| F1-ID-10 | F1 -> F9 | docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json (F9-ID-01) | PROVIDED | intake area and geometry rows (VALUE | TOLERANCE | EVIDENCE_CLASS | SOURCE | FREEZE_STATUS): none freezable from this lane (alpha, structure, pointing, p_ref TBD) |
 
 ## Open owner questions (new)
 - **F1Q-01** (TBD_OWNER): IntakeSurface recombines species rows by mass fraction although its C_D rows are normalised by the mixture q and CR_passive needs mole weighting (finding F1-01). Authorise a controlled model change (goldens move, HISTORY entry), or keep the production convention and use the species-consistent recombination only in the design-synthesis layer? _Why new:_ new finding of this lane; not covered by DI-1.1..DI-1.12.

@@ -173,3 +173,67 @@ def test_lane_files_hygiene():
     gi = open(os.path.join(ROOT, "abep_core/.gitignore")).read().split()
     assert "target/" in gi
     assert os.path.exists(os.path.join(ROOT, "abep_core/Cargo.lock"))
+
+
+# ------------------------------------------------------------------------- consolidated verification round 1
+def _fake_extension(tmp_path):
+    d = tmp_path / "abep_core"
+    d.mkdir()
+    (d / "abep_core.cpython-311-x86_64-linux-gnu.so").write_bytes(b"not the admitted build")
+    fake = types.ModuleType("abep_core")
+    fake.__file__ = str(d / "__init__.py")
+    for a in TB.RUST_REQUIRED_ATTRS:
+        setattr(fake, a, None)
+    fake.clausing_transmission = lambda *a, **k: 0.25
+    fake.__version__ = "0.0.0"
+    fake.RNG_ALGORITHM = "fake"
+    return fake
+
+
+def test_unadmitted_build_is_refused(monkeypatch, tmp_path):
+    """RUST-01: an importable abep_core whose extension sha256 differs from the parity report is never served."""
+    fake = _fake_extension(tmp_path)
+    monkeypatch.setattr(TB.importlib, "import_module", lambda name: fake)
+    assert TB.rust_available()
+    ok, why = TB.admission_status(fake, "K5_clausing")
+    assert not ok and "sha256" in why
+    rng = np.random.default_rng(0)
+    state = rng.bit_generator.state
+    with pytest.raises(TB.RustBackendNotAdmitted, match="NOT_ADMITTED_BUILD"):
+        TB.clausing_transmission(rng, R, 0.05, 0.5, 350.0, M, n=10, backend="rust")
+    assert rng.bit_generator.state == state            # refused before consuming the caller's stream
+    with TB.parity_campaign_unadmitted():              # only the parity campaign may run an unadmitted build
+        assert TB.clausing_transmission(rng, R, 0.05, 0.5, 350.0, M, n=10, backend="rust") == 0.25
+    assert TB.backend_info()["build_admitted"] is False
+
+
+def test_source_drift_breaks_admission(monkeypatch, tmp_path):
+    """RUST-01: with the recorded extension hash, a changed source still refuses."""
+    fake = _fake_extension(tmp_path)
+    rep = json.load(open(REPORT))
+    monkeypatch.setattr(TB, "extension_sha256", lambda mod: rep["build_provenance"]["extension_sha256"])
+    real = TB._sha256
+    monkeypatch.setattr(TB, "_sha256", lambda p: "0" * 64 if p.endswith("tpmc.rs") else real(p))
+    ok, why = TB.admission_status(fake, "K4_trace")
+    assert not ok and "abep_core/src/tpmc.rs" in why
+
+
+def test_check_fails_on_source_drift(monkeypatch):
+    """RUST-01 / STR-03: --check compares the current sources (and the reference) with the recorded build."""
+    V = _load_verify()
+    real = V.sha256_file
+    monkeypatch.setattr(V, "sha256_file", lambda rel: "0" * 64 if rel.endswith("tpmc.rs") else real(rel))
+    assert V.check(0) == 1
+    assert "abep_sim/intake_tpmc.py" in V.PROVENANCE_SOURCES
+    rep = json.load(open(REPORT))
+    assert "abep_sim/intake_tpmc.py" in rep["build_provenance"]["source_sha256"]
+
+
+def test_div04_max_hits_cap_documented_and_refused_for_rust():
+    """RUST-02: max_hits_cap = 0 runs in the reference; backend='rust' refuses it with a correct message."""
+    v0 = REF._flux_weighted_entry(np.random.default_rng(3), 50, ATM["V"], 0.0, ATM["T"], M)
+    TB.trace_channel(np.random.default_rng(4), v0, R, 0.05, 0.5, 350.0, M, max_hits_cap=0)
+    with pytest.raises(ValueError, match="DIV-04"):
+        TB.trace_channel(np.random.default_rng(4), v0, R, 0.05, 0.5, 350.0, M, max_hits_cap=0, backend="rust")
+    rep = json.load(open(REPORT))
+    assert "DIV-04" in {d["id"] for d in rep["documented_divergence"]}
