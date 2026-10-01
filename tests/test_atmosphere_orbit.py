@@ -93,7 +93,8 @@ def test_existing_orbit_averaged_dataset_unchanged():
 def test_not_wired_into_existing_modules():
     pkg = os.path.join(ROOT, "abep_sim")
     for fn in os.listdir(pkg):
-        if fn.endswith(".py") and fn != "atmosphere_orbit.py":
+        # atmosphere_orbit_v2.py (A9.17 WINDS) is itself repository-only and must import the v1 grid (brief: by import).
+        if fn.endswith(".py") and fn not in ("atmosphere_orbit.py", "atmosphere_orbit_v2.py"):
             assert "atmosphere_orbit" not in open(os.path.join(pkg, fn)).read(), fn
 
 

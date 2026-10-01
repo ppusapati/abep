@@ -105,10 +105,15 @@ def _data_files() -> list[str]:
 
 # Repository-only data (A9.17 DATA_SIZE): never shipped in the wheel/sdist.
 REPO_ONLY_GLOB = "data/atmosphere_msis21_orbit_v1*"
+# A9.17 WINDS: the HWM14-wind atmosphere v2 is repository-only too.
+REPO_ONLY_GLOB_V2 = "data/atmosphere_msis21_hwm14_orbit_v2*"
+REPO_ONLY_GLOBS = (REPO_ONLY_GLOB, REPO_ONLY_GLOB_V2)
+# Modules that are the accessors of repository-only data (they may reference atmosphere_orbit).
+REPO_ONLY_MODULES = ("atmosphere_orbit.py", "atmosphere_orbit_v2.py")
 
 
 def _repo_only(f: str) -> bool:
-    return fnmatch.fnmatchcase(f, REPO_ONLY_GLOB)
+    return any(fnmatch.fnmatchcase(f, g) for g in REPO_ONLY_GLOBS)
 
 
 def test_package_data_covers_abep_sim_data(pyproject):
@@ -128,20 +133,23 @@ def test_orbit_dataset_excluded_from_distribution(pyproject):
     st = pyproject["tool"]["setuptools"]
     globs = st["package-data"]["abep_sim"]
     repo_only = [f for f in _data_files() if _repo_only(f)]
-    assert sorted(repo_only) == ["data/atmosphere_msis21_orbit_v1.csv.gz", "data/atmosphere_msis21_orbit_v1.json",
-                                 "data/atmosphere_msis21_orbit_v1_design_states.json",
-                                 "data/atmosphere_msis21_orbit_v1_design_states_v2.json"], repo_only
+    assert sorted(repo_only) == sorted([
+        "data/atmosphere_msis21_orbit_v1.csv.gz", "data/atmosphere_msis21_orbit_v1.json",
+        "data/atmosphere_msis21_orbit_v1_design_states.json", "data/atmosphere_msis21_orbit_v1_design_states_v2.json",
+        "data/atmosphere_msis21_hwm14_orbit_v2.csv.gz", "data/atmosphere_msis21_hwm14_orbit_v2.disturbance.csv.gz",
+        "data/atmosphere_msis21_hwm14_orbit_v2.json"]), repo_only
     shipped = [f for f in repo_only if any(fnmatch.fnmatchcase(f, g) for g in globs)]
     assert not shipped, f"repository-only files matched by package-data globs: {shipped}"
-    assert REPO_ONLY_GLOB in st["exclude-package-data"]["abep_sim"]
     with open(os.path.join(ROOT, "MANIFEST.in")) as f:
         lines = [ln.split() for ln in f if ln.strip() and not ln.lstrip().startswith("#")]
-    assert ["exclude", "abep_sim/" + REPO_ONLY_GLOB] in lines
+    for g in REPO_ONLY_GLOBS:
+        assert g in st["exclude-package-data"]["abep_sim"], g
+        assert ["exclude", "abep_sim/" + g] in lines, g
     # runtime need check: no other abep_sim module imports the accessor of the excluded data
     pkg = os.path.join(ROOT, "abep_sim")
     for d, _dirs, fns in os.walk(pkg):
         for fn in fns:
-            if fn.endswith(".py") and fn != "atmosphere_orbit.py":
+            if fn.endswith(".py") and fn not in REPO_ONLY_MODULES:
                 with open(os.path.join(d, fn), encoding="utf-8") as fh:
                     assert "atmosphere_orbit" not in fh.read(), fn
 

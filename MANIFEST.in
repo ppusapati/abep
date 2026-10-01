@@ -4,3 +4,5 @@ include README.md requirements-lock.txt
 recursive-include abep_sim/data *.json *.csv *.dat *.md
 # A9.17 DATA_SIZE: the orbit-resolved dataset (atmosphere_msis21_orbit_v1.*) is repository evidence, not distributed.
 exclude abep_sim/data/atmosphere_msis21_orbit_v1*
+# A9.17 WINDS: the HWM14-wind atmosphere v2 (atmosphere_msis21_hwm14_orbit_v2.*) is repository evidence too.
+exclude abep_sim/data/atmosphere_msis21_hwm14_orbit_v2*
