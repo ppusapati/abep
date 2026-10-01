@@ -36,7 +36,7 @@ REQUIRED_SPECIES = ("N+", "N2+", "O+", "O2+")
 ATOMIC_SPECIES = {"N+": "N", "O+": "O"}
 MOLECULAR_SPECIES = ("N2+", "O2+")
 MATERIAL_CLASSES = {"alloy", "coating", "oxide_coating", "element"}
-TOP_KEYS = ("id", "date", "base_commit", "decisions", "read_only_references", "species_required",
+TOP_KEYS = ("id", "date", "base_commit", "screening_guardbands", "decisions", "read_only_references", "species_required",
             "species_context_not_assessed", "reporting_energy_grid_eV", "reporting_energy_grid_note", "sources",
             "atomic_weights", "atomic_numbers", "nifs_table1", "nifs_worked_example", "nifs_formula_reading",
             "nifs_caption_fits", "trim_tables", "apid_fit_params", "q0_matrix", "acquisition_requests", "search_log",
@@ -52,6 +52,13 @@ APID_KEYS = ("id", "projectile", "target", "pdf_page", "lambda", "q", "mu", "eps
 AR_KEYS = ("id", "source", "provides", "lawful_route", "relevant_cells_text", "applies_to")
 # optional keys (allowed but not required); every other key is rejected (fail closed)
 TOP_OPTIONAL = ("purpose",)
+# owner A9.17 screening guardbands (frozen 2026-10-01; values read from the inputs and cross-checked against the decision)
+GUARDBAND_KEYS = ("status", "E_screen_factor", "F_worst", "decision", "use_in_this_register", "scope",
+                  "provenance_history", "first_build")
+GUARDBAND_DECISION_KEYS = ("id", "decision_key", "answer", "json", "json_sha256", "verbatim_md", "verbatim_md_sha256",
+                           "verbatim_quote")
+GUARDBAND_FIRST_BUILD_KEYS = ("commit", "inputs_sha256", "register_json_sha256", "register_md_sha256",
+                              "screening_outcomes")
 SOURCE_OPTIONAL = ("abstract_statement", "same_file_as", "scope_note")
 AR_OPTIONAL = ("priority_note",)
 TRIM_KEYS = ("id", "projectile", "target", "locator", "header", "angles_deg", "rows", "flags")
@@ -71,8 +78,8 @@ NUMERIC_BLOCKS = ("atomic_weights", "nifs_table1", "nifs_worked_example", "nifs_
 # owner A9.12 S5.11 (P4-OQ-02) Q0 matrix candidates, as registered in the read-only P4 register
 Q0_CANDIDATES = ("CAND-01", "CAND-02A", "CAND-02B", "CAND-02C", "CAND-02D", "CAND-03A", "CAND-03B", "CAND-03C",
                  "CAND-04", "CAND-05", "CAND-06", "CAND-07", "CAND-08", "CAND-09")
-APID_NEAR_THRESHOLD = 1.1      # points with E < 1.1 Eth are reported but excluded from the reproduction gate
-APID_REPRO_TOL_FACTOR = 1.25   # printed average fit errors are 7-15 %; a larger factor means a transcription / reading error
+# The APID-reproduction screen factors (E_screen = E_screen_factor x Eth; F_worst) are NOT builder constants: they are the
+# owner A9.17 screening guardbands in inputs["screening_guardbands"] (see verify_guardbands).
 IDENTITY_W_TOL = 0.005         # captions print W as k * Us; Table 1 prints W to two decimals
 TOL_WORKED_EXAMPLE = 0.02      # relative, see nifs_worked_example.note
 TOL_MASS_RATIO = 0.006         # captions print A to two decimals
@@ -180,6 +187,40 @@ def validate_inputs(d: dict) -> None:
             raise ValueError(f"projectile {proj}: atomic weight / number missing")
 
 
+def verify_guardbands(d: dict) -> dict:
+    """Owner A9.17 (decision key SPUTTER): E_screen = 1.10 x E_threshold, F_worst = 1.25, frozen prospectively as
+    screening / down-selection guardbands. The values in the inputs must equal the decision file's owner_supplied_values,
+    and the decision json / verbatim md must match their pinned sha256 (decisions are immutable)."""
+    g = d["screening_guardbands"]
+    _require(g, GUARDBAND_KEYS, "screening_guardbands")
+    _require(g["decision"], GUARDBAND_DECISION_KEYS, "screening_guardbands.decision")
+    _require(g["first_build"], GUARDBAND_FIRST_BUILD_KEYS, "screening_guardbands.first_build")
+    if g["status"] != "OWNER_DEFINED_SCREENING_GUARDBANDS":
+        raise ValueError(f"screening_guardbands.status {g['status']!r} != OWNER_DEFINED_SCREENING_GUARDBANDS")
+    dec = g["decision"]
+    for key, rel in (("json_sha256", dec["json"]), ("verbatim_md_sha256", dec["verbatim_md"])):
+        p = ROOT / rel
+        if not p.is_file():
+            raise ValueError(f"screening_guardbands: decision file missing: {rel}")
+        got = _sha256(p)
+        if got != dec[key]:
+            raise ValueError(f"screening_guardbands: {rel} sha256 {got} != pinned {dec[key]} (decisions are immutable)")
+    od = json.loads((ROOT / dec["json"]).read_text(encoding="utf-8"))
+    if od["decisions"][dec["decision_key"]]["answer"] != dec["answer"]:
+        raise ValueError("screening_guardbands: decision answer does not match the owner decision file")
+    osv = od["owner_supplied_values"]
+    for k in ("E_screen_factor", "F_worst"):
+        v = g[k]
+        if not (_finite_nonneg(v) and v > 0) or v != osv[k]:
+            raise ValueError(f"screening_guardbands.{k} = {v!r} differs from the owner-supplied value {osv[k]!r} "
+                             f"({dec['json']}); the guardbands are owner constants, never lane-chosen")
+    def norm(t: str) -> str:   # the verbatim record wraps lines; compare whitespace-normalised
+        return " ".join(t.split())
+    if norm(dec["verbatim_quote"]) not in norm((ROOT / dec["verbatim_md"]).read_text(encoding="utf-8")):
+        raise ValueError("screening_guardbands: verbatim_quote not found in the verbatim decision record")
+    return g
+
+
 def verify_decision_pins(d: dict) -> list:
     out = []
     for dec in d["decisions"]:
@@ -255,6 +296,8 @@ def _r(x: float, n: int = 4):
 
 def build(d: dict) -> dict:
     decisions = verify_decision_pins(d)
+    gb = verify_guardbands(d)
+    e_screen, f_worst = gb["E_screen_factor"], gb["F_worst"]
     aw = d["atomic_weights"]["values"]
     zn = d["atomic_numbers"]
     t1 = d["nifs_table1"]["rows"]
@@ -296,7 +339,9 @@ def build(d: dict) -> dict:
         worst = max(worst, abs(a - row["A"]))
         if abs(a - row["A"]) > TOL_MASS_RATIO:
             raise ValueError(f"{row['id']}: M2/M1 {a:.4f} disagrees with caption A {row['A']}")
-    checks.append({"id": "CHK-MASS-RATIOS", "what": "CIAAW atomic weights vs caption A = M2/M1 (8 captions)",
+    n_cap = len(d["nifs_caption_fits"]["rows"])
+    checks.append({"id": "CHK-MASS-RATIOS",
+                   "what": f"CIAAW atomic weights vs caption A = M2/M1 ({n_cap} caption{'s' if n_cap != 1 else ''})",
                    "max_abs_difference": _r(worst, 3), "tolerance": TOL_MASS_RATIO, "pass": True})
 
     records = []
@@ -425,12 +470,12 @@ def build(d: dict) -> dict:
                 if r[1] and row["Eth_eV"] < r[0] <= row["Emax_eV"] and r[0] <= 1000:
                     y = apid_fit(r[0], row["lambda"], row["q"], row["mu"], row["eps_L_per_eV"], row["Eth_eV"])
                     pts.append({"E_eV": r[0], "TRIM_SP": r[1], "fit": _r(y), "ratio": _r(y / r[1], 3),
-                                "near_threshold": r[0] < APID_NEAR_THRESHOLD * row["Eth_eV"]})
+                                "near_threshold": r[0] < e_screen * row["Eth_eV"]})
         worst_all = _worst_factor(pts)
         worst_away = _worst_factor([p for p in pts if not p["near_threshold"]])
-        if worst_away is not None and worst_away > APID_REPRO_TOL_FACTOR:
+        if worst_away is not None and worst_away > f_worst:
             raise ValueError(f"{row['id']}: printed APID fit does not reproduce TRIM.SP away from threshold "
-                             f"(worst factor {worst_away:.3f} > {APID_REPRO_TOL_FACTOR}); transcription or formula error")
+                             f"(worst factor {worst_away:.3f} > F_worst {f_worst}); transcription or formula error")
         apid_rows.append({"id": row["id"], "projectile": row["projectile"] + "+", "target": row["target"],
                           "parameters_as_printed": {k: row[k] for k in ("lambda", "q", "mu", "eps_L_per_eV", "Eth_eV",
                                                                          "avg_error_pct", "Emax_eV")},
@@ -442,12 +487,36 @@ def build(d: dict) -> dict:
                           "status": "NOT_USED_NUMERICALLY",
                           "status_reason": "the fit is an analytic fit to TRIM.SP calculated points (source comment); it adds no evidence independent of the TRIM.SP calculations, which are carried as records where transcribed"})
     checks.append({"id": "CHK-APID-REPRODUCTION",
-                   "what": f"IAEA APID 7B fit formula (report p. 18, PDF p. 20) with the printed parameters vs the TRIM.SP points the fits were made to (<= 1 keV); gate: worst factor <= {APID_REPRO_TOL_FACTOR} for E >= {APID_NEAR_THRESHOLD} Eth",
+                   "what": f"IAEA APID 7B fit formula (report p. 18, PDF p. 20) with the printed parameters vs the TRIM.SP points the fits were made to (<= 1 keV); gate: worst factor <= {f_worst:g} for E >= {e_screen:g} Eth",
+                   "guardbands": {"E_screen_factor": e_screen, "F_worst": f_worst,
+                                  "status": gb["status"], "decision": f"{gb['decision']['id']} {gb['decision']['decision_key']}"},
                    "rows": [{"id": r["id"], "worst_factor_all_points": r["worst_factor_all_points"],
                              "worst_factor_E_ge_1p1_Eth": r["worst_factor_E_ge_1p1_Eth"],
                              "reproduction": r["reproduction"], "status": r["status"]} for r in apid_rows],
                    "reading": "the printed fits reproduce the TRIM.SP points they were fitted to, consistent with the printed average errors, except within a few eV of the fitted threshold (fitted Eth slightly above the TRIM.SP onset); they are still not evaluated as priors because they carry no information beyond the TRIM.SP calculations",
                    "pass": True})
+
+    # regenerated screening outcomes vs the first (non-pre-registered) build: reported, never acted on
+    fb = gb["first_build"]["screening_outcomes"]
+    now_rows = [{"id": r["id"], "reproduction": r["reproduction"],
+                 "excluded_below_E_screen_eV": [p["E_eV"] for p in r["reproduction_check_vs_TRIM_SP"] if p["near_threshold"]],
+                 "worst_factor_E_ge_E_screen": r["worst_factor_E_ge_1p1_Eth"]} for r in apid_rows]
+    fb_by = {r["id"]: r for r in fb["rows"]}
+    now_by = {r["id"]: r for r in now_rows}
+    diffs = []
+    for rid in sorted(set(fb_by) | set(now_by)):
+        if fb_by.get(rid) != now_by.get(rid):
+            diffs.append({"id": rid, "first_build": fb_by.get(rid), "regenerated": now_by.get(rid)})
+    if fb["chk_apid_reproduction_pass"] is not True:
+        diffs.append({"id": "CHK-APID-REPRODUCTION.pass", "first_build": fb["chk_apid_reproduction_pass"],
+                      "regenerated": True})
+    screening_comparison = {
+        "first_build_commit": gb["first_build"]["commit"],
+        "first_build_register_json_sha256": gb["first_build"]["register_json_sha256"],
+        "rows_compared": len(now_rows),
+        "differences": diffs,
+        "result": "IDENTICAL" if not diffs else "DIFFERS",
+        "note": "reported only; no factor, transcription or status is adjusted because a row or material passes or fails (A9.17)"}
 
     # coverage matrix
     rec_by_el = {}
@@ -524,7 +593,7 @@ def build(d: dict) -> dict:
 
     reg = {
         "id": "sputter_yields_v1",
-        "version": "1.0",
+        "version": "1.1",
         "date": d["date"],
         "base_commit": d["base_commit"],
         "generated_by": REL + "/build_sputter_yields_v1.py (--check reproduces JSON and MD exactly) from " + REL + "/sputter_yield_inputs_v1.json",
@@ -534,6 +603,14 @@ def build(d: dict) -> dict:
         "status": "EVIDENCE REGISTER ONLY. Not wired into any simulator module. No alloy or coating sputter yield exists in this register; no molecular-ion (N2+, O2+) number exists in this register. Every numeric yield is an elemental-target literature or semi-empirical value usable only as a prior bound / for test-matrix selection / comparison / model initialisation (S5.13), never as a candidate value, and never as a CR-04 recession or life input.",
         "evidence_policy": "docs/EVIDENCE.md (CLAUDE.md rules 6, 10): evidence_level = strength / proximity of the source (1-7); evidence_class = quantity type; evaluation of a published formula does not raise the level",
         "owner_decisions": decisions,
+        "screening_guardbands": {
+            "status": gb["status"], "E_screen_factor": e_screen, "F_worst": f_worst,
+            "definition": f"E_screen = {e_screen:g} x E_threshold; F_worst = {f_worst:g}",
+            "decision": gb["decision"], "use_in_this_register": gb["use_in_this_register"], "scope": gb["scope"],
+            "provenance_history": gb["provenance_history"],
+            "preregistration_status": "FIRST_BUILD_NOT_PREREGISTERED__THIS_REGENERATION_PROSPECTIVE",
+            "first_build": {k: v for k, v in gb["first_build"].items() if k != "screening_outcomes"},
+            "regenerated_vs_first_build": screening_comparison},
         "read_only_references": d["read_only_references"],
         "hard_statements": [
             "NO_SILENT_SUBSTITUTION: no record in this register is an alloy or coating value; coverage cells carry candidate_specific_value = null and status NO_CANDIDATE_SPECIFIC_DATA for every Q0 candidate and every required species (owner S5.13).",
@@ -541,7 +618,8 @@ def build(d: dict) -> dict:
             f"REACTIVE_PROJECTILES: for N and/or O on {', '.join(fit_els)} the source compilation had to refit the surface binding energy (best-fit Us {us_span} the Table 1 value); generic Table-1 evaluations for elements without N/O data ({', '.join(no_data_els)}) are unvalidated for these projectiles (evidence level 6).",
             "CHEMICAL_EROSION: for O on carbon (isotropic graphite control) physical-sputtering values are a lower bound only.",
             "NO_ENERGY_DOMAIN: the reporting grid is a tabulation grid, not a sheath energy; CR-04 'sheath_energy_range' is not registered.",
-            "NO_ACCEPTANCE: thresholds are set at LOCK-2 (S5.12); this register sets none."],
+            "NO_ACCEPTANCE: thresholds are set at LOCK-2 (S5.12); this register sets none.",
+            f"SCREENING_GUARDBANDS_ONLY: E_screen = {e_screen:g} x E_threshold and F_worst = {f_worst:g} are owner-defined screening / down-selection guardbands (A9.17, {gb['decision']['json']} sha256 {gb['decision']['json_sha256'][:12]}..., key {gb['decision']['decision_key']}); never P4 material-acceptance, lifetime or qualification thresholds (S5.12 governs those). The first build that used these values (commit {gb['first_build']['commit'][:7]}) chose them after seeing the data and is NOT pre-registered evidence; this regeneration applies them prospectively."],
         "species_required": list(REQUIRED_SPECIES),
         "species_context_not_assessed": d["species_context_not_assessed"],
         "reporting_energy_grid_eV": grid,
@@ -598,6 +676,18 @@ def render_md(reg: dict) -> str:
           f"questions: {', '.join(dcs['question_ids'])}.")
         for ap in dcs["applied"]:
             a(f"  - {ap}")
+    a("")
+    g = reg["screening_guardbands"]
+    a(f"- **{g['decision']['id']}** `{g['decision']['json']}` (sha256 `{g['decision']['json_sha256']}`), verbatim "
+      f"`{g['decision']['verbatim_md']}`; decision key {g['decision']['decision_key']} = {g['decision']['answer']}.")
+    a(f"  - Owner-defined screening guardbands ({g['status']}): {g['definition']}.")
+    for k, v in g["use_in_this_register"].items():
+        a(f"  - {k}: {v}.")
+    a(f"  - Scope: {g['scope']}")
+    a(f"  - Pre-registration: {g['provenance_history']}")
+    cmp_ = g["regenerated_vs_first_build"]
+    a(f"  - Regenerated vs first build (`{cmp_['first_build_commit'][:7]}`): {cmp_['result']} over {cmp_['rows_compared']} "
+      f"APID rows ({len(cmp_['differences'])} differences); {cmp_['note']}.")
     a("")
     a("Read-only references: " + "; ".join(f"`{r['path']}` (sha256 at base `{r['sha256_at_base_commit'][:12]}...`)"
                                          for r in reg["read_only_references"]) + ".")
@@ -684,7 +774,7 @@ def render_md(reg: dict) -> str:
             a(f"- **{c['id']}**: " + "; ".join(f"{p['combo']} {p['E_eV']} eV: " + ("YT below its threshold, TRIM " + _fmt(p['TRIM_SP']) if p["YT_below_formula_threshold"] else f"YT/TRIM {p['YT_over_TRIM']}") for p in c["points"]) + f". {c['reading']}.")
         elif c["id"] == "CHK-APID-REPRODUCTION":
             a(f"- **{c['id']}** ({c['what']}): " + "; ".join(
-                f"{r['id']} {r['reproduction']}, worst factor {_fmt(r['worst_factor_E_ge_1p1_Eth'])} for E >= 1.1 Eth "
+                f"{r['id']} {r['reproduction']}, worst factor {_fmt(r['worst_factor_E_ge_1p1_Eth'])} for E >= {c['guardbands']['E_screen_factor']:g} Eth "
                 f"({_fmt(r['worst_factor_all_points'])} incl. near-threshold points), {r['status']}" for r in c["rows"]) + f". {c['reading']}.")
     a("")
     a("IAEA APID 7B printed comments (qualitative evidence carried):")

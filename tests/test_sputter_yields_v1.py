@@ -8,6 +8,7 @@ numbers, and missing inputs raise.
 from __future__ import annotations
 
 import copy
+import hashlib
 import importlib.util
 import json
 import math
@@ -239,7 +240,7 @@ def test_apid_register_statuses_true(reg):
         assert r["status"] == "NOT_USED_NUMERICALLY" and "TRIM.SP" in r["status_reason"]
         if r["reproduction_check_vs_TRIM_SP"]:
             assert r["reproduction"] == "REPRODUCED_AWAY_FROM_THRESHOLD"
-            assert r["worst_factor_E_ge_1p1_Eth"] <= 1.25
+            assert r["worst_factor_E_ge_1p1_Eth"] <= reg["screening_guardbands"]["F_worst"]
     chk = next(c for c in reg["consistency_checks"] if c["id"] == "CHK-APID-REPRODUCTION")
     assert chk["pass"] is True
 
@@ -309,3 +310,89 @@ def test_generic_vs_fit_excludes_identity_rows(reg):
     assert chk["ratio_min"] > 1.0
     gen = next(r for r in reg["records"] if r["id"] == "YT-GEN-O-C")
     assert gen["has_combination_specific_fit"] is False and gen["caption_uses_table1_parameters"] is True
+
+
+# ---------------------------------------------------------------- A9.17 owner screening guardbands (2026-10-01)
+
+A917_JSON = ROOT / "docs" / "decisions" / "OD_2026_10_01_A9_17_data_artifact_owner_decisions.json"
+
+
+def test_guardbands_are_the_owner_values(b, inputs, reg):
+    """A9.17 SPUTTER: E_screen = 1.10 x E_threshold and F_worst = 1.25 are owner constants read from the inputs and
+    cross-checked against the decision file; screening only, first build not pre-registered."""
+    od = json.loads(A917_JSON.read_text(encoding="utf-8"))
+    g = inputs["screening_guardbands"]
+    assert g["E_screen_factor"] == od["owner_supplied_values"]["E_screen_factor"] == 1.1
+    assert g["F_worst"] == od["owner_supplied_values"]["F_worst"] == 1.25
+    assert g["decision"]["decision_key"] == "SPUTTER"
+    assert od["decisions"]["SPUTTER"]["answer"] == g["decision"]["answer"]
+    assert b.verify_guardbands(inputs) is g
+    assert not hasattr(b, "APID_NEAR_THRESHOLD") and not hasattr(b, "APID_REPRO_TOL_FACTOR")
+    rg = reg["screening_guardbands"]
+    assert rg["status"] == "OWNER_DEFINED_SCREENING_GUARDBANDS"
+    assert rg["preregistration_status"] == "FIRST_BUILD_NOT_PREREGISTERED__THIS_REGENERATION_PROSPECTIVE"
+    assert "NOT pre-registered" in rg["provenance_history"]
+    for word in ("acceptance", "lifetime", "qualification", "S5.12"):
+        assert word in rg["scope"]
+    assert any(h.startswith("SCREENING_GUARDBANDS_ONLY") for h in reg["hard_statements"])
+    chk = next(c for c in reg["consistency_checks"] if c["id"] == "CHK-APID-REPRODUCTION")
+    assert chk["guardbands"]["E_screen_factor"] == 1.1 and chk["guardbands"]["F_worst"] == 1.25
+
+
+def test_guardband_inputs_byte_identical_except_provenance(inputs):
+    """A9.17: the regeneration uses unchanged source data. Removing the screening_guardbands block (the only addition)
+    restores the first-build inputs byte for byte."""
+    lines = INP.read_text(encoding="utf-8").splitlines(keepends=True)
+    start = lines.index(' "screening_guardbands": {\n')
+    end = lines.index(" },\n", start)
+    stripped = "".join(lines[:start] + lines[end + 1:])
+    first = inputs["screening_guardbands"]["first_build"]
+    assert hashlib.sha256(stripped.encode("utf-8")).hexdigest() == first["inputs_sha256"]
+
+
+def test_regenerated_screening_outcomes_identical_to_first_build(reg, inputs):
+    """A9.17: the same values give the same screening outcomes; reported, never acted on."""
+    cmp_ = reg["screening_guardbands"]["regenerated_vs_first_build"]
+    assert cmp_["result"] == "IDENTICAL" and cmp_["differences"] == []
+    assert cmp_["rows_compared"] == len(inputs["apid_fit_params"]["rows"])
+    assert cmp_["first_build_register_json_sha256"] == inputs["screening_guardbands"]["first_build"]["register_json_sha256"]
+
+
+@pytest.mark.parametrize("key,value", [("E_screen_factor", 1.2), ("F_worst", 1.5), ("F_worst", float("nan")),
+                                       ("E_screen_factor", True)])
+def test_guardbands_cannot_be_lane_changed(b, inputs, key, value):
+    bad = copy.deepcopy(inputs)
+    bad["screening_guardbands"][key] = value
+    with pytest.raises(ValueError, match="owner"):
+        b.verify_guardbands(bad)
+
+
+def test_guardband_decision_pin_and_fields_enforced(b, inputs):
+    bad = copy.deepcopy(inputs)
+    bad["screening_guardbands"]["decision"]["json_sha256"] = "0" * 64
+    with pytest.raises(ValueError, match="immutable"):
+        b.verify_guardbands(bad)
+    bad = copy.deepcopy(inputs)
+    bad["screening_guardbands"]["typo_field"] = 1
+    with pytest.raises(ValueError, match="unknown field"):
+        b.verify_guardbands(bad)
+    bad = copy.deepcopy(inputs)
+    del bad["screening_guardbands"]
+    with pytest.raises(ValueError, match="missing required"):
+        b.validate_inputs(bad)
+    bad = copy.deepcopy(inputs)
+    bad["screening_guardbands"]["status"] = "LANE_CHOSEN"
+    with pytest.raises(ValueError):
+        b.verify_guardbands(bad)
+
+
+def test_mass_ratio_check_text_is_derived(b, inputs, reg):
+    """A9.17 minor item: CHK-MASS-RATIOS states the caption count it actually checked."""
+    n = len(inputs["nifs_caption_fits"]["rows"])
+    chk = next(c for c in reg["consistency_checks"] if c["id"] == "CHK-MASS-RATIOS")
+    assert f"({n} captions)" in chk["what"]
+    bad = copy.deepcopy(inputs)
+    bad["nifs_caption_fits"]["rows"] = bad["nifs_caption_fits"]["rows"][:-1]
+    built = b.build(bad)
+    chk2 = next(c for c in built["consistency_checks"] if c["id"] == "CHK-MASS-RATIOS")
+    assert f"({n - 1} captions)" in chk2["what"]
