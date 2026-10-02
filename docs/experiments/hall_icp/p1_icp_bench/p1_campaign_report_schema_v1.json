@@ -27,7 +27,8 @@
   "excluded_records",
   "raw_record_index",
   "raw_records",
-  "statements"
+  "statements",
+  "owner_rules_a9_16"
  ],
  "properties": {
   "schema": {
@@ -153,6 +154,7 @@
     "status": {
      "enum": [
       "NOT_EVALUATED",
+      "NOT_EVALUATED_REGISTRATION",
       "SYNTHETIC_TEST_ONLY_NOT_EVIDENCE",
       "EVALUATED_ENGINEERING_ONLY"
      ]
@@ -323,6 +325,22 @@
    "items": {
     "type": "string"
    }
+  },
+  "owner_rules_a9_16": {
+   "type": "object",
+   "required": [
+    "thermal_protection",
+    "thermal_status",
+    "pressure_match_registration",
+    "i_d_max_h1_ar_registration",
+    "stable_criteria_registration",
+    "p1_s6_entry",
+    "geometry_matrix",
+    "magnet_factor_f6_order_violations",
+    "operating_domain_freeze_violations",
+    "decisions"
+   ],
+   "description": "owner decisions A9.8 / A9.10 / A9.11 / A9.14 applied by A9.16 step 1 (never PASS)"
   }
  },
  "$defs": {
@@ -364,7 +382,10 @@
       "closure_rule",
       "i_d_max_registration",
       "margin_rule",
-      "stable_criteria"
+      "stable_criteria",
+      "sustainment_definition",
+      "start_attempt_limits",
+      "icp_geometry_matrix"
      ],
      "additionalProperties": false,
      "x-nullable": [
@@ -372,7 +393,10 @@
       "closure_rule",
       "i_d_max_registration",
       "margin_rule",
-      "stable_criteria"
+      "stable_criteria",
+      "sustainment_definition",
+      "start_attempt_limits",
+      "icp_geometry_matrix"
      ],
      "properties": {
       "registration_set_id": {},
@@ -382,7 +406,10 @@
       "closure_rule": {},
       "i_d_max_registration": {},
       "margin_rule": {},
-      "stable_criteria": {}
+      "stable_criteria": {},
+      "sustainment_definition": {},
+      "start_attempt_limits": {},
+      "icp_geometry_matrix": {}
      }
     },
     "records": {

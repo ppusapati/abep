@@ -28,6 +28,13 @@ A9.6 directive, runs the framework self-check (p2_framework.py, synthetic + one 
 'framework' section (sec. 9 capabilities, sec. 14 fail-closed behaviour, open-access references with sha256) and
 p2_impedance_map_schema_v1.json.
 
+A9.16 step 1 (owner instruction 2026-10-01; lane P2 IMPEDANCE MAP): the owner decisions A9.8 P2Q-02, A9.10 P1Q-24,
+A9.11 P2Q-01/03/04/07/08/09 and A9.14 ICPQ-11 / P2Q-10 / P2Q-06 / F6-OQ-02 are applied by a9_16_application.py (data +
+document transformation, pinned decision files) and p2_a9_16_rules.py (fail-closed rules), with the reducer / framework
+changes listed in a9_16_incorporation; A9.15 reviewed (no P2 Xe-contingency text). A9.19 / A9.20 (one Hall + one RF/ICP
+neutralizer for both supply modes AIR_PRIMARY / XE_CONTINGENCY, no hollow cathode; C1 ground-only) applied by
+p2_a9_19_application.py (a9_19_incorporation; Xe evidence tag TAG_XE).
+
     python docs/experiments/hall_icp/p2_impedance_map/build_p2_impedance_prep.py          # (re)write outputs
     python docs/experiments/hall_icp/p2_impedance_map/build_p2_impedance_prep.py --check  # exit 1 unless reproduced
 """
@@ -74,6 +81,15 @@ _spec.loader.exec_module(RED)
 _fspec = importlib.util.spec_from_file_location("p2_framework", str(HERE / "p2_framework.py"))
 FW = importlib.util.module_from_spec(_fspec)
 _fspec.loader.exec_module(FW)
+_aspec = importlib.util.spec_from_file_location("p2_a9_16_application", str(HERE / "a9_16_application.py"))
+APP = importlib.util.module_from_spec(_aspec)
+_aspec.loader.exec_module(APP)
+_a19spec = importlib.util.spec_from_file_location("p2_a9_19_application", str(HERE / "p2_a9_19_application.py"))
+APP19 = importlib.util.module_from_spec(_a19spec)
+_a19spec.loader.exec_module(APP19)
+_rspec = importlib.util.spec_from_file_location("p2_a9_16_rules", str(HERE / "p2_a9_16_rules.py"))
+RULES = importlib.util.module_from_spec(_rspec)
+_rspec.loader.exec_module(RULES)
 
 # ------------------------------------------------------------------------------------------------ pinned inputs
 DECISIONS = {
@@ -119,6 +135,8 @@ DECISIONS = {
               "c6ee26e57ea5ca559f4fa4e4a8809b1aa8f3a217e50c534b943fc3ad99240634",
               "A9.6 (verbatim; sec. 9 and 14 bind the framework)"),
 }
+DECISIONS.update(APP.decision_pins())        # A9.16 step 1: A9.8, A9.10, A9.11, A9.14, A9.15 (json + verbatim)
+DECISIONS.update(APP19.decision_pins())      # A9.19 / A9.20 (json + verbatim)
 DELIVERABLES = {
     "UB": ("docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
            "c6567e6d0bbc008bedd5b9c14a9716f117144ab6952b9c498f7b0c75e02a624d", "A9-04 uncertainty budget"),
@@ -209,7 +227,7 @@ def rfq_coverage_check(rfq2):
 XLANE_PATHS = {
     "P1": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
     "P2": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
-    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
     "P4": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
     "MP": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
     "XE": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
@@ -1687,6 +1705,10 @@ def build():
                                      "anode OPEN / UNRESOLVED - carried unchanged",
             "merged_lanes_cross_checked": [p["path"] for p in MERGED_LANES]},
     }
+    doc = APP.apply(doc, oq_rows)
+    doc["a9_16_incorporation"] = APP.incorporation(RED, FW, RULES, a9_16_selfcheck())
+    doc["owner_answers_applied"] = doc["owner_answers_applied"] + APP19.owner_answer_rows()
+    doc["a9_19_incorporation"] = APP19.incorporation(RED)
     return doc
 
 
@@ -1926,16 +1948,16 @@ def framework_selfcheck():
                 "mc_coverage_interval_95": [_r(v, 5) for v in mc["coverage_interval_95"][0]],
                 "ok": abs(lin["u_y"][0] - a["u_gamma_mag"]) < 1e-9 and abs(mc["u_y"][0] / a["u_gamma_mag"] - 1) < 0.05})
     # FS-06 E/H detection on a synthetic up sweep
-    crit = {"form": "absolute_step", "basis": "SYNTHETIC criteria (not a frozen threshold)",
-            "frozen_before_p2_map": True, "step_photodiode_V": 0.5, "step_P_reflected_W": 2.0,
-            "step_I_ant_rms_A": 0.5}
+    crit = {"form": "k_times_uc", "basis": "SYNTHETIC criteria (owner form, A9.11 P2Q-09)", "k": FW.K_TRANSITION,
+            "frozen_before_p2_map": True}
     sw = [{"index": i, "direction": "up", "photodiode_valid": True, "tuning_state_id": "TS-SYN-1",
-           "photodiode_V": pdv, "P_reflected_W": prf, "I_ant_rms_A": ia, "P_forward_W": pf, "P_delivered_W": None}
+           "photodiode_V": pdv, "P_reflected_W": prf, "I_ant_rms_A": ia, "P_forward_W": pf, "P_delivered_W": None,
+           "u_photodiode_V": 0.05, "u_P_reflected_W": 0.2, "u_I_ant_rms_A": 0.05}
           for i, (pdv, prf, ia, pf) in enumerate([(0.1, 1.0, 3.0, 50.0), (0.2, 1.1, 3.1, 60.0), (2.0, 6.0, 2.0, 70.0),
                                                    (2.1, 6.1, 2.0, 80.0)])]
     ev = FW.detect_eh_transitions(sw, crit)
     out.append({"id": "FS-06", "what": "E/H jump detection on a synthetic 4-point up sweep (photodiode + reflected "
-                "power + antenna current step between index 1 and 2)",
+                "power + antenna current step between index 1 and 2; k_transition = 2.0 x combined step uncertainty)",
                 "events": [{"between": e["between"], "class": e["class"], "emission_step": e.get("emission_step")}
                            for e in ev["events"]],
                 "ok": [e["class"] for e in ev["events"]] == ["TRANSITION_CANDIDATE_CORROBORATED"]})
@@ -2056,7 +2078,7 @@ def build_framework(oq_rows):
          "feedthrough (S-02), every local-match tuning state with its logged element positions (S-03), cold antenna "
          "(S-06), SOL standards' definitions (S-01) (P1 IF-P1-31)", XL_PAIRS["XL-07"][3], XL_PAIRS["XL-07"][4],
          ["XL-07"]),
-        ("IDP2-20", "P2 -> P3 coupled thermal (docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json "
+        ("IDP2-20", "P2 -> P3 coupled thermal (docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json "
          "P3-IF-N04)", "P_forward, P_reflected, P_line/match,loss and P_delivered envelopes (numeric only from "
          "verified-loss records; REFUSED values are passed as REFUSED and refused by P3), antenna current and cold "
          "antenna resistance as Q_RF/match inputs", XL_PAIRS["XL-20"][3], XL_PAIRS["XL-20"][4], ["XL-20"]),
@@ -2070,7 +2092,7 @@ def build_framework(oq_rows):
         ("IDP2-23", "P2 -> RFQ v2 (docs/procurement/rfq_a9_v2/rfq_a9_v2.json IFD-04)", "Z_antenna envelope from the "
          "hot map -> RF component ratings for the RFQ lines (rating_structure; candidates for owner selection only)",
          XL_PAIRS["XL-16"][3], XL_PAIRS["XL-16"][4], ["XL-16"]),
-        ("IDP2-24", "P3 coupled thermal -> P2 (docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json "
+        ("IDP2-24", "P3 coupled thermal -> P2 (docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json "
          "P3-IF-S06)", "module calorimetric energy balance (thermocouple map RF on / off) that fixes f_leaving; "
          "recorded with the hot map, never a thermal PASS", XL_PAIRS["XL-22"][3], XL_PAIRS["XL-22"][4], ["XL-22"]),
     ]
@@ -2163,8 +2185,17 @@ def render_framework_md(doc):
         L.append(f"| {_v(f['a9_6_sec14_item'])} | {_v(f['p2_behaviour'])} | {_v(f['applicability'])} |")
     L += ["", "Reducer changes:", ""] + [f"- {x}" for x in fw["reducer_changes"]]
     h = fw["heat_load_alternatives"]
-    L += ["", f"ICPQ-10 heat-load bound ({h['status']}): {h['question_text']} Alternatives: "
-          + "; ".join(h["alternatives"]) + f". {h['note']}.", "", "References (open access; sha256 of the file read):",
+    if "alternatives" in h:
+        L += ["", f"ICPQ-10 heat-load bound ({h['status']}): {h['question_text']} Alternatives: "
+              + "; ".join(h["alternatives"]) + f". {h['note']}."]
+    else:
+        L += ["", f"ICPQ-10 heat-load bound ({h['status']}, {h['decision']['decision']} {h['decision']['sequenced_no']}, "
+              f"`{h['decision']['decision_file']}` sha256 `{h['decision']['decision_json_sha256']}`): alternative "
+              f"{h['selected_alternative']} - {h['selected']}; evaluated by `{h['bound_rule']}`. {h['note']}. "
+              "Alternatives as raised (history): "
+              + "; ".join(f"{x['alternative']} -> {x['disposition']}" for x in h["history_alternatives_as_raised"])
+              + "."]
+    L += ["", "References (open access; sha256 of the file read):",
           "", "| id | citation | locators | sha256 | use |", "|---|---|---|---|---|"]
     for r in fw["references"]:
         L.append(f"| {r['id']} | {_v(r['citation'])} ({r['url']}) | {_v('; '.join(r['locators']))} | "
@@ -2417,10 +2448,19 @@ def render_md(doc):
     L += ["", "## (c) Owner answers applied", "", "| ref | how applied |", "|---|---|"]
     for o in doc["owner_answers_applied"]:
         L.append(f"| {_src(o['ref'])} | {_v(o['how'])} |")
-    L += ["", "## (d) Open owner questions (new)", "", "| id | question | proposed answer | needed by |",
+    L += ["", "## (d) Owner questions raised by P2 (all answered; none open now)", ""]
+    if doc.get("open_owner_questions_note"):
+        L += [doc["open_owner_questions_note"] + ".", ""]
+    n_open = len(doc.get("owner_questions_open_now", doc["open_owner_questions"]))
+    L.append(("None open: every P2 question is answered by the owner decisions of 2026-10-01 (below). " if not n_open
+              else "") + "Owner questions open now: %d." % n_open)
+    L += ["", "Answered (A9.16 step 1):", "", "| id | question | answered by | decision file (json sha256) |",
           "|---|---|---|---|"]
-    for q in doc["open_owner_questions"]:
-        L.append(f"| {q['id']} | {_v(q['question'])} | {_v(q['proposed_answer'])} | {q['needed_by']} |")
+    for q in doc["answered_owner_questions"]:
+        a = q["answered_by"]
+        L.append(f"| {q['id']} | {_v(q['question'])} | {a['decision']} {a['sequenced_no']} | {a['decision_file']} "
+                 f"(`{a['decision_json_sha256']}`) |")
+    L += render_a9_16_md(doc)
     L += ["", "## (e) Historical reuse", "", "| path | sha256 | reused | not reused |", "|---|---|---|---|"]
     for h in doc["historical_reuse"]:
         L.append(f"| {h['path']} | `{h['sha256'][:16]}...` | {_v(h['reused'])} | {_v(h['not_reused'])} |")
@@ -2452,6 +2492,81 @@ def render_md(doc):
           f"(sha256 `{i5['verbatim']['sha256']}`). Changes: " + "; ".join(i5["changes"]) +
           f". P1Q-15 / P1Q-16: {i5['p1q15_p1q16']}. M16: {i5['m16_impact_change']}.", ""]
     return "\n".join(L)
+
+
+def a9_16_selfcheck():
+    """SYNTHETIC checks of the A9.16 owner rules (labelled SYNTHETIC_TEST_DATA_NOT_EVIDENCE; no Vyovrinda value)."""
+    out = []
+    za = {"R_ohm": 1.0, "X_ohm": 80.0, "u_R_ohm": 0.1, "u_X_ohm": 1.0, "uncertainty_budget_id": "SYN-UB-A",
+          "operating_point_id": "SYN-OP-1", "configuration_id": "SYN-CFG-1"}
+    zb_ok = dict(za, R_ohm=1.2, X_ohm=81.0, uncertainty_budget_id="SYN-UB-B", valid=True)
+    zb_bad = dict(zb_ok, R_ohm=1.5)
+    a1, a2, a3 = (RULES.method_agreement(za, zb_ok), RULES.method_agreement(za, zb_bad),
+                  RULES.method_agreement(za, None))
+    out.append({"id": "A16-01", "what": "ZM-A vs ZM-B, k_agreement = 2.0 (A9.11 P2Q-01 / P2Q-03)",
+                "statuses": [a1["status"], a2["status"], a3["status"]],
+                "ok": [a1["status"], a2["status"], a3["status"]] == [RULES.AGREEMENT, RULES.METHOD_DISAGREEMENT,
+                                                                    RULES.ZM_B_MISSING_OR_INVALID]
+                and a2["averaged_value"] is None and a3["zm_a_independently_verified"] is False})
+    h1 = RULES.updown_hysteresis(10.0, 0.3, 10.5, 0.3, quantity="R_ohm", factor_level_id="SYN-L1")
+    h2 = RULES.updown_hysteresis(10.0, 0.3, 11.0, 0.3, quantity="R_ohm", factor_level_id="SYN-L1")
+    out.append({"id": "A16-02", "what": "up / down z_hyst classes (A9.11 P2Q-03)", "statuses": [h1["status"],
+                h2["status"]], "ok": [h1["status"], h2["status"]] == [RULES.NO_HYSTERESIS, RULES.RESOLVED_HYSTERESIS]})
+    obs = {"photodiode_line_of_sight_ok": True, "photodiode_saturated": False, "optical_signal_V": 0.1,
+           "unlit_threshold_V": 0.5}
+    ind = [{"name": "antenna_rf_current_step", "applicable": True, "y_a": 2.0, "y_b": 2.5, "u_a": 0.1, "u_b": 0.1}]
+    c1 = RULES.classify_with_hm_r06(obs, ind)
+    c2 = RULES.classify_with_hm_r06(obs, [dict(ind[0], y_b=2.1)])
+    c3 = RULES.classify_with_hm_r06(dict(obs, photodiode_saturated=True), [])
+    out.append({"id": "A16-03", "what": "HM-R06 indicators with k_transition = 2.0 (A9.11 P2Q-09)",
+                "states": [c1["state"], c2["state"], c3["state"]], "basis": c1["electrical_indicator_basis"],
+                "ok": [c1["state"], c2["state"], c3["state"]] == ["UNCERTAIN", "UNLIT", "UNCERTAIN"]
+                and c1["electrical_indicator_basis"] == ["antenna_rf_current_step"]})
+    rs = FW.rating_structure(None)
+    out.append({"id": "A16-04", "what": "rating structure carries the owner stress-class factors without data "
+                "(A9.14 P2Q-10 / ICPQ-11)", "policy": {k: rs["policy"][k] for k in ("RF_VOLTAGE",
+                                                                                     "CONTINUOUS_RF_POWER_CURRENT",
+                                                                                     "THERMAL")},
+                "RF_COMPONENT_RATINGS": rs["RF_COMPONENT_RATINGS"],
+                "ok": rs["RF_COMPONENT_RATINGS"] == RATINGS_TBD and rs["policy"]["RF_VOLTAGE"] == 1.5})
+    g = RULES.geometry_point_check({"geometry_id": "SYN-G1", "drawing_id": "SYN-DWG", "drawing_revision": "A",
+                                    "variables": {"x": 2.0}},
+                                   {"drawing_id": "SYN-DWG", "revision": "A", "bounds": {"x": [0.0, 1.0]}})
+    out.append({"id": "A16-05", "what": "geometry point outside the drawing envelope refused (A9.14 F6-OQ-02)",
+                "status": g["status"], "ok": g["status"] == RULES.OUTSIDE_ENVELOPE})
+    for o in out:
+        o["evidence_status"] = RED.SYNTHETIC_LABEL
+    if not all(o["ok"] for o in out):
+        raise SystemExit("A9.16 rules self-check failed: %s" % [o["id"] for o in out if not o["ok"]])
+    return out
+
+
+def render_a9_16_md(doc):
+    inc = doc["a9_16_incorporation"]
+    L = ["", "## A9.16 step 1 - owner decisions of 2026-10-01 applied", "", inc["step"] + ". " + inc["reading_rule"]
+         + ".", "", "| decision | json (sha256) | verbatim (sha256) |", "|---|---|---|"]
+    for x in inc["decisions"]:
+        L.append(f"| {x['decision']} | {x['json']} (`{x['json_sha256']}`) | {x['verbatim']} (`{x['verbatim_sha256']}`) |")
+    L += ["", "| decision | question | sequenced | owner answer | implemented in | tests |", "|---|---|---|---|---|---|"]
+    for x in inc["applied"]:
+        L.append(f"| {x['decision']} | {x['question_id']} | {x['sequenced_no']} | {x['owner_answer']} | "
+                 f"{_v(x['implemented_in'])} | {_v(', '.join(x['tests']))} |")
+    L += ["", "Reviewed, not applicable:", ""] + [f"- {x['decision']} {x['question_ids']}: {x['why']}"
+                                                   for x in inc["not_applicable"]]
+    L += ["", "Owner numbers used: " + "; ".join(f"{k} = {v}" for k, v in inc["owner_numbers_used"].items()) + ".", "",
+          "Registration slots (no number invented; missing -> fail-closed): " +
+          "; ".join(inc["registration_slots_not_filled"]) + ".", "", "Fail-closed cases:", "",
+          "| case | outcome | test |", "|---|---|---|"]
+    for x in inc["fail_closed"]:
+        L.append(f"| {_v(x['case'])} | {_v(x['outcome'])} | {x['test']} |")
+    L += ["", "Self-check (SYNTHETIC_TEST_DATA_NOT_EVIDENCE):", ""]
+    for x in inc["selfcheck"]:
+        body = {k: v for k, v in x.items() if k not in ("id", "what", "evidence_status")}
+        L.append(f"- **{x['id']}** {x['what']}: `{json.dumps(body, ensure_ascii=False)}`")
+    L += ["", "Existing tests updated because the owner decision changed the behaviour: "
+          + "; ".join(inc["existing_tests_updated"]) + ".", "", inc["pinning_note"] + ". " + inc["statuses_unchanged"]
+          + "."]
+    return L
 
 
 def render():

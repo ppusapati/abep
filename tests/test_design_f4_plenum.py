@@ -253,7 +253,9 @@ def test_transient_case_conserves_mass_and_settles(recs, grid):
     assert m["E0_hold"]["settling_time_s"] == 0.0                    # starts at its own steady state
     assert m["E1_setpoint_up"]["P_final_Pa"] == pytest.approx(0.022, rel=2 * pf.SETTLE_BAND)
     assert m["E3_feed_path_step"]["peak_deviation_frac"] > 0.0
-    assert set(r["objectives"]) == set(pf.OBJECTIVES)
+    # A9.13 S6.17: ripple is reported (feed-quality constraint) but is no longer a Pareto objective
+    assert set(r["objectives"]) == set(pf.OBJECTIVES) | set(pf.REPORTED_NOT_OPTIMISED)
+    assert "ripple_transfer_shaft" not in pf.OBJECTIVES
     if r["status"] == pf.ST_FEASIBLE:
         assert r["objectives"]["settling_max_s"] is not None
 

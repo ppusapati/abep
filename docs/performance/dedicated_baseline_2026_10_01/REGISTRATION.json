@@ -1,0 +1,155 @@
+{
+ "schema": "dedicated_performance_baseline_registration_v1",
+ "status": "ADMISSION_BASELINE_PERFORMANCE_ONLY",
+ "authority": {
+  "A9.14 S10.2 F0-OQ-02": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+  "A9.17 PERF": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json"
+ },
+ "decision_sha256": {
+  "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+  "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad"
+ },
+ "source": {
+  "branch": "perf/dedicated-baseline-2026-10-01",
+  "commit": "72669dbc5e5ce11d3177ed42a1f27ada0312279a",
+  "run_by": "owner's remote-control session on the owner's machine (otherwise idle), 2026-10-01 18:39-18:51 IST",
+  "measured_head": "3257374d0613c5be2f55c673f0e18b0e157fdc63"
+ },
+ "files_sha256": {
+  "baseline.json": "cf0c09ef1336c961f366af422fcafa71caabb5330288943fb48a879695742a30",
+  "baseline.md": "595bd23419d42a957bcec4d30e090a2b3d59d8c1086d7eb24f343f86d22188d4",
+  "machine.json": "d556666175316d0b5fbc42578442aaf420ba9edfd489c55ec4922578d2adbfd8"
+ },
+ "machine": {
+  "cpu": "11th Gen Intel Core i7-11700K @ 3.60GHz, 8 cores / 16 threads",
+  "os": "Windows 11 (10.0.29671)",
+  "python": "3.13.14",
+  "numpy": "2.4.4",
+  "scipy": "1.17.1",
+  "blas": "scipy-openblas",
+  "threads": "OMP/MKL/OPENBLAS_NUM_THREADS=1",
+  "windows_cpu_load_percent_before_after": [
+   7,
+   1
+  ]
+ },
+ "same_harness_as_A9_7": {
+  "script": "scripts/perf/profile_baseline.py (unmodified)",
+  "workload_spec_sha256_equal": true,
+  "parameters_equal": true,
+  "mode": "full"
+ },
+ "ranking_comparison": [
+  {
+   "workload": "uq_modular_run_uq",
+   "reference_workload_s_shared_A9_7": 173.37,
+   "reference_workload_s_dedicated": 82.66,
+   "judgement_shared": "PORT_CANDIDATE",
+   "judgement_dedicated": "PORT_CANDIDATE"
+  },
+  {
+   "workload": "intake_response_surface_reduced",
+   "reference_workload_s_shared_A9_7": 244.67,
+   "reference_workload_s_dedicated": 106.53,
+   "judgement_shared": "PORT_CANDIDATE",
+   "judgement_dedicated": "PORT_CANDIDATE"
+  },
+  {
+   "workload": "archengine_close_architecture",
+   "reference_workload_s_shared_A9_7": 28.96,
+   "reference_workload_s_dedicated": 14.21,
+   "judgement_shared": "MARGINAL",
+   "judgement_dedicated": "MARGINAL"
+  },
+  {
+   "workload": "mission_run_generic",
+   "reference_workload_s_shared_A9_7": 5.11,
+   "reference_workload_s_dedicated": 2.22,
+   "judgement_shared": "NOT_A_BOTTLENECK",
+   "judgement_dedicated": "NOT_A_BOTTLENECK"
+  },
+  {
+   "workload": "system_evaluate_gas_path",
+   "reference_workload_s_shared_A9_7": 1.76,
+   "reference_workload_s_dedicated": 0.98,
+   "judgement_shared": "NOT_A_BOTTLENECK",
+   "judgement_dedicated": "NOT_A_BOTTLENECK"
+  },
+  {
+   "workload": "uq6_robust_design",
+   "reference_workload_s_shared_A9_7": 1.51,
+   "reference_workload_s_dedicated": 0.76,
+   "judgement_shared": "NOT_A_BOTTLENECK",
+   "judgement_dedicated": "NOT_A_BOTTLENECK"
+  },
+  {
+   "workload": "compressor_size_for",
+   "reference_workload_s_shared_A9_7": 0.85,
+   "reference_workload_s_dedicated": 0.46,
+   "judgement_shared": "NOT_A_BOTTLENECK",
+   "judgement_dedicated": "NOT_A_BOTTLENECK"
+  },
+  {
+   "workload": "p3_view_factors_verify",
+   "reference_workload_s_shared_A9_7": 0.09,
+   "reference_workload_s_dedicated": 0.02,
+   "judgement_shared": "NOT_A_BOTTLENECK",
+   "judgement_dedicated": "NOT_A_BOTTLENECK"
+  }
+ ],
+ "s10_1_thresholds": "PORT_CANDIDATE >= 60 s, MARGINAL >= 10 s (A9.14 S10.1) applied unchanged; every judgement is unchanged vs the shared A9.7 run",
+ "deviations_and_notes": [
+  "platform differs from the Linux / Python 3.11 CI and A9.7 environment (Windows 11, Python 3.13.14); timings are this machine's admission baseline, not portable absolute numbers",
+  "native Windows Python has no os.getloadavg(); a temporary sitecustomize shim outside the repository supplied the sentinel (-1,-1,-1); idleness is evidenced by the recorded Windows CPU load (7 % before, 1 % after)",
+  "baseline.md was rendered by the unmodified script and keeps its generic sentence 'measured on a shared machine'; for this run it does not apply (see machine.json)",
+  "the optional abep_core build / parity --check was not run on this machine (no result committed)",
+  "output fingerprints of 4 workloads differ from the Linux A9.7 run at the 1e-4 relative level or below (platform floating point / libm); these workloads exercise withdrawn 0-D Hall physics and are determinism fingerprints only, never physics evidence"
+ ],
+ "fingerprint_differences_vs_A9_7": [
+  {
+   "workload": "archengine_close_architecture",
+   "differences": {
+    "ledger_resid": [
+     1.84756662364e-16,
+     0.0
+    ]
+   }
+  },
+  {
+   "workload": "uq_modular_run_uq",
+   "differences": {
+    "ratio_q50": [
+     0.884993566384,
+     0.884677110319
+    ],
+    "sum_T_mN": [
+     197.991531951,
+     197.681854948
+    ]
+   }
+  },
+  {
+   "workload": "uq6_robust_design",
+   "differences": {
+    "TD_sc_end_p10": [
+     1.47533363169,
+     1.47475335095
+    ]
+   }
+  },
+  {
+   "workload": "mission_run_generic",
+   "differences": {
+    "D_mean_mN": [
+     36.5789956819,
+     36.5823333642
+    ],
+    "T_mean_mN": [
+     36.5789956819,
+     36.5823333642
+    ]
+   }
+  }
+ ],
+ "historical": "docs/performance/PERFORMANCE_BASELINE_98fbbb9.json (A9.7, shared CPU) stays as historical measurement only (A9.17 PERF)"
+}

@@ -215,6 +215,76 @@
    "path": "schemas/interfaces/preionizer_module_icd_v1.json",
    "sha256": "2470718e1decbde874d2362a997d1e2aaae54eb855d1ed179b930c3be6e7130e",
    "role": "historical pre-ionizer module ICD"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+   "sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+   "role": "owner A9.8 (machine-readable; A9.16 step 1)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md",
+   "sha256": "8e770d0edf056a0402f6ec8c86a2a2feec169ab971fae788c7a9a620211e1aa0",
+   "role": "owner A9.8 verbatim (governs over the json summary; A9.16 step 1)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+   "sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+   "role": "owner A9.10 (machine-readable; A9.16 step 1)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md",
+   "sha256": "6845f54a97192eaa934cc67d5f415c94e317707c97411353aa2325bf5f9b0491",
+   "role": "owner A9.10 verbatim (governs over the json summary; A9.16 step 1)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_11_s4_p2_owner_decisions.json",
+   "sha256": "d8baf59a5b92739698e29d893e89a30995559ee7167814c096dc24599679156c",
+   "role": "owner A9.11 (machine-readable; A9.16 step 1)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_11_S4_P2_OWNER_DECISIONS.md",
+   "sha256": "4a9fd171abc6a63266a34e6a7c4cb25c4d67ed16615715e158902a57f7071a41",
+   "role": "owner A9.11 verbatim (governs over the json summary; A9.16 step 1)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "role": "owner A9.14 (machine-readable; A9.16 step 1)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "role": "owner A9.14 verbatim (governs over the json summary; A9.16 step 1)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
+   "sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
+   "role": "owner A9.15 (machine-readable; A9.16 step 1)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
+   "sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903",
+   "role": "owner A9.15 verbatim (governs over the json summary; A9.16 step 1)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "role": "owner decision A9.19 (json)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+   "role": "owner decision A9.19 (verbatim md, governs)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+   "sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+   "role": "owner decision A9.20 (json)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+   "sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+   "role": "owner decision A9.20 (verbatim md, governs)"
   }
  ],
  "governance_files_not_pinned": [
@@ -303,7 +373,9 @@
     "I_scale_min_A",
     "I_scale_min_basis",
     "covariance",
-    "open_by_construction_terminals"
+    "open_by_construction_terminals",
+    "leakage_negligibility_ratio_max",
+    "dwv_leakage_by_path"
    ],
    "channel_uncertainty_components": [
     "u_calibration_A",
@@ -331,6 +403,7 @@
    ],
    "icp45_statuses": [
     "NOT_EVALUATED",
+    "NOT_EVALUATED_REGISTRATION",
     "SYNTHETIC_TEST_ONLY_NOT_EVIDENCE",
     "EVALUATED_ENGINEERING_ONLY"
    ],
@@ -476,6 +549,7 @@
     ],
     "exit": [
      "G0_ENTRY_CONDITIONS_RECORDED: every P1-SI interlock functionally tested; 350 V class / >= 525 V design withstand declared; every applicable passive insulation path at 1.05 kV DC / 60 s current-limited with leakage recorded against a registered acceptance (A9.4 P1Q-14); ICPQ-06 ~1 kV representative-gas qualification ONLY on gas lines that bridge isolated potentials (A9.3); one Ar MFC (two overlapping only if necessary, A9.6 sec. 5); GROUND/FACILITY_ONLY generator; P1-G0 registrations recorded",
+     "owner A9.8 (A9.16 step 1): per-path leakage limit with documented basis registered before the test, no flashover / breakdown / tracking / trip (P1-IT-55); in-house assembled-system DWV plus supplier certificate (OQ-RFQV2-08); H-1 anode / discharge-supply path class recorded (OQ-RFQV2-06); validated thermal limits registered (P1Q-04: limit - 50 K abort / derate on all P1 operation); target geometry and interim IP-NEU harness drawing registered (P1Q-09, A9.14 P1Q-12)",
      "otherwise G0_NOT_MET (deficiency) or G0_NOT_EVALUATED_TBD (input missing); every later stage record is OUT_OF_DOMAIN until G0 is met"
     ],
     "record_template": {
@@ -498,7 +572,8 @@
       "ar_sweep_bounds_mg_s",
       "second_mfc_necessity",
       "generator_class",
-      "registrations"
+      "registrations",
+      "thermal_limits"
      ]
     },
     "required_channels": [
@@ -591,7 +666,9 @@
       "ignition_delay_s",
       "extinguished",
       "optical",
-      "h1_magnet_state"
+      "h1_magnet_state",
+      "start_state",
+      "restart_condition_met"
      ]
     },
     "required_channels": [
@@ -646,7 +723,8 @@
       "impedance",
       "terminals",
       "temperatures",
-      "rf_pickup_check"
+      "rf_pickup_check",
+      "h1_magnet_state"
      ]
     },
     "required_channels": [
@@ -710,6 +788,7 @@
       "terminals",
       "temperatures",
       "rf_pickup_check",
+      "h1_magnet_state",
       "capacity_monitoring",
       "h1_point_id"
      ]
@@ -795,7 +874,8 @@
      "surface from P1-W04; ignition repeatability from P1-W03"
     ],
     "exit": [
-     "handoff record: points within OWNER criteria (P1Q-01) and the envelope of tested points; NOT_EVALUATED without criteria (raw metrics handed over)"
+     "handoff record: points within OWNER criteria (P1Q-01) and the envelope of tested points; NOT_EVALUATED without criteria (raw metrics handed over)",
+     "owner A9.11 P1Q-01: criteria frozen and hashed before the first P1-S5 dwell, derived from P1-S2..S4 evidence; >= 3 independent re-ignitions per point (A9.10 P1Q-05); WITHIN_OWNER_CRITERIA only"
     ],
     "record_template": {
      "record_kind": "stability_dwell",
@@ -830,7 +910,8 @@
      "P1-S6"
     ],
     "entry": [
-     "HI-HOLDOUT-A signed; Hall start limits (P1-IT-31) and sustainment definition (P1-IT-32) registered; C1 disconnected"
+     "HI-HOLDOUT-A signed; Hall start limits (P1-IT-31) and sustainment definition (P1-IT-32) registered; C1 disconnected",
+     "owner A9.10 (A9.16 step 1): HI-HOLDOUT-A starts here (P1Q-08); start-attempt limits (P1Q-02) and the current-and-time sustainment definition (P1Q-03) frozen before the first P1-S6 record, else OUT_OF_DOMAIN; C1 may be C1_NOT_INSTALLED (OQ-RFQV2-09)"
     ],
     "exit": [
      "observation class only; engineering-only, non-scoring, never a gate (A9.3 OQ-VI-05; A9.6 sec. 8)"
@@ -850,7 +931,9 @@
       "classification",
       "c1_disconnected",
       "hall_start_registration_id",
-      "steps"
+      "steps",
+      "c1_configuration",
+      "hi_holdout_a_id"
      ]
     },
     "required_channels": [
@@ -870,7 +953,7 @@
      "P1-S7H"
     ],
     "entry": [
-     "discharge-OFF capacity shown at the same registered H-1 point (a CLOSURE_VALID_CANDIDATE with M_n,LB > 0 under both P1Q-19 treatments); otherwise the row is OUT_OF_DOMAIN (entry not met)"
+     "discharge-OFF capacity shown at the same registered H-1 point (a CLOSURE_VALID_CANDIDATE with M_n,LB > 0 under the owner-selected P1Q-19 treatment, A9.10 REQUIRE_REGISTERED_GE_CHANNEL); otherwise the row is OUT_OF_DOMAIN (entry not met)"
     ],
     "exit": [
      "descriptive consistency rows (sustainment, closure, I_e,ICP vs I_d, potentials, RF power); never ICP45_CAPACITY and never I_e,cap (A9.4 P1Q-10; A9.6 sec. 2)"
@@ -902,7 +985,8 @@
       "impedance",
       "terminals",
       "temperatures",
-      "rf_pickup_check"
+      "rf_pickup_check",
+      "h1_magnet_state"
      ]
     },
     "required_channels": [
@@ -930,14 +1014,20 @@
     "closure_rule",
     "i_d_max_registration",
     "margin_rule",
-    "stable_criteria"
+    "stable_criteria",
+    "sustainment_definition",
+    "start_attempt_limits",
+    "icp_geometry_matrix"
    ],
    "registration_nullable": [
     "facility_match",
     "closure_rule",
     "i_d_max_registration",
     "margin_rule",
-    "stable_criteria"
+    "stable_criteria",
+    "sustainment_definition",
+    "start_attempt_limits",
+    "icp_geometry_matrix"
    ],
    "dispositions": [
     "REDUCED",
@@ -1050,11 +1140,22 @@
    {
     "id": "P1Q-19 (require vs use larger)",
     "disposition": "TBD_OWNER",
-    "answer": "both admissible treatments ['REQUIRE_REGISTERED_GE_CHANNEL', 'USE_LARGER_OF_REGISTERED_AND_CHANNEL'] computed side by side; ICP45 = NOT_EVALUATED while they disagree",
-    "follows_from": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md sec. 7 (a genuine preregistration design choice is not answered by the lane)",
+    "disposition_note": "'disposition' is the disposition AS RAISED (TBD_OWNER under A9.6 sec. 7; read back unchanged by the immutable state-v4 builder); the owner has since decided it - owner_decision governs",
+    "owner_decision": {
+     "status": "OWNER_DECIDED",
+     "decided_by": "A9.10 P1Q-19 (S3.7)",
+     "owner_answer": "REQUIRE_REGISTERED_GE_CHANNEL",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+     "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md",
+     "rule": "u_I_e,registered >= u(I_e,cap)_channels under the registered correlation treatment before the first P1-S7 point, else ICP-45 = NOT_EVALUATED_REGISTRATION; never silently replaced by the larger value; the alternative USE_LARGER_OF_REGISTERED_AND_CHANNEL is NOT_OWNER_SELECTED and is never evaluated"
+    },
+    "answer": "owner A9.10 P1Q-19 selected REQUIRE_REGISTERED_GE_CHANNEL: a registered u_I_e_A below the channel propagation makes the ICP-45 evaluation NOT_EVALUATED_REGISTRATION; the rejected alternative is never evaluated and never decides",
+    "follows_from": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json (sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544) decisions.P1Q-19; verbatim docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md S3.7 (formerly TBD_OWNER under docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md sec. 7)",
     "implemented_in": "p1_reducer.icp45a_evaluate",
     "tests": [
-     "test_a96_p1q19_alternatives_side_by_side"
+     "test_a96_p1q19_alternatives_side_by_side",
+     "test_p1_a9_16_p1q19_owner_selected"
     ]
    },
    {
@@ -1124,6 +1225,504 @@
    "the P3 / P4 / mass-power / Xe packages are merged and cited by id (pairs XL-17, XL-18, XL-21, XL-25, XL-36..XL-38; merged_cross_lane); nothing is read from them beyond id existence"
   ],
   "m16_impact_change": "none: software workflow only; ICP electron-current capacity stays PENDING_ICP45 and no physical item becomes READY / VERIFIED (A9.6 sec. 16)"
+ },
+ "a9_16_incorporation": {
+  "step": "A9.16 step 1 (owner instruction 2026-10-01 'continue implementing them sequentially'), lane P1 ICP BENCH",
+  "decisions": [
+   {
+    "decision": "A9.8",
+    "json": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+    "json_sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+    "verbatim": "docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md",
+    "verbatim_sha256": "8e770d0edf056a0402f6ec8c86a2a2feec169ab971fae788c7a9a620211e1aa0"
+   },
+   {
+    "decision": "A9.10",
+    "json": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+    "json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+    "verbatim": "docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md",
+    "verbatim_sha256": "6845f54a97192eaa934cc67d5f415c94e317707c97411353aa2325bf5f9b0491"
+   },
+   {
+    "decision": "A9.11",
+    "json": "docs/decisions/OD_2026_10_01_A9_11_s4_p2_owner_decisions.json",
+    "json_sha256": "d8baf59a5b92739698e29d893e89a30995559ee7167814c096dc24599679156c",
+    "verbatim": "docs/decisions/OD_2026_10_01_A9_11_S4_P2_OWNER_DECISIONS.md",
+    "verbatim_sha256": "4a9fd171abc6a63266a34e6a7c4cb25c4d67ed16615715e158902a57f7071a41"
+   },
+   {
+    "decision": "A9.14",
+    "json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+    "json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+    "verbatim": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+    "verbatim_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07"
+   },
+   {
+    "decision": "A9.15",
+    "json": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
+    "json_sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
+    "verbatim": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
+    "verbatim_sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903"
+   }
+  ],
+  "reading_rule": "the verbatim .md of every applied decision was read in full; it governs over the json 'summary' digest; A9.15 (RFP-compliant propellant policy) governs wherever older text restricts Xe to a C1 contingency",
+  "applied": [
+   {
+    "decision": "A9.8",
+    "question_id": "P1Q-04",
+    "sequenced_no": "S1.1",
+    "owner_answer": "YES",
+    "implemented_in": "p1_reducer.reduce_readiness (thermal_limits); p1_a9_16_rules.thermal_abort_rows; p1_campaign",
+    "tests": [
+     "test_p1_a9_16_thermal_abort_all_operation",
+     "test_p1_a9_16_readiness_thermal_limits_required"
+    ]
+   },
+   {
+    "decision": "A9.8",
+    "question_id": "P1Q-09",
+    "sequenced_no": "S1.2",
+    "owner_answer": "DEDICATED_ISOLATED_TARGET_NO_CHAMBER_WALL",
+    "implemented_in": "p1_reducer.validate_operating_point (REFUSED_EXTRACTION_ELECTRODES, P1Q09_TERMINALS, TARGET_GEOMETRY_FIELD, OPEN_CIRCUIT_VERIFICATION_FIELD)",
+    "tests": [
+     "test_p1_a9_16_chamber_wall_refused_surface_and_capacity",
+     "test_p1_a9_16_target_bias_reference_and_geometry",
+     "test_p1_a9_16_open_circuit_needs_physical_verification",
+     "test_extraction_topology_rules (updated)"
+    ]
+   },
+   {
+    "decision": "A9.8",
+    "question_id": "P1Q-11",
+    "sequenced_no": "S1.3",
+    "owner_answer": "DERIVE_FROM_INSTALLED_GAUGE",
+    "implemented_in": "p1_a9_16_rules.check_pressure_match_registration; p1_campaign",
+    "tests": [
+     "test_p1_a9_16_pressure_match_registration",
+     "test_a96_sec14_invalid_pair_excluded (updated)"
+    ]
+   },
+   {
+    "decision": "A9.8",
+    "question_id": "P1Q-18",
+    "sequenced_no": "S1.4",
+    "owner_answer": "CONFIRMED",
+    "implemented_in": "p1_reducer.kirchhoff_closure / icp45a_candidates (unchanged)",
+    "tests": [
+     "test_met03_rf_off_adequacy_applied",
+     "test_p1_a9_16_p1q18_confirmed_reading"
+    ]
+   },
+   {
+    "decision": "A9.8",
+    "question_id": "P1Q-20",
+    "sequenced_no": "S1.5",
+    "owner_answer": "YES",
+    "implemented_in": "p1_reducer._leakage_uncertainty / kirchhoff_closure; p1_campaign (dwv_leakage_by_path from P1-G0)",
+    "tests": [
+     "test_p1_a9_16_open_circuit_leakage_enters_u_R",
+     "test_p1_a9_16_leakage_negligible_only_registered",
+     "test_p1_a9_16_campaign_leakage_traced_to_accepted_dwv"
+    ]
+   },
+   {
+    "decision": "A9.8",
+    "question_id": "P1-IT-52",
+    "sequenced_no": "S1.15",
+    "owner_answer": "STAGE_DOMAINS_FROM_REAL_HARDWARE",
+    "implemented_in": "p1_a9_16_rules.check_operating_domains / domain_freeze_reasons; p1_campaign",
+    "tests": [
+     "test_p1_a9_16_domain_registration_unique_and_frozen"
+    ]
+   },
+   {
+    "decision": "A9.8",
+    "question_id": "P1-IT-55",
+    "sequenced_no": "S1.16",
+    "owner_answer": "PER_PATH_DOCUMENTED_LEAKAGE_LIMIT",
+    "implemented_in": "p1_reducer.reduce_readiness (LEAKAGE_ACCEPTANCE_REQUIRED, DWV_APPLICABLE_REQUIRED)",
+    "tests": [
+     "test_p1_a9_16_dwv_per_path_limit_rules"
+    ]
+   },
+   {
+    "decision": "A9.8",
+    "question_id": "OQ-RFQV2-06",
+    "sequenced_no": "S1.13",
+    "owner_answer": "YES",
+    "implemented_in": "p1_reducer.reduce_readiness (DWV_REQUIRED_PATH_CLASSES)",
+    "tests": [
+     "test_p1_a9_16_dwv_path_classes_required"
+    ]
+   },
+   {
+    "decision": "A9.8",
+    "question_id": "OQ-RFQV2-08",
+    "sequenced_no": "S1.14",
+    "owner_answer": "BOTH_SUPPLIER_AND_IN_HOUSE",
+    "implemented_in": "p1_reducer.reduce_readiness",
+    "tests": [
+     "test_p1_a9_16_dwv_in_house_assembled_and_supplier"
+    ]
+   },
+   {
+    "decision": "A9.10",
+    "question_id": "P1Q-02",
+    "sequenced_no": "S3.1",
+    "owner_answer": "HARDWARE_DERIVED_LIMITS_BEFORE_P1_S6",
+    "implemented_in": "p1_reducer.check_start_attempt_limits / reduce_topology_control; p1_a9_16_rules.check_start_limit_revisions",
+    "tests": [
+     "test_p1_a9_16_start_limits_bounds",
+     "test_p1_a9_16_start_limits_never_raised_after_failure",
+     "test_p1_a9_16_s6_entry_requires_registrations"
+    ]
+   },
+   {
+    "decision": "A9.10",
+    "question_id": "P1Q-03",
+    "sequenced_no": "S3.2",
+    "owner_answer": "PREREGISTERED_CURRENT_AND_TIME_CRITERION",
+    "implemented_in": "p1_reducer.check_sustainment_definition / classify_sustained / reduce_topology_control",
+    "tests": [
+     "test_p1_a9_16_sustained_definition",
+     "test_topology_control_paths (updated)"
+    ]
+   },
+   {
+    "decision": "A9.10",
+    "question_id": "P1Q-05",
+    "sequenced_no": "S3.3",
+    "owner_answer": "MIN_3_INDEPENDENT_REIGNITIONS",
+    "implemented_in": "p1_reducer.validate_ignition / reduce_ignition / classify_stable_region",
+    "tests": [
+     "test_p1_a9_16_reignition_minimum_three",
+     "test_sw01_stable_criteria_validated (updated)"
+    ]
+   },
+   {
+    "decision": "A9.10",
+    "question_id": "P1Q-06",
+    "sequenced_no": "S3.4",
+    "owner_answer": "BOTH_AS_FACTOR_F6",
+    "implemented_in": "p1_reducer.check_magnet_state; p1_a9_16_rules.magnet_order_reasons",
+    "tests": [
+     "test_p1_a9_16_magnet_factor_f6"
+    ]
+   },
+   {
+    "decision": "A9.10",
+    "question_id": "P1Q-07",
+    "sequenced_no": "S3.5",
+    "owner_answer": "DEDICATED_H1_C1_CHARACTERIZATION",
+    "implemented_in": "p1_reducer._check_registration; p1_a9_16_rules.freeze_before_stage_reasons; p1_campaign",
+    "tests": [
+     "test_p1_a9_16_i_d_max_ar_registration"
+    ]
+   },
+   {
+    "decision": "A9.8",
+    "question_id": "P3Q-01",
+    "sequenced_no": "S1.7",
+    "owner_answer": "C_BOTH_CALORIMETRY_PRIMARY",
+    "implemented_in": "build_p1_icp_bench.measurements (P1-M-30), XL_PAIRS XL-18 / XL-25; p1_reducer.capacity_structural_reasons (PROBE_PRESENT_KEY / PROBE_EVIDENCE_KEY)",
+    "tests": [
+     "test_p1_a9_16_f2_langmuir_probe_required_and_capacity_exclusion"
+    ]
+   },
+   {
+    "decision": "A9.10",
+    "question_id": "P1Q-08",
+    "sequenced_no": "S3.6",
+    "owner_answer": "YES",
+    "implemented_in": "p1_reducer.reduce_topology_control (HOLDOUT_STAGE)",
+    "tests": [
+     "test_p1_a9_16_holdout_and_c1_absent"
+    ]
+   },
+   {
+    "decision": "A9.10",
+    "question_id": "P1Q-19",
+    "sequenced_no": "S3.7",
+    "owner_answer": "REQUIRE_REGISTERED_GE_CHANNEL",
+    "implemented_in": "p1_reducer.icp45a_evaluate (P1Q19_OWNER_SELECTED)",
+    "tests": [
+     "test_a96_p1q19_alternatives_side_by_side (updated)",
+     "test_p1_a9_16_p1q19_owner_selected"
+    ]
+   },
+   {
+    "decision": "A9.10",
+    "question_id": "P1Q-24",
+    "sequenced_no": "S3.8",
+    "owner_answer": "K_LOSS_2_FAIL_CLOSED_CONFIRMED",
+    "implemented_in": "p1_reducer.at_power_loss_check (K_LOSS)",
+    "tests": [
+     "test_met02_loss_needs_at_power_verification (updated)",
+     "test_p1_a9_16_k_loss_owner_constant"
+    ]
+   },
+   {
+    "decision": "A9.10",
+    "question_id": "OQ-RFQV2-09",
+    "sequenced_no": "S3.9",
+    "owner_answer": "C1_ABSENT_ALLOWED_P1_S6",
+    "implemented_in": "p1_reducer.reduce_topology_control (C1_CONFIGURATIONS)",
+    "tests": [
+     "test_p1_a9_16_holdout_and_c1_absent"
+    ]
+   },
+   {
+    "decision": "A9.11",
+    "question_id": "P1Q-01",
+    "sequenced_no": "S4.1",
+    "owner_answer": "FORM_FROZEN_VALUES_PREREGISTERED_BEFORE_P1_S5_HANDOFF",
+    "implemented_in": "p1_reducer.check_stable_criteria / stable_region_handoff; p1_a9_16_rules.check_stable_criteria_registration",
+    "tests": [
+     "test_p1_a9_16_stable_criteria_frozen_hashed",
+     "test_sw02_stable_region_failure_branches (updated)"
+    ]
+   },
+   {
+    "decision": "A9.14",
+    "question_id": "P1Q-17",
+    "sequenced_no": "S9.5",
+    "owner_answer": "REVERIFICATION_700V_DC_60S_TRIGGERED_ONLY",
+    "implemented_in": "p1_a9_16_rules.reduce_dwv_reverification",
+    "tests": [
+     "test_p1_a9_16_reverification_700v_triggered_only"
+    ]
+   },
+   {
+    "decision": "A9.14",
+    "question_id": "P1Q-12",
+    "sequenced_no": "S8.31",
+    "owner_answer": "YES_IP_NEU_LOCK1_ICD_INTERFACE",
+    "implemented_in": "p1_reducer.READINESS_REGISTRATIONS",
+    "tests": [
+     "test_p1_a9_16_readiness_registrations"
+    ]
+   },
+   {
+    "decision": "A9.14",
+    "question_id": "OD5",
+    "sequenced_no": "S9.9",
+    "owner_answer": "ICP_FIRST_HALL_SECOND_MAX_3_ATTEMPTS",
+    "implemented_in": "p1_a9_16_rules.check_baseline_start_sequence",
+    "tests": [
+     "test_p1_a9_16_od5_start_sequence"
+    ]
+   },
+   {
+    "decision": "A9.14",
+    "question_id": "ICPQ-08",
+    "sequenced_no": "S8.2",
+    "owner_answer": "ENERGIZED_IF_RF_IMMUNE_ELSE_REGISTERED_RF_OFF_DELAY",
+    "implemented_in": "p1_a9_16_rules.check_bz_mapping",
+    "tests": [
+     "test_p1_a9_16_bz_mapping"
+    ]
+   },
+   {
+    "decision": "A9.14",
+    "question_id": "F6-OQ-03",
+    "sequenced_no": "S7.8",
+    "owner_answer": "MULTI_GEOMETRY_BENCH_FIRST_MODEL_AFTER_VALIDATION",
+    "implemented_in": "p1_a9_16_rules.geometry_matrix_report; p1_campaign",
+    "tests": [
+     "test_p1_a9_16_geometry_matrix"
+    ]
+   }
+  ],
+  "not_applicable": [
+   {
+    "decision": "A9.15",
+    "question_ids": "RFP-COMPLIANT PROPELLANT POLICY (amends A9.13 xenon statement; A9.14 OQ-A907-07, XA9Q-07, MPQ-01, XV2Q-01, XA9Q-05, OD6)",
+    "why": "reviewed: the P1 package contains no wording that restricts Xe to a C1 contingency (nothing to amend); P1 is the Ar engineering step (G-REUSE, ICP gas-mode baseline A9.1 unchanged; G-XE stays a declared ICP-feed variant, a dedicated feed only as a labelled diagnostic booked in the corresponding atmospheric / Xe ledger); C1_NOT_INSTALLED in P1-S6 (A9.10 OQ-RFQV2-09) is a bench topology control and does not remove the RFP-required system Xe capability"
+   },
+   {
+    "decision": "A9.14",
+    "question_ids": "OQ-A907-07 / XA9Q-07 / MPQ-01 / XV2Q-01 / XA9Q-05 / OD6 (as amended by A9.15)",
+    "why": "mass / Xe accounting / flight-configuration items; no P1 bench artifact carries them (owned by the mass / Xe and RFQ lanes)"
+   }
+  ],
+  "owner_numbers_used": {
+   "k_loss": 2.0,
+   "reverification_V_DC": 700.0,
+   "reverification_duration_s": 60.0,
+   "initial_dwv_V_DC": 1050.0,
+   "initial_dwv_duration_s": 60.0,
+   "design_withstand_min_V": 525.0,
+   "thermal_abort_margin_K": 50.0,
+   "stand_ceiling_A (never I_d,max,H1)": 8.333333333333334,
+   "od5_max_attempts": 3,
+   "min_independent_reignitions": 3
+  },
+  "registration_slots_not_filled": [
+   "pressure-match tolerance (P1Q-11)",
+   "stage operating domains (P1-IT-52)",
+   "start-attempt limits (P1Q-02)",
+   "sustained-discharge threshold / duration (P1Q-03)",
+   "stable-region limits (P1Q-01)",
+   "per-path DWV leakage limits (P1-IT-55)",
+   "electron-collector target geometry (P1Q-09)",
+   "validated continuous-use temperature limits (P1Q-04)",
+   "leakage negligibility ratio (P1Q-20, optional)",
+   "I_d,max,H1,Ar (P1Q-07)",
+   "B(z) RF-off delay and tolerance (ICPQ-08)",
+   "ICP geometry matrix (F6-OQ-03)",
+   "IP-NEU interim harness drawing id (P1Q-12)",
+   "OD5 dwell / thermal limits id"
+  ],
+  "campaign_registration_keys_added": [
+   "sustainment_definition",
+   "start_attempt_limits",
+   "icp_geometry_matrix"
+  ],
+  "record_fields_added": {
+   "icp_operating_point": [
+    "h1_magnet_state (+ h1_magnet_field_setting_id, h1_coil_currents_A when on)",
+    "extraction.target_geometry_id (dedicated target)",
+    "terminals.<open>.physical_verification_id",
+    "terminals.<open>.leakage",
+    "icp_geometry_id (when a geometry matrix is registered)"
+   ],
+   "ignition_attempt": [
+    "start_state",
+    "restart_condition_met",
+    "h1_magnet_state in OFF / REGISTERED_SETTING"
+   ],
+   "topology_control_sequence": [
+    "c1_configuration",
+    "c1_absence_record_id (C1_NOT_INSTALLED)",
+    "hi_holdout_a_id",
+    "steps 5/7: supply_enabled_connected, artifact_or_transient_only, interlock_invalidates"
+   ],
+   "p1_g0_readiness": [
+    "thermal_limits",
+    "dwv_tests[].path_class / tracking_or_disruptive_discharge / protective_trip / test_configuration / configuration_id / supplier_certificate / test_utc",
+    "leakage_acceptance.basis_document_id / u_measurement_A / uncertainty_treatment / registered_utc",
+    "registrations.electron_collector_target_geometry_id / ip_neu_interim_harness_drawing_id"
+   ]
+  },
+  "fail_closed": [
+   {
+    "case": "chamber wall as electron collector (any record)",
+    "outcome": "refused (ExtractionTopologyError)",
+    "test": "tests/test_p1_a9_16_owner_rules.py::test_p1_a9_16_chamber_wall_refused_surface_and_capacity"
+   },
+   {
+    "case": "OPEN_CIRCUIT_BY_CONSTRUCTION without physical verification",
+    "outcome": "refused (MissingInputError)",
+    "test": "tests/test_p1_a9_16_owner_rules.py::test_p1_a9_16_open_circuit_needs_physical_verification"
+   },
+   {
+    "case": "open-circuit terminal without a traceable DWV leakage term",
+    "outcome": "NOT_EVALUATED_UNCERTAINTY",
+    "test": "tests/test_p1_a9_16_owner_rules.py::test_p1_a9_16_open_circuit_leakage_enters_u_R"
+   },
+   {
+    "case": "pressure-match tolerance not registered / frozen late / not gauge-derived",
+    "outcome": "NOT_EVALUATED_REGISTRATION",
+    "test": "tests/test_p1_a9_16_owner_rules.py::test_p1_a9_16_pressure_match_registration"
+   },
+   {
+    "case": "stage domain frozen at / after its first record",
+    "outcome": "OUT_OF_DOMAIN",
+    "test": "tests/test_p1_a9_16_owner_rules.py::test_p1_a9_16_domain_registration_unique_and_frozen"
+   },
+   {
+    "case": "DWV path without documented leakage basis",
+    "outcome": "G0_NOT_EVALUATED_TBD",
+    "test": "tests/test_p1_a9_16_owner_rules.py::test_p1_a9_16_dwv_per_path_limit_rules"
+   },
+   {
+    "case": "DWV limit registered after the test / tracking / trip",
+    "outcome": "G0_NOT_MET",
+    "test": "tests/test_p1_a9_16_owner_rules.py::test_p1_a9_16_dwv_per_path_limit_rules"
+   },
+   {
+    "case": "component temperature >= validated limit - 50 K",
+    "outcome": "OUT_OF_DOMAIN (abort / derate)",
+    "test": "tests/test_p1_a9_16_owner_rules.py::test_p1_a9_16_thermal_abort_all_operation"
+   },
+   {
+    "case": "start limits / sustainment definition missing or frozen late",
+    "outcome": "P1-S6 OUT_OF_DOMAIN / NOT_EVALUATED_REGISTRATION",
+    "test": "tests/test_p1_a9_16_owner_rules.py::test_p1_a9_16_s6_entry_requires_registrations"
+   },
+   {
+    "case": "start-limit increase after a failed ignition",
+    "outcome": "refused (RuleError)",
+    "test": "tests/test_p1_a9_16_owner_rules.py::test_p1_a9_16_start_limits_never_raised_after_failure"
+   },
+   {
+    "case": "< 3 independent re-ignitions",
+    "outcome": "NOT_EVALUATED (INSUFFICIENT_REIGNITION_EVIDENCE)",
+    "test": "tests/test_p1_a9_16_owner_rules.py::test_p1_a9_16_reignition_minimum_three"
+   },
+   {
+    "case": "magnet-on before the magnet-OFF baseline",
+    "outcome": "OUT_OF_DOMAIN",
+    "test": "tests/test_p1_a9_16_owner_rules.py::test_p1_a9_16_magnet_factor_f6"
+   },
+   {
+    "case": "I_d,max,H1,Ar not from H-1 + C1 HI-AR characterization / frozen late",
+    "outcome": "refused / NOT_EVALUATED_REGISTRATION",
+    "test": "tests/test_p1_a9_16_owner_rules.py::test_p1_a9_16_i_d_max_ar_registration"
+   },
+   {
+    "case": "registered u_I_e below channel propagation",
+    "outcome": "NOT_EVALUATED_REGISTRATION",
+    "test": "tests/test_p1_a9_16_owner_rules.py::test_p1_a9_16_p1q19_owner_selected"
+   },
+   {
+    "case": "k other than k_loss = 2.0",
+    "outcome": "refused",
+    "test": "tests/test_p1_a9_16_owner_rules.py::test_p1_a9_16_k_loss_owner_constant"
+   },
+   {
+    "case": "stable criteria unhashed / frozen after a P1-S5 dwell",
+    "outcome": "refused / NOT_EVALUATED",
+    "test": "tests/test_p1_a9_16_owner_rules.py::test_p1_a9_16_stable_criteria_frozen_hashed"
+   },
+   {
+    "case": "routine pre-run 700 V test or ECSS attribution",
+    "outcome": "refused",
+    "test": "tests/test_p1_a9_16_owner_rules.py::test_p1_a9_16_reverification_700v_triggered_only"
+   },
+   {
+    "case": "energized B(z) map without RF-immunity record",
+    "outcome": "NOT_EVALUATED_REGISTRATION",
+    "test": "tests/test_p1_a9_16_owner_rules.py::test_p1_a9_16_bz_mapping"
+   },
+   {
+    "case": "geometry outside the registered matrix",
+    "outcome": "OUT_OF_DOMAIN",
+    "test": "tests/test_p1_a9_16_owner_rules.py::test_p1_a9_16_geometry_matrix"
+   }
+  ],
+  "existing_tests_updated": [
+   "test_topology_control_paths",
+   "test_stable_region_and_facility_check",
+   "test_extraction_topology_rules",
+   "test_a94_capacity_record_refusals",
+   "test_a94_not_evaluated_until_registration",
+   "test_a95_eligibility_conditions",
+   "test_a95_unmeasured_return_paths_excluded_uniformly",
+   "test_a96_sec14_invalid_pair_excluded",
+   "test_a96_p1q19_alternatives_side_by_side",
+   "test_a96_derived_resolutions_and_open_questions",
+   "test_a94_answered_questions_moved",
+   "test_stable_region_handoff_fields_match_p2_consumer",
+   "test_e2_open_circuit_only_for_floating_anode_or_registered",
+   "test_met02_loss_needs_at_power_verification",
+   "test_sw01_stable_criteria_validated",
+   "test_sw02_stable_region_failure_branches",
+   "test_sw_r2_01_synthetic_handoff_never_opens_measured_p2_map",
+   "test_met06_at_power_check_tied_to_characterization_and_registered_k"
+  ],
+  "pinning_note": "the P1 json / reducer / campaign are sha-pinned or read by other packages (state v4, RVM, M16 v4, RFQ v2, F6): the integration lane re-pins; nothing outside this lane's paths was edited",
+  "statuses_unchanged": "ICP45 = NOT_EVALUATED until registered; ICP_COUPLED_THERMAL UNRESOLVED; RF ratings TBD_AFTER_IMPEDANCE_MAP; anode material OPEN; C1 CONTROL_FALLBACK; no PASS anywhere"
  },
  "merged_cross_references": [
   {
@@ -1427,7 +2026,7 @@
     "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other back; a pin would be circular)"
    },
    "P3": {
-    "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
     "state": "MERGED",
     "pairs": [
      "XL-17",
@@ -1493,8 +2092,8 @@
   "dedicated_feed": "only as an explicitly labelled DIAGNOSTIC variable (DIAGNOSTIC_VARIABLE_NOT_BASELINE), never baseline, booked in the corresponding atmospheric / Xe ledger if activated (A9.3 OQ-RFQ-10)",
   "gas": "Ar only; label ENGINEERING_ONLY_NON_SCORING on every record; never counts toward DRDO atmospheric requirements (owner row 36; A9.3 OQ-RFQ-02)",
   "configurations": [
-   "hall_icp_neutralizer (P1 builds its ICP module)",
-   "hall_c1_reference (C1 disconnected in P1-S6; CONTROL_FALLBACK)"
+   "hall_icp_neutralizer (the flight configuration: one Hall + one RF/ICP neutralizer serving AIR_PRIMARY and XE_CONTINGENCY, no conventional hollow cathode, A9.19; P1 builds its ICP module)",
+   "hall_c1_reference as GROUND_REFERENCE only (C1 = GROUND_ONLY_LAB_EQUIPMENT, A9.20: not installed or disconnected in P1-S6, A9.10 OQ-RFQV2-09; used for the I_d,max,H1,Ar characterization gate, A9.10 P1Q-07 / S3.5, and as the C1-vs-ICP bench control; never a flight candidate)"
   ],
   "outcome_vocabulary_note": "P1 produces engineering records only; the architecture outcome vocabulary (incl. NO_VIABLE_CASE) belongs to the later comparison"
  },
@@ -2072,12 +2671,12 @@
    "value": "TBD - requires the maximum H-1 discharge current within the registered operating envelope, from measured/registered H-1 operation (owner question P1Q-07 on who registers it and when)",
    "units": "A",
    "basis": "owner decision",
-   "source": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json OQ-A907-02 (ICP45_REQUIRED_CURRENT = H1_REGISTERED_MAX); docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json execution_decisions.i_d_max_h1",
+   "source": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json OQ-A907-02 (ICP45_REQUIRED_CURRENT = H1_REGISTERED_MAX); docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json execution_decisions.i_d_max_h1; docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json (sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544)",
    "evidence_class": null,
-   "status": "TBD",
+   "status": "OWNER_DECIDED (A9.10 P1Q-07 DEDICATED_H1_C1_CHARACTERIZATION; value registered before P1-S7)",
    "freeze_point": "after-evidence",
    "p1_gate": "P1-S7 entry",
-   "note": "A9.4: never assigned from the 8.33 A supply rating; until registered from the H-1 envelope and measured H-1 behaviour, ICP45 = NOT_EVALUATED (not PASS or FAIL); the P1 current-capability surface may be generated before it is frozen"
+   "note": "A9.4: never assigned from the 8.33 A supply rating; until registered from the H-1 envelope and measured H-1 behaviour, ICP45 = NOT_EVALUATED (not PASS or FAIL); the P1 current-capability surface may be generated before it is frozen; A9.16 step 1: I_d,max,H1,Ar from a dedicated H-1 + conventional C1 characterization in HI-AR with its uncertainty, frozen before P1-S7 (Ar engineering reference only; the flight-relevant I_d,max,H1 is a later separate registration); never 8.33 A"
   },
   {
    "id": "P1-IT-08",
@@ -2306,12 +2905,12 @@
    "value": "TBD - requires validated continuous-use limits per component (UBQ-06 rule: limit - 50 K for score-bearing operation; application to non-scoring P1 is owner question P1Q-04)",
    "units": "degC",
    "basis": "owner decision (rule)",
-   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json UBQ-06; docs/decisions/OD_2026_09_29_owner_answers_147.json row 86",
+   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json UBQ-06; docs/decisions/OD_2026_09_29_owner_answers_147.json row 86; docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json (sha256 e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f)",
    "evidence_class": null,
-   "status": "TBD",
+   "status": "OWNER_DECIDED rule (A9.8 P1Q-04: applies to ALL P1 operation incl. non-scoring); limits registered at P1-G0",
    "freeze_point": "after-evidence",
    "p1_gate": "P1-G0",
-   "note": ""
+   "note": "A9.16 step 1: registered per component in the P1-G0 readiness record (thermal_limits); never a thermal PASS"
   },
   {
    "id": "P1-IT-26",
@@ -2371,12 +2970,12 @@
    "value": "TBD - requires owner decision on the PROPOSED form (P1Q-01): ignition repeatability, relative drift of I_e and P_refl (and Z where measured) over a dwell, absence of mode jumps, minimum dwell duration",
    "units": "-, s",
    "basis": "PROPOSED form",
-   "source": "this lane",
+   "source": "this lane; docs/decisions/OD_2026_10_01_A9_11_s4_p2_owner_decisions.json (sha256 d8baf59a5b92739698e29d893e89a30995559ee7167814c096dc24599679156c)",
    "evidence_class": null,
-   "status": "PROPOSED (values TBD)",
+   "status": "OWNER_DECIDED form (A9.11 P1Q-01); values registered, frozen and hashed before the first P1-S5 handoff classification",
    "freeze_point": "after-evidence",
    "p1_gate": "P1-G5",
-   "note": ""
+   "note": "A9.16 step 1: criteria_id versioned; derived from P1-S2..S4 evidence and >= 3 independent re-ignitions (A9.10 P1Q-05); unregistered -> NOT_EVALUATED; pass label WITHIN_OWNER_CRITERIA only"
   },
   {
    "id": "P1-IT-31",
@@ -2384,12 +2983,12 @@
    "value": "TBD - requires registration before P1-S6 (P1Q-02)",
    "units": "V, A, s, count",
    "basis": "owner decision (registration required)",
-   "source": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json OQ-VI-05",
+   "source": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json OQ-VI-05; docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json (sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544)",
    "evidence_class": null,
-   "status": "TBD",
+   "status": "OWNER_DECIDED methodology (A9.10 P1Q-02); values registered before P1-S6",
    "freeze_point": "after-evidence",
    "p1_gate": "P1-S6 entry",
-   "note": ""
+   "note": "A9.16 step 1: registrations.start_attempt_limits; current limit <= min(safe H-1, supply, 8.33 A); never increased after a failed ignition"
   },
   {
    "id": "P1-IT-32",
@@ -2397,12 +2996,12 @@
    "value": "TBD - requires registration before P1-S6 (P1Q-03)",
    "units": "A, s",
    "basis": "owner decision (registration required)",
-   "source": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json OQ-VI-05",
+   "source": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json OQ-VI-05; docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json (sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544)",
    "evidence_class": null,
-   "status": "TBD",
+   "status": "OWNER_DECIDED definition (A9.10 P1Q-03); threshold / duration registered before P1-S6",
    "freeze_point": "after-evidence",
    "p1_gate": "P1-S6 entry",
-   "note": ""
+   "note": "A9.16 step 1: registrations.sustainment_definition; SUSTAINED computed from the I_d trace"
   },
   {
    "id": "P1-IT-33",
@@ -2410,12 +3009,12 @@
    "value": "HI-HOLDOUT-A signed before P1-S6 (first Hall-on reading on the actual H-1, Ar included)",
    "units": "-",
    "basis": "owner decision",
-   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json HIQ-04; docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json stage HI-HOLDOUT-A",
+   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json HIQ-04; docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json stage HI-HOLDOUT-A; docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json (sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544)",
    "evidence_class": "owner-allocation",
-   "status": "OWNER_GIVEN",
+   "status": "OWNER_GIVEN; confirmed A9.10 P1Q-08 (HI-HOLDOUT-A starts at P1-S6)",
    "freeze_point": "NOW",
    "p1_gate": "P1-S6 entry",
-   "note": ""
+   "note": "A9.16 step 1: the P1-S6 sequence names hi_holdout_a_id"
   },
   {
    "id": "P1-IT-34",
@@ -2449,12 +3048,14 @@
    "value": "TBD - requires registration at P1-G0 (owner question P1Q-09, narrowed by A9.4 P1Q-10: ICP45_CAPACITY records use the dedicated, isolated, instrumented electron-collecting electrode, i.e. option (A); geometry, position and V_collector reference stay open). Fixed by physics / sources: the extracted electrons must be sunk by an electrode positive w.r.t. the ICP ion-collecting electrode (in the anchor the ion collector is the negative end of V_D and the HET anode sinks the electrons, TK-13 / TK-40); with the Hall discharge OFF the H-1 anode is NOT used as the sink (a positively biased H-1 anode with Ar flowing is a Hall discharge, contradicting P1-S4). Candidates: (A) a dedicated isolated downstream electron-collecting target, instrumented as terminal 'electron_collector'; (B) the grounded chamber wall (sink = facility_ground terminal). Option (A) is OWNER_DECIDED for every ICP45_CAPACITY record by A9.4 P1Q-10 (dedicated, isolated, instrumented electron-collecting electrode; consistent with this lane's earlier reasoning that with (B) ICP emission cannot be separated from wall / facility current paths in the Kirchhoff closure); whether (B) remains usable for non-capacity ENGINEERING_SURFACE records is P1Q-09",
    "units": "-, mm, V",
    "basis": "this lane (form) + published anchor; option A for capacity records owner decision A9.4 P1Q-10",
-   "source": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json TK-13, TK-40; ICD ICP-21; docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json VI-EX-03; docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-10",
+   "source": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json TK-13, TK-40; ICD ICP-21; docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json VI-EX-03; docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-10; docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json (sha256 e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f)",
    "evidence_class": null,
    "status": "TBD (geometry / position / reference); option A OWNER_DECIDED for ICP45_CAPACITY records (A9.4 P1Q-10)",
    "freeze_point": "after-evidence",
    "p1_gate": "P1-G0",
-   "note": "the reducer requires extraction.topology_id and electron_collecting_electrode on every record and refuses H1_ANODE with the Hall discharge OFF and anything but H1_ANODE with it ON; it refuses an ICP45_CAPACITY record whose sink is not DEDICATED_ELECTRON_COLLECTOR_TARGET (A9.4 P1Q-10)"
+   "note": "the reducer requires extraction.topology_id and electron_collecting_electrode on every record and refuses H1_ANODE with the Hall discharge OFF and anything but H1_ANODE with it ON; it refuses an ICP45_CAPACITY record whose sink is not DEDICATED_ELECTRON_COLLECTOR_TARGET (A9.4 P1Q-10); A9.16 step 1: option (B) chamber wall REFUSED for every record; ion collector biased negative w.r.t. the target; six metered terminals; OPEN_CIRCUIT_BY_CONSTRUCTION only physically verified",
+   "status_a9_16": "OWNER_DECIDED (A9.8 P1Q-09 DEDICATED_ISOLATED_TARGET_NO_CHAMBER_WALL); geometry registered at P1-G0 from the ICP module drawing",
+   "status_note": "'status' = A9.6 text kept for the immutable read-back (docs/procurement/rfq_a9_v2/build_rfq_a9_v2.py (immutable) reads items[id=P1-IT-36].status back into rfq_a9_v2.json; 'status' keeps that A9.6 text and status_a9_16 carries the current status); status_a9_16 governs"
   },
   {
    "id": "P1-IT-37",
@@ -2462,12 +3063,12 @@
    "value": "TBD - requires registration at P1-G0 (owner question P1Q-11); the reducer takes it as an explicit input and has no default",
    "units": "- (relative)",
    "basis": "this lane (form)",
-   "source": "this lane",
+   "source": "this lane; docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json (sha256 e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f)",
    "evidence_class": null,
-   "status": "TBD",
+   "status": "OWNER_DECIDED method (A9.8 P1Q-11); value derived from installed-gauge repeatability, frozen before the first P1-S4 pair",
    "freeze_point": "after-evidence",
    "p1_gate": "P1-G0",
-   "note": ""
+   "note": "A9.16 step 1: immutable within the campaign; not registered -> NOT_EVALUATED_REGISTRATION; unmatched pair -> P1-IT-51 exclusion"
   },
   {
    "id": "P1-IT-38",
@@ -2566,15 +3167,15 @@
   {
    "id": "P1-IT-45",
    "name": "later acceptance / reverification of the ICP body / collector insulation",
-   "value": "TBD - requires an owner-registered lower controlled level / procedure (A9.4 P1Q-14: the 1.05 kV test is qualification-style and is not repeated before every campaign; requalification only after a fault or hardware modification; owner question P1Q-17)",
+   "value": "700 V DC / 60 s, current-limited, triggered only (owner development acceptance level, not ECSS)",
    "units": "V (DC), s",
    "basis": "owner decision (rule)",
-   "source": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-14.no_repeated_hipot",
-   "evidence_class": null,
-   "status": "TBD",
+   "source": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-14.no_repeated_hipot; docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json (sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+   "evidence_class": "owner-stated",
+   "status": "OWNER_DECIDED (A9.14 P1Q-17 REVERIFICATION_700V_DC_60S_TRIGGERED_ONLY)",
    "freeze_point": "after-evidence",
    "p1_gate": "before any reverification",
-   "note": ""
+   "note": "A9.16 step 1: 700 V DC / 60 s current-limited, triggered only; per-path leakage criterion; owner development acceptance level, not an ECSS clause; p1_a9_16_rules.reduce_dwv_reverification"
   },
   {
    "id": "P1-IT-46",
@@ -2631,12 +3232,12 @@
    "value": "TBD - requires the calibration certificates, zero/offset records, resolution, repeatability (where applicable) and registered RF-pickup contribution (P1-M-22) of every current channel. Form (owner): u_R = sqrt(sum_k u^2(I_k)) for independent calibrated channels; the full covariance form sum_ij r_ij u(I_i) u(I_j) when correlations are established (registered correlation, closure_rule.covariance)",
    "units": "A",
    "basis": "owner decision (form); values from certificates",
-   "source": "docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json decisions.P1Q-15.uncertainty",
+   "source": "docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json decisions.P1Q-15.uncertainty; docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json (sha256 e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f)",
    "evidence_class": null,
    "status": "TBD (form OWNER_DECIDED)",
    "freeze_point": "after-evidence",
    "p1_gate": "P1-G1",
-   "note": "record fields per MEASURED terminal: uncertainty {u_calibration_A, u_zero_offset_A, u_resolution_A (> 0), u_repeatability_A or 'NOT_APPLICABLE', u_rf_pickup_A or 'NONE_REGISTERED'} and sign_convention_id; a missing component makes the point not evaluable (never a zero default); OPEN_CIRCUIT_BY_CONSTRUCTION terminals contribute I = 0, u = 0 by construction (P1Q-20)"
+   "note": "record fields per MEASURED terminal: uncertainty {u_calibration_A, u_zero_offset_A, u_resolution_A (> 0), u_repeatability_A or 'NOT_APPLICABLE', u_rf_pickup_A or 'NONE_REGISTERED'} and sign_convention_id; a missing component makes the point not evaluable (never a zero default); OPEN_CIRCUIT_BY_CONSTRUCTION terminals contribute I = 0, u = 0 by construction (P1Q-20); A9.16 step 1: A9.8 P1Q-20: OPEN_CIRCUIT_BY_CONSTRUCTION terminals carry the measured DWV leakage term (never u = 0 by default)"
   },
   {
    "id": "P1-IT-50",
@@ -2679,12 +3280,12 @@
    "value": "TBD - requires registration before each stage (registrations.operating_domains: {stage_id: {domain_id, P_fwd_W, p_chamber_Pa, mdot_Ar_H1_mg_s, V_collector_V as [min, max]}}), from the procured ratings and the P1 run matrix; a record outside it, of an unregistered stage, or taken before P1-G0 is met is OUT_OF_DOMAIN (never a FAIL)",
    "units": "W, Pa, mg/s, V",
    "basis": "A9.6 sec. 14 (OUT_OF_DOMAIN distinct from FAIL); values registered",
-   "source": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md sec. 14",
+   "source": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md sec. 14; docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json (sha256 e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f)",
    "evidence_class": null,
-   "status": "TBD (registered input)",
+   "status": "OWNER_DECIDED form (A9.8 P1-IT-52 STAGE_DOMAINS_FROM_REAL_HARDWARE); values registered per stage",
    "freeze_point": "LOCK-1",
    "p1_gate": "P1-G0",
-   "note": "the driver has no default domain; P_fwd is not checked on RF-OFF records"
+   "note": "the driver has no default domain; P_fwd is not checked on RF-OFF records; A9.16 step 1: unique domain_id, frozen_utc before the stage's first record, hardware basis; outside -> OUT_OF_DOMAIN"
   },
   {
    "id": "P1-IT-53",
@@ -2718,12 +3319,12 @@
    "value": "TBD - requires the insulation-path / feedthrough ratings (P1-IT-44 note; not given by the owner). Until registered the P1-G0 status is G0_NOT_EVALUATED_TBD",
    "units": "A",
    "basis": "owner decision (DWV performed at 1.05 kV / 60 s, leakage recorded); acceptance value not decided",
-   "source": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-14.initial_dwv",
+   "source": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-14.initial_dwv; docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json (sha256 e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f)",
    "evidence_class": null,
-   "status": "TBD",
+   "status": "OWNER_DECIDED form (A9.8 P1-IT-55 PER_PATH_DOCUMENTED_LEAKAGE_LIMIT); per-path values registered before the DWV test",
    "freeze_point": "LOCK-1",
    "p1_gate": "P1-G0",
-   "note": "p1_reducer.reduce_readiness"
+   "note": "p1_reducer.reduce_readiness; A9.16 step 1: no documented basis -> G0_NOT_EVALUATED_TBD; flashover / breakdown / tracking / trip fail; leakage feeds P1Q-20; in-house assembled test plus supplier certificate (OQ-RFQV2-08)"
   },
   {
    "id": "P1-IT-56",
@@ -2741,15 +3342,80 @@
   {
    "id": "P1-IT-57",
    "name": "treatment of a registered u_I_e_A below the channel propagation",
-   "value": "TBD_OWNER (P1Q-19): the two admissible treatments REQUIRE_REGISTERED_GE_CHANNEL and USE_LARGER_OF_REGISTERED_AND_CHANNEL are computed side by side; ICP45 = NOT_EVALUATED whenever they disagree; the registered value is never used as it stands when it is below the propagation (DERIVED)",
+   "value": "OWNER_DECIDED (A9.10 P1Q-19): REQUIRE_REGISTERED_GE_CHANNEL - u_I_e,registered >= u(I_e,cap)_channels under the registered correlation treatment before the first P1-S7 point, else the ICP-45 evaluation is NOT_EVALUATED_REGISTRATION; corrected only before data acquisition, never after seeing the result",
    "units": "A",
    "basis": "A9.6 sec. 7 (genuine design choice stays TBD_OWNER; support all admissible outcomes)",
-   "source": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md sec. 7",
-   "evidence_class": null,
-   "status": "TBD_OWNER",
+   "source": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md sec. 7; docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json (sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544)",
+   "evidence_class": "owner-stated",
+   "status": "OWNER_DECIDED (A9.10 P1Q-19 REQUIRE_REGISTERED_GE_CHANNEL)",
    "freeze_point": "LOCK-1",
    "p1_gate": "P1-S7",
-   "note": "p1_reducer._p1q19_alternatives"
+   "note": "p1_reducer._p1q19_alternatives; A9.16 step 1: registered below propagation -> NOT_EVALUATED_REGISTRATION"
+  },
+  {
+   "id": "P1-IT-58",
+   "name": "at-power RF loss-model agreement factor k_loss (P1 and P2)",
+   "value": 2.0,
+   "units": "-",
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json decisions.P1Q-24 (sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544)",
+   "evidence_class": "owner-stated",
+   "status": "OWNER_GIVEN (A9.10 P1Q-24 K_LOSS_2_FAIL_CLOSED_CONFIRMED)",
+   "freeze_point": "NOW",
+   "p1_gate": "P1-G1",
+   "note": "|eta_meas - eta_pred| / u_c <= 2; never relaxed in P1 or P2; P_delivered / C_e upper bounds until passed"
+  },
+  {
+   "id": "P1-IT-59",
+   "name": "baseline start sequence (OD5)",
+   "value": "gas / plenum / feed -> H-1 magnet state -> ICP ignite / stabilize -> verify electron-source condition -> apply V_d -> verify sustained Hall discharge; max 1 initial + 2 retries",
+   "units": "-, count",
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json decisions.OD5 (sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+   "evidence_class": "owner-stated",
+   "status": "OWNER_GIVEN (A9.14 OD5; dwell / thermal limits registered)",
+   "freeze_point": "NOW",
+   "p1_gate": "P1-S7H",
+   "note": "C1-selected variant uses its own qualified sequence; the P1-S6 control experiment is not this sequence"
+  },
+  {
+   "id": "P1-IT-60",
+   "name": "B(z) mapping with RF present (ICPQ-08)",
+   "value": "energized only with demonstrated gaussmeter RF immunity; else after RF-off at a preregistered decay-characterized delay (TBD - registered)",
+   "units": "s",
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json decisions.ICPQ-08 (sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+   "evidence_class": "owner-stated",
+   "status": "OWNER_DECIDED (delay value TBD - registered)",
+   "freeze_point": "after-evidence",
+   "p1_gate": "P1-G0",
+   "note": "p1_a9_16_rules.check_bz_mapping"
+  },
+  {
+   "id": "P1-IT-61",
+   "name": "ICP geometry bench matrix (F6-OQ-03)",
+   "value": "TBD - registered matrix of modular ICP geometry variants inside the drawing envelope; each geometry measured; no surrogate before separate validation",
+   "units": "-",
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json decisions.F6-OQ-03 (sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+   "evidence_class": "owner-stated",
+   "status": "OWNER_DECIDED (matrix TBD - registered)",
+   "freeze_point": "LOCK-1",
+   "p1_gate": "P1-G0",
+   "note": "registrations.icp_geometry_matrix; p1_a9_16_rules.geometry_matrix_report"
+  },
+  {
+   "id": "P1-IT-62",
+   "name": "IP-NEU module interface (P1Q-12)",
+   "value": "defined in the LOCK-1 ICD revision; P1 builds to a controlled interim harness drawing (id registered at P1-G0)",
+   "units": "-",
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json decisions.P1Q-12 (sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+   "evidence_class": "owner-stated",
+   "status": "OWNER_DECIDED (A9.14 P1Q-12 YES_IP_NEU_LOCK1_ICD_INTERFACE)",
+   "freeze_point": "LOCK-1",
+   "p1_gate": "P1-G0",
+   "note": "readiness registration ip_neu_interim_harness_drawing_id"
   }
  ],
  "measurements": [
@@ -3249,16 +3915,19 @@
    "quantity": "plasma potential and electron temperature at the collector sheath edge (conditional)",
    "symbol": "V_p,coll, T_e,coll",
    "units": "V, eV",
-   "instrument_class": "TBD_OWNER (P3Q-01): probe diagnostic near the collector (e.g. Langmuir or emissive probe) or none if the calorimetric collector energy balance is accepted instead",
-   "reference_plane": "collector sheath edge (probe position TBD at P1-G0)",
+   "instrument_class": "Langmuir-probe diagnostic near the collector (OWNER_DECIDED A9.8 S1.7 P3Q-01 option C): independent sheath-model cross-check of the calorimetric collector energy balance, which stays the PRIMARY Q_collector evidence (calibrated temperatures, registered conductances / thermal mass, RF-ON / RF-OFF comparisons, collector-current / bias steps); taken in matched DIAGNOSTIC runs",
+   "reference_plane": "near the collector (probe position registered at P1-G0 from the ICP module drawing)",
    "sampling": "TBD - frozen at P1-G0 (PROPOSED: continuous logging on the common time base INS-18)",
    "uncertainty_sources": [
-    "TBD - requires the probe selection and its calibration (P3Q-01)"
+    "TBD - requires the selected probe and its calibration (registered at P1-G0)"
    ],
    "stages": "S4-S7",
    "status": "CONDITIONAL (TBD_OWNER P3Q-01)",
-   "note": "listed so that P3 Q_collector (P3-P1-04 / P3-P1-05, pair XL-18) and the P4 collector ion energy (IT-19, pair XL-25) have a named P1 channel; recorded only if the owner selects a probe diagnostic under P3Q-01; never assumed, never replaced by an analog value; no RFQ v2 line (disposition NP-CONDITIONAL-P3Q01)",
-   "metrology_spec": "TBD_OWNER - conditional on P3Q-01 (docs/experiments/hall_icp/p3_coupled_thermal/): no metrology specification until a probe diagnostic is selected; if the calorimetric alternative is accepted this channel is not recorded"
+   "note": "named P1 channel for P3 Q_collector (P3-P1-04 / P3-P1-05, pair XL-18) and the P4 collector ion energy (IT-19, pair XL-25); a probe present during an ICP45_CAPACITY record without registered evidence that its perturbation is negligible excludes that capacity point (p1_reducer.capacity_structural_reasons, capacity_monitoring.langmuir_probe_present); never assumed, never replaced by an analog value; RFQ v3 line TH-L10 (RFQ3-THRUST, P1_NEEDED); RFQ v2 disposition NP-CONDITIONAL-P3Q01 superseded by RFQ v3",
+   "metrology_spec": "TBD - Langmuir-probe metrology (probe geometry and position, I-V sweep range / resolution, calibration and uncertainty) registered at P1-G0 from the selected probe (A9.8 P3Q-01 option C; RFQ v3 line TH-L10); nothing is invented here",
+   "quantity_a9_16": "plasma potential and electron temperature near the collector (Langmuir probe; required Ar P1 development diagnostic)",
+   "status_a9_16": "REQUIRED (A9.8 P3Q-01 option C: Ar P1 development campaign; matched diagnostic runs; cross-check only)",
+   "readback_note": "'quantity' / 'status' = A9.6 text kept for the immutable RFQ v2 read-back (docs/procurement/rfq_a9_v2/build_rfq_a9_v2.py); quantity_a9_16 / status_a9_16 govern"
   }
  ],
  "derived_quantities": [
@@ -3373,9 +4042,9 @@
   },
   {
    "id": "P1-D-19",
-   "quantity": "P1Q-19 alternatives for the u(I_e,cap) used in M_n",
-   "formula": "registered u_I_e_A >= u(I_e,cap)_channels: both treatments identical, M_n with u_I_e_A; otherwise REQUIRE_REGISTERED_GE_CHANNEL -> NOT_EVALUATED, USE_LARGER_OF_REGISTERED_AND_CHANNEL -> M_n with u(I_e,cap)_channels; overall NOT_EVALUATED (TBD_OWNER) when they disagree",
-   "source": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md sec. 6-7; https://www.bipm.org/documents/20126/2071204/JCGM_100_2008_E.pdf 5.1.2 / 5.2.2"
+   "quantity": "u(I_e,cap) used in M_n under the owner P1Q-19 rule",
+   "formula": "owner A9.10 P1Q-19 REQUIRE_REGISTERED_GE_CHANNEL: registered u_I_e_A >= u(I_e,cap)_channels (under the registered correlation treatment) -> M_n with u_I_e_A; otherwise the registration is inadmissible and ICP-45 = NOT_EVALUATED_REGISTRATION (never replaced by the larger value; USE_LARGER_OF_REGISTERED_AND_CHANNEL is NOT_OWNER_SELECTED_INFORMATIONAL, never evaluated)",
+   "source": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md sec. 6-7; https://www.bipm.org/documents/20126/2071204/JCGM_100_2008_E.pdf 5.1.2 / 5.2.2; docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json decisions.P1Q-19"
   },
   {
    "id": "P1-D-11",
@@ -3421,8 +4090,8 @@
    "id": "P1-SI-05",
    "hazard": "HV between floating circuits and ground (collector, ICP body, Hall anode)",
    "function": "isolation per ICD ICP-23: 350 V operating class of owner row 81 for H-1 / discharge supply / isolation / diagnostics, extended by A9.4 P1Q-14 to the ICP body / collector circuits (vs Hall anode, H-1 body/common, facility ground, other isolated circuits); V_design,withstand >= 525 V; initial DWV 1.05 kV DC for 60 s on passive insulation paths and feedthrough assemblies where ratings permit, current-limited, sensitive electronics disconnected where necessary, leakage recorded, before first HV/RF operation, plus representative-pressure/gas testing for Paschen-risk paths; current-limited supplies; discharge-supply protection sized to the 8.33 A stand ceiling",
-   "threshold": "350 V operating; >= 525 V design withstand; 1.05 kV DC / 60 s initial DWV (A9.4 P1Q-14); leakage acceptance TBD; later reverification level TBD (P1-IT-45)",
-   "source": "ICD ICP-23; docs/decisions/OD_2026_09_29_owner_answers_147.json row 81; docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-14; docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json OQ-A907-02",
+   "threshold": "350 V operating; >= 525 V design withstand; 1.05 kV DC / 60 s initial DWV (A9.4 P1Q-14); leakage acceptance TBD; later reverification 700 V DC / 60 s, current-limited, triggered only (A9.14 P1Q-17 owner development acceptance level, not ECSS; P1-IT-45)",
+   "source": "ICD ICP-23; docs/decisions/OD_2026_09_29_owner_answers_147.json row 81; docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-14; docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json OQ-A907-02; docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json decisions.P1Q-17",
    "status": "OWNER_DECIDED (A9.4 P1Q-14); ICP-44 RF insulation OPEN"
   },
   {
@@ -3469,9 +4138,9 @@
    "id": "P1-SI-11",
    "hazard": "dielectric-withstand (hipot) testing itself: personnel HV exposure and insulation ageing by repeated proof stress",
    "function": "current-limited tester; sensitive electronics disconnected where necessary; the 1.05 kV DC / 60 s test is qualification-style and not repeated before each campaign; later reverification at a lower controlled level / procedure unless a fault or hardware modification requires requalification",
-   "threshold": "1.05 kV DC / 60 s initial (A9.4 P1Q-14); reverification level TBD (P1-IT-45)",
-   "source": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-14.initial_dwv, no_repeated_hipot",
-   "status": "OWNER_DECIDED (rule) / TBD (reverification level)"
+   "threshold": "1.05 kV DC / 60 s initial (A9.4 P1Q-14); reverification 700 V DC / 60 s, current-limited, triggered only (A9.14 P1Q-17 owner development acceptance level, not ECSS; P1-IT-45)",
+   "source": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-14.initial_dwv, no_repeated_hipot; docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json decisions.P1Q-17",
+   "status": "OWNER_DECIDED (A9.4 P1Q-14 rule; A9.14 P1Q-17 reverification level)"
   }
  ],
  "run_matrix": {
@@ -3820,7 +4489,8 @@
    "rfq_v1_package": "RFQ-08 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "HE-L10, HE-L11, HE-L12 (dispatch LATER) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
    "h2_or_h1_items": "H2-2 C-1; ICD ICP-25, ICP-46; A9.1 ICP-46 (keeper isolation basis)",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)",
+   "c1_status": "GROUND_ONLY_LAB_EQUIPMENT (A9.20): H-1 I_d,max,H1,Ar characterization (A9.10 S3.5 / P1Q-07) and bench control in the C1-vs-ICP comparison; never flight hardware, never in flight budgets; not CONTROL_FALLBACK (A9.19)"
   },
   {
    "id": "P1-HW-33",
@@ -4077,7 +4747,7 @@
   {
    "id": "IF-P1-16",
    "direction": "to",
-   "counterpart": "P3 docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json P3-IF-N01 (and A9-07 as context)",
+   "counterpart": "P3 docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json P3-IF-N01 (and A9-07 as context)",
    "what": "measured collector / body currents and potentials, Hall I_d / V_d at consistency points, temperatures incl. H-1 poles and T_sink per run; the terminal currents are net signed currents (P1-IT-42) - the ion / electron particle-current split at the collector that Q_collector needs (P3-P1-01 / P3-P1-02) is not a P1 measurand and stays TBD_AFTER_EVIDENCE until registered",
    "units": "A; V; degC",
    "status": "TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; records only; ICP_COUPLED_THERMAL UNRESOLVED)",
@@ -4085,7 +4755,7 @@
     {
      "pair": "XL-17",
      "counterpart": "P3:P3-IF-N01",
-     "counterpart_path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "counterpart_path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "quantity": "P1 measured records for the coupled thermal model: collector current and potential (P1-M-10, P1-M-11, P1-M-27), ICP body current (P1-M-12), Hall I_d / V_d at consistency points (P1-M-14), module and H-1 pole temperatures and T_sink per run (P1-M-21) -> P3-P1-01, P3-P1-02, P3-P1-03, P3-P1-07, P3-P1-08",
      "units": "A; V; degC",
      "status": "TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; records only; ICP_COUPLED_THERMAL UNRESOLVED)"
@@ -4140,7 +4810,7 @@
    "counterpart": "H2-2 docs/hardware/h2/h2_2_cathode_integration/h2_2_cathode_integration_v1.json / RFQ-08",
    "what": "C1 (C-1) module installed on KC-1 with a disconnect means and a verification that it supplies no electrons in P1-S6 (OQ-VI-05 step 2)",
    "units": "-, A",
-   "status": "REQUIRED (C1 stays CONTROL_FALLBACK)"
+   "status": "REQUIRED (C1 = GROUND_ONLY_LAB_EQUIPMENT, A9.20)"
   },
   {
    "id": "IF-P1-22",
@@ -4321,25 +4991,25 @@
   {
    "id": "IF-P1-34",
    "direction": "to",
-   "counterpart": "P3 docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json P3-IF-N02",
-   "what": "conditional P1-M-30 sheath-edge plasma potential / T_e for Q_collector, or the calorimetric alternative (P3Q-01)",
+   "counterpart": "P3 docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json P3-IF-N02",
+   "what": "P1-M-30 Langmuir-probe plasma potential / T_e near the collector as the sheath-model cross-check of the primary calorimetric Q_collector (A9.8 P3Q-01 option C)",
    "units": "V; eV",
-   "status": "TBD_OWNER (P3Q-01 OPEN; registration at P1-G0)",
+   "status": "OWNER_DECIDED (A9.8 P3Q-01 option C: calorimetry primary, Langmuir probe cross-check); probe position / calibration registered at P1-G0; readings TBD_AFTER_EVIDENCE",
    "xref": [
     {
      "pair": "XL-18",
      "counterpart": "P3:P3-IF-N02",
-     "counterpart_path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
-     "quantity": "plasma potential and electron temperature at the collector sheath edge (conditional P1 measurement P1-M-30) or an accepted calorimetric alternative -> P3-P1-04, P3-P1-05",
+     "counterpart_path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
+     "quantity": "plasma potential and electron temperature near the collector from the Langmuir probe P1-M-30 (required Ar P1 development diagnostic, matched diagnostic runs; sheath-model cross-check) beside the calorimetric collector energy balance (primary Q_collector evidence) -> P3-P1-04, P3-P1-05",
      "units": "V; eV",
-     "status": "TBD_OWNER (P3Q-01 OPEN; registration at P1-G0)"
+     "status": "OWNER_DECIDED (A9.8 P3Q-01 option C: calorimetry primary, Langmuir probe cross-check); probe position / calibration registered at P1-G0; readings TBD_AFTER_EVIDENCE"
     }
    ]
   },
   {
    "id": "IF-P1-35",
    "direction": "from",
-   "counterpart": "P3 docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json P3-IF-S05",
+   "counterpart": "P3 docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json P3-IF-S05",
    "what": "verification temperature set of the coupled thermal model (P1-M-21 channel list)",
    "units": "degC",
    "status": "DEFINED (channel list); readings TBD_AFTER_EVIDENCE; never a thermal PASS",
@@ -4347,7 +5017,7 @@
     {
      "pair": "XL-21",
      "counterpart": "P3:P3-IF-S05",
-     "counterpart_path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "counterpart_path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "quantity": "verification temperature set of the coupled model (P3-P1-07 -> P1-M-21 channels: antenna, dielectric, collector, match, H-1 inner / outer pole, sink)",
      "units": "degC",
      "status": "DEFINED (channel list); readings TBD_AFTER_EVIDENCE; never a thermal PASS"
@@ -4358,17 +5028,17 @@
    "id": "IF-P1-36",
    "direction": "to",
    "counterpart": "P4 docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json ID-06",
-   "what": "measured collector bias / current and the conditional sheath-edge plasma potential for the P4 collector ion energy",
+   "what": "measured collector bias / current and the P1-M-30 Langmuir-probe plasma potential near the collector for the P4 collector ion energy (A9.8 P3Q-01)",
    "units": "V; A",
-   "status": "TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; sheath energy additionally TBD_OWNER P3Q-01)",
+   "status": "TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; sheath energy from the P1-M-30 Langmuir probe, A9.8 P3Q-01 option C cross-check)",
    "xref": [
     {
      "pair": "XL-25",
      "counterpart": "P4:ID-06",
      "counterpart_path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
-     "quantity": "measured collector bias and current (P1-M-10, P1-M-11, P1-M-27) and the conditional sheath-edge plasma potential (P1-M-30) for the collector ion energy (P4 IT-19, CR-04)",
+     "quantity": "measured collector bias and current (P1-M-10, P1-M-11, P1-M-27) and the Langmuir-probe plasma potential near the collector (P1-M-30, A9.8 P3Q-01) for the collector ion energy (P4 IT-19, CR-04)",
      "units": "V; A",
-     "status": "TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; sheath energy additionally TBD_OWNER P3Q-01)"
+     "status": "TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; sheath energy from the P1-M-30 Langmuir probe, A9.8 P3Q-01 option C cross-check)"
     }
    ]
   },
@@ -4413,7 +5083,7 @@
   {
    "id": "A9",
    "kind": "governing decision",
-   "how_applied": "primary investigation Hall + downstream 13.56 MHz ICP; C1 CONTROL_FALLBACK; evidence order Ar -> N2 -> O2 (P1 is the Ar step); status kept INVESTIGATION_HYPOTHESIS"
+   "how_applied": "primary investigation Hall + downstream 13.56 MHz ICP; C1 CONTROL_FALLBACK (C1 role superseded by A9.19 / A9.20: GROUND_ONLY_LAB_EQUIPMENT); evidence order Ar -> N2 -> O2 (P1 is the Ar step); status kept INVESTIGATION_HYPOTHESIS"
   },
   {
    "id": "A9.3 OQ-VI-03",
@@ -4724,8 +5394,613 @@
    "id": "A9.6 sec. 14",
    "kind": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md sec. 14",
    "how_applied": "APPLIED: fail-closed audit bullet by bullet with one explicit test each (a9_6_incorporation.fail_closed_audit); OUT_OF_DOMAIN outcome added, never counted as FAIL"
+  },
+  {
+   "id": "A9.8 P1Q-04",
+   "kind": "owner decision (A9.16 step 1)",
+   "how_applied": "APPLIED (YES): UBQ-06 abort / derate (validated continuous-use limit - 50 K) on ALL P1 operation incl. non-scoring runs: the P1-G0 readiness record registers the validated limits of every component temperature channel (null -> G0_NOT_EVALUATED_TBD); every later record at / above limit - 50 K is OUT_OF_DOMAIN with the abort / derate reason and listed in owner_rules_a9_16.thermal_protection; never a thermal PASS (ICP_COUPLED_THERMAL stays UNRESOLVED) [decision docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json sha256 e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f, S1.1 P1Q-04; verbatim docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+   "decision_json_sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+   "question_id": "P1Q-04",
+   "sequenced_no": "S1.1",
+   "owner_answer": "YES",
+   "implemented_in": "p1_reducer.reduce_readiness (thermal_limits); p1_a9_16_rules.thermal_abort_rows; p1_campaign",
+   "tests": [
+    "test_p1_a9_16_thermal_abort_all_operation",
+    "test_p1_a9_16_readiness_thermal_limits_required"
+   ]
+  },
+  {
+   "id": "A9.8 P1Q-09",
+   "kind": "owner decision (A9.16 step 1)",
+   "how_applied": "APPLIED (DEDICATED_ISOLATED_TARGET_NO_CHAMBER_WALL): dedicated isolated electron-collecting target for ICP45_CAPACITY AND the P1-S4 ENGINEERING_SURFACE records; the chamber wall (CHAMBER_WALL_FACILITY_GROUND) is REFUSED as electron collector for every record; V_collector is referenced to the target (ELECTRON_COLLECTOR_ELECTRODE) and must be < 0 (ICP ion-collecting electrode biased negative w.r.t. the target, potential recorded); six terminals collector_supply, icp_body, facility_ground, electron_collector, h1_body, hall_anode required; OPEN_CIRCUIT_BY_CONSTRUCTION only with a recorded physical_verification_id; target geometry registered at P1-G0 (extraction.target_geometry_id, readiness registration electron_collector_target_geometry_id) - no dimension invented; 316L stays acceptable for the Ar engineering article only (A9.1 A9-03-collector), not a flight collector material [decision docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json sha256 e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f, S1.2 P1Q-09; verbatim docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+   "decision_json_sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+   "question_id": "P1Q-09",
+   "sequenced_no": "S1.2",
+   "owner_answer": "DEDICATED_ISOLATED_TARGET_NO_CHAMBER_WALL",
+   "implemented_in": "p1_reducer.validate_operating_point (REFUSED_EXTRACTION_ELECTRODES, P1Q09_TERMINALS, TARGET_GEOMETRY_FIELD, OPEN_CIRCUIT_VERIFICATION_FIELD)",
+   "tests": [
+    "test_p1_a9_16_chamber_wall_refused_surface_and_capacity",
+    "test_p1_a9_16_target_bias_reference_and_geometry",
+    "test_p1_a9_16_open_circuit_needs_physical_verification",
+    "test_extraction_topology_rules (updated)"
+   ]
+  },
+  {
+   "id": "A9.8 P1Q-11",
+   "kind": "owner decision (A9.16 step 1)",
+   "how_applied": "APPLIED (DERIVE_FROM_INSTALLED_GAUGE): pressure-match tolerance is a registration (criteria_id, p_chamber_rel_tol, gauge_id, derived_from_record_ids of P1-S2 / P1-S3 records, repeatability_basis, frozen_utc) frozen before the first P1-S4 matched pair; one registration per campaign (immutable); not registered / not admissible -> the RF-OFF correction is not formed and the capacity point is NOT_EVALUATED_REGISTRATION; an unmatched pair stays an exclusion (P1-IT-51); no percentage is set here [decision docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json sha256 e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f, S1.3 P1Q-11; verbatim docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+   "decision_json_sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+   "question_id": "P1Q-11",
+   "sequenced_no": "S1.3",
+   "owner_answer": "DERIVE_FROM_INSTALLED_GAUGE",
+   "implemented_in": "p1_a9_16_rules.check_pressure_match_registration; p1_campaign",
+   "tests": [
+    "test_p1_a9_16_pressure_match_registration",
+    "test_a96_sec14_invalid_pair_excluded (updated)"
+   ]
+  },
+  {
+   "id": "A9.8 P1Q-18",
+   "kind": "owner decision (A9.16 step 1)",
+   "how_applied": "APPLIED (CONFIRMED): recorder reading confirmed and kept: full adequacy 3 u_R > 0.02 |I_e,collector| on the RF-ON ICP45_CAPACITY candidate; matched RF-OFF record floor-based (I_scale,min); a fractional-only RF-OFF resolution failure is NOT_EVALUATED_INSTRUMENT, not an exclusion [decision docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json sha256 e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f, S1.4 P1Q-18; verbatim docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+   "decision_json_sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+   "question_id": "P1Q-18",
+   "sequenced_no": "S1.4",
+   "owner_answer": "CONFIRMED",
+   "implemented_in": "p1_reducer.kirchhoff_closure / icp45a_candidates (unchanged)",
+   "tests": [
+    "test_met03_rf_off_adequacy_applied",
+    "test_p1_a9_16_p1q18_confirmed_reading"
+   ]
+  },
+  {
+   "id": "A9.8 P1Q-20",
+   "kind": "owner decision (A9.16 step 1)",
+   "how_applied": "APPLIED (YES): an OPEN_CIRCUIT_BY_CONSTRUCTION terminal (floating H-1 anode, registered open terminals) never gets u = 0 by default: it carries leakage {dwv_path_id, leakage_upper_bound_A >= the leakage measured on that ACCEPTED DWV path of the governing P1-G0 record, u_leakage_A > 0} entering u_R as the zero-offset / leakage term; zero only when DEMONSTRABLY_NEGLIGIBLE under a registered closure_rule.leakage_negligibility_ratio_max (no default); missing / untraceable -> NOT_EVALUATED_UNCERTAINTY [decision docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json sha256 e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f, S1.5 P1Q-20; verbatim docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+   "decision_json_sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+   "question_id": "P1Q-20",
+   "sequenced_no": "S1.5",
+   "owner_answer": "YES",
+   "implemented_in": "p1_reducer._leakage_uncertainty / kirchhoff_closure; p1_campaign (dwv_leakage_by_path from P1-G0)",
+   "tests": [
+    "test_p1_a9_16_open_circuit_leakage_enters_u_R",
+    "test_p1_a9_16_leakage_negligible_only_registered",
+    "test_p1_a9_16_campaign_leakage_traced_to_accepted_dwv"
+   ]
+  },
+  {
+   "id": "A9.8 P1-IT-52",
+   "kind": "owner decision (A9.16 step 1)",
+   "how_applied": "APPLIED (STAGE_DOMAINS_FROM_REAL_HARDWARE): every registered stage domain carries a unique domain_id, frozen_utc and its hardware basis; P_fwd_W, p_chamber_Pa, mdot_Ar_H1_mg_s, V_collector_V as [min, max]; frozen at / after the stage's first record -> that stage's records OUT_OF_DOMAIN (never a FAIL); 0-500 W stays the laboratory investigation capability, not a stage domain; no numbers set here [decision docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json sha256 e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f, S1.15 P1-IT-52; verbatim docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+   "decision_json_sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+   "question_id": "P1-IT-52",
+   "sequenced_no": "S1.15",
+   "owner_answer": "STAGE_DOMAINS_FROM_REAL_HARDWARE",
+   "implemented_in": "p1_a9_16_rules.check_operating_domains / domain_freeze_reasons; p1_campaign",
+   "tests": [
+    "test_p1_a9_16_domain_registration_unique_and_frozen"
+   ]
+  },
+  {
+   "id": "A9.8 P1-IT-55",
+   "kind": "owner decision (A9.16 step 1)",
+   "how_applied": "APPLIED (PER_PATH_DOCUMENTED_LEAKAGE_LIMIT): per-path leakage limit = registered criterion with basis_document_id (most restrictive documented component / feedthrough / insulator / supplier specification), u_measurement_A and uncertainty_treatment, registered_utc before the test; flashover, breakdown, tracking / disruptive discharge or protective trip -> deficiency; no documented basis -> G0_NOT_EVALUATED_TBD (no universal uA value); accepted leakage feeds P1Q-20 [decision docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json sha256 e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f, S1.16 P1-IT-55; verbatim docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+   "decision_json_sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+   "question_id": "P1-IT-55",
+   "sequenced_no": "S1.16",
+   "owner_answer": "PER_PATH_DOCUMENTED_LEAKAGE_LIMIT",
+   "implemented_in": "p1_reducer.reduce_readiness (LEAKAGE_ACCEPTANCE_REQUIRED, DWV_APPLICABLE_REQUIRED)",
+   "tests": [
+    "test_p1_a9_16_dwv_per_path_limit_rules"
+   ]
+  },
+  {
+   "id": "A9.8 OQ-RFQV2-06",
+   "kind": "owner decision (A9.16 step 1)",
+   "how_applied": "APPLIED (YES): the 350 V class / >= 525 V design withstand / 1.05 kV DC 60 s initial DWV applies to the H-1 anode / discharge-supply isolation and feedthrough paths: readiness requires a DWV record (tested, or not applicable with reason) of path class H1_ANODE_DISCHARGE_SUPPLY_350V_CLASS beside ICP_BODY_COLLECTOR_350V_CLASS; RF antenna / matching insulation, Paschen-risk gas paths and combined RF+DC stress stay separately qualified (P1-IT-46 OPEN) [decision docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json sha256 e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f, S1.13 OQ-RFQV2-06; verbatim docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+   "decision_json_sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+   "question_id": "OQ-RFQV2-06",
+   "sequenced_no": "S1.13",
+   "owner_answer": "YES",
+   "implemented_in": "p1_reducer.reduce_readiness (DWV_REQUIRED_PATH_CLASSES)",
+   "tests": [
+    "test_p1_a9_16_dwv_path_classes_required"
+   ]
+  },
+  {
+   "id": "A9.8 OQ-RFQV2-08",
+   "kind": "owner decision (A9.16 step 1)",
+   "how_applied": "APPLIED (BOTH_SUPPLIER_AND_IN_HOUSE): every applicable DWV path: in-house current-limited 1.05 kV DC / 60 s on the ASSEMBLED configuration (test_configuration ASSEMBLED_SYSTEM_IN_HOUSE, configuration_id) before first HV / RF operation, plus a supplier / factory certificate id or the recorded reason the rating does not permit it; test voltage, duration, leakage, configuration and pass / fail observations recorded [decision docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json sha256 e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f, S1.14 OQ-RFQV2-08; verbatim docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+   "decision_json_sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+   "question_id": "OQ-RFQV2-08",
+   "sequenced_no": "S1.14",
+   "owner_answer": "BOTH_SUPPLIER_AND_IN_HOUSE",
+   "implemented_in": "p1_reducer.reduce_readiness",
+   "tests": [
+    "test_p1_a9_16_dwv_in_house_assembled_and_supplier"
+   ]
+  },
+  {
+   "id": "A9.10 P1Q-02",
+   "kind": "owner decision (A9.16 step 1)",
+   "how_applied": "APPLIED (HARDWARE_DERIVED_LIMITS_BEFORE_P1_S6): registration slot start_attempt_limits {V_d_max_V <= V_qualified_envelope_V, I_limit_A <= min(I_h1_safe_A, I_supply_capability_A, 8.33 A stand ceiling), attempt_duration_max_s, max_attempts, cooldown_condition, thermal / isolation / interlock basis ids, frozen_utc}; frozen before the first P1-S6 record else P1-S6 OUT_OF_DOMAIN; the step-4 attempt outside the limits -> OUT_OF_DOMAIN_START_LIMITS_EXCEEDED; a later revision may not increase any limit after a failed ignition (refused); 8.33 A never I_d,max,H1 [decision docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544, S3.1 P1Q-02; verbatim docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+   "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+   "question_id": "P1Q-02",
+   "sequenced_no": "S3.1",
+   "owner_answer": "HARDWARE_DERIVED_LIMITS_BEFORE_P1_S6",
+   "implemented_in": "p1_reducer.check_start_attempt_limits / reduce_topology_control; p1_a9_16_rules.check_start_limit_revisions",
+   "tests": [
+    "test_p1_a9_16_start_limits_bounds",
+    "test_p1_a9_16_start_limits_never_raised_after_failure",
+    "test_p1_a9_16_s6_entry_requires_registrations"
+   ]
+  },
+  {
+   "id": "A9.10 P1Q-03",
+   "kind": "owner decision (A9.16 step 1)",
+   "how_applied": "APPLIED (PREREGISTERED_CURRENT_AND_TIME_CRITERION): registration slot sustainment_definition {I_threshold_A > measured P1-M-22 pickup floor, u of the floor, min_duration_s, DAQ bandwidth, transient basis, frozen_utc}; SUSTAINED computed from the recorded I_d trace: supply enabled + connected, above threshold continuously >= min duration, not an artifact, no interlock; a recorded bool that contradicts the criterion is RECORD_AND_REVIEW, never resolved after the run [decision docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544, S3.2 P1Q-03; verbatim docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+   "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+   "question_id": "P1Q-03",
+   "sequenced_no": "S3.2",
+   "owner_answer": "PREREGISTERED_CURRENT_AND_TIME_CRITERION",
+   "implemented_in": "p1_reducer.check_sustainment_definition / classify_sustained / reduce_topology_control",
+   "tests": [
+    "test_p1_a9_16_sustained_definition",
+    "test_topology_control_paths (updated)"
+   ]
+  },
+  {
+   "id": "A9.10 P1Q-05",
+   "kind": "owner decision (A9.16 step 1)",
+   "how_applied": "APPLIED (MIN_3_INDEPENDENT_REIGNITIONS): ignition records carry start_state (EXTINGUISHED_RF_OFF) and restart_condition_met; per point all attempts count and independent_attempts are reported; a stable-region classification with < 3 independent re-ignitions is NOT_EVALUATED (INSUFFICIENT_REIGNITION_EVIDENCE); the minimum is repeatability evidence, never a PASS [decision docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544, S3.3 P1Q-05; verbatim docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+   "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+   "question_id": "P1Q-05",
+   "sequenced_no": "S3.3",
+   "owner_answer": "MIN_3_INDEPENDENT_REIGNITIONS",
+   "implemented_in": "p1_reducer.validate_ignition / reduce_ignition / classify_stable_region",
+   "tests": [
+    "test_p1_a9_16_reignition_minimum_three",
+    "test_sw01_stable_criteria_validated (updated)"
+   ]
+  },
+  {
+   "id": "A9.10 P1Q-06",
+   "kind": "owner decision (A9.16 step 1)",
+   "how_applied": "APPLIED (BOTH_AS_FACTOR_F6): h1_magnet_state OFF | REGISTERED_SETTING on ignition and operating-point records; magnet-on records carry h1_magnet_field_setting_id and the measured h1_coil_currents_A; in P1-S3..S5 a magnet-on record before the stage's magnet-OFF baseline is OUT_OF_DOMAIN (magnet OFF first); the fringe field is never assumed negligible [decision docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544, S3.4 P1Q-06; verbatim docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+   "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+   "question_id": "P1Q-06",
+   "sequenced_no": "S3.4",
+   "owner_answer": "BOTH_AS_FACTOR_F6",
+   "implemented_in": "p1_reducer.check_magnet_state; p1_a9_16_rules.magnet_order_reasons",
+   "tests": [
+    "test_p1_a9_16_magnet_factor_f6"
+   ]
+  },
+  {
+   "id": "A9.10 P1Q-07",
+   "kind": "owner decision (A9.16 step 1)",
+   "how_applied": "APPLIED (DEDICATED_H1_C1_CHARACTERIZATION): the I_d,max,H1 registration needs propellant Ar, characterization_id, electron_source C1_CONVENTIONAL_REFERENCE, envelope_id HI-AR, u_I_d_max_H1_A > 0, frozen_utc and scope AR_ENGINEERING_QUALIFICATION_REFERENCE_NOT_FLIGHT_RELEVANT; frozen at / after the first P1-S7 record -> not usable (NOT_EVALUATED_REGISTRATION); the later flight-relevant I_d,max,H1 is a separate registration; never the 8.33 A ceiling [decision docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544, S3.5 P1Q-07; verbatim docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+   "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+   "question_id": "P1Q-07",
+   "sequenced_no": "S3.5",
+   "owner_answer": "DEDICATED_H1_C1_CHARACTERIZATION",
+   "implemented_in": "p1_reducer._check_registration; p1_a9_16_rules.freeze_before_stage_reasons; p1_campaign",
+   "tests": [
+    "test_p1_a9_16_i_d_max_ar_registration"
+   ]
+  },
+  {
+   "id": "A9.8 P3Q-01",
+   "kind": "owner decision (A9.16 step 1)",
+   "how_applied": "APPLIED (C_BOTH_CALORIMETRY_PRIMARY): P1-M-30 is a REQUIRED Ar P1 development diagnostic: Langmuir probe near the collector (T_e, plasma potential) as the independent sheath-model cross-check of the calorimetric collector energy balance, which stays the primary Q_collector evidence; probe data in matched diagnostic runs; a probe present in an ICP45_CAPACITY record without registered evidence that its perturbation is negligible (or an undeclared probe state) excludes that capacity point; pairs XL-18 (P3) / XL-25 (P4) re-stated on both sides (A9.16 repair F2) [decision docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json sha256 e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f, S1.7 P3Q-01; verbatim docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+   "decision_json_sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+   "question_id": "P3Q-01",
+   "sequenced_no": "S1.7",
+   "owner_answer": "C_BOTH_CALORIMETRY_PRIMARY",
+   "implemented_in": "build_p1_icp_bench.measurements (P1-M-30), XL_PAIRS XL-18 / XL-25; p1_reducer.capacity_structural_reasons (PROBE_PRESENT_KEY / PROBE_EVIDENCE_KEY)",
+   "tests": [
+    "test_p1_a9_16_f2_langmuir_probe_required_and_capacity_exclusion"
+   ]
+  },
+  {
+   "id": "A9.10 P1Q-08",
+   "kind": "owner decision (A9.16 step 1)",
+   "how_applied": "APPLIED (YES): P1-S0..S5 = HI-ENG / HI-S1A; the P1-S6 topology-control sequence must name the signed HI-HOLDOUT-A record (hi_holdout_a_id) - required immediately before the first Hall-on reading, not earlier [decision docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544, S3.6 P1Q-08; verbatim docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+   "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+   "question_id": "P1Q-08",
+   "sequenced_no": "S3.6",
+   "owner_answer": "YES",
+   "implemented_in": "p1_reducer.reduce_topology_control (HOLDOUT_STAGE)",
+   "tests": [
+    "test_p1_a9_16_holdout_and_c1_absent"
+   ]
+  },
+  {
+   "id": "A9.10 P1Q-19",
+   "kind": "owner decision (A9.16 step 1)",
+   "how_applied": "APPLIED (REQUIRE_REGISTERED_GE_CHANNEL): u_I_e,registered < u(I_e,cap)_channels -> ICP-45 status NOT_EVALUATED_REGISTRATION (registration inadmissible, never silently replaced by the larger value); the rejected alternative is listed as NOT_OWNER_SELECTED_INFORMATIONAL with no margin and no condition_met (never evaluated; A9.16 repair F9) [decision docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544, S3.7 P1Q-19; verbatim docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+   "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+   "question_id": "P1Q-19",
+   "sequenced_no": "S3.7",
+   "owner_answer": "REQUIRE_REGISTERED_GE_CHANNEL",
+   "implemented_in": "p1_reducer.icp45a_evaluate (P1Q19_OWNER_SELECTED)",
+   "tests": [
+    "test_a96_p1q19_alternatives_side_by_side (updated)",
+    "test_p1_a9_16_p1q19_owner_selected"
+   ]
+  },
+  {
+   "id": "A9.10 P1Q-24",
+   "kind": "owner decision (A9.16 step 1)",
+   "how_applied": "APPLIED (K_LOSS_2_FAIL_CLOSED_CONFIRMED): k_loss = 2.0 (owner constant) for the at-power loss-model verification of P1 and P2; a record's k is null (owner value applies) or exactly 2.0, any other k refused; until LOSS_MODEL_VERIFIED, P_delivered and C_e stay upper bounds; small-signal S-parameters alone never verify the loss model [decision docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544, S3.8 P1Q-24; verbatim docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+   "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+   "question_id": "P1Q-24",
+   "sequenced_no": "S3.8",
+   "owner_answer": "K_LOSS_2_FAIL_CLOSED_CONFIRMED",
+   "implemented_in": "p1_reducer.at_power_loss_check (K_LOSS)",
+   "tests": [
+    "test_met02_loss_needs_at_power_verification (updated)",
+    "test_p1_a9_16_k_loss_owner_constant"
+   ]
+  },
+  {
+   "id": "A9.10 OQ-RFQV2-09",
+   "kind": "owner decision (A9.16 step 1)",
+   "how_applied": "APPLIED (C1_ABSENT_ALLOWED_P1_S6): P1-S6 records c1_configuration C1_NOT_INSTALLED (with c1_absence_record_id documenting absent / open electrical and gas connections) or C1_INSTALLED_DISCONNECTED; HE-L10..L12 not advanced to P1_NEEDED for P1-S6; C1 is scheduled against the I_d,max,H1,Ar characterization gate (P1Q-07) [decision docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544, S3.9 OQ-RFQV2-09; verbatim docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+   "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+   "question_id": "OQ-RFQV2-09",
+   "sequenced_no": "S3.9",
+   "owner_answer": "C1_ABSENT_ALLOWED_P1_S6",
+   "implemented_in": "p1_reducer.reduce_topology_control (C1_CONFIGURATIONS)",
+   "tests": [
+    "test_p1_a9_16_holdout_and_c1_absent"
+   ]
+  },
+  {
+   "id": "A9.11 P1Q-01",
+   "kind": "owner decision (A9.16 step 1)",
+   "how_applied": "APPLIED (FORM_FROZEN_VALUES_PREREGISTERED_BEFORE_P1_S5_HANDOFF): stable criteria carry the classify_stable_region limits plus frozen_utc, criteria_sha256 (sha256 of the canonical record without that field, verified by the campaign), derived_from_record_ids (P1-S2..S4 evidence of this campaign) and derivation_basis; frozen at / after a P1-S5 dwell or derived from non-P1-S2..S4 records -> NOT_EVALUATED (raw dwells kept); pass label WITHIN_OWNER_CRITERIA only; Z stability carried per dwell [decision docs/decisions/OD_2026_10_01_A9_11_s4_p2_owner_decisions.json sha256 d8baf59a5b92739698e29d893e89a30995559ee7167814c096dc24599679156c, S4.1 P1Q-01; verbatim docs/decisions/OD_2026_10_01_A9_11_S4_P2_OWNER_DECISIONS.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_11_s4_p2_owner_decisions.json",
+   "decision_json_sha256": "d8baf59a5b92739698e29d893e89a30995559ee7167814c096dc24599679156c",
+   "question_id": "P1Q-01",
+   "sequenced_no": "S4.1",
+   "owner_answer": "FORM_FROZEN_VALUES_PREREGISTERED_BEFORE_P1_S5_HANDOFF",
+   "implemented_in": "p1_reducer.check_stable_criteria / stable_region_handoff; p1_a9_16_rules.check_stable_criteria_registration",
+   "tests": [
+    "test_p1_a9_16_stable_criteria_frozen_hashed",
+    "test_sw02_stable_region_failure_branches (updated)"
+   ]
+  },
+  {
+   "id": "A9.14 P1Q-17",
+   "kind": "owner decision (A9.16 step 1)",
+   "how_applied": "APPLIED (REVERIFICATION_700V_DC_60S_TRIGGERED_ONLY): triggered reverification record: 700 V DC / 60 s current-limited at representative pressure / gas, only after repair, insulation-path modification, suspected fault or a defined requalification trigger (routine pre-run refused); per-path leakage criterion (P1-IT-55 form); separate from the initial 1.05 kV qualification; level basis OWNER_DEVELOPMENT_ACCEPTANCE_LEVEL_A9_14_P1Q-17, never attributed to an ECSS clause [decision docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c, S9.5 P1Q-17; verbatim docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "question_id": "P1Q-17",
+   "sequenced_no": "S9.5",
+   "owner_answer": "REVERIFICATION_700V_DC_60S_TRIGGERED_ONLY",
+   "implemented_in": "p1_a9_16_rules.reduce_dwv_reverification",
+   "tests": [
+    "test_p1_a9_16_reverification_700v_triggered_only"
+   ]
+  },
+  {
+   "id": "A9.14 P1Q-12",
+   "kind": "owner decision (A9.16 step 1)",
+   "how_applied": "APPLIED (YES_IP_NEU_LOCK1_ICD_INTERFACE): the reusable IP-NEU interface is a LOCK-1 ICD revision item (not built here); P1 registers the controlled interim harness drawing at P1-G0 (readiness registration ip_neu_interim_harness_drawing_id; missing -> G0_NOT_EVALUATED_TBD) [decision docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c, S8.31 P1Q-12; verbatim docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "question_id": "P1Q-12",
+   "sequenced_no": "S8.31",
+   "owner_answer": "YES_IP_NEU_LOCK1_ICD_INTERFACE",
+   "implemented_in": "p1_reducer.READINESS_REGISTRATIONS",
+   "tests": [
+    "test_p1_a9_16_readiness_registrations"
+   ]
+  },
+  {
+   "id": "A9.14 OD5",
+   "kind": "owner decision (A9.16 step 1)",
+   "how_applied": "APPLIED (ICP_FIRST_HALL_SECOND_MAX_3_ATTEMPTS): baseline start sequence checker: gas / plenum / feed -> H-1 magnet state -> ICP ignite / stabilize -> verify electron-source condition -> apply V_d -> verify sustained Hall discharge; at most 1 + 2 attempts under a registered dwell / thermal limit id (no values set); C1-selected variant uses its own qualified sequence id; the P1-S6 ICP-OFF-first control experiment (A9.3 OQ-VI-05) is explicitly not this baseline sequence [decision docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c, S9.9 OD5; verbatim docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "question_id": "OD5",
+   "sequenced_no": "S9.9",
+   "owner_answer": "ICP_FIRST_HALL_SECOND_MAX_3_ATTEMPTS",
+   "implemented_in": "p1_a9_16_rules.check_baseline_start_sequence",
+   "tests": [
+    "test_p1_a9_16_od5_start_sequence"
+   ]
+  },
+  {
+   "id": "A9.14 ICPQ-08",
+   "kind": "owner decision (A9.16 step 1)",
+   "how_applied": "APPLIED (ENERGIZED_IF_RF_IMMUNE_ELSE_REGISTERED_RF_OFF_DELAY): B(z) map record: ENERGIZED only with a gaussmeter RF-immunity record, else NOT_EVALUATED_REGISTRATION; RF_OFF only at a preregistered decay-characterized delay (delay_s, delay_tolerance_s registered), otherwise NOT_EVALUATED_REGISTRATION / OUT_OF_DOMAIN [decision docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c, S8.2 ICPQ-08; verbatim docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "question_id": "ICPQ-08",
+   "sequenced_no": "S8.2",
+   "owner_answer": "ENERGIZED_IF_RF_IMMUNE_ELSE_REGISTERED_RF_OFF_DELAY",
+   "implemented_in": "p1_a9_16_rules.check_bz_mapping",
+   "tests": [
+    "test_p1_a9_16_bz_mapping"
+   ]
+  },
+  {
+   "id": "A9.14 F6-OQ-03",
+   "kind": "owner decision (A9.16 step 1)",
+   "how_applied": "APPLIED (MULTI_GEOMETRY_BENCH_FIRST_MODEL_AFTER_VALIDATION): registration slot icp_geometry_matrix {matrix_id, frozen_utc, geometries [{geometry_id, drawing_id, revision, within_drawing_envelope true}]}; operating points carry icp_geometry_id in the matrix (else OUT_OF_DOMAIN); each geometry reported MEASURED_GEOMETRY / NOT_YET_MEASURED; no surrogate between geometries before separate predictive validation; a geometry outside the drawing envelope is refused (F6-OQ-02) [decision docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c, S7.8 F6-OQ-03; verbatim docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "question_id": "F6-OQ-03",
+   "sequenced_no": "S7.8",
+   "owner_answer": "MULTI_GEOMETRY_BENCH_FIRST_MODEL_AFTER_VALIDATION",
+   "implemented_in": "p1_a9_16_rules.geometry_matrix_report; p1_campaign",
+   "tests": [
+    "test_p1_a9_16_geometry_matrix"
+   ]
+  },
+  {
+   "id": "A9.15 RFP-COMPLIANT",
+   "kind": "owner decision reviewed (A9.16 step 1)",
+   "how_applied": "NOT_APPLICABLE to the P1 artifacts: reviewed: the P1 package contains no wording that restricts Xe to a C1 contingency (nothing to amend); P1 is the Ar engineering step (G-REUSE, ICP gas-mode baseline A9.1 unchanged; G-XE stays a declared ICP-feed variant, a dedicated feed only as a labelled diagnostic booked in the corresponding atmospheric / Xe ledger); C1_NOT_INSTALLED in P1-S6 (A9.10 OQ-RFQV2-09) is a bench topology control and does not remove the RFP-required system Xe capability [decision docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309; verbatim docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
+   "decision_json_sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
+   "question_id": "RFP-COMPLIANT PROPELLANT POLICY (amends A9.13 xenon statement; A9.14 OQ-A907-07, XA9Q-07, MPQ-01, XV2Q-01, XA9Q-05, OD6)",
+   "sequenced_no": null,
+   "owner_answer": null,
+   "implemented_in": null,
+   "tests": []
+  },
+  {
+   "id": "A9.14 OQ-A907-07",
+   "kind": "owner decision reviewed (A9.16 step 1)",
+   "how_applied": "NOT_APPLICABLE to the P1 artifacts: mass / Xe accounting / flight-configuration items; no P1 bench artifact carries them (owned by the mass / Xe and RFQ lanes) [decision docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c; verbatim docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md]",
+   "decision_file": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "question_id": "OQ-A907-07 / XA9Q-07 / MPQ-01 / XV2Q-01 / XA9Q-05 / OD6 (as amended by A9.15)",
+   "sequenced_no": null,
+   "owner_answer": null,
+   "implemented_in": null,
+   "tests": []
+  },
+  {
+   "decision": "A9.19",
+   "question_id": "architecture",
+   "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "decision_json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "decision_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+   "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+   "record_ids": [
+    "scope.configurations",
+    "a9_19_incorporation.flight_architecture"
+   ],
+   "how_applied": "flight configuration = hall_icp_neutralizer only (one Hall + one RF/ICP neutralizer for AIR_PRIMARY and XE_CONTINGENCY, no conventional hollow cathode); hall_c1_reference listed only as GROUND_REFERENCE",
+   "tests": [
+    "tests/test_p1_a9_19_owner_rules.py"
+   ],
+   "id": "A9.19 architecture",
+   "kind": "decision"
+  },
+  {
+   "decision": "A9.19",
+   "question_id": "supply_modes",
+   "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "decision_json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "decision_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+   "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+   "record_ids": [
+    "record_schema ignition_attempt.supply_mode",
+    "record_schema icp_operating_point.supply_mode",
+    "p1_reducer.icp_supply_mode"
+   ],
+   "how_applied": "ICP ignition / operation records allow both supply modes (AIR_PRIMARY N2-family, XE_CONTINGENCY Xe) via an optional supply_mode checked against the gas; P1 stays the Ar step and refuses N2 / Xe records naming the stage that reduces them; ICP feed-gas baseline G-REUSE / G-XE unchanged",
+   "tests": [
+    "tests/test_p1_a9_19_owner_rules.py"
+   ],
+   "id": "A9.19 supply_modes",
+   "kind": "decision"
+  },
+  {
+   "decision": "A9.20",
+   "question_id": "c1_role",
+   "decision_code": "C1_GROUND_ONLY_LABORATORY_REFERENCE",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+   "decision_json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+   "decision_md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+   "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+   "record_ids": [
+    "IF-P1-21",
+    "P1-HW-32.c1_status",
+    "m16_impact row 11",
+    "a9_19_incorporation.c1"
+   ],
+   "how_applied": "C1 = GROUND_ONLY_LAB_EQUIPMENT (H-1 I_d,max,H1,Ar characterization, A9.10 S3.5; C1-vs-ICP bench control); not CONTROL_FALLBACK; P1-S6 C1_NOT_INSTALLED logic unchanged",
+   "tests": [
+    "tests/test_p1_a9_19_owner_rules.py"
+   ],
+   "id": "A9.20 c1_role",
+   "kind": "decision"
   }
  ],
+ "a9_19_incorporation": {
+  "decisions": [
+   {
+    "decision": "A9.19",
+    "md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+    "md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+    "json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+    "json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+    "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY"
+   },
+   {
+    "decision": "A9.20",
+    "md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+    "md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+    "json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+    "json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+    "decision_code": "C1_GROUND_ONLY_LABORATORY_REFERENCE"
+   }
+  ],
+  "reading_rule": "the verbatim .md of A9.19 / A9.20 was read in full and governs; A9.19 amends A9.15 on the ROLE of Xe only (capability and two separate tanks stay)",
+  "flight_architecture": {
+   "configuration": "hall_icp_neutralizer",
+   "hall_accelerators": 1,
+   "electron_source_neutralizer": {
+    "count": 1,
+    "kind": "RF/ICP (13.56 MHz) electron source / neutralizer, cathodeless / electrodeless",
+    "serves_supply_modes": [
+     "AIR_PRIMARY",
+     "XE_CONTINGENCY"
+    ]
+   },
+   "supply_modes": [
+    {
+     "mode": "AIR_PRIMARY",
+     "role": "PRIMARY",
+     "propellant": "ambient atmospheric propellant (180-230 km)",
+     "path": [
+      "intake",
+      "filter",
+      "compressor",
+      "atmospheric_gas_chamber",
+      "valve"
+     ]
+    },
+    {
+     "mode": "XE_CONTINGENCY",
+     "role": "CONTINGENCY_EMERGENCY",
+     "propellant": "xenon",
+     "path": [
+      "xe_tank",
+      "valve"
+     ],
+     "note": "capability required by the RFP (RFP-P17-05 extra input system; RFP-P18-08 separate tank); role contingency / emergency, not a parallel co-equal propellant (A9.19)"
+    }
+   ],
+   "separate_tanks": true,
+   "conventional_hollow_cathode": "NONE",
+   "icp_feed_gas_baseline": {
+    "primary": "G-REUSE",
+    "declared_variant": "G-XE",
+    "status": "UNCHANGED (A9.1; A9.19 does not alter the ICP feed-gas baseline)"
+   },
+   "c1": {
+    "status": "GROUND_ONLY_LAB_EQUIPMENT",
+    "uses": [
+     "H-1 I_d,max,H1,Ar characterization (A9.10 S3.5, independent of the ICP)",
+     "bench control in the C1-vs-ICP comparison"
+    ],
+    "never": [
+     "flight hardware",
+     "flight mass budget",
+     "flight power budget",
+     "flight Xe budget",
+     "flight fallback / candidate flight configuration"
+    ],
+    "authority": "A9.20 (C1_GROUND_ONLY_LABORATORY_REFERENCE); A9.19 amends 'A9 C1 CONTROL_FALLBACK'"
+   },
+   "verbatim": [
+    "One Hall accelerator.",
+    "One RF/ICP electron-source/neutralizer.",
+    "Two propellant supply modes.",
+    "No conventional hollow cathode."
+   ],
+   "status": "OWNER_DECIDED_ARCHITECTURE_DEFINITION (A9 investigation; not a flight baseline, not a PASS)"
+  },
+  "c1": {
+   "status": "GROUND_ONLY_LAB_EQUIPMENT",
+   "uses": [
+    "H-1 I_d,max,H1,Ar characterization (A9.10 S3.5, independent of the ICP)",
+    "bench control in the C1-vs-ICP comparison"
+   ],
+   "never": [
+    "flight hardware",
+    "flight mass budget",
+    "flight power budget",
+    "flight Xe budget",
+    "flight fallback / candidate flight configuration"
+   ],
+   "p1_s6_configurations_unchanged": [
+    "C1_NOT_INSTALLED",
+    "C1_INSTALLED_DISCONNECTED"
+   ],
+   "i_d_max_electron_source": "C1_CONVENTIONAL_REFERENCE"
+  },
+  "icp_record_supply_modes": {
+   "modes": [
+    "AIR_PRIMARY",
+    "XE_CONTINGENCY",
+    "BENCH_AR_ENGINEERING_GROUND_ONLY"
+   ],
+   "gases": {
+    "AIR_PRIMARY": [
+     "N2",
+     "NITROGEN",
+     "O2",
+     "OXYGEN",
+     "O",
+     "AIR",
+     "N2/O2",
+     "N2+O2",
+     "N2_O2",
+     "AMBIENT_AIR",
+     "ATMOSPHERIC"
+    ],
+    "XE_CONTINGENCY": [
+     "XE",
+     "XENON"
+    ],
+    "BENCH_AR_ENGINEERING_GROUND_ONLY": [
+     "AR",
+     "ARGON"
+    ]
+   },
+   "stage": {
+    "BENCH_AR_ENGINEERING_GROUND_ONLY": "P1 (this reducer)",
+    "AIR_PRIMARY": "ICP-45N / N2 ICP stage (A9 evidence order Ar -> N2 -> O2-bearing)",
+    "XE_CONTINGENCY": "Xe ICP stage (G-XE declared ICP-feed variant, A9.1; Xe supply mode A9.19)"
+   },
+   "rule": "an ICP ignition / operation record may declare supply_mode; it must agree with the gas (SupplyModeError otherwise); both flight modes are valid ICP record modes (one ICP for both); P1 reduces the Ar bench mode only"
+  },
+  "icp_feed_gas_baseline": {
+   "primary": "G-REUSE",
+   "declared_variant": "G-XE",
+   "status": "UNCHANGED (A9.1; A9.19 does not alter the ICP feed-gas baseline)"
+  },
+  "not_changed": [
+   "P1 stage gas (Ar only, A9.3)",
+   "P1-S6 C1_NOT_INSTALLED logic (A9.10 OQ-RFQV2-09)",
+   "I_d,max,H1,Ar registration via the dedicated H-1 + C1 characterization (A9.10 P1Q-07)",
+   "hardware_readiness item texts and measurement quantities read back by RFQ v2 (immutable)"
+  ],
+  "statuses": "ICP45 = NOT_EVALUATED until registered; ICP_COUPLED_THERMAL UNRESOLVED; RF ratings TBD_AFTER_IMPEDANCE_MAP; anode material OPEN; C1 GROUND_ONLY_LAB_EQUIPMENT; no PASS anywhere"
+ },
  "open_owner_questions": [
   {
    "id": "P1Q-01",
@@ -4827,6 +6102,314 @@
    "needed_by": "before the first P_RF_DELIVERED / C_e is reported from P1-S4"
   }
  ],
+ "open_owner_questions_note": "open_owner_questions is the record of the owner questions AS RAISED by this package (text and as-raised status unchanged; read back by the immutable owner-question state-v4 builder). Every one is answered by the owner decisions of 2026-10-01: owner_question_status_current carries the current status and the deciding decision per question; owner_questions_open_now lists the questions still open (none)",
+ "owner_question_status_current": [
+  {
+   "id": "P1Q-01",
+   "status_as_raised": "OPEN (as raised)",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.11 P1Q-01"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.11",
+     "question_id": "P1Q-01",
+     "sequenced_no": "S4.1",
+     "owner_answer": "FORM_FROZEN_VALUES_PREREGISTERED_BEFORE_P1_S5_HANDOFF",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_11_s4_p2_owner_decisions.json",
+     "decision_json_sha256": "d8baf59a5b92739698e29d893e89a30995559ee7167814c096dc24599679156c",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_11_S4_P2_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-02",
+   "status_as_raised": "OPEN (as raised)",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.10 P1Q-02"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.10",
+     "question_id": "P1Q-02",
+     "sequenced_no": "S3.1",
+     "owner_answer": "HARDWARE_DERIVED_LIMITS_BEFORE_P1_S6",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+     "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-03",
+   "status_as_raised": "OPEN (as raised)",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.10 P1Q-03"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.10",
+     "question_id": "P1Q-03",
+     "sequenced_no": "S3.2",
+     "owner_answer": "PREREGISTERED_CURRENT_AND_TIME_CRITERION",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+     "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-04",
+   "status_as_raised": "OPEN (as raised)",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.8 P1Q-04"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.8",
+     "question_id": "P1Q-04",
+     "sequenced_no": "S1.1",
+     "owner_answer": "YES",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+     "decision_json_sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-05",
+   "status_as_raised": "OPEN (as raised)",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.10 P1Q-05"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.10",
+     "question_id": "P1Q-05",
+     "sequenced_no": "S3.3",
+     "owner_answer": "MIN_3_INDEPENDENT_REIGNITIONS",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+     "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-06",
+   "status_as_raised": "OPEN (as raised)",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.10 P1Q-06"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.10",
+     "question_id": "P1Q-06",
+     "sequenced_no": "S3.4",
+     "owner_answer": "BOTH_AS_FACTOR_F6",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+     "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-07",
+   "status_as_raised": "OPEN (as raised)",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.10 P1Q-07"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.10",
+     "question_id": "P1Q-07",
+     "sequenced_no": "S3.5",
+     "owner_answer": "DEDICATED_H1_C1_CHARACTERIZATION",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+     "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-08",
+   "status_as_raised": "OPEN (as raised)",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.10 P1Q-08"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.10",
+     "question_id": "P1Q-08",
+     "sequenced_no": "S3.6",
+     "owner_answer": "YES",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+     "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-09",
+   "status_as_raised": "OPEN (as raised)",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.8 P1Q-09"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.8",
+     "question_id": "P1Q-09",
+     "sequenced_no": "S1.2",
+     "owner_answer": "DEDICATED_ISOLATED_TARGET_NO_CHAMBER_WALL",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+     "decision_json_sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-11",
+   "status_as_raised": "OPEN (as raised)",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.8 P1Q-11"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.8",
+     "question_id": "P1Q-11",
+     "sequenced_no": "S1.3",
+     "owner_answer": "DERIVE_FROM_INSTALLED_GAUGE",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+     "decision_json_sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-12",
+   "status_as_raised": "OPEN (as raised)",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.14 P1Q-12"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.14",
+     "question_id": "P1Q-12",
+     "sequenced_no": "S8.31",
+     "owner_answer": "YES_IP_NEU_LOCK1_ICD_INTERFACE",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-17",
+   "status_as_raised": "OPEN (as raised)",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.14 P1Q-17"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.14",
+     "question_id": "P1Q-17",
+     "sequenced_no": "S9.5",
+     "owner_answer": "REVERIFICATION_700V_DC_60S_TRIGGERED_ONLY",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-18",
+   "status_as_raised": "OPEN (as raised)",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.8 P1Q-18"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.8",
+     "question_id": "P1Q-18",
+     "sequenced_no": "S1.4",
+     "owner_answer": "CONFIRMED",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+     "decision_json_sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-19",
+   "status_as_raised": "TBD_OWNER",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.10 P1Q-19"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.10",
+     "question_id": "P1Q-19",
+     "sequenced_no": "S3.7",
+     "owner_answer": "REQUIRE_REGISTERED_GE_CHANNEL",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+     "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-20",
+   "status_as_raised": "TBD_OWNER",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.8 P1Q-20"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.8",
+     "question_id": "P1Q-20",
+     "sequenced_no": "S1.5",
+     "owner_answer": "YES",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+     "decision_json_sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md"
+    }
+   ]
+  },
+  {
+   "id": "P1Q-24",
+   "status_as_raised": "TBD_OWNER",
+   "status_current": "OWNER_DECIDED",
+   "decided_by_ids": [
+    "A9.10 P1Q-24"
+   ],
+   "decided_by": [
+    {
+     "decision": "A9.10",
+     "question_id": "P1Q-24",
+     "sequenced_no": "S3.8",
+     "owner_answer": "K_LOSS_2_FAIL_CLOSED_CONFIRMED",
+     "decision_file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+     "decision_json_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
+     "verbatim": "docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md"
+    }
+   ]
+  }
+ ],
+ "owner_questions_open_now": [],
  "historical_reuse": [
   {
    "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
@@ -4935,7 +6518,7 @@
   {
    "row": 11,
    "key": "cathode",
-   "impact": "C1 disconnected in P1-S6; stays CONTROL_FALLBACK"
+   "impact": "C1 disconnected or not installed in P1-S6; C1 = GROUND_ONLY_LAB_EQUIPMENT (A9.20), no hollow cathode in flight (A9.19)"
   },
   {
    "row": 9,
@@ -5023,6 +6606,6 @@
   "no supplier / author / lab contact; published sources only",
   "never PASS for ICP thermal, RF ratings or anode items",
   "A9.6 sec. 14 fail-closed reducers: one explicit test per bullet (a9_6_incorporation.fail_closed_audit); OUT_OF_DOMAIN never counted as FAIL",
-  "genuine owner choices stay TBD_OWNER (P1Q-19 remaining part, P1Q-20 and the other open questions); derived rules cite the decision or the published standard they follow from"
+  "the former open questions (P1Q-01..09, 11, 12, 17..20, 24) are answered by the owner decisions of 2026-10-01 (A9.8 / A9.10 / A9.11 / A9.14; a9_16_incorporation); every number the owner deferred stays a registration slot with a fail-closed refusal; derived rules cite the decision or the published standard they follow from"
  ]
 }

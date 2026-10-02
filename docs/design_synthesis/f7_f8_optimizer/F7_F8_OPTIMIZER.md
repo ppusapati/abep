@@ -9,28 +9,28 @@ What this is not: not an architecture selection, design, optimum, winner, requir
 | block | lane | state | variables |
 |---|---|---|---|
 | x_intake | F1 | SEARCHED | 7 |
-| x_filter | F2 (through F4 filter cases) | CONTEXT_AXIS_NOT_SEARCHED | 2 |
-| x_compressor | F3 | SEARCHED | 12 |
-| x_plenum | F4 | SEARCHED | 8 |
+| x_filter | F2 (through F4 filter cases) | CONTEXT_AXIS_NOT_SEARCHED | 3 |
+| x_compressor | F3 | SEARCHED | 13 |
+| x_plenum | F4 | SEARCHED | 9 |
 | x_Hall | F5 | BOUNDED_NOT_SEARCHED_NO_EVALUABLE_OBJECTIVE | 5 |
 | x_ICP | F6 | NOT_SEARCHABLE_BOUNDS_TBD | 17 |
-| x_RF | P2 framework / RFQ v2 / mass-power v2 | NOT_SEARCHABLE_BOUNDS_TBD | 5 |
-| x_thermal | P3 | NOT_SEARCHABLE_BOUNDS_TBD | 28 |
+| x_RF | P2 framework / RFQ v3 / mass-power v3 | NOT_SEARCHABLE_BOUNDS_TBD | 5 |
+| x_thermal | P3 | NOT_SEARCHABLE_BOUNDS_TBD | 30 |
 
 ## Findings
 
-- **F78-01** (model-derived (PARAMETRIC_SENSITIVITY inputs)): upstream sub-problem F1 -> F2 -> F3 -> F4 searched over 48 d-collapsed intakes x 32 compressors x 3 volumes x 6 set pressures in 600 contexts (10 surface scenarios x 5 filter cases x 2 wall cases x 6 P_set): 26564 Pareto members in 290 non-empty contexts; vector statuses {'FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS': 42175, 'INFEASIBLE': 1178577, 'INFEASIBLE_OUT_OF_DOMAIN': 1544048}
-- **F78-02** (model-derived): nominal context (filter none, WALL-G0): the all-state delivered-flow frontier is 0.1027382 mg/s (cll_a0.8, P_set 0.01 Pa, A0.5_Ld20_phi0.8|F4-FIL-NONE|T6-A2-U1-D0-Ti6Al4V|V0.001|P0.01); Pareto members reaching the owner ground-characterization lower end 0.38 mg/s at every state: 0 (all contexts). Consistent with F4-01 (single-setpoint frontier 0.1027 mg/s)
-- **F78-03** (model-derived): set pressures with any all-state-feasible vector (number of contexts): {0.005: 93, 0.01: 90, 0.02: 72, 0.05: 30, 0.1: 5}; the others fail by dead-head (high P_set) or by leaving the Gaede characteristic domain (low P_set); reason counts over all vectors {'F1_INTAKE_INFEASIBLE_AT_STATE': 1843200, 'GAEDE_CHARACTERISTIC_OUTSIDE_K_1_TO_K0': 1544048, 'TARGET_AT_OR_ABOVE_DEAD_HEAD_PRESSURE': 1918842}
-- **F78-04** (model-derived (PARAMETRIC filter cases)): frontier by filter case (WALL-G0, max over scenarios and P_set, mg/s): {'F4-FIL-NONE': 0.1027382, 'F4-FIL-PLACEHOLDER': 0.09852148, 'F4-FIL-T0.5': 0.09758052, 'F4-FIL-T0.7': 0.1004624, 'F4-FIL-T0.9': 0.1021383}; the filter is a context axis because its protection benefit is NOT_EVALUATED
-- **F78-05** (inferred): system level: for all {'hall_c1_reference': 4218, 'hall_icp_neutralizer': 4218} nominal Pareto evaluations every system objective (T - D, P_bus, m_wet, Q_reject, I_e,cap - I_d,max, life) is NOT_EVALUATED and every RVM hard constraint except the intake-face drag bound HC-09 is NOT_EVALUATED (fail closed); full-system ranking REFUSED_INCOMPLETE for both configurations (missing counts {'T_minus_D_spacecraft_N': 4218, 'P_bus_W': 4218, 'm_wet_kg': 4218, 'Q_reject_W': 4218, 'I_e_cap_minus_I_d_max_A': 4218, 'life_material': 4218})
-- **F78-06** (model-derived (code-default coefficients)): P_bus: the official A9-02 ledger is PARTIAL_BOUNDARY (compressor load TBD, row 22) with lower bound 0 W; the parametric sensitivity ledger booking the F3/F4 compressor draw has lower bound [8.378346, 14.27457] W on the nominal Pareto members (vs the 300 W common allocation, an allocation not a gate)
-- **F78-07** (model-derived (code-default coefficients; allocation context)): compressor model mass on the nominal Pareto members [4.229072, 18.28933] kg; 4194 member evaluations exceed the 5.5 kg AL-02 allocation (parametric value vs allocation; neither is a CBE; never merged)
-- **F8-01** (model-derived): 1233 unique upstream survivors (nominal-context Pareto members over all scenarios and P_set); feasible-scenario tiers (n scenarios feasible: count) {1: 90, 2: 270, 3: 120, 4: 120, 5: 189, 6: 150, 7: 102, 8: 159, 9: 18, 10: 15}; feasible in all 10 surface scenarios: 15; robust Pareto members per P_set {0.01: 9}; worst-case (over the 10 scenarios) delivered flow of the robust members [0.008134276, 0.008409471] mg/s (compare the best single-scenario frontier in F78-02: the price of requiring feasibility in every TBD surface scenario)
-- **F8-02** (model-derived (quantified TPMC statistics only)): seeded TPMC Monte Carlo (100 draws per candidate and scenario): over the 5613 (survivor, scenario) pairs that are nominally feasible, P_feasible ranges [0.51, 1.0] (228 pairs below 1: candidates at a domain or dead-head boundary); on the robust Pareto members the minimum over scenarios is [1.0, 1.0]. The F1 statistical SEs are ~1e-4 relative (e.g. mdot_fwd SE / value), so the TBD surface-scenario set, not TPMC statistics, dominates robustness
-- **F8-03** (model-derived (frozen surface node)): pointing node theta = 5 deg (design state only): delivered-flow change [-0.1239386, -0.001369665] on the robust members, 0 status changes; the corner states have no theta node (NOT_EVALUATED)
-- **F8-04** (model-derived (uncited DB gamma prior)): wall-recombination case WALL-TI64-DB: robust members feasible in n of 10 scenarios {0: 4, 2: 1, 3: 1, 6: 2, 8: 1}
-- **F8-05** (model-derived (local elasticity, no range implied)): largest |d ln mdot_delivered / d ln c| over the robust members: [('turbo_kK', 7.609339), ('turbo_kS', 0.7361988), ('leak_conductance_m3_s', 0.001340045)]; drag-channel coefficients (h, w, L, xi, R_rotor) have zero effect because every front design has N_drag = 0 (F3-01): closing tests on the turbo-row coefficients (compressor_downselect T-1 / T-2) matter most
+- **F78-01** (model-derived (PARAMETRIC_SENSITIVITY inputs)): upstream sub-problem F1 -> F2 -> F3 -> F4 searched over 48 d-collapsed intakes x 55 compressors x 3 volumes x 6 set pressures in 600 contexts (10 surface scenarios x 5 filter cases x 2 wall cases x 6 P_set): 22282 Pareto members in 290 non-empty contexts; vector statuses {'FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS': 100267, 'INFEASIBLE': 1786886, 'NOT_EVALUATED_OUT_OF_DOMAIN': 2864847}
+- **F78-02** (model-derived): nominal context (filter none, WALL-G0): the all-state delivered-flow frontier is 0.09832423 mg/s (cll_a0.5, P_set 0.02 Pa, A0.5_Ld20_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.02); Pareto members reaching the lower end of the 0.38-3.2 mg/s characterization coverage (A9.13 S6.21: coverage only, not a requirement or gate) at every state: 0 (all contexts). Compare F4-01 (single-setpoint frontier 0.09832 mg/s)
+- **F78-03** (model-derived): set pressures with any all-state-feasible vector (number of contexts): {0.005: 70, 0.01: 90, 0.02: 75, 0.05: 40, 0.1: 15}; the others fail by dead-head (high P_set) or by leaving the Gaede characteristic domain (low P_set); reason counts over all vectors {'F1_INTAKE_INFEASIBLE_AT_STATE': 3168000, 'GAEDE_CHARACTERISTIC_OUTSIDE_K_1_TO_K0': 2864847, 'TARGET_AT_OR_ABOVE_DEAD_HEAD_PRESSURE': 2898279}
+- **F78-04** (model-derived (PARAMETRIC filter cases)): frontier by filter case (WALL-G0, max over scenarios and P_set, mg/s): {'F4-FIL-NONE': 0.09832423, 'F4-FIL-PLACEHOLDER': 0.0924078, 'F4-FIL-T0.5': 0.09175043, 'F4-FIL-T0.7': 0.09539459, 'F4-FIL-T0.9': 0.09754749}; the filter is a context axis because its protection benefit is NOT_EVALUATED
+- **F78-05** (inferred): system level: for all {'hall_icp_neutralizer': 2925} nominal Pareto evaluations every system objective (T - D, P_bus, m_wet, Q_reject, I_e,cap - I_d,max, life) is NOT_EVALUATED and every RVM hard constraint except the intake-face drag bound HC-09 is NOT_EVALUATED (fail closed); full-system ranking REFUSED_INCOMPLETE for every flight configuration ['hall_icp_neutralizer'] (A9.19 / A9.20: C1 is a GROUND_REFERENCE, never evaluated as a flight candidate) (missing counts {'T_minus_D_spacecraft_N': 2925, 'P_bus_W': 2925, 'm_wet_kg': 2925, 'Q_reject_W': 2925, 'I_e_cap_minus_I_d_max_A': 2925, 'life_material': 2925})
+- **F78-06** (model-derived (code-default coefficients)): P_bus: the official A9-02 ledger is PARTIAL_BOUNDARY (compressor load TBD, row 22) with lower bound 0 W; the parametric sensitivity ledger booking the F3/F4 compressor draw has lower bound [8.439032, 14.69768] W on the nominal Pareto members (vs the 300 W common allocation, an allocation not a gate)
+- **F78-07** (model-derived (code-default coefficients; allocation context)): compressor model mass on the nominal Pareto members [4.189245, 10.90722] kg; 2655 member evaluations exceed the 5.5 kg AL-02 allocation (parametric value vs allocation; neither is a CBE; never merged)
+- **F8-01** (model-derived): 843 unique upstream survivors (nominal-context Pareto members over all scenarios and P_set); feasible-scenario tiers (n scenarios feasible: count) {1: 48, 2: 169, 3: 78, 4: 70, 5: 98, 6: 128, 7: 83, 8: 130, 9: 23, 10: 16}; feasible in all 10 surface scenarios: 16; robust Pareto members per P_set {0.01: 8}; worst-case (over the 10 scenarios) delivered flow of the robust members [0.002933262, 0.01134189] mg/s (compare the best single-scenario frontier in F78-02: the price of requiring feasibility in every TBD surface scenario)
+- **F8-02** (model-derived (quantified TPMC statistics only)): seeded TPMC Monte Carlo (100 draws per candidate and scenario): over the 4146 (survivor, scenario) pairs that are nominally feasible, P_feasible ranges [0.43, 1.0] (190 pairs below 1: candidates at a domain or dead-head boundary); on the robust Pareto members the minimum over scenarios is [1.0, 1.0]. The F1 statistical SEs are ~1e-4 relative (e.g. mdot_fwd SE / value), so the TBD surface-scenario set, not TPMC statistics, dominates robustness
+- **F8-03** (model-derived (frozen surface node)): pointing node theta = 5 deg (design state only): delivered-flow change [-0.1231031, -0.001058445] on the robust members, 0 status changes; the corner states have no theta node (NOT_EVALUATED)
+- **F8-04** (model-derived (uncited DB gamma prior)): wall-recombination case WALL-TI64-DB: robust members feasible in n of 10 scenarios {5: 1, 6: 4, 7: 1, 8: 2}
+- **F8-05** (model-derived (local elasticity, no range implied)): largest |d ln mdot_delivered / d ln c| over the robust members: [('turbo_kK', 24.85822), ('turbo_kS', 0.8074347), ('leak_conductance_m3_s', 0.003947125)]; drag-channel coefficients (h, w, L, xi, R_rotor) have zero effect because every front design has N_drag = 0 (F3-01): closing tests on the turbo-row coefficients (compressor_downselect T-1 / T-2) matter most
 - **F8-06** (inferred): evidence gates unchanged by the robust filter: True (credible Hall set EMPTY, A9.2 statuses verbatim, H-1 article NOT_FROZEN)
 
 ## Upstream objectives (Pareto, PARAMETRIC_SENSITIVITY)
@@ -42,47 +42,46 @@ What this is not: not an architecture selection, design, optimum, winner, requir
 | P_compressor_el_max_W | min | W | compressor electrical input (DragCompressor model, code-default coefficients), maximum over states |
 | m_compressor_max_kg | min | kg | compressor mass of the DragCompressor model (code-default coefficients; PARAMETRIC, not a CBE), maximum over states (torque-dependent motor term) |
 | intake_wall_area_m2 | min | m^2 | intake honeycomb wall area 2 phi A L/d: mass proxy (structural inputs TBD; monotone for any positive wall areal mass) |
-| plenum_V_m3 | min | m^3 | plenum volume: mass proxy (plenum mass TBD, F4-P-16) |
-| ripple_transfer_shaft | min | - | open-loop plenum attenuation of a compressor flow perturbation at the shaft frequency (upper bound, F4-P-17), design state: transient quality |
+| plenum_V_m3 | min | m^3 | plenum volume: required-volume and mass proxy (plenum mass TBD, F4-P-16) |
 
 ## Upstream Pareto summary (nominal context: filter none, WALL-G0)
 
-| scenario | P_set [Pa] | evaluated | feasible | Pareto | frontier [mg/s] | >= 0.38 mg/s |
+| scenario | P_set [Pa] | evaluated | feasible | Pareto | frontier [mg/s] | >= 0.38 mg/s (coverage only) |
 |---|---|---|---|---|---|---|
-| cll_a0 | 0.005 | 4608 | 288 | 240 | 0.02346 | 0 |
-| cll_a0 | 0.01 | 4608 | 96 | 96 | 0.0097 | 0 |
-| cll_a0.2 | 0.005 | 4608 | 36 | 36 | 0.03734 | 0 |
-| cll_a0.2 | 0.01 | 4608 | 264 | 135 | 0.07247 | 0 |
-| cll_a0.2 | 0.02 | 4608 | 120 | 66 | 0.04427 | 0 |
-| cll_a0.5 | 0.005 | 4608 | 9 | 9 | 0.04266 | 0 |
-| cll_a0.5 | 0.01 | 4608 | 258 | 159 | 0.08452 | 0 |
-| cll_a0.5 | 0.02 | 4608 | 294 | 129 | 0.09982 | 0 |
-| cll_a0.5 | 0.05 | 4608 | 60 | 30 | 0.05616 | 0 |
-| cll_a0.8 | 0.01 | 4608 | 291 | 210 | 0.1027 | 0 |
-| cll_a0.8 | 0.02 | 4608 | 414 | 195 | 0.09691 | 0 |
-| cll_a0.8 | 0.05 | 4608 | 144 | 60 | 0.06593 | 0 |
-| cll_a0.8 | 0.1 | 4608 | 12 | 12 | 0.02464 | 0 |
-| cll_a1 | 0.005 | 4608 | 174 | 174 | 0.05296 | 0 |
-| cll_a1 | 0.01 | 4608 | 537 | 273 | 0.07163 | 0 |
-| cll_a1 | 0.02 | 4608 | 372 | 156 | 0.05094 | 0 |
-| cll_a1 | 0.05 | 4608 | 72 | 48 | 0.02254 | 0 |
-| maxwell_a0 | 0.005 | 4608 | 288 | 240 | 0.02345 | 0 |
-| maxwell_a0 | 0.01 | 4608 | 96 | 96 | 0.009697 | 0 |
-| maxwell_a0.2 | 0.005 | 4608 | 90 | 84 | 0.04689 | 0 |
-| maxwell_a0.2 | 0.01 | 4608 | 285 | 138 | 0.05182 | 0 |
-| maxwell_a0.2 | 0.02 | 4608 | 96 | 48 | 0.0296 | 0 |
-| maxwell_a0.5 | 0.005 | 4608 | 93 | 93 | 0.04815 | 0 |
-| maxwell_a0.5 | 0.01 | 4608 | 408 | 210 | 0.06382 | 0 |
-| maxwell_a0.5 | 0.02 | 4608 | 192 | 84 | 0.04514 | 0 |
-| maxwell_a0.5 | 0.05 | 4608 | 12 | 12 | 0.01004 | 0 |
-| maxwell_a0.8 | 0.005 | 4608 | 129 | 129 | 0.04737 | 0 |
-| maxwell_a0.8 | 0.01 | 4608 | 477 | 264 | 0.06666 | 0 |
-| maxwell_a0.8 | 0.02 | 4608 | 300 | 117 | 0.04734 | 0 |
-| maxwell_a0.8 | 0.05 | 4608 | 48 | 33 | 0.02064 | 0 |
-| maxwell_a1 | 0.005 | 4608 | 195 | 189 | 0.05536 | 0 |
-| maxwell_a1 | 0.01 | 4608 | 498 | 261 | 0.06818 | 0 |
-| maxwell_a1 | 0.02 | 4608 | 360 | 144 | 0.0505 | 0 |
-| maxwell_a1 | 0.05 | 4608 | 72 | 48 | 0.02097 | 0 |
+| cll_a0 | 0.005 | 7920 | 816 | 132 | 0.02312 | 0 |
+| cll_a0 | 0.01 | 7920 | 432 | 42 | 0.01313 | 0 |
+| cll_a0.2 | 0.01 | 7920 | 684 | 90 | 0.04805 | 0 |
+| cll_a0.2 | 0.02 | 7920 | 456 | 63 | 0.05011 | 0 |
+| cll_a0.2 | 0.05 | 7920 | 36 | 12 | 0.007094 | 0 |
+| cll_a0.5 | 0.01 | 7920 | 474 | 73 | 0.05625 | 0 |
+| cll_a0.5 | 0.02 | 7920 | 762 | 116 | 0.09832 | 0 |
+| cll_a0.5 | 0.05 | 7920 | 228 | 44 | 0.06541 | 0 |
+| cll_a0.5 | 0.1 | 7920 | 48 | 12 | 0.01535 | 0 |
+| cll_a0.8 | 0.01 | 7920 | 294 | 85 | 0.06204 | 0 |
+| cll_a0.8 | 0.02 | 7920 | 1065 | 180 | 0.09625 | 0 |
+| cll_a0.8 | 0.05 | 7920 | 468 | 86 | 0.07269 | 0 |
+| cll_a0.8 | 0.1 | 7920 | 144 | 26 | 0.03623 | 0 |
+| cll_a1 | 0.005 | 7920 | 108 | 24 | 0.03144 | 0 |
+| cll_a1 | 0.01 | 7920 | 1059 | 225 | 0.06404 | 0 |
+| cll_a1 | 0.02 | 7920 | 1008 | 167 | 0.05457 | 0 |
+| cll_a1 | 0.05 | 7920 | 360 | 72 | 0.02793 | 0 |
+| cll_a1 | 0.1 | 7920 | 36 | 12 | 0.0008244 | 0 |
+| maxwell_a0 | 0.005 | 7920 | 816 | 132 | 0.02312 | 0 |
+| maxwell_a0 | 0.01 | 7920 | 432 | 42 | 0.01313 | 0 |
+| maxwell_a0.2 | 0.005 | 7920 | 18 | 5 | 0.02724 | 0 |
+| maxwell_a0.2 | 0.01 | 7920 | 825 | 97 | 0.05021 | 0 |
+| maxwell_a0.2 | 0.02 | 7920 | 384 | 49 | 0.035 | 0 |
+| maxwell_a0.5 | 0.01 | 7920 | 912 | 166 | 0.06059 | 0 |
+| maxwell_a0.5 | 0.02 | 7920 | 696 | 102 | 0.04935 | 0 |
+| maxwell_a0.5 | 0.05 | 7920 | 108 | 22 | 0.01822 | 0 |
+| maxwell_a0.8 | 0.005 | 7920 | 66 | 16 | 0.03641 | 0 |
+| maxwell_a0.8 | 0.01 | 7920 | 984 | 210 | 0.06289 | 0 |
+| maxwell_a0.8 | 0.02 | 7920 | 900 | 139 | 0.05161 | 0 |
+| maxwell_a0.8 | 0.05 | 7920 | 216 | 44 | 0.02657 | 0 |
+| maxwell_a1 | 0.005 | 7920 | 120 | 27 | 0.02986 | 0 |
+| maxwell_a1 | 0.01 | 7920 | 1002 | 197 | 0.06349 | 0 |
+| maxwell_a1 | 0.02 | 7920 | 984 | 156 | 0.05409 | 0 |
+| maxwell_a1 | 0.05 | 7920 | 336 | 60 | 0.02795 | 0 |
 
 ## System objectives (every vector)
 
@@ -90,7 +89,7 @@ What this is not: not an architecture selection, design, optimum, winner, requir
 |---|---|---|---|
 | T_minus_D_spacecraft_N | NOT_EVALUATED | T: no admitted Hall response map (credible set EMPTY); D_spacecraft: spacecraft body / array drag TBD (F1-ID-08) | an ADMITTED Hall transport member (credible set non-empty: a screening candidate promoted by pre-registered predictive evidence, CLAUDE.md next-work 1/3) AND a design-specific Hall map (own H-1 geometry and B(z), HallMap trustworthy, chemistry_trustworthy) whose domain contains the offered feed state; or a measured H-1 thrust on the delivered feed (hardware pivot Phase 1-3, thrust stand RFQ-01) / spacecraft frontal area / body + array drag model (F1-ID-08: no spacecraft geometry in the repository) at the same orbit states |
 | P_bus_W | NOT_EVALUATED | A9-02 official ledger status PARTIAL_BOUNDARY (24 TBD terms; compressor load TBD per row 22); every Hall / ICP / C1 / valve / thermal / housekeeping load and every supply efficiency is TBD | every installed A9-02 slot load and supply efficiency at a registered condition (Hall discharge from the registered H-1 envelope, coils from the frozen MC-1, RF generator DC input measured, compressor ICD row 22, valve drivers, thermal, housekeeping, front end) on the p_bus_1ms_max basis with a conformant gate measurement (A9.1 OQ-A902-01) |
-| m_wet_kg | NOT_EVALUATED | no CBE or measured mass exists for any BOM line (mass/power v2); the wet roll-ups against the 40 kg limit are ['DOES_NOT_CLOSE', 'NOT_EVALUABLE'] under every reading | a CBE or measured mass for every mass/power v2 BOM line (no CBE exists) plus the Xe load case (XA9Q-01 / MQ-09) and the MQ-01 margin reading decided by the owner |
+| m_wet_kg | NOT_EVALUATED | no CBE or measured mass exists for any BOM line (mass/power v3); the wet roll-ups of the owner reading 'MEV_LEVEL_EVIDENCE_BASED (the single owner reading)' against the 40 kg wet limit are ['DOES_NOT_CLOSE'] for the Xe load cases [2.0, 5.0, 10.0] kg | a CBE or measured mass for every mass/power v3 BOM line (no CBE exists) plus the Xe load case (XA9Q-01 / MQ-09) and the MQ-01 margin reading decided by the owner |
 | Q_reject_W | NOT_EVALUATED | P3 framework FRAMEWORK_IMPLEMENTED_INPUTS_TBD; fail-closed evaluations {'Q_RF/match': 'INCOMPLETE_EVIDENCE', 'Q_collector': 'INCOMPLETE_EVIDENCE', 'Q_plume': 'INCOMPLETE_EVIDENCE', 'Q_Hall->ICP': 'INCOMPLETE_EVIDENCE', 'coupled_network': 'INCOMPLETE_EVIDENCE'}; ICP_COUPLED_THERMAL and ANODE_THERMAL_CLOSURE UNRESOLVED (never reported as PASS) | the P3 coupled network solved: ICP geometry P3-G-01..08, emittances P3-R-01..04, conductances P3-K-01..06, heat terms from P1/P2 data (Q_RF/match, Q_collector) and Phase-1 plume data (Q_plume) |
 | I_e_cap_minus_I_d_max_A | NOT_EVALUATED | ICP-45 NOT_EVALUATED: I_d,max,H1 TBD (not registered) and no P1 data; ICP electron-current capacity PENDING_ICP45 | registered I_d,max,H1 (A9.3 OQ-A907-02, from measured H-1 operation) AND a P1 ICP-45A result EVALUATED_ENGINEERING_ONLY (discharge-OFF capacity, one-sided LCB, A9.4 P1Q-10 / A9.5 P1Q-16); for hall_c1_reference a registered C1 emission capacity |
 | life_material | NOT_EVALUATED | no life model or life evidence for any block; P4 gates all INCOMPLETE_EVIDENCE; the only number is a parametric rotor stress margin | Hall wall-erosion life (needs an admitted Hall map with wall_life_trustworthy) or a life test; anode / collector material with gate-admissible evidence (P4: all 352 gate cells INCOMPLETE_EVIDENCE); intake / plenum / filter AO compatibility (coupon programme, owner row 132) |
@@ -106,13 +105,15 @@ What this is not: not an architecture selection, design, optimum, winner, requir
 | HC-05 | RVM-15 | I_e,cap - I_d,max,H1 (one-sided LCB) > 0 A | NOT_EVALUATED | no evaluable value (fail closed: never counted as satisfied) |
 | HC-06 | RVM-17 | thermal margin below validated limits >= 50 K | NOT_EVALUATED | no evaluable value (fail closed: never counted as satisfied) |
 | HC-07 | RVM-12 | cumulative firing time capability > 15000 h | NOT_EVALUATED | no evaluable value (fail closed: never counted as satisfied) |
-| HC-08 | derived (A9.7 F7 T - D objective; owner question OQ-F78-01) | T - D_spacecraft (drag compensation) >= 0 N | NOT_EVALUATED | no evaluable value (fail closed: never counted as satisfied) |
+| HC-08 | AG-13 (owner decision A9.13 S6.15 / OQ-F78-01; A9.14 S9.7 statewise quantifier) | T_available(state) - D_spacecraft(state) at EVERY required state (statewise; worst state governs; the orbit average never hides a deficit) T_available(state) - D_spacecraft(state) at EVERY required state (statewise; worst state governs; the orbit average never hides a deficit) | NOT_EVALUATED | no statewise record over the required state set (a single value never closes a statewise constraint; A9.13 S6.15 / S6.21 / A9.14 S9.7) |
 | HC-09 | F1 C-DRAG-RFP (RFP thrust max as recorded, F1-P-11) | intake-face drag at every orbit state <= 0.025 N | MET_ON_PARAMETRIC_VALUES_SENSITIVITY_ONLY_NOT_MET | value 0.0103365 N (PARAMETRIC_SENSITIVITY_ONLY): sensitivity comparison only, never counted as satisfied (fail closed) |
+| HC-10 | A9.15 RFP-compliant propellant policy | ambient-air AND Xe operating capability with two separate propellant tanks / paths (1 = both demonstrated) >= 1 - | NOT_EVALUATED | no evaluable value (fail closed: never counted as satisfied) |
+| HC-11 | AG-12 (owner decision A9.13 S6.21 / F9-OQ-02) | statewise feed-state sufficiency (mdot, P, T, composition, ripple) vs the requirement derived from the required thrust and a VALIDATED H-1 map (no fixed mg/s gate) statewise feed-state sufficiency (mdot, P, T, composition, ripple) vs the requirement derived from the required thrust and a VALIDATED H-1 map (no fixed mg/s gate) | NOT_EVALUATED | no statewise record over the required state set (a single value never closes a statewise constraint; A9.13 S6.15 / S6.21 / A9.14 S9.7) |
+| HC-12 | A9.13 S6.17 / S6.12 feed-quality | compressor / plenum ripple <= measured H-1 ripple tolerance compressor / plenum ripple <= measured H-1 ripple tolerance | NOT_EVALUATED | upstream_a9_13 ripple_feed_quality status NOT_EVALUATED |
 
 ## Full-system ranking
 
-- hall_c1_reference: **REFUSED_INCOMPLETE** - system objectives (incl. the life / material indicator gate) not EVALUATED for some or all candidates (fail closed, no subset ranking) (missing counts {'T_minus_D_spacecraft_N': 4218, 'P_bus_W': 4218, 'm_wet_kg': 4218, 'Q_reject_W': 4218, 'I_e_cap_minus_I_d_max_A': 4218, 'life_material': 4218})
-- hall_icp_neutralizer: **REFUSED_INCOMPLETE** - system objectives (incl. the life / material indicator gate) not EVALUATED for some or all candidates (fail closed, no subset ranking) (missing counts {'T_minus_D_spacecraft_N': 4218, 'P_bus_W': 4218, 'm_wet_kg': 4218, 'Q_reject_W': 4218, 'I_e_cap_minus_I_d_max_A': 4218, 'life_material': 4218})
+- hall_icp_neutralizer: **REFUSED_INCOMPLETE** - system objectives (incl. the life / material indicator gate) not EVALUATED for some or all candidates (fail closed, no subset ranking) (missing counts {'T_minus_D_spacecraft_N': 2925, 'P_bus_W': 2925, 'm_wet_kg': 2925, 'Q_reject_W': 2925, 'I_e_cap_minus_I_d_max_A': 2925, 'life_material': 2925})
 
 ## F8 uncertainty axes
 
@@ -135,33 +136,33 @@ What this is not: not an architecture selection, design, optimum, winner, requir
 
 candidates nominally feasible in EVERY surface scenario (fail closed), compared on worst-case objectives over the scenario set plus the minimum TPMC P_feasible; per set pressure; a set, never a winner; evidence-gate statuses unchanged (gate_snapshot before == after)
 
-Survivors 1233; feasible-scenario tiers {'1': 90, '2': 270, '3': 120, '4': 120, '5': 189, '6': 150, '7': 102, '8': 159, '9': 18, '10': 15}; feasible in all scenarios 15; evidence gates unchanged: True.
+Survivors 843; feasible-scenario tiers {'1': 48, '2': 169, '3': 78, '4': 70, '5': 98, '6': 128, '7': 83, '8': 130, '9': 23, '10': 16}; feasible in all scenarios 16; evidence gates unchanged: True.
 
 | P_set [Pa] | design | worst mdot [mg/s] | worst drag [mN] | worst P_el [W] | m_comp [kg] | P_feas,min |
 |---|---|---|---|---|---|---|
-| 0.01 | A0.25_Ld3_phi0.8 / F4-FIL-NONE / T6-A1-U2-D0-Ti6Al4V / V0.001 / P0.01 | 0.008134 | 10.44 | 9.587 | 10.91 | 1 |
-| 0.01 | A0.25_Ld3_phi0.8 / F4-FIL-NONE / T6-A1-U2-D0-Ti6Al4V / V0.01 / P0.01 | 0.008134 | 10.44 | 9.587 | 10.91 | 1 |
-| 0.01 | A0.25_Ld3_phi0.8 / F4-FIL-NONE / T6-A1-U2-D0-Ti6Al4V / V0.1 / P0.01 | 0.008134 | 10.44 | 9.587 | 10.91 | 1 |
-| 0.01 | A0.25_Ld3_phi0.9 / F4-FIL-NONE / T6-A1-U2-D0-Ti6Al4V / V0.001 / P0.01 | 0.008404 | 10.4 | 9.632 | 10.91 | 1 |
-| 0.01 | A0.25_Ld3_phi0.9 / F4-FIL-NONE / T6-A1-U2-D0-Ti6Al4V / V0.01 / P0.01 | 0.008404 | 10.4 | 9.632 | 10.91 | 1 |
-| 0.01 | A0.25_Ld3_phi0.9 / F4-FIL-NONE / T6-A1-U2-D0-Ti6Al4V / V0.1 / P0.01 | 0.008404 | 10.4 | 9.632 | 10.91 | 1 |
-| 0.01 | A0.25_Ld5_phi0.9 / F4-FIL-NONE / T6-A1-U2-D0-Ti6Al4V / V0.001 / P0.01 | 0.008409 | 10.48 | 9.751 | 10.91 | 1 |
-| 0.01 | A0.25_Ld5_phi0.9 / F4-FIL-NONE / T6-A1-U2-D0-Ti6Al4V / V0.01 / P0.01 | 0.008409 | 10.48 | 9.751 | 10.91 | 1 |
-| 0.01 | A0.25_Ld5_phi0.9 / F4-FIL-NONE / T6-A1-U2-D0-Ti6Al4V / V0.1 / P0.01 | 0.008409 | 10.48 | 9.751 | 10.91 | 1 |
+| 0.01 | A0.25_Ld3_phi0.8 / F4-FIL-NONE / T6-A0-U2-D0-Ti6Al4V-H0.75 / V0.001 / P0.01 | 0.007101 | 10.44 | 9.229 | 7.488 | 1 |
+| 0.01 | A0.25_Ld3_phi0.8 / F4-FIL-NONE / T6-A1-U2-D0-Ti6Al4V-H0.25 / V0.001 / P0.01 | 0.008755 | 10.44 | 9.594 | 10.91 | 1 |
+| 0.01 | A0.25_Ld3_phi0.8 / F4-FIL-NONE / T6-A1-U2-D0-Ti6Al4V-H0.5 / V0.001 / P0.01 | 0.01096 | 10.44 | 9.628 | 10.91 | 1 |
+| 0.01 | A0.25_Ld3_phi0.8 / F4-FIL-NONE / T6-A2-U2-D0-Ti6Al4V-H0.75 / V0.001 / P0.01 | 0.0072 | 10.44 | 9.235 | 7.525 | 1 |
+| 0.01 | A0.25_Ld3_phi0.9 / F4-FIL-NONE / T6-A1-U1-D0-Ti6Al4V-H0.75 / V0.001 / P0.01 | 0.002933 | 10.4 | 9.331 | 10.91 | 1 |
+| 0.01 | A0.25_Ld3_phi0.9 / F4-FIL-NONE / T6-A1-U2-D0-Ti6Al4V-H0.25 / V0.001 / P0.01 | 0.009046 | 10.4 | 9.641 | 10.91 | 1 |
+| 0.01 | A0.25_Ld3_phi0.9 / F4-FIL-NONE / T6-A1-U2-D0-Ti6Al4V-H0.5 / V0.001 / P0.01 | 0.01134 | 10.4 | 9.678 | 10.91 | 1 |
+| 0.01 | A0.25_Ld5_phi0.9 / F4-FIL-NONE / T6-A1-U2-D0-Ti6Al4V-H0.5 / V0.001 / P0.01 | 0.01134 | 10.48 | 9.803 | 10.91 | 1 |
 
 ## Architecture questions
 
 | id | question | answer state | basis |
 |---|---|---|---|
 | AQ-01 | Which upstream intake / compressor / plenum combinations deliver the most flow for the least drag, compressor power, mass proxy and ripple, per surface scenario and set pressure? | CAN_ANSWER_UNDER_PARAMETRIC_INPUTS | F7 upstream Pareto sets (PARAMETRIC_SENSITIVITY: code-default compressor coefficients, parametric filter / leak / chain temperature) |
-| AQ-02 | Does any upstream chain deliver the owner ground-characterization flow range (0.38-3.2 mg/s) at every orbit state with one plenum setpoint? | CAN_ANSWER_UNDER_PARAMETRIC_INPUTS | F7 upstream frontier per context (see findings); F4-01 |
+| AQ-02 | Where does the delivered upstream flow sit relative to the 0.38-3.2 mg/s ground-characterization COVERAGE (not a flight requirement, A9.13 S6.21) at every orbit state with one plenum setpoint? | CAN_ANSWER_UNDER_PARAMETRIC_INPUTS | F7 upstream frontier per context (see findings); F4-01; coverage only, never PASS / FAIL |
+| AQ-02b | Is the delivered feed state sufficient (AG-12) for the required drag-compensation thrust at every required state? | CANNOT_ANSWER | AG-12 is statewise feed-state sufficiency against a VALIDATED H-1 map (A9.13 S6.21): no such map |
 | AQ-03 | Which set pressures can the upstream chain hold at all? | CAN_ANSWER_UNDER_PARAMETRIC_INPUTS | feasible counts per P_set; > 0.1 Pa out of domain (F3/F4) |
-| AQ-04 | Does the architecture produce net thrust T - D >= 0 / >= 12 mN at 180-230 km? | CANNOT_ANSWER | no admitted Hall response map; spacecraft drag TBD |
+| AQ-04 | Does the architecture produce T(state) - D(state) >= 0 at EVERY required state (statewise, A9.13 S6.15) and >= 12 mN at 180-230 km? | CANNOT_ANSWER | no admitted Hall response map; host-spacecraft drag ICD absent (reference drag is REFERENCE_PARAMETRIC only, S6.18) |
 | AQ-05 | Does the system close P_bus < 1.5 kW (and the 1.35 kW allocation)? | CANNOT_ANSWER | A9-02 ledger PARTIAL_BOUNDARY |
-| AQ-06 | Does the system close < 40 kg wet? | CANNOT_ANSWER | no CBE for any BOM line; wet roll-ups NOT_EVALUABLE |
-| AQ-07 | Can the ICP (or C1) neutralize the H-1 discharge current with margin? | CANNOT_ANSWER | ICP-45 NOT_EVALUATED; I_d,max,H1 not registered |
+| AQ-06 | Does the system close < 40 kg wet? | CANNOT_ANSWER | no CBE for any BOM line (m_wet NOT_EVALUATED); mass/power v3 wet roll-ups against HARD_40_WET (MEV-level owner reading, Xe cases 2 / 5 / 10 kg): hall_icp_neutralizer ['DOES_NOT_CLOSE'] (known terms 42.75-50.75 kg) (flight configuration only; A9.19 / A9.20: C1 is a GROUND_REFERENCE, never a flight roll-up) |
+| AQ-07 | Can the ICP neutralize the H-1 discharge current with margin (both supply modes; no hollow cathode in flight, A9.19)? | CANNOT_ANSWER | ICP-45 NOT_EVALUATED; I_d,max,H1 not registered |
 | AQ-08 | Does the coupled H-1 / ICP thermal design close with >= 50 K margin? | CANNOT_ANSWER | P3 INCOMPLETE_EVIDENCE; closures UNRESOLVED |
-| AQ-09 | hall_icp_neutralizer vs hall_c1_reference: which configuration is better? | CANNOT_ANSWER | every discriminating system objective is NOT_EVALUATED for both configurations; the upstream chain is common to both (no discrimination there) |
+| AQ-09 | Does the ICP neutralizer match or exceed the ground C1 reference (bench control, GROUND_REFERENCE) in the C1-vs-ICP bench comparison? | CANNOT_ANSWER | A9.19 / A9.20: hall_c1_reference is no longer a flight configuration; the comparison is a ground bench comparison with C1 as GROUND_ONLY_LAB_EQUIPMENT; no bench data (P1 / ICP-45 NOT_EVALUATED) |
 | AQ-10 | Which H-1 geometry inside the F5 windows is preferable? | CANNOT_ANSWER | every Hall performance quantity NOT_EVALUATED; only geometric admissibility is evaluable |
 | AQ-11 | Which ICP geometry is preferable? | CANNOT_ANSWER | F6 bounds all TBD; P1 / P2 no data |
 | AQ-12 | Is the upstream Pareto set robust to the TBD surface state, wall recombination, pointing and TPMC statistics? | CAN_ANSWER_UNDER_PARAMETRIC_INPUTS | F8 robust filter (scenario set + seeded MC over quantified TPMC statistics); probabilities only over quantified uncertainty |
@@ -172,7 +173,7 @@ Survivors 1233; feasible-scenario tiers {'1': 90, '2': 270, '3': 120, '4': 120, 
 - **T**: an ADMITTED Hall transport member (credible set non-empty: a screening candidate promoted by pre-registered predictive evidence, CLAUDE.md next-work 1/3) AND a design-specific Hall map (own H-1 geometry and B(z), HallMap trustworthy, chemistry_trustworthy) whose domain contains the offered feed state; or a measured H-1 thrust on the delivered feed (hardware pivot Phase 1-3, thrust stand RFQ-01)
 - **D_spacecraft**: spacecraft frontal area / body + array drag model (F1-ID-08: no spacecraft geometry in the repository) at the same orbit states
 - **P_bus**: every installed A9-02 slot load and supply efficiency at a registered condition (Hall discharge from the registered H-1 envelope, coils from the frozen MC-1, RF generator DC input measured, compressor ICD row 22, valve drivers, thermal, housekeeping, front end) on the p_bus_1ms_max basis with a conformant gate measurement (A9.1 OQ-A902-01)
-- **m_wet**: a CBE or measured mass for every mass/power v2 BOM line (no CBE exists) plus the Xe load case (XA9Q-01 / MQ-09) and the MQ-01 margin reading decided by the owner
+- **m_wet**: a CBE or measured mass for every mass/power v3 BOM line (no CBE exists) plus the Xe load case (XA9Q-01 / MQ-09) and the MQ-01 margin reading decided by the owner
 - **Q_reject**: the P3 coupled network solved: ICP geometry P3-G-01..08, emittances P3-R-01..04, conductances P3-K-01..06, heat terms from P1/P2 data (Q_RF/match, Q_collector) and Phase-1 plume data (Q_plume)
 - **I_e_margin**: registered I_d,max,H1 (A9.3 OQ-A907-02, from measured H-1 operation) AND a P1 ICP-45A result EVALUATED_ENGINEERING_ONLY (discharge-OFF capacity, one-sided LCB, A9.4 P1Q-10 / A9.5 P1Q-16); for hall_c1_reference a registered C1 emission capacity
 - **life**: Hall wall-erosion life (needs an admitted Hall map with wall_life_trustworthy) or a life test; anode / collector material with gate-admissible evidence (P4: all 352 gate cells INCOMPLETE_EVIDENCE); intake / plenum / filter AO compatibility (coupon programme, owner row 132)
@@ -192,10 +193,10 @@ Survivors 1233; feasible-scenario tiers {'1': 90, '2': 270, '3': 120, '4': 120, 
 | F78-ID-09 | F7 -> F5 | docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json (IFS-F7-02) | Hall performance for any x_Hall (T, I_d, efficiency, heat shares): required before x_Hall can be searched | DEMANDED (NOT_EVALUATED) |
 | F78-ID-10 | F6 -> F7 | abep_sim/design/icp_geometry_synthesis.py; docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json | x_ICP definition and the fail-closed objective contract (F6-IF-S01) | CONSUMED (bounds TBD, not searchable) |
 | F78-ID-11 | P1 -> F7 | docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json | ICP-45A result and registered I_d,max,H1 for I_e,cap - I_d,max | DEMANDED (NOT_EVALUATED) |
-| F78-ID-12 | P2 / RFQ v2 -> F7 | docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json; docs/procurement/rfq_a9_v2/rfq_a9_v2.json | RF ratings, match loss, flight source efficiency (x_RF) | DEMANDED (TBD_AFTER_IMPEDANCE_MAP) |
-| F78-ID-13 | P3 -> F7 | docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json | solved coupled network for Q_reject and the 50 K margin | DEMANDED (INCOMPLETE_EVIDENCE) |
+| F78-ID-12 | P2 / RFQ v3 -> F7 | docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json; docs/procurement/rfq_a9_v3/rfq_a9_v3.json | RF ratings, match loss, flight source efficiency (x_RF) | DEMANDED (TBD_AFTER_IMPEDANCE_MAP) |
+| F78-ID-13 | P3 -> F7 | docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json | solved coupled network for Q_reject and the 50 K margin | DEMANDED (INCOMPLETE_EVIDENCE) |
 | F78-ID-14 | P4 -> F7 | docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json | material gate evidence for life / material indicators | DEMANDED |
-| F78-ID-15 | mass/power v2 -> F7 | docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json | A9-02 slot TBD texts, allocations, evidence floors, wet roll-ups; F7 returns design-parametric masses in a separate column (never merged) | CONSUMED / PROVIDED |
+| F78-ID-15 | mass/power v3 -> F7 | docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json | A9-02 slot TBD texts, allocations, evidence floors, wet roll-ups; F7 returns design-parametric masses in a separate column (never merged) | CONSUMED / PROVIDED |
 | F78-ID-16 | F7/F8 -> F9 | docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json (F9-ID-07) | upstream Pareto sets per context, robust Pareto set, full-system ranking status REFUSED_INCOMPLETE with the unlock evidence map; F9 carries sets, never a silently selected point | PROVIDED |
 | F78-ID-17 | F7/F8 -> F0 | docs/performance/ | workload: F7 steady sweeps + F8 Monte Carlo (CPU printed by the builder; no Rust kernel needed: no TPMC runs here) | PROVIDED |
 
@@ -208,7 +209,7 @@ Survivors 1233; feasible-scenario tiers {'1': 90, '2': 270, '3': 120, '4': 120, 
 
 ## Limitations
 
-- INT-01 (consolidated verification round 1): x_compressor is searched only over the union of the F3 per-case Pareto ids (32 designs, as in F4), and those F3 fronts were built on the down-selection envelope inlets, not on the F1-coupled states coupled here. F3's inlet-independent gates (N_drag = 0, Ti-6Al-4V, cited tip speed <= 305.5 m/s) admit 48 designs. Every F7 upstream Pareto set and the F8 robust set are therefore 'Pareto within the F3 front-union subset': the consolidated-verification evidence for INT-01 (a re-run over all 48) reports 9 of the 10 nominal contexts changing (members added, and some committed members dominated by an excluded design, e.g. T4-A0-U2-D0). Searching all 48 designs is an open follow-up; no set here is a Pareto set over the admissible compressor space
+- INT-01 (consolidated verification round 1): x_compressor is searched only over the union of the F3 per-case Pareto ids (55 designs, as in F4), and those F3 fronts were built on the down-selection envelope inlets, not on the F1-coupled states coupled here. F3's inlet-independent gates (N_drag = 0, Ti-6Al-4V, cited tip speed <= 305.5 m/s) admit 210 designs (A9.16: hub-ratio coverage included). Every F7 upstream Pareto set and the F8 robust set are therefore 'Pareto within the F3 front-union subset': the A9.7 consolidated-verification evidence for INT-01 (a re-run over the then 48 gate-passing designs) reported 9 of the 10 nominal contexts changing (members added, and some committed members dominated by an excluded design, e.g. T4-A0-U2-D0). Searching all 210 designs is an open follow-up; no set here is a Pareto set over the admissible compressor space
 - every upstream number inherits PARAMETRIC_SENSITIVITY inputs: uncited DragCompressor coefficients (F3), parametric filter cases (F2/F4), the assumed isothermal 350 K chain (F4-P-01), the parametric leak (F4-P-05)
 - steady operating points only in the F7 search; transient quality enters as the open-loop ripple transfer bound at the shaft frequency (F4-P-17); event-sequence transients are F4's study
 - single-channel TPMC intake model with Maxwell / CLL kernels at frozen-surface nodes (F1 limitations)

@@ -50,6 +50,8 @@ def answers():
         for qid, v in (d.get("decisions") or {}).items():
             if isinstance(v, dict) and "sequenced_no" in v:
                 out[qid] = "%s (%s)" % (v["answer"], p.name)
+                if v.get("amended_by"):
+                    out[qid] += " [amended by %s]" % Path(v["amended_by"]).name
     return out
 
 

@@ -17,6 +17,7 @@ from abep_sim import bus_boundary_a9 as bb
 from abep_sim.design import architecture_optimizer as ao
 from abep_sim.design import plenum_feed as pf
 from abep_sim.design import robust_optimizer as ro
+from abep_sim.design import upstream_a9_13 as u13
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "docs/design_synthesis/f7_f8_optimizer"
@@ -36,7 +37,8 @@ def inp():
 @pytest.fixture(scope="module")
 def small_ctx(inp):
     cands = ("A0.25_Ld10_phi0.8", "A0.5_Ld20_phi0.8", "A1.5_Ld3_phi0.9")
-    comps = ("T3-A1-U2-D0-Ti6Al4V", "T6-A2-U1-D0-Ti6Al4V")
+    # F3 front-union members (A1 = the 0.196 m^2 LI2015 area; the A2 grid bound moved with the W1 S6.8 re-pin)
+    comps = ("T3-A1-U2-D0-Ti6Al4V-H0.25", "T6-A1-U1-D0-Ti6Al4V-H0.25")
     return ao.upstream_context(inp, "cll_a0.8", "F4-FIL-NONE", "WALL-G0", candidates=cands, compressors=comps)
 
 
@@ -207,12 +209,39 @@ def _syn(v):
     return {"value": v, "evidence_class": SYN, "source": "SYNTHETIC_TEST_FIXTURE"}
 
 
+TEST_STATES = [{"state_id": "test-s1", "weight": 0.5}, {"state_id": "test-s2", "weight": 0.5}]
+
+
+class _TestH1Map:
+    """A test-only H-1 thrust-versus-feed map (no such validated map exists; the status is set by the caller)."""
+
+    def __init__(self, status):
+        self.status = status
+
+    def min_feed_state(self, st, thrust_N, offered):
+        return {"mdot_kgps": 1e-7, "P_Pa": 0.01, "T_range_K": (300.0, 400.0), "x_domain_ok": True,
+                "ripple_tolerance_frac": 0.05}
+
+
+def _statewise_records(vs, thrust, drag=0.002, hall_admitted=False):
+    """A9.13 S6.15 / S6.21 / S6.17 records for HC-08 / HC-11 / HC-12 from test values of value status ``vs``."""
+    rec = lambda v: (lambda st: {"value_N": v, "status": vs, "source": "TEST_FIXTURE", "state_id": st["state_id"]})
+    tw = u13.statewise_drag_compensation(TEST_STATES, rec(thrust), rec(drag), hall_admitted=hall_admitted)
+    off = lambda st: {"mdot_kgps": 2e-7, "P_Pa": 0.02, "T_K": 350.0, "x_mole": {"O": 0.5, "N2": 0.45, "O2": 0.05},
+                      "ripple_frac": 0.01, "status": vs}
+    fss = u13.feed_state_sufficiency(TEST_STATES, off, rec(thrust),
+                                     _TestH1Map(u13.SYNTHETIC if vs == u13.VALUE_SYNTHETIC else u13.H1_MAP_VALIDATED))
+    rip = u13.ripple_feed_quality(0.01, vs, u13.H1Tolerance("ripple", 0.05, vs, "TEST_FIXTURE"))
+    return {"statewise_T_minus_D": tw, "feed_state_sufficiency": fss, "ripple_feed_quality": rip}
+
+
 def _syn_eval(row, thrust, pbus_scale, mwet, design_id, measured_bus=False):
     sup = {"thrust": _syn(thrust), "thrust_capability": _syn(0.03), "spacecraft_drag": _syn(0.002),
            "bus": _syn_ledgers("hall_icp_neutralizer", pbus_scale, measured_bus),
            "m_wet": dict(_syn(mwet), all_terms_resolved=True), "Q_reject": _syn(300.0), "I_e_margin": _syn(1.0),
            "thermal_margin": _syn(60.0), "firing_life": _syn(16000.0), "life_material": _syn(1.0),
-           "drag_intake_max": _syn(0.005)}
+           "drag_intake_max": _syn(0.005), "propellant_capability": _syn(1.0),
+           **_statewise_records(u13.VALUE_SYNTHETIC, thrust)}
     ev = ao.evaluate_system(row, "hall_icp_neutralizer", supplied=sup)
     ev["design_id"] = design_id
     return ev
@@ -253,7 +282,7 @@ def test_supplied_objective_labels():
 
 # ------------------------------------------------------------------------------------------------- F8 helpers
 def test_plant_with_overrides_identity_and_effect(inp):
-    d = inp.designs["T6-A2-U1-D0-Ti6Al4V"]
+    d = inp.designs["T6-A1-U1-D0-Ti6Al4V-H0.25"]
     p0, p1 = pf.CompressorPlant.from_design(d), ro.plant_with_overrides(d, {})
     assert p0.characteristic() == p1.characteristic() and p0.leak_m3_s == p1.leak_m3_s
     p2 = ro.plant_with_overrides(d, {"turbo_kK": 1.2 * 1.01})
@@ -271,12 +300,12 @@ def test_perturbed_zero_draw_is_identity(inp):
 
 
 def test_mc_deterministic_and_theta_node(inp):
-    cand = {"design_id": "t", "candidate": "A0.25_Ld10_phi0.8", "compressor": "T3-A1-U2-D0-Ti6Al4V",
+    cand = {"design_id": "t", "candidate": "A0.25_Ld10_phi0.8", "compressor": "T3-A1-U2-D0-Ti6Al4V-H0.25",
             "V_m3": 0.001, "P_set_Pa": 0.01, "filter": "F4-FIL-NONE"}
     a = ro.tpmc_monte_carlo(inp, [cand], ["cll_a0.8"], n=4)
     b = ro.tpmc_monte_carlo(inp, [cand], ["cll_a0.8"], n=4)
     assert a == b
-    rec = a[("A0.25_Ld10_phi0.8", "F4-FIL-NONE", "T3-A1-U2-D0-Ti6Al4V", 0.01)]["cll_a0.8"]
+    rec = a[("A0.25_Ld10_phi0.8", "F4-FIL-NONE", "T3-A1-U2-D0-Ti6Al4V-H0.25", 0.01)]["cll_a0.8"]
     assert 0.0 <= rec["P_feasible"] <= 1.0 and rec["n"] == 4
     tr = ro.theta_ratio_index(inp.f1)
     assert len(tr) == 10 * 4 * 2 * 3 and all(0 < e <= 1.0 + 1e-9 for e, _ in tr.values())
@@ -391,7 +420,8 @@ def _evidence_eval(monkeypatch, row, design_id, cons_rec):
            "bus": _syn_ledgers("hall_icp_neutralizer", 1.0, measured=True),
            "m_wet": dict(_meas(30.0), all_terms_resolved=True), "Q_reject": _meas(300.0), "I_e_margin": _meas(1.0),
            "thermal_margin": cons_rec(60.0), "firing_life": cons_rec(16000.0), "life_material": _meas(1.0),
-           "drag_intake_max": _meas(0.005)}
+           "drag_intake_max": _meas(0.005), "propellant_capability": _meas(1.0),
+           **_statewise_records(u13.VALUE_EVIDENCE, 0.02, hall_admitted=True)}
     ev = ao.evaluate_system(row, "hall_icp_neutralizer", supplied=sup)
     ev["design_id"] = design_id
     return ev

@@ -121,7 +121,8 @@ def test_manual_smoke_workflow_is_not_required():
 def test_no_other_workflows_unaccounted_for():
     wf_dir = os.path.dirname(CI_YML)
     found = sorted(f for f in os.listdir(wf_dir) if f.endswith((".yml", ".yaml")))
-    assert found == ["ci.yml", "julia-smoke.yml"], (
+    # rust-parity.yml: optional, not required (owner A9.14 S10.4 RUST-OQ-02; docs/ci/BRANCH_PROTECTION.md, RUST_PARITY.md).
+    assert found == ["ci.yml", "julia-smoke.yml", "rust-parity.yml"], (
         f"new workflow(s) {found}: decide (owner) whether they are required and update docs/ci/BRANCH_PROTECTION.md")
 
 

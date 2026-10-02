@@ -273,8 +273,12 @@ def resolve_inputs(rd: Reader, merges: dict[str, str]) -> list[dict]:
                 base = rd.abs(d)
                 if os.path.isdir(base):
                     for dp, dns, fns in os.walk(base):
-                        dns.sort()
+                        # bytecode caches are interpreter by-products, not inputs: fingerprinting them made the
+                        # dossier depend on which builders happened to have been imported in this checkout
+                        dns[:] = sorted(x for x in dns if x != "__pycache__")
                         for fn in sorted(fns):
+                            if fn.endswith((".pyc", ".pyo")):
+                                continue
                             rel = os.path.relpath(os.path.join(dp, fn), rd.root).replace(os.sep, "/")
                             rd.bytes(rel)
                             found.append(rel)

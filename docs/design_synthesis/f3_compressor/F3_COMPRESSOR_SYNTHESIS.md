@@ -6,15 +6,17 @@
 
 This is a bounded design search beside `DragCompressor.size_for()`, which is not modified. It builds `DragCompressor` instances and runs the module's own self-consistent `run()`. It then applies fail-closed gates that `run()` and `size_for()` do not apply: a cited rotor allowable, a convergence re-check, characteristic clipping, the free-molecular evidence domain and a thermal limit. It returns feasible sets and Pareto fronts and keeps every rejected design with its reasons. It never selects an optimum.
 
-Every coefficient that is not searched is an uncited code default (compressor_downselect CD-01). For that reason **MODE_STRICT returns NOT_EVALUATED**, and every number below is a **PARAMETRIC_SENSITIVITY** result. None of them is a design value, a CBE or a PASS. The inlet records are the 36 W1 candidate-cases of the DI-1.4 requirement envelope, which are PROPOSED and model-derived. The F1/F2 interface records exist, but this study's fronts are not rebuilt on them; F4 and F7 couple F1 -> F2 -> F3 directly over the F3 front union (a restriction recorded as a limitation in F4 / F7 / F9).
+Every coefficient that is not searched is an uncited code default (compressor_downselect CD-01). For that reason **MODE_STRICT returns NOT_EVALUATED**, and every number below is a **PARAMETRIC_SENSITIVITY** result. None of them is a design value, a CBE or a PASS. The inlet records are the 9 W1 candidate-cases of the DI-1.4 requirement envelope, which are PROPOSED and model-derived. The F1/F2 interface records exist, but this study's fronts are not rebuilt on them; F4 and F7 couple F1 -> F2 -> F3 directly over the F3 front union (a restriction recorded as a limitation in F4 / F7 / F9).
 
 ## Search variables (A9.7 list)
 
 | variable | value / range | basis | evidence class | status |
 |---|---|---|---|---|
 | N_turbo | [1, 2, 3, 4, 5, 6] - | turbo rows 1..6: DragCompressor.size_for(max_turbo_rows=6) module limit | assumed | SEARCHED (module limit) |
-| A_turbo | [0.09785329371, 0.1963495408, 0.3766950753] m^2 | ends: minimum inlet area range for the PROPOSED b = 0.25 target (P-A-INLET-MIN-RANGE); interior point: Li 2015 inlet area pi*0.25^2 (P-LI2015-INLET-DIAMETER, verify) | model-derived / reconstructed | SEARCHED (evidence-bounded range) |
-| R_turbo | sqrt(A_turbo/pi) m | derived from A_turbo (hub ratio TBD); not an independent variable | model-derived | DERIVED |
+| A_turbo | [0.1128299365, 0.1963495408, 0.1137287437] m^2 | ends: minimum inlet area range for the PROPOSED b = 0.25 target (P-A-INLET-MIN-RANGE); interior point: Li 2015 inlet area pi*0.25^2 (P-LI2015-INLET-DIAMETER, verify) | model-derived / reconstructed | SEARCHED (evidence-bounded range) |
+| R_turbo | sqrt(A_turbo / (pi (1 - nu^2))) m | tip radius derived from A_turbo and the hub ratio nu (A9.13 S6.7); not an independent variable | model-derived | DERIVED |
+| hub_ratio | [0.0, 0.25, 0.5, 0.75] - | hub ratio nu = R_hub / R_tip: explicit geometry variable (A9.13 S6.7). Searched values are a declared PARAMETRIC_SENSITIVITY coverage of the definitional domain [0, 1); nu = 0 is the zero-hub analytical bound only (not buildable). Bounds TBD from: shaft / bearing geometry; rotor structural analysis; motor / interface geometry; blade manufacturability; pumping-performance model | assumed | SEARCHED (PARAMETRIC_SENSITIVITY; bounds TBD) |
+| blade_span | R_tip (1 - nu) m | turbo blade span derived from the tip radius and hub ratio (A9.13 S6.7) | model-derived | DERIVED |
 | N_drag | [0, 1, 2, 3, 4] - | drag stages 0..4: DragCompressor.size_for(max_drag_stages=4) module limit | assumed | SEARCHED (module limit) |
 | R_rotor | 0.06 m | drag rotor radius: no accessed source gives a range | assumed | FIXED_CODE_DEFAULT (excluded from search; TBD evidence T-1/T-7) |
 | RPM | via turbo tip speed u_t in [u(R_turbo, 5000 rpm), 500 m/s], 6 linear points rpm | lower end: size_for rpm search start (P-RPM-SEARCH-MIN); upper end: published TMP circumferential speed (P-U-TIP-PUBLISHED-MAX); rotor-stress gate rejects the excess | assumed / inferred | SEARCHED (module limit + cited practice) |
@@ -22,7 +24,7 @@ Every coefficient that is not searched is an uncited code default (compressor_do
 | w | 12.0 mm | drag channel width: no accessed source | assumed | FIXED_CODE_DEFAULT (excluded; TBD evidence T-1) |
 | L | 0.35 m | drag channel length per stage: no accessed source | assumed | FIXED_CODE_DEFAULT (excluded; TBD evidence T-1) |
 | xi | 0.6 - | the module has no helix angle; its equivalent is the geometric efficiency xi of the drag channel (ln K0 and S0 both scale with xi). No accessed source gives a value | assumed | FIXED_CODE_DEFAULT (excluded; TBD evidence T-1) |
-| rotor_material | ['Ti6Al4V'] - | only materials with a CITED allowable (CITED_ALLOWABLES_PA); excluded: Al6061: allowable TBD: materials.DB yield 276 MPa is an uncited prior; no accessed A/B-basis source. Chiggiato names 'high-strength aluminium alloys' for commercial rotors (alloy and temper not stated); CFRP: allowable TBD (materials.DB 600 MPa uncited prior; laminate-dependent); bare CFRP wetted parts recede 0.48-15.9 mm over 26,000 h at the ram AO yield (compressor_downselect CD-07); owner OD-C3 PROPOSED metallic/coated a priori | inferred | SEARCHED (restricted) |
+| rotor_material | ['Ti6Al4V'] - | only materials with a CITED allowable (CITED_ALLOWABLES_PA); excluded: Al6061: allowable TBD: materials.DB yield 276 MPa is an uncited prior; no accessed A/B-basis source. Chiggiato names 'high-strength aluminium alloys' for commercial rotors (alloy and temper not stated). Re-enters only through a registered rotor-strength basis (rotor_strength.register_basis) plus an AO disposition (A9.13 S6.9); CFRP: allowable TBD (materials.DB 600 MPa uncited prior; laminate-dependent); bare CFRP wetted parts recede 0.48-15.9 mm over 26,000 h at the ram AO yield (compressor_downselect CD-07); owner OD-C3 PROPOSED metallic/coated a priori. Re-enters only through a registered basis plus laminate definition, directional allowables, temperature / moisture / environment basis, manufacturing / inspection basis and AO disposition of every exposed surface (A9.13 S6.9) | inferred | SEARCHED (restricted) |
 
 ## Cited and labelled parameters
 
@@ -37,12 +39,12 @@ Every coefficient that is not searched is an uncited code default (compressor_do
 | P-TI64-FTY-A-BASIS | 827000000.0 | Pa | SRC-NASA-HDBK-6025 Sec. 3 (definitions, 'Mechanical Properties'), p. 18 of 75 | inferred | CITED (secondary quotation of MMPDS-06) |
 | P-TI64-DENSITY | 4430 | kg/m^3 | SRC-MATERIALS-PY | assumed | UNCITED_DB_PRIOR (verify against a primary datasheet) |
 | P-TI64-T-SERVICE | 700 | K | SRC-MATERIALS-PY | assumed | UNCITED_DB_PRIOR (verify) |
-| P-STRESS-SAFETY | 2.0 | - | SRC-COMPRESSOR-PY | assumed | CODE_DEFAULT_UNCITED; TBD_OWNER for flight |
+| P-STRESS-SAFETY | 2.0 | - | SRC-COMPRESSOR-PY | assumed | CODE_DEFAULT_UNCITED; LEGACY_PARAMETRIC_SENSITIVITY only (A9.9 S2.3 / OQ-F3-01: flight rotor acceptance only through a registered strength basis, rotor_strength.qualify_rotor) |
 | P-RPM-SEARCH-MIN | 5000.0 | rpm | SRC-COMPRESSOR-PY | assumed | MODULE_LIMIT |
 | P-RECIRC-RTOL | 0.0001 | - | SRC-COMPRESSOR-PY | model-derived | MODULE_TOLERANCE |
 | P-OWNER-MASS-ALLOCATION | 5.5 | kg | SRC-OWNER-147 row 54 | owner-allocation | OWNER_ALLOCATION (not a CBE) |
 | P-LI2015-INLET-DIAMETER | 0.5 | m | SRC-R1-THREAD (LI2015) | reconstructed | VERIFY (first-hand text not accessed) |
-| P-A-INLET-MIN-RANGE | [0.09785329371, 0.3766950753] | m^2 | SRC-DOWNSELECT requirement_summary.A_inlet_min_m2['0.25'] | model-derived | PROPOSED-DERIVED (from PROPOSED b and W1 inputs) |
+| P-A-INLET-MIN-RANGE | [0.1128299365, 0.1137287437] | m^2 | SRC-DOWNSELECT requirement_summary.A_inlet_min_m2['0.25'] | model-derived | PROPOSED-DERIVED (from PROPOSED b and W1 inputs) |
 
 ## Fixed module coefficients (not searched)
 
@@ -84,172 +86,64 @@ Every coefficient that is not searched is an uncited code default (compressor_do
 | R9 | `DRAG_CHANNEL_KNUDSEN_BELOW_FREE_MOLECULAR_LIMIT` | drag channel Kn upper bound (O omitted) >= 0.5 | P-KN-FREE-MOLECULAR, P-SIGMA-C-N2/O2 (P-SIGMA-C-O TBD) |
 | R10 | `COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT` | T_compressor <= materials.DB T_max_K | P-TI64-T-SERVICE (uncited) |
 
-Strict mode: **NOT_EVALUATED** (22 blockers).
+Strict mode: **NOT_EVALUATED_MATERIAL_BASIS** (23 blockers).
 
 ## Per-case results (PARAMETRIC_SENSITIVITY)
 
 | case | p_in Pa | feasible / designs | front | P_out Pa | P_el W | mass kg | T_comp K | x_O out (pp) | setpoint Pa (PROPOSED) | reaching it |
 |---|---|---|---|---|---|---|---|---|---|---|
-| DC-S12-G10/alt180_low | 0.01303 | 16 / 540 | 14 | 0.01515–0.09864 | 8.494–16.1 | 2.56–18.29 | 314–333 | 0.3235–0.471 | 0.1 | 0 |
-| DC-S12-G10/alt180_mean | 0.01786 | 15 / 540 | 15 | 0.02057–0.08024 | 8.597–14.4 | 2.56–18.29 | 314.3–328.7 | 0.3684–0.5166 | 0.1 | 0 |
-| DC-S12-G10/alt180_high | 0.02306 | 14 / 540 | 14 | 0.02633–0.09596 | 8.707–14.16 | 2.56–18.29 | 314.6–328 | 0.4079–0.555 | 0.1 | 0 |
-| DC-S12-G10/alt200_low | 0.006127 | 18 / 540 | 18 | 0.007006–0.07004 | 8.332–13.89 | 2.56–18.29 | 313.6–327.5 | 0.3669–0.5657 | 0.1 | 0 |
-| DC-S12-G10/alt200_mean | 0.009634 | 17 / 540 | 17 | 0.01095–0.06547 | 8.407–13.47 | 2.56–18.29 | 313.8–326.4 | 0.3938–0.5902 | 0.1 | 0 |
-| DC-S12-G10/alt200_high | 0.01344 | 17 / 540 | 17 | 0.01518–0.08881 | 8.487–15.32 | 2.56–18.29 | 314–331 | 0.4236–0.6172 | 0.1 | 0 |
-| DC-S12-G10/alt230_low | 0.002267 | 18 / 540 | 18 | 0.002529–0.02255 | 8.244–10.08 | 2.56–18.29 | 313.4–317.9 | 0.5038–0.6909 | 0.1 | 0 |
-| DC-S12-G10/alt230_mean | 0.004383 | 18 / 540 | 18 | 0.004891–0.04367 | 8.289–11.79 | 2.56–18.29 | 313.5–322.2 | 0.499–0.6852 | 0.1 | 0 |
-| DC-S12-G10/alt230_high | 0.006804 | 18 / 540 | 18 | 0.007568–0.06667 | 8.34–13.64 | 2.56–18.29 | 313.7–326.8 | 0.5141–0.6963 | 0.1 | 0 |
-| DC-S12-G20/alt180_low | 0.01461 | 32 / 540 | 23 | 0.01497–0.1 | 8.281–13.7 | 1.888–18.29 | 313.5–327 | 0.329–0.4812 | 0.05 | 8 |
-| DC-S12-G20/alt180_mean | 0.02 | 28 / 540 | 19 | 0.0204–0.09208 | 8.31–13.03 | 1.888–15.39 | 313.6–325.4 | 0.4042–0.5267 | 0.05 | 6 |
-| DC-S12-G20/alt180_high | 0.02578 | 27 / 540 | 16 | 0.02622–0.09925 | 8.341–12.29 | 1.888–9.238 | 313.7–323.3 | 0.4431–0.5649 | 0.05 | 9 |
-| DC-S12-G20/alt200_low | 0.006857 | 34 / 540 | 22 | 0.006979–0.0713 | 8.235–11.79 | 1.888–18.29 | 313.4–322 | 0.3851–0.5756 | 0.05 | 2 |
-| DC-S12-G20/alt200_mean | 0.01077 | 33 / 540 | 22 | 0.01093–0.09983 | 8.256–15.71 | 1.888–18.29 | 313.4–332 | 0.4308–0.5999 | 0.05 | 5 |
-| DC-S12-G20/alt200_high | 0.01501 | 32 / 540 | 20 | 0.01515–0.09185 | 8.279–13.22 | 1.888–18.29 | 313.5–325.9 | 0.4742–0.6266 | 0.05 | 8 |
-| DC-S12-G20/alt230_low | 0.002529 | 30 / 540 | 24 | 0.002548–0.04022 | 8.21–10.33 | 2.56–18.29 | 313.3–318.4 | 0.4744–0.699 | 0.05 | 0 |
-| DC-S12-G20/alt230_mean | 0.004887 | 30 / 540 | 23 | 0.004925–0.07784 | 8.223–12.12 | 2.56–18.29 | 313.4–322.9 | 0.4698–0.6933 | 0.05 | 2 |
-| DC-S12-G20/alt230_high | 0.007582 | 28 / 540 | 21 | 0.00763–0.06847 | 8.237–11.66 | 2.56–18.29 | 313.4–321.7 | 0.527–0.7041 | 0.05 | 2 |
-| DC-S25-G10/alt180_low | 0.01303 | 6 / 540 | 6 | 0.01322–0.0193 | 8.77–11.69 | 3.79–18.29 | 314.7–322 | 0.415–0.4818 | 0.2 | 0 |
-| DC-S25-G10/alt180_mean | 0.01786 | 6 / 540 | 6 | 0.01796–0.02109 | 8.944–12.54 | 3.79–18.29 | 315.1–324.1 | 0.4954–0.5278 | 0.2 | 0 |
-| DC-S25-G10/alt180_high | 0.02306 | 0 / 540 | 0 | - | - | - | - | - | 0.2 | 0 |
-| DC-S25-G10/alt200_low | 0.006127 | 0 / 540 | 0 | - | - | - | - | - | 0.2 | 0 |
-| DC-S25-G10/alt200_mean | 0.009634 | 0 / 540 | 0 | - | - | - | - | - | 0.2 | 0 |
-| DC-S25-G10/alt200_high | 0.01344 | 0 / 540 | 0 | - | - | - | - | - | 0.2 | 0 |
-| DC-S25-G10/alt230_low | 0.002267 | 0 / 540 | 0 | - | - | - | - | - | 0.2 | 0 |
-| DC-S25-G10/alt230_mean | 0.004383 | 0 / 540 | 0 | - | - | - | - | - | 0.2 | 0 |
-| DC-S25-G10/alt230_high | 0.006804 | 0 / 540 | 0 | - | - | - | - | - | 0.2 | 0 |
-| DC-S25-G20/alt180_low | 0.01461 | 17 / 540 | 15 | 0.01573–0.09886 | 8.524–16.32 | 2.56–18.29 | 314.1–333.5 | 0.3056–0.4765 | 0.1 | 0 |
-| DC-S25-G20/alt180_mean | 0.02 | 16 / 540 | 13 | 0.02132–0.08107 | 8.637–14.65 | 2.56–18.29 | 314.4–329.4 | 0.3534–0.5226 | 0.1 | 0 |
-| DC-S25-G20/alt180_high | 0.02578 | 15 / 540 | 12 | 0.02726–0.0869 | 8.756–14.86 | 2.56–18.29 | 314.7–329.7 | 0.3969–0.5613 | 0.1 | 0 |
-| DC-S25-G20/alt200_low | 0.006857 | 18 / 540 | 16 | 0.007265–0.06933 | 8.345–13.96 | 2.56–18.29 | 313.7–327.6 | 0.3774–0.5718 | 0.1 | 0 |
-| DC-S25-G20/alt200_mean | 0.01077 | 17 / 540 | 15 | 0.01133–0.06515 | 8.428–13.59 | 2.56–18.29 | 313.9–326.7 | 0.4344–0.5965 | 0.1 | 0 |
-| DC-S25-G20/alt200_high | 0.01501 | 17 / 540 | 14 | 0.01569–0.08815 | 8.515–15.48 | 2.56–18.29 | 314.1–331.4 | 0.4702–0.6235 | 0.1 | 0 |
-| DC-S25-G20/alt230_low | 0.002529 | 18 / 540 | 14 | 0.002615–0.02213 | 8.249–10.1 | 2.56–18.29 | 313.4–318 | 0.5102–0.6968 | 0.1 | 0 |
-| DC-S25-G20/alt230_mean | 0.004887 | 18 / 540 | 14 | 0.005053–0.04283 | 8.298–11.81 | 2.56–18.29 | 313.5–322.3 | 0.5053–0.6911 | 0.1 | 0 |
-| DC-S25-G20/alt230_high | 0.007582 | 18 / 540 | 13 | 0.007813–0.06528 | 8.353–13.67 | 2.56–18.29 | 313.7–326.9 | 0.5195–0.7021 | 0.1 | 0 |
+| DC-S12-G20/alt180_low | 0.01371 | 92 / 2160 | 43 | 0.01412–0.09339 | 8.302–12.83 | 1.99–10.91 | 313.6–324.7 | 0.3143–0.4807 | 0.05 | 15 |
+| DC-S12-G20/alt180_mean | 0.01874 | 88 / 2160 | 39 | 0.01921–0.09502 | 8.339–12 | 1.99–10.91 | 313.7–322.7 | 0.3585–0.5263 | 0.05 | 19 |
+| DC-S12-G20/alt180_high | 0.02416 | 85 / 2160 | 36 | 0.02466–0.09893 | 8.378–12.32 | 1.99–10.91 | 313.7–323.4 | 0.4015–0.5646 | 0.05 | 26 |
+| DC-S12-G20/alt200_low | 0.006407 | 99 / 2160 | 40 | 0.00654–0.07535 | 8.244–11.87 | 1.99–10.91 | 313.4–322.3 | 0.3614–0.5754 | 0.05 | 4 |
+| DC-S12-G20/alt200_mean | 0.01007 | 97 / 2160 | 40 | 0.01025–0.09337 | 8.271–12.96 | 1.99–10.91 | 313.5–325 | 0.3885–0.5997 | 0.05 | 9 |
+| DC-S12-G20/alt200_high | 0.01405 | 95 / 2160 | 39 | 0.01426–0.09287 | 8.3–12.47 | 1.99–10.91 | 313.6–323.9 | 0.4186–0.6263 | 0.05 | 12 |
+| DC-S12-G20/alt230_low | 0.002367 | 102 / 2160 | 40 | 0.002389–0.03996 | 8.213–10.39 | 1.99–10.91 | 313.3–318.6 | 0.4644–0.6989 | 0.05 | 0 |
+| DC-S12-G20/alt230_mean | 0.00458 | 102 / 2160 | 43 | 0.004625–0.0775 | 8.229–12.28 | 1.99–10.91 | 313.4–323.3 | 0.4599–0.6932 | 0.05 | 3 |
+| DC-S12-G20/alt230_high | 0.007116 | 100 / 2160 | 40 | 0.007177–0.07096 | 8.247–11.73 | 1.99–10.91 | 313.4–322 | 0.5069–0.7039 | 0.05 | 5 |
 
 ## size_for() consistency check (not a replacement)
 
 | case | A_turbo m² | size_for rows/stages/rpm | sized | this module | on front |
 |---|---|---|---|---|---|
-| DC-S12-G10/alt180_low | 0.09785 | 6/0/17052 | False | REJECTED R2,R7 | False |
-| DC-S12-G10/alt180_low | 0.1963 | 5/0/12038 | True | REJECTED R2,R8 | False |
-| DC-S12-G10/alt180_low | 0.3767 | 4/0/8691 | True | REJECTED R2,R8 | False |
-| DC-S12-G10/alt180_mean | 0.09785 | 6/0/17052 | False | REJECTED R2,R7 | False |
-| DC-S12-G10/alt180_mean | 0.1963 | 5/0/12038 | True | REJECTED R2,R8 | False |
-| DC-S12-G10/alt180_mean | 0.3767 | 4/0/7500 | True | REJECTED R8 | False |
-| DC-S12-G10/alt180_high | 0.09785 | 6/0/17052 | False | REJECTED R2,R7 | False |
-| DC-S12-G10/alt180_high | 0.1963 | 4/0/12038 | True | REJECTED R2,R8 | False |
-| DC-S12-G10/alt180_high | 0.3767 | 3/0/8691 | True | REJECTED R2,R8 | False |
-| DC-S12-G10/alt200_low | 0.09785 | 6/0/17052 | False | REJECTED R2,R7 | False |
-| DC-S12-G10/alt200_low | 0.1963 | 6/0/12038 | False | REJECTED R2 | False |
-| DC-S12-G10/alt200_low | 0.3767 | 5/0/8691 | True | REJECTED R2,R8 | False |
-| DC-S12-G10/alt200_mean | 0.09785 | 6/0/17052 | False | REJECTED R2,R7 | False |
-| DC-S12-G10/alt200_mean | 0.1963 | 6/0/12038 | True | REJECTED R2,R8 | False |
-| DC-S12-G10/alt200_mean | 0.3767 | 5/0/8691 | True | REJECTED R2,R8 | False |
-| DC-S12-G10/alt200_high | 0.09785 | 6/0/17052 | False | REJECTED R2,R7 | False |
-| DC-S12-G10/alt200_high | 0.1963 | 5/0/12038 | True | REJECTED R2,R8 | False |
-| DC-S12-G10/alt200_high | 0.3767 | 4/0/8691 | True | REJECTED R2,R8 | False |
-| DC-S12-G10/alt230_low | 0.09785 | 6/0/17052 | False | REJECTED R2,R7 | False |
-| DC-S12-G10/alt230_low | 0.1963 | 6/0/12038 | False | REJECTED R2 | False |
-| DC-S12-G10/alt230_low | 0.3767 | 6/0/8691 | False | REJECTED R2 | False |
-| DC-S12-G10/alt230_mean | 0.09785 | 6/0/17052 | False | REJECTED R2,R7 | False |
-| DC-S12-G10/alt230_mean | 0.1963 | 6/0/12038 | False | REJECTED R2 | False |
-| DC-S12-G10/alt230_mean | 0.3767 | 6/0/8691 | True | REJECTED R2,R8 | False |
-| DC-S12-G10/alt230_high | 0.09785 | 6/0/17052 | False | REJECTED R2,R7 | False |
-| DC-S12-G10/alt230_high | 0.1963 | 6/0/12038 | False | REJECTED R2 | False |
-| DC-S12-G10/alt230_high | 0.3767 | 6/0/8691 | True | REJECTED R2,R8 | False |
-| DC-S12-G20/alt180_low | 0.09785 | 4/0/17052 | True | REJECTED R2 | False |
+| DC-S12-G20/alt180_low | 0.1128 | 4/0/15880 | True | REJECTED R2 | False |
 | DC-S12-G20/alt180_low | 0.1963 | 3/0/12038 | True | REJECTED R2 | False |
-| DC-S12-G20/alt180_low | 0.3767 | 3/0/7500 | True | FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS - | False |
-| DC-S12-G20/alt180_mean | 0.09785 | 4/0/17052 | True | REJECTED R2 | False |
-| DC-S12-G20/alt180_mean | 0.1963 | 2/0/12038 | True | REJECTED R2 | False |
-| DC-S12-G20/alt180_mean | 0.3767 | 2/0/7500 | True | FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS - | True |
-| DC-S12-G20/alt180_high | 0.09785 | 3/0/17052 | True | REJECTED R2 | False |
-| DC-S12-G20/alt180_high | 0.1963 | 2/0/10000 | True | FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS - | True |
-| DC-S12-G20/alt180_high | 0.3767 | 2/0/7500 | True | FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS - | False |
-| DC-S12-G20/alt200_low | 0.09785 | 6/0/17052 | True | REJECTED R2 | False |
+| DC-S12-G20/alt180_low | 0.1137 | 4/0/15817 | True | REJECTED R2 | False |
+| DC-S12-G20/alt180_mean | 0.1128 | 4/0/15000 | True | FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS - | True |
+| DC-S12-G20/alt180_mean | 0.1963 | 3/0/10000 | True | FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS - | True |
+| DC-S12-G20/alt180_mean | 0.1137 | 4/0/15000 | True | FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS - | True |
+| DC-S12-G20/alt180_high | 0.1128 | 3/0/15880 | True | REJECTED R2 | False |
+| DC-S12-G20/alt180_high | 0.1963 | 2/0/12038 | True | REJECTED R2 | False |
+| DC-S12-G20/alt180_high | 0.1137 | 3/0/15817 | True | REJECTED R2 | False |
+| DC-S12-G20/alt200_low | 0.1128 | 6/0/15880 | True | REJECTED R2 | False |
 | DC-S12-G20/alt200_low | 0.1963 | 4/0/12038 | True | REJECTED R2 | False |
-| DC-S12-G20/alt200_low | 0.3767 | 4/0/7500 | True | FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS - | False |
-| DC-S12-G20/alt200_mean | 0.09785 | 5/0/17052 | True | REJECTED R2 | False |
-| DC-S12-G20/alt200_mean | 0.1963 | 4/0/10000 | True | FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS - | True |
-| DC-S12-G20/alt200_mean | 0.3767 | 3/0/8691 | True | REJECTED R2 | False |
-| DC-S12-G20/alt200_high | 0.09785 | 4/0/17052 | True | REJECTED R2 | False |
+| DC-S12-G20/alt200_low | 0.1137 | 6/0/15000 | True | FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS - | True |
+| DC-S12-G20/alt200_mean | 0.1128 | 5/0/15880 | True | REJECTED R2 | False |
+| DC-S12-G20/alt200_mean | 0.1963 | 4/0/12038 | True | REJECTED R2 | False |
+| DC-S12-G20/alt200_mean | 0.1137 | 5/0/15817 | True | REJECTED R2 | False |
+| DC-S12-G20/alt200_high | 0.1128 | 5/0/15000 | True | FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS - | True |
 | DC-S12-G20/alt200_high | 0.1963 | 3/0/12038 | True | REJECTED R2 | False |
-| DC-S12-G20/alt200_high | 0.3767 | 3/0/7500 | True | FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS - | False |
-| DC-S12-G20/alt230_low | 0.09785 | 6/0/17052 | False | REJECTED R2 | False |
+| DC-S12-G20/alt200_high | 0.1137 | 5/0/15000 | True | FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS - | True |
+| DC-S12-G20/alt230_low | 0.1128 | 6/0/15880 | False | REJECTED R2 | False |
 | DC-S12-G20/alt230_low | 0.1963 | 6/0/12038 | True | REJECTED R2 | False |
-| DC-S12-G20/alt230_low | 0.3767 | 6/0/7500 | True | FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS - | True |
-| DC-S12-G20/alt230_mean | 0.09785 | 6/0/17052 | False | REJECTED R2 | False |
+| DC-S12-G20/alt230_low | 0.1137 | 6/0/15817 | False | REJECTED R2 | False |
+| DC-S12-G20/alt230_mean | 0.1128 | 6/0/15880 | False | REJECTED R2 | False |
 | DC-S12-G20/alt230_mean | 0.1963 | 5/0/12038 | True | REJECTED R2 | False |
-| DC-S12-G20/alt230_mean | 0.3767 | 5/0/7500 | True | FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS - | False |
-| DC-S12-G20/alt230_high | 0.09785 | 6/0/17052 | True | REJECTED R2 | False |
-| DC-S12-G20/alt230_high | 0.1963 | 4/0/12038 | True | REJECTED R2 | False |
-| DC-S12-G20/alt230_high | 0.3767 | 4/0/7500 | True | FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS - | False |
-| DC-S25-G10/alt180_low | 0.09785 | 6/0/17052 | False | REJECTED R2,R7 | False |
-| DC-S25-G10/alt180_low | 0.1963 | 6/0/12038 | False | REJECTED R2,R7 | False |
-| DC-S25-G10/alt180_low | 0.3767 | 6/0/8691 | False | REJECTED R2,R8 | False |
-| DC-S25-G10/alt180_mean | 0.09785 | 6/0/17052 | False | REJECTED R2,R7 | False |
-| DC-S25-G10/alt180_mean | 0.1963 | 6/0/12038 | False | REJECTED R2,R7 | False |
-| DC-S25-G10/alt180_mean | 0.3767 | 6/0/8691 | True | REJECTED R2,R8 | False |
-| DC-S25-G10/alt180_high | 0.09785 | 6/0/17052 | False | REJECTED R2,R7 | False |
-| DC-S25-G10/alt180_high | 0.1963 | 6/0/12038 | False | REJECTED R2,R7 | False |
-| DC-S25-G10/alt180_high | 0.3767 | 6/0/8691 | True | REJECTED R2,R8 | False |
-| DC-S25-G10/alt200_low | 0.09785 | 6/0/17052 | False | REJECTED R2,R7 | False |
-| DC-S25-G10/alt200_low | 0.1963 | 6/0/12038 | False | REJECTED R2,R7 | False |
-| DC-S25-G10/alt200_low | 0.3767 | 6/0/8691 | False | REJECTED R2 | False |
-| DC-S25-G10/alt200_mean | 0.09785 | 6/0/17052 | False | REJECTED R2,R7 | False |
-| DC-S25-G10/alt200_mean | 0.1963 | 6/0/12038 | False | REJECTED R2,R7 | False |
-| DC-S25-G10/alt200_mean | 0.3767 | 6/0/8691 | False | REJECTED R2,R8 | False |
-| DC-S25-G10/alt200_high | 0.09785 | 6/0/17052 | False | REJECTED R2,R7 | False |
-| DC-S25-G10/alt200_high | 0.1963 | 6/0/12038 | False | REJECTED R2,R7 | False |
-| DC-S25-G10/alt200_high | 0.3767 | 6/0/8691 | False | REJECTED R2,R8 | False |
-| DC-S25-G10/alt230_low | 0.09785 | 6/0/17052 | False | REJECTED R2,R7 | False |
-| DC-S25-G10/alt230_low | 0.1963 | 6/0/12038 | False | REJECTED R2,R7 | False |
-| DC-S25-G10/alt230_low | 0.3767 | 6/0/8691 | False | REJECTED R2 | False |
-| DC-S25-G10/alt230_mean | 0.09785 | 6/0/17052 | False | REJECTED R2,R7 | False |
-| DC-S25-G10/alt230_mean | 0.1963 | 6/0/12038 | False | REJECTED R2,R7 | False |
-| DC-S25-G10/alt230_mean | 0.3767 | 6/0/8691 | False | REJECTED R2 | False |
-| DC-S25-G10/alt230_high | 0.09785 | 6/0/17052 | False | REJECTED R2,R7 | False |
-| DC-S25-G10/alt230_high | 0.1963 | 6/0/12038 | False | REJECTED R2,R7 | False |
-| DC-S25-G10/alt230_high | 0.3767 | 6/0/8691 | False | REJECTED R2 | False |
-| DC-S25-G20/alt180_low | 0.09785 | 6/0/17052 | False | REJECTED R2,R7 | False |
-| DC-S25-G20/alt180_low | 0.1963 | 6/0/12038 | True | REJECTED R2,R8 | False |
-| DC-S25-G20/alt180_low | 0.3767 | 4/0/8691 | True | REJECTED R2,R8 | False |
-| DC-S25-G20/alt180_mean | 0.09785 | 6/0/17052 | False | REJECTED R2,R7 | False |
-| DC-S25-G20/alt180_mean | 0.1963 | 5/0/12038 | True | REJECTED R2,R8 | False |
-| DC-S25-G20/alt180_mean | 0.3767 | 4/0/7500 | True | REJECTED R8 | False |
-| DC-S25-G20/alt180_high | 0.09785 | 6/0/17052 | False | REJECTED R2,R7 | False |
-| DC-S25-G20/alt180_high | 0.1963 | 5/0/12038 | True | REJECTED R2,R8 | False |
-| DC-S25-G20/alt180_high | 0.3767 | 3/0/8691 | True | REJECTED R2,R8 | False |
-| DC-S25-G20/alt200_low | 0.09785 | 6/0/17052 | False | REJECTED R2,R7 | False |
-| DC-S25-G20/alt200_low | 0.1963 | 6/0/12038 | False | REJECTED R2 | False |
-| DC-S25-G20/alt200_low | 0.3767 | 5/0/8691 | True | REJECTED R2,R8 | False |
-| DC-S25-G20/alt200_mean | 0.09785 | 6/0/17052 | False | REJECTED R2,R7 | False |
-| DC-S25-G20/alt200_mean | 0.1963 | 6/0/12038 | True | REJECTED R2,R8 | False |
-| DC-S25-G20/alt200_mean | 0.3767 | 5/0/8691 | True | REJECTED R2,R8 | False |
-| DC-S25-G20/alt200_high | 0.09785 | 6/0/17052 | False | REJECTED R2,R7 | False |
-| DC-S25-G20/alt200_high | 0.1963 | 6/0/12038 | True | REJECTED R2,R8 | False |
-| DC-S25-G20/alt200_high | 0.3767 | 4/0/8691 | True | REJECTED R2,R8 | False |
-| DC-S25-G20/alt230_low | 0.09785 | 6/0/17052 | False | REJECTED R2,R7 | False |
-| DC-S25-G20/alt230_low | 0.1963 | 6/0/12038 | False | REJECTED R2 | False |
-| DC-S25-G20/alt230_low | 0.3767 | 6/0/8691 | False | REJECTED R2 | False |
-| DC-S25-G20/alt230_mean | 0.09785 | 6/0/17052 | False | REJECTED R2,R7 | False |
-| DC-S25-G20/alt230_mean | 0.1963 | 6/0/12038 | False | REJECTED R2 | False |
-| DC-S25-G20/alt230_mean | 0.3767 | 6/0/8691 | True | REJECTED R2,R8 | False |
-| DC-S25-G20/alt230_high | 0.09785 | 6/0/17052 | False | REJECTED R2,R7 | False |
-| DC-S25-G20/alt230_high | 0.1963 | 6/0/12038 | False | REJECTED R2 | False |
-| DC-S25-G20/alt230_high | 0.3767 | 5/0/8691 | True | REJECTED R2,R8 | False |
+| DC-S12-G20/alt230_mean | 0.1137 | 6/0/15817 | False | REJECTED R2 | False |
+| DC-S12-G20/alt230_high | 0.1128 | 6/0/15880 | True | REJECTED R2 | False |
+| DC-S12-G20/alt230_high | 0.1963 | 5/0/12038 | True | REJECTED R2 | False |
+| DC-S12-G20/alt230_high | 0.1137 | 6/0/15817 | True | REJECTED R2 | False |
 
 ## Findings
 
-- **F3-01** (model-derived (from assumed code-default coefficients)): no design with drag stages is feasible: 15552 of 15552 drag-stage design evaluations have an unclipped Gaede K < 1 (throughput above the stage capacity S0 p at the code-default channel h, w, L, xi; the module silently reports K = 1). Feasible drag-stage designs: 0. Agrees with the down-selection drag-only probe (S_required / S0 ~ 1e3)
-- **F3-02** (inferred (cited allowable) + assumed (safety factor, density)): rotor stress: with the cited Ti-6Al-4V A-basis Fty 827 MPa and the module safety factor 2 (uncited), sigma = rho u^2 caps the tip speed at 305.5 m/s; the module's own rotor_ok (uncited DB yield 880 MPa) allows 315.2 m/s, so size_for can return rotors this search rejects. Both are below the 500 m/s published TMP practice (Al alloys)
-- **F3-03** (inferred): evidence domain: every stage outlet is capped at 0.1 Pa (free-molecular, Chiggiato Sec. 4.1.2 / CD-04). Cases where a feasible design reaches the PROPOSED W1 setpoint: 8 of 36; PROPOSED setpoints above the domain: [0.2] Pa (cannot be evaluated by this model at all; needs T-1 data or a transitional-regime model)
-- **F3-04** (model-derived (from assumed code-default coefficients)): mdot_delivered is invariant across converged designs at a fixed inlet record (DragCompressor.run delivers the captured flow in steady state), so it does not discriminate designs; the compressor's effect on delivered flow enters through the inlet pumping speed S_turbo and the plenum backflow (F1/F4 coupling), reported as a secondary Pareto objective. The delivered-flow composition equals the inlet composition; the outlet PARTIAL-PRESSURE composition is O-depleted (x_O [0.3055737615661154, 0.7041100067466821] on the fronts vs delivered-flow x_O [0.48309201980918165, 0.7045543116607601])
-- **F3-05** (model-derived (from assumed code-default coefficients)): Pareto fronts (all cases): P_out [0.002529259854964673, 0.09999923513217218] Pa, P_compressor (electrical, eta_motor 0.8 code default) [8.20996805796175, 16.318195139952582] W, m_compressor [1.887574740348362, 18.28933485626996] kg vs the owner v0 allocation 5.5 kg (allocation, not CBE), T_compressor [313.328570604055, 333.5301125122176] K. PARAMETRIC_SENSITIVITY values under uncited coefficients: not a CBE, not a design value
-- **F3-06** (model-derived): size_for() consistency check (108 calls = 36 cases x 3 A_turbo): sized=53; rejected by this module's gates=98 (reasons {'GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY': 36, 'ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR': 96, 'STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN': 31}); on the synthesis front=4; feasible but dominated=6. size_for optimises the scalar mass + 0.02 P_el, checks only rotor_ok with an uncited yield, and applies no convergence, clipping or domain gate
-- **F3-07** (model-derived (from assumed code-default coefficients)): cases with an empty feasible set: 7 (['DC-S25-G10/alt180_high', 'DC-S25-G10/alt200_low', 'DC-S25-G10/alt200_mean', 'DC-S25-G10/alt200_high', 'DC-S25-G10/alt230_low', 'DC-S25-G10/alt230_mean', 'DC-S25-G10/alt230_high']); they are reported, not relaxed
-- **F3-08** (inferred): MODE_STRICT returns NOT_EVALUATED for every case: 22 blockers (all FIXED DragCompressor coefficients are uncited code defaults, the inlet is a PARAMETRIC_SENSITIVITY record, the rotor density is an uncited DB prior). Closing evidence: compressor_downselect T-1..T-9
+- **F3-01** (model-derived (from assumed code-default coefficients)): no design with drag stages is feasible: 15552 of 15552 drag-stage design evaluations have an unclipped Gaede K < 1 (throughput above the stage capacity S0 p at the code-default channel h, w, L, xi; since A9.9 S2.5 / MCC-02 the module reports the unclipped K and flags the stage OUT_OF_MODEL_DOMAIN_STAGE_CAPACITY instead of silently using K = 1). Feasible drag-stage designs: 0. Agrees with the down-selection drag-only probe (S_required / S0 ~ 1e3)
+- **F3-02** (inferred (cited allowable) + assumed (safety factor, density)): rotor stress: with the cited Ti-6Al-4V A-basis Fty 827 MPa and the module safety factor 2 (uncited), sigma = rho u^2 caps the tip speed at 305.5 m/s; the module's legacy sensitivity tip-speed cap (uncited DB yield 880 MPa; since A9.9 S2.3 not a qualification: rotor_ok is False without a registered strength basis) allows 315.2 m/s, so size_for in PARAMETRIC_SENSITIVITY mode can return rotors this search rejects. Both are below the 500 m/s published TMP practice (Al alloys)
+- **F3-03** (inferred): evidence domain: every stage outlet is capped at 0.1 Pa (free-molecular, Chiggiato Sec. 4.1.2 / CD-04). Cases where a feasible design reaches the PROPOSED W1 setpoint: 8 of 9; PROPOSED setpoints above the domain: [] Pa (cannot be evaluated by this model at all; needs T-1 data or a transitional-regime model)
+- **F3-04** (model-derived (from assumed code-default coefficients)): mdot_delivered is invariant across converged designs at a fixed inlet record (DragCompressor.run delivers the captured flow in steady state), so it does not discriminate designs; the compressor's effect on delivered flow enters through the inlet pumping speed S_turbo and the plenum backflow (F1/F4 coupling), reported as a secondary Pareto objective. The delivered-flow composition equals the inlet composition; the outlet PARTIAL-PRESSURE composition is O-depleted (x_O [0.31431459698894554, 0.7039371130412178] on the fronts vs delivered-flow x_O [0.48309201980918165, 0.7045543116607601])
+- **F3-05** (model-derived (from assumed code-default coefficients)): Pareto fronts (all cases): P_out [0.002389349692287779, 0.09893078632703001] Pa, P_compressor (electrical, eta_motor 0.8 code default) [8.213360720364031, 12.958674535577627] W, m_compressor [1.9897483927903004, 10.907215025495107] kg vs the owner v0 allocation 5.5 kg (allocation, not CBE), T_compressor [313.3370522600607, 324.9884028634689] K. PARAMETRIC_SENSITIVITY values under uncited coefficients: not a CBE, not a design value
+- **F3-06** (model-derived): size_for() consistency check (27 calls = 9 cases x 3 A_turbo): sized=23; rejected by this module's gates=21 (reasons {'ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR': 21}); on the synthesis front=6; feasible but dominated=0. size_for optimises the scalar mass + 0.02 P_el, checks only rotor_ok with an uncited yield, and applies no convergence, clipping or domain gate
+- **F3-07** (model-derived (from assumed code-default coefficients)): cases with an empty feasible set: 0 ([]); they are reported, not relaxed
+- **F3-08** (inferred): MODE_STRICT returns NOT_EVALUATED for every case: 23 blockers (all FIXED DragCompressor coefficients are uncited code defaults, the inlet is a PARAMETRIC_SENSITIVITY record, the rotor density is an uncited DB prior). Closing evidence: compressor_downselect T-1..T-9
 
 ## Interface demands
 
@@ -261,16 +155,18 @@ Strict mode: **NOT_EVALUATED** (22 blockers).
 | IFD-F3-04 | provides | F4 (fo_a9_7_f4_plenum_feed) | abep_sim/design/plenum_feed.py (F4-ID-05) | per design: P_out, mdot_s delivered, x_s,out (partial pressure) and delivered-flow x_s, T_gas and T_compressor, P_compressor | AVAILABLE (PARAMETRIC_SENSITIVITY) |
 | IFD-F3-05 | requires | F4 (fo_a9_7_f4_plenum_feed) | abep_sim/design/plenum_feed.py (F4-ID-06) | downstream plenum back-pressure / feed-control boundary (DragCompressor computes P_out from a fixed inlet; a coupled plenum must close p_out against the H-1 demand) | TBD |
 | IFD-F3-06 | requires | F5 (fo_a9_7_f5_h1_freeze_candidate) | docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json (IFD-F3-01, IFD-F4-01..05: TBD) | H-1 inlet demand (mdot_s, P, T, x_s); the W1 setpoints used here are PROPOSED references only | TBD |
-| IFD-F3-07 | provides | F0 (fo_a9_7_f0_profiling) | docs/performance/PERFORMANCE_BASELINE_98fbbb9.json | compressor design-space search workload: 540 designs x 36 inlets via `python docs/design_synthesis/f3_compressor/build_f3_compressor.py` (a few CPU seconds); size_for comparison 108 calls | AVAILABLE |
+| IFD-F3-07 | provides | F0 (fo_a9_7_f0_profiling) | docs/performance/PERFORMANCE_BASELINE_98fbbb9.json | compressor design-space search workload: 2160 designs x 9 inlets via `python docs/design_synthesis/f3_compressor/build_f3_compressor.py` (a few CPU seconds); size_for comparison 27 calls | AVAILABLE |
 | IFD-F3-08 | provides | F7/F8 (fo_a9_7_f7_f8_coupled_optimizer) | abep_sim/design/compressor_synthesis.py | x_compressor = (N_turbo, A_turbo, u_tip/RPM, N_drag, rotor_material) and evaluate_design(); MODE_STRICT returns NOT_EVALUATED until the coefficient evidence exists (never an assumed value) | AVAILABLE |
 | IFD-F3-09 | provides | mass/power budgets (A9B-04, AL-02) | docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json | model-derived mass/power ranges labelled PARAMETRIC_SENSITIVITY; they do NOT fill the CBE column | INFORMATIONAL |
 
-## Open owner questions (new)
+## Owner questions raised by this lane
 
-- **OQ-F3-01**: Safety factor and allowable basis for the compressor rotor: the module uses an uncited factor 2.0; the only cited allowable accessed is the Ti-6Al-4V annealed-plate A-basis Fty 827 MPa (MMPDS-06 via NASA-HDBK-6025, room temperature). Which factor and which product-form / temperature allowable govern? Proposed: none proposed (design-policy decision). Needed by: any F3 result used beyond PARAMETRIC_SENSITIVITY.
-- **OQ-F3-02**: Turbo-stage geometry definition: hub ratio / blade span relating R_turbo to A_turbo (the search uses the zero-hub limit R = sqrt(A/pi))? Proposed: none proposed. Needed by: F7 coupled vector.
-- **OQ-F3-03**: The free-molecular domain caps every stage at 0.1 Pa while W1 PROPOSED setpoints reach 0.2 Pa: wait for T-1 data, or commission an open-literature transitional-regime stage model before any outlet above 0.1 Pa is evaluated? Proposed: wait for T-1 (no extrapolation meanwhile). Needed by: F4 plenum/feed closure.
-- **OQ-F3-04**: Re-admit aluminium-alloy or CFRP rotors to the search once a cited allowable is supplied (CFRP also subject to the AO policy OD-C3)? Proposed: only with a cited A/B-basis allowable and an AO disposition. Needed by: next F3 revision.
+Status from `docs/budgets/owner_decisions/owner_questions_state_v5.json` (as raised: TBD_OWNER).
+
+- **OQ-F3-01** (ANSWERED (A9.9 S2.3, decision code REGISTERED_ROTOR_STRENGTH_BASIS_FAIL_CLOSED)): Safety factor and allowable basis for the compressor rotor: the module uses an uncited factor 2.0; the only cited allowable accessed is the Ti-6Al-4V annealed-plate A-basis Fty 827 MPa (MMPDS-06 via NASA-HDBK-6025, room temperature). Which factor and which product-form / temperature allowable govern? Proposed (as raised): none proposed (design-policy decision). Needed by: any F3 result used beyond PARAMETRIC_SENSITIVITY.
+- **OQ-F3-02** (ANSWERED (A9.13 S6.7, decision code EXPLICIT_HUB_RATIO)): Turbo-stage geometry definition: hub ratio / blade span relating R_turbo to A_turbo (the search uses the zero-hub limit R = sqrt(A/pi))? Proposed (as raised): none proposed. Needed by: F7 coupled vector.
+- **OQ-F3-03** (ANSWERED (A9.13 S6.8, decision code MODEL_AND_TEST_PARALLEL_FAIL_CLOSED)): The free-molecular domain caps every stage at 0.1 Pa while W1 PROPOSED setpoints reach 0.2 Pa: wait for T-1 data, or commission an open-literature transitional-regime stage model before any outlet above 0.1 Pa is evaluated? Proposed (as raised): wait for T-1 (no extrapolation meanwhile). Needed by: F4 plenum/feed closure.
+- **OQ-F3-04** (ANSWERED (A9.13 S6.9, decision code YES_VIA_S2_3_GATE)): Re-admit aluminium-alloy or CFRP rotors to the search once a cited allowable is supplied (CFRP also subject to the AO policy OD-C3)? Proposed (as raised): only with a cited A/B-basis allowable and an AO disposition. Needed by: next F3 revision.
 
 ## M16 impact
 
@@ -280,7 +176,7 @@ Strict mode: **NOT_EVALUATED** (22 blockers).
 
 - **SRC-CHIGGIATO2013**: P. Chiggiato, 'Vacuum Technology for Ion Sources', CERN Accelerator School: Ion Sources, CERN-2013-007 (2013); arXiv:1404.0960 (full_text, https://arxiv.org/pdf/1404.0960)
 - **SRC-NASA-HDBK-6025**: NASA-HDBK-6025, 'Guidelines for the Specification and Certification of Titanium Alloys for NASA Flight Applications' (approved 2014-04-24) (full_text, https://standards.nasa.gov/sites/default/files/standards/NASA/Baseline-w/CHANGE-1/1/Historical/NASA-HDBK-6025.pdf)
-- **SRC-DOWNSELECT**: repository: docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json (DI-1.4 compressor down-selection v1) (repository)
+- **SRC-DOWNSELECT**: repository: docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json (DI-1.4 compressor down-selection, v2 = A9.16 regeneration; v1 kept as history) (repository)
 - **SRC-R1-THREAD**: repository: docs/procurement/web_track_v1/threads/R1_compressor.json (Li 2015 evidence thread) (repository)
 - **SRC-OWNER-147**: repository: docs/decisions/OD_2026_09_29_owner_answers_147.json row 54 (v0 dry-mass allocation: compressor+drive 5.5 kg; 'allocations, not CBEs') (repository)
 - **SRC-COMPRESSOR-PY**: repository: abep_sim/compressor.py DragCompressor (dataclass defaults, run(), _run_once(), size_for()) (repository)

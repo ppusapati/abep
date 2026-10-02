@@ -568,7 +568,7 @@
   "records": [
    {
     "id": "PH-01",
-    "location": "abep_sim/intake_tpmc.py:43",
+    "location": "abep_sim/intake_tpmc.py:44",
     "file": "abep_sim/intake_tpmc.py",
     "text": "filter: bool = False",
     "value": "False",
@@ -581,7 +581,7 @@
    },
    {
     "id": "PH-02",
-    "location": "abep_sim/intake_tpmc.py:44",
+    "location": "abep_sim/intake_tpmc.py:45",
     "file": "abep_sim/intake_tpmc.py",
     "text": "filter_open_frac: float = 0.7",
     "value": "0.7",
@@ -594,7 +594,7 @@
    },
    {
     "id": "PH-03",
-    "location": "abep_sim/intake_tpmc.py:45",
+    "location": "abep_sim/intake_tpmc.py:46",
     "file": "abep_sim/intake_tpmc.py",
     "text": "filter_transmission: float = 0.6",
     "value": "0.6",
@@ -607,7 +607,7 @@
    },
    {
     "id": "PH-04",
-    "location": "abep_sim/intake_tpmc.py:46",
+    "location": "abep_sim/intake_tpmc.py:47",
     "file": "abep_sim/intake_tpmc.py",
     "text": "filter_mass_per_m2: float = 0.8",
     "value": "0.8",
@@ -620,7 +620,7 @@
    },
    {
     "id": "PH-05",
-    "location": "abep_sim/intake_tpmc.py:193",
+    "location": "abep_sim/intake_tpmc.py:258",
     "file": "abep_sim/intake_tpmc.py",
     "text": "eta_c *= geom.filter_open_frac * geom.filter_transmission ** 0.5",
     "value": "law",
@@ -633,7 +633,7 @@
    },
    {
     "id": "PH-06",
-    "location": "abep_sim/intake_tpmc.py:194",
+    "location": "abep_sim/intake_tpmc.py:259",
     "file": "abep_sim/intake_tpmc.py",
     "text": "K_back *= geom.filter_transmission",
     "value": "law",
@@ -646,7 +646,7 @@
    },
    {
     "id": "PH-07",
-    "location": "abep_sim/intake_tpmc.py:195",
+    "location": "abep_sim/intake_tpmc.py:260",
     "file": "abep_sim/intake_tpmc.py",
     "text": "phi_eff = geom.phi * geom.filter_open_frac",
     "value": "law",
@@ -659,7 +659,7 @@
    },
    {
     "id": "PH-08",
-    "location": "abep_sim/intake_tpmc.py:205",
+    "location": "abep_sim/intake_tpmc.py:270",
     "file": "abep_sim/intake_tpmc.py",
     "text": "(geom.filter_mass_per_m2 * geom.area_m2 if geom.filter else 0.0)",
     "value": "law",
@@ -685,7 +685,7 @@
    },
    {
     "id": "PH-10",
-    "location": "abep_sim/intake.py:71",
+    "location": "abep_sim/intake.py:76",
     "file": "abep_sim/intake.py",
     "text": "m_int += 0.8 * intake.area_m2",
     "value": "0.8",
@@ -698,7 +698,7 @@
    },
    {
     "id": "PH-11",
-    "location": "abep_sim/system.py:309",
+    "location": "abep_sim/system.py:387",
     "file": "abep_sim/system.py",
     "text": "\"filter\": 0.8 * cfg.intake.area_m2 if cfg.intake.filter else 0.0",
     "value": "0.8",
@@ -722,7 +722,7 @@
    "sources": [],
    "evidence": "definition",
    "interface_status": "NUMERIC by definition (FilterStage.none)",
-   "admissibility": "TBD_OWNER (F2-OQ-03): the RFP chain names a filter (RVM-08, secondary transcription)",
+   "admissibility": "ANSWERED A9.13 S6.5 NO_FILTER_REFERENCE_ONLY (F2-OQ-03): reference bound only, never an admissible architecture option (the RFP chain names a filter stage)",
    "ao_applicability": "not applicable (no element)",
    "candidate_status": "LISTED_ONLY_NO_SELECTION"
   },
@@ -820,7 +820,7 @@
    "evidence": "none",
    "interface_status": "all F2 interface parameters TBD (FilterStage.tbd): apply() refuses in evidence mode",
    "ao_applicability": "INCOMPLETE_EVIDENCE",
-   "candidate_status": "LISTED_ONLY_NO_SELECTION (admissibility TBD_OWNER, F2-OQ-02)"
+   "candidate_status": "LISTED_ONLY_NO_SELECTION (admissibility ANSWERED A9.13 S6.4 CATALYTIC_NOT_BASELINE, F2-OQ-02: not the baseline)"
   },
   {
    "id": "FC-07",
@@ -1051,7 +1051,99 @@
     },
     "protection": [],
     "materials": [],
-    "notes": []
+    "notes": [],
+    "role": "REFERENCE_BOUND_FC00_NOT_ADMISSIBLE_FLIGHT_ARCHITECTURE",
+    "admissible_as_baseline": false,
+    "interfaces": {
+     "upstream_interface": "IF-A1 (intake / channel-array exit, downstream of the primary intake / collimator)",
+     "downstream_interface": "IF-A2 (compressor inlet)",
+     "production_path_element": true,
+     "folded_into_intake_efficiency": false,
+     "basis": "A9.13 S6.6 / S6.19; RFP-P16-02 (Intake -> Filter -> Compressor)"
+    },
+    "retained_inventory": {
+     "propellant_capture_rate_kgps": 0.0,
+     "propellant_capture_status": "EVALUATED_FROM_STAGE_RECORDS",
+     "contaminant_capture_rate": "TBD (contamination environment / particle classes not defined; A9.13 S6.3)",
+     "capacity_kg": {
+      "value": 0.0,
+      "units": "kg",
+      "status": "DEFINITION",
+      "evidence_class": "definition",
+      "evidence_level": null,
+      "source": "definition (no physical element)",
+      "uncertainty": "exact by definition",
+      "basis": "no element: nothing is retained",
+      "domain": null,
+      "requires": null
+     },
+     "inventory_over_time": "retained_inventory_kg(result, duration_s)",
+     "note": "compressor wear products are not credited to this filter (A9.13 S6.3)"
+    },
+    "thermal_load": {
+     "status": "NO_ELEMENT",
+     "absorbed_upper_bound_W": 0.0
+    },
+    "material_state": {
+     "application": "APP-FILTER (P4, A9.13 S6.6)",
+     "materials": [],
+     "ao_compatibility": [
+      "INCOMPLETE_EVIDENCE"
+     ],
+     "element_temperature_K": {
+      "value": 0.0,
+      "units": "K",
+      "status": "DEFINITION",
+      "evidence_class": "definition",
+      "evidence_level": null,
+      "source": "definition (no physical element)",
+      "uncertainty": "exact by definition",
+      "basis": "no element (no element temperature)",
+      "domain": null,
+      "requires": null
+     },
+     "erosion_state": "NOT_EVALUATED (AO erosion yield / fluence TBD per material)",
+     "final_material_status": "NOT_APPLICABLE_NO_ELEMENT"
+    },
+    "validity_flags": {
+     "status": "NO_FILTER_IDENTITY",
+     "label": "NORMALIZED_UNIT_INPUT_NOT_A_PHYSICAL_STATE",
+     "regime": {
+      "regime": "no element",
+      "knudsen_number": null,
+      "criterion": "not applicable (identity)"
+     },
+     "incidence_declared": "diffuse_thermal",
+     "incidence_inlet": "diffuse_thermal",
+     "species_resolved": true,
+     "folded_into_intake_efficiency": false,
+     "reference_bound_only": true,
+     "research_variant_only": false,
+     "research_variant_evidence_missing": [],
+     "o_conversion_fraction": {
+      "forward": 0.0,
+      "reverse": 0.0
+     },
+     "o_recombination_acceptance_limit": "TBD (pre-registered before LOCK-1 from evidence, A9.13 S6.3)",
+     "acceptance_items_preregistration_pending": [
+      "capture efficiency vs registered contaminant / particle class",
+      "species-resolved propellant transmission",
+      "pressure-loss / conductance penalty",
+      "O recombination / conversion probability",
+      "retained contaminant capacity",
+      "AO erosion / material durability",
+      "effect on AG-12 feed-state closure"
+     ],
+     "baseline_protection_targets": [
+      "particulates_debris"
+     ],
+     "not_credited_targets": {
+      "atomic_oxygen_to_downstream_surfaces": "atomic O is propellant (RFP-P17-05), not a contaminant to be removed in the baseline (A9.13 S6.3)",
+      "sputter_wear_products": "compressor wear products are downstream-generated: not credited to the intake filter unless backstream transport is demonstrated; a separate downstream guard / trap is defined if needed (A9.13 S6.3)",
+      "ambient_charged_particles": "not a baseline filter requirement unless a hazard analysis demonstrates the need (A9.13 S6.3)"
+     },
+     "f4_gap_model_supports_lossy_element": false
+    }
    },
    "f3_record": {
     "interface": "IF-A2 filter -> compressor",
@@ -1090,7 +1182,48 @@
     "filter_flow_effect_applied": false,
     "filter_retained_mass_rate_kgps": 0.0,
     "mass_kg": 0.0,
-    "overrides_used": []
+    "overrides_used": [],
+    "filter_role": "REFERENCE_BOUND_FC00_NOT_ADMISSIBLE_FLIGHT_ARCHITECTURE",
+    "admissible_as_baseline": false,
+    "validity_flags": {
+     "status": "NO_FILTER_IDENTITY",
+     "label": "NORMALIZED_UNIT_INPUT_NOT_A_PHYSICAL_STATE",
+     "regime": {
+      "regime": "no element",
+      "knudsen_number": null,
+      "criterion": "not applicable (identity)"
+     },
+     "incidence_declared": "diffuse_thermal",
+     "incidence_inlet": "diffuse_thermal",
+     "species_resolved": true,
+     "folded_into_intake_efficiency": false,
+     "reference_bound_only": true,
+     "research_variant_only": false,
+     "research_variant_evidence_missing": [],
+     "o_conversion_fraction": {
+      "forward": 0.0,
+      "reverse": 0.0
+     },
+     "o_recombination_acceptance_limit": "TBD (pre-registered before LOCK-1 from evidence, A9.13 S6.3)",
+     "acceptance_items_preregistration_pending": [
+      "capture efficiency vs registered contaminant / particle class",
+      "species-resolved propellant transmission",
+      "pressure-loss / conductance penalty",
+      "O recombination / conversion probability",
+      "retained contaminant capacity",
+      "AO erosion / material durability",
+      "effect on AG-12 feed-state closure"
+     ],
+     "baseline_protection_targets": [
+      "particulates_debris"
+     ],
+     "not_credited_targets": {
+      "atomic_oxygen_to_downstream_surfaces": "atomic O is propellant (RFP-P17-05), not a contaminant to be removed in the baseline (A9.13 S6.3)",
+      "sputter_wear_products": "compressor wear products are downstream-generated: not credited to the intake filter unless backstream transport is demonstrated; a separate downstream guard / trap is defined if needed (A9.13 S6.3)",
+      "ambient_charged_particles": "not a baseline filter requirement unless a hazard analysis demonstrates the need (A9.13 S6.3)"
+     },
+     "f4_gap_model_supports_lossy_element": false
+    }
    }
   },
   {
@@ -1271,7 +1404,8 @@
       "requires": "gas temperature at the filter (IF-A1)"
      }
     ],
-    "label": "NORMALIZED_UNIT_INPUT_NOT_A_PHYSICAL_STATE"
+    "label": "NORMALIZED_UNIT_INPUT_NOT_A_PHYSICAL_STATE",
+    "filter_role": "BASELINE_INERT_LOW_RECOMBINATION"
    },
    "backflow_coupling": {
     "status": "REFUSED_TBD",
@@ -1675,7 +1809,102 @@
     "materials": [],
     "notes": [
      "sensitivity case SC-PLACEHOLDER-REPO-FILTER: reproduces the unsourced repository filter law (abep_sim/intake_tpmc.py IntakeGeometry filter_* defaults) so its effect can be bounded; not evidence, not a flight design"
-    ]
+    ],
+    "role": "BASELINE_INERT_LOW_RECOMBINATION",
+    "admissible_as_baseline": false,
+    "interfaces": {
+     "upstream_interface": "IF-A1 (intake / channel-array exit, downstream of the primary intake / collimator)",
+     "downstream_interface": "IF-A2 (compressor inlet)",
+     "production_path_element": true,
+     "folded_into_intake_efficiency": false,
+     "basis": "A9.13 S6.6 / S6.19; RFP-P16-02 (Intake -> Filter -> Compressor)"
+    },
+    "retained_inventory": {
+     "propellant_capture_rate_kgps": 0.0,
+     "propellant_capture_status": "EVALUATED_FROM_STAGE_RECORDS",
+     "contaminant_capture_rate": "TBD (contamination environment / particle classes not defined; A9.13 S6.3)",
+     "capacity_kg": {
+      "value": "TBD",
+      "units": "kg",
+      "status": "TBD",
+      "evidence_class": null,
+      "evidence_level": null,
+      "source": null,
+      "uncertainty": null,
+      "basis": "",
+      "domain": null,
+      "requires": "retained contaminant capacity (defined contamination environment + measured element retention; pre-registered before LOCK-1, A9.13 S6.3)"
+     },
+     "inventory_over_time": "retained_inventory_kg(result, duration_s)",
+     "note": "compressor wear products are not credited to this filter (A9.13 S6.3)"
+    },
+    "thermal_load": {
+     "status": "NOT_EVALUATED",
+     "requires": [
+      "incident energy flux per species at the inlet face (F1 / TPMC)",
+      "energy accommodation of the incident gas on the element (measured / sourced for the element material)"
+     ]
+    },
+    "material_state": {
+     "application": "APP-FILTER (P4, A9.13 S6.6)",
+     "materials": [],
+     "ao_compatibility": [
+      "INCOMPLETE_EVIDENCE"
+     ],
+     "element_temperature_K": {
+      "value": "TBD",
+      "units": "K",
+      "status": "TBD",
+      "evidence_class": null,
+      "evidence_level": null,
+      "source": null,
+      "uncertainty": null,
+      "basis": "",
+      "domain": null,
+      "requires": "filter element temperature at the operating state (P3 coupled thermal network / measurement)"
+     },
+     "erosion_state": "NOT_EVALUATED (AO erosion yield / fluence TBD per material)",
+     "final_material_status": "OPEN"
+    },
+    "validity_flags": {
+     "status": "NUMERIC",
+     "label": "PARAMETRIC_SENSITIVITY_NOT_EVIDENCE",
+     "regime": {
+      "regime": "free_molecular",
+      "knudsen_number": null,
+      "criterion": "ASSUMED free molecular (sensitivity case; Kn not established)"
+     },
+     "incidence_declared": "hyperthermal_directed",
+     "incidence_inlet": "hyperthermal_directed",
+     "species_resolved": true,
+     "folded_into_intake_efficiency": false,
+     "reference_bound_only": false,
+     "research_variant_only": false,
+     "research_variant_evidence_missing": [],
+     "o_conversion_fraction": {
+      "forward": 0.0,
+      "reverse": 0.0
+     },
+     "o_recombination_acceptance_limit": "TBD (pre-registered before LOCK-1 from evidence, A9.13 S6.3)",
+     "acceptance_items_preregistration_pending": [
+      "capture efficiency vs registered contaminant / particle class",
+      "species-resolved propellant transmission",
+      "pressure-loss / conductance penalty",
+      "O recombination / conversion probability",
+      "retained contaminant capacity",
+      "AO erosion / material durability",
+      "effect on AG-12 feed-state closure"
+     ],
+     "baseline_protection_targets": [
+      "particulates_debris"
+     ],
+     "not_credited_targets": {
+      "atomic_oxygen_to_downstream_surfaces": "atomic O is propellant (RFP-P17-05), not a contaminant to be removed in the baseline (A9.13 S6.3)",
+      "sputter_wear_products": "compressor wear products are downstream-generated: not credited to the intake filter unless backstream transport is demonstrated; a separate downstream guard / trap is defined if needed (A9.13 S6.3)",
+      "ambient_charged_particles": "not a baseline filter requirement unless a hazard analysis demonstrates the need (A9.13 S6.3)"
+     },
+     "f4_gap_model_supports_lossy_element": false
+    }
    },
    "f3_record": {
     "interface": "IF-A2 filter -> compressor",
@@ -1853,7 +2082,48 @@
       "replaces_status": "TBD",
       "replaces_value": null
      }
-    ]
+    ],
+    "filter_role": "BASELINE_INERT_LOW_RECOMBINATION",
+    "admissible_as_baseline": false,
+    "validity_flags": {
+     "status": "NUMERIC",
+     "label": "PARAMETRIC_SENSITIVITY_NOT_EVIDENCE",
+     "regime": {
+      "regime": "free_molecular",
+      "knudsen_number": null,
+      "criterion": "ASSUMED free molecular (sensitivity case; Kn not established)"
+     },
+     "incidence_declared": "hyperthermal_directed",
+     "incidence_inlet": "hyperthermal_directed",
+     "species_resolved": true,
+     "folded_into_intake_efficiency": false,
+     "reference_bound_only": false,
+     "research_variant_only": false,
+     "research_variant_evidence_missing": [],
+     "o_conversion_fraction": {
+      "forward": 0.0,
+      "reverse": 0.0
+     },
+     "o_recombination_acceptance_limit": "TBD (pre-registered before LOCK-1 from evidence, A9.13 S6.3)",
+     "acceptance_items_preregistration_pending": [
+      "capture efficiency vs registered contaminant / particle class",
+      "species-resolved propellant transmission",
+      "pressure-loss / conductance penalty",
+      "O recombination / conversion probability",
+      "retained contaminant capacity",
+      "AO erosion / material durability",
+      "effect on AG-12 feed-state closure"
+     ],
+     "baseline_protection_targets": [
+      "particulates_debris"
+     ],
+     "not_credited_targets": {
+      "atomic_oxygen_to_downstream_surfaces": "atomic O is propellant (RFP-P17-05), not a contaminant to be removed in the baseline (A9.13 S6.3)",
+      "sputter_wear_products": "compressor wear products are downstream-generated: not credited to the intake filter unless backstream transport is demonstrated; a separate downstream guard / trap is defined if needed (A9.13 S6.3)",
+      "ambient_charged_particles": "not a baseline filter requirement unless a hazard analysis demonstrates the need (A9.13 S6.3)"
+     },
+     "f4_gap_model_supports_lossy_element": false
+    }
    },
    "f1_record": {
     "interface": "IF-A1 intake <- filter (return)",
@@ -1996,7 +2266,7 @@
    "counterpart": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
    "content": "an APP-FILTER application (O / AO exposure at filter temperature, recombination probability and erosion yield criteria) would be needed; P4 today screens APP-ANODE and APP-COLLECTOR only",
    "units": "-",
-   "status": "TBD_OWNER (F2-OQ-04)"
+   "status": "ANSWERED A9.13 S6.6 COMPRESSOR_INLET_PLUS_APP_FILTER (F2-OQ-04: filter at the compressor inlet; P4 adds APP-FILTER)"
   },
   {
    "id": "F2-IF-09",
@@ -2028,25 +2298,41 @@
    "id": "F2-OQ-01",
    "question": "Which protection functions must the RFP filter stage provide (particulates / debris, compressor wear products, atomic O to downstream surfaces, ambient charged particles, backflow limitation), and against which quantitative acceptance?",
    "why": "the RFP chain names a filter but no function or acceptance is recorded in the repository; every capture efficiency is TBD",
-   "status": "TBD_OWNER"
+   "status": "ANSWERED (A9.13 S6.3, decision code PARTICULATE_DEBRIS_PROTECTION)",
+   "status_as_raised": "TBD_OWNER",
+   "owner_decision": "A9.13 S6.3",
+   "decision_code": "PARTICULATE_DEBRIS_PROTECTION",
+   "owner_state_source": "docs/budgets/owner_decisions/owner_questions_state_v5.json rows[id=F2-OQ-01]"
   },
   {
    "id": "F2-OQ-02",
    "question": "Is a deliberately catalytic (O -> O2 converting) filter element admissible, given owner row 102 (inert / low-recombination lining baseline to preserve the representative atomic-O fraction)?",
    "why": "FC-06 would trade downstream AO protection against the delivered species state",
-   "status": "TBD_OWNER"
+   "status": "ANSWERED (A9.13 S6.4, decision code CATALYTIC_NOT_BASELINE)",
+   "status_as_raised": "TBD_OWNER",
+   "owner_decision": "A9.13 S6.4",
+   "decision_code": "CATALYTIC_NOT_BASELINE",
+   "owner_state_source": "docs/budgets/owner_decisions/owner_questions_state_v5.json rows[id=F2-OQ-02]"
   },
   {
    "id": "F2-OQ-03",
    "question": "May trade studies carry 'no filter' (FC-00) as an admissible architecture option, or only as a reference bound because the RFP chain names a filter stage?",
    "why": "the RFP architecture text is recorded only as a secondary transcription (RVM-08, verify)",
-   "status": "TBD_OWNER"
+   "status": "ANSWERED (A9.13 S6.5, decision code NO_FILTER_REFERENCE_ONLY)",
+   "status_as_raised": "TBD_OWNER",
+   "owner_decision": "A9.13 S6.5",
+   "decision_code": "NO_FILTER_REFERENCE_ONLY",
+   "owner_state_source": "docs/budgets/owner_decisions/owner_questions_state_v5.json rows[id=F2-OQ-03]"
   },
   {
    "id": "F2-OQ-04",
    "question": "Where does the filter sit (ahead of the intake collimator, in the intake chamber, or at the compressor inlet), and should P4 add an APP-FILTER application for its material?",
    "why": "placement fixes the forward incidence (hyperthermal vs thermalised), the face area and the O exposure; P4 screens only anode and collector",
-   "status": "TBD_OWNER"
+   "status": "ANSWERED (A9.13 S6.6, decision code COMPRESSOR_INLET_PLUS_APP_FILTER)",
+   "status_as_raised": "TBD_OWNER",
+   "owner_decision": "A9.13 S6.6",
+   "decision_code": "COMPRESSOR_INLET_PLUS_APP_FILTER",
+   "owner_state_source": "docs/budgets/owner_decisions/owner_questions_state_v5.json rows[id=F2-OQ-04]"
   }
  ],
  "related_existing_open_questions": [

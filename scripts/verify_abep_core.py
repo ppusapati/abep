@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """A9.7 Rust lane - pre-registered parity campaign: Python reference (abep_sim/intake_tpmc.py) vs abep_core (Rust).
 
-Lane fo_a9_7_rust_kernels. Implements docs/performance/abep_core/parity_prereg_v1.json exactly (committed before any
-comparison) and writes docs/performance/abep_core/parity_report_v1.json (+ .md rendered from it) with the verdict
+Lane fo_a9_7_rust_kernels. Implements docs/performance/abep_core/parity_prereg_v2.json exactly (committed before any
+v2 comparison; same workloads, seeds and tolerance as v1, re-pinned to the A9.9-changed reference, A9.14 S10.4) and
+writes docs/performance/abep_core/parity_report_v2.json (+ .md rendered from it) with the verdict
 ADMITTED / NOT_ADMITTED per kernel and the measured speed-up on the F0 workload. The Python reference stays
 authoritative whatever the verdict; nothing here wires Rust into production paths, frozen data or goldens.
 
@@ -19,6 +20,19 @@ Commands
                                                      additionally recomputes the first 3 vectors of every kernel and
                                                      requires bitwise-identical numbers (needs abep_core, same build)
   python scripts/verify_abep_core.py --render-md     re-render the MD from the JSON
+
+Non-interactive CI entry points (.github/workflows/rust-parity.yml, docs/ci/RUST_PARITY.md; owner A9.14 S10.4
+RUST-OQ-02). They add exit codes only; no verdict rule, tolerance, seed or vector changes:
+  python scripts/verify_abep_core.py --source-status [--github-output FILE]
+                                                     prints whether the current PROVENANCE_SOURCES match the report's
+                                                     build_provenance, whether the reference matches the prereg and
+                                                     whether the importable extension is the recorded binary, the
+                                                     campaign_history length and whether a v1 scoring failure (or a
+                                                     v1 rerun after one) is on record; with --github-output also
+                                                     appends key=value lines to FILE; exit 0
+  python scripts/verify_abep_core.py --dev --strict  full development comparison (development seed, never scored,
+                                                     never written); exit 1 if any development check disagrees (a
+                                                     regression smoke, not a verdict: it never admits a kernel)
 
 The extension is built outside the repository environment (abep_core/README.md), e.g. into a scratch venv created
 with --system-site-packages; run this script with that venv's python.
@@ -48,9 +62,12 @@ from abep_sim.atmosphere import atmosphere                  # noqa: E402
 from abep_sim.constants import K_B, M_SPECIES               # noqa: E402
 from abep_sim.design import tpmc_backend as TB              # noqa: E402
 
-PREREG_REL = "docs/performance/abep_core/parity_prereg_v1.json"
-REPORT_REL = "docs/performance/abep_core/parity_report_v1.json"
-MD_REL = "docs/performance/abep_core/parity_report_v1.md"
+# Registration version read by every entry point. v1 (parity_prereg_v1.json / parity_report_v1.*) is immutable
+# history: its reference sha256 predates A9.9 S2.5 / S2.1, so its verdicts no longer bind the current tree.
+PREREG_REL = "docs/performance/abep_core/parity_prereg_v2.json"
+REPORT_REL = "docs/performance/abep_core/parity_report_v2.json"
+MD_REL = "docs/performance/abep_core/parity_report_v2.md"
+V1_REPORT_REL = "docs/performance/abep_core/parity_report_v1.json"      # informational cross-check only (prereg v1_cross_check)
 F0_REL = "docs/performance/PERFORMANCE_BASELINE_98fbbb9.json"
 LANE = "fo_a9_7_rust_kernels"
 DIRECTIVE = "docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md"
@@ -730,7 +747,7 @@ def parameters_section(pre):
 def interface_section():
     return [
         {"id": "RUST-ID-01", "direction": "rust -> F0", "counterparty": "fo_a9_7_f0_profiling (docs/performance/PERFORMANCE_BASELINE_98fbbb9.json, F0-ID-02)",
-         "demand": "parity record supplied: pre-registered tolerance (parity_prereg_v1.json) and per-kernel verdicts (this report); cite them in any post-port baseline",
+         "demand": f"parity record supplied: pre-registered tolerance ({os.path.basename(PREREG_REL)}) and per-kernel verdicts (this report); cite them in any post-port baseline",
          "status": "SUPPLIED"},
         {"id": "RUST-ID-02", "direction": "F0 -> rust (response)", "counterparty": "fo_a9_7_f0_profiling (F0-ID-01; scripts/perf/profile_baseline.py)",
          "demand": "F0 asks for its harness to be re-run on the Rust-enabled tree with the same keys. The harness calls abep_sim.intake_tpmc directly and has no backend switch (it is outside this lane's paths); this report times the identical tpmc_trace_channel workload (W1) under both backends in one session instead. Re-running the harness itself is left to F0 / the consolidated verification",
@@ -766,7 +783,7 @@ def assemble(pre, results, invariants, spd, prov, master, history):
               "source": REPORT_REL, "evidence_class": "model-derived (numerical parity of two implementations; not physics evidence)",
               "status": s["verdict"]} for k, s in kernels.items()]
     rep = {
-        "schema": "abep_core_parity_report_v1",
+        "schema": "abep_core_parity_report_v2",
         "lane": LANE,
         "directive": DIRECTIVE,
         "generated_by": "scripts/verify_abep_core.py",
@@ -799,7 +816,7 @@ def assemble(pre, results, invariants, spd, prov, master, history):
 
 
 def render_md(rep):
-    L = [f"# abep_core parity report v1 (A9.7 Rust lane, TPMC kernel)", "",
+    L = [f"# abep_core parity report v2 (A9.7 Rust lane, TPMC kernel)", "",
          f"Generated by `scripts/verify_abep_core.py` from `{REPORT_REL}`; do not edit by hand. Lane `{LANE}`, directive "
          f"`{DIRECTIVE}`. Pre-registration `{rep['prereg']['path']}` (sha256 `{rep['prereg']['sha256'][:16]}...`, committed "
          "before any comparison).", "",
@@ -826,6 +843,14 @@ def render_md(rep):
                 L.append(f"| {k} | {iid} | not exercised | not exercised |")
             else:
                 L.append(f"| {k} | {iid} | {r['python']['held']} ({r['python']['n_checks']}) | {r['rust']['held']} ({r['rust']['n_checks']}) |")
+    xc = rep.get("v1_cross_check")
+    if xc and xc.get("kernels"):
+        L += ["", "## Cross-check against the v1 record (informational; not a decision criterion)", "",
+              f"Same seeds and vectors as v1 (`{xc['v1_report']}`, sha256 `{xc['v1_report_sha256'][:16]}...`). Stored test "
+              "numbers (mean, se) equal to v1 bitwise, per backend:", "",
+              "| kernel | tests | python equal | rust equal | status equal |", "|---|---|---|---|---|"]
+        for k, c in xc["kernels"].items():
+            L.append(f"| {k} | {c['tests']} | {c['python_bitwise_equal']} | {c['rust_bitwise_equal']} | {c['status_equal']} |")
     sp = rep["speedup"]
     ss = rep.get("speedup_served_path") or {}
     L += ["", "## Measured speed-up (informational; not an admission criterion)", "",
@@ -879,6 +904,43 @@ def write_report(rep):
         fh.write(render_md(rep))
 
 
+def v1_cross_check(results):
+    """prereg v2 v1_cross_check (informational, never a verdict input): per kernel and backend, how many stored test
+    numbers (mean, se) equal the v1 report's numbers bitwise for the same vector id and observable."""
+    if not os.path.exists(_p(V1_REPORT_REL)):
+        return {"status": "NOT_EVALUATED_V1_REPORT_MISSING"}
+    v1 = json.load(open(_p(V1_REPORT_REL)))
+    out = {"status": "informational, not a decision criterion (prereg v2 v1_cross_check)", "v1_report": V1_REPORT_REL,
+           "v1_report_sha256": sha256_file(V1_REPORT_REL), "kernels": {}}
+    for k, rows in results.items():
+        old = {r["id"]: r for r in v1.get("vectors", {}).get(k, [])}
+        c = {"tests": 0, "python_bitwise_equal": 0, "rust_bitwise_equal": 0, "status_equal": 0, "params_equal_vectors": 0,
+             "vectors_missing_in_v1": 0, "python_mismatches": [], "rust_mismatches": []}
+        for r in rows:
+            o = old.get(r["id"])
+            if o is None:
+                c["vectors_missing_in_v1"] += 1
+                continue
+            new = json.loads(json.dumps(r))
+            c["params_equal_vectors"] += int(new["params"] == o["params"])
+            for obs, rec in new["tests"].items():
+                orec = o["tests"].get(obs)
+                c["tests"] += 1
+                if orec is None:
+                    continue
+                py_eq = rec[0:2] == orec[0:2]
+                rs_eq = rec[2:4] == orec[2:4]
+                c["python_bitwise_equal"] += int(py_eq)
+                c["rust_bitwise_equal"] += int(rs_eq)
+                c["status_equal"] += int(rec[5] == orec[5])
+                if not py_eq and len(c["python_mismatches"]) < 20:
+                    c["python_mismatches"].append([r["id"], obs])
+                if not rs_eq and len(c["rust_mismatches"]) < 20:
+                    c["rust_mismatches"].append([r["id"], obs])
+        out["kernels"][k] = c
+    return out
+
+
 def campaign():
     pre = load_prereg()
     if sha256_file("abep_sim/intake_tpmc.py") != pre["reference_implementation"]["sha256_at_registration"]:
@@ -906,6 +968,7 @@ def campaign():
     if os.path.exists(_p(REPORT_REL)):
         history = json.load(open(_p(REPORT_REL))).get("campaign_history", [])
     rep = assemble(pre, results, inv, spd, prov, master, history)
+    rep["v1_cross_check"] = v1_cross_check(results)
     rep["campaign_history"] = history + [{
         "utc": _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "git_head": prov.get("git_head"),
         "git_dirty": prov.get("git_dirty"), "master_seed": master, "prereg_sha256": rep["prereg"]["sha256"],
@@ -920,22 +983,88 @@ def campaign():
     return 0
 
 
-def dev(only, limit):
+def dev(only, limit, strict=False):
     pre = load_prereg()
     if not TB.rust_available():
         print(f"abep_core unavailable: {TB.rust_unavailable_reason()}")
+        return 2
+    if strict and (only or limit is not None):
+        print("--dev --strict runs the full development comparison; --only / --limit are not allowed with it")
         return 2
     master = pre["campaign_seeds"]["development_master_seed"]
     inv = {}
     with TB.parity_campaign_unadmitted():
         standalone_invariants(inv, master)
         results = run_vectors(pre, master, only=only, limit=limit, inv=inv)
+    bad = []
     for k in results:
         s = kernel_summary(k, results[k], inv, pre)
         print(k, "(DEVELOPMENT, not scored)", s["test_counts"], s["max_abs_z"],
               {o: round(a["abs_sum_z_over_sqrtN"] or 0, 2) for o, a in s["aggregate_bias"].items()},
               "inv rust ok:", all(r is None or r["rust"]["held"] for r in s["invariants"].values()),
               "inv py ok:", all(r is None or r["python"]["held"] for r in s["invariants"].values()))
+        if s["verdict"] != "ADMITTED":          # the scored verdict rule, applied to development data only (no verdict)
+            bad.append(k)
+    if strict:
+        if bad:
+            print(f"DEVELOPMENT_SMOKE_FAILED (development seed, not scored, not a verdict): {bad}")
+            return 1
+        print("DEVELOPMENT_SMOKE_OK (development seed, not scored, not a verdict; admits nothing)")
+    return 0
+
+
+SOURCE_STATUS_KEYS = ("sources_match_recorded_build", "reference_matches_prereg", "extension_importable",
+                      "extension_is_recorded_build", "v1_scoring_failure_on_record", "v1_rerun_after_failure_on_record")
+
+
+def scoring_history_flags(history, pre, prereg_sha256):
+    """CI entry point (RUSTCI-1): read the committed campaign_history against prereg decision_rules.no_retuning.
+
+    A v1 scoring execution is an entry with the pre-registered scoring_master_seed under this prereg's sha256. Returns
+    (any v1 execution with a non-ADMITTED kernel verdict, any v1 execution recorded after such a failure). Reads the
+    record only; it changes no verdict rule, tolerance, seed or vector."""
+    seed = pre["campaign_seeds"]["scoring_master_seed"]
+    failed = rerun = False
+    for h in history:
+        if h.get("master_seed") != seed or h.get("prereg_sha256") != prereg_sha256:
+            continue
+        if failed:
+            rerun = True
+        verdicts = h.get("verdicts") or {}
+        if not verdicts or any(v != "ADMITTED" for v in verdicts.values()):
+            failed = True
+    return failed, rerun
+
+
+def source_status(github_output=None):
+    """CI entry point: compare the current sources, the reference and the importable extension with the record."""
+    pre = load_prereg()
+    rep = json.load(open(_p(REPORT_REL)))
+    bp = rep["build_provenance"]
+    current = {s: (sha256_file(s) if os.path.exists(_p(s)) else None) for s in PROVENANCE_SOURCES}
+    differing = sorted(s for s in PROVENANCE_SOURCES if current[s] != bp["source_sha256"].get(s))
+    mod, why = TB._load_rust()
+    ext = TB.extension_sha256(mod) if mod is not None else None
+    st = {
+        "sources_match_recorded_build": not differing,
+        "differing_sources": differing,
+        "reference_matches_prereg": current["abep_sim/intake_tpmc.py"] == pre["reference_implementation"]["sha256_at_registration"],
+        "extension_importable": mod is not None,
+        "extension_unavailable_reason": why,
+        "extension_sha256": ext,
+        "recorded_extension_sha256": bp.get("extension_sha256"),
+        "extension_is_recorded_build": ext is not None and ext == bp.get("extension_sha256"),
+        "recorded_verdicts": rep["verdicts"],
+        "campaign_history_length": len(rep["campaign_history"]),
+    }
+    st["v1_scoring_failure_on_record"], st["v1_rerun_after_failure_on_record"] = scoring_history_flags(
+        rep["campaign_history"], pre, sha256_file(PREREG_REL))
+    print(json.dumps(st, indent=1))
+    if github_output:
+        with open(github_output, "a") as fh:
+            for key in SOURCE_STATUS_KEYS:
+                fh.write(f"{key}={'true' if st[key] else 'false'}\n")
+            fh.write(f"campaign_history_length={st['campaign_history_length']}\n")
     return 0
 
 
@@ -1034,7 +1163,16 @@ def main(argv=None):
     ap.add_argument("--dev", action="store_true")
     ap.add_argument("--only", nargs="*")
     ap.add_argument("--limit", type=int)
+    ap.add_argument("--strict", action="store_true", help="with --dev: exit 1 on any development disagreement")
+    ap.add_argument("--source-status", action="store_true")
+    ap.add_argument("--github-output", help="with --source-status: append key=value lines to this file")
     a = ap.parse_args(argv)
+    if a.strict and not a.dev:
+        ap.error("--strict is only valid with --dev")
+    if a.github_output and not a.source_status:
+        ap.error("--github-output is only valid with --source-status")
+    if a.source_status:
+        return source_status(a.github_output)
     if a.check:
         return check(a.recompute)
     if a.render_md:
@@ -1043,7 +1181,7 @@ def main(argv=None):
             fh.write(render_md(rep))
         return 0
     if a.dev:
-        return dev(a.only, a.limit)
+        return dev(a.only, a.limit, a.strict)
     return campaign()
 
 

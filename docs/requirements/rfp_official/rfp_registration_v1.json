@@ -1,0 +1,1015 @@
+{
+ "schema": "rfp_registration_v1",
+ "status": "REGISTERED_BY_HASH_PDF_CONTROLLED_EXTERNALLY",
+ "document": {
+  "title": "Online invitation of bids (two bids system) for grant-in-aid project under Technology Development Fund scheme titled AIR BREATHING SPACE BASED PROPULSION (ELECTRIC) FOR VLEO",
+  "rfp_number": "DTDF/06/13516/DSP/ABEP/X/L/M/01",
+  "issuer": "Government of India, Ministry of Defence, DRDO, Directorate of Technology Development Fund (DTDF)",
+  "pages": 40,
+  "sha256": "a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00",
+  "size_bytes": 20118082,
+  "pdf_creation_date_metadata": "2026-09-08T12:10:27Z (pdfinfo CreationDate of the supplied file)",
+  "provenance": "PDF uploaded by the owner into the execution session on 2026-10-01 (file name 'RFP.pdf'); original distribution channel per the document: DefProc portal (www.defproc.gov.in)",
+  "committed_to_repository": false,
+  "original_filename_as_received": "RFP.pdf",
+  "retrieval": {
+   "source": "owner upload into the execution session (original channel: DefProc portal per the document)",
+   "date": "2026-10-01"
+  },
+  "pdf_storage": "controlled project evidence store (owner A9.17 RFP: the binary is not redistributed in the public repository; this record carries identity, hash, page count and the requirement extraction)",
+  "authority": "authoritative requirement source for propellant capability and all RFP requirements (owner A9.15, A9.17)",
+  "not_in_document": [
+   "bid due / closing date (the RFP refers to the tender document on DefProc for important dates, Part I note 5); the 05 Oct 2026 date in CLAUDE.md is therefore NOT verified by this file"
+  ]
+ },
+ "evidence_class": "transcription (human-read from the scanned page images of the registered PDF)",
+ "clauses": [
+  {
+   "id": "RFP-P16-01",
+   "page": 16,
+   "section": "Part III 1(A)i",
+   "text": "1. Development of Air Breathing Electric Propulsion (ABEP) which will work in the VLEO environment. 2. Testing and space qualification of the Air Breathing Electric Propulsion (ABEP)."
+  },
+  {
+   "id": "RFP-P16-02",
+   "page": 16,
+   "section": "Part III 1(A)ii Figure 1",
+   "text": "Logical Block Diagram: Intake -> Filter -> Compressor -> Gas Chamber -> Valve -> Thruster (Ionization zone | Acceleration zone) -> Thrust; Xenon Gas -> Valve -> Thruster."
+  },
+  {
+   "id": "RFP-P17-01",
+   "page": 17,
+   "section": "Part III Figure 2",
+   "text": "Processing block diagram of EM QM Testing of ABEP System: EM Air Intake System, Compressor storage; EM Power processing unit (PPU); EM Thruster -> EM Integration -> EM Integration Test -> Qualification Model Intake and compressor; Qualification Model Power Electronics; Qualification Model Thruster -> QM Integration Test."
+  },
+  {
+   "id": "RFP-P17-02",
+   "page": 17,
+   "section": "Part III 1(A)iii",
+   "text": "List of critical technologies required for the solution: 1. Electric propulsion thruster to Ionize and accelerate N2 and nascent O. 2. Material compatibility to with stand VLEO atmospheric nascent oxygen. 3. Air Intake system design and compressor technology. 4. Test facility to simulate air mixture conditions in VLEO environment."
+  },
+  {
+   "id": "RFP-P17-03",
+   "page": 17,
+   "section": "Part III 1(A)iv row 1 Air Intake",
+   "text": "Air intake system captures residual atmospheric particles (mainly atomic oxygen and nitrogen) at VLEO altitudes (< 250 km). Most challenging in total system."
+  },
+  {
+   "id": "RFP-P17-04",
+   "page": 17,
+   "section": "Part III 1(A)iv row 2 Compressor and gas Reservoir",
+   "text": "Increases the density of the collected atmospheric gases to a usable level of ionization"
+  },
+  {
+   "id": "RFP-P17-05",
+   "page": 17,
+   "section": "Part III 1(A)iv row 3 Thruster",
+   "text": "Capability to ionize N2, atomic oxygen in same thruster and It should have capability to use Xe as propellant, an extra input system to take care any problems on board unforeseen problems."
+  },
+  {
+   "id": "RFP-P18-01",
+   "page": 18,
+   "section": "Part III 1(A)iv row 4 Power System Electronics",
+   "text": "Power system electronics shall capable taking power from satellite bus and provide the total ABEP system required voltages and Current requirements."
+  },
+  {
+   "id": "RFP-P18-02",
+   "page": 18,
+   "section": "Part III 1(A)iv row 5 Reliability",
+   "text": "The system should have redundancy in Electronics level and sensor level if any."
+  },
+  {
+   "id": "RFP-P18-03",
+   "page": 18,
+   "section": "Part III 1(A)iv row 6 Any other Points",
+   "text": "a) Indigenous Content: >60% to mitigate International Traffic in Arm Regulations (ITAR)/ export control restrictions b) Development partner shall be called for a presentation as part of Technical Evaluation to present the technical proposal in detail (design, realization, testing and schedules) to a technical evaluation committee. c) Consortium of different industries (if proposed) should be supported by documentary proof of consortium agreement."
+  },
+  {
+   "id": "RFP-P18-04",
+   "page": 18,
+   "section": "Part III 2 Functional Orbit altitude",
+   "text": "180 to 230 km"
+  },
+  {
+   "id": "RFP-P18-05",
+   "page": 18,
+   "section": "Part III 2 Air intake Specification",
+   "text": "Shall be decided by air density based on solar activity and altitude"
+  },
+  {
+   "id": "RFP-P18-06",
+   "page": 18,
+   "section": "Part III 2 Thrust Requirement",
+   "text": "12 mN to 25 mN (From expected drag to compensate)"
+  },
+  {
+   "id": "RFP-P18-07",
+   "page": 18,
+   "section": "Part III 2 Thruster Type",
+   "text": "Hall effect preferable"
+  },
+  {
+   "id": "RFP-P18-08",
+   "page": 18,
+   "section": "Part III 2 Propellant for propulsion system",
+   "text": "Compatible for using Ambient air (at the functional orbit altitude of 180-230km) and Xenon as propellant. Two separate propellant tanks for ambient air and xenon."
+  },
+  {
+   "id": "RFP-P18-09",
+   "page": 18,
+   "section": "Part III 2 Redundancy",
+   "text": "Must cater to single point failure for electronics."
+  },
+  {
+   "id": "RFP-P18-10",
+   "page": 18,
+   "section": "Part III 2 Power",
+   "text": "<1500W"
+  },
+  {
+   "id": "RFP-P18-11",
+   "page": 18,
+   "section": "Part III 2 Mass",
+   "text": "< 40kg"
+  },
+  {
+   "id": "RFP-P18-12",
+   "page": 18,
+   "section": "Part III 2 Electrical Interface",
+   "text": "MIL-1553B with satellite onboard computer for configuration and for high rate data-logging with data recorder. Discrete interface for thruster operation. Necessary hardware drivers to be part of propulsion system."
+  },
+  {
+   "id": "RFP-P19-01",
+   "page": 19,
+   "section": "Part III 2 Life Cycle and Maintainability",
+   "text": "Mission life: 3 years (Approx 26000 hrs). Ignition Time: More than 15000 hrs"
+  },
+  {
+   "id": "RFP-P19-02",
+   "page": 19,
+   "section": "Part III 2 Material Specifications",
+   "text": "All materials and processes used in the product realization should be space qualified for Qualified model."
+  },
+  {
+   "id": "RFP-P19-03",
+   "page": 19,
+   "section": "Part III 2 Subsystems",
+   "text": "The overall system shall consist of the following sub-systems a. Air Intake and Compressor storage b. Power Supply Electronics c. Thruster"
+  },
+  {
+   "id": "RFP-P19-04",
+   "page": 19,
+   "section": "Part III 2 Environment",
+   "text": "The product should qualify the launch vibrations and shock. The product shall qualify atomic oxygen erosion, radiation, thermal and ThermoVac specifications for a VLEO orbit with a mission life of 3 years. Atomic oxygen erosion environment, All parts in Intake, Compressor and Thruster design shall take care of nascent atomic oxygen erosion for lifetime. ENTEST Specifications (The specifications will be provided at the time PDR): The system has to qualify for VLEO environment for a lifetime 03 yrs and for launch loads of PSLV/ SSLV or any other Launch Vehicle decided by DRDO at the time of PDR."
+  },
+  {
+   "id": "RFP-P19-05",
+   "page": 19,
+   "section": "Part III 3 Indigenous Content",
+   "text": "The firm should provide a detailed plan for achieving the minimum 75% IC in the project deliverables. Minimum Indigenization Desired: 1. Space Qualified Thruster >80%; 2. Intake system >80%; 3. Compressor and Storage >60%; 4. Power Supply Electronics >70%."
+  },
+  {
+   "id": "RFP-P19-06",
+   "page": 19,
+   "section": "Part III 4.1 Testing",
+   "text": "The system performance should be demonstrated by means of following tests: a) Coating materials and surface tests with Atomic Oxygen beam exposure, Erosion yield measurement. b) Creation of rarefied gas with prescribed mg/sec and velocity to test Intake system Erosion process. c) Minimum functional performance testing for EM and QM in integration mode for force calculation, with variable air intake (mg/sec), Isp, Efficiency of the total system etc. d) The test plan document for different tests shall be reviewed/ finalized through an expert committee and approved by PMMG/SPMMG."
+  },
+  {
+   "id": "RFP-P20-01",
+   "page": 20,
+   "section": "Part III 4.2-4.3",
+   "text": "4.2 Acceptance Criteria: Deliverable of the project should be matched with parameters given below in Para 2. 4.3 Certification: The Company shall be ISO certified. i. Acceptance/Qualification based on ATP Document. Preparation of ATP document will be carried out based on parameters listed in Para 2 above and will be finalized after DDR/CDR. ii. Testing as per Applicable Standards (MIL / ASTM/ BIS etc) / ESS Specification"
+  },
+  {
+   "id": "RFP-P20-02",
+   "page": 20,
+   "section": "Part III 5",
+   "text": "Trial and Performance Evaluation on system, if required: Only ground demonstration in simulated environment and space qualification testing is desired."
+  },
+  {
+   "id": "RFP-P20-03",
+   "page": 20,
+   "section": "Part III 6",
+   "text": "Exit criteria / Risk Management: Successful realization of Engineering Model of ABEP system, realization of qualified electric thruster with O and N2 as propellant at milestone 4 can be considered as a partial success of the project."
+  },
+  {
+   "id": "RFP-P20-04",
+   "page": 20,
+   "section": "Part III 7 Milestone 1",
+   "text": "Preliminary Design Review-1 (Hardware); PDC T0+09 months; 15%: completion of preliminary design (mechanical and electrical), finalization of BoM; preliminary test plan review; clearance for EM hardware realization. Deliverables: approved PDR document, design documents, CAD & EDA models; preliminary test plan and test facility document."
+  },
+  {
+   "id": "RFP-P20-05",
+   "page": 20,
+   "section": "Part III 7 Milestone 2",
+   "text": "Preliminary Design Review-2 (Algorithms and Software and Test plan); T0+12 months; 10%: electric power supply system software preliminary design, FDIR, Telemetry (MATLAB and C); review of test facility readiness. Deliverable: approved GNC design document and codes."
+  },
+  {
+   "id": "RFP-P20-06",
+   "page": 20,
+   "section": "Part III 7 Milestone 3 (continues p21)",
+   "text": "Critical Design Review; T0+20 months; 20%: realization of Engineering Models of thruster, power supply electronics; demonstration of functionality of EM hardware with Storage input not with INTAKE; clearance for qualification unit realization except Intake system. Deliverables: EM units power electronics and thruster mechanical and electrical drawings, CAD models; test results documents, test plan documents; simulation models (mechanical and electrical); test software."
+  },
+  {
+   "id": "RFP-P21-01",
+   "page": 21,
+   "section": "Part III 7 Milestone 4",
+   "text": "Engineering model Intake system; Qualification model for Power Supply Electronics and Thruster; T0+24 months; 35%: realization of Engineering model Intake System with Compressor and Storage; complete Qualification model PSE and Thruster testing with Storage Atomic reminants. Deliverables: EM Intake with compressor and Storage unit design details, CAD & EDA models, drawings etc; QM PSE, Thruster units design details, CAD & EDA models, drawings etc."
+  },
+  {
+   "id": "RFP-P21-02",
+   "page": 21,
+   "section": "Part III 7 Milestone 5",
+   "text": "QM integration and testing Delivery; T0+36 months; 20%: realization of QM Intake system and integration as total QM model ABEP; ENTEST qualification of QM units, documentation and delivery; documentation and final delivery, completion of project closure formalities."
+  },
+  {
+   "id": "RFP-P21-03",
+   "page": 21,
+   "section": "Part III 8",
+   "text": "NO Waivers shall be given for PART (IV) (B)."
+  },
+  {
+   "id": "RFP-P27-01",
+   "page": 27,
+   "section": "Part IV(B) 3 Infrastructure",
+   "text": "i. Ultra High Vacuum Test Facility for propulsion system testing (In-house/ Consortium/ Sub contract); ii. Low Thrust measurement setup (In-house/ Consortium/ Sub contract)."
+  },
+  {
+   "id": "RFP-P27-02",
+   "page": 27,
+   "section": "Part IV(B) 5",
+   "text": "Collaboration with Academia / Research Institute/Experts with specific work share related to following critical technologies of project: i. Material compatibility of Intake and thruster exposed to atmospheric nascent Oxygen (LoI from experts or MoU with institute is to be produced)."
+  },
+  {
+   "id": "RFP-P30-01",
+   "page": 30,
+   "section": "Part IV(C) 5 Thrust Measurement System",
+   "text": "Thrust Measurement System capable of measuring micro-Newton level thrust (In house: 10; Consortium: 5; Sub-contract: 0 marks)."
+  }
+ ],
+ "owner_rfp_fact_check": [
+  {
+   "statement": "180-230 km operation",
+   "result": "CONFIRMED",
+   "clause_ids": [
+    "RFP-P18-04"
+   ]
+  },
+  {
+   "statement": "intake sized by air density based on solar activity and altitude",
+   "result": "CONFIRMED",
+   "clause_ids": [
+    "RFP-P18-05"
+   ]
+  },
+  {
+   "statement": "12-25 mN thrust for drag compensation",
+   "result": "CONFIRMED",
+   "clause_ids": [
+    "RFP-P18-06"
+   ]
+  },
+  {
+   "statement": "N2 and nascent/atomic O handled by the propulsion system",
+   "result": "CONFIRMED",
+   "clause_ids": [
+    "RFP-P17-02",
+    "RFP-P17-05"
+   ]
+  },
+  {
+   "statement": "ambient air AND Xenon propellant capability with two separate tanks",
+   "result": "CONFIRMED",
+   "clause_ids": [
+    "RFP-P18-08",
+    "RFP-P16-02"
+   ]
+  },
+  {
+   "statement": "Xe capability required in the thruster",
+   "result": "CONFIRMED_WITH_NOTE",
+   "clause_ids": [
+    "RFP-P17-05"
+   ],
+   "note": "the RFP describes the Xe input literally as 'an extra input system to take care any problems on board unforeseen problems'; the capability is mandatory (A9.15 rule stands); the stated purpose reads as an on-board contingency input - recorded for the owner, no rule changed"
+  },
+  {
+   "statement": "indigenous content: >60% statement and a more specific minimum 75% project target with subsystem targets",
+   "result": "CONFIRMED",
+   "clause_ids": [
+    "RFP-P18-03",
+    "RFP-P19-05"
+   ],
+   "note": "the subsystem table reads 'Space Qualified Thruster' >80%, 'Intake system' >80%, 'Compressor and Storage' >60%, 'Power Supply Electronics' >70%"
+  },
+  {
+   "statement": "single-point failure for electronics + redundancy at electronics and sensor level",
+   "result": "CONFIRMED",
+   "clause_ids": [
+    "RFP-P18-09",
+    "RFP-P18-02"
+   ]
+  },
+  {
+   "statement": "3-year mission, 'Ignition Time' more than 15,000 h",
+   "result": "CONFIRMED",
+   "clause_ids": [
+    "RFP-P19-01"
+   ],
+   "note": "mission life printed as '3 years (Approx 26000 hrs)'"
+  },
+  {
+   "statement": "< 1.5 kW, < 40 kg",
+   "result": "CONFIRMED",
+   "clause_ids": [
+    "RFP-P18-10",
+    "RFP-P18-11"
+   ],
+   "note": "mass not stated as wet or dry in the RFP"
+  },
+  {
+   "statement": "Hall preferred",
+   "result": "CONFIRMED",
+   "clause_ids": [
+    "RFP-P18-07"
+   ]
+  }
+ ],
+ "requirements_to_check_against_rvm": [
+  {
+   "clause_id": "RFP-P18-12",
+   "summary": "MIL-1553B interface to the satellite onboard computer + discrete thruster interface + hardware drivers inside the propulsion system"
+  },
+  {
+   "clause_id": "RFP-P19-04",
+   "summary": "ENTEST: launch vibration/shock (PSLV/SSLV or DRDO-decided LV at PDR), AO erosion, radiation, thermal, ThermoVac for 3 years"
+  },
+  {
+   "clause_id": "RFP-P19-06",
+   "summary": "test approach: AO-beam coating/erosion-yield tests; rarefied-gas generation at prescribed mg/s and velocity for intake erosion; EM/QM force tests with variable intake mg/s, Isp, total-system efficiency"
+  },
+  {
+   "clause_id": "RFP-P20-03",
+   "summary": "exit criterion: qualified electric thruster with O and N2 as propellant at milestone 4"
+  },
+  {
+   "clause_id": "RFP-P20-06",
+   "summary": "milestone 3: EM thruster + PSE demonstrated with storage input (not intake)"
+  },
+  {
+   "clause_id": "RFP-P30-01",
+   "summary": "micro-newton-level thrust measurement capability (evaluation criterion)"
+  }
+ ],
+ "ag_15": "the official RFP is registered with immutable identity (sha256); RVM re-basing against these clauses is the next AG-15 step (A9.16 step 3, after the step-1 RVM changes land)",
+ "rvm_mapping": {
+  "source": "docs/requirements/rvm_a9/rvm_a9_v1.json rfp_rebase (rvm_a9_rfp_rebase_v1)",
+  "regenerate": "python docs/requirements/rvm_a9/build_rvm_a9.py && python docs/requirements/rfp_official/rfp_clauses_v1.py",
+  "rule": "every RVM row cites the RFP clause id(s) it derives from or is labelled DERIVED_PROJECT_REQUIREMENT / OWNER_ALLOCATION; every registered clause maps to at least one row or is a recorded programmatic item; statuses unchanged by the re-base (rvm_rules; no PASS without determining evidence, A9.13 S6.22); requirement_frozen stays false on RFP rows until the owner closes AG-15",
+  "ag_15_status": "OPEN - RFP registered by hash with verbatim transcription and the RVM re-based; closure is the owner's (not declared here)",
+  "clauses_sha256": "fd51a951a1d06ea8bebd39416147686aedb1f596170fb81b6583f4564148a8aa",
+  "clauses": [
+   {
+    "clause_id": "RFP-P16-01",
+    "rvm_rows": [
+     "RVM-21"
+    ],
+    "related_rvm_rows": [
+     "RVM-08",
+     "RVM-25"
+    ]
+   },
+   {
+    "clause_id": "RFP-P16-02",
+    "rvm_rows": [
+     "RVM-08",
+     "RVM-10"
+    ],
+    "related_rvm_rows": [
+     "RVM-29"
+    ]
+   },
+   {
+    "clause_id": "RFP-P17-01",
+    "rvm_rows": [
+     "RVM-25"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P17-02",
+    "rvm_rows": [
+     "RVM-09",
+     "RVM-16"
+    ],
+    "related_rvm_rows": [
+     "RVM-08",
+     "RVM-22"
+    ]
+   },
+   {
+    "clause_id": "RFP-P17-03",
+    "rvm_rows": [
+     "RVM-08"
+    ],
+    "related_rvm_rows": [
+     "RVM-01"
+    ]
+   },
+   {
+    "clause_id": "RFP-P17-04",
+    "rvm_rows": [
+     "RVM-08"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P17-05",
+    "rvm_rows": [
+     "RVM-09",
+     "RVM-10",
+     "RVM-29"
+    ],
+    "related_rvm_rows": [
+     "RVM-15",
+     "RVM-28"
+    ]
+   },
+   {
+    "clause_id": "RFP-P18-01",
+    "rvm_rows": [
+     "RVM-04",
+     "RVM-20"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P18-02",
+    "rvm_rows": [
+     "RVM-19"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P18-03",
+    "rvm_rows": [
+     "RVM-18"
+    ],
+    "related_rvm_rows": [],
+    "partial_programmatic": "items b) (technical-evaluation presentation) and c) (consortium agreement proof) are programmatic bid items; item a) (indigenous content > 60 %) is mapped to RVM-18"
+   },
+   {
+    "clause_id": "RFP-P18-04",
+    "rvm_rows": [
+     "RVM-01"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P18-05",
+    "rvm_rows": [
+     "RVM-01"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P18-06",
+    "rvm_rows": [
+     "RVM-02",
+     "RVM-03"
+    ],
+    "related_rvm_rows": [
+     "RVM-15"
+    ]
+   },
+   {
+    "clause_id": "RFP-P18-07",
+    "rvm_rows": [
+     "RVM-11"
+    ],
+    "related_rvm_rows": [
+     "RVM-28"
+    ]
+   },
+   {
+    "clause_id": "RFP-P18-08",
+    "rvm_rows": [
+     "RVM-08",
+     "RVM-10",
+     "RVM-29"
+    ],
+    "related_rvm_rows": [
+     "RVM-28"
+    ]
+   },
+   {
+    "clause_id": "RFP-P18-09",
+    "rvm_rows": [
+     "RVM-19"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P18-10",
+    "rvm_rows": [
+     "RVM-03",
+     "RVM-04"
+    ],
+    "related_rvm_rows": [
+     "RVM-05"
+    ]
+   },
+   {
+    "clause_id": "RFP-P18-11",
+    "rvm_rows": [
+     "RVM-06"
+    ],
+    "related_rvm_rows": [
+     "RVM-07"
+    ]
+   },
+   {
+    "clause_id": "RFP-P18-12",
+    "rvm_rows": [
+     "RVM-20"
+    ],
+    "related_rvm_rows": [
+     "RVM-14"
+    ]
+   },
+   {
+    "clause_id": "RFP-P19-01",
+    "rvm_rows": [
+     "RVM-12",
+     "RVM-13"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P19-02",
+    "rvm_rows": [
+     "RVM-16",
+     "RVM-21"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P19-03",
+    "rvm_rows": [
+     "RVM-08"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P19-04",
+    "rvm_rows": [
+     "RVM-16",
+     "RVM-21"
+    ],
+    "related_rvm_rows": [
+     "RVM-17",
+     "RVM-27"
+    ]
+   },
+   {
+    "clause_id": "RFP-P19-05",
+    "rvm_rows": [
+     "RVM-18"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P19-06",
+    "rvm_rows": [
+     "RVM-16",
+     "RVM-22"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P20-01",
+    "rvm_rows": [
+     "RVM-23"
+    ],
+    "related_rvm_rows": [
+     "RVM-21"
+    ],
+    "partial_programmatic": "4.3 'The Company shall be ISO certified' is an organisational requirement carried by RVM-23"
+   },
+   {
+    "clause_id": "RFP-P20-02",
+    "rvm_rows": [
+     "RVM-22"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P20-03",
+    "rvm_rows": [
+     "RVM-24"
+    ],
+    "related_rvm_rows": [
+     "RVM-09"
+    ]
+   },
+   {
+    "clause_id": "RFP-P20-04",
+    "rvm_rows": [
+     "RVM-25"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P20-05",
+    "rvm_rows": [
+     "RVM-25"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P20-06",
+    "rvm_rows": [
+     "RVM-25"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P21-01",
+    "rvm_rows": [
+     "RVM-25"
+    ],
+    "related_rvm_rows": [
+     "RVM-24"
+    ]
+   },
+   {
+    "clause_id": "RFP-P21-02",
+    "rvm_rows": [
+     "RVM-25"
+    ],
+    "related_rvm_rows": [
+     "RVM-21"
+    ]
+   },
+   {
+    "clause_id": "RFP-P21-03",
+    "rvm_rows": [
+     "RVM-26"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P27-01",
+    "rvm_rows": [
+     "RVM-26"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P27-02",
+    "rvm_rows": [],
+    "related_rvm_rows": [
+     "RVM-16"
+    ],
+    "not_system_requirement": {
+     "class": "PROGRAMMATIC_BID_QUALIFICATION",
+     "why": "collaboration with academia / research institute on material compatibility with nascent oxygen (LoI / MoU to be produced; Part IV(B), no waivers per RFP-P21-03); a bid-qualification item, related technical row RVM-16"
+    }
+   },
+   {
+    "clause_id": "RFP-P30-01",
+    "rvm_rows": [
+     "RVM-26"
+    ],
+    "related_rvm_rows": []
+   }
+  ],
+  "rows_not_from_rfp": [
+   {
+    "rvm_row": "RVM-05",
+    "origin": "OWNER_ALLOCATION",
+    "related_clauses": [
+     "RFP-P18-10"
+    ],
+    "title": "Internal ~1.35 kW design allocation (row 109)"
+   },
+   {
+    "rvm_row": "RVM-07",
+    "origin": "OWNER_ALLOCATION",
+    "related_clauses": [
+     "RFP-P18-11"
+    ],
+    "title": "Internal 34 kg and 36 kg design allocations (row 53)"
+   },
+   {
+    "rvm_row": "RVM-14",
+    "origin": "DERIVED_PROJECT_REQUIREMENT",
+    "related_clauses": [
+     "RFP-P18-12"
+    ],
+    "title": "Start-up / restart (ignition, Hall ignition with the electron source, restart, transients)"
+   },
+   {
+    "rvm_row": "RVM-15",
+    "origin": "DERIVED_PROJECT_REQUIREMENT",
+    "related_clauses": [
+     "RFP-P17-05",
+     "RFP-P18-06"
+    ],
+    "title": "Beam neutralization / electron-current capacity (ICP-45 or C1)"
+   },
+   {
+    "rvm_row": "RVM-17",
+    "origin": "DERIVED_PROJECT_REQUIREMENT",
+    "related_clauses": [
+     "RFP-P19-04"
+    ],
+    "title": "Thermal closure (>= 50 K below validated limits, 20 % heat-load margin)"
+   },
+   {
+    "rvm_row": "RVM-27",
+    "origin": "OWNER_ALLOCATION",
+    "related_clauses": [
+     "RFP-P19-04"
+    ],
+    "title": "Steady heat conducted into the spacecraft mounting interface <= 50 W (A9.12 S5.4 provisional owner allocation; 100 W contingency, 25 W stretch)"
+   },
+   {
+    "rvm_row": "RVM-28",
+    "origin": "OWNER_ALLOCATION",
+    "related_clauses": [
+     "RFP-P17-05",
+     "RFP-P18-08",
+     "RFP-P18-07"
+    ],
+    "title": "Flight thruster architecture: one Hall accelerator + one RF/ICP electron-source/neutralizer for both atmospheric gases and Xe; no conventional hollow cathode (A9.19)"
+   },
+   {
+    "rvm_row": "RVM-30",
+    "origin": "OWNER_ALLOCATION",
+    "related_clauses": [],
+    "title": "C1 (heated Xe-fed LaB6) is a ground-only laboratory reference: never flight hardware, never in the flight mass / power / Xe budgets (A9.20)"
+   }
+  ],
+  "requirements_to_check_against_rvm_resolution": [
+   {
+    "clause_id": "RFP-P18-12",
+    "rvm_rows": [
+     "RVM-20"
+    ]
+   },
+   {
+    "clause_id": "RFP-P19-04",
+    "rvm_rows": [
+     "RVM-16",
+     "RVM-21"
+    ]
+   },
+   {
+    "clause_id": "RFP-P19-06",
+    "rvm_rows": [
+     "RVM-16",
+     "RVM-22"
+    ]
+   },
+   {
+    "clause_id": "RFP-P20-03",
+    "rvm_rows": [
+     "RVM-24"
+    ]
+   },
+   {
+    "clause_id": "RFP-P20-06",
+    "rvm_rows": [
+     "RVM-25"
+    ]
+   },
+   {
+    "clause_id": "RFP-P30-01",
+    "rvm_rows": [
+     "RVM-26"
+    ]
+   }
+  ],
+  "discrepancies": [
+   {
+    "id": "DISC-01",
+    "topic": "bid due / closing date",
+    "rfp_clauses": [],
+    "disposition": "UNVERIFIED_BY_RFP_DOCUMENT - programmatic, not a system requirement (excluded candidate PRG-BID); verify on the DefProc tender document; CLAUDE.md is not edited here"
+   },
+   {
+    "id": "DISC-02",
+    "topic": "mass wet / dry",
+    "rfp_clauses": [
+     "RFP-P18-11"
+    ],
+    "disposition": "the wet reading is the conservative owner reading and is retained; recorded for DRDO clarification; requirement_frozen stays false"
+   },
+   {
+    "id": "DISC-03",
+    "topic": "indigenous content",
+    "rfp_clauses": [
+     "RFP-P18-03",
+     "RFP-P19-05"
+    ],
+    "disposition": "recorded for DRDO clarification (A9.14 OD12)"
+   },
+   {
+    "id": "DISC-04",
+    "topic": "mission life hours",
+    "rfp_clauses": [
+     "RFP-P19-01"
+    ],
+    "disposition": "consistent within the RFP's 'Approx'; the 26,280 h basis is conservative and retained"
+   },
+   {
+    "id": "DISC-05",
+    "topic": "'Ignition Time' label",
+    "rfp_clauses": [
+     "RFP-P19-01"
+    ],
+    "disposition": "literal wording preserved; conservative design basis pending clarification (A9.14 S8.5)"
+   },
+   {
+    "id": "DISC-06",
+    "topic": "stated purpose of the Xe input",
+    "rfp_clauses": [
+     "RFP-P17-05",
+     "RFP-P18-08"
+    ],
+    "disposition": "capability mandatory (A9.15 stands); stated purpose recorded for the owner; no rule changed"
+   },
+   {
+    "id": "DISC-07",
+    "topic": "thrust range reading",
+    "rfp_clauses": [
+     "RFP-P18-06"
+    ],
+    "disposition": "owner engineering reading retained; the RFP gives no split between sustained and capability"
+   },
+   {
+    "id": "DISC-08",
+    "topic": "ignition / restart",
+    "rfp_clauses": [],
+    "disposition": "DERIVED_PROJECT_REQUIREMENT (A9.14 S9.12 OD14)"
+   },
+   {
+    "id": "DISC-09",
+    "topic": "ENTEST values",
+    "rfp_clauses": [
+     "RFP-P19-04"
+    ],
+    "disposition": "RVM-21 carries no numeric level; levels TBD at PDR (not invented)"
+   },
+   {
+    "id": "DISC-10",
+    "topic": "test-facility / thrust-measurement capability",
+    "rfp_clauses": [
+     "RFP-P27-01",
+     "RFP-P30-01"
+    ],
+    "disposition": "new row RVM-26; the mN-level stand plan is not evidence of micro-newton capability"
+   }
+  ],
+  "n_rvm_rows": 30
+ },
+ "page_coverage": {
+  "pages_with_registered_clauses": [
+   16,
+   17,
+   18,
+   19,
+   20,
+   21,
+   27,
+   30
+  ],
+  "pages_screened_for_clauses": [
+   16,
+   17,
+   18,
+   19,
+   20,
+   21,
+   22,
+   23,
+   24,
+   25,
+   26,
+   27,
+   28,
+   29,
+   30,
+   31,
+   32,
+   33
+  ],
+  "pages_not_screened": "pages 1-15 and 34-40 were not screened for requirement-bearing clauses in this record (bid / legal / programmatic front and back matter per the document structure, not verified page by page): status UNSCREENED_PENDING_OWNER_PAGE_REVIEW of the owner-held PDF; nothing is assumed about their content",
+  "screened_out": [
+   {
+    "page": 26,
+    "section": "Part IV(B) preamble + Table B(1) notes 1-2",
+    "heading_as_read": "Firm Essential Qualification Criteria: clause-by-clause compliance philosophy; COTS catalogue / brochure",
+    "class": "PROGRAMMATIC_BID_QUALIFICATION",
+    "why_not_registered": "bid-submission format, not a system requirement",
+    "no_waiver": "RFP-P21-03 'NO Waivers shall be given for PART (IV) (B)'"
+   },
+   {
+    "page": 26,
+    "section": "Part IV(B) 1",
+    "heading_as_read": "Financial Capabilities (no negative net worth as on 31st March 2026 / last financial year; CA-certified document)",
+    "class": "PROGRAMMATIC_BID_QUALIFICATION",
+    "why_not_registered": "financial qualification of the bidder (no waiver, RFP-P21-03)",
+    "no_waiver": "RFP-P21-03 'NO Waivers shall be given for PART (IV) (B)'"
+   },
+   {
+    "page": 26,
+    "section": "Part IV(B) 2",
+    "heading_as_read": "Details on in-house expertise to handle critical technologies (subsystem/module/components/ processes): i. complete indigenous realization of an electric propulsion system (space heritage data, indigenous content >50%); ii. space grade electronics and power system; iii. vacuum technology testing system for space qualification",
+    "class": "PROGRAMMATIC_BID_QUALIFICATION",
+    "why_not_registered": "experience / heritage qualification of the bidder (no waiver, RFP-P21-03); no system requirement on the ABEP product",
+    "no_waiver": "RFP-P21-03 'NO Waivers shall be given for PART (IV) (B)'"
+   },
+   {
+    "page": 27,
+    "section": "Part IV(B) 4",
+    "heading_as_read": "Availability of Experienced Manpower (at least 1 experienced person, > 3 years: i. High energy Physics; ii. Electric Propulsion; in-house)",
+    "class": "PROGRAMMATIC_BID_QUALIFICATION",
+    "why_not_registered": "staffing qualification of the bidder (no waiver, RFP-P21-03)",
+    "no_waiver": "RFP-P21-03 'NO Waivers shall be given for PART (IV) (B)'"
+   },
+   {
+    "page": 28,
+    "section": "Part IV(C) preamble",
+    "heading_as_read": "Technical Capability Evaluation: qualify Part IV(B); maximum 100 marks, minimum 60 to qualify (Table B2 / Table-E Technical Evaluation Criteria)",
+    "class": "BID_EVALUATION_CRITERION",
+    "why_not_registered": "evaluation procedure, not a system requirement"
+   },
+   {
+    "page": 28,
+    "section": "Part IV(C) 1",
+    "heading_as_read": "Expertise in Design and Development (based on completed projects only) (21 Marks): high power electronics, space structure and thermal design, high vacuum system",
+    "class": "BID_EVALUATION_CRITERION",
+    "why_not_registered": "bidder track-record scoring"
+   },
+   {
+    "page": 28,
+    "section": "Part IV(C) 2",
+    "heading_as_read": "Initial Indigenous Content for Technologies (14 Marks): electric propulsion IC content and space grade electronics IC content (>75%: 7 marks; 50-75%: 4 marks)",
+    "class": "BID_EVALUATION_CRITERION",
+    "why_not_registered": "bidder IC scoring; the project IC requirement is RFP-P19-05 / RFP-P18-03 (RVM-18)"
+   },
+   {
+    "page": 29,
+    "section": "Part IV(C) 3",
+    "heading_as_read": "Present TRL available with industry (15 Marks; indigenous electric propulsion system TRL bands)",
+    "class": "BID_EVALUATION_CRITERION",
+    "why_not_registered": "bidder maturity scoring"
+   },
+   {
+    "page": 29,
+    "section": "Part IV(C) 4",
+    "heading_as_read": "Clarity and Quality of Submitted Proposal (25 Marks): a) idea / concept; b) sub-system details; c) qualification & test plan; d) modeling / simulation / analysis results; e) bench top prototype demonstration with test results",
+    "class": "BID_EVALUATION_CRITERION",
+    "why_not_registered": "proposal-quality scoring (DPR content), not a system requirement"
+   },
+   {
+    "page": 30,
+    "section": "Part IV(C) 5 Ultra High Vacuum Chamber",
+    "heading_as_read": "Development and Test Infrastructure (20 Marks): vacuum chamber for testing electric propulsion system (in house 10 / consortium 5 / sub-contract 0)",
+    "class": "BID_EVALUATION_CRITERION",
+    "why_not_registered": "scoring of the infrastructure already required by RFP-P27-01 i (RVM-26 related); the thrust-measurement sub-item is RFP-P30-01"
+   },
+   {
+    "page": 30,
+    "section": "Part IV(C) 6",
+    "heading_as_read": "Manpower HR Expertise (relevant to project requirement) (5 Marks): MTech or PhD in plasma physics and any mechanical engineering discipline with electric propulsion work experience",
+    "class": "BID_EVALUATION_CRITERION",
+    "why_not_registered": "staffing scoring"
+   },
+   {
+    "page": 31,
+    "section": "Part IV(C) Table B3",
+    "heading_as_read": "Performance based score matrix for DA having already awarded TDF projects (over and above the evaluation score)",
+    "class": "BID_EVALUATION_CRITERION",
+    "why_not_registered": "past-performance scoring"
+   },
+   {
+    "page": 22,
+    "section": "Detailed Project Report (pp. 22-25)",
+    "heading_as_read": "DPR template (bidder-filled: project overview, critical technologies, approach)",
+    "class": "PROGRAMMATIC_BID_QUALIFICATION",
+    "why_not_registered": "bid-form template (bidder-filled); screened from the PDF text layer only, not transcribed from the page images"
+   },
+   {
+    "page": 32,
+    "section": "Industry Profile (pp. 32-33)",
+    "heading_as_read": "industry profile / firm-type document tables",
+    "class": "PROGRAMMATIC_BID_QUALIFICATION",
+    "why_not_registered": "bid-form template; screened from the PDF text layer only, not transcribed from the page images"
+   }
+  ],
+  "rule": "every Part IV(B) item (no waivers, RFP-P21-03) is either a registered clause (3: RFP-P27-01, 5: RFP-P27-02) or screened out here as PROGRAMMATIC_BID_QUALIFICATION; Part IV(C) criteria other than 5 (thrust measurement, RFP-P30-01) are bid-evaluation scoring"
+ }
+}

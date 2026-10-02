@@ -1,0 +1,415 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_HARDWARE_PIVOT_2026_10_01_A9_14_s7_s10_owner_decisions",
+ "decided_by": "owner",
+ "date": "2026-10-01",
+ "decision": "A9_14_S7_S10_DECISIONS_RECORDED",
+ "applies_to": "groups S7-S10 (61 questions) of docs/budgets/owner_decisions/OWNER_QUESTIONS_SEQUENCED_v1.md",
+ "parents": [
+  "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json"
+ ],
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+  "sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07"
+ },
+ "decisions": {
+  "F5-OQ-01": {
+   "sequenced_no": "S7.1",
+   "status": "OWNER_DECIDED",
+   "answer": "YES_FEMM_ANALYSIS_POINTS_NOT_SELECTION",
+   "summary": "YES: AUTHORISE FEMM ANALYSIS POINTS."
+  },
+  "F5-OQ-02": {
+   "sequenced_no": "S7.2",
+   "status": "OWNER_DECIDED",
+   "answer": "SELECT_ENGINEERING_POINT_NONPERFORMANCE",
+   "summary": "SELECT AN ENGINEERING CHANNEL POINT NOW ON NON-PERFORMANCE CRITERIA."
+  },
+  "F5-OQ-03": {
+   "sequenced_no": "S7.3",
+   "status": "OWNER_DECIDED",
+   "answer": "USE_754C_NECESSARY_CEILING_PENDING_GRADE_DATA",
+   "summary": "USE 754 °C AS THE CONSERVATIVE NECESSARY CEILING FOR NOW."
+  },
+  "F5-OQ-04": {
+   "sequenced_no": "S7.4",
+   "status": "OWNER_DECIDED",
+   "answer": "ACCEPT_FREEZE_CANDIDATE_WITH_EXPLICIT_BLOCKERS",
+   "summary": "ACCEPT THE FREEZE_CANDIDATE DEFINITION AS THE LOCK-1 RELEASE BASIS."
+  },
+  "F5-OQ-05": {
+   "sequenced_no": "S7.5",
+   "status": "OWNER_DECIDED",
+   "answer": "ACCEPT_EXISTING_FEMM_FIELD_TARGET_BAND",
+   "summary": "ACCEPT THE EXISTING `r_Le <= 0.1 h` TARGET BAND FOR FEMM."
+  },
+  "F6-OQ-01": {
+   "sequenced_no": "S7.6",
+   "status": "OWNER_DECIDED",
+   "answer": "APPROVE_F6_OBJECTIVES_FAIL_CLOSED",
+   "summary": "APPROVE ALL EIGHT F6 OBJECTIVES AND FAIL-CLOSED PARETO SEMANTICS."
+  },
+  "F6-OQ-02": {
+   "sequenced_no": "S7.7",
+   "status": "OWNER_DECIDED",
+   "answer": "DRAWING_HARD_BOUNDS_BENCH_EVIDENCE_POINTS",
+   "summary": "DRAWING ENVELOPE DEFINES HARD BOUNDS; BENCH MATRIX DEFINES EVIDENCED GEOMETRIES."
+  },
+  "F6-OQ-03": {
+   "sequenced_no": "S7.8",
+   "status": "OWNER_DECIDED",
+   "answer": "MULTI_GEOMETRY_BENCH_FIRST_MODEL_AFTER_VALIDATION",
+   "summary": "USE A MULTI-GEOMETRY BENCH MATRIX FIRST."
+  },
+  "F6-OQ-04": {
+   "sequenced_no": "S7.9",
+   "status": "OWNER_DECIDED",
+   "answer": "DELTA_B_ACC_MAX_5_PERCENT_PROVISIONAL",
+   "summary": "DEFINE A 5% PROVISIONAL HALL-FIELD-DISTURBANCE LIMIT."
+  },
+  "ICPQ-03": {
+   "sequenced_no": "S8.1",
+   "status": "OWNER_DECIDED",
+   "answer": "YES_BOTH_MODULES_ON_MOVING_PLATFORM",
+   "summary": "YES. Both interchangeable downstream modules and their representative mounting hardware belong on the moving thrust platform so module/plume forces remain inside the measured system boundary."
+  },
+  "ICPQ-08": {
+   "sequenced_no": "S8.2",
+   "status": "OWNER_DECIDED",
+   "answer": "ENERGIZED_IF_RF_IMMUNE_ELSE_REGISTERED_RF_OFF_DELAY",
+   "summary": "YES. Map B(z) energized when the gaussmeter chain has demonstrated RF immunity; otherwise map immediately after RF-off using a preregistered delay whose field decay/repeatability has been characterized."
+  },
+  "ICPQ-09": {
+   "sequenced_no": "S8.3",
+   "status": "OWNER_DECIDED",
+   "answer": "PLUME_INTERCEPTION_INSIDE_SYSTEM_BOUNDARY",
+   "summary": "YES. Plume interception by the downstream ICP structure is a real system force/energy interaction. Keep it inside the boundary; do not numerically “correct it away.”"
+  },
+  "ICPQ-11": {
+   "sequenced_no": "S8.4",
+   "status": "OWNER_DECIDED",
+   "answer": "K_RF_1_5",
+   "summary": "SET `k_RF = 1.5`. Antenna-circuit voltage rating shall be at least `1.5 × V_ant,peak` at the worst measured P2 mismatch/operating point. This does not replace Paschen, creepage/clearance or combined RF+DC-stress qualification; any more stringent supplier/qualification requirement governs."
+  },
+  "OQ-VI-04": {
+   "sequenced_no": "S8.5",
+   "status": "OWNER_DECIDED",
+   "answer": "LIFE_15000H_MIN_CYCLES_FROM_MISSION_PROFILE",
+   "summary": "PROVISIONAL ICP LIFE BASIS: ≥15,000 h; CYCLES MISSION-DERIVED."
+  },
+  "MQ-01": {
+   "sequenced_no": "S8.6",
+   "status": "OWNER_DECIDED",
+   "answer": "MQ01_MEV_LEVEL",
+   "summary": "ROW-54 ALLOCATIONS ARE MEV-LEVEL BUDGETS. Equipment margin is already inside the line allocation; do not add the row-57 margin a second time to an owner MEV allocation. Actual CBE/evidence floors still override allocations when heavier."
+  },
+  "MQ-02": {
+   "sequenced_no": "S8.7",
+   "status": "OWNER_DECIDED",
+   "answer": "SYSTEM_MARGIN_20_PERCENT_REPLACES_4KG_RESERVE",
+   "summary": "THE 20% SYSTEM MARGIN REPLACES THE FIXED 4 kg RESERVE. Do not add both. With the present 24 kg pre-system-margin owner allocation, the formula gives 4.8 kg, hence 28.8 kg; if line allocations change, recalculate 20% rather than freezing 4.8 kg forever."
+  },
+  "MQ-03": {
+   "sequenced_no": "S8.8",
+   "status": "OWNER_DECIDED",
+   "answer": "REBASE_AL04_FROM_H1_CBE_NO_RESERVE_PATCH",
+   "summary": "REBASE AL-04; DO NOT PATCH ONLY THE 0.504 kg GAP. Under the MEV reading, the currently known 3.504 kg magnetic-parts floor already implies 4.2048 kg MEV, before channel/anode/body/fasteners. Use `AL-04 >= 1.20 × actual H-1 CBE` once the design exists; 4.2048 kg is only today's incomplete planning floor."
+  },
+  "MQ-04": {
+   "sequenced_no": "S8.9",
+   "status": "OWNER_DECIDED",
+   "answer": "REBASE_AL07_PPU_MIN_6KG_MEV_PLANNING_FLOOR",
+   "summary": "REBASE AL-07 FROM REAL PPU EVIDENCE. Use the present lowest 5.0 kg admissible analog as a provisional CBE floor, giving a 6.0 kg MEV planning floor under the selected margin convention. Replace it with the selected flight PPU CBE when available. Do not consume system margin to disguise an under-allocated PPU."
+  },
+  "MQ-05": {
+   "sequenced_no": "S8.10",
+   "status": "OWNER_DECIDED",
+   "answer": "AL08_FULL_XE_SYSTEM_REBASE_FROM_CBE",
+   "summary": "AL-08 INCLUDES THE COMPLETE Xe STORAGE/FLOW HARDWARE. Scope includes Xe tank, regulator, valves, plumbing, mounting and thermal hardware. The current 5.044 kg incomplete CBE floor implies 6.0528 kg MEV planning floor; quotations/design replace this value."
+  },
+  "MQ-06": {
+   "sequenced_no": "S8.11",
+   "status": "OWNER_DECIDED",
+   "answer": "SPLIT_CONTROLS_AND_HARNESS",
+   "summary": "YES, SPLIT CONTROLS AND HARNESS. Harness is its own mass line governed by the row-60 percentage rule; electronics/controls/valve drivers form a separate allocation/CBE line."
+  },
+  "MQ-07": {
+   "sequenced_no": "S8.12",
+   "status": "OWNER_DECIDED",
+   "answer": "ACCEPT_MQ07_MAPPING",
+   "summary": "ACCEPT THE PROPOSED MAPPING, clarified as: collector/bias electrode → AL-05; collector/bias supply → AL-07; RF feedthrough/coax/local match → AL-06; flight sensors/valve drivers → controls portion of AL-09; Xe mounting/thermal/plumbing → AL-08."
+  },
+  "MQ-09": {
+   "sequenced_no": "S8.13",
+   "status": "OWNER_DECIDED",
+   "answer": "LOADED_CASE_INCLUDES_RESERVE_AND_RESIDUAL",
+   "summary": "NO RESIDUAL ON TOP OF A LOADED CASE. Define each 2/5/10 kg case as total loaded Xe:"
+  },
+  "MQ-10": {
+   "sequenced_no": "S8.14",
+   "status": "OWNER_DECIDED",
+   "answer": "MASS_CLOSURE_REQUIRES_REDESIGN_NOT_MARGIN_RELAXATION",
+   "summary": "DO NOT RELAX THE MARGIN READING TO MAKE 40 kg PASS. If evidence-based mass exceeds the RFP limit, reduce actual subsystem CBE through redesign, integration or lighter qualified parts. Allocation bookkeeping cannot override real evidence."
+  },
+  "OQ-A907-01": {
+   "sequenced_no": "S8.15",
+   "status": "OWNER_DECIDED",
+   "answer": "THREE_ATTEMPTS_ONE_PLUS_TWO_RETRIES",
+   "summary": "THREE ATTEMPTS. One initial C1 ignition attempt plus at most two retries = maximum three dwells per start."
+  },
+  "OQ-A907-04": {
+   "sequenced_no": "S8.16",
+   "status": "OWNER_DECIDED",
+   "answer": "PLAIN_COPPER_BASELINE_NICLAD_CONTINGENCY",
+   "summary": "PLAIN CERAMIC-INSULATED COPPER IS THE BASELINE. Ni-clad/Kulgrid remains a contingency variant only if oxidation, supplier availability or manufacturing demands it; if used it requires measured resistance and magnetic perturbation evidence."
+  },
+  "OQ-A907-07": {
+   "sequenced_no": "S8.17",
+   "status": "OWNER_DECIDED",
+   "answer": "DEFER_FLIGHT_C1_UNTIL_SELECTED",
+   "summary": "DEFER FLIGHT C1 INTEGRATION. Do not burden the baseline flight article with C1 until C1 is actually selected as a flight fallback. Development/reference C1 work continues separately.",
+   "amended_by": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json"
+  },
+  "XA9Q-01": {
+   "sequenced_no": "S8.18",
+   "status": "OWNER_DECIDED",
+   "answer": "LOADED_XE_CASES",
+   "summary": "2/5/10 kg ARE LOADED-Xe CASES. Reserve and residual are carved out within each total loaded mass."
+  },
+  "XA9Q-03": {
+   "sequenced_no": "S8.19",
+   "status": "OWNER_DECIDED",
+   "answer": "FLOW_CLASS_ADDITIVE_INSIDE_RESERVE_BASE",
+   "summary": "YES. Keep the flow-class term additive and inside the non-reserve base until hardware evidence establishes a lower class."
+  },
+  "XA9Q-06": {
+   "sequenced_no": "S8.20",
+   "status": "OWNER_DECIDED",
+   "answer": "QUOTE_DERIVED_MEOP_AT_323K",
+   "summary": "YES, RETIRE THE 75-bar PLACEHOLDER. Request tank/regulator solutions against the 323 K volume/pressure cases. Select MEOP only from the actual design case, supplier qualification basis and applicable pressure-vessel practice."
+  },
+  "XA9Q-07": {
+   "sequenced_no": "S8.21",
+   "status": "OWNER_DECIDED",
+   "answer": "YES_XE_PROPULSION_CAPABILITY_BOTH_CONFIGURATIONS",
+   "summary": "YES, Xe CAPABILITY APPLIES TO `hall_icp_neutralizer`. The RFP requires compatibility with both ambient air and Xenon and explicitly mentions separate ambient-air and Xe propellant storage. RFP(1) This is distinct from C1: Xe remains contingency-only for the C1 electron source unless C1 is actually required.",
+   "amended_by": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json"
+  },
+  "OQ-RFQ-01": {
+   "sequenced_no": "S8.22",
+   "status": "OWNER_DECIDED",
+   "answer": "ONE_SPARE_BREAKABLE_CONSUMABLE_C1_CONDITIONAL",
+   "summary": "SPARES: one spare set of stand flexures; one spare of each breakable ICP dielectric/feedthrough item; for C1, one development unit + one spare only if the C1 campaign is activated; a sacrificial O/AO unit only where the planned test is destructive."
+  },
+  "OQ-RFQ-03": {
+   "sequenced_no": "S8.23",
+   "status": "OWNER_DECIDED",
+   "answer": "QUOTE_NOW_FREEZE_RANGE_AFTER_REFERENCE_POINT",
+   "summary": "GET INDICATIVE Xe-MFC QUOTES NOW. Request sufficient range options to cover the prospective reference/C1 envelope; freeze the range only after the actual Xe reference point is registered."
+  },
+  "OQ-RFQ-04": {
+   "sequenced_no": "S8.24",
+   "status": "OWNER_DECIDED",
+   "answer": "C1_START_FLOW_OPTIONAL_QUOTE_NOT_FROZEN",
+   "summary": "DO NOT FREEZE 0.6–0.8 mg/s AS A REQUIREMENT. Quote the second/start controller as an option capable of that provisional region, but final start/diode flow comes from the selected C1 vendor procedure and characterization."
+  },
+  "OQ-RFQ-08": {
+   "sequenced_no": "S8.25",
+   "status": "OWNER_DECIDED",
+   "answer": "YES_OPTION_B_COMPARISON_QUOTE",
+   "summary": "YES, REQUEST OPTION-B COMPLETE-STAND COMPARISON QUOTE. It is a commercial/architecture comparator, never the sole procurement path."
+  },
+  "OQ-RFQ-09": {
+   "sequenced_no": "S8.26",
+   "status": "OWNER_DECIDED",
+   "answer": "SUPPLIER_PROPOSES_MEOP_FINAL_AFTER_QUOTATIONS",
+   "summary": "LET SUPPLIERS PROPOSE MEOP AND DESIGN/PROOF FACTORS. Give them the 323 K design cases and required usable/loaded quantities; then select the basis after comparing compliant certified solutions."
+  },
+  "OQ-A910-01": {
+   "sequenced_no": "S8.27",
+   "status": "OWNER_DECIDED",
+   "answer": "UNIFY_BOTH_LEDGERS_LOADED_XE",
+   "summary": "ONE ACCOUNTING READING GOVERNS BOTH LEDGERS: LOADED Xe. The 2/5/10 kg case includes usable mission quantity, reserve and residual. Do not add residual again in the mass BOM."
+  },
+  "OQ-A910-02": {
+   "sequenced_no": "S8.28",
+   "status": "OWNER_DECIDED",
+   "answer": "ASSIGN_FROM_STAGE_MAP_AND_DQ_TABLE_AT_LOCK1",
+   "summary": "ASSIGN PRODUCING STAGE AND DECISION QUANTITY AT LOCK-1. Use the frozen A9-01 stage map and the decision-quantity consumer table. No stage assignment is inferred simply to eliminate a TBD."
+  },
+  "OQ-A910-03": {
+   "sequenced_no": "S8.29",
+   "status": "OWNER_DECIDED",
+   "answer": "PEAK_SAMPLED_BELOW_LIMIT_SUFFICIENT_PASS_NOT_FAILURE_METRIC",
+   "summary": "YES, `peak_sampled < 1500 W` MAY BE A ONE-SIDED SUFFICIENT PASS CONDITION. Only when the record satisfies the declared ≥100 kSa/s, ≥20 kHz measurement bandwidth, anti-alias filtering, synchronized channels, no saturation and total-bus-power reconstruction requirements. Since every conformant sample is below 1500 W, its 1 ms mean cannot exceed 1500 W. Conversely, `peak_sampled >=1500 W` does not fail the 1 ms gate; calculate the proper 1 ms maximum."
+  },
+  "OQ-A910-05": {
+   "sequenced_no": "S8.30",
+   "status": "OWNER_DECIDED",
+   "answer": "SHAM_MATCH_EQUIVALENT_LOCAL_MATCH_AL06",
+   "summary": "YES: MATCHED SHAM MUST REPRODUCE THE LOCAL-MATCH PARASITICS. Provide mass/stiffness/thermal/service-line equivalent as necessary for force-system equivalence. Book the local matching hardware on AL-06 RF generator/matching, not AL-05."
+  },
+  "P1Q-12": {
+   "sequenced_no": "S8.31",
+   "status": "OWNER_DECIDED",
+   "answer": "YES_IP_NEU_LOCK1_ICD_INTERFACE",
+   "summary": "YES. Define the reusable IP-NEU electrical/mechanical/connector/harness interface in the LOCK-1 ICD revision. P1 may use a controlled interim harness drawing until that revision exists."
+  },
+  "P2Q-06": {
+   "sequenced_no": "S8.32",
+   "status": "OWNER_DECIDED",
+   "answer": "ZM_B_THRUST_STAND_AFTER_ZM_A_AGREEMENT",
+   "summary": "YES, USE ZM-B ON THE THRUST STAND AFTER BENCH AGREEMENT IS DEMONSTRATED. Do not route an unnecessary V/I probe line across the moving stage. ZM-A remains the bench reference and periodic/after-change cross-check."
+  },
+  "MPQ-01": {
+   "sequenced_no": "S8.33",
+   "status": "OWNER_DECIDED",
+   "answer": "C1_OPTION_C_NEW_AL_C1_MODULE_ONLY",
+   "summary": "USE OPTION (c). C1 heater/keeper/control electronics belong inside AL-07; the C1 Xe branch belongs inside AL-08; create a separate AL-C1 only for the cathode module, shield/mount and any C1-specific getter/filter. Do not invent a fixed kg allocation now: set `AL-C1 = selected C1 module CBE × 1.20` under the chosen MEV convention when C1 is actually selected.",
+   "amended_by": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json"
+  },
+  "MPQ-02": {
+   "sequenced_no": "S8.34",
+   "status": "OWNER_DECIDED",
+   "answer": "ACCEPT_MPQ02_MAPPING",
+   "summary": "ACCEPT THE PROPOSED MAPPING: ICP isolation hardware → AL-05; RF protection/sensing electronics → AL-06; anode heat-removal hardware → AL-04; ICP open-frame support/spacer → AL-10."
+  },
+  "XV2Q-01": {
+   "sequenced_no": "S8.35",
+   "status": "OWNER_DECIDED",
+   "answer": "NOT_APPLICABLE_PARENT_XA9Q07_YES",
+   "summary": "NOT APPLICABLE BECAUSE XA9Q-07 = YES. `hall_icp_neutralizer` retains the RFP-required Xe propulsion capability. It is not Xe-free. Again, this does not make Xe mandatory for C1.",
+   "amended_by": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json"
+  },
+  "XA9Q-02": {
+   "sequenced_no": "S9.1",
+   "status": "OWNER_DECIDED",
+   "answer": "THREE_DWELLS_MAX_360S",
+   "summary": "THREE DWELLS / 360 s MAXIMUM BOOKING. One attempt + two retries, each capped at 120 s. Final operating dwell may later be tightened by evidence."
+  },
+  "XA9Q-04": {
+   "sequenced_no": "S9.2",
+   "status": "OWNER_DECIDED",
+   "answer": "GROUND_XE_20_PERCENT_LOGISTICS_MARGIN",
+   "summary": "BOOK A 20% GROUND-TEST Xe LOGISTICS MARGIN. Apply it to calculated test consumption. Purges, conditioning, line-fill and known vendor procedures are booked explicitly before this margin rather than hidden within it."
+  },
+  "XA9Q-05": {
+   "sequenced_no": "S9.3",
+   "status": "OWNER_DECIDED",
+   "answer": "NO_ICP_XE_GETTER_UNLESS_REQUIRED_BY_SPEC",
+   "summary": "NO DEFAULT FILTER/GETTER FOR G-XE ICP. Add one only if the selected ICP/material/process or Xe purity specification demonstrates the need. C1 getter requirements remain separate.",
+   "amended_by": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json"
+  },
+  "M16-V3-Q-01": {
+   "sequenced_no": "S9.4",
+   "status": "OWNER_DECIDED",
+   "answer": "ACCEPT_ROLE_MAP_NAMES_FROM_STAFFING_LEDGER",
+   "summary": "ACCEPT THE PROPOSED BLOCKING-ITEM / FUNCTIONAL-ROLE / DECISION-POINT MAPPING. Do not fabricate individual engineer names. The source contains no staffing roster. Named-person assignments shall be populated from the actual project staffing ledger before the corresponding work package starts; functional-role ownership remains binding in the meantime."
+  },
+  "P1Q-17": {
+   "sequenced_no": "S9.5",
+   "status": "OWNER_DECIDED",
+   "answer": "REVERIFICATION_700V_DC_60S_TRIGGERED_ONLY",
+   "summary": "REVERIFICATION = 700 V DC / 60 s. Use a current-limited controlled DC test at representative pressure/gas, record leakage, disconnect sensitive electronics as required and apply the per-path leakage criterion. This is not a routine pre-run test: use after repair, insulation-path modification, suspected fault or other defined requalification trigger. The initial 1.05 kV qualification test remains separate. Do not attribute 700 V to an unverified ECSS clause; it is an owner development acceptance level."
+  },
+  "P2Q-10": {
+   "sequenced_no": "S9.6",
+   "status": "OWNER_DECIDED",
+   "answer": "RF_RATING_POLICY_V1_5_PI_1_25_THERMAL_1_20",
+   "summary": "USE STRESS-CLASS-SPECIFIC RF MARGINS, NOT ONE UNIVERSAL FACTOR."
+  },
+  "OD2": {
+   "sequenced_no": "S9.7",
+   "status": "OWNER_DECIDED",
+   "answer": "EVERY_REQUIRED_ENVIRONMENT_STATE_FAIL_CLOSED",
+   "summary": "USE A STATEWISE ENVELOPE QUANTIFIER. Every required state of the frozen 180–230 km mission/environment dataset must satisfy the applicable hard requirements; an orbit-average cannot conceal a statewise violation. Report worst state and orbit-average additionally."
+  },
+  "OD3": {
+   "sequenced_no": "S9.8",
+   "status": "OWNER_DECIDED",
+   "answer": "DESIGN_STATES_FROM_FROZEN_ORBIT_RESOLVED_ATMOSPHERE",
+   "summary": "ATMOSPHERE DESIGN STATES COME FROM THE VERSIONED ORBIT-RESOLVED DATASET. Do not invent a few convenient F10.7/density points manually. The design set must include the mission-relevant nominal states and physical extrema of density/species/temperature/local-time/solar activity represented in the frozen dataset, with provenance and hashes."
+  },
+  "OD5": {
+   "sequenced_no": "S9.9",
+   "status": "OWNER_DECIDED",
+   "answer": "ICP_FIRST_HALL_SECOND_MAX_3_ATTEMPTS",
+   "summary": "BASELINE ATMOSPHERIC START SEQUENCE: establish gas/plenum/feed state → set H-1 magnet state → ignite/stabilize ICP → verify electron-source/current condition → apply Hall discharge voltage → verify sustained Hall discharge. Maximum one initial attempt + two retries under registered dwell/thermal limits. A C1-selected variant uses its separately qualified heater/keeper sequence."
+  },
+  "OD6": {
+   "sequenced_no": "S9.10",
+   "status": "OWNER_DECIDED",
+   "answer": "DUAL_PROPELLANT_SEPARATE_MODES_NOT_PREMIX",
+   "summary": "“AIR + Xe” MEANS DUAL-PROPELLANT CAPABILITY, NOT A REQUIRED PREMIX. The RFP requires compatibility with ambient air in the 180–230 km operating range and with Xe, with separate storage paths. RFP(1) Treat them as separate selectable operating modes unless a later experiment intentionally studies mixing.",
+   "amended_by": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json"
+  },
+  "OD12": {
+   "sequenced_no": "S9.11",
+   "status": "OWNER_DECIDED",
+   "answer": "GATE_IC_REDUNDANCY_AND_ATOMIC_O_REQUIREMENTS",
+   "summary": "PROMOTE THE RECORDED RFP ITEMS INTO EXPLICIT COMPLIANCE GATES."
+  },
+  "OD14": {
+   "sequenced_no": "S9.12",
+   "status": "OWNER_DECIDED",
+   "answer": "ATMOSPHERIC_IGNITION_DERIVED_NOT_RFP_EXPLICIT",
+   "summary": "ATMOSPHERIC OFF-STATE IGNITION IS NOT EXPLICITLY AN RFP REQUIREMENT. Keep it as a project-derived operability/restart requirement because the flight architecture needs it, but label it `DERIVED_PROJECT_REQUIREMENT`, not `RFP_EXPLICIT`. Do not claim DRDO specified an ignition/restart clause when it did not."
+  },
+  "RVMQ-01": {
+   "sequenced_no": "S9.13",
+   "status": "OWNER_DECIDED",
+   "answer": "REBASE_ELECTRONICS_SENSOR_REDUNDANCY_NO_FULL_THRUSTER_DUPLICATION",
+   "summary": "REBASE RVM-19 ON THE OFFICIAL RFP REDUNDANCY CLAUSE. The RFP says the system must cater to single-point failure for electronics and separately calls for redundancy at electronics and sensor level. RFP(1) Therefore:"
+  },
+  "F0-OQ-01": {
+   "sequenced_no": "S10.1",
+   "status": "OWNER_DECIDED",
+   "answer": "ACCEPT_60S_10S_PORT_THRESHOLDS",
+   "summary": "ACCEPT THE PREREGISTERED THRESHOLDS. `PORT_CANDIDATE >= 60 s`; `MARGINAL >= 10 s` interpreter time for the reference workload. They are development-priority thresholds, not physics/evidence gates."
+  },
+  "F0-OQ-02": {
+   "sequenced_no": "S10.2",
+   "status": "OWNER_DECIDED",
+   "answer": "DEDICATED_BASELINE_REQUIRED_BEFORE_RUST_PERFORMANCE_ADMISSION",
+   "summary": "YES, RE-MEASURE ON A DEDICATED UNLOADED MACHINE BEFORE PERFORMANCE ADMISSION. Record CPU, OS, Python version, compiler/toolchain, thermal/power state, thread settings and workload hash. The shared-machine A9.7 result remains historical evidence, not the admission baseline."
+  },
+  "RUST-OQ-01": {
+   "sequenced_no": "S10.3",
+   "status": "OWNER_DECIDED",
+   "answer": "PYTHON_CANONICAL_FOR_FROZEN_AND_SCORE_BEARING",
+   "summary": "PYTHON REMAINS AUTHORITATIVE FOR FROZEN AND SCORE-BEARING OUTPUTS. An admitted Rust kernel may accelerate exploration, CI parity checks and non-authoritative runs, but frozen datasets, golden/reference rebuilds and score-bearing evidence must be produced or independently reproduced by the Python reference implementation."
+  },
+  "RUST-OQ-02": {
+   "sequenced_no": "S10.4",
+   "status": "OWNER_DECIDED",
+   "answer": "OPTIONAL_RUST_CI_MANDATORY_PARITY_ON_RUST_CHANGES",
+   "summary": "YES, ADD OPTIONAL RUST CI, WITH MANDATORY PARITY ON RUST CHANGES. Normal CI may remain runnable without a Rust toolchain, but when `abep_core` is built the parity suite should run. Any change to Rust kernels, bindings or numerical logic requires the full preregistered parity campaign before the kernel remains `ADMITTED`."
+  }
+ },
+ "owner_supplied_values": {
+  "k_RF": 1.5,
+  "rf_continuous_power_current_factor": 1.25,
+  "delta_B_acc_max_provisional": 0.05,
+  "curie_necessary_ceiling_degC": 754,
+  "reverification_DC_V": 700,
+  "reverification_s": 60,
+  "ignition_attempts_max": 3,
+  "dwell_booking_max_s": 360,
+  "ground_test_xe_logistics_margin": 0.2,
+  "system_margin": 0.2,
+  "AL_04_MEV_planning_floor_kg": 4.2048,
+  "AL_07_MEV_planning_floor_kg": 6.0,
+  "AL_08_MEV_planning_floor_kg": 6.0528,
+  "icp_life_basis_h_min": 15000
+ },
+ "recorder_notes": [
+  "S9.4: no engineer names exist in the repository; named assignments come from the project staffing ledger",
+  "facts cited 'RFP(1)' are owner-stated pending registration of the official RFP (AG-15)",
+  "the 'Xe contingency-only for C1' wording in S8.17/S8.21/S8.33/S8.35/S9.3/S9.10 is superseded by A9.15"
+ ],
+ "execution": {
+  "instruction": "apply in the A9.16 decision-application step",
+  "merge": "no merge to main is authorized by this addendum"
+ },
+ "immutability": "never edited after commit; later owner amendments are new addendum files"
+}

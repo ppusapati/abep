@@ -1,0 +1,163 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_HARDWARE_PIVOT_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions",
+ "decided_by": "owner",
+ "date": "2026-10-01",
+ "decision": "A9_13_S6_UPSTREAM_ARCHITECTURE_DECISIONS_RECORDED",
+ "applies_to": "group S6 of docs/budgets/owner_decisions/OWNER_QUESTIONS_SEQUENCED_v1.md (A9.7 F1/F2/F3/F4/F7-F8/F9 lane questions and UPSTREAM_ICD-Q1)",
+ "parents": [
+  "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+  "docs/decisions/OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json"
+ ],
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
+  "sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf"
+ },
+ "checkpoint_6_merge": "APPROVED in this message (one merge): A9.7 verified design synthesis + A9.8-A9.12 decision records, as PR ppusapati/abep#36; S1-S5 decisions stay text-only at that checkpoint",
+ "decisions": {
+  "F1Q-02": {
+   "sequenced_no": "S6.1",
+   "status": "OWNER_DECIDED",
+   "answer": "BUDGETING_ASSUMPTION_SOURCED_BEFORE_LOCK_1",
+   "summary": "honeycomb structure as labelled PARAMETRIC_SENSITIVITY for budgeting only (no CBE, frozen mass or structural claim); sourced buildable definition mandatory before LOCK-1"
+  },
+  "F1Q-03": {
+   "sequenced_no": "S6.2",
+   "status": "OWNER_DECIDED",
+   "answer": "AOCS_ENVELOPE_REQUIRED",
+   "summary": "0/2/5 deg sensitivity only; register the AOCS relative-wind pointing envelope first, build intake surface v2 over it, direct TPMC meanwhile, never extrapolate beyond the frozen angular domain"
+  },
+  "F2-OQ-01": {
+   "sequenced_no": "S6.3",
+   "status": "OWNER_DECIDED",
+   "answer": "PARTICULATE_DEBRIS_PROTECTION",
+   "summary": "baseline protects the compressor against intake-borne particulates, debris, released particulates; atomic O is propellant (not removed); charged-particle removal not baseline; no credit for compressor wear products (separate downstream guard if needed); quantitative acceptance (capture vs class, species transmission, conductance penalty, O recombination, capacity, AO durability, AG-12 effect) pre-registered before LOCK-1 from evidence"
+  },
+  "F2-OQ-02": {
+   "sequenced_no": "S6.4",
+   "status": "OWNER_DECIDED",
+   "answer": "CATALYTIC_NOT_BASELINE",
+   "summary": "inert/low-recombination baseline; catalytic O->O2 only as a separately labelled research/contingency variant with its own conversion, flow, qualification and H-1 map"
+  },
+  "F2-OQ-03": {
+   "sequenced_no": "S6.5",
+   "status": "OWNER_DECIDED",
+   "answer": "NO_FILTER_REFERENCE_ONLY",
+   "summary": "FC-00 analytical reference bound only, never an admissible flight architecture"
+  },
+  "F2-OQ-04": {
+   "sequenced_no": "S6.6",
+   "status": "OWNER_DECIDED",
+   "answer": "COMPRESSOR_INLET_PLUS_APP_FILTER",
+   "summary": "intake/channel array -> filter -> compressor inlet; axial location/area/thermal state remain variables; APP-FILTER added to P4 (AO exposure, erosion, recombination, retention, thermal cycling, transmission)"
+  },
+  "OQ-F3-02": {
+   "sequenced_no": "S6.7",
+   "status": "OWNER_DECIDED",
+   "answer": "EXPLICIT_HUB_RATIO",
+   "summary": "hub ratio/radius and blade span explicit design variables; zero-hub only as an analytical bound; no invented numerical bounds before shaft/bearing/structural/motor/manufacturing/pumping interfaces exist"
+  },
+  "OQ-F3-03": {
+   "sequenced_no": "S6.8",
+   "status": "OWNER_DECIDED",
+   "answer": "MODEL_AND_TEST_PARALLEL_FAIL_CLOSED",
+   "summary": "open-literature transitional-regime model now + T-1/T-2 characterization in parallel; until admitted/validated, > 0.1 Pa results are NOT_EVALUATED_OUT_OF_DOMAIN and never valid architecture points"
+  },
+  "OQ-F3-04": {
+   "sequenced_no": "S6.9",
+   "status": "OWNER_DECIDED",
+   "answer": "YES_VIA_S2_3_GATE",
+   "summary": "Al and CFRP rotors re-admitted only with an S2.3 strength basis; CFRP also laminate, directional allowables, environment basis, manufacturing/inspection, AO disposition"
+  },
+  "OQ-F4-01": {
+   "sequenced_no": "S6.10",
+   "status": "OWNER_DECIDED",
+   "answer": "SCHEDULED_BASELINE_FIXED_FALLBACK",
+   "summary": "orbit-state-scheduled plenum setpoint is the baseline (only controller-available state variables); fixed setpoint retained as degraded-mode fallback and comparison; schedule not frozen until validated domains exist"
+  },
+  "OQ-F4-02": {
+   "sequenced_no": "S6.11",
+   "status": "OWNER_DECIDED",
+   "answer": "HIGHER_PRESSURE_COMPRESSION_PRIMARY",
+   "summary": "primary direction: compressor/feed chain producing the H-1-required pressure/flow state (extend compressor regime per S6.8, measure the H-1 inlet requirement, design valve/line/isolator/distributor to the admitted feed state); <= 0.1 Pa high-conductance branch kept as sensitivity/fallback only"
+  },
+  "OQ-F4-03": {
+   "sequenced_no": "S6.12",
+   "status": "OWNER_DECIDED",
+   "answer": "YES_PROVISIONAL",
+   "summary": "2 % band, 60 s window, E0-E7, modulation cases and outputs retained as the pre-LOCK-2 characterization framework; final tolerances from measured H-1 feed sensitivity at LOCK-2; a tighter H-1 limit governs"
+  },
+  "OQ-F4-04": {
+   "sequenced_no": "S6.13",
+   "status": "OWNER_DECIDED",
+   "answer": "NO_REQUIREMENT_RELAXATION",
+   "summary": "order: performance-derived requirement (S6.21), capture within drag/mass/pointing, compressor domain/pumping/feed efficiency, scheduled setpoint; dense-state-only operation a sensitivity only if it violates S6.15; 0.38 mg/s is not a flight requirement"
+  },
+  "OQ-F4-05": {
+   "sequenced_no": "S6.14",
+   "status": "OWNER_DECIDED",
+   "answer": "ORBIT_RESOLVED_DATASET_AUTHORISED",
+   "summary": "rule-1 versioned orbit-resolved frozen atmosphere (state, density, composition, temperature, wind, solar/geomagnetic inputs, local time/orbit position, source/version, provenance/hashes); orbit-averaged dataset kept unchanged; no invented amplitude"
+  },
+  "OQ-F78-01": {
+   "sequenced_no": "S6.15",
+   "status": "OWNER_DECIDED",
+   "answer": "HARD_STATEWISE",
+   "summary": "T_available(state) - D_spacecraft(state) >= 0 at every required state 180-230 km, same-state evaluation; report statewise, worst-state and orbit-averaged margins; negative intervals only by a future owner decision"
+  },
+  "OQ-F78-02": {
+   "sequenced_no": "S6.16",
+   "status": "OWNER_DECIDED",
+   "answer": "ALL_ADMITTED_SCENARIOS",
+   "summary": "robust feasibility across every admitted Maxwell/CLL/accommodation scenario until DI-1.3; then a pre-registered measurement-to-range mapping narrows the set, full-range cases kept as sensitivities"
+  },
+  "OQ-F78-03": {
+   "sequenced_no": "S6.17",
+   "status": "OWNER_DECIDED",
+   "answer": "RIPPLE_CONSTRAINT_PARETO",
+   "summary": "hard constraints first (AG-12, AG-13, power, mass, thermal, material/life, H-1 feed-quality incl. ripple vs measured H-1 tolerance); then Pareto over worst-state margin, drag, upstream power, mass, volume, heat-rejection burden; no weighted scalar"
+  },
+  "OQ-F78-04": {
+   "sequenced_no": "S6.18",
+   "status": "OWNER_DECIDED",
+   "answer": "SOURCING_FOR_PARAMETRIC_ICD_FOR_CLOSURE",
+   "summary": "documented/public/official spacecraft geometry allowed for REFERENCE/PARAMETRIC drag studies; AG-13 closure requires the host-spacecraft ICD; until then D_spacecraft and T-D NOT_EVALUATED for freeze"
+  },
+  "UPSTREAM_ICD-Q1": {
+   "sequenced_no": "S6.19",
+   "status": "OWNER_DECIDED",
+   "answer": "SEPARATE_ELEMENT",
+   "summary": "filter is a distinct production element between IF-A1 and IF-A2 exposing species forward/reverse transmission, conductance, conversion, retained inventory, thermal load, material state, validity flags; not hidden in intake efficiency"
+  },
+  "F9-OQ-01": {
+   "sequenced_no": "S6.20",
+   "status": "OWNER_DECIDED",
+   "answer": "CARRY_SET_DEFER_REPRESENTATIVE",
+   "summary": "carry a versioned robust Pareto set; current 9 members not frozen (regenerated after S2 fixes, intake v2, filter, expanded compressor search, T-1/T-2, DI-1.3); single-point studies evaluate all members or label an engineering reference"
+  },
+  "F9-OQ-02": {
+   "sequenced_no": "S6.21",
+   "status": "OWNER_DECIDED",
+   "answer": "PERFORMANCE_DERIVED_FEED_STATE",
+   "summary": "no fixed mg/s flight gate (neither 0.38 nor ~1.3 mg/s); AG-12 = statewise feed-state sufficiency: required drag-compensation thrust from the registered drag basis -> minimum feed state (mass flow, pressure, temperature, composition, ripple quality) from the validated H-1 map within power/thermal envelope -> upstream must deliver it; NOT_EVALUATED until the H-1 map exists; 0.38-3.2 mg/s is characterization coverage only"
+  },
+  "F9-OQ-03": {
+   "sequenced_no": "S6.22",
+   "status": "OWNER_DECIDED",
+   "answer": "AG_01_15_APPROVED_DETERMINING_EVIDENCE",
+   "summary": "gates approved; closure only on determining evidence (test, validated analysis where permitted, inspected/weighed/certified configuration, official requirement documents); AG-03 via a new pre-registered held-out validation (P5-N2 v1 stays INCONCLUSIVE); AG-12 per S6.21; AG-13 per S6.15; AG-15 requires the official RFP registered with immutable provenance/hash and the RVM re-based on it; all 15 closed before FROZEN_REFERENCE_FLIGHT_ARCHITECTURE"
+  }
+ },
+ "owner_statements": {
+  "flight_flow_requirement": "0.38 mg/s and ~1.3 mg/s are not flight requirements; the delivered-flow shortfall vs 0.38 mg/s is an engineering warning, not a demonstrated requirement failure; the governing question is whether the delivered feed lets the measured H-1 produce the required 12-25 mN drag compensation within < 1.5 kW and < 40 kg",
+  "xenon": "the RFP expects ambient-air operation and Xe capability; Xe stays contingency-only for C1, while the propulsion system still needs the RFP-required Xe capability"
+ },
+ "recorder_notes": [
+  "'RFP(1)' markers cite the official RFP document the owner holds; it is not yet in the repository, so AG-15 (and any requirement re-basing) needs the document registered with provenance/hash"
+ ],
+ "execution": {
+  "instruction": "apply in the decision-application batch after checkpoint 6 merges",
+  "merge": "no further merge to main is authorized by this addendum"
+ },
+ "immutability": "never edited after commit; later owner amendments are new addendum files"
+}

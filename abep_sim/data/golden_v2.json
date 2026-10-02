@@ -1,0 +1,751 @@
+{
+ "case_roles": {
+  "accelerators": "CANONICAL",
+  "architecture_closure": "CANONICAL",
+  "atmosphere": "CANONICAL",
+  "design_point_selection": "SELECTION_RECORD",
+  "gas_path": "CANONICAL",
+  "hall": "CANONICAL",
+  "intake": "CANONICAL",
+  "mission": "CANONICAL",
+  "nonconverged_reference": "NONCONVERGED_REFERENCE / EXPECTED_NONCONVERGENCE",
+  "source_plasma": "CANONICAL"
+ },
+ "cases": {
+  "accelerators": {
+   "ecr_grids": {
+    "I_beam_A": 1.4520492236138016,
+    "P_acc_W": 1454.339124246246,
+    "P_hat": 0.6972378679706791,
+    "T_N": 0.030037295566732774,
+    "chi": 0.49415745641127895,
+    "f_cx": 0.0013404611261962683,
+    "life_h": 6278.578119732745
+   },
+   "ecr_hall": {
+    "I_beam_A": 2.0083216347745645,
+    "P_acc_W": 919.7033364636676,
+    "P_neut_W": 34.55409382409207,
+    "T_N": 0.02052742727013332,
+    "chi": 0.06227769670089554
+   },
+   "ecr_nozzle": {
+    "E_i_eV": 23.718177824690546,
+    "T_N": 0.002374598790462803,
+    "chi": 0.19814559175150254,
+    "eta_det": 0.8727207793864215,
+    "m_acc": 1.3215454051682731
+   },
+   "gas_point": {
+    "area_m2": 0.7,
+    "gaspath_domain_status": "IN_DOMAIN",
+    "gaspath_status": "CONVERGED",
+    "p_level_Pa": 0.05
+   }
+  },
+  "architecture_closure": {
+   "ext_hall_2p5kW": {
+    "A_array_m2": 8.220602282886157,
+    "A_rad_m2": 0.5058049897308248,
+    "CBE_kg": 42.94863073976071,
+    "MEV_kg": 49.88045491831906,
+    "P_bus_W": 1183.3355394537623,
+    "P_jet_W": 568.6744537159775,
+    "Q_waste_W": 400.42146975604044,
+    "T_mN": 22.31951206866866,
+    "T_over_D_sc": 1.3320650655263437,
+    "calibration": "extrapolation",
+    "closes_constraints": true,
+    "comp_rotor_qualification": "NOT_EVALUATED_MATERIAL_BASIS",
+    "comp_sizing_mode": "PARAMETRIC_SENSITIVITY",
+    "evidence_admissible": false,
+    "evidence_class": "PARAMETRIC_SENSITIVITY",
+    "extrapolation": 0.6667819824909338,
+    "feasible": false,
+    "gaspath_domain_status": "IN_DOMAIN",
+    "gaspath_status": "CONVERGED",
+    "ledger_resid": -1.921464097564328e-16,
+    "life_sys_h": 28225.44918361367,
+    "m_system_kg": 76.18638222355476,
+    "optimum_at_search_edge": "Vd",
+    "status": "PARAMETRIC_SENSITIVITY",
+    "x_L_ch": 0.2,
+    "x_Vd": 325.0,
+    "x_area": 0.7,
+    "x_p_level": 0.05,
+    "xe_kg": 5.616
+   }
+  },
+  "atmosphere": {
+   "180_high": {
+    "T": 1023.0321,
+    "V": 7800.367930842138,
+    "fN2": 0.552651509,
+    "fO": 0.42614073,
+    "fO2": 0.0212077618,
+    "n": 1.8937391855466268e+16,
+    "n_O": 1.072359648304326e+16,
+    "rho": 6.685847989999996e-10
+   },
+   "180_low": {
+    "T": 704.326843,
+    "V": 7800.367930842138,
+    "fN2": 0.583533799,
+    "fO": 0.345019955,
+    "fO2": 0.0714462464,
+    "n": 1.0272006714076902e+16,
+    "n_O": 4962324470842039.0,
+    "rho": 3.821290230000003e-10
+   },
+   "180_mean": {
+    "T": 885.035095,
+    "V": 7800.367930842138,
+    "fN2": 0.570902202,
+    "fO": 0.388265851,
+    "fO2": 0.040831947,
+    "n": 1.4398895951852732e+16,
+    "n_O": 7607172315403842.0,
+    "rho": 5.205508249999996e-10
+   },
+   "200_high": {
+    "T": 1105.59399,
+    "V": 7788.487984973157,
+    "fN2": 0.49451576,
+    "fO": 0.489438896,
+    "fO2": 0.0160453438,
+    "n": 1.1348418145860264e+16,
+    "n_O": 7120587395412869.0,
+    "rho": 3.865328610000006e-10
+   },
+   "200_low": {
+    "T": 734.870789,
+    "V": 7788.487984973157,
+    "fN2": 0.509983173,
+    "fO": 0.43508282,
+    "fO2": 0.0549340061,
+    "n": 5026421774327285.0,
+    "n_O": 2900530924953183.0,
+    "rho": 1.771228720000001e-10
+   },
+   "200_mean": {
+    "T": 949.100647,
+    "V": 7788.487984973157,
+    "fN2": 0.507574158,
+    "fO": 0.460869498,
+    "fO2": 0.0315563438,
+    "n": 8017577624932196.0,
+    "n_O": 4819492564092168.0,
+    "rho": 2.7783850199999997e-10
+   },
+   "230_high": {
+    "T": 1178.73547,
+    "V": 7770.769402868593,
+    "fN2": 0.412649571,
+    "fO": 0.57593132,
+    "fO2": 0.0114191092,
+    "n": 5973033530428823.0,
+    "n_O": 4208326527479619.5,
+    "rho": 1.9413677600000017e-10
+   },
+   "230_low": {
+    "T": 757.816406,
+    "V": 7770.769402868593,
+    "fN2": 0.395790034,
+    "fO": 0.568370003,
+    "fO2": 0.0358399632,
+    "n": 1975816360889526.2,
+    "n_O": 1382222717683939.5,
+    "rho": 6.461241260000005e-11
+   },
+   "230_mean": {
+    "T": 1005.00238,
+    "V": 7770.769402868593,
+    "fN2": 0.415167842,
+    "fO": 0.562744961,
+    "fO2": 0.0220871964,
+    "n": 3818784158842299.0,
+    "n_O": 2649727664519795.0,
+    "rho": 1.2510040200000008e-10
+   }
+  },
+  "design_point_selection": {
+   "grid_area_m2": {
+    "0": 0.6,
+    "1": 0.7,
+    "2": 0.85
+   },
+   "grid_p_level_Pa": {
+    "0": 0.02,
+    "1": 0.05,
+    "2": 0.1
+   },
+   "hall_calibration_domain_status": "RECORDED_NOT_GATING_OWNER_CONFIRMATION_REQUESTED",
+   "rule_id": "A9.18-SEL-1 FIRST_ADMISSIBLE_IN_DEFAULT_GRID_ORDER",
+   "selected": {
+    "area_m2": 0.7,
+    "p_level_Pa": 0.05
+   },
+   "visited": {
+    "A0.6_p0.02": {
+     "admissible": false,
+     "verdict": "GASPATH_MODEL_NOT_CONVERGED"
+    },
+    "A0.6_p0.05": {
+     "admissible": false,
+     "verdict": "CLOSURE_INFEASIBLE"
+    },
+    "A0.6_p0.1": {
+     "admissible": false,
+     "verdict": "CLOSURE_INFEASIBLE"
+    },
+    "A0.7_p0.02": {
+     "admissible": false,
+     "verdict": "GASPATH_MODEL_NOT_CONVERGED"
+    },
+    "A0.7_p0.05": {
+     "admissible": true,
+     "hall_calibration": "extrapolation",
+     "verdict": "ADMISSIBLE"
+    }
+   }
+  },
+  "gas_path": {
+   "A0.7_p0.05": {
+    "C_D": 2.05490760966916,
+    "P_comp_W": 26.647324036652133,
+    "comp_converged": true,
+    "comp_drag_stages": 0.0,
+    "comp_gaede_K_unclipped_min": 1.5008403873442833,
+    "comp_gaede_domain_ok": true,
+    "comp_iterations": 3.0,
+    "comp_residual": 7.385541169580066e-05,
+    "comp_rotor_qualification": "NOT_EVALUATED_MATERIAL_BASIS",
+    "comp_rotor_within_legacy_sensitivity_cap": true,
+    "comp_rpm": 9188.0,
+    "comp_sized": true,
+    "comp_sizing_mode": "PARAMETRIC_SENSITIVITY",
+    "comp_turbo_rows": 4.0,
+    "drag_mN": 12.121575812576323,
+    "eta_c": 0.643894588016098,
+    "fO2_inlet": 0.07558441870188275,
+    "fO_inlet": 0.3978164326660236,
+    "gaspath_domain_status": "IN_DOMAIN",
+    "gaspath_status": "CONVERGED",
+    "m_comp_kg": 6.667217876448296,
+    "m_intake_kg": 3.2926634999999997,
+    "mdot_air_mgps": 0.975342587489833,
+    "orifice_bracketed": true,
+    "orifice_converged": true,
+    "orifice_p_residual_rel": 2.7755575615628914e-16,
+    "p_in_Pa": 0.05000000000000002,
+    "p_target_Pa": 0.05,
+    "res_balance_residual_rel": 1.696180025882066e-17,
+    "res_converged": true,
+    "res_iterations": 21.0,
+    "res_residual": 9.53654131098305e-07
+   }
+  },
+  "hall": {
+   "air_1.0_cold": {
+    "I_d_A": 2.7483160546474252,
+    "P_d_W": 755.7869150280419,
+    "P_jet_W": 421.8272124315341,
+    "T_N": 0.017895915308925186,
+    "Te_eV": 27.507374846350267,
+    "ignited": true,
+    "n_e": 5.277915424811189e+17
+   },
+   "air_1.0_seed0.3A": {
+    "P_d_W": 939.273822582916,
+    "T_N": 0.02249602870190223,
+    "Te_eV": 28.558515885763786,
+    "n_e": 6.215323037684623e+17
+   },
+   "air_1.3_cold": {
+    "I_d_A": 4.1566190290907965,
+    "P_d_W": 1143.070232999969,
+    "P_jet_W": 640.4784102958683,
+    "T_N": 0.0269219015273902,
+    "Te_eV": 26.399478764720804,
+    "ignited": true,
+    "n_e": 8.087242057687877e+17
+   },
+   "air_1.7_cold": {
+    "I_d_A": 6.133145921116059,
+    "P_d_W": 1686.6151283069162,
+    "P_jet_W": 948.9590195747204,
+    "T_N": 0.03953463275156691,
+    "Te_eV": 26.260947663816445,
+    "ignited": true,
+    "n_e": 1.1868158056065165e+18
+   },
+   "air_1.7_hot": {
+    "I_d_A": 6.133145921116059,
+    "P_d_W": 1686.6151283069162,
+    "P_jet_W": 948.9590195747204,
+    "T_N": 0.03953463275156691,
+    "Te_eV": 26.260947663816445,
+    "ignited": true,
+    "n_e": 1.1868158056065165e+18
+   },
+   "anchor_N2": {
+    "I_beam_A": 5.30335503397884,
+    "I_d_A": 8.190465274411576,
+    "P_d_W": 2047.616318602894,
+    "P_jet_W": 1126.9629447205036,
+    "T_N": 0.05643753943958559,
+    "Te_eV": 27.90781066710457,
+    "eta_b": 0.6475035124741246,
+    "f_cx": 0.005553591444255962,
+    "n_e": 1.6813043839903447e+18,
+    "util_hall": 0.9747197890127495
+   }
+  },
+  "intake": {
+   "cll_a0.5_ld3.0": {
+    "C_D": 2.0287055227450765,
+    "eta_c": 0.85,
+    "mdot_collected": 1.2875453915810144e-06,
+    "mdot_incident": 1.514759284212958e-06
+   },
+   "cll_a0.8_ld5.0": {
+    "C_D": 2.0294339589193706,
+    "eta_c": 0.8452106137742504,
+    "mdot_collected": 1.2802906243298786e-06,
+    "mdot_incident": 1.514759284212958e-06
+   },
+   "cll_a0.95_ld10.0": {
+    "C_D": 2.0729798221146987,
+    "eta_c": 0.5154097703848545,
+    "mdot_collected": 7.807217348645272e-07,
+    "mdot_incident": 1.514759284212958e-06
+   },
+   "maxwell_a0.5_ld3.0": {
+    "C_D": 2.037674246680448,
+    "eta_c": 0.7724852750790712,
+    "mdot_collected": 1.1701292423438238e-06,
+    "mdot_incident": 1.514759284212958e-06
+   },
+   "maxwell_a0.8_ld5.0": {
+    "C_D": 2.05490760966916,
+    "eta_c": 0.643894588016098,
+    "mdot_collected": 9.753453052518622e-07,
+    "mdot_incident": 1.514759284212958e-06
+   },
+   "maxwell_a0.95_ld10.0": {
+    "C_D": 2.0822844935124616,
+    "eta_c": 0.4423086347703725,
+    "mdot_collected": 6.699911110059801e-07,
+    "mdot_incident": 1.514759284212958e-06
+   }
+  },
+  "mission": {
+   "map_T_N": {
+    "0.3": 0.0010744578140520374,
+    "0.45": 0.005005043841427461,
+    "0.6": 0.009588255455861606,
+    "0.75": 0.014331069037073284,
+    "0.9": 0.01911487977564759,
+    "1.0": 0.02231951206866866,
+    "1.15": 0.02715135209425556,
+    "1.3": 0.032013216516527054,
+    "1.5": 0.03853342419902235
+   },
+   "mission_4000h": {
+    "D_mean_mN": 17.49025565886967,
+    "P_bus_mean_W": 1014.8525957137618,
+    "P_bus_peak_W": 1059.2463855599456,
+    "T_mean_mN": 17.49025565886967,
+    "ao_fluence_m2": 5.682823007966737e+26,
+    "architecture_status": "PARAMETRIC_SENSITIVITY",
+    "evidence_admissible": false,
+    "evidence_class": "PARAMETRIC_SENSITIVITY",
+    "fired_hours": 3996.0,
+    "min_alt_km": 200.0,
+    "mission_closed": true
+   }
+  },
+  "nonconverged_reference": {
+   "design_point": {
+    "area_m2": 1.3,
+    "p_level_Pa": 0.05
+   },
+   "expectation": "EXPECTED_NONCONVERGENCE",
+   "refusal": {
+    "accelerators": {
+     "evidence_class": "MODEL_NOT_CONVERGED",
+     "gas_state": "make_gas_fn()(0.7, 'nominal')",
+     "gaspath_not_converged": "orifice_sizing",
+     "gaspath_status": "MODEL_NOT_CONVERGED"
+    },
+    "architecture_closure": {
+     "ext_hall_2p5kW": {
+      "evidence_admissible": false,
+      "evidence_class": "MODEL_NOT_CONVERGED",
+      "feasible": false,
+      "gaspath_domain_status": "OUT_OF_MODEL_DOMAIN",
+      "gaspath_not_converged": "orifice_sizing",
+      "gaspath_out_of_domain": "compressor_gaede_stage_capacity",
+      "gaspath_status": "MODEL_NOT_CONVERGED",
+      "status": "MODEL_NOT_CONVERGED"
+     }
+    },
+    "gas_path": {
+     "A0.7": {
+      "chk_compressor_feasible": false,
+      "gaspath_domain_status": "IN_DOMAIN",
+      "gaspath_not_converged": "orifice_sizing",
+      "gaspath_status": "MODEL_NOT_CONVERGED",
+      "orifice_bracketed": false
+     },
+     "A1.3": {
+      "chk_compressor_feasible": false,
+      "gaspath_domain_status": "OUT_OF_MODEL_DOMAIN",
+      "gaspath_not_converged": "orifice_sizing",
+      "gaspath_status": "MODEL_NOT_CONVERGED",
+      "orifice_bracketed": false
+     }
+    },
+    "mission": {
+     "mission_4000h": {
+      "architecture_status": "MODEL_NOT_CONVERGED",
+      "evidence_admissible": false,
+      "evidence_class": "MODEL_NOT_CONVERGED"
+     }
+    }
+   },
+   "refusal_violations": {},
+   "role": "NONCONVERGED_REFERENCE",
+   "values": {
+    "accelerators": {
+     "ecr_grids": {
+      "I_beam_A": 1.452043163906302,
+      "P_acc_W": 1454.3330671959884,
+      "P_hat": 0.6972333033900816,
+      "T_N": 0.030037090767238338,
+      "chi": 0.4941526946755445,
+      "f_cx": 0.0013404682757482728,
+      "life_h": 6278.591250951987
+     },
+     "ecr_hall": {
+      "I_beam_A": 2.0083765409180345,
+      "P_acc_W": 919.7224387999388,
+      "P_neut_W": 34.551272746708776,
+      "T_N": 0.02052791935912226,
+      "chi": 0.06227713865088882
+     },
+     "ecr_nozzle": {
+      "E_i_eV": 23.718170522072683,
+      "T_N": 0.002374577777719838,
+      "chi": 0.19814332916609192,
+      "eta_det": 0.8727207793864215,
+      "m_acc": 1.3215454051682731
+     }
+    },
+    "architecture_closure": {
+     "ext_hall_2p5kW": {
+      "A_array_m2": 12.203951586167115,
+      "A_rad_m2": 1.2650977911458057,
+      "CBE_kg": 59.66467444614005,
+      "MEV_kg": 69.70047379777797,
+      "P_bus_W": 2458.730101509519,
+      "P_jet_W": 1269.0399397826714,
+      "Q_waste_W": 753.3165347688766,
+      "T_mN": 51.2734154588626,
+      "T_over_D_sc": 1.8504512799321002,
+      "ledger_resid": 1.8495212248277082e-16,
+      "life_sys_h": 28225.44918361367,
+      "m_system_kg": 108.75311887351275,
+      "status": "MODEL_NOT_CONVERGED",
+      "x_L_ch": 0.12,
+      "x_Vd": 300.0,
+      "xe_kg": 5.616
+     }
+    },
+    "gas_path": {
+     "A0.7": {
+      "C_D": 2.05490760966916,
+      "P_comp_W": 26.647324036652133,
+      "drag_mN": 12.121575812576323,
+      "eta_c": 0.643894588016098,
+      "fO2_inlet": 0.0755667708154606,
+      "fO_inlet": 0.3978340805524458,
+      "m_comp_kg": 6.667217876448296,
+      "m_intake_kg": 3.2926634999999997,
+      "mdot_air_mgps": 0.9753425959668736,
+      "p_in_Pa": 0.04984434707818128
+     },
+     "A1.3": {
+      "C_D": 2.05490760966916,
+      "P_comp_W": 13.479186558555252,
+      "drag_mN": 22.511497937641742,
+      "eta_c": 0.643894588016098,
+      "fO2_inlet": 0.09083567225613942,
+      "fO_inlet": 0.38256517911176696,
+      "m_comp_kg": 9.5228,
+      "m_intake_kg": 6.1149465,
+      "mdot_air_mgps": 1.8113505353670512,
+      "p_in_Pa": 0.08776043454875429
+     }
+    },
+    "mission": {
+     "map_T_N": {
+      "0.3": 0.004877534833576961,
+      "0.45": 0.014552790369584224,
+      "0.6": 0.02456900707094907,
+      "0.75": 0.03455436521871355,
+      "0.9": 0.044567732032797513,
+      "1.0": 0.0512734154588626,
+      "1.15": 0.06137025539102697,
+      "1.3": 0.07148824753516594,
+      "1.5": 0.0849604887670865
+     },
+     "mission_4000h": {
+      "D_mean_mN": 28.923298954326153,
+      "P_bus_mean_W": 1693.5569982376262,
+      "P_bus_peak_W": 1770.6253966706442,
+      "T_mean_mN": 28.923298954326153,
+      "ao_fluence_m2": 5.682823007966737e+26,
+      "fired_hours": 3996.0,
+      "min_alt_km": 200.0,
+      "mission_closed": true
+     }
+    }
+   }
+  },
+  "source_plasma": {
+   "P100": {
+    "I_exit_A": 0.2879877454528326,
+    "P_iz_W": 69.36655827597872,
+    "P_wall_W": 23.932723459191877,
+    "Te_eV": 4.809217032402943,
+    "eV_per_ion": 347.2369973338961,
+    "n_e": 1.2951930546841274e+17,
+    "sustained": true,
+    "util_total": 0.06614970467117129
+   },
+   "P300": {
+    "I_exit_A": 0.9779359217038007,
+    "P_iz_W": 192.8458091965825,
+    "P_wall_W": 88.82598240367416,
+    "Te_eV": 5.25636944725051,
+    "eV_per_ion": 306.76856565134403,
+    "n_e": 3.984085162813076e+17,
+    "sustained": true,
+    "util_total": 0.20173041505661207
+   }
+  }
+ },
+ "model": "ABEP Python Physics Candidate v1.5.1 + A9.9 S2 model changes",
+ "provenance": {
+  "admissibility_criteria": [
+   "inputs accepted by every input-validation rule (no ValueError from intake surface / TPMC / gas path)",
+   "atmosphere from the frozen NRLMSIS dataset (atm_source 'NRLMSIS 2.1 frozen scenario ...'), TPMC intake model",
+   "G-03 compressor recirculation converged (comp_converged)",
+   "G-04 reservoir steady state converged (res_converged)",
+   "G-05 orifice sizing converged AND bracketed/reachable (orifice_converged, orifice_bracketed)",
+   "gaspath_status == CONVERGED",
+   "MCC-02 Gaede domain: comp_gaede_domain_ok, comp_gaede_K_unclipped_min >= 1, gaspath_domain_status == IN_DOMAIN",
+   "no unsized compressor fallback (comp_sized)",
+   "rotor inside the labelled legacy sensitivity cap (comp_rotor_within_legacy_sensitivity_cap); rotor qualification PASS or the labelled NOT_EVALUATED_MATERIAL_BASIS (S2.3: no registered rotor-strength basis exists)",
+   "close_architecture at that single gas point returns a closed design: status / evidence_class in {OK, PARAMETRIC_SENSITIVITY}, closes_constraints True, |ledger_resid| < 0.02 (gate 4)"
+  ],
+  "code_version": {
+   "abep_sim_paths_differing_from_head_at_generation": [
+    "abep_sim/design/compressor_synthesis.py",
+    "abep_sim/golden.py",
+    "abep_sim/system.py"
+   ],
+   "git_head_at_generation": "f676854606e0bfa89b378f3cd124fd62c125a806",
+   "note": "the generating code is git_head_at_generation plus the listed working-tree paths (the commit that adds this file); the golden comparison, not this record, is the reproducibility gate"
+  },
+  "decision_records": [
+   "docs/decisions/OD_2026_10_01_A9_18_GOLDEN_AND_BASELINE_OWNER_DECISIONS.md",
+   "docs/decisions/OD_2026_10_01_A9_9_S2_MODEL_CHANGE_OWNER_DECISIONS.md (S2.3, S2.4 G-03..G-05, S2.5 MCC-02)"
+  ],
+  "environment": {
+   "numpy": "2.4.4",
+   "pandas": "3.0.2",
+   "python": "3.11.15",
+   "scipy": "1.17.1"
+  },
+  "frozen_inputs_sha256": {
+   "abep_sim/data/atmosphere_msis21_v1.csv": "5e108c6e5cb7c03ed9b741233fafbc71c7813987e1ff3d0596b04c99c4a9bff7",
+   "abep_sim/data/atmosphere_msis21_v1.json": "38a6f662521a8795b28186ccab5fbb007da59a861f59fde50400e7092e181160",
+   "abep_sim/data/intake_surface_v1.csv": "62b804924d801f913420a05142d4fe62137a7619eca17ae7786da5bef005c09a",
+   "abep_sim/data/intake_surface_v1.json": "5b26b7fd60272537dd0e719a122cb874233c6dd777202ab164b159cc7215d425"
+  },
+  "full_grid_scan": [
+   {
+    "admissible": false,
+    "area": 0.6,
+    "comp_rotor_qualification": "NOT_EVALUATED_MATERIAL_BASIS",
+    "failed_checks": [
+     "g05_orifice_bracketed",
+     "g05_orifice_converged",
+     "gaspath_converged"
+    ],
+    "gaspath_domain_status": "IN_DOMAIN",
+    "gaspath_not_converged": "orifice_sizing",
+    "gaspath_status": "MODEL_NOT_CONVERGED",
+    "p_level": 0.02,
+    "reason": "failed: g05_orifice_converged,g05_orifice_bracketed,gaspath_converged",
+    "verdict": "GASPATH_MODEL_NOT_CONVERGED"
+   },
+   {
+    "admissible": false,
+    "area": 0.6,
+    "closure_status": "INFEASIBLE",
+    "comp_rotor_qualification": "NOT_EVALUATED_MATERIAL_BASIS",
+    "failed_checks": [],
+    "gaspath_domain_status": "IN_DOMAIN",
+    "gaspath_not_converged": "",
+    "gaspath_status": "CONVERGED",
+    "hall_calibration": null,
+    "hall_calibration_extrapolation": null,
+    "p_level": 0.05,
+    "reason": "no candidate satisfies constraints: mission_envelope=25",
+    "verdict": "CLOSURE_INFEASIBLE"
+   },
+   {
+    "admissible": false,
+    "area": 0.6,
+    "closure_status": "INFEASIBLE",
+    "comp_rotor_qualification": "NOT_EVALUATED_MATERIAL_BASIS",
+    "failed_checks": [],
+    "gaspath_domain_status": "IN_DOMAIN",
+    "gaspath_not_converged": "",
+    "gaspath_status": "CONVERGED",
+    "hall_calibration": null,
+    "hall_calibration_extrapolation": null,
+    "p_level": 0.1,
+    "reason": "no candidate satisfies constraints: mission_envelope=25",
+    "verdict": "CLOSURE_INFEASIBLE"
+   },
+   {
+    "admissible": false,
+    "area": 0.7,
+    "comp_rotor_qualification": "NOT_EVALUATED_MATERIAL_BASIS",
+    "failed_checks": [
+     "g05_orifice_bracketed",
+     "g05_orifice_converged",
+     "gaspath_converged"
+    ],
+    "gaspath_domain_status": "IN_DOMAIN",
+    "gaspath_not_converged": "orifice_sizing",
+    "gaspath_status": "MODEL_NOT_CONVERGED",
+    "p_level": 0.02,
+    "reason": "failed: g05_orifice_converged,g05_orifice_bracketed,gaspath_converged",
+    "verdict": "GASPATH_MODEL_NOT_CONVERGED"
+   },
+   {
+    "admissible": true,
+    "area": 0.7,
+    "closure_status": "PARAMETRIC_SENSITIVITY",
+    "comp_rotor_qualification": "NOT_EVALUATED_MATERIAL_BASIS",
+    "failed_checks": [],
+    "gaspath_domain_status": "IN_DOMAIN",
+    "gaspath_not_converged": "",
+    "gaspath_status": "CONVERGED",
+    "hall_calibration": "extrapolation",
+    "hall_calibration_extrapolation": 0.6667819824909338,
+    "p_level": 0.05,
+    "reason": "",
+    "verdict": "ADMISSIBLE"
+   },
+   {
+    "admissible": true,
+    "area": 0.7,
+    "closure_status": "PARAMETRIC_SENSITIVITY",
+    "comp_rotor_qualification": "NOT_EVALUATED_MATERIAL_BASIS",
+    "failed_checks": [],
+    "gaspath_domain_status": "IN_DOMAIN",
+    "gaspath_not_converged": "",
+    "gaspath_status": "CONVERGED",
+    "hall_calibration": "extrapolation",
+    "hall_calibration_extrapolation": 0.666816142757401,
+    "p_level": 0.1,
+    "reason": "",
+    "verdict": "ADMISSIBLE"
+   },
+   {
+    "admissible": false,
+    "area": 0.85,
+    "comp_rotor_qualification": "NOT_EVALUATED_MATERIAL_BASIS",
+    "failed_checks": [
+     "g05_orifice_bracketed",
+     "g05_orifice_converged",
+     "gaspath_converged"
+    ],
+    "gaspath_domain_status": "IN_DOMAIN",
+    "gaspath_not_converged": "orifice_sizing",
+    "gaspath_status": "MODEL_NOT_CONVERGED",
+    "p_level": 0.02,
+    "reason": "failed: g05_orifice_converged,g05_orifice_bracketed,gaspath_converged",
+    "verdict": "GASPATH_MODEL_NOT_CONVERGED"
+   },
+   {
+    "admissible": false,
+    "area": 0.85,
+    "comp_rotor_qualification": "NOT_EVALUATED_MATERIAL_BASIS",
+    "failed_checks": [
+     "g05_orifice_bracketed",
+     "g05_orifice_converged",
+     "gaspath_converged"
+    ],
+    "gaspath_domain_status": "IN_DOMAIN",
+    "gaspath_not_converged": "orifice_sizing",
+    "gaspath_status": "MODEL_NOT_CONVERGED",
+    "p_level": 0.05,
+    "reason": "failed: g05_orifice_converged,g05_orifice_bracketed,gaspath_converged",
+    "verdict": "GASPATH_MODEL_NOT_CONVERGED"
+   },
+   {
+    "admissible": true,
+    "area": 0.85,
+    "closure_status": "PARAMETRIC_SENSITIVITY",
+    "comp_rotor_qualification": "NOT_EVALUATED_MATERIAL_BASIS",
+    "failed_checks": [],
+    "gaspath_domain_status": "IN_DOMAIN",
+    "gaspath_not_converged": "",
+    "gaspath_status": "CONVERGED",
+    "hall_calibration": "extrapolation",
+    "hall_calibration_extrapolation": 0.8762461759362119,
+    "p_level": 0.1,
+    "reason": "",
+    "verdict": "ADMISSIBLE"
+   }
+  ],
+  "generator": "python -m abep_sim.golden generate",
+  "hall_calibration_domain": {
+   "basis": "docs/decisions/OD_2026_10_01_A9_18_GOLDEN_AND_BASELINE_OWNER_DECISIONS.md item 1; CLAUDE.md withdrawn list",
+   "criterion": "0-D Hall calibration envelope (archengine.CALIBRATION['hall'], calibration_status)",
+   "statement": "The 0-D Hall closure and its calibration envelope are withdrawn (CLAUDE.md 'Superseded / withdrawn': all absolute Hall results of the 0-D closure, incl. the Marchioni calibration on an invented geometry). This golden is a reproducibility reference of a converged numerical state, not physics evidence, so the withdrawn envelope is not treated as part of the 'registered model domain' of A9.18 item 1 for golden purposes. The selected point carries calibration = 'extrapolation' (worst relative excursion recorded in cases.architecture_closure and in the grid scan); every closed point of the default grid is an extrapolation (provenance.full_grid_scan). If the owner rules the envelope part of the registered domain, SELECTION_RULE finds no admissible point and the golden must be re-decided; it is never re-picked silently.",
+   "status": "RECORDED_NOT_GATING_OWNER_CONFIRMATION_REQUESTED"
+  },
+  "owner_decision": "A9.18 GOLDEN = NEW_ADMISSIBLE_CONVERGED_GOLDEN; RETAIN_OLD_AS_NONCONVERGED_REGRESSION_REFERENCE",
+  "previous_design_point": {
+   "area_m2": 1.3,
+   "p_level_Pa": 0.05,
+   "status": "MODEL_NOT_CONVERGED (orifice setpoint unbracketed; Gaede OUT_OF_MODEL_DOMAIN)"
+  },
+  "previous_golden": {
+   "file": "abep_sim/data/golden_v1.json",
+   "sha256": "1f7fbb626f79e38d743bf69516e9ea62b8ddef2ff2726d2f0fd4f4df6b377fb8",
+   "status": "retained unchanged as history; its gas-path-dependent values are carried verbatim in cases.nonconverged_reference.values"
+  },
+  "quotability": "historical 0-D / withdrawn-Hall benchmarks (CLAUDE.md 'Superseded / withdrawn'): reproducibility references only; absolute values are not quotable",
+  "rotor_qualification_label": "comp_rotor_qualification = NOT_EVALUATED_MATERIAL_BASIS, comp_sizing_mode = PARAMETRIC_SENSITIVITY, architecture status / evidence_class = PARAMETRIC_SENSITIVITY, feasible False. A9.9 S2.3 allows a rotor to be explored as PARAMETRIC_SENSITIVITY while no rotor-strength basis is registered; it forbids only a qualified rotor_ok = true. The golden checks reproducibility of a converged numerical state, not qualification, so it carries this labelled state; it is not design evidence and not a qualified rotor.",
+  "selected_design_point": {
+   "area_m2": 0.7,
+   "p_level_Pa": 0.05
+  },
+  "selection_rule": {
+   "fixed_scenario": "unchanged from golden_v1: architecture hall_internal+hall+lab6_xe, DesignConstraints(P_bus_max 2500 W), Spacecraft(bus_frontal_m2=0.10, pointing_sigma_deg=0.5), size_arrays, mission_envelope (margin 1.0); gas state make_gas_fn() defaults (alpha 0.8, L/d 5, 200 km, mean solar, frozen NRLMSIS + frozen TPMC surface, CompressorParams(ratio=2000), p_target = p_level)",
+   "id": "A9.18-SEL-1 FIRST_ADMISSIBLE_IN_DEFAULT_GRID_ORDER",
+   "neutrality": "The grid and its order are fixed by archengine.close_architecture before any result is seen; the rule reads only pass/fail admissibility verdicts, never a performance value, so it is neither a performance optimum nor tuned to reproduce golden_v1. Cross-check (not used for the choice): the declared alternative 'admissible point closest to the golden_v1 point (1.3 m2, 0.05 Pa), same p_level first, then smallest |delta area|' selects the same point (0.7 m2, 0.05 Pa).",
+   "rule": "Walk the default close_architecture gas grid (DEFAULT_GAS_GRID: area [0.6, 0.7, 0.85] m2 x p_level [0.02, 0.05, 0.1] Pa) in the solver's own loop order (area ascending outer, p_level ascending inner) and take the FIRST point that is admissible (ADMISSIBILITY_CRITERIA). Nothing else (thrust, mass, power, T/D, closeness to golden_v1 numbers) enters the choice."
+  }
+ },
+ "version": "golden_v2"
+}

@@ -92,8 +92,8 @@ Roll-up: {"execution_states": {"BLOCKED": 20, "SUPERSEDED_FOR_PRIMARY_LINE": 1},
 * now exists [REQUIREMENT_MATRIX]: `docs/requirements/rvm_a9/rvm_a9_v1.json` RVM-01, RVM-08, RVM-09 - altitude envelope, atmospheric propellant, nascent O
 * evidence: none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware
 * contributing blockers: OWNER_QUESTION OD2 (TBD_OWNER); OWNER_QUESTION OD3 (TBD_OWNER)
-* RVM: RVM-01 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-08 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-09 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}
-* lane fo_a9_6_rvm: requirement rows RVM-01, RVM-08, RVM-09 (status per configuration in rvm_requirement_status)
+* RVM: RVM-01 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-08 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-09 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-22 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}
+* lane fo_a9_6_rvm: requirement rows RVM-01, RVM-08, RVM-09, RVM-22 (status per configuration in rvm_requirement_status)
 
 ### Row 2: filter (BLOCKED)
 
@@ -137,7 +137,7 @@ Roll-up: {"execution_states": {"BLOCKED": 20, "SUPERSEDED_FOR_PRIMARY_LINE": 1},
 * now exists [REQUIREMENT_MATRIX]: `docs/requirements/rvm_a9/rvm_a9_v1.json` RVM-06, RVM-07, RVM-10, RVM-13 - wet mass, internal allocations, Xe capability, mission-life basis
 * evidence: none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware
 * contributing blockers: OWNER_QUESTION XA9Q-07 (TBD_OWNER); OWNER_QUESTION XA9Q-01 (TBD_OWNER); OWNER_QUESTION XA9Q-06 (TBD_OWNER); OWNER_QUESTION OD6 (TBD_OWNER); VENDOR_QUOTE GAS-L08 (QUOTATION_ONLY (LATER); no purchase order)
-* RVM: RVM-06 {"hall_icp_neutralizer": "INCOMPLETE_EVIDENCE", "hall_c1_reference": "INCOMPLETE_EVIDENCE"}; RVM-07 {"hall_icp_neutralizer": "INCOMPLETE_EVIDENCE", "hall_c1_reference": "INCOMPLETE_EVIDENCE"}; RVM-10 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-13 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}
+* RVM: RVM-06 {"hall_icp_neutralizer": "INCOMPLETE_EVIDENCE", "hall_c1_reference": "NOT_EVALUATED"}; RVM-07 {"hall_icp_neutralizer": "INCOMPLETE_EVIDENCE", "hall_c1_reference": "NOT_EVALUATED"}; RVM-10 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-13 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}
 * lane fo_a9_6_mass_power_integration: Xe hardware in both configurations (row 6); XA9Q-07 OPEN
 * lane fo_a9_6_xe_accounting: tank volume per design case at 323 K under both RA-CASE readings (USABLE reading adds the residual: loaded x 1.02); totals REFUSED; no readiness change
 * lane fo_a9_6_rfq_completion: Xe tank quote lines (LATER)
@@ -177,10 +177,10 @@ Roll-up: {"execution_states": {"BLOCKED": 20, "SUPERSEDED_FOR_PRIMARY_LINE": 1},
 * now exists [REQUIREMENT_MATRIX]: `docs/requirements/rvm_a9/rvm_a9_v1.json` RVM-02, RVM-03, RVM-11, RVM-12 - 12 mN, 25 mN, Hall preference, firing hours
 * evidence: none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware
 * contributing blockers: OWNER_QUESTION OQ-RFQV2-10 (TBD_OWNER); OWNER_QUESTION P1Q-07 (TBD_OWNER); P1_MEASUREMENT P1-M-14 (NOT_RUN (plan only; nothing measured))
-* RVM: RVM-01 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-02 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-03 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-08 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-09 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-11 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-12 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-13 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}
+* RVM: RVM-01 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-02 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-03 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-08 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-09 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-11 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-12 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-13 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-22 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-24 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-26 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}
 * lane fo_a9_6_p1_workflow_completion: H-1 Hall-on only in P1-S6/S7 on Ar, engineering-only
 * lane fo_a9_6_mass_power_integration: anode material OPEN, 316L rejected as baseline; heat-removal line MPV2-N03
-* lane fo_a9_6_rvm: requirement rows RVM-01, RVM-02, RVM-03, RVM-08, RVM-09, RVM-11, RVM-12, RVM-13 (status per configuration in rvm_requirement_status)
+* lane fo_a9_6_rvm: requirement rows RVM-01, RVM-02, RVM-03, RVM-08, RVM-09, RVM-11, RVM-12, RVM-13, RVM-22, RVM-24, RVM-26 (status per configuration in rvm_requirement_status)
 
 ### Row 10: magnetic_circuit (BLOCKED)
 
@@ -205,7 +205,7 @@ Roll-up: {"execution_states": {"BLOCKED": 20, "SUPERSEDED_FOR_PRIMARY_LINE": 1},
 * A9.2 statuses: C1 conventional reference = CONTROL_FALLBACK
 * contributing blockers: OWNER_QUESTION P1Q-07 (TBD_OWNER); OWNER_QUESTION MPQ-01 (TBD_OWNER); OWNER_QUESTION OQ-A907-07 (TBD_OWNER); OWNER_QUESTION OQ-A907-01 (TBD_OWNER); OWNER_QUESTION OQ-RFQ-04 (TBD_OWNER); VENDOR_QUOTE RFQ2-HALLEL-R20 (OPEN_SPECIFICATION (supplier / evidence input))
 * RVM: RVM-12 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-13 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-14 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-15 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-16 {"hall_icp_neutralizer": "INCOMPLETE_EVIDENCE", "hall_c1_reference": "INCOMPLETE_EVIDENCE"}
-* lane fo_a9_6_p1_workflow_completion: C1 disconnected in P1-S6; stays CONTROL_FALLBACK
+* lane fo_a9_6_p1_workflow_completion: C1 disconnected or not installed in P1-S6; C1 = GROUND_ONLY_LAB_EQUIPMENT (A9.20), no hollow cathode in flight (A9.19)
 * lane fo_a9_6_mass_power_integration: C1 line AL-C1 without owner allocation (MPQ-01); hall_c1_reference column only
 * lane fo_a9_6_xe_accounting: C1 remains CONTROL_FALLBACK: every C1 Xe phase a separate line; not present in the ICP configuration
 * lane fo_a9_6_rfq_completion: C1 cathode + keeper/heater supplies (LATER)
@@ -219,16 +219,16 @@ Roll-up: {"execution_states": {"BLOCKED": 20, "SUPERSEDED_FOR_PRIMARY_LINE": 1},
 * now exists [REQUIREMENT_MATRIX]: `docs/requirements/rvm_a9/rvm_a9_v1.json` RVM-04, RVM-05, RVM-19 - full bus < 1.5 kW, 1.35 kW allocation, no-SPF statement
 * evidence: none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware
 * contributing blockers: VENDOR_QUOTE HE-L06 (QUOTATION_ONLY (LATER); no purchase order); VENDOR_QUOTE RFQ2-HALLEL-R06 (OPEN_SPECIFICATION (supplier / evidence input)); OWNER_QUESTION MQ-04 (TBD_OWNER); OWNER_QUESTION RVMQ-01 (TBD_OWNER); BUS_ITEM_OPEN A902-21 (OPEN)
-* RVM: RVM-02 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-03 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-04 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-05 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-06 {"hall_icp_neutralizer": "INCOMPLETE_EVIDENCE", "hall_c1_reference": "INCOMPLETE_EVIDENCE"}; RVM-07 {"hall_icp_neutralizer": "INCOMPLETE_EVIDENCE", "hall_c1_reference": "INCOMPLETE_EVIDENCE"}; RVM-14 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-19 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}
+* RVM: RVM-02 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-03 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-04 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-05 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-06 {"hall_icp_neutralizer": "INCOMPLETE_EVIDENCE", "hall_c1_reference": "NOT_EVALUATED"}; RVM-07 {"hall_icp_neutralizer": "INCOMPLETE_EVIDENCE", "hall_c1_reference": "NOT_EVALUATED"}; RVM-14 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-19 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-20 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}
 * lane fo_a9_6_p1_workflow_completion: collector/bias supply and stand-ceiling sizing (8.33 A) for ground hardware only
 * lane fo_a9_6_mass_power_integration: flight RF source = FLIGHT_REPRESENTATIVE_DC_RF_SOURCE; RF protection line; collector bias rating TBD (I_d,max,H1 NOT_EVALUATED)
 * lane fo_a9_6_rfq_completion: laboratory discharge/magnet/collector supplies (P1), H-1 body ground-current monitor, V_anode channel and anode disconnect (A9.4 P1Q-13; P1), breadboard supplies (LATER), laboratory RF generator (P1, ground only)
-* lane fo_a9_6_rvm: requirement rows RVM-02, RVM-03, RVM-04, RVM-05, RVM-06, RVM-07, RVM-14, RVM-19 (status per configuration in rvm_requirement_status)
+* lane fo_a9_6_rvm: requirement rows RVM-02, RVM-03, RVM-04, RVM-05, RVM-06, RVM-07, RVM-14, RVM-19, RVM-20 (status per configuration in rvm_requirement_status)
 
 ### Row 13: thermal_control (BLOCKED)
 
-* now exists [FRAMEWORK]: `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json` P3-B-01, P3-B-02, P3-M-01, P3-M-02, P3-M-03 - coupled H-1 / ICP thermal framework: heat-load bound alternatives, owner margins
-* now exists [SOFTWARE]: `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json` docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py - coupled thermal network library (fail-closed on REFUSED inputs)
+* now exists [FRAMEWORK]: `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json` P3-B-01, P3-B-02, P3-M-01, P3-M-02, P3-M-03 - coupled H-1 / ICP thermal framework: heat-load bound alternatives, owner margins
+* now exists [SOFTWARE]: `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json` docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py - coupled thermal network library (fail-closed on REFUSED inputs)
 * now exists [BUDGET]: `docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json` A9B-30, MPV2-N05 - thermal-control hardware; active-cooling variant only
 * now exists [PLAN]: `docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json` P1-M-21 - temperatures recorded for the P3 model
 * now exists [REQUIREMENT_MATRIX]: `docs/requirements/rvm_a9/rvm_a9_v1.json` RVM-17 - thermal closure
@@ -236,12 +236,12 @@ Roll-up: {"execution_states": {"BLOCKED": 20, "SUPERSEDED_FOR_PRIMARY_LINE": 1},
 * A9.2 statuses: coupled H-1/ICP thermal closure = UNRESOLVED
 * blocking item RE-POINTED (P3-G-01, P3-G-02, P3-G-03, P3-G-04, P3-G-05, P3-G-06, P3-G-07, P3-K-01, P3-K-02, P3-K-03, P3-K-04, P3-K-05, P3-K-06, P3-R-01, P3-R-02, P3-R-03, P3-R-04, P3-M-04); v3 item: coupled H-1 / ICP thermal model (A9H-TH-01: Q_Hall->ICP, Q_collector, Q_RF/match, Q_plume, ICP view factors; A9.2 ICP_COUPLED_THERMAL = UNRESOLVED)
 * contributing blockers: OWNER_QUESTION P3Q-02 (TBD_OWNER); OWNER_QUESTION OQ-A907-03 (TBD_OWNER); OWNER_QUESTION OQ-A907-09 (TBD_OWNER); OWNER_QUESTION OQ-A907-10 (TBD_OWNER); OWNER_QUESTION ICPQ-10 (TBD_OWNER); OWNER_QUESTION OQ-A910-06 (TBD_OWNER); P3_INPUT P3-P2-03 (TBD_AFTER_IMPEDANCE_MAP); P3_INPUT P3-P1-07 (TBD_AFTER_EVIDENCE); P1_MEASUREMENT P1-M-21 (NOT_RUN (plan only; nothing measured))
-* RVM: RVM-17 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}
+* RVM: RVM-17 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-21 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-27 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}
 * lane fo_a9_6_p1_workflow_completion: temperatures recorded for the P3 coupled model; ICP_COUPLED_THERMAL stays UNRESOLVED
 * lane fo_a9_6_p3_coupled_thermal: coupled H-1 / ICP thermal framework exists (software); thermal closure UNRESOLVED; blocking inputs P3-G/K/R (hardware), P1/P2 data
 * lane fo_a9_6_mass_power_integration: UNRESOLVED (anode, coupled ICP); active cooling variant-only
 * lane fo_a9_6_rfq_completion: ICP material temperature data; ICP_COUPLED_THERMAL stays UNRESOLVED (no PASS); coupled thermal framework merged (docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json; inputs TBD, material limits pair XL-42)
-* lane fo_a9_6_rvm: requirement rows RVM-17 (status per configuration in rvm_requirement_status)
+* lane fo_a9_6_rvm: requirement rows RVM-17, RVM-21, RVM-27 (status per configuration in rvm_requirement_status)
 
 ### Row 14: control_fdir (BLOCKED)
 
@@ -251,9 +251,9 @@ Roll-up: {"execution_states": {"BLOCKED": 20, "SUPERSEDED_FOR_PRIMARY_LINE": 1},
 * now exists [REQUIREMENT_MATRIX]: `docs/requirements/rvm_a9/rvm_a9_v1.json` RVM-14, RVM-19 - start-up / restart, no-SPF statement
 * evidence: none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware
 * contributing blockers: VENDOR_QUOTE RF-L10 (QUOTATION_ONLY (P1_NEEDED); no purchase order); P2_MEASUREMENT RF_INTERLOCK_TRIP_THRESHOLDS (after-evidence (A9.2 rf_protection)); OWNER_QUESTION OD14 (TBD_OWNER); OWNER_QUESTION RVMQ-01 (TBD_OWNER)
-* RVM: RVM-14 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-19 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}
+* RVM: RVM-14 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-19 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-20 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}
 * lane fo_a9_6_p1_workflow_completion: RF protection / interlock functions exercised; thresholds frozen at P1-G2
-* lane fo_a9_6_rvm: requirement rows RVM-14, RVM-19 (status per configuration in rvm_requirement_status)
+* lane fo_a9_6_rvm: requirement rows RVM-14, RVM-19, RVM-20 (status per configuration in rvm_requirement_status)
 
 ### Row 15: sensors_diagnostics (BLOCKED)
 
@@ -280,11 +280,11 @@ Roll-up: {"execution_states": {"BLOCKED": 20, "SUPERSEDED_FOR_PRIMARY_LINE": 1},
 * now exists [REQUIREMENT_MATRIX]: `docs/requirements/rvm_a9/rvm_a9_v1.json` RVM-06, RVM-07 - wet mass, internal allocations
 * evidence: none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware
 * contributing blockers: P3_INPUT P3-G-01 (TBD); P3_INPUT P3-G-05 (TBD); VENDOR_QUOTE RFQ2-MECH-R06 (OPEN_SPECIFICATION (supplier / evidence input)); OWNER_QUESTION ICPQ-03 (TBD_OWNER); OWNER_QUESTION OQ-A910-05 (TBD_OWNER)
-* RVM: RVM-06 {"hall_icp_neutralizer": "INCOMPLETE_EVIDENCE", "hall_c1_reference": "INCOMPLETE_EVIDENCE"}; RVM-07 {"hall_icp_neutralizer": "INCOMPLETE_EVIDENCE", "hall_c1_reference": "INCOMPLETE_EVIDENCE"}
+* RVM: RVM-06 {"hall_icp_neutralizer": "INCOMPLETE_EVIDENCE", "hall_c1_reference": "NOT_EVALUATED"}; RVM-07 {"hall_icp_neutralizer": "INCOMPLETE_EVIDENCE", "hall_c1_reference": "NOT_EVALUATED"}; RVM-21 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-27 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}
 * lane fo_a9_6_p1_workflow_completion: KC-1 carrier provisions for a later ICP_ORIFICED_VARIANT
 * lane fo_a9_6_mass_power_integration: ICP open-frame support / spacer line MPV2-N04
 * lane fo_a9_6_rfq_completion: modular ICP carrier and supports (P1); stand/KC-1 (LATER)
-* lane fo_a9_6_rvm: requirement rows RVM-06, RVM-07 (status per configuration in rvm_requirement_status)
+* lane fo_a9_6_rvm: requirement rows RVM-06, RVM-07, RVM-21, RVM-27 (status per configuration in rvm_requirement_status)
 
 ### Row 17: preionizer_interface (SUPERSEDED_FOR_PRIMARY_LINE)
 
@@ -297,7 +297,7 @@ Roll-up: {"execution_states": {"BLOCKED": 20, "SUPERSEDED_FOR_PRIMARY_LINE": 1},
 * now exists [PLAN]: `docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json` P1-S3, P1-S4, P1-S5, P1-S7, P1-S7H - ICP ignition map (G-REUSE), electron-current sweep, stable region, ICP-45A discharge-OFF capacity, Hall-ON NEUTRALIZATION_CONSISTENCY
 * now exists [SOFTWARE]: `docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json` docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py, docs/experiments/hall_icp/p1_icp_bench/p1_campaign.py - signed I_e,cap = I_RFON - I_RFOFF and Kirchhoff admission (fail-closed)
 * now exists [FRAMEWORK]: `docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json` ZM-A, ZM-B, ZM-C - Z_antenna measurement methods
-* now exists [FRAMEWORK]: `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json` P3-B-01, P3-B-02 - ICP-43 total module heat-load bound alternatives (TBD_OWNER)
+* now exists [FRAMEWORK]: `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json` P3-B-01, P3-B-02 - ICP-43 total module heat-load bound alternatives (TBD_OWNER)
 * now exists [FRAMEWORK]: `docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json` APP-COLLECTOR - collector material comparison (material OPEN)
 * now exists [BUDGET]: `docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json` A9B-17, A9B-18, MPV2-N01 - ICP head, collector / bias electrode, isolation hardware
 * now exists [LEDGER]: `docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json` P-FL-ICP-XE - dedicated ICP Xe line; A9.6 sec. 12: m_Xe,ICP = 0 under the primary G-REUSE mode
@@ -349,7 +349,7 @@ Roll-up: {"execution_states": {"BLOCKED": 20, "SUPERSEDED_FOR_PRIMARY_LINE": 1},
 ### Row 21: h1_anode_heat_path (BLOCKED)
 
 * now exists [FRAMEWORK]: `docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json` ID-01, ID-02 - P3 <-> P4 interface (T_operating, k(T))
-* now exists [SOFTWARE]: `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json` docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py - anode heat path is a network input of the coupled model
+* now exists [SOFTWARE]: `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json` docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py - anode heat path is a network input of the coupled model
 * now exists [BUDGET]: `docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json` MPV2-N03 - H-1 anode heat-removal path hardware line
 * now exists [REQUIREMENT_MATRIX]: `docs/requirements/rvm_a9/rvm_a9_v1.json` RVM-17 - thermal closure
 * evidence: none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware
@@ -387,7 +387,7 @@ Roll-up: {"execution_states": {"BLOCKED": 20, "SUPERSEDED_FOR_PRIMARY_LINE": 1},
 | M16V4-ID-04 | consumes | docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json interface_demands[id=ID-11] | rows 18, 20, 21: framework implemented; readiness unchanged | APPLIED |
 | M16V4-ID-05 | consumes | docs/budgets/owner_decisions/owner_questions_state_v4.json (IF-V4-08) | owner-question ids used as blockers; each must be one TBD_OWNER row | APPLIED |
 | M16V4-ID-06 | provides | fo_a9_6_consolidated_verification (A9.6 sec. 18) | readiness rules R-M16V4-01..08, derive_state(), per-row blockers and the v3 -> v4 diff | OFFERED |
-| M16V4-ID-07 | provides | owner (M16-V3-Q-01) | PROPOSED blocking items, roles and latest decision points for acceptance; named engineers | AWAITING_OWNER_DECISION |
+| M16V4-ID-07 | provides | owner (M16-V3-Q-01) | PROPOSED blocking items, roles and latest decision points for acceptance; named engineers | OWNER_DECIDED (A9.14 M16-V3-Q-01: accepted; names from the staffing ledger) |
 
 ## Owner answers applied
 
@@ -401,7 +401,7 @@ Roll-up: {"execution_states": {"BLOCKED": 20, "SUPERSEDED_FOR_PRIMARY_LINE": 1},
 
 ## Open owner questions
 
-no new owner question: M16-V3-Q-01 (TBD_OWNER, state v4) is carried and covers acceptance of the v4 blocking-item selection, roles and latest decision points
+no new owner question: M16-V3-Q-01 (TBD_OWNER in state v4) is answered by A9.14 (state v5 ANSWERED_BY_A9_14)
 
 Owner-question v4 ids used as blockers: ICPQ-03, ICPQ-10, ICPQ-11, MPQ-01, MQ-04, OD12, OD14, OD2, OD3, OD6, OQ-A907-01, OQ-A907-03, OQ-A907-04, OQ-A907-05, OQ-A907-06, OQ-A907-07, OQ-A907-08, OQ-A907-09, OQ-A907-10, OQ-A910-05, OQ-A910-06, OQ-RFQ-04, OQ-RFQ-09, OQ-RFQV2-10, OQ-VI-04, P1Q-06, P1Q-07, P1Q-09, P2Q-01, P2Q-02, P2Q-03, P2Q-04, P2Q-07, P2Q-10, P3Q-01, P3Q-02, P4-OQ-01, P4-OQ-02, P4-OQ-03, P4-OQ-04, P4-OQ-05, RVMQ-01, XA9Q-01, XA9Q-03, XA9Q-06, XA9Q-07.
 

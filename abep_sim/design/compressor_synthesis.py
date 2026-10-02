@@ -38,6 +38,23 @@ value to obtain an optimum"):
     reasons. There is no scalar objective and no selected optimum.
 
 Not wired into archengine; imports only abep_sim.compressor, abep_sim.constants and abep_sim.materials (read-only).
+
+A9.13 / A9.9 owner decisions applied (A9.16 step 3 design layer; docs/decisions/OD_2026_10_01_A9_13_* json sha256
+9afaca45..., OD_2026_10_01_A9_9_* json sha256 b6010d9d...; shared rules in abep_sim/design/upstream_a9_13.py):
+  * S6.7 / OQ-F3-02: hub ratio nu = R_hub / R_tip and blade span (R_tip - R_hub) are explicit geometry variables;
+    R_tip = sqrt(A / (pi (1 - nu^2))). The zero-hub relation R = sqrt(A / pi) is only the analytical bound
+    (ZERO_HUB_ANALYTICAL_BOUND, reported apart from the Pareto front); no hub-ratio bound is invented: the searched
+    values ``HUB_RATIO_PARAMETRIC`` are a declared PARAMETRIC_SENSITIVITY coverage of the definitional domain [0, 1);
+    final bounds come from shaft / bearing, rotor-structural, motor / interface, manufacturability and pumping
+    interfaces.
+  * S6.8 / OQ-F3-03: a design touching a pressure above 0.1 Pa is NOT_EVALUATED_OUT_OF_DOMAIN (no outputs); the
+    transitional model abep_sim/compressor_transitional.py is CANDIDATE_NOT_ADMITTED and is not imported here.
+  * A9.9 S2.3 / S2.5 MCC-03 (review finding D-05) and A9.13 S6.9 / OQ-F3-04: rotor structural acceptance is granted
+    ONLY through abep_sim.rotor_strength.qualify_rotor (registered basis, yield AND ultimate). Without a registered
+    basis MODE_STRICT returns NOT_EVALUATED_MATERIAL_BASIS; the 827 MPa x 2.0 thin-ring gate survives only as the
+    labelled legacy PARAMETRIC_SENSITIVITY case of MODE_PARAMETRIC. Aluminium and CFRP re-enter only through a
+    registered basis plus an AO disposition (CFRP additionally laminate, directional allowables, environment and
+    manufacturing / inspection bases): ``material_admission``.
 """
 from __future__ import annotations
 
@@ -46,9 +63,11 @@ import math
 from dataclasses import dataclass, field
 from typing import Mapping
 
+from .. import rotor_strength as rs
 from ..compressor import DragCompressor
 from ..constants import K_B, M_SPECIES
 from ..materials import DB
+from . import upstream_a9_13 as u13
 
 SCHEMA = "f3_compressor_synthesis_v1"
 VERSION = "1.0.0"
@@ -68,6 +87,8 @@ ST_FEASIBLE = "FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS"
 ST_FEASIBLE_STRICT = "FEASIBLE_UNDER_SUPPLIED_EVIDENCE"
 ST_REJECTED = "REJECTED"
 ST_NOT_EVALUATED = "NOT_EVALUATED"
+ST_NOT_EVALUATED_OOD = u13.NOT_EVALUATED_OOD                     # A9.13 S6.8
+ST_NOT_EVALUATED_MATERIAL_BASIS = rs.Q_NOT_EVALUATED_MATERIAL_BASIS  # A9.9 S2.3 / MCC-03
 
 # rejection reasons (a design can carry several)
 R_ALLOWABLE_TBD = "ROTOR_MATERIAL_ALLOWABLE_TBD"
@@ -80,8 +101,28 @@ R_CLIP = "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY"
 R_DOMAIN_P = "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN"
 R_DOMAIN_KN = "DRAG_CHANNEL_KNUDSEN_BELOW_FREE_MOLECULAR_LIMIT"
 R_THERMAL = "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT"
+R_ROTOR_QUAL_FAIL = "ROTOR_QUALIFICATION_FAIL_REGISTERED_BASIS"
+R_ROTOR_QUAL_OOD = "ROTOR_QUALIFICATION_OUTSIDE_REGISTERED_BASIS_DOMAIN"
+R_READMISSION_RECORDS = "MATERIAL_READMISSION_RECORDS_MISSING"          # A9.13 S6.9 (Al / CFRP extra records)
 REASONS = (R_ALLOWABLE_TBD, R_STRESS, R_TIP_DOMAIN, R_INLET_DOMAIN, R_MODEL, R_NONCONV, R_CLIP, R_DOMAIN_P,
-           R_DOMAIN_KN, R_THERMAL)
+           R_DOMAIN_KN, R_THERMAL, R_ROTOR_QUAL_FAIL, R_ROTOR_QUAL_OOD, R_READMISSION_RECORDS)
+DOMAIN_REASONS = (R_INLET_DOMAIN, R_DOMAIN_P, R_DOMAIN_KN)                       # pressure above the 0.1 Pa domain
+INLET_INDEPENDENT_REASONS = (R_ALLOWABLE_TBD, R_STRESS, R_TIP_DOMAIN, R_ROTOR_QUAL_FAIL)
+
+# A9.13 S6.7: hub ratio values searched as a declared PARAMETRIC_SENSITIVITY coverage of the definitional domain
+# [0, 1) (equal spacing; NOT design bounds, none is sourced). 0 = zero-hub analytical bound (not a buildable rotor).
+HUB_RATIO_PARAMETRIC = (0.0, 0.25, 0.5, 0.75)
+HUB_ZERO_BOUND = "ZERO_HUB_ANALYTICAL_BOUND_NOT_BUILDABLE"
+HUB_PARAMETRIC = "PARAMETRIC_SENSITIVITY_HUB_RATIO_BOUNDS_TBD"
+HUB_BOUND_SOURCES = ("shaft / bearing geometry", "rotor structural analysis", "motor / interface geometry",
+                     "blade manufacturability", "pumping-performance model")
+STRESS_CASE_LEGACY = "LEGACY_PARAMETRIC_SENSITIVITY"
+STRESS_CASE_REGISTERED = "REGISTERED_BASIS_QUALIFY_ROTOR"
+# A9.13 S6.9: additional basis records for re-admitted rotor materials (beyond the registered strength basis)
+AO_DISPOSITION_KEY = "ao_disposition"
+CFRP_EXTRA_BASIS_KEYS = ("laminate_definition", "directional_allowables", "temperature_moisture_environment_basis",
+                         "manufacturing_inspection_basis", AO_DISPOSITION_KEY)
+READMITTED_MATERIALS = {"Al6061": (AO_DISPOSITION_KEY,), "CFRP": CFRP_EXTRA_BASIS_KEYS}
 
 # ----------------------------------------------------------------------------------------------------------- sources
 SOURCES = {
@@ -107,8 +148,8 @@ SOURCES = {
                 "quotation of a design-allowables handbook",
     },
     "SRC-DOWNSELECT": {
-        "citation": "repository: docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json "
-                    "(DI-1.4 compressor down-selection v1)",
+        "citation": "repository: docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json "
+                    "(DI-1.4 compressor down-selection, v2 = A9.16 regeneration; v1 kept as history)",
         "access_level": "repository",
         "note": "requirement envelope (W1 feed-state closure cases), CD-01..CD-08, EV-01..EV-20, T-1..T-9",
     },
@@ -155,8 +196,8 @@ SIZE_FOR_MAX_TURBO_ROWS = 6         # DragCompressor.size_for(max_turbo_rows=6) 
 SIZE_FOR_MAX_DRAG_STAGES = 4        # DragCompressor.size_for(max_drag_stages=4) default
 OWNER_MASS_ALLOCATION_KG = 5.5      # row 54 (allocation, not CBE)
 LI2015_INLET_DIAMETER_M = 0.5       # reconstructed, verify (R1 thread)
-# compressor_downselect_v1.json requirement_summary.A_inlet_min_m2["0.25"] (min, max): PROPOSED b = 0.25 target
-A_INLET_MIN_B025_RANGE_M2 = (0.09785329371, 0.3766950753)
+# compressor_downselect_v2.json requirement_summary.A_inlet_min_m2["0.25"] (min, max): PROPOSED b = 0.25 target
+A_INLET_MIN_B025_RANGE_M2 = (0.1128299365, 0.1137287437)   # re-pinned after the W1 S6.8 domain gate (only DC-S12-G20 closes in domain)
 
 CITED_VALUES = [
     _p("P-MOLECULAR-LIMIT", P_MOLECULAR_LIMIT_PA, "Pa",
@@ -196,7 +237,8 @@ CITED_VALUES = [
        "module's lumped compressor temperature", "SRC-MATERIALS-PY", "assumed", "UNCITED_DB_PRIOR (verify)"),
     _p("P-STRESS-SAFETY", DragCompressor.stress_safety, "-", "safety factor on the allowable (DragCompressor."
        "stress_safety code default); the flight factor is an owner/design-policy decision",
-       "SRC-COMPRESSOR-PY", "assumed", "CODE_DEFAULT_UNCITED; TBD_OWNER for flight"),
+       "SRC-COMPRESSOR-PY", "assumed", "CODE_DEFAULT_UNCITED; LEGACY_PARAMETRIC_SENSITIVITY only (A9.9 S2.3 / "
+       "OQ-F3-01: flight rotor acceptance only through a registered strength basis, rotor_strength.qualify_rotor)"),
     _p("P-RPM-SEARCH-MIN", RPM_SEARCH_MIN, "rpm", "lower end of the size_for rpm search (range(5000, ...)); used as the "
        "lower end of the tip-speed range", "SRC-COMPRESSOR-PY", "assumed", "MODULE_LIMIT"),
     _p("P-RECIRC-RTOL", RECIRC_RTOL, "-", "DragCompressor.run leak-recirculation fixed-point stopping criterion; a "
@@ -209,20 +251,50 @@ CITED_VALUES = [
        "via search-engine excerpts only); one A_turbo grid point = pi (D/2)^2", "SRC-R1-THREAD (LI2015)",
        "reconstructed", "VERIFY (first-hand text not accessed)"),
     _p("P-A-INLET-MIN-RANGE", list(A_INLET_MIN_B025_RANGE_M2), "m^2", "minimum inlet area for the PROPOSED backflow "
-       "target b = 0.25 over the 36 W1 candidate-cases, max(2S/u_ref, 4S/c_bar) (compressor_downselect CD-02); ends of "
+       "target b = 0.25 over the W1 candidate-cases (in-domain closures, A9.13 S6.8), max(2S/u_ref, 4S/c_bar) (compressor_downselect CD-02); ends of "
        "the A_turbo search range", "SRC-DOWNSELECT requirement_summary.A_inlet_min_m2['0.25']",
        "model-derived", "PROPOSED-DERIVED (from PROPOSED b and W1 inputs)"),
 ]
 
 # Materials: only those with a CITED allowable are searched (fail closed); the others are listed with the reason.
-CITED_ALLOWABLES_PA = {"Ti6Al4V": TI64_FTY_A_BASIS_PA}
+CITED_ALLOWABLES_PA = {"Ti6Al4V": TI64_FTY_A_BASIS_PA}   # legacy PARAMETRIC_SENSITIVITY stress case only (A9.9 S2.3)
 MATERIALS_EXCLUDED = {
     "Al6061": "allowable TBD: materials.DB yield 276 MPa is an uncited prior; no accessed A/B-basis source. Chiggiato "
-              "names 'high-strength aluminium alloys' for commercial rotors (alloy and temper not stated)",
+              "names 'high-strength aluminium alloys' for commercial rotors (alloy and temper not stated). Re-enters "
+              "only through a registered rotor-strength basis (rotor_strength.register_basis) plus an AO disposition "
+              "(A9.13 S6.9)",
     "CFRP": "allowable TBD (materials.DB 600 MPa uncited prior; laminate-dependent); bare CFRP wetted parts recede "
             "0.48-15.9 mm over 26,000 h at the ram AO yield (compressor_downselect CD-07); owner OD-C3 PROPOSED "
-            "metallic/coated a priori",
+            "metallic/coated a priori. Re-enters only through a registered basis plus laminate definition, directional "
+            "allowables, temperature / moisture / environment basis, manufacturing / inspection basis and AO "
+            "disposition of every exposed surface (A9.13 S6.9)",
 }
+
+
+def registered_bases_for(material: str) -> list:
+    """Registered rotor-strength bases (rotor_strength.REGISTRY) that apply to ``material`` (no transfer)."""
+    return sorted(k for k, b in rs.REGISTRY.items() if b.materials_db_key == material)
+
+
+def material_admission(material: str, extra_basis: Mapping | None = None) -> dict:
+    """Admission status of a rotor material for the design search (A9.13 S6.9, A9.9 S2.3). A handbook strength number
+    never admits a material: only a registered rotor-strength basis does, plus the S6.9 extra records for re-admitted
+    materials (Al: AO disposition; CFRP: laminate, directional allowables, environment, manufacturing / inspection,
+    AO disposition)."""
+    if material not in DB:
+        raise SynthesisInputError(f"rotor material {material!r} is not in materials.DB")
+    bases = registered_bases_for(material)
+    extra = dict(extra_basis or {})
+    missing_extra = [k for k in READMITTED_MATERIALS.get(material, ()) if not str(extra.get(k, "")).strip()]
+    if bases and not missing_extra:
+        return {"material": material, "status": "ADMITTED_VIA_REGISTERED_BASIS", "bases": bases,
+                "structural_acceptance": "rotor_strength.qualify_rotor only"}
+    if material in CITED_ALLOWABLES_PA:
+        return {"material": material, "status": STRESS_CASE_LEGACY, "bases": bases, "missing_extra": missing_extra,
+                "structural_acceptance": ST_NOT_EVALUATED_MATERIAL_BASIS,
+                "note": rs.LEGACY_SENSITIVITY_LABEL}
+    return {"material": material, "status": ST_NOT_EVALUATED_MATERIAL_BASIS, "bases": bases,
+            "missing_extra": missing_extra, "reason": MATERIALS_EXCLUDED.get(material, "no registered basis")}
 
 # --------------------------------------------------------------------------------------------- coefficient registry
 # Role of every DragCompressor field in this search. The closing test ids are compressor_downselect T-1..T-9.
@@ -233,7 +305,7 @@ FROM_INLET = "FROM_INLET_RECORD"
 FIELD_ROLES = {
     "turbo_rows": (SEARCHED, "N_turbo", "-", "T-1/T-2"),
     "turbo_area_m2": (SEARCHED, "A_turbo", "m^2", "T-2"),
-    "turbo_radius_m": (DERIVED, "R_turbo", "m", "T-2 (hub ratio TBD)"),
+    "turbo_radius_m": (DERIVED, "R_turbo (tip radius from A_turbo and hub ratio)", "m", "T-2 (hub-ratio bounds TBD)"),
     "turbo_kS": (FIXED, "turbo pumping-speed coefficient", "-", "T-2"),
     "turbo_kK": (FIXED, "turbo ln K0 coefficient per row", "-", "T-1"),
     "turbo_blade_area_frac": (FIXED, "blade area fraction (drag area, mass)", "-", "T-4/T-7"),
@@ -286,8 +358,8 @@ def coefficient_registry() -> list[dict]:
             out.append(_p(f"C-{f}", "SEARCHED", units, name, "see search_variables", "see search_variables",
                           "SEARCHED", role=role))
         elif role == DERIVED:
-            out.append(_p(f"C-{f}", "DERIVED", units, f"{name} = sqrt(A_turbo/pi): smallest outer radius whose disc "
-                          "holds the swept annulus (hub ratio 0 limit; real hub ratio TBD, closing test " + test + ")",
+            out.append(_p(f"C-{f}", "DERIVED", units, f"{name} = sqrt(A_turbo / (pi (1 - nu^2))) with hub ratio nu "
+                          "(A9.13 S6.7; nu = 0 is the zero-hub analytical bound only; closing test " + test + ")",
                           "geometry", "model-derived", "DERIVED", role=role))
         else:
             out.append(_p(f"C-{f}", "FROM_INLET", units, f"{name} = inlet record T", "inlet record",
@@ -305,8 +377,15 @@ def search_variables(grid: "SearchGrid | None" = None) -> list[dict]:
         _p("A_turbo", list(g.a_turbo_m2), "m^2", "ends: minimum inlet area range for the PROPOSED b = 0.25 target "
            "(P-A-INLET-MIN-RANGE); interior point: Li 2015 inlet area pi*0.25^2 (P-LI2015-INLET-DIAMETER, verify)",
            "SRC-DOWNSELECT CD-02; SRC-R1-THREAD", "model-derived / reconstructed", "SEARCHED (evidence-bounded range)"),
-        _p("R_turbo", "sqrt(A_turbo/pi)", "m", "derived from A_turbo (hub ratio TBD); not an independent variable",
-           "geometry", "model-derived", "DERIVED"),
+        _p("R_turbo", "sqrt(A_turbo / (pi (1 - nu^2)))", "m", "tip radius derived from A_turbo and the hub ratio nu "
+           "(A9.13 S6.7); not an independent variable", "geometry", "model-derived", "DERIVED"),
+        _p("hub_ratio", list(g.hub_ratios), "-", "hub ratio nu = R_hub / R_tip: explicit geometry variable (A9.13 "
+           "S6.7). Searched values are a declared PARAMETRIC_SENSITIVITY coverage of the definitional domain [0, 1); "
+           "nu = 0 is the zero-hub analytical bound only (not buildable). Bounds TBD from: " +
+           "; ".join(HUB_BOUND_SOURCES), "owner decision A9.13 S6.7 (no numerical bound given)", "assumed",
+           "SEARCHED (PARAMETRIC_SENSITIVITY; bounds TBD)"),
+        _p("blade_span", "R_tip (1 - nu)", "m", "turbo blade span derived from the tip radius and hub ratio "
+           "(A9.13 S6.7)", "geometry", "model-derived", "DERIVED"),
         _p("N_drag", list(g.n_drag), "-", "drag stages 0..4: DragCompressor.size_for(max_drag_stages=4) module limit",
            "SRC-COMPRESSOR-PY size_for", "assumed", "SEARCHED (module limit)"),
         _p("R_rotor", d["rotor_radius_m"], "m", "drag rotor radius: no accessed source gives a range", "SRC-COMPRESSOR-PY",
@@ -400,12 +479,17 @@ class SearchGrid:
     n_tip_speeds: int = 6
     n_drag: tuple = tuple(range(0, SIZE_FOR_MAX_DRAG_STAGES + 1))
     materials: tuple = ("Ti6Al4V",)
+    hub_ratios: tuple = HUB_RATIO_PARAMETRIC
 
     def __post_init__(self):
-        if any(m not in CITED_ALLOWABLES_PA for m in self.materials):
-            raise SynthesisInputError("search materials must have a cited allowable (CITED_ALLOWABLES_PA)")
+        for m in self.materials:
+            if m not in CITED_ALLOWABLES_PA and not registered_bases_for(m):
+                raise SynthesisInputError(f"search material {m!r} has neither a registered rotor-strength basis nor "
+                                          "the legacy cited sensitivity allowable (A9.13 S6.9 / A9.9 S2.3)")
         if any(a <= 0 for a in self.a_turbo_m2) or self.n_tip_speeds < 2:
             raise SynthesisInputError("bad grid")
+        if not self.hub_ratios or any(not (_real(h) is not None and 0.0 <= h < 1.0) for h in self.hub_ratios):
+            raise SynthesisInputError("hub ratios must be finite and in [0, 1)")
 
     def tip_speeds(self, r_turbo_m: float) -> list[float]:
         u_lo = r_turbo_m * RPM_SEARCH_MIN * 2.0 * math.pi / 60.0
@@ -416,21 +500,37 @@ class SearchGrid:
         return [u_lo + (u_hi - u_lo) * i / (n - 1) for i in range(n)]
 
     def designs(self) -> list[dict]:
+        """Design points. Ids of zero-hub points keep the historical form T{n}-A{i}-U{j}-D{k}-{mat}; points with a
+        hub get the suffix -H{nu}."""
         out = []
         for ia, a in enumerate(self.a_turbo_m2):
-            r = r_turbo_from_area(a)
-            for iu, u in enumerate(self.tip_speeds(r)):
-                for nt in self.n_turbo:
-                    for nd in self.n_drag:
-                        for mat in self.materials:
-                            out.append({"id": f"T{nt}-A{ia}-U{iu}-D{nd}-{mat}", "N_turbo": nt, "A_turbo_m2": a,
-                                        "R_turbo_m": r, "u_tip_turbo_mps": u, "rpm": rpm_from_tip(u, r),
-                                        "N_drag": nd, "rotor_material": mat})
+            for nu in self.hub_ratios:
+                r = r_turbo_from_area(a, nu)
+                for iu, u in enumerate(self.tip_speeds(r)):
+                    for nt in self.n_turbo:
+                        for nd in self.n_drag:
+                            for mat in self.materials:
+                                sfx = "" if nu == 0.0 else f"-H{nu:g}"
+                                out.append({"id": f"T{nt}-A{ia}-U{iu}-D{nd}-{mat}{sfx}", "N_turbo": nt,
+                                            "A_turbo_m2": a, "R_turbo_m": r, "u_tip_turbo_mps": u,
+                                            "rpm": rpm_from_tip(u, r), "N_drag": nd, "rotor_material": mat,
+                                            **hub_geometry(a, nu)})
         return out
 
 
-def r_turbo_from_area(a_m2: float) -> float:
-    return math.sqrt(a_m2 / math.pi)
+def r_turbo_from_area(a_m2: float, hub_ratio: float = 0.0) -> float:
+    """Tip radius of an annulus of swept area A with hub ratio nu: R = sqrt(A / (pi (1 - nu^2))) (A9.13 S6.7).
+    nu = 0 is the zero-hub analytical bound."""
+    if not 0.0 <= hub_ratio < 1.0:
+        raise SynthesisInputError("hub ratio must be in [0, 1)")
+    return math.sqrt(a_m2 / (math.pi * (1.0 - hub_ratio ** 2)))
+
+
+def hub_geometry(a_m2: float, hub_ratio: float) -> dict:
+    """Explicit hub geometry record of a turbo-row annulus (A9.13 S6.7)."""
+    r = r_turbo_from_area(a_m2, hub_ratio)
+    return {"hub_ratio": float(hub_ratio), "R_hub_m": hub_ratio * r, "blade_span_m": r * (1.0 - hub_ratio),
+            "hub_geometry_status": HUB_ZERO_BOUND if hub_ratio == 0.0 else HUB_PARAMETRIC}
 
 
 def rpm_from_tip(u_mps: float, r_m: float) -> float:
@@ -470,7 +570,29 @@ def strict_blockers(inlet: InletRecord, coefficient_evidence: Mapping[str, dict]
         out.append({"id": "P-TI64-DENSITY", "what": "rotor density", "status": "MODULE_CANNOT_REPRESENT",
                     "needs": "the cited density differs from materials.DB, which DragCompressor reads; a materials "
                              "change is a model change (CLAUDE.md rule 2), outside this lane"})
+    bid = ev.get("rotor_strength_basis_id", {}).get("value") if isinstance(ev.get("rotor_strength_basis_id"),
+                                                                          Mapping) else None
+    if rs.get_registered(bid) is None:
+        out.append({"id": "ROTOR-STRENGTH-BASIS", "what": "registered rotor-strength basis (A9.9 S2.3 / MCC-03)",
+                    "status": ST_NOT_EVALUATED_MATERIAL_BASIS,
+                    "needs": "an owner-registered basis in abep_sim.rotor_strength.REGISTRY (stock / product form, "
+                             "design temperature, yield AND ultimate allowables, factors, maximum speed, proof spin); "
+                             "supply its id as coefficient_evidence['rotor_strength_basis_id']"})
     return out
+
+
+def _basis_id(design: Mapping, coefficient_evidence: Mapping | None):
+    if design.get("rotor_strength_basis_id"):
+        return design["rotor_strength_basis_id"]
+    rec = (coefficient_evidence or {}).get("rotor_strength_basis_id")
+    return rec.get("value") if isinstance(rec, Mapping) else None
+
+
+def _not_evaluated_status(blockers: list) -> str:
+    """NOT_EVALUATED_MATERIAL_BASIS whenever the registered rotor basis is missing (A9.9 S2.3 / D-05), else
+    NOT_EVALUATED."""
+    return ST_NOT_EVALUATED_MATERIAL_BASIS if any(b["id"] == "ROTOR-STRENGTH-BASIS" for b in blockers) \
+        else ST_NOT_EVALUATED
 
 
 def _positive_finite(v) -> bool:
@@ -582,6 +704,15 @@ def validate_design(design: Mapping) -> None:
     if design.get("rotor_material") not in DB:
         raise SynthesisInputError(f"design {design.get('id')}: rotor_material {design.get('rotor_material')!r} is "
                                   "not in materials.DB")
+    if "hub_ratio" in design:
+        nu = _real(design["hub_ratio"])
+        if nu is None or not 0.0 <= nu < 1.0:
+            raise SynthesisInputError(f"design {design.get('id')}: hub_ratio={design['hub_ratio']!r} must be in [0, 1)")
+        if "R_turbo_m" in design:
+            r_exp = r_turbo_from_area(float(design["A_turbo_m2"]), nu)
+            if abs(float(design["R_turbo_m"]) / r_exp - 1.0) > 1e-9:
+                raise SynthesisInputError(f"design {design.get('id')}: R_turbo_m inconsistent with A_turbo and "
+                                          "hub_ratio (refused, not repaired)")
 
 
 def build_compressor(design: Mapping, inlet: InletRecord, coefficient_overrides: Mapping[str, object] | None = None
@@ -591,7 +722,7 @@ def build_compressor(design: Mapping, inlet: InletRecord, coefficient_overrides:
     for f, v in (coefficient_overrides or {}).items():
         kw[f] = validate_coefficient(f, v)
     a = float(design["A_turbo_m2"])
-    r = float(design.get("R_turbo_m", r_turbo_from_area(a)))
+    r = float(design.get("R_turbo_m", r_turbo_from_area(a, float(design.get("hub_ratio", 0.0)))))
     kw.update({"turbo_rows": int(design["N_turbo"]), "turbo_area_m2": a, "turbo_radius_m": r,
                "n_stages": int(design["N_drag"]), "rpm": float(design["rpm"]),
                "rotor_material": design["rotor_material"], "T_gas_K": float(inlet.T_K)})
@@ -606,15 +737,20 @@ def evaluate_design(design: Mapping, inlet: InletRecord, mode: str = MODE_PARAME
     if mode == MODE_STRICT:
         blk = strict_blockers(inlet, coefficient_evidence)
         if blk:
-            return {"id": design.get("id"), "status": ST_NOT_EVALUATED, "reasons": [], "blockers": blk,
-                    "outputs": None, "diagnostics": None}
-    overrides = {f: e["value"] for f, e in (coefficient_evidence or {}).items() if f in FIELD_ROLES}
+            return {"id": design.get("id"), "status": _not_evaluated_status(blk), "reasons": [], "blockers": blk,
+                    "outputs": None, "diagnostics": None,
+                    "rotor_qualification": ST_NOT_EVALUATED_MATERIAL_BASIS
+                    if rs.get_registered(_basis_id(design, coefficient_evidence)) is None else ST_NOT_EVALUATED}
+    overrides = {f: e["value"] for f, e in (coefficient_evidence or {}).items()
+                 if f in FIELD_ROLES and FIELD_ROLES[f][0] == FIXED}
     comp = build_compressor(design, inlet, overrides)
     md = {s: float(inlet.mdot_kgps[s]) for s in SPECIES}
     reasons: list[str] = []
     diag: dict = {}
 
-    # --- rotor stress (cited allowable x safety factor), thin-ring sigma = rho u^2 at the larger tip speed
+    # --- rotor structural acceptance (A9.9 S2.3 / MCC-03, D-05): ONLY rotor_strength.qualify_rotor grants it. Without a
+    # registered basis, MODE_PARAMETRIC keeps the labelled legacy thin-ring case (cited 827 MPa A-basis plate value x
+    # the uncited code factor 2.0, sigma = rho u^2) as a PARAMETRIC_SENSITIVITY screen; it never qualifies a rotor.
     mat = comp.rotor_material
     u_t = comp.turbo_radius_m * comp.rpm * 2 * math.pi / 60.0
     u_d = comp.u
@@ -622,15 +758,30 @@ def evaluate_design(design: Mapping, inlet: InletRecord, mode: str = MODE_PARAME
     rho = DB[mat].density
     sigma = rho * u_max_tip ** 2
     diag.update({"u_tip_turbo_mps": u_t, "u_tip_drag_mps": u_d, "hoop_stress_Pa": sigma,
-                 "module_rotor_ok_uncited_db_yield": None})
-    if mat not in CITED_ALLOWABLES_PA:
+                 "module_rotor_ok_uncited_db_yield": None,
+                 "hub_ratio": float(design.get("hub_ratio", 0.0)),
+                 "hub_geometry_status": design.get("hub_geometry_status", HUB_ZERO_BOUND)})
+    basis_id = _basis_id(design, coefficient_evidence)
+    registered = rs.get_registered(basis_id) is not None
+    extra = design.get("material_extra_basis") or (coefficient_evidence or {}).get("material_extra_basis")
+    admission = material_admission(mat, extra)
+    diag["material_admission"] = admission["status"]
+    if registered and admission.get("missing_extra"):
+        # A9.13 S6.9: a registered strength basis alone does not re-admit Al / CFRP (AO / laminate records missing)
+        reasons.append(R_READMISSION_RECORDS)
+        diag["stress_case"] = ST_NOT_EVALUATED_MATERIAL_BASIS
+    elif registered:
+        diag["stress_case"] = STRESS_CASE_REGISTERED          # qualify_rotor evaluated after the run (needs T_rotor)
+    elif mat not in CITED_ALLOWABLES_PA:
         reasons.append(R_ALLOWABLE_TBD)
         diag["stress_margin"] = None
+        diag["stress_case"] = ST_NOT_EVALUATED_MATERIAL_BASIS
     else:
         allow = CITED_ALLOWABLES_PA[mat]
         margin = allow / (comp.stress_safety * sigma) - 1.0
         diag.update({"allowable_Pa": allow, "safety_factor": comp.stress_safety, "stress_margin": margin,
-                     "u_allow_with_sf_mps": math.sqrt(allow / (comp.stress_safety * rho))})
+                     "u_allow_with_sf_mps": math.sqrt(allow / (comp.stress_safety * rho)),
+                     "stress_case": STRESS_CASE_LEGACY, "stress_case_label": rs.LEGACY_SENSITIVITY_LABEL})
         if not margin >= 0.0:                # fail closed: a NaN margin is never a pass (SW-02)
             reasons.append(R_STRESS)
     if u_t > U_TIP_PUBLISHED_MAX_MPS * (1.0 + 1e-12):
@@ -684,10 +835,42 @@ def evaluate_design(design: Mapping, inlet: InletRecord, mode: str = MODE_PARAME
             if r["T_comp_K"] > t_lim:
                 reasons.append(R_THERMAL)
 
+    # --- rotor qualification through the registered-basis gate (both modes; never PASS on the legacy case)
+    T_rotor = diag.get("T_comp_K", float("nan"))
+    rq = rs.qualify_rotor(basis_id, mat, u_max_tip, comp.rpm, T_rotor, design.get("rotor_stock_thickness_m"))
+    diag["rotor_qualification"] = {k: rq[k] for k in ("rotor_qualification", "rotor_ok", "rotor_strength_basis_id",
+                                                      "rotor_qualification_reasons", "margin_yield",
+                                                      "margin_ultimate")}
+    if registered and R_READMISSION_RECORDS in reasons:
+        rq = dict(rq, rotor_qualification=ST_NOT_EVALUATED_MATERIAL_BASIS, rotor_ok=False)
+        diag["rotor_qualification"].update(rotor_qualification=ST_NOT_EVALUATED_MATERIAL_BASIS, rotor_ok=False)
+    elif registered:
+        if rq["rotor_qualification"] == rs.Q_FAIL:
+            reasons.append(R_ROTOR_QUAL_FAIL)
+        elif rq["rotor_qualification"] != rs.Q_PASS:
+            reasons.append(R_ROTOR_QUAL_OOD)
+
     rec = {"id": design.get("id"), "design": {k: design[k] for k in design if k != "id"}, "reasons": reasons,
-           "diagnostics": diag, "outputs": None}
+           "diagnostics": diag, "outputs": None,
+           "rotor_structural_acceptance": rq["rotor_qualification"],
+           "architecture_point_status": ST_NOT_EVALUATED_OOD if any(x in DOMAIN_REASONS for x in reasons)
+           else u13.DOMAIN_IN}
+    if mode == MODE_STRICT and not registered:            # defensive: strict_blockers already refuses this
+        rec["status"] = ST_NOT_EVALUATED_MATERIAL_BASIS
+        return rec
     if reasons:
-        rec["status"] = ST_REJECTED
+        # A9.13 S6.8: above the 0.1 Pa domain nothing is evaluated; an inlet-independent rejection (rotor / tip /
+        # allowable) still rejects the design point regardless of the inlet state
+        if any(x in INLET_INDEPENDENT_REASONS for x in reasons):
+            rec["status"] = ST_REJECTED
+        elif any(x in DOMAIN_REASONS for x in reasons):
+            rec["status"] = ST_NOT_EVALUATED_OOD
+        elif R_ROTOR_QUAL_OOD in reasons or R_READMISSION_RECORDS in reasons:
+            # registered basis present but the rotor is outside it (temperature, stock section, material): not
+            # evaluated, never accepted (A9.9 S2.3)
+            rec["status"] = ST_NOT_EVALUATED_MATERIAL_BASIS
+        else:
+            rec["status"] = ST_REJECTED
         return rec
     rec["status"] = ST_FEASIBLE_STRICT if mode == MODE_STRICT else ST_FEASIBLE
     delivered = {s: float(r["delivered_kgps"][s]) for s in SPECIES}
@@ -705,6 +888,9 @@ def evaluate_design(design: Mapping, inlet: InletRecord, mode: str = MODE_PARAME
         "S_turbo_m3_s": r["S_turbo_m3_s"], "S0_drag_m3_s": r["S0_drag_m3_s"],
         "recirculation_frac": r["recirculation_frac"],
         "mass_allocation_margin_kg": OWNER_MASS_ALLOCATION_KG - r["mass_kg"],
+        "rotor_structural_acceptance": rq["rotor_qualification"],
+        "hub_ratio": float(design.get("hub_ratio", 0.0)),
+        "blade_span_m": comp.turbo_radius_m * (1.0 - float(design.get("hub_ratio", 0.0))),
     }
     return rec
 
@@ -750,18 +936,27 @@ def synthesize(inlet: InletRecord, mode: str = MODE_PARAMETRIC, grid: SearchGrid
     if mode == MODE_STRICT:
         blk = strict_blockers(inlet, coefficient_evidence)
         if blk:
-            return {"inlet": inlet.record_id, "mode": mode, "status": ST_NOT_EVALUATED, "blockers": blk,
-                    "designs": [], "feasible_ids": [], "pareto_ids": [], "pareto_with_S_ids": []}
+            return {"inlet": inlet.record_id, "mode": mode, "status": _not_evaluated_status(blk), "blockers": blk,
+                    "designs": [], "feasible_ids": [], "pareto_ids": [], "pareto_with_S_ids": [],
+                    "domain": u13.classify_pressure_target(inlet.p_total_Pa)}
     elif inlet.label != LABEL_PARAMETRIC and inlet.evidence_class == "assumed":
         raise SynthesisInputError("an assumed inlet record must be labelled PARAMETRIC_SENSITIVITY")
     g = grid or SearchGrid()
     recs = [evaluate_design(d, inlet, mode, coefficient_evidence) for d in g.designs()]
     feas = [r["id"] for r in recs if r["outputs"]]
+    # A9.13 S6.7: zero-hub points are the analytical bound only; the Pareto front is formed over hub > 0 points
+    # (the bound front is reported separately)
+    hub = [r for r in recs if r["design"].get("hub_geometry_status", HUB_ZERO_BOUND) != HUB_ZERO_BOUND]
+    bound = [r for r in recs if r["design"].get("hub_geometry_status", HUB_ZERO_BOUND) == HUB_ZERO_BOUND]
     return {"inlet": inlet.record_id, "mode": mode,
             "label": LABEL_PARAMETRIC if mode == MODE_PARAMETRIC else LABEL_INTERFACE,
             "status": "EVALUATED", "designs": recs, "feasible_ids": feas,
-            "pareto_ids": pareto_front(recs, PRIMARY_OBJECTIVES),
-            "pareto_with_S_ids": pareto_front(recs, SECONDARY_OBJECTIVES)}
+            "pareto_ids": pareto_front(hub, PRIMARY_OBJECTIVES),
+            "pareto_with_S_ids": pareto_front(hub, SECONDARY_OBJECTIVES),
+            "zero_hub_bound_pareto_ids": pareto_front(bound, PRIMARY_OBJECTIVES),
+            "status_counts": {st: sum(1 for r in recs if r["status"] == st) for st in sorted({r["status"] for r in recs})},
+            "domain": u13.classify_pressure_target(inlet.p_total_Pa),
+            "transitional_model": dict(u13.TRANSITIONAL_MODEL)}
 
 
 # ------------------------------------------------------------------------------------- size_for consistency check

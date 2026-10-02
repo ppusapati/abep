@@ -40,6 +40,30 @@
    "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
    "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
    "role": "A9 governing decision (Hall + downstream 13.56 MHz RF ICP neutralizer; INVESTIGATION_HYPOTHESIS)"
+  },
+  {
+   "key": "A914_JSON",
+   "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "role": "A9.14 owner decisions (applied: A9.16 step 1)"
+  },
+  {
+   "key": "A914_MD",
+   "path": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "role": "A9.14 verbatim record (governs)"
+  },
+  {
+   "key": "A915_JSON",
+   "path": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
+   "sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
+   "role": "A9.15 owner decisions (applied: A9.16 step 1)"
+  },
+  {
+   "key": "A915_MD",
+   "path": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
+   "sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903",
+   "role": "A9.15 verbatim record (governs)"
   }
  ],
  "referenced_not_pinned": [
@@ -3978,26 +4002,178 @@
   {
    "id": "F6-OQ-01",
    "question": "Approve the F6 objective definitions and directions (eight objectives; worst-case P2 loss fraction as the matching metric; P_RF,delivered at the ICP45 capacity point as the RF power metric; sum A_z F_z->ICP as the view-factor metric) and the fail-closed Pareto rule (no subset ranking)?",
-   "status": "TBD_OWNER",
-   "blocks": "any F6 Pareto set"
+   "status": "OWNER_DECIDED",
+   "blocks": "any F6 Pareto set",
+   "status_when_raised": "TBD_OWNER",
+   "decision": "A9.14 F6-OQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+   "decision_code": "APPROVE_F6_OBJECTIVES_FAIL_CLOSED",
+   "answer_verbatim": "6. S7.6 \u2014 F6-OQ-01 \u2014 APPROVE ALL EIGHT F6 OBJECTIVES AND FAIL-CLOSED PARETO SEMANTICS.\nApprove electron-current capacity, plume interception, RF-match loss, RF delivered power, Hall-field disturbance, view-factor obstruction, collector heating and module mass with the directions already defined. No ranking from an incomplete subset; missing required objectives keep the Pareto result `REFUSED_INCOMPLETE`.\nDecision code: `APPROVE_F6_OBJECTIVES_FAIL_CLOSED`."
   },
   {
    "id": "F6-OQ-02",
    "question": "Which source fixes the design-variable bounds F6-X-01..17: the KC-1 / ICP module drawing envelope at LOCK-1, or a registered P1 / P2 bench geometry matrix?",
-   "status": "TBD_OWNER",
-   "blocks": "search()"
+   "status": "OWNER_DECIDED",
+   "blocks": "search()",
+   "status_when_raised": "TBD_OWNER",
+   "decision": "A9.14 F6-OQ-02 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+   "decision_code": "DRAWING_HARD_BOUNDS_BENCH_EVIDENCE_POINTS",
+   "answer_verbatim": "7. S7.7 \u2014 F6-OQ-02 \u2014 DRAWING ENVELOPE DEFINES HARD BOUNDS; BENCH MATRIX DEFINES EVIDENCED GEOMETRIES.\nThe KC-1/ICP LOCK-1 drawing envelope defines the permissible mechanical design-variable bounds. The registered P1/P2 geometry matrix defines which points inside that envelope have experimental evidence. A test matrix shall never enlarge a mechanical envelope without a drawing revision.\nDecision code: `DRAWING_HARD_BOUNDS_BENCH_EVIDENCE_POINTS`."
   },
   {
    "id": "F6-OQ-03",
    "question": "P1 / P2 measure built geometries only. Does the owner want (a) a multi-geometry P1 / P2 bench matrix (each candidate built and measured) or (b) a separately validated model of I_e,cap and Z_antenna vs geometry? Without one, the F6 'search' is an evaluation over built geometries.",
-   "status": "TBD_OWNER",
-   "blocks": "geometry search beyond built articles"
+   "status": "OWNER_DECIDED",
+   "blocks": "geometry search beyond built articles",
+   "status_when_raised": "TBD_OWNER",
+   "decision": "A9.14 F6-OQ-03 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+   "decision_code": "MULTI_GEOMETRY_BENCH_FIRST_MODEL_AFTER_VALIDATION",
+   "answer_verbatim": "8. S7.8 \u2014 F6-OQ-03 \u2014 USE A MULTI-GEOMETRY BENCH MATRIX FIRST.\nUse modular/replaceable ICP geometry variants in P1/P2 and measure each registered geometry. A geometry-response surrogate/model may later be used between measured configurations only after separate predictive validation. Until then, F6 evaluates built geometries rather than pretending to perform a continuous validated search.\nDecision code: `MULTI_GEOMETRY_BENCH_FIRST_MODEL_AFTER_VALIDATION`."
   },
   {
    "id": "F6-OQ-04",
    "question": "Define the Hall magnetic-field disturbance metric (e.g. max |dB|/|B| in the acceleration region vs at IP-EXIT) and its acceptance threshold.",
-   "status": "TBD_OWNER",
-   "blocks": "hall_b_field_disturbance"
+   "status": "OWNER_DECIDED",
+   "blocks": "hall_b_field_disturbance",
+   "status_when_raised": "TBD_OWNER",
+   "decision": "A9.14 F6-OQ-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+   "decision_code": "DELTA_B_ACC_MAX_5_PERCENT_PROVISIONAL",
+   "answer_verbatim": "9. S7.9 \u2014 F6-OQ-04 \u2014 DEFINE A 5% PROVISIONAL HALL-FIELD-DISTURBANCE LIMIT.\nUse\n`\u03b4B_acc = max_ROI |B_H1+ICP \u2212 B_H1| / max_ROI |B_H1|`\nover the preregistered H-1 acceleration-region ROI and relevant magnet operating states. Set the provisional design requirement \u03b4B_acc \u2264 0.05. Also report absolute stray field at IP-EXIT and through the ICP volume. The 5% value is an owner engineering allocation, not experimental proof; later H-1 sensitivity evidence may tighten it, but it shall not be relaxed post-hoc merely to admit a design.\nDecision code: `DELTA_B_ACC_MAX_5_PERCENT_PROVISIONAL`."
+  }
+ ],
+ "a9_16_owner_decisions": {
+  "objectives": {
+   "status": "OWNER_APPROVED",
+   "decision": "A9.14 F6-OQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+   "required": [
+    "electron_current_capacity",
+    "plume_interception_fraction",
+    "rf_match_loss_fraction",
+    "rf_power_delivered",
+    "hall_b_field_disturbance",
+    "view_factor_obstruction",
+    "collector_heating",
+    "module_mass"
+   ],
+   "pareto_rule": "fail closed: REFUSED_INCOMPLETE while any required objective is missing; no ranking from an incomplete subset"
+  },
+  "bounds": {
+   "status": "OWNER_DECIDED",
+   "decision": "A9.14 F6-OQ-02 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+   "hard_bounds": "KC-1 / ICP LOCK-1 drawing envelope (not yet registered: NOT_EVALUATED_REGISTRATION)",
+   "evidence_points": "registered P1 / P2 geometry matrix (P1 icp_geometry_matrix slot, P1-IT-61)",
+   "rule": "a test matrix never enlarges the mechanical envelope without a drawing revision",
+   "evaluator": "docs/design_synthesis/f6_icp_geometry/a9_16_f6.py:geometry_scope"
+  },
+  "search_scope": {
+   "status": "BUILT_GEOMETRIES_ONLY",
+   "decision": "A9.14 F6-OQ-03 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+   "surrogate": "none; a geometry-response surrogate only after a separate predictive validation"
+  },
+  "hall_b_field_disturbance": {
+   "status": "OWNER_DEFINED_PROVISIONAL",
+   "decision": "A9.14 F6-OQ-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+   "metric": "delta_B_acc = max_ROI |B_H1+ICP - B_H1| / max_ROI |B_H1|",
+   "provisional_max": 0.05,
+   "also_report": [
+    "absolute stray field at IP-EXIT",
+    "absolute stray field through the ICP volume"
+   ],
+   "roi": "preregistered H-1 acceleration-region ROI and relevant magnet states (TBD)",
+   "today": "NOT_EVALUATED (no FEMM of MC-1 covering the ICP region; F6-IF-N02)",
+   "evaluator": "docs/design_synthesis/f6_icp_geometry/a9_16_f6.py:delta_b_acc",
+   "module_change": "PENDING_STEP_3_ARCHITECTURE (abep_sim/design/icp_geometry_synthesis.b_field_objective keeps its contract)"
+  }
+ },
+ "owner_answers_applied": [
+  {
+   "decision": "A9.14",
+   "question_id": "F6-OQ-01",
+   "sequenced_no": "S7.6",
+   "decision_code": "APPROVE_F6_OBJECTIVES_FAIL_CLOSED",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
+   "record_ids": [
+    "a9_16_owner_decisions.objectives"
+   ],
+   "how_applied": "eight objectives approved; fail-closed Pareto kept",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.14",
+   "question_id": "F6-OQ-02",
+   "sequenced_no": "S7.7",
+   "decision_code": "DRAWING_HARD_BOUNDS_BENCH_EVIDENCE_POINTS",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
+   "record_ids": [
+    "a9_16_owner_decisions.bounds"
+   ],
+   "how_applied": "drawing envelope = hard bounds, bench matrix = evidence points (geometry_scope refuses points outside / unbounded / other revision)",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.14",
+   "question_id": "F6-OQ-03",
+   "sequenced_no": "S7.8",
+   "decision_code": "MULTI_GEOMETRY_BENCH_FIRST_MODEL_AFTER_VALIDATION",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
+   "record_ids": [
+    "a9_16_owner_decisions.search_scope"
+   ],
+   "how_applied": "F6 evaluates built geometries; surrogate refused until predictively validated",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.14",
+   "question_id": "F6-OQ-04",
+   "sequenced_no": "S7.9",
+   "decision_code": "DELTA_B_ACC_MAX_5_PERCENT_PROVISIONAL",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
+   "record_ids": [
+    "a9_16_owner_decisions.hall_b_field_disturbance"
+   ],
+   "how_applied": "delta_B_acc metric, provisional <= 0.05, stray field at IP-EXIT and ICP volume reported (delta_b_acc, fail closed)",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ]
+  },
+  {
+   "decision": "A9.15",
+   "question_id": "A9.15 governing_rule",
+   "decision_code": "A9_15_RFP_COMPLIANT_PROPELLANT_POLICY",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
+   "decision_json_sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
+   "decision_md_sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903",
+   "artifact": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
+   "record_ids": [
+    "(review)"
+   ],
+   "how_applied": "reviewed: no Xe wording in F6; nothing to amend",
+   "tests": [
+    "tests/test_decision_application_a9_16.py"
+   ],
+   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
   }
  ],
  "m16_impact": [

@@ -6259,6 +6259,9 @@
     "schemas/interfaces"
    ],
    "files": [
+    "schemas/interfaces/bus_power_boundary_a9_v1.json",
+    "schemas/interfaces/icp_neutralizer_icd_v1.json",
+    "schemas/interfaces/preionizer_module_icd_v1.json",
     "schemas/interfaces/upstream_icd_v1.json"
    ],
    "key": "upstream_icd",
@@ -6322,9 +6325,6 @@
     "docs/chemistry/o_o2/v0/manifest_nist107_o_v0.json",
     "docs/chemistry/o_o2/v0/manifest_song2026_v0.json",
     "docs/chemistry/o_o2/v0/o_o2_v0_common.py",
-    "docs/chemistry/o_o2/v0/__pycache__/build_tables_nist107_o.cpython-311.pyc",
-    "docs/chemistry/o_o2/v0/__pycache__/build_tables_song2026.cpython-311.pyc",
-    "docs/chemistry/o_o2/v0/__pycache__/o_o2_v0_common.cpython-311.pyc",
     "docs/chemistry/o_o2/v0/tables/attachment_O2_song2026.dat",
     "docs/chemistry/o_o2/v0/tables/attachment_O2_song2026.dat.source",
     "docs/chemistry/o_o2/v0/tables/dissociation_O2_song2026.dat",
@@ -6377,8 +6377,7 @@
     "docs/milestones/bundle1/governance_snapshot_v2.json",
     "docs/milestones/bundle1/governance_snapshot_v3.json",
     "docs/milestones/bundle1/governance_snapshot_v4.json",
-    "docs/milestones/bundle1/governance_snapshot_v5.json",
-    "docs/milestones/bundle1/__pycache__/build_bundle1.cpython-311.pyc"
+    "docs/milestones/bundle1/governance_snapshot_v5.json"
    ],
    "key": "bundle1",
    "lane": "fo_bundle1_conditional_selection",
@@ -6566,16 +6565,16 @@
    "provenance.generation.generated_at"
   ],
   "generation": {
-   "generated_at": "2026-09-27T09:13:34Z"
+   "generated_at": "2026-10-02T00:14:47Z"
   },
   "generator_sha256": {
-   "scripts/architecture/build_decision_dossier.py": "9c6ff9ca58733357e94966f57d166d4255ba2742638d69a81704c60f0b03f3d3"
+   "scripts/architecture/build_decision_dossier.py": "f0cac7810be1a2f5351493e217c25195553b29ccc5295bddbca259093c7a9c9c"
   },
-  "git_commit": "4385d204d4283b67e14d4c56f920d75fe268282e",
+  "git_commit": "183a4b958484aae1d102ff4dc5d762eacc8620b0",
   "input_files_sha256": {
-   "CLAUDE.md": "2bd58ce43ba0ec7b22b48fa0175636460801eed2cfe6429dadc7539ba97a7401",
+   "CLAUDE.md": "c70b83d43608e2b953b790ee61e44380484eb2a02f69bda3a203ea6996920436",
    "abep_sim/arch_boundary.py": "8dfc309a5d2c717913fd4961bc660f8bab92ed2c59356f5a78bff3ef4392eeae",
-   "abep_sim/arch_compare.py": "ce1f6157379dde73017cb83fa1d3479e0af93edc6a04ea16cbedc6da51c3dc9f",
+   "abep_sim/arch_compare.py": "23b6ffe7b218238b7ad5e3a9964a47227cc1236373a53990319043c381ef5722",
    "abep_sim/hall_ensemble.py": "218f890c8444af1f593396da5051e38d2d093bbb3cb0bc976cc44b01b67df704",
    "abep_sim/hard_gates.py": "a36fe3c9065291f0fe5be3f17e179d5b691f00c013f7f8ef299fa89db896dda8",
    "abep_sim/interstage.py": "bc4b9987a832209d1417f6646d2a44c72b8d79bac18f896089647bcd1ed93174",
@@ -6620,9 +6619,6 @@
    "docs/chemistry/o_o2/o_o2_source_matrix_v1.json": "28d3bf895e13518f61a7f365d5b79c57562fae194b38e9e04dc2d8b82858e92c",
    "docs/chemistry/o_o2/o_o2_source_matrix_v1.md": "c416f191be7dd878b016e7318a9f6d16225fcdc80e6be80eb19bd232bd308af1",
    "docs/chemistry/o_o2/v0/README.md": "87f1da3e064dd04f69c429426f3d9d0b2238a0760ca42c555be063b6cdbe7aad",
-   "docs/chemistry/o_o2/v0/__pycache__/build_tables_nist107_o.cpython-311.pyc": "3abd4b8524af79a77add75d63ebdd97c9f9718a56140312242fbc1d0be6fa24e",
-   "docs/chemistry/o_o2/v0/__pycache__/build_tables_song2026.cpython-311.pyc": "4302422723b7ad3123d5a4be64879dfd30b1522d2b0994f231983f6426e96814",
-   "docs/chemistry/o_o2/v0/__pycache__/o_o2_v0_common.cpython-311.pyc": "08a48ab1115847772ef837ae517c4f69df08011974cc73dab2785da96f340162",
    "docs/chemistry/o_o2/v0/build_tables_nist107_o.py": "5183535a0938bafde03551780ebe781645b208fbd5a311d727af20c6d4822a3b",
    "docs/chemistry/o_o2/v0/build_tables_song2026.py": "c9ff001987371f4ca2ab5e79a0d097c770a846da5ea71dae358832734078d3ac",
    "docs/chemistry/o_o2/v0/channel_status_v0.json": "162544f109211ad67c15a5f64a124a3d49853051aa6cb20d53d3cdf922d61a18",
@@ -6669,7 +6665,6 @@
    "docs/milestones/bundle1/BUNDLE1_v3.md": "68ded897b2be56475d1244fb794347121b9e72e956d92eb193cdfddc2634fa3d",
    "docs/milestones/bundle1/BUNDLE1_v4.md": "5801c234d195016515155fcee324a9ecde68dbdef01310c479abc04f7d28dfb7",
    "docs/milestones/bundle1/BUNDLE1_v5.md": "9741d0687fb6ce0e37abd196b553be7e0674d300af366ba97a0d031ccae0c100",
-   "docs/milestones/bundle1/__pycache__/build_bundle1.cpython-311.pyc": "d1f8ed6e5c3ebb7e8ff25063e0ba6ac8a86706b048e6ee20b8c7b3676068c642",
    "docs/milestones/bundle1/build_bundle1.py": "8ffc2bd389ddadf3f3962788a29f7032121ace433c387f4d2acee3baf439e6ce",
    "docs/milestones/bundle1/bundle1_v1.json": "c07264b2f9f4126445bda95c888d1d29e9b52176b91cc044653269071ce65a3d",
    "docs/milestones/bundle1/bundle1_v1.schema.json": "10826077bd323d125d792662d8b06e616b676ed1b0f0fdb55a10dbcf3ab333a0",
@@ -6693,6 +6688,9 @@
    "schemas/architecture_comparison/bus_power_boundary_v1.json": "a78068a31ad097d94d83f36b9860c6992d0e560cfdc51335b4c222a3feaed3e9",
    "schemas/architecture_comparison/hard_gates_v1.schema.json": "e5c70c588f3e785720c0d9d01013e5725807b9fd288fa8a1bddf6ba6d86f54ba",
    "schemas/architecture_comparison/interstage_v1.schema.json": "650fd92fbde19354968fabf4bb893c656a72c62a16870b6b29577fe1f1ae6d45",
+   "schemas/interfaces/bus_power_boundary_a9_v1.json": "64238d1526d8ce6bf3ca6b45f385f8948e6dcf916e4f2140cbcb6c46d2c7aa09",
+   "schemas/interfaces/icp_neutralizer_icd_v1.json": "8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c",
+   "schemas/interfaces/preionizer_module_icd_v1.json": "2470718e1decbde874d2362a997d1e2aaae54eb855d1ed179b930c3be6e7130e",
    "schemas/interfaces/upstream_icd_v1.json": "2437d125060f2f24da06ac33b22220483f70b411033c91682cdffb5f01310850",
    "schemas/ledgers/bus_power_ledger_v1.json": "4ab1783b6aef3393cd4775f3669c2c9f1dac4ba2e9326a2484eddf635990f6b2",
    "schemas/ledgers/subsystem_ledger_v1.json": "c4c9cc4dd249100335b578184c359443dd5ae707e46fe30bbe368ae9e418fb8b",

@@ -2,7 +2,9 @@
 """A9.7 F9 - architecture freeze candidate (lane fo_a9_7_f9_freeze_candidate).
 
 ONE candidate definition of the A9 architecture under investigation (atmospheric path intake -> filter -> compressor
--> plenum / feed -> H-1 Hall -> downstream 13.56 MHz ICP neutralizer; C1 control / fallback) with three sections:
+-> plenum / feed -> H-1 Hall -> downstream 13.56 MHz ICP neutralizer; A9.19: one Hall + one RF/ICP neutralizer for both
+supply modes AIR_PRIMARY / XE_CONTINGENCY, no conventional hollow cathode; A9.20: C1 ground-only reference) with three
+sections:
 UPSTREAM (intake, filter, compressor, plenum, valves / feed), PROPULSION (H-1 geometry, magnetic circuit, anode
 approach, downstream ICP geometry, RF / match architecture, collector) and SYSTEM (PPU topology, power budget, mass
 budget, thermal interfaces, control / start sequence, Xe functionality). Every parameter carries
@@ -43,6 +45,9 @@ REL_TEST = "tests/test_architecture_freeze_candidate.py"
 BASE_COMMIT = "7800fe93e53898af1750f1394fdeb07b04e21c57"
 DATE = "2026-10-01"
 LANE = "fo_a9_7_f9_freeze_candidate"
+sys.path.insert(0, str(LANE_DIR))
+import a9_16_f9 as A16  # noqa: E402  (A9.16 step 1 owner-decision application, integration lane)
+import a9_19_f9 as A19  # noqa: E402  (A9.19 / A9.20 owner-decision application, design + experiments lane)
 
 # --------------------------------------------------------------------------------------------------------------------
 # inputs
@@ -64,6 +69,15 @@ PINS = {
     "ANS": ("docs/decisions/OD_2026_09_29_owner_answers_147.json",
             "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1"),
 }
+# A9.16 step 1: owner decisions A9.8 .. A9.15 (immutable; json + verbatim md pinned)
+for _k in A16.L.ORDER:
+    PINS["A" + _k[1:].replace(".", "")] = (A16.L.LOADED[_k]["json"], A16.L.LOADED[_k]["json_sha256"])
+    PINS["A" + _k[1:].replace(".", "") + "_MD"] = (A16.L.LOADED[_k]["md"], A16.L.LOADED[_k]["md_sha256"])
+# A9.19 / A9.20 (immutable; json + verbatim md pinned in abep_sim/design/a9_19_architecture.py)
+for _k in ("A9.19", "A9.20"):
+    _d = A19.A.DECISIONS[_k]
+    PINS["A" + _k[1:].replace(".", "")] = (_d["json"], _d["json_sha256"])
+    PINS["A" + _k[1:].replace(".", "") + "_MD"] = (_d["md"], _d["md_sha256"])
 # Mutable / revisable inputs: read-only, sha256 recorded at build time (drift is reported by --check).
 CONSUMED = {
     # A9.7 lanes (all merged in the base of this lane)
@@ -81,15 +95,18 @@ CONSUMED = {
     "F8R": "docs/design_synthesis/f7_f8_optimizer/f8_robust_candidates_v1.json",
     # A9 / A9.x deliverables
     "OQ4": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+    "OQ5": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "MP3": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
     "RVM": "docs/requirements/rvm_a9/rvm_a9_v1.json",
     "MP2": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
     "M16": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
     "XE2": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+    "XE3": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",     # A9.16 repair F8 (current Xe ledger)
     "BUS": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
     "ICD": "schemas/interfaces/icp_neutralizer_icd_v1.json",
     "P1": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
     "P2": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
-    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
     "P4": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
     "ENS": "hallthruster_bridge/ensemble/transport_ensemble_v0.json",
     "VAL": "hallthruster_bridge/validation/VALIDATION_RELEASE_v1.json",
@@ -143,8 +160,8 @@ A97_F9_BULLETS = {
     "thermal interfaces;": ("SYSTEM", "thermal_interfaces"), "control/start sequence;": ("SYSTEM", "control_start"),
     "Xe functionality.": ("SYSTEM", "xe"),
 }
-CONFIGURATION = "hall_icp_neutralizer"
-FALLBACK_CONFIGURATION = "hall_c1_reference"
+CONFIGURATION = A19.FLIGHT                        # A9.19: the single flight configuration
+GROUND_REFERENCE_CONFIGURATION = A19.GROUND_REFERENCE  # A9.20: C1 ground-only; label only, never a flight candidate
 
 _cache: dict = {}
 _sha: dict = {}
@@ -599,7 +616,7 @@ def build_upstream(rows: list, us: dict) -> None:
       fs="OPEN", adv=["H-1 required inlet pressure (H1F-IN-04)", "owner answer OQ-F4-01 (setpoint policy)",
                       "owner answer OQ-F4-02 (design direction at <= 0.1 Pa)"])
     P(rows, "AFC-UP-PL-03", S, "plenum", "setpoint policy across orbit states (single vs scheduled)",
-      "TBD - owner question OQ-F4-01 (single-setpoint frontier 0.1027 mg/s vs scheduled 0.143 mg/s, parametric)",
+      "TBD - owner question OQ-F4-01 (single-setpoint frontier 0.09832 mg/s vs scheduled 0.1192 mg/s, parametric)",
       units="-", tolerance="TBD", ec=None,
       sources=[ref("F4", find("F4", "/open_owner_questions", "id", "OQ-F4-01"))], basis="F4-01", fs="TBD_OWNER",
       adv=["owner answer OQ-F4-01"])
@@ -616,21 +633,22 @@ def build_upstream(rows: list, us: dict) -> None:
                         ref("F78", find("F78", "/findings", "id", "F8-04") + "/finding")],
       basis="F4-P-06; owner GP-D03", fs="TBD_AFTER_EVIDENCE",
       adv=["coupon / witness evidence of the selected lining (GP-D03)"],
-      note="robust members lose feasibility in most scenarios under WALL-TI64-DB (F8-04)")
+      note="robust members lose feasibility in 2-5 of the 10 surface scenarios under WALL-TI64-DB (F8-04)")
     P(rows, "AFC-UP-PL-07", S, "plenum", "plenum external leak area", "TBD - code default 5e-8 m^2 is a parametric case",
       units="m^2", tolerance="TBD", ec=None, sources=[ref("F4", find("F4", "/items", "id", "F4-P-05"))],
       basis="F4-P-05", fs="TBD_AFTER_EVIDENCE", adv=["leak specification / helium leak test of the plenum"])
     wc = [m["mdot_delivered_min_kgps"] * 1e6 for m in mem]
     P(rows, "AFC-UP-PL-08", S, "plenum", "delivered total flow offered by the upstream chain (min over orbit states)",
       {"kind": "PARETO_SET", "robust_set_worst_case_range_mg_s": _rng(wc),
-       "all_state_single_setpoint_frontier_mg_s": 0.1027382, "all_state_scheduled_frontier_mg_s": 0.142955,
+       "all_state_single_setpoint_frontier_mg_s": 0.09832423, "all_state_scheduled_frontier_mg_s": 0.119186,
        "owner_ground_characterization_range_mg_s": get("F78", find("F78", "/items", "id", "F78-P-11") + "/value"),
        "pareto_members_reaching_0.38_mg_s_at_every_state": 0},
       units="mg/s", tolerance=T_PARAM, ec="model-derived", label="PARAMETRIC_SENSITIVITY",
-      sources=[rob, cite("F78", find("F78", "/findings", "id", "F78-02") + "/finding", "0.1027382",
-                         "reaching the owner ground-characterization lower end 0.38 mg/s at every state: 0"),
-               cite("F4", find("F4", "/findings", "id", "F4-01") + "/finding", "0.143 mg/s"),
-               cite("F4", find("F4", "/findings", "id", "F4-07") + "/finding", "0.142955"), ans(73)],
+      sources=[rob, cite("F78", find("F78", "/findings", "id", "F78-02") + "/finding", "0.09832423",
+                         "characterization coverage (A9.13 S6.21: coverage only, not a requirement or gate) at every "
+                         "state: 0"),
+               cite("F4", find("F4", "/findings", "id", "F4-01") + "/finding", "0.1192 mg/s"),
+               cite("F4", find("F4", "/findings", "id", "F4-07") + "/finding", "0.119186"), ans(73)],
       basis="F4 / F7 frontiers under parametric inputs; the owner range (row 73) is characterization context, not a "
             "flight requirement", fs="OPEN",
       adv=[FLOWREQ, "owner answer OQ-F4-04 (lever: capture, operating states or feed requirement)", T12, ACCOM])
@@ -1093,14 +1111,15 @@ def build_gates() -> list:
     for i, r in enumerate(get("RVM", "/rows")):
         cfg = r["configurations"]
         rvm_rows.append({"id": r["id"], "title": r["title"], "requirement_frozen": r["requirement_frozen"],
-                         "status": {c: cfg[c]["status"] for c in (CONFIGURATION, FALLBACK_CONFIGURATION)},
+                         "status": A19.rvm_row_status(cfg),
                          "rule": cfg[CONFIGURATION]["rule"], "blocking": cfg[CONFIGURATION]["reason"],
                          "source": ref("RVM", f"/rows/{i}/configurations")})
     counts = get("RVM", "/status_counts")
     assert all(counts[c]["PASS"] == 0 for c in counts), "an RVM row is PASS: re-assess AG-01 by hand"
     cstr = "; ".join(c + ": " + ", ".join(f"{k} {v}" for k, v in counts[c].items() if v) for c in counts)
     frozen = sum(r["requirement_frozen"] for r in rvm_rows)
-    G("AG-01", f"RVM rows ({len(rvm_rows)} system requirements, both configurations)", cstr, False,
+    G("AG-01", f"RVM rows ({len(rvm_rows)} system requirements; flight configuration {CONFIGURATION}, C1 column "
+               "if any = ground reference)", cstr, False,
       {"rows": rvm_rows, "summary": f"no row is PASS ({cstr}); requirements frozen: {frozen} of {len(rvm_rows)} "
                                     "(official RFP not in the repository)"},
       [ref("RVM", "/status_counts"), ref("RVM", "/rfp_document_in_repository")],
@@ -1160,11 +1179,11 @@ def build_gates() -> list:
     n_f3 = len(get("F3", "/strict_mode/blockers"))
     G("AG-12", "upstream delivered-flow closure (UG-FLOW, proposed F9 gate)",
       "NOT_EVALUATED (strict mode); parametric frontier below the owner characterization range", False,
-      f"all-state frontier 0.1027382 mg/s (single setpoint) and robust worst case {_rng(wc)} mg/s under parametric "
+      f"all-state frontier 0.09832423 mg/s (single setpoint) and robust worst case {_rng(wc)} mg/s under parametric "
       "inputs vs 0.38-3.2 mg/s characterization and ~1.3 mg/s nominal sizing (row 73); compressor coefficients "
       f"uncited (F3 MODE_STRICT {n_f3} blockers), accommodation TBD, filter TBD; the delivered-flow requirement "
       "itself is not set (F9-OQ-02)", [ref("F4", "/strict_mode"), cite("F3", "/strict_mode/status", "NOT_EVALUATED"),
-                     cite("F78", find("F78", "/findings", "id", "F78-02"), "0.1027382")], ["EP-08", "EP-09", "EP-14"])
+                     cite("F78", find("F78", "/findings", "id", "F78-02"), "0.09832423")], ["EP-08", "EP-09", "EP-14"])
     G("AG-13", "drag compensation T - D_spacecraft", "NOT_EVALUATED", False,
       "thrust (AG-02) and spacecraft body / array drag (no spacecraft geometry; OQ-F78-04); whether HC-08 is a hard "
       "constraint is OQ-F78-01", [ref("F78", "/unlock_evidence/D_spacecraft"),
@@ -1186,7 +1205,8 @@ def architecture_status(gates: list) -> str:
 
 
 EVIDENCE_PLAN = [
-    ("EP-01", "obtain the official RFP document (owner rows 1-2) and re-base the RVM requirement texts",
+    ("EP-01", "register the official RFP (owner rows 1-2; A9.13 AG-15: immutable provenance / sha256 in the repository "
+              "evidence system) and re-base the RVM requirement texts",
      ["AG-15", "AG-01"], [], "owner / legitimate portal route"),
     ("EP-02", "Phase-1 H-1 operation on N2 (hardware pivot): Hall-only sustainment knee; register I_d,max,H1, "
               "deposited anode power fraction and inlet conductance on the built article",
@@ -1219,10 +1239,12 @@ EVIDENCE_PLAN = [
      ["AG-11", "AG-01"], ["EP-05", "EP-06"], "docs/budgets/mass_power_a9_v2/"),
     ("EP-13", "conformant P_bus,1ms,max gate measurement over the start-up sequence and steady state",
      ["AG-10", "AG-09", "AG-01"], ["EP-02", "EP-03", "EP-08"], "A9-02 bus boundary"),
-    ("EP-14", "owner sets the delivered-flow requirement at the H-1 inlet (F9-OQ-02) and the lever for the flow gap "
-              "(OQ-F4-04)", ["AG-12"], [], "owner"),
-    ("EP-15", "spacecraft frontal geometry / drag basis (OQ-F78-04) and the T - D constraint definition (OQ-F78-01)",
-     ["AG-13"], [], "owner / spacecraft ICD"),
+    ("EP-14", "statewise performance-derived feed-state requirement from the measured / validated H-1 thrust-vs-feed "
+              "map (A9.13 F9-OQ-02), then capture / compression / feed improvements in the owner order (OQ-F4-04)",
+     ["AG-12"], ["EP-02", "EP-11"], "Phase-1 / Phase-3 H-1 measurement"),
+    ("EP-15", "actual host-spacecraft ICD (frontal geometry, arrays, attitude states, drag model, surface state) for "
+              "D_spacecraft; statewise T - D >= 0 (A9.13 OQ-F78-01 / OQ-F78-04)",
+     ["AG-13"], [], "spacecraft ICD"),
 ]
 
 
@@ -1243,6 +1265,10 @@ def evidence_plan(gates: list) -> list:
 # model-change candidates (production-model issues found by A9.7 lanes)
 # --------------------------------------------------------------------------------------------------------------------
 def model_change_candidates() -> list:
+    _m = re.search(r"(\d+ of \d+) drag-stage", get("F3", find("F3", "/findings", "id", "F3-01") + "/finding"))
+    if _m is None:
+        raise SystemExit("REFUSED: F3-01 no longer states the drag-stage clipping count")
+    _f3_clip = _m.group(1)
     common = {"required": ["owner decision (authorize as a controlled model change, or keep the design-layer "
                            "workaround)", "docs/HISTORY.md entry (CLAUDE.md rules 1-2)",
                            "golden check after implementation; if goldens move, justify, regenerate, log"],
@@ -1261,14 +1287,16 @@ def model_change_candidates() -> list:
          "module": "abep_sim/compressor.py DragCompressor._run_once",
          "issue": "K = max(min(K, K0), 1.0) hides an overloaded stage (throughput above S0 p): the module reports "
                   "K = 1 instead of a non-convergence / overload status (CLAUDE.md rule 3: no silent fallbacks)",
-         "magnitude": "15552 of 15552 drag-stage design evaluations in F3 have an unclipped K < 1 (F3-01)",
+         "magnitude": f"{_f3_clip} drag-stage design evaluations in F3 have an unclipped K < 1 (F3-01)",
          "golden_impact": "unknown: a status flag alone does not change values; refusing clipped states would move "
                           "any golden that passes through a clipped stage (to be checked at implementation)",
          "owner_question": "F9-OQ-04 (new)",
-         "sources": [cite("F3", find("F3", "/findings", "id", "F3-01"), "15552 of 15552"),
+         "sources": [cite("F3", find("F3", "/findings", "id", "F3-01"), _f3_clip),
                      ref("F3", find("F3", "/gates", "id", "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_"
                                                          "CAPACITY")),
-                     tref("MOD_COMP", "K = max(min(K, K0), 1.0)")]},
+                     tref("MOD_COMP", "# MCC-02 (owner decision A9.9 S2.5, finding F3-01): Gaede stage-capacity domain.",
+                          "the clip quoted in 'issue' (K = max(min(K, K0), 1.0)) was removed by the A9.9 S2.5 step-2 "
+                          "change; the locator points at its replacement")]},
         {"id": "MCC-03", "finding": "F3-02 uncited rotor allowable",
          "module": "abep_sim/compressor.py DragCompressor.u_max (rotor_ok) with abep_sim/materials.py DB yield",
          "issue": "the module's tip-speed cap uses an uncited DB yield (880 MPa for Ti-6Al-4V) and an uncited safety "
@@ -1334,7 +1362,7 @@ F9_QUESTIONS = [
      "question": "Set the delivered-flow requirement at the H-1 inlet that the proposed architecture gate AG-12 "
                  "(UG-FLOW) is scored against (owner row 73 gives a sizing flow ~1.3 mg/s and a characterization "
                  "range 0.38-3.2 mg/s, neither a flight requirement): which value, at which orbit states / averaging?",
-     "why_new": "no requirement exists; F4 / F7 report a parametric all-state frontier of 0.1027 mg/s and OQ-F4-04 asks "
+     "why_new": "no requirement exists; F4 / F7 report a parametric all-state frontier of 0.09832 mg/s and OQ-F4-04 asks "
                 "only which lever to study",
      "needed_by": "LOCK-1 (before any upstream freeze)", "status": "TBD_OWNER"},
     {"id": "F9-OQ-03",
@@ -1449,6 +1477,8 @@ def build() -> dict:
     build_h1_from_f5(rows)
     build_propulsion_icp(rows)
     build_system(rows)
+    a916_touched = A16.apply_rows(rows, ref, get)
+    a919_touched = A19.apply_rows(rows)
     ids = [r["id"] for r in rows]
     assert len(ids) == len(set(ids)), "duplicate parameter ids"
     covered = {(r["section"], r["subsection"]) for r in rows}
@@ -1457,7 +1487,7 @@ def build() -> dict:
         assert bullet in load("A97_MD"), bullet
         assert ss in covered, ss
         bullets_ok[bullet] = list(ss)
-    gates = build_gates()
+    gates = A16.apply_gates(build_gates(), ref)
     status = architecture_status(gates)
     plan = evidence_plan(gates)
     counts = {k: sum(r["freeze_status"] == k for r in rows) for k in FREEZE_STATUSES}
@@ -1465,7 +1495,7 @@ def build() -> dict:
     for r in rows:
         key = f"{r['section']}/{r['subsection']}"
         by_sec.setdefault(key, {k: 0 for k in FREEZE_STATUSES})[r["freeze_status"]] += 1
-    rollup = owner_rollup()
+    rollup = A16.rollup_v5(owner_rollup(), load("OQ5"), ref("OQ5", "/rows"))
     findings = [
         {"id": "F9-01", "evidence_class": "inferred",
          "finding": f"architecture status {status}: {sum(not g['evidence_sufficient_for_freeze'] for g in gates)} of "
@@ -1477,18 +1507,21 @@ def build() -> dict:
         {"id": "F9-03", "evidence_class": "model-derived (PARAMETRIC_SENSITIVITY inputs)",
          "finding": "upstream flow gap: robust worst-case delivered flow "
                     f"{_rng([m['mdot_delivered_min_kgps'] * 1e6 for m in us['members']])} mg/s and all-state "
-                    "frontier 0.1027 mg/s vs the owner characterization lower end 0.38 mg/s and nominal sizing ~1.3 "
-                    "mg/s (row 73); not a FAIL (strict mode NOT_EVALUATED; requirement not set, F9-OQ-02)"},
+                    "frontier 0.09832 mg/s, low relative to the 0.38-3.2 mg/s ground-characterization coverage (row 73): "
+                    "an engineering warning, not a demonstrated requirement failure; 0.38 and ~1.3 mg/s are not flight "
+                    "requirements and AG-12 is the statewise feed-state sufficiency gate (A9.13 F9-OQ-02)"},
         {"id": "F9-04", "evidence_class": "inferred",
          "finding": f"freeze-status roll-up over {len(rows)} parameters: {counts}; every FREEZE_CANDIDATE is an owner "
                     "decision, convention, rule or allocation; no computed performance value is a freeze candidate"},
         {"id": "F9-05", "evidence_class": "inferred",
-         "finding": "7 production-model issues registered as model-change candidates (MCC-01..07); none implemented "
-                    "here; each needs an owner decision and a HISTORY entry"},
+         "finding": "7 production-model issues registered as model-change candidates (MCC-01..07); all owner-"
+                    "authorised (A9.9 F1Q-01 / UPSTREAM_ICD-Q7 / F9-OQ-04); none implemented here "
+                    "(PENDING_STEP_2_MODEL_CHANGE, each with a HISTORY entry)"},
         {"id": "F9-06", "evidence_class": "inferred",
          "finding": f"owner roll-up: {rollup['state_v4_tbd_owner_count']} state v4 TBD_OWNER rows, "
                     f"{rollup['a9_7_lane_question_count']} A9.7 lane questions (F0-F8, Rust), {len(F9_QUESTIONS)} new "
-                    "F9 questions; none answered"},
+                    "F9 questions; all answered by the owner (A9.8 .. A9.14, A9.15 amendments); state v5 TBD_OWNER: "
+                    f"{rollup['state_v5']['tbd_owner_count']} ({', '.join(rollup['state_v5']['open_owner_questions'])})"},
     ]
     doc = {
         "schema": "architecture_freeze_candidate_v1",
@@ -1506,11 +1539,7 @@ def build() -> dict:
         "frozen_reference_flight_architecture": status == "FROZEN_REFERENCE_FLIGHT_ARCHITECTURE",
         "freeze_rule": get("A97", "/summary/freeze_rule"),
         "deliverable_status": "FREEZE_CANDIDATE_DEFINITION (not frozen, not a design release, no winner, no PASS)",
-        "configuration": {"primary": CONFIGURATION, "control_fallback": FALLBACK_CONFIGURATION,
-                          "a9_status": get("A9", "/status"),
-                          "rule": "the candidate is defined for the primary configuration; C1 rows that differ are "
-                                  "carried by the cited deliverables (RVM / mass_power v2 / bus boundary) as the "
-                                  "CONTROL_FALLBACK reference"},
+        "configuration": A19.configuration_block(get("A9", "/status")),
         "what_this_is_not": [
             "not a frozen architecture and not FROZEN_REFERENCE_FLIGHT_ARCHITECTURE",
             "not a selection: Pareto sets are carried, no representative point is chosen (F9-OQ-01)",
@@ -1553,9 +1582,19 @@ def build() -> dict:
         "freeze_rollup": {"counts": counts, "by_subsection": by_sec, "total": len(rows)},
         "architecture_gates": gates,
         "evidence_plan": plan,
-        "model_change_candidates": model_change_candidates(),
+        "model_change_candidates": A16.apply_mcc(model_change_candidates()),
         "owner_question_rollup": rollup,
-        "open_owner_questions": F9_QUESTIONS,
+        "open_owner_questions": A16.answered_f9_questions(F9_QUESTIONS),
+        "a9_16_owner_answers_applied": A16.owner_answers_applied(),
+        "a9_16_touched_parameters": a916_touched,
+        "a9_19_owner_answers_applied": A19.owner_answers_applied(),
+        "a9_19_touched_parameters": a919_touched,
+        "a9_16_evaluators": {
+            "gate_closes": "docs/architecture/freeze_candidate/a9_16_f9.py:gate_closes (determining evidence only)",
+            "ag12": "docs/architecture/freeze_candidate/a9_16_f9.py:ag12_feed_state_sufficiency (NOT_EVALUATED today)",
+            "ag13": "docs/architecture/freeze_candidate/a9_16_f9.py:ag13_statewise (NOT_EVALUATED today)",
+            "pending": "optimizer / model code changes of A9.13 are PENDING_STEP_3_ARCHITECTURE; A9.9 model changes "
+                       "PENDING_STEP_2_MODEL_CHANGE"},
         "interface_demands": interface_demands(),
         "findings": findings,
         "m16_impact": [{"m16_row": None, "state_change": "none - F9 consolidates lane outputs into one candidate "
@@ -1567,6 +1606,7 @@ def build() -> dict:
                        "pass_declared": False, "owner_question_answered": False, "julia_used": False,
                        "network_used": False, "deterministic": True, "new_pytest_skips": False},
     }
+    doc["upstream_pareto"] = A16.apply_upstream_pareto(doc["upstream_pareto"])
     return doc
 
 
@@ -1593,8 +1633,11 @@ def render_md(doc: dict) -> str:
          f"`--check` verifies). Base commit `{doc['base_commit']}`.", "",
          f"**Architecture status: {doc['architecture_status']}** (frozen reference flight architecture: "
          f"{str(doc['frozen_reference_flight_architecture']).lower()}). Freeze rule (A9.7): {doc['freeze_rule']}.", "",
-         f"Configuration: primary `{doc['configuration']['primary']}`, control / fallback "
-         f"`{doc['configuration']['control_fallback']}`. {doc['deliverable_status']}.", "",
+         f"Flight configuration: `{doc['configuration']['flight']}` (one Hall + one RF/ICP neutralizer, supply modes "
+         f"{' / '.join(doc['configuration']['flight_architecture']['electron_source_neutralizer']['serves_supply_modes'])}"
+         f", no conventional hollow cathode; A9.19). Ground reference only: "
+         f"`{doc['configuration']['ground_reference']['configuration']}` "
+         f"({doc['configuration']['ground_reference']['c1_status']}; A9.20). {doc['deliverable_status']}.", "",
          "## What this is not", ""]
     L += [f"- {x}" for x in doc["what_this_is_not"]]
     L += ["", "## A9.2 statuses (verbatim)", "", "| item | status |", "|---|---|"]
@@ -1609,9 +1652,10 @@ def render_md(doc: dict) -> str:
         b = g["blocking_evidence"]
         L.append(f"- **{g['id']}**: {_fmt(b['summary'] if isinstance(b, dict) else b, 400)}")
     rv = doc["architecture_gates"][0]["blocking_evidence"]["rows"]
-    L += ["", "RVM rows (AG-01):", "", "| row | title | hall_icp_neutralizer | hall_c1_reference | frozen |",
-          "|---|---|---|---|---|"]
-    L += [f"| {r['id']} | {r['title']} | {r['status']['hall_icp_neutralizer']} | {r['status']['hall_c1_reference']} "
+    gcol = "ground_reference (hall_c1_reference)"
+    L += ["", "RVM rows (AG-01; C1 column = GROUND_REFERENCE, not a flight candidate):", "",
+          "| row | title | hall_icp_neutralizer (flight) | C1 ground reference | frozen |", "|---|---|---|---|---|"]
+    L += [f"| {r['id']} | {r['title']} | {r['status']['hall_icp_neutralizer']} | {r['status'].get(gcol, '-')} "
           f"| {str(r['requirement_frozen']).lower()} |" for r in rv]
     up = doc["upstream_pareto"]
     L += ["", "## Upstream Pareto sets (PARAMETRIC_SENSITIVITY)", "",
@@ -1622,7 +1666,9 @@ def render_md(doc: dict) -> str:
     for m in up["robust_set"]["members"]:
         L.append(f"| `{m['design_id'].replace('|', ' / ')}` | {sig(m['mdot_delivered_min_kgps'] * 1e6, 4)} | "
                  f"{sig(m['drag_intake_max_N'] * 1e3, 4)} | {sig(m['P_compressor_el_max_W'], 4)} | "
-                 f"{sig(m['m_compressor_max_kg'], 4)} | {m['V_m3']} | {sig(m['ripple_transfer_shaft'], 4)} |")
+                 f"{sig(m['m_compressor_max_kg'], 4)} | {m['V_m3']} | "
+                 + (f"{sig(m['ripple_transfer_shaft'], 4)} |" if m.get("ripple_transfer_shaft") is not None else
+                    "not carried (reported constraint, not an objective; A9.16 step 3) |"))
     vs = up["nominal_pareto_union"]["value_sets"]
     L += ["", f"Nominal-context Pareto union: {up['nominal_pareto_union']['n_members']} members "
               f"({up['nominal_pareto_union']['check']}):", ""]
@@ -1655,17 +1701,23 @@ def render_md(doc: dict) -> str:
         L.append(f"| {s['id']} | {_fmt(s['evidence'], 220)} | {', '.join(s['addresses_gates'])} | "
                  f"{', '.join(s['depends_on']) or '-'} | {s['vehicle']} |")
     ro = doc["owner_question_rollup"]
-    L += ["", "## Owner-question roll-up (not answered here)", "", ro["rule"] + ".", "",
-          f"### New F9 questions", ""]
-    L += [f"- **{q['id']}** ({q['needed_by']}): {q['question']}" for q in doc["open_owner_questions"]]
-    L += ["", f"### A9.7 lane questions ({ro['a9_7_lane_question_count']})", "", "| lane | id | question |",
-          "|---|---|---|"]
-    L += [f"| {q['lane']} | {q['id']} | {_fmt(q['question'], 260)} |" for q in ro["a9_7_lane_questions"]]
-    L += ["", "Other existing open questions cited: " + "; ".join(
-        f"{q['id']}: {q['question']}" for q in ro["other_existing_open_questions_cited"]), "",
-          f"### State v4 TBD_OWNER ({ro['state_v4_tbd_owner_count']})", "", "| no | id | blocks | question |",
-          "|---|---|---|---|"]
-    L += [f"| {q['no']} | {q['id']} | {_fmt(q['blocks'], 40)} | {_fmt(q['question'], 200)} |"
+    v5s = ro.get("state_v5", {}).get("status_of_rolled_up_questions", {})
+    st5 = lambda qid: v5s.get(qid, "-")        # noqa: E731  (A9.16 repair F8: the v5 status is shown beside each row)
+    L += ["", "## Owner-question roll-up (questions as raised by the lanes; current status from state v5)", "",
+          ro["rule"] + ".", "", "Current status: state v5 " + str(ro.get("state_v5", {}).get("tbd_owner_count", "-"))
+          + " TBD_OWNER (" + ", ".join(ro.get("state_v5", {}).get("open_owner_questions", [])) + "); every other "
+          "question below is answered (status column).", "", f"### F9 questions (as raised)", ""]
+    L += [f"- **{q['id']}** ({q['needed_by']}; status {q.get('status', '-')}): {q['question']}"
+          for q in doc["open_owner_questions"]]
+    L += ["", f"### A9.7 lane questions as raised ({ro['a9_7_lane_question_count']})", "",
+          "| lane | id | status (v5) | question |", "|---|---|---|---|"]
+    L += [f"| {q['lane']} | {q['id']} | {st5(q['id'])} | {_fmt(q['question'], 260)} |"
+          for q in ro["a9_7_lane_questions"]]
+    L += ["", "Other existing questions cited (as raised): " + "; ".join(
+        f"{q['id']} [{st5(q['id'])}]: {q['question']}" for q in ro["other_existing_open_questions_cited"]), "",
+          f"### Historical: state v4 TBD_OWNER as raised ({ro['state_v4_tbd_owner_count']}) - status now from state v5",
+          "", "| no | id | blocks | status (v5) | question |", "|---|---|---|---|---|"]
+    L += [f"| {q['no']} | {q['id']} | {_fmt(q['blocks'], 40)} | {st5(q['id'])} | {_fmt(q['question'], 200)} |"
           for q in ro["state_v4_tbd_owner"]]
     L += ["", "## Findings", ""]
     L += [f"- **{f['id']}** ({f['evidence_class']}): {f['finding']}" for f in doc["findings"]]
@@ -1673,6 +1725,16 @@ def render_md(doc: dict) -> str:
     L += [f"| {d['id']} | {d['direction']} | {d['counterpart']} | {_fmt(d['content'], 200)} | {d['status']} |"
           for d in doc["interface_demands"]]
     L += ["", "## M16 impact", ""] + [f"- {m['state_change']}" for m in doc["m16_impact"]]
+    L += ["", "## A9.16 owner decisions applied", "",
+          f"State v5: {ro['state_v5']['tbd_owner_count']} TBD_OWNER ({', '.join(ro['state_v5']['open_owner_questions'])}). "
+          + ro["rule_v5"] + ".", "", "| decision | question | code | records | how applied |", "|---|---|---|---|---|"]
+    L += [f"| {r['decision']} | {r['question_id']} | {r['decision_code']} | {_fmt(', '.join(r['record_ids']), 80)} | "
+          f"{_fmt(r['how_applied'], 220)} |" for r in doc["a9_16_owner_answers_applied"]]
+    L += ["", "Evaluators: " + "; ".join(f"{k}: {v}" for k, v in doc["a9_16_evaluators"].items()) + "."]
+    L += ["", "## A9.19 / A9.20 owner decisions applied", "", "| decision | item | records | how applied |",
+          "|---|---|---|---|"]
+    L += [f"| {r['decision']} | {r['question_id']} | {_fmt(', '.join(r['record_ids']), 80)} | "
+          f"{_fmt(r['how_applied'], 220)} |" for r in doc["a9_19_owner_answers_applied"]]
     L += ["", "## Inputs", "", "Pinned (immutable, sha256 verified):", ""]
     L += [f"- `{v['path']}` {v['sha256']}" for v in doc["pins"].values()]
     L += ["", "Consumed (sha256 at build time; drift reported by `--check`):", ""]

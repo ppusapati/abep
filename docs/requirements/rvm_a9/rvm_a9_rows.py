@@ -97,7 +97,8 @@ def build_rows(B, ctx):
         "requirement_text": "P_bus,1ms,max = max_t (1/1 ms) integral P_bus dt < 1500 W at the spacecraft-DC "
                             "propulsion boundary (every active load: Hall discharge, magnets, RF source / match, "
                             "collector bias, C1 supplies, compressor, flow control, housekeeping, thermal), for steady "
-                            "state AND start-up transients unless the official RFP grants a transient exception.",
+                            "state AND start-up transients; the registered RFP prints only '<1500W' (RFP-P18-10) and "
+                            "grants no transient exception.",
         "sources": [ctx.r2("(d) Power", "1,500 W"), ctx.hgm("R1", "< 1.5 kW"),
                     ctx.answer(108, "<1.5 kW"), ctx.answer(110, "Every active load gets a bus slot"),
                     ctx.decision("A91", "OQ-A902-01", "1 ms"),
@@ -150,8 +151,9 @@ def build_rows(B, ctx):
     rows.append({
         "id": "RVM-06", "key": "MASS_LT_40KG_WET", "category": "rfp_recorded",
         "title": "< 40 kg wet (incl. Xe + tank)",
-        "requirement_text": "Total propulsion-system mass < 40 kg, read as the wet system including Xe and tank unless "
-                            "the official RFP defines it as dry (row 5); 20 % internal development margin (row 52).",
+        "requirement_text": "Total propulsion-system mass < 40 kg, read as the wet system including Xe and tank (owner "
+                            "row 5; the registered RFP prints '< 40kg' without wet / dry, RFP-P18-11, recorded as "
+                            "DISC-02 for DRDO clarification); 20 % internal development margin (row 52).",
         "sources": [ctx.r2("(a) Mass", "under 40 kg"), ctx.hgm("R1", "< 40 kg"),
                     ctx.answer(5, "INCLUDES Xe + tank"), ctx.answer(52, "<40 kg wet"),
                     ctx.a9("requirement_discipline", "< 40 kg")],
@@ -299,11 +301,13 @@ def build_rows(B, ctx):
     rows.append({
         "id": "RVM-13", "key": "MISSION_LIFE_GE_26280H", "category": "rfp_recorded",
         "title": "Mission-life basis >= 26,280 h",
-        "requirement_text": "Mission life >= 26,280 h (three years), the conservative engineering basis versus the "
-                            "repository's 26,000 h until the official wording is verified (row 3).",
+        "requirement_text": "Mission life >= 26,280 h (three years = 3 x 8,760 h), the conservative engineering "
+                            "basis (row 3) against the registered RFP wording '3 years (Approx 26000 hrs)' "
+                            "(RFP-P19-01; DISC-04).",
         "sources": [ctx.r2("(d) Life", "three years"), ctx.hgm("R1", "26,000 h mission"),
                     ctx.answer(3, "≥26,280 h")],
-        "requirement_basis": "OWNER_ENGINEERING_BASIS (row 3) pending the official RFP wording",
+        "requirement_basis": "OWNER_ENGINEERING_BASIS (row 3; registered RFP-P19-01 '3 years (Approx 26000 hrs)', "
+                             "DISC-04)",
         "requirement_frozen": False,
         "limit": {"quantity": "mission life", "comparator": ">=", "value": 26280, "units": "h"},
         "verification_methods": ["analysis"],
@@ -463,5 +467,234 @@ def build_rows(B, ctx):
         "open_readings": [od(ctx, "OD12")],
         "rtm_xref": [ctx.rtm("RFP-REDUND")], "lane24_gates": [], "m16_rows": [12, 14],
         "artifacts": cfg_map(lambda c: [plan(ctx, "BUS", "@doc", why="supply partition exists; no FMEA")]),
+    })
+    rows.extend(build_rfp_rebase_rows(B, ctx, hall, cfg_map, rfp_basis))
+    return rows
+
+
+def build_rfp_rebase_rows(B, ctx, hall, cfg_map, rfp_basis):
+    """RFP re-base rows (AG-15). RVM-20..RVM-26 cover registered RFP clauses no earlier row carried; RVM-27 is the A9.12
+    owner mount-heat allocation. Their RFP clause sources are added by rfp_rebase.apply (single mapping table); the
+    requirement texts paraphrase the verbatim clauses, which are copied into each row's sources. Tokens checked here
+    fail closed when the registered transcription does not contain them."""
+    plan, absent = B.plan, B.absent
+    rows = []
+    ctx.rfp("RFP-P18-12", "Discrete interface for thruster operation")
+    ctx.rfp("RFP-P18-12", "Necessary hardware drivers to be part of propulsion system")
+    # RVM-20 ---------------------------------------------------------------------------------------------- 1553B
+    rows.append({
+        "id": "RVM-20", "key": "ELECTRICAL_INTERFACE_MIL1553B", "category": "rfp_registered",
+        "title": "MIL-1553B interface with the satellite onboard computer + discrete thruster interface + hardware "
+                 "drivers inside the propulsion system",
+        "requirement_text": "MIL-1553B interface with the satellite onboard computer for configuration and for "
+                            "high-rate data-logging with the data recorder; discrete interface for thruster operation; "
+                            "the necessary hardware drivers are part of the propulsion system (RFP-P18-12). The power "
+                            "system electronics take power from the satellite bus and provide the ABEP voltages and "
+                            "currents (RFP-P18-01).",
+        "sources": [], "requirement_basis": rfp_basis, "requirement_frozen": False,
+        "limit": {"quantity": "spacecraft data / command interface", "comparator": "is",
+                  "value": "MIL-1553B + discrete thruster-operation interface (as printed)", "units": "-"},
+        "verification_methods": ["inspection", "test", "demonstration"],
+        "verification_note": "interface control document (inspection), MIL-1553B configuration / data-logging test "
+                             "with a representative onboard-computer bus, discrete-line thruster operation demonstrated "
+                             "with the drivers inside the propulsion system; no data-interface artifact exists",
+        "open_readings": [], "rtm_xref": [], "lane24_gates": [], "m16_rows": [12, 14],
+        "artifacts": cfg_map(lambda c: [
+            absent(ctx, "RFP-P18-12", "an interface control document and a MIL-1553B configuration / high-rate "
+                                      "data-logging test with the satellite onboard computer plus a discrete-interface "
+                                      "thruster-operation demonstration, drivers inside the propulsion system"),
+            plan(ctx, "BUS", "@doc", role="SUPPORTING", why="power boundary only; no data interface defined"),
+        ]),
+    })
+    # RVM-21 ---------------------------------------------------------------------------------------------- ENTEST
+    ctx.rfp("RFP-P19-04", "PSLV/ SSLV")
+    ctx.rfp("RFP-P19-04", "radiation, thermal and ThermoVac")
+    rows.append({
+        "id": "RVM-21", "key": "ENVIRONMENTAL_QUALIFICATION_ENTEST", "category": "rfp_registered",
+        "title": "Environmental qualification (ENTEST): launch vibration / shock (PSLV / SSLV or DRDO-decided LV), AO "
+                 "erosion, radiation, thermal, ThermoVac, 3-year VLEO life",
+        "requirement_text": "The product qualifies the launch vibrations and shock (launch loads of PSLV / SSLV or any "
+                            "other launch vehicle decided by DRDO at PDR) and the atomic-oxygen erosion, radiation, "
+                            "thermal and ThermoVac specifications for a VLEO orbit with a 3-year mission life; all "
+                            "intake, compressor and thruster parts take care of nascent atomic-oxygen erosion for the "
+                            "lifetime (RFP-P19-04). ENTEST specifications are provided at PDR: no numeric level is "
+                            "carried (not invented). Space-qualified materials and processes for the QM (RFP-P19-02).",
+        "sources": [], "requirement_basis": rfp_basis, "requirement_frozen": False,
+        "limit": None,
+        "verification_methods": ["test", "analysis"],
+        "verification_note": "QM ENTEST campaign against the PDR-issued specification (milestone 5, RFP-P21-02); AO "
+                             "erosion through the AO programme (RVM-16); thermal / ThermoVac with the coupled thermal "
+                             "model inputs (RVM-17)",
+        "open_readings": [], "rtm_xref": [], "lane24_gates": [], "m16_rows": [13, 16],
+        "artifacts": cfg_map(lambda c: [
+            absent(ctx, "RFP-P19-04", "ENTEST qualification test reports of the QM units against the ENTEST "
+                                      "specification issued at PDR (launch vibration / shock, AO erosion, radiation, "
+                                      "thermal, ThermoVac)"),
+            plan(ctx, "AOL", "AOL-EX-01", why="ground AO exposure (AO-erosion part only)"),
+            plan(ctx, "AOL", "AOL-EX-02", role="SUPPORTING"),
+            plan(ctx, "P3", "@doc", role="SUPPORTING", why="coupled thermal framework (inputs TBD)"),
+        ]),
+    })
+    # RVM-22 ---------------------------------------------------------------------------------------------- test approach
+    sub = [("a", "Coating materials and surface tests with Atomic Oxygen beam exposure"),
+           ("b", "Creation of rarefied gas with prescribed mg/sec and velocity"),
+           ("c", "Minimum functional performance testing for EM and QM"),
+           ("d", "approved by PMMG/SPMMG")]
+    for _, tok in sub:
+        ctx.rfp("RFP-P19-06", tok)
+    rows.append({
+        "id": "RVM-22", "key": "RFP_TEST_APPROACH", "category": "rfp_registered",
+        "title": "RFP test approach 4.1 a-d (AO-beam coating tests; rarefied-gas intake erosion; EM / QM force, Isp, "
+                 "efficiency; expert-committee-approved test plan) and ground demonstration",
+        "requirement_text": "System performance demonstrated by: a) coating-material and surface tests with "
+                            "atomic-oxygen beam exposure and erosion-yield measurement; b) rarefied gas created with "
+                            "prescribed mg/s and velocity to test the intake erosion process; c) minimum functional "
+                            "performance testing of EM and QM in integration mode for force, with variable air intake "
+                            "(mg/s), Isp and total-system efficiency; d) test-plan document reviewed / finalized by an "
+                            "expert committee and approved by PMMG / SPMMG (RFP-P19-06). Only ground demonstration in "
+                            "a simulated environment and space-qualification testing is desired (RFP-P20-02).",
+        "sources": [], "requirement_basis": rfp_basis, "requirement_frozen": False,
+        "limit": None,
+        "verification_methods": ["test", "inspection"],
+        "verification_note": "a) AO programme (AOL-EX-01 / -02); b) no rarefied-gas intake-erosion facility or test "
+                             "record exists; c) HI-ABS absolute demonstration plan (force at registered delivered feed "
+                             "states; Isp and total-system efficiency need the same measured thrust); d) committee / "
+                             "PMMG approval record (inspection)",
+        "sub_requirements": [{"item": i, "rfp_clause": "RFP-P19-06", "token": t} for i, t in sub],
+        "open_readings": [], "rtm_xref": [], "lane24_gates": [], "m16_rows": [1, 9],
+        "artifacts": cfg_map(lambda c: [
+            plan(ctx, "AOL", "AOL-EX-01", why="4.1 a) AO-beam / erosion-yield"),
+            absent(ctx, "RFP-P19-06", "4.1 b) a rarefied-gas source with prescribed mg/s and velocity and an intake "
+                                      "erosion test record", suffix="-b"),
+            plan(ctx, "PRE", "HI-ABS", why="4.1 c) EM / QM force with variable intake mg/s, Isp, efficiency"),
+            absent(ctx, "RFP-P19-06", "4.1 d) the test-plan document reviewed / finalized by the expert committee and "
+                                      "approved by PMMG / SPMMG", suffix="-d"),
+        ]),
+    })
+    # RVM-23 ---------------------------------------------------------------------------------------------- ISO / ATP
+    ctx.rfp("RFP-P20-01", "ATP document")
+    rows.append({
+        "id": "RVM-23", "key": "ISO_CERTIFICATION_ATP", "category": "rfp_registered",
+        "title": "ISO certification; acceptance / qualification per ATP (finalized after DDR / CDR); testing to "
+                 "MIL / ASTM / BIS / ESS standards",
+        "requirement_text": "Deliverables match the Para 2 parameters (4.2 acceptance); the company is ISO certified; "
+                            "acceptance / qualification based on the ATP document prepared from the Para 2 parameters "
+                            "and finalized after DDR / CDR; testing as per applicable standards (MIL / ASTM / BIS etc.) "
+                            "/ ESS specification (RFP-P20-01).",
+        "sources": [], "requirement_basis": rfp_basis, "requirement_frozen": False,
+        "limit": None,
+        "verification_methods": ["inspection"],
+        "verification_note": "inspection of the ISO certificate and of the ATP document after DDR / CDR; no ATP "
+                             "exists (the RVM is not an ATP)",
+        "open_readings": [], "rtm_xref": [], "lane24_gates": [], "m16_rows": [],
+        "artifacts": cfg_map(lambda c: [
+            absent(ctx, "RFP-P20-01", "the company ISO certificate and the ATP document finalized after DDR / CDR "
+                                      "(Para 2 parameters; MIL / ASTM / BIS / ESS test standards)"),
+        ]),
+    })
+    # RVM-24 ---------------------------------------------------------------------------------------------- M4 exit
+    rows.append({
+        "id": "RVM-24", "key": "MILESTONE4_EXIT_QUALIFIED_THRUSTER_O_N2", "category": "rfp_registered",
+        "title": "Exit criterion: EM of the ABEP system + qualified electric thruster with O and N2 as propellant at "
+                 "milestone 4 (partial success)",
+        "requirement_text": "Successful realization of the Engineering Model of the ABEP system and realization of a "
+                            "qualified electric thruster with O and N2 as propellant at milestone 4 can be considered "
+                            "a partial success of the project (RFP-P20-03; milestone 4 = QM PSE and thruster testing, "
+                            "RFP-P21-01). N2 + O2 surrogate data are NO_ATOMIC_O and never atomic-O evidence; "
+                            "compliance gate CG-N2-AO (A9.14 OD12).",
+        "sources": [], "requirement_basis": rfp_basis, "requirement_frozen": False,
+        "limit": {"quantity": "propellants of the qualified electric thruster at milestone 4", "comparator": "includes",
+                  "value": "O and N2", "units": "-"},
+        "verification_methods": ["test", "demonstration"],
+        "verification_note": "qualification test record of the thruster on N2 and on O (atomic-O source, HI-AO) at "
+                             "milestone 4; Ar / Xe data never count",
+        "open_readings": [], "rtm_xref": [], "lane24_gates": [], "m16_rows": [9],
+        "artifacts": cfg_map(lambda c: [
+            absent(ctx, "RFP-P20-03", "a qualification test record of the electric thruster operated on O and on N2 "
+                                      "at milestone 4"),
+            plan(ctx, "PRE", "HI-AO"), plan(ctx, "PRE", "DQ-HI-SUST"), hall,
+        ]),
+    })
+    # RVM-25 ---------------------------------------------------------------------------------------------- milestones
+    ms = [(1, "RFP-P20-04", "T0+09", "15%"), (2, "RFP-P20-05", "T0+12", "10%"), (3, "RFP-P20-06", "T0+20", "20%"),
+          (4, "RFP-P21-01", "T0+24", "35%"), (5, "RFP-P21-02", "T0+36", "20%")]
+    milestones = []
+    for n, cid, due, share in ms:
+        rec = ctx.rfp(cid, due)
+        ctx.rfp(cid, share)
+        milestones.append({"milestone": n, "rfp_clause": cid, "due": due + " months", "share": share,
+                           "verbatim": rec["verbatim"]})
+    rows.append({
+        "id": "RVM-25", "key": "MILESTONE_SCHEDULE_DELIVERABLES", "category": "rfp_registered",
+        "title": "Milestone schedule and deliverables M1-M5 (T0+9 / +12 / +20 / +24 / +36 months) and the EM -> QM "
+                 "processing flow",
+        "requirement_text": "Milestones and deliverables as printed (RFP-P20-04 .. RFP-P21-02): M1 PDR-1 hardware "
+                            "(T0+09, 15 %), M2 PDR-2 algorithms / software / test plan (T0+12, 10 %), M3 CDR with EM "
+                            "thruster and PSE demonstrated with storage input, not intake (T0+20, 20 %), M4 EM intake + "
+                            "QM PSE and thruster (T0+24, 35 %), M5 QM integration, ENTEST and delivery (T0+36, 20 %); "
+                            "EM -> QM processing flow (RFP-P17-01). T0 is not set.",
+        "sources": [], "requirement_basis": rfp_basis, "requirement_frozen": False,
+        "limit": {"quantity": "QM integration, ENTEST qualification and delivery (milestone 5)", "comparator": "<=",
+                  "value": "T0+36", "units": "months"},
+        "verification_methods": ["inspection", "demonstration"],
+        "verification_note": "inspection of the approved milestone deliverables (design documents, CAD / EDA models, "
+                             "test plans and results) at each review; none exists and T0 is not set",
+        "milestones": milestones,
+        "open_readings": [], "rtm_xref": [], "lane24_gates": [], "m16_rows": [],
+        "artifacts": cfg_map(lambda c: [
+            absent(ctx, "RFP-P20-04", "the approved milestone deliverables M1-M5 (PDR-1, PDR-2, CDR, EM intake + QM "
+                                      "PSE / thruster, QM integration / ENTEST / delivery) against a set T0"),
+        ]),
+    })
+    # RVM-26 ---------------------------------------------------------------------------------------------- uN stand
+    ctx.rfp("RFP-P27-01", "Ultra High Vacuum Test Facility")
+    rows.append({
+        "id": "RVM-26", "key": "THRUST_MEASUREMENT_AND_TEST_INFRASTRUCTURE", "category": "rfp_registered",
+        "title": "Micro-newton-level thrust measurement system; UHV test facility and low-thrust measurement setup "
+                 "(Part IV(B), no waivers)",
+        "requirement_text": "Thrust measurement system capable of measuring micro-newton-level thrust (Part IV(C) 5 "
+                            "evaluation criterion: in-house 10 / consortium 5 / sub-contract 0 marks, RFP-P30-01); "
+                            "ultra-high-vacuum test facility for propulsion-system testing and a low-thrust measurement "
+                            "setup, in-house / consortium / sub-contract (RFP-P27-01; no waivers for Part IV(B), "
+                            "RFP-P21-03).",
+        "sources": [], "requirement_basis": rfp_basis, "requirement_frozen": False,
+        "limit": {"quantity": "thrust measurement capability", "comparator": "resolves",
+                  "value": "micro-newton level (as printed; no numeric resolution stated)", "units": "-"},
+        "verification_methods": ["inspection", "demonstration", "test"],
+        "verification_note": "calibration / resolution demonstration of the stand at micro-newton level and a facility "
+                             "availability record; the mN-level torsional-stand plan of RVM-02 (row 115) is not "
+                             "evidence of micro-newton capability",
+        "open_readings": [], "rtm_xref": [], "lane24_gates": [], "m16_rows": [9],
+        "artifacts": cfg_map(lambda c: [
+            absent(ctx, "RFP-P30-01", "a calibration record demonstrating micro-newton-level thrust resolution of "
+                                      "the thrust measurement system"),
+            absent(ctx, "RFP-P27-01", "an availability record of the UHV test facility and the low-thrust "
+                                      "measurement setup (in-house / consortium / sub-contract)"),
+            plan(ctx, "PRE", "DQ-HI-TABS", role="SUPPORTING", why="mN-level absolute thrust gate (not uN)"),
+            plan(ctx, "VI", "VI-HD-03", role="SUPPORTING"),
+        ]),
+    })
+    # RVM-27 ---------------------------------------------------------------------------------------------- 50 W mount
+    rows.append({
+        "id": "RVM-27", "key": "MOUNT_HEAT_50W_ALLOCATION", "category": "owner_internal_allocation",
+        "title": "Steady heat conducted into the spacecraft mounting interface <= 50 W (A9.12 S5.4 provisional owner "
+                 "allocation; 100 W contingency, 25 W stretch)",
+        "requirement_text": "Thermally isolated H-1 mount + dedicated radiator; 50 W is the provisional governing "
+                            "allocation for steady heat conducted into the spacecraft mounting interface until the "
+                            "spacecraft thermal ICD exists (100 W contingency / sensitivity only, 25 W stretch; a "
+                            "design meeting only 100 W is not closed). An owner allocation, not a spacecraft or RFP "
+                            "requirement.",
+        "sources": [ctx.decision("A912", "OQ-A907-06", "50 W")],
+        "requirement_basis": "OWNER_ALLOCATION (A9.12 S5.4 OQ-A907-06): provisional until the spacecraft thermal ICD",
+        "requirement_frozen": True,
+        "limit": {"quantity": "steady heat conducted into the spacecraft mounting interface", "comparator": "<=",
+                  "value": 50, "units": "W"},
+        "verification_methods": ["analysis", "test"],
+        "verification_note": "P3 mount-heat report at the 25 / 50 / 100 W cases (no coupled result: inputs "
+                             "INCOMPLETE_EVIDENCE) plus a thermal-vacuum measurement of the conducted interface heat",
+        "open_readings": [], "rtm_xref": [], "lane24_gates": [], "m16_rows": [13, 16],
+        "artifacts": cfg_map(lambda c: [
+            plan(ctx, "P3", "@doc", why="mount-heat report (25 / 50 / 100 W cases); coupled network inputs TBD"),
+        ]),
     })
     return rows

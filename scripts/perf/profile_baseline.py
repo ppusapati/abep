@@ -60,6 +60,13 @@ SCRIPT_REL = "scripts/perf/profile_baseline.py"
 OUT_DIR_REL = "docs/performance"
 JSON_REL = f"{OUT_DIR_REL}/PERFORMANCE_BASELINE_98fbbb9.json"
 MD_REL = f"{OUT_DIR_REL}/PERFORMANCE_BASELINE_98fbbb9.md"
+# Historical source-drift record (A9.18 PERF_RERUN): profiled sources changed after measurement by authorised model
+# changes; --check reports them as HISTORICAL_SOURCE_DRIFT instead of failing (timings are never re-measured).
+DRIFT_REL = "docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_9.json"
+# Later drift records, applied in order after DRIFT_REL (each entry chains old_sha256 -> new_sha256 from the previous
+# record's new_sha256). The current bytes of every drifted file must equal the last recorded new_sha256 (SW-05: a
+# recorded drift is never an allowance for any later change).
+DRIFT_ADDENDA_REL = ("docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_18_REPAIR.json",)
 TEST_REL = "tests/test_perf_baseline.py"
 P3_LIB_REL = "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py"
 P3_BUILDER_REL = "docs/experiments/hall_icp/p3_coupled_thermal/build_p3_coupled_thermal.py"
@@ -1189,12 +1196,73 @@ def check():
     if doc.get("commands") != COMMANDS:
         errs.append("commands changed")
     for s in doc.get("profiled_sources", []):
-        cur = hashlib.sha256((REPO / s["path"]).read_bytes()).hexdigest()
-        if cur != s["sha256"]:
-            errs.append(f"profiled source changed since the baseline: {s['path']} (baseline is stale)")
         if s.get("identical_to_98fbbb9") is False:
             errs.append(f"{s['path']} differed from 98fbbb9 at measurement time")
+    errs += [d["error"] for d in source_drift(doc) if d.get("error")]
     return errs
+
+
+def source_drift(doc=None):
+    """Profiled sources whose bytes changed since the baseline was measured (historical source drift).
+
+    The committed timings are never re-measured or altered here. A drift is acceptable for --check only when it is
+    recorded in DRIFT_REL with the baseline's old sha256 (an authorised model change after the measurement; the owner
+    rerun, A9.18 PERF_RERUN, is required before any Rust performance admission). An unrecorded drift, or a record whose
+    old sha256 does not match the baseline, carries an ``error``. So does a recorded file whose current bytes differ from
+    the last recorded new sha256 (DRIFT_REL, then each DRIFT_ADDENDA_REL record chained on the previous new sha256):
+    a further change must be recorded in a new drift record, never accepted silently (SW-05, fail closed)."""
+    if doc is None:
+        doc = json.loads((REPO / JSON_REL).read_text())
+    rp = REPO / DRIFT_REL
+    rec = {}
+    if rp.exists():
+        rec = {d["path"]: d for d in json.loads(rp.read_text()).get("drifted_files", [])}
+    addenda = []
+    for rel in DRIFT_ADDENDA_REL:
+        ap = REPO / rel
+        if ap.exists():
+            addenda.append((rel, {d["path"]: d for d in json.loads(ap.read_text()).get("drifted_files", [])}))
+    out = []
+    for s in doc.get("profiled_sources", []):
+        cur = hashlib.sha256((REPO / s["path"]).read_bytes()).hexdigest()
+        if cur == s["sha256"]:
+            continue
+        d = {"status": "HISTORICAL_SOURCE_DRIFT", "path": s["path"], "old_sha256": s["sha256"], "new_sha256": cur}
+        r = rec.get(s["path"])
+        if r is None:
+            d["error"] = (f"profiled source changed since the baseline and the drift is not recorded in {DRIFT_REL}: "
+                          f"{s['path']} (old {s['sha256']}, new {cur})")
+        elif r.get("old_sha256_a9_7") != s["sha256"]:
+            d["error"] = f"drift record {DRIFT_REL} has a wrong old sha256 for {s['path']}"
+        else:
+            expected, where = r.get("new_sha256"), DRIFT_REL
+            for rel, arec in addenda:
+                a = arec.get(s["path"])
+                if a is None:
+                    continue
+                if a.get("old_sha256") != expected:
+                    d["error"] = (f"drift record {rel} does not chain for {s['path']}: its old sha256 "
+                                  f"{a.get('old_sha256')} != {where} new sha256 {expected}")
+                    break
+                expected, where = a.get("new_sha256"), rel
+            else:
+                if cur != expected:
+                    d["error"] = (f"{s['path']} drifted again after the drift record {where} (recorded new {expected}, "
+                                  f"now {cur}); record the change in a new drift record")
+        out.append(d)
+    return out
+
+
+def drift_report_lines(doc=None):
+    """Explicit HISTORICAL_SOURCE_DRIFT report lines (printed by --check; never silent)."""
+    drift = source_drift(doc)
+    lines = [f"HISTORICAL_SOURCE_DRIFT {d['path']} old_sha256={d['old_sha256']} new_sha256={d['new_sha256']}"
+             for d in drift]
+    if drift:
+        lines.append(f"HISTORICAL_SOURCE_DRIFT: {len(drift)} profiled source(s) changed after measurement (records "
+                     f"{', '.join((DRIFT_REL,) + tuple(DRIFT_ADDENDA_REL))}); recorded timings are historical for the measured code state; owner rerun "
+                     "(A9.18 PERF_RERUN) required before any Rust performance admission")
+    return lines
 
 
 def main(argv=None):
@@ -1210,6 +1278,8 @@ def main(argv=None):
     a = ap.parse_args(argv)
     if a.check:
         errs = check()
+        for line in drift_report_lines():
+            print(line)
         print("OK" if not errs else "\n".join(errs))
         return 1 if errs else 0
     if a.rederive:

@@ -1,0 +1,20 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_HARDWARE_PIVOT_2026_10_01_A9_20_c1_ground_only_owner_decision",
+ "decided_by": "owner",
+ "date": "2026-10-01",
+ "decision": "C1_GROUND_ONLY_LABORATORY_REFERENCE",
+ "parents": [
+  "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json"
+ ],
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+  "sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c"
+ },
+ "answer": "owner chose the recommended option: C1 is a ground-only laboratory reference (registers I_d,max,H1,Ar on H-1 independently of the ICP per A9.10 S3.5, and serves as the bench control in the C1-vs-ICP comparison); never flight hardware; never in the flight mass/power/Xe budgets",
+ "execution": {
+  "instruction": "apply with A9.19 after the running A9.16 finalize",
+  "merge": "no merge to main is authorized by this addendum"
+ },
+ "immutability": "never edited after commit; later owner amendments are new addendum files"
+}

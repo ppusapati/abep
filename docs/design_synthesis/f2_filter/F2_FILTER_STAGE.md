@@ -60,17 +60,17 @@ Rule: recorded as PLACEHOLDER_NOT_A_FLIGHT_DESIGN; never used silently. Filter e
 
 | id | location | value | units | what |
 |---|---|---|---|---|
-| PH-01 | `abep_sim/intake_tpmc.py:43` | False | - | IntakeGeometry.filter switch (filter branch of the direct TPMC); default off |
-| PH-02 | `abep_sim/intake_tpmc.py:44` | 0.7 | - | open-area fraction of the filter element; multiplies eta_c and the passive-compression area |
-| PH-03 | `abep_sim/intake_tpmc.py:45` | 0.6 | - | 'thermal Clausing factor of the filter element' (code comment); no source |
-| PH-04 | `abep_sim/intake_tpmc.py:46` | 0.8 | kg/m^2 | filter areal mass; no source |
-| PH-05 | `abep_sim/intake_tpmc.py:193` | law | - | forward law 'hyperthermal, mostly transmitted' (code comment): eta_c x open_frac x transmission^0.5; no source |
-| PH-06 | `abep_sim/intake_tpmc.py:194` | law | - | backflow law: K_back x transmission; no source |
-| PH-07 | `abep_sim/intake_tpmc.py:195` | law | - | effective open fraction for the passive compression ratio |
-| PH-08 | `abep_sim/intake_tpmc.py:205` | law | kg | filter mass added to the intake mass (direct TPMC) |
+| PH-01 | `abep_sim/intake_tpmc.py:44` | False | - | IntakeGeometry.filter switch (filter branch of the direct TPMC); default off |
+| PH-02 | `abep_sim/intake_tpmc.py:45` | 0.7 | - | open-area fraction of the filter element; multiplies eta_c and the passive-compression area |
+| PH-03 | `abep_sim/intake_tpmc.py:46` | 0.6 | - | 'thermal Clausing factor of the filter element' (code comment); no source |
+| PH-04 | `abep_sim/intake_tpmc.py:47` | 0.8 | kg/m^2 | filter areal mass; no source |
+| PH-05 | `abep_sim/intake_tpmc.py:258` | law | - | forward law 'hyperthermal, mostly transmitted' (code comment): eta_c x open_frac x transmission^0.5; no source |
+| PH-06 | `abep_sim/intake_tpmc.py:259` | law | - | backflow law: K_back x transmission; no source |
+| PH-07 | `abep_sim/intake_tpmc.py:260` | law | - | effective open fraction for the passive compression ratio |
+| PH-08 | `abep_sim/intake_tpmc.py:270` | law | kg | filter mass added to the intake mass (direct TPMC) |
 | PH-09 | `abep_sim/intake.py:29` | False | - | IntakeParams.filter switch (production path); default off |
-| PH-10 | `abep_sim/intake.py:71` | 0.8 | kg/m^2 | production path adds filter MASS only (no flow effect: UPSTREAM_ICD G-01) |
-| PH-11 | `abep_sim/system.py:309` | 0.8 | kg/m^2 | BOM filter line in system.evaluate |
+| PH-10 | `abep_sim/intake.py:76` | 0.8 | kg/m^2 | production path adds filter MASS only (no flow effect: UPSTREAM_ICD G-01) |
+| PH-11 | `abep_sim/system.py:387` | 0.8 | kg/m^2 | BOM filter line in system.evaluate |
 
 - related, not used: abep_sim/aochem.py RECOMB_GAMMA and EROSION_YIELD_CM3_PER_ATOM ('literature-class priors' without per-entry sources): not filter values, not used by F2
 
@@ -131,7 +131,7 @@ Rule: recorded as PLACEHOLDER_NOT_A_FLIGHT_DESIGN; never used silently. Filter e
 - evidence: none
 - interface status: all F2 interface parameters TBD (FilterStage.tbd): apply() refuses in evidence mode
 - AO applicability: INCOMPLETE_EVIDENCE
-- candidate status: LISTED_ONLY_NO_SELECTION (admissibility TBD_OWNER, F2-OQ-02)
+- candidate status: LISTED_ONLY_NO_SELECTION (admissibility ANSWERED A9.13 S6.4 CATALYTIC_NOT_BASELINE, F2-OQ-02: not the baseline)
 
 ### FC-07 - Xe cathode-line filter / getter (owner row 51)
 - function: Xe purity for the C1 LaB6 branch - Xe path, NOT the atmospheric filter stage
@@ -173,17 +173,19 @@ DC-03 per-species forward fractions (repository placeholder law, sensitivity onl
 | F2-IF-05 | F2 <-> F4 | abep_sim/design/plenum_feed.py (F4-ID-03, F4-ID-04) | FilterStage.backflow_coupling(): per unit mass flow arriving at the outlet face, fractions to upstream / reflected to plenum / captured / converted, and C_s; F4 returns the downstream incident flux per species (InletState.mdot_back_incident_kgps, required, never defaulted) | DEFINED (numbers only when the records are usable) |
 | F2-IF-06 | F2 -> F7 | abep_sim/design/architecture_optimizer.py (F78-ID-03, context axis) | x_filter design-vector component: concept id + geometry design variables; result labels propagate (a sensitivity label is never a design value) | DEFINED |
 | F2-IF-07 | F2 -> mass budget | docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json (A9B-02, AL-01) | filter mass = areal mass x face area (TBD); AL-01 3.5 kg covers intake/filter/duct jointly | TBD_AFTER_EVIDENCE |
-| F2-IF-08 | F2 -> P4 materials | docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json | an APP-FILTER application (O / AO exposure at filter temperature, recombination probability and erosion yield criteria) would be needed; P4 today screens APP-ANODE and APP-COLLECTOR only | TBD_OWNER (F2-OQ-04) |
+| F2-IF-08 | F2 -> P4 materials | docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json | an APP-FILTER application (O / AO exposure at filter temperature, recombination probability and erosion yield criteria) would be needed; P4 today screens APP-ANODE and APP-COLLECTOR only | ANSWERED A9.13 S6.6 COMPRESSOR_INLET_PLUS_APP_FILTER (F2-OQ-04: filter at the compressor inlet; P4 adds APP-FILTER) |
 | F2-IF-09 | F2 -> AO / lifetime register | docs/experiments/lifetime_ao/ao_lifetime_register_v5.json | no AOL mechanism covers a filter element (AOL-M01..M11); a future register revision would add filter erosion / recombination and filter-emitted contamination | TBD_AFTER_EVIDENCE |
 | F2-IF-10 | F2 -> upstream ICD | docs/interfaces/UPSTREAM_ICD.md IF-A1 / IF-A2, gap G-01 | this design-layer interface supplies a separate filter element with its own transmission; the production path (intake.collection) is unchanged, so G-01 stays open there (moving it is a model change: UPSTREAM_ICD open question 1) | DEFINED |
 | F2-IF-11 | F2 -> F0 | docs/performance/PERFORMANCE_BASELINE_98fbbb9.json | the filter stage is O(n_species) arithmetic; not a profiling hotspot, not a Rust candidate | DEFINED |
 
-## Open owner questions (new)
+## Owner questions raised by this lane
 
-- **F2-OQ-01** (TBD_OWNER): Which protection functions must the RFP filter stage provide (particulates / debris, compressor wear products, atomic O to downstream surfaces, ambient charged particles, backflow limitation), and against which quantitative acceptance? Why: the RFP chain names a filter but no function or acceptance is recorded in the repository; every capture efficiency is TBD
-- **F2-OQ-02** (TBD_OWNER): Is a deliberately catalytic (O -> O2 converting) filter element admissible, given owner row 102 (inert / low-recombination lining baseline to preserve the representative atomic-O fraction)? Why: FC-06 would trade downstream AO protection against the delivered species state
-- **F2-OQ-03** (TBD_OWNER): May trade studies carry 'no filter' (FC-00) as an admissible architecture option, or only as a reference bound because the RFP chain names a filter stage? Why: the RFP architecture text is recorded only as a secondary transcription (RVM-08, verify)
-- **F2-OQ-04** (TBD_OWNER): Where does the filter sit (ahead of the intake collimator, in the intake chamber, or at the compressor inlet), and should P4 add an APP-FILTER application for its material? Why: placement fixes the forward incidence (hyperthermal vs thermalised), the face area and the O exposure; P4 screens only anode and collector
+Status from `docs/budgets/owner_decisions/owner_questions_state_v5.json` (as raised: TBD_OWNER).
+
+- **F2-OQ-01** (ANSWERED (A9.13 S6.3, decision code PARTICULATE_DEBRIS_PROTECTION)): Which protection functions must the RFP filter stage provide (particulates / debris, compressor wear products, atomic O to downstream surfaces, ambient charged particles, backflow limitation), and against which quantitative acceptance? Why: the RFP chain names a filter but no function or acceptance is recorded in the repository; every capture efficiency is TBD
+- **F2-OQ-02** (ANSWERED (A9.13 S6.4, decision code CATALYTIC_NOT_BASELINE)): Is a deliberately catalytic (O -> O2 converting) filter element admissible, given owner row 102 (inert / low-recombination lining baseline to preserve the representative atomic-O fraction)? Why: FC-06 would trade downstream AO protection against the delivered species state
+- **F2-OQ-03** (ANSWERED (A9.13 S6.5, decision code NO_FILTER_REFERENCE_ONLY)): May trade studies carry 'no filter' (FC-00) as an admissible architecture option, or only as a reference bound because the RFP chain names a filter stage? Why: the RFP architecture text is recorded only as a secondary transcription (RVM-08, verify)
+- **F2-OQ-04** (ANSWERED (A9.13 S6.6, decision code COMPRESSOR_INLET_PLUS_APP_FILTER)): Where does the filter sit (ahead of the intake collimator, in the intake chamber, or at the compressor inlet), and should P4 add an APP-FILTER application for its material? Why: placement fixes the forward incidence (hyperthermal vs thermalised), the face area and the O exposure; P4 screens only anode and collector
 
 Related existing open questions (not answered here):
 - docs/interfaces/UPSTREAM_ICD.md sec. 9 question 1 (G-01): filter as a separate element on the production path (model change; could move goldens) - not answered here; F2 is design-layer

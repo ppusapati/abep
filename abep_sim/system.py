@@ -9,6 +9,14 @@ from .intake import IntakeParams, CompressorParams, collection, compress
 from .thruster import CARDS, performance, xe_for_thrust
 from .aochem import AOParams, inlet_composition, ao_flux, fluence, erosion_depth_um
 
+# A9.13 S6.8 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json): production/design
+# evidence above the 0.1 Pa free-molecular domain stays NOT_EVALUATED_OUT_OF_DOMAIN. Same value as
+# abep_sim.design.compressor_synthesis.P_MOLECULAR_LIMIT_PA and upstream_a9_13.P_FREE_MOLECULAR_LIMIT_PA (F3
+# P-MOLECULAR-LIMIT, Chiggiato 2013 Sec. 4.1.2; a test checks they agree).
+P_FREE_MOLECULAR_LIMIT_PA = 0.1
+NOT_EVALUATED_OUT_OF_DOMAIN = "NOT_EVALUATED_OUT_OF_DOMAIN"
+PRESSURE_DOMAIN_TAG = "free_molecular_pressure_limit_0.1Pa"
+
 
 @dataclass
 class Budgets:
@@ -84,16 +92,31 @@ def evaluate(cfg: Config) -> dict:
     cmp_ = compress(cfg.compressor, atm, col["mdot_collected"], col["eta_c"], col["passive_override"])
     mdot_air = cmp_["mdot_net"]
     p_in = cmp_["p_out_Pa"]
+    # Collected composition (owner decision A9.9 S2.1, review fix D-04/N3 2026-10-01): on the TPMC path the collected
+    # species flow comes from the species-resolved collection efficiencies (intake.collection mdot_collected_species),
+    # not from the free-stream mass fractions times one mass-weighted efficiency. The parametric intake path (no
+    # species rows) keeps the free-stream split. The total collected flow is unchanged (sum_s mdot_c,s = mdot_collected).
+    col_sp = col.get("mdot_collected_species")
+    if col_sp:
+        tot_sp = sum(col_sp.values())
+        if not (math.isfinite(tot_sp) and tot_sp > 0):
+            raise ValueError(f"species-resolved collected flow is not positive/finite: {col_sp}")
+        w_col = {s: col_sp.get(s, 0.0) / tot_sp for s in ("O", "N2", "O2")}
+        collected_composition_basis = "species_resolved_collection_A9.9_S2.1"
+    else:
+        w_col = {"O": atm["fO"], "N2": atm["fN2"], "O2": atm["fO2"]}
+        collected_composition_basis = "free_stream_mass_fractions_parametric_intake"
+    atm_col = {**atm, "fO": w_col["O"], "fN2": w_col["N2"], "fO2": w_col["O2"]}
 
     # AO chemistry: what the thruster actually receives after wall recombination
-    inlet = inlet_composition(atm, cfg.ao)
+    inlet = inlet_composition(atm_col, cfg.ao)
     gas = {}
     if cfg.gaspath_physics:
         from .compressor import DragCompressor
         from .reservoir import Reservoir, size_orifice_for_pressure
         p_min = card.p_min_Pa if card.stage1 is None else max(card.p_min_Pa, card.stage1.p_min_Pa)
         p_target = cfg.p_target_Pa if cfg.p_target_Pa is not None else cfg.p_margin_over_pmin * p_min
-        md_in = {"O": mdot_air * atm["fO"], "N2": mdot_air * atm["fN2"], "O2": mdot_air * atm["fO2"]}
+        md_in = {s: mdot_air * w_col[s] for s in ("O", "N2", "O2")}     # collected composition (S2.1, see above)
         comp = DragCompressor(turbo_area_m2=min(0.45, 0.9 * cfg.intake.area_m2 * cfg.intake.phi),
                               turbo_radius_m=min(0.45, math.sqrt(cfg.intake.area_m2 / math.pi)),
                               rotor_material=cfg.rotor_material)
@@ -101,8 +124,37 @@ def evaluate(cfg: Config) -> dict:
         cres = comp.size_for(cmp_["p_passive_Pa"], md_in, CR_target=cr_needed)
         res = Reservoir(wall_material=cfg.reservoir_material, upstream_material=cfg.rotor_material if cfg.rotor_material in ("Ti6Al4V", "Al6061") else "Al2O3_anodised",
                         upstream_collisions=10.0 * cres["turbo_rows"] + 50.0 * cres["n_stages"], T_K=min(max(cres["T_comp_K"], 300.0), 500.0))
-        size_orifice_for_pressure(res, cres["delivered_kgps"], min(p_target, cres["p_out_Pa"]))
+        orf = size_orifice_for_pressure(res, cres["delivered_kgps"], min(p_target, cres["p_out_Pa"]), report=True)
         rs = res.steady_state(cres["delivered_kgps"])
+        # G-03..G-05 (owner decision A9.9 S2.4): every gas-path solver must converge (and the orifice target must be
+        # bracketed) for the record to be admissible; otherwise the raw state is kept but flagged MODEL_NOT_CONVERGED
+        # and the compressor branch is not feasible (fail closed). Converged numerics are untouched.
+        nc = [n for n, ok in (("compressor_recirculation", cres["converged"]), ("orifice_sizing", orf["converged"]),
+                              ("reservoir_steady_state", rs["converged"])) if not ok]
+        gaspath_converged = not nc
+        # MCC-02 (owner decision A9.9 S2.5): a compressor state with any stage/species outside the Gaede
+        # stage-capacity domain (unclipped K < 1) is outside the admitted model; its clipped values are diagnostics
+        # only and the compressor branch is not feasible (fail closed). Reported separately from convergence.
+        ood = ["compressor_gaede_stage_capacity"] if not cres["gaede_domain_ok"] else []
+        # A9.13 S6.8 (owner decision; PHY-02 repair): the admitted compressor / feed model is free-molecular and ends at
+        # 0.1 Pa. A state whose target (compressor-outlet / valve setpoint) or operating reservoir pressure (the
+        # compressor discharges into the reservoir) exceeds that limit is NOT_EVALUATED_OUT_OF_DOMAIN: its values are
+        # extrapolations, never a valid architecture point (fail closed; a non-finite pressure is out of domain).
+        # The free-discharge outlet of the compressor sizing search (cres p_out, before the orifice throttles the
+        # reservoir to p_target) is reported explicitly next to it (comp_sizing_p_out_Pa / ..._above_limit), never
+        # silently: whether that sizing-search state is itself production evidence is an owner question.
+        # The setpoint is compared exactly; the reservoir pressure reaches the orifice target only to the orifice
+        # solver's own declared tolerance (reservoir.ORIFICE_P_RTOL), so it is compared within that tolerance (a
+        # converged 0.1 Pa setpoint is not pushed out of domain by rounding).
+        from .reservoir import ORIFICE_P_RTOL
+        p_res = float(rs["p_total_Pa"])
+        p_domain_max = max(float(p_target), p_res)
+        pressure_ood = not (math.isfinite(float(p_target)) and math.isfinite(p_res)
+                            and float(p_target) <= P_FREE_MOLECULAR_LIMIT_PA
+                            and p_res <= P_FREE_MOLECULAR_LIMIT_PA * (1.0 + ORIFICE_P_RTOL))
+        if pressure_ood:
+            ood = ood + [PRESSURE_DOMAIN_TAG]
+        gaspath_in_domain = not ood
         mdot_air = sum(rs["mdot_anode"].values())
         p_in = rs["p_total_Pa"]
         comp_mass = cres["mass_kg"]; comp_power = cres["P_el_W"]
@@ -114,9 +166,35 @@ def evaluate(cfg: Config) -> dict:
                "comp_CR_O": cres["CR_by_species"].get("O", 1.0), "comp_CR_N2": cres["CR_by_species"].get("N2", 1.0),
                "comp_T_K": cres["T_comp_K"], "res_p_Pa": rs["p_total_Pa"], "res_tau_ms": rs["residence_time_s"] * 1e3,
                "res_wall_collisions": rs["wall_collisions_reservoir"], "gamma_wall": rs["gamma_wall"],
-               "p_target_Pa": p_target, "cr_needed": cr_needed}
+               "p_target_Pa": p_target, "cr_needed": cr_needed,
+               "comp_converged": cres["converged"], "comp_iterations": cres["iterations"], "comp_residual": cres["residual"],
+               "res_converged": rs["converged"], "res_iterations": rs["iterations"], "res_residual": rs["residual"],
+               "res_balance_residual_rel": rs["balance_residual_rel"],
+               "orifice_converged": orf["converged"], "orifice_bracketed": orf["bracketed"],
+               "orifice_p_residual_rel": orf["p_residual_rel"],
+               "gaspath_converged": gaspath_converged,
+               "gaspath_status": "CONVERGED" if gaspath_converged else "MODEL_NOT_CONVERGED",
+               "gaspath_not_converged": nc,
+               "comp_gaede_status": cres["gaede_status"], "comp_gaede_domain_ok": cres["gaede_domain_ok"],
+               "comp_gaede_out_of_domain": cres["gaede_out_of_domain"],
+               "comp_gaede_K_unclipped_min": cres["gaede_K_unclipped_min"],
+               "comp_gaede_K_unclipped": cres["gaede_K_unclipped"],
+               "comp_n_rejected_out_of_gaede_domain": cres["n_rejected_out_of_gaede_domain"],
+               "gaspath_in_domain": gaspath_in_domain,
+               "gaspath_domain_status": ("IN_DOMAIN" if gaspath_in_domain else
+                                         NOT_EVALUATED_OUT_OF_DOMAIN if pressure_ood else "OUT_OF_MODEL_DOMAIN"),
+               "gaspath_p_domain_max_Pa": p_domain_max, "gaspath_p_domain_limit_Pa": P_FREE_MOLECULAR_LIMIT_PA,
+               "comp_sizing_p_out_Pa": float(cres["p_out_Pa"]),
+               "comp_sizing_p_out_above_limit": not (float(cres["p_out_Pa"]) <= P_FREE_MOLECULAR_LIMIT_PA),
+               "gaspath_out_of_domain": ood,
+               # A9.9 S2.3 / MCC-03: rotor structural acceptance needs a registered rotor-strength basis. Without one
+               # the compressor is a PARAMETRIC_SENSITIVITY result (mass/power from the labelled legacy tip-speed cap)
+               # and the compressor branch is not feasible (fail closed).
+               "comp_sizing_mode": cres["sizing_mode"], "comp_u_max_basis": cres["u_max_basis"],
+               "comp_rotor_qualification": cres["rotor_qualification"], "comp_rotor_ok": cres["rotor_ok"],
+               "comp_rotor_within_legacy_sensitivity_cap": cres["rotor_within_legacy_sensitivity_cap"]}
         cmp_ = {**cmp_, "p_out_Pa": p_in, "comp_power_W": comp_power, "comp_mass_kg": comp_mass,
-                "active_ratio": cres["CR_active"], "comp_feasible": cres["sized"] and cres["rotor_ok"], "mdot_net": mdot_air}
+                "active_ratio": cres["CR_active"], "comp_feasible": cres["sized"] and cres["rotor_ok"] and gaspath_converged and gaspath_in_domain, "mdot_net": mdot_air}
     atm_in = {**atm, "fO": inlet["fO"], "fN2": inlet["fN2"], "fO2": inlet["fO2"],
               "diss_sink_J_per_kg": inlet["diss_sink_J_per_kg"]}
     ao = ao_flux(atm)
@@ -363,6 +441,8 @@ def evaluate(cfg: Config) -> dict:
         "p_passive_Pa": cmp_["p_passive_Pa"], "passive_ratio": cmp_["passive_ratio"],
         "active_ratio": cmp_["active_ratio"],
         "fO_inlet": inlet["fO"], "fO2_inlet": inlet["fO2"], "O_survival": inlet["O_survival"],
+        "fO_collected": w_col["O"], "fN2_collected": w_col["N2"], "fO2_collected": w_col["O2"],
+        "collected_composition_basis": collected_composition_basis,
         "ao_flux_m2s": ao["ao_flux"], "ao_fluence_mission_m2": fl,
         "erosion_kapton_um": erosion_depth_um("kapton_HN", fl),
         "erosion_graphite_um": erosion_depth_um("graphite", fl),

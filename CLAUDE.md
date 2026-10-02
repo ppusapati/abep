@@ -7,7 +7,7 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
 
 ## Rules (do not break these)
 1. **Frozen data is the reference behaviour.** `abep_sim/data/atmosphere_msis21_v1.*`, `intake_surface_v1.*`,
-   `golden_v1.json`, `rates/` carry hashes/provenance. Never regenerate them casually. Rebuild only on an intentional model
+   `golden_v2.json` (canonical since A9.18; `golden_v1.json` kept as history), `rates/` carry hashes/provenance. Never regenerate them casually. Rebuild only on an intentional model
    change, via `python -m abep_sim.atmosphere build`, `python -m abep_sim.intake_tpmc build`, `python -m abep_sim.golden generate`,
    and record why in docs/HISTORY.md.
 2. **Golden benchmarks must reproduce** (`python -m abep_sim.golden check` → OK). If a change moves them, it is a model
@@ -282,7 +282,7 @@ Hall family (rule 8: no model/archengine change implied). New Hall→ICP work go
 **A9 state (2026-09-30):** A9-01..A9-10 verified on the execution branch; A9.1 (`OD_2026_09_30_A9_1_*`) and A9.2 (`OD_2026_09_30_A9_2_*`)
 applied. Binding statuses: RF matching LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT, RF ratings TBD_AFTER_IMPEDANCE_MAP, 316L anode
 REJECTED_AS_CURRENT_BASELINE, anode material OPEN, anode and coupled H-1/ICP thermal closure UNRESOLVED (never report an ICP
-thermal result as PASS), ICP capacity PENDING_ICP45, C1 CONTROL_FALLBACK. Open owner questions: `docs/budgets/owner_decisions/owner_questions_state_v4.*` (v2/v3 immutable history).
+thermal result as PASS), ICP capacity PENDING_ICP45, C1 GROUND_ONLY_LAB_REFERENCE (A9.19/A9.20: flight architecture = one Hall + one RF/ICP neutralizer for air and Xe, two supply modes, Xe contingency/emergency, no hollow cathode). Open owner questions: `docs/budgets/owner_decisions/owner_questions_state_v4.*` (v2/v3 immutable history).
 **A9.3-A9.6 (2026-09-30, execution branch):** P1 ICP bench, P2 impedance framework, P3 coupled-thermal and P4 materials frameworks,
 mass/power v2, Xe accounting v2, RFQ v2, RVM (`docs/requirements/rvm_a9/`), M16 v4; implementation-first batch verified once
 (A9.6 sec. 18). ICP-45 capacity is discharge-OFF, I_e,cap = I_on - I_off signed; ICP45 = NOT_EVALUATED until I_d,max,H1 is registered.
