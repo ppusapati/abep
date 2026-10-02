@@ -440,9 +440,9 @@
   "hall_c1_reference": {
    "PASS": 0,
    "FAIL": 0,
-   "NOT_EVALUATED": 27,
+   "NOT_EVALUATED": 29,
    "OUT_OF_DOMAIN": 0,
-   "INCOMPLETE_EVIDENCE": 3,
+   "INCOMPLETE_EVIDENCE": 1,
    "NUMERICAL_FAILURE": 0
   }
  },
@@ -1474,140 +1474,20 @@
     "hall_c1_reference": {
      "status": "NOT_EVALUATED",
      "rule": "R7-NOT-EVALUATED",
-     "reason": "no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1:HI-ABS [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-TABS [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PBUS [PLAN_OR_FRAMEWORK], transport_ensemble_v0:members [VALIDATED_ANALYSIS]",
-     "current_evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK || PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK || PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK || UNAVAILABLE - credible Hall transport set EMPTY (transport_ensemble_v0 members = []; Credible set is EMPTY (P5-Xe blind validation failed; no can...); P5-N2 v1 p5_n2_campaign_v1_vacuum: promotable [], inconclusive 9 of 9 candidates (permanent INCONCLUSIVE); all absolute 0-D Hall results withdrawn - no thrust / power / life analysis evidence exists",
+     "reason": "no determining evaluation with evidenced terms: A9.20:RVM-03:NOT_APPLICABLE_GROUND_REFERENCE [NOT_APPLICABLE_GROUND_REFERENCE]",
+     "current_evidence_state": "NOT_APPLICABLE_GROUND_REFERENCE - hall_c1_reference is a ground-only laboratory reference (A9.20), not a flight configuration (A9.19); this flight-architecture requirement is not evaluated against it and the cell is never compliance evidence",
      "artifacts": [
       {
-       "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-       "id": "A9_01_hall_icp_prereg_framework_v1:HI-ABS",
+       "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+       "id": "A9.20:RVM-03:NOT_APPLICABLE_GROUND_REFERENCE",
        "role": "DETERMINING",
-       "kind": "PLAN_OR_FRAMEWORK",
-       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK",
+       "kind": "NOT_APPLICABLE_GROUND_REFERENCE",
+       "evidence_state": "NOT_APPLICABLE_GROUND_REFERENCE - hall_c1_reference is a ground-only laboratory reference (A9.20), not a flight configuration (A9.19); this flight-architecture requirement is not evaluated against it and the cell is never compliance evidence",
        "evaluated": false,
        "verified": false,
        "measured": false,
        "synthetic": false,
        "in_domain": null,
-       "meets": null,
-       "coverage_complete": false,
-       "evidenced_terms": 0,
-       "numerical_failure": false,
-       "lower_bound_verified": false,
-       "exceeds_limit_every_reading": null,
-       "detail": {
-        "name": "absolute demonstration",
-        "why": ""
-       }
-      },
-      {
-       "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-       "id": "A9_01_hall_icp_prereg_framework_v1:DQ-HI-TABS",
-       "role": "DETERMINING",
-       "kind": "PLAN_OR_FRAMEWORK",
-       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK",
-       "evaluated": false,
-       "verified": false,
-       "measured": false,
-       "synthetic": false,
-       "in_domain": null,
-       "meets": null,
-       "coverage_complete": false,
-       "evidenced_terms": 0,
-       "numerical_failure": false,
-       "lower_bound_verified": false,
-       "exceeds_limit_every_reading": null,
-       "detail": {
-        "name": "absolute thrust compatibility",
-        "why": ""
-       }
-      },
-      {
-       "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-       "id": "A9_01_hall_icp_prereg_framework_v1:DQ-HI-PBUS",
-       "role": "DETERMINING",
-       "kind": "PLAN_OR_FRAMEWORK",
-       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK",
-       "evaluated": false,
-       "verified": false,
-       "measured": false,
-       "synthetic": false,
-       "in_domain": null,
-       "meets": null,
-       "coverage_complete": false,
-       "evidenced_terms": 0,
-       "numerical_failure": false,
-       "lower_bound_verified": false,
-       "exceeds_limit_every_reading": null,
-       "detail": {
-        "name": "full bus-power compatibility",
-        "why": ""
-       }
-      },
-      {
-       "path": "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
-       "id": "hall_icp_validation_inputs_v1:VI-PB-03",
-       "role": "SUPPORTING",
-       "kind": "PLAN_OR_FRAMEWORK",
-       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_FOR_OWNER_REVIEW; item status HARDWARE_ONLY",
-       "evaluated": false,
-       "verified": false,
-       "measured": false,
-       "synthetic": false,
-       "in_domain": null,
-       "meets": null,
-       "coverage_complete": false,
-       "evidenced_terms": 0,
-       "numerical_failure": false,
-       "lower_bound_verified": false,
-       "exceeds_limit_every_reading": null,
-       "detail": {
-        "name": "total P_bus including start-up transients",
-        "why": ""
-       }
-      },
-      {
-       "path": "hallthruster_bridge/ensemble/transport_ensemble_v0.json",
-       "id": "transport_ensemble_v0:members",
-       "role": "DETERMINING",
-       "kind": "VALIDATED_ANALYSIS",
-       "evidence_state": "UNAVAILABLE - credible Hall transport set EMPTY (transport_ensemble_v0 members = []; Credible set is EMPTY (P5-Xe blind validation failed; no can...); P5-N2 v1 p5_n2_campaign_v1_vacuum: promotable [], inconclusive 9 of 9 candidates (permanent INCONCLUSIVE); all absolute 0-D Hall results withdrawn - no thrust / power / life analysis evidence exists",
-       "evaluated": false,
-       "verified": false,
-       "measured": false,
-       "synthetic": false,
-       "in_domain": null,
-       "meets": null,
-       "coverage_complete": false,
-       "evidenced_terms": 0,
-       "numerical_failure": false,
-       "lower_bound_verified": false,
-       "exceeds_limit_every_reading": null,
-       "detail": {
-        "validation_release": "hallthruster_bridge/validation/VALIDATION_RELEASE_v1.json",
-        "inconclusive": [
-         "sgb-screen-01",
-         "sgb-screen-02",
-         "sgb-screen-03",
-         "sgb-screen-04",
-         "sgb-screen-05",
-         "sgb-screen-06",
-         "sgb-screen-07",
-         "sgb-screen-08",
-         "sgb-screen-09"
-        ]
-       }
-      },
-      {
-       "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
-       "id": "xe_accounting_a9_v3:evaluations[S2-FL-C1]",
-       "role": "SUPPORTING",
-       "kind": "BUDGET_EVALUATION",
-       "evidence_state": "XE ACCOUNTING (supporting; never a capability demonstration): S2-FL-C1 (RA-FUNC APPLIES, RA-CASE LOADED): REFUSED_TBD_INPUTS (TBD lines 11)",
-       "evaluated": true,
-       "verified": false,
-       "measured": false,
-       "synthetic": false,
-       "in_domain": true,
        "meets": null,
        "coverage_complete": false,
        "evidenced_terms": 0,
@@ -1615,6 +1495,12 @@
        "lower_bound_verified": false,
        "exceeds_limit_every_reading": null
       }
+     ],
+     "applicability_marker": "NOT_APPLICABLE_GROUND_REFERENCE",
+     "counts_as_compliance_evidence": false,
+     "not_applicable_basis": "the v3 flight budgets (mass_power_a9_v3 / xe_accounting_a9_v3) retire hall_c1_reference to history (A9.19 single flight configuration; A9.20 C1 ground-only): no flight budget evaluates this cell",
+     "retired_flight_budget_probes": [
+      "xe"
      ],
      "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
@@ -1935,45 +1821,15 @@
     "hall_c1_reference": {
      "status": "NOT_EVALUATED",
      "rule": "R7-NOT-EVALUATED",
-     "reason": "no determining evaluation with evidenced terms: mass_power_a9_v3:power.configurations.hall_c1_reference.rfp_gate_1ms [BUDGET_EVALUATION], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PBUS [PLAN_OR_FRAMEWORK]",
-     "current_evidence_state": "LEDGER EVALUATED, NOT_EVALUABLE - steady ledger PARTIAL_BOUNDARY, 26 TBD, P_bus lower bound 0.0 W; P_bus,1ms,max gate NOT_EVALUABLE in all 8 registered steps; slots with a CBE 0, measured 0 || PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK",
+     "reason": "no determining evaluation with evidenced terms: A9.20:RVM-04:NOT_APPLICABLE_GROUND_REFERENCE [NOT_APPLICABLE_GROUND_REFERENCE]",
+     "current_evidence_state": "NOT_APPLICABLE_GROUND_REFERENCE - hall_c1_reference is a ground-only laboratory reference (A9.20), not a flight configuration (A9.19); this flight-architecture requirement is not evaluated against it and the cell is never compliance evidence",
      "artifacts": [
       {
-       "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
-       "id": "mass_power_a9_v3:power.configurations.hall_c1_reference.rfp_gate_1ms",
+       "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+       "id": "A9.20:RVM-04:NOT_APPLICABLE_GROUND_REFERENCE",
        "role": "DETERMINING",
-       "kind": "BUDGET_EVALUATION",
-       "evidence_state": "LEDGER EVALUATED, NOT_EVALUABLE - steady ledger PARTIAL_BOUNDARY, 26 TBD, P_bus lower bound 0.0 W; P_bus,1ms,max gate NOT_EVALUABLE in all 8 registered steps; slots with a CBE 0, measured 0",
-       "evaluated": true,
-       "verified": false,
-       "measured": false,
-       "synthetic": false,
-       "in_domain": true,
-       "meets": null,
-       "coverage_complete": false,
-       "evidenced_terms": 0,
-       "numerical_failure": false,
-       "lower_bound_verified": false,
-       "exceeds_limit_every_reading": null,
-       "detail": {
-        "steps": [
-         "C-S7=PARTIAL_BOUNDARY",
-         "C-S0=INCOMPLETE_EVIDENCE",
-         "C-S1=PARTIAL_BOUNDARY",
-         "C-S2=PARTIAL_BOUNDARY",
-         "C-S3=PARTIAL_BOUNDARY",
-         "C-S4=PARTIAL_BOUNDARY",
-         "C-S5=PARTIAL_BOUNDARY",
-         "C-S6=PARTIAL_BOUNDARY"
-        ]
-       }
-      },
-      {
-       "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-       "id": "A9_01_hall_icp_prereg_framework_v1:DQ-HI-PBUS",
-       "role": "DETERMINING",
-       "kind": "PLAN_OR_FRAMEWORK",
-       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK",
+       "kind": "NOT_APPLICABLE_GROUND_REFERENCE",
+       "evidence_state": "NOT_APPLICABLE_GROUND_REFERENCE - hall_c1_reference is a ground-only laboratory reference (A9.20), not a flight configuration (A9.19); this flight-architecture requirement is not evaluated against it and the cell is never compliance evidence",
        "evaluated": false,
        "verified": false,
        "measured": false,
@@ -1984,78 +1840,14 @@
        "evidenced_terms": 0,
        "numerical_failure": false,
        "lower_bound_verified": false,
-       "exceeds_limit_every_reading": null,
-       "detail": {
-        "name": "full bus-power compatibility",
-        "why": ""
-       }
-      },
-      {
-       "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-       "id": "bus_power_boundary_a9_v1:A902-01",
-       "role": "SUPPORTING",
-       "kind": "PLAN_OR_FRAMEWORK",
-       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status PRELIMINARY_DRAFT_FOR_OWNER; item status REQUIREMENT_AS_RECORDED",
-       "evaluated": false,
-       "verified": false,
-       "measured": false,
-       "synthetic": false,
-       "in_domain": null,
-       "meets": null,
-       "coverage_complete": false,
-       "evidenced_terms": 0,
-       "numerical_failure": false,
-       "lower_bound_verified": false,
-       "exceeds_limit_every_reading": null,
-       "detail": {
-        "name": "RFP bus-power requirement (strict '<')",
-        "why": ""
-       }
-      },
-      {
-       "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-       "id": "bus_power_boundary_a9_v1:A902-03",
-       "role": "SUPPORTING",
-       "kind": "PLAN_OR_FRAMEWORK",
-       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status PRELIMINARY_DRAFT_FOR_OWNER; item status ADOPTED (A9.1; A9 engineering definition pending authoritative RFP wording)",
-       "evaluated": false,
-       "verified": false,
-       "measured": false,
-       "synthetic": false,
-       "in_domain": null,
-       "meets": null,
-       "coverage_complete": false,
-       "evidenced_terms": 0,
-       "numerical_failure": false,
-       "lower_bound_verified": false,
-       "exceeds_limit_every_reading": null,
-       "detail": {
-        "name": "averaging window defining the gate quantity P_bus,1ms,max (start-up AND steady state)",
-        "why": ""
-       }
-      },
-      {
-       "path": "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
-       "id": "hall_icp_validation_inputs_v1:VI-PB-03",
-       "role": "SUPPORTING",
-       "kind": "PLAN_OR_FRAMEWORK",
-       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_FOR_OWNER_REVIEW; item status HARDWARE_ONLY",
-       "evaluated": false,
-       "verified": false,
-       "measured": false,
-       "synthetic": false,
-       "in_domain": null,
-       "meets": null,
-       "coverage_complete": false,
-       "evidenced_terms": 0,
-       "numerical_failure": false,
-       "lower_bound_verified": false,
-       "exceeds_limit_every_reading": null,
-       "detail": {
-        "name": "total P_bus including start-up transients",
-        "why": ""
-       }
+       "exceeds_limit_every_reading": null
       }
+     ],
+     "applicability_marker": "NOT_APPLICABLE_GROUND_REFERENCE",
+     "counts_as_compliance_evidence": false,
+     "not_applicable_basis": "the v3 flight budgets (mass_power_a9_v3 / xe_accounting_a9_v3) retire hall_c1_reference to history (A9.19 single flight configuration; A9.20 C1 ground-only): no flight budget evaluates this cell",
+     "retired_flight_budget_probes": [
+      "power"
      ],
      "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
@@ -2253,71 +2045,33 @@
     "hall_c1_reference": {
      "status": "NOT_EVALUATED",
      "rule": "R7-NOT-EVALUATED",
-     "reason": "no determining evaluation with evidenced terms: mass_power_a9_v3:power.configurations.hall_c1_reference.phases.steady.design_allocation_1350W [BUDGET_EVALUATION]",
-     "current_evidence_state": "ALLOCATION CHECK EVALUATED, NOT_EVALUABLE - 26 TBD loads",
+     "reason": "no determining evaluation with evidenced terms: A9.20:RVM-05:NOT_APPLICABLE_GROUND_REFERENCE [NOT_APPLICABLE_GROUND_REFERENCE]",
+     "current_evidence_state": "NOT_APPLICABLE_GROUND_REFERENCE - hall_c1_reference is a ground-only laboratory reference (A9.20), not a flight configuration (A9.19); this flight-architecture requirement is not evaluated against it and the cell is never compliance evidence",
      "artifacts": [
       {
-       "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
-       "id": "mass_power_a9_v3:power.configurations.hall_c1_reference.phases.steady.design_allocation_1350W",
+       "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+       "id": "A9.20:RVM-05:NOT_APPLICABLE_GROUND_REFERENCE",
        "role": "DETERMINING",
-       "kind": "BUDGET_EVALUATION",
-       "evidence_state": "ALLOCATION CHECK EVALUATED, NOT_EVALUABLE - 26 TBD loads",
-       "evaluated": true,
+       "kind": "NOT_APPLICABLE_GROUND_REFERENCE",
+       "evidence_state": "NOT_APPLICABLE_GROUND_REFERENCE - hall_c1_reference is a ground-only laboratory reference (A9.20), not a flight configuration (A9.19); this flight-architecture requirement is not evaluated against it and the cell is never compliance evidence",
+       "evaluated": false,
        "verified": false,
        "measured": false,
        "synthetic": false,
-       "in_domain": true,
+       "in_domain": null,
        "meets": null,
        "coverage_complete": false,
        "evidenced_terms": 0,
        "numerical_failure": false,
        "lower_bound_verified": false,
        "exceeds_limit_every_reading": null
-      },
-      {
-       "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-       "id": "bus_power_boundary_a9_v1:A902-04",
-       "role": "SUPPORTING",
-       "kind": "PLAN_OR_FRAMEWORK",
-       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status PRELIMINARY_DRAFT_FOR_OWNER; item status ALLOCATION (not a prediction, not a gate)",
-       "evaluated": false,
-       "verified": false,
-       "measured": false,
-       "synthetic": false,
-       "in_domain": null,
-       "meets": null,
-       "coverage_complete": false,
-       "evidenced_terms": 0,
-       "numerical_failure": false,
-       "lower_bound_verified": false,
-       "exceeds_limit_every_reading": null,
-       "detail": {
-        "name": "internal design allocation (ICP must fit inside it)",
-        "why": ""
-       }
-      },
-      {
-       "path": "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
-       "id": "hall_icp_validation_inputs_v1:VI-PB-04",
-       "role": "SUPPORTING",
-       "kind": "PLAN_OR_FRAMEWORK",
-       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_FOR_OWNER_REVIEW; item status FIXED_BY_OWNER",
-       "evaluated": false,
-       "verified": false,
-       "measured": false,
-       "synthetic": false,
-       "in_domain": null,
-       "meets": null,
-       "coverage_complete": false,
-       "evidenced_terms": 0,
-       "numerical_failure": false,
-       "lower_bound_verified": false,
-       "exceeds_limit_every_reading": null,
-       "detail": {
-        "name": "internal design allocation the ICP must fit inside",
-        "why": ""
-       }
       }
+     ],
+     "applicability_marker": "NOT_APPLICABLE_GROUND_REFERENCE",
+     "counts_as_compliance_evidence": false,
+     "not_applicable_basis": "the v3 flight budgets (mass_power_a9_v3 / xe_accounting_a9_v3) retire hall_c1_reference to history (A9.19 single flight configuration; A9.20 C1 ground-only): no flight budget evaluates this cell",
+     "retired_flight_budget_probes": [
+      "allocation"
      ],
      "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
@@ -2689,120 +2443,17 @@
      ]
     },
     "hall_c1_reference": {
-     "status": "INCOMPLETE_EVIDENCE",
-     "rule": "R6-INCOMPLETE",
-     "reason": "evaluation run with evidenced terms but inconclusive: mass_power_a9_v3:rollups[hall_c1_reference] (4 evidenced term(s))",
-     "current_evidence_state": "BUDGET EVALUATED (mass_power_a9_v3, A9.14 / A9.15 applied), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; HARD_40_WET: floor-only 13.748-13.748 kg vs < 40.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 36.33 kg; wet_known 38.33 / 41.33 / 46.33 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 2 / NOT_EVALUABLE 1 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 3 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
+     "status": "NOT_EVALUATED",
+     "rule": "R7-NOT-EVALUATED",
+     "reason": "no determining evaluation with evidenced terms: A9.20:RVM-06:NOT_APPLICABLE_GROUND_REFERENCE [NOT_APPLICABLE_GROUND_REFERENCE]",
+     "current_evidence_state": "NOT_APPLICABLE_GROUND_REFERENCE - hall_c1_reference is a ground-only laboratory reference (A9.20), not a flight configuration (A9.19); this flight-architecture requirement is not evaluated against it and the cell is never compliance evidence",
      "artifacts": [
       {
-       "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
-       "id": "mass_power_a9_v3:rollups[hall_c1_reference]",
+       "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+       "id": "A9.20:RVM-06:NOT_APPLICABLE_GROUND_REFERENCE",
        "role": "DETERMINING",
-       "kind": "BUDGET_EVALUATION",
-       "evidence_state": "BUDGET EVALUATED (mass_power_a9_v3, A9.14 / A9.15 applied), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; HARD_40_WET: floor-only 13.748-13.748 kg vs < 40.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 36.33 kg; wet_known 38.33 / 41.33 / 46.33 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 2 / NOT_EVALUABLE 1 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 3 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
-       "evaluated": true,
-       "verified": false,
-       "measured": false,
-       "synthetic": false,
-       "in_domain": true,
-       "meets": null,
-       "coverage_complete": false,
-       "evidenced_terms": 4,
-       "numerical_failure": false,
-       "lower_bound_verified": false,
-       "exceeds_limit_every_reading": false,
-       "detail": {
-        "analyses": [
-         {
-          "reference": "HARD_40_WET",
-          "limit_kg": 40.0,
-          "strict": true,
-          "evidence_floors": [
-           {
-            "line": "AL-04",
-            "floor_kg": 3.504
-           },
-           {
-            "line": "AL-07",
-            "floor_kg": 5.0
-           },
-           {
-            "line": "AL-08",
-            "floor_kg": 5.044
-           },
-           {
-            "line": "AL-C1",
-            "floor_kg": 0.2
-           }
-          ],
-          "evidence_floor_definition": "analog planning value of other hardware or a Vyovrinda preliminary design point, copied by pointer from verified deliverables; not a CBE and not a physical lower bound",
-          "lower_bound_verified": false,
-          "floor_only_readings": [
-           {
-            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=2.0",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=5.0",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=10.0",
-            "floor_only_kg": 13.748
-           }
-          ],
-          "floor_fail_check": {
-           "exceeds_every_reading": false,
-           "n_readings": 3,
-           "n_exceeding": 0,
-           "min_floor_kg": 13.748,
-           "max_floor_kg": 13.748
-          },
-          "mixed_basis_states": [
-           {
-            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=2.0",
-            "dry_known_kg": 36.32538948,
-            "wet_known_kg": 38.32538948,
-            "state": "NOT_EVALUABLE"
-           },
-           {
-            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=5.0",
-            "dry_known_kg": 36.32538948,
-            "wet_known_kg": 41.32538948,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=10.0",
-            "dry_known_kg": 36.32538948,
-            "wet_known_kg": 46.32538948,
-            "state": "DOES_NOT_CLOSE"
-           }
-          ],
-          "mixed_basis_counts": {
-           "DOES_NOT_CLOSE": 2,
-           "NOT_EVALUABLE": 1,
-           "CLOSES": 0
-          },
-          "v3_owner_reading": {
-           "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)",
-           "dry_known_kg": 36.32538948,
-           "lines_without_value": [
-            "AL-09",
-            "AL-C1"
-           ],
-           "all_terms_resolved": false
-          },
-          "fail_rule": "FAIL only if a VERIFIED lower-bound floor exceeds the limit under EVERY admissible reading (v3: the single owner reading MEV_LEVEL_EVIDENCE_BASED x LOADED x the 2/5/10 kg Xe design cases); the v3 roll-up states (owner MEV allocations + MEV planning floors) are recorded as current evidence state but are not verified lower bounds, so a DOES_NOT_CLOSE there is not a FAIL (MQ-10 redesign lever)"
-         }
-        ]
-       }
-      },
-      {
-       "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-       "id": "A9_01_hall_icp_prereg_framework_v1:DQ-HI-DMASS",
-       "role": "SUPPORTING",
-       "kind": "PLAN_OR_FRAMEWORK",
-       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK",
+       "kind": "NOT_APPLICABLE_GROUND_REFERENCE",
+       "evidence_state": "NOT_APPLICABLE_GROUND_REFERENCE - hall_c1_reference is a ground-only laboratory reference (A9.20), not a flight configuration (A9.19); this flight-architecture requirement is not evaluated against it and the cell is never compliance evidence",
        "evaluated": false,
        "verified": false,
        "measured": false,
@@ -2813,30 +2464,15 @@
        "evidenced_terms": 0,
        "numerical_failure": false,
        "lower_bound_verified": false,
-       "exceeds_limit_every_reading": null,
-       "detail": {
-        "name": "mass difference relative to C1 (dmass)",
-        "why": ""
-       }
-      },
-      {
-       "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
-       "id": "xe_accounting_a9_v3:evaluations[S2-FL-C1]",
-       "role": "SUPPORTING",
-       "kind": "BUDGET_EVALUATION",
-       "evidence_state": "XE ACCOUNTING (supporting; never a capability demonstration): S2-FL-C1 (RA-FUNC APPLIES, RA-CASE LOADED): REFUSED_TBD_INPUTS (TBD lines 11)",
-       "evaluated": true,
-       "verified": false,
-       "measured": false,
-       "synthetic": false,
-       "in_domain": true,
-       "meets": null,
-       "coverage_complete": false,
-       "evidenced_terms": 0,
-       "numerical_failure": false,
-       "lower_bound_verified": false,
        "exceeds_limit_every_reading": null
       }
+     ],
+     "applicability_marker": "NOT_APPLICABLE_GROUND_REFERENCE",
+     "counts_as_compliance_evidence": false,
+     "not_applicable_basis": "the v3 flight budgets (mass_power_a9_v3 / xe_accounting_a9_v3) retire hall_c1_reference to history (A9.19 single flight configuration; A9.20 C1 ground-only): no flight budget evaluates this cell",
+     "retired_flight_budget_probes": [
+      "mass",
+      "xe"
      ],
      "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
@@ -3169,195 +2805,35 @@
      ]
     },
     "hall_c1_reference": {
-     "status": "INCOMPLETE_EVIDENCE",
-     "rule": "R6-INCOMPLETE",
-     "reason": "evaluation run with evidenced terms but inconclusive: mass_power_a9_v3:rollups[hall_c1_reference] (4 evidenced term(s))",
-     "current_evidence_state": "BUDGET EVALUATED (mass_power_a9_v3, A9.14 / A9.15 applied), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; INTERNAL_34: floor-only 13.748-13.748 kg vs <= 34.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 36.33 kg; wet_known 38.33 / 41.33 / 46.33 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; INTERNAL_36: floor-only 13.748-13.748 kg vs <= 36.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 36.33 kg; wet_known 38.33 / 41.33 / 46.33 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 6 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
+     "status": "NOT_EVALUATED",
+     "rule": "R7-NOT-EVALUATED",
+     "reason": "no determining evaluation with evidenced terms: A9.20:RVM-07:NOT_APPLICABLE_GROUND_REFERENCE [NOT_APPLICABLE_GROUND_REFERENCE]",
+     "current_evidence_state": "NOT_APPLICABLE_GROUND_REFERENCE - hall_c1_reference is a ground-only laboratory reference (A9.20), not a flight configuration (A9.19); this flight-architecture requirement is not evaluated against it and the cell is never compliance evidence",
      "artifacts": [
       {
-       "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
-       "id": "mass_power_a9_v3:rollups[hall_c1_reference]",
+       "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+       "id": "A9.20:RVM-07:NOT_APPLICABLE_GROUND_REFERENCE",
        "role": "DETERMINING",
-       "kind": "BUDGET_EVALUATION",
-       "evidence_state": "BUDGET EVALUATED (mass_power_a9_v3, A9.14 / A9.15 applied), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; INTERNAL_34: floor-only 13.748-13.748 kg vs <= 34.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 36.33 kg; wet_known 38.33 / 41.33 / 46.33 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; INTERNAL_36: floor-only 13.748-13.748 kg vs <= 36.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 36.33 kg; wet_known 38.33 / 41.33 / 46.33 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 6 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
-       "evaluated": true,
+       "kind": "NOT_APPLICABLE_GROUND_REFERENCE",
+       "evidence_state": "NOT_APPLICABLE_GROUND_REFERENCE - hall_c1_reference is a ground-only laboratory reference (A9.20), not a flight configuration (A9.19); this flight-architecture requirement is not evaluated against it and the cell is never compliance evidence",
+       "evaluated": false,
        "verified": false,
        "measured": false,
        "synthetic": false,
-       "in_domain": true,
+       "in_domain": null,
        "meets": null,
        "coverage_complete": false,
-       "evidenced_terms": 4,
+       "evidenced_terms": 0,
        "numerical_failure": false,
        "lower_bound_verified": false,
-       "exceeds_limit_every_reading": false,
-       "detail": {
-        "analyses": [
-         {
-          "reference": "INTERNAL_34",
-          "limit_kg": 34.0,
-          "strict": false,
-          "evidence_floors": [
-           {
-            "line": "AL-04",
-            "floor_kg": 3.504
-           },
-           {
-            "line": "AL-07",
-            "floor_kg": 5.0
-           },
-           {
-            "line": "AL-08",
-            "floor_kg": 5.044
-           },
-           {
-            "line": "AL-C1",
-            "floor_kg": 0.2
-           }
-          ],
-          "evidence_floor_definition": "analog planning value of other hardware or a Vyovrinda preliminary design point, copied by pointer from verified deliverables; not a CBE and not a physical lower bound",
-          "lower_bound_verified": false,
-          "floor_only_readings": [
-           {
-            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=2.0",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=5.0",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=10.0",
-            "floor_only_kg": 13.748
-           }
-          ],
-          "floor_fail_check": {
-           "exceeds_every_reading": false,
-           "n_readings": 3,
-           "n_exceeding": 0,
-           "min_floor_kg": 13.748,
-           "max_floor_kg": 13.748
-          },
-          "mixed_basis_states": [
-           {
-            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=2.0",
-            "dry_known_kg": 36.32538948,
-            "wet_known_kg": 38.32538948,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=5.0",
-            "dry_known_kg": 36.32538948,
-            "wet_known_kg": 41.32538948,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=10.0",
-            "dry_known_kg": 36.32538948,
-            "wet_known_kg": 46.32538948,
-            "state": "DOES_NOT_CLOSE"
-           }
-          ],
-          "mixed_basis_counts": {
-           "DOES_NOT_CLOSE": 3,
-           "NOT_EVALUABLE": 0,
-           "CLOSES": 0
-          },
-          "v3_owner_reading": {
-           "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)",
-           "dry_known_kg": 36.32538948,
-           "lines_without_value": [
-            "AL-09",
-            "AL-C1"
-           ],
-           "all_terms_resolved": false
-          },
-          "fail_rule": "FAIL only if a VERIFIED lower-bound floor exceeds the limit under EVERY admissible reading (v3: the single owner reading MEV_LEVEL_EVIDENCE_BASED x LOADED x the 2/5/10 kg Xe design cases); the v3 roll-up states (owner MEV allocations + MEV planning floors) are recorded as current evidence state but are not verified lower bounds, so a DOES_NOT_CLOSE there is not a FAIL (MQ-10 redesign lever)"
-         },
-         {
-          "reference": "INTERNAL_36",
-          "limit_kg": 36.0,
-          "strict": false,
-          "evidence_floors": [
-           {
-            "line": "AL-04",
-            "floor_kg": 3.504
-           },
-           {
-            "line": "AL-07",
-            "floor_kg": 5.0
-           },
-           {
-            "line": "AL-08",
-            "floor_kg": 5.044
-           },
-           {
-            "line": "AL-C1",
-            "floor_kg": 0.2
-           }
-          ],
-          "evidence_floor_definition": "analog planning value of other hardware or a Vyovrinda preliminary design point, copied by pointer from verified deliverables; not a CBE and not a physical lower bound",
-          "lower_bound_verified": false,
-          "floor_only_readings": [
-           {
-            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=2.0",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=5.0",
-            "floor_only_kg": 13.748
-           },
-           {
-            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=10.0",
-            "floor_only_kg": 13.748
-           }
-          ],
-          "floor_fail_check": {
-           "exceeds_every_reading": false,
-           "n_readings": 3,
-           "n_exceeding": 0,
-           "min_floor_kg": 13.748,
-           "max_floor_kg": 13.748
-          },
-          "mixed_basis_states": [
-           {
-            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=2.0",
-            "dry_known_kg": 36.32538948,
-            "wet_known_kg": 38.32538948,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=5.0",
-            "dry_known_kg": 36.32538948,
-            "wet_known_kg": 41.32538948,
-            "state": "DOES_NOT_CLOSE"
-           },
-           {
-            "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=10.0",
-            "dry_known_kg": 36.32538948,
-            "wet_known_kg": 46.32538948,
-            "state": "DOES_NOT_CLOSE"
-           }
-          ],
-          "mixed_basis_counts": {
-           "DOES_NOT_CLOSE": 3,
-           "NOT_EVALUABLE": 0,
-           "CLOSES": 0
-          },
-          "v3_owner_reading": {
-           "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)",
-           "dry_known_kg": 36.32538948,
-           "lines_without_value": [
-            "AL-09",
-            "AL-C1"
-           ],
-           "all_terms_resolved": false
-          },
-          "fail_rule": "FAIL only if a VERIFIED lower-bound floor exceeds the limit under EVERY admissible reading (v3: the single owner reading MEV_LEVEL_EVIDENCE_BASED x LOADED x the 2/5/10 kg Xe design cases); the v3 roll-up states (owner MEV allocations + MEV planning floors) are recorded as current evidence state but are not verified lower bounds, so a DOES_NOT_CLOSE there is not a FAIL (MQ-10 redesign lever)"
-         }
-        ]
-       }
+       "exceeds_limit_every_reading": null
       }
+     ],
+     "applicability_marker": "NOT_APPLICABLE_GROUND_REFERENCE",
+     "counts_as_compliance_evidence": false,
+     "not_applicable_basis": "the v3 flight budgets (mass_power_a9_v3 / xe_accounting_a9_v3) retire hall_c1_reference to history (A9.19 single flight configuration; A9.20 C1 ground-only): no flight budget evaluates this cell",
+     "retired_flight_budget_probes": [
+      "mass"
      ],
      "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
@@ -4415,71 +3891,33 @@
     "hall_c1_reference": {
      "status": "NOT_EVALUATED",
      "rule": "R7-NOT-EVALUATED",
-     "reason": "no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1:HI-CMP [PLAN_OR_FRAMEWORK]",
-     "current_evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK",
+     "reason": "no determining evaluation with evidenced terms: A9.20:RVM-10:NOT_APPLICABLE_GROUND_REFERENCE [NOT_APPLICABLE_GROUND_REFERENCE]",
+     "current_evidence_state": "NOT_APPLICABLE_GROUND_REFERENCE - hall_c1_reference is a ground-only laboratory reference (A9.20), not a flight configuration (A9.19); this flight-architecture requirement is not evaluated against it and the cell is never compliance evidence",
      "artifacts": [
       {
-       "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-       "id": "A9_01_hall_icp_prereg_framework_v1:HI-CMP",
+       "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+       "id": "A9.20:RVM-10:NOT_APPLICABLE_GROUND_REFERENCE",
        "role": "DETERMINING",
-       "kind": "PLAN_OR_FRAMEWORK",
-       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK",
+       "kind": "NOT_APPLICABLE_GROUND_REFERENCE",
+       "evidence_state": "NOT_APPLICABLE_GROUND_REFERENCE - hall_c1_reference is a ground-only laboratory reference (A9.20), not a flight configuration (A9.19); this flight-architecture requirement is not evaluated against it and the cell is never compliance evidence",
        "evaluated": false,
        "verified": false,
        "measured": false,
        "synthetic": false,
        "in_domain": null,
-       "meets": null,
-       "coverage_complete": false,
-       "evidenced_terms": 0,
-       "numerical_failure": false,
-       "lower_bound_verified": false,
-       "exceeds_limit_every_reading": null,
-       "detail": {
-        "name": "score-bearing C1-vs-ICP comparison (atmospheric surrogates)",
-        "why": "bounded XE_REFERENCE checks, labelled and booked"
-       }
-      },
-      {
-       "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
-       "id": "xe_accounting_a9_v3:evaluations[S2-FL-C1]",
-       "role": "SUPPORTING",
-       "kind": "BUDGET_EVALUATION",
-       "evidence_state": "XE ACCOUNTING (supporting; never a capability demonstration): S2-FL-C1 (RA-FUNC APPLIES, RA-CASE LOADED): REFUSED_TBD_INPUTS (TBD lines 11)",
-       "evaluated": true,
-       "verified": false,
-       "measured": false,
-       "synthetic": false,
-       "in_domain": true,
        "meets": null,
        "coverage_complete": false,
        "evidenced_terms": 0,
        "numerical_failure": false,
        "lower_bound_verified": false,
        "exceeds_limit_every_reading": null
-      },
-      {
-       "path": "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
-       "id": "hall_icp_validation_inputs_v1:VI-SU-05",
-       "role": "SUPPORTING",
-       "kind": "PLAN_OR_FRAMEWORK",
-       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_FOR_OWNER_REVIEW; item status HARDWARE_ONLY",
-       "evaluated": false,
-       "verified": false,
-       "measured": false,
-       "synthetic": false,
-       "in_domain": null,
-       "meets": null,
-       "coverage_complete": false,
-       "evidenced_terms": 0,
-       "numerical_failure": false,
-       "lower_bound_verified": false,
-       "exceeds_limit_every_reading": null,
-       "detail": {
-        "name": "C1 steady cathode Xe flow",
-        "why": ""
-       }
       }
+     ],
+     "applicability_marker": "NOT_APPLICABLE_GROUND_REFERENCE",
+     "counts_as_compliance_evidence": false,
+     "not_applicable_basis": "the v3 flight budgets (mass_power_a9_v3 / xe_accounting_a9_v3) retire hall_c1_reference to history (A9.19 single flight configuration; A9.20 C1 ground-only): no flight budget evaluates this cell",
+     "retired_flight_budget_probes": [
+      "xe"
      ],
      "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
@@ -5713,93 +5151,33 @@
     "hall_c1_reference": {
      "status": "NOT_EVALUATED",
      "rule": "R7-NOT-EVALUATED",
-     "reason": "no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1:DQ-HI-IGN [PLAN_OR_FRAMEWORK], hall_icp_validation_inputs_v1:VI-SU-04 [PLAN_OR_FRAMEWORK]",
-     "current_evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK || PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_FOR_OWNER_REVIEW; item status HARDWARE_ONLY",
+     "reason": "no determining evaluation with evidenced terms: A9.20:RVM-14:NOT_APPLICABLE_GROUND_REFERENCE [NOT_APPLICABLE_GROUND_REFERENCE]",
+     "current_evidence_state": "NOT_APPLICABLE_GROUND_REFERENCE - hall_c1_reference is a ground-only laboratory reference (A9.20), not a flight configuration (A9.19); this flight-architecture requirement is not evaluated against it and the cell is never compliance evidence",
      "artifacts": [
       {
-       "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-       "id": "A9_01_hall_icp_prereg_framework_v1:DQ-HI-IGN",
+       "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+       "id": "A9.20:RVM-14:NOT_APPLICABLE_GROUND_REFERENCE",
        "role": "DETERMINING",
-       "kind": "PLAN_OR_FRAMEWORK",
-       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK",
+       "kind": "NOT_APPLICABLE_GROUND_REFERENCE",
+       "evidence_state": "NOT_APPLICABLE_GROUND_REFERENCE - hall_c1_reference is a ground-only laboratory reference (A9.20), not a flight configuration (A9.19); this flight-architecture requirement is not evaluated against it and the cell is never compliance evidence",
        "evaluated": false,
        "verified": false,
        "measured": false,
        "synthetic": false,
        "in_domain": null,
-       "meets": null,
-       "coverage_complete": false,
-       "evidenced_terms": 0,
-       "numerical_failure": false,
-       "lower_bound_verified": false,
-       "exceeds_limit_every_reading": null,
-       "detail": {
-        "name": "ignition / start / restart",
-        "why": ""
-       }
-      },
-      {
-       "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-       "id": "A9_01_hall_icp_prereg_framework_v1:DQ-HI-RESTART",
-       "role": "SUPPORTING",
-       "kind": "PLAN_OR_FRAMEWORK",
-       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK",
-       "evaluated": false,
-       "verified": false,
-       "measured": false,
-       "synthetic": false,
-       "in_domain": null,
-       "meets": null,
-       "coverage_complete": false,
-       "evidenced_terms": 0,
-       "numerical_failure": false,
-       "lower_bound_verified": false,
-       "exceeds_limit_every_reading": null,
-       "detail": {
-        "name": "restart burden",
-        "why": ""
-       }
-      },
-      {
-       "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
-       "id": "mass_power_a9_v3:power.configurations.hall_c1_reference.phases.startup",
-       "role": "SUPPORTING",
-       "kind": "BUDGET_EVALUATION",
-       "evidence_state": "SEQUENCE RULES RULES_NOT_EVALUABLE (6 rules not evaluable; template bus_boundary_a9.SEQUENCE_TEMPLATES (PROPOSED, row 112))",
-       "evaluated": true,
-       "verified": false,
-       "measured": false,
-       "synthetic": false,
-       "in_domain": true,
        "meets": null,
        "coverage_complete": false,
        "evidenced_terms": 0,
        "numerical_failure": false,
        "lower_bound_verified": false,
        "exceeds_limit_every_reading": null
-      },
-      {
-       "path": "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
-       "id": "hall_icp_validation_inputs_v1:VI-SU-04",
-       "role": "DETERMINING",
-       "kind": "PLAN_OR_FRAMEWORK",
-       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_FOR_OWNER_REVIEW; item status HARDWARE_ONLY",
-       "evaluated": false,
-       "verified": false,
-       "measured": false,
-       "synthetic": false,
-       "in_domain": null,
-       "meets": null,
-       "coverage_complete": false,
-       "evidenced_terms": 0,
-       "numerical_failure": false,
-       "lower_bound_verified": false,
-       "exceeds_limit_every_reading": null,
-       "detail": {
-        "name": "C1 start sequence Xe and dwell",
-        "why": ""
-       }
       }
+     ],
+     "applicability_marker": "NOT_APPLICABLE_GROUND_REFERENCE",
+     "counts_as_compliance_evidence": false,
+     "not_applicable_basis": "the v3 flight budgets (mass_power_a9_v3 / xe_accounting_a9_v3) retire hall_c1_reference to history (A9.19 single flight configuration; A9.20 C1 ground-only): no flight budget evaluates this cell",
+     "retired_flight_budget_probes": [
+      "startup"
      ],
      "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
@@ -9751,7 +9129,7 @@
        "lower_bound_verified": false,
        "exceeds_limit_every_reading": null,
        "detail": {
-        "name": "A9 mass + power integration v3: one MEV reading, 20 % system margin, rebased AL-04 / AL-07 / AL-08, controls / harness split, decided mappings, LOADED Xe, evidence-based dry / wet vs 40 kg",
+        "name": "A9 mass + power integration v3: one MEV reading, 20 % system margin, rebased AL-04 / AL-07 / AL-08, controls / harness split, decided mappings, LOADED Xe, evidence-based dry / wet vs 40 kg; A9.19 / A9.20: single flight configuration hall_icp_neutralizer, Xe contingency / emergency, C1 ground-only",
         "why": "flight mass / power v3, to be refreshed for A9.19 / A9.20 without C1 (budgets lane); the immutable v2 still books hall_c1_reference as history and is not evidence here"
        }
       },
@@ -11948,7 +11326,65 @@
     "marker": "NOT_APPLICABLE_GROUND_REFERENCE"
    }
   ],
-  "budget_retired_ground_reference_cells": [],
+  "budget_retired_ground_reference_cells": [
+   {
+    "row": "RVM-03",
+    "configuration": "hall_c1_reference",
+    "marker": "NOT_APPLICABLE_GROUND_REFERENCE",
+    "probes": [
+     "xe"
+    ]
+   },
+   {
+    "row": "RVM-04",
+    "configuration": "hall_c1_reference",
+    "marker": "NOT_APPLICABLE_GROUND_REFERENCE",
+    "probes": [
+     "power"
+    ]
+   },
+   {
+    "row": "RVM-05",
+    "configuration": "hall_c1_reference",
+    "marker": "NOT_APPLICABLE_GROUND_REFERENCE",
+    "probes": [
+     "allocation"
+    ]
+   },
+   {
+    "row": "RVM-06",
+    "configuration": "hall_c1_reference",
+    "marker": "NOT_APPLICABLE_GROUND_REFERENCE",
+    "probes": [
+     "mass",
+     "xe"
+    ]
+   },
+   {
+    "row": "RVM-07",
+    "configuration": "hall_c1_reference",
+    "marker": "NOT_APPLICABLE_GROUND_REFERENCE",
+    "probes": [
+     "mass"
+    ]
+   },
+   {
+    "row": "RVM-10",
+    "configuration": "hall_c1_reference",
+    "marker": "NOT_APPLICABLE_GROUND_REFERENCE",
+    "probes": [
+     "xe"
+    ]
+   },
+   {
+    "row": "RVM-14",
+    "configuration": "hall_c1_reference",
+    "marker": "NOT_APPLICABLE_GROUND_REFERENCE",
+    "probes": [
+     "startup"
+    ]
+   }
+  ],
   "budget_retired_note": "rows whose hall_c1_reference evidence is a v3 flight budget carry the marker only once those budgets retire the column to history (A9.19 / A9.20 budgets refresh); while the budgets still carry it, the cell stays the labelled ground-reference evaluation",
   "na_note": "flight-architecture rows RVM-28..30 are not evaluated against the ground-only hall_c1_reference (RV19-10); the cell keeps a vocabulary status (rvm_rules, R7) but carries applicability_marker NOT_APPLICABLE_GROUND_REFERENCE and counts_as_compliance_evidence = false",
   "owner_open_note": "A9.20 verbatim also asks 'is it good to remove hollow cathode' - recorded for the owner, not answered here (see recorder_proposals_open_for_owner)",

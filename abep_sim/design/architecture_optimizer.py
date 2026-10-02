@@ -1167,13 +1167,16 @@ def evaluate_constraints(values: Mapping) -> list[dict]:
 def _line_hc_elements(ln: Mapping, config: str) -> list[dict]:
     """Every name-bearing item of one v3 budget line: the line itself, each floor constituent and the c1_branch record.
     A name worded as a conditional C1 provision ('if C1 selected') is flagged CONDITIONAL_NOT_BOOKED (A9.20: never
-    selected for flight); a c1_branch is flagged only while it is *NOT_SELECTED and books nothing, else it is a C1
-    element (refused)."""
+    selected for flight); a c1_branch is flagged only while it is *NOT_SELECTED and books nothing. An explicit absence
+    statement ('no C1 ... - C1 is ground-only'; a c1_branch NO_C1_... booking nothing) is booked DECLARED_ABSENT
+    (reported, re-verified by the refusal). Anything else naming C1 is a C1 element (refused)."""
     lid = ln.get("line")
     name = ln.get("name", ln.get("owner_name"))
     el = {"id": lid, "name": name, "kind": "mass_line", "source": f"{MP_V3_REL} lines.{config}.{lid}"}
     if a919.is_conditional_c1_text(name) and a919.hollow_cathode_elements([name]):
         el["booking"] = a919.C1_BOOKING_CONDITIONAL
+    elif a919.is_c1_absence_text(name):
+        el["booking"] = a919.C1_DECLARED_ABSENT
     out = [el]
     for i, fc in enumerate(ln.get("floor_constituents") or []):
         what = fc.get("what")
@@ -1181,6 +1184,8 @@ def _line_hc_elements(ln: Mapping, config: str) -> list[dict]:
              "source": f"{MP_V3_REL} lines.{config}.{lid}.floor_constituents[{i}]"}
         if a919.is_conditional_c1_text(what) and a919.hollow_cathode_elements([what]):
             e["booking"] = a919.C1_BOOKING_CONDITIONAL
+        elif a919.is_c1_absence_text(what):
+            e["booking"] = a919.C1_DECLARED_ABSENT
         out.append(e)
     br = ln.get("c1_branch")
     if br is not None:
@@ -1189,6 +1194,8 @@ def _line_hc_elements(ln: Mapping, config: str) -> list[dict]:
              "in_line": br.get("in_AL08"), "source": f"{MP_V3_REL} lines.{config}.{lid}.c1_branch"}
         if "NOT_SELECTED" in st and not br.get("in_AL08"):
             e["booking"] = a919.C1_BOOKING_CONDITIONAL
+        elif a919.is_c1_absent_branch_state(st, br.get("in_AL08")):
+            e["booking"] = a919.C1_DECLARED_ABSENT
         out.append(e)
     return out
 
@@ -1210,14 +1217,28 @@ def flight_configuration_elements(config: str, repo: Path = REPO) -> list[dict]:
         els += _line_hc_elements(ln, config)
     present = {ln.get("line") for ln in flight_lines}
     for gcfg in GROUND_REFERENCE_CONFIGURATIONS:
-        for ln in mp["lines"].get(gcfg, []):
-            m = _EMBEDDED_C1_RE.search(str(ln.get("floor_arithmetic", "")))
-            if m and m.group(3) in present:
-                els.append({"id": f"{m.group(3)}.embedded_c1_cathode_xe_branch", "name": "C1 cathode Xe branch",
-                            "kind": "embedded_floor_branch", "kg": float(m.group(1)), "ref": m.group(2),
-                            "booking": a919.C1_BOOKING_EMBEDDED,
-                            "source": f"{MP_V3_REL} lines.{gcfg}.{ln.get('line')}.floor_arithmetic"})
+        for where, glines in ground_reference_lines(mp, gcfg):
+            for ln in glines:
+                m = _EMBEDDED_C1_RE.search(str(ln.get("floor_arithmetic", "")))
+                if m and m.group(3) in present:
+                    els.append({"id": f"{m.group(3)}.embedded_c1_cathode_xe_branch", "name": "C1 cathode Xe branch",
+                                "kind": "embedded_floor_branch", "kg": float(m.group(1)), "ref": m.group(2),
+                                "booking": a919.C1_BOOKING_EMBEDDED,
+                                "source": f"{MP_V3_REL} {where}.{gcfg}.{ln.get('line')}.floor_arithmetic"})
     return els
+
+
+def ground_reference_lines(mp: Mapping, gcfg: str) -> list[tuple[str, list]]:
+    """The ground reference's own v3 lines: the live column while the budget carries it, else the labelled
+    retired-history column (A9.19 budgets refresh). The C1 text there still states which flight floor embeds a C1
+    branch, so the EMBEDDED_IN_FLOOR flag survives the retirement until the floor itself is re-based."""
+    out = []
+    if gcfg in mp["lines"]:
+        out.append(("lines", mp["lines"][gcfg]))
+    hist = ((mp.get("retired_flight_configuration_history") or {}).get("lines") or {})
+    if gcfg in hist:
+        out.append(("retired_flight_configuration_history.lines", hist[gcfg]))
+    return out
 
 
 def evaluate_system(upstream_row: Mapping | None, config: str, design: Mapping | None = None,
@@ -1276,6 +1297,7 @@ def evaluate_system(upstream_row: Mapping | None, config: str, design: Mapping |
     return {"configuration": config, "design_id": row.get("design_id"), "objectives": objs, "constraints": cons,
             "propellant_paths": prop, "hollow_cathode_check": hc["check"],
             "c1_provisions_flagged": [e["id"] for e in hc["c1_provisions_flagged"]],
+            "c1_absence_statements": [e["id"] for e in hc["c1_absence_statements"]],
             "system_not_evaluated": ne,
             "constraints_not_evaluated": [c["id"] for c in cons if c["status"] == C_NOT_EVALUATED],
             "constraints_violated": [c["id"] for c in cons if c["status"] == C_VIOLATED]}

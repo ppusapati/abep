@@ -193,6 +193,28 @@ C1_FLAGGED_BOOKINGS = (C1_BOOKING_CONDITIONAL, C1_BOOKING_EMBEDDED)
 CHECK_CLEAN = "NO_HOLLOW_CATHODE_ELEMENT_LISTED"
 CHECK_FLAGGED = "NO_HOLLOW_CATHODE_ELEMENT_LISTED_C1_PROVISIONS_FLAGGED_PENDING_BUDGET_REFRESH"
 _C1_CONDITIONAL_RE = re.compile(r"if\s+c-?1\s+(is\s+)?selected", re.I)
+# A9.19 budget refresh: a flight line may state the ABSENCE of C1 content explicitly ('no C1 electronics - C1 is
+# ground-only'; a c1_branch record whose state is NO_C1_... with nothing in the line). Such a statement is not a listed
+# element: it is reported (c1_absence_statements) and keeps the check clean only when the text left after removing the
+# negated / ground-only clauses carries no hollow-cathode marker at all (a booked C1 item is still refused).
+C1_DECLARED_ABSENT = "DECLARED_ABSENT"
+_C1_ABSENCE_RES = (re.compile(r"\bno\s+c-?1\b[^;,()\-]*", re.I),
+                   re.compile(r"\bc-?1\s+is\s+ground-?\s*only\b", re.I))
+
+
+def is_c1_absence_text(text) -> bool:
+    """True when ``text`` mentions C1 only inside explicit absence clauses ('no C1 ...', 'C1 is ground-only')."""
+    if not isinstance(text, str) or not any(r.search(text) for r in _C1_ABSENCE_RES):
+        return False
+    rest = text
+    for r in _C1_ABSENCE_RES:
+        rest = r.sub(" ", rest)
+    return bool(hollow_cathode_elements([text])) and not hollow_cathode_elements([rest])
+
+
+def is_c1_absent_branch_state(state, in_line) -> bool:
+    """A c1_branch record that declares no C1 branch in flight (state NO_C1_..., nothing booked in the line)."""
+    return str(state).upper().startswith("NO_C1") and not in_line
 
 
 def is_conditional_c1_text(text) -> bool:
@@ -202,20 +224,32 @@ def is_conditional_c1_text(text) -> bool:
 def refuse_hollow_cathode_elements(config: str, elements: Iterable) -> dict:
     """A9.19: no conventional hollow cathode in the flight architecture. Refuses a flight configuration that lists any
     hollow-cathode element; returns the checked record otherwise. Elements carrying ``booking`` in C1_FLAGGED_BOOKINGS
-    (conditional / embedded C1 provisions, RV19-11) are not refusals but are reported and make the check non-clean."""
+    (conditional / embedded C1 provisions, RV19-11) are not refusals but are reported and make the check non-clean.
+    Elements booked C1_DECLARED_ABSENT (explicit 'no C1' statements, re-verified here) are reported in
+    ``c1_absence_statements`` and do not make the check non-clean."""
     require_flight_configuration(config)
     els = list(elements)
 
     def _flagged(e):
         return isinstance(e, Mapping) and e.get("booking") in C1_FLAGGED_BOOKINGS
 
+    def _absent(e):
+        # the label is re-verified here: a DECLARED_ABSENT booking on content that books C1 is still refused
+        if not (isinstance(e, Mapping) and e.get("booking") == C1_DECLARED_ABSENT):
+            return False
+        if e.get("kind") == "c1_branch":
+            return is_c1_absent_branch_state(e.get("state"), e.get("in_line"))
+        return is_c1_absence_text(e.get("name"))
+
     flagged = [e for e in els if _flagged(e)]
-    hits = hollow_cathode_elements([e for e in els if not _flagged(e)])
+    absent = [e for e in els if _absent(e)]
+    hits = hollow_cathode_elements([e for e in els if not _flagged(e) and not _absent(e)])
     if hits:
         raise ArchitectureRuleError(f"REFUSED: hollow-cathode element(s) {hits} in flight configuration {config!r} "
                                     "(A9.19: no conventional hollow cathode; A9.20: C1 ground-only)")
     return {"configuration": config, "n_elements": len(els), "hollow_cathode_elements": [],
             "c1_provisions_flagged": [dict(e) for e in flagged],
+            "c1_absence_statements": [dict(e) for e in absent],
             "check": CHECK_FLAGGED if flagged else CHECK_CLEAN, "authority": cite("A9.19", "A9.20")}
 
 

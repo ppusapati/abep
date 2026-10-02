@@ -1550,7 +1550,7 @@
      "record_locations": [
       "/banner/0",
       "/banner/2",
-      "/banner/6",
+      "/banner/7",
       "/common_interface/banner/0"
      ]
     },
@@ -1562,7 +1562,7 @@
      "record_locations": [
       "/banner/0",
       "/banner/2",
-      "/banner/6",
+      "/banner/7",
       "/common_interface/banner/0"
      ],
      "what": "F4: RFQ3-H1FAB sent against the P9e configuration-controlled P1 engineering drawing set; LOCK-1 release kept for the flight H-1 only (recorder reading for the owner to confirm)"
@@ -4231,7 +4231,7 @@
      "record_locations": [
       "/items_v3/1/source/0",
       "/lines/hall_icp_neutralizer/3/owner_answers_applied/1",
-      "/lines/hall_c1_reference/3/owner_answers_applied/1",
+      "/retired_flight_configuration_history/lines/hall_c1_reference/3/owner_answers_applied/1",
       "/owner_answers_applied/2/id"
      ]
     },
@@ -4287,7 +4287,7 @@
      "record_locations": [
       "/items_v3/2/source/0",
       "/lines/hall_icp_neutralizer/6/owner_answers_applied/1",
-      "/lines/hall_c1_reference/4/owner_answers_applied/1",
+      "/retired_flight_configuration_history/lines/hall_c1_reference/4/owner_answers_applied/1",
       "/owner_answers_applied/3/id"
      ]
     },
@@ -4344,8 +4344,8 @@
      "record_locations": [
       "/items_v3/3/source/0",
       "/lines/hall_icp_neutralizer/7/owner_answers_applied/1",
-      "/lines/hall_c1_reference/5/owner_answers_applied/1",
-      "/bom/6/allocation_mapping"
+      "/retired_flight_configuration_history/lines/hall_c1_reference/5/owner_answers_applied/1",
+      "/c1_mass_check/flight"
      ]
     },
     {
@@ -4464,7 +4464,7 @@
       "/margin_convention/wet",
       "/xe_v3_import/rule",
       "/bom/12/v1_status",
-      "/bom/13/owner_answers_applied/2"
+      "/bom/13/owner_answers_applied/3"
      ]
     },
     {
@@ -4575,8 +4575,8 @@
      "commit": "1d515542e268dc042c9e48a4b1e496de4891f6e5",
      "status": "APPLIED",
      "record_locations": [
-      "/power/configurations/hall_c1_reference/phases/startup/steps/4/name",
-      "/power/configurations/hall_c1_reference/phases/startup/steps/4/decisions/0",
+      "/power/retired_flight_configuration_history/configurations/hall_c1_reference/phases/startup/steps/4/name",
+      "/power/retired_flight_configuration_history/configurations/hall_c1_reference/phases/startup/steps/4/decisions/0",
       "/owner_answers_applied/24/id"
      ],
      "what": "F10: C-S4 keeper ignition <= 3 dwells (1 + 2 retries) x 120 s = 360 s maximum booking"
@@ -4667,10 +4667,10 @@
      "commit": "d008ac31daa11b6d0fcfe4ad78f9587e359bced3",
      "status": "APPLIED",
      "record_locations": [
-      "/lines/hall_c1_reference/8/owner_answers_applied/2",
-      "/lines/hall_c1_reference/8/owner_answers_applied/3",
-      "/lines/hall_c1_reference/8/flight_integration",
-      "/bom/31/configurations/hall_c1_reference"
+      "/items_v3/4/source/2",
+      "/lines/hall_icp_neutralizer/6/owner_answers_applied/3",
+      "/lines/hall_icp_neutralizer/7/owner_answers_applied/6",
+      "/retired_flight_configuration_history/by/0"
      ]
     },
     {
@@ -4679,10 +4679,10 @@
      "commit": "d008ac31daa11b6d0fcfe4ad78f9587e359bced3",
      "status": "APPLIED",
      "record_locations": [
-      "/propellant_policy/c1_flight_xe_now/rule",
-      "/propellant_policy/ground_reference_c1",
       "/items/0/owner_answers_applied/0",
-      "/items/0/v3_scope"
+      "/items/0/owner_answers_applied/2",
+      "/items/1/owner_answers_applied/0",
+      "/items/1/owner_answers_applied/2"
      ]
     },
     {
@@ -4788,7 +4788,7 @@
      "status": "APPLIED",
      "record_locations": [
       "/reading_axes_resolved/RA-FLOWUNC/by/0",
-      "/ledger_lines/18/owner_answers_applied/4",
+      "/retired_flight_configuration_history/ledger_lines/4/owner_answers_applied/4",
       "/owner_answers_applied/13/id"
      ]
     },
@@ -4892,7 +4892,7 @@
      "status": "APPLIED",
      "record_locations": [
       "/lines/hall_icp_neutralizer/7/owner_answers_applied/3",
-      "/lines/hall_c1_reference/5/owner_answers_applied/3",
+      "/retired_flight_configuration_history/lines/hall_c1_reference/5/owner_answers_applied/3",
       "/bom/6/owner_answers_applied/1",
       "/bom/7/owner_answers_applied/1"
      ]
@@ -5155,7 +5155,7 @@
      "record_locations": [
       "/margin_convention/wet",
       "/xe_v3_import/rule",
-      "/bom/12/owner_answers_applied/3",
+      "/bom/12/owner_answers_applied/4",
       "/bom/12/v3_status"
      ]
     },
@@ -5235,8 +5235,8 @@
      "record_locations": [
       "/power/configurations/hall_icp_neutralizer/phases/peak/rule",
       "/power/configurations/hall_icp_neutralizer/phases/peak/rule_v2",
-      "/power/configurations/hall_c1_reference/phases/peak/rule",
-      "/power/configurations/hall_c1_reference/phases/peak/rule_v2"
+      "/power/retired_flight_configuration_history/configurations/hall_c1_reference/phases/peak/rule",
+      "/power/retired_flight_configuration_history/configurations/hall_c1_reference/phases/peak/rule_v2"
      ]
     },
     {
@@ -5383,10 +5383,10 @@
      "commit": "d008ac31daa11b6d0fcfe4ad78f9587e359bced3",
      "status": "APPLIED",
      "record_locations": [
-      "/propellant_policy/c1_flight_xe_now/rule",
       "/items/0/owner_answers_applied/1",
-      "/items/0/v3_scope",
-      "/items/1/owner_answers_applied/1"
+      "/items/0/owner_answers_applied/2",
+      "/items/1/owner_answers_applied/1",
+      "/items/1/owner_answers_applied/2"
      ]
     },
     {
@@ -5395,10 +5395,10 @@
      "commit": "1d515542e268dc042c9e48a4b1e496de4891f6e5",
      "status": "APPLIED",
      "record_locations": [
-      "/propellant_policy/c1_flight_xe_now/rule",
       "/items/0/owner_answers_applied/1",
-      "/items/0/v3_scope",
-      "/items/1/owner_answers_applied/1"
+      "/items/0/owner_answers_applied/2",
+      "/items/1/owner_answers_applied/1",
+      "/items/1/owner_answers_applied/2"
      ],
      "what": "F6: P-FL-C1 a configuration-scope zero (no C1 in hall_icp_neutralizer), not an owner Xe exclusion; XV2-02 and the C1 sensitivity labelled A5 design-target placeholders"
     },
@@ -5473,9 +5473,9 @@
      "status": "APPLIED",
      "record_locations": [
       "/propellant_policy/per_configuration/0/xe_free_reading",
-      "/propellant_policy/per_configuration/1/xe_free_reading",
       "/reading_axes_resolved/RA-FUNC/by/2",
-      "/ledger_lines/2/owner_answers_applied/2"
+      "/ledger_lines/2/owner_answers_applied/2",
+      "/ledger_lines/3/owner_answers_applied/2"
      ]
     },
     {
@@ -5531,8 +5531,8 @@
      "commit": "1d515542e268dc042c9e48a4b1e496de4891f6e5",
      "status": "APPLIED",
      "record_locations": [
-      "/power/configurations/hall_c1_reference/phases/startup/steps/4/name",
-      "/power/configurations/hall_c1_reference/phases/startup/steps/4/decisions/1",
+      "/power/retired_flight_configuration_history/configurations/hall_c1_reference/phases/startup/steps/4/name",
+      "/power/retired_flight_configuration_history/configurations/hall_c1_reference/phases/startup/steps/4/decisions/1",
       "/owner_answers_applied/25/id"
      ],
      "what": "F10: as above"
@@ -5718,9 +5718,9 @@
      "status": "APPLIED",
      "record_locations": [
       "/a9_16_incorporation/applied/20/question_id",
-      "/items/44/value",
       "/items/44/status",
-      "/hardware_readiness/29/rfq_v1_package"
+      "/safety_interlocks/4/threshold",
+      "/safety_interlocks/4/source"
      ]
     },
     {
@@ -6360,8 +6360,8 @@
      "record_locations": [
       "/title",
       "/banner/5",
-      "/decision_pins_v3/8/key",
-      "/decision_pins_v3/9/key"
+      "/banner/6",
+      "/rfp_propellant_policy/a9_19_xe_role/rfq3_gas_n03_scope_note"
      ],
      "what": "RFQ3-GAS-N03 / RFQ3-GAS-N04, NIR-07: system Xe capability for both configurations, C1 Xe lines only for a selected C1 needing Xe, ICP getter an engineering / vendor requirement"
     },

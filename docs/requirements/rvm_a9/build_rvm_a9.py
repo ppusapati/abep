@@ -397,6 +397,13 @@ RETIRED_BASIS = ("the v3 flight budgets (mass_power_a9_v3 / xe_accounting_a9_v3)
                  "(A9.19 single flight configuration; A9.20 C1 ground-only): no flight budget evaluates this cell")
 
 
+def xe_retired_flight_configuration(xe):
+    """The Xe v3 retirement label: propellant_policy.architecture.retired_flight_configuration (where the budgets lane
+    records the A9.19 architecture); '' when absent (fails closed in c1_retired_from_flight_budgets)."""
+    arch = (xe.get("propellant_policy") or {}).get("architecture") or {}
+    return arch.get("retired_flight_configuration", "")
+
+
 def c1_retired_from_flight_budgets(ctx):
     mp, xe = ctx.r["MP"], ctx.r["XE"]
     mp_ret = C1_CFG not in mp["lines"]
@@ -407,7 +414,7 @@ def c1_retired_from_flight_budgets(ctx):
         if any(p["configuration"] == C1_CFG for p in mp["propellant_policy"]["per_configuration"]):
             raise BuildError("mass/power v3 retires hall_c1_reference but still carries its propellant policy")
     xe_ret = not any(e["scenario"] == C1_FLIGHT_XE_SCENARIO for e in xe["evaluations"])
-    if xe_ret and not str((xe.get("architecture") or {}).get("retired_flight_configuration", "")).startswith(C1_CFG):
+    if xe_ret and not str(xe_retired_flight_configuration(xe)).startswith(C1_CFG):
         raise BuildError("Xe v3 drops the flight C1 scenario without labelling hall_c1_reference retired")
     if mp_ret != xe_ret:
         raise BuildError("mass/power v3 and Xe v3 disagree on whether hall_c1_reference is a flight configuration")
@@ -737,7 +744,7 @@ def evaluate_rows(ctx, rows):
             if retired:
                 if c != C1_CFG:
                     raise BuildError(f"{r['id']}: only {C1_CFG} can be retired from the flight budgets")
-                arts = [A19.na_ground_reference(sys.modules[__name__], r["id"])]
+                arts = [A19.na_ground_reference(types.SimpleNamespace(**globals()), r["id"])]
             status, rule, reason = R.assign_status([{k: v for k, v in a.items() if k != "detail"} for a in arts],
                                                    r["requirement_frozen"])
             det = [a for a in arts if a["role"] == "DETERMINING"]

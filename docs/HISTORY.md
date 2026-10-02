@@ -3071,3 +3071,33 @@ ea0100b9... (v1 pin) to dcddf947..., so the v1 campaign refused (REFUSED_REFEREN
 - **RVF-05.** `REGISTRATION_ADDENDUM_A9_18.json` supersedes the dedicated baseline's `ADMISSION_BASELINE_PERFORMANCE_ONLY`
   label for current use (`HISTORICAL_FOR_EARLIER_CODE_STATE`, Rust admission blocked until the A9.18 PERF_RERUN) and
   marks the baseline.md "shared machine" sentence as harness boilerplate (Windows CPU load 7 % / 1 %). Measured files untouched.
+
+## 2026-10-02 — A9.19 / A9.20 integration after the A9.16 finalize merge
+
+The three A9.19 / A9.20 lanes re-applied on the A9.16 finalize state (budgets 4cd79e6, RVM 1eb021c, design 56e7327) are
+merged with `--no-ff`; every (B) repair is kept (RFP-01 RVM on the v3 artifacts, RVF-01 / PHY-01 domain-gated W1, S6.8
+statuses). Integration fixes, all on the A9.19 rule "one Hall + one RF/ICP neutralizer, no conventional hollow cathode,
+Xe CONTINGENCY_EMERGENCY, C1 GROUND_ONLY":
+- **Hollow-cathode refusal vs the refreshed budgets.** The budgets lane now states the absence of C1 content explicitly
+  (AL-07 "no C1 electronics - C1 is ground-only"; AL-08 `c1_branch.state = NO_C1_XE_BRANCH_IN_FLIGHT`, nothing booked).
+  The optimizer refused those statements as C1 elements. `a9_19_architecture` adds `C1_DECLARED_ABSENT`: an element is
+  only an absence statement when the text left after removing its "no C1 ..." / "C1 is ground-only" clauses carries no
+  hollow-cathode marker (or the c1_branch is `NO_C1_*` and books nothing); the refusal re-verifies the label, so booked C1
+  content is still refused. Absence statements are reported (`c1_absence_statements`) and keep the check clean.
+  The ground reference's C1 floor text now lives in `retired_flight_configuration_history`; the optimizer reads it there
+  (`ground_reference_lines`), so the AL-08 two-branch floor that may still embed the C1 cathode Xe branch (0.285 kg,
+  budgets recorder flag) stays FLAGGED (`NO_HOLLOW_CATHODE_ELEMENT_LISTED_C1_PROVISIONS_FLAGGED_PENDING_BUDGET_REFRESH`)
+  until the owner / quotations re-base AL-08. No number changes.
+- **RVM.** The retirement label in Xe v3 is read where the budgets lane writes it
+  (`propellant_policy.architecture.retired_flight_configuration`); `na_ground_reference` gets the builder namespace (not
+  `sys.modules[__name__]`, which failed under the test loader). The C1 cells of rows whose evidence was a flight-budget
+  probe are now `NOT_APPLICABLE_GROUND_REFERENCE` (never compliance evidence); tests read those cells accordingly.
+- **Regenerated in dependency order:** RVM -> RFP registration (RVM-28..30 cross-references) -> A9.16 application matrix
+  (record locations only) -> M16 v4 -> F7/F8 -> F9 freeze candidate (AFC-SY-XE-01 states the A9.19 Xe role; the A9.15
+  "not a contingency" wording is superseded) -> H-1 freeze candidate (M16 v4 pin) -> decision dossier; the F0 performance
+  MD re-rendered from its JSON (`--render-md`; live F3 / F7 counts after the S6.8 regeneration; no timing changed).
+- **Immutable H2 v1 history restored (SW-02 re-homed).** 46ff2d1 had edited the H2-6 builder (SW-02: `--check` also runs
+  `verify_sources`), but `docs/hardware/h2` is immutable H2 v1 history in the A9.10 reconciliation (byte-identical to
+  ecdad06). The builder is restored byte for byte; the SW-02 guarantee moves to the CI static check `h2_6_live_sources`
+  (`scripts/ci_checks.py`, docs/ci/CI.md), which runs `verify_sources()` on every push (and
+  `test_h2_6_diagnostics_fixture::test_consumed_values_match_live_sources` in the suite).

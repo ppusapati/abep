@@ -35,8 +35,8 @@
   "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json": "85c79045047a6b09a10c8f199782b25defad2b5446386fa68496a16cf41c2ff2",
   "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json": "ccd7da1e54368c67cbedc5bf495ecc035fc844e235c5b36725c522cbc74d4412",
   "docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json": "74a52aa749e1d071f76957e4f9ef4929c9d8ab302b183da3c5a5d9ba8d6d6923",
-  "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json": "b14aed11beea5a0418608291d389bc35705730297bb8fc19e2603a20053d9f8d",
-  "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json": "88591d52fe4e8102865812f50752efcbd6f9ef474bbdd1c81a4b668b230e0b93",
+  "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json": "36f94251ccca4427715ad4395957b4700b6bcb9d8127a4e3feaa1f4865150590",
+  "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json": "67c3dcb650c104eb16093279a54c3482c2bb5821711916cc05811841a9e7b992",
   "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
  },
  "referenced_not_pinned": [
@@ -9966,7 +9966,7 @@
      },
      {
       "line": "AL-07",
-      "name": "Hall PPU (incl. collector/bias supply; C1 heater/keeper/control electronics if C1 selected)",
+      "name": "Hall PPU (incl. collector/bias supply; no C1 electronics - C1 is ground-only, A9.19 / A9.20)",
       "allocation_kg": 2.5,
       "evidence_floor_kg": 5.0,
       "cbe_kg": null,
@@ -9977,7 +9977,7 @@
      },
      {
       "line": "AL-08",
-      "name": "complete Xe storage/flow hardware: tank, regulator, valves, plumbing, mounting, thermal",
+      "name": "complete Xe storage/flow hardware: tank, regulator, valves, plumbing, mounting, thermal (REQUIRED_RFP_XE_CAPABILITY; role CONTINGENCY_EMERGENCY, A9.19)",
       "allocation_kg": 1.5,
       "evidence_floor_kg": 5.044,
       "cbe_kg": null,
@@ -10356,9 +10356,11 @@
   },
   "hollow_cathode_check": "NO_HOLLOW_CATHODE_ELEMENT_LISTED_C1_PROVISIONS_FLAGGED_PENDING_BUDGET_REFRESH",
   "c1_provisions_flagged": [
-   "AL-07",
-   "AL-08.c1_branch",
    "AL-08.embedded_c1_cathode_xe_branch"
+  ],
+  "c1_absence_statements": [
+   "AL-07",
+   "AL-08.c1_branch"
   ],
   "system_not_evaluated": [
    "T_minus_D",
@@ -13564,9 +13566,9 @@
     "hall_c1_reference": {
      "PASS": 0,
      "FAIL": 0,
-     "NOT_EVALUATED": 27,
+     "NOT_EVALUATED": 29,
      "OUT_OF_DOMAIN": 0,
-     "INCOMPLETE_EVIDENCE": 3,
+     "INCOMPLETE_EVIDENCE": 1,
      "NUMERICAL_FAILURE": 0
     }
    }
@@ -13604,9 +13606,9 @@
     "hall_c1_reference": {
      "PASS": 0,
      "FAIL": 0,
-     "NOT_EVALUATED": 27,
+     "NOT_EVALUATED": 29,
      "OUT_OF_DOMAIN": 0,
-     "INCOMPLETE_EVIDENCE": 3,
+     "INCOMPLETE_EVIDENCE": 1,
      "NUMERICAL_FAILURE": 0
     }
    }

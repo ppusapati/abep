@@ -183,7 +183,11 @@ def test_f9_records():
     assert by["AFC-SY-MASS-AL-04"]["value"] == 4.2048 and by["AFC-SY-MASS-AL-07"]["value"] == 6.0
     assert by["AFC-SY-MASS-AL-08"]["value"] == 6.0528
     assert by["AFC-SY-XE-03"]["freeze_status"] == "FREEZE_CANDIDATE"
-    assert "RFP-required" in by["AFC-SY-XE-01"]["value"] and "not a contingency" in by["AFC-SY-XE-01"]["value"]
+    # A9.15 'Xe is not a contingency' is superseded by A9.19 (xenon_role CONTINGENCY_EMERGENCY; the capability stays
+    # RFP-required): the F9 value states the capability AND the A9.19 role, and never the superseded wording
+    xe01 = by["AFC-SY-XE-01"]["value"]
+    assert "RFP-required" in xe01 and "XE_CONTINGENCY" in xe01 and "contingency / emergency role, A9.19" in xe01
+    assert "not a contingency" not in xe01 and "no hollow cathode" in xe01
     assert by["AFC-UP-FI-02"]["freeze_status"] == "FREEZE_CANDIDATE"
     assert by["AFC-PR-ICP-05"]["freeze_status"] == "OPEN" and "0.05" in by["AFC-PR-ICP-05"]["value"]
     assert "G-REUSE" in by["AFC-PR-CL-07"]["value"]                         # A9.1 ICP gas mode unchanged

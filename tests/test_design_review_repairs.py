@@ -103,14 +103,31 @@ def _h26():
     return mod
 
 
-def test_h2_6_check_runs_the_live_source_verification(monkeypatch):
-    """SW-02: --check must fail on a stale transcription, not only --verify-sources."""
-    mod = _h26()
-    monkeypatch.setattr(mod, "check", lambda *a, **k: [])
-    monkeypatch.setattr(mod, "verify_sources", lambda *a, **k: ["mdot_O2_max_W1_kgps: live source != consumed"])
-    assert mod.main(["--check"]) == 1
-    monkeypatch.setattr(mod, "verify_sources", lambda *a, **k: [])
-    assert mod.main(["--check"]) == 0
+def test_h2_6_live_source_verification_gates_ci(monkeypatch):
+    """SW-02: a stale H2-6 transcription must fail CI, not only an explicit --verify-sources run. The H2-6 builder is
+    immutable H2 v1 history (A9.10 reconciliation: byte-identical to its base), so the gate is the CI static check
+    h2_6_live_sources (scripts/ci_checks.py), which runs verify_sources() on every push."""
+    import importlib.util
+    import subprocess
+    import sys
+    spec = importlib.util.spec_from_file_location("_ci_checks_sw02", REPO / "scripts/ci_checks.py")
+    ci = importlib.util.module_from_spec(spec)
+    sys.modules["_ci_checks_sw02"] = ci
+    spec.loader.exec_module(ci)
+    assert "h2_6_live_sources" in ci.CHECKS
+    stale = _h26()
+    monkeypatch.setattr(stale, "verify_sources", lambda *a, **k: ["mdot_O2_max_W1_kgps: live source != consumed"])
+    monkeypatch.setattr(ci, "load_h2_6", lambda: stale)
+    assert ci.run_checks(["h2_6_live_sources"])["h2_6_live_sources"][0]
+    fresh = _h26()
+    monkeypatch.setattr(fresh, "verify_sources", lambda *a, **k: [])
+    monkeypatch.setattr(ci, "load_h2_6", lambda: fresh)
+    assert ci.run_checks(["h2_6_live_sources"])["h2_6_live_sources"][0] == []
+    # the builder itself stays byte-identical to the A9.10 reconciliation base (immutable H2 v1 history)
+    rel = "docs/hardware/h2/h2_6_diagnostics_fixture/build_h2_6_diagnostics_fixture.py"
+    base = subprocess.run(["git", "show", f"ecdad06e30bc5d2f172e862e4bd4843e86332d42:{rel}"], cwd=REPO,
+                          capture_output=True, check=True).stdout
+    assert (REPO / rel).read_bytes() == base
 
 
 # ----------------------------------------------------------------------------------------------------------- RFP-02

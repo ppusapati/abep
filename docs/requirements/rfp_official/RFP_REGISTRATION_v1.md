@@ -86,20 +86,20 @@ AG-15: OPEN - RFP registered by hash with verbatim transcription and the RVM re-
 | Clause | RVM rows (derived) | Related rows | Note |
 |---|---|---|---|
 | RFP-P16-01 | RVM-21 | RVM-08, RVM-25 |  |
-| RFP-P16-02 | RVM-08, RVM-10 | - |  |
+| RFP-P16-02 | RVM-08, RVM-10 | RVM-29 |  |
 | RFP-P17-01 | RVM-25 | - |  |
 | RFP-P17-02 | RVM-09, RVM-16 | RVM-08, RVM-22 |  |
 | RFP-P17-03 | RVM-08 | RVM-01 |  |
 | RFP-P17-04 | RVM-08 | - |  |
-| RFP-P17-05 | RVM-09, RVM-10 | RVM-15 |  |
+| RFP-P17-05 | RVM-09, RVM-10, RVM-29 | RVM-15, RVM-28 |  |
 | RFP-P18-01 | RVM-04, RVM-20 | - |  |
 | RFP-P18-02 | RVM-19 | - |  |
 | RFP-P18-03 | RVM-18 | - | items b) (technical-evaluation presentation) and c) (consortium agreement proof) are programmatic bid items; item a) (indigenous content > 60 %) is mapped to RVM-18 |
 | RFP-P18-04 | RVM-01 | - |  |
 | RFP-P18-05 | RVM-01 | - |  |
 | RFP-P18-06 | RVM-02, RVM-03 | RVM-15 |  |
-| RFP-P18-07 | RVM-11 | - |  |
-| RFP-P18-08 | RVM-08, RVM-10 | - |  |
+| RFP-P18-07 | RVM-11 | RVM-28 |  |
+| RFP-P18-08 | RVM-08, RVM-10, RVM-29 | RVM-28 |  |
 | RFP-P18-09 | RVM-19 | - |  |
 | RFP-P18-10 | RVM-03, RVM-04 | RVM-05 |  |
 | RFP-P18-11 | RVM-06 | RVM-07 |  |
@@ -131,6 +131,8 @@ Rows not derived from an RFP clause:
 - RVM-15 DERIVED_PROJECT_REQUIREMENT: Beam neutralization / electron-current capacity (ICP-45 or C1)
 - RVM-17 DERIVED_PROJECT_REQUIREMENT: Thermal closure (>= 50 K below validated limits, 20 % heat-load margin)
 - RVM-27 OWNER_ALLOCATION: Steady heat conducted into the spacecraft mounting interface <= 50 W (A9.12 S5.4 provisional owner allocation; 100 W contingency, 25 W stretch)
+- RVM-28 OWNER_ALLOCATION: Flight thruster architecture: one Hall accelerator + one RF/ICP electron-source/neutralizer for both atmospheric gases and Xe; no conventional hollow cathode (A9.19)
+- RVM-30 OWNER_ALLOCATION: C1 (heated Xe-fed LaB6) is a ground-only laboratory reference: never flight hardware, never in the flight mass / power / Xe budgets (A9.20)
 
 Requirements flagged for the RVM check, resolved:
 

@@ -143,7 +143,7 @@ def test_rv19_11_elements_read_mass_power_v3_content():
     assert sum(e["kind"] == "floor_constituent" for e in els) == n_fc
     assert sum(e["kind"] == "c1_branch" for e in els) == sum("c1_branch" in ln for ln in lines)
     # any embedded C1 branch is quoted from the ground reference's own text (kg present there, never invented)
-    gtxt = json.dumps(mp["lines"].get("hall_c1_reference", []))
+    gtxt = json.dumps([ls for _, ls in ao.ground_reference_lines(mp, "hall_c1_reference")])
     for e in els:
         if e.get("booking") == a919.C1_BOOKING_EMBEDDED:
             assert f"C1 cathode Xe branch {e['kg']:g} kg" in gtxt
@@ -176,3 +176,27 @@ def test_rv19_11_booked_c1_content_refused():
     assert a919.refuse_hollow_cathode_elements("hall_icp_neutralizer", ok)["check"] == a919.CHECK_FLAGGED
     clean = ao._line_hc_elements(base, "hall_icp_neutralizer")
     assert a919.refuse_hollow_cathode_elements("hall_icp_neutralizer", clean)["check"] == a919.CHECK_CLEAN
+
+
+def test_c1_absence_statements_not_refused_but_booked_c1_still_refused():
+    """A9.19 budget refresh: explicit absence statements ('no C1 electronics - C1 is ground-only'; a c1_branch NO_C1_...
+    booking nothing) are reported, not refused and not flagged; C1 content beside them is still refused, and a
+    DECLARED_ABSENT label on booked content is re-verified and refused."""
+    base = {"line": "AL-99", "name": "Hall PPU", "floor_constituents": []}
+    ok = ao._line_hc_elements(dict(base, name="Hall PPU (incl. collector/bias supply; no C1 electronics - C1 is "
+                                              "ground-only, A9.19 / A9.20)",
+                                   c1_branch={"state": "NO_C1_XE_BRANCH_IN_FLIGHT (A9.19 / A9.20)", "in_AL08": False}),
+                              "hall_icp_neutralizer")
+    rec = a919.refuse_hollow_cathode_elements("hall_icp_neutralizer", ok)
+    assert rec["check"] == a919.CHECK_CLEAN and len(rec["c1_absence_statements"]) == 2
+    for bad in (dict(base, name="Hall PPU (no C1 electronics; C1 heater/keeper supply)"),
+                dict(base, c1_branch={"state": "NO_C1_XE_BRANCH_IN_FLIGHT", "in_AL08": 0.285})):
+        with pytest.raises(a919.ArchitectureRuleError, match="hollow-cathode"):
+            a919.refuse_hollow_cathode_elements("hall_icp_neutralizer",
+                                                ao._line_hc_elements(bad, "hall_icp_neutralizer"))
+    forged = {"id": "X", "name": "C1 heater", "kind": "mass_line", "booking": a919.C1_DECLARED_ABSENT}
+    with pytest.raises(a919.ArchitectureRuleError, match="hollow-cathode"):
+        a919.refuse_hollow_cathode_elements("hall_icp_neutralizer", [forged])
+    ev = ao.evaluate_system(None, "hall_icp_neutralizer")
+    els = ao.flight_configuration_elements("hall_icp_neutralizer")
+    assert ev["c1_absence_statements"] == [e["id"] for e in els if e.get("booking") == a919.C1_DECLARED_ABSENT]

@@ -53,6 +53,7 @@ never silent about its scope. The exit code is 1 if any check fails, and a check
 | `launch_manifests` | `scripts/make_p5_n2_launch_manifests.py` `build()` reproduces every `campaign/manifests/*.json` byte for byte, and no committed manifest is an orphan. The manifests embed the driver and lock sha256, so this also catches an edited campaign driver or lock. | nothing about a follow-on run is decided after results |
 | `multiply_charged_tables` | `scripts/build_multiply_charged_tables.py` reproduces every table it owns (`propellants/` and `audit/bound_tables/`) byte for byte, plus each `.source` provenance file. This is the comparison its `--check` mode makes, plus `.source`, without a temporary directory. | rule 6 (tables carry their source) |
 | `ensemble_gate` | `abep_sim.hall_ensemble.load_ensemble()` loads the transport ensemble. `require_admitted` refuses every screening candidate (with the SCREENING reason) and an unknown id, and no id is both admitted and screening. The admission-record verification lives in `load_ensemble` itself and is reused. | screening candidates never produce design Hall maps |
+| `h2_6_live_sources` | The H2-6 builder's `verify_sources()` reports no consumed value that differs from its live source (review finding SW-02). The builder is immutable H2 v1 history (byte-identical to the A9.10 reconciliation base), so this gate runs here rather than inside its `--check`. | a regenerated upstream never leaves a stale H2-6 transcription passing CI |
 
 **Fresh generation without writing.** Each generator runs through its own `__main__` write path with default arguments
 inside `WriteCapture`. There, `builtins.open` and `io.open` in a writing mode return in-memory buffers, directory creation
@@ -172,6 +173,8 @@ the P5-N2 campaign is running, so their CI runtime is unknown (timeout 90 min).
   and are never automatic.
 * **`ensemble_gate`**: a screening candidate would be treated as admitted, or the ensemble does not load. Admission needs
   an offline-verifiable admission record (`hall_ensemble._check_admission`).
+* **`h2_6_live_sources`**: an upstream that H2-6 consumed (e.g. the W1 feed-state closure) was regenerated and H2-6 now
+  carries a stale value. H2-6 is immutable history: record the drift for the owner; never edit the H2 v1 deliverables.
 * **Rule-9 outcome**: a test was newly skipped, the strict xfail changed, or the skip reasons changed. Never "fix" the
   superseded tests by re-tuning.
 * **Golden**: a model change (rule 2), not something to regenerate so that CI passes.

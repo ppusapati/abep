@@ -35,7 +35,7 @@ Flight configuration: `hall_icp_neutralizer` (one Hall + one RF/ICP neutralizer,
 
 | id | gate | current status | sufficient | evidence steps |
 |---|---|---|---|---|
-| AG-01 | RVM rows (30 system requirements; flight configuration hall_icp_neutralizer, C1 column if any = ground reference) | hall_icp_neutralizer: NOT_EVALUATED 27, INCOMPLETE_EVIDENCE 3; hall_c1_reference: NOT_EVALUATED 27, INCOMPLETE_EVIDEN... | false | EP-01, EP-02, EP-03, EP-10, EP-11, EP-12, EP-13 |
+| AG-01 | RVM rows (30 system requirements; flight configuration hall_icp_neutralizer, C1 column if any = ground reference) | hall_icp_neutralizer: NOT_EVALUATED 27, INCOMPLETE_EVIDENCE 3; hall_c1_reference: NOT_EVALUATED 29, INCOMPLETE_EVIDEN... | false | EP-01, EP-02, EP-03, EP-10, EP-11, EP-12, EP-13 |
 | AG-02 | Hall credible transport set (admitted members) | EMPTY (members = []) | false | EP-02, EP-10, EP-11 |
 | AG-03 | Hall-transport validation (successor held-out predictive validation; P5-N2 v1 unchanged) | INCONCLUSIVE (permanent; promotable = []) | false | EP-10 |
 | AG-04 | ICP-45 electron-current capacity (I_e,cap vs I_d,max,H1) | PENDING_ICP45; ICP45 NOT_EVALUATED | false | EP-02, EP-03 |
@@ -53,7 +53,7 @@ Flight configuration: `hall_icp_neutralizer` (one Hall + one RF/ICP neutralizer,
 
 Blocking evidence per gate:
 
-- **AG-01**: no row is PASS (hall_icp_neutralizer: NOT_EVALUATED 27, INCOMPLETE_EVIDENCE 3; hall_c1_reference: NOT_EVALUATED 27, INCOMPLETE_EVIDENCE 3); requirements frozen: 6 of 30 (official RFP not in the repository)
+- **AG-01**: no row is PASS (hall_icp_neutralizer: NOT_EVALUATED 27, INCOMPLETE_EVIDENCE 3; hall_c1_reference: NOT_EVALUATED 29, INCOMPLETE_EVIDENCE 1); requirements frozen: 6 of 30 (official RFP not in the repository)
 - **AG-02**: no admitted Hall transport closure: no design-specific Hall map exists, so thrust T, T - D, I_d,max, Hall discharge power and wall life are NOT_EVALUATED for every design vector
 - **AG-03**: P5-N2 v1 stays INCONCLUSIVE and is never rewritten; closure needs a separately preregistered successor held-out predictive validation that admits a Hall-transport member (A9.13 F9-OQ-03 AG-03 clarification)
 - **AG-04**: I_d,max,H1 not registered (needs measured H-1 operation); no P1 data (P1 plan ENGINEERING_TEST_PLAN_DRAFT_NOT_SCORE_BEARING)
@@ -78,8 +78,8 @@ RVM rows (AG-01; C1 column = GROUND_REFERENCE, not a flight candidate):
 | RVM-03 | 25 mN demonstrated system capability inside P_bus < 1.5 kW | NOT_EVALUATED | NOT_EVALUATED | false |
 | RVM-04 | < 1.5 kW full bus power (A9-02 boundary, steady and start-up, 1 ms window) | NOT_EVALUATED | NOT_EVALUATED | false |
 | RVM-05 | Internal ~1.35 kW design allocation (row 109) | NOT_EVALUATED | NOT_EVALUATED | true |
-| RVM-06 | < 40 kg wet (incl. Xe + tank) | INCOMPLETE_EVIDENCE | INCOMPLETE_EVIDENCE | false |
-| RVM-07 | Internal 34 kg and 36 kg design allocations (row 53) | INCOMPLETE_EVIDENCE | INCOMPLETE_EVIDENCE | true |
+| RVM-06 | < 40 kg wet (incl. Xe + tank) | INCOMPLETE_EVIDENCE | NOT_EVALUATED | false |
+| RVM-07 | Internal 34 kg and 36 kg design allocations (row 53) | INCOMPLETE_EVIDENCE | NOT_EVALUATED | true |
 | RVM-08 | Atmospheric propellant (air: N2 / O2 path; NO_ATOMIC_O labels) | NOT_EVALUATED | NOT_EVALUATED | false |
 | RVM-09 | Ionise N2 and nascent (atomic) O in the same thruster (RFP-P17-05, RFP-P17-02) | NOT_EVALUATED | NOT_EVALUATED | false |
 | RVM-10 | Xe capability (air + Xe; bounded functional Xe mode) | NOT_EVALUATED | NOT_EVALUATED | false |
@@ -742,20 +742,20 @@ Consumed (sha256 at build time; drift reported by `--check`):
 - `docs/design_synthesis/f2_filter/f2_filter_stage_v1.json` b67557f441b24c6665fae4df1f33bc8f0991b445b55d19e1bcd2c7f5880119a0
 - `docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json` ccd7da1e54368c67cbedc5bf495ecc035fc844e235c5b36725c522cbc74d4412
 - `docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json` 74a52aa749e1d071f76957e4f9ef4929c9d8ab302b183da3c5a5d9ba8d6d6923
-- `docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json` b14aed11beea5a0418608291d389bc35705730297bb8fc19e2603a20053d9f8d
-- `docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json` 88591d52fe4e8102865812f50752efcbd6f9ef474bbdd1c81a4b668b230e0b93
+- `docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json` 36f94251ccca4427715ad4395957b4700b6bcb9d8127a4e3feaa1f4865150590
+- `docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json` 67c3dcb650c104eb16093279a54c3482c2bb5821711916cc05811841a9e7b992
 - `docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json` eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450
-- `docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json` 9e7a41fa3a146663c8e7d3bc1b9f67ff6889e68f6b2a0bdf8419b1709af038b1
+- `docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json` 04ce2f797b747829c62391017a93ee9ea3c0cd25f720b7ca3f01903136e98361
 - `docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json` 7a282dd217cd876999c5c65b3a445449175bfa3362a3b59bed74ed120a9bb0c9
 - `docs/design_synthesis/f7_f8_optimizer/f8_robust_candidates_v1.json` 43adc213f7f7b7f34fdda5e494033fcac52615ec7627777a010b1e2497d5927d
 - `docs/budgets/owner_decisions/owner_questions_state_v4.json` 6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67
 - `docs/budgets/owner_decisions/owner_questions_state_v5.json` 19b4da540b1823c6d3bc1b93f4b673c798af3a519c75e4e055853dbe98c945da
-- `docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json` 1809628bffadcd0c3b3afe99aa788df7fdcebe342b075250dfa416073642a3aa
-- `docs/requirements/rvm_a9/rvm_a9_v1.json` 63e737aa2a2432608304d790924bc2fc587c909cf6990562025826292acea188
+- `docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json` 0d8413fec02ead4d0a21e9acbdad0b29569dfc0a7eb9a03bdd99d3c9fb504602
+- `docs/requirements/rvm_a9/rvm_a9_v1.json` a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6
 - `docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json` c1a7875fdd0e27b3425cc02ba915ab61bcf9760ac032d294b69a887a91e78459
-- `docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json` 7599d59576ca9b9c8215b6fad7de1548c727f872df20adc0f076034ddb0a0582
+- `docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json` 4d7ff17fc54fa5b686b1826c64f2df0662fb3c5fbd0f03bbe8c11f25486a8643
 - `docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json` ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a
-- `docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json` 876b0fb0364af1eeb9afeeda68edba7f3b24eced9bd19ae50cf8d03dca70f275
+- `docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json` 95d0f5229f23c85d8a6520637c4bd4fed53a49fca0082da30da747735c2e0195
 - `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` 9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6
 - `schemas/interfaces/icp_neutralizer_icd_v1.json` 8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c
 - `docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json` e4a965cbf1c33295a0bec1407f01c26aa5df3e2807dfc0e70a0bf7a5e0c24180

@@ -20,6 +20,8 @@ and they never read campaign records (hallthruster_bridge/out/ and any run outpu
   multiply_charged_tables  scripts/build_multiply_charged_tables.py == committed .dat and .dat.source (byte for byte; this is
                            the comparison its --check mode makes, plus the .source provenance files, without a temp directory)
   ensemble_gate            abep_sim.hall_ensemble.load_ensemble() loads; require_admitted refuses every screening candidate
+  h2_6_live_sources        review finding SW-02: the H2-6 builder's verify_sources() reports no consumed value that differs from
+                           its live source (the builder is immutable H2 v1 history, so the gate lives here, not in its --check)
 
 "Fresh generation" runs each generator's OWN write path (its __main__, default arguments) inside WriteCapture: builtins.open /
 io.open in a writing mode return in-memory buffers, directory creation is a no-op, every move / remove / copy call raises and
@@ -431,6 +433,30 @@ def check_ensemble_gate():
     return bad, f"ensemble loads; {len(members)} admitted, {len(screening)} screening candidates all refused by require_admitted"
 
 
+# ------------------------------------------------------------------------------------------------------- H2-6 live sources
+H2_6_BUILDER = os.path.join(ROOT, "docs", "hardware", "h2", "h2_6_diagnostics_fixture", "build_h2_6_diagnostics_fixture.py")
+
+
+def load_h2_6():
+    """The H2-6 builder (immutable H2 v1 history, A9.10 reconciliation) imported read-only (module code under WriteCapture)."""
+    spec = importlib.util.spec_from_file_location("_ci_h2_6", H2_6_BUILDER)
+    m = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = m
+    with WriteCapture():
+        spec.loader.exec_module(m)
+    return m
+
+
+def check_h2_6_live_sources():
+    """Review finding SW-02: every value the H2-6 deliverable consumed still equals its live source (verify_sources), so a
+    regenerated upstream (e.g. the W1 feed-state closure) can never leave a stale transcription passing CI. Runs here
+    because the H2-6 builder itself is immutable H2 v1 history (byte-identical to the A9.10 reconciliation base)."""
+    m = load_h2_6()
+    with WriteCapture():
+        bad = list(m.verify_sources())
+    return bad, f"{_rel(H2_6_BUILDER)} verify_sources(): consumed values == live sources"
+
+
 # ------------------------------------------------------------------------------------------------------------ pytest outcome
 def check_full_history(root: str = ROOT) -> list[str]:
     """Rule 9 is defined on a full-history clone (history-dependent provenance tests skip otherwise). [] = full history."""
@@ -481,6 +507,7 @@ CHECKS = {
     "launch_manifests": check_launch_manifests,
     "multiply_charged_tables": check_multiply_charged_tables,
     "ensemble_gate": check_ensemble_gate,
+    "h2_6_live_sources": check_h2_6_live_sources,
 }
 
 

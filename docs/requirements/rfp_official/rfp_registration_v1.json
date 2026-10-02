@@ -385,7 +385,9 @@
      "RVM-08",
      "RVM-10"
     ],
-    "related_rvm_rows": []
+    "related_rvm_rows": [
+     "RVM-29"
+    ]
    },
    {
     "clause_id": "RFP-P17-01",
@@ -425,10 +427,12 @@
     "clause_id": "RFP-P17-05",
     "rvm_rows": [
      "RVM-09",
-     "RVM-10"
+     "RVM-10",
+     "RVM-29"
     ],
     "related_rvm_rows": [
-     "RVM-15"
+     "RVM-15",
+     "RVM-28"
     ]
    },
    {
@@ -483,15 +487,20 @@
     "rvm_rows": [
      "RVM-11"
     ],
-    "related_rvm_rows": []
+    "related_rvm_rows": [
+     "RVM-28"
+    ]
    },
    {
     "clause_id": "RFP-P18-08",
     "rvm_rows": [
      "RVM-08",
-     "RVM-10"
+     "RVM-10",
+     "RVM-29"
     ],
-    "related_rvm_rows": []
+    "related_rvm_rows": [
+     "RVM-28"
+    ]
    },
    {
     "clause_id": "RFP-P18-09",
@@ -724,6 +733,22 @@
      "RFP-P19-04"
     ],
     "title": "Steady heat conducted into the spacecraft mounting interface <= 50 W (A9.12 S5.4 provisional owner allocation; 100 W contingency, 25 W stretch)"
+   },
+   {
+    "rvm_row": "RVM-28",
+    "origin": "OWNER_ALLOCATION",
+    "related_clauses": [
+     "RFP-P17-05",
+     "RFP-P18-08",
+     "RFP-P18-07"
+    ],
+    "title": "Flight thruster architecture: one Hall accelerator + one RF/ICP electron-source/neutralizer for both atmospheric gases and Xe; no conventional hollow cathode (A9.19)"
+   },
+   {
+    "rvm_row": "RVM-30",
+    "origin": "OWNER_ALLOCATION",
+    "related_clauses": [],
+    "title": "C1 (heated Xe-fed LaB6) is a ground-only laboratory reference: never flight hardware, never in the flight mass / power / Xe budgets (A9.20)"
    }
   ],
   "requirements_to_check_against_rvm_resolution": [
@@ -847,7 +872,7 @@
     "disposition": "new row RVM-26; the mN-level stand plan is not evidence of micro-newton capability"
    }
   ],
-  "n_rvm_rows": 27
+  "n_rvm_rows": 30
  },
  "page_coverage": {
   "pages_with_registered_clauses": [

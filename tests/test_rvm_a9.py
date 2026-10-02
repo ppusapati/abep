@@ -238,6 +238,22 @@ def test_rfp_rows_not_frozen_and_no_interpretation_frozen(doc):
     assert doc["rfp_document_in_repository"] is False
 
 
+def _evaluated_cells(doc, key):
+    """(config, cell) of a row, leaving out a hall_c1_reference cell retired from the v3 flight budgets (A9.19 / A9.20):
+    such a cell must carry the NOT_APPLICABLE_GROUND_REFERENCE marker only (never compliance evidence, never PASS)."""
+    out = []
+    for c in B.CONFIGS:
+        cell = _row(doc, key)["configurations"][c]
+        if "applicability_marker" in cell:
+            assert c == "hall_c1_reference" and cell["applicability_marker"] == "NOT_APPLICABLE_GROUND_REFERENCE"
+            assert cell["counts_as_compliance_evidence"] is False and cell["status"] != "PASS"
+            assert [a["kind"] for a in cell["artifacts"]] == ["NOT_APPLICABLE_GROUND_REFERENCE"]
+            continue
+        out.append((c, cell))
+    assert any(c == "hall_icp_neutralizer" for c, _ in out)
+    return out
+
+
 def _row(doc, key):
     return next(r for r in doc["rows"] if r["key"] == key)
 
@@ -250,8 +266,8 @@ def test_expected_statuses_today(doc):
         for c in B.CONFIGS:
             assert _row(doc, key)["configurations"][c]["status"] == "NOT_EVALUATED", (key, c)
     for key in ("MASS_LT_40KG_WET", "INTERNAL_34_36KG_ALLOCATION", "AO_MATERIAL_COMPATIBILITY"):
-        for c in B.CONFIGS:
-            assert _row(doc, key)["configurations"][c]["status"] == "INCOMPLETE_EVIDENCE", (key, c)
+        for c, cell in _evaluated_cells(doc, key):
+            assert cell["status"] == "INCOMPLETE_EVIDENCE", (key, c)
     # TH-05: every P3 heat term and the coupled network are refused (INCOMPLETE_EVIDENCE inputs): 0 evaluated terms,
     # so the thermal row is NOT_EVALUATED (R7), never an 'evaluation with evidenced terms'
     for c in B.CONFIGS:
@@ -262,8 +278,7 @@ def test_expected_statuses_today(doc):
 
 
 def test_mass_rows_report_per_reading_and_no_fail(doc):
-    for c in B.CONFIGS:
-        cell = _row(doc, "MASS_LT_40KG_WET")["configurations"][c]
+    for c, cell in _evaluated_cells(doc, "MASS_LT_40KG_WET"):
         det = [a for a in cell["artifacts"] if a["role"] == "DETERMINING"]
         assert len(det) == 1 and det[0]["kind"] == "BUDGET_EVALUATION"
         an = det[0]["detail"]["analyses"][0]
@@ -276,8 +291,8 @@ def test_mass_rows_report_per_reading_and_no_fail(doc):
 
 def test_hall_performance_rows_cite_empty_credible_set(doc):
     for key in ("THRUST_12MN_SUSTAINED", "THRUST_25MN_CAPABILITY"):
-        for c in B.CONFIGS:
-            arts = _row(doc, key)["configurations"][c]["artifacts"]
+        for c, cell in _evaluated_cells(doc, key):
+            arts = cell["artifacts"]
             hall = [a for a in arts if a["kind"] == "VALIDATED_ANALYSIS"]
             assert hall and not hall[0]["evaluated"] and "EMPTY" in hall[0]["evidence_state"]
 
@@ -309,9 +324,12 @@ def test_power_verdict_change_refused():
     refs["MP"]["power"]["configurations"]["hall_icp_neutralizer"]["rfp_gate_1ms"]["verdict"] = "PASS"
     with pytest.raises(B.BuildError):
         B.probe_power(B.Ctx(pins, refs), "hall_icp_neutralizer")
-    refs["MP"]["power"]["configurations"]["hall_c1_reference"]["slots"][0]["MEASURED_W"] = 100.0
-    with pytest.raises(B.BuildError):
-        B.probe_power(B.Ctx(pins, refs), "hall_c1_reference")
+    if "hall_c1_reference" in refs["MP"]["power"]["configurations"]:
+        refs["MP"]["power"]["configurations"]["hall_c1_reference"]["slots"][0]["MEASURED_W"] = 100.0
+        with pytest.raises(B.BuildError):
+            B.probe_power(B.Ctx(pins, refs), "hall_c1_reference")
+    else:   # retired from the v3 flight budgets (A9.19 / A9.20): the probe returns the retired sentinel, never a verdict
+        assert B.probe_power(B.Ctx(pins, B.load_refs()), "hall_c1_reference") == {B.RETIRED_KEY: "power"}
 
 
 def test_unknown_artifact_id_refused():
@@ -763,6 +781,7 @@ def test_a919_c1_retirement_from_v3_flight_budgets_detected_and_fail_closed():
     c1 = "hall_c1_reference"
     if cur:
         assert c1 in mp["retired_flight_configuration_history"]["lines"]
+        assert B.xe_retired_flight_configuration(xe).startswith(c1)
         mp_r, xe_r = mp, xe
     else:
         # synthesize a labelled retirement from the current budgets (structure only; no value is read from it)
@@ -772,7 +791,8 @@ def test_a919_c1_retirement_from_v3_flight_budgets_detected_and_fail_closed():
         mp_r["propellant_policy"]["per_configuration"] = [
             p for p in mp_r["propellant_policy"]["per_configuration"] if p["configuration"] != c1]
         xe_r["evaluations"] = [e for e in xe_r["evaluations"] if e["scenario"] != B.C1_FLIGHT_XE_SCENARIO]
-        xe_r["architecture"] = {"retired_flight_configuration": c1 + " (A9.19; history only)"}
+        xe_r["propellant_policy"].setdefault("architecture", {})["retired_flight_configuration"] = (
+            c1 + " (A9.19; history only)")
         assert B.c1_retired_from_flight_budgets(_budget_ctx(mp_r, xe_r)) is True
         with pytest.raises(B.BuildError):          # budgets disagree
             B.c1_retired_from_flight_budgets(_budget_ctx(mp_r, xe))
@@ -783,7 +803,7 @@ def test_a919_c1_retirement_from_v3_flight_budgets_detected_and_fail_closed():
     with pytest.raises(B.BuildError):              # dropped without a labelled history column
         B.c1_retired_from_flight_budgets(_budget_ctx(unlabelled, xe_r))
     xe_u = copy.deepcopy(xe_r)
-    xe_u.pop("architecture")
+    xe_u["propellant_policy"]["architecture"].pop("retired_flight_configuration")
     with pytest.raises(B.BuildError):              # Xe retirement not labelled
         B.c1_retired_from_flight_budgets(_budget_ctx(mp_r, xe_u))
     # the probes return the sentinel only for the retired ground reference

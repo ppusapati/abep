@@ -1026,7 +1026,7 @@
      "title": "< 40 kg wet (incl. Xe + tank)",
      "status": {
       "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
-      "hall_c1_reference": "INCOMPLETE_EVIDENCE"
+      "hall_c1_reference": "NOT_EVALUATED"
      }
     },
     {
@@ -1034,7 +1034,7 @@
      "title": "Internal 34 kg and 36 kg design allocations (row 53)",
      "status": {
       "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
-      "hall_c1_reference": "INCOMPLETE_EVIDENCE"
+      "hall_c1_reference": "NOT_EVALUATED"
      }
     },
     {
@@ -1854,7 +1854,7 @@
     {
      "lane": "fo_a9_6_p1_workflow_completion",
      "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
-     "how": "C1 disconnected in P1-S6; stays CONTROL_FALLBACK",
+     "how": "C1 disconnected or not installed in P1-S6; C1 = GROUND_ONLY_LAB_EQUIPMENT (A9.20), no hollow cathode in flight (A9.19)",
      "stated_readiness_change": null
     },
     {
@@ -2259,7 +2259,7 @@
      "title": "< 40 kg wet (incl. Xe + tank)",
      "status": {
       "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
-      "hall_c1_reference": "INCOMPLETE_EVIDENCE"
+      "hall_c1_reference": "NOT_EVALUATED"
      }
     },
     {
@@ -2267,7 +2267,7 @@
      "title": "Internal 34 kg and 36 kg design allocations (row 53)",
      "status": {
       "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
-      "hall_c1_reference": "INCOMPLETE_EVIDENCE"
+      "hall_c1_reference": "NOT_EVALUATED"
      }
     },
     {
@@ -3365,7 +3365,7 @@
      "title": "< 40 kg wet (incl. Xe + tank)",
      "status": {
       "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
-      "hall_c1_reference": "INCOMPLETE_EVIDENCE"
+      "hall_c1_reference": "NOT_EVALUATED"
      }
     },
     {
@@ -3373,7 +3373,7 @@
      "title": "Internal 34 kg and 36 kg design allocations (row 53)",
      "status": {
       "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
-      "hall_c1_reference": "INCOMPLETE_EVIDENCE"
+      "hall_c1_reference": "NOT_EVALUATED"
      }
     },
     {
