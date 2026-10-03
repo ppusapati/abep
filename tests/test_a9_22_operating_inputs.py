@@ -124,3 +124,57 @@ def test_g1_golden_xe_on_mission_basis():
     # the golden_v1 fixture keeps the pre-A9.22 basis verbatim
     v = g["cases"]["nonconverged_reference"]["values"]["architecture_closure"]["ext_hall_2p5kW"]
     assert v["xe_kg"] == pytest.approx(0.05e-6 * 26000.0 * 3600.0 * 1.2, rel=1e-12)
+
+
+# ---------------------------------------------------------------------------------- A9.22 G4 cathodeless golden
+def test_g4_historical_lab6_golden_cases_refused_for_flight_uses():
+    from abep_sim import golden as G
+    for case in ("architecture_closure", "mission"):
+        assert G.CASE_ROLES[case] == "HISTORICAL_NON_FLIGHT_REGRESSION"
+        for use in G.FLIGHT_USES:
+            with pytest.raises(G.HistoricalNonFlightError):
+                G.load_case(case, use)
+        assert G.load_case(case, "regression")["golden_role"] == "HISTORICAL_NON_FLIGHT_REGRESSION"
+    with pytest.raises(ValueError):
+        G.require_flight_eligible_case("architecture_closure", "whatever")
+    G.require_flight_eligible_case("hall_icp_neutralizer_reference", "flight_budget")     # active case: allowed
+    assert G.HISTORICAL_NON_FLIGHT_ARCHITECTURE == "hall_internal+hall+lab6_xe"
+    assert not hasattr(G, "GOLDEN_ARCHITECTURE")
+
+
+def test_g4_archengine_refuses_lab6_for_flight():
+    from abep_sim import archengine as AE
+    A = {AE.arch_name(x): x for x in AE.enumerate_architectures()}
+    lab6 = A["hall_internal+hall+lab6_xe"]
+    assert not AE.flight_eligible(lab6) and AE.flight_eligible(A["hall_internal+hall+rf_cathode"])
+    with pytest.raises(AE.FlightIneligibleArchitectureError):
+        AE.close_architecture(lab6, lambda *a: {}, None, flight=True)
+    df = AE.run_all(lambda *a: {}, None, archs=[lab6], flight=True)
+    assert list(df.status) == ["EXCLUDED_HISTORICAL_NON_FLIGHT"] and not bool(df.feasible.iloc[0])
+
+
+def test_g4_hall_icp_reference_case_content():
+    import json
+    g = json.load(open(os.path.join(ROOT, "abep_sim", "data", "golden_v2.json")))
+    c = g["cases"]["hall_icp_neutralizer_reference"]
+    assert c["architecture"] == "hall_icp_neutralizer"
+    assert "none" in c["composition"]["hollow_cathode"]
+    assert "lab6" not in json.dumps(c).lower().replace("no lab6", "")
+    assert c["operating_basis"]["mission_hours"] == 26280.0
+    assert c["supply_modes"]["air"]["gaspath_status"] == "CONVERGED"
+    assert c["supply_modes"]["xe"]["status"] == "NOT_EVALUATED_NO_ADMITTED_MODEL"
+    assert c["ao_exposure_mission"]["ao_fluence_m2"] == pytest.approx(
+        c["ao_exposure_mission"]["ao_flux_ram_m2_s"] * 26280.0 * 3600.0, rel=1e-12)
+    assert c["mass_ledger"]["totals"]["MEV_kg"] == "NOT_EVALUATED_NO_ADMITTED_MODEL"
+    for k in ("hall_accelerator", "icp_neutralizer", "xe_load", "ppu", "thermal"):
+        assert c["mass_ledger"][k]["status"] == "NOT_EVALUATED_NO_ADMITTED_MODEL"
+    for k in ("hall_discharge_thrust_power", "icp_neutralizer", "p_bus_and_ppu", "thermal", "life", "mission_closure"):
+        assert c["not_evaluated"][k]["status"] == "NOT_EVALUATED_NO_ADMITTED_MODEL" and c["not_evaluated"][k]["reason"]
+    # no fabricated performance numbers anywhere in the case
+    flat = json.dumps(c)
+    for key in ("T_mN", "P_bus_W", "thrust_mN", "xe_kg", "I_d_A"):
+        assert key not in flat
+    # same gas state as the canonical gas_path case
+    gp = g["cases"]["gas_path"]["A0.7_p0.05"]
+    assert c["supply_modes"]["air"]["mdot_air_mgps"] == gp["mdot_air_mgps"]
+    assert c["mass_ledger"]["compressor"]["cbe_kg"] == gp["m_comp_kg"]

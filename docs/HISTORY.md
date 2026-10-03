@@ -3319,3 +3319,29 @@ explicitly labelled subsystem firing-life assumption. Intentional model-basis ch
   Nothing else moved (gas path, accelerators, mission 4000 h case, selection record and all other cases bit-identical;
   provenance.code_version updated). The `nonconverged_reference` fixture recomputes golden_v1 on the pre-A9.22 26,000 h
   basis and still reproduces it verbatim; `golden_v1.json` untouched.
+
+## 2026-10-03 — A9.22 G4 (lane w2core): cathodeless active golden; LaB6 golden = HISTORICAL_NON_FLIGHT_REGRESSION
+Owner decision A9.22 G4 (CATHODELESS_ACTIVE_BASELINE): active flight architecture `hall_icp_neutralizer` (Hall accelerator +
+downstream RF/ICP electron source / neutralizer; no hollow cathode, no LaB6).
+- **Historical label.** The golden closure scenario `hall_internal+hall+lab6_xe` (LaB6 Xe hollow cathode) is now
+  `HISTORICAL_NON_FLIGHT_REGRESSION`: `golden.HISTORICAL_NON_FLIGHT_ARCHITECTURE` (the old `GOLDEN_ARCHITECTURE` name is
+  gone), `CASE_ROLES` of `architecture_closure` and `mission`, and a `golden_role` / `architecture` label inside both
+  stored cases. Values unchanged (still reproduced by `check`); history not rewritten; golden_v1 untouched.
+- **Guards.** `golden.require_flight_eligible_case(case, use)` / `golden.load_case(case, use)` raise
+  `HistoricalNonFlightError` for any of architecture_closure, architecture_selection, optimisation, rfp_compliance,
+  flight_budget, design_decision (only `regression` is allowed). `archengine.FLIGHT_EXCLUDED_NEUTRALIZERS = {lab6_xe}`,
+  `require_flight_eligible`, `close_architecture(flight=True)` refuses, `run_all(flight=True)` returns
+  `EXCLUDED_HISTORICAL_NON_FLIGHT` / feasible False without closing. Defaults (flight=False) keep research/regression
+  behaviour unchanged.
+- **New governed case `hall_icp_neutralizer_reference`** (role `GOVERNED_REFERENCE_ACTIVE_ARCHITECTURE_PARTIAL`) at the
+  A9.18 golden design point (0.7 m2, 0.05 Pa, 200 km mean): only quantities admitted models compute — air supply mode
+  gas path (mdot 0.9753 mg/s, p_in 0.05 Pa, x_O, x_O2, eta_c, C_D, intake drag, P_comp; CONVERGED / IN_DOMAIN, rotor
+  NOT_EVALUATED_MATERIAL_BASIS), mission-basis AO exposure (26,280 h: fluence, intake-coating erosion, alpha_end,
+  blade-coating and intake lives), intake and compressor mass lines (PARAMETRIC_SENSITIVITY). Everything else is
+  `NOT_EVALUATED_NO_ADMITTED_MODEL` with its reason: Hall thrust / discharge (0-D closure withdrawn, credible set empty),
+  ICP neutralizer (archengine `rf_cathode` is an air-fed plasma-bridge cathode calibrated to AMPCAT microwave data and
+  capped at 0.5 A validated: not an honest model of the 13.56 MHz downstream ICP; ICP-45 NOT_EVALUATED), Xe supply-mode
+  flow, P_bus/PPU (bus boundary v2 is A9.22 G8 work), thermal (UNRESOLVED), life, mission closure, and the mass lines
+  Hall accelerator / ICP / RF chain / PPU / thermal / Xe load / Xe tank / harness / structure and CBE/MEV totals. No
+  number was invented (rule 6) and no propulsion family added (rule 8).
+- golden_v2 regenerated: new case and labels only; every numeric value of the existing cases unchanged.
