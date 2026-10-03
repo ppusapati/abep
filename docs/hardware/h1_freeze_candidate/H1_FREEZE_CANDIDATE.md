@@ -496,7 +496,7 @@ Consumed verified deliverables (sha256 at build time; `--check` reports drift):
 * `docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json` `c1a7875fdd0e27b3425cc02ba915ab61bcf9760ac032d294b69a887a91e78459`
 * `docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json` `fde0ddac723b62ab9bdc9789fa738c74198de23b8d150fd67b1b89d9e9d2d2ae`
 * `docs/budgets/owner_decisions/owner_questions_state_v4.json` `6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67`
-* `docs/budgets/owner_decisions/owner_questions_state_v5.json` `0a86af5cccf116b8a7c75ca6ee4e8ddb20755261a21501d8923e0d311bc2b5ef`
+* `docs/budgets/owner_decisions/owner_questions_state_v5.json` `65ba51c54f712c628525fb567c91b0bdf32019d49d3679eb4cd9bbbaf6098936`
 * `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` `f082a6d3eabf07485d447ace927f69e8980acbcc8eff54d0cd21f196e20a0afe`
 * `hallthruster_bridge/ensemble/transport_ensemble_v0.json` `2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b`
 * `hallthruster_bridge/validation/VALIDATION_RELEASE_v1.json` `0a57a397883141be20196853b7d722404dc3cb20c72fba666121fd43507dc97c`
