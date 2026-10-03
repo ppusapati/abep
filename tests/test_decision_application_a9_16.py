@@ -581,3 +581,33 @@ def test_matrix_structural_record_check_fails_closed():
         MX._verify_record(gate, rec, "ICP_GATE", "x.json")
     with pytest.raises(SystemExit):
         MX._verify_record({"owner_approved_gates": []}, rec, "ICP_GATE", "x.json")
+
+
+def test_matrix_m16_v3_q_01_rederivation_applied_named_persons_pending():
+    """S9.4 / M16-V3-Q-01: the M16 v5 re-derivation residual is APPLIED (structural record check of the M16 v5
+    owner_answers_applied record); named persons stay PENDING_EVIDENCE (staffing ledger, owner)."""
+    e = [x for x in MXDOC["entries"] if x["question_id"] == "M16-V3-Q-01"]
+    assert len(e) == 1
+    e = e[0]
+    assert e["status"] == "APPLIED"
+    assert [(r["status"], r["where"]) for r in e["residual"]] == [("PENDING_EVIDENCE", "staffing ledger (owner)")]
+    assert not any("M16 v5" in r["what"] for r in e["residual"])
+    res = e["resolved_residual"]
+    assert len(res) == 1 and res[0]["status_before"] == "BLOCKED" and res[0]["status"] == "APPLIED"
+    assert res[0]["artifact"] == MX.M16V5_REL and res[0]["commit"] == MX.M16V5_COMMIT
+    assert res[0]["record_pointer"] == "/owner_answers_applied/0 (question_id=M16-V3-Q-01)"
+    apps = [a for a in e["applications"] if a["lane"] == "M16_V5"]
+    assert len(apps) == 1 and apps[0]["record_pointer"] == res[0]["record_pointer"]
+    m16v5 = _j(MX.M16V5_REL)
+    rec = m16v5["owner_answers_applied"][0]
+    assert rec["rederivation"] == "APPLIED" and rec["rows_covered"] == len(M16DOC["rows"])
+    assert rec["named_persons"].startswith("PENDING_EVIDENCE")
+    # structural check fails closed on a record that does not state the re-derivation
+    spec = MX.CODE_APPS["M16-V3-Q-01"][0]["record"]
+    bad = {"owner_answers_applied": [dict(rec, rederivation="BLOCKED")]}
+    with pytest.raises(SystemExit):
+        MX._verify_record(bad, spec, "M16-V3-Q-01", "x.json")
+    bad = {"owner_answers_applied": [dict(rec, named_persons="Some Engineer")]}
+    with pytest.raises(SystemExit):
+        MX._verify_record(bad, spec, "M16-V3-Q-01", "x.json")
+    assert MXDOC["residual_counts"]["BLOCKED"] == 19

@@ -15,6 +15,9 @@ A9.21 AL08: APPLIED where the mass / power v3 AL-08 line and Xe v3 XV3-IF-02 car
 PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (checked structurally in the artifacts); the quotation re-base stays PENDING_EVIDENCE.
 A9.21 ICP_GATE: APPLIED where the RVM owner_approved_gates and the F9 pre_lock1_gates register GNG-ICP-01 (NOT_EVALUATED,
 fail closed; checked structurally); the GO / NO-GO criteria stay PENDING_OWNER_ACCEPTANCE.
+A9.14 S9.4 / M16-V3-Q-01: the BLOCKED residual 're-derivation of M16 scheduler blocking items (M16 v5 refresh)' is
+APPLIED by M16 v5 (docs/experiments/hall_icp/integration/m16_v5; structural check of its owner_answers_applied record;
+kept on the entry as 'resolved_residual'); named persons stay PENDING_EVIDENCE (staffing ledger, owner).
 AG-15: the registration and RVM re-base parts are APPLIED (docs/requirements/rfp_official + rvm re-base); the owner
 acceptance / closure stays PENDING_OWNER_ACCEPTANCE ('ag_15' on F9-OQ-03; the F9 freeze-candidate AG-15 rule is being
 changed in a parallel lane - regenerate this matrix after merging it).
@@ -178,6 +181,28 @@ CODE_APPS = {
                    _app("STEP3", "docs/performance/abep_core/parity_report_v2.json",
                         "d87d217d3306cc84d51d2cf7e54d9222cd52994e", ["ADMITTED"],
                         "parity campaign v2 report (all five kernels ADMITTED)")],
+}
+# A9.14 S9.4 / M16-V3-Q-01 residual (scheduler re-derivation, M16 v5 refresh): applied by the M16 v5 record (commit
+# below, made before this matrix so the pointer is verifiable); structural record check of its owner_answers_applied
+M16V5_REL = "docs/experiments/hall_icp/integration/m16_v5/subsystem_maturity_v5.json"
+M16V5_COMMIT = "c4062e0fad73b7159fed109516ec8d9ffae76915"
+M16V5_RESIDUAL_TEXT = ("re-derivation of M16 scheduler blocking items from the A9.8 .. A9.15 answers (M16 v5 refresh) is "
+                       "not built in A9.16; M16 v4 was regenerated only for its changed RVM inputs (RFP re-base)")
+CODE_APPS["M16-V3-Q-01"] = [
+    _app("M16_V5", M16V5_REL, M16V5_COMMIT, ['"subsystem_maturity_v5"', '"rederivation": "APPLIED"'],
+         "M16 v5: every v4 row's scheduler blocking items re-derived from the owner answers A9.8 .. A9.21 (state v5), the "
+         "A9.21 programme order and GNG-ICP-01 (removed blockers with answer pointer + sha256; remaining blockers by "
+         "category; no readiness advance without determining evidence); M16 v4 byte-identical; named persons stay "
+         "PENDING_EVIDENCE (staffing ledger, owner; none fabricated)",
+         {"list": "/owner_answers_applied", "match": ("question_id", "M16-V3-Q-01"),
+          "checks": {"rederivation": ("equals", "APPLIED"), "rows_covered": ("equals", 21),
+                     "decision_code": ("equals", "ACCEPT_ROLE_MAP_NAMES_FROM_STAFFING_LEDGER"),
+                     "named_persons": ("startswith", "PENDING_EVIDENCE")}})]
+# residual items resolved since the A9.16 matrix (kept as history on the entry: what it was, how it was resolved)
+RESOLVED_RESIDUAL = {
+    "M16-V3-Q-01": [{"status_before": "BLOCKED", "what": M16V5_RESIDUAL_TEXT,
+                     "where_before": "docs/experiments/hall_icp/integration/ (M16 v5, not started)",
+                     "status": "APPLIED", "artifact": M16V5_REL, "commit": M16V5_COMMIT}],
 }
 # A9.13 step-3 decisions that are NOT applied by any step-3 / finalize commit at this matrix's base (truthfully BLOCKED)
 STEP3_NOT_APPLIED = {
@@ -618,11 +643,9 @@ RESIDUAL = {
     "F0-OQ-02": [("BLOCKED", "the 2026-10-01 dedicated run is historical for the earlier code state: A9.18 PERF_RERUN "
                   "(identical procedure after the step-3 merge, idle owner machine) is the Rust-admission baseline",
                   "owner machine (A9.18 PERF_RERUN)")],
+    # the BLOCKED re-derivation residual is APPLIED by M16 v5 (RESOLVED_RESIDUAL; structural record check in CODE_APPS)
     "M16-V3-Q-01": [("PENDING_EVIDENCE", "named persons from the project staffing ledger (none in the repository; none "
-                     "fabricated)", "staffing ledger (owner)"),
-                    ("BLOCKED", "re-derivation of M16 scheduler blocking items from the A9.8 .. A9.15 answers (M16 v5 "
-                     "refresh) is not built in A9.16; M16 v4 was regenerated only for its changed RVM inputs (RFP "
-                     "re-base)", "docs/experiments/hall_icp/integration/ (M16 v5, not started)")],
+                     "fabricated)", "staffing ledger (owner)")],
 }
 NOT_APPLICABLE = {
     "OQ-A910-02": "the producing stage and decision quantity are assigned at LOCK-1 from the frozen A9-01 stage map and "
@@ -853,6 +876,11 @@ def build():
                 e["residual"].append({"status": "BLOCKED", "what": "intake surface v2 build (rule-1 versioned) waits "
                                       "for the registered AOCS pointing envelope (A9.13 S6.2 / F1Q-03)",
                                       "where": "spacecraft / AOCS ICD (owner); abep_sim/data/ build"})
+            if qid in RESOLVED_RESIDUAL:
+                ptrs = [a.get("record_pointer") for a in applied if a["lane"] == "M16_V5"]
+                if len(ptrs) != 1 or not ptrs[0]:
+                    raise SystemExit(f"{qid}: resolved residual without one verified M16 v5 record")
+                e["resolved_residual"] = [{**x, "record_pointer": ptrs[0]} for x in RESOLVED_RESIDUAL[qid]]
             entries.append(e)
     a15 = L.LOADED["A9.15"]
     a915_apps = [{"lane": ln, "artifact": LANES[ln][1], "commit": LANES[ln][0], "status": "APPLIED",
@@ -926,7 +954,8 @@ def build():
                                       "a9_19_design": A919_DESIGN_COMMIT, "a9_19_integration": A919_INTEGRATION_COMMIT,
                                       "a9_17_21_records": RECORDS_A917_21_COMMIT,
                                       "a9_21_al08_budgets": A921_AL08_BUDGETS_COMMIT,
-                                      "a9_21_icp_gate": A921_ICP_GATE_COMMIT},
+                                      "a9_21_icp_gate": A921_ICP_GATE_COMMIT,
+                                      "m16_v5_rederivation": M16V5_COMMIT},
         "post_step1_commits": {"step2_merge": "f9f4749994ea17703b005c84aadfb3b04d0cff10", "design_layer": DESIGN_LAYER_COMMIT,
                                "rvm_rfp_rebase": RVM_REBASE_COMMIT},
         "integration_commits": INTEGRATION_COMMITS,
@@ -1040,6 +1069,8 @@ def render_md(doc):
         apps = "; ".join(f"{a['lane']}: {a['artifact'].rsplit('/', 1)[-1]} @ {a['commit'][:7]}"
                          + ("" if a["status"] == "APPLIED" else f" ({a['status']})") for a in e["applications"])
         res = "; ".join(f"{r['status']}: {r['what']}" for r in e["residual"])
+        res += "".join(f"; resolved {r['status_before']} -> {r['status']} ({r['artifact'].rsplit('/', 1)[-1]} @ "
+                       f"{r['commit'][:7]} {r['record_pointer']}): {r['what']}" for r in e.get("resolved_residual", []))
         st = e["status"] + (f" - {e['status_reason']}" if e.get("status_reason") else "")
         if e.get("amended_by_later"):
             st += " (later: " + "; ".join(f"{x['relation']} by {x['decision']} {x['item']}"
