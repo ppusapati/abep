@@ -3437,3 +3437,14 @@ consumer, `abep_sim/system.py` (Phase B raw closure). Intentional model-basis ch
   public names unchanged), so importing the package no longer imports the assessment layer.
 - Decision dossier re-pinned (`scripts/architecture/build_decision_dossier.py`; arch_compare.py sha and the bus boundary
   v2 schema now present in schemas/interfaces).
+
+## 2026-10-03 — Owner: upstream ICD kept as is; RFQ v3 flag RF3-FLAG-04 resolved
+
+- **Upstream ICD (owner, 2026-10-03: "keep the ICD as is").** `schemas/interfaces/upstream_icd_v1.json` and
+  `UPSTREAM_ICD.md` stay byte-identical (their sha256 is pinned by ~10 records, several immutable). After the A9.22
+  raw / assessment split the ICD's `abep_sim.system.evaluate` reference is resolved to its raw producer
+  `physics_closure` in `tests/test_upstream_icd.py` (`RAW_PRODUCER_OF`), gated by a behavioural delegation test; no
+  ICD v1.1 is issued.
+- **RFQ v3 RF3-FLAG-04** ("the RFP is owner-held and not yet registered (AG-15)") marked RESOLVED with its history kept:
+  the RFP is registered by hash (A9.17 RFP) and AG-15 is closed by the owner (A9.22 G3). RFQ v3 rebuilt (text only);
+  no consumer pin moved.
