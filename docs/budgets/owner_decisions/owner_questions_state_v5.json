@@ -9563,9 +9563,9 @@
    "id": "F1Q-01",
    "kind": "a9_7_lane_question",
    "lane": "A9.7 F1",
-   "source": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json /open_owner_questions/0",
+   "source": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json /open_owner_questions/0",
    "source_ref": {
-    "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+    "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
     "pointer": "/open_owner_questions/0"
    },
    "question": "IntakeSurface recombines species rows by mass fraction although its C_D rows are normalised by the mixture q and CR_passive needs mole weighting (finding F1-01). Authorise a controlled model change (goldens move, HISTORY entry), or keep the production convention and use the species-consistent recombination only in the design-synthesis layer?",
@@ -9592,9 +9592,9 @@
    "id": "F1Q-02",
    "kind": "a9_7_lane_question",
    "lane": "A9.7 F1",
-   "source": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json /open_owner_questions/1",
+   "source": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json /open_owner_questions/1",
    "source_ref": {
-    "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+    "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
     "pointer": "/open_owner_questions/1"
    },
    "question": "Structural basis for the honeycomb (wall material and thickness, AO coating and its density, support fraction): supply a sourced design, or authorise a labelled assumption for budgeting only?",
@@ -9620,9 +9620,9 @@
    "id": "F1Q-03",
    "kind": "a9_7_lane_question",
    "lane": "A9.7 F1",
-   "source": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json /open_owner_questions/2",
+   "source": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json /open_owner_questions/2",
    "source_ref": {
-    "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+    "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
     "pointer": "/open_owner_questions/2"
    },
    "question": "Pointing (theta) budget of the intake axis vs the relative wind: is the frozen surface's 0-5 deg range adequate, or must larger angles be evaluated (direct TPMC)?",
@@ -9665,9 +9665,9 @@
    "id": "F1Q-04",
    "kind": "a9_7_lane_question",
    "lane": "A9.7 F1",
-   "source": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json /open_owner_questions/3",
+   "source": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json /open_owner_questions/3",
    "source_ref": {
-    "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+    "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
     "pointer": "/open_owner_questions/3"
    },
    "question": "Authorise a frozen intake surface v2 at the envelope states (CLAUDE.md rule 1 rebuild) to replace the bounded direct TPMC used here off the build state?",

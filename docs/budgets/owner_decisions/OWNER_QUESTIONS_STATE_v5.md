@@ -256,10 +256,10 @@ Superseded by A9.19 (ROLE of Xe only):
 |---|---|---|---|---|
 | 362 | F0-OQ-01 | A9.7 F0 | ANSWERED_BY_A9_14 | docs/performance/PERFORMANCE_BASELINE_98fbbb9.json /open_owner_questions/0 |
 | 363 | F0-OQ-02 | A9.7 F0 | ANSWERED_BY_A9_14 | docs/performance/PERFORMANCE_BASELINE_98fbbb9.json /open_owner_questions/1 |
-| 364 | F1Q-01 | A9.7 F1 | ANSWERED_BY_A9_9 | docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json /open_owner_questions/0 |
-| 365 | F1Q-02 | A9.7 F1 | ANSWERED_BY_A9_13 | docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json /open_owner_questions/1 |
-| 366 | F1Q-03 | A9.7 F1 | ANSWERED_BY_A9_13 | docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json /open_owner_questions/2 |
-| 367 | F1Q-04 | A9.7 F1 | ANSWERED_BY_A9_9 | docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json /open_owner_questions/3 |
+| 364 | F1Q-01 | A9.7 F1 | ANSWERED_BY_A9_9 | docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json /open_owner_questions/0 |
+| 365 | F1Q-02 | A9.7 F1 | ANSWERED_BY_A9_13 | docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json /open_owner_questions/1 |
+| 366 | F1Q-03 | A9.7 F1 | ANSWERED_BY_A9_13 | docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json /open_owner_questions/2 |
+| 367 | F1Q-04 | A9.7 F1 | ANSWERED_BY_A9_9 | docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json /open_owner_questions/3 |
 | 368 | F2-OQ-01 | A9.7 F2 | ANSWERED_BY_A9_13 | docs/design_synthesis/f2_filter/f2_filter_stage_v1.json /open_owner_questions/0 |
 | 369 | F2-OQ-02 | A9.7 F2 | ANSWERED_BY_A9_13 | docs/design_synthesis/f2_filter/f2_filter_stage_v1.json /open_owner_questions/1 |
 | 370 | F2-OQ-03 | A9.7 F2 | ANSWERED_BY_A9_13 | docs/design_synthesis/f2_filter/f2_filter_stage_v1.json /open_owner_questions/2 |
