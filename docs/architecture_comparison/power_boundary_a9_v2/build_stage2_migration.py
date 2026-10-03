@@ -46,7 +46,7 @@ DECISION = ("docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions
             "docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md item 8)")
 DATE = "2026-10-03"
 PRE_COMMIT = "5b32edcc8e9124cd8bd12aba7d91204c1470aa3f"       # integration head before the migration
-POST_COMMIT = "MIGRATION_COMMIT_PLACEHOLDER"                  # the migration commit (set after it exists)
+POST_COMMIT = "10aefa7ba6bf8d8fd78cae6fe8e38d32019bf417"     # the migration commit
 
 V1_JSON = "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json"
 V2_JSON = "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"

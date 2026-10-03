@@ -1,0 +1,3076 @@
+{
+ "schema": "bus_boundary_stage2_migration_v1",
+ "id": "bus_power_boundary_a9_v2_stage2_migration",
+ "decision": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json G8_BUS_BOUNDARY (verbatim: docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md item 8)",
+ "stage": "2 (one controlled migration: every LIVE_REPOINT consumer re-pointed to bus_power_boundary_a9_v2)",
+ "date": "2026-10-03",
+ "pre_commit": "5b32edcc8e9124cd8bd12aba7d91204c1470aa3f",
+ "post_commit": "10aefa7ba6bf8d8fd78cae6fe8e38d32019bf417",
+ "generated_by": "docs/architecture_comparison/power_boundary_a9_v2/build_stage2_migration.py",
+ "regenerate": "python docs/architecture_comparison/power_boundary_a9_v2/build_stage2_migration.py  (check: --check)",
+ "inventory": {
+  "path": "docs/architecture_comparison/power_boundary_a9_v2/CONSUMER_INVENTORY.json",
+  "base_commit": "5b32edcc8e9124cd8bd12aba7d91204c1470aa3f",
+  "counts": {
+   "files": 138,
+   "files_by_status": {
+    "GOVERNANCE_RECORD": 24,
+    "IMMUTABLE_HISTORY": 68,
+    "LIVE_REPOINT": 28,
+    "LIVE_RETAIN_V1_REFERENCE": 9,
+    "SELF_V1": 6,
+    "TRANSITIVE_LIVE": 3
+   },
+   "families_by_status": {
+    "GOVERNANCE_RECORD": 3,
+    "IMMUTABLE_HISTORY": 17,
+    "LIVE_REPOINT": 12,
+    "LIVE_RETAIN_V1_REFERENCE": 3,
+    "SELF_V1": 1,
+    "TRANSITIVE_LIVE": 2
+   },
+   "hits_by_kind": {
+    "import": 9,
+    "key_reference": 40,
+    "read": 79,
+    "sha_pin": 161,
+    "text_citation": 708,
+    "transitive_import": 7
+   }
+  }
+ },
+ "verdict": "NO_PHYSICS_RESULT_CHANGED: every changed field of every re-pointed output is a pin, path, label or declared provenance text; no number changed, appeared or disappeared",
+ "rules": [
+  "v1 family byte-identical at both commits (A9.22 G8: v1 immutable)",
+  "IMMUTABLE_HISTORY / SELF_V1 / GOVERNANCE_RECORD / LIVE_RETAIN_V1_REFERENCE / TRANSITIVE_LIVE files byte-identical (docs/HISTORY.md: append-only entry)",
+  "every LIVE_REPOINT file changed; its remaining v1 references each carry a declared retention reason",
+  "JSON outputs diffed field by field; NUMERIC_CHANGE or UNEXPLAINED stops the build",
+  "Markdown renderings: the numbers in every changed line are identical before / after",
+  "the v2 module runs the v1 code objects (tests/test_bus_boundary_a9_v2.py: a v2 hall_icp_neutralizer ledger / gate / allocation / start-up result equals v1 except the boundary label)",
+  "C1 is not a v2 configuration: C1 ground-reference / retired cells keep citing v1"
+ ],
+ "classes": {
+  "PIN_SHA": "sha256 pin moved with the re-pointed file (old -> new sha)",
+  "PATH": "file path v1 -> v2 (document or module)",
+  "LABEL": "boundary label / module name v1 -> v2",
+  "PROVENANCE_TEXT": "declared citation / role text (no number changed)",
+  "PROVENANCE_ADDED": "added provenance record (pin, history note, re-point record; no number)",
+  "NUMERIC_CHANGE": "STOP",
+  "UNEXPLAINED": "STOP"
+ },
+ "class_totals": {
+  "LABEL": 12,
+  "PATH": 55,
+  "PIN_SHA": 150,
+  "PROVENANCE_ADDED": 28,
+  "PROVENANCE_TEXT": 11
+ },
+ "order": [
+  "v2 artefact",
+  "P1 ICP bench",
+  "P2 impedance prep",
+  "mass/power v3",
+  "Xe accounting v3",
+  "RFQ v3",
+  "M16 v5",
+  "F7/F8 optimizer outputs",
+  "RVM",
+  "F9 architecture freeze candidate"
+ ],
+ "v1_family_byte_identical": [
+  {
+   "path": "abep_sim/bus_boundary_a9.py",
+   "sha256": "7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a"
+  },
+  {
+   "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+   "sha256": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6"
+  },
+  {
+   "path": "docs/architecture_comparison/power_boundary_a9/build_bus_power_boundary_a9.py",
+   "sha256": "d5c8130ff0f7bea66d9eb82f552f96ebea0eac7f9514fd097bd120ad7397c482"
+  },
+  {
+   "path": "docs/architecture_comparison/power_boundary_a9/BUS_POWER_BOUNDARY_A9.md",
+   "sha256": "bc2c761720ad39a3e7c21a17937ff44a87059d4b5f3b3aadcee64cb323b0a5d0"
+  },
+  {
+   "path": "schemas/interfaces/bus_power_boundary_a9_v1.json",
+   "sha256": "64238d1526d8ce6bf3ca6b45f385f8948e6dcf916e4f2140cbcb6c46d2c7aa09"
+  }
+ ],
+ "repointed_consumers": [
+  {
+   "path": "abep_sim/design/architecture_optimizer.py",
+   "family": "F7 architecture optimizer (code)",
+   "sha256_before": "5949565f1fdfee64714f7fec7deb3dd5a50b07060cd0d9790a7b778fce248247",
+   "sha256_after": "bee20562899a7f40dec45893b8dd5a0ad93812a78f3f9b868b7650b6f677eb72",
+   "v1_hits_before": 8,
+   "v1_hits_after": 1
+  },
+  {
+   "path": "docs/architecture/freeze_candidate/ARCHITECTURE_FREEZE_CANDIDATE.md",
+   "family": "F9 architecture freeze candidate",
+   "sha256_before": "0ebc2c73fd57da6f8c297566c575c3f73f47079479523e85663a3482b0052b95",
+   "sha256_after": "d011e97e57b8186ec32d787805690242bcdea8e3fa75bebf8c5e81b69f0fc44d",
+   "v1_hits_before": 14,
+   "v1_hits_after": 0
+  },
+  {
+   "path": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "family": "F9 architecture freeze candidate",
+   "sha256_before": "8b1d414a16015ff91d7cf8e007df22b21414650d5bdca0a2c9ff92ba74cc1aa2",
+   "sha256_after": "eeb89bf9d8a6c31f8730b7f7d64719650e58687f9215d98d77f9f618298bade4",
+   "v1_hits_before": 47,
+   "v1_hits_after": 0
+  },
+  {
+   "path": "docs/architecture/freeze_candidate/build_freeze_candidate.py",
+   "family": "F9 architecture freeze candidate",
+   "sha256_before": "fc0bf0265fa693d5b9958b42883e160a84dff9498a8def864a8aec6a029f3c99",
+   "sha256_after": "6503026307759e318f00bd3ba14e89c5bcbdf7515552d1d12f26e2bf6f36fbbb",
+   "v1_hits_before": 10,
+   "v1_hits_after": 0
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py",
+   "family": "mass/power v3",
+   "sha256_before": "359ff02a5d8322cf747bb8f38154081a5bbd5682b4856df2d93e7764d28a5240",
+   "sha256_after": "b1df7537456d5334e8b051bb6ed9bca9626933497b3b52e916c9997338e6a572",
+   "v1_hits_before": 3,
+   "v1_hits_after": 6
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "family": "mass/power v3",
+   "sha256_before": "8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316",
+   "sha256_after": "96764681d13d05f2f566ec04417049c65f1116955ba91870a7d3a713c0d5098a",
+   "v1_hits_before": 19,
+   "v1_hits_after": 22
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/peak_sampled_gate_a9_v3.py",
+   "family": "mass/power v3",
+   "sha256_before": "0e68af3cea8b1d3e16694dc22ac6d54ebb4a899f1aa4f0cc1420aa4dfb1bff2e",
+   "sha256_after": "21917da17ff6668aaa4a50852708f0fe943b61670bedd9dba9d376b913b016c3",
+   "v1_hits_before": 5,
+   "v1_hits_after": 1
+  },
+  {
+   "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+   "family": "Xe accounting v3",
+   "sha256_before": "bcecab6147d62564669c0f154c3c1c7eceb5150a86bd9cb5f99b0b7f6daa6f63",
+   "sha256_after": "8240f49dbdfe9eef3dc2a1ab854a276e27a8eb435ddb2f6c62e48be5e511e0fe",
+   "v1_hits_before": 1,
+   "v1_hits_after": 1
+  },
+  {
+   "path": "docs/design_synthesis/f7_f8_optimizer/F7_F8_OPTIMIZER.md",
+   "family": "F7/F8 optimizer outputs",
+   "sha256_before": "689dffcbd019b139f0804f7de417ab2d6ccb6dbcf7d270d7fab6c3cb133eb449",
+   "sha256_after": "5f652fb9c4749ae0ca76d11ba795e2ade6a0e0dd86438595bd3ee40f0faad5b9",
+   "v1_hits_before": 1,
+   "v1_hits_after": 0
+  },
+  {
+   "path": "docs/design_synthesis/f7_f8_optimizer/build_f7_f8_optimizer.py",
+   "family": "F7/F8 optimizer outputs",
+   "sha256_before": "ee872ed578719949972a80ed67007031ee62765e38bd33ad49be4b944b2f25c5",
+   "sha256_after": "3af4a8ebb8606cde77a7181bbe54af5601690c1d4d8c82b01a5f9524171e288d",
+   "v1_hits_before": 2,
+   "v1_hits_after": 0
+  },
+  {
+   "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
+   "family": "F7/F8 optimizer outputs",
+   "sha256_before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+   "sha256_after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1",
+   "v1_hits_before": 4,
+   "v1_hits_after": 0
+  },
+  {
+   "path": "docs/experiments/hall_icp/integration/m16_v5/build_subsystem_maturity_v5.py",
+   "family": "M16 v5",
+   "sha256_before": "7e345735aa75e4c0c62f2c58d81e2062d980421e71874498b4e77fdf8ccb1871",
+   "sha256_after": "760b4ca486c1e055463b46e394f9ab08d11bd08eb71fe1281d6dec16f29fec36",
+   "v1_hits_before": 1,
+   "v1_hits_after": 1
+  },
+  {
+   "path": "docs/experiments/hall_icp/integration/m16_v5/subsystem_maturity_v5.json",
+   "family": "M16 v5",
+   "sha256_before": "988bf981f9e26ae746bfb9bb1875ec41005bcf0186d2427027099a86e4833678",
+   "sha256_after": "73c46274be1caa96e359baaefd9325e9d874d72328a8bfdf8b75ab2702cc0a7a",
+   "v1_hits_before": 3,
+   "v1_hits_after": 0
+  },
+  {
+   "path": "docs/experiments/hall_icp/p1_icp_bench/P1_ICP_BENCH.md",
+   "family": "P1 ICP bench",
+   "sha256_before": "9b5c85250babeb1f889cabe13d6316863a56e1562027d80bf6195a7098a90883",
+   "sha256_after": "ae3c231be82f41cd8c98e94f416c445332b2d546fc2eeb30a71aeac7a18444c8",
+   "v1_hits_before": 5,
+   "v1_hits_after": 2
+  },
+  {
+   "path": "docs/experiments/hall_icp/p1_icp_bench/build_p1_icp_bench.py",
+   "family": "P1 ICP bench",
+   "sha256_before": "9a910ef78e11eb29f980a0b352d8ffc39a26c92777542cc2eb9356586a2a4a38",
+   "sha256_after": "72f2d09b30900afdbd08d897e1ce105829265c430633ca14f0fbdbad0fdb5625",
+   "v1_hits_before": 2,
+   "v1_hits_after": 2
+  },
+  {
+   "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+   "family": "P1 ICP bench",
+   "sha256_before": "26bf86ec11a975f6fdd70702652ece30ef80ad46ecd8446a51b2423c03da1350",
+   "sha256_after": "3f99a90c9491106a030bfce8043dd456a37537c220795b2bc1caff058b2139db",
+   "v1_hits_before": 7,
+   "v1_hits_after": 4
+  },
+  {
+   "path": "docs/experiments/hall_icp/p2_impedance_map/P2_IMPEDANCE_PREP.md",
+   "family": "P2 impedance prep",
+   "sha256_before": "552620bffdb7c65685a26f2f52aaa8a2c383e5ebc686dd9fd900e4d477684895",
+   "sha256_after": "26d90feb15cd33cc699ead408fca5411a1479aba0bc3f88a5f1243d085ed88d1",
+   "v1_hits_before": 1,
+   "v1_hits_after": 0
+  },
+  {
+   "path": "docs/experiments/hall_icp/p2_impedance_map/build_p2_impedance_prep.py",
+   "family": "P2 impedance prep",
+   "sha256_before": "64cea4eb1ac5bb18c710974acbf37a8489801ab8493b9637ed8500dd426bedb0",
+   "sha256_after": "aa1f37bce3dd642962698745bac438cc6785f4df1bfafb036f5ad4d18cd22290",
+   "v1_hits_before": 3,
+   "v1_hits_after": 0
+  },
+  {
+   "path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+   "family": "P2 impedance prep",
+   "sha256_before": "9a3270b5631979889ab6151aac423c2bc4a08e3da2004868f826ba5cb8dcc617",
+   "sha256_after": "9e1343a529e4c8e68ffcbf69b598edff680271a93494fddbcc7bba27b521c334",
+   "v1_hits_before": 2,
+   "v1_hits_after": 0
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "family": "RFQ v3",
+   "sha256_before": "65be55e592e1b42369ab8d4d8ddf0865c54d45cd501a0a646920b7c6500b5d08",
+   "sha256_after": "6fb6465515a8fb5f001c516c31fe6470dd92be702e18579e80cca796df7e9ec2",
+   "v1_hits_before": 22,
+   "v1_hits_after": 27
+  },
+  {
+   "path": "docs/requirements/rvm_a9/RVM_A9.md",
+   "family": "RVM",
+   "sha256_before": "6c5c7da5531fac507c9d7078113998cf173af889994f139616121315b6eab737",
+   "sha256_after": "7f0864c35c21c7e28240373614ab0ba62a44b6c54b0c168b5a8ac5c71f2f437d",
+   "v1_hits_before": 11,
+   "v1_hits_after": 4
+  },
+  {
+   "path": "docs/requirements/rvm_a9/build_rvm_a9.py",
+   "family": "RVM",
+   "sha256_before": "d3bdf983ca609be93de25e8262be024485cabe19706a017c972e6470c4946b1a",
+   "sha256_after": "16a17f00aa3cb6ae6794d3f114563cdfd1243125c0a735f7db104f5c346157c9",
+   "v1_hits_before": 2,
+   "v1_hits_after": 2
+  },
+  {
+   "path": "docs/requirements/rvm_a9/rvm_a9_rows.py",
+   "family": "RVM",
+   "sha256_before": "b77f742bb1b531d0f9d478d4564710a113c44012fd6bef68985b235b3fc57534",
+   "sha256_after": "d3ed397bb6ba02b6a6cfe5eaf1eb4f53b4e6a0616e18eaf265882cb34bb08ca7",
+   "v1_hits_before": 5,
+   "v1_hits_after": 0
+  },
+  {
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "family": "RVM",
+   "sha256_before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+   "sha256_after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264",
+   "v1_hits_before": 19,
+   "v1_hits_after": 7
+  },
+  {
+   "path": "tests/test_design_a9_19_architecture.py",
+   "family": "design tests",
+   "sha256_before": "bd20cad964ffdc44882f83f05046252dcef521f5220bcec7099f380202792e3a",
+   "sha256_after": "1b34cc80657b26739ad5cd9e18254d1b0f41340b1515f8e5554a42feb65e7f7c",
+   "v1_hits_before": 2,
+   "v1_hits_after": 0
+  },
+  {
+   "path": "tests/test_design_f7_f8_optimizer.py",
+   "family": "design tests",
+   "sha256_before": "9e06a33f7c4ead578ce3a93d211d1f90d956d780c7e14ccb569e8f16b38a95a6",
+   "sha256_after": "c1d66bc5456bce84c6583a49130ec692d8f4572257885da63f8516ad39e1a16d",
+   "v1_hits_before": 2,
+   "v1_hits_after": 0
+  },
+  {
+   "path": "tests/test_mass_power_a9_v3.py",
+   "family": "mass/power v3",
+   "sha256_before": "aba9b8732fbf1688d072f581de3741b9d434437969edd055fa1f4a4034f9ea6a",
+   "sha256_after": "8f42ad1f1e50d4aea5c4e6b6bddb1f839df536e362f739c99900672640189d5d",
+   "v1_hits_before": 1,
+   "v1_hits_after": 1
+  },
+  {
+   "path": "tests/test_single_flight_configuration.py",
+   "family": "single-configuration scan",
+   "sha256_before": "c329bc8840b2fbf12a35fa0a2b6c0413674108510c7156191d09b6be5b90fa12",
+   "sha256_after": "119a0e601e8b0cf53943226b0b75b72c5fd47170f0e0f82ade8671131b4c54f2",
+   "v1_hits_before": 3,
+   "v1_hits_after": 3
+  }
+ ],
+ "unchanged_by_status": {
+  "count": 109,
+  "files": [
+   "abep_sim/bus_boundary_a9.py",
+   "docs/architecture_comparison/power_boundary_a9/BUS_POWER_BOUNDARY_A9.md",
+   "docs/architecture_comparison/power_boundary_a9/build_bus_power_boundary_a9.py",
+   "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+   "docs/bid/OWNER_DECISION_BRIEF_P0_P1.md",
+   "docs/bid/owner_decision_brief_p0_p1.json",
+   "docs/budgets/mass_a9/MASS_A9.md",
+   "docs/budgets/mass_a9/build_mass_a9.py",
+   "docs/budgets/mass_a9/mass_a9_v1.json",
+   "docs/budgets/mass_power_a9_v2/MASS_POWER_A9_V2.md",
+   "docs/budgets/mass_power_a9_v2/build_mass_power_a9_v2.py",
+   "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+   "docs/budgets/owner_decisions/OWNER_QUESTIONS_STATE_v2.md",
+   "docs/budgets/owner_decisions/build_owner_questions_state_v2.py",
+   "docs/budgets/owner_decisions/owner_questions_state_v2.csv",
+   "docs/budgets/owner_decisions/owner_questions_state_v2.json",
+   "docs/budgets/owner_decisions/owner_questions_state_v3.csv",
+   "docs/budgets/owner_decisions/owner_questions_state_v3.json",
+   "docs/budgets/owner_decisions/owner_questions_state_v4.csv",
+   "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+   "docs/budgets/subsystem_maturity/SUBSYSTEM_MATURITY_v3.md",
+   "docs/budgets/subsystem_maturity/build_subsystem_maturity_v3.py",
+   "docs/budgets/xe_accounting_a9_v2/XE_ACCOUNTING_A9_V2.md",
+   "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+   "docs/budgets/xe_ledger_a9/XE_LEDGER_A9.md",
+   "docs/budgets/xe_ledger_a9/build_xe_ledger_a9.py",
+   "docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json",
+   "docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md",
+   "docs/experiments/hall_icp/integration/A9_10_RECONCILIATION.md",
+   "docs/experiments/hall_icp/integration/A9_CORE_INTEGRATION.md",
+   "docs/experiments/hall_icp/integration/a9_10_overlay.py",
+   "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json",
+   "docs/experiments/hall_icp/integration/a9_core_integration_v1.json",
+   "docs/experiments/hall_icp/integration/build_a9_10_reconciliation.py",
+   "docs/experiments/hall_icp/integration/build_a9_core_integration.py",
+   "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json",
+   "docs/experiments/hall_icp/integration/m16_v4/build_subsystem_maturity_v4.py",
+   "docs/experiments/hall_icp/integration/m16_v4/m16_v4_rows.py",
+   "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
+   "docs/experiments/hall_icp/prereg_framework/HALL_ICP_PREREG_FRAMEWORK.md",
+   "docs/experiments/hall_icp/prereg_framework/build_hall_icp_prereg_framework.py",
+   "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
+   "docs/experiments/hall_icp/uncertainty_budget/HALL_ICP_UNCERTAINTY_BUDGET.md",
+   "docs/experiments/hall_icp/uncertainty_budget/build_hall_icp_uncertainty_budget.py",
+   "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
+   "docs/experiments/hall_icp/validation_inputs/HALL_ICP_VALIDATION_INPUTS.md",
+   "docs/experiments/hall_icp/validation_inputs/build_hall_icp_validation_inputs.py",
+   "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
+   "docs/hardware/h2_a9_revisions/H2_A9_REVISIONS.md",
+   "docs/hardware/h2_a9_revisions/build_h2_a9_revisions.py",
+   "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
+   "docs/interfaces/icp_neutralizer/ICP_NEUTRALIZER_ICD.md",
+   "docs/interfaces/icp_neutralizer/build_icp_neutralizer_icd.py",
+   "docs/orchestration/lane_registry_v1.json",
+   "docs/orchestration/trigger_ledger_v2.jsonl",
+   "docs/orchestration/trigger_registry_v1.json",
+   "docs/orchestration/workflow_scripts/a9-01-hall-icp-prereg-framework.js",
+   "docs/orchestration/workflow_scripts/a9-02-bus-boundary-a9.js",
+   "docs/orchestration/workflow_scripts/a9-03-icp-neutralizer-icd.js",
+   "docs/orchestration/workflow_scripts/a9-04-hall-icp-uncertainty-budget.js",
+   "docs/orchestration/workflow_scripts/a9-05-hall-icp-validation-inputs.js",
+   "docs/orchestration/workflow_scripts/a9-06-mass-reconciliation.js",
+   "docs/orchestration/workflow_scripts/a9-07-h2-revisions-repair3.js",
+   "docs/orchestration/workflow_scripts/a9-07-h2-revisions.js",
+   "docs/orchestration/workflow_scripts/a9-08-xe-ledger-update.js",
+   "docs/orchestration/workflow_scripts/a9-09-rfq-packages.js",
+   "docs/orchestration/workflow_scripts/a9-10-a9-2-incorporation.js",
+   "docs/orchestration/workflow_scripts/a9-10-a9-2-repair-b.js",
+   "docs/orchestration/workflow_scripts/a9-10-a9-2-repair.js",
+   "docs/orchestration/workflow_scripts/a9-10-integration.js",
+   "docs/orchestration/workflow_scripts/a9-16-decision-application-step1.js",
+   "docs/orchestration/workflow_scripts/a9-3-post-a9-lanes.js",
+   "docs/orchestration/workflow_scripts/a9-6-implementation-lanes.js",
+   "docs/orchestration/workflow_scripts/a9-7-design-lanes.js",
+   "docs/orchestration/workflow_scripts/a9-int-core-integration.js",
+   "docs/procurement/rfq_a9/RFQ_A9.md",
+   "docs/procurement/rfq_a9/build_rfq_a9.py",
+   "docs/procurement/rfq_a9/packages/RFQ-04_rf_chain.md",
+   "docs/procurement/rfq_a9/packages/RFQ-05_icp_source_components.md",
+   "docs/procurement/rfq_a9/packages/RFQ-06_discharge_supply_and_pbus_chain.md",
+   "docs/procurement/rfq_a9/packages/RFQ-07_xe_feed.md",
+   "docs/procurement/rfq_a9/packages/RFQ-08_c1_cathode_and_keeper.md",
+   "docs/procurement/rfq_a9/rfq_a9_v1.json",
+   "docs/procurement/rfq_a9_v2/RFQ_A9_V2.md",
+   "docs/procurement/rfq_a9_v2/build_rfq_a9_v2.py",
+   "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+   "schemas/interfaces/bus_power_boundary_a9_v1.json",
+   "schemas/interfaces/icp_neutralizer_icd_v1.json",
+   "tests/test_a9_10_reconciliation.py",
+   "tests/test_a9_core_integration.py",
+   "tests/test_bus_boundary_a9.py",
+   "tests/test_h2_a9_revisions.py",
+   "tests/test_hall_icp_prereg_framework.py",
+   "tests/test_hall_icp_uncertainty_budget.py",
+   "tests/test_hall_icp_validation_inputs.py",
+   "tests/test_mass_power_a9_v2.py",
+   "tests/test_owner_questions_state_v2.py",
+   "docs/architecture_comparison/dossier/DECISION_DOSSIER.md",
+   "docs/architecture_comparison/dossier/dossier.json",
+   "docs/bid/package/01_COMPLIANCE_MATRIX.md",
+   "docs/bid/package/02_TECHNICAL_APPROACH.md",
+   "docs/bid/package/04_RISK_REGISTER.md",
+   "docs/bid/package/compliance_data.py",
+   "docs/bid/package/compliance_matrix_v1.json",
+   "docs/budgets/owner_decisions/owner_questions_state_v5.csv",
+   "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+   "abep_sim/design/robust_optimizer.py",
+   "tests/test_design_a9_13_upstream.py",
+   "tests/test_design_review_repairs.py"
+  ]
+ },
+ "transitive_live": [
+  "abep_sim/design/robust_optimizer.py",
+  "tests/test_design_a9_13_upstream.py",
+  "tests/test_design_review_repairs.py"
+ ],
+ "live_retain_v1_reference": [
+  "docs/architecture_comparison/dossier/DECISION_DOSSIER.md",
+  "docs/architecture_comparison/dossier/dossier.json",
+  "docs/bid/package/01_COMPLIANCE_MATRIX.md",
+  "docs/bid/package/02_TECHNICAL_APPROACH.md",
+  "docs/bid/package/04_RISK_REGISTER.md",
+  "docs/bid/package/compliance_data.py",
+  "docs/bid/package/compliance_matrix_v1.json",
+  "docs/budgets/owner_decisions/owner_questions_state_v5.csv",
+  "docs/budgets/owner_decisions/owner_questions_state_v5.json"
+ ],
+ "outputs": [
+  {
+   "family": "v2 artefact",
+   "path": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
+   "kind": "json",
+   "regenerated_by": "docs/architecture_comparison/power_boundary_a9_v2/build_bus_power_boundary_a9_v2.py",
+   "sha256_before": "2ec144fe1483baaec946e682bd37e58d6d40b1a478715ddc574363e62cc67d6c",
+   "sha256_after": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980",
+   "byte_identical": false,
+   "class_counts": {
+    "PROVENANCE_TEXT": 1
+   },
+   "changes": [
+    {
+     "path": "/derived_from/consumers",
+     "change": "CHANGED",
+     "class": "PROVENANCE_TEXT",
+     "before": "docs/architecture_comparison/power_boundary_a9_v2/CONSUMER_INVENTORY.json (stage 1: no consumer re-pointed)",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/CONSUMER_INVENTORY.json (stage 1: every consumer listed, scanned at the pre-migration commit); stage 2 (one controlled migration) re-pointed every LIVE_REPOINT consumer to v2 and proved n..."
+    }
+   ]
+  },
+  {
+   "family": "v2 artefact",
+   "path": "docs/architecture_comparison/power_boundary_a9_v2/BUS_POWER_BOUNDARY_A9_V2.md",
+   "kind": "markdown",
+   "regenerated_by": "docs/architecture_comparison/power_boundary_a9_v2/build_bus_power_boundary_a9_v2.py",
+   "sha256_before": "dbbf4c21ef805bebf433a75fcee08feaa76251aa18a7c7d8f09621d039117e80",
+   "sha256_after": "78ed6f131af0f0213bc79d94fdf91f61dfb5b203e5bfe9d69c4a6471e2a62f96",
+   "byte_identical": false,
+   "changed_lines": 1,
+   "numbers_in_changed_lines_identical": true,
+   "added_listing_lines": []
+  },
+  {
+   "family": "P1 ICP bench",
+   "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+   "kind": "json",
+   "regenerated_by": "docs/experiments/hall_icp/p1_icp_bench/build_p1_icp_bench.py",
+   "sha256_before": "26bf86ec11a975f6fdd70702652ece30ef80ad46ecd8446a51b2423c03da1350",
+   "sha256_after": "3f99a90c9491106a030bfce8043dd456a37537c220795b2bc1caff058b2139db",
+   "byte_identical": false,
+   "class_counts": {
+    "PATH": 4,
+    "PIN_SHA": 1,
+    "PROVENANCE_ADDED": 1,
+    "PROVENANCE_TEXT": 1
+   },
+   "changes": [
+    {
+     "path": "/authority_pins/21/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/authority_pins/21/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+     "after": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+    },
+    {
+     "path": "/authority_pins/21/role",
+     "change": "CHANGED",
+     "class": "PROVENANCE_TEXT",
+     "before": "A9-02 bus-power boundary",
+     "after": "A9-02 bus-power boundary, v2 (A9.22 G8: hall_icp_neutralizer only; C1 ground-reference metadata)"
+    },
+    {
+     "path": "/authority_pins/22",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "{\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\", \"role\": \"A9-02 bus-power boundary v1 (immutable history; historical reuse only)\", \"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7a..."
+    },
+    {
+     "path": "/items/17/source",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json A902-23; ICD ICP-21; docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json OQ-A907-02",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json A902-23; ICD ICP-21; docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json OQ-A907-02"
+    },
+    {
+     "path": "/interface_demands/10/counterpart",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "A9-02 docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "A9-02 docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/interface_demands/11/counterpart",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "A9-02 docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "A9-02 docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    }
+   ]
+  },
+  {
+   "family": "P1 ICP bench",
+   "path": "docs/experiments/hall_icp/p1_icp_bench/P1_ICP_BENCH.md",
+   "kind": "markdown",
+   "regenerated_by": "docs/experiments/hall_icp/p1_icp_bench/build_p1_icp_bench.py",
+   "sha256_before": "9b5c85250babeb1f889cabe13d6316863a56e1562027d80bf6195a7098a90883",
+   "sha256_after": "ae3c231be82f41cd8c98e94f416c445332b2d546fc2eeb30a71aeac7a18444c8",
+   "byte_identical": false,
+   "changed_lines": 5,
+   "numbers_in_changed_lines_identical": true,
+   "added_listing_lines": [
+    "- `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` - `9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6` (A9-02 bus-power boundary v1 (immutable history; historical reuse only))"
+   ]
+  },
+  {
+   "family": "P2 impedance prep",
+   "path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+   "kind": "json",
+   "regenerated_by": "docs/experiments/hall_icp/p2_impedance_map/build_p2_impedance_prep.py",
+   "sha256_before": "9a3270b5631979889ab6151aac423c2bc4a08e3da2004868f826ba5cb8dcc617",
+   "sha256_after": "9e1343a529e4c8e68ffcbf69b598edff680271a93494fddbcc7bba27b521c334",
+   "byte_identical": false,
+   "class_counts": {
+    "PATH": 1,
+    "PIN_SHA": 1,
+    "PROVENANCE_TEXT": 1
+   },
+   "changes": [
+    {
+     "path": "/deliverable_pins/12/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/deliverable_pins/12/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+     "after": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+    },
+    {
+     "path": "/deliverable_pins/12/what",
+     "change": "CHANGED",
+     "class": "PROVENANCE_TEXT",
+     "before": "A9-02 bus power boundary",
+     "after": "A9-02 bus power boundary, v2 (A9.22 G8 stage 2: hall_icp_neutralizer only)"
+    }
+   ]
+  },
+  {
+   "family": "P2 impedance prep",
+   "path": "docs/experiments/hall_icp/p2_impedance_map/P2_IMPEDANCE_PREP.md",
+   "kind": "markdown",
+   "regenerated_by": "docs/experiments/hall_icp/p2_impedance_map/build_p2_impedance_prep.py",
+   "sha256_before": "552620bffdb7c65685a26f2f52aaa8a2c383e5ebc686dd9fd900e4d477684895",
+   "sha256_after": "26d90feb15cd33cc699ead408fca5411a1479aba0bc3f88a5f1243d085ed88d1",
+   "byte_identical": false,
+   "changed_lines": 1,
+   "numbers_in_changed_lines_identical": true,
+   "added_listing_lines": []
+  },
+  {
+   "family": "mass/power v3",
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "kind": "json",
+   "regenerated_by": "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py",
+   "sha256_before": "8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316",
+   "sha256_after": "96764681d13d05f2f566ec04417049c65f1116955ba91870a7d3a713c0d5098a",
+   "byte_identical": false,
+   "class_counts": {
+    "LABEL": 2,
+    "PATH": 2,
+    "PIN_SHA": 3,
+    "PROVENANCE_ADDED": 7,
+    "PROVENANCE_TEXT": 1
+   },
+   "changes": [
+    {
+     "path": "/pins/bus_boundary_module/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "abep_sim/bus_boundary_a9.py",
+     "after": "abep_sim/bus_boundary_a9_v2.py"
+    },
+    {
+     "path": "/pins/bus_boundary_module/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a",
+     "after": "8964520ffb55d97eeb93c4b8cc45250026e0c6a0b3082ea58fcfd834ba661e26"
+    },
+    {
+     "path": "/pins/bus_boundary_module/boundary_version",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "bus_power_boundary_a9_v2"
+    },
+    {
+     "path": "/pins/bus_boundary_module/repointed",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "A9.22 G8 stage 2 (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json G8_BUS_BOUNDARY): configuration taxonomy only, every value identical"
+    },
+    {
+     "path": "/pins/bus_boundary_module_v1_history",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "{\"boundary_version\": \"bus_power_boundary_a9_v1\", \"path\": \"abep_sim/bus_boundary_a9.py\", \"sha256\": \"7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a\", \"use\": \"immutable history: cited by the carried v2 items and by the ret..."
+    },
+    {
+     "path": "/power/boundary_version",
+     "change": "CHANGED",
+     "class": "LABEL",
+     "before": "bus_power_boundary_a9_v1",
+     "after": "bus_power_boundary_a9_v2"
+    },
+    {
+     "path": "/power/module",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "abep_sim/bus_boundary_a9.py",
+     "after": "abep_sim/bus_boundary_a9_v2.py"
+    },
+    {
+     "path": "/power/module_sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a",
+     "after": "8964520ffb55d97eeb93c4b8cc45250026e0c6a0b3082ea58fcfd834ba661e26"
+    },
+    {
+     "path": "/power/configurations/hall_icp_neutralizer/phases/startup/template",
+     "change": "CHANGED",
+     "class": "LABEL",
+     "before": "bus_boundary_a9.SEQUENCE_TEMPLATES (PROPOSED, row 112)",
+     "after": "bus_boundary_a9_v2.SEQUENCE_TEMPLATES (PROPOSED, row 112)"
+    },
+    {
+     "path": "/power/retired_flight_configuration_history/boundary_version",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "bus_power_boundary_a9_v1"
+    },
+    {
+     "path": "/power/retired_flight_configuration_history/module",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "abep_sim/bus_boundary_a9.py"
+    },
+    {
+     "path": "/power/retired_flight_configuration_history/module_sha256",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a"
+    },
+    {
+     "path": "/power/peak_sampled_rule_v3/helper_sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "0e68af3cea8b1d3e16694dc22ac6d54ebb4a899f1aa4f0cc1420aa4dfb1bff2e",
+     "after": "21917da17ff6668aaa4a50852708f0fe943b61670bedd9dba9d376b913b016c3"
+    },
+    {
+     "path": "/power/peak_sampled_rule_v3/bus_boundary_module",
+     "change": "CHANGED",
+     "class": "PROVENANCE_TEXT",
+     "before": "unchanged (import only); its PEAK_SAMPLED_RULE stays the A9.1 wording - this artifact evaluates peak_sampled records through the helper",
+     "after": "abep_sim/bus_boundary_a9_v2.py unchanged (import only; v2 runs the immutable v1 code objects); its PEAK_SAMPLED_RULE stays the A9.1 wording - this artifact evaluates peak_sampled records through the helper"
+    },
+    {
+     "path": "/power/boundary_repointed",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "{\"carried_from_v2\": {\"boundary_version\": \"bus_power_boundary_a9_v1\", \"module\": \"abep_sim/bus_boundary_a9.py\", \"module_sha256\": \"7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a\"}, \"rule\": \"A9.22 G8 stage 2 (docs/decisions..."
+    }
+   ]
+  },
+  {
+   "family": "mass/power v3",
+   "path": "docs/budgets/mass_power_a9_v3/MASS_POWER_A9_V3.md",
+   "kind": "markdown",
+   "regenerated_by": "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py",
+   "sha256_before": "7b4fa152e991bb5153c0899b5d0e491ff1cb9171f4789c5ee5bbe11c0527bf43",
+   "sha256_after": "ad663ece1a3b0cfde70c88b4df7ab6c647502cb300a7bb68d369df1bd94cade3",
+   "byte_identical": false,
+   "changed_lines": 1,
+   "numbers_in_changed_lines_identical": true,
+   "added_listing_lines": []
+  },
+  {
+   "family": "Xe accounting v3",
+   "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+   "kind": "json",
+   "regenerated_by": "docs/budgets/xe_accounting_a9_v3/build_xe_accounting_a9_v3.py",
+   "sha256_before": "bcecab6147d62564669c0f154c3c1c7eceb5150a86bd9cb5f99b0b7f6daa6f63",
+   "sha256_after": "8240f49dbdfe9eef3dc2a1ab854a276e27a8eb435ddb2f6c62e48be5e511e0fe",
+   "byte_identical": false,
+   "class_counts": {
+    "PROVENANCE_ADDED": 1,
+    "PROVENANCE_TEXT": 2
+   },
+   "changes": [
+    {
+     "path": "/items/14/source",
+     "change": "CHANGED",
+     "class": "PROVENANCE_TEXT",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json start-up templates C-S5 / I-S5 (gas not stated)",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json start-up templates I-S5 (sequencing.templates_PROPOSED.hall_icp_neutralizer) / C-S5 (ground_reference_test_metadata.hall_c1_reference.templates_PROPOSED_as_i..."
+    },
+    {
+     "path": "/items/14/v3_change",
+     "change": "CHANGED",
+     "class": "PROVENANCE_TEXT",
+     "before": "carried unchanged from v2",
+     "after": "carried unchanged from v2; source re-pointed to bus_power_boundary_a9_v2 (A9.22 G8 stage 2, citation only)"
+    },
+    {
+     "path": "/items/14/source_v2",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json start-up templates C-S5 / I-S5 (gas not stated)"
+    }
+   ]
+  },
+  {
+   "family": "Xe accounting v3",
+   "path": "docs/budgets/xe_accounting_a9_v3/XE_ACCOUNTING_A9_V3.md",
+   "kind": "markdown",
+   "regenerated_by": "docs/budgets/xe_accounting_a9_v3/build_xe_accounting_a9_v3.py",
+   "sha256_before": "b06a94afbd2185650dc66a5077e5ede145ff28114321242cb318708aee3542f8",
+   "sha256_after": "fef8cdfda0ee83d9254835921cd6b708e76804978778bf2f4ce9dd6f9c53f089",
+   "byte_identical": false,
+   "changed_lines": 1,
+   "numbers_in_changed_lines_identical": true,
+   "added_listing_lines": []
+  },
+  {
+   "family": "RFQ v3",
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "kind": "json",
+   "regenerated_by": "docs/procurement/rfq_a9_v3/build_rfq_a9_v3.py",
+   "sha256_before": "65be55e592e1b42369ab8d4d8ddf0865c54d45cd501a0a646920b7c6500b5d08",
+   "sha256_after": "6fb6465515a8fb5f001c516c31fe6470dd92be702e18579e80cca796df7e9ec2",
+   "byte_identical": false,
+   "class_counts": {
+    "PATH": 13,
+    "PROVENANCE_ADDED": 17,
+    "PROVENANCE_TEXT": 1
+   },
+   "changes": [
+    {
+     "path": "/packages/0/requirements/3/sources/0/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/packages/0/requirements/3/sources/0/repointed_from",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json"
+    },
+    {
+     "path": "/packages/0/requirements/3/sources/1/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/packages/0/requirements/3/sources/1/repointed_from",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json"
+    },
+    {
+     "path": "/packages/0/requirements/6/sources/0/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/packages/0/requirements/6/sources/0/repointed_from",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json"
+    },
+    {
+     "path": "/packages/3/requirements/0/sources/2/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/packages/3/requirements/0/sources/2/repointed_from",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json"
+    },
+    {
+     "path": "/packages/3/requirements/2/sources/2/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/packages/3/requirements/2/sources/2/repointed_from",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json"
+    },
+    {
+     "path": "/packages/3/requirements/3/sources/2/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/packages/3/requirements/3/sources/2/repointed_from",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json"
+    },
+    {
+     "path": "/packages/3/requirements/5/sources/0/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/packages/3/requirements/5/sources/0/repointed_from",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json"
+    },
+    {
+     "path": "/packages/3/requirements/8/sources/2/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/packages/3/requirements/8/sources/2/repointed_from",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json"
+    },
+    {
+     "path": "/packages/3/requirements/13/basis",
+     "change": "CHANGED",
+     "class": "PROVENANCE_TEXT",
+     "before": "slots with status INSTALLED / VARIANT_ONLY in bus_power_boundary_a9_v1.json",
+     "after": "slots with status INSTALLED / VARIANT_ONLY in bus_power_boundary_a9_v2.json (hall_icp_neutralizer); the hall_c1_reference ground-bench column from bus_power_boundary_a9_v1.json (C1 is not a v2 configuration)"
+    },
+    {
+     "path": "/packages/3/requirements/13/sources/0/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/packages/3/requirements/13/sources/0/repointed_from",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json"
+    },
+    {
+     "path": "/packages/3/requirements/13/sources/1",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "{\"key\": \"BUS_V1\", \"note\": \"hall_c1_reference ground-bench column only (C1 is not a v2 configuration)\", \"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\", \"pointer\": \"/slots\", \"type\": \"deliverable\"}"
+    },
+    {
+     "path": "/packages/3/requirements/13/basis_v2",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "slots with status INSTALLED / VARIANT_ONLY in bus_power_boundary_a9_v1.json"
+    },
+    {
+     "path": "/packages/3/requirements/14/sources/2/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/packages/3/requirements/14/sources/2/repointed_from",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json"
+    },
+    {
+     "path": "/packages/3/requirements/17/sources/0/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/packages/3/requirements/17/sources/0/repointed_from",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json"
+    },
+    {
+     "path": "/packages/3/requirements/17/sources/1/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/packages/3/requirements/17/sources/1/repointed_from",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json"
+    },
+    {
+     "path": "/packages/3/requirements/17/sources/2/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/packages/3/requirements/17/sources/2/repointed_from",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json"
+    },
+    {
+     "path": "/traceability_matrix/104/sources/5",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "BUS_V1"
+    },
+    {
+     "path": "/bus_boundary_repoint_a9_22",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "{\"c1_rows_kept_on_v1\": [\"RFQ2-GAS-R26\", \"RFQ2-HALLEL-R22\", \"RFQ2-HALLEL-R25\", \"RFQ2-HALLEL-R29\"], \"carried_from_v2_deliverable_pins\": \"unchanged (carried history keeps the v1 sha)\", \"repointed_sources\": [\"RFQ2-RF-R04 A902-19\", \"RFQ2-RF-R..."
+    }
+   ]
+  },
+  {
+   "family": "RFQ v3",
+   "path": "docs/procurement/rfq_a9_v3/RFQ_A9_V3.md",
+   "kind": "markdown",
+   "regenerated_by": "docs/procurement/rfq_a9_v3/build_rfq_a9_v3.py",
+   "sha256_before": "c61f0f19d2c58bd934c78088a816a9c54ee1a45df94b78a10258f92f21eb2adc",
+   "sha256_after": "1f526aa20dca7cb37b6e5ddca73a36f614fc055ffaf744fe6fa6008467b15f31",
+   "byte_identical": false,
+   "changed_lines": 1,
+   "numbers_in_changed_lines_identical": true,
+   "added_listing_lines": []
+  },
+  {
+   "family": "RFQ v3",
+   "path": "docs/procurement/rfq_a9_v3/packages/RFQ3-04_hall_electrical.md",
+   "kind": "markdown",
+   "regenerated_by": "docs/procurement/rfq_a9_v3/build_rfq_a9_v3.py",
+   "sha256_before": "b7205e0b69cd8c8278eaa5220b068b3f0e18ad375b59a7dc3d1d0cb01ab7844f",
+   "sha256_after": "78788a404febd924e130ab67a85e674c2dd5e35d1bdfa76f805a1b1b698e6517",
+   "byte_identical": false,
+   "changed_lines": 1,
+   "numbers_in_changed_lines_identical": true,
+   "added_listing_lines": []
+  },
+  {
+   "family": "M16 v5",
+   "path": "docs/experiments/hall_icp/integration/m16_v5/subsystem_maturity_v5.json",
+   "kind": "json",
+   "regenerated_by": "docs/experiments/hall_icp/integration/m16_v5/build_subsystem_maturity_v5.py",
+   "sha256_before": "988bf981f9e26ae746bfb9bb1875ec41005bcf0186d2427027099a86e4833678",
+   "sha256_after": "73c46274be1caa96e359baaefd9325e9d874d72328a8bfdf8b75ab2702cc0a7a",
+   "byte_identical": false,
+   "class_counts": {
+    "PATH": 3,
+    "PROVENANCE_ADDED": 1
+   },
+   "changes": [
+    {
+     "path": "/referenced_not_pinned/artifacts/9",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "{\"identity\": \"bus_power_boundary_a9_v2\", \"key\": \"BUS\", \"path\": \"docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json\", \"use\": \"A9-02 bus-power boundary v2 (BUS_ITEM_OPEN blockers)\"}"
+    },
+    {
+     "path": "/rows/11/remaining_blockers/3/artifact",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/rows/18/remaining_blockers/0/artifact",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "A9-02 docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json (A902-21)",
+     "after": "A9-02 docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json (A902-21)"
+    },
+    {
+     "path": "/rows/18/remaining_blockers/0/still_open_checks/0/artifact",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    }
+   ]
+  },
+  {
+   "family": "M16 v5",
+   "path": "docs/experiments/hall_icp/integration/m16_v5/SUBSYSTEM_MATURITY_v5.md",
+   "kind": "markdown",
+   "regenerated_by": "docs/experiments/hall_icp/integration/m16_v5/build_subsystem_maturity_v5.py",
+   "sha256_before": "eaed8970ee7d2e3aca634a9624a456ea70b06a43fd2e5199f2d07c1b56ad766f",
+   "sha256_after": "eaed8970ee7d2e3aca634a9624a456ea70b06a43fd2e5199f2d07c1b56ad766f",
+   "byte_identical": true,
+   "changed_lines": 0,
+   "numbers_in_changed_lines_identical": true,
+   "added_listing_lines": []
+  },
+  {
+   "family": "F7/F8 optimizer outputs",
+   "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
+   "kind": "json",
+   "regenerated_by": "docs/design_synthesis/f7_f8_optimizer/build_f7_f8_optimizer.py",
+   "sha256_before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+   "sha256_after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1",
+   "byte_identical": false,
+   "class_counts": {
+    "LABEL": 1,
+    "PATH": 3,
+    "PROVENANCE_TEXT": 1
+   },
+   "changes": [
+    {
+     "path": "/referenced_not_pinned/14/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "abep_sim/bus_boundary_a9.py",
+     "after": "abep_sim/bus_boundary_a9_v2.py"
+    },
+    {
+     "path": "/referenced_not_pinned/14/use",
+     "change": "CHANGED",
+     "class": "PROVENANCE_TEXT",
+     "before": "A9-02 bus boundary (called, never modified)",
+     "after": "A9-02 bus boundary v2 (A9.22 G8; called, never modified)"
+    },
+    {
+     "path": "/design_vector/blocks/6/variables/0/source",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json items_v2 MPV2-P07; abep_sim/bus_boundary_a9.py RF_FREQUENCY_HZ",
+     "after": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json items_v2 MPV2-P07; abep_sim/bus_boundary_a9_v2.py RF_FREQUENCY_HZ"
+    },
+    {
+     "path": "/design_vector/blocks/6/variables/4/source",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "abep_sim/bus_boundary_a9.py LAB_RF_FORWARD_W_RANGE",
+     "after": "abep_sim/bus_boundary_a9_v2.py LAB_RF_FORWARD_W_RANGE"
+    },
+    {
+     "path": "/system_evaluation_exemplar/constraints/2/basis",
+     "change": "CHANGED",
+     "class": "LABEL",
+     "before": "bus_boundary_a9.rfp_power_gate verdict NOT_EVALUABLE but value status NOT_EVALUATED: not evaluable (fail closed)",
+     "after": "bus_boundary_a9_v2.rfp_power_gate verdict NOT_EVALUABLE but value status NOT_EVALUATED: not evaluable (fail closed)"
+    }
+   ]
+  },
+  {
+   "family": "F7/F8 optimizer outputs",
+   "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
+   "kind": "json",
+   "regenerated_by": "docs/design_synthesis/f7_f8_optimizer/build_f7_f8_optimizer.py",
+   "sha256_before": "423e74ded14e5d5df640a9cc5818c8d8478b194573270ec379b1eb9359c1c455",
+   "sha256_after": "423e74ded14e5d5df640a9cc5818c8d8478b194573270ec379b1eb9359c1c455",
+   "byte_identical": true,
+   "class_counts": {},
+   "changes": []
+  },
+  {
+   "family": "F7/F8 optimizer outputs",
+   "path": "docs/design_synthesis/f7_f8_optimizer/f8_robust_candidates_v1.json",
+   "kind": "json",
+   "regenerated_by": "docs/design_synthesis/f7_f8_optimizer/build_f7_f8_optimizer.py",
+   "sha256_before": "2ec7e059ebc55d9b83f4c8f0e3cd43e2cebcbe665933e7ce9ecf1a43451f4e8d",
+   "sha256_after": "2ec7e059ebc55d9b83f4c8f0e3cd43e2cebcbe665933e7ce9ecf1a43451f4e8d",
+   "byte_identical": true,
+   "class_counts": {},
+   "changes": []
+  },
+  {
+   "family": "F7/F8 optimizer outputs",
+   "path": "docs/design_synthesis/f7_f8_optimizer/F7_F8_OPTIMIZER.md",
+   "kind": "markdown",
+   "regenerated_by": "docs/design_synthesis/f7_f8_optimizer/build_f7_f8_optimizer.py",
+   "sha256_before": "689dffcbd019b139f0804f7de417ab2d6ccb6dbcf7d270d7fab6c3cb133eb449",
+   "sha256_after": "5f652fb9c4749ae0ca76d11ba795e2ade6a0e0dd86438595bd3ee40f0faad5b9",
+   "byte_identical": false,
+   "changed_lines": 1,
+   "numbers_in_changed_lines_identical": true,
+   "added_listing_lines": []
+  },
+  {
+   "family": "RVM",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "kind": "json",
+   "regenerated_by": "docs/requirements/rvm_a9/build_rvm_a9.py",
+   "sha256_before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+   "sha256_after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264",
+   "byte_identical": false,
+   "class_counts": {
+    "LABEL": 8,
+    "PATH": 6,
+    "PROVENANCE_ADDED": 1,
+    "PROVENANCE_TEXT": 3
+   },
+   "changes": [
+    {
+     "path": "/referenced_not_pinned/0/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/referenced_not_pinned/0/identity/id",
+     "change": "CHANGED",
+     "class": "LABEL",
+     "before": "bus_power_boundary_a9_v1",
+     "after": "bus_power_boundary_a9_v2"
+    },
+    {
+     "path": "/referenced_not_pinned/0/role",
+     "change": "CHANGED",
+     "class": "PROVENANCE_TEXT",
+     "before": "A9-02 bus-power boundary (1 ms gate, 1.35 kW allocation)",
+     "after": "A9-02 bus-power boundary v2 (1 ms gate, 1.35 kW allocation; A9.22 G8)"
+    },
+    {
+     "path": "/referenced_not_pinned/1",
+     "change": "ADDED",
+     "class": "PROVENANCE_ADDED",
+     "before": "null",
+     "after": "{\"identity\": {\"id\": \"bus_power_boundary_a9_v1\"}, \"key\": \"BUS_V1\", \"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\", \"role\": \"A9-02 bus-power boundary (1 ms gate, 1.35 kW allocation)\", \"why\": \"mutable..."
+    },
+    {
+     "path": "/rows/3/configurations/hall_icp_neutralizer/artifacts/2/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/rows/3/configurations/hall_icp_neutralizer/artifacts/2/id",
+     "change": "CHANGED",
+     "class": "LABEL",
+     "before": "bus_power_boundary_a9_v1:A902-01",
+     "after": "bus_power_boundary_a9_v2:A902-01"
+    },
+    {
+     "path": "/rows/3/configurations/hall_icp_neutralizer/artifacts/3/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/rows/3/configurations/hall_icp_neutralizer/artifacts/3/id",
+     "change": "CHANGED",
+     "class": "LABEL",
+     "before": "bus_power_boundary_a9_v1:A902-03",
+     "after": "bus_power_boundary_a9_v2:A902-03"
+    },
+    {
+     "path": "/rows/4/configurations/hall_icp_neutralizer/artifacts/1/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/rows/4/configurations/hall_icp_neutralizer/artifacts/1/id",
+     "change": "CHANGED",
+     "class": "LABEL",
+     "before": "bus_power_boundary_a9_v1:A902-04",
+     "after": "bus_power_boundary_a9_v2:A902-04"
+    },
+    {
+     "path": "/rows/13/configurations/hall_icp_neutralizer/artifacts/2/evidence_state",
+     "change": "CHANGED",
+     "class": "LABEL",
+     "before": "SEQUENCE RULES RULES_NOT_EVALUABLE (5 rules not evaluable; template bus_boundary_a9.SEQUENCE_TEMPLATES (PROPOSED, row 112))",
+     "after": "SEQUENCE RULES RULES_NOT_EVALUABLE (5 rules not evaluable; template bus_boundary_a9_v2.SEQUENCE_TEMPLATES (PROPOSED, row 112))"
+    },
+    {
+     "path": "/rows/18/configurations/hall_icp_neutralizer/reason",
+     "change": "CHANGED",
+     "class": "LABEL",
+     "before": "no determining evaluation with evidenced terms: bus_power_boundary_a9_v1 [PLAN_OR_FRAMEWORK]",
+     "after": "no determining evaluation with evidenced terms: bus_power_boundary_a9_v2 [PLAN_OR_FRAMEWORK]"
+    },
+    {
+     "path": "/rows/18/configurations/hall_icp_neutralizer/artifacts/0/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/rows/18/configurations/hall_icp_neutralizer/artifacts/0/id",
+     "change": "CHANGED",
+     "class": "LABEL",
+     "before": "bus_power_boundary_a9_v1",
+     "after": "bus_power_boundary_a9_v2"
+    },
+    {
+     "path": "/rows/18/configurations/hall_icp_neutralizer/artifacts/0/detail/name",
+     "change": "CHANGED",
+     "class": "PROVENANCE_TEXT",
+     "before": "A9-02 bus-power boundary (1 ms gate, 1.35 kW allocation)",
+     "after": "A9-02 bus-power boundary v2 (1 ms gate, 1.35 kW allocation; A9.22 G8)"
+    },
+    {
+     "path": "/rows/19/configurations/hall_icp_neutralizer/artifacts/1/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/rows/19/configurations/hall_icp_neutralizer/artifacts/1/id",
+     "change": "CHANGED",
+     "class": "LABEL",
+     "before": "bus_power_boundary_a9_v1",
+     "after": "bus_power_boundary_a9_v2"
+    },
+    {
+     "path": "/rows/19/configurations/hall_icp_neutralizer/artifacts/1/detail/name",
+     "change": "CHANGED",
+     "class": "PROVENANCE_TEXT",
+     "before": "A9-02 bus-power boundary (1 ms gate, 1.35 kW allocation)",
+     "after": "A9-02 bus-power boundary v2 (1 ms gate, 1.35 kW allocation; A9.22 G8)"
+    }
+   ]
+  },
+  {
+   "family": "RVM",
+   "path": "docs/requirements/rvm_a9/RVM_A9.md",
+   "kind": "markdown",
+   "regenerated_by": "docs/requirements/rvm_a9/build_rvm_a9.py",
+   "sha256_before": "6c5c7da5531fac507c9d7078113998cf173af889994f139616121315b6eab737",
+   "sha256_after": "7f0864c35c21c7e28240373614ab0ba62a44b6c54b0c168b5a8ac5c71f2f437d",
+   "byte_identical": false,
+   "changed_lines": 8,
+   "numbers_in_changed_lines_identical": true,
+   "added_listing_lines": [
+    "- read, not pinned: `docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json` (A9-02 bus-power boundary v2 (1 ms gate, 1.35 kW allocation; A9.22 G8))"
+   ]
+  },
+  {
+   "family": "F9 architecture freeze candidate",
+   "path": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "kind": "json",
+   "regenerated_by": "docs/architecture/freeze_candidate/build_freeze_candidate.py",
+   "sha256_before": "8b1d414a16015ff91d7cf8e007df22b21414650d5bdca0a2c9ff92ba74cc1aa2",
+   "sha256_after": "eeb89bf9d8a6c31f8730b7f7d64719650e58687f9215d98d77f9f618298bade4",
+   "byte_identical": false,
+   "class_counts": {
+    "LABEL": 1,
+    "PATH": 23,
+    "PIN_SHA": 145
+   },
+   "changes": [
+    {
+     "path": "/consumed/F78/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/consumed/MP3/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316",
+     "after": "96764681d13d05f2f566ec04417049c65f1116955ba91870a7d3a713c0d5098a"
+    },
+    {
+     "path": "/consumed/RVM/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/consumed/XE3/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "bcecab6147d62564669c0f154c3c1c7eceb5150a86bd9cb5f99b0b7f6daa6f63",
+     "after": "8240f49dbdfe9eef3dc2a1ab854a276e27a8eb435ddb2f6c62e48be5e511e0fe"
+    },
+    {
+     "path": "/consumed/BUS/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/consumed/BUS/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+     "after": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+    },
+    {
+     "path": "/consumed/P1/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "26bf86ec11a975f6fdd70702652ece30ef80ad46ecd8446a51b2423c03da1350",
+     "after": "3f99a90c9491106a030bfce8043dd456a37537c220795b2bc1caff058b2139db"
+    },
+    {
+     "path": "/consumed/P2/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "9a3270b5631979889ab6151aac423c2bc4a08e3da2004868f826ba5cb8dcc617",
+     "after": "9e1343a529e4c8e68ffcbf69b598edff680271a93494fddbcc7bba27b521c334"
+    },
+    {
+     "path": "/upstream_pareto/robust_set/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/parameters/0/source/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/parameters/0/source/2/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/parameters/1/source/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/parameters/2/source/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/parameters/3/source/1/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/parameters/5/source/2/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/parameters/6/source/2/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/parameters/8/source/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/parameters/8/source/1/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/parameters/17/source/2/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/parameters/18/source/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/parameters/21/source/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/parameters/21/source/2/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/parameters/22/source/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/parameters/22/source/2/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/parameters/26/source/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/parameters/27/source/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/parameters/27/source/2/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/parameters/31/source/1/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/parameters/33/source/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/parameters/33/source/1/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/parameters/149/source/0/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/parameters/149/source/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+     "after": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+    },
+    {
+     "path": "/parameters/150/source/1/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/parameters/150/source/1/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+     "after": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+    },
+    {
+     "path": "/parameters/151/source/2/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/parameters/151/source/2/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+     "after": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+    },
+    {
+     "path": "/parameters/152/source/2/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/parameters/158/source/0/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/parameters/158/source/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+     "after": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+    },
+    {
+     "path": "/parameters/159/source/0/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/parameters/159/source/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+     "after": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+    },
+    {
+     "path": "/parameters/159/source/1/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/parameters/159/source/1/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+     "after": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+    },
+    {
+     "path": "/parameters/160/source/1/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/parameters/160/source/1/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+     "after": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+    },
+    {
+     "path": "/parameters/161/source/0/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/parameters/161/source/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+     "after": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+    },
+    {
+     "path": "/parameters/162/source/0/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/parameters/162/source/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+     "after": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+    },
+    {
+     "path": "/parameters/163/source/0/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/parameters/163/source/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+     "after": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+    },
+    {
+     "path": "/parameters/164/source/1/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/parameters/165/source/0/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/parameters/165/source/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+     "after": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+    },
+    {
+     "path": "/parameters/165/source/1/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/parameters/165/source/1/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+     "after": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+    },
+    {
+     "path": "/parameters/166/source/0/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/parameters/166/source/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+     "after": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+    },
+    {
+     "path": "/parameters/167/source/0/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/parameters/167/source/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+     "after": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+    },
+    {
+     "path": "/parameters/167/source/1/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/parameters/167/source/1/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+     "after": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+    },
+    {
+     "path": "/parameters/168/source/0/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/parameters/168/source/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+     "after": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+    },
+    {
+     "path": "/parameters/168/source/1/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/parameters/168/source/1/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+     "after": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+    },
+    {
+     "path": "/parameters/169/source/1/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/parameters/170/source/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/parameters/170/source/1/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/parameters/170/source/1/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+     "after": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+    },
+    {
+     "path": "/parameters/171/source/0/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/parameters/171/source/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+     "after": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+    },
+    {
+     "path": "/parameters/175/source/2/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316",
+     "after": "96764681d13d05f2f566ec04417049c65f1116955ba91870a7d3a713c0d5098a"
+    },
+    {
+     "path": "/parameters/178/source/2/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316",
+     "after": "96764681d13d05f2f566ec04417049c65f1116955ba91870a7d3a713c0d5098a"
+    },
+    {
+     "path": "/parameters/179/source/2/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316",
+     "after": "96764681d13d05f2f566ec04417049c65f1116955ba91870a7d3a713c0d5098a"
+    },
+    {
+     "path": "/parameters/182/source/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/parameters/183/source/1/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/parameters/184/source/2/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316",
+     "after": "96764681d13d05f2f566ec04417049c65f1116955ba91870a7d3a713c0d5098a"
+    },
+    {
+     "path": "/parameters/192/source/0/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/parameters/192/source/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+     "after": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+    },
+    {
+     "path": "/parameters/193/source/0/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/parameters/193/source/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+     "after": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+    },
+    {
+     "path": "/parameters/197/source/2/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/parameters/197/source/6/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "bcecab6147d62564669c0f154c3c1c7eceb5150a86bd9cb5f99b0b7f6daa6f63",
+     "after": "8240f49dbdfe9eef3dc2a1ab854a276e27a8eb435ddb2f6c62e48be5e511e0fe"
+    },
+    {
+     "path": "/parameters/198/source/2/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "bcecab6147d62564669c0f154c3c1c7eceb5150a86bd9cb5f99b0b7f6daa6f63",
+     "after": "8240f49dbdfe9eef3dc2a1ab854a276e27a8eb435ddb2f6c62e48be5e511e0fe"
+    },
+    {
+     "path": "/parameters/199/source/6/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "bcecab6147d62564669c0f154c3c1c7eceb5150a86bd9cb5f99b0b7f6daa6f63",
+     "after": "8240f49dbdfe9eef3dc2a1ab854a276e27a8eb435ddb2f6c62e48be5e511e0fe"
+    },
+    {
+     "path": "/parameters/199/source/7/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "bcecab6147d62564669c0f154c3c1c7eceb5150a86bd9cb5f99b0b7f6daa6f63",
+     "after": "8240f49dbdfe9eef3dc2a1ab854a276e27a8eb435ddb2f6c62e48be5e511e0fe"
+    },
+    {
+     "path": "/parameters/200/source/2/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "bcecab6147d62564669c0f154c3c1c7eceb5150a86bd9cb5f99b0b7f6daa6f63",
+     "after": "8240f49dbdfe9eef3dc2a1ab854a276e27a8eb435ddb2f6c62e48be5e511e0fe"
+    },
+    {
+     "path": "/parameters/200/source/3/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "bcecab6147d62564669c0f154c3c1c7eceb5150a86bd9cb5f99b0b7f6daa6f63",
+     "after": "8240f49dbdfe9eef3dc2a1ab854a276e27a8eb435ddb2f6c62e48be5e511e0fe"
+    },
+    {
+     "path": "/parameters/201/source/1/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "bcecab6147d62564669c0f154c3c1c7eceb5150a86bd9cb5f99b0b7f6daa6f63",
+     "after": "8240f49dbdfe9eef3dc2a1ab854a276e27a8eb435ddb2f6c62e48be5e511e0fe"
+    },
+    {
+     "path": "/parameters/202/source/4/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "bcecab6147d62564669c0f154c3c1c7eceb5150a86bd9cb5f99b0b7f6daa6f63",
+     "after": "8240f49dbdfe9eef3dc2a1ab854a276e27a8eb435ddb2f6c62e48be5e511e0fe"
+    },
+    {
+     "path": "/parameters/202/source/5/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "bcecab6147d62564669c0f154c3c1c7eceb5150a86bd9cb5f99b0b7f6daa6f63",
+     "after": "8240f49dbdfe9eef3dc2a1ab854a276e27a8eb435ddb2f6c62e48be5e511e0fe"
+    },
+    {
+     "path": "/parameters/203/source/1/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "bcecab6147d62564669c0f154c3c1c7eceb5150a86bd9cb5f99b0b7f6daa6f63",
+     "after": "8240f49dbdfe9eef3dc2a1ab854a276e27a8eb435ddb2f6c62e48be5e511e0fe"
+    },
+    {
+     "path": "/parameters/204/source/2/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316",
+     "after": "96764681d13d05f2f566ec04417049c65f1116955ba91870a7d3a713c0d5098a"
+    },
+    {
+     "path": "/parameters/204/source/4/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316",
+     "after": "96764681d13d05f2f566ec04417049c65f1116955ba91870a7d3a713c0d5098a"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/0/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/1/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/2/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/3/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/4/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/5/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/6/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/7/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/8/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/9/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/10/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/11/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/12/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/13/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/14/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/15/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/16/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/17/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/18/blocking",
+     "change": "CHANGED",
+     "class": "LABEL",
+     "before": "no determining evaluation with evidenced terms: bus_power_boundary_a9_v1 [PLAN_OR_FRAMEWORK]",
+     "after": "no determining evaluation with evidenced terms: bus_power_boundary_a9_v2 [PLAN_OR_FRAMEWORK]"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/18/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/19/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/20/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/21/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/22/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/23/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/24/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/25/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/26/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/27/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/28/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/blocking_evidence/rows/29/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/sources/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/sources/1/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/0/sources/2/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/1/sources/1/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/architecture_gates/3/sources/2/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "26bf86ec11a975f6fdd70702652ece30ef80ad46ecd8446a51b2423c03da1350",
+     "after": "3f99a90c9491106a030bfce8043dd456a37537c220795b2bc1caff058b2139db"
+    },
+    {
+     "path": "/architecture_gates/3/sources/3/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/architecture_gates/4/sources/2/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/architecture_gates/7/sources/1/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "9a3270b5631979889ab6151aac423c2bc4a08e3da2004868f826ba5cb8dcc617",
+     "after": "9e1343a529e4c8e68ffcbf69b598edff680271a93494fddbcc7bba27b521c334"
+    },
+    {
+     "path": "/architecture_gates/8/sources/1/path",
+     "change": "CHANGED",
+     "class": "PATH",
+     "before": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "after": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+    },
+    {
+     "path": "/architecture_gates/8/sources/1/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+     "after": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+    },
+    {
+     "path": "/architecture_gates/9/sources/1/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/architecture_gates/10/sources/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/10/sources/1/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/architecture_gates/11/sources/2/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/architecture_gates/12/sources/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/architecture_gates/12/sources/1/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/architecture_gates/14/sources/3/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/14/sources/4/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/architecture_gates/14/sources/6/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/pre_lock1_gates/0/sources/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+     "after": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"
+    },
+    {
+     "path": "/owner_question_rollup/a9_7_lane_questions/28/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/owner_question_rollup/a9_7_lane_questions/29/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/owner_question_rollup/a9_7_lane_questions/30/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/owner_question_rollup/a9_7_lane_questions/31/source/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/design_findings_for_owner/0/evidence/F7/source/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/design_findings_for_owner/0/evidence/F7/source/1/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/design_findings_for_owner/0/evidence/F7/source/2/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/design_findings_for_owner/0/evidence/F7/source/3/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/design_findings_for_owner/0/evidence/F7/source/4/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/design_findings_for_owner/0/evidence/F7/source/5/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/design_findings_for_owner/0/evidence/F8/source/1/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/design_findings_for_owner/0/evidence/F8/source/2/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/design_findings_for_owner/0/sources/0/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/design_findings_for_owner/0/sources/1/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/design_findings_for_owner/0/sources/2/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/design_findings_for_owner/0/sources/13/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/design_findings_for_owner/0/sources/14/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/design_findings_for_owner/0/sources/15/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/design_findings_for_owner/0/sources/16/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/design_findings_for_owner/0/sources/17/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/design_findings_for_owner/0/sources/18/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/design_findings_for_owner/0/sources/20/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    },
+    {
+     "path": "/design_findings_for_owner/0/sources/21/sha256",
+     "change": "CHANGED",
+     "class": "PIN_SHA",
+     "before": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce",
+     "after": "204fab17fd74f0180407b9db34dd2fdec7121a1f7e9735f195a269b0892df8d1"
+    }
+   ]
+  },
+  {
+   "family": "F9 architecture freeze candidate",
+   "path": "docs/architecture/freeze_candidate/ARCHITECTURE_FREEZE_CANDIDATE.md",
+   "kind": "markdown",
+   "regenerated_by": "docs/architecture/freeze_candidate/build_freeze_candidate.py",
+   "sha256_before": "0ebc2c73fd57da6f8c297566c575c3f73f47079479523e85663a3482b0052b95",
+   "sha256_after": "d011e97e57b8186ec32d787805690242bcdea8e3fa75bebf8c5e81b69f0fc44d",
+   "byte_identical": false,
+   "changed_lines": 20,
+   "numbers_in_changed_lines_identical": true,
+   "added_listing_lines": []
+  }
+ ],
+ "remaining_v1_references": [
+  {
+   "path": "abep_sim/design/architecture_optimizer.py",
+   "line": 45,
+   "text": "it from the immutable v1 abep_sim.bus_boundary_a9, whose code objects v2 runs unchanged): the official ledger keeps",
+   "retained_because": "explicit history / re-point bookkeeping (the line names v1 as the predecessor, the carried history or the C1 retention)"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py",
+   "line": 6,
+   "text": "peak_sampled_gate_a9_v3.py; A9.22 G8 stage 2 re-pointed it from the immutable v1 abep_sim.bus_boundary_a9, whose code",
+   "retained_because": "explicit history / re-point bookkeeping (the line names v1 as the predecessor, the carried history or the C1 retention)"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py",
+   "line": 35,
+   "text": "failure - the 1 ms maximum decides (NEW helper peak_sampled_gate_a9_v3.py; bus_boundary_a9 unchanged).",
+   "retained_because": "mass/power v3: v1 module pinned as history of the carried v2 items and the retired C1 power configuration"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py",
+   "line": 94,
+   "text": "BUS_MODULE_V1 = (\"abep_sim/bus_boundary_a9.py\", \"7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a\")",
+   "retained_because": "explicit history / re-point bookkeeping (the line names v1 as the predecessor, the carried history or the C1 retention)"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py",
+   "line": 95,
+   "text": "BUS_VERSION, BUS_VERSION_V1 = \"bus_power_boundary_a9_v2\", \"bus_power_boundary_a9_v1\"",
+   "retained_because": "explicit history / re-point bookkeeping (the line names v1 as the predecessor, the carried history or the C1 retention)"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py",
+   "line": 984,
+   "text": "raise MassError(\"v2 power block no longer names bus_power_boundary_a9_v1; review the A9.22 G8 re-point\")",
+   "retained_because": "mass/power v3: v1 module pinned as history of the carried v2 items and the retired C1 power configuration"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py",
+   "line": 993,
+   "text": "if st[\"template\"] != \"bus_boundary_a9.SEQUENCE_TEMPLATES (PROPOSED, row 112)\":",
+   "retained_because": "mass/power v3: v1 module pinned as history of the carried v2 items and the retired C1 power configuration"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "line": 147,
+   "text": "\"path\": \"abep_sim/bus_boundary_a9.py\",",
+   "retained_because": "mass/power v3: carried v2 items (MPV2-P0x sources), retired C1 power configuration, v1 history pins (checked field by field below)"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "line": 148,
+   "text": "\"sha256\": \"7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a\",",
+   "retained_because": "mass/power v3: carried v2 items (MPV2-P0x sources), retired C1 power configuration, v1 history pins (checked field by field below)"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "line": 149,
+   "text": "\"boundary_version\": \"bus_power_boundary_a9_v1\",",
+   "retained_because": "mass/power v3: carried v2 items (MPV2-P0x sources), retired C1 power configuration, v1 history pins (checked field by field below)"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "line": 892,
+   "text": "\"path\": \"abep_sim/bus_boundary_a9.py\",",
+   "retained_because": "mass/power v3: carried v2 items (MPV2-P0x sources), retired C1 power configuration, v1 history pins (checked field by field below)"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "line": 894,
+   "text": "\"sha256\": \"7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a\"",
+   "retained_because": "mass/power v3: carried v2 items (MPV2-P0x sources), retired C1 power configuration, v1 history pins (checked field by field below)"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "line": 918,
+   "text": "\"path\": \"abep_sim/bus_boundary_a9.py\",",
+   "retained_because": "mass/power v3: carried v2 items (MPV2-P0x sources), retired C1 power configuration, v1 history pins (checked field by field below)"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "line": 920,
+   "text": "\"sha256\": \"7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a\"",
+   "retained_because": "mass/power v3: carried v2 items (MPV2-P0x sources), retired C1 power configuration, v1 history pins (checked field by field below)"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "line": 944,
+   "text": "\"path\": \"abep_sim/bus_boundary_a9.py\",",
+   "retained_because": "mass/power v3: carried v2 items (MPV2-P0x sources), retired C1 power configuration, v1 history pins (checked field by field below)"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "line": 946,
+   "text": "\"sha256\": \"7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a\"",
+   "retained_because": "mass/power v3: carried v2 items (MPV2-P0x sources), retired C1 power configuration, v1 history pins (checked field by field below)"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "line": 970,
+   "text": "\"path\": \"abep_sim/bus_boundary_a9.py\",",
+   "retained_because": "mass/power v3: carried v2 items (MPV2-P0x sources), retired C1 power configuration, v1 history pins (checked field by field below)"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "line": 972,
+   "text": "\"sha256\": \"7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a\"",
+   "retained_because": "mass/power v3: carried v2 items (MPV2-P0x sources), retired C1 power configuration, v1 history pins (checked field by field below)"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "line": 1014,
+   "text": "\"path\": \"abep_sim/bus_boundary_a9.py\",",
+   "retained_because": "mass/power v3: carried v2 items (MPV2-P0x sources), retired C1 power configuration, v1 history pins (checked field by field below)"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "line": 1016,
+   "text": "\"sha256\": \"7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a\"",
+   "retained_because": "mass/power v3: carried v2 items (MPV2-P0x sources), retired C1 power configuration, v1 history pins (checked field by field below)"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "line": 1040,
+   "text": "\"path\": \"abep_sim/bus_boundary_a9.py\",",
+   "retained_because": "mass/power v3: carried v2 items (MPV2-P0x sources), retired C1 power configuration, v1 history pins (checked field by field below)"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "line": 1042,
+   "text": "\"sha256\": \"7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a\"",
+   "retained_because": "mass/power v3: carried v2 items (MPV2-P0x sources), retired C1 power configuration, v1 history pins (checked field by field below)"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "line": 6249,
+   "text": "\"template\": \"bus_boundary_a9.SEQUENCE_TEMPLATES (PROPOSED, row 112)\",",
+   "retained_because": "mass/power v3: carried v2 items (MPV2-P0x sources), retired C1 power configuration, v1 history pins (checked field by field below)"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "line": 6413,
+   "text": "\"boundary_version\": \"bus_power_boundary_a9_v1\",",
+   "retained_because": "mass/power v3: carried v2 items (MPV2-P0x sources), retired C1 power configuration, v1 history pins (checked field by field below)"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "line": 6414,
+   "text": "\"module\": \"abep_sim/bus_boundary_a9.py\",",
+   "retained_because": "mass/power v3: carried v2 items (MPV2-P0x sources), retired C1 power configuration, v1 history pins (checked field by field below)"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "line": 6415,
+   "text": "\"module_sha256\": \"7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a\"",
+   "retained_because": "mass/power v3: carried v2 items (MPV2-P0x sources), retired C1 power configuration, v1 history pins (checked field by field below)"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "line": 6420,
+   "text": "\"boundary_version\": \"bus_power_boundary_a9_v1\",",
+   "retained_because": "mass/power v3: carried v2 items (MPV2-P0x sources), retired C1 power configuration, v1 history pins (checked field by field below)"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "line": 6421,
+   "text": "\"module\": \"abep_sim/bus_boundary_a9.py\",",
+   "retained_because": "mass/power v3: carried v2 items (MPV2-P0x sources), retired C1 power configuration, v1 history pins (checked field by field below)"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "line": 6422,
+   "text": "\"module_sha256\": \"7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a\"",
+   "retained_because": "mass/power v3: carried v2 items (MPV2-P0x sources), retired C1 power configuration, v1 history pins (checked field by field below)"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/peak_sampled_gate_a9_v3.py",
+   "line": 4,
+   "text": "immutable v1 abep_sim/bus_boundary_a9.py, whose code objects and constants v2 uses unchanged). Its rfp_power_gate()",
+   "retained_because": "explicit history / re-point bookkeeping (the line names v1 as the predecessor, the carried history or the C1 retention)"
+  },
+  {
+   "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+   "line": 877,
+   "text": "\"source_v2\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json start-up templates C-S5 / I-S5 (gas not stated)\",",
+   "retained_because": "explicit history / re-point bookkeeping (the line names v1 as the predecessor, the carried history or the C1 retention)"
+  },
+  {
+   "path": "docs/experiments/hall_icp/integration/m16_v5/build_subsystem_maturity_v5.py",
+   "line": 125,
+   "text": "BUS_V1_REL = \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\"",
+   "retained_because": "explicit history / re-point bookkeeping (the line names v1 as the predecessor, the carried history or the C1 retention)"
+  },
+  {
+   "path": "docs/experiments/hall_icp/p1_icp_bench/P1_ICP_BENCH.md",
+   "line": 587,
+   "text": "| docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json | 9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6 | A902-19/21/22/23 definitions | no ledger computat...",
+   "retained_because": "P1: historical_reuse entry and its authority pin keep v1 (A902-19/21/22/23 definitions reused)"
+  },
+  {
+   "path": "docs/experiments/hall_icp/p1_icp_bench/P1_ICP_BENCH.md",
+   "line": 904,
+   "text": "- `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` - `9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6` (A9-02 bus-power boundary v1 (immutable history...",
+   "retained_because": "explicit history / re-point bookkeeping (the line names v1 as the predecessor, the carried history or the C1 retention)"
+  },
+  {
+   "path": "docs/experiments/hall_icp/p1_icp_bench/build_p1_icp_bench.py",
+   "line": 368,
+   "text": "BUS1 = \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\"  # immutable v1 (historical reuse)",
+   "retained_because": "explicit history / re-point bookkeeping (the line names v1 as the predecessor, the carried history or the C1 retention)"
+  },
+  {
+   "path": "docs/experiments/hall_icp/p1_icp_bench/build_p1_icp_bench.py",
+   "line": 406,
+   "text": "(BUS1, \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\",",
+   "retained_because": "P1: historical_reuse entry and its authority pin keep v1 (A902-19/21/22/23 definitions reused)"
+  },
+  {
+   "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+   "line": 135,
+   "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\",",
+   "retained_because": "P1: historical_reuse entry and its authority pin keep v1 (A902-19/21/22/23 definitions reused)"
+  },
+  {
+   "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+   "line": 136,
+   "text": "\"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\",",
+   "retained_because": "P1: historical_reuse entry and its authority pin keep v1 (A902-19/21/22/23 definitions reused)"
+  },
+  {
+   "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+   "line": 6826,
+   "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\",",
+   "retained_because": "P1: historical_reuse entry and its authority pin keep v1 (A902-19/21/22/23 definitions reused)"
+  },
+  {
+   "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+   "line": 6827,
+   "text": "\"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\",",
+   "retained_because": "P1: historical_reuse entry and its authority pin keep v1 (A902-19/21/22/23 definitions reused)"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "line": 2287,
+   "text": "\"repointed_from\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\"",
+   "retained_because": "explicit history / re-point bookkeeping (the line names v1 as the predecessor, the carried history or the C1 retention)"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "line": 2295,
+   "text": "\"repointed_from\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\"",
+   "retained_because": "explicit history / re-point bookkeeping (the line names v1 as the predecessor, the carried history or the C1 retention)"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "line": 2493,
+   "text": "\"repointed_from\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\"",
+   "retained_because": "explicit history / re-point bookkeeping (the line names v1 as the predecessor, the carried history or the C1 retention)"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "line": 9917,
+   "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\",",
+   "retained_because": "RFQ v3: C1 rows RFQ2-GAS-R26 / HALLEL-R22 / R25 / R29, the R14 C1 ground-bench column, carried_from_v2.deliverable_pins and the repoint record keep v1"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "line": 17394,
+   "text": "\"repointed_from\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\"",
+   "retained_because": "explicit history / re-point bookkeeping (the line names v1 as the predecessor, the carried history or the C1 retention)"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "line": 17549,
+   "text": "\"repointed_from\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\"",
+   "retained_because": "explicit history / re-point bookkeeping (the line names v1 as the predecessor, the carried history or the C1 retention)"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "line": 17615,
+   "text": "\"repointed_from\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\"",
+   "retained_because": "explicit history / re-point bookkeeping (the line names v1 as the predecessor, the carried history or the C1 retention)"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "line": 17716,
+   "text": "\"repointed_from\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\"",
+   "retained_because": "explicit history / re-point bookkeeping (the line names v1 as the predecessor, the carried history or the C1 retention)"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "line": 17931,
+   "text": "\"repointed_from\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\"",
+   "retained_because": "explicit history / re-point bookkeeping (the line names v1 as the predecessor, the carried history or the C1 retention)"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "line": 18218,
+   "text": "\"basis\": \"slots with status INSTALLED / VARIANT_ONLY in bus_power_boundary_a9_v2.json (hall_icp_neutralizer); the hall_c1_reference ground-bench column from bus_power_boundary_a9_v1.json (C1 is not...",
+   "retained_because": "explicit history / re-point bookkeeping (the line names v1 as the predecessor, the carried history or the C1 retention)"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "line": 18225,
+   "text": "\"repointed_from\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\"",
+   "retained_because": "explicit history / re-point bookkeeping (the line names v1 as the predecessor, the carried history or the C1 retention)"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "line": 18230,
+   "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\",",
+   "retained_because": "RFQ v3: C1 rows RFQ2-GAS-R26 / HALLEL-R22 / R25 / R29, the R14 C1 ground-bench column, carried_from_v2.deliverable_pins and the repoint record keep v1"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "line": 18285,
+   "text": "\"basis_v2\": \"slots with status INSTALLED / VARIANT_ONLY in bus_power_boundary_a9_v1.json\"",
+   "retained_because": "RFQ v3: C1 rows RFQ2-GAS-R26 / HALLEL-R22 / R25 / R29, the R14 C1 ground-bench column, carried_from_v2.deliverable_pins and the repoint record keep v1"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "line": 18317,
+   "text": "\"repointed_from\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\"",
+   "retained_because": "explicit history / re-point bookkeeping (the line names v1 as the predecessor, the carried history or the C1 retention)"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "line": 18461,
+   "text": "\"repointed_from\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\"",
+   "retained_because": "explicit history / re-point bookkeeping (the line names v1 as the predecessor, the carried history or the C1 retention)"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "line": 18469,
+   "text": "\"repointed_from\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\"",
+   "retained_because": "explicit history / re-point bookkeeping (the line names v1 as the predecessor, the carried history or the C1 retention)"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "line": 18477,
+   "text": "\"repointed_from\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\"",
+   "retained_because": "explicit history / re-point bookkeeping (the line names v1 as the predecessor, the carried history or the C1 retention)"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "line": 18806,
+   "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\",",
+   "retained_because": "RFQ v3: C1 rows RFQ2-GAS-R26 / HALLEL-R22 / R25 / R29, the R14 C1 ground-bench column, carried_from_v2.deliverable_pins and the repoint record keep v1"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "line": 18977,
+   "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\",",
+   "retained_because": "RFQ v3: C1 rows RFQ2-GAS-R26 / HALLEL-R22 / R25 / R29, the R14 C1 ground-bench column, carried_from_v2.deliverable_pins and the repoint record keep v1"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "line": 18984,
+   "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\",",
+   "retained_because": "RFQ v3: C1 rows RFQ2-GAS-R26 / HALLEL-R22 / R25 / R29, the R14 C1 ground-bench column, carried_from_v2.deliverable_pins and the repoint record keep v1"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "line": 19199,
+   "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\",",
+   "retained_because": "RFQ v3: C1 rows RFQ2-GAS-R26 / HALLEL-R22 / R25 / R29, the R14 C1 ground-bench column, carried_from_v2.deliverable_pins and the repoint record keep v1"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "line": 19206,
+   "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\",",
+   "retained_because": "RFQ v3: C1 rows RFQ2-GAS-R26 / HALLEL-R22 / R25 / R29, the R14 C1 ground-bench column, carried_from_v2.deliverable_pins and the repoint record keep v1"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "line": 43035,
+   "text": "\"rule\": \"A9.22 G8 stage 2 (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json G8_BUS_BOUNDARY): requirement sources citing bus_power_boundary_a9_v1 re-point to bus_power_bound...",
+   "retained_because": "explicit history / re-point bookkeeping (the line names v1 as the predecessor, the carried history or the C1 retention)"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "line": 43041,
+   "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\",",
+   "retained_because": "RFQ v3: C1 rows RFQ2-GAS-R26 / HALLEL-R22 / R25 / R29, the R14 C1 ground-bench column, carried_from_v2.deliverable_pins and the repoint record keep v1"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "line": 43042,
+   "text": "\"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\"",
+   "retained_because": "RFQ v3: C1 rows RFQ2-GAS-R26 / HALLEL-R22 / R25 / R29, the R14 C1 ground-bench column, carried_from_v2.deliverable_pins and the repoint record keep v1"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "line": 45715,
+   "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\",",
+   "retained_because": "RFQ v3: C1 rows RFQ2-GAS-R26 / HALLEL-R22 / R25 / R29, the R14 C1 ground-bench column, carried_from_v2.deliverable_pins and the repoint record keep v1"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "line": 45716,
+   "text": "\"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\"",
+   "retained_because": "RFQ v3: C1 rows RFQ2-GAS-R26 / HALLEL-R22 / R25 / R29, the R14 C1 ground-bench column, carried_from_v2.deliverable_pins and the repoint record keep v1"
+  },
+  {
+   "path": "docs/requirements/rvm_a9/RVM_A9.md",
+   "line": 439,
+   "text": "- **hall_c1_reference: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: bus_power_boundary_a9_v1 [PLAN_OR_FRAMEWORK]",
+   "retained_because": "RVM: hall_c1_reference ground-reference cells (RVM-19 / RVM-20) and the BUS_V1 reference keep v1"
+  },
+  {
+   "path": "docs/requirements/rvm_a9/RVM_A9.md",
+   "line": 440,
+   "text": "- [DETERMINING/PLAN_OR_FRAMEWORK] `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` `bus_power_boundary_a9_v1`: PLANNED / FRAMEWORK ONLY - nothing measured; package sta...",
+   "retained_because": "RVM: hall_c1_reference ground-reference cells (RVM-19 / RVM-20) and the BUS_V1 reference keep v1"
+  },
+  {
+   "path": "docs/requirements/rvm_a9/RVM_A9.md",
+   "line": 455,
+   "text": "- [SUPPORTING/PLAN_OR_FRAMEWORK] `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` `bus_power_boundary_a9_v1`: PLANNED / FRAMEWORK ONLY - nothing measured; package stat...",
+   "retained_because": "RVM: hall_c1_reference ground-reference cells (RVM-19 / RVM-20) and the BUS_V1 reference keep v1"
+  },
+  {
+   "path": "docs/requirements/rvm_a9/RVM_A9.md",
+   "line": 938,
+   "text": "- read, not pinned: `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` (A9-02 bus-power boundary (1 ms gate, 1.35 kW allocation))",
+   "retained_because": "RVM: hall_c1_reference ground-reference cells (RVM-19 / RVM-20) and the BUS_V1 reference keep v1"
+  },
+  {
+   "path": "docs/requirements/rvm_a9/build_rvm_a9.py",
+   "line": 139,
+   "text": "\"BUS_V1\": (\"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\", \"id\",",
+   "retained_because": "explicit history / re-point bookkeeping (the line names v1 as the predecessor, the carried history or the C1 retention)"
+  },
+  {
+   "path": "docs/requirements/rvm_a9/build_rvm_a9.py",
+   "line": 140,
+   "text": "\"bus_power_boundary_a9_v1\", \"A9-02 bus-power boundary (1 ms gate, 1.35 kW allocation)\"),  # v1 role text",
+   "retained_because": "explicit history / re-point bookkeeping (the line names v1 as the predecessor, the carried history or the C1 retention)"
+  },
+  {
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "line": 293,
+   "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\",",
+   "retained_because": "RVM: hall_c1_reference ground-reference cells (RVM-19 / RVM-20) and the BUS_V1 reference keep v1"
+  },
+  {
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "line": 295,
+   "text": "\"id\": \"bus_power_boundary_a9_v1\"",
+   "retained_because": "RVM: hall_c1_reference ground-reference cells (RVM-19 / RVM-20) and the BUS_V1 reference keep v1"
+  },
+  {
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "line": 6768,
+   "text": "\"reason\": \"no determining evaluation with evidenced terms: bus_power_boundary_a9_v1 [PLAN_OR_FRAMEWORK]\",",
+   "retained_because": "RVM: hall_c1_reference ground-reference cells (RVM-19 / RVM-20) and the BUS_V1 reference keep v1"
+  },
+  {
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "line": 6772,
+   "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\",",
+   "retained_because": "RVM: hall_c1_reference ground-reference cells (RVM-19 / RVM-20) and the BUS_V1 reference keep v1"
+  },
+  {
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "line": 6773,
+   "text": "\"id\": \"bus_power_boundary_a9_v1\",",
+   "retained_because": "RVM: hall_c1_reference ground-reference cells (RVM-19 / RVM-20) and the BUS_V1 reference keep v1"
+  },
+  {
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "line": 6982,
+   "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\",",
+   "retained_because": "RVM: hall_c1_reference ground-reference cells (RVM-19 / RVM-20) and the BUS_V1 reference keep v1"
+  },
+  {
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "line": 6983,
+   "text": "\"id\": \"bus_power_boundary_a9_v1\",",
+   "retained_because": "RVM: hall_c1_reference ground-reference cells (RVM-19 / RVM-20) and the BUS_V1 reference keep v1"
+  },
+  {
+   "path": "tests/test_mass_power_a9_v3.py",
+   "line": 39,
+   "text": "\"abep_sim/bus_boundary_a9.py\": \"7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a\",",
+   "retained_because": "v1 module pin kept as history (carried v2 items)"
+  },
+  {
+   "path": "tests/test_single_flight_configuration.py",
+   "line": 17,
+   "text": "(``bus_power_boundary_a9_v1.json``, dated 2026-09-29); it is accepted only while it stays byte-identical to that",
+   "retained_because": "scan allowance for the byte-identical v1 document"
+  },
+  {
+   "path": "tests/test_single_flight_configuration.py",
+   "line": 54,
+   "text": "PINNED_PRE_A9_19 = {\"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\":",
+   "retained_because": "scan allowance for the byte-identical v1 document"
+  },
+  {
+   "path": "tests/test_single_flight_configuration.py",
+   "line": 55,
+   "text": "\"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\"}",
+   "retained_because": "scan allowance for the byte-identical v1 document"
+  }
+ ]
+}
