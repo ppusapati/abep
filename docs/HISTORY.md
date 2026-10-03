@@ -3162,3 +3162,18 @@ that launched it ended before its lanes merged. It was re-run from fd91185 as th
   NOT_APPLICABLE_TO_ARTIFACTS 3, SUPERSEDED_BY_LATER_DECISION 2.
 - **Regenerated:** F4 -> F7/F8 -> F9 -> matrix (H-1 pin). Checks: 3830 passed / 5 skipped / 1 xfailed, rule-9 outcome check
   passes, golden OK, ci_checks 11/11. No production physics module, frozen dataset or golden changed.
+
+## 2026-10-03 — M16 v5 (scheduler re-derived from A9.8-A9.21) + review fixes (parallel review/fix model)
+
+Owner instruction 2026-10-03: rapid delivery; review, verification and fixes run in parallel with implementation.
+- **M16 v5 (lane c4062e0, 7b5e985).** New `docs/experiments/hall_icp/integration/m16_v5/` re-derives every M16 row's
+  blockers from owner answers A9.8-A9.21 (state v5 + pinned later records), the A9.21 programme order and GNG-ICP-01;
+  M16 v4 and state v4 byte-identical. 21 rows; readiness unchanged (20 BLOCKED, 1 SUPERSEDED_FOR_PRIMARY_LINE): rule
+  R-M16V5-03, a state advances only on a registered measured artifact, never on an authorising answer. 59 blockers removed
+  (54 answered owner questions, 5 scheduler items changed), 103 remain (31 hardware run, 26 external input, 25 owner act, 21
+  evidence). No named person fabricated. State v5 RP-A919-01 gains `gate_location` (pointer only). Matrix: S9.4 /
+  M16-V3-Q-01 re-derivation APPLIED (named persons PENDING_EVIDENCE).
+- **Code review fixes (cbd55ab).** Fail-open paths found by the parallel correctness review of fd91185..9d0f851 closed,
+  each with a regression test (details in the commit message).
+- **Regenerated:** H-1 (state v5 pin) -> F4 -> F7/F8 -> F9 -> matrix. Targeted suites for every touched artifact: 313
+  passed; builders --check current; full-suite result recorded with the next integration.
