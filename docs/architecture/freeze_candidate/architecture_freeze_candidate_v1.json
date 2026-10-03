@@ -394,6 +394,14 @@
   "A920_MD": {
    "path": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
    "sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c"
+  },
+  "A921": {
+   "path": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+   "sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549"
+  },
+  "A921_MD": {
+   "path": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+   "sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440"
   }
  },
  "consumed": {
@@ -459,7 +467,7 @@
   },
   "RVM": {
    "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-   "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
   },
   "RFP": {
    "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
@@ -555,7 +563,7 @@
   "PARETO_SET": "the value is a Pareto set (or a set of Pareto members' values); no member is selected",
   "PARAMETRIC_SENSITIVITY": "computed from uncited code-default coefficients and / or parametric cases (A9.7 F3 / F4 / F7 / F8 label); never a design value, a CBE or a requirement",
   "ALLOCATION": "owner allocation (budget), not a CBE and not a measured value",
-  "REQUIREMENT_AS_RECORDED": "RFP value as recorded from secondary sources (official RFP not in the repository; RVM requirement_frozen = false)",
+  "REQUIREMENT_AS_RECORDED": "RFP value as recorded in the project requirement records (owner rows / RVM); the official RFP is registered by sha256 with a verbatim clause transcription (docs/requirements/rfp_official/rfp_registration_v1.json; the PDF itself is kept in the controlled evidence store, not in the repository; A9.17 RFP) and the RVM re-based on it; each such parameter cites its registered clause id(s) through the RVM row the re-base maps (rfp_citation); RVM requirement_frozen = false until the owner closes AG-15",
   "WINDOW": "admissible window or analog envelope, not a design point",
   "RULE": "decision, convention or interface rule"
  },
@@ -7170,7 +7178,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+     "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
@@ -7187,18 +7195,39 @@
      "note": "A9.14 OD12 (S9.11)"
     }
    ],
-   "basis": "owner row 55; A9.14 RVMQ-01 (S9.13) / OD12 (S9.11); RFP clause owner-stated, pending registration (AG-15)",
+   "basis": "owner row 55; A9.14 RVMQ-01 (S9.13) / OD12 (S9.11); RFP clause registered (RFP-P18-09, RFP-P18-02; via RVM-19, RVM re-base; AG-15 closure pending the owner)",
    "freeze_status": "TBD_AFTER_EVIDENCE",
    "evidence_to_advance": [
     "single-point-failure / FMEA analysis of electronics and sensors",
-    "official RFP registered (AG-15)"
+    "owner AG-15 closure (the official RFP is registered by hash and the RVM re-based; requirement_frozen pending the owner)"
    ],
    "a9_16": {
     "decisions": [
      "A9.14 RVMQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
      "A9.14 OD12 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     ],
-    "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+    "rfp_citation_status": "REGISTERED_CLAUSE",
+    "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+    "rfp_clause_ids": [
+     "RFP-P18-09",
+     "RFP-P18-02"
+    ],
+    "rfp_rvm_rows": [
+     "RVM-19"
+    ],
+    "rfp_correspondence": [
+     {
+      "rvm_row": "RVM-19",
+      "kind": "RVM_REBASE_DECISION",
+      "evidence": "docs/requirements/rvm_a9/rvm_a9_v1.json RVM-19 rfp_rebase.decisions cite RVMQ-01"
+     },
+     {
+      "rvm_row": "RVM-19",
+      "kind": "RVM_REBASE_DECISION",
+      "evidence": "docs/requirements/rvm_a9/rvm_a9_v1.json RVM-19 rfp_rebase.decisions cite OD12"
+     }
+    ],
+    "rfp_citation_note": "registered clause(s) RFP-P18-09, RFP-P18-02 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-19; AG-15 closure is the owner's, requirement_frozen stays false"
    }
   },
   {
@@ -7239,7 +7268,25 @@
    "freeze_status": "OPEN",
    "evidence_to_advance": [
     "official RFP wording (owner row 1)"
-   ]
+   ],
+   "rfp_citation": {
+    "rfp_citation_status": "REGISTERED_CLAUSE",
+    "rfp_clause_ids": [
+     "RFP-P18-10",
+     "RFP-P18-01"
+    ],
+    "rfp_rvm_rows": [
+     "RVM-04"
+    ],
+    "rfp_correspondence": [
+     {
+      "rvm_row": "RVM-04",
+      "kind": "PARAMETER_FACT",
+      "evidence": "F9 parameter 'P_bus,1ms,max' = docs/requirements/rvm_a9/rvm_a9_v1.json RVM-04 requirement 'P_bus,1ms,max'"
+     }
+    ],
+    "rfp_citation_note": "registered clause(s) RFP-P18-10, RFP-P18-01 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-04; AG-15 closure is the owner's, requirement_frozen stays false"
+   }
   },
   {
    "id": "AFC-SY-PWR-02",
@@ -7358,7 +7405,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rows/3/configurations/hall_icp_neutralizer",
-     "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+     "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
     }
    ],
    "basis": "mass_power v2 (A9-02 boundary)",
@@ -7794,7 +7841,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rows/5",
-     "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+     "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
     },
     {
      "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
@@ -7806,7 +7853,24 @@
    "freeze_status": "OPEN",
    "evidence_to_advance": [
     "official RFP wording (owner row 1)"
-   ]
+   ],
+   "rfp_citation": {
+    "rfp_citation_status": "REGISTERED_CLAUSE",
+    "rfp_clause_ids": [
+     "RFP-P18-11"
+    ],
+    "rfp_rvm_rows": [
+     "RVM-06"
+    ],
+    "rfp_correspondence": [
+     {
+      "rvm_row": "RVM-06",
+      "kind": "F9_SOURCE_POINTER",
+      "evidence": "F9 source docs/requirements/rvm_a9/rvm_a9_v1.json/rows/5 = RVM-06"
+     }
+    ],
+    "rfp_citation_note": "registered clause(s) RFP-P18-11 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-06; AG-15 closure is the owner's, requirement_frozen stays false"
+   }
   },
   {
    "id": "AFC-SY-MASS-INT",
@@ -7832,7 +7896,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rows/6",
-     "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+     "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
     }
    ],
    "basis": "owner row 53 (both evaluated; 40 kg stays the hard limit)",
@@ -8354,7 +8418,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rows/9",
-     "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+     "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
@@ -8397,7 +8461,7 @@
      "note": "A9.20 C1_GROUND_ONLY_LABORATORY_REFERENCE (verbatim docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md sha256 2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c)"
     }
    ],
-   "basis": "owner row 6; A9.15 governing_rule; A9.14 XA9Q-07 / OD6 as amended by A9.15; RFP content owner-stated, pending registration (AG-15); A9.19 amends A9.15 on the ROLE of Xe (contingency / emergency; capability required)",
+   "basis": "owner row 6; A9.15 governing_rule; A9.14 XA9Q-07 / OD6 as amended by A9.15; RFP content registered (RFP-P18-08, RFP-P17-05, RFP-P16-02; via RVM-10, RVM re-base; AG-15 closure pending the owner); A9.19 amends A9.15 on the ROLE of Xe (contingency / emergency; capability required)",
    "freeze_status": "TBD_AFTER_EVIDENCE",
    "evidence_to_advance": [
     "mission mode profile (XV2-18 events / duration / flow)",
@@ -8409,9 +8473,36 @@
      "A9.14 XA9Q-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c); amended by A9.15 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309)",
      "A9.14 OD6 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c); amended by A9.15 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309)"
     ],
-    "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+    "rfp_citation_status": "REGISTERED_CLAUSE",
     "icp_gas_mode": "unchanged: A9.1 G-REUSE primary; G-XE a declared ICP-feed variant",
-    "current_source_rule": "xe_accounting_a9_v3 / mass_power_a9_v3 / state v5 govern; the v2 / v4 sources are history (A9.16 repair F8)"
+    "current_source_rule": "xe_accounting_a9_v3 / mass_power_a9_v3 / state v5 govern; the v2 / v4 sources are history (A9.16 repair F8)",
+    "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+    "rfp_clause_ids": [
+     "RFP-P18-08",
+     "RFP-P17-05",
+     "RFP-P16-02"
+    ],
+    "rfp_rvm_rows": [
+     "RVM-10"
+    ],
+    "rfp_correspondence": [
+     {
+      "rvm_row": "RVM-10",
+      "kind": "RVM_A9_16_DECISION",
+      "evidence": "docs/requirements/rvm_a9/rvm_a9_v1.json RVM-10 a9_16.decisions cite XA9Q-07"
+     },
+     {
+      "rvm_row": "RVM-10",
+      "kind": "RVM_A9_16_DECISION",
+      "evidence": "docs/requirements/rvm_a9/rvm_a9_v1.json RVM-10 a9_16.decisions cite OD6"
+     },
+     {
+      "rvm_row": "RVM-10",
+      "kind": "RVM_A9_15_APPLIED",
+      "evidence": "docs/requirements/rvm_a9/rvm_a9_v1.json a9_16_owner_answers_applied (A9.15 governing_rule) names RVM-10"
+     }
+    ],
+    "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-10; AG-15 closure is the owner's, requirement_frozen stays false"
    },
    "current_sources": [
     "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json/propellant_policy"
@@ -8928,7 +9019,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/0/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -8947,7 +9038,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/1/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -8967,7 +9058,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/2/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -8987,7 +9078,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/3/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -9004,7 +9095,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/4/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -9023,7 +9114,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/5/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -9040,7 +9131,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/6/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -9063,7 +9154,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/7/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -9083,7 +9174,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/8/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -9104,7 +9195,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/9/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -9123,7 +9214,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/10/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -9142,7 +9233,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/11/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -9161,7 +9252,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/12/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -9178,7 +9269,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/13/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -9195,7 +9286,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/14/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -9217,7 +9308,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/15/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -9234,7 +9325,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/16/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -9254,7 +9345,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/17/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -9274,7 +9365,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/18/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -9294,7 +9385,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/19/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -9315,7 +9406,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/20/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -9335,7 +9426,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/21/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -9354,7 +9445,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/22/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -9373,7 +9464,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/23/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -9397,7 +9488,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/24/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -9418,7 +9509,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/25/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -9435,7 +9526,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/26/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -9452,7 +9543,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/27/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -9472,7 +9563,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/28/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      },
      {
@@ -9489,7 +9580,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/29/configurations/hall_icp_neutralizer",
-       "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+       "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
       }
      }
     ],
@@ -9509,17 +9600,17 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/status_counts/hall_icp_neutralizer",
-     "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+     "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
     },
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rfp_registered_in_repository",
-     "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+     "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
     },
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rfp_rebase/ag_15_status",
-     "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+     "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
     }
    ],
    "evidence_plan_steps": [
@@ -9963,7 +10054,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rows/5/configurations/hall_icp_neutralizer",
-     "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+     "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
@@ -10021,7 +10112,30 @@
     "characterization_coverage_role": "CHARACTERIZATION_COVERAGE_ONLY_NOT_A_PASS_FAIL_REQUIREMENT",
     "engineering_warning": "the parametric upstream frontier (0.09832423 mg/s all-state, single setpoint) is low relative to the ground-characterization envelope: an engineering warning, not a demonstrated requirement failure (A9.13 owner_statements.flight_flow_requirement)",
     "evaluator": "a9_16_f9.ag12_feed_state_sufficiency (fail closed; refuses a fixed mg/s gate)",
-    "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+    "rfp_citation_status": "REGISTERED_CLAUSE",
+    "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+    "rfp_clause_ids": [
+     "RFP-P18-04",
+     "RFP-P18-05",
+     "RFP-P18-06"
+    ],
+    "rfp_rvm_rows": [
+     "RVM-01",
+     "RVM-02"
+    ],
+    "rfp_correspondence": [
+     {
+      "rvm_row": "RVM-01",
+      "kind": "VERBATIM_FACT",
+      "evidence": "owner verbatim '180–230 km' (F9-OQ-02) = docs/requirements/rvm_a9/rvm_a9_v1.json RVM-01 '180-230 km'"
+     },
+     {
+      "rvm_row": "RVM-02",
+      "kind": "VERBATIM_FACT",
+      "evidence": "owner verbatim '12–25 mN' (F9-OQ-02) = docs/requirements/rvm_a9/rvm_a9_v1.json RVM-02 '12-25 mN'"
+     }
+    ],
+    "rfp_citation_note": "registered clause(s) RFP-P18-04, RFP-P18-05, RFP-P18-06 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-01, RVM-02; AG-15 closure is the owner's, requirement_frozen stays false"
    },
    "sources": [
     {
@@ -10342,12 +10456,12 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rfp_rebase/clause_coverage",
-     "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+     "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
     },
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rfp_rebase/ag_15_status",
-     "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+     "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
     },
     {
      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
@@ -10387,6 +10501,65 @@
    }
   }
  ],
+ "pre_lock1_gates": [
+  {
+   "id": "GNG-ICP-01",
+   "gate": "ICP go / no-go (mandatory, before LOCK-1) for the single Hall + RF/ICP neutralizer flight architecture (A9.19: no hollow-cathode fallback)",
+   "kind": "OWNER_APPROVED_PRE_LOCK1_GATE",
+   "mandatory": true,
+   "placement": "BEFORE_LOCK-1",
+   "precedes": "LOCK-1",
+   "current_status": "NOT_EVALUATED",
+   "status_reason": "no owner-accepted GO / NO-GO criterion (criteria PENDING_OWNER_ACCEPTANCE); fail closed (A9.21)",
+   "evidence_sufficient_for_freeze": false,
+   "criteria": "PENDING_OWNER_ACCEPTANCE",
+   "evidence": [],
+   "fail_closed_rule": "missing required evidence -> NOT_EVALUATED, never GO (A9.21); GO only when every owner-accepted criterion is MET on registered evidence",
+   "proposed_criteria_for_owner_review": {
+    "source_proposal": "RP-A919-01",
+    "source": "docs/requirements/rvm_a9/rvm_a9_v1.json recorder_proposals_open_for_owner[id=RP-A919-01] (a9_19_rvm.RECORDER_PROPOSALS)",
+    "text_verbatim": "ICP go / no-go before LOCK-1 for the single Hall + RF/ICP flight architecture (no hollow-cathode fallback exists after A9.19): (a) measured ICP electron-current capacity I_e,cap >= I_d,max with a pre-registered margin; (b) RF power per extracted ampere (W/A) within the power budget; (c) repeatable ignition on N2 and on Xe.",
+    "numbers_as_recorded": "none proposed: the margin, the W/A budget and the ignition repeatability criterion would be owner / pre-registration values; nothing is invented here",
+    "status": "NOT_APPROVED_PRESERVED_FOR_OWNER_REVIEW",
+    "is_criteria": false,
+    "evaluated": false,
+    "rule": "preserved verbatim for the owner's review (A9.21: 'preserved separately until their text is available for review'); never evaluated, never used as GO / NO-GO criteria; only an owner decision can supply criteria"
+   },
+   "owner_approved": {
+    "decision": "A9.21 ICP_GATE (docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json sha256 78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549; verbatim docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md sha256 01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440)",
+    "decision_code": "ICP_GO_NO_GO_REQUIRED_BEFORE_LOCK1",
+    "approved_scope": "EXISTENCE_AND_PLACEMENT_ONLY (no numerical criterion approved)",
+    "verbatim_excerpt": "4. ICP go/no-go before LOCK-1: I approve the existence and placement of a mandatory ICP go/no-go gate before LOCK-1. I would not yet approve any numerical criterion that I cannot see in the proposal text. The gate must be fail-closed: if its required evidence is missing, the result is `NOT_EVALUATED`, not GO.\nDecision: `ICP_GO_NO_GO_REQUIRED_BEFORE_LOCK1`.\nThe exact proposed GO/NO-GO criteria should be preserved separately until their text is available for review."
+   },
+   "not_in_ag_series": "own id; not one of AG-01 .. AG-15 (their owner approval A9.13 S6.22 F9-OQ-03 covers only those 15 gates); approved by A9.21 ICP_GATE",
+   "evaluator": "docs/requirements/rvm_a9/a9_21_icp_gate.py:evaluate (fail closed) (re-evaluated here from the RVM record)",
+   "sources": [
+    {
+     "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "pointer": "/owner_approved_gates/0",
+     "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+     "pointer": "/decisions/ICP_GATE",
+     "sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "pinned": true,
+     "note": "A9.21 ICP_GATE (verbatim docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md sha256 01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440)"
+    }
+   ]
+  }
+ ],
+ "lock1_precondition": {
+  "lock1_release_reportable": false,
+  "mandatory_pre_lock1_gates": [
+   {
+    "id": "GNG-ICP-01",
+    "status": "NOT_EVALUATED"
+   }
+  ],
+  "rule": "LOCK-1 cannot be reported released while any mandatory pre-LOCK-1 gate is not GO (A9.21 ICP_GATE: fail closed; missing evidence -> NOT_EVALUATED, never GO)",
+  "evaluator": "docs/requirements/rvm_a9/a9_21_icp_gate.py:lock1_release_reportable"
+ },
  "evidence_plan": [
   {
    "id": "EP-01",
@@ -13103,7 +13276,30 @@
    "decision": "A9.13 F9-OQ-02 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
    "decision_code": "PERFORMANCE_DERIVED_FEED_STATE",
    "answer_verbatim": "21. S6.21 — F9-OQ-02 — DO NOT SET A FIXED FLIGHT MASS-FLOW REQUIREMENT; DERIVE IT FROM THE MEASURED H-1 THRUST MAP AND THE RFP DRAG-COMPENSATION REQUIREMENT.\n\nThere is no basis for setting `0.38 mg/s` as the flight requirement. Likewise, the existing approximately `1.3 mg/s` sizing value shall not become a flight requirement merely because it appears in an earlier design basis.\nThe official RFP instead defines the functional orbit and thrust requirement: 180–230 km, intake specification dependent on air density/solar activity, and 12–25 mN thrust for expected drag compensation. RFP(1)\nRedefine AG-12 as a feed-state sufficiency gate, not a fixed-number mass-flow gate.\nFor each required orbit/environment state:\n\n1. determine the required drag-compensation thrust from the registered spacecraft drag basis;\n2. use the measured/validated H-1 map for the actual atmospheric composition to determine the minimum feed state required to produce that thrust within the admitted power/thermal envelope;\n3. require the upstream chain to deliver at least that feed state.\n\nThe feed-state record shall include at least:\n\n* mass flow;\n* pressure;\n* temperature;\n* species composition;\n* applicable transient/ripple quality.\n\nUntil the validated H-1 thrust-versus-feed map exists, AG-12 remains `NOT_EVALUATED`.\nThe 0.38–3.2 mg/s ground range remains useful for characterization coverage but not as an architecture PASS/FAIL requirement.\nDecision: performance-derived, state-specific feed requirement; no arbitrary fixed mg/s flight gate.",
-   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+   "rfp_citation_status": "REGISTERED_CLAUSE",
+   "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+   "rfp_clause_ids": [
+    "RFP-P18-04",
+    "RFP-P18-05",
+    "RFP-P18-06"
+   ],
+   "rfp_rvm_rows": [
+    "RVM-01",
+    "RVM-02"
+   ],
+   "rfp_correspondence": [
+    {
+     "rvm_row": "RVM-01",
+     "kind": "VERBATIM_FACT",
+     "evidence": "owner verbatim '180–230 km' (F9-OQ-02) = docs/requirements/rvm_a9/rvm_a9_v1.json RVM-01 '180-230 km'"
+    },
+    {
+     "rvm_row": "RVM-02",
+     "kind": "VERBATIM_FACT",
+     "evidence": "owner verbatim '12–25 mN' (F9-OQ-02) = docs/requirements/rvm_a9/rvm_a9_v1.json RVM-02 '12-25 mN'"
+    }
+   ],
+   "rfp_citation_note": "registered clause(s) RFP-P18-04, RFP-P18-05, RFP-P18-06 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-01, RVM-02; AG-15 closure is the owner's, requirement_frozen stays false"
   },
   {
    "id": "F9-OQ-03",
@@ -13169,7 +13365,30 @@
    "tests": [
     "tests/test_decision_application_a9_16.py"
    ],
-   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+   "rfp_citation_status": "REGISTERED_CLAUSE",
+   "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+   "rfp_clause_ids": [
+    "RFP-P18-04",
+    "RFP-P18-05",
+    "RFP-P18-06"
+   ],
+   "rfp_rvm_rows": [
+    "RVM-01",
+    "RVM-02"
+   ],
+   "rfp_correspondence": [
+    {
+     "rvm_row": "RVM-01",
+     "kind": "VERBATIM_FACT",
+     "evidence": "owner verbatim '180–230 km' (F9-OQ-02) = docs/requirements/rvm_a9/rvm_a9_v1.json RVM-01 '180-230 km'"
+    },
+    {
+     "rvm_row": "RVM-02",
+     "kind": "VERBATIM_FACT",
+     "evidence": "owner verbatim '12–25 mN' (F9-OQ-02) = docs/requirements/rvm_a9/rvm_a9_v1.json RVM-02 '12-25 mN'"
+    }
+   ],
+   "rfp_citation_note": "registered clause(s) RFP-P18-04, RFP-P18-05, RFP-P18-06 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-01, RVM-02; AG-15 closure is the owner's, requirement_frozen stays false"
   },
   {
    "decision": "A9.13",
@@ -13355,7 +13574,23 @@
    "tests": [
     "tests/test_decision_application_a9_16.py"
    ],
-   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+   "rfp_citation_status": "REGISTERED_CLAUSE",
+   "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+   "rfp_clause_ids": [
+    "RFP-P17-05",
+    "RFP-P17-02"
+   ],
+   "rfp_rvm_rows": [
+    "RVM-09"
+   ],
+   "rfp_correspondence": [
+    {
+     "rvm_row": "RVM-09",
+     "kind": "VERBATIM_FACT",
+     "evidence": "owner verbatim 'N2 and nascent/atomic oxygen' (F2-OQ-01) = docs/requirements/rvm_a9/rvm_a9_v1.json RVM-09 'N2 and nascent (atomic) O'"
+    }
+   ],
+   "rfp_citation_note": "registered clause(s) RFP-P17-05, RFP-P17-02 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-09; AG-15 closure is the owner's, requirement_frozen stays false"
   },
   {
    "decision": "A9.13",
@@ -13392,7 +13627,26 @@
    "tests": [
     "tests/test_decision_application_a9_16.py"
    ],
-   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+   "rfp_citation_status": "REGISTERED_CLAUSE",
+   "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+   "rfp_clause_ids": [
+    "RFP-P18-08",
+    "RFP-P16-02",
+    "RFP-P17-03",
+    "RFP-P17-04",
+    "RFP-P19-03"
+   ],
+   "rfp_rvm_rows": [
+    "RVM-08"
+   ],
+   "rfp_correspondence": [
+    {
+     "rvm_row": "RVM-08",
+     "kind": "VERBATIM_FACT",
+     "evidence": "owner verbatim 'intake → filter → compressor' (F2-OQ-03) = docs/requirements/rvm_a9/rvm_a9_v1.json RVM-08 'intake -> filter -> compressor'"
+    }
+   ],
+   "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P16-02, RFP-P17-03, RFP-P17-04, RFP-P19-03 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-08; AG-15 closure is the owner's, requirement_frozen stays false"
   },
   {
    "decision": "A9.13",
@@ -13519,7 +13773,23 @@
    "tests": [
     "tests/test_decision_application_a9_16.py"
    ],
-   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+   "rfp_citation_status": "REGISTERED_CLAUSE",
+   "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+   "rfp_clause_ids": [
+    "RFP-P18-09",
+    "RFP-P18-02"
+   ],
+   "rfp_rvm_rows": [
+    "RVM-19"
+   ],
+   "rfp_correspondence": [
+    {
+     "rvm_row": "RVM-19",
+     "kind": "RVM_REBASE_DECISION",
+     "evidence": "docs/requirements/rvm_a9/rvm_a9_v1.json RVM-19 rfp_rebase.decisions cite RVMQ-01"
+    }
+   ],
+   "rfp_citation_note": "registered clause(s) RFP-P18-09, RFP-P18-02 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-19; AG-15 closure is the owner's, requirement_frozen stays false"
   },
   {
    "decision": "A9.14",
@@ -13538,7 +13808,23 @@
    "tests": [
     "tests/test_decision_application_a9_16.py"
    ],
-   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+   "rfp_citation_status": "REGISTERED_CLAUSE",
+   "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+   "rfp_clause_ids": [
+    "RFP-P18-09",
+    "RFP-P18-02"
+   ],
+   "rfp_rvm_rows": [
+    "RVM-19"
+   ],
+   "rfp_correspondence": [
+    {
+     "rvm_row": "RVM-19",
+     "kind": "RVM_REBASE_DECISION",
+     "evidence": "docs/requirements/rvm_a9/rvm_a9_v1.json RVM-19 rfp_rebase.decisions cite OD12"
+    }
+   ],
+   "rfp_citation_note": "registered clause(s) RFP-P18-09, RFP-P18-02 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-19; AG-15 closure is the owner's, requirement_frozen stays false"
   },
   {
    "decision": "A9.14",
@@ -13708,7 +13994,24 @@
     "pointer": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json#/amendments/XA9Q-07",
     "verbatim_excerpt": "S8.21 / XA9Q-07: YES — Xe capability applies to the `hall_icp_neutralizer` flight configuration because the RFP requires it."
    },
-   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+   "rfp_citation_status": "REGISTERED_CLAUSE",
+   "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+   "rfp_clause_ids": [
+    "RFP-P18-08",
+    "RFP-P17-05",
+    "RFP-P16-02"
+   ],
+   "rfp_rvm_rows": [
+    "RVM-10"
+   ],
+   "rfp_correspondence": [
+    {
+     "rvm_row": "RVM-10",
+     "kind": "RVM_A9_16_DECISION",
+     "evidence": "docs/requirements/rvm_a9/rvm_a9_v1.json RVM-10 a9_16.decisions cite XA9Q-07"
+    }
+   ],
+   "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-10; AG-15 closure is the owner's, requirement_frozen stays false"
   },
   {
    "decision": "A9.14",
@@ -13734,7 +14037,24 @@
     "pointer": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json#/amendments/OD6",
     "verbatim_excerpt": "S9.10 / OD6: “air + Xe” means the system must provide both ambient-air and Xenon operating capability; it should not be weakened into a contingency interpretation."
    },
-   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+   "rfp_citation_status": "REGISTERED_CLAUSE",
+   "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+   "rfp_clause_ids": [
+    "RFP-P18-08",
+    "RFP-P17-05",
+    "RFP-P16-02"
+   ],
+   "rfp_rvm_rows": [
+    "RVM-10"
+   ],
+   "rfp_correspondence": [
+    {
+     "rvm_row": "RVM-10",
+     "kind": "RVM_A9_16_DECISION",
+     "evidence": "docs/requirements/rvm_a9/rvm_a9_v1.json RVM-10 a9_16.decisions cite OD6"
+    }
+   ],
+   "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-10; AG-15 closure is the owner's, requirement_frozen stays false"
   },
   {
    "decision": "A9.14",
@@ -13843,7 +14163,24 @@
    "tests": [
     "tests/test_decision_application_a9_16.py"
    ],
-   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+   "rfp_citation_status": "REGISTERED_CLAUSE",
+   "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+   "rfp_clause_ids": [
+    "RFP-P18-08",
+    "RFP-P17-05",
+    "RFP-P16-02"
+   ],
+   "rfp_rvm_rows": [
+    "RVM-10"
+   ],
+   "rfp_correspondence": [
+    {
+     "rvm_row": "RVM-10",
+     "kind": "RVM_A9_15_APPLIED",
+     "evidence": "docs/requirements/rvm_a9/rvm_a9_v1.json a9_16_owner_answers_applied (A9.15 governing_rule) names RVM-10"
+    }
+   ],
+   "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-10; AG-15 closure is the owner's, requirement_frozen stays false"
   }
  ],
  "a9_16_touched_parameters": [
@@ -13951,6 +14288,28 @@
  "a9_19_touched_parameters": [
   "AFC-SY-XE-01",
   "AFC-SY-CTL-01"
+ ],
+ "a9_21_owner_answers_applied": [
+  {
+   "decision": "A9.21",
+   "question_id": "ICP_GATE",
+   "decision_code": "ICP_GO_NO_GO_REQUIRED_BEFORE_LOCK1",
+   "decision_json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+   "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+   "decision_md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+   "decision_md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+   "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "record_ids": [
+    "pre_lock1_gates[id=GNG-ICP-01]",
+    "lock1_precondition",
+    "architecture_status"
+   ],
+   "how_applied": "mandatory ICP go / no-go gate GNG-ICP-01 carried as a pre-LOCK-1 gate (own id; AG-01 .. AG-15 unchanged), re-evaluated from the RVM registration: NOT_EVALUATED, criteria PENDING_OWNER_ACCEPTANCE, recorder proposal RP-A919-01 preserved for owner review (never evaluated); LOCK-1 release not reportable while it is not GO",
+   "tests": [
+    "tests/test_icp_gate_a9_21.py",
+    "tests/test_architecture_freeze_candidate.py"
+   ]
+  }
  ],
  "a9_16_evaluators": {
   "gate_closes": "docs/architecture/freeze_candidate/a9_16_f9.py:gate_closes (determining evidence only)",
@@ -14102,5 +14461,266 @@
   "network_used": false,
   "deterministic": true,
   "new_pytest_skips": false
+ },
+ "rfp_citations": {
+  "rule": "F9 records whose owner answer cites the RFP carry the registered clause ids of the RVM row(s) the RVM re-base maps for the corresponding requirement (rfp_citations_f9.CORRESPONDENCE, each correspondence verified against the artifacts); the step-1 label is kept as rfp_citation_status_as_applied; a record without a registered correspondence is UNMAPPED_NO_RVM_MAPPED_CLAUSE with its reason; AG-15 closure stays the owner's",
+  "registration": "docs/requirements/rfp_official/rfp_registration_v1.json",
+  "rvm": "docs/requirements/rvm_a9/rvm_a9_v1.json#/rfp_rebase",
+  "statuses": {
+   "REGISTERED_CLAUSE": "registered clause ids, mapped through the RVM re-base",
+   "UNMAPPED_NO_RVM_MAPPED_CLAUSE": "no RVM-mapped clause for the requirement the record cites (reason recorded)"
+  },
+  "records": [
+   {
+    "record": "parameters[id=AFC-SY-PPU-07].a9_16",
+    "questions": [
+     "RVMQ-01",
+     "OD12"
+    ],
+    "status": "REGISTERED_CLAUSE",
+    "rfp_clause_ids": [
+     "RFP-P18-09",
+     "RFP-P18-02"
+    ],
+    "rvm_rows": [
+     "RVM-19"
+    ],
+    "correspondence_kinds": [
+     "RVM_REBASE_DECISION"
+    ]
+   },
+   {
+    "record": "parameters[id=AFC-SY-PWR-01].rfp_citation",
+    "questions": [],
+    "status": "REGISTERED_CLAUSE",
+    "rfp_clause_ids": [
+     "RFP-P18-10",
+     "RFP-P18-01"
+    ],
+    "rvm_rows": [
+     "RVM-04"
+    ],
+    "correspondence_kinds": [
+     "PARAMETER_FACT"
+    ]
+   },
+   {
+    "record": "parameters[id=AFC-SY-MASS-WET].rfp_citation",
+    "questions": [],
+    "status": "REGISTERED_CLAUSE",
+    "rfp_clause_ids": [
+     "RFP-P18-11"
+    ],
+    "rvm_rows": [
+     "RVM-06"
+    ],
+    "correspondence_kinds": [
+     "F9_SOURCE_POINTER"
+    ]
+   },
+   {
+    "record": "parameters[id=AFC-SY-XE-01].a9_16",
+    "questions": [
+     "XA9Q-07",
+     "OD6",
+     "A9.15 governing_rule"
+    ],
+    "status": "REGISTERED_CLAUSE",
+    "rfp_clause_ids": [
+     "RFP-P18-08",
+     "RFP-P17-05",
+     "RFP-P16-02"
+    ],
+    "rvm_rows": [
+     "RVM-10"
+    ],
+    "correspondence_kinds": [
+     "RVM_A9_15_APPLIED",
+     "RVM_A9_16_DECISION"
+    ]
+   },
+   {
+    "record": "architecture_gates[id=AG-12].blocking_evidence",
+    "questions": [
+     "F9-OQ-02"
+    ],
+    "status": "REGISTERED_CLAUSE",
+    "rfp_clause_ids": [
+     "RFP-P18-04",
+     "RFP-P18-05",
+     "RFP-P18-06"
+    ],
+    "rvm_rows": [
+     "RVM-01",
+     "RVM-02"
+    ],
+    "correspondence_kinds": [
+     "VERBATIM_FACT"
+    ]
+   },
+   {
+    "record": "open_owner_questions[id=F9-OQ-02]",
+    "questions": [
+     "F9-OQ-02"
+    ],
+    "status": "REGISTERED_CLAUSE",
+    "rfp_clause_ids": [
+     "RFP-P18-04",
+     "RFP-P18-05",
+     "RFP-P18-06"
+    ],
+    "rvm_rows": [
+     "RVM-01",
+     "RVM-02"
+    ],
+    "correspondence_kinds": [
+     "VERBATIM_FACT"
+    ]
+   },
+   {
+    "record": "a9_16_owner_answers_applied[question_id=F9-OQ-02]",
+    "questions": [
+     "F9-OQ-02"
+    ],
+    "status": "REGISTERED_CLAUSE",
+    "rfp_clause_ids": [
+     "RFP-P18-04",
+     "RFP-P18-05",
+     "RFP-P18-06"
+    ],
+    "rvm_rows": [
+     "RVM-01",
+     "RVM-02"
+    ],
+    "correspondence_kinds": [
+     "VERBATIM_FACT"
+    ]
+   },
+   {
+    "record": "a9_16_owner_answers_applied[question_id=F2-OQ-01]",
+    "questions": [
+     "F2-OQ-01"
+    ],
+    "status": "REGISTERED_CLAUSE",
+    "rfp_clause_ids": [
+     "RFP-P17-05",
+     "RFP-P17-02"
+    ],
+    "rvm_rows": [
+     "RVM-09"
+    ],
+    "correspondence_kinds": [
+     "VERBATIM_FACT"
+    ]
+   },
+   {
+    "record": "a9_16_owner_answers_applied[question_id=F2-OQ-03]",
+    "questions": [
+     "F2-OQ-03"
+    ],
+    "status": "REGISTERED_CLAUSE",
+    "rfp_clause_ids": [
+     "RFP-P18-08",
+     "RFP-P16-02",
+     "RFP-P17-03",
+     "RFP-P17-04",
+     "RFP-P19-03"
+    ],
+    "rvm_rows": [
+     "RVM-08"
+    ],
+    "correspondence_kinds": [
+     "VERBATIM_FACT"
+    ]
+   },
+   {
+    "record": "a9_16_owner_answers_applied[question_id=RVMQ-01]",
+    "questions": [
+     "RVMQ-01"
+    ],
+    "status": "REGISTERED_CLAUSE",
+    "rfp_clause_ids": [
+     "RFP-P18-09",
+     "RFP-P18-02"
+    ],
+    "rvm_rows": [
+     "RVM-19"
+    ],
+    "correspondence_kinds": [
+     "RVM_REBASE_DECISION"
+    ]
+   },
+   {
+    "record": "a9_16_owner_answers_applied[question_id=OD12]",
+    "questions": [
+     "OD12"
+    ],
+    "status": "REGISTERED_CLAUSE",
+    "rfp_clause_ids": [
+     "RFP-P18-09",
+     "RFP-P18-02"
+    ],
+    "rvm_rows": [
+     "RVM-19"
+    ],
+    "correspondence_kinds": [
+     "RVM_REBASE_DECISION"
+    ]
+   },
+   {
+    "record": "a9_16_owner_answers_applied[question_id=XA9Q-07]",
+    "questions": [
+     "XA9Q-07"
+    ],
+    "status": "REGISTERED_CLAUSE",
+    "rfp_clause_ids": [
+     "RFP-P18-08",
+     "RFP-P17-05",
+     "RFP-P16-02"
+    ],
+    "rvm_rows": [
+     "RVM-10"
+    ],
+    "correspondence_kinds": [
+     "RVM_A9_16_DECISION"
+    ]
+   },
+   {
+    "record": "a9_16_owner_answers_applied[question_id=OD6]",
+    "questions": [
+     "OD6"
+    ],
+    "status": "REGISTERED_CLAUSE",
+    "rfp_clause_ids": [
+     "RFP-P18-08",
+     "RFP-P17-05",
+     "RFP-P16-02"
+    ],
+    "rvm_rows": [
+     "RVM-10"
+    ],
+    "correspondence_kinds": [
+     "RVM_A9_16_DECISION"
+    ]
+   },
+   {
+    "record": "a9_16_owner_answers_applied[question_id=A9.15 governing_rule]",
+    "questions": [
+     "A9.15 governing_rule"
+    ],
+    "status": "REGISTERED_CLAUSE",
+    "rfp_clause_ids": [
+     "RFP-P18-08",
+     "RFP-P17-05",
+     "RFP-P16-02"
+    ],
+    "rvm_rows": [
+     "RVM-10"
+    ],
+    "correspondence_kinds": [
+     "RVM_A9_15_APPLIED"
+    ]
+   }
+  ]
  }
 }

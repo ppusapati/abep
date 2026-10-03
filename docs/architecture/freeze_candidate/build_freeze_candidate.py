@@ -49,6 +49,8 @@ sys.path.insert(0, str(LANE_DIR))
 import a9_16_f9 as A16  # noqa: E402  (A9.16 step 1 owner-decision application, integration lane)
 import a9_19_f9 as A19  # noqa: E402  (A9.19 / A9.20 owner-decision application, design + experiments lane)
 import ag15_f9 as AG15  # noqa: E402  (AG-15 from the registered RFP + RVM re-base; A9.13 S6.22, A9.17 RFP)
+import a9_21_f9 as A21  # noqa: E402  (A9.21 ICP_GATE: mandatory ICP go / no-go before LOCK-1, own id)
+import rfp_citations_f9 as RFPC  # noqa: E402  (F9 RFP citations re-based on the registered clauses)
 
 # --------------------------------------------------------------------------------------------------------------------
 # inputs
@@ -79,6 +81,8 @@ for _k in ("A9.19", "A9.20"):
     _d = A19.A.DECISIONS[_k]
     PINS["A" + _k[1:].replace(".", "")] = (_d["json"], _d["json_sha256"])
     PINS["A" + _k[1:].replace(".", "") + "_MD"] = (_d["md"], _d["md_sha256"])
+# A9.21 (immutable; json + verbatim md pinned in docs/decisions/application/a9_later_lib.py)
+PINS.update(A21.pins())
 # Mutable / revisable inputs: read-only, sha256 recorded at build time (drift is reported by --check).
 CONSUMED = {
     # A9.7 lanes (all merged in the base of this lane)
@@ -135,8 +139,13 @@ VALUE_LABELS = {
     "PARAMETRIC_SENSITIVITY": "computed from uncited code-default coefficients and / or parametric cases (A9.7 F3 / "
                               "F4 / F7 / F8 label); never a design value, a CBE or a requirement",
     "ALLOCATION": "owner allocation (budget), not a CBE and not a measured value",
-    "REQUIREMENT_AS_RECORDED": "RFP value as recorded from secondary sources (official RFP not in the repository; "
-                               "RVM requirement_frozen = false)",
+    "REQUIREMENT_AS_RECORDED": "RFP value as recorded in the project requirement records (owner rows / RVM); the "
+                               "official RFP is registered by sha256 with a verbatim clause transcription "
+                               "(docs/requirements/rfp_official/rfp_registration_v1.json; the PDF itself is kept in the "
+                               "controlled evidence store, not in the repository; A9.17 RFP) and the RVM re-based on "
+                               "it; each such parameter cites its registered clause id(s) through the RVM row the "
+                               "re-base maps (rfp_citation); RVM requirement_frozen = false until the owner closes "
+                               "AG-15",
     "WINDOW": "admissible window or analog envelope, not a design point",
     "RULE": "decision, convention or interface rule",
 }
@@ -1232,6 +1241,8 @@ def ag15_assessment() -> dict:
 
 
 def architecture_status(gates: list) -> str:
+    """build() passes the architecture gates AND the owner-approved pre-LOCK-1 gates (A9.21 GNG-ICP-01, sufficient only
+    when GO): one insufficient gate keeps INVESTIGATION_HYPOTHESIS."""
     if gates and all(g["evidence_sufficient_for_freeze"] for g in gates):
         return "FROZEN_REFERENCE_FLIGHT_ARCHITECTURE"
     return "INVESTIGATION_HYPOTHESIS"
@@ -1526,7 +1537,10 @@ def build() -> dict:
         assert ss in covered, ss
         bullets_ok[bullet] = list(ss)
     gates = A16.apply_gates(build_gates(), ref)
-    status = architecture_status(gates)
+    pre_lock1 = A21.pre_lock1_gates(get("RVM", "/owner_approved_gates"), ref)
+    if any(g["evidence_sufficient_for_freeze"] != (g["current_status"] == A21.G.GO) for g in pre_lock1):
+        raise SystemExit("REFUSED: a pre-LOCK-1 gate is sufficient without being GO")
+    status = architecture_status(gates + pre_lock1)
     plan = evidence_plan(gates)
     counts = {k: sum(r["freeze_status"] == k for r in rows) for k in FREEZE_STATUSES}
     by_sec = {}
@@ -1621,6 +1635,8 @@ def build() -> dict:
         "parameters": rows,
         "freeze_rollup": {"counts": counts, "by_subsection": by_sec, "total": len(rows)},
         "architecture_gates": gates,
+        "pre_lock1_gates": pre_lock1,
+        "lock1_precondition": A21.lock1_precondition(pre_lock1),
         "evidence_plan": plan,
         "model_change_candidates": A16.apply_mcc(model_change_candidates()),
         "owner_question_rollup": rollup,
@@ -1629,6 +1645,7 @@ def build() -> dict:
         "a9_16_touched_parameters": a916_touched,
         "a9_19_owner_answers_applied": A19.owner_answers_applied(),
         "a9_19_touched_parameters": a919_touched,
+        "a9_21_owner_answers_applied": A21.owner_answers_applied(),
         "a9_16_evaluators": {
             "gate_closes": "docs/architecture/freeze_candidate/a9_16_f9.py:gate_closes (determining evidence only)",
             "ag12": "docs/architecture/freeze_candidate/a9_16_f9.py:ag12_feed_state_sufficiency (NOT_EVALUATED today)",
@@ -1647,6 +1664,7 @@ def build() -> dict:
                        "network_used": False, "deterministic": True, "new_pytest_skips": False},
     }
     doc["upstream_pareto"] = A16.apply_upstream_pareto(doc["upstream_pareto"])
+    doc["rfp_citations"] = RFPC.apply(doc, load("RVM"), A16.L.answer, A16.L.RFP_PENDING)
     return doc
 
 
@@ -1699,6 +1717,25 @@ def render_md(doc: dict) -> str:
     L += [f"- remaining condition {c['id']}: {c['condition']} - {c['state']}" for c in a15["remaining_conditions"]]
     L += [f"- recorded open item {o['id']} ({o['item']}): {_fmt(o['as_recorded'], 300)}"
           for o in a15["recorded_open_items_for_owner_review"]]
+    L += ["", "## Owner-approved pre-LOCK-1 gates (own ids; not AG-01 .. AG-15)", "",
+          "| id | gate | placement | status | criteria | sufficient |", "|---|---|---|---|---|---|"]
+    for g in doc["pre_lock1_gates"]:
+        L.append(f"| {g['id']} | {_fmt(g['gate'], 120)} | {g['placement']} (mandatory) | {g['current_status']} | "
+                 f"{g['criteria']} | {str(g['evidence_sufficient_for_freeze']).lower()} |")
+    for g in doc["pre_lock1_gates"]:
+        pc = g["proposed_criteria_for_owner_review"]
+        L += ["", f"- **{g['id']}**: {g['status_reason']}. Owner approval: {g['owner_approved']['decision_code']} "
+                  f"({g['owner_approved']['approved_scope']}). {g['not_in_ag_series']}.",
+              f"- Proposed criteria for owner review ({pc['source_proposal']}, {pc['status']}; never evaluated): "
+              f"\"{pc['text_verbatim']}\""]
+    lp = doc["lock1_precondition"]
+    L += [f"- LOCK-1 release reportable: **{str(lp['lock1_release_reportable']).lower()}** ({lp['rule']})."]
+    rc = doc["rfp_citations"]
+    L += ["", "RFP citations of F9 records (" + rc["rule"] + "):", "",
+          "| record | status | registered clauses | RVM rows | correspondence |", "|---|---|---|---|---|"]
+    L += [f"| {r['record']} | {r['status']} | {', '.join(r.get('rfp_clause_ids', [])) or '-'} | "
+          f"{', '.join(r.get('rvm_rows', [])) or '-'} | {', '.join(r.get('correspondence_kinds', [])) or r.get('reason', '-')} |"
+          for r in rc["records"]]
     rv = doc["architecture_gates"][0]["blocking_evidence"]["rows"]
     fl = doc["configuration"]["flight"]
     L += ["", f"RVM rows (AG-01; flight configuration `{fl}` only):", "",
@@ -1783,6 +1820,9 @@ def render_md(doc: dict) -> str:
           "|---|---|---|---|"]
     L += [f"| {r['decision']} | {r['question_id']} | {_fmt(', '.join(r['record_ids']), 80)} | "
           f"{_fmt(r['how_applied'], 220)} |" for r in doc["a9_19_owner_answers_applied"]]
+    L += ["", "## A9.21 owner decision applied", "", "| decision | item | records | how applied |", "|---|---|---|---|"]
+    L += [f"| {r['decision']} | {r['question_id']} | {_fmt(', '.join(r['record_ids']), 80)} | "
+          f"{_fmt(r['how_applied'], 220)} |" for r in doc["a9_21_owner_answers_applied"]]
     gh = doc["ground_reference_history"]
     L += ["", "## Ground reference / retired flight configuration (history only; not evaluated for flight)", "",
           f"Label {gh['label']}: `{gh['configuration']}` - {gh['flight_status']}. Not in status counts, objectives or "

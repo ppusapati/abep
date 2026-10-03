@@ -264,6 +264,18 @@
    "path": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
    "sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
    "role": "owner decision A9.20 (verbatim; governs)"
+  },
+  {
+   "key": "A921",
+   "path": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+   "sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+   "role": "owner decision A9.21 (applied: a9_21_icp_gate, ICP_GATE)"
+  },
+  {
+   "key": "A921_MD",
+   "path": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+   "sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+   "role": "owner decision A9.21 (verbatim; governs)"
   }
  ],
  "referenced_not_pinned": [
@@ -11405,7 +11417,16 @@
     "RVM-28",
     "RVM-04",
     "RVM-14"
-   ]
+   ],
+   "a9_21_disposition": {
+    "decision": "A9.21 ICP_GATE (docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json sha256 78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549; verbatim docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md sha256 01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440)",
+    "decision_code": "ICP_GO_NO_GO_REQUIRED_BEFORE_LOCK1",
+    "gate_part": "APPROVED_BY_OWNER: gate existence and placement (mandatory, before LOCK-1, fail closed); registered as GNG-ICP-01 (owner_approved_gates[id=GNG-ICP-01])",
+    "criteria_part": "NOT_APPROVED_PRESERVED_FOR_OWNER_REVIEW: criteria (a) - (c) not approved; preserved verbatim in owner_approved_gates[id=GNG-ICP-01].proposed_criteria_for_owner_review (never evaluated)",
+    "registered_gate": "GNG-ICP-01",
+    "criteria_status": "PENDING_OWNER_ACCEPTANCE",
+    "handling_after_a9_21": "the gate is registered (status NOT_EVALUATED); the proposal text is not a criterion; the 'handling' field above is the A9.19 record (history)"
+   }
   }
  ],
  "a9_19_owner_answers_applied": [
@@ -12052,5 +12073,79 @@
     "owner_or_drdo_action": "owner: facility / stand capability evidence (in-house, consortium or sub-contract)"
    }
   ]
- }
+ },
+ "owner_approved_gates": [
+  {
+   "id": "GNG-ICP-01",
+   "gate": "ICP go / no-go (mandatory, before LOCK-1) for the single Hall + RF/ICP neutralizer flight architecture (A9.19: no hollow-cathode fallback)",
+   "owner_approved": {
+    "decision": "A9.21",
+    "item": "ICP_GATE",
+    "decision_code": "ICP_GO_NO_GO_REQUIRED_BEFORE_LOCK1",
+    "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/ICP_GATE",
+    "decision_json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+    "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+    "decision_md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+    "decision_md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+    "verbatim_excerpt": "4. ICP go/no-go before LOCK-1: I approve the existence and placement of a mandatory ICP go/no-go gate before LOCK-1. I would not yet approve any numerical criterion that I cannot see in the proposal text. The gate must be fail-closed: if its required evidence is missing, the result is `NOT_EVALUATED`, not GO.\nDecision: `ICP_GO_NO_GO_REQUIRED_BEFORE_LOCK1`.\nThe exact proposed GO/NO-GO criteria should be preserved separately until their text is available for review.",
+    "recorder_digest": "ICP_GO_NO_GO_REQUIRED_BEFORE_LOCK1 (gate existence and placement approved; fail-closed NOT_EVALUATED without evidence; NO numerical criterion approved; recorder proposal text preserved separately for review)",
+    "approved_scope": "EXISTENCE_AND_PLACEMENT_ONLY (no numerical criterion approved)"
+   },
+   "mandatory": true,
+   "placement": "BEFORE_LOCK-1",
+   "precedes": "LOCK-1",
+   "status": "NOT_EVALUATED",
+   "status_reason": "no owner-accepted GO / NO-GO criterion (criteria PENDING_OWNER_ACCEPTANCE); fail closed (A9.21)",
+   "status_vocabulary": [
+    "NOT_EVALUATED",
+    "GO",
+    "NO_GO"
+   ],
+   "fail_closed_rule": "missing required evidence -> NOT_EVALUATED, never GO (A9.21); GO only when every owner-accepted criterion is MET on registered evidence",
+   "criteria": "PENDING_OWNER_ACCEPTANCE",
+   "criteria_note": "no GO / NO-GO criterion is approved (A9.21: 'I would not yet approve any numerical criterion that I cannot see in the proposal text'); the evaluator refuses the recorder proposal as criteria",
+   "evidence": [],
+   "proposed_criteria_for_owner_review": {
+    "source_proposal": "RP-A919-01",
+    "source": "docs/requirements/rvm_a9/rvm_a9_v1.json recorder_proposals_open_for_owner[id=RP-A919-01] (a9_19_rvm.RECORDER_PROPOSALS)",
+    "text_verbatim": "ICP go / no-go before LOCK-1 for the single Hall + RF/ICP flight architecture (no hollow-cathode fallback exists after A9.19): (a) measured ICP electron-current capacity I_e,cap >= I_d,max with a pre-registered margin; (b) RF power per extracted ampere (W/A) within the power budget; (c) repeatable ignition on N2 and on Xe.",
+    "numbers_as_recorded": "none proposed: the margin, the W/A budget and the ignition repeatability criterion would be owner / pre-registration values; nothing is invented here",
+    "status": "NOT_APPROVED_PRESERVED_FOR_OWNER_REVIEW",
+    "is_criteria": false,
+    "evaluated": false,
+    "rule": "preserved verbatim for the owner's review (A9.21: 'preserved separately until their text is available for review'); never evaluated, never used as GO / NO-GO criteria; only an owner decision can supply criteria"
+   },
+   "lock1_release_reportable": false,
+   "lock1_rule": "LOCK-1 cannot be reported released while this gate is not GO",
+   "not_in_ag_series": "own id; not one of AG-01 .. AG-15 (their owner approval A9.13 S6.22 F9-OQ-03 covers only those 15 gates); approved by A9.21 ICP_GATE",
+   "evaluator": "docs/requirements/rvm_a9/a9_21_icp_gate.py:evaluate (fail closed)",
+   "related_rvm_rows": [
+    "RVM-15",
+    "RVM-28",
+    "RVM-04",
+    "RVM-14"
+   ]
+  }
+ ],
+ "a9_21_owner_answers_applied": [
+  {
+   "decision": "A9.21",
+   "question_id": "ICP_GATE",
+   "decision_code": "ICP_GO_NO_GO_REQUIRED_BEFORE_LOCK1",
+   "decision_json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+   "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+   "decision_md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+   "decision_md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+   "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "record_ids": [
+    "owner_approved_gates[id=GNG-ICP-01]",
+    "recorder_proposals_open_for_owner[id=RP-A919-01].a9_21_disposition"
+   ],
+   "how_applied": "mandatory ICP go / no-go gate GNG-ICP-01 registered before LOCK-1 (own id, not AG-01 .. AG-15); status NOT_EVALUATED (fail closed), criteria PENDING_OWNER_ACCEPTANCE; the recorder proposal RP-A919-01 (a) - (c) preserved verbatim for owner review, never evaluated",
+   "tests": [
+    "tests/test_rvm_a9.py",
+    "tests/test_icp_gate_a9_21.py"
+   ]
+  }
+ ]
 }

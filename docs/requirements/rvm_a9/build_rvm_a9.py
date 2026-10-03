@@ -51,6 +51,7 @@ sys.path.insert(0, str(HERE))
 import a9_16_rvm as A16  # noqa: E402  (A9.16 step 1 owner-decision application, integration lane)
 import rfp_rebase as RB  # noqa: E402  (AG-15 re-base on the registered official RFP, A9.16 step 3)
 import a9_19_rvm as A19  # noqa: E402  (A9.19 / A9.20 owner decisions: flight architecture, Xe role, C1 ground-only)
+import a9_21_icp_gate as A21  # noqa: E402  (A9.21 ICP_GATE: mandatory ICP go / no-go gate before LOCK-1)
 JSON_NAME = "rvm_a9_v1.json"
 MD_NAME = "RVM_A9.md"
 TEST_REL = "tests/test_rvm_a9.py"
@@ -114,6 +115,9 @@ for _k in ("A9.19", "A9.20"):
     _d = A19.DECISIONS[_k]
     PINS["A" + _k[1:].replace(".", "")] = (_d["json"], _d["json_sha256"], f"owner decision {_k} (applied: a9_19_rvm)")
     PINS["A" + _k[1:].replace(".", "") + "_MD"] = (_d["md"], _d["md_sha256"], f"owner decision {_k} (verbatim; governs)")
+_d = A21.X.LOADED["A9.21"]
+PINS["A921"] = (_d["json"], _d["json_sha256"], "owner decision A9.21 (applied: a9_21_icp_gate, ICP_GATE)")
+PINS["A921_MD"] = (_d["md"], _d["md_sha256"], "owner decision A9.21 (verbatim; governs)")
 HISTORICAL_KEYS = ("RTM", "HGM", "R2")
 HISTORICAL_EXTRA = {
     "docs/traceability/RTM.md": "ce5b608a5079a86d1b2096f222266f558fab2ebdabc1aa8dfef3153076faa802",
@@ -1129,6 +1133,10 @@ def build_doc():
         doc = A16.registered_rfp_citations(doc)   # A9.16 repair RFP-03 / RVF-04
     except RuntimeError as e:
         raise BuildError(str(e)) from e
+    try:
+        doc = A21.apply_rvm(doc)                  # A9.21 ICP_GATE: GNG-ICP-01 registered before LOCK-1 (fail closed)
+    except A21.IcpGateError as e:
+        raise BuildError(str(e)) from e
     R.assert_status_vocabulary(doc)
     R.assert_no_pass_without_measurement(doc)
     for r in rows:
@@ -1353,7 +1361,24 @@ def render_md(doc):
     a("")
     for pr in doc["recorder_proposals_open_for_owner"]:
         a(f"- **{pr['id']}** [{pr['status']}]: {_esc(pr['proposal'])} Why raised: {_esc(pr['why_raised'])} "
-          f"Numbers: {pr['numbers']}. Handling: {pr['handling']}.")
+          f"Numbers: {pr['numbers']}. Handling: {pr['handling']}."
+          + (f" A9.21: {pr['a9_21_disposition']['gate_part']}; {pr['a9_21_disposition']['criteria_part']}."
+             if pr.get("a9_21_disposition") else ""))
+    a("")
+    a("## (d2c) Owner-approved gates outside AG-01 .. AG-15 (A9.21)")
+    a("")
+    for g in doc["owner_approved_gates"]:
+        oa = g["owner_approved"]
+        pc = g["proposed_criteria_for_owner_review"]
+        a(f"- **{g['id']}** {g['gate']}: placement **{g['placement']}** (mandatory: {str(g['mandatory']).lower()}); "
+          f"status **{g['status']}** ({g['status_reason']}); criteria **{g['criteria']}**; LOCK-1 release reportable: "
+          f"{str(g['lock1_release_reportable']).lower()}. Owner approval {oa['decision']} {oa['item']} "
+          f"`{oa['decision_code']}` ({oa['approved_scope']}; json sha256 {oa['decision_json_sha256'][:12]}..., "
+          f"verbatim md sha256 {oa['decision_md_sha256'][:12]}...). {g['not_in_ag_series']}.")
+        a(f"    - Proposed criteria for owner review ({pc['source_proposal']}, {pc['status']}; never evaluated): "
+          f"\"{_esc(pc['text_verbatim'])}\"")
+    for o in doc["a9_21_owner_answers_applied"]:
+        a(f"- {o['decision']} `{o['question_id']}` -> {', '.join(o['record_ids'])}: {_esc(o['how_applied'])}")
     a("")
     a("## (d3) RFP re-base (AG-15)")
     a("")

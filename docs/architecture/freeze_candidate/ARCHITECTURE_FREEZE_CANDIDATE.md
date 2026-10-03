@@ -78,6 +78,35 @@ AG-15 (A9.13 S6.22, verbatim: 'The official RFP is now available to the project,
 - recorded open item AG15-OI-01 (registration page coverage): pages 1-15 and 34-40 were not screened for requirement-bearing clauses in this record (bid / legal / programmatic front and back matter per the document structure, not verified page by page): status UNSCREENED_PENDING_OWNER_PAGE_REVIEW of the owner-held PDF; nothing is assumed about their content
 - recorded open item AG15-OI-02 (RVM re-base discrepancies recorded against the RFP): [{"id": "DISC-01", "topic": "bid due / closing date", "disposition": "UNVERIFIED_BY_RFP_DOCUMENT - programmatic, not a system requirement (excluded candidate PRG-BID); verify on the DefProc tender document; CLAUDE.md is not edited here"}, {"id": "DISC-02", "topic": "mass wet / dry", "disposition"...
 
+## Owner-approved pre-LOCK-1 gates (own ids; not AG-01 .. AG-15)
+
+| id | gate | placement | status | criteria | sufficient |
+|---|---|---|---|---|---|
+| GNG-ICP-01 | ICP go / no-go (mandatory, before LOCK-1) for the single Hall + RF/ICP neutralizer flight architecture (A9.19: no hol... | BEFORE_LOCK-1 (mandatory) | NOT_EVALUATED | PENDING_OWNER_ACCEPTANCE | false |
+
+- **GNG-ICP-01**: no owner-accepted GO / NO-GO criterion (criteria PENDING_OWNER_ACCEPTANCE); fail closed (A9.21). Owner approval: ICP_GO_NO_GO_REQUIRED_BEFORE_LOCK1 (EXISTENCE_AND_PLACEMENT_ONLY (no numerical criterion approved)). own id; not one of AG-01 .. AG-15 (their owner approval A9.13 S6.22 F9-OQ-03 covers only those 15 gates); approved by A9.21 ICP_GATE.
+- Proposed criteria for owner review (RP-A919-01, NOT_APPROVED_PRESERVED_FOR_OWNER_REVIEW; never evaluated): "ICP go / no-go before LOCK-1 for the single Hall + RF/ICP flight architecture (no hollow-cathode fallback exists after A9.19): (a) measured ICP electron-current capacity I_e,cap >= I_d,max with a pre-registered margin; (b) RF power per extracted ampere (W/A) within the power budget; (c) repeatable ignition on N2 and on Xe."
+- LOCK-1 release reportable: **false** (LOCK-1 cannot be reported released while any mandatory pre-LOCK-1 gate is not GO (A9.21 ICP_GATE: fail closed; missing evidence -> NOT_EVALUATED, never GO)).
+
+RFP citations of F9 records (F9 records whose owner answer cites the RFP carry the registered clause ids of the RVM row(s) the RVM re-base maps for the corresponding requirement (rfp_citations_f9.CORRESPONDENCE, each correspondence verified against the artifacts); the step-1 label is kept as rfp_citation_status_as_applied; a record without a registered correspondence is UNMAPPED_NO_RVM_MAPPED_CLAUSE with its reason; AG-15 closure stays the owner's):
+
+| record | status | registered clauses | RVM rows | correspondence |
+|---|---|---|---|---|
+| parameters[id=AFC-SY-PPU-07].a9_16 | REGISTERED_CLAUSE | RFP-P18-09, RFP-P18-02 | RVM-19 | RVM_REBASE_DECISION |
+| parameters[id=AFC-SY-PWR-01].rfp_citation | REGISTERED_CLAUSE | RFP-P18-10, RFP-P18-01 | RVM-04 | PARAMETER_FACT |
+| parameters[id=AFC-SY-MASS-WET].rfp_citation | REGISTERED_CLAUSE | RFP-P18-11 | RVM-06 | F9_SOURCE_POINTER |
+| parameters[id=AFC-SY-XE-01].a9_16 | REGISTERED_CLAUSE | RFP-P18-08, RFP-P17-05, RFP-P16-02 | RVM-10 | RVM_A9_15_APPLIED, RVM_A9_16_DECISION |
+| architecture_gates[id=AG-12].blocking_evidence | REGISTERED_CLAUSE | RFP-P18-04, RFP-P18-05, RFP-P18-06 | RVM-01, RVM-02 | VERBATIM_FACT |
+| open_owner_questions[id=F9-OQ-02] | REGISTERED_CLAUSE | RFP-P18-04, RFP-P18-05, RFP-P18-06 | RVM-01, RVM-02 | VERBATIM_FACT |
+| a9_16_owner_answers_applied[question_id=F9-OQ-02] | REGISTERED_CLAUSE | RFP-P18-04, RFP-P18-05, RFP-P18-06 | RVM-01, RVM-02 | VERBATIM_FACT |
+| a9_16_owner_answers_applied[question_id=F2-OQ-01] | REGISTERED_CLAUSE | RFP-P17-05, RFP-P17-02 | RVM-09 | VERBATIM_FACT |
+| a9_16_owner_answers_applied[question_id=F2-OQ-03] | REGISTERED_CLAUSE | RFP-P18-08, RFP-P16-02, RFP-P17-03, RFP-P17-04, RFP-P19-03 | RVM-08 | VERBATIM_FACT |
+| a9_16_owner_answers_applied[question_id=RVMQ-01] | REGISTERED_CLAUSE | RFP-P18-09, RFP-P18-02 | RVM-19 | RVM_REBASE_DECISION |
+| a9_16_owner_answers_applied[question_id=OD12] | REGISTERED_CLAUSE | RFP-P18-09, RFP-P18-02 | RVM-19 | RVM_REBASE_DECISION |
+| a9_16_owner_answers_applied[question_id=XA9Q-07] | REGISTERED_CLAUSE | RFP-P18-08, RFP-P17-05, RFP-P16-02 | RVM-10 | RVM_A9_16_DECISION |
+| a9_16_owner_answers_applied[question_id=OD6] | REGISTERED_CLAUSE | RFP-P18-08, RFP-P17-05, RFP-P16-02 | RVM-10 | RVM_A9_16_DECISION |
+| a9_16_owner_answers_applied[question_id=A9.15 governing_rule] | REGISTERED_CLAUSE | RFP-P18-08, RFP-P17-05, RFP-P16-02 | RVM-10 | RVM_A9_15_APPLIED |
+
 RVM rows (AG-01; flight configuration `hall_icp_neutralizer` only):
 
 | row | title | origin | hall_icp_neutralizer (flight) | frozen |
@@ -711,6 +740,12 @@ Evaluators: gate_closes: docs/architecture/freeze_candidate/a9_16_f9.py:gate_clo
 | A9.19 | amends A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 | AFC-SY-CTL-01 | no C1-selected flight start variant |
 | A9.20 | c1_role | configuration.ground_reference, ground_reference_history, AG-01 RVM rows (fli... | C1 = GROUND_ONLY_LAB_EQUIPMENT: hall_c1_reference carried only as the labelled GROUND_REFERENCE (I_d,max,H1,Ar characterization, A9.10 S3.5; C1-vs-ICP bench control); never flight hardware or in flight budgets; its RV... |
 
+## A9.21 owner decision applied
+
+| decision | item | records | how applied |
+|---|---|---|---|
+| A9.21 | ICP_GATE | pre_lock1_gates[id=GNG-ICP-01], lock1_precondition, architecture_status | mandatory ICP go / no-go gate GNG-ICP-01 carried as a pre-LOCK-1 gate (own id; AG-01 .. AG-15 unchanged), re-evaluated from the RVM registration: NOT_EVALUATED, criteria PENDING_OWNER_ACCEPTANCE, recorder proposal RP-... |
+
 ## Ground reference / retired flight configuration (history only; not evaluated for flight)
 
 Label GROUND_REFERENCE_AND_RETIRED_FLIGHT_CONFIGURATION_HISTORY: `hall_c1_reference` - RETIRED_AS_FLIGHT_CONFIGURATION (A9.19 one flight configuration; A9.20 C1 GROUND_ONLY_LAB_EQUIPMENT). Not in status counts, objectives or gates. RVM cells as carried by the RVM (docs/requirements/rvm_a9/rvm_a9_v1.json#/rows/*/configurations/hall_c1_reference): {"PASS": 0, "FAIL": 0, "NOT_EVALUATED": 29, "OUT_OF_DOMAIN": 0, "INCOMPLETE_EVIDENCE": 1, "NUMERICAL_FAILURE": 0}.
@@ -746,6 +781,8 @@ Pinned (immutable, sha256 verified):
 - `docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md` d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749
 - `docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json` 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6
 - `docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md` 2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c
+- `docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json` 78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549
+- `docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md` 01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440
 
 Consumed (sha256 at build time; drift reported by `--check`):
 
@@ -764,7 +801,7 @@ Consumed (sha256 at build time; drift reported by `--check`):
 - `docs/budgets/owner_decisions/owner_questions_state_v4.json` 6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67
 - `docs/budgets/owner_decisions/owner_questions_state_v5.json` 0a86af5cccf116b8a7c75ca6ee4e8ddb20755261a21501d8923e0d311bc2b5ef
 - `docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json` 8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316
-- `docs/requirements/rvm_a9/rvm_a9_v1.json` a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6
+- `docs/requirements/rvm_a9/rvm_a9_v1.json` 3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305
 - `docs/requirements/rfp_official/rfp_registration_v1.json` be2d26cdc8c8b140f29d26b52140a3bae6d1080ecaa92ea40841889207e49412
 - `docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json` c1a7875fdd0e27b3425cc02ba915ab61bcf9760ac032d294b69a887a91e78459
 - `docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json` fde0ddac723b62ab9bdc9789fa738c74198de23b8d150fd67b1b89d9e9d2d2ae
