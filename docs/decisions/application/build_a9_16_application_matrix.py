@@ -19,8 +19,10 @@ A9.14 S9.4 / M16-V3-Q-01: the BLOCKED residual 're-derivation of M16 scheduler b
 APPLIED by M16 v5 (docs/experiments/hall_icp/integration/m16_v5; structural check of its owner_answers_applied record;
 kept on the entry as 'resolved_residual'); named persons stay PENDING_EVIDENCE (staffing ledger, owner).
 AG-15: the registration and RVM re-base parts are APPLIED (docs/requirements/rfp_official + rvm re-base); the owner
-acceptance / closure stays PENDING_OWNER_ACCEPTANCE ('ag_15' on F9-OQ-03; the F9 freeze-candidate AG-15 rule is being
-changed in a parallel lane - regenerate this matrix after merging it).
+closed AG-15 in A9.22 G3 ('ag_15' on F9-OQ-03: owner_acceptance APPLIED, verified against the RVM closure record
+rfp_rebase.ag15_closure, the registration owner_page_review and the F9 AG-15 gate; fail closed). The earlier
+PENDING_OWNER_ACCEPTANCE residuals (F9-OQ-03, OD12, A9.17 RFP) are kept as 'resolved_residual' history.
+A9.22: G3 APPLIED (AG-15 closure lane); G1, G2, G4 .. G9 PENDING_GOVERNED_MIGRATION (their own migration lanes).
 
     python docs/decisions/application/build_a9_16_application_matrix.py          # write JSON + MD
     python docs/decisions/application/build_a9_16_application_matrix.py --check  # verify both are current
@@ -54,8 +56,12 @@ STATUSES = {
                "registration) is still pending - not APPLIED until that part exists (named in 'residual')",
     "SUPERSEDED_BY_LATER_DECISION": "applied earlier and superseded by a later owner decision (named in "
                                     "'amended_by_later'); the later decision's entry governs",
+    "PENDING_GOVERNED_MIGRATION": "owner-approved migration item (A9.22 layer separation) not yet applied: its own "
+                                  "governed migration lane applies it; no artifact is claimed here (named in "
+                                  "'residual')",
 }
 RESIDUAL_STATUSES = ("BLOCKED", "PENDING_STEP_2_MODEL_CHANGE", "PENDING_STEP_3_ARCHITECTURE", "PENDING_EVIDENCE",
+                     "PENDING_GOVERNED_MIGRATION",
                      "PENDING_CI_CHANGE", "OPEN_OWNER_QUESTION", "PENDING_FINALIZE_DESIGN_REGEN",
                      "PENDING_OWNER_ACCEPTANCE")
 
@@ -205,6 +211,24 @@ RESOLVED_RESIDUAL = {
     "M16-V3-Q-01": [{"status_before": "BLOCKED", "what": M16V5_RESIDUAL_TEXT,
                      "where_before": "docs/experiments/hall_icp/integration/ (M16 v5, not started)",
                      "status": "APPLIED", "artifact": M16V5_REL, "commit": M16V5_COMMIT}],
+}
+# A9.22 G3: the owner closed AG-15 (commit of the AG-15 closure lane: RVM closure record, registration page review,
+# F9 ag15_f9 closure-record check, state v5 a9_22_g3); the residuals that waited for it are resolved (history kept)
+A922_AG15_COMMIT = "e78c781c70f79fb46b903e19ab9cb1202db94595"
+AG15_CLOSURE_POINTER = "/rfp_rebase/ag15_closure"
+AG15_CLOSURE_TOKENS = ['"ag15_closure"', '"decision_code": "AG15_CLOSED"', '"requirements_snapshot": "FROZEN"']
+_AG15_RESOLVED = lambda what: [{"status_before": "PENDING_OWNER_ACCEPTANCE", "what": what,   # noqa: E731
+                                "where_before": "owner act (AG-15 closure)", "status": "APPLIED",
+                                "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json", "commit": A922_AG15_COMMIT,
+                                "record_pointer": AG15_CLOSURE_POINTER, "by": "A9.22 G3_REQUIREMENTS_SNAPSHOT"}]
+RESOLVED_RESIDUAL_AG15 = {
+    "F9-OQ-03": _AG15_RESOLVED("AG-15 closure: the official RFP is registered by sha256 (A9.17 RFP) and the RVM is "
+                               "re-based on it (step 3) - both APPLIED ('ag_15'); requirement_frozen stays false on "
+                               "RFP rows until the owner accepts the re-base and closes AG-15"),
+    "OD12": _AG15_RESOLVED("RFP clauses registered and mapped (CG-IC / CG-SPF / CG-N2-AO carry their clauses); "
+                           "requirement_frozen stays false until the owner closes AG-15"),
+    ("A9.17", "RFP"): _AG15_RESOLVED("AG-15 closure (requirement_frozen stays false on RFP rows until the owner accepts "
+                                     "the re-base and closes AG-15)"),
 }
 # A9.13 step-3 decisions that are NOT applied by any step-3 / finalize commit at this matrix's base (truthfully BLOCKED)
 STEP3_NOT_APPLIED = {
@@ -411,8 +435,39 @@ LATER_APPS = {
         _rec(V5_REL, ['"TBD_EXTERNAL_INPUT'], "state v5: F1Q-03, OQ-F78-04, OD3, OQ-F4-05 external_input_status"),
         _rec(M16_REL, ['"EXTERNAL_INPUTS"'], "M16 v4 row 1")],
     ("A9.21", "RFQ_DISPATCH"): [],
+    # ---- A9.22 (layer separation): G3 applied by the AG-15 closure lane; the other items by their own migrations
+    ("A9.22", "G3_REQUIREMENTS_SNAPSHOT"): [
+        _app("A9.22", RVM_REL, A922_AG15_COMMIT, AG15_CLOSURE_TOKENS + ["RP-BRIEF-01"],
+             "RVM: requirement_frozen = true on the 22 RFP_CLAUSE rows (before status evaluation; no status changed), "
+             "closure record rfp_rebase.ag15_closure (RP-BRIEF-01 format), requirements snapshot FROZEN",
+             {"list": "/rows", "match": ("id", "RVM-01"), "checks": {"requirement_frozen": ("equals", True)}}),
+        _app("A9.22", "docs/requirements/rvm_a9/rfp_rebase.py", A922_AG15_COMMIT,
+             ["A9.22 G3", "ACCEPTED_BASIS_SHA256", "def record_closure"],
+             "closure applied on the final RVM; a later change of the requirements basis is refused (new owner "
+             "decision needed)"),
+        _app("A9.22", REG_REL, A922_AG15_COMMIT,
+             ['"owner_page_review"', "OWNER_REVIEWED_NO_ADDITIONAL_TECHNICAL_PERFORMANCE_REQUIREMENT"],
+             "registration page_coverage: owner review disposition of pages 1-15 / 34-40 (owner-stated, verbatim)"),
+        _app("A9.22", F9_REL, A922_AG15_COMMIT, ['"owner_closure_recorded"', '"architecture_status": '
+                                                 '"INVESTIGATION_HYPOTHESIS"'],
+             "F9 AG-15 closed on the owner closure record (fail-closed check replaces the 'CLOSED' text prefix); "
+             "architecture stays INVESTIGATION_HYPOTHESIS",
+             {"list": "/architecture_gates", "match": ("id", "AG-15"),
+              "checks": {"evidence_sufficient_for_freeze": ("equals", True),
+                         "current_status": ("equals", "DETERMINING_EVIDENCE_PRESENT_NO_REMAINING_CONDITION")}}),
+        _app("A9.22", "docs/architecture/freeze_candidate/ag15_f9.py", A922_AG15_COMMIT,
+             ["def owner_closure_errors", "CLOSURE_DECISION"], "F9 AG-15 closure-record check (fail closed)"),
+        _app("A9.22", V5_REL, A922_AG15_COMMIT, ['"a9_22_g3"', '"PERFORMS_OWNER_ACT"'],
+             "state v5: F9-OQ-03 PERFORMS_OWNER_ACT record; a9_22_g3 with pointers + sha256")],
+    **{("A9.22", k): [] for k in ("G1_MISSION_LIFE", "G2_C_DRAG_RFP", "G4_GOLDEN_ARCHITECTURE", "G5_ALTITUDE_BAND",
+                                  "G6_IC_HALL_PREFERRED", "G7_DEAD_LOGIC", "G8_BUS_BOUNDARY", "G9_F1_OUTPUT")},
 }
+A922_MIGRATION_REASON = ("owner-approved (A9.22 migration plan, phases A-E) and not applied by the AG-15 closure lane; "
+                         "applied by its own governed migration (no artifact claimed here)")
 LATER_STATUS = {
+    **{("A9.22", k): ("PENDING_GOVERNED_MIGRATION", A922_MIGRATION_REASON)
+       for k in ("G1_MISSION_LIFE", "G2_C_DRAG_RFP", "G4_GOLDEN_ARCHITECTURE", "G5_ALTITUDE_BAND",
+                 "G6_IC_HALL_PREFERRED", "G7_DEAD_LOGIC", "G8_BUS_BOUNDARY", "G9_F1_OUTPUT")},
     ("A9.18", "PERF_RERUN"): ("BLOCKED", "owner-machine action after the step-3 merge (nothing to run now): the identical "
                               "dedicated procedure on the idle owner machine; not runnable in this environment"),
     ("A9.21", "PERF_RERUN"): ("BLOCKED", "owner-machine action: the owner reruns the dedicated baseline on the exact "
@@ -425,10 +480,22 @@ LATER_STATUS = {
                                 "(docs/procurement/rfq_a9_v3); dispatch is an owner / procurement act"),
 }
 LATER_RESIDUAL = {
+    **{("A9.22", k): [("PENDING_GOVERNED_MIGRATION", w, "its own A9.22 migration lane")] for k, w in (
+        ("G1_MISSION_LIFE", "mission duration 26,280 h for mission-integrated quantities (governed baseline change)"),
+        ("G2_C_DRAG_RFP", "C-DRAG-RFP kept as a generation filter from the frozen engineering-constraints snapshot"),
+        ("G4_GOLDEN_ARCHITECTURE", "governed golden / reference case for hall_icp_neutralizer; LaB6 golden data "
+                                   "HISTORICAL_NON_FLIGHT_REGRESSION"),
+        ("G5_ALTITUDE_BAND", "mission_domain.altitude_km = [180, 230] consumed with provenance to the requirements "
+                             "snapshot"),
+        ("G6_IC_HALL_PREFERRED", "IC / hall_preferred / compliance classifications moved to the assessment layer"),
+        ("G7_DEAD_LOGIC", "remove ignition_req_met '... or True', unused Budgets.duty_cycle and the unused RFP import"),
+        ("G8_BUS_BOUNDARY", "bus_boundary_a9_v2 (hall_icp_neutralizer only) and one controlled consumer migration"),
+        ("G9_F1_OUTPUT", "deterministic F1 evidence archive outside ordinary Git history with manifest + hashes"))},
+    ("A9.22", "G3_REQUIREMENTS_SNAPSHOT"): [
+        ("PENDING_EVIDENCE", "compliance of the frozen rows: freezing the requirement basis changes no RVM status; "
+         "every row stays as evaluated until determining evidence exists", "hardware programme / RVM")],
     ("A9.17", "ORBIT"): [("PENDING_EVIDENCE", "inclination / LTAN from DRDO / spacecraft ICD / PDR mission definition, "
                           "then a new dataset version", "official mission ICD (owner)")],
-    ("A9.17", "RFP"): [("PENDING_OWNER_ACCEPTANCE", "AG-15 closure (requirement_frozen stays false on RFP rows until "
-                        "the owner accepts the re-base and closes AG-15)", "owner act")],
     ("A9.17", "PERF"): [("BLOCKED", "superseded as the admission baseline by the A9.18 PERF_RERUN (after the step-3 "
                          "merge); the 2026-10-01 dedicated run is historical for the earlier code state",
                          "owner machine (A9.18 PERF_RERUN)")],
@@ -643,11 +710,7 @@ RESIDUAL = {
                "docs/budgets/mass_power_a9_v3/")],
     # OQ-A907-07 / MPQ-01: the 'wait for C1 selection' residuals are gone - A9.19 removes the C1 flight variant
     # (SUPERSEDED_BY_LATER_DECISION; see the A9.19 entry)
-    "F9-OQ-03": [("PENDING_OWNER_ACCEPTANCE", "AG-15 closure: the official RFP is registered by sha256 (A9.17 RFP) and "
-                  "the RVM is re-based on it (step 3) - both APPLIED ('ag_15'); requirement_frozen stays false on RFP "
-                  "rows until the owner accepts the re-base and closes AG-15", "owner act (AG-15 closure)")],
-    "OD12": [("PENDING_OWNER_ACCEPTANCE", "RFP clauses registered and mapped (CG-IC / CG-SPF / CG-N2-AO carry their "
-              "clauses); requirement_frozen stays false until the owner closes AG-15", "owner act (AG-15 closure)")],
+    # F9-OQ-03 / OD12: the PENDING_OWNER_ACCEPTANCE residuals are resolved by A9.22 G3 (RESOLVED_RESIDUAL_AG15)
     "F0-OQ-02": [("BLOCKED", "the 2026-10-01 dedicated run is historical for the earlier code state: A9.18 PERF_RERUN "
                   "(identical procedure after the step-3 merge, idle owner machine) is the Rust-admission baseline",
                   "owner machine (A9.18 PERF_RERUN)")],
@@ -681,10 +744,11 @@ RULES = [
     {"id": "R-RFP", "decision": None, "rule": "the official RFP is registered by hash in the public repository (A9.17 "
      "RFP; docs/requirements/rfp_official/rfp_registration_v1.json, PDF in the controlled evidence store) and the RVM is "
      "re-based on its clauses; the step-1 records keep rfp_citation_status OWNER_STATED_PENDING_RFP_REGISTRATION as the "
-     "history of the state in which they were applied (step-1 rule: " + L.RFP_PENDING_NOTE + "); AG-15 closure (owner "
-     "acceptance; requirement_frozen) is PENDING_OWNER_ACCEPTANCE", "status": "APPLIED",
-     "application": "state v5 rfp_registration_now; F9-OQ-03 'ag_15' (registration + re-base APPLIED, owner acceptance "
-                    "pending); step-1 rows, F9 / RVM records carry rfp_citation_status as history"},
+     "history of the state in which they were applied (step-1 rule: " + L.RFP_PENDING_NOTE + "); the owner closed "
+     "AG-15 (A9.22 G3): requirement_frozen = true on the RFP_CLAUSE rows, RFP-derived requirements snapshot FROZEN "
+     "(basis only, no compliance claim)", "status": "APPLIED",
+     "application": "state v5 rfp_registration_now + a9_22_g3; F9-OQ-03 'ag_15' (registration + re-base + owner "
+                    "acceptance APPLIED); step-1 rows, F9 / RVM records carry rfp_citation_status as history"},
     {"id": "R-A919", "decision": "A9.19 / A9.20", "rule": "one flight configuration hall_icp_neutralizer: one Hall "
      "accelerator + one RF/ICP electron-source / neutralizer for air and Xe, two supply modes (ambient atmospheric "
      "primary, Xe contingency / emergency), no conventional hollow cathode; C1 = GROUND_ONLY_LAB_REFERENCE; "
@@ -908,6 +972,8 @@ def build():
                 if len(ptrs) != 1 or not ptrs[0]:
                     raise SystemExit(f"{qid}: resolved residual without one verified M16 v5 record")
                 e["resolved_residual"] = [{**x, "record_pointer": ptrs[0]} for x in RESOLVED_RESIDUAL[qid]]
+            if qid in RESOLVED_RESIDUAL_AG15:
+                e["resolved_residual"] = e.get("resolved_residual", []) + ag15_resolved(qid)
             entries.append(e)
     a15 = L.LOADED["A9.15"]
     a915_apps = [{"lane": ln, "artifact": LANES[ln][1], "commit": LANES[ln][0], "status": "APPLIED",
@@ -952,6 +1018,8 @@ def build():
             e["status_reason"] = reason
         e["applications"] = apps
         e["residual"] = [{"status": s, "what": w, "where": wh} for s, w, wh in LATER_RESIDUAL.get((dk, qid), [])]
+        if (dk, qid) in RESOLVED_RESIDUAL_AG15:
+            e["resolved_residual"] = ag15_resolved((dk, qid))
         entries.append(e)
     apply_later_amendments(entries)
     ag15 = ag_15_record()
@@ -968,18 +1036,18 @@ def build():
     return {
         "schema": "a9_16_application_matrix_v1", "id": "a9_16_application_matrix_v1",
         "lane": "A9.16 step 1 integration; refreshed in the A9.16 finalize records lane (step 2 / step 3 / A9.17 / "
-                "A9.18 applications) and in the A9.17 .. A9.21 records lane (A9.19 / A9.20 / A9.21)", "date": "2026-10-03",
+                "A9.18 applications) and in the A9.17 .. A9.21 records lane (A9.19 / A9.20 / A9.21) and in the A9.22 AG-15 closure lane (G3)", "date": "2026-10-03",
         "generated_by": "docs/decisions/application/build_a9_16_application_matrix.py",
         "companion_document": REL(OUT_MD), "test": "tests/test_decision_application_a9_16.py",
         "status_vocabulary": STATUSES, "residual_status_vocabulary": list(RESIDUAL_STATUSES),
         "rule": "one entry per decision id of A9.8 .. A9.14, the A9.15 governing rule and one entry per decision item "
-                "of A9.17 .. A9.21; the verbatim .md governs; statuses never PASS; an application is listed only when "
-                "its question id (step-1 lanes) or its recorded locator tokens (step 2 / step 3 / A9.17 .. A9.21) are "
+                "of A9.17 .. A9.22; the verbatim .md governs; statuses never PASS; an application is listed only when "
+                "its question id (step-1 lanes) or its recorded locator tokens (step 2 / step 3 / A9.17 .. A9.22) are "
                 "locatable in the artifact",
         "pins": L.pins() + X.pins(),
         "later_application_commits": {"a9_19_rvm": A919_RVM_COMMIT, "a9_19_budgets": A919_BUDGETS_COMMIT,
                                       "a9_19_design": A919_DESIGN_COMMIT, "a9_19_integration": A919_INTEGRATION_COMMIT,
-                                      "a9_17_21_records": RECORDS_A917_21_COMMIT,
+                                      "a9_17_21_records": RECORDS_A917_21_COMMIT, "a9_22_ag15_closure": A922_AG15_COMMIT,
                                       "a9_21_al08_budgets": A921_AL08_BUDGETS_COMMIT,
                                       "a9_21_icp_gate": A921_ICP_GATE_COMMIT,
                                       "m16_v5_rederivation": M16V5_COMMIT},
@@ -1049,8 +1117,22 @@ def apply_later_amendments(entries):
         raise SystemExit(f"later amendments not attached: {missing}")
 
 
+def ag15_resolved(key):
+    """Resolved AG-15 residual (A9.22 G3): verified against the RVM closure record (tokens + decision sha256)."""
+    rel = "docs/requirements/rvm_a9/rvm_a9_v1.json"
+    text = (ROOT / rel).read_text(encoding="utf-8")
+    if any(t not in text for t in AG15_CLOSURE_TOKENS):
+        raise SystemExit(f"{key}: AG-15 closure record not found in {rel} (resolved residual not verifiable)")
+    cl = json.loads(text)["rfp_rebase"]["ag15_closure"]
+    if cl["decision"]["json_sha256"] != X.LOADED["A9.22"]["json_sha256"]:
+        raise SystemExit(f"{key}: RVM ag15_closure does not cite the pinned A9.22 record")
+    return [dict(x) for x in RESOLVED_RESIDUAL_AG15[key]]
+
+
 def ag_15_record():
-    """AG-15 (A9.13 S6.22 / F9-OQ-03): registration + RVM re-base APPLIED, owner acceptance pending (fail closed)."""
+    """AG-15 (A9.13 S6.22 / F9-OQ-03): registration + RVM re-base APPLIED; owner acceptance APPLIED by A9.22 G3 only when
+    the RVM closure record, the registration page review and the F9 AG-15 gate agree with the pinned A9.22 record
+    (fail closed); otherwise PENDING_OWNER_ACCEPTANCE."""
     reg = json.loads((ROOT / REG_REL).read_text(encoding="utf-8"))
     rvm = json.loads((ROOT / RVM_REL).read_text(encoding="utf-8"))
     doc, rb = reg["document"], rvm["rfp_rebase"]
@@ -1062,6 +1144,33 @@ def ag_15_record():
     if unmapped or len(rb["clause_coverage"]) != len(reg["clauses"]):
         raise SystemExit(f"AG-15: registered clauses not covered by the RVM re-base: {unmapped}")
     frozen = [r["id"] for r in rvm["rows"] if r["category"].startswith("rfp") and r.get("requirement_frozen")]
+    rfp_rows = [r["id"] for r in rvm["rows"] if r["requirement_origin"] == "RFP_CLAUSE"]
+    cl = rb.get("ag15_closure")
+    if cl is None:
+        if frozen:
+            raise SystemExit("AG-15: RFP rows frozen without an owner closure record")
+        acceptance = {"status": "PENDING_OWNER_ACCEPTANCE", "rfp_rows_requirement_frozen": frozen,
+                      "what": "owner acceptance of the re-base / AG-15 closure (" + rb["ag_15_status"] + ")"}
+    else:
+        d = X.LOADED["A9.22"]
+        f9 = json.loads((ROOT / F9_REL).read_text(encoding="utf-8"))
+        g = [x for x in f9["architecture_gates"] if x["id"] == "AG-15"]
+        pr = reg["page_coverage"].get("owner_page_review") or {}
+        if (cl["decision"]["json"], cl["decision"]["json_sha256"]) != (d["json"], d["json_sha256"]) \
+                or cl["frozen_rows"] != rfp_rows or sorted(frozen) != sorted(rfp_rows) \
+                or pr.get("decision", {}).get("json_sha256") != d["json_sha256"] \
+                or len(g) != 1 or g[0]["evidence_sufficient_for_freeze"] is not True:
+            raise SystemExit("AG-15: closure record / registration page review / F9 AG-15 gate disagree with the "
+                             "pinned A9.22 G3 record (fail closed)")
+        acceptance = {"status": "APPLIED", "by": "A9.22 G3_REQUIREMENTS_SNAPSHOT",
+                      "decision_json": d["json"], "decision_json_sha256": d["json_sha256"],
+                      "decision_md": d["md"], "decision_md_sha256": d["md_sha256"],
+                      "decision_code": X.decision_code("A9.22", "G3_REQUIREMENTS_SNAPSHOT"),
+                      "artifact": RVM_REL, "record_pointer": AG15_CLOSURE_POINTER, "commit": A922_AG15_COMMIT,
+                      "rfp_rows_requirement_frozen": frozen, "requirements_snapshot": rb["requirements_snapshot"],
+                      "f9_gate": g[0]["current_status"],
+                      "what": "owner closure of AG-15 (requirement basis frozen; no RVM status changed, no compliance "
+                              "claim)"}
     return {
         "gate": "AG-15 (A9.13 S6.22 F9-OQ-03; A9.17 RFP)",
         "registration": {"status": "APPLIED", "artifact": REG_REL, "commit": "96ace704ed78d699c5805ebcc8acd99f5cc0b125",
@@ -1070,11 +1179,7 @@ def ag_15_record():
         "rvm_rebase": {"status": "APPLIED", "artifact": RVM_REL, "builder": "docs/requirements/rvm_a9/rfp_rebase.py",
                        "commit": RVM_REBASE_COMMIT, "id": rb["id"], "clauses_covered": len(rb["clause_coverage"]),
                        "origin_counts": rb["origin_counts"]},
-        "owner_acceptance": {"status": "PENDING_OWNER_ACCEPTANCE", "rfp_rows_requirement_frozen": frozen,
-                             "what": "owner acceptance of the re-base / AG-15 closure; requirement_frozen stays false on "
-                                     "RFP rows until then (" + rb["ag_15_status"] + ")"},
-        "note": "the F9 freeze-candidate AG-15 rule is being changed in a parallel lane; regenerate this matrix after "
-                "that lane merges (the F9 a9_16 record read here may still say BLOCKED_RFP_NOT_REGISTERED)"}
+        "owner_acceptance": acceptance}
 
 
 def _c(s):
@@ -1106,8 +1211,8 @@ def render_md(doc):
                    f"{_c(st)} | {_c(apps) or '-'} | {_c(res) or '-'} |")
     out += ["", "## Pins", ""] + [f"- `{p['path']}` sha256 `{p['sha256']}`" for p in doc["pins"]]
     out += ["", "No PASS; no question answered here. The official RFP is registered by hash (A9.17 RFP) and the RVM "
-            "re-based; step-1 rfp_citation_status OWNER_STATED_PENDING_RFP_REGISTRATION labels are history; AG-15 closure "
-            "is PENDING_OWNER_ACCEPTANCE."]
+            "re-based; step-1 rfp_citation_status OWNER_STATED_PENDING_RFP_REGISTRATION labels are history; AG-15 is "
+            "closed by the owner (A9.22 G3; requirement basis frozen, not compliance)."]
     return "\n".join(out) + "\n"
 
 

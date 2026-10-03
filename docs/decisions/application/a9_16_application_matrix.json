@@ -1,7 +1,7 @@
 {
  "schema": "a9_16_application_matrix_v1",
  "id": "a9_16_application_matrix_v1",
- "lane": "A9.16 step 1 integration; refreshed in the A9.16 finalize records lane (step 2 / step 3 / A9.17 / A9.18 applications) and in the A9.17 .. A9.21 records lane (A9.19 / A9.20 / A9.21)",
+ "lane": "A9.16 step 1 integration; refreshed in the A9.16 finalize records lane (step 2 / step 3 / A9.17 / A9.18 applications) and in the A9.17 .. A9.21 records lane (A9.19 / A9.20 / A9.21) and in the A9.22 AG-15 closure lane (G3)",
  "date": "2026-10-03",
  "generated_by": "docs/decisions/application/build_a9_16_application_matrix.py",
  "companion_document": "docs/decisions/application/a9_16_application_matrix.md",
@@ -14,19 +14,21 @@
   "PENDING_CI_CHANGE": "needs a CI workflow change (.github/workflows), outside every A9.16 step-1 allowed path",
   "BLOCKED": "cannot be applied yet (missing input or record outside the allowed paths; named in 'residual')",
   "PARTIAL": "the decision's rule is recorded in the governing artifact but a named part it requires (a selection, a registration) is still pending - not APPLIED until that part exists (named in 'residual')",
-  "SUPERSEDED_BY_LATER_DECISION": "applied earlier and superseded by a later owner decision (named in 'amended_by_later'); the later decision's entry governs"
+  "SUPERSEDED_BY_LATER_DECISION": "applied earlier and superseded by a later owner decision (named in 'amended_by_later'); the later decision's entry governs",
+  "PENDING_GOVERNED_MIGRATION": "owner-approved migration item (A9.22 layer separation) not yet applied: its own governed migration lane applies it; no artifact is claimed here (named in 'residual')"
  },
  "residual_status_vocabulary": [
   "BLOCKED",
   "PENDING_STEP_2_MODEL_CHANGE",
   "PENDING_STEP_3_ARCHITECTURE",
   "PENDING_EVIDENCE",
+  "PENDING_GOVERNED_MIGRATION",
   "PENDING_CI_CHANGE",
   "OPEN_OWNER_QUESTION",
   "PENDING_FINALIZE_DESIGN_REGEN",
   "PENDING_OWNER_ACCEPTANCE"
  ],
- "rule": "one entry per decision id of A9.8 .. A9.14, the A9.15 governing rule and one entry per decision item of A9.17 .. A9.21; the verbatim .md governs; statuses never PASS; an application is listed only when its question id (step-1 lanes) or its recorded locator tokens (step 2 / step 3 / A9.17 .. A9.21) are locatable in the artifact",
+ "rule": "one entry per decision id of A9.8 .. A9.14, the A9.15 governing rule and one entry per decision item of A9.17 .. A9.22; the verbatim .md governs; statuses never PASS; an application is listed only when its question id (step-1 lanes) or its recorded locator tokens (step 2 / step 3 / A9.17 .. A9.22) are locatable in the artifact",
  "pins": [
   {
    "key": "A9.8_json",
@@ -157,6 +159,16 @@
    "key": "A9.21_md",
    "path": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
    "sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440"
+  },
+  {
+   "key": "A9.22_json",
+   "path": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
+   "sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49"
+  },
+  {
+   "key": "A9.22_md",
+   "path": "docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md",
+   "sha256": "749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77"
   }
  ],
  "later_application_commits": {
@@ -165,6 +177,7 @@
   "a9_19_design": "90f0137842ddd59dcfc99444fc98ba46c808edd0",
   "a9_19_integration": "f280cf4401fe1f428352b5657e97881f38cc7c79",
   "a9_17_21_records": "42453f5fdb10a645ea88ef90f56aad851d2c6520",
+  "a9_22_ag15_closure": "e78c781c70f79fb46b903e19ab9cb1202db94595",
   "a9_21_al08_budgets": "6a69ac52dcca091212c0dfc4cd10abcbd2e1bdcc",
   "a9_21_icp_gate": "eae96c820ef86c281dc7ffafd6bb698ee0b2b96f",
   "m16_v5_rederivation": "c4062e0fad73b7159fed109516ec8d9ffae76915"
@@ -222,21 +235,24 @@
   "A9.18": 2,
   "A9.19": 6,
   "A9.20": 1,
-  "A9.21": 8
+  "A9.21": 8,
+  "A9.22": 9
  },
  "counts": {
-  "APPLIED": 146,
+  "APPLIED": 147,
   "BLOCKED": 4,
   "NOT_APPLICABLE_TO_ARTIFACTS": 3,
   "PARTIAL": 4,
+  "PENDING_GOVERNED_MIGRATION": 8,
   "SUPERSEDED_BY_LATER_DECISION": 2
  },
  "residual_counts": {
   "BLOCKED": 19,
   "OPEN_OWNER_QUESTION": 1,
-  "PENDING_EVIDENCE": 7,
+  "PENDING_EVIDENCE": 8,
   "PENDING_FINALIZE_DESIGN_REGEN": 21,
-  "PENDING_OWNER_ACCEPTANCE": 6
+  "PENDING_GOVERNED_MIGRATION": 8,
+  "PENDING_OWNER_ACCEPTANCE": 3
  },
  "rules": [
   {
@@ -249,9 +265,9 @@
   {
    "id": "R-RFP",
    "decision": null,
-   "rule": "the official RFP is registered by hash in the public repository (A9.17 RFP; docs/requirements/rfp_official/rfp_registration_v1.json, PDF in the controlled evidence store) and the RVM is re-based on its clauses; the step-1 records keep rfp_citation_status OWNER_STATED_PENDING_RFP_REGISTRATION as the history of the state in which they were applied (step-1 rule: 'RFP(1)' cites the official RFP held by the owner; the document is not registered in the repository (AG-15), so every RFP-cited fact is OWNER_STATED_PENDING_RFP_REGISTRATION); AG-15 closure (owner acceptance; requirement_frozen) is PENDING_OWNER_ACCEPTANCE",
+   "rule": "the official RFP is registered by hash in the public repository (A9.17 RFP; docs/requirements/rfp_official/rfp_registration_v1.json, PDF in the controlled evidence store) and the RVM is re-based on its clauses; the step-1 records keep rfp_citation_status OWNER_STATED_PENDING_RFP_REGISTRATION as the history of the state in which they were applied (step-1 rule: 'RFP(1)' cites the official RFP held by the owner; the document is not registered in the repository (AG-15), so every RFP-cited fact is OWNER_STATED_PENDING_RFP_REGISTRATION); the owner closed AG-15 (A9.22 G3): requirement_frozen = true on the RFP_CLAUSE rows, RFP-derived requirements snapshot FROZEN (basis only, no compliance claim)",
    "status": "APPLIED",
-   "application": "state v5 rfp_registration_now; F9-OQ-03 'ag_15' (registration + re-base APPLIED, owner acceptance pending); step-1 rows, F9 / RVM records carry rfp_citation_status as history"
+   "application": "state v5 rfp_registration_now + a9_22_g3; F9-OQ-03 'ag_15' (registration + re-base + owner acceptance APPLIED); step-1 rows, F9 / RVM records carry rfp_citation_status as history"
   },
   {
    "id": "R-A919",
@@ -3659,11 +3675,17 @@
      "what": "RVM re-based on the registered official RFP (AG-15 step); requirement_frozen stays false on RFP rows until the owner closes AG-15"
     }
    ],
-   "residual": [
+   "residual": [],
+   "resolved_residual": [
     {
-     "status": "PENDING_OWNER_ACCEPTANCE",
+     "status_before": "PENDING_OWNER_ACCEPTANCE",
      "what": "AG-15 closure: the official RFP is registered by sha256 (A9.17 RFP) and the RVM is re-based on it (step 3) - both APPLIED ('ag_15'); requirement_frozen stays false on RFP rows until the owner accepts the re-base and closes AG-15",
-     "where": "owner act (AG-15 closure)"
+     "where_before": "owner act (AG-15 closure)",
+     "status": "APPLIED",
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "commit": "e78c781c70f79fb46b903e19ab9cb1202db94595",
+     "record_pointer": "/rfp_rebase/ag15_closure",
+     "by": "A9.22 G3_REQUIREMENTS_SNAPSHOT"
     }
    ],
    "ag_15": {
@@ -3692,11 +3714,44 @@
      }
     },
     "owner_acceptance": {
-     "status": "PENDING_OWNER_ACCEPTANCE",
-     "rfp_rows_requirement_frozen": [],
-     "what": "owner acceptance of the re-base / AG-15 closure; requirement_frozen stays false on RFP rows until then (OPEN - RFP registered by hash with verbatim transcription and the RVM re-based; closure is the owner's (not declared here))"
-    },
-    "note": "the F9 freeze-candidate AG-15 rule is being changed in a parallel lane; regenerate this matrix after that lane merges (the F9 a9_16 record read here may still say BLOCKED_RFP_NOT_REGISTERED)"
+     "status": "APPLIED",
+     "by": "A9.22 G3_REQUIREMENTS_SNAPSHOT",
+     "decision_json": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
+     "decision_json_sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49",
+     "decision_md": "docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md",
+     "decision_md_sha256": "749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77",
+     "decision_code": "AG15_CLOSED_SNAPSHOT_FROZEN",
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "record_pointer": "/rfp_rebase/ag15_closure",
+     "commit": "e78c781c70f79fb46b903e19ab9cb1202db94595",
+     "rfp_rows_requirement_frozen": [
+      "RVM-01",
+      "RVM-02",
+      "RVM-03",
+      "RVM-04",
+      "RVM-06",
+      "RVM-08",
+      "RVM-09",
+      "RVM-10",
+      "RVM-11",
+      "RVM-12",
+      "RVM-13",
+      "RVM-16",
+      "RVM-18",
+      "RVM-19",
+      "RVM-20",
+      "RVM-21",
+      "RVM-22",
+      "RVM-23",
+      "RVM-24",
+      "RVM-25",
+      "RVM-26",
+      "RVM-29"
+     ],
+     "requirements_snapshot": "FROZEN",
+     "f9_gate": "DETERMINING_EVIDENCE_PRESENT_NO_REMAINING_CONDITION",
+     "what": "owner closure of AG-15 (requirement basis frozen; no RVM status changed, no compliance claim)"
+    }
    }
   },
   {
@@ -6305,11 +6360,17 @@
      "what": "compliance gates CG-IC / CG-N2-AO carry their registered RFP clauses"
     }
    ],
-   "residual": [
+   "residual": [],
+   "resolved_residual": [
     {
-     "status": "PENDING_OWNER_ACCEPTANCE",
+     "status_before": "PENDING_OWNER_ACCEPTANCE",
      "what": "RFP clauses registered and mapped (CG-IC / CG-SPF / CG-N2-AO carry their clauses); requirement_frozen stays false until the owner closes AG-15",
-     "where": "owner act (AG-15 closure)"
+     "where_before": "owner act (AG-15 closure)",
+     "status": "APPLIED",
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "commit": "e78c781c70f79fb46b903e19ab9cb1202db94595",
+     "record_pointer": "/rfp_rebase/ag15_closure",
+     "by": "A9.22 G3_REQUIREMENTS_SNAPSHOT"
     }
    ]
   },
@@ -6871,11 +6932,17 @@
      "what": "RVM re-based on the registered clauses"
     }
    ],
-   "residual": [
+   "residual": [],
+   "resolved_residual": [
     {
-     "status": "PENDING_OWNER_ACCEPTANCE",
+     "status_before": "PENDING_OWNER_ACCEPTANCE",
      "what": "AG-15 closure (requirement_frozen stays false on RFP rows until the owner accepts the re-base and closes AG-15)",
-     "where": "owner act"
+     "where_before": "owner act (AG-15 closure)",
+     "status": "APPLIED",
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "commit": "e78c781c70f79fb46b903e19ab9cb1202db94595",
+     "record_pointer": "/rfp_rebase/ag15_closure",
+     "by": "A9.22 G3_REQUIREMENTS_SNAPSHOT"
     }
    ]
   },
@@ -7627,6 +7694,248 @@
      "status": "BLOCKED",
      "what": "dispatch of the quotation packages",
      "where": "owner / procurement"
+    }
+   ]
+  },
+  {
+   "decision": "A9.22",
+   "question_id": "G1_MISSION_LIFE",
+   "sequenced_no": null,
+   "decision_code": "MISSION_DURATION_26280_H",
+   "decision_json": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
+   "decision_json_sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49",
+   "pointer": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json#/decisions/G1_MISSION_LIFE",
+   "status": "PENDING_GOVERNED_MIGRATION",
+   "status_reason": "owner-approved (A9.22 migration plan, phases A-E) and not applied by the AG-15 closure lane; applied by its own governed migration (no artifact claimed here)",
+   "applications": [],
+   "residual": [
+    {
+     "status": "PENDING_GOVERNED_MIGRATION",
+     "what": "mission duration 26,280 h for mission-integrated quantities (governed baseline change)",
+     "where": "its own A9.22 migration lane"
+    }
+   ]
+  },
+  {
+   "decision": "A9.22",
+   "question_id": "G2_C_DRAG_RFP",
+   "sequenced_no": null,
+   "decision_code": "OPTION_1_GENERATION_FILTER_FROM_FROZEN_SNAPSHOT",
+   "decision_json": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
+   "decision_json_sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49",
+   "pointer": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json#/decisions/G2_C_DRAG_RFP",
+   "status": "PENDING_GOVERNED_MIGRATION",
+   "status_reason": "owner-approved (A9.22 migration plan, phases A-E) and not applied by the AG-15 closure lane; applied by its own governed migration (no artifact claimed here)",
+   "applications": [],
+   "residual": [
+    {
+     "status": "PENDING_GOVERNED_MIGRATION",
+     "what": "C-DRAG-RFP kept as a generation filter from the frozen engineering-constraints snapshot",
+     "where": "its own A9.22 migration lane"
+    }
+   ]
+  },
+  {
+   "decision": "A9.22",
+   "question_id": "G3_REQUIREMENTS_SNAPSHOT",
+   "sequenced_no": null,
+   "decision_code": "AG15_CLOSED_SNAPSHOT_FROZEN",
+   "decision_json": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
+   "decision_json_sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49",
+   "pointer": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json#/decisions/G3_REQUIREMENTS_SNAPSHOT",
+   "status": "APPLIED",
+   "applications": [
+    {
+     "lane": "A9.22",
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "commit": "e78c781c70f79fb46b903e19ab9cb1202db94595",
+     "status": "APPLIED",
+     "record_locations": [
+      "\"ag15_closure\"",
+      "\"decision_code\": \"AG15_CLOSED\"",
+      "\"requirements_snapshot\": \"FROZEN\"",
+      "RP-BRIEF-01"
+     ],
+     "what": "RVM: requirement_frozen = true on the 22 RFP_CLAUSE rows (before status evaluation; no status changed), closure record rfp_rebase.ag15_closure (RP-BRIEF-01 format), requirements snapshot FROZEN",
+     "record_pointer": "/rows/0 (id=RVM-01)"
+    },
+    {
+     "lane": "A9.22",
+     "artifact": "docs/requirements/rvm_a9/rfp_rebase.py",
+     "commit": "e78c781c70f79fb46b903e19ab9cb1202db94595",
+     "status": "APPLIED",
+     "record_locations": [
+      "A9.22 G3",
+      "ACCEPTED_BASIS_SHA256",
+      "def record_closure"
+     ],
+     "what": "closure applied on the final RVM; a later change of the requirements basis is refused (new owner decision needed)"
+    },
+    {
+     "lane": "A9.22",
+     "artifact": "docs/requirements/rfp_official/rfp_registration_v1.json",
+     "commit": "e78c781c70f79fb46b903e19ab9cb1202db94595",
+     "status": "APPLIED",
+     "record_locations": [
+      "\"owner_page_review\"",
+      "OWNER_REVIEWED_NO_ADDITIONAL_TECHNICAL_PERFORMANCE_REQUIREMENT"
+     ],
+     "what": "registration page_coverage: owner review disposition of pages 1-15 / 34-40 (owner-stated, verbatim)"
+    },
+    {
+     "lane": "A9.22",
+     "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+     "commit": "e78c781c70f79fb46b903e19ab9cb1202db94595",
+     "status": "APPLIED",
+     "record_locations": [
+      "\"owner_closure_recorded\"",
+      "\"architecture_status\": \"INVESTIGATION_HYPOTHESIS\""
+     ],
+     "what": "F9 AG-15 closed on the owner closure record (fail-closed check replaces the 'CLOSED' text prefix); architecture stays INVESTIGATION_HYPOTHESIS",
+     "record_pointer": "/architecture_gates/14 (id=AG-15)"
+    },
+    {
+     "lane": "A9.22",
+     "artifact": "docs/architecture/freeze_candidate/ag15_f9.py",
+     "commit": "e78c781c70f79fb46b903e19ab9cb1202db94595",
+     "status": "APPLIED",
+     "record_locations": [
+      "def owner_closure_errors",
+      "CLOSURE_DECISION"
+     ],
+     "what": "F9 AG-15 closure-record check (fail closed)"
+    },
+    {
+     "lane": "A9.22",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+     "commit": "e78c781c70f79fb46b903e19ab9cb1202db94595",
+     "status": "APPLIED",
+     "record_locations": [
+      "\"a9_22_g3\"",
+      "\"PERFORMS_OWNER_ACT\""
+     ],
+     "what": "state v5: F9-OQ-03 PERFORMS_OWNER_ACT record; a9_22_g3 with pointers + sha256"
+    }
+   ],
+   "residual": [
+    {
+     "status": "PENDING_EVIDENCE",
+     "what": "compliance of the frozen rows: freezing the requirement basis changes no RVM status; every row stays as evaluated until determining evidence exists",
+     "where": "hardware programme / RVM"
+    }
+   ]
+  },
+  {
+   "decision": "A9.22",
+   "question_id": "G4_GOLDEN_ARCHITECTURE",
+   "sequenced_no": null,
+   "decision_code": "CATHODELESS_ACTIVE_BASELINE",
+   "decision_json": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
+   "decision_json_sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49",
+   "pointer": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json#/decisions/G4_GOLDEN_ARCHITECTURE",
+   "status": "PENDING_GOVERNED_MIGRATION",
+   "status_reason": "owner-approved (A9.22 migration plan, phases A-E) and not applied by the AG-15 closure lane; applied by its own governed migration (no artifact claimed here)",
+   "applications": [],
+   "residual": [
+    {
+     "status": "PENDING_GOVERNED_MIGRATION",
+     "what": "governed golden / reference case for hall_icp_neutralizer; LaB6 golden data HISTORICAL_NON_FLIGHT_REGRESSION",
+     "where": "its own A9.22 migration lane"
+    }
+   ]
+  },
+  {
+   "decision": "A9.22",
+   "question_id": "G5_ALTITUDE_BAND",
+   "sequenced_no": null,
+   "decision_code": "MISSION_DOMAIN_ALTITUDE_180_230_KM_FROZEN_CONSTRAINT",
+   "decision_json": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
+   "decision_json_sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49",
+   "pointer": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json#/decisions/G5_ALTITUDE_BAND",
+   "status": "PENDING_GOVERNED_MIGRATION",
+   "status_reason": "owner-approved (A9.22 migration plan, phases A-E) and not applied by the AG-15 closure lane; applied by its own governed migration (no artifact claimed here)",
+   "applications": [],
+   "residual": [
+    {
+     "status": "PENDING_GOVERNED_MIGRATION",
+     "what": "mission_domain.altitude_km = [180, 230] consumed with provenance to the requirements snapshot",
+     "where": "its own A9.22 migration lane"
+    }
+   ]
+  },
+  {
+   "decision": "A9.22",
+   "question_id": "G6_IC_HALL_PREFERRED",
+   "sequenced_no": null,
+   "decision_code": "MOVE_TO_ASSESSMENT",
+   "decision_json": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
+   "decision_json_sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49",
+   "pointer": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json#/decisions/G6_IC_HALL_PREFERRED",
+   "status": "PENDING_GOVERNED_MIGRATION",
+   "status_reason": "owner-approved (A9.22 migration plan, phases A-E) and not applied by the AG-15 closure lane; applied by its own governed migration (no artifact claimed here)",
+   "applications": [],
+   "residual": [
+    {
+     "status": "PENDING_GOVERNED_MIGRATION",
+     "what": "IC / hall_preferred / compliance classifications moved to the assessment layer",
+     "where": "its own A9.22 migration lane"
+    }
+   ]
+  },
+  {
+   "decision": "A9.22",
+   "question_id": "G7_DEAD_LOGIC",
+   "sequenced_no": null,
+   "decision_code": "REMOVE",
+   "decision_json": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
+   "decision_json_sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49",
+   "pointer": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json#/decisions/G7_DEAD_LOGIC",
+   "status": "PENDING_GOVERNED_MIGRATION",
+   "status_reason": "owner-approved (A9.22 migration plan, phases A-E) and not applied by the AG-15 closure lane; applied by its own governed migration (no artifact claimed here)",
+   "applications": [],
+   "residual": [
+    {
+     "status": "PENDING_GOVERNED_MIGRATION",
+     "what": "remove ignition_req_met '... or True', unused Budgets.duty_cycle and the unused RFP import",
+     "where": "its own A9.22 migration lane"
+    }
+   ]
+  },
+  {
+   "decision": "A9.22",
+   "question_id": "G8_BUS_BOUNDARY",
+   "sequenced_no": null,
+   "decision_code": "CREATE_BUS_BOUNDARY_A9_V2",
+   "decision_json": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
+   "decision_json_sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49",
+   "pointer": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json#/decisions/G8_BUS_BOUNDARY",
+   "status": "PENDING_GOVERNED_MIGRATION",
+   "status_reason": "owner-approved (A9.22 migration plan, phases A-E) and not applied by the AG-15 closure lane; applied by its own governed migration (no artifact claimed here)",
+   "applications": [],
+   "residual": [
+    {
+     "status": "PENDING_GOVERNED_MIGRATION",
+     "what": "bus_boundary_a9_v2 (hall_icp_neutralizer only) and one controlled consumer migration",
+     "where": "its own A9.22 migration lane"
+    }
+   ]
+  },
+  {
+   "decision": "A9.22",
+   "question_id": "G9_F1_OUTPUT",
+   "sequenced_no": null,
+   "decision_code": "KEEP_FULL_OUTPUT_OUT_OF_ORDINARY_GIT",
+   "decision_json": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
+   "decision_json_sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49",
+   "pointer": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json#/decisions/G9_F1_OUTPUT",
+   "status": "PENDING_GOVERNED_MIGRATION",
+   "status_reason": "owner-approved (A9.22 migration plan, phases A-E) and not applied by the AG-15 closure lane; applied by its own governed migration (no artifact claimed here)",
+   "applications": [],
+   "residual": [
+    {
+     "status": "PENDING_GOVERNED_MIGRATION",
+     "what": "deterministic F1 evidence archive outside ordinary Git history with manifest + hashes",
+     "where": "its own A9.22 migration lane"
     }
    ]
   }

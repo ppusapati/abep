@@ -130,15 +130,17 @@ def test_f9_gates_approved_with_determining_evidence_standard():
     assert len(gates) == 15 and F9DOC["architecture_status"] == "INVESTIGATION_HYPOTHESIS"
     for g in gates.values():
         assert g["owner_approved"]["decision_code"] == "AG_01_15_APPROVED_DETERMINING_EVIDENCE"
-        assert g["evidence_sufficient_for_freeze"] is False
+        # only AG-15 is sufficient: closed by the owner on the A9.22 G3 closure record (basis only)
+        assert g["evidence_sufficient_for_freeze"] is (g["id"] == "AG-15"), g["id"]
     assert gates["AG-12"]["current_status"].startswith("NOT_EVALUATED")
     be = gates["AG-12"]["blocking_evidence"]
     assert be["characterization_coverage_mg_s"] == [0.38, 3.2]
     assert be["characterization_coverage_role"] == "CHARACTERIZATION_COVERAGE_ONLY_NOT_A_PASS_FAIL_REQUIREMENT"
     assert "statewise" in gates["AG-13"]["gate"]
     # A9.13 S6.22 + A9.17 RFP: the RFP is registered by hash and the RVM re-based on it; AG-15 now carries only the
-    # owner-closure condition (never BLOCKED_RFP_NOT_REGISTERED, never PASS while requirement_frozen is false)
-    assert gates["AG-15"]["current_status"].startswith("RFP_REGISTERED_AND_RVM_REBASED_PENDING_OWNER_CLOSURE")
+    # owner-closure condition, now met by the A9.22 G3 owner closure record (never BLOCKED_RFP_NOT_REGISTERED, never PASS)
+    assert gates["AG-15"]["current_status"] == "DETERMINING_EVIDENCE_PRESENT_NO_REMAINING_CONDITION"
+    assert "PASS" not in gates["AG-15"]["current_status"]
     assert not gates["AG-15"]["current_status"].startswith("BLOCKED_RFP_NOT_REGISTERED")
     assert "successor held-out" in gates["AG-03"]["gate"]
 
@@ -288,7 +290,7 @@ def test_rvm_rows_rebased():
     assert a16["statewise_status"].startswith("NOT_EVALUATED")
     for r in RVMDOC["rows"]:
         if r["category"].startswith("rfp"):
-            assert r["requirement_frozen"] is False                       # AG-15 still open
+            assert r["requirement_frozen"] is True                        # AG-15 closed by the owner (A9.22 G3)
         for c in r["configurations"].values():
             assert c["status"] != "PASS"
     assert {g["id"] for g in RVMDOC["a9_16_compliance_gates"]} == {"CG-IC", "CG-SPF", "CG-N2-AO"}
@@ -344,12 +346,15 @@ def test_matrix_covers_every_decision_id_once():
                                 "owner_request")} | \
         {("A9.20", "answer")} | \
         {("A9.21", q) for q in ("PERF_RERUN", "AL08", "H2_6", "ICP_GATE", "BID_CLOSE", "HW_PROGRAMME",
-                                "EXTERNAL_INPUTS", "RFQ_DISPATCH")}
+                                "EXTERNAL_INPUTS", "RFQ_DISPATCH")} | \
+        {("A9.22", q) for q in ("G1_MISSION_LIFE", "G2_C_DRAG_RFP", "G3_REQUIREMENTS_SNAPSHOT",
+                                "G4_GOLDEN_ARCHITECTURE", "G5_ALTITUDE_BAND", "G6_IC_HALL_PREFERRED", "G7_DEAD_LOGIC",
+                                "G8_BUS_BOUNDARY", "G9_F1_OUTPUT")}
     assert set(MX.LATER_APPS) == later
     for k in X.ORDER:                                   # every item of every later decision record is covered
         assert {(k, q) for q in X.item_keys(k)} <= later
     want |= later
-    assert set(ids) == want and len(want) == 136 + 8 + 15
+    assert set(ids) == want and len(want) == 136 + 8 + 15 + 9
     for e in MXDOC["entries"]:
         assert e["status"] in MX.STATUSES
         for r in e["residual"]:
@@ -410,7 +415,7 @@ def test_matrix_applications_are_verifiable():
             if a["status"] != "APPLIED" or a["lane"] == "INTEGRATION":
                 continue
             if a["lane"] in ("STEP2", "STEP3", "A9.13_DATA", "A9.17", "A9.18", "A9.19", "A9.20", "A9.21",
-                             "A9_17_21_RECORDS"):
+                             "A9_17_21_RECORDS", "A9.22"):
                 text = (ROOT / a["artifact"]).read_text(encoding="utf-8")
                 assert a["record_locations"] and all(t in text for t in a["record_locations"]), (e["question_id"], a)
             elif e["decision"] != "A9.15":
@@ -562,16 +567,26 @@ def test_matrix_earlier_entries_amended_or_superseded_by_later():
     assert "hall_icp_neutralizer" in rules["R-A919"]["rule"] and "GROUND_ONLY_LAB_REFERENCE" in rules["R-A919"]["rule"]
 
 
-def test_matrix_ag15_registration_and_rebase_applied_owner_acceptance_pending(monkeypatch):
+def test_matrix_ag15_registration_rebase_and_owner_acceptance_applied(monkeypatch):
     e = {x["question_id"]: x for x in MXDOC["entries"]}["F9-OQ-03"]
     ag = e["ag_15"]
     reg = _j("docs/requirements/rfp_official/rfp_registration_v1.json")
+    rvm = _j("docs/requirements/rvm_a9/rvm_a9_v1.json")
     assert ag["registration"]["status"] == "APPLIED" and ag["rvm_rebase"]["status"] == "APPLIED"
     assert ag["registration"]["pdf_sha256"] == reg["document"]["sha256"]
     assert ag["registration"]["n_clauses"] == len(reg["clauses"]) == ag["rvm_rebase"]["clauses_covered"]
-    assert ag["owner_acceptance"]["status"] == "PENDING_OWNER_ACCEPTANCE"
-    assert ag["owner_acceptance"]["rfp_rows_requirement_frozen"] == []       # AG-15 open: no RFP row frozen
-    assert [r["status"] for r in e["residual"]] == ["PENDING_OWNER_ACCEPTANCE"]
+    oa = ag["owner_acceptance"]                         # A9.22 G3: the owner closed AG-15 (basis only)
+    assert oa["status"] == "APPLIED" and oa["decision_json_sha256"] == X.LOADED["A9.22"]["json_sha256"]
+    assert sorted(oa["rfp_rows_requirement_frozen"]) == sorted(
+        r["id"] for r in rvm["rows"] if r["requirement_origin"] == "RFP_CLAUSE")
+    assert e["residual"] == [] and [r["status_before"] for r in e["resolved_residual"]] == ["PENDING_OWNER_ACCEPTANCE"]
+    for k in ("OD12",):
+        x = {y["question_id"]: y for y in MXDOC["entries"]}[k]
+        assert not any(r["status"] == "PENDING_OWNER_ACCEPTANCE" for r in x["residual"]) and x["resolved_residual"]
+    g3 = _later("A9.22", "G3_REQUIREMENTS_SNAPSHOT")
+    assert g3["status"] == "APPLIED" and g3["decision_code"] == "AG15_CLOSED_SNAPSHOT_FROZEN"
+    for k in ("G1_MISSION_LIFE", "G8_BUS_BOUNDARY"):    # not applied here: their own governed migrations
+        assert _later("A9.22", k)["status"] == "PENDING_GOVERNED_MIGRATION" and not _later("A9.22", k)["applications"]
     assert "REGISTERED" in {r["id"]: r for r in MXDOC["rules"]}["R-RFP"]["rule"].upper()
     for x in MXDOC["entries"]:                          # AG-15 closure is never shown as BLOCKED on registration
         for r in x["residual"]:
