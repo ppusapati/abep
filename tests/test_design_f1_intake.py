@@ -188,8 +188,55 @@ def test_if_a1_record_for_filter_stage():
     assert F1.compressor_burden(0.2, 0.01) == pytest.approx(20.0)
 
 
+def test_core_view_is_the_lossless_view_of_the_full_output():
+    """A9.22 item 9: the committed core view is the core view of the full output (when present locally) and pins it."""
+    core_txt = (REPO / F1.F1_CORE_REL).read_text()
+    core = json.loads(core_txt)
+    man = json.loads((REPO / F1.F1_ARCHIVE_MANIFEST_REL).read_text())
+    full_entry = next(f for f in man["files"] if f["source_path"] == F1.F1_FULL_REL)
+    assert core["full_output"]["sha256"] == full_entry["sha256"]
+    assert man["committed_in_git"]["core_view"]["sha256"] == hashlib.sha256(core_txt.encode()).hexdigest()
+    assert man["archive"]["sha256"] == man["storage"]["git_lfs"]["lfs_oid"].split(":")[1]
+    full_p = REPO / F1.F1_FULL_REL
+    if not full_p.is_file():
+        pytest.skip("full F1 output not present locally (archived); core view checked against the manifest only")
+    raw = full_p.read_bytes()
+    assert hashlib.sha256(raw).hexdigest() == full_entry["sha256"]
+    assert F1.core_text_from_full_bytes(raw) == core_txt
+    assert json.dumps(F1.load_f1_view(REPO)) == json.dumps(F1.consumer_view(json.loads(raw)))
+
+
+def test_stdlib_core_reader_matches_canonical_decoder():
+    spec = importlib.util.spec_from_file_location("_f1_core_view", OUT / "f1_core_view.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    core = json.loads((REPO / F1.F1_CORE_REL).read_text())
+    assert json.dumps(mod.expand_core(core)) == json.dumps(F1.expand_core(core))
+    assert mod.RECORD_SPECIES_FIELDS == F1.VIEW_RECORD_SPECIES_FIELDS and mod.CORE_SCHEMA == F1.CORE_SCHEMA
+
+
+def test_core_view_round_trip_tiny():
+    full = {"schema": "x", "status": "S", "deliverable_status": "D", "direct_runs": 1,
+            "coverage_rule": {"orbit_states": ["s0", "s1"]}, "design_space": {"n_candidates": 1},
+            "pareto": {"envelope": {"sc": {}}},
+            "candidate_metrics": {"envelope": {"sc": {"columns": ["candidate", "feasible"], "rows": [["c", False]]}}},
+            "infeasible_reasons": {"design_case": {}, "envelope": {"sc": {
+                "A1_d5_Ld3_phi0.9": ["C-DRAG-RFP at s1: 26.50 mN", "other reason"],
+                "A1_d10_Ld3_phi0.9": ["C-DRAG-RFP at s1: 26.50 mN", "other reason"]}}},
+            "species_table": {"columns": list(F1.VIEW_SPECIES_COLS) + ["seed"],
+                              "rows": [["s0", "O", 3.0, 0.9, 1.0, 0.0, "maxwell", "DIRECT_TPMC", 0.8, 2.1, None, 40.0, 7]]},
+            "if_a1_interface": {"schema": {}, "records_per_unit_area": [
+                {"candidate": "u", "state": "s1", "scenario": "sc", "theta_deg": 0.0, "note": "dropped",
+                 "species": {s: {f: 1.5e-7 for f in F1.VIEW_RECORD_SPECIES_FIELDS + ("eta_c",)} for s in F1.SPECIES},
+                 "T_K": 350.0, "converged": True}], "producer_function": "f"}}
+    core = F1.core_from_full(full, "0" * 64, 1)
+    assert json.dumps(F1.expand_core(json.loads(F1.dump_core(core)))) == json.dumps(F1.consumer_view(full))
+    assert len(core["encoded"]["infeasible_reasons"]["envelope"]["sc"]["reason_lists"]) == 1   # stored once
+    assert F1.expand_core(core)["infeasible_reasons"]["envelope"]["sc"]["A1_d5_Ld3_phi0.9"][1] == "other reason"
+
+
 def test_committed_outputs_consistent():
-    doc = json.loads((OUT / "f1_intake_synthesis_v1.json").read_text())
+    doc = F1.load_f1_view(REPO)        # the compact core view expanded to the deliverable layout (A9.22 item 9)
     b = _builder()
     assert (OUT / "F1_INTAKE_SYNTHESIS.md").read_text() == b.render_md(doc)
     for k in ("items", "interface_demands", "open_owner_questions", "m16_impact", "pareto", "candidate_metrics",

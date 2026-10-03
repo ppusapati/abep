@@ -15,12 +15,16 @@ REPO = Path(__file__).resolve().parents[1]
 
 
 def _j(rel: str) -> dict:
-    return json.loads((REPO / rel).read_text(encoding="utf-8"))
+    d = json.loads((REPO / rel).read_text(encoding="utf-8"))
+    if d.get("schema") == "f1_intake_synthesis_v1_core":      # F1 compact core view -> deliverable layout
+        from abep_sim.design import intake_synthesis as isy
+        d = isy.expand_core(d)
+    return d
 
 
 # ------------------------------------------------------------------------------------------------ RVF-02 owner state
 F_RECORDS = {
-    "F1": ("docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+    "F1": ("docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",   # compact core view (A9.22 item 9)
            "docs/design_synthesis/f1_intake/F1_INTAKE_SYNTHESIS.md"),
     "F2": ("docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
            "docs/design_synthesis/f2_filter/F2_FILTER_STAGE.md"),

@@ -414,8 +414,8 @@
    "sha256": "09cf58a9dac3aea1aed2e3a343310d189c980a78ec699a75f7bc494c161418f8"
   },
   "F1": {
-   "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
-   "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+   "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
+   "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
   },
   "F2": {
    "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
@@ -431,7 +431,7 @@
   },
   "F4": {
    "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
-   "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+   "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
   },
   "F5": {
    "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
@@ -443,7 +443,7 @@
   },
   "F78": {
    "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
-   "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+   "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
   },
   "F7P": {
    "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
@@ -716,7 +716,7 @@
    "source": {
     "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
     "pointer": "/robust/robust_pareto_by_P_set",
-    "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+    "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
    }
   },
   "nominal_pareto_union": {
@@ -816,7 +816,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
@@ -827,12 +827,12 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/7/finding",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
-     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
      "pointer": "/design_space/variables/area_m2",
-     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+     "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
     }
    ],
    "basis": "robust set = F8 members feasible in all 10 TBD surface scenarios and non-dominated on worst-case objectives (robust P_set: none (robust set empty)); union = every F7 nominal-context Pareto member",
@@ -869,7 +869,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
@@ -878,9 +878,9 @@
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
-     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
      "pointer": "/design_space/variables/L_over_d",
-     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+     "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
     }
    ],
    "basis": "F1 trade (F1-05): L/d trades collection efficiency and off-axis tolerance against passive compression",
@@ -913,7 +913,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
@@ -922,9 +922,9 @@
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
-     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
      "pointer": "/design_space/variables/phi",
-     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+     "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
     }
    ],
    "basis": "frozen intake-surface nodes 0.8 / 0.9",
@@ -950,14 +950,14 @@
    "evidence_note": "free-molecular outputs are d-invariant at fixed L/d; d sets only intake depth L and cell count",
    "source": [
     {
-     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
      "pointer": "/findings/1/finding",
-     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+     "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/design_vector/blocks/0/variables/1",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     }
    ],
    "basis": "F1-02; F7 collapses d",
@@ -977,19 +977,19 @@
    "evidence_class": null,
    "source": [
     {
-     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
      "pointer": "/items/1",
-     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+     "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
     },
     {
-     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
      "pointer": "/items/4",
-     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+     "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
     },
     {
-     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
      "pointer": "/open_owner_questions/1/question",
-     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+     "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -1021,19 +1021,19 @@
    "evidence_class": null,
    "source": [
     {
-     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
      "pointer": "/items/6",
-     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+     "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
     },
     {
-     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
      "pointer": "/items/7",
-     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+     "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/1/question",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     }
    ],
    "basis": "no measured accommodation for any Vyovrinda surface",
@@ -1054,19 +1054,19 @@
    "evidence_class": null,
    "source": [
     {
-     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
      "pointer": "/items/8",
-     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+     "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
     },
     {
-     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
      "pointer": "/open_owner_questions/2/question",
-     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+     "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/9/finding",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -1101,9 +1101,9 @@
    "evidence_note": "code default the frozen TPMC surface was built with (no cited source)",
    "source": [
     {
-     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
      "pointer": "/items/5",
-     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+     "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
     }
    ],
    "basis": "F1-P-06; UPSTREAM_ICD G-07",
@@ -1135,17 +1135,17 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/hard_constraints/8",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
-     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
      "pointer": "/infeasible_reasons/envelope",
-     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+     "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
     }
    ],
    "basis": "F8 worst case over the 10 scenarios; spacecraft body / array drag excluded (TBD, OQ-F78-04); binding (scenario, altitude) of the F1 envelope drag exceedances read from F1 infeasible_reasons",
@@ -1166,9 +1166,9 @@
    "evidence_class": null,
    "source": [
     {
-     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
      "pointer": "/findings/9/finding",
-     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+     "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
     },
     {
      "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -1445,7 +1445,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     }
    ],
    "basis": "F3 bounded design search; F7 / F8 Pareto",
@@ -1494,7 +1494,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
@@ -1614,7 +1614,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
@@ -1624,7 +1624,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/5",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     }
    ],
    "basis": "DragCompressor model through F3 / F4 / F7",
@@ -1657,7 +1657,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
@@ -1667,7 +1667,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/6",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
      "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -1800,7 +1800,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
@@ -1811,7 +1811,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/search_variables/0",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     }
    ],
    "basis": "volume trades the mass proxy against shaft-frequency ripple attenuation; the plenum is not an orbit-scale buffer at <= 0.1 Pa (F4-05)",
@@ -1844,7 +1844,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
@@ -1855,7 +1855,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/2/finding",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     }
    ],
    "basis": "robust-member P_set: none (robust set empty); F7 set pressures with any all-state-feasible vector: 0.01, 0.02 Pa (read from F7 upstream_pareto_summary)",
@@ -1879,7 +1879,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -1912,7 +1912,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/0",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     }
    ],
    "basis": "F4-P-01 = F1 T_wall",
@@ -1957,12 +1957,12 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/5",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/10/finding",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     }
    ],
    "basis": "F4-P-06; owner GP-D03",
@@ -1985,7 +1985,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/4",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     }
    ],
    "basis": "F4-P-05",
@@ -2020,22 +2020,22 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/1/finding",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/findings/0/finding",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/steady/feasibility_regions",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     },
     {
      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
@@ -2067,7 +2067,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/15",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     },
     {
      "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -2105,12 +2105,12 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/search_variables/1",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/pareto",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     },
     {
      "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
@@ -2138,17 +2138,17 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/7",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/sensitivity_valve_bandwidth",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/findings/8/finding",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     }
    ],
    "basis": "F4-P-08",
@@ -2170,17 +2170,17 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/8",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/findings/7/finding",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/transient/contexts",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     }
    ],
    "basis": "F4-P-09",
@@ -2207,17 +2207,17 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/steady/conductance_demand",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/findings/2/finding",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/1",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     }
    ],
    "basis": "F4-03: the H2-3 analog IF-A5 pressure 5.74-1216 Pa lies above the compressor domain cap",
@@ -2245,7 +2245,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/9",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     }
    ],
    "basis": "F5 IFD-F4-01..05; F4-P-10",
@@ -2283,17 +2283,17 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/offered_to_h1",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/transient/contexts",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/findings/4/finding",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     }
    ],
    "basis": "F4 transient Pareto members at the design state h200_f150 (single-state values; the all-state frontier is AFC-UP-PL-08); no chain passes the orbit check on the transient basis, so no record is offered (never a fabricated range)",
@@ -6502,7 +6502,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/hard_constraints/4",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     }
    ],
    "basis": "I_e,cap = I_on - I_off (discharge OFF, signed; A9.4 P1Q-10 / A9.5 P1Q-16)",
@@ -7118,7 +7118,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/system_evaluation/parametric_P_bus_lower_bound_W_range",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
      "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
@@ -7810,7 +7810,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/0",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     }
    ],
    "basis": "UPSTREAM_ICD G-07",
@@ -7980,12 +7980,12 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/metric_definitions",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -9340,7 +9340,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/T",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     }
    ],
    "evidence_plan_steps": [
@@ -9435,7 +9435,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/I_e_margin",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     }
    ],
    "evidence_plan_steps": [
@@ -9483,7 +9483,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/Q_reject",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     }
    ],
    "evidence_plan_steps": [
@@ -9699,7 +9699,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/P_bus",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     }
    ],
    "evidence_plan_steps": [
@@ -9743,7 +9743,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/m_wet",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     }
    ],
    "evidence_plan_steps": [
@@ -9826,7 +9826,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/strict_mode",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
@@ -9836,7 +9836,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/1",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -9896,12 +9896,12 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/D_spacecraft",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/hard_constraints/7",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -10463,14 +10463,14 @@
    "owner_question": "F1Q-01 (existing)",
    "sources": [
     {
-     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
      "pointer": "/findings/0",
-     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+     "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
     },
     {
-     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
      "pointer": "/species_recombination_bias",
-     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+     "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
     },
     {
      "path": "abep_sim/intake_tpmc.py",
@@ -10582,7 +10582,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/checks/size_orifice_note",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     },
     {
      "path": "docs/interfaces/UPSTREAM_ICD.md",
@@ -12445,9 +12445,9 @@
     "id": "F1Q-01",
     "question": "IntakeSurface recombines species rows by mass fraction although its C_D rows are normalised by the mixture q and CR_passive needs mole weighting (finding F1-01). Authorise a controlled model change (goldens move, HISTORY entry), or keep the production convention and use the species-consistent recombination only in the design-synthesis layer?",
     "source": {
-     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+     "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
     }
    },
    {
@@ -12455,9 +12455,9 @@
     "id": "F1Q-02",
     "question": "Structural basis for the honeycomb (wall material and thickness, AO coating and its density, support fraction): supply a sourced design, or authorise a labelled assumption for budgeting only?",
     "source": {
-     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
      "pointer": "/open_owner_questions/1",
-     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+     "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
     }
    },
    {
@@ -12465,9 +12465,9 @@
     "id": "F1Q-03",
     "question": "Pointing (theta) budget of the intake axis vs the relative wind: is the frozen surface's 0-5 deg range adequate, or must larger angles be evaluated (direct TPMC)?",
     "source": {
-     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+     "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
     }
    },
    {
@@ -12475,9 +12475,9 @@
     "id": "F1Q-04",
     "question": "Authorise a frozen intake surface v2 at the envelope states (CLAUDE.md rule 1 rebuild) to replace the bounded direct TPMC used here off the build state?",
     "source": {
-     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
      "pointer": "/open_owner_questions/3",
-     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+     "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
     }
    },
    {
@@ -12567,7 +12567,7 @@
     "source": {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     }
    },
    {
@@ -12577,7 +12577,7 @@
     "source": {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/1",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     }
    },
    {
@@ -12587,7 +12587,7 @@
     "source": {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     }
    },
    {
@@ -12597,7 +12597,7 @@
     "source": {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/3",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     }
    },
    {
@@ -12607,7 +12607,7 @@
     "source": {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/4",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     }
    },
    {
@@ -12707,7 +12707,7 @@
     "source": {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     }
    },
    {
@@ -12717,7 +12717,7 @@
     "source": {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/1",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     }
    },
    {
@@ -12727,7 +12727,7 @@
     "source": {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     }
    },
    {
@@ -12737,7 +12737,7 @@
     "source": {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/3",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     }
    },
    {
@@ -13144,19 +13144,19 @@
      "binding_rule": "for each envelope-infeasible (scenario, candidate) record: the (scenario, altitude) of its largest intake-face drag exceedance (C-DRAG-RFP, drag > RFP thrust max 25 mN)",
      "source": [
       {
-       "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+       "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
        "pointer": "/candidate_metrics/envelope",
-       "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+       "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
       },
       {
-       "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+       "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
        "pointer": "/infeasible_reasons/envelope",
-       "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+       "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
       },
       {
-       "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+       "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
        "pointer": "/findings/3/finding",
-       "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+       "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
       }
      ]
     },
@@ -13184,37 +13184,37 @@
       {
        "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
        "pointer": "/steady/feasibility_regions",
-       "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+       "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
       },
       {
        "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
        "pointer": "/findings/0/finding",
-       "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+       "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
       },
       {
        "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
        "pointer": "/steady/per_state_frontier_filter_none_wall_g0",
-       "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+       "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
       },
       {
        "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
        "pointer": "/findings/1/finding",
-       "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+       "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
       },
       {
        "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
        "pointer": "/transient/contexts",
-       "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+       "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
       },
       {
        "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
        "pointer": "/offered_to_h1",
-       "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+       "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
       },
       {
        "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
        "pointer": "/findings/4/finding",
-       "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+       "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
       }
      ]
     },
@@ -13243,32 +13243,32 @@
       {
        "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
        "pointer": "/upstream_pareto_summary",
-       "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+       "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
       },
       {
        "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
        "pointer": "/upstream_status_totals",
-       "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+       "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
       },
       {
        "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
        "pointer": "/upstream_reason_totals",
-       "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+       "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
       },
       {
        "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
        "pointer": "/findings/0/finding",
-       "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+       "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
       },
       {
        "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
        "pointer": "/findings/1/finding",
-       "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+       "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
       },
       {
        "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
        "pointer": "/findings/2/finding",
-       "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+       "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
       }
      ]
     },
@@ -13306,12 +13306,12 @@
       {
        "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
        "pointer": "/robust/all_scenario_feasible",
-       "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+       "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
       },
       {
        "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
        "pointer": "/findings/7/finding",
-       "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+       "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
       }
      ]
     },
@@ -13383,97 +13383,97 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/flow_gap_owner_order",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/design_state_set",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
-     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
      "pointer": "/candidate_metrics/envelope",
-     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+     "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
     },
     {
-     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
      "pointer": "/infeasible_reasons/envelope",
-     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+     "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
     },
     {
-     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
      "pointer": "/findings/3/finding",
-     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+     "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/steady/feasibility_regions",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/findings/0/finding",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/steady/per_state_frontier_filter_none_wall_g0",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/findings/1/finding",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/transient/contexts",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/offered_to_h1",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/findings/4/finding",
-     "sha256": "7b412c3d38b9301b8728581c3faf6aaff2a67401d62f38941590263e391d72df"
+     "sha256": "29454512535c18d3bca3f120776760edddc581e2cfaf931598784b355a3d03f5"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/upstream_pareto_summary",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/upstream_status_totals",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/upstream_reason_totals",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/0/finding",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/1/finding",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/2/finding",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f8_robust_candidates_v1.json",
@@ -13483,12 +13483,12 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/all_scenario_feasible",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/7/finding",
-     "sha256": "5b06a2360c07cc6ef00933bafa0f685ccde1fd2749a1762f97975593b6672bd1"
+     "sha256": "48f9405a13f6ec4f2ae0ecee832605b8dd63c9184441f606665913b7030da9ce"
     }
    ]
   }

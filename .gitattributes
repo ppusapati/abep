@@ -1,0 +1,2 @@
+# A9.22 item 9: deterministic evidence archives are stored with Git LFS (never as ordinary blobs)
+docs/evidence_archives/**/*.tar.zst filter=lfs diff=lfs merge=lfs -text

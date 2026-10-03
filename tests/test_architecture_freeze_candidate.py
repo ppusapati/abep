@@ -38,7 +38,11 @@ def doc():
 
 
 def _j(rel):
-    return json.loads((ROOT / rel).read_text(encoding="utf-8"))
+    d = json.loads((ROOT / rel).read_text(encoding="utf-8"))
+    if d.get("schema") == "f1_intake_synthesis_v1_core":      # F1 compact core view -> deliverable layout
+        from abep_sim.design import intake_synthesis as isy
+        d = isy.expand_core(d)
+    return d
 
 
 def test_committed_outputs_are_current(b, built):
@@ -159,7 +163,7 @@ def test_owner_rollup_complete_and_unanswered(doc):
     want = sorted(r["no"] for r in v4["rows"] if r["status"] == "TBD_OWNER")
     assert sorted(q["no"] for q in ro["state_v4_tbd_owner"]) == want
     lane_files = ["docs/performance/PERFORMANCE_BASELINE_98fbbb9.json", "docs/performance/abep_core/parity_report_v1.json",
-                  "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+                  "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
                   "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
                   "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
                   "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",

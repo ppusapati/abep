@@ -143,7 +143,8 @@ SYN_CLASS = "SYNTHETIC_TEST_DATA_NOT_EVIDENCE"
 FORBIDDEN_STATUS_WORDS = ("PASS", "SELECTED", "WINNER", "QUALIFIED", "OPTIMUM")
 
 # lane inputs (read; the JSON outputs are the committed lane deliverables)
-F1_REL = "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json"
+F1_REL = "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json"   # the F1 deliverable (cited by pointer)
+F1_CORE_REL = isy.F1_CORE_REL     # what is read and pinned: its committed compact core view (A9.22 item 9)
 F2_REL = "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json"
 F3_REL = "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json"
 F3D_REL = "docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json"
@@ -215,6 +216,17 @@ def read_json(rel: str, repo: Path = REPO) -> dict:
     return _read_json_cached(str(p), p.stat().st_mtime_ns)
 
 
+@functools.lru_cache(maxsize=4)
+def _read_f1_cached(repo: str, mtime_ns: int) -> dict:
+    return isy.load_f1_view(repo)
+
+
+def read_f1(repo: Path = REPO) -> dict:
+    """The F1 deliverable as consumers read it (expanded compact core view, isy.load_f1_view; cached on path + mtime;
+    callers never mutate the returned object)."""
+    return _read_f1_cached(str(repo), (Path(repo) / F1_CORE_REL).stat().st_mtime_ns)
+
+
 def _var(vid, block, symbol, value, units, basis, source, evidence_class, status, **extra):
     d = {"id": vid, "block": block, "symbol": symbol, "value": value, "units": units, "basis": basis,
          "source": source, "evidence_class": evidence_class, "status": status}
@@ -239,7 +251,8 @@ def _f5_builder(repo: Path = REPO):
 def design_vector_blocks(repo: Path = REPO) -> list[dict]:
     """The common design vector, block by block, with every variable's value / bounds / TBD, units, basis, source,
     evidence class and status taken from the lane that owns it."""
-    f1, f3, f4, f5, f6 = (read_json(r, repo) for r in (F1_REL, F3_REL, F4_REL, F5_REL, F6_REL))
+    f1 = read_f1(repo)
+    f3, f4, f5, f6 = (read_json(r, repo) for r in (F3_REL, F4_REL, F5_REL, F6_REL))
     p3, mp = read_json(P3_REL, repo), read_json(MP_REL, repo)
     blocks = []
 
@@ -477,7 +490,7 @@ def drag_table(f1: dict) -> dict:
 
 
 def load_upstream_inputs(repo: Path = REPO) -> UpstreamInputs:
-    f1 = read_json(F1_REL, repo)
+    f1 = read_f1(repo)
     areas = tuple(float(a) for a in f1["design_space"]["variables"]["area_m2"])
     recs = pf.load_f1_records(f1, areas)
     records = {(r.candidate, r.scenario, r.state): r for r in recs}

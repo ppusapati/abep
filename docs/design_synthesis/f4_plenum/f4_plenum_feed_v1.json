@@ -30,7 +30,7 @@
   "docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md": "fb51328d6fe07a6eaf257ef9ef9592cb0c0039ae3e8cf04ef0420007c985b129",
   "docs/decisions/OD_2026_10_01_A9_7_architecture_freeze_design_synthesis.json": "3199a670c901967ae4dca930022470b024cac14b263335da0adc3d423c37f372",
   "docs/decisions/OD_2026_09_29_owner_answers_147.json": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
-  "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e",
+  "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854",
   "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json": "ccd7da1e54368c67cbedc5bf495ecc035fc844e235c5b36725c522cbc74d4412",
   "docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json": "74a52aa749e1d071f76957e4f9ef4929c9d8ab302b183da3c5a5d9ba8d6d6923",
   "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json": "8c8e19f8339fff8b473d5ac9c6d55d3c23e94441a16de17c64e199ad8c5935d4",

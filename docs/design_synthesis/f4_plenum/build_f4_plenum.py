@@ -53,7 +53,7 @@ TEST_REL = "tests/test_design_f4_plenum.py"
 BASE_COMMIT = "de6bb89a208c66a41cc57757772b2dece69a2d53"
 SIG = 8
 
-F1_REL = "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json"
+F1_REL = isy.F1_CORE_REL   # F1 compact core view (A9.22 item 9: the full output is an evidence archive)
 F3_REL = "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json"
 F3D_REL = "docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json"
 F5_REL = "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json"
