@@ -13,8 +13,9 @@ PENDING_STEP_2_MODEL_CHANGE):
   A9.13 / A9.14 / A9.12 / A9.8 / A9.15 answers that settle F9 rows (filter placement, setpoint policy, delta_B_acc,
                           isolation class, redundancy, mass lines, Xe cases, start sequence, Xe capability)
   A9.9 F1Q-01 / UPSTREAM_ICD-Q7 / F9-OQ-04  model-change candidates MCC-01..07 owner-authorised, PENDING_STEP_2
-No PASS; no representative; parameter-level RFP citations keep the step-1 label OWNER_STATED_PENDING_RFP_REGISTRATION
-(AG-15 itself is evaluated from the registered RFP, ag15_f9).
+No PASS; no representative; the step-1 label OWNER_STATED_PENDING_RFP_REGISTRATION set here is re-based afterwards onto
+the registered clause ids by rfp_citations_f9 (kept there as rfp_citation_status_as_applied; AG-15 itself is evaluated
+from the registered RFP, ag15_f9).
 """
 from __future__ import annotations
 

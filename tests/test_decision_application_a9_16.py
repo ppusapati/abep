@@ -481,7 +481,7 @@ def test_matrix_later_decisions_truthful_statuses():
         assert any(a["artifact"] != MX.V5_REL for a in e["applications"]), item      # a governing artifact
         assert e["pointer"].startswith(X.LOADED["A9.19"]["json"] + "#/")
     assert _later("A9.20", "answer")["status"] == "APPLIED"
-    want = {"PERF_RERUN": "BLOCKED", "AL08": "BLOCKED", "H2_6": "APPLIED", "ICP_GATE": "BLOCKED",
+    want = {"PERF_RERUN": "BLOCKED", "AL08": "APPLIED", "H2_6": "APPLIED", "ICP_GATE": "APPLIED",
             "BID_CLOSE": "NOT_APPLICABLE_TO_ARTIFACTS", "HW_PROGRAMME": "PARTIAL", "EXTERNAL_INPUTS": "APPLIED",
             "RFQ_DISPATCH": "NOT_APPLICABLE_TO_ARTIFACTS"}
     for item, st in want.items():
@@ -490,8 +490,16 @@ def test_matrix_later_decisions_truthful_statuses():
         if st != "APPLIED":
             assert e["status_reason"], item
     gate = _later("A9.21", "ICP_GATE")
-    assert {r["status"] for r in gate["residual"]} == {"BLOCKED", "PENDING_OWNER_ACCEPTANCE"}
+    # registration APPLIED in the gate artifacts (RVM + F9, checked structurally); criteria stay with the owner
+    assert {r["status"] for r in gate["residual"]} == {"PENDING_OWNER_ACCEPTANCE"}
     assert any("not approved" in r["what"] for r in gate["residual"])
+    locs = {a["artifact"]: a.get("record_pointer", "") for a in gate["applications"]}
+    assert locs[MX.RVM_REL].startswith("/owner_approved_gates/") and "GNG-ICP-01" in locs[MX.RVM_REL]
+    assert locs[MX.F9_REL].startswith("/pre_lock1_gates/") and "GNG-ICP-01" in locs[MX.F9_REL]
+    al08 = _later("A9.21", "AL08")
+    assert {r["status"] for r in al08["residual"]} == {"PENDING_EVIDENCE"}
+    locs = {a["artifact"]: a.get("record_pointer", "") for a in al08["applications"]}
+    assert locs[MX.MP3_REL].endswith("(line=AL-08)") and locs[MX.XE3_REL].endswith("(id=XV3-IF-02)")
     assert any(r["status"] == "PENDING_EVIDENCE" for r in _later("A9.21", "EXTERNAL_INPUTS")["residual"])
     assert any(r["status"] == "PENDING_EVIDENCE" and "quotations" in r["what"]
                for r in _later("A9.21", "AL08")["residual"])
@@ -543,3 +551,22 @@ def test_matrix_ag15_registration_and_rebase_applied_owner_acceptance_pending(mo
     monkeypatch.setattr(MX.json, "loads", fake)
     with pytest.raises(SystemExit):
         MX.ag_15_record()
+
+
+def test_matrix_structural_record_check_fails_closed():
+    """A9.21 AL08 / ICP_GATE applications are detected from the artifact records themselves (fail closed)."""
+    doc = {"lines": {"hall_icp_neutralizer": [{"line": "AL-08", "a9_21_status": "FROZEN"}]}}
+    rec = {"list": "/lines/hall_icp_neutralizer", "match": ("line", "AL-08"),
+           "checks": {"a9_21_status": ("startswith", MX.AL08_LABEL)}}
+    with pytest.raises(SystemExit):
+        MX._verify_record(doc, rec, "AL08", "x.json")
+    doc["lines"]["hall_icp_neutralizer"][0]["a9_21_status"] = MX.AL08_LABEL + " (A9.21)"
+    assert MX._verify_record(doc, rec, "AL08", "x.json") == "/lines/hall_icp_neutralizer/0 (line=AL-08)"
+    gate = {"owner_approved_gates": [{"id": MX.ICP_GATE_ID, "status": "GO", "criteria": MX.ICP_CRITERIA,
+                                      "placement": "BEFORE_LOCK-1", "mandatory": True,
+                                      "lock1_release_reportable": True}]}
+    rec = {"list": "/owner_approved_gates", "match": ("id", MX.ICP_GATE_ID), "checks": MX.ICP_GATE_CHECKS}
+    with pytest.raises(SystemExit):
+        MX._verify_record(gate, rec, "ICP_GATE", "x.json")
+    with pytest.raises(SystemExit):
+        MX._verify_record({"owner_approved_gates": []}, rec, "ICP_GATE", "x.json")
