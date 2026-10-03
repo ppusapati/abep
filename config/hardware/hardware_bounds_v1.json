@@ -1,0 +1,65 @@
+{
+ "schema": "abep_config_hardware_bounds_index_v1",
+ "id": "hardware_bounds_v1",
+ "layer": "FROZEN_ENGINEERING_CONFIGURATION",
+ "kind": "INDEX (path + sha256 + locator; no value is copied)",
+ "generated_by": "scripts/config/build_config.py",
+ "entries": [
+  {
+   "id": "h1_freeze_candidate",
+   "kind": "hardware_freeze_candidate",
+   "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+   "sha256": "8c8e19f8339fff8b473d5ac9c6d55d3c23e94441a16de17c64e199ad8c5935d4",
+   "locator": "parameters[*] / freeze_points / consistency_checks",
+   "role": "H-1 Hall accelerator freeze-candidate parameter set"
+  },
+  {
+   "id": "rotor_strength_registry",
+   "kind": "rotor_strength_registry",
+   "path": "abep_sim/rotor_strength.py",
+   "sha256": "59f7ba95bf5d4268b184304defddb36bbfca219c79a0cc8fde91e5031bc61d9b",
+   "locator": "REGISTRY (empty: no registered basis) / REFERENCE_RECORDS",
+   "role": "registered rotor-strength bases (A9.9 S2.3)"
+  },
+  {
+   "id": "materials_db",
+   "kind": "materials_database",
+   "path": "abep_sim/materials.py",
+   "sha256": "08e2ddddfc9380780e71bc15957fa82a9e879fc36046c266c669b037c2194feb",
+   "locator": "DB (Material.yield_MPa, T_max_K, ...; literature-class priors with fidelity tags)",
+   "role": "materials database"
+  },
+  {
+   "id": "thermal_life_limits",
+   "kind": "thermal_node_limits",
+   "path": "schemas/thermal_life/limits_v1.json",
+   "sha256": "0df363f76dcb6efcef41bc0a07e1775b6255c2c9d84b185228862958ef827dbb",
+   "locator": "records[*] (sourced / TBD limits)",
+   "role": "sourced thermal / life limits"
+  },
+  {
+   "id": "thermal_node_model",
+   "kind": "thermal_node_limits",
+   "path": "abep_sim/thermal.py",
+   "sha256": "3ad94b716dd78e863ad441a78ffdc7fd3ef38b2764a7aabaace6876a2f1444fb",
+   "locator": "Node.T_max_K; ThermalParams.radiator_T_max_K",
+   "role": "thermal-node limit fields of the 0-D thermal model"
+  },
+  {
+   "id": "h2_5_thermal_network",
+   "kind": "thermal_node_limits",
+   "path": "docs/hardware/h2/h2_5_thermal_network/h2_5_thermal_network_v1.json",
+   "sha256": "68c5be61443d0ef1c7308c4aba265426137292dcf9363e57903e0a1f6c8bc083",
+   "locator": "limits[*] / node_list",
+   "role": "H2-5 thermal-network node limits"
+  },
+  {
+   "id": "compressor_legacy_caps",
+   "kind": "compressor_legacy_caps",
+   "path": "abep_sim/compressor.py",
+   "sha256": "7a8dfe5b64d269474863410f6e42a886c6d3f57015c05491880d65251dfafc75",
+   "locator": "DragCompressor.stress_safety; DragCompressor.u_max_legacy_sensitivity(); size_for(rpm_max=...)",
+   "role": "LEGACY_CONSERVATIVE_SENSITIVITY tip-speed / rpm caps (not a qualification basis)"
+  }
+ ]
+}

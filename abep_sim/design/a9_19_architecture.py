@@ -24,6 +24,11 @@ Consequences enforced here (fail closed, refuse rather than repair):
   * The A9.1 ICP feed-gas baseline (G-REUSE primary, G-XE declared variant) is UNCHANGED.
 
 Nothing here invents a number, answers an owner question, or declares PASS / SELECTED / WINNER / QUALIFIED.
+
+A9.22 layer separation, Phase A: the architecture DEFINITION (decision-record pins, configuration names, supply modes,
+gases, C1 role, FLIGHT_ARCHITECTURE) lives in config/architecture/hall_icp_neutralizer_v1.json, generated from the
+owner decision records by scripts/config/build_config.py and sha256-checked against config/MANIFEST.json by
+abep_sim.configuration (fail closed). This module is its loader plus the rule logic; every constant keeps its value.
 """
 from __future__ import annotations
 
@@ -32,34 +37,21 @@ import re
 from pathlib import Path
 from typing import Iterable, Mapping, Sequence
 
+from ..configuration import load_architecture as _load_architecture
+
 REPO = Path(__file__).resolve().parents[2]
-
-DECISIONS = {
-    "A9.19": {"md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
-              "md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
-              "json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
-              "json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
-              "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY"},
-    "A9.20": {"md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
-              "md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
-              "json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
-              "json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
-              "decision_code": "C1_GROUND_ONLY_LABORATORY_REFERENCE"},
-    # A9.15 is amended by A9.19 on the ROLE of Xe only (capability and two separate tanks / paths stay)
-    "A9.15": {"md": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
-              "md_sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903",
-              "json": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
-              "json_sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
-              "decision_code": "A9_15_RFP_COMPLIANT_PROPELLANT_POLICY"},
-}
-RFP_REGISTRATION = "docs/requirements/rfp_official/rfp_registration_v1.json"
-RFP_CLAUSES = {"xe_extra_input": "RFP-P17-05", "two_tanks": "RFP-P18-08"}
-VERBATIM_A9_19 = ("One Hall accelerator.", "One RF/ICP electron-source/neutralizer.", "Two propellant supply modes.",
-                  "No conventional hollow cathode.")
-
 
 class ArchitectureRuleError(ValueError):
     """A request that A9.19 / A9.20 forbids (refused, never repaired)."""
+
+
+_ARCH = _load_architecture()          # config/architecture/hall_icp_neutralizer_v1.json (manifest-verified)
+_C = _ARCH["constants"]
+
+DECISIONS = {k: dict(v) for k, v in _ARCH["decision_records"].items()}
+RFP_REGISTRATION = _ARCH["rfp_registration"]
+RFP_CLAUSES = dict(_ARCH["rfp_clauses"])
+VERBATIM_A9_19 = tuple(_ARCH["verbatim_a9_19"])
 
 
 def _sha256(path: Path) -> str:
@@ -85,53 +77,48 @@ def cite(*keys: str) -> list[dict]:
 
 
 # ================================================================================================= architecture
-FLIGHT_CONFIGURATION = "hall_icp_neutralizer"
+FLIGHT_CONFIGURATION = _C["flight_configuration"]
 FLIGHT_CONFIGURATIONS = (FLIGHT_CONFIGURATION,)
-GROUND_REFERENCE_CONFIGURATION = "hall_c1_reference"
-GROUND_REFERENCE_LABEL = "GROUND_REFERENCE"
-GROUND_ONLY_LAB_EQUIPMENT = "GROUND_ONLY_LAB_EQUIPMENT"
-C1_ROLE = {
-    "status": GROUND_ONLY_LAB_EQUIPMENT,
-    "uses": ["H-1 I_d,max,H1,Ar characterization (A9.10 S3.5, independent of the ICP)",
-             "bench control in the C1-vs-ICP comparison"],
-    "never": ["flight hardware", "flight mass budget", "flight power budget", "flight Xe budget",
-              "flight fallback / candidate flight configuration"],
-    "authority": "A9.20 (C1_GROUND_ONLY_LABORATORY_REFERENCE); A9.19 amends 'A9 C1 CONTROL_FALLBACK'",
-}
-SUPPLY_MODE_AIR = "AIR_PRIMARY"
-SUPPLY_MODE_XE = "XE_CONTINGENCY"
-SUPPLY_MODES = (SUPPLY_MODE_AIR, SUPPLY_MODE_XE)
-XE_PATH_ROLE = "CONTINGENCY_EMERGENCY"
-AIR_PATH_ROLE = "PRIMARY"
+GROUND_REFERENCE_CONFIGURATION = _C["ground_reference_configuration"]
+GROUND_REFERENCE_LABEL = _C["ground_reference_label"]
+GROUND_ONLY_LAB_EQUIPMENT = _C["ground_only_lab_equipment"]
+C1_ROLE = _C["c1_role"]
+SUPPLY_MODE_AIR = _C["supply_mode_air"]
+SUPPLY_MODE_XE = _C["supply_mode_xe"]
+SUPPLY_MODES = tuple(_C["supply_modes"])
+XE_PATH_ROLE = _C["xe_path_role"]
+AIR_PATH_ROLE = _C["air_path_role"]
 # gas families each flight supply mode delivers to the ONE Hall + ONE ICP (N2-family = the atmospheric gases;
 # O-bearing gases belong to the atmospheric mode too; the A9 evidence order Ar -> N2 -> O2 -> atomic O is unchanged)
-SUPPLY_MODE_GASES = {SUPPLY_MODE_AIR: ("N2", "NITROGEN", "O2", "OXYGEN", "O", "AIR", "N2/O2", "N2+O2", "N2_O2",
-                                       "AMBIENT_AIR", "ATMOSPHERIC"),
-                     SUPPLY_MODE_XE: ("XE", "XENON")}
-BENCH_ENGINEERING_GAS = ("AR", "ARGON")         # A9: Ar is engineering-only; not a flight supply mode
-BENCH_SUPPLY_MODE = "BENCH_AR_ENGINEERING_GROUND_ONLY"
-ICP_FEED_GAS_BASELINE = {"primary": "G-REUSE", "declared_variant": "G-XE",
-                         "status": "UNCHANGED (A9.1; A9.19 does not alter the ICP feed-gas baseline)"}
+SUPPLY_MODE_GASES = {k: tuple(v) for k, v in _C["supply_mode_gases"].items()}
+BENCH_ENGINEERING_GAS = tuple(_C["bench_engineering_gas"])     # A9: Ar is engineering-only; not a flight supply mode
+BENCH_SUPPLY_MODE = _C["bench_supply_mode"]
+ICP_FEED_GAS_BASELINE = _C["icp_feed_gas_baseline"]
+FLIGHT_ARCHITECTURE = _C["flight_architecture"]
 
-FLIGHT_ARCHITECTURE = {
-    "configuration": FLIGHT_CONFIGURATION,
-    "hall_accelerators": 1,
-    "electron_source_neutralizer": {"count": 1, "kind": "RF/ICP (13.56 MHz) electron source / neutralizer, "
-                                    "cathodeless / electrodeless", "serves_supply_modes": list(SUPPLY_MODES)},
-    "supply_modes": [
-        {"mode": SUPPLY_MODE_AIR, "role": AIR_PATH_ROLE, "propellant": "ambient atmospheric propellant (180-230 km)",
-         "path": ["intake", "filter", "compressor", "atmospheric_gas_chamber", "valve"]},
-        {"mode": SUPPLY_MODE_XE, "role": XE_PATH_ROLE, "propellant": "xenon",
-         "path": ["xe_tank", "valve"],
-         "note": "capability required by the RFP (RFP-P17-05 extra input system; RFP-P18-08 separate tank); role "
-                 "contingency / emergency, not a parallel co-equal propellant (A9.19)"}],
-    "separate_tanks": True,
-    "conventional_hollow_cathode": "NONE",
-    "icp_feed_gas_baseline": ICP_FEED_GAS_BASELINE,
-    "c1": C1_ROLE,
-    "verbatim": list(VERBATIM_A9_19),
-    "status": "OWNER_DECIDED_ARCHITECTURE_DEFINITION (A9 investigation; not a flight baseline, not a PASS)",
-}
+
+def _check_loaded_architecture() -> None:
+    """Internal consistency of the loaded definition (fail closed; the config builder enforces the same)."""
+    problems = []
+    if tuple(_C["flight_configurations"]) != FLIGHT_CONFIGURATIONS:
+        problems.append("config flight_configurations must be exactly (flight_configuration,)")
+    if GROUND_REFERENCE_CONFIGURATION in FLIGHT_CONFIGURATIONS:
+        problems.append("the ground reference is not a flight configuration")
+    if SUPPLY_MODES != (SUPPLY_MODE_AIR, SUPPLY_MODE_XE) or set(SUPPLY_MODE_GASES) != set(SUPPLY_MODES):
+        problems.append("supply modes / gases inconsistent")
+    if FLIGHT_ARCHITECTURE.get("configuration") != FLIGHT_CONFIGURATION or FLIGHT_ARCHITECTURE.get("c1") != C1_ROLE \
+            or FLIGHT_ARCHITECTURE.get("icp_feed_gas_baseline") != ICP_FEED_GAS_BASELINE \
+            or FLIGHT_ARCHITECTURE.get("verbatim") != list(VERBATIM_A9_19) \
+            or FLIGHT_ARCHITECTURE.get("conventional_hollow_cathode") != "NONE":
+        problems.append("FLIGHT_ARCHITECTURE inconsistent with the loaded constants")
+    if problems:
+        raise ArchitectureRuleError(f"REFUSED: config/architecture definition inconsistent: {problems}")
+
+
+_check_loaded_architecture()
+# the flight architecture shares the C1-role and ICP-feed objects (as when they were defined inline)
+FLIGHT_ARCHITECTURE["c1"] = C1_ROLE
+FLIGHT_ARCHITECTURE["icp_feed_gas_baseline"] = ICP_FEED_GAS_BASELINE
 
 
 def require_flight_configuration(config: str) -> str:

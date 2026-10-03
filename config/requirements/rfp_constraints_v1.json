@@ -1,0 +1,632 @@
+{
+ "schema": "abep_config_requirements_snapshot_v1",
+ "id": "rfp_constraints_v1",
+ "layer": "REQUIREMENTS",
+ "title": "RFP-derived requirements snapshot generated from the RVM limit fields",
+ "snapshot_status": "PROVISIONAL",
+ "snapshot_status_rule": "FROZEN only when every RVM row this snapshot draws a value from has requirement_frozen = true in the pinned RVM; otherwise PROVISIONAL (derived at build time, never hard-coded). FROZEN freezes the requirements basis only; it never means compliance (A9.22 G3).",
+ "rows_used_frozen": "0/9",
+ "rfp_clause_rows_frozen": "0/22",
+ "generated_by": "scripts/config/build_config.py",
+ "regenerate": "python scripts/config/build_config.py  (check: --check)",
+ "rvm": {
+  "id": "rvm_a9_v1",
+  "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+  "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+  "status": "DRAFT_IMPLEMENTATION_FIRST_PENDING_CONSOLIDATED_VERIFICATION"
+ },
+ "registration": {
+  "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+  "sha256": "be2d26cdc8c8b140f29d26b52140a3bae6d1080ecaa92ea40841889207e49412",
+  "rfp_number": "DTDF/06/13516/DSP/ABEP/X/L/M/01",
+  "pdf_sha256": "a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00",
+  "clauses_sha256": "fd51a951a1d06ea8bebd39416147686aedb1f596170fb81b6583f4564148a8aa",
+  "clauses_hash_rule": "sha256 of json.dumps(clauses, ensure_ascii=False, sort_keys=True, separators=(',', ':'))",
+  "n_clauses": 37
+ },
+ "governing_directive_a9_22": {
+  "json": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
+  "json_sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49",
+  "md": "docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md",
+  "md_sha256": "749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77"
+ },
+ "physics_rule": "the physics layer never reads this file's clause ids or the RVM; it consumes values through config/mission and the abep_sim.constants compatibility loader only",
+ "mission_domain": {
+  "altitude_km": [
+   180,
+   230
+  ],
+  "rvm_row": "RVM-01",
+  "rvm_key": "ALTITUDE_ENVELOPE",
+  "rfp_clauses": [
+   "RFP-P18-04",
+   "RFP-P18-05"
+  ],
+  "requirement_origin": "RFP_CLAUSE",
+  "requirement_frozen": false,
+  "status": "PROVISIONAL",
+  "units": "km",
+  "provenance": "A9.22 G5: the 180-230 km check stays as a frozen mission / design-state domain constraint, consumed as mission_domain.altitude_km"
+ },
+ "mission_duration": {
+  "authoritative_basis_h": 26280,
+  "rvm_row": "RVM-13",
+  "rvm_key": "MISSION_LIFE_GE_26280H",
+  "rfp_clauses": [
+   "RFP-P19-01"
+  ],
+  "requirement_origin": "RFP_CLAUSE",
+  "requirement_frozen": false,
+  "status": "PROVISIONAL",
+  "provenance": "A9.22 G1: 26,280 h is the authoritative mission-duration basis",
+  "rfp_printed_text": "Mission life: 3 years (Approx 26000 hrs). Ignition Time: More than 15000 hrs",
+  "legacy_mission_hours_in_use": 26000,
+  "legacy_label": "PENDING_GOVERNED_MIGRATION_A9_22_G1"
+ },
+ "subsystem_firing_life": {
+  "value_h": 15000,
+  "comparator": ">",
+  "rvm_row": "RVM-12",
+  "rvm_key": "FIRING_GT_15000H_PROVISIONAL",
+  "rfp_clauses": [
+   "RFP-P19-01"
+  ],
+  "requirement_origin": "RFP_CLAUSE",
+  "requirement_frozen": false,
+  "status": "PROVISIONAL",
+  "label": "SUBSYSTEM_FIRING_LIFE_ASSUMPTION",
+  "provenance": "A9.22 G1: 15,000 h only as an explicitly labelled subsystem firing / life assumption, never the mission duration"
+ },
+ "rvm_limits": [
+  {
+   "rvm_row": "RVM-01",
+   "rvm_key": "ALTITUDE_ENVELOPE",
+   "rfp_clauses": [
+    "RFP-P18-04",
+    "RFP-P18-05"
+   ],
+   "requirement_origin": "RFP_CLAUSE",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL",
+   "title": "Altitude envelope 180-230 km",
+   "limit": {
+    "quantity": "orbital altitude",
+    "comparator": "within",
+    "value": [
+     180,
+     230
+    ],
+    "units": "km"
+   }
+  },
+  {
+   "rvm_row": "RVM-02",
+   "rvm_key": "THRUST_12MN_SUSTAINED",
+   "rfp_clauses": [
+    "RFP-P18-06"
+   ],
+   "requirement_origin": "RFP_CLAUSE",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL",
+   "title": ">= 12 mN minimum sustained thrust on atmospheric propellant",
+   "limit": {
+    "quantity": "sustained thrust on atmospheric propellant",
+    "comparator": ">=",
+    "value": 12,
+    "units": "mN"
+   }
+  },
+  {
+   "rvm_row": "RVM-03",
+   "rvm_key": "THRUST_25MN_CAPABILITY",
+   "rfp_clauses": [
+    "RFP-P18-06",
+    "RFP-P18-10"
+   ],
+   "requirement_origin": "RFP_CLAUSE",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL",
+   "title": "25 mN demonstrated system capability inside P_bus < 1.5 kW",
+   "limit": {
+    "quantity": "demonstrated thrust capability at P_bus < 1500 W",
+    "comparator": ">=",
+    "value": 25,
+    "units": "mN"
+   }
+  },
+  {
+   "rvm_row": "RVM-04",
+   "rvm_key": "PBUS_LT_1500W_FULL_BUS",
+   "rfp_clauses": [
+    "RFP-P18-10",
+    "RFP-P18-01"
+   ],
+   "requirement_origin": "RFP_CLAUSE",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL",
+   "title": "< 1.5 kW full bus power (A9-02 boundary, steady and start-up, 1 ms window)",
+   "limit": {
+    "quantity": "P_bus,1ms,max (steady and start-up)",
+    "comparator": "<",
+    "value": 1500,
+    "units": "W"
+   }
+  },
+  {
+   "rvm_row": "RVM-05",
+   "rvm_key": "INTERNAL_1350W_ALLOCATION",
+   "rfp_clauses": [],
+   "requirement_origin": "OWNER_ALLOCATION",
+   "requirement_frozen": true,
+   "status": "FROZEN",
+   "title": "Internal ~1.35 kW design allocation (row 109)",
+   "limit": {
+    "quantity": "system bus power at every registered condition (internal allocation)",
+    "comparator": "<=",
+    "value": 1350,
+    "units": "W"
+   }
+  },
+  {
+   "rvm_row": "RVM-06",
+   "rvm_key": "MASS_LT_40KG_WET",
+   "rfp_clauses": [
+    "RFP-P18-11"
+   ],
+   "requirement_origin": "RFP_CLAUSE",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL",
+   "title": "< 40 kg wet (incl. Xe + tank)",
+   "limit": {
+    "quantity": "wet propulsion-system mass",
+    "comparator": "<",
+    "value": 40,
+    "units": "kg"
+   }
+  },
+  {
+   "rvm_row": "RVM-07",
+   "rvm_key": "INTERNAL_34_36KG_ALLOCATION",
+   "rfp_clauses": [],
+   "requirement_origin": "OWNER_ALLOCATION",
+   "requirement_frozen": true,
+   "status": "FROZEN",
+   "title": "Internal 34 kg and 36 kg design allocations (row 53)",
+   "limit": {
+    "quantity": "wet propulsion-system mass (internal allocation)",
+    "comparator": "<=",
+    "value": [
+     34,
+     36
+    ],
+    "units": "kg"
+   }
+  },
+  {
+   "rvm_row": "RVM-08",
+   "rvm_key": "ATMOSPHERIC_PROPELLANT",
+   "rfp_clauses": [
+    "RFP-P18-08",
+    "RFP-P16-02",
+    "RFP-P17-03",
+    "RFP-P17-04",
+    "RFP-P19-03"
+   ],
+   "requirement_origin": "RFP_CLAUSE",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL",
+   "title": "Atmospheric propellant (air: N2 / O2 path; NO_ATOMIC_O labels)",
+   "limit": {
+    "quantity": "propellant",
+    "comparator": "is",
+    "value": "delivered atmospheric air",
+    "units": "-"
+   }
+  },
+  {
+   "rvm_row": "RVM-10",
+   "rvm_key": "XE_CAPABILITY",
+   "rfp_clauses": [
+    "RFP-P18-08",
+    "RFP-P17-05",
+    "RFP-P16-02"
+   ],
+   "requirement_origin": "RFP_CLAUSE",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL",
+   "title": "Xe capability (air + Xe; bounded functional Xe mode)",
+   "limit": {
+    "quantity": "Xe-capable operating mode",
+    "comparator": "demonstrated",
+    "value": "bounded functional",
+    "units": "-"
+   }
+  },
+  {
+   "rvm_row": "RVM-12",
+   "rvm_key": "FIRING_GT_15000H_PROVISIONAL",
+   "rfp_clauses": [
+    "RFP-P19-01"
+   ],
+   "requirement_origin": "RFP_CLAUSE",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL",
+   "title": "'Ignition Time: More than 15000 hrs' (RFP-P19-01, literal); design basis >= 15,000 h cumulative energized operation",
+   "limit": {
+    "quantity": "cumulative firing time",
+    "comparator": ">",
+    "value": 15000,
+    "units": "h"
+   }
+  },
+  {
+   "rvm_row": "RVM-13",
+   "rvm_key": "MISSION_LIFE_GE_26280H",
+   "rfp_clauses": [
+    "RFP-P19-01"
+   ],
+   "requirement_origin": "RFP_CLAUSE",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL",
+   "title": "Mission-life basis >= 26,280 h",
+   "limit": {
+    "quantity": "mission life",
+    "comparator": ">=",
+    "value": 26280,
+    "units": "h"
+   }
+  },
+  {
+   "rvm_row": "RVM-14",
+   "rvm_key": "STARTUP_RESTART",
+   "rfp_clauses": [],
+   "requirement_origin": "DERIVED_PROJECT_REQUIREMENT",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL",
+   "title": "Start-up / restart (ignition, Hall ignition with the electron source, restart, transients)",
+   "limit": {
+    "quantity": "C1 ignition dwell per attempt (preliminary protocol)",
+    "comparator": "<=",
+    "value": 120,
+    "units": "s"
+   }
+  },
+  {
+   "rvm_row": "RVM-15",
+   "rvm_key": "NEUTRALIZATION",
+   "rfp_clauses": [],
+   "requirement_origin": "DERIVED_PROJECT_REQUIREMENT",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL",
+   "title": "Beam neutralization / electron-current capacity (ICP-45 or C1)",
+   "limit": {
+    "quantity": "I_e,cap - I_d,max,H1 (one-sided lower confidence bound)",
+    "comparator": ">",
+    "value": 0,
+    "units": "A"
+   }
+  },
+  {
+   "rvm_row": "RVM-17",
+   "rvm_key": "THERMAL_CLOSURE",
+   "rfp_clauses": [],
+   "requirement_origin": "DERIVED_PROJECT_REQUIREMENT",
+   "requirement_frozen": true,
+   "status": "FROZEN",
+   "title": "Thermal closure (>= 50 K below validated limits, 20 % heat-load margin)",
+   "limit": {
+    "quantity": "margin below validated continuous-use limit",
+    "comparator": ">=",
+    "value": 50,
+    "units": "K"
+   }
+  },
+  {
+   "rvm_row": "RVM-18",
+   "rvm_key": "INDIGENOUS_CONTENT",
+   "rfp_clauses": [
+    "RFP-P19-05",
+    "RFP-P18-03"
+   ],
+   "requirement_origin": "RFP_CLAUSE",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL",
+   "title": "Indigenous content: >= 75 % project, thruster > 80 %, intake > 80 %, compressor / storage > 60 %, PSE > 70 % (RFP-P19-05; > 60 % statement RFP-P18-03 recorded)",
+   "limit": {
+    "quantity": "indigenous content (total)",
+    "comparator": ">=",
+    "value": 75,
+    "units": "%"
+   }
+  },
+  {
+   "rvm_row": "RVM-20",
+   "rvm_key": "ELECTRICAL_INTERFACE_MIL1553B",
+   "rfp_clauses": [
+    "RFP-P18-12",
+    "RFP-P18-01"
+   ],
+   "requirement_origin": "RFP_CLAUSE",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL",
+   "title": "MIL-1553B interface with the satellite onboard computer + discrete thruster interface + hardware drivers inside the propulsion system",
+   "limit": {
+    "quantity": "spacecraft data / command interface",
+    "comparator": "is",
+    "value": "MIL-1553B + discrete thruster-operation interface (as printed)",
+    "units": "-"
+   }
+  },
+  {
+   "rvm_row": "RVM-24",
+   "rvm_key": "MILESTONE4_EXIT_QUALIFIED_THRUSTER_O_N2",
+   "rfp_clauses": [
+    "RFP-P20-03"
+   ],
+   "requirement_origin": "RFP_CLAUSE",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL",
+   "title": "Exit criterion: EM of the ABEP system + qualified electric thruster with O and N2 as propellant at milestone 4 (partial success)",
+   "limit": {
+    "quantity": "propellants of the qualified electric thruster at milestone 4",
+    "comparator": "includes",
+    "value": "O and N2",
+    "units": "-"
+   }
+  },
+  {
+   "rvm_row": "RVM-25",
+   "rvm_key": "MILESTONE_SCHEDULE_DELIVERABLES",
+   "rfp_clauses": [
+    "RFP-P20-04",
+    "RFP-P20-05",
+    "RFP-P20-06",
+    "RFP-P21-01",
+    "RFP-P21-02",
+    "RFP-P17-01"
+   ],
+   "requirement_origin": "RFP_CLAUSE",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL",
+   "title": "Milestone schedule and deliverables M1-M5 (T0+9 / +12 / +20 / +24 / +36 months) and the EM -> QM processing flow",
+   "limit": {
+    "quantity": "QM integration, ENTEST qualification and delivery (milestone 5)",
+    "comparator": "<=",
+    "value": "T0+36",
+    "units": "months"
+   }
+  },
+  {
+   "rvm_row": "RVM-26",
+   "rvm_key": "THRUST_MEASUREMENT_AND_TEST_INFRASTRUCTURE",
+   "rfp_clauses": [
+    "RFP-P30-01",
+    "RFP-P27-01",
+    "RFP-P21-03"
+   ],
+   "requirement_origin": "RFP_CLAUSE",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL",
+   "title": "Micro-newton-level thrust measurement system; UHV test facility and low-thrust measurement setup (Part IV(B), no waivers)",
+   "limit": {
+    "quantity": "thrust measurement capability",
+    "comparator": "resolves",
+    "value": "micro-newton level (as printed; no numeric resolution stated)",
+    "units": "-"
+   }
+  },
+  {
+   "rvm_row": "RVM-27",
+   "rvm_key": "MOUNT_HEAT_50W_ALLOCATION",
+   "rfp_clauses": [],
+   "requirement_origin": "OWNER_ALLOCATION",
+   "requirement_frozen": true,
+   "status": "FROZEN",
+   "title": "Steady heat conducted into the spacecraft mounting interface <= 50 W (A9.12 S5.4 provisional owner allocation; 100 W contingency, 25 W stretch)",
+   "limit": {
+    "quantity": "steady heat conducted into the spacecraft mounting interface",
+    "comparator": "<=",
+    "value": 50,
+    "units": "W"
+   }
+  },
+  {
+   "rvm_row": "RVM-28",
+   "rvm_key": "FLIGHT_ARCHITECTURE_SINGLE_HALL_ICP_NO_HOLLOW_CATHODE",
+   "rfp_clauses": [],
+   "requirement_origin": "OWNER_ALLOCATION",
+   "requirement_frozen": true,
+   "status": "FROZEN",
+   "title": "Flight thruster architecture: one Hall accelerator + one RF/ICP electron-source/neutralizer for both atmospheric gases and Xe; no conventional hollow cathode (A9.19)",
+   "limit": {
+    "quantity": "flight Hall accelerators / RF-ICP neutralizers / conventional hollow cathodes",
+    "comparator": "==",
+    "value": [
+     1,
+     1,
+     0
+    ],
+    "units": "count"
+   }
+  },
+  {
+   "rvm_row": "RVM-29",
+   "rvm_key": "TWO_SUPPLY_MODES_SEPARATE_TANKS_XE_CONTINGENCY",
+   "rfp_clauses": [
+    "RFP-P18-08",
+    "RFP-P17-05"
+   ],
+   "requirement_origin": "RFP_CLAUSE",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL",
+   "title": "Two propellant supply modes with separate tanks / paths: ambient atmospheric propellant (primary) and Xe (contingency / emergency supply mode) (RFP-P18-08, RFP-P17-05; A9.19)",
+   "limit": {
+    "quantity": "propellant supply modes / tanks",
+    "comparator": "is",
+    "value": "2 separate (ambient air primary; Xe contingency / emergency)",
+    "units": "-"
+   }
+  },
+  {
+   "rvm_row": "RVM-30",
+   "rvm_key": "C1_GROUND_ONLY_LAB_REFERENCE_NOT_IN_FLIGHT_BUDGETS",
+   "rfp_clauses": [],
+   "requirement_origin": "OWNER_ALLOCATION",
+   "requirement_frozen": true,
+   "status": "FROZEN",
+   "title": "C1 (heated Xe-fed LaB6) is a ground-only laboratory reference: never flight hardware, never in the flight mass / power / Xe budgets (A9.20)",
+   "limit": {
+    "quantity": "C1 mass / power / Xe booked in flight budgets",
+    "comparator": "==",
+    "value": 0,
+    "units": "kg / W / kg"
+   }
+  }
+ ],
+ "rfp_constraints_compat": {
+  "thrust_min_mN": {
+   "value": 12,
+   "rvm_row": "RVM-02",
+   "rvm_key": "THRUST_12MN_SUSTAINED",
+   "rfp_clauses": [
+    "RFP-P18-06"
+   ],
+   "requirement_origin": "RFP_CLAUSE",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL"
+  },
+  "thrust_max_mN": {
+   "value": 25,
+   "rvm_row": "RVM-03",
+   "rvm_key": "THRUST_25MN_CAPABILITY",
+   "rfp_clauses": [
+    "RFP-P18-06",
+    "RFP-P18-10"
+   ],
+   "requirement_origin": "RFP_CLAUSE",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL",
+   "note": "upper end of the printed thrust band RFP-P18-06 '12 mN to 25 mN'; RVM-03 carries it as the >= 25 mN capability requirement"
+  },
+  "power_max_W": {
+   "value": 1500,
+   "rvm_row": "RVM-04",
+   "rvm_key": "PBUS_LT_1500W_FULL_BUS",
+   "rfp_clauses": [
+    "RFP-P18-10",
+    "RFP-P18-01"
+   ],
+   "requirement_origin": "RFP_CLAUSE",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL"
+  },
+  "mass_max_kg": {
+   "value": 40,
+   "rvm_row": "RVM-06",
+   "rvm_key": "MASS_LT_40KG_WET",
+   "rfp_clauses": [
+    "RFP-P18-11"
+   ],
+   "requirement_origin": "RFP_CLAUSE",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL"
+  },
+  "alt_min_km": {
+   "value": 180,
+   "rvm_row": "RVM-01",
+   "rvm_key": "ALTITUDE_ENVELOPE",
+   "rfp_clauses": [
+    "RFP-P18-04",
+    "RFP-P18-05"
+   ],
+   "requirement_origin": "RFP_CLAUSE",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL"
+  },
+  "alt_max_km": {
+   "value": 230,
+   "rvm_row": "RVM-01",
+   "rvm_key": "ALTITUDE_ENVELOPE",
+   "rfp_clauses": [
+    "RFP-P18-04",
+    "RFP-P18-05"
+   ],
+   "requirement_origin": "RFP_CLAUSE",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL"
+  },
+  "ignition_hours": {
+   "value": 15000,
+   "rvm_row": "RVM-12",
+   "rvm_key": "FIRING_GT_15000H_PROVISIONAL",
+   "rfp_clauses": [
+    "RFP-P19-01"
+   ],
+   "requirement_origin": "RFP_CLAUSE",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL",
+   "label": "SUBSYSTEM_FIRING_LIFE_ASSUMPTION"
+  },
+  "mission_hours": {
+   "value": 26000,
+   "rvm_row": "RVM-13",
+   "rvm_key": "MISSION_LIFE_GE_26280H",
+   "rfp_clauses": [
+    "RFP-P19-01"
+   ],
+   "requirement_origin": "RFP_CLAUSE",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL",
+   "label": "PENDING_GOVERNED_MIGRATION_A9_22_G1",
+   "authoritative_basis_h": 26280,
+   "note": "LEGACY value still used by today's consumers (RFP-P19-01 prints 'Approx 26000 hrs'); the authoritative mission-duration basis is mission_duration.authoritative_basis_h (A9.22 G1); a later lane performs the governed migration"
+  },
+  "ic_total_min": {
+   "value": 0.75,
+   "rvm_row": "RVM-18",
+   "rvm_key": "INDIGENOUS_CONTENT",
+   "rfp_clauses": [
+    "RFP-P19-05",
+    "RFP-P18-03"
+   ],
+   "requirement_origin": "RFP_CLAUSE",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL",
+   "layer_target": "ASSESSMENT (A9.22 G6)"
+  },
+  "ic_subsystem_min": {
+   "value": {
+    "thruster": 0.8,
+    "intake": 0.8,
+    "compressor": 0.6,
+    "pse": 0.7
+   },
+   "rvm_row": "RVM-18",
+   "rvm_key": "INDIGENOUS_CONTENT",
+   "rfp_clauses": [
+    "RFP-P19-05",
+    "RFP-P18-03"
+   ],
+   "requirement_origin": "RFP_CLAUSE",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL",
+   "layer_target": "ASSESSMENT (A9.22 G6)",
+   "clause_text_source": "RFP-P19-05",
+   "note": "RFP-P19-05 'Minimum Indigenization Desired' subsystem minima, read from the registered clause text (printed as '>'; carried as the legacy minimum)"
+  },
+  "hall_preferred": {
+   "value": true,
+   "rvm_row": "RVM-11",
+   "rvm_key": "HALL_PREFERENCE",
+   "rfp_clauses": [
+    "RFP-P18-07"
+   ],
+   "requirement_origin": "RFP_CLAUSE",
+   "requirement_frozen": false,
+   "status": "PROVISIONAL",
+   "layer_target": "ASSESSMENT (A9.22 G6)",
+   "clause_text_source": "RFP-P18-07",
+   "note": "RFP-P18-07 'Hall effect preferable' (a preference flag, not a numeric limit)"
+  }
+ }
+}
