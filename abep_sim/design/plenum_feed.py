@@ -1511,6 +1511,7 @@ def feed_quality(case_result: Mapping, tolerances: Mapping[str, "u13.H1Tolerance
     """Feed-quality constraints of one transient case against measured H-1 tolerances (S6.12 / S6.17): pressure
     peak deviation and ripple. With a TBD tolerance the constraint is NOT_EVALUATED; F4's provisional 2 % band never
     replaces a tighter measured H-1 limit. Values from this model are PARAMETRIC_SENSITIVITY."""
+    from ..assessment import design_gates as dg     # A9.22: HC-12 ripple assessment lives in the assessment layer
     tol = dict(tolerances or {})
     obj = case_result.get("objectives") or {}
     pk = obj.get("peak_deviation_max")
@@ -1525,5 +1526,5 @@ def feed_quality(case_result: Mapping, tolerances: Mapping[str, "u13.H1Tolerance
                                                                                          p_tol.status]))
     return {"framework": TRANSIENT_FRAMEWORK["status"], "pressure_band": band,
             "pressure_peak_deviation": {"value_frac": pk, "status": p_status},
-            "ripple": u13.ripple_feed_quality(rip, u13.VALUE_PARAMETRIC if rip is not None else u13.VALUE_TBD, r_tol),
+            "ripple": dg.ripple_feed_quality(rip, u13.VALUE_PARAMETRIC if rip is not None else u13.VALUE_TBD, r_tol),
             "authority": u13.cite("A9.13")}

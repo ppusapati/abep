@@ -64,8 +64,9 @@ from functools import lru_cache
 import numpy as np
 
 from ..atmosphere import atmosphere, orbital_velocity
-from ..constants import K_B, M_SPECIES, RFP
+from ..constants import K_B, M_SPECIES
 from ..intake_tpmc import IntakeGeometry, clausing_transmission, frozen_surface_path, intake_response
+from . import engineering_constraints as ec
 
 SCHEMA = "f1_intake_synthesis_v1"
 SPECIES = ("O", "N2", "O2")                      # the species carried by the frozen atmosphere (He/H/Ar/N dropped)
@@ -195,7 +196,8 @@ DESIGN_STATE_DATASET_ID = "atmosphere_msis21_orbit_v1"
 DESIGN_STATE_DATASET_SHA256 = "c0ce282e99695be8cae0834270c5b9ff7853033255665abda7ec18c307566164"
 DESIGN_STATE_MANIFEST_REL = "abep_sim/data/atmosphere_msis21_orbit_v1.json"
 DESIGN_STATE_PRODUCER = "python -m abep_sim.atmosphere_orbit design-states-v2"
-RFP_ALT_BAND_KM = (180.0, 230.0)
+# A9.22 G5: mission_domain.altitude_km (frozen domain constraint from the engineering-constraints seam; no RFP parsing)
+MISSION_DOMAIN_ALTITUDE_KM = ec.MISSION_DOMAIN_ALTITUDE_KM
 ORBIT_BASIS_LABEL = "BROAD_ENVELOPE_ALL_INCLINATIONS_ALL_LTAN_NOT_MISSION_ICD"
 ORBIT_BASIS_NOTE = ("inclination and LTAN are not specified (A9.21 EXTERNAL_INPUTS: not in the RFP; the old 96.3 deg "
                     "dawn-dusk code default is never mission truth; A9.17 ORBIT: TBD from DRDO / spacecraft ICD / PDR "
@@ -286,7 +288,7 @@ def _sha256_file(path: str) -> str:
 def load_design_state_set() -> dict:
     """The frozen design-state set v2, verified fail closed: file present, sha256 == DESIGN_STATE_SET_SHA256, the
     dataset manifest records the same file hash and the same dataset sha256, set id / count / unique ids, every state
-    carries the dataset provenance and lies in the RFP altitude band. Read directly (no atmosphere_orbit import:
+    carries the dataset provenance and lies in the mission-domain altitude band (mission_domain.altitude_km). Read directly (no atmosphere_orbit import:
     the orbit dataset is repository-only data, A9.17 DATA_SIZE)."""
     path = os.path.join(DATA_DIR, os.path.basename(DESIGN_STATE_SET_REL))
     man = os.path.join(DATA_DIR, os.path.basename(DESIGN_STATE_MANIFEST_REL))
@@ -317,12 +319,13 @@ def load_design_state_set() -> dict:
     ids = [x.get("state_id") for x in st]
     if len(set(ids)) != len(ids) or any(not isinstance(i, str) or not i for i in ids):
         raise DesignStateSetError("design-state ids missing or not unique")
-    lo, hi = RFP_ALT_BAND_KM
+    lo, hi = MISSION_DOMAIN_ALTITUDE_KM
     for x in st:
         if DESIGN_STATE_DATASET_SHA256 not in str(x.get("source", "")):
             raise DesignStateSetError(f"state {x['state_id']} does not carry the dataset provenance")
         if not lo <= float(x["alt_km"]) <= hi:
-            raise DesignStateSetError(f"state {x['state_id']} outside the RFP altitude band {RFP_ALT_BAND_KM}")
+            raise DesignStateSetError(f"state {x['state_id']} outside the mission-domain altitude band "
+                                      f"{MISSION_DOMAIN_ALTITUDE_KM}")
         if not isinstance(x.get("required"), bool):
             raise DesignStateSetError(f"state {x['state_id']} has no boolean 'required' flag")
         for k in ("rho_kg_m3", "n_O_m3", "n_N2_m3", "n_O2_m3", "T_K"):
@@ -1178,7 +1181,8 @@ def run_study(spec: StudySpec, progress=None) -> dict:
                          cd_rel_sd_at_n=(cal["rel_sd_max"], spec.n_direct), force_direct=True)
     check = surface_reproduction_check(spec, ev_check)
     bias = species_c_d_recombination_bias(ev)
-    rfp_max_N = RFP.thrust_max_mN * 1e-3
+    # A9.22 G2: C-DRAG-RFP stays a generation filter, limit from the frozen engineering-constraints snapshot
+    rfp_max_N = ec.INTAKE_DRAG_GENERATION_LIMIT_N
 
     # species table: every physics point evaluated (one row per node x scenario x species x state x theta)
     nodes = sorted({(c.L_over_d, c.phi) for c in spec.candidates()})
@@ -1218,7 +1222,7 @@ def run_study(spec: StudySpec, progress=None) -> dict:
                 reasons_dc.append("MODEL_ERROR: TPMC unresolved fraction > 1e-3")
             if dc["drag_N"] > rfp_max_N:
                 reasons_dc.append(f"C-DRAG-RFP: intake-face drag {dc['drag_N'] * 1e3:.2f} mN > RFP thrust max "
-                                  f"{RFP.thrust_max_mN:g} mN at {DESIGN_STATE.id}")
+                                  f"{ec.INTAKE_DRAG_GENERATION_LIMIT_MN:g} mN at {DESIGN_STATE.id}")
             for sid, m in per_state.items():
                 if not (m["converged"] and ss[sid]["converged"]):
                     reasons_env.append(f"MODEL_ERROR at {sid}")

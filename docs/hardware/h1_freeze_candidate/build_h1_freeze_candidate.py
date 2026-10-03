@@ -20,7 +20,6 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import bisect
 import hashlib
 import json
 import math
@@ -38,6 +37,7 @@ import a9_16_h1 as A16  # noqa: E402  (A9.16 step 1 owner-decision application, 
 import a9_19_h1 as A19  # noqa: E402  (A9.19 / A9.20 owner-decision application, design + experiments lane)
 sys.path.insert(0, str(REPO / "docs" / "experiments" / "hall_icp" / "programme"))
 import hw_programme_a9_21 as PROG  # noqa: E402  (A9.21 HW_PROGRAMME order, items 6 and 11)
+from abep_sim import h1_geometry as _H1G  # noqa: E402  (A9.22: geometric_admissibility library)
 BASE_COMMIT = "1c9d7a648cd4ce739e587248693271e5115698e1"
 DATE = "2026-10-01"
 
@@ -852,10 +852,8 @@ def build_parameters() -> list:
 # --------------------------------------------------------------------------------------------------------------------
 # geometric admissibility (interface to F7: x_Hall bounds; fail closed; never a PASS)
 # --------------------------------------------------------------------------------------------------------------------
-# The H2-1 windows and corners are published to 4 significant figures; window edges are compared with this relative
-# rounding allowance so that the published corners themselves are not rejected by their own rounding. It is a
-# publication-rounding treatment, not a physical tolerance.
-ROUNDING_REL = 1e-3
+# publication-rounding allowance of the H2-1 window edges (abep_sim/h1_geometry.py, A9.22 library)
+ROUNDING_REL = _H1G.ROUNDING_REL
 
 
 def x_hall_definition() -> dict:
@@ -880,45 +878,9 @@ def x_hall_definition() -> dict:
 
 def geometric_admissibility(h_mm: float, d_mean_mm: float, L_mm: float, assumptions: str = "worst_case_assumptions",
                             xdef: dict | None = None) -> dict:
-    """Check a candidate (h, d_mean, L) against the declared H-1 geometric windows only.
-
-    Returns WITHIN_DECLARED_GEOMETRIC_WINDOWS or OUTSIDE_DECLARED_GEOMETRIC_WINDOWS (or OUT_OF_DOMAIN for an h outside
-    the tabulated inner-coil floor). It is never a PASS: FEMM, thermal, supply, mass and every Hall performance
-    quantity stay NOT_EVALUATED. Between tabulated h rows the larger (upper-row) floor is used (conservative)."""
-    xdef = xdef or x_hall_definition()
-    c = xdef["constraints"]
-    if not all(isinstance(v, (int, float)) and math.isfinite(v) and v > 0 for v in (h_mm, d_mean_mm, L_mm)):
-        return {"status": "OUT_OF_DOMAIN", "violations": ["non-finite or non-positive input"],
-                "not_evaluated": xdef["not_evaluated"], "performance": "NOT_EVALUATED"}
-    floors = c["inner_coil_solid_core_floor_mm"]
-    if assumptions not in next(iter(floors.values())):
-        raise ValueError(f"unknown assumption set {assumptions!r}")
-    hs = sorted(float(k) for k in floors)
-    if h_mm < hs[0] or h_mm > hs[-1]:
-        return {"status": "OUT_OF_DOMAIN", "violations": [f"h {h_mm} mm outside the tabulated floor range "
-                                                          f"[{hs[0]}, {hs[-1]}] mm"],
-                "not_evaluated": xdef["not_evaluated"], "performance": "NOT_EVALUATED"}
-    k = bisect.bisect_left(hs, h_mm)
-    key = {float(kk): kk for kk in floors}[hs[k]]
-    floor = floors[key][assumptions]
-    viol = []
-    area_cm2 = math.pi * h_mm * d_mean_mm / 100.0
-    tol = ROUNDING_REL
-    a0, a1 = c["area_window_cm2"]
-    if not (a0 * (1 - tol) <= area_cm2 <= a1 * (1 + tol)):
-        viol.append(f"area {area_cm2:.4g} cm^2 outside [{a0}, {a1}]")
-    r0, r1 = c["d_over_h_window"]
-    if not (r0 * (1 - tol) <= d_mean_mm / h_mm <= r1 * (1 + tol)):
-        viol.append(f"d_mean/h {d_mean_mm / h_mm:.4g} outside [{r0}, {r1}]")
-    l0, l1 = c["L_over_h_window"]
-    if not (l0 * (1 - tol) <= L_mm / h_mm <= l1 * (1 + tol)):
-        viol.append(f"L/h {L_mm / h_mm:.4g} outside [{l0}, {l1}]")
-    if d_mean_mm < floor:
-        viol.append(f"d_mean {d_mean_mm} mm below the inner-coil solid-core floor {floor} mm ({assumptions}, h row "
-                    f"{key} mm)")
-    return {"status": "OUTSIDE_DECLARED_GEOMETRIC_WINDOWS" if viol else "WITHIN_DECLARED_GEOMETRIC_WINDOWS",
-            "violations": viol, "floor_row_h_mm": key, "floor_mm": floor, "assumptions": assumptions,
-            "not_evaluated": xdef["not_evaluated"], "performance": "NOT_EVALUATED"}
+    """Check a candidate (h, d_mean, L) against the declared H-1 geometric windows only (library implementation
+    abep_sim/h1_geometry.py since A9.22; this builder supplies its own window definition by default)."""
+    return _H1G.geometric_admissibility(h_mm, d_mean_mm, L_mm, assumptions, xdef or x_hall_definition())
 
 
 # --------------------------------------------------------------------------------------------------------------------
