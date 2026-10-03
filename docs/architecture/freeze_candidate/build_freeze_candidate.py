@@ -48,6 +48,7 @@ LANE = "fo_a9_7_f9_freeze_candidate"
 sys.path.insert(0, str(LANE_DIR))
 import a9_16_f9 as A16  # noqa: E402  (A9.16 step 1 owner-decision application, integration lane)
 import a9_19_f9 as A19  # noqa: E402  (A9.19 / A9.20 owner-decision application, design + experiments lane)
+import ag15_f9 as AG15  # noqa: E402  (AG-15 from the registered RFP + RVM re-base; A9.13 S6.22, A9.17 RFP)
 
 # --------------------------------------------------------------------------------------------------------------------
 # inputs
@@ -98,6 +99,7 @@ CONSUMED = {
     "OQ5": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "MP3": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
     "RVM": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+    "RFP": AG15.REGISTRATION_PATH,      # official RFP registration (by hash; PDF controlled externally, A9.17 RFP)
     "MP2": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
     "M16": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
     "XE2": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
@@ -1111,18 +1113,24 @@ def build_gates() -> list:
     for i, r in enumerate(get("RVM", "/rows")):
         cfg = r["configurations"]
         rvm_rows.append({"id": r["id"], "title": r["title"], "requirement_frozen": r["requirement_frozen"],
+                         "requirement_origin": r["requirement_origin"], "rfp_clauses": r.get("rfp_clauses", []),
                          "status": A19.rvm_row_status(cfg),
                          "rule": cfg[CONFIGURATION]["rule"], "blocking": cfg[CONFIGURATION]["reason"],
-                         "source": ref("RVM", f"/rows/{i}/configurations")})
-    counts = get("RVM", "/status_counts")
+                         "source": ref("RVM", f"/rows/{i}/configurations/{CONFIGURATION}")})
+    counts = A19.flight_status_counts(get("RVM", "/status_counts"))
     assert all(counts[c]["PASS"] == 0 for c in counts), "an RVM row is PASS: re-assess AG-01 by hand"
     cstr = "; ".join(c + ": " + ", ".join(f"{k} {v}" for k, v in counts[c].items() if v) for c in counts)
     frozen = sum(r["requirement_frozen"] for r in rvm_rows)
-    G("AG-01", f"RVM rows ({len(rvm_rows)} system requirements; flight configuration {CONFIGURATION}, C1 column "
-               "if any = ground reference)", cstr, False,
-      {"rows": rvm_rows, "summary": f"no row is PASS ({cstr}); requirements frozen: {frozen} of {len(rvm_rows)} "
-                                    "(official RFP not in the repository)"},
-      [ref("RVM", "/status_counts"), ref("RVM", "/rfp_document_in_repository")],
+    n_rfp = sum(r["requirement_origin"] == "RFP_CLAUSE" for r in rvm_rows)
+    n_rfp_frozen = sum(r["requirement_frozen"] for r in rvm_rows if r["requirement_origin"] == "RFP_CLAUSE")
+    G("AG-01", f"RVM rows ({len(rvm_rows)} system requirements; flight configuration {CONFIGURATION} only)", cstr,
+      False,
+      {"rows": rvm_rows, "status_counts": counts,
+       "summary": f"no row is PASS ({cstr}); requirements frozen: {frozen} of {len(rvm_rows)} ({n_rfp_frozen} of "
+                  f"{n_rfp} RFP_CLAUSE rows: the official RFP is registered by hash and the RVM re-based on it; "
+                  "requirement_frozen on RFP rows waits for the owner's AG-15 closure)"},
+      [ref("RVM", f"/status_counts/{CONFIGURATION}"), ref("RVM", "/rfp_registered_in_repository"),
+       ref("RVM", "/rfp_rebase/ag_15_status")],
       ["EP-01", "EP-02", "EP-03", "EP-10", "EP-11", "EP-12", "EP-13"])
     G("AG-02", "Hall credible transport set (admitted members)",
       "EMPTY (members = " + json.dumps(get("ENS", "/members")) + ")", False,
@@ -1192,10 +1200,35 @@ def build_gates() -> list:
     G("AG-14", "H-1 engineering article", get("F5", "/article_freeze_state"), False,
       "channel design point (H1F-CH-11 TBD_OWNER), FEMM of MC-1, B(z) evidence, anode closure",
       [ref("F5", "/article_freeze_state"), ref("F5", "/freeze_rollup")], ["EP-05", "EP-06", "EP-07"])
-    G("AG-15", "requirement basis (official RFP document)", "NOT_IN_REPOSITORY (secondary transcriptions only)",
-      False, "owner rows 1-2: obtain the canonical RFP; freeze no interpretation from secondary sources",
-      [ref("RVM", "/rfp_document_in_repository"), ans(1)], ["EP-01"])
+    a15 = ag15_assessment()
+    reg = a15["evidence_parts"]["official_rfp_registered_with_immutable_provenance_hash"]
+    rc = "; ".join(c["id"] + " " + c["condition"] + " - " + c["state"] for c in a15["remaining_conditions"])
+    G("AG-15", "requirement basis (official RFP registered + RVM re-based; A9.13 S6.22)",
+      a15["status"] + (f" (remaining: {rc})" if rc else ""), a15["evidence_sufficient_for_freeze"],
+      {"summary": f"registration (pdf sha256 {reg['pdf_sha256']}, {reg['pages']} pages, "
+                  f"{reg['n_registered_clauses']} clauses) and RVM re-base (every registered clause mapped to an RVM "
+                  f"row or recorded as programmatic) are present; remaining: {rc or 'none'}",
+       "assessment": a15},
+      [ref("RFP", "/status"), ref("RFP", "/document"), ref("RFP", "/clauses"),
+       ref("RVM", "/rfp_rebase/clause_coverage"), ref("RVM", "/rfp_rebase/ag_15_status"), ans(1)],
+      ["EP-01"])
     return gates
+
+
+def ag15_assessment() -> dict:
+    """AG-15 from the registered RFP and the RVM re-base (ag15_f9.assess). Fail closed: a missing or inconsistent
+    registration stops the build."""
+    if path_of("RFP") != AG15.REGISTRATION_PATH:
+        raise SystemExit(f"REFUSED: AG-15: RFP registration path {path_of('RFP')} != {AG15.REGISTRATION_PATH}")
+    if not (REPO / path_of("RFP")).is_file():
+        raise SystemExit(f"REFUSED: AG-15: RFP registration missing: {path_of('RFP')}")
+    a = AG15.assess(load("RFP"), load("RVM"), sha_of("RFP"))
+    if a["status"] == AG15.STATUS_REFUSED:
+        raise SystemExit("REFUSED: AG-15: RFP registration / RVM re-base inconsistent: " + "; ".join(a["errors"]))
+    a["determining_evidence"] = A16.gate_closes("AG-15", AG15.determining_evidence(load("RFP"), sha_of("RFP")))
+    if not a["determining_evidence"]["closes"]:
+        raise SystemExit("REFUSED: AG-15: the registration is not determining evidence under gate_closes")
+    return a
 
 
 def architecture_status(gates: list) -> str:
@@ -1205,9 +1238,10 @@ def architecture_status(gates: list) -> str:
 
 
 EVIDENCE_PLAN = [
-    ("EP-01", "register the official RFP (owner rows 1-2; A9.13 AG-15: immutable provenance / sha256 in the repository "
-              "evidence system) and re-base the RVM requirement texts",
-     ["AG-15", "AG-01"], [], "owner / legitimate portal route"),
+    ("EP-01", "owner closure of AG-15 (A9.13 S6.22): accept the RVM re-base against the registered official RFP "
+              "(docs/requirements/rfp_official/rfp_registration_v1.json, by sha256, PDF controlled externally per A9.17 "
+              "RFP; registration and re-base done) and set requirement_frozen on the RFP_CLAUSE rows",
+     ["AG-15", "AG-01"], [], "owner (RVM re-base acceptance)"),
     ("EP-02", "Phase-1 H-1 operation on N2 (hardware pivot): Hall-only sustainment knee; register I_d,max,H1, "
               "deposited anode power fraction and inlet conductance on the built article",
      ["AG-04", "AG-06", "AG-10", "AG-01"], ["EP-05"], "hardware pivot Phase 1 (OD 2026-09-27)"),
@@ -1429,7 +1463,11 @@ def a92_statuses() -> dict:
     return {"statuses": js, "source": [ref("A92", "/decisions/a9_10_statuses"),
                                        tref("A92_MD", "9. A9-10 statuses")],
             "rule": "verbatim (JSON keys; the Markdown table uses the arrow character for '->'); never converted to "
-                    "PASS"}
+                    "PASS",
+            "superseded_as_flight_status": {
+                k: "historical A9.2 status; superseded by A9.19 / A9.20: C1 is " + A19.A.GROUND_ONLY_LAB_EQUIPMENT
+                   + " (ground reference only), not a flight control / fallback configuration"
+                for k, v in js.items() if v == "CONTROL_FALLBACK"}}
 
 
 def interface_demands() -> list:
@@ -1540,6 +1578,8 @@ def build() -> dict:
         "freeze_rule": get("A97", "/summary/freeze_rule"),
         "deliverable_status": "FREEZE_CANDIDATE_DEFINITION (not frozen, not a design release, no winner, no PASS)",
         "configuration": A19.configuration_block(get("A9", "/status")),
+        "ground_reference_history": A19.ground_reference_history(get("RVM", "/rows"), get("RVM", "/status_counts"),
+                                                                 get("RVM", "/configurations"), path_of("RVM")),
         "what_this_is_not": [
             "not a frozen architecture and not FROZEN_REFERENCE_FLIGHT_ARCHITECTURE",
             "not a selection: Pareto sets are carried, no representative point is chosen (F9-OQ-01)",
@@ -1641,7 +1681,9 @@ def render_md(doc: dict) -> str:
          "## What this is not", ""]
     L += [f"- {x}" for x in doc["what_this_is_not"]]
     L += ["", "## A9.2 statuses (verbatim)", "", "| item | status |", "|---|---|"]
-    L += [f"| {k} | {v} |" for k, v in doc["a9_2_statuses"]["statuses"].items()]
+    sup = doc["a9_2_statuses"]["superseded_as_flight_status"]
+    L += [f"| {k} | {v}" + (f" ({sup[k]})" if k in sup else "") + " |"
+          for k, v in doc["a9_2_statuses"]["statuses"].items()]
     L += ["", "## Architecture-level gates", "",
           "| id | gate | current status | sufficient | evidence steps |", "|---|---|---|---|---|"]
     for g in doc["architecture_gates"]:
@@ -1651,11 +1693,17 @@ def render_md(doc: dict) -> str:
     for g in doc["architecture_gates"]:
         b = g["blocking_evidence"]
         L.append(f"- **{g['id']}**: {_fmt(b['summary'] if isinstance(b, dict) else b, 400)}")
+    a15 = next(g for g in doc["architecture_gates"] if g["id"] == "AG-15")["blocking_evidence"]["assessment"]
+    L += ["", f"AG-15 (A9.13 S6.22, verbatim: '{a15['gate_text_verbatim']}'): **{a15['status']}**.", ""]
+    L += [f"- {k}: {v['state']} ({v['source']})" for k, v in a15["evidence_parts"].items()]
+    L += [f"- remaining condition {c['id']}: {c['condition']} - {c['state']}" for c in a15["remaining_conditions"]]
+    L += [f"- recorded open item {o['id']} ({o['item']}): {_fmt(o['as_recorded'], 300)}"
+          for o in a15["recorded_open_items_for_owner_review"]]
     rv = doc["architecture_gates"][0]["blocking_evidence"]["rows"]
-    gcol = "ground_reference (hall_c1_reference)"
-    L += ["", "RVM rows (AG-01; C1 column = GROUND_REFERENCE, not a flight candidate):", "",
-          "| row | title | hall_icp_neutralizer (flight) | C1 ground reference | frozen |", "|---|---|---|---|---|"]
-    L += [f"| {r['id']} | {r['title']} | {r['status']['hall_icp_neutralizer']} | {r['status'].get(gcol, '-')} "
+    fl = doc["configuration"]["flight"]
+    L += ["", f"RVM rows (AG-01; flight configuration `{fl}` only):", "",
+          f"| row | title | origin | {fl} (flight) | frozen |", "|---|---|---|---|---|"]
+    L += [f"| {r['id']} | {r['title']} | {r['requirement_origin']} | {r['status'][fl]} "
           f"| {str(r['requirement_frozen']).lower()} |" for r in rv]
     up = doc["upstream_pareto"]
     L += ["", "## Upstream Pareto sets (PARAMETRIC_SENSITIVITY)", "",
@@ -1735,6 +1783,11 @@ def render_md(doc: dict) -> str:
           "|---|---|---|---|"]
     L += [f"| {r['decision']} | {r['question_id']} | {_fmt(', '.join(r['record_ids']), 80)} | "
           f"{_fmt(r['how_applied'], 220)} |" for r in doc["a9_19_owner_answers_applied"]]
+    gh = doc["ground_reference_history"]
+    L += ["", "## Ground reference / retired flight configuration (history only; not evaluated for flight)", "",
+          f"Label {gh['label']}: `{gh['configuration']}` - {gh['flight_status']}. Not in status counts, objectives or "
+          f"gates. RVM cells as carried by the RVM ({gh['source']}): "
+          + _fmt(gh["rvm_status_counts_as_carried"], 200) + "."]
     L += ["", "## Inputs", "", "Pinned (immutable, sha256 verified):", ""]
     L += [f"- `{v['path']}` {v['sha256']}" for v in doc["pins"].values()]
     L += ["", "Consumed (sha256 at build time; drift reported by `--check`):", ""]

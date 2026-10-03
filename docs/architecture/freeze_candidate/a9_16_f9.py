@@ -5,15 +5,16 @@ PENDING_STEP_2_MODEL_CHANGE):
   A9.13 F9-OQ-03 (S6.22)  AG-01 .. AG-15 approved with the determining-evidence closure standard (gate_closes);
                           AG-03 via a separately preregistered successor held-out validation (P5-N2 v1 stays INCONCLUSIVE);
                           AG-12 = statewise feed-state sufficiency (S6.21); AG-13 = statewise T - D >= 0 (S6.15);
-                          AG-15 = official RFP registered with immutable provenance / hash + RVM re-based (BLOCKED: the RFP
-                          document is not in the repository)
+                          AG-15 = official RFP registered with immutable provenance / hash + RVM re-based (status
+                          derived by ag15_f9.assess from the registration record and the RVM re-base; F9 lane F9)
   A9.13 F9-OQ-02 (S6.21)  no fixed flight mass-flow gate: 0.38 mg/s and ~1.3 mg/s are not requirements; 0.38-3.2 mg/s is
                           characterization coverage only; AG-12 NOT_EVALUATED until the validated H-1 thrust-vs-feed map
   A9.13 F9-OQ-01 (S6.20)  the robust Pareto set is carried to LOCK-1; no representative is selected
   A9.13 / A9.14 / A9.12 / A9.8 / A9.15 answers that settle F9 rows (filter placement, setpoint policy, delta_B_acc,
                           isolation class, redundancy, mass lines, Xe cases, start sequence, Xe capability)
   A9.9 F1Q-01 / UPSTREAM_ICD-Q7 / F9-OQ-04  model-change candidates MCC-01..07 owner-authorised, PENDING_STEP_2
-No PASS; no representative; RFP-cited facts are OWNER_STATED_PENDING_RFP_REGISTRATION (AG-15).
+No PASS; no representative; parameter-level RFP citations keep the step-1 label OWNER_STATED_PENDING_RFP_REGISTRATION
+(AG-15 itself is evaluated from the registered RFP, ag15_f9).
 """
 from __future__ import annotations
 
@@ -158,11 +159,13 @@ def apply_gates(gates: list, ref) -> list:
         "evaluator": "a9_16_f9.ag13_statewise (fail closed)"}
     g["sources"] = g["sources"] + [dsrc("OQ-F78-01"), dsrc("OQ-F78-04")]
     g = by["AG-15"]
-    g["current_status"] = "BLOCKED_RFP_NOT_REGISTERED (owner states the RFP is available to the project; not in the repository)"
-    g["blocking_evidence"] = ("register the official RFP in the repository evidence system with immutable provenance / "
-                              "sha256 and re-base the RVM requirements against it; secondary transcriptions are not "
-                              "enough (A9.13 F9-OQ-03 AG-15 clarification); until then every RFP-cited owner statement "
-                              "is OWNER_STATED_PENDING_RFP_REGISTRATION")
+    # status and blocking evidence come from the registered RFP + RVM re-base (build_gates -> ag15_f9.assess); the
+    # A9.13 clarification is recorded with the gate, never overriding the derived status
+    if not isinstance(g["blocking_evidence"], dict) or "assessment" not in g["blocking_evidence"]:
+        raise SystemExit("REFUSED: AG-15 carries no registration assessment (ag15_f9)")
+    g["blocking_evidence"]["a9_13_clarification"] = (
+        "register the official RFP in the repository evidence system with immutable provenance / sha256 and re-base "
+        "the RVM requirements against it; secondary transcriptions are not enough (A9.13 F9-OQ-03 AG-15 clarification)")
     g["sources"] = g["sources"] + [dsrc("F9-OQ-03")]
     for gg in gates:
         assert gg["evidence_sufficient_for_freeze"] is False
@@ -489,6 +492,8 @@ def rollup_v5(rollup: dict, v5: dict, v5_ref) -> dict:
 
 def owner_answers_applied() -> list:
     A = ARTIFACT
+    # how_applied texts are the A9.16 step-1 application record (history, consumed verbatim by the A9.16 application
+    # matrix); the current AG-15 status is derived in build_gates from the registered RFP (ag15_f9)
     rows = [L.applied_row("F9-OQ-03", A, ["architecture_gates[*].owner_approved", "AG-03", "AG-12", "AG-13", "AG-15"],
                           "AG-01..AG-15 approved with the determining-evidence standard (gate_closes, fail closed); "
                           "AG-03 successor held-out validation; AG-15 BLOCKED_RFP_NOT_REGISTERED", [TEST]),

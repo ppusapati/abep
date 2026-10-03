@@ -118,6 +118,165 @@
    }
   ]
  },
+ "ground_reference_history": {
+  "label": "GROUND_REFERENCE_AND_RETIRED_FLIGHT_CONFIGURATION_HISTORY",
+  "configuration": "hall_c1_reference",
+  "flight_status": "RETIRED_AS_FLIGHT_CONFIGURATION (A9.19 one flight configuration; A9.20 C1 GROUND_ONLY_LAB_EQUIPMENT)",
+  "evaluated_for_flight": false,
+  "in_status_counts": false,
+  "in_gates": false,
+  "in_objectives": false,
+  "rvm_description_as_carried": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a candidate flight configuration (A9.19); its cells are kept only as the labelled ground / laboratory reference (H-1 I_d,max,H1,Ar characterization, A9.10 S3.5; C1-vs-ICP bench control) and are never flight compliance evidence",
+  "rvm_status_counts_as_carried": {
+   "PASS": 0,
+   "FAIL": 0,
+   "NOT_EVALUATED": 29,
+   "OUT_OF_DOMAIN": 0,
+   "INCOMPLETE_EVIDENCE": 1,
+   "NUMERICAL_FAILURE": 0
+  },
+  "rvm_rows_as_carried": [
+   {
+    "id": "RVM-01",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-02",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-03",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-04",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-05",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-06",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-07",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-08",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-09",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-10",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-11",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-12",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-13",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-14",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-15",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-16",
+    "status_as_carried_by_rvm": "INCOMPLETE_EVIDENCE"
+   },
+   {
+    "id": "RVM-17",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-18",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-19",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-20",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-21",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-22",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-23",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-24",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-25",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-26",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-27",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-28",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-29",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   },
+   {
+    "id": "RVM-30",
+    "status_as_carried_by_rvm": "NOT_EVALUATED"
+   }
+  ],
+  "source": "docs/requirements/rvm_a9/rvm_a9_v1.json#/rows/*/configurations/hall_c1_reference",
+  "authority": [
+   {
+    "decision": "A9.19",
+    "md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+    "md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+    "json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+    "json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+    "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY"
+   },
+   {
+    "decision": "A9.20",
+    "md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+    "md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+    "json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+    "json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+    "decision_code": "C1_GROUND_ONLY_LABORATORY_REFERENCE"
+   }
+  ]
+ },
  "what_this_is_not": [
   "not a frozen architecture and not FROZEN_REFERENCE_FLIGHT_ARCHITECTURE",
   "not a selection: Pareto sets are carried, no representative point is chosen (F9-OQ-01)",
@@ -301,6 +460,10 @@
   "RVM": {
    "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
    "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+  },
+  "RFP": {
+   "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+   "sha256": "be2d26cdc8c8b140f29d26b52140a3bae6d1080ecaa92ea40841889207e49412"
   },
   "MP2": {
    "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -526,7 +689,10 @@
     "pinned": true
    }
   ],
-  "rule": "verbatim (JSON keys; the Markdown table uses the arrow character for '->'); never converted to PASS"
+  "rule": "verbatim (JSON keys; the Markdown table uses the arrow character for '->'); never converted to PASS",
+  "superseded_as_flight_status": {
+   "C1 conventional reference": "historical A9.2 status; superseded by A9.19 / A9.20: C1 is GROUND_ONLY_LAB_EQUIPMENT (ground reference only), not a flight control / fallback configuration"
+  }
  },
  "upstream_pareto": {
   "robust_set": {
@@ -8740,8 +8906,8 @@
  "architecture_gates": [
   {
    "id": "AG-01",
-   "gate": "RVM rows (30 system requirements; flight configuration hall_icp_neutralizer, C1 column if any = ground reference)",
-   "current_status": "hall_icp_neutralizer: NOT_EVALUATED 27, INCOMPLETE_EVIDENCE 3; hall_c1_reference: NOT_EVALUATED 29, INCOMPLETE_EVIDENCE 1",
+   "gate": "RVM rows (30 system requirements; flight configuration hall_icp_neutralizer only)",
+   "current_status": "hall_icp_neutralizer: NOT_EVALUATED 27, INCOMPLETE_EVIDENCE 3",
    "evidence_sufficient_for_freeze": false,
    "blocking_evidence": {
     "rows": [
@@ -8749,15 +8915,19 @@
       "id": "RVM-01",
       "title": "Altitude envelope 180-230 km",
       "requirement_frozen": false,
+      "requirement_origin": "RFP_CLAUSE",
+      "rfp_clauses": [
+       "RFP-P18-04",
+       "RFP-P18-05"
+      ],
       "status": {
-       "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1:HI-ABS [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-TABS [PLAN_OR_FRAMEWORK], transport_ensemble_v0:members [VALIDATED_ANALYSIS]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/0/configurations",
+       "pointer": "/rows/0/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -8765,15 +8935,18 @@
       "id": "RVM-02",
       "title": ">= 12 mN minimum sustained thrust on atmospheric propellant",
       "requirement_frozen": false,
+      "requirement_origin": "RFP_CLAUSE",
+      "rfp_clauses": [
+       "RFP-P18-06"
+      ],
       "status": {
-       "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1:DQ-HI-TABS [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-SUST [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:HI-ABS [PLAN_OR_FRAMEWORK], transport_ensemble_v0:members [VALIDATED_ANALYSIS]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/1/configurations",
+       "pointer": "/rows/1/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -8781,15 +8954,19 @@
       "id": "RVM-03",
       "title": "25 mN demonstrated system capability inside P_bus < 1.5 kW",
       "requirement_frozen": false,
+      "requirement_origin": "RFP_CLAUSE",
+      "rfp_clauses": [
+       "RFP-P18-06",
+       "RFP-P18-10"
+      ],
       "status": {
-       "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1:HI-ABS [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-TABS [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PBUS [PLAN_OR_FRAMEWORK], transport_ensemble_v0:members [VALIDATED_ANALYSIS]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/2/configurations",
+       "pointer": "/rows/2/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -8797,15 +8974,19 @@
       "id": "RVM-04",
       "title": "< 1.5 kW full bus power (A9-02 boundary, steady and start-up, 1 ms window)",
       "requirement_frozen": false,
+      "requirement_origin": "RFP_CLAUSE",
+      "rfp_clauses": [
+       "RFP-P18-10",
+       "RFP-P18-01"
+      ],
       "status": {
-       "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: mass_power_a9_v3:power.configurations.hall_icp_neutralizer.rfp_gate_1ms [BUDGET_EVALUATION], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PBUS [PLAN_OR_FRAMEWORK]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/3/configurations",
+       "pointer": "/rows/3/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -8813,15 +8994,16 @@
       "id": "RVM-05",
       "title": "Internal ~1.35 kW design allocation (row 109)",
       "requirement_frozen": true,
+      "requirement_origin": "OWNER_ALLOCATION",
+      "rfp_clauses": [],
       "status": {
-       "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: mass_power_a9_v3:power.configurations.hall_icp_neutralizer.phases.steady.design_allocation_1350W [BUDGET_EVALUATION], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PALLOC [PLAN_OR_FRAMEWORK]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/4/configurations",
+       "pointer": "/rows/4/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -8829,15 +9011,18 @@
       "id": "RVM-06",
       "title": "< 40 kg wet (incl. Xe + tank)",
       "requirement_frozen": false,
+      "requirement_origin": "RFP_CLAUSE",
+      "rfp_clauses": [
+       "RFP-P18-11"
+      ],
       "status": {
-       "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE"
       },
       "rule": "R6-INCOMPLETE",
       "blocking": "evaluation run with evidenced terms but inconclusive: mass_power_a9_v3:rollups[hall_icp_neutralizer] (3 evidenced term(s))",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/5/configurations",
+       "pointer": "/rows/5/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -8845,15 +9030,16 @@
       "id": "RVM-07",
       "title": "Internal 34 kg and 36 kg design allocations (row 53)",
       "requirement_frozen": true,
+      "requirement_origin": "OWNER_ALLOCATION",
+      "rfp_clauses": [],
       "status": {
-       "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE"
       },
       "rule": "R6-INCOMPLETE",
       "blocking": "evaluation run with evidenced terms but inconclusive: mass_power_a9_v3:rollups[hall_icp_neutralizer] (3 evidenced term(s))",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/6/configurations",
+       "pointer": "/rows/6/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -8861,15 +9047,22 @@
       "id": "RVM-08",
       "title": "Atmospheric propellant (air: N2 / O2 path; NO_ATOMIC_O labels)",
       "requirement_frozen": false,
+      "requirement_origin": "RFP_CLAUSE",
+      "rfp_clauses": [
+       "RFP-P18-08",
+       "RFP-P16-02",
+       "RFP-P17-03",
+       "RFP-P17-04",
+       "RFP-P19-03"
+      ],
       "status": {
-       "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1:HI-CMP [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-SUST [PLAN_OR_FRAMEWORK], transport_ensemble_v0:members [VALIDATED_ANALYSIS]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/7/configurations",
+       "pointer": "/rows/7/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -8877,15 +9070,19 @@
       "id": "RVM-09",
       "title": "Ionise N2 and nascent (atomic) O in the same thruster (RFP-P17-05, RFP-P17-02)",
       "requirement_frozen": false,
+      "requirement_origin": "RFP_CLAUSE",
+      "rfp_clauses": [
+       "RFP-P17-05",
+       "RFP-P17-02"
+      ],
       "status": {
-       "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1:HI-AO [PLAN_OR_FRAMEWORK], transport_ensemble_v0:members [VALIDATED_ANALYSIS]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/8/configurations",
+       "pointer": "/rows/8/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -8893,15 +9090,20 @@
       "id": "RVM-10",
       "title": "Xe capability (air + Xe; bounded functional Xe mode)",
       "requirement_frozen": false,
+      "requirement_origin": "RFP_CLAUSE",
+      "rfp_clauses": [
+       "RFP-P18-08",
+       "RFP-P17-05",
+       "RFP-P16-02"
+      ],
       "status": {
-       "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1:HI-CMP [PLAN_OR_FRAMEWORK]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/9/configurations",
+       "pointer": "/rows/9/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -8909,15 +9111,18 @@
       "id": "RVM-11",
       "title": "Hall-effect thruster preferred",
       "requirement_frozen": false,
+      "requirement_origin": "RFP_CLAUSE",
+      "rfp_clauses": [
+       "RFP-P18-07"
+      ],
       "status": {
-       "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1 [PLAN_OR_FRAMEWORK]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/10/configurations",
+       "pointer": "/rows/10/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -8925,15 +9130,18 @@
       "id": "RVM-12",
       "title": "'Ignition Time: More than 15000 hrs' (RFP-P19-01, literal); design basis >= 15,000 h cumulative energized operation",
       "requirement_frozen": false,
+      "requirement_origin": "RFP_CLAUSE",
+      "rfp_clauses": [
+       "RFP-P19-01"
+      ],
       "status": {
-       "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: ao_lifetime_register_v5:AOL-LF-02 [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-LIFE [PLAN_OR_FRAMEWORK], transport_ensemble_v0:members [VALIDATED_ANALYSIS], hall_icp_validation_inputs_v1:VI-LF-05 [PLAN_OR_FRAMEWORK]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/11/configurations",
+       "pointer": "/rows/11/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -8941,15 +9149,18 @@
       "id": "RVM-13",
       "title": "Mission-life basis >= 26,280 h",
       "requirement_frozen": false,
+      "requirement_origin": "RFP_CLAUSE",
+      "rfp_clauses": [
+       "RFP-P19-01"
+      ],
       "status": {
-       "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: transport_ensemble_v0:members [VALIDATED_ANALYSIS], A9_01_hall_icp_prereg_framework_v1:DQ-HI-LIFE [PLAN_OR_FRAMEWORK]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/12/configurations",
+       "pointer": "/rows/12/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -8957,15 +9168,16 @@
       "id": "RVM-14",
       "title": "Start-up / restart (ignition, Hall ignition with the electron source, restart, transients)",
       "requirement_frozen": false,
+      "requirement_origin": "DERIVED_PROJECT_REQUIREMENT",
+      "rfp_clauses": [],
       "status": {
-       "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1:DQ-HI-IGN [PLAN_OR_FRAMEWORK], hall_icp_validation_inputs_v1:VI-SU-01 [PLAN_OR_FRAMEWORK], hall_icp_validation_inputs_v1:VI-SU-02 [PLAN_OR_FRAMEWORK]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/13/configurations",
+       "pointer": "/rows/13/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -8973,15 +9185,16 @@
       "id": "RVM-15",
       "title": "Beam neutralization / electron-current capacity (ICP-45 or C1)",
       "requirement_frozen": false,
+      "requirement_origin": "DERIVED_PROJECT_REQUIREMENT",
+      "rfp_clauses": [],
       "status": {
-       "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: p1_icp_bench_v1:P1-S7 [PLAN_OR_FRAMEWORK], icp_neutralizer_icd_v1:ICP-45 [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-ECAP [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-VCPL [PLAN_OR_FRAMEWORK]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/14/configurations",
+       "pointer": "/rows/14/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -8989,15 +9202,21 @@
       "id": "RVM-16",
       "title": "Atomic-oxygen / material compatibility (AO-beam test; anode, collector, keeper, gas path)",
       "requirement_frozen": false,
+      "requirement_origin": "RFP_CLAUSE",
+      "rfp_clauses": [
+       "RFP-P17-02",
+       "RFP-P19-04",
+       "RFP-P19-06",
+       "RFP-P19-02"
+      ],
       "status": {
-       "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
-       "ground_reference (hall_c1_reference)": "INCOMPLETE_EVIDENCE"
+       "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE"
       },
       "rule": "R6-INCOMPLETE",
       "blocking": "evaluation run with evidenced terms but inconclusive: p4_anode_materials_v1:candidate_screening_states (21 evidenced term(s))",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/15/configurations",
+       "pointer": "/rows/15/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -9005,15 +9224,16 @@
       "id": "RVM-17",
       "title": "Thermal closure (>= 50 K below validated limits, 20 % heat-load margin)",
       "requirement_frozen": true,
+      "requirement_origin": "DERIVED_PROJECT_REQUIREMENT",
+      "rfp_clauses": [],
       "status": {
-       "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: p3_coupled_thermal_v2:fail_closed_evaluations [FRAMEWORK_EVALUATION]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/16/configurations",
+       "pointer": "/rows/16/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -9021,15 +9241,19 @@
       "id": "RVM-18",
       "title": "Indigenous content: >= 75 % project, thruster > 80 %, intake > 80 %, compressor / storage > 60 %, PSE > 70 % (RFP-P19-05; > 60 % statement RFP-P18-03 recorded)",
       "requirement_frozen": false,
+      "requirement_origin": "RFP_CLAUSE",
+      "rfp_clauses": [
+       "RFP-P19-05",
+       "RFP-P18-03"
+      ],
       "status": {
-       "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: RFQ_A9_V3 [PROCUREMENT]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/17/configurations",
+       "pointer": "/rows/17/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -9037,15 +9261,19 @@
       "id": "RVM-19",
       "title": "Electronics: cater to single-point failure (RFP-P18-09); redundancy at electronics and sensor level (RFP-P18-02)",
       "requirement_frozen": false,
+      "requirement_origin": "RFP_CLAUSE",
+      "rfp_clauses": [
+       "RFP-P18-09",
+       "RFP-P18-02"
+      ],
       "status": {
-       "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: bus_power_boundary_a9_v1 [PLAN_OR_FRAMEWORK]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/18/configurations",
+       "pointer": "/rows/18/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -9053,15 +9281,19 @@
       "id": "RVM-20",
       "title": "MIL-1553B interface with the satellite onboard computer + discrete thruster interface + hardware drivers inside the propulsion system",
       "requirement_frozen": false,
+      "requirement_origin": "RFP_CLAUSE",
+      "rfp_clauses": [
+       "RFP-P18-12",
+       "RFP-P18-01"
+      ],
       "status": {
-       "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P18-12:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/19/configurations",
+       "pointer": "/rows/19/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -9069,15 +9301,20 @@
       "id": "RVM-21",
       "title": "Environmental qualification (ENTEST): launch vibration / shock (PSLV / SSLV or DRDO-decided LV), AO erosion, radiation, thermal, ThermoVac, 3-year VLEO life",
       "requirement_frozen": false,
+      "requirement_origin": "RFP_CLAUSE",
+      "rfp_clauses": [
+       "RFP-P19-04",
+       "RFP-P19-02",
+       "RFP-P16-01"
+      ],
       "status": {
-       "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P19-04:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT], ao_lifetime_register_v5:AOL-EX-01 [PLAN_OR_FRAMEWORK]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/20/configurations",
+       "pointer": "/rows/20/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -9085,15 +9322,19 @@
       "id": "RVM-22",
       "title": "RFP test approach 4.1 a-d (AO-beam coating tests; rarefied-gas intake erosion; EM / QM force, Isp, efficiency; expert-committee-approved test plan) and ground demonstration",
       "requirement_frozen": false,
+      "requirement_origin": "RFP_CLAUSE",
+      "rfp_clauses": [
+       "RFP-P19-06",
+       "RFP-P20-02"
+      ],
       "status": {
-       "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: ao_lifetime_register_v5:AOL-EX-01 [PLAN_OR_FRAMEWORK], rfp_registration_v1:RFP-P19-06-b:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT], A9_01_hall_icp_prereg_framework_v1:HI-ABS [PLAN_OR_FRAMEWORK], rfp_registration_v1:RFP-P19-06-d:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/21/configurations",
+       "pointer": "/rows/21/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -9101,15 +9342,18 @@
       "id": "RVM-23",
       "title": "ISO certification; acceptance / qualification per ATP (finalized after DDR / CDR); testing to MIL / ASTM / BIS / ESS standards",
       "requirement_frozen": false,
+      "requirement_origin": "RFP_CLAUSE",
+      "rfp_clauses": [
+       "RFP-P20-01"
+      ],
       "status": {
-       "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P20-01:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/22/configurations",
+       "pointer": "/rows/22/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -9117,15 +9361,18 @@
       "id": "RVM-24",
       "title": "Exit criterion: EM of the ABEP system + qualified electric thruster with O and N2 as propellant at milestone 4 (partial success)",
       "requirement_frozen": false,
+      "requirement_origin": "RFP_CLAUSE",
+      "rfp_clauses": [
+       "RFP-P20-03"
+      ],
       "status": {
-       "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P20-03:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT], A9_01_hall_icp_prereg_framework_v1:HI-AO [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-SUST [PLAN_OR_FRAMEWORK], transport_ensemble_v0:members [VALIDATED_ANALYSIS]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/23/configurations",
+       "pointer": "/rows/23/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -9133,15 +9380,23 @@
       "id": "RVM-25",
       "title": "Milestone schedule and deliverables M1-M5 (T0+9 / +12 / +20 / +24 / +36 months) and the EM -> QM processing flow",
       "requirement_frozen": false,
+      "requirement_origin": "RFP_CLAUSE",
+      "rfp_clauses": [
+       "RFP-P20-04",
+       "RFP-P20-05",
+       "RFP-P20-06",
+       "RFP-P21-01",
+       "RFP-P21-02",
+       "RFP-P17-01"
+      ],
       "status": {
-       "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P20-04:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/24/configurations",
+       "pointer": "/rows/24/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -9149,15 +9404,20 @@
       "id": "RVM-26",
       "title": "Micro-newton-level thrust measurement system; UHV test facility and low-thrust measurement setup (Part IV(B), no waivers)",
       "requirement_frozen": false,
+      "requirement_origin": "RFP_CLAUSE",
+      "rfp_clauses": [
+       "RFP-P30-01",
+       "RFP-P27-01",
+       "RFP-P21-03"
+      ],
       "status": {
-       "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P30-01:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT], rfp_registration_v1:RFP-P27-01:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/25/configurations",
+       "pointer": "/rows/25/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -9165,15 +9425,16 @@
       "id": "RVM-27",
       "title": "Steady heat conducted into the spacecraft mounting interface <= 50 W (A9.12 S5.4 provisional owner allocation; 100 W contingency, 25 W stretch)",
       "requirement_frozen": true,
+      "requirement_origin": "OWNER_ALLOCATION",
+      "rfp_clauses": [],
       "status": {
-       "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: p3_coupled_thermal_v2 [PLAN_OR_FRAMEWORK]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/26/configurations",
+       "pointer": "/rows/26/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -9181,15 +9442,16 @@
       "id": "RVM-28",
       "title": "Flight thruster architecture: one Hall accelerator + one RF/ICP electron-source/neutralizer for both atmospheric gases and Xe; no conventional hollow cathode (A9.19)",
       "requirement_frozen": true,
+      "requirement_origin": "OWNER_ALLOCATION",
+      "rfp_clauses": [],
       "status": {
-       "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P17-05:A9_19_ARCHITECTURE:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/27/configurations",
+       "pointer": "/rows/27/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -9197,15 +9459,19 @@
       "id": "RVM-29",
       "title": "Two propellant supply modes with separate tanks / paths: ambient atmospheric propellant (primary) and Xe (contingency / emergency supply mode) (RFP-P18-08, RFP-P17-05; A9.19)",
       "requirement_frozen": false,
+      "requirement_origin": "RFP_CLAUSE",
+      "rfp_clauses": [
+       "RFP-P18-08",
+       "RFP-P17-05"
+      ],
       "status": {
-       "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P18-08:A9_19_SUPPLY_MODES:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/28/configurations",
+       "pointer": "/rows/28/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      },
@@ -9213,30 +9479,46 @@
       "id": "RVM-30",
       "title": "C1 (heated Xe-fed LaB6) is a ground-only laboratory reference: never flight hardware, never in the flight mass / power / Xe budgets (A9.20)",
       "requirement_frozen": true,
+      "requirement_origin": "OWNER_ALLOCATION",
+      "rfp_clauses": [],
       "status": {
-       "hall_icp_neutralizer": "NOT_EVALUATED",
-       "ground_reference (hall_c1_reference)": "NOT_EVALUATED"
+       "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
       "blocking": "no determining evaluation with evidenced terms: mass_power_a9_v3 [PLAN_OR_FRAMEWORK], xe_accounting_a9_v3 [PLAN_OR_FRAMEWORK]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-       "pointer": "/rows/29/configurations",
+       "pointer": "/rows/29/configurations/hall_icp_neutralizer",
        "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
       }
      }
     ],
-    "summary": "no row is PASS (hall_icp_neutralizer: NOT_EVALUATED 27, INCOMPLETE_EVIDENCE 3; hall_c1_reference: NOT_EVALUATED 29, INCOMPLETE_EVIDENCE 1); requirements frozen: 6 of 30 (official RFP not in the repository)"
+    "status_counts": {
+     "hall_icp_neutralizer": {
+      "PASS": 0,
+      "FAIL": 0,
+      "NOT_EVALUATED": 27,
+      "OUT_OF_DOMAIN": 0,
+      "INCOMPLETE_EVIDENCE": 3,
+      "NUMERICAL_FAILURE": 0
+     }
+    },
+    "summary": "no row is PASS (hall_icp_neutralizer: NOT_EVALUATED 27, INCOMPLETE_EVIDENCE 3); requirements frozen: 6 of 30 (0 of 22 RFP_CLAUSE rows: the official RFP is registered by hash and the RVM re-based on it; requirement_frozen on RFP rows waits for the owner's AG-15 closure)"
    },
    "sources": [
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-     "pointer": "/status_counts",
+     "pointer": "/status_counts/hall_icp_neutralizer",
      "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
     },
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-     "pointer": "/rfp_document_in_repository",
+     "pointer": "/rfp_registered_in_repository",
+     "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+    },
+    {
+     "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "pointer": "/rfp_rebase/ag_15_status",
      "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
     }
    ],
@@ -9906,14 +10188,165 @@
   },
   {
    "id": "AG-15",
-   "gate": "requirement basis (official RFP document)",
-   "current_status": "BLOCKED_RFP_NOT_REGISTERED (owner states the RFP is available to the project; not in the repository)",
+   "gate": "requirement basis (official RFP registered + RVM re-based; A9.13 S6.22)",
+   "current_status": "RFP_REGISTERED_AND_RVM_REBASED_PENDING_OWNER_CLOSURE (remaining: AG15-RC-01 owner closure of AG-15: owner acceptance of the RVM re-base against the registered RFP and requirement_frozen = true on the RFP_CLAUSE rows - OPEN (RVM re-base ag_15_status: \"OPEN - RFP registered by hash with verbatim transcription and the RVM re-based; closure is the owner's (not declared here)\"; requirement_frozen true on 0 of 22 RFP_CLAUSE rows))",
    "evidence_sufficient_for_freeze": false,
-   "blocking_evidence": "register the official RFP in the repository evidence system with immutable provenance / sha256 and re-base the RVM requirements against it; secondary transcriptions are not enough (A9.13 F9-OQ-03 AG-15 clarification); until then every RFP-cited owner statement is OWNER_STATED_PENDING_RFP_REGISTRATION",
+   "blocking_evidence": {
+    "summary": "registration (pdf sha256 a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00, 40 pages, 37 clauses) and RVM re-base (every registered clause mapped to an RVM row or recorded as programmatic) are present; remaining: AG15-RC-01 owner closure of AG-15: owner acceptance of the RVM re-base against the registered RFP and requirement_frozen = true on the RFP_CLAUSE rows - OPEN (RVM re-base ag_15_status: \"OPEN - RFP registered by hash with verbatim transcription and the RVM re-based; closure is the owner's (not declared here)\"; requirement_frozen true on 0 of 22 RFP_CLAUSE rows)",
+    "assessment": {
+     "status": "RFP_REGISTERED_AND_RVM_REBASED_PENDING_OWNER_CLOSURE",
+     "closes": false,
+     "evidence_sufficient_for_freeze": false,
+     "registration_file_sha256": "be2d26cdc8c8b140f29d26b52140a3bae6d1080ecaa92ea40841889207e49412",
+     "gate_text_verbatim": "The official RFP is now available to the project, but before this gate closes it must be placed/registered in the repository evidence system with immutable provenance/hash and the RVM requirements re-based against it. The repository may not continue relying only on secondary transcriptions.",
+     "evidence_parts": {
+      "official_rfp_registered_with_immutable_provenance_hash": {
+       "state": "EVIDENCE_PRESENT",
+       "status": "REGISTERED_BY_HASH_PDF_CONTROLLED_EXTERNALLY",
+       "rfp_number": "DTDF/06/13516/DSP/ABEP/X/L/M/01",
+       "pdf_sha256": "a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00",
+       "pages": 40,
+       "n_registered_clauses": 37,
+       "clauses_sha256": "fd51a951a1d06ea8bebd39416147686aedb1f596170fb81b6583f4564148a8aa",
+       "pdf_in_repository": false,
+       "pdf_storage": "controlled project evidence store (owner A9.17 RFP: the binary is not redistributed in the public repository; this record carries identity, hash, page count and the requirement extraction)",
+       "evidence_class": "transcription (human-read from the scanned page images of the registered PDF)",
+       "source": "docs/requirements/rfp_official/rfp_registration_v1.json#/document"
+      },
+      "rvm_requirements_rebased_against_it": {
+       "state": "EVIDENCE_PRESENT",
+       "rebase_id": "rvm_a9_rfp_rebase_v1",
+       "rvm_status": "DRAFT_IMPLEMENTATION_FIRST_PENDING_CONSOLIDATED_VERIFICATION",
+       "clauses_mapped_to_rvm_rows": 36,
+       "clauses_recorded_programmatic": [
+        "RFP-P27-02"
+       ],
+       "clauses_unmapped": [],
+       "origin_counts": {
+        "RFP_CLAUSE": 22,
+        "OWNER_ALLOCATION": 5,
+        "DERIVED_PROJECT_REQUIREMENT": 3
+       },
+       "rvm_rows": 30,
+       "source": "docs/requirements/rvm_a9/rvm_a9_v1.json#/rfp_rebase/clause_coverage"
+      },
+      "not_relying_only_on_secondary_transcriptions": {
+       "state": "EVIDENCE_PRESENT",
+       "note": "RFP_CLAUSE rows cite registered clause ids; secondary records are kept as historical cross-references",
+       "source": "docs/requirements/rvm_a9/rvm_a9_v1.json#/rows"
+      }
+     },
+     "remaining_conditions": [
+      {
+       "id": "AG15-RC-01",
+       "condition": "owner closure of AG-15: owner acceptance of the RVM re-base against the registered RFP and requirement_frozen = true on the RFP_CLAUSE rows",
+       "state": "OPEN (RVM re-base ag_15_status: \"OPEN - RFP registered by hash with verbatim transcription and the RVM re-based; closure is the owner's (not declared here)\"; requirement_frozen true on 0 of 22 RFP_CLAUSE rows)",
+       "source": [
+        "docs/requirements/rvm_a9/rvm_a9_v1.json#/rfp_rebase/ag_15_status",
+        "docs/requirements/rvm_a9/rvm_a9_v1.json#/rfp_rebase/rule"
+       ],
+       "owner_action": true
+      }
+     ],
+     "recorded_open_items_for_owner_review": [
+      {
+       "id": "AG15-OI-01",
+       "item": "registration page coverage",
+       "as_recorded": "pages 1-15 and 34-40 were not screened for requirement-bearing clauses in this record (bid / legal / programmatic front and back matter per the document structure, not verified page by page): status UNSCREENED_PENDING_OWNER_PAGE_REVIEW of the owner-held PDF; nothing is assumed about their content",
+       "source": "docs/requirements/rfp_official/rfp_registration_v1.json#/page_coverage/pages_not_screened"
+      },
+      {
+       "id": "AG15-OI-02",
+       "item": "RVM re-base discrepancies recorded against the RFP",
+       "as_recorded": [
+        {
+         "id": "DISC-01",
+         "topic": "bid due / closing date",
+         "disposition": "UNVERIFIED_BY_RFP_DOCUMENT - programmatic, not a system requirement (excluded candidate PRG-BID); verify on the DefProc tender document; CLAUDE.md is not edited here"
+        },
+        {
+         "id": "DISC-02",
+         "topic": "mass wet / dry",
+         "disposition": "the wet reading is the conservative owner reading and is retained; recorded for DRDO clarification; requirement_frozen stays false"
+        },
+        {
+         "id": "DISC-03",
+         "topic": "indigenous content",
+         "disposition": "recorded for DRDO clarification (A9.14 OD12)"
+        },
+        {
+         "id": "DISC-04",
+         "topic": "mission life hours",
+         "disposition": "consistent within the RFP's 'Approx'; the 26,280 h basis is conservative and retained"
+        },
+        {
+         "id": "DISC-05",
+         "topic": "'Ignition Time' label",
+         "disposition": "literal wording preserved; conservative design basis pending clarification (A9.14 S8.5)"
+        },
+        {
+         "id": "DISC-06",
+         "topic": "stated purpose of the Xe input",
+         "disposition": "capability mandatory (A9.15 stands); stated purpose recorded for the owner; no rule changed"
+        },
+        {
+         "id": "DISC-07",
+         "topic": "thrust range reading",
+         "disposition": "owner engineering reading retained; the RFP gives no split between sustained and capability"
+        },
+        {
+         "id": "DISC-08",
+         "topic": "ignition / restart",
+         "disposition": "DERIVED_PROJECT_REQUIREMENT (A9.14 S9.12 OD14)"
+        },
+        {
+         "id": "DISC-09",
+         "topic": "ENTEST values",
+         "disposition": "RVM-21 carries no numeric level; levels TBD at PDR (not invented)"
+        },
+        {
+         "id": "DISC-10",
+         "topic": "test-facility / thrust-measurement capability",
+         "disposition": "new row RVM-26; the mN-level stand plan is not evidence of micro-newton capability"
+        }
+       ],
+       "source": "docs/requirements/rvm_a9/rvm_a9_v1.json#/rfp_rebase/discrepancies"
+      }
+     ],
+     "errors": [],
+     "determining_evidence": {
+      "gate": "AG-15",
+      "closes": true,
+      "status": "DETERMINING_EVIDENCE_PRESENT",
+      "refused": []
+     }
+    },
+    "a9_13_clarification": "register the official RFP in the repository evidence system with immutable provenance / sha256 and re-base the RVM requirements against it; secondary transcriptions are not enough (A9.13 F9-OQ-03 AG-15 clarification)"
+   },
    "sources": [
     {
+     "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+     "pointer": "/status",
+     "sha256": "be2d26cdc8c8b140f29d26b52140a3bae6d1080ecaa92ea40841889207e49412"
+    },
+    {
+     "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+     "pointer": "/document",
+     "sha256": "be2d26cdc8c8b140f29d26b52140a3bae6d1080ecaa92ea40841889207e49412"
+    },
+    {
+     "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+     "pointer": "/clauses",
+     "sha256": "be2d26cdc8c8b140f29d26b52140a3bae6d1080ecaa92ea40841889207e49412"
+    },
+    {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-     "pointer": "/rfp_document_in_repository",
+     "pointer": "/rfp_rebase/clause_coverage",
+     "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
+    },
+    {
+     "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "pointer": "/rfp_rebase/ag_15_status",
      "sha256": "a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6"
     },
     {
@@ -9957,13 +10390,13 @@
  "evidence_plan": [
   {
    "id": "EP-01",
-   "evidence": "register the official RFP (owner rows 1-2; A9.13 AG-15: immutable provenance / sha256 in the repository evidence system) and re-base the RVM requirement texts",
+   "evidence": "owner closure of AG-15 (A9.13 S6.22): accept the RVM re-base against the registered official RFP (docs/requirements/rfp_official/rfp_registration_v1.json, by sha256, PDF controlled externally per A9.17 RFP; registration and re-base done) and set requirement_frozen on the RFP_CLAUSE rows",
    "addresses_gates": [
     "AG-15",
     "AG-01"
    ],
    "depends_on": [],
-   "vehicle": "owner / legitimate portal route"
+   "vehicle": "owner (RVM re-base acceptance)"
   },
   {
    "id": "EP-02",
@@ -13504,10 +13937,11 @@
    "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
    "record_ids": [
     "configuration.ground_reference",
-    "AG-01 RVM rows",
+    "ground_reference_history",
+    "AG-01 RVM rows (flight only)",
     "AFC-SY-CTL-01"
    ],
-   "how_applied": "C1 = GROUND_ONLY_LAB_EQUIPMENT: hall_c1_reference carried only as the labelled GROUND_REFERENCE (I_d,max,H1,Ar characterization, A9.10 S3.5; C1-vs-ICP bench control); never flight hardware or in flight budgets",
+   "how_applied": "C1 = GROUND_ONLY_LAB_EQUIPMENT: hall_c1_reference carried only as the labelled GROUND_REFERENCE (I_d,max,H1,Ar characterization, A9.10 S3.5; C1-vs-ICP bench control); never flight hardware or in flight budgets; its RVM cells only in the labelled ground_reference_history section, never in status counts, objectives or gates",
    "tests": [
     "tests/test_architecture_freeze_candidate.py",
     "tests/test_design_a9_19_architecture.py"
