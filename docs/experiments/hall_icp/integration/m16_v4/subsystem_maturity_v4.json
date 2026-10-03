@@ -133,6 +133,16 @@
    "C1 conventional reference": "CONTROL_FALLBACK"
   }
  },
+ "a9_2_status_notes": {
+  "C1 conventional reference": "CONTROL_FALLBACK carried verbatim (R-M16V4-06; immutable A9.2 history); superseded for use: C1 is not a flight fallback (A9.19) and is a ground-only laboratory reference (A9.20)"
+ },
+ "configurations": {
+  "hall_icp_neutralizer": "FLIGHT (A9.19): the one flight configuration - one Hall accelerator + one RF/ICP electron-source / neutralizer for air and Xe, two supply modes (ambient atmospheric primary, Xe contingency / emergency), no conventional hollow cathode; A9 stays OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
+  "hall_c1_reference": "GROUND_ONLY_LAB_REFERENCE (A9.20): retired as a flight configuration (A9.19); carried only as the labelled ground / laboratory reference (H-1 I_d,max,H1,Ar characterization, C1-vs-ICP bench control); never flight compliance evidence"
+ },
+ "flight_configurations": [
+  "hall_icp_neutralizer"
+ ],
  "pins": [
   {
    "path": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json",
@@ -208,6 +218,36 @@
    "path": "docs/EVIDENCE.md",
    "sha256": "a2950352141890c12ad33e66766cd003215c807cb29203d21df090349ab90b61",
    "role": "evidence rules (quantity types; CLAUDE.md rule 10)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "role": "owner decision A9.19 (flight architecture / Xe contingency role)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+   "sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+   "role": "owner decision A9.20 (C1 ground-only reference)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+   "sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+   "role": "owner decision A9.21 (open items + hardware programme)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+   "role": "owner decision A9.19 (verbatim)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+   "sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+   "role": "owner decision A9.20 (verbatim)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+   "sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+   "role": "owner decision A9.21 (verbatim)"
   }
  ],
  "referenced_not_pinned": {
@@ -382,7 +422,11 @@
      ],
      "group": "DG-RFP-ENVELOPE",
      "state_v5": "ANSWERED_BY_A9_14",
-     "decision": "A9.14 OD3 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
+     "decision": "A9.14 OD3 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+     "later_owner_decisions": [
+      "A9.17 ORBIT INPUT_STAYS_TBD (docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json sha256 9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad)",
+      "A9.21 EXTERNAL_INPUTS INPUT_STAYS_TBD (docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json sha256 78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549)"
+     ]
     }
    ],
    "worked_by": null,
@@ -405,37 +449,59 @@
      "rvm_row": "RVM-01",
      "title": "Altitude envelope 180-230 km",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-08",
      "title": "Atmospheric propellant (air: N2 / O2 path; NO_ATOMIC_O labels)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-09",
      "title": "Ionise N2 and nascent (atomic) O in the same thruster (RFP-P17-05, RFP-P17-02)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-22",
      "title": "RFP test approach 4.1 a-d (AO-beam coating tests; rarefied-gas intake erosion; EM / QM force, Isp, efficiency; expert-committee-approved test plan) and ground demonstration",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     }
    ],
    "execution_state": "BLOCKED",
-   "state_rule": "R-M16V4-04"
+   "state_rule": "R-M16V4-04",
+   "a9_21": [
+    {
+     "decision": "A9.21",
+     "item": "EXTERNAL_INPUTS",
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/EXTERNAL_INPUTS",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "verbatim_excerpt": "* AOCS pointing envelope: needs the actual spacecraft/AOCS requirement. * Inclination and LTAN: not specified by the RFP; do not use the old code default as mission truth.",
+     "effect": "the external inputs stay TBD (no code default as mission truth); no readiness state change"
+    }
+   ]
   },
   {
    "row": 2,
@@ -532,21 +598,28 @@
      "rvm_row": "RVM-08",
      "title": "Atmospheric propellant (air: N2 / O2 path; NO_ATOMIC_O labels)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-09",
      "title": "Ionise N2 and nascent (atomic) O in the same thruster (RFP-P17-05, RFP-P17-02)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     }
    ],
    "execution_state": "BLOCKED",
-   "state_rule": "R-M16V4-04"
+   "state_rule": "R-M16V4-04",
+   "a9_21": []
   },
   {
    "row": 3,
@@ -643,21 +716,28 @@
      "rvm_row": "RVM-01",
      "title": "Altitude envelope 180-230 km",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-08",
      "title": "Atmospheric propellant (air: N2 / O2 path; NO_ATOMIC_O labels)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     }
    ],
    "execution_state": "BLOCKED",
-   "state_rule": "R-M16V4-04"
+   "state_rule": "R-M16V4-04",
+   "a9_21": []
   },
   {
    "row": 4,
@@ -738,13 +818,17 @@
      "rvm_row": "RVM-08",
      "title": "Atmospheric propellant (air: N2 / O2 path; NO_ATOMIC_O labels)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     }
    ],
    "execution_state": "BLOCKED",
-   "state_rule": "R-M16V4-04"
+   "state_rule": "R-M16V4-04",
+   "a9_21": []
   },
   {
    "row": 5,
@@ -825,13 +909,17 @@
      "rvm_row": "RVM-08",
      "title": "Atmospheric propellant (air: N2 / O2 path; NO_ATOMIC_O labels)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     }
    ],
    "execution_state": "BLOCKED",
-   "state_rule": "R-M16V4-04"
+   "state_rule": "R-M16V4-04",
+   "a9_21": []
   },
   {
    "row": 6,
@@ -951,8 +1039,12 @@
       "BLOCKS_LOCK_1"
      ],
      "group": "DG-XE-FUNC",
-     "state_v5": "AMENDED_BY_A9_15",
-     "decision": "A9.14 XA9Q-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c); amended by A9.15 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309)"
+     "state_v5": "AMENDED_BY_A9_19",
+     "decision": "A9.14 XA9Q-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c); amended by A9.15 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309)",
+     "later_owner_decisions": [
+      "A9.19 xenon_role AMENDS (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16)",
+      "A9.20 answer AMENDS (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6)"
+     ]
     },
     {
      "kind": "OWNER_QUESTION",
@@ -993,8 +1085,11 @@
       "NOTHING_IMMEDIATE"
      ],
      "group": "DG-XE-FUNC",
-     "state_v5": "AMENDED_BY_A9_15",
-     "decision": "A9.14 OD6 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c); amended by A9.15 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309)"
+     "state_v5": "AMENDED_BY_A9_19",
+     "decision": "A9.14 OD6 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c); amended by A9.15 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309)",
+     "later_owner_decisions": [
+      "A9.19 amends/A9.15 AMENDS (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16)"
+     ]
     },
     {
      "kind": "VENDOR_QUOTE",
@@ -1025,37 +1120,87 @@
      "rvm_row": "RVM-06",
      "title": "< 40 kg wet (incl. Xe + tank)",
      "status": {
-      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
+      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-07",
      "title": "Internal 34 kg and 36 kg design allocations (row 53)",
      "status": {
-      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
+      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-10",
      "title": "Xe capability (air + Xe; bounded functional Xe mode)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-13",
      "title": "Mission-life basis >= 26,280 h",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     }
    ],
    "execution_state": "BLOCKED",
-   "state_rule": "R-M16V4-04"
+   "state_rule": "R-M16V4-04",
+   "a9_19_20": {
+    "configuration_status": "FLIGHT_SUBSYSTEM (hall_icp_neutralizer; Xe contingency / emergency supply mode, A9.19)",
+    "flight_configuration": "hall_icp_neutralizer",
+    "c1_role": "GROUND_ONLY_LAB_REFERENCE (A9.20)",
+    "note": "the C1 cathode Xe term / C1 keeper line and 'Xe hardware in both configurations' come from the pre-A9.19 deliverables (hall_c1_reference column): ground-reference history, never a flight Xe budget line (A9.20)",
+    "statements": [
+     {
+      "pointer": "/a9_6_implemented/0/what",
+      "text": "Xe tank, mounting, load and residual lines; C1 cathode Xe term (hall_c1_reference only)",
+      "classification": "SUPERSEDED_FOR_FLIGHT_PRE_A9_19"
+     },
+     {
+      "pointer": "/a9_6_implemented/1/what",
+      "text": "Xe accounting v2: G-REUSE ICP line, bounded functional Xe mode, C1 keeper line, G-XE contingency",
+      "classification": "GROUND_REFERENCE_ITEM"
+     },
+     {
+      "pointer": "/a9_6_lanes/0/how",
+      "text": "Xe hardware in both configurations (row 6); XA9Q-07 OPEN",
+      "classification": "SUPERSEDED_FOR_FLIGHT_PRE_A9_19"
+     }
+    ],
+    "decisions": [
+     "A9.19 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16; verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)",
+     "A9.20 (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6; verbatim docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md sha256 2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c)"
+    ],
+    "execution_state_effect": "none (labels only; R-M16V4-01..08 unchanged)"
+   },
+   "a9_21": [
+    {
+     "decision": "A9.21",
+     "item": "AL08",
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/AL08",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "verbatim_excerpt": "2. Xe-hardware floor: wait for quotations before formally rebasing AL-08. Keep 6.05 kg only as a provisional planning floor, not a frozen allocation. The reason is important: that analog-derived figure may contain about 0.285 kg of C1 cathode-branch hardware, while the RFP-required Xe propulsion system and any C1-specific Xe hardware must be accounted separately. Quotations should split tank, regulator, valves, plumbing, mounting/thermal, and any C1-specific branch before the final re-base.\nDecision: `KEEP_6_05KG_PROVISIONAL_WAIT_FOR_QUOTES_TO_REBASE_AL08`.",
+     "effect": "sequencing / scope only; no readiness state change"
+    }
+   ]
   },
   {
    "row": 7,
@@ -1213,13 +1358,44 @@
      "rvm_row": "RVM-10",
      "title": "Xe capability (air + Xe; bounded functional Xe mode)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     }
    ],
    "execution_state": "BLOCKED",
-   "state_rule": "R-M16V4-04"
+   "state_rule": "R-M16V4-04",
+   "a9_19_20": {
+    "configuration_status": "FLIGHT_SUBSYSTEM (hall_icp_neutralizer; Xe contingency / emergency supply mode, A9.19)",
+    "flight_configuration": "hall_icp_neutralizer",
+    "c1_role": "GROUND_ONLY_LAB_REFERENCE (A9.20)",
+    "note": "the carried v3 blocking item 'specification gap at the C1 flow range' concerns the ground C1 reference only (A9.20); it is kept unchanged as the scheduler item (re-deriving blocking items is the M16 v5 follow-on) and is not a flight Xe-regulator requirement",
+    "statements": [
+     {
+      "pointer": "/blocking_item/text",
+      "text": "specification gap at the C1 flow range",
+      "classification": "GROUND_REFERENCE_ITEM"
+     }
+    ],
+    "decisions": [
+     "A9.19 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16; verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)",
+     "A9.20 (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6; verbatim docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md sha256 2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c)"
+    ],
+    "execution_state_effect": "none (labels only; R-M16V4-01..08 unchanged)"
+   },
+   "a9_21": [
+    {
+     "decision": "A9.21",
+     "item": "AL08",
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/AL08",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "verbatim_excerpt": "2. Xe-hardware floor: wait for quotations before formally rebasing AL-08. Keep 6.05 kg only as a provisional planning floor, not a frozen allocation. The reason is important: that analog-derived figure may contain about 0.285 kg of C1 cathode-branch hardware, while the RFP-required Xe propulsion system and any C1-specific Xe hardware must be accounted separately. Quotations should split tank, regulator, valves, plumbing, mounting/thermal, and any C1-specific branch before the final re-base.\nDecision: `KEEP_6_05KG_PROVISIONAL_WAIT_FOR_QUOTES_TO_REBASE_AL08`.",
+     "effect": "sequencing / scope only; no readiness state change"
+    }
+   ]
   },
   {
    "row": 8,
@@ -1370,13 +1546,69 @@
      "rvm_row": "RVM-10",
      "title": "Xe capability (air + Xe; bounded functional Xe mode)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     }
    ],
    "execution_state": "BLOCKED",
-   "state_rule": "R-M16V4-04"
+   "state_rule": "R-M16V4-04",
+   "a9_19_20": {
+    "configuration_status": "FLIGHT_SUBSYSTEM (hall_icp_neutralizer; Xe contingency / emergency supply mode, A9.19)",
+    "flight_configuration": "hall_icp_neutralizer",
+    "c1_role": "GROUND_ONLY_LAB_REFERENCE (A9.20)",
+    "note": "the cathode-feed split in the (verbatim v3) row name and the C1 branch lines / C1 FCUs / C1 controllers are ground C1 reference items (A9.20); the flight Xe metering serves the Hall Xe supply mode (ICP feed variants per A9.1 unchanged)",
+    "statements": [
+     {
+      "pointer": "/name",
+      "text": "Xe metering (splits to ignition/transition feed and cathode feed)",
+      "classification": "GROUND_REFERENCE_ITEM"
+     },
+     {
+      "pointer": "/a9_6_implemented/0/what",
+      "text": "Xe isolation valves, anode-feed flow control, plumbing; C1 branch lines (hall_c1_reference)",
+      "classification": "SUPERSEDED_FOR_FLIGHT_PRE_A9_19"
+     },
+     {
+      "pointer": "/a9_6_implemented/2/what",
+      "text": "Xe reference MFC, C1 controllers, FCU, series isolation valves (LATER)",
+      "classification": "GROUND_REFERENCE_ITEM"
+     },
+     {
+      "pointer": "/a9_6_lanes/0/how",
+      "text": "C1 cathode branch only in hall_c1_reference (inside the AL-08 floor)",
+      "classification": "SUPERSEDED_FOR_FLIGHT_PRE_A9_19"
+     },
+     {
+      "pointer": "/a9_6_lanes/1/how",
+      "text": "C1 FCUs only in hall_c1_reference; ICP feed metering only as a CASE-3 optional entry (G-XE/G-ATM/diagnostic); Hall-side Xe metering under RA-FUNC APPLIES only for the ICP configuration",
+      "classification": "SUPERSEDED_FOR_FLIGHT_PRE_A9_19"
+     },
+     {
+      "pointer": "/a9_6_lanes/2/how",
+      "text": "C1 controllers, FCU, Xe reference MFC (LATER)",
+      "classification": "GROUND_REFERENCE_ITEM"
+     }
+    ],
+    "decisions": [
+     "A9.19 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16; verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)",
+     "A9.20 (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6; verbatim docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md sha256 2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c)"
+    ],
+    "execution_state_effect": "none (labels only; R-M16V4-01..08 unchanged)"
+   },
+   "a9_21": [
+    {
+     "decision": "A9.21",
+     "item": "AL08",
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/AL08",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "verbatim_excerpt": "2. Xe-hardware floor: wait for quotations before formally rebasing AL-08. Keep 6.05 kg only as a provisional planning floor, not a frozen allocation. The reason is important: that analog-derived figure may contain about 0.285 kg of C1 cathode-branch hardware, while the RFP-required Xe propulsion system and any C1-specific Xe hardware must be accounted separately. Quotations should split tank, regulator, valves, plumbing, mounting/thermal, and any C1-specific branch before the final re-base.\nDecision: `KEEP_6_05KG_PROVISIONAL_WAIT_FOR_QUOTES_TO_REBASE_AL08`.",
+     "effect": "sequencing / scope only; no readiness state change"
+    }
+   ]
   },
   {
    "row": 9,
@@ -1502,7 +1734,11 @@
      ],
      "group": null,
      "state_v5": "ANSWERED_BY_A9_10",
-     "decision": "A9.10 P1Q-07 (docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544)"
+     "decision": "A9.10 P1Q-07 (docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544)",
+     "later_owner_decisions": [
+      "A9.20 answer CONFIRMS (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6)",
+      "A9.21 HW_PROGRAMME CONFIRMS (docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json sha256 78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549)"
+     ]
     },
     {
      "kind": "P1_MEASUREMENT",
@@ -1533,93 +1769,144 @@
      "rvm_row": "RVM-01",
      "title": "Altitude envelope 180-230 km",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-02",
      "title": ">= 12 mN minimum sustained thrust on atmospheric propellant",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-03",
      "title": "25 mN demonstrated system capability inside P_bus < 1.5 kW",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-08",
      "title": "Atmospheric propellant (air: N2 / O2 path; NO_ATOMIC_O labels)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-09",
      "title": "Ionise N2 and nascent (atomic) O in the same thruster (RFP-P17-05, RFP-P17-02)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-11",
      "title": "Hall-effect thruster preferred",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-12",
      "title": "'Ignition Time: More than 15000 hrs' (RFP-P19-01, literal); design basis >= 15,000 h cumulative energized operation",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-13",
      "title": "Mission-life basis >= 26,280 h",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-22",
      "title": "RFP test approach 4.1 a-d (AO-beam coating tests; rarefied-gas intake erosion; EM / QM force, Isp, efficiency; expert-committee-approved test plan) and ground demonstration",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-24",
      "title": "Exit criterion: EM of the ABEP system + qualified electric thruster with O and N2 as propellant at milestone 4 (partial success)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-26",
      "title": "Micro-newton-level thrust measurement system; UHV test facility and low-thrust measurement setup (Part IV(B), no waivers)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     }
    ],
    "execution_state": "BLOCKED",
-   "state_rule": "R-M16V4-04"
+   "state_rule": "R-M16V4-04",
+   "a9_21": [
+    {
+     "decision": "A9.21",
+     "item": "HW_PROGRAMME",
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/HW_PROGRAMME",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "verbatim_excerpt": "6. H-1 engineering build — approved. S7.1 FEMM analysis points first, then S7.2 engineering channel-point selection using magnetic feasibility, thermal margin, mass, packaging and manufacturability. It remains an engineering freeze candidate, not a thrust-optimized design.",
+     "effect": "sequencing / scope only; no readiness state change"
+    },
+    {
+     "decision": "A9.21",
+     "item": "HW_PROGRAMME",
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/HW_PROGRAMME",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "verbatim_excerpt": "11. Measured H-1 thrust/feed map — approved and mandatory. This is what should drive the performance-derived feed requirement for AG-12, followed by the statewise AG-13 `T-D >= 0` check.",
+     "effect": "sequencing / scope only; no readiness state change"
+    }
+   ]
   },
   {
    "row": 10,
@@ -1764,21 +2051,37 @@
      "rvm_row": "RVM-02",
      "title": ">= 12 mN minimum sustained thrust on atmospheric propellant",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-11",
      "title": "Hall-effect thruster preferred",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     }
    ],
    "execution_state": "BLOCKED",
-   "state_rule": "R-M16V4-04"
+   "state_rule": "R-M16V4-04",
+   "a9_21": [
+    {
+     "decision": "A9.21",
+     "item": "HW_PROGRAMME",
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/HW_PROGRAMME",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "verbatim_excerpt": "6. H-1 engineering build — approved. S7.1 FEMM analysis points first, then S7.2 engineering channel-point selection using magnetic feasibility, thermal margin, mass, packaging and manufacturability. It remains an engineering freeze candidate, not a thrust-optimized design.",
+     "effect": "sequencing / scope only; no readiness state change"
+    }
+   ]
   },
   {
    "row": 11,
@@ -1915,7 +2218,11 @@
      ],
      "group": null,
      "state_v5": "ANSWERED_BY_A9_10",
-     "decision": "A9.10 P1Q-07 (docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544)"
+     "decision": "A9.10 P1Q-07 (docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544)",
+     "later_owner_decisions": [
+      "A9.20 answer CONFIRMS (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6)",
+      "A9.21 HW_PROGRAMME CONFIRMS (docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json sha256 78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549)"
+     ]
     },
     {
      "kind": "OWNER_QUESTION",
@@ -1928,8 +2235,12 @@
       "BLOCKS_LOCK_1"
      ],
      "group": "DG-C1-FLIGHT",
-     "state_v5": "AMENDED_BY_A9_15",
-     "decision": "A9.14 MPQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c); amended by A9.15 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309)"
+     "state_v5": "AMENDED_BY_A9_19",
+     "decision": "A9.14 MPQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c); amended by A9.15 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309)",
+     "later_owner_decisions": [
+      "A9.19 amends/A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 SUPERSEDES (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16)",
+      "A9.20 answer SUPERSEDES (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6)"
+     ]
     },
     {
      "kind": "OWNER_QUESTION",
@@ -1942,8 +2253,12 @@
       "BLOCKS_LOCK_1"
      ],
      "group": "DG-C1-FLIGHT",
-     "state_v5": "AMENDED_BY_A9_15",
-     "decision": "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c); amended by A9.15 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309)"
+     "state_v5": "AMENDED_BY_A9_19",
+     "decision": "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c); amended by A9.15 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309)",
+     "later_owner_decisions": [
+      "A9.19 amends/A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 SUPERSEDES (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16)",
+      "A9.20 answer SUPERSEDES (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6)"
+     ]
     },
     {
      "kind": "OWNER_QUESTION",
@@ -1956,8 +2271,12 @@
       "BLOCKS_LOCK_1"
      ],
      "group": "DG-IGN-DWELL",
-     "state_v5": "ANSWERED_BY_A9_14",
-     "decision": "A9.14 OQ-A907-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
+     "state_v5": "AMENDED_BY_A9_20",
+     "decision": "A9.14 OQ-A907-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+     "later_owner_decisions": [
+      "A9.20 answer AMENDS (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6)",
+      "A9.19 architecture AMENDS (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16)"
+     ]
     },
     {
      "kind": "OWNER_QUESTION",
@@ -2004,45 +2323,140 @@
      "rvm_row": "RVM-12",
      "title": "'Ignition Time: More than 15000 hrs' (RFP-P19-01, literal); design basis >= 15,000 h cumulative energized operation",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-13",
      "title": "Mission-life basis >= 26,280 h",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-14",
      "title": "Start-up / restart (ignition, Hall ignition with the electron source, restart, transients)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-15",
      "title": "Beam neutralization / electron-current capacity (ICP-45 or C1)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-16",
      "title": "Atomic-oxygen / material compatibility (AO-beam test; anode, collector, keeper, gas path)",
      "status": {
-      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
+      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "INCOMPLETE_EVIDENCE"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     }
    ],
    "execution_state": "BLOCKED",
-   "state_rule": "R-M16V4-04"
+   "state_rule": "R-M16V4-04",
+   "a9_19_20": {
+    "configuration_status": "GROUND_ONLY_LAB_REFERENCE (A9.20): NOT_A_FLIGHT_SUBSYSTEM (A9.19: no conventional hollow cathode)",
+    "flight_configuration": "hall_icp_neutralizer",
+    "c1_role": "GROUND_ONLY_LAB_REFERENCE (A9.20)",
+    "note": "scheduled only as the ground C1 reference: H-1 + C1 characterization registers I_d,max,H1,Ar before P1-S7 (A9.10 S3.5, approved again by A9.21) and C1 is the C1-vs-ICP bench control; 'C1 remains CONTROL_FALLBACK' (lane text) and the '/ fallback' in the owner-accepted role name are pre-A9.19 history",
+    "statements": [
+     {
+      "pointer": "/name",
+      "text": "shielded Xe-fed LaB6 hollow cathode",
+      "classification": "GROUND_REFERENCE_ITEM"
+     },
+     {
+      "pointer": "/a9_6_implemented/0/what",
+      "text": "C1 unit, shield / mount, supplies (hall_c1_reference column only)",
+      "classification": "SUPERSEDED_FOR_FLIGHT_PRE_A9_19"
+     },
+     {
+      "pointer": "/a9_6_implemented/1/what",
+      "text": "every C1 Xe phase booked as a separate line (PHASE_TOTAL_FLOW)",
+      "classification": "GROUND_REFERENCE_ITEM"
+     },
+     {
+      "pointer": "/a9_6_implemented/2/what",
+      "text": "C1 cathode, heater and pulsed keeper supplies (LATER)",
+      "classification": "GROUND_REFERENCE_ITEM"
+     },
+     {
+      "pointer": "/a9_6_implemented/3/what",
+      "text": "C1 on its own module, disconnected in P1-S6",
+      "classification": "GROUND_REFERENCE_ITEM"
+     },
+     {
+      "pointer": "/a9_6_lanes/0/how",
+      "text": "C1 disconnected or not installed in P1-S6; C1 = GROUND_ONLY_LAB_EQUIPMENT (A9.20), no hollow cathode in flight (A9.19)",
+      "classification": "CONSISTENT_WITH_A9_19_20"
+     },
+     {
+      "pointer": "/a9_6_lanes/1/how",
+      "text": "C1 line AL-C1 without owner allocation (MPQ-01); hall_c1_reference column only",
+      "classification": "SUPERSEDED_FOR_FLIGHT_PRE_A9_19"
+     },
+     {
+      "pointer": "/a9_6_lanes/2/how",
+      "text": "C1 remains CONTROL_FALLBACK: every C1 Xe phase a separate line; not present in the ICP configuration",
+      "classification": "SUPERSEDED_FOR_FLIGHT_PRE_A9_19"
+     },
+     {
+      "pointer": "/a9_6_lanes/3/how",
+      "text": "C1 cathode + keeper/heater supplies (LATER)",
+      "classification": "GROUND_REFERENCE_ITEM"
+     },
+     {
+      "pointer": "/owner/functional_role",
+      "text": "electron-source lead (C1 reference / fallback)",
+      "classification": "SUPERSEDED_FOR_FLIGHT_PRE_A9_19"
+     },
+     {
+      "pointer": "/a9_2_statuses/C1 conventional reference",
+      "text": "CONTROL_FALLBACK",
+      "classification": "SUPERSEDED_FOR_FLIGHT_PRE_A9_19"
+     }
+    ],
+    "decisions": [
+     "A9.19 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16; verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)",
+     "A9.20 (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6; verbatim docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md sha256 2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c)"
+    ],
+    "execution_state_effect": "none (labels only; R-M16V4-01..08 unchanged)",
+    "a9_2_status_note": "'C1 conventional reference' = CONTROL_FALLBACK is carried verbatim (R-M16V4-06; immutable A9.2 history); for use it is superseded: C1 is not a flight fallback (A9.19) and is a ground-only laboratory reference (A9.20)",
+    "functional_role_note": "owner-accepted role name carried verbatim (A9.14 M16-V3-Q-01); its '/ fallback' part is superseded (A9.19 / A9.20)"
+   },
+   "a9_21": [
+    {
+     "decision": "A9.21",
+     "item": "HW_PROGRAMME",
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/HW_PROGRAMME",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "verbatim_excerpt": "7. C1 ground reference — approved. Run H-1 + C1 reference characterization and register `I_d,max,H1,Ar` before P1-S7. This remains a reference/engineering campaign and does not redefine the RFP propellant requirement.",
+     "effect": "sequencing / scope only; no readiness state change"
+    }
+   ]
   },
   {
    "row": 12,
@@ -2226,77 +2640,105 @@
      "rvm_row": "RVM-02",
      "title": ">= 12 mN minimum sustained thrust on atmospheric propellant",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-03",
      "title": "25 mN demonstrated system capability inside P_bus < 1.5 kW",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-04",
      "title": "< 1.5 kW full bus power (A9-02 boundary, steady and start-up, 1 ms window)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-05",
      "title": "Internal ~1.35 kW design allocation (row 109)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-06",
      "title": "< 40 kg wet (incl. Xe + tank)",
      "status": {
-      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
+      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-07",
      "title": "Internal 34 kg and 36 kg design allocations (row 53)",
      "status": {
-      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
+      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-14",
      "title": "Start-up / restart (ignition, Hall ignition with the electron source, restart, transients)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-19",
      "title": "Electronics: cater to single-point failure (RFP-P18-09); redundancy at electronics and sensor level (RFP-P18-02)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-20",
      "title": "MIL-1553B interface with the satellite onboard computer + discrete thruster interface + hardware drivers inside the propulsion system",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     }
    ],
    "execution_state": "BLOCKED",
-   "state_rule": "R-M16V4-04"
+   "state_rule": "R-M16V4-04",
+   "a9_21": []
   },
   {
    "row": 13,
@@ -2711,29 +3153,48 @@
      "rvm_row": "RVM-17",
      "title": "Thermal closure (>= 50 K below validated limits, 20 % heat-load margin)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-21",
      "title": "Environmental qualification (ENTEST): launch vibration / shock (PSLV / SSLV or DRDO-decided LV), AO erosion, radiation, thermal, ThermoVac, 3-year VLEO life",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-27",
      "title": "Steady heat conducted into the spacecraft mounting interface <= 50 W (A9.12 S5.4 provisional owner allocation; 100 W contingency, 25 W stretch)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     }
    ],
    "execution_state": "BLOCKED",
-   "state_rule": "R-M16V4-04"
+   "state_rule": "R-M16V4-04",
+   "a9_21": [
+    {
+     "decision": "A9.21",
+     "item": "HW_PROGRAMME",
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/HW_PROGRAMME",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "verbatim_excerpt": "10. Coupled H-1 + ICP → thermal → P4 — approved. P4 acceptance thresholds must be frozen before acceptance-bearing coupon exposure, following the LOCK-2 rule already adopted.",
+     "effect": "sequencing / scope only; no readiness state change"
+    }
+   ]
   },
   {
    "row": 14,
@@ -2889,29 +3350,39 @@
      "rvm_row": "RVM-14",
      "title": "Start-up / restart (ignition, Hall ignition with the electron source, restart, transients)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-19",
      "title": "Electronics: cater to single-point failure (RFP-P18-09); redundancy at electronics and sensor level (RFP-P18-02)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-20",
      "title": "MIL-1553B interface with the satellite onboard computer + discrete thruster interface + hardware drivers inside the propulsion system",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     }
    ],
    "execution_state": "BLOCKED",
-   "state_rule": "R-M16V4-04"
+   "state_rule": "R-M16V4-04",
+   "a9_21": []
   },
   {
    "row": 15,
@@ -3110,7 +3581,10 @@
      ],
      "group": null,
      "state_v5": "ANSWERED_BY_A9_11",
-     "decision": "A9.11 P2Q-07 (docs/decisions/OD_2026_10_01_A9_11_s4_p2_owner_decisions.json sha256 d8baf59a5b92739698e29d893e89a30995559ee7167814c096dc24599679156c)"
+     "decision": "A9.11 P2Q-07 (docs/decisions/OD_2026_10_01_A9_11_s4_p2_owner_decisions.json sha256 d8baf59a5b92739698e29d893e89a30995559ee7167814c096dc24599679156c)",
+     "later_owner_decisions": [
+      "A9.21 HW_PROGRAMME CONFIRMS (docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json sha256 78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549)"
+     ]
     },
     {
      "kind": "OWNER_QUESTION",
@@ -3162,7 +3636,17 @@
    },
    "rvm_requirement_status": [],
    "execution_state": "BLOCKED",
-   "state_rule": "R-M16V4-04"
+   "state_rule": "R-M16V4-04",
+   "a9_21": [
+    {
+     "decision": "A9.21",
+     "item": "HW_PROGRAMME",
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/HW_PROGRAMME",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "verbatim_excerpt": "9. P2 impedance map — approved. Run after the in-house V/I magnitude/phase calibration and its uncertainty budget are frozen.",
+     "effect": "sequencing / scope only; no readiness state change"
+    }
+   ]
   },
   {
    "row": 16,
@@ -3364,37 +3848,50 @@
      "rvm_row": "RVM-06",
      "title": "< 40 kg wet (incl. Xe + tank)",
      "status": {
-      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
+      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-07",
      "title": "Internal 34 kg and 36 kg design allocations (row 53)",
      "status": {
-      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
+      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-21",
      "title": "Environmental qualification (ENTEST): launch vibration / shock (PSLV / SSLV or DRDO-decided LV), AO erosion, radiation, thermal, ThermoVac, 3-year VLEO life",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-27",
      "title": "Steady heat conducted into the spacecraft mounting interface <= 50 W (A9.12 S5.4 provisional owner allocation; 100 W contingency, 25 W stretch)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     }
    ],
    "execution_state": "BLOCKED",
-   "state_rule": "R-M16V4-04"
+   "state_rule": "R-M16V4-04",
+   "a9_21": []
   },
   {
    "row": 17,
@@ -3455,7 +3952,8 @@
    "a9_2_statuses": {},
    "rvm_requirement_status": [],
    "execution_state": "SUPERSEDED_FOR_PRIMARY_LINE",
-   "state_rule": "R-M16V4-07"
+   "state_rule": "R-M16V4-07",
+   "a9_21": []
   },
   {
    "row": 18,
@@ -3700,7 +4198,11 @@
      ],
      "group": null,
      "state_v5": "ANSWERED_BY_A9_10",
-     "decision": "A9.10 P1Q-07 (docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544)"
+     "decision": "A9.10 P1Q-07 (docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544)",
+     "later_owner_decisions": [
+      "A9.20 answer CONFIRMS (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6)",
+      "A9.21 HW_PROGRAMME CONFIRMS (docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json sha256 78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549)"
+     ]
     },
     {
      "kind": "OWNER_QUESTION",
@@ -3829,53 +4331,89 @@
      "rvm_row": "RVM-05",
      "title": "Internal ~1.35 kW design allocation (row 109)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-12",
      "title": "'Ignition Time: More than 15000 hrs' (RFP-P19-01, literal); design basis >= 15,000 h cumulative energized operation",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-13",
      "title": "Mission-life basis >= 26,280 h",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-14",
      "title": "Start-up / restart (ignition, Hall ignition with the electron source, restart, transients)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-15",
      "title": "Beam neutralization / electron-current capacity (ICP-45 or C1)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-16",
      "title": "Atomic-oxygen / material compatibility (AO-beam test; anode, collector, keeper, gas path)",
      "status": {
-      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
+      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "INCOMPLETE_EVIDENCE"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     }
    ],
    "execution_state": "BLOCKED",
-   "state_rule": "R-M16V4-04"
+   "state_rule": "R-M16V4-04",
+   "a9_21": [
+    {
+     "decision": "A9.21",
+     "item": "HW_PROGRAMME",
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/HW_PROGRAMME",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "verbatim_excerpt": "8. ICP programme — approved with one sequencing qualification: preserve the Ar engineering/commissioning reference where already required, then perform the registered air/N₂ ICP-45 campaign, followed by the Xe operating mode as a separate registered campaign. Each gas/mode gets its own operating domain and provenance. Before it starts, close the stage domains, pressure-match tolerance, DWV leakage criteria and stable-region criteria.",
+     "effect": "sequencing / scope only; no readiness state change"
+    },
+    {
+     "decision": "A9.21",
+     "item": "ICP_GATE",
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/ICP_GATE",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "verbatim_excerpt": "4. ICP go/no-go before LOCK-1: I approve the existence and placement of a mandatory ICP go/no-go gate before LOCK-1. I would not yet approve any numerical criterion that I cannot see in the proposal text. The gate must be fail-closed: if its required evidence is missing, the result is `NOT_EVALUATED`, not GO.\nDecision: `ICP_GO_NO_GO_REQUIRED_BEFORE_LOCK1`.\nThe exact proposed GO/NO-GO criteria should be preserved separately until their text is available for review.",
+     "effect": "sequencing / scope only; no readiness state change"
+    }
+   ]
   },
   {
    "row": 19,
@@ -4119,29 +4657,48 @@
      "rvm_row": "RVM-04",
      "title": "< 1.5 kW full bus power (A9-02 boundary, steady and start-up, 1 ms window)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-05",
      "title": "Internal ~1.35 kW design allocation (row 109)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-15",
      "title": "Beam neutralization / electron-current capacity (ICP-45 or C1)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     }
    ],
    "execution_state": "BLOCKED",
-   "state_rule": "R-M16V4-04"
+   "state_rule": "R-M16V4-04",
+   "a9_21": [
+    {
+     "decision": "A9.21",
+     "item": "HW_PROGRAMME",
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/HW_PROGRAMME",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "verbatim_excerpt": "9. P2 impedance map — approved. Run after the in-house V/I magnitude/phase calibration and its uncertainty budget are frozen.",
+     "effect": "sequencing / scope only; no readiness state change"
+    }
+   ]
   },
   {
    "row": 20,
@@ -4311,7 +4868,10 @@
      ],
      "group": null,
      "state_v5": "ANSWERED_BY_A9_12",
-     "decision": "A9.12 P4-OQ-03 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
+     "decision": "A9.12 P4-OQ-03 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)",
+     "later_owner_decisions": [
+      "A9.21 HW_PROGRAMME CONFIRMS (docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json sha256 78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549)"
+     ]
     },
     {
      "kind": "OWNER_QUESTION",
@@ -4381,29 +4941,48 @@
      "rvm_row": "RVM-12",
      "title": "'Ignition Time: More than 15000 hrs' (RFP-P19-01, literal); design basis >= 15,000 h cumulative energized operation",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-16",
      "title": "Atomic-oxygen / material compatibility (AO-beam test; anode, collector, keeper, gas path)",
      "status": {
-      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
+      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "INCOMPLETE_EVIDENCE"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     },
     {
      "rvm_row": "RVM-17",
      "title": "Thermal closure (>= 50 K below validated limits, 20 % heat-load margin)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     }
    ],
    "execution_state": "BLOCKED",
-   "state_rule": "R-M16V4-04"
+   "state_rule": "R-M16V4-04",
+   "a9_21": [
+    {
+     "decision": "A9.21",
+     "item": "HW_PROGRAMME",
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/HW_PROGRAMME",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "verbatim_excerpt": "10. Coupled H-1 + ICP → thermal → P4 — approved. P4 acceptance thresholds must be frozen before acceptance-bearing coupon exposure, following the LOCK-2 rule already adopted.",
+     "effect": "sequencing / scope only; no readiness state change"
+    }
+   ]
   },
   {
    "row": 21,
@@ -4565,13 +5144,26 @@
      "rvm_row": "RVM-17",
      "title": "Thermal closure (>= 50 K below validated limits, 20 % heat-load margin)",
      "status": {
-      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_icp_neutralizer": "NOT_EVALUATED"
+     },
+     "ground_reference_status": {
       "hall_c1_reference": "NOT_EVALUATED"
-     }
+     },
+     "ground_reference_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): never flight compliance evidence"
     }
    ],
    "execution_state": "BLOCKED",
-   "state_rule": "R-M16V4-04"
+   "state_rule": "R-M16V4-04",
+   "a9_21": [
+    {
+     "decision": "A9.21",
+     "item": "HW_PROGRAMME",
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/HW_PROGRAMME",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "verbatim_excerpt": "10. Coupled H-1 + ICP → thermal → P4 — approved. P4 acceptance thresholds must be frozen before acceptance-bearing coupon exposure, following the LOCK-2 rule already adopted.",
+     "effect": "sequencing / scope only; no readiness state change"
+    }
+   ]
   }
  ],
  "diff_v3_v4": [
@@ -4900,7 +5492,7 @@
     "id": "XA9Q-07",
     "rvm_status": "OWNER_DECIDED",
     "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
-    "register_status": "AMENDED_BY_A9_15",
+    "register_status": "AMENDED_BY_A9_19",
     "agrees": true
    },
    {
@@ -4948,7 +5540,7 @@
     "id": "XA9Q-07",
     "rvm_status": "OWNER_DECIDED",
     "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
-    "register_status": "AMENDED_BY_A9_15",
+    "register_status": "AMENDED_BY_A9_19",
     "agrees": true
    },
    {
@@ -4964,7 +5556,7 @@
     "id": "XA9Q-07",
     "rvm_status": "OWNER_DECIDED",
     "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
-    "register_status": "AMENDED_BY_A9_15",
+    "register_status": "AMENDED_BY_A9_19",
     "agrees": true
    },
    {
@@ -4980,7 +5572,7 @@
     "id": "OD6",
     "rvm_status": "OWNER_DECIDED",
     "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
-    "register_status": "AMENDED_BY_A9_15",
+    "register_status": "AMENDED_BY_A9_19",
     "agrees": true
    },
    {
@@ -5004,7 +5596,7 @@
     "id": "OD5",
     "rvm_status": "OWNER_DECIDED",
     "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
-    "register_status": "ANSWERED_BY_A9_14",
+    "register_status": "AMENDED_BY_A9_19",
     "agrees": true
    },
    {
@@ -5020,7 +5612,7 @@
     "id": "OQ-A907-01",
     "rvm_status": "OWNER_DECIDED",
     "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
-    "register_status": "ANSWERED_BY_A9_14",
+    "register_status": "AMENDED_BY_A9_20",
     "agrees": true
    },
    {
@@ -5210,6 +5802,28 @@
    "evidence_class": "derived (bookkeeping count; no physical quantity)",
    "status": "COMPUTED",
    "freeze_point": "rebuilt whenever a pinned input or a referenced deliverable changes"
+  },
+  {
+   "id": "M16V4-IT-12",
+   "name": "flight configurations evaluated",
+   "value": 1,
+   "units": "count",
+   "basis": "A9.19: one flight configuration (hall_icp_neutralizer); hall_c1_reference a labelled ground reference (A9.20)",
+   "source": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json rows",
+   "evidence_class": "derived (bookkeeping count; no physical quantity)",
+   "status": "COMPUTED",
+   "freeze_point": "rebuilt whenever a pinned input or a referenced deliverable changes"
+  },
+  {
+   "id": "M16V4-IT-13",
+   "name": "rows labelled for A9.19 / A9.20 (C1 / hall_c1_reference / fallback text)",
+   "value": 4,
+   "units": "count",
+   "basis": "a9_19_m16.apply (fail closed on an unreviewed row)",
+   "source": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json rows",
+   "evidence_class": "derived (bookkeeping count; no physical quantity)",
+   "status": "COMPUTED",
+   "freeze_point": "rebuilt whenever a pinned input or a referenced deliverable changes"
   }
  ],
  "interface_demands": [
@@ -5317,6 +5931,181 @@
    ]
   }
  ],
+ "a9_19_21": {
+  "rows_labelled": [
+   6,
+   7,
+   8,
+   11
+  ],
+  "rows_with_a9_21": [
+   1,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   13,
+   15,
+   18,
+   19,
+   20,
+   21
+  ],
+  "statement_classes": {
+   "CONSISTENT_WITH_A9_19_20": "the text already states the A9.19 / A9.20 reading",
+   "SUPERSEDED_FOR_FLIGHT_PRE_A9_19": "pre-A9.19 text treating C1 / hall_c1_reference as a flight configuration, a flight line or a fallback: history only (A9.19 / A9.20)",
+   "GROUND_REFERENCE_ITEM": "a C1 item that now reads as a ground-only laboratory reference item (A9.20)"
+  },
+  "rule": "labels only: rows naming C1 / hall_c1_reference / a fallback carry a9_19_20 (configuration status, each such statement classified); A9.21 programme items attached per row (a9_21); requirement status split into the flight configuration and the labelled ground reference; no readiness state changes; quoted owner-question text and A9.2 statuses verbatim"
+ },
+ "a9_19_21_owner_answers_applied": [
+  {
+   "decision": "A9.19",
+   "question_id": "architecture",
+   "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "decision_json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "decision_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+   "artifact": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
+   "record_ids": [
+    "configurations",
+    "flight_configurations",
+    "rows[6].a9_19_20",
+    "rows[7].a9_19_20",
+    "rows[8].a9_19_20",
+    "rows[11].a9_19_20"
+   ],
+   "how_applied": "one flight configuration hall_icp_neutralizer; rows naming C1 / hall_c1_reference / a fallback labelled (configuration_status; pre-A9.19 statements marked history); requirement status per RVM row split into the flight configuration and the labelled ground reference",
+   "tests": [
+    "tests/test_m16_v4.py"
+   ]
+  },
+  {
+   "decision": "A9.19",
+   "question_id": "amends/A9 C1 CONTROL_FALLBACK",
+   "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "decision_json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "decision_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+   "artifact": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
+   "record_ids": [
+    "rows[11].a9_19_20.a9_2_status_note",
+    "a9_2_status_notes"
+   ],
+   "how_applied": "C1 CONTROL_FALLBACK (A9.2) carried verbatim as history; superseded for use (not a flight fallback)",
+   "tests": [
+    "tests/test_m16_v4.py"
+   ]
+  },
+  {
+   "decision": "A9.20",
+   "question_id": "answer",
+   "decision_code": "C1_GROUND_ONLY_LABORATORY_REFERENCE",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+   "decision_json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+   "decision_md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+   "artifact": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
+   "record_ids": [
+    "configurations",
+    "rows[11].a9_19_20",
+    "rows[6].a9_19_20",
+    "rows[7].a9_19_20",
+    "rows[8].a9_19_20",
+    "rows[11].a9_19_20"
+   ],
+   "how_applied": "C1 = GROUND_ONLY_LAB_REFERENCE: row 11 is not a flight subsystem; C1 items of rows 6 / 7 / 8 are ground reference items, never flight budget lines",
+   "tests": [
+    "tests/test_m16_v4.py"
+   ]
+  },
+  {
+   "decision": "A9.21",
+   "question_id": "HW_PROGRAMME",
+   "decision_code": null,
+   "decision_json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+   "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+   "decision_md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+   "decision_md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+   "artifact": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
+   "record_ids": [
+    "rows[1].a9_21",
+    "rows[6].a9_21",
+    "rows[7].a9_21",
+    "rows[8].a9_21",
+    "rows[9].a9_21",
+    "rows[10].a9_21",
+    "rows[11].a9_21",
+    "rows[13].a9_21",
+    "rows[15].a9_21",
+    "rows[18].a9_21",
+    "rows[19].a9_21",
+    "rows[20].a9_21",
+    "rows[21].a9_21"
+   ],
+   "how_applied": "programme order attached to the rows it sequences (H-1 S7.1 -> S7.2; H-1 + C1 reference before P1-S7; ICP Ar -> air/N2 ICP-45 -> Xe mode; P2 after the V/I calibration; coupled thermal -> P4; thrust / feed map -> AG-12 -> AG-13); no state change",
+   "tests": [
+    "tests/test_m16_v4.py"
+   ]
+  },
+  {
+   "decision": "A9.21",
+   "question_id": "ICP_GATE",
+   "decision_code": "ICP_GO_NO_GO_REQUIRED_BEFORE_LOCK1",
+   "decision_json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+   "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+   "decision_md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+   "decision_md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+   "artifact": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
+   "record_ids": [
+    "rows[18].a9_21"
+   ],
+   "how_applied": "mandatory ICP go / no-go before LOCK-1 attached to row 18 (fail closed; no numerical criterion approved)",
+   "tests": [
+    "tests/test_m16_v4.py"
+   ]
+  },
+  {
+   "decision": "A9.21",
+   "question_id": "AL08",
+   "decision_code": "KEEP_6_05KG_PROVISIONAL_WAIT_FOR_QUOTES_TO_REBASE_AL08",
+   "decision_json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+   "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+   "decision_md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+   "decision_md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+   "artifact": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
+   "record_ids": [
+    "rows[6].a9_21",
+    "rows[7].a9_21",
+    "rows[8].a9_21"
+   ],
+   "how_applied": "AL-08 6.05 kg a provisional planning floor until quotations (rows 6-8)",
+   "tests": [
+    "tests/test_m16_v4.py"
+   ]
+  },
+  {
+   "decision": "A9.21",
+   "question_id": "EXTERNAL_INPUTS",
+   "decision_code": null,
+   "decision_json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+   "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+   "decision_md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+   "decision_md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+   "artifact": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
+   "record_ids": [
+    "rows[1].a9_21"
+   ],
+   "how_applied": "AOCS pointing envelope and inclination / LTAN stay TBD (row 1)",
+   "tests": [
+    "tests/test_m16_v4.py"
+   ]
+  }
+ ],
  "a9_16_owner_question_blockers_answered_since_v4": {
   "ids": [
    "ICPQ-03",
@@ -5398,6 +6187,7 @@
  "compliance": [
   "v1 / v2 / v3 unchanged (v3 pinned)",
   "every cited id resolved at build time; no-longer-open ids raise",
+  "one flight configuration (hall_icp_neutralizer, A9.19); C1 / hall_c1_reference only as the labelled ground-only laboratory reference (A9.20)",
   "no PASS; no winner; no prediction",
   "A9.2 statuses verbatim",
   "no file under docs/budgets/subsystem_maturity/"
