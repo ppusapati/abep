@@ -110,7 +110,16 @@ DECISIONS = {
               "json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
               "md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
               "md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c"},
+    "A9.21": {"json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+              "json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+              "md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+              "md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440"},
 }
+# A9.21 AL08 (owner decision 2026-10-02): label only, no number changes
+AL08_A921_STATUS = ("PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (A9.21 KEEP_6_05KG_PROVISIONAL_WAIT_FOR_QUOTES_TO_REBASE_AL08): "
+                    "the 6.0528 kg AL-08 MEV planning floor is kept only as a provisional planning floor, not a frozen "
+                    "allocation; AL-08 is formally re-based only after quotations split tank, regulator, valves, "
+                    "plumbing, mounting/thermal and any C1-specific branch")
 # registered official RFP clauses (A9.19 cites them for the Xe role and the two separate tanks); text verified at build
 RFP_REG = "docs/requirements/rfp_official/rfp_registration_v1.json"
 RFP_CLAUSES = {
@@ -213,6 +222,11 @@ def OD(key: str, qid: str, quote: str) -> dict:
         else:
             raise BookingError(f"{key} has no field / amendment {qid}")
         seq = None
+    elif key == "A9.21":
+        # A9.21: 'decisions' maps an id (e.g. 'AL08') to the owner's decision string
+        if qid not in js.get("decisions", {}):
+            raise BookingError(f"A9.21 has no decision {qid}")
+        seq, ans = None, js["decisions"][qid]
     else:
         rec = js["decisions"].get(qid)
         if rec is None or rec.get("status") != "OWNER_DECIDED":
@@ -329,6 +343,10 @@ def S() -> dict:
         "A920": OD("A9.20", "answer",
                    "Options offered: \"Ground-only reference (Recommended)\" / \"Remove C1 entirely\"."),
         "A920_V": OD("A9.20", "answer", "will go with your recommended"),
+        # A9.21 (2026-10-02): AL-08 stays a provisional planning floor until quotations
+        "A921_AL08": OD("A9.21", "AL08",
+                        "Xe-hardware floor: wait for quotations before formally rebasing AL-08. Keep 6.05 kg only as a "
+                        "provisional planning floor, not a frozen allocation."),
     }
 
 
@@ -603,8 +621,29 @@ def build_items(v2: dict, s: dict) -> list:
                                 "and vendor procedures) with their Xe quantities; no number is invented",
                     "applies_to": {"configs": list(CONFIGS), "ledgers": ["GROUND_TEST"]},
                     "owner_answers_applied": [cite(s["XA9Q04"])], "v3_change": "new (explicit procedure line)"})
+    out = [split_applicability(x) for x in out]
     out.sort(key=lambda i: i["id"])
     return out
+
+
+def split_applicability(item: dict) -> dict:
+    """A9.19 / A9.20: hall_c1_reference is never in a flight scope. An item's applies_to keeps only the flight
+    configuration(s); the C1 ground-test applicability moves to applies_to.ground_reference (GROUND_TEST ledger only,
+    A9.20 ground-only laboratory reference) and the pre-A9.19 scope is kept verbatim as applies_to_pre_a9_19."""
+    a = item.get("applies_to") or {}
+    cfgs, ledgers = list(a.get("configs", [])), list(a.get("ledgers", []))
+    if not any(c in RETIRED_FLIGHT_CONFIGS for c in cfgs):
+        return item
+    flight = [c for c in cfgs if c not in RETIRED_FLIGHT_CONFIGS]
+    new = {"configs": flight, "ledgers": ledgers if flight else []}
+    if "GROUND_TEST" in ledgers:
+        new["ground_reference"] = {"configs": [c for c in cfgs if c in RETIRED_FLIGHT_CONFIGS],
+                                   "ledgers": ["GROUND_TEST"],
+                                   "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"}
+    x = dict(item)
+    x["applies_to_pre_a9_19"] = a
+    x["applies_to"] = new
+    return x
 
 
 # ------------------------------------------------------------------------------------------------ ledger lines
@@ -1005,8 +1044,12 @@ APPLIED = [
                 "GROUND_ONLY_NEVER_FLIGHT, XV3-02 NOT_APPLICABLE; P-FL-C1 scope note restated"),
     ("A919_CF", "hall_c1_reference is no longer a candidate flight configuration (CASE-2 restated; history only)"),
     ("A920", "C1 = GROUND_ONLY laboratory reference: S2-GT-C1 ground-test Xe kept (A9.10 S3.5 I_d,max,H1,Ar "
-             "characterization; C1-vs-ICP bench control); never in the flight Xe budget"),
+             "characterization; C1-vs-ICP bench control); never in the flight Xe budget; items applies_to: "
+             "hall_c1_reference removed from every flight scope, its ground-test applicability kept as "
+             "applies_to.ground_reference (GROUND_TEST only) and the pre-A9.19 scope as applies_to_pre_a9_19"),
     ("A920_V", "owner chose the recommended option (ground-only reference)"),
+    ("A921_AL08", "XV3-IF-02 (AL-08 stored-Xe hardware) labelled a9_21_status PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN; "
+                  "the AL-08 re-base recorder flag answered (wait for quotations); no number changes"),
 ]
 
 
@@ -1056,6 +1099,11 @@ def split_retired(lines: list, scen: list, evals: list) -> tuple:
                                        "(A9.20)")
             hist_l.append(ln)
         else:
+            if ln["configuration"] in RETIRED_FLIGHT_CONFIGS:
+                if ln["ledger"] != "GROUND_TEST":
+                    raise BookingError(f"{ln['id']}: hall_c1_reference outside the ground-test ledger (A9.20)")
+                ln = dict(ln, a9_20_role="GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe of the C1 laboratory "
+                                         "reference; never a flight configuration (A9.19)")
             keep_l.append(ln)
     keep_s = [x for x in scen if x["id"] not in RETIRED_FLIGHT_SCENARIOS]
     hist_s = [x for x in scen if x["id"] in RETIRED_FLIGHT_SCENARIOS]
@@ -1189,7 +1237,8 @@ def build_doc() -> dict:
             {"id": "XV3-IF-02", "direction": "IN", "from": MASS_POWER_V3, "to": SCHEMA_ID,
              "quantity": "stored-Xe hardware (AL-08: tank, regulator, valves, plumbing, mounting, thermal) planning "
                          "floor / CBE for the stored-Xe share", "units": "kg",
-             "status": "TBD_AFTER_EVIDENCE (AL-08 MEV planning floor 6.0528 kg is not a CBE; quotations replace it)"},
+             "status": "TBD_AFTER_EVIDENCE (AL-08 MEV planning floor 6.0528 kg is not a CBE; quotations replace it)",
+             "a9_21_status": AL08_A921_STATUS, "by": [cite(s["A921_AL08"])]},
             {"id": "XV3-IF-03", "direction": "OUT", "from": SCHEMA_ID, "to": "RFQ v3 (quotation only)",
              "quantity": "tank / regulator MEOP and proof / burst basis against the 323 K LOADED cases (XV2-28 / XV2-29)",
              "units": "bar", "status": "TBD_FROM_QUOTATIONS (no purchase, no supplier contact)"}],
@@ -1218,7 +1267,9 @@ def build_doc() -> dict:
             "the AL-08 planning floor (5.044 kg CBE floor) is the owner's figure (A9.14 MQ-05) and is kept unchanged; "
             "its H2-7 two-branch valve set was described in mass / power v2 as including the C1 cathode Xe branch - "
             "with no flight C1 after A9.19 / A9.20 whether the floor should be re-based is an owner / quotation matter "
-            "(mass / power v3 recorder flag; no number changed here)",
+            "(mass / power v3 recorder flag; no number changed here); A9.21 answered it: keep 6.05 kg only as a "
+            "provisional planning floor, not a frozen allocation, and re-base AL-08 after quotations (" +
+            cite(s["A921_AL08"]) + ")",
             "A9.19 sizing: the 2 kg loaded case as the natural sizing case is a recorder OBSERVATION for the owner "
             "(design_cases.sizing_observation_a9_19), not a selection"],
         "compliance": {
@@ -1295,7 +1346,8 @@ def render_md(doc: dict) -> str:
                  for i in doc["items"]])
     L += ["## Ledger lines", ""]
     L += _table(["id", "config", "ledger", "phase", "presence", "formula", "v3 change"],
-                [[x["id"], x["configuration"], x["ledger"], x["phase"], x["presence"], x["formula"], x["v3_change"]]
+                [[x["id"], x["configuration"] + (" (ground reference, A9.20)" if x.get("a9_20_role") else ""),
+                  x["ledger"], x["phase"], x["presence"], x["formula"], x["v3_change"]]
                  for x in doc["ledger_lines"]])
     L += ["## Scenario evaluations (every total with a TBD input REFUSED)", ""]
     rows = []
@@ -1331,6 +1383,8 @@ def render_md(doc: dict) -> str:
     L += _table(["id", "dir", "to / from", "quantity", "status"],
                 [[x["id"], x["direction"], x["to"] if x["direction"] == "OUT" else x["from"], x["quantity"], x["status"]]
                  for x in doc["interface_demands"]])
+    L += [f"* **{x['id']}** (A9.21): {x['a9_21_status']}" for x in doc["interface_demands"] if x.get("a9_21_status")]
+    L += [""]
     L += ["## Open questions and recorder flags", ""]
     L += [f"* {q['id']}: {q['status']} ({'; '.join(q['by'])})" + (f": {q['question']}" if q.get("question") else "")
           for q in doc["open_owner_questions"]]

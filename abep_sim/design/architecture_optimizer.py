@@ -761,8 +761,9 @@ UNLOCK = {
     "Q_reject": "the P3 coupled network solved: ICP geometry P3-G-01..08, emittances P3-R-01..04, conductances "
                 "P3-K-01..06, heat terms from P1/P2 data (Q_RF/match, Q_collector) and Phase-1 plume data (Q_plume)",
     "I_e_margin": "registered I_d,max,H1 (A9.3 OQ-A907-02, from measured H-1 operation) AND a P1 ICP-45A result "
-                  "EVALUATED_ENGINEERING_ONLY (discharge-OFF capacity, one-sided LCB, A9.4 P1Q-10 / A9.5 P1Q-16); "
-                  "for hall_c1_reference a registered C1 emission capacity",
+                  "EVALUATED_ENGINEERING_ONLY (discharge-OFF capacity, one-sided LCB, A9.4 P1Q-10 / A9.5 P1Q-16) "
+                  "for the single flight configuration hall_icp_neutralizer (A9.19; the ground C1 reference is never "
+                  "a flight objective, A9.20)",
     "life": "Hall wall-erosion life (needs an admitted Hall map with wall_life_trustworthy) or a life test; anode / "
             "collector material with gate-admissible evidence (P4: all 352 gate cells INCOMPLETE_EVIDENCE); intake "
             "/ plenum / filter AO compatibility (coupon programme, owner row 132)",

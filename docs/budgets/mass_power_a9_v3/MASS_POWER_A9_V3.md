@@ -52,6 +52,8 @@ row-54 sum 24 kg -> 20 % system margin 4.8 kg -> dry budget 28.8 kg. recompute 2
 | AL-10 | structure/thermal (incl. ICP open-frame support/spacer, MPQ-02) | 2.5 | TBD | 2.5 | ALLOCATION_MEV | owner-allocation |
 | AL-HAR | harness (row-60 rule until a routed harness exists; MQ-06) | TBD | TBD | TBD | HARNESS_POLICY_ROW60 (computed in the roll-up) | TBD |
 
+* **AL-08** (A9.21): PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (A9.21 KEEP_6_05KG_PROVISIONAL_WAIT_FOR_QUOTES_TO_REBASE_AL08): the 6.0528 kg AL-08 MEV planning floor is kept only as a provisional planning floor, not a frozen allocation; AL-08 is formally re-based only after quotations split tank, regulator, valves, plumbing, mounting/thermal and any C1-specific branch (the analog-derived figure may contain about 0.285 kg of C1 cathode-branch hardware)
+
 ## Evidence-based dry / wet totals vs 40 kg (every TBD listed)
 
 ### `hall_icp_neutralizer`
@@ -201,6 +203,7 @@ Helper `docs/budgets/mass_power_a9_v3/peak_sampled_gate_a9_v3.py`; unchanged (im
 | A9.19 | A9 C1 CONTROL_FALLBACK | TBD | C1 is not a flight fallback; hall_c1_reference is no longer a candidate flight configuration (its ground/laboratory role is an open recorder question to the owner) | 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16 | hall_c1_reference retired as a flight configuration: its pre-A9.19 column, roll-up and power configuration kept only as labelled history (retired_flight_configuration_history); c1_mass_check answers 'check C1 mass' |
 | A9.20 | answer | TBD | owner chose the recommended option: C1 is a ground-only laboratory reference (registers I_d,max,H1,Ar on H-1 independently of the ICP per A9.10 S3.5, and serves as the bench control in the C1-vs-ICP comparison); never flight hardware; never in the flight mass/power/Xe budgets | 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6 | C1 = GROUND_ONLY laboratory reference: BOM A9B-C01..C07 -> GROUND_ONLY_LAB_EQUIPMENT; GA-01 a9_20_rule |
 | A9.20 | answer | TBD | owner chose the recommended option: C1 is a ground-only laboratory reference (registers I_d,max,H1,Ar on H-1 independently of the ICP per A9.10 S3.5, and serves as the bench control in the C1-vs-ICP comparison); never flight hardware; never in the flight mass/power/Xe budgets | 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6 | owner chose the recommended option (ground-only reference) |
+| A9.21 | AL08 | TBD | KEEP_6_05KG_PROVISIONAL_WAIT_FOR_QUOTES_TO_REBASE_AL08 (provisional planning floor, not frozen; quotations split tank, regulator, valves, plumbing, mounting/thermal and any C1-specific branch) | 78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549 | AL-08 labelled a9_21_status PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (6.0528 kg kept as a provisional planning floor, not a frozen allocation; re-based only after quotations); no number changes |
 
 ## Open questions and recorder flags
 

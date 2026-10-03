@@ -39,7 +39,8 @@ V2 = {
 DEC_SHA = {"A9.14": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
            "A9.15": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
            "A9.19": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
-           "A9.20": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6"}
+           "A9.20": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+           "A9.21": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549"}
 REQUIRED = [("A9.15", "governing_rule"), ("A9.14", "XA9Q-07"), ("A9.15", "XA9Q-07"), ("A9.14", "XV2Q-01"),
             ("A9.15", "XV2Q-01"), ("A9.14", "XA9Q-01"), ("A9.14", "MQ-09"), ("A9.14", "OQ-A910-01"),
             ("A9.14", "XA9Q-02"), ("A9.14", "OQ-A907-01"), ("A9.14", "XA9Q-03"), ("A9.14", "XA9Q-04"),
@@ -47,7 +48,7 @@ REQUIRED = [("A9.15", "governing_rule"), ("A9.14", "XA9Q-07"), ("A9.15", "XA9Q-0
             ("A9.15", "MPQ-01"), ("A9.14", "XA9Q-05"), ("A9.15", "XA9Q-05"),
             ("A9.19", "architecture"), ("A9.19", "xenon_role"), ("A9.19", "A9.15"),
             ("A9.19", "A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07"), ("A9.19", "A9 C1 CONTROL_FALLBACK"),
-            ("A9.20", "answer")]
+            ("A9.20", "answer"), ("A9.21", "AL08")]
 
 
 def _sha(p: Path) -> str:
@@ -404,3 +405,29 @@ def test_rv19_08_pre_a9_19_c1_rows_marked_superseded(d):
     for r in hits:
         assert r["how_applied"].endswith(tag), r
     assert MD_PATH.read_text(encoding="utf-8").count(tag) >= 4
+
+
+def test_al08_provisional_planning_floor_a9_21(d):
+    """A9.21: AL-08 (XV3-IF-02) labelled a provisional planning floor, not frozen, until quotations."""
+    if02 = {x["id"]: x for x in d["interface_demands"]}["XV3-IF-02"]
+    assert if02["a9_21_status"].startswith("PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN")
+    assert "6.0528 kg" in if02["status"]
+
+
+def test_item_applicability_never_puts_c1_in_flight(d):
+    """A9.19 / A9.20: no item applies hall_c1_reference to a flight scope; its ground-test applicability is the
+    labelled ground_reference (GROUND_TEST only); the pre-A9.19 scope is kept as applies_to_pre_a9_19."""
+    moved = 0
+    for x in d["items"]:
+        a = x["applies_to"]
+        assert "hall_c1_reference" not in a["configs"], x["id"]
+        g = a.get("ground_reference")
+        if g:
+            assert g["configs"] == ["hall_c1_reference"] and g["ledgers"] == ["GROUND_TEST"], x["id"]
+        if "applies_to_pre_a9_19" in x:
+            moved += 1
+            assert "hall_c1_reference" in x["applies_to_pre_a9_19"]["configs"], x["id"]
+    assert moved > 0
+    for ln in d["ledger_lines"]:
+        if ln["configuration"] == "hall_c1_reference":
+            assert ln["ledger"] == "GROUND_TEST" and ln["a9_20_role"].startswith("GROUND_ONLY_LAB_REFERENCE")

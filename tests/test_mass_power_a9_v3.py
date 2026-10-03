@@ -42,13 +42,14 @@ DEC_SHA = {"A9.12": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f
            "A9.14": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
            "A9.15": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
            "A9.19": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
-           "A9.20": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6"}
+           "A9.20": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+           "A9.21": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549"}
 REQUIRED = [("A9.14", q) for q in ("MQ-01", "MQ-02", "MQ-03", "MQ-04", "MQ-05", "MQ-06", "MQ-07", "MQ-09", "MQ-10",
                                     "XA9Q-01", "OQ-A910-01", "MPQ-01", "MPQ-02", "OQ-A907-07", "XA9Q-07", "XV2Q-01",
                                     "OQ-A910-05", "OQ-A910-03")] + \
            [("A9.15", q) for q in ("governing_rule", "MPQ-01", "OQ-A907-07", "XA9Q-07", "XV2Q-01")] + \
            [("A9.19", q) for q in ("architecture", "xenon_role", "A9.15", "A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07",
-                                    "A9 C1 CONTROL_FALLBACK")] + [("A9.20", "answer")]
+                                    "A9 C1 CONTROL_FALLBACK")] + [("A9.20", "answer"), ("A9.21", "AL08")]
 
 
 def _sha(p: Path) -> str:
@@ -453,3 +454,14 @@ def test_rv19_09_c1_mass_check_flight_bullet_qualified(d):
     assert "two-branch valve set" in flight and "recorder_flags" in flight
     assert any("two-branch valve set" in f for f in d["recorder_flags"])
     assert "no C1 Xe branch in AL-08 in the flight architecture" not in MD_PATH.read_text(encoding="utf-8")
+
+
+def test_al08_provisional_planning_floor_a9_21(d):
+    """A9.21: the 6.0528 kg AL-08 floor is a PROVISIONAL planning floor (not frozen) until quotations; no number moves."""
+    al08 = _line(d, "hall_icp_neutralizer", "AL-08")
+    assert al08["a9_21_status"].startswith("PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN")
+    assert "not a frozen allocation" in al08["a9_21_status"]
+    assert al08["value"]["value_kg"] == 6.0528 and al08["owner_mev_planning_floor_kg"] == 6.0528
+    assert any(x.startswith("A9.21 AL08 (") for x in al08["owner_answers_applied"])
+    sup = d["statuses"]["a9_19_20_supersessions"]["C1 conventional reference"]
+    assert sup.startswith("GROUND_ONLY_LAB_EQUIPMENT")

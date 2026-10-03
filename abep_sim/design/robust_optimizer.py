@@ -112,10 +112,22 @@ def gate_snapshot(repo=ao.REPO) -> dict:
     f5 = ao.read_json(ao.F5_REL, repo)
     rvm = ao.read_json(ao.RVM_REL, repo)
     hall = ao.hall_response_status(repo)
-    return {"hall_credible_set": hall["credible_set"], "hall_admitted_members": list(hall["admitted_members"]),
+    counts = rvm["status_counts"]
+    # A9.19 / A9.20: only the flight configuration's RVM counts are an evidence gate here; the RVM's
+    # hall_c1_reference column is the labelled ground / laboratory reference and is carried only as such
+    snap = {"hall_credible_set": hall["credible_set"], "hall_admitted_members": list(hall["admitted_members"]),
             "a9_2_statuses": dict(mp["statuses"]["a9_2_statuses"]),
+            "a9_19_20_supersessions": dict(mp["statuses"].get("a9_19_20_supersessions", {})),
             "h1_article_freeze_state": f5["article_freeze_state"],
-            "rvm_hall_status": dict(rvm["hall_status"]), "rvm_status_counts": rvm["status_counts"]}
+            "rvm_hall_status": dict(rvm["hall_status"]),
+            "rvm_status_counts": {c: counts[c] for c in ao.CONFIGURATIONS}}
+    ground = {c: counts[c] for c in ao.GROUND_REFERENCE_CONFIGURATIONS if c in counts}
+    if ground:
+        snap["ground_reference_rvm_status_counts"] = {
+            "label": "GROUND_ONLY_LAB_REFERENCE (A9.20): RVM cells of the C1 ground / laboratory reference; never a "
+                     "flight configuration (A9.19) and never flight compliance evidence",
+            "counts": ground}
+    return snap
 
 
 # ================================================================================================= helpers
