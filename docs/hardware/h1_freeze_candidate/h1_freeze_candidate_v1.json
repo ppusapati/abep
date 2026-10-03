@@ -417,11 +417,11 @@
   },
   "P3": {
    "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
-   "sha256": "26030a9fd7cdee2d7a9b0ef44b99b0fa843ef8b4560db17d7ad3d2e4f2c2cf20"
+   "sha256": "1db2b13e82389fc824acc24f6b6b9aafb11b950b9c5546347cc8037b2bdb132a"
   },
   "P4": {
    "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
-   "sha256": "ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412"
+   "sha256": "6d224b5f88745600a0adc0a58ab6f0324f9cc2d43993dc0a33159fd067f75633"
   },
   "MP2": {
    "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -1175,7 +1175,7 @@
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/interface_demands/2/status",
-     "sha256": "ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412"
+     "sha256": "6d224b5f88745600a0adc0a58ab6f0324f9cc2d43993dc0a33159fd067f75633"
     }
    ],
    "basis": "row 75 / GD-02; H2-1 interface demand to H2-3 (annulus = channel h, d_mean); P4 ID-03 PENDING",
@@ -1204,7 +1204,7 @@
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/fixed_statuses/316L_FLIGHT_ANODE",
-     "sha256": "ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412"
+     "sha256": "6d224b5f88745600a0adc0a58ab6f0324f9cc2d43993dc0a33159fd067f75633"
     }
    ],
    "basis": "A9.2 sec. 3: 316L allowed only as engineering / shakedown material, coupon candidate or low-temperature development component",
@@ -1225,12 +1225,12 @@
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/fixed_statuses/FINAL_ANODE_MATERIAL",
-     "sha256": "ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412"
+     "sha256": "6d224b5f88745600a0adc0a58ab6f0324f9cc2d43993dc0a33159fd067f75633"
     },
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/final_material_status",
-     "sha256": "ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412"
+     "sha256": "6d224b5f88745600a0adc0a58ab6f0324f9cc2d43993dc0a33159fd067f75633"
     },
     {
      "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
@@ -1278,7 +1278,7 @@
     {
      "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "pointer": "/closure_statuses/ANODE_THERMAL_CLOSURE",
-     "sha256": "26030a9fd7cdee2d7a9b0ef44b99b0fa843ef8b4560db17d7ad3d2e4f2c2cf20"
+     "sha256": "1db2b13e82389fc824acc24f6b6b9aafb11b950b9c5546347cc8037b2bdb132a"
     },
     {
      "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -1337,12 +1337,12 @@
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/findings",
-     "sha256": "ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412"
+     "sha256": "6d224b5f88745600a0adc0a58ab6f0324f9cc2d43993dc0a33159fd067f75633"
     },
     {
      "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "pointer": "/closure_statuses",
-     "sha256": "26030a9fd7cdee2d7a9b0ef44b99b0fa843ef8b4560db17d7ad3d2e4f2c2cf20"
+     "sha256": "1db2b13e82389fc824acc24f6b6b9aafb11b950b9c5546347cc8037b2bdb132a"
     }
    ],
    "basis": "P4 findings; P3 closure statuses UNRESOLVED",
@@ -2364,7 +2364,7 @@
     {
      "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "pointer": "/closure_statuses/ICP_COUPLED_THERMAL",
-     "sha256": "26030a9fd7cdee2d7a9b0ef44b99b0fa843ef8b4560db17d7ad3d2e4f2c2cf20"
+     "sha256": "1db2b13e82389fc824acc24f6b6b9aafb11b950b9c5546347cc8037b2bdb132a"
     }
    ],
    "basis": "A9-07 K4; A9.2 ICP_COUPLED_THERMAL",
@@ -2707,12 +2707,12 @@
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/candidates",
-     "sha256": "ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412"
+     "sha256": "6d224b5f88745600a0adc0a58ab6f0324f9cc2d43993dc0a33159fd067f75633"
     },
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/candidate_screening_states",
-     "sha256": "ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412"
+     "sha256": "6d224b5f88745600a0adc0a58ab6f0324f9cc2d43993dc0a33159fd067f75633"
     }
    ],
    "basis": "P4 framework (APP-ANODE)",
@@ -2816,7 +2816,7 @@
     {
      "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "pointer": "/closure_statuses",
-     "sha256": "26030a9fd7cdee2d7a9b0ef44b99b0fa843ef8b4560db17d7ad3d2e4f2c2cf20"
+     "sha256": "1db2b13e82389fc824acc24f6b6b9aafb11b950b9c5546347cc8037b2bdb132a"
     }
    ],
    "basis": "A9.2 sec. 5-7 (no thermal PASS from a negligible-coupling calculation)",
@@ -4822,6 +4822,157 @@
   "H1F-EX-05",
   "H1F-CH-05"
  ],
+ "a9_21_programme": {
+  "programme_record": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json",
+  "programme_record_sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a",
+  "library": "docs/experiments/hall_icp/programme/hw_programme_a9_21.py",
+  "decision": "A9.21 HW_PROGRAMME (docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json sha256 78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549; verbatim docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md sha256 01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440)",
+  "order": [
+   "H1-S7.1",
+   "H1-S7.2",
+   "C1-REF",
+   "ICP-AR-REF",
+   "ICP-45A-P1-S7",
+   "ICP-45N",
+   "ICP-XE-MODE",
+   "P2-MAP",
+   "COUPLED-H1-ICP",
+   "P3-THERMAL",
+   "P4-ACCEPTANCE-EXPOSURE",
+   "H1-THRUST-FEED-MAP",
+   "AG-12",
+   "AG-13"
+  ],
+  "steps": [
+   {
+    "id": "H1-S7.1",
+    "order_index": 1,
+    "owner_item": 6,
+    "title": "H-1 S7.1 FEMM analysis points (FEMM-class axisymmetric magnetostatics of MC-1 at the authorised ANALYSIS_POINTS; not a selection)",
+    "kind": "ANALYSIS",
+    "predecessors": [],
+    "successors": [
+     "H1-S7.2"
+    ],
+    "entry_preconditions": [
+     {
+      "id": "H1-S7.1-PRE-01",
+      "what": "authorised analysis-point set and geometry ids registered (femm_analysis_points, worst-case geometric admissibility)",
+      "validator": "registered",
+      "enforced_by": "docs/hardware/h1_freeze_candidate/a9_16_h1.py:femm_analysis_points",
+      "sources": [
+       {
+        "question_id": "F5-OQ-01",
+        "cite": "A9.14 F5-OQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+        "decision_code": "YES_FEMM_ANALYSIS_POINTS_NOT_SELECTION"
+       }
+      ],
+      "freeze_before": "the step's first record",
+      "gates": "STEP_START"
+     }
+    ],
+    "outputs": [
+     "FEMM result record per authorised point (result_id, sha256, geometry_id, solver_configuration_id)"
+    ],
+    "note": "FEMM_AUTHORISED_NOT_RUN today; no Hall performance is inferred from magnetic feasibility",
+    "entry_status_now": "NOT_STARTABLE_PRECONDITION_MISSING"
+   },
+   {
+    "id": "H1-S7.2",
+    "order_index": 2,
+    "owner_item": 6,
+    "title": "H-1 S7.2 engineering channel-point selection on magnetic feasibility, thermal margin, mass, packaging and manufacturability",
+    "kind": "SELECTION",
+    "predecessors": [
+     {
+      "step": "H1-S7.1",
+      "basis": "EXPLICIT_A9_21"
+     }
+    ],
+    "successors": [
+     "C1-REF"
+    ],
+    "entry_preconditions": [
+     {
+      "id": "H1-S7.2-PRE-01",
+      "what": "S7.1 FEMM results registered for EVERY authorised analysis point",
+      "validator": "femm_points",
+      "enforced_by": "docs/experiments/hall_icp/programme/hw_programme_a9_21.py:s7_1_results_cover_points",
+      "sources": [
+       {
+        "question_id": "F5-OQ-01",
+        "cite": "A9.14 F5-OQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+        "decision_code": "YES_FEMM_ANALYSIS_POINTS_NOT_SELECTION"
+       },
+       {
+        "question_id": "F5-OQ-02",
+        "cite": "A9.14 F5-OQ-02 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+        "decision_code": "SELECT_ENGINEERING_POINT_NONPERFORMANCE"
+       }
+      ],
+      "freeze_before": "the step's first record",
+      "gates": "STEP_START"
+     }
+    ],
+    "outputs": [
+     "selected engineering point, status ENGINEERING_FREEZE_CANDIDATE (NOT_THRUST_OPTIMISED); checked by s7_2_selection_check"
+    ],
+    "note": "the point stays an engineering freeze candidate; thrust is measured later (H1-THRUST-FEED-MAP), never a selection input",
+    "entry_status_now": "NOT_STARTABLE_PREDECESSOR_INCOMPLETE"
+   },
+   {
+    "id": "H1-THRUST-FEED-MAP",
+    "order_index": 12,
+    "owner_item": 11,
+    "title": "measured H-1 thrust / feed map (mandatory)",
+    "kind": "CAMPAIGN",
+    "predecessors": [],
+    "successors": [
+     "AG-12"
+    ],
+    "entry_preconditions": [],
+    "outputs": [
+     "measured thrust-versus-feed map of H-1 for the actual composition (evidence_class measured)"
+    ],
+    "note": "A9.21 item 11 names no predecessor; A9.13 F9-OQ-02",
+    "entry_status_now": "NO_A9_21_ENTRY_PRECONDITION_LISTED"
+   }
+  ],
+  "owner_items_verbatim": {
+   "6": "6. H-1 engineering build — approved. S7.1 FEMM analysis points first, then S7.2 engineering channel-point selection using magnetic feasibility, thermal margin, mass, packaging and manufacturability. It remains an engineering freeze candidate, not a thrust-optimized design.",
+   "11": "11. Measured H-1 thrust/feed map — approved and mandatory. This is what should drive the performance-derived feed requirement for AG-12, followed by the statewise AG-13 `T-D >= 0` check."
+  },
+  "rule": "fail closed (hw_programme_a9_21.entry_status): a step is NOT_STARTABLE while a predecessor completion or a listed precondition registration is missing; never PASS / GO / START_AUTHORISED",
+  "ag12_ag13_dependency": {
+   "AG-12": {
+    "programme_input": "NOT_EVALUATED",
+    "reasons": [
+     "H1-THRUST-FEED-MAP: not registered"
+    ],
+    "gate_location": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json"
+   },
+   "AG-13": {
+    "programme_input": "NOT_EVALUATED",
+    "after": "AG-12",
+    "gate_location": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+    "also_needs": "host-spacecraft drag ICD (A9.21 EXTERNAL_INPUTS; stays TBD)"
+   }
+  },
+  "h1f_ch_11": {
+   "point_status": "NOT_SELECTED_PENDING_FEMM",
+   "s7_2_entry": "NOT_STARTABLE_PREDECESSOR_INCOMPLETE",
+   "status_when_selected": "ENGINEERING_FREEZE_CANDIDATE",
+   "optimisation_basis": "NOT_THRUST_OPTIMISED",
+   "selection_criteria_a9_21": [
+    "magnetic_feasibility",
+    "thermal_margin",
+    "mass",
+    "packaging",
+    "manufacturability"
+   ],
+   "selection_check": "hw_programme_a9_21.s7_2_selection_check (refuses before S7.1 covers every authorised point, and refuses any thrust / performance criterion)"
+  }
+ },
  "existing_owner_questions_touched": [
   {
    "id": "MQ-03",

@@ -6582,5 +6582,73 @@
   "archengine_untouched": true,
   "outputs_regenerable": "python docs/experiments/hall_icp/p3_coupled_thermal/build_p3_coupled_thermal_v2.py --check"
  },
+ "a9_21_programme": {
+  "programme_record": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json",
+  "programme_record_sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a",
+  "library": "docs/experiments/hall_icp/programme/hw_programme_a9_21.py",
+  "decision": "A9.21 HW_PROGRAMME (docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json sha256 78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549; verbatim docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md sha256 01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440)",
+  "order": [
+   "H1-S7.1",
+   "H1-S7.2",
+   "C1-REF",
+   "ICP-AR-REF",
+   "ICP-45A-P1-S7",
+   "ICP-45N",
+   "ICP-XE-MODE",
+   "P2-MAP",
+   "COUPLED-H1-ICP",
+   "P3-THERMAL",
+   "P4-ACCEPTANCE-EXPOSURE",
+   "H1-THRUST-FEED-MAP",
+   "AG-12",
+   "AG-13"
+  ],
+  "steps": [
+   {
+    "id": "COUPLED-H1-ICP",
+    "order_index": 9,
+    "owner_item": 10,
+    "title": "coupled H-1 + ICP operation",
+    "kind": "CAMPAIGN",
+    "predecessors": [],
+    "successors": [
+     "P3-THERMAL"
+    ],
+    "entry_preconditions": [],
+    "outputs": [
+     "coupled H-1 + ICP operation records (heat terms for P3)"
+    ],
+    "note": "A9.21 item 10 names no predecessor or registration for the coupled operation itself",
+    "entry_status_now": "NO_A9_21_ENTRY_PRECONDITION_LISTED"
+   },
+   {
+    "id": "P3-THERMAL",
+    "order_index": 10,
+    "owner_item": 10,
+    "title": "P3 coupled H-1 / ICP thermal closure",
+    "kind": "ANALYSIS_AND_TEST",
+    "predecessors": [
+     {
+      "step": "COUPLED-H1-ICP",
+      "basis": "EXPLICIT_A9_21"
+     }
+    ],
+    "successors": [
+     "P4-ACCEPTANCE-EXPOSURE"
+    ],
+    "entry_preconditions": [],
+    "outputs": [
+     "coupled thermal result (ICP_COUPLED_THERMAL stays UNRESOLVED until then; never PASS)"
+    ],
+    "note": "A9.21 item 10",
+    "entry_status_now": "NOT_STARTABLE_PREDECESSOR_INCOMPLETE"
+   }
+  ],
+  "owner_items_verbatim": {
+   "10": "10. Coupled H-1 + ICP → thermal → P4 — approved. P4 acceptance thresholds must be frozen before acceptance-bearing coupon exposure, following the LOCK-2 rule already adopted."
+  },
+  "rule": "fail closed (hw_programme_a9_21.entry_status): a step is NOT_STARTABLE while a predecessor completion or a listed precondition registration is missing; never PASS / GO / START_AUTHORISED",
+  "p3_thermal_entry_now": "NOT_STARTABLE_PREDECESSOR_INCOMPLETE"
+ },
  "serialization_note": "floats written to 6 significant digits; machine-precision residuals |x| < 1e-10 (solver / algebra cross-checks) are written as 0.0 - they are below 1e-10, not exactly zero (platform-independent outputs)"
 }

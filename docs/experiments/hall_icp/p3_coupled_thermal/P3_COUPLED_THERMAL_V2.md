@@ -517,3 +517,19 @@ Referenced, not pinned (merged A9.6 packages citing P3 back): `docs/experiments/
   - C-81: Inside surface of right cylinder to coaxial disk of same diameter separated from base of cylinder (https://www.thermalradiation.net/sectionc/C-81.html)
 - **EXT-GOEBEL-KATZ-2008**: D. M. Goebel, I. Katz, 'Fundamentals of Electric Propulsion: Ion and Hall Thrusters', JPL Space Science and Technology Series, Jet Propulsion Laboratory / California Institute of Technology, March 2008. full text, open (JPL DESCANSO); read 2026-09-30. Evidence: published analog (textbook sheath energy-transmission relations; applicability to the ICP collector sheath is an assumption to be checked with P1 data).
   - https://descanso.jpl.nasa.gov/SciTechBook/series1/Goebel__cmprsd_opt.pdf (sha256 `a373c8a26137b7c7cd989880c303c4f6c1f84f20a11a02770047f6ba4c249e4e`); electron_energy_2Te: Eq. (4.2-9), p. 95 (energy removed from the plasma per electron 2kTe/e + phi; derived in Appendix C, Eq. (C-2), p. 467); Eq. (7.3-47), p. 356 and Eq. (7.3-61), pp. 360-361 ('each electron deposits 2kTe/e to the anode for positive plasma potentials'); accelerating_sheath: p. 356 ('If the plasma potential is negative relative to the anode ... the positive-going sheath potential accelerating electrons into the anode' increases the heating; Eq. (7.3-47) is then 'reasonable, but not worst-case'); ion_energy: Eq. (4.2-10), p. 95 (ion energy kTe/2e (pre-sheath) + phi (sheath)); wall_power: Eq. (7.3-45), p. 354 (secondary-electron cooling neglected, p. 355)
+
+
+## A9.21 hardware-programme place (owner items 6-11)
+
+Programme record `docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json` (sha256 `135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a`); decision A9.21 HW_PROGRAMME (docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json sha256 78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549; verbatim docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md sha256 01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440).
+
+Order: H1-S7.1 -> H1-S7.2 -> C1-REF -> ICP-AR-REF -> ICP-45A-P1-S7 -> ICP-45N -> ICP-XE-MODE -> P2-MAP -> COUPLED-H1-ICP -> P3-THERMAL -> P4-ACCEPTANCE-EXPOSURE -> H1-THRUST-FEED-MAP -> AG-12 -> AG-13
+
+> 10. Coupled H-1 + ICP → thermal → P4 — approved. P4 acceptance thresholds must be frozen before acceptance-bearing coupon exposure, following the LOCK-2 rule already adopted.
+
+| step | # | predecessors | entry preconditions | entry status now |
+|---|---|---|---|---|
+| COUPLED-H1-ICP | 9 | - | - | NO_A9_21_ENTRY_PRECONDITION_LISTED |
+| P3-THERMAL | 10 | COUPLED-H1-ICP (EXPLICIT_A9_21) | - | NOT_STARTABLE_PREDECESSOR_INCOMPLETE |
+
+fail closed (hw_programme_a9_21.entry_status): a step is NOT_STARTABLE while a predecessor completion or a listed precondition registration is missing; never PASS / GO / START_AUTHORISED

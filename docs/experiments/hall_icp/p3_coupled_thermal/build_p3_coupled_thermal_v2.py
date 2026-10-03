@@ -78,6 +78,7 @@ def _load_module(name, rel):
 
 LIB = _load_module("p3_thermal_lib", LIB_REL)
 RULES = _load_module("p3_a9_16_rules", f"{LANE_REL}/p3_a9_16_rules.py")
+PROG = _load_module("hw_programme_a9_21", "docs/experiments/hall_icp/programme/hw_programme_a9_21.py")  # A9.21 item 10
 APP = _load_module("p3_a9_16_application", f"{LANE_REL}/a9_16_application.py")
 
 # ------------------------------------------------------------------------------------------------ pinned inputs
@@ -1211,6 +1212,14 @@ def build():
                                                 if it["status"].startswith("TBD") or it["status"] == "PENDING"),
         "governance_files_not_pinned": True, "archengine_untouched": True,
         "outputs_regenerable": f"python {SCRIPT_REL} --check"}
+    # A9.21 HW_PROGRAMME item 10: coupled H-1 + ICP -> P3 thermal -> P4. Fail closed: while P3-THERMAL has no
+    # registered entry (coupled H-1 + ICP operation completed) every closure status stays UNRESOLVED (never PASS)
+    doc["a9_21_programme"] = PROG.artifact_view("P3")
+    p3_entry = PROG.entry_status("P3-THERMAL")["status"]
+    if p3_entry != PROG.ENTRY_REGISTERED and doc["compliance"]["closure_statuses_unresolved"] is not True:
+        raise SystemExit(f"REFUSED: P3-THERMAL entry is {p3_entry} but a closure status is not UNRESOLVED "
+                         "(A9.21 item 10: coupled H-1 + ICP operation first)")
+    doc["a9_21_programme"]["p3_thermal_entry_now"] = p3_entry
     return doc
 
 
@@ -1614,6 +1623,7 @@ def render_md(doc):
             L.append(f"  - {v['url']} (sha256 `{v['sha256']}`); " + "; ".join(f"{a}: {b}" for a, b in
                                                                            v["locators"].items()))
     L.append("")
+    L += PROG.render_view_md(doc["a9_21_programme"])
     return "\n".join(L)
 
 

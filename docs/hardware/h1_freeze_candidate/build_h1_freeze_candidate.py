@@ -36,6 +36,8 @@ REL_SELF = "docs/hardware/h1_freeze_candidate/build_h1_freeze_candidate.py"
 sys.path.insert(0, str(LANE_DIR))
 import a9_16_h1 as A16  # noqa: E402  (A9.16 step 1 owner-decision application, integration lane)
 import a9_19_h1 as A19  # noqa: E402  (A9.19 / A9.20 owner-decision application, design + experiments lane)
+sys.path.insert(0, str(REPO / "docs" / "experiments" / "hall_icp" / "programme"))
+import hw_programme_a9_21 as PROG  # noqa: E402  (A9.21 HW_PROGRAMME order, items 6 and 11)
 BASE_COMMIT = "1c9d7a648cd4ce739e587248693271e5115698e1"
 DATE = "2026-10-01"
 
@@ -1151,6 +1153,7 @@ def build_document() -> dict:
         "flight_architecture": A19.A.FLIGHT_ARCHITECTURE,
         "a9_19_owner_answers_applied": A19.owner_answers_applied(),
         "a9_19_touched_parameters": a919_touched,
+        "a9_21_programme": a921_programme(params),
         "existing_owner_questions_touched": [
             {"id": q, "status": get("OQ5", find("OQ5", "/rows", "id", q) + "/status"),
              "v4_status": get("OQ4", find("OQ4", "/rows", "id", q) + "/status"),
@@ -1172,6 +1175,27 @@ def build_document() -> dict:
         },
     }
     return doc
+
+
+def a921_programme(params: list) -> dict:
+    """A9.21 HW_PROGRAMME items 6 / 11: this record's steps (S7.1 -> S7.2; measured thrust / feed map -> AG-12 -> AG-13)
+    from the programme record. Fail closed: while S7.2 has no registered entry (S7.1 FEMM results for every authorised
+    point), H1F-CH-11 must stay NOT_SELECTED_PENDING_FEMM; the point is never thrust-optimised."""
+    view = PROG.artifact_view("H1")
+    ch11 = next(p for p in params if p["id"] == "H1F-CH-11")
+    s72 = PROG.entry_status("H1-S7.2")["status"]
+    if s72 != PROG.ENTRY_REGISTERED and ch11["a9_16"]["point_status"] != "NOT_SELECTED_PENDING_FEMM":
+        raise SystemExit(f"REFUSED: H1F-CH-11 point_status {ch11['a9_16']['point_status']!r} while S7.2 entry is "
+                         f"{s72} (A9.21 item 6: S7.1 FEMM analysis points first)")
+    if ch11["a9_16"]["status_when_selected"] != PROG.H1_POINT_STATUS:
+        raise SystemExit("REFUSED: H1F-CH-11 status_when_selected is not ENGINEERING_FREEZE_CANDIDATE (A9.21 item 6)")
+    view["h1f_ch_11"] = {"point_status": ch11["a9_16"]["point_status"], "s7_2_entry": s72,
+                         "status_when_selected": PROG.H1_POINT_STATUS,
+                         "optimisation_basis": PROG.H1_NOT_THRUST_OPTIMISED,
+                         "selection_criteria_a9_21": list(PROG.H1_SELECTION_CRITERIA),
+                         "selection_check": "hw_programme_a9_21.s7_2_selection_check (refuses before S7.1 covers "
+                                            "every authorised point, and refuses any thrust / performance criterion)"}
+    return view
 
 
 def interface_demands() -> list:
@@ -1522,6 +1546,13 @@ def render_md(doc: dict) -> str:
     a("|---|---|---|---|")
     for r in doc["a9_19_owner_answers_applied"]:
         a(f"| {r['decision']} | {r['question_id']} | {', '.join(r['record_ids'])} | {_fmt(r['how_applied'])} |")
+    a("")
+    pv = doc["a9_21_programme"]
+    L.extend(PROG.render_view_md(pv))
+    a(f"H1F-CH-11: point_status **{pv['h1f_ch_11']['point_status']}** (S7.2 entry {pv['h1f_ch_11']['s7_2_entry']}); "
+      f"when selected {pv['h1f_ch_11']['status_when_selected']} / {pv['h1f_ch_11']['optimisation_basis']}. AG-12 / "
+      "AG-13 (F9) programme input: " + ", ".join(f"{g} {v['programme_input']}"
+                                                  for g, v in pv["ag12_ag13_dependency"].items()) + ".")
     a("")
     a("Existing owner questions touched (not restated): " + ", ".join(
         f"{q['id']} ({q['status']})" for q in doc["existing_owner_questions_touched"]) + ".")

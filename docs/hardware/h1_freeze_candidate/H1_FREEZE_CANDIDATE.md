@@ -413,6 +413,27 @@ A9.19 / A9.20 owner decisions applied (one Hall + one RF/ICP neutralizer, supply
 | A9.19 | architecture | standing_facts.a9, flight_architecture, H1F-EX-02 | H-1 is the single Hall accelerator of the flight architecture (one Hall + one RF/ICP neutralizer, supply modes AIR_PRIMARY / XE_CONTINGENCY, no hollow cathode); no geometry value changed |
 | A9.20 | c1_role | standing_facts.a9, H1F-EX-05, H1F-CH-05 | C1 GROUND_ONLY_LAB_EQUIPMENT: IP-C1 stray field is a ground-bench quantity; C1 not CONTROL_FALLBACK |
 
+
+## A9.21 hardware-programme place (owner items 6-11)
+
+Programme record `docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json` (sha256 `135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a`); decision A9.21 HW_PROGRAMME (docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json sha256 78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549; verbatim docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md sha256 01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440).
+
+Order: H1-S7.1 -> H1-S7.2 -> C1-REF -> ICP-AR-REF -> ICP-45A-P1-S7 -> ICP-45N -> ICP-XE-MODE -> P2-MAP -> COUPLED-H1-ICP -> P3-THERMAL -> P4-ACCEPTANCE-EXPOSURE -> H1-THRUST-FEED-MAP -> AG-12 -> AG-13
+
+> 6. H-1 engineering build — approved. S7.1 FEMM analysis points first, then S7.2 engineering channel-point selection using magnetic feasibility, thermal margin, mass, packaging and manufacturability. It remains an engineering freeze candidate, not a thrust-optimized design.
+
+> 11. Measured H-1 thrust/feed map — approved and mandatory. This is what should drive the performance-derived feed requirement for AG-12, followed by the statewise AG-13 `T-D >= 0` check.
+
+| step | # | predecessors | entry preconditions | entry status now |
+|---|---|---|---|---|
+| H1-S7.1 | 1 | - | H1-S7.1-PRE-01: authorised analysis-point set and geometry ids registered (femm_analysis_points, worst-case geometric admissibility) [docs/hardware/h1_freeze_candidate/a9_16_h1.py:femm_analysis_points] | NOT_STARTABLE_PRECONDITION_MISSING |
+| H1-S7.2 | 2 | H1-S7.1 (EXPLICIT_A9_21) | H1-S7.2-PRE-01: S7.1 FEMM results registered for EVERY authorised analysis point [docs/experiments/hall_icp/programme/hw_programme_a9_21.py:s7_1_results_cover_points] | NOT_STARTABLE_PREDECESSOR_INCOMPLETE |
+| H1-THRUST-FEED-MAP | 12 | - | - | NO_A9_21_ENTRY_PRECONDITION_LISTED |
+
+fail closed (hw_programme_a9_21.entry_status): a step is NOT_STARTABLE while a predecessor completion or a listed precondition registration is missing; never PASS / GO / START_AUTHORISED
+
+H1F-CH-11: point_status **NOT_SELECTED_PENDING_FEMM** (S7.2 entry NOT_STARTABLE_PREDECESSOR_INCOMPLETE); when selected ENGINEERING_FREEZE_CANDIDATE / NOT_THRUST_OPTIMISED. AG-12 / AG-13 (F9) programme input: AG-12 NOT_EVALUATED, AG-13 NOT_EVALUATED.
+
 Existing owner questions touched (not restated): MQ-03 (ANSWERED_BY_A9_14), OQ-A907-04 (ANSWERED_BY_A9_14), OQ-A907-05 (ANSWERED_BY_A9_12), OQ-A907-06 (ANSWERED_BY_A9_12), OQ-A907-08 (ANSWERED_BY_A9_12), P1Q-06 (ANSWERED_BY_A9_10), OQ-RFQV2-10 (ANSWERED_BY_A9_10), P4-OQ-01 (ANSWERED_BY_A9_12), P4-OQ-02 (ANSWERED_BY_A9_12), P4-OQ-04 (ANSWERED_BY_A9_12).
 
 ## M16 impact
@@ -470,8 +491,8 @@ Consumed verified deliverables (sha256 at build time; `--check` reports drift):
 * `docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json` `b428565299c1c41487d9ffa50c174986d2d52c544539f89ca21b7bdbc2ae44fa`
 * `schemas/interfaces/icp_neutralizer_icd_v1.json` `8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c`
 * `docs/experiments/hardware/hardware_requirements_v1.json` `0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0`
-* `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json` `26030a9fd7cdee2d7a9b0ef44b99b0fa843ef8b4560db17d7ad3d2e4f2c2cf20`
-* `docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json` `ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412`
+* `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json` `1db2b13e82389fc824acc24f6b6b9aafb11b950b9c5546347cc8037b2bdb132a`
+* `docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json` `6d224b5f88745600a0adc0a58ab6f0324f9cc2d43993dc0a33159fd067f75633`
 * `docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json` `c1a7875fdd0e27b3425cc02ba915ab61bcf9760ac032d294b69a887a91e78459`
 * `docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json` `fde0ddac723b62ab9bdc9789fa738c74198de23b8d150fd67b1b89d9e9d2d2ae`
 * `docs/budgets/owner_decisions/owner_questions_state_v4.json` `6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67`
