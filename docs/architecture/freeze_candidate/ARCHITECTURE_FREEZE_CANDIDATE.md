@@ -29,13 +29,13 @@ Flight configuration: `hall_icp_neutralizer` (one Hall + one RF/ICP neutralizer,
 | final anode material | OPEN |
 | anode thermal closure | UNRESOLVED |
 | coupled H-1/ICP thermal closure | UNRESOLVED |
-| C1 conventional reference | CONTROL_FALLBACK |
+| C1 conventional reference | CONTROL_FALLBACK (historical A9.2 status; superseded by A9.19 / A9.20: C1 is GROUND_ONLY_LAB_EQUIPMENT (ground reference only), not a flight control / fallback configuration) |
 
 ## Architecture-level gates
 
 | id | gate | current status | sufficient | evidence steps |
 |---|---|---|---|---|
-| AG-01 | RVM rows (30 system requirements; flight configuration hall_icp_neutralizer, C1 column if any = ground reference) | hall_icp_neutralizer: NOT_EVALUATED 27, INCOMPLETE_EVIDENCE 3; hall_c1_reference: NOT_EVALUATED 29, INCOMPLETE_EVIDEN... | false | EP-01, EP-02, EP-03, EP-10, EP-11, EP-12, EP-13 |
+| AG-01 | RVM rows (30 system requirements; flight configuration hall_icp_neutralizer only) | hall_icp_neutralizer: NOT_EVALUATED 27, INCOMPLETE_EVIDENCE 3 | false | EP-01, EP-02, EP-03, EP-10, EP-11, EP-12, EP-13 |
 | AG-02 | Hall credible transport set (admitted members) | EMPTY (members = []) | false | EP-02, EP-10, EP-11 |
 | AG-03 | Hall-transport validation (successor held-out predictive validation; P5-N2 v1 unchanged) | INCONCLUSIVE (permanent; promotable = []) | false | EP-10 |
 | AG-04 | ICP-45 electron-current capacity (I_e,cap vs I_d,max,H1) | PENDING_ICP45; ICP45 NOT_EVALUATED | false | EP-02, EP-03 |
@@ -49,11 +49,11 @@ Flight configuration: `hall_icp_neutralizer` (one Hall + one RF/ICP neutralizer,
 | AG-12 | statewise feed-state sufficiency (performance-derived; A9.13 F9-OQ-02) | NOT_EVALUATED (validated H-1 thrust-versus-feed map does not exist) | false | EP-08, EP-09, EP-14 |
 | AG-13 | statewise drag compensation T_available(state) - D_spacecraft(state) >= 0 (A9.13 OQ-F78-01) | NOT_EVALUATED | false | EP-11, EP-15 |
 | AG-14 | H-1 engineering article | NOT_FROZEN (OPEN / TBD items remain; FREEZE_CANDIDATE items are candidates only) | false | EP-05, EP-06, EP-07 |
-| AG-15 | requirement basis (official RFP document) | BLOCKED_RFP_NOT_REGISTERED (owner states the RFP is available to the project; not in the repository) | false | EP-01 |
+| AG-15 | requirement basis (official RFP registered + RVM re-based; A9.13 S6.22) | RFP_REGISTERED_AND_RVM_REBASED_PENDING_OWNER_CLOSURE (remaining: AG15-RC-01 owner closure of AG-15: owner acceptance ... | false | EP-01 |
 
 Blocking evidence per gate:
 
-- **AG-01**: no row is PASS (hall_icp_neutralizer: NOT_EVALUATED 27, INCOMPLETE_EVIDENCE 3; hall_c1_reference: NOT_EVALUATED 29, INCOMPLETE_EVIDENCE 1); requirements frozen: 6 of 30 (official RFP not in the repository)
+- **AG-01**: no row is PASS (hall_icp_neutralizer: NOT_EVALUATED 27, INCOMPLETE_EVIDENCE 3); requirements frozen: 6 of 30 (0 of 22 RFP_CLAUSE rows: the official RFP is registered by hash and the RVM re-based on it; requirement_frozen on RFP rows waits for the owner's AG-15 closure)
 - **AG-02**: no admitted Hall transport closure: no design-specific Hall map exists, so thrust T, T - D, I_d,max, Hall discharge power and wall life are NOT_EVALUATED for every design vector
 - **AG-03**: P5-N2 v1 stays INCONCLUSIVE and is never rewritten; closure needs a separately preregistered successor held-out predictive validation that admits a Hall-transport member (A9.13 F9-OQ-03 AG-03 clarification)
 - **AG-04**: I_d,max,H1 not registered (needs measured H-1 operation); no P1 data (P1 plan ENGINEERING_TEST_PLAN_DRAFT_NOT_SCORE_BEARING)
@@ -67,42 +67,51 @@ Blocking evidence per gate:
 - **AG-12**: NOT_EVALUATED until the validated H-1 thrust-versus-feed map exists; statewise feed-state sufficiency replaces the fixed 0.38 mg/s gate (0.38-3.2 mg/s = characterization coverage only)
 - **AG-13**: statewise T - D >= 0 at every required state; NOT_EVALUATED (no admitted thrust, no host-spacecraft ICD for D_spacecraft)
 - **AG-14**: channel design point (H1F-CH-11 TBD_OWNER), FEMM of MC-1, B(z) evidence, anode closure
-- **AG-15**: register the official RFP in the repository evidence system with immutable provenance / sha256 and re-base the RVM requirements against it; secondary transcriptions are not enough (A9.13 F9-OQ-03 AG-15 clarification); until then every RFP-cited owner statement is OWNER_STATED_PENDING_RFP_REGISTRATION
+- **AG-15**: registration (pdf sha256 a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00, 40 pages, 37 clauses) and RVM re-base (every registered clause mapped to an RVM row or recorded as programmatic) are present; remaining: AG15-RC-01 owner closure of AG-15: owner acceptance of the RVM re-base against the registered RFP and requirement_frozen = true on the RFP_CLAUSE rows - OPEN (RVM re-bas...
 
-RVM rows (AG-01; C1 column = GROUND_REFERENCE, not a flight candidate):
+AG-15 (A9.13 S6.22, verbatim: 'The official RFP is now available to the project, but before this gate closes it must be placed/registered in the repository evidence system with immutable provenance/hash and the RVM requirements re-based against it. The repository may not continue relying only on secondary transcriptions.'): **RFP_REGISTERED_AND_RVM_REBASED_PENDING_OWNER_CLOSURE**.
 
-| row | title | hall_icp_neutralizer (flight) | C1 ground reference | frozen |
+- official_rfp_registered_with_immutable_provenance_hash: EVIDENCE_PRESENT (docs/requirements/rfp_official/rfp_registration_v1.json#/document)
+- rvm_requirements_rebased_against_it: EVIDENCE_PRESENT (docs/requirements/rvm_a9/rvm_a9_v1.json#/rfp_rebase/clause_coverage)
+- not_relying_only_on_secondary_transcriptions: EVIDENCE_PRESENT (docs/requirements/rvm_a9/rvm_a9_v1.json#/rows)
+- remaining condition AG15-RC-01: owner closure of AG-15: owner acceptance of the RVM re-base against the registered RFP and requirement_frozen = true on the RFP_CLAUSE rows - OPEN (RVM re-base ag_15_status: "OPEN - RFP registered by hash with verbatim transcription and the RVM re-based; closure is the owner's (not declared here)"; requirement_frozen true on 0 of 22 RFP_CLAUSE rows)
+- recorded open item AG15-OI-01 (registration page coverage): pages 1-15 and 34-40 were not screened for requirement-bearing clauses in this record (bid / legal / programmatic front and back matter per the document structure, not verified page by page): status UNSCREENED_PENDING_OWNER_PAGE_REVIEW of the owner-held PDF; nothing is assumed about their content
+- recorded open item AG15-OI-02 (RVM re-base discrepancies recorded against the RFP): [{"id": "DISC-01", "topic": "bid due / closing date", "disposition": "UNVERIFIED_BY_RFP_DOCUMENT - programmatic, not a system requirement (excluded candidate PRG-BID); verify on the DefProc tender document; CLAUDE.md is not edited here"}, {"id": "DISC-02", "topic": "mass wet / dry", "disposition"...
+
+RVM rows (AG-01; flight configuration `hall_icp_neutralizer` only):
+
+| row | title | origin | hall_icp_neutralizer (flight) | frozen |
 |---|---|---|---|---|
-| RVM-01 | Altitude envelope 180-230 km | NOT_EVALUATED | NOT_EVALUATED | false |
-| RVM-02 | >= 12 mN minimum sustained thrust on atmospheric propellant | NOT_EVALUATED | NOT_EVALUATED | false |
-| RVM-03 | 25 mN demonstrated system capability inside P_bus < 1.5 kW | NOT_EVALUATED | NOT_EVALUATED | false |
-| RVM-04 | < 1.5 kW full bus power (A9-02 boundary, steady and start-up, 1 ms window) | NOT_EVALUATED | NOT_EVALUATED | false |
-| RVM-05 | Internal ~1.35 kW design allocation (row 109) | NOT_EVALUATED | NOT_EVALUATED | true |
-| RVM-06 | < 40 kg wet (incl. Xe + tank) | INCOMPLETE_EVIDENCE | NOT_EVALUATED | false |
-| RVM-07 | Internal 34 kg and 36 kg design allocations (row 53) | INCOMPLETE_EVIDENCE | NOT_EVALUATED | true |
-| RVM-08 | Atmospheric propellant (air: N2 / O2 path; NO_ATOMIC_O labels) | NOT_EVALUATED | NOT_EVALUATED | false |
-| RVM-09 | Ionise N2 and nascent (atomic) O in the same thruster (RFP-P17-05, RFP-P17-02) | NOT_EVALUATED | NOT_EVALUATED | false |
-| RVM-10 | Xe capability (air + Xe; bounded functional Xe mode) | NOT_EVALUATED | NOT_EVALUATED | false |
-| RVM-11 | Hall-effect thruster preferred | NOT_EVALUATED | NOT_EVALUATED | false |
-| RVM-12 | 'Ignition Time: More than 15000 hrs' (RFP-P19-01, literal); design basis >= 15,000 h cumulative energized operation | NOT_EVALUATED | NOT_EVALUATED | false |
-| RVM-13 | Mission-life basis >= 26,280 h | NOT_EVALUATED | NOT_EVALUATED | false |
-| RVM-14 | Start-up / restart (ignition, Hall ignition with the electron source, restart, transients) | NOT_EVALUATED | NOT_EVALUATED | false |
-| RVM-15 | Beam neutralization / electron-current capacity (ICP-45 or C1) | NOT_EVALUATED | NOT_EVALUATED | false |
-| RVM-16 | Atomic-oxygen / material compatibility (AO-beam test; anode, collector, keeper, gas path) | INCOMPLETE_EVIDENCE | INCOMPLETE_EVIDENCE | false |
-| RVM-17 | Thermal closure (>= 50 K below validated limits, 20 % heat-load margin) | NOT_EVALUATED | NOT_EVALUATED | true |
-| RVM-18 | Indigenous content: >= 75 % project, thruster > 80 %, intake > 80 %, compressor / storage > 60 %, PSE > 70 % (RFP-P19-05; > 60 % statement RFP-P18-03 recorded) | NOT_EVALUATED | NOT_EVALUATED | false |
-| RVM-19 | Electronics: cater to single-point failure (RFP-P18-09); redundancy at electronics and sensor level (RFP-P18-02) | NOT_EVALUATED | NOT_EVALUATED | false |
-| RVM-20 | MIL-1553B interface with the satellite onboard computer + discrete thruster interface + hardware drivers inside the propulsion system | NOT_EVALUATED | NOT_EVALUATED | false |
-| RVM-21 | Environmental qualification (ENTEST): launch vibration / shock (PSLV / SSLV or DRDO-decided LV), AO erosion, radiation, thermal, ThermoVac, 3-year VLEO life | NOT_EVALUATED | NOT_EVALUATED | false |
-| RVM-22 | RFP test approach 4.1 a-d (AO-beam coating tests; rarefied-gas intake erosion; EM / QM force, Isp, efficiency; expert-committee-approved test plan) and ground demonstration | NOT_EVALUATED | NOT_EVALUATED | false |
-| RVM-23 | ISO certification; acceptance / qualification per ATP (finalized after DDR / CDR); testing to MIL / ASTM / BIS / ESS standards | NOT_EVALUATED | NOT_EVALUATED | false |
-| RVM-24 | Exit criterion: EM of the ABEP system + qualified electric thruster with O and N2 as propellant at milestone 4 (partial success) | NOT_EVALUATED | NOT_EVALUATED | false |
-| RVM-25 | Milestone schedule and deliverables M1-M5 (T0+9 / +12 / +20 / +24 / +36 months) and the EM -> QM processing flow | NOT_EVALUATED | NOT_EVALUATED | false |
-| RVM-26 | Micro-newton-level thrust measurement system; UHV test facility and low-thrust measurement setup (Part IV(B), no waivers) | NOT_EVALUATED | NOT_EVALUATED | false |
-| RVM-27 | Steady heat conducted into the spacecraft mounting interface <= 50 W (A9.12 S5.4 provisional owner allocation; 100 W contingency, 25 W stretch) | NOT_EVALUATED | NOT_EVALUATED | true |
-| RVM-28 | Flight thruster architecture: one Hall accelerator + one RF/ICP electron-source/neutralizer for both atmospheric gases and Xe; no conventional hollow cathode (A9.19) | NOT_EVALUATED | NOT_EVALUATED | true |
-| RVM-29 | Two propellant supply modes with separate tanks / paths: ambient atmospheric propellant (primary) and Xe (contingency / emergency supply mode) (RFP-P18-08, RFP-P17-05; A9.19) | NOT_EVALUATED | NOT_EVALUATED | false |
-| RVM-30 | C1 (heated Xe-fed LaB6) is a ground-only laboratory reference: never flight hardware, never in the flight mass / power / Xe budgets (A9.20) | NOT_EVALUATED | NOT_EVALUATED | true |
+| RVM-01 | Altitude envelope 180-230 km | RFP_CLAUSE | NOT_EVALUATED | false |
+| RVM-02 | >= 12 mN minimum sustained thrust on atmospheric propellant | RFP_CLAUSE | NOT_EVALUATED | false |
+| RVM-03 | 25 mN demonstrated system capability inside P_bus < 1.5 kW | RFP_CLAUSE | NOT_EVALUATED | false |
+| RVM-04 | < 1.5 kW full bus power (A9-02 boundary, steady and start-up, 1 ms window) | RFP_CLAUSE | NOT_EVALUATED | false |
+| RVM-05 | Internal ~1.35 kW design allocation (row 109) | OWNER_ALLOCATION | NOT_EVALUATED | true |
+| RVM-06 | < 40 kg wet (incl. Xe + tank) | RFP_CLAUSE | INCOMPLETE_EVIDENCE | false |
+| RVM-07 | Internal 34 kg and 36 kg design allocations (row 53) | OWNER_ALLOCATION | INCOMPLETE_EVIDENCE | true |
+| RVM-08 | Atmospheric propellant (air: N2 / O2 path; NO_ATOMIC_O labels) | RFP_CLAUSE | NOT_EVALUATED | false |
+| RVM-09 | Ionise N2 and nascent (atomic) O in the same thruster (RFP-P17-05, RFP-P17-02) | RFP_CLAUSE | NOT_EVALUATED | false |
+| RVM-10 | Xe capability (air + Xe; bounded functional Xe mode) | RFP_CLAUSE | NOT_EVALUATED | false |
+| RVM-11 | Hall-effect thruster preferred | RFP_CLAUSE | NOT_EVALUATED | false |
+| RVM-12 | 'Ignition Time: More than 15000 hrs' (RFP-P19-01, literal); design basis >= 15,000 h cumulative energized operation | RFP_CLAUSE | NOT_EVALUATED | false |
+| RVM-13 | Mission-life basis >= 26,280 h | RFP_CLAUSE | NOT_EVALUATED | false |
+| RVM-14 | Start-up / restart (ignition, Hall ignition with the electron source, restart, transients) | DERIVED_PROJECT_REQUIREMENT | NOT_EVALUATED | false |
+| RVM-15 | Beam neutralization / electron-current capacity (ICP-45 or C1) | DERIVED_PROJECT_REQUIREMENT | NOT_EVALUATED | false |
+| RVM-16 | Atomic-oxygen / material compatibility (AO-beam test; anode, collector, keeper, gas path) | RFP_CLAUSE | INCOMPLETE_EVIDENCE | false |
+| RVM-17 | Thermal closure (>= 50 K below validated limits, 20 % heat-load margin) | DERIVED_PROJECT_REQUIREMENT | NOT_EVALUATED | true |
+| RVM-18 | Indigenous content: >= 75 % project, thruster > 80 %, intake > 80 %, compressor / storage > 60 %, PSE > 70 % (RFP-P19-05; > 60 % statement RFP-P18-03 recorded) | RFP_CLAUSE | NOT_EVALUATED | false |
+| RVM-19 | Electronics: cater to single-point failure (RFP-P18-09); redundancy at electronics and sensor level (RFP-P18-02) | RFP_CLAUSE | NOT_EVALUATED | false |
+| RVM-20 | MIL-1553B interface with the satellite onboard computer + discrete thruster interface + hardware drivers inside the propulsion system | RFP_CLAUSE | NOT_EVALUATED | false |
+| RVM-21 | Environmental qualification (ENTEST): launch vibration / shock (PSLV / SSLV or DRDO-decided LV), AO erosion, radiation, thermal, ThermoVac, 3-year VLEO life | RFP_CLAUSE | NOT_EVALUATED | false |
+| RVM-22 | RFP test approach 4.1 a-d (AO-beam coating tests; rarefied-gas intake erosion; EM / QM force, Isp, efficiency; expert-committee-approved test plan) and ground demonstration | RFP_CLAUSE | NOT_EVALUATED | false |
+| RVM-23 | ISO certification; acceptance / qualification per ATP (finalized after DDR / CDR); testing to MIL / ASTM / BIS / ESS standards | RFP_CLAUSE | NOT_EVALUATED | false |
+| RVM-24 | Exit criterion: EM of the ABEP system + qualified electric thruster with O and N2 as propellant at milestone 4 (partial success) | RFP_CLAUSE | NOT_EVALUATED | false |
+| RVM-25 | Milestone schedule and deliverables M1-M5 (T0+9 / +12 / +20 / +24 / +36 months) and the EM -> QM processing flow | RFP_CLAUSE | NOT_EVALUATED | false |
+| RVM-26 | Micro-newton-level thrust measurement system; UHV test facility and low-thrust measurement setup (Part IV(B), no waivers) | RFP_CLAUSE | NOT_EVALUATED | false |
+| RVM-27 | Steady heat conducted into the spacecraft mounting interface <= 50 W (A9.12 S5.4 provisional owner allocation; 100 W contingency, 25 W stretch) | OWNER_ALLOCATION | NOT_EVALUATED | true |
+| RVM-28 | Flight thruster architecture: one Hall accelerator + one RF/ICP electron-source/neutralizer for both atmospheric gases and Xe; no conventional hollow cathode (A9.19) | OWNER_ALLOCATION | NOT_EVALUATED | true |
+| RVM-29 | Two propellant supply modes with separate tanks / paths: ambient atmospheric propellant (primary) and Xe (contingency / emergency supply mode) (RFP-P18-08, RFP-P17-05; A9.19) | RFP_CLAUSE | NOT_EVALUATED | false |
+| RVM-30 | C1 (heated Xe-fed LaB6) is a ground-only laboratory reference: never flight hardware, never in the flight mass / power / Xe budgets (A9.20) | OWNER_ALLOCATION | NOT_EVALUATED | true |
 
 ## Upstream Pareto sets (PARAMETRIC_SENSITIVITY)
 
@@ -445,7 +454,7 @@ Freeze-status roll-up (205 parameters): {"FREEZE_CANDIDATE": 53, "OPEN": 71, "TB
 
 | step | evidence | gates | depends on | vehicle |
 |---|---|---|---|---|
-| EP-01 | register the official RFP (owner rows 1-2; A9.13 AG-15: immutable provenance / sha256 in the repository evidence system) and re-base the RVM requirement texts | AG-15, AG-01 | - | owner / legitimate portal route |
+| EP-01 | owner closure of AG-15 (A9.13 S6.22): accept the RVM re-base against the registered official RFP (docs/requirements/rfp_official/rfp_registration_v1.json, by sha256, PDF controlled externally per A9.17 RFP; registrati... | AG-15, AG-01 | - | owner (RVM re-base acceptance) |
 | EP-02 | Phase-1 H-1 operation on N2 (hardware pivot): Hall-only sustainment knee; register I_d,max,H1, deposited anode power fraction and inlet conductance on the built article | AG-04, AG-06, AG-10, AG-01 | EP-05 | hardware pivot Phase 1 (OD 2026-09-27) |
 | EP-03 | P1 ICP bench: ICP-45A discharge-OFF capacity I_e,cap (Ar engineering, then N2), C_e and C_e,DC | AG-04, AG-08, AG-09, AG-05 | - | docs/experiments/hall_icp/p1_icp_bench/ |
 | EP-04 | P2 impedance map Z_antenna = f(P_RF, mdot, p, gas, plasma state) in the P1 stable region; RF ratings and flight matching implementation | AG-08, AG-09, AG-05 | EP-03 | docs/experiments/hall_icp/p2_impedance_map/ |
@@ -700,7 +709,11 @@ Evaluators: gate_closes: docs/architecture/freeze_candidate/a9_16_f9.py:gate_clo
 | A9.19 | architecture | configuration | flight configuration = hall_icp_neutralizer only (one Hall + one RF/ICP neutralizer, two supply modes AIR_PRIMARY / XE_CONTINGENCY, no conventional hollow cathode); control_fallback hall_c1_reference removed |
 | A9.19 | xenon_role | AFC-SY-XE-01 | Xe = XE_CONTINGENCY supply mode (contingency / emergency role; capability required by RFP-P17-05 / RFP-P18-08; separate tanks / paths); amends the A9.15 'not a contingency' wording on the ROLE of Xe only |
 | A9.19 | amends A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 | AFC-SY-CTL-01 | no C1-selected flight start variant |
-| A9.20 | c1_role | configuration.ground_reference, AG-01 RVM rows, AFC-SY-CTL-01 | C1 = GROUND_ONLY_LAB_EQUIPMENT: hall_c1_reference carried only as the labelled GROUND_REFERENCE (I_d,max,H1,Ar characterization, A9.10 S3.5; C1-vs-ICP bench control); never flight hardware or in flight budgets |
+| A9.20 | c1_role | configuration.ground_reference, ground_reference_history, AG-01 RVM rows (fli... | C1 = GROUND_ONLY_LAB_EQUIPMENT: hall_c1_reference carried only as the labelled GROUND_REFERENCE (I_d,max,H1,Ar characterization, A9.10 S3.5; C1-vs-ICP bench control); never flight hardware or in flight budgets; its RV... |
+
+## Ground reference / retired flight configuration (history only; not evaluated for flight)
+
+Label GROUND_REFERENCE_AND_RETIRED_FLIGHT_CONFIGURATION_HISTORY: `hall_c1_reference` - RETIRED_AS_FLIGHT_CONFIGURATION (A9.19 one flight configuration; A9.20 C1 GROUND_ONLY_LAB_EQUIPMENT). Not in status counts, objectives or gates. RVM cells as carried by the RVM (docs/requirements/rvm_a9/rvm_a9_v1.json#/rows/*/configurations/hall_c1_reference): {"PASS": 0, "FAIL": 0, "NOT_EVALUATED": 29, "OUT_OF_DOMAIN": 0, "INCOMPLETE_EVIDENCE": 1, "NUMERICAL_FAILURE": 0}.
 
 ## Inputs
 
@@ -752,6 +765,7 @@ Consumed (sha256 at build time; drift reported by `--check`):
 - `docs/budgets/owner_decisions/owner_questions_state_v5.json` 19b4da540b1823c6d3bc1b93f4b673c798af3a519c75e4e055853dbe98c945da
 - `docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json` 0d8413fec02ead4d0a21e9acbdad0b29569dfc0a7eb9a03bdd99d3c9fb504602
 - `docs/requirements/rvm_a9/rvm_a9_v1.json` a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6
+- `docs/requirements/rfp_official/rfp_registration_v1.json` be2d26cdc8c8b140f29d26b52140a3bae6d1080ecaa92ea40841889207e49412
 - `docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json` c1a7875fdd0e27b3425cc02ba915ab61bcf9760ac032d294b69a887a91e78459
 - `docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json` 4d7ff17fc54fa5b686b1826c64f2df0662fb3c5fbd0f03bbe8c11f25486a8643
 - `docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json` ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a

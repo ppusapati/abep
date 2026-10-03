@@ -8,7 +8,8 @@ GROUND-ONLY laboratory reference) change the F9 record as follows:
     carried only as a labelled GROUND_REFERENCE (C1 = GROUND_ONLY_LAB_EQUIPMENT) where a comparison needs it;
   * AFC-SY-XE-01: Xe capability required (RFP-P17-05 / RFP-P18-08), role contingency / emergency; no C1 Xe branch;
   * AFC-SY-CTL-01: no C1-selected flight start variant (the C1 heater / keeper sequence is a ground bench item);
-  * RVM AG-01 rows: the flight column only; any C1 column of the RVM is shown as the ground reference.
+  * RVM AG-01 rows and status counts: the flight configuration only; any C1 column of the RVM is carried only in the
+    labelled ground-reference / retired-configuration history section (ground_reference_history).
 The pinned decision records live in abep_sim/design/a9_19_architecture.py (json + verbatim md sha256). No PASS.
 """
 from __future__ import annotations
@@ -54,11 +55,33 @@ def configuration_block(a9_status: str) -> dict:
 
 
 def rvm_row_status(cfg: dict) -> dict:
-    """Flight status; a C1 column of the RVM (if the RVM still carries one) is shown as the ground reference."""
-    out = {FLIGHT: cfg[FLIGHT]["status"]}
-    if GROUND_REFERENCE in cfg:
-        out["ground_reference (" + GROUND_REFERENCE + ")"] = cfg[GROUND_REFERENCE]["status"]
-    return out
+    """Flight status only (A9.19: one flight configuration). A C1 column of the RVM, if the RVM still carries one, is
+    never reported here; it goes to ground_reference_history() (A9.20: C1 ground-only)."""
+    return {FLIGHT: cfg[FLIGHT]["status"]}
+
+
+def flight_status_counts(counts: dict) -> dict:
+    """Status counts of the flight configuration only."""
+    if FLIGHT not in counts:
+        raise SystemExit(f"REFUSED: RVM status_counts carries no {FLIGHT} entry")
+    return {FLIGHT: counts[FLIGHT]}
+
+
+def ground_reference_history(rvm_rows: list, counts: dict, configurations: dict, rvm_path: str) -> dict:
+    """Labelled ground-reference / retired-flight-configuration history: the RVM cells of the C1 configuration as the
+    RVM carries them. Never a flight evaluation, never in status counts, objectives or gates."""
+    rows = [{"id": r["id"], "status_as_carried_by_rvm": r["configurations"][GROUND_REFERENCE]["status"]}
+            for r in rvm_rows if GROUND_REFERENCE in r.get("configurations", {})]
+    return {"label": "GROUND_REFERENCE_AND_RETIRED_FLIGHT_CONFIGURATION_HISTORY",
+            "configuration": GROUND_REFERENCE,
+            "flight_status": "RETIRED_AS_FLIGHT_CONFIGURATION (A9.19 one flight configuration; A9.20 C1 "
+                             + A.GROUND_ONLY_LAB_EQUIPMENT + ")",
+            "evaluated_for_flight": False, "in_status_counts": False, "in_gates": False, "in_objectives": False,
+            "rvm_description_as_carried": configurations.get(GROUND_REFERENCE),
+            "rvm_status_counts_as_carried": counts.get(GROUND_REFERENCE),
+            "rvm_rows_as_carried": rows,
+            "source": rvm_path + "#/rows/*/configurations/" + GROUND_REFERENCE,
+            "authority": A.cite("A9.19", "A9.20")}
 
 
 def apply_rows(rows: list) -> list:
@@ -102,8 +125,10 @@ def owner_answers_applied() -> list:
                       "amends the A9.15 'not a contingency' wording on the ROLE of Xe only", t, "xenon_role"),
         A.applied_row("A9.19", ARTIFACT, ["AFC-SY-CTL-01"], "no C1-selected flight start variant", t,
                       "amends A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07"),
-        A.applied_row("A9.20", ARTIFACT, ["configuration.ground_reference", "AG-01 RVM rows", "AFC-SY-CTL-01"],
+        A.applied_row("A9.20", ARTIFACT, ["configuration.ground_reference", "ground_reference_history",
+                                          "AG-01 RVM rows (flight only)", "AFC-SY-CTL-01"],
                       "C1 = GROUND_ONLY_LAB_EQUIPMENT: hall_c1_reference carried only as the labelled GROUND_REFERENCE "
                       "(I_d,max,H1,Ar characterization, A9.10 S3.5; C1-vs-ICP bench control); never flight hardware "
-                      "or in flight budgets", t, "c1_role"),
+                      "or in flight budgets; its RVM cells only in the labelled ground_reference_history section, "
+                      "never in status counts, objectives or gates", t, "c1_role"),
     ]

@@ -267,10 +267,9 @@ def test_a9_19_a9_20_single_flight_configuration(doc, b):
     assert "XE_CONTINGENCY" in xe and "RFP-P17-05" in xe and "RFP-P18-08" in xe and "not a contingency" not in xe
     ctl = by["AFC-SY-CTL-01"]
     assert "C1-selected variant uses" not in ctl["evidence_note"] and "ground" in ctl["basis"]
-    # AG-01: flight column always; any C1 column is labelled ground reference
+    # AG-01: the flight column only; the C1 cells live only in the labelled ground-reference history section
     for r in doc["architecture_gates"][0]["blocking_evidence"]["rows"]:
-        assert set(r["status"]) <= {"hall_icp_neutralizer", "ground_reference (hall_c1_reference)"}
-        assert "hall_icp_neutralizer" in r["status"]
+        assert set(r["status"]) == {"hall_icp_neutralizer"}
     rows = doc["a9_19_owner_answers_applied"]
     assert {r["decision"] for r in rows} == {"A9.19", "A9.20"}
     for r in rows:
@@ -279,3 +278,188 @@ def test_a9_19_a9_20_single_flight_configuration(doc, b):
     assert "PASS" not in json.dumps(rows)
     for k in ("A919", "A920", "A919_MD", "A920_MD"):
         assert k in b.PINS
+
+
+# ------------------------------------------------------------------------------- F9: one flight configuration only
+FLIGHT = "hall_icp_neutralizer"
+RETIRED = "hall_c1_reference"
+# JSON top-level sections where the retired / ground-reference configuration name may appear: the labelled
+# ground-reference entries, verbatim historical owner-question text, and the A9.19 / A9.20 application record
+RETIRED_ALLOWED_TOP = {"configuration", "ground_reference_history", "owner_question_rollup", "open_owner_questions",
+                       "a9_19_owner_answers_applied"}
+
+
+def _paths_with(o, needle, path=()):
+    if isinstance(o, dict):
+        for k, v in o.items():
+            if needle in k:
+                yield path + (k,)
+            yield from _paths_with(v, needle, path + (k,))
+    elif isinstance(o, list):
+        for i, v in enumerate(o):
+            yield from _paths_with(v, needle, path + (i,))
+    elif isinstance(o, str) and needle in o:
+        yield path
+
+
+def test_only_flight_configuration_in_status_counts_objectives_and_gates(doc):
+    hits = list(_paths_with(doc, RETIRED))
+    assert hits, "the labelled ground-reference history must still record the retired configuration"
+    assert {h[0] for h in hits} <= RETIRED_ALLOWED_TOP, sorted({h[0] for h in hits} - RETIRED_ALLOWED_TOP)
+    # inside 'configuration' only the labelled ground_reference entry and its rule text
+    assert {h[1] for h in hits if h[0] == "configuration"} <= {"ground_reference", "rule"}
+    assert doc["configuration"]["ground_reference"]["flight_candidate"] is False
+    for g in doc["architecture_gates"]:
+        assert RETIRED not in json.dumps(g), g["id"]
+        assert "ground_reference" not in json.dumps(g), g["id"]
+    ag01 = doc["architecture_gates"][0]["blocking_evidence"]
+    assert set(ag01["status_counts"]) == {FLIGHT}
+    rvm = _j("docs/requirements/rvm_a9/rvm_a9_v1.json")
+    assert ag01["status_counts"][FLIGHT] == rvm["status_counts"][FLIGHT]
+    assert doc["architecture_gates"][0]["current_status"].startswith(FLIGHT + ":")
+    for k in ("parameters", "upstream_pareto", "evidence_plan", "freeze_rollup", "findings", "standing_facts",
+              "model_change_candidates", "interface_demands"):
+        assert RETIRED not in json.dumps(doc[k]), k
+    gh = doc["ground_reference_history"]
+    assert gh["label"] == "GROUND_REFERENCE_AND_RETIRED_FLIGHT_CONFIGURATION_HISTORY"
+    assert gh["configuration"] == RETIRED and gh["flight_status"].startswith("RETIRED_AS_FLIGHT_CONFIGURATION")
+    for k in ("evaluated_for_flight", "in_status_counts", "in_gates", "in_objectives"):
+        assert gh[k] is False, k
+    assert gh["rvm_status_counts_as_carried"] == rvm["status_counts"].get(RETIRED)
+    # Markdown: the retired name only in the header ground-reference line, the labelled history section, the verbatim
+    # owner-question tables and the A9.19 / A9.20 application table
+    md = MD_PATH.read_text(encoding="utf-8")
+    section = None
+    for ln in md.splitlines():
+        if ln.startswith("## "):
+            section = ln
+        if RETIRED in ln:
+            assert (section is None and ln.startswith("Flight configuration:")) or section in (
+                "## Ground reference / retired flight configuration (history only; not evaluated for flight)",
+                "## Owner-question roll-up (questions as raised by the lanes; current status from state v5)",
+                "## A9.19 / A9.20 owner decisions applied"), (section, ln[:120])
+    gates_md = md.split("## Architecture-level gates")[1].split("\n## ")[0]
+    assert RETIRED not in gates_md and "C1 ground reference" not in gates_md
+    # the verbatim A9.2 CONTROL_FALLBACK status of C1 is shown only as superseded history (A9.19 / A9.20)
+    sup = doc["a9_2_statuses"]["superseded_as_flight_status"]
+    assert set(sup) == {k for k, v in doc["a9_2_statuses"]["statuses"].items() if v == "CONTROL_FALLBACK"}
+    assert sup and all("GROUND_ONLY_LAB_EQUIPMENT" in v and "superseded" in v for v in sup.values())
+
+
+# ------------------------------------------------------------------------- AG-15 from the registered RFP + RVM
+REG_PATH = "docs/requirements/rfp_official/rfp_registration_v1.json"
+
+
+@pytest.fixture(scope="module")
+def ag15(b):
+    import ag15_f9  # the builder put the lane directory on sys.path
+    return ag15_f9
+
+
+def test_ag15_consumes_registered_rfp_and_rvm_rebase(doc, ag15):
+    reg = _j(REG_PATH)
+    rvm = _j("docs/requirements/rvm_a9/rvm_a9_v1.json")
+    g = {x["id"]: x for x in doc["architecture_gates"]}["AG-15"]
+    a = g["blocking_evidence"]["assessment"]
+    # derived from the registration record (status, sha256, pages, clause count, file hash)
+    assert reg["status"] == "REGISTERED_BY_HASH_PDF_CONTROLLED_EXTERNALLY"
+    p = a["evidence_parts"]["official_rfp_registered_with_immutable_provenance_hash"]
+    assert p["state"] == "EVIDENCE_PRESENT" and p["status"] == reg["status"]
+    assert p["pdf_sha256"] == reg["document"]["sha256"] and p["pages"] == reg["document"]["pages"]
+    assert p["n_registered_clauses"] == len(reg["clauses"])
+    assert p["clauses_sha256"] == ag15.clauses_sha256(reg["clauses"]) == rvm["rfp_rebase"]["registration"]["clauses_sha256"]
+    assert a["registration_file_sha256"] == hashlib.sha256((ROOT / REG_PATH).read_bytes()).hexdigest()
+    assert any(s["path"] == REG_PATH for s in g["sources"])
+    assert doc["consumed"]["RFP"]["path"] == REG_PATH
+    # every registered clause is mapped to an RVM row (or recorded programmatic), checked independently here
+    cov = {c["clause_id"]: c for c in rvm["rfp_rebase"]["clause_coverage"]}
+    for c in reg["clauses"]:
+        assert cov[c["id"]]["rvm_rows"] or cov[c["id"]]["not_system_requirement"]["class"], c["id"]
+    rb = a["evidence_parts"]["rvm_requirements_rebased_against_it"]
+    assert rb["state"] == "EVIDENCE_PRESENT" and rb["clauses_unmapped"] == []
+    assert rb["clauses_mapped_to_rvm_rows"] + len(rb["clauses_recorded_programmatic"]) == len(reg["clauses"])
+    assert rb["origin_counts"] == rvm["rfp_rebase"]["origin_counts"]
+    # the registration is determining evidence for a 'requirement' gate ...
+    assert a["determining_evidence"]["closes"] is True
+    # ... but the gate stays open while the owner's closure / requirement_frozen is pending
+    rfp_rows = [r for r in rvm["rows"] if r["requirement_origin"] == "RFP_CLAUSE"]
+    if not all(r["requirement_frozen"] for r in rfp_rows) or not rvm["rfp_rebase"]["ag_15_status"].startswith("CLOSED"):
+        assert a["status"] == ag15.STATUS_EVIDENCE_PRESENT
+        assert g["current_status"].startswith(ag15.STATUS_EVIDENCE_PRESENT)
+        assert [c["id"] for c in a["remaining_conditions"]] == ["AG15-RC-01"]
+        assert a["closes"] is False and g["evidence_sufficient_for_freeze"] is False
+    assert a["gate_text_verbatim"] in (ROOT / "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_"
+                                              "DECISIONS.md").read_text(encoding="utf-8")
+    txt = json.dumps(doc["architecture_gates"])
+    assert "BLOCKED_RFP_NOT_REGISTERED" not in txt and "NOT_IN_REPOSITORY" not in txt
+    assert "PASS" not in g["current_status"]
+    md_gates = MD_PATH.read_text(encoding="utf-8").split("## Architecture-level gates")[1].split("\n## ")[0]
+    assert "BLOCKED_RFP_NOT_REGISTERED" not in md_gates and "AG-15 (A9.13 S6.22" in md_gates
+    # the only remaining occurrence is the A9.16 step-1 application record (history), never a gate status
+    hist = [h for h in _paths_with(doc, "BLOCKED_RFP_NOT_REGISTERED")]
+    assert {h[0] for h in hist} <= {"a9_16_owner_answers_applied"}, hist
+    ep01 = {s["id"]: s for s in doc["evidence_plan"]}["EP-01"]
+    assert "owner closure of AG-15" in ep01["evidence"]
+
+
+def test_ag15_fail_closed_on_missing_or_inconsistent_registration(ag15):
+    import copy
+    reg = _j(REG_PATH)
+    rvm = _j("docs/requirements/rvm_a9/rvm_a9_v1.json")
+    sha = hashlib.sha256((ROOT / REG_PATH).read_bytes()).hexdigest()
+    assert ag15.assess(reg, rvm, sha)["status"] == ag15.STATUS_EVIDENCE_PRESENT
+    refused = ag15.STATUS_REFUSED
+    assert ag15.assess(None, rvm, sha)["status"] == refused                       # registration missing
+    assert ag15.assess(reg, None, sha)["status"] == refused                       # RVM / re-base missing
+    assert ag15.assess(reg, rvm, "not-a-hash")["status"] == refused
+
+    def tampered(fn):
+        r2, v2 = copy.deepcopy(reg), copy.deepcopy(rvm)
+        fn(r2, v2)
+        out = ag15.assess(r2, v2, sha)
+        assert out["status"] == refused and out["closes"] is False and out["errors"], fn
+        assert out["evidence_sufficient_for_freeze"] is False
+
+    tampered(lambda r, v: r["document"].pop("sha256"))                             # hash missing
+    tampered(lambda r, v: r["document"].__setitem__("sha256", "0" * 64))           # hash inconsistent with the RVM
+    tampered(lambda r, v: r["document"].__setitem__("sha256", "xyz"))              # not a sha256
+    tampered(lambda r, v: r.__setitem__("status", "PENDING"))                      # not registered
+    tampered(lambda r, v: r["document"].__setitem__("pages", 0))
+    tampered(lambda r, v: r["clauses"][0].__setitem__("text", r["clauses"][0]["text"] + " "))   # clause hash drift
+    tampered(lambda r, v: r["clauses"].pop())                                      # clause count / hash drift
+    tampered(lambda r, v: v["rfp_rebase"]["clause_coverage"].pop(0))               # a clause left unmapped
+    tampered(lambda r, v: v["rows"][0].__setitem__("requirement_origin", "SECONDARY_TRANSCRIPTION"))
+    tampered(lambda r, v: v["rows"][0].__setitem__("rfp_clauses", ["RFP-P99-99"]))
+
+
+def test_ag15_closes_only_on_recorded_owner_closure(ag15):
+    import copy
+    reg = _j(REG_PATH)
+    rvm = copy.deepcopy(_j("docs/requirements/rvm_a9/rvm_a9_v1.json"))
+    sha = hashlib.sha256((ROOT / REG_PATH).read_bytes()).hexdigest()
+    rvm["rfp_rebase"]["ag_15_status"] = "CLOSED by owner (hypothetical)"
+    assert ag15.assess(reg, rvm, sha)["closes"] is False                           # RFP rows still unfrozen
+    for r in rvm["rows"]:
+        if r["requirement_origin"] == "RFP_CLAUSE":
+            r["requirement_frozen"] = True
+    out = ag15.assess(reg, rvm, sha)
+    assert out["status"] == ag15.STATUS_CLOSABLE and out["closes"] is True and out["remaining_conditions"] == []
+
+
+def test_builder_refuses_missing_or_inconsistent_registration():
+    for mutate in ("missing_path", "tampered_record"):
+        b2 = _load_builder()
+        if mutate == "missing_path":
+            b2.CONSUMED["RFP"] = "docs/requirements/rfp_official/rfp_registration_missing.json"
+        else:
+            reg = _j(REG_PATH)
+            reg["document"]["sha256"] = "f" * 64
+            b2._cache["RFP"] = reg
+        with pytest.raises(SystemExit) as e:
+            b2.ag15_assessment()
+        assert "REFUSED: AG-15" in str(e.value)
+    b3 = _load_builder()
+    b3.REPO = ROOT / "nonexistent_root_for_test"
+    with pytest.raises(SystemExit) as e:
+        b3.ag15_assessment()
+    assert "REFUSED" in str(e.value)
