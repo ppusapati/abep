@@ -611,7 +611,25 @@
     "id": "RP-A919-01",
     "what": "numerical GO / NO-GO criteria not approved (preserved for owner review)"
    }
-  ]
+  ],
+  "gate_location": {
+   "row": "RP-A919-01",
+   "gate_id": "GNG-ICP-01",
+   "defined_in": "docs/requirements/rvm_a9/a9_21_icp_gate.py",
+   "records": [
+    {
+     "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "locator": "owner_approved_gates[id=GNG-ICP-01]",
+     "pointer": "/owner_approved_gates/0"
+    },
+    {
+     "path": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+     "locator": "pre_lock1_gates[id=GNG-ICP-01]",
+     "pointer": "/pre_lock1_gates/0"
+    }
+   ],
+   "rule": "pointer only (where the gate approved by A9.21 ICP_GATE now lives: RVM owner_approved_gates and F9 pre_lock1_gates); the gate's status and criteria are read there, not here; this row's status ANSWERED_BY_A9_21 (in part) and its open_part are unchanged"
+  }
  },
  "rfp_registration_now": {
   "registration": {
@@ -10781,7 +10799,24 @@
    "blocks": [
     "BLOCKS_LOCK_1"
    ],
-   "classification_basis": "recorder proposal raised with the A9.19 RVM application (no hollow-cathode fallback after A9.19; the owner asked 'is it good to remove hollow cathode', A9.20); A9.21 approves the gate, not its criteria"
+   "classification_basis": "recorder proposal raised with the A9.19 RVM application (no hollow-cathode fallback after A9.19; the owner asked 'is it good to remove hollow cathode', A9.20); A9.21 approves the gate, not its criteria",
+   "gate_location": {
+    "gate_id": "GNG-ICP-01",
+    "defined_in": "docs/requirements/rvm_a9/a9_21_icp_gate.py",
+    "records": [
+     {
+      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+      "locator": "owner_approved_gates[id=GNG-ICP-01]",
+      "pointer": "/owner_approved_gates/0"
+     },
+     {
+      "path": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+      "locator": "pre_lock1_gates[id=GNG-ICP-01]",
+      "pointer": "/pre_lock1_gates/0"
+     }
+    ],
+    "rule": "pointer only (where the gate approved by A9.21 ICP_GATE now lives: RVM owner_approved_gates and F9 pre_lock1_gates); the gate's status and criteria are read there, not here; this row's status ANSWERED_BY_A9_21 (in part) and its open_part are unchanged"
+   }
   }
  ]
 }

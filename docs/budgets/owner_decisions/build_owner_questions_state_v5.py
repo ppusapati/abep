@@ -25,6 +25,9 @@ immutable (its committed JSON is pinned by sha256 here; v4 is never rebuilt by t
    and get the records only. A9.19: one flight configuration hall_icp_neutralizer (one Hall + one RF/ICP neutralizer
    for air and Xe, two supply modes, Xe contingency / emergency, no hollow cathode); A9.20: C1 is a ground-only
    laboratory reference (hall_c1_reference retired as a flight configuration).
+7. RP-A919-01 carries 'gate_location' (pointer only, checked at build time): the gate approved by A9.21 ICP_GATE,
+   GNG-ICP-01, now lives in the RVM owner_approved_gates and the F9 pre_lock1_gates (defined once in
+   docs/requirements/rvm_a9/a9_21_icp_gate.py); the row's status, status_detail and open_part are unchanged.
 
 A v4 TBD_OWNER row with no owner answer stays TBD_OWNER. Nothing is answered here that the owner did not answer; the
 step-1 RFP-cited facts ('RFP(1)') keep rfp_citation_status OWNER_STATED_PENDING_RFP_REGISTRATION as the record of
@@ -436,6 +439,34 @@ def apply_later(rows: list, rvm: dict, reg: dict) -> dict:
     return applied
 
 
+ICP_GATE_ID = "GNG-ICP-01"
+ICP_GATE_MODULE = "docs/requirements/rvm_a9/a9_21_icp_gate.py"
+
+
+def icp_gate_location(rows: list, rvm: dict, f9: dict) -> dict:
+    """Pointer only: where the gate approved by A9.21 ICP_GATE (answering RP-A919-01 in part) now lives - the RVM
+    owner_approved_gates and the F9 pre_lock1_gates. Fail closed: exactly one record in each, matching the gate id
+    and placement. The row's status / status_detail / open_part are not changed (pointer added, semantics kept)."""
+    r = _one_row(rows, NEW_ROW_ID)
+    locs = []
+    for path, doc, key in ((RVM, rvm, "owner_approved_gates"), (F9, f9, "pre_lock1_gates")):
+        hits = [i for i, g in enumerate(doc.get(key, [])) if isinstance(g, dict) and g.get("id") == ICP_GATE_ID]
+        if len(hits) != 1:
+            raise SystemExit(f"{REL(path)} {key}: {ICP_GATE_ID} found {len(hits)} times (gate location not verifiable)")
+        g = doc[key][hits[0]]
+        if g.get("placement") != "BEFORE_LOCK-1":
+            raise SystemExit(f"{REL(path)} {key}[id={ICP_GATE_ID}]: placement {g.get('placement')!r} != BEFORE_LOCK-1")
+        locs.append({"path": REL(path), "locator": f"{key}[id={ICP_GATE_ID}]", "pointer": f"/{key}/{hits[0]}"})
+    if not (ROOT / ICP_GATE_MODULE).is_file():
+        raise SystemExit(f"{ICP_GATE_MODULE} missing")
+    r["gate_location"] = {
+        "gate_id": ICP_GATE_ID, "defined_in": ICP_GATE_MODULE, "records": locs,
+        "rule": "pointer only (where the gate approved by A9.21 ICP_GATE now lives: RVM owner_approved_gates and F9 "
+                "pre_lock1_gates); the gate's status and criteria are read there, not here; this row's status "
+                "ANSWERED_BY_A9_21 (in part) and its open_part are unchanged"}
+    return r["gate_location"]
+
+
 def later_superseded_statements() -> list:
     a15 = L.LOADED["A9.15"]
     out = []
@@ -533,6 +564,7 @@ def build():
     rvm = json.loads(RVM.read_text(encoding="utf-8"))
     reg = json.loads(RFP_REG.read_text(encoding="utf-8"))
     later = apply_later(rows, rvm, reg)
+    gate_loc = icp_gate_location(rows, rvm, f9)
 
     counts, tbd_blocks = {}, {}
     for r in rows:
@@ -627,7 +659,8 @@ def build():
                                     "not an owner-question row; RP-A919-01 (ICP go / no-go) answers it on the "
                                     "recorder side and A9.21 ICP_GATE approves that gate's existence and placement",
             "open_parts": [{"id": NEW_ROW_ID, "what": "numerical GO / NO-GO criteria not approved (preserved for "
-                                                     "owner review)"}]},
+                                                     "owner review)"}],
+            "gate_location": {"row": NEW_ROW_ID, **gate_loc}},
         "rfp_registration_now": rfp_registration_now(reg, rvm),
         "owner_answers_applied": applied + applied_later,
         "open_owner_questions": [r["id"] for r in rows if r["status"] == "TBD_OWNER"],
@@ -680,7 +713,11 @@ def render_md(doc):
             + cell("; ".join(f"{x['decision']} {x['item']} {x['relation']}: {x['scope']}"
                              for x in r["later_owner_decisions"])) + " |"
             for r in rows if r.get("later_owner_decisions")]
+    gl = lt["gate_location"]
     out += ["", "Open part: " + "; ".join(f"{o['id']}: {o['what']}" for o in lt["open_parts"]) + ".", "",
+            f"Gate location ({gl['row']} -> {gl['gate_id']}, defined in `{gl['defined_in']}`): "
+            + "; ".join(f"`{x['path']}` {x['locator']}" for x in gl["records"]) + " (pointer only; status unchanged).",
+            "",
             "Items without a state row: " + "; ".join(lt["items_without_a_state_row"]) + ".", "",
             "Superseded by A9.19 (ROLE of Xe only):", ""]
     out += [f"- {s['id']}: \"{cell(s['text'])}\" -> superseded by A9.19 (`{s['superseded_by']['path']}`; "

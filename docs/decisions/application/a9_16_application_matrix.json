@@ -166,7 +166,8 @@
   "a9_19_integration": "f280cf4401fe1f428352b5657e97881f38cc7c79",
   "a9_17_21_records": "42453f5fdb10a645ea88ef90f56aad851d2c6520",
   "a9_21_al08_budgets": "6a69ac52dcca091212c0dfc4cd10abcbd2e1bdcc",
-  "a9_21_icp_gate": "eae96c820ef86c281dc7ffafd6bb698ee0b2b96f"
+  "a9_21_icp_gate": "eae96c820ef86c281dc7ffafd6bb698ee0b2b96f",
+  "m16_v5_rederivation": "c4062e0fad73b7159fed109516ec8d9ffae76915"
  },
  "post_step1_commits": {
   "step2_merge": "f9f4749994ea17703b005c84aadfb3b04d0cff10",
@@ -231,7 +232,7 @@
   "SUPERSEDED_BY_LATER_DECISION": 2
  },
  "residual_counts": {
-  "BLOCKED": 20,
+  "BLOCKED": 19,
   "OPEN_OWNER_QUESTION": 1,
   "PENDING_EVIDENCE": 7,
   "PENDING_FINALIZE_DESIGN_REGEN": 21,
@@ -5854,6 +5855,18 @@
       "M16V4-ID-07"
      ],
      "what": "role map / blocking items / decision points accepted; named persons only from the staffing ledger (R-M16V4-05 unchanged: no READY without a named engineer)"
+    },
+    {
+     "lane": "M16_V5",
+     "artifact": "docs/experiments/hall_icp/integration/m16_v5/subsystem_maturity_v5.json",
+     "commit": "c4062e0fad73b7159fed109516ec8d9ffae76915",
+     "status": "APPLIED",
+     "record_locations": [
+      "\"subsystem_maturity_v5\"",
+      "\"rederivation\": \"APPLIED\""
+     ],
+     "what": "M16 v5: every v4 row's scheduler blocking items re-derived from the owner answers A9.8 .. A9.21 (state v5), the A9.21 programme order and GNG-ICP-01 (removed blockers with answer pointer + sha256; remaining blockers by category; no readiness advance without determining evidence); M16 v4 byte-identical; named persons stay PENDING_EVIDENCE (staffing ledger, owner; none fabricated)",
+     "record_pointer": "/owner_answers_applied/0 (question_id=M16-V3-Q-01)"
     }
    ],
    "residual": [
@@ -5861,11 +5874,17 @@
      "status": "PENDING_EVIDENCE",
      "what": "named persons from the project staffing ledger (none in the repository; none fabricated)",
      "where": "staffing ledger (owner)"
-    },
+    }
+   ],
+   "resolved_residual": [
     {
-     "status": "BLOCKED",
+     "status_before": "BLOCKED",
      "what": "re-derivation of M16 scheduler blocking items from the A9.8 .. A9.15 answers (M16 v5 refresh) is not built in A9.16; M16 v4 was regenerated only for its changed RVM inputs (RFP re-base)",
-     "where": "docs/experiments/hall_icp/integration/ (M16 v5, not started)"
+     "where_before": "docs/experiments/hall_icp/integration/ (M16 v5, not started)",
+     "status": "APPLIED",
+     "artifact": "docs/experiments/hall_icp/integration/m16_v5/subsystem_maturity_v5.json",
+     "commit": "c4062e0fad73b7159fed109516ec8d9ffae76915",
+     "record_pointer": "/owner_answers_applied/0 (question_id=M16-V3-Q-01)"
     }
    ]
   },
