@@ -2,16 +2,16 @@
  "schema": "abep_config_mission_scenario_v1",
  "id": "mission_scenario_v1",
  "layer": "FROZEN_ENGINEERING_CONFIGURATION",
- "title": "Operating-scenario inputs the physics takes today from the RFP constants (values unchanged)",
+ "title": "Operating-scenario inputs consumed by the physics / design seams (frozen engineering configuration)",
  "generated_by": "scripts/config/build_config.py",
  "regenerate": "python scripts/config/build_config.py  (check: --check)",
  "requirements_snapshot": {
   "id": "rfp_constraints_v1",
   "path": "config/requirements/rfp_constraints_v1.json",
-  "sha256": "e17c212f7601d3bcdaefca7f490436b473d6df064cce81d88ff9ce2fe60ffef0",
+  "sha256": "76656e6a7010a39179c8af0c788609b00459f34d5198d3f0bc966da0ef840ef7",
   "snapshot_status": "FROZEN"
  },
- "rule": "Phase A changes no consumer and no number: these are the values physics uses today. Switching a consumer to read this file is a later lane; the 26,000 -> 26,280 h change is the governed A9.22 G1 migration.",
+ "rule": "abep_sim/operating_inputs.py (physics seam) and abep_sim/design/engineering_constraints.py (design seam) read their values from this file through abep_sim.configuration loaders (fail closed). The 26,000 -> 26,280 h change is the governed A9.22 G1 migration, APPLIED (docs/HISTORY.md).",
  "inputs": {
   "altitude_domain_km": {
    "value": [
@@ -65,19 +65,36 @@
     "status": "FROZEN"
    }
   },
+  "wet_mass_limit_kg": {
+   "value": 40,
+   "units": "kg",
+   "role": "wet-mass limit handed to callers as a design constraint (operating_inputs.MASS_MAX_KG)",
+   "source": {
+    "snapshot_field": "rfp_constraints_compat.mass_max_kg",
+    "rvm_row": "RVM-06",
+    "rfp_clauses": [
+     "RFP-P18-11"
+    ],
+    "status": "FROZEN"
+   }
+  },
   "mission_hours": {
+   "value": 26280,
    "authoritative_basis_h": 26280,
-   "legacy_mission_hours_in_use": 26000,
-   "legacy_label": "PENDING_GOVERNED_MIGRATION_A9_22_G1",
+   "label": "MISSION_DURATION_BASIS",
    "units": "h",
-   "consumers_not_switched": [
-    "abep_sim/constants.py RFPConstraints.mission_hours (via this config, value 26000)",
-    "abep_sim/life.py LifeInputs.mission_h (literal 26000.0)",
-    "abep_sim/mission5.py run_phase5 / run_mission_generic hours = RFP.mission_hours",
-    "abep_sim/archengine.py firing_hours = RFP.mission_hours",
-    "abep_sim/system.py fluence(atm, RFP.mission_hours); Budgets.duty_cycle",
-    "abep_sim/mission_uq.py (docstring and horizon)"
+   "g1_status": "APPLIED",
+   "g1_migrated_consumers": [
+    "abep_sim/life.py LifeInputs.mission_h (default operating_inputs.MISSION_HOURS)",
+    "abep_sim/mission5.py run_phase5 / run_mission_generic hours (default operating_inputs.MISSION_HOURS)",
+    "abep_sim/archengine.py mission-integrated Xe basis (default operating_inputs.MISSION_HOURS)",
+    "abep_sim/system.py AO fluence / erosion depths, cathode starts, eng_R_mission (operating_inputs.MISSION_HOURS)"
    ],
+   "historical_note": {
+    "value_h": 26000,
+    "label": "HISTORICAL_CONSTANT_NOT_CONSUMED",
+    "note": "pre-A9.22 basis (abep_sim.constants.RFP.mission_hours, immutable); no consumer computes with it"
+   },
    "source": {
     "snapshot_field": "mission_duration",
     "rvm_row": "RVM-13"

@@ -6,14 +6,19 @@ Owner decision A9.22 items 6-7 (docs/decisions/OD_2026_10_03_A9_22_layer_separat
     requirement check, IC metric, architecture-preference flag or RFP / compliance classification.
   * ``abep_sim.assessment.assess(raw, constraints, priors)`` compares a raw closure with the constraints.
   * ``evaluate(cfg)`` keeps returning the pre-split merged dict (same keys, order and values) for existing tools.
-RFP-derived physics inputs (T_req floor, mission / ignition hours) are still read from ``constants.RFP`` here; a
-later lane replaces them with frozen configuration values.
+Engineering inputs (T_req floor, thrust cap, mission-duration basis, subsystem firing-life assumption) come only
+from the operating-inputs seam ``abep_sim.operating_inputs`` (frozen configuration config/mission/), never from the
+RFP / RVM. A9.22 G1 governed baseline change (docs/HISTORY.md 'A9.22 G1 governed baseline change (system.py
+completion)'): mission-integrated quantities (AO fluence / erosion depths, cathode start count, mission reliability
+horizon) use the 26,280 h mission-duration basis; firing-integrated quantities (cathode Xe, Xe-for-T_req, the
+O-exposed life margin) use the labelled 15,000 h SUBSYSTEM_FIRING_LIFE_ASSUMPTION.
 """
 from __future__ import annotations
 import math
 from dataclasses import dataclass, asdict
 from typing import Optional
-from .constants import RFP, G0
+from .constants import G0
+from . import operating_inputs as OI
 from .atmosphere import atmosphere
 from .intake import IntakeParams, CompressorParams, collection, compress
 from .thruster import CARDS, performance, xe_for_thrust
@@ -61,7 +66,7 @@ class Config:
     compressor: CompressorParams = None
     vd_V: Optional[float] = None
     accommodation: Optional[float] = None
-    T_required_mN: Optional[float] = None   # if None, use RFP 12 mN floor
+    T_required_mN: Optional[float] = None   # if None, use the 12 mN floor (operating_inputs.THRUST_MIN_mN)
     body_area_m2: float = 0.0               # spacecraft frontal area beyond the intake (DRDO input, unknown)
     gaspath_physics: bool = False           # Phase 2: drag-compressor + reservoir network instead of parametric
     plasma_physics: bool = False            # Phase 3: global chemistry + source coupling + interstage + Hall channel + cathode
@@ -214,7 +219,10 @@ def physics_closure(cfg: Config) -> dict:
     atm_in = {**atm, "fO": inlet["fO"], "fN2": inlet["fN2"], "fO2": inlet["fO2"],
               "diss_sink_J_per_kg": inlet["diss_sink_J_per_kg"]}
     ao = ao_flux(atm)
-    fl = fluence(atm, RFP.mission_hours)
+    # A9.22 G1: AO fluence / life exposure is mission-integrated -> mission-duration basis (26,280 h)
+    mission_h = OI.MISSION_HOURS
+    firing_h = OI.FIRING_HOURS          # SUBSYSTEM_FIRING_LIFE_ASSUMPTION (OI.FIRING_HOURS_LABEL), firing-integrated only
+    fl = fluence(atm, mission_h)
 
     air = performance(card, atm_in, mdot_air, p_in, cfg.vd_V)
     plasma = {}
@@ -271,14 +279,14 @@ def physics_closure(cfg: Config) -> dict:
                   "pl_cath_life_h": cath["life_h_evaporation"], "pl_sustained": hr["I_beam_A"] > 0.05}
     T_air = air["T_N"]
 
-    # Sustained thrust requirement: RFP floor (12 mN) unless overridden. Drag of the
+    # Sustained thrust requirement: 12 mN floor (operating_inputs) unless overridden. Drag of the
     # ram face is reported separately as T/D so closure is visible, not hidden in Xe.
     drag = col["drag_N"]
-    T_req = (cfg.T_required_mN * 1e-3) if cfg.T_required_mN else RFP.thrust_min_mN * 1e-3
-    T_req = min(T_req, RFP.thrust_max_mN * 1e-3)
+    T_req = (cfg.T_required_mN * 1e-3) if cfg.T_required_mN else OI.THRUST_MIN_mN * 1e-3
+    T_req = min(T_req, OI.THRUST_MAX_mN * 1e-3)
 
     # Xe augmentation to reach the 25 mN peak point (and to reach T_req if air is short)
-    xe_peak = xe_for_thrust(card, atm_in, mdot_air, p_in, RFP.thrust_max_mN * 1e-3, cfg.vd_V)
+    xe_peak = xe_for_thrust(card, atm_in, mdot_air, p_in, OI.THRUST_MAX_mN * 1e-3, cfg.vd_V)
     peak = performance(card, atm_in, mdot_air, p_in, cfg.vd_V, mdot_xe_anode=xe_peak)
     xe_req = xe_for_thrust(card, atm_in, mdot_air, p_in, T_req, cfg.vd_V)
 
@@ -290,10 +298,11 @@ def physics_closure(cfg: Config) -> dict:
     P_peak = total_power(peak)
     # (the 1.5 kW x (1 - p_margin_frac) power cap is an assessment constraint: abep_sim.assessment)
 
-    # Xe mass over mission
-    xe_cath_kg = card.cathode.xe_flow_mgps * 1e-6 * RFP.ignition_hours * 3600
+    # Xe mass: cathode flow and Xe-for-T_req are firing-integrated (they flow only while firing), so they use the
+    # labelled SUBSYSTEM_FIRING_LIFE_ASSUMPTION (15,000 h; A9.22 G1), not the mission duration
+    xe_cath_kg = card.cathode.xe_flow_mgps * 1e-6 * firing_h * 3600
     xe_aug_kg = xe_peak * b.xe_aug_hours * 3600
-    xe_req_kg = xe_req * RFP.ignition_hours * 3600       # if air alone can't meet T_req all the time
+    xe_req_kg = xe_req * firing_h * 3600       # if air alone can't meet T_req all the time
     xe_total_kg = xe_cath_kg + xe_aug_kg + xe_req_kg
 
     # Mass
@@ -313,7 +322,7 @@ def physics_closure(cfg: Config) -> dict:
     m_mev = m_cbe + m_mga
 
     # Life: O-exposed component lives scaled by air-operation hours; cathode as separate item
-    air_hours = RFP.ignition_hours
+    air_hours = firing_h                 # air-operation (firing) hours: SUBSYSTEM_FIRING_LIFE_ASSUMPTION
     life_items = dict(card.o_life_h)
     if card.cathode.kind == "mw_air":
         life_items["cathode"] = card.cathode.o_life_h
@@ -357,7 +366,8 @@ def physics_closure(cfg: Config) -> dict:
                         blade_tip_mps=gas.get("comp_tip_mps", 350.0), V_rel_mps=atm.get("V_rel", atm["V"]),
                         blade_coating_um=cfg.blade_coating_um,
                         magnet_T_K=rad["hot"]["T"]["magnets"], cathode_T_K=plasma.get("pl_cath_T_K", 1750.0),
-                        cathode_starts=int(RFP.mission_hours / 24 * 0.5))
+                        cathode_starts=int(mission_h / 24 * 0.5),   # A9.22 G1: starts over the mission duration
+                        mission_h=mission_h, firing_h=firing_h)
         L_hall = hall_channel_life(li); L_int = intake_life(li); L_bl = blade_life(li); L_mag = magnet_life(li)
         L_cat = cathode_life(li); L_cmp = compressor_life(li)
         rel = reliability(li, {"hall_channel": L_hall["life_h"], "cathode": L_cat["life_evaporation_h"],
@@ -405,7 +415,11 @@ def physics_closure(cfg: Config) -> dict:
                "eng_intake_coating_erosion_um": L_int["coating_erosion_um"], "eng_intake_alpha_end": L_int["alpha_end"],
                "eng_blade_coating_life_h": L_bl["coating_life_h"], "eng_blade_impact_eV": L_bl["impact_E_eV"],
                "eng_magnet_ok": L_mag["ok"], "eng_cathode_life_h": L_cat["life_evaporation_h"], "eng_cathode_starts": L_cat["starts"],
-               "eng_R_15000h": rel["R_15000h"], "eng_R_26000h": rel["R_26000h"], "eng_marginal_items": ",".join(rel["single_point_or_marginal"]),
+               # A9.22 G1: eng_R_mission = R at the mission-duration basis (life.reliability R_mission) is the
+               # mission-reliability output; eng_R_26000h keeps its honest meaning (R at the historical 26,000 h horizon,
+               # life.LEGACY_RELIABILITY_HORIZON_H) for existing readers only and is no longer the mission value.
+               "eng_R_15000h": rel["R_firing"], "eng_R_26000h": rel["R_26000h"],
+               "eng_R_mission": rel["R_mission"], "eng_R_mission_h": mission_h, "eng_marginal_items": ",".join(rel["single_point_or_marginal"]),
                "eng_m_cbe_kg": m_cbe, "eng_m_mga_kg": m_mga, "eng_m_mev_kg": m_mev, "eng_structure_t_mm": st["panel_t_mm"],
                "eng_deck_if_own_kg": st["deck_if_own_kg"],
                "eng_xe_tank_kg": tank["mass_kg"], "eng_hall_magnetics_kg": m_mag["mass_kg"], "eng_hall_channel_kg": m_ch,
@@ -423,7 +437,7 @@ def physics_closure(cfg: Config) -> dict:
         "fO_inlet": inlet["fO"], "fO2_inlet": inlet["fO2"], "O_survival": inlet["O_survival"],
         "fO_collected": w_col["O"], "fN2_collected": w_col["N2"], "fO2_collected": w_col["O2"],
         "collected_composition_basis": collected_composition_basis,
-        "ao_flux_m2s": ao["ao_flux"], "ao_fluence_mission_m2": fl,
+        "ao_flux_m2s": ao["ao_flux"], "ao_fluence_mission_m2": fl, "ao_fluence_basis_h": mission_h,
         "erosion_kapton_um": erosion_depth_um("kapton_HN", fl),
         "erosion_graphite_um": erosion_depth_um("graphite", fl),
         "erosion_silver_um": erosion_depth_um("silver", fl),

@@ -12,7 +12,7 @@
  "rvm": {
   "id": "rvm_a9_v1",
   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-  "sha256": "ef80ac72b052f5faf09f30b23908801681a6cbaec584f07bb096c48d87618338",
+  "sha256": "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264",
   "status": "DRAFT_IMPLEMENTATION_FIRST_PENDING_CONSOLIDATED_VERIFICATION"
  },
  "registration": {
@@ -60,8 +60,12 @@
   "status": "FROZEN",
   "provenance": "A9.22 G1: 26,280 h is the authoritative mission-duration basis",
   "rfp_printed_text": "Mission life: 3 years (Approx 26000 hrs). Ignition Time: More than 15000 hrs",
-  "legacy_mission_hours_in_use": 26000,
-  "legacy_label": "PENDING_GOVERNED_MIGRATION_A9_22_G1"
+  "g1_status": "APPLIED",
+  "historical_mission_hours": {
+   "value_h": 26000,
+   "label": "HISTORICAL_CONSTANT_NOT_CONSUMED",
+   "note": "pre-A9.22 basis; kept in abep_sim.constants.RFP (immutable) and in immutable history only"
+  }
  },
  "subsystem_firing_life": {
   "value_h": 15000,
@@ -577,9 +581,10 @@
    "requirement_origin": "RFP_CLAUSE",
    "requirement_frozen": true,
    "status": "FROZEN",
-   "label": "PENDING_GOVERNED_MIGRATION_A9_22_G1",
+   "label": "HISTORICAL_CONSTANT_NOT_CONSUMED",
    "authoritative_basis_h": 26280,
-   "note": "LEGACY value still used by today's consumers (RFP-P19-01 prints 'Approx 26000 hrs'); the authoritative mission-duration basis is mission_duration.authoritative_basis_h (A9.22 G1); a later lane performs the governed migration"
+   "g1_status": "APPLIED",
+   "note": "HISTORICAL value (RFP-P19-01 prints 'Approx 26000 hrs'), carried only so the abep_sim.constants.RFP compatibility record (immutable, sha-pinned) stays field-for-field identical; no consumer computes with it since the A9.22 G1 governed migration was applied. The mission-duration basis is mission_duration.authoritative_basis_h (26,280 h), consumed through config/mission/mission_scenario_v1.json"
   },
   "ic_total_min": {
    "value": 0.75,

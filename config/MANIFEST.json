@@ -5,8 +5,8 @@
  "regenerate": "python scripts/config/build_config.py  (check: --check)",
  "files": {
   "README.md": {
-   "sha256": "b3080704d0190b32ceb0125f1a3e086d76a3b372ea03014ad6b6bd6be7f0aee7",
-   "bytes": 1986
+   "sha256": "c54fe2d8e30ded34d7c9592cd8617d72f352d8f5df9ca80b901f763826fb2273",
+   "bytes": 2126
   },
   "architecture/hall_icp_neutralizer_v1.json": {
    "sha256": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3",
@@ -21,16 +21,16 @@
    "bytes": 2627
   },
   "mission/mission_scenario_v1.json": {
-   "sha256": "afdac50676f0d9723c768d83cbe9eec61de48f8a1994f1ad21bb662a1da6ca3b",
-   "bytes": 3005
+   "sha256": "b0088fb942de53b4865f122ba2ef83ae457203f06d2ff40fbdfcb21bb8226b1f",
+   "bytes": 3603
   },
   "model_set/physics_model_set_v1.json": {
-   "sha256": "27f62a66b2d84b14dd384f7f0e328ccb453691bfc44f94e985d5f8e6b73c7980",
-   "bytes": 17585
+   "sha256": "c4d4e4c5a94f464c37c0d51af7a8a1859d7609e8bd7d9b8b84f77f1ae2b41243",
+   "bytes": 17742
   },
   "requirements/rfp_constraints_v1.json": {
-   "sha256": "e17c212f7601d3bcdaefca7f490436b473d6df064cce81d88ff9ce2fe60ffef0",
-   "bytes": 18460
+   "sha256": "76656e6a7010a39179c8af0c788609b00459f34d5198d3f0bc966da0ef840ef7",
+   "bytes": 18793
   }
  }
 }

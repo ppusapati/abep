@@ -6260,6 +6260,7 @@
    ],
    "files": [
     "schemas/interfaces/bus_power_boundary_a9_v1.json",
+    "schemas/interfaces/bus_power_boundary_a9_v2.json",
     "schemas/interfaces/icp_neutralizer_icd_v1.json",
     "schemas/interfaces/preionizer_module_icd_v1.json",
     "schemas/interfaces/upstream_icd_v1.json"
@@ -6565,16 +6566,16 @@
    "provenance.generation.generated_at"
   ],
   "generation": {
-   "generated_at": "2026-10-02T00:14:47Z"
+   "generated_at": "2026-10-03T14:01:53Z"
   },
   "generator_sha256": {
    "scripts/architecture/build_decision_dossier.py": "f0cac7810be1a2f5351493e217c25195553b29ccc5295bddbca259093c7a9c9c"
   },
-  "git_commit": "183a4b958484aae1d102ff4dc5d762eacc8620b0",
+  "git_commit": "985c368f73b1aa6aeb63eb613665b4691edcf607",
   "input_files_sha256": {
    "CLAUDE.md": "c70b83d43608e2b953b790ee61e44380484eb2a02f69bda3a203ea6996920436",
    "abep_sim/arch_boundary.py": "8dfc309a5d2c717913fd4961bc660f8bab92ed2c59356f5a78bff3ef4392eeae",
-   "abep_sim/arch_compare.py": "23b6ffe7b218238b7ad5e3a9964a47227cc1236373a53990319043c381ef5722",
+   "abep_sim/arch_compare.py": "4eb5562284a123bc566b56d04011d17890c78fadbc93463910a2b088bea49042",
    "abep_sim/hall_ensemble.py": "218f890c8444af1f593396da5051e38d2d093bbb3cb0bc976cc44b01b67df704",
    "abep_sim/hard_gates.py": "a36fe3c9065291f0fe5be3f17e179d5b691f00c013f7f8ef299fa89db896dda8",
    "abep_sim/interstage.py": "bc4b9987a832209d1417f6646d2a44c72b8d79bac18f896089647bcd1ed93174",
@@ -6689,6 +6690,7 @@
    "schemas/architecture_comparison/hard_gates_v1.schema.json": "e5c70c588f3e785720c0d9d01013e5725807b9fd288fa8a1bddf6ba6d86f54ba",
    "schemas/architecture_comparison/interstage_v1.schema.json": "650fd92fbde19354968fabf4bb893c656a72c62a16870b6b29577fe1f1ae6d45",
    "schemas/interfaces/bus_power_boundary_a9_v1.json": "64238d1526d8ce6bf3ca6b45f385f8948e6dcf916e4f2140cbcb6c46d2c7aa09",
+   "schemas/interfaces/bus_power_boundary_a9_v2.json": "6c01742e3b1088a7aa9ed05674ba4cf83f2322259c80273ecccdfc032886f20a",
    "schemas/interfaces/icp_neutralizer_icd_v1.json": "8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c",
    "schemas/interfaces/preionizer_module_icd_v1.json": "2470718e1decbde874d2362a997d1e2aaae54eb855d1ed179b930c3be6e7130e",
    "schemas/interfaces/upstream_icd_v1.json": "2437d125060f2f24da06ac33b22220483f70b411033c91682cdffb5f01310850",

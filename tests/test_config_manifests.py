@@ -189,11 +189,19 @@ def test_constants_rfp_equals_todays_values_field_by_field():
     assert C.M_SPECIES == {"O": 16.0 * C.AMU, "N2": 28.0 * C.AMU, "O2": 32.0 * C.AMU, "Xe": 131.3 * C.AMU}
 
 
-def test_mission_scenario_keeps_legacy_hours_and_records_the_frozen_basis():
+def test_mission_scenario_records_g1_applied_and_the_historical_constant():
     ms = cfg.load_mission_scenario()["inputs"]
-    assert ms["mission_hours"]["authoritative_basis_h"] == 26280
-    assert ms["mission_hours"]["legacy_mission_hours_in_use"] == 26000
-    assert ms["mission_hours"]["legacy_label"] == "PENDING_GOVERNED_MIGRATION_A9_22_G1"
+    assert ms["mission_hours"]["value"] == ms["mission_hours"]["authoritative_basis_h"] == 26280
+    assert ms["mission_hours"]["g1_status"] == "APPLIED" and ms["mission_hours"]["label"] == "MISSION_DURATION_BASIS"
+    assert "legacy_mission_hours_in_use" not in ms["mission_hours"]
+    assert ms["mission_hours"]["historical_note"]["value_h"] == 26000
+    assert ms["mission_hours"]["historical_note"]["label"] == "HISTORICAL_CONSTANT_NOT_CONSUMED"
+    assert ms["wet_mass_limit_kg"]["value"] == 40
+    snap = cfg.load_requirements_snapshot()
+    assert snap["rfp_constraints_compat"]["mission_hours"]["value"] == 26000          # constants.RFP compat, immutable
+    assert snap["rfp_constraints_compat"]["mission_hours"]["label"] == "HISTORICAL_CONSTANT_NOT_CONSUMED"
+    assert snap["mission_duration"]["g1_status"] == "APPLIED"
+    assert "PENDING_GOVERNED_MIGRATION_A9_22_G1" not in json.dumps(snap) + json.dumps(ms)
     assert ms["firing_hours"] == {**ms["firing_hours"], "value": 15000, "label": "SUBSYSTEM_FIRING_LIFE_ASSUMPTION"}
     assert (ms["xe_sizing_thrust_target_mN"]["value"], ms["commanded_thrust_cap_mN"]["value"],
             ms["p_bus_throttling_cap_W"]["value"], ms["altitude_domain_km"]["value"]) == (12, 25, 1500, [180, 230])

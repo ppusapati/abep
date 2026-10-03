@@ -31,6 +31,46 @@ def test_operating_inputs_seam_values():
     assert set(OI.as_dict()) >= {"mission_hours", "firing_hours", "source"}
 
 
+def test_seams_read_the_frozen_config_with_identical_values():
+    """A9.22 re-point: operating_inputs <- config/mission (no requirements snapshot); engineering_constraints <-
+    config/requirements + config/mission. Values identical to the pre-re-point seam values."""
+    from abep_sim import configuration as cfg
+    from abep_sim.design import engineering_constraints as ec
+    v = cfg.load_operating_inputs()
+    assert (OI.MISSION_HOURS, OI.FIRING_HOURS, OI.HISTORICAL_MISSION_HOURS_PRE_A9_22) == (26280.0, 15000.0, 26000.0)
+    assert (OI.THRUST_MIN_mN, OI.THRUST_MAX_mN, OI.P_BUS_MAX_W, OI.MASS_MAX_KG) == (12.0, 25.0, 1500.0, 40.0)
+    assert OI.FIRING_HOURS_LABEL == "SUBSYSTEM_FIRING_LIFE_ASSUMPTION"
+    assert v["mission_hours"] == OI.MISSION_HOURS and OI.SOURCE.startswith("config/mission/mission_scenario_v1.json")
+    for x in (OI.MISSION_HOURS, OI.FIRING_HOURS, OI.THRUST_MIN_mN, OI.THRUST_MAX_mN, OI.P_BUS_MAX_W, OI.MASS_MAX_KG):
+        assert type(x) is float
+    assert ec.SOURCE.startswith("config/requirements/rfp_constraints_v1.json")
+    for rel in (("operating_inputs.py",), ("design", "engineering_constraints.py")):
+        tree = ast.parse(open(os.path.join(ROOT, "abep_sim", *rel)).read())
+        mods = {(n.module or "") for n in ast.walk(tree) if isinstance(n, ast.ImportFrom)}
+        assert not any(m.endswith("constants") for m in mods), rel          # no constants.RFP read any more
+        assert any(m.endswith("configuration") for m in mods), rel
+
+
+def test_operating_inputs_fail_closed(tmp_path, monkeypatch):
+    import json
+    import shutil
+    from abep_sim import configuration as cfg
+    root = tmp_path / "config"
+    shutil.copytree(os.path.join(ROOT, "config"), root)
+    rel = cfg.MISSION_REL
+    d = json.loads((root / rel).read_text())
+    d["inputs"]["mission_hours"]["g1_status"] = "PENDING"
+    (root / rel).write_text(json.dumps(d))
+    with pytest.raises(cfg.ConfigurationError):          # sha256 differs from MANIFEST
+        cfg.load_operating_inputs(root)
+    import hashlib
+    man = json.loads((root / cfg.MANIFEST_REL).read_text())
+    man["files"][rel]["sha256"] = hashlib.sha256((root / rel).read_bytes()).hexdigest()
+    (root / cfg.MANIFEST_REL).write_text(json.dumps(man))
+    with pytest.raises(cfg.ConfigurationError, match="APPLIED"):
+        cfg.load_operating_inputs(root)
+
+
 def test_life_inputs_defaults_from_seam():
     from abep_sim.life import LifeInputs
     li = LifeInputs()

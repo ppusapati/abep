@@ -16,25 +16,29 @@ pins them):
   * ``HARD_CONSTRAINT_LIMITS`` - the numeric limits of the F7 hard-constraint table (the table itself, with its
     RVM / RFP labels, is an assessment definition: abep_sim/assessment/design_gates.py).
 
-Source (transitional): ``abep_sim.constants.RFP`` (same values). The integrator re-points ``_snapshot()`` to the
-frozen engineering-constraints snapshot under config/requirements/ once the A9.22 Phase A configuration lane merges;
-nothing else in the design layer changes when it does.
+Source: the frozen engineering-constraints snapshot config/requirements/rfp_constraints_v1.json (its
+``rfp_constraints_compat`` values) and the mission domain of config/mission/mission_scenario_v1.json, read through
+``abep_sim.configuration.load_engineering_constraints`` (sha256-checked against config/MANIFEST.json, fail closed, no
+fallback). Values are identical to the pre-re-point ``abep_sim.constants.RFP`` values.
 """
 from __future__ import annotations
 
-from ..constants import RFP as _RFP_CONSTANTS
+from types import SimpleNamespace
 
-SOURCE = "abep_sim.constants.RFP (transitional; A9.22 Phase A re-points this seam to config/requirements/)"
-PROVENANCE = ("requirements snapshot of RFP DTDF/06/13516/DSP/ABEP/X/L/M/01 as recorded in abep_sim/constants.py "
-              "(A9.22 owner decisions items 2 and 5: frozen engineering inputs, no RFP parsing in design / physics)")
+from ..configuration import load_engineering_constraints as _load
+
+PROVENANCE = ("requirements snapshot of RFP DTDF/06/13516/DSP/ABEP/X/L/M/01 as frozen in "
+              "config/requirements/rfp_constraints_v1.json (A9.22 owner decisions items 2 and 5: frozen engineering "
+              "inputs, no RFP parsing in design / physics)")
 
 
 def _snapshot():
-    """The frozen engineering-constraint record this seam reads (one place to re-point)."""
-    return _RFP_CONSTANTS
+    """The frozen engineering-constraint record this seam reads (one place; fails closed)."""
+    return SimpleNamespace(**_load())
 
 
 _S = _snapshot()
+SOURCE = _S.source + " via abep_sim.configuration.load_engineering_constraints"
 
 # ------------------------------------------------------------------------------------------------ thrust envelope
 THRUST_MIN_MN = _S.thrust_min_mN
