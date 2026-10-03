@@ -1,0 +1,18 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_2026_10_03_A9_23_simulation_architecture_owner_directive",
+ "decided_by": "owner",
+ "date": "2026-10-03",
+ "decision": "A9_23_SIMULATION_ARCHITECTURE_DIRECTIVE_RECORDED",
+ "verbatim": {"path": "docs/decisions/OD_2026_10_03_A9_23_SIMULATION_ARCHITECTURE_OWNER_DIRECTIVE.md", "sha256": "0c187b16cb25d853650ca1ddfe19b5404bf0c87835a753fa0167405cb33ec81d"},
+ "binding_rules": [
+  "the simulator never reads, parses, interprets or depends on the RFP / RVM during physics execution; RFP / RVM belong only to requirements/provenance, compliance mapping, verification reporting and bid/document traceability",
+  "simulation inputs are independent authoritative artefacts: architecture_frozen_v1, engineering_constraints_v1 (frozen values; provenance may cite requirement ids; physics consumes only the values), vleo_design_states_v2 (the frozen 196 states), physics_model_set_vN",
+  "the physics layer returns raw physical quantities; it never calculates or exposes compliance; compliance labels may remain only temporarily in a backward-compatibility wrapper layer",
+  "no new RFP dependencies in physics/design code; no RFP / RVM objects passed into physics functions; no physics decisions from clause ids",
+  "remaining physics/design -> assessment calls: move requirement/compliance logic outward; preserve numerical physics exactly and merged outputs where possible; no change to equations, coefficients, states, models, thresholds or golden values; version any raw-schema change; STOP and report before merging if any numerical result changes",
+  "authoritative sources of truth identified or created (no duplicates) for: frozen architecture, frozen engineering constraints, frozen design-state set, physics model/version set, raw simulation result, assessment/compliance result",
+  "tests enforce: requirements/provenance -> frozen constraints; architecture + frozen constraints + design states + physics -> raw results; raw results + frozen constraints -> assessment; a requirement-threshold change can change compliance without changing raw physics; a physics-model change may change raw physics without changing the requirements snapshot; a design-state-set change must not rewrite the architecture"
+ ],
+ "immutability": "never edited after commit; later owner amendments are new addendum files"
+}

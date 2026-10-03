@@ -17,6 +17,6 @@
  },
  "producer": "python -m abep_sim.atmosphere_orbit design-states-v2",
  "loader": "abep_sim/design/intake_synthesis.py::load_design_state_set (DESIGN_STATE_SET_SHA256)",
- "altitude_domain_source": "config/requirements/rfp_constraints_v1.json mission_domain.altitude_km",
+ "altitude_domain_source": "config/constraints/engineering_constraints_v1.json constraints.altitude_band_km",
  "generated_by": "scripts/config/build_config.py"
 }

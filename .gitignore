@@ -3,6 +3,7 @@ __pycache__/
 .pytest_cache/
 .venv/
 results/
+!schemas/results/
 hallthruster_bridge/out/
 *.egg-info/
 .DS_Store

@@ -2,87 +2,62 @@
  "schema": "abep_config_mission_scenario_v1",
  "id": "mission_scenario_v1",
  "layer": "FROZEN_ENGINEERING_CONFIGURATION",
- "title": "Operating-scenario inputs consumed by the physics / design seams (frozen engineering configuration)",
+ "title": "Operating-scenario choices consumed by the physics seam; constraint-derived inputs are references to engineering_constraints_v1 (not restated)",
  "generated_by": "scripts/config/build_config.py",
  "regenerate": "python scripts/config/build_config.py  (check: --check)",
- "requirements_snapshot": {
-  "id": "rfp_constraints_v1",
-  "path": "config/requirements/rfp_constraints_v1.json",
-  "sha256": "76656e6a7010a39179c8af0c788609b00459f34d5198d3f0bc966da0ef840ef7",
-  "snapshot_status": "FROZEN"
+ "engineering_constraints": {
+  "id": "engineering_constraints_v1",
+  "path": "config/constraints/engineering_constraints_v1.json",
+  "sha256": "62ca800de8ce66ce72eead5b6f2fbc2b285e487e95aadaf89ce702c4a4c0e09c",
+  "set_status": "FROZEN"
  },
- "rule": "abep_sim/operating_inputs.py (physics seam) and abep_sim/design/engineering_constraints.py (design seam) read their values from this file through abep_sim.configuration loaders (fail closed). The 26,000 -> 26,280 h change is the governed A9.22 G1 migration, APPLIED (docs/HISTORY.md).",
+ "rule": "abep_sim/operating_inputs.py (physics seam) reads this file and engineering_constraints_v1 through abep_sim.configuration.load_operating_inputs (fail closed; the constraints pin above is verified). Inputs of kind CONSTRAINT_REFERENCE carry no value (single source: engineering_constraints_v1); inputs of kind OPERATING_SCENARIO_CHOICE are an operating-scenario choice, distinct from the engineering constraint it was set equal to when this file was built (set_equal_to_constraint): physics consumes the choice; the assessment compares results with the constraint. Editing the constraint file alone changes the assessment, not this choice. The 26,000 -> 26,280 h change is the governed A9.22 G1 migration, APPLIED (docs/HISTORY.md).",
  "inputs": {
   "altitude_domain_km": {
-   "value": [
-    180,
-    230
-   ],
+   "kind": "CONSTRAINT_REFERENCE",
+   "constraint_ref": "altitude_band_km",
    "units": "km",
    "source": {
     "snapshot_field": "mission_domain.altitude_km",
     "rvm_row": "RVM-01"
-   }
+   },
+   "note": "value not restated here: read from engineering_constraints_v1 constraints.altitude_band_km"
   },
   "xe_sizing_thrust_target_mN": {
    "value": 12,
    "units": "mN",
-   "role": "thrust target for Xe sizing (today: RFP.thrust_min_mN)",
-   "source": {
-    "snapshot_field": "rfp_constraints_compat.thrust_min_mN",
-    "rvm_row": "RVM-02",
-    "rfp_clauses": [
-     "RFP-P18-06"
-    ],
-    "status": "FROZEN"
-   }
+   "kind": "OPERATING_SCENARIO_CHOICE",
+   "role": "thrust target for Xe sizing / T_req floor of the closure",
+   "set_equal_to_constraint": "thrust_sustained_min_mN"
   },
   "commanded_thrust_cap_mN": {
    "value": 25,
    "units": "mN",
-   "role": "commanded-thrust cap (today: RFP.thrust_max_mN)",
-   "source": {
-    "snapshot_field": "rfp_constraints_compat.thrust_max_mN",
-    "rvm_row": "RVM-03",
-    "rfp_clauses": [
-     "RFP-P18-06",
-     "RFP-P18-10"
-    ],
-    "status": "FROZEN"
-   }
+   "kind": "OPERATING_SCENARIO_CHOICE",
+   "role": "commanded-thrust cap",
+   "set_equal_to_constraint": "thrust_capability_mN"
   },
   "p_bus_throttling_cap_W": {
    "value": 1500,
    "units": "W",
-   "role": "P_bus throttling cap (today: RFP.power_max_W and literals 1500)",
-   "source": {
-    "snapshot_field": "rfp_constraints_compat.power_max_W",
-    "rvm_row": "RVM-04",
-    "rfp_clauses": [
-     "RFP-P18-10",
-     "RFP-P18-01"
-    ],
-    "status": "FROZEN"
-   }
+   "kind": "OPERATING_SCENARIO_CHOICE",
+   "role": "P_bus throttling cap",
+   "set_equal_to_constraint": "p_bus_max_W"
   },
   "wet_mass_limit_kg": {
-   "value": 40,
+   "kind": "CONSTRAINT_REFERENCE",
+   "constraint_ref": "wet_mass_max_kg",
    "units": "kg",
-   "role": "wet-mass limit handed to callers as a design constraint (operating_inputs.MASS_MAX_KG)",
-   "source": {
-    "snapshot_field": "rfp_constraints_compat.mass_max_kg",
-    "rvm_row": "RVM-06",
-    "rfp_clauses": [
-     "RFP-P18-11"
-    ],
-    "status": "FROZEN"
-   }
+   "note": "value not restated here: read from engineering_constraints_v1 constraints.wet_mass_max_kg"
   },
   "mission_hours": {
    "value": 26280,
+   "units": "h",
+   "kind": "OPERATING_SCENARIO_CHOICE",
+   "role": "mission-integration horizon (mission-duration basis for mission-integrated quantities; A9.22 G1)",
+   "set_equal_to_constraint": "mission_life_h",
    "authoritative_basis_h": 26280,
    "label": "MISSION_DURATION_BASIS",
-   "units": "h",
    "g1_status": "APPLIED",
    "g1_migrated_consumers": [
     "abep_sim/life.py LifeInputs.mission_h (default operating_inputs.MISSION_HOURS)",
@@ -96,22 +71,16 @@
     "note": "pre-A9.22 basis (abep_sim.constants.RFP.mission_hours, immutable); no consumer computes with it"
    },
    "source": {
-    "snapshot_field": "mission_duration",
+    "snapshot_field": "mission_duration.authoritative_basis_h",
     "rvm_row": "RVM-13"
    }
   },
   "firing_hours": {
-   "value": 15000,
+   "kind": "CONSTRAINT_REFERENCE",
+   "constraint_ref": "firing_life_h",
    "units": "h",
    "label": "SUBSYSTEM_FIRING_LIFE_ASSUMPTION",
-   "source": {
-    "snapshot_field": "rfp_constraints_compat.ignition_hours",
-    "rvm_row": "RVM-12",
-    "rfp_clauses": [
-     "RFP-P19-01"
-    ],
-    "status": "FROZEN"
-   }
+   "note": "value not restated here: read from engineering_constraints_v1 constraints.firing_life_h"
   }
  }
 }

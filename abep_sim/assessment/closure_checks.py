@@ -94,13 +94,16 @@ class AssessmentPriors:
     hall_preferred: bool
 
 
-def constraints_from_config(cfg) -> Constraints:
-    """Pre-split constraint values: RFP limits plus the config's Budgets margin / CBE target."""
-    from ..constants import RFP
+def constraints_from_config(cfg, root=None) -> Constraints:
+    """Pre-split constraint values: the frozen engineering-constraint limits (A9.23:
+    config/constraints/engineering_constraints_v1.json; same values as the former abep_sim.constants.RFP fields) plus
+    the config's Budgets margin / CBE target. ``root`` selects a config root (default: abep_sim.configuration)."""
+    from ..configuration import load_engineering_constraints
+    ec = load_engineering_constraints(root)
     b = cfg.budgets
-    return Constraints(thrust_max_mN=RFP.thrust_max_mN, power_max_W=RFP.power_max_W, p_margin_frac=b.p_margin_frac,
-                       mass_max_kg=RFP.mass_max_kg, ic_total_min=RFP.ic_total_min,
-                       ic_thruster_min=RFP.ic_subsystem_min["thruster"], m_cbe_target_kg=b.m_cbe_target_kg)
+    return Constraints(thrust_max_mN=ec["thrust_max_mN"], power_max_W=ec["power_max_W"],
+                       p_margin_frac=b.p_margin_frac, mass_max_kg=ec["mass_max_kg"], ic_total_min=ec["ic_total_min"],
+                       ic_thruster_min=ec["ic_subsystem_min"]["thruster"], m_cbe_target_kg=b.m_cbe_target_kg)
 
 
 def priors_from_config(cfg) -> AssessmentPriors:

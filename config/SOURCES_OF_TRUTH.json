@@ -1,0 +1,123 @@
+{
+ "schema": "abep_sources_of_truth_v1",
+ "id": "sources_of_truth_v1",
+ "generated_by": "scripts/config/build_config.py",
+ "regenerate": "python scripts/config/build_config.py  (check: --check)",
+ "governing_directive_a9_23": {
+  "json": "docs/decisions/OD_2026_10_03_A9_23_simulation_architecture_owner_directive.json",
+  "json_sha256": "7ecf593a150bd8d80cad8cce3ba2db7b1c46704e7d5c0d70779b1bb9480a6775",
+  "md": "docs/decisions/OD_2026_10_03_A9_23_SIMULATION_ARCHITECTURE_OWNER_DIRECTIVE.md",
+  "md_sha256": "0c187b16cb25d853650ca1ddfe19b5404bf0c87835a753fa0167405cb33ec81d"
+ },
+ "dependency_rule": [
+  "requirements/provenance -> frozen engineering constraints (scripts/config/build_config.py only)",
+  "architecture + frozen constraints + design states + physics -> raw results",
+  "raw results + frozen constraints -> assessment / compliance"
+ ],
+ "rule": "exactly one authoritative artefact per role; no second file may claim a listed role (same schema id or artefact id); tests/test_a9_23_dependency_rule.py enforces it",
+ "supporting_inputs": {
+  "operating_scenario": {
+   "artefact": "config/mission/mission_scenario_v1.json",
+   "sha256": "a01b56a6ec7a79cb3b37c6356542d093c618632388edefb150881bf03fbe7ba0",
+   "role": "operating-scenario choices (constraint-derived inputs referenced, not restated)"
+  },
+  "hardware_bounds_index": {
+   "artefact": "config/hardware/hardware_bounds_v1.json",
+   "sha256": "e061c624f70a5b2dbeb6be0f57a4518bf9046ca060f70e4a05ac5af172c2841d",
+   "role": "index of hardware-limit sources (no copied values)"
+  }
+ },
+ "sources": {
+  "frozen_architecture": {
+   "layer": "FROZEN_ARCHITECTURE",
+   "artefact": "config/architecture/hall_icp_neutralizer_v1.json",
+   "id": "hall_icp_neutralizer_v1",
+   "schema": "abep_config_architecture_v1",
+   "sha256": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3",
+   "pinned_by": [
+    "config/MANIFEST.json"
+   ],
+   "role": "architecture_frozen_v1: the single flight architecture definition",
+   "loader": "abep_sim.configuration.load_architecture; abep_sim/design/a9_19_architecture.py"
+  },
+  "frozen_engineering_constraints": {
+   "layer": "FROZEN_ENGINEERING_CONSTRAINTS",
+   "artefact": "config/constraints/engineering_constraints_v1.json",
+   "id": "engineering_constraints_v1",
+   "schema": "abep_config_engineering_constraints_v1",
+   "sha256": "62ca800de8ce66ce72eead5b6f2fbc2b285e487e95aadaf89ce702c4a4c0e09c",
+   "pinned_by": [
+    "config/MANIFEST.json"
+   ],
+   "role": "engineering_constraints_v1: every frozen numerical / categorical constraint (values; provenance only for requirement ids)",
+   "loader": "abep_sim.configuration.load_engineering_constraints; abep_sim/design/engineering_constraints.py; abep_sim/operating_inputs.py; abep_sim/assessment"
+  },
+  "frozen_design_state_set": {
+   "layer": "FROZEN_DESIGN_STATE_SET",
+   "artefact": "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json",
+   "id": "atmosphere_msis21_orbit_v1_design_states_v2",
+   "alias": "vleo_design_states_v2",
+   "n_states": 196,
+   "sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+   "reference": "config/environment/design_state_set_ref_v1.json",
+   "reference_sha256": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484",
+   "pinned_by": [
+    "abep_sim/data/atmosphere_msis21_orbit_v1.json (design_states_file_v2.sha256)",
+    "config/environment/design_state_set_ref_v1.json"
+   ],
+   "role": "the frozen environmental / orbital design states consumed by the design / physics runs",
+   "loader": "abep_sim.configuration.load_design_state_set_ref; abep_sim/design/intake_synthesis.py::load_design_state_set (DESIGN_STATE_SET_SHA256)"
+  },
+  "physics_model_set": {
+   "layer": "PHYSICS_MODELS",
+   "artefact": "config/model_set/physics_model_set_v1.json",
+   "id": "physics_model_set_v1",
+   "schema": "abep_config_physics_model_set_v1",
+   "sha256": "55026f023511ae901c14709d9794a5fd83575b42f9e99234d6381d6ec69a4f69",
+   "pinned_by": [
+    "config/MANIFEST.json"
+   ],
+   "role": "physics_model_set_v1: physics module / data hashes and version labels",
+   "loader": "abep_sim.configuration.load_model_set / model_set_drift"
+  },
+  "raw_simulation_result": {
+   "layer": "RAW_RESULTS",
+   "artefact": "schemas/results/raw_closure_v2.json",
+   "id": "raw_closure_v2",
+   "schema": "https://json-schema.org/draft/2020-12/schema",
+   "sha256": "83d1f20055e97b318a9678fa2631b5da3e4328cfbc4e13cc2e2d516ffebb56f8",
+   "pinned_by": [
+    "config/SOURCES_OF_TRUTH.json"
+   ],
+   "role": "schema raw_closure_v2 of the raw physical result",
+   "producer": "abep_sim.system.physics_closure",
+   "generated_by": "scripts/config/build_result_schemas.py"
+  },
+  "assessment_result": {
+   "layer": "ASSESSMENT",
+   "artefact": "schemas/results/closure_assessment_v1.json",
+   "id": "closure_assessment_v1",
+   "schema": "https://json-schema.org/draft/2020-12/schema",
+   "sha256": "eccc5b7fe074cacf803c9079ad34389fb3e3f4e784de98b0f3f0743e48bc05af",
+   "pinned_by": [
+    "config/SOURCES_OF_TRUTH.json"
+   ],
+   "role": "schema closure_assessment_v1 of the assessment / compliance result (raw result + frozen constraints)",
+   "producer": "abep_sim.assessment.assess",
+   "generated_by": "scripts/config/build_result_schemas.py"
+  },
+  "requirements_provenance": {
+   "layer": "PROVENANCE",
+   "artefact": "config/requirements/rfp_constraints_v1.json",
+   "id": "rfp_constraints_v1",
+   "schema": "abep_config_requirements_snapshot_v1",
+   "sha256": "76656e6a7010a39179c8af0c788609b00459f34d5198d3f0bc966da0ef840ef7",
+   "pinned_by": [
+    "config/MANIFEST.json"
+   ],
+   "role": "requirements-extraction snapshot (RVM / RFP clause provenance); the only input of the engineering constraints; never read by physics / design code",
+   "loader": "abep_sim.configuration.load_requirements_snapshot (assessment / compliance mapping only)",
+   "snapshot_status": "FROZEN"
+  }
+ }
+}

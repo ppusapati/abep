@@ -49,8 +49,9 @@ def test_manifest_lists_every_file_with_matching_sha256():
     assert sorted(list(man["files"]) + ["MANIFEST.json"]) == sorted(on_disk)
     for rel, e in man["files"].items():
         assert _sha(CONFIG / rel) == e["sha256"], rel
-    for rel in (cfg.ARCHITECTURE_REL, cfg.REQUIREMENTS_REL, cfg.MISSION_REL, cfg.DESIGN_STATE_REF_REL,
-                cfg.HARDWARE_BOUNDS_REL, cfg.MODEL_SET_REL, "README.md"):
+    for rel in (cfg.ARCHITECTURE_REL, cfg.REQUIREMENTS_REL, cfg.CONSTRAINTS_REL, cfg.MISSION_REL,
+                cfg.DESIGN_STATE_REF_REL, cfg.HARDWARE_BOUNDS_REL, cfg.MODEL_SET_REL, cfg.SOURCES_OF_TRUTH_REL,
+                "README.md"):
         assert rel in man["files"], rel
 
 
@@ -101,8 +102,9 @@ def _remanifest(root: Path):
     (root / "MANIFEST.json").write_text(json.dumps(man, indent=1) + "\n", encoding="utf-8")
 
 
-@pytest.mark.parametrize("rel", [cfg.ARCHITECTURE_REL, cfg.REQUIREMENTS_REL, cfg.MISSION_REL, cfg.DESIGN_STATE_REF_REL,
-                                 cfg.HARDWARE_BOUNDS_REL, cfg.MODEL_SET_REL])
+@pytest.mark.parametrize("rel", [cfg.ARCHITECTURE_REL, cfg.REQUIREMENTS_REL, cfg.CONSTRAINTS_REL, cfg.MISSION_REL,
+                                 cfg.DESIGN_STATE_REF_REL, cfg.HARDWARE_BOUNDS_REL, cfg.MODEL_SET_REL,
+                                 cfg.SOURCES_OF_TRUTH_REL])
 def test_altered_config_file_is_refused(cfg_copy, rel):
     assert cfg.load_verified(rel, cfg_copy)                    # the copy itself loads
     p = cfg_copy / rel
@@ -123,14 +125,15 @@ def test_missing_or_unlisted_files_are_refused(cfg_copy):
 
 
 def test_cross_pins_are_checked(cfg_copy):
-    # mission scenario pins the snapshot it was derived from
-    snap = cfg_copy / cfg.REQUIREMENTS_REL
-    d = json.loads(snap.read_text(encoding="utf-8"))
+    # mission scenario pins the engineering constraints it references (A9.23; no longer the requirements snapshot)
+    cons = cfg_copy / cfg.CONSTRAINTS_REL
+    d = json.loads(cons.read_text(encoding="utf-8"))
     d["title"] += " (edited)"
-    snap.write_text(json.dumps(d, indent=1), encoding="utf-8")
+    cons.write_text(json.dumps(d, indent=1), encoding="utf-8")
     _remanifest(cfg_copy)
-    with pytest.raises(cfg.ConfigurationError, match="requirements snapshot"):
+    with pytest.raises(cfg.ConfigurationError, match="engineering constraints"):
         cfg.load_mission_scenario(cfg_copy)
+    assert cfg.load_mission_scenario(cfg_copy, verify_constraints=False)["id"] == "mission_scenario_v1"
     # design-state reference: a wrong target hash is refused
     ref = cfg_copy / cfg.DESIGN_STATE_REF_REL
     d = json.loads(ref.read_text(encoding="utf-8"))
@@ -191,20 +194,28 @@ def test_constants_rfp_equals_todays_values_field_by_field():
 
 def test_mission_scenario_records_g1_applied_and_the_historical_constant():
     ms = cfg.load_mission_scenario()["inputs"]
+    ec = cfg.load_engineering_constraints_file()["constraints"]
     assert ms["mission_hours"]["value"] == ms["mission_hours"]["authoritative_basis_h"] == 26280
+    assert ms["mission_hours"]["kind"] == "OPERATING_SCENARIO_CHOICE"
+    assert ec["mission_life_h"]["value"] == 26280 and ec["mission_life_h"]["g1_status"] == "APPLIED"
+    assert ec["mission_life_h"]["historical_value"] == {**ec["mission_life_h"]["historical_value"], "value_h": 26000,
+                                                        "label": "HISTORICAL_CONSTANT_NOT_CONSUMED"}
     assert ms["mission_hours"]["g1_status"] == "APPLIED" and ms["mission_hours"]["label"] == "MISSION_DURATION_BASIS"
     assert "legacy_mission_hours_in_use" not in ms["mission_hours"]
     assert ms["mission_hours"]["historical_note"]["value_h"] == 26000
     assert ms["mission_hours"]["historical_note"]["label"] == "HISTORICAL_CONSTANT_NOT_CONSUMED"
-    assert ms["wet_mass_limit_kg"]["value"] == 40
+    assert "value" not in ms["wet_mass_limit_kg"] and ms["wet_mass_limit_kg"]["constraint_ref"] == "wet_mass_max_kg"
+    assert ec["wet_mass_max_kg"]["value"] == 40 and ec["wet_mass_max_kg"]["comparator"] == "<"
     snap = cfg.load_requirements_snapshot()
     assert snap["rfp_constraints_compat"]["mission_hours"]["value"] == 26000          # constants.RFP compat, immutable
     assert snap["rfp_constraints_compat"]["mission_hours"]["label"] == "HISTORICAL_CONSTANT_NOT_CONSUMED"
     assert snap["mission_duration"]["g1_status"] == "APPLIED"
     assert "PENDING_GOVERNED_MIGRATION_A9_22_G1" not in json.dumps(snap) + json.dumps(ms)
-    assert ms["firing_hours"] == {**ms["firing_hours"], "value": 15000, "label": "SUBSYSTEM_FIRING_LIFE_ASSUMPTION"}
+    assert ms["firing_hours"]["label"] == "SUBSYSTEM_FIRING_LIFE_ASSUMPTION" and "value" not in ms["firing_hours"]
+    assert ec["firing_life_h"] == {**ec["firing_life_h"], "value": 15000, "label": "SUBSYSTEM_FIRING_LIFE_ASSUMPTION"}
     assert (ms["xe_sizing_thrust_target_mN"]["value"], ms["commanded_thrust_cap_mN"]["value"],
-            ms["p_bus_throttling_cap_W"]["value"], ms["altitude_domain_km"]["value"]) == (12, 25, 1500, [180, 230])
+            ms["p_bus_throttling_cap_W"]["value"], ec["altitude_band_km"]["value"]) == (12, 25, 1500, [180, 230])
+    assert "value" not in ms["altitude_domain_km"]
 
 
 # ------------------------------------------------------------------------------------------------ architecture

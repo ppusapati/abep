@@ -2696,8 +2696,11 @@ def _top_level(doc, v2, c: Ctx, s) -> None:
                                       "against the A9.16-updated P1 / P2 lanes and the cross-lane pairs is for the "
                                       "integration lane; cross-lane statuses carried from v2 that name other lanes' "
                                       "questions (e.g. IFD-14 MQ-01, IFD-17 P4 IT-17) are not restated here"},
-        {"id": "RF3-FLAG-04", "flag": "the RFP (RFP(1)) is owner-held and not yet registered in the repository "
-                                      "(AG-15); A9.15 content is applied as owner-stated"},
+        {"id": "RF3-FLAG-04", "flag": "RESOLVED (history kept): when this flag was raised the RFP (RFP(1)) was owner-held "
+                                      "and not yet registered (AG-15) and A9.15 content was applied as owner-stated; the "
+                                      "RFP is now registered by hash (A9.17 RFP, docs/requirements/rfp_official/"
+                                      "rfp_registration_v1.json) and AG-15 is closed by the owner (A9.22 G3, "
+                                      "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json)"},
         {"id": "RF3-FLAG-05", "flag": "A9.20: the owner chose the recommended ground-only option and in the same message "
                                       "asked 'is it good to remove hollow cathode' - recorded for the owner, not "
                                       "answered here; A9.19 'check C1 mass' is a mass / budget-lane request (C1 is now "

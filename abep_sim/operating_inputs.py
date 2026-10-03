@@ -5,11 +5,13 @@ clause ids; requirements reach physics only as frozen engineering inputs. Physic
 parameters (mission_hours, firing_hours, thrust_cap_mN, P_bus_max_W, mass limits as DesignConstraints, ...) that their
 callers supply. Where no caller supplies one, the default comes from this module, and only from this module.
 
-Source: the frozen engineering configuration config/mission/mission_scenario_v1.json, read through
-abep_sim.configuration.load_operating_inputs (sha256-checked against config/MANIFEST.json; fails closed, no fallback,
-CLAUDE.md rule 3). This module never opens the requirements snapshot (config/requirements/) or anything under
-docs/requirements/; nothing here is an RFP parser: these are plain numbers with a provenance string. The values are
-identical to the pre-re-point values (tests/test_a9_22_operating_inputs.py pins them).
+Source (A9.23): the operating-scenario choices of config/mission/mission_scenario_v1.json (Xe-sizing thrust target,
+commanded-thrust cap, P_bus throttling cap, mission-integration horizon) and the frozen engineering constraints it
+references by id from config/constraints/engineering_constraints_v1.json (wet-mass limit, firing-life assumption,
+altitude band), read through abep_sim.configuration.load_operating_inputs (sha256-checked against config/MANIFEST.json;
+fails closed, no fallback, CLAUDE.md rule 3). This module never opens the requirements snapshot (config/requirements/)
+or anything under docs/requirements/; nothing here is an RFP parser: these are plain numbers with a provenance string.
+The values are identical to the pre-re-point values (tests/test_a9_22_operating_inputs.py pins them).
 """
 from __future__ import annotations
 
