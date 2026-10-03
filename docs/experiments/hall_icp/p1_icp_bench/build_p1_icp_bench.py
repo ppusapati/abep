@@ -364,7 +364,8 @@ H23 = "docs/hardware/h2/h2_3_gas_path_plenum/h2_3_gas_path_plenum_v1.json"
 H22 = "docs/hardware/h2/h2_2_cathode_integration/h2_2_cathode_integration_v1.json"
 H24 = "docs/hardware/h2/h2_4_ppu_bus/h2_4_ppu_bus_v1.json"
 H26 = "docs/hardware/h2/h2_6_diagnostics_fixture/h2_6_diagnostics_fixture_v1.json"
-BUS = "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json"
+BUS = "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"   # A9.22 G8 stage 2 (v2)
+BUS1 = "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json"  # immutable v1 (historical reuse)
 RFQ1 = "docs/procurement/rfq_a9/rfq_a9_v1.json"
 M16 = "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json"
 OQS = "docs/budgets/owner_decisions/owner_questions_state_v3.json"
@@ -400,7 +401,10 @@ PINS = [
     (UB, "c6567e6d0bbc008bedd5b9c14a9716f117144ab6952b9c498f7b0c75e02a624d", "A9-04 uncertainty budget"),
     (EVI, "092e4ca8e1827dd2e9558058a204f46510f2633316ce188e7126b697ec6d0b53", "A9-05 Takahashi 2024 extraction"),
     (VIN, "fac472e370b54875df5dea90c3c7740403da5ac1edd1af29b43ed09ee679d450", "A9-05 validation-input list"),
-    (BUS, "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6", "A9-02 bus-power boundary"),
+    (BUS, "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980",
+     "A9-02 bus-power boundary, v2 (A9.22 G8: hall_icp_neutralizer only; C1 ground-reference metadata)"),
+    (BUS1, "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+     "A9-02 bus-power boundary v1 (immutable history; historical reuse only)"),
     (MASS, "071b03fb634c6b25ef422e7ec81006d337e6c333b80133240bdea32999a4f7d4", "A9-06 mass reconciliation"),
     (REVS, "b428565299c1c41487d9ffa50c174986d2d52c544539f89ca21b7bdbc2ae44fa", "A9-07 H2 revisions"),
     (XE_A9, "37c32cda9fb04200f6e9041b0e790ca700e270866f29e7c10f8a298034ddacfd", "A9-08 Xe ledger (A9)"),
@@ -2059,7 +2063,7 @@ def historical_reuse():
          "(superseded by A9.2 / A9.3; v2 = " + RFQ2 + ")"),
         (REVS, "A9H-* instrument items, REV-30 / REV-36", "thermal results (UNRESOLVED)"),
         (H24, "H24-27 8.33 A laboratory rating (sizing)", "flight discharge current values"),
-        (BUS, "A902-19/21/22/23 definitions", "no ledger computation"),
+        (BUS1, "A902-19/21/22/23 definitions", "no ledger computation"),
         (INS, "INS-04/08/10/11/17/18 ids", "HW-0/RF/ECR arm semantics (historical)"),
         (P1F, "nothing (historical A5 Phase-1 pre-ionizer framework, kept immutable per A9)",
          "all of it: hall_only / rf_hall / ecr_hall topology is superseded (owner row 28)"),

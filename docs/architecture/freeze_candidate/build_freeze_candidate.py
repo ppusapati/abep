@@ -114,7 +114,7 @@ CONSUMED = {
     "M16": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
     "XE2": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
     "XE3": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",     # A9.16 repair F8 (current Xe ledger)
-    "BUS": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+    "BUS": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",   # A9.22 G8 stage 2
     "ICD": "schemas/interfaces/icp_neutralizer_icd_v1.json",
     "P1": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
     "P2": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",

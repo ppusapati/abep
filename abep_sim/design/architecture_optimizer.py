@@ -41,7 +41,8 @@ Design decisions recorded here (evidence discipline, CLAUDE.md rules 3, 6, 10; d
   * Thrust T needs an admitted Hall response map. The credible set is EMPTY and P5-N2 v1 is INCONCLUSIVE, so T and
     T - D are NOT_EVALUATED for every vector; x_Hall is bounded (F5 windows, admissibility function) but no objective
     depends on it today, so it is not searched.
-  * P_bus uses the A9-02 boundary module abep_sim.bus_boundary_a9 (called, never modified): the official ledger keeps
+  * P_bus uses the A9-02 boundary module abep_sim.bus_boundary_a9_v2 (called, never modified; A9.22 G8 stage 2 moved
+    it from the immutable v1 abep_sim.bus_boundary_a9, whose code objects v2 runs unchanged): the official ledger keeps
     the compressor slot TBD (row 22: the compressor ICD has not supplied it) and is PARTIAL_BOUNDARY; a separate,
     labelled parametric-sensitivity ledger books the F3/F4 compressor draw and reports its lower bound only.
   * Mass: allocation, evidence floor, parametric design value and CBE are kept in separate columns (mass/power
@@ -103,7 +104,7 @@ from typing import Mapping, Sequence
 
 import numpy as np
 
-from .. import bus_boundary_a9 as bb
+from .. import bus_boundary_a9_v2 as bb
 from .. import rotor_strength as rs
 from ..constants import M_SPECIES
 from . import filter_stage as fs
@@ -194,11 +195,13 @@ RANK_COMPUTED_SYNTHETIC = "PARETO_LAYERS_COMPUTED_SYNTHETIC_TEST_ONLY_NOT_EVIDEN
 RANK_STATUSES = (RANK_REFUSED_INCOMPLETE, RANK_REFUSED_NO_FEASIBLE, RANK_REFUSED_MIXED, RANK_COMPUTED,
                  RANK_COMPUTED_SYNTHETIC)
 
-# A9.19 / A9.20: the flight configurations are hall_icp_neutralizer only; hall_c1_reference (bb.CONFIGURATIONS keeps
-# it for the A9-02 boundary history) is a GROUND_REFERENCE label only, never a flight candidate
+# A9.19 / A9.20: the flight configurations are hall_icp_neutralizer only; hall_c1_reference is a GROUND_REFERENCE
+# label only, never a flight candidate. A9.22 G8: bus_power_boundary_a9_v2 carries exactly that split (flight bus
+# CONFIGURATIONS; C1 only as GROUND_REFERENCE_TEST_METADATA)
 CONFIGURATIONS = a919.FLIGHT_CONFIGURATIONS
 GROUND_REFERENCE_CONFIGURATIONS = (a919.GROUND_REFERENCE_CONFIGURATION,)
-assert set(CONFIGURATIONS) | set(GROUND_REFERENCE_CONFIGURATIONS) == set(bb.CONFIGURATIONS)
+assert tuple(CONFIGURATIONS) == tuple(bb.CONFIGURATIONS)
+assert GROUND_REFERENCE_CONFIGURATIONS == tuple(bb.GROUND_REFERENCE_TEST_METADATA)
 
 
 class OptimizerError(ValueError):
@@ -379,7 +382,7 @@ def design_vector_blocks(repo: Path = REPO) -> list[dict]:
     chain = mp["power"]["icp_rf_chain"]
     rv = [
         _var("x_RF.frequency", "x_RF", "f_RF", bb.RF_FREQUENCY_HZ, "Hz", "13.56 MHz ICP drive (row 72 / A9)",
-             f"{MP_REL} items_v2 MPV2-P07; abep_sim/bus_boundary_a9.py RF_FREQUENCY_HZ", "owner-allocation",
+             f"{MP_REL} items_v2 MPV2-P07; abep_sim/bus_boundary_a9_v2.py RF_FREQUENCY_HZ", "owner-allocation",
              "OWNER_GIVEN"),
         _var("x_RF.chain_topology", "x_RF", "RF chain", chain["chain"], "-", "flight-representative DC-RF source, "
              "directional coupler, 50-ohm line, local adjustable match, antenna (A9.2 / A9.3 decisions)",
@@ -390,7 +393,7 @@ def design_vector_blocks(repo: Path = REPO) -> list[dict]:
              f"{MP_REL} items_v2 MPV2-P08", "TBD", "TBD"),
         _var("x_RF.lab_forward_range", "x_RF", "P_fwd lab", list(bb.LAB_RF_FORWARD_W_RANGE), "W", "laboratory "
              "source + inline chain sizing: a TEST capability, never a flight allowance (row 72)",
-             "abep_sim/bus_boundary_a9.py LAB_RF_FORWARD_W_RANGE", "owner-allocation", "TEST_CAPABILITY_ONLY"),
+             "abep_sim/bus_boundary_a9_v2.py LAB_RF_FORWARD_W_RANGE", "owner-allocation", "TEST_CAPABILITY_ONLY"),
     ]
     blocks.append({"block": "x_RF", "lane": "P2 framework / RFQ v3 / mass-power v3", "path": P2_REL,
                    "state": "NOT_SEARCHABLE_BOUNDS_TBD", "variables": rv})
@@ -920,7 +923,7 @@ def official_ledger(config: str, repo: Path = REPO, compressor_P_W: float | None
 
 def bus_power(config: str, compressor_P_W: float | None, supplied: Mapping | None = None, repo: Path = REPO) -> dict:
     """P_bus objective. EVALUATED only from supplied COMPLETE ledgers (steady + start-up steps) whose loads are all of
-    a rankable class; the RFP gate verdict of bus_boundary_a9.rfp_power_gate is carried for the hard constraint.
+    a rankable class; the RFP gate verdict of bus_boundary_a9_v2.rfp_power_gate is carried for the hard constraint.
     Otherwise NOT_EVALUATED with the official ledger status and the parametric lower bound."""
     if supplied is not None:
         steady, startup = supplied["steady"], supplied["startup"]
@@ -1207,16 +1210,16 @@ def evaluate_constraints(values: Mapping) -> list[dict]:
             vst = rec.get("status")
             if vst in (EVALUATED, SYNTHETIC_ONLY):
                 st = {"PASS": C_MET, "FAIL": C_VIOLATED}.get(gv, C_NOT_EVALUATED)
-                basis = f"bus_boundary_a9.rfp_power_gate verdict {gv} ({vst})"
+                basis = f"bus_boundary_a9_v2.rfp_power_gate verdict {gv} ({vst})"
             elif vst == PARAMETRIC_ONLY:
                 # the gate ignores evidence class: on assumed / parametric loads its verdict is a sensitivity
                 # comparison only and never counts as satisfied (fail closed; OPT-04)
                 st = {"PASS": C_MET_PARAMETRIC, "FAIL": C_VIOLATED_PARAMETRIC}.get(gv, C_NOT_EVALUATED)
-                basis = (f"bus_boundary_a9.rfp_power_gate verdict {gv} on {vst} ledger values: sensitivity "
+                basis = (f"bus_boundary_a9_v2.rfp_power_gate verdict {gv} on {vst} ledger values: sensitivity "
                          "comparison only, never counted as satisfied (fail closed)")
             else:
                 st = C_NOT_EVALUATED
-                basis = (f"bus_boundary_a9.rfp_power_gate verdict {gv} but value status {vst}: "
+                basis = (f"bus_boundary_a9_v2.rfp_power_gate verdict {gv} but value status {vst}: "
                          "not evaluable (fail closed)")
         elif rec is not None and rec.get("status") in (EVALUATED, PARAMETRIC_ONLY, SYNTHETIC_ONLY) and \
                 rec.get("value") is not None and math.isfinite(float(rec["value"])):

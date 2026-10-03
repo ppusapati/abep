@@ -164,7 +164,7 @@ Request: "check C1 mass" (A9.19 A9 C1 CONTROL_FALLBACK (docs/decisions/OD_2026_1
 
 peak_sampled < 1500 W on a conformant record (>= 100 kSa/s, >= 20 kHz, anti-alias filtering, synchronized channels, no saturation, total-bus-power reconstruction) is a one-sided sufficient PASS; peak_sampled >= 1500 W is not a failure - the proper 1 ms maximum decides; a non-conformant record is NOT_EVALUABLE (A9.14 OQ-A910-03)
 
-Helper `docs/budgets/mass_power_a9_v3/peak_sampled_gate_a9_v3.py`; unchanged (import only); its PEAK_SAMPLED_RULE stays the A9.1 wording - this artifact evaluates peak_sampled records through the helper. Today: NOT_EVALUABLE: no measured total-bus record exists (every load TBD); no PASS produced.
+Helper `docs/budgets/mass_power_a9_v3/peak_sampled_gate_a9_v3.py`; abep_sim/bus_boundary_a9_v2.py unchanged (import only; v2 runs the immutable v1 code objects); its PEAK_SAMPLED_RULE stays the A9.1 wording - this artifact evaluates peak_sampled records through the helper. Today: NOT_EVALUABLE: no measured total-bus record exists (every load TBD); no PASS produced.
 
 ## Owner decisions applied
 

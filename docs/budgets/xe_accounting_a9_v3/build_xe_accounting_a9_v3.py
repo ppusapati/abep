@@ -128,6 +128,10 @@ RFP_CLAUSES = {
     "RFP-P18-08": "Compatible for using Ambient air (at the functional orbit altitude of 180-230km) and Xenon as "
                   "propellant. Two separate propellant tanks for ambient air and xenon."}
 MASS_POWER_V3 = "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json"   # downstream consumer; never read here
+BUS_V1_TEMPLATES = "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json start-up templates C-S5 / I-S5"
+BUS_V2_TEMPLATES = ("docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json start-up templates "
+                    "I-S5 (sequencing.templates_PROPOSED.hall_icp_neutralizer) / C-S5 (ground_reference_test_metadata."
+                    "hall_c1_reference.templates_PROPOSED_as_in_v1)")
 
 CONFIGS = ("hall_c1_reference", "hall_icp_neutralizer")      # ledger configurations (C1: ground-only after A9.20)
 FLIGHT_CONFIGS = ("hall_icp_neutralizer",)                    # A9.19: the single flight configuration
@@ -584,6 +588,12 @@ def build_items(v2: dict, s: dict) -> list:
         elif iid == "XV2-44":
             x["label_note"] = ICP_FEED_LABEL_NOTE
             x["v3_change"] = "label note only (A9.16 repair F11)"
+        if BUS_V1_TEMPLATES in x.get("source", ""):
+            # A9.22 G8 stage 2: the start-up templates are cited from bus_power_boundary_a9_v2 (I-S5 flight template;
+            # C-S5 only as C1 ground-reference metadata); value / status unchanged, the v2-carried text kept
+            x["source_v2"] = x["source"]
+            x["source"] = x["source"].replace(BUS_V1_TEMPLATES, BUS_V2_TEMPLATES)
+            x["v3_change"] += "; source re-pointed to bus_power_boundary_a9_v2 (A9.22 G8 stage 2, citation only)"
         out.append(x)
     proc = [("XV3-03", "ground-test system Xe-path purge Xe (non-C1; per campaign)", "purge"),
             ("XV3-04", "ground-test Xe conditioning (bake-out / flow-conditioning procedures) Xe", "conditioning"),

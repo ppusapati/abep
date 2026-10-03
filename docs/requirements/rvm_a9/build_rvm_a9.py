@@ -132,8 +132,12 @@ NEVER_PINNED = ("docs/orchestration/lane_registry_v1.json", "docs/orchestration/
 # ------------------------------------------------------------------------------------------------ read, never pinned
 # (key: path, identity field, expected identity value, role)
 REFS = {
-    "BUS": ("docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json", "id",
-            "bus_power_boundary_a9_v1", "A9-02 bus-power boundary (1 ms gate, 1.35 kW allocation)"),
+    # A9.22 G8 stage 2: the flight cells cite bus_power_boundary_a9_v2 (hall_icp_neutralizer only); the C1
+    # ground-reference cells keep citing the immutable v1 (C1 is not a v2 configuration)
+    "BUS": ("docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json", "id",
+            "bus_power_boundary_a9_v2", "A9-02 bus-power boundary v2 (1 ms gate, 1.35 kW allocation; A9.22 G8)"),
+    "BUS_V1": ("docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json", "id",
+               "bus_power_boundary_a9_v1", "A9-02 bus-power boundary (1 ms gate, 1.35 kW allocation)"),  # v1 role text
     "PRE": ("docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json", "id",
             "A9_01_hall_icp_prereg_framework_v1", "A9-01 Hall->ICP pre-registration framework (stages, DQ-HI-*)"),
     "VI": ("docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json", "schema",

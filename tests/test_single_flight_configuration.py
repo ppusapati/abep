@@ -42,9 +42,15 @@ REQUIRED = ("docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
             "docs/design_synthesis/f4_plenum/f4_plenum_transients_v1.json",
             "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
             "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
-            "docs/design_synthesis/f7_f8_optimizer/f8_robust_candidates_v1.json")
-# pre-A9.19 A9-02 boundary (2026-09-29): pinned by sha in deliverables outside this chain (RFQ, P1, P2, M16, mass/Xe
-# v1/v2, H2 revisions, F9); history until it is rebuilt, and then it must pass the scan like everything else
+            "docs/design_synthesis/f7_f8_optimizer/f8_robust_candidates_v1.json",
+            # A9.22 G8: the current A9-02 boundary (flight configuration only; C1 as ground-reference metadata)
+            "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json")
+# pre-A9.19 A9-02 boundary v1 (2026-09-29), immutable history (A9.22 G8). After the stage-2 migration the live chain
+# (P1, P2, mass/power v3, Xe v3, RFQ v3, M16 v5, F7/F8, RVM, F9) cites bus_power_boundary_a9_v2; v1 stays sha-pinned by
+# the immutable deliverables (RFQ v1/v2, M16 v3/v4, mass/Xe v1/v2, H2 revisions, A9-10, core integration, owner brief)
+# and is cited by the live chain only where v1 is the correct reference: C1 ground-reference cells (RVM, RFQ v3 C1
+# rows), the retired C1 power configuration and the carried v2 items (mass/power v3), P1 historical reuse, Xe v3
+# source_v2. It is accepted only while byte-identical to this pinned version.
 PINNED_PRE_A9_19 = {"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json":
                     "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6"}
 

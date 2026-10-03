@@ -20,7 +20,7 @@
 
 **Carried text.** text carried verbatim from v1 (items A902-25..29/37/43/44, owner answers, interface demands, H2-4 flags, open questions, H3/H4 inputs, a9_10_reconciliation) still mentions the C1 reference; in v2 it describes the GROUND_ONLY_LAB_REFERENCE recorded under ground_reference_test_metadata, never a v2 flight bus configuration.
 
-**Consumers.** docs/architecture_comparison/power_boundary_a9_v2/CONSUMER_INVENTORY.json (stage 1: no consumer re-pointed).
+**Consumers.** docs/architecture_comparison/power_boundary_a9_v2/CONSUMER_INVENTORY.json (stage 1: every consumer listed, scanned at the pre-migration commit); stage 2 (one controlled migration) re-pointed every LIVE_REPOINT consumer to v2 and proved no physics value changed: docs/architecture_comparison/power_boundary_a9_v2/STAGE2_MIGRATION.json.
 
 ## v1 -> v2 difference (document, field by field)
 

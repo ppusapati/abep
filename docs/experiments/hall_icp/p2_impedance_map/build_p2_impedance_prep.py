@@ -164,8 +164,9 @@ DELIVERABLES = {
             "7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96", "W4 instrumentation definition"),
     "MS": ("docs/experiments/instrumentation/metrology_spec/metrology_measurement_spec_v1.json",
            "55c11dc2d22fd92d95b498f72d60f2cdc0c62a45940da2446514049bd5130865", "metrology measurement spec"),
-    "BUS": ("docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-            "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6", "A9-02 bus power boundary"),
+    "BUS": ("docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
+            "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980",
+            "A9-02 bus power boundary, v2 (A9.22 G8 stage 2: hall_icp_neutralizer only)"),
     "EVID": ("docs/EVIDENCE.md", "a2950352141890c12ad33e66766cd003215c807cb29203d21df090349ab90b61",
              "evidence rules (CLAUDE.md rule 10)"),
 }
