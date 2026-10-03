@@ -61,10 +61,12 @@ def worst_eclipse_fraction(sc: "Spacecraft", alt_km: float = 200.0) -> float:
 
 
 def array_area_for(P_prop_W: float, sc: "Spacecraft", alt_km: float = 200.0, years: float = 3.0,
-                   rho_max_over_design: float = 1.39, P_cap_W: float = 1500.0) -> float:
+                   rho_max_over_design: float = 1.39, P_cap_W: float | None = None) -> float:
     """Array area for the worst case the mission actually meets: eclipse season (computed for the orbit), end of
     life, and solar-maximum drag (the propulsion must deliver ~rho_max/rho_design x design thrust, so ~that x power,
-    up to the bus cap)."""
+    up to the bus cap). P_cap_W is caller-supplied (A9.22); None -> abep_sim.operating_inputs.P_BUS_MAX_W."""
+    if P_cap_W is None:
+        from .operating_inputs import P_BUS_MAX_W as P_cap_W
     f_ecl = worst_eclipse_fraction(sc, alt_km)
     P_prop_W = min(P_prop_W * rho_max_over_design, P_cap_W)
     eol = 1.0 - sc.array_deg_per_yr * years

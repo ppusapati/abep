@@ -31,7 +31,7 @@ def test_drag_equation_and_status():
     assert r["freeze_status"] == "NOT_EVALUATED"
     assert r["label"] == "REFERENCE/PARAMETRIC"
     assert "INTAKE_OVERLAP_UNRESOLVED" in r["flags"]
-    assert r["rfp_thrust_band_mN"]["requirement_status"] == "OWNER_STATED_RFP_NOT_REGISTERED"
+    assert r["rfp_thrust_band_mN"]["requirement_status"] == "FROZEN_REQUIREMENTS_SNAPSHOT"
 
 
 def test_intake_accounting_guards_double_counting():

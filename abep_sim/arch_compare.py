@@ -43,7 +43,7 @@ from numbers import Real
 from types import MappingProxyType
 
 from . import hall_ensemble, hall_map
-from .constants import RFP
+from .assessment import arch_constraints as _AC
 
 HARNESS_VERSION = "arch_compare_v1"
 ARCHITECTURES = ("hall_only", "rf_hall", "ecr_hall")
@@ -608,7 +608,7 @@ def _run_ledger(fn, arch: str, loads: dict, efficiencies: dict, expected_version
 
 # ------------------------------------------------------------------------------------------------------ evaluation
 def _evaluate(mid: str, spec: ArchitectureSpec, hm, prov: dict, query: dict, upstream: UpstreamState, fn,
-              expected_version: str) -> dict:
+              expected_version: str, limits: Mapping | None = None) -> dict:
     res = {"status": None, "reason": None, "hall_query": dict(query), "hall_map": prov,
            "upstream_fingerprint": upstream.fingerprint()}
     outside = {k: [float(hm.axes[k][0]), float(hm.axes[k][-1])] for k in hm.names
@@ -639,8 +639,8 @@ def _evaluate(mid: str, spec: ArchitectureSpec, hm, prov: dict, query: dict, ups
     metrics = {"thrust_mN": T * 1e3, "discharge_power_W": Pd, "discharge_current_A": out["discharge_current_A"],
                "anode_eff": eta_a, "anode_jet_power_W": eta_a * Pd, "P_bus_W": P_bus,
                "thrust_per_P_bus_mN_per_kW": T * 1e3 / (P_bus / 1e3), "bus_to_anode_jet_efficiency": eta_a * Pd / P_bus}
-    flags = {"thrust_within_rfp_range": RFP.thrust_min_mN <= T * 1e3 <= RFP.thrust_max_mN,
-             "P_bus_within_rfp_cap": P_bus <= RFP.power_max_W}
+    # evaluation-only band / cap flags: assessment layer (A9.22); limits are caller-supplied
+    flags = _AC.band_cap_flags(T * 1e3, P_bus, _AC.default_limits() if limits is None else limits)
     if upstream.drag_N is not None:
         metrics["thrust_minus_drag_mN"] = (T - upstream.drag_N) * 1e3
         metrics["thrust_to_drag"] = T / upstream.drag_N
@@ -693,7 +693,8 @@ def _paired(archs: list, ids: list, results: dict, envelopes: dict) -> dict:
 
 def compare_architectures(specs, upstream: UpstreamState, hall_maps: Mapping, *, ledger=None,
                           ensemble: Mapping | None = None,
-                          expected_boundary_version: str = EXPECTED_BOUNDARY_VERSION) -> dict:
+                          expected_boundary_version: str = EXPECTED_BOUNDARY_VERSION,
+                          limits: Mapping | None = None) -> dict:
     """Evaluate every spec'd architecture for EVERY admitted member on the common bus boundary.
 
     specs      ArchitectureSpec per architecture (subset of ARCHITECTURES, no repeats)
@@ -701,7 +702,11 @@ def compare_architectures(specs, upstream: UpstreamState, hall_maps: Mapping, *,
     hall_maps  {member_id: {arch: path | {'path', 'sha256'}}}; keys must be exactly the admitted members
     ledger     None -> abep_sim.arch_boundary.bus_power_ledger (imported now); or an injected callable
     ensemble   None -> the frozen ensemble file via hall_ensemble.load_ensemble(); an injected mapping is for tests
+    limits     {thrust_min_mN, thrust_max_mN, power_max_W} for the evaluation-only flags (A9.22: caller-supplied);
+               None -> abep_sim.operating_inputs (today abep_sim.constants.RFP)
     """
+    limits_source = "abep_sim.constants.RFP" if limits is None else "caller-supplied"
+    limits = _AC.default_limits() if limits is None else {k: float(limits[k]) for k in ("thrust_min_mN", "thrust_max_mN", "power_max_W")}
     ens, ens_info = resolve_ensemble(ensemble)
     ids = admitted_members(ens)                                       # refuses on an empty credible set
     if not isinstance(specs, Sequence) or isinstance(specs, str) or not specs:
@@ -745,7 +750,8 @@ def compare_architectures(specs, upstream: UpstreamState, hall_maps: Mapping, *,
         results[mid] = {}
         for s in specs:
             hm, prov = maps[mid][s.arch]
-            results[mid][s.arch] = _evaluate(mid, s, hm, prov, queries[s.arch], upstream, fn, expected_boundary_version)
+            results[mid][s.arch] = _evaluate(mid, s, hm, prov, queries[s.arch], upstream, fn, expected_boundary_version,
+                                              limits)
             if upstream.fingerprint() != fp0:
                 raise ScopeViolationError("the upstream state changed during the member loop")
     comps = {}
@@ -779,8 +785,7 @@ def compare_architectures(specs, upstream: UpstreamState, hall_maps: Mapping, *,
         "mass_closure": _plain(closures),
         "maps_not_used": {mid: v for mid, v in unused.items() if v},
         "ledger_residual_gate_frac": LEDGER_RESIDUAL_MAX_FRAC,
-        "rfp_limits": {"thrust_min_mN": RFP.thrust_min_mN, "thrust_max_mN": RFP.thrust_max_mN,
-                       "power_max_W": RFP.power_max_W, "source": "abep_sim.constants.RFP"},
+        "rfp_limits": _AC.limits_record(limits, limits_source),
         "results": results,
         "envelopes": envelopes,
         "paired_differences": _paired(archs, ids, results, envelopes),

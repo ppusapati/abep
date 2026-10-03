@@ -6,13 +6,15 @@ Turbo blades:   AO erosion at tip (impact energy from V_rel + tip speed), coatin
 Magnets:        SmCo demagnetisation margin vs temperature (linear loss to Curie), AO if bare
 Cathode:        oxide coverage growth -> work function -> required T -> evaporation; start-cycle limit
 Compressor:     bearing life (magnetic: electronics-limited; ball: L10 hours)
-Reliability:    series system, exponential for electronics, Weibull for wear-out; R(15,000 h), R(26,000 h), SPF list
+Reliability:    series system, exponential for electronics, Weibull for wear-out; R at the firing-life assumption
+                (15,000 h) and at the mission-duration basis (A9.22 G1: 26,280 h), SPF list
 """
 from __future__ import annotations
 import math
 from dataclasses import dataclass
 from .materials import DB, surface_ageing_alpha
 from .constants import AMU, E_CHARGE
+from . import operating_inputs as _OI
 
 
 @dataclass
@@ -38,8 +40,9 @@ class LifeInputs:
     cathode_start_limit: int = 10000
     bearing_type: str = "magnetic"
     duty: float = 0.58
-    mission_h: float = 26000.0
-    firing_h: float = 15000.0
+    # operating inputs (A9.22): defaults from the single seam abep_sim.operating_inputs; callers may supply them
+    mission_h: float = _OI.MISSION_HOURS      # mission-duration basis (AO fluence / life exposure, reliability horizon)
+    firing_h: float = _OI.FIRING_HOURS        # SUBSYSTEM_FIRING_LIFE_ASSUMPTION (required firing life), not the mission
 
 
 def hall_channel_life(li: LifeInputs) -> dict:
@@ -108,19 +111,29 @@ def compressor_life(li: LifeInputs) -> dict:
     return {"bearing_life_h": L10, "ok": L10 >= li.mission_h, "note": "ball bearing L10"}
 
 
+LEGACY_RELIABILITY_HORIZON_H = _OI.HISTORICAL_MISSION_HOURS_PRE_A9_22    # 26,000 h, compatibility key only
+
+
 def reliability(li: LifeInputs, wearout: dict, lam_electronics_per_h: float = 2.0e-6, redundant_electronics=True) -> dict:
     """Series system. Electronics: exponential (redundant pair -> 2R - R^2). Wear-out items: Weibull with beta=3
     and characteristic life = predicted life."""
     def weibull(t, eta_life, beta=3.0):
         return math.exp(-(t / max(eta_life, 1e-9)) ** beta)
-    out = {}
-    for t in (li.firing_h, li.mission_h):
+    def R_at(t):
         R_el = math.exp(-lam_electronics_per_h * t)
         if redundant_electronics:
             R_el = 2 * R_el - R_el ** 2
         R = R_el
         for k, life in wearout.items():
             R *= weibull(t, life)
-        out[f"R_{int(t)}h"] = R
+        return R
+    out = {}
+    # R at the firing-life assumption and at the mission-duration basis, keyed by their hours; plus R at the
+    # pre-A9.22 26,000 h horizon under its own (truthful) key, kept for consumers that still read R_26000h
+    # (system.py eng_R_26000h, outside this lane) until they migrate to R_mission.
+    for t in (li.firing_h, li.mission_h, LEGACY_RELIABILITY_HORIZON_H):
+        out[f"R_{int(t)}h"] = R_at(t)
+    out["R_firing"] = out[f"R_{int(li.firing_h)}h"]
+    out["R_mission"] = out[f"R_{int(li.mission_h)}h"]
     spf = [k for k, life in wearout.items() if life < li.mission_h * 1.5]
     return {**out, "single_point_or_marginal": spf}

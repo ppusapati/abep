@@ -3279,3 +3279,69 @@ Owner instruction 2026-10-03: rapid delivery; review, verification and fixes run
   basis) applied to the committed outputs and confirmed byte-identical by a full single-process rebuild.
 - **Stays on v1.** Immutable history (RFQ v1/v2, M16 v3/v4, mass/Xe v1/v2, A9-10, core integration, owner brief, ...),
   the bid package anchored at bbc480c, state v5 OQ-A902-xx 'raised in v1' citations, the decision dossier listing.
+
+## 2026-10-03 — A9.22 step 1 (lane w2core): operating inputs as explicit parameters; assessment-layer constraint flags (NO numeric change)
+Owner directive A9.22 (layer separation; `docs/decisions/OD_2026_10_03_A9_22_*`): physics never reads RFP / RVM / clause ids;
+requirements reach physics only as frozen engineering inputs.
+- **Seam.** New `abep_sim/operating_inputs.py`: the one module that supplies defaults for caller-omitted operating inputs
+  (MISSION_HOURS, FIRING_HOURS, THRUST_MIN/MAX_mN, P_BUS_MAX_W, MASS_MAX_KG). Today it reads `constants.RFP` (values
+  unchanged); the integrator re-points it to `config/mission/mission_scenario_v1.json`.
+- **Parameters instead of RFP reads.** `archengine.close_architecture(firing_hours=None)`; `mission5.run_phase5(hours,
+  thrust_cap_mN, mission_hours, firing_hours)` and `run_mission_generic(hours, P_bus_max_W)`; `mission_env.array_area_for
+  (P_cap_W=None)`; `life.LifeInputs.mission_h / firing_h` defaults from the seam; `uq_modular.evaluate_sample / run_uq
+  (firing_hours)` (was a literal 15000.0); `arch_compare.compare_architectures(limits=None)`. None = seam default.
+- **Assessment layer.** New `abep_sim/assessment/arch_constraints.py`: archengine output flags (thrust_min_ok, thrust_max_ok,
+  mass_ok, life_ok, all_constraints_ok), the DesignConstraints owner preset (`archengine.rfp_preset` delegates), arch_compare
+  band/cap flags and limits record, uq_modular success flag, mass plausibility screen and hard-gate evaluation route
+  through it. archengine in-loop candidate rejection is unchanged (selection under caller-supplied DesignConstraints).
+- **Not edited (pins).** `abep_sim/mass_bom.py` is pinned immutable by the A9.10 reconciliation and the veto layer, and
+  `abep_sim/cathode_integration.py` by the aux-bus / veto layer: editing either refuses those builders. mass_bom's
+  `build_document` keeps reading the recorded mass limit (its screen is reachable with a caller threshold through
+  `assessment.arch_constraints.mass_plausibility_screen`); cathode_integration reads its values from its immutable v1 data
+  file, not from `constants.RFP`. `hard_gates.py` reads only the gate matrix (no RFP constant) and is unchanged.
+- **Stale label removed.** `spacecraft_reference_drag.RFP_THRUST_BAND` (12-25 mN, unchanged) now carries
+  `requirement_status = FROZEN_REQUIREMENTS_SNAPSHOT` with provenance to `docs/requirements/rfp_official/
+  rfp_registration_v1.json` (A9.22 G3 freeze); the stale `OWNER_STATED_RFP_NOT_REGISTERED` label and its AG-15 open item are
+  gone; the lane document was rebuilt (label/provenance lines and module sha256 only).
+- **Verification.** golden check OK (unchanged); ci_checks 11/11; the 34 builders that read these modules were `--check`
+  current before and after, except `scripts/architecture/build_decision_dossier.py`, stale by pin only (arch_compare.py
+  sha256 in its provenance), left for the integrator to re-pin.
+
+## 2026-10-03 — A9.22 G1 governed baseline change (lane w2core): mission-duration basis 26,280 h
+Owner decision A9.22 G1 (`docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json`,
+G1_MISSION_LIFE = MISSION_DURATION_26280_H): mission-integrated quantities use 26,280 h; 15,000 h survives only as an
+explicitly labelled subsystem firing-life assumption. Intentional model-basis change (CLAUDE.md rules 1-2), applied once.
+- **Seam.** `operating_inputs.MISSION_HOURS = MISSION_DURATION_BASIS_H = 26280.0`; `FIRING_HOURS =
+  SUBSYSTEM_FIRING_LIFE_ASSUMPTION_H = 15000.0` (label `SUBSYSTEM_FIRING_LIFE_ASSUMPTION`);
+  `HISTORICAL_MISSION_HOURS_PRE_A9_22 = 26000.0` exists only to recompute immutable history. `constants.RFP.mission_hours`
+  (Phase A lane) is not edited here.
+- **Per-site choice.**
+  - `archengine.close_architecture` xe_kg (neutralizer Xe integrated over `firing_hours`, default was RFP.mission_hours =
+    26,000): **mission basis 26,280 h**. archengine defines no separate duty/firing profile that would legitimately
+    reduce the firing time, so the 15,000 h assumption is not used for Xe.
+  - `life.LifeInputs.mission_h` (AO fluence of the intake coating, blade/compressor life checks, reliability horizon,
+    SPF threshold 1.5 x mission): **26,280 h**. `LifeInputs.firing_h` = 15,000 h, labelled firing-life assumption
+    (hall channel / cathode life requirement, R at the firing horizon).
+  - `life.reliability`: keys `R_15000h`, `R_26280h`, plus role keys `R_firing` / `R_mission`; `R_26000h` is still emitted
+    as R evaluated AT 26,000 h (truthful key, not relabelled) because `system.py` (Phase B lane) still reads
+    `eng_R_26000h`; that consumer migrates to `R_mission` in its own lane.
+  - `mission5.run_phase5`: propagation `hours` and life `mission_hours` default 26,280 h, `firing_hours` 15,000 h (labelled);
+    output reliability keys `R_firing`, `R_mission`, `R_15000h`, `R_26280h` (was `R_15000h`, `R_26000h`).
+    `run_mission_generic(hours)` default 26,280 h.
+  - Unchanged: `mission_env.array_area_for(years=3.0)` (already 3 years = 26,280 h); `cathode_integration` derived
+    statements (immutable v1 data file, LaB6 lane = historical non-flight; a caller may pass hours explicitly);
+    `system.py` (`fluence(atm, RFP.mission_hours)`, cathode starts) belongs to the Phase B lane.
+- **golden_v2 regenerated** (`python -m abep_sim.golden generate`, then `check` OK). Moved values (all in
+  `cases.architecture_closure.ext_hall_2p5kW`, the LaB6-Xe historical closure; neutralizer Xe 0.05 mg/s x 1.2):
+
+  | entry | before (26,000 h) | after (26,280 h) |
+  |---|---|---|
+  | xe_kg | 5.616 | 5.67648 |
+  | CBE_kg | 42.94863073976071 | 43.02504899163571 |
+  | MEV_kg | 49.88045491831906 | 49.96406543847815 |
+  | m_system_kg | 76.18638222355476 | 76.26999274371386 |
+  | firing_hours_for_xe (new label key) | — | 26280.0 |
+
+  Nothing else moved (gas path, accelerators, mission 4000 h case, selection record and all other cases bit-identical;
+  provenance.code_version updated). The `nonconverged_reference` fixture recomputes golden_v1 on the pre-A9.22 26,000 h
+  basis and still reproduces it verbatim; `golden_v1.json` untouched.
