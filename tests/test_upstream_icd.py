@@ -282,6 +282,15 @@ def _source_of(obj):
         return None
 
 
+# A9.22 Phase B (owner decision A9.22 items 6-7; docs/decisions/OD_2026_10_03_A9_22_*): abep_sim.system.evaluate is
+# now the pre-split compatibility merge legacy_merge(physics_closure(cfg), assess(...)); the gas-path quantities the
+# ICD names are produced / consumed inside the raw producer abep_sim.system.physics_closure. The ICD v1 files keep
+# naming the public entry point `evaluate` (their sha256 is pinned by byte-reproduced records, e.g. H2-3 v1 and
+# subsystem maturity v1/v2, so they are not rewritten); an ICD reference to a delegating entry point resolves to its
+# raw producer ONLY when the delegation is demonstrated behaviourally (test_evaluate_delegates_to_raw_producer).
+RAW_PRODUCER_OF = {("abep_sim.system", "evaluate"): "physics_closure"}
+
+
 def _check_python_ref(q, where):
     mod = importlib.import_module(q["module"])
     obj = mod
@@ -291,12 +300,42 @@ def _check_python_ref(q, where):
     key = q.get("output_key")
     if key is None:
         return
-    holder = mod
-    for part in q.get("key_source", q["attribute"]).split("."):
-        holder = getattr(holder, part)
-    src = _source_of(holder)
-    assert src is not None, f"{where}: cannot read the source of {q['module']}.{q.get('key_source', q['attribute'])}"
-    assert re.search(rf"\b{re.escape(key)}\b", src), f"{where}: key {key!r} not found in {q['module']}.{q['attribute']}"
+    holders = [q.get("key_source", q["attribute"])]
+    if "key_source" not in q and (q["module"], q["attribute"]) in RAW_PRODUCER_OF:
+        holders.append(RAW_PRODUCER_OF[(q["module"], q["attribute"])])
+    found = False
+    for name in holders:
+        holder = mod
+        for part in name.split("."):
+            holder = getattr(holder, part)
+        src = _source_of(holder)
+        assert src is not None, f"{where}: cannot read the source of {q['module']}.{name}"
+        found = found or bool(re.search(rf"\b{re.escape(key)}\b", src))
+    assert found, f"{where}: key {key!r} not found in {q['module']}.{' / '.join(holders)}"
+
+
+def test_evaluate_delegates_to_raw_producer(monkeypatch):
+    """Behaviour behind RAW_PRODUCER_OF: evaluate() obtains its raw quantities from physics_closure() (it calls it once
+    with the same config, and every raw key physics_closure returns, except the raw-only bookkeeping keys, reaches the
+    evaluate() record with the identical value). Fails closed if evaluate stops delegating."""
+    import abep_sim.system as S
+    from abep_sim.assessment.closure_checks import RAW_ONLY_KEYS
+    assert set(RAW_PRODUCER_OF) == {("abep_sim.system", "evaluate")}
+    cfg = S.Config(architecture="hall_1stage")
+    raw = S.physics_closure(cfg)
+    real, calls = S.physics_closure, []
+
+    def spy(c):
+        calls.append(c)
+        return real(c)
+
+    monkeypatch.setattr(S, "physics_closure", spy)
+    out = S.evaluate(cfg)
+    assert calls == [cfg]
+    passed = [k for k in raw if k not in RAW_ONLY_KEYS]
+    assert "atm_source" in passed and "mdot_air_mgps" in passed
+    for k in passed:
+        assert k in out and (out[k] == raw[k] or (out[k] != out[k] and raw[k] != raw[k])), k
 
 
 def test_existing_code_references_resolve(schema):

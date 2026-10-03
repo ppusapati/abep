@@ -1,0 +1,103 @@
+{
+ "schema": "perf_baseline_source_drift_v1",
+ "id": "DRIFT_AFTER_A9_22",
+ "status": "HISTORICAL_SOURCE_DRIFT",
+ "recorded_utc_date": "2026-10-03",
+ "recorded_at_base_commit": "cf31dba60a2f70cee4f6459b8d38de5dbe8d08b7",
+ "chains_on": "docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_18_REPAIR.json",
+ "authority": {
+  "A9.22 layer separation (G1 governed 26,280 h baseline change, Phase B raw / assessment split, operating-input seam, G4 cathodeless golden)": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
+  "A9.18 GOLDEN and PERF_RERUN": "docs/decisions/OD_2026_10_01_A9_18_golden_and_baseline_owner_decisions.json"
+ },
+ "statement": "Profiled sources changed again after the DRIFT_AFTER_A9_18_REPAIR record under the A9.22 layer-separation migrations (operating inputs as explicit parameters, Phase B raw physics closure vs assessment, G1 governed mission-duration baseline change 26,280 h, G4 cathodeless active golden). Each entry's old sha256 is the previous record's new sha256 (DRIFT_AFTER_A9_18_REPAIR, else DRIFT_AFTER_A9_9); a file unchanged at both earlier records chains on the baseline's own sha256 (first_recorded_here). The recorded timings are NOT re-measured, NOT altered and NOT fabricated; they remain valid only for the code state they were measured on. The owner rerun (A9.18 PERF_RERUN) is REQUIRED before any Rust performance admission.",
+ "owner_rerun_required": true,
+ "rust_performance_admission": "BLOCKED_UNTIL_A9_18_PERF_RERUN",
+ "drifted_files": [
+  {
+   "path": "abep_sim/system.py",
+   "old_sha256": "d95d01e35fd5968cc4f1ac31b24d2e8904bb51c85ffeec7e4aad1812734981ad",
+   "old_git_blob": "c612562062104e3df4d3284c88e34fc9b2379d70",
+   "chains_on": "docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_18_REPAIR.json",
+   "new_sha256": "75e5b47cf3e7a8b00774c19399b22d2b30bddd2a1401ad8cd35dd67933be7a51",
+   "new_git_blob": "7d995456bc3b3c96065912dc3f7a73c992b9a448",
+   "changed_by_commits": [
+    "f2ebdb7",
+    "1e4b09b"
+   ]
+  },
+  {
+   "path": "abep_sim/archengine.py",
+   "old_sha256": "2968d1840373768c03c9e1fe8cf6d43e7e2545326107bbc5b16467ff1ee38e8e",
+   "old_git_blob": "e44e8cd92b2b1cdb6ed95f7f6a15f888dc0ac1a6",
+   "chains_on": "docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_9.json",
+   "new_sha256": "4dc28f3a448ea85439ecb616ca2632fa5e2d8b1d18bf897cee9751f1bec13264",
+   "new_git_blob": "5e6b1c9776f12234eec4a544d43e052aa27b6428",
+   "changed_by_commits": [
+    "58309a1",
+    "512d704",
+    "883dcc6"
+   ]
+  },
+  {
+   "path": "abep_sim/uq_modular.py",
+   "old_sha256": "e90de34d032b7ebd15f218331c970948a86f11274bbf11edd721d9b27af3dbe4",
+   "old_git_blob": "178a08d0933c03f8a4064ac09ddca0028e7049c1",
+   "chains_on": "docs/performance/PERFORMANCE_BASELINE_98fbbb9.json",
+   "old_sha256_a9_7": "e90de34d032b7ebd15f218331c970948a86f11274bbf11edd721d9b27af3dbe4",
+   "first_recorded_here": true,
+   "new_sha256": "1a5cb74223113d0d5671e901550605baa1cee462cdc8efcbc2810a9125d4b79c",
+   "new_git_blob": "6f8df9b92030559f667fcfdb29f94d66863d7f0a",
+   "changed_by_commits": [
+    "883dcc6"
+   ]
+  },
+  {
+   "path": "abep_sim/uq6.py",
+   "old_sha256": "1904030d40925dba37eb65402acdf77c5ec517c97210043ce74605efc617cb87",
+   "old_git_blob": "f942b0afd059d9a46f1a322fd49a101a963b5d16",
+   "chains_on": "docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_9.json",
+   "new_sha256": "78db1a74559e2950c2dcd49dc2ce037f88fe3308e3d37180abbe0b82b4f16b94",
+   "new_git_blob": "343cc361d2ca6f024f32573d8dede85ae5364b02",
+   "changed_by_commits": [
+    "f2ebdb7"
+   ]
+  },
+  {
+   "path": "abep_sim/mission_env.py",
+   "old_sha256": "117782f17c94ecc29aa2c17c7eb2fb408b10bfde3f06ce6c0ecd22a773e8f40b",
+   "old_git_blob": "e69dc49c51165b9011399f4fb398ec88b3c98fe8",
+   "chains_on": "docs/performance/PERFORMANCE_BASELINE_98fbbb9.json",
+   "old_sha256_a9_7": "117782f17c94ecc29aa2c17c7eb2fb408b10bfde3f06ce6c0ecd22a773e8f40b",
+   "first_recorded_here": true,
+   "new_sha256": "f568fba29678852565b03821e85dd7cce1fb18ec623ab2ca282e521a97f164af",
+   "new_git_blob": "523bb484a5c8df8cd720465a9a273abe9dffa9e3",
+   "changed_by_commits": [
+    "883dcc6"
+   ]
+  },
+  {
+   "path": "abep_sim/mission5.py",
+   "old_sha256": "b559d188d29b51ec795bbb0de0d0c0d1842148c4d6f693edd738a71e45edb464",
+   "old_git_blob": "bf347bcdeb7f9fbcea5513439f31430ac6dade37",
+   "chains_on": "docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_9.json",
+   "new_sha256": "1c93f31dd425f66e0a419961e57a0909bd0fb6d5049094c7ac2ead54abdb209a",
+   "new_git_blob": "9e2b00f83f0a3f671c1c5f162849056729d75ac7",
+   "changed_by_commits": [
+    "512d704",
+    "883dcc6"
+   ]
+  },
+  {
+   "path": "abep_sim/golden.py",
+   "old_sha256": "eeebe9a2d6b60c24a8226fdc0879bfdc5f4d3df494095a21e5ba6e0a7948ba53",
+   "old_git_blob": "f5364243bae92bccc687fb0eecd9b5bf4408c7a0",
+   "chains_on": "docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_18_REPAIR.json",
+   "new_sha256": "096e4b133eaa580436d41c2a511ee8c9390dc6aa593c671fee3556a605bf6b00",
+   "new_git_blob": "5d2dbc287fd45d3e20adbcebb4167e75346100cb",
+   "changed_by_commits": [
+    "58309a1",
+    "512d704"
+   ]
+  }
+ ]
+}

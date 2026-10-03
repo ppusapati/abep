@@ -22,7 +22,9 @@ AG-15: the registration and RVM re-base parts are APPLIED (docs/requirements/rfp
 closed AG-15 in A9.22 G3 ('ag_15' on F9-OQ-03: owner_acceptance APPLIED, verified against the RVM closure record
 rfp_rebase.ag15_closure, the registration owner_page_review and the F9 AG-15 gate; fail closed). The earlier
 PENDING_OWNER_ACCEPTANCE residuals (F9-OQ-03, OD12, A9.17 RFP) are kept as 'resolved_residual' history.
-A9.22: G3 APPLIED (AG-15 closure lane); G1, G2, G4 .. G9 PENDING_GOVERNED_MIGRATION (their own migration lanes).
+A9.22: G3 APPLIED (AG-15 closure lane); G1, G2, G4 .. G9 APPLIED by their own governed migration lanes (structural
+record checks / artifact tokens, commits from this branch's history); residuals: G2 Option 2 is a later change needing a
+separate owner approval (LATER_SEPARATE_OWNER_APPROVAL), G9 release upload PENDING_OWNER_UPLOAD.
 
     python docs/decisions/application/build_a9_16_application_matrix.py          # write JSON + MD
     python docs/decisions/application/build_a9_16_application_matrix.py --check  # verify both are current
@@ -61,7 +63,7 @@ STATUSES = {
                                   "'residual')",
 }
 RESIDUAL_STATUSES = ("BLOCKED", "PENDING_STEP_2_MODEL_CHANGE", "PENDING_STEP_3_ARCHITECTURE", "PENDING_EVIDENCE",
-                     "PENDING_GOVERNED_MIGRATION",
+                     "PENDING_GOVERNED_MIGRATION", "PENDING_OWNER_UPLOAD", "LATER_SEPARATE_OWNER_APPROVAL",
                      "PENDING_CI_CHANGE", "OPEN_OWNER_QUESTION", "PENDING_FINALIZE_DESIGN_REGEN",
                      "PENDING_OWNER_ACCEPTANCE")
 
@@ -215,6 +217,16 @@ RESOLVED_RESIDUAL = {
 # A9.22 G3: the owner closed AG-15 (commit of the AG-15 closure lane: RVM closure record, registration page review,
 # F9 ag15_f9 closure-record check, state v5 a9_22_g3); the residuals that waited for it are resolved (history kept)
 A922_AG15_COMMIT = "e78c781c70f79fb46b903e19ab9cb1202db94595"
+# A9.22 governed migration lanes (commits from this branch's history)
+A922_DESIGN_SEPARATION_COMMIT = "c06c2ed7b95fc7b6fbc6eb38a9d66b908174bbe0"   # G2 / G5 seam; gates -> assessment
+A922_PHASE_B_COMMIT = "1e4b09b9681dfa6e151f92d902ba1c2a93f6a5af"             # G6 / G7 raw / assessment split
+A922_CONFIG_COMMIT = "2cbe2ddc69ac8ed786ef0bf5975e1f8ed63aa4cf"              # Phase A config (G5 mission_domain)
+A922_G1_COMMIT = "512d704950946bdc0c4e55078c1a5527f75da449"                  # G1 governed baseline change
+A922_G1_SYSTEM_COMMIT = "f2ebdb7bcf6e977c00f7d201abcf1ee7619ba9ed"           # G1 system.py completion
+A922_G4_COMMIT = "58309a115b768e4268a9dba7993778b163fbc399"                  # G4 cathodeless active golden
+A922_G8_STAGE1_COMMIT = "5dbcb539a4372450629bb7b498fb8ec8d7478cf2"           # G8 stage 1 (v2 + inventory)
+A922_G8_STAGE2_COMMIT = "a5294a766e1c58cb78eeba4287064e08378c52f1"           # G8 stage 2 migration record
+A922_G9_COMMIT = "3b2072e324cd121f2d2a7d7ae1df1e4a23dc40d8"                  # G9 F1 core view + archive manifest
 AG15_CLOSURE_POINTER = "/rfp_rebase/ag15_closure"
 AG15_CLOSURE_TOKENS = ['"ag15_closure"', '"decision_code": "AG15_CLOSED"', '"requirements_snapshot": "FROZEN"']
 _AG15_RESOLVED = lambda what: [{"status_before": "PENDING_OWNER_ACCEPTANCE", "what": what,   # noqa: E731
@@ -459,15 +471,106 @@ LATER_APPS = {
              ["def owner_closure_errors", "CLOSURE_DECISION"], "F9 AG-15 closure-record check (fail closed)"),
         _app("A9.22", V5_REL, A922_AG15_COMMIT, ['"a9_22_g3"', '"PERFORMS_OWNER_ACT"'],
              "state v5: F9-OQ-03 PERFORMS_OWNER_ACT record; a9_22_g3 with pointers + sha256")],
-    **{("A9.22", k): [] for k in ("G1_MISSION_LIFE", "G2_C_DRAG_RFP", "G4_GOLDEN_ARCHITECTURE", "G5_ALTITUDE_BAND",
-                                  "G6_IC_HALL_PREFERRED", "G7_DEAD_LOGIC", "G8_BUS_BOUNDARY", "G9_F1_OUTPUT")},
+    # ---- A9.22 G1 / G2 / G4 .. G9: applied by their own governed migration lanes (commits on the integration history;
+    # each (commit, artifact) pair is a commit that changed the artifact; structural record checks where a record exists)
+    ("A9.22", "G1_MISSION_LIFE"): [
+        _app("A9.22", "abep_sim/operating_inputs.py", A922_G1_COMMIT,
+             ["G1_MISSION_LIFE = MISSION_DURATION_26280_H", "SUBSYSTEM_FIRING_LIFE_ASSUMPTION",
+              "HISTORICAL_MISSION_HOURS_PRE_A9_22"],
+             "operating-inputs seam: mission-duration basis 26,280 h (26,000 h kept as the immutable historical "
+             "constant, not consumed); 15,000 h only as the labelled subsystem firing-life assumption"),
+        _app("A9.22", "abep_sim/system.py", A922_G1_SYSTEM_COMMIT, ["A9.22 G1 governed baseline change"],
+             "system.py completion: AO fluence / erosion, cathode starts, mission reliability horizon on 26,280 h"),
+        _app("A9.22", "config/mission/mission_scenario_v1.json", A922_G1_SYSTEM_COMMIT,
+             ['"authoritative_basis_h": 26280', '"g1_status": "APPLIED"'],
+             "frozen mission scenario: mission_hours 26,280 h, G1 APPLIED with the migrated consumers listed",
+             {"node": "/inputs/mission_hours", "checks": {"value": ("equals", 26280),
+                                                          "label": ("equals", "MISSION_DURATION_BASIS"),
+                                                          "g1_status": ("equals", "APPLIED")}}),
+        _app("A9.22", "abep_sim/data/golden_v2.json", A922_G1_COMMIT, ["mission-duration basis 26,280 h"],
+             "golden v2 regenerated under the governed baseline change (architecture_closure xe_kg on 26,280 h)",
+             {"node": "/provenance/a9_22", "checks": {"G1": ("startswith", "mission-duration basis 26,280 h")}}),
+        _app("A9.22", "docs/HISTORY.md", A922_G1_COMMIT, ["A9.22 G1 governed baseline change"],
+             "HISTORY entries (rule 1-2 governed baseline change, logged)")],
+    ("A9.22", "G2_C_DRAG_RFP"): [
+        _app("A9.22", "abep_sim/design/engineering_constraints.py", A922_DESIGN_SEPARATION_COMMIT,
+             ["A9.22 G2 (Option 1)", "C-DRAG-RFP", "INTAKE_DRAG_GENERATION_LIMIT_N"],
+             "C-DRAG-RFP kept as an F1 GENERATION filter read from the frozen engineering-constraints seam "
+             "(Option 1; numerical / design-space results preserved)")],
+    ("A9.22", "G4_GOLDEN_ARCHITECTURE"): [
+        _app("A9.22", "abep_sim/data/golden_v2.json", A922_G4_COMMIT,
+             ['"HISTORICAL_NON_FLIGHT_REGRESSION"', '"hall_icp_neutralizer_reference"'],
+             "golden v2 case roles: LaB6 / hollow-cathode cases HISTORICAL_NON_FLIGHT_REGRESSION; governed active "
+             "reference case hall_icp_neutralizer_reference",
+             {"node": "/case_roles", "checks": {
+                 "architecture_closure": ("equals", "HISTORICAL_NON_FLIGHT_REGRESSION"),
+                 "mission": ("equals", "HISTORICAL_NON_FLIGHT_REGRESSION"),
+                 "hall_icp_neutralizer_reference": ("equals", "GOVERNED_REFERENCE_ACTIVE_ARCHITECTURE_PARTIAL")}}),
+        _app("A9.22", "abep_sim/golden.py", A922_G4_COMMIT, ["def require_flight_eligible_case"],
+             "guard: historical non-flight golden cases refused for closure / selection / budgets"),
+        _app("A9.22", "abep_sim/archengine.py", A922_G4_COMMIT, ["def require_flight_eligible("],
+             "guard: LaB6 / hollow-cathode architectures refused as flight-eligible"),
+        _app("A9.22", "docs/HISTORY.md", A922_G4_COMMIT, ["A9.22 G4"], "HISTORY entry")],
+    ("A9.22", "G5_ALTITUDE_BAND"): [
+        _app("A9.22", "abep_sim/design/engineering_constraints.py", A922_DESIGN_SEPARATION_COMMIT,
+             ["A9.22 G5", "MISSION_DOMAIN_ALTITUDE_KM"],
+             "design seam consumes mission_domain.altitude_km = [180, 230] (no RFP clause parsing)"),
+        _app("A9.22", "config/requirements/rfp_constraints_v1.json", A922_CONFIG_COMMIT,
+             ['"mission_domain"', "A9.22 G5"],
+             "requirements snapshot: mission_domain.altitude_km [180, 230], FROZEN, provenance RVM-01",
+             {"node": "/mission_domain", "checks": {"altitude_km": ("equals", [180, 230]),
+                                                    "status": ("equals", "FROZEN"),
+                                                    "rvm_row": ("equals", "RVM-01")}}),
+        _app("A9.22", "config/mission/mission_scenario_v1.json", A922_CONFIG_COMMIT, ['"altitude_domain_km"'],
+             "frozen mission scenario: altitude domain consumed from the snapshot field mission_domain.altitude_km",
+             {"node": "/inputs/altitude_domain_km/source",
+              "checks": {"snapshot_field": ("equals", "mission_domain.altitude_km")}})],
+    ("A9.22", "G6_IC_HALL_PREFERRED"): [
+        _app("A9.22", "abep_sim/system.py", A922_PHASE_B_COMMIT,
+             ['RAW_CLOSURE_SCHEMA_VERSION = "raw_closure_v2"', "def physics_closure"],
+             "raw physics closure (schema increment raw_closure_v2): no IC metric, preference flag or compliance "
+             "classification"),
+        _app("A9.22", "abep_sim/assessment/closure_checks.py", A922_PHASE_B_COMMIT,
+             ["FORBIDDEN_RAW_KEYS", '"hall_preferred"', "def legacy_merge"],
+             "assessment layer: IC metrics, hall_preferred, RFP / compliance classifications; legacy merge keeps "
+             "the pre-split evaluate() dict for existing tools")],
+    ("A9.22", "G7_DEAD_LOGIC"): [
+        _app("A9.22", "abep_sim/transient.py", A922_PHASE_B_COMMIT,
+             ['always-true "ignition_req_met" flag was removed'], "ignition_req_met '... or True' removed"),
+        _app("A9.22", "tests/test_raw_assessment_split.py", A922_PHASE_B_COMMIT,
+             ["def test_dead_logic_removed", 'not hasattr(sizing, "RFP")', '"duty_cycle" not in'],
+             "structural test: Budgets.duty_cycle, the unused RFP import in sizing and the always-true flag are "
+             "gone; evaluate() identical to the base-commit fixture")],
+    ("A9.22", "G8_BUS_BOUNDARY"): [
+        _app("A9.22", "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
+             A922_G8_STAGE1_COMMIT, ['"boundary_version": "bus_power_boundary_a9_v2"', '"configurations": ['],
+             "bus_power_boundary_a9_v2: hall_icp_neutralizer only; hall_c1_reference ground-reference / test "
+             "metadata, not a flight bus configuration (v1 immutable)",
+             {"node": "/ground_reference_test_metadata/hall_c1_reference",
+              "checks": {"role": ("equals", "GROUND_ONLY_LAB_REFERENCE"),
+                         "flight_bus_configuration": ("equals", False)}}),
+        _app("A9.22", "abep_sim/bus_boundary_a9_v2.py", A922_G8_STAGE1_COMMIT,
+             ['BOUNDARY_VERSION = "bus_power_boundary_a9_v2"'], "v2 boundary module (v1 runs unchanged)"),
+        _app("A9.22", "docs/architecture_comparison/power_boundary_a9_v2/CONSUMER_INVENTORY.json",
+             A922_G8_STAGE1_COMMIT, ['"LIVE_REPOINT"'], "consumer inventory listed before anything changed"),
+        _app("A9.22", "docs/architecture_comparison/power_boundary_a9_v2/STAGE2_MIGRATION.json",
+             A922_G8_STAGE2_COMMIT, ['"verdict": "NO_PHYSICS_RESULT_CHANGED', '"v1_family_byte_identical"'],
+             "one controlled migration: LIVE_REPOINT consumers re-pointed with pins together; v1 byte-identical; "
+             "no physics result changed")],
+    ("A9.22", "G9_F1_OUTPUT"): [
+        _app("A9.22", "docs/evidence_archives/f1_intake/F1_INTAKE_SYNTHESIS_v1_405296e.manifest.json",
+             A922_G9_COMMIT, ['"schema": "evidence_archive_manifest_v1"', '"generating_commit"', '"input_manifest"'],
+             "deterministic F1 evidence archive manifest (archive sha256 / size, generating commit, architecture / "
+             "design-state-set / input-manifest hashes, command, timestamp, per-file sha256, classification)",
+             {"node": "/storage/preferred", "checks": {"kind": ("startswith", "GitHub Release asset"),
+                                                       "status": ("equals", "PENDING_OWNER_UPLOAD")}}),
+        _app("A9.22", "docs/design_synthesis/f1_intake/f1_core_view.py", A922_G9_COMMIT,
+             ['CORE_SCHEMA = "f1_intake_synthesis_v1_core"', "def expand_core"],
+             "compact F1 core view for consumers (lossless)"),
+        _app("A9.22", "scripts/evidence/f1_archive.py", A922_G9_COMMIT, ["def build_manifest", "def verify"],
+             "archive builder / byte-for-byte verifier (original kept until hash-verified)")],
 }
-A922_MIGRATION_REASON = ("owner-approved (A9.22 migration plan, phases A-E) and not applied by the AG-15 closure lane; "
-                         "applied by its own governed migration (no artifact claimed here)")
 LATER_STATUS = {
-    **{("A9.22", k): ("PENDING_GOVERNED_MIGRATION", A922_MIGRATION_REASON)
-       for k in ("G1_MISSION_LIFE", "G2_C_DRAG_RFP", "G4_GOLDEN_ARCHITECTURE", "G5_ALTITUDE_BAND",
-                 "G6_IC_HALL_PREFERRED", "G7_DEAD_LOGIC", "G8_BUS_BOUNDARY", "G9_F1_OUTPUT")},
     ("A9.18", "PERF_RERUN"): ("BLOCKED", "owner-machine action after the step-3 merge (nothing to run now): the identical "
                               "dedicated procedure on the idle owner machine; not runnable in this environment"),
     ("A9.21", "PERF_RERUN"): ("BLOCKED", "owner-machine action: the owner reruns the dedicated baseline on the exact "
@@ -480,17 +583,15 @@ LATER_STATUS = {
                                 "(docs/procurement/rfq_a9_v3); dispatch is an owner / procurement act"),
 }
 LATER_RESIDUAL = {
-    **{("A9.22", k): [("PENDING_GOVERNED_MIGRATION", w, "its own A9.22 migration lane")] for k, w in (
-        ("G1_MISSION_LIFE", "mission duration 26,280 h for mission-integrated quantities (governed baseline change)"),
-        ("G2_C_DRAG_RFP", "C-DRAG-RFP kept as a generation filter from the frozen engineering-constraints snapshot"),
-        ("G4_GOLDEN_ARCHITECTURE", "governed golden / reference case for hall_icp_neutralizer; LaB6 golden data "
-                                   "HISTORICAL_NON_FLIGHT_REGRESSION"),
-        ("G5_ALTITUDE_BAND", "mission_domain.altitude_km = [180, 230] consumed with provenance to the requirements "
-                             "snapshot"),
-        ("G6_IC_HALL_PREFERRED", "IC / hall_preferred / compliance classifications moved to the assessment layer"),
-        ("G7_DEAD_LOGIC", "remove ignition_req_met '... or True', unused Budgets.duty_cycle and the unused RFP import"),
-        ("G8_BUS_BOUNDARY", "bus_boundary_a9_v2 (hall_icp_neutralizer only) and one controlled consumer migration"),
-        ("G9_F1_OUTPUT", "deterministic F1 evidence archive outside ordinary Git history with manifest + hashes"))},
+    ("A9.22", "G2_C_DRAG_RFP"): [
+        ("LATER_SEPARATE_OWNER_APPROVAL", "Option 2 (generate all designs, apply drag <= 25 mN only in the "
+         "assessment layer) is recorded as a later semantic / model-pipeline change; it changes the F1-F8 Pareto "
+         "populations and robustness counts and needs a separate owner approval (not applied)", "owner")],
+    ("A9.22", "G9_F1_OUTPUT"): [
+        ("PENDING_OWNER_UPLOAD", "the hash-verified F1 archive F1_INTAKE_SYNTHESIS_v1_405296e.tar.zst is uploaded by "
+         "the owner as the GitHub Release asset (tag evidence-f1-intake-synthesis-v1-405296e); the original full F1 "
+         "file is removed from the working tree only after the re-downloaded asset is hash-verified byte for byte",
+         "owner (GitHub Release on ppusapati/abep)")],
     ("A9.22", "G3_REQUIREMENTS_SNAPSHOT"): [
         ("PENDING_EVIDENCE", "compliance of the frozen rows: freezing the requirement basis changes no RVM status; "
          "every row stays as evaluated until determining evidence exists", "hardware programme / RVM")],
@@ -881,11 +982,27 @@ def _verify_pin(doc, pin, qid, artifact):
 def _verify_record(doc, rec, qid, artifact):
     """Fail closed: exactly one record of the JSON list at rec['list'] matches rec['match'] and every field check holds
     (('equals', v) or ('startswith', prefix)). Returns the JSON pointer of the record."""
+    if "node" in rec:      # (A9.22) a JSON object at a pointer, field checks on it (no list / match)
+        rec = {"list": rec["node"].rsplit("/", 1)[0] or "/", "_obj": rec["node"].rsplit("/", 1)[1],
+               "checks": rec["checks"]}
     node = doc
-    for part in rec["list"].strip("/").split("/"):
+    for part in rec["list"].strip("/").split("/") if rec["list"].strip("/") else ():
         node = node[int(part)] if isinstance(node, list) else node.get(part) if isinstance(node, dict) else None
         if node is None:
             raise SystemExit(f"{qid}: {artifact}{rec['list']} missing (application not verifiable)")
+    if "_obj" in rec:
+        x = node.get(rec["_obj"]) if isinstance(node, dict) else None
+        ptr = f"{rec['list'].rstrip('/')}/{rec['_obj']}"
+        if not isinstance(x, dict):
+            raise SystemExit(f"{qid}: {artifact}{ptr} missing or not an object (application not verifiable)")
+        for field, (op, want) in rec["checks"].items():
+            got = x.get(field)
+            if op not in ("equals", "startswith"):
+                raise SystemExit(f"{qid}: unknown record check op {op!r} for {field}")
+            ok = got == want if op == "equals" else isinstance(got, str) and got.startswith(want)
+            if not ok:
+                raise SystemExit(f"{qid}: {artifact}{ptr}.{field} = {got!r} fails {op} {want!r}")
+        return ptr
     key, val = rec["match"]
     hits = [i for i, x in enumerate(node) if isinstance(x, dict) and x.get(key) == val]
     if len(hits) != 1:
@@ -983,9 +1100,14 @@ def build():
                    "what": w} for ln, w in A915_REVIEWED_NA.items()]
     a915_apps += a915_integ
     a915_apps += [_verify_app(_app("STEP3", "abep_sim/design/upstream_a9_13.py", DESIGN_LAYER_COMMIT,
-                                   ["A9.15 propellants", "def propellant_paths_check"],
+                                   ["A9.15 propellants", "PROPELLANT_POLICY = {"],
                                    "design layer: ambient air AND Xe capability, two separate propellant tanks / "
-                                   "paths (propellant_paths_check)"), "A9.15"),
+                                   "paths (PROPELLANT_POLICY, AIR_PATH / XE_PATH)"), "A9.15"),
+                  _verify_app(_app("A9.22", "abep_sim/assessment/design_gates.py", A922_DESIGN_SEPARATION_COMMIT,
+                                   ["def propellant_paths_check", "A9.15 / RFP-P18-08"],
+                                   "assessment layer (A9.22 layer separation moved it from the design layer; "
+                                   "upstream_a9_13 keeps a deprecated shim): HC-10 structural check of the two "
+                                   "separate propellant tanks / paths (propellant_paths_check)"), "A9.15"),
                   _verify_app(_app("STEP3", "docs/requirements/rvm_a9/rfp_rebase.py", RVM_REBASE_COMMIT, ["A9.15"],
                                    "RVM re-base on the registered RFP carries the A9.15 propellant policy"), "A9.15")]
     for x in a915_apps:
@@ -1036,7 +1158,7 @@ def build():
     return {
         "schema": "a9_16_application_matrix_v1", "id": "a9_16_application_matrix_v1",
         "lane": "A9.16 step 1 integration; refreshed in the A9.16 finalize records lane (step 2 / step 3 / A9.17 / "
-                "A9.18 applications) and in the A9.17 .. A9.21 records lane (A9.19 / A9.20 / A9.21) and in the A9.22 AG-15 closure lane (G3)", "date": "2026-10-03",
+                "A9.18 applications) and in the A9.17 .. A9.21 records lane (A9.19 / A9.20 / A9.21) and in the A9.22 AG-15 closure lane (G3) and the A9.22 governed migration lanes (G1, G2, G4 .. G9)", "date": "2026-10-03",
         "generated_by": "docs/decisions/application/build_a9_16_application_matrix.py",
         "companion_document": REL(OUT_MD), "test": "tests/test_decision_application_a9_16.py",
         "status_vocabulary": STATUSES, "residual_status_vocabulary": list(RESIDUAL_STATUSES),
