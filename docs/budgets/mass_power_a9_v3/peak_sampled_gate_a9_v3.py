@@ -1,17 +1,19 @@
-"""RFP bus-power gate: the owner's peak_sampled rule (A9.14 OQ-A910-03), as a NEW helper beside abep_sim/bus_boundary_a9.
+"""RFP bus-power gate: the owner's peak_sampled rule (A9.14 OQ-A910-03), as a NEW helper beside abep_sim/bus_boundary_a9_v2.
 
-abep_sim/bus_boundary_a9.py is imported only (never modified). Its rfp_power_gate() keeps treating a ``peak_sampled``
+abep_sim/bus_boundary_a9_v2.py is imported only (never modified; A9.22 G8 stage 2 re-pointed this helper from the
+immutable v1 abep_sim/bus_boundary_a9.py, whose code objects and constants v2 uses unchanged). Its rfp_power_gate()
+keeps treating a ``peak_sampled``
 ledger as NOT_EVALUABLE in both directions (the A9.1 rule it was written under); this helper implements the later owner
 decision A9.14 OQ-A910-03 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json, verbatim .md S8.29):
 
   * ``peak_sampled < 1500 W`` is a ONE-SIDED SUFFICIENT PASS condition, but only for a CONFORMANT record: declared
     >= 100 kSa/s, >= 20 kHz measurement bandwidth, anti-alias filtering, synchronized channels, no saturation and
     total-bus-power reconstruction (every conformant sample < 1500 W, so its 1 ms mean cannot exceed 1500 W);
-  * ``peak_sampled >= 1500 W`` is NOT a failure: the proper 1 ms maximum is calculated (bus_boundary_a9.p_bus_1ms_max)
+  * ``peak_sampled >= 1500 W`` is NOT a failure: the proper 1 ms maximum is calculated (bus_boundary_a9_v2.p_bus_1ms_max)
     from the sampled total-bus record, and that value decides; without the samples the record stays NOT_EVALUABLE;
   * a non-conformant record is NOT_EVALUABLE in both directions (no default is assumed for a missing declaration).
 
-Pure arithmetic on the caller's record; no model, no default, no Hall number. Standard library + bus_boundary_a9.
+Pure arithmetic on the caller's record; no model, no default, no Hall number. Standard library + bus_boundary_a9_v2.
 """
 from __future__ import annotations
 
@@ -24,7 +26,7 @@ _ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.
 if _ROOT not in sys.path:
     sys.path.insert(0, _ROOT)
 
-from abep_sim import bus_boundary_a9 as bb  # noqa: E402  (import only; never modified)
+from abep_sim import bus_boundary_a9_v2 as bb  # noqa: E402  (import only; never modified)
 
 LIMIT_W = bb.P_BUS_REQUIREMENT_W
 MIN_SAMPLE_RATE_SA_S = bb.GATE_MIN_SAMPLE_RATE_SA_S      # 100 kSa/s (A9.1 OQ-A902-01; restated by A9.14 OQ-A910-03)

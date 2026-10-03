@@ -29,7 +29,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Callable, Mapping, Sequence
 
-from .. import bus_boundary_a9 as bb
+from .. import bus_boundary_a9_v2 as bb
 from ..design import a9_19_architecture as a919
 from ..design import architecture_optimizer as ao
 from ..design import engineering_constraints as ec
@@ -138,16 +138,16 @@ def evaluate_constraints(values: Mapping) -> list[dict]:
             vst = rec.get("status")
             if vst in (EVALUATED, SYNTHETIC_ONLY):
                 st = {"PASS": C_MET, "FAIL": C_VIOLATED}.get(gv, C_NOT_EVALUATED)
-                basis = f"bus_boundary_a9.rfp_power_gate verdict {gv} ({vst})"
+                basis = f"bus_boundary_a9_v2.rfp_power_gate verdict {gv} ({vst})"
             elif vst == PARAMETRIC_ONLY:
                 # the gate ignores evidence class: on assumed / parametric loads its verdict is a sensitivity
                 # comparison only and never counts as satisfied (fail closed; OPT-04)
                 st = {"PASS": C_MET_PARAMETRIC, "FAIL": C_VIOLATED_PARAMETRIC}.get(gv, C_NOT_EVALUATED)
-                basis = (f"bus_boundary_a9.rfp_power_gate verdict {gv} on {vst} ledger values: sensitivity "
+                basis = (f"bus_boundary_a9_v2.rfp_power_gate verdict {gv} on {vst} ledger values: sensitivity "
                          "comparison only, never counted as satisfied (fail closed)")
             else:
                 st = C_NOT_EVALUATED
-                basis = (f"bus_boundary_a9.rfp_power_gate verdict {gv} but value status {vst}: "
+                basis = (f"bus_boundary_a9_v2.rfp_power_gate verdict {gv} but value status {vst}: "
                          "not evaluable (fail closed)")
         elif rec is not None and rec.get("status") in (EVALUATED, PARAMETRIC_ONLY, SYNTHETIC_ONLY) and \
                 rec.get("value") is not None and math.isfinite(float(rec["value"])):
@@ -187,7 +187,7 @@ def constraint_met_value_kinds(evaluations: Sequence[Mapping]) -> set:
 
 
 def bus_power_gate(steady: Mapping, startup) -> dict:
-    """A9-02 RFP power gate verdict on supplied ledgers (bus_boundary_a9.rfp_power_gate; HC-03 assessment)."""
+    """A9-02 RFP power gate verdict on supplied ledgers (bus_boundary_a9_v2.rfp_power_gate; HC-03 assessment)."""
     return bb.rfp_power_gate(steady, startup)
 
 

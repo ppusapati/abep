@@ -77,7 +77,7 @@ What this is not: not an architecture selection, design, optimum, winner, requir
 |---|---|---|---|---|
 | HC-01 | RVM-02 | T (sustained, atmospheric propellant) >= 0.012 N | NOT_EVALUATED | no evaluable value (fail closed: never counted as satisfied) |
 | HC-02 | RVM-03 | demonstrated thrust capability at P_bus < 1500 W >= 0.025 N | NOT_EVALUATED | no evaluable value (fail closed: never counted as satisfied) |
-| HC-03 | RVM-04 | P_bus,1ms,max (steady and start-up, A9-02 gate) < 1500 W | NOT_EVALUATED | bus_boundary_a9.rfp_power_gate verdict NOT_EVALUABLE but value status NOT_EVALUATED: not evaluable (fail closed) |
+| HC-03 | RVM-04 | P_bus,1ms,max (steady and start-up, A9-02 gate) < 1500 W | NOT_EVALUATED | bus_boundary_a9_v2.rfp_power_gate verdict NOT_EVALUABLE but value status NOT_EVALUATED: not evaluable (fail closed) |
 | HC-04 | RVM-06 | wet propulsion-system mass < 40 kg | NOT_EVALUATED | no evaluable value (fail closed: never counted as satisfied) |
 | HC-05 | RVM-15 | I_e,cap - I_d,max,H1 (one-sided LCB) > 0 A | NOT_EVALUATED | no evaluable value (fail closed: never counted as satisfied) |
 | HC-06 | RVM-17 | thermal margin below validated limits >= 50 K | NOT_EVALUATED | no evaluable value (fail closed: never counted as satisfied) |

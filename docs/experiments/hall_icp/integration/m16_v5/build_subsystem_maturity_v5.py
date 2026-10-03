@@ -117,7 +117,17 @@ REFERENCED = {
     "P4": ("docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json", "id", "p4_anode_materials_v1",
            "P4 applications"),
     "RFQ3": ("docs/procurement/rfq_a9_v3/rfq_a9_v3.json", "id", "RFQ_A9_V3", "RFQ v3 packages"),
+    # A9.22 G8 stage 2: BUS_ITEM_OPEN blockers resolve in the v2 boundary (no longer through the immutable v4 builder's
+    # INPUTS, which name v1); the item is cross-checked identical in v1
+    "BUS": ("docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json", "id",
+            "bus_power_boundary_a9_v2", "A9-02 bus-power boundary v2 (BUS_ITEM_OPEN blockers)"),
 }
+BUS_V1_REL = "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json"
+
+
+def _bus_v2_text(text):
+    """A v4-carried artifact string naming the v1 boundary document, re-pointed to v2 (citation only)."""
+    return text.replace(BUS_V1_REL, REFERENCED["BUS"][0]) if isinstance(text, str) else text
 V4_KIND_KEY = {"P1_MEASUREMENT": "P1", "P2_MEASUREMENT": "P2", "P3_INPUT": "P3", "P4_EVIDENCE": "P4",
                "VENDOR_QUOTE": "RFQ", "INTERFACE_TBD": "ICD", "BUS_ITEM_OPEN": "BUS", "H2A9_ITEM_TBD": "H2A9"}
 
@@ -252,6 +262,15 @@ def resolve_v5(ctx: Ctx, kind: str, ident: str, v4row: dict) -> dict:
         raise BuildError(f"blocker kind {kind!r} not in the v5 vocabulary")
     cat = SPEC.BLOCKER_KINDS_V5[kind][0]
     base = {"id": ident, "kind": kind}
+    if kind == "BUS_ITEM_OPEN":
+        b = B4.resolve_blocker(ctx.ctx4, kind, V4_KIND_KEY[kind], ident)        # v1 (v4 resolver), cross-check
+        it = _one(ctx.docs["BUS"].get("items", []), "id", ident, "bus_power_boundary_a9_v2 items")
+        if not str(it.get("status", "")).startswith("OPEN"):
+            raise BuildError(f"bus item {ident} is no longer OPEN")
+        if (b["artifact"], str(it.get("status")), str(it.get("name", ""))) != (BUS_V1_REL, b["state"], b["detail"]):
+            raise BuildError(f"bus item {ident}: v2 differs from the v1 resolution")
+        return {**base, "category": cat, "artifact": REFERENCED["BUS"][0], "locator": f"items[id={ident}]",
+                "state": str(it.get("status")), "detail": _clip(str(it.get("name", "")))}
     if kind in SPEC.V4_KINDS:
         b = B4.resolve_blocker(ctx.ctx4, kind, V4_KIND_KEY[kind], ident)
         return {**base, "category": cat, "artifact": b["artifact"], "locator": b["locator"], "state": b["state"],
@@ -480,7 +499,7 @@ def build_row(ctx: Ctx, r4: dict, idx: int) -> tuple:
         if "check" in sd:
             checks.append(resolve_v5(ctx, sd["check"][0], sd["check"][1], r4))
         remaining.append({"id": "V4-SCHED", "kind": "V4_SCHEDULER_CARRIED", "category": sd["category"],
-                          "artifact": sched4.get("source"), "locator": f"{v4ref}/blocking_item",
+                          "artifact": _bus_v2_text(sched4.get("source")), "locator": f"{v4ref}/blocking_item",
                           "state": "OPEN (carried from v4" + ("; re-resolved" if checks else "; no answer removes it")
                                    + ")", "detail": _clip(sched4["text"]), "note": sd["note"],
                           "constrained_by": list(sd.get("by", [])), "still_open_checks": checks})

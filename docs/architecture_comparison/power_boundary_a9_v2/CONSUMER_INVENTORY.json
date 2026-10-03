@@ -2,9 +2,11 @@
  "schema": "consumer_inventory_v1",
  "id": "bus_power_boundary_a9_v1_consumer_inventory",
  "decision": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json G8_BUS_BOUNDARY (item 8: list every consumer before changing anything)",
- "stage": "1 (inventory + v2 artefact; NO consumer re-pointed)",
+ "stage": "1 (inventory + v2 artefact; NO consumer re-pointed); re-run at the pre-migration head before the stage-2 migration (docs/architecture_comparison/power_boundary_a9_v2/STAGE2_MIGRATION.json)",
  "date": "2026-10-03",
- "base_commit": "9eb302c06241c8e8a369334a6bdc5bc559227143",
+ "base_commit": "5b32edcc8e9124cd8bd12aba7d91204c1470aa3f",
+ "stage_1_commit": "9eb302c06241c8e8a369334a6bdc5bc559227143",
+ "scanned_tree": "git tree of 5b32edcc8e9124cd8bd12aba7d91204c1470aa3f (not the working tree: reproducible after stage 2)",
  "generated_by": "docs/architecture_comparison/power_boundary_a9_v2/build_consumer_inventory.py",
  "regenerate": "python docs/architecture_comparison/power_boundary_a9_v2/build_consumer_inventory.py  (check: --check)",
  "v1_family": {
@@ -55,7 +57,7 @@
   ]
  },
  "method": [
-  "every tracked text file scanned line by line (git ls-files at the base commit)",
+  "every tracked text file of the base commit's git tree scanned line by line",
   "name match: bus_boundary_a9 | bus_power_boundary_a9 | power_boundary_a9 | BUS_POWER_BOUNDARY_A9 (not followed by _v2)",
   "sha match: 16-hex prefix of the sha256 of every committed version of the five v1 family files",
   "key_reference: lines using a pin key that the file (or the declared definer) binds to the v1 document: {\"docs/requirements/rvm_a9/rvm_a9_rows.py\": \"BUS\", \"docs/experiments/hall_icp/integration/m16_v4/m16_v4_rows.py\": \"BUS\", \"docs/experiments/hall_icp/integration/m16_v5/build_subsystem_maturity_v5.py\": \"BUS\"}; in-file keys {\"docs/architecture/freeze_candidate/build_freeze_candidate.py\": \"[\\\\\\\"']BUS[\\\\\\\"']\", \"docs/experiments/hall_icp/p2_impedance_map/build_p2_impedance_prep.py\": \"[\\\\\\\"']BUS[\\\\\\\"']\", \"docs/procurement/rfq_a9/build_rfq_a9.py\": \"[\\\\\\\"']BUS[\\\\\\\"']\", \"docs/bid/package/compliance_data.py\": \"\\\\bBPB\\\\b\"}",
@@ -318,6 +320,10 @@
     "tests/test_bus_boundary_a9_v2.py"
    ],
    "sha_pinned_by": [
+    "docs/architecture_comparison/power_boundary_a9_v2/BUS_POWER_BOUNDARY_A9_V2.md",
+    "docs/architecture_comparison/power_boundary_a9_v2/CONSUMER_INVENTORY.json",
+    "docs/architecture_comparison/power_boundary_a9_v2/build_bus_power_boundary_a9_v2.py",
+    "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
     "docs/bid/OWNER_DECISION_BRIEF_P0_P1.md",
     "docs/bid/owner_decision_brief_p0_p1.json",
     "docs/budgets/mass_power_a9_v2/MASS_POWER_A9_V2.md",
@@ -327,6 +333,7 @@
     "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
     "docs/experiments/hall_icp/integration/A9_10_RECONCILIATION.md",
     "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json",
+    "tests/test_bus_boundary_a9_v2.py",
     "tests/test_mass_power_a9_v2.py",
     "tests/test_mass_power_a9_v3.py"
    ],
@@ -392,37 +399,37 @@
      "text": "from .. import bus_boundary_a9 as bb"
     },
     {
-     "line": 369,
+     "line": 382,
      "kind": "text_citation",
      "target": "abep_sim/bus_boundary_a9.py",
      "text": "f\"{MP_REL} items_v2 MPV2-P07; abep_sim/bus_boundary_a9.py RF_FREQUENCY_HZ\", \"owner-allocation\","
     },
     {
-     "line": 380,
+     "line": 393,
      "kind": "text_citation",
      "target": "abep_sim/bus_boundary_a9.py",
      "text": "\"abep_sim/bus_boundary_a9.py LAB_RF_FORWARD_W_RANGE\", \"owner-allocation\", \"TEST_CAPABILITY_ONLY\"),"
     },
     {
-     "line": 910,
+     "line": 923,
      "kind": "text_citation",
      "target": "abep_sim/bus_boundary_a9.py",
      "text": "a rankable class; the RFP gate verdict of bus_boundary_a9.rfp_power_gate is carried for the hard constraint."
     },
     {
-     "line": 1197,
+     "line": 1210,
      "kind": "text_citation",
      "target": "abep_sim/bus_boundary_a9.py",
      "text": "basis = f\"bus_boundary_a9.rfp_power_gate verdict {gv} ({vst})\""
     },
     {
-     "line": 1202,
+     "line": 1215,
      "kind": "text_citation",
      "target": "abep_sim/bus_boundary_a9.py",
      "text": "basis = (f\"bus_boundary_a9.rfp_power_gate verdict {gv} on {vst} ledger values: sensitivity \""
     },
     {
-     "line": 1206,
+     "line": 1219,
      "kind": "text_citation",
      "target": "abep_sim/bus_boundary_a9.py",
      "text": "basis = (f\"bus_boundary_a9.rfp_power_gate verdict {gv} but value status {vst}: \""
@@ -510,85 +517,85 @@
    "sha_pinned_by": [],
    "hits": [
     {
-     "line": 362,
+     "line": 361,
      "kind": "text_citation",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "| AFC-PR-RF-08 | flight RF source DC-input -> forward-power efficiency | TBD - requires a measured flight-representative DC-input RF source (A902-21) - | TBD | - | docs/architecture_comparison/powe..."
     },
     {
-     "line": 387,
+     "line": 386,
      "kind": "text_citation",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "| AFC-SY-PPU-01 | internal propulsion bus | 100.0 V (regulated) | n/a (decision / rule) | owner-allocation (RULE) | docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json#/ite..."
     },
     {
-     "line": 388,
+     "line": 387,
      "kind": "text_citation",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "| AFC-SY-PPU-02 | spacecraft-input front-end voltage and efficiency | TBD - front end kept configurable until the spacecraft bus is known (A902-12 / A902-13 OPEN) V; - | TBD | - | docs/architecture..."
     },
     {
-     "line": 390,
+     "line": 389,
      "kind": "text_citation",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "| AFC-SY-PPU-04 | Hall magnet supplies | inner, outer, trim (3), current-controlled, current recorded per reading - | n/a (decision / rule) | assumed (RULE) | docs/architecture_comparison/power_bou..."
     },
     {
-     "line": 391,
+     "line": 390,
      "kind": "text_citation",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "| AFC-SY-PPU-05 | RF quantity crossing the bus boundary | generator DC input only - | n/a (decision / rule) | owner-allocation (RULE) | docs/architecture_comparison/power_boundary_a9/bus_power_boun..."
     },
     {
-     "line": 392,
+     "line": 391,
      "kind": "text_citation",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "| AFC-SY-PPU-06 | supply efficiencies per slot | TBD - one per slot (A902-35 OPEN) - | TBD | - | docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json#/items/34 | TBD_AFTER_E..."
     },
     {
-     "line": 399,
+     "line": 398,
      "kind": "text_citation",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "| AFC-SY-PWR-01 | RFP bus-power gate P_bus,1ms,max (steady and start-up) | 1500.0 W (strict <) | n/a (decision / rule) | requirement-as-recorded (REQUIREMENT_AS_RECORDED) | docs/architecture_compar..."
     },
     {
-     "line": 400,
+     "line": 399,
      "kind": "text_citation",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "| AFC-SY-PWR-02 | internal design allocation (ICP fits inside; 1350 -> 1500 W margin not consumed nominally) | 1350.0 W | n/a (allocation, not a CBE) | owner-allocation (ALLOCATION) | docs/architec..."
     },
     {
-     "line": 401,
+     "line": 400,
      "kind": "text_citation",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "| AFC-SY-PWR-03 | common allocation (compressor, flow control, thermal, housekeeping) incl. 50 W controls... | {\"common_W\": 300.0, \"controls_thermal_W\": 50.0} W | n/a (allocation, not a CBE) | owne..."
     },
     {
-     "line": 402,
+     "line": 401,
      "kind": "text_citation",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "| AFC-SY-PWR-04 | Hall + electron-source envelope at the common upper value | 1050.0 W | n/a (allocation, not a CBE) | model-derived (ALLOCATION) | docs/architecture_comparison/power_boundary_a9/bu..."
     },
     {
-     "line": 405,
+     "line": 404,
      "kind": "text_citation",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "| AFC-SY-PWR-07 | Hall discharge load | TBD - requires the registered H-1 envelope and a measured flight-representative discharge supply (row 113); no Hall closure or 0-D number is used W | TBD | -..."
     },
     {
-     "line": 444,
+     "line": 443,
      "kind": "text_citation",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "| AFC-SY-CTL-02 | enforced ordering (hall_icp_neutralizer) | [[\"icp_rf_ignition\", \"icp_collector_bias_on\"], [\"icp_rf_ignition\", \"hall_discharge_ignition\"], [\"magnet_ramp\", \"hall_discharge_ignition\"..."
     },
     {
-     "line": 445,
+     "line": 444,
      "kind": "text_citation",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "| AFC-SY-CTL-03 | peak sequencing rule | at most one peak-class load commanded to rise per start-up step; steady loads may stay on - | n/a (decision / rule) | owner-allocation (RULE) | docs/archite..."
     },
     {
-     "line": 809,
+     "line": 810,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "- `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` 9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6"
@@ -615,289 +622,286 @@
     "tests/test_icp_gate_a9_21.py",
     "tests/test_hw_programme_a9_21.py"
    ],
-   "sha_pinned_by": [
-    "docs/bid/OWNER_DECISION_BRIEF_P0_P1.md",
-    "docs/bid/owner_decision_brief_p0_p1.json"
-   ],
+   "sha_pinned_by": [],
    "hits": [
     {
-     "line": 493,
+     "line": 501,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\","
     },
     {
-     "line": 494,
+     "line": 502,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\""
     },
     {
-     "line": 6401,
+     "line": 6409,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\","
     },
     {
-     "line": 6403,
+     "line": 6411,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\""
     },
     {
-     "line": 6435,
+     "line": 6443,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\","
     },
     {
-     "line": 6437,
+     "line": 6445,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\""
     },
     {
-     "line": 6470,
+     "line": 6478,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\","
     },
     {
-     "line": 6472,
+     "line": 6480,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\""
     },
     {
-     "line": 6677,
+     "line": 6685,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\","
     },
     {
-     "line": 6679,
+     "line": 6687,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\""
     },
     {
-     "line": 6704,
+     "line": 6712,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\","
     },
     {
-     "line": 6706,
+     "line": 6714,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\""
     },
     {
-     "line": 6709,
+     "line": 6717,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\","
     },
     {
-     "line": 6711,
+     "line": 6719,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\""
     },
     {
-     "line": 6752,
+     "line": 6760,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\","
     },
     {
-     "line": 6754,
+     "line": 6762,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\""
     },
     {
-     "line": 6777,
+     "line": 6785,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\","
     },
     {
-     "line": 6779,
+     "line": 6787,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\""
     },
     {
-     "line": 6805,
+     "line": 6813,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\","
     },
     {
-     "line": 6807,
+     "line": 6815,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\""
     },
     {
-     "line": 6830,
+     "line": 6838,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\","
     },
     {
-     "line": 6832,
+     "line": 6840,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\""
     },
     {
-     "line": 6926,
+     "line": 6934,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\","
     },
     {
-     "line": 6928,
+     "line": 6936,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\""
     },
     {
-     "line": 6931,
+     "line": 6939,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\","
     },
     {
-     "line": 6933,
+     "line": 6941,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\""
     },
     {
-     "line": 6985,
+     "line": 6993,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\","
     },
     {
-     "line": 6987,
+     "line": 6995,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\""
     },
     {
-     "line": 7016,
+     "line": 7024,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\","
     },
     {
-     "line": 7018,
+     "line": 7026,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\""
     },
     {
-     "line": 7021,
+     "line": 7029,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\","
     },
     {
-     "line": 7023,
+     "line": 7031,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\""
     },
     {
-     "line": 7050,
+     "line": 7058,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\","
     },
     {
-     "line": 7052,
+     "line": 7060,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\""
     },
     {
-     "line": 7055,
+     "line": 7063,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\","
     },
     {
-     "line": 7057,
+     "line": 7065,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\""
     },
     {
-     "line": 7124,
+     "line": 7132,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\","
     },
     {
-     "line": 7126,
+     "line": 7134,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\""
     },
     {
-     "line": 7147,
+     "line": 7155,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\","
     },
     {
-     "line": 7149,
+     "line": 7157,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\""
     },
     {
-     "line": 7940,
+     "line": 7948,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\","
     },
     {
-     "line": 7942,
+     "line": 7950,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\""
     },
     {
-     "line": 7961,
+     "line": 7969,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\","
     },
     {
-     "line": 7963,
+     "line": 7971,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\""
     },
     {
-     "line": 9048,
+     "line": 9056,
      "kind": "text_citation",
      "target": "boundary label bus_power_boundary_a9_v1",
      "text": "\"blocking\": \"no determining evaluation with evidenced terms: bus_power_boundary_a9_v1 [PLAN_OR_FRAMEWORK]\","
     },
     {
-     "line": 9657,
+     "line": 9665,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"path\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\","
     },
     {
-     "line": 9659,
+     "line": 9667,
      "kind": "sha_pin",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"sha256\": \"9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6\""
@@ -926,61 +930,61 @@
    "sha_pinned_by": [],
    "hits": [
     {
-     "line": 111,
+     "line": 117,
      "kind": "read",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"BUS\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\","
     },
     {
-     "line": 1080,
+     "line": 1093,
      "kind": "key_reference",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "ec=None, sources=[ref(\"BUS\", find(\"BUS\", \"/items\", \"id\", \"A902-21\")),"
     },
     {
-     "line": 1088,
+     "line": 1101,
      "kind": "key_reference",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "ref(\"BUS\", find(\"BUS\", \"/items\", \"id\", \"A902-20\"))],"
     },
     {
-     "line": 1098,
+     "line": 1111,
      "kind": "key_reference",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "ref(\"BUS\", find(\"BUS\", \"/items\", \"id\", \"A902-23\"))],"
     },
     {
-     "line": 1135,
+     "line": 1148,
      "kind": "key_reference",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "return ref(\"BUS\", find(\"BUS\", \"/items\", \"id\", iid))"
     },
     {
-     "line": 1138,
+     "line": 1151,
      "kind": "key_reference",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "return get(\"BUS\", find(\"BUS\", \"/items\", \"id\", iid) + \"/value\")"
     },
     {
-     "line": 1151,
+     "line": 1164,
      "kind": "key_reference",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "ref(\"BUS\", \"/slots\")],"
     },
     {
-     "line": 1294,
+     "line": 1307,
      "kind": "key_reference",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "get(\"BUS\", \"/sequencing/enforced_order/hall_icp_neutralizer\"), units=\"-\", tolerance=T_RULE,"
     },
     {
-     "line": 1295,
+     "line": 1308,
      "kind": "key_reference",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "ec=\"owner-allocation\", sources=[ref(\"BUS\", \"/sequencing/enforced_order/hall_icp_neutralizer\")],"
     },
     {
-     "line": 1427,
+     "line": 1442,
      "kind": "key_reference",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "[ref(\"A92\", \"/decisions/a9_10_statuses/ICP RF power closure\"), ref(\"BUS\", find(\"BUS\", \"/items\", \"id\","
@@ -1065,8 +1069,13 @@
     "tests/test_bus_boundary_a9.py"
    ],
    "sha_pinned_by": [
+    "docs/architecture_comparison/power_boundary_a9_v2/BUS_POWER_BOUNDARY_A9_V2.md",
+    "docs/architecture_comparison/power_boundary_a9_v2/CONSUMER_INVENTORY.json",
+    "docs/architecture_comparison/power_boundary_a9_v2/build_bus_power_boundary_a9_v2.py",
+    "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
     "docs/experiments/hall_icp/integration/A9_10_RECONCILIATION.md",
-    "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json"
+    "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json",
+    "tests/test_bus_boundary_a9_v2.py"
    ],
    "hits": [
     {
@@ -1177,8 +1186,13 @@
     "tests/test_bus_boundary_a9.py"
    ],
    "sha_pinned_by": [
+    "docs/architecture_comparison/power_boundary_a9_v2/BUS_POWER_BOUNDARY_A9_V2.md",
+    "docs/architecture_comparison/power_boundary_a9_v2/CONSUMER_INVENTORY.json",
+    "docs/architecture_comparison/power_boundary_a9_v2/build_bus_power_boundary_a9_v2.py",
+    "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
     "docs/experiments/hall_icp/integration/A9_10_RECONCILIATION.md",
-    "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json"
+    "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json",
+    "tests/test_bus_boundary_a9_v2.py"
    ],
    "hits": [
     {
@@ -1338,6 +1352,10 @@
    "sha_pinned_by": [
     "docs/architecture/freeze_candidate/ARCHITECTURE_FREEZE_CANDIDATE.md",
     "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+    "docs/architecture_comparison/power_boundary_a9_v2/BUS_POWER_BOUNDARY_A9_V2.md",
+    "docs/architecture_comparison/power_boundary_a9_v2/CONSUMER_INVENTORY.json",
+    "docs/architecture_comparison/power_boundary_a9_v2/build_bus_power_boundary_a9_v2.py",
+    "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
     "docs/budgets/mass_a9/mass_a9_v1.json",
     "docs/budgets/mass_power_a9_v2/MASS_POWER_A9_V2.md",
     "docs/budgets/mass_power_a9_v2/build_mass_power_a9_v2.py",
@@ -1361,6 +1379,7 @@
     "docs/procurement/rfq_a9_v2/build_rfq_a9_v2.py",
     "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
     "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+    "tests/test_bus_boundary_a9_v2.py",
     "tests/test_single_flight_configuration.py"
    ],
    "hits": [
@@ -3083,57 +3102,53 @@
    ],
    "sha_pinned_by": [
     "docs/architecture/freeze_candidate/ARCHITECTURE_FREEZE_CANDIDATE.md",
-    "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
-    "docs/bid/OWNER_DECISION_BRIEF_P0_P1.md",
-    "docs/bid/owner_decision_brief_p0_p1.json",
-    "docs/hardware/h1_freeze_candidate/H1_FREEZE_CANDIDATE.md",
-    "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json"
+    "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json"
    ],
    "hits": [
     {
-     "line": 4366,
+     "line": 4466,
      "kind": "text_citation",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"source\": \"A9-02 (docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json)\","
     },
     {
-     "line": 4380,
+     "line": 4480,
      "kind": "text_citation",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"source\": \"A9-02 (docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json)\","
     },
     {
-     "line": 4394,
+     "line": 4494,
      "kind": "text_citation",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"source\": \"A9-02 (docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json)\","
     },
     {
-     "line": 4408,
+     "line": 4508,
      "kind": "text_citation",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"source\": \"A9-02 (docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json)\","
     },
     {
-     "line": 4410,
+     "line": 4510,
      "kind": "text_citation",
      "target": "boundary label bus_power_boundary_a9_v1",
      "text": "\"proposed\": \"owner call (not declared in bus_power_boundary_a9_v1; would be a new declared variant)\","
     },
     {
-     "line": 4422,
+     "line": 4522,
      "kind": "text_citation",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"source\": \"A9-02 (docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json)\","
     },
     {
-     "line": 4436,
+     "line": 4536,
      "kind": "text_citation",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"source\": \"A9-02 (docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json)\","
     },
     {
-     "line": 4450,
+     "line": 4550,
      "kind": "text_citation",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"source\": \"A9-02 (docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json)\","
@@ -3419,7 +3434,23 @@
    "change_on_repoint": "nothing",
    "tests": [],
    "sha_pinned_by": [
-    "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json"
+    "docs/architecture/freeze_candidate/ARCHITECTURE_FREEZE_CANDIDATE.md",
+    "docs/architecture/freeze_candidate/ag15_f9.py",
+    "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+    "docs/architecture_comparison/power_boundary_a9_v2/build_bus_power_boundary_a9_v2.py",
+    "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
+    "docs/budgets/owner_decisions/OWNER_QUESTIONS_STATE_v5.md",
+    "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
+    "docs/decisions/application/a9_16_application_matrix.json",
+    "docs/decisions/application/a9_16_application_matrix.md",
+    "docs/decisions/application/a9_later_lib.py",
+    "docs/experiments/hall_icp/integration/m16_v5/SUBSYSTEM_MATURITY_v5.md",
+    "docs/experiments/hall_icp/integration/m16_v5/subsystem_maturity_v5.json",
+    "docs/requirements/rfp_official/rfp_registration_v1.json",
+    "docs/requirements/rvm_a9/RVM_A9.md",
+    "docs/requirements/rvm_a9/rfp_rebase.py",
+    "docs/requirements/rvm_a9/rvm_a9_v1.json"
    ],
    "hits": [
     {
@@ -5717,19 +5748,19 @@
    "sha_pinned_by": [],
    "hits": [
     {
-     "line": 3100,
+     "line": 3110,
      "kind": "text_citation",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"artifact\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\","
     },
     {
-     "line": 5344,
+     "line": 5354,
      "kind": "text_citation",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"artifact\": \"A9-02 docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json (A902-21)\","
     },
     {
-     "line": 5355,
+     "line": 5365,
      "kind": "text_citation",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "\"artifact\": \"docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json\","
@@ -8682,7 +8713,7 @@
      "text": "- [SUPPORTING/PLAN_OR_FRAMEWORK] `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` `bus_power_boundary_a9_v1`: PLANNED / FRAMEWORK ONLY - nothing measured; package stat..."
     },
     {
-     "line": 927,
+     "line": 937,
      "kind": "text_citation",
      "target": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
      "text": "- read, not pinned: `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` (A9-02 bus-power boundary (1 ms gate, 1.35 kW allocation))"
@@ -8796,9 +8827,7 @@
    ],
    "sha_pinned_by": [
     "docs/architecture/freeze_candidate/ARCHITECTURE_FREEZE_CANDIDATE.md",
-    "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
-    "docs/bid/OWNER_DECISION_BRIEF_P0_P1.md",
-    "docs/bid/owner_decision_brief_p0_p1.json"
+    "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json"
    ],
    "hits": [
     {
@@ -8936,8 +8965,13 @@
    "sha_pinned_by": [
     "docs/architecture_comparison/dossier/DECISION_DOSSIER.md",
     "docs/architecture_comparison/dossier/dossier.json",
+    "docs/architecture_comparison/power_boundary_a9_v2/BUS_POWER_BOUNDARY_A9_V2.md",
+    "docs/architecture_comparison/power_boundary_a9_v2/CONSUMER_INVENTORY.json",
+    "docs/architecture_comparison/power_boundary_a9_v2/build_bus_power_boundary_a9_v2.py",
+    "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
     "docs/experiments/hall_icp/integration/A9_10_RECONCILIATION.md",
-    "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json"
+    "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json",
+    "tests/test_bus_boundary_a9_v2.py"
    ],
    "hits": [
     {
@@ -9302,13 +9336,13 @@
    "sha_pinned_by": [],
    "hits": [
     {
-     "line": 135,
+     "line": 139,
      "kind": "transitive_import",
      "target": "abep_sim/design/architecture_optimizer.py (imports abep_sim.bus_boundary_a9 as bb)",
      "text": "from abep_sim.design import architecture_optimizer as ao"
     },
     {
-     "line": 150,
+     "line": 154,
      "kind": "transitive_import",
      "target": "abep_sim/design/architecture_optimizer.py (imports abep_sim.bus_boundary_a9 as bb)",
      "text": "from abep_sim.design import architecture_optimizer as ao"

@@ -127,9 +127,14 @@
    "role": "A9-05 validation-input list"
   },
   {
+   "path": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
+   "sha256": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980",
+   "role": "A9-02 bus-power boundary, v2 (A9.22 G8: hall_icp_neutralizer only; C1 ground-reference metadata)"
+  },
+  {
    "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
    "sha256": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
-   "role": "A9-02 bus-power boundary"
+   "role": "A9-02 bus-power boundary v1 (immutable history; historical reuse only)"
   },
   {
    "path": "docs/budgets/mass_a9/mass_a9_v1.json",
@@ -2814,7 +2819,7 @@
    "value": "TBD - requires the ICD ICP-21 collector design and A9-02 A902-23; the collector circuit current rating is sized to the 8.33 A stand ceiling (P1-IT-06)",
    "units": "V / A",
    "basis": "pending",
-   "source": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json A902-23; ICD ICP-21; docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json OQ-A907-02",
+   "source": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json A902-23; ICD ICP-21; docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json OQ-A907-02",
    "evidence_class": null,
    "status": "TBD",
    "freeze_point": "after-evidence",
@@ -4707,7 +4712,7 @@
   {
    "id": "IF-P1-11",
    "direction": "from",
-   "counterpart": "A9-02 docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+   "counterpart": "A9-02 docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
    "what": "A902-19 (only the RF-source DC input crosses the boundary), A902-21 (DC-input efficiency TBD; not measurable with the mains generator), A902-22 (match draw), A902-23 (collector range)",
    "units": "W, V, A",
    "status": "CONSUMED"
@@ -4715,7 +4720,7 @@
   {
    "id": "IF-P1-12",
    "direction": "to",
-   "counterpart": "A9-02 docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+   "counterpart": "A9-02 docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
    "what": "C_e and C_e,DC tables with boundary labels; P_mains,in/P_fwd as GROUND/FACILITY_ONLY context (NOT A902-21)",
    "units": "W/A, -",
    "status": "OFFERED (engineering-only)"

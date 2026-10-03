@@ -103,8 +103,8 @@
    "use": "F4 physics (called)"
   },
   {
-   "path": "abep_sim/bus_boundary_a9.py",
-   "use": "A9-02 bus boundary (called, never modified)"
+   "path": "abep_sim/bus_boundary_a9_v2.py",
+   "use": "A9-02 bus boundary v2 (A9.22 G8; called, never modified)"
   },
   {
    "path": "docs/hardware/h1_freeze_candidate/build_h1_freeze_candidate.py",
@@ -1296,7 +1296,7 @@
       "value": 13560000.0,
       "units": "Hz",
       "basis": "13.56 MHz ICP drive (row 72 / A9)",
-      "source": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json items_v2 MPV2-P07; abep_sim/bus_boundary_a9.py RF_FREQUENCY_HZ",
+      "source": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json items_v2 MPV2-P07; abep_sim/bus_boundary_a9_v2.py RF_FREQUENCY_HZ",
       "evidence_class": "owner-allocation",
       "status": "OWNER_GIVEN"
      },
@@ -1349,7 +1349,7 @@
       ],
       "units": "W",
       "basis": "laboratory source + inline chain sizing: a TEST capability, never a flight allowance (row 72)",
-      "source": "abep_sim/bus_boundary_a9.py LAB_RF_FORWARD_W_RANGE",
+      "source": "abep_sim/bus_boundary_a9_v2.py LAB_RF_FORWARD_W_RANGE",
       "evidence_class": "owner-allocation",
       "status": "TEST_CAPABILITY_ONLY"
      }
@@ -10238,7 +10238,7 @@
     "rule": "< 1500 W",
     "status": "NOT_EVALUATED",
     "value_status": "NOT_EVALUATED",
-    "basis": "bus_boundary_a9.rfp_power_gate verdict NOT_EVALUABLE but value status NOT_EVALUATED: not evaluable (fail closed)"
+    "basis": "bus_boundary_a9_v2.rfp_power_gate verdict NOT_EVALUABLE but value status NOT_EVALUATED: not evaluable (fail closed)"
    },
    {
     "id": "HC-04",

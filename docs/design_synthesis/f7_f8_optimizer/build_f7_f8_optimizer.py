@@ -3,7 +3,8 @@
 
 Runs abep_sim/design/architecture_optimizer.py (F7) and abep_sim/design/robust_optimizer.py (F8) on the committed
 lane deliverables (F1 IF-A1 records and species table, F2/F4 filter cases, F3 compressor front union, F4 plenum grid,
-F5 x_Hall windows, F6 x_ICP definition, P1-P4 frameworks, mass/power v3, the A9-02 bus boundary, the RVM) and writes
+F5 x_Hall windows, F6 x_ICP definition, P1-P4 frameworks, mass/power v3, the A9-02 bus boundary v2, the RVM) and
+writes
 
   f7_f8_optimizer_v1.json         design-vector blocks, parameters, upstream Pareto summary, system evaluation
                                   (every system objective evaluated or refused with its unlock evidence), fail-closed
@@ -90,7 +91,7 @@ REFERENCED_NOT_PINNED = (
     ("abep_sim/design/architecture_optimizer.py", "the F7 module"),
     ("abep_sim/design/robust_optimizer.py", "the F8 module"),
     ("abep_sim/design/plenum_feed.py", "F4 physics (called)"),
-    ("abep_sim/bus_boundary_a9.py", "A9-02 bus boundary (called, never modified)"),
+    ("abep_sim/bus_boundary_a9_v2.py", "A9-02 bus boundary v2 (A9.22 G8; called, never modified)"),
     (ao.F5_BUILDER_REL, "F5 geometric_admissibility (imported by path, read-only)"),
 )
 IDENTITY = {ao.MP_REL: "mass_power_a9_v3", ao.P3_REL: "p3_coupled_thermal_v2", ao.P4_REL: "p4_anode_materials_v1",

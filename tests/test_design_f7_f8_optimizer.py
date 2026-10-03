@@ -13,7 +13,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from abep_sim import bus_boundary_a9 as bb
+from abep_sim import bus_boundary_a9_v2 as bb
 from abep_sim.design import architecture_optimizer as ao
 from abep_sim.design import intake_synthesis as isy
 from abep_sim.design import plenum_feed as pf

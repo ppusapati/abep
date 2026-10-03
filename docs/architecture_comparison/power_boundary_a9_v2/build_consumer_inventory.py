@@ -10,6 +10,11 @@ sha256 of a family file (16-hex prefix), on a pin key that a consumer defines fo
 classification stops the build, and so does a classified file that no longer matches. Nothing is re-pointed here
 (stage 1).
 
+The scan reads the tree of the fixed pre-migration commit ``BASE_COMMIT`` from git (``git ls-tree`` / ``git cat-file``),
+not the working tree, so the inventory stays reproducible after the stage-2 migration re-points the consumers. Stage 2
+re-ran it at the integration head 5b32edc before changing anything (line numbers had moved since 9eb302c); the
+migration itself is recorded in ``STAGE2_MIGRATION.json`` (``build_stage2_migration.py``).
+
 Each consumer gets one status:
   IMMUTABLE_HISTORY         stays on v1, never edited
   LIVE_REPOINT              moves to v2 in the single controlled stage-2 migration
@@ -36,7 +41,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(HERE)))
 OUT_JSON = os.path.join(HERE, "CONSUMER_INVENTORY.json")
 OUT_MD = os.path.join(HERE, "CONSUMER_INVENTORY.md")
 SCRIPT_REL = "docs/architecture_comparison/power_boundary_a9_v2/build_consumer_inventory.py"
-BASE_COMMIT = "9eb302c06241c8e8a369334a6bdc5bc559227143"
+# pre-migration integration head (bus boundary v2 stage 1 + AG-15 closure + F1 core view); stage 1 ran at 9eb302c
+BASE_COMMIT = "5b32edcc8e9124cd8bd12aba7d91204c1470aa3f"
+STAGE1_COMMIT = "9eb302c06241c8e8a369334a6bdc5bc559227143"
 DATE = "2026-10-03"
 
 V1_JSON = "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json"
@@ -324,9 +331,35 @@ def _classify(path: str):
     return best
 
 
+_BLOBS: dict = {}
+
+
+def _git(*args, inp: bytes | None = None) -> bytes:
+    r = subprocess.run(["git", *args], cwd=ROOT, input=inp, capture_output=True)
+    if r.returncode:
+        raise InventoryError(f"git {' '.join(args)} failed (is {BASE_COMMIT} in this clone?): "
+                             f"{r.stderr.decode('utf-8', 'replace').strip()}")
+    return r.stdout
+
+
 def _tracked() -> list:
-    r = subprocess.run(["git", "ls-files", "-z"], cwd=ROOT, capture_output=True, check=True)
-    return sorted(p for p in r.stdout.decode("utf-8").split("\0") if p)
+    """Tracked files of BASE_COMMIT (blob contents cached for _read)."""
+    if not _BLOBS:
+        rows = [ln.split("\t", 1) for ln in _git("ls-tree", "-r", "-z", BASE_COMMIT).decode("utf-8").split("\0") if ln]
+        ents = [(meta.split()[2], path) for meta, path in rows if meta.split()[1] == "blob"]
+        out = _git("cat-file", "--batch", inp="".join(sha + "\n" for sha, _ in ents).encode())
+        pos = 0
+        for sha, path in ents:
+            nl = out.index(b"\n", pos)
+            size = int(out[pos:nl].split()[2])
+            _BLOBS[path] = out[nl + 1:nl + 1 + size]
+            pos = nl + 1 + size + 1
+    return sorted(_BLOBS)
+
+
+def _read(rel: str) -> bytes:
+    _tracked()
+    return _BLOBS[rel]
 
 
 def _target(text: str) -> str:
@@ -349,11 +382,9 @@ def scan() -> dict:
     for rel in _tracked():
         if rel.startswith(OWN) or rel in OWN:
             continue
-        p = os.path.join(ROOT, rel)
         try:
-            with open(p, encoding="utf-8") as f:
-                lines = f.read().split("\n")
-        except (UnicodeDecodeError, IsADirectoryError, FileNotFoundError):
+            lines = _read(rel).decode("utf-8").split("\n")
+        except UnicodeDecodeError:
             continue
         hits = []
         sha_lines = {i for i, ln in enumerate(lines) if SHA_RX.search(ln)}
@@ -394,15 +425,13 @@ def pinned_by(files: list, tracked: list) -> dict:
     """Who sha-pins each consumer file (current sha256, full hex): the cascade a re-pointed consumer triggers."""
     shas = {}
     for rel in files:
-        with open(os.path.join(ROOT, rel), "rb") as f:
-            shas[hashlib.sha256(f.read()).hexdigest()] = rel
+        shas[hashlib.sha256(_read(rel)).hexdigest()] = rel
     out = {rel: [] for rel in files}
     rx = re.compile(r"[0-9a-f]{64}")
     for rel in tracked:
         try:
-            with open(os.path.join(ROOT, rel), encoding="utf-8") as f:
-                found = set(rx.findall(f.read()))
-        except (UnicodeDecodeError, IsADirectoryError, FileNotFoundError):
+            found = set(rx.findall(_read(rel).decode("utf-8")))
+        except UnicodeDecodeError:
             continue
         for h in found:
             if h in shas and shas[h] != rel:
@@ -420,7 +449,7 @@ def build() -> dict:
     stale = [c[0] for c in CLASSES if c[0] not in used]
     if stale:
         raise InventoryError(f"classifications that match no consumer: {stale}")
-    missing_tests = sorted({t for c in CLASSES for t in c[5] if not os.path.isfile(os.path.join(ROOT, t))})
+    missing_tests = sorted({t for c in CLASSES for t in c[5] if t not in _BLOBS})
     if missing_tests:
         raise InventoryError(f"listed tests do not exist: {missing_tests}")
     pins = pinned_by(list(files), tracked)
@@ -447,12 +476,15 @@ def build() -> dict:
         "id": "bus_power_boundary_a9_v1_consumer_inventory",
         "decision": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json G8_BUS_BOUNDARY "
                     "(item 8: list every consumer before changing anything)",
-        "stage": "1 (inventory + v2 artefact; NO consumer re-pointed)",
-        "date": DATE, "base_commit": BASE_COMMIT, "generated_by": SCRIPT_REL,
+        "stage": "1 (inventory + v2 artefact; NO consumer re-pointed); re-run at the pre-migration head before the "
+                 "stage-2 migration (docs/architecture_comparison/power_boundary_a9_v2/STAGE2_MIGRATION.json)",
+        "date": DATE, "base_commit": BASE_COMMIT, "stage_1_commit": STAGE1_COMMIT,
+        "scanned_tree": f"git tree of {BASE_COMMIT} (not the working tree: reproducible after stage 2)",
+        "generated_by": SCRIPT_REL,
         "regenerate": f"python {SCRIPT_REL}  (check: --check)",
         "v1_family": {V1_MOD: FAMILY_SHAS[V1_MOD], V1_JSON: FAMILY_SHAS[V1_JSON], V1_BUILDER: FAMILY_SHAS[V1_BUILDER],
                       V1_MD: FAMILY_SHAS[V1_MD], V1_SCHEMA: FAMILY_SHAS[V1_SCHEMA]},
-        "method": ["every tracked text file scanned line by line (git ls-files at the base commit)",
+        "method": ["every tracked text file of the base commit's git tree scanned line by line",
                    "name match: bus_boundary_a9 | bus_power_boundary_a9 | power_boundary_a9 | BUS_POWER_BOUNDARY_A9 "
                    "(not followed by _v2)",
                    "sha match: 16-hex prefix of the sha256 of every committed version of the five v1 family files",

@@ -317,9 +317,9 @@
   },
   {
    "key": "BUS",
-   "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-   "sha256": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
-   "what": "A9-02 bus power boundary"
+   "path": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
+   "sha256": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980",
+   "what": "A9-02 bus power boundary, v2 (A9.22 G8 stage 2: hall_icp_neutralizer only)"
   },
   {
    "key": "EVID",

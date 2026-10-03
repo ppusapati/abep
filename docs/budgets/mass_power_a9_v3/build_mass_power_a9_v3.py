@@ -2,8 +2,9 @@
 """A9.16 mass + power integration v3 (mass_power_a9_v3) - a REVISION of the immutable mass / power v2.
 
 Lane: A9.16 step 1, mass / power v3 + Xe accounting v3 (owner instruction 2026-10-01 'continue implementing them
-sequentially'). Deterministic; standard library plus abep_sim.bus_boundary_a9 (import only, through the new helper
-peak_sampled_gate_a9_v3.py); no Julia; well under a second. v2 (docs/budgets/mass_power_a9_v2/) is pinned by sha256 and
+sequentially'). Deterministic; standard library plus abep_sim.bus_boundary_a9_v2 (import only, through the new helper
+peak_sampled_gate_a9_v3.py; A9.22 G8 stage 2 re-pointed it from the immutable v1 abep_sim.bus_boundary_a9, whose code
+objects v2 runs unchanged); no Julia; well under a second. v2 (docs/budgets/mass_power_a9_v2/) is pinned by sha256 and
 read as data, never edited. The Xe accounting v3 JSON is read back (ids / values checked, not sha-pinned: cross-lane).
 
 v3 = v2 + the recorded owner decisions applied (the verbatim .md of each decision governs; every quote is checked
@@ -86,7 +87,14 @@ V2 = {
     "V2_BUILDER": ("docs/budgets/mass_power_a9_v2/build_mass_power_a9_v2.py",
                    "88a4f0878ba388f8a792138ee5625f83a087fc069dd67049e883a96e0701481b"),
 }
-BUS_MODULE = ("abep_sim/bus_boundary_a9.py", "7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a")
+# A9.22 G8 stage 2: the flight bus boundary is bus_power_boundary_a9_v2 (hall_icp_neutralizer only; C1 ground-reference
+# metadata). v1 stays pinned as immutable history: the carried v2 items cite its symbols and the retired C1 power
+# configuration was evaluated under it.
+BUS_MODULE = ("abep_sim/bus_boundary_a9_v2.py", "8964520ffb55d97eeb93c4b8cc45250026e0c6a0b3082ea58fcfd834ba661e26")
+BUS_MODULE_V1 = ("abep_sim/bus_boundary_a9.py", "7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a")
+BUS_VERSION, BUS_VERSION_V1 = "bus_power_boundary_a9_v2", "bus_power_boundary_a9_v1"
+BUS_STAGE2 = ("A9.22 G8 stage 2 (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json "
+              "G8_BUS_BOUNDARY): configuration taxonomy only, every value identical")
 DECISIONS = {
     "A9.12": {"json": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
               "json_sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
@@ -155,7 +163,7 @@ def _sha(rel: str) -> str:
 
 
 def verify_pins() -> None:
-    bad = [f"{p} (expected {s[:12]}, got {_sha(p)[:12]})" for p, s in list(V2.values()) + [BUS_MODULE]
+    bad = [f"{p} (expected {s[:12]}, got {_sha(p)[:12]})" for p, s in list(V2.values()) + [BUS_MODULE, BUS_MODULE_V1]
            if _sha(p) != s]
     for k, d in DECISIONS.items():
         for f in ("json", "md"):
@@ -970,11 +978,27 @@ def build_doc() -> dict:
         "configurations": {c: power["configurations"].pop(c) for c in RETIRED_FLIGHT_CONFIGS}}
     if set(power["configurations"]) != set(CONFIGS):
         raise MassError("power configurations must be the flight configuration only (A9.19)")
+    # A9.22 G8 stage 2: the flight power configuration is evaluated under bus_power_boundary_a9_v2 (same numbers);
+    # the retired C1 configuration stays on v1 (C1 is not a v2 configuration)
+    if (power["boundary_version"], power["module"], power["module_sha256"]) != (BUS_VERSION_V1,) + BUS_MODULE_V1:
+        raise MassError("v2 power block no longer names bus_power_boundary_a9_v1; review the A9.22 G8 re-point")
+    power["boundary_version"], power["module"], power["module_sha256"] = (BUS_VERSION,) + BUS_MODULE
+    power["boundary_repointed"] = {"rule": BUS_STAGE2, "carried_from_v2": {
+        "boundary_version": BUS_VERSION_V1, "module": BUS_MODULE_V1[0], "module_sha256": BUS_MODULE_V1[1]}}
+    power["retired_flight_configuration_history"]["boundary_version"] = BUS_VERSION_V1
+    power["retired_flight_configuration_history"]["module"] = BUS_MODULE_V1[0]
+    power["retired_flight_configuration_history"]["module_sha256"] = BUS_MODULE_V1[1]
+    for cfg_p in power["configurations"].values():
+        st = cfg_p["phases"]["startup"]
+        if st["template"] != "bus_boundary_a9.SEQUENCE_TEMPLATES (PROPOSED, row 112)":
+            raise MassError("v2 start-up template citation changed; review the A9.22 G8 re-point")
+        st["template"] = "bus_boundary_a9_v2.SEQUENCE_TEMPLATES (PROPOSED, row 112)"
     power["peak_sampled_rule_v3"] = {
         "decision": cite(s["OQA91003"]), "quote": s["OQA91003"]["quote"], "helper": HELPER_REL,
         "helper_sha256": _sha(HELPER_REL), "rule": helper.RULE,
-        "bus_boundary_module": "unchanged (import only); its PEAK_SAMPLED_RULE stays the A9.1 wording - this artifact "
-                               "evaluates peak_sampled records through the helper",
+        "bus_boundary_module": "abep_sim/bus_boundary_a9_v2.py unchanged (import only; v2 runs the immutable v1 code "
+                               "objects); its PEAK_SAMPLED_RULE stays the A9.1 wording - this artifact evaluates "
+                               "peak_sampled records through the helper",
         "conformance_keys": list(helper.RECORD_KEYS),
         "state_today": "NOT_EVALUABLE: no measured total-bus record exists (every load TBD); no PASS produced"}
     return {
@@ -1017,7 +1041,12 @@ def build_doc() -> dict:
         "pins": {"v2": [{"key": k, "path": p, "sha256": h} for k, (p, h) in V2.items()],
                  "decisions": [{"key": k, "json": d["json"], "json_sha256": d["json_sha256"], "md": d["md"],
                                 "md_sha256": d["md_sha256"]} for k, d in DECISIONS.items()],
-                 "bus_boundary_module": {"path": BUS_MODULE[0], "sha256": BUS_MODULE[1], "use": "import only"}},
+                 "bus_boundary_module": {"path": BUS_MODULE[0], "sha256": BUS_MODULE[1], "use": "import only",
+                                         "boundary_version": BUS_VERSION, "repointed": BUS_STAGE2},
+                 "bus_boundary_module_v1_history": {
+                     "path": BUS_MODULE_V1[0], "sha256": BUS_MODULE_V1[1], "boundary_version": BUS_VERSION_V1,
+                     "use": "immutable history: cited by the carried v2 items and by the retired C1 power "
+                            "configuration (C1 is not a v2 configuration)"}},
         "cross_lane": {"XE": {"path": XE_V3, "ids_checked": ["design_cases.loaded_split", "XV3-IF-01",
                                                              "reading_axes_resolved.RA-CASE"],
                               "sha_pinned": False, "build_order": "XE -> MP"}},

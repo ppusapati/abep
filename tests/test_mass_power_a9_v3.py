@@ -37,6 +37,8 @@ V2 = {
     "docs/budgets/mass_power_a9_v2/build_mass_power_a9_v2.py":
         "88a4f0878ba388f8a792138ee5625f83a087fc069dd67049e883a96e0701481b",
     "abep_sim/bus_boundary_a9.py": "7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a",
+    # A9.22 G8 stage 2: the flight bus boundary module (v1 above stays pinned as immutable history)
+    "abep_sim/bus_boundary_a9_v2.py": "8964520ffb55d97eeb93c4b8cc45250026e0c6a0b3082ea58fcfd834ba661e26",
 }
 DEC_SHA = {"A9.12": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",     # A9.16 repair F5
            "A9.14": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",

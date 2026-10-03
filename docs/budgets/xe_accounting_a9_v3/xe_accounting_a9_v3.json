@@ -849,7 +849,7 @@
    "unit": "mg/s; s",
    "kind": "mass_flow",
    "basis": "pending",
-   "source": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json start-up templates C-S5 / I-S5 (gas not stated)",
+   "source": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json start-up templates I-S5 (sequencing.templates_PROPOSED.hall_icp_neutralizer) / C-S5 (ground_reference_test_metadata.hall_c1_reference.templates_PROPOSED_as_in_v1) (gas not stated)",
    "evidence_class": "none",
    "status": "TBD",
    "freeze_point": "after-evidence",
@@ -872,8 +872,9 @@
     }
    },
    "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase",
-   "v3_change": "carried unchanged from v2",
+   "v3_change": "carried unchanged from v2; source re-pointed to bus_power_boundary_a9_v2 (A9.22 G8 stage 2, citation only)",
    "owner_answers_applied": [],
+   "source_v2": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json start-up templates C-S5 / I-S5 (gas not stated)",
    "applies_to_pre_a9_19": {
     "configs": [
      "hall_c1_reference",

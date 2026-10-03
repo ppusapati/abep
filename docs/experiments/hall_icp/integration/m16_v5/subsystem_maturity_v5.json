@@ -464,6 +464,12 @@
     "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
     "identity": "RFQ_A9_V3",
     "use": "RFQ v3 packages"
+   },
+   {
+    "key": "BUS",
+    "path": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
+    "identity": "bus_power_boundary_a9_v2",
+    "use": "A9-02 bus-power boundary v2 (BUS_ITEM_OPEN blockers)"
    }
   ]
  },
@@ -3107,7 +3113,7 @@
      "id": "A902-21",
      "kind": "BUS_ITEM_OPEN",
      "category": "EXTERNAL_INPUT",
-     "artifact": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "artifact": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
      "locator": "items[id=A902-21]",
      "state": "OPEN",
      "detail": "RF generator DC-input -> forward-power efficiency",
@@ -5351,7 +5357,7 @@
      "id": "V4-SCHED",
      "kind": "V4_SCHEDULER_CARRIED",
      "category": "EXTERNAL_INPUT",
-     "artifact": "A9-02 docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json (A902-21)",
+     "artifact": "A9-02 docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json (A902-21)",
      "locator": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json#/rows/18/blocking_item",
      "state": "OPEN (carried from v4; re-resolved)",
      "detail": "flight-representative DC-input RF source not scoped: A902-21 (generator DC-input -> forward-power efficiency) OPEN; the laboratory generator is ground/facility-only (OQ-RFQ-06)",
@@ -5362,7 +5368,7 @@
        "id": "A902-21",
        "kind": "BUS_ITEM_OPEN",
        "category": "EXTERNAL_INPUT",
-       "artifact": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+       "artifact": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
        "locator": "items[id=A902-21]",
        "state": "OPEN",
        "detail": "RF generator DC-input -> forward-power efficiency"

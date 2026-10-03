@@ -17,8 +17,9 @@ It does the following:
   * writes ``bus_power_boundary_a9_v2.json``, ``BUS_POWER_BOUNDARY_A9_V2.md`` (generated from the JSON) and the
     instance schema ``schemas/interfaces/bus_power_boundary_a9_v2.json``.
 
-No consumer is re-pointed here (stage 1). The consumer inventory is ``CONSUMER_INVENTORY.json`` / ``.md`` in this
-directory.
+No consumer is re-pointed here. The stage-1 consumer inventory is ``CONSUMER_INVENTORY.json`` / ``.md`` in this
+directory; the stage-2 migration record (every LIVE_REPOINT consumer re-pointed, before/after diff classified) is
+``STAGE2_MIGRATION.json`` / ``.md`` (``build_stage2_migration.py``).
 
     python docs/architecture_comparison/power_boundary_a9_v2/build_bus_power_boundary_a9_v2.py            # (re)write
     python docs/architecture_comparison/power_boundary_a9_v2/build_bus_power_boundary_a9_v2.py --check    # exit 1 on drift
@@ -291,8 +292,10 @@ def build(inp: dict, schema_diff: list) -> dict:
                              "demands, H2-4 flags, open questions, H3/H4 inputs, a9_10_reconciliation) still mentions "
                              "the C1 reference; in v2 it describes the GROUND_ONLY_LAB_REFERENCE recorded under "
                              "ground_reference_test_metadata, never a v2 flight bus configuration",
-        "consumers": "docs/architecture_comparison/power_boundary_a9_v2/CONSUMER_INVENTORY.json (stage 1: no "
-                     "consumer re-pointed)",
+        "consumers": "docs/architecture_comparison/power_boundary_a9_v2/CONSUMER_INVENTORY.json (stage 1: every "
+                     "consumer listed, scanned at the pre-migration commit); stage 2 (one controlled migration) "
+                     "re-pointed every LIVE_REPOINT consumer to v2 and proved no physics value changed: "
+                     "docs/architecture_comparison/power_boundary_a9_v2/STAGE2_MIGRATION.json",
     }
     d["schema_v1_to_v2_diff"] = schema_diff
     d["v1_to_v2_diff"] = []                      # placeholder so the diff below sees the key as ADDED

@@ -2249,12 +2249,84 @@ def build() -> dict:
     apply_stale_text_fixes(c, src)
     apply_a9_19_20(c, src)
     apply_a9_21(c, src)
+    apply_bus_boundary_v2(doc)
     doc["packages"].sort(key=lambda p: PKG_ORDER.index(p["id"]))
     _rebuild_quote_sheets(doc)
     _finish_packages(doc, src)
     _common_interface(doc, src)
     _top_level(doc, v2, c, src)
     return doc
+
+
+# ------------------------------------------------------------------- A9.22 G8 stage 2: bus boundary v1 -> v2 citations
+BUS_V1_JSON = "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json"
+BUS_V2_JSON = "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json"
+BUS_V2_SHA = "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+BUS_V1_SHA = "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6"
+# C1 rows (keeper / heater / cathode-common / C1 getter branch): C1 is not a v2 configuration -> they keep citing v1
+BUS_V1_RETAINED_C1_REQS = ("RFQ2-GAS-R26", "RFQ2-HALLEL-R22", "RFQ2-HALLEL-R25", "RFQ2-HALLEL-R29")
+BUS_SLOTS_REQ = "RFQ2-HALLEL-R14"          # channel list per configuration: flight column v2, C1 bench column v1
+BUS_REPOINT_RULE = ("A9.22 G8 stage 2 (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json "
+                    "G8_BUS_BOUNDARY): requirement sources citing bus_power_boundary_a9_v1 re-point to "
+                    "bus_power_boundary_a9_v2 where the cited pointer resolves to the identical value in v2; C1 rows "
+                    "keep citing v1 (C1 is not a v2 configuration); requirement text and values unchanged")
+
+
+def _ptr(doc, pointer: str):
+    o = doc
+    for t in pointer.strip("/").split("/"):
+        o = o[int(t)] if isinstance(o, list) else o[t]
+    return o
+
+
+def apply_bus_boundary_v2(doc) -> None:
+    """Re-point package requirement sources from the v1 bus boundary to v2 (citation only; fail closed)."""
+    if _sha_file(BUS_V2_JSON) != BUS_V2_SHA or _sha_file(BUS_V1_JSON) != BUS_V1_SHA:
+        raise RuntimeError("bus boundary v1 / v2 documents changed (pinned inputs)")
+    v1, v2 = _load(BUS_V1_JSON), _load(BUS_V2_JSON)
+    repointed, retained = [], []
+    for p in doc["packages"]:
+        for r in p["requirements"]:
+            hits = [x for x in r.get("sources", []) if isinstance(x, dict) and x.get("path") == BUS_V1_JSON]
+            if not hits:
+                continue
+            if r["id"] in BUS_V1_RETAINED_C1_REQS:
+                retained.append(r["id"])
+                continue
+            for x in hits:
+                if r["id"] == BUS_SLOTS_REQ and x.get("pointer") == "/slots":
+                    want = r["basis"]
+                    if want != "slots with status INSTALLED / VARIANT_ONLY in bus_power_boundary_a9_v1.json":
+                        raise ValueError(f"{r['id']}: unexpected basis text")
+                    for cfg, val in r["value"].items():
+                        src = v2["slots"] if cfg in v2["configurations"] else v1["slots"]
+                        inst = sorted(sl["slot"] for sl in src if sl["configurations"][cfg] == "INSTALLED")
+                        var = sorted(sl["slot"] for sl in src if sl["configurations"][cfg] == "VARIANT_ONLY")
+                        if (inst, var) != (sorted(val["INSTALLED"]), sorted(val["VARIANT_ONLY"])):
+                            raise ValueError(f"{r['id']} {cfg}: slot list differs from the cited boundary")
+                    x["path"] = BUS_V2_JSON
+                    x["repointed_from"] = BUS_V1_JSON
+                    r["sources"].insert(r["sources"].index(x) + 1, {
+                        "type": "deliverable", "key": "BUS_V1", "path": BUS_V1_JSON, "pointer": "/slots",
+                        "note": "hall_c1_reference ground-bench column only (C1 is not a v2 configuration)"})
+                    r["basis_v2"] = want
+                    r["basis"] = ("slots with status INSTALLED / VARIANT_ONLY in bus_power_boundary_a9_v2.json "
+                                  "(hall_icp_neutralizer); the hall_c1_reference ground-bench column from "
+                                  "bus_power_boundary_a9_v1.json (C1 is not a v2 configuration)")
+                else:
+                    if _ptr(v1, x["pointer"]) != _ptr(v2, x["pointer"]) or \
+                            (x.get("id") and _ptr(v2, x["pointer"]).get("id") != x["id"]):
+                        raise ValueError(f"{r['id']}: {x['pointer']} does not resolve identically in v2")
+                    x["path"] = BUS_V2_JSON
+                    x["repointed_from"] = BUS_V1_JSON
+                repointed.append(f"{r['id']} {x.get('id') or x['pointer']}")
+    if sorted(set(retained)) != sorted(BUS_V1_RETAINED_C1_REQS):
+        raise ValueError(f"C1 rows citing v1 changed: {sorted(set(retained))}")
+    doc["bus_boundary_repoint_a9_22"] = {
+        "rule": BUS_REPOINT_RULE, "v2": {"path": BUS_V2_JSON, "sha256": BUS_V2_SHA},
+        "v1_history": {"path": BUS_V1_JSON, "sha256": BUS_V1_SHA},
+        "repointed_sources": repointed, "c1_rows_kept_on_v1": sorted(set(retained)),
+        "carried_from_v2_deliverable_pins": "unchanged (carried history keeps the v1 sha)"}
 
 
 def _finish_packages(doc, s) -> None:
@@ -2711,7 +2783,8 @@ def _top_level(doc, v2, c: Ctx, s) -> None:
              "a9_6_sec13_coverage", "instrument_coverage",
              "not_in_this_revision", "resolved_not_in_previous_revision", "change_log", "traceability_matrix",
              "interface_demands", "owner_answers_applied", "open_owner_questions", "recorder_flags_v3",
-             "historical_reuse", "m16_impact", "h3_h4_inputs", "merged_cross_lane", "compliance", "change_types_v3",
+             "historical_reuse", "m16_impact", "h3_h4_inputs", "merged_cross_lane", "bus_boundary_repoint_a9_22",
+             "compliance", "change_types_v3",
              "change_log_v1_to_v2", "carried_from_v2"]
     rest = [k for k in doc if k not in order]
     if rest:

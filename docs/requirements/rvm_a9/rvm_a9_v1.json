@@ -281,6 +281,15 @@
  "referenced_not_pinned": [
   {
    "key": "BUS",
+   "path": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
+   "identity": {
+    "id": "bus_power_boundary_a9_v2"
+   },
+   "role": "A9-02 bus-power boundary v2 (1 ms gate, 1.35 kW allocation; A9.22 G8)",
+   "why": "mutable package: read at build time, identity checked, never pinned"
+  },
+  {
+   "key": "BUS_V1",
    "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
    "identity": {
     "id": "bus_power_boundary_a9_v1"
@@ -1741,8 +1750,8 @@
        }
       },
       {
-       "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-       "id": "bus_power_boundary_a9_v1:A902-01",
+       "path": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
+       "id": "bus_power_boundary_a9_v2:A902-01",
        "role": "SUPPORTING",
        "kind": "PLAN_OR_FRAMEWORK",
        "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status PRELIMINARY_DRAFT_FOR_OWNER; item status REQUIREMENT_AS_RECORDED",
@@ -1763,8 +1772,8 @@
        }
       },
       {
-       "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-       "id": "bus_power_boundary_a9_v1:A902-03",
+       "path": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
+       "id": "bus_power_boundary_a9_v2:A902-03",
        "role": "SUPPORTING",
        "kind": "PLAN_OR_FRAMEWORK",
        "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status PRELIMINARY_DRAFT_FOR_OWNER; item status ADOPTED (A9.1; A9 engineering definition pending authoritative RFP wording)",
@@ -1987,8 +1996,8 @@
        "exceeds_limit_every_reading": null
       },
       {
-       "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-       "id": "bus_power_boundary_a9_v1:A902-04",
+       "path": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
+       "id": "bus_power_boundary_a9_v2:A902-04",
        "role": "SUPPORTING",
        "kind": "PLAN_OR_FRAMEWORK",
        "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status PRELIMINARY_DRAFT_FOR_OWNER; item status ALLOCATION (not a prediction, not a gate)",
@@ -5079,7 +5088,7 @@
        "id": "mass_power_a9_v3:power.configurations.hall_icp_neutralizer.phases.startup",
        "role": "SUPPORTING",
        "kind": "BUDGET_EVALUATION",
-       "evidence_state": "SEQUENCE RULES RULES_NOT_EVALUABLE (5 rules not evaluable; template bus_boundary_a9.SEQUENCE_TEMPLATES (PROPOSED, row 112))",
+       "evidence_state": "SEQUENCE RULES RULES_NOT_EVALUABLE (5 rules not evaluable; template bus_boundary_a9_v2.SEQUENCE_TEMPLATES (PROPOSED, row 112))",
        "evaluated": true,
        "verified": false,
        "measured": false,
@@ -6726,12 +6735,12 @@
     "hall_icp_neutralizer": {
      "status": "NOT_EVALUATED",
      "rule": "R7-NOT-EVALUATED",
-     "reason": "no determining evaluation with evidenced terms: bus_power_boundary_a9_v1 [PLAN_OR_FRAMEWORK]",
+     "reason": "no determining evaluation with evidenced terms: bus_power_boundary_a9_v2 [PLAN_OR_FRAMEWORK]",
      "current_evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status PRELIMINARY_DRAFT_FOR_OWNER",
      "artifacts": [
       {
-       "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-       "id": "bus_power_boundary_a9_v1",
+       "path": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
+       "id": "bus_power_boundary_a9_v2",
        "role": "DETERMINING",
        "kind": "PLAN_OR_FRAMEWORK",
        "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status PRELIMINARY_DRAFT_FOR_OWNER",
@@ -6747,7 +6756,7 @@
        "lower_bound_verified": false,
        "exceeds_limit_every_reading": null,
        "detail": {
-        "name": "A9-02 bus-power boundary (1 ms gate, 1.35 kW allocation)",
+        "name": "A9-02 bus-power boundary v2 (1 ms gate, 1.35 kW allocation; A9.22 G8)",
         "why": "supply partition exists; no FMEA"
        }
       }
@@ -6918,8 +6927,8 @@
        }
       },
       {
-       "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-       "id": "bus_power_boundary_a9_v1",
+       "path": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
+       "id": "bus_power_boundary_a9_v2",
        "role": "SUPPORTING",
        "kind": "PLAN_OR_FRAMEWORK",
        "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status PRELIMINARY_DRAFT_FOR_OWNER",
@@ -6935,7 +6944,7 @@
        "lower_bound_verified": false,
        "exceeds_limit_every_reading": null,
        "detail": {
-        "name": "A9-02 bus-power boundary (1 ms gate, 1.35 kW allocation)",
+        "name": "A9-02 bus-power boundary v2 (1 ms gate, 1.35 kW allocation; A9.22 G8)",
         "why": "power boundary only; no data interface defined"
        }
       }

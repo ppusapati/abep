@@ -1,4 +1,5 @@
-"""A9.22 G8 stage 1: bus_power_boundary_a9_v2 (abep_sim/bus_boundary_a9_v2.py + power_boundary_a9_v2/).
+"""A9.22 G8 stages 1 and 2: bus_power_boundary_a9_v2 (abep_sim/bus_boundary_a9_v2.py + power_boundary_a9_v2/), the
+consumer inventory and the stage-2 migration record (STAGE2_MIGRATION.json).
 
 v1 stays byte-identical; v2 differs from v1 only in the configuration taxonomy (hall_icp_neutralizer only; C1 as
 ground-reference / test metadata); a v2 ledger / gate / allocation / start-up result equals v1's except the label.
@@ -232,3 +233,47 @@ def test_consumer_inventory_reproduces_and_counts():
     assert paths["abep_sim/design/architecture_optimizer.py"] == "LIVE_REPOINT"
     assert paths["docs/procurement/rfq_a9_v2/rfq_a9_v2.json"] == "IMMUTABLE_HISTORY"
     assert paths["abep_sim/bus_boundary_a9.py"] == "SELF_V1"
+
+
+# ------------------------------------------------------------------------------------------------ stage 2 (migration)
+def test_stage2_migration_record():
+    """A9.22 G8 stage 2: every LIVE_REPOINT consumer re-pointed in one migration; no number moved (field by field)."""
+    inv = _load(os.path.join(LANE, "CONSUMER_INVENTORY.json"))
+    rec = _load(os.path.join(LANE, "STAGE2_MIGRATION.json"))
+    assert rec["pre_commit"] == inv["base_commit"]
+    assert inv["counts"]["files_by_status"]["LIVE_REPOINT"] == 28
+    assert rec["verdict"].startswith("NO_PHYSICS_RESULT_CHANGED")
+    assert not set(rec["class_totals"]) & {"NUMERIC_CHANGE", "UNEXPLAINED"}
+    live = {c["path"] for c in inv["consumers"] if c["status"] == "LIVE_REPOINT"}
+    assert {r["path"] for r in rec["repointed_consumers"]} == live
+    assert all(r["sha256_before"] != r["sha256_after"] for r in rec["repointed_consumers"])
+    assert {p["path"]: p["sha256"] for p in rec["v1_family_byte_identical"]} == V1_SHAS
+    for o in rec["outputs"]:
+        if o["kind"] == "markdown":
+            assert o["numbers_in_changed_lines_identical"] is True, o["path"]
+        else:
+            assert all(c["class"] in ("PIN_SHA", "PATH", "LABEL", "PROVENANCE_TEXT", "PROVENANCE_ADDED")
+                       for c in o["changes"]), o["path"]
+    assert all(r["retained_because"] for r in rec["remaining_v1_references"])
+
+
+def test_stage2_flight_consumers_use_v2_and_c1_stays_v1():
+    mp = _load(os.path.join(ROOT, "docs", "budgets", "mass_power_a9_v3", "mass_power_a9_v3.json"))
+    p = mp["power"]
+    assert (p["boundary_version"], p["module"]) == ("bus_power_boundary_a9_v2", "abep_sim/bus_boundary_a9_v2.py")
+    assert set(p["configurations"]) == {ICP}
+    h = p["retired_flight_configuration_history"]
+    assert h["boundary_version"] == "bus_power_boundary_a9_v1" and set(h["configurations"]) == {C1}
+    from abep_sim.design import architecture_optimizer as ao
+    assert ao.bb is B2 and tuple(ao.CONFIGURATIONS) == B2.CONFIGURATIONS
+    assert ao.GROUND_REFERENCE_CONFIGURATIONS == tuple(B2.GROUND_REFERENCE_TEST_METADATA)
+    rvm = _load(os.path.join(ROOT, "docs", "requirements", "rvm_a9", "rvm_a9_v1.json"))
+    n = 0
+    for r in rvm["rows"]:
+        for cfg, cell in r["configurations"].items():
+            for a in cell.get("artifacts", []):
+                if "power_boundary_a9" in a.get("path", ""):
+                    n += 1
+                    want = "power_boundary_a9_v2/" if cfg == ICP else "power_boundary_a9/"
+                    assert want in a["path"], (r["id"], cfg, a["path"])
+    assert n == 7                        # 5 flight cells on v2, 2 C1 ground-reference cells (RVM-19 / RVM-20) on v1

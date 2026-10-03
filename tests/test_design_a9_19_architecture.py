@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from abep_sim import bus_boundary_a9 as bb
+from abep_sim import bus_boundary_a9_v2 as bb
 from abep_sim.design import a9_19_architecture as a919
 from abep_sim.design import architecture_optimizer as ao
 from abep_sim.design import upstream_a9_13 as u13
@@ -76,7 +76,8 @@ def test_no_hollow_cathode_element_in_flight_configuration():
         with pytest.raises(a919.ArchitectureRuleError, match="hollow-cathode"):
             a919.refuse_hollow_cathode_elements("hall_icp_neutralizer", els + [bad])
     # the C1 configuration's own slots are all caught
-    hits = a919.hollow_cathode_elements(bb.installed_slots("hall_c1_reference"))
+    # A9.22 G8: v2 refuses C1 as a configuration; its v1 slot list is ground-reference metadata
+    hits = a919.hollow_cathode_elements(bb.GROUND_REFERENCE_TEST_METADATA["hall_c1_reference"]["base_slots_as_in_v1"])
     assert set(hits) >= {"c1_heater", "c1_keeper", "c1_common_tie"}
     # no false positive on the ICP flight elements
     assert a919.hollow_cathode_elements(bb.installed_slots("hall_icp_neutralizer")) == []

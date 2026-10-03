@@ -209,13 +209,51 @@ def _unrename(o):
     return json.loads(s)
 
 
+BUS_V1_JSON = "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json"
+
+
+def _unrepoint_bus(r: dict) -> dict:
+    """Undo the A9.22 G8 stage-2 citation re-point (bus boundary v1 -> v2): sources only, plus the R14 basis text."""
+    r = copy.deepcopy(r)
+    if "basis_v2" in r:
+        r["basis"] = r.pop("basis_v2")
+    srcs = []
+    for x in r.get("sources", []):
+        if isinstance(x, dict) and x.get("key") == "BUS_V1":
+            continue                                   # the added C1 ground-bench column citation
+        if isinstance(x, dict) and "repointed_from" in x:
+            x = dict(x, path=x["repointed_from"])
+            x.pop("repointed_from")
+        srcs.append(x)
+    if "sources" in r:
+        r["sources"] = srcs
+    return r
+
+
+def test_bus_v2_repoint_is_citation_only(doc, v2):
+    rec = doc["bus_boundary_repoint_a9_22"]
+    assert rec["c1_rows_kept_on_v1"] == ["RFQ2-GAS-R26", "RFQ2-HALLEL-R22", "RFQ2-HALLEL-R25", "RFQ2-HALLEL-R29"]
+    assert len(rec["repointed_sources"]) == 13            # + 6 sources in the 4 C1 rows stay on v1 (19 in v2)
+    v2r = {r["id"]: r for p in v2["packages"] for r in p["requirements"]}
+    n = 0
+    for p in doc["packages"]:
+        for r in p["requirements"]:
+            for x in r.get("sources", []):
+                if isinstance(x, dict) and x.get("path") == BUS_V1_JSON:
+                    assert r["id"] in rec["c1_rows_kept_on_v1"] or x.get("key") == "BUS_V1", r["id"]
+            if any(isinstance(x, dict) and "repointed_from" in x for x in r.get("sources", [])):
+                n += 1
+                assert r["value"] == v2r[r["id"]]["value"] and r["requirement"] == v2r[r["id"]]["requirement"]
+    assert n == 10                                       # requirements with at least one re-pointed source
+
+
 def test_unchanged_requirements_identical_to_v2(doc, v2):
     v2r = {r["id"]: r for p in v2["packages"] for r in p["requirements"]}
     for p in doc["packages"]:
         for r in p["requirements"]:
             if r["change_v3"]["type"] not in ("CARRIED_UNCHANGED", "MOVED_PACKAGE"):
                 continue
-            a = {k: v for k, v in r.items() if k not in ("change_v3", "package")}
+            a = {k: v for k, v in _unrepoint_bus(r).items() if k not in ("change_v3", "package")}
             b = {k: v for k, v in v2r[r["id"]].items() if k != "package"}
             assert _unrename(a) == b, r["id"]
 

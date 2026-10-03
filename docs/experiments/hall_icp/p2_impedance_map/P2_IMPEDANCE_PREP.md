@@ -730,7 +730,7 @@ H4 (test):
 | OQ3 | docs/budgets/owner_decisions/owner_questions_state_v3.json | `1c2e74340852dfe8c58b1804c3cfda2bfbfb3bfb5d631aaebd715cf716b76af2` |
 | INS | docs/experiments/instrumentation/instrumentation_definition_v1.json | `7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96` |
 | MS | docs/experiments/instrumentation/metrology_spec/metrology_measurement_spec_v1.json | `55c11dc2d22fd92d95b498f72d60f2cdc0c62a45940da2446514049bd5130865` |
-| BUS | docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json | `9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6` |
+| BUS | docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json | `de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980` |
 | EVID | docs/EVIDENCE.md | `a2950352141890c12ad33e66766cd003215c807cb29203d21df090349ab90b61` |
 
 Never pinned (mutable governance): docs/orchestration/lane_registry_v1.json, docs/orchestration/trigger_registry_v1.json, docs/orchestration/fired_triggers.jsonl, docs/orchestration/trigger_ledger_v2.jsonl, docs/orchestration/runtime_state.json.

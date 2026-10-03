@@ -3253,3 +3253,29 @@ Owner instruction 2026-10-03: rapid delivery; review, verification and fixes run
 - **Integration.** F4 -> F7/F8 rebuilt for the current H-1 pin (pin-only diffs; F4 23 min, F7/F8 40 min single-process),
   then F9 and the matrix. F0 performance MD re-rendered (live F1 direct-run count). Open: the F1 output is now 36.7 MB
   (was 1.9 MB) — storage form is an owner call (A9.17 DATA_SIZE intent: avoid bloating Git history).
+
+## 2026-10-03 — A9.22 G8 stage 2: bus-boundary consumers re-pointed v1 -> v2 (one controlled migration)
+
+- **Decision.** A9.22 item 8 / G8_BUS_BOUNDARY: re-point the pinned consumers of `bus_boundary_a9` in one controlled
+  migration, update pins together, keep v1 immutable, verify no physics result changes because the taxonomy changed.
+- **Inventory first.** `build_consumer_inventory.py` re-run at the pre-migration head 5b32edc (line numbers had moved
+  since stage 1 at 9eb302c; counts unchanged: 138 files, 28 LIVE_REPOINT in 12 families, 3 TRANSITIVE_LIVE,
+  9 LIVE_RETAIN_V1_REFERENCE, 68 IMMUTABLE_HISTORY). It now scans the git tree of that fixed commit, so it stays
+  reproducible after the migration.
+- **Migration (recorded order).** v2 artefact (consumer note only) -> P1 (BUS authority pin v2; historical_reuse keeps a
+  v1 pin) -> P2 -> mass/power v3 (module + peak helper import v2; power.boundary_version v2; retired C1 power
+  configuration and carried v2 items stay v1) -> Xe v3 (XV2-15 template citation; v2 text kept as source_v2) -> RFQ v3
+  (13 sources re-pointed after checking each pointer resolves identically in v2; C1 rows GAS-R26 / HALLEL-R22 / R25 / R29
+  stay v1; R14 cites v2 /slots plus v1 /slots for the C1 bench column) -> M16 v5 (own BUS ref; BUS_ITEM_OPEN resolved in
+  v2, cross-checked against v1) -> F7/F8 (architecture_optimizer imports v2; assertion now `CONFIGURATIONS ==
+  bb.CONFIGURATIONS` and `GROUND_REFERENCE_CONFIGURATIONS == tuple(bb.GROUND_REFERENCE_TEST_METADATA)`) -> RVM (flight
+  cells cite v2; C1 ground-reference cells RVM-19 / RVM-20 keep v1; requirement texts / limits untouched, AG-15 freeze
+  intact) -> F9 (BUS input v2; every changed pin re-pinned by the rebuild).
+- **No physics change.** `STAGE2_MIGRATION.json` (`build_stage2_migration.py`, PRE 5b32edc vs the migration commit,
+  read from git) diffs every regenerated JSON field by field and every Markdown line: only PIN_SHA / PATH / LABEL /
+  declared PROVENANCE_TEXT / PROVENANCE_ADDED changes, no number changed, appeared or disappeared; v1 family
+  byte-identical; every immutable / retained / transitive file byte-identical; each v1 reference left in a re-pointed
+  file has a declared retention reason. F7/F8 outputs: string-only edits (module path, two source strings, one gate
+  basis) applied to the committed outputs and confirmed byte-identical by a full single-process rebuild.
+- **Stays on v1.** Immutable history (RFQ v1/v2, M16 v3/v4, mass/Xe v1/v2, A9-10, core integration, owner brief, ...),
+  the bid package anchored at bbc480c, state v5 OQ-A902-xx 'raised in v1' citations, the decision dossier listing.
