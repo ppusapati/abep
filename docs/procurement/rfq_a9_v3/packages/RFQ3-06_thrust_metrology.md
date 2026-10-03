@@ -283,6 +283,32 @@ X-03, X-04, X-09, X-12, X-13, X-15, X-17, X-19, X-20
 
 Reference data are not requirements, not a selection and not a supplier ranking.
 
+## Dispatch readiness checklist (A9.21 item 15)
+
+NOW subset: **NOT_READY_BLOCKING_TBD**; LATER subset: LATER_NOT_IN_CURRENT_DISPATCH. Dispatched by the repository: False; purchase authorized: False. Common interface cited: RFQ3-CIF v3 (`docs/procurement/rfq_a9_v3/packages/RFQ3-00_common_interface.md`, rendered sha256 `e4b2f647151fa40b0a8a6b90b9068cb8b08690c106d1e1d8a616e08e7e76d311`). Owner action: owner / procurement sends the request for quotation outside the repository and keeps the dispatch record outside it (A9.21 item 15); no purchase order.
+
+- [x] banner states DO NOT PURCHASE - quotation / specification only
+- [x] cites the common interface document RFQ3-CIF (docs/procurement/rfq_a9_v3/packages/RFQ3-00_common_interface.md)
+- [x] has NOW lines (P1_NEEDED or indicative quotation now)
+- [x] every P1_NEEDED line has a complete quote sheet (spec, acceptance, calibration, documentation)
+- [ ] every NOW line is in an owner-authorised send state with no unmet send precondition
+- [ ] no NOW line has a blocking open item
+- [x] no price, supplier name, ranking or purchase authorization (compliance record)
+
+| line | set | readiness | supplier answers | deferred to gate | blocking | reason | send state |
+|---|---|---|---|---|---|---|---|
+| TH-L01 | LATER | LATER_NOT_IN_CURRENT_DISPATCH | - | RFQ2-THRUST-R04, RFQ2-THRUST-R10, RFQ2-THRUST-R13, RFQ2-THRUST-R14, RFQ2-THRUST-R15, RFQ2-THRUST-R17, RFQ2-THRUST-R18 | - | dispatch tag LATER (LATER (sent with the later campaign set); purchase order NOT authorized) | LATER (sent with the later campaign set); purchase order NOT authorized |
+| TH-O01 | LATER | LATER_NOT_IN_CURRENT_DISPATCH | - | - | - | dispatch tag LATER (LATER (sent with the later campaign set); purchase order NOT authorized) | LATER (sent with the later campaign set); purchase order NOT authorized |
+| TH-L02 | LATER | LATER_NOT_IN_CURRENT_DISPATCH | - | RFQ2-THRUST-R10 | - | dispatch tag LATER (LATER (sent with the later campaign set); purchase order NOT authorized) | LATER (sent with the later campaign set); purchase order NOT authorized |
+| TH-L03 | LATER | LATER_NOT_IN_CURRENT_DISPATCH | - | - | - | dispatch tag LATER (LATER (sent with the later campaign set); purchase order NOT authorized) | LATER (sent with the later campaign set); purchase order NOT authorized |
+| TH-L04 | NOW | READY_FOR_OWNER_DISPATCH | - | RFQ2-THRUST-N01, RFQ2-THRUST-N05 | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| TH-L05 | NOW | READY_FOR_OWNER_DISPATCH | - | RFQ2-THRUST-N01, quantity | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| TH-L06 | NOW | READY_FOR_OWNER_DISPATCH | - | RFQ2-THRUST-N02, quantity | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| TH-L07 | NOW | READY_FOR_OWNER_DISPATCH | - | - | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| TH-L08 | NOW | READY_FOR_OWNER_DISPATCH | - | RFQ2-THRUST-N01 | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| TH-L09 | NOW | NOT_READY_BLOCKING_TBD | - | - | quantity | blocking: quantity | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| TH-L10 | NOW | READY_FOR_OWNER_DISPATCH | - | RFQ3-THRUST-N03, quantity | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+
 ## Open specification items
 
 | id | v1 | title | value | freeze | dispatch |

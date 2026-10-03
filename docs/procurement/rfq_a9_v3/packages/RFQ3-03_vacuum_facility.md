@@ -209,6 +209,28 @@ X-02, X-06, X-10, X-14, X-15, X-17, X-18
 
 Reference data are not requirements, not a selection and not a supplier ranking.
 
+## Dispatch readiness checklist (A9.21 item 15)
+
+NOW subset: **READY_FOR_OWNER_DISPATCH**; LATER subset: LATER_NOT_IN_CURRENT_DISPATCH. Dispatched by the repository: False; purchase authorized: False. Common interface cited: RFQ3-CIF v3 (`docs/procurement/rfq_a9_v3/packages/RFQ3-00_common_interface.md`, rendered sha256 `e4b2f647151fa40b0a8a6b90b9068cb8b08690c106d1e1d8a616e08e7e76d311`). Owner action: owner / procurement sends the request for quotation outside the repository and keeps the dispatch record outside it (A9.21 item 15); no purchase order.
+
+- [x] banner states DO NOT PURCHASE - quotation / specification only
+- [x] cites the common interface document RFQ3-CIF (docs/procurement/rfq_a9_v3/packages/RFQ3-00_common_interface.md)
+- [x] has NOW lines (P1_NEEDED or indicative quotation now)
+- [x] every P1_NEEDED line has a complete quote sheet (spec, acceptance, calibration, documentation)
+- [x] every NOW line is in an owner-authorised send state with no unmet send precondition
+- [x] no NOW line has a blocking open item
+- [x] no price, supplier name, ranking or purchase authorization (compliance record)
+
+| line | set | readiness | supplier answers | deferred to gate | blocking | reason | send state |
+|---|---|---|---|---|---|---|---|
+| VAC-L01 | NOW | READY_FOR_OWNER_DISPATCH | - | RFQ2-VAC-N01, quantity | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| VAC-L02 | NOW | READY_FOR_OWNER_DISPATCH | RFQ2-VAC-N02, quantity | - | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| VAC-L03 | NOW | READY_FOR_OWNER_DISPATCH | - | quantity | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| VAC-L04 | NOW | READY_FOR_OWNER_DISPATCH | - | RFQ2-VAC-N04, quantity | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| VAC-L05 | NOW | READY_FOR_OWNER_DISPATCH | RFQ2-VAC-R05, RFQ2-VAC-R07 | RFQ2-VAC-R03, RFQ2-VAC-R06 | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| VAC-L06 | LATER | LATER_NOT_IN_CURRENT_DISPATCH | - | RFQ2-VAC-N05, quantity | - | dispatch tag LATER (LATER (sent with the later campaign set); purchase order NOT authorized) | LATER (sent with the later campaign set); purchase order NOT authorized |
+| VAC-L07 | NOW | READY_FOR_OWNER_DISPATCH | - | - | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+
 ## Open specification items
 
 | id | v1 | title | value | freeze | dispatch |
