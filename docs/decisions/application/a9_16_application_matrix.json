@@ -164,7 +164,9 @@
   "a9_19_budgets": "4cd79e6425472ece6835d4c254710cdfe036b31a",
   "a9_19_design": "56e73270a96669a4760e4e11c4244e78fa6e4d03",
   "a9_19_integration": "f280cf4401fe1f428352b5657e97881f38cc7c79",
-  "a9_17_21_records": "42453f5fdb10a645ea88ef90f56aad851d2c6520"
+  "a9_17_21_records": "42453f5fdb10a645ea88ef90f56aad851d2c6520",
+  "a9_21_al08_budgets": "6a69ac52dcca091212c0dfc4cd10abcbd2e1bdcc",
+  "a9_21_icp_gate": "eae96c820ef86c281dc7ffafd6bb698ee0b2b96f"
  },
  "post_step1_commits": {
   "step2_merge": "f9f4749994ea17703b005c84aadfb3b04d0cff10",
@@ -222,14 +224,14 @@
   "A9.21": 8
  },
  "counts": {
-  "APPLIED": 143,
-  "BLOCKED": 6,
+  "APPLIED": 145,
+  "BLOCKED": 4,
   "NOT_APPLICABLE_TO_ARTIFACTS": 3,
   "PARTIAL": 5,
   "SUPERSEDED_BY_LATER_DECISION": 2
  },
  "residual_counts": {
-  "BLOCKED": 23,
+  "BLOCKED": 21,
   "OPEN_OWNER_QUESTION": 1,
   "PENDING_EVIDENCE": 7,
   "PENDING_FINALIZE_DESIGN_REGEN": 21,
@@ -7261,8 +7263,7 @@
    "decision_json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
    "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
    "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/AL08",
-   "status": "BLOCKED",
-   "status_reason": "recorded in state v5 (MQ-05) and M16 only: the mass / power v3 AL-08 line does not yet cite A9.21 (provisional floor, quotation split incl. the possible ~0.285 kg C1 cathode branch); docs/budgets/mass_power_a9_v3 is outside this lane",
+   "status": "APPLIED",
    "applications": [
     {
      "lane": "A9_17_21_RECORDS",
@@ -7283,6 +7284,28 @@
       "\"AL08\""
      ],
      "what": "M16 v4 rows 6 / 7 / 8: AL-08 provisional until quotations"
+    },
+    {
+     "lane": "A9.21",
+     "artifact": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+     "commit": "6a69ac52dcca091212c0dfc4cd10abcbd2e1bdcc",
+     "status": "APPLIED",
+     "record_locations": [
+      "KEEP_6_05KG_PROVISIONAL_WAIT_FOR_QUOTES_TO_REBASE_AL08"
+     ],
+     "what": "mass / power v3 AL-08 line: a9_21_status PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (6.0528 kg kept as a provisional planning floor; re-based only after the split quotations)",
+     "record_pointer": "/lines/hall_icp_neutralizer/7 (line=AL-08)"
+    },
+    {
+     "lane": "A9.21",
+     "artifact": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+     "commit": "6a69ac52dcca091212c0dfc4cd10abcbd2e1bdcc",
+     "status": "APPLIED",
+     "record_locations": [
+      "KEEP_6_05KG_PROVISIONAL_WAIT_FOR_QUOTES_TO_REBASE_AL08"
+     ],
+     "what": "Xe accounting v3 XV3-IF-02 (AL-08 stored-Xe hardware): a9_21_status PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN",
+     "record_pointer": "/interface_demands/1 (id=XV3-IF-02)"
     }
    ],
    "residual": [
@@ -7290,11 +7313,6 @@
      "status": "PENDING_EVIDENCE",
      "what": "quotations split into tank, regulator, valves, plumbing, mounting/thermal and any C1-specific branch, then the formal AL-08 re-base",
      "where": "supplier quotations (owner / procurement)"
-    },
-    {
-     "status": "BLOCKED",
-     "what": "mass / power v3 AL-08 line to cite A9.21 (provisional planning floor, not frozen)",
-     "where": "docs/budgets/mass_power_a9_v3/ (budgets lane)"
     }
    ]
   },
@@ -7339,8 +7357,7 @@
    "decision_json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
    "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
    "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/ICP_GATE",
-   "status": "BLOCKED",
-   "status_reason": "the gate is recorded in state v5 (RP-A919-01) and M16 row 18 only: no gate artifact registers it yet (the RVM still lists RP-A919-01 as RECORDER_PROPOSAL_OPEN_FOR_OWNER; the F9 gate list has no ICP go / no-go) - outside this lane",
+   "status": "APPLIED",
    "applications": [
     {
      "lane": "A9_17_21_RECORDS",
@@ -7362,14 +7379,34 @@
       "\"ICP_GATE\""
      ],
      "what": "M16 v4 row 18 carries the gate (fail closed; no numbers)"
+    },
+    {
+     "lane": "A9.21",
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "commit": "eae96c820ef86c281dc7ffafd6bb698ee0b2b96f",
+     "status": "APPLIED",
+     "record_locations": [
+      "\"owner_approved_gates\"",
+      "GNG-ICP-01"
+     ],
+     "what": "RVM owner_approved_gates: GNG-ICP-01 mandatory ICP go / no-go before LOCK-1 (own id, not AG-01 .. AG-15), NOT_EVALUATED (fail closed), criteria PENDING_OWNER_ACCEPTANCE; RP-A919-01 (a) - (c) preserved verbatim for owner review (never evaluated)",
+     "record_pointer": "/owner_approved_gates/0 (id=GNG-ICP-01)"
+    },
+    {
+     "lane": "A9.21",
+     "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+     "commit": "eae96c820ef86c281dc7ffafd6bb698ee0b2b96f",
+     "status": "APPLIED",
+     "record_locations": [
+      "\"pre_lock1_gates\"",
+      "\"lock1_precondition\"",
+      "GNG-ICP-01"
+     ],
+     "what": "F9 pre_lock1_gates: GNG-ICP-01 re-evaluated from the RVM record (NOT_EVALUATED); LOCK-1 release not reportable while it is not GO; architecture status stays INVESTIGATION_HYPOTHESIS",
+     "record_pointer": "/pre_lock1_gates/0 (id=GNG-ICP-01)"
     }
    ],
    "residual": [
-    {
-     "status": "BLOCKED",
-     "what": "register the mandatory ICP go / no-go gate before LOCK-1 (fail closed: missing evidence -> NOT_EVALUATED, never GO) in the gate artifacts",
-     "where": "docs/requirements/rvm_a9/, docs/architecture/freeze_candidate/"
-    },
     {
      "status": "PENDING_OWNER_ACCEPTANCE",
      "what": "numerical GO / NO-GO criteria: not approved; the recorder proposal text (RP-A919-01 (a) - (c)) is preserved for owner review",

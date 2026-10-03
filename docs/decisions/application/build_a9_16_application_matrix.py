@@ -11,6 +11,10 @@ Later owner decisions A9.17 .. A9.21: one entry per decision item (a9_later_lib.
 configuration hall_icp_neutralizer, Xe contingency / emergency, no hollow cathode; C1 a ground-only laboratory
 reference) and A9.21 (open items + hardware programme). Earlier entries a later decision amends carry
 'amended_by_later'; the ones it supersedes (OQ-A907-07, MPQ-01: no C1 flight variant) get SUPERSEDED_BY_LATER_DECISION.
+A9.21 AL08: APPLIED where the mass / power v3 AL-08 line and Xe v3 XV3-IF-02 carry a9_21_status
+PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (checked structurally in the artifacts); the quotation re-base stays PENDING_EVIDENCE.
+A9.21 ICP_GATE: APPLIED where the RVM owner_approved_gates and the F9 pre_lock1_gates register GNG-ICP-01 (NOT_EVALUATED,
+fail closed; checked structurally); the GO / NO-GO criteria stay PENDING_OWNER_ACCEPTANCE.
 AG-15: the registration and RVM re-base parts are APPLIED (docs/requirements/rfp_official + rvm re-base); the owner
 acceptance / closure stays PENDING_OWNER_ACCEPTANCE ('ag_15' on F9-OQ-03; the F9 freeze-candidate AG-15 rule is being
 changed in a parallel lane - regenerate this matrix after merging it).
@@ -64,8 +68,11 @@ F_REGEN = ("the F-lane records that carry this decision (docs/design_synthesis/*
 F_REGEN_WHERE = "docs/design_synthesis/**, docs/architecture/** (A9.16 finalize design regeneration lane)"
 
 
-def _app(lane, artifact, commit, tokens, what):
-    return {"lane": lane, "artifact": artifact, "commit": commit, "tokens": list(tokens), "what": what}
+def _app(lane, artifact, commit, tokens, what, record=None):
+    a = {"lane": lane, "artifact": artifact, "commit": commit, "tokens": list(tokens), "what": what}
+    if record:
+        a["record"] = record   # structural check of the artifact record (JSON list pointer, match, field checks)
+    return a
 
 
 CODE_APPS = {
@@ -203,6 +210,8 @@ A919_BUDGETS_COMMIT = "4cd79e6425472ece6835d4c254710cdfe036b31a"   # mass / powe
 A919_DESIGN_COMMIT = "56e73270a96669a4760e4e11c4244e78fa6e4d03"    # abep_sim/design/a9_19_architecture.py
 A919_INTEGRATION_COMMIT = "f280cf4401fe1f428352b5657e97881f38cc7c79"  # F9 Xe role, H2-6 live-source CI check
 RECORDS_A917_21_COMMIT = "42453f5fdb10a645ea88ef90f56aad851d2c6520"  # state v5 + M16 v4 A9.17 .. A9.21 records
+A921_AL08_BUDGETS_COMMIT = "6a69ac52dcca091212c0dfc4cd10abcbd2e1bdcc"  # mass / power v3 AL-08 + Xe v3 XV3-IF-02 A9.21 label
+A921_ICP_GATE_COMMIT = "eae96c820ef86c281dc7ffafd6bb698ee0b2b96f"      # RVM + F9 GNG-ICP-01 registration (A9.21 ICP_GATE)
 V5_REL = "docs/budgets/owner_decisions/owner_questions_state_v5.json"
 M16_REL = "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json"
 RVM_REL = "docs/requirements/rvm_a9/rvm_a9_v1.json"
@@ -210,6 +219,14 @@ REG_REL = "docs/requirements/rfp_official/rfp_registration_v1.json"
 MP3_REL = "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json"
 XE3_REL = "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json"
 F9_REL = "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json"
+
+
+AL08_LABEL = "PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN"
+ICP_GATE_ID = "GNG-ICP-01"
+ICP_CRITERIA = "PENDING_OWNER_ACCEPTANCE"
+ICP_GATE_CHECKS = {"status": ("equals", "NOT_EVALUATED"), "criteria": ("equals", ICP_CRITERIA),
+                   "placement": ("equals", "BEFORE_LOCK-1"), "mandatory": ("equals", True),
+                   "lock1_release_reportable": ("equals", False)}
 
 
 def _rec(artifact, tokens, what):
@@ -300,7 +317,16 @@ LATER_APPS = {
     ("A9.21", "PERF_RERUN"): [],
     ("A9.21", "AL08"): [
         _rec(V5_REL, ['"KEEP_6_05KG_PROVISIONAL_WAIT_FOR_QUOTES_TO_REBASE_AL08"'], "state v5 MQ-05 AMENDED_BY_A9_21"),
-        _rec(M16_REL, ['"AL08"'], "M16 v4 rows 6 / 7 / 8: AL-08 provisional until quotations")],
+        _rec(M16_REL, ['"AL08"'], "M16 v4 rows 6 / 7 / 8: AL-08 provisional until quotations"),
+        _app("A9.21", MP3_REL, A921_AL08_BUDGETS_COMMIT, ["KEEP_6_05KG_PROVISIONAL_WAIT_FOR_QUOTES_TO_REBASE_AL08"],
+             "mass / power v3 AL-08 line: a9_21_status PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (6.0528 kg kept as a "
+             "provisional planning floor; re-based only after the split quotations)",
+             {"list": "/lines/hall_icp_neutralizer", "match": ("line", "AL-08"),
+              "checks": {"a9_21_status": ("startswith", AL08_LABEL)}}),
+        _app("A9.21", XE3_REL, A921_AL08_BUDGETS_COMMIT, ["KEEP_6_05KG_PROVISIONAL_WAIT_FOR_QUOTES_TO_REBASE_AL08"],
+             "Xe accounting v3 XV3-IF-02 (AL-08 stored-Xe hardware): a9_21_status PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN",
+             {"list": "/interface_demands", "match": ("id", "XV3-IF-02"),
+              "checks": {"a9_21_status": ("startswith", AL08_LABEL)}})],
     ("A9.21", "H2_6"): [
         _app("A9.21", "scripts/ci_checks.py", A919_INTEGRATION_COMMIT, ["h2_6_live_sources"],
              "live-source verification of the frozen H2-6 builder runs as a CI static check (implemented in the "
@@ -309,7 +335,19 @@ LATER_APPS = {
     ("A9.21", "ICP_GATE"): [
         _rec(V5_REL, ['"RP-A919-01"', '"NOT_APPROVED_PRESERVED_FOR_OWNER_REVIEW"'],
              "state v5 RP-A919-01 ANSWERED_BY_A9_21 in part; criteria preserved for owner review"),
-        _rec(M16_REL, ['"ICP_GATE"'], "M16 v4 row 18 carries the gate (fail closed; no numbers)")],
+        _rec(M16_REL, ['"ICP_GATE"'], "M16 v4 row 18 carries the gate (fail closed; no numbers)"),
+        _app("A9.21", RVM_REL, A921_ICP_GATE_COMMIT, ['"owner_approved_gates"', ICP_GATE_ID],
+             "RVM owner_approved_gates: " + ICP_GATE_ID + " mandatory ICP go / no-go before LOCK-1 (own id, not "
+             "AG-01 .. AG-15), NOT_EVALUATED (fail closed), criteria PENDING_OWNER_ACCEPTANCE; RP-A919-01 (a) - (c) "
+             "preserved verbatim for owner review (never evaluated)",
+             {"list": "/owner_approved_gates", "match": ("id", ICP_GATE_ID), "checks": ICP_GATE_CHECKS}),
+        _app("A9.21", F9_REL, A921_ICP_GATE_COMMIT, ['"pre_lock1_gates"', '"lock1_precondition"', ICP_GATE_ID],
+             "F9 pre_lock1_gates: " + ICP_GATE_ID + " re-evaluated from the RVM record (NOT_EVALUATED); LOCK-1 release "
+             "not reportable while it is not GO; architecture status stays INVESTIGATION_HYPOTHESIS",
+             {"list": "/pre_lock1_gates", "match": ("id", ICP_GATE_ID),
+              "checks": {"current_status": ("equals", "NOT_EVALUATED"), "criteria": ("equals", ICP_CRITERIA),
+                         "placement": ("equals", "BEFORE_LOCK-1"),
+                         "evidence_sufficient_for_freeze": ("equals", False)}})],
     ("A9.21", "BID_CLOSE"): [
         _rec(V5_REL, ['"rfp_registered_document"'], "state v5 WEB-ACC-2 AMENDED_BY_A9_21 (operational deadline "
                                                      "05-Oct-2026 17:00; RFP number from the registered document)")],
@@ -329,12 +367,6 @@ LATER_STATUS = {
     ("A9.21", "PERF_RERUN"): ("BLOCKED", "owner-machine action: the owner reruns the dedicated baseline on the exact "
                               "commit SHA supplied to them, into a new folder (previous baseline unchanged); the SHA is "
                               "sent after the merge; not runnable in this environment"),
-    ("A9.21", "AL08"): ("BLOCKED", "recorded in state v5 (MQ-05) and M16 only: the mass / power v3 AL-08 line does not "
-                        "yet cite A9.21 (provisional floor, quotation split incl. the possible ~0.285 kg C1 cathode "
-                        "branch); docs/budgets/mass_power_a9_v3 is outside this lane"),
-    ("A9.21", "ICP_GATE"): ("BLOCKED", "the gate is recorded in state v5 (RP-A919-01) and M16 row 18 only: no gate "
-                            "artifact registers it yet (the RVM still lists RP-A919-01 as RECORDER_PROPOSAL_OPEN_FOR_OWNER; "
-                            "the F9 gate list has no ICP go / no-go) - outside this lane"),
     ("A9.21", "BID_CLOSE"): ("NOT_APPLICABLE_TO_ARTIFACTS", "an operational submission deadline (DefProc tender "
                              "2026_DRDO_788433_1), not a requirement of the registered RFP (not in the PDF); recorded in "
                              "state v5 WEB-ACC-2"),
@@ -366,12 +398,8 @@ LATER_RESIDUAL = {
     ("A9.21", "AL08"): [("PENDING_EVIDENCE", "quotations split into tank, regulator, valves, plumbing, mounting/thermal "
                          "and any C1-specific branch, then the formal AL-08 re-base", "supplier quotations (owner / "
                          "procurement)"),
-                        ("BLOCKED", "mass / power v3 AL-08 line to cite A9.21 (provisional planning floor, not frozen)",
-                         "docs/budgets/mass_power_a9_v3/ (budgets lane)")],
-    ("A9.21", "ICP_GATE"): [("BLOCKED", "register the mandatory ICP go / no-go gate before LOCK-1 (fail closed: missing "
-                             "evidence -> NOT_EVALUATED, never GO) in the gate artifacts", "docs/requirements/rvm_a9/, "
-                             "docs/architecture/freeze_candidate/"),
-                            ("PENDING_OWNER_ACCEPTANCE", "numerical GO / NO-GO criteria: not approved; the recorder "
+],
+    ("A9.21", "ICP_GATE"): [("PENDING_OWNER_ACCEPTANCE", "numerical GO / NO-GO criteria: not approved; the recorder "
                              "proposal text (RP-A919-01 (a) - (c)) is preserved for owner review", "owner")],
     ("A9.21", "HW_PROGRAMME"): [("BLOCKED", "re-sequence the campaign / stage artifacts to the approved order",
                                  "docs/hardware/h1_freeze_candidate/, docs/experiments/hall_icp/p1_icp_bench/, "
@@ -716,8 +744,32 @@ def _verify_app(spec, qid):
     missing = [t for t in spec["tokens"] if t not in text]
     if missing:
         raise SystemExit(f"{qid}: tokens {missing} not found in {spec['artifact']} (application not verifiable)")
-    return {"lane": spec["lane"], "artifact": spec["artifact"], "commit": spec["commit"], "status": "APPLIED",
-            "record_locations": list(spec["tokens"]), "what": spec["what"]}
+    out = {"lane": spec["lane"], "artifact": spec["artifact"], "commit": spec["commit"], "status": "APPLIED",
+           "record_locations": list(spec["tokens"]), "what": spec["what"]}
+    if spec.get("record"):
+        out["record_pointer"] = _verify_record(json.loads(text), spec["record"], qid, spec["artifact"])
+    return out
+
+
+def _verify_record(doc, rec, qid, artifact):
+    """Fail closed: exactly one record of the JSON list at rec['list'] matches rec['match'] and every field check holds
+    (('equals', v) or ('startswith', prefix)). Returns the JSON pointer of the record."""
+    node = doc
+    for part in rec["list"].strip("/").split("/"):
+        node = node[int(part)] if isinstance(node, list) else node.get(part) if isinstance(node, dict) else None
+        if node is None:
+            raise SystemExit(f"{qid}: {artifact}{rec['list']} missing (application not verifiable)")
+    key, val = rec["match"]
+    hits = [i for i, x in enumerate(node) if isinstance(x, dict) and x.get(key) == val]
+    if len(hits) != 1:
+        raise SystemExit(f"{qid}: {artifact}{rec['list']}: {key}={val!r} found {len(hits)} times")
+    x = node[hits[0]]
+    for field, (op, want) in rec["checks"].items():
+        got = x.get(field)
+        ok = got == want if op == "equals" else isinstance(got, str) and got.startswith(want)
+        if not ok:
+            raise SystemExit(f"{qid}: {artifact}{rec['list']}/{hits[0]}.{field} = {got!r} fails {op} {want!r}")
+    return f"{rec['list']}/{hits[0]} ({key}={val})"
 
 
 def code_applications():
@@ -857,7 +909,9 @@ def build():
         "pins": L.pins() + X.pins(),
         "later_application_commits": {"a9_19_rvm": A919_RVM_COMMIT, "a9_19_budgets": A919_BUDGETS_COMMIT,
                                       "a9_19_design": A919_DESIGN_COMMIT, "a9_19_integration": A919_INTEGRATION_COMMIT,
-                                      "a9_17_21_records": RECORDS_A917_21_COMMIT},
+                                      "a9_17_21_records": RECORDS_A917_21_COMMIT,
+                                      "a9_21_al08_budgets": A921_AL08_BUDGETS_COMMIT,
+                                      "a9_21_icp_gate": A921_ICP_GATE_COMMIT},
         "post_step1_commits": {"step2_merge": "f9f4749994ea17703b005c84aadfb3b04d0cff10", "design_layer": DESIGN_LAYER_COMMIT,
                                "rvm_rfp_rebase": RVM_REBASE_COMMIT},
         "integration_commits": INTEGRATION_COMMITS,
