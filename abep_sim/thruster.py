@@ -34,7 +34,8 @@ class Stage1:
     eta_u_boost: float            # additive lift to eta_u (saturates at eta_u_cap)
     eta_u_cap: float
     mass_kg: float
-    ic: float                     # indigenous-content estimate of the stage hardware
+    ic: float                     # indigenous-content estimate of the stage hardware (assessment-only prior, A9.22 item 6:
+                                  # read by abep_sim.assessment, never by the physics closure)
     transport_eff: float = 1.0    # fraction of pre-ionised plasma that survives the interstage region
 
 
@@ -51,7 +52,7 @@ class Cathode:
 class Card:
     name: str
     family: str                   # hall | gridded | gridless_ecr | helicon
-    hall: bool                    # counts for "Hall effect preferable"
+    hall: bool                    # counts for "Hall effect preferable" (assessment-only preference attribute, A9.22 item 6)
     eta_u_max: dict               # {"Xe":..,"air":..}
     p_min_Pa: float               # accelerator/discharge minimum inlet pressure (air)
     p_width_dec: float            # sigmoid width in decades
@@ -61,7 +62,7 @@ class Card:
     vd_default_V: float
     p_magnet_W: float
     mass_kg: float                # thruster + magnetic circuit
-    ic_thruster: float
+    ic_thruster: float            # indigenous-content prior (assessment-only, A9.22 item 6)
     cathode: Cathode
     stage1: Optional[Stage1] = None
     o_life_h: dict = field(default_factory=dict)   # component -> life in O plasma

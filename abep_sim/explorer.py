@@ -1,4 +1,4 @@
-"""Build a self-contained interactive explorer (single HTML) from sweep.csv."""
+"""Build a self-contained interactive explorer (single HTML) from sweep.csv (parametric screening, not evidence)."""
 from __future__ import annotations
 import json
 from pathlib import Path
@@ -12,7 +12,7 @@ COLS = ["architecture", "alt_km", "solar", "intake_area_m2", "accommodation", "c
 
 TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ABEP design-space explorer — DTDF/06/13516</title>
+<title>ABEP screening explorer</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root{--bg:#f7f7f5;--fg:#1a1a1a;--mut:#666;--card:#fff;--line:#ddd;--acc:#4259A1;--ok:#1CAB98;--bad:#c0392b;
@@ -35,7 +35,7 @@ canvas{max-width:100%}
 .ok{color:var(--ok)} .bad{color:var(--bad)}
 .note{font-size:12px;color:var(--mut);margin-top:8px}
 </style></head><body>
-<header><h1>ABEP design-space explorer</h1><div class="sub">__N__ configurations · DRDO TDF DTDF/06/13516 · 12–25 mN · &lt;1.5 kW · &lt;40 kg · 180–230 km · N₂ + O · Xe · &gt;15,000 h · IC ≥ 75 %. Priors, not test data.</div></header>
+<header><h1>ABEP design-space explorer — parametric screening</h1><div class="sub">PARAMETRIC_SCREENING_NOT_EVIDENCE · __N__ configurations · DRDO TDF DTDF/06/13516 · 12–25 mN · &lt;1.5 kW · &lt;40 kg · 180–230 km · N₂ + O · Xe · &gt;15,000 h · IC ≥ 75 %. Priors, not test data; flags are screening checks, not compliance or validation.</div></header>
 <main>
 <aside class="panel">
 <fieldset><legend>Architecture</legend><div id="archs"></div></fieldset>
@@ -45,8 +45,8 @@ canvas{max-width:100%}
 <fieldset><legend>Discharge voltage</legend><div id="vds" class="row"></div></fieldset>
 <fieldset><legend>Intake surface</legend><div id="accs" class="row"></div></fieldset>
 <fieldset><legend>Show</legend>
-<label class="chk"><input type="checkbox" id="feasOnly"> RFP-compliant only (incl. 12 mN sustained on air)</label>
-<label class="chk"><input type="checkbox" id="closeOnly"> ABEP-closed only (RFP-compliant AND T &gt; D on air)</label>
+<label class="chk"><input type="checkbox" id="feasOnly"> passes RFP screening checks only (incl. 12 mN sustained on air)</label>
+<label class="chk"><input type="checkbox" id="closeOnly"> screens ABEP-closed only (screening pass AND T &gt; D on air)</label>
 <label class="chk"><input type="checkbox" id="ignoreIC"> technical only (ignore both IC checks)</label></fieldset>
 <fieldset><legend>Axes</legend><div class="row"><select id="xsel"></select><select id="ysel"></select></div></fieldset>
 <fieldset><legend>Rank table by</legend><select id="rank"></select></fieldset>
@@ -88,7 +88,7 @@ ctx.strokeStyle='#c0392b';ctx.setLineDash([5,4]);
 for(const [L,ax,vert] of [[lx,x,true],[ly,y,false]]){if(!L)continue;for(const v of L){if(v==null)continue;const p=ax.getPixelForValue(v);ctx.beginPath();if(vert){ctx.moveTo(p,ca.top);ctx.lineTo(p,ca.bottom)}else{ctx.moveTo(ca.left,p);ctx.lineTo(ca.right,p)}ctx.stroke()}}
 ctx.restore()}}]});
 const feas=rows.filter(r=>r.rfp_compliant).length,tc=rows.filter(r=>r.technical_compliant).length,both=rows.filter(r=>r.abep_closed).length,tcl=rows.filter(r=>r.technical_closed).length;
-stats.innerHTML=`<div class="stat">shown<b>${rows.length}</b></div><div class="stat">RFP-compliant<b>${feas}</b></div><div class="stat">technical-compliant (no IC)<b>${tc}</b></div><div class="stat">ABEP-closed<b>${both}</b></div><div class="stat">technical-closed<b>${tcl}</b></div>`;
+stats.innerHTML=`<div class="stat">shown<b>${rows.length}</b></div><div class="stat">RFP screening pass<b>${feas}</b></div><div class="stat">technical screening pass (no IC)<b>${tc}</b></div><div class="stat">screens ABEP-closed<b>${both}</b></div><div class="stat">technical screening closed<b>${tcl}</b></div>`;
 const rk=rank.value;const top=[...rows].sort((a,b)=>b[rk]-a[rk]).slice(0,25);
 const cols=["architecture","alt_km","solar","intake_area_m2","accommodation","comp_ratio","vd_V","mdot_air_mgps","p_in_Pa","eta_u_air","T_air_mN","Isp_air_s","T_over_D_air","P_total_air_W","P_total_peak_W","m_total_kg","xe_total_kg","ic_total","life_margin","rfp_compliant","abep_closed","technical_closed"];
 const fmt=(k,v)=>typeof v==='number'?(k==='p_in_Pa'||k==='O_survival'?v.toExponential(2):(Math.abs(v)>=100?v.toFixed(0):v.toFixed(2))):(typeof v==='boolean'?`<span class="${v?'ok':'bad'}">${v?'yes':'no'}</span>`:v);
