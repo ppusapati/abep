@@ -16,6 +16,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "docs" / "decisions" / "application"))
 import a9_16_lib as L  # noqa: E402
+import a9_later_lib as X  # noqa: E402
 
 
 def _mod(rel, name):
@@ -329,10 +330,18 @@ def test_matrix_covers_every_decision_id_once():
     assert len(ids) == len(set(ids))
     want = {(k, q) for k in L.ORDER if k != "A9.15" for q in L.decision_ids(k)} | {("A9.15", "A9.15 governing_rule")}
     later = {("A9.17", q) for q in ("WINDS", "ORBIT", "DATA_SIZE", "SPUTTER", "RFP", "PERF")} | \
-        {("A9.18", q) for q in ("GOLDEN", "PERF_RERUN")}
+        {("A9.18", q) for q in ("GOLDEN", "PERF_RERUN")} | \
+        {("A9.19", q) for q in ("architecture", "xenon_role", "amends/A9.15",
+                                "amends/A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07", "amends/A9 C1 CONTROL_FALLBACK",
+                                "owner_request")} | \
+        {("A9.20", "answer")} | \
+        {("A9.21", q) for q in ("PERF_RERUN", "AL08", "H2_6", "ICP_GATE", "BID_CLOSE", "HW_PROGRAMME",
+                                "EXTERNAL_INPUTS", "RFQ_DISPATCH")}
     assert set(MX.LATER_APPS) == later
+    for k in X.ORDER:                                   # every item of every later decision record is covered
+        assert {(k, q) for q in X.item_keys(k)} <= later
     want |= later
-    assert set(ids) == want and len(want) == 136 + 8
+    assert set(ids) == want and len(want) == 136 + 8 + 15
     for e in MXDOC["entries"]:
         assert e["status"] in MX.STATUSES
         for r in e["residual"]:
@@ -343,7 +352,7 @@ def test_matrix_covers_every_decision_id_once():
 def test_matrix_status_classes():
     """A9.16 finalize: step-2 (A9.9) and step-3 (A9.13) decisions are APPLIED only through a verified step-2 / step-3
     application; the ones no commit applies are BLOCKED / PARTIAL with a stated reason (never PENDING after the steps)."""
-    by = {e["question_id"]: e for e in MXDOC["entries"] if e["decision"] not in ("A9.17", "A9.18")}
+    by = {e["question_id"]: e for e in MXDOC["entries"] if e["decision"] not in X.ORDER}
     code_lanes = {"STEP2", "STEP3", "A9.13_DATA", "A9.17"}
     for q in L.decision_ids("A9.9"):
         e = by[q]
@@ -392,7 +401,8 @@ def test_matrix_applications_are_verifiable():
             commits.add(a["commit"])
             if a["status"] != "APPLIED" or a["lane"] == "INTEGRATION":
                 continue
-            if a["lane"] in ("STEP2", "STEP3", "A9.13_DATA", "A9.17", "A9.18"):
+            if a["lane"] in ("STEP2", "STEP3", "A9.13_DATA", "A9.17", "A9.18", "A9.19", "A9.20", "A9.21",
+                             "A9_17_21_RECORDS"):
                 text = (ROOT / a["artifact"]).read_text(encoding="utf-8")
                 assert a["record_locations"] and all(t in text for t in a["record_locations"]), (e["question_id"], a)
             elif e["decision"] != "A9.15":
@@ -440,9 +450,88 @@ def test_matrix_repair_lane_truthful_statuses():
 def test_od3_partial_until_design_layer_consumes_design_states():
     """A9.16 repair RVF-03: S9.8 is not APPLIED while the design-layer statewise evaluators still use the five
     orbit-averaged ENVELOPE_STATES; the residual names them (and S6.14 carries the same BLOCKED residual)."""
-    by = {e["question_id"]: e for e in MXDOC["entries"] if e["decision"] not in ("A9.17", "A9.18")}
+    by = {e["question_id"]: e for e in MXDOC["entries"] if e["decision"] not in X.ORDER}
     assert by["OD3"]["status"] == "PARTIAL"
     for q in ("OD3", "OQ-F4-05"):
         bl = [r for r in by[q]["residual"] if r["status"] == "BLOCKED"]
         assert bl and "ENVELOPE_STATES" in bl[0]["what"] and "architecture_optimizer" in bl[0]["what"], q
     assert any(r["status"] == "PENDING_FINALIZE_DESIGN_REGEN" for r in by["OQ-F4-05"]["residual"])
+
+
+
+# ------------------------------------------------------------------------------------------- A9.17 .. A9.21
+def _later(dk, item):
+    sel = [e for e in MXDOC["entries"] if (e["decision"], e["question_id"]) == (dk, item)]
+    assert len(sel) == 1, (dk, item)
+    return sel[0]
+
+
+def test_matrix_later_decisions_truthful_statuses():
+    for item in X.item_keys("A9.19"):
+        e = _later("A9.19", item)
+        assert e["status"] == "APPLIED", item
+        assert any(a["artifact"] != MX.V5_REL for a in e["applications"]), item      # a governing artifact
+        assert e["pointer"].startswith(X.LOADED["A9.19"]["json"] + "#/")
+    assert _later("A9.20", "answer")["status"] == "APPLIED"
+    want = {"PERF_RERUN": "BLOCKED", "AL08": "BLOCKED", "H2_6": "APPLIED", "ICP_GATE": "BLOCKED",
+            "BID_CLOSE": "NOT_APPLICABLE_TO_ARTIFACTS", "HW_PROGRAMME": "PARTIAL", "EXTERNAL_INPUTS": "APPLIED",
+            "RFQ_DISPATCH": "NOT_APPLICABLE_TO_ARTIFACTS"}
+    for item, st in want.items():
+        e = _later("A9.21", item)
+        assert e["status"] == st, item
+        if st != "APPLIED":
+            assert e["status_reason"], item
+    gate = _later("A9.21", "ICP_GATE")
+    assert {r["status"] for r in gate["residual"]} == {"BLOCKED", "PENDING_OWNER_ACCEPTANCE"}
+    assert any("not approved" in r["what"] for r in gate["residual"])
+    assert any(r["status"] == "PENDING_EVIDENCE" for r in _later("A9.21", "EXTERNAL_INPUTS")["residual"])
+    assert any(r["status"] == "PENDING_EVIDENCE" and "quotations" in r["what"]
+               for r in _later("A9.21", "AL08")["residual"])
+    pins = {p["path"]: p["sha256"] for p in MXDOC["pins"]}
+    for k in X.ORDER:
+        assert pins[X.LOADED[k]["json"]] == L.sha256_file(X.LOADED[k]["json"])
+        assert pins[X.LOADED[k]["md"]] == L.sha256_file(X.LOADED[k]["md"])
+
+
+def test_matrix_earlier_entries_amended_or_superseded_by_later():
+    by = {e["question_id"]: e for e in MXDOC["entries"] if e["decision"] not in X.ORDER}
+    for q in ("OQ-A907-07", "MPQ-01"):                     # no C1 flight variant (A9.19 / A9.20)
+        e = by[q]
+        assert e["status"] == "SUPERSEDED_BY_LATER_DECISION" and e["status_reason"]
+        assert {x["decision"] for x in e["amended_by_later"]} == {"A9.19", "A9.20"}
+        assert not any("C1 selection" in r["what"] or "once C1 is selected" in r["what"] for r in e["residual"])
+    for q in ("XA9Q-07", "XV2Q-01", "OD6", "OD5", "OQ-A907-01", "MQ-05"):
+        e = by[q]
+        assert e["status"] == "APPLIED" and e["amended_by_later"], q
+        assert all(x["relation"] == "AMENDS" for x in e["amended_by_later"]), q
+    a15 = by["A9.15 governing_rule"]
+    assert {x["decision"] for x in a15["amended_by_later"]} == {"A9.19"}
+    rules = {r["id"]: r for r in MXDOC["rules"]}
+    assert "hall_icp_neutralizer" in rules["R-A919"]["rule"] and "GROUND_ONLY_LAB_REFERENCE" in rules["R-A919"]["rule"]
+
+
+def test_matrix_ag15_registration_and_rebase_applied_owner_acceptance_pending(monkeypatch):
+    e = {x["question_id"]: x for x in MXDOC["entries"]}["F9-OQ-03"]
+    ag = e["ag_15"]
+    reg = _j("docs/requirements/rfp_official/rfp_registration_v1.json")
+    assert ag["registration"]["status"] == "APPLIED" and ag["rvm_rebase"]["status"] == "APPLIED"
+    assert ag["registration"]["pdf_sha256"] == reg["document"]["sha256"]
+    assert ag["registration"]["n_clauses"] == len(reg["clauses"]) == ag["rvm_rebase"]["clauses_covered"]
+    assert ag["owner_acceptance"]["status"] == "PENDING_OWNER_ACCEPTANCE"
+    assert ag["owner_acceptance"]["rfp_rows_requirement_frozen"] == []       # AG-15 open: no RFP row frozen
+    assert [r["status"] for r in e["residual"]] == ["PENDING_OWNER_ACCEPTANCE"]
+    assert "REGISTERED" in {r["id"]: r for r in MXDOC["rules"]}["R-RFP"]["rule"].upper()
+    for x in MXDOC["entries"]:                          # AG-15 closure is never shown as BLOCKED on registration
+        for r in x["residual"]:
+            assert not (r["status"] == "BLOCKED" and "AG-15" in r["what"]), x["question_id"]
+    # fail closed: an unregistered RFP refuses the AG-15 record
+    real = MX.json.loads
+
+    def fake(text, *a, **k):
+        d = real(text, *a, **k)
+        if isinstance(d, dict) and d.get("schema") == "rfp_registration_v1":
+            d["status"] = "NOT_REGISTERED"
+        return d
+    monkeypatch.setattr(MX.json, "loads", fake)
+    with pytest.raises(SystemExit):
+        MX.ag_15_record()
