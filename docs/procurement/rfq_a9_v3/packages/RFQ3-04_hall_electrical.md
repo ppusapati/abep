@@ -433,6 +433,41 @@ X-05, X-08, X-10, X-11, X-12, X-18, X-20
 
 Reference data are not requirements, not a selection and not a supplier ranking.
 
+## Dispatch readiness checklist (A9.21 item 15)
+
+NOW subset: **READY_FOR_OWNER_DISPATCH**; LATER subset: LATER_NOT_IN_CURRENT_DISPATCH. Dispatched by the repository: False; purchase authorized: False. Common interface cited: RFQ3-CIF v3 (`docs/procurement/rfq_a9_v3/packages/RFQ3-00_common_interface.md`, rendered sha256 `e4b2f647151fa40b0a8a6b90b9068cb8b08690c106d1e1d8a616e08e7e76d311`). Owner action: owner / procurement sends the request for quotation outside the repository and keeps the dispatch record outside it (A9.21 item 15); no purchase order.
+
+- [x] banner states DO NOT PURCHASE - quotation / specification only
+- [x] cites the common interface document RFQ3-CIF (docs/procurement/rfq_a9_v3/packages/RFQ3-00_common_interface.md)
+- [x] has NOW lines (P1_NEEDED or indicative quotation now)
+- [x] every P1_NEEDED line has a complete quote sheet (spec, acceptance, calibration, documentation)
+- [x] every NOW line is in an owner-authorised send state with no unmet send precondition
+- [x] no NOW line has a blocking open item
+- [x] no price, supplier name, ranking or purchase authorization (compliance record)
+
+| line | set | readiness | supplier answers | deferred to gate | blocking | reason | send state |
+|---|---|---|---|---|---|---|---|
+| HE-L01 | NOW | READY_FOR_OWNER_DISPATCH | - | - | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| HE-L02 | NOW | READY_FOR_OWNER_DISPATCH | - | RFQ2-HALLEL-N02, quantity | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| HE-L03 | NOW | READY_FOR_OWNER_DISPATCH | - | RFQ2-HALLEL-R01 | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| HE-L04 | NOW | READY_FOR_OWNER_DISPATCH | - | quantity | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| HE-L05 | NOW | READY_FOR_OWNER_DISPATCH | - | RFQ2-HALLEL-N03, quantity | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| HE-L06 | LATER | LATER_NOT_IN_CURRENT_DISPATCH | - | RFQ2-HALLEL-R06 | - | dispatch tag LATER (LATER (sent with the later campaign set); purchase order NOT authorized) | LATER (sent with the later campaign set); purchase order NOT authorized |
+| HE-L07 | LATER | LATER_NOT_IN_CURRENT_DISPATCH | - | RFQ2-HALLEL-R18 | - | dispatch tag LATER (LATER (sent with the later campaign set); purchase order NOT authorized) | LATER (sent with the later campaign set); purchase order NOT authorized |
+| HE-L08 | LATER | LATER_NOT_IN_CURRENT_DISPATCH | - | RFQ2-HALLEL-R15 | - | dispatch tag LATER (LATER (sent with the later campaign set); purchase order NOT authorized) | LATER (sent with the later campaign set); purchase order NOT authorized |
+| HE-L09 | LATER | LATER_NOT_IN_CURRENT_DISPATCH | - | - | - | dispatch tag LATER (LATER (sent with the later campaign set); purchase order NOT authorized) | LATER (sent with the later campaign set); purchase order NOT authorized |
+| HE-L10 | LATER | LATER_NOT_IN_CURRENT_DISPATCH | - | RFQ2-HALLEL-R20 | - | dispatch tag LATER (LATER (sent with the later campaign set); purchase order NOT authorized); gate: H-1 reference characterization with the conventional C1 (A9.10 P1Q-07; before the Ar I_d,max,H1 registration and P1-S7) | LATER (sent with the later campaign set); purchase order NOT authorized |
+| HE-O01 | LATER | LATER_NOT_IN_CURRENT_DISPATCH | - | - | - | dispatch tag LATER (LATER (sent with the later campaign set); purchase order NOT authorized) | LATER (sent with the later campaign set); purchase order NOT authorized |
+| HE-L11 | LATER | LATER_NOT_IN_CURRENT_DISPATCH | RFQ2-HALLEL-R25 | - | - | dispatch tag LATER (LATER (sent with the later campaign set); purchase order NOT authorized); gate: H-1 reference characterization with the conventional C1 (A9.10 P1Q-07; before the Ar I_d,max,H1 registration and P1-S7) | LATER (sent with the later campaign set); purchase order NOT authorized |
+| HE-L12 | LATER | LATER_NOT_IN_CURRENT_DISPATCH | - | - | - | dispatch tag LATER (LATER (sent with the later campaign set); purchase order NOT authorized); gate: H-1 reference characterization with the conventional C1 (A9.10 P1Q-07; before the Ar I_d,max,H1 registration and P1-S7) | LATER (sent with the later campaign set); purchase order NOT authorized |
+| HE-L13 | LATER | LATER_NOT_IN_CURRENT_DISPATCH | - | quantity | - | dispatch tag LATER (LATER (sent with the later campaign set); purchase order NOT authorized) | LATER (sent with the later campaign set); purchase order NOT authorized |
+| HE-L14 | LATER | LATER_NOT_IN_CURRENT_DISPATCH | - | RFQ2-HALLEL-R29 | - | dispatch tag LATER (LATER (sent with the later campaign set); purchase order NOT authorized) | LATER (sent with the later campaign set); purchase order NOT authorized |
+| HE-L15 | NOW | READY_FOR_OWNER_DISPATCH | - | quantity | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| HE-L16 | NOW | READY_FOR_OWNER_DISPATCH | - | - | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| HE-L17 | NOW | READY_FOR_OWNER_DISPATCH | - | - | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| HE-L18 | NOW | READY_FOR_OWNER_DISPATCH | - | quantity | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| HE-L19 | NOW | READY_FOR_OWNER_DISPATCH | - | - | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+
 ## Open specification items
 
 | id | v1 | title | value | freeze | dispatch |

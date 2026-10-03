@@ -223,6 +223,30 @@ RFQ2-RF-N06, RFQ2-RF-N13 (full text in the owning package; values are copied int
 
 X-01, X-02, X-03, X-04, X-05, X-16, X-19
 
+## Dispatch readiness checklist (A9.21 item 15)
+
+NOW subset: **READY_FOR_OWNER_DISPATCH**; LATER subset: -. Dispatched by the repository: False; purchase authorized: False. Common interface cited: RFQ3-CIF v3 (`docs/procurement/rfq_a9_v3/packages/RFQ3-00_common_interface.md`, rendered sha256 `e4b2f647151fa40b0a8a6b90b9068cb8b08690c106d1e1d8a616e08e7e76d311`). Owner action: owner / procurement sends the request for quotation outside the repository and keeps the dispatch record outside it (A9.21 item 15); no purchase order.
+
+- [x] banner states DO NOT PURCHASE - quotation / specification only
+- [x] cites the common interface document RFQ3-CIF (docs/procurement/rfq_a9_v3/packages/RFQ3-00_common_interface.md)
+- [x] has NOW lines (P1_NEEDED or indicative quotation now)
+- [x] every P1_NEEDED line has a complete quote sheet (spec, acceptance, calibration, documentation)
+- [x] every NOW line is in an owner-authorised send state with no unmet send precondition
+- [x] no NOW line has a blocking open item
+- [x] no price, supplier name, ranking or purchase authorization (compliance record)
+
+| line | set | readiness | supplier answers | deferred to gate | blocking | reason | send state |
+|---|---|---|---|---|---|---|---|
+| RF-L12 | NOW | READY_FOR_OWNER_DISPATCH | - | - | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| RF-L13 | NOW | READY_FOR_OWNER_DISPATCH | - | - | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| RF-L14 | NOW | READY_FOR_OWNER_DISPATCH | - | quantity | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| RF-L15 | NOW | READY_FOR_OWNER_DISPATCH | - | quantity | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| RF-L16 | NOW | READY_FOR_OWNER_DISPATCH | - | - | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| RF-L17 | NOW | READY_FOR_OWNER_DISPATCH | - | - | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| RF-L18 | NOW | READY_FOR_OWNER_DISPATCH | - | - | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| RF-O01 | NOW | READY_FOR_OWNER_DISPATCH | - | - | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+| RFM-L01 | NOW | READY_FOR_OWNER_DISPATCH | quantity | - | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |
+
 ## Open specification items
 
 | id | v1 | title | value | freeze | dispatch |

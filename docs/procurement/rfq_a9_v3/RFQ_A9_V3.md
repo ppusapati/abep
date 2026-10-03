@@ -25,7 +25,7 @@ Applied: RFQ3-GAS-N03 (system Xe capability, both configurations); RFQ2-GAS-R27 
 | package | family | v2 package | file | P1 lines | LATER lines | requirements |
 |---|---|---|---|---|---|---|
 | RFQ3-RF | RF package | RFQ2-RF | docs/procurement/rfq_a9_v3/packages/RFQ3-01_rf.md | 11 | 1 | 28 |
-| RFQ3-GAS | Gas/metrology package | RFQ2-GAS | docs/procurement/rfq_a9_v3/packages/RFQ3-02_gas_metrology.md | 8 | 12 | 42 |
+| RFQ3-GAS | Gas/metrology package | RFQ2-GAS | docs/procurement/rfq_a9_v3/packages/RFQ3-02_gas_metrology.md | 8 | 14 | 43 |
 | RFQ3-VAC | Vacuum/facility package | RFQ2-VAC | docs/procurement/rfq_a9_v3/packages/RFQ3-03_vacuum_facility.md | 6 | 1 | 20 |
 | RFQ3-HALLEL | Hall electrical package | RFQ2-HALLEL | docs/procurement/rfq_a9_v3/packages/RFQ3-04_hall_electrical.md | 10 | 10 | 41 |
 | RFQ3-MECH | Mechanical/ICP fabrication package | RFQ2-MECH | docs/procurement/rfq_a9_v3/packages/RFQ3-05_mechanical_icp_fabrication.md | 8 | 1 | 17 |
@@ -116,6 +116,60 @@ Common interface document: `docs/procurement/rfq_a9_v3/packages/RFQ3-00_common_i
 | RFQ3-H1FAB | H1-L09 | dimensional inspection reports and material certificates for every H1-L01..L08 part | TBD - per the controlled P1 engineering drawing set (RFQ3-H1FAB-N02) |  | SEND_ONLY_WITH_CONTROLLED_H1_DRAWINGS (P1 engineering article: drawing ID, revision, content hash under P9e / Vyovrinda configuration control, A9.10 OQ-RFQV2-10; the LOCK-1 release of A9.14 F5-OQ-04 is the basis of the FLIGHT H-1, not a precondition for quoting P1 hardware); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized |
 | RFQ3-H1FAB | H1-O01 | OPTION: Ni-clad / Kulgrid coil wire (contingency variant only) | 0 or 1 (option line; contingency only) | OPTION | SEND_ONLY_WITH_CONTROLLED_H1_DRAWINGS (P1 engineering article: drawing ID, revision, content hash under P9e / Vyovrinda configuration control, A9.10 OQ-RFQV2-10; the LOCK-1 release of A9.14 F5-OQ-04 is the basis of the FLIGHT H-1, not a precondition for quoting P1 hardware); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized |
 
+## Dispatch readiness (A9.21 item 15)
+
+> Owner (A9.21 RFQ_DISPATCH): "For 15, I cannot dispatch supplier RFQs from this chat environment. The quotation packages can be finalized here, but you/procurement must actually send them."
+
+Repository dispatches: **False**; purchase authorized: **False**; dispatch record: NONE_IN_REPOSITORY (the repository and Claude never contact a supplier; dispatch is an owner / procurement act, A9.21 item 15).
+
+Rule: a package's NOW subset is READY_FOR_OWNER_DISPATCH only if every NOW line is in an owner-authorised send state with no BLOCKING_SEND open item; readiness is never claimed with a blocking TBD; the classification of open items is a recorder rule for owner review (RF3-FLAG-07). Order: P1-first order of p1_dispatch_first (packages in first-appearance order). Common interface: RFQ3-CIF v3 (`docs/procurement/rfq_a9_v3/packages/RFQ3-00_common_interface.md`, rendered sha256 `e4b2f647151fa40b0a8a6b90b9068cb8b08690c106d1e1d8a616e08e7e76d311`).
+
+| order | package | NOW readiness | NOW lines | blocking | LATER | LATER lines | CIF |
+|---|---|---|---|---|---|---|---|
+| 1 | RFQ3-RF | READY_FOR_OWNER_DISPATCH | 11 | - | LATER_NOT_IN_CURRENT_DISPATCH | 1 | RFQ3-CIF v3 |
+| 2 | RFQ3-GAS | READY_FOR_OWNER_DISPATCH | 9 | - | LATER_NOT_IN_CURRENT_DISPATCH | 13 | RFQ3-CIF v3 |
+| 3 | RFQ3-VAC | READY_FOR_OWNER_DISPATCH | 6 | - | LATER_NOT_IN_CURRENT_DISPATCH | 1 | RFQ3-CIF v3 |
+| 4 | RFQ3-HALLEL | READY_FOR_OWNER_DISPATCH | 10 | - | LATER_NOT_IN_CURRENT_DISPATCH | 10 | RFQ3-CIF v3 |
+| 5 | RFQ3-MECH | READY_FOR_OWNER_DISPATCH | 8 | - | LATER_NOT_IN_CURRENT_DISPATCH | 1 | RFQ3-CIF v3 |
+| 6 | RFQ3-THRUST | NOT_READY_BLOCKING_TBD | 7 | quantity | LATER_NOT_IN_CURRENT_DISPATCH | 4 | RFQ3-CIF v3 |
+| 7 | RFQ3-RFMET | READY_FOR_OWNER_DISPATCH | 9 | - | - | 0 | RFQ3-CIF v3 |
+| 8 | RFQ3-H1FAB | NOT_READY_AWAITING_CONTROLLED_H1_DRAWINGS | 10 | RFQ3-H1FAB-N02, quantity | - | 0 | RFQ3-CIF v3 |
+
+Status vocabulary:
+
+- `READY_FOR_OWNER_DISPATCH`: finalized in the repository for an owner / procurement request for quotation; the repository never sends it and purchase NOT authorized
+- `NOT_READY_BLOCKING_TBD`: a NOW line has an open item that must be closed before the request can be sent
+- `NOT_READY_AWAITING_CONTROLLED_H1_DRAWINGS`: the build-to-print lines may be sent only with the P9e configuration-controlled drawing set (A9.10 OQ-RFQV2-10)
+- `NOT_READY_CHECKLIST_INCOMPLETE`: a package checklist item is not met
+- `LATER_NOT_IN_CURRENT_DISPATCH`: owner dispatch tag LATER: sent with the later campaign set, not now
+
+Open-item classes:
+
+- `SUPPLIER_TO_ANSWER`: the request asks the supplier to state / propose it; it does not block sending
+- `DEFERRED_TO_FREEZE_GATE`: an owner-deferred value frozen at its later gate from the procured / calibrated hardware (A9.8 P1-IT-52: no numbers invented now); the supplier quotes capability ranges; A9.4 / A9.6 allow P1_NEEDED lines to be sent for quotation; not blocking
+- `BLOCKING_SEND`: must be closed before the line can be sent (freeze point NOW and not a supplier answer, or an unmet send precondition such as the controlled H-1 drawing set)
+
+## Xe storage / flow quotation split and AL-08 (A9.21 AL08)
+
+> Owner (A9.21 AL08): "Xe-hardware floor: wait for quotations before formally rebasing AL-08. Keep 6.05 kg only as a provisional planning floor, not a frozen allocation."
+> Owner (A9.21 AL08): "The reason is important: that analog-derived figure may contain about 0.285 kg of C1 cathode-branch hardware, while the RFP-required Xe propulsion system and any C1-specific Xe hardware must be accounted separately."
+> Owner (A9.21 AL08): "Quotations should split tank, regulator, valves, plumbing, mounting/thermal, and any C1-specific branch before the final re-base."
+
+AL-08 status: **PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN** - 6.0528 kg MEV planning floor is provisional, not frozen; formal AL-08 re-base only after the split quotations; an owner decision (A9.21); this RFQ never re-bases or freezes AL-08 (rule function al08_quote_split_status). Requirement RFQ3-GAS-N05; mass context RFQ2-GAS-R28 (RFQ-07-R10).
+
+| category | lines | booking | note |
+|---|---|---|---|
+| tank | GAS-L08 | FLIGHT_AL08 (RFP-required system Xe capability; AL-08 provisional, re-based only after these split quotations) | Xe tank (one quote line per loaded-Xe design case, RFQ2-GAS-R20) |
+| regulator | GAS-L09 | FLIGHT_AL08 (RFP-required system Xe capability; AL-08 provisional, re-based only after these split quotations) | low-flow PMU (regulator) |
+| valves | GAS-L11, GAS-L10 | FLIGHT_AL08 (RFP-required system Xe capability; AL-08 provisional, re-based only after these split quotations) | Xe isolation valves (series pair, GAS-L11); the low-flow FCU (GAS-L10) is stated as its own sub-row inside this category (recorder mapping RF3-FLAG-06: the mass / power v3 AL-08 floor books the flow-control valves under valves; the owner may re-map) |
+| plumbing | GAS-L18 | FLIGHT_AL08 (RFP-required system Xe capability; AL-08 provisional, re-based only after these split quotations) | new quote-request line; scope and quantity proposed by the supplier |
+| mounting/thermal | GAS-L19 | FLIGHT_AL08 (RFP-required system Xe capability; AL-08 provisional, re-based only after these split quotations) | new quote-request line; scope and quantity proposed by the supplier |
+| C1-specific branch | GAS-L05, GAS-L06, GAS-L15, GAS-O03 | GROUND_ONLY_LAB_EQUIPMENT - quoted as a separate offer section and booked separately as laboratory equipment; NEVER inside the flight AL-08 (A9.19 / A9.20 / A9.21) | C1 Xe branch of the ground-only C1 laboratory reference (A9.20); any C1-branch plumbing, fittings or mounting a supplier offers are stated here, never inside the flight plumbing or mounting/thermal lines |
+
+Per category the supplier states: mass; envelope; power; lead time; qualification / heritage status; compliance per requirement id (COMPLIANT / DEVIATION / NOT OFFERED); datasheets / certificates.
+
+- outside the split: GAS-L04 - Xe anode-path MFC(s) (laboratory flow metrology; indicative quotation now, A9.14 OQ-RFQ-03): not one of the A9.21 split categories; its mass is stated on its own line; whether it belongs to AL-08 is not decided here (RF3-FLAG-06)
+
 ## Owner answers applied (v3)
 
 one entry per applied (decision, question id); applied_in lists every v3 requirement / line / CIF item whose change_v3 cites it; the verbatim .md governs over the json summary
@@ -129,7 +183,7 @@ one entry per applied (decision, question id); applied_in lists every v3 require
 | A9.14 | F5-OQ-03 | S7.3 | USE_754C_NECESSARY_CEILING_PENDING_GRADE_DATA | c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c | RFQ3-H1FAB-N04 |
 | A9.14 | F5-OQ-04 | S7.4 | ACCEPT_FREEZE_CANDIDATE_WITH_EXPLICIT_BLOCKERS | c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c | RFQ3-H1FAB-N02 |
 | A9.14 | MPQ-01 | S8.33 | C1_OPTION_C_NEW_AL_C1_MODULE_ONLY | c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c | GAS-O03, RFQ2-GAS-R26, RFQ3-GAS-N04 |
-| A9.14 | MQ-05 | S8.10 | AL08_FULL_XE_SYSTEM_REBASE_FROM_CBE | c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c | RFQ2-GAS-R28 |
+| A9.14 | MQ-05 | S8.10 | AL08_FULL_XE_SYSTEM_REBASE_FROM_CBE | c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c | GAS-L18, GAS-L19, RFQ2-GAS-R28 |
 | A9.14 | OQ-A907-04 | S8.16 | PLAIN_COPPER_BASELINE_NICLAD_CONTINGENCY | c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c | H1-O01, RFQ3-H1FAB-N03 |
 | A9.14 | OQ-RFQ-01 | S8.22 | ONE_SPARE_BREAKABLE_CONSUMABLE_C1_CONDITIONAL | c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c | HE-L10, HE-O01, ME-L01, RF-L07, RFQ3-MECH-N01, RFQ3-THRUST-N02, TH-L03 |
 | A9.14 | OQ-RFQ-03 | S8.23 | QUOTE_NOW_FREEZE_RANGE_AFTER_REFERENCE_POINT | c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c | GAS-L04, RFQ2-GAS-R07 |
@@ -149,7 +203,8 @@ one entry per applied (decision, question id); applied_in lists every v3 require
 | A9.19 | amends | - | A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY | 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16 | GAS-L05, GAS-L06, GAS-L15 |
 | A9.19 | architecture | - | A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY | 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16 | HE-L10, HE-L11, HE-L12, RFQ2-GAS-R27, RFQ2-HALLEL-R19, RFQ3-GAS-N03, RFQ3-HALLEL-N03 |
 | A9.19 | xenon_role | - | A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY | 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16 | IFD-19, RFQ2-GAS-R27, RFQ3-GAS-N03 |
-| A9.20 | answer | - | C1_GROUND_ONLY_LABORATORY_REFERENCE | 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6 | GAS-L05, GAS-L06, GAS-L15, GAS-O03, HE-L10, HE-L11, HE-L12, IFD-19, RFQ2-GAS-R11, RFQ2-GAS-R24, RFQ2-GAS-R26, RFQ2-GAS-R27, RFQ2-HALLEL-R19, RFQ3-GAS-N03, RFQ3-GAS-N04, RFQ3-HALLEL-N03 |
+| A9.20 | answer | - | C1_GROUND_ONLY_LABORATORY_REFERENCE | 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6 | GAS-L05, GAS-L06, GAS-L15, GAS-O03, HE-L10, HE-L11, HE-L12, IFD-19, RFQ2-GAS-R11, RFQ2-GAS-R24, RFQ2-GAS-R26, RFQ2-GAS-R27, RFQ2-HALLEL-R19, RFQ3-GAS-N03, RFQ3-GAS-N04, RFQ3-GAS-N05, RFQ3-HALLEL-N03 |
+| A9.21 | AL08 | - | KEEP_6_05KG_PROVISIONAL_WAIT_FOR_QUOTES_TO_REBASE_AL08 (provisional planning floor, not frozen; quotations split tank, regulator, valves, plumbing, mounting/thermal and any C1-specific branch) | 78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549 | GAS-L05, GAS-L06, GAS-L08, GAS-L09, GAS-L10, GAS-L11, GAS-L15, GAS-L18, GAS-L19, GAS-O03, RFQ2-GAS-R28, RFQ3-GAS-N05 |
 | A9.8 | OQ-RFQV2-01 | S1.8 | NOT_MANDATORY_FOR_P1_AR | e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f | GAS-L01, GAS-L16, GAS-O01, RFQ2-THRUST-N04, RFQ3-GAS-N01 |
 | A9.8 | OQ-RFQV2-02 | S1.9 | REQUEST_PUMPING_QUOTATIONS | e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f | RFQ2-VAC-N02, RFQ3-VAC-N01, VAC-L02 |
 | A9.8 | OQ-RFQV2-03 | S1.10 | YES | e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f | RF-L08, RF-L09, RFQ3-RF-N01 |
@@ -194,6 +249,8 @@ every question left open by v2 is OWNER_DECIDED in A9.8 / A9.10 / A9.11 / A9.14 
 - RF3-FLAG-03: instrument coverage is the v2 snapshot remapped to v3 lines; re-verification against the A9.16-updated P1 / P2 lanes and the cross-lane pairs is for the integration lane; cross-lane statuses carried from v2 that name other lanes' questions (e.g. IFD-14 MQ-01, IFD-17 P4 IT-17) are not restated here
 - RF3-FLAG-04: the RFP (RFP(1)) is owner-held and not yet registered in the repository (AG-15); A9.15 content is applied as owner-stated
 - RF3-FLAG-05: A9.20: the owner chose the recommended ground-only option and in the same message asked 'is it good to remove hollow cathode' - recorded for the owner, not answered here; A9.19 'check C1 mass' is a mass / budget-lane request (C1 is now outside every flight budget), not an RFQ line change
+- RF3-FLAG-06: A9.21 AL08 split mapping (recorder reading for the owner): the low-flow FCU GAS-L10 is stated as a sub-row of 'valves' (the mass / power v3 AL-08 floor books the flow-control valves under valves); the laboratory Xe MFC GAS-L04 is not one of the owner's split categories and is quoted on its own line; the owner may re-map either
+- RF3-FLAG-07: A9.21 item 15 dispatch readiness: the classification of open items (SUPPLIER_TO_ANSWER / DEFERRED_TO_FREEZE_GATE / BLOCKING_SEND, rule function classify_open_item) is a recorder rule for owner review; the Xe storage / flow lines whose split quotations the AL-08 re-base waits for keep their owner dispatch tag LATER - sending them earlier is an owner call
 
 ## Not in this revision
 
@@ -218,8 +275,10 @@ every question left open by v2 is OWNER_DECIDED in A9.8 / A9.10 / A9.11 / A9.14 
 | CL3-07 | Ar MFC certificate rule; pumping quoted; combined calorimetric load; magnet supply in P1 set; anode/discharge isolation class; DWV evidence route; C1 lines gated on the H-1 reference characterization; V/I calibration route | A9.8 OQ-RFQV2-01..06, 08; A9.10 OQ-RFQV2-09; A9.11 P2Q-07 |
 | CL3-08 | Langmuir-probe cross-check line TH-L10 | A9.8 P3Q-01 |
 | CL3-09 | C1 lines HE-L10 / L11 / L12, the C1 Xe branch GAS-L05 / L06 / L15 and the C1 getter option GAS-O03 reclassified GROUND_ONLY_LAB_EQUIPMENT (new RFQ3-HALLEL-N03; H-1 reference characterization A9.10 S3.5 and C1-vs-ICP bench control); flight-C1 wording removed (RFQ-07-R09 / R08 / R06, RFQ-08-R01, NIR-04, IFD-19, P1-HW-32); Xe = contingency / emergency supply mode (RFQ3-GAS-N03) | A9.19 architecture / xenon_role; A9.20 answer; A9.10 P1Q-07 |
+| CL3-10 | Xe storage / flow quotation split RFQ3-GAS-N05 (tank, regulator, valves, plumbing, mounting/thermal, C1-specific branch separate and ground-only); new quote-request lines GAS-L18 (plumbing) and GAS-L19 (mounting/thermal) with supplier-proposed quantities; AL-08 mass context = provisional planning floor, row-54 allocation kept as labelled history | A9.21 AL08 |
+| CL3-11 | per-package dispatch-readiness record and checklist (READY_FOR_OWNER_DISPATCH / NOT_READY_* / LATER_NOT_IN_CURRENT_DISPATCH); the repository never dispatches; purchase NOT authorized | A9.21 RFQ_DISPATCH (item 15) |
 
-Counts: {"CARRIED_MODIFIED": 52, "CARRIED_UNCHANGED": 186, "MOVED_PACKAGE": 6, "MOVED_PACKAGE_MODIFIED": 9, "NEW": 33, "SUPERSEDED_LINES": 2}
+Counts: {"CARRIED_MODIFIED": 52, "CARRIED_UNCHANGED": 186, "MOVED_PACKAGE": 6, "MOVED_PACKAGE_MODIFIED": 9, "NEW": 36, "SUPERSEDED_LINES": 2}
 
 | id | package | change | decisions | why |
 |---|---|---|---|---|
@@ -234,11 +293,12 @@ Counts: {"CARRIED_MODIFIED": 52, "CARRIED_UNCHANGED": 186, "MOVED_PACKAGE": 6, "
 | RFQ2-GAS-R24 | RFQ3-GAS | CARRIED_MODIFIED | A9.15 governing_rule, A9.15 MPQ-01, A9.20 answer, A9.10 P1Q-07 | A9.15: PMU/FCU range covers the system Xe propulsion flows; C1 flows only if a selected C1 needs Xe; A9.20: C1 flows belong to the ground-only C1 laboratory branch |
 | RFQ2-GAS-R26 | RFQ3-GAS | CARRIED_MODIFIED | A9.14 XA9Q-05, A9.15 XA9Q-05, A9.14 MPQ-01, A9.20 answer, A9.10 P1Q-07 | A9.15 / XA9Q-05: C1-specific getter, separate from the ICP Xe path; A9.20: C1 getter on the ground-only C1 laboratory branch; no flight AL-C1 |
 | RFQ2-GAS-R27 | RFQ3-GAS | CARRIED_MODIFIED | A9.15 governing_rule, A9.15 XA9Q-07, A9.14 XA9Q-07, A9.15 OQ-A907-07, A9.19 architecture, A9.19 xenon_role, A9.20 answer, A9.10 P1Q-07 | A9.15: Xe hardware is the RFP-required system capability, not C1 ground-only; A9.19 / A9.20: no flight C1; C1 ground-only; Xe = contingency / emergency supply mode |
-| RFQ2-GAS-R28 | RFQ3-GAS | CARRIED_MODIFIED | A9.14 MQ-05 | A9.14 MQ-05 AL-08 scope and MEV planning floor |
+| RFQ2-GAS-R28 | RFQ3-GAS | CARRIED_MODIFIED | A9.14 MQ-05, A9.21 AL08 | A9.14 MQ-05 AL-08 scope and MEV planning floor; A9.21 AL08: 6.0528 kg = provisional planning floor (not frozen), re-based only after the split quotations; row-54 1.5 kg allocation kept only as labelled history |
 | RFQ3-GAS-N01 | RFQ3-GAS | NEW | A9.8 OQ-RFQV2-01 | A9.8 OQ-RFQV2-01 |
 | RFQ3-GAS-N02 | RFQ3-GAS | NEW | A9.14 OQ-RFQ-09, A9.14 XA9Q-06 | A9.14 OQ-RFQ-09, XA9Q-06 |
 | RFQ3-GAS-N03 | RFQ3-GAS | NEW | A9.15 governing_rule, A9.15 XA9Q-07, A9.14 XA9Q-07, A9.19 architecture, A9.19 xenon_role, A9.20 answer, A9.10 P1Q-07 | A9.14 XA9Q-07 as amended by A9.15; A9.19: Xe = contingency / emergency supply mode; A9.20: C1 Xe lines ground-only |
 | RFQ3-GAS-N04 | RFQ3-GAS | NEW | A9.14 XA9Q-05, A9.15 XA9Q-05, A9.14 MPQ-01, A9.20 answer, A9.10 P1Q-07 | A9.14 XA9Q-05 as amended by A9.15; A9.20: C1 getter ground-only |
+| RFQ3-GAS-N05 | RFQ3-GAS | NEW | A9.21 AL08, A9.20 answer | A9.21 AL08: quotation split before the AL-08 re-base |
 | RFQ2-VAC-N02 | RFQ3-VAC | CARRIED_MODIFIED | A9.8 OQ-RFQV2-02 | A9.8 OQ-RFQV2-02: pumping quoted, not assumed |
 | RFQ2-VAC-N03 | RFQ3-VAC | CARRIED_MODIFIED | A9.8 OQ-RFQV2-06 | A9.8 OQ-RFQV2-06 closes the row-81 margin for the DC isolation class |
 | RFQ2-VAC-N07 | RFQ3-VAC | CARRIED_MODIFIED | A9.8 P1-IT-55 | A9.8 P1-IT-55 per-path leakage limit |
@@ -278,16 +338,18 @@ Counts: {"CARRIED_MODIFIED": 52, "CARRIED_UNCHANGED": 186, "MOVED_PACKAGE": 6, "
 | GAS-L01 | RFQ3-GAS | CARRIED_MODIFIED | A9.8 OQ-RFQV2-01 | A9.8 OQ-RFQV2-01 certificate acceptance; A9.8 OQ-RFQV2-01 |
 | GAS-O01 | RFQ3-GAS | CARRIED_MODIFIED | A9.8 OQ-RFQV2-01 | A9.8 OQ-RFQV2-01 certificate acceptance |
 | GAS-L04 | RFQ3-GAS | CARRIED_MODIFIED | A9.14 OQ-RFQ-03, A9.15 governing_rule | A9.14 OQ-RFQ-03; A9.15 system Xe capability; A9.15 system Xe capability |
-| GAS-L05 | RFQ3-GAS | CARRIED_MODIFIED | A9.15 governing_rule, A9.15 MPQ-01, A9.20 answer, A9.10 P1Q-07, A9.19 amends | A9.15: C1 Xe only for a selected C1 that requires Xe, booked inside the system Xe architecture; A9.19 / A9.20: C1 Xe branch = ground-only laboratory equipment; never in the flight Xe accounting |
-| GAS-L06 | RFQ3-GAS | CARRIED_MODIFIED | A9.14 OQ-RFQ-04, A9.15 governing_rule, A9.15 MPQ-01, A9.20 answer, A9.10 P1Q-07, A9.19 amends | A9.14 OQ-RFQ-04: option line; A9.15: C1 Xe only for a selected C1 that requires Xe, booked inside the system Xe architecture; A9.19 / A9.20: C1 Xe branch = ground-only laboratory equipment; never in the flight Xe accounting |
+| GAS-L05 | RFQ3-GAS | CARRIED_MODIFIED | A9.15 governing_rule, A9.15 MPQ-01, A9.20 answer, A9.10 P1Q-07, A9.19 amends, A9.21 AL08 | A9.15: C1 Xe only for a selected C1 that requires Xe, booked inside the system Xe architecture; A9.19 / A9.20: C1 Xe branch = ground-only laboratory equipment; never in the flight Xe accounting; A9.21 AL08: quoted as split category 'C1-specific branch' |
+| GAS-L06 | RFQ3-GAS | CARRIED_MODIFIED | A9.14 OQ-RFQ-04, A9.15 governing_rule, A9.15 MPQ-01, A9.20 answer, A9.10 P1Q-07, A9.19 amends, A9.21 AL08 | A9.14 OQ-RFQ-04: option line; A9.15: C1 Xe only for a selected C1 that requires Xe, booked inside the system Xe architecture; A9.19 / A9.20: C1 Xe branch = ground-only laboratory equipment; never in the flight Xe accounting; A9.21 AL08: quoted as split category 'C1-specific branch' |
 | GAS-O02 | RFQ3-GAS | CARRIED_MODIFIED | A9.14 XA9Q-05, A9.15 XA9Q-05 | A9.15 / XA9Q-05: ICP Xe-path getter is engineering |
-| GAS-L08 | RFQ3-GAS | CARRIED_MODIFIED | A9.8 OQ-RFQV2-04, A9.15 governing_rule, A9.15 XA9Q-07, A9.14 OQ-RFQ-09, A9.14 XA9Q-06 | A9.8 OQ-RFQV2-04: Xe tank/PMU/FCU under gas/metrology accepted; A9.15 system Xe capability (both configurations); A9.14 OQ-RFQ-09 / XA9Q-06; A9.15 |
-| GAS-L09 | RFQ3-GAS | CARRIED_MODIFIED | A9.15 governing_rule, A9.15 XA9Q-07, A9.14 XA9Q-06 | A9.15 system Xe capability (both configurations); A9.14 XA9Q-06: regulator solutions against the 323 K cases |
-| GAS-L10 | RFQ3-GAS | CARRIED_MODIFIED | A9.15 governing_rule, A9.15 XA9Q-07 | A9.15 system Xe capability (both configurations) |
-| GAS-L11 | RFQ3-GAS | CARRIED_MODIFIED | A9.15 governing_rule, A9.15 XA9Q-07 | A9.15 system Xe capability (both configurations) |
-| GAS-O03 | RFQ3-GAS | CARRIED_MODIFIED | A9.14 XA9Q-05, A9.15 XA9Q-05, A9.14 MPQ-01, A9.20 answer, A9.10 P1Q-07 | A9.15 / XA9Q-05; A9.20: C1 getter option = ground-only C1 laboratory branch |
-| GAS-L15 | RFQ3-GAS | CARRIED_MODIFIED | A9.15 governing_rule, A9.15 MPQ-01, A9.20 answer, A9.10 P1Q-07, A9.19 amends | A9.15: C1 Xe only for a selected C1 that requires Xe, booked inside the system Xe architecture; A9.19 / A9.20: C1 Xe branch = ground-only laboratory equipment; never in the flight Xe accounting |
+| GAS-L08 | RFQ3-GAS | CARRIED_MODIFIED | A9.8 OQ-RFQV2-04, A9.15 governing_rule, A9.15 XA9Q-07, A9.14 OQ-RFQ-09, A9.14 XA9Q-06, A9.21 AL08 | A9.8 OQ-RFQV2-04: Xe tank/PMU/FCU under gas/metrology accepted; A9.15 system Xe capability (both configurations); A9.14 OQ-RFQ-09 / XA9Q-06; A9.15; A9.21 AL08: quoted as split category 'tank' |
+| GAS-L09 | RFQ3-GAS | CARRIED_MODIFIED | A9.15 governing_rule, A9.15 XA9Q-07, A9.14 XA9Q-06, A9.21 AL08 | A9.15 system Xe capability (both configurations); A9.14 XA9Q-06: regulator solutions against the 323 K cases; A9.21 AL08: quoted as split category 'regulator' |
+| GAS-L10 | RFQ3-GAS | CARRIED_MODIFIED | A9.15 governing_rule, A9.15 XA9Q-07, A9.21 AL08 | A9.15 system Xe capability (both configurations); A9.21 AL08: quoted as split category 'valves' |
+| GAS-L11 | RFQ3-GAS | CARRIED_MODIFIED | A9.15 governing_rule, A9.15 XA9Q-07, A9.21 AL08 | A9.15 system Xe capability (both configurations); A9.21 AL08: quoted as split category 'valves' |
+| GAS-O03 | RFQ3-GAS | CARRIED_MODIFIED | A9.14 XA9Q-05, A9.15 XA9Q-05, A9.14 MPQ-01, A9.20 answer, A9.10 P1Q-07, A9.21 AL08 | A9.15 / XA9Q-05; A9.20: C1 getter option = ground-only C1 laboratory branch; A9.21 AL08: quoted as split category 'C1-specific branch' |
+| GAS-L15 | RFQ3-GAS | CARRIED_MODIFIED | A9.15 governing_rule, A9.15 MPQ-01, A9.20 answer, A9.10 P1Q-07, A9.19 amends, A9.21 AL08 | A9.15: C1 Xe only for a selected C1 that requires Xe, booked inside the system Xe architecture; A9.19 / A9.20: C1 Xe branch = ground-only laboratory equipment; never in the flight Xe accounting; A9.21 AL08: quoted as split category 'C1-specific branch' |
 | GAS-L16 | RFQ3-GAS | CARRIED_MODIFIED | A9.8 OQ-RFQV2-01 | A9.8 OQ-RFQV2-01: P1 Ar acceptance stated explicitly |
+| GAS-L18 | RFQ3-GAS | NEW | A9.21 AL08, A9.14 MQ-05 | A9.21 AL08: quote-request line for a split category that had no line |
+| GAS-L19 | RFQ3-GAS | NEW | A9.21 AL08, A9.14 MQ-05 | A9.21 AL08: quote-request line for a split category that had no line |
 | VAC-L02 | RFQ3-VAC | CARRIED_MODIFIED | A9.8 OQ-RFQV2-02 | A9.8 OQ-RFQV2-02 |
 | VAC-L03 | RFQ3-VAC | CARRIED_MODIFIED | A9.8 OQ-RFQV2-06, A9.8 OQ-RFQV2-08, A9.8 P1-IT-55 | A9.8 OQ-RFQV2-06 isolation class for anode / discharge feedthroughs; A9.8 OQ-RFQV2-08 DWV evidence route |
 | HE-L01 | RFQ3-HALLEL | CARRIED_MODIFIED | A9.8 OQ-RFQV2-06 | A9.8 OQ-RFQV2-06 isolation class |
@@ -383,7 +445,7 @@ Counts: {"CARRIED_MODIFIED": 52, "CARRIED_UNCHANGED": 186, "MOVED_PACKAGE": 6, "
 | RFQ2-GAS-R25 | RFQ-07-R07 | RFQ3-GAS | A9.1 A9-09; A9.1 HIQ-06; v1 RFQ-07-R07 | OWNER_GIVEN | NOW | LATER | CARRIED_UNCHANGED |
 | RFQ2-GAS-R26 | RFQ-07-R08 | RFQ3-GAS | BUS:A902-29; row 51; v1 RFQ-07-R08; A9.14 XA9Q-05; A9.15 XA9Q-05; A9.14 MPQ-01; A9.20 answer; A9.10 P1Q-07 | TBD | after-evidence | LATER | CARRIED_MODIFIED |
 | RFQ2-GAS-R27 | RFQ-07-R09 | RFQ3-GAS | A9.1 OQ-A902-04; v1 RFQ-07-R09; A9.15 governing_rule; A9.15 XA9Q-07; A9.14 XA9Q-07; A9.15 OQ-A907-07; A9.19 architecture; A9.19 xenon_role; A9.20 answer; A9.10 P1Q-07 | OWNER_GIVEN | NOW | LATER | CARRIED_MODIFIED |
-| RFQ2-GAS-R28 | RFQ-07-R10 | RFQ3-GAS | row 5; row 54; v1 RFQ-07-R10; A9.14 MQ-05 | COPIED_VERIFIED | after-evidence | LATER | CARRIED_MODIFIED |
+| RFQ2-GAS-R28 | RFQ-07-R10 | RFQ3-GAS | row 5; row 54; v1 RFQ-07-R10; A9.14 MQ-05; A9.21 AL08 | COPIED_VERIFIED | after-evidence | LATER | CARRIED_MODIFIED |
 | RFQ2-GAS-R29 | RFQ-07-R11 | RFQ3-GAS | H22:H3-C1-04; v1 RFQ-07-R11 | TBD | LOCK-1 | LATER | CARRIED_UNCHANGED |
 | RFQ2-GAS-R30 | RFQ-08-R12 | RFQ3-GAS | H22:H3-C1-04; v1 RFQ-08-R12 | PENDING | LOCK-1 | LATER | CARRIED_UNCHANGED |
 | RFQ2-GAS-N01 | - | RFQ3-GAS | A9.3 OQ-RFQ-02; EVI:TK-31 (p. 3 text); P1:F2; P1:P1-IT-09; P1:P1-IT-10 | TBD | P1-G0 | P1_NEEDED | CARRIED_UNCHANGED |
@@ -398,6 +460,7 @@ Counts: {"CARRIED_MODIFIED": 52, "CARRIED_UNCHANGED": 186, "MOVED_PACKAGE": 6, "
 | RFQ3-GAS-N02 | - | RFQ3-GAS | A9.14 OQ-RFQ-09; A9.14 XA9Q-06 | OWNER_GIVEN | NOW | LATER | NEW |
 | RFQ3-GAS-N03 | - | RFQ3-GAS | A9.15 governing_rule; A9.15 XA9Q-07; A9.14 XA9Q-07; A9.19 architecture; A9.19 xenon_role; A9.20 answer; A9.10 P1Q-07 | OWNER_GIVEN | NOW | LATER | NEW |
 | RFQ3-GAS-N04 | - | RFQ3-GAS | A9.14 XA9Q-05; A9.15 XA9Q-05; A9.14 MPQ-01; A9.20 answer; A9.10 P1Q-07 | OWNER_GIVEN | NOW | LATER | NEW |
+| RFQ3-GAS-N05 | - | RFQ3-GAS | A9.21 AL08; A9.20 answer | OWNER_GIVEN | NOW | LATER | NEW |
 | RFQ2-VAC-R01 | RFQ-03-R01 | RFQ3-VAC | UB:UB-B-02; row 127; v1 RFQ-03-R01 | OWNER_GIVEN | NOW | P1_NEEDED | CARRIED_UNCHANGED |
 | RFQ2-VAC-R02 | RFQ-03-R02 | RFQ3-VAC | row 127; row 23; v1 RFQ-03-R02 | OWNER_GIVEN | NOW | P1_NEEDED | CARRIED_UNCHANGED |
 | RFQ2-VAC-R03 | RFQ-03-R03 | RFQ3-VAC | UB:UB-B-01; row 23; v1 RFQ-03-R03 | TBD | after-evidence | P1_NEEDED | CARRIED_UNCHANGED |
@@ -676,6 +739,8 @@ H3 gate: QUOTATION PACKAGES v3 READY FOR OWNER DISPATCH (P1 subset first; H-1 bu
 | A9.19 | docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md | d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749 |
 | A9.20 | docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json | 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6 |
 | A9.20 | docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md | 2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c |
+| A9.21 | docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json | 78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549 |
+| A9.21 | docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md | 01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440 |
 | V2_JSON | docs/procurement/rfq_a9_v2/rfq_a9_v2.json | 6960f2927ece5a171d851bc10bc2314e99ef448b1e6f7d5ba84b93d2226795cb |
 | V2_MD | docs/procurement/rfq_a9_v2/RFQ_A9_V2.md | 80b9cbd08d0366336950f3496b92a28b9c8c40d7ab17af3c3cc2d9e7452ac01c |
 | V2_BUILDER | docs/procurement/rfq_a9_v2/build_rfq_a9_v2.py | 4aa6ce0dfbc1698e27c2b737fb2f1c7f3efb55efc08969a4de22484acedb8964 |

@@ -3,7 +3,7 @@
 Checks that docs/procurement/rfq_a9_v3/ is reproducible from its builder, that it is a revision of the immutable v2
 packages (v2 pinned and unchanged; every v2 requirement carried exactly once; every v2 line carried or explicitly
 superseded), that each applied owner decision (A9.8 / A9.10 / A9.11 / A9.14 / A9.15 / A9.19 / A9.20) is cited by decision file + json
-sha256 + question id with verbatim quotes, that the owner-decided package changes hold (RF-metrology package, H-1
+sha256 + question id with verbatim quotes (A9.21 AL08 split + dispatch readiness included), that the owner-decided package changes hold (RF-metrology package, H-1
 build-to-print package, required DWV tester, dedicated target, Xe capability in both configurations), that owner-deferred
 numbers stay TBD, and that every fail-closed rule function refuses incomplete evidence.
 Run: python -m pytest -q tests/test_rfq_a9_v3.py
@@ -45,6 +45,8 @@ PINNED = {
         "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
     "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json":
         "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+    "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json":
+        "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
 }
 # (decision key, question id) the lane must apply (lane list of the A9.16 RFQ step)
 REQUIRED_APPLIED = [
@@ -55,6 +57,7 @@ REQUIRED_APPLIED = [
     ("A9.14", "XA9Q-06"), ("A9.14", "OQ-A907-04"), ("A9.14", "XA9Q-07"), ("A9.14", "XA9Q-05"),
     ("A9.15", "governing_rule"), ("A9.15", "XA9Q-07"), ("A9.15", "XA9Q-05"),
     ("A9.19", "architecture"), ("A9.19", "xenon_role"), ("A9.20", "answer"), ("A9.10", "P1Q-07"),
+    ("A9.21", "AL08"),
 ]
 PKGS = ["RFQ3-RF", "RFQ3-GAS", "RFQ3-VAC", "RFQ3-HALLEL", "RFQ3-MECH", "RFQ3-THRUST", "RFQ3-RFMET", "RFQ3-H1FAB"]
 
@@ -730,3 +733,136 @@ def test_a919_a920_single_record_decisions_fail_closed(mod):
         mod.OD("A9.20", "answer", "Remove C1 entirely and fly a hollow cathode.")
     assert mod.OD("A9.20", "answer", "Ground-only reference (Recommended)")["answer"] == \
         "C1_GROUND_ONLY_LABORATORY_REFERENCE"
+
+
+# ------------------------------------------------------------------------------------------- A9.21 AL08 + dispatch
+def test_a921_al08_split_categories_present(mod, reqs, lines, doc):
+    """A9.21 AL08: tank, regulator, valves, plumbing, mounting/thermal and any C1-specific branch, each quoted
+    separately; plumbing and mounting/thermal get quote-request lines with supplier-proposed quantities."""
+    n05 = reqs["RFQ3-GAS-N05"]
+    cats = [x["category"] for x in n05["value"]["categories"]]
+    assert cats == ["tank", "regulator", "valves", "plumbing", "mounting/thermal", "C1-specific branch"]
+    assert n05["value"]["attributes_per_category"][0] == "mass"
+    assert ("A9.21", "AL08") in {(d["key"], d["id"]) for d in n05["change_v3"]["decisions"]}
+    for x in n05["value"]["categories"]:
+        assert x["lines"], x["category"]
+        for lid in x["lines"]:
+            li = lines[lid][1]
+            assert li["al08_split_category"] == x["category"] and "RFQ3-GAS-N05" in li["requirements"], lid
+            assert any("stated separately" in t for t in li["quote_sheet"]["documentation"]), lid
+    for lid in ("GAS-L18", "GAS-L19"):
+        pk, li = lines[lid]
+        assert pk == "RFQ3-GAS" and li["change_v3"]["type"] == "NEW" and li["dispatch"] == "LATER"
+        assert li["qty"].startswith("TBD - supplier proposes")
+        assert not re.search(r"\d", li["qty"].split("(")[0])            # no invented quantity
+    sp = doc["al08_quotation_split_a9_21"]
+    assert [x["category"] for x in sp["categories"]] == cats and sp["new_quote_request_lines"] == ["GAS-L18", "GAS-L19"]
+
+
+def test_a921_c1_branch_separate_from_flight_al08(mod, reqs, lines):
+    cats = {x["category"]: x for x in reqs["RFQ3-GAS-N05"]["value"]["categories"]}
+    c1 = cats["C1-specific branch"]
+    assert set(c1["lines"]) == set(mod.C1_XE_LINES + ["GAS-O03"])
+    assert c1["booking"].startswith("GROUND_ONLY_LAB_EQUIPMENT") and "NEVER inside the flight AL-08" in c1["booking"]
+    flight = [x for x in cats.values() if x["booking"].startswith("FLIGHT_AL08")]
+    assert {x["category"] for x in flight} == {"tank", "regulator", "valves", "plumbing", "mounting/thermal"}
+    for x in flight:
+        assert not set(x["lines"]) & set(c1["lines"])
+    for lid in c1["lines"]:
+        assert lines[lid][1]["equipment_class"] == "GROUND_ONLY_LAB_EQUIPMENT"
+    # rule function: fail closed
+    good = {k: {"mass_kg": 1.0, "lines": cats[k]["lines"]} for k in mod.AL08_FLIGHT_CATEGORIES}
+    assert mod.al08_quote_split_status({})["state"] == "NOT_REBASEABLE_SPLIT_INCOMPLETE"
+    assert mod.al08_quote_split_status(good)["missing"] == ["C1-specific branch"]
+    ok = mod.al08_quote_split_status(dict(good, **{"C1-specific branch": {"mass_kg": "NONE"}}))
+    assert ok["state"] == "SPLIT_COMPLETE_REBASE_IS_OWNER_DECISION" and "_kg" not in json.dumps(ok)
+    bad = copy.deepcopy(good)
+    bad["valves"]["lines"] = bad["valves"]["lines"] + ["GAS-L05"]
+    assert mod.al08_quote_split_status(dict(bad, **{"C1-specific branch": {"mass_kg": "NONE"}}))["state"] == \
+        "REFUSED_C1_HARDWARE_INSIDE_FLIGHT_AL08"
+    c1_in_flight = dict(good, **{"C1-specific branch": {"mass_kg": 1.0, "booking": "FLIGHT_AL08"}})
+    assert mod.al08_quote_split_status(c1_in_flight)["state"] == "REFUSED_C1_HARDWARE_INSIDE_FLIGHT_AL08"
+    no_mass = copy.deepcopy(good)
+    no_mass["plumbing"].pop("mass_kg")
+    assert "plumbing" in mod.al08_quote_split_status(no_mass)["missing"]
+    with pytest.raises(KeyError):
+        mod.al08_quote_split_status({"tank+valves": {"mass_kg": 1.0}})
+
+
+def test_a921_al08_provisional_label_and_history(mod, reqs):
+    v = reqs["RFQ-07-R10"]["value"]
+    assert v["AL-08_status"].startswith("PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN")
+    assert "NOT a frozen allocation" in v["AL-08_status"] and v["AL-08_MEV_planning_floor_kg"] == 6.0528
+    # the older allocation survives only as labelled history, never as a current field
+    assert "AL-08_owner_allocation_kg" not in v and "state" not in v
+    assert v["history"]["label"].startswith("HISTORY") and v["history"]["AL-08_owner_allocation_kg_row54"] == 1.5
+    assert v["history"]["state_before_a9_14_mq05"] == "ALLOCATION_BELOW_EVIDENCE_FLOOR"
+    assert reqs["RFQ-07-R10"]["before_v3"]["value"]["AL-08_owner_allocation_kg"] == 1.5
+    assert "0.285 kg" in v["c1_branch"] and "NOT in the flight AL-08" in v["c1_branch"]
+    assert mod._check_mass_power_al08()["a9_21_status"].startswith("PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN")
+    gas = (LANE / "packages" / "RFQ3-02_gas_metrology.md").read_text(encoding="utf-8")
+    assert "PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN" in gas
+    assert '"AL-08_owner_allocation_kg": 1.5' not in gas
+
+
+def test_a921_no_purchase_or_dispatch_authorization(doc):
+    dr = doc["dispatch_readiness_a9_21"]
+    assert dr["repository_dispatches"] is False and dr["purchase_authorized"] is False
+    assert dr["dispatch_record"].startswith("NONE_IN_REPOSITORY")
+    assert dr["decision"]["key"] == "A9.21" and dr["decision"]["id"] == "RFQ_DISPATCH"
+    allowed = set(dr["status_vocabulary"])
+    assert not any(s.startswith(("DISPATCHED", "SENT", "PURCHASE")) for s in allowed)
+    for p in doc["packages"]:
+        rd = p["dispatch_readiness"]
+        assert rd["dispatched_by_repository"] is False and rd["purchase_authorized"] is False
+        assert rd["now_subset"]["readiness"] in allowed
+        for x in rd["lines"]:
+            assert x["readiness"] in allowed and "purchase order NOT authorized" in x["send_state"]
+    text = JSON_PATH.read_text(encoding="utf-8") + MD_PATH.read_text(encoding="utf-8")
+    for pat in (r"(?<!no )purchase (order )?(is )?authori[sz]ed\b(?!: (\*\*)?False)", r"PURCHASE_AUTHORI[SZ]ED",
+                r"\"repository_dispatches\": true", r"\"purchase_authorized\": true",
+                r"\"dispatched_by_repository\": true"):
+        assert not re.search(pat, text), pat
+
+
+def test_a921_readiness_never_claimed_with_blocking_tbd(mod, doc):
+    for p in doc["packages"]:
+        rd = p["dispatch_readiness"]
+        now = [x for x in rd["lines"] if x["set"] == "NOW"]
+        if rd["now_subset"]["readiness"] == "READY_FOR_OWNER_DISPATCH":
+            assert now and all(c["ok"] for c in rd["checklist"])
+            assert not any(x["blocking_open_items"] for x in now)
+            assert all(x["readiness"] == "READY_FOR_OWNER_DISPATCH" for x in now)
+        if any(x["blocking_open_items"] for x in now):
+            assert rd["now_subset"]["readiness"].startswith("NOT_READY"), p["id"]
+        for x in rd["lines"]:
+            if x["readiness"] == "READY_FOR_OWNER_DISPATCH":
+                assert not x["blocking_open_items"], x["line"]
+        assert rd["common_interface"]["id"] == "RFQ3-CIF"
+    # every line appears once, with its send state; the P1-first order is reused
+    got = [x["line"] for p in doc["packages"] for x in p["dispatch_readiness"]["lines"]]
+    assert got == [li["id"] for p in doc["packages"] for li in p["line_items"]]
+    order = list(dict.fromkeys(x["package"] for x in doc["p1_dispatch_first"]))
+    assert [x["package"] for x in doc["dispatch_readiness_a9_21"]["packages"]] == order
+    st = {x["package"]: x["now_readiness"] for x in doc["dispatch_readiness_a9_21"]["packages"]}
+    assert st["RFQ3-H1FAB"] == "NOT_READY_AWAITING_CONTROLLED_H1_DRAWINGS"     # no controlled drawing registered
+    # the package rule function fails closed
+    blk = [{"blocking_open_items": ["quantity"], "readiness": "NOT_READY_BLOCKING_TBD"}]
+    assert mod.package_readiness(blk, [{"ok": True}]) == "NOT_READY_BLOCKING_TBD"
+    assert mod.package_readiness([], [{"ok": True}]) == "NOT_READY_CHECKLIST_INCOMPLETE"
+    ready = [{"blocking_open_items": [], "readiness": "READY_FOR_OWNER_DISPATCH"}]
+    assert mod.package_readiness(ready, [{"ok": False}]) == "NOT_READY_CHECKLIST_INCOMPLETE"
+    assert mod.package_readiness(ready, [{"ok": True}]) == "READY_FOR_OWNER_DISPATCH"
+    assert mod.classify_open_item("TBD - requires supplier statement", "LOCK-1") == "SUPPLIER_TO_ANSWER"
+    assert mod.classify_open_item("TBD - requires X", "NOW") == "BLOCKING_SEND"
+    assert mod.classify_open_item("TBD - requires X", "P1-G0") == "DEFERRED_TO_FREEZE_GATE"
+    assert mod.classify_open_item("TBD - supplier data", "P1-G0", send_precondition_unmet=True) == "BLOCKING_SEND"
+    with pytest.raises(ValueError):
+        mod.classify_open_item("TBD", "someday")
+
+
+def test_a921_package_markdown_carries_checklist():
+    for f in sorted((LANE / "packages").glob("RFQ3-0[1-8]_*.md")):
+        t = f.read_text(encoding="utf-8")
+        assert "## Dispatch readiness checklist (A9.21 item 15)" in t, f.name
+        assert "Dispatched by the repository: False; purchase authorized: False" in t, f.name
