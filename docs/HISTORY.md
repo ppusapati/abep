@@ -3101,3 +3101,38 @@ Xe CONTINGENCY_EMERGENCY, C1 GROUND_ONLY":
   ecdad06). The builder is restored byte for byte; the SW-02 guarantee moves to the CI static check `h2_6_live_sources`
   (`scripts/ci_checks.py`, docs/ci/CI.md), which runs `verify_sources()` on every push (and
   `test_h2_6_diagnostics_fixture::test_consumed_values_match_live_sources` in the suite).
+
+## 2026-10-03 — Single flight configuration everywhere + AG-15 consumes the registered RFP (resumed step)
+
+The step scripted in `docs/orchestration/workflow_scripts/a9-19-single-config-ag15.js` (cfd3d0e) never landed: the session
+that launched it ended before its lanes merged. It was re-run from fd91185 as three isolated lanes and integrated here.
+- **F9 / AG-15 (lane 3d4f447).** New `docs/architecture/freeze_candidate/ag15_f9.py` reads
+  `docs/requirements/rfp_official/rfp_registration_v1.json` and the RVM re-base and checks them against each other (status,
+  sha256, clause ids, clause hash, page/clause counts, every clause mapped or programmatic, every RVM origin known). AG-15 is
+  now `RFP_REGISTERED_AND_RVM_REBASED_PENDING_OWNER_CLOSURE`: registration and re-base are EVIDENCE_PRESENT; the owner closure
+  (re-base acceptance, `requirement_frozen`; 0/22 RFP_CLAUSE rows frozen) remains the explicit condition AG15-RC-01. Never PASS;
+  an inconsistent or missing registration refuses the build. Status counts, objectives and gates evaluate only
+  `hall_icp_neutralizer`; C1 cells live in a labelled ground-reference/retired history section. `BLOCKED_RFP_NOT_REGISTERED`
+  now appears only in the verbatim A9.16 step-1 application text, never in a gate (tested).
+- **M16 v4 / owner-question state v5 / application matrix (lane 42453f5, 34aae48).** State v5 records A9.17-A9.21:
+  10 rows AMENDED_BY_A9_19 (OQ-A907-07 and MPQ-01 superseded: no C1 flight variant), 1 AMENDED_BY_A9_20, 2 AMENDED_BY_A9_21
+  (MQ-05 AL-08 provisional floor; WEB-ACC-2 bid close 05-Oct-2026 17:00), new row RP-A919-01 ANSWERED_BY_A9_21 in part (ICP
+  go/no-go gate before LOCK-1 approved, fail-closed; no numerical criterion approved). Earlier statuses kept as
+  `pre_a9_17_status`. M16 v4: one flight configuration; C1 only GROUND_ONLY_LAB_REFERENCE; no readiness state changed.
+  Matrix: 159 entries (APPLIED 143, PARTIAL 5, BLOCKED 6, NOT_APPLICABLE_TO_ARTIFACTS 3, SUPERSEDED_BY_LATER_DECISION 2);
+  AG-15 registration + re-base APPLIED, owner acceptance PENDING_OWNER_ACCEPTANCE. New helper `a9_later_lib.py` pins the
+  A9.17-A9.21 records (kept out of `a9_16_lib` so no other builder re-pins).
+- **Single-configuration audit (lane 6a69ac5).** Three places still evaluated `hall_c1_reference` as flight: Xe v3 (45 items'
+  `applies_to.configs`; C1-GT lines now GROUND_TEST-only with `a9_20_role = GROUND_ONLY_LAB_REFERENCE`, prior scope kept as
+  `applies_to_pre_a9_19`), F7/F8 robust gate snapshot (RVM status-count column; I_e unlock text) and mass/power v3 (A9.2 status
+  annotated as superseded). AL-08 carries `a9_21_status = PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN` in mass/power v3 and Xe v3
+  (value 6.0528 kg unchanged). New `tests/test_single_flight_configuration.py` scans the generated JSONs. Not changed:
+  `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` (pre-A9.19, sha-pinned by ~17 deliverables;
+  accepted by the test only while byte-identical).
+- **Integration.** Regenerated in dependency order H-1 freeze candidate (M16 v4 pin) -> F4 (H-1 pin) -> F7/F8 -> F9 ->
+  application matrix. Two assertions in `tests/test_decision_application_a9_16.py` that encoded the superseded state were
+  updated (AG-15 status; XV2Q-01 now AMENDED_BY_A9_19 with `pre_a9_17_status = AMENDED_BY_A9_15` asserted).
+- **Checks:** both CI legs (pymsis absent / present) 3787 passed / 5 skipped / 1 xfailed, rule-9 outcome check passes in
+  both; golden OK; ci_checks 11/11. No production physics module, frozen dataset or golden changed.
+- **Still open (not this step):** 13 F9 parameters keep `rfp_citation_status = OWNER_STATED_PENDING_RFP_REGISTRATION`
+  (needs per-parameter clause mapping); A9.21 ICP_GATE / AL08 artifact registration / HW_PROGRAMME re-sequencing.

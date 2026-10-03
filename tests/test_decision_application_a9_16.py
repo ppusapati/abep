@@ -136,7 +136,10 @@ def test_f9_gates_approved_with_determining_evidence_standard():
     assert be["characterization_coverage_mg_s"] == [0.38, 3.2]
     assert be["characterization_coverage_role"] == "CHARACTERIZATION_COVERAGE_ONLY_NOT_A_PASS_FAIL_REQUIREMENT"
     assert "statewise" in gates["AG-13"]["gate"]
-    assert gates["AG-15"]["current_status"].startswith("BLOCKED_RFP_NOT_REGISTERED")
+    # A9.13 S6.22 + A9.17 RFP: the RFP is registered by hash and the RVM re-based on it; AG-15 now carries only the
+    # owner-closure condition (never BLOCKED_RFP_NOT_REGISTERED, never PASS while requirement_frozen is false)
+    assert gates["AG-15"]["current_status"].startswith("RFP_REGISTERED_AND_RVM_REBASED_PENDING_OWNER_CLOSURE")
+    assert not gates["AG-15"]["current_status"].startswith("BLOCKED_RFP_NOT_REGISTERED")
     assert "successor held-out" in gates["AG-03"]["gate"]
 
 
@@ -205,7 +208,12 @@ def test_f9_repair_f8_rollup_status_and_current_xe_sources():
     assert "Owner-question roll-up (not answered here)" not in md and "### State v4 TBD_OWNER (" not in md
     assert "### Historical: state v4 TBD_OWNER as raised" in md and "| status (v5) |" in md
     row335 = [ln for ln in md.splitlines() if ln.startswith("| 335 | XV2Q-01 |")][0]
-    assert "AMENDED_BY_A9_15" in row335
+    # A9.15 amended XV2Q-01; A9.19 (xenon_role) amends it again in scope. State v5 shows the latest amendment and keeps
+    # the A9.15 status as its pre-A9.17 history (never dropped)
+    assert "AMENDED_BY_A9_19" in row335
+    v5 = json.loads((ROOT / "docs/budgets/owner_decisions/owner_questions_state_v5.json").read_text(encoding="utf-8"))
+    r335 = next(r for r in v5["rows"] if r["id"] == "XV2Q-01")
+    assert r335["pre_a9_17_status"] == "AMENDED_BY_A9_15" and r335["status"] == "AMENDED_BY_A9_19"
     by = {r["id"]: r for r in F9DOC["parameters"]}
     for rid in ("AFC-SY-XE-01", "AFC-SY-XE-03", "AFC-SY-XE-04", "AFC-SY-XE-06", "AFC-SY-XE-08"):
         cur = by[rid]["current_sources"]

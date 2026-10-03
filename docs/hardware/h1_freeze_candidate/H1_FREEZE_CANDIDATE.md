@@ -473,9 +473,9 @@ Consumed verified deliverables (sha256 at build time; `--check` reports drift):
 * `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json` `26030a9fd7cdee2d7a9b0ef44b99b0fa843ef8b4560db17d7ad3d2e4f2c2cf20`
 * `docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json` `ac85981b0a212f33ef5a51e2a10c6a157abd32fa4b5129be1f19f444d1ea5412`
 * `docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json` `c1a7875fdd0e27b3425cc02ba915ab61bcf9760ac032d294b69a887a91e78459`
-* `docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json` `4d7ff17fc54fa5b686b1826c64f2df0662fb3c5fbd0f03bbe8c11f25486a8643`
+* `docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json` `fde0ddac723b62ab9bdc9789fa738c74198de23b8d150fd67b1b89d9e9d2d2ae`
 * `docs/budgets/owner_decisions/owner_questions_state_v4.json` `6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67`
-* `docs/budgets/owner_decisions/owner_questions_state_v5.json` `19b4da540b1823c6d3bc1b93f4b673c798af3a519c75e4e055853dbe98c945da`
+* `docs/budgets/owner_decisions/owner_questions_state_v5.json` `0a86af5cccf116b8a7c75ca6ee4e8ddb20755261a21501d8923e0d311bc2b5ef`
 * `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` `f082a6d3eabf07485d447ace927f69e8980acbcc8eff54d0cd21f196e20a0afe`
 * `hallthruster_bridge/ensemble/transport_ensemble_v0.json` `2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b`
 * `hallthruster_bridge/validation/VALIDATION_RELEASE_v1.json` `0a57a397883141be20196853b7d722404dc3cb20c72fba666121fd43507dc97c`

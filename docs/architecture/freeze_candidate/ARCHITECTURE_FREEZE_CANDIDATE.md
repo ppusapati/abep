@@ -538,12 +538,12 @@ Other existing questions cited (as raised): UPSTREAM_ICD-Q7 [ANSWERED_BY_A9_9]: 
 | 243 | MQ-02 | ["BLOCKS_LOCK_1"] | ANSWERED_BY_A9_14 | Is the 4 kg dry development reserve (row 54) the row-52 20 % internal system margin, or additional to it? |
 | 244 | MQ-03 | ["BLOCKS_LOCK_1"] | ANSWERED_BY_A9_14 | AL-04 Hall head+magnet 3.0 kg is below the verified MC-1 magnetic-parts floor 3.504 kg (gap 0.504 kg at CBE). Which re-allocation? |
 | 245 | MQ-04 | ["BLOCKS_LOCK_1"] | ANSWERED_BY_A9_14 | AL-07 Hall PPU 2.5 kg is below every row-56-admissible measured PPU analog (lowest 5.0 kg; H2-4 6.1 kg). Which re-allocation? |
-| 246 | MQ-05 | ["BLOCKS_LOCK_1"] | ANSWERED_BY_A9_14 | AL-08 Xe hardware 1.5 kg is below the H2-7 analog floor 5.044 kg (regulator + valves alone 1.544 kg). Which re-allocation, and does AL-08 include tank mounting/thermal and plumbing? |
+| 246 | MQ-05 | ["BLOCKS_LOCK_1"] | AMENDED_BY_A9_21 | AL-08 Xe hardware 1.5 kg is below the H2-7 analog floor 5.044 kg (regulator + valves alone 1.544 kg). Which re-allocation, and does AL-08 include tank mounting/thermal and plumbing? |
 | 247 | MQ-06 | ["BLOCKS_LOCK_1"] | ANSWERED_BY_A9_14 | Row 60 harness (5 % of nominal dry) alone is 1.21-1.45 kg, above the whole 'controls/harness 1.0 kg' line. Split the line into controls and harness? |
 | 248 | MQ-07 | ["BLOCKS_LOCK_1"] | ANSWERED_BY_A9_14 | Map the A9 items that row 54 does not name: collector/bias electrode (AL-05?), collector/bias supply (AL-07?), RF feedthrough/coax (AL-06?), flight sensors and valve drivers (AL-09?), Xe tank mount... |
 | 250 | MQ-09 | ["BLOCKS_LOCK_1"] | ANSWERED_BY_A9_14 | Do the 2 / 5 / 10 kg Xe design cases (row 48) include the row-43 20 % reserve, with the row-45 residual on top? |
 | 251 | MQ-10 | ["BLOCKS_LOCK_1"] | ANSWERED_BY_A9_14 | Under the primary policy reading with the three evidence floors (R2E) the dry mass alone exceeds 40 kg. Accept that closure requires reducing the six evidence-free lines AL-01/02/03/05/06/10 (harne... |
-| 252 | OQ-A907-01 | ["BLOCKS_LOCK_1"] | ANSWERED_BY_A9_14 | Row 93 'cap each ignition dwell at 120 s and allow at most two retries': book 3 attempts (1 + 2 retries, literal) or 2 (the '120 s x 2' shorthand used in the A9 backlog) per start in the Xe ledger? |
+| 252 | OQ-A907-01 | ["BLOCKS_LOCK_1"] | AMENDED_BY_A9_20 | Row 93 'cap each ignition dwell at 120 s and allow at most two retries': book 3 attempts (1 + 2 retries, literal) or 2 (the '120 s x 2' shorthand used in the A9 backlog) per start in the Xe ledger? |
 | 254 | OQ-A907-03 | ["BLOCKS_LOCK_1", "BLOCKS_P3_P4"] | ANSWERED_BY_A9_12 | Is the >= 50 K rule tested at the bounding corner (all adverse analog inputs together, as done here) or at a nominal point plus a pre-registered uncertainty treatment? |
 | 255 | OQ-A907-04 | ["BLOCKS_LOCK_1"] | ANSWERED_BY_A9_14 | Ceramic-insulated coil conductor: plain copper or Ni-clad (Kulgrid)? The Ni-clad conductor raises I^2R by up to x1.33 at equal section and needs a measured magnetic perturbation (row 77) |
 | 256 | OQ-A907-05 | ["BLOCKS_LOCK_1", "BLOCKS_P3_P4"] | ANSWERED_BY_A9_12 | Accept the supplier continuous ratings (BN 900 degC oxidizing guide value, ceramic wire 1000 F) as PROVISIONAL limits for the >= 50 K rule until qualification tests validate them? |
@@ -551,14 +551,14 @@ Other existing questions cited (as raised): UPSTREAM_ICD-Q7 [ANSWERED_BY_A9_9]: 
 | 258 | OQ-A907-08 | ["BLOCKS_LOCK_1", "BLOCKS_P3_P4"] | ANSWERED_BY_A9_12 | Exterior coating temperature limit (row 84): the Z-93-class coating's temperature capability on the Hall body is not established (H2-5 v1 TBD). The coated PO/BP surfaces must withstand up to PO 442... |
 | 259 | OQ-A907-09 | ["BLOCKS_LOCK_1", "BLOCKS_P3_P4"] | ANSWERED_BY_A9_12 | Row 86 '20% heat-load design margin': this lane scales only the DISSIPATED loads (discharge fractions, coil I^2R, cathode) by 1.2 and keeps the environmental solar/albedo/OLR inputs at their v1 hot... |
 | 260 | OQ-A907-10 | ["BLOCKS_LOCK_1", "BLOCKS_P3_P4"] | ANSWERED_BY_A9_12 | The thermal worst case is found by a local search plus a heuristic search allowance (not an upper bound). Within-limit results (for hall_icp_neutralizer: UNCOUPLED_SENSITIVITY_WITHIN_LIMIT, reporte... |
-| 262 | OQ-A907-07 | ["BLOCKS_LOCK_1"] | AMENDED_BY_A9_15 | Develop a flight C1 integration (external mount on the flight article, two series valves, keeper supply) now for the fallback architecture hall_c1_reference, or defer until C1 is chosen for flight? |
+| 262 | OQ-A907-07 | ["BLOCKS_LOCK_1"] | AMENDED_BY_A9_19 | Develop a flight C1 integration (external mount on the flight article, two series valves, keeper supply) now for the fallback architecture hall_c1_reference, or defer until C1 is chosen for flight? |
 | 263 | XA9Q-01 | ["BLOCKS_LOCK_1"] | ANSWERED_BY_A9_14 | Are the row-48 design cases (2 / 5 / 10 kg) LOADED Xe (usable + residual) or usable Xe? |
 | 264 | XA9Q-02 | ["NOTHING_IMMEDIATE"] | ANSWERED_BY_A9_14 | Row 93 'at most two retries': is the per-start bound 3 dwells (1 + 2 retries, 360 s) or 2 dwells (240 s)? |
 | 265 | XA9Q-03 | ["BLOCKS_LOCK_1"] | ANSWERED_BY_A9_14 | Is the row-96 flow-class term booked additively (conservative) and inside the reserve base? |
 | 266 | XA9Q-04 | ["NOTHING_IMMEDIATE"] | ANSWERED_BY_A9_14 | Ground-test Xe supply margin over the booked ground-test Xe? |
 | 267 | XA9Q-05 | ["NOTHING_IMMEDIATE"] | AMENDED_BY_A9_15 | Does a G-XE ICP feed need a filter/getter? |
 | 268 | XA9Q-06 | ["BLOCKS_LOCK_1"] | ANSWERED_BY_A9_14 | Retire H2-7 H27-34 (PROPOSED >= 75 bar MEOP, a 293.15 K check) in favour of a MEOP chosen from quotations against the 323 K volume table? |
-| 269 | XA9Q-07 | ["BLOCKS_LOCK_1"] | AMENDED_BY_A9_15 | Does the row-6 functional Xe mode apply to the hall_icp_neutralizer flight configuration (so it also carries a Xe tank and Xe flow control)? |
+| 269 | XA9Q-07 | ["BLOCKS_LOCK_1"] | AMENDED_BY_A9_19 | Does the row-6 functional Xe mode apply to the hall_icp_neutralizer flight configuration (so it also carries a Xe tank and Xe flow control)? |
 | 270 | OQ-RFQ-01 | ["BLOCKS_LOCK_1"] | ANSWERED_BY_A9_14 | Spare quantities (stand flexures, ICP dielectric/feedthrough spares, C1 sacrificial O-exposure unit)? |
 | 272 | OQ-RFQ-03 | ["BLOCKS_LOCK_1"] | ANSWERED_BY_A9_14 | Quote the Xe reference-path MFC now with its range TBD, or after A9-01 registers the Xe reference point? |
 | 273 | OQ-RFQ-04 | ["BLOCKS_LOCK_1"] | ANSWERED_BY_A9_14 | Is the 0.6-0.8 mg/s C1 start/diode flow retained (row 125 'if ... retained')? |
@@ -602,9 +602,9 @@ Other existing questions cited (as raised): UPSTREAM_ICD-Q7 [ANSWERED_BY_A9_9]: 
 | 330 | P4-OQ-03 | ["BLOCKS_P3_P4", "BLOCKS_LOCK_1"] | ANSWERED_BY_A9_12 | Pre-registered coupon acceptance: resistance-rise threshold, AO / sputter recession limits and exposure durations (before any exposure). |
 | 331 | P4-OQ-04 | ["BLOCKS_P3_P4"] | ANSWERED_BY_A9_12 | Authorize lawful acquisition (library / ILL / purchase) of species-resolved (N+, N2+, O+, O2+) sputtering-yield data for alloy and coating candidates not covered by open elemental compilations? |
 | 332 | P4-OQ-05 | ["BLOCKS_P3_P4"] | ANSWERED_BY_A9_12 | Collector coupons: bias polarity (ion-collecting negative bias as the collector runs, in addition to or instead of the row-106 electron-collecting / floating pair)? |
-| 333 | MPQ-01 | ["BLOCKS_LOCK_1"] | AMENDED_BY_A9_15 | Row 54 gives no allocation for the C1 electron-source hardware of the hall_c1_reference flight fallback configuration (cathode unit, shield/mount, filter/getter; supplies and cathode Xe branch poss... |
+| 333 | MPQ-01 | ["BLOCKS_LOCK_1"] | AMENDED_BY_A9_19 | Row 54 gives no allocation for the C1 electron-source hardware of the hall_c1_reference flight fallback configuration (cathode unit, shield/mount, filter/getter; supplies and cathode Xe branch poss... |
 | 334 | MPQ-02 | ["BLOCKS_LOCK_1"] | ANSWERED_BY_A9_14 | Map the A9.2-A9.6 lines that neither row 54 nor MQ-07 names: ICP isolation hardware (MPV2-N01), RF protection/sensing electronics (MPV2-N02), anode heat-removal hardware (MPV2-N03), ICP open-frame ... |
-| 335 | XV2Q-01 | ["BLOCKS_LOCK_1"] | AMENDED_BY_A9_15 | If XA9Q-07 is answered NO (the row-6 functional Xe mode does not apply to hall_icp_neutralizer), is that flight configuration Xe-free (no tank, no Xe flow control), or does it keep a Xe system for ... |
+| 335 | XV2Q-01 | ["BLOCKS_LOCK_1"] | AMENDED_BY_A9_19 | If XA9Q-07 is answered NO (the row-6 functional Xe mode does not apply to hall_icp_neutralizer), is that flight configuration Xe-free (no tank, no Xe flow control), or does it keep a Xe system for ... |
 | 336 | OQ-RFQV2-01 | ["BLOCKS_P1_START"] | ANSWERED_BY_A9_8 | Must the Ar MFC certificate be ISO/IEC 17025 / NABL-accredited, or is the maker's Ar calibration plus the in-house rate-of-rise/transfer verification sufficient (Ar is ENGINEERING_ONLY_NON_SCORING;... |
 | 337 | OQ-RFQV2-02 | ["BLOCKS_P1_START"] | ANSWERED_BY_A9_8 | Does the domestic engineering chamber for P1 (row 139) already provide pumping, or must RFQ2-VAC request pumping quotations? |
 | 338 | OQ-RFQV2-03 | ["BLOCKS_P1_START"] | ANSWERED_BY_A9_8 | May one calorimetric dummy load serve both the dummy-load and the calorimetric cross-check functions? |
@@ -618,8 +618,8 @@ Other existing questions cited (as raised): UPSTREAM_ICD-Q7 [ANSWERED_BY_A9_9]: 
 | 347 | P1-IT-55 | ["BLOCKS_P1_START"] | ANSWERED_BY_A9_8 | Register DWV leakage acceptance criterion (per insulation path) (A): TBD - requires the insulation-path / feedthrough ratings (P1-IT-44 note; not given by the owner). Until registered the P1-G0 sta... |
 | 354 | OD2 | ["NOTHING_IMMEDIATE"] | ANSWERED_BY_A9_14 | Envelope quantifier over 180–230 km × atmosphere states |
 | 355 | OD3 | ["NOTHING_IMMEDIATE"] | ANSWERED_BY_A9_14 | Atmosphere design states |
-| 356 | OD5 | ["NOTHING_IMMEDIATE"] | ANSWERED_BY_A9_14 | Ignition start sequence and restart count |
-| 357 | OD6 | ["NOTHING_IMMEDIATE"] | AMENDED_BY_A9_15 | Meaning of 'air + Xe' |
+| 356 | OD5 | ["NOTHING_IMMEDIATE"] | AMENDED_BY_A9_19 | Ignition start sequence and restart count |
+| 357 | OD6 | ["NOTHING_IMMEDIATE"] | AMENDED_BY_A9_19 | Meaning of 'air + Xe' |
 | 358 | OD12 | ["NOTHING_IMMEDIATE"] | ANSWERED_BY_A9_14 | RFP requirements recorded but not gated (indigenous content, no single-point failure, 'ionise nascent O') |
 | 360 | OD14 | ["NOTHING_IMMEDIATE"] | ANSWERED_BY_A9_14 | Is ignition from the off state on atmospheric propellant an RFP requirement? (G6.ignition is inferred from 'air + Xe' and the RFP architecture; no ignition or restart clause is recorded in the repo... |
 | 361 | RVMQ-01 | ["NOTHING_IMMEDIATE"] | ANSWERED_BY_A9_14 | If the official RFP confirms 'no single-point failure in electronics' (recorded only in abep_sim/ppu.py, R7), does the row-55 limited-redundancy policy (no duplicated thruster, ICP neutralizer or f... |
@@ -755,21 +755,21 @@ Consumed (sha256 at build time; drift reported by `--check`):
 - `docs/design_synthesis/f2_filter/f2_filter_stage_v1.json` b67557f441b24c6665fae4df1f33bc8f0991b445b55d19e1bcd2c7f5880119a0
 - `docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json` ccd7da1e54368c67cbedc5bf495ecc035fc844e235c5b36725c522cbc74d4412
 - `docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json` 74a52aa749e1d071f76957e4f9ef4929c9d8ab302b183da3c5a5d9ba8d6d6923
-- `docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json` 36f94251ccca4427715ad4395957b4700b6bcb9d8127a4e3feaa1f4865150590
-- `docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json` 67c3dcb650c104eb16093279a54c3482c2bb5821711916cc05811841a9e7b992
+- `docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json` 10037175cfc814d42a062bcaee1a043379afc2c2a325fa6a4e7062f96be27637
+- `docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json` a36bf7bacefa70e8be652da98f4887bebaf8f2143b7e9c27abd12d2ae4cd7ced
 - `docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json` eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450
-- `docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json` 04ce2f797b747829c62391017a93ee9ea3c0cd25f720b7ca3f01903136e98361
+- `docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json` 45e055ccae563440180f89a6c26415357abd51064cc6296bfbf14139ffee517b
 - `docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json` 7a282dd217cd876999c5c65b3a445449175bfa3362a3b59bed74ed120a9bb0c9
 - `docs/design_synthesis/f7_f8_optimizer/f8_robust_candidates_v1.json` 43adc213f7f7b7f34fdda5e494033fcac52615ec7627777a010b1e2497d5927d
 - `docs/budgets/owner_decisions/owner_questions_state_v4.json` 6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67
-- `docs/budgets/owner_decisions/owner_questions_state_v5.json` 19b4da540b1823c6d3bc1b93f4b673c798af3a519c75e4e055853dbe98c945da
-- `docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json` 0d8413fec02ead4d0a21e9acbdad0b29569dfc0a7eb9a03bdd99d3c9fb504602
+- `docs/budgets/owner_decisions/owner_questions_state_v5.json` 0a86af5cccf116b8a7c75ca6ee4e8ddb20755261a21501d8923e0d311bc2b5ef
+- `docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json` 8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316
 - `docs/requirements/rvm_a9/rvm_a9_v1.json` a277bab2d29f0592f25c2a4c72be93561e84ed2e0fe06682e553260e2697dec6
 - `docs/requirements/rfp_official/rfp_registration_v1.json` be2d26cdc8c8b140f29d26b52140a3bae6d1080ecaa92ea40841889207e49412
 - `docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json` c1a7875fdd0e27b3425cc02ba915ab61bcf9760ac032d294b69a887a91e78459
-- `docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json` 4d7ff17fc54fa5b686b1826c64f2df0662fb3c5fbd0f03bbe8c11f25486a8643
+- `docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json` fde0ddac723b62ab9bdc9789fa738c74198de23b8d150fd67b1b89d9e9d2d2ae
 - `docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json` ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a
-- `docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json` 95d0f5229f23c85d8a6520637c4bd4fed53a49fca0082da30da747735c2e0195
+- `docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json` bcecab6147d62564669c0f154c3c1c7eceb5150a86bd9cb5f99b0b7f6daa6f63
 - `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` 9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6
 - `schemas/interfaces/icp_neutralizer_icd_v1.json` 8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c
 - `docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json` e4a965cbf1c33295a0bec1407f01c26aa5df3e2807dfc0e70a0bf7a5e0c24180
