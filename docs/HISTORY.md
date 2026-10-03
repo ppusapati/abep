@@ -3134,8 +3134,9 @@ that launched it ended before its lanes merged. It was re-run from fd91185 as th
   updated (AG-15 status; XV2Q-01 now AMENDED_BY_A9_19 with `pre_a9_17_status = AMENDED_BY_A9_15` asserted).
 - **Checks:** both CI legs (pymsis absent / present) 3787 passed / 5 skipped / 1 xfailed, rule-9 outcome check passes in
   both; golden OK; ci_checks 11/11. No production physics module, frozen dataset or golden changed.
-- **Still open (not this step):** 13 F9 parameters keep `rfp_citation_status = OWNER_STATED_PENDING_RFP_REGISTRATION`
-  (needs per-parameter clause mapping); A9.21 ICP_GATE / AL08 artifact registration / HW_PROGRAMME re-sequencing.
+- **Still open (not this step):** 12 F9 records (2 parameter a9_16 records, the AG-12 gate, F9-OQ-02 and 8 owner-answer
+  application rows; corrected in the 2026-10-03 review, was "13 F9 parameters") keep `rfp_citation_status =
+  OWNER_STATED_PENDING_RFP_REGISTRATION` (needs per-record clause mapping); A9.21 ICP_GATE / AL08 artifact registration / HW_PROGRAMME re-sequencing.
 
 ## 2026-10-03 — A9.21 applied: ICP go/no-go gate, RFP clause citations in F9, AL-08 detection, hardware programme order
 
@@ -3144,13 +3145,14 @@ that launched it ended before its lanes merged. It was re-run from fd91185 as th
   re-evaluated in F9 (`pre_lock1_gates`, `lock1_precondition.lock1_release_reportable = false`). Status NOT_EVALUATED;
   criteria PENDING_OWNER_ACCEPTANCE; RP-A919-01 (a)-(c) kept verbatim as `proposed_criteria_for_owner_review` (never
   evaluated; criteria reusing it are refused). GO only with owner-accepted criteria and sha-pinned MET evidence for each.
-- **F9 RFP citations (lane eae96c8).** The F9 records still labelled OWNER_STATED_PENDING_RFP_REGISTRATION (10 records)
+- **F9 RFP citations (lane eae96c8).** The F9 records still labelled OWNER_STATED_PENDING_RFP_REGISTRATION (12 records;
+  corrected in the 2026-10-03 review, was "10")
   and the two REQUIREMENT_AS_RECORDED parameters cite registered clause ids read from the RVM rows at build time
   (`docs/architecture/freeze_candidate/rfp_citations_f9.py`; `a9_16_lib` untouched). Five links (AG-12 / F9-OQ-02,
   F2-OQ-01, F2-OQ-03) rest on the RFP fact quoted in the owner's answer matching the RVM row text, not on a direct RVM
   citation; recorded as such. The old label is kept as `rfp_citation_status_as_applied`.
 - **Hardware programme order (lane 364a5ab).** One record, `docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json`
-  (14 ordered steps from the verbatim A9.21 items 6-11, predecessors and entry preconditions, each naming its existing
+  (14 steps listed in owner-item order - binding precedence only through the recorded predecessors - from the verbatim A9.21 items 6-11, predecessors and entry preconditions, each naming its existing
   enforcing rule), consumed and sha-pinned by H-1 and P1-P4. Fail closed: no step startable while a predecessor or a
   registration is missing; no PASS / GO / START_AUTHORISED. H-1 S7.2 waits for every authorised FEMM point; one gas/mode per
   ICP campaign with its own domain id and provenance; P2 map after the frozen in-house V/I calibration + uncertainty
@@ -3162,3 +3164,23 @@ that launched it ended before its lanes merged. It was re-run from fd91185 as th
   NOT_APPLICABLE_TO_ARTIFACTS 3, SUPERSEDED_BY_LATER_DECISION 2.
 - **Regenerated:** F4 -> F7/F8 -> F9 -> matrix (H-1 pin). Checks: 3830 passed / 5 skipped / 1 xfailed, rule-9 outcome check
   passes, golden OK, ci_checks 11/11. No production physics module, frozen dataset or golden changed.
+
+## 2026-10-03 — Review-and-fix of fd91185..9d0f851 (evidence discipline / consistency)
+
+- **Matrix commit citations.** Two cited (commit, artifact) pairs did not contain the claimed change (`git show`):
+  A9.19 `abep_sim/design/a9_19_architecture.py` @ 56e7327 (does not touch the file; its FLIGHT_CONFIGURATIONS record came
+  in 90f0137) and A9.14 F0-OQ-02 `REGISTRATION.json` @ 61373fd (touches baseline.json / machine.json only; the file came
+  in b9b7387). Both re-pointed in `build_a9_16_application_matrix.py`; new test
+  `test_matrix_cited_commits_touch_their_artifacts` (every application outside the step-1 lane table). Not fixed: the
+  step-1 P3 lane cites `p3_coupled_thermal_v2.json` @ c00f9b5, which changed only the v1 files (v2 first appears in the
+  repair commit 1d51554); re-pointing needs the step-1 P3 locator set reworked (several ids are absent from v1).
+- **F9 RFP citations.** The F9 record -> RVM row correspondence (`rfp_citations_f9.CORRESPONDENCE`) is the recorder's
+  reading, not an owner or RVM re-base mapping; it is now labelled `RECORDER_READING_OWNER_MAY_REVERSE`
+  (`rfp_citations.correspondence_status`; `rfp_correspondence_status` on each of the 14 records; the note no longer says
+  "mapped as the RVM re-base maps"). Clause ids unchanged.
+- **Wording.** Programme / H-1 / P1-P4 companion documents rendered the 14 steps as one `a -> b -> ...` chain although
+  ICP-AR-REF, P2-MAP, COUPLED-H1-ICP and H1-THRUST-FEED-MAP have no predecessor in A9.21; now a listing with the
+  predecessor rule stated (JSON records unchanged). State v5 MD labels the step-1 "document is not registered" RFP rule
+  as history next to "RFP now". HISTORY counts above corrected in place (12 pending F9 records, not 13 / 10).
+- No owner decision, frozen dataset, golden, physics module or status changed. Checks: 3834 passed / 5 skipped /
+  1 xfailed (4 new regression tests), golden OK, ci_checks 11/11, every rebuilt builder `--check` current.

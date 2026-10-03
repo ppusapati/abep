@@ -855,7 +855,7 @@ Pinning: the P1 json / reducer / campaign are sha-pinned or read by other packag
 
 Programme record `docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json` (sha256 `135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a`); decision A9.21 HW_PROGRAMME (docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json sha256 78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549; verbatim docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md sha256 01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440).
 
-Order: H1-S7.1 -> H1-S7.2 -> C1-REF -> ICP-AR-REF -> ICP-45A-P1-S7 -> ICP-45N -> ICP-XE-MODE -> P2-MAP -> COUPLED-H1-ICP -> P3-THERMAL -> P4-ACCEPTANCE-EXPOSURE -> H1-THRUST-FEED-MAP -> AG-12 -> AG-13
+Listing order (owner items 6-11; not a sequence: the only binding precedence is each step's predecessors below and in the programme record): H1-S7.1, H1-S7.2, C1-REF, ICP-AR-REF, ICP-45A-P1-S7, ICP-45N, ICP-XE-MODE, P2-MAP, COUPLED-H1-ICP, P3-THERMAL, P4-ACCEPTANCE-EXPOSURE, H1-THRUST-FEED-MAP, AG-12, AG-13
 
 > 7. C1 ground reference — approved. Run H-1 + C1 reference characterization and register `I_d,max,H1,Ar` before P1-S7. This remains a reference/engineering campaign and does not redefine the RFP propellant requirement.
 

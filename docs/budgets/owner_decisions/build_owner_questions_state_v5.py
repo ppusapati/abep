@@ -655,7 +655,8 @@ def render_md(doc):
            + doc["generated_by"] + "`; do not edit by hand).", "",
            "Counts: " + ", ".join(f"{k} {v}" for k, v in doc["counts"].items()) + f". **{doc['tbd_owner_count']} TBD_OWNER.**", "",
            "Answered in this step: " + ", ".join(f"{k} {v}" for k, v in doc["answered_this_step_by_decision"].items()) + ".", "",
-           "RFP rule: " + doc["rfp_rule"] + ".", "",
+           "RFP rule (A9.16 step-1 application rule, history; the RFP is now registered by hash - see 'RFP now' "
+           "below): " + doc["rfp_rule"] + ".", "",
            "## A9.15 RFP-compliant propellant policy (governing)", "", "> " + doc["a9_15_governing_statement"], "",
            doc["a9_15_scope_note"] + ".", "",
            "| # | ID | A9.14 code | Governing reading (A9.15, verbatim) |", "|---|---|---|---|"]

@@ -162,7 +162,7 @@
  "later_application_commits": {
   "a9_19_rvm": "1eb021c91da662fe277d098cc11ab35c3d28afc7",
   "a9_19_budgets": "4cd79e6425472ece6835d4c254710cdfe036b31a",
-  "a9_19_design": "56e73270a96669a4760e4e11c4244e78fa6e4d03",
+  "a9_19_design": "90f0137842ddd59dcfc99444fc98ba46c808edd0",
   "a9_19_integration": "f280cf4401fe1f428352b5657e97881f38cc7c79",
   "a9_17_21_records": "42453f5fdb10a645ea88ef90f56aad851d2c6520",
   "a9_21_al08_budgets": "6a69ac52dcca091212c0dfc4cd10abcbd2e1bdcc",
@@ -6427,7 +6427,7 @@
     {
      "lane": "A9.17",
      "artifact": "docs/performance/dedicated_baseline_2026_10_01/REGISTRATION.json",
-     "commit": "61373fd21609268c9901a7910a9d948bed0df286",
+     "commit": "b9b738733a6cab9cf32dcf65cf0f7f1e4a2e2855",
      "status": "APPLIED",
      "record_locations": [
       "A9.14 S10.2 F0-OQ-02",
@@ -6973,7 +6973,7 @@
     {
      "lane": "A9.19",
      "artifact": "abep_sim/design/a9_19_architecture.py",
-     "commit": "56e73270a96669a4760e4e11c4244e78fa6e4d03",
+     "commit": "90f0137842ddd59dcfc99444fc98ba46c808edd0",
      "status": "APPLIED",
      "record_locations": [
       "FLIGHT_CONFIGURATIONS = (FLIGHT_CONFIGURATION,)"

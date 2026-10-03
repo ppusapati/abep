@@ -129,3 +129,17 @@ def test_correspondence_fails_closed(monkeypatch):
     bad[("AG-12", "F9-OQ-02")] = [("RVM-01", "RVM_REBASE_DECISION", None, None)]   # RVM-01 cites no F9-OQ-02
     with pytest.raises(SystemExit):
         C.mapping("AG-12", "F9-OQ-02", RVM, L.answer)
+
+
+def test_correspondence_labelled_recorder_reading():
+    """Review 2026-10-03 (evidence discipline): the F9 record -> RVM row correspondence is the recorder's reading, not
+    an owner or RVM re-base mapping; the summary and every registered record say so; 12 step-1 records were
+    re-labelled plus the 2 REQUIREMENT_AS_RECORDED parameters (HISTORY 2026-10-03)."""
+    block = F9["rfp_citations"]
+    assert block["correspondence_status"].startswith("RECORDER_READING_OWNER_MAY_REVERSE")
+    recs = block["records"]
+    assert len(recs) == 14
+    assert sum(1 for r in recs if r["record"].endswith(".rfp_citation")) == 2
+    blob = json.dumps(F9, ensure_ascii=False)
+    assert "mapped as the RVM re-base maps" not in blob
+    assert blob.count('"rfp_correspondence_status": "RECORDER_READING_OWNER_MAY_REVERSE"') == 14

@@ -7227,7 +7227,8 @@
       "evidence": "docs/requirements/rvm_a9/rvm_a9_v1.json RVM-19 rfp_rebase.decisions cite OD12"
      }
     ],
-    "rfp_citation_note": "registered clause(s) RFP-P18-09, RFP-P18-02 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-19; AG-15 closure is the owner's, requirement_frozen stays false"
+    "rfp_citation_note": "registered clause(s) RFP-P18-09, RFP-P18-02 (docs/requirements/rfp_official/rfp_registration_v1.json), the rfp_clauses the RVM re-base maps for RVM-19; the record -> RVM row correspondence is a RECORDER_READING_OWNER_MAY_REVERSE (RVM_REBASE_DECISION); AG-15 closure is the owner's, requirement_frozen stays false",
+    "rfp_correspondence_status": "RECORDER_READING_OWNER_MAY_REVERSE"
    }
   },
   {
@@ -7285,7 +7286,8 @@
       "evidence": "F9 parameter 'P_bus,1ms,max' = docs/requirements/rvm_a9/rvm_a9_v1.json RVM-04 requirement 'P_bus,1ms,max'"
      }
     ],
-    "rfp_citation_note": "registered clause(s) RFP-P18-10, RFP-P18-01 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-04; AG-15 closure is the owner's, requirement_frozen stays false"
+    "rfp_citation_note": "registered clause(s) RFP-P18-10, RFP-P18-01 (docs/requirements/rfp_official/rfp_registration_v1.json), the rfp_clauses the RVM re-base maps for RVM-04; the record -> RVM row correspondence is a RECORDER_READING_OWNER_MAY_REVERSE (PARAMETER_FACT); AG-15 closure is the owner's, requirement_frozen stays false",
+    "rfp_correspondence_status": "RECORDER_READING_OWNER_MAY_REVERSE"
    }
   },
   {
@@ -7869,7 +7871,8 @@
       "evidence": "F9 source docs/requirements/rvm_a9/rvm_a9_v1.json/rows/5 = RVM-06"
      }
     ],
-    "rfp_citation_note": "registered clause(s) RFP-P18-11 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-06; AG-15 closure is the owner's, requirement_frozen stays false"
+    "rfp_citation_note": "registered clause(s) RFP-P18-11 (docs/requirements/rfp_official/rfp_registration_v1.json), the rfp_clauses the RVM re-base maps for RVM-06; the record -> RVM row correspondence is a RECORDER_READING_OWNER_MAY_REVERSE (F9_SOURCE_POINTER); AG-15 closure is the owner's, requirement_frozen stays false",
+    "rfp_correspondence_status": "RECORDER_READING_OWNER_MAY_REVERSE"
    }
   },
   {
@@ -8502,7 +8505,8 @@
       "evidence": "docs/requirements/rvm_a9/rvm_a9_v1.json a9_16_owner_answers_applied (A9.15 governing_rule) names RVM-10"
      }
     ],
-    "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-10; AG-15 closure is the owner's, requirement_frozen stays false"
+    "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json), the rfp_clauses the RVM re-base maps for RVM-10; the record -> RVM row correspondence is a RECORDER_READING_OWNER_MAY_REVERSE (RVM_A9_15_APPLIED, RVM_A9_16_DECISION); AG-15 closure is the owner's, requirement_frozen stays false",
+    "rfp_correspondence_status": "RECORDER_READING_OWNER_MAY_REVERSE"
    },
    "current_sources": [
     "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json/propellant_policy"
@@ -10135,7 +10139,8 @@
       "evidence": "owner verbatim '12–25 mN' (F9-OQ-02) = docs/requirements/rvm_a9/rvm_a9_v1.json RVM-02 '12-25 mN'"
      }
     ],
-    "rfp_citation_note": "registered clause(s) RFP-P18-04, RFP-P18-05, RFP-P18-06 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-01, RVM-02; AG-15 closure is the owner's, requirement_frozen stays false"
+    "rfp_citation_note": "registered clause(s) RFP-P18-04, RFP-P18-05, RFP-P18-06 (docs/requirements/rfp_official/rfp_registration_v1.json), the rfp_clauses the RVM re-base maps for RVM-01, RVM-02; the record -> RVM row correspondence is a RECORDER_READING_OWNER_MAY_REVERSE (VERBATIM_FACT); AG-15 closure is the owner's, requirement_frozen stays false",
+    "rfp_correspondence_status": "RECORDER_READING_OWNER_MAY_REVERSE"
    },
    "sources": [
     {
@@ -13299,7 +13304,8 @@
      "evidence": "owner verbatim '12–25 mN' (F9-OQ-02) = docs/requirements/rvm_a9/rvm_a9_v1.json RVM-02 '12-25 mN'"
     }
    ],
-   "rfp_citation_note": "registered clause(s) RFP-P18-04, RFP-P18-05, RFP-P18-06 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-01, RVM-02; AG-15 closure is the owner's, requirement_frozen stays false"
+   "rfp_citation_note": "registered clause(s) RFP-P18-04, RFP-P18-05, RFP-P18-06 (docs/requirements/rfp_official/rfp_registration_v1.json), the rfp_clauses the RVM re-base maps for RVM-01, RVM-02; the record -> RVM row correspondence is a RECORDER_READING_OWNER_MAY_REVERSE (VERBATIM_FACT); AG-15 closure is the owner's, requirement_frozen stays false",
+   "rfp_correspondence_status": "RECORDER_READING_OWNER_MAY_REVERSE"
   },
   {
    "id": "F9-OQ-03",
@@ -13388,7 +13394,8 @@
      "evidence": "owner verbatim '12–25 mN' (F9-OQ-02) = docs/requirements/rvm_a9/rvm_a9_v1.json RVM-02 '12-25 mN'"
     }
    ],
-   "rfp_citation_note": "registered clause(s) RFP-P18-04, RFP-P18-05, RFP-P18-06 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-01, RVM-02; AG-15 closure is the owner's, requirement_frozen stays false"
+   "rfp_citation_note": "registered clause(s) RFP-P18-04, RFP-P18-05, RFP-P18-06 (docs/requirements/rfp_official/rfp_registration_v1.json), the rfp_clauses the RVM re-base maps for RVM-01, RVM-02; the record -> RVM row correspondence is a RECORDER_READING_OWNER_MAY_REVERSE (VERBATIM_FACT); AG-15 closure is the owner's, requirement_frozen stays false",
+   "rfp_correspondence_status": "RECORDER_READING_OWNER_MAY_REVERSE"
   },
   {
    "decision": "A9.13",
@@ -13590,7 +13597,8 @@
      "evidence": "owner verbatim 'N2 and nascent/atomic oxygen' (F2-OQ-01) = docs/requirements/rvm_a9/rvm_a9_v1.json RVM-09 'N2 and nascent (atomic) O'"
     }
    ],
-   "rfp_citation_note": "registered clause(s) RFP-P17-05, RFP-P17-02 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-09; AG-15 closure is the owner's, requirement_frozen stays false"
+   "rfp_citation_note": "registered clause(s) RFP-P17-05, RFP-P17-02 (docs/requirements/rfp_official/rfp_registration_v1.json), the rfp_clauses the RVM re-base maps for RVM-09; the record -> RVM row correspondence is a RECORDER_READING_OWNER_MAY_REVERSE (VERBATIM_FACT); AG-15 closure is the owner's, requirement_frozen stays false",
+   "rfp_correspondence_status": "RECORDER_READING_OWNER_MAY_REVERSE"
   },
   {
    "decision": "A9.13",
@@ -13646,7 +13654,8 @@
      "evidence": "owner verbatim 'intake → filter → compressor' (F2-OQ-03) = docs/requirements/rvm_a9/rvm_a9_v1.json RVM-08 'intake -> filter -> compressor'"
     }
    ],
-   "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P16-02, RFP-P17-03, RFP-P17-04, RFP-P19-03 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-08; AG-15 closure is the owner's, requirement_frozen stays false"
+   "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P16-02, RFP-P17-03, RFP-P17-04, RFP-P19-03 (docs/requirements/rfp_official/rfp_registration_v1.json), the rfp_clauses the RVM re-base maps for RVM-08; the record -> RVM row correspondence is a RECORDER_READING_OWNER_MAY_REVERSE (VERBATIM_FACT); AG-15 closure is the owner's, requirement_frozen stays false",
+   "rfp_correspondence_status": "RECORDER_READING_OWNER_MAY_REVERSE"
   },
   {
    "decision": "A9.13",
@@ -13789,7 +13798,8 @@
      "evidence": "docs/requirements/rvm_a9/rvm_a9_v1.json RVM-19 rfp_rebase.decisions cite RVMQ-01"
     }
    ],
-   "rfp_citation_note": "registered clause(s) RFP-P18-09, RFP-P18-02 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-19; AG-15 closure is the owner's, requirement_frozen stays false"
+   "rfp_citation_note": "registered clause(s) RFP-P18-09, RFP-P18-02 (docs/requirements/rfp_official/rfp_registration_v1.json), the rfp_clauses the RVM re-base maps for RVM-19; the record -> RVM row correspondence is a RECORDER_READING_OWNER_MAY_REVERSE (RVM_REBASE_DECISION); AG-15 closure is the owner's, requirement_frozen stays false",
+   "rfp_correspondence_status": "RECORDER_READING_OWNER_MAY_REVERSE"
   },
   {
    "decision": "A9.14",
@@ -13824,7 +13834,8 @@
      "evidence": "docs/requirements/rvm_a9/rvm_a9_v1.json RVM-19 rfp_rebase.decisions cite OD12"
     }
    ],
-   "rfp_citation_note": "registered clause(s) RFP-P18-09, RFP-P18-02 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-19; AG-15 closure is the owner's, requirement_frozen stays false"
+   "rfp_citation_note": "registered clause(s) RFP-P18-09, RFP-P18-02 (docs/requirements/rfp_official/rfp_registration_v1.json), the rfp_clauses the RVM re-base maps for RVM-19; the record -> RVM row correspondence is a RECORDER_READING_OWNER_MAY_REVERSE (RVM_REBASE_DECISION); AG-15 closure is the owner's, requirement_frozen stays false",
+   "rfp_correspondence_status": "RECORDER_READING_OWNER_MAY_REVERSE"
   },
   {
    "decision": "A9.14",
@@ -14011,7 +14022,8 @@
      "evidence": "docs/requirements/rvm_a9/rvm_a9_v1.json RVM-10 a9_16.decisions cite XA9Q-07"
     }
    ],
-   "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-10; AG-15 closure is the owner's, requirement_frozen stays false"
+   "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json), the rfp_clauses the RVM re-base maps for RVM-10; the record -> RVM row correspondence is a RECORDER_READING_OWNER_MAY_REVERSE (RVM_A9_16_DECISION); AG-15 closure is the owner's, requirement_frozen stays false",
+   "rfp_correspondence_status": "RECORDER_READING_OWNER_MAY_REVERSE"
   },
   {
    "decision": "A9.14",
@@ -14054,7 +14066,8 @@
      "evidence": "docs/requirements/rvm_a9/rvm_a9_v1.json RVM-10 a9_16.decisions cite OD6"
     }
    ],
-   "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-10; AG-15 closure is the owner's, requirement_frozen stays false"
+   "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json), the rfp_clauses the RVM re-base maps for RVM-10; the record -> RVM row correspondence is a RECORDER_READING_OWNER_MAY_REVERSE (RVM_A9_16_DECISION); AG-15 closure is the owner's, requirement_frozen stays false",
+   "rfp_correspondence_status": "RECORDER_READING_OWNER_MAY_REVERSE"
   },
   {
    "decision": "A9.14",
@@ -14180,7 +14193,8 @@
      "evidence": "docs/requirements/rvm_a9/rvm_a9_v1.json a9_16_owner_answers_applied (A9.15 governing_rule) names RVM-10"
     }
    ],
-   "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json), mapped as the RVM re-base maps RVM-10; AG-15 closure is the owner's, requirement_frozen stays false"
+   "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json), the rfp_clauses the RVM re-base maps for RVM-10; the record -> RVM row correspondence is a RECORDER_READING_OWNER_MAY_REVERSE (RVM_A9_15_APPLIED); AG-15 closure is the owner's, requirement_frozen stays false",
+   "rfp_correspondence_status": "RECORDER_READING_OWNER_MAY_REVERSE"
   }
  ],
  "a9_16_touched_parameters": [
@@ -14464,6 +14478,7 @@
  },
  "rfp_citations": {
   "rule": "F9 records whose owner answer cites the RFP carry the registered clause ids of the RVM row(s) the RVM re-base maps for the corresponding requirement (rfp_citations_f9.CORRESPONDENCE, each correspondence verified against the artifacts); the step-1 label is kept as rfp_citation_status_as_applied; a record without a registered correspondence is UNMAPPED_NO_RVM_MAPPED_CLAUSE with its reason; AG-15 closure stays the owner's",
+  "correspondence_status": "RECORDER_READING_OWNER_MAY_REVERSE: the F9 record -> RVM row correspondence (rfp_citations_f9.CORRESPONDENCE) is the recorder's reading, verified against the artifacts (VERBATIM_FACT: the RFP fact quoted in the owner's answer matches the RVM row text); only the clause ids per RVM row come from the RVM re-base; the owner may reverse a correspondence (AG-15 closure pending)",
   "registration": "docs/requirements/rfp_official/rfp_registration_v1.json",
   "rvm": "docs/requirements/rvm_a9/rvm_a9_v1.json#/rfp_rebase",
   "statuses": {

@@ -6,7 +6,7 @@ Counts: ADDRESSED_IN_A9_10 2, AMENDED_BY_A9_15 1, AMENDED_BY_A9_19 10, AMENDED_B
 
 Answered in this step: A9.8 16, A9.9 5, A9.10 10, A9.11 7, A9.12 14, A9.13 22, A9.14 61.
 
-RFP rule: 'RFP(1)' cites the official RFP held by the owner; the document is not registered in the repository (AG-15), so every RFP-cited fact is OWNER_STATED_PENDING_RFP_REGISTRATION.
+RFP rule (A9.16 step-1 application rule, history; the RFP is now registered by hash - see 'RFP now' below): 'RFP(1)' cites the official RFP held by the owner; the document is not registered in the repository (AG-15), so every RFP-cited fact is OWNER_STATED_PENDING_RFP_REGISTRATION.
 
 ## A9.15 RFP-compliant propellant policy (governing)
 
