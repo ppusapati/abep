@@ -84,6 +84,13 @@
    }
   },
   {
+   "path": "abep_sim/bus_boundary_a9_v2.py",
+   "sha256": "8964520ffb55d97eeb93c4b8cc45250026e0c6a0b3082ea58fcfd834ba661e26",
+   "version_labels": {
+    "BOUNDARY_VERSION": "bus_power_boundary_a9_v2"
+   }
+  },
+  {
    "path": "abep_sim/cathode_integration.py",
    "sha256": "9c8e776b851c112da89b0621a2e1da0dd128ab647229214b81aed19c3e0561b0",
    "version_labels": {
@@ -112,7 +119,7 @@
   },
   {
    "path": "abep_sim/constants.py",
-   "sha256": "b88848341c2d6da7ae5afcc01b44be10eac9c2b214912b8e2e394b4c6c8cf74a",
+   "sha256": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7",
    "version_labels": {}
   },
   {
@@ -122,12 +129,17 @@
   },
   {
    "path": "abep_sim/explorer.py",
-   "sha256": "dc4ba7b30d39f2df3d2c95c63e29ca51bb1635ae0c230d64a246a9481bd0ed18",
+   "sha256": "402fc740a8f8e91643beecfe186633c5ae311785b4691d7f049d4e71cc69b7f4",
    "version_labels": {}
   },
   {
    "path": "abep_sim/golden.py",
    "sha256": "eeebe9a2d6b60c24a8226fdc0879bfdc5f4d3df494095a21e5ba6e0a7948ba53",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/h1_geometry.py",
+   "sha256": "c678c86c9176c8008cbebb67442a2ef9fe30d3b91b68d75f0009f9260eca4ca5",
    "version_labels": {}
   },
   {
@@ -164,6 +176,18 @@
     "RESULT_SCHEMA": "hard_gate_evaluation_v1",
     "RESULT_SET_SCHEMA": "hard_gate_evaluation_set_v1"
    }
+  },
+  {
+   "path": "abep_sim/icp_bench_lib.py",
+   "sha256": "f153809a003a82144d3e85d25b794508d562fe76e112c4fbd84027aa5e0d593e",
+   "version_labels": {
+    "MAP_SCHEMA_ID": "p2_impedance_map_v1"
+   }
+  },
+  {
+   "path": "abep_sim/icp_thermal_lib.py",
+   "sha256": "ffd8e9d904e2e67993404a0cdd058b5cf3a892034593b29cebc51b85438d0fca",
+   "version_labels": {}
   },
   {
    "path": "abep_sim/intake.py",
@@ -272,7 +296,7 @@
   },
   {
    "path": "abep_sim/sizing.py",
-   "sha256": "e82ec817d7addb613a8ccfd33622b620edc8a6c92cea5019ddf3b85e95f1b5b9",
+   "sha256": "0c79da9538b021929b39e117f1f533767f7caf041580ee44371e7e4f5b11c97e",
    "version_labels": {}
   },
   {
@@ -289,13 +313,15 @@
   },
   {
    "path": "abep_sim/sweep.py",
-   "sha256": "cc15298b9a6b756c212ec86c6b41626cc10529225a3b03ff96f814e8d00723c8",
+   "sha256": "b7eb09c14e9874f758735bdd2361d502b535ff2d6cd3d3eef3083ce4c8df8729",
    "version_labels": {}
   },
   {
    "path": "abep_sim/system.py",
-   "sha256": "d95d01e35fd5968cc4f1ac31b24d2e8904bb51c85ffeec7e4aad1812734981ad",
-   "version_labels": {}
+   "sha256": "287c1be24c0ac93e0a306c1b623e6bf3c6e1650750fc01ddd6dd42913e0857c0",
+   "version_labels": {
+    "RAW_CLOSURE_SCHEMA_VERSION": "raw_closure_v2"
+   }
   },
   {
    "path": "abep_sim/thermal.py",
@@ -318,12 +344,12 @@
   },
   {
    "path": "abep_sim/thruster.py",
-   "sha256": "bb3b67f4d4a398529a89799f5293d46e16e1046c0f1ddc5a0177f90efc7a2b80",
+   "sha256": "3b178d48880f7b10b9e410e5e70e5592edf834bbb223766739ba80ae3082d0db",
    "version_labels": {}
   },
   {
    "path": "abep_sim/transient.py",
-   "sha256": "996ab3b3a4cea5f147e43b5510c99b45155b85d668df369aa8e26d9e09e02147",
+   "sha256": "92709ea1232a7fb31c02cd4a8d9bc0be7161a66b12c2d4baadd26881f0869daf",
    "version_labels": {}
   },
   {
@@ -444,6 +470,7 @@
   "breakeven.BOUNDARY_VERSION": "bus_power_boundary_v1",
   "bus_boundary_a9.BOUNDARY_VERSION": "bus_power_boundary_a9_v1",
   "bus_boundary_a9.V1_BOUNDARY_VERSION": "bus_power_boundary_v1",
+  "bus_boundary_a9_v2.BOUNDARY_VERSION": "bus_power_boundary_a9_v2",
   "cathode_integration.CATHODE_INTEGRATION_VERSION": "cathode_integration_v1",
   "cathode_integration.BOUNDARY_VERSION": "bus_power_boundary_v1",
   "compressor_transitional.SCHEMA": "compressor_transitional_candidate_v1",
@@ -456,6 +483,7 @@
   "hard_gates.EVIDENCE_SCHEMA": "hard_gate_evidence_v1",
   "hard_gates.RESULT_SCHEMA": "hard_gate_evaluation_v1",
   "hard_gates.RESULT_SET_SCHEMA": "hard_gate_evaluation_set_v1",
+  "icp_bench_lib.MAP_SCHEMA_ID": "p2_impedance_map_v1",
   "intake_surface_v2_spec.SPEC_ID": "intake_surface_v2_spec_v1",
   "interstage.MODEL_VERSION": "interstage_v1",
   "interstage.SCHEMA_ID": "interstage_v1",
@@ -463,6 +491,7 @@
   "mass_bom.BOM_VERSION": "mass_bom_v1",
   "mass_bom.BOM_SCHEMA_PATH": "schemas/architecture_comparison/mass_bom_v1.schema.json",
   "spacecraft_reference_drag.SCHEMA": "abep.spacecraft_reference_drag.v1",
+  "system.RAW_CLOSURE_SCHEMA_VERSION": "raw_closure_v2",
   "thermal_life.LIMITS_SCHEMA": "thermal_life_limits_v1",
   "thermal_life.INPUTS_SCHEMA": "thermal_life_inputs_v1",
   "thermal_life.RESULT_SCHEMA": "thermal_life_result_v1",

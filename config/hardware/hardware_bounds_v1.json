@@ -9,7 +9,7 @@
    "id": "h1_freeze_candidate",
    "kind": "hardware_freeze_candidate",
    "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
-   "sha256": "8c8e19f8339fff8b473d5ac9c6d55d3c23e94441a16de17c64e199ad8c5935d4",
+   "sha256": "33588f073f988355f3d485c76e3b8d762a21a5888f7cad2f6c84898f2ecf344d",
    "locator": "parameters[*] / freeze_points / consistency_checks",
    "role": "H-1 Hall accelerator freeze-candidate parameter set"
   },

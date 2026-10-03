@@ -8,8 +8,8 @@
  "requirements_snapshot": {
   "id": "rfp_constraints_v1",
   "path": "config/requirements/rfp_constraints_v1.json",
-  "sha256": "dcd3524a6fcd152e73e1aa8d53d7d868e32665c5330bb5497423ecf59840c1aa",
-  "snapshot_status": "PROVISIONAL"
+  "sha256": "e17c212f7601d3bcdaefca7f490436b473d6df064cce81d88ff9ce2fe60ffef0",
+  "snapshot_status": "FROZEN"
  },
  "rule": "Phase A changes no consumer and no number: these are the values physics uses today. Switching a consumer to read this file is a later lane; the 26,000 -> 26,280 h change is the governed A9.22 G1 migration.",
  "inputs": {
@@ -34,7 +34,7 @@
     "rfp_clauses": [
      "RFP-P18-06"
     ],
-    "status": "PROVISIONAL"
+    "status": "FROZEN"
    }
   },
   "commanded_thrust_cap_mN": {
@@ -48,7 +48,7 @@
      "RFP-P18-06",
      "RFP-P18-10"
     ],
-    "status": "PROVISIONAL"
+    "status": "FROZEN"
    }
   },
   "p_bus_throttling_cap_W": {
@@ -62,7 +62,7 @@
      "RFP-P18-10",
      "RFP-P18-01"
     ],
-    "status": "PROVISIONAL"
+    "status": "FROZEN"
    }
   },
   "mission_hours": {
@@ -93,7 +93,7 @@
     "rfp_clauses": [
      "RFP-P19-01"
     ],
-    "status": "PROVISIONAL"
+    "status": "FROZEN"
    }
   }
  }

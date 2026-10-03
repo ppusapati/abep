@@ -353,3 +353,16 @@ def test_assessment_configuration_adds_the_snapshot():
     assert {k: v for k, v in ac.as_dict().items() if not k.startswith("requirements_")} == \
         {k: v for k, v in pc.as_dict().items() if not k.startswith("requirements_")}
     assert pc.materials_id.startswith("materials_db@")
+
+
+def test_constants_rfp_equals_the_frozen_snapshot_compat_block():
+    """A9.22 integration: abep_sim/constants.py stays byte-identical (immutable records pin its sha256); the config
+    requirements snapshot is the single source of truth and constants.RFP must never drift from it."""
+    from abep_sim import constants as C
+    compat = cfg.load_rfp_constraints_compat()
+    for k, v in compat.items():
+        if k.startswith("_") or not hasattr(C.RFP, k):
+            continue
+        got = getattr(C.RFP, k)
+        want = v["value"] if isinstance(v, dict) and "value" in v else v
+        assert got == want, (k, got, want)
