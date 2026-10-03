@@ -14,11 +14,19 @@ INVESTIGATION_HYPOTHESIS.
 Usage:
   python docs/design_synthesis/f1_intake/build_f1_intake.py          # (re)write outputs
   python docs/design_synthesis/f1_intake/build_f1_intake.py --check  # exit 1 unless the committed files are reproduced
+  python docs/design_synthesis/f1_intake/build_f1_intake.py --check-core  # fast (no TPMC): core view, MD, archive
+  python docs/design_synthesis/f1_intake/build_f1_intake.py --write-core  # core view from the local full JSON
+
+A9.22 item 9: the full JSON (36.7 MB) is an evidence archive (docs/evidence_archives/f1_intake/, built and verified by
+scripts/evidence/f1_archive.py) and is git-ignored; Git keeps the compact consumer view f1_intake_synthesis_v1_core.json
+(abep_sim/design/intake_synthesis.py core_from_full / load_f1_view), the Markdown and the archive manifest. A rebuild
+that changes the full output needs a new archive (new run id) before the changed core view is committed.
 """
 from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import sys
 import time
@@ -683,19 +691,71 @@ def dump(doc) -> str:
     return text
 
 
+def check_core() -> int:
+    """Fast check (no TPMC; A9.22 item 9): the committed core view is the core view of the full output (when the full
+    JSON is present locally), the Markdown renders from the expanded core view, and the evidence-archive manifest agrees
+    with the core view, the full output and the archive (whichever are present locally)."""
+    out = REPO / OUT_DIR_REL
+    ok = True
+    core_txt = (REPO / F1.F1_CORE_REL).read_text()
+    full_p = out / JSON_NAME
+    if full_p.is_file():
+        if F1.core_text_from_full_bytes(full_p.read_bytes()) != core_txt:
+            print(f"MISMATCH {F1.F1_CORE_REL} (not the core view of {OUT_DIR_REL}/{JSON_NAME})", file=sys.stderr)
+            ok = False
+    else:
+        print(f"NOTE {OUT_DIR_REL}/{JSON_NAME} not present locally (archived): core view checked against the "
+              "archive manifest only", file=sys.stderr)
+    if (out / MD_NAME).read_text() != render_md(F1.expand_core(json.loads(core_txt))):
+        print(f"MISMATCH {OUT_DIR_REL}/{MD_NAME} (does not render from the core view)", file=sys.stderr)
+        ok = False
+    spec = importlib.util.spec_from_file_location("_f1_archive", REPO / "scripts/evidence/f1_archive.py")
+    arch = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(arch)
+    ok = (arch.verify() == 0) and ok
+    print("OK" if ok else "FAIL")
+    return 0 if ok else 1
+
+
+def write_core() -> int:
+    """Derive the committed core view from the local full output (no TPMC)."""
+    full_p = REPO / OUT_DIR_REL / JSON_NAME
+    if not full_p.is_file():
+        print(f"REFUSED: {OUT_DIR_REL}/{JSON_NAME} is not present (fetch the evidence archive first)", file=sys.stderr)
+        return 1
+    (REPO / F1.F1_CORE_REL).write_text(F1.core_text_from_full_bytes(full_p.read_bytes()))
+    print(f"wrote {F1.F1_CORE_REL}")
+    return 0
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="A9.7 F1 intake geometry synthesis study builder")
-    ap.add_argument("--check", action="store_true", help="verify the committed outputs are reproduced")
+    ap.add_argument("--check", action="store_true", help="full rebuild (slow); verify the committed core view and "
+                    "Markdown are reproduced (and the full JSON, when present locally)")
+    ap.add_argument("--check-core", action="store_true", help="fast, no TPMC: core view vs local full output, Markdown "
+                    "vs core view, evidence-archive manifest")
+    ap.add_argument("--write-core", action="store_true", help="derive the core view from the local full output")
     ap.add_argument("--quiet", action="store_true")
     args = ap.parse_args(argv)
+    if args.check_core:
+        return check_core()
+    if args.write_core:
+        return write_core()
     prog = None if args.quiet else (lambda m: print(m, file=sys.stderr, flush=True))
     doc, cpu = build(progress=prog)
     js, md = dump(doc), render_md(doc)
+    core = F1.core_text_from_full_bytes(js.encode())
     out = REPO / OUT_DIR_REL
     print(f"cpu {cpu:.1f} s, direct runs {doc['direct_runs']}", file=sys.stderr)
     if args.check:
         ok = True
-        for name, text in ((JSON_NAME, js), (MD_NAME, md)):
+        targets = [(MD_NAME, md), (Path(F1.F1_CORE_REL).name, core)]
+        if (out / JSON_NAME).is_file():
+            targets.append((JSON_NAME, js))
+        else:
+            print(f"NOTE {OUT_DIR_REL}/{JSON_NAME} not present locally (archived): compared through the core view, "
+                  "whose full_output.sha256 pins the full output", file=sys.stderr)
+        for name, text in targets:
             p = out / name
             if not p.exists() or p.read_text() != text:
                 print(f"MISMATCH {OUT_DIR_REL}/{name}", file=sys.stderr)
@@ -703,9 +763,13 @@ def main(argv=None) -> int:
         print("OK" if ok else "FAIL")
         return 0 if ok else 1
     out.mkdir(parents=True, exist_ok=True)
+    # The full output is written to the working tree for local use and archiving only: it is git-ignored and is never
+    # committed as an ordinary Git blob (A9.22 item 9). A changed full output needs a new evidence archive
+    # (scripts/evidence/f1_archive.py build, new run id) before the core view that pins it is committed.
     (out / JSON_NAME).write_text(js)
     (out / MD_NAME).write_text(md)
-    print(f"wrote {OUT_DIR_REL}/{JSON_NAME}, {MD_NAME}")
+    (REPO / F1.F1_CORE_REL).write_text(core)
+    print(f"wrote {OUT_DIR_REL}/{JSON_NAME} (archive only, not committed), {MD_NAME}, {Path(F1.F1_CORE_REL).name}")
     return 0
 
 

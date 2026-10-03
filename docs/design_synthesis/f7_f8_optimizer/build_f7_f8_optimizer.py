@@ -72,7 +72,7 @@ STATE_SET_HISTORY = {
 PINNED = (
     "docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md",
     "docs/decisions/OD_2026_10_01_A9_7_architecture_freeze_design_synthesis.json",
-    ao.F1_REL, ao.F3_REL, ao.F3D_REL, ao.F4_REL, ao.F5_REL, ao.F6_REL,
+    ao.F1_CORE_REL, ao.F3_REL, ao.F3D_REL, ao.F4_REL, ao.F5_REL, ao.F6_REL,
 )
 REFERENCED_NOT_PINNED = (
     (ao.F2_REL, "F2 filter-stage deliverable (filter cases are built through abep_sim/design/filter_stage.py)"),

@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import re
 import sys
@@ -88,7 +89,9 @@ CONSUMED = {
     # A9.7 lanes (all merged in the base of this lane)
     "F0": "docs/performance/PERFORMANCE_BASELINE_98fbbb9.json",
     "RUST": "docs/performance/abep_core/parity_report_v1.json",
-    "F1": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+    # F1: the committed compact core view (A9.22 item 9; the 36.7 MB full output is an evidence archive). load()
+    # expands it to the deliverable layout, so every F1 JSON pointer below resolves exactly as in the full output.
+    "F1": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
     "F2": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
     "F3": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
     "F3D": "docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json",
@@ -215,6 +218,12 @@ def load(key: str):
             raise SystemExit(f"REFUSED: input missing: {path_of(key)}")
         _cache[key] = json.loads(p.read_text(encoding="utf-8")) if p.suffix == ".json" else p.read_text(
             encoding="utf-8")
+        if key == "F1":     # F1 compact core view -> deliverable layout (A9.22 item 9; stdlib reader, no abep_sim)
+            spec = importlib.util.spec_from_file_location(
+                "_f1_core_view", REPO / "docs/design_synthesis/f1_intake/f1_core_view.py")
+            f1v = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(f1v)
+            _cache[key] = f1v.expand_core(_cache[key])
     return _cache[key]
 
 

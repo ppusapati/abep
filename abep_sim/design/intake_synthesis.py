@@ -56,6 +56,7 @@ import inspect
 import json
 import math
 import os
+import re
 import zlib
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass, field
@@ -1322,3 +1323,272 @@ def run_study(spec: StudySpec, progress=None) -> dict:
             "species_rows": species_rows, "views": views, "candidate_rows": candidate_rows, "if_a1_unit_area": if_a1,
             "speed_ratio_bracket": speed_ratio_bracket_check(tuple(st for st in spec.states if st is not DESIGN_STATE)),
             "direct_runs": ev.direct_runs + ev_check.direct_runs + len(spec.cd_calibration_nodes) * spec.cd_calibration_replicates}
+
+
+# =================================================================================== committed consumer view (A9.22 item 9)
+# Owner decision A9.22 item 9 (docs/decisions/OD_2026_10_03_A9_22_*): the complete F1 output (36.7 MB) is kept as a
+# deterministic evidence archive outside ordinary Git history; Git keeps a compact consumer view, the archive manifest
+# and summaries. This block only re-packs the committed F1 output (no physics, no numerical change):
+#   consumer_view(full)  the subset of the F1 deliverable every downstream consumer reads (F4 plenum_feed, F7/F8
+#                        architecture_optimizer / robust_optimizer, F9 build_freeze_candidate, F1 Markdown, tests), in
+#                        the deliverable's own JSON layout (same keys / JSON pointers, values verbatim, row and key order
+#                        kept); the heavy tables keep only the fields those consumers read.
+#   core_from_full(full) that view, losslessly encoded (dictionary-encoded state / candidate / scenario ids, identical
+#                        infeasibility reason lists stored once) + provenance + summaries -> F1_CORE_REL (committed).
+#   expand_core(core)    the inverse: expand_core(core_from_full(full)) == consumer_view(full) (checked on every write).
+#   load_f1_view(repo)   what consumers load: expand_core of the committed core view (the full file is never needed).
+F1_DIR_REL = "docs/design_synthesis/f1_intake"
+F1_FULL_REL = f"{F1_DIR_REL}/f1_intake_synthesis_v1.json"
+F1_CORE_REL = f"{F1_DIR_REL}/f1_intake_synthesis_v1_core.json"
+F1_ARCHIVE_DIR_REL = "docs/evidence_archives/f1_intake"
+F1_RUN_ID = "INTAKE_SYNTHESIS_v1_405296e"          # F1_<run-id>: deliverable id + the commit that generated the output
+F1_ARCHIVE_MANIFEST_REL = f"{F1_ARCHIVE_DIR_REL}/F1_{F1_RUN_ID}.manifest.json"
+CORE_SCHEMA = "f1_intake_synthesis_v1_core"
+VIEW_HEAVY_KEYS = ("infeasible_reasons", "species_table", "if_a1_interface")
+VIEW_RECORD_KEYS = ("candidate", "state", "scenario", "theta_deg", "species", "T_K", "converged")
+VIEW_RECORD_SPECIES_FIELDS = ("mdot_fwd_kgps", "mdot_fwd_se_kgps", "p_passive_Pa", "p_passive_se_Pa", "K_back")
+VIEW_SPECIES_COLS = ("state_id", "species", "L_over_d", "phi", "alpha", "theta_deg", "scattering", "source", "eta_c",
+                     "C_D_species", "C_D_species_se", "CR_passive")
+VIEW_CONSUMERS = {
+    "abep_sim/design/plenum_feed.py (F4; load_f1, load_f1_records, f1_state_infeasibility)":
+        "coverage_rule.orbit_states; design_space.variables; pareto.envelope (scenario keys); "
+        "infeasible_reasons.envelope; if_a1_interface.records_per_unit_area[candidate, state, scenario, theta_deg, "
+        "converged, T_K, species.{mdot_fwd_kgps, p_passive_Pa, K_back}]",
+    "abep_sim/design/architecture_optimizer.py (F7; design_vector_blocks, drag_table, load_upstream_inputs)":
+        "design_space.{variables, scenario_axes}; coverage_rule.orbit_states; pareto.envelope (scenario keys); "
+        "species_table[state_id, species, L_over_d, phi, alpha, theta_deg, scattering, C_D_species, C_D_species_se]; "
+        "the F4 fields above (through plenum_feed.load_f1_records)",
+    "abep_sim/design/robust_optimizer.py (F8; record_se_index, theta_ratio_index)":
+        "if_a1_interface.records_per_unit_area species.{mdot_fwd_se_kgps, p_passive_se_Pa}; species_table design-state "
+        "rows [state_id (column 0), scattering, alpha, L_over_d, phi, species, theta_deg, eta_c, CR_passive]",
+    "docs/design_synthesis/f7_f8_optimizer/build_f7_f8_optimizer.py (F7/F8 builder)": "coverage_rule.design_state_set",
+    "docs/architecture/freeze_candidate/build_freeze_candidate.py (F9)":
+        "candidate_metrics.envelope (feasible column); infeasible_reasons.envelope; findings; items; "
+        "open_owner_questions; design_space.variables; species_recombination_bias",
+    "docs/design_synthesis/f1_intake/build_f1_intake.py render_md (F1_INTAKE_SYNTHESIS.md)":
+        "every small top-level key verbatim; len(if_a1_interface.records_per_unit_area); if_a1_interface.{schema, "
+        "producer_function}",
+    "tests (test_design_f1_intake, test_design_f4_plenum, test_design_a9_13_upstream, test_design_f7_f8_optimizer, "
+    "test_design_review_repairs, test_architecture_freeze_candidate)":
+        "the fields above; species_table source column; findings; open_owner_questions; pins; compliance",
+}
+_REASON_RE = re.compile(r"C-DRAG-RFP at (\S+?): (\d+\.\d+) mN")
+
+
+def consumer_view(full: dict) -> dict:
+    """The consumer subset of the full F1 deliverable (same layout; values verbatim; order kept)."""
+    out = {}
+    for k, v in full.items():
+        if k == "species_table":
+            idx = [v["columns"].index(c) for c in VIEW_SPECIES_COLS]
+            out[k] = {"columns": list(VIEW_SPECIES_COLS), "rows": [[r[i] for i in idx] for r in v["rows"]]}
+        elif k == "if_a1_interface":
+            out[k] = {kk: ([{rk: ({s: {f: sp[f] for f in VIEW_RECORD_SPECIES_FIELDS} for s, sp in r[rk].items()}
+                                  if rk == "species" else r[rk]) for rk in VIEW_RECORD_KEYS} for r in vv]
+                           if kk == "records_per_unit_area" else vv) for kk, vv in v.items()}
+        else:
+            out[k] = v
+    return out
+
+
+def _index(values) -> tuple[list, dict]:
+    order = list(dict.fromkeys(values))
+    return order, {x: i for i, x in enumerate(order)}
+
+
+def _encode_reasons(env: dict, st_idx: dict) -> dict:
+    out = {}
+    for sc, cands in env.items():
+        groups, gidx, rows = [], {}, []
+        for cid, reasons in cands.items():
+            enc = []
+            for r in reasons:
+                m = _REASON_RE.fullmatch(r)
+                if m and m.group(1) in st_idx and f"C-DRAG-RFP at {m.group(1)}: {m.group(2)} mN" == r:
+                    enc.append([st_idx[m.group(1)], m.group(2)])
+                else:
+                    enc.append(r)                       # any other reason is kept verbatim
+            key = json.dumps(enc)
+            if key not in gidx:
+                gidx[key] = len(groups)
+                groups.append(enc)
+            rows.append([cid, gidx[key]])
+        out[sc] = {"candidates": rows, "reason_lists": groups}
+    return out
+
+
+def _decode_reasons(enc: dict, states: list) -> dict:
+    out = {}
+    for sc, blk in enc.items():
+        lists = [[r if isinstance(r, str) else f"C-DRAG-RFP at {states[r[0]]}: {r[1]} mN" for r in g]
+                 for g in blk["reason_lists"]]
+        out[sc] = {cid: list(lists[gi]) for cid, gi in blk["candidates"]}
+    return out
+
+
+def core_summary(full: dict) -> dict:
+    """Headline counts of the full deliverable (committed with the core view)."""
+    feas = {}
+    for vname, by_sc in full["candidate_metrics"].items():
+        feas[vname] = {}
+        for sc, blk in by_sc.items():
+            i = blk["columns"].index("feasible")
+            feas[vname][sc] = {"feasible": sum(1 for r in blk["rows"] if r[i]), "candidates": len(blk["rows"])}
+    return {
+        "n_orbit_states": len(full["coverage_rule"]["orbit_states"]),
+        "n_candidates": full["design_space"]["n_candidates"],
+        "n_scenarios": len(full["pareto"]["envelope"]),
+        "direct_runs": full["direct_runs"],
+        "n_if_a1_records_per_unit_area": len(full["if_a1_interface"]["records_per_unit_area"]),
+        "n_species_table_rows": len(full["species_table"]["rows"]),
+        "species_table_columns_full": list(full["species_table"]["columns"]),
+        "feasible_per_view_and_scenario": feas,
+        "infeasible_candidate_scenario_records": {v: sum(len(c) for c in by.values())
+                                                  for v, by in full["infeasible_reasons"].items()},
+        "infeasibility_reasons": {v: sum(len(r) for c in by.values() for r in c.values())
+                                  for v, by in full["infeasible_reasons"].items()},
+    }
+
+
+def core_from_full(full: dict, full_sha256: str, full_size: int) -> dict:
+    """Compact committed view of the full F1 deliverable (lossless for the consumer view; verified here)."""
+    view = consumer_view(full)
+    recs = view["if_a1_interface"]["records_per_unit_area"]
+    tab = view["species_table"]
+    i_src = VIEW_SPECIES_COLS.index("source")
+    states, st_idx = _index(list(full["coverage_rule"]["orbit_states"]) + [r["state"] for r in recs]
+                            + [r[0] for r in tab["rows"]])
+    cands, c_idx = _index(r["candidate"] for r in recs)
+    scens, s_idx = _index(r["scenario"] for r in recs)
+    sources, src_idx = _index(r[i_src] for r in tab["rows"])
+    rec_cols = ["candidate", "state", "scenario", "theta_deg", "T_K", "converged"] + [
+        f"{s}.{f}" for s in SPECIES for f in VIEW_RECORD_SPECIES_FIELDS]
+    rec_rows = []
+    for r in recs:
+        if tuple(r["species"]) != SPECIES:
+            raise RuntimeError(f"F1 record species order {tuple(r['species'])} != {SPECIES}")
+        rec_rows.append([c_idx[r["candidate"]], st_idx[r["state"]], s_idx[r["scenario"]], r["theta_deg"], r["T_K"],
+                         r["converged"]] + [r["species"][s][f] for s in SPECIES for f in VIEW_RECORD_SPECIES_FIELDS])
+    tab_rows = [[st_idx[r[0]]] + r[1:i_src] + [src_idx[r[i_src]]] + r[i_src + 1:] for r in tab["rows"]]
+    ia, ir = full["if_a1_interface"], full["infeasible_reasons"]
+    core = {
+        "schema": CORE_SCHEMA,
+        "id": "F1_INTAKE_SYNTHESIS_v1_CORE",
+        "status": full["status"],
+        "deliverable_status": full["deliverable_status"],
+        "what_this_is": "compact committed consumer view of the F1 intake synthesis deliverable (owner decision A9.22 "
+                        "item 9): every field the downstream consumers read, losslessly encoded, plus summaries. Not a "
+                        "new result: no value is recomputed, rounded or changed. The complete output is the "
+                        "deterministic evidence archive described by full_output.archive_manifest.",
+        "generated_by": f"{F1_DIR_REL}/build_f1_intake.py (core view: abep_sim/design/intake_synthesis.py "
+                        "core_from_full; verify without TPMC: --check-core)",
+        "full_output": {"path": F1_FULL_REL, "sha256": full_sha256, "size_bytes": full_size,
+                        "archive_manifest": F1_ARCHIVE_MANIFEST_REL,
+                        "git_storage": "never committed again as an ordinary Git blob (A9.22 item 9); retrievable from "
+                                       "the evidence archive (manifest: storage)"},
+        "view_rule": {
+            "load": "abep_sim.design.intake_synthesis.load_f1_view(repo) = expand_core(this file)",
+            "pointers": "JSON pointers into the F1 deliverable (e.g. /infeasible_reasons/envelope, /findings/3) resolve "
+                        "identically in the expanded view; in this file the top-level keys other than "
+                        f"{', '.join(VIEW_HEAVY_KEYS)} are under /verbatim",
+            "heavy_tables_kept_fields": {
+                "if_a1_interface.records_per_unit_area[]": list(VIEW_RECORD_KEYS),
+                "if_a1_interface.records_per_unit_area[].species[s]": list(VIEW_RECORD_SPECIES_FIELDS),
+                "species_table.columns": list(VIEW_SPECIES_COLS),
+                "infeasible_reasons": "all (verbatim strings after decoding)"},
+            "encoding": "state / candidate / scenario / source strings are indices into the lists under /encoded; an "
+                        "envelope infeasibility reason [i, v] decodes to 'C-DRAG-RFP at {states[i]}: {v} mN' (any other "
+                        "reason is stored verbatim); identical reason lists are stored once per scenario",
+            "consumers": VIEW_CONSUMERS,
+        },
+        "summary": core_summary(full),
+        "key_order": list(full),
+        "verbatim": {k: v for k, v in full.items() if k not in VIEW_HEAVY_KEYS},
+        "encoded": {
+            "states": states,
+            "if_a1_interface": {
+                "key_order": list(ia),
+                "verbatim": {k: v for k, v in ia.items() if k != "records_per_unit_area"},
+                "candidates": cands, "scenarios": scens, "species": list(SPECIES),
+                "columns": rec_cols, "rows": rec_rows},
+            "species_table": {"columns": list(VIEW_SPECIES_COLS), "sources": sources, "rows": tab_rows},
+            "infeasible_reasons": {
+                "key_order": list(ir),
+                "verbatim": {k: v for k, v in ir.items() if k != "envelope"},
+                "envelope": _encode_reasons(ir["envelope"], st_idx)},
+        },
+    }
+    if json.dumps(expand_core(core)) != json.dumps(view):
+        raise RuntimeError("F1 core view is not a lossless encoding of the consumer view (refused)")
+    return core
+
+
+def expand_core(core: dict) -> dict:
+    """The consumer view (full deliverable layout) from the compact core view."""
+    if core.get("schema") != CORE_SCHEMA:
+        raise RuntimeError(f"not an F1 core view: schema {core.get('schema')!r}")
+    enc = core["encoded"]
+    states = enc["states"]
+    nf = len(VIEW_RECORD_SPECIES_FIELDS)
+    out = {}
+    for k in core["key_order"]:
+        if k == "if_a1_interface":
+            e = enc[k]
+            recs = [{"candidate": e["candidates"][row[0]], "state": states[row[1]], "scenario": e["scenarios"][row[2]],
+                     "theta_deg": row[3],
+                     "species": {s: dict(zip(VIEW_RECORD_SPECIES_FIELDS, row[6 + j * nf:6 + (j + 1) * nf]))
+                                 for j, s in enumerate(e["species"])},
+                     "T_K": row[4], "converged": row[5]} for row in e["rows"]]
+            out[k] = {kk: (recs if kk == "records_per_unit_area" else e["verbatim"][kk]) for kk in e["key_order"]}
+        elif k == "species_table":
+            e = enc[k]
+            i_src = e["columns"].index("source")
+            out[k] = {"columns": list(e["columns"]),
+                      "rows": [[states[r[0]]] + r[1:i_src] + [e["sources"][r[i_src]]] + r[i_src + 1:]
+                               for r in e["rows"]]}
+        elif k == "infeasible_reasons":
+            e = enc[k]
+            out[k] = {kk: (_decode_reasons(e["envelope"], states) if kk == "envelope" else e["verbatim"][kk])
+                      for kk in e["key_order"]}
+        else:
+            out[k] = core["verbatim"][k]
+    return out
+
+
+def _pp_core(v, ind: int) -> str:
+    """Deterministic printer: dicts indented one space per level; a list of scalars (a table row) on one line."""
+    def scalar(x):
+        return x is None or isinstance(x, (str, int, float, bool))
+    pad, pad1 = " " * ind, " " * (ind + 1)
+    if isinstance(v, dict):
+        if not v:
+            return "{}"
+        if all(scalar(x) for x in v.values()) and len(v) <= 8:
+            return json.dumps(v, ensure_ascii=False)
+        return "{\n" + ",\n".join(f"{pad1}{json.dumps(k, ensure_ascii=False)}: {_pp_core(x, ind + 1)}"
+                                  for k, x in v.items()) + "\n" + pad + "}"
+    if isinstance(v, list):
+        if not v:
+            return "[]"
+        if all(scalar(x) for x in v):
+            return json.dumps(v, ensure_ascii=False)
+        return "[\n" + ",\n".join(f"{pad1}{_pp_core(x, ind + 1)}" for x in v) + "\n" + pad + "]"
+    return json.dumps(v, ensure_ascii=False)
+
+
+def dump_core(core: dict) -> str:
+    text = _pp_core(core, 0) + "\n"
+    if json.loads(text) != core:
+        raise RuntimeError("F1 core view does not round-trip through its text form")
+    return text
+
+
+def core_text_from_full_bytes(raw: bytes) -> str:
+    """Committed core-view text derived from the bytes of a full F1 deliverable (no TPMC)."""
+    return dump_core(core_from_full(json.loads(raw), hashlib.sha256(raw).hexdigest(), len(raw)))
+
+
+def load_f1_view(repo) -> dict:
+    """The F1 consumer view expanded from the committed core view (a fresh object on every call)."""
+    with open(os.path.join(str(repo), F1_CORE_REL), encoding="utf-8") as f:
+        return expand_core(json.load(f))

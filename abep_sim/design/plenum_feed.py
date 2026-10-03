@@ -315,7 +315,9 @@ def f1_candidate_id(area_m2: float, L_over_d: float, phi: float) -> str:
 
 
 def load_f1(repo: Path) -> dict:
-    return json.loads((Path(repo) / "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json").read_text())
+    """The F1 deliverable as its consumers read it: the committed compact core view, expanded to the deliverable's
+    layout (A9.22 item 9; the 36.7 MB full output is an evidence archive; values identical, intake_synthesis)."""
+    return isy.load_f1_view(repo)
 
 
 _F1_STATE_REASON = re.compile(r"(?:C-DRAG-RFP|MODEL_ERROR) at (\S+?)(?=: |$)")
