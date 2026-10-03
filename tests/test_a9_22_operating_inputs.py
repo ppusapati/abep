@@ -86,3 +86,41 @@ def test_hard_gates_routed_through_assessment():
     from abep_sim.assessment import arch_constraints as AC
     assert callable(AC.evaluate_hard_gates) and callable(AC.evaluate_all_hard_gates)
     assert callable(hard_gates.evaluate) and callable(hard_gates.evaluate_all)
+
+
+# ---------------------------------------------------------------------------------- A9.22 G1 governed baseline change
+def test_g1_mission_duration_basis():
+    assert OI.MISSION_HOURS == OI.MISSION_DURATION_BASIS_H == 26280.0
+    assert OI.FIRING_HOURS == OI.SUBSYSTEM_FIRING_LIFE_ASSUMPTION_H == 15000.0
+    assert OI.FIRING_HOURS_LABEL == "SUBSYSTEM_FIRING_LIFE_ASSUMPTION"
+    assert OI.HISTORICAL_MISSION_HOURS_PRE_A9_22 == 26000.0
+
+
+def test_g1_life_and_reliability_keys():
+    from abep_sim.life import LifeInputs, reliability, intake_life
+    li = LifeInputs()
+    assert (li.mission_h, li.firing_h) == (26280.0, 15000.0)
+    r = reliability(li, {"x": 1e5})
+    assert r["R_mission"] == r["R_26280h"] and r["R_firing"] == r["R_15000h"]
+    assert r["R_26000h"] > r["R_26280h"]                       # legacy horizon key is R at 26,000 h, not relabelled
+    f = intake_life(LifeInputs(ao_flux_ram_m2_s=1e19))["ao_fluence_m2"]
+    assert f == pytest.approx(1e19 * 26280.0 * 3600.0, rel=1e-12)
+
+
+def test_g1_defaults_are_seam_values():
+    import inspect
+    from abep_sim import archengine, mission5
+    assert inspect.signature(archengine.close_architecture).parameters["firing_hours"].default is None
+    for fn in (mission5.run_phase5, mission5.run_mission_generic):
+        assert inspect.signature(fn).parameters["hours"].default is None
+
+
+def test_g1_golden_xe_on_mission_basis():
+    import json
+    g = json.load(open(os.path.join(ROOT, "abep_sim", "data", "golden_v2.json")))
+    c = g["cases"]["architecture_closure"]["ext_hall_2p5kW"]
+    assert c["firing_hours_for_xe"] == 26280.0
+    assert c["xe_kg"] == pytest.approx(0.05e-6 * 26280.0 * 3600.0 * 1.2, rel=1e-12)
+    # the golden_v1 fixture keeps the pre-A9.22 basis verbatim
+    v = g["cases"]["nonconverged_reference"]["values"]["architecture_closure"]["ext_hall_2p5kW"]
+    assert v["xe_kg"] == pytest.approx(0.05e-6 * 26000.0 * 3600.0 * 1.2, rel=1e-12)

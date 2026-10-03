@@ -1,6 +1,6 @@
 """Phase 5 mission run: the complete chain on the real mission profile.
 
-For a design (full physics), propagate 26,000 h with: J2, co-rotation, full spacecraft drag (intake + bus +
+For a design (full physics), propagate the mission-duration basis (A9.22 G1: 26,280 h) with: J2, co-rotation, full spacecraft drag (intake + bus +
 arrays with pointing), solar-cycle density, altitude-hold controller with flow throttling, eclipse and array power,
 AO-fluence-driven intake ageing (alpha -> eta_c through the TPMC ROM), radiation dose, plume erosion, debris,
 and the life/reliability model on the actual firing hours. Reports the mission-level closure and the limiting item.
@@ -111,7 +111,9 @@ def run_phase5(cfg: Config, sc: Spacecraft, hours: float | None = None, dt_h: fl
             "uv_alpha_s_end": uv["alpha_s_end"], "contamination_um": uv["contamination_deposit_um"],
             "debris_P_intake": deb_int["P_at_least_one"], "debris_P_radiator": deb_rad["P_at_least_one"],
             "plume_direct_frac": pl["f_beam_direct"], "coverglass_erosion_um": pl["coverglass_erosion_cex_um"] + pl["coverglass_erosion_direct_um"],
-            "R_15000h": rel["R_15000h"], "R_26000h": rel["R_26000h"], "D_mean_mN": float(df.D_mN.mean()),
+            "R_firing": rel["R_firing"], "R_mission": rel["R_mission"], "firing_hours": firing_hours,
+            "mission_hours": mission_hours, f"R_{int(firing_hours)}h": rel["R_firing"],
+            f"R_{int(mission_hours)}h": rel["R_mission"], "D_mean_mN": float(df.D_mN.mean()),
             "D_intake_frac": float(base["drag_mN"] / df.D_mN.mean()) if df.D_mN.mean() > 0 else 0.0,
             "T_mean_mN": float(df.T_mN.mean()), "P_bus_mean_W": float(df.P_bus_W.mean()), "P_avail_mean_W": float(df.P_avail_W.mean())}
 
@@ -129,7 +131,7 @@ def run_mission_generic(arch_result: dict, sc: Spacecraft, gas: dict, hours: flo
                         f107_mean: float = 150.0, f107_amp: float = 80.0, phase_yr: float = 0.0, intake_phi_c: float = 1.0e28,
                         alpha0: float = 0.8, L_over_d: float = 5.0, thrust_cap_mN: float | None = None, pmap: dict | None = None,
                         alt0_km: float = 200.0, P_bus_max_W: float | None = None) -> dict:
-    """Item 10: every architecture from archengine goes through the same 26,000 h propagator. The propulsion is
+    """Item 10: every architecture from archengine goes through the same mission-duration (26,280 h) propagator. The propulsion is
     represented by its optimised design point (thrust ∝ collected flow near the point, power ∝ flow), the intake by
     the TPMC ROM with AO ageing, the spacecraft by `sc`. Returns the same summary fields as run_phase5.
     Operating inputs are caller-supplied (A9.22): hours None -> operating_inputs.MISSION_HOURS, P_bus_max_W None ->

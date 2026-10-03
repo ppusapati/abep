@@ -611,7 +611,9 @@ def close_architecture(a: dict, gas_fn, sc, dc: DesignConstraints | None = None,
     Every design constraint, converter rating and thermal feasibility is enforced *inside* the candidate loop
     (item 2, 6, 7). Model exceptions are recorded as MODEL_ERROR, never treated as infeasible (item 3);
     strict=True re-raises them. firing_hours: hours over which the neutralizer Xe flow is integrated for xe_kg
-    (caller-supplied; default abep_sim.operating_inputs.MISSION_HOURS, the mission-integrated Xe basis)."""
+    (caller-supplied; default abep_sim.operating_inputs.MISSION_HOURS, the mission-integrated Xe basis: A9.22 G1,
+    26,280 h; archengine defines no separate duty/firing profile that would legitimately reduce the firing time, so the
+    15,000 h subsystem firing-life assumption is NOT used here)."""
     from .mission_env import spacecraft_drag
     from .assessment.arch_constraints import closure_constraint_flags
     if firing_hours is None:

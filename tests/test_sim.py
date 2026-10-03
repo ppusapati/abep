@@ -312,7 +312,7 @@ def test_phase5_mission_runs_fast_and_reports():
                CompressorParams(ratio=2000), vd_V=275, gaspath_physics=True, plasma_physics=True, engineering_physics=True,
                hall_L_m=0.20, hall_shielding=0.03, hall_wall_mm=6.0, blade_coating_um=50, xe_aug_hours=500)
     r = run_phase5(c, Spacecraft(bus_frontal_m2=0.10, array_area_m2=3.5, pointing_sigma_deg=0.5), hours=1000, dt_h=6.0)
-    assert set(["mission_closed", "limiting", "tid_krad", "R_26000h", "D_intake_frac"]) <= set(r)
+    assert set(["mission_closed", "limiting", "tid_krad", "R_mission", "R_26280h", "R_15000h", "D_intake_frac"]) <= set(r)
     assert 0.3 < r["D_intake_frac"] < 1.0 and r["tid_krad"] > 0
 
 

@@ -3280,3 +3280,42 @@ requirements reach physics only as frozen engineering inputs.
 - **Verification.** golden check OK (unchanged); ci_checks 11/11; the 34 builders that read these modules were `--check`
   current before and after, except `scripts/architecture/build_decision_dossier.py`, stale by pin only (arch_compare.py
   sha256 in its provenance), left for the integrator to re-pin.
+
+## 2026-10-03 — A9.22 G1 governed baseline change (lane w2core): mission-duration basis 26,280 h
+Owner decision A9.22 G1 (`docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json`,
+G1_MISSION_LIFE = MISSION_DURATION_26280_H): mission-integrated quantities use 26,280 h; 15,000 h survives only as an
+explicitly labelled subsystem firing-life assumption. Intentional model-basis change (CLAUDE.md rules 1-2), applied once.
+- **Seam.** `operating_inputs.MISSION_HOURS = MISSION_DURATION_BASIS_H = 26280.0`; `FIRING_HOURS =
+  SUBSYSTEM_FIRING_LIFE_ASSUMPTION_H = 15000.0` (label `SUBSYSTEM_FIRING_LIFE_ASSUMPTION`);
+  `HISTORICAL_MISSION_HOURS_PRE_A9_22 = 26000.0` exists only to recompute immutable history. `constants.RFP.mission_hours`
+  (Phase A lane) is not edited here.
+- **Per-site choice.**
+  - `archengine.close_architecture` xe_kg (neutralizer Xe integrated over `firing_hours`, default was RFP.mission_hours =
+    26,000): **mission basis 26,280 h**. archengine defines no separate duty/firing profile that would legitimately
+    reduce the firing time, so the 15,000 h assumption is not used for Xe.
+  - `life.LifeInputs.mission_h` (AO fluence of the intake coating, blade/compressor life checks, reliability horizon,
+    SPF threshold 1.5 x mission): **26,280 h**. `LifeInputs.firing_h` = 15,000 h, labelled firing-life assumption
+    (hall channel / cathode life requirement, R at the firing horizon).
+  - `life.reliability`: keys `R_15000h`, `R_26280h`, plus role keys `R_firing` / `R_mission`; `R_26000h` is still emitted
+    as R evaluated AT 26,000 h (truthful key, not relabelled) because `system.py` (Phase B lane) still reads
+    `eng_R_26000h`; that consumer migrates to `R_mission` in its own lane.
+  - `mission5.run_phase5`: propagation `hours` and life `mission_hours` default 26,280 h, `firing_hours` 15,000 h (labelled);
+    output reliability keys `R_firing`, `R_mission`, `R_15000h`, `R_26280h` (was `R_15000h`, `R_26000h`).
+    `run_mission_generic(hours)` default 26,280 h.
+  - Unchanged: `mission_env.array_area_for(years=3.0)` (already 3 years = 26,280 h); `cathode_integration` derived
+    statements (immutable v1 data file, LaB6 lane = historical non-flight; a caller may pass hours explicitly);
+    `system.py` (`fluence(atm, RFP.mission_hours)`, cathode starts) belongs to the Phase B lane.
+- **golden_v2 regenerated** (`python -m abep_sim.golden generate`, then `check` OK). Moved values (all in
+  `cases.architecture_closure.ext_hall_2p5kW`, the LaB6-Xe historical closure; neutralizer Xe 0.05 mg/s x 1.2):
+
+  | entry | before (26,000 h) | after (26,280 h) |
+  |---|---|---|
+  | xe_kg | 5.616 | 5.67648 |
+  | CBE_kg | 42.94863073976071 | 43.02504899163571 |
+  | MEV_kg | 49.88045491831906 | 49.96406543847815 |
+  | m_system_kg | 76.18638222355476 | 76.26999274371386 |
+  | firing_hours_for_xe (new label key) | — | 26280.0 |
+
+  Nothing else moved (gas path, accelerators, mission 4000 h case, selection record and all other cases bit-identical;
+  provenance.code_version updated). The `nonconverged_reference` fixture recomputes golden_v1 on the pre-A9.22 26,000 h
+  basis and still reproduces it verbatim; `golden_v1.json` untouched.

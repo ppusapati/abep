@@ -47,8 +47,8 @@
    "ext_hall_2p5kW": {
     "A_array_m2": 8.220602282886157,
     "A_rad_m2": 0.5058049897308248,
-    "CBE_kg": 42.94863073976071,
-    "MEV_kg": 49.88045491831906,
+    "CBE_kg": 43.02504899163571,
+    "MEV_kg": 49.96406543847815,
     "P_bus_W": 1183.3355394537623,
     "P_jet_W": 568.6744537159775,
     "Q_waste_W": 400.42146975604044,
@@ -62,18 +62,19 @@
     "evidence_class": "PARAMETRIC_SENSITIVITY",
     "extrapolation": 0.6667819824909338,
     "feasible": false,
+    "firing_hours_for_xe": 26280.0,
     "gaspath_domain_status": "IN_DOMAIN",
     "gaspath_status": "CONVERGED",
     "ledger_resid": -1.921464097564328e-16,
     "life_sys_h": 28225.44918361367,
-    "m_system_kg": 76.18638222355476,
+    "m_system_kg": 76.26999274371386,
     "optimum_at_search_edge": "Vd",
     "status": "PARAMETRIC_SENSITIVITY",
     "x_L_ch": 0.2,
     "x_Vd": 325.0,
     "x_area": 0.7,
     "x_p_level": 0.05,
-    "xe_kg": 5.616
+    "xe_kg": 5.676479999999999
    }
   },
   "atmosphere": {
@@ -552,11 +553,13 @@
   ],
   "code_version": {
    "abep_sim_paths_differing_from_head_at_generation": [
-    "abep_sim/design/compressor_synthesis.py",
+    "abep_sim/archengine.py",
     "abep_sim/golden.py",
-    "abep_sim/system.py"
+    "abep_sim/life.py",
+    "abep_sim/mission5.py",
+    "abep_sim/operating_inputs.py"
    ],
-   "git_head_at_generation": "f676854606e0bfa89b378f3cd124fd62c125a806",
+   "git_head_at_generation": "883dcc6919e6582e385b5702fe147e2bf97dd844",
    "note": "the generating code is git_head_at_generation plus the listed working-tree paths (the commit that adds this file); the golden comparison, not this record, is the reproducibility gate"
   },
   "decision_records": [

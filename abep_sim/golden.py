@@ -163,8 +163,21 @@ def _gas_record(area: float, p_level: float) -> dict:
                            p_target_Pa=float(p_level)))
 
 
+# A9.22 G1 (governed baseline change, 2026-10-03): the canonical closure integrates the neutralizer Xe over the mission
+# duration basis (operating_inputs.MISSION_HOURS = 26,280 h). The golden_v1 non-converged reference fixture is history
+# and is recomputed exactly as golden_v1 generated it, on the pre-A9.22 26,000 h basis.
+def _canonical_xe_hours() -> float:
+    from .operating_inputs import MISSION_HOURS
+    return float(MISSION_HOURS)
+
+
+def _v1_xe_hours() -> float:
+    from .operating_inputs import HISTORICAL_MISSION_HOURS_PRE_A9_22
+    return float(HISTORICAL_MISSION_HOURS_PRE_A9_22)
+
+
 @functools.lru_cache(maxsize=None)
-def _closure_cached(area: float, p_level: float) -> dict:
+def _closure_cached(area: float, p_level: float, firing_hours: float) -> dict:
     """close_architecture of the fixed golden scenario at one gas point (pure function of the key, rule 5)."""
     from . import archengine as AE
     from .mission_env import Spacecraft
@@ -172,11 +185,11 @@ def _closure_cached(area: float, p_level: float) -> dict:
     sc = Spacecraft(bus_frontal_m2=0.10, pointing_sigma_deg=0.5)
     return AE.close_architecture(A[GOLDEN_ARCHITECTURE], gf, sc, AE.DesignConstraints(GOLDEN_P_BUS_MAX_W),
                                  gas_vars={"area": [area], "p_level": [p_level]}, size_arrays=True, mission_envelope=True,
-                                 envelope_margin=1.0, keep_candidates=False)
+                                 envelope_margin=1.0, keep_candidates=False, firing_hours=firing_hours)
 
 
-def _closure(area: float, p_level: float) -> dict:
-    return copy.deepcopy(_closure_cached(area, p_level))
+def _closure(area: float, p_level: float, firing_hours: float | None = None) -> dict:
+    return copy.deepcopy(_closure_cached(area, p_level, _canonical_xe_hours() if firing_hours is None else float(firing_hours)))
 
 
 def admissibility(area: float, p_level: float) -> dict:
@@ -255,7 +268,7 @@ _CLOSURE_KEYS = ("status", "x_Vd", "x_L_ch", "T_mN", "P_bus_W", "P_jet_W", "ledg
                  "A_array_m2", "m_system_kg", "life_sys_h", "Q_waste_W", "A_rad_m2", "xe_kg")
 _CLOSURE_LABELS = ("x_area", "x_p_level", "evidence_class", "evidence_admissible", "feasible", "closes_constraints", "gaspath_status",
                    "gaspath_domain_status", "comp_rotor_qualification", "comp_sizing_mode", "calibration", "extrapolation",
-                   "optimum_at_search_edge")
+                   "optimum_at_search_edge", "firing_hours_for_xe")
 _MISSION_KEYS = ("mission_closed", "min_alt_km", "D_mean_mN", "T_mean_mN", "P_bus_mean_W", "P_bus_peak_W", "ao_fluence_m2", "fired_hours")
 _MISSION_LABELS = ("architecture_status", "evidence_class", "evidence_admissible")
 
@@ -349,7 +362,7 @@ def _v1_values_and_refusal() -> tuple:
     cls, _ = AE.gas_evidence_class(gas)
     refusal["accelerators"] = {"gas_state": "make_gas_fn()(0.7, 'nominal')", "gaspath_status": gas["gaspath_status"],
                                "gaspath_not_converged": gas["gaspath_not_converged"], "evidence_class": cls}
-    r = _closure(V1_DESIGN_POINT["area"], V1_DESIGN_POINT["p_level"])
+    r = _closure(V1_DESIGN_POINT["area"], V1_DESIGN_POINT["p_level"], firing_hours=_v1_xe_hours())
     vals["architecture_closure"] = {"ext_hall_2p5kW": _flt({k: r.get(k) for k in _CLOSURE_KEYS})}
     refusal["architecture_closure"] = {"ext_hall_2p5kW": {k: r.get(k) for k in (
         "status", "evidence_class", "evidence_admissible", "feasible", "gaspath_status", "gaspath_not_converged",
