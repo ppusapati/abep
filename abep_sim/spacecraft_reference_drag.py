@@ -22,8 +22,10 @@ Interfaces (no hidden defaults; missing inputs raise)
 * Intake: the intake projected area and the intake drag coefficient are a SEPARATE caller-supplied term (F1 owns intake
   drag). How that term combines with a reference case is an explicit, required ``intake_accounting`` argument, because
   several published reference areas already contain the intake (e.g. Romano 2018 sets A_f = A_in = 1 m^2).
-* Thrust band: 12-25 mN is shown only as OWNER-STATED (A9.13 S6.21 citing "RFP(1)"); the official RFP is not registered
-  in the repository (AG-15), so the band carries ``requirement_status = OWNER_STATED_RFP_NOT_REGISTERED``.
+* Thrust band: 12-25 mN is shown for orientation only, as a frozen engineering input taken from the frozen
+  requirements snapshot (owner A9.22 G3: AG-15 closed, snapshot FROZEN; docs/requirements/rfp_official/
+  rfp_registration_v1.json); it carries ``requirement_status = FROZEN_REQUIREMENTS_SNAPSHOT``. This module never reads
+  or interprets requirement clauses; the band values are plain numbers with provenance.
 
 Evidence classes follow docs/EVIDENCE.md: evidence level (1-7, strength/proximity of the source) is orthogonal to
 quantity type (measured / digitized / inferred / reconstructed / model-derived / assumed / as-reported (secondary) / TBD).
@@ -71,11 +73,16 @@ DECISIONS = (
 
 RFP_THRUST_BAND = {
     "min_mN": 12.0, "max_mN": 25.0,
-    "requirement_status": "OWNER_STATED_RFP_NOT_REGISTERED",
+    "requirement_status": "FROZEN_REQUIREMENTS_SNAPSHOT",
     "source": "A9.13 S6.21 verbatim: 'The official RFP instead defines the functional orbit and thrust requirement: "
               "180-230 km, intake specification dependent on air density/solar activity, and 12-25 mN thrust for "
               "expected drag compensation. RFP(1)'",
-    "note": "RFP(1) is the owner-held RFP, not registered in the repository (AG-15). Shown for orientation only; it is "
+    "provenance": "frozen requirements snapshot docs/requirements/rfp_official/rfp_registration_v1.json (sha256 "
+                  "be2d26cdc8c8b140f29d26b52140a3bae6d1080ecaa92ea40841889207e49412); snapshot frozen and AG-15 closed by "
+                  "owner decision A9.22 G3 (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json). "
+                  "Value unchanged; the earlier label OWNER_STATED_RFP_NOT_REGISTERED is superseded (stale since the "
+                  "registration and the A9.22 freeze).",
+    "note": "Shown for orientation only; it is "
             "not a drag result and the statewise gate is T_available(state) - D_spacecraft(state) >= 0 (S6.15).",
 }
 
@@ -499,7 +506,6 @@ FINDINGS = (
 OPEN_ITEMS = (
     "AG-13 closure requires the host-spacecraft ICD (body frontal geometry, intake projected area, arrays/deployed "
     "surfaces, attitude/pointing states, C_D/model basis, accommodation/surface state) - S6.18",
-    "Official RFP registration (AG-15); the 12-25 mN band is owner-stated until then",
     "Orbit-resolved atmosphere producer (S6.14) supplies rho and v_rel; no state evaluated here",
     "SLATS frontal area and C_D: not in the open sources read",
     "Vaidya 2022 (GOCE-like C_D 3.7) not accessed; derivation TBD",

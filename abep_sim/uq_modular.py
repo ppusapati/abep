@@ -18,6 +18,7 @@ from .atmosphere import atmosphere
 from .mission_env import Spacecraft, spacecraft_drag
 from . import plasma_chem as PC
 from . import plasma_devices as PD
+from . import operating_inputs as OI
 
 PRIORS = {  # name: (low, mode, high, kind)
     "alpha_anom": (0.75, 0.88, 1.00, "epistemic"),
@@ -35,7 +36,13 @@ def _tri(rng, lo, mo, hi, n):
     return rng.triangular(lo, mo, hi, n)
 
 
-def evaluate_sample(a, x, area, p_level, A_array, P_cap, xs: dict, alt=200.0, eta_ppu=0.9, P_mag=25.0) -> dict:
+def evaluate_sample(a, x, area, p_level, A_array, P_cap, xs: dict, alt=200.0, eta_ppu=0.9, P_mag=25.0,
+                    firing_hours: float | None = None) -> dict:
+    """firing_hours: firing-life requirement for the success flag (caller-supplied, A9.22; None ->
+    abep_sim.operating_inputs.FIRING_HOURS). The flag itself is evaluated in abep_sim.assessment.arch_constraints."""
+    from .assessment.arch_constraints import uq_success
+    if firing_hours is None:
+        firing_hours = OI.FIRING_HOURS
     alpha_q = round(xs["accommodation"] / 0.05) * 0.05                     # reuse cached gas states
     gf = make_gas_fn(alpha=alpha_q, alt=alt)
     gas = gf(area, p_level)
@@ -78,14 +85,16 @@ def evaluate_sample(a, x, area, p_level, A_array, P_cap, xs: dict, alt=200.0, et
             T_hi *= P_cap / P_hi
         ratio = min(T0 / D, T_lo / (D * r_lo), T_hi / (D * r_hi)) if D > 0 else 0.0
         return {"T_mN": T0 * 1e3, "P_bus_W": P0, "T_lo_mN": T_lo * 1e3, "T_hi_mN": T_hi * 1e3, "D_mN": D * 1e3,
-                "ratio_min": ratio, "ignited": T0 > 0, "life_h": life, "success": bool(ratio >= 1.0 and life >= 15000.0), "limit": ["mean", "solar_min", "solar_max"][int(np.argmin(
+                "ratio_min": ratio, "ignited": T0 > 0, "life_h": life, "success": uq_success(ratio, life, firing_hours), "limit": ["mean", "solar_min", "solar_max"][int(np.argmin(
                     [T0 / D, T_lo / (D * r_lo), T_hi / (D * r_hi)]))] if T0 > 0 else "no_ignition"}
     finally:
         PC.RATES.clear(); PC.RATES.update(rates0); PC.EPS_C.clear(); PC.EPS_C.update(eps0); HALL_OVERRIDES.clear()
 
 
 def run_uq(arch: str, x: dict, area: float, p_level: float, A_array: float, P_cap: float, n: int = 200, seed: int = 1,
-           alt: float = 200.0) -> tuple[pd.DataFrame, dict]:
+           alt: float = 200.0, firing_hours: float | None = None) -> tuple[pd.DataFrame, dict]:
+    if firing_hours is None:
+        firing_hours = OI.FIRING_HOURS
     from scipy.stats import spearmanr
     a = {arch_name(z): z for z in enumerate_architectures()}[arch]
     rng = np.random.default_rng(seed)
@@ -93,7 +102,7 @@ def run_uq(arch: str, x: dict, area: float, p_level: float, A_array: float, P_ca
     rows = []
     for i in range(n):
         xs = {k: float(S[k][i]) for k in S}
-        rows.append({**xs, **evaluate_sample(a, x, area, p_level, A_array, P_cap, xs, alt)})
+        rows.append({**xs, **evaluate_sample(a, x, area, p_level, A_array, P_cap, xs, alt, firing_hours=firing_hours)})
     df = pd.DataFrame(rows)
     sens = {}
     for k in PRIORS:
@@ -102,7 +111,7 @@ def run_uq(arch: str, x: dict, area: float, p_level: float, A_array: float, P_ca
     summ = {"arch": arch, "x": x, "area": area, "p_level": p_level, "A_array": A_array, "P_cap": P_cap, "n": n,
             "P_ignite": float(df.ignited.mean()), "P_close": float((df.ratio_min >= 1.0).mean()),
             "P_close_margin": float((df.ratio_min >= 1.1).mean()),
-            "P_success": float(df.success.mean()), "P_life_ok": float((df.life_h >= 15000.0).mean()),
+            "P_success": float(df.success.mean()), "P_life_ok": float((df.life_h >= firing_hours).mean()),
             "life_q": {q: float(df.life_h.quantile(q)) for q in (0.1, 0.5, 0.9)},
             "ratio_q": {q: float(df.ratio_min.quantile(q)) for q in (0.1, 0.5, 0.9)},
             "limit_counts": df.limit.value_counts().to_dict(),

@@ -3253,3 +3253,30 @@ Owner instruction 2026-10-03: rapid delivery; review, verification and fixes run
 - **Integration.** F4 -> F7/F8 rebuilt for the current H-1 pin (pin-only diffs; F4 23 min, F7/F8 40 min single-process),
   then F9 and the matrix. F0 performance MD re-rendered (live F1 direct-run count). Open: the F1 output is now 36.7 MB
   (was 1.9 MB) — storage form is an owner call (A9.17 DATA_SIZE intent: avoid bloating Git history).
+
+## 2026-10-03 — A9.22 step 1 (lane w2core): operating inputs as explicit parameters; assessment-layer constraint flags (NO numeric change)
+Owner directive A9.22 (layer separation; `docs/decisions/OD_2026_10_03_A9_22_*`): physics never reads RFP / RVM / clause ids;
+requirements reach physics only as frozen engineering inputs.
+- **Seam.** New `abep_sim/operating_inputs.py`: the one module that supplies defaults for caller-omitted operating inputs
+  (MISSION_HOURS, FIRING_HOURS, THRUST_MIN/MAX_mN, P_BUS_MAX_W, MASS_MAX_KG). Today it reads `constants.RFP` (values
+  unchanged); the integrator re-points it to `config/mission/mission_scenario_v1.json`.
+- **Parameters instead of RFP reads.** `archengine.close_architecture(firing_hours=None)`; `mission5.run_phase5(hours,
+  thrust_cap_mN, mission_hours, firing_hours)` and `run_mission_generic(hours, P_bus_max_W)`; `mission_env.array_area_for
+  (P_cap_W=None)`; `life.LifeInputs.mission_h / firing_h` defaults from the seam; `uq_modular.evaluate_sample / run_uq
+  (firing_hours)` (was a literal 15000.0); `arch_compare.compare_architectures(limits=None)`. None = seam default.
+- **Assessment layer.** New `abep_sim/assessment/arch_constraints.py`: archengine output flags (thrust_min_ok, thrust_max_ok,
+  mass_ok, life_ok, all_constraints_ok), the DesignConstraints owner preset (`archengine.rfp_preset` delegates), arch_compare
+  band/cap flags and limits record, uq_modular success flag, mass plausibility screen and hard-gate evaluation route
+  through it. archengine in-loop candidate rejection is unchanged (selection under caller-supplied DesignConstraints).
+- **Not edited (pins).** `abep_sim/mass_bom.py` is pinned immutable by the A9.10 reconciliation and the veto layer, and
+  `abep_sim/cathode_integration.py` by the aux-bus / veto layer: editing either refuses those builders. mass_bom's
+  `build_document` keeps reading the recorded mass limit (its screen is reachable with a caller threshold through
+  `assessment.arch_constraints.mass_plausibility_screen`); cathode_integration reads its values from its immutable v1 data
+  file, not from `constants.RFP`. `hard_gates.py` reads only the gate matrix (no RFP constant) and is unchanged.
+- **Stale label removed.** `spacecraft_reference_drag.RFP_THRUST_BAND` (12-25 mN, unchanged) now carries
+  `requirement_status = FROZEN_REQUIREMENTS_SNAPSHOT` with provenance to `docs/requirements/rfp_official/
+  rfp_registration_v1.json` (A9.22 G3 freeze); the stale `OWNER_STATED_RFP_NOT_REGISTERED` label and its AG-15 open item are
+  gone; the lane document was rebuilt (label/provenance lines and module sha256 only).
+- **Verification.** golden check OK (unchanged); ci_checks 11/11; the 34 builders that read these modules were `--check`
+  current before and after, except `scripts/architecture/build_decision_dossier.py`, stale by pin only (arch_compare.py
+  sha256 in its provenance), left for the integrator to re-pin.

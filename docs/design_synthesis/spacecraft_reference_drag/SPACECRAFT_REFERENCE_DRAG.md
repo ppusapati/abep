@@ -14,7 +14,7 @@ S6.18: sourced geometry is for interim parametric studies only and is labelled `
 - **is_not**: the flight/host spacecraft, an ICD, a drag closure, or an AG-13 verdict
 - **drag_equation**: D = 0.5 rho v_rel^2 C_D A_ref (Romano 2018 Eq. 1) + caller-supplied intake term (F1)
 - **atmosphere_interface**: rho_kg_m3, v_rel_m_s and atmosphere_state supplied by the caller from the orbit-resolved atmosphere; this module imports no atmosphere module
-- **thrust band**: 12–25 mN, `OWNER_STATED_RFP_NOT_REGISTERED`. RFP(1) is the owner-held RFP, not registered in the repository (AG-15). Shown for orientation only; it is not a drag result and the statewise gate is T_available(state) - D_spacecraft(state) >= 0 (S6.15).
+- **thrust band**: 12–25 mN, `FROZEN_REQUIREMENTS_SNAPSHOT`. Shown for orientation only; it is not a drag result and the statewise gate is T_available(state) - D_spacecraft(state) >= 0 (S6.15).
 
 ## Declared reference cases (same-source (A_ref, C_D) pairs only)
 
@@ -76,7 +76,6 @@ Per-value source, evidence level, quantity type and verbatim notes are in the JS
 
 ## Open items
 - AG-13 closure requires the host-spacecraft ICD (body frontal geometry, intake projected area, arrays/deployed surfaces, attitude/pointing states, C_D/model basis, accommodation/surface state) - S6.18
-- Official RFP registration (AG-15); the 12-25 mN band is owner-stated until then
 - Orbit-resolved atmosphere producer (S6.14) supplies rho and v_rel; no state evaluated here
 - SLATS frontal area and C_D: not in the open sources read
 - Vaidya 2022 (GOCE-like C_D 3.7) not accessed; derivation TBD

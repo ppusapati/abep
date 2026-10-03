@@ -22,7 +22,8 @@ from __future__ import annotations
 import math, itertools
 from dataclasses import dataclass, field
 import pandas as pd
-from .constants import E_CHARGE, K_B, AMU, G0, RFP
+from .constants import E_CHARGE, K_B, AMU, G0
+from . import operating_inputs as OI
 from .plasma_chem import Chamber, solve_global, M_ION, M_NEUT
 from .plasma_devices import HallChannel, ECRSource, RFSource, Interstage, LaB6Cathode
 from .materials import DB
@@ -423,8 +424,9 @@ def calibration_status(family: str, point: dict) -> tuple[str, float]:
 # ------------------------------------------------------------------------------------------ closure of one architecture
 @dataclass
 class DesignConstraints:
-    """Physics limits are always enforced inside the models; these are *design* constraints, user-selectable.
-    The RFP is one preset (rfp_preset())."""
+    """Physics limits are always enforced inside the models; these are *design* constraints, supplied by the caller
+    (selection under owner-supplied constraints; A9.22: the search never reads RFP values itself). The owner-constraint
+    preset is rfp_preset(), built by the assessment layer from abep_sim.operating_inputs."""
     P_bus_max_W: float = 1500.0
     m_max_kg: float | None = None
     T_min_mN: float | None = None
@@ -435,8 +437,10 @@ class DesignConstraints:
 
 
 def rfp_preset() -> DesignConstraints:
-    return DesignConstraints(P_bus_max_W=RFP.power_max_W, m_max_kg=RFP.mass_max_kg, T_min_mN=RFP.thrust_min_mN,
-                             T_max_mN=RFP.thrust_max_mN, life_min_h=RFP.ignition_hours)
+    """Owner-constraint preset (P_bus cap, mass limit, thrust band, firing-life requirement) built by the caller-side
+    assessment layer from the single operating-inputs seam (abep_sim.operating_inputs); kept here for compatibility."""
+    from .assessment.arch_constraints import design_constraints
+    return design_constraints()
 
 
 def _propulsion(a: dict, gas: dict, x: dict) -> dict:
@@ -600,14 +604,18 @@ def gas_evidence_class(gas: dict) -> tuple:
 
 
 def close_architecture(a: dict, gas_fn, sc, dc: DesignConstraints | None = None, k_margin: float = 1.3,
-                       gas_vars: dict | None = None, strict: bool = False, firing_hours: float = RFP.mission_hours,
+                       gas_vars: dict | None = None, strict: bool = False, firing_hours: float | None = None,
                        keep_candidates: bool = True, size_arrays: bool = False, mission_envelope: bool = False,
                        envelope_margin: float = 1.1) -> dict:
     """Nested constrained optimisation. gas_fn(area, p_level) -> gas state (gas path is part of the search, item 9).
     Every design constraint, converter rating and thermal feasibility is enforced *inside* the candidate loop
     (item 2, 6, 7). Model exceptions are recorded as MODEL_ERROR, never treated as infeasible (item 3);
-    strict=True re-raises them."""
+    strict=True re-raises them. firing_hours: hours over which the neutralizer Xe flow is integrated for xe_kg
+    (caller-supplied; default abep_sim.operating_inputs.MISSION_HOURS, the mission-integrated Xe basis)."""
     from .mission_env import spacecraft_drag
+    from .assessment.arch_constraints import closure_constraint_flags
+    if firing_hours is None:
+        firing_hours = OI.MISSION_HOURS
     from .atmosphere import atmosphere
     from .ppu import default_ppu, load_modes, Converter
     from .thermal import default_nodes, size_radiator, ThermalParams
@@ -855,11 +863,8 @@ def close_architecture(a: dict, gas_fn, sc, dc: DesignConstraints | None = None,
     if ev_cls != "OK":
         out["status"] = ev_cls
         out["feasible"] = False
-    out["thrust_min_ok"] = (dc.T_min_mN is None) or (T * 1e3 >= dc.T_min_mN)
-    out["thrust_max_ok"] = (dc.T_max_mN is None) or (T * 1e3 <= dc.T_max_mN)
-    out["mass_ok"] = (dc.m_max_kg is None) or (bom["mev_kg"] <= dc.m_max_kg)
-    out["life_ok"] = (dc.life_min_h is None) or (best["life_sys"] >= dc.life_min_h)
-    out["all_constraints_ok"] = out["thrust_min_ok"] and out["thrust_max_ok"] and out["mass_ok"] and out["life_ok"]
+    # evaluation-only flags against the caller's DesignConstraints: assessment layer (A9.22)
+    out.update(closure_constraint_flags(T * 1e3, bom["mev_kg"], best["life_sys"], dc))
     # degeneracy of the optimum: candidates within 1 % of the best objective (a small input change can flip the argmax)
     Js = [c["J"] for c in cands if c.get("closes", True) and "J" in c]
     if Js:

@@ -13,6 +13,7 @@ import math
 from dataclasses import dataclass
 from .materials import DB, surface_ageing_alpha
 from .constants import AMU, E_CHARGE
+from . import operating_inputs as _OI
 
 
 @dataclass
@@ -38,8 +39,9 @@ class LifeInputs:
     cathode_start_limit: int = 10000
     bearing_type: str = "magnetic"
     duty: float = 0.58
-    mission_h: float = 26000.0
-    firing_h: float = 15000.0
+    # operating inputs (A9.22): defaults from the single seam abep_sim.operating_inputs; callers may supply them
+    mission_h: float = _OI.MISSION_HOURS      # mission-duration basis (AO fluence / life exposure, reliability horizon)
+    firing_h: float = _OI.FIRING_HOURS        # SUBSYSTEM_FIRING_LIFE_ASSUMPTION (required firing life), not the mission
 
 
 def hall_channel_life(li: LifeInputs) -> dict:
