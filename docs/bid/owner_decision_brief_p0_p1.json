@@ -1,0 +1,3926 @@
+{
+ "schema": "owner_decision_brief_p0_p1_v1",
+ "id": "owner_decision_brief_p0_p1",
+ "date": "2026-10-03",
+ "status": "RECORDER_BRIEF_FOR_OWNER: no owner question is answered here; options are those already recorded in the repository; recorder proposals are labelled RECORDER_PROPOSAL_NOT_AN_OWNER_DECISION",
+ "companion_document": "docs/bid/OWNER_DECISION_BRIEF_P0_P1.md",
+ "test": "tests/test_owner_decision_brief.py",
+ "base_commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+ "bid_technical_source_commit": "bbc480cd6aacaa40c39eb459a056b942fe996b32",
+ "post_freeze_commit_cited": "32c9e639268df6bba10852d94e64983e73d0cac6",
+ "identity_note": "every cited file except docs/HISTORY.md, docs/bid/bid_technical_baseline.json and the freeze candidate JSON is byte-identical at the bid source bbc480c and at 66fe963",
+ "locator_syntax": "kind json: \"/\"-separated path from the document root; a segment is a key, a list index, or key[field=value] selecting the single list element whose field equals value (a bare [field=value] segment selects inside the current list); the value at the locator equals \"verbatim\" exactly. kind text: L<a> or L<a>-L<b> (1-based lines of the file at the commit); \"verbatim\" is an exact substring of those lines joined with \"\\n\"",
+ "rules": [
+  "never invent: every value shown is read from the cited file at the cited commit",
+  "never answer an owner question; options are as recorded, observations and proposals labelled",
+  "quote integrity is machine-checked: tests/test_owner_decision_brief.py re-reads every file from git at the cited commit, checks its sha256 and the verbatim value at the locator"
+ ],
+ "files": [
+  {
+   "path": "docs/HISTORY.md",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "7993451e4fe16430ae365a3b97c2062e21bcfa74df14bab45bbd147767864fb9",
+   "size_bytes": 296484
+  },
+  {
+   "path": "docs/architecture/freeze_candidate/ag15_f9.py",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "c27a0c3a04592dc368829e9ac184141254063139071d96c0fcadd63faebf2a05",
+   "size_bytes": 11954
+  },
+  {
+   "path": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "commit": "32c9e639268df6bba10852d94e64983e73d0cac6",
+   "sha256": "7c0a2b75c7f0af174327dcaa47d6741133d94adefada463472d5d413a54cc954",
+   "size_bytes": 594131
+  },
+  {
+   "path": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "7c0a2b75c7f0af174327dcaa47d6741133d94adefada463472d5d413a54cc954",
+   "size_bytes": 594131
+  },
+  {
+   "path": "docs/architecture/freeze_candidate/rfp_citations_f9.py",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "a1be2f777c21d6c8de522bcf4db3ddf438d584497508a01cb0c794c88b61c1ad",
+   "size_bytes": 16721
+  },
+  {
+   "path": "docs/bid/bid_technical_baseline.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "2372ee7c7d847eb69181c2b5f0fd7f18b6eaace85605638b73d5cefd1c4c22ff",
+   "size_bytes": 2024
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316",
+   "size_bytes": 278421
+  },
+  {
+   "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65ba51c54f712c628525fb567c91b0bdf32019d49d3679eb4cd9bbbaf6098936",
+   "size_bytes": 698726
+  },
+  {
+   "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "bcecab6147d62564669c0f154c3c1c7eceb5150a86bd9cb5f99b0b7f6daa6f63",
+   "size_bytes": 252898
+  },
+  {
+   "path": "docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e",
+   "size_bytes": 17470
+  },
+  {
+   "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+   "size_bytes": 8095
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
+   "size_bytes": 3615
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_18_golden_and_baseline_owner_decisions.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "7c170e1000ae039c1f032ccf38bcacf2c59825d5dab26b4d98658a96914a8c3a",
+   "size_bytes": 1917
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "size_bytes": 2651
+  },
+  {
+   "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e",
+   "size_bytes": 36690882
+  },
+  {
+   "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
+   "commit": "bbc480cd6aacaa40c39eb459a056b942fe996b32",
+   "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01",
+   "size_bytes": 340278
+  },
+  {
+   "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "26bf86ec11a975f6fdd70702652ece30ef80ad46ecd8446a51b2423c03da1350",
+   "size_bytes": 363703
+  },
+  {
+   "path": "docs/experiments/hall_icp/programme/hw_programme_a9_21.py",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "b0ae752d2273722b91f9b8b369e8deefaafed681fcb11e44f9b0e20b30316bac",
+   "size_bytes": 49789
+  },
+  {
+   "path": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a",
+   "size_bytes": 31148
+  },
+  {
+   "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "8c8e19f8339fff8b473d5ac9c6d55d3c23e94441a16de17c64e199ad8c5935d4",
+   "size_bytes": 196356
+  },
+  {
+   "path": "docs/performance/dedicated_baseline_2026_10_01/REGISTRATION_ADDENDUM_A9_18.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "37068e8ded889e0e46bd336ce4eacf3749e3fd1c5669da224f8f73dc51de1bf2",
+   "size_bytes": 2574
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65be55e592e1b42369ab8d4d8ddf0865c54d45cd501a0a646920b7c6500b5d08",
+   "size_bytes": 1688485
+  },
+  {
+   "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "be2d26cdc8c8b140f29d26b52140a3bae6d1080ecaa92ea40841889207e49412",
+   "size_bytes": 34278
+  },
+  {
+   "path": "docs/requirements/rvm_a9/rfp_rebase.py",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "c696df8e108764a00b61b4107ccec10be2d36393b5e90368f98c29769a4f96a2",
+   "size_bytes": 32855
+  },
+  {
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "size_bytes": 597557
+  }
+ ],
+ "items": [
+  {
+   "no": 1,
+   "id": "AG-15",
+   "title": "AG-15 owner closure (RFP registration + RVM re-base)",
+   "decision_owner": "owner",
+   "question_as_recorded": {
+    "quote_ids": [
+     "Q1-GATE",
+     "Q1-GATE-TEXT",
+     "Q1-AG15-STATUS",
+     "Q1-RC-01"
+    ]
+   },
+   "blocks": [
+    {
+     "what": "closure of architecture gate AG-15 in the freeze candidate (F9): the AG-15 assessment stays EVIDENCE_PRESENT and not closable while the RVM re-base ag_15_status does not record a closure and requirement_frozen is not true on all 22 RFP_CLAUSE rows",
+     "quote_ids": [
+      "Q1-AFC-STATUS",
+      "Q1-AFC-SUFFICIENT",
+      "Q1-RC-01",
+      "Q1-FREEZE-RULE"
+     ]
+    },
+    {
+     "what": "freezing any RFP_CLAUSE row: the re-base builder refuses a frozen RFP row before AG-15 closes",
+     "quote_ids": [
+      "Q1-REBASE-GUARD",
+      "Q1-REBASE-RULE"
+     ]
+    }
+   ],
+   "what_the_owner_must_accept": [
+    {
+     "part": "the registration of the official RFP by hash (PDF sha256, 40 pages, verbatim clause transcription with clause-set sha256); the PDF itself is held outside the repository",
+     "quote_ids": [
+      "Q1-REG-STATUS",
+      "Q1-REG-PDF",
+      "Q1-REG-PAGES",
+      "Q1-REG-CLAUSES-SHA",
+      "Q1-REG-NOT-IN-DOC"
+     ]
+    },
+    {
+     "part": "the RVM re-base: 22 RFP_CLAUSE rows, 3 DERIVED_PROJECT_REQUIREMENT, 5 OWNER_ALLOCATION; RVM file docs/requirements/rvm_a9/rvm_a9_v1.json sha256 3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305 at 66fe963 (byte-identical at the bid source bbc480c)",
+     "quote_ids": [
+      "Q1-ORIGIN-COUNTS",
+      "Q1-REBASE-RULE"
+     ]
+    },
+    {
+     "part": "the 22 RFP_CLAUSE rows that would be frozen (requirement_frozen false today on every one; list below with row id, clause ids and requirement text)",
+     "quote_ids": [
+      "Q1-RVM-01-TITLE",
+      "Q1-RVM-01-CLAUSES",
+      "Q1-RVM-01-TEXT",
+      "Q1-RVM-01-FROZEN",
+      "Q1-RVM-02-TITLE",
+      "Q1-RVM-02-CLAUSES",
+      "Q1-RVM-02-TEXT",
+      "Q1-RVM-02-FROZEN",
+      "Q1-RVM-03-TITLE",
+      "Q1-RVM-03-CLAUSES",
+      "Q1-RVM-03-TEXT",
+      "Q1-RVM-03-FROZEN",
+      "Q1-RVM-04-TITLE",
+      "Q1-RVM-04-CLAUSES",
+      "Q1-RVM-04-TEXT",
+      "Q1-RVM-04-FROZEN",
+      "Q1-RVM-06-TITLE",
+      "Q1-RVM-06-CLAUSES",
+      "Q1-RVM-06-TEXT",
+      "Q1-RVM-06-FROZEN",
+      "Q1-RVM-08-TITLE",
+      "Q1-RVM-08-CLAUSES",
+      "Q1-RVM-08-TEXT",
+      "Q1-RVM-08-FROZEN",
+      "Q1-RVM-09-TITLE",
+      "Q1-RVM-09-CLAUSES",
+      "Q1-RVM-09-TEXT",
+      "Q1-RVM-09-FROZEN",
+      "Q1-RVM-10-TITLE",
+      "Q1-RVM-10-CLAUSES",
+      "Q1-RVM-10-TEXT",
+      "Q1-RVM-10-FROZEN",
+      "Q1-RVM-11-TITLE",
+      "Q1-RVM-11-CLAUSES",
+      "Q1-RVM-11-TEXT",
+      "Q1-RVM-11-FROZEN",
+      "Q1-RVM-12-TITLE",
+      "Q1-RVM-12-CLAUSES",
+      "Q1-RVM-12-TEXT",
+      "Q1-RVM-12-FROZEN",
+      "Q1-RVM-13-TITLE",
+      "Q1-RVM-13-CLAUSES",
+      "Q1-RVM-13-TEXT",
+      "Q1-RVM-13-FROZEN",
+      "Q1-RVM-16-TITLE",
+      "Q1-RVM-16-CLAUSES",
+      "Q1-RVM-16-TEXT",
+      "Q1-RVM-16-FROZEN",
+      "Q1-RVM-18-TITLE",
+      "Q1-RVM-18-CLAUSES",
+      "Q1-RVM-18-TEXT",
+      "Q1-RVM-18-FROZEN",
+      "Q1-RVM-19-TITLE",
+      "Q1-RVM-19-CLAUSES",
+      "Q1-RVM-19-TEXT",
+      "Q1-RVM-19-FROZEN",
+      "Q1-RVM-20-TITLE",
+      "Q1-RVM-20-CLAUSES",
+      "Q1-RVM-20-TEXT",
+      "Q1-RVM-20-FROZEN",
+      "Q1-RVM-21-TITLE",
+      "Q1-RVM-21-CLAUSES",
+      "Q1-RVM-21-TEXT",
+      "Q1-RVM-21-FROZEN",
+      "Q1-RVM-22-TITLE",
+      "Q1-RVM-22-CLAUSES",
+      "Q1-RVM-22-TEXT",
+      "Q1-RVM-22-FROZEN",
+      "Q1-RVM-23-TITLE",
+      "Q1-RVM-23-CLAUSES",
+      "Q1-RVM-23-TEXT",
+      "Q1-RVM-23-FROZEN",
+      "Q1-RVM-24-TITLE",
+      "Q1-RVM-24-CLAUSES",
+      "Q1-RVM-24-TEXT",
+      "Q1-RVM-24-FROZEN",
+      "Q1-RVM-25-TITLE",
+      "Q1-RVM-25-CLAUSES",
+      "Q1-RVM-25-TEXT",
+      "Q1-RVM-25-FROZEN",
+      "Q1-RVM-26-TITLE",
+      "Q1-RVM-26-CLAUSES",
+      "Q1-RVM-26-TEXT",
+      "Q1-RVM-26-FROZEN",
+      "Q1-RVM-29-TITLE",
+      "Q1-RVM-29-CLAUSES",
+      "Q1-RVM-29-TEXT",
+      "Q1-RVM-29-FROZEN"
+     ]
+    },
+    {
+     "part": "the recorded dispositions of discrepancies DISC-01..DISC-10 (several are recorded as awaiting a DRDO clarification or an owner confirmation)",
+     "quote_ids": [
+      "Q1-DISC-01",
+      "Q1-DISC-02",
+      "Q1-DISC-03",
+      "Q1-DISC-04",
+      "Q1-DISC-05",
+      "Q1-DISC-06",
+      "Q1-DISC-07",
+      "Q1-DISC-08",
+      "Q1-DISC-09",
+      "Q1-DISC-10"
+     ]
+    },
+    {
+     "part": "the unscreened pages 1-15 and 34-40 of the owner-held PDF (status UNSCREENED_PENDING_OWNER_PAGE_REVIEW; nothing is assumed about their content)",
+     "quote_ids": [
+      "Q1-REG-UNSCREENED"
+     ]
+    }
+   ],
+   "rfp_clause_rows": [
+    {
+     "row": "RVM-01",
+     "quote_ids": [
+      "Q1-RVM-01-TITLE",
+      "Q1-RVM-01-CLAUSES",
+      "Q1-RVM-01-TEXT",
+      "Q1-RVM-01-FROZEN"
+     ]
+    },
+    {
+     "row": "RVM-02",
+     "quote_ids": [
+      "Q1-RVM-02-TITLE",
+      "Q1-RVM-02-CLAUSES",
+      "Q1-RVM-02-TEXT",
+      "Q1-RVM-02-FROZEN"
+     ]
+    },
+    {
+     "row": "RVM-03",
+     "quote_ids": [
+      "Q1-RVM-03-TITLE",
+      "Q1-RVM-03-CLAUSES",
+      "Q1-RVM-03-TEXT",
+      "Q1-RVM-03-FROZEN"
+     ]
+    },
+    {
+     "row": "RVM-04",
+     "quote_ids": [
+      "Q1-RVM-04-TITLE",
+      "Q1-RVM-04-CLAUSES",
+      "Q1-RVM-04-TEXT",
+      "Q1-RVM-04-FROZEN"
+     ]
+    },
+    {
+     "row": "RVM-06",
+     "quote_ids": [
+      "Q1-RVM-06-TITLE",
+      "Q1-RVM-06-CLAUSES",
+      "Q1-RVM-06-TEXT",
+      "Q1-RVM-06-FROZEN"
+     ]
+    },
+    {
+     "row": "RVM-08",
+     "quote_ids": [
+      "Q1-RVM-08-TITLE",
+      "Q1-RVM-08-CLAUSES",
+      "Q1-RVM-08-TEXT",
+      "Q1-RVM-08-FROZEN"
+     ]
+    },
+    {
+     "row": "RVM-09",
+     "quote_ids": [
+      "Q1-RVM-09-TITLE",
+      "Q1-RVM-09-CLAUSES",
+      "Q1-RVM-09-TEXT",
+      "Q1-RVM-09-FROZEN"
+     ]
+    },
+    {
+     "row": "RVM-10",
+     "quote_ids": [
+      "Q1-RVM-10-TITLE",
+      "Q1-RVM-10-CLAUSES",
+      "Q1-RVM-10-TEXT",
+      "Q1-RVM-10-FROZEN"
+     ]
+    },
+    {
+     "row": "RVM-11",
+     "quote_ids": [
+      "Q1-RVM-11-TITLE",
+      "Q1-RVM-11-CLAUSES",
+      "Q1-RVM-11-TEXT",
+      "Q1-RVM-11-FROZEN"
+     ]
+    },
+    {
+     "row": "RVM-12",
+     "quote_ids": [
+      "Q1-RVM-12-TITLE",
+      "Q1-RVM-12-CLAUSES",
+      "Q1-RVM-12-TEXT",
+      "Q1-RVM-12-FROZEN"
+     ]
+    },
+    {
+     "row": "RVM-13",
+     "quote_ids": [
+      "Q1-RVM-13-TITLE",
+      "Q1-RVM-13-CLAUSES",
+      "Q1-RVM-13-TEXT",
+      "Q1-RVM-13-FROZEN"
+     ]
+    },
+    {
+     "row": "RVM-16",
+     "quote_ids": [
+      "Q1-RVM-16-TITLE",
+      "Q1-RVM-16-CLAUSES",
+      "Q1-RVM-16-TEXT",
+      "Q1-RVM-16-FROZEN"
+     ]
+    },
+    {
+     "row": "RVM-18",
+     "quote_ids": [
+      "Q1-RVM-18-TITLE",
+      "Q1-RVM-18-CLAUSES",
+      "Q1-RVM-18-TEXT",
+      "Q1-RVM-18-FROZEN"
+     ]
+    },
+    {
+     "row": "RVM-19",
+     "quote_ids": [
+      "Q1-RVM-19-TITLE",
+      "Q1-RVM-19-CLAUSES",
+      "Q1-RVM-19-TEXT",
+      "Q1-RVM-19-FROZEN"
+     ]
+    },
+    {
+     "row": "RVM-20",
+     "quote_ids": [
+      "Q1-RVM-20-TITLE",
+      "Q1-RVM-20-CLAUSES",
+      "Q1-RVM-20-TEXT",
+      "Q1-RVM-20-FROZEN"
+     ]
+    },
+    {
+     "row": "RVM-21",
+     "quote_ids": [
+      "Q1-RVM-21-TITLE",
+      "Q1-RVM-21-CLAUSES",
+      "Q1-RVM-21-TEXT",
+      "Q1-RVM-21-FROZEN"
+     ]
+    },
+    {
+     "row": "RVM-22",
+     "quote_ids": [
+      "Q1-RVM-22-TITLE",
+      "Q1-RVM-22-CLAUSES",
+      "Q1-RVM-22-TEXT",
+      "Q1-RVM-22-FROZEN"
+     ]
+    },
+    {
+     "row": "RVM-23",
+     "quote_ids": [
+      "Q1-RVM-23-TITLE",
+      "Q1-RVM-23-CLAUSES",
+      "Q1-RVM-23-TEXT",
+      "Q1-RVM-23-FROZEN"
+     ]
+    },
+    {
+     "row": "RVM-24",
+     "quote_ids": [
+      "Q1-RVM-24-TITLE",
+      "Q1-RVM-24-CLAUSES",
+      "Q1-RVM-24-TEXT",
+      "Q1-RVM-24-FROZEN"
+     ]
+    },
+    {
+     "row": "RVM-25",
+     "quote_ids": [
+      "Q1-RVM-25-TITLE",
+      "Q1-RVM-25-CLAUSES",
+      "Q1-RVM-25-TEXT",
+      "Q1-RVM-25-FROZEN"
+     ]
+    },
+    {
+     "row": "RVM-26",
+     "quote_ids": [
+      "Q1-RVM-26-TITLE",
+      "Q1-RVM-26-CLAUSES",
+      "Q1-RVM-26-TEXT",
+      "Q1-RVM-26-FROZEN"
+     ]
+    },
+    {
+     "row": "RVM-29",
+     "quote_ids": [
+      "Q1-RVM-29-TITLE",
+      "Q1-RVM-29-CLAUSES",
+      "Q1-RVM-29-TEXT",
+      "Q1-RVM-29-FROZEN"
+     ]
+    }
+   ],
+   "options": [
+    {
+     "id": "1-A",
+     "origin": "OPTION_AS_RECORDED_IN_REPOSITORY",
+     "label": "close AG-15 (owner acceptance of the re-base; requirement_frozen = true on the RFP_CLAUSE rows)",
+     "evidence_quote_ids": [
+      "Q1-RC-01",
+      "Q1-REBASE-RULE",
+      "Q1-AG15-STATUS"
+     ],
+     "artifact_consequences": [
+      "docs/requirements/rvm_a9/rfp_rebase.py: ag_15_status text and the RebaseError guard (line 418) change; requirement_frozen set true on the 22 rows (rows module docs/requirements/rvm_a9/rvm_a9_rows.py / builder docs/requirements/rvm_a9/build_rvm_a9.py); rvm_a9_v1.json and RVM_A9.md regenerated",
+      "docs/requirements/rfp_official/rfp_clauses_v1.py: rvm_mapping.ag_15_status copy regenerated",
+      "docs/architecture/freeze_candidate/ag15_f9.py + build_freeze_candidate.py: AG-15 becomes closable (today detected by the \"CLOSED\" prefix, see recorder proposal RP-BRIEF-01)",
+      "owner-question state (next version), decision application matrix, M16 v5 and docs/HISTORY.md record the closure; tests that assert requirement_frozen is false on RFP rows (tests/test_rvm_a9.py, tests/test_decision_application_a9_16.py, tests/test_architecture_freeze_candidate.py) change with it",
+      "a new owner decision file is required (decision files are never edited after commit)"
+     ]
+    },
+    {
+     "id": "1-B",
+     "origin": "OPTION_AS_RECORDED_IN_REPOSITORY",
+     "label": "keep AG-15 open (current state)",
+     "evidence_quote_ids": [
+      "Q1-AG15-STATUS",
+      "Q1-AFC-STATUS"
+     ],
+     "artifact_consequences": [
+      "no artifact changes; AG-15 stays RFP_REGISTERED_AND_RVM_REBASED_PENDING_OWNER_CLOSURE; RFP rows stay requirement_frozen = false"
+     ]
+    }
+   ],
+   "recorder_observations": [
+    {
+     "origin": "RECORDER_OBSERVATION_OF_REPOSITORY_FACT",
+     "text": "the F9 check closes AG-15 only when requirement_frozen is true on ALL RFP_CLAUSE rows (len(rfp_rows_frozen) == len(rfp_rows)); a partial freeze (e.g. leaving the rows touched by DISC-02 / DISC-03 / DISC-05 unfrozen pending DRDO clarification) keeps AG-15 open by construction",
+     "quote_ids": [
+      "Q1-RC-01"
+     ]
+    },
+    {
+     "origin": "RECORDER_OBSERVATION_OF_REPOSITORY_FACT",
+     "text": "RFQ v3 recorder flag RF3-FLAG-04 still says the RFP is not yet registered; it predates the A9.17 registration (no change made here)",
+     "quote_ids": [
+      "Q1-RF3-FLAG-04"
+     ]
+    }
+   ],
+   "recorder_proposals": [
+    {
+     "id": "RP-BRIEF-01",
+     "origin": "RECORDER_PROPOSAL_NOT_AN_OWNER_DECISION",
+     "text": "format of the owner closure record, so that the F9 AG-15 check can require a citation instead of the current \"CLOSED\" text prefix (recorded open review item)",
+     "quote_ids": [
+      "Q1-F9-PREFIX",
+      "Q1-REVIEW-ITEM"
+     ],
+     "proposed_record": {
+      "decision_file": "docs/decisions/OD_<date>_AG15_CLOSURE_owner_decision.json (+ verbatim .md), never edited after commit",
+      "fields": {
+       "decision_code": "AG15_CLOSED (or AG15_KEPT_OPEN)",
+       "accepted_registration": {
+        "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+        "file_sha256": "be2d26cdc8c8b140f29d26b52140a3bae6d1080ecaa92ea40841889207e49412",
+        "pdf_sha256": "a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00",
+        "clauses_sha256": "fd51a951a1d06ea8bebd39416147686aedb1f596170fb81b6583f4564148a8aa"
+       },
+       "accepted_rvm": {
+        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+        "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+        "file_sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+        "note": "the pre-closure RVM the owner read; byte-identical at the bid source bbc480cd6aacaa40c39eb459a056b942fe996b32"
+       },
+       "frozen_rows": [
+        "RVM-01",
+        "RVM-02",
+        "RVM-03",
+        "RVM-04",
+        "RVM-06",
+        "RVM-08",
+        "RVM-09",
+        "RVM-10",
+        "RVM-11",
+        "RVM-12",
+        "RVM-13",
+        "RVM-16",
+        "RVM-18",
+        "RVM-19",
+        "RVM-20",
+        "RVM-21",
+        "RVM-22",
+        "RVM-23",
+        "RVM-24",
+        "RVM-25",
+        "RVM-26",
+        "RVM-29"
+       ],
+       "discrepancy_dispositions": {
+        "DISC-01": "ACCEPT_AS_RECORDED | <owner text>",
+        "DISC-02": "ACCEPT_AS_RECORDED | <owner text>",
+        "DISC-03": "ACCEPT_AS_RECORDED | <owner text>",
+        "DISC-04": "ACCEPT_AS_RECORDED | <owner text>",
+        "DISC-05": "ACCEPT_AS_RECORDED | <owner text>",
+        "DISC-06": "ACCEPT_AS_RECORDED | <owner text>",
+        "DISC-07": "ACCEPT_AS_RECORDED | <owner text>",
+        "DISC-08": "ACCEPT_AS_RECORDED | <owner text>",
+        "DISC-09": "ACCEPT_AS_RECORDED | <owner text>",
+        "DISC-10": "ACCEPT_AS_RECORDED | <owner text>"
+       },
+       "unscreened_pages": {
+        "1-15": "REVIEWED_NO_REQUIREMENT | REVIEWED_ADD_CLAUSES | ACCEPT_UNSCREENED",
+        "34-40": "REVIEWED_NO_REQUIREMENT | REVIEWED_ADD_CLAUSES | ACCEPT_UNSCREENED"
+       }
+      },
+      "check_the_f9_gate_would_make": [
+       "rfp_rebase.ag_15_status cites the decision file path and its sha256; the file exists and hashes to it",
+       "the decision is owner-decided (decided_by owner) with decision_code AG15_CLOSED",
+       "accepted_registration hashes equal the current registration (pdf_sha256, clauses_sha256)",
+       "the RVM at accepted_rvm.commit hashes to accepted_rvm.file_sha256 and differs from the current RVM only in the closure fields (requirement_frozen on frozen_rows, ag_15_status)",
+       "frozen_rows == the RFP_CLAUSE rows exactly, and every one carries requirement_frozen = true"
+      ]
+     },
+     "status": "PROPOSAL_FOR_OWNER_REVIEW; nothing implemented; no code changed by this brief"
+    }
+   ],
+   "one_line_answer_form": "AG-15: CLOSE per RP-BRIEF-01 record (RVM sha256 3b89fe6ca260..., 22 rows, DISC dispositions, pages 1-15/34-40 disposition) | KEEP OPEN | CLOSE with a different record format: <format>"
+  },
+  {
+   "no": 2,
+   "id": "MPV3Q-01",
+   "title": "controls / electronics / valve-driver provisional mass allocation (AL-09)",
+   "decision_owner": "owner",
+   "question_as_recorded": {
+    "quote_ids": [
+     "Q2-STATE-Q",
+     "Q2-MP3-Q"
+    ]
+   },
+   "status_as_recorded": {
+    "quote_ids": [
+     "Q2-STATE-STATUS",
+     "Q2-STATE-NEEDED",
+     "Q2-STATE-PROPOSED",
+     "Q2-MP3-PROPOSED"
+    ]
+   },
+   "blocks": [
+    {
+     "what": "LOCK-1 (state v5 classification BLOCKS_LOCK_1); AL-09 is a missing term in every evidence-based mass roll-up",
+     "quote_ids": [
+      "Q2-STATE-BLOCKS",
+      "Q2-ROLLUP-TBD",
+      "Q2-AL09-STATUS"
+     ]
+    }
+   ],
+   "candidate_bases_in_repository": [
+    {
+     "basis": "row-54 owner v0 dry allocation \"controls/harness\" 1.0 kg (owner allocation, not a CBE); covered controls AND harness together before the MQ-06 split",
+     "quote_ids": [
+      "Q2-ROW54"
+     ]
+    },
+    {
+     "basis": "harness now has its own rule (row 60: 5 % of the other nominal dry lines), so the harness share leaves the 1.0 kg line",
+     "quote_ids": [
+      "Q2-HARNESS"
+     ]
+    },
+    {
+     "basis": "no verified evidence floor exists for any AL-09 constituent",
+     "quote_ids": [
+      "Q2-AL09-FLOOR",
+      "Q2-AL09-ITEM"
+     ]
+    },
+    {
+     "basis": "Hall PPU analog floors (SETS 5.0 / NG EM1 6.1 / TAS Mk1 10.9 kg) and the scope-matched basket arithmetic that adds the 1.0 kg controls/harness figure to the 2.5 kg PPU allocation; the valve drivers are recorded as inside the PPU analog in H2-7 v1, so these floors are scope-overlapping context for AL-09, not an AL-09 floor",
+     "quote_ids": [
+      "Q2-PPU-NAME",
+      "Q2-PPU-FLOOR",
+      "Q2-BOM-A9B-26",
+      "Q2-BOM-A9B-26-MAP"
+     ]
+    },
+    {
+     "basis": "AL-09 member items (BOM): valve drivers / housekeeping electronics, control / FDIR electronics, flight sensors; every CBE TBD",
+     "quote_ids": [
+      "Q2-AL09-NAME",
+      "Q2-BOM-A9B-26",
+      "Q2-BOM-A9B-27",
+      "Q2-BOM-A9B-29"
+     ]
+    },
+    {
+     "basis": "power side only (not a mass basis): 50 W controls/thermal allowance inside the 300 W common allocation (row 114)",
+     "quote_ids": [
+      "Q2-PWR-ALLOW"
+     ]
+    }
+   ],
+   "options": [
+    {
+     "id": "2-A",
+     "origin": "OPTION_AS_RECORDED_IN_REPOSITORY",
+     "label": "keep the 1.0 kg row-54 figure for controls alone (named in the question)",
+     "evidence_quote_ids": [
+      "Q2-STATE-Q",
+      "Q2-ROW54"
+     ],
+     "artifact_consequences": [
+      "mass/power builder (docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py or its successor revision) books AL-09 = the owner value as OWNER_ALLOCATION; the missing-term entry leaves the roll-ups and the flight roll-up vs 40 kg; owner state (next version) closes MPV3Q-01; M16 v5 row, freeze-candidate reference and decision application matrix updated; HISTORY entry"
+     ]
+    },
+    {
+     "id": "2-B",
+     "origin": "OPTION_AS_RECORDED_IN_REPOSITORY",
+     "label": "another value (owner supplies the number and its basis)",
+     "evidence_quote_ids": [
+      "Q2-STATE-Q"
+     ],
+     "artifact_consequences": [
+      "as 2-A with the owner value; the repository records no other candidate number"
+     ]
+    }
+   ],
+   "one_line_answer_form": "MPV3Q-01: AL-09 (controls / electronics / valve drivers / flight sensors, harness excluded) = 1.0 kg (row-54 figure) | = <x> kg because <basis>"
+  },
+  {
+   "no": 3,
+   "id": "XV3Q-01",
+   "title": "ICP-feed nomenclature: G-REUSE primary vs dedicated G-ATM / G-XE variants",
+   "decision_owner": "owner",
+   "question_as_recorded": {
+    "quote_ids": [
+     "Q3-STATE-Q",
+     "Q3-XE3-Q"
+    ]
+   },
+   "status_as_recorded": {
+    "quote_ids": [
+     "Q3-STATE-PROPOSED",
+     "Q3-STATE-BASIS",
+     "Q3-XE3-A91",
+     "Q3-XE3-A919-NOTE"
+    ]
+   },
+   "blocks": [
+    {
+     "what": "LOCK-1 (state v5 classification BLOCKS_LOCK_1)",
+     "quote_ids": [
+      "Q3-STATE-BLOCKS"
+     ]
+    }
+   ],
+   "consistency_constraints": [
+    {
+     "constraint": "A9.1 HIQ-06 (owner): G-REUSE is the primary ICP gas mode; the capped dedicated port allows G-ATM / G-XE as separately declared contingency variants; no dedicated Xe merely to make the ICP work",
+     "quote_ids": [
+      "Q3-HIQ-06-MD"
+     ]
+    },
+    {
+     "constraint": "A9.1 accounting: G-REUSE mdot_ICP,dedicated = 0; G-ATM adds to the atmospheric total; G-XE booked explicitly in the Xe ledger (PHASE_TOTAL_FLOW)",
+     "quote_ids": [
+      "Q3-HIQ-06-ACC"
+     ]
+    },
+    {
+     "constraint": "A9.19 (owner): Xe role = CONTINGENCY_AND_EMERGENCY; it supersedes the A9.15 \"not a contingency\" statements on the ROLE of Xe only; one RF/ICP neutralizer serves both supply modes",
+     "quote_ids": [
+      "Q3-A919-ROLE",
+      "Q3-A919-AMENDS",
+      "Q3-A919-ARCH"
+     ]
+    },
+    {
+     "constraint": "as carried: the A9.1 ICP feed-gas baseline is unchanged in Xe v3 and P1 (G-REUSE primary, G-XE declared variant, CASE-3 optional entries absent from every primary scenario); with the Hall on Xe, G-REUSE runs the ICP on the Xe exhaust",
+     "quote_ids": [
+      "Q3-XE3-BASELINE",
+      "Q3-XE3-CASE3",
+      "Q3-XE3-LABEL",
+      "Q3-XE3-REUSE-XE",
+      "Q3-P1-A919"
+     ]
+    }
+   ],
+   "options": [
+    {
+     "id": "3-A",
+     "origin": "OPTION_AS_RECORDED_IN_REPOSITORY",
+     "label": "A9.15 / A9.19 do not change the A9.1 HIQ-06 ICP-feed labels (keep G-REUSE primary; G-ATM / G-XE separately declared contingency variants); the Xe v3 recorder note reads no remaining conflict after A9.19, but records the closure as the owner's",
+     "evidence_quote_ids": [
+      "Q3-XE3-A919-NOTE",
+      "Q3-A919-AMENDS",
+      "Q3-XE3-BASELINE"
+     ],
+     "artifact_consequences": [
+      "XV3Q-01 closed in the next owner-question state; Xe v3 label_note references to XV3Q-01 become history at its next revision; M16 v5 and the decision application matrix entry updated; no ledger value changes"
+     ]
+    },
+    {
+     "id": "3-B",
+     "origin": "OPTION_AS_RECORDED_IN_REPOSITORY",
+     "label": "the labels change (owner states the new nomenclature)",
+     "evidence_quote_ids": [
+      "Q3-STATE-Q"
+     ],
+     "artifact_consequences": [
+      "Xe accounting (G-XE items and label notes, CASE-3), P1 a9_19 icp_feed_gas_baseline, mass/power BOM ICP gas-feed flow-control variant line, RVM rows citing the ICP feed, RFQ gas lines and owner-question state regenerated; any change must keep the A9.1 accounting rules above unless the owner amends them"
+     ]
+    }
+   ],
+   "one_line_answer_form": "XV3Q-01: no change - G-REUSE primary, G-ATM / G-XE declared contingency variants of the ICP feed only | change to: <labels>"
+  },
+  {
+   "no": 4,
+   "id": "GNG-ICP-01",
+   "title": "numerical criteria of the ICP go / no-go gate (recorder proposal RP-A919-01)",
+   "decision_owner": "owner",
+   "question_as_recorded": {
+    "quote_ids": [
+     "Q4-GNG-OWNER",
+     "Q4-GNG-PRESERVED",
+     "Q4-RP-NUMBERS",
+     "Q4-RP-CRITERIA-PART"
+    ]
+   },
+   "proposal_verbatim": {
+    "origin": "RECORDER_PROPOSAL_RP-A919-01 (not approved; preserved for owner review)",
+    "quote_ids": [
+     "Q4-RP-TEXT",
+     "Q4-GNG-PRESERVED"
+    ]
+   },
+   "blocks": [
+    {
+     "what": "LOCK-1: it cannot be reported released while GNG-ICP-01 is not GO; the gate is NOT_EVALUATED (fail closed) without owner-accepted criteria",
+     "quote_ids": [
+      "Q4-GNG-STATUS",
+      "Q4-GNG-FAILCLOSED",
+      "Q4-GNG-LOCK1",
+      "Q4-AFC-LOCK1"
+     ]
+    }
+   ],
+   "criteria": [
+    {
+     "criterion": "(a) measured ICP electron-current capacity I_e,cap >= I_d,max with a pre-registered margin",
+     "evidence_needed": "ICP-45 capacity rule as recorded: discharge-OFF, floating anode, signed RF-ON minus RF-OFF collector current, Kirchhoff closure; I_d,max,H1 registered from H-1 operation (not the supply rating); owner-given margin form M_n lower bound > 0 at one-sided alpha 0.05 (freeze LOCK-1); today PENDING_ICP45 / NOT_EVALUATED",
+     "number_to_freeze": "whether the owner-given M_n form is the GNG margin, or another margin",
+     "quote_ids": [
+      "Q4-A-RVM15",
+      "Q4-A-EVAL",
+      "Q4-A-VNOTE",
+      "Q4-A-MARGIN-FORM",
+      "Q4-A-STATUS"
+     ]
+    },
+    {
+     "criterion": "(b) RF power per extracted ampere (W/A) within the power budget",
+     "evidence_needed": "owner-given electron-cost definitions C_e = P_RF,delivered / I_e and C_e,DC = P_generator,input / I_e (each with its boundary label); the budget side is P_ICP,available = 1350 - P_common - P_Hall - P_other_active at every registered condition (no fixed Hall/ICP split)",
+     "number_to_freeze": "which C_e (RF plane or DC input) and the W/A ceiling, or the rule deriving it from P_ICP,available and I_d,max,H1",
+     "quote_ids": [
+      "Q4-B-COST",
+      "Q4-B-PICP",
+      "Q4-B-VNOTE"
+     ]
+    },
+    {
+     "criterion": "(c) repeatable ignition on N2 and on Xe",
+     "evidence_needed": "P1 records ignition attempts and success fraction with >= 3 independent re-ignitions per point (owner A9.10 P1Q-05); P1 is Ar-only; N2 is the ICP-45N stage and Xe the separate Xe-mode stage; Xe operation of the ICP is not yet measured",
+     "number_to_freeze": "attempts per point, required success fraction and conditions, separately for N2 and Xe",
+     "quote_ids": [
+      "Q4-C-STABLE",
+      "Q4-C-STAGES",
+      "Q4-C-RVM28",
+      "Q4-C-CASE1"
+     ]
+    }
+   ],
+   "timing_rule": {
+    "text": "the numbers must be owner-frozen before LOCK-1 (lock1_rule) and before any evidence they judge is seen (pre-registration discipline of CLAUDE.md; the owner did not approve criteria not visible in the proposal text). Recorded exception to note: the P1 Ar stable-region criteria are by owner decision derived from P1-S2..S4 evidence; recorder reading RR-01 closes the stable-region criteria of the registered ICP-45N / Xe-mode campaigns before their first record",
+    "quote_ids": [
+     "Q4-GNG-LOCK1",
+     "Q4-GNG-OWNER",
+     "Q4-C-STABLE",
+     "Q6-RR-01"
+    ]
+   },
+   "options": [
+    {
+     "id": "4-A",
+     "origin": "OPTION_AS_RECORDED_IN_REPOSITORY",
+     "label": "accept (a)-(c) as the GNG-ICP-01 criteria with owner numbers",
+     "evidence_quote_ids": [
+      "Q4-RP-TEXT",
+      "Q4-RP-NUMBERS"
+     ],
+     "artifact_consequences": [
+      "a new owner decision file with the numbers; docs/requirements/rvm_a9/a9_21_icp_gate.py evaluates them (criteria field leaves PENDING_OWNER_ACCEPTANCE); RVM owner_approved_gates regenerated; freeze-candidate pre-LOCK-1 gate and HW programme ICP-45N / ICP-XE-MODE registrations cite them"
+     ]
+    },
+    {
+     "id": "4-B",
+     "origin": "OPTION_AS_RECORDED_IN_REPOSITORY",
+     "label": "amend (a)-(c) (owner text replaces the proposal)",
+     "evidence_quote_ids": [
+      "Q4-RP-CRITERIA-PART"
+     ],
+     "artifact_consequences": [
+      "as 4-A with the owner text"
+     ]
+    },
+    {
+     "id": "4-C",
+     "origin": "OPTION_AS_RECORDED_IN_REPOSITORY",
+     "label": "not yet (gate stays NOT_EVALUATED; LOCK-1 not reportable)",
+     "evidence_quote_ids": [
+      "Q4-GNG-STATUS",
+      "Q4-GNG-LOCK1"
+     ],
+     "artifact_consequences": [
+      "none"
+     ]
+    }
+   ],
+   "one_line_answer_form": "GNG-ICP-01: (a) margin = <M_n LB > 0 at alpha 0.05 | other>; (b) C_e <RF|DC> <= <x> W/A | rule <...>; (c) N2: <n> attempts, >= <p> success; Xe: <n>, >= <p>; frozen in <file> before LOCK-1"
+  },
+  {
+   "no": 5,
+   "id": "BID-FREEZE-CAVEAT",
+   "title": "bid freeze caveat: bbc480c five-state F7/F8 numbers vs post-freeze F9-DF-01 (32c9e63)",
+   "decision_owner": "owner",
+   "question_as_recorded": {
+    "quote_ids": [
+     "Q5-ATTENTION"
+    ]
+   },
+   "record": {
+    "quote_ids": [
+     "Q5-DECISION",
+     "Q5-SOURCE",
+     "Q5-VERIFIED",
+     "Q5-RULES",
+     "Q5-RANGE"
+    ]
+   },
+   "blocks": [
+    {
+     "what": "the wording of every upstream (intake / compressor / feed) statement in the submission; the operational bid deadline as recorded",
+     "quote_ids": [
+      "Q5-ATTENTION",
+      "Q5-DEADLINE"
+     ]
+    }
+   ],
+   "evidence": {
+    "bbc480c_five_state": [
+     "Q5-BID-OBJ",
+     "Q5-BID-F78-01",
+     "Q5-BID-F78-02",
+     "Q5-BID-F8-01"
+    ],
+    "32c9e63_196_state": [
+     "Q5-DF-STATUS",
+     "Q5-DF-FINDING",
+     "Q5-DF-RELAX"
+    ]
+   },
+   "options": [
+    {
+     "id": "5-A",
+     "origin": "OPTION_AS_RECORDED_IN_REPOSITORY",
+     "label": "cite the bbc480c F7/F8 numbers as five-state screening results only",
+     "evidence_quote_ids": [
+      "Q5-ATTENTION",
+      "Q5-BID-OBJ",
+      "Q5-BID-F8-01"
+     ],
+     "artifact_consequences": [
+      "bid source stays bbc480c (tag bid-technical-baseline-2026-10-05); every upstream number is labelled \"five hand-picked orbit-averaged states, screening\"; the bid narrative claims no robust upstream closure; F9-DF-01 stays post-freeze work; the owner decision is recorded as a new decision file / bid record addendum"
+     ]
+    },
+    {
+     "id": "5-B",
+     "origin": "OPTION_AS_RECORDED_IN_REPOSITORY",
+     "label": "re-freeze the bid technical source at 32c9e63",
+     "evidence_quote_ids": [
+      "Q5-ATTENTION",
+      "Q5-DF-FINDING"
+     ],
+     "artifact_consequences": [
+      "new bid record and tag at 32c9e63; the narrative states that under the 196-state design envelope no robust upstream design survives (F8 robust Pareto set empty, F4 all-state frontier 0.01296 mg/s) as a design finding, not a requirement failure and no relaxation; the verification line (full suite / rule 9 / golden / ci_checks) is recorded for bbc480c only and would have to be re-recorded at 32c9e63"
+     ]
+    }
+   ],
+   "one_line_answer_form": "BID: cite bbc480c upstream numbers as five-state screening only | re-freeze at 32c9e63"
+  },
+  {
+   "no": 6,
+   "id": "RECORDER-READINGS",
+   "title": "pending recorder readings needing accept / reverse",
+   "decision_owner": "owner",
+   "readings": [
+    {
+     "id": "RR-01",
+     "quote_ids": [
+      "Q6-RR-01"
+     ],
+     "options": [
+      "ACCEPT reading",
+      "REVERSE to the recorded alternative"
+     ],
+     "consequence_if_reversed": "HW programme (docs/experiments/hall_icp/programme/hw_programme_a9_21.py) adds the four closures as preconditions of ICP-AR-REF; the recorded alternative contradicts A9.11 P1Q-01 (P1 stable-region criteria from P1-S2..S4 evidence)"
+    },
+    {
+     "id": "RR-02",
+     "quote_ids": [
+      "Q6-RR-02"
+     ],
+     "options": [
+      "ACCEPT (C1-REF after H1-S7.2)",
+      "REVERSE (only \"before P1-S7\")"
+     ],
+     "consequence_if_reversed": "HW programme predecessor of C1-REF changes"
+    },
+    {
+     "id": "RR-03",
+     "quote_ids": [
+      "Q6-RR-03"
+     ],
+     "options": [
+      "ACCEPT labels",
+      "RENAME"
+     ],
+     "consequence_if_reversed": "step ids in the HW programme record and its consumers renamed"
+    },
+    {
+     "id": "RF3-FLAG-06",
+     "quote_ids": [
+      "Q6-FLAG-06"
+     ],
+     "options": [
+      "ACCEPT mapping",
+      "RE-MAP GAS-L10 and/or GAS-L04"
+     ],
+     "consequence_if_reversed": "RFQ v3 GAS quote sheets (AL-08 split categories) regenerated"
+    },
+    {
+     "id": "RF3-FLAG-07",
+     "quote_ids": [
+      "Q6-FLAG-07",
+      "Q6-OPEN-CLASSES"
+     ],
+     "options": [
+      "ACCEPT the open-item classification rule",
+      "REVERSE / amend the rule",
+      "send the Xe storage / flow LATER lines earlier (owner call)"
+     ],
+     "consequence_if_reversed": "RFQ v3 dispatch_readiness per package regenerated"
+    },
+    {
+     "id": "TH-L09",
+     "quote_ids": [
+      "Q6-THL09-ITEM",
+      "Q6-THL09-QTY",
+      "Q6-THL09-READY",
+      "Q6-THRUST-NOW"
+     ],
+     "options": [
+      "keep quantity BLOCKING_SEND until the dispatched P1 line set fixes it (RFQ3-THRUST stays NOT_READY_BLOCKING_TBD)",
+      "owner reclassifies the quantity under RF3-FLAG-07 (e.g. a per-instrument quotation the supplier answers, class SUPPLIER_TO_ANSWER)"
+     ],
+     "consequence_if_reversed": "RFQ3-THRUST NOW subset can become READY_FOR_OWNER_DISPATCH",
+     "origin_of_second_option": "RECORDER_OBSERVATION_OF_REPOSITORY_FACT (the class exists in the recorded vocabulary; no such reclassification is recorded)"
+    },
+    {
+     "id": "F9-RFP-CORRESPONDENCES",
+     "quote_ids": [
+      "Q6-F9-STATUS",
+      "Q6-F9-L1",
+      "Q6-F9-L2",
+      "Q6-F9-L3",
+      "Q6-F9-L4",
+      "Q6-F9-L5"
+     ],
+     "text_match_links": [
+      "AFC-UP-FI-01 / F2-OQ-01 -> RVM-09 (VERBATIM_FACT)",
+      "AFC-UP-FI-01 / F2-OQ-03 -> RVM-08 (VERBATIM_FACT)",
+      "AG-12 / F9-OQ-02 -> RVM-01 (VERBATIM_FACT)",
+      "AG-12 / F9-OQ-02 -> RVM-02 (VERBATIM_FACT)",
+      "AFC-SY-PWR-01 -> RVM-04 (PARAMETER_FACT)"
+     ],
+     "options": [
+      "ACCEPT all five",
+      "REVERSE <link>"
+     ],
+     "consequence_if_reversed": "docs/architecture/freeze_candidate/rfp_citations_f9.py CORRESPONDENCE entry removed; the record then carries UNMAPPED_NO_RVM_MAPPED_CLAUSE with its reason; freeze candidate regenerated"
+    },
+    {
+     "id": "F1-OUTPUT-STORAGE",
+     "quote_ids": [
+      "Q6-F1-OPEN",
+      "Q6-DATA-SIZE"
+     ],
+     "file_fact": {
+      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+      "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+      "size_bytes": 36690882,
+      "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+     },
+     "options": [
+      "keep the JSON in Git as is",
+      "one canonical compressed copy with builder, manifest and sha256 (A9.17 DATA_SIZE)",
+      "immutable external artifact referenced by sha256 (A9.17 DATA_SIZE, \"if versions start bloating history\")"
+     ],
+     "consequence_if_reversed": "F1 builder (docs/design_synthesis/f1_intake/build_f1_intake.py) write path and its consumers (F4, F7/F8, F9 readers, tests) change to the chosen form"
+    }
+   ],
+   "one_line_answer_form": "RR-01 A|R; RR-02 A|R; RR-03 A|R; FLAG-06 A|remap; FLAG-07 A|R; TH-L09 wait|reclassify; F9 links: accept all | reverse <ids>; F1 storage: git|compressed|external"
+  },
+  {
+   "no": 7,
+   "id": "OUTSIDE-REPOSITORY",
+   "title": "items the repository cannot do (owner / procurement / hardware)",
+   "decision_owner": "owner / procurement / hardware team",
+   "entries": [
+    {
+     "id": "RFQ-DISPATCH",
+     "quote_ids": [
+      "Q7-DISPATCH-DECISION",
+      "Q7-REPO-DISPATCHES",
+      "Q7-RFQ3-RF",
+      "Q7-RFQ3-GAS",
+      "Q7-RFQ3-VAC",
+      "Q7-RFQ3-HALLEL",
+      "Q7-RFQ3-MECH",
+      "Q7-RFQ3-THRUST",
+      "Q7-RFQ3-RFMET",
+      "Q7-RFQ3-H1FAB"
+     ],
+     "ready_for_owner_dispatch": [
+      "RFQ3-RF",
+      "RFQ3-GAS",
+      "RFQ3-VAC",
+      "RFQ3-HALLEL",
+      "RFQ3-MECH",
+      "RFQ3-RFMET"
+     ],
+     "not_ready": {
+      "RFQ3-THRUST": "NOT_READY_BLOCKING_TBD",
+      "RFQ3-H1FAB": "NOT_READY_AWAITING_CONTROLLED_H1_DRAWINGS"
+     },
+     "who": "owner / procurement (outside the repository; no purchase order authorized)"
+    },
+    {
+     "id": "FEMM-S7.1",
+     "quote_ids": [
+      "Q7-FEMM-STATUS",
+      "Q7-FEMM-DECISION",
+      "Q7-FEMM-RULES",
+      "Q7-FEMM-POINTS",
+      "Q7-FEMM-RESULTS",
+      "Q7-S71-PRE",
+      "Q7-S71-STATUS",
+      "Q7-S71-OUTPUTS",
+      "Q7-REG-FIELDS"
+     ],
+     "environment": "FEMM is not available in this Linux execution environment (no femm / xfemm executable on PATH, no pyfemm module; checked 2026-10-03); S7.1 must run on an owner machine",
+     "authorised_points": [
+      "A_min_dh_max L/h 8.603",
+      "A_min_dh_max L/h 12.0",
+      "A_max_dh_min L/h 8.603",
+      "A_max_dh_min L/h 12.0",
+      "A_max_dh_max L/h 8.603",
+      "A_max_dh_max L/h 12.0",
+      "RP-1 anchor (not a selection)"
+     ],
+     "not_authorised_points": [
+      "A_min_dh_min L/h 8.603",
+      "A_min_dh_min L/h 12.0"
+     ],
+     "missing_for_startable": "precondition H1-S7.1-PRE-01: a registration of the authorised analysis-point set and geometry ids carrying registration_id, frozen_utc (ISO-8601 with offset) and sha256; none exists, so the step is NOT_STARTABLE_PRECONDITION_MISSING. Outputs then: one FEMM result record per authorised point (result_id, sha256, geometry_id, solver_configuration_id); H1-S7.2 needs results for EVERY authorised point",
+     "who": "owner / H-1 team on a machine with FEMM"
+    },
+    {
+     "id": "P2-CALIBRATION-FREEZE",
+     "quote_ids": [
+      "Q7-P2-PRE",
+      "Q7-P2-STATUS"
+     ],
+     "who": "hardware: in-house V/I magnitude / relative-phase calibration and its uncertainty budget frozen"
+    },
+    {
+     "id": "HARDWARE-CAMPAIGNS",
+     "quote_ids": [
+      "Q7-HW-H1-S7.1",
+      "Q7-HW-H1-S7.2",
+      "Q7-HW-C1-REF",
+      "Q7-HW-ICP-AR-REF",
+      "Q7-HW-ICP-45A-P1-S7",
+      "Q7-HW-ICP-45N",
+      "Q7-HW-ICP-XE-MODE",
+      "Q7-HW-P2-MAP",
+      "Q7-HW-COUPLED-H1-ICP",
+      "Q7-HW-P3-THERMAL",
+      "Q7-HW-P4-ACCEPTANCE-EXPOSURE",
+      "Q7-HW-H1-THRUST-FEED-MAP",
+      "Q7-HW-AG-12",
+      "Q7-HW-AG-13"
+     ],
+     "who": "hardware team (C1-REF, ICP-AR-REF, ICP-45A, ICP-45N, ICP-XE-MODE, coupled H-1 + ICP, P3, P4, H-1 thrust / feed map)"
+    },
+    {
+     "id": "PERF_RERUN",
+     "quote_ids": [
+      "Q7-PERF",
+      "Q7-PERF-ADM"
+     ],
+     "who": "owner on the idle dedicated owner machine"
+    }
+   ],
+   "one_line_answer_form": "none (owner actions; acknowledge or schedule)"
+  }
+ ],
+ "quotes": [
+  {
+   "id": "Q1-GATE",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rfp_rebase/gate",
+   "verbatim": "AG-15 (A9.13 S6.22 F9-OQ-03)"
+  },
+  {
+   "id": "Q1-GATE-TEXT",
+   "path": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "7c0a2b75c7f0af174327dcaa47d6741133d94adefada463472d5d413a54cc954",
+   "kind": "json",
+   "locator": "/architecture_gates[id=AG-15]/blocking_evidence/assessment/gate_text_verbatim",
+   "verbatim": "The official RFP is now available to the project, but before this gate closes it must be placed/registered in the repository evidence system with immutable provenance/hash and the RVM requirements re-based against it. The repository may not continue relying only on secondary transcriptions."
+  },
+  {
+   "id": "Q1-AG15-STATUS",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rfp_rebase/ag_15_status",
+   "verbatim": "OPEN - RFP registered by hash with verbatim transcription and the RVM re-based; closure is the owner's (not declared here)"
+  },
+  {
+   "id": "Q1-REBASE-RULE",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rfp_rebase/rule",
+   "verbatim": "every RVM row cites the RFP clause id(s) it derives from or is labelled DERIVED_PROJECT_REQUIREMENT / OWNER_ALLOCATION; every registered clause maps to at least one row or is a recorded programmatic item; statuses unchanged by the re-base (rvm_rules; no PASS without determining evidence, A9.13 S6.22); requirement_frozen stays false on RFP rows until the owner closes AG-15"
+  },
+  {
+   "id": "Q1-RC-01",
+   "path": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "7c0a2b75c7f0af174327dcaa47d6741133d94adefada463472d5d413a54cc954",
+   "kind": "json",
+   "locator": "/architecture_gates[id=AG-15]/blocking_evidence/assessment/remaining_conditions[id=AG15-RC-01]/condition",
+   "verbatim": "owner closure of AG-15: owner acceptance of the RVM re-base against the registered RFP and requirement_frozen = true on the RFP_CLAUSE rows"
+  },
+  {
+   "id": "Q1-AFC-STATUS",
+   "path": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "7c0a2b75c7f0af174327dcaa47d6741133d94adefada463472d5d413a54cc954",
+   "kind": "json",
+   "locator": "/architecture_gates[id=AG-15]/current_status",
+   "verbatim": "RFP_REGISTERED_AND_RVM_REBASED_PENDING_OWNER_CLOSURE (remaining: AG15-RC-01 owner closure of AG-15: owner acceptance of the RVM re-base against the registered RFP and requirement_frozen = true on the RFP_CLAUSE rows - OPEN (RVM re-base ag_15_status: \"OPEN - RFP registered by hash with verbatim transcription and the RVM re-based; closure is the owner's (not declared here)\"; requirement_frozen true on 0 of 22 RFP_CLAUSE rows))"
+  },
+  {
+   "id": "Q1-AFC-SUFFICIENT",
+   "path": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "7c0a2b75c7f0af174327dcaa47d6741133d94adefada463472d5d413a54cc954",
+   "kind": "json",
+   "locator": "/architecture_gates[id=AG-15]/evidence_sufficient_for_freeze",
+   "verbatim": false
+  },
+  {
+   "id": "Q1-FREEZE-RULE",
+   "path": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "7c0a2b75c7f0af174327dcaa47d6741133d94adefada463472d5d413a54cc954",
+   "kind": "json",
+   "locator": "/freeze_rule",
+   "verbatim": "FROZEN_REFERENCE_FLIGHT_ARCHITECTURE only when architecture-level gates have sufficient evidence; until then INVESTIGATION_HYPOTHESIS"
+  },
+  {
+   "id": "Q1-REG-STATUS",
+   "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "be2d26cdc8c8b140f29d26b52140a3bae6d1080ecaa92ea40841889207e49412",
+   "kind": "json",
+   "locator": "/status",
+   "verbatim": "REGISTERED_BY_HASH_PDF_CONTROLLED_EXTERNALLY"
+  },
+  {
+   "id": "Q1-REG-PDF",
+   "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "be2d26cdc8c8b140f29d26b52140a3bae6d1080ecaa92ea40841889207e49412",
+   "kind": "json",
+   "locator": "/document/sha256",
+   "verbatim": "a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00"
+  },
+  {
+   "id": "Q1-REG-PAGES",
+   "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "be2d26cdc8c8b140f29d26b52140a3bae6d1080ecaa92ea40841889207e49412",
+   "kind": "json",
+   "locator": "/document/pages",
+   "verbatim": 40
+  },
+  {
+   "id": "Q1-REG-CLAUSES-SHA",
+   "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "be2d26cdc8c8b140f29d26b52140a3bae6d1080ecaa92ea40841889207e49412",
+   "kind": "json",
+   "locator": "/rvm_mapping/clauses_sha256",
+   "verbatim": "fd51a951a1d06ea8bebd39416147686aedb1f596170fb81b6583f4564148a8aa"
+  },
+  {
+   "id": "Q1-REG-NOT-IN-DOC",
+   "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "be2d26cdc8c8b140f29d26b52140a3bae6d1080ecaa92ea40841889207e49412",
+   "kind": "json",
+   "locator": "/document/not_in_document",
+   "verbatim": [
+    "bid due / closing date (the RFP refers to the tender document on DefProc for important dates, Part I note 5); the 05 Oct 2026 date in CLAUDE.md is therefore NOT verified by this file"
+   ]
+  },
+  {
+   "id": "Q1-REG-UNSCREENED",
+   "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "be2d26cdc8c8b140f29d26b52140a3bae6d1080ecaa92ea40841889207e49412",
+   "kind": "json",
+   "locator": "/page_coverage/pages_not_screened",
+   "verbatim": "pages 1-15 and 34-40 were not screened for requirement-bearing clauses in this record (bid / legal / programmatic front and back matter per the document structure, not verified page by page): status UNSCREENED_PENDING_OWNER_PAGE_REVIEW of the owner-held PDF; nothing is assumed about their content"
+  },
+  {
+   "id": "Q1-ORIGIN-COUNTS",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rfp_rebase/origin_counts",
+   "verbatim": {
+    "RFP_CLAUSE": 22,
+    "DERIVED_PROJECT_REQUIREMENT": 3,
+    "OWNER_ALLOCATION": 5
+   }
+  },
+  {
+   "id": "Q1-RVM-01-TITLE",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-01]/title",
+   "verbatim": "Altitude envelope 180-230 km"
+  },
+  {
+   "id": "Q1-RVM-01-CLAUSES",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-01]/rfp_clauses",
+   "verbatim": [
+    "RFP-P18-04",
+    "RFP-P18-05"
+   ]
+  },
+  {
+   "id": "Q1-RVM-01-TEXT",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-01]/requirement_text",
+   "verbatim": "Operate the ABEP propulsion system in very low Earth orbit over the altitude band 180-230 km: every required state of the frozen 180-230 km mission / environment dataset must satisfy the applicable hard requirements (A9.14 OD2); design atmosphere states come from the versioned orbit-resolved dataset (A9.14 OD3; built as atmosphere_msis21_orbit_v1_design_states_v2, not yet consumed by the design-layer statewise evaluators)."
+  },
+  {
+   "id": "Q1-RVM-01-FROZEN",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-01]/requirement_frozen",
+   "verbatim": false
+  },
+  {
+   "id": "Q1-RVM-02-TITLE",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-02]/title",
+   "verbatim": ">= 12 mN minimum sustained thrust on atmospheric propellant"
+  },
+  {
+   "id": "Q1-RVM-02-CLAUSES",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-02]/rfp_clauses",
+   "verbatim": [
+    "RFP-P18-06"
+   ]
+  },
+  {
+   "id": "Q1-RVM-02-TEXT",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-02]/requirement_text",
+   "verbatim": "Demonstrate >= 12 mN sustained atmospheric operation (owner row 4 reading of '12-25 mN'), measured on the full system inside the < 1.5 kW spacecraft-DC boundary."
+  },
+  {
+   "id": "Q1-RVM-02-FROZEN",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-02]/requirement_frozen",
+   "verbatim": false
+  },
+  {
+   "id": "Q1-RVM-03-TITLE",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-03]/title",
+   "verbatim": "25 mN demonstrated system capability inside P_bus < 1.5 kW"
+  },
+  {
+   "id": "Q1-RVM-03-CLAUSES",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-03]/rfp_clauses",
+   "verbatim": [
+    "RFP-P18-06",
+    "RFP-P18-10"
+   ]
+  },
+  {
+   "id": "Q1-RVM-03-TEXT",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-03]/requirement_text",
+   "verbatim": "Demonstrate 25 mN system capability inside the same full spacecraft-DC propulsion boundary with P_bus < 1.5 kW (16.67 mN/kW absolute full-system floor at that point); Xe is not required for 25 mN, any Xe use is booked, and XE_AUGMENTED_PEAK points are never atmospheric-only evidence."
+  },
+  {
+   "id": "Q1-RVM-03-FROZEN",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-03]/requirement_frozen",
+   "verbatim": false
+  },
+  {
+   "id": "Q1-RVM-04-TITLE",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-04]/title",
+   "verbatim": "< 1.5 kW full bus power (A9-02 boundary, steady and start-up, 1 ms window)"
+  },
+  {
+   "id": "Q1-RVM-04-CLAUSES",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-04]/rfp_clauses",
+   "verbatim": [
+    "RFP-P18-10",
+    "RFP-P18-01"
+   ]
+  },
+  {
+   "id": "Q1-RVM-04-TEXT",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-04]/requirement_text",
+   "verbatim": "P_bus,1ms,max = max_t (1/1 ms) integral P_bus dt < 1500 W at the spacecraft-DC propulsion boundary (every active load: Hall discharge, magnets, RF source / match, collector bias, C1 supplies, compressor, flow control, housekeeping, thermal), for steady state AND start-up transients; the registered RFP prints only '<1500W' (RFP-P18-10) and grants no transient exception."
+  },
+  {
+   "id": "Q1-RVM-04-FROZEN",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-04]/requirement_frozen",
+   "verbatim": false
+  },
+  {
+   "id": "Q1-RVM-06-TITLE",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-06]/title",
+   "verbatim": "< 40 kg wet (incl. Xe + tank)"
+  },
+  {
+   "id": "Q1-RVM-06-CLAUSES",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-06]/rfp_clauses",
+   "verbatim": [
+    "RFP-P18-11"
+   ]
+  },
+  {
+   "id": "Q1-RVM-06-TEXT",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-06]/requirement_text",
+   "verbatim": "Total propulsion-system mass < 40 kg, read as the wet system including Xe and tank (owner row 5; the registered RFP prints '< 40kg' without wet / dry, RFP-P18-11, recorded as DISC-02 for DRDO clarification); 20 % internal development margin (row 52)."
+  },
+  {
+   "id": "Q1-RVM-06-FROZEN",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-06]/requirement_frozen",
+   "verbatim": false
+  },
+  {
+   "id": "Q1-RVM-08-TITLE",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-08]/title",
+   "verbatim": "Atmospheric propellant (air: N2 / O2 path; NO_ATOMIC_O labels)"
+  },
+  {
+   "id": "Q1-RVM-08-CLAUSES",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-08]/rfp_clauses",
+   "verbatim": [
+    "RFP-P18-08",
+    "RFP-P16-02",
+    "RFP-P17-03",
+    "RFP-P17-04",
+    "RFP-P19-03"
+   ]
+  },
+  {
+   "id": "Q1-RVM-08-TEXT",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-08]/requirement_text",
+   "verbatim": "Operate on intake-collected atmospheric air through the RFP architecture path (intake -> filter -> compressor -> atmospheric gas chamber -> valve -> ionization/discharge -> acceleration). Evidence order: Ar (engineering-only, never counts) -> N2 -> O2-bearing surrogate labelled NO_ATOMIC_O -> separate atomic-O programme; no N2 + O2 test is AO proof."
+  },
+  {
+   "id": "Q1-RVM-08-FROZEN",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-08]/requirement_frozen",
+   "verbatim": false
+  },
+  {
+   "id": "Q1-RVM-09-TITLE",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-09]/title",
+   "verbatim": "Ionise N2 and nascent (atomic) O in the same thruster (RFP-P17-05, RFP-P17-02)"
+  },
+  {
+   "id": "Q1-RVM-09-CLAUSES",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-09]/rfp_clauses",
+   "verbatim": [
+    "RFP-P17-05",
+    "RFP-P17-02"
+   ]
+  },
+  {
+   "id": "Q1-RVM-09-TEXT",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-09]/requirement_text",
+   "verbatim": "The thruster ionizes N2 and atomic oxygen in the same thruster (RFP-P17-05; critical technology 1 'Electric propulsion thruster to Ionize and accelerate N2 and nascent O', RFP-P17-02). No numeric threshold is printed. N2 + O2 surrogate data are NO_ATOMIC_O and never atomic-O evidence; compliance gate CG-N2-AO (A9.14 OD12)."
+  },
+  {
+   "id": "Q1-RVM-09-FROZEN",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-09]/requirement_frozen",
+   "verbatim": false
+  },
+  {
+   "id": "Q1-RVM-10-TITLE",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-10]/title",
+   "verbatim": "Xe capability (air + Xe; bounded functional Xe mode)"
+  },
+  {
+   "id": "Q1-RVM-10-CLAUSES",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-10]/rfp_clauses",
+   "verbatim": [
+    "RFP-P18-08",
+    "RFP-P17-05",
+    "RFP-P16-02"
+   ]
+  },
+  {
+   "id": "Q1-RVM-10-TEXT",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-10]/requirement_text",
+   "verbatim": "Provide RFP-required Xenon propulsion capability alongside ambient atmospheric propellant (A9.15): separate selectable ambient-air and Xe operating modes with separate tanks / paths, in both configurations and independent of C1; demonstrate a bounded functional Xe-capable operating mode beyond bookkeeping and book every Xe use (PHASE_TOTAL_FLOW, LOADED cases); Xe reference / health checks are labelled and never atmospheric evidence."
+  },
+  {
+   "id": "Q1-RVM-10-FROZEN",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-10]/requirement_frozen",
+   "verbatim": false
+  },
+  {
+   "id": "Q1-RVM-11-TITLE",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-11]/title",
+   "verbatim": "Hall-effect thruster preferred"
+  },
+  {
+   "id": "Q1-RVM-11-CLAUSES",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-11]/rfp_clauses",
+   "verbatim": [
+    "RFP-P18-07"
+   ]
+  },
+  {
+   "id": "Q1-RVM-11-TEXT",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-11]/requirement_text",
+   "verbatim": "Preference (not mandate) for a Hall-effect thruster configuration. Both A9 configurations use the H-1 Hall accelerator; A9 keeps the Hall family (CLAUDE.md rule 8)."
+  },
+  {
+   "id": "Q1-RVM-11-FROZEN",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-11]/requirement_frozen",
+   "verbatim": false
+  },
+  {
+   "id": "Q1-RVM-12-TITLE",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-12]/title",
+   "verbatim": "'Ignition Time: More than 15000 hrs' (RFP-P19-01, literal); design basis >= 15,000 h cumulative energized operation"
+  },
+  {
+   "id": "Q1-RVM-12-CLAUSES",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-12]/rfp_clauses",
+   "verbatim": [
+    "RFP-P19-01"
+   ]
+  },
+  {
+   "id": "Q1-RVM-12-TEXT",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-12]/requirement_text",
+   "verbatim": "The RFP prints 'Ignition Time: More than 15000 hrs' (RFP-P19-01; literal wording preserved). Design basis: >= 15,000 h cumulative energized operating life (conservative reading pending clarification, A9.14 S8.5 OQ-VI-04); restart / cycle count from the frozen mission-mode profile (TBD, not invented). C1 carries the 15,000 h cathode basis; the ICP neutralizer carries its own >= 15,000 h life basis."
+  },
+  {
+   "id": "Q1-RVM-12-FROZEN",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-12]/requirement_frozen",
+   "verbatim": false
+  },
+  {
+   "id": "Q1-RVM-13-TITLE",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-13]/title",
+   "verbatim": "Mission-life basis >= 26,280 h"
+  },
+  {
+   "id": "Q1-RVM-13-CLAUSES",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-13]/rfp_clauses",
+   "verbatim": [
+    "RFP-P19-01"
+   ]
+  },
+  {
+   "id": "Q1-RVM-13-TEXT",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-13]/requirement_text",
+   "verbatim": "Mission life >= 26,280 h (three years = 3 x 8,760 h), the conservative engineering basis (row 3) against the registered RFP wording '3 years (Approx 26000 hrs)' (RFP-P19-01; DISC-04)."
+  },
+  {
+   "id": "Q1-RVM-13-FROZEN",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-13]/requirement_frozen",
+   "verbatim": false
+  },
+  {
+   "id": "Q1-RVM-16-TITLE",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-16]/title",
+   "verbatim": "Atomic-oxygen / material compatibility (AO-beam test; anode, collector, keeper, gas path)"
+  },
+  {
+   "id": "Q1-RVM-16-CLAUSES",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-16]/rfp_clauses",
+   "verbatim": [
+    "RFP-P17-02",
+    "RFP-P19-04",
+    "RFP-P19-06",
+    "RFP-P19-02"
+   ]
+  },
+  {
+   "id": "Q1-RVM-16-TEXT",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-16]/requirement_text",
+   "verbatim": "All parts in intake, compressor and thruster take care of nascent atomic-oxygen erosion for the lifetime (RFP-P19-04); materials compatible with VLEO nascent oxygen (RFP-P17-02); coating and surface tests with atomic-oxygen beam exposure and erosion-yield measurement (RFP-P19-06 a); space-qualified materials and processes for the QM (RFP-P19-02). Owner rules carried: 316L REJECTED_AS_CURRENT_BASELINE for the flight anode; final anode / collector material OPEN until coupon evidence; no graphite flight keeper for O / AO exposure; no silver in O / AO-wetted gas-path parts."
+  },
+  {
+   "id": "Q1-RVM-16-FROZEN",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-16]/requirement_frozen",
+   "verbatim": false
+  },
+  {
+   "id": "Q1-RVM-18-TITLE",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-18]/title",
+   "verbatim": "Indigenous content: >= 75 % project, thruster > 80 %, intake > 80 %, compressor / storage > 60 %, PSE > 70 % (RFP-P19-05; > 60 % statement RFP-P18-03 recorded)"
+  },
+  {
+   "id": "Q1-RVM-18-CLAUSES",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-18]/rfp_clauses",
+   "verbatim": [
+    "RFP-P19-05",
+    "RFP-P18-03"
+   ]
+  },
+  {
+   "id": "Q1-RVM-18-TEXT",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-18]/requirement_text",
+   "verbatim": "Minimum 75 % indigenous content in the project deliverables with subsystem minima: space qualified thruster > 80 %, intake system > 80 %, compressor and storage > 60 %, power supply electronics > 70 % (RFP-P19-05); the RFP also prints 'Indigenous Content: >60%' (RFP-P18-03 a). The stricter / more specific targets are used internally; the discrepancy is recorded for DRDO clarification (DISC-03; A9.14 S9.11 OD12). Compliance gate CG-IC."
+  },
+  {
+   "id": "Q1-RVM-18-FROZEN",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-18]/requirement_frozen",
+   "verbatim": false
+  },
+  {
+   "id": "Q1-RVM-19-TITLE",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-19]/title",
+   "verbatim": "Electronics: cater to single-point failure (RFP-P18-09); redundancy at electronics and sensor level (RFP-P18-02)"
+  },
+  {
+   "id": "Q1-RVM-19-CLAUSES",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-19]/rfp_clauses",
+   "verbatim": [
+    "RFP-P18-09",
+    "RFP-P18-02"
+   ]
+  },
+  {
+   "id": "Q1-RVM-19-TEXT",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-19]/requirement_text",
+   "verbatim": "'Must cater to single point failure for electronics' (RFP-P18-09) and 'redundancy in Electronics level and sensor level if any' (RFP-P18-02): redundant / independent critical control, power-switching, telemetry and sensor paths where an individual failure would defeat the mission / safe state, proven by a single-point-failure / FMEA analysis (compliance gate CG-SPF); duplicate thrusters, ICP modules or complete mechanical chains are not required (A9.14 S9.13 RVMQ-01); row-55 limited redundancy remains for the physical thruster / ICP hardware, never as a waiver of electronics / sensor redundancy."
+  },
+  {
+   "id": "Q1-RVM-19-FROZEN",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-19]/requirement_frozen",
+   "verbatim": false
+  },
+  {
+   "id": "Q1-RVM-20-TITLE",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-20]/title",
+   "verbatim": "MIL-1553B interface with the satellite onboard computer + discrete thruster interface + hardware drivers inside the propulsion system"
+  },
+  {
+   "id": "Q1-RVM-20-CLAUSES",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-20]/rfp_clauses",
+   "verbatim": [
+    "RFP-P18-12",
+    "RFP-P18-01"
+   ]
+  },
+  {
+   "id": "Q1-RVM-20-TEXT",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-20]/requirement_text",
+   "verbatim": "MIL-1553B interface with the satellite onboard computer for configuration and for high-rate data-logging with the data recorder; discrete interface for thruster operation; the necessary hardware drivers are part of the propulsion system (RFP-P18-12). The power system electronics take power from the satellite bus and provide the ABEP voltages and currents (RFP-P18-01)."
+  },
+  {
+   "id": "Q1-RVM-20-FROZEN",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-20]/requirement_frozen",
+   "verbatim": false
+  },
+  {
+   "id": "Q1-RVM-21-TITLE",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-21]/title",
+   "verbatim": "Environmental qualification (ENTEST): launch vibration / shock (PSLV / SSLV or DRDO-decided LV), AO erosion, radiation, thermal, ThermoVac, 3-year VLEO life"
+  },
+  {
+   "id": "Q1-RVM-21-CLAUSES",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-21]/rfp_clauses",
+   "verbatim": [
+    "RFP-P19-04",
+    "RFP-P19-02",
+    "RFP-P16-01"
+   ]
+  },
+  {
+   "id": "Q1-RVM-21-TEXT",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-21]/requirement_text",
+   "verbatim": "The product qualifies the launch vibrations and shock (launch loads of PSLV / SSLV or any other launch vehicle decided by DRDO at PDR) and the atomic-oxygen erosion, radiation, thermal and ThermoVac specifications for a VLEO orbit with a 3-year mission life; all intake, compressor and thruster parts take care of nascent atomic-oxygen erosion for the lifetime (RFP-P19-04). ENTEST specifications are provided at PDR: no numeric level is carried (not invented). Space-qualified materials and processes for the QM (RFP-P19-02)."
+  },
+  {
+   "id": "Q1-RVM-21-FROZEN",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-21]/requirement_frozen",
+   "verbatim": false
+  },
+  {
+   "id": "Q1-RVM-22-TITLE",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-22]/title",
+   "verbatim": "RFP test approach 4.1 a-d (AO-beam coating tests; rarefied-gas intake erosion; EM / QM force, Isp, efficiency; expert-committee-approved test plan) and ground demonstration"
+  },
+  {
+   "id": "Q1-RVM-22-CLAUSES",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-22]/rfp_clauses",
+   "verbatim": [
+    "RFP-P19-06",
+    "RFP-P20-02"
+   ]
+  },
+  {
+   "id": "Q1-RVM-22-TEXT",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-22]/requirement_text",
+   "verbatim": "System performance demonstrated by: a) coating-material and surface tests with atomic-oxygen beam exposure and erosion-yield measurement; b) rarefied gas created with prescribed mg/s and velocity to test the intake erosion process; c) minimum functional performance testing of EM and QM in integration mode for force, with variable air intake (mg/s), Isp and total-system efficiency; d) test-plan document reviewed / finalized by an expert committee and approved by PMMG / SPMMG (RFP-P19-06). Only ground demonstration in a simulated environment and space-qualification testing is desired (RFP-P20-02)."
+  },
+  {
+   "id": "Q1-RVM-22-FROZEN",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-22]/requirement_frozen",
+   "verbatim": false
+  },
+  {
+   "id": "Q1-RVM-23-TITLE",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-23]/title",
+   "verbatim": "ISO certification; acceptance / qualification per ATP (finalized after DDR / CDR); testing to MIL / ASTM / BIS / ESS standards"
+  },
+  {
+   "id": "Q1-RVM-23-CLAUSES",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-23]/rfp_clauses",
+   "verbatim": [
+    "RFP-P20-01"
+   ]
+  },
+  {
+   "id": "Q1-RVM-23-TEXT",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-23]/requirement_text",
+   "verbatim": "Deliverables match the Para 2 parameters (4.2 acceptance); the company is ISO certified; acceptance / qualification based on the ATP document prepared from the Para 2 parameters and finalized after DDR / CDR; testing as per applicable standards (MIL / ASTM / BIS etc.) / ESS specification (RFP-P20-01)."
+  },
+  {
+   "id": "Q1-RVM-23-FROZEN",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-23]/requirement_frozen",
+   "verbatim": false
+  },
+  {
+   "id": "Q1-RVM-24-TITLE",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-24]/title",
+   "verbatim": "Exit criterion: EM of the ABEP system + qualified electric thruster with O and N2 as propellant at milestone 4 (partial success)"
+  },
+  {
+   "id": "Q1-RVM-24-CLAUSES",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-24]/rfp_clauses",
+   "verbatim": [
+    "RFP-P20-03"
+   ]
+  },
+  {
+   "id": "Q1-RVM-24-TEXT",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-24]/requirement_text",
+   "verbatim": "Successful realization of the Engineering Model of the ABEP system and realization of a qualified electric thruster with O and N2 as propellant at milestone 4 can be considered a partial success of the project (RFP-P20-03; milestone 4 = QM PSE and thruster testing, RFP-P21-01). N2 + O2 surrogate data are NO_ATOMIC_O and never atomic-O evidence; compliance gate CG-N2-AO (A9.14 OD12)."
+  },
+  {
+   "id": "Q1-RVM-24-FROZEN",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-24]/requirement_frozen",
+   "verbatim": false
+  },
+  {
+   "id": "Q1-RVM-25-TITLE",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-25]/title",
+   "verbatim": "Milestone schedule and deliverables M1-M5 (T0+9 / +12 / +20 / +24 / +36 months) and the EM -> QM processing flow"
+  },
+  {
+   "id": "Q1-RVM-25-CLAUSES",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-25]/rfp_clauses",
+   "verbatim": [
+    "RFP-P20-04",
+    "RFP-P20-05",
+    "RFP-P20-06",
+    "RFP-P21-01",
+    "RFP-P21-02",
+    "RFP-P17-01"
+   ]
+  },
+  {
+   "id": "Q1-RVM-25-TEXT",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-25]/requirement_text",
+   "verbatim": "Milestones and deliverables as printed (RFP-P20-04 .. RFP-P21-02): M1 PDR-1 hardware (T0+09, 15 %), M2 PDR-2 algorithms / software / test plan (T0+12, 10 %), M3 CDR with EM thruster and PSE demonstrated with storage input, not intake (T0+20, 20 %), M4 EM intake + QM PSE and thruster (T0+24, 35 %), M5 QM integration, ENTEST and delivery (T0+36, 20 %); EM -> QM processing flow (RFP-P17-01). T0 is not set."
+  },
+  {
+   "id": "Q1-RVM-25-FROZEN",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-25]/requirement_frozen",
+   "verbatim": false
+  },
+  {
+   "id": "Q1-RVM-26-TITLE",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-26]/title",
+   "verbatim": "Micro-newton-level thrust measurement system; UHV test facility and low-thrust measurement setup (Part IV(B), no waivers)"
+  },
+  {
+   "id": "Q1-RVM-26-CLAUSES",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-26]/rfp_clauses",
+   "verbatim": [
+    "RFP-P30-01",
+    "RFP-P27-01",
+    "RFP-P21-03"
+   ]
+  },
+  {
+   "id": "Q1-RVM-26-TEXT",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-26]/requirement_text",
+   "verbatim": "Thrust measurement system capable of measuring micro-newton-level thrust (Part IV(C) 5 evaluation criterion: in-house 10 / consortium 5 / sub-contract 0 marks, RFP-P30-01); ultra-high-vacuum test facility for propulsion-system testing and a low-thrust measurement setup, in-house / consortium / sub-contract (RFP-P27-01; no waivers for Part IV(B), RFP-P21-03)."
+  },
+  {
+   "id": "Q1-RVM-26-FROZEN",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-26]/requirement_frozen",
+   "verbatim": false
+  },
+  {
+   "id": "Q1-RVM-29-TITLE",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-29]/title",
+   "verbatim": "Two propellant supply modes with separate tanks / paths: ambient atmospheric propellant (primary) and Xe (contingency / emergency supply mode) (RFP-P18-08, RFP-P17-05; A9.19)"
+  },
+  {
+   "id": "Q1-RVM-29-CLAUSES",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-29]/rfp_clauses",
+   "verbatim": [
+    "RFP-P18-08",
+    "RFP-P17-05"
+   ]
+  },
+  {
+   "id": "Q1-RVM-29-TEXT",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-29]/requirement_text",
+   "verbatim": "Two separate propellant supply modes with separate tanks / paths feed the one Hall accelerator + RF/ICP neutralizer: ambient atmospheric propellant at 180-230 km (primary mode) and Xe (contingency / emergency supply mode - the RFP's 'extra input system to take care any problems on board unforeseen problems', RFP-P17-05; 'Two separate propellant tanks for ambient air and xenon', RFP-P18-08). Xe is not a parallel co-equal propellant (A9.19, amending A9.15 on the ROLE of Xe); the Xe capability itself stays required (RVM-10). The A9.1 ICP feed-gas baseline is unchanged (G-REUSE primary; G-XE a declared variant)."
+  },
+  {
+   "id": "Q1-RVM-29-FROZEN",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-29]/requirement_frozen",
+   "verbatim": false
+  },
+  {
+   "id": "Q1-DISC-01",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rfp_rebase/discrepancies[id=DISC-01]",
+   "verbatim": {
+    "id": "DISC-01",
+    "topic": "bid due / closing date",
+    "rfp_clauses": [],
+    "rfp": "not stated in the registered RFP document (registration document.not_in_document: bid due / closing date (the RFP refers to the tender document on DefProc for important dates, Part I note 5); the 05 Oct 2026 date in CLAUDE.md is therefore NOT verified by this file)",
+    "repository": "CLAUDE.md 'bid close 05 Oct 2026'",
+    "disposition": "UNVERIFIED_BY_RFP_DOCUMENT - programmatic, not a system requirement (excluded candidate PRG-BID); verify on the DefProc tender document; CLAUDE.md is not edited here",
+    "owner_or_drdo_action": "owner: confirm the date from the DefProc tender document"
+   }
+  },
+  {
+   "id": "Q1-DISC-02",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rfp_rebase/discrepancies[id=DISC-02]",
+   "verbatim": {
+    "id": "DISC-02",
+    "topic": "mass wet / dry",
+    "rfp_clauses": [
+     "RFP-P18-11"
+    ],
+    "rfp": "'< 40kg' - wet or dry not stated",
+    "repository": "RVM-06 / owner row 5: < 40 kg WET incl. Xe + tank; CLAUDE.md '< 40 kg'; A9 '< 40 kg (wet)'",
+    "disposition": "the wet reading is the conservative owner reading and is retained; recorded for DRDO clarification; requirement_frozen stays false",
+    "owner_or_drdo_action": "DRDO clarification (wet or dry)"
+   }
+  },
+  {
+   "id": "Q1-DISC-03",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rfp_rebase/discrepancies[id=DISC-03]",
+   "verbatim": {
+    "id": "DISC-03",
+    "topic": "indigenous content",
+    "rfp_clauses": [
+     "RFP-P18-03",
+     "RFP-P19-05"
+    ],
+    "rfp": "'Indigenous Content: >60%' (RFP-P18-03 a) vs 'minimum 75% IC in the project deliverables' with subsystem minima > 80 / > 80 / > 60 / > 70 % (RFP-P19-05)",
+    "repository": "RVM-18 (A9.14 S9.11 OD12): stricter / more specific targets used internally",
+    "disposition": "recorded for DRDO clarification (A9.14 OD12)",
+    "owner_or_drdo_action": "DRDO clarification"
+   }
+  },
+  {
+   "id": "Q1-DISC-04",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rfp_rebase/discrepancies[id=DISC-04]",
+   "verbatim": {
+    "id": "DISC-04",
+    "topic": "mission life hours",
+    "rfp_clauses": [
+     "RFP-P19-01"
+    ],
+    "rfp": "'Mission life: 3 years (Approx 26000 hrs)'",
+    "repository": "CLAUDE.md '26,000 h mission'; RVM-13 owner engineering basis >= 26,280 h (row 3)",
+    "disposition": "consistent within the RFP's 'Approx'; the 26,280 h basis is conservative and retained",
+    "owner_or_drdo_action": "none required"
+   }
+  },
+  {
+   "id": "Q1-DISC-05",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rfp_rebase/discrepancies[id=DISC-05]",
+   "verbatim": {
+    "id": "DISC-05",
+    "topic": "'Ignition Time' label",
+    "rfp_clauses": [
+     "RFP-P19-01"
+    ],
+    "rfp": "'Ignition Time: More than 15000 hrs'",
+    "repository": "CLAUDE.md '> 15,000 h firing'; RVM-12 >= 15,000 h cumulative energized operation (A9.14 S8.5)",
+    "disposition": "literal wording preserved; conservative design basis pending clarification (A9.14 S8.5)",
+    "owner_or_drdo_action": "DRDO clarification of 'Ignition Time'"
+   }
+  },
+  {
+   "id": "Q1-DISC-06",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rfp_rebase/discrepancies[id=DISC-06]",
+   "verbatim": {
+    "id": "DISC-06",
+    "topic": "stated purpose of the Xe input",
+    "rfp_clauses": [
+     "RFP-P17-05",
+     "RFP-P18-08"
+    ],
+    "rfp": "Xe 'an extra input system to take care any problems on board unforeseen problems'; two separate tanks",
+    "repository": "A9.15: Xe capability mandatory, dual-propellant separate modes (RVM-10)",
+    "disposition": "capability mandatory (A9.15 stands); stated purpose recorded for the owner; no rule changed",
+    "owner_or_drdo_action": "none required (recorded)"
+   }
+  },
+  {
+   "id": "Q1-DISC-07",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rfp_rebase/discrepancies[id=DISC-07]",
+   "verbatim": {
+    "id": "DISC-07",
+    "topic": "thrust range reading",
+    "rfp_clauses": [
+     "RFP-P18-06"
+    ],
+    "rfp": "'12 mN to 25 mN (From expected drag to compensate)'",
+    "repository": "RVM-02 / RVM-03: >= 12 mN sustained + 25 mN capability (owner row 4 reading)",
+    "disposition": "owner engineering reading retained; the RFP gives no split between sustained and capability",
+    "owner_or_drdo_action": "none required (recorded)"
+   }
+  },
+  {
+   "id": "Q1-DISC-08",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rfp_rebase/discrepancies[id=DISC-08]",
+   "verbatim": {
+    "id": "DISC-08",
+    "topic": "ignition / restart",
+    "rfp_clauses": [],
+    "rfp": "no ignition / restart clause registered",
+    "repository": "RVM-14 start-up / restart (earlier labelled RFP-inferred)",
+    "disposition": "DERIVED_PROJECT_REQUIREMENT (A9.14 S9.12 OD14)",
+    "owner_or_drdo_action": "none required"
+   }
+  },
+  {
+   "id": "Q1-DISC-09",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rfp_rebase/discrepancies[id=DISC-09]",
+   "verbatim": {
+    "id": "DISC-09",
+    "topic": "ENTEST values",
+    "rfp_clauses": [
+     "RFP-P19-04"
+    ],
+    "rfp": "'ENTEST Specifications (The specifications will be provided at the time PDR)'",
+    "repository": "no ENTEST levels in the repository",
+    "disposition": "RVM-21 carries no numeric level; levels TBD at PDR (not invented)",
+    "owner_or_drdo_action": "DRDO supplies ENTEST specifications at PDR"
+   }
+  },
+  {
+   "id": "Q1-DISC-10",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rfp_rebase/discrepancies[id=DISC-10]",
+   "verbatim": {
+    "id": "DISC-10",
+    "topic": "test-facility / thrust-measurement capability",
+    "rfp_clauses": [
+     "RFP-P27-01",
+     "RFP-P30-01"
+    ],
+    "rfp": "UHV test facility + low-thrust measurement setup (Part IV(B), no waivers); micro-newton-level thrust measurement (evaluation criterion)",
+    "repository": "torsional thrust stand plan at mN level for RVM-02 (row 115, 1 % target); no micro-newton capability record",
+    "disposition": "new row RVM-26; the mN-level stand plan is not evidence of micro-newton capability",
+    "owner_or_drdo_action": "owner: facility / stand capability evidence (in-house, consortium or sub-contract)"
+   }
+  },
+  {
+   "id": "Q1-F9-PREFIX",
+   "path": "docs/architecture/freeze_candidate/ag15_f9.py",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "c27a0c3a04592dc368829e9ac184141254063139071d96c0fcadd63faebf2a05",
+   "kind": "text",
+   "locator": "L151",
+   "verbatim": "owner_closed = isinstance(ag15_rvm, str) and ag15_rvm.startswith(\"CLOSED\")"
+  },
+  {
+   "id": "Q1-REVIEW-ITEM",
+   "path": "docs/HISTORY.md",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "7993451e4fe16430ae365a3b97c2062e21bcfa74df14bab45bbd147767864fb9",
+   "kind": "text",
+   "locator": "L3222-L3224",
+   "verbatim": "Open for the owner: AG-15\n  closure is detected by an `ag_15_status` \"CLOSED\" prefix without an owner-decision citation (format of the owner's\n  closure record to be decided)."
+  },
+  {
+   "id": "Q1-REBASE-GUARD",
+   "path": "docs/requirements/rvm_a9/rfp_rebase.py",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "c696df8e108764a00b61b4107ccec10be2d36393b5e90368f98c29769a4f96a2",
+   "kind": "text",
+   "locator": "L418",
+   "verbatim": "raise RebaseError(f\"{rid}: an RFP row cannot be frozen before AG-15 closes\")"
+  },
+  {
+   "id": "Q1-RF3-FLAG-04",
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65be55e592e1b42369ab8d4d8ddf0865c54d45cd501a0a646920b7c6500b5d08",
+   "kind": "json",
+   "locator": "/recorder_flags_v3[id=RF3-FLAG-04]/flag",
+   "verbatim": "the RFP (RFP(1)) is owner-held and not yet registered in the repository (AG-15); A9.15 content is applied as owner-stated"
+  },
+  {
+   "id": "Q2-STATE-Q",
+   "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65ba51c54f712c628525fb567c91b0bdf32019d49d3679eb4cd9bbbaf6098936",
+   "kind": "json",
+   "locator": "/rows[id=MPV3Q-01]/question",
+   "verbatim": "MQ-06 splits row-54 'controls/harness 1.0 kg' into a harness line (row-60 rule) and a controls / electronics / valve-driver allocation / CBE line. Which allocation does the controls line carry until its CBE exists (e.g. keep the 1.0 kg row-54 figure for controls alone, or another value)?"
+  },
+  {
+   "id": "Q2-STATE-PROPOSED",
+   "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65ba51c54f712c628525fb567c91b0bdf32019d49d3679eb4cd9bbbaf6098936",
+   "kind": "json",
+   "locator": "/rows[id=MPV3Q-01]/proposed",
+   "verbatim": "none - owner call; v3 books no controls value (the line is listed as a missing term in every evidence-based roll-up)"
+  },
+  {
+   "id": "Q2-STATE-STATUS",
+   "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65ba51c54f712c628525fb567c91b0bdf32019d49d3679eb4cd9bbbaf6098936",
+   "kind": "json",
+   "locator": "/rows[id=MPV3Q-01]/status",
+   "verbatim": "TBD_OWNER"
+  },
+  {
+   "id": "Q2-STATE-BLOCKS",
+   "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65ba51c54f712c628525fb567c91b0bdf32019d49d3679eb4cd9bbbaf6098936",
+   "kind": "json",
+   "locator": "/rows[id=MPV3Q-01]/blocks",
+   "verbatim": [
+    "BLOCKS_LOCK_1"
+   ]
+  },
+  {
+   "id": "Q2-STATE-NEEDED",
+   "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65ba51c54f712c628525fb567c91b0bdf32019d49d3679eb4cd9bbbaf6098936",
+   "kind": "json",
+   "locator": "/rows[id=MPV3Q-01]/needed_by",
+   "verbatim": "LOCK-1"
+  },
+  {
+   "id": "Q2-MP3-Q",
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316",
+   "kind": "json",
+   "locator": "/open_owner_questions[id=MPV3Q-01]/question",
+   "verbatim": "MQ-06 splits row-54 'controls/harness 1.0 kg' into a harness line (row-60 rule) and a controls / electronics / valve-driver allocation / CBE line. Which allocation does the controls line carry until its CBE exists (e.g. keep the 1.0 kg row-54 figure for controls alone, or another value)?"
+  },
+  {
+   "id": "Q2-MP3-PROPOSED",
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316",
+   "kind": "json",
+   "locator": "/open_owner_questions[id=MPV3Q-01]/proposed",
+   "verbatim": "none - owner call; v3 books no controls value (the line is listed as a missing term in every evidence-based roll-up)"
+  },
+  {
+   "id": "Q2-ROW54",
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316",
+   "kind": "json",
+   "locator": "/items_v2[id=MA-AL-09]",
+   "verbatim": {
+    "id": "MA-AL-09",
+    "name": "owner v0 dry allocation: controls/harness",
+    "value": 1.0,
+    "units": "kg",
+    "basis": "row 54",
+    "source": [
+     {
+      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+      "row": 54,
+      "covers_ids": [
+       "H27-Q7"
+      ],
+      "answer_sha256": "addfe38afdbd444fafdbc2cb6f75193bf2f90941d0361702061299ec3f232402"
+     }
+    ],
+    "evidence_class": "owner-allocation",
+    "status": "OWNER_ALLOCATION (not a CBE)",
+    "freeze_point": "NOW",
+    "carried_from": "docs/budgets/mass_a9/mass_a9_v1.json items (by pointer)"
+   }
+  },
+  {
+   "id": "Q2-AL09-ITEM",
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316",
+   "kind": "json",
+   "locator": "/items_v3[id=MPV3-06]",
+   "verbatim": {
+    "id": "MPV3-06",
+    "name": "AL-09 controls / electronics / valve drivers allocation after the MQ-06 split",
+    "value": null,
+    "units": "kg",
+    "evidence_class": null,
+    "source": [
+     "A9.14 MQ-06 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
+    ],
+    "status": "TBD_OWNER (MPV3Q-01)"
+   }
+  },
+  {
+   "id": "Q2-AL09-STATUS",
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316",
+   "kind": "json",
+   "locator": "/lines/hall_icp_neutralizer/8/allocation_status",
+   "verbatim": "TBD_OWNER (MPV3Q-01): row 54 gave 1.0 kg to controls+harness combined; MQ-06 splits the line but states no controls allocation; no number invented"
+  },
+  {
+   "id": "Q2-AL09-FLOOR",
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316",
+   "kind": "json",
+   "locator": "/lines/hall_icp_neutralizer/8/floor_arithmetic",
+   "verbatim": "no verified evidence value exists for any constituent; comparison not possible"
+  },
+  {
+   "id": "Q2-AL09-NAME",
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316",
+   "kind": "json",
+   "locator": "/lines/hall_icp_neutralizer/8/name",
+   "verbatim": "controls / electronics / valve drivers / flight sensors (MQ-06 split; harness excluded)"
+  },
+  {
+   "id": "Q2-PPU-FLOOR",
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316",
+   "kind": "json",
+   "locator": "/lines/hall_icp_neutralizer/6/floor_arithmetic",
+   "verbatim": "floor = min(SETS 5.0, NG EM1 6.1, TAS Mk1 10.9) = 5.0 kg > allocation 2.5 kg; gap 2.5 kg (vs the H2-4 analog 6.1 kg: gap 3.6 kg). Widest scope-matched basket: Hall PPU 2.5 + controls/harness 1.0 = 3.5 kg < 5.0 kg, still below; adding RF generator/matching 1.5 kg (a function the analogs do not contain) gives 5.0 kg, equal to the lowest analog and below the H2-4 6.1 kg"
+  },
+  {
+   "id": "Q2-PPU-NAME",
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316",
+   "kind": "json",
+   "locator": "/lines/hall_icp_neutralizer/6/name",
+   "verbatim": "Hall PPU (incl. collector/bias supply; no C1 electronics - C1 is ground-only, A9.19 / A9.20)"
+  },
+  {
+   "id": "Q2-HARNESS",
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316",
+   "kind": "json",
+   "locator": "/margin_convention/harness",
+   "verbatim": "AL-HAR = 0.05/0.95 x the other nominal dry lines (row 60; MQ-06)"
+  },
+  {
+   "id": "Q2-BOM-A9B-26",
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316",
+   "kind": "json",
+   "locator": "/bom[id=A9B-26]/columns/CBE/status",
+   "verbatim": "TBD - requires controller/driver design (inside the PPU analog in H2-7 v1)"
+  },
+  {
+   "id": "Q2-BOM-A9B-26-MAP",
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316",
+   "kind": "json",
+   "locator": "/bom[id=A9B-26]/allocation_mapping",
+   "verbatim": "OWNER_MAPPING (A9.14 MQ-07: valve drivers -> controls portion of AL-09)"
+  },
+  {
+   "id": "Q2-BOM-A9B-27",
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316",
+   "kind": "json",
+   "locator": "/bom[id=A9B-27]/columns/CBE/status",
+   "verbatim": "TBD - requires a controller design (H2-4 split)"
+  },
+  {
+   "id": "Q2-BOM-A9B-29",
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316",
+   "kind": "json",
+   "locator": "/bom[id=A9B-29]/allocation_mapping",
+   "verbatim": "OWNER_MAPPING (A9.14 MQ-07: flight sensors -> controls portion of AL-09)"
+  },
+  {
+   "id": "Q2-PWR-ALLOW",
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316",
+   "kind": "json",
+   "locator": "/items_v2[id=MPV2-P04]",
+   "verbatim": {
+    "id": "MPV2-P04",
+    "name": "controls/thermal allowance inside the common allocation",
+    "value": 50.0,
+    "units": "W",
+    "basis": "row 114",
+    "source": [
+     {
+      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+      "row": 114,
+      "covers_ids": [
+       "V2-Q1"
+      ],
+      "answer_sha256": "c2d169b8e8ed65d79eea28c44962b46568dc752f744430326a8cfba04fed95be"
+     },
+     {
+      "path": "abep_sim/bus_boundary_a9.py",
+      "symbol": "CONTROLS_THERMAL_ALLOWANCE_W",
+      "sha256": "7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a"
+     }
+    ],
+    "evidence_class": "owner-allocation",
+    "status": "OWNER_ALLOCATION",
+    "freeze_point": "NOW",
+    "carried_from": null
+   }
+  },
+  {
+   "id": "Q2-ROLLUP-TBD",
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "8695707105fbd0ab9ba35c255ab90bc29f89df2f8521b5789ad4062fb5a05316",
+   "kind": "json",
+   "locator": "/rollups/0/tbd/10",
+   "verbatim": "AL-09: NO VALUE - TBD_OWNER (MPV3Q-01): row 54 gave 1.0 kg to controls+harness combined; MQ-06 splits the line but states no controls allocation; no number invented (excluded from the known part)"
+  },
+  {
+   "id": "Q3-STATE-Q",
+   "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65ba51c54f712c628525fb567c91b0bdf32019d49d3679eb4cd9bbbaf6098936",
+   "kind": "json",
+   "locator": "/rows[id=XV3Q-01]/question",
+   "verbatim": "A9.15 makes Xe an RFP-required system capability that must not be 'weakened into a contingency interpretation'. Does it also change the A9.1 HIQ-06 ICP gas-mode labels, where G-REUSE is primary and the dedicated G-ATM / G-XE ICP feeds are 'separately declared contingency variants'? (The A9.15 recorder note flagged this; Xe v3 keeps the A9.1 ICP-feed labels and scopes 'contingency' to the ICP feed choice only.)"
+  },
+  {
+   "id": "Q3-STATE-PROPOSED",
+   "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65ba51c54f712c628525fb567c91b0bdf32019d49d3679eb4cd9bbbaf6098936",
+   "kind": "json",
+   "locator": "/rows[id=XV3Q-01]/proposed",
+   "verbatim": "none - owner call (no reading is chosen here; the A9.1 baseline stays as recorded until the owner answers)"
+  },
+  {
+   "id": "Q3-STATE-BLOCKS",
+   "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65ba51c54f712c628525fb567c91b0bdf32019d49d3679eb4cd9bbbaf6098936",
+   "kind": "json",
+   "locator": "/rows[id=XV3Q-01]/blocks",
+   "verbatim": [
+    "BLOCKS_LOCK_1"
+   ]
+  },
+  {
+   "id": "Q3-STATE-BASIS",
+   "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65ba51c54f712c628525fb567c91b0bdf32019d49d3679eb4cd9bbbaf6098936",
+   "kind": "json",
+   "locator": "/rows[id=XV3Q-01]/classification_basis",
+   "verbatim": "the A9.15 recorder note flags the A9.1 HIQ-06 ICP-feed labels to the owner; no owner answer exists, so no reading is chosen (A9.1 basis: The dedicated ICP gas port remains installed and capped so G-ATM and G-XE can be tested as separately declared contingency variants.)"
+  },
+  {
+   "id": "Q3-XE3-Q",
+   "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "bcecab6147d62564669c0f154c3c1c7eceb5150a86bd9cb5f99b0b7f6daa6f63",
+   "kind": "json",
+   "locator": "/open_owner_questions[id=XV3Q-01]/question",
+   "verbatim": "A9.15 makes Xe an RFP-required system capability that must not be 'weakened into a contingency interpretation'. Does it also change the A9.1 HIQ-06 ICP gas-mode labels, where G-REUSE is primary and the dedicated G-ATM / G-XE ICP feeds are 'separately declared contingency variants'? (The A9.15 recorder note flagged this; Xe v3 keeps the A9.1 ICP-feed labels and scopes 'contingency' to the ICP feed choice only.)"
+  },
+  {
+   "id": "Q3-XE3-A91",
+   "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "bcecab6147d62564669c0f154c3c1c7eceb5150a86bd9cb5f99b0b7f6daa6f63",
+   "kind": "json",
+   "locator": "/open_owner_questions[id=XV3Q-01]/a9_1_basis_verbatim",
+   "verbatim": "The dedicated ICP gas port remains installed and capped so G-ATM and G-XE can be tested as separately declared contingency variants."
+  },
+  {
+   "id": "Q3-XE3-A919-NOTE",
+   "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "bcecab6147d62564669c0f154c3c1c7eceb5150a86bd9cb5f99b0b7f6daa6f63",
+   "kind": "json",
+   "locator": "/open_owner_questions[id=XV3Q-01]/a9_19_recorder_note",
+   "verbatim": "A9.19 supersedes the A9.15 'not a contingency' premise of this question on the ROLE of xenon (Xe = contingency / emergency) and leaves the A9.1 ICP feed-gas baseline unchanged (G-REUSE primary, G-XE declared variant); the recorder therefore sees no remaining conflict with the A9.1 HIQ-06 labels, but closing XV3Q-01 is the owner's call (status kept OPEN)"
+  },
+  {
+   "id": "Q3-HIQ-06-MD",
+   "path": "docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e",
+   "kind": "text",
+   "locator": "L29",
+   "verbatim": "Primary ICP gas mode = G-REUSE: the downstream ICP shall first attempt to operate on Hall exhaust/residual propellant, matching the Takahashi topology. The dedicated ICP gas port remains installed and capped so G-ATM and G-XE can be tested as separately declared contingency variants. Score-bearing N₂/N₂+O₂ comparison uses G-REUSE unless it fails the preregistered ICP-capacity gate. No dedicated Xe is introduced merely to make the ICP work."
+  },
+  {
+   "id": "Q3-HIQ-06-ACC",
+   "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+   "kind": "json",
+   "locator": "/decisions/HIQ-06_accounting",
+   "verbatim": {
+    "G-REUSE": "mdot_ICP,dedicated = 0 (no double counting of Hall feed)",
+    "G-ATM": "mdot_atm,total = mdot_Hall + mdot_ICP,dedicated (actual routing)",
+    "G-XE": "mdot_ICP,Xe booked explicitly in the Xe ledger under PHASE_TOTAL_FLOW"
+   }
+  },
+  {
+   "id": "Q3-A919-ROLE",
+   "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "kind": "json",
+   "locator": "/xenon_role",
+   "verbatim": "CONTINGENCY_AND_EMERGENCY - not a parallel/co-equal propellant; Xe capability is retained (the RFP requires the capability and describes the Xe input as 'an extra input system to take care any problems on board unforeseen problems', RFP-P17-05, with separate tanks RFP-P18-08), but its role is contingency"
+  },
+  {
+   "id": "Q3-A919-AMENDS",
+   "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "kind": "json",
+   "locator": "/amends/A9.15",
+   "verbatim": "the statements 'Xenon is an RFP-required system capability, not merely a contingency' and S9.10 'should not be weakened into a contingency interpretation' are superseded on the ROLE of Xe: Xe capability stays required (two separate supply modes/tanks), Xe is the contingency/emergency mode"
+  },
+  {
+   "id": "Q3-A919-ARCH",
+   "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "kind": "json",
+   "locator": "/architecture/electron_source_neutralizer",
+   "verbatim": "one RF/ICP electron-source/neutralizer (cathodeless/electrodeless) for both atmospheric gases and xenon"
+  },
+  {
+   "id": "Q3-XE3-BASELINE",
+   "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "bcecab6147d62564669c0f154c3c1c7eceb5150a86bd9cb5f99b0b7f6daa6f63",
+   "kind": "json",
+   "locator": "/propellant_policy/icp_gas_mode_baseline_unchanged",
+   "verbatim": "A9.1: G-REUSE primary (m_Xe,ICP = 0 exactly); G-XE a declared ICP-feed variant (CASE-3); A9.15 recorder note"
+  },
+  {
+   "id": "Q3-XE3-CASE3",
+   "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "bcecab6147d62564669c0f154c3c1c7eceb5150a86bd9cb5f99b0b7f6daa6f63",
+   "kind": "json",
+   "locator": "/cases/CASE-3",
+   "verbatim": "OPTIONAL entries: G-XE contingency (flight/ground), G-ATM (0 Xe), P1 diagnostic dedicated Xe; zero (absent) in every primary scenario"
+  },
+  {
+   "id": "Q3-XE3-LABEL",
+   "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "bcecab6147d62564669c0f154c3c1c7eceb5150a86bd9cb5f99b0b7f6daa6f63",
+   "kind": "json",
+   "locator": "/items[id=XV2-22]/label_note",
+   "verbatim": "'contingency' here is the owner's A9.1 HIQ-06 label of the dedicated ICP feed gas-mode variants (G-REUSE primary; G-ATM / G-XE 'separately declared contingency variants', docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md sha256 2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e); it qualifies the ICP feed choice only and never the RFP-required system Xe capability (A9.15); whether A9.15 changes this ICP-feed labelling is open owner question XV3Q-01"
+  },
+  {
+   "id": "Q3-XE3-REUSE-XE",
+   "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "bcecab6147d62564669c0f154c3c1c7eceb5150a86bd9cb5f99b0b7f6daa6f63",
+   "kind": "json",
+   "locator": "/ledger_lines/2/note",
+   "verbatim": "G-REUSE: while the Hall runs on Xe the ICP runs on that Xe exhaust; nothing is added for the ICP"
+  },
+  {
+   "id": "Q3-P1-A919",
+   "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "26bf86ec11a975f6fdd70702652ece30ef80ad46ecd8446a51b2423c03da1350",
+   "kind": "json",
+   "locator": "/a9_19_incorporation/icp_feed_gas_baseline",
+   "verbatim": {
+    "primary": "G-REUSE",
+    "declared_variant": "G-XE",
+    "status": "UNCHANGED (A9.1; A9.19 does not alter the ICP feed-gas baseline)"
+   }
+  },
+  {
+   "id": "Q4-RP-TEXT",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/recorder_proposals_open_for_owner[id=RP-A919-01]/proposal",
+   "verbatim": "ICP go / no-go before LOCK-1 for the single Hall + RF/ICP flight architecture (no hollow-cathode fallback exists after A9.19): (a) measured ICP electron-current capacity I_e,cap >= I_d,max with a pre-registered margin; (b) RF power per extracted ampere (W/A) within the power budget; (c) repeatable ignition on N2 and on Xe."
+  },
+  {
+   "id": "Q4-RP-NUMBERS",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/recorder_proposals_open_for_owner[id=RP-A919-01]/numbers",
+   "verbatim": "none proposed: the margin, the W/A budget and the ignition repeatability criterion would be owner / pre-registration values; nothing is invented here"
+  },
+  {
+   "id": "Q4-RP-CRITERIA-PART",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/recorder_proposals_open_for_owner[id=RP-A919-01]/a9_21_disposition/criteria_part",
+   "verbatim": "NOT_APPROVED_PRESERVED_FOR_OWNER_REVIEW: criteria (a) - (c) not approved; preserved verbatim in owner_approved_gates[id=GNG-ICP-01].proposed_criteria_for_owner_review (never evaluated)"
+  },
+  {
+   "id": "Q4-GNG-PRESERVED",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/owner_approved_gates[id=GNG-ICP-01]/proposed_criteria_for_owner_review/text_verbatim",
+   "verbatim": "ICP go / no-go before LOCK-1 for the single Hall + RF/ICP flight architecture (no hollow-cathode fallback exists after A9.19): (a) measured ICP electron-current capacity I_e,cap >= I_d,max with a pre-registered margin; (b) RF power per extracted ampere (W/A) within the power budget; (c) repeatable ignition on N2 and on Xe."
+  },
+  {
+   "id": "Q4-GNG-OWNER",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/owner_approved_gates[id=GNG-ICP-01]/owner_approved/verbatim_excerpt",
+   "verbatim": "4. ICP go/no-go before LOCK-1: I approve the existence and placement of a mandatory ICP go/no-go gate before LOCK-1. I would not yet approve any numerical criterion that I cannot see in the proposal text. The gate must be fail-closed: if its required evidence is missing, the result is `NOT_EVALUATED`, not GO.\nDecision: `ICP_GO_NO_GO_REQUIRED_BEFORE_LOCK1`.\nThe exact proposed GO/NO-GO criteria should be preserved separately until their text is available for review."
+  },
+  {
+   "id": "Q4-GNG-STATUS",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/owner_approved_gates[id=GNG-ICP-01]/status",
+   "verbatim": "NOT_EVALUATED"
+  },
+  {
+   "id": "Q4-GNG-FAILCLOSED",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/owner_approved_gates[id=GNG-ICP-01]/fail_closed_rule",
+   "verbatim": "missing required evidence -> NOT_EVALUATED, never GO (A9.21); GO only when every owner-accepted criterion is MET on registered evidence"
+  },
+  {
+   "id": "Q4-GNG-LOCK1",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/owner_approved_gates[id=GNG-ICP-01]/lock1_rule",
+   "verbatim": "LOCK-1 cannot be reported released while this gate is not GO"
+  },
+  {
+   "id": "Q4-AFC-LOCK1",
+   "path": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "7c0a2b75c7f0af174327dcaa47d6741133d94adefada463472d5d413a54cc954",
+   "kind": "json",
+   "locator": "/lock1_precondition/rule",
+   "verbatim": "LOCK-1 cannot be reported released while any mandatory pre-LOCK-1 gate is not GO (A9.21 ICP_GATE: fail closed; missing evidence -> NOT_EVALUATED, never GO)"
+  },
+  {
+   "id": "Q4-A-RVM15",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-15]/requirement_text",
+   "verbatim": "hall_icp_neutralizer: ICP-45 capacity I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF (signed, discharge-OFF, anode disconnected and floating, Kirchhoff admission) >= I_d,max,H1 with the pre-registered one-sided margin before any score-bearing point; Hall-ON is NEUTRALIZATION_CONSISTENCY only. hall_c1_reference: heated Xe-fed LaB6 C1 sized to the measured / derived current demand (CONTROL_FALLBACK)."
+  },
+  {
+   "id": "Q4-A-EVAL",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-15]/sources/5/text/evaluation",
+   "verbatim": "M_n = I_e,cap / I_d,max,H1 - 1; ICP-45A eligible only when (1) the capacity point passes current closure, (2) the matched RF-OFF correction is valid, (3) all required uncertainties are available, (4) I_d,max,H1 is registered; then the preregistered one-sided lower bound M_n,LB > 0; until all four exist ICP45 = NOT_EVALUATED"
+  },
+  {
+   "id": "Q4-A-VNOTE",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-15]/verification_note",
+   "verbatim": "unknown I_d,max,H1 -> NOT_EVALUATED (A9.6 sec. 14); ICP capacity status PENDING_ICP45; the 8.33 A stand ceiling is not a requirement (A9.3 OQ-A907-02)"
+  },
+  {
+   "id": "Q4-A-MARGIN-FORM",
+   "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "26bf86ec11a975f6fdd70702652ece30ef80ad46ecd8446a51b2423c03da1350",
+   "kind": "json",
+   "locator": "/items[id=P1-IT-29]",
+   "verbatim": {
+    "id": "P1-IT-29",
+    "name": "neutralization-margin form (used only once I_d,max,H1 is registered)",
+    "value": "M_n = I_e,cap / I_d,dem - 1; one-sided lower confidence bound > 0; one-sided alpha 0.05 per absolute gate (the registered margin_rule carries alpha_one_sided = 0.05 and k_basis; k_one_sided below the normal one-sided quantile 1.6449 is refused - consolidated verification MET-04)",
+    "units": "-",
+    "basis": "owner decision",
+    "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json UBQ-02, UBQ-07",
+    "evidence_class": "owner-allocation",
+    "status": "OWNER_GIVEN (freeze LOCK-1)",
+    "freeze_point": "LOCK-1",
+    "p1_gate": null,
+    "note": ""
+   }
+  },
+  {
+   "id": "Q4-A-STATUS",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/a9_2_statuses_carried/ICP electron-current capacity",
+   "verbatim": "PENDING_ICP45"
+  },
+  {
+   "id": "Q4-B-COST",
+   "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "26bf86ec11a975f6fdd70702652ece30ef80ad46ecd8446a51b2423c03da1350",
+   "kind": "json",
+   "locator": "/items[id=P1-IT-28]",
+   "verbatim": {
+    "id": "P1-IT-28",
+    "name": "electron cost definitions",
+    "value": "C_e = P_RF,delivered / I_e; C_e,DC = P_generator,input / I_e; each with its boundary label",
+    "units": "W/A",
+    "basis": "owner decision",
+    "source": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json OQ-RFQ-06.p1_outputs",
+    "evidence_class": "owner-allocation",
+    "status": "OWNER_GIVEN",
+    "freeze_point": "NOW",
+    "p1_gate": null,
+    "note": ""
+   }
+  },
+  {
+   "id": "Q4-B-PICP",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-05]/sources/1/text",
+   "verbatim": "no fixed Hall/ICP split; P_ICP,available = 1350 - P_common - P_Hall - P_other_active at every registered condition; ICP-45 demonstrated within it; 0-500 W lab RF is a test capability only"
+  },
+  {
+   "id": "Q4-B-VNOTE",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-05]/verification_note",
+   "verbatim": "ICP-45 demonstrated within P_ICP,available (A9.1 OQ-A902-03); the 0-500 W laboratory RF range is a test capability only"
+  },
+  {
+   "id": "Q4-C-STABLE",
+   "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "26bf86ec11a975f6fdd70702652ece30ef80ad46ecd8446a51b2423c03da1350",
+   "kind": "json",
+   "locator": "/items[id=P1-IT-30]",
+   "verbatim": {
+    "id": "P1-IT-30",
+    "name": "stable ICP operating region criteria (P1 -> P2 handoff)",
+    "value": "TBD - requires owner decision on the PROPOSED form (P1Q-01): ignition repeatability, relative drift of I_e and P_refl (and Z where measured) over a dwell, absence of mode jumps, minimum dwell duration",
+    "units": "-, s",
+    "basis": "PROPOSED form",
+    "source": "this lane; docs/decisions/OD_2026_10_01_A9_11_s4_p2_owner_decisions.json (sha256 d8baf59a5b92739698e29d893e89a30995559ee7167814c096dc24599679156c)",
+    "evidence_class": null,
+    "status": "OWNER_DECIDED form (A9.11 P1Q-01); values registered, frozen and hashed before the first P1-S5 handoff classification",
+    "freeze_point": "after-evidence",
+    "p1_gate": "P1-G5",
+    "note": "A9.16 step 1: criteria_id versioned; derived from P1-S2..S4 evidence and >= 3 independent re-ignitions (A9.10 P1Q-05); unregistered -> NOT_EVALUATED; pass label WITHIN_OWNER_CRITERIA only"
+   }
+  },
+  {
+   "id": "Q4-C-STAGES",
+   "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "26bf86ec11a975f6fdd70702652ece30ef80ad46ecd8446a51b2423c03da1350",
+   "kind": "json",
+   "locator": "/a9_19_incorporation/icp_record_supply_modes/stage",
+   "verbatim": {
+    "BENCH_AR_ENGINEERING_GROUND_ONLY": "P1 (this reducer)",
+    "AIR_PRIMARY": "ICP-45N / N2 ICP stage (A9 evidence order Ar -> N2 -> O2-bearing)",
+    "XE_CONTINGENCY": "Xe ICP stage (G-XE declared ICP-feed variant, A9.1; Xe supply mode A9.19)"
+   }
+  },
+  {
+   "id": "Q4-C-RVM28",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "kind": "json",
+   "locator": "/rows[id=RVM-28]/verification_note",
+   "verbatim": "inspection of the frozen flight design baseline (none exists: A9 is OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE) and demonstration that the one ICP serves both supply modes (ICP-45 capacity PENDING_ICP45; Xe operation of the ICP not yet measured); a design intent is not verification evidence"
+  },
+  {
+   "id": "Q4-C-CASE1",
+   "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "bcecab6147d62564669c0f154c3c1c7eceb5150a86bd9cb5f99b0b7f6daa6f63",
+   "kind": "json",
+   "locator": "/cases/CASE-1",
+   "verbatim": "PRIMARY hall_icp_neutralizer, G-REUSE: m_Xe,ICP = 0 exactly; flight Xe for the RFP-required Hall Xe-capable mode family (own tank / path); ground-test Xe; P1 bench Ar-only"
+  },
+  {
+   "id": "Q5-DECISION",
+   "path": "docs/bid/bid_technical_baseline.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "2372ee7c7d847eb69181c2b5f0fd7f18b6eaace85605638b73d5cefd1c4c22ff",
+   "kind": "json",
+   "locator": "/decision_verbatim",
+   "verbatim": "Freeze the repository state for the bid | Claude head `bbc480c`, CI green | Record this exact SHA as the technical source used for the bid. Do not continue changing architecture underneath the proposal."
+  },
+  {
+   "id": "Q5-DEADLINE",
+   "path": "docs/bid/bid_technical_baseline.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "2372ee7c7d847eb69181c2b5f0fd7f18b6eaace85605638b73d5cefd1c4c22ff",
+   "kind": "json",
+   "locator": "/tender/operational_deadline",
+   "verbatim": "2026-10-05 17:00 (A9.21 BID_CLOSE; DefProc, unless a corrigendum changes it)"
+  },
+  {
+   "id": "Q5-SOURCE",
+   "path": "docs/bid/bid_technical_baseline.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "2372ee7c7d847eb69181c2b5f0fd7f18b6eaace85605638b73d5cefd1c4c22ff",
+   "kind": "json",
+   "locator": "/bid_technical_source/commit",
+   "verbatim": "bbc480cd6aacaa40c39eb459a056b942fe996b32"
+  },
+  {
+   "id": "Q5-VERIFIED",
+   "path": "docs/bid/bid_technical_baseline.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "2372ee7c7d847eb69181c2b5f0fd7f18b6eaace85605638b73d5cefd1c4c22ff",
+   "kind": "json",
+   "locator": "/bid_technical_source/verification_at_commit",
+   "verbatim": "full suite 3871 passed / 5 skipped / 1 xfailed; rule-9 outcome check pass; golden OK; ci_checks 11/11 (2026-10-03)"
+  },
+  {
+   "id": "Q5-RULES",
+   "path": "docs/bid/bid_technical_baseline.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "2372ee7c7d847eb69181c2b5f0fd7f18b6eaace85605638b73d5cefd1c4c22ff",
+   "kind": "json",
+   "locator": "/rules",
+   "verbatim": [
+    "every technical number, status or claim in the submission package cites this commit (or a file at this commit)",
+    "commits after this SHA are post-freeze engineering work; they are not bid sources unless the owner re-freezes",
+    "architecture changes are not made underneath the proposal; post-freeze work is recorded as post-freeze"
+   ]
+  },
+  {
+   "id": "Q5-RANGE",
+   "path": "docs/bid/bid_technical_baseline.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "2372ee7c7d847eb69181c2b5f0fd7f18b6eaace85605638b73d5cefd1c4c22ff",
+   "kind": "json",
+   "locator": "/post_freeze_commits_known_at_freeze/range",
+   "verbatim": "bbc480c..32c9e63"
+  },
+  {
+   "id": "Q5-ATTENTION",
+   "path": "docs/bid/bid_technical_baseline.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "2372ee7c7d847eb69181c2b5f0fd7f18b6eaace85605638b73d5cefd1c4c22ff",
+   "kind": "json",
+   "locator": "/post_freeze_commits_known_at_freeze/owner_attention",
+   "verbatim": "at bbc480c the F1-F8 upstream design results rest on five hand-picked orbit-averaged states, which owner decision OD3 says must be replaced by the versioned design-state set; under that set (32c9e63) no robust upstream design survives (F9-DF-01: F8 robust Pareto set empty; F4 all-state frontier 0.0130 mg/s; no transient chain passes the orbit check). The submission must therefore not claim robust upstream (intake/compressor/feed) closure from the bbc480c F7/F8 numbers; owner to decide whether to cite them as five-state screening results or re-freeze at 32c9e63."
+  },
+  {
+   "id": "Q5-BID-OBJ",
+   "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
+   "commit": "bbc480cd6aacaa40c39eb459a056b942fe996b32",
+   "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01",
+   "kind": "json",
+   "locator": "/upstream_objectives[key=mdot_delivered_min_kgps]/definition",
+   "verbatim": "delivered (valve) total flow, minimum over the five orbit states at one plenum set pressure (single setpoint for all states)"
+  },
+  {
+   "id": "Q5-BID-F78-01",
+   "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
+   "commit": "bbc480cd6aacaa40c39eb459a056b942fe996b32",
+   "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01",
+   "kind": "json",
+   "locator": "/findings[id=F78-01]/finding",
+   "verbatim": "upstream sub-problem F1 -> F2 -> F3 -> F4 searched over 48 d-collapsed intakes x 55 compressors x 3 volumes x 6 set pressures in 600 contexts (10 surface scenarios x 5 filter cases x 2 wall cases x 6 P_set): 22282 Pareto members in 290 non-empty contexts; vector statuses {'FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS': 100267, 'INFEASIBLE': 1786886, 'NOT_EVALUATED_OUT_OF_DOMAIN': 2864847}"
+  },
+  {
+   "id": "Q5-BID-F78-02",
+   "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
+   "commit": "bbc480cd6aacaa40c39eb459a056b942fe996b32",
+   "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01",
+   "kind": "json",
+   "locator": "/findings[id=F78-02]/finding",
+   "verbatim": "nominal context (filter none, WALL-G0): the all-state delivered-flow frontier is 0.09832423 mg/s (cll_a0.5, P_set 0.02 Pa, A0.5_Ld20_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.02); Pareto members reaching the lower end of the 0.38-3.2 mg/s characterization coverage (A9.13 S6.21: coverage only, not a requirement or gate) at every state: 0 (all contexts). Compare F4-01 (single-setpoint frontier 0.09832 mg/s)"
+  },
+  {
+   "id": "Q5-BID-F8-01",
+   "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
+   "commit": "bbc480cd6aacaa40c39eb459a056b942fe996b32",
+   "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01",
+   "kind": "json",
+   "locator": "/findings[id=F8-01]/finding",
+   "verbatim": "843 unique upstream survivors (nominal-context Pareto members over all scenarios and P_set); feasible-scenario tiers (n scenarios feasible: count) {1: 48, 2: 169, 3: 78, 4: 70, 5: 98, 6: 128, 7: 83, 8: 130, 9: 23, 10: 16}; feasible in all 10 surface scenarios: 16; robust Pareto members per P_set {0.01: 8}; worst-case (over the 10 scenarios) delivered flow of the robust members [0.002933262, 0.01134189] mg/s (compare the best single-scenario frontier in F78-02: the price of requiring feasibility in every TBD surface scenario)"
+  },
+  {
+   "id": "Q5-DF-STATUS",
+   "path": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "commit": "32c9e639268df6bba10852d94e64983e73d0cac6",
+   "sha256": "7c0a2b75c7f0af174327dcaa47d6741133d94adefada463472d5d413a54cc954",
+   "kind": "json",
+   "locator": "/design_findings_for_owner[id=F9-DF-01]/status",
+   "verbatim": "EMPTY_ROBUST_SET_NOT_EVALUATED"
+  },
+  {
+   "id": "Q5-DF-FINDING",
+   "path": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "commit": "32c9e639268df6bba10852d94e64983e73d0cac6",
+   "sha256": "7c0a2b75c7f0af174327dcaa47d6741133d94adefada463472d5d413a54cc954",
+   "kind": "json",
+   "locator": "/design_findings_for_owner[id=F9-DF-01]/finding",
+   "verbatim": "under the full registered design-state envelope (atmosphere_msis21_orbit_v1_design_states_v2, sha256 60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049, 196 required states, BROAD_ENVELOPE_ALL_INCLINATIONS_ALL_LTAN_NOT_MISSION_ICD) no robust upstream design survives. EMPTY_ROBUST_SET_NOT_EVALUATED: F8 robust Pareto set has 0 members (90 F7 nominal-context survivors, all-10-scenario feasible 0, at most 6 of 10 scenarios feasible); F7 feasible vectors 4647, Pareto members 1279; F1 envelope-feasible intakes per scenario 24 of 144 (intake-face drag binding at ECSS_ST_HIGH 180 km in 1200 of 1200 infeasible records); F4 all-state frontier 0.01296 mg/s single / 0.02644 mg/s scheduled, flow binding at ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184 in 9 of 13 cells; transient basis: 0 of 7 chains pass the orbit check (0 simulated), offered_to_h1 records 0. Binding reasons read from the lane outputs: intake-face drag at the dense ECSS_ST_HIGH 180 km states (F1 C-DRAG-RFP, 1200 records); all-state delivered flow at ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184 (F4, 9 of 13 cells); transient-basis orbit check failures {\"amplitude 0.1: GAEDE_CHARACTERISTIC_OUTSIDE_K_1_TO_K0\": 4, \"amplitude 0.1: VALVE_SATURATED_SETPOINT_NOT_MAINTAINED\": 7, \"amplitude 0.2: GAEDE_CHARACTERISTIC_OUTSIDE_K_1_TO_K0\": 4, \"amplitude 0.2: VALVE_SATURATED_SETPOINT_NOT_MAINTAINED\": 7} (F4). This is a design finding for the owner, not a demonstrated requirement failure and not a proposal to relax any requirement (A9.13 S6.13 / OQ-F4-04 (NO_REQUIREMENT_RELAXATION): no requirement relaxation: the flight feed requirement is performance-derived (rank 1, S6.21) and is PENDING_EVIDENCE until a measured / validated H-1 thrust-versus-feed map exists; it is never lowered to a deliverable frontier, a state subset or a characterization value). Owner flow-gap order (as recorded in F7): 1 PERFORMANCE_DERIVED_H1_FEED_REQUIREMENT (A9.13 S6.21 / F9-OQ-02; PENDING_EVIDENCE); 2 CAPTURE_COLLECTION (A9.13 S6.13; OPEN); 3 COMPRESSOR_DOMAIN_PUMPING_FEED_EFFICIENCY (A9.13 S6.13; OPEN); 4 SCHEDULED_SETPOINT (A9.13 S6.10 / OQ-F4-01; OPEN). Dense-state-only operation: SENSITIVITY_ONLY_NOT_BASELINE."
+  },
+  {
+   "id": "Q5-DF-RELAX",
+   "path": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "commit": "32c9e639268df6bba10852d94e64983e73d0cac6",
+   "sha256": "7c0a2b75c7f0af174327dcaa47d6741133d94adefada463472d5d413a54cc954",
+   "kind": "json",
+   "locator": "/design_findings_for_owner[id=F9-DF-01]/requirement_relaxation_proposed",
+   "verbatim": false
+  },
+  {
+   "id": "Q6-RR-01",
+   "path": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a",
+   "kind": "json",
+   "locator": "/recorder_readings[id=RR-01]",
+   "verbatim": {
+    "id": "RR-01",
+    "item": 8,
+    "reading": "'Before it starts, close the stage domains, pressure-match tolerance, DWV leakage criteria and stable-region criteria' is applied to each REGISTERED campaign (ICP-45N, ICP-XE-MODE): all four are registered before that campaign's first record. The Ar engineering / commissioning reference (P1) keeps its existing per-stage freeze points (A9.8 P1-IT-52 / P1Q-11 / P1-IT-55, A9.11 P1Q-01), because its stable-region criteria are derived from its own P1-S2 .. S4 evidence and could not be closed before P1 starts; 'preserve ... where already required' keeps it as it is",
+    "alternative": "close all four before the first P1 (Ar) record as well; that would contradict A9.11 P1Q-01",
+    "status": "RECORDER_READING_OWNER_MAY_REVERSE"
+   }
+  },
+  {
+   "id": "Q6-RR-02",
+   "path": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a",
+   "kind": "json",
+   "locator": "/recorder_readings[id=RR-02]",
+   "verbatim": {
+    "id": "RR-02",
+    "item": 7,
+    "reading": "C1-REF is placed after H1-S7.2 only because the characterization needs the built H-1 article (PHYSICAL_PREREQUISITE_RECORDER); A9.21 states only 'before P1-S7'",
+    "status": "RECORDER_READING_OWNER_MAY_REVERSE"
+   }
+  },
+  {
+   "id": "Q6-RR-03",
+   "path": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a",
+   "kind": "json",
+   "locator": "/recorder_readings[id=RR-03]",
+   "verbatim": {
+    "id": "RR-03",
+    "item": 8,
+    "reading": "the step ids ICP-AR-REF / ICP-45A-P1-S7 / ICP-XE-MODE are recorder labels (A9.1 names ICP-45A / ICP-45N); the ICP-45N campaign follows the Ar reference INCLUDING its P1-S7 ICP-45A capacity stage (A9.1 order ICP-45A then ICP-45N); no criterion, value or duration is attached here",
+    "status": "RECORDER_LABEL"
+   }
+  },
+  {
+   "id": "Q6-FLAG-06",
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65be55e592e1b42369ab8d4d8ddf0865c54d45cd501a0a646920b7c6500b5d08",
+   "kind": "json",
+   "locator": "/recorder_flags_v3[id=RF3-FLAG-06]/flag",
+   "verbatim": "A9.21 AL08 split mapping (recorder reading for the owner): the low-flow FCU GAS-L10 is stated as a sub-row of 'valves' (the mass / power v3 AL-08 floor books the flow-control valves under valves); the laboratory Xe MFC GAS-L04 is not one of the owner's split categories and is quoted on its own line; the owner may re-map either"
+  },
+  {
+   "id": "Q6-FLAG-07",
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65be55e592e1b42369ab8d4d8ddf0865c54d45cd501a0a646920b7c6500b5d08",
+   "kind": "json",
+   "locator": "/recorder_flags_v3[id=RF3-FLAG-07]/flag",
+   "verbatim": "A9.21 item 15 dispatch readiness: the classification of open items (SUPPLIER_TO_ANSWER / DEFERRED_TO_FREEZE_GATE / BLOCKING_SEND, rule function classify_open_item) is a recorder rule for owner review; the Xe storage / flow lines whose split quotations the AL-08 re-base waits for keep their owner dispatch tag LATER - sending them earlier is an owner call"
+  },
+  {
+   "id": "Q6-OPEN-CLASSES",
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65be55e592e1b42369ab8d4d8ddf0865c54d45cd501a0a646920b7c6500b5d08",
+   "kind": "json",
+   "locator": "/dispatch_readiness_a9_21/open_item_classes",
+   "verbatim": {
+    "SUPPLIER_TO_ANSWER": "the request asks the supplier to state / propose it; it does not block sending",
+    "DEFERRED_TO_FREEZE_GATE": "an owner-deferred value frozen at its later gate from the procured / calibrated hardware (A9.8 P1-IT-52: no numbers invented now); the supplier quotes capability ranges; A9.4 / A9.6 allow P1_NEEDED lines to be sent for quotation; not blocking",
+    "BLOCKING_SEND": "must be closed before the line can be sent (freeze point NOW and not a supplier answer, or an unmet send precondition such as the controlled H-1 drawing set)"
+   }
+  },
+  {
+   "id": "Q6-THL09-ITEM",
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65be55e592e1b42369ab8d4d8ddf0865c54d45cd501a0a646920b7c6500b5d08",
+   "kind": "json",
+   "locator": "/packages[id=RFQ3-THRUST]/line_items[id=TH-L09]/item",
+   "verbatim": "calibration services / certificates for the P1 instruments not delivered with a valid certificate (MS-G-01..03; A9.5 current-channel components)"
+  },
+  {
+   "id": "Q6-THL09-QTY",
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65be55e592e1b42369ab8d4d8ddf0865c54d45cd501a0a646920b7c6500b5d08",
+   "kind": "json",
+   "locator": "/packages[id=RFQ3-THRUST]/line_items[id=TH-L09]/qty",
+   "verbatim": "per instrument (TBD - requires the dispatched P1 line set)"
+  },
+  {
+   "id": "Q6-THL09-READY",
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65be55e592e1b42369ab8d4d8ddf0865c54d45cd501a0a646920b7c6500b5d08",
+   "kind": "json",
+   "locator": "/packages[id=RFQ3-THRUST]/dispatch_readiness/lines[line=TH-L09]",
+   "verbatim": {
+    "line": "TH-L09",
+    "set": "NOW",
+    "dispatch_tag": "P1_NEEDED",
+    "option_line": false,
+    "send_state": "READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized",
+    "readiness": "NOT_READY_BLOCKING_TBD",
+    "reason": "blocking: quantity",
+    "open_items": [
+     {
+      "item": "quantity",
+      "kind": "quantity",
+      "freeze_point": "NOW",
+      "class": "BLOCKING_SEND"
+     }
+    ],
+    "blocking_open_items": [
+     "quantity"
+    ],
+    "supplier_to_answer": [],
+    "deferred_to_freeze_gate": []
+   }
+  },
+  {
+   "id": "Q6-THRUST-NOW",
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65be55e592e1b42369ab8d4d8ddf0865c54d45cd501a0a646920b7c6500b5d08",
+   "kind": "json",
+   "locator": "/packages[id=RFQ3-THRUST]/dispatch_readiness/now_subset/readiness",
+   "verbatim": "NOT_READY_BLOCKING_TBD"
+  },
+  {
+   "id": "Q6-F9-STATUS",
+   "path": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "7c0a2b75c7f0af174327dcaa47d6741133d94adefada463472d5d413a54cc954",
+   "kind": "json",
+   "locator": "/rfp_citations/correspondence_status",
+   "verbatim": "RECORDER_READING_OWNER_MAY_REVERSE: the F9 record -> RVM row correspondence (rfp_citations_f9.CORRESPONDENCE) is the recorder's reading, verified against the artifacts (VERBATIM_FACT: the RFP fact quoted in the owner's answer matches the RVM row text); only the clause ids per RVM row come from the RVM re-base; the owner may reverse a correspondence (AG-15 closure pending)"
+  },
+  {
+   "id": "Q6-F9-L1",
+   "path": "docs/architecture/freeze_candidate/rfp_citations_f9.py",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "a1be2f777c21d6c8de522bcf4db3ddf438d584497508a01cb0c794c88b61c1ad",
+   "kind": "text",
+   "locator": "L44-L45",
+   "verbatim": "(\"AFC-UP-FI-01\", \"F2-OQ-01\"): [(\"RVM-09\", \"VERBATIM_FACT\", \"N2 and nascent/atomic oxygen\",\n                                    \"N2 and nascent (atomic) O\")]"
+  },
+  {
+   "id": "Q6-F9-L2",
+   "path": "docs/architecture/freeze_candidate/rfp_citations_f9.py",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "a1be2f777c21d6c8de522bcf4db3ddf438d584497508a01cb0c794c88b61c1ad",
+   "kind": "text",
+   "locator": "L46-L47",
+   "verbatim": "(\"AFC-UP-FI-01\", \"F2-OQ-03\"): [(\"RVM-08\", \"VERBATIM_FACT\", \"intake → filter → compressor\",\n                                    \"intake -> filter -> compressor\")]"
+  },
+  {
+   "id": "Q6-F9-L3",
+   "path": "docs/architecture/freeze_candidate/rfp_citations_f9.py",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "a1be2f777c21d6c8de522bcf4db3ddf438d584497508a01cb0c794c88b61c1ad",
+   "kind": "text",
+   "locator": "L48",
+   "verbatim": "(\"AG-12\", \"F9-OQ-02\"): [(\"RVM-01\", \"VERBATIM_FACT\", \"180–230 km\", \"180-230 km\"),"
+  },
+  {
+   "id": "Q6-F9-L4",
+   "path": "docs/architecture/freeze_candidate/rfp_citations_f9.py",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "a1be2f777c21d6c8de522bcf4db3ddf438d584497508a01cb0c794c88b61c1ad",
+   "kind": "text",
+   "locator": "L49",
+   "verbatim": "(\"RVM-02\", \"VERBATIM_FACT\", \"12–25 mN\", \"12-25 mN\")]"
+  },
+  {
+   "id": "Q6-F9-L5",
+   "path": "docs/architecture/freeze_candidate/rfp_citations_f9.py",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "a1be2f777c21d6c8de522bcf4db3ddf438d584497508a01cb0c794c88b61c1ad",
+   "kind": "text",
+   "locator": "L51",
+   "verbatim": "(\"AFC-SY-PWR-01\", None): [(\"RVM-04\", \"PARAMETER_FACT\", \"P_bus,1ms,max\", \"P_bus,1ms,max\")]"
+  },
+  {
+   "id": "Q6-F1-OPEN",
+   "path": "docs/HISTORY.md",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "7993451e4fe16430ae365a3b97c2062e21bcfa74df14bab45bbd147767864fb9",
+   "kind": "text",
+   "locator": "L3254-L3255",
+   "verbatim": "Open: the F1 output is now 36.7 MB\n  (was 1.9 MB) — storage form is an owner call (A9.17 DATA_SIZE intent: avoid bloating Git history)."
+  },
+  {
+   "id": "Q6-DATA-SIZE",
+   "path": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
+   "kind": "json",
+   "locator": "/decisions/DATA_SIZE",
+   "verbatim": {
+    "answer": "KEEP_DATA_ARTIFACT_EXCLUDE_FROM_INSTALL_WHERE_POSSIBLE",
+    "summary": "keep the frozen dataset as repository evidence (one canonical compressed copy, builder, manifest, sha256); not packaged in the installed wheel unless runtime code genuinely needs it; immutable external artifact if versions start bloating history"
+   }
+  },
+  {
+   "id": "Q7-DISPATCH-DECISION",
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65be55e592e1b42369ab8d4d8ddf0865c54d45cd501a0a646920b7c6500b5d08",
+   "kind": "json",
+   "locator": "/dispatch_readiness_a9_21/decision/quote",
+   "verbatim": "For 15, I cannot dispatch supplier RFQs from this chat environment. The quotation packages can be finalized here, but you/procurement must actually send them."
+  },
+  {
+   "id": "Q7-REPO-DISPATCHES",
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65be55e592e1b42369ab8d4d8ddf0865c54d45cd501a0a646920b7c6500b5d08",
+   "kind": "json",
+   "locator": "/dispatch_readiness_a9_21/repository_dispatches",
+   "verbatim": false
+  },
+  {
+   "id": "Q7-RFQ3-RF",
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65be55e592e1b42369ab8d4d8ddf0865c54d45cd501a0a646920b7c6500b5d08",
+   "kind": "json",
+   "locator": "/packages[id=RFQ3-RF]/dispatch_readiness/now_subset/readiness",
+   "verbatim": "READY_FOR_OWNER_DISPATCH"
+  },
+  {
+   "id": "Q7-RFQ3-GAS",
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65be55e592e1b42369ab8d4d8ddf0865c54d45cd501a0a646920b7c6500b5d08",
+   "kind": "json",
+   "locator": "/packages[id=RFQ3-GAS]/dispatch_readiness/now_subset/readiness",
+   "verbatim": "READY_FOR_OWNER_DISPATCH"
+  },
+  {
+   "id": "Q7-RFQ3-VAC",
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65be55e592e1b42369ab8d4d8ddf0865c54d45cd501a0a646920b7c6500b5d08",
+   "kind": "json",
+   "locator": "/packages[id=RFQ3-VAC]/dispatch_readiness/now_subset/readiness",
+   "verbatim": "READY_FOR_OWNER_DISPATCH"
+  },
+  {
+   "id": "Q7-RFQ3-HALLEL",
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65be55e592e1b42369ab8d4d8ddf0865c54d45cd501a0a646920b7c6500b5d08",
+   "kind": "json",
+   "locator": "/packages[id=RFQ3-HALLEL]/dispatch_readiness/now_subset/readiness",
+   "verbatim": "READY_FOR_OWNER_DISPATCH"
+  },
+  {
+   "id": "Q7-RFQ3-MECH",
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65be55e592e1b42369ab8d4d8ddf0865c54d45cd501a0a646920b7c6500b5d08",
+   "kind": "json",
+   "locator": "/packages[id=RFQ3-MECH]/dispatch_readiness/now_subset/readiness",
+   "verbatim": "READY_FOR_OWNER_DISPATCH"
+  },
+  {
+   "id": "Q7-RFQ3-THRUST",
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65be55e592e1b42369ab8d4d8ddf0865c54d45cd501a0a646920b7c6500b5d08",
+   "kind": "json",
+   "locator": "/packages[id=RFQ3-THRUST]/dispatch_readiness/now_subset/readiness",
+   "verbatim": "NOT_READY_BLOCKING_TBD"
+  },
+  {
+   "id": "Q7-RFQ3-RFMET",
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65be55e592e1b42369ab8d4d8ddf0865c54d45cd501a0a646920b7c6500b5d08",
+   "kind": "json",
+   "locator": "/packages[id=RFQ3-RFMET]/dispatch_readiness/now_subset/readiness",
+   "verbatim": "READY_FOR_OWNER_DISPATCH"
+  },
+  {
+   "id": "Q7-RFQ3-H1FAB",
+   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "65be55e592e1b42369ab8d4d8ddf0865c54d45cd501a0a646920b7c6500b5d08",
+   "kind": "json",
+   "locator": "/packages[id=RFQ3-H1FAB]/dispatch_readiness/now_subset/readiness",
+   "verbatim": "NOT_READY_AWAITING_CONTROLLED_H1_DRAWINGS"
+  },
+  {
+   "id": "Q7-FEMM-STATUS",
+   "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "8c8e19f8339fff8b473d5ac9c6d55d3c23e94441a16de17c64e199ad8c5935d4",
+   "kind": "json",
+   "locator": "/femm_analysis_points/status",
+   "verbatim": "FEMM_AUTHORISED_NOT_RUN"
+  },
+  {
+   "id": "Q7-FEMM-DECISION",
+   "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "8c8e19f8339fff8b473d5ac9c6d55d3c23e94441a16de17c64e199ad8c5935d4",
+   "kind": "json",
+   "locator": "/femm_analysis_points/decision",
+   "verbatim": "A9.14 F5-OQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
+  },
+  {
+   "id": "Q7-FEMM-RULES",
+   "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "8c8e19f8339fff8b473d5ac9c6d55d3c23e94441a16de17c64e199ad8c5935d4",
+   "kind": "json",
+   "locator": "/femm_analysis_points/rules",
+   "verbatim": [
+    "FEMM-class axisymmetric magnetostatics at the RP-1 anchor and the admissible window corners",
+    "use actual / sourced B-H data when available; preserve geometry ids and solver configuration",
+    "do not infer Hall performance from magnetic feasibility alone"
+   ]
+  },
+  {
+   "id": "Q7-FEMM-POINTS",
+   "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "8c8e19f8339fff8b473d5ac9c6d55d3c23e94441a16de17c64e199ad8c5935d4",
+   "kind": "json",
+   "locator": "/femm_analysis_points/points",
+   "verbatim": [
+    {
+     "probe": "A_min_dh_min L/h 8.603",
+     "geometric_status": {
+      "nominal_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS",
+      "worst_case_assumptions": "OUTSIDE_DECLARED_GEOMETRIC_WINDOWS"
+     },
+     "authorised_analysis_point": false,
+     "note": "the solid-core inner-coil floor does not admit this corner under worst-case assumptions; not in the authorised set (owner may add)",
+     "femm_status": "NOT_AUTHORISED"
+    },
+    {
+     "probe": "A_min_dh_min L/h 12.0",
+     "geometric_status": {
+      "nominal_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS",
+      "worst_case_assumptions": "OUTSIDE_DECLARED_GEOMETRIC_WINDOWS"
+     },
+     "authorised_analysis_point": false,
+     "note": "the solid-core inner-coil floor does not admit this corner under worst-case assumptions; not in the authorised set (owner may add)",
+     "femm_status": "NOT_AUTHORISED"
+    },
+    {
+     "probe": "A_min_dh_max L/h 8.603",
+     "geometric_status": {
+      "nominal_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS",
+      "worst_case_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS"
+     },
+     "authorised_analysis_point": true,
+     "note": null,
+     "femm_status": "FEMM_AUTHORISED_NOT_RUN"
+    },
+    {
+     "probe": "A_min_dh_max L/h 12.0",
+     "geometric_status": {
+      "nominal_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS",
+      "worst_case_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS"
+     },
+     "authorised_analysis_point": true,
+     "note": null,
+     "femm_status": "FEMM_AUTHORISED_NOT_RUN"
+    },
+    {
+     "probe": "A_max_dh_min L/h 8.603",
+     "geometric_status": {
+      "nominal_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS",
+      "worst_case_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS"
+     },
+     "authorised_analysis_point": true,
+     "note": null,
+     "femm_status": "FEMM_AUTHORISED_NOT_RUN"
+    },
+    {
+     "probe": "A_max_dh_min L/h 12.0",
+     "geometric_status": {
+      "nominal_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS",
+      "worst_case_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS"
+     },
+     "authorised_analysis_point": true,
+     "note": null,
+     "femm_status": "FEMM_AUTHORISED_NOT_RUN"
+    },
+    {
+     "probe": "A_max_dh_max L/h 8.603",
+     "geometric_status": {
+      "nominal_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS",
+      "worst_case_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS"
+     },
+     "authorised_analysis_point": true,
+     "note": null,
+     "femm_status": "FEMM_AUTHORISED_NOT_RUN"
+    },
+    {
+     "probe": "A_max_dh_max L/h 12.0",
+     "geometric_status": {
+      "nominal_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS",
+      "worst_case_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS"
+     },
+     "authorised_analysis_point": true,
+     "note": null,
+     "femm_status": "FEMM_AUTHORISED_NOT_RUN"
+    },
+    {
+     "probe": "RP-1 anchor (not a selection)",
+     "geometric_status": {
+      "nominal_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS",
+      "worst_case_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS"
+     },
+     "authorised_analysis_point": true,
+     "note": null,
+     "femm_status": "FEMM_AUTHORISED_NOT_RUN"
+    }
+   ]
+  },
+  {
+   "id": "Q7-FEMM-RESULTS",
+   "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "8c8e19f8339fff8b473d5ac9c6d55d3c23e94441a16de17c64e199ad8c5935d4",
+   "kind": "json",
+   "locator": "/femm_analysis_points/results",
+   "verbatim": []
+  },
+  {
+   "id": "Q7-S71-PRE",
+   "path": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a",
+   "kind": "json",
+   "locator": "/steps[id=H1-S7.1]/entry_preconditions/0/what",
+   "verbatim": "authorised analysis-point set and geometry ids registered (femm_analysis_points, worst-case geometric admissibility)"
+  },
+  {
+   "id": "Q7-S71-STATUS",
+   "path": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a",
+   "kind": "json",
+   "locator": "/steps[id=H1-S7.1]/entry_status_now",
+   "verbatim": "NOT_STARTABLE_PRECONDITION_MISSING"
+  },
+  {
+   "id": "Q7-S71-OUTPUTS",
+   "path": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a",
+   "kind": "json",
+   "locator": "/steps[id=H1-S7.1]/outputs",
+   "verbatim": [
+    "FEMM result record per authorised point (result_id, sha256, geometry_id, solver_configuration_id)"
+   ]
+  },
+  {
+   "id": "Q7-REG-FIELDS",
+   "path": "docs/experiments/hall_icp/programme/hw_programme_a9_21.py",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "b0ae752d2273722b91f9b8b369e8deefaafed681fcb11e44f9b0e20b30316bac",
+   "kind": "text",
+   "locator": "L92",
+   "verbatim": "REGISTRATION_FIELDS = (\"registration_id\", \"frozen_utc\", \"sha256\")"
+  },
+  {
+   "id": "Q7-P2-PRE",
+   "path": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a",
+   "kind": "json",
+   "locator": "/steps[id=P2-MAP]/entry_preconditions",
+   "verbatim": [
+    {
+     "id": "P2-MAP-PRE-01",
+     "what": "in-house V/I magnitude / relative-phase calibration admissible and frozen",
+     "validator": "vi_calibration",
+     "enforced_by": "docs/experiments/hall_icp/p2_impedance_map/p2_a9_16_rules.py:vi_calibration_check",
+     "sources": [
+      {
+       "question_id": "P2Q-07",
+       "cite": "A9.11 P2Q-07 (docs/decisions/OD_2026_10_01_A9_11_s4_p2_owner_decisions.json sha256 d8baf59a5b92739698e29d893e89a30995559ee7167814c096dc24599679156c)",
+       "decision_code": "YES_IN_HOUSE_TRACEABLE"
+      }
+     ],
+     "freeze_before": "the first impedance-map record",
+     "gates": "STEP_START"
+    },
+    {
+     "id": "P2-MAP-PRE-02",
+     "what": "uncertainty budget of the V/I calibration frozen",
+     "validator": "uncertainty_budget",
+     "enforced_by": "docs/experiments/hall_icp/programme/hw_programme_a9_21.py:entry_status",
+     "sources": [
+      {
+       "question_id": "P2Q-07",
+       "cite": "A9.11 P2Q-07 (docs/decisions/OD_2026_10_01_A9_11_s4_p2_owner_decisions.json sha256 d8baf59a5b92739698e29d893e89a30995559ee7167814c096dc24599679156c)",
+       "decision_code": "YES_IN_HOUSE_TRACEABLE"
+      }
+     ],
+     "freeze_before": "the first impedance-map record",
+     "gates": "STEP_START"
+    }
+   ]
+  },
+  {
+   "id": "Q7-P2-STATUS",
+   "path": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a",
+   "kind": "json",
+   "locator": "/steps[id=P2-MAP]/entry_status_now",
+   "verbatim": "NOT_STARTABLE_PRECONDITION_MISSING"
+  },
+  {
+   "id": "Q7-HW-H1-S7.1",
+   "path": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a",
+   "kind": "json",
+   "locator": "/steps[id=H1-S7.1]/entry_status_now",
+   "verbatim": "NOT_STARTABLE_PRECONDITION_MISSING"
+  },
+  {
+   "id": "Q7-HW-H1-S7.2",
+   "path": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a",
+   "kind": "json",
+   "locator": "/steps[id=H1-S7.2]/entry_status_now",
+   "verbatim": "NOT_STARTABLE_PREDECESSOR_INCOMPLETE"
+  },
+  {
+   "id": "Q7-HW-C1-REF",
+   "path": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a",
+   "kind": "json",
+   "locator": "/steps[id=C1-REF]/entry_status_now",
+   "verbatim": "NOT_STARTABLE_PREDECESSOR_INCOMPLETE"
+  },
+  {
+   "id": "Q7-HW-ICP-AR-REF",
+   "path": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a",
+   "kind": "json",
+   "locator": "/steps[id=ICP-AR-REF]/entry_status_now",
+   "verbatim": "ENTRY_GATED_BY_EXISTING_STAGE_RULES"
+  },
+  {
+   "id": "Q7-HW-ICP-45A-P1-S7",
+   "path": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a",
+   "kind": "json",
+   "locator": "/steps[id=ICP-45A-P1-S7]/entry_status_now",
+   "verbatim": "NOT_STARTABLE_PREDECESSOR_INCOMPLETE"
+  },
+  {
+   "id": "Q7-HW-ICP-45N",
+   "path": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a",
+   "kind": "json",
+   "locator": "/steps[id=ICP-45N]/entry_status_now",
+   "verbatim": "NOT_STARTABLE_PREDECESSOR_INCOMPLETE"
+  },
+  {
+   "id": "Q7-HW-ICP-XE-MODE",
+   "path": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a",
+   "kind": "json",
+   "locator": "/steps[id=ICP-XE-MODE]/entry_status_now",
+   "verbatim": "NOT_STARTABLE_PREDECESSOR_INCOMPLETE"
+  },
+  {
+   "id": "Q7-HW-P2-MAP",
+   "path": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a",
+   "kind": "json",
+   "locator": "/steps[id=P2-MAP]/entry_status_now",
+   "verbatim": "NOT_STARTABLE_PRECONDITION_MISSING"
+  },
+  {
+   "id": "Q7-HW-COUPLED-H1-ICP",
+   "path": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a",
+   "kind": "json",
+   "locator": "/steps[id=COUPLED-H1-ICP]/entry_status_now",
+   "verbatim": "NO_A9_21_ENTRY_PRECONDITION_LISTED"
+  },
+  {
+   "id": "Q7-HW-P3-THERMAL",
+   "path": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a",
+   "kind": "json",
+   "locator": "/steps[id=P3-THERMAL]/entry_status_now",
+   "verbatim": "NOT_STARTABLE_PREDECESSOR_INCOMPLETE"
+  },
+  {
+   "id": "Q7-HW-P4-ACCEPTANCE-EXPOSURE",
+   "path": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a",
+   "kind": "json",
+   "locator": "/steps[id=P4-ACCEPTANCE-EXPOSURE]/entry_status_now",
+   "verbatim": "NOT_STARTABLE_PREDECESSOR_INCOMPLETE"
+  },
+  {
+   "id": "Q7-HW-H1-THRUST-FEED-MAP",
+   "path": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a",
+   "kind": "json",
+   "locator": "/steps[id=H1-THRUST-FEED-MAP]/entry_status_now",
+   "verbatim": "NO_A9_21_ENTRY_PRECONDITION_LISTED"
+  },
+  {
+   "id": "Q7-HW-AG-12",
+   "path": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a",
+   "kind": "json",
+   "locator": "/steps[id=AG-12]/entry_status_now",
+   "verbatim": "NOT_STARTABLE_PREDECESSOR_INCOMPLETE"
+  },
+  {
+   "id": "Q7-HW-AG-13",
+   "path": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a",
+   "kind": "json",
+   "locator": "/steps[id=AG-13]/entry_status_now",
+   "verbatim": "NOT_STARTABLE_PREDECESSOR_INCOMPLETE"
+  },
+  {
+   "id": "Q7-PERF",
+   "path": "docs/decisions/OD_2026_10_01_A9_18_golden_and_baseline_owner_decisions.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "7c170e1000ae039c1f032ccf38bcacf2c59825d5dab26b4d98658a96914a8c3a",
+   "kind": "json",
+   "locator": "/decisions/PERF_RERUN/summary",
+   "verbatim": "after step 3 is merged and the owner is told, rerun the identical dedicated procedure on the idle owner machine; that run is the Rust-admission baseline; the earlier dedicated run is historical for the earlier code state; workload definition and S10.1 thresholds unchanged; record commit SHA, workload hashes, machine/toolchain metadata, timings; nothing to run now"
+  },
+  {
+   "id": "Q7-PERF-ADM",
+   "path": "docs/performance/dedicated_baseline_2026_10_01/REGISTRATION_ADDENDUM_A9_18.json",
+   "commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+   "sha256": "37068e8ded889e0e46bd336ce4eacf3749e3fd1c5669da224f8f73dc51de1bf2",
+   "kind": "json",
+   "locator": "/rust_performance_admission",
+   "verbatim": "BLOCKED_UNTIL_A9_18_PERF_RERUN"
+  }
+ ]
+}
