@@ -68,8 +68,13 @@ def test_case_roles(v2):
     assert set(v2["case_roles"]) == set(G.CASES) == set(v2["cases"])
     assert v2["case_roles"]["nonconverged_reference"] == "NONCONVERGED_REFERENCE / EXPECTED_NONCONVERGENCE"
     assert v2["case_roles"]["design_point_selection"] == "SELECTION_RECORD"
-    for k in ("atmosphere", "intake", "gas_path", "source_plasma", "hall", "accelerators", "architecture_closure", "mission"):
+    for k in ("atmosphere", "intake", "gas_path", "source_plasma", "hall", "accelerators"):
         assert v2["case_roles"][k] == "CANONICAL"
+    # A9.22 G4: the LaB6 Xe hollow-cathode closure / mission cases are historical non-flight regression only
+    for k in ("architecture_closure", "mission"):
+        assert v2["case_roles"][k] == "HISTORICAL_NON_FLIGHT_REGRESSION"
+        assert v2["cases"][k]["golden_role"] == "HISTORICAL_NON_FLIGHT_REGRESSION"
+    assert v2["case_roles"]["hall_icp_neutralizer_reference"] == "GOVERNED_REFERENCE_ACTIVE_ARCHITECTURE_PARTIAL"
 
 
 def test_unaffected_cases_identical_to_v1(v1, v2):

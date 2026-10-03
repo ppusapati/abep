@@ -163,6 +163,28 @@ def arch_name(a: dict) -> str:
     return f"{a['ionizer'].name}+{a['accelerator'].name}" + (f"+{a['neutralizer'].name}" if a["neutralizer"].name != "none" else "")
 
 
+# A9.22 G4 (owner decision 2026-10-03, CATHODELESS_ACTIVE_BASELINE): the flight architecture has no conventional hollow
+# cathode and no LaB6. Architectures with these neutralizers stay enumerable for historical research / regression, but a
+# flight-purpose closure, selection or budget refuses them (require_flight_eligible; close_architecture(flight=True);
+# run_all(flight=True)).
+FLIGHT_EXCLUDED_NEUTRALIZERS = {"lab6_xe": "HISTORICAL_NON_FLIGHT_REGRESSION (LaB6 Xe hollow cathode; A9.22 G4)"}
+
+
+class FlightIneligibleArchitectureError(ValueError):
+    """A historical non-flight architecture was requested for a flight-purpose closure / selection / budget."""
+
+
+def flight_eligible(a: dict) -> bool:
+    return a["neutralizer"].name not in FLIGHT_EXCLUDED_NEUTRALIZERS
+
+
+def require_flight_eligible(a: dict) -> None:
+    if not flight_eligible(a):
+        raise FlightIneligibleArchitectureError(
+            f"{arch_name(a)}: neutralizer {a['neutralizer'].name!r} is {FLIGHT_EXCLUDED_NEUTRALIZERS[a['neutralizer'].name]}; "
+            "it must not participate in architecture closure, selection, optimisation, compliance or flight budgets")
+
+
 # ------------------------------------------------------------------------------------------ accelerator physics
 _ION_CACHE: dict = {}
 _NEUT_CACHE: dict = {}
@@ -606,7 +628,7 @@ def gas_evidence_class(gas: dict) -> tuple:
 def close_architecture(a: dict, gas_fn, sc, dc: DesignConstraints | None = None, k_margin: float = 1.3,
                        gas_vars: dict | None = None, strict: bool = False, firing_hours: float | None = None,
                        keep_candidates: bool = True, size_arrays: bool = False, mission_envelope: bool = False,
-                       envelope_margin: float = 1.1) -> dict:
+                       envelope_margin: float = 1.1, flight: bool = False) -> dict:
     """Nested constrained optimisation. gas_fn(area, p_level) -> gas state (gas path is part of the search, item 9).
     Every design constraint, converter rating and thermal feasibility is enforced *inside* the candidate loop
     (item 2, 6, 7). Model exceptions are recorded as MODEL_ERROR, never treated as infeasible (item 3);
@@ -622,6 +644,8 @@ def close_architecture(a: dict, gas_fn, sc, dc: DesignConstraints | None = None,
     from .ppu import default_ppu, load_modes, Converter
     from .thermal import default_nodes, size_radiator, ThermalParams
     from .mass_bom import xe_tank, hall_magnetic_circuit, hall_channel_mass, build_bom, structure_mass
+    if flight:                                   # A9.22 G4: flight-purpose closures refuse historical non-flight archs
+        require_flight_eligible(a)
     dc = dc or DesignConstraints()
     gas_vars = gas_vars or {"area": [0.6, 0.7, 0.85], "p_level": [0.02, 0.05, 0.1]}
     cands = []; runners = []; best_env = None
@@ -950,9 +974,15 @@ def make_gas_fn(alpha=0.8, L_over_d=5, alt=200, solar="mean", blade_coating_um=5
 
 
 def run_all(gas_fn, sc, dc: DesignConstraints | None = None, k_margin: float = 1.3, gas_vars: dict | None = None,
-            strict: bool = False, archs=None) -> pd.DataFrame:
+            strict: bool = False, archs=None, flight: bool = False) -> pd.DataFrame:
+    """flight=True (A9.22 G4): historical non-flight architectures are not closed; they appear with status
+    EXCLUDED_HISTORICAL_NON_FLIGHT and feasible False, so they can never be selected."""
     rows = []
     for a in (archs or enumerate_architectures()):
+        if flight and not flight_eligible(a):
+            rows.append({"architecture": arch_name(a), "valid": a["valid"], "feasible": False,
+                         "status": "EXCLUDED_HISTORICAL_NON_FLIGHT", "reason": FLIGHT_EXCLUDED_NEUTRALIZERS[a["neutralizer"].name]})
+            continue
         rows.append(close_architecture(a, gas_fn, sc, dc, k_margin, gas_vars, strict))
     return pd.DataFrame(rows)
 
