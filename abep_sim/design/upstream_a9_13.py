@@ -11,6 +11,11 @@ Owner decisions implemented here (immutable records; the verbatim .md governs; c
     S6.11 / OQ-F4-02   higher-pressure compression = primary design direction; <= 0.1 Pa high-conductance branch =
                        labelled sensitivity / fallback
     S6.12 / OQ-F4-03   F4 transient metrics provisional (pre-LOCK-2); a measured H-1 tolerance governs when tighter
+    S6.13 / OQ-F4-04   flow gap, NO_REQUIREMENT_RELAXATION: (1) performance-derived H-1 feed requirement (S6.21,
+                       PENDING_EVIDENCE: measured H-1 thrust / feed map), (2) capture / collection, (3) compressor /
+                       feed efficiency, (4) scheduled setpoint (S6.10); 0.38 mg/s = ground characterization only;
+                       dense-state-only operation = sensitivity, never baseline while S6.15 is not met
+                       (``flow_gap_record`` / ``refuse_feed_requirement_lowering`` / ``state_coverage``)
     S6.15 / OQ-F78-01  AG-13 / HC-08: T_available(state) - D_spacecraft(state) >= 0 at EVERY required state
                        (statewise, worst-state and orbit-averaged margins; the average never hides a deficit)
     S6.16 / OQ-F78-02  robustness over EVERY admitted Maxwell / CLL / accommodation scenario until DI-1.3 narrows them
@@ -72,6 +77,21 @@ DECISIONS = {
               "json_sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
               "ids": ["RFP (registration of the official RFP as the requirement source)"]},
 }
+# Decisions applied by the design-state / F1Q-02 / flow-gap step (kept out of DECISIONS so the citation records that
+# other builders already pin through cite() do not change; checked by verify_state_set_decision_records)
+STATE_SET_DECISIONS = {
+    "A9.13": {"json": DECISIONS["A9.13"]["json"], "json_sha256": DECISIONS["A9.13"]["json_sha256"],
+              "ids": ["S6.1 / F1Q-02", "S6.13 / OQ-F4-04", "S6.14 / OQ-F4-05", "S6.15 / OQ-F78-01",
+                      "S6.21 / F9-OQ-02"]},
+    "A9.14": {"json": DECISIONS["A9.14"]["json"], "json_sha256": DECISIONS["A9.14"]["json_sha256"],
+              "ids": ["S9.8 / OD3"]},
+    "A9.17": {"json": DECISIONS["A9.17"]["json"], "json_sha256": DECISIONS["A9.17"]["json_sha256"],
+              "ids": ["ORBIT (inclination / LTAN TBD from the official mission ICD; broad design-state envelope)"]},
+    "A9.21": {"md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+              "json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+              "json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+              "ids": ["EXTERNAL_INPUTS (inclination / LTAN not specified: no code default as mission truth)"]},
+}
 RFP_REGISTRATION = "docs/requirements/rfp_official/rfp_registration_v1.json"
 # RFP clauses this module cites (verbatim text in the registration; tests check that every id exists there)
 RFP_CLAUSES = {
@@ -95,6 +115,11 @@ def _sha256(path: Path) -> str:
 def verify_decision_records(repo: Path = REPO) -> dict:
     """Re-hash every cited decision JSON (immutable records); returns {decision: True/False}."""
     return {k: _sha256(Path(repo) / d["json"]) == d["json_sha256"] for k, d in DECISIONS.items()}
+
+
+def verify_state_set_decision_records(repo: Path = REPO) -> dict:
+    """Re-hash the decision JSONs behind STATE_SET_DECISIONS; returns {decision: True/False}."""
+    return {k: _sha256(Path(repo) / d["json"]) == d["json_sha256"] for k, d in STATE_SET_DECISIONS.items()}
 
 
 def cite(*keys: str) -> list[dict]:
@@ -653,6 +678,111 @@ def feed_state_sufficiency(states: Sequence[Mapping], offered_fn: Callable[[Mapp
                  "field_margins": {k: v.get("field_margins") for k, v in rows.items()},
                  "worst_state": q["worst_state"], "average_hides_violation": q["average_hides_violation"]})
     return base
+
+
+# ================================================================================================= S6.13 OQ-F4-04 flow gap
+# A9.13 S6.13 / OQ-F4-04, owner answer NO_REQUIREMENT_RELAXATION: the order in which the upstream flow gap is worked.
+# The feed requirement is never lowered to what a chain happens to deliver; 0.38 mg/s is ground characterization only.
+FLOW_GAP_AUTHORITY = "A9.13 S6.13 / OQ-F4-04 (NO_REQUIREMENT_RELAXATION)"
+GROUND_CHARACTERIZATION_ONLY_MGPS = 0.38
+FLOW_GAP_ORDER = (
+    {"rank": 1, "lever": "PERFORMANCE_DERIVED_H1_FEED_REQUIREMENT", "authority": "A9.13 S6.21 / F9-OQ-02",
+     "what": "derive the minimum feed state from the required drag-compensation thrust at every required state "
+             "through the measured / validated H-1 thrust-versus-feed map (AG-12)",
+     "status": "PENDING_EVIDENCE", "needs": "measured / validated H-1 thrust-versus-feed map (none exists)"},
+    {"rank": 2, "lever": "CAPTURE_COLLECTION", "authority": "A9.13 S6.13",
+     "what": "raise capture / collection within the drag (S6.15 statewise), mass and pointing constraints",
+     "status": "OPEN"},
+    {"rank": 3, "lever": "COMPRESSOR_DOMAIN_PUMPING_FEED_EFFICIENCY", "authority": "A9.13 S6.13",
+     "what": "compressor domain, pumping and feed efficiency", "status": "OPEN"},
+    {"rank": 4, "lever": "SCHEDULED_SETPOINT", "authority": "A9.13 S6.10 / OQ-F4-01",
+     "what": "orbit-state-scheduled plenum setpoint (baseline control mode, not frozen)", "status": "OPEN"},
+)
+DENSE_STATE_ONLY_ROLE = "SENSITIVITY_ONLY_NOT_BASELINE"
+FULL_STATE_SET = "FULL_REQUIRED_STATE_SET"
+STATE_SUBSET = "STATE_SUBSET_SENSITIVITY_ONLY"
+# bases a flight feed requirement may never be set from (fail closed)
+FORBIDDEN_FEED_REQUIREMENT_BASES = ("GROUND_CHARACTERIZATION", "CHARACTERIZATION_COVERAGE", "DELIVERABLE_FRONTIER",
+                                    "DENSE_STATE_ONLY", "STATE_SUBSET", "FIXED_MASS_FLOW_GATE")
+PERFORMANCE_DERIVED_BASIS = "PERFORMANCE_DERIVED_VALIDATED_H1_MAP"
+
+
+def flow_gap_record() -> dict:
+    """The owner-ordered handling of the upstream flow gap (S6.13), carried in F4 / F7 outputs."""
+    return {"authority": FLOW_GAP_AUTHORITY, "decision_record": {"json": STATE_SET_DECISIONS["A9.13"]["json"],
+                                                                 "json_sha256": STATE_SET_DECISIONS["A9.13"]["json_sha256"],
+                                                                 "id": "S6.13 / OQ-F4-04"},
+            "order": [dict(x) for x in FLOW_GAP_ORDER],
+            "rule": "no requirement relaxation: the flight feed requirement is performance-derived (rank 1, S6.21) "
+                    "and is PENDING_EVIDENCE until a measured / validated H-1 thrust-versus-feed map exists; it is never "
+                    "lowered to a deliverable frontier, a state subset or a characterization value",
+            "ground_characterization_mgps": GROUND_CHARACTERIZATION_ONLY_MGPS,
+            "ground_characterization_role": "GROUND_CHARACTERIZATION_ONLY_NEVER_A_FLIGHT_REQUIREMENT",
+            "dense_state_only_operation": {"role": DENSE_STATE_ONLY_ROLE,
+                                           "rule": "operation restricted to higher-density states is a sensitivity; it "
+                                                   "cannot be baseline while it violates S6.15 (T - D >= 0 at EVERY "
+                                                   "required state); S6.15 is NOT_EVALUATED today, so it is never "
+                                                   "baseline-admissible"},
+            "flight_feed_requirement": flight_feed_requirement()}
+
+
+def flight_feed_requirement(h1_map=None) -> dict:
+    """The flight feed requirement: performance-derived only (S6.21, rank 1 of S6.13). PENDING_EVIDENCE (no value)
+    until a VALIDATED H-1 thrust-versus-feed map exists; a synthetic map never produces a flight requirement."""
+    st = None if h1_map is None else getattr(h1_map, "status", None)
+    if st != H1_MAP_VALIDATED:
+        return {"status": "PENDING_EVIDENCE", "value": None, "basis": PERFORMANCE_DERIVED_BASIS,
+                "needs": FLOW_GAP_ORDER[0]["needs"], "authority": [FLOW_GAP_AUTHORITY, "A9.13 S6.21 / F9-OQ-02"]}
+    return {"status": "DERIVE_PER_STATE_FROM_VALIDATED_MAP", "value": None, "basis": PERFORMANCE_DERIVED_BASIS,
+            "rule": "per required state via feed_state_sufficiency (AG-12); never a single number"}
+
+
+def refuse_feed_requirement_lowering(basis: str, value_mgps=None) -> None:
+    """S6.13 fail-closed guard: a flight feed requirement may only come from the performance-derived basis (S6.21).
+    Any attempt to set it from the ground characterization value, the characterization coverage, a deliverable
+    frontier, a dense-state-only / state-subset frontier or a fixed mg/s gate is refused."""
+    if basis == PERFORMANCE_DERIVED_BASIS:
+        return
+    if basis in FORBIDDEN_FEED_REQUIREMENT_BASES or (value_mgps is not None and _finite(value_mgps)
+                                                     and math.isclose(float(value_mgps),
+                                                                      GROUND_CHARACTERIZATION_ONLY_MGPS)):
+        raise A913RuleError(f"{FLOW_GAP_AUTHORITY}: a flight feed requirement is never set from {basis!r}"
+                            + (f" ({value_mgps} mg/s)" if value_mgps is not None else "")
+                            + "; it is performance-derived (S6.21) and PENDING_EVIDENCE until a validated H-1 map "
+                              "exists; 0.38 mg/s is ground characterization only")
+    raise A913RuleError(f"{FLOW_GAP_AUTHORITY}: unknown feed-requirement basis {basis!r} (only "
+                        f"{PERFORMANCE_DERIVED_BASIS})")
+
+
+def state_coverage(used_state_ids: Sequence[str], required_state_ids: Sequence[str]) -> dict:
+    """S6.13 / S6.15: a result over a subset of the required states (e.g. the higher-density states only) is a
+    sensitivity, never baseline; a result over the full required set is eligible (its own gates still apply)."""
+    used, req = list(dict.fromkeys(used_state_ids)), list(dict.fromkeys(required_state_ids))
+    if not req:
+        raise A913RuleError("the required state set is empty")
+    missing = [s for s in req if s not in set(used)]
+    if not missing:
+        return {"coverage": FULL_STATE_SET, "baseline_admissible_by_coverage": True, "n_required": len(req),
+                "n_used_required": len(req), "missing": []}
+    return {"coverage": STATE_SUBSET, "role": DENSE_STATE_ONLY_ROLE, "baseline_admissible_by_coverage": False,
+            "n_required": len(req), "n_used_required": len(req) - len(missing), "missing_count": len(missing),
+            "rule": f"{FLOW_GAP_AUTHORITY}: operation on a state subset is a sensitivity; it cannot be baseline while "
+                    "S6.15 statewise drag compensation is violated or NOT_EVALUATED at any required state"}
+
+
+def dense_state_only_operation(used_state_ids: Sequence[str], required_state_ids: Sequence[str],
+                               s615_record: Mapping | None = None) -> dict:
+    """Classify an operation restricted to a state subset (S6.13): baseline only if it covers every required state
+    AND S6.15 is MET at every required state on determining evidence; otherwise SENSITIVITY_ONLY_NOT_BASELINE."""
+    cov = state_coverage(used_state_ids, required_state_ids)
+    s615 = (s615_record or {}).get("status", C_NOT_EVALUATED)
+    if cov["coverage"] != FULL_STATE_SET:
+        role = DENSE_STATE_ONLY_ROLE
+    elif s615 == C_MET:
+        role = "BASELINE_ELIGIBLE"
+    else:
+        role = "BASELINE_BLOCKED_S6_15_NOT_MET"
+    return {**cov, "s6_15_status": s615, "role": role, "authority": FLOW_GAP_AUTHORITY}
 
 
 # ================================================================================================= S6.16 surface scenarios

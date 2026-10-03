@@ -26,8 +26,19 @@ def _builder():
     return mod
 
 
+def _labelled(label: str):
+    """The required design state carrying ``label`` (e.g. the envelope density maximum); exactly one."""
+    st = [s for s in F1.required_states() if label in s.labels]
+    assert len(st) == 1, label
+    return st[0]
+
+
+DENSEST = _labelled("ENVELOPE_MAX_rho_kg_m3")
+RAREST = _labelled("ENVELOPE_MIN_rho_kg_m3")
+HOTTEST = _labelled("ENVELOPE_MAX_T_K")
+
 TINY = F1.StudySpec(areas_m2=(0.5, 1.0, 2.0), d_mm=(5.0, 10.0), L_over_d=(3.0, 20.0), phi=(0.9,), alphas=(0.5, 1.0),
-                    kernels=("maxwell",), states=(F1.DESIGN_STATE, F1.ENVELOPE_CORNERS[1]), n_direct=300,
+                    kernels=("maxwell",), states=(F1.DESIGN_STATE, DENSEST), n_direct=300,
                     cd_calibration_nodes=((3.0, 1.0, "N2"),), cd_calibration_replicates=3,
                     surface_check_nodes=((3.0, 0.9, 1.0, "N2"),))
 
@@ -38,7 +49,7 @@ def tiny():
 
 
 def test_phi_reconstruction_matches_intake_response():
-    st = F1.ENVELOPE_CORNERS[0]
+    st = RAREST
     ev = F1.Evaluator(n_direct=300, force_direct=True, cd_rel_sd_at_n=(0.01, 300))
     for phi, th in ((0.8, 0.0), (0.9, 5.0)):
         p = ev.point(st, 5.0, phi, 0.5, th, "maxwell", "O")
@@ -76,7 +87,9 @@ def test_surface_used_only_at_exact_node_and_build_state():
     assert F1.surface_node("maxwell", "O", 7.0, 0.9, 1.0, 0.0) is None
     assert F1.surface_node("maxwell", "O", 10.0, 0.9, 1.0, 0.0) is not None
     assert F1.surface_covers(F1.DESIGN_STATE, "maxwell", "O", 10.0, 0.9, 1.0, 0.0)
-    assert not F1.surface_covers(F1.ENVELOPE_CORNERS[0], "maxwell", "O", 10.0, 0.9, 1.0, 0.0)
+    assert not F1.surface_covers(F1.OrbitState(180.0, 70.0), "maxwell", "O", 10.0, 0.9, 1.0, 0.0)
+    # a design state of the orbit-resolved set is never covered (NOT_COVERED -> direct TPMC; never extrapolated)
+    assert not any(F1.surface_covers(st, "maxwell", "O", 10.0, 0.9, 1.0, 0.0) for st in F1.required_states())
     assert not F1.surface_covers(F1.DESIGN_STATE, "maxwell", "O", 10.0, 0.9, 0.9, 0.0)
     ev = F1.Evaluator(n_direct=200, cd_rel_sd_at_n=(0.01, 200))
     p = ev.point(F1.DESIGN_STATE, 10.0, 0.9, 1.0, 0.0, "cll", "N2")
@@ -129,7 +142,7 @@ def test_tiny_study(tiny):
             for g in v["nondominated_groups_d_collapsed"]:
                 assert g["d_mm"] == sorted(TINY.d_mm)
     rows = res["candidate_rows"]["envelope"]["maxwell_a1"]
-    # A = 2 m^2 at 180 km / F10.7 230 must exceed the 25 mN RFP bound -> fail closed with a reason
+    # A = 2 m^2 at the envelope density maximum must exceed the 25 mN RFP bound -> fail closed with a reason
     big = [r for r in rows if r["area_m2"] == 2.0]
     assert big and all(not r["feasible"] and any("C-DRAG-RFP" in x for x in r["infeasible_reasons"]) for r in big)
     assert all(r["pareto_status"] == "INFEASIBLE" for r in big)
@@ -150,14 +163,14 @@ def test_fail_closed_on_nonconverged_tpmc(monkeypatch):
         return r
     monkeypatch.setattr(F1, "intake_response", bad)
     spec = F1.StudySpec(areas_m2=(0.5,), d_mm=(10.0,), L_over_d=(3.0,), phi=(0.9,), alphas=(0.8, 1.0), kernels=("maxwell",),
-                        states=(F1.DESIGN_STATE, F1.ENVELOPE_CORNERS[2]), n_direct=100,
+                        states=(F1.DESIGN_STATE, HOTTEST), n_direct=100,
                         cd_calibration_nodes=((3.0, 1.0, "N2"),), cd_calibration_replicates=2,
                         surface_check_nodes=((3.0, 0.9, 1.0, "N2"),))
     res = F1.run_study(spec)
     env = res["candidate_rows"]["envelope"]["maxwell_a1"][0]
     assert not env["feasible"] and any("MODEL_ERROR" in x for x in env["infeasible_reasons"])
     assert env["pareto_status"] == "INFEASIBLE"
-    rec = [r for r in res["if_a1_unit_area"] if r["state"] == F1.ENVELOPE_CORNERS[2].id][0]
+    rec = [r for r in res["if_a1_unit_area"] if r["state"] == HOTTEST.id][0]
     assert rec["status"] == "MODEL_ERROR"
 
 
@@ -201,6 +214,28 @@ def test_committed_outputs_consistent():
     assert all(r[i_state] == F1.DESIGN_STATE.id for r in tab["rows"] if r[i_src] == "FROZEN_SURFACE")
     assert any(d["counterpart"].startswith("abep_sim/design/filter_stage.py") for d in doc["interface_demands"])
     assert not any("PENDING" in d["counterpart"] for d in doc["interface_demands"])     # integration pass
+    # A9.14 S9.8 OD3: the committed study evaluated the design-case reference + EVERY required design state (no subset)
+    cr = doc["coverage_rule"]
+    assert cr["orbit_states"] == [s.id for s in F1.envelope_states()]
+    assert cr["orbit_states"][0] == F1.DESIGN_STATE.id and len(cr["orbit_states"]) == 1 + len(F1.required_states())
+    ds = cr["design_state_set"]
+    assert ds["sha256"] == F1.DESIGN_STATE_SET_SHA256 and ds["n_required_states"] == len(F1.required_states())
+    assert ds["subset_used"] is False and ds["orbit_basis_label"] == F1.ORBIT_BASIS_LABEL
+    assert doc["orbit_basis_label"] == F1.ORBIT_BASIS_LABEL
+    assert len(cr["design_states"]["rows"]) == len(F1.required_states())
+    assert {r["state"] for r in doc["if_a1_interface"]["records_per_unit_area"]} == set(cr["orbit_states"])
+    assert set(tab["rows"][i][i_state] for i in range(len(tab["rows"]))) == set(cr["orbit_states"])
+    # design states are never covered by the frozen surface
+    assert all(r[i_src] == "DIRECT_TPMC" for r in tab["rows"] if r[i_state] != F1.DESIGN_STATE.id)
+    # history of the superseded five-state set is kept as a labelled record
+    assert doc["state_set_history"]["superseded_state_set"]["state_ids"] == F1.HISTORY_FIVE_STATE_SET["state_ids"]
+    # A9.13 S6.1 / F1Q-02: the intake structural mass is a budgeting sensitivity only
+    lab = doc["intake_structural_mass_label"]
+    assert lab["label"] == "PARAMETRIC_SENSITIVITY" and lab["use"] == "BUDGETING_ONLY"
+    assert set(lab["not"]) == {"CBE", "FROZEN_INTAKE_MASS", "STRUCTURAL_QUALIFICATION"}
+    assert lab["lock1_condition"] == "SOURCED_STRUCTURAL_DEFINITION_REQUIRED_BEFORE_LOCK_1"
+    f9 = [f for f in doc["findings"] if f["id"] == "F1-09"][0]
+    assert f9["f1q02"] == lab
 
 
 def test_lane_files_hygiene():
@@ -250,3 +285,95 @@ def test_pareto_filter_non_finite_row_not_evaluated():
     """OPT-04: a NaN objective is NOT_EVALUATED and never dominates a fully evaluated row."""
     st = F1.pareto_filter([_row("good"), _row("nan_row", mdot_captured_kgps=2.0, drag_N=float("nan"))])
     assert st == {"good": "NONDOMINATED", "nan_row": "NOT_EVALUATED_NON_FINITE_OBJECTIVE"}
+
+
+# ------------------------------------------------------------------------- A9.14 S9.8 OD3 design-state set
+def test_design_state_set_pinned_and_complete():
+    d = F1.load_design_state_set()
+    raw = (REPO / F1.DESIGN_STATE_SET_REL).read_bytes()
+    assert hashlib.sha256(raw).hexdigest() == F1.DESIGN_STATE_SET_SHA256
+    req = F1.required_states()
+    assert len(req) == d["n_states"] == 196 and all(s.required for s in req)
+    env = F1.envelope_states()
+    assert env[0] is F1.DESIGN_STATE and env[1:] == req          # reference first, then every required state, no subset
+    labels = {lab.split("[")[0] for s in req for lab in s.labels}
+    assert {"NOMINAL_MEDIAN_RHO", "MAX_rho_kg_m3", "MIN_rho_kg_m3", "MAX_T_K", "MIN_T_K", "LST_PEAK",
+            "LST_TROUGH", "ENVELOPE_MAX_rho_kg_m3"} <= labels
+    assert F1.ENVELOPE_STATES == env and F1.REQUIRED_STATES == req
+
+
+def test_design_state_atmosphere_record():
+    from abep_sim.atmosphere import orbital_velocity
+    st = DENSEST
+    a = st.atm()
+    assert math.isclose(a["fO"] + a["fN2"] + a["fO2"], 1.0, rel_tol=1e-12)
+    assert a["rho"] == st.rho_kg_m3 and a["T"] == st.T_K and a["V"] == orbital_velocity(st.alt_km)
+    assert a["orbit_basis"] == F1.ORBIT_BASIS_LABEL and F1.DESIGN_STATE_SET_SHA256 in a["source"]
+    assert st.key != F1.DESIGN_STATE.key and st.id.startswith("ds2:")
+    assert F1.state_alt_km(st.id) == st.alt_km and F1.state_role(st.id) == "REQUIRED_DESIGN_STATE"
+    assert F1.state_role(F1.DESIGN_STATE.id) == "DESIGN_CASE_REFERENCE_POINT"
+    with pytest.raises(F1.IntakeInputError):
+        F1.state_alt_km("h180_f230")                            # superseded corner: not an evaluated state any more
+
+
+def _isolated_data_dir(tmp_path, monkeypatch, mutate=None, drop=None):
+    for name in (Path(F1.DESIGN_STATE_SET_REL).name, Path(F1.DESIGN_STATE_MANIFEST_REL).name):
+        if name == drop:
+            continue
+        b = (REPO / "abep_sim/data" / name).read_bytes()
+        if mutate and name == mutate[0]:
+            b = mutate[1](b)
+        (tmp_path / name).write_bytes(b)
+    monkeypatch.setattr(F1, "DATA_DIR", str(tmp_path))
+    F1.load_design_state_set.cache_clear()
+    F1.required_states.cache_clear()
+    F1.state_index.cache_clear()
+
+
+@pytest.mark.parametrize("case", ["missing_set", "missing_manifest", "altered_set"])
+def test_design_state_set_fails_closed(tmp_path, monkeypatch, case):
+    name = Path(F1.DESIGN_STATE_SET_REL).name
+    try:
+        if case == "missing_set":
+            _isolated_data_dir(tmp_path, monkeypatch, drop=name)
+        elif case == "missing_manifest":
+            _isolated_data_dir(tmp_path, monkeypatch, drop=Path(F1.DESIGN_STATE_MANIFEST_REL).name)
+        else:
+            _isolated_data_dir(tmp_path, monkeypatch, mutate=(name, lambda b: b.replace(b'"alt_km": 180.0', b'"alt_km": 181.0', 1)))
+        with pytest.raises(F1.DesignStateSetError):
+            F1.required_states()
+        with pytest.raises(F1.DesignStateSetError):
+            F1.StudySpec()                                       # no fallback state set for the study either
+    finally:
+        monkeypatch.undo()
+        F1.load_design_state_set.cache_clear()
+        F1.required_states.cache_clear()
+        F1.state_index.cache_clear()
+    assert len(F1.required_states()) == 196
+
+
+def test_prefill_matches_serial_direct_runs():
+    pts = [(st, ld, al, 0.0, k, sp) for st in (DENSEST, RAREST) for ld in (3.0,) for al in (0.0, 1.0)
+           for k in ("maxwell", "cll") for sp in ("O", "N2")]
+    a = F1.Evaluator(n_direct=80)
+    n = a.prefill_direct(pts, workers=2)
+    b = F1.Evaluator(n_direct=80)
+    for p_ in pts:
+        ra, rb = a.direct_core(*p_), b.direct_core(*p_)
+        assert ra["seed"] == rb["seed"]
+        assert all(ra["r"][k] == rb["r"][k] for k in ("eta_c", "C_D", "K_back", "CR_passive", "unresolved_fraction"))
+    assert n == len(pts) == a.direct_runs == b.direct_runs
+    assert a.prefill_direct(pts, workers=2) == 0                 # cached points are never re-run
+
+
+def test_f1q02_intake_mass_budgeting_only():
+    c = F1.GeometryCandidate(0.5, 10.0, 10.0, 0.9)
+    m = F1.intake_mass(c, F1.STRUCTURAL_CODE_DEFAULT)
+    assert m["f1q02"] == F1.f1q02_label() and m["f1q02"]["use"] == "BUDGETING_ONLY"
+    for bad in ("CBE", "FROZEN_INTAKE_MASS", "STRUCTURAL_QUALIFICATION", "anything"):
+        with pytest.raises(F1.IntakeMassUseError):
+            F1.intake_mass(c, F1.STRUCTURAL_CODE_DEFAULT, use=bad)
+    F1.require_f1q02_label(m)
+    for rec in ({"m_intake_kg": 1.0}, {"f1q02": dict(F1.f1q02_label(), use="CBE")}, None):
+        with pytest.raises(F1.IntakeMassUseError):
+            F1.require_f1q02_label(rec)

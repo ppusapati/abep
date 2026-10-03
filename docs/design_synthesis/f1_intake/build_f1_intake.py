@@ -44,8 +44,28 @@ PINNED = (
     "abep_sim/data/intake_surface_v1.json",
     "abep_sim/data/atmosphere_msis21_v1.csv",
     "abep_sim/data/atmosphere_msis21_v1.json",
+    F1.DESIGN_STATE_SET_REL,
+    F1.DESIGN_STATE_MANIFEST_REL,
     DIRECTIVE_REL,
 )
+# A9.14 S9.8 OD3 / A9.13 S6.14: the orbit-state set changed from five hand-picked orbit-averaged states to the frozen
+# design-state set v2. The builder keeps no output history, so the superseded run is recorded here (facts of the
+# committed output at 61eefc4, read from that file; never recomputed).
+STATE_SET_HISTORY = {
+    "superseded_state_set": F1.HISTORY_FIVE_STATE_SET,
+    "superseded_output": {"path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json", "commit": "61eefc4",
+                          "sha256": "85c79045047a6b09a10c8f199782b25defad2b5446386fa68496a16cf41c2ff2",
+                          "direct_runs": 503,
+                          "feasible_of_144_per_scenario": {
+                              "design_case": {"maxwell_a0": 120, "maxwell_a0.2": 120, "maxwell_a0.5": 120,
+                                              "maxwell_a0.8": 120, "maxwell_a1": 120, "cll_a0": 120, "cll_a0.2": 120,
+                                              "cll_a0.5": 120, "cll_a0.8": 120, "cll_a1": 120},
+                              "envelope": {"maxwell_a0": 48, "maxwell_a0.2": 48, "maxwell_a0.5": 48, "maxwell_a0.8": 48,
+                                           "maxwell_a1": 48, "cll_a0": 48, "cll_a0.2": 48, "cll_a0.5": 48,
+                                           "cll_a0.8": 48, "cll_a1": 48}}},
+    "reason": "A9.14 S9.8 OD3 (design states come from the versioned orbit-resolved dataset; no hand-picked F10.7 / "
+              "density points) and A9.13 S6.14 OQ-F4-05 (application-matrix residual RVF-03)",
+}
 REFERENCED_NOT_PINNED = (
     ("abep_sim/intake_tpmc.py", "called (intake_response, clausing_transmission, IntakeGeometry defaults); not modified"),
     ("abep_sim/intake.py", "IntakeSurface recombination convention examined (finding F1-01, since fixed in "
@@ -132,17 +152,19 @@ def build_items(spec):
         item("F1-P-11", "RFP thrust maximum (hard-constraint bound on intake-face drag)", RFP.thrust_max_mN, "mN",
              "intake-face drag above the top of the RFP thrust range cannot be compensated inside that range",
              "REF-RFP-CONSTANTS", "requirement-as-recorded", "REQUIREMENT_AS_RECORDED (verify against official RFP)"),
-        item("F1-P-12", "direct TPMC particles per point", spec.n_direct, "-", "bounded for the < 10 min CPU budget; "
-             "statistical SE reported per point", "this study", "numerical-setting", "STUDY_SETTING"),
+        item("F1-P-12", "direct TPMC particles per point", spec.n_direct, "-", "bounded per point (unchanged since A9.7); "
+             "statistical SE reported per point; with the full design-state set the direct runs are spread over a "
+             "seeded process pool (results independent of the worker count)", "this study", "numerical-setting",
+             "STUDY_SETTING"),
         item("F1-P-13", "frozen-surface particles per point", int(sm["n_per_point"]), "-", "surface metadata",
              "abep_sim/data/intake_surface_v1.json n_per_point", "numerical-setting", "FROZEN"),
         item("F1-P-14", "K_back (Clausing) particles per evaluation", F1.K_BACK_N, "-",
              "intake_response calls clausing_transmission with its default n; assumed unchanged since the surface build "
              "(not recorded in the surface metadata)", "abep_sim/intake_tpmc.py clausing_transmission signature",
              "numerical-setting", "CODE_DEFAULT"),
-        item("F1-P-15", "relative flow speed", "V_orbital", "m s^-1",
-             "atmosphere() returns no V_rel (co-rotation / winds), so V_rel = V_orb on every path", "docs/interfaces/"
-             "UPSTREAM_ICD.md IF-A0 V_mps (partial)", "model-derived", "KNOWN_LIMITATION"),
+        item("F1-P-15", "relative flow speed", "V_orbital", "m s^-1", F1.V_REL_BASIS,
+             "abep_sim/atmosphere.py orbital_velocity; docs/interfaces/UPSTREAM_ICD.md IF-A0 V_mps (partial)",
+             "model-derived", "KNOWN_LIMITATION (inclination / LTAN TBD, A9.21)"),
         item("F1-P-16", "frontal-area design grid", list(spec.areas_m2), "m^2",
              "design-grid sample points (no evidence claim); upper end equals the largest A_f in the literature concept "
              "table (context only)", "feed_state_closure_v1.json published_comparables LIT-01 (Andreussi 2022 Table 1)",
@@ -153,6 +175,13 @@ def build_items(spec):
         item("F1-P-18", "L/d and phi design grid", {"L_over_d": list(spec.L_over_d), "phi": list(spec.phi)}, "-",
              "frozen-surface nodes (exact coverage at the build state; direct TPMC elsewhere)",
              "intake_surface_v1.json grid", "model-derived", "DESIGN_GRID"),
+        item("F1-P-19", "orbit / atmosphere state set", F1.DESIGN_STATE_SET_ID, "-",
+             f"every required state of the frozen design-state set v2 ({len(F1.required_states())} states; nominal "
+             "median-density states and physical extrema of density, composition, temperature, local time and solar "
+             "activity per ECSS scenario x altitude node) plus the design-case reference point "
+             f"{F1.DESIGN_STATE.id}; orbit basis {F1.ORBIT_BASIS_LABEL}",
+             f"{F1.DESIGN_STATE_SET_REL} sha256 {F1.DESIGN_STATE_SET_SHA256}", "model-derived",
+             "FROZEN_DATASET (A9.14 S9.8 OD3; broad envelope, not a mission orbit)"),
     ]
 
 
@@ -209,10 +238,14 @@ def summarize(res, spec):
                            f"{chk['all_within_3sigma']} (z-scores in surface_reproduction_check)",
                 "handling": "diagnostic of build-state / normalisation consistency only"})
     sr = res["speed_ratio_bracket"]
+    ext = "; ".join(f"{k} {v['min']:.4g}..{v['max']:.4g} (max at {v['argmax_labels'][0] if v['argmax_labels'] else v['argmax']})"
+                    for k, v in sr["quantities"].items())
     out.append({"id": "F1-07", "evidence_class": "model-derived",
-                "finding": f"over all {sr['n_grid_states']} frozen-atmosphere grid states in 180-230 km (all F10.7), the "
-                           f"extremes of the species speed ratios, rho V and q occur at evaluated states: {sr['all_bracketed']}",
-                "handling": "basis for the corner-state envelope; interior states are not evaluated"})
+                "finding": f"over the {sr['n_states']} required states of {sr['state_set']} (every scenario x altitude "
+                           f"node with its density / composition / temperature / local-time extrema) the free-stream "
+                           f"ranges are: {ext}",
+                "handling": "every required state is evaluated (no corner bracketing, no subset); orbit basis "
+                            f"{F1.ORBIT_BASIS_LABEL}"})
     oa = [r["off_axis_rel_eta_loss_per_deg"] for rows in cr["design_case"].values() for r in rows]
     out.append({"id": "F1-08", "evidence_class": "model-derived",
                 "finding": f"relative collection loss per degree of pointing (secant 0-{spec.theta_hi_deg:g} deg, design case) "
@@ -233,8 +266,10 @@ def summarize(res, spec):
                 "finding": f"m_intake is TBD for every candidate (wall thickness, coating and support fraction have no evidence). "
                            f"Under the labelled PARAMETRIC_SENSITIVITY_CASE SC-CODE-DEFAULT it spans {min(m):.2f}-{max(m):.2f} kg "
                            f"over the grid. Mass dominance uses (wall area, frontal area), which implies mass dominance for ANY "
-                           f"positive structural parameters", "handling": f"F1Q-02 {ost.status_label('F1Q-02')}: labelled budgeting "
-                                                       "assumption, sourced before LOCK-1"})
+                           f"positive structural parameters", "handling": f"F1Q-02 {ost.status_label('F1Q-02')}: "
+                                                       f"{F1.F1Q02_LABEL}, {F1.F1Q02_USE} (never "
+                                                       f"{', '.join(F1.F1Q02_FORBIDDEN_USES)}); {F1.F1Q02_LOCK1}",
+                "f1q02": F1.f1q02_label()})
     return out
 
 
@@ -303,9 +338,19 @@ def build(progress=None):
                            "pinned by a test), deterministic crc32 seeds, n per point = F1-P-12; converged iff unresolved "
                            "fraction <= 1e-3, else MODEL_ERROR (fail closed)",
             "orbit_states": [s.id for s in spec.states],
-            "orbit_state_basis": "RFP band corners 180/230 km x F10.7 70/230 (extremes present in the frozen dataset) plus "
-                                 "the surface build state 200 km / F10.7 150. Local-time states: NOT_IN_FROZEN_DATASET (the "
-                                 "dataset is orbit-averaged over local solar time); live MSIS not used (rule 3)",
+            "orbit_state_basis": f"index 0: design-case reference point {F1.DESIGN_STATE.id} (surface build state, "
+                                 "orbit-averaged atmosphere_msis21_v1); then every required state of the frozen "
+                                 f"design-state set v2 {F1.DESIGN_STATE_SET_ID} (sha256 {F1.DESIGN_STATE_SET_SHA256}): "
+                                 "nominal states and physical extrema of density / composition / temperature / local "
+                                 "time / solar activity of the frozen orbit-resolved dataset (A9.14 S9.8 OD3). No subset; "
+                                 "live MSIS not used (rule 3)",
+            "orbit_basis_label": F1.ORBIT_BASIS_LABEL,
+            "design_state_coverage": F1.SURFACE_COVERAGE_AT_DESIGN_STATES,
+            "design_state_set": F1.design_state_set_record(),
+            "design_states": table([s.record() for s in spec.states if s is not F1.DESIGN_STATE],
+                                   ("state_id", "scenario", "alt_km", "lat_deg", "lst_h", "lon_deg", "doy", "f107",
+                                    "ap", "labels", "evaluation", "interp_max_rel_err_rho",
+                                    "nominal_mission_scenario")),
             "species": list(F1.SPECIES),
             "theta": "0 deg at every state; 5 deg (largest frozen node) at the design state for the off-axis objective",
         },
@@ -433,7 +478,10 @@ def build(progress=None):
         ],
         "limitations": [
             "single-channel TPMC (no edge / inter-channel effects), fixed T_wall, Maxwell or CLL with alpha_n = alpha_t",
-            "orbit-averaged atmosphere only (no local time, no winds, V_rel = V_orb)",
+            "V_rel = V_orb (inertial circular): Earth co-rotation and thermospheric winds not included (inclination / "
+            "LTAN TBD, A9.21; the design-state set carries no relative velocity)",
+            "the design-state set is a broad envelope (every inclination and LTAN), not a mission orbit: statewise "
+            "results are design-envelope results, never mission-ICD results (" + F1.ORBIT_BASIS_LABEL + ")",
             "off-axis objective evaluated at the design state only; theta > 5 deg not evaluated",
             "K_back unresolved fraction is not returned by intake_response (only the forward trace's)",
             "free-molecular validity inside the plenum is not checked here (p_passive is reported)",
@@ -446,6 +494,9 @@ def build(progress=None):
             "deterministic": True,
         },
         "direct_runs": res["direct_runs"],
+        "orbit_basis_label": F1.ORBIT_BASIS_LABEL,
+        "state_set_history": STATE_SET_HISTORY,
+        "intake_structural_mass_label": F1.f1q02_label(),
     }
     doc["findings"] = summarize(res, spec)
     doc = F1.rnd(doc, 6)
@@ -477,7 +528,33 @@ def render_md(doc) -> str:
     a("")
     a("## Coverage rule")
     for k, v in doc["coverage_rule"].items():
-        a(f"- **{k}**: {v}")
+        if k == "orbit_states":
+            a(f"- **{k}**: {len(v)} states (index 0 `{v[0]}` = design-case reference point; the rest = the required "
+              f"design states, ids in the JSON)")
+        elif k == "design_states":
+            a(f"- **{k}**: {len(v['rows'])} required-state records (scenario, altitude, latitude, local time, longitude, "
+              f"day of year, labels) in the JSON")
+        elif k == "design_state_set":
+            a(f"- **{k}**: `{v['design_state_set_id']}` (`{v['path']}`, sha256 `{v['sha256']}`), "
+              f"{v['n_required_states']} required states ({v['n_nominal_mission_scenario_states']} in the nominal "
+              f"mission scenario {v['nominal_scenario']}); scenarios {v['scenarios']}; altitudes {v['altitudes_km']} km; "
+              f"labels {v['label_counts']}; orbit basis **{v['orbit_basis_label']}**: {v['orbit_basis_note']} "
+              f"Speed: {v['v_rel_basis']}. Composition: {v['composition_basis']}. Subset used: {v['subset_used']} "
+              f"({v['subset_note']}).")
+        else:
+            a(f"- **{k}**: {v}")
+    a("")
+    h = doc["state_set_history"]
+    a("## State-set change (history)")
+    a(f"- Superseded: {h['superseded_state_set']['state_ids']} ({h['superseded_state_set']['basis']}; "
+      f"{h['superseded_state_set']['status']}). Reason: {h['reason']}.")
+    so = h["superseded_output"]
+    a(f"- Superseded output `{so['path']}` at {so['commit']} (sha256 `{so['sha256']}`, {so['direct_runs']} direct runs); "
+      f"feasible candidates of 144 per scenario: design case {so['feasible_of_144_per_scenario']['design_case']}, "
+      f"envelope {so['feasible_of_144_per_scenario']['envelope']}.")
+    lab = doc["intake_structural_mass_label"]
+    a(f"- Intake structural mass label ({lab['authority']}): {lab['label']}, {lab['use']}; never {', '.join(lab['not'])}; "
+      f"{lab['lock1_condition']}.")
     a("")
     a("## Parameters")
     a("| id | name | value | units | evidence class | status | source |")
@@ -522,7 +599,9 @@ def render_md(doc) -> str:
     cal = doc["uncertainty_calibration"]
     a(f"- C_D replicate calibration: rel SD {fmt(cal['rel_sd_max'])} at n = {cal['n_per_run']} ({cal['replicates']} seeds)")
     sr = doc["speed_ratio_bracket_check"]
-    a(f"- Envelope bracket over {sr['n_grid_states']} frozen grid states: {sr['all_bracketed']}")
+    for k, v in sr["quantities"].items():
+        a(f"- {k} over the {sr['n_states']} required design states: {fmt(v['min'])} ({', '.join(v['argmin_labels'])}) "
+          f"to {fmt(v['max'])} ({', '.join(v['argmax_labels'])})")
     a(f"- Direct TPMC runs in this build: {doc['direct_runs']}")
     sw = doc["compressor_burden_sweep"]
     a(f"- Compressor burden sweep p_ref = {sw['p_ref_Pa']} Pa: {sw['rule']}")

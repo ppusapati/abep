@@ -15,6 +15,7 @@ from abep_sim import rotor_strength as rs
 from abep_sim.design import architecture_optimizer as ao
 from abep_sim.design import compressor_synthesis as cs
 from abep_sim.design import filter_stage as fs
+from abep_sim.design import intake_synthesis as isy
 from abep_sim.design import plenum_feed as pf
 from abep_sim.design import robust_optimizer as ro
 from abep_sim.design import upstream_a9_13 as u13
@@ -296,7 +297,10 @@ def test_schedule_uses_controller_available_state_only():
 
 
 def test_scheduled_baseline_and_fixed_fallback_over_orbit_states(recs, grid):
-    states = [recs[("A0.5_Ld10_phi0.9", "maxwell_a1", s)] for s in ("h180_f70", "h200_f150", "h230_f230")]
+    # nominal (median-density) design states of the nominal mission scenario at 180 / 230 km around the reference
+    nom = {s.alt_km: s.id for s in isy.required_states()
+           if any(lab == f"NOMINAL_MEDIAN_RHO[ECSS_LT_MODERATE,{s.alt_km:g}km]" for lab in s.labels)}
+    states = [recs[("A0.5_Ld10_phi0.9", "maxwell_a1", s)] for s in (nom[180.0], "h200_f150", nom[230.0])]
     sch = u13.SetpointSchedule("S", pf.NAV_ALTITUDE_INPUT, ((180.0, 0.02), (230.0, 0.01)),
                                "PARAMETRIC_SENSITIVITY test schedule", "test")
     fx = u13.FixedSetpoint(0.01, "PARAMETRIC_SENSITIVITY", "test")

@@ -4,8 +4,9 @@ For the upstream candidates that survive F7 (members of the F7 upstream Pareto s
 wall WALL-G0), F8 asks how their feasibility and objectives move under every uncertainty axis named by A9.7 F8:
 
   axis                         treatment here                          why
-  atmosphere                   SCENARIO_SET (5 frozen orbit states)    the frozen NRLMSIS dataset is orbit-averaged; no
-                                                                       probability is attached to F10.7 / altitude
+  atmosphere                   SCENARIO_SET (every F1 state)           design-case reference + every required state of
+                                                                       the frozen design-state set v2 (A9.14 S9.8 OD3);
+                                                                       no probability is attached to any state
   intake surface state         SCENARIO_SET (alpha 0..1 x kernel)      accommodation is TBD (F1-P-07): a set, no weights
   gas-surface interaction      SCENARIO_SET (Maxwell / CLL)            kernel TBD (F1-P-08), same axis as above
   TPMC statistics              SEEDED_MONTE_CARLO                      the only QUANTIFIED uncertainty: binomial SEs of
@@ -58,7 +59,6 @@ from . import upstream_a9_13 as u13
 
 SCHEMA = "f8_robust_optimizer_v1"
 SPECIES = ao.SPECIES
-STATES = ao.STATES
 N_MC_DEFAULT = 100
 SEED_BASE = 20261001
 ELASTICITY_STEP = 1e-3            # relative central-difference step (numerical setting, not an uncertainty)
@@ -66,11 +66,27 @@ NOMINAL_FILTER = "F4-FIL-NONE"
 NOMINAL_FILTER_ROLE = "REFERENCE_BOUND_FC00_NOT_ADMISSIBLE"     # A9.13 S6.5
 NOMINAL_WALL = "WALL-G0"
 
-UQ_AXES = (
-    {"axis": "atmosphere", "treatment": "SCENARIO_SET", "quantified": False,
-     "members": list(STATES), "basis": "frozen NRLMSIS 2.1 dataset (orbit-averaged): the design state and the four "
-     "RFP-band corners (F1 coverage_rule); no probability over solar activity / altitude is sourced",
-     "source": ao.F1_REL + " coverage_rule"},
+def _uq_axes() -> tuple:
+    return ({"axis": "atmosphere", "treatment": "SCENARIO_SET", "quantified": False,
+             "members": list(ao.states()), "design_state_set": isy.DESIGN_STATE_SET_ID,
+             "design_state_set_sha256": isy.DESIGN_STATE_SET_SHA256, "orbit_basis": isy.ORBIT_BASIS_LABEL,
+             "basis": "design-case reference point h200_f150 (orbit-averaged, surface build state) + every required "
+             "state of the frozen design-state set v2 (nominal states and physical extrema of density, composition, "
+             "temperature, local time and solar activity; A9.14 S9.8 OD3; F1 coverage_rule); no probability over "
+             "the states is sourced; broad envelope, inclination / LTAN TBD (A9.21)",
+             "source": ao.F1_REL + " coverage_rule"},) + _UQ_AXES_REST
+
+
+def __getattr__(name):
+    # UQ_AXES / STATES are resolved lazily (the design-state set is repository-only data)
+    if name == "UQ_AXES":
+        return _uq_axes()
+    if name == "STATES":
+        return ao.states()
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+
+_UQ_AXES_REST = (
     {"axis": "intake_surface_state", "treatment": "SCENARIO_SET", "quantified": False,
      "basis": "alpha in {0, 0.2, 0.5, 0.8, 1} (TBD, F1-P-07); no measured accommodation", "source": ao.F1_REL},
     {"axis": "gas_surface_interaction", "treatment": "SCENARIO_SET", "quantified": False,
@@ -80,8 +96,8 @@ UQ_AXES = (
      "draws per species and state) and the replicate-calibrated C_D SE (drag); model-form uncertainty is NOT in "
      "these SEs (F1 conventions.uncertainty)", "source": ao.F1_REL + " if_a1_interface, species_table"},
     {"axis": "pointing_theta", "treatment": "DETERMINISTIC_NODE", "quantified": False,
-     "basis": "theta = 5 deg frozen-surface node at the design state only (per-species eta_c and CR ratios vs "
-     "theta 0); the AOCS pointing budget is TBD (F1-P-09); the four corner states have no theta node",
+     "basis": "theta = 5 deg frozen-surface node at the design-case reference point only (per-species eta_c and CR "
+     "ratios vs theta 0); the AOCS pointing budget is TBD (F1-P-09); the required design states have no theta node",
      "source": ao.F1_REL + " species_table (theta_deg 5)"},
     {"axis": "wall_recombination", "treatment": "SCENARIO_SET", "quantified": False,
      "basis": "WALL-G0 (gamma 0 bound) vs WALL-TI64-DB (uncited DB prior), F4-P-06 TBD", "source": ao.F4_REL},
@@ -100,8 +116,8 @@ UQ_AXES = (
      "basis": "P3 geometry / emittance / conductance inputs TBD; chain gas temperature assumed 350 K (F4-P-01)",
      "source": ao.P3_REL},
     {"axis": "orbit_scale_density_modulation", "treatment": "NOT_EVALUATED", "quantified": False,
-     "basis": "F4-P-11 TBD (frozen atmosphere orbit-averaged); F4 parametric amplitudes 0.1 / 0.2 are reported "
-     "there", "source": ao.F4_REL},
+     "basis": "F4-P-11 TBD (a revolution through the orbit-resolved states needs the TBD inclination / LTAN, A9.21); "
+     "F4 parametric amplitudes 0.1 / 0.2 are reported there", "source": ao.F4_REL},
 )
 
 
@@ -195,8 +211,11 @@ def _state_eval(states: list, filt: pf.FilterCase, plant: pf.CompressorPlant, pl
     side = side if side is not None else pf.intake_side(states, filt)
     f1ok = np.array([r.f1_status == "FEASIBLE_AT_STATE" for r in states])
     sw = pf.steady_sweep(side, plant, pl, [P], f1ok)
-    n = len(states) // len(STATES)
-    bits = sw["bits"][:, 0].reshape(n, len(STATES))
+    nst = len(ao.states())
+    if len(states) % nst:
+        raise ao.OptimizerError(f"{len(states)} intake states are not whole groups of the {nst} F1 states")
+    n = len(states) // nst
+    bits = sw["bits"][:, 0].reshape(n, nst)
     ok = (bits == 0)
     allok = ok.all(axis=1)
     with np.errstate(all="ignore"), warnings.catch_warnings():
@@ -269,11 +288,12 @@ def scenario_robustness(cands: Sequence[Mapping], contexts: Mapping, scenarios: 
 def tpmc_monte_carlo(inp: ao.UpstreamInputs, cands: Sequence[Mapping], scenarios: Sequence[str], n: int = N_MC_DEFAULT,
                      wall: str = NOMINAL_WALL) -> dict:
     """Seeded MC over the quantified TPMC statistics, per (candidate, scenario). One batch per (scenario, filter,
-    compressor): every intake candidate on the survivor list draws n samples of the five orbit states (one generator
+    compressor): every intake candidate on the survivor list draws n samples of every F1 state (one generator
     per (candidate, scenario), seeded from stable ids, so results do not depend on batching). Returns, per design id
     and scenario: P_feasible (k / n), percentiles of the delivered minimum flow, compressor power and drag, and the
     dead-head margin. WALL-G0 steady states are volume-independent, so V does not enter the draws."""
     se_idx = record_se_index(inp.f1)
+    STATES = ao.states()
     groups: dict = {}
     for c in cands:
         groups.setdefault((c["filter"], c["compressor"]), {}).setdefault(c["candidate"], set()).add(c["P_set_Pa"])
@@ -329,8 +349,9 @@ def tpmc_monte_carlo(inp: ao.UpstreamInputs, cands: Sequence[Mapping], scenarios
 # ================================================================================================= pointing node
 def pointing_sensitivity(inp: ao.UpstreamInputs, cands: Sequence[Mapping], scenarios: Sequence[str],
                          wall: str = NOMINAL_WALL) -> dict:
-    """theta = 5 deg node at the design state only (per-species eta_c and CR ratios from the frozen surface):
-    status and delivered flow at the design state vs theta 0. The corner states have no theta node (NOT_EVALUATED)."""
+    """theta = 5 deg node at the design-case reference point only (per-species eta_c and CR ratios from the frozen
+    surface): status and delivered flow there vs theta 0. The required design states have no theta node
+    (NOT_EVALUATED)."""
     tr = theta_ratio_index(inp.f1)
     out = {}
     for c in cands:
@@ -362,22 +383,26 @@ def compressor_elasticities(inp: ao.UpstreamInputs, cand: Mapping, scenarios: Se
     minimum flow, compressor power and mass (max over states); max |elasticity| over the scenarios. A coefficient whose
     perturbation changes the feasibility status is flagged (STATUS_FLIP). No coefficient range is implied."""
     design = inp.designs[cand["compressor"]]
+    STATES = ao.states()
     pl = ao.plenum(cand["V_m3"], wall)
     fc = inp.filters[cand["filter"]]
     base_kw = cs.module_defaults()
     out = {}
     nominal_ok: dict = {}
+    sides: dict = {}
     for coef in fixed_coefficients():
         c0 = float(base_kw[coef])
         worst = {"mdot_min": 0.0, "P_el_max": 0.0, "m_comp_max": 0.0}
         flip = False
         for sc in scenarios:
             states = [inp.records[(cand["candidate"], sc, st)] for st in STATES]
+            if sc not in sides:          # the intake side does not depend on the compressor coefficients: reuse it
+                sides[sc] = pf.intake_side(states, fc)
             if sc not in nominal_ok:
                 nominal_ok[sc] = bool(_state_eval(states, fc, plant_with_overrides(design), pl,
-                                                  cand["P_set_Pa"])["all_ok"][0])
-            evs = [_state_eval(states, fc, plant_with_overrides(design, {coef: c0 * f}), pl, cand["P_set_Pa"])
-                   for f in (1.0 - step, 1.0 + step)]
+                                                  cand["P_set_Pa"], sides[sc])["all_ok"][0])
+            evs = [_state_eval(states, fc, plant_with_overrides(design, {coef: c0 * f}), pl, cand["P_set_Pa"],
+                               sides[sc]) for f in (1.0 - step, 1.0 + step)]
             oks = [bool(e["all_ok"][0]) for e in evs]
             # OPT-06: a flip is any perturbed status that differs from the NOMINAL status (both-infeasible around a
             # feasible nominal point is a knife edge and is flagged too)
