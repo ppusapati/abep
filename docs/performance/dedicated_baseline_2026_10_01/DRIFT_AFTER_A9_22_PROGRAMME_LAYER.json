@@ -40,10 +40,11 @@
    "old_sha256": "1a5cb74223113d0d5671e901550605baa1cee462cdc8efcbc2810a9125d4b79c",
    "old_git_blob": "6f8df9b92030559f667fcfdb29f94d66863d7f0a",
    "chains_on": "docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_22.json",
-   "new_sha256": "2d804e8924649328e8ec0f43dacc4c72a002086e455f8ecd00be95305298479e",
-   "new_git_blob": "2dd988d6951a3fd94eb6787313d272546cafa9d7",
+   "new_sha256": "55d4f0b3e9b3c4691579f13ae2c07a59a4f6bad2c484b2c1ca4d29f503933c2e",
+   "new_git_blob": "cff9271afb1da37eb229d42750fe7adbed49cebb",
    "changed_by_commits": [
-    "ce639f1"
+    "ce639f1",
+    "4437cbb"
    ]
   },
   {

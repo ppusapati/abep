@@ -73,7 +73,7 @@
    "artefact": "config/model_set/physics_model_set_v1.json",
    "id": "physics_model_set_v1",
    "schema": "abep_config_physics_model_set_v1",
-   "sha256": "55026f023511ae901c14709d9794a5fd83575b42f9e99234d6381d6ec69a4f69",
+   "sha256": "1ee761e0dcb2a571d51e531bf12e8b95704013e6dd62c569790e1b9927403e2e",
    "pinned_by": [
     "config/MANIFEST.json"
    ],

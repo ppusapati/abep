@@ -9,7 +9,7 @@
    "bytes": 4696
   },
   "SOURCES_OF_TRUTH.json": {
-   "sha256": "c486217b57af3be25d90c6937bd79bb89f9d90cf62036042430bdcb67ccb8407",
+   "sha256": "1082561df69834f84b6f431747b94eb1f9904dc69e18a1a10b53b2db19a23b28",
    "bytes": 5913
   },
   "architecture/hall_icp_neutralizer_v1.json": {
@@ -33,7 +33,7 @@
    "bytes": 3976
   },
   "model_set/physics_model_set_v1.json": {
-   "sha256": "55026f023511ae901c14709d9794a5fd83575b42f9e99234d6381d6ec69a4f69",
+   "sha256": "1ee761e0dcb2a571d51e531bf12e8b95704013e6dd62c569790e1b9927403e2e",
    "bytes": 17596
   },
   "requirements/rfp_constraints_v1.json": {
