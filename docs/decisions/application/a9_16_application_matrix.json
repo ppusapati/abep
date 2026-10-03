@@ -1,7 +1,7 @@
 {
  "schema": "a9_16_application_matrix_v1",
  "id": "a9_16_application_matrix_v1",
- "lane": "A9.16 step 1 integration; refreshed in the A9.16 finalize records lane (step 2 / step 3 / A9.17 / A9.18 applications) and in the A9.17 .. A9.21 records lane (A9.19 / A9.20 / A9.21) and in the A9.22 AG-15 closure lane (G3)",
+ "lane": "A9.16 step 1 integration; refreshed in the A9.16 finalize records lane (step 2 / step 3 / A9.17 / A9.18 applications) and in the A9.17 .. A9.21 records lane (A9.19 / A9.20 / A9.21) and in the A9.22 AG-15 closure lane (G3) and the A9.22 governed migration lanes (G1, G2, G4 .. G9)",
  "date": "2026-10-03",
  "generated_by": "docs/decisions/application/build_a9_16_application_matrix.py",
  "companion_document": "docs/decisions/application/a9_16_application_matrix.md",
@@ -23,6 +23,8 @@
   "PENDING_STEP_3_ARCHITECTURE",
   "PENDING_EVIDENCE",
   "PENDING_GOVERNED_MIGRATION",
+  "PENDING_OWNER_UPLOAD",
+  "LATER_SEPARATE_OWNER_APPROVAL",
   "PENDING_CI_CHANGE",
   "OPEN_OWNER_QUESTION",
   "PENDING_FINALIZE_DESIGN_REGEN",
@@ -239,20 +241,20 @@
   "A9.22": 9
  },
  "counts": {
-  "APPLIED": 147,
+  "APPLIED": 155,
   "BLOCKED": 4,
   "NOT_APPLICABLE_TO_ARTIFACTS": 3,
   "PARTIAL": 4,
-  "PENDING_GOVERNED_MIGRATION": 8,
   "SUPERSEDED_BY_LATER_DECISION": 2
  },
  "residual_counts": {
   "BLOCKED": 19,
+  "LATER_SEPARATE_OWNER_APPROVAL": 1,
   "OPEN_OWNER_QUESTION": 1,
   "PENDING_EVIDENCE": 8,
   "PENDING_FINALIZE_DESIGN_REGEN": 21,
-  "PENDING_GOVERNED_MIGRATION": 8,
-  "PENDING_OWNER_ACCEPTANCE": 3
+  "PENDING_OWNER_ACCEPTANCE": 3,
+  "PENDING_OWNER_UPLOAD": 1
  },
  "rules": [
   {
@@ -6741,9 +6743,20 @@
      "status": "APPLIED",
      "record_locations": [
       "A9.15 propellants",
-      "def propellant_paths_check"
+      "PROPELLANT_POLICY = {"
      ],
-     "what": "design layer: ambient air AND Xe capability, two separate propellant tanks / paths (propellant_paths_check)"
+     "what": "design layer: ambient air AND Xe capability, two separate propellant tanks / paths (PROPELLANT_POLICY, AIR_PATH / XE_PATH)"
+    },
+    {
+     "lane": "A9.22",
+     "artifact": "abep_sim/assessment/design_gates.py",
+     "commit": "c06c2ed7b95fc7b6fbc6eb38a9d66b908174bbe0",
+     "status": "APPLIED",
+     "record_locations": [
+      "def propellant_paths_check",
+      "A9.15 / RFP-P18-08"
+     ],
+     "what": "assessment layer (A9.22 layer separation moved it from the design layer; upstream_a9_13 keeps a deprecated shim): HC-10 structural check of the two separate propellant tanks / paths (propellant_paths_check)"
     },
     {
      "lane": "STEP3",
@@ -7705,16 +7718,65 @@
    "decision_json": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
    "decision_json_sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49",
    "pointer": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json#/decisions/G1_MISSION_LIFE",
-   "status": "PENDING_GOVERNED_MIGRATION",
-   "status_reason": "owner-approved (A9.22 migration plan, phases A-E) and not applied by the AG-15 closure lane; applied by its own governed migration (no artifact claimed here)",
-   "applications": [],
-   "residual": [
+   "status": "APPLIED",
+   "applications": [
     {
-     "status": "PENDING_GOVERNED_MIGRATION",
-     "what": "mission duration 26,280 h for mission-integrated quantities (governed baseline change)",
-     "where": "its own A9.22 migration lane"
+     "lane": "A9.22",
+     "artifact": "abep_sim/operating_inputs.py",
+     "commit": "512d704950946bdc0c4e55078c1a5527f75da449",
+     "status": "APPLIED",
+     "record_locations": [
+      "G1_MISSION_LIFE = MISSION_DURATION_26280_H",
+      "SUBSYSTEM_FIRING_LIFE_ASSUMPTION",
+      "HISTORICAL_MISSION_HOURS_PRE_A9_22"
+     ],
+     "what": "operating-inputs seam: mission-duration basis 26,280 h (26,000 h kept as the immutable historical constant, not consumed); 15,000 h only as the labelled subsystem firing-life assumption"
+    },
+    {
+     "lane": "A9.22",
+     "artifact": "abep_sim/system.py",
+     "commit": "f2ebdb7bcf6e977c00f7d201abcf1ee7619ba9ed",
+     "status": "APPLIED",
+     "record_locations": [
+      "A9.22 G1 governed baseline change"
+     ],
+     "what": "system.py completion: AO fluence / erosion, cathode starts, mission reliability horizon on 26,280 h"
+    },
+    {
+     "lane": "A9.22",
+     "artifact": "config/mission/mission_scenario_v1.json",
+     "commit": "f2ebdb7bcf6e977c00f7d201abcf1ee7619ba9ed",
+     "status": "APPLIED",
+     "record_locations": [
+      "\"authoritative_basis_h\": 26280",
+      "\"g1_status\": \"APPLIED\""
+     ],
+     "what": "frozen mission scenario: mission_hours 26,280 h, G1 APPLIED with the migrated consumers listed",
+     "record_pointer": "/inputs/mission_hours"
+    },
+    {
+     "lane": "A9.22",
+     "artifact": "abep_sim/data/golden_v2.json",
+     "commit": "512d704950946bdc0c4e55078c1a5527f75da449",
+     "status": "APPLIED",
+     "record_locations": [
+      "mission-duration basis 26,280 h"
+     ],
+     "what": "golden v2 regenerated under the governed baseline change (architecture_closure xe_kg on 26,280 h)",
+     "record_pointer": "/provenance/a9_22"
+    },
+    {
+     "lane": "A9.22",
+     "artifact": "docs/HISTORY.md",
+     "commit": "512d704950946bdc0c4e55078c1a5527f75da449",
+     "status": "APPLIED",
+     "record_locations": [
+      "A9.22 G1 governed baseline change"
+     ],
+     "what": "HISTORY entries (rule 1-2 governed baseline change, logged)"
     }
-   ]
+   ],
+   "residual": []
   },
   {
    "decision": "A9.22",
@@ -7724,14 +7786,26 @@
    "decision_json": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
    "decision_json_sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49",
    "pointer": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json#/decisions/G2_C_DRAG_RFP",
-   "status": "PENDING_GOVERNED_MIGRATION",
-   "status_reason": "owner-approved (A9.22 migration plan, phases A-E) and not applied by the AG-15 closure lane; applied by its own governed migration (no artifact claimed here)",
-   "applications": [],
+   "status": "APPLIED",
+   "applications": [
+    {
+     "lane": "A9.22",
+     "artifact": "abep_sim/design/engineering_constraints.py",
+     "commit": "c06c2ed7b95fc7b6fbc6eb38a9d66b908174bbe0",
+     "status": "APPLIED",
+     "record_locations": [
+      "A9.22 G2 (Option 1)",
+      "C-DRAG-RFP",
+      "INTAKE_DRAG_GENERATION_LIMIT_N"
+     ],
+     "what": "C-DRAG-RFP kept as an F1 GENERATION filter read from the frozen engineering-constraints seam (Option 1; numerical / design-space results preserved)"
+    }
+   ],
    "residual": [
     {
-     "status": "PENDING_GOVERNED_MIGRATION",
-     "what": "C-DRAG-RFP kept as a generation filter from the frozen engineering-constraints snapshot",
-     "where": "its own A9.22 migration lane"
+     "status": "LATER_SEPARATE_OWNER_APPROVAL",
+     "what": "Option 2 (generate all designs, apply drag <= 25 mN only in the assessment layer) is recorded as a later semantic / model-pipeline change; it changes the F1-F8 Pareto populations and robustness counts and needs a separate owner approval (not applied)",
+     "where": "owner"
     }
    ]
   },
@@ -7833,16 +7907,52 @@
    "decision_json": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
    "decision_json_sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49",
    "pointer": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json#/decisions/G4_GOLDEN_ARCHITECTURE",
-   "status": "PENDING_GOVERNED_MIGRATION",
-   "status_reason": "owner-approved (A9.22 migration plan, phases A-E) and not applied by the AG-15 closure lane; applied by its own governed migration (no artifact claimed here)",
-   "applications": [],
-   "residual": [
+   "status": "APPLIED",
+   "applications": [
     {
-     "status": "PENDING_GOVERNED_MIGRATION",
-     "what": "governed golden / reference case for hall_icp_neutralizer; LaB6 golden data HISTORICAL_NON_FLIGHT_REGRESSION",
-     "where": "its own A9.22 migration lane"
+     "lane": "A9.22",
+     "artifact": "abep_sim/data/golden_v2.json",
+     "commit": "58309a115b768e4268a9dba7993778b163fbc399",
+     "status": "APPLIED",
+     "record_locations": [
+      "\"HISTORICAL_NON_FLIGHT_REGRESSION\"",
+      "\"hall_icp_neutralizer_reference\""
+     ],
+     "what": "golden v2 case roles: LaB6 / hollow-cathode cases HISTORICAL_NON_FLIGHT_REGRESSION; governed active reference case hall_icp_neutralizer_reference",
+     "record_pointer": "/case_roles"
+    },
+    {
+     "lane": "A9.22",
+     "artifact": "abep_sim/golden.py",
+     "commit": "58309a115b768e4268a9dba7993778b163fbc399",
+     "status": "APPLIED",
+     "record_locations": [
+      "def require_flight_eligible_case"
+     ],
+     "what": "guard: historical non-flight golden cases refused for closure / selection / budgets"
+    },
+    {
+     "lane": "A9.22",
+     "artifact": "abep_sim/archengine.py",
+     "commit": "58309a115b768e4268a9dba7993778b163fbc399",
+     "status": "APPLIED",
+     "record_locations": [
+      "def require_flight_eligible("
+     ],
+     "what": "guard: LaB6 / hollow-cathode architectures refused as flight-eligible"
+    },
+    {
+     "lane": "A9.22",
+     "artifact": "docs/HISTORY.md",
+     "commit": "58309a115b768e4268a9dba7993778b163fbc399",
+     "status": "APPLIED",
+     "record_locations": [
+      "A9.22 G4"
+     ],
+     "what": "HISTORY entry"
     }
-   ]
+   ],
+   "residual": []
   },
   {
    "decision": "A9.22",
@@ -7852,16 +7962,44 @@
    "decision_json": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
    "decision_json_sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49",
    "pointer": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json#/decisions/G5_ALTITUDE_BAND",
-   "status": "PENDING_GOVERNED_MIGRATION",
-   "status_reason": "owner-approved (A9.22 migration plan, phases A-E) and not applied by the AG-15 closure lane; applied by its own governed migration (no artifact claimed here)",
-   "applications": [],
-   "residual": [
+   "status": "APPLIED",
+   "applications": [
     {
-     "status": "PENDING_GOVERNED_MIGRATION",
-     "what": "mission_domain.altitude_km = [180, 230] consumed with provenance to the requirements snapshot",
-     "where": "its own A9.22 migration lane"
+     "lane": "A9.22",
+     "artifact": "abep_sim/design/engineering_constraints.py",
+     "commit": "c06c2ed7b95fc7b6fbc6eb38a9d66b908174bbe0",
+     "status": "APPLIED",
+     "record_locations": [
+      "A9.22 G5",
+      "MISSION_DOMAIN_ALTITUDE_KM"
+     ],
+     "what": "design seam consumes mission_domain.altitude_km = [180, 230] (no RFP clause parsing)"
+    },
+    {
+     "lane": "A9.22",
+     "artifact": "config/requirements/rfp_constraints_v1.json",
+     "commit": "2cbe2ddc69ac8ed786ef0bf5975e1f8ed63aa4cf",
+     "status": "APPLIED",
+     "record_locations": [
+      "\"mission_domain\"",
+      "A9.22 G5"
+     ],
+     "what": "requirements snapshot: mission_domain.altitude_km [180, 230], FROZEN, provenance RVM-01",
+     "record_pointer": "/mission_domain"
+    },
+    {
+     "lane": "A9.22",
+     "artifact": "config/mission/mission_scenario_v1.json",
+     "commit": "2cbe2ddc69ac8ed786ef0bf5975e1f8ed63aa4cf",
+     "status": "APPLIED",
+     "record_locations": [
+      "\"altitude_domain_km\""
+     ],
+     "what": "frozen mission scenario: altitude domain consumed from the snapshot field mission_domain.altitude_km",
+     "record_pointer": "/inputs/altitude_domain_km/source"
     }
-   ]
+   ],
+   "residual": []
   },
   {
    "decision": "A9.22",
@@ -7871,16 +8009,33 @@
    "decision_json": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
    "decision_json_sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49",
    "pointer": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json#/decisions/G6_IC_HALL_PREFERRED",
-   "status": "PENDING_GOVERNED_MIGRATION",
-   "status_reason": "owner-approved (A9.22 migration plan, phases A-E) and not applied by the AG-15 closure lane; applied by its own governed migration (no artifact claimed here)",
-   "applications": [],
-   "residual": [
+   "status": "APPLIED",
+   "applications": [
     {
-     "status": "PENDING_GOVERNED_MIGRATION",
-     "what": "IC / hall_preferred / compliance classifications moved to the assessment layer",
-     "where": "its own A9.22 migration lane"
+     "lane": "A9.22",
+     "artifact": "abep_sim/system.py",
+     "commit": "1e4b09b9681dfa6e151f92d902ba1c2a93f6a5af",
+     "status": "APPLIED",
+     "record_locations": [
+      "RAW_CLOSURE_SCHEMA_VERSION = \"raw_closure_v2\"",
+      "def physics_closure"
+     ],
+     "what": "raw physics closure (schema increment raw_closure_v2): no IC metric, preference flag or compliance classification"
+    },
+    {
+     "lane": "A9.22",
+     "artifact": "abep_sim/assessment/closure_checks.py",
+     "commit": "1e4b09b9681dfa6e151f92d902ba1c2a93f6a5af",
+     "status": "APPLIED",
+     "record_locations": [
+      "FORBIDDEN_RAW_KEYS",
+      "\"hall_preferred\"",
+      "def legacy_merge"
+     ],
+     "what": "assessment layer: IC metrics, hall_preferred, RFP / compliance classifications; legacy merge keeps the pre-split evaluate() dict for existing tools"
     }
-   ]
+   ],
+   "residual": []
   },
   {
    "decision": "A9.22",
@@ -7890,16 +8045,32 @@
    "decision_json": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
    "decision_json_sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49",
    "pointer": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json#/decisions/G7_DEAD_LOGIC",
-   "status": "PENDING_GOVERNED_MIGRATION",
-   "status_reason": "owner-approved (A9.22 migration plan, phases A-E) and not applied by the AG-15 closure lane; applied by its own governed migration (no artifact claimed here)",
-   "applications": [],
-   "residual": [
+   "status": "APPLIED",
+   "applications": [
     {
-     "status": "PENDING_GOVERNED_MIGRATION",
-     "what": "remove ignition_req_met '... or True', unused Budgets.duty_cycle and the unused RFP import",
-     "where": "its own A9.22 migration lane"
+     "lane": "A9.22",
+     "artifact": "abep_sim/transient.py",
+     "commit": "1e4b09b9681dfa6e151f92d902ba1c2a93f6a5af",
+     "status": "APPLIED",
+     "record_locations": [
+      "always-true \"ignition_req_met\" flag was removed"
+     ],
+     "what": "ignition_req_met '... or True' removed"
+    },
+    {
+     "lane": "A9.22",
+     "artifact": "tests/test_raw_assessment_split.py",
+     "commit": "1e4b09b9681dfa6e151f92d902ba1c2a93f6a5af",
+     "status": "APPLIED",
+     "record_locations": [
+      "def test_dead_logic_removed",
+      "not hasattr(sizing, \"RFP\")",
+      "\"duty_cycle\" not in"
+     ],
+     "what": "structural test: Budgets.duty_cycle, the unused RFP import in sizing and the always-true flag are gone; evaluate() identical to the base-commit fixture"
     }
-   ]
+   ],
+   "residual": []
   },
   {
    "decision": "A9.22",
@@ -7909,16 +8080,53 @@
    "decision_json": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
    "decision_json_sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49",
    "pointer": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json#/decisions/G8_BUS_BOUNDARY",
-   "status": "PENDING_GOVERNED_MIGRATION",
-   "status_reason": "owner-approved (A9.22 migration plan, phases A-E) and not applied by the AG-15 closure lane; applied by its own governed migration (no artifact claimed here)",
-   "applications": [],
-   "residual": [
+   "status": "APPLIED",
+   "applications": [
     {
-     "status": "PENDING_GOVERNED_MIGRATION",
-     "what": "bus_boundary_a9_v2 (hall_icp_neutralizer only) and one controlled consumer migration",
-     "where": "its own A9.22 migration lane"
+     "lane": "A9.22",
+     "artifact": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
+     "commit": "5dbcb539a4372450629bb7b498fb8ec8d7478cf2",
+     "status": "APPLIED",
+     "record_locations": [
+      "\"boundary_version\": \"bus_power_boundary_a9_v2\"",
+      "\"configurations\": ["
+     ],
+     "what": "bus_power_boundary_a9_v2: hall_icp_neutralizer only; hall_c1_reference ground-reference / test metadata, not a flight bus configuration (v1 immutable)",
+     "record_pointer": "/ground_reference_test_metadata/hall_c1_reference"
+    },
+    {
+     "lane": "A9.22",
+     "artifact": "abep_sim/bus_boundary_a9_v2.py",
+     "commit": "5dbcb539a4372450629bb7b498fb8ec8d7478cf2",
+     "status": "APPLIED",
+     "record_locations": [
+      "BOUNDARY_VERSION = \"bus_power_boundary_a9_v2\""
+     ],
+     "what": "v2 boundary module (v1 runs unchanged)"
+    },
+    {
+     "lane": "A9.22",
+     "artifact": "docs/architecture_comparison/power_boundary_a9_v2/CONSUMER_INVENTORY.json",
+     "commit": "5dbcb539a4372450629bb7b498fb8ec8d7478cf2",
+     "status": "APPLIED",
+     "record_locations": [
+      "\"LIVE_REPOINT\""
+     ],
+     "what": "consumer inventory listed before anything changed"
+    },
+    {
+     "lane": "A9.22",
+     "artifact": "docs/architecture_comparison/power_boundary_a9_v2/STAGE2_MIGRATION.json",
+     "commit": "a5294a766e1c58cb78eeba4287064e08378c52f1",
+     "status": "APPLIED",
+     "record_locations": [
+      "\"verdict\": \"NO_PHYSICS_RESULT_CHANGED",
+      "\"v1_family_byte_identical\""
+     ],
+     "what": "one controlled migration: LIVE_REPOINT consumers re-pointed with pins together; v1 byte-identical; no physics result changed"
     }
-   ]
+   ],
+   "residual": []
   },
   {
    "decision": "A9.22",
@@ -7928,14 +8136,49 @@
    "decision_json": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
    "decision_json_sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49",
    "pointer": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json#/decisions/G9_F1_OUTPUT",
-   "status": "PENDING_GOVERNED_MIGRATION",
-   "status_reason": "owner-approved (A9.22 migration plan, phases A-E) and not applied by the AG-15 closure lane; applied by its own governed migration (no artifact claimed here)",
-   "applications": [],
+   "status": "APPLIED",
+   "applications": [
+    {
+     "lane": "A9.22",
+     "artifact": "docs/evidence_archives/f1_intake/F1_INTAKE_SYNTHESIS_v1_405296e.manifest.json",
+     "commit": "3b2072e324cd121f2d2a7d7ae1df1e4a23dc40d8",
+     "status": "APPLIED",
+     "record_locations": [
+      "\"schema\": \"evidence_archive_manifest_v1\"",
+      "\"generating_commit\"",
+      "\"input_manifest\""
+     ],
+     "what": "deterministic F1 evidence archive manifest (archive sha256 / size, generating commit, architecture / design-state-set / input-manifest hashes, command, timestamp, per-file sha256, classification)",
+     "record_pointer": "/storage/preferred"
+    },
+    {
+     "lane": "A9.22",
+     "artifact": "docs/design_synthesis/f1_intake/f1_core_view.py",
+     "commit": "3b2072e324cd121f2d2a7d7ae1df1e4a23dc40d8",
+     "status": "APPLIED",
+     "record_locations": [
+      "CORE_SCHEMA = \"f1_intake_synthesis_v1_core\"",
+      "def expand_core"
+     ],
+     "what": "compact F1 core view for consumers (lossless)"
+    },
+    {
+     "lane": "A9.22",
+     "artifact": "scripts/evidence/f1_archive.py",
+     "commit": "3b2072e324cd121f2d2a7d7ae1df1e4a23dc40d8",
+     "status": "APPLIED",
+     "record_locations": [
+      "def build_manifest",
+      "def verify"
+     ],
+     "what": "archive builder / byte-for-byte verifier (original kept until hash-verified)"
+    }
+   ],
    "residual": [
     {
-     "status": "PENDING_GOVERNED_MIGRATION",
-     "what": "deterministic F1 evidence archive outside ordinary Git history with manifest + hashes",
-     "where": "its own A9.22 migration lane"
+     "status": "PENDING_OWNER_UPLOAD",
+     "what": "the hash-verified F1 archive F1_INTAKE_SYNTHESIS_v1_405296e.tar.zst is uploaded by the owner as the GitHub Release asset (tag evidence-f1-intake-synthesis-v1-405296e); the original full F1 file is removed from the working tree only after the re-downloaded asset is hash-verified byte for byte",
+     "where": "owner (GitHub Release on ppusapati/abep)"
     }
    ]
   }

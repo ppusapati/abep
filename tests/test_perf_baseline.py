@@ -98,9 +98,16 @@ def test_historical_source_drift_is_reported_not_hidden(H, doc):
     old = {s["path"]: s["sha256"] for s in doc["profiled_sources"]}
     for p, d in recorded.items():
         assert d["old_sha256_a9_7"] == old[p] and d["new_sha256"] != old[p]
+    # files first drifting after DRIFT_AFTER_A9_9 are recorded by a chained addendum (old sha256 = the baseline's)
+    first_later = {}
+    for rel in H.DRIFT_ADDENDA_REL:
+        for d in json.loads((REPO / rel).read_text())["drifted_files"]:
+            if d["path"] not in recorded and d["path"] not in first_later:
+                assert d.get("first_recorded_here") is True and d["old_sha256"] == d["old_sha256_a9_7"] == old[d["path"]]
+                first_later[d["path"]] = d
     drift = H.source_drift(doc)
     assert all(d["status"] == "HISTORICAL_SOURCE_DRIFT" and "error" not in d for d in drift)
-    assert {d["path"] for d in drift} <= set(recorded)
+    assert {d["path"] for d in drift} <= set(recorded) | set(first_later)
     lines = H.drift_report_lines(doc)
     for d in drift:
         assert any(d["path"] in ln and d["old_sha256"] in ln and d["new_sha256"] in ln for ln in lines)
@@ -112,6 +119,7 @@ def test_unrecorded_drift_still_fails(H, doc, monkeypatch, tmp_path):
     empty = tmp_path / "empty_drift.json"
     empty.write_text(json.dumps({"drifted_files": []}))
     monkeypatch.setattr(H, "DRIFT_REL", str(empty))       # REPO / absolute path -> the absolute path
+    monkeypatch.setattr(H, "DRIFT_ADDENDA_REL", ())       # no record at all: every drift is unrecorded
     drift = H.source_drift(doc)
     if drift:
         assert all("not recorded" in d["error"] for d in drift)
@@ -123,6 +131,12 @@ def test_recorded_drift_changed_again_fails(H, doc, monkeypatch, tmp_path):
     current bytes (here: every recorded new sha256 replaced) fails --check."""
     rec = json.loads(DRIFT_PATH.read_text())
     stale = tmp_path / "stale_drift.json"
+    have = {d["path"] for d in rec["drifted_files"]}
+    for rel in H.DRIFT_ADDENDA_REL:                       # files first recorded by a later addendum, same treatment
+        for d in json.loads((REPO / rel).read_text())["drifted_files"]:
+            if d.get("first_recorded_here") and d["path"] not in have:
+                rec["drifted_files"].append({"path": d["path"], "old_sha256_a9_7": d["old_sha256_a9_7"]})
+                have.add(d["path"])
     for d in rec["drifted_files"]:
         d["new_sha256"] = "0" * 64
     stale.write_text(json.dumps(rec))
@@ -147,13 +161,20 @@ def test_drift_addendum_must_chain(H, doc, monkeypatch, tmp_path):
 
 
 def test_drift_addenda_chain_to_current_bytes(H, doc):
-    """Every addendum record chains on the earlier record and ends at the current bytes (A9.18 PERF_RERUN still owed)."""
+    """Every addendum record chains on the earlier record and the LAST record naming a file ends at its current bytes
+    (an earlier record superseded by a later chained addendum is history; A9.18 PERF_RERUN still owed)."""
+    last = {}
     for rel in H.DRIFT_ADDENDA_REL:
         add = json.loads((REPO / rel).read_text())
         assert add["status"] == "HISTORICAL_SOURCE_DRIFT" and add["owner_rerun_required"] is True
         assert add["rust_performance_admission"] == "BLOCKED_UNTIL_A9_18_PERF_RERUN"
         for d in add["drifted_files"]:
-            assert d["new_sha256"] == hashlib.sha256((REPO / d["path"]).read_bytes()).hexdigest(), d["path"]
+            if d["path"] in last:
+                assert d["old_sha256"] == last[d["path"]]["new_sha256"], (rel, d["path"])
+            last[d["path"]] = d
+    assert last
+    for p, d in last.items():
+        assert d["new_sha256"] == hashlib.sha256((REPO / p).read_bytes()).hexdigest(), p
     assert all("error" not in d for d in H.source_drift(doc))
 
 

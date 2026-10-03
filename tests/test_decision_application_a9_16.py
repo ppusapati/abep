@@ -585,8 +585,18 @@ def test_matrix_ag15_registration_rebase_and_owner_acceptance_applied(monkeypatc
         assert not any(r["status"] == "PENDING_OWNER_ACCEPTANCE" for r in x["residual"]) and x["resolved_residual"]
     g3 = _later("A9.22", "G3_REQUIREMENTS_SNAPSHOT")
     assert g3["status"] == "APPLIED" and g3["decision_code"] == "AG15_CLOSED_SNAPSHOT_FROZEN"
-    for k in ("G1_MISSION_LIFE", "G8_BUS_BOUNDARY"):    # not applied here: their own governed migrations
-        assert _later("A9.22", k)["status"] == "PENDING_GOVERNED_MIGRATION" and not _later("A9.22", k)["applications"]
+    # G1, G2, G4 .. G9: applied by their own governed migration lanes, each with verified applications (tokens and,
+    # where a record exists, a structural record check); residuals: G2 Option 2 (separate approval), G9 upload
+    for k in ("G1_MISSION_LIFE", "G2_C_DRAG_RFP", "G4_GOLDEN_ARCHITECTURE", "G5_ALTITUDE_BAND",
+              "G6_IC_HALL_PREFERRED", "G7_DEAD_LOGIC", "G8_BUS_BOUNDARY", "G9_F1_OUTPUT"):
+        g = _later("A9.22", k)
+        assert g["status"] == "APPLIED" and g["applications"], k
+        assert all(a["status"] == "APPLIED" and a["record_locations"] for a in g["applications"]), k
+        assert all(r["status"] != "PENDING_GOVERNED_MIGRATION" for r in g["residual"]), k
+    for k in ("G1_MISSION_LIFE", "G4_GOLDEN_ARCHITECTURE", "G5_ALTITUDE_BAND", "G8_BUS_BOUNDARY", "G9_F1_OUTPUT"):
+        assert any(a.get("record_pointer") for a in _later("A9.22", k)["applications"]), k
+    assert [r["status"] for r in _later("A9.22", "G2_C_DRAG_RFP")["residual"]] == ["LATER_SEPARATE_OWNER_APPROVAL"]
+    assert [r["status"] for r in _later("A9.22", "G9_F1_OUTPUT")["residual"]] == ["PENDING_OWNER_UPLOAD"]
     assert "REGISTERED" in {r["id"]: r for r in MXDOC["rules"]}["R-RFP"]["rule"].upper()
     for x in MXDOC["entries"]:                          # AG-15 closure is never shown as BLOCKED on registration
         for r in x["residual"]:

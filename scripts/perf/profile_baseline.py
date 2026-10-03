@@ -66,7 +66,8 @@ DRIFT_REL = "docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_9.jso
 # Later drift records, applied in order after DRIFT_REL (each entry chains old_sha256 -> new_sha256 from the previous
 # record's new_sha256). The current bytes of every drifted file must equal the last recorded new_sha256 (SW-05: a
 # recorded drift is never an allowance for any later change).
-DRIFT_ADDENDA_REL = ("docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_18_REPAIR.json",)
+DRIFT_ADDENDA_REL = ("docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_18_REPAIR.json",
+                     "docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_22.json")
 TEST_REL = "tests/test_perf_baseline.py"
 P3_LIB_REL = "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py"
 P3_BUILDER_REL = "docs/experiments/hall_icp/p3_coupled_thermal/build_p3_coupled_thermal.py"
@@ -1229,13 +1230,16 @@ def source_drift(doc=None):
             continue
         d = {"status": "HISTORICAL_SOURCE_DRIFT", "path": s["path"], "old_sha256": s["sha256"], "new_sha256": cur}
         r = rec.get(s["path"])
-        if r is None:
+        # a file unchanged at DRIFT_REL may be first recorded by a later addendum: its chain then starts at the
+        # baseline's own sha256 (the first addendum entry must carry it as old_sha256)
+        first_in_addendum = r is None and any(s["path"] in arec for _, arec in addenda)
+        if r is None and not first_in_addendum:
             d["error"] = (f"profiled source changed since the baseline and the drift is not recorded in {DRIFT_REL}: "
                           f"{s['path']} (old {s['sha256']}, new {cur})")
-        elif r.get("old_sha256_a9_7") != s["sha256"]:
+        elif r is not None and r.get("old_sha256_a9_7") != s["sha256"]:
             d["error"] = f"drift record {DRIFT_REL} has a wrong old sha256 for {s['path']}"
         else:
-            expected, where = r.get("new_sha256"), DRIFT_REL
+            expected, where = (s["sha256"], JSON_REL) if r is None else (r.get("new_sha256"), DRIFT_REL)
             for rel, arec in addenda:
                 a = arec.get(s["path"])
                 if a is None:
