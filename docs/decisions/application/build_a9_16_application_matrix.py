@@ -71,10 +71,12 @@ F_REGEN = ("the F-lane records that carry this decision (docs/design_synthesis/*
 F_REGEN_WHERE = "docs/design_synthesis/**, docs/architecture/** (A9.16 finalize design regeneration lane)"
 
 
-def _app(lane, artifact, commit, tokens, what, record=None):
+def _app(lane, artifact, commit, tokens, what, record=None, pin=None):
     a = {"lane": lane, "artifact": artifact, "commit": commit, "tokens": list(tokens), "what": what}
     if record:
         a["record"] = record   # structural check of the artifact record (JSON list pointer, match, field checks)
+    if pin:
+        a["pin"] = pin         # (JSON pointer, repo path): the value at the pointer must be the file's current sha256
     return a
 
 
@@ -237,7 +239,8 @@ A919_INTEGRATION_COMMIT = "f280cf4401fe1f428352b5657e97881f38cc7c79"  # F9 Xe ro
 RECORDS_A917_21_COMMIT = "42453f5fdb10a645ea88ef90f56aad851d2c6520"  # state v5 + M16 v4 A9.17 .. A9.21 records
 A921_AL08_BUDGETS_COMMIT = "6a69ac52dcca091212c0dfc4cd10abcbd2e1bdcc"  # mass / power v3 AL-08 + Xe v3 XV3-IF-02 A9.21 label
 A921_ICP_GATE_COMMIT = "eae96c820ef86c281dc7ffafd6bb698ee0b2b96f"      # RVM + F9 GNG-ICP-01 registration (A9.21 ICP_GATE)
-A921_HW_PROGRAMME_COMMIT = "364a5ab3f1d61206bce54cc1a160570e8947f185"  # programme-order record consumed by H-1, P1-P4
+A921_HW_PROGRAMME_COMMIT = "364a5ab3f1d61206bce54cc1a160570e8947f185"
+HW_PROGRAMME_REL = "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json"  # programme-order record consumed by H-1, P1-P4
 V5_REL = "docs/budgets/owner_decisions/owner_questions_state_v5.json"
 M16_REL = "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json"
 RVM_REL = "docs/requirements/rvm_a9/rvm_a9_v1.json"
@@ -389,16 +392,21 @@ LATER_APPS = {
              "(fail closed: never PASS / GO / START_AUTHORISED; recorder readings RR-01..RR-03 for the owner)"),
         _app("A9.21", "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json", A921_HW_PROGRAMME_COMMIT,
              ["hw_programme_a9_21_v1.json"], "H-1: S7.1 FEMM points before S7.2 engineering channel point (programme "
-                                             "record pinned)"),
+                                             "record pinned)",
+             pin=("/a9_21_programme/programme_record_sha256", HW_PROGRAMME_REL)),
         _app("A9.21", "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json", A921_HW_PROGRAMME_COMMIT,
              ["hw_programme_a9_21_v1.json"], "P1: C1 reference before P1-S7; Ar reference -> air/N2 ICP-45 -> Xe mode, "
-                                             "one gas/mode per campaign with its own domain and provenance"),
+                                             "one gas/mode per campaign with its own domain and provenance",
+             pin=("/a9_21_programme/programme_record_sha256", HW_PROGRAMME_REL)),
         _app("A9.21", "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json", A921_HW_PROGRAMME_COMMIT,
-             ["hw_programme_a9_21_v1.json"], "P2: map only after the in-house V/I calibration + uncertainty budget freeze"),
+             ["hw_programme_a9_21_v1.json"], "P2: map only after the in-house V/I calibration + uncertainty budget freeze",
+             pin=("/a9_21_programme/programme_record_sha256", HW_PROGRAMME_REL)),
         _app("A9.21", "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
-             A921_HW_PROGRAMME_COMMIT, ["hw_programme_a9_21_v1.json"], "P3: after coupled H-1 + ICP"),
+             A921_HW_PROGRAMME_COMMIT, ["hw_programme_a9_21_v1.json"], "P3: after coupled H-1 + ICP",
+             pin=("/a9_21_programme/programme_record_sha256", HW_PROGRAMME_REL)),
         _app("A9.21", "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json", A921_HW_PROGRAMME_COMMIT,
-             ["hw_programme_a9_21_v1.json"], "P4: acceptance exposure only after LOCK-2 is frozen")],
+             ["hw_programme_a9_21_v1.json"], "P4: acceptance exposure only after LOCK-2 is frozen",
+             pin=("/a9_21_programme/programme_record_sha256", HW_PROGRAMME_REL))],
     ("A9.21", "EXTERNAL_INPUTS"): [
         _rec(V5_REL, ['"TBD_EXTERNAL_INPUT'], "state v5: F1Q-03, OQ-F78-04, OD3, OQ-F4-05 external_input_status"),
         _rec(M16_REL, ['"EXTERNAL_INPUTS"'], "M16 v4 row 1")],
@@ -786,7 +794,24 @@ def _verify_app(spec, qid):
            "record_locations": list(spec["tokens"]), "what": spec["what"]}
     if spec.get("record"):
         out["record_pointer"] = _verify_record(json.loads(text), spec["record"], qid, spec["artifact"])
+    if spec.get("pin"):
+        out["pin_pointer"] = _verify_pin(json.loads(text), spec["pin"], qid, spec["artifact"])
     return out
+
+
+def _verify_pin(doc, pin, qid, artifact):
+    """Fail closed: the value at the JSON pointer must equal the sha256 of the pinned repository file as it is now."""
+    import hashlib
+    pointer, rel = pin
+    node = doc
+    for part in pointer.strip("/").split("/"):
+        node = node.get(part) if isinstance(node, dict) else None
+        if node is None:
+            raise SystemExit(f"{qid}: {artifact}{pointer} missing (pin not verifiable)")
+    want = hashlib.sha256((ROOT / rel).read_bytes()).hexdigest()
+    if node != want:
+        raise SystemExit(f"{qid}: {artifact}{pointer} = {node!r} is not the current sha256 of {rel}")
+    return f"{pointer} = sha256({rel})"
 
 
 def _verify_record(doc, rec, qid, artifact):
@@ -804,6 +829,8 @@ def _verify_record(doc, rec, qid, artifact):
     x = node[hits[0]]
     for field, (op, want) in rec["checks"].items():
         got = x.get(field)
+        if op not in ("equals", "startswith"):
+            raise SystemExit(f"{qid}: unknown record check op {op!r} for {field}")
         ok = got == want if op == "equals" else isinstance(got, str) and got.startswith(want)
         if not ok:
             raise SystemExit(f"{qid}: {artifact}{rec['list']}/{hits[0]}.{field} = {got!r} fails {op} {want!r}")

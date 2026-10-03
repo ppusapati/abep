@@ -3215,3 +3215,10 @@ Owner instruction 2026-10-03: rapid delivery; review, verification and fixes run
   everywhere; the open-item classification is a recorder rule for owner review (RF3-FLAG-07).
 - Matrix regenerated (record locations for A9.14 MQ-05 moved inside the RFQ). Affected suites 121 passed; RFQ v3 / RVM /
   state v5 / M16 v5 / H-1 / F9 / matrix --check current.
+- **Review follow-ups (2026-10-03, unfixed items of the correctness review cbd55ab).** Matrix: unknown record-check op
+  refused; the five HW_PROGRAMME stage applications verify `/a9_21_programme/programme_record_sha256` against the current
+  programme record (`pin_pointer`). ICP gate: a criteria item without its own text is refused (never GO). F9 citations: a
+  partly mapped record keeps its unmapped questions' reasons (`rfp_citation_partially_unmapped`). `a9_later_lib.verbatim`
+  refuses an empty excerpt. Guards only: every output reproduces; regression tests added. Open for the owner: AG-15
+  closure is detected by an `ag_15_status` "CLOSED" prefix without an owner-decision citation (format of the owner's
+  closure record to be decided).

@@ -143,3 +143,15 @@ def test_correspondence_labelled_recorder_reading():
     blob = json.dumps(F9, ensure_ascii=False)
     assert "mapped as the RVM re-base maps" not in blob
     assert blob.count('"rfp_correspondence_status": "RECORDER_READING_OWNER_MAY_REVERSE"') == 14
+
+
+def test_partly_mapped_record_keeps_unmapped_reasons():
+    """Review follow-up 2026-10-03: a record with several owner questions keeps the reasons of the ones that do not map."""
+    ok = {"status": C.REGISTERED, "clauses": ["RFP-X"], "rows": ["RVM-1"], "correspondence": [{"kind": "k"}]}
+    bad = {"status": "UNMAPPED_NO_RVM_MAPPED_CLAUSE", "reason": "no RVM row for Q2"}
+    m = C._merge([ok, bad])
+    assert m["status"] == C.REGISTERED and m["unmapped_reasons"] == ["no RVM row for Q2"]
+    rec = {}
+    C._relabel(rec, m, None)
+    assert rec["rfp_citation_partially_unmapped"] == ["no RVM row for Q2"]
+    assert "unmapped_reasons" not in C._merge([ok])

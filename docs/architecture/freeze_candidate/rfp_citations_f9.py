@@ -147,6 +147,10 @@ def _merge(ms: list) -> dict:
         out["clauses"] += [c for c in m["clauses"] if c not in out["clauses"]]
         out["rows"] += [r for r in m["rows"] if r not in out["rows"]]
         out["correspondence"] += m["correspondence"]
+    # review 2026-10-03: a partly mapped record keeps the reasons of its unmapped questions (never silently dropped)
+    unmapped = [m["reason"] for m in ms if m["status"] != REGISTERED]
+    if unmapped:
+        out["unmapped_reasons"] = unmapped
     return out
 
 
@@ -164,6 +168,8 @@ def _relabel(rec: dict, m: dict, pending) -> None:
                                     + " (" + ", ".join(sorted({c["kind"] for c in m["correspondence"]}))
                                     + "); AG-15 closure is the owner's, requirement_frozen stays false")
         rec["rfp_correspondence_status"] = CORRESPONDENCE_STATUS
+        if m.get("unmapped_reasons"):
+            rec["rfp_citation_partially_unmapped"] = list(m["unmapped_reasons"])
     else:
         rec["rfp_citation_unmapped_reason"] = m["reason"]
 

@@ -114,8 +114,11 @@ def _uses_proposal(criteria: dict) -> bool:
     if PROPOSAL_ID.lower() in text or "recorder_proposal" in text or "recorder proposal" in text:
         return True
     items = criteria.get("items") or []
-    return any(_norm(i.get("text", "")).lower() and _norm(i.get("text", "")).lower() in prop for i in items
-               if isinstance(i, dict))
+    # review 2026-10-03: a criterion item without its own text (or not a dict) cannot be shown to differ from the
+    # recorder proposal, so it is treated as unusable (fail closed: NOT_EVALUATED, never GO)
+    if any(not isinstance(i, dict) or not _norm(str(i.get("text", ""))) for i in items):
+        return True
+    return any(_norm(i.get("text", "")).lower() in prop for i in items)
 
 
 def _pinned_file_ok(ref: dict, root: Path) -> bool:

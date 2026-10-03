@@ -149,6 +149,8 @@ def decision_code(key: str, item: str):
 
 def verbatim(key: str, text: str) -> str:
     """Return `text` after checking it occurs verbatim (whitespace-normalized) in the pinned md body."""
+    if not _norm(text):
+        raise LaterDecisionError(f"{key}: empty excerpt (a verbatim excerpt must carry text)")
     if _norm(text) not in _norm(LOADED[key]["body"]):
         raise LaterDecisionError(f"{key}: excerpt not found verbatim in {LOADED[key]['md']}: {text[:80]!r}")
     return text

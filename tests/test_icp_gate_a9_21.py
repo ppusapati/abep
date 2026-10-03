@@ -230,3 +230,13 @@ def test_f9_refuses_missing_or_inconsistent_registration():
     moved[0]["placement"] = "AFTER_LOCK-1"
     with pytest.raises(SystemExit):
         F21.pre_lock1_gates(moved, _ref)
+
+
+def test_criterion_without_text_never_go():
+    """Review follow-up 2026-10-03: an accepted criteria item without its own text (or not a dict) cannot be shown to
+    differ from the recorder proposal; it is refused (NOT_EVALUATED), never GO."""
+    full = [_ev("C1"), _ev("C2")]
+    for items in ([{"id": "C1"}, {"id": "C2", "text": "y"}], [{"id": "C1", "text": "  "}, {"id": "C2", "text": "y"}],
+                  ["C1", {"id": "C2", "text": "y"}]):
+        assert G._uses_proposal(dict(ACCEPTED, items=items)) is True
+        assert _evaluate(dict(ACCEPTED, items=items), full)["status"] != "GO"

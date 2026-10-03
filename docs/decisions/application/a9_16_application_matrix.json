@@ -7511,7 +7511,8 @@
      "record_locations": [
       "hw_programme_a9_21_v1.json"
      ],
-     "what": "H-1: S7.1 FEMM points before S7.2 engineering channel point (programme record pinned)"
+     "what": "H-1: S7.1 FEMM points before S7.2 engineering channel point (programme record pinned)",
+     "pin_pointer": "/a9_21_programme/programme_record_sha256 = sha256(docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json)"
     },
     {
      "lane": "A9.21",
@@ -7521,7 +7522,8 @@
      "record_locations": [
       "hw_programme_a9_21_v1.json"
      ],
-     "what": "P1: C1 reference before P1-S7; Ar reference -> air/N2 ICP-45 -> Xe mode, one gas/mode per campaign with its own domain and provenance"
+     "what": "P1: C1 reference before P1-S7; Ar reference -> air/N2 ICP-45 -> Xe mode, one gas/mode per campaign with its own domain and provenance",
+     "pin_pointer": "/a9_21_programme/programme_record_sha256 = sha256(docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json)"
     },
     {
      "lane": "A9.21",
@@ -7531,7 +7533,8 @@
      "record_locations": [
       "hw_programme_a9_21_v1.json"
      ],
-     "what": "P2: map only after the in-house V/I calibration + uncertainty budget freeze"
+     "what": "P2: map only after the in-house V/I calibration + uncertainty budget freeze",
+     "pin_pointer": "/a9_21_programme/programme_record_sha256 = sha256(docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json)"
     },
     {
      "lane": "A9.21",
@@ -7541,7 +7544,8 @@
      "record_locations": [
       "hw_programme_a9_21_v1.json"
      ],
-     "what": "P3: after coupled H-1 + ICP"
+     "what": "P3: after coupled H-1 + ICP",
+     "pin_pointer": "/a9_21_programme/programme_record_sha256 = sha256(docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json)"
     },
     {
      "lane": "A9.21",
@@ -7551,7 +7555,8 @@
      "record_locations": [
       "hw_programme_a9_21_v1.json"
      ],
-     "what": "P4: acceptance exposure only after LOCK-2 is frozen"
+     "what": "P4: acceptance exposure only after LOCK-2 is frozen",
+     "pin_pointer": "/a9_21_programme/programme_record_sha256 = sha256(docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json)"
     }
    ],
    "residual": [

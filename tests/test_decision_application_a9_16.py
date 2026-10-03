@@ -636,3 +636,24 @@ def test_matrix_m16_v3_q_01_rederivation_applied_named_persons_pending():
     with pytest.raises(SystemExit):
         MX._verify_record(bad, spec, "M16-V3-Q-01", "x.json")
     assert MXDOC["residual_counts"]["BLOCKED"] == 19
+
+
+def test_record_check_unknown_op_and_programme_pins_fail_closed(monkeypatch):
+    """Review follow-up 2026-10-03: an unknown record-check op is refused (no fall-through to startswith); the
+    HW_PROGRAMME stage applications verify the programme-record sha256 pin, not only a filename token."""
+    doc = {"l": [{"id": "a", "f": "xyz"}]}
+    with pytest.raises(SystemExit):
+        MX._verify_record(doc, {"list": "/l", "match": ("id", "a"), "checks": {"f": ("contains", "x")}}, "q", "art")
+    hw = [a for a in next(e for e in MXDOC["entries"] if e["decision"] == "A9.21"
+                          and e["question_id"] == "HW_PROGRAMME")["applications"] if a.get("pin_pointer")]
+    assert len(hw) == 5
+    with pytest.raises(SystemExit):
+        MX._verify_pin({"a9_21_programme": {"programme_record_sha256": "0" * 64}},
+                       ("/a9_21_programme/programme_record_sha256", MX.HW_PROGRAMME_REL), "q", "art")
+    with pytest.raises(SystemExit):
+        MX._verify_pin({}, ("/a9_21_programme/programme_record_sha256", MX.HW_PROGRAMME_REL), "q", "art")
+
+
+def test_verbatim_refuses_empty_excerpt():
+    with pytest.raises(X.LaterDecisionError):
+        X.verbatim("A9.21", "   ")
