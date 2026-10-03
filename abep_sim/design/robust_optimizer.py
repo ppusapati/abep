@@ -122,28 +122,30 @@ _UQ_AXES_REST = (
 
 
 # ================================================================================================= gate snapshot
-def gate_snapshot(repo=ao.REPO) -> dict:
-    """Evidence-gate statuses the robust filter must never change (read from their owning deliverables)."""
+def design_gate_snapshot(repo=ao.REPO, rvm_snapshot: dict | None = None) -> dict:
+    """Evidence-gate statuses the robust filter must never change, read from their owning design deliverables (Hall
+    credible set, mass/power statuses, H-1 freeze state). A9.22: the RVM-derived part is an assessment input; the
+    caller passes it in (``rvm_snapshot``: abep_sim.assessment.design_gates.rvm_gate_snapshot), this module never
+    reads the RVM."""
     mp = ao.read_json(ao.MP_REL, repo)
     f5 = ao.read_json(ao.F5_REL, repo)
-    rvm = ao.read_json(ao.RVM_REL, repo)
     hall = ao.hall_response_status(repo)
-    counts = rvm["status_counts"]
-    # A9.19 / A9.20: only the flight configuration's RVM counts are an evidence gate here; the RVM's
-    # hall_c1_reference column is the labelled ground / laboratory reference and is carried only as such
     snap = {"hall_credible_set": hall["credible_set"], "hall_admitted_members": list(hall["admitted_members"]),
             "a9_2_statuses": dict(mp["statuses"]["a9_2_statuses"]),
             "a9_19_20_supersessions": dict(mp["statuses"].get("a9_19_20_supersessions", {})),
-            "h1_article_freeze_state": f5["article_freeze_state"],
-            "rvm_hall_status": dict(rvm["hall_status"]),
-            "rvm_status_counts": {c: counts[c] for c in ao.CONFIGURATIONS}}
-    ground = {c: counts[c] for c in ao.GROUND_REFERENCE_CONFIGURATIONS if c in counts}
-    if ground:
-        snap["ground_reference_rvm_status_counts"] = {
-            "label": "GROUND_ONLY_LAB_REFERENCE (A9.20): RVM cells of the C1 ground / laboratory reference; never a "
-                     "flight configuration (A9.19) and never flight compliance evidence",
-            "counts": ground}
+            "h1_article_freeze_state": f5["article_freeze_state"]}
+    snap.update(rvm_snapshot or {})
     return snap
+
+
+def gate_snapshot(repo=ao.REPO, rvm_snapshot: dict | None = None) -> dict:
+    """DEPRECATED compatibility entry point (A9.22): with ``rvm_snapshot`` supplied by the builder it is
+    design_gate_snapshot; without it the RVM part is obtained from the assessment layer
+    (abep_sim.assessment.design_gates.gate_snapshot), identical to the pre-A9.22 result."""
+    if rvm_snapshot is not None:
+        return design_gate_snapshot(repo, rvm_snapshot)
+    from ..assessment import design_gates as dg
+    return dg.gate_snapshot(repo)
 
 
 # ================================================================================================= helpers
