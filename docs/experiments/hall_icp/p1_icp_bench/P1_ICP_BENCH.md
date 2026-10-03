@@ -850,6 +850,33 @@ Statuses: ICP45 = NOT_EVALUATED until registered; ICP_COUPLED_THERMAL UNRESOLVED
 
 Pinning: the P1 json / reducer / campaign are sha-pinned or read by other packages (state v4, RVM, M16 v4, RFQ v2, F6): the integration lane re-pins; nothing outside this lane's paths was edited
 
+
+## A9.21 hardware-programme place (owner items 6-11)
+
+Programme record `docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json` (sha256 `135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a`); decision A9.21 HW_PROGRAMME (docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json sha256 78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549; verbatim docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md sha256 01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440).
+
+Order: H1-S7.1 -> H1-S7.2 -> C1-REF -> ICP-AR-REF -> ICP-45A-P1-S7 -> ICP-45N -> ICP-XE-MODE -> P2-MAP -> COUPLED-H1-ICP -> P3-THERMAL -> P4-ACCEPTANCE-EXPOSURE -> H1-THRUST-FEED-MAP -> AG-12 -> AG-13
+
+> 7. C1 ground reference — approved. Run H-1 + C1 reference characterization and register `I_d,max,H1,Ar` before P1-S7. This remains a reference/engineering campaign and does not redefine the RFP propellant requirement.
+
+> 8. ICP programme — approved with one sequencing qualification: preserve the Ar engineering/commissioning reference where already required, then perform the registered air/N₂ ICP-45 campaign, followed by the Xe operating mode as a separate registered campaign. Each gas/mode gets its own operating domain and provenance. Before it starts, close the stage domains, pressure-match tolerance, DWV leakage criteria and stable-region criteria.
+
+| step | # | predecessors | entry preconditions | entry status now |
+|---|---|---|---|---|
+| C1-REF | 3 | H1-S7.2 (PHYSICAL_PREREQUISITE_RECORDER) | - | NOT_STARTABLE_PREDECESSOR_INCOMPLETE |
+| ICP-AR-REF | 4 | - | ICP-AR-REF-PRE-01: per-stage operating domains (unique domain_id, frozen before the stage's first record) [docs/experiments/hall_icp/p1_icp_bench/p1_a9_16_rules.py:check_operating_domains / domain_freeze_reasons]; ICP-AR-REF-PRE-02: RF-ON / RF-OFF pressure-match tolerance (installed-gauge derived) [docs/experiments/hall_icp/p1_icp_bench/p1_a9_16_rules.py:check_pressure_match_registration]; ICP-AR-REF-PRE-03: per-path DWV leakage limits (registered before the DWV test) [docs/experiments/hall_icp/p1_icp_bench/p1_a9_16_rules.py:reduce_dwv_reverification; p1_reducer.reduce_readiness]; ICP-AR-REF-PRE-04: stable-region criteria frozen and hashed (derived from P1-S2 .. S4 evidence) [docs/experiments/hall_icp/p1_icp_bench/p1_a9_16_rules.py:check_stable_criteria_registration] | ENTRY_GATED_BY_EXISTING_STAGE_RULES |
+| ICP-45A-P1-S7 | 5 | C1-REF (EXPLICIT_A9_21), ICP-AR-REF (EXISTING_OWNER_RULE) | ICP-45A-P1-S7-PRE-01: I_d,max,H1,Ar registered from the H-1 + C1 reference characterization, frozen before the first P1-S7 record [docs/experiments/hall_icp/p1_icp_bench/p1_campaign.py:run_campaign (p1_a9_16_rules.freeze_before_stage_reasons + p1_reducer._check_registration)] | NOT_STARTABLE_PREDECESSOR_INCOMPLETE |
+| ICP-45N | 6 | ICP-45A-P1-S7 (EXPLICIT_A9_21) | ICP-45N-PRE-01: campaign registration of THIS gas / mode: own operating domain (domain_id), own provenance (registration_set_id) and the four closures - stage domains, pressure-match tolerance, DWV leakage criteria, stable-region criteria - each frozen before the campaign's first record [docs/experiments/hall_icp/programme/hw_programme_a9_21.py:icp_campaign_check] | NOT_STARTABLE_PREDECESSOR_INCOMPLETE |
+| ICP-XE-MODE | 7 | ICP-45N (EXPLICIT_A9_21) | ICP-XE-MODE-PRE-01: campaign registration of THIS gas / mode: own operating domain (domain_id), own provenance (registration_set_id) and the four closures - stage domains, pressure-match tolerance, DWV leakage criteria, stable-region criteria - each frozen before the campaign's first record [docs/experiments/hall_icp/programme/hw_programme_a9_21.py:icp_campaign_check] | NOT_STARTABLE_PREDECESSOR_INCOMPLETE |
+
+fail closed (hw_programme_a9_21.entry_status): a step is NOT_STARTABLE while a predecessor completion or a listed precondition registration is missing; never PASS / GO / START_AUTHORISED
+
+Registered ICP gas / mode campaigns (ICP-45N, ICP-XE-MODE): one gas / mode each, own operating-domain id and provenance, closures stage_domains, pressure_match_tolerance, dwv_leakage_criteria, stable_region_criteria registered before the campaign's first record; refused: programme_step not ICP-45N / ICP-XE-MODE; gas not of the step's supply mode; operating domain missing (no own domain_id); domain_id shared with another gas / mode campaign or an Ar reference stage domain; provenance missing or registration_set_id shared with another gas / mode campaign.
+
+- RR-01 (RECORDER_READING_OWNER_MAY_REVERSE): 'Before it starts, close the stage domains, pressure-match tolerance, DWV leakage criteria and stable-region criteria' is applied to each REGISTERED campaign (ICP-45N, ICP-XE-MODE): all four are registered before that campaign's first record. The Ar engineering / commissioning reference (P1) keeps its existing per-stage freeze points (A9.8 P1-IT-52 / P1Q-11 / P1-IT-55, A9.11 P1Q-01), because its stable-region criteria are derived from its own P1-S2 .. S4 evidence and could not be closed before P1 starts; 'preserve ... where already required' keeps it as it is
+- RR-02 (RECORDER_READING_OWNER_MAY_REVERSE): C1-REF is placed after H1-S7.2 only because the characterization needs the built H-1 article (PHYSICAL_PREREQUISITE_RECORDER); A9.21 states only 'before P1-S7'
+- RR-03 (RECORDER_LABEL): the step ids ICP-AR-REF / ICP-45A-P1-S7 / ICP-XE-MODE are recorder labels (A9.1 names ICP-45A / ICP-45N); the ICP-45N campaign follows the Ar reference INCLUDING its P1-S7 ICP-45A capacity stage (A9.1 order ICP-45A then ICP-45N); no criterion, value or duration is attached here
+
 ## Pinned inputs (sha256)
 
 - `docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json` - `74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f` (governing owner decision A9)

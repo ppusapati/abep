@@ -433,6 +433,9 @@ PINS = PINS + APP.pins()
 # C1 ground-only laboratory reference)
 APP19 = _load_sibling("p1_a9_19_application.py", "p1_a9_19_application_for_builder")
 PINS = PINS + APP19.pins()
+# A9.21 HW_PROGRAMME (owner decision of 2026-10-02, items 7 / 8): programme order record (refuses a stale record)
+sys.path.insert(0, os.path.join(ROOT, "docs", "experiments", "hall_icp", "programme"))
+import hw_programme_a9_21 as PROG  # noqa: E402
 GOVERNANCE_NOT_PINNED = ["docs/orchestration/lane_registry_v1.json", "docs/orchestration/trigger_registry_v1.json",
                          "docs/orchestration/trigger_ledger_v2.jsonl", "docs/orchestration/fired_triggers.jsonl",
                          "docs/orchestration/runtime_state.json"]
@@ -2498,6 +2501,7 @@ def build_doc():
         "interface_demands": interface_demands(),
         "owner_answers_applied": owner_answers_applied(),
         "a9_19_incorporation": APP19.incorporation(_reducer()),
+        "a9_21_programme": PROG.artifact_view("P1"),
         "open_owner_questions": open_questions(),
         "open_owner_questions_note": APP.AS_RAISED_QUESTIONS_NOTE,
         "owner_question_status_current": APP.owner_question_status_current(open_questions()),
@@ -3026,6 +3030,13 @@ def render_md(doc):
     L += _table(a16["fail_closed"], [("case", "case"), ("outcome", "outcome"), ("test", "test")]) + [""]
     L += ["Existing tests updated (behaviour changed by an owner decision): " + ", ".join(a16["existing_tests_updated"]),
           "", "Statuses: " + a16["statuses_unchanged"], "", "Pinning: " + a16["pinning_note"], ""]
+    pv = doc["a9_21_programme"]
+    L += PROG.render_view_md(pv)
+    L += ["Registered ICP gas / mode campaigns (%s): one gas / mode each, own operating-domain id and provenance, "
+          "closures %s registered before the campaign's first record; refused: %s." % (
+              ", ".join(pv["icp_campaign_rule"]["steps"]), ", ".join(pv["icp_campaign_rule"]["closures"]),
+              "; ".join(pv["icp_campaign_rule"]["refusals"])), ""]
+    L += ["- %s (%s): %s" % (r["id"], r["status"], r["reading"]) for r in pv["recorder_readings"]] + [""]
     L += ["## Pinned inputs (sha256)", ""]
     L += ["- `%s` - `%s` (%s)" % (p["path"], p["sha256"], p["role"]) for p in doc["authority_pins"]] + [""]
     L += ["Read but never pinned (mutable governance): " + "; ".join("`%s`" % g for g in

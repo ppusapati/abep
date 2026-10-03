@@ -90,6 +90,8 @@ _a19spec.loader.exec_module(APP19)
 _rspec = importlib.util.spec_from_file_location("p2_a9_16_rules", str(HERE / "p2_a9_16_rules.py"))
 RULES = importlib.util.module_from_spec(_rspec)
 _rspec.loader.exec_module(RULES)
+sys.path.insert(0, str(REPO / "docs" / "experiments" / "hall_icp" / "programme"))
+import hw_programme_a9_21 as PROG  # noqa: E402  (A9.21 HW_PROGRAMME order, item 9)
 
 # ------------------------------------------------------------------------------------------------ pinned inputs
 DECISIONS = {
@@ -1709,6 +1711,8 @@ def build():
     doc["a9_16_incorporation"] = APP.incorporation(RED, FW, RULES, a9_16_selfcheck())
     doc["owner_answers_applied"] = doc["owner_answers_applied"] + APP19.owner_answer_rows()
     doc["a9_19_incorporation"] = APP19.incorporation(RED)
+    # A9.21 HW_PROGRAMME item 9: P2 map only after the in-house V/I calibration and its uncertainty budget are frozen
+    doc["a9_21_programme"] = PROG.artifact_view("P2")
     return doc
 
 
@@ -2491,6 +2495,7 @@ def render_md(doc):
           f"`{i5['decision']['path']}` (sha256 `{i5['decision']['sha256']}`), verbatim `{i5['verbatim']['path']}` "
           f"(sha256 `{i5['verbatim']['sha256']}`). Changes: " + "; ".join(i5["changes"]) +
           f". P1Q-15 / P1Q-16: {i5['p1q15_p1q16']}. M16: {i5['m16_impact_change']}.", ""]
+    L += PROG.render_view_md(doc["a9_21_programme"])
     return "\n".join(L)
 
 

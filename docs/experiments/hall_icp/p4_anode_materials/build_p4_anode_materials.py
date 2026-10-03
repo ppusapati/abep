@@ -77,6 +77,10 @@ def _load_local(name, fname):
 
 RULES = _load_local("p4_a9_16_rules", "p4_a9_16_rules.py")
 APP = _load_local("p4_a9_16_application", "a9_16_application.py")
+_pp = importlib.util.spec_from_file_location("hw_programme_a9_21",
+                                             str(REPO / "docs/experiments/hall_icp/programme/hw_programme_a9_21.py"))
+PROG = importlib.util.module_from_spec(_pp)       # A9.21 HW_PROGRAMME order (item 10)
+_pp.loader.exec_module(PROG)
 A916_DATE = "2026-10-01"
 
 # ------------------------------------------------------------------------------------------------ pinned inputs
@@ -1555,6 +1559,17 @@ def build_doc(pins):
             "registration slot that refuses today",
         ],
     }
+    # A9.21 HW_PROGRAMME item 10: coupled H-1 + ICP -> P3 thermal -> P4; acceptance thresholds frozen (LOCK-2) before
+    # any acceptance-bearing coupon exposure. Fail closed: while the LOCK-2 freeze refuses on the registered inputs,
+    # the P4 acceptance-exposure step can never report a registered entry.
+    view = PROG.artifact_view("P4")
+    p4_entry = PROG.entry_status("P4-ACCEPTANCE-EXPOSURE")["status"]
+    lock2_now = doc["a9_16_owner_rules"]["lock2"]["registered_freeze"]["status"]
+    if lock2_now != PROG.LOCK2_STATUS and p4_entry == PROG.ENTRY_REGISTERED:
+        raise BuildError("P4 acceptance-bearing exposure entry registered while LOCK-2 is not frozen (A9.21 item 10)")
+    view["p4_acceptance_exposure_entry_now"] = p4_entry
+    view["lock2_registered_freeze_now"] = lock2_now
+    doc["a9_21_programme"] = view
     SCR.assert_no_forbidden_status(doc)
     return doc
 
@@ -1713,6 +1728,9 @@ def render_md(doc):
     for s in doc["source_register"]["reused_from_r8"]:
         L.append(f"- **{s['id']}** (via R8, {s['accessed']}): {s['cite']}. {s['url']} ({s['access']})")
     L += ["", "## Findings", ""] + [f"- {f}" for f in doc["findings"]] + [""]
+    L += PROG.render_view_md(doc["a9_21_programme"])
+    L += [f"P4 acceptance-bearing exposure entry now: {doc['a9_21_programme']['p4_acceptance_exposure_entry_now']}; "
+          f"LOCK-2 registered freeze now: {doc['a9_21_programme']['lock2_registered_freeze_now']}.", ""]
     return "\n".join(L)
 
 
