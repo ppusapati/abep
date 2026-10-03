@@ -89,6 +89,13 @@
     "json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
     "md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
     "md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c"
+   },
+   {
+    "key": "A9.21",
+    "json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+    "json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+    "md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+    "md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440"
    }
   ],
   "a9": {
@@ -296,12 +303,8 @@
    "status": "OWNER_BASIS (provisional per row 3)",
    "freeze_point": "NOW",
    "applies_to": {
-    "configs": [
-     "hall_c1_reference"
-    ],
-    "ledgers": [
-     "FLIGHT"
-    ]
+    "configs": [],
+    "ledgers": []
    },
    "v3_change": "value unchanged; ground-only scope (A9.19 / A9.20)",
    "owner_answers_applied": [
@@ -310,7 +313,15 @@
     "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
     "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)"
    ],
-   "v3_scope": "GROUND_ONLY (A9.20): C1 is a ground-only laboratory reference; no flight use (A9.19: no conventional hollow cathode in the flight architecture); ground lab-reference use unchanged (the pre-A9.19 flight scope 'CONDITIONAL_ON_C1_FLIGHT_SELECTION' is history)"
+   "v3_scope": "GROUND_ONLY (A9.20): C1 is a ground-only laboratory reference; no flight use (A9.19: no conventional hollow cathode in the flight architecture); ground lab-reference use unchanged (the pre-A9.19 flight scope 'CONDITIONAL_ON_C1_FLIGHT_SELECTION' is history)",
+   "applies_to_pre_a9_19": {
+    "configs": [
+     "hall_c1_reference"
+    ],
+    "ledgers": [
+     "FLIGHT"
+    ]
+   }
   },
   {
    "id": "XV2-02",
@@ -326,12 +337,8 @@
    "status": "A5_DESIGN_TARGET_PLACEHOLDER: the A5 design-target flow (not a demonstrated or selected-hardware flow) used for the ground development / reference C1 booking; for a flight C1 it is replaced by the selected C1 hardware's qualified flow when C1 is selected (A9.15: C1 Xe derived from the selected C1 hardware)",
    "freeze_point": "after-evidence",
    "applies_to": {
-    "configs": [
-     "hall_c1_reference"
-    ],
-    "ledgers": [
-     "FLIGHT"
-    ]
+    "configs": [],
+    "ledgers": []
    },
    "note": "closes with the C1 measured spot-mode minimum flow (H22-50); the flow step of that search is row 92",
    "v3_change": "value unchanged; ground-only scope (A9.19 / A9.20); labelled an A5 design-target placeholder (A9.16 repair F6)",
@@ -343,7 +350,15 @@
     "A9.15 governing_rule (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37a)"
    ],
    "v3_scope": "GROUND_ONLY (A9.20): C1 is a ground-only laboratory reference; no flight use (A9.19: no conventional hollow cathode in the flight architecture); ground lab-reference use unchanged (the pre-A9.19 flight scope 'CONDITIONAL_ON_C1_FLIGHT_SELECTION' is history)",
-   "status_v2": "FIXED_DESIGN_TERM (A5 design target, not a demonstrated flow)"
+   "status_v2": "FIXED_DESIGN_TERM (A5 design target, not a demonstrated flow)",
+   "applies_to_pre_a9_19": {
+    "configs": [
+     "hall_c1_reference"
+    ],
+    "ledgers": [
+     "FLIGHT"
+    ]
+   }
   },
   {
    "id": "XV2-03",
@@ -359,15 +374,19 @@
    "status": "SENSITIVITY_ONLY (A5: experimental upper test point, never the allocation)",
    "freeze_point": "after-evidence",
    "applies_to": {
+    "configs": [],
+    "ledgers": []
+   },
+   "v3_change": "carried unchanged from v2",
+   "owner_answers_applied": [],
+   "applies_to_pre_a9_19": {
     "configs": [
      "hall_c1_reference"
     ],
     "ledgers": [
      "FLIGHT"
     ]
-   },
-   "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   }
   },
   {
    "id": "XV2-04",
@@ -383,13 +402,17 @@
    "status": "OWNER_BASIS until S1a demonstrates a better class on Xe",
    "freeze_point": "after-evidence",
    "applies_to": {
-    "configs": [
-     "hall_c1_reference"
-    ],
-    "ledgers": [
-     "FLIGHT",
-     "GROUND_TEST"
-    ]
+    "configs": [],
+    "ledgers": [],
+    "ground_reference": {
+     "configs": [
+      "hall_c1_reference"
+     ],
+     "ledgers": [
+      "GROUND_TEST"
+     ],
+     "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"
+    }
    },
    "v3_change": "value unchanged; ground-only scope (A9.19 / A9.20)",
    "owner_answers_applied": [
@@ -398,7 +421,16 @@
     "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
     "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)"
    ],
-   "v3_scope": "GROUND_ONLY (A9.20): C1 is a ground-only laboratory reference; no flight use (A9.19: no conventional hollow cathode in the flight architecture); ground lab-reference use unchanged (the pre-A9.19 flight scope 'CONDITIONAL_ON_C1_FLIGHT_SELECTION' is history)"
+   "v3_scope": "GROUND_ONLY (A9.20): C1 is a ground-only laboratory reference; no flight use (A9.19: no conventional hollow cathode in the flight architecture); ground lab-reference use unchanged (the pre-A9.19 flight scope 'CONDITIONAL_ON_C1_FLIGHT_SELECTION' is history)",
+   "applies_to_pre_a9_19": {
+    "configs": [
+     "hall_c1_reference"
+    ],
+    "ledgers": [
+     "FLIGHT",
+     "GROUND_TEST"
+    ]
+   }
   },
   {
    "id": "XV2-05",
@@ -414,13 +446,17 @@
    "status": "OWNER_BASIS (class); instrument selection PENDING A9-09 RFQ",
    "freeze_point": "LOCK-1",
    "applies_to": {
-    "configs": [
-     "hall_c1_reference"
-    ],
-    "ledgers": [
-     "FLIGHT",
-     "GROUND_TEST"
-    ]
+    "configs": [],
+    "ledgers": [],
+    "ground_reference": {
+     "configs": [
+      "hall_c1_reference"
+     ],
+     "ledgers": [
+      "GROUND_TEST"
+     ],
+     "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"
+    }
    },
    "v3_change": "value unchanged; ground-only scope (A9.19 / A9.20)",
    "owner_answers_applied": [
@@ -429,7 +465,16 @@
     "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
     "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)"
    ],
-   "v3_scope": "GROUND_ONLY (A9.20): C1 is a ground-only laboratory reference; no flight use (A9.19: no conventional hollow cathode in the flight architecture); ground lab-reference use unchanged (the pre-A9.19 flight scope 'CONDITIONAL_ON_C1_FLIGHT_SELECTION' is history)"
+   "v3_scope": "GROUND_ONLY (A9.20): C1 is a ground-only laboratory reference; no flight use (A9.19: no conventional hollow cathode in the flight architecture); ground lab-reference use unchanged (the pre-A9.19 flight scope 'CONDITIONAL_ON_C1_FLIGHT_SELECTION' is history)",
+   "applies_to_pre_a9_19": {
+    "configs": [
+     "hall_c1_reference"
+    ],
+    "ledgers": [
+     "FLIGHT",
+     "GROUND_TEST"
+    ]
+   }
   },
   {
    "id": "XV2-06",
@@ -445,6 +490,21 @@
    "status": "CONDITIONAL (row 125)",
    "freeze_point": "LOCK-1",
    "applies_to": {
+    "configs": [],
+    "ledgers": [],
+    "ground_reference": {
+     "configs": [
+      "hall_c1_reference"
+     ],
+     "ledgers": [
+      "GROUND_TEST"
+     ],
+     "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"
+    }
+   },
+   "v3_change": "carried unchanged from v2",
+   "owner_answers_applied": [],
+   "applies_to_pre_a9_19": {
     "configs": [
      "hall_c1_reference"
     ],
@@ -452,9 +512,7 @@
      "FLIGHT",
      "GROUND_TEST"
     ]
-   },
-   "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   }
   },
   {
    "id": "XV2-07",
@@ -470,6 +528,21 @@
    "status": "PRELIMINARY_PROTOCOL_BOUND",
    "freeze_point": "LOCK-2",
    "applies_to": {
+    "configs": [],
+    "ledgers": [],
+    "ground_reference": {
+     "configs": [
+      "hall_c1_reference"
+     ],
+     "ledgers": [
+      "GROUND_TEST"
+     ],
+     "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"
+    }
+   },
+   "v3_change": "carried unchanged from v2",
+   "owner_answers_applied": [],
+   "applies_to_pre_a9_19": {
     "configs": [
      "hall_c1_reference"
     ],
@@ -477,9 +550,7 @@
      "FLIGHT",
      "GROUND_TEST"
     ]
-   },
-   "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   }
   },
   {
    "id": "XV2-08",
@@ -495,6 +566,24 @@
    "status": "OWNER_DECIDED_MAXIMUM (A9.14 XA9Q-02 / OQ-A907-01)",
    "freeze_point": "LOCK-2",
    "applies_to": {
+    "configs": [],
+    "ledgers": [],
+    "ground_reference": {
+     "configs": [
+      "hall_c1_reference"
+     ],
+     "ledgers": [
+      "GROUND_TEST"
+     ],
+     "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"
+    }
+   },
+   "v3_change": "RA-DWELL resolved: 3 attempts (v2 carried 3 and 2 side by side)",
+   "owner_answers_applied": [
+    "A9.14 XA9Q-02 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+    "A9.14 OQ-A907-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
+   ],
+   "applies_to_pre_a9_19": {
     "configs": [
      "hall_c1_reference"
     ],
@@ -502,12 +591,7 @@
      "FLIGHT",
      "GROUND_TEST"
     ]
-   },
-   "v3_change": "RA-DWELL resolved: 3 attempts (v2 carried 3 and 2 side by side)",
-   "owner_answers_applied": [
-    "A9.14 XA9Q-02 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-    "A9.14 OQ-A907-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
-   ]
+   }
   },
   {
    "id": "XV2-09",
@@ -523,13 +607,17 @@
    "status": "TBD",
    "freeze_point": "after-evidence",
    "applies_to": {
-    "configs": [
-     "hall_c1_reference"
-    ],
-    "ledgers": [
-     "FLIGHT",
-     "GROUND_TEST"
-    ]
+    "configs": [],
+    "ledgers": [],
+    "ground_reference": {
+     "configs": [
+      "hall_c1_reference"
+     ],
+     "ledgers": [
+      "GROUND_TEST"
+     ],
+     "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"
+    }
    },
    "requires": "the selected C1 vendor/design-qualified ignition flow (row 93; OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation); OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))",
    "v2_counterpart": "TBD_AFTER_EVIDENCE - requires quotations / vendor data requested through docs/procurement/rfq_a9_v2/rfq_a9_v2.json (merged RFQ v2; quotation only) (IFD-15, pair XL-35; none received, no purchase)",
@@ -540,7 +628,16 @@
     "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
     "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)"
    ],
-   "v3_scope": "GROUND_ONLY (A9.20): C1 is a ground-only laboratory reference; no flight use (A9.19: no conventional hollow cathode in the flight architecture); ground lab-reference use unchanged (the pre-A9.19 flight scope 'CONDITIONAL_ON_C1_FLIGHT_SELECTION' is history)"
+   "v3_scope": "GROUND_ONLY (A9.20): C1 is a ground-only laboratory reference; no flight use (A9.19: no conventional hollow cathode in the flight architecture); ground lab-reference use unchanged (the pre-A9.19 flight scope 'CONDITIONAL_ON_C1_FLIGHT_SELECTION' is history)",
+   "applies_to_pre_a9_19": {
+    "configs": [
+     "hall_c1_reference"
+    ],
+    "ledgers": [
+     "FLIGHT",
+     "GROUND_TEST"
+    ]
+   }
   },
   {
    "id": "XV2-10",
@@ -556,13 +653,17 @@
    "status": "TBD",
    "freeze_point": "after-evidence",
    "applies_to": {
-    "configs": [
-     "hall_c1_reference"
-    ],
-    "ledgers": [
-     "FLIGHT",
-     "GROUND_TEST"
-    ]
+    "configs": [],
+    "ledgers": [],
+    "ground_reference": {
+     "configs": [
+      "hall_c1_reference"
+     ],
+     "ledgers": [
+      "GROUND_TEST"
+     ],
+     "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"
+    }
    },
    "requires": "the selected C1 vendor/design-qualified purge flow and duration (row 93; OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation))",
    "v2_counterpart": "TBD_AFTER_EVIDENCE - requires quotations / vendor data requested through docs/procurement/rfq_a9_v2/rfq_a9_v2.json (merged RFQ v2; quotation only) (IFD-15, pair XL-35; none received, no purchase)",
@@ -573,7 +674,16 @@
     "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
     "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)"
    ],
-   "v3_scope": "GROUND_ONLY (A9.20): C1 is a ground-only laboratory reference; no flight use (A9.19: no conventional hollow cathode in the flight architecture); ground lab-reference use unchanged (the pre-A9.19 flight scope 'CONDITIONAL_ON_C1_FLIGHT_SELECTION' is history)"
+   "v3_scope": "GROUND_ONLY (A9.20): C1 is a ground-only laboratory reference; no flight use (A9.19: no conventional hollow cathode in the flight architecture); ground lab-reference use unchanged (the pre-A9.19 flight scope 'CONDITIONAL_ON_C1_FLIGHT_SELECTION' is history)",
+   "applies_to_pre_a9_19": {
+    "configs": [
+     "hall_c1_reference"
+    ],
+    "ledgers": [
+     "FLIGHT",
+     "GROUND_TEST"
+    ]
+   }
   },
   {
    "id": "XV2-11",
@@ -589,13 +699,17 @@
    "status": "TBD",
    "freeze_point": "after-evidence",
    "applies_to": {
-    "configs": [
-     "hall_c1_reference"
-    ],
-    "ledgers": [
-     "FLIGHT",
-     "GROUND_TEST"
-    ]
+    "configs": [],
+    "ledgers": [],
+    "ground_reference": {
+     "configs": [
+      "hall_c1_reference"
+     ],
+     "ledgers": [
+      "GROUND_TEST"
+     ],
+     "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"
+    }
    },
    "requires": "the selected C1 heater procedure and the H-1/C-1 start sequence with Xe logged per phase (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation))",
    "v2_counterpart": "TBD_AFTER_EVIDENCE - requires quotations / vendor data requested through docs/procurement/rfq_a9_v2/rfq_a9_v2.json (merged RFQ v2; quotation only) (IFD-15, pair XL-35; none received, no purchase)",
@@ -606,7 +720,16 @@
     "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
     "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)"
    ],
-   "v3_scope": "GROUND_ONLY (A9.20): C1 is a ground-only laboratory reference; no flight use (A9.19: no conventional hollow cathode in the flight architecture); ground lab-reference use unchanged (the pre-A9.19 flight scope 'CONDITIONAL_ON_C1_FLIGHT_SELECTION' is history)"
+   "v3_scope": "GROUND_ONLY (A9.20): C1 is a ground-only laboratory reference; no flight use (A9.19: no conventional hollow cathode in the flight architecture); ground lab-reference use unchanged (the pre-A9.19 flight scope 'CONDITIONAL_ON_C1_FLIGHT_SELECTION' is history)",
+   "applies_to_pre_a9_19": {
+    "configs": [
+     "hall_c1_reference"
+    ],
+    "ledgers": [
+     "FLIGHT",
+     "GROUND_TEST"
+    ]
+   }
   },
   {
    "id": "XV2-12",
@@ -622,15 +745,28 @@
    "status": "OWNER_BASIS",
    "freeze_point": "NOW",
    "applies_to": {
+    "configs": [],
+    "ledgers": [],
+    "ground_reference": {
+     "configs": [
+      "hall_c1_reference"
+     ],
+     "ledgers": [
+      "GROUND_TEST"
+     ],
+     "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"
+    }
+   },
+   "v3_change": "carried unchanged from v2",
+   "owner_answers_applied": [],
+   "applies_to_pre_a9_19": {
     "configs": [
      "hall_c1_reference"
     ],
     "ledgers": [
      "GROUND_TEST"
     ]
-   },
-   "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   }
   },
   {
    "id": "XV2-13",
@@ -646,16 +782,29 @@
    "status": "TBD",
    "freeze_point": "LOCK-1",
    "applies_to": {
+    "configs": [],
+    "ledgers": [],
+    "ground_reference": {
+     "configs": [
+      "hall_c1_reference"
+     ],
+     "ledgers": [
+      "GROUND_TEST"
+     ],
+     "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"
+    }
+   },
+   "requires": "the preregistered stopping rule (LOCK-1) and the campaign schedule (LOCK-2)",
+   "v3_change": "carried unchanged from v2",
+   "owner_answers_applied": [],
+   "applies_to_pre_a9_19": {
     "configs": [
      "hall_c1_reference"
     ],
     "ledgers": [
      "GROUND_TEST"
     ]
-   },
-   "requires": "the preregistered stopping rule (LOCK-1) and the campaign schedule (LOCK-2)",
-   "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   }
   },
   {
    "id": "XV2-14",
@@ -672,7 +821,6 @@
    "freeze_point": "after-evidence",
    "applies_to": {
     "configs": [
-     "hall_c1_reference",
      "hall_icp_neutralizer"
     ],
     "ledgers": [
@@ -681,7 +829,16 @@
    },
    "requires": "the mission operations concept (eclipse/duty cycling, anomaly restarts) and FDIR restart policy",
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "applies_to_pre_a9_19": {
+    "configs": [
+     "hall_c1_reference",
+     "hall_icp_neutralizer"
+    ],
+    "ledgers": [
+     "FLIGHT"
+    ]
+   }
   },
   {
    "id": "XV2-15",
@@ -698,6 +855,27 @@
    "freeze_point": "after-evidence",
    "applies_to": {
     "configs": [
+     "hall_icp_neutralizer"
+    ],
+    "ledgers": [
+     "FLIGHT",
+     "GROUND_TEST"
+    ],
+    "ground_reference": {
+     "configs": [
+      "hall_c1_reference"
+     ],
+     "ledgers": [
+      "GROUND_TEST"
+     ],
+     "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"
+    }
+   },
+   "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase",
+   "v3_change": "carried unchanged from v2",
+   "owner_answers_applied": [],
+   "applies_to_pre_a9_19": {
+    "configs": [
      "hall_c1_reference",
      "hall_icp_neutralizer"
     ],
@@ -705,10 +883,7 @@
      "FLIGHT",
      "GROUND_TEST"
     ]
-   },
-   "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase",
-   "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   }
   },
   {
    "id": "XV2-16",
@@ -725,6 +900,27 @@
    "freeze_point": "after-evidence",
    "applies_to": {
     "configs": [
+     "hall_icp_neutralizer"
+    ],
+    "ledgers": [
+     "FLIGHT",
+     "GROUND_TEST"
+    ],
+    "ground_reference": {
+     "configs": [
+      "hall_c1_reference"
+     ],
+     "ledgers": [
+      "GROUND_TEST"
+     ],
+     "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"
+    }
+   },
+   "requires": "H-1 transition measurement with Xe logged per phase and the operations concept",
+   "v3_change": "carried unchanged from v2",
+   "owner_answers_applied": [],
+   "applies_to_pre_a9_19": {
+    "configs": [
      "hall_c1_reference",
      "hall_icp_neutralizer"
     ],
@@ -732,10 +928,7 @@
      "FLIGHT",
      "GROUND_TEST"
     ]
-   },
-   "requires": "H-1 transition measurement with Xe logged per phase and the operations concept",
-   "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   }
   },
   {
    "id": "XV2-17",
@@ -752,7 +945,6 @@
    "freeze_point": "after-evidence",
    "applies_to": {
     "configs": [
-     "hall_c1_reference",
      "hall_icp_neutralizer"
     ],
     "ledgers": [
@@ -761,7 +953,16 @@
    },
    "requires": "the FDIR fallback policy and an H-1 Xe operating point measured on the actual H-1",
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "applies_to_pre_a9_19": {
+    "configs": [
+     "hall_c1_reference",
+     "hall_icp_neutralizer"
+    ],
+    "ledgers": [
+     "FLIGHT"
+    ]
+   }
   },
   {
    "id": "XV2-18",
@@ -778,7 +979,6 @@
    "freeze_point": "after-evidence",
    "applies_to": {
     "configs": [
-     "hall_c1_reference",
      "hall_icp_neutralizer"
     ],
     "ledgers": [
@@ -787,7 +987,16 @@
    },
    "requires": "the official RFP wording (row 1) and an owner bound on the Xe-mode duration, plus an H-1 Xe operating point measured on the actual H-1",
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "applies_to_pre_a9_19": {
+    "configs": [
+     "hall_c1_reference",
+     "hall_icp_neutralizer"
+    ],
+    "ledgers": [
+     "FLIGHT"
+    ]
+   }
   },
   {
    "id": "XV2-19",
@@ -804,7 +1013,6 @@
    "freeze_point": "after-evidence",
    "applies_to": {
     "configs": [
-     "hall_c1_reference",
      "hall_icp_neutralizer"
     ],
     "ledgers": [
@@ -813,7 +1021,16 @@
    },
    "requires": "the official RFP (row 1) permitting Xe for the 25 mN capability, and a measured H-1 Xe peak point",
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "applies_to_pre_a9_19": {
+    "configs": [
+     "hall_c1_reference",
+     "hall_icp_neutralizer"
+    ],
+    "ledgers": [
+     "FLIGHT"
+    ]
+   }
   },
   {
    "id": "XV2-20",
@@ -830,6 +1047,28 @@
    "freeze_point": "LOCK-1",
    "applies_to": {
     "configs": [
+     "hall_icp_neutralizer"
+    ],
+    "ledgers": [
+     "FLIGHT",
+     "GROUND_TEST"
+    ],
+    "ground_reference": {
+     "configs": [
+      "hall_c1_reference"
+     ],
+     "ledgers": [
+      "GROUND_TEST"
+     ],
+     "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"
+    }
+   },
+   "requires": "the anode-side / ICP-feed Xe flow controller selection and its Xe calibration (OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))",
+   "v2_counterpart": "TBD_AFTER_EVIDENCE - requires quotations / vendor data requested through docs/procurement/rfq_a9_v2/rfq_a9_v2.json (merged RFQ v2; quotation only) (IFD-15, pair XL-35; none received, no purchase)",
+   "v3_change": "carried unchanged from v2",
+   "owner_answers_applied": [],
+   "applies_to_pre_a9_19": {
+    "configs": [
      "hall_c1_reference",
      "hall_icp_neutralizer"
     ],
@@ -837,11 +1076,7 @@
      "FLIGHT",
      "GROUND_TEST"
     ]
-   },
-   "requires": "the anode-side / ICP-feed Xe flow controller selection and its Xe calibration (OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))",
-   "v2_counterpart": "TBD_AFTER_EVIDENCE - requires quotations / vendor data requested through docs/procurement/rfq_a9_v2/rfq_a9_v2.json (merged RFQ v2; quotation only) (IFD-15, pair XL-35; none received, no purchase)",
-   "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   }
   },
   {
    "id": "XV2-21",
@@ -920,7 +1155,6 @@
    "freeze_point": "after-evidence",
    "applies_to": {
     "configs": [
-     "hall_c1_reference",
      "hall_icp_neutralizer"
     ],
     "ledgers": [
@@ -928,7 +1162,16 @@
     ]
    },
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "applies_to_pre_a9_19": {
+    "configs": [
+     "hall_c1_reference",
+     "hall_icp_neutralizer"
+    ],
+    "ledgers": [
+     "FLIGHT"
+    ]
+   }
   },
   {
    "id": "XV2-24",
@@ -945,7 +1188,6 @@
    "freeze_point": "NOW",
    "applies_to": {
     "configs": [
-     "hall_c1_reference",
      "hall_icp_neutralizer"
     ],
     "ledgers": [
@@ -955,7 +1197,16 @@
    "v3_change": "residual reading fixed: inside the loaded case",
    "owner_answers_applied": [
     "A9.14 MQ-09 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
-   ]
+   ],
+   "applies_to_pre_a9_19": {
+    "configs": [
+     "hall_c1_reference",
+     "hall_icp_neutralizer"
+    ],
+    "ledgers": [
+     "FLIGHT"
+    ]
+   }
   },
   {
    "id": "XV2-25",
@@ -972,7 +1223,6 @@
    "freeze_point": "NOW",
    "applies_to": {
     "configs": [
-     "hall_c1_reference",
      "hall_icp_neutralizer"
     ],
     "ledgers": [
@@ -980,7 +1230,16 @@
     ]
    },
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "applies_to_pre_a9_19": {
+    "configs": [
+     "hall_c1_reference",
+     "hall_icp_neutralizer"
+    ],
+    "ledgers": [
+     "FLIGHT"
+    ]
+   }
   },
   {
    "id": "XV2-26",
@@ -997,7 +1256,6 @@
    "freeze_point": "NOW",
    "applies_to": {
     "configs": [
-     "hall_c1_reference",
      "hall_icp_neutralizer"
     ],
     "ledgers": [
@@ -1005,7 +1263,16 @@
     ]
    },
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "applies_to_pre_a9_19": {
+    "configs": [
+     "hall_c1_reference",
+     "hall_icp_neutralizer"
+    ],
+    "ledgers": [
+     "FLIGHT"
+    ]
+   }
   },
   {
    "id": "XV2-27",
@@ -1022,7 +1289,6 @@
    "freeze_point": "NOW",
    "applies_to": {
     "configs": [
-     "hall_c1_reference",
      "hall_icp_neutralizer"
     ],
     "ledgers": [
@@ -1030,7 +1296,16 @@
     ]
    },
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "applies_to_pre_a9_19": {
+    "configs": [
+     "hall_c1_reference",
+     "hall_icp_neutralizer"
+    ],
+    "ledgers": [
+     "FLIGHT"
+    ]
+   }
   },
   {
    "id": "XV2-28",
@@ -1047,7 +1322,6 @@
    "freeze_point": "LOCK-1",
    "applies_to": {
     "configs": [
-     "hall_c1_reference",
      "hall_icp_neutralizer"
     ],
     "ledgers": [
@@ -1059,7 +1333,16 @@
    "v3_change": "75-bar placeholder retired; MEOP quote-derived",
    "owner_answers_applied": [
     "A9.14 XA9Q-06 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
-   ]
+   ],
+   "applies_to_pre_a9_19": {
+    "configs": [
+     "hall_c1_reference",
+     "hall_icp_neutralizer"
+    ],
+    "ledgers": [
+     "FLIGHT"
+    ]
+   }
   },
   {
    "id": "XV2-29",
@@ -1076,7 +1359,6 @@
    "freeze_point": "LOCK-1",
    "applies_to": {
     "configs": [
-     "hall_c1_reference",
      "hall_icp_neutralizer"
     ],
     "ledgers": [
@@ -1085,7 +1367,16 @@
    },
    "requires": "the owner's choice of the applicable pressure-vessel standard (e.g. ECSS-E-ST-32-02 - verify; not accessed in this lane) and the launcher requirements",
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "applies_to_pre_a9_19": {
+    "configs": [
+     "hall_c1_reference",
+     "hall_icp_neutralizer"
+    ],
+    "ledgers": [
+     "FLIGHT"
+    ]
+   }
   },
   {
    "id": "XV2-30",
@@ -1110,7 +1401,6 @@
    "freeze_point": "after-evidence",
    "applies_to": {
     "configs": [
-     "hall_c1_reference",
      "hall_icp_neutralizer"
     ],
     "ledgers": [
@@ -1122,7 +1412,16 @@
     "A9.14 XA9Q-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
     "A9.14 MQ-09 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
     "A9.14 OQ-A910-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
-   ]
+   ],
+   "applies_to_pre_a9_19": {
+    "configs": [
+     "hall_c1_reference",
+     "hall_icp_neutralizer"
+    ],
+    "ledgers": [
+     "FLIGHT"
+    ]
+   }
   },
   {
    "id": "XV2-31",
@@ -1138,13 +1437,17 @@
    "status": "TBD (<= 17 W class only after vendor/spec verification)",
    "freeze_point": "after-evidence",
    "applies_to": {
-    "configs": [
-     "hall_c1_reference"
-    ],
-    "ledgers": [
-     "FLIGHT",
-     "GROUND_TEST"
-    ]
+    "configs": [],
+    "ledgers": [],
+    "ground_reference": {
+     "configs": [
+      "hall_c1_reference"
+     ],
+     "ledgers": [
+      "GROUND_TEST"
+     ],
+     "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"
+    }
    },
    "requires": "vendor/spec verification of the selected filter/getter (row 51; OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))",
    "v2_counterpart": "TBD_AFTER_EVIDENCE - requires quotations / vendor data requested through docs/procurement/rfq_a9_v2/rfq_a9_v2.json (merged RFQ v2; quotation only) (IFD-15, pair XL-35; none received, no purchase)",
@@ -1155,7 +1458,16 @@
     "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
     "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)"
    ],
-   "v3_scope": "C1-specific getter/filter: GROUND_ONLY_LAB_EQUIPMENT (A9.20; C1 never flight, no AL-C1 in any flight roll-up, A9.19); separate from the ICP Xe path (A9.14 XA9Q-05 as amended by A9.15)"
+   "v3_scope": "C1-specific getter/filter: GROUND_ONLY_LAB_EQUIPMENT (A9.20; C1 never flight, no AL-C1 in any flight roll-up, A9.19); separate from the ICP Xe path (A9.14 XA9Q-05 as amended by A9.15)",
+   "applies_to_pre_a9_19": {
+    "configs": [
+     "hall_c1_reference"
+    ],
+    "ledgers": [
+     "FLIGHT",
+     "GROUND_TEST"
+    ]
+   }
   },
   {
    "id": "XV2-32",
@@ -1171,13 +1483,17 @@
    "status": "TBD",
    "freeze_point": "after-evidence",
    "applies_to": {
-    "configs": [
-     "hall_c1_reference"
-    ],
-    "ledgers": [
-     "FLIGHT",
-     "GROUND_TEST"
-    ]
+    "configs": [],
+    "ledgers": [],
+    "ground_reference": {
+     "configs": [
+      "hall_c1_reference"
+     ],
+     "ledgers": [
+      "GROUND_TEST"
+     ],
+     "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"
+    }
    },
    "requires": "vendor/spec verification (OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation)); mass booked by A9-06 (OPEN after A9-06 (docs/budgets/mass_a9/mass_a9_v1.json, merged: owner allocations and evidence floors, no hardware CBE; A9-10 re-evaluation))",
    "v2_counterpart": "TBD_AFTER_EVIDENCE - stored-Xe hardware masses exchanged with docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json (merged mass / power v2) (MPV2-ID-16, pair XL-32; no CBE, owner line allocation AL-08 only)",
@@ -1188,7 +1504,16 @@
     "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
     "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)"
    ],
-   "v3_scope": "C1-specific getter/filter: GROUND_ONLY_LAB_EQUIPMENT (A9.20; C1 never flight, no AL-C1 in any flight roll-up, A9.19); separate from the ICP Xe path (A9.14 XA9Q-05 as amended by A9.15)"
+   "v3_scope": "C1-specific getter/filter: GROUND_ONLY_LAB_EQUIPMENT (A9.20; C1 never flight, no AL-C1 in any flight roll-up, A9.19); separate from the ICP Xe path (A9.14 XA9Q-05 as amended by A9.15)",
+   "applies_to_pre_a9_19": {
+    "configs": [
+     "hall_c1_reference"
+    ],
+    "ledgers": [
+     "FLIGHT",
+     "GROUND_TEST"
+    ]
+   }
   },
   {
    "id": "XV2-33",
@@ -1205,16 +1530,33 @@
    "freeze_point": "LOCK-2",
    "applies_to": {
     "configs": [
+     "hall_icp_neutralizer"
+    ],
+    "ledgers": [
+     "GROUND_TEST"
+    ],
+    "ground_reference": {
+     "configs": [
+      "hall_c1_reference"
+     ],
+     "ledgers": [
+      "GROUND_TEST"
+     ],
+     "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"
+    }
+   },
+   "requires": "the bounded Xe reference procedure (rule at LOCK-1, values at LOCK-2) and the measured H-1 Xe reference flow",
+   "v3_change": "carried unchanged from v2",
+   "owner_answers_applied": [],
+   "applies_to_pre_a9_19": {
+    "configs": [
      "hall_c1_reference",
      "hall_icp_neutralizer"
     ],
     "ledgers": [
      "GROUND_TEST"
     ]
-   },
-   "requires": "the bounded Xe reference procedure (rule at LOCK-1, values at LOCK-2) and the measured H-1 Xe reference flow",
-   "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   }
   },
   {
    "id": "XV2-34",
@@ -1231,16 +1573,33 @@
    "freeze_point": "LOCK-2",
    "applies_to": {
     "configs": [
+     "hall_icp_neutralizer"
+    ],
+    "ledgers": [
+     "GROUND_TEST"
+    ],
+    "ground_reference": {
+     "configs": [
+      "hall_c1_reference"
+     ],
+     "ledgers": [
+      "GROUND_TEST"
+     ],
+     "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"
+    }
+   },
+   "requires": "the LOCK-2 block count n and the installation schedule (HIQ-02: >= 6 blocks before any larger n)",
+   "v3_change": "carried unchanged from v2",
+   "owner_answers_applied": [],
+   "applies_to_pre_a9_19": {
+    "configs": [
      "hall_c1_reference",
      "hall_icp_neutralizer"
     ],
     "ledgers": [
      "GROUND_TEST"
     ]
-   },
-   "requires": "the LOCK-2 block count n and the installation schedule (HIQ-02: >= 6 blocks before any larger n)",
-   "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   }
   },
   {
    "id": "XV2-35",
@@ -1257,16 +1616,33 @@
    "freeze_point": "LOCK-2",
    "applies_to": {
     "configs": [
+     "hall_icp_neutralizer"
+    ],
+    "ledgers": [
+     "GROUND_TEST"
+    ],
+    "ground_reference": {
+     "configs": [
+      "hall_c1_reference"
+     ],
+     "ledgers": [
+      "GROUND_TEST"
+     ],
+     "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"
+    }
+   },
+   "requires": "RFP permission (row 26 'if permitted by the RFP') and the preregistered point list",
+   "v3_change": "carried unchanged from v2",
+   "owner_answers_applied": [],
+   "applies_to_pre_a9_19": {
+    "configs": [
      "hall_c1_reference",
      "hall_icp_neutralizer"
     ],
     "ledgers": [
      "GROUND_TEST"
     ]
-   },
-   "requires": "RFP permission (row 26 'if permitted by the RFP') and the preregistered point list",
-   "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   }
   },
   {
    "id": "XV2-36",
@@ -1282,16 +1658,29 @@
    "status": "TBD",
    "freeze_point": "LOCK-2",
    "applies_to": {
+    "configs": [],
+    "ledgers": [],
+    "ground_reference": {
+     "configs": [
+      "hall_c1_reference"
+     ],
+     "ledgers": [
+      "GROUND_TEST"
+     ],
+     "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"
+    }
+   },
+   "requires": "the LOCK-2 schedule (installations, blocks, retries)",
+   "v3_change": "carried unchanged from v2",
+   "owner_answers_applied": [],
+   "applies_to_pre_a9_19": {
     "configs": [
      "hall_c1_reference"
     ],
     "ledgers": [
      "GROUND_TEST"
     ]
-   },
-   "requires": "the LOCK-2 schedule (installations, blocks, retries)",
-   "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   }
   },
   {
    "id": "XV2-37",
@@ -1308,17 +1697,34 @@
    "freeze_point": "NOW",
    "applies_to": {
     "configs": [
+     "hall_icp_neutralizer"
+    ],
+    "ledgers": [
+     "GROUND_TEST"
+    ],
+    "ground_reference": {
+     "configs": [
+      "hall_c1_reference"
+     ],
+     "ledgers": [
+      "GROUND_TEST"
+     ],
+     "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"
+    }
+   },
+   "v3_change": "TBD owner call -> 0.20 ground-test logistics margin",
+   "owner_answers_applied": [
+    "A9.14 XA9Q-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
+   ],
+   "applies_to_pre_a9_19": {
+    "configs": [
      "hall_c1_reference",
      "hall_icp_neutralizer"
     ],
     "ledgers": [
      "GROUND_TEST"
     ]
-   },
-   "v3_change": "TBD owner call -> 0.20 ground-test logistics margin",
-   "owner_answers_applied": [
-    "A9.14 XA9Q-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
-   ]
+   }
   },
   {
    "id": "XV2-38",
@@ -1335,7 +1741,6 @@
    "freeze_point": "NOW",
    "applies_to": {
     "configs": [
-     "hall_c1_reference",
      "hall_icp_neutralizer"
     ],
     "ledgers": [
@@ -1343,7 +1748,16 @@
     ]
    },
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "applies_to_pre_a9_19": {
+    "configs": [
+     "hall_c1_reference",
+     "hall_icp_neutralizer"
+    ],
+    "ledgers": [
+     "FLIGHT"
+    ]
+   }
   },
   {
    "id": "XV2-39",
@@ -1360,7 +1774,6 @@
    "freeze_point": "NOW",
    "applies_to": {
     "configs": [
-     "hall_c1_reference",
      "hall_icp_neutralizer"
     ],
     "ledgers": [
@@ -1368,7 +1781,16 @@
     ]
    },
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "applies_to_pre_a9_19": {
+    "configs": [
+     "hall_c1_reference",
+     "hall_icp_neutralizer"
+    ],
+    "ledgers": [
+     "FLIGHT"
+    ]
+   }
   },
   {
    "id": "XV2-40",
@@ -1385,7 +1807,6 @@
    "freeze_point": "NOW",
    "applies_to": {
     "configs": [
-     "hall_c1_reference",
      "hall_icp_neutralizer"
     ],
     "ledgers": [
@@ -1393,7 +1814,16 @@
     ]
    },
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "applies_to_pre_a9_19": {
+    "configs": [
+     "hall_c1_reference",
+     "hall_icp_neutralizer"
+    ],
+    "ledgers": [
+     "FLIGHT"
+    ]
+   }
   },
   {
    "id": "XV2-41",
@@ -1409,16 +1839,29 @@
    "status": "TBD",
    "freeze_point": "LOCK-2",
    "applies_to": {
+    "configs": [],
+    "ledgers": [],
+    "ground_reference": {
+     "configs": [
+      "hall_c1_reference"
+     ],
+     "ledgers": [
+      "GROUND_TEST"
+     ],
+     "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"
+    }
+   },
+   "requires": "the C1 test procedure setpoints and the LOCK-2 schedule (flows under test, not the A5 flight design flow)",
+   "v3_change": "carried unchanged from v2",
+   "owner_answers_applied": [],
+   "applies_to_pre_a9_19": {
     "configs": [
      "hall_c1_reference"
     ],
     "ledgers": [
      "GROUND_TEST"
     ]
-   },
-   "requires": "the C1 test procedure setpoints and the LOCK-2 schedule (flows under test, not the A5 flight design flow)",
-   "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   }
   },
   {
    "id": "XV2-42",
@@ -1434,6 +1877,24 @@
    "status": "OWNER_DECIDED_MAXIMUM_BOOKING (A9.14 XA9Q-02; may later be tightened by evidence)",
    "freeze_point": "LOCK-2",
    "applies_to": {
+    "configs": [],
+    "ledgers": [],
+    "ground_reference": {
+     "configs": [
+      "hall_c1_reference"
+     ],
+     "ledgers": [
+      "GROUND_TEST"
+     ],
+     "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"
+    }
+   },
+   "v3_change": "RA-DWELL resolved: 360 s maximum booking per start",
+   "owner_answers_applied": [
+    "A9.14 XA9Q-02 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
+    "A9.14 OQ-A907-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
+   ],
+   "applies_to_pre_a9_19": {
     "configs": [
      "hall_c1_reference"
     ],
@@ -1441,12 +1902,7 @@
      "FLIGHT",
      "GROUND_TEST"
     ]
-   },
-   "v3_change": "RA-DWELL resolved: 360 s maximum booking per start",
-   "owner_answers_applied": [
-    "A9.14 XA9Q-02 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
-    "A9.14 OQ-A907-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
-   ]
+   }
   },
   {
    "id": "XV2-43",
@@ -1544,12 +2000,17 @@
    "status": "OWNER_DECIDED (A9.19 / A9.20; supersedes the A9.14 OQ-A907-07 / A9.15 'deferred until selected' state)",
    "freeze_point": "NOW",
    "applies_to": {
-    "configs": [
-     "hall_c1_reference"
-    ],
-    "ledgers": [
-     "GROUND_TEST"
-    ]
+    "configs": [],
+    "ledgers": [],
+    "ground_reference": {
+     "configs": [
+      "hall_c1_reference"
+     ],
+     "ledgers": [
+      "GROUND_TEST"
+     ],
+     "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"
+    }
    },
    "owner_answers_applied": [
     "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)",
@@ -1557,7 +2018,15 @@
     "A9.19 A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
     "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)"
    ],
-   "v3_change": "A9.19 / A9.20: C1 ground-only, never flight"
+   "v3_change": "A9.19 / A9.20: C1 ground-only, never flight",
+   "applies_to_pre_a9_19": {
+    "configs": [
+     "hall_c1_reference"
+    ],
+    "ledgers": [
+     "GROUND_TEST"
+    ]
+   }
   },
   {
    "id": "XV3-02",
@@ -1602,17 +2071,34 @@
    "requires": "the registered ground-test procedures (facility / article line volumes, conditioning and vendor procedures) with their Xe quantities; no number is invented",
    "applies_to": {
     "configs": [
+     "hall_icp_neutralizer"
+    ],
+    "ledgers": [
+     "GROUND_TEST"
+    ],
+    "ground_reference": {
+     "configs": [
+      "hall_c1_reference"
+     ],
+     "ledgers": [
+      "GROUND_TEST"
+     ],
+     "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"
+    }
+   },
+   "owner_answers_applied": [
+    "A9.14 XA9Q-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
+   ],
+   "v3_change": "new (explicit procedure line)",
+   "applies_to_pre_a9_19": {
+    "configs": [
      "hall_c1_reference",
      "hall_icp_neutralizer"
     ],
     "ledgers": [
      "GROUND_TEST"
     ]
-   },
-   "owner_answers_applied": [
-    "A9.14 XA9Q-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
-   ],
-   "v3_change": "new (explicit procedure line)"
+   }
   },
   {
    "id": "XV3-04",
@@ -1631,17 +2117,34 @@
    "requires": "the registered ground-test procedures (facility / article line volumes, conditioning and vendor procedures) with their Xe quantities; no number is invented",
    "applies_to": {
     "configs": [
+     "hall_icp_neutralizer"
+    ],
+    "ledgers": [
+     "GROUND_TEST"
+    ],
+    "ground_reference": {
+     "configs": [
+      "hall_c1_reference"
+     ],
+     "ledgers": [
+      "GROUND_TEST"
+     ],
+     "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"
+    }
+   },
+   "owner_answers_applied": [
+    "A9.14 XA9Q-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
+   ],
+   "v3_change": "new (explicit procedure line)",
+   "applies_to_pre_a9_19": {
+    "configs": [
      "hall_c1_reference",
      "hall_icp_neutralizer"
     ],
     "ledgers": [
      "GROUND_TEST"
     ]
-   },
-   "owner_answers_applied": [
-    "A9.14 XA9Q-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
-   ],
-   "v3_change": "new (explicit procedure line)"
+   }
   },
   {
    "id": "XV3-05",
@@ -1660,17 +2163,34 @@
    "requires": "the registered ground-test procedures (facility / article line volumes, conditioning and vendor procedures) with their Xe quantities; no number is invented",
    "applies_to": {
     "configs": [
+     "hall_icp_neutralizer"
+    ],
+    "ledgers": [
+     "GROUND_TEST"
+    ],
+    "ground_reference": {
+     "configs": [
+      "hall_c1_reference"
+     ],
+     "ledgers": [
+      "GROUND_TEST"
+     ],
+     "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"
+    }
+   },
+   "owner_answers_applied": [
+    "A9.14 XA9Q-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
+   ],
+   "v3_change": "new (explicit procedure line)",
+   "applies_to_pre_a9_19": {
+    "configs": [
      "hall_c1_reference",
      "hall_icp_neutralizer"
     ],
     "ledgers": [
      "GROUND_TEST"
     ]
-   },
-   "owner_answers_applied": [
-    "A9.14 XA9Q-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
-   ],
-   "v3_change": "new (explicit procedure line)"
+   }
   },
   {
    "id": "XV3-06",
@@ -1689,17 +2209,34 @@
    "requires": "the registered ground-test procedures (facility / article line volumes, conditioning and vendor procedures) with their Xe quantities; no number is invented",
    "applies_to": {
     "configs": [
+     "hall_icp_neutralizer"
+    ],
+    "ledgers": [
+     "GROUND_TEST"
+    ],
+    "ground_reference": {
+     "configs": [
+      "hall_c1_reference"
+     ],
+     "ledgers": [
+      "GROUND_TEST"
+     ],
+     "role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe only, never flight"
+    }
+   },
+   "owner_answers_applied": [
+    "A9.14 XA9Q-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
+   ],
+   "v3_change": "new (explicit procedure line)",
+   "applies_to_pre_a9_19": {
+    "configs": [
      "hall_c1_reference",
      "hall_icp_neutralizer"
     ],
     "ledgers": [
      "GROUND_TEST"
     ]
-   },
-   "owner_answers_applied": [
-    "A9.14 XA9Q-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
-   ],
-   "v3_change": "new (explicit procedure line)"
+   }
   }
  ],
  "ledger_lines": [
@@ -2291,7 +2828,8 @@
    "optional_entry": false,
    "note": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "a9_20_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe of the C1 laboratory reference; never a flight configuration (A9.19)"
   },
   {
    "id": "C1-GT-HEAT",
@@ -2330,7 +2868,8 @@
    "optional_entry": false,
    "note": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "a9_20_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe of the C1 laboratory reference; never a flight configuration (A9.19)"
   },
   {
    "id": "C1-GT-IGN",
@@ -2376,7 +2915,8 @@
    "v3_change": "RA-DWELL resolved: 3 attempts / 360 s",
    "owner_answers_applied": [
     "A9.14 XA9Q-02 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
-   ]
+   ],
+   "a9_20_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe of the C1 laboratory reference; never a flight configuration (A9.19)"
   },
   {
    "id": "C1-GT-KEEPER",
@@ -2410,7 +2950,8 @@
    "optional_entry": false,
    "note": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "a9_20_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe of the C1 laboratory reference; never a flight configuration (A9.19)"
   },
   {
    "id": "C1-GT-MINFLOW",
@@ -2454,7 +2995,8 @@
    "optional_entry": false,
    "note": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "a9_20_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe of the C1 laboratory reference; never a flight configuration (A9.19)"
   },
   {
    "id": "C1-GT-FLOWUNC",
@@ -2493,7 +3035,8 @@
    "optional_entry": false,
    "note": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "a9_20_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe of the C1 laboratory reference; never a flight configuration (A9.19)"
   },
   {
    "id": "C1-GT-XE-REFERENCE",
@@ -2532,7 +3075,8 @@
    "optional_entry": false,
    "note": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "a9_20_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe of the C1 laboratory reference; never a flight configuration (A9.19)"
   },
   {
    "id": "C1-GT-PEAK",
@@ -2571,7 +3115,8 @@
    "optional_entry": false,
    "note": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "a9_20_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe of the C1 laboratory reference; never a flight configuration (A9.19)"
   },
   {
    "id": "C1-GT-HALL-START",
@@ -2610,7 +3155,8 @@
    "optional_entry": false,
    "note": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "a9_20_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe of the C1 laboratory reference; never a flight configuration (A9.19)"
   },
   {
    "id": "C1-GT-TRANSITION",
@@ -2649,7 +3195,8 @@
    "optional_entry": false,
    "note": null,
    "v3_change": "carried unchanged from v2",
-   "owner_answers_applied": []
+   "owner_answers_applied": [],
+   "a9_20_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe of the C1 laboratory reference; never a flight configuration (A9.19)"
   },
   {
    "id": "OPT-FL-GXE",
@@ -3019,7 +3566,8 @@
    "owner_answers_applied": [
     "A9.14 XA9Q-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
    ],
-   "v3_change": "new"
+   "v3_change": "new",
+   "a9_20_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe of the C1 laboratory reference; never a flight configuration (A9.19)"
   },
   {
    "id": "C1-GT-PROC-COND",
@@ -3051,7 +3599,8 @@
    "owner_answers_applied": [
     "A9.14 XA9Q-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
    ],
-   "v3_change": "new"
+   "v3_change": "new",
+   "a9_20_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe of the C1 laboratory reference; never a flight configuration (A9.19)"
   },
   {
    "id": "C1-GT-PROC-LINEFILL",
@@ -3083,7 +3632,8 @@
    "owner_answers_applied": [
     "A9.14 XA9Q-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
    ],
-   "v3_change": "new"
+   "v3_change": "new",
+   "a9_20_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe of the C1 laboratory reference; never a flight configuration (A9.19)"
   },
   {
    "id": "C1-GT-PROC-VENDOR",
@@ -3115,7 +3665,8 @@
    "owner_answers_applied": [
     "A9.14 XA9Q-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f)"
    ],
-   "v3_change": "new"
+   "v3_change": "new",
+   "a9_20_role": "GROUND_ONLY_LAB_REFERENCE (A9.20): ground-test Xe of the C1 laboratory reference; never a flight configuration (A9.19)"
   }
  ],
  "scenarios": [
@@ -5993,7 +6544,11 @@
    "to": "xe_accounting_a9_v3",
    "quantity": "stored-Xe hardware (AL-08: tank, regulator, valves, plumbing, mounting, thermal) planning floor / CBE for the stored-Xe share",
    "units": "kg",
-   "status": "TBD_AFTER_EVIDENCE (AL-08 MEV planning floor 6.0528 kg is not a CBE; quotations replace it)"
+   "status": "TBD_AFTER_EVIDENCE (AL-08 MEV planning floor 6.0528 kg is not a CBE; quotations replace it)",
+   "a9_21_status": "PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (A9.21 KEEP_6_05KG_PROVISIONAL_WAIT_FOR_QUOTES_TO_REBASE_AL08): the 6.0528 kg AL-08 MEV planning floor is kept only as a provisional planning floor, not a frozen allocation; AL-08 is formally re-based only after quotations split tank, regulator, valves, plumbing, mounting/thermal and any C1-specific branch",
+   "by": [
+    "A9.21 AL08 (docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json sha256 78766d3adaaa)"
+   ]
   },
   {
    "id": "XV3-IF-03",
@@ -6348,7 +6903,7 @@
    "md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
    "json_path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
    "json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
-   "how_applied": "C1 = GROUND_ONLY laboratory reference: S2-GT-C1 ground-test Xe kept (A9.10 S3.5 I_d,max,H1,Ar characterization; C1-vs-ICP bench control); never in the flight Xe budget"
+   "how_applied": "C1 = GROUND_ONLY laboratory reference: S2-GT-C1 ground-test Xe kept (A9.10 S3.5 I_d,max,H1,Ar characterization; C1-vs-ICP bench control); never in the flight Xe budget; items applies_to: hall_c1_reference removed from every flight scope, its ground-test applicability kept as applies_to.ground_reference (GROUND_TEST only) and the pre-A9.19 scope as applies_to_pre_a9_19"
   },
   {
    "key": "A9.20",
@@ -6361,6 +6916,18 @@
    "json_path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
    "json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
    "how_applied": "owner chose the recommended option (ground-only reference)"
+  },
+  {
+   "key": "A9.21",
+   "id": "AL08",
+   "sequenced_no": null,
+   "answer": "KEEP_6_05KG_PROVISIONAL_WAIT_FOR_QUOTES_TO_REBASE_AL08 (provisional planning floor, not frozen; quotations split tank, regulator, valves, plumbing, mounting/thermal and any C1-specific branch)",
+   "quote": "Xe-hardware floor: wait for quotations before formally rebasing AL-08. Keep 6.05 kg only as a provisional planning floor, not a frozen allocation.",
+   "path": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+   "md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+   "json_path": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+   "json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+   "how_applied": "XV3-IF-02 (AL-08 stored-Xe hardware) labelled a9_21_status PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN; the AL-08 re-base recorder flag answered (wait for quotations); no number changes"
   }
  ],
  "open_owner_questions": [
@@ -6388,7 +6955,7 @@
  ],
  "recorder_flags": [
   "XA9Q-04 reading: the 0.20 margin is applied to the full calculated ground total INCLUDING the explicitly booked purge / conditioning / line-fill / vendor lines (conservative literal reading of 'booked explicitly before this margin'); flagged for owner confirmation, no number depends on it today (all TBD)",
-  "the AL-08 planning floor (5.044 kg CBE floor) is the owner's figure (A9.14 MQ-05) and is kept unchanged; its H2-7 two-branch valve set was described in mass / power v2 as including the C1 cathode Xe branch - with no flight C1 after A9.19 / A9.20 whether the floor should be re-based is an owner / quotation matter (mass / power v3 recorder flag; no number changed here)",
+  "the AL-08 planning floor (5.044 kg CBE floor) is the owner's figure (A9.14 MQ-05) and is kept unchanged; its H2-7 two-branch valve set was described in mass / power v2 as including the C1 cathode Xe branch - with no flight C1 after A9.19 / A9.20 whether the floor should be re-based is an owner / quotation matter (mass / power v3 recorder flag; no number changed here); A9.21 answered it: keep 6.05 kg only as a provisional planning floor, not a frozen allocation, and re-base AL-08 after quotations (A9.21 AL08 (docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json sha256 78766d3adaaa))",
   "A9.19 sizing: the 2 kg loaded case as the natural sizing case is a recorder OBSERVATION for the owner (design_cases.sizing_observation_a9_19), not a selection"
  ],
  "compliance": {

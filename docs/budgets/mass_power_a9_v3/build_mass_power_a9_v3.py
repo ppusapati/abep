@@ -112,6 +112,10 @@ DECISIONS = {
               "json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
               "md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
               "md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c"},
+    "A9.21": {"json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+              "json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+              "md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+              "md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440"},
 }
 
 CONFIGS = ("hall_icp_neutralizer",)                   # A9.19: the single flight configuration
@@ -127,6 +131,12 @@ EQUIPMENT_MARGIN = 0.2           # row 57 default for new / unselected parts; in
 HARNESS_FRACTION = 0.05          # row 60
 OWNER_MEV_FLOORS = {"AL-04": 4.2048, "AL-07": 6.0, "AL-08": 6.0528}   # A9.14 MQ-03 / MQ-04 / MQ-05 (owner-stated)
 OWNER_MQ02_CHECK = (24.0, 4.8, 28.8)                                  # A9.14 MQ-02 (owner-stated arithmetic)
+# A9.21 AL08 (owner decision 2026-10-02): label only, no number changes
+AL08_A921_STATUS = ("PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (A9.21 KEEP_6_05KG_PROVISIONAL_WAIT_FOR_QUOTES_TO_REBASE_AL08): "
+                    "the 6.0528 kg AL-08 MEV planning floor is kept only as a provisional planning floor, not a frozen "
+                    "allocation; AL-08 is formally re-based only after quotations split tank, regulator, valves, "
+                    "plumbing, mounting/thermal and any C1-specific branch (the analog-derived figure may contain about "
+                    "0.285 kg of C1 cathode-branch hardware)")
 CLOSURE = ("CLOSES", "DOES_NOT_CLOSE", "NOT_EVALUABLE")
 C1_STATES = ("NOT_SELECTED", "SELECTED")
 
@@ -192,6 +202,11 @@ def OD(key: str, qid: str, quote: str) -> dict:
         else:
             raise MassError(f"{key} has no field / amendment {qid}")
         seq = None
+    elif key == "A9.21":
+        # A9.21: 'decisions' maps an id (e.g. 'AL08') to the owner's decision string
+        if qid not in js.get("decisions", {}):
+            raise MassError(f"A9.21 has no decision {qid}")
+        seq, ans = None, js["decisions"][qid]
     else:
         rec = js["decisions"].get(qid)
         if rec is None or rec.get("status") != "OWNER_DECIDED":
@@ -329,6 +344,10 @@ def S() -> dict:
         "A920": OD("A9.20", "answer",
                    "Options offered: \"Ground-only reference (Recommended)\" / \"Remove C1 entirely\"."),
         "A920_V": OD("A9.20", "answer", "will go with your recommended"),
+        # A9.21 (2026-10-02): AL-08 stays a provisional planning floor until quotations
+        "A921_AL08": OD("A9.21", "AL08",
+                        "Xe-hardware floor: wait for quotations before formally rebasing AL-08. Keep 6.05 kg only as a "
+                        "provisional planning floor, not a frozen allocation."),
         "OQA91003": OD("A9.14", "OQ-A910-03",
                        "Only when the record satisfies the declared ≥100 kSa/s, ≥20 kHz measurement bandwidth, "
                        "anti-alias filtering, synchronized channels, no saturation and total-bus-power reconstruction "
@@ -546,6 +565,8 @@ def build_lines(v2: dict, s: dict, cfgs=CONFIGS, history: bool = False) -> dict:
                                                                          "history column)"}
                 else:
                     rec["owner_answers_applied"] += [cite(s["A919_XE"]), cite(s["A919_C1"]), cite(s["A920"])]
+                    rec["owner_answers_applied"].append(cite(s["A921_AL08"]))
+                    rec["a9_21_status"] = AL08_A921_STATUS
                     rec["c1_branch"] = c1_xe_branch_booking()
                     rec["rfp_required"] = xe_hardware_required(cfg)
                     rec["xe_role"] = XE_ROLE
@@ -833,6 +854,8 @@ APPLIED = [
                 "answers 'check C1 mass'"),
     ("A920", "C1 = GROUND_ONLY laboratory reference: BOM A9B-C01..C07 -> GROUND_ONLY_LAB_EQUIPMENT; GA-01 a9_20_rule"),
     ("A920_V", "owner chose the recommended option (ground-only reference)"),
+    ("A921_AL08", "AL-08 labelled a9_21_status PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (6.0528 kg kept as a provisional "
+                  "planning floor, not a frozen allocation; re-based only after quotations); no number changes"),
 ]
 
 
@@ -987,7 +1010,10 @@ def build_doc() -> dict:
             "not a CBE: every value is an owner MEV allocation, an owner-stated MEV planning floor or TBD",
             "not a margin relaxation: the 40 kg exceedance is reported with the redesign need (MQ-10)",
             "not a thermal, RF-rating, anode or ICP-capacity PASS; not a P_bus demonstration (every load TBD)"],
-        "statuses": v2["statuses"],
+        "statuses": dict(v2["statuses"], a9_19_20_supersessions={
+            "C1 conventional reference": "GROUND_ONLY_LAB_EQUIPMENT (A9.20; the carried A9.2 'CONTROL_FALLBACK' is "
+                                         "superseded: C1 is never flight hardware and no hall_c1_reference flight "
+                                         "configuration exists after A9.19)"}),
         "pins": {"v2": [{"key": k, "path": p, "sha256": h} for k, (p, h) in V2.items()],
                  "decisions": [{"key": k, "json": d["json"], "json_sha256": d["json_sha256"], "md": d["md"],
                                 "md_sha256": d["md_sha256"]} for k, d in DECISIONS.items()],
@@ -1160,6 +1186,8 @@ def render_md(d: dict) -> str:
                      "evidence class"],
                     [[r["line"], r["name"], r["row54_allocation_kg"], r["evidence_floor_cbe_kg"], r["value"]["value_kg"],
                       r["value"]["governs"], r.get("evidence_class_of_value")] for r in d["lines"][cfg]])
+        L += [f"* **{r['line']}** (A9.21): {r['a9_21_status']}" for r in d["lines"][cfg] if r.get("a9_21_status")]
+        L += [""]
     L += ["## Evidence-based dry / wet totals vs 40 kg (every TBD listed)", ""]
     for r in d["rollups"]:
         L += [f"### `{r['configuration']}`", "", r["note"] + ".", "",
