@@ -55,29 +55,36 @@ CONFIG_KEYS = re.compile(r"(^|_)(configurations?|configs|ranking|rankings|evalua
 LABEL = re.compile(r"^(RETIRED|GROUND_ONLY|GROUND-ONLY|HISTORY)")
 
 
+def _is_retired(x) -> bool:
+    """A value that NAMES the retired configuration (whitespace-insensitive), as opposed to quoted text mentioning it."""
+    return isinstance(x, str) and x.strip() == RETIRED
+
+
 def _scan(doc) -> list[str]:
     bad: list[str] = []
 
     def walk(o, path: tuple, ctx: bool):
         if isinstance(o, dict):
-            if not ctx and o.get("configuration") == RETIRED:
-                ground = o.get("ledger") == "GROUND_TEST" and any(
-                    "role" in k and isinstance(v, str) and "GROUND_ONLY" in v for k, v in o.items())
-                if not ground:
-                    bad.append("/".join(path) + ": evaluated record with configuration hall_c1_reference")
+            ground = o.get("ledger") == "GROUND_TEST" and any(
+                "role" in k and isinstance(v, str) and "GROUND_ONLY" in v for k, v in o.items())
+            if not ctx and _is_retired(o.get("configuration")) and not ground:
+                bad.append("/".join(path) + ": evaluated record with configuration hall_c1_reference")
             for k, v in o.items():
                 kctx = ctx or bool(CONTEXT.search(k))
-                if k == RETIRED and not kctx:
+                if RETIRED in k and not kctx:
                     labelled = isinstance(v, str) and bool(LABEL.match(v))
                     if not labelled:
                         bad.append("/".join(path + (k,)) + ": hall_c1_reference evaluated as a map member")
-                if CONFIG_KEYS.search(k) and not kctx and isinstance(v, list) and RETIRED in v:
+                if CONFIG_KEYS.search(k) and not kctx and isinstance(v, list) and any(_is_retired(x) for x in v):
                     bad.append("/".join(path + (k,)) + ": hall_c1_reference in a configuration list")
+                # any other field whose value names the retired configuration (config, winner, selected, ...)
+                if k != "configuration" and not kctx and not ground and _is_retired(v):
+                    bad.append("/".join(path + (k,)) + ": hall_c1_reference as an evaluated value")
                 walk(v, path + (k,), kctx)
         elif isinstance(o, list):
             for i, v in enumerate(o):
                 walk(v, path + (f"[{i}]",), ctx)
-            if not ctx and RETIRED in o:
+            if not ctx and any(_is_retired(x) for x in o):
                 bad.append("/".join(path) + ": hall_c1_reference as a list member")
 
     walk(doc, (), False)
@@ -134,6 +141,14 @@ def test_flight_configuration_sets_are_single():
     {"ranking": {RETIRED: "REFUSED"}},
     {"items": [{"applies_to": {"configs": [RETIRED], "ledgers": ["FLIGHT"]}}]},
     {"ledger_lines": [{"configuration": RETIRED, "ledger": "FLIGHT", "role": "GROUND_ONLY"}]},
+    # review fix: entries the earlier scan missed
+    {"winner": RETIRED},
+    {"rollups": [{"config": RETIRED, "dry_known_kg": 1.0}]},
+    {"configuration_id": RETIRED},
+    {"hall_c1_reference_dry_kg": 3.0},
+    {"lines": {RETIRED + " ": []}},
+    {"configurations": [RETIRED + " "]},
+    {"rollups": [{"configuration": " " + RETIRED, "dry_known_kg": 1.0}]},
 ])
 def test_scanner_catches_evaluations(doc):
     assert _scan(doc)

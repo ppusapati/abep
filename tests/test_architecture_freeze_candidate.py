@@ -430,6 +430,20 @@ def test_ag15_fail_closed_on_missing_or_inconsistent_registration(ag15):
     tampered(lambda r, v: v["rfp_rebase"]["clause_coverage"].pop(0))               # a clause left unmapped
     tampered(lambda r, v: v["rows"][0].__setitem__("requirement_origin", "SECONDARY_TRANSCRIPTION"))
     tampered(lambda r, v: v["rows"][0].__setitem__("rfp_clauses", ["RFP-P99-99"]))
+    # review fixes: origin_counts can no longer be dropped to skip the check, and a re-base with no RFP_CLAUSE row
+    # (where 'every RFP row frozen' would hold vacuously) is refused, even with a recorded owner closure
+    tampered(lambda r, v: v["rfp_rebase"].pop("origin_counts"))
+
+    def no_rfp_rows(r, v):
+        v["rfp_rebase"]["ag_15_status"] = "CLOSED by owner (hypothetical)"
+        for row in v["rows"]:
+            if row["requirement_origin"] == "RFP_CLAUSE":
+                row["requirement_origin"] = "DERIVED_PROJECT_REQUIREMENT"
+        counts = {}
+        for row in v["rows"]:
+            counts[row["requirement_origin"]] = counts.get(row["requirement_origin"], 0) + 1
+        v["rfp_rebase"]["origin_counts"] = counts
+    tampered(no_rfp_rows)
 
 
 def test_ag15_closes_only_on_recorded_owner_closure(ag15):

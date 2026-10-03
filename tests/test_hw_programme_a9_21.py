@@ -89,16 +89,21 @@ def test_record_refuses_stale(monkeypatch):
 
 
 # ------------------------------------------------------------------------------------------------ item 6 H-1
-def femm(points=("A", "B"), results=("A", "B"), t=T0):
+AUTH = P.authorised_femm_points()          # the H-1 record's authorised S7.1 analysis points
+
+
+def femm(points=None, results=None, t=T0):
+    points = AUTH if points is None else points
+    results = points if results is None else results
     return reg("FEMM-REG", t, authorised_points=list(points),
                results=[{"probe": p, "result_id": f"FR-{p}", "sha256": H, "geometry_id": f"G-{p}",
                          "solver_configuration_id": "S-1"} for p in results])
 
 
 def test_s7_2_needs_s7_1_results_for_every_authorised_point():
-    ev = {"completed": {"H1-S7.1": done()}, "registrations": {"H1-S7.2-PRE-01": femm(results=("A",))}}
+    ev = {"completed": {"H1-S7.1": done()}, "registrations": {"H1-S7.2-PRE-01": femm(results=AUTH[:1])}}
     r = P.entry_status("H1-S7.2", ev)
-    assert r["status"] == P.NOT_STARTABLE_PRECONDITION and any("'B'" in x for x in r["precondition_reasons"])
+    assert r["status"] == P.NOT_STARTABLE_PRECONDITION and any(repr(AUTH[1]) in x for x in r["precondition_reasons"])
     assert P.entry_status("H1-S7.2", {"registrations": {"H1-S7.2-PRE-01": femm()}})["status"] == \
         P.NOT_STARTABLE_PREDECESSOR
     ev["registrations"]["H1-S7.2-PRE-01"] = femm()
@@ -108,7 +113,7 @@ def test_s7_2_needs_s7_1_results_for_every_authorised_point():
 
 
 def sel(**kw):
-    s = {"selection_id": "SEL-1", "point_id": "A", "frozen_utc": T1, "status": P.H1_POINT_STATUS,
+    s = {"selection_id": "SEL-1", "point_id": AUTH[0], "frozen_utc": T1, "status": P.H1_POINT_STATUS,
          "optimisation_basis": P.H1_NOT_THRUST_OPTIMISED,
          "criteria": {c: {"record_id": f"CR-{c}"} for c in P.H1_SELECTION_CRITERIA}}
     s.update(kw)
@@ -118,7 +123,7 @@ def sel(**kw):
 def test_s7_2_selection_engineering_freeze_candidate_never_thrust_optimised():
     assert P.s7_2_selection_check(sel(), femm())["status"] == "ENGINEERING_FREEZE_CANDIDATE"
     with pytest.raises(P.ProgrammeError, match="before S7.1"):
-        P.s7_2_selection_check(sel(), femm(results=("A",)))
+        P.s7_2_selection_check(sel(), femm(results=AUTH[:1]))
     bad = sel()
     bad["criteria"]["thrust_margin"] = {"record_id": "X"}
     with pytest.raises(P.ProgrammeError, match="not thrust-optimised"):
@@ -224,14 +229,51 @@ def test_icp_campaign_order_ar_then_n2_then_xe():
     assert P.entry_status("ICP-45N")["status"] == P.NOT_STARTABLE_PREDECESSOR
     assert P.entry_status("ICP-45N", {"completed": {"ICP-45A-P1-S7": done()}})["status"] == \
         P.NOT_STARTABLE_PRECONDITION
-    ok = {"completed": {"ICP-45A-P1-S7": done()}, "campaign": campaign(first=T1)}
+    ar = ["DOM-AR-S0", "DOM-AR-S4"]
+    ok = {"completed": {"ICP-45A-P1-S7": done()}, "campaign": campaign(first=T1), "ar_reference_domain_ids": ar}
     assert P.entry_status("ICP-45N", ok)["status"] == P.ENTRY_REGISTERED
     xe = campaign("ICP-XE-MODE", "Xe", "XE_CONTINGENCY", dom="DOM-XE-1", rset="RS-XE-1", first=T2)
     assert P.entry_status("ICP-XE-MODE", {"campaign": xe})["status"] == P.NOT_STARTABLE_PREDECESSOR
     assert P.entry_status("ICP-XE-MODE", {"campaign": xe, "completed": {"ICP-45N": done(t=T1)},
-                                          "other_campaigns": [campaign(first=T1)]})["status"] == P.ENTRY_REGISTERED
+                                          "other_campaigns": [campaign(first=T1)],
+                                          "ar_reference_domain_ids": ar})["status"] == P.ENTRY_REGISTERED
     with pytest.raises(P.ProgrammeError, match="registered for"):
         P.entry_status("ICP-XE-MODE", {"campaign": campaign(), "completed": {"ICP-45N": done()}})
+
+
+def test_icp_campaign_separation_not_bypassable():
+    """Review fixes: (1) reusing the N2 campaign_id for the Xe campaign does not skip the shared-domain / provenance
+    check; (2) omitting the sets the separation is checked against is not 'no conflict' (fail closed)."""
+    n2 = campaign(first=T1)
+    xe = campaign("ICP-XE-MODE", "Xe", "XE_CONTINGENCY", dom="DOM-N2-1", rset="RS-N2-1", first=T2)
+    xe["campaign_id"] = n2["campaign_id"]
+    with pytest.raises(P.ProgrammeError, match="one gas / mode per campaign"):
+        P.icp_campaign_check(xe, [n2])
+    ar = ["DOM-AR-S0"]
+    xe_shared = campaign("ICP-XE-MODE", "Xe", "XE_CONTINGENCY", dom="DOM-N2-1", rset="RS-N2-1", first=T2)
+    r = P.entry_status("ICP-XE-MODE", {"campaign": xe_shared, "completed": {"ICP-45N": done(t=T1)},
+                                       "ar_reference_domain_ids": ar})
+    assert r["status"] == P.NOT_STARTABLE_PRECONDITION
+    assert any("ICP-45N campaign registration is not supplied" in m for m in r["precondition_reasons"])
+    with pytest.raises(P.ProgrammeError, match="own operating domain"):
+        P.entry_status("ICP-XE-MODE", {"campaign": xe_shared, "completed": {"ICP-45N": done(t=T1)},
+                                       "other_campaigns": [n2], "ar_reference_domain_ids": ar})
+    r = P.entry_status("ICP-45N", {"completed": {"ICP-45A-P1-S7": done()}, "campaign": campaign(first=T1)})
+    assert r["status"] == P.NOT_STARTABLE_PRECONDITION
+    assert any("Ar reference (P1) stage domain ids not supplied" in m for m in r["precondition_reasons"])
+
+
+def test_s7_2_needs_every_h1_authorised_point_not_a_declared_subset():
+    """Review fix: a registration declaring only a subset of the H-1 authorised points (with results for that subset)
+    is not 'S7.1 results for every authorised point'."""
+    ev = {"completed": {"H1-S7.1": done()}, "registrations": {"H1-S7.2-PRE-01": femm(points=AUTH[:1])}}
+    r = P.entry_status("H1-S7.2", ev)
+    assert r["status"] == P.NOT_STARTABLE_PRECONDITION
+    assert any("omit the H-1 authorised analysis points" in m for m in r["precondition_reasons"])
+    with pytest.raises(P.ProgrammeError, match="before S7.1"):
+        P.s7_2_selection_check(sel(), femm(points=AUTH[:1]))
+    assert len(AUTH) > 1 and AUTH == [p["probe"] for p in load(P.ARTIFACTS["H1"])["femm_analysis_points"]["points"]
+                                      if p["authorised_analysis_point"]]
 
 
 def test_p1_artifact_records_campaign_rule_and_reading():
