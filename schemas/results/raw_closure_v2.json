@@ -1,0 +1,815 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "raw_closure_v2",
+ "title": "Raw physics / design closure (abep_sim.system.physics_closure): physical and design quantities and model labels only; no requirement check, IC metric, preference flag or compliance class",
+ "type": "object",
+ "required": [
+  "architecture",
+  "alt_km",
+  "solar",
+  "intake_area_m2",
+  "accommodation",
+  "comp_ratio",
+  "vd_V",
+  "rho",
+  "fO",
+  "V_orb",
+  "atm_source",
+  "eta_c",
+  "C_D",
+  "intake_model",
+  "mdot_air_mgps",
+  "p_in_Pa",
+  "p_passive_Pa",
+  "passive_ratio",
+  "active_ratio",
+  "fO_inlet",
+  "fO2_inlet",
+  "O_survival",
+  "fO_collected",
+  "fN2_collected",
+  "fO2_collected",
+  "collected_composition_basis",
+  "ao_flux_m2s",
+  "ao_fluence_mission_m2",
+  "ao_fluence_basis_h",
+  "erosion_kapton_um",
+  "erosion_graphite_um",
+  "erosion_silver_um",
+  "drag_mN",
+  "T_req_mN",
+  "body_area_m2",
+  "drag_closure_scope",
+  "P_diss_W",
+  "gaspath_model",
+  "plasma_model",
+  "T_air_mN",
+  "Isp_air_s",
+  "eta_u_air",
+  "I_beam_A",
+  "eta_thr_air",
+  "T_over_D_air",
+  "P_thr_air_W",
+  "P_stage1_W",
+  "P_comp_W",
+  "P_total_air_W",
+  "xe_peak_mgps",
+  "T_peak_mN",
+  "P_total_peak_W",
+  "xe_cathode_kg",
+  "xe_aug_kg",
+  "xe_req_kg",
+  "xe_total_kg",
+  "m_thruster_kg",
+  "m_ppu_kg",
+  "m_intake_kg",
+  "m_comp_kg",
+  "m_xe_sys_kg",
+  "m_struct_kg",
+  "m_total_kg",
+  "m_cbe_kg",
+  "m_mga_kg",
+  "m_mev_kg",
+  "life_limit_h",
+  "life_margin",
+  "life_limiting",
+  "comp_ratio_effective",
+  "engineering_model",
+  "raw_schema_version",
+  "T_air_N",
+  "T_req_N",
+  "T_peak_N",
+  "comp_feasible"
+ ],
+ "properties": {
+  "architecture": {
+   "type": "string"
+  },
+  "alt_km": {
+   "type": "number"
+  },
+  "solar": {
+   "type": "string"
+  },
+  "intake_area_m2": {
+   "type": "number"
+  },
+  "accommodation": {
+   "type": "number"
+  },
+  "comp_ratio": {
+   "type": "number"
+  },
+  "vd_V": {
+   "type": "number"
+  },
+  "rho": {
+   "type": "number"
+  },
+  "fO": {
+   "type": "number"
+  },
+  "V_orb": {
+   "type": "number"
+  },
+  "atm_source": {
+   "type": "string"
+  },
+  "eta_c": {
+   "type": "number"
+  },
+  "C_D": {
+   "type": "number"
+  },
+  "intake_model": {
+   "type": "string"
+  },
+  "mdot_air_mgps": {
+   "type": "number"
+  },
+  "p_in_Pa": {
+   "type": "number"
+  },
+  "p_passive_Pa": {
+   "type": "number"
+  },
+  "passive_ratio": {
+   "type": "number"
+  },
+  "active_ratio": {
+   "type": "number"
+  },
+  "fO_inlet": {
+   "type": "number"
+  },
+  "fO2_inlet": {
+   "type": "number"
+  },
+  "O_survival": {
+   "type": "number"
+  },
+  "fO_collected": {
+   "type": "number"
+  },
+  "fN2_collected": {
+   "type": "number"
+  },
+  "fO2_collected": {
+   "type": "number"
+  },
+  "collected_composition_basis": {
+   "type": "string"
+  },
+  "ao_flux_m2s": {
+   "type": "number"
+  },
+  "ao_fluence_mission_m2": {
+   "type": "number"
+  },
+  "ao_fluence_basis_h": {
+   "type": "number"
+  },
+  "erosion_kapton_um": {
+   "type": "number"
+  },
+  "erosion_graphite_um": {
+   "type": "number"
+  },
+  "erosion_silver_um": {
+   "type": "number"
+  },
+  "drag_mN": {
+   "type": "number"
+  },
+  "T_req_mN": {
+   "type": "number"
+  },
+  "body_area_m2": {
+   "type": "number"
+  },
+  "drag_closure_scope": {
+   "type": "string"
+  },
+  "P_diss_W": {
+   "type": "number"
+  },
+  "gaspath_model": {
+   "type": "string"
+  },
+  "plasma_model": {
+   "type": "string"
+  },
+  "T_air_mN": {
+   "type": "number"
+  },
+  "Isp_air_s": {
+   "type": "number"
+  },
+  "eta_u_air": {
+   "type": "number"
+  },
+  "I_beam_A": {
+   "type": "number"
+  },
+  "eta_thr_air": {
+   "type": "number"
+  },
+  "T_over_D_air": {
+   "type": "number"
+  },
+  "P_thr_air_W": {
+   "type": "number"
+  },
+  "P_stage1_W": {
+   "type": "number"
+  },
+  "P_comp_W": {
+   "type": "number"
+  },
+  "P_total_air_W": {
+   "type": "number"
+  },
+  "xe_peak_mgps": {
+   "type": "number"
+  },
+  "T_peak_mN": {
+   "type": "number"
+  },
+  "P_total_peak_W": {
+   "type": "number"
+  },
+  "xe_cathode_kg": {
+   "type": "number"
+  },
+  "xe_aug_kg": {
+   "type": "number"
+  },
+  "xe_req_kg": {
+   "type": "number"
+  },
+  "xe_total_kg": {
+   "type": "number"
+  },
+  "m_thruster_kg": {
+   "type": "number"
+  },
+  "m_ppu_kg": {
+   "type": "number"
+  },
+  "m_intake_kg": {
+   "type": "number"
+  },
+  "m_comp_kg": {
+   "type": "number"
+  },
+  "m_xe_sys_kg": {
+   "type": "number"
+  },
+  "m_struct_kg": {
+   "type": "number"
+  },
+  "m_total_kg": {
+   "type": "number"
+  },
+  "m_cbe_kg": {
+   "type": "number"
+  },
+  "m_mga_kg": {
+   "type": "number"
+  },
+  "m_mev_kg": {
+   "type": "number"
+  },
+  "life_limit_h": {
+   "type": "number"
+  },
+  "life_margin": {
+   "type": "number"
+  },
+  "life_limiting": {
+   "type": "string"
+  },
+  "comp_ratio_effective": {
+   "type": "number"
+  },
+  "engineering_model": {
+   "type": "string"
+  },
+  "raw_schema_version": {
+   "const": "raw_closure_v2"
+  },
+  "T_air_N": {
+   "type": "number"
+  },
+  "T_req_N": {
+   "type": "number"
+  },
+  "T_peak_N": {
+   "type": "number"
+  },
+  "comp_feasible": {
+   "type": "boolean"
+  },
+  "comp_sized": {
+   "type": "boolean"
+  },
+  "comp_turbo_rows": {
+   "type": "number"
+  },
+  "comp_drag_stages": {
+   "type": "number"
+  },
+  "comp_rpm": {
+   "type": "number"
+  },
+  "comp_tip_mps": {
+   "type": "number"
+  },
+  "comp_CR_active": {
+   "type": "number"
+  },
+  "comp_CR_O": {
+   "type": "number"
+  },
+  "comp_CR_N2": {
+   "type": "number"
+  },
+  "comp_T_K": {
+   "type": "number"
+  },
+  "res_p_Pa": {
+   "type": "number"
+  },
+  "res_tau_ms": {
+   "type": "number"
+  },
+  "res_wall_collisions": {
+   "type": "number"
+  },
+  "gamma_wall": {
+   "type": "number"
+  },
+  "p_target_Pa": {
+   "type": "number"
+  },
+  "cr_needed": {
+   "type": "number"
+  },
+  "comp_converged": {
+   "type": "boolean"
+  },
+  "comp_iterations": {
+   "type": "number"
+  },
+  "comp_residual": {
+   "type": "number"
+  },
+  "res_converged": {
+   "type": "boolean"
+  },
+  "res_iterations": {
+   "type": "number"
+  },
+  "res_residual": {
+   "type": "number"
+  },
+  "res_balance_residual_rel": {
+   "type": "number"
+  },
+  "orifice_converged": {
+   "type": "boolean"
+  },
+  "orifice_bracketed": {
+   "type": "boolean"
+  },
+  "orifice_p_residual_rel": {
+   "type": "number"
+  },
+  "gaspath_converged": {
+   "type": "boolean"
+  },
+  "gaspath_status": {
+   "type": "string"
+  },
+  "gaspath_not_converged": {
+   "type": "array"
+  },
+  "comp_gaede_status": {
+   "type": "string"
+  },
+  "comp_gaede_domain_ok": {
+   "type": "boolean"
+  },
+  "comp_gaede_out_of_domain": {
+   "type": "array"
+  },
+  "comp_gaede_K_unclipped_min": {
+   "type": "number"
+  },
+  "comp_gaede_K_unclipped": {
+   "type": "object"
+  },
+  "comp_n_rejected_out_of_gaede_domain": {
+   "type": "number"
+  },
+  "gaspath_in_domain": {
+   "type": "boolean"
+  },
+  "gaspath_domain_status": {
+   "type": "string"
+  },
+  "gaspath_p_domain_max_Pa": {
+   "type": "number"
+  },
+  "gaspath_p_domain_limit_Pa": {
+   "type": "number"
+  },
+  "comp_sizing_p_out_Pa": {
+   "type": "number"
+  },
+  "comp_sizing_p_out_above_limit": {
+   "type": "boolean"
+  },
+  "gaspath_out_of_domain": {
+   "type": "array"
+  },
+  "comp_sizing_mode": {
+   "type": "string"
+  },
+  "comp_u_max_basis": {
+   "type": "string"
+  },
+  "comp_rotor_qualification": {
+   "type": "string"
+  },
+  "comp_rotor_ok": {
+   "type": "boolean"
+  },
+  "comp_rotor_within_legacy_sensitivity_cap": {
+   "type": "boolean"
+  },
+  "pl_Te_hall_eV": {
+   "type": "number"
+  },
+  "pl_Te_see_limit_eV": {
+   "type": "number"
+  },
+  "pl_ne_hall": {
+   "type": "number"
+  },
+  "pl_I_d_A": {
+   "type": "number"
+  },
+  "pl_eta_b": {
+   "type": "number"
+  },
+  "pl_util_hall_only": {
+   "type": "number"
+  },
+  "pl_f_cx": {
+   "type": "number"
+  },
+  "pl_m_ion_amu": {
+   "type": "number"
+  },
+  "pl_wall_erosion_um_per_kh": {
+   "type": "number"
+  },
+  "pl_util_beam": {
+   "type": "number"
+  },
+  "pl_util_consumed": {
+   "type": "number"
+  },
+  "pl_eta_transport": {
+   "type": "number"
+  },
+  "pl_preion_A": {
+   "type": "number"
+  },
+  "pl_s1_Te_eV": {
+   "type": "number"
+  },
+  "pl_s1_ne": {
+   "type": "number"
+  },
+  "pl_s1_util": {
+   "type": "number"
+  },
+  "pl_s1_eV_per_ion": {
+   "type": "number"
+  },
+  "pl_s1_P_abs_W": {
+   "type": "number"
+  },
+  "pl_s1_overdense": {
+   "type": "number"
+  },
+  "pl_s1_dissO2": {
+   "type": "number"
+  },
+  "pl_s1_dissN2": {
+   "type": "number"
+  },
+  "pl_cath_T_K": {
+   "type": "number"
+  },
+  "pl_cath_coverage": {
+   "type": "number"
+  },
+  "pl_cath_P_W": {
+   "type": "number"
+  },
+  "pl_cath_life_h": {
+   "type": "number"
+  },
+  "pl_sustained": {
+   "type": "boolean"
+  },
+  "eng_P_bus_steady_W": {
+   "type": "number"
+  },
+  "eng_P_bus_startup_W": {
+   "type": "number"
+  },
+  "eng_P_bus_peak_W": {
+   "type": "number"
+  },
+  "eng_ppu_eta": {
+   "type": "number"
+  },
+  "eng_ppu_loss_W": {
+   "type": "number"
+  },
+  "eng_ppu_mass_kg": {
+   "type": "number"
+  },
+  "eng_T_ppu_K": {
+   "type": "number"
+  },
+  "eng_T_thruster_K": {
+   "type": "number"
+  },
+  "eng_T_magnets_K": {
+   "type": "number"
+  },
+  "eng_T_compressor_K": {
+   "type": "number"
+  },
+  "eng_T_intake_K": {
+   "type": "number"
+  },
+  "eng_T_radiator_K": {
+   "type": "number"
+  },
+  "eng_A_radiator_m2": {
+   "type": "number"
+  },
+  "eng_m_thermal_kg": {
+   "type": "number"
+  },
+  "eng_thermal_limiting": {
+   "type": "string"
+  },
+  "eng_P_waste_W": {
+   "type": "number"
+  },
+  "eng_q_aero_W_m2": {
+   "type": "number"
+  },
+  "eng_life_hall_h": {
+   "type": "number"
+  },
+  "eng_hall_wall_remaining_mm_15kh": {
+   "type": "number"
+  },
+  "eng_intake_coating_erosion_um": {
+   "type": "number"
+  },
+  "eng_intake_alpha_end": {
+   "type": "number"
+  },
+  "eng_blade_coating_life_h": {
+   "type": "number"
+  },
+  "eng_blade_impact_eV": {
+   "type": "number"
+  },
+  "eng_magnet_ok": {
+   "type": "boolean"
+  },
+  "eng_cathode_life_h": {
+   "type": "number"
+  },
+  "eng_cathode_starts": {
+   "type": "number"
+  },
+  "eng_R_15000h": {
+   "type": "number"
+  },
+  "eng_R_26000h": {
+   "type": "number"
+  },
+  "eng_R_mission": {
+   "type": "number"
+  },
+  "eng_R_mission_h": {
+   "type": "number"
+  },
+  "eng_marginal_items": {
+   "type": "string"
+  },
+  "eng_m_cbe_kg": {
+   "type": "number"
+  },
+  "eng_m_mga_kg": {
+   "type": "number"
+  },
+  "eng_m_mev_kg": {
+   "type": "number"
+  },
+  "eng_structure_t_mm": {
+   "type": "number"
+  },
+  "eng_deck_if_own_kg": {
+   "type": "number"
+  },
+  "eng_xe_tank_kg": {
+   "type": "number"
+  },
+  "eng_hall_magnetics_kg": {
+   "type": "number"
+  },
+  "eng_hall_channel_kg": {
+   "type": "number"
+  },
+  "eng_bom": {
+   "type": "array"
+  },
+  "eng_life_model_ok_flags": {
+   "type": "object"
+  },
+  "eng_thermal_radiator_feasible": {
+   "type": "boolean"
+  }
+ },
+ "additionalProperties": false,
+ "x-abep": {
+  "layer": "RAW_PHYSICS_RESULT",
+  "producer": "abep_sim.system.physics_closure",
+  "version_constant": "abep_sim.system.RAW_CLOSURE_SCHEMA_VERSION",
+  "forbidden_key_prefixes": [
+   "chk_",
+   "rfp_",
+   "ic_"
+  ],
+  "forbidden_keys": [
+   "hall_preferred",
+   "feasible",
+   "rfp_compliant",
+   "abep_closed",
+   "technical_compliant",
+   "technical_closed"
+  ],
+  "raw_only_keys": [
+   "raw_schema_version",
+   "T_air_N",
+   "T_req_N",
+   "T_peak_N",
+   "comp_feasible",
+   "eng_life_model_ok_flags",
+   "eng_thermal_radiator_feasible"
+  ],
+  "generated_by": "scripts/config/build_result_schemas.py",
+  "regenerate": "python scripts/config/build_result_schemas.py  (check: --check)",
+  "derivation": "key names, JSON types and presence observed on the outputs of the reference configurations below (one per closure path); no value is recorded",
+  "reference_paths": [
+   "parametric",
+   "gaspath_physics",
+   "plasma_physics",
+   "engineering_physics"
+  ],
+  "path_conditional_keys": {
+   "gaspath_physics": [
+    "comp_sized",
+    "comp_turbo_rows",
+    "comp_drag_stages",
+    "comp_rpm",
+    "comp_tip_mps",
+    "comp_CR_active",
+    "comp_CR_O",
+    "comp_CR_N2",
+    "comp_T_K",
+    "res_p_Pa",
+    "res_tau_ms",
+    "res_wall_collisions",
+    "gamma_wall",
+    "p_target_Pa",
+    "cr_needed",
+    "comp_converged",
+    "comp_iterations",
+    "comp_residual",
+    "res_converged",
+    "res_iterations",
+    "res_residual",
+    "res_balance_residual_rel",
+    "orifice_converged",
+    "orifice_bracketed",
+    "orifice_p_residual_rel",
+    "gaspath_converged",
+    "gaspath_status",
+    "gaspath_not_converged",
+    "comp_gaede_status",
+    "comp_gaede_domain_ok",
+    "comp_gaede_out_of_domain",
+    "comp_gaede_K_unclipped_min",
+    "comp_gaede_K_unclipped",
+    "comp_n_rejected_out_of_gaede_domain",
+    "gaspath_in_domain",
+    "gaspath_domain_status",
+    "gaspath_p_domain_max_Pa",
+    "gaspath_p_domain_limit_Pa",
+    "comp_sizing_p_out_Pa",
+    "comp_sizing_p_out_above_limit",
+    "gaspath_out_of_domain",
+    "comp_sizing_mode",
+    "comp_u_max_basis",
+    "comp_rotor_qualification",
+    "comp_rotor_ok",
+    "comp_rotor_within_legacy_sensitivity_cap"
+   ],
+   "plasma_physics": [
+    "pl_Te_hall_eV",
+    "pl_Te_see_limit_eV",
+    "pl_ne_hall",
+    "pl_I_d_A",
+    "pl_eta_b",
+    "pl_util_hall_only",
+    "pl_f_cx",
+    "pl_m_ion_amu",
+    "pl_wall_erosion_um_per_kh",
+    "pl_util_beam",
+    "pl_util_consumed",
+    "pl_eta_transport",
+    "pl_preion_A",
+    "pl_s1_Te_eV",
+    "pl_s1_ne",
+    "pl_s1_util",
+    "pl_s1_eV_per_ion",
+    "pl_s1_P_abs_W",
+    "pl_s1_overdense",
+    "pl_s1_dissO2",
+    "pl_s1_dissN2",
+    "pl_cath_T_K",
+    "pl_cath_coverage",
+    "pl_cath_P_W",
+    "pl_cath_life_h",
+    "pl_sustained"
+   ],
+   "engineering_physics": [
+    "eng_P_bus_steady_W",
+    "eng_P_bus_startup_W",
+    "eng_P_bus_peak_W",
+    "eng_ppu_eta",
+    "eng_ppu_loss_W",
+    "eng_ppu_mass_kg",
+    "eng_T_ppu_K",
+    "eng_T_thruster_K",
+    "eng_T_magnets_K",
+    "eng_T_compressor_K",
+    "eng_T_intake_K",
+    "eng_T_radiator_K",
+    "eng_A_radiator_m2",
+    "eng_m_thermal_kg",
+    "eng_thermal_limiting",
+    "eng_P_waste_W",
+    "eng_q_aero_W_m2",
+    "eng_life_hall_h",
+    "eng_hall_wall_remaining_mm_15kh",
+    "eng_intake_coating_erosion_um",
+    "eng_intake_alpha_end",
+    "eng_blade_coating_life_h",
+    "eng_blade_impact_eV",
+    "eng_magnet_ok",
+    "eng_cathode_life_h",
+    "eng_cathode_starts",
+    "eng_R_15000h",
+    "eng_R_26000h",
+    "eng_R_mission",
+    "eng_R_mission_h",
+    "eng_marginal_items",
+    "eng_m_cbe_kg",
+    "eng_m_mga_kg",
+    "eng_m_mev_kg",
+    "eng_structure_t_mm",
+    "eng_deck_if_own_kg",
+    "eng_xe_tank_kg",
+    "eng_hall_magnetics_kg",
+    "eng_hall_channel_kg",
+    "eng_bom",
+    "eng_life_model_ok_flags",
+    "eng_thermal_radiator_feasible"
+   ]
+  }
+ }
+}

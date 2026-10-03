@@ -16,10 +16,12 @@ pins them):
   * ``HARD_CONSTRAINT_LIMITS`` - the numeric limits of the F7 hard-constraint table (the table itself, with its
     RVM / RFP labels, is an assessment definition: abep_sim/assessment/design_gates.py).
 
-Source: the frozen engineering-constraints snapshot config/requirements/rfp_constraints_v1.json (its
-``rfp_constraints_compat`` values) and the mission domain of config/mission/mission_scenario_v1.json, read through
+Source (A9.23 owner directive 2026-10-03, docs/decisions/OD_2026_10_03_A9_23_*): the frozen engineering-constraints
+artefact config/constraints/engineering_constraints_v1.json ONLY (values), read through
 ``abep_sim.configuration.load_engineering_constraints`` (sha256-checked against config/MANIFEST.json, fail closed, no
-fallback). Values are identical to the pre-re-point ``abep_sim.constants.RFP`` values.
+fallback). This module never opens the requirements snapshot (config/requirements/) or the RVM; the constraints file
+is derived from that snapshot by scripts/config/build_config.py and carries the requirement ids as provenance only.
+Values are identical to the pre-re-point ``abep_sim.constants.RFP`` values.
 """
 from __future__ import annotations
 
@@ -27,9 +29,9 @@ from types import SimpleNamespace
 
 from ..configuration import load_engineering_constraints as _load
 
-PROVENANCE = ("requirements snapshot of RFP DTDF/06/13516/DSP/ABEP/X/L/M/01 as frozen in "
-              "config/requirements/rfp_constraints_v1.json (A9.22 owner decisions items 2 and 5: frozen engineering "
-              "inputs, no RFP parsing in design / physics)")
+PROVENANCE = ("frozen engineering constraints config/constraints/engineering_constraints_v1.json, derived from the "
+              "requirements snapshot of RFP DTDF/06/13516/DSP/ABEP/X/L/M/01 (A9.22 owner decisions items 2 and 5; "
+              "A9.23: frozen engineering inputs, no RFP / RVM parsing in design / physics)")
 
 
 def _snapshot():
@@ -44,8 +46,9 @@ SOURCE = _S.source + " via abep_sim.configuration.load_engineering_constraints"
 THRUST_MIN_MN = _S.thrust_min_mN
 THRUST_MAX_MN = _S.thrust_max_mN
 
-# A9.22 G2: F1 C-DRAG-RFP generation filter (intake-face drag <= thrust maximum)
-INTAKE_DRAG_GENERATION_LIMIT_MN = THRUST_MAX_MN
+# A9.22 G2: F1 C-DRAG-RFP generation filter (intake-face drag <= thrust maximum; constraint
+# intake_drag_generation_limit_mN, derived from the thrust capability in the constraints file)
+INTAKE_DRAG_GENERATION_LIMIT_MN = _S.intake_drag_generation_limit_mN
 INTAKE_DRAG_GENERATION_LIMIT_N = INTAKE_DRAG_GENERATION_LIMIT_MN * 1e-3
 
 # ------------------------------------------------------------------------------------------------ mission domain
@@ -60,7 +63,7 @@ THRUST_CAPABILITY_MIN_N = THRUST_MAX_MN * 1e-3         # HC-02
 P_BUS_MAX_W = _S.power_max_W                           # HC-03
 M_WET_MAX_KG = _S.mass_max_kg                          # HC-04
 FIRING_LIFE_MIN_H = _S.ignition_hours                  # HC-07 (subsystem firing-life requirement)
-INTAKE_DRAG_MAX_N = THRUST_MAX_MN * 1e-3               # HC-09 (same bound as the F1 generation filter)
+INTAKE_DRAG_MAX_N = INTAKE_DRAG_GENERATION_LIMIT_MN * 1e-3   # HC-09 (same bound as the F1 generation filter)
 # Owner-decision / project-derived limits (not requirement-snapshot values)
 I_E_MARGIN_MIN_A = 0.0                                 # HC-05 I_e,cap - I_d,max,H1 > 0 (owner decision)
 THERMAL_MARGIN_MIN_K = 50.0                            # HC-06 >= 50 K below validated limits (project)

@@ -32,8 +32,8 @@ def test_operating_inputs_seam_values():
 
 
 def test_seams_read_the_frozen_config_with_identical_values():
-    """A9.22 re-point: operating_inputs <- config/mission (no requirements snapshot); engineering_constraints <-
-    config/requirements + config/mission. Values identical to the pre-re-point seam values."""
+    """A9.22 re-point / A9.23: operating_inputs <- config/mission + config/constraints; engineering_constraints <-
+    config/constraints only (neither reads the requirements snapshot). Values identical to the pre-re-point values."""
     from abep_sim import configuration as cfg
     from abep_sim.design import engineering_constraints as ec
     v = cfg.load_operating_inputs()
@@ -43,7 +43,7 @@ def test_seams_read_the_frozen_config_with_identical_values():
     assert v["mission_hours"] == OI.MISSION_HOURS and OI.SOURCE.startswith("config/mission/mission_scenario_v1.json")
     for x in (OI.MISSION_HOURS, OI.FIRING_HOURS, OI.THRUST_MIN_mN, OI.THRUST_MAX_mN, OI.P_BUS_MAX_W, OI.MASS_MAX_KG):
         assert type(x) is float
-    assert ec.SOURCE.startswith("config/requirements/rfp_constraints_v1.json")
+    assert ec.SOURCE.startswith("config/constraints/engineering_constraints_v1.json")
     for rel in (("operating_inputs.py",), ("design", "engineering_constraints.py")):
         tree = ast.parse(open(os.path.join(ROOT, "abep_sim", *rel)).read())
         mods = {(n.module or "") for n in ast.walk(tree) if isinstance(n, ast.ImportFrom)}

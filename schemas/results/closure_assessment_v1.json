@@ -1,0 +1,149 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "closure_assessment_v1",
+ "title": "Assessment / compliance result of one raw closure (abep_sim.assessment.assess): checks, IC metrics, classifications, requirement pointers and the constraint values used",
+ "type": "object",
+ "required": [
+  "assessment_schema_version",
+  "raw_schema_version",
+  "chk_mass_mev",
+  "chk_mass_cbe_target",
+  "ic_thruster",
+  "ic_total",
+  "feasible",
+  "rfp_compliant",
+  "abep_closed",
+  "technical_compliant",
+  "technical_closed",
+  "chk_thrust_air_ge_req",
+  "chk_thrust_peak_25mN",
+  "chk_power_air",
+  "chk_power_peak",
+  "chk_mass",
+  "chk_life",
+  "chk_ic_total",
+  "chk_ic_thruster",
+  "chk_compressor_feasible",
+  "chk_hall_preferred",
+  "chk_net_drag_comp_air",
+  "requirement_pointers",
+  "requirement_pointer_source",
+  "constraints"
+ ],
+ "properties": {
+  "assessment_schema_version": {
+   "const": "closure_assessment_v1"
+  },
+  "raw_schema_version": {
+   "const": "raw_closure_v2"
+  },
+  "chk_mass_mev": {
+   "type": "boolean"
+  },
+  "chk_mass_cbe_target": {
+   "type": "boolean"
+  },
+  "ic_thruster": {
+   "type": "number"
+  },
+  "ic_total": {
+   "type": "number"
+  },
+  "feasible": {
+   "type": "boolean"
+  },
+  "rfp_compliant": {
+   "type": "boolean"
+  },
+  "abep_closed": {
+   "type": "boolean"
+  },
+  "technical_compliant": {
+   "type": "boolean"
+  },
+  "technical_closed": {
+   "type": "boolean"
+  },
+  "chk_thrust_air_ge_req": {
+   "type": "boolean"
+  },
+  "chk_thrust_peak_25mN": {
+   "type": "boolean"
+  },
+  "chk_power_air": {
+   "type": "boolean"
+  },
+  "chk_power_peak": {
+   "type": "boolean"
+  },
+  "chk_mass": {
+   "type": "boolean"
+  },
+  "chk_life": {
+   "type": "boolean"
+  },
+  "chk_ic_total": {
+   "type": "boolean"
+  },
+  "chk_ic_thruster": {
+   "type": "boolean"
+  },
+  "chk_compressor_feasible": {
+   "type": "boolean"
+  },
+  "chk_hall_preferred": {
+   "type": "boolean"
+  },
+  "chk_net_drag_comp_air": {
+   "type": "boolean"
+  },
+  "requirement_pointers": {
+   "type": "object"
+  },
+  "requirement_pointer_source": {
+   "type": "string"
+  },
+  "constraints": {
+   "type": "object"
+  },
+  "chk_thermal": {
+   "type": "boolean"
+  }
+ },
+ "additionalProperties": false,
+ "x-abep": {
+  "layer": "ASSESSMENT_RESULT",
+  "producer": "abep_sim.assessment.closure_checks.assess",
+  "version_constant": "abep_sim.assessment.closure_checks.ASSESSMENT_SCHEMA_VERSION",
+  "consumes": [
+   "raw_closure_v2",
+   "config/constraints/engineering_constraints_v1.json"
+  ],
+  "constraints_fields": [
+   "thrust_max_mN",
+   "power_max_W",
+   "p_margin_frac",
+   "mass_max_kg",
+   "ic_total_min",
+   "ic_thruster_min",
+   "m_cbe_target_kg",
+   "life_margin_min",
+   "T_over_D_min",
+   "thrust_peak_rel_tol"
+  ],
+  "generated_by": "scripts/config/build_result_schemas.py",
+  "regenerate": "python scripts/config/build_result_schemas.py  (check: --check)",
+  "derivation": "key names, JSON types and presence observed on the outputs of the reference configurations below (one per closure path); no value is recorded",
+  "reference_paths": [
+   "parametric",
+   "gaspath_physics",
+   "plasma_physics",
+   "engineering_physics"
+  ],
+  "path_conditional_keys": {
+   "engineering_physics": [
+    "chk_thermal"
+   ]
+  }
+ }
+}

@@ -49,8 +49,11 @@ def closure_constraint_flags(T_mN: float, mev_kg: float, life_h: float, dc) -> d
 
 
 # ------------------------------------------------------------------------------------------- arch_compare flags
-def default_limits() -> dict:
-    return {"thrust_min_mN": OI.THRUST_MIN_mN, "thrust_max_mN": OI.THRUST_MAX_mN, "power_max_W": OI.P_BUS_MAX_W}
+def default_limits(root=None) -> dict:
+    """Assessment limits from the frozen engineering constraints (A9.23; same values as the operating-inputs seam)."""
+    from ..configuration import load_engineering_constraints
+    ec = load_engineering_constraints(root)
+    return {"thrust_min_mN": ec["thrust_min_mN"], "thrust_max_mN": ec["thrust_max_mN"], "power_max_W": ec["power_max_W"]}
 
 
 def band_cap_flags(T_mN: float, P_bus_W: float, limits: Mapping[str, float]) -> dict:

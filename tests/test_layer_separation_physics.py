@@ -291,13 +291,17 @@ def test_physics_closure_runs_with_requirements_hidden(tmp_path):
     assert out[2]["eng_R_mission_h"] == 26280.0
 
 
-def test_requirements_hidden_breaks_the_design_constraint_seam(tmp_path):
-    """Control: the hidden-requirements setup is effective (the design seam, which does read the snapshot, fails
-    closed there), so the physics run above genuinely ran without it."""
+def test_requirements_hidden_breaks_only_the_requirements_loaders(tmp_path):
+    """Control: the hidden-requirements setup is effective (the requirements-snapshot loaders fail closed there), so
+    the physics run above genuinely ran without it; since A9.23 both seams (operating inputs, design engineering
+    constraints) read config/constraints and load without the snapshot."""
     cfg_root = tmp_path / "config"
     shutil.copytree(ROOT / "config", cfg_root)
     shutil.rmtree(cfg_root / "requirements")
     from abep_sim import configuration as cfg
     with pytest.raises(cfg.ConfigurationError):
-        cfg.load_engineering_constraints(cfg_root)
+        cfg.load_rfp_constraints_compat(cfg_root)
+    with pytest.raises(cfg.ConfigurationError):
+        cfg.assessment_configuration(cfg_root)
     assert cfg.load_operating_inputs(cfg_root)["mission_hours"] == 26280.0
+    assert cfg.load_engineering_constraints(cfg_root)["power_max_W"] == 1500.0

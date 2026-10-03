@@ -1,18 +1,24 @@
-"""Build the authoritative input manifests under config/ (A9.22 layer separation, Phase A; no numerical change).
+"""Build the authoritative input manifests under config/ (A9.22 layer separation / A9.23; no numerical change).
 
 Owner directive 2026-10-03 (docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md + companion json):
-REQUIREMENTS -> FROZEN ENGINEERING CONFIGURATION -> PHYSICS -> ASSESSMENT. This builder derives every config file from
-the existing sources of record; it invents no number and never edits a source:
+REQUIREMENTS -> FROZEN ENGINEERING CONFIGURATION -> PHYSICS -> ASSESSMENT (A9.23: docs/decisions/OD_2026_10_03_A9_23_*).
+This builder derives every config file from the existing sources of record; it invents no number and never edits a
+source:
 
   architecture/hall_icp_neutralizer_v1.json   from the A9.19 / A9.20 / A9.15 owner decision records (hash-checked; the
                                               A9.19 verbatim sentences and the decision codes are verified in them)
   requirements/rfp_constraints_v1.json        from docs/requirements/rvm_a9/rvm_a9_v1.json row limit fields + the RFP
                                               registration; FROZEN / PROVISIONAL derived from the RVM requirement_frozen
                                               flags (never hard-coded)
-  mission/mission_scenario_v1.json            operating-scenario inputs, values read from the snapshot just built
+  constraints/engineering_constraints_v1.json frozen engineering constraints (A9.23), values read from the snapshot
+                                              just built (requirements extraction -> engineering constraints; the
+                                              only derivation path); requirement ids carried as provenance only
+  mission/mission_scenario_v1.json            operating-scenario choices (set from the constraints) + references
+                                              (id + sha256) to the constraints it does not restate
   environment/design_state_set_ref_v1.json    reference (id, path, sha256, manifest sha256) to the frozen design states
   hardware/hardware_bounds_v1.json            index of hardware-limit sources (path + sha256 + locator; no values)
   model_set/physics_model_set_v1.json         physics module sources, frozen data hashes, version labels in code
+  SOURCES_OF_TRUTH.json                       A9.23 index: one authoritative artefact per role (sha256 pinned)
   README.md, MANIFEST.json                    description; every file + sha256
 
 Usage: python scripts/config/build_config.py            write config/
@@ -38,7 +44,19 @@ RVM_REL = "docs/requirements/rvm_a9/rvm_a9_v1.json"
 REG_REL = "docs/requirements/rfp_official/rfp_registration_v1.json"
 A922 = {"md": "docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md",
         "json": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json"}
+A923 = {"md": "docs/decisions/OD_2026_10_03_A9_23_SIMULATION_ARCHITECTURE_OWNER_DIRECTIVE.md",
+        "json": "docs/decisions/OD_2026_10_03_A9_23_simulation_architecture_owner_directive.json"}
 A9_REL = "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json"
+
+# config-relative file names (one place)
+ARCH_FILE = "architecture/hall_icp_neutralizer_v1.json"
+REQ_FILE = "requirements/rfp_constraints_v1.json"
+CONSTRAINTS_FILE = "constraints/engineering_constraints_v1.json"
+MISSION_FILE = "mission/mission_scenario_v1.json"
+DS_REF_FILE = "environment/design_state_set_ref_v1.json"
+HW_FILE = "hardware/hardware_bounds_v1.json"
+MODEL_SET_FILE = "model_set/physics_model_set_v1.json"
+SOT_FILE = "SOURCES_OF_TRUTH.json"
 
 # Owner decision records the architecture is generated from (pins as carried by abep_sim/design/a9_19_architecture.py
 # before Phase A; a changed record is refused, never followed)
@@ -330,6 +348,155 @@ def build_requirements() -> dict:
     }
 
 
+# ============================================================================================== engineering constraints
+def _limit_of(snapshot: dict, rvm_row: str) -> dict:
+    """The RVM limit record (comparator / units / value) the snapshot carries for one row (provenance lookup only)."""
+    for e in snapshot["rvm_limits"]:
+        if e["rvm_row"] == rvm_row:
+            return e["limit"]
+    raise BuildError(f"requirements snapshot carries no rvm_limits entry for {rvm_row}")
+
+
+def _prov(snapshot_field: str, e: dict) -> dict:
+    """Provenance block of one constraint (labels only: never read by physics / design code)."""
+    return {"snapshot_field": snapshot_field, "rvm_row": e["rvm_row"], "rvm_key": e["rvm_key"],
+            "rfp_clauses": list(e["rfp_clauses"]), "requirement_origin": e.get("requirement_origin"),
+            "requirement_frozen": bool(e["requirement_frozen"])}
+
+
+def build_constraints(snapshot: dict, snapshot_bytes: bytes) -> dict:
+    """Requirements extraction -> frozen engineering constraints (A9.23). Every value is read from the requirements
+    snapshot just built (no number typed here); status FROZEN / PROVISIONAL from the snapshot row flags."""
+    comp = snapshot["rfp_constraints_compat"]
+    md, life, fire = snapshot["mission_domain"], snapshot["mission_duration"], snapshot["subsystem_firing_life"]
+    rows = {e["rvm_row"]: e for e in snapshot["rvm_limits"]}
+
+    def entry(value, units, comparator, kind, consumed_by, prov, status, **kw):
+        return {"value": value, "units": units, "comparator": comparator, "kind": kind, "status": status,
+                "consumed_by": consumed_by, **kw, "provenance": prov}
+
+    def st(*es):
+        return "FROZEN" if all(e["requirement_frozen"] for e in es) else "PROVISIONAL"
+
+    alt_lim = _limit_of(snapshot, md["rvm_row"])
+    tmin_lim, tmax_lim = _limit_of(snapshot, comp["thrust_min_mN"]["rvm_row"]), \
+        _limit_of(snapshot, comp["thrust_max_mN"]["rvm_row"])
+    pbus_lim, mass_lim = _limit_of(snapshot, comp["power_max_W"]["rvm_row"]), \
+        _limit_of(snapshot, comp["mass_max_kg"]["rvm_row"])
+    life_lim, fire_lim = _limit_of(snapshot, life["rvm_row"]), _limit_of(snapshot, fire["rvm_row"])
+    ic_lim = _limit_of(snapshot, comp["ic_total_min"]["rvm_row"])
+    air_row, xe_row = rows.get("RVM-08"), rows.get("RVM-10")
+    if not air_row or not air_row["rvm_key"].startswith("ATMOSPHERIC_PROPELLANT") \
+            or not xe_row or not xe_row["rvm_key"].startswith("XE_CAPABILITY"):
+        raise BuildError("requirements snapshot: propellant-capability rows (atmospheric / Xe) not found")
+    for got, want in ((comp["thrust_min_mN"]["value"], tmin_lim["value"]), (comp["power_max_W"]["value"],
+                      pbus_lim["value"]), (comp["mass_max_kg"]["value"], mass_lim["value"]),
+                      (md["altitude_km"], alt_lim["value"]), (life["authoritative_basis_h"], life_lim["value"]),
+                      (fire["value_h"], fire_lim["value"]), (comp["ignition_hours"]["value"], fire["value_h"])):
+        if got != want:
+            raise BuildError(f"requirements snapshot is internally inconsistent ({got!r} != {want!r})")
+
+    tmax = comp["thrust_max_mN"]
+    constraints = {
+        "altitude_band_km": entry(
+            list(md["altitude_km"]), "km", alt_lim["comparator"], "DOMAIN",
+            ["abep_sim/design/engineering_constraints.py MISSION_DOMAIN_ALTITUDE_KM (design-state domain check)",
+             "abep_sim/operating_inputs.py (altitude domain)"],
+            _prov("mission_domain.altitude_km", md), st(md),
+            note="A9.22 G5: frozen mission / design-state domain constraint (mission_domain.altitude_km)"),
+        "thrust_sustained_min_mN": entry(
+            comp["thrust_min_mN"]["value"], "mN", tmin_lim["comparator"], "LIMIT",
+            ["abep_sim/design/engineering_constraints.py THRUST_MIN_MN / HC-01"],
+            _prov("rfp_constraints_compat.thrust_min_mN", comp["thrust_min_mN"]), comp["thrust_min_mN"]["status"]),
+        "thrust_capability_mN": entry(
+            tmax["value"], "mN", tmax_lim["comparator"], "LIMIT",
+            ["abep_sim/design/engineering_constraints.py THRUST_MAX_MN / HC-02",
+             "abep_sim/assessment/closure_checks.py Constraints.thrust_max_mN (peak-capability check)"],
+            _prov("rfp_constraints_compat.thrust_max_mN", tmax), tmax["status"],
+            note="upper end of the printed 12-25 mN thrust envelope; carried as the >= 25 mN capability requirement"),
+        "p_bus_max_W": entry(
+            comp["power_max_W"]["value"], "W", pbus_lim["comparator"], "LIMIT",
+            ["abep_sim/design/engineering_constraints.py P_BUS_MAX_W / HC-03",
+             "abep_sim/assessment/closure_checks.py Constraints.power_max_W",
+             "abep_sim/assessment/arch_constraints.py default_limits power_max_W"],
+            _prov("rfp_constraints_compat.power_max_W", comp["power_max_W"]), comp["power_max_W"]["status"]),
+        "wet_mass_max_kg": entry(
+            comp["mass_max_kg"]["value"], "kg", mass_lim["comparator"], "LIMIT",
+            ["abep_sim/design/engineering_constraints.py M_WET_MAX_KG / HC-04",
+             "abep_sim/operating_inputs.py MASS_MAX_KG (design-constraint default handed to callers)",
+             "abep_sim/assessment/closure_checks.py Constraints.mass_max_kg"],
+            _prov("rfp_constraints_compat.mass_max_kg", comp["mass_max_kg"]), comp["mass_max_kg"]["status"]),
+        "mission_life_h": entry(
+            life["authoritative_basis_h"], "h", life_lim["comparator"], "LIMIT",
+            ["config/mission/mission_scenario_v1.json mission_hours (mission-integration horizon set equal to it)"],
+            _prov("mission_duration.authoritative_basis_h", life), life["status"],
+            g1_status=life["g1_status"],
+            historical_value={"value_h": comp["mission_hours"]["value"], "label": HISTORICAL_LABEL,
+                              "note": "pre-A9.22 basis (abep_sim.constants.RFP.mission_hours, immutable); no consumer "
+                                      "computes with it"}),
+        "firing_life_h": entry(
+            fire["value_h"], "h", fire_lim["comparator"], "LIMIT",
+            ["abep_sim/operating_inputs.py FIRING_HOURS (firing-integrated basis)",
+             "abep_sim/design/engineering_constraints.py FIRING_LIFE_MIN_H / HC-07"],
+            _prov("subsystem_firing_life.value_h", fire), fire["status"], label=fire["label"]),
+        "propellant_capability": entry(
+            {"ambient_atmosphere": air_row["limit"]["value"], "xe": xe_row["limit"]["value"]}, "-",
+            {"ambient_atmosphere": air_row["limit"]["comparator"], "xe": xe_row["limit"]["comparator"]},
+            "CATEGORICAL", ["assessment / compliance mapping only (no physics consumer)"],
+            [_prov("rvm_limits[RVM-08]", air_row), _prov("rvm_limits[RVM-10]", xe_row)], st(air_row, xe_row),
+            note="ambient atmospheric propellant primary + Xe-capable operating mode (architecture: "
+                 "config/architecture/hall_icp_neutralizer_v1.json supply modes)"),
+        "intake_drag_generation_limit_mN": entry(
+            tmax["value"], "mN", "<=", "GENERATION_FILTER",
+            ["abep_sim/design/engineering_constraints.py INTAKE_DRAG_GENERATION_LIMIT_N (F1 C-DRAG-RFP) / HC-09"],
+            _prov("rfp_constraints_compat.thrust_max_mN", tmax), tmax["status"],
+            derived_from="thrust_capability_mN",
+            note="A9.22 G2 Option 1: C-DRAG-RFP stays a generation filter (intake-face drag <= thrust maximum); "
+                 "Option 2 (assessment-only) is a separately approved change"),
+        "ic_total_min": entry(
+            comp["ic_total_min"]["value"], "fraction", ic_lim["comparator"], "PROGRAMME_METRIC_LIMIT",
+            ["abep_sim/assessment/closure_checks.py Constraints.ic_total_min"],
+            _prov("rfp_constraints_compat.ic_total_min", comp["ic_total_min"]), comp["ic_total_min"]["status"],
+            layer="ASSESSMENT_ONLY (A9.22 G6)"),
+        "ic_subsystem_min": entry(
+            dict(comp["ic_subsystem_min"]["value"]), "fraction", ic_lim["comparator"], "PROGRAMME_METRIC_LIMIT",
+            ["abep_sim/assessment/closure_checks.py Constraints.ic_thruster_min (thruster)"],
+            _prov("rfp_constraints_compat.ic_subsystem_min", comp["ic_subsystem_min"]),
+            comp["ic_subsystem_min"]["status"], layer="ASSESSMENT_ONLY (A9.22 G6)"),
+        "hall_preferred": entry(
+            comp["hall_preferred"]["value"], "-", "is", "CATEGORICAL_PREFERENCE",
+            ["abep_sim/assessment/closure_checks.py (architecture-preference flag)"],
+            _prov("rfp_constraints_compat.hall_preferred", comp["hall_preferred"]), comp["hall_preferred"]["status"],
+            layer="ASSESSMENT_ONLY (A9.22 G6)"),
+    }
+    n_frozen = sum(c["status"] == "FROZEN" for c in constraints.values())
+    return {
+        "schema": "abep_config_engineering_constraints_v1",
+        "id": "engineering_constraints_v1",
+        "layer": "FROZEN_ENGINEERING_CONSTRAINTS",
+        "title": "Frozen engineering constraints (values) consumed by the physics / design seams and the assessment "
+                 "layer; derived from the requirements snapshot (requirements extraction -> engineering constraints)",
+        "set_status": "FROZEN" if n_frozen == len(constraints) else "PROVISIONAL",
+        "set_status_rule": "FROZEN only when every constraint is FROZEN; each constraint's status is derived from the "
+                           "requirement_frozen flags its provenance rows carry in the requirements snapshot (never "
+                           "hard-coded). FROZEN freezes the constraint basis only; it never means compliance.",
+        "constraints_frozen": f"{n_frozen}/{len(constraints)}",
+        "generated_by": GENERATED_BY,
+        "regenerate": REGENERATE,
+        "governing_directive_a9_23": decision_ref(A923["json"], A923["md"]),
+        "rule": "A9.23: physics / design code consumes the values of this file only (abep_sim.configuration."
+                "load_engineering_constraints; abep_sim/operating_inputs.py; abep_sim/design/engineering_constraints."
+                "py); the assessment layer reads its limits here. Requirement / clause ids below are PROVENANCE ONLY: "
+                "no code computes with them. The only derivation path is requirements snapshot -> this file "
+                "(scripts/config/build_config.py).",
+        "provenance": {"requirements_snapshot": {"id": snapshot["id"], "path": "config/" + REQ_FILE,
+                                                 "sha256": sha256_bytes(snapshot_bytes),
+                                                 "snapshot_status": snapshot["snapshot_status"]},
+                       "role": "PROVENANCE_ONLY"},
+        "constraints": constraints,
+    }
+
+
 # ============================================================================================== mission scenario
 # A9.22 G1 (owner decision 2026-10-03): APPLIED. Mission-integrated consumers moved to 26,280 h through the single seam
 # abep_sim/operating_inputs.py (which reads this file): life.LifeInputs.mission_h, mission5 hours, archengine
@@ -344,56 +511,62 @@ G1_MIGRATED_CONSUMERS = [
     "abep_sim/archengine.py mission-integrated Xe basis (default operating_inputs.MISSION_HOURS)",
     "abep_sim/system.py AO fluence / erosion depths, cathode starts, eng_R_mission (operating_inputs.MISSION_HOURS)",
 ]
+OPERATING_CHOICE = "OPERATING_SCENARIO_CHOICE"
+CONSTRAINT_REFERENCE = "CONSTRAINT_REFERENCE"
+OPERATING_CHOICE_RULE = ("an operating-scenario choice, distinct from the engineering constraint it was set equal to "
+                         "when this file was built (set_equal_to_constraint): physics consumes the choice; the "
+                         "assessment compares results with the constraint. Editing the constraint file alone changes "
+                         "the assessment, not this choice")
 
 
-def build_mission(snapshot: dict, snapshot_bytes: bytes) -> dict:
-    comp = snapshot["rfp_constraints_compat"]
+def build_mission(constraints: dict, constraints_bytes: bytes) -> dict:
+    c = constraints["constraints"]
 
-    def src(field_):
-        e = comp[field_]
-        return {"snapshot_field": f"rfp_constraints_compat.{field_}", "rvm_row": e["rvm_row"],
-                "rfp_clauses": e["rfp_clauses"], "status": e["status"]}
+    def ref(cid, **kw):
+        e = c[cid]
+        return {"kind": CONSTRAINT_REFERENCE, "constraint_ref": cid, "units": e["units"], **kw,
+                "note": f"value not restated here: read from engineering_constraints_v1 constraints.{cid}"}
+
+    def choice(cid, role, **kw):
+        e = c[cid]
+        return {"value": e["value"], "units": e["units"], "kind": OPERATING_CHOICE, "role": role,
+                "set_equal_to_constraint": cid, **kw}
+
+    def snap_src(cid):
+        p = c[cid]["provenance"]
+        return {"snapshot_field": p["snapshot_field"], "rvm_row": p["rvm_row"]}
 
     return {
         "schema": "abep_config_mission_scenario_v1",
         "id": "mission_scenario_v1",
         "layer": "FROZEN_ENGINEERING_CONFIGURATION",
-        "title": "Operating-scenario inputs consumed by the physics / design seams (frozen engineering configuration)",
+        "title": "Operating-scenario choices consumed by the physics seam; constraint-derived inputs are references to "
+                 "engineering_constraints_v1 (not restated)",
         "generated_by": GENERATED_BY,
         "regenerate": REGENERATE,
-        "requirements_snapshot": {"id": snapshot["id"], "path": "config/" + "requirements/rfp_constraints_v1.json",
-                                  "sha256": sha256_bytes(snapshot_bytes), "snapshot_status": snapshot["snapshot_status"]},
-        "rule": "abep_sim/operating_inputs.py (physics seam) and abep_sim/design/engineering_constraints.py (design "
-                "seam) read their values from this file through abep_sim.configuration loaders (fail closed). The "
-                "26,000 -> 26,280 h change is the governed A9.22 G1 migration, APPLIED (docs/HISTORY.md).",
+        "engineering_constraints": {"id": constraints["id"], "path": "config/" + CONSTRAINTS_FILE,
+                                    "sha256": sha256_bytes(constraints_bytes), "set_status": constraints["set_status"]},
+        "rule": "abep_sim/operating_inputs.py (physics seam) reads this file and engineering_constraints_v1 through "
+                "abep_sim.configuration.load_operating_inputs (fail closed; the constraints pin above is verified). "
+                "Inputs of kind CONSTRAINT_REFERENCE carry no value (single source: engineering_constraints_v1); inputs "
+                f"of kind {OPERATING_CHOICE} are {OPERATING_CHOICE_RULE}. The 26,000 -> 26,280 h change is the "
+                "governed A9.22 G1 migration, APPLIED (docs/HISTORY.md).",
         "inputs": {
-            "altitude_domain_km": {"value": snapshot["mission_domain"]["altitude_km"], "units": "km",
-                                   "source": {"snapshot_field": "mission_domain.altitude_km",
-                                              "rvm_row": snapshot["mission_domain"]["rvm_row"]}},
-            "xe_sizing_thrust_target_mN": {"value": comp["thrust_min_mN"]["value"], "units": "mN",
-                                           "role": "thrust target for Xe sizing (today: RFP.thrust_min_mN)",
-                                           "source": src("thrust_min_mN")},
-            "commanded_thrust_cap_mN": {"value": comp["thrust_max_mN"]["value"], "units": "mN",
-                                        "role": "commanded-thrust cap (today: RFP.thrust_max_mN)",
-                                        "source": src("thrust_max_mN")},
-            "p_bus_throttling_cap_W": {"value": comp["power_max_W"]["value"], "units": "W",
-                                       "role": "P_bus throttling cap (today: RFP.power_max_W and literals 1500)",
-                                       "source": src("power_max_W")},
-            "wet_mass_limit_kg": {"value": comp["mass_max_kg"]["value"], "units": "kg",
-                                  "role": "wet-mass limit handed to callers as a design constraint (operating_inputs."
-                                          "MASS_MAX_KG)", "source": src("mass_max_kg")},
-            "mission_hours": {"value": snapshot["mission_duration"]["authoritative_basis_h"],
-                              "authoritative_basis_h": snapshot["mission_duration"]["authoritative_basis_h"],
+            "altitude_domain_km": ref("altitude_band_km", source=snap_src("altitude_band_km")),
+            "xe_sizing_thrust_target_mN": choice("thrust_sustained_min_mN",
+                                                 "thrust target for Xe sizing / T_req floor of the closure"),
+            "commanded_thrust_cap_mN": choice("thrust_capability_mN", "commanded-thrust cap"),
+            "p_bus_throttling_cap_W": choice("p_bus_max_W", "P_bus throttling cap"),
+            "wet_mass_limit_kg": ref("wet_mass_max_kg"),
+            "mission_hours": {**choice("mission_life_h", "mission-integration horizon (mission-duration basis for "
+                                       "mission-integrated quantities; A9.22 G1)"),
+                              "authoritative_basis_h": c["mission_life_h"]["value"],
                               "label": "MISSION_DURATION_BASIS",
-                              "units": "h",
                               "g1_status": G1_STATUS,
                               "g1_migrated_consumers": G1_MIGRATED_CONSUMERS,
-                              "historical_note": {"value_h": comp["mission_hours"]["value"], "label": HISTORICAL_LABEL,
-                                                  "note": "pre-A9.22 basis (abep_sim.constants.RFP.mission_hours, "
-                                                          "immutable); no consumer computes with it"},
-                              "source": {"snapshot_field": "mission_duration", "rvm_row": comp["mission_hours"]["rvm_row"]}},
-            "firing_hours": {"value": comp["ignition_hours"]["value"], "units": "h",
-                             "label": "SUBSYSTEM_FIRING_LIFE_ASSUMPTION", "source": src("ignition_hours")},
+                              "historical_note": dict(c["mission_life_h"]["historical_value"]),
+                              "source": snap_src("mission_life_h")},
+            "firing_hours": ref("firing_life_h", label=c["firing_life_h"]["label"]),
         },
     }
 
@@ -425,7 +598,7 @@ def build_design_state_ref() -> dict:
                      "design_states_file_v2_sha256": rec["sha256"], "dataset_sha256": man.get("sha256")},
         "producer": ds["producer"],
         "loader": "abep_sim/design/intake_synthesis.py::load_design_state_set (DESIGN_STATE_SET_SHA256)",
-        "altitude_domain_source": "config/requirements/rfp_constraints_v1.json mission_domain.altitude_km",
+        "altitude_domain_source": "config/constraints/engineering_constraints_v1.json constraints.altitude_band_km",
         "generated_by": GENERATED_BY,
     }
 
@@ -518,25 +691,134 @@ def build_model_set() -> dict:
     }
 
 
+# ============================================================================================== source-of-truth index
+# A9.23 (owner directive 2026-10-03): exactly one authoritative artefact per role. The raw / assessment result schemas
+# are generated by scripts/config/build_result_schemas.py (they run the physics, so they are not rebuilt here); this
+# index pins their sha256.
+RESULT_SCHEMAS = {"raw": "schemas/results/raw_closure_v2.json", "assessment": "schemas/results/closure_assessment_v1.json"}
+SOT_ROLES = ("frozen_architecture", "frozen_engineering_constraints", "frozen_design_state_set", "physics_model_set",
+             "raw_simulation_result", "assessment_result", "requirements_provenance")
+
+
+def build_sources_of_truth(files: dict[str, bytes]) -> dict:
+    def cfg_entry(rel, layer, role_text, loader, **kw):
+        d = json.loads(files[rel])
+        return {"layer": layer, "artefact": "config/" + rel, "id": d["id"], "schema": d["schema"],
+                "sha256": sha256_bytes(files[rel]), "pinned_by": ["config/MANIFEST.json"], "role": role_text,
+                "loader": loader, **kw}
+
+    def schema_entry(rel, layer, role_text, producer):
+        if not (ROOT / rel).is_file():
+            raise BuildError(f"{rel} missing: run python scripts/config/build_result_schemas.py")
+        d = read_json(rel)
+        return {"layer": layer, "artefact": rel, "id": d["$id"], "schema": d["$schema"], "sha256": sha256_file(rel),
+                "pinned_by": ["config/SOURCES_OF_TRUTH.json"], "role": role_text, "producer": producer,
+                "generated_by": d["x-abep"]["generated_by"]}
+
+    ds_ref = json.loads(files[DS_REF_FILE])
+    sources = {
+        "frozen_architecture": cfg_entry(
+            ARCH_FILE, "FROZEN_ARCHITECTURE", "architecture_frozen_v1: the single flight architecture definition",
+            "abep_sim.configuration.load_architecture; abep_sim/design/a9_19_architecture.py"),
+        "frozen_engineering_constraints": cfg_entry(
+            CONSTRAINTS_FILE, "FROZEN_ENGINEERING_CONSTRAINTS",
+            "engineering_constraints_v1: every frozen numerical / categorical constraint (values; provenance only "
+            "for requirement ids)",
+            "abep_sim.configuration.load_engineering_constraints; abep_sim/design/engineering_constraints.py; "
+            "abep_sim/operating_inputs.py; abep_sim/assessment"),
+        "frozen_design_state_set": {
+            "layer": "FROZEN_DESIGN_STATE_SET", "artefact": ds_ref["path"], "id": ds_ref["id"],
+            "alias": "vleo_design_states_v2", "n_states": ds_ref["n_states"], "sha256": ds_ref["sha256"],
+            "reference": "config/" + DS_REF_FILE, "reference_sha256": sha256_bytes(files[DS_REF_FILE]),
+            "pinned_by": [f"{ds_ref['manifest']['path']} (design_states_file_v2.sha256)", "config/" + DS_REF_FILE],
+            "role": "the frozen environmental / orbital design states consumed by the design / physics runs",
+            "loader": "abep_sim.configuration.load_design_state_set_ref; " + ds_ref["loader"]},
+        "physics_model_set": cfg_entry(
+            MODEL_SET_FILE, "PHYSICS_MODELS", "physics_model_set_v1: physics module / data hashes and version labels",
+            "abep_sim.configuration.load_model_set / model_set_drift"),
+        "raw_simulation_result": schema_entry(
+            RESULT_SCHEMAS["raw"], "RAW_RESULTS", "schema raw_closure_v2 of the raw physical result",
+            "abep_sim.system.physics_closure"),
+        "assessment_result": schema_entry(
+            RESULT_SCHEMAS["assessment"], "ASSESSMENT", "schema closure_assessment_v1 of the assessment / "
+            "compliance result (raw result + frozen constraints)", "abep_sim.assessment.assess"),
+        "requirements_provenance": cfg_entry(
+            REQ_FILE, "PROVENANCE", "requirements-extraction snapshot (RVM / RFP clause provenance); the only input "
+                                    "of the engineering constraints; never read by physics / design code",
+            "abep_sim.configuration.load_requirements_snapshot (assessment / compliance mapping only)",
+            snapshot_status=json.loads(files[REQ_FILE])["snapshot_status"]),
+    }
+    if tuple(sources) != SOT_ROLES:
+        raise BuildError("source-of-truth roles differ from SOT_ROLES")
+    return {
+        "schema": "abep_sources_of_truth_v1",
+        "id": "sources_of_truth_v1",
+        "generated_by": GENERATED_BY,
+        "regenerate": REGENERATE,
+        "governing_directive_a9_23": decision_ref(A923["json"], A923["md"]),
+        "dependency_rule": [
+            "requirements/provenance -> frozen engineering constraints (scripts/config/build_config.py only)",
+            "architecture + frozen constraints + design states + physics -> raw results",
+            "raw results + frozen constraints -> assessment / compliance",
+        ],
+        "rule": "exactly one authoritative artefact per role; no second file may claim a listed role (same schema id "
+                "or artefact id); tests/test_a9_23_dependency_rule.py enforces it",
+        "supporting_inputs": {
+            "operating_scenario": {"artefact": "config/" + MISSION_FILE, "sha256": sha256_bytes(files[MISSION_FILE]),
+                                   "role": "operating-scenario choices (constraint-derived inputs referenced, not "
+                                           "restated)"},
+            "hardware_bounds_index": {"artefact": "config/" + HW_FILE, "sha256": sha256_bytes(files[HW_FILE]),
+                                      "role": "index of hardware-limit sources (no copied values)"},
+        },
+        "sources": sources,
+    }
+
+
 # ============================================================================================== README / manifest
-README = """# config/ - authoritative input manifests (A9.22 layer separation, Phase A)
+README = """# config/ - authoritative input manifests (A9.22 layer separation; A9.23 simulation architecture)
 
 Generated by `scripts/config/build_config.py` (check: `--check`). Do not edit by hand: every file is pinned in
 `MANIFEST.json` and `abep_sim/configuration.py` refuses a file whose sha256 differs (fail closed, no fallback).
 
-Owner directive 2026-10-03 (`docs/decisions/OD_2026_10_03_A9_22_*`): four layers
-REQUIREMENTS -> FROZEN ENGINEERING CONFIGURATION -> PHYSICS -> ASSESSMENT. The physics never reads or interprets the
-RFP, the RVM or clause ids. Phase A changed no number; the A9.22 G1 mission-basis change (26,280 h) is the only
-governed numerical change routed through these files (docs/HISTORY.md).
+Owner directives 2026-10-03 (`docs/decisions/OD_2026_10_03_A9_22_*`, `docs/decisions/OD_2026_10_03_A9_23_*`):
+
+    requirements / provenance                    -> frozen engineering constraints   (this builder only)
+    architecture + constraints + design states + physics -> raw results
+    raw results + frozen constraints             -> assessment / compliance
+
+The physics never reads or interprets the RFP, the RVM or clause ids: physics / design seams read the values of
+`constraints/engineering_constraints_v1.json` (and the operating choices of `mission/`), never `requirements/`. The
+requirements snapshot is the provenance layer; the assessment layer reads it only for compliance mapping /
+requirement ids. Phase A changed no number; the A9.22 G1 mission-basis change (26,280 h) is the only governed
+numerical change routed through these files (docs/HISTORY.md).
 
 | file | layer | content |
 |---|---|---|
-| `architecture/hall_icp_neutralizer_v1.json` | configuration | A9.19 / A9.20 / A9.15 flight architecture, status INVESTIGATION_HYPOTHESIS; loaded by `abep_sim/design/a9_19_architecture.py` |
-| `requirements/rfp_constraints_v1.json` | requirements | snapshot generated from the RVM limit fields (row ids, clause ids, RVM + registration sha256); FROZEN / PROVISIONAL derived from `requirement_frozen`; `rfp_constraints_compat` feeds `abep_sim.constants.RFP` |
-| `mission/mission_scenario_v1.json` | configuration | operating-scenario inputs (Xe-sizing thrust target, thrust cap, P_bus cap, mission / firing hours) with provenance to the snapshot; mission basis 26,280 h (A9.22 G1 APPLIED; 26,000 h only as HISTORICAL_CONSTANT_NOT_CONSUMED); read by `abep_sim/operating_inputs.py` |
-| `environment/design_state_set_ref_v1.json` | configuration | reference (never a copy) to the frozen design-state set v2 and its dataset manifest |
+| `architecture/hall_icp_neutralizer_v1.json` | frozen architecture | A9.19 / A9.20 / A9.15 flight architecture, status INVESTIGATION_HYPOTHESIS; loaded by `abep_sim/design/a9_19_architecture.py` |
+| `constraints/engineering_constraints_v1.json` | frozen engineering constraints | every frozen numerical / categorical constraint (altitude band, thrust envelope, P_bus, wet mass, mission life, firing-life assumption, propellant capability, C-DRAG generation limit, IC minima, Hall preference) with units, comparator, FROZEN / PROVISIONAL status and provenance (snapshot sha256 + row / clause ids as provenance only); generated from the requirements snapshot |
+| `requirements/rfp_constraints_v1.json` | requirements (provenance) | snapshot generated from the RVM limit fields (row ids, clause ids, RVM + registration sha256); FROZEN / PROVISIONAL derived from `requirement_frozen`; the only input of the engineering constraints |
+| `mission/mission_scenario_v1.json` | operating scenario | operating-scenario choices (Xe-sizing thrust target, commanded-thrust cap, P_bus throttling cap, mission-integration horizon 26,280 h, A9.22 G1 APPLIED) and references (id + sha256) to the constraints it does not restate (altitude band, wet mass, firing life); read by `abep_sim/operating_inputs.py` |
+| `environment/design_state_set_ref_v1.json` | frozen design states | reference (never a copy) to the frozen design-state set v2 and its dataset manifest |
 | `hardware/hardware_bounds_v1.json` | configuration | index (path + sha256 + locator) of hardware-limit sources; no copied values |
 | `model_set/physics_model_set_v1.json` | physics | physics module sources, frozen data hashes, version labels, HallThruster.jl pin / reaction set |
+| `SOURCES_OF_TRUTH.json` | index | the one authoritative artefact per role (below) |
+
+## Sources of truth (A9.23)
+
+`SOURCES_OF_TRUTH.json` names exactly one authoritative artefact per role; `tests/test_a9_23_dependency_rule.py`
+checks each exists, matches its pin, and that no second file claims the same role.
+
+| role | authoritative artefact | pinned by |
+|---|---|---|
+| frozen architecture | `config/architecture/hall_icp_neutralizer_v1.json` | `config/MANIFEST.json` |
+| frozen engineering constraints | `config/constraints/engineering_constraints_v1.json` | `config/MANIFEST.json` |
+| frozen design-state set (vleo_design_states_v2) | `abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json` via `config/environment/design_state_set_ref_v1.json` | dataset manifest `abep_sim/data/atmosphere_msis21_orbit_v1.json` + the config reference |
+| physics model / version set | `config/model_set/physics_model_set_v1.json` | `config/MANIFEST.json` |
+| raw simulation result | schema `raw_closure_v2` = `schemas/results/raw_closure_v2.json` (producer `abep_sim.system.physics_closure`) | `config/SOURCES_OF_TRUTH.json` |
+| assessment / compliance result | schema `closure_assessment_v1` = `schemas/results/closure_assessment_v1.json` (producer `abep_sim.assessment.assess`) | `config/SOURCES_OF_TRUTH.json` |
+| requirements (provenance layer) | `config/requirements/rfp_constraints_v1.json` | `config/MANIFEST.json` |
+
+The result schemas are generated from the actual outputs by `scripts/config/build_result_schemas.py` (`--check`).
 
 `abep_sim.configuration.physics_configuration()` builds the `SimulationConfiguration` of a raw physics run without
 opening the requirements snapshot; `assessment_configuration()` adds it.
@@ -545,13 +827,16 @@ opening the requirements snapshot; `assessment_configuration()` adds it.
 
 def build_all() -> dict[str, bytes]:
     out: dict[str, bytes] = {}
-    out["architecture/hall_icp_neutralizer_v1.json"] = dumps(build_architecture())
+    out[ARCH_FILE] = dumps(build_architecture())
     snap = build_requirements()
-    out["requirements/rfp_constraints_v1.json"] = snap_b = dumps(snap)
-    out["mission/mission_scenario_v1.json"] = dumps(build_mission(snap, snap_b))
-    out["environment/design_state_set_ref_v1.json"] = dumps(build_design_state_ref())
-    out["hardware/hardware_bounds_v1.json"] = dumps(build_hardware())
-    out["model_set/physics_model_set_v1.json"] = dumps(build_model_set())
+    out[REQ_FILE] = snap_b = dumps(snap)
+    cons = build_constraints(snap, snap_b)
+    out[CONSTRAINTS_FILE] = cons_b = dumps(cons)
+    out[MISSION_FILE] = dumps(build_mission(cons, cons_b))
+    out[DS_REF_FILE] = dumps(build_design_state_ref())
+    out[HW_FILE] = dumps(build_hardware())
+    out[MODEL_SET_FILE] = dumps(build_model_set())
+    out[SOT_FILE] = dumps(build_sources_of_truth(out))
     out["README.md"] = README.encode("utf-8")
     manifest = {"schema": "abep_config_manifest_v1", "id": "config_manifest_v1", "generated_by": GENERATED_BY,
                 "regenerate": REGENERATE,
