@@ -276,11 +276,13 @@ def build_requirements() -> dict:
         "alt_min_km": c(lo, alt),
         "alt_max_km": c(hi, alt),
         "ignition_hours": c(_num(lim(firing)["value"]), firing, label="SUBSYSTEM_FIRING_LIFE_ASSUMPTION"),
-        "mission_hours": c(legacy_mission_h, life, "LEGACY value still used by today's consumers (RFP-P19-01 prints "
-                           "'Approx 26000 hrs'); the authoritative mission-duration basis is "
-                           "mission_duration.authoritative_basis_h (A9.22 G1); a later lane performs the governed "
-                           "migration", label="PENDING_GOVERNED_MIGRATION_A9_22_G1",
-                           authoritative_basis_h=_num(lim(life)["value"])),
+        "mission_hours": c(legacy_mission_h, life, "HISTORICAL value (RFP-P19-01 prints 'Approx 26000 hrs'), carried "
+                           "only so the abep_sim.constants.RFP compatibility record (immutable, sha-pinned) stays "
+                           "field-for-field identical; no consumer computes with it since the A9.22 G1 governed "
+                           "migration was applied. The mission-duration basis is mission_duration.authoritative_basis_h "
+                           "(26,280 h), consumed through config/mission/mission_scenario_v1.json",
+                           label=HISTORICAL_LABEL, authoritative_basis_h=_num(lim(life)["value"]),
+                           g1_status=G1_STATUS),
         "ic_total_min": c(_num(lim(ic)["value"]) / 100, ic, layer_target="ASSESSMENT (A9.22 G6)"),
         "ic_subsystem_min": c(ic_sub, ic, "RFP-P19-05 'Minimum Indigenization Desired' subsystem minima, read from "
                               "the registered clause text (printed as '>'; carried as the legacy minimum)",
@@ -315,8 +317,10 @@ def build_requirements() -> dict:
         "mission_duration": {"authoritative_basis_h": _num(lim(life)["value"]), **ref(life),
                              "provenance": "A9.22 G1: 26,280 h is the authoritative mission-duration basis",
                              "rfp_printed_text": c_life["text"],
-                             "legacy_mission_hours_in_use": legacy_mission_h,
-                             "legacy_label": "PENDING_GOVERNED_MIGRATION_A9_22_G1"},
+                             "g1_status": G1_STATUS,
+                             "historical_mission_hours": {"value_h": legacy_mission_h, "label": HISTORICAL_LABEL,
+                                                          "note": "pre-A9.22 basis; kept in abep_sim.constants.RFP "
+                                                                  "(immutable) and in immutable history only"}},
         "subsystem_firing_life": {"value_h": _num(lim(firing)["value"]), "comparator": lim(firing)["comparator"],
                                   **ref(firing), "label": "SUBSYSTEM_FIRING_LIFE_ASSUMPTION",
                                   "provenance": "A9.22 G1: 15,000 h only as an explicitly labelled subsystem "
@@ -327,13 +331,18 @@ def build_requirements() -> dict:
 
 
 # ============================================================================================== mission scenario
-CONSUMERS_LEGACY_26000 = [
-    "abep_sim/constants.py RFPConstraints.mission_hours (via this config, value 26000)",
-    "abep_sim/life.py LifeInputs.mission_h (literal 26000.0)",
-    "abep_sim/mission5.py run_phase5 / run_mission_generic hours = RFP.mission_hours",
-    "abep_sim/archengine.py firing_hours = RFP.mission_hours",
-    "abep_sim/system.py fluence(atm, RFP.mission_hours); Budgets.duty_cycle",
-    "abep_sim/mission_uq.py (docstring and horizon)",
+# A9.22 G1 (owner decision 2026-10-03): APPLIED. Mission-integrated consumers moved to 26,280 h through the single seam
+# abep_sim/operating_inputs.py (which reads this file): life.LifeInputs.mission_h, mission5 hours, archengine
+# mission-integrated Xe basis, system.py AO fluence / erosion / cathode starts / eng_R_mission (docs/HISTORY.md 'A9.22 G1
+# governed baseline change' and '... (system.py completion)'). constants.RFP.mission_hours = 26000 is immutable
+# (sha-pinned by immutable records) and is consumed by nothing.
+G1_STATUS = "APPLIED"
+HISTORICAL_LABEL = "HISTORICAL_CONSTANT_NOT_CONSUMED"
+G1_MIGRATED_CONSUMERS = [
+    "abep_sim/life.py LifeInputs.mission_h (default operating_inputs.MISSION_HOURS)",
+    "abep_sim/mission5.py run_phase5 / run_mission_generic hours (default operating_inputs.MISSION_HOURS)",
+    "abep_sim/archengine.py mission-integrated Xe basis (default operating_inputs.MISSION_HOURS)",
+    "abep_sim/system.py AO fluence / erosion depths, cathode starts, eng_R_mission (operating_inputs.MISSION_HOURS)",
 ]
 
 
@@ -349,14 +358,14 @@ def build_mission(snapshot: dict, snapshot_bytes: bytes) -> dict:
         "schema": "abep_config_mission_scenario_v1",
         "id": "mission_scenario_v1",
         "layer": "FROZEN_ENGINEERING_CONFIGURATION",
-        "title": "Operating-scenario inputs the physics takes today from the RFP constants (values unchanged)",
+        "title": "Operating-scenario inputs consumed by the physics / design seams (frozen engineering configuration)",
         "generated_by": GENERATED_BY,
         "regenerate": REGENERATE,
         "requirements_snapshot": {"id": snapshot["id"], "path": "config/" + "requirements/rfp_constraints_v1.json",
                                   "sha256": sha256_bytes(snapshot_bytes), "snapshot_status": snapshot["snapshot_status"]},
-        "rule": "Phase A changes no consumer and no number: these are the values physics uses today. Switching a "
-                "consumer to read this file is a later lane; the 26,000 -> 26,280 h change is the governed A9.22 G1 "
-                "migration.",
+        "rule": "abep_sim/operating_inputs.py (physics seam) and abep_sim/design/engineering_constraints.py (design "
+                "seam) read their values from this file through abep_sim.configuration loaders (fail closed). The "
+                "26,000 -> 26,280 h change is the governed A9.22 G1 migration, APPLIED (docs/HISTORY.md).",
         "inputs": {
             "altitude_domain_km": {"value": snapshot["mission_domain"]["altitude_km"], "units": "km",
                                    "source": {"snapshot_field": "mission_domain.altitude_km",
@@ -370,11 +379,18 @@ def build_mission(snapshot: dict, snapshot_bytes: bytes) -> dict:
             "p_bus_throttling_cap_W": {"value": comp["power_max_W"]["value"], "units": "W",
                                        "role": "P_bus throttling cap (today: RFP.power_max_W and literals 1500)",
                                        "source": src("power_max_W")},
-            "mission_hours": {"authoritative_basis_h": snapshot["mission_duration"]["authoritative_basis_h"],
-                              "legacy_mission_hours_in_use": comp["mission_hours"]["value"],
-                              "legacy_label": "PENDING_GOVERNED_MIGRATION_A9_22_G1",
+            "wet_mass_limit_kg": {"value": comp["mass_max_kg"]["value"], "units": "kg",
+                                  "role": "wet-mass limit handed to callers as a design constraint (operating_inputs."
+                                          "MASS_MAX_KG)", "source": src("mass_max_kg")},
+            "mission_hours": {"value": snapshot["mission_duration"]["authoritative_basis_h"],
+                              "authoritative_basis_h": snapshot["mission_duration"]["authoritative_basis_h"],
+                              "label": "MISSION_DURATION_BASIS",
                               "units": "h",
-                              "consumers_not_switched": CONSUMERS_LEGACY_26000,
+                              "g1_status": G1_STATUS,
+                              "g1_migrated_consumers": G1_MIGRATED_CONSUMERS,
+                              "historical_note": {"value_h": comp["mission_hours"]["value"], "label": HISTORICAL_LABEL,
+                                                  "note": "pre-A9.22 basis (abep_sim.constants.RFP.mission_hours, "
+                                                          "immutable); no consumer computes with it"},
                               "source": {"snapshot_field": "mission_duration", "rvm_row": comp["mission_hours"]["rvm_row"]}},
             "firing_hours": {"value": comp["ignition_hours"]["value"], "units": "h",
                              "label": "SUBSYSTEM_FIRING_LIFE_ASSUMPTION", "source": src("ignition_hours")},
@@ -510,13 +526,14 @@ Generated by `scripts/config/build_config.py` (check: `--check`). Do not edit by
 
 Owner directive 2026-10-03 (`docs/decisions/OD_2026_10_03_A9_22_*`): four layers
 REQUIREMENTS -> FROZEN ENGINEERING CONFIGURATION -> PHYSICS -> ASSESSMENT. The physics never reads or interprets the
-RFP, the RVM or clause ids. Phase A changes no number (golden check unchanged).
+RFP, the RVM or clause ids. Phase A changed no number; the A9.22 G1 mission-basis change (26,280 h) is the only
+governed numerical change routed through these files (docs/HISTORY.md).
 
 | file | layer | content |
 |---|---|---|
 | `architecture/hall_icp_neutralizer_v1.json` | configuration | A9.19 / A9.20 / A9.15 flight architecture, status INVESTIGATION_HYPOTHESIS; loaded by `abep_sim/design/a9_19_architecture.py` |
 | `requirements/rfp_constraints_v1.json` | requirements | snapshot generated from the RVM limit fields (row ids, clause ids, RVM + registration sha256); FROZEN / PROVISIONAL derived from `requirement_frozen`; `rfp_constraints_compat` feeds `abep_sim.constants.RFP` |
-| `mission/mission_scenario_v1.json` | configuration | operating-scenario inputs (Xe-sizing thrust target, thrust cap, P_bus cap, mission / firing hours) with provenance to the snapshot; mission basis 26,280 h, `legacy_mission_hours_in_use` 26,000 PENDING_GOVERNED_MIGRATION_A9_22_G1 |
+| `mission/mission_scenario_v1.json` | configuration | operating-scenario inputs (Xe-sizing thrust target, thrust cap, P_bus cap, mission / firing hours) with provenance to the snapshot; mission basis 26,280 h (A9.22 G1 APPLIED; 26,000 h only as HISTORICAL_CONSTANT_NOT_CONSUMED); read by `abep_sim/operating_inputs.py` |
 | `environment/design_state_set_ref_v1.json` | configuration | reference (never a copy) to the frozen design-state set v2 and its dataset manifest |
 | `hardware/hardware_bounds_v1.json` | configuration | index (path + sha256 + locator) of hardware-limit sources; no copied values |
 | `model_set/physics_model_set_v1.json` | physics | physics module sources, frozen data hashes, version labels, HallThruster.jl pin / reaction set |

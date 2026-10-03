@@ -288,6 +288,8 @@ def test_full_engineering_chain_bom_consistent():
     assert abs(sum(c for _, c, _, _, _ in r["eng_bom"]) - r["eng_m_cbe_kg"]) < 0.05   # table rounded to 2 dp
     assert r["eng_m_mev_kg"] > r["eng_m_cbe_kg"] and r["eng_P_bus_peak_W"] >= r["eng_P_bus_steady_W"]
     assert 0 < r["eng_R_26000h"] < 1
+    # A9.22 G1: mission reliability at the 26,280 h basis; R(26,280 h) <= R(26,000 h) (monotone in t)
+    assert r["eng_R_mission_h"] == 26280.0 and 0 < r["eng_R_mission"] <= r["eng_R_26000h"]
 
 
 def test_phase5_environment_models():

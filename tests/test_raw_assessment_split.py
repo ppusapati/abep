@@ -2,7 +2,13 @@
 
 * evaluate() must reproduce, bit for bit (key set, key order, value types, float repr), the records frozen at base
   commit 9eb302c before the split (tests/fixtures/evaluate_identity_base_9eb302c.json, generated once by
-  tests/fixtures/make_evaluate_identity_fixture.py at that commit).
+  tests/fixtures/make_evaluate_identity_fixture.py at that commit), EXCEPT the keys moved or added by the governed
+  A9.22 G1 baseline change (system.py completion; docs/HISTORY.md 'A9.22 G1 governed baseline change (system.py
+  completion)'), which are listed explicitly below (G1_MOVED_KEYS, G1_ADDED_KEYS) and checked against the 26,280 /
+  26,000 h scaling instead. The 9eb302c fixture is kept unedited as the historical no-change proof of Phase B.
+* The same records must reproduce, bit for bit with no exclusion, the post-G1 fixture
+  tests/fixtures/evaluate_identity_g1.json (generated once by tests/fixtures/make_evaluate_identity_fixture_g1.py at
+  the G1 completion commit): the reference for future no-change checks.
 * physics_closure() (schema raw_closure_v2) carries no chk_* / rfp_* / ic_* / hall_preferred / compliance keys.
 * assess() points checks at RVM rows (pointers only); constraints change the assessment, never the raw physics.
 * The sweep's raw + assessment files join back to the legacy sweep table.
@@ -27,6 +33,7 @@ from abep_sim.system import Config, Budgets, evaluate, physics_closure, RAW_CLOS
 ROOT = Path(__file__).resolve().parents[1]
 FIX_DIR = Path(__file__).resolve().parent / "fixtures"
 FIXTURE = FIX_DIR / "evaluate_identity_base_9eb302c.json"
+FIXTURE_G1 = FIX_DIR / "evaluate_identity_g1.json"
 RVM = ROOT / "docs/requirements/rvm_a9/rvm_a9_v1.json"
 
 
@@ -39,6 +46,35 @@ def _gen():
 
 GEN = _gen()
 FIX = json.loads(FIXTURE.read_text())
+FIX_G1 = json.loads(FIXTURE_G1.read_text()) if FIXTURE_G1.is_file() else None
+
+# A9.22 G1 governed baseline change (system.py completion): mission-integrated outputs moved from the 26,000 h to the
+# 26,280 h mission-duration basis (exact factor 26280/26000); new keys carry the basis / mission reliability.
+G1_MOVED_KEYS = ("ao_fluence_mission_m2", "erosion_kapton_um", "erosion_graphite_um", "erosion_silver_um",
+                 "eng_cathode_starts")
+G1_SCALED_KEYS = G1_MOVED_KEYS[:4]                       # linear in the mission hours
+G1_ADDED_KEYS = ("ao_fluence_basis_h", "eng_R_mission", "eng_R_mission_h")
+G1_FACTOR = 26280.0 / 26000.0
+
+
+def _decode(e):
+    return float(e["float"]) if "float" in e else e["int"]
+
+
+def _check_against_9eb302c(row, r: dict):
+    """Bit-for-bit vs the 9eb302c record except the explicitly listed G1 keys (checked by their scaling)."""
+    keys = [k for k in r if k not in G1_ADDED_KEYS]
+    assert keys == row["keys"], "key set / order changed (beyond the listed G1 additions)"
+    assert set(G1_ADDED_KEYS[:1]) <= set(r)
+    old = dict(zip(row["keys"], row["values"]))
+    diff = [(k, GEN.encode(r[k]), old[k]) for k in keys if k not in G1_MOVED_KEYS and GEN.encode(r[k]) != old[k]]
+    assert not diff, f"numerical / type change vs base commit 9eb302c outside the G1 keys: {diff[:5]}"
+    assert r["ao_fluence_basis_h"] == 26280.0
+    for k in G1_SCALED_KEYS:
+        assert r[k] == pytest.approx(_decode(old[k]) * G1_FACTOR, rel=1e-12), k
+    if "eng_cathode_starts" in r:
+        assert old["eng_cathode_starts"] == {"int": int(26000.0 / 24 * 0.5)} and r["eng_cathode_starts"] == int(26280.0 / 24 * 0.5)
+        assert r["eng_R_mission_h"] == 26280.0 and 0 < r["eng_R_mission"] <= r["eng_R_26000h"]
 
 
 def _no_forbidden(raw: dict):
@@ -55,10 +91,20 @@ def test_fixture_provenance():
 def test_evaluate_identical_to_base_commit(i):
     row = FIX["rows"][i]
     r = evaluate(GEN.build(row["config"]))
-    assert list(r) == row["keys"], "key set / order changed"
-    got = [GEN.encode(r[k]) for k in r]
-    diff = [(k, a, b) for k, a, b in zip(row["keys"], got, row["values"]) if a != b]
-    assert not diff, f"numerical / type change vs base commit 9eb302c: {diff[:5]}"
+    _check_against_9eb302c(row, r)
+    if FIX_G1 is not None:                                  # post-G1 reference: no exclusion
+        g = FIX_G1["rows"][i]
+        assert g["config"] == row["config"] and list(r) == g["keys"]
+        got = [GEN.encode(r[k]) for k in r]
+        diff = [(k, a, b) for k, a, b in zip(g["keys"], got, g["values"]) if a != b]
+        assert not diff, f"numerical / type change vs the G1 fixture: {diff[:5]}"
+
+
+def test_g1_fixture_present_and_provenanced():
+    assert FIX_G1 is not None, "tests/fixtures/evaluate_identity_g1.json missing"
+    assert FIX_G1["generator"] == "tests/fixtures/make_evaluate_identity_fixture_g1.py"
+    assert FIX_G1["mission_hours_basis_h"] == 26280.0 and FIX_G1["firing_hours_assumption_h"] == 15000.0
+    assert len(FIX_G1["rows"]) == len(FIX["rows"]) == 122
 
 
 @pytest.mark.parametrize("i", [0, 57, 113, 117, 119, 121])
@@ -72,8 +118,7 @@ def test_physics_closure_is_raw_only(i):
     # raw + assessment == legacy evaluate() (same keys, order, values)
     a = assess(raw, constraints_from_config(cfg), priors_from_config(cfg))
     merged = legacy_merge(raw, a)
-    assert list(merged) == FIX["rows"][i]["keys"]
-    assert [GEN.encode(merged[k]) for k in merged] == FIX["rows"][i]["values"]
+    _check_against_9eb302c(FIX["rows"][i], merged)
     assert set(RAW_ONLY_KEYS) & set(merged) == set()
 
 

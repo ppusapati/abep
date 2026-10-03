@@ -3371,3 +3371,69 @@ downstream RF/ICP electron source / neutralizer; no hollow cathode, no LaB6).
   Hall accelerator / ICP / RF chain / PPU / thermal / Xe load / Xe tank / harness / structure and CBE/MEV totals. No
   number was invented (rule 6) and no propulsion family added (rule 8).
 - golden_v2 regenerated: new case and labels only; every numeric value of the existing cases unchanged.
+
+## 2026-10-03 — A9.22 G1 governed baseline change (system.py completion)
+Owner decision A9.22 G1 (`docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json`,
+G1_MISSION_LIFE = MISSION_DURATION_26280_H), completing the migration logged in the w2core G1 entry above for the last
+consumer, `abep_sim/system.py` (Phase B raw closure). Intentional model-basis change (CLAUDE.md rules 1-2), applied once.
+- **system.py: no `constants.RFP` read remains.** Every engineering input comes from the seam `abep_sim.operating_inputs`.
+  Per site:
+  - AO fluence `fluence(atm, mission_h)` and the three erosion depths (Kapton, graphite, silver): mission-integrated ->
+    **26,280 h** (was `RFP.mission_hours` = 26,000 h). New key `ao_fluence_basis_h` = 26280.0 states the basis.
+  - `LifeInputs(cathode_starts=int(mission_h / 24 * 0.5))`: starts over the mission -> **26,280 h**; `LifeInputs` now also
+    receives `mission_h` / `firing_h` explicitly (same values as its seam defaults, so the life models are unchanged).
+  - Cathode Xe (`xe_cathode_kg`), Xe-for-T_req (`xe_req_kg`) and the O-exposed life margin (`air_hours`): firing-integrated
+    (they flow / wear only while firing) -> **15,000 h kept**, now read as `operating_inputs.FIRING_HOURS` with label
+    `SUBSYSTEM_FIRING_LIFE_ASSUMPTION` (value unchanged; the OD allows a defined firing profile to reduce the Xe
+    integration time, and the labelled firing-life assumption is that profile here).
+  - T_req floor / thrust cap / Xe peak point: `operating_inputs.THRUST_MIN_mN` / `THRUST_MAX_mN` (12 / 25 mN, unchanged).
+  - Reliability: new keys `eng_R_mission` (= `life.reliability()["R_mission"]`, R at 26,280 h) and `eng_R_mission_h`
+    (26280.0). `eng_R_26000h` is KEPT with its honest meaning (R evaluated at the historical 26,000 h horizon,
+    `life.LEGACY_RELIABILITY_HORIZON_H`; value unchanged) for existing readers; it is no longer the mission value.
+    `eng_R_15000h` now reads `R_firing` (same number). `uq6.monte_carlo6` reports `eng_R_mission` alongside
+    `eng_R_26000h`; `tests/test_sim.py` checks `eng_R_mission`.
+- **Moved outputs** (system.evaluate / physics_closure; exact factor 26280/26000 = 1.0107692 on the four linear ones;
+  every other output of the 122 identity configurations bit-identical):
+
+  | output | config | before (26,000 h) | after (26,280 h) |
+  |---|---|---|---|
+  | ao_fluence_mission_m2 | hall_1stage 180 km low (identity row 0) | 3.62306474382429e+27 | 3.662082364142398e+27 |
+  | erosion_kapton_um | row 0 | 10869.194231472871 | 10986.247092427195 |
+  | erosion_graphite_um | row 0 | 4347.677692589149 | 4394.498836970878 |
+  | erosion_silver_um | row 0 | 38042.17981015505 | 38451.86482349518 |
+  | ao_fluence_mission_m2 | hall_1stage 200 km mean, engineering path (row 119) | 3.5134220093636966e+27 | 3.5512588617722285e+27 |
+  | eng_cathode_starts | rows 119-121 (engineering path) | 541 | 547 |
+  | eng_R_mission (new) | row 119 / 120 / 121 | — | 0.3442111919970725 / 2.244652790675135e-12 / 1.4189005597000432e-06 |
+  | eng_R_26000h (unchanged, R at 26,000 h) | row 119 / 120 / 121 | 0.35600820959019297 / 5.242294465093805e-12 / 2.1720953464819916e-06 | same |
+  | ao_fluence_basis_h, eng_R_mission_h (new) | all / engineering rows | — | 26280.0 |
+
+  Not moved: xe_* masses, m_* / eng_m_* masses, life_limit_h / life_margin, eng_R_15000h, eng_marginal_items (SPF
+  threshold already used `LifeInputs.mission_h` = 26,280 h since the w2core G1 change), all assessment flags.
+- **golden: `python -m abep_sim.golden check` -> OK without regeneration**; golden_v2 does not carry any system.evaluate
+  output that moved, so it was NOT regenerated in this step.
+- **Identity fixtures.** `tests/fixtures/evaluate_identity_base_9eb302c.json` is unedited and stays the historical
+  no-change proof of Phase B: `tests/test_raw_assessment_split.py` compares against it bit for bit EXCEPT the explicitly
+  listed G1 keys (`G1_MOVED_KEYS` = ao_fluence_mission_m2, erosion_kapton_um, erosion_graphite_um, erosion_silver_um,
+  eng_cathode_starts; `G1_ADDED_KEYS` = ao_fluence_basis_h, eng_R_mission, eng_R_mission_h), which are checked instead
+  against the exact 26280/26000 scaling and the 541 -> 547 start count. A second fixture
+  `tests/fixtures/evaluate_identity_g1.json` (generator `tests/fixtures/make_evaluate_identity_fixture_g1.py`, same 122
+  configurations, generated once at the G1 completion commit recorded in its `base_commit`) is compared with no
+  exclusion and is the reference for future no-change checks.
+- **Seams re-pointed to the frozen configuration (values identical).** `abep_sim/operating_inputs.py` reads
+  `config/mission/mission_scenario_v1.json` through `abep_sim.configuration.load_operating_inputs` (manifest-checked, fail
+  closed; never opens the requirements snapshot); `abep_sim/design/engineering_constraints.py` reads
+  `config/requirements/rfp_constraints_v1.json` (+ the mission domain) through `load_engineering_constraints`. Neither
+  imports `abep_sim.constants` any more. `scripts/config/build_config.py` records G1 as `APPLIED`: mission scenario
+  `mission_hours.value` = 26280 (label `MISSION_DURATION_BASIS`, `g1_migrated_consumers`), `legacy_mission_hours_in_use`
+  removed, the 26,000 h kept only as `historical_note` labelled `HISTORICAL_CONSTANT_NOT_CONSUMED` (same label on the
+  snapshot's `rfp_constraints_compat.mission_hours`, which must stay 26000 to match the immutable, sha-pinned
+  `abep_sim/constants.py`, unedited); new mission-scenario input `wet_mass_limit_kg` (40, from the snapshot) feeds
+  `operating_inputs.MASS_MAX_KG`. config/ rebuilt (`--check` OK).
+- **Layer separation test** `tests/test_layer_separation_physics.py`: AST import graph (no `abep_sim.assessment` import
+  from physics modules outside a frozen, shrink-only allowlist of 13 compatibility / orchestration call sites), no read of
+  docs/requirements / docs/decisions (labels allowed), no clause / RVM id used for computation, and a runtime check that
+  `system.physics_closure` runs with config/requirements hidden, abep_sim.assessment unimportable and an audit hook on
+  open(). To make the runtime check possible `abep_sim/__init__.py` resolves `run_grid` / `summarize` lazily (PEP 562;
+  public names unchanged), so importing the package no longer imports the assessment layer.
+- Decision dossier re-pinned (`scripts/architecture/build_decision_dossier.py`; arch_compare.py sha and the bus boundary
+  v2 schema now present in schemas/interfaces).
