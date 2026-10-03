@@ -3199,3 +3199,19 @@ Owner instruction 2026-10-03: rapid delivery; review, verification and fixes run
   as history next to "RFP now". HISTORY counts above corrected in place (12 pending F9 records, not 13 / 10).
 - No owner decision, frozen dataset, golden, physics module or status changed. Checks: 3834 passed / 5 skipped /
   1 xfailed (4 new regression tests), golden OK, ci_checks 11/11, every rebuilt builder `--check` current.
+
+## 2026-10-03 — RFQ v3: A9.21 AL-08 quotation split + per-package dispatch readiness
+
+- **AL-08 split (lane c6a1194).** RFQ v3 revised in place (v1/v2 stay immutable): new requirement RFQ3-GAS-N05 — every Xe
+  storage/flow supplier states mass and attributes separately for tank (GAS-L08), regulator/PMU (GAS-L09), valves (GAS-L11;
+  FCU GAS-L10 as a sub-row, recorder flag RF3-FLAG-06), plumbing (new GAS-L18), mounting/thermal (new GAS-L19; both LATER,
+  quantity proposed by the supplier) and any C1-specific branch (GAS-L05/L06/L15/O03; ground-only, quoted and booked
+  separately, never inside flight AL-08). 6.0528 kg labelled PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (checked against
+  mass/power v3 at build time); the 1.5 kg row-54 allocation kept only as history. `al08_quote_split_status` never computes
+  or freezes an AL-08 value.
+- **Dispatch readiness (A9.21 item 15).** Per package: READY_FOR_OWNER_DISPATCH for RFQ3-RF, -GAS, -VAC, -HALLEL, -MECH,
+  -RFMET (NOW lines); RFQ3-THRUST NOT_READY_BLOCKING_TBD (TH-L09 quantity depends on the dispatched P1 line set);
+  RFQ3-H1FAB NOT_READY_AWAITING_CONTROLLED_H1_DRAWINGS. `repository_dispatches = false`, `purchase_authorized = false`
+  everywhere; the open-item classification is a recorder rule for owner review (RF3-FLAG-07).
+- Matrix regenerated (record locations for A9.14 MQ-05 moved inside the RFQ). Affected suites 121 passed; RFQ v3 / RVM /
+  state v5 / M16 v5 / H-1 / F9 / matrix --check current.

@@ -4417,9 +4417,9 @@
      "status": "APPLIED",
      "record_locations": [
       "/packages/1/line_items/9/quote_sheet/spec/4/value/note",
-      "/packages/1/requirements/27/value/note",
-      "/packages/1/requirements/27/sources/3/id",
-      "/packages/1/requirements/27/change_v3/why"
+      "/packages/1/line_items/9/quote_sheet/spec/4/value/history/superseded_by",
+      "/packages/1/line_items/20/basis",
+      "/packages/1/line_items/20/change_v3/decisions/1/id"
      ]
     },
     {
