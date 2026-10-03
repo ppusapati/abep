@@ -1,4 +1,14 @@
-"""Close one ABEP configuration against every RFP constraint."""
+"""Close one ABEP configuration: raw physics / design closure, then (separately) its assessment.
+
+Owner decision A9.22 items 6-7 (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json):
+  * ``physics_closure(cfg)`` returns raw physical / design quantities and model labels only (schema
+    ``raw_closure_v2``, an explicit increment over the pre-split merged dict, implicitly v1). It carries no
+    requirement check, IC metric, architecture-preference flag or RFP / compliance classification.
+  * ``abep_sim.assessment.assess(raw, constraints, priors)`` compares a raw closure with the constraints.
+  * ``evaluate(cfg)`` keeps returning the pre-split merged dict (same keys, order and values) for existing tools.
+RFP-derived physics inputs (T_req floor, mission / ignition hours) are still read from ``constants.RFP`` here; a
+later lane replaces them with frozen configuration values.
+"""
 from __future__ import annotations
 import math
 from dataclasses import dataclass, asdict
@@ -32,12 +42,13 @@ class Budgets:
     mga_new_design: float = 0.30         # mass growth allowance, new/low-TRL items (intake, compressor, stage1)
     mga_modified: float = 0.15           # modified heritage (thruster, PPU)
     mga_existing: float = 0.05           # existing (tanks, structure)
+    # Assessment-only fields (A9.22 item 6): kept on Budgets for compatibility (sweep YAML `budgets`, UQ priors), but
+    # read only by abep_sim.assessment, never by physics_closure.
     m_cbe_target_kg: float = 32.0        # internal target for current best estimate
     ic_intake: float = 0.90
     ic_compressor: float = 0.65
     ic_pse: float = 0.80
     ic_structure: float = 0.95
-    duty_cycle: float = RFP.ignition_hours / RFP.mission_hours   # ~0.58
     xe_aug_hours: float = 1500.0         # hours of Xe-augmented (peak) operation budgeted
 
 
@@ -84,7 +95,12 @@ class Config:
             self.budgets.xe_aug_hours = self.xe_aug_hours
 
 
-def evaluate(cfg: Config) -> dict:
+RAW_CLOSURE_SCHEMA_VERSION = "raw_closure_v2"
+
+
+def physics_closure(cfg: Config) -> dict:
+    """Raw physics / design closure of one configuration (schema raw_closure_v2): physical and design quantities and
+    model labels only. Requirement checks, IC metrics, preference flags and compliance classes: abep_sim.assessment."""
     card = CARDS[cfg.architecture]
     b = cfg.budgets
     atm = atmosphere(cfg.alt_km, cfg.solar)
@@ -272,7 +288,7 @@ def evaluate(cfg: Config) -> dict:
         return bus
     P_air = total_power(air)
     P_peak = total_power(peak)
-    P_cap = RFP.power_max_W * (1 - b.p_margin_frac)
+    # (the 1.5 kW x (1 - p_margin_frac) power cap is an assessment constraint: abep_sim.assessment)
 
     # Xe mass over mission
     xe_cath_kg = card.cathode.xe_flow_mgps * 1e-6 * RFP.ignition_hours * 3600
@@ -296,14 +312,6 @@ def evaluate(cfg: Config) -> dict:
              + b.mga_modified * (card.mass_kg + m_ppu) + b.mga_existing * (m_tank + m_struct))
     m_mev = m_cbe + m_mga
 
-    # Indigenous content (mass-weighted, dry)
-    ic_thr = card.ic_thruster
-    if card.stage1:
-        ic_thr = (card.mass_kg * card.ic_thruster + card.stage1.mass_kg * card.stage1.ic) / m_thr
-    ic_num = (m_thr * ic_thr + m_intake * b.ic_intake + m_comp * b.ic_compressor
-              + m_ppu * b.ic_pse + m_struct * b.ic_structure)
-    ic_total = ic_num / (m_thr + m_intake + m_comp + m_ppu + m_struct)
-
     # Life: O-exposed component lives scaled by air-operation hours; cathode as separate item
     air_hours = RFP.ignition_hours
     life_items = dict(card.o_life_h)
@@ -313,29 +321,6 @@ def evaluate(cfg: Config) -> dict:
     life_margin = life_h / air_hours
 
     T_over_D = T_air / drag if drag > 0 else float("inf")
-
-
-    checks = {
-        "thrust_air_ge_req": T_air >= T_req,
-        "thrust_peak_25mN": peak["T_N"] >= RFP.thrust_max_mN * 1e-3 * 0.999,
-        "power_air": P_air <= P_cap,
-        "power_peak": P_peak <= P_cap,
-        "mass": m_total <= RFP.mass_max_kg,
-        "life": life_margin >= 1.0,
-        "ic_total": ic_total >= RFP.ic_total_min,
-        "ic_thruster": ic_thr >= RFP.ic_subsystem_min["thruster"],
-        "compressor_feasible": cmp_["comp_feasible"],
-        "hall_preferred": card.hall,
-        "net_drag_comp_air": T_over_D >= 1.0,
-    }
-    hard = ["thrust_air_ge_req", "thrust_peak_25mN", "power_air", "power_peak", "mass", "life",
-            "ic_total", "ic_thruster", "compressor_feasible"]
-    rfp_compliant = all(checks[k] for k in hard)          # meets every stated RFP limit
-    abep_closed = rfp_compliant and checks["net_drag_comp_air"]   # AND physically does the job: T > D on air
-    technical = [k for k in hard if k not in ("ic_total", "ic_thruster")]
-    technical_compliant = all(checks[k] for k in technical)        # physics/engineering only, no IC
-    technical_closed = technical_compliant and checks["net_drag_comp_air"]
-    feasible = rfp_compliant
 
     eng = {}
     if cfg.engineering_physics:
@@ -404,16 +389,11 @@ def evaluate(cfg: Config) -> dict:
         P_air = P_bus_steady
         P_peak = P_bus_peak
         m_cbe = bom["cbe_kg"]; m_mev = bom["mev_kg"]; m_mga = bom["mga_kg"]; m_total = m_mev
-        checks["power_air"] = P_air <= P_cap; checks["power_peak"] = P_peak <= P_cap
-        checks["mass"] = m_mev <= RFP.mass_max_kg
-        checks["life"] = all(x["ok"] for x in (L_hall, L_bl, L_mag, L_cat, L_cmp)) and L_int["coating_ok"]
-        checks["thermal"] = rad["feasible"]
-        hard.append("thermal")
-        rfp_compliant = all(checks[k] for k in hard)
-        abep_closed = rfp_compliant and checks["net_drag_comp_air"]
-        technical_compliant = all(checks[k] for k in technical + ["thermal"])
-        technical_closed = technical_compliant and checks["net_drag_comp_air"]
-        feasible = rfp_compliant
+        # Model-emitted pass flags (abep_sim.life against its LifeInputs hours; abep_sim.thermal radiator-area
+        # feasibility). Raw-only inputs to the assessment layer; not part of the legacy evaluate() dict.
+        eng_life_model_ok_flags = {"hall_channel": L_hall["ok"], "blade_coating": L_bl["ok"], "magnet": L_mag["ok"],
+                                   "cathode": L_cat["ok"], "compressor": L_cmp["ok"], "intake_coating": L_int["coating_ok"]}
+        eng_thermal_radiator_feasible = rad["feasible"]
         eng = {"eng_P_bus_steady_W": P_bus_steady, "eng_P_bus_startup_W": P_bus_start, "eng_P_bus_peak_W": P_bus_peak,
                "eng_ppu_eta": modes["steady"]["eta_overall"], "eng_ppu_loss_W": modes["steady"]["P_loss_W"],
                "eng_ppu_mass_kg": pm["m_ppu_total_kg"], "eng_T_ppu_K": T_ppu, "eng_T_thruster_K": rad["hot"]["T"]["thruster"],
@@ -461,13 +441,20 @@ def evaluate(cfg: Config) -> dict:
         "m_thruster_kg": m_thr, "m_ppu_kg": m_ppu, "m_intake_kg": m_intake, "m_comp_kg": m_comp,
         "m_xe_sys_kg": m_xe_sys, "m_struct_kg": m_struct, "m_total_kg": m_total,
         "m_cbe_kg": m_cbe, "m_mga_kg": m_mga, "m_mev_kg": m_mev,
-        "chk_mass_mev": m_mev <= RFP.mass_max_kg, "chk_mass_cbe_target": m_cbe <= b.m_cbe_target_kg,
-        "ic_thruster": ic_thr, "ic_total": ic_total,
         "life_limit_h": life_h, "life_margin": life_margin,
         "life_limiting": min(life_items, key=life_items.get) if life_items else "none",
         "comp_ratio_effective": cmp_["ratio_effective"],
-        "feasible": feasible, "rfp_compliant": rfp_compliant, "abep_closed": abep_closed,
-        "technical_compliant": technical_compliant, "technical_closed": technical_closed,
         "engineering_model": "physics" if cfg.engineering_physics else "parametric", **eng,
-        **{f"chk_{k}": v for k, v in checks.items()},
+        # raw-only (abep_sim.assessment.RAW_ONLY_KEYS): schema label, exact SI thrusts, model feasibility flags
+        "raw_schema_version": RAW_CLOSURE_SCHEMA_VERSION,
+        "T_air_N": T_air, "T_req_N": T_req, "T_peak_N": peak["T_N"], "comp_feasible": cmp_["comp_feasible"],
+        **({"eng_life_model_ok_flags": eng_life_model_ok_flags,
+            "eng_thermal_radiator_feasible": eng_thermal_radiator_feasible} if cfg.engineering_physics else {}),
     }
+
+
+def evaluate(cfg: Config) -> dict:
+    """Pre-split merged record (raw closure + assessment), same keys / order / values as before A9.22 Phase B."""
+    from .assessment import assess, constraints_from_config, priors_from_config, legacy_merge
+    raw = physics_closure(cfg)
+    return legacy_merge(raw, assess(raw, constraints_from_config(cfg), priors_from_config(cfg)))
