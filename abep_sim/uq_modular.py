@@ -88,3 +88,13 @@ def sample_closure(a, x, area, p_level, A_array, P_cap, xs: dict, alt=200.0, eta
                     [T0 / D, T_lo / (D * r_lo), T_hi / (D * r_hi)]))] if T0 > 0 else "no_ignition"}
     finally:
         PC.RATES.clear(); PC.RATES.update(rates0); PC.EPS_C.clear(); PC.EPS_C.update(eps0); HALL_OVERRIDES.clear()
+
+
+def evaluate_sample(a, x, area, p_level, A_array, P_cap, xs: dict, alt=200.0, eta_ppu=0.9, P_mag=25.0,
+                    firing_hours: float | None = None) -> dict:
+    """COMPATIBILITY ENTRY (A9.22): the UQ sample record with its evaluation-only success flag is built by the
+    programme layer, abep_sim.programme.uq_modular.evaluate_sample (identical output). Kept because
+    schemas/ledgers/subsystem_ledger_v1.json names abep_sim/uq_modular.py:evaluate_sample as an uncertainty origin;
+    in-repo code imports the programme layer."""
+    from .programme.uq_modular import evaluate_sample as _assessed_sample
+    return _assessed_sample(a, x, area, p_level, A_array, P_cap, xs, alt, eta_ppu, P_mag, firing_hours=firing_hours)

@@ -62,6 +62,9 @@ PROGRAMME_IMPORT_ALLOWLIST = {
     ("abep_sim/__init__.py", "__getattr__", "abep_sim.programme"):
         "lazy package-level public names abep_sim.run_grid / summarize (sweep, unchanged public API)",
     ("abep_sim/__main__.py", "<module>", "abep_sim.programme.sweep"): "CLI `python -m abep_sim` = the sweep CLI",
+    ("abep_sim/uq_modular.py", "evaluate_sample", "abep_sim.programme.uq_modular"):
+        "compatibility entry delegating to programme.uq_modular.evaluate_sample: schemas/ledgers/subsystem_ledger_v1.json "
+        "names abep_sim/uq_modular.py:evaluate_sample as an uncertainty origin (tests/test_ledger_schemas.py resolves it)",
     ("abep_sim/arch_compare.py", "main", "abep_sim.programme.arch_compare"):
         "documented CLI `python -m abep_sim.arch_compare run` (HARNESS.md) writes the full comparison record",
     ("abep_sim/sizing.py", "<module>", "abep_sim.programme.closure"):

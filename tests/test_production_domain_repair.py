@@ -37,7 +37,9 @@ def test_gaspath_above_0p1_pa_is_not_evaluated_out_of_domain(p_level):
     assert r["gaspath_domain_status"] == "NOT_EVALUATED_OUT_OF_DOMAIN" and r["gaspath_in_domain"] is False
     assert "free_molecular_pressure_limit_0.1Pa" in r["gaspath_out_of_domain"]
     assert r["gaspath_p_domain_max_Pa"] > 0.1 and r["gaspath_p_domain_limit_Pa"] == 0.1
-    assert r["chk_compressor_feasible"] is False or r.get("chk_compressor_feasible") in (False, None)
+    # _gas_record is the raw closure since the A9.22 programme split: the raw compressor feasibility flag (the legacy
+    # merged record's chk_compressor_feasible was exactly this value)
+    assert not r["comp_feasible"]
     gas = AE.make_gas_fn()(0.7, p_level)
     assert gas["gaspath_domain_status"] == "NOT_EVALUATED_OUT_OF_DOMAIN"
     assert AE.gas_evidence_class(gas)[0] == "OUT_OF_MODEL_DOMAIN"
