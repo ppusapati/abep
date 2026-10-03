@@ -9,6 +9,8 @@ import pytest
 
 from abep_sim import bus_boundary_a9_v2 as bb
 from abep_sim.design import a9_19_architecture as a919
+from abep_sim.assessment import design_gates as dg  # A9.22: assessment layer
+from abep_sim.programme import design_synthesis as ds  # A9.22: programme layer (F7/F8 runners)
 from abep_sim.design import architecture_optimizer as ao
 from abep_sim.design import upstream_a9_13 as u13
 
@@ -52,7 +54,7 @@ def test_hall_c1_reference_refused_as_flight_configuration():
     with pytest.raises(a919.ArchitectureRuleError, match="not a flight configuration"):
         a919.require_flight_configuration("hall_c1_reference")
     with pytest.raises(ao.OptimizerError, match="not a flight configuration"):
-        ao.evaluate_system(None, "hall_c1_reference")
+        ds.evaluate_system(None, "hall_c1_reference")
     with pytest.raises(a919.ArchitectureRuleError):
         ao.flight_configuration_elements("hall_c1_reference")
     gr = a919.ground_reference("hall_c1_reference", "C1-vs-ICP bench control")
@@ -66,7 +68,7 @@ def test_hall_c1_reference_refused_as_flight_configuration():
 def test_no_hollow_cathode_element_in_flight_configuration():
     els = ao.flight_configuration_elements("hall_icp_neutralizer")
     assert a919.refuse_hollow_cathode_elements("hall_icp_neutralizer", els)["hollow_cathode_elements"] == []
-    ev = ao.evaluate_system(None, "hall_icp_neutralizer")
+    ev = ds.evaluate_system(None, "hall_icp_neutralizer")
     rec = a919.refuse_hollow_cathode_elements("hall_icp_neutralizer", els)
     assert ev["hollow_cathode_check"] == rec["check"]
     assert ev["hollow_cathode_check"] == (a919.CHECK_FLAGGED if ev["c1_provisions_flagged"] else a919.CHECK_CLEAN)
@@ -84,7 +86,7 @@ def test_no_hollow_cathode_element_in_flight_configuration():
 
 
 def test_hc10_separate_paths_xe_role_contingency_emergency():
-    ok = u13.propellant_paths_check(ao.MODELLED_PROPELLANT_PATHS)
+    ok = dg.propellant_paths_check(ao.MODELLED_PROPELLANT_PATHS)
     assert ok["path_roles"] == {"air": "PRIMARY", "xe": "CONTINGENCY_EMERGENCY"}
     assert ok["supply_modes"] == {"air": "AIR_PRIMARY", "xe": "XE_CONTINGENCY"}
     assert ok["status"] == u13.C_NOT_EVALUATED                     # capability still NOT_EVALUATED, never PASS
@@ -94,8 +96,8 @@ def test_hc10_separate_paths_xe_role_contingency_emergency():
                 {"air": list(u13.AIR_PATH), "xe": ["xe_tank", "c1_feed", "valve"]},
                 {"air": list(u13.AIR_PATH), "xe": ["xe_tank", "atmospheric_gas_chamber"]}):
         with pytest.raises(u13.A913RuleError):
-            u13.propellant_paths_check(bad)
-    hc10 = [c for c in ao.evaluate_constraints({}) if c["id"] == "HC-10"][0]
+            dg.propellant_paths_check(bad)
+    hc10 = [c for c in dg.evaluate_constraints({}) if c["id"] == "HC-10"][0]
     assert hc10["status"] == ao.C_NOT_EVALUATED
 
 
@@ -198,6 +200,6 @@ def test_c1_absence_statements_not_refused_but_booked_c1_still_refused():
     forged = {"id": "X", "name": "C1 heater", "kind": "mass_line", "booking": a919.C1_DECLARED_ABSENT}
     with pytest.raises(a919.ArchitectureRuleError, match="hollow-cathode"):
         a919.refuse_hollow_cathode_elements("hall_icp_neutralizer", [forged])
-    ev = ao.evaluate_system(None, "hall_icp_neutralizer")
+    ev = ds.evaluate_system(None, "hall_icp_neutralizer")
     els = ao.flight_configuration_elements("hall_icp_neutralizer")
     assert ev["c1_absence_statements"] == [e["id"] for e in els if e.get("booking") == a919.C1_DECLARED_ABSENT]

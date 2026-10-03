@@ -635,9 +635,10 @@ def close_architecture(a: dict, gas_fn, sc, dc: DesignConstraints | None = None,
     strict=True re-raises them. firing_hours: hours over which the neutralizer Xe flow is integrated for xe_kg
     (caller-supplied; default abep_sim.operating_inputs.MISSION_HOURS, the mission-integrated Xe basis: A9.22 G1,
     26,280 h; archengine defines no separate duty/firing profile that would legitimately reduce the firing time, so the
-    15,000 h subsystem firing-life assumption is NOT used here)."""
+    15,000 h subsystem firing-life assumption is NOT used here). The evaluation-only closure constraint flags
+    (thrust_min_ok / thrust_max_ok / mass_ok / life_ok / all_constraints_ok) are an assessment and are not part of this
+    design record: the programme layer abep_sim.programme.closure.close_architecture adds them (A9.22)."""
     from .mission_env import spacecraft_drag
-    from .assessment.arch_constraints import closure_constraint_flags
     if firing_hours is None:
         firing_hours = OI.MISSION_HOURS
     from .atmosphere import atmosphere
@@ -889,8 +890,7 @@ def close_architecture(a: dict, gas_fn, sc, dc: DesignConstraints | None = None,
     if ev_cls != "OK":
         out["status"] = ev_cls
         out["feasible"] = False
-    # evaluation-only flags against the caller's DesignConstraints: assessment layer (A9.22)
-    out.update(closure_constraint_flags(T * 1e3, bom["mev_kg"], best["life_sys"], dc))
+    # evaluation-only flags against the caller's DesignConstraints: added here by abep_sim.programme.closure (A9.22)
     # degeneracy of the optimum: candidates within 1 % of the best objective (a small input change can flip the argmax)
     Js = [c["J"] for c in cands if c.get("closes", True) and "J" in c]
     if Js:
@@ -990,10 +990,11 @@ def run_all(gas_fn, sc, dc: DesignConstraints | None = None, k_margin: float = 1
 def gas_path_state(area_m2=0.7, alpha=0.8, L_over_d=5, alt=200, solar="mean", blade_coating_um=50.0, p_margin=3.0,
                    p_target: float | None = None) -> dict:
     """Run Phases 1-2 (+ intake/blade life) once; the spacecraft is passed separately to run_all (item 26)."""
-    from .system import Config, evaluate
+    from .system import Config, physics_closure
     from .intake import IntakeParams, CompressorParams
     from .life import LifeInputs, blade_life, intake_life
-    r = evaluate(Config("hall_1stage", alt, solar, IntakeParams(area_m2=area_m2, accommodation=alpha, use_tpmc=True, L_over_d=L_over_d),
+    # raw physics closure (A9.22): every key read below is a raw key, identical in value to the legacy merged record
+    r = physics_closure(Config("hall_1stage", alt, solar, IntakeParams(area_m2=area_m2, accommodation=alpha, use_tpmc=True, L_over_d=L_over_d),
                         CompressorParams(ratio=2000), vd_V=275, gaspath_physics=True, p_margin_over_pmin=p_margin, p_target_Pa=p_target))
     li = LifeInputs(blade_coating_um=blade_coating_um, blade_tip_mps=r.get("comp_tip_mps", 400.0), ao_flux_ram_m2_s=r["ao_flux_m2s"], intake_alpha0=alpha)
     return {"mdot_air": r["mdot_air_mgps"] * 1e-6, "p_in": r["p_in_Pa"], "fO": r["fO_inlet"], "fN2": 1 - r["fO_inlet"] - r["fO2_inlet"],

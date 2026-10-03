@@ -10,6 +10,9 @@ Outputs (owner decision A9.22 items 6-7, raw physics separated from assessment):
                                 records) with one extra trailing column ``evidence_status``; row i of every file is
                                 row_id i;
   * ``assessment_requirement_pointers.json`` -- check -> RVM row ids (pointers only, not verification).
+
+Programme layer (A9.22): moved from abep_sim/sweep.py unchanged in behaviour (it combines physics and assessment);
+CLI ``abep-sim`` / ``python -m abep_sim``.
 """
 from __future__ import annotations
 import itertools
@@ -17,12 +20,13 @@ import sys
 from pathlib import Path
 import pandas as pd
 import yaml
-from .intake import IntakeParams, CompressorParams
-from .system import Config, Budgets, evaluate, physics_closure
-from .assessment import assess, constraints_from_config, priors_from_config, legacy_merge, assessment_columns
+from ..intake import IntakeParams, CompressorParams
+from ..system import Config, Budgets, physics_closure
+from ..assessment import assess, constraints_from_config, priors_from_config, legacy_merge, assessment_columns
+from .closure import evaluate
 
 EVIDENCE_STATUS = "PARAMETRIC_SCREENING_NOT_EVIDENCE"
-from .thruster import CARDS
+from ..thruster import CARDS
 
 DEFAULT_GRID = {
     "architectures": list(CARDS),
@@ -175,8 +179,8 @@ def main(argv=None):
     assessed.to_csv(out / "assessment_sweep.csv", index=False)
     df.assign(evidence_status=EVIDENCE_STATUS).to_csv(out / "sweep.csv", index=False)
     import json
-    from .assessment import REQUIREMENT_POINTERS
-    from .assessment.closure_checks import RVM_SOURCE
+    from ..assessment import REQUIREMENT_POINTERS
+    from ..assessment.closure_checks import RVM_SOURCE
     (out / "assessment_requirement_pointers.json").write_text(json.dumps(
         {"source": RVM_SOURCE, "note": "pointers only; a screening check is not verification evidence",
          "pointers": {k: list(v) for k, v in REQUIREMENT_POINTERS.items()}}, indent=1) + "\n")

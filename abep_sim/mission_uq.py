@@ -11,7 +11,8 @@ import numpy as np
 import pandas as pd
 from .uncertainty import DEFAULT_PRIORS, _apply, _relevant, _sample_tri, _JOINT
 from .intake import IntakeParams, CompressorParams
-from .system import Config, Budgets, evaluate
+from .system import Config, Budgets
+from .programme.closure import evaluate      # legacy merged record (uses its assessment flags; A9.22 programme layer)
 from .transient import MissionParams, run_mission
 from .thruster import CARDS
 from .aochem import AOParams

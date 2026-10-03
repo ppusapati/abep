@@ -375,7 +375,8 @@ def test_archengine_v2_interfaces_and_cathode_closure():
 
 @_SUPERSEDED
 def test_archengine_v2_nested_optimisation_hall():
-    from abep_sim.archengine import enumerate_architectures, close_architecture, make_gas_fn, DesignConstraints, arch_name
+    from abep_sim.archengine import enumerate_architectures, make_gas_fn, DesignConstraints, arch_name
+    from abep_sim.programme.closure import close_architecture       # A9.22: record incl. the closure constraint flags
     from abep_sim.mission_env import Spacecraft
     gf = make_gas_fn()
     a = [x for x in enumerate_architectures() if arch_name(x) == "hall_internal+hall+lab6_xe"][0]
@@ -467,7 +468,7 @@ def test_v131_plasma_source_and_interstage_conserve_mass():
 
 
 def test_v131_modular_uq_runs():
-    from abep_sim.uq_modular import run_uq
+    from abep_sim.programme.uq_modular import run_uq
     df, s = run_uq("hall_internal+hall+lab6_xe", {"Vd": 300.0, "L_ch": 0.20}, 1.0, 0.05, 6.0, 1500.0, n=6)
     assert len(df) == 6 and 0 <= s["P_close"] <= 1 and "alpha_anom" in df
 

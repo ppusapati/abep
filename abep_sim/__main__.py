@@ -1,2 +1,2 @@
-from .sweep import main
+from .programme.sweep import main
 raise SystemExit(main())

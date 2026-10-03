@@ -11,7 +11,8 @@ from .constants import K_B
 from .atmosphere import atmosphere
 from .intake import IntakeParams, CompressorParams, collection, passive_compression
 from .thruster import CARDS
-from .system import Config, evaluate
+from .system import Config
+from .programme.closure import evaluate      # legacy merged record (uses its assessment flags; A9.22 programme layer)
 
 
 def _area_for_thrust(arch, alt, solar, T_target_N, accommodation, cr_total, vd, area_ratio):

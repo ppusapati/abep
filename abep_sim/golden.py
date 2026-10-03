@@ -188,10 +188,11 @@ ROTOR_LABEL = ("comp_rotor_qualification = NOT_EVALUATED_MATERIAL_BASIS, comp_si
 
 
 def _gas_record(area: float, p_level: float) -> dict:
-    """system.evaluate record of the gas state that archengine.make_gas_fn()(area, p_level) wraps (same Config)."""
-    from .system import Config, evaluate
+    """Raw closure (system.physics_closure) of the gas state that archengine.make_gas_fn()(area, p_level) wraps (same
+    Config). A9.22: only raw keys are read from it (identical values to the legacy merged system.evaluate record)."""
+    from .system import Config, physics_closure
     from .intake import IntakeParams, CompressorParams
-    return evaluate(Config("hall_1stage", 200, "mean", IntakeParams(area_m2=area, accommodation=0.8, use_tpmc=True, L_over_d=5),
+    return physics_closure(Config("hall_1stage", 200, "mean", IntakeParams(area_m2=area, accommodation=0.8, use_tpmc=True, L_over_d=5),
                            CompressorParams(ratio=2000), vd_V=275, gaspath_physics=True, p_margin_over_pmin=3.0,
                            p_target_Pa=float(p_level)))
 
@@ -460,17 +461,19 @@ def _v1_values_and_refusal() -> tuple:
     """Recompute the golden_v1 gas-path-dependent cases exactly as golden_v1 did (same inputs; same keys) and the labels
     proving that the solver refuses them."""
     from . import archengine as AE
-    from .system import Config, evaluate
+    from .system import Config, physics_closure
     from .intake import IntakeParams, CompressorParams
     vals = {"gas_path": {}}; refusal = {"gas_path": {}}
     for area in (0.7, 1.3):
-        r = evaluate(Config("hall_1stage", 200, "mean", IntakeParams(area_m2=area, accommodation=0.8, use_tpmc=True, L_over_d=5),
+        r = physics_closure(Config("hall_1stage", 200, "mean", IntakeParams(area_m2=area, accommodation=0.8, use_tpmc=True, L_over_d=5),
                             CompressorParams(ratio=2000), vd_V=275, gaspath_physics=True))
         vals["gas_path"][f"A{area}"] = _flt({k: r[k] for k in _GAS_PATH_KEYS if k in r})
         refusal["gas_path"][f"A{area}"] = {"gaspath_status": r["gaspath_status"], "gaspath_not_converged": ",".join(r["gaspath_not_converged"]),
                                            "gaspath_domain_status": r["gaspath_domain_status"],
                                            "orifice_bracketed": bool(r["orifice_bracketed"]),
-                                           "chk_compressor_feasible": bool(r.get("chk_compressor_feasible"))}
+                                           # stored label name kept; its value is the raw model feasibility flag
+                                           # (the legacy chk_compressor_feasible was assess(): raw comp_feasible)
+                                           "chk_compressor_feasible": bool(r["comp_feasible"])}
     gas = AE.make_gas_fn()(0.7, "nominal")
     vals["accelerators"] = _accelerator_values(gas)
     cls, _ = AE.gas_evidence_class(gas)

@@ -37,7 +37,7 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
 from abep_sim.design import intake_synthesis as isy  # noqa: E402
-from abep_sim.design import owner_state as ost  # noqa: E402
+from abep_sim.assessment import design_gates as ost  # noqa: E402  (owner-question state v5 reader; A9.22)
 from abep_sim.design import plenum_feed as pf  # noqa: E402
 from abep_sim.design import upstream_a9_13 as u13  # noqa: E402
 from abep_sim.materials import DB  # noqa: E402

@@ -94,7 +94,8 @@ def test_size_for_rejects_cr_reached_through_clipped_stage(monkeypatch):
 
 
 def test_gas_path_fails_closed_out_of_gaede_domain():
-    from abep_sim.system import Config, evaluate
+    from abep_sim.system import Config
+    from abep_sim.programme.closure import evaluate
     from abep_sim.intake import IntakeParams, CompressorParams
     r = evaluate(Config("hall_1stage", 200, "mean", IntakeParams(area_m2=1.3, accommodation=0.8, use_tpmc=True, L_over_d=5),
                         CompressorParams(ratio=2000), vd_V=275, gaspath_physics=True))

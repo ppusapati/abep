@@ -17,7 +17,8 @@ from dataclasses import dataclass, field
 import numpy as np
 import pandas as pd
 from .intake import IntakeParams, CompressorParams
-from .system import Config, Budgets, evaluate
+from .system import Config, Budgets
+from .programme.closure import evaluate      # legacy merged record (uses its assessment flags; A9.22 programme layer)
 from .thruster import CARDS
 from .aochem import AOParams
 

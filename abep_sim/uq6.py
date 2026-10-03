@@ -13,7 +13,8 @@ import numpy as np
 import pandas as pd
 from scipy.stats import norm
 from .intake import IntakeParams, CompressorParams
-from .system import Config, evaluate
+from .system import Config
+from .programme.closure import evaluate      # legacy merged record (uses its assessment flags; A9.22 programme layer)
 from .thruster import CARDS
 from .mission_env import Spacecraft, spacecraft_drag
 from .atmosphere import atmosphere

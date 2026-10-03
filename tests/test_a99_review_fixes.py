@@ -96,7 +96,8 @@ def test_mission_passes_aged_accommodation_unclipped(monkeypatch):
 
 # ------------------------------------------------------------------------------------------------ D-04 / N3
 def test_gas_path_uses_species_resolved_collected_composition():
-    from abep_sim.system import Config, evaluate
+    from abep_sim.system import Config
+    from abep_sim.programme.closure import evaluate
     ip = IntakeParams(area_m2=0.7, accommodation=0.8, use_tpmc=True, L_over_d=5)
     r = evaluate(Config("hall_1stage", 200, "mean", ip, CompressorParams(ratio=2000), vd_V=275, gaspath_physics=True))
     atm = atmosphere(200.0, "mean")

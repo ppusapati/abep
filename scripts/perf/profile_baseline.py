@@ -237,7 +237,8 @@ def _golden_compressor_args():
     if "comp_args" in _SHARED:
         return _SHARED["comp_args"]
     from abep_sim import compressor as C
-    from abep_sim.system import Config, evaluate
+    from abep_sim.system import Config
+    from abep_sim.programme.closure import evaluate   # A9.22: the recorded entry point system.evaluate delegates here
     from abep_sim.intake import IntakeParams, CompressorParams
     orig = C.DragCompressor.size_for
     cap = {}
@@ -284,7 +285,8 @@ def w_compressor_run(p):
 
 
 def w_system_evaluate(p):
-    from abep_sim.system import Config, evaluate
+    from abep_sim.system import Config
+    from abep_sim.programme.closure import evaluate   # A9.22: the recorded entry point system.evaluate delegates here
     from abep_sim.intake import IntakeParams, CompressorParams
 
     def run():
@@ -305,7 +307,7 @@ def w_close_architecture(p):
 
 
 def w_uq_modular(p):
-    from abep_sim.uq_modular import run_uq
+    from abep_sim.programme.uq_modular import run_uq     # A9.22: moved from abep_sim.uq_modular (programme layer)
 
     def run():
         df, s = run_uq("hall_internal+hall+lab6_xe", {"Vd": 300.0, "L_ch": 0.20}, 1.0, 0.05, 6.0, 1500.0,

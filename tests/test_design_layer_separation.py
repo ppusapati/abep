@@ -30,7 +30,7 @@ from abep_sim.design import upstream_a9_13 as u13  # noqa: E402
 F7_JSON = REPO / "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json"
 
 # ------------------------------------------------------------------------------------------------ import graph
-SHIMS = {"abep_sim/design/owner_state.py"}            # deprecated re-export of the assessment-layer reader
+SHIMS: set = set()     # the deprecated owner_state re-export shim was removed (A9.22 programme-layer split)
 PATH_LOADER_ALLOWED = {"abep_sim/icp_bench_lib.py"}   # loads the full P1 reducer (docs/experiments) for builder probes
 FORBIDDEN_NAMES = {"RVM_REL", "RFP_REGISTRATION", "OQ5_REL"}
 FORBIDDEN_PREFIXES = ("docs/requirements/", "docs/decisions/", "docs/budgets/owner_decisions/")
@@ -115,8 +115,8 @@ def test_engineering_constraints_values_equal_pre_a9_22_literals():
 def test_hard_constraints_equal_committed_f7_record():
     doc = json.loads(F7_JSON.read_text(encoding="utf-8"))
     assert [dict(c) for c in dg.HARD_CONSTRAINTS] == doc["hard_constraints"]
-    assert list(ao.HARD_CONSTRAINTS) == list(dg.HARD_CONSTRAINTS)          # deprecated shim
-    assert ao.PRE_EVALUATED_OBJECTIVES == dg.PRE_EVALUATED_OBJECTIVES
+    # the deprecated re-export shims were removed (programme-layer split): the design module no longer carries them
+    assert not hasattr(ao, "HARD_CONSTRAINTS") and not hasattr(ao, "PRE_EVALUATED_OBJECTIVES")
 
 
 def test_c_drag_generation_filter_consistent_with_committed_f1():
@@ -142,13 +142,24 @@ def test_c_drag_generation_filter_consistent_with_committed_f1():
     assert n > 0
 
 
-# ------------------------------------------------------------------------------------------------ shims / identity
-def test_shims_resolve_to_assessment_layer():
+# ------------------------------------------------------------------------------------------------ moved names
+def test_moved_names_live_only_in_the_assessment_or_programme_layer():
+    """The deprecated design-layer re-export shims were removed (A9.22 programme-layer split): the moved assessments
+    are reached in abep_sim.assessment.design_gates, the F7/F8 runners in abep_sim.programme.design_synthesis."""
+    import importlib
+    from abep_sim.programme import design_synthesis as ds
     for name in u13.MOVED_TO_ASSESSMENT:
-        assert getattr(u13, name) is getattr(dg, name)
-    from abep_sim.design import owner_state as ost
-    assert ost.owner_state is dg.owner_state and ost.apply_to_questions is dg.apply_to_questions
-    assert ao.evaluate_constraints({}) == dg.evaluate_constraints({})
+        assert not hasattr(u13, name) and callable(getattr(dg, name))
+    with pytest.raises(ModuleNotFoundError):
+        importlib.import_module("abep_sim.design.owner_state")
+    assert callable(dg.owner_state) and callable(dg.apply_to_questions)
+    for name in ("context_pareto", "bus_power", "evaluate_system", "rank_full_system", "statewise_T_minus_D",
+                 "evaluate_constraints", "system_pareto"):
+        assert not hasattr(ao, name), name
+    for name in ("context_pareto", "bus_power", "evaluate_system", "rank_full_system", "statewise_T_minus_D",
+                 "feed_quality"):
+        assert callable(getattr(ds, name)), name
+    assert not hasattr(ro, "gate_snapshot")
 
 
 def _builder(rel, name):
@@ -174,8 +185,8 @@ def test_moved_statewise_gate_records_reproduce_committed_f7(f7_builder, f7_doc)
 
 
 def test_gate_snapshot_reproduces_committed_f8(f7_builder, f7_doc):
-    snap = ro.gate_snapshot()
-    assert snap == dg.gate_snapshot() == ro.design_gate_snapshot(ao.REPO, dg.rvm_gate_snapshot())
+    snap = dg.gate_snapshot()
+    assert snap == ro.design_gate_snapshot(ao.REPO, dg.rvm_gate_snapshot())
     assert f7_builder.rnd(snap) == f7_doc["robust"]["gates_before"] == f7_doc["robust"]["gates_after"]
     assert list(snap) == list(f7_doc["robust"]["gates_before"])
 

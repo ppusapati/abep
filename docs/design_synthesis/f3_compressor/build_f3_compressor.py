@@ -34,7 +34,7 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
 from abep_sim.design import compressor_synthesis as cs  # noqa: E402
-from abep_sim.design import owner_state as ost  # noqa: E402
+from abep_sim.assessment import design_gates as ost  # noqa: E402  (owner-question state v5 reader; A9.22)
 
 OUT_DIR_REL = "docs/design_synthesis/f3_compressor"
 SCRIPT_REL = f"{OUT_DIR_REL}/build_f3_compressor.py"

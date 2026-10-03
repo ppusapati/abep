@@ -456,7 +456,7 @@ def governing_band(quantity: str, f4_provisional_frac: float, h1: H1Tolerance | 
             "h1_source": h1.source}
 
 
-# A9.22: ripple_feed_quality moved to abep_sim/assessment/design_gates.py (deprecated shim: module __getattr__ below)
+# A9.22: ripple_feed_quality moved to abep_sim/assessment/design_gates.py
 
 
 # ================================================================================================= statewise quantifier
@@ -508,7 +508,7 @@ def _rec_value(rec: Mapping, what: str) -> tuple[float, str]:
     return float(v), st
 
 
-# A9.22: statewise_drag_compensation (AG-13 / HC-08) moved to abep_sim/assessment/design_gates.py (deprecated shim below)
+# A9.22: statewise_drag_compensation (AG-13 / HC-08) moved to abep_sim/assessment/design_gates.py
 
 
 def reference_drag_fn(case_id: str, *, intake_projected_area_m2: float, intake_cd: float, intake_source: str,
@@ -558,7 +558,7 @@ def refuse_fixed_mass_flow_gate(gate) -> None:
 H1_MAP_VALIDATED = "VALIDATED"
 
 
-# A9.22: feed_state_sufficiency (AG-12 / HC-11) moved to abep_sim/assessment/design_gates.py (deprecated shim below)
+# A9.22: feed_state_sufficiency (AG-12 / HC-11) moved to abep_sim/assessment/design_gates.py
 
 
 # ================================================================================================= S6.13 OQ-F4-04 flow gap
@@ -727,7 +727,7 @@ def _dominates(a, b, senses) -> bool:
     return better
 
 
-# A9.22: pareto_s6_17 (S6.17 system comparison) moved to abep_sim/assessment/design_gates.py (deprecated shim below)
+# A9.22: pareto_s6_17 (S6.17 system comparison) moved to abep_sim/assessment/design_gates.py
 
 
 REGENERATION_TRIGGERS = (
@@ -807,18 +807,12 @@ PROPELLANT_POLICY = {
 }
 
 
-# A9.22: propellant_paths_check (HC-10 structural check) moved to abep_sim/assessment/design_gates.py (deprecated shim below)
+# A9.22: propellant_paths_check (HC-10 structural check) moved to abep_sim/assessment/design_gates.py
 
 
-# ================================================================================================= A9.22 shims
-# DEPRECATED import shims (A9.22 layer separation): these assessments now live in abep_sim/assessment/design_gates.py.
-# Kept so existing builders / tests that call upstream_a9_13.<name> keep working; new code imports design_gates.
+# ================================================================================================= A9.22 moves
+# These assessments live in abep_sim/assessment/design_gates.py (A9.22 layer separation). The deprecated import shims
+# that re-exported them from this module were removed with the programme-layer split (callers import design_gates /
+# abep_sim.programme.design_synthesis); the names are kept here as the record of what moved.
 MOVED_TO_ASSESSMENT = ("ripple_feed_quality", "statewise_drag_compensation", "feed_state_sufficiency", "pareto_s6_17",
                        "propellant_paths_check")
-
-
-def __getattr__(name):
-    if name in MOVED_TO_ASSESSMENT:
-        from ..assessment import design_gates
-        return getattr(design_gates, name)
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

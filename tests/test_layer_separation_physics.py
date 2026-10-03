@@ -1,12 +1,15 @@
 """A9.22 layer separation (owner decisions 2026-10-03, docs/decisions/OD_2026_10_03_A9_22_*): the physics layer.
 
-Physics modules = every module under abep_sim/ except abep_sim/assessment/** and abep_sim/configuration.py (the
-configuration loader is the one place that opens config/requirements/). For them:
+Physics modules = every module under abep_sim/ except abep_sim/assessment/**, abep_sim/programme/** (the
+programme-runner layer, which combines physics and assessment) and abep_sim/configuration.py (the configuration loader
+is the one place that opens config/requirements/). For them:
 
-1. AST import graph: no import from abep_sim.assessment. The pre-existing compatibility / orchestration call sites
-   (legacy merged outputs kept for existing tools per owner item 6, deprecated shims, design-layer optimisers that call
-   the assessment gates) are listed EXPLICITLY in ASSESSMENT_IMPORT_ALLOWLIST with their reason; any new import fails,
-   and an allowlist entry that no longer exists fails too (the list can only shrink).
+1. AST import graph: no import from abep_sim.assessment. The remaining compatibility call sites are listed EXPLICITLY
+   in ASSESSMENT_IMPORT_ALLOWLIST with their reason; any new import fails, and an allowlist entry that no longer exists
+   fails too (the list can only shrink). The orchestration that combined physics and assessment (legacy merged record,
+   sweep, closure / UQ / comparison flags, F7/F8 design-gate runners, deprecated shims) moved to abep_sim/programme/.
+   Because a programme module imports the assessment layer, a physics import of abep_sim.programme is a TRANSITIVE
+   assessment dependency: those edges are listed the same way in PROGRAMME_IMPORT_ALLOWLIST (can only shrink).
 2. No read of docs/requirements/** or docs/decisions/**: a forbidden path (string constant, or a module name bound to
    one) inside a reader call (open / read_text / json.load / Path / ...) fails. The same strings used purely as
    provenance labels (assigned to a constant, placed in a dict / tuple / f-string) are allowed.
@@ -38,35 +41,46 @@ READERS = {"open", "read_json", "_read_json", "read_text", "read_bytes", "load",
 CLAUSE_RE = re.compile(r"\b(RFP-P\d+-\d+|RVM-\d+)\b")
 LOOKUP_METHODS = {"get", "index", "count", "startswith", "endswith", "pop", "setdefault"}
 
-# (module, enclosing function or "<module>", imported assessment module) -> reason. Frozen at the A9.22 G1 completion;
-# may only shrink. Every entry is a compatibility / orchestration call site, never the raw physics closure itself.
+# (module, enclosing function or "<module>", imported assessment module) -> reason. Frozen at the A9.22 G1 completion
+# with 13 entries; shrunk to 1 by the programme-layer split (abep_sim/programme/). May only shrink.
 ASSESSMENT_IMPORT_ALLOWLIST = {
-    ("abep_sim/system.py", "evaluate", "abep_sim.assessment"):
-        "legacy merged dict (raw closure + assessment) kept for existing tools (owner item 6); physics_closure is clean",
-    ("abep_sim/sweep.py", "<module>", "abep_sim.assessment"):
-        "sweep orchestration writes raw + assessment + legacy merged tables",
-    ("abep_sim/sweep.py", "main", "abep_sim.assessment"): "sweep CLI writes the requirement-pointer table",
-    ("abep_sim/sweep.py", "main", "abep_sim.assessment.closure_checks"): "sweep CLI RVM source label",
-    ("abep_sim/arch_compare.py", "<module>", "abep_sim.assessment"): "architecture comparison tool (assessment flags)",
     ("abep_sim/archengine.py", "rfp_preset", "abep_sim.assessment.arch_constraints"):
-        "compatibility wrapper: the preset is built by the assessment layer",
-    ("abep_sim/archengine.py", "close_architecture", "abep_sim.assessment.arch_constraints"):
-        "closure_constraint_flags appended to the architecture result (assessment flags)",
-    ("abep_sim/uq_modular.py", "evaluate_sample", "abep_sim.assessment.arch_constraints"): "UQ success flag (assessment)",
-    ("abep_sim/design/owner_state.py", "<module>", "abep_sim.assessment.design_gates"): "deprecated re-export shim",
-    ("abep_sim/design/upstream_a9_13.py", "__getattr__", "abep_sim.assessment"): "deprecated import shim",
-    ("abep_sim/design/plenum_feed.py", "*", "abep_sim.assessment"): "HC-12 ripple assessment (design-layer caller)",
-    ("abep_sim/design/architecture_optimizer.py", "*", "abep_sim.assessment"):
-        "design-layer optimiser applies the hard-constraint / power-gate assessment",
-    ("abep_sim/design/robust_optimizer.py", "*", "abep_sim.assessment"):
-        "design-layer robust optimiser applies the assessment gates",
+        "compatibility wrapper (one lazy delegation, no computation): the owner-constraint preset is built by the "
+        "assessment layer (arch_constraints.design_constraints). `def rfp_preset` must stay in archengine.py because "
+        "docs/traceability/rtm_v1.json references abep_sim/archengine.py::rfp_preset (tests/test_traceability.py "
+        "resolves it) and the RTM is sha256-pinned by the immutable subsystem maturity v1/v2 records",
+}
+
+# Physics -> programme-layer import edges (transitive assessment dependencies; module-level or lazy). May only shrink.
+PROGRAMME_IMPORT_ALLOWLIST = {
+    ("abep_sim/system.py", "evaluate", "abep_sim.programme.closure"):
+        "compatibility entry delegating to programme.closure.evaluate: the immutable upstream ICD v1 names "
+        "abep_sim.system.evaluate (byte-pinned by H2-3 v1 / subsystem maturity records) and rtm_v1 references "
+        "abep_sim/system.py::evaluate; tests/fixtures/make_evaluate_identity_fixture*.py call it by path",
+    ("abep_sim/__init__.py", "__getattr__", "abep_sim.programme.closure"):
+        "lazy package-level public name abep_sim.evaluate (unchanged public API)",
+    ("abep_sim/__init__.py", "__getattr__", "abep_sim.programme"):
+        "lazy package-level public names abep_sim.run_grid / summarize (sweep, unchanged public API)",
+    ("abep_sim/__main__.py", "<module>", "abep_sim.programme.sweep"): "CLI `python -m abep_sim` = the sweep CLI",
+    ("abep_sim/arch_compare.py", "main", "abep_sim.programme.arch_compare"):
+        "documented CLI `python -m abep_sim.arch_compare run` (HARNESS.md) writes the full comparison record",
+    ("abep_sim/sizing.py", "<module>", "abep_sim.programme.closure"):
+        "legacy sizing study: reads the merged record's rfp_compliant / abep_closed / chk_* flags",
+    ("abep_sim/thresholds.py", "<module>", "abep_sim.programme.closure"):
+        "legacy PDR-1 threshold study: P(technical_closed) from the merged record",
+    ("abep_sim/uncertainty.py", "<module>", "abep_sim.programme.closure"):
+        "legacy UQ study: P(rfp_compliant / abep_closed / technical_*) and ic_thruster from the merged record",
+    ("abep_sim/uq6.py", "<module>", "abep_sim.programme.closure"):
+        "legacy phase-6 UQ: technical_compliant from the merged record (mission_ok_rom)",
+    ("abep_sim/mission_uq.py", "<module>", "abep_sim.programme.closure"):
+        "legacy mission UQ: chk_thrust_air_ge_req from the merged record",
 }
 
 
 def _physics_modules():
     for p in sorted((ROOT / "abep_sim").rglob("*.py")):
         rel = p.relative_to(ROOT).as_posix()
-        if rel.startswith("abep_sim/assessment/") or rel == "abep_sim/configuration.py":
+        if rel.startswith(("abep_sim/assessment/", "abep_sim/programme/")) or rel == "abep_sim/configuration.py":
             continue
         yield rel, ast.parse(p.read_text(encoding="utf-8"))
 
@@ -98,7 +112,7 @@ def _enclosing_function(node, par) -> str:
     return "<module>"
 
 
-def _assessment_imports():
+def _layer_imports(pkg: str):
     found = set()
     for rel, tree in _physics_modules():
         par = _parents(tree)
@@ -109,27 +123,55 @@ def _assessment_imports():
                 mods = [m] + [f"{m}.{a.name}" for a in n.names]
             elif isinstance(n, ast.Import):
                 mods = [a.name for a in n.names]
-            hits = sorted({m for m in mods if m == "abep_sim.assessment" or m.startswith("abep_sim.assessment.")},
-                          key=len)
+            hits = sorted({m for m in mods if m == pkg or m.startswith(pkg + ".")}, key=len)
             if hits:
                 found.add((rel, _enclosing_function(n, par), hits[0], n.lineno))
     return found
 
 
-def _allowed(rel, fn, mod):
-    return (rel, fn, mod) in ASSESSMENT_IMPORT_ALLOWLIST or \
-        any(r == rel and f == "*" and mod.startswith(m) for (r, f, m) in ASSESSMENT_IMPORT_ALLOWLIST)
+def _assessment_imports():
+    return _layer_imports("abep_sim.assessment")
+
+
+def _allowed(rel, fn, mod, allowlist=None):
+    allowlist = ASSESSMENT_IMPORT_ALLOWLIST if allowlist is None else allowlist
+    return (rel, fn, mod) in allowlist or \
+        any(r == rel and f == "*" and mod.startswith(m) for (r, f, m) in allowlist)
+
+
+def _check_layer(pkg, allowlist, what):
+    found = _layer_imports(pkg)
+    bad = sorted(f"{rel}:{ln} ({fn}) imports {mod}" for rel, fn, mod, ln in found
+                 if not _allowed(rel, fn, mod, allowlist))
+    assert not bad, f"physics module imports {pkg} outside the frozen {what} allowlist: {bad}"
+    # the allowlist only shrinks: every entry must still correspond to a real import
+    stale = [k for k in allowlist
+             if not any(rel == k[0] and (k[1] in ("*", fn)) and mod.startswith(k[2]) for rel, fn, mod, _ in found)]
+    assert not stale, f"allowlist entries without a matching import (remove them): {stale}"
 
 
 def test_physics_modules_do_not_import_the_assessment_layer():
-    found = _assessment_imports()
-    bad = sorted(f"{rel}:{ln} ({fn}) imports {mod}" for rel, fn, mod, ln in found if not _allowed(rel, fn, mod))
-    assert not bad, "physics module imports abep_sim.assessment outside the frozen compatibility allowlist: " \
-                    f"{bad}"
-    # the allowlist only shrinks: every entry must still correspond to a real import
-    stale = [k for k in ASSESSMENT_IMPORT_ALLOWLIST
-             if not any(rel == k[0] and (k[1] in ("*", fn)) and mod.startswith(k[2]) for rel, fn, mod, _ in found)]
-    assert not stale, f"allowlist entries without a matching import (remove them): {stale}"
+    _check_layer("abep_sim.assessment", ASSESSMENT_IMPORT_ALLOWLIST, "compatibility")
+    assert len(ASSESSMENT_IMPORT_ALLOWLIST) <= 1                  # shrunk from 13 by the programme-layer split
+
+
+def test_physics_modules_import_the_programme_layer_only_through_listed_edges():
+    """abep_sim.programme imports the assessment layer, so a physics -> programme import is a transitive assessment
+    dependency; only the listed compatibility / legacy-study edges exist, and the design layer has none."""
+    _check_layer("abep_sim.programme", PROGRAMME_IMPORT_ALLOWLIST, "programme-edge")
+    assert not [k for k in PROGRAMME_IMPORT_ALLOWLIST if k[0].startswith("abep_sim/design/")]
+    assert not [k for k in ASSESSMENT_IMPORT_ALLOWLIST if k[0].startswith("abep_sim/design/")]
+
+
+def test_programme_layer_is_not_imported_at_module_level_by_physics_closure_modules():
+    """The raw physics path (system, archengine, mission5, golden, uq_modular) carries no module-level programme
+    import; system.evaluate's delegation is lazy (function level)."""
+    for rel in ("abep_sim/system.py", "abep_sim/archengine.py", "abep_sim/mission5.py", "abep_sim/golden.py",
+                "abep_sim/uq_modular.py", "abep_sim/arch_compare.py"):
+        tree = ast.parse((ROOT / rel).read_text(encoding="utf-8"))
+        for n in tree.body:
+            if isinstance(n, ast.ImportFrom):
+                assert not _resolve(rel, n).startswith(("abep_sim.programme", "abep_sim.assessment")), (rel, n.lineno)
 
 
 def test_raw_physics_entry_module_imports_no_assessment_at_module_level():

@@ -12,7 +12,7 @@ dependencies = ["numpy", "pandas", "pyyaml", "matplotlib", "scipy"]
 [project.optional-dependencies]
 msis = ["pymsis>=0.13"]
 [project.scripts]
-abep-sim = "abep_sim.sweep:main"
+abep-sim = "abep_sim.programme.sweep:main"
 [build-system]
 requires = ["setuptools>=64"]
 build-backend = "setuptools.build_meta"

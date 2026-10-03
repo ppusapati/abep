@@ -44,6 +44,8 @@ from abep_sim.design import intake_synthesis as isy  # noqa: E402
 from abep_sim.design import plenum_feed as pf  # noqa: E402
 from abep_sim.design import robust_optimizer as ro  # noqa: E402
 from abep_sim.design import upstream_a9_13 as u13  # noqa: E402
+from abep_sim.assessment import design_gates as dg  # noqa: E402  (A9.22: assessment layer, builder level)
+from abep_sim.programme import design_synthesis as ds  # noqa: E402  (A9.22: programme layer, builder level)
 
 OUT_DIR_REL = "docs/design_synthesis/f7_f8_optimizer"
 SCRIPT_REL = f"{OUT_DIR_REL}/build_f7_f8_optimizer.py"
@@ -132,7 +134,7 @@ def stage_f7(inp):
         for filt in inp.filters:
             for sc in inp.scenarios:
                 ctx = ao.upstream_context(inp, sc, filt, wall)
-                pars[(sc, filt, wall)] = ao.context_pareto(ctx)
+                pars[(sc, filt, wall)] = ds.context_pareto(ctx)
                 if filt == ro.NOMINAL_FILTER:
                     ctxs[(sc, filt, wall)] = ctx
     return ctxs, pars
@@ -202,7 +204,7 @@ def stage_system(inp, pars):
         for P, b in sorted(par.items()):
             for m in b["members"]:
                 for cfg in ao.CONFIGURATIONS:
-                    ev = ao.evaluate_system(m, cfg, design=inp.designs[m["compressor"]])
+                    ev = ds.evaluate_system(m, cfg, design=inp.designs[m["compressor"]])
                     ev["design_id"] = f"{sc}|{m['design_id']}"
                     evals[cfg].append(ev)
                     if exemplar is None and cfg == "hall_icp_neutralizer":
@@ -215,7 +217,7 @@ def stage_system(inp, pars):
                 status[(cfg, k, o["status"])] += 1
             for c in ev["constraints"]:
                 cons[(cfg, c["id"], c["status"])] += 1
-    ranking = {cfg: ao.rank_full_system(evs) for cfg, evs in evals.items()}
+    ranking = {cfg: ds.rank_full_system(evs) for cfg, evs in evals.items()}
     pel = [ev["objectives"]["P_bus_W"]["parametric_lower_bound_W"] for ev in evals["hall_icp_neutralizer"]]
     mcomp = [ev["objectives"]["m_wet_kg"]["lines"][1]["design_parametric"]["m_compressor_max_kg"]
              for ev in evals["hall_icp_neutralizer"]]
@@ -231,7 +233,7 @@ def stage_system(inp, pars):
 
 # ----------------------------------------------------------------------------------------------------- F8
 def stage_f8(inp, ctxs, pars):
-    before = ro.gate_snapshot()
+    before = dg.gate_snapshot()
     surv = ro.survivors(pars)
     scen = ro.scenario_robustness(surv, ctxs, inp.scenarios, ro.NOMINAL_WALL)
     mc = ro.tpmc_monte_carlo(inp, surv, inp.scenarios, n=N_MC)
@@ -242,7 +244,7 @@ def stage_f8(inp, ctxs, pars):
     wall = ro.scenario_robustness(mem, ctxs, inp.scenarios, "WALL-TI64-DB")
     point = ro.pointing_sensitivity(inp, mem, inp.scenarios)
     elas = {m["design_id"]: ro.compressor_elasticities(inp, m, inp.scenarios) for m in mem}
-    after = ro.gate_snapshot()
+    after = dg.gate_snapshot()
     tiers = Counter(scen[s["design_id"]]["n_scenarios_feasible"] for s in surv)
     return {"survivors": surv, "scenario": scen, "mc": mc, "all_scenario_feasible": allsc, "robust_pareto": rp,
             "members": mem, "wall": wall, "pointing": point, "elasticities": elas, "gates_before": before,
@@ -499,8 +501,8 @@ def statewise_gate_records() -> dict:
         return {"value_N": None, "status": u13.VALUE_TBD, "state_id": st["state_id"],
                 "source": "host-spacecraft drag ICD absent (A9.21 EXTERNAL_INPUTS)"}
 
-    ag13 = ao.statewise_T_minus_D(sts, thrust, drag)
-    ag12 = u13.feed_state_sufficiency(sts, lambda st: {"status": u13.VALUE_TBD}, thrust, h1_map=None)
+    ag13 = ds.statewise_T_minus_D(sts, thrust, drag)
+    ag12 = dg.feed_state_sufficiency(sts, lambda st: {"status": u13.VALUE_TBD}, thrust, h1_map=None)
     keep = ("constraint", "gate", "rule", "status", "reason", "n_required_states", "value_status", "h1_map_status",
             "fixed_mass_flow_gate")
     return {"required_state_set": isy.DESIGN_STATE_SET_ID, "n_required_states": len(sts),
@@ -596,7 +598,7 @@ def assemble(inp, blocks, pars, f7sum, totals, sysd, f8):
         "upstream_status_totals": totals[0], "upstream_reason_totals": totals[1],
         "system_objectives": [{"key": k, "sense": s} for k, s in ao.SYSTEM_OBJECTIVES] +
                              [{"key": "life_material", "sense": "indicator"}],
-        "hard_constraints": list(ao.HARD_CONSTRAINTS),
+        "hard_constraints": list(dg.HARD_CONSTRAINTS),
         "constraint_rule": "fail closed: NOT_EVALUATED never counts as satisfied; MET / VIOLATED carry the status "
                            "label of the value they used (parametric / synthetic values are labelled, never evidence)",
         "system_evaluation": rnd(sysd), "system_evaluation_exemplar": rnd(exemplar),

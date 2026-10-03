@@ -22,7 +22,8 @@ still does.
 ## What is (and is not) in the distribution
 
 * Package: `abep_sim` only (no subpackages today; `abep_sim.*` is included so a future subpackage is picked up).
-  Console script `abep-sim = abep_sim.sweep:main`.
+  Console script `abep-sim = abep_sim.programme.sweep:main` (A9.22 programme layer; it was `abep_sim.sweep:main`
+  before the sweep moved out of the physics package).
 * Package data: all 8 files under `abep_sim/data` — `atmosphere_msis21_v1.{csv,json}`, `intake_surface_v1.{csv,json}`,
   `golden_v1.json`, `rates/{PROVENANCE.md, elastic_N2.dat, ionization_N2_N2+.dat}`. These are located at run time via
   `os.path.dirname(__file__)/data`, so they resolve inside `site-packages` for a wheel install.

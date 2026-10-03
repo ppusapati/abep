@@ -34,7 +34,7 @@ F_RECORDS = {
 
 
 def test_owner_state_reads_v5_and_never_fabricates():
-    from abep_sim.design import owner_state as ost
+    from abep_sim.assessment import design_gates as ost      # owner-question state v5 reader (A9.22)
     s = ost.owner_state("F1Q-01")
     assert s["answered"] and s["decision"] == "A9.9 S2.1" and s["decision_code"] == "YES_PRODUCTION_FIX"
     assert ost.owner_state("NO-SUCH-QUESTION-ID")["status"] == ost.TBD_OWNER
@@ -43,7 +43,7 @@ def test_owner_state_reads_v5_and_never_fabricates():
 
 @pytest.mark.parametrize("lane", sorted(F_RECORDS))
 def test_f_lane_questions_carry_v5_answer_state(lane):
-    from abep_sim.design import owner_state as ost
+    from abep_sim.assessment import design_gates as ost      # owner-question state v5 reader (A9.22)
     js, md = F_RECORDS[lane]
     doc = _j(js)
     text = (REPO / md).read_text(encoding="utf-8")

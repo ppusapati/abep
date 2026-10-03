@@ -15,6 +15,7 @@ import numpy as np
 import pytest
 
 from abep_sim import arch_compare as ac
+from abep_sim.programme import arch_compare as pac      # A9.22: full record incl. the evaluation-only flags
 from abep_sim.hall_ensemble import load_ensemble, screening_ids
 from abep_sim.hall_map import REQUIRED_FIELDS, REQUIRED_META, pinned_commit
 
@@ -134,15 +135,15 @@ def test_refuses_zero_admitted_members_against_the_real_ensemble(capsys):
     assert real["members"] == [] and len(screening_ids(real)) == 9
     for ledger in (None, _test_only_ledger):
         with pytest.raises(ac.NoAdmittedMembersError, match="zero ADMITTED members"):
-            ac.compare_architectures(_specs(), _upstream(), {}, ledger=ledger)
+            pac.compare_architectures(_specs(), _upstream(), {}, ledger=ledger)
         with pytest.raises(ac.NoAdmittedMembersError):                 # screening ids cannot stand in for members
-            ac.compare_architectures(_specs(), _upstream(), {"sgb-screen-01": {}}, ledger=ledger)
+            pac.compare_architectures(_specs(), _upstream(), {"sgb-screen-01": {}}, ledger=ledger)
     with pytest.raises(ac.NoAdmittedMembersError):
         ac.admitted_members(real)
     assert ac.main(["status"]) == 2
     assert "REFUSED (NoAdmittedMembersError)" in capsys.readouterr().err
     with pytest.raises(ac.NoAdmittedMembersError):                     # synthetic empty set: same refusal
-        ac.compare_architectures(_specs(), _upstream(), {}, ledger=_test_only_ledger,
+        pac.compare_architectures(_specs(), _upstream(), {}, ledger=_test_only_ledger,
                                  ensemble=_test_only_ensemble(members=()))
 
 
@@ -153,27 +154,27 @@ def test_refuses_screening_candidate_ids(tmp_path):
     for sid in sorted(screening_ids(ens)):
         bad = dict(maps, **{sid: {a: _write_map(tmp_path, sid, a) for a in ac.ARCHITECTURES}})
         with pytest.raises(ac.MemberRefusedError, match="SCREENING"):
-            ac.compare_architectures(_specs(), _upstream(), bad, ledger=_test_only_ledger, ensemble=ens)
+            pac.compare_architectures(_specs(), _upstream(), bad, ledger=_test_only_ledger, ensemble=ens)
     with pytest.raises(ac.MemberRefusedError, match="SCREENING"):
-        ac.compare_architectures(_specs(), _upstream(), {"sgb-screen-01": maps[TEST_MEMBERS[0]]},
+        pac.compare_architectures(_specs(), _upstream(), {"sgb-screen-01": maps[TEST_MEMBERS[0]]},
                                  ledger=_test_only_ledger, ensemble=ens)
     # a screening candidate's map filed under an admitted id: HallMap itself refuses it
     m2 = copy.deepcopy(maps)
     m2[TEST_MEMBERS[0]]["hall_only"] = _write_map(tmp_path, TEST_MEMBERS[0], "hall_only", meta_member="sgb-screen-01",
                                                   name="screen_under_a.json")
     with pytest.raises(ac.HallMapRefusedError, match="not an admitted"):
-        ac.compare_architectures(_specs(), _upstream(), m2, ledger=_test_only_ledger, ensemble=ens)
+        pac.compare_architectures(_specs(), _upstream(), m2, ledger=_test_only_ledger, ensemble=ens)
     # another admitted member's map filed under the wrong id
     m3 = copy.deepcopy(maps)
     m3[TEST_MEMBERS[0]]["hall_only"] = maps[TEST_MEMBERS[1]]["hall_only"]
     with pytest.raises(ac.MemberRefusedError, match="produced by member"):
-        ac.compare_architectures(_specs(), _upstream(), m3, ledger=_test_only_ledger, ensemble=ens)
+        pac.compare_architectures(_specs(), _upstream(), m3, ledger=_test_only_ledger, ensemble=ens)
     # every admitted member must be present (no subset)
     with pytest.raises(ac.MemberRefusedError, match="every admitted member"):
-        ac.compare_architectures(_specs(), _upstream(), {TEST_MEMBERS[0]: maps[TEST_MEMBERS[0]]},
+        pac.compare_architectures(_specs(), _upstream(), {TEST_MEMBERS[0]: maps[TEST_MEMBERS[0]]},
                                  ledger=_test_only_ledger, ensemble=ens)
     with pytest.raises(ac.MemberRefusedError, match="not an admitted"):
-        ac.compare_architectures(_specs(), _upstream(), dict(maps, unknown={}), ledger=_test_only_ledger, ensemble=ens)
+        pac.compare_architectures(_specs(), _upstream(), dict(maps, unknown={}), ledger=_test_only_ledger, ensemble=ens)
 
 
 def test_missing_ledger_module_raises_and_is_never_substituted(tmp_path, monkeypatch):
@@ -183,7 +184,7 @@ def test_missing_ledger_module_raises_and_is_never_substituted(tmp_path, monkeyp
     with pytest.raises(ac.LedgerUnavailableError, match="no substitute"):
         ac.resolve_ledger()
     with pytest.raises(ac.LedgerUnavailableError):
-        ac.compare_architectures(_specs(), _upstream(), maps, ensemble=ens)
+        pac.compare_architectures(_specs(), _upstream(), maps, ensemble=ens)
     fake = types.ModuleType(ac.LEDGER_MODULE)                                      # TEST-ONLY stand-in module
     fake.BOUNDARY_VERSION = "bus_power_boundary_v0"
     fake.bus_power_ledger = _test_only_ledger
@@ -197,7 +198,7 @@ def test_missing_ledger_module_raises_and_is_never_substituted(tmp_path, monkeyp
     fake.bus_power_ledger = _test_only_ledger
     fn, info = ac.resolve_ledger()
     assert fn is _test_only_ledger and info["origin"] == "abep_sim.arch_boundary.bus_power_ledger"
-    res = ac.compare_architectures(_specs(), _upstream(), maps, ensemble=ens)    # lazily resolved at call time
+    res = pac.compare_architectures(_specs(), _upstream(), maps, ensemble=ens)    # lazily resolved at call time
     assert res["ledger_resolution"]["module_boundary_version"] == "bus_power_boundary_v1"
     assert res["production_path"] is False                                       # injected ensemble
     def wrong_signature(a, l, e):
@@ -210,7 +211,7 @@ def test_missing_ledger_module_raises_and_is_never_substituted(tmp_path, monkeyp
 def test_envelope_aggregation_over_all_admitted_members(tmp_path):
     ens = _test_only_ensemble()
     scales = {TEST_MEMBERS[0]: (0.9, 1.1), TEST_MEMBERS[1]: (1.0, 1.0), TEST_MEMBERS[2]: (1.1, 0.95)}
-    res = ac.compare_architectures(_specs(), _upstream(), _maps(tmp_path, scales=scales), ledger=_test_only_ledger,
+    res = pac.compare_architectures(_specs(), _upstream(), _maps(tmp_path, scales=scales), ledger=_test_only_ledger,
                                    ensemble=ens)
     assert res["members"] == sorted(TEST_MEMBERS) and res["weighting"] == "unweighted"
     assert res["architectures"] == list(ac.ARCHITECTURES) and res["production_path"] is False
@@ -257,7 +258,7 @@ def test_envelope_aggregation_over_all_admitted_members(tmp_path):
 
 
 def test_no_winner_or_weighted_output(tmp_path):
-    res = ac.compare_architectures(_specs(), _upstream(), _maps(tmp_path), ledger=_test_only_ledger,
+    res = pac.compare_architectures(_specs(), _upstream(), _maps(tmp_path), ledger=_test_only_ledger,
                                    ensemble=_test_only_ensemble())
     bad = sorted({k for k in _keys(res) if any(p in str(k).lower() for p in FORBIDDEN_KEY_PARTS)})
     assert bad == []
@@ -270,7 +271,7 @@ def test_untrustworthy_or_out_of_domain_members_make_the_envelope_incomplete(tmp
     maps = _maps(tmp_path)
     maps[TEST_MEMBERS[1]]["rf_hall"] = _write_map(tmp_path, TEST_MEMBERS[1], "rf_hall", chem_ok=False,
                                                   name="chem_bad.json")
-    res = ac.compare_architectures(_specs(), _upstream(), maps, ledger=_test_only_ledger, ensemble=ens)
+    res = pac.compare_architectures(_specs(), _upstream(), maps, ledger=_test_only_ledger, ensemble=ens)
     r = res["results"][TEST_MEMBERS[1]]["rf_hall"]
     assert r["status"] == "UNTRUSTWORTHY_HALL_POINT" and "metrics" not in r and "bus_ledger" not in r
     env = res["envelopes"]["rf_hall"]
@@ -279,7 +280,7 @@ def test_untrustworthy_or_out_of_domain_members_make_the_envelope_incomplete(tmp
     assert res["envelopes"]["hall_only"]["status"] == "COMPLETE"
     assert res["paired_differences"]["hall_only_minus_rf_hall"] == {"status": "INCOMPLETE", "metrics": None}
     assert res["paired_differences"]["hall_only_minus_ecr_hall"]["status"] == "COMPLETE"
-    res2 = ac.compare_architectures(_specs(Vd=350.0), _upstream(), _maps(tmp_path), ledger=_test_only_ledger,
+    res2 = pac.compare_architectures(_specs(Vd=350.0), _upstream(), _maps(tmp_path), ledger=_test_only_ledger,
                                     ensemble=ens)
     assert {res2["results"][m][a]["status"] for m in TEST_MEMBERS for a in ac.ARCHITECTURES} == {"OUT_OF_MAP_DOMAIN"}
     assert {e["status"] for e in res2["envelopes"].values()} == {"INCOMPLETE"}
@@ -289,7 +290,7 @@ def test_untrustworthy_or_out_of_domain_members_make_the_envelope_incomplete(tmp
 def test_ledger_residual_gate_and_contract(tmp_path):
     ens = _test_only_ensemble()
     maps = _maps(tmp_path)
-    run = lambda led: ac.compare_architectures(_specs(), _upstream(), maps, ledger=led, ensemble=ens)
+    run = lambda led: pac.compare_architectures(_specs(), _upstream(), maps, ledger=led, ensemble=ens)
     res = run(_ledger_variant(resid_frac=0.01))                                  # 1 % < 2 %: passes, reported
     r = res["results"][TEST_MEMBERS[0]]["hall_only"]["bus_ledger"]
     assert r["residual_frac"] == pytest.approx(0.01) and r["residual_gate_frac"] == 0.02
@@ -320,7 +321,7 @@ def test_ledger_residual_gate_and_contract(tmp_path):
 def test_scope_guards_nuisance_and_upstream_leak(tmp_path):
     ens = _test_only_ensemble()
     maps = _maps(tmp_path)
-    go = lambda specs=None, up=None, m=None: ac.compare_architectures(specs or _specs(), up or _upstream(), m or maps,
+    go = lambda specs=None, up=None, m=None: pac.compare_architectures(specs or _specs(), up or _upstream(), m or maps,
                                                                      ledger=_test_only_ledger, ensemble=ens)
     nuis = sorted(ens["calibration_nuisance"])
     assert "p5_registration" in nuis
@@ -371,14 +372,14 @@ def test_mass_closure_is_exact_when_declared(tmp_path):
     closure = {"supply": ["mdot_air"], "hall_axes": ["mdot_kgps"], "other_sinks": ["mdot_cathode"]}
     ok = _spec("hall_only", hall_axis_bindings={"mdot_kgps": "mdot_hall"},
                feed={"mdot_hall": 1.5e-6, "mdot_cathode": 0.1e-6}, mass_closure=closure)
-    res = ac.compare_architectures([ok], up, maps, ledger=_test_only_ledger, ensemble=ens)
+    res = pac.compare_architectures([ok], up, maps, ledger=_test_only_ledger, ensemble=ens)
     assert res["mass_closure"]["hall_only"]["declared"] is True
     assert abs(res["mass_closure"]["hall_only"]["residual"]) <= 1e-9 * 1.6e-6
     bad = _spec("hall_only", hall_axis_bindings={"mdot_kgps": "mdot_hall"},
                 feed={"mdot_hall": 1.5e-6, "mdot_cathode": 0.2e-6}, mass_closure=closure)
     with pytest.raises(ac.SpecError, match="mass closure"):
-        ac.compare_architectures([bad], up, maps, ledger=_test_only_ledger, ensemble=ens)
-    res2 = ac.compare_architectures([_spec("hall_only")], _upstream(), maps, ledger=_test_only_ledger, ensemble=ens)
+        pac.compare_architectures([bad], up, maps, ledger=_test_only_ledger, ensemble=ens)
+    res2 = pac.compare_architectures([_spec("hall_only")], _upstream(), maps, ledger=_test_only_ledger, ensemble=ens)
     assert res2["mass_closure"]["hall_only"]["declared"] is False                  # reported, not silent
     assert res2["maps_not_used"] == {m: ["ecr_hall", "rf_hall"] for m in TEST_MEMBERS}
 
@@ -401,7 +402,7 @@ def test_upstream_state_from_gas_path_and_drag(tmp_path):
         ac.upstream_from_archengine(area_m2=0.7, alpha=0.8, L_over_d=5, alt_km=200, solar="mean", blade_coating_um=50)
     ud = ac.UpstreamState({"mdot_air": 1.5e-6, "comp_power": 30.0}, "TEST-ONLY", drag_N=0.014,
                           drag_source="TEST-ONLY drag")
-    res = ac.compare_architectures(_specs(), ud, _maps(tmp_path), ledger=_test_only_ledger,
+    res = pac.compare_architectures(_specs(), ud, _maps(tmp_path), ledger=_test_only_ledger,
                                    ensemble=_test_only_ensemble())
     r = res["results"][TEST_MEMBERS[0]]["hall_only"]
     assert r["metrics"]["thrust_minus_drag_mN"] == pytest.approx(15.0 - 14.0)
@@ -423,7 +424,7 @@ def test_hall_map_index_binds_maps_to_the_admission_record(tmp_path):
         return str(p)
     idx = ac.load_hall_map_index(index(TEST_MEMBERS), ensemble=ens)
     assert set(idx) == set(TEST_MEMBERS) and all(os.path.isabs(e["path"]) for v in idx.values() for e in v.values())
-    res = ac.compare_architectures(_specs(), _upstream(), idx, ledger=_test_only_ledger, ensemble=ens)
+    res = pac.compare_architectures(_specs(), _upstream(), idx, ledger=_test_only_ledger, ensemble=ens)
     assert all(res["results"][m][a]["hall_map"]["sha256_verified_against_record"]
                for m in TEST_MEMBERS for a in ac.ARCHITECTURES)
     with pytest.raises(ac.MemberRefusedError, match="admission record"):
@@ -432,14 +433,16 @@ def test_hall_map_index_binds_maps_to_the_admission_record(tmp_path):
         ac.load_hall_map_index(index(TEST_MEMBERS + ("sgb-screen-02",)), ensemble=ens)
     bad = ac.load_hall_map_index(index(TEST_MEMBERS, corrupt=True), ensemble=ens)
     with pytest.raises(ac.HallMapRefusedError, match="sha256"):
-        ac.compare_architectures(_specs(), _upstream(), bad, ledger=_test_only_ledger, ensemble=ens)
+        pac.compare_architectures(_specs(), _upstream(), bad, ledger=_test_only_ledger, ensemble=ens)
 
 
 def test_harness_ships_no_synthetic_provider():
     """Defaults are the frozen ensemble and the lazily imported boundary ledger; nothing synthetic is in the module."""
     import inspect
-    sig = inspect.signature(ac.compare_architectures)
-    assert sig.parameters["ledger"].default is None and sig.parameters["ensemble"].default is None
-    src = open(ac.__file__).read()
-    assert "TEST-ONLY" not in src and "synthetic" not in src.lower()
+    for fn in (pac.compare_architectures, ac.compare_architectures_unassessed):
+        sig = inspect.signature(fn)
+        assert sig.parameters["ledger"].default is None and sig.parameters["ensemble"].default is None
+    for mod in (ac, pac):
+        src = open(mod.__file__).read()
+        assert "TEST-ONLY" not in src and "synthetic" not in src.lower()
     assert ac.LEDGER_RESIDUAL_MAX_FRAC == 0.02 and ac.EXPECTED_BOUNDARY_VERSION == "bus_power_boundary_v1"

@@ -89,6 +89,12 @@ A9.19 / A9.20 owner decisions applied (abep_sim/design/a9_19_architecture.py; ve
   * no hollow-cathode element may appear in a flight configuration (``flight_configuration_elements`` +
     a9_19_architecture.refuse_hollow_cathode_elements, checked by ``evaluate_system``);
   * HC-10 marks the Xe path role CONTINGENCY_EMERGENCY (capability still required, RFP-P17-05 / RFP-P18-08).
+
+A9.22 layer separation: this module computes design quantities only and does not import the assessment layer. The
+functions that apply the design-gate assessment (context_pareto, bus_power, evaluate_system, rank_full_system,
+statewise_T_minus_D) are in the programme layer, abep_sim/programme/design_synthesis.py; the hard-constraint table,
+evaluate_constraints and the S6.17 system comparison (pareto_s6_17, formerly system_pareto) are in
+abep_sim/assessment/design_gates.py.
 """
 from __future__ import annotations
 
@@ -138,10 +144,7 @@ def __getattr__(name):
     # STATES is resolved lazily (the design-state set is repository-only data; importing the module must not need it)
     if name == "STATES":
         return states()
-    # A9.22 DEPRECATED shims: the hard-constraint table is an assessment definition (abep_sim/assessment/design_gates.py)
-    if name in ("HARD_CONSTRAINTS", "PRE_EVALUATED_OBJECTIVES"):
-        from ..assessment import design_gates as dg
-        return getattr(dg, name)
+    # A9.22: HARD_CONSTRAINTS / PRE_EVALUATED_OBJECTIVES are assessment definitions (abep_sim/assessment/design_gates.py)
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 LABEL_PARAMETRIC = "PARAMETRIC_SENSITIVITY"
 SYN_CLASS = "SYNTHETIC_TEST_DATA_NOT_EVIDENCE"
@@ -703,56 +706,6 @@ def pareto_mask(F: np.ndarray, senses: Sequence[str], chunk: int = 256) -> np.nd
     return keep
 
 
-def context_pareto(ctx: dict, objectives=OBJ_KEYS) -> dict:
-    """Pareto set per set pressure of one evaluated context. Returns {P_set: {n_evaluated, n_feasible, status counts,
-    reason counts, members: [row dicts]}}; every member carries the NOT_EVALUATED system objectives."""
-    from ..assessment import design_gates as dg   # A9.22: HC-12 ripple assessment (assessment layer)
-    arr = ctx["arrays"]
-    cands, comps, vols, tgs = ctx["candidates"], ctx["compressors"], ctx["volumes"], ctx["targets"]
-    res = {}
-    for ti, P in enumerate(tgs):
-        sl = (slice(None), slice(None), slice(None), ti)
-        feas = ctx["feasible"][sl]
-        bits = ctx["bits"][sl]
-        idx = np.argwhere(feas)
-        F = np.column_stack([arr[k][sl][feas] for k in objectives]) if len(idx) else np.zeros((0, len(objectives)))
-        mask = pareto_mask(F, [OBJ_SENSE[k] for k in objectives]) if len(idx) else np.zeros(0, bool)
-        status_counts: dict = {}
-        reason_counts: dict = {}
-        for b in bits.ravel():
-            rs = pf.reasons_from_bits(int(b))
-            st = pf.status_from_reasons(rs)
-            status_counts[st] = status_counts.get(st, 0) + 1
-            for r in rs:
-                reason_counts[r] = reason_counts.get(r, 0) + 1
-        members = []
-        for (ci, ki, vi), m in zip(idx, mask):
-            if not m:
-                continue
-            g = (ci, ki, vi, ti)
-            row = {"design_id": design_id(cands[ci], ctx["filter"], comps[ki], vols[vi], P),
-                   "candidate": cands[ci], "compressor": comps[ki], "V_m3": vols[vi], "P_set_Pa": P}
-            for k in objectives:
-                row[k] = float(arr[k][g])
-            for k in ("mdot_captured_min_kgps", "drag_intake_max_se_N", "mdot_delivered_design_kgps", "xO_flow_min",
-                      "xO_flow_max", "deadhead_margin_min", "kn_upper_min", "T_comp_max_K", "a_eq_design_m2"):
-                row[k] = float(arr[k][g])
-            for k in REPORTED_CONSTRAINT_COLUMNS:
-                if k in arr:
-                    row[k] = float(arr[k][g])
-            row["ripple_feed_quality"] = dg.ripple_feed_quality(row.get("ripple_transfer_shaft"), u13.VALUE_PARAMETRIC,
-                                                                u13.h1_tolerance_tbd("ripple"))["status"]
-            row["characterization_coverage"] = u13.characterization_coverage(row["mdot_delivered_min_kgps"])["position"]
-            row["context_role"] = ctx.get("context_role", "ARCHITECTURE_CONTEXT")
-            row["system_not_evaluated"] = list(SYSTEM_NOT_EVALUATED_CODES)
-            members.append(row)
-        members.sort(key=lambda r: r["design_id"])
-        res[P] = {"context_id": context_id(ctx["scenario"], ctx["filter"], ctx["wall"], P),
-                  "n_evaluated": int(bits.size), "n_feasible": int(feas.sum()), "status_counts": status_counts,
-                  "reason_counts": reason_counts, "n_pareto": len(members), "members": members}
-    return res
-
-
 # ================================================================================================= system objectives
 def _obj(name, status, value=None, units="", evidence_class=None, source=None, reason=None, unlock=None, **extra):
     if status not in OBJECTIVE_STATUSES:
@@ -921,49 +874,6 @@ def official_ledger(config: str, repo: Path = REPO, compressor_P_W: float | None
     return bb.ledger(config, loads, effs, fe, label=label)
 
 
-def bus_power(config: str, compressor_P_W: float | None, supplied: Mapping | None = None, repo: Path = REPO) -> dict:
-    """P_bus objective. EVALUATED only from supplied COMPLETE ledgers (steady + start-up steps) whose loads are all of
-    a rankable class; the RFP gate verdict of bus_boundary_a9_v2.rfp_power_gate is carried for the hard constraint.
-    Otherwise NOT_EVALUATED with the official ledger status and the parametric lower bound."""
-    if supplied is not None:
-        steady, startup = supplied["steady"], supplied["startup"]
-        from ..assessment import design_gates as dg   # A9.22: the RFP power-gate verdict is an assessment
-        gate = dg.bus_power_gate(steady, startup)
-        def _ledger_classes(led):
-            # every evidence class that enters P_bus: loads, slot efficiencies, front-end efficiency (PR #36 review)
-            c = set(led["load_evidence_classes"])
-            c |= {it["efficiency_evidence_class"] for it in led["items"]
-                  if it.get("efficiency") is not None and it.get("efficiency_evidence_class")}
-            if any(it.get("path") == "internal_bus" and it.get("state") != "OFF" for it in led["items"]):
-                c.add(led["front_end"]["evidence_class"] or "TBD")
-            return c
-        classes = _ledger_classes(steady)
-        for s in startup:
-            classes |= _ledger_classes(s)
-        if steady["status"] != "COMPLETE":
-            return _obj("P_bus_W", INCOMPLETE, None, "W", reason=f"supplied steady ledger {steady['status']}",
-                        unlock=[UNLOCK["P_bus"]], gate_verdict=gate["verdict"],
-                        lower_bound_W=steady["P_bus_lower_bound_W"])
-        syn = supplied.get("synthetic", False)
-        st = SYNTHETIC_ONLY if syn else (EVALUATED if classes <= set(RANKABLE_CLASSES) else PARAMETRIC_ONLY)
-        return _obj("P_bus_W", st, steady["P_bus_W"], "W", evidence_class=SYN_CLASS if syn else
-                    ",".join(sorted(classes)), source=supplied.get("source", "supplied A9-02 ledgers"),
-                    gate_verdict=gate["verdict"], power_basis=steady["power_basis"])
-    off = official_ledger(config, repo)
-    par = official_ledger(config, repo, compressor_P_W) if compressor_P_W is not None else None
-    return _obj("P_bus_W", NOT_EVALUATED, None, "W",
-                reason=f"A9-02 official ledger status {off['status']} ({len(off['tbd'])} TBD terms; compressor load "
-                       "TBD per row 22); every Hall / ICP / C1 / valve / thermal / housekeeping load and every supply "
-                       "efficiency is TBD", unlock=[UNLOCK["P_bus"]],
-                official_status=off["status"], official_lower_bound_W=off["P_bus_lower_bound_W"],
-                parametric_lower_bound_W=None if par is None else par["P_bus_lower_bound_W"],
-                parametric_status=None if par is None else par["status"],
-                gate_verdict="NOT_EVALUABLE",
-                allocation_context={"design_allocation_W": bb.DESIGN_ALLOCATION_W,
-                                    "common_allocation_W": bb.COMMON_ALLOCATION_W,
-                                    "rule": "owner allocations (rows 109, 114), never gates or predictions"})
-
-
 # ----------------------------------------------------------------------------------------------- m_wet
 MASS_LINES_DESIGN = {"AL-01": "intake (+ filter / duct)", "AL-02": "compressor + drive", "AL-03": "plenum / feed",
                      "AL-05": "ICP neutralizer"}
@@ -1127,10 +1037,6 @@ SYSTEM_OBJECTIVE_CODE = {"T_minus_D_spacecraft_N": "T_minus_D", "P_bus_W": "P_bu
 # A9.22: HARD_CONSTRAINTS, PRE_EVALUATED_OBJECTIVES and evaluate_constraints (+ _from_u13 / _cmp) moved to the
 # assessment layer abep_sim/assessment/design_gates.py (limits from abep_sim/design/engineering_constraints.py).
 # Deprecated shims: evaluate_constraints below and the module __getattr__ (HARD_CONSTRAINTS, PRE_EVALUATED_OBJECTIVES).
-def evaluate_constraints(values: Mapping) -> list[dict]:
-    """DEPRECATED shim (A9.22): abep_sim.assessment.design_gates.evaluate_constraints (identical behaviour)."""
-    from ..assessment import design_gates as dg
-    return dg.evaluate_constraints(values)
 
 
 def _line_hc_elements(ln: Mapping, config: str) -> list[dict]:
@@ -1210,69 +1116,6 @@ def ground_reference_lines(mp: Mapping, gcfg: str) -> list[tuple[str, list]]:
     return out
 
 
-def evaluate_system(upstream_row: Mapping | None, config: str, design: Mapping | None = None,
-                    supplied: Mapping | None = None, repo: Path = REPO) -> dict:
-    """Every system objective of one design vector (upstream sub-vector from an F7 row; x_Hall / x_ICP / x_RF /
-    x_thermal through the supplied records) and the fail-closed hard constraints. ``supplied`` keys: thrust,
-    thrust_capability, spacecraft_drag, bus (ledgers), m_wet, Q_reject, I_e_margin, thermal_margin, firing_life,
-    life_material (a record {value, evidence_class, source} standing for a closed life / material assessment),
-    drag_intake_max (a record replacing the row's parametric F1 intake-drag value for HC-09), statewise_T_minus_D
-    (upstream_a9_13.statewise_drag_compensation result, HC-08), feed_state_sufficiency (upstream_a9_13.
-    feed_state_sufficiency result, HC-11), ripple_feed_quality (upstream_a9_13.ripple_feed_quality result, HC-12),
-    propellant_capability (a record, 1 = air AND Xe operation demonstrated, HC-10) and propellant_paths (the
-    modelled paths; default MODELLED_PROPELLANT_PATHS, checked structurally against A9.15)."""
-    if config in GROUND_REFERENCE_CONFIGURATIONS:
-        raise OptimizerError(f"REFUSED: {config!r} is not a flight configuration (A9.19: no conventional hollow "
-                             "cathode; A9.20: C1 is a GROUND-ONLY laboratory reference)")
-    if config not in CONFIGURATIONS:
-        raise OptimizerError(f"unknown configuration {config!r}")
-    from ..assessment import design_gates as dg   # A9.22: hard-constraint assessment (assessment layer)
-    hc = a919.refuse_hollow_cathode_elements(config, flight_configuration_elements(config, repo))
-    s = dict(supplied or {})
-    row = dict(upstream_row or {})
-    pel = row.get("P_compressor_el_max_W")
-    objs = {
-        "T_minus_D_spacecraft_N": thrust_minus_drag(row.get("drag_intake_max_N"), row.get("drag_intake_max_se_N"),
-                                                    s.get("thrust"), s.get("spacecraft_drag"), repo,
-                                                    intake_drag=s.get("drag_intake_max")),
-        "P_bus_W": bus_power(config, pel, s.get("bus"), repo),
-        "m_wet_kg": wet_mass(config, {"AL-02": {"m_compressor_max_kg": row.get("m_compressor_max_kg"),
-                                                 "status": LABEL_PARAMETRIC, "allocation_kg": 5.5}}
-                             if row.get("m_compressor_max_kg") is not None else None, s.get("m_wet"), repo),
-        "Q_reject_W": heat_rejection(pel, s.get("Q_reject"), repo),
-        "I_e_cap_minus_I_d_max_A": electron_margin(config, s.get("I_e_margin"), repo),
-        "life_material": _life_material(design, s.get("life_material"), repo),
-    }
-    cvals = dict(objs)
-    for k, name, units in (("thrust", "thrust_N", "N"), ("thrust_capability", "thrust_capability_N", "N"),
-                           ("thermal_margin", "thermal_margin_K", "K"), ("firing_life", "firing_life_h", "h")):
-        cvals[name] = supplied_objective(name, s.get(k), units)
-        if k in ("thrust", "thrust_capability"):
-            cvals[name] = hall_gated_thrust(name, cvals[name], repo)
-    if row.get("drag_intake_max_N") is not None:
-        cvals["drag_intake_max_N"] = _obj("drag_intake_max_N", PARAMETRIC_ONLY, row["drag_intake_max_N"], "N",
-                                          "model-derived", "F1 (TPMC) at a TBD surface scenario")
-    if s.get("drag_intake_max") is not None:     # a supplied (e.g. measured / synthetic) intake-drag record
-        cvals["drag_intake_max_N"] = supplied_objective("drag_intake_max_N", s["drag_intake_max"], "N")
-    # A9.13 S6.15 / S6.21 / S6.17 pre-evaluated statewise / feed-quality records (never recomputed from one number)
-    for k in dg.PRE_EVALUATED_OBJECTIVES:
-        cvals[k] = s.get(k)
-    if cvals["ripple_feed_quality"] is None and row.get("ripple_transfer_shaft") is not None:
-        cvals["ripple_feed_quality"] = dg.ripple_feed_quality(row["ripple_transfer_shaft"], u13.VALUE_PARAMETRIC,
-                                                              u13.h1_tolerance_tbd("ripple"))
-    prop = dg.propellant_paths_check(s.get("propellant_paths", MODELLED_PROPELLANT_PATHS))
-    cvals["propellant_capability"] = supplied_objective("propellant_capability", s.get("propellant_capability"), "-")
-    cons = dg.evaluate_constraints(cvals)
-    ne = [SYSTEM_OBJECTIVE_CODE[k] for k, v in objs.items() if v["status"] != EVALUATED]
-    return {"configuration": config, "design_id": row.get("design_id"), "objectives": objs, "constraints": cons,
-            "propellant_paths": prop, "hollow_cathode_check": hc["check"],
-            "c1_provisions_flagged": [e["id"] for e in hc["c1_provisions_flagged"]],
-            "c1_absence_statements": [e["id"] for e in hc["c1_absence_statements"]],
-            "system_not_evaluated": ne,
-            "constraints_not_evaluated": [c["id"] for c in cons if c["status"] == C_NOT_EVALUATED],
-            "constraints_violated": [c["id"] for c in cons if c["status"] == C_VIOLATED]}
-
-
 # ----------------------------------------------------------------------------------------------- full-system ranking
 def nondominated_layers(F: np.ndarray, senses: Sequence[str]) -> np.ndarray:
     """Non-dominated sorting: layer 1 = Pareto set, layer 2 = Pareto set of the rest, ... (no scalarisation)."""
@@ -1298,78 +1141,6 @@ def _upstream_value(ev: Mapping, key: str) -> tuple[float | None, str | None]:
     if isinstance(v, Mapping):
         return v.get("value"), v.get("status")
     return v, (ev.get("upstream_status") or {}).get(key)
-
-
-def rank_full_system(evaluations: Sequence[Mapping], upstream_objectives: Sequence[str] = ()) -> dict:
-    """Full-system ranking over evaluated design vectors: non-dominated sorting layers of the system objectives (plus
-    optional upstream objective keys present in each record's 'upstream'), after removing vectors that VIOLATE a hard
-    constraint or have one not MET on rankable values (fail closed). REFUSED_INCOMPLETE when ANY record has a system
-    objective that is not EVALUATED / synthetic, including the life / material indicator set (no subset ranking:
-    ranking only what happens to be measurable would bias the set); REFUSED_MIXED when synthetic and evidence records
-    meet, in the objectives OR in the values a hard constraint was met on; REFUSED_PARAMETRIC_UPSTREAM when a ranked
-    upstream objective is not EVALUATED / synthetic (the committed upstream values are PARAMETRIC_SENSITIVITY). A
-    synthetic-only ranking is labelled SYNTHETIC_TEST_ONLY_NOT_EVIDENCE. Never a winner: layer 1 is a set.
-
-    life_material is a gate, not a Pareto axis: it is an indicator set with no scalar (its life scalar is HC-07,
-    firing life > 15,000 h); the ranking refuses until it is EVALUATED (or synthetic in a synthetic-only test)."""
-    if not evaluations:
-        return {"status": RANK_REFUSED_NO_FEASIBLE, "reason": "no candidate supplied", "layers": {}}
-    missing = {}
-    kinds = set()
-    for ev in evaluations:
-        for name in [n for n, _ in SYSTEM_OBJECTIVES] + ["life_material"]:
-            o = ev["objectives"][name]
-            ok_value = name == "life_material" or o["value"] is not None
-            if o["status"] not in (EVALUATED, SYNTHETIC_ONLY) or not ok_value:
-                missing.setdefault(name, 0)
-                missing[name] += 1
-            else:
-                kinds.add(o["status"])
-    if missing:
-        return {"status": RANK_REFUSED_INCOMPLETE,
-                "reason": "system objectives (incl. the life / material indicator gate) not EVALUATED for some or "
-                          "all candidates (fail closed, no subset ranking)", "missing_counts": missing,
-                "n_candidates": len(evaluations), "unlock": {k: v for k, v in UNLOCK.items()}, "layers": {}}
-    bad_up = {}
-    for ev in evaluations:
-        for k in upstream_objectives:
-            v, st = _upstream_value(ev, k)
-            if st not in (EVALUATED, SYNTHETIC_ONLY) or v is None or not math.isfinite(float(v)):
-                bad_up.setdefault(k, set()).add(str(st))
-            else:
-                kinds.add(st)
-    if bad_up:
-        return {"status": RANK_REFUSED_PARAMETRIC_UPSTREAM,
-                "reason": "a ranked upstream objective is not EVALUATED / synthetic (PARAMETRIC_SENSITIVITY or "
-                          "unlabelled values never enter an evidence ranking; rank them in the labelled F7 upstream "
-                          "Pareto sets instead)", "upstream_statuses": {k: sorted(v) for k, v in bad_up.items()},
-                "layers": {}}
-    from ..assessment import design_gates as dg   # A9.22: hard-constraint exclusion is an assessment
-    kinds |= dg.constraint_met_value_kinds(evaluations)
-    if kinds == {EVALUATED, SYNTHETIC_ONLY}:
-        return {"status": RANK_REFUSED_MIXED, "reason": "synthetic test data and evidence never meet in one ranking "
-                "(objectives, ranked upstream values and the values hard constraints were met on)", "layers": {}}
-    synthetic = kinds == {SYNTHETIC_ONLY}
-    admissible, excluded = dg.hard_constraint_partition(evaluations)
-    if not admissible:
-        return {"status": RANK_REFUSED_NO_FEASIBLE, "reason": "every candidate violates a hard constraint or has one "
-                "not met on rankable values (NOT_EVALUATED or parametric only; fail closed)",
-                "excluded": [{"design_id": e["design_id"], "constraints": b} for e, b in excluded], "layers": {}}
-    keys = [k for k, _ in SYSTEM_OBJECTIVES] + list(upstream_objectives)
-    senses = [s for _, s in SYSTEM_OBJECTIVES] + [OBJ_SENSE[k] for k in upstream_objectives]
-    F = np.array([[ev["objectives"][k]["value"] for k, _ in SYSTEM_OBJECTIVES] +
-                  [_upstream_value(ev, k)[0] for k in upstream_objectives] for ev, _ in admissible], dtype=float)
-    lay = nondominated_layers(F, senses)
-    layers: dict = {}
-    for (ev, _), l in zip(admissible, lay):
-        layers.setdefault(int(l), []).append(ev["design_id"])
-    for l in layers:
-        layers[l].sort()
-    return {"status": RANK_COMPUTED_SYNTHETIC if synthetic else RANK_COMPUTED,
-            "label": SYNTHETIC_ONLY if synthetic else "NOT_A_SELECTION (Pareto layers; no winner)",
-            "objectives": keys, "senses": senses, "layers": layers,
-            "life_material": "gate only (indicator set, no scalar axis; its life scalar is HC-07)",
-            "excluded": [{"design_id": e["design_id"], "constraints": b} for e, b in excluded]}
 
 
 # ================================================================================================= reporting helpers
@@ -1457,20 +1228,6 @@ def require_all_admitted_scenarios(used, inp: UpstreamInputs | None = None, admi
     set) unless a pre-registered DI-1.3 narrowing record is supplied."""
     adm = list(admitted) if admitted is not None else list(inp.scenarios)
     return u13.require_all_admitted_scenarios(list(used), adm, narrowing_record)
-
-
-def statewise_T_minus_D(states, thrust_fn, drag_fn, repo: Path = REPO) -> dict:
-    """HC-08 / AG-13 statewise record (A9.13 S6.15) with the admitted-Hall-member gate read from the repository."""
-    from ..assessment import design_gates as dg
-    return dg.statewise_drag_compensation(states, thrust_fn, drag_fn,
-                                           hall_admitted=bool(hall_response_status(repo)["admitted_members"]))
-
-
-def system_pareto(rows, weights=None) -> dict:
-    """A9.13 S6.17 system comparison: hard constraints first, then a Pareto filter over worst-state margin, drag,
-    upstream power, mass, volume and heat-rejection burden; a weighted scalar is refused."""
-    from ..assessment import design_gates as dg
-    return dg.pareto_s6_17(rows, weights=weights)
 
 
 def robust_pareto_set(member_ids, version: str, provenance: str, regenerated_after=()) -> "u13.RobustParetoSet":

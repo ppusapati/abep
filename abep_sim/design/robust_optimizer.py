@@ -138,14 +138,8 @@ def design_gate_snapshot(repo=ao.REPO, rvm_snapshot: dict | None = None) -> dict
     return snap
 
 
-def gate_snapshot(repo=ao.REPO, rvm_snapshot: dict | None = None) -> dict:
-    """DEPRECATED compatibility entry point (A9.22): with ``rvm_snapshot`` supplied by the builder it is
-    design_gate_snapshot; without it the RVM part is obtained from the assessment layer
-    (abep_sim.assessment.design_gates.gate_snapshot), identical to the pre-A9.22 result."""
-    if rvm_snapshot is not None:
-        return design_gate_snapshot(repo, rvm_snapshot)
-    from ..assessment import design_gates as dg
-    return dg.gate_snapshot(repo)
+# A9.22: the full F8 evidence-gate snapshot (design part + RVM part) is abep_sim.assessment.design_gates.gate_snapshot
+# (= design_gate_snapshot(repo, rvm_gate_snapshot(repo))); the deprecated no-argument gate_snapshot here was removed.
 
 
 # ================================================================================================= helpers

@@ -1509,24 +1509,3 @@ def compare_control_modes(filt: FilterCase, plant: CompressorPlant, plenum: Plen
 
 
 # =================================================================================================== A9.13 S6.12 / S6.17
-def feed_quality(case_result: Mapping, tolerances: Mapping[str, "u13.H1Tolerance"] | None = None) -> dict:
-    """Feed-quality constraints of one transient case against measured H-1 tolerances (S6.12 / S6.17): pressure
-    peak deviation and ripple. With a TBD tolerance the constraint is NOT_EVALUATED; F4's provisional 2 % band never
-    replaces a tighter measured H-1 limit. Values from this model are PARAMETRIC_SENSITIVITY."""
-    from ..assessment import design_gates as dg     # A9.22: HC-12 ripple assessment lives in the assessment layer
-    tol = dict(tolerances or {})
-    obj = case_result.get("objectives") or {}
-    pk = obj.get("peak_deviation_max")
-    rip = obj.get("ripple_transfer_shaft")
-    p_tol = tol.get("pressure") or u13.h1_tolerance_tbd("pressure")
-    r_tol = tol.get("ripple") or u13.h1_tolerance_tbd("ripple")
-    band = u13.governing_band("pressure", SETTLE_BAND, p_tol)
-    if p_tol.status == u13.VALUE_TBD or pk is None:
-        p_status = u13.C_NOT_EVALUATED
-    else:
-        p_status = u13.constraint_status(pk <= p_tol.value_frac, u13.combine_value_status([u13.VALUE_PARAMETRIC,
-                                                                                         p_tol.status]))
-    return {"framework": TRANSIENT_FRAMEWORK["status"], "pressure_band": band,
-            "pressure_peak_deviation": {"value_frac": pk, "status": p_status},
-            "ripple": dg.ripple_feed_quality(rip, u13.VALUE_PARAMETRIC if rip is not None else u13.VALUE_TBD, r_tol),
-            "authority": u13.cite("A9.13")}

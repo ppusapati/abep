@@ -26,6 +26,11 @@ Refusals (a HarnessError is raised; there is never a fallback):
 Output: per-member, per-architecture results; per-architecture min/max envelopes over the members (unweighted scenario
 set: no mean, no probability, no weighting); min/max envelopes of paired per-member differences between architectures.
 There is deliberately no field that names a single preferred architecture.
+
+A9.22 layer separation: this module computes the comparison (``compare_architectures_unassessed``); the
+evaluation-only band / cap flags (``rfp_flags``), their per-architecture ``constraint_robustness`` and the
+``rfp_limits`` block are attached by the programme layer, ``abep_sim.programme.arch_compare.compare_architectures``
+(the full comparison record, identical to the pre-move output). The ``run`` CLI command calls the programme layer.
 """
 from __future__ import annotations
 
@@ -43,7 +48,6 @@ from numbers import Real
 from types import MappingProxyType
 
 from . import hall_ensemble, hall_map
-from .assessment import arch_constraints as _AC
 
 HARNESS_VERSION = "arch_compare_v1"
 ARCHITECTURES = ("hall_only", "rf_hall", "ecr_hall")
@@ -608,7 +612,7 @@ def _run_ledger(fn, arch: str, loads: dict, efficiencies: dict, expected_version
 
 # ------------------------------------------------------------------------------------------------------ evaluation
 def _evaluate(mid: str, spec: ArchitectureSpec, hm, prov: dict, query: dict, upstream: UpstreamState, fn,
-              expected_version: str, limits: Mapping | None = None) -> dict:
+              expected_version: str) -> dict:
     res = {"status": None, "reason": None, "hall_query": dict(query), "hall_map": prov,
            "upstream_fingerprint": upstream.fingerprint()}
     outside = {k: [float(hm.axes[k][0]), float(hm.axes[k][-1])] for k in hm.names
@@ -639,15 +643,13 @@ def _evaluate(mid: str, spec: ArchitectureSpec, hm, prov: dict, query: dict, ups
     metrics = {"thrust_mN": T * 1e3, "discharge_power_W": Pd, "discharge_current_A": out["discharge_current_A"],
                "anode_eff": eta_a, "anode_jet_power_W": eta_a * Pd, "P_bus_W": P_bus,
                "thrust_per_P_bus_mN_per_kW": T * 1e3 / (P_bus / 1e3), "bus_to_anode_jet_efficiency": eta_a * Pd / P_bus}
-    # evaluation-only band / cap flags: assessment layer (A9.22); limits are caller-supplied
-    flags = _AC.band_cap_flags(T * 1e3, P_bus, _AC.default_limits() if limits is None else limits)
+    # evaluation-only band / cap flags (rfp_flags): added by the programme layer (A9.22)
     if upstream.drag_N is not None:
         metrics["thrust_minus_drag_mN"] = (T - upstream.drag_N) * 1e3
         metrics["thrust_to_drag"] = T / upstream.drag_N
-        flags["thrust_exceeds_drag"] = T > upstream.drag_N
     res.update(status=STATUS_OK, hall={k: v for k, v in out.items()}, member_independent_loads_W=_plain(
         {**spec.fixed_loads_W, **upstream_loads}), hall_loads_W=hall_loads, efficiencies=dict(spec.efficiencies),
-        bus_ledger=led, metrics=metrics, rfp_flags=flags)
+        bus_ledger=led, metrics=metrics)
     return res
 
 
@@ -659,16 +661,12 @@ def _envelope(arch: str, ids: list, results: dict) -> dict:
     not_ok = {mid: r["status"] for mid, r in rows.items() if r["status"] != STATUS_OK}
     env = {"n_members": len(ids), "status_counts": counts, "not_ok_members": not_ok}
     if not_ok:
-        env.update(status="INCOMPLETE", metrics=None, constraint_robustness=None,
+        env.update(status="INCOMPLETE", metrics=None,
                    note="at least one admitted member has no OK result: no envelope is reported over a subset")
         return env
     keys = set.intersection(*(set(r["metrics"]) for r in rows.values()))
     env["metrics"] = {k: {"min": min(r["metrics"][k] for r in rows.values()),
                           "max": max(r["metrics"][k] for r in rows.values())} for k in sorted(keys)}
-    flags = set.intersection(*(set(r["rfp_flags"]) for r in rows.values()))
-    env["constraint_robustness"] = {
-        f: {"n_true": sum(bool(r["rfp_flags"][f]) for r in rows.values()), "n_members": len(ids),
-            "holds_for_all_members": all(bool(r["rfp_flags"][f]) for r in rows.values())} for f in sorted(flags)}
     env["status"] = "COMPLETE"
     return env
 
@@ -691,22 +689,18 @@ def _paired(archs: list, ids: list, results: dict, envelopes: dict) -> dict:
     return out
 
 
-def compare_architectures(specs, upstream: UpstreamState, hall_maps: Mapping, *, ledger=None,
-                          ensemble: Mapping | None = None,
-                          expected_boundary_version: str = EXPECTED_BOUNDARY_VERSION,
-                          limits: Mapping | None = None) -> dict:
-    """Evaluate every spec'd architecture for EVERY admitted member on the common bus boundary.
+def compare_architectures_unassessed(specs, upstream: UpstreamState, hall_maps: Mapping, *, ledger=None,
+                                     ensemble: Mapping | None = None,
+                                     expected_boundary_version: str = EXPECTED_BOUNDARY_VERSION) -> dict:
+    """Evaluate every spec'd architecture for EVERY admitted member on the common bus boundary (no evaluation-only
+    flags: abep_sim.programme.arch_compare.compare_architectures adds rfp_flags, constraint_robustness, rfp_limits).
 
     specs      ArchitectureSpec per architecture (subset of ARCHITECTURES, no repeats)
     upstream   UpstreamState, identical for all members and architectures
     hall_maps  {member_id: {arch: path | {'path', 'sha256'}}}; keys must be exactly the admitted members
     ledger     None -> abep_sim.arch_boundary.bus_power_ledger (imported now); or an injected callable
     ensemble   None -> the frozen ensemble file via hall_ensemble.load_ensemble(); an injected mapping is for tests
-    limits     {thrust_min_mN, thrust_max_mN, power_max_W} for the evaluation-only flags (A9.22: caller-supplied);
-               None -> abep_sim.operating_inputs (today abep_sim.constants.RFP)
     """
-    limits_source = "abep_sim.constants.RFP" if limits is None else "caller-supplied"
-    limits = _AC.default_limits() if limits is None else {k: float(limits[k]) for k in ("thrust_min_mN", "thrust_max_mN", "power_max_W")}
     ens, ens_info = resolve_ensemble(ensemble)
     ids = admitted_members(ens)                                       # refuses on an empty credible set
     if not isinstance(specs, Sequence) or isinstance(specs, str) or not specs:
@@ -750,8 +744,7 @@ def compare_architectures(specs, upstream: UpstreamState, hall_maps: Mapping, *,
         results[mid] = {}
         for s in specs:
             hm, prov = maps[mid][s.arch]
-            results[mid][s.arch] = _evaluate(mid, s, hm, prov, queries[s.arch], upstream, fn, expected_boundary_version,
-                                              limits)
+            results[mid][s.arch] = _evaluate(mid, s, hm, prov, queries[s.arch], upstream, fn, expected_boundary_version)
             if upstream.fingerprint() != fp0:
                 raise ScopeViolationError("the upstream state changed during the member loop")
     comps = {}
@@ -785,7 +778,6 @@ def compare_architectures(specs, upstream: UpstreamState, hall_maps: Mapping, *,
         "mass_closure": _plain(closures),
         "maps_not_used": {mid: v for mid, v in unused.items() if v},
         "ledger_residual_gate_frac": LEDGER_RESIDUAL_MAX_FRAC,
-        "rfp_limits": _AC.limits_record(limits, limits_source),
         "results": results,
         "envelopes": envelopes,
         "paired_differences": _paired(archs, ids, results, envelopes),
@@ -882,6 +874,8 @@ def main(argv=None) -> int:
             _write_new(a.out, {"schema": UPSTREAM_SCHEMA, **u.to_dict()})
             print(f"wrote {a.out} (fingerprint {u.fingerprint()})")
         else:
+            # the full comparison record (with the evaluation-only flags) is the programme layer's (A9.22)
+            from .programme.arch_compare import compare_architectures
             res = compare_architectures(load_specs(a.specs), load_upstream(a.upstream), load_hall_map_index(a.maps))
             _write_new(a.out, res)
             print(f"wrote {a.out}: {len(res['members'])} members x {len(res['architectures'])} architectures; "

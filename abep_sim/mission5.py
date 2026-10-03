@@ -12,7 +12,7 @@ import pandas as pd
 from . import operating_inputs as OI
 from .atmosphere import atmosphere
 from .intake import IntakeParams, CompressorParams, collection, compress
-from .system import Config, evaluate
+from .system import Config, physics_closure
 from .mission_env import Spacecraft, spacecraft_drag, propagate, plume_interaction
 from .radiation import RadEnv, electronics_margins, uv_contamination_ageing, debris_puncture, shielding_mass
 from .materials import surface_ageing_alpha
@@ -33,7 +33,7 @@ def run_phase5(cfg: Config, sc: Spacecraft, hours: float | None = None, dt_h: fl
     mission_hours = OI.MISSION_HOURS if mission_hours is None else mission_hours
     firing_hours = OI.FIRING_HOURS if firing_hours is None else firing_hours
     thrust_cap_mN = OI.THRUST_MAX_mN if thrust_cap_mN is None else thrust_cap_mN
-    base = evaluate(cfg)                                   # design point (mean solar) for masses, life rates
+    base = physics_closure(cfg)                            # design point (mean solar) for masses, life rates (raw keys)
     alpha0 = cfg.intake.accommodation
     ao_flux = base["ao_flux_m2s"]
     fluence = 0.0; fired_h = 0.0; energy = 0.0

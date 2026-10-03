@@ -28,7 +28,8 @@ from abep_sim.assessment import (RAW_ONLY_KEYS, FORBIDDEN_RAW_PREFIXES, FORBIDDE
                                  RAW_SCHEMA_VERSION, assess, constraints_from_config, priors_from_config,
                                  legacy_merge)
 from abep_sim.intake import IntakeParams, CompressorParams
-from abep_sim.system import Config, Budgets, evaluate, physics_closure, RAW_CLOSURE_SCHEMA_VERSION
+from abep_sim.system import Config, Budgets, physics_closure, RAW_CLOSURE_SCHEMA_VERSION
+from abep_sim.programme.closure import evaluate
 
 ROOT = Path(__file__).resolve().parents[1]
 FIX_DIR = Path(__file__).resolve().parent / "fixtures"
@@ -194,7 +195,7 @@ SMALL_GRID = {"architectures": ["hall_1stage", "hall_ecr"], "alt_km": [200], "so
 
 
 def test_sweep_raw_assessment_join_equals_legacy(tmp_path):
-    from abep_sim.sweep import run_grid, run_grid_split, main, EVIDENCE_STATUS
+    from abep_sim.programme.sweep import run_grid, run_grid_split, main, EVIDENCE_STATUS
     legacy = run_grid(SMALL_GRID)
     raw, assessed, merged = run_grid_split(SMALL_GRID)
     pd.testing.assert_frame_equal(merged, legacy)

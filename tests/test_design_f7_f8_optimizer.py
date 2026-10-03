@@ -14,6 +14,8 @@ import numpy as np
 import pytest
 
 from abep_sim import bus_boundary_a9_v2 as bb
+from abep_sim.assessment import design_gates as dg  # A9.22: assessment layer
+from abep_sim.programme import design_synthesis as ds  # A9.22: programme layer (F7/F8 runners)
 from abep_sim.design import architecture_optimizer as ao
 from abep_sim.design import intake_synthesis as isy
 from abep_sim.design import plenum_feed as pf
@@ -145,7 +147,7 @@ def test_pareto_mask_semantics():
 
 
 def test_context_pareto_members_feasible_and_carry_not_evaluated(small_ctx):
-    par = ao.context_pareto(small_ctx)
+    par = ds.context_pareto(small_ctx)
     n = 0
     for P, b in par.items():
         assert b["n_pareto"] == len(b["members"]) <= b["n_feasible"]
@@ -158,14 +160,14 @@ def test_context_pareto_members_feasible_and_carry_not_evaluated(small_ctx):
 
 # ------------------------------------------------------------------------------------------------- system level
 def _row(small_ctx):
-    par = ao.context_pareto(small_ctx)
+    par = ds.context_pareto(small_ctx)
     return next(m for b in par.values() for m in b["members"])
 
 
 def test_system_objectives_refused_today(inp, small_ctx):
     row = _row(small_ctx)
     for cfg in ao.CONFIGURATIONS:
-        ev = ao.evaluate_system(row, cfg, design=inp.designs[row["compressor"]])
+        ev = ds.evaluate_system(row, cfg, design=inp.designs[row["compressor"]])
         assert all(o["status"] == ao.NOT_EVALUATED for o in ev["objectives"].values())
         assert all(o["unlock"] for o in ev["objectives"].values())
         assert ev["system_not_evaluated"] == list(ao.SYSTEM_NOT_EVALUATED_CODES)
@@ -176,11 +178,11 @@ def test_system_objectives_refused_today(inp, small_ctx):
         pb = ev["objectives"]["P_bus_W"]
         assert pb["official_status"] == "PARTIAL_BOUNDARY" and pb["official_lower_bound_W"] == 0.0
         assert pb["parametric_lower_bound_W"] == pytest.approx(row["P_compressor_el_max_W"])
-        assert ao.rank_full_system([ev])["status"] == ao.RANK_REFUSED_INCOMPLETE
+        assert ds.rank_full_system([ev])["status"] == ao.RANK_REFUSED_INCOMPLETE
 
 
 def test_constraints_fail_closed_on_nothing():
-    cons = ao.evaluate_constraints({})
+    cons = dg.evaluate_constraints({})
     assert {c["status"] for c in cons} == {ao.C_NOT_EVALUATED}
 
 
@@ -229,12 +231,12 @@ class _TestH1Map:
 def _statewise_records(vs, thrust, drag=0.002, hall_admitted=False):
     """A9.13 S6.15 / S6.21 / S6.17 records for HC-08 / HC-11 / HC-12 from test values of value status ``vs``."""
     rec = lambda v: (lambda st: {"value_N": v, "status": vs, "source": "TEST_FIXTURE", "state_id": st["state_id"]})
-    tw = u13.statewise_drag_compensation(TEST_STATES, rec(thrust), rec(drag), hall_admitted=hall_admitted)
+    tw = dg.statewise_drag_compensation(TEST_STATES, rec(thrust), rec(drag), hall_admitted=hall_admitted)
     off = lambda st: {"mdot_kgps": 2e-7, "P_Pa": 0.02, "T_K": 350.0, "x_mole": {"O": 0.5, "N2": 0.45, "O2": 0.05},
                       "ripple_frac": 0.01, "status": vs}
-    fss = u13.feed_state_sufficiency(TEST_STATES, off, rec(thrust),
+    fss = dg.feed_state_sufficiency(TEST_STATES, off, rec(thrust),
                                      _TestH1Map(u13.SYNTHETIC if vs == u13.VALUE_SYNTHETIC else u13.H1_MAP_VALIDATED))
-    rip = u13.ripple_feed_quality(0.01, vs, u13.H1Tolerance("ripple", 0.05, vs, "TEST_FIXTURE"))
+    rip = dg.ripple_feed_quality(0.01, vs, u13.H1Tolerance("ripple", 0.05, vs, "TEST_FIXTURE"))
     return {"statewise_T_minus_D": tw, "feed_state_sufficiency": fss, "ripple_feed_quality": rip}
 
 
@@ -245,7 +247,7 @@ def _syn_eval(row, thrust, pbus_scale, mwet, design_id, measured_bus=False):
            "thermal_margin": _syn(60.0), "firing_life": _syn(16000.0), "life_material": _syn(1.0),
            "drag_intake_max": _syn(0.005), "propellant_capability": _syn(1.0),
            **_statewise_records(u13.VALUE_SYNTHETIC, thrust)}
-    ev = ao.evaluate_system(row, "hall_icp_neutralizer", supplied=sup)
+    ev = ds.evaluate_system(row, "hall_icp_neutralizer", supplied=sup)
     ev["design_id"] = design_id
     return ev
 
@@ -258,18 +260,18 @@ def test_full_system_ranking_code_path_with_synthetic_fixtures(small_ctx):
     d = _syn_eval(row, 0.010, 1.0, 30.0, "SYN-D")             # violates HC-01 (12 mN) -> excluded
     for ev in (a, b, c, d):
         assert all(o["status"] == ao.SYNTHETIC_ONLY for o in ev["objectives"].values())
-    r = ao.rank_full_system([a, b, c, d])
+    r = ds.rank_full_system([a, b, c, d])
     assert r["status"] == ao.RANK_COMPUTED_SYNTHETIC and r["label"] == ao.SYNTHETIC_ONLY
     assert r["layers"][1] == ["SYN-A", "SYN-C"] and r["layers"][2] == ["SYN-B"]
     assert [e["design_id"] for e in r["excluded"]] == ["SYN-D"] and "HC-01" in r["excluded"][0]["constraints"]
     # mixing synthetic and evidence refuses
     m = _syn_eval(row, 0.020, 1.0, 30.0, "MIX", measured_bus=True)
     assert m["objectives"]["P_bus_W"]["status"] == ao.EVALUATED
-    assert ao.rank_full_system([a, m])["status"] == ao.RANK_REFUSED_MIXED
+    assert ds.rank_full_system([a, m])["status"] == ao.RANK_REFUSED_MIXED
     # one missing objective anywhere refuses the whole ranking (no subset ranking)
-    assert ao.rank_full_system([a, ao.evaluate_system(row, "hall_icp_neutralizer")])["status"] == \
+    assert ds.rank_full_system([a, ds.evaluate_system(row, "hall_icp_neutralizer")])["status"] == \
         ao.RANK_REFUSED_INCOMPLETE
-    assert ao.rank_full_system([d])["status"] == ao.RANK_REFUSED_NO_FEASIBLE
+    assert ds.rank_full_system([d])["status"] == ao.RANK_REFUSED_NO_FEASIBLE
 
 
 def test_supplied_objective_labels():
@@ -322,7 +324,7 @@ def test_uq_axes_and_gate_snapshot():
     assert t["tpmc_statistics"] == "SEEDED_MONTE_CARLO"
     assert t["compressor_performance"] == "LOCAL_ELASTICITY"
     assert [a["axis"] for a in ro.UQ_AXES if a["quantified"]] == ["tpmc_statistics"]
-    g = ro.gate_snapshot(ROOT)
+    g = dg.gate_snapshot(ROOT)
     assert g["hall_credible_set"] == "EMPTY" and g["a9_2_statuses"]["ICP electron-current capacity"] == "PENDING_ICP45"
 
 
@@ -409,7 +411,7 @@ def test_model_derived_thrust_never_meets_hc01_hc02_while_credible_set_empty(sma
            "thrust_capability": {"value": 0.03, "evidence_class": "model-derived", "source": "x"},
            "firing_life": {"value": 2e4, "evidence_class": "assumed", "source": "x"},
            "thermal_margin": {"value": 80.0, "evidence_class": "assumed", "source": "x"}}
-    ev = ao.evaluate_system(row, "hall_icp_neutralizer", supplied=sup)
+    ev = ds.evaluate_system(row, "hall_icp_neutralizer", supplied=sup)
     st = {c["id"]: c["status"] for c in ev["constraints"]}
     assert st["HC-01"] == st["HC-02"] == ao.C_NOT_EVALUATED
     assert st["HC-06"] == st["HC-07"] == ao.C_MET_PARAMETRIC
@@ -426,7 +428,7 @@ def _evidence_eval(monkeypatch, row, design_id, cons_rec):
            "thermal_margin": cons_rec(60.0), "firing_life": cons_rec(16000.0), "life_material": _meas(1.0),
            "drag_intake_max": _meas(0.005), "propellant_capability": _meas(1.0),
            **_statewise_records(u13.VALUE_EVIDENCE, 0.02, hall_admitted=True)}
-    ev = ao.evaluate_system(row, "hall_icp_neutralizer", supplied=sup)
+    ev = ds.evaluate_system(row, "hall_icp_neutralizer", supplied=sup)
     ev["design_id"] = design_id
     return ev
 
@@ -438,10 +440,10 @@ def test_assumed_or_synthetic_constraint_values_never_admit_to_evidence_ranking(
     st = {c["id"]: c["status"] for c in a["constraints"]}
     assert st["HC-06"] == st["HC-07"] == ao.C_MET_PARAMETRIC
     assert {v for k, v in st.items() if k not in ("HC-06", "HC-07")} == {ao.C_MET}
-    r = ao.rank_full_system([a])
+    r = ds.rank_full_system([a])
     assert r["status"] == ao.RANK_REFUSED_NO_FEASIBLE
     s = _evidence_eval(monkeypatch, row, "S", _syn)
-    assert ao.rank_full_system([s])["status"] == ao.RANK_REFUSED_MIXED
+    assert ds.rank_full_system([s])["status"] == ao.RANK_REFUSED_MIXED
 
 
 def test_ranking_refuses_while_life_material_not_evaluated(monkeypatch, small_ctx):
@@ -449,7 +451,7 @@ def test_ranking_refuses_while_life_material_not_evaluated(monkeypatch, small_ct
     row = _row(small_ctx)
     a = _syn_eval(row, 0.020, 1.0, 30.0, "SYN-A")
     a["objectives"]["life_material"] = ao.life_material_indicators()
-    r = ao.rank_full_system([a])
+    r = ds.rank_full_system([a])
     assert r["status"] == ao.RANK_REFUSED_INCOMPLETE and r["missing_counts"] == {"life_material": 1}
 
 
@@ -459,15 +461,15 @@ def test_ranking_refuses_unlabelled_or_parametric_upstream_objectives(small_ctx)
     a = _syn_eval(row, 0.020, 1.0, 30.0, "SYN-A")
     b = _syn_eval(row, 0.020, 1.0, 30.0, "SYN-B")
     a["upstream"], b["upstream"] = {"P_compressor_el_max_W": 10.0}, {"P_compressor_el_max_W": 5.0}
-    r = ao.rank_full_system([a, b], upstream_objectives=["P_compressor_el_max_W"])
+    r = ds.rank_full_system([a, b], upstream_objectives=["P_compressor_el_max_W"])
     assert r["status"] == ao.RANK_REFUSED_PARAMETRIC_UPSTREAM
     a["upstream"] = {"P_compressor_el_max_W": {"value": 10.0, "status": ao.PARAMETRIC_ONLY}}
     b["upstream"] = {"P_compressor_el_max_W": {"value": 5.0, "status": ao.PARAMETRIC_ONLY}}
-    assert ao.rank_full_system([a, b], upstream_objectives=["P_compressor_el_max_W"])["status"] == \
+    assert ds.rank_full_system([a, b], upstream_objectives=["P_compressor_el_max_W"])["status"] == \
         ao.RANK_REFUSED_PARAMETRIC_UPSTREAM
     a["upstream"] = {"P_compressor_el_max_W": {"value": 10.0, "status": ao.SYNTHETIC_ONLY}}
     b["upstream"] = {"P_compressor_el_max_W": {"value": 5.0, "status": ao.SYNTHETIC_ONLY}}
-    r = ao.rank_full_system([a, b], upstream_objectives=["P_compressor_el_max_W"])
+    r = ds.rank_full_system([a, b], upstream_objectives=["P_compressor_el_max_W"])
     assert r["status"] == ao.RANK_COMPUTED_SYNTHETIC and r["layers"] == {1: ["SYN-B"], 2: ["SYN-A"]}
 
 
@@ -495,7 +497,7 @@ def test_hc03_gate_verdict_on_parametric_ledger_never_met():
     the A9-02 gate verdict (which ignores evidence class) must not turn HC-03 into MET_ON_SUPPLIED_VALUES."""
     L = _syn_ledgers("hall_icp_neutralizer", 1.0, measured=False)
     L["synthetic"] = False
-    ev = ao.evaluate_system({"design_id": "x"}, "hall_icp_neutralizer", supplied={"bus": L})
+    ev = ds.evaluate_system({"design_id": "x"}, "hall_icp_neutralizer", supplied={"bus": L})
     hc03 = [c for c in ev["constraints"] if c["id"] == "HC-03"]
     assert len(hc03) == 1
     c = hc03[0]
@@ -503,12 +505,12 @@ def test_hc03_gate_verdict_on_parametric_ledger_never_met():
     assert c["status"] != ao.C_MET
     assert c["status"] in (ao.C_MET_PARAMETRIC, ao.C_VIOLATED_PARAMETRIC, ao.C_NOT_EVALUATED)
     # direct: a parametric record carrying a PASS verdict maps to the parametric sensitivity status
-    out = ao.evaluate_constraints({"P_bus_W": {"status": ao.PARAMETRIC_ONLY, "value": 1000.0, "gate_verdict": "PASS"}})
+    out = dg.evaluate_constraints({"P_bus_W": {"status": ao.PARAMETRIC_ONLY, "value": 1000.0, "gate_verdict": "PASS"}})
     hc = [x for x in out if x["id"] == "HC-03"][0]
     assert hc["status"] == ao.C_MET_PARAMETRIC
-    out = ao.evaluate_constraints({"P_bus_W": {"status": ao.PARAMETRIC_ONLY, "value": 2000.0, "gate_verdict": "FAIL"}})
+    out = dg.evaluate_constraints({"P_bus_W": {"status": ao.PARAMETRIC_ONLY, "value": 2000.0, "gate_verdict": "FAIL"}})
     assert [x for x in out if x["id"] == "HC-03"][0]["status"] == ao.C_VIOLATED_PARAMETRIC
-    out = ao.evaluate_constraints({"P_bus_W": {"status": ao.EVALUATED, "value": 1000.0, "gate_verdict": "PASS"}})
+    out = dg.evaluate_constraints({"P_bus_W": {"status": ao.EVALUATED, "value": 1000.0, "gate_verdict": "PASS"}})
     assert [x for x in out if x["id"] == "HC-03"][0]["status"] == ao.C_MET
 
 
@@ -527,9 +529,9 @@ def test_bus_power_counts_efficiency_evidence(monkeypatch):
                        label="T", power_basis="p_bus_1ms_max", gate_measurement=gm)
         return {"steady": st, "startup": [st], "source": "x"}
 
-    assert ao.bus_power(config, None, led("measured", "measured"), ROOT)["status"] == ao.EVALUATED
-    assert ao.bus_power(config, None, led("assumed", "measured"), ROOT)["status"] == ao.PARAMETRIC_ONLY
-    assert ao.bus_power(config, None, led("measured", "assumed"), ROOT)["status"] == ao.PARAMETRIC_ONLY
+    assert ds.bus_power(config, None, led("measured", "measured"), ROOT)["status"] == ao.EVALUATED
+    assert ds.bus_power(config, None, led("assumed", "measured"), ROOT)["status"] == ao.PARAMETRIC_ONLY
+    assert ds.bus_power(config, None, led("measured", "assumed"), ROOT)["status"] == ao.PARAMETRIC_ONLY
 
 
 def test_thrust_minus_drag_inherits_intake_drag_status(monkeypatch):

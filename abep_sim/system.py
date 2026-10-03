@@ -5,7 +5,7 @@ Owner decision A9.22 items 6-7 (docs/decisions/OD_2026_10_03_A9_22_layer_separat
     ``raw_closure_v2``, an explicit increment over the pre-split merged dict, implicitly v1). It carries no
     requirement check, IC metric, architecture-preference flag or RFP / compliance classification.
   * ``abep_sim.assessment.assess(raw, constraints, priors)`` compares a raw closure with the constraints.
-  * ``evaluate(cfg)`` keeps returning the pre-split merged dict (same keys, order and values) for existing tools.
+  * the pre-split merged dict: programme layer ``abep_sim.programme.closure.evaluate`` (``evaluate`` here delegates).
 Engineering inputs (T_req floor, thrust cap, mission-duration basis, subsystem firing-life assumption) come only
 from the operating-inputs seam ``abep_sim.operating_inputs`` (frozen configuration config/mission/), never from the
 RFP / RVM. A9.22 G1 governed baseline change (docs/HISTORY.md 'A9.22 G1 governed baseline change (system.py
@@ -468,7 +468,9 @@ def physics_closure(cfg: Config) -> dict:
 
 
 def evaluate(cfg: Config) -> dict:
-    """Pre-split merged record (raw closure + assessment), same keys / order / values as before A9.22 Phase B."""
-    from .assessment import assess, constraints_from_config, priors_from_config, legacy_merge
-    raw = physics_closure(cfg)
-    return legacy_merge(raw, assess(raw, constraints_from_config(cfg), priors_from_config(cfg)))
+    """COMPATIBILITY ENTRY (A9.22 layer separation): the legacy merged record (raw closure + assessment) is built by the
+    programme layer, abep_sim.programme.closure.evaluate (identical keys / order / values). This name is kept only
+    because immutable records reference it by path (upstream ICD v1 producers/consumers, RTM v1 model reference);
+    in-repo code imports the programme layer. The raw physics entry is physics_closure."""
+    from .programme.closure import evaluate as _merged_record
+    return _merged_record(cfg)

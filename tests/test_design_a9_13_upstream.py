@@ -12,6 +12,8 @@ from pathlib import Path
 import pytest
 
 from abep_sim import rotor_strength as rs
+from abep_sim.assessment import design_gates as dg  # A9.22: assessment layer
+from abep_sim.programme import design_synthesis as ds  # A9.22: programme layer (F7/F8 runners)
 from abep_sim.design import architecture_optimizer as ao
 from abep_sim.design import compressor_synthesis as cs
 from abep_sim.design import filter_stage as fs
@@ -96,7 +98,7 @@ def test_decision_records_and_rfp_clauses_are_pinned():
     reg = json.loads((ROOT / u13.RFP_REGISTRATION).read_text())
     ids = {c["id"] for c in reg["clauses"]}
     assert set(u13.RFP_CLAUSES.values()) <= ids
-    for c in ao.HARD_CONSTRAINTS:
+    for c in dg.HARD_CONSTRAINTS:
         for cid in (c.get("rfp") or "").replace(";", " ").split():
             if cid.startswith("RFP-"):
                 assert cid in ids, (c["id"], cid)
@@ -330,19 +332,19 @@ def test_transient_framework_provisional_and_h1_governs_when_tighter():
     assert tight["governing"] == "H1_MEASURED_TOLERANCE" and tight["engineering_target_frac"] == 0.005
     loose = u13.governing_band("pressure", 0.02, u13.H1Tolerance("pressure", 0.05, u13.VALUE_SYNTHETIC, "test"))
     assert loose["acceptance_limit_frac"] == 0.05 and loose["engineering_target_frac"] == 0.02
-    fq = pf.feed_quality({"objectives": {"peak_deviation_max": 0.01, "ripple_transfer_shaft": 0.3}})
+    fq = ds.feed_quality({"objectives": {"peak_deviation_max": 0.01, "ripple_transfer_shaft": 0.3}})
     assert fq["ripple"]["status"] == u13.C_NOT_EVALUATED and fq["pressure_peak_deviation"]["status"] == u13.NOT_EVALUATED
-    fq = pf.feed_quality({"objectives": {"peak_deviation_max": 0.01, "ripple_transfer_shaft": 0.3}},
+    fq = ds.feed_quality({"objectives": {"peak_deviation_max": 0.01, "ripple_transfer_shaft": 0.3}},
                          {"ripple": u13.H1Tolerance("ripple", 0.1, u13.VALUE_EVIDENCE, "test")})
     assert fq["ripple"]["status"] == u13.C_VIOLATED_PARAMETRIC               # model ripple: parametric only
 
 
 def test_ripple_is_a_constraint_not_an_objective():
     assert "ripple_transfer_shaft" not in ao.OBJ_KEYS and "ripple_transfer_shaft" not in pf.OBJECTIVES
-    hc12 = [c for c in ao.evaluate_constraints({}) if c["id"] == "HC-12"][0]
+    hc12 = [c for c in dg.evaluate_constraints({}) if c["id"] == "HC-12"][0]
     assert hc12["status"] == ao.C_NOT_EVALUATED
     with pytest.raises(u13.A913RuleError):
-        u13.pareto_s6_17([], weights={"drag_N": 1.0})
+        dg.pareto_s6_17([], weights={"drag_N": 1.0})
 
 
 def test_system_pareto_constraints_first_no_scalar():
@@ -353,7 +355,7 @@ def test_system_pareto_constraints_first_no_scalar():
             {"id": "C", "objectives": obj(2.0, 0.03), "constraints": {"HC-08": u13.C_NOT_EVALUATED}},
             {"id": "D", "objectives": obj(9.0, 0.001), "constraints": {"HC-08": u13.C_VIOLATED}},
             {"id": "E", "objectives": dict(obj(1.0, 0.01), Q_reject_W=None), "constraints": {}}]
-    p = ao.system_pareto(rows)
+    p = dg.pareto_s6_17(rows)
     assert p["members"] == ["A", "C"] and p["excluded_violating"][0]["id"] == "D"
     assert p["status"] == "CONDITIONAL_ON_NOT_EVALUATED_CONSTRAINTS" and p["conditional_on"] == ["HC-08"]
     assert p["not_ranked_incomplete_objectives"][0]["id"] == "E"
@@ -367,20 +369,20 @@ def _rec(v, st):
 def test_ag13_statewise_never_hidden_by_average():
     states = [{"state_id": "a", "weight": 0.5}, {"state_id": "b", "weight": 0.5}]
     thrust = _rec(lambda s: 0.020 if s["state_id"] == "a" else 0.010, u13.VALUE_SYNTHETIC)
-    r = u13.statewise_drag_compensation(states, thrust, _rec(0.012, u13.VALUE_SYNTHETIC), hall_admitted=False)
+    r = dg.statewise_drag_compensation(states, thrust, _rec(0.012, u13.VALUE_SYNTHETIC), hall_admitted=False)
     assert r["orbit_average_margin_N"] > 0 and r["average_hides_violation"]
     assert r["status"] == u13.C_VIOLATED_SYNTHETIC and r["worst_state"]["state_id"] == "b"
-    hc = [c for c in ao.evaluate_constraints({"statewise_T_minus_D": r}) if c["id"] == "HC-08"][0]
+    hc = [c for c in dg.evaluate_constraints({"statewise_T_minus_D": r}) if c["id"] == "HC-08"][0]
     assert hc["status"] == ao.C_VIOLATED and hc["value_status"] == ao.SYNTHETIC_ONLY
     # a parametric thrust prediction without an admitted Hall member is refused
-    r = u13.statewise_drag_compensation(states, _rec(0.03, u13.VALUE_PARAMETRIC), _rec(0.01, u13.VALUE_EVIDENCE),
+    r = dg.statewise_drag_compensation(states, _rec(0.03, u13.VALUE_PARAMETRIC), _rec(0.01, u13.VALUE_EVIDENCE),
                                         hall_admitted=False)
     assert r["status"] == u13.C_NOT_EVALUATED and r["thrust_refused_no_admitted_hall_member"] == ["a", "b"]
     with pytest.raises(u13.A913RuleError):            # thrust and drag paired at different states
-        u13.statewise_drag_compensation(states, lambda s: {"value_N": 1, "status": u13.VALUE_SYNTHETIC,
+        dg.statewise_drag_compensation(states, lambda s: {"value_N": 1, "status": u13.VALUE_SYNTHETIC,
                                                            "state_id": "zz"}, _rec(0.01, u13.VALUE_SYNTHETIC), False)
     # a single T - D value never closes HC-08
-    assert [c for c in ao.evaluate_constraints({"T_minus_D_spacecraft_N": {"status": ao.EVALUATED, "value": 1.0}})
+    assert [c for c in dg.evaluate_constraints({"T_minus_D_spacecraft_N": {"status": ao.EVALUATED, "value": 1.0}})
             if c["id"] == "HC-08"][0]["status"] == ao.C_NOT_EVALUATED
 
 
@@ -389,12 +391,12 @@ def test_ag13_reference_drag_on_orbit_resolved_states_is_reference_only():
     states = orbit_states(200.0, 96.0, 6.0, "ECSS_LT_MODERATE", 100, 0.0, 8)
     drag = u13.reference_drag_fn("RC-ROMANO2018", intake_projected_area_m2=1.0, intake_cd=2.0,
                                  intake_source="test (F1 owns intake drag)", intake_accounting="contained_in_reference")
-    r = u13.statewise_drag_compensation(states, _rec(0.5, u13.VALUE_SYNTHETIC), drag, hall_admitted=False)
+    r = dg.statewise_drag_compensation(states, _rec(0.5, u13.VALUE_SYNTHETIC), drag, hall_admitted=False)
     assert r["value_status"] == u13.VALUE_SYNTHETIC                 # weakest link: synthetic thrust
-    r = u13.statewise_drag_compensation(states, _rec(0.5, u13.VALUE_EVIDENCE), drag, hall_admitted=True)
+    r = dg.statewise_drag_compensation(states, _rec(0.5, u13.VALUE_EVIDENCE), drag, hall_admitted=True)
     assert r["value_status"] == u13.VALUE_REFERENCE and r["status"] == u13.C_MET_PARAMETRIC   # never MET
     assert len(r["statewise"]) == 8 and r["orbit_average_margin_N"] is not None
-    hc = [c for c in ao.evaluate_constraints({"statewise_T_minus_D": r}) if c["id"] == "HC-08"][0]
+    hc = [c for c in dg.evaluate_constraints({"statewise_T_minus_D": r}) if c["id"] == "HC-08"][0]
     assert hc["status"] == ao.C_MET_PARAMETRIC
 
 
@@ -403,13 +405,13 @@ def test_ag12_feed_state_sufficiency_not_evaluated_without_validated_map():
     states = [{"state_id": "a"}]
     off = lambda s: {"mdot_kgps": 1e-7, "P_Pa": 0.01, "T_K": 350.0, "x_mole": {}, "ripple_frac": 0.0,
                      "status": u13.VALUE_PARAMETRIC}
-    r = u13.feed_state_sufficiency(states, off, None)
+    r = dg.feed_state_sufficiency(states, off, None)
     assert r["status"] == u13.C_NOT_EVALUATED and "validated H-1" in r["reason"]
     with pytest.raises(u13.A913RuleError):
-        u13.feed_state_sufficiency(states, off, None, fixed_mass_flow_gate=0.38e-6)
+        dg.feed_state_sufficiency(states, off, None, fixed_mass_flow_gate=0.38e-6)
     cov = u13.characterization_coverage(0.1e-6)
     assert cov["position"] == "BELOW_COVERAGE" and cov["role"] == "CHARACTERIZATION_COVERAGE_NOT_A_REQUIREMENT"
-    assert [c for c in ao.evaluate_constraints({}) if c["id"] == "HC-11"][0]["status"] == ao.C_NOT_EVALUATED
+    assert [c for c in dg.evaluate_constraints({}) if c["id"] == "HC-11"][0]["status"] == ao.C_NOT_EVALUATED
     q = {x["id"]: x for x in ao.architecture_questions()}
     assert q["AQ-02b"]["answer_state"] == "CANNOT_ANSWER" and "COVERAGE" in q["AQ-02"]["question"]
 
@@ -424,7 +426,7 @@ def test_ag12_with_a_test_map_is_statewise():
     states = [{"state_id": "a", "weight": 0.5}, {"state_id": "b", "weight": 0.5}]
     off = lambda s: {"mdot_kgps": 1.5e-7, "P_Pa": 0.02, "T_K": 350.0, "x_mole": {"O": 1.0}, "ripple_frac": 0.01,
                      "status": u13.VALUE_SYNTHETIC}
-    r = u13.feed_state_sufficiency(states, off, _rec(0.015, u13.VALUE_SYNTHETIC), M())
+    r = dg.feed_state_sufficiency(states, off, _rec(0.015, u13.VALUE_SYNTHETIC), M())
     assert r["status"] == u13.C_VIOLATED_SYNTHETIC and r["worst_state"]["state_id"] == "b"
     assert r["field_margins"]["a"]["mdot"] == pytest.approx(0.5)
 
@@ -465,13 +467,13 @@ def test_robust_pareto_set_is_carried_without_representative():
 
 # ================================================================================================= A9.15 propellants
 def test_dual_propellant_paths_with_separate_tanks():
-    ok = u13.propellant_paths_check(ao.MODELLED_PROPELLANT_PATHS)
+    ok = dg.propellant_paths_check(ao.MODELLED_PROPELLANT_PATHS)
     assert ok["structure"] == "TWO_SEPARATE_PATHS_DECLARED" and ok["status"] == u13.C_NOT_EVALUATED
     for bad in ({"air": list(u13.AIR_PATH)},
                 {"air": list(u13.AIR_PATH), "xe": ["xe_tank", "atmospheric_gas_chamber", "valve"]},
                 {"air": ["intake", "compressor", "atmospheric_gas_chamber", "valve"], "xe": list(u13.XE_PATH)},
                 {"air": ["intake", "compressor", "filter", "atmospheric_gas_chamber"], "xe": list(u13.XE_PATH)}):
         with pytest.raises(u13.A913RuleError):
-            u13.propellant_paths_check(bad)
-    hc10 = [c for c in ao.evaluate_constraints({}) if c["id"] == "HC-10"][0]
+            dg.propellant_paths_check(bad)
+    hc10 = [c for c in dg.evaluate_constraints({}) if c["id"] == "HC-10"][0]
     assert hc10["status"] == ao.C_NOT_EVALUATED and "RFP-P18-08" in hc10["rfp"]

@@ -33,7 +33,7 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
 from abep_sim.design import filter_stage as fs  # noqa: E402
-from abep_sim.design import owner_state as ost  # noqa: E402
+from abep_sim.assessment import design_gates as ost  # noqa: E402  (owner-question state v5 reader; A9.22)
 
 LANE_DIR = "docs/design_synthesis/f2_filter/"
 OUT_JSON = LANE_DIR + "f2_filter_stage_v1.json"
