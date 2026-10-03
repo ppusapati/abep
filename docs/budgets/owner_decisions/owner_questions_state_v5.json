@@ -104,6 +104,56 @@
    "key": "A9.15_md",
    "path": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
    "sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903"
+  },
+  {
+   "key": "A9.17_json",
+   "path": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+   "sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad"
+  },
+  {
+   "key": "A9.17_md",
+   "path": "docs/decisions/OD_2026_10_01_A9_17_DATA_ARTIFACT_OWNER_DECISIONS.md",
+   "sha256": "540212c0c8862528e549555244f0fd39f8f9c9272f84dfb450bfef9dc54eba13"
+  },
+  {
+   "key": "A9.18_json",
+   "path": "docs/decisions/OD_2026_10_01_A9_18_golden_and_baseline_owner_decisions.json",
+   "sha256": "7c170e1000ae039c1f032ccf38bcacf2c59825d5dab26b4d98658a96914a8c3a"
+  },
+  {
+   "key": "A9.18_md",
+   "path": "docs/decisions/OD_2026_10_01_A9_18_GOLDEN_AND_BASELINE_OWNER_DECISIONS.md",
+   "sha256": "b26b739244d87fb98001936688650c8b0cf307abeddb2ee4c494ff4f06c5951d"
+  },
+  {
+   "key": "A9.19_json",
+   "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16"
+  },
+  {
+   "key": "A9.19_md",
+   "path": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749"
+  },
+  {
+   "key": "A9.20_json",
+   "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+   "sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6"
+  },
+  {
+   "key": "A9.20_md",
+   "path": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+   "sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c"
+  },
+  {
+   "key": "A9.21_json",
+   "path": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+   "sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549"
+  },
+  {
+   "key": "A9.21_md",
+   "path": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+   "sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440"
   }
  ],
  "referenced_not_pinned": {
@@ -111,7 +161,9 @@
   "paths": [
    "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
    "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
-   "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json"
+   "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+   "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "docs/requirements/rfp_official/rfp_registration_v1.json"
   ]
  },
  "status_vocabulary": {
@@ -132,23 +184,31 @@
   "ANSWERED_BY_A9_12": "answered by owner decision A9.12 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json; verbatim docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md)",
   "ANSWERED_BY_A9_13": "answered by owner decision A9.13 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json; verbatim docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md)",
   "ANSWERED_BY_A9_14": "answered by owner decision A9.14 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json; verbatim docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md)",
-  "AMENDED_BY_A9_15": "answered by A9.14 and amended by A9.15, the RFP-compliant propellant policy (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json): the A9.15 verbatim bullet governs; 'Xe contingency-only for C1' readings are superseded"
+  "AMENDED_BY_A9_15": "answered by A9.14 and amended by A9.15, the RFP-compliant propellant policy (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json): the A9.15 verbatim bullet governs; 'Xe contingency-only for C1' readings are superseded",
+  "AMENDED_BY_A9_19": "earlier answer amended or superseded by owner decision A9.19 (single Hall + RF/ICP neutralizer flight architecture, Xe contingency / emergency, no hollow cathode); see later_owner_decisions (the scope of each record names what changes; pre_a9_17_status keeps the earlier status)",
+  "AMENDED_BY_A9_20": "earlier answer amended by owner decision A9.20 (C1 ground-only laboratory reference); see later_owner_decisions",
+  "AMENDED_BY_A9_21": "earlier answer amended by owner decision A9.21 (open items + hardware programme); see later_owner_decisions",
+  "ANSWERED_BY_A9_21": "answered (in the scope named in status_detail / open_part) by owner decision A9.21"
  },
- "status_rule": "'status' is canonical. A v4 TBD_OWNER row answered by A9.8 .. A9.14 keeps 'v4_status' and gets ANSWERED_BY_A9_<n> or, where A9.15 amends the answer, AMENDED_BY_A9_15 (governing_reading = the A9.15 bullet). Non-TBD v4 rows are copied unchanged. A9.7 lane questions are rows of kind a9_7_lane_question. A row without an owner answer stays TBD_OWNER.",
+ "status_rule": "'status' is canonical. A v4 TBD_OWNER row answered by A9.8 .. A9.14 keeps 'v4_status' and gets ANSWERED_BY_A9_<n> or, where A9.15 amends the answer, AMENDED_BY_A9_15 (governing_reading = the A9.15 bullet). Non-TBD v4 rows are copied unchanged. A9.7 lane questions are rows of kind a9_7_lane_question. A row without an owner answer stays TBD_OWNER. A9.17 .. A9.21: a row a later decision supersedes / amends / answers gets AMENDED_BY_A9_<n> / ANSWERED_BY_A9_21 with pre_a9_17_status kept and later_owner_decisions + later_governing_reading; a row a later decision only confirms, or whose external input stays TBD, keeps its status and gets the records (external_input_status).",
  "rfp_rule": "'RFP(1)' cites the official RFP held by the owner; the document is not registered in the repository (AG-15), so every RFP-cited fact is OWNER_STATED_PENDING_RFP_REGISTRATION",
  "a9_15_governing_statement": "The official RFP is the sole governing basis for propellant capability. The system shall support both ambient atmospheric propellant and Xenon. C1-specific Xe requirements, if any, are derived from the selected C1 hardware and integrated into that RFP-compliant Xe architecture; no independent policy shall restrict or override the RFP.",
  "a9_15_scope_note": "A9.15 concerns system propellant capability (ambient atmospheric propellant 180-230 km AND Xenon, separate tanks / paths); it does not change the A9.1 ICP gas-mode baseline (G-REUSE primary; G-XE a declared ICP-feed variant)",
  "counts": {
   "ADDRESSED_IN_A9_10": 2,
-  "AMENDED_BY_A9_15": 6,
-  "ANSWERED": 190,
+  "AMENDED_BY_A9_15": 1,
+  "AMENDED_BY_A9_19": 10,
+  "AMENDED_BY_A9_20": 1,
+  "AMENDED_BY_A9_21": 2,
+  "ANSWERED": 185,
   "ANSWERED_BY_A9_1": 34,
   "ANSWERED_BY_A9_10": 10,
   "ANSWERED_BY_A9_11": 7,
   "ANSWERED_BY_A9_12": 14,
   "ANSWERED_BY_A9_13": 22,
-  "ANSWERED_BY_A9_14": 55,
+  "ANSWERED_BY_A9_14": 52,
   "ANSWERED_BY_A9_2": 1,
+  "ANSWERED_BY_A9_21": 1,
   "ANSWERED_BY_A9_3": 8,
   "ANSWERED_BY_A9_4": 4,
   "ANSWERED_BY_A9_5": 2,
@@ -380,6 +440,196 @@
    }
   }
  ],
+ "superseded_statements_a9_19": [
+  {
+   "id": "A9.15 'Xenon is ... not merely a contingency'",
+   "path": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
+   "sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903",
+   "text": "Xenon is therefore an RFP-required system capability, not merely a contingency introduced by our internal architecture.",
+   "superseded_by": {
+    "decision": "A9.19",
+    "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+    "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+    "pointer": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json#/amends/A9.15",
+    "recorder_digest": "the statements 'Xenon is an RFP-required system capability, not merely a contingency' and S9.10 'should not be weakened into a contingency interpretation' are superseded on the ROLE of Xe: Xe capability stays required (two separate supply modes/tanks), Xe is the contingency/emergency mode",
+    "verbatim_owner_text": "xenon is not a parllel gas its just a contigency and emergency gas"
+   },
+   "scope": "ROLE of Xe only (contingency / emergency supply mode); the RFP-required Xe capability, two separate supply modes and the A9.15 governing statement on capability stand"
+  },
+  {
+   "id": "A9.15 S9.10 / OD6 bullet",
+   "path": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
+   "sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903",
+   "text": "S9.10 / OD6: “air + Xe” means the system must provide both ambient-air and Xenon operating capability; it should not be weakened into a contingency interpretation.",
+   "superseded_by": {
+    "decision": "A9.19",
+    "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+    "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+    "pointer": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json#/amends/A9.15",
+    "recorder_digest": "the statements 'Xenon is an RFP-required system capability, not merely a contingency' and S9.10 'should not be weakened into a contingency interpretation' are superseded on the ROLE of Xe: Xe capability stays required (two separate supply modes/tanks), Xe is the contingency/emergency mode",
+    "verbatim_owner_text": "xenon is not a parllel gas its just a contigency and emergency gas"
+   },
+   "scope": "ROLE of Xe only (contingency / emergency supply mode); the RFP-required Xe capability, two separate supply modes and the A9.15 governing statement on capability stand"
+  }
+ ],
+ "a9_17_21": {
+  "decisions": [
+   {
+    "decision": "A9.17",
+    "json": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+    "json_sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
+    "md": "docs/decisions/OD_2026_10_01_A9_17_DATA_ARTIFACT_OWNER_DECISIONS.md",
+    "md_sha256": "540212c0c8862528e549555244f0fd39f8f9c9272f84dfb450bfef9dc54eba13"
+   },
+   {
+    "decision": "A9.18",
+    "json": "docs/decisions/OD_2026_10_01_A9_18_golden_and_baseline_owner_decisions.json",
+    "json_sha256": "7c170e1000ae039c1f032ccf38bcacf2c59825d5dab26b4d98658a96914a8c3a",
+    "md": "docs/decisions/OD_2026_10_01_A9_18_GOLDEN_AND_BASELINE_OWNER_DECISIONS.md",
+    "md_sha256": "b26b739244d87fb98001936688650c8b0cf307abeddb2ee4c494ff4f06c5951d"
+   },
+   {
+    "decision": "A9.19",
+    "json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+    "json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+    "md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+    "md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749"
+   },
+   {
+    "decision": "A9.20",
+    "json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+    "json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+    "md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+    "md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c"
+   },
+   {
+    "decision": "A9.21",
+    "json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+    "json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+    "md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+    "md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440"
+   }
+  ],
+  "flight_configuration": "hall_icp_neutralizer",
+  "ground_reference": {
+   "hall_c1_reference": "GROUND_ONLY_LAB_REFERENCE (A9.20): retired as a flight configuration (A9.19); quoted historical question / answer text keeps the name verbatim"
+  },
+  "xenon_role_a9_19": "CONTINGENCY_AND_EMERGENCY - not a parallel/co-equal propellant; Xe capability is retained (the RFP requires the capability and describes the Xe input as 'an extra input system to take care any problems on board unforeseen problems', RFP-P17-05, with separate tanks RFP-P18-08), but its role is contingency",
+  "rows_status_changed": {
+   "OQ-A907-07": "AMENDED_BY_A9_19",
+   "MPQ-01": "AMENDED_BY_A9_19",
+   "XA9Q-07": "AMENDED_BY_A9_19",
+   "XV2Q-01": "AMENDED_BY_A9_19",
+   "OD6": "AMENDED_BY_A9_19",
+   "OD5": "AMENDED_BY_A9_19",
+   "OQ-A907-01": "AMENDED_BY_A9_20",
+   "OD-XE-5": "AMENDED_BY_A9_19",
+   "R6-Q1": "AMENDED_BY_A9_19",
+   "OD-M5": "AMENDED_BY_A9_19",
+   "HWQ-09": "AMENDED_BY_A9_19",
+   "MQ-05": "AMENDED_BY_A9_21",
+   "WEB-ACC-2": "AMENDED_BY_A9_21"
+  },
+  "rows_answered": [
+   "RP-A919-01"
+  ],
+  "rows_with_records_only": {
+   "P1Q-07": [
+    "CONFIRMS"
+   ],
+   "F5-OQ-01": [
+    "CONFIRMS"
+   ],
+   "F5-OQ-02": [
+    "CONFIRMS"
+   ],
+   "F9-OQ-02": [
+    "CONFIRMS"
+   ],
+   "P1-IT-52": [
+    "CONFIRMS"
+   ],
+   "P1-IT-55": [
+    "CONFIRMS"
+   ],
+   "P2Q-07": [
+    "CONFIRMS"
+   ],
+   "P4-OQ-03": [
+    "CONFIRMS"
+   ],
+   "F1Q-03": [
+    "INPUT_STAYS_TBD"
+   ],
+   "OQ-F78-04": [
+    "INPUT_STAYS_TBD"
+   ],
+   "OD3": [
+    "INPUT_STAYS_TBD"
+   ],
+   "OQ-F4-05": [
+    "CONFIRMS",
+    "INPUT_STAYS_TBD"
+   ],
+   "F0-OQ-02": [
+    "CONFIRMS"
+   ],
+   "F9-OQ-03": [
+    "CONFIRMS"
+   ]
+  },
+  "records_by_decision_and_relation": {
+   "A9.17 CONFIRMS": 3,
+   "A9.17 INPUT_STAYS_TBD": 2,
+   "A9.18 CONFIRMS": 1,
+   "A9.19 AMENDS": 9,
+   "A9.19 SUPERSEDES": 2,
+   "A9.20 AMENDS": 7,
+   "A9.20 CONFIRMS": 1,
+   "A9.20 SUPERSEDES": 2,
+   "A9.21 AMENDS": 2,
+   "A9.21 ANSWERS": 1,
+   "A9.21 CONFIRMS": 9,
+   "A9.21 INPUT_STAYS_TBD": 4
+  },
+  "relations": {
+   "SUPERSEDES": "the later decision replaces the earlier answer (the earlier text is history)",
+   "AMENDS": "the later decision amends the earlier answer within the named scope; the rest of the answer stands",
+   "ANSWERS": "the later decision answers a question that had no owner answer (in the named scope)",
+   "CONFIRMS": "the later decision confirms / sequences the earlier answer; nothing in it changes",
+   "INPUT_STAYS_TBD": "the later decision states that the external input the earlier answer requires cannot be supplied from current evidence and stays TBD (no code default as mission truth)"
+  },
+  "items_without_a_state_row": [
+   "A9.17 DATA_SIZE, SPUTTER (data-artifact rules; no owner-question row)",
+   "A9.18 GOLDEN (golden design point; no owner-question row)",
+   "A9.21 H2_6 (H2-6 builder frozen, live-source check in CI; no owner-question row)",
+   "A9.21 RFQ_DISPATCH (quotation packages finalized here; dispatch by owner / procurement)"
+  ],
+  "owner_asked_recorder": "A9.20 verbatim also asks the recorder 'is it good to remove hollow cathode' - not an owner-question row; RP-A919-01 (ICP go / no-go) answers it on the recorder side and A9.21 ICP_GATE approves that gate's existence and placement",
+  "open_parts": [
+   {
+    "id": "RP-A919-01",
+    "what": "numerical GO / NO-GO criteria not approved (preserved for owner review)"
+   }
+  ]
+ },
+ "rfp_registration_now": {
+  "registration": {
+   "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+   "status": "REGISTERED_BY_HASH_PDF_CONTROLLED_EXTERNALLY",
+   "rfp_number": "DTDF/06/13516/DSP/ABEP/X/L/M/01",
+   "pdf_sha256": "a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00",
+   "pages": 40,
+   "n_clauses": 37,
+   "pdf_in_repository": false
+  },
+  "rvm_rebase": {
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "id": "rvm_a9_rfp_rebase_v1",
+   "ag_15_status": "OPEN - RFP registered by hash with verbatim transcription and the RVM re-based; closure is the owner's (not declared here)"
+  },
+  "rule": "the step-1 rfp_citation_status OWNER_STATED_PENDING_RFP_REGISTRATION on rows answered by A9.8 .. A9.15 records the state when those answers were applied; the RFP is now registered by hash (A9.17 RFP) and the RVM re-based on it; AG-15 closure (owner acceptance; requirement_frozen) stays the owner's and is not declared here"
+ },
  "owner_answers_applied": [
   {
    "id": "A9.8 (S1 (blocks P1 start))",
@@ -601,6 +851,98 @@
     "OD6"
    ],
    "how_applied": "rows AMENDED_BY_A9_15 with the verbatim A9.15 bullet as governing_reading; A9.13 owner_statements.xenon and the A9.14 closing Xe statement listed as superseded"
+  },
+  {
+   "id": "A9.17 (data artifacts / RFP / performance)",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+   "decision_json_sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_17_DATA_ARTIFACT_OWNER_DECISIONS.md",
+   "decision_md_sha256": "540212c0c8862528e549555244f0fd39f8f9c9272f84dfb450bfef9dc54eba13",
+   "rows": [
+    "F0-OQ-02",
+    "F9-OQ-03",
+    "OD3",
+    "OQ-F4-05"
+   ],
+   "how_applied": "later_owner_decisions records (pointer, json / md sha256, verbatim excerpt, relation, scope); status AMENDED_BY / ANSWERED_BY only where the relation is SUPERSEDES / AMENDS / ANSWERS"
+  },
+  {
+   "id": "A9.18 (golden + baseline rerun)",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_18_golden_and_baseline_owner_decisions.json",
+   "decision_json_sha256": "7c170e1000ae039c1f032ccf38bcacf2c59825d5dab26b4d98658a96914a8c3a",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_18_GOLDEN_AND_BASELINE_OWNER_DECISIONS.md",
+   "decision_md_sha256": "b26b739244d87fb98001936688650c8b0cf307abeddb2ee4c494ff4f06c5951d",
+   "rows": [
+    "F0-OQ-02"
+   ],
+   "how_applied": "later_owner_decisions records (pointer, json / md sha256, verbatim excerpt, relation, scope); status AMENDED_BY / ANSWERED_BY only where the relation is SUPERSEDES / AMENDS / ANSWERS"
+  },
+  {
+   "id": "A9.19 (flight architecture / Xe contingency role)",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "decision_json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "decision_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+   "rows": [
+    "HWQ-09",
+    "MPQ-01",
+    "OD-M5",
+    "OD-XE-5",
+    "OD5",
+    "OD6",
+    "OQ-A907-01",
+    "OQ-A907-07",
+    "R6-Q1",
+    "XA9Q-07",
+    "XV2Q-01"
+   ],
+   "how_applied": "later_owner_decisions records (pointer, json / md sha256, verbatim excerpt, relation, scope); status AMENDED_BY / ANSWERED_BY only where the relation is SUPERSEDES / AMENDS / ANSWERS"
+  },
+  {
+   "id": "A9.20 (C1 ground-only reference)",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+   "decision_json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+   "decision_md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+   "rows": [
+    "HWQ-09",
+    "MPQ-01",
+    "OD-M5",
+    "OD-XE-5",
+    "OD5",
+    "OQ-A907-01",
+    "OQ-A907-07",
+    "P1Q-07",
+    "R6-Q1",
+    "XA9Q-07"
+   ],
+   "how_applied": "later_owner_decisions records (pointer, json / md sha256, verbatim excerpt, relation, scope); status AMENDED_BY / ANSWERED_BY only where the relation is SUPERSEDES / AMENDS / ANSWERS"
+  },
+  {
+   "id": "A9.21 (open items + hardware programme)",
+   "decision_json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+   "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+   "decision_md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+   "decision_md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+   "rows": [
+    "F0-OQ-02",
+    "F1Q-03",
+    "F5-OQ-01",
+    "F5-OQ-02",
+    "F9-OQ-02",
+    "MQ-05",
+    "OD3",
+    "OQ-F4-05",
+    "OQ-F78-04",
+    "P1-IT-52",
+    "P1-IT-55",
+    "P1Q-07",
+    "P2Q-07",
+    "P4-OQ-03",
+    "RP-A919-01",
+    "WEB-ACC-2"
+   ],
+   "how_applied": "later_owner_decisions records (pointer, json / md sha256, verbatim excerpt, relation, scope); status AMENDED_BY / ANSWERED_BY only where the relation is SUPERSEDES / AMENDS / ANSWERS"
   }
  ],
  "open_owner_questions": [
@@ -609,10 +951,11 @@
  ],
  "open_owner_questions_note": "TBD_OWNER rows: questions with no owner answer yet (raised since v4 or unanswered)",
  "compliance": [
-  "every v4 row present; non-TBD_OWNER v4 rows copied unchanged",
+  "every v4 row present; non-TBD_OWNER v4 rows copied unchanged except the A9.17 .. A9.21 overlay (status / status_detail changed, earlier values kept in pre_a9_17_status[_detail], later_owner_decisions / later_governing_reading / governing_reading_status / external_input_status / rfp_registered_document added)",
   "every answered row carries decision pointer, json sha256, verbatim md sha256 and a verbatim excerpt",
-  "A9.15 governs every 'Xe contingency-only for C1' reading",
-  "RFP-cited facts are OWNER_STATED_PENDING_RFP_REGISTRATION; no PASS produced; no answer invented"
+  "A9.15 governs every 'Xe contingency-only for C1' reading; A9.19 governs the ROLE of Xe (contingency / emergency supply mode; capability retained)",
+  "one flight configuration (hall_icp_neutralizer); C1 a ground-only laboratory reference (A9.20)",
+  "step-1 RFP-cited facts keep OWNER_STATED_PENDING_RFP_REGISTRATION as history (rfp_registration_now records the registration); no PASS produced; no answer invented"
  ],
  "rows": [
   {
@@ -635,7 +978,7 @@
    "id": "WEB-ACC-2",
    "source": "v1 consolidated list row 2 (A. RFP / access / repo)",
    "question": "Confirm RFP number (XI/LM vs X/L/M) and bid close date (05 Oct vs 20 Oct 2026).",
-   "status": "ANSWERED",
+   "status": "AMENDED_BY_A9_21",
    "answer_pointer": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 2",
    "answer_sha256": "af603606e9e074eb37044960bda5caeb04f80923a0e008249193f79c8fe11994",
    "answer_excerpt": "VERIFY-FIRST — use Tender ID `2026_DRDO_788433_1` for project tracking. Do not choose 05 Oct vs 20 Oct, or XI/LM vs X/L/M, from conflicting secondary material; freeze the exact RFP reference and bid-close date only from the official tend...",
@@ -643,7 +986,45 @@
    "proposed": "none - owner call",
    "needed_by": "ASAP",
    "kind": "v1_row",
-   "status_detail": "ANSWERED"
+   "status_detail": "ANSWERED; AMENDS by A9.21 BID_CLOSE",
+   "pre_a9_17_status": "ANSWERED",
+   "pre_a9_17_status_detail": "ANSWERED",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.21",
+     "item": "BID_CLOSE",
+     "relation": "AMENDS",
+     "decision_code": null,
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/BID_CLOSE",
+     "decision_json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "decision_md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+     "decision_md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+     "verbatim_excerpt": "5. Bid close date: current DefProc-derived listings show 05 October 2026 at 17:00 for Tender `2026_DRDO_788433_1`; TDF/DRDO’s published announcement gives the same deadline. [TenderHut](https://tenderhut.in/tender/defproc/2026-drdo-788433-1?utm_source=chatgpt.com) The RFP PDF itself does not need to contain the portal closing date. Treat 05-Oct-2026, 17:00 as the operational submission deadline unless DefProc subsequently posts a corrigendum changing it.",
+     "recorder_digest": "operational submission deadline 2026-10-05 17:00 (DefProc tender 2026_DRDO_788433_1, owner-cited listings) unless a DefProc corrigendum changes it; not in the RFP PDF",
+     "scope": "bid-close part: 05-Oct-2026 17:00 is the operational submission deadline (DefProc tender 2026_DRDO_788433_1) unless a DefProc corrigendum changes it; the RFP PDF need not contain it. RFP-number part: see rfp_registered_document (A9.17 RFP registration by hash)"
+    }
+   ],
+   "later_governing_reading": {
+    "decisions": [
+     "A9.21"
+    ],
+    "pointers": [
+     "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/BID_CLOSE"
+    ],
+    "sha256": [
+     "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549"
+    ],
+    "text": "5. Bid close date: current DefProc-derived listings show 05 October 2026 at 17:00 for Tender `2026_DRDO_788433_1`; TDF/DRDO’s published announcement gives the same deadline. [TenderHut](https://tenderhut.in/tender/defproc/2026-drdo-788433-1?utm_source=chatgpt.com) The RFP PDF itself does not need to contain the portal closing date. Treat 05-Oct-2026, 17:00 as the operational submission deadline unless DefProc subsequently posts a corrigendum changing it.",
+    "scope": "bid-close part: 05-Oct-2026 17:00 is the operational submission deadline (DefProc tender 2026_DRDO_788433_1) unless a DefProc corrigendum changes it; the RFP PDF need not contain it. RFP-number part: see rfp_registered_document (A9.17 RFP registration by hash)"
+   },
+   "rfp_registered_document": {
+    "rfp_number": "DTDF/06/13516/DSP/ABEP/X/L/M/01",
+    "pdf_sha256": "a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00",
+    "status": "REGISTERED_BY_HASH_PDF_CONTROLLED_EXTERNALLY",
+    "source": "docs/requirements/rfp_official/rfp_registration_v1.json document.rfp_number (A9.17 RFP registration by hash)",
+    "bid_close_in_document": "bid due / closing date (the RFP refers to the tender document on DefProc for important dates, Part I note 5); the 05 Oct 2026 date in CLAUDE.md is therefore NOT verified by this file"
+   }
   },
   {
    "no": 3,
@@ -1295,7 +1676,7 @@
    "id": "OD-XE-5",
    "source": "v1 consolidated list row 46 (D. Xe system)",
    "question": "Firing-hours basis of the cathode term.",
-   "status": "ANSWERED",
+   "status": "AMENDED_BY_A9_19",
    "answer_pointer": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 46",
    "answer_sha256": "49ccf10433154086311dcc6afe02b69501ea5bc37b90006c331c2ee518a4bc5f",
    "answer_excerpt": "15,000 h for the conventional C1 reference/fallback term. The ICP-neutralizer architecture has no continuous C1-Xe cathode term, but must carry its own RF-neutralizer lifetime/cycle requirement.",
@@ -1303,7 +1684,55 @@
    "proposed": "15,000 h (A5)",
    "needed_by": "—",
    "kind": "v1_row",
-   "status_detail": "ANSWERED"
+   "status_detail": "ANSWERED; AMENDS by A9.19 amends/A9 C1 CONTROL_FALLBACK; AMENDS by A9.20 answer",
+   "pre_a9_17_status": "ANSWERED",
+   "pre_a9_17_status_detail": "ANSWERED",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.19",
+     "item": "amends/A9 C1 CONTROL_FALLBACK",
+     "relation": "AMENDS",
+     "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+     "pointer": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json#/amends/A9 C1 CONTROL_FALLBACK",
+     "decision_json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "decision_json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "decision_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+     "decision_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+     "verbatim_excerpt": "as we discussed earlier we xenon is not a parllel gas its just a contigency and emergency gas. so our thruster architecture should be cathode/electrodless for both the atmosphere gases and xenon check C1  mass\n\nOne Hall accelerator.\nOne RF/ICP electron-source/neutralizer.\nTwo propellant supply modes.\nNo conventional hollow cathode.",
+     "recorder_digest": "C1 is not a flight fallback; hall_c1_reference is no longer a candidate flight configuration (its ground/laboratory role is an open recorder question to the owner)",
+     "scope": "'reference/fallback' -> reference only: C1 is not a flight fallback; the 15,000 h C1 cathode term applies to no flight element (the ICP neutralizer carries its own life / cycle requirement, unchanged)"
+    },
+    {
+     "decision": "A9.20",
+     "item": "answer",
+     "relation": "AMENDS",
+     "decision_code": "C1_GROUND_ONLY_LABORATORY_REFERENCE",
+     "pointer": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json#/answer",
+     "decision_json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+     "decision_json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+     "decision_md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+     "decision_md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+     "verbatim_excerpt": "what do you think of my approach? will go with your recommended but is it good to remove hollow cathode",
+     "recorder_digest": "owner chose the recommended option: C1 is a ground-only laboratory reference (registers I_d,max,H1,Ar on H-1 independently of the ICP per A9.10 S3.5, and serves as the bench control in the C1-vs-ICP comparison); never flight hardware; never in the flight mass/power/Xe budgets",
+     "scope": "C1 is a GROUND_ONLY_LAB_REFERENCE (owner chose the recommended 'Ground-only reference' option): it registers I_d,max,H1,Ar on H-1 and is the C1-vs-ICP bench control; never flight hardware, never in the flight mass / power / Xe budgets; hall_c1_reference is not a flight configuration"
+    }
+   ],
+   "later_governing_reading": {
+    "decisions": [
+     "A9.19",
+     "A9.20"
+    ],
+    "pointers": [
+     "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json#/amends/A9 C1 CONTROL_FALLBACK",
+     "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json#/answer"
+    ],
+    "sha256": [
+     "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6"
+    ],
+    "text": "as we discussed earlier we xenon is not a parllel gas its just a contigency and emergency gas. so our thruster architecture should be cathode/electrodless for both the atmosphere gases and xenon check C1  mass\n\nOne Hall accelerator.\nOne RF/ICP electron-source/neutralizer.\nTwo propellant supply modes.\nNo conventional hollow cathode. | what do you think of my approach? will go with your recommended but is it good to remove hollow cathode",
+    "scope": "'reference/fallback' -> reference only: C1 is not a flight fallback; the 15,000 h C1 cathode term applies to no flight element (the ICP neutralizer carries its own life / cycle requirement, unchanged) | C1 is a GROUND_ONLY_LAB_REFERENCE (owner chose the recommended 'Ground-only reference' option): it registers I_d,max,H1,Ar on H-1 and is the C1-vs-ICP bench control; never flight hardware, never in the flight mass / power / Xe budgets; hall_c1_reference is not a flight configuration"
+   }
   },
   {
    "no": 47,
@@ -1340,7 +1769,7 @@
    "id": "R6-Q1",
    "source": "v1 consolidated list row 49 (D. Xe system)",
    "question": "C-1 heated or heaterless (heaterless per-start Xe 2-6x higher)?",
-   "status": "ANSWERED",
+   "status": "AMENDED_BY_A9_19",
    "answer_pointer": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 49",
    "answer_sha256": "7095eca76b584c6aafccc4aa3b1bd399d67f56ecdde1e494ebcd4fde423481dc",
    "answer_excerpt": "HEATED C1 — use a heated Xe-fed LaB6 cathode for the conventional reference/fallback because it minimizes low-flow uncertainty and avoids the heaterless high-start-flow penalty. It is not automatically the final flight neutralizer.",
@@ -1348,7 +1777,55 @@
    "proposed": "none - owner call",
    "needed_by": "—",
    "kind": "v1_row",
-   "status_detail": "ANSWERED"
+   "status_detail": "ANSWERED; AMENDS by A9.19 amends/A9 C1 CONTROL_FALLBACK; AMENDS by A9.20 answer",
+   "pre_a9_17_status": "ANSWERED",
+   "pre_a9_17_status_detail": "ANSWERED",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.19",
+     "item": "amends/A9 C1 CONTROL_FALLBACK",
+     "relation": "AMENDS",
+     "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+     "pointer": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json#/amends/A9 C1 CONTROL_FALLBACK",
+     "decision_json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "decision_json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "decision_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+     "decision_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+     "verbatim_excerpt": "as we discussed earlier we xenon is not a parllel gas its just a contigency and emergency gas. so our thruster architecture should be cathode/electrodless for both the atmosphere gases and xenon check C1  mass\n\nOne Hall accelerator.\nOne RF/ICP electron-source/neutralizer.\nTwo propellant supply modes.\nNo conventional hollow cathode.",
+     "recorder_digest": "C1 is not a flight fallback; hall_c1_reference is no longer a candidate flight configuration (its ground/laboratory role is an open recorder question to the owner)",
+     "scope": "'conventional reference/fallback' -> ground reference only; the heated Xe-fed LaB6 choice stands for the ground C1 reference"
+    },
+    {
+     "decision": "A9.20",
+     "item": "answer",
+     "relation": "AMENDS",
+     "decision_code": "C1_GROUND_ONLY_LABORATORY_REFERENCE",
+     "pointer": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json#/answer",
+     "decision_json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+     "decision_json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+     "decision_md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+     "decision_md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+     "verbatim_excerpt": "what do you think of my approach? will go with your recommended but is it good to remove hollow cathode",
+     "recorder_digest": "owner chose the recommended option: C1 is a ground-only laboratory reference (registers I_d,max,H1,Ar on H-1 independently of the ICP per A9.10 S3.5, and serves as the bench control in the C1-vs-ICP comparison); never flight hardware; never in the flight mass/power/Xe budgets",
+     "scope": "C1 is a GROUND_ONLY_LAB_REFERENCE (owner chose the recommended 'Ground-only reference' option): it registers I_d,max,H1,Ar on H-1 and is the C1-vs-ICP bench control; never flight hardware, never in the flight mass / power / Xe budgets; hall_c1_reference is not a flight configuration"
+    }
+   ],
+   "later_governing_reading": {
+    "decisions": [
+     "A9.19",
+     "A9.20"
+    ],
+    "pointers": [
+     "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json#/amends/A9 C1 CONTROL_FALLBACK",
+     "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json#/answer"
+    ],
+    "sha256": [
+     "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6"
+    ],
+    "text": "as we discussed earlier we xenon is not a parllel gas its just a contigency and emergency gas. so our thruster architecture should be cathode/electrodless for both the atmosphere gases and xenon check C1  mass\n\nOne Hall accelerator.\nOne RF/ICP electron-source/neutralizer.\nTwo propellant supply modes.\nNo conventional hollow cathode. | what do you think of my approach? will go with your recommended but is it good to remove hollow cathode",
+    "scope": "'conventional reference/fallback' -> ground reference only; the heated Xe-fed LaB6 choice stands for the ground C1 reference | C1 is a GROUND_ONLY_LAB_REFERENCE (owner chose the recommended 'Ground-only reference' option): it registers I_d,max,H1,Ar on H-1 and is the C1-vs-ICP bench control; never flight hardware, never in the flight mass / power / Xe budgets; hall_c1_reference is not a flight configuration"
+   }
   },
   {
    "no": 50,
@@ -1490,7 +1967,7 @@
    "id": "OD-M5",
    "source": "v1 consolidated list row 59 (E. Mass)",
    "question": "Mass BOM item list.",
-   "status": "ANSWERED",
+   "status": "AMENDED_BY_A9_19",
    "answer_pointer": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 59",
    "answer_sha256": "9668b33ede8a23e68000e615a0a95416640cf6b58832b1bd2c142c54e9be88a4",
    "answer_excerpt": "ACCEPT with A9 amendment — add downstream ICP neutralizer, RF generator/matching/feedthrough and collector/bias hardware; retain C1 as reference/fallback. Remove pre-ionizer-only items from the new architecture BOM, not from historical v1.",
@@ -1498,7 +1975,55 @@
    "proposed": "accept",
    "needed_by": "—",
    "kind": "v1_row",
-   "status_detail": "ANSWERED"
+   "status_detail": "ANSWERED; AMENDS by A9.19 amends/A9 C1 CONTROL_FALLBACK; AMENDS by A9.20 answer",
+   "pre_a9_17_status": "ANSWERED",
+   "pre_a9_17_status_detail": "ANSWERED",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.19",
+     "item": "amends/A9 C1 CONTROL_FALLBACK",
+     "relation": "AMENDS",
+     "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+     "pointer": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json#/amends/A9 C1 CONTROL_FALLBACK",
+     "decision_json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "decision_json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "decision_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+     "decision_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+     "verbatim_excerpt": "as we discussed earlier we xenon is not a parllel gas its just a contigency and emergency gas. so our thruster architecture should be cathode/electrodless for both the atmosphere gases and xenon check C1  mass\n\nOne Hall accelerator.\nOne RF/ICP electron-source/neutralizer.\nTwo propellant supply modes.\nNo conventional hollow cathode.",
+     "recorder_digest": "C1 is not a flight fallback; hall_c1_reference is no longer a candidate flight configuration (its ground/laboratory role is an open recorder question to the owner)",
+     "scope": "'retain C1 as reference/fallback' -> C1 is retained only as the ground laboratory reference and is not a flight BOM item; the ICP / RF / collector BOM additions stand"
+    },
+    {
+     "decision": "A9.20",
+     "item": "answer",
+     "relation": "AMENDS",
+     "decision_code": "C1_GROUND_ONLY_LABORATORY_REFERENCE",
+     "pointer": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json#/answer",
+     "decision_json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+     "decision_json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+     "decision_md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+     "decision_md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+     "verbatim_excerpt": "what do you think of my approach? will go with your recommended but is it good to remove hollow cathode",
+     "recorder_digest": "owner chose the recommended option: C1 is a ground-only laboratory reference (registers I_d,max,H1,Ar on H-1 independently of the ICP per A9.10 S3.5, and serves as the bench control in the C1-vs-ICP comparison); never flight hardware; never in the flight mass/power/Xe budgets",
+     "scope": "C1 is a GROUND_ONLY_LAB_REFERENCE (owner chose the recommended 'Ground-only reference' option): it registers I_d,max,H1,Ar on H-1 and is the C1-vs-ICP bench control; never flight hardware, never in the flight mass / power / Xe budgets; hall_c1_reference is not a flight configuration"
+    }
+   ],
+   "later_governing_reading": {
+    "decisions": [
+     "A9.19",
+     "A9.20"
+    ],
+    "pointers": [
+     "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json#/amends/A9 C1 CONTROL_FALLBACK",
+     "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json#/answer"
+    ],
+    "sha256": [
+     "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6"
+    ],
+    "text": "as we discussed earlier we xenon is not a parllel gas its just a contigency and emergency gas. so our thruster architecture should be cathode/electrodless for both the atmosphere gases and xenon check C1  mass\n\nOne Hall accelerator.\nOne RF/ICP electron-source/neutralizer.\nTwo propellant supply modes.\nNo conventional hollow cathode. | what do you think of my approach? will go with your recommended but is it good to remove hollow cathode",
+    "scope": "'retain C1 as reference/fallback' -> C1 is retained only as the ground laboratory reference and is not a flight BOM item; the ICP / RF / collector BOM additions stand | C1 is a GROUND_ONLY_LAB_REFERENCE (owner chose the recommended 'Ground-only reference' option): it registers I_d,max,H1,Ar on H-1 and is the C1-vs-ICP bench control; never flight hardware, never in the flight mass / power / Xe budgets; hall_c1_reference is not a flight configuration"
+   }
   },
   {
    "no": 60,
@@ -1925,7 +2450,7 @@
    "id": "HWQ-09",
    "source": "v1 consolidated list row 88 (H. Cathode C-1)",
    "question": "Confirm Xe-fed LaB6 hollow cathode and its emission rating vs derived I_d bound + keeper + interstage currents.",
-   "status": "ANSWERED",
+   "status": "AMENDED_BY_A9_19",
    "answer_pointer": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 88",
    "answer_sha256": "d932abe4b14343c0cb6f8a6a9057d67c66a5484d1226abd97a0cccd636b973da",
    "answer_excerpt": "CONFIRM C1 only as the conventional reference/fallback: heated Xe-fed LaB6 hollow cathode sized to the measured/derived current demand. It is not the primary flight neutralizer if the downstream ICP succeeds.",
@@ -1933,7 +2458,55 @@
    "proposed": "confirm",
    "needed_by": "—",
    "kind": "v1_row",
-   "status_detail": "ANSWERED"
+   "status_detail": "ANSWERED; AMENDS by A9.19 amends/A9 C1 CONTROL_FALLBACK; AMENDS by A9.20 answer",
+   "pre_a9_17_status": "ANSWERED",
+   "pre_a9_17_status_detail": "ANSWERED",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.19",
+     "item": "amends/A9 C1 CONTROL_FALLBACK",
+     "relation": "AMENDS",
+     "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+     "pointer": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json#/amends/A9 C1 CONTROL_FALLBACK",
+     "decision_json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "decision_json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "decision_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+     "decision_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+     "verbatim_excerpt": "as we discussed earlier we xenon is not a parllel gas its just a contigency and emergency gas. so our thruster architecture should be cathode/electrodless for both the atmosphere gases and xenon check C1  mass\n\nOne Hall accelerator.\nOne RF/ICP electron-source/neutralizer.\nTwo propellant supply modes.\nNo conventional hollow cathode.",
+     "recorder_digest": "C1 is not a flight fallback; hall_c1_reference is no longer a candidate flight configuration (its ground/laboratory role is an open recorder question to the owner)",
+     "scope": "'conventional reference/fallback' -> ground reference only; the one RF/ICP neutralizer is the only flight electron source (no 'if the downstream ICP succeeds' fallback)"
+    },
+    {
+     "decision": "A9.20",
+     "item": "answer",
+     "relation": "AMENDS",
+     "decision_code": "C1_GROUND_ONLY_LABORATORY_REFERENCE",
+     "pointer": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json#/answer",
+     "decision_json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+     "decision_json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+     "decision_md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+     "decision_md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+     "verbatim_excerpt": "what do you think of my approach? will go with your recommended but is it good to remove hollow cathode",
+     "recorder_digest": "owner chose the recommended option: C1 is a ground-only laboratory reference (registers I_d,max,H1,Ar on H-1 independently of the ICP per A9.10 S3.5, and serves as the bench control in the C1-vs-ICP comparison); never flight hardware; never in the flight mass/power/Xe budgets",
+     "scope": "C1 is a GROUND_ONLY_LAB_REFERENCE (owner chose the recommended 'Ground-only reference' option): it registers I_d,max,H1,Ar on H-1 and is the C1-vs-ICP bench control; never flight hardware, never in the flight mass / power / Xe budgets; hall_c1_reference is not a flight configuration"
+    }
+   ],
+   "later_governing_reading": {
+    "decisions": [
+     "A9.19",
+     "A9.20"
+    ],
+    "pointers": [
+     "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json#/amends/A9 C1 CONTROL_FALLBACK",
+     "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json#/answer"
+    ],
+    "sha256": [
+     "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6"
+    ],
+    "text": "as we discussed earlier we xenon is not a parllel gas its just a contigency and emergency gas. so our thruster architecture should be cathode/electrodless for both the atmosphere gases and xenon check C1  mass\n\nOne Hall accelerator.\nOne RF/ICP electron-source/neutralizer.\nTwo propellant supply modes.\nNo conventional hollow cathode. | what do you think of my approach? will go with your recommended but is it good to remove hollow cathode",
+    "scope": "'conventional reference/fallback' -> ground reference only; the one RF/ICP neutralizer is the only flight electron source (no 'if the downstream ICP succeeds' fallback) | C1 is a GROUND_ONLY_LAB_REFERENCE (owner chose the recommended 'Ground-only reference' option): it registers I_d,max,H1,Ar on H-1 and is the C1-vs-ICP bench control; never flight hardware, never in the flight mass / power / Xe budgets; hall_c1_reference is not a flight configuration"
+   }
   },
   {
    "no": 89,
@@ -4503,11 +5076,11 @@
    "needed_by": "LOCK-1 (PROPOSED by A9-10 per row 144; the lane stated no gate)",
    "kind": "lane",
    "lane": "A9-06",
-   "status": "ANSWERED_BY_A9_14",
+   "status": "AMENDED_BY_A9_21",
    "answer_pointer": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json#/decisions/MQ-05",
    "answer_excerpt": "10. S8.10 — MQ-05 — AL-08 INCLUDES THE COMPLETE Xe STORAGE/FLOW HARDWARE. Scope includes Xe tank, regulator, valves, plumbing, mounting and thermal hardware. The current 5.044 kg incomplete CBE floor implies 6.0528 kg MEV planning floor; quotations/design replace this value.\n `AL08_FULL_XE_SYSTEM_REBASE_FROM_CBE`.",
    "no": 246,
-   "status_detail": "ANSWERED (A9.14 S8.10, decision code AL08_FULL_XE_SYSTEM_REBASE_FROM_CBE)",
+   "status_detail": "ANSWERED (A9.14 S8.10, decision code AL08_FULL_XE_SYSTEM_REBASE_FROM_CBE); AMENDS by A9.21 AL08",
    "v3_status": "OPEN",
    "dependency": [
     "OWNER_JUDGMENT",
@@ -4525,7 +5098,38 @@
    "decision_code": "AL08_FULL_XE_SYSTEM_REBASE_FROM_CBE",
    "answer_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
    "answer_verbatim_path": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
-   "answer_verbatim_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07"
+   "answer_verbatim_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "pre_a9_17_status": "ANSWERED_BY_A9_14",
+   "pre_a9_17_status_detail": "ANSWERED (A9.14 S8.10, decision code AL08_FULL_XE_SYSTEM_REBASE_FROM_CBE)",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.21",
+     "item": "AL08",
+     "relation": "AMENDS",
+     "decision_code": "KEEP_6_05KG_PROVISIONAL_WAIT_FOR_QUOTES_TO_REBASE_AL08",
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/AL08",
+     "decision_json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "decision_md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+     "decision_md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+     "verbatim_excerpt": "2. Xe-hardware floor: wait for quotations before formally rebasing AL-08. Keep 6.05 kg only as a provisional planning floor, not a frozen allocation. The reason is important: that analog-derived figure may contain about 0.285 kg of C1 cathode-branch hardware, while the RFP-required Xe propulsion system and any C1-specific Xe hardware must be accounted separately. Quotations should split tank, regulator, valves, plumbing, mounting/thermal, and any C1-specific branch before the final re-base.\nDecision: `KEEP_6_05KG_PROVISIONAL_WAIT_FOR_QUOTES_TO_REBASE_AL08`.",
+     "recorder_digest": "KEEP_6_05KG_PROVISIONAL_WAIT_FOR_QUOTES_TO_REBASE_AL08 (provisional planning floor, not frozen; quotations split tank, regulator, valves, plumbing, mounting/thermal and any C1-specific branch)",
+     "scope": "the 6.05 kg (6.0528 kg MEV) AL-08 figure is a PROVISIONAL planning floor, not a frozen allocation; the formal AL-08 re-base waits for quotations split into tank, regulator, valves, plumbing, mounting/thermal and any C1-specific branch (the analog floor may contain about 0.285 kg of C1 cathode-branch hardware); the complete-Xe-system scope of S8.10 stands"
+    }
+   ],
+   "later_governing_reading": {
+    "decisions": [
+     "A9.21"
+    ],
+    "pointers": [
+     "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/AL08"
+    ],
+    "sha256": [
+     "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549"
+    ],
+    "text": "2. Xe-hardware floor: wait for quotations before formally rebasing AL-08. Keep 6.05 kg only as a provisional planning floor, not a frozen allocation. The reason is important: that analog-derived figure may contain about 0.285 kg of C1 cathode-branch hardware, while the RFP-required Xe propulsion system and any C1-specific Xe hardware must be accounted separately. Quotations should split tank, regulator, valves, plumbing, mounting/thermal, and any C1-specific branch before the final re-base.\nDecision: `KEEP_6_05KG_PROVISIONAL_WAIT_FOR_QUOTES_TO_REBASE_AL08`.",
+    "scope": "the 6.05 kg (6.0528 kg MEV) AL-08 figure is a PROVISIONAL planning floor, not a frozen allocation; the formal AL-08 re-base waits for quotations split into tank, regulator, valves, plumbing, mounting/thermal and any C1-specific branch (the analog floor may contain about 0.285 kg of C1 cathode-branch hardware); the complete-Xe-system scope of S8.10 stands"
+   }
   },
   {
    "id": "MQ-06",
@@ -4683,11 +5287,11 @@
    "needed_by": "LOCK-1 (PROPOSED by A9-10 per row 144; the lane stated no gate)",
    "kind": "lane",
    "lane": "A9-07",
-   "status": "ANSWERED_BY_A9_14",
+   "status": "AMENDED_BY_A9_20",
    "answer_pointer": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json#/decisions/OQ-A907-01",
    "answer_excerpt": "15. S8.15 — OQ-A907-01 — THREE ATTEMPTS. One initial C1 ignition attempt plus at most two retries = maximum three dwells per start.\n `THREE_ATTEMPTS_ONE_PLUS_TWO_RETRIES`.",
    "no": 252,
-   "status_detail": "ANSWERED (A9.14 S8.15, decision code THREE_ATTEMPTS_ONE_PLUS_TWO_RETRIES)",
+   "status_detail": "ANSWERED (A9.14 S8.15, decision code THREE_ATTEMPTS_ONE_PLUS_TWO_RETRIES); AMENDS by A9.20 answer; AMENDS by A9.19 architecture",
    "v3_status": "OPEN",
    "dependency": [
     "OWNER_JUDGMENT"
@@ -4704,7 +5308,63 @@
    "decision_code": "THREE_ATTEMPTS_ONE_PLUS_TWO_RETRIES",
    "answer_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
    "answer_verbatim_path": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
-   "answer_verbatim_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07"
+   "answer_verbatim_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "pre_a9_17_status": "ANSWERED_BY_A9_14",
+   "pre_a9_17_status_detail": "ANSWERED (A9.14 S8.15, decision code THREE_ATTEMPTS_ONE_PLUS_TWO_RETRIES)",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.20",
+     "item": "answer",
+     "relation": "AMENDS",
+     "decision_code": "C1_GROUND_ONLY_LABORATORY_REFERENCE",
+     "pointer": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json#/answer",
+     "decision_json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+     "decision_json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+     "decision_md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+     "decision_md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+     "verbatim_excerpt": "what do you think of my approach? will go with your recommended but is it good to remove hollow cathode",
+     "recorder_digest": "owner chose the recommended option: C1 is a ground-only laboratory reference (registers I_d,max,H1,Ar on H-1 independently of the ICP per A9.10 S3.5, and serves as the bench control in the C1-vs-ICP comparison); never flight hardware; never in the flight mass/power/Xe budgets",
+     "scope": "the three-dwell C1 ignition booking (1 + 2 retries) applies to the ground C1 laboratory reference and its test-campaign Xe only; it is never a flight Xe budget line"
+    },
+    {
+     "decision": "A9.19",
+     "item": "architecture",
+     "relation": "AMENDS",
+     "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+     "pointer": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json#/architecture",
+     "decision_json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "decision_json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "decision_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+     "decision_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+     "verbatim_excerpt": "as we discussed earlier we xenon is not a parllel gas its just a contigency and emergency gas. so our thruster architecture should be cathode/electrodless for both the atmosphere gases and xenon check C1  mass\n\nOne Hall accelerator.\nOne RF/ICP electron-source/neutralizer.\nTwo propellant supply modes.\nNo conventional hollow cathode.",
+     "recorder_digest": {
+      "hall_accelerators": 1,
+      "electron_source_neutralizer": "one RF/ICP electron-source/neutralizer (cathodeless/electrodeless) for both atmospheric gases and xenon",
+      "propellant_supply_modes": [
+       "ambient atmospheric propellant (primary)",
+       "xenon (contingency / emergency)"
+      ],
+      "conventional_hollow_cathode": "NONE in the thruster architecture"
+     },
+     "scope": "no conventional hollow cathode in the flight architecture"
+    }
+   ],
+   "later_governing_reading": {
+    "decisions": [
+     "A9.19",
+     "A9.20"
+    ],
+    "pointers": [
+     "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json#/answer",
+     "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json#/architecture"
+    ],
+    "sha256": [
+     "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+     "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16"
+    ],
+    "text": "what do you think of my approach? will go with your recommended but is it good to remove hollow cathode | as we discussed earlier we xenon is not a parllel gas its just a contigency and emergency gas. so our thruster architecture should be cathode/electrodless for both the atmosphere gases and xenon check C1  mass\n\nOne Hall accelerator.\nOne RF/ICP electron-source/neutralizer.\nTwo propellant supply modes.\nNo conventional hollow cathode.",
+    "scope": "the three-dwell C1 ignition booking (1 + 2 retries) applies to the ground C1 laboratory reference and its test-campaign Xe only; it is never a flight Xe budget line | no conventional hollow cathode in the flight architecture"
+   }
   },
   {
    "id": "OQ-A907-02",
@@ -4967,11 +5627,11 @@
    "needed_by": "LOCK-1 (PROPOSED by A9-10 per row 144; the lane stated no gate)",
    "kind": "lane",
    "lane": "A9-07",
-   "status": "AMENDED_BY_A9_15",
+   "status": "AMENDED_BY_A9_19",
    "answer_pointer": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json#/decisions/OQ-A907-07",
    "answer_excerpt": "17. S8.17 — OQ-A907-07 — DEFER FLIGHT C1 INTEGRATION. Do not burden the baseline flight article with C1 until C1 is actually selected as a flight fallback. Development/reference C1 work continues separately.\n `DEFER_FLIGHT_C1_UNTIL_SELECTED`.",
    "no": 262,
-   "status_detail": "ANSWERED (A9.14 S8.17, decision code DEFER_FLIGHT_C1_UNTIL_SELECTED); AMENDED (A9.15)",
+   "status_detail": "ANSWERED (A9.14 S8.17, decision code DEFER_FLIGHT_C1_UNTIL_SELECTED); AMENDED (A9.15); SUPERSEDES by A9.19 amends/A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07; SUPERSEDES by A9.20 answer",
    "v3_status": "OPEN",
    "dependency": [
     "OWNER_JUDGMENT"
@@ -5006,7 +5666,56 @@
     "pointer": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json#/amendments/OQ-A907-07",
     "sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
     "text": "S8.17 / OQ-A907-07: C1 flight integration may still be deferred until C1 is selected, but not because Xe is contingency-only."
-   }
+   },
+   "pre_a9_17_status": "AMENDED_BY_A9_15",
+   "pre_a9_17_status_detail": "ANSWERED (A9.14 S8.17, decision code DEFER_FLIGHT_C1_UNTIL_SELECTED); AMENDED (A9.15)",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.19",
+     "item": "amends/A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07",
+     "relation": "SUPERSEDES",
+     "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+     "pointer": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json#/amends/A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07",
+     "decision_json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "decision_json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "decision_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+     "decision_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+     "verbatim_excerpt": "as we discussed earlier we xenon is not a parllel gas its just a contigency and emergency gas. so our thruster architecture should be cathode/electrodless for both the atmosphere gases and xenon check C1  mass\n\nOne Hall accelerator.\nOne RF/ICP electron-source/neutralizer.\nTwo propellant supply modes.\nNo conventional hollow cathode.",
+     "recorder_digest": "no C1 flight variant: the flight architecture has no conventional hollow cathode; AL-C1 and C1 Xe/electronics bookings are removed from the flight architecture",
+     "scope": "no C1 flight variant: the flight architecture has no conventional hollow cathode, so a flight C1 integration is neither developed nor deferred; the A9.14 'defer until selected' answer and the A9.15 reading of it are history"
+    },
+    {
+     "decision": "A9.20",
+     "item": "answer",
+     "relation": "SUPERSEDES",
+     "decision_code": "C1_GROUND_ONLY_LABORATORY_REFERENCE",
+     "pointer": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json#/answer",
+     "decision_json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+     "decision_json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+     "decision_md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+     "decision_md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+     "verbatim_excerpt": "what do you think of my approach? will go with your recommended but is it good to remove hollow cathode",
+     "recorder_digest": "owner chose the recommended option: C1 is a ground-only laboratory reference (registers I_d,max,H1,Ar on H-1 independently of the ICP per A9.10 S3.5, and serves as the bench control in the C1-vs-ICP comparison); never flight hardware; never in the flight mass/power/Xe budgets",
+     "scope": "C1 is a GROUND_ONLY_LAB_REFERENCE (owner chose the recommended 'Ground-only reference' option): it registers I_d,max,H1,Ar on H-1 and is the C1-vs-ICP bench control; never flight hardware, never in the flight mass / power / Xe budgets; hall_c1_reference is not a flight configuration"
+    }
+   ],
+   "later_governing_reading": {
+    "decisions": [
+     "A9.19",
+     "A9.20"
+    ],
+    "pointers": [
+     "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json#/amends/A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07",
+     "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json#/answer"
+    ],
+    "sha256": [
+     "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6"
+    ],
+    "text": "as we discussed earlier we xenon is not a parllel gas its just a contigency and emergency gas. so our thruster architecture should be cathode/electrodless for both the atmosphere gases and xenon check C1  mass\n\nOne Hall accelerator.\nOne RF/ICP electron-source/neutralizer.\nTwo propellant supply modes.\nNo conventional hollow cathode. | what do you think of my approach? will go with your recommended but is it good to remove hollow cathode",
+    "scope": "no C1 flight variant: the flight architecture has no conventional hollow cathode, so a flight C1 integration is neither developed nor deferred; the A9.14 'defer until selected' answer and the A9.15 reading of it are history | C1 is a GROUND_ONLY_LAB_REFERENCE (owner chose the recommended 'Ground-only reference' option): it registers I_d,max,H1,Ar on H-1 and is the C1-vs-ICP bench control; never flight hardware, never in the flight mass / power / Xe budgets; hall_c1_reference is not a flight configuration"
+   },
+   "governing_reading_status": "SUPERSEDED_BY_A9_19"
   },
   {
    "id": "XA9Q-01",
@@ -5219,11 +5928,11 @@
    "needed_by": "NOW",
    "kind": "lane",
    "lane": "A9-08",
-   "status": "AMENDED_BY_A9_15",
+   "status": "AMENDED_BY_A9_19",
    "answer_pointer": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json#/decisions/XA9Q-07",
    "answer_excerpt": "21. S8.21 — XA9Q-07 — YES, Xe CAPABILITY APPLIES TO `hall_icp_neutralizer`. The RFP requires compatibility with both ambient air and Xenon and explicitly mentions separate ambient-air and Xe propellant storage. RFP(1) This is distinct from C1: Xe remains contingency-only for the C1 electron source unless C1 is actually required.\n `YES_XE_PROPULSION_CAPABILITY_BOTH_CONFIGURATIONS`.",
    "no": 269,
-   "status_detail": "ANSWERED (A9.14 S8.21, decision code YES_XE_PROPULSION_CAPABILITY_BOTH_CONFIGURATIONS); AMENDED (A9.15)",
+   "status_detail": "ANSWERED (A9.14 S8.21, decision code YES_XE_PROPULSION_CAPABILITY_BOTH_CONFIGURATIONS); AMENDED (A9.15); AMENDS by A9.19 xenon_role; AMENDS by A9.20 answer",
    "v3_status": "OPEN",
    "dependency": [
     "OWNER_JUDGMENT"
@@ -5258,7 +5967,56 @@
     "pointer": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json#/amendments/XA9Q-07",
     "sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
     "text": "S8.21 / XA9Q-07: YES — Xe capability applies to the `hall_icp_neutralizer` flight configuration because the RFP requires it."
-   }
+   },
+   "pre_a9_17_status": "AMENDED_BY_A9_15",
+   "pre_a9_17_status_detail": "ANSWERED (A9.14 S8.21, decision code YES_XE_PROPULSION_CAPABILITY_BOTH_CONFIGURATIONS); AMENDED (A9.15)",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.19",
+     "item": "xenon_role",
+     "relation": "AMENDS",
+     "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+     "pointer": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json#/xenon_role",
+     "decision_json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "decision_json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "decision_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+     "decision_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+     "verbatim_excerpt": "as we discussed earlier we xenon is not a parllel gas its just a contigency and emergency gas. so our thruster architecture should be cathode/electrodless for both the atmosphere gases and xenon check C1  mass\n\nOne Hall accelerator.\nOne RF/ICP electron-source/neutralizer.\nTwo propellant supply modes.\nNo conventional hollow cathode.",
+     "recorder_digest": "CONTINGENCY_AND_EMERGENCY - not a parallel/co-equal propellant; Xe capability is retained (the RFP requires the capability and describes the Xe input as 'an extra input system to take care any problems on board unforeseen problems', RFP-P17-05, with separate tanks RFP-P18-08), but its role is contingency",
+     "scope": "ROLE of Xe only: Xe is the contingency / emergency supply mode (two supply modes, separate tanks / paths); the YES on Xe propulsion capability for hall_icp_neutralizer stands"
+    },
+    {
+     "decision": "A9.20",
+     "item": "answer",
+     "relation": "AMENDS",
+     "decision_code": "C1_GROUND_ONLY_LABORATORY_REFERENCE",
+     "pointer": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json#/answer",
+     "decision_json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+     "decision_json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+     "decision_md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+     "decision_md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+     "verbatim_excerpt": "what do you think of my approach? will go with your recommended but is it good to remove hollow cathode",
+     "recorder_digest": "owner chose the recommended option: C1 is a ground-only laboratory reference (registers I_d,max,H1,Ar on H-1 independently of the ICP per A9.10 S3.5, and serves as the bench control in the C1-vs-ICP comparison); never flight hardware; never in the flight mass/power/Xe budgets",
+     "scope": "'both configurations': hall_c1_reference is no longer a candidate flight configuration; the Xe capability applies to the one flight configuration hall_icp_neutralizer"
+    }
+   ],
+   "later_governing_reading": {
+    "decisions": [
+     "A9.19",
+     "A9.20"
+    ],
+    "pointers": [
+     "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json#/xenon_role",
+     "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json#/answer"
+    ],
+    "sha256": [
+     "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6"
+    ],
+    "text": "as we discussed earlier we xenon is not a parllel gas its just a contigency and emergency gas. so our thruster architecture should be cathode/electrodless for both the atmosphere gases and xenon check C1  mass\n\nOne Hall accelerator.\nOne RF/ICP electron-source/neutralizer.\nTwo propellant supply modes.\nNo conventional hollow cathode. | what do you think of my approach? will go with your recommended but is it good to remove hollow cathode",
+    "scope": "ROLE of Xe only: Xe is the contingency / emergency supply mode (two supply modes, separate tanks / paths); the YES on Xe propulsion capability for hall_icp_neutralizer stands | 'both configurations': hall_c1_reference is no longer a candidate flight configuration; the Xe capability applies to the one flight configuration hall_icp_neutralizer"
+   },
+   "governing_reading_status": "AMENDED_IN_SCOPE_BY_A9_19"
   },
   {
    "id": "OQ-RFQ-01",
@@ -6069,7 +6827,44 @@
    "answer_sha256": "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544",
    "answer_verbatim_path": "docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md",
    "answer_verbatim_sha256": "6845f54a97192eaa934cc67d5f415c94e317707c97411353aa2325bf5f9b0491",
-   "answer_excerpt": "5. S3.5 — P1Q-07 — REGISTER `I_d,max,H1` FROM A DEDICATED H-1 CHARACTERIZATION WITH THE CONVENTIONAL C1 REFERENCE SOURCE.\nUse a dedicated H-1 characterization campaign with the conventional C1 electron source/neutralizer to establish the maximum discharge current of H-1 independently of the experimental ICP neutralizer.\nFor the P1 Ar engineering programme:\n   * operate H-1 with C1 under the registered HI-AR H-1 operating envelope;\n   * characterize the admissible H-1 operating surface;\n   * register `I_d,max,H1,Ar` as the maximum measured discharge current inside that qualified envelope;\n   * include its registered uncertainty;\n   * freeze that value before P1-S7.\nP1-S7 ICP-45A in Ar shall use this registered value. It shall not use the 8.33 A stand ceiling.\nThis Ar value is an engineering qualification reference only. It shall not automatically become the final flight-relevant `I_d,max,H1`. When H-1 is later characterized on the relevant N2/O2/O or delivered VLEO-propellant condition, register a separate flight-relevant `I_d,max,H1` with its own provenance.\nThe later value does not retroactively alter the historical Ar P1 result.\nDecision: H-1 + conventional C1 characterization; Ar engineering value registered before P1-S7, later propellant-specific value registered separately."
+   "answer_excerpt": "5. S3.5 — P1Q-07 — REGISTER `I_d,max,H1` FROM A DEDICATED H-1 CHARACTERIZATION WITH THE CONVENTIONAL C1 REFERENCE SOURCE.\nUse a dedicated H-1 characterization campaign with the conventional C1 electron source/neutralizer to establish the maximum discharge current of H-1 independently of the experimental ICP neutralizer.\nFor the P1 Ar engineering programme:\n   * operate H-1 with C1 under the registered HI-AR H-1 operating envelope;\n   * characterize the admissible H-1 operating surface;\n   * register `I_d,max,H1,Ar` as the maximum measured discharge current inside that qualified envelope;\n   * include its registered uncertainty;\n   * freeze that value before P1-S7.\nP1-S7 ICP-45A in Ar shall use this registered value. It shall not use the 8.33 A stand ceiling.\nThis Ar value is an engineering qualification reference only. It shall not automatically become the final flight-relevant `I_d,max,H1`. When H-1 is later characterized on the relevant N2/O2/O or delivered VLEO-propellant condition, register a separate flight-relevant `I_d,max,H1` with its own provenance.\nThe later value does not retroactively alter the historical Ar P1 result.\nDecision: H-1 + conventional C1 characterization; Ar engineering value registered before P1-S7, later propellant-specific value registered separately.",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.20",
+     "item": "answer",
+     "relation": "CONFIRMS",
+     "decision_code": "C1_GROUND_ONLY_LABORATORY_REFERENCE",
+     "pointer": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json#/answer",
+     "decision_json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+     "decision_json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+     "decision_md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+     "decision_md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+     "verbatim_excerpt": "what do you think of my approach? will go with your recommended but is it good to remove hollow cathode",
+     "recorder_digest": "owner chose the recommended option: C1 is a ground-only laboratory reference (registers I_d,max,H1,Ar on H-1 independently of the ICP per A9.10 S3.5, and serves as the bench control in the C1-vs-ICP comparison); never flight hardware; never in the flight mass/power/Xe budgets",
+     "scope": "C1 stays the ground reference that registers I_d,max,H1,Ar"
+    },
+    {
+     "decision": "A9.21",
+     "item": "HW_PROGRAMME",
+     "relation": "CONFIRMS",
+     "decision_code": null,
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/HW_PROGRAMME",
+     "decision_json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "decision_md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+     "decision_md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+     "verbatim_excerpt": "7. C1 ground reference — approved. Run H-1 + C1 reference characterization and register `I_d,max,H1,Ar` before P1-S7. This remains a reference/engineering campaign and does not redefine the RFP propellant requirement.",
+     "recorder_digest": [
+      "H-1: S7.1 FEMM analysis points, then S7.2 engineering channel point (engineering freeze candidate)",
+      "C1 ground reference: H-1 + C1 characterization registers I_d,max,H1,Ar before P1-S7",
+      "ICP: Ar commissioning reference where required -> registered air/N2 ICP-45 campaign -> separate registered Xe-mode campaign; own domain/provenance per gas/mode; stage domains, pressure-match tolerance, DWV leakage, stable-region criteria closed first",
+      "P2 impedance map after the in-house V/I calibration + uncertainty budget are frozen",
+      "coupled H-1 + ICP -> thermal -> P4 (thresholds frozen before acceptance-bearing exposure)",
+      "measured H-1 thrust/feed map (mandatory) -> AG-12 performance-derived feed requirement -> statewise AG-13 T-D >= 0"
+     ],
+     "scope": "H-1 + C1 reference characterization approved; I_d,max,H1,Ar registered before P1-S7"
+    }
+   ]
   },
   {
    "no": 302,
@@ -6751,7 +7546,30 @@
    "answer_sha256": "d8baf59a5b92739698e29d893e89a30995559ee7167814c096dc24599679156c",
    "answer_verbatim_path": "docs/decisions/OD_2026_10_01_A9_11_S4_P2_OWNER_DECISIONS.md",
    "answer_verbatim_sha256": "4a9fd171abc6a63266a34e6a7c4cb25c4d67ed16615715e158902a57f7071a41",
-   "answer_excerpt": "5. S4.5 — P2Q-07 — YES: ACCEPT AN IN-HOUSE V/I-PROBE PHASE CALIBRATION WHEN NO SUITABLE ACCREDITED SCOPE EXISTS, SUBJECT TO TRACEABILITY AND VALIDATION.\nIf no ISO/IEC 17025/NABL laboratory is available with an appropriate scope for the required V/I-probe magnitude and relative-phase calibration at 13.56 MHz, an in-house calibration is acceptable.\nThe in-house procedure shall be traceable through the calibrated VNA and calibration kit and shall include, at minimum:\n   * VNA and calibration-kit certificates / traceability;\n   * complex V/I gain calibration at 13.56 MHz;\n   * short/open/known-load checks as applicable at low level;\n   * a precision 50-ohm reference;\n   * at least one VNA-characterized reactive reference appropriate to testing phase accuracy;\n   * RP-VI → RP-ANT fixture characterization or a verified declaration that the planes coincide;\n   * pre/post calibration checks;\n   * probe/cable temperature and phase-drift contribution;\n   * repeatability;\n   * full uncertainty propagation for magnitude and relative phase;\n   * configuration IDs, raw data and hashes.\nBecause resistance can be highly sensitive to phase error for a low-R/high-X antenna, relative phase uncertainty shall be explicitly included and never inferred from magnitude calibration alone.\nThe low-level calibration shall also be followed by the already planned CAL-P2-15 at-power validation using the calorimetric 50-ohm load and VNA-known antenna-simulator load.\nThe record shall be identified as an in-house traceable calibration, not represented as an accredited-laboratory certificate.\nIf the resulting uncertainty is inadequate for the required impedance discrimination, the affected measurement is `NOT_EVALUATED_INSTRUMENT`; the uncertainty shall not be reduced administratively.\nDecision: YES — in-house VNA-traceable phase calibration accepted where accredited scope is unavailable, with documented uncertainty and at-power validation."
+   "answer_excerpt": "5. S4.5 — P2Q-07 — YES: ACCEPT AN IN-HOUSE V/I-PROBE PHASE CALIBRATION WHEN NO SUITABLE ACCREDITED SCOPE EXISTS, SUBJECT TO TRACEABILITY AND VALIDATION.\nIf no ISO/IEC 17025/NABL laboratory is available with an appropriate scope for the required V/I-probe magnitude and relative-phase calibration at 13.56 MHz, an in-house calibration is acceptable.\nThe in-house procedure shall be traceable through the calibrated VNA and calibration kit and shall include, at minimum:\n   * VNA and calibration-kit certificates / traceability;\n   * complex V/I gain calibration at 13.56 MHz;\n   * short/open/known-load checks as applicable at low level;\n   * a precision 50-ohm reference;\n   * at least one VNA-characterized reactive reference appropriate to testing phase accuracy;\n   * RP-VI → RP-ANT fixture characterization or a verified declaration that the planes coincide;\n   * pre/post calibration checks;\n   * probe/cable temperature and phase-drift contribution;\n   * repeatability;\n   * full uncertainty propagation for magnitude and relative phase;\n   * configuration IDs, raw data and hashes.\nBecause resistance can be highly sensitive to phase error for a low-R/high-X antenna, relative phase uncertainty shall be explicitly included and never inferred from magnitude calibration alone.\nThe low-level calibration shall also be followed by the already planned CAL-P2-15 at-power validation using the calorimetric 50-ohm load and VNA-known antenna-simulator load.\nThe record shall be identified as an in-house traceable calibration, not represented as an accredited-laboratory certificate.\nIf the resulting uncertainty is inadequate for the required impedance discrimination, the affected measurement is `NOT_EVALUATED_INSTRUMENT`; the uncertainty shall not be reduced administratively.\nDecision: YES — in-house VNA-traceable phase calibration accepted where accredited scope is unavailable, with documented uncertainty and at-power validation.",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.21",
+     "item": "HW_PROGRAMME",
+     "relation": "CONFIRMS",
+     "decision_code": null,
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/HW_PROGRAMME",
+     "decision_json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "decision_md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+     "decision_md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+     "verbatim_excerpt": "9. P2 impedance map — approved. Run after the in-house V/I magnitude/phase calibration and its uncertainty budget are frozen.",
+     "recorder_digest": [
+      "H-1: S7.1 FEMM analysis points, then S7.2 engineering channel point (engineering freeze candidate)",
+      "C1 ground reference: H-1 + C1 characterization registers I_d,max,H1,Ar before P1-S7",
+      "ICP: Ar commissioning reference where required -> registered air/N2 ICP-45 campaign -> separate registered Xe-mode campaign; own domain/provenance per gas/mode; stage domains, pressure-match tolerance, DWV leakage, stable-region criteria closed first",
+      "P2 impedance map after the in-house V/I calibration + uncertainty budget are frozen",
+      "coupled H-1 + ICP -> thermal -> P4 (thresholds frozen before acceptance-bearing exposure)",
+      "measured H-1 thrust/feed map (mandatory) -> AG-12 performance-derived feed requirement -> statewise AG-13 T-D >= 0"
+     ],
+     "scope": "the P2 impedance map runs after the in-house V/I magnitude / phase calibration and its uncertainty budget are frozen"
+    }
+   ]
   },
   {
    "no": 323,
@@ -7049,7 +7867,30 @@
    "answer_sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
    "answer_verbatim_path": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
    "answer_verbatim_sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62",
-   "answer_excerpt": "12. S5.12 — P4-OQ-03 — FREEZE NUMERICAL ACCEPTANCE THRESHOLDS AT LOCK-2 AFTER METROLOGY COMMISSIONING, BEFORE ACCEPTANCE-BEARING EXPOSURE.\n\nSelect the LOCK-2 alternative.\nFirst establish the actual Q0/Q1 measurement capability, including:\n\n* resistance repeatability/resolution;\n* mass-change detection limit;\n* profilometry/recession resolution;\n* SEM/XPS capability where applicable;\n* coupon-to-coupon/process repeatability;\n* AO/ion exposure dosimetry capability.\n\nThis metrology commissioning may use standards, blanks, controls or sacrificial commissioning coupons.\nThen, before any acceptance-bearing candidate exposure is performed, freeze:\n\n* allowable resistance-rise threshold;\n* mass-loss/recession limits;\n* sputtering/erosion acceptance;\n* required exposure duration/fluence;\n* applicable uncertainty treatment;\n* acceptance/rejection logic.\n\nDo not use the performance of the candidate coupons themselves to choose thresholds that they subsequently have to pass.\nIf the metrology capability is inadequate to resolve the desired acceptance criterion, return `NOT_EVALUATED_METROLOGY`; do not widen the material acceptance criterion simply to fit the instrument.\nDecision: LOCK-2 after metrology commissioning, but before acceptance-bearing coupon exposure."
+   "answer_excerpt": "12. S5.12 — P4-OQ-03 — FREEZE NUMERICAL ACCEPTANCE THRESHOLDS AT LOCK-2 AFTER METROLOGY COMMISSIONING, BEFORE ACCEPTANCE-BEARING EXPOSURE.\n\nSelect the LOCK-2 alternative.\nFirst establish the actual Q0/Q1 measurement capability, including:\n\n* resistance repeatability/resolution;\n* mass-change detection limit;\n* profilometry/recession resolution;\n* SEM/XPS capability where applicable;\n* coupon-to-coupon/process repeatability;\n* AO/ion exposure dosimetry capability.\n\nThis metrology commissioning may use standards, blanks, controls or sacrificial commissioning coupons.\nThen, before any acceptance-bearing candidate exposure is performed, freeze:\n\n* allowable resistance-rise threshold;\n* mass-loss/recession limits;\n* sputtering/erosion acceptance;\n* required exposure duration/fluence;\n* applicable uncertainty treatment;\n* acceptance/rejection logic.\n\nDo not use the performance of the candidate coupons themselves to choose thresholds that they subsequently have to pass.\nIf the metrology capability is inadequate to resolve the desired acceptance criterion, return `NOT_EVALUATED_METROLOGY`; do not widen the material acceptance criterion simply to fit the instrument.\nDecision: LOCK-2 after metrology commissioning, but before acceptance-bearing coupon exposure.",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.21",
+     "item": "HW_PROGRAMME",
+     "relation": "CONFIRMS",
+     "decision_code": null,
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/HW_PROGRAMME",
+     "decision_json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "decision_md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+     "decision_md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+     "verbatim_excerpt": "10. Coupled H-1 + ICP → thermal → P4 — approved. P4 acceptance thresholds must be frozen before acceptance-bearing coupon exposure, following the LOCK-2 rule already adopted.",
+     "recorder_digest": [
+      "H-1: S7.1 FEMM analysis points, then S7.2 engineering channel point (engineering freeze candidate)",
+      "C1 ground reference: H-1 + C1 characterization registers I_d,max,H1,Ar before P1-S7",
+      "ICP: Ar commissioning reference where required -> registered air/N2 ICP-45 campaign -> separate registered Xe-mode campaign; own domain/provenance per gas/mode; stage domains, pressure-match tolerance, DWV leakage, stable-region criteria closed first",
+      "P2 impedance map after the in-house V/I calibration + uncertainty budget are frozen",
+      "coupled H-1 + ICP -> thermal -> P4 (thresholds frozen before acceptance-bearing exposure)",
+      "measured H-1 thrust/feed map (mandatory) -> AG-12 performance-derived feed requirement -> statewise AG-13 T-D >= 0"
+     ],
+     "scope": "P4 acceptance thresholds frozen before acceptance-bearing coupon exposure (LOCK-2 rule)"
+    }
+   ]
   },
   {
    "no": 331,
@@ -7142,8 +7983,8 @@
    "question": "Row 54 gives no allocation for the C1 electron-source hardware of the hall_c1_reference flight fallback configuration (cathode unit, shield/mount, filter/getter; supplies and cathode Xe branch possibly inside AL-07/AL-08). Which allocation line and value apply?",
    "proposed": "owner call; admissible options carried: (a) reuse the ICP-only lines AL-05 + AL-06 (3.5 kg) for the C1 line in hall_c1_reference; (b) a separate C1 allocation; (c) C1 supplies inside AL-07 and the C1 branch inside AL-08 with only the cathode module on a new line. Until then the C1 column reports a known part only (not comparable)",
    "needed_by": "LOCK-1",
-   "status": "AMENDED_BY_A9_15",
-   "status_detail": "ANSWERED (A9.14 S8.33, decision code C1_OPTION_C_NEW_AL_C1_MODULE_ONLY); AMENDED (A9.15)",
+   "status": "AMENDED_BY_A9_19",
+   "status_detail": "ANSWERED (A9.14 S8.33, decision code C1_OPTION_C_NEW_AL_C1_MODULE_ONLY); AMENDED (A9.15); SUPERSEDES by A9.19 amends/A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07; SUPERSEDES by A9.20 answer",
    "dependency": [
     "OWNER_JUDGMENT"
    ],
@@ -7179,7 +8020,56 @@
     "pointer": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json#/amendments/MPQ-01",
     "sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
     "text": "S8.33 / MPQ-01: if C1 is selected and requires Xe, its C1-specific branch is booked within the RFP-compliant Xe system; do not assume or exclude C1 Xe in advance."
-   }
+   },
+   "pre_a9_17_status": "AMENDED_BY_A9_15",
+   "pre_a9_17_status_detail": "ANSWERED (A9.14 S8.33, decision code C1_OPTION_C_NEW_AL_C1_MODULE_ONLY); AMENDED (A9.15)",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.19",
+     "item": "amends/A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07",
+     "relation": "SUPERSEDES",
+     "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+     "pointer": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json#/amends/A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07",
+     "decision_json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "decision_json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "decision_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+     "decision_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+     "verbatim_excerpt": "as we discussed earlier we xenon is not a parllel gas its just a contigency and emergency gas. so our thruster architecture should be cathode/electrodless for both the atmosphere gases and xenon check C1  mass\n\nOne Hall accelerator.\nOne RF/ICP electron-source/neutralizer.\nTwo propellant supply modes.\nNo conventional hollow cathode.",
+     "recorder_digest": "no C1 flight variant: the flight architecture has no conventional hollow cathode; AL-C1 and C1 Xe/electronics bookings are removed from the flight architecture",
+     "scope": "no AL-C1 line and no C1 electronics / C1 Xe branch booking in the flight architecture (A9.19 amends S8.33); the option-(c) allocation and the A9.15 reading of it are history"
+    },
+    {
+     "decision": "A9.20",
+     "item": "answer",
+     "relation": "SUPERSEDES",
+     "decision_code": "C1_GROUND_ONLY_LABORATORY_REFERENCE",
+     "pointer": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json#/answer",
+     "decision_json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+     "decision_json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+     "decision_md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+     "decision_md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+     "verbatim_excerpt": "what do you think of my approach? will go with your recommended but is it good to remove hollow cathode",
+     "recorder_digest": "owner chose the recommended option: C1 is a ground-only laboratory reference (registers I_d,max,H1,Ar on H-1 independently of the ICP per A9.10 S3.5, and serves as the bench control in the C1-vs-ICP comparison); never flight hardware; never in the flight mass/power/Xe budgets",
+     "scope": "C1 is a GROUND_ONLY_LAB_REFERENCE (owner chose the recommended 'Ground-only reference' option): it registers I_d,max,H1,Ar on H-1 and is the C1-vs-ICP bench control; never flight hardware, never in the flight mass / power / Xe budgets; hall_c1_reference is not a flight configuration"
+    }
+   ],
+   "later_governing_reading": {
+    "decisions": [
+     "A9.19",
+     "A9.20"
+    ],
+    "pointers": [
+     "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json#/amends/A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07",
+     "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json#/answer"
+    ],
+    "sha256": [
+     "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6"
+    ],
+    "text": "as we discussed earlier we xenon is not a parllel gas its just a contigency and emergency gas. so our thruster architecture should be cathode/electrodless for both the atmosphere gases and xenon check C1  mass\n\nOne Hall accelerator.\nOne RF/ICP electron-source/neutralizer.\nTwo propellant supply modes.\nNo conventional hollow cathode. | what do you think of my approach? will go with your recommended but is it good to remove hollow cathode",
+    "scope": "no AL-C1 line and no C1 electronics / C1 Xe branch booking in the flight architecture (A9.19 amends S8.33); the option-(c) allocation and the A9.15 reading of it are history | C1 is a GROUND_ONLY_LAB_REFERENCE (owner chose the recommended 'Ground-only reference' option): it registers I_d,max,H1,Ar on H-1 and is the C1-vs-ICP bench control; never flight hardware, never in the flight mass / power / Xe budgets; hall_c1_reference is not a flight configuration"
+   },
+   "governing_reading_status": "SUPERSEDED_BY_A9_19"
   },
   {
    "no": 334,
@@ -7228,8 +8118,8 @@
    "question": "If XA9Q-07 is answered NO (the row-6 functional Xe mode does not apply to hall_icp_neutralizer), is that flight configuration Xe-free (no tank, no Xe flow control), or does it keep a Xe system for Hall Xe ignition / Xe fallback / transitions only?",
    "proposed": "none - owner call; v2 carries the Xe-free reading literally from the XA9Q-07 parenthetical and the full A9-08 set under YES; an intermediate reading would be a third RA-FUNC value",
    "needed_by": "with XA9Q-07 (NOW)",
-   "status": "AMENDED_BY_A9_15",
-   "status_detail": "ANSWERED (A9.14 S8.35, decision code NOT_APPLICABLE_PARENT_XA9Q07_YES); AMENDED (A9.15)",
+   "status": "AMENDED_BY_A9_19",
+   "status_detail": "ANSWERED (A9.14 S8.35, decision code NOT_APPLICABLE_PARENT_XA9Q07_YES); AMENDED (A9.15); AMENDS by A9.19 xenon_role",
    "dependency": [
     "OWNER_JUDGMENT"
    ],
@@ -7265,7 +8155,39 @@
     "pointer": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json#/amendments/XV2Q-01",
     "sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
     "text": "S8.35 / XV2Q-01: becomes NOT APPLICABLE, because the system is not Xe-free under the RFP."
-   }
+   },
+   "pre_a9_17_status": "AMENDED_BY_A9_15",
+   "pre_a9_17_status_detail": "ANSWERED (A9.14 S8.35, decision code NOT_APPLICABLE_PARENT_XA9Q07_YES); AMENDED (A9.15)",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.19",
+     "item": "xenon_role",
+     "relation": "AMENDS",
+     "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+     "pointer": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json#/xenon_role",
+     "decision_json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "decision_json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "decision_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+     "decision_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+     "verbatim_excerpt": "as we discussed earlier we xenon is not a parllel gas its just a contigency and emergency gas. so our thruster architecture should be cathode/electrodless for both the atmosphere gases and xenon check C1  mass\n\nOne Hall accelerator.\nOne RF/ICP electron-source/neutralizer.\nTwo propellant supply modes.\nNo conventional hollow cathode.",
+     "recorder_digest": "CONTINGENCY_AND_EMERGENCY - not a parallel/co-equal propellant; Xe capability is retained (the RFP requires the capability and describes the Xe input as 'an extra input system to take care any problems on board unforeseen problems', RFP-P17-05, with separate tanks RFP-P18-08), but its role is contingency",
+     "scope": "ROLE of Xe only: NOT APPLICABLE stands - the flight configuration is not Xe-free; Xe is retained as the contingency / emergency supply mode with its own tank / path"
+    }
+   ],
+   "later_governing_reading": {
+    "decisions": [
+     "A9.19"
+    ],
+    "pointers": [
+     "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json#/xenon_role"
+    ],
+    "sha256": [
+     "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16"
+    ],
+    "text": "as we discussed earlier we xenon is not a parllel gas its just a contigency and emergency gas. so our thruster architecture should be cathode/electrodless for both the atmosphere gases and xenon check C1  mass\n\nOne Hall accelerator.\nOne RF/ICP electron-source/neutralizer.\nTwo propellant supply modes.\nNo conventional hollow cathode.",
+    "scope": "ROLE of Xe only: NOT APPLICABLE stands - the flight configuration is not Xe-free; Xe is retained as the contingency / emergency supply mode with its own tank / path"
+   },
+   "governing_reading_status": "AMENDED_IN_SCOPE_BY_A9_19"
   },
   {
    "no": 336,
@@ -7626,7 +8548,30 @@
    "answer_sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
    "answer_verbatim_path": "docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md",
    "answer_verbatim_sha256": "8e770d0edf056a0402f6ec8c86a2a2feec169ab971fae788c7a9a620211e1aa0",
-   "answer_excerpt": "15. S1.15 — P1-IT-52 — REGISTER STAGE-SPECIFIC DOMAINS FROM REAL HARDWARE; DO NOT INVENT NUMBERS NOW.\nOwner decision: every P1 stage shall have its operating domain frozen before the first record of that stage, using the procured/calibrated hardware capability, P1-G0 safety limits and the pre-registered run matrix.\nRegister, as applicable, `P_fwd_W`, `p_chamber_Pa`, `mdot_Ar_H1_mg_s` and `V_collector_V` as explicit `[min,max]` ranges under a unique `domain_id`.\nThe existing 0–500 W figure is only the laboratory RF investigation capability, not permission to declare every P1 stage as 0–500 W. Pressure limits must come from the qualified chamber/gauge/pumping system; flow limits from the calibrated Ar MFC and gas path; collector-voltage limits from the selected bias supply and verified isolation configuration.\nNo result outside its registered stage domain may be interpreted as a test failure; it remains `OUT_OF_DOMAIN`.\nTherefore no fabricated numerical pressure, flow or collector-bias limits are authorized at this point."
+   "answer_excerpt": "15. S1.15 — P1-IT-52 — REGISTER STAGE-SPECIFIC DOMAINS FROM REAL HARDWARE; DO NOT INVENT NUMBERS NOW.\nOwner decision: every P1 stage shall have its operating domain frozen before the first record of that stage, using the procured/calibrated hardware capability, P1-G0 safety limits and the pre-registered run matrix.\nRegister, as applicable, `P_fwd_W`, `p_chamber_Pa`, `mdot_Ar_H1_mg_s` and `V_collector_V` as explicit `[min,max]` ranges under a unique `domain_id`.\nThe existing 0–500 W figure is only the laboratory RF investigation capability, not permission to declare every P1 stage as 0–500 W. Pressure limits must come from the qualified chamber/gauge/pumping system; flow limits from the calibrated Ar MFC and gas path; collector-voltage limits from the selected bias supply and verified isolation configuration.\nNo result outside its registered stage domain may be interpreted as a test failure; it remains `OUT_OF_DOMAIN`.\nTherefore no fabricated numerical pressure, flow or collector-bias limits are authorized at this point.",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.21",
+     "item": "HW_PROGRAMME",
+     "relation": "CONFIRMS",
+     "decision_code": null,
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/HW_PROGRAMME",
+     "decision_json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "decision_md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+     "decision_md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+     "verbatim_excerpt": "8. ICP programme — approved with one sequencing qualification: preserve the Ar engineering/commissioning reference where already required, then perform the registered air/N₂ ICP-45 campaign, followed by the Xe operating mode as a separate registered campaign. Each gas/mode gets its own operating domain and provenance. Before it starts, close the stage domains, pressure-match tolerance, DWV leakage criteria and stable-region criteria.",
+     "recorder_digest": [
+      "H-1: S7.1 FEMM analysis points, then S7.2 engineering channel point (engineering freeze candidate)",
+      "C1 ground reference: H-1 + C1 characterization registers I_d,max,H1,Ar before P1-S7",
+      "ICP: Ar commissioning reference where required -> registered air/N2 ICP-45 campaign -> separate registered Xe-mode campaign; own domain/provenance per gas/mode; stage domains, pressure-match tolerance, DWV leakage, stable-region criteria closed first",
+      "P2 impedance map after the in-house V/I calibration + uncertainty budget are frozen",
+      "coupled H-1 + ICP -> thermal -> P4 (thresholds frozen before acceptance-bearing exposure)",
+      "measured H-1 thrust/feed map (mandatory) -> AG-12 performance-derived feed requirement -> statewise AG-13 T-D >= 0"
+     ],
+     "scope": "stage domains are closed before the registered air/N2 ICP-45 and Xe-mode campaigns start; each gas / mode gets its own operating domain and provenance"
+    }
+   ]
   },
   {
    "no": 347,
@@ -7661,7 +8606,30 @@
    "answer_sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
    "answer_verbatim_path": "docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md",
    "answer_verbatim_sha256": "8e770d0edf056a0402f6ec8c86a2a2feec169ab971fae788c7a9a620211e1aa0",
-   "answer_excerpt": "16. S1.16 — P1-IT-55 — USE A PER-PATH DOCUMENTED LEAKAGE LIMIT; DO NOT CREATE A UNIVERSAL ARBITRARY µA VALUE.\nAt 1.05 kV DC / 60 s, every insulation path shall satisfy: no flashover, breakdown, tracking, disruptive discharge or protective trip, and measured leakage must remain below a pre-registered numerical limit for that specific insulation path.\nThat numerical limit shall be taken from the most restrictive applicable documented component/feedthrough/insulator qualification or supplier acceptance specification, with the assembled-system measurement uncertainty included. The limit must be registered before the DWV test and may not be changed after seeing the result.\nIf an insulation path has no documented allowable leakage/insulation-resistance basis from its selected hardware, that path remains `G0_NOT_EVALUATED_TBD`; it shall not be declared qualified by inventing a generic leakage-current limit.\nThe measured leakage from the accepted DWV/isolation configuration shall also feed P1Q-20/P1-IT-49 as the relevant zero-offset/leakage uncertainty contribution."
+   "answer_excerpt": "16. S1.16 — P1-IT-55 — USE A PER-PATH DOCUMENTED LEAKAGE LIMIT; DO NOT CREATE A UNIVERSAL ARBITRARY µA VALUE.\nAt 1.05 kV DC / 60 s, every insulation path shall satisfy: no flashover, breakdown, tracking, disruptive discharge or protective trip, and measured leakage must remain below a pre-registered numerical limit for that specific insulation path.\nThat numerical limit shall be taken from the most restrictive applicable documented component/feedthrough/insulator qualification or supplier acceptance specification, with the assembled-system measurement uncertainty included. The limit must be registered before the DWV test and may not be changed after seeing the result.\nIf an insulation path has no documented allowable leakage/insulation-resistance basis from its selected hardware, that path remains `G0_NOT_EVALUATED_TBD`; it shall not be declared qualified by inventing a generic leakage-current limit.\nThe measured leakage from the accepted DWV/isolation configuration shall also feed P1Q-20/P1-IT-49 as the relevant zero-offset/leakage uncertainty contribution.",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.21",
+     "item": "HW_PROGRAMME",
+     "relation": "CONFIRMS",
+     "decision_code": null,
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/HW_PROGRAMME",
+     "decision_json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "decision_md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+     "decision_md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+     "verbatim_excerpt": "8. ICP programme — approved with one sequencing qualification: preserve the Ar engineering/commissioning reference where already required, then perform the registered air/N₂ ICP-45 campaign, followed by the Xe operating mode as a separate registered campaign. Each gas/mode gets its own operating domain and provenance. Before it starts, close the stage domains, pressure-match tolerance, DWV leakage criteria and stable-region criteria.",
+     "recorder_digest": [
+      "H-1: S7.1 FEMM analysis points, then S7.2 engineering channel point (engineering freeze candidate)",
+      "C1 ground reference: H-1 + C1 characterization registers I_d,max,H1,Ar before P1-S7",
+      "ICP: Ar commissioning reference where required -> registered air/N2 ICP-45 campaign -> separate registered Xe-mode campaign; own domain/provenance per gas/mode; stage domains, pressure-match tolerance, DWV leakage, stable-region criteria closed first",
+      "P2 impedance map after the in-house V/I calibration + uncertainty budget are frozen",
+      "coupled H-1 + ICP -> thermal -> P4 (thresholds frozen before acceptance-bearing exposure)",
+      "measured H-1 thrust/feed map (mandatory) -> AG-12 performance-derived feed requirement -> statewise AG-13 T-D >= 0"
+     ],
+     "scope": "DWV leakage criteria are closed before the ICP campaigns start"
+    }
+   ]
   },
   {
    "no": 348,
@@ -7880,7 +8848,41 @@
    "answer_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
    "answer_verbatim_path": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
    "answer_verbatim_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
-   "answer_excerpt": "8. S9.8 — OD3 — ATMOSPHERE DESIGN STATES COME FROM THE VERSIONED ORBIT-RESOLVED DATASET. Do not invent a few convenient F10.7/density points manually. The design set must include the mission-relevant nominal states and physical extrema of density/species/temperature/local-time/solar activity represented in the frozen dataset, with provenance and hashes.\n`DESIGN_STATES_FROM_FROZEN_ORBIT_RESOLVED_ATMOSPHERE`."
+   "answer_excerpt": "8. S9.8 — OD3 — ATMOSPHERE DESIGN STATES COME FROM THE VERSIONED ORBIT-RESOLVED DATASET. Do not invent a few convenient F10.7/density points manually. The design set must include the mission-relevant nominal states and physical extrema of density/species/temperature/local-time/solar activity represented in the frozen dataset, with provenance and hashes.\n`DESIGN_STATES_FROM_FROZEN_ORBIT_RESOLVED_ATMOSPHERE`.",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.17",
+     "item": "ORBIT",
+     "relation": "INPUT_STAYS_TBD",
+     "decision_code": "ORBIT_INCLINATION_LTAN_TBD_FROM_OFFICIAL_MISSION_ICD",
+     "pointer": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json#/decisions/ORBIT",
+     "decision_json": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+     "decision_json_sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
+     "decision_md": "docs/decisions/OD_2026_10_01_A9_17_DATA_ARTIFACT_OWNER_DECISIONS.md",
+     "decision_md_sha256": "540212c0c8862528e549555244f0fd39f8f9c9272f84dfb450bfef9dc54eba13",
+     "verbatim_excerpt": "2. Inclination / LTAN — do not register 96.3° dawn-dusk as the mission orbit. The official RFP fixes the functional altitude at 180–230 km, but does not give an inclination or LTAN in the technical parameters. RFP(1) Therefore 96.3° and dawn-dusk remain explicitly `CODE_DEFAULT / PARAMETRIC`, not requirement inputs. Keep the atmosphere/design-state envelope broad enough until DRDO, the spacecraft ICD, or the PDR mission definition supplies the real inclination and LTAN. Once supplied, regenerate/narrow the orbit-resolved dataset under a new version; never reinterpret the old default as the real orbit.\nDecision: `ORBIT_INCLINATION_LTAN_TBD_FROM_OFFICIAL_MISSION_ICD`.",
+     "recorder_digest": {
+      "answer": "ORBIT_INCLINATION_LTAN_TBD_FROM_OFFICIAL_MISSION_ICD",
+      "summary": "96.3 deg / dawn-dusk stays CODE_DEFAULT / PARAMETRIC, never a requirement input; envelope stays broad until DRDO / spacecraft ICD / PDR mission definition supplies inclination and LTAN; then a new dataset version"
+     },
+     "scope": "96.3 deg / dawn-dusk stays CODE_DEFAULT / PARAMETRIC; the design-state envelope stays broad until the official inclination / LTAN is supplied"
+    },
+    {
+     "decision": "A9.21",
+     "item": "EXTERNAL_INPUTS",
+     "relation": "INPUT_STAYS_TBD",
+     "decision_code": null,
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/EXTERNAL_INPUTS",
+     "decision_json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "decision_md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+     "decision_md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+     "verbatim_excerpt": "* Inclination and LTAN: not specified by the RFP; do not use the old code default as mission truth.",
+     "recorder_digest": "AOCS pointing envelope, inclination/LTAN and host-spacecraft drag ICD cannot be supplied from current evidence; stay TBD (no code default as mission truth)",
+     "scope": "inclination / LTAN stay TBD (external input)"
+    }
+   ],
+   "external_input_status": "TBD_EXTERNAL_INPUT (A9.17 ORBIT; A9.21 EXTERNAL_INPUTS): cannot be supplied from current evidence; no code default is mission truth"
   },
   {
    "no": 356,
@@ -7905,8 +8907,8 @@
    "lane24_current_handling": "PASS needs an air-only start; FAIL must exclude both start sequences, which are exhaustive (with or without xenon); the restart count is TBD and not counted (G6.restart_count, P2.start_cycles).",
    "proposed": "",
    "needed_by": "",
-   "status": "ANSWERED_BY_A9_14",
-   "status_detail": "ANSWERED (A9.14 S9.9, decision code ICP_FIRST_HALL_SECOND_MAX_3_ATTEMPTS)",
+   "status": "AMENDED_BY_A9_19",
+   "status_detail": "ANSWERED (A9.14 S9.9, decision code ICP_FIRST_HALL_SECOND_MAX_3_ATTEMPTS); AMENDS by A9.19 architecture; AMENDS by A9.20 answer",
    "dependency": [
     "OFFICIAL_RFP_TEXT",
     "OWNER_JUDGMENT"
@@ -7943,7 +8945,63 @@
    "answer_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
    "answer_verbatim_path": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
    "answer_verbatim_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
-   "answer_excerpt": "9. S9.9 — OD5 — BASELINE ATMOSPHERIC START SEQUENCE: establish gas/plenum/feed state → set H-1 magnet state → ignite/stabilize ICP → verify electron-source/current condition → apply Hall discharge voltage → verify sustained Hall discharge. Maximum one initial attempt + two retries under registered dwell/thermal limits. A C1-selected variant uses its separately qualified heater/keeper sequence.\n`ICP_FIRST_HALL_SECOND_MAX_3_ATTEMPTS`."
+   "answer_excerpt": "9. S9.9 — OD5 — BASELINE ATMOSPHERIC START SEQUENCE: establish gas/plenum/feed state → set H-1 magnet state → ignite/stabilize ICP → verify electron-source/current condition → apply Hall discharge voltage → verify sustained Hall discharge. Maximum one initial attempt + two retries under registered dwell/thermal limits. A C1-selected variant uses its separately qualified heater/keeper sequence.\n`ICP_FIRST_HALL_SECOND_MAX_3_ATTEMPTS`.",
+   "pre_a9_17_status": "ANSWERED_BY_A9_14",
+   "pre_a9_17_status_detail": "ANSWERED (A9.14 S9.9, decision code ICP_FIRST_HALL_SECOND_MAX_3_ATTEMPTS)",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.19",
+     "item": "architecture",
+     "relation": "AMENDS",
+     "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+     "pointer": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json#/architecture",
+     "decision_json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "decision_json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "decision_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+     "decision_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+     "verbatim_excerpt": "as we discussed earlier we xenon is not a parllel gas its just a contigency and emergency gas. so our thruster architecture should be cathode/electrodless for both the atmosphere gases and xenon check C1  mass\n\nOne Hall accelerator.\nOne RF/ICP electron-source/neutralizer.\nTwo propellant supply modes.\nNo conventional hollow cathode.",
+     "recorder_digest": {
+      "hall_accelerators": 1,
+      "electron_source_neutralizer": "one RF/ICP electron-source/neutralizer (cathodeless/electrodeless) for both atmospheric gases and xenon",
+      "propellant_supply_modes": [
+       "ambient atmospheric propellant (primary)",
+       "xenon (contingency / emergency)"
+      ],
+      "conventional_hollow_cathode": "NONE in the thruster architecture"
+     },
+     "scope": "the clause 'A C1-selected variant uses its separately qualified heater/keeper sequence' has no flight application (no conventional hollow cathode); the ICP-first, Hall-second start sequence with at most three attempts stands"
+    },
+    {
+     "decision": "A9.20",
+     "item": "answer",
+     "relation": "AMENDS",
+     "decision_code": "C1_GROUND_ONLY_LABORATORY_REFERENCE",
+     "pointer": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json#/answer",
+     "decision_json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+     "decision_json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+     "decision_md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+     "decision_md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+     "verbatim_excerpt": "what do you think of my approach? will go with your recommended but is it good to remove hollow cathode",
+     "recorder_digest": "owner chose the recommended option: C1 is a ground-only laboratory reference (registers I_d,max,H1,Ar on H-1 independently of the ICP per A9.10 S3.5, and serves as the bench control in the C1-vs-ICP comparison); never flight hardware; never in the flight mass/power/Xe budgets",
+     "scope": "C1 is a GROUND_ONLY_LAB_REFERENCE (owner chose the recommended 'Ground-only reference' option): it registers I_d,max,H1,Ar on H-1 and is the C1-vs-ICP bench control; never flight hardware, never in the flight mass / power / Xe budgets; hall_c1_reference is not a flight configuration"
+    }
+   ],
+   "later_governing_reading": {
+    "decisions": [
+     "A9.19",
+     "A9.20"
+    ],
+    "pointers": [
+     "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json#/architecture",
+     "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json#/answer"
+    ],
+    "sha256": [
+     "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6"
+    ],
+    "text": "as we discussed earlier we xenon is not a parllel gas its just a contigency and emergency gas. so our thruster architecture should be cathode/electrodless for both the atmosphere gases and xenon check C1  mass\n\nOne Hall accelerator.\nOne RF/ICP electron-source/neutralizer.\nTwo propellant supply modes.\nNo conventional hollow cathode. | what do you think of my approach? will go with your recommended but is it good to remove hollow cathode",
+    "scope": "the clause 'A C1-selected variant uses its separately qualified heater/keeper sequence' has no flight application (no conventional hollow cathode); the ICP-first, Hall-second start sequence with at most three attempts stands | C1 is a GROUND_ONLY_LAB_REFERENCE (owner chose the recommended 'Ground-only reference' option): it registers I_d,max,H1,Ar on H-1 and is the C1-vs-ICP bench control; never flight hardware, never in the flight mass / power / Xe budgets; hall_c1_reference is not a flight configuration"
+   }
   },
   {
    "no": 357,
@@ -7969,8 +9027,8 @@
    "lane24_current_handling": "G7.xenon_operation counts for PASS and FAIL; its FAIL must cover every xenon-containing feed (xenon and atmospheric_xenon_mixed, steady and peak), so it holds under each reading. G7.feed_switching and G7.mixed_feed count toward PASS only.",
    "proposed": "",
    "needed_by": "",
-   "status": "AMENDED_BY_A9_15",
-   "status_detail": "ANSWERED (A9.14 S9.10, decision code DUAL_PROPELLANT_SEPARATE_MODES_NOT_PREMIX); AMENDED (A9.15)",
+   "status": "AMENDED_BY_A9_19",
+   "status_detail": "ANSWERED (A9.14 S9.10, decision code DUAL_PROPELLANT_SEPARATE_MODES_NOT_PREMIX); AMENDED (A9.15); AMENDS by A9.19 amends/A9.15",
    "dependency": [
     "OFFICIAL_RFP_TEXT",
     "OWNER_JUDGMENT"
@@ -8017,7 +9075,39 @@
     "pointer": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json#/amendments/OD6",
     "sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
     "text": "S9.10 / OD6: “air + Xe” means the system must provide both ambient-air and Xenon operating capability; it should not be weakened into a contingency interpretation."
-   }
+   },
+   "pre_a9_17_status": "AMENDED_BY_A9_15",
+   "pre_a9_17_status_detail": "ANSWERED (A9.14 S9.10, decision code DUAL_PROPELLANT_SEPARATE_MODES_NOT_PREMIX); AMENDED (A9.15)",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.19",
+     "item": "amends/A9.15",
+     "relation": "AMENDS",
+     "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+     "pointer": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json#/amends/A9.15",
+     "decision_json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "decision_json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "decision_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+     "decision_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+     "verbatim_excerpt": "as we discussed earlier we xenon is not a parllel gas its just a contigency and emergency gas. so our thruster architecture should be cathode/electrodless for both the atmosphere gases and xenon check C1  mass\n\nOne Hall accelerator.\nOne RF/ICP electron-source/neutralizer.\nTwo propellant supply modes.\nNo conventional hollow cathode.",
+     "recorder_digest": "the statements 'Xenon is an RFP-required system capability, not merely a contingency' and S9.10 'should not be weakened into a contingency interpretation' are superseded on the ROLE of Xe: Xe capability stays required (two separate supply modes/tanks), Xe is the contingency/emergency mode",
+     "scope": "ROLE of Xe only: the A9.15 clause 'it should not be weakened into a contingency interpretation' is superseded on the role of Xe (contingency / emergency supply mode); dual-propellant capability as separate selectable modes with separate storage stands"
+    }
+   ],
+   "later_governing_reading": {
+    "decisions": [
+     "A9.19"
+    ],
+    "pointers": [
+     "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json#/amends/A9.15"
+    ],
+    "sha256": [
+     "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16"
+    ],
+    "text": "as we discussed earlier we xenon is not a parllel gas its just a contigency and emergency gas. so our thruster architecture should be cathode/electrodless for both the atmosphere gases and xenon check C1  mass\n\nOne Hall accelerator.\nOne RF/ICP electron-source/neutralizer.\nTwo propellant supply modes.\nNo conventional hollow cathode.",
+    "scope": "ROLE of Xe only: the A9.15 clause 'it should not be weakened into a contingency interpretation' is superseded on the role of Xe (contingency / emergency supply mode); dual-propellant capability as separate selectable modes with separate storage stands"
+   },
+   "governing_reading_status": "AMENDED_IN_SCOPE_BY_A9_19"
   },
   {
    "no": 358,
@@ -8298,7 +9388,57 @@
    "answer_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
    "answer_verbatim_path": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
    "answer_verbatim_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
-   "answer_excerpt": "2. S10.2 — F0-OQ-02 — YES, RE-MEASURE ON A DEDICATED UNLOADED MACHINE BEFORE PERFORMANCE ADMISSION. Record CPU, OS, Python version, compiler/toolchain, thermal/power state, thread settings and workload hash. The shared-machine A9.7 result remains historical evidence, not the admission baseline.\n`DEDICATED_BASELINE_REQUIRED_BEFORE_RUST_PERFORMANCE_ADMISSION`."
+   "answer_excerpt": "2. S10.2 — F0-OQ-02 — YES, RE-MEASURE ON A DEDICATED UNLOADED MACHINE BEFORE PERFORMANCE ADMISSION. Record CPU, OS, Python version, compiler/toolchain, thermal/power state, thread settings and workload hash. The shared-machine A9.7 result remains historical evidence, not the admission baseline.\n`DEDICATED_BASELINE_REQUIRED_BEFORE_RUST_PERFORMANCE_ADMISSION`.",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.17",
+     "item": "PERF",
+     "relation": "CONFIRMS",
+     "decision_code": "RUN_DEDICATED_PERFORMANCE_BASELINE_NOW",
+     "pointer": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json#/decisions/PERF",
+     "decision_json": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+     "decision_json_sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
+     "decision_md": "docs/decisions/OD_2026_10_01_A9_17_DATA_ARTIFACT_OWNER_DECISIONS.md",
+     "decision_md_sha256": "540212c0c8862528e549555244f0fd39f8f9c9272f84dfb450bfef9dc54eba13",
+     "verbatim_excerpt": "For performance, yes: run the dedicated baseline in the remote-control session using the already prepared prompt, with the machine otherwise idle. No A9/S2 builds, tests, browser-heavy work or other CPU-intensive work should run concurrently. Capture the before/after machine metadata already built into the procedure. That dedicated run becomes the admission baseline for Rust performance decisions; the earlier shared-CPU A9.7 numbers remain historical measurements only. Do not change the S10.1 thresholds after seeing the dedicated result.\nDecision: `RFP_HASH_PROVENANCE_IN_PUBLIC_REPO_PDF_CONTROLLED_EXTERNALLY; RUN_DEDICATED_PERFORMANCE_BASELINE_NOW`.",
+     "recorder_digest": {
+      "answer": "RUN_DEDICATED_PERFORMANCE_BASELINE_NOW",
+      "summary": "dedicated baseline on the owner's remote-control machine with nothing else CPU-intensive running, before/after machine metadata; it becomes the Rust performance-admission baseline; A9.7 shared-CPU numbers are historical only; S10.1 thresholds never changed after seeing the result"
+     },
+     "scope": "dedicated baseline run on the idle owner machine (2026-10-01)"
+    },
+    {
+     "decision": "A9.18",
+     "item": "PERF_RERUN",
+     "relation": "CONFIRMS",
+     "decision_code": "RERUN_DEDICATED_BASELINE_AFTER_STEP3_MERGE_BEFORE_RUST_ADMISSION",
+     "pointer": "docs/decisions/OD_2026_10_01_A9_18_golden_and_baseline_owner_decisions.json#/decisions/PERF_RERUN",
+     "decision_json": "docs/decisions/OD_2026_10_01_A9_18_golden_and_baseline_owner_decisions.json",
+     "decision_json_sha256": "7c170e1000ae039c1f032ccf38bcacf2c59825d5dab26b4d98658a96914a8c3a",
+     "decision_md": "docs/decisions/OD_2026_10_01_A9_18_GOLDEN_AND_BASELINE_OWNER_DECISIONS.md",
+     "decision_md_sha256": "b26b739244d87fb98001936688650c8b0cf307abeddb2ee4c494ff4f06c5951d",
+     "verbatim_excerpt": "2. Dedicated performance baseline — yes, rerun only after step 3 is merged. Nothing needs to be run on your machine now.",
+     "recorder_digest": {
+      "answer": "RERUN_DEDICATED_BASELINE_AFTER_STEP3_MERGE_BEFORE_RUST_ADMISSION",
+      "summary": "after step 3 is merged and the owner is told, rerun the identical dedicated procedure on the idle owner machine; that run is the Rust-admission baseline; the earlier dedicated run is historical for the earlier code state; workload definition and S10.1 thresholds unchanged; record commit SHA, workload hashes, machine/toolchain metadata, timings; nothing to run now"
+     },
+     "scope": "the 2026-10-01 run is historical for the earlier code state; the rerun after the step-3 merge is the Rust-admission baseline"
+    },
+    {
+     "decision": "A9.21",
+     "item": "PERF_RERUN",
+     "relation": "CONFIRMS",
+     "decision_code": null,
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/PERF_RERUN",
+     "decision_json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "decision_md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+     "decision_md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+     "verbatim_excerpt": "1. Dedicated baseline: no action now. Send the exact commit SHA when ready. I’ll treat the rerun as a new baseline artifact in a new folder, preserving the previous baseline unchanged.",
+     "recorder_digest": "owner reruns the dedicated baseline on the exact commit SHA supplied, into a new folder; previous baseline unchanged",
+     "scope": "the owner reruns on the exact commit SHA supplied, into a new folder; the previous baseline is kept unchanged"
+    }
+   ]
   },
   {
    "no": 364,
@@ -8383,7 +9523,24 @@
    "answer_sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
    "answer_verbatim_path": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
    "answer_verbatim_sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf",
-   "answer_excerpt": "2. S6.2 — F1Q-03 — DO NOT DECLARE 0–5° ADEQUATE WITHOUT THE AOCS POINTING BUDGET.\nThe intake pointing envelope shall be an explicit spacecraft/AOCS interface requirement.\nThe existing 0°, 2°, 5° data may remain as the current sensitivity set, but 5° shall not be treated as the validated maximum pointing error merely because the existing frozen surface stops there.\nFor intake-surface v2:\n   * first register the required relative-wind pointing envelope from the spacecraft/AOCS design;\n   * build the frozen surface over that complete registered envelope;\n   * use direct TPMC during development for required angles not yet represented by the frozen surface;\n   * never extrapolate silently beyond the frozen angular domain.\nDecision: 0–5° is sensitivity only; v2 must cover the eventual registered AOCS pointing envelope."
+   "answer_excerpt": "2. S6.2 — F1Q-03 — DO NOT DECLARE 0–5° ADEQUATE WITHOUT THE AOCS POINTING BUDGET.\nThe intake pointing envelope shall be an explicit spacecraft/AOCS interface requirement.\nThe existing 0°, 2°, 5° data may remain as the current sensitivity set, but 5° shall not be treated as the validated maximum pointing error merely because the existing frozen surface stops there.\nFor intake-surface v2:\n   * first register the required relative-wind pointing envelope from the spacecraft/AOCS design;\n   * build the frozen surface over that complete registered envelope;\n   * use direct TPMC during development for required angles not yet represented by the frozen surface;\n   * never extrapolate silently beyond the frozen angular domain.\nDecision: 0–5° is sensitivity only; v2 must cover the eventual registered AOCS pointing envelope.",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.21",
+     "item": "EXTERNAL_INPUTS",
+     "relation": "INPUT_STAYS_TBD",
+     "decision_code": null,
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/EXTERNAL_INPUTS",
+     "decision_json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "decision_md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+     "decision_md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+     "verbatim_excerpt": "* AOCS pointing envelope: needs the actual spacecraft/AOCS requirement.",
+     "recorder_digest": "AOCS pointing envelope, inclination/LTAN and host-spacecraft drag ICD cannot be supplied from current evidence; stay TBD (no code default as mission truth)",
+     "scope": "the AOCS pointing envelope stays TBD (external input); intake surface v2 stays unbuilt until it is registered"
+    }
+   ],
+   "external_input_status": "TBD_EXTERNAL_INPUT (A9.21 EXTERNAL_INPUTS): cannot be supplied from current evidence; no code default is mission truth"
   },
   {
    "no": 367,
@@ -8780,7 +9937,58 @@
    "answer_sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
    "answer_verbatim_path": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
    "answer_verbatim_sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf",
-   "answer_excerpt": "14. S6.14 — OQ-F4-05 — AUTHORISE AN ORBIT-RESOLVED FROZEN ATMOSPHERE DATASET.\n\nAuthorise a rule-1 rebuild/versioned dataset for orbit-resolved atmospheric conditions.\nPreserve the existing orbit-averaged dataset unchanged for reproducibility.\nThe new dataset shall carry, as applicable:\n\n* altitude/orbit state;\n* density;\n* species composition;\n* temperature;\n* relative flow/wind state;\n* solar-activity inputs;\n* geomagnetic/atmospheric inputs;\n* local-time/orbit position dependence;\n* source/model/version;\n* provenance and hashes.\n\nDo not invent an arbitrary density-modulation amplitude when an orbit-resolved producer can supply the physical variation.\nDecision: YES — versioned orbit-resolved frozen atmosphere dataset."
+   "answer_excerpt": "14. S6.14 — OQ-F4-05 — AUTHORISE AN ORBIT-RESOLVED FROZEN ATMOSPHERE DATASET.\n\nAuthorise a rule-1 rebuild/versioned dataset for orbit-resolved atmospheric conditions.\nPreserve the existing orbit-averaged dataset unchanged for reproducibility.\nThe new dataset shall carry, as applicable:\n\n* altitude/orbit state;\n* density;\n* species composition;\n* temperature;\n* relative flow/wind state;\n* solar-activity inputs;\n* geomagnetic/atmospheric inputs;\n* local-time/orbit position dependence;\n* source/model/version;\n* provenance and hashes.\n\nDo not invent an arbitrary density-modulation amplitude when an orbit-resolved producer can supply the physical variation.\nDecision: YES — versioned orbit-resolved frozen atmosphere dataset.",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.17",
+     "item": "WINDS",
+     "relation": "CONFIRMS",
+     "decision_code": "AUTHORIZE_HWM14_ATMOSPHERE_V2_KEEP_V1_IMMUTABLE",
+     "pointer": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json#/decisions/WINDS",
+     "decision_json": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+     "decision_json_sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
+     "decision_md": "docs/decisions/OD_2026_10_01_A9_17_DATA_ARTIFACT_OWNER_DECISIONS.md",
+     "decision_md_sha256": "540212c0c8862528e549555244f0fd39f8f9c9272f84dfb450bfef9dc54eba13",
+     "verbatim_excerpt": "1. Atmospheric winds — build v2 with HWM14, but keep the no-wind v1 immutable. HWM14 is publicly available: NASA CCMC explicitly marks the source code as publicly available/open, and NRL hosts the Fortran source and supporting data in its public repository. [NASA CCMC](https://kauai.ccmc.gsfc.nasa.gov/CMR/view/model/SimulationModel?resourceID=spase%3A%2F%2FCCMC%2FSimulationModel%2FHWM14%2F2014&utm_source=chatgpt.com)\nThe new atmosphere dataset should therefore carry both the Earth-corotating atmosphere result and the HWM14-corrected neutral-wind result, with HWM14 version, Ap input, date/time, coordinates and provenance recorded. Do not overwrite v1. Until the actual spacecraft orbit is registered, v2 remains a design-envelope/parametric dataset rather than a mission-specific frozen trajectory.\nDecision: `AUTHORIZE_HWM14_ATMOSPHERE_V2_KEEP_V1_IMMUTABLE`.",
+     "recorder_digest": {
+      "answer": "AUTHORIZE_HWM14_ATMOSPHERE_V2_KEEP_V1_IMMUTABLE",
+      "summary": "build atmosphere v2 with HWM14 neutral winds; carry both the Earth-corotating and the HWM14-corrected relative-flow result; record HWM14 version, Ap input, date/time, coordinates and provenance; v1 never overwritten; v2 is a design-envelope/parametric dataset until the real orbit is registered"
+     },
+     "scope": "relative flow / wind state: HWM14 atmosphere v2 (v1 immutable); parametric until the orbit is registered"
+    },
+    {
+     "decision": "A9.17",
+     "item": "ORBIT",
+     "relation": "INPUT_STAYS_TBD",
+     "decision_code": "ORBIT_INCLINATION_LTAN_TBD_FROM_OFFICIAL_MISSION_ICD",
+     "pointer": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json#/decisions/ORBIT",
+     "decision_json": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+     "decision_json_sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
+     "decision_md": "docs/decisions/OD_2026_10_01_A9_17_DATA_ARTIFACT_OWNER_DECISIONS.md",
+     "decision_md_sha256": "540212c0c8862528e549555244f0fd39f8f9c9272f84dfb450bfef9dc54eba13",
+     "verbatim_excerpt": "2. Inclination / LTAN — do not register 96.3° dawn-dusk as the mission orbit. The official RFP fixes the functional altitude at 180–230 km, but does not give an inclination or LTAN in the technical parameters. RFP(1) Therefore 96.3° and dawn-dusk remain explicitly `CODE_DEFAULT / PARAMETRIC`, not requirement inputs. Keep the atmosphere/design-state envelope broad enough until DRDO, the spacecraft ICD, or the PDR mission definition supplies the real inclination and LTAN. Once supplied, regenerate/narrow the orbit-resolved dataset under a new version; never reinterpret the old default as the real orbit.\nDecision: `ORBIT_INCLINATION_LTAN_TBD_FROM_OFFICIAL_MISSION_ICD`.",
+     "recorder_digest": {
+      "answer": "ORBIT_INCLINATION_LTAN_TBD_FROM_OFFICIAL_MISSION_ICD",
+      "summary": "96.3 deg / dawn-dusk stays CODE_DEFAULT / PARAMETRIC, never a requirement input; envelope stays broad until DRDO / spacecraft ICD / PDR mission definition supplies inclination and LTAN; then a new dataset version"
+     },
+     "scope": "orbit-resolved dataset regenerated / narrowed under a new version once the official inclination / LTAN is supplied"
+    },
+    {
+     "decision": "A9.21",
+     "item": "EXTERNAL_INPUTS",
+     "relation": "INPUT_STAYS_TBD",
+     "decision_code": null,
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/EXTERNAL_INPUTS",
+     "decision_json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "decision_md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+     "decision_md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+     "verbatim_excerpt": "* Inclination and LTAN: not specified by the RFP; do not use the old code default as mission truth.",
+     "recorder_digest": "AOCS pointing envelope, inclination/LTAN and host-spacecraft drag ICD cannot be supplied from current evidence; stay TBD (no code default as mission truth)",
+     "scope": "inclination / LTAN stay TBD (external input)"
+    }
+   ],
+   "external_input_status": "TBD_EXTERNAL_INPUT (A9.17 ORBIT; A9.21 EXTERNAL_INPUTS): cannot be supplied from current evidence; no code default is mission truth"
   },
   {
    "no": 381,
@@ -8808,7 +10016,30 @@
    "answer_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
    "answer_verbatim_path": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
    "answer_verbatim_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
-   "answer_excerpt": "1. S7.1 — F5-OQ-01 — YES: AUTHORISE FEMM ANALYSIS POINTS.\nRun FEMM-class axisymmetric magnetostatics at the RP-1 anchor and admissible window corners. These are `ANALYSIS_POINTS`, not selected designs. Use actual/sourced B-H data when available, preserve geometry IDs and solver configuration, and do not infer Hall performance from magnetic feasibility alone.\nDecision code: `YES_FEMM_ANALYSIS_POINTS_NOT_SELECTION`."
+   "answer_excerpt": "1. S7.1 — F5-OQ-01 — YES: AUTHORISE FEMM ANALYSIS POINTS.\nRun FEMM-class axisymmetric magnetostatics at the RP-1 anchor and admissible window corners. These are `ANALYSIS_POINTS`, not selected designs. Use actual/sourced B-H data when available, preserve geometry IDs and solver configuration, and do not infer Hall performance from magnetic feasibility alone.\nDecision code: `YES_FEMM_ANALYSIS_POINTS_NOT_SELECTION`.",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.21",
+     "item": "HW_PROGRAMME",
+     "relation": "CONFIRMS",
+     "decision_code": null,
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/HW_PROGRAMME",
+     "decision_json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "decision_md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+     "decision_md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+     "verbatim_excerpt": "6. H-1 engineering build — approved. S7.1 FEMM analysis points first, then S7.2 engineering channel-point selection using magnetic feasibility, thermal margin, mass, packaging and manufacturability. It remains an engineering freeze candidate, not a thrust-optimized design.",
+     "recorder_digest": [
+      "H-1: S7.1 FEMM analysis points, then S7.2 engineering channel point (engineering freeze candidate)",
+      "C1 ground reference: H-1 + C1 characterization registers I_d,max,H1,Ar before P1-S7",
+      "ICP: Ar commissioning reference where required -> registered air/N2 ICP-45 campaign -> separate registered Xe-mode campaign; own domain/provenance per gas/mode; stage domains, pressure-match tolerance, DWV leakage, stable-region criteria closed first",
+      "P2 impedance map after the in-house V/I calibration + uncertainty budget are frozen",
+      "coupled H-1 + ICP -> thermal -> P4 (thresholds frozen before acceptance-bearing exposure)",
+      "measured H-1 thrust/feed map (mandatory) -> AG-12 performance-derived feed requirement -> statewise AG-13 T-D >= 0"
+     ],
+     "scope": "S7.1 FEMM analysis points first (engineering build approved)"
+    }
+   ]
   },
   {
    "no": 382,
@@ -8836,7 +10067,30 @@
    "answer_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
    "answer_verbatim_path": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
    "answer_verbatim_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
-   "answer_excerpt": "2. S7.2 — F5-OQ-02 — SELECT AN ENGINEERING CHANNEL POINT NOW ON NON-PERFORMANCE CRITERIA.\nDo not wait for a Hall transport model that is presently not admitted. Select a buildable engineering point using FEMM feasibility, thermal margin, packaging, mass, manufacturability and the existing adjustable-anode/insert capability. Keep it `ENGINEERING_FREEZE_CANDIDATE`; thrust remains determined by Phase-1/Phase-3 measurement.\nDecision code: `SELECT_ENGINEERING_POINT_NONPERFORMANCE`."
+   "answer_excerpt": "2. S7.2 — F5-OQ-02 — SELECT AN ENGINEERING CHANNEL POINT NOW ON NON-PERFORMANCE CRITERIA.\nDo not wait for a Hall transport model that is presently not admitted. Select a buildable engineering point using FEMM feasibility, thermal margin, packaging, mass, manufacturability and the existing adjustable-anode/insert capability. Keep it `ENGINEERING_FREEZE_CANDIDATE`; thrust remains determined by Phase-1/Phase-3 measurement.\nDecision code: `SELECT_ENGINEERING_POINT_NONPERFORMANCE`.",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.21",
+     "item": "HW_PROGRAMME",
+     "relation": "CONFIRMS",
+     "decision_code": null,
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/HW_PROGRAMME",
+     "decision_json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "decision_md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+     "decision_md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+     "verbatim_excerpt": "6. H-1 engineering build — approved. S7.1 FEMM analysis points first, then S7.2 engineering channel-point selection using magnetic feasibility, thermal margin, mass, packaging and manufacturability. It remains an engineering freeze candidate, not a thrust-optimized design.",
+     "recorder_digest": [
+      "H-1: S7.1 FEMM analysis points, then S7.2 engineering channel point (engineering freeze candidate)",
+      "C1 ground reference: H-1 + C1 characterization registers I_d,max,H1,Ar before P1-S7",
+      "ICP: Ar commissioning reference where required -> registered air/N2 ICP-45 campaign -> separate registered Xe-mode campaign; own domain/provenance per gas/mode; stage domains, pressure-match tolerance, DWV leakage, stable-region criteria closed first",
+      "P2 impedance map after the in-house V/I calibration + uncertainty budget are frozen",
+      "coupled H-1 + ICP -> thermal -> P4 (thresholds frozen before acceptance-bearing exposure)",
+      "measured H-1 thrust/feed map (mandatory) -> AG-12 performance-derived feed requirement -> statewise AG-13 T-D >= 0"
+     ],
+     "scope": "S7.2 engineering channel point after S7.1; an engineering freeze candidate, not thrust-optimized"
+    }
+   ]
   },
   {
    "no": 383,
@@ -9144,7 +10398,24 @@
    "answer_sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
    "answer_verbatim_path": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
    "answer_verbatim_sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf",
-   "answer_excerpt": "18. S6.18 — OQ-F78-04 — AUTHORISE SOURCING FOR PARAMETRIC STUDIES; FINAL DRAG CLOSURE REQUIRES THE ACTUAL SPACECRAFT ICD.\n\nAuthorise use of documented/public/official spacecraft geometry information for interim parametric drag studies.\nSuch sourced reference geometry shall be explicitly labelled `REFERENCE/PARAMETRIC`, not the flight spacecraft.\nAG-13 final closure requires the actual host-spacecraft basis including:\n\n* body frontal geometry;\n* intake projected area;\n* arrays/deployed surfaces;\n* attitude/pointing states;\n* drag-coefficient/model basis;\n* relevant accommodation/surface state.\n\nUntil that ICD exists, `D_spacecraft` and `T-D` remain `NOT_EVALUATED` for freeze purposes.\nDecision: sourcing authorised for sensitivity; actual spacecraft ICD mandatory for closure."
+   "answer_excerpt": "18. S6.18 — OQ-F78-04 — AUTHORISE SOURCING FOR PARAMETRIC STUDIES; FINAL DRAG CLOSURE REQUIRES THE ACTUAL SPACECRAFT ICD.\n\nAuthorise use of documented/public/official spacecraft geometry information for interim parametric drag studies.\nSuch sourced reference geometry shall be explicitly labelled `REFERENCE/PARAMETRIC`, not the flight spacecraft.\nAG-13 final closure requires the actual host-spacecraft basis including:\n\n* body frontal geometry;\n* intake projected area;\n* arrays/deployed surfaces;\n* attitude/pointing states;\n* drag-coefficient/model basis;\n* relevant accommodation/surface state.\n\nUntil that ICD exists, `D_spacecraft` and `T-D` remain `NOT_EVALUATED` for freeze purposes.\nDecision: sourcing authorised for sensitivity; actual spacecraft ICD mandatory for closure.",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.21",
+     "item": "EXTERNAL_INPUTS",
+     "relation": "INPUT_STAYS_TBD",
+     "decision_code": null,
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/EXTERNAL_INPUTS",
+     "decision_json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "decision_md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+     "decision_md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+     "verbatim_excerpt": "* Host-spacecraft drag ICD: needs actual spacecraft geometry/attitude/surface data.",
+     "recorder_digest": "AOCS pointing envelope, inclination/LTAN and host-spacecraft drag ICD cannot be supplied from current evidence; stay TBD (no code default as mission truth)",
+     "scope": "the host-spacecraft drag ICD stays TBD; D_spacecraft and T - D stay NOT_EVALUATED for freeze"
+    }
+   ],
+   "external_input_status": "TBD_EXTERNAL_INPUT (A9.21 EXTERNAL_INPUTS): cannot be supplied from current evidence; no code default is mission truth"
   },
   {
    "no": 394,
@@ -9314,7 +10585,30 @@
    "answer_verbatim_path": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
    "answer_verbatim_sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf",
    "answer_excerpt": "21. S6.21 — F9-OQ-02 — DO NOT SET A FIXED FLIGHT MASS-FLOW REQUIREMENT; DERIVE IT FROM THE MEASURED H-1 THRUST MAP AND THE RFP DRAG-COMPENSATION REQUIREMENT.\n\nThere is no basis for setting `0.38 mg/s` as the flight requirement. Likewise, the existing approximately `1.3 mg/s` sizing value shall not become a flight requirement merely because it appears in an earlier design basis.\nThe official RFP instead defines the functional orbit and thrust requirement: 180–230 km, intake specification dependent on air density/solar activity, and 12–25 mN thrust for expected drag compensation. RFP(1)\nRedefine AG-12 as a feed-state sufficiency gate, not a fixed-number mass-flow gate.\nFor each required orbit/environment state:\n\n1. determine the required drag-compensation thrust from the registered spacecraft drag basis;\n2. use the measured/validated H-1 map for the actual atmospheric composition to determine the minimum feed state required to produce that thrust within the admitted power/thermal envelope;\n3. require the upstream chain to deliver at least that feed state.\n\nThe feed-state record shall include at least:\n\n* mass flow;\n* pressure;\n* temperature;\n* species composition;\n* applicable transient/ripple quality.\n\nUntil the validated H-1 thrust-versus-feed map exists, AG-12 remains `NOT_EVALUATED`.\nThe 0.38–3.2 mg/s ground range remains useful for characterization coverage but not as an architecture PASS/FAIL requirement.\nDecision: performance-derived, state-specific feed requirement; no arbitrary fixed mg/s flight gate.",
-   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.21",
+     "item": "HW_PROGRAMME",
+     "relation": "CONFIRMS",
+     "decision_code": null,
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/HW_PROGRAMME",
+     "decision_json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "decision_md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+     "decision_md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+     "verbatim_excerpt": "11. Measured H-1 thrust/feed map — approved and mandatory. This is what should drive the performance-derived feed requirement for AG-12, followed by the statewise AG-13 `T-D >= 0` check.",
+     "recorder_digest": [
+      "H-1: S7.1 FEMM analysis points, then S7.2 engineering channel point (engineering freeze candidate)",
+      "C1 ground reference: H-1 + C1 characterization registers I_d,max,H1,Ar before P1-S7",
+      "ICP: Ar commissioning reference where required -> registered air/N2 ICP-45 campaign -> separate registered Xe-mode campaign; own domain/provenance per gas/mode; stage domains, pressure-match tolerance, DWV leakage, stable-region criteria closed first",
+      "P2 impedance map after the in-house V/I calibration + uncertainty budget are frozen",
+      "coupled H-1 + ICP -> thermal -> P4 (thresholds frozen before acceptance-bearing exposure)",
+      "measured H-1 thrust/feed map (mandatory) -> AG-12 performance-derived feed requirement -> statewise AG-13 T-D >= 0"
+     ],
+     "scope": "the measured H-1 thrust / feed map is mandatory and drives the AG-12 performance-derived feed requirement, followed by the statewise AG-13 T - D >= 0 check"
+    }
+   ]
   },
   {
    "no": 400,
@@ -9342,7 +10636,26 @@
    "answer_sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
    "answer_verbatim_path": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
    "answer_verbatim_sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf",
-   "answer_excerpt": "22. S6.22 — F9-OQ-03 — APPROVE AG-01…AG-15, WITH DETERMINING-EVIDENCE CLOSURE AND FOUR CLARIFICATIONS.\n\nApprove the architecture gate set AG-01 through AG-15 as the gate structure for moving from `INVESTIGATION_HYPOTHESIS` toward `FROZEN_REFERENCE_FLIGHT_ARCHITECTURE`.\nA gate closes only on determining evidence appropriate to that gate:\n\n* measured/test evidence for performance quantities;\n* correlated/validated analysis where the accepted methodology explicitly permits it;\n* inspected/weighed/certified configuration evidence for hardware/mass/material items;\n* official source documentation for requirements.\n\nAssumptions, parametric sensitivities, analog values, code defaults, supplier marketing values or \"evidence seems sufficient\" are not determining closure evidence.\nApply these clarifications:\nAG-03:\n Do not attempt to rewrite the immutable P5-N2 v1 `INCONCLUSIVE` result. That historical result stays unchanged. Closure requires a separately preregistered successor held-out predictive validation that admits a Hall-transport member.\nAG-12:\n Use the S6.21 performance-derived feed-state sufficiency rule, not 0.38 mg/s.\nAG-13:\n Use the S6.15 statewise `T - D_spacecraft >= 0` criterion.\nAG-15:\n The official RFP is now available to the project, but before this gate closes it must be placed/registered in the repository evidence system with immutable provenance/hash and the RVM requirements re-based against it. The repository may not continue relying only on secondary transcriptions.\nAll 15 gates must be closed before the architecture is labelled `FROZEN_REFERENCE_FLIGHT_ARCHITECTURE`; unresolved gates remain explicit blockers.\nDecision: AG-01…AG-15 APPROVED with the determining-evidence standard and clarifications above."
+   "answer_excerpt": "22. S6.22 — F9-OQ-03 — APPROVE AG-01…AG-15, WITH DETERMINING-EVIDENCE CLOSURE AND FOUR CLARIFICATIONS.\n\nApprove the architecture gate set AG-01 through AG-15 as the gate structure for moving from `INVESTIGATION_HYPOTHESIS` toward `FROZEN_REFERENCE_FLIGHT_ARCHITECTURE`.\nA gate closes only on determining evidence appropriate to that gate:\n\n* measured/test evidence for performance quantities;\n* correlated/validated analysis where the accepted methodology explicitly permits it;\n* inspected/weighed/certified configuration evidence for hardware/mass/material items;\n* official source documentation for requirements.\n\nAssumptions, parametric sensitivities, analog values, code defaults, supplier marketing values or \"evidence seems sufficient\" are not determining closure evidence.\nApply these clarifications:\nAG-03:\n Do not attempt to rewrite the immutable P5-N2 v1 `INCONCLUSIVE` result. That historical result stays unchanged. Closure requires a separately preregistered successor held-out predictive validation that admits a Hall-transport member.\nAG-12:\n Use the S6.21 performance-derived feed-state sufficiency rule, not 0.38 mg/s.\nAG-13:\n Use the S6.15 statewise `T - D_spacecraft >= 0` criterion.\nAG-15:\n The official RFP is now available to the project, but before this gate closes it must be placed/registered in the repository evidence system with immutable provenance/hash and the RVM requirements re-based against it. The repository may not continue relying only on secondary transcriptions.\nAll 15 gates must be closed before the architecture is labelled `FROZEN_REFERENCE_FLIGHT_ARCHITECTURE`; unresolved gates remain explicit blockers.\nDecision: AG-01…AG-15 APPROVED with the determining-evidence standard and clarifications above.",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.17",
+     "item": "RFP",
+     "relation": "CONFIRMS",
+     "decision_code": "RFP_HASH_PROVENANCE_IN_PUBLIC_REPO_PDF_CONTROLLED_EXTERNALLY",
+     "pointer": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json#/decisions/RFP",
+     "decision_json": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+     "decision_json_sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
+     "decision_md": "docs/decisions/OD_2026_10_01_A9_17_DATA_ARTIFACT_OWNER_DECISIONS.md",
+     "decision_md_sha256": "540212c0c8862528e549555244f0fd39f8f9c9272f84dfb450bfef9dc54eba13",
+     "verbatim_excerpt": "4. RFP PDF + dedicated performance baseline — do not put the RFP binary in the public repo; do run the dedicated baseline. For the RFP, make the official document the authoritative requirement source, but I would not redistribute the 20 MB PDF inside the public GitHub repository unless redistribution rights are explicitly clear. Instead commit a provenance record containing the official filename/document identity, retrieval source, retrieval date, SHA-256, page count and the requirement extraction/RVM mapping. Keep the actual PDF in the controlled project evidence store. This gives us immutable traceability without unnecessarily republishing a procurement document.",
+     "recorder_digest": {
+      "answer": "RFP_HASH_PROVENANCE_IN_PUBLIC_REPO_PDF_CONTROLLED_EXTERNALLY",
+      "summary": "official RFP is the authoritative requirement source; the public repository carries the provenance record (document identity, filename, retrieval source and date, sha256, page count, requirement extraction, RVM mapping); the PDF stays in the controlled project evidence store"
+     },
+     "scope": "AG-15 registration part: the official RFP is registered by hash with provenance in the public repository (PDF in the controlled evidence store) and the RVM is re-based on it; AG-15 closure (owner acceptance; requirement_frozen) stays the owner's"
+    }
+   ]
   },
   {
    "no": 401,
@@ -9418,6 +10731,57 @@
     "BLOCKS_LOCK_1"
    ],
    "classification_basis": "the A9.15 recorder note flags the A9.1 HIQ-06 ICP-feed labels to the owner; no owner answer exists, so no reading is chosen (A9.1 basis: The dedicated ICP gas port remains installed and capped so G-ATM and G-XE can be tested as separately declared contingency variants.)"
+  },
+  {
+   "no": 404,
+   "id": "RP-A919-01",
+   "kind": "recorder_proposal",
+   "lane": "RVM A9.19 / A9.20 application",
+   "source": "docs/requirements/rvm_a9/rvm_a9_v1.json recorder_proposals_open_for_owner[id=RP-A919-01]",
+   "source_ref": {
+    "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+    "locator": "recorder_proposals_open_for_owner[id=RP-A919-01]"
+   },
+   "question": "ICP go / no-go before LOCK-1 for the single Hall + RF/ICP flight architecture (no hollow-cathode fallback exists after A9.19): (a) measured ICP electron-current capacity I_e,cap >= I_d,max with a pre-registered margin; (b) RF power per extracted ampere (W/A) within the power budget; (c) repeatable ignition on N2 and on Xe.",
+   "proposed": "none proposed: the margin, the W/A budget and the ignition repeatability criterion would be owner / pre-registration values; nothing is invented here",
+   "needed_by": "LOCK-1",
+   "status": "ANSWERED_BY_A9_21",
+   "status_detail": "ANSWERED IN PART (A9.21 ICP_GATE, decision code ICP_GO_NO_GO_REQUIRED_BEFORE_LOCK1): the gate exists and sits before LOCK-1, fail closed; the proposal's criteria (a) - (c) are NOT approved and are preserved for owner review (open_part)",
+   "answer_decision": "A9.21",
+   "decision_code": "ICP_GO_NO_GO_REQUIRED_BEFORE_LOCK1",
+   "answer_pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/ICP_GATE",
+   "answer_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+   "answer_verbatim_path": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+   "answer_verbatim_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+   "answer_excerpt": "4. ICP go/no-go before LOCK-1: I approve the existence and placement of a mandatory ICP go/no-go gate before LOCK-1. I would not yet approve any numerical criterion that I cannot see in the proposal text. The gate must be fail-closed: if its required evidence is missing, the result is `NOT_EVALUATED`, not GO.\nDecision: `ICP_GO_NO_GO_REQUIRED_BEFORE_LOCK1`.\nThe exact proposed GO/NO-GO criteria should be preserved separately until their text is available for review.",
+   "later_owner_decisions": [
+    {
+     "decision": "A9.21",
+     "item": "ICP_GATE",
+     "relation": "ANSWERS",
+     "decision_code": "ICP_GO_NO_GO_REQUIRED_BEFORE_LOCK1",
+     "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/ICP_GATE",
+     "decision_json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
+     "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+     "decision_md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+     "decision_md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+     "verbatim_excerpt": "4. ICP go/no-go before LOCK-1: I approve the existence and placement of a mandatory ICP go/no-go gate before LOCK-1. I would not yet approve any numerical criterion that I cannot see in the proposal text. The gate must be fail-closed: if its required evidence is missing, the result is `NOT_EVALUATED`, not GO.\nDecision: `ICP_GO_NO_GO_REQUIRED_BEFORE_LOCK1`.\nThe exact proposed GO/NO-GO criteria should be preserved separately until their text is available for review.",
+     "recorder_digest": "ICP_GO_NO_GO_REQUIRED_BEFORE_LOCK1 (gate existence and placement approved; fail-closed NOT_EVALUATED without evidence; NO numerical criterion approved; recorder proposal text preserved separately for review)",
+     "scope": "gate EXISTENCE and PLACEMENT approved (mandatory ICP go / no-go before LOCK-1, fail closed: missing evidence -> NOT_EVALUATED, never GO); NO numerical criterion approved"
+    }
+   ],
+   "open_part": {
+    "what": "numerical GO / NO-GO criteria: the recorder proposal text (criteria (a) - (c), no numbers) is preserved for the owner's review; nothing is approved or invented here",
+    "preserved_text": "ICP go / no-go before LOCK-1 for the single Hall + RF/ICP flight architecture (no hollow-cathode fallback exists after A9.19): (a) measured ICP electron-current capacity I_e,cap >= I_d,max with a pre-registered margin; (b) RF power per extracted ampere (W/A) within the power budget; (c) repeatable ignition on N2 and on Xe.",
+    "status": "NOT_APPROVED_PRESERVED_FOR_OWNER_REVIEW"
+   },
+   "dependency": [
+    "OWNER_JUDGMENT"
+   ],
+   "blocks": [
+    "BLOCKS_LOCK_1"
+   ],
+   "classification_basis": "recorder proposal raised with the A9.19 RVM application (no hollow-cathode fallback after A9.19; the owner asked 'is it good to remove hollow cathode', A9.20); A9.21 approves the gate, not its criteria"
   }
  ]
 }

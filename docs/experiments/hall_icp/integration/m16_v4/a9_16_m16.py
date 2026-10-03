@@ -21,7 +21,9 @@ ARTIFACT = "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.j
 TEST = "tests/test_m16_v4.py"
 V4 = "docs/budgets/owner_decisions/owner_questions_state_v4.json"
 V5 = "docs/budgets/owner_decisions/owner_questions_state_v5.json"
-DECIDED_PREFIXES = ("ANSWERED_BY_A9_", "AMENDED_BY_A9_15")
+# owner-decided statuses in state v5: A9.8 .. A9.14 answers, the A9.15 amendments and the later A9.19 / A9.20 / A9.21
+# amendments / answers (each carries later_owner_decisions records in state v5)
+DECIDED_PREFIXES = ("ANSWERED_BY_A9_", "AMENDED_BY_A9_")
 
 
 def v5_index(v5: dict) -> dict:
@@ -51,6 +53,9 @@ def overlay_blockers(rows: list, idx: dict) -> list:
             if v["status"] != "TBD_OWNER":
                 b["decision"] = L.cite(b["id"])
                 answered.add(b["id"])
+            if v.get("later_owner_decisions"):
+                b["later_owner_decisions"] = [f"{x['decision']} {x['item']} {x['relation']} ({x['decision_json']} "
+                                              f"sha256 {x['decision_json_sha256']})" for x in v["later_owner_decisions"]]
     return sorted(answered)
 
 

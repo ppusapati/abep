@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 HERE = ROOT / "docs" / "budgets" / "owner_decisions"
 sys.path.insert(0, str(ROOT / "docs" / "decisions" / "application"))
 import a9_16_lib as L  # noqa: E402
+import a9_later_lib as X  # noqa: E402
 
 
 def _builder():
@@ -43,12 +44,25 @@ def test_outputs_are_current_and_parse():
     json.loads((HERE / "owner_questions_state_v5.json").read_text(encoding="utf-8"))
 
 
+# A9.17 .. A9.21 overlay keys (the only keys a later owner decision adds to / changes on a copied row)
+LATER_STATUS_KEYS = {"status", "status_detail", "pre_a9_17_status", "pre_a9_17_status_detail", "later_owner_decisions",
+                     "later_governing_reading", "governing_reading_status", "rfp_registered_document"}
+LATER_NOTE_KEYS = {"later_owner_decisions", "external_input_status"}
+
+
 def test_v4_pinned_and_rows_copied():
     assert hashlib.sha256((HERE / "owner_questions_state_v4.json").read_bytes()).hexdigest() == B.V4_SHA
     for r4, r5 in zip(V4["rows"], ROWS):
         assert (r4["no"], r4["id"]) == (r5["no"], r5["id"])
         if r4["status"] != "TBD_OWNER":
-            assert r5 == r4, r4["id"]
+            if r4["id"] in B.LATER_ROWS:          # A9.17 .. A9.21 status change; everything else identical
+                assert r5["pre_a9_17_status"] == r4["status"] and r5["status"].startswith("AMENDED_BY_A9_"), r4["id"]
+                assert {k: v for k, v in r5.items() if k not in LATER_STATUS_KEYS} == \
+                       {k: v for k, v in r4.items() if k not in ("status", "status_detail")}, r4["id"]
+            elif r4["id"] in B.LATER_NOTES:       # records only, status unchanged
+                assert {k: v for k, v in r5.items() if k not in LATER_NOTE_KEYS} == r4, r4["id"]
+            else:
+                assert r5 == r4, r4["id"]
         else:
             assert r5["v4_status"] == "TBD_OWNER"
             new = ("status", "status_detail", "answer_pointer", "answer_excerpt", "answer_sha256")
@@ -88,13 +102,21 @@ def test_every_owner_answer_lands_on_exactly_one_row_with_pointer_and_verbatim()
             assert f"— {qid} —" in r["answer_excerpt"].splitlines()[0]
             assert r["decision_code"] == d["doc"]["decisions"][qid]["answer"]
             want = "AMENDED_BY_A9_15" if qid in L.A915_AMENDED else "ANSWERED_BY_" + key.replace(".", "_")
+            if qid in B.LATER_ROWS:              # later owner decision A9.19 / A9.20 / A9.21 amends the answer
+                assert r["pre_a9_17_status"] == want, qid
+                want = "AMENDED_BY_" + B.LATER_ROWS[qid][0].replace(".", "_")
             assert r["status"] == want, qid
 
 
 def test_a9_15_amendments_govern_and_no_contingency_reading():
     for qid in L.A915_AMENDED:
         r = _answered(qid)
-        assert r["status"] == "AMENDED_BY_A9_15"
+        if qid in B.LATER_ROWS:                  # A9.19 amends / supersedes the A9.15 reading (kept as history)
+            assert r["pre_a9_17_status"] == "AMENDED_BY_A9_15" and r["status"] == "AMENDED_BY_A9_19", qid
+            assert r["governing_reading_status"] in ("SUPERSEDED_BY_A9_19", "AMENDED_IN_SCOPE_BY_A9_19"), qid
+        else:
+            assert r["status"] == "AMENDED_BY_A9_15"
+        assert r["amended_by"]["decision"] == "A9.15"
         g = r["governing_reading"]["text"]
         assert g in L.LOADED["A9.15"]["md_text"] and f"/ {qid}:" in g
         assert not L.has_xe_contingency_wording(g)
@@ -167,4 +189,136 @@ def test_missing_a9_7_answer_refused(monkeypatch):
     real = L.decision_ids
     monkeypatch.setattr(L, "decision_ids", lambda k: [q for q in real(k) if q != "F6-OQ-04"])
     with pytest.raises(SystemExit):
+        B.build()
+
+
+# ------------------------------------------------------------------------------------------- A9.17 .. A9.21
+RVM_DOC = json.loads((ROOT / "docs/requirements/rvm_a9/rvm_a9_v1.json").read_text(encoding="utf-8"))
+REG = json.loads((ROOT / "docs/requirements/rfp_official/rfp_registration_v1.json").read_text(encoding="utf-8"))
+
+
+def _row(qid):
+    sel = [r for r in ROWS if r["id"] == qid]
+    assert len(sel) == 1, qid
+    return sel[0]
+
+
+def _norm(s):
+    return " ".join(s.split())
+
+
+def test_later_decisions_pinned_with_pointer_and_verbatim():
+    n = 0
+    for r in ROWS:
+        for x in r.get("later_owner_decisions", []):
+            d = X.LOADED[x["decision"]]
+            assert x["decision_json_sha256"] == hashlib.sha256((ROOT / d["json"]).read_bytes()).hexdigest()
+            assert x["decision_md_sha256"] == hashlib.sha256((ROOT / d["md"]).read_bytes()).hexdigest()
+            assert x["pointer"].startswith(d["json"] + "#/")
+            assert _norm(x["verbatim_excerpt"]) in _norm(d["md_text"]), (r["id"], x["decision"])
+            assert x["relation"] in X.RELATIONS and x["scope"]
+            n += 1
+    assert n >= 30
+    pins = {p["path"]: p["sha256"] for p in DOC["pins"]}
+    for k in X.ORDER:
+        assert pins[X.LOADED[k]["json"]] == X.LOADED[k]["json_sha256"]
+        assert pins[X.LOADED[k]["md"]] == X.LOADED[k]["md_sha256"]
+
+
+def test_later_decision_tamper_and_invented_excerpt_refused():
+    bad = dict(X.DECISIONS)
+    jp, _, mp, msha, lab = bad["A9.19"]
+    bad["A9.19"] = (jp, "e" * 64, mp, msha, lab)
+    with pytest.raises(SystemExit):
+        X._load(bad)
+    with pytest.raises(SystemExit):
+        X.verbatim("A9.21", "the owner approved a 2 A ICP capacity margin")      # not in the record: refused
+    with pytest.raises(SystemExit):
+        X.record("A9.21", "ICP_GATE", "APPROVES", X.block("A9.21", "4. ICP go/no-go"), "x")   # unknown relation
+
+
+def test_a9_19_a9_20_single_flight_configuration_and_c1_ground_only():
+    want = {"OQ-A907-07": "AMENDED_BY_A9_19", "MPQ-01": "AMENDED_BY_A9_19", "XA9Q-07": "AMENDED_BY_A9_19",
+            "XV2Q-01": "AMENDED_BY_A9_19", "OD6": "AMENDED_BY_A9_19", "OD5": "AMENDED_BY_A9_19",
+            "OD-XE-5": "AMENDED_BY_A9_19", "R6-Q1": "AMENDED_BY_A9_19", "OD-M5": "AMENDED_BY_A9_19",
+            "HWQ-09": "AMENDED_BY_A9_19", "OQ-A907-01": "AMENDED_BY_A9_20",
+            "MQ-05": "AMENDED_BY_A9_21", "WEB-ACC-2": "AMENDED_BY_A9_21"}
+    assert DOC["a9_17_21"]["rows_status_changed"] == want
+    for qid, st in want.items():
+        assert _row(qid)["status"] == st, qid
+    for qid in ("OQ-A907-07", "MPQ-01"):                 # no C1 flight variant: the earlier reading is history
+        r = _row(qid)
+        assert r["governing_reading_status"] == "SUPERSEDED_BY_A9_19"
+        assert {x["relation"] for x in r["later_owner_decisions"]} == {"SUPERSEDES"}
+        assert "No conventional hollow cathode." in r["later_governing_reading"]["text"]
+    for qid in ("XA9Q-07", "XV2Q-01", "OD6"):            # Xe ROLE only; the capability answer stands
+        r = _row(qid)
+        assert r["governing_reading_status"] == "AMENDED_IN_SCOPE_BY_A9_19"
+        assert any("ROLE of Xe only" in x["scope"] for x in r["later_owner_decisions"])
+        assert not L.has_xe_contingency_wording(r["later_governing_reading"]["text"])
+    for qid in ("OD-XE-5", "R6-Q1", "OD-M5", "HWQ-09"):  # C1 'fallback' rows
+        r = _row(qid)
+        assert "fallback" in r["answer_excerpt"]                      # verbatim historical answer kept
+        assert {x["decision"] for x in r["later_owner_decisions"]} == {"A9.19", "A9.20"}
+    lt = DOC["a9_17_21"]
+    assert lt["flight_configuration"] == "hall_icp_neutralizer"
+    assert list(lt["ground_reference"]) == ["hall_c1_reference"]
+    assert lt["ground_reference"]["hall_c1_reference"].startswith("GROUND_ONLY_LAB_REFERENCE")
+    sup = DOC["superseded_statements_a9_19"]
+    assert {s["superseded_by"]["decision"] for s in sup} == {"A9.19"}
+    for s in sup:
+        assert s["text"] in L.LOADED["A9.15"]["md_text"]
+    # quoted historical question text stays verbatim (the v4 text is unchanged)
+    v4q = {r["id"]: r["question"] for r in V4["rows"]}
+    assert _row("OQ-A907-07")["question"] == v4q["OQ-A907-07"] and "hall_c1_reference" in v4q["OQ-A907-07"]
+
+
+def test_a9_21_rows_and_recorder_proposal():
+    mq = _row("MQ-05")
+    assert "Keep 6.05 kg only as a provisional planning floor" in mq["later_owner_decisions"][0]["verbatim_excerpt"]
+    assert mq["later_owner_decisions"][0]["decision_code"] == "KEEP_6_05KG_PROVISIONAL_WAIT_FOR_QUOTES_TO_REBASE_AL08"
+    web = _row("WEB-ACC-2")
+    assert "05 October 2026 at 17:00" in web["later_owner_decisions"][0]["verbatim_excerpt"]
+    assert web["rfp_registered_document"]["rfp_number"] == REG["document"]["rfp_number"]
+    assert web["rfp_registered_document"]["pdf_sha256"] == REG["document"]["sha256"]
+    rp = _row("RP-A919-01")
+    prop = [p for p in RVM_DOC["recorder_proposals_open_for_owner"] if p["id"] == "RP-A919-01"][0]
+    assert rp["status"] == "ANSWERED_BY_A9_21" and rp["decision_code"] == "ICP_GO_NO_GO_REQUIRED_BEFORE_LOCK1"
+    assert rp["question"] == prop["proposal"] == rp["open_part"]["preserved_text"]
+    assert rp["open_part"]["status"] == "NOT_APPROVED_PRESERVED_FOR_OWNER_REVIEW"
+    assert "`NOT_EVALUATED`, not GO" in rp["answer_excerpt"]
+    assert rp["no"] == len(ROWS) and "RP-A919-01" not in DOC["open_owner_questions"]
+    for qid, before in (("F1Q-03", "ANSWERED_BY_A9_13"), ("OQ-F78-04", "ANSWERED_BY_A9_13"),
+                        ("OD3", "ANSWERED_BY_A9_14"), ("OQ-F4-05", "ANSWERED_BY_A9_13")):
+        r = _row(qid)                                      # external inputs stay TBD: status unchanged
+        assert r["status"] == before and r["external_input_status"].startswith("TBD_EXTERNAL_INPUT"), qid
+        assert "pre_a9_17_status" not in r
+    for qid in ("P1Q-07", "F5-OQ-01", "F5-OQ-02", "F9-OQ-02", "F0-OQ-02", "F9-OQ-03"):
+        r = _row(qid)
+        assert {x["relation"] for x in r["later_owner_decisions"]} <= {"CONFIRMS", "INPUT_STAYS_TBD"}, qid
+        assert "pre_a9_17_status" not in r
+    assert DOC["counts"]["ANSWERED_BY_A9_21"] == 1 and DOC["counts"]["AMENDED_BY_A9_21"] == 2
+
+
+def test_rfp_registration_now_and_ag15_open():
+    now = DOC["rfp_registration_now"]
+    assert now["registration"]["status"] == "REGISTERED_BY_HASH_PDF_CONTROLLED_EXTERNALLY"
+    assert now["registration"]["pdf_sha256"] == REG["document"]["sha256"]
+    assert now["registration"]["pdf_in_repository"] is False
+    assert now["rvm_rebase"]["ag_15_status"].startswith("OPEN")
+    bad = copy.deepcopy(REG)
+    bad["status"] = "DRAFT"
+    with pytest.raises(SystemExit):
+        B.rfp_registration_now(bad, RVM_DOC)
+
+
+def test_unreviewed_later_target_refused(monkeypatch):
+    monkeypatch.setitem(B.LATER_NOTES, "NOT-A-ROW", [("A9.21", "H2_6", "CONFIRMS",
+                                                      ("3. H2-6 frozen builder", {}), "x")])
+    with pytest.raises(SystemExit):
+        B.build()
+    monkeypatch.delitem(B.LATER_NOTES, "NOT-A-ROW")
+    monkeypatch.setitem(B.LATER_NOTES, "P2Q-07", [("A9.21", "HW_PROGRAMME", "AMENDS",
+                                                   ("9. P2 impedance map", {}), "x")])
+    with pytest.raises(SystemExit):                        # a status-changing relation must be a reviewed LATER_ROWS entry
         B.build()
