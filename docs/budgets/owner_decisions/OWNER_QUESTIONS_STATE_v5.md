@@ -71,6 +71,8 @@ RFP now: REGISTERED_BY_HASH_PDF_CONTROLLED_EXTERNALLY (RFP DTDF/06/13516/DSP/ABE
 
 Open part: RP-A919-01: numerical GO / NO-GO criteria not approved (preserved for owner review).
 
+Gate location (RP-A919-01 -> GNG-ICP-01, defined in `docs/requirements/rvm_a9/a9_21_icp_gate.py`): `docs/requirements/rvm_a9/rvm_a9_v1.json` owner_approved_gates[id=GNG-ICP-01]; `docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json` pre_lock1_gates[id=GNG-ICP-01] (pointer only; status unchanged).
+
 Items without a state row: A9.17 DATA_SIZE, SPUTTER (data-artifact rules; no owner-question row); A9.18 GOLDEN (golden design point; no owner-question row); A9.21 H2_6 (H2-6 builder frozen, live-source check in CI; no owner-question row); A9.21 RFQ_DISPATCH (quotation packages finalized here; dispatch by owner / procurement).
 
 Superseded by A9.19 (ROLE of Xe only):

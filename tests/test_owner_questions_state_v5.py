@@ -322,3 +322,42 @@ def test_unreviewed_later_target_refused(monkeypatch):
                                                    ("9. P2 impedance map", {}), "x")])
     with pytest.raises(SystemExit):                        # a status-changing relation must be a reviewed LATER_ROWS entry
         B.build()
+
+
+F9_REL = "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json"
+
+
+def test_rp_a919_01_gate_location_pointer_only():
+    """RP-A919-01 points to where GNG-ICP-01 lives (RVM owner_approved_gates + F9 pre_lock1_gates); semantics unchanged."""
+    rp = _row("RP-A919-01")
+    gl = rp["gate_location"]
+    assert gl["gate_id"] == "GNG-ICP-01" and gl["defined_in"] == "docs/requirements/rvm_a9/a9_21_icp_gate.py"
+    assert (ROOT / gl["defined_in"]).is_file()
+    f9 = json.loads((ROOT / F9_REL).read_text(encoding="utf-8"))
+    docs = {"docs/requirements/rvm_a9/rvm_a9_v1.json": RVM_DOC, F9_REL: f9}
+    assert [x["locator"] for x in gl["records"]] == ["owner_approved_gates[id=GNG-ICP-01]",
+                                                     "pre_lock1_gates[id=GNG-ICP-01]"]
+    for x in gl["records"]:
+        node = docs[x["path"]]
+        for part in x["pointer"].strip("/").split("/"):
+            node = node[int(part)] if isinstance(node, list) else node[part]
+        assert node["id"] == "GNG-ICP-01" and node["placement"] == "BEFORE_LOCK-1"
+    # pointer only: no gate status / criteria copied; the row's answer semantics are unchanged
+    assert "status" not in gl and "criteria" not in json.dumps(gl["records"])
+    assert rp["status"] == "ANSWERED_BY_A9_21" and rp["open_part"]["status"] == "NOT_APPROVED_PRESERVED_FOR_OWNER_REVIEW"
+    assert rp["status_detail"].startswith("ANSWERED IN PART (A9.21 ICP_GATE")
+    assert DOC["a9_17_21"]["gate_location"]["row"] == "RP-A919-01"
+    assert DOC["counts"]["ANSWERED_BY_A9_21"] == 1
+
+
+def test_gate_location_fails_closed():
+    rows = copy.deepcopy(ROWS)
+    f9 = json.loads((ROOT / F9_REL).read_text(encoding="utf-8"))
+    bad = copy.deepcopy(RVM_DOC)
+    bad["owner_approved_gates"] = []
+    with pytest.raises(SystemExit):
+        B.icp_gate_location(rows, bad, f9)
+    bad_f9 = copy.deepcopy(f9)
+    bad_f9["pre_lock1_gates"][0]["placement"] = "AFTER_LOCK-1"
+    with pytest.raises(SystemExit):
+        B.icp_gate_location(rows, RVM_DOC, bad_f9)
