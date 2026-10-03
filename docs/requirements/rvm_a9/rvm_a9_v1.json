@@ -519,7 +519,7 @@
     }
    ],
    "requirement_basis": "RFP_CLAUSE RFP-P18-04, RFP-P18-05 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...)",
-   "requirement_frozen": false,
+   "requirement_frozen": true,
    "limit": {
     "quantity": "orbital altitude",
     "comparator": "within",
@@ -846,7 +846,7 @@
      "title": "Altitude envelope 180-230 km",
      "requirement_basis": "SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false)"
     },
-    "requirement_frozen_note": "stays false: the RFP transcription is registered (AG-15 step) but AG-15 closes only by owner verification; interpretation readings are listed in rfp_rebase.discrepancies"
+    "requirement_frozen_note": "true: AG-15 closed by the owner, RFP-derived requirements snapshot FROZEN (A9.22 G3_REQUIREMENTS_SNAPSHOT (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json sha256 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49; verbatim docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md sha256 749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77)); this freezes the requirement basis only, never compliance (the row's evidence / status values are unchanged); interpretation readings stay listed in rfp_rebase.discrepancies"
    }
   },
   {
@@ -916,7 +916,7 @@
     }
    ],
    "requirement_basis": "RFP_CLAUSE RFP-P18-06 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...); owner engineering reading row 4",
-   "requirement_frozen": false,
+   "requirement_frozen": true,
    "limit": {
     "quantity": "sustained thrust on atmospheric propellant",
     "comparator": ">=",
@@ -1228,7 +1228,7 @@
      "title": ">= 12 mN minimum sustained thrust on atmospheric propellant",
      "requirement_basis": "SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false); owner engineering reading row 4"
     },
-    "requirement_frozen_note": "stays false: the RFP transcription is registered (AG-15 step) but AG-15 closes only by owner verification; interpretation readings are listed in rfp_rebase.discrepancies",
+    "requirement_frozen_note": "true: AG-15 closed by the owner, RFP-derived requirements snapshot FROZEN (A9.22 G3_REQUIREMENTS_SNAPSHOT (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json sha256 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49; verbatim docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md sha256 749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77)); this freezes the requirement basis only, never compliance (the row's evidence / status values are unchanged); interpretation readings stay listed in rfp_rebase.discrepancies",
     "note": "the RFP prints '12 mN to 25 mN (From expected drag to compensate)'; the >= 12 mN sustained / 25 mN capability split is the owner's engineering reading (row 4), recorded as reading R-THR"
    }
   },
@@ -1304,7 +1304,7 @@
     }
    ],
    "requirement_basis": "RFP_CLAUSE RFP-P18-06, RFP-P18-10 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...); owner engineering reading rows 4, 27",
-   "requirement_frozen": false,
+   "requirement_frozen": true,
    "limit": {
     "quantity": "demonstrated thrust capability at P_bus < 1500 W",
     "comparator": ">=",
@@ -1536,7 +1536,7 @@
      "title": "25 mN demonstrated system capability inside P_bus < 1.5 kW",
      "requirement_basis": "SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false); owner engineering reading rows 4, 27"
     },
-    "requirement_frozen_note": "stays false: the RFP transcription is registered (AG-15 step) but AG-15 closes only by owner verification; interpretation readings are listed in rfp_rebase.discrepancies"
+    "requirement_frozen_note": "true: AG-15 closed by the owner, RFP-derived requirements snapshot FROZEN (A9.22 G3_REQUIREMENTS_SNAPSHOT (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json sha256 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49; verbatim docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md sha256 749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77)); this freezes the requirement basis only, never compliance (the row's evidence / status values are unchanged); interpretation readings stay listed in rfp_rebase.discrepancies"
    }
   },
   {
@@ -1638,7 +1638,7 @@
     }
    ],
    "requirement_basis": "RFP_CLAUSE RFP-P18-10, RFP-P18-01 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...); owner rows 108, 110; A9.1 OQ-A902-01 engineering definition",
-   "requirement_frozen": false,
+   "requirement_frozen": true,
    "limit": {
     "quantity": "P_bus,1ms,max (steady and start-up)",
     "comparator": "<",
@@ -1890,7 +1890,7 @@
      "title": "< 1.5 kW full bus power (A9-02 boundary, steady and start-up, 1 ms window)",
      "requirement_basis": "SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false); owner rows 108, 110; A9.1 OQ-A902-01 engineering definition"
     },
-    "requirement_frozen_note": "stays false: the RFP transcription is registered (AG-15 step) but AG-15 closes only by owner verification; interpretation readings are listed in rfp_rebase.discrepancies",
+    "requirement_frozen_note": "true: AG-15 closed by the owner, RFP-derived requirements snapshot FROZEN (A9.22 G3_REQUIREMENTS_SNAPSHOT (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json sha256 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49; verbatim docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md sha256 749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77)); this freezes the requirement basis only, never compliance (the row's evidence / status values are unchanged); interpretation readings stay listed in rfp_rebase.discrepancies",
     "note": "the RFP prints '<1500W' with no averaging window or transient clause; the 1 ms window is the owner's engineering definition (A9.1 OQ-A902-01)"
    }
   },
@@ -2179,7 +2179,7 @@
     }
    ],
    "requirement_basis": "RFP_CLAUSE RFP-P18-11 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...); owner wet reading row 5",
-   "requirement_frozen": false,
+   "requirement_frozen": true,
    "limit": {
     "quantity": "wet propulsion-system mass",
     "comparator": "<",
@@ -2269,7 +2269,7 @@
      "rfp_clause_ids": [
       "RFP-P18-11"
      ],
-     "rfp_citation_note": "registered clause(s) RFP-P18-11 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
+     "rfp_citation_note": "registered clause(s) RFP-P18-11 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closed by the owner (A9.22 G3): RFP_CLAUSE rows frozen, basis only"
     },
     {
      "id": "OQ-A910-01",
@@ -2507,7 +2507,7 @@
      "title": "< 40 kg wet (incl. Xe + tank)",
      "requirement_basis": "SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false); owner wet reading row 5"
     },
-    "requirement_frozen_note": "stays false: the RFP transcription is registered (AG-15 step) but AG-15 closes only by owner verification; interpretation readings are listed in rfp_rebase.discrepancies",
+    "requirement_frozen_note": "true: AG-15 closed by the owner, RFP-derived requirements snapshot FROZEN (A9.22 G3_REQUIREMENTS_SNAPSHOT (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json sha256 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49; verbatim docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md sha256 749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77)); this freezes the requirement basis only, never compliance (the row's evidence / status values are unchanged); interpretation readings stay listed in rfp_rebase.discrepancies",
     "note": "the RFP prints '< 40kg' without stating wet or dry (discrepancy DISC-02); the wet reading incl. Xe + tank is the owner's conservative reading (row 5)"
    }
   },
@@ -2611,7 +2611,7 @@
      "rfp_clause_ids": [
       "RFP-P18-11"
      ],
-     "rfp_citation_note": "registered clause(s) RFP-P18-11 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
+     "rfp_citation_note": "registered clause(s) RFP-P18-11 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closed by the owner (A9.22 G3): RFP_CLAUSE rows frozen, basis only"
     }
    ],
    "rtm_xref": [],
@@ -2995,7 +2995,7 @@
     }
    ],
    "requirement_basis": "RFP_CLAUSE RFP-P18-08, RFP-P16-02, RFP-P17-03, RFP-P17-04, RFP-P19-03 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...); owner rows 36, 132; A9 evidence_sequence",
-   "requirement_frozen": false,
+   "requirement_frozen": true,
    "limit": {
     "quantity": "propellant",
     "comparator": "is",
@@ -3337,7 +3337,7 @@
      "title": "Atmospheric propellant (air: N2 / O2 path; NO_ATOMIC_O labels)",
      "requirement_basis": "SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false); owner rows 36, 132; A9 evidence_sequence"
     },
-    "requirement_frozen_note": "stays false: the RFP transcription is registered (AG-15 step) but AG-15 closes only by owner verification; interpretation readings are listed in rfp_rebase.discrepancies"
+    "requirement_frozen_note": "true: AG-15 closed by the owner, RFP-derived requirements snapshot FROZEN (A9.22 G3_REQUIREMENTS_SNAPSHOT (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json sha256 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49; verbatim docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md sha256 749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77)); this freezes the requirement basis only, never compliance (the row's evidence / status values are unchanged); interpretation readings stay listed in rfp_rebase.discrepancies"
    }
   },
   {
@@ -3400,7 +3400,7 @@
     }
    ],
    "requirement_basis": "RFP_CLAUSE RFP-P17-05, RFP-P17-02 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...) (as carried: RFP_INFERRED_FROM_REPO_TEXT - verify against the RFP document)",
-   "requirement_frozen": false,
+   "requirement_frozen": true,
    "limit": null,
    "verification_methods": [
     "test",
@@ -3425,7 +3425,7 @@
       "RFP-P17-05",
       "RFP-P17-02"
      ],
-     "rfp_citation_note": "registered clause(s) RFP-P17-05, RFP-P17-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
+     "rfp_citation_note": "registered clause(s) RFP-P17-05, RFP-P17-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closed by the owner (A9.22 G3): RFP_CLAUSE rows frozen, basis only"
     }
    ],
    "rtm_xref": [
@@ -3626,13 +3626,13 @@
     ],
     "compliance_gate": "N2_PLUS_ATOMIC_O_OPERATION_QUALIFICATION (A9.14 OD12)",
     "rfp_citation_status": "REGISTERED_CLAUSE",
-    "note": "the owner's statement that the RFP requires ionizing N2 and nascent / atomic O (A9.13 S6.3, A9.15) is confirmed by the registered clauses RFP-P17-05 / RFP-P17-02 (AG-15 closure is the owner's)",
+    "note": "the owner's statement that the RFP requires ionizing N2 and nascent / atomic O (A9.13 S6.3, A9.15) is confirmed by the registered clauses RFP-P17-05 / RFP-P17-02 (AG-15 closed by the owner, A9.22 G3)",
     "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
     "rfp_clause_ids": [
      "RFP-P17-05",
      "RFP-P17-02"
     ],
-    "rfp_citation_note": "registered clause(s) RFP-P17-05, RFP-P17-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
+    "rfp_citation_note": "registered clause(s) RFP-P17-05, RFP-P17-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closed by the owner (A9.22 G3): RFP_CLAUSE rows frozen, basis only"
    },
    "requirement_origin": "RFP_CLAUSE",
    "rfp_clauses": [
@@ -3656,7 +3656,7 @@
      "requirement_basis": "RFP_INFERRED_FROM_REPO_TEXT - verify against the RFP document",
      "requirement_text": "The ABEP ionises nascent (atomic) O from the collected atmosphere. Recorded only in-repo (R6); no threshold recorded; whether it needs its own gate is lane-24 OD12."
     },
-    "requirement_frozen_note": "stays false: the RFP transcription is registered (AG-15 step) but AG-15 closes only by owner verification; interpretation readings are listed in rfp_rebase.discrepancies"
+    "requirement_frozen_note": "true: AG-15 closed by the owner, RFP-derived requirements snapshot FROZEN (A9.22 G3_REQUIREMENTS_SNAPSHOT (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json sha256 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49; verbatim docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md sha256 749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77)); this freezes the requirement basis only, never compliance (the row's evidence / status values are unchanged); interpretation readings stay listed in rfp_rebase.discrepancies"
    }
   },
   {
@@ -3760,7 +3760,7 @@
     }
    ],
    "requirement_basis": "RFP_CLAUSE RFP-P18-08, RFP-P17-05, RFP-P16-02 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...); owner reading row 6",
-   "requirement_frozen": false,
+   "requirement_frozen": true,
    "limit": {
     "quantity": "Xe-capable operating mode",
     "comparator": "demonstrated",
@@ -3792,7 +3792,7 @@
       "RFP-P17-05",
       "RFP-P16-02"
      ],
-     "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
+     "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closed by the owner (A9.22 G3): RFP_CLAUSE rows frozen, basis only"
     },
     {
      "id": "XA9Q-01",
@@ -3825,7 +3825,7 @@
       "RFP-P17-05",
       "RFP-P16-02"
      ],
-     "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
+     "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closed by the owner (A9.22 G3): RFP_CLAUSE rows frozen, basis only"
     }
    ],
    "rtm_xref": [
@@ -3951,7 +3951,7 @@
      "RFP-P17-05",
      "RFP-P16-02"
     ],
-    "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
+    "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closed by the owner (A9.22 G3): RFP_CLAUSE rows frozen, basis only"
    },
    "requirement_text_as_carried": "Demonstrate a bounded functional Xe-capable operating mode beyond bookkeeping (need not be continuous nominal operation) and book every Xe use (PHASE_TOTAL_FLOW); Xe reference / health checks are labelled and never atmospheric evidence.",
    "a9_19": {
@@ -3983,7 +3983,7 @@
      "title": "Xe capability (air + Xe; bounded functional Xe mode)",
      "requirement_basis": "SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false); owner reading row 6"
     },
-    "requirement_frozen_note": "stays false: the RFP transcription is registered (AG-15 step) but AG-15 closes only by owner verification; interpretation readings are listed in rfp_rebase.discrepancies",
+    "requirement_frozen_note": "true: AG-15 closed by the owner, RFP-derived requirements snapshot FROZEN (A9.22 G3_REQUIREMENTS_SNAPSHOT (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json sha256 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49; verbatim docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md sha256 749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77)); this freezes the requirement basis only, never compliance (the row's evidence / status values are unchanged); interpretation readings stay listed in rfp_rebase.discrepancies",
     "note": "the RFP describes the Xe input as 'an extra input system to take care any problems on board unforeseen problems'; the capability is mandatory (A9.15), the stated purpose is recorded (DISC-06), no rule changed"
    }
   },
@@ -4042,7 +4042,7 @@
     }
    ],
    "requirement_basis": "RFP_CLAUSE RFP-P18-07 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...)",
-   "requirement_frozen": false,
+   "requirement_frozen": true,
    "limit": null,
    "verification_methods": [
     "inspection"
@@ -4152,7 +4152,7 @@
      "title": "Hall-effect thruster preferred",
      "requirement_basis": "SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false)"
     },
-    "requirement_frozen_note": "stays false: the RFP transcription is registered (AG-15 step) but AG-15 closes only by owner verification; interpretation readings are listed in rfp_rebase.discrepancies"
+    "requirement_frozen_note": "true: AG-15 closed by the owner, RFP-derived requirements snapshot FROZEN (A9.22 G3_REQUIREMENTS_SNAPSHOT (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json sha256 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49; verbatim docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md sha256 749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77)); this freezes the requirement basis only, never compliance (the row's evidence / status values are unchanged); interpretation readings stay listed in rfp_rebase.discrepancies"
    }
   },
   {
@@ -4204,7 +4204,7 @@
     }
    ],
    "requirement_basis": "RFP_CLAUSE RFP-P19-01 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...) (as carried: PROVISIONAL (row 3) - verify against the RFP; no accessed source mentions it (R2))",
-   "requirement_frozen": false,
+   "requirement_frozen": true,
    "limit": {
     "quantity": "cumulative firing time",
     "comparator": ">",
@@ -4233,7 +4233,7 @@
      "rfp_clause_ids": [
       "RFP-P19-01"
      ],
-     "rfp_citation_note": "registered clause(s) RFP-P19-01 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
+     "rfp_citation_note": "registered clause(s) RFP-P19-01 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closed by the owner (A9.22 G3): RFP_CLAUSE rows frozen, basis only"
     },
     {
      "id": "OD13",
@@ -4247,7 +4247,7 @@
       "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
       "owner_answer_verbatim": "ENGINEERING BASIS — use mission life ≥26,280 h until the official wording is verified because it is the conservative interpretation of 'three years' versus 26,000 h. Retain >15,000 h firing as a provisional hard requirement until the official RFP confirms it."
      },
-     "handling": "superseded by an owner answer to the same question: owner row 3 retains > 15,000 h firing as a provisional hard requirement; the registered RFP prints 'Ignition Time: More than 15000 hrs' (RFP-P19-01; label recorded as DISC-05); AG-15 closure of the wording is the owner's (RVM-ID-12), not an open question; not an open question (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
+     "handling": "superseded by an owner answer to the same question: owner row 3 retains > 15,000 h firing as a provisional hard requirement; the registered RFP prints 'Ignition Time: More than 15000 hrs' (RFP-P19-01; label recorded as DISC-05); the wording is part of the RFP basis frozen by the owner's AG-15 closure (A9.22 G3, RVM-ID-12; the DISC-05 DRDO clarification stays open), not an open question; not an open question (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     }
    ],
    "rtm_xref": [
@@ -4549,7 +4549,7 @@
     "rfp_clause_ids": [
      "RFP-P19-01"
     ],
-    "rfp_citation_note": "registered clause(s) RFP-P19-01 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
+    "rfp_citation_note": "registered clause(s) RFP-P19-01 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closed by the owner (A9.22 G3): RFP_CLAUSE rows frozen, basis only"
    },
    "a9_19": {
     "decisions": [
@@ -4578,7 +4578,7 @@
      "requirement_basis": "PROVISIONAL (row 3) - verify against the RFP; no accessed source mentions it (R2)",
      "requirement_text": "Cumulative firing time > 15,000 h, retained as a provisional hard requirement until the official RFP confirms it (row 3). C1 carries the 15,000 h cathode basis; the ICP neutralizer must carry its own RF-neutralizer lifetime / cycle requirement (row 46; not yet defined: OQ-VI-04)."
     },
-    "requirement_frozen_note": "stays false: the RFP transcription is registered (AG-15 step) but AG-15 closes only by owner verification; interpretation readings are listed in rfp_rebase.discrepancies"
+    "requirement_frozen_note": "true: AG-15 closed by the owner, RFP-derived requirements snapshot FROZEN (A9.22 G3_REQUIREMENTS_SNAPSHOT (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json sha256 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49; verbatim docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md sha256 749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77)); this freezes the requirement basis only, never compliance (the row's evidence / status values are unchanged); interpretation readings stay listed in rfp_rebase.discrepancies"
    }
   },
   {
@@ -4630,7 +4630,7 @@
     }
    ],
    "requirement_basis": "RFP_CLAUSE RFP-P19-01 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...) (as carried: OWNER_ENGINEERING_BASIS (row 3; registered RFP-P19-01 '3 years (Approx 26000 hrs)', DISC-04))",
-   "requirement_frozen": false,
+   "requirement_frozen": true,
    "limit": {
     "quantity": "mission life",
     "comparator": ">=",
@@ -4859,7 +4859,7 @@
      "title": "Mission-life basis >= 26,280 h",
      "requirement_basis": "OWNER_ENGINEERING_BASIS (row 3; registered RFP-P19-01 '3 years (Approx 26000 hrs)', DISC-04)"
     },
-    "requirement_frozen_note": "stays false: the RFP transcription is registered (AG-15 step) but AG-15 closes only by owner verification; interpretation readings are listed in rfp_rebase.discrepancies",
+    "requirement_frozen_note": "true: AG-15 closed by the owner, RFP-derived requirements snapshot FROZEN (A9.22 G3_REQUIREMENTS_SNAPSHOT (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json sha256 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49; verbatim docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md sha256 749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77)); this freezes the requirement basis only, never compliance (the row's evidence / status values are unchanged); interpretation readings stay listed in rfp_rebase.discrepancies",
     "note": "the RFP prints '3 years (Approx 26000 hrs)'; 26,280 h (= 3 x 8,760 h) is the owner's conservative engineering basis (row 3), recorded as DISC-04"
    }
   },
@@ -5850,7 +5850,7 @@
     }
    ],
    "requirement_basis": "RFP_CLAUSE RFP-P17-02, RFP-P19-04, RFP-P19-06, RFP-P19-02 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...) (as carried: RFP_INFERRED_FROM_REPO_TEXT (R6) + owner rows 94, 103, 106, 132; A9.1 / A9.2)",
-   "requirement_frozen": false,
+   "requirement_frozen": true,
    "limit": null,
    "verification_methods": [
     "test",
@@ -5877,7 +5877,7 @@
       "RFP-P19-06",
       "RFP-P19-02"
      ],
-     "rfp_citation_note": "registered clause(s) RFP-P17-02, RFP-P19-04, RFP-P19-06, RFP-P19-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
+     "rfp_citation_note": "registered clause(s) RFP-P17-02, RFP-P19-04, RFP-P19-06, RFP-P19-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closed by the owner (A9.22 G3): RFP_CLAUSE rows frozen, basis only"
     }
    ],
    "rtm_xref": [
@@ -6156,7 +6156,7 @@
      "requirement_basis": "RFP_INFERRED_FROM_REPO_TEXT (R6) + owner rows 94, 103, 106, 132; A9.1 / A9.2",
      "requirement_text": "AO-exposed and O / O2-wetted materials qualified in a dedicated AO programme (AO-beam test recorded as 'RFP 4.1a', verify); 316L REJECTED_AS_CURRENT_BASELINE for the flight anode; final anode / collector material OPEN until coupon evidence; no graphite flight keeper for O / AO exposure; no silver in O / AO-wetted gas-path parts."
     },
-    "requirement_frozen_note": "stays false: the RFP transcription is registered (AG-15 step) but AG-15 closes only by owner verification; interpretation readings are listed in rfp_rebase.discrepancies"
+    "requirement_frozen_note": "true: AG-15 closed by the owner, RFP-derived requirements snapshot FROZEN (A9.22 G3_REQUIREMENTS_SNAPSHOT (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json sha256 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49; verbatim docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md sha256 749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77)); this freezes the requirement basis only, never compliance (the row's evidence / status values are unchanged); interpretation readings stay listed in rfp_rebase.discrepancies"
    }
   },
   {
@@ -6472,7 +6472,7 @@
     }
    ],
    "requirement_basis": "RFP_CLAUSE RFP-P19-05, RFP-P18-03 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...)",
-   "requirement_frozen": false,
+   "requirement_frozen": true,
    "limit": {
     "quantity": "indigenous content (total)",
     "comparator": ">=",
@@ -6501,7 +6501,7 @@
       "RFP-P19-05",
       "RFP-P18-03"
      ],
-     "rfp_citation_note": "registered clause(s) RFP-P19-05, RFP-P18-03 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
+     "rfp_citation_note": "registered clause(s) RFP-P19-05, RFP-P18-03 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closed by the owner (A9.22 G3): RFP_CLAUSE rows frozen, basis only"
     }
    ],
    "rtm_xref": [
@@ -6591,7 +6591,7 @@
      "RFP-P19-05",
      "RFP-P18-03"
     ],
-    "rfp_citation_note": "registered clause(s) RFP-P19-05, RFP-P18-03 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
+    "rfp_citation_note": "registered clause(s) RFP-P19-05, RFP-P18-03 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closed by the owner (A9.22 G3): RFP_CLAUSE rows frozen, basis only"
    },
    "requirement_text_as_carried": "Total indigenous content >= 75 % (subsystem minima thruster 0.80, intake 0.80, compressor 0.60, PSE 0.70 exist only in in-repo code, R2; not found in any accessed source).",
    "requirement_origin": "RFP_CLAUSE",
@@ -6615,7 +6615,7 @@
      "requirement_basis": "SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false)",
      "requirement_text": "Total indigenous content >= 75 % (project target) with subsystem targets thruster > 80 %, intake > 80 %, compressor / storage > 60 %, power electronics > 70 % (A9.14 OD12; registered RFP-P19-05; the RFP's > 60 % statement RFP-P18-03 is a recorded discrepancy DISC-03 for DRDO clarification)."
     },
-    "requirement_frozen_note": "stays false: the RFP transcription is registered (AG-15 step) but AG-15 closes only by owner verification; interpretation readings are listed in rfp_rebase.discrepancies"
+    "requirement_frozen_note": "true: AG-15 closed by the owner, RFP-derived requirements snapshot FROZEN (A9.22 G3_REQUIREMENTS_SNAPSHOT (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json sha256 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49; verbatim docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md sha256 749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77)); this freezes the requirement basis only, never compliance (the row's evidence / status values are unchanged); interpretation readings stay listed in rfp_rebase.discrepancies"
    }
   },
   {
@@ -6678,7 +6678,7 @@
     }
    ],
    "requirement_basis": "RFP_CLAUSE RFP-P18-09, RFP-P18-02 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...) (as carried: RFP_INFERRED_FROM_REPO_TEXT (R7) - verify against the RFP document)",
-   "requirement_frozen": false,
+   "requirement_frozen": true,
    "limit": null,
    "verification_methods": [
     "analysis",
@@ -6703,7 +6703,7 @@
       "RFP-P18-09",
       "RFP-P18-02"
      ],
-     "rfp_citation_note": "registered clause(s) RFP-P18-09, RFP-P18-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
+     "rfp_citation_note": "registered clause(s) RFP-P18-09, RFP-P18-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closed by the owner (A9.22 G3): RFP_CLAUSE rows frozen, basis only"
     }
    ],
    "rtm_xref": [
@@ -6801,7 +6801,7 @@
      "RFP-P18-09",
      "RFP-P18-02"
     ],
-    "rfp_citation_note": "registered clause(s) RFP-P18-09, RFP-P18-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
+    "rfp_citation_note": "registered clause(s) RFP-P18-09, RFP-P18-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closed by the owner (A9.22 G3): RFP_CLAUSE rows frozen, basis only"
    },
    "requirement_text_as_carried": "'Redundancy per RFP: no single-point failure in electronics' is recorded only in a code docstring (R7, unverified). Owner row 55 sets limited redundancy (dual series isolation on the high-pressure Xe path, critical sensing / FDIR redundancy; no duplicated thruster, ICP or full PPU at this stage). Both are carried side by side; see RVMQ-01.",
    "requirement_origin": "RFP_CLAUSE",
@@ -6826,7 +6826,7 @@
      "requirement_basis": "RFP_INFERRED_FROM_REPO_TEXT (R7) - verify against the RFP document",
      "requirement_text": "Electronics and sensors: no single-point failure that defeats the mission / safe state (registered RFP clauses RFP-P18-09 / RFP-P18-02): redundant / independent critical control, power-switching, telemetry and sensor paths, proven by a single-point-failure / FMEA analysis; duplicate thrusters, ICP modules or complete mechanical chains are not required (A9.14 RVMQ-01)."
     },
-    "requirement_frozen_note": "stays false: the RFP transcription is registered (AG-15 step) but AG-15 closes only by owner verification; interpretation readings are listed in rfp_rebase.discrepancies"
+    "requirement_frozen_note": "true: AG-15 closed by the owner, RFP-derived requirements snapshot FROZEN (A9.22 G3_REQUIREMENTS_SNAPSHOT (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json sha256 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49; verbatim docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md sha256 749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77)); this freezes the requirement basis only, never compliance (the row's evidence / status values are unchanged); interpretation readings stay listed in rfp_rebase.discrepancies"
    }
   },
   {
@@ -6860,7 +6860,7 @@
     }
    ],
    "requirement_basis": "RFP_CLAUSE RFP-P18-12, RFP-P18-01 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...)",
-   "requirement_frozen": false,
+   "requirement_frozen": true,
    "limit": {
     "quantity": "spacecraft data / command interface",
     "comparator": "is",
@@ -7014,7 +7014,7 @@
      "title": "MIL-1553B interface with the satellite onboard computer + discrete thruster interface + hardware drivers inside the propulsion system",
      "requirement_basis": "SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false)"
     },
-    "requirement_frozen_note": "stays false: the RFP transcription is registered (AG-15 step) but AG-15 closes only by owner verification; interpretation readings are listed in rfp_rebase.discrepancies"
+    "requirement_frozen_note": "true: AG-15 closed by the owner, RFP-derived requirements snapshot FROZEN (A9.22 G3_REQUIREMENTS_SNAPSHOT (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json sha256 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49; verbatim docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md sha256 749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77)); this freezes the requirement basis only, never compliance (the row's evidence / status values are unchanged); interpretation readings stay listed in rfp_rebase.discrepancies"
    }
   },
   {
@@ -7059,7 +7059,7 @@
     }
    ],
    "requirement_basis": "RFP_CLAUSE RFP-P19-04, RFP-P19-02, RFP-P16-01 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...)",
-   "requirement_frozen": false,
+   "requirement_frozen": true,
    "limit": null,
    "verification_methods": [
     "test",
@@ -7299,7 +7299,7 @@
      "title": "Environmental qualification (ENTEST): launch vibration / shock (PSLV / SSLV or DRDO-decided LV), AO erosion, radiation, thermal, ThermoVac, 3-year VLEO life",
      "requirement_basis": "SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false)"
     },
-    "requirement_frozen_note": "stays false: the RFP transcription is registered (AG-15 step) but AG-15 closes only by owner verification; interpretation readings are listed in rfp_rebase.discrepancies"
+    "requirement_frozen_note": "true: AG-15 closed by the owner, RFP-derived requirements snapshot FROZEN (A9.22 G3_REQUIREMENTS_SNAPSHOT (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json sha256 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49; verbatim docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md sha256 749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77)); this freezes the requirement basis only, never compliance (the row's evidence / status values are unchanged); interpretation readings stay listed in rfp_rebase.discrepancies"
    }
   },
   {
@@ -7333,7 +7333,7 @@
     }
    ],
    "requirement_basis": "RFP_CLAUSE RFP-P19-06, RFP-P20-02 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...)",
-   "requirement_frozen": false,
+   "requirement_frozen": true,
    "limit": null,
    "verification_methods": [
     "test",
@@ -7593,7 +7593,7 @@
      "title": "RFP test approach 4.1 a-d (AO-beam coating tests; rarefied-gas intake erosion; EM / QM force, Isp, efficiency; expert-committee-approved test plan) and ground demonstration",
      "requirement_basis": "SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false)"
     },
-    "requirement_frozen_note": "stays false: the RFP transcription is registered (AG-15 step) but AG-15 closes only by owner verification; interpretation readings are listed in rfp_rebase.discrepancies"
+    "requirement_frozen_note": "true: AG-15 closed by the owner, RFP-derived requirements snapshot FROZEN (A9.22 G3_REQUIREMENTS_SNAPSHOT (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json sha256 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49; verbatim docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md sha256 749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77)); this freezes the requirement basis only, never compliance (the row's evidence / status values are unchanged); interpretation readings stay listed in rfp_rebase.discrepancies"
    }
   },
   {
@@ -7616,7 +7616,7 @@
     }
    ],
    "requirement_basis": "RFP_CLAUSE RFP-P20-01 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...)",
-   "requirement_frozen": false,
+   "requirement_frozen": true,
    "limit": null,
    "verification_methods": [
     "inspection"
@@ -7707,7 +7707,7 @@
      "title": "ISO certification; acceptance / qualification per ATP (finalized after DDR / CDR); testing to MIL / ASTM / BIS / ESS standards",
      "requirement_basis": "SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false)"
     },
-    "requirement_frozen_note": "stays false: the RFP transcription is registered (AG-15 step) but AG-15 closes only by owner verification; interpretation readings are listed in rfp_rebase.discrepancies"
+    "requirement_frozen_note": "true: AG-15 closed by the owner, RFP-derived requirements snapshot FROZEN (A9.22 G3_REQUIREMENTS_SNAPSHOT (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json sha256 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49; verbatim docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md sha256 749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77)); this freezes the requirement basis only, never compliance (the row's evidence / status values are unchanged); interpretation readings stay listed in rfp_rebase.discrepancies"
    }
   },
   {
@@ -7730,7 +7730,7 @@
     }
    ],
    "requirement_basis": "RFP_CLAUSE RFP-P20-03 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...)",
-   "requirement_frozen": false,
+   "requirement_frozen": true,
    "limit": {
     "quantity": "propellants of the qualified electric thruster at milestone 4",
     "comparator": "includes",
@@ -7988,7 +7988,7 @@
      "title": "Exit criterion: EM of the ABEP system + qualified electric thruster with O and N2 as propellant at milestone 4 (partial success)",
      "requirement_basis": "SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false)"
     },
-    "requirement_frozen_note": "stays false: the RFP transcription is registered (AG-15 step) but AG-15 closes only by owner verification; interpretation readings are listed in rfp_rebase.discrepancies"
+    "requirement_frozen_note": "true: AG-15 closed by the owner, RFP-derived requirements snapshot FROZEN (A9.22 G3_REQUIREMENTS_SNAPSHOT (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json sha256 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49; verbatim docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md sha256 749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77)); this freezes the requirement basis only, never compliance (the row's evidence / status values are unchanged); interpretation readings stay listed in rfp_rebase.discrepancies"
    }
   },
   {
@@ -8066,7 +8066,7 @@
     }
    ],
    "requirement_basis": "RFP_CLAUSE RFP-P20-04, RFP-P20-05, RFP-P20-06, RFP-P21-01, RFP-P21-02, RFP-P17-01 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...)",
-   "requirement_frozen": false,
+   "requirement_frozen": true,
    "limit": {
     "quantity": "QM integration, ENTEST qualification and delivery (milestone 5)",
     "comparator": "<=",
@@ -8207,7 +8207,7 @@
      "title": "Milestone schedule and deliverables M1-M5 (T0+9 / +12 / +20 / +24 / +36 months) and the EM -> QM processing flow",
      "requirement_basis": "SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false)"
     },
-    "requirement_frozen_note": "stays false: the RFP transcription is registered (AG-15 step) but AG-15 closes only by owner verification; interpretation readings are listed in rfp_rebase.discrepancies"
+    "requirement_frozen_note": "true: AG-15 closed by the owner, RFP-derived requirements snapshot FROZEN (A9.22 G3_REQUIREMENTS_SNAPSHOT (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json sha256 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49; verbatim docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md sha256 749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77)); this freezes the requirement basis only, never compliance (the row's evidence / status values are unchanged); interpretation readings stay listed in rfp_rebase.discrepancies"
    }
   },
   {
@@ -8252,7 +8252,7 @@
     }
    ],
    "requirement_basis": "RFP_CLAUSE RFP-P30-01, RFP-P27-01, RFP-P21-03 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...)",
-   "requirement_frozen": false,
+   "requirement_frozen": true,
    "limit": {
     "quantity": "thrust measurement capability",
     "comparator": "resolves",
@@ -8490,7 +8490,7 @@
      "title": "Micro-newton-level thrust measurement system; UHV test facility and low-thrust measurement setup (Part IV(B), no waivers)",
      "requirement_basis": "SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false)"
     },
-    "requirement_frozen_note": "stays false: the RFP transcription is registered (AG-15 step) but AG-15 closes only by owner verification; interpretation readings are listed in rfp_rebase.discrepancies"
+    "requirement_frozen_note": "true: AG-15 closed by the owner, RFP-derived requirements snapshot FROZEN (A9.22 G3_REQUIREMENTS_SNAPSHOT (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json sha256 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49; verbatim docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md sha256 749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77)); this freezes the requirement basis only, never compliance (the row's evidence / status values are unchanged); interpretation readings stay listed in rfp_rebase.discrepancies"
    }
   },
   {
@@ -8891,7 +8891,7 @@
     }
    ],
    "requirement_basis": "RFP_CLAUSE RFP-P18-08, RFP-P17-05 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...); Xe ROLE = owner decision A9.19 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16; verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)",
-   "requirement_frozen": false,
+   "requirement_frozen": true,
    "limit": {
     "quantity": "propellant supply modes / tanks",
     "comparator": "is",
@@ -9044,7 +9044,7 @@
      "title": "Two propellant supply modes with separate tanks / paths: ambient atmospheric propellant (primary) and Xe (contingency / emergency supply mode) (RFP-P18-08, RFP-P17-05; A9.19)",
      "requirement_basis": "SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false); Xe ROLE = owner decision A9.19 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16; verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)"
     },
-    "requirement_frozen_note": "stays false: the RFP transcription is registered (AG-15 step) but AG-15 closes only by owner verification; interpretation readings are listed in rfp_rebase.discrepancies",
+    "requirement_frozen_note": "true: AG-15 closed by the owner, RFP-derived requirements snapshot FROZEN (A9.22 G3_REQUIREMENTS_SNAPSHOT (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json sha256 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49; verbatim docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md sha256 749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77)); this freezes the requirement basis only, never compliance (the row's evidence / status values are unchanged); interpretation readings stay listed in rfp_rebase.discrepancies",
     "note": "the Xe contingency / emergency ROLE is the owner's A9.19 decision, consistent with the RFP's stated purpose of the Xe input (DISC-06); the capability stays mandatory (A9.15, RVM-10)"
    }
   },
@@ -9289,7 +9289,7 @@
     }
    ],
    "evidence_class": "requirement-as-recorded",
-   "status": "RFP_CLAUSE_REGISTERED (verbatim clause in the registration; AG-15 closure is the owner's, requirement not frozen)",
+   "status": "RFP_CLAUSE_REGISTERED (verbatim clause in the registration; AG-15 closed by the owner, A9.22 G3: requirement basis frozen, compliance not implied)",
    "freeze_point": "after-evidence",
    "note": "",
    "requirement_origin": "RFP_CLAUSE",
@@ -9337,7 +9337,7 @@
     }
    ],
    "evidence_class": "requirement-as-recorded",
-   "status": "RFP_CLAUSE_REGISTERED (verbatim clause in the registration; AG-15 closure is the owner's, requirement not frozen)",
+   "status": "RFP_CLAUSE_REGISTERED (verbatim clause in the registration; AG-15 closed by the owner, A9.22 G3: requirement basis frozen, compliance not implied)",
    "freeze_point": "after-evidence",
    "note": "",
    "requirement_origin": "RFP_CLAUSE",
@@ -9500,7 +9500,7 @@
     }
    ],
    "evidence_class": "requirement-as-recorded",
-   "status": "RFP_CLAUSE_REGISTERED (verbatim clause in the registration; AG-15 closure is the owner's, requirement not frozen)",
+   "status": "RFP_CLAUSE_REGISTERED (verbatim clause in the registration; AG-15 closed by the owner, A9.22 G3: requirement basis frozen, compliance not implied)",
    "freeze_point": "after-evidence",
    "note": "",
    "requirement_origin": "RFP_CLAUSE",
@@ -9624,7 +9624,7 @@
     }
    ],
    "evidence_class": "requirement-as-recorded",
-   "status": "RFP_CLAUSE_REGISTERED (verbatim clause in the registration; AG-15 closure is the owner's, requirement not frozen)",
+   "status": "RFP_CLAUSE_REGISTERED (verbatim clause in the registration; AG-15 closed by the owner, A9.22 G3: requirement basis frozen, compliance not implied)",
    "freeze_point": "after-evidence",
    "note": "",
    "requirement_origin": "RFP_CLAUSE",
@@ -9881,7 +9881,7 @@
     }
    ],
    "evidence_class": "requirement-as-recorded",
-   "status": "RFP_CLAUSE_REGISTERED (verbatim clause in the registration; AG-15 closure is the owner's, requirement not frozen)",
+   "status": "RFP_CLAUSE_REGISTERED (verbatim clause in the registration; AG-15 closed by the owner, A9.22 G3: requirement basis frozen, compliance not implied)",
    "freeze_point": "after-evidence",
    "note": "",
    "requirement_origin": "RFP_CLAUSE",
@@ -10079,8 +10079,8 @@
    "id": "RVM-ID-12",
    "direction": "RVM <- official RFP",
    "counterpart": "owner rows 1-2 (legitimate owner / portal route); registered in docs/requirements/rfp_official/rfp_registration_v1.json",
-   "content": "the canonical RFP PDF with sha256 is registered with a verbatim clause transcription and every row is re-based on it (rfp_rebase); AG-15 closure (requirement_frozen = true on RFP rows) is the owner's",
-   "status": "REGISTERED_BY_HASH; AG-15 CLOSURE AWAITING_OWNER_ACTION"
+   "content": "the canonical RFP PDF with sha256 is registered with a verbatim clause transcription and every row is re-based on it (rfp_rebase); AG-15 closed by the owner (A9.22 G3): requirement_frozen = true on the RFP_CLAUSE rows, closure record rfp_rebase.ag15_closure",
+   "status": "REGISTERED_BY_HASH; AG-15 CLOSED_BY_OWNER (A9.22 G3)"
   }
  ],
  "owner_answers_applied": [
@@ -10091,7 +10091,7 @@
    ],
    "answer_sha256": "e16fbaa3a7815e232201381f5de5f408e00f8f933b3baa5c03102c040e35fc9a",
    "owner_answer_verbatim": "YES — obtain the canonical latest RFP PDF immediately through the legitimate owner/portal route; store the exact file, source URL/date and SHA-256. Do not freeze ambiguous RFP interpretations from secondary sources.",
-   "how_applied": "no RFP interpretation frozen: every RFP-recorded row carries requirement_frozen = false"
+   "how_applied": "no RFP interpretation frozen from secondary sources: the canonical RFP is registered by sha256 (A9.17 RFP) and every RFP_CLAUSE row cites its registered clauses; requirement_frozen = true on the RFP_CLAUSE rows only since the owner closed AG-15 on that registered basis (A9.22 G3, rfp_rebase.ag15_closure)"
   },
   {
    "row": 2,
@@ -10851,7 +10851,7 @@
   }
  ],
  "a9_16_rfp_rule_as_applied": "'RFP(1)' cites the official RFP held by the owner; the document is not registered in the repository (AG-15), so every RFP-cited fact is OWNER_STATED_PENDING_RFP_REGISTRATION; requirement_frozen stays false for every RFP row until AG-15 closes",
- "a9_16_rfp_rule": "the official RFP is registered by hash with a verbatim clause transcription (docs/requirements/rfp_official/rfp_registration_v1.json, A9.17 RFP); RFP-cited facts carry rfp_citation_status REGISTERED_CLAUSE with the registered clause ids (the step-1 label OWNER_STATED_PENDING_RFP_REGISTRATION is kept as rfp_citation_status_as_applied history); AG-15 closure is the owner's, so requirement_frozen stays false for every RFP row until the owner closes AG-15",
+ "a9_16_rfp_rule": "the official RFP is registered by hash with a verbatim clause transcription (docs/requirements/rfp_official/rfp_registration_v1.json, A9.17 RFP); RFP-cited facts carry rfp_citation_status REGISTERED_CLAUSE with the registered clause ids (the step-1 label OWNER_STATED_PENDING_RFP_REGISTRATION is kept as rfp_citation_status_as_applied history); the owner closed AG-15 (A9.22 G3), so requirement_frozen = true on every RFP_CLAUSE row (requirement basis frozen; no status changes, no compliance claim)",
  "a9_16_owner_answers_applied": [
   {
    "decision": "A9.14",
@@ -10915,7 +10915,7 @@
     "RFP-P17-04",
     "RFP-P19-03"
    ],
-   "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P16-02, RFP-P17-03, RFP-P17-04, RFP-P19-03 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
+   "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P16-02, RFP-P17-03, RFP-P17-04, RFP-P19-03 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closed by the owner (A9.22 G3): RFP_CLAUSE rows frozen, basis only"
   },
   {
    "decision": "A9.14",
@@ -10940,7 +10940,7 @@
     "RFP-P17-05",
     "RFP-P17-02"
    ],
-   "rfp_citation_note": "registered clause(s) RFP-P17-05, RFP-P17-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
+   "rfp_citation_note": "registered clause(s) RFP-P17-05, RFP-P17-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closed by the owner (A9.22 G3): RFP_CLAUSE rows frozen, basis only"
   },
   {
    "decision": "A9.14",
@@ -10973,7 +10973,7 @@
     "RFP-P17-05",
     "RFP-P16-02"
    ],
-   "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
+   "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closed by the owner (A9.22 G3): RFP_CLAUSE rows frozen, basis only"
   },
   {
    "decision": "A9.14",
@@ -11024,7 +11024,7 @@
     "RFP-P17-05",
     "RFP-P16-02"
    ],
-   "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
+   "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closed by the owner (A9.22 G3): RFP_CLAUSE rows frozen, basis only"
   },
   {
    "decision": "A9.14",
@@ -11048,7 +11048,7 @@
    "rfp_clause_ids": [
     "RFP-P19-01"
    ],
-   "rfp_citation_note": "registered clause(s) RFP-P19-01 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
+   "rfp_citation_note": "registered clause(s) RFP-P19-01 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closed by the owner (A9.22 G3): RFP_CLAUSE rows frozen, basis only"
   },
   {
    "decision": "A9.14",
@@ -11217,7 +11217,7 @@
     "RFP-P19-05",
     "RFP-P18-03"
    ],
-   "rfp_citation_note": "registered clause(s) RFP-P19-05, RFP-P18-03 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
+   "rfp_citation_note": "registered clause(s) RFP-P19-05, RFP-P18-03 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closed by the owner (A9.22 G3): RFP_CLAUSE rows frozen, basis only"
   },
   {
    "decision": "A9.14",
@@ -11242,7 +11242,7 @@
     "RFP-P18-09",
     "RFP-P18-02"
    ],
-   "rfp_citation_note": "registered clause(s) RFP-P18-09, RFP-P18-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
+   "rfp_citation_note": "registered clause(s) RFP-P18-09, RFP-P18-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closed by the owner (A9.22 G3): RFP_CLAUSE rows frozen, basis only"
   },
   {
    "decision": "A9.14",
@@ -11267,7 +11267,7 @@
     "RFP-P18-09",
     "RFP-P18-02"
    ],
-   "rfp_citation_note": "registered clause(s) RFP-P18-09, RFP-P18-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
+   "rfp_citation_note": "registered clause(s) RFP-P18-09, RFP-P18-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closed by the owner (A9.22 G3): RFP_CLAUSE rows frozen, basis only"
   },
   {
    "decision": "A9.15",
@@ -11292,7 +11292,7 @@
     "RFP-P17-05",
     "RFP-P16-02"
    ],
-   "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closure is the owner's, requirement_frozen stays false"
+   "rfp_citation_note": "registered clause(s) RFP-P18-08, RFP-P17-05, RFP-P16-02 (docs/requirements/rfp_official/rfp_registration_v1.json); AG-15 closed by the owner (A9.22 G3): RFP_CLAUSE rows frozen, basis only"
   }
  ],
  "configurations_as_carried_a9_16": {
@@ -11551,15 +11551,17 @@
    "A9.14 OD14 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
    "A9.14 RVMQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
    "A9.14 OQ-VI-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
-   "A9.12 OQ-A907-06 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
+   "A9.12 OQ-A907-06 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)",
+   "A9.22 G3_REQUIREMENTS_SNAPSHOT (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json sha256 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49; verbatim docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md sha256 749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77)"
   ],
   "origins": [
    "RFP_CLAUSE",
    "DERIVED_PROJECT_REQUIREMENT",
    "OWNER_ALLOCATION"
   ],
-  "rule": "every RVM row cites the RFP clause id(s) it derives from or is labelled DERIVED_PROJECT_REQUIREMENT / OWNER_ALLOCATION; every registered clause maps to at least one row or is a recorded programmatic item; statuses unchanged by the re-base (rvm_rules; no PASS without determining evidence, A9.13 S6.22); requirement_frozen stays false on RFP rows until the owner closes AG-15",
-  "ag_15_status": "OPEN - RFP registered by hash with verbatim transcription and the RVM re-based; closure is the owner's (not declared here)",
+  "rule": "every RVM row cites the RFP clause id(s) it derives from or is labelled DERIVED_PROJECT_REQUIREMENT / OWNER_ALLOCATION; every registered clause maps to at least one row or is a recorded programmatic item; statuses unchanged by the re-base (rvm_rules; no PASS without determining evidence, A9.13 S6.22); requirement_frozen = true on every RFP_CLAUSE row since the owner closed AG-15 (A9.22 G3: the requirement basis is frozen, compliance is not implied)",
+  "ag_15_status": "CLOSED by the owner, A9.22 G3 (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json sha256 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49): RVM re-base accepted (pre-closure RVM file sha256 3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305, requirements-basis sha256 1d4a7f0099e937f0c74a8c1be8fc14408b75f211c7990be4672f4eee5f9b66b5); requirement_frozen = true on the RFP_CLAUSE rows; RFP-derived requirements snapshot FROZEN; closure record rfp_rebase.ag15_closure (RP-BRIEF-01 format); not a compliance claim",
+  "requirements_snapshot": "FROZEN",
   "origin_counts": {
    "RFP_CLAUSE": 22,
    "DERIVED_PROJECT_REQUIREMENT": 3,
@@ -12072,7 +12074,101 @@
     "disposition": "new row RVM-26; the mN-level stand plan is not evidence of micro-newton capability",
     "owner_or_drdo_action": "owner: facility / stand capability evidence (in-house, consortium or sub-contract)"
    }
-  ]
+  ],
+  "ag15_closure": {
+   "format": "RP-BRIEF-01 (docs/bid/OWNER_DECISION_BRIEF_P0_P1.md item 1; recorder proposal implemented on the owner's A9.22 G3 closure)",
+   "decision_code": "AG15_CLOSED",
+   "decision": {
+    "item": "G3_REQUIREMENTS_SNAPSHOT",
+    "code": "AG15_CLOSED_SNAPSHOT_FROZEN",
+    "json": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
+    "json_sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49",
+    "md": "docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md",
+    "md_sha256": "749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77",
+    "pointer": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json#/decisions/G3_REQUIREMENTS_SNAPSHOT",
+    "decided_by": "owner",
+    "date": "2026-10-03",
+    "verbatim_excerpts": [
+     "AG-15 is approved for closure.",
+     "This freezes the requirements basis only.\nIt does not mean the architecture has demonstrated compliance. Individual RVM rows retain their existing evidence/status values until determining evidence exists."
+    ]
+   },
+   "accepted_registration": {
+    "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+    "pdf_sha256": "a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00",
+    "clauses_sha256": "fd51a951a1d06ea8bebd39416147686aedb1f596170fb81b6583f4564148a8aa",
+    "n_clauses": 37
+   },
+   "accepted_rvm": {
+    "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+    "pre_closure_commit": "9eb302c06241c8e8a369334a6bdc5bc559227143",
+    "pre_closure_file_sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+    "brief_commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d",
+    "requirements_basis_sha256": "1d4a7f0099e937f0c74a8c1be8fc14408b75f211c7990be4672f4eee5f9b66b5",
+    "basis_hash_rule": "sha256 of json.dumps({'rfp_clause_rows': [{f: row[f] for f in ('id', 'title', 'category', 'requirement_text', 'requirement_basis', 'requirement_origin', 'rfp_clauses', 'related_rfp_clauses', 'limit')} for every RFP_CLAUSE row in RVM order], 'row_origins': {row id: requirement_origin for every row}, plus rfp_rebase[k] for k in ('registration', 'clause_coverage', 'not_system_requirements', 'discrepancies')}, ensure_ascii=False, sort_keys=True, separators=(',', ':')); requirement_frozen, statuses, evidence and notes are outside the basis",
+    "note": "the pre-closure RVM the owner accepted (file sha256 at the closing base commit; byte-identical at the brief commit); the closure changes only requirement_frozen on the frozen rows and the closure fields, so the requirements-basis hash of the current RVM must equal requirements_basis_sha256"
+   },
+   "frozen_rows": [
+    "RVM-01",
+    "RVM-02",
+    "RVM-03",
+    "RVM-04",
+    "RVM-06",
+    "RVM-08",
+    "RVM-09",
+    "RVM-10",
+    "RVM-11",
+    "RVM-12",
+    "RVM-13",
+    "RVM-16",
+    "RVM-18",
+    "RVM-19",
+    "RVM-20",
+    "RVM-21",
+    "RVM-22",
+    "RVM-23",
+    "RVM-24",
+    "RVM-25",
+    "RVM-26",
+    "RVM-29"
+   ],
+   "requirements_snapshot": "FROZEN",
+   "discrepancy_dispositions": {
+    "status": "AS_RECORDED",
+    "note": "A9.22 G3 closes AG-15 without amending any discrepancy disposition: each DISC keeps the disposition and the owner / DRDO action recorded in rfp_rebase.discrepancies (DRDO clarifications stay open there); nothing is accepted or answered for DRDO here",
+    "dispositions": {
+     "DISC-01": "UNVERIFIED_BY_RFP_DOCUMENT - programmatic, not a system requirement (excluded candidate PRG-BID); verify on the DefProc tender document; CLAUDE.md is not edited here",
+     "DISC-02": "the wet reading is the conservative owner reading and is retained; recorded for DRDO clarification; requirement_frozen stays false",
+     "DISC-03": "recorded for DRDO clarification (A9.14 OD12)",
+     "DISC-04": "consistent within the RFP's 'Approx'; the 26,280 h basis is conservative and retained",
+     "DISC-05": "literal wording preserved; conservative design basis pending clarification (A9.14 S8.5)",
+     "DISC-06": "capability mandatory (A9.15 stands); stated purpose recorded for the owner; no rule changed",
+     "DISC-07": "owner engineering reading retained; the RFP gives no split between sustained and capability",
+     "DISC-08": "DERIVED_PROJECT_REQUIREMENT (A9.14 S9.12 OD14)",
+     "DISC-09": "RVM-21 carries no numeric level; levels TBD at PDR (not invented)",
+     "DISC-10": "new row RVM-26; the mN-level stand plan is not evidence of micro-newton capability"
+    },
+    "phrases_overtaken_by_the_closure": [
+     {
+      "id": "DISC-02",
+      "phrase": "requirement_frozen stays false",
+      "rows": [
+       "RVM-06"
+      ],
+      "now": "requirement_frozen = true on these RFP_CLAUSE rows (A9.22 G3); the disposition text is kept as recorded and the reading and its owner / DRDO action are unchanged"
+     }
+    ]
+   },
+   "unscreened_pages": {
+    "pages": "1-15, 34-40",
+    "disposition": "OWNER_REVIEWED_NO_ADDITIONAL_TECHNICAL_PERFORMANCE_REQUIREMENT",
+    "basis": "owner statement (A9.22 G3), verbatim: The previously unscreened RFP pages have now been reviewed and do not introduce an additional ABEP technical-performance requirement that alters the current RVM technical re-base.",
+    "scope": "owner-stated review of the owner-held PDF; the page contents are not transcribed or screened in the repository and nothing else is recorded about them",
+    "registration_record": "docs/requirements/rfp_official/rfp_registration_v1.json#/page_coverage/owner_page_review"
+   },
+   "what_it_is_not": "a freeze of the requirements basis only (A9.22 G3): not a compliance claim; every RVM row keeps its evidence / status values until determining evidence exists",
+   "pre_closure_ag_15_status": "OPEN - RFP registered by hash with verbatim transcription and the RVM re-based; closure is the owner's (not declared here)"
+  }
  },
  "owner_approved_gates": [
   {

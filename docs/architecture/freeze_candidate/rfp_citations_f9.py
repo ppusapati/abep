@@ -16,7 +16,8 @@ requirement: the clause ids are the 'rfp_clauses' of the corresponding RVM row(s
   F9_SOURCE_POINTER     the F9 parameter's own source points at the RVM row
 A record with no registered correspondence keeps an explicit UNMAPPED_NO_RVM_MAPPED_CLAUSE status with the reason (never
 a guessed clause). The step-1 label is kept as rfp_citation_status_as_applied (history), as the RVM does
-(a9_16_rvm.registered_rfp_citations). AG-15 closure stays the owner's: requirement_frozen = false on RFP rows.
+(a9_16_rvm.registered_rfp_citations). AG-15 is closed by the owner (A9.22 G3): requirement_frozen = true on the RVM
+RFP_CLAUSE rows (requirement basis only; no status change, no compliance claim).
 
 Kept out of docs/decisions/application/a9_16_lib.py on purpose: that lib feeds the pins of many builders; this mapping
 only re-labels F9 records. stdlib only; deterministic.
@@ -56,13 +57,13 @@ QUESTION_RECORD = {"F9-OQ-02": "AG-12"}
 # stale A9.16 step-1 wording on the two parameters whose a9_16 record carried the label (exact text; fail closed)
 STALE_TEXT = {
     "AFC-SY-PPU-07": [("basis", "RFP clause owner-stated, pending registration (AG-15)",
-                       "RFP clause registered ({clauses}; via {rows}, RVM re-base; AG-15 closure pending the owner)")],
+                       "RFP clause registered ({clauses}; via {rows}, RVM re-base; AG-15 closed by the owner, A9.22 G3)")],
     "AFC-SY-XE-01": [("basis", "RFP content owner-stated, pending registration (AG-15)",
-                      "RFP content registered ({clauses}; via {rows}, RVM re-base; AG-15 closure pending the owner)")],
+                      "RFP content registered ({clauses}; via {rows}, RVM re-base; AG-15 closed by the owner, A9.22 G3)")],
 }
 STALE_ADVANCE = {"AFC-SY-PPU-07": ("official RFP registered (AG-15)",
-                                   "owner AG-15 closure (the official RFP is registered by hash and the RVM re-based; "
-                                   "requirement_frozen pending the owner)")}
+                                   "AG-15 closed by the owner (A9.22 G3: the official RFP is registered by hash, the "
+                                   "RVM re-based and the requirement basis frozen; RVM-19 itself stays NOT_EVALUATED)")}
 
 
 class RfpCitationError(SystemExit):
@@ -166,7 +167,7 @@ def _relabel(rec: dict, m: dict, pending) -> None:
                                     + "), the rfp_clauses the RVM re-base maps for " + ", ".join(m["rows"])
                                     + "; the record -> RVM row correspondence is a " + CORRESPONDENCE_STATUS
                                     + " (" + ", ".join(sorted({c["kind"] for c in m["correspondence"]}))
-                                    + "); AG-15 closure is the owner's, requirement_frozen stays false")
+                                    + "); AG-15 closed by the owner (A9.22 G3): RFP_CLAUSE rows frozen, basis only")
         rec["rfp_correspondence_status"] = CORRESPONDENCE_STATUS
         if m.get("unmapped_reasons"):
             rec["rfp_citation_partially_unmapped"] = list(m["unmapped_reasons"])
@@ -236,12 +237,13 @@ def apply(doc: dict, rvm: dict, answer, pending: str) -> dict:
                     "RVM re-base maps for the corresponding requirement (rfp_citations_f9.CORRESPONDENCE, each "
                     "correspondence verified against the artifacts); the step-1 label is kept as "
                     "rfp_citation_status_as_applied; a record without a registered correspondence is "
-                    + UNMAPPED + " with its reason; AG-15 closure stays the owner's",
+                    + UNMAPPED + " with its reason; AG-15 closed by the owner (A9.22 G3)",
             "correspondence_status": CORRESPONDENCE_STATUS + ": the F9 record -> RVM row correspondence "
                                      "(rfp_citations_f9.CORRESPONDENCE) is the recorder's reading, verified against the "
                                      "artifacts (VERBATIM_FACT: the RFP fact quoted in the owner's answer matches the RVM "
                                      "row text); only the clause ids per RVM row come from the RVM re-base; the owner may "
-                                     "reverse a correspondence (AG-15 closure pending)",
+                                     "reverse a correspondence (the AG-15 closure, A9.22 G3, froze the RVM requirement basis, not this "
+                                     "correspondence)",
             "registration": REGISTRATION_PATH, "rvm": RVM_PATH + "#/rfp_rebase",
             "statuses": {"REGISTERED_CLAUSE": "registered clause ids, mapped through the RVM re-base",
                          UNMAPPED: "no RVM-mapped clause for the requirement the record cites (reason recorded)"},

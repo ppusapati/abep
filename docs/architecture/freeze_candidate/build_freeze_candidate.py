@@ -83,6 +83,9 @@ for _k in ("A9.19", "A9.20"):
     PINS["A" + _k[1:].replace(".", "") + "_MD"] = (_d["md"], _d["md_sha256"])
 # A9.21 (immutable; json + verbatim md pinned in docs/decisions/application/a9_later_lib.py)
 PINS.update(A21.pins())
+# A9.22 G3 (immutable; json + verbatim md): the owner's AG-15 closure decision, pinned as ag15_f9 pins it
+PINS["A922"] = (AG15.CLOSURE_DECISION["json"], AG15.CLOSURE_DECISION["json_sha256"])
+PINS["A922_MD"] = (AG15.CLOSURE_DECISION["md"], AG15.CLOSURE_DECISION["md_sha256"])
 # Mutable / revisable inputs: read-only, sha256 recorded at build time (drift is reported by --check).
 CONSUMED = {
     # A9.7 lanes (all merged in the base of this lane)
@@ -144,8 +147,9 @@ VALUE_LABELS = {
                                "(docs/requirements/rfp_official/rfp_registration_v1.json; the PDF itself is kept in the "
                                "controlled evidence store, not in the repository; A9.17 RFP) and the RVM re-based on "
                                "it; each such parameter cites its registered clause id(s) through the RVM row the "
-                               "re-base maps (rfp_citation); RVM requirement_frozen = false until the owner closes "
-                               "AG-15",
+                               "re-base maps (rfp_citation); AG-15 is closed by the owner (A9.22 G3): RVM "
+                               "requirement_frozen = true on the RFP_CLAUSE rows (requirement basis frozen; not "
+                               "compliance)",
     "WINDOW": "admissible window or analog envelope, not a design point",
     "RULE": "decision, convention or interface rule",
 }
@@ -1386,7 +1390,9 @@ def build_gates(us: dict) -> list:
       {"rows": rvm_rows, "status_counts": counts,
        "summary": f"no row is PASS ({cstr}); requirements frozen: {frozen} of {len(rvm_rows)} ({n_rfp_frozen} of "
                   f"{n_rfp} RFP_CLAUSE rows: the official RFP is registered by hash and the RVM re-based on it; "
-                  "requirement_frozen on RFP rows waits for the owner's AG-15 closure)"},
+                  + ("the owner closed AG-15 (A9.22 G3), freezing the requirement basis only - no row status changes)"
+                     if n_rfp_frozen == n_rfp else
+                     "requirement_frozen on RFP rows waits for the owner's AG-15 closure)")},
       [ref("RVM", f"/status_counts/{CONFIGURATION}"), ref("RVM", "/rfp_registered_in_repository"),
        ref("RVM", "/rfp_rebase/ag_15_status")],
       ["EP-01", "EP-02", "EP-03", "EP-10", "EP-11", "EP-12", "EP-13"])
@@ -1469,10 +1475,20 @@ def build_gates(us: dict) -> list:
       a15["status"] + (f" (remaining: {rc})" if rc else ""), a15["evidence_sufficient_for_freeze"],
       {"summary": f"registration (pdf sha256 {reg['pdf_sha256']}, {reg['pages']} pages, "
                   f"{reg['n_registered_clauses']} clauses) and RVM re-base (every registered clause mapped to an RVM "
-                  f"row or recorded as programmatic) are present; remaining: {rc or 'none'}",
+                  f"row or recorded as programmatic) are present"
+                  + (f"; owner closure recorded (A9.22 G3, {AG15.CLOSURE_DECISION['json']} sha256 "
+                     f"{AG15.CLOSURE_DECISION['json_sha256']}; RVM rfp_rebase.ag15_closure: "
+                     f"{len(a15['evidence_parts']['owner_closure_recorded']['frozen_rows'])} RFP_CLAUSE rows frozen, "
+                     "requirements snapshot FROZEN, basis only - no RVM status changes, no compliance claim)"
+                     if "owner_closure_recorded" in a15["evidence_parts"] else "")
+                  + f"; remaining: {rc or 'none'}",
        "assessment": a15},
       [ref("RFP", "/status"), ref("RFP", "/document"), ref("RFP", "/clauses"),
-       ref("RVM", "/rfp_rebase/clause_coverage"), ref("RVM", "/rfp_rebase/ag_15_status"), ans(1)],
+       ref("RVM", "/rfp_rebase/clause_coverage"), ref("RVM", "/rfp_rebase/ag_15_status")]
+      + ([ref("A922", "/decisions/" + AG15.CLOSURE_DECISION["item"], "owner decision A9.22 G3: AG-15 closed, RFP-derived "
+              "requirements snapshot FROZEN (verbatim " + AG15.CLOSURE_DECISION["md"] + " governs)"),
+          ref("RVM", "/rfp_rebase/ag15_closure"), ref("RFP", "/page_coverage/owner_page_review")]
+         if "owner_closure_recorded" in a15["evidence_parts"] else []) + [ans(1)],
       ["EP-01"])
     return gates
 
@@ -1487,7 +1503,9 @@ def ag15_assessment() -> dict:
     a = AG15.assess(load("RFP"), load("RVM"), sha_of("RFP"))
     if a["status"] == AG15.STATUS_REFUSED:
         raise SystemExit("REFUSED: AG-15: RFP registration / RVM re-base inconsistent: " + "; ".join(a["errors"]))
-    a["determining_evidence"] = A16.gate_closes("AG-15", AG15.determining_evidence(load("RFP"), sha_of("RFP")))
+    a["determining_evidence"] = A16.gate_closes("AG-15", AG15.determining_evidence(load("RFP"), sha_of("RFP"), a))
+    if a["closes"] and not (a["determining_evidence"]["closes"] and "owner_closure_recorded" in a["evidence_parts"]):
+        raise SystemExit("REFUSED: AG-15: closable without determining evidence and a valid owner closure record")
     if not a["determining_evidence"]["closes"]:
         raise SystemExit("REFUSED: AG-15: the registration is not determining evidence under gate_closes")
     return a
@@ -1546,12 +1564,25 @@ EVIDENCE_PLAN = [
 ]
 
 
+# evidence-plan steps whose owner act is recorded (the gate itself is re-derived; the step is marked only when the
+# named gate is sufficient)
+EVIDENCE_STEP_DONE_BY_GATE = {"EP-01": ("AG-15",)}
+EVIDENCE_STEP_DONE_NOTE = {"EP-01": "owner closed AG-15, A9.22 G3; closure record "
+                                    "docs/requirements/rvm_a9/rvm_a9_v1.json#/rfp_rebase/ag15_closure; the AG-01 part "
+                                    "(RVM rows by determining evidence) stays open"}
+
+
 def evidence_plan(gates: list) -> list:
     gids = {g["id"] for g in gates}
     out = []
     for sid, what, closes, deps, vehicle in EVIDENCE_PLAN:
         assert set(closes) <= gids, sid
-        out.append({"id": sid, "evidence": what, "addresses_gates": closes, "depends_on": deps, "vehicle": vehicle})
+        step = {"id": sid, "evidence": what, "addresses_gates": closes, "depends_on": deps, "vehicle": vehicle}
+        done = [g["id"] for g in gates if g["id"] in closes and g["id"] in EVIDENCE_STEP_DONE_BY_GATE.get(sid, ())
+                and g["evidence_sufficient_for_freeze"]]
+        if done:
+            step["state"] = "DONE_FOR " + ", ".join(done) + " (" + EVIDENCE_STEP_DONE_NOTE[sid] + ")"
+        out.append(step)
     covered = {g for s in out for g in s["addresses_gates"]}
     assert covered == gids, f"gates without an evidence step: {gids - covered}"
     for g in gates:
@@ -2077,7 +2108,8 @@ def render_md(doc: dict) -> str:
           "| step | evidence | gates | depends on | vehicle |", "|---|---|---|---|---|"]
     for s in doc["evidence_plan"]:
         L.append(f"| {s['id']} | {_fmt(s['evidence'], 220)} | {', '.join(s['addresses_gates'])} | "
-                 f"{', '.join(s['depends_on']) or '-'} | {s['vehicle']} |")
+                 f"{', '.join(s['depends_on']) or '-'} | {s['vehicle']}"
+                 + (f" ({s['state']})" if s.get("state") else "") + " |")
     ro = doc["owner_question_rollup"]
     v5s = ro.get("state_v5", {}).get("status_of_rolled_up_questions", {})
     st5 = lambda qid: v5s.get(qid, "-")        # noqa: E731  (A9.16 repair F8: the v5 status is shown beside each row)

@@ -1,4 +1,4 @@
-"""Owner decisions A9.17 .. A9.21 (after the A9.16 step-1 set): pins, item keys and verbatim excerpts.
+"""Owner decisions A9.17 .. A9.22 (after the A9.16 step-1 set): pins, item keys and verbatim excerpts.
 
 Kept separate from a9_16_lib on purpose: a9_16_lib.DECISIONS / pins() feed the pins of every A9.16 integration builder
 (H-1, F9, F6, RVM, M16, state v5, matrix); adding the later decisions there would silently re-pin all of them. This
@@ -11,6 +11,9 @@ module is read by the owner-question state v5 builder, the M16 v4 builder and th
   A9.20  C1 = ground-only laboratory reference (never flight hardware, never in the flight budgets)
   A9.21  open items + hardware programme (AL-08 provisional, H2-6 frozen + CI, ICP go / no-go before LOCK-1 without
          numbers, bid close, programme order, external inputs stay TBD, RFQ dispatch by owner / procurement)
+  A9.22  layer separation (requirements / configuration / physics / assessment), items G1-G9; G3 closes AG-15 and
+         freezes the RFP-derived requirements snapshot (applied by the AG-15 closure lane; the other items are applied
+         by their own governed migrations)
 
 Every decision file is immutable: the companion json and the verbatim md are pinned by sha256 and the md path / sha
 recorded inside the json must agree (fail closed). Excerpts are cut verbatim from the pinned md (the md governs; json
@@ -49,7 +52,12 @@ DECISIONS = {
               "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
               f"{DEC}/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
               "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440", "open items + hardware programme"),
+    "A9.22": (f"{DEC}/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
+              "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49",
+              f"{DEC}/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md",
+              "749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77", "layer separation G1-G9"),
 }
+_DECISION_ITEMS = ("A9.17", "A9.18", "A9.21", "A9.22")   # records whose items are the keys of 'decisions'
 ORDER = tuple(DECISIONS)
 FLIGHT_CONFIGURATION = "hall_icp_neutralizer"
 GROUND_REFERENCE = "hall_c1_reference"
@@ -105,7 +113,7 @@ def pins() -> list:
 def item_keys(key: str) -> list:
     """The decision items of one record (one application-matrix entry each)."""
     doc = LOADED[key]["doc"]
-    if key in ("A9.17", "A9.18", "A9.21"):
+    if key in _DECISION_ITEMS:
         return list(doc["decisions"])
     if key == "A9.19":
         return ["architecture", "xenon_role"] + [f"amends/{k}" for k in doc["amends"]] + ["owner_request"]
@@ -116,7 +124,7 @@ def item_keys(key: str) -> list:
 
 def pointer(key: str, item: str) -> str:
     doc = LOADED[key]["doc"]
-    if key in ("A9.17", "A9.18", "A9.21"):
+    if key in _DECISION_ITEMS:
         if item not in doc["decisions"]:
             raise LaterDecisionError(f"{key}: no decision item {item}")
         return f"{LOADED[key]['json']}#/decisions/{item}"
@@ -128,7 +136,7 @@ def pointer(key: str, item: str) -> str:
 def digest(key: str, item: str):
     """The json (recorder digest) value at the item pointer."""
     doc = LOADED[key]["doc"]
-    if key in ("A9.17", "A9.18", "A9.21"):
+    if key in _DECISION_ITEMS:
         return doc["decisions"][item]
     if item.startswith("amends/"):
         return doc["amends"][item.split("/", 1)[1]]
@@ -215,4 +223,7 @@ RELATIONS = {
     "CONFIRMS": "the later decision confirms / sequences the earlier answer; nothing in it changes",
     "INPUT_STAYS_TBD": "the later decision states that the external input the earlier answer requires cannot be "
                        "supplied from current evidence and stays TBD (no code default as mission truth)",
+    "PERFORMS_OWNER_ACT": "the later decision performs an act the earlier answer reserved to the owner (e.g. closing a "
+                          "gate on recorded evidence, A9.22 G3 closing AG-15); the earlier answer stands and the row "
+                          "status is unchanged",
 }

@@ -1,4 +1,5 @@
 """AG-15: the official RFP registration is current and internally consistent."""
+import hashlib
 import json
 import subprocess
 import sys
@@ -56,5 +57,10 @@ def test_page_coverage_screens_part_iv_items():
     assert any(s.startswith("Part IV(B) 3") for s in reg) and any(s.startswith("Part IV(B) 5") for s in reg)
     for item in ("1", "2", "3", "4", "6"):
         assert so[f"Part IV(C) {item}"]["class"] == "BID_EVALUATION_CRITERION"
-    assert "UNSCREENED" in pc["pages_not_screened"]
+    assert "UNSCREENED" in pc["pages_not_screened_as_registered"] and "pages_not_screened" not in pc
+    pr = pc["owner_page_review"]                       # A9.22 G3: owner-stated review disposition (cited by sha256)
+    assert pr["status"] == "OWNER_REVIEWED_NO_ADDITIONAL_TECHNICAL_PERFORMANCE_REQUIREMENT" and pr["pages"] == "1-15, 34-40"
+    assert pr["decision"]["json_sha256"] == hashlib.sha256((ROOT / pr["decision"]["json"]).read_bytes()).hexdigest()
+    md = (ROOT / pr["decision"]["md"]).read_text(encoding="utf-8")
+    assert " ".join(pr["owner_statement_verbatim"].split()) in " ".join(md.split())
     assert set(pc["pages_with_registered_clauses"]) <= set(pc["pages_screened_for_clauses"])

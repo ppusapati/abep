@@ -154,6 +154,16 @@
    "key": "A9.21_md",
    "path": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
    "sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440"
+  },
+  {
+   "key": "A9.22_json",
+   "path": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
+   "sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49"
+  },
+  {
+   "key": "A9.22_md",
+   "path": "docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md",
+   "sha256": "749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77"
   }
  ],
  "referenced_not_pinned": {
@@ -508,6 +518,13 @@
     "json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
     "md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
     "md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440"
+   },
+   {
+    "decision": "A9.22",
+    "json": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
+    "json_sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49",
+    "md": "docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md",
+    "md_sha256": "749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77"
    }
   ],
   "flight_configuration": "hall_icp_neutralizer",
@@ -575,7 +592,8 @@
     "CONFIRMS"
    ],
    "F9-OQ-03": [
-    "CONFIRMS"
+    "CONFIRMS",
+    "PERFORMS_OWNER_ACT"
    ]
   },
   "records_by_decision_and_relation": {
@@ -590,20 +608,23 @@
    "A9.21 AMENDS": 2,
    "A9.21 ANSWERS": 1,
    "A9.21 CONFIRMS": 9,
-   "A9.21 INPUT_STAYS_TBD": 4
+   "A9.21 INPUT_STAYS_TBD": 4,
+   "A9.22 PERFORMS_OWNER_ACT": 1
   },
   "relations": {
    "SUPERSEDES": "the later decision replaces the earlier answer (the earlier text is history)",
    "AMENDS": "the later decision amends the earlier answer within the named scope; the rest of the answer stands",
    "ANSWERS": "the later decision answers a question that had no owner answer (in the named scope)",
    "CONFIRMS": "the later decision confirms / sequences the earlier answer; nothing in it changes",
-   "INPUT_STAYS_TBD": "the later decision states that the external input the earlier answer requires cannot be supplied from current evidence and stays TBD (no code default as mission truth)"
+   "INPUT_STAYS_TBD": "the later decision states that the external input the earlier answer requires cannot be supplied from current evidence and stays TBD (no code default as mission truth)",
+   "PERFORMS_OWNER_ACT": "the later decision performs an act the earlier answer reserved to the owner (e.g. closing a gate on recorded evidence, A9.22 G3 closing AG-15); the earlier answer stands and the row status is unchanged"
   },
   "items_without_a_state_row": [
    "A9.17 DATA_SIZE, SPUTTER (data-artifact rules; no owner-question row)",
    "A9.18 GOLDEN (golden design point; no owner-question row)",
    "A9.21 H2_6 (H2-6 builder frozen, live-source check in CI; no owner-question row)",
-   "A9.21 RFQ_DISPATCH (quotation packages finalized here; dispatch by owner / procurement)"
+   "A9.21 RFQ_DISPATCH (quotation packages finalized here; dispatch by owner / procurement)",
+   "A9.22 G1, G2, G4 .. G9 (layer-separation audit items; no owner-question row; applied by their own governed migrations)"
   ],
   "owner_asked_recorder": "A9.20 verbatim also asks the recorder 'is it good to remove hollow cathode' - not an owner-question row; RP-A919-01 (ICP go / no-go) answers it on the recorder side and A9.21 ICP_GATE approves that gate's existence and placement",
   "open_parts": [
@@ -644,9 +665,77 @@
   "rvm_rebase": {
    "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
    "id": "rvm_a9_rfp_rebase_v1",
-   "ag_15_status": "OPEN - RFP registered by hash with verbatim transcription and the RVM re-based; closure is the owner's (not declared here)"
+   "ag_15_status": "CLOSED by the owner, A9.22 G3 (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json sha256 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49): RVM re-base accepted (pre-closure RVM file sha256 3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305, requirements-basis sha256 1d4a7f0099e937f0c74a8c1be8fc14408b75f211c7990be4672f4eee5f9b66b5); requirement_frozen = true on the RFP_CLAUSE rows; RFP-derived requirements snapshot FROZEN; closure record rfp_rebase.ag15_closure (RP-BRIEF-01 format); not a compliance claim",
+   "requirements_snapshot": "FROZEN",
+   "ag15_closure": "docs/requirements/rvm_a9/rvm_a9_v1.json#/rfp_rebase/ag15_closure"
   },
-  "rule": "the step-1 rfp_citation_status OWNER_STATED_PENDING_RFP_REGISTRATION on rows answered by A9.8 .. A9.15 records the state when those answers were applied; the RFP is now registered by hash (A9.17 RFP) and the RVM re-based on it; AG-15 closure (owner acceptance; requirement_frozen) stays the owner's and is not declared here"
+  "rule": "the step-1 rfp_citation_status OWNER_STATED_PENDING_RFP_REGISTRATION on rows answered by A9.8 .. A9.15 records the state when those answers were applied; the RFP is now registered by hash (A9.17 RFP) and the RVM re-based on it; the owner closed AG-15 (A9.22 G3: requirement_frozen = true on the RFP_CLAUSE rows, requirements snapshot FROZEN, basis only - see a9_22_g3); nothing is declared here beyond the owner's record"
+ },
+ "a9_22_g3": {
+  "decision": "A9.22",
+  "item": "G3_REQUIREMENTS_SNAPSHOT",
+  "decision_code": "AG15_CLOSED_SNAPSHOT_FROZEN",
+  "pointer": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json#/decisions/G3_REQUIREMENTS_SNAPSHOT",
+  "decision_json": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
+  "decision_json_sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49",
+  "decision_md": "docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md",
+  "decision_md_sha256": "749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77",
+  "verbatim_excerpt": "3. Requirements snapshot — close AG-15 and freeze it.\nAG-15 is approved for closure.\nThe previously unscreened RFP pages have now been reviewed and do not introduce an additional ABEP technical-performance requirement that alters the current RVM technical re-base.\nSet the RFP-derived requirements snapshot to:\n`FROZEN`\nand set `requirement_frozen = true` for the applicable RFP-clause rows.\nThis freezes the requirements basis only.\nIt does not mean the architecture has demonstrated compliance. Individual RVM rows retain their existing evidence/status values until determining evidence exists.",
+  "answers": {
+   "gate": "AG-15 (A9.13 S6.22 F9-OQ-03): CLOSED by the owner",
+   "state_row": "F9-OQ-03 (status ANSWERED_BY_A9_13 unchanged; PERFORMS_OWNER_ACT record added)",
+   "rfp_rows": "requirement_frozen = true on the 22 RFP_CLAUSE rows (basis only; statuses unchanged)",
+   "rfp_pages_1_15_34_40": "OWNER_REVIEWED_NO_ADDITIONAL_TECHNICAL_PERFORMANCE_REQUIREMENT (owner-stated)"
+  },
+  "rvm_closure_record": {
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "pointer": "/rfp_rebase/ag15_closure",
+   "format": "RP-BRIEF-01 (docs/bid/OWNER_DECISION_BRIEF_P0_P1.md item 1; recorder proposal implemented on the owner's A9.22 G3 closure)",
+   "decision_code": "AG15_CLOSED",
+   "frozen_rows": [
+    "RVM-01",
+    "RVM-02",
+    "RVM-03",
+    "RVM-04",
+    "RVM-06",
+    "RVM-08",
+    "RVM-09",
+    "RVM-10",
+    "RVM-11",
+    "RVM-12",
+    "RVM-13",
+    "RVM-16",
+    "RVM-18",
+    "RVM-19",
+    "RVM-20",
+    "RVM-21",
+    "RVM-22",
+    "RVM-23",
+    "RVM-24",
+    "RVM-25",
+    "RVM-26",
+    "RVM-29"
+   ],
+   "requirements_snapshot": "FROZEN",
+   "accepted_rvm_pre_closure_file_sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+   "accepted_rvm_pre_closure_commit": "9eb302c06241c8e8a369334a6bdc5bc559227143",
+   "requirements_basis_sha256": "1d4a7f0099e937f0c74a8c1be8fc14408b75f211c7990be4672f4eee5f9b66b5",
+   "discrepancy_dispositions": "AS_RECORDED"
+  },
+  "registration_page_review": {
+   "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+   "pointer": "/page_coverage/owner_page_review",
+   "status": "OWNER_REVIEWED_NO_ADDITIONAL_TECHNICAL_PERFORMANCE_REQUIREMENT"
+  },
+  "f9_gate": {
+   "path": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "locator": "architecture_gates[id=AG-15]",
+   "current_status": "DETERMINING_EVIDENCE_PRESENT_NO_REMAINING_CONDITION",
+   "evidence_sufficient_for_freeze": true,
+   "architecture_status": "INVESTIGATION_HYPOTHESIS"
+  },
+  "not_this": "a freeze of the requirements basis only: no RVM row status changes and no compliance claim; the architecture stays INVESTIGATION_HYPOTHESIS",
+  "other_a9_22_items": "G1, G2, G4 .. G9: no owner-question row; applied by their own governed migrations"
  },
  "owner_answers_applied": [
   {
@@ -959,6 +1048,17 @@
     "P4-OQ-03",
     "RP-A919-01",
     "WEB-ACC-2"
+   ],
+   "how_applied": "later_owner_decisions records (pointer, json / md sha256, verbatim excerpt, relation, scope); status AMENDED_BY / ANSWERED_BY only where the relation is SUPERSEDES / AMENDS / ANSWERS"
+  },
+  {
+   "id": "A9.22 (layer separation G1-G9)",
+   "decision_json": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
+   "decision_json_sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49",
+   "decision_md": "docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md",
+   "decision_md_sha256": "749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77",
+   "rows": [
+    "F9-OQ-03"
    ],
    "how_applied": "later_owner_decisions records (pointer, json / md sha256, verbatim excerpt, relation, scope); status AMENDED_BY / ANSWERED_BY only where the relation is SUPERSEDES / AMENDS / ANSWERS"
   }
@@ -10672,6 +10772,20 @@
       "summary": "official RFP is the authoritative requirement source; the public repository carries the provenance record (document identity, filename, retrieval source and date, sha256, page count, requirement extraction, RVM mapping); the PDF stays in the controlled project evidence store"
      },
      "scope": "AG-15 registration part: the official RFP is registered by hash with provenance in the public repository (PDF in the controlled evidence store) and the RVM is re-based on it; AG-15 closure (owner acceptance; requirement_frozen) stays the owner's"
+    },
+    {
+     "decision": "A9.22",
+     "item": "G3_REQUIREMENTS_SNAPSHOT",
+     "relation": "PERFORMS_OWNER_ACT",
+     "decision_code": "AG15_CLOSED_SNAPSHOT_FROZEN",
+     "pointer": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json#/decisions/G3_REQUIREMENTS_SNAPSHOT",
+     "decision_json": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
+     "decision_json_sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49",
+     "decision_md": "docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md",
+     "decision_md_sha256": "749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77",
+     "verbatim_excerpt": "3. Requirements snapshot — close AG-15 and freeze it.\nAG-15 is approved for closure.\nThe previously unscreened RFP pages have now been reviewed and do not introduce an additional ABEP technical-performance requirement that alters the current RVM technical re-base.\nSet the RFP-derived requirements snapshot to:\n`FROZEN`\nand set `requirement_frozen = true` for the applicable RFP-clause rows.\nThis freezes the requirements basis only.\nIt does not mean the architecture has demonstrated compliance. Individual RVM rows retain their existing evidence/status values until determining evidence exists.",
+     "recorder_digest": "AG15_CLOSED_SNAPSHOT_FROZEN (requirement_frozen = true on applicable RFP-clause rows; owner reviewed the unscreened RFP pages: no additional ABEP technical-performance requirement; freezes the requirements basis only, not compliance; RVM row evidence/status values unchanged)",
+     "scope": "the owner closes AG-15 (the closure A9.13 S6.22 F9-OQ-03 reserved to the owner): RVM re-base accepted, requirement_frozen = true on the 22 RFP_CLAUSE rows, RFP-derived requirements snapshot FROZEN; owner review of RFP pages 1-15 / 34-40: no additional ABEP technical-performance requirement altering the RVM re-base; basis only - RVM row evidence / status values unchanged, no compliance claim (see a9_22_g3)"
     }
    ]
   },

@@ -111,7 +111,7 @@ def test_requirement_as_recorded_label_is_truthful():
     d = F9["value_labels"]["REQUIREMENT_AS_RECORDED"]
     assert "official RFP not in the repository" not in d
     assert "docs/requirements/rfp_official/rfp_registration_v1.json" in d and "registered by sha256" in d
-    assert "requirement_frozen = false" in d
+    assert "requirement_frozen = true on the RFP_CLAUSE rows" in d and "A9.22 G3" in d
 
 
 def test_unmapped_is_explicit_never_guessed():

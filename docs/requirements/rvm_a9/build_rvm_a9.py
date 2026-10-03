@@ -673,8 +673,9 @@ REGISTER_NOTE = ("question text from the pinned immutable v3 snapshot; current r
 # lane-24 decisions that an owner answer supersedes (same question answered; S-01): id -> (owner row, what it settles)
 LANE24_SUPERSEDED_BY_OWNER = {
     "OD13": (3, "owner row 3 retains > 15,000 h firing as a provisional hard requirement; the registered RFP prints "
-                "'Ignition Time: More than 15000 hrs' (RFP-P19-01; label recorded as DISC-05); AG-15 closure of the "
-                "wording is the owner's (RVM-ID-12), not an open question"),
+                "'Ignition Time: More than 15000 hrs' (RFP-P19-01; label recorded as DISC-05); the wording is part "
+                "of the RFP basis frozen by the owner's AG-15 closure (A9.22 G3, RVM-ID-12; the DISC-05 DRDO "
+                "clarification stays open), not an open question"),
 }
 
 
@@ -890,14 +891,17 @@ def build_interface_demands(ctx):
         idd("RVM-ID-12", "RVM <- official RFP", "owner rows 1-2 (legitimate owner / portal route); registered in "
                                                      + RB.REG_REL,
             "the canonical RFP PDF with sha256 is registered with a verbatim clause transcription and every row is "
-            "re-based on it (rfp_rebase); AG-15 closure (requirement_frozen = true on RFP rows) is the owner's",
-            "REGISTERED_BY_HASH; AG-15 CLOSURE AWAITING_OWNER_ACTION"),
+            "re-based on it (rfp_rebase); AG-15 closed by the owner (A9.22 G3): requirement_frozen = true on the "
+            "RFP_CLAUSE rows, closure record rfp_rebase.ag15_closure",
+            "REGISTERED_BY_HASH; AG-15 CLOSED_BY_OWNER (A9.22 G3)"),
     ]
 
 
 # ------------------------------------------------------------------------------------------------ (c) owner answers
 OWNER_ROWS_APPLIED = [
-    (1, "no RFP interpretation frozen: every RFP-recorded row carries requirement_frozen = false"),
+    (1, "no RFP interpretation frozen from secondary sources: the canonical RFP is registered by sha256 (A9.17 RFP) "
+        "and every RFP_CLAUSE row cites its registered clauses; requirement_frozen = true on the RFP_CLAUSE rows only "
+        "since the owner closed AG-15 on that registered basis (A9.22 G3, rfp_rebase.ag15_closure)"),
     (2, "RFP reference / bid date not frozen here"),
     (3, "RVM-12 (> 15,000 h provisional) and RVM-13 (>= 26,280 h basis)"),
     (4, "RVM-02 (>= 12 mN sustained atmospheric) and RVM-03 (25 mN capability; Xe not required, booked if used)"),
@@ -1041,7 +1045,14 @@ def build_doc():
         new_rows = A19.build_rows(ns, ctx)
     except A19.A919Error as e:
         raise BuildError(str(e)) from e
-    rows = evaluate_rows(ctx, rows_mod.build_rows(ns, ctx) + new_rows)
+    raw_rows = rows_mod.build_rows(ns, ctx) + new_rows
+    rebase_table = dict(RB.REBASE)
+    rebase_table.update(A19.REBASE)
+    try:   # A9.22 G3: AG-15 closed by the owner -> RFP_CLAUSE rows frozen BEFORE status evaluation (statuses unchanged)
+        frozen_ids = RB.freeze_rfp_rows(raw_rows, rebase_table)
+    except RB.RebaseError as e:
+        raise BuildError(str(e)) from e
+    rows = evaluate_rows(ctx, raw_rows)
     counts = {c: {s: sum(1 for r in rows if r["configurations"][c]["status"] == s) for s in R.STATUSES}
               for c in CONFIGS}
     a92 = pins["A92"]["decisions"]["a9_10_statuses"]
@@ -1119,8 +1130,7 @@ def build_doc():
         doc = A19.apply(doc)
     except A19.A919Error as e:
         raise BuildError(str(e)) from e
-    rebase = dict(RB.REBASE)
-    rebase.update(A19.REBASE)
+    rebase = rebase_table
     try:
         RB.REBASE, saved = rebase, RB.REBASE
         try:
@@ -1136,6 +1146,10 @@ def build_doc():
     try:
         doc = A21.apply_rvm(doc)                  # A9.21 ICP_GATE: GNG-ICP-01 registered before LOCK-1 (fail closed)
     except A21.IcpGateError as e:
+        raise BuildError(str(e)) from e
+    try:
+        doc = RB.record_closure(doc, frozen_ids)   # A9.22 G3 closure record (RP-BRIEF-01), on the final RVM
+    except RB.RebaseError as e:
         raise BuildError(str(e)) from e
     R.assert_status_vocabulary(doc)
     R.assert_no_pass_without_measurement(doc)
@@ -1195,8 +1209,9 @@ def render_md(doc):
     a(f"- The official RFP {rb['registration']['rfp_number']} is registered by hash (PDF sha256 "
       f"`{rb['registration']['pdf_sha256']}`, not committed; A9.17) with a verbatim clause transcription in "
       f"`{rb['registration']['path']}`. Every row cites the RFP clause(s) it derives from or is labelled "
-      f"DERIVED_PROJECT_REQUIREMENT / OWNER_ALLOCATION (AG-15 re-base). RFP rows keep `requirement_frozen = false` "
-      f"until the owner closes AG-15; the interpretation readings are recorded as discrepancies below.")
+      f"DERIVED_PROJECT_REQUIREMENT / OWNER_ALLOCATION (AG-15 re-base). AG-15 is closed by the owner (A9.22 G3): RFP rows "
+      f"carry `requirement_frozen = true` (requirement basis frozen; statuses unchanged, not compliance); the "
+      f"interpretation readings stay recorded as discrepancies below.")
     a(f"- Hall: credible set {doc['hall_status']['credible_set']}; P5-N2 v1 {doc['hall_status']['p5_n2_v1']}; "
       f"0-D absolute results {doc['hall_status']['absolute_0d_results']} - no thrust, power or life analysis "
       f"evidence exists.")
@@ -1389,6 +1404,25 @@ def render_md(doc):
       + "; ".join(rb["decisions"]) + ".")
     a("")
     a("Origins: " + ", ".join(f"{k} {v}" for k, v in rb["origin_counts"].items()) + ".")
+    a("")
+    cl = rb["ag15_closure"]
+    a(f"### AG-15 closure record ({cl['format']})")
+    a("")
+    a(f"- Decision: {cl['decision_code']} - {cl['decision']['item']} = {cl['decision']['code']} "
+      f"(`{cl['decision']['json']}` sha256 `{cl['decision']['json_sha256']}`; verbatim `{cl['decision']['md']}` sha256 "
+      f"`{cl['decision']['md_sha256']}`). Owner text: " + " ".join(_esc(x) for x in cl["decision"]["verbatim_excerpts"]))
+    a(f"- Requirements snapshot: **{cl['requirements_snapshot']}**. {cl['what_it_is_not']}.")
+    a(f"- Accepted registration: `{cl['accepted_registration']['path']}` (PDF sha256 "
+      f"`{cl['accepted_registration']['pdf_sha256']}`, clauses sha256 `{cl['accepted_registration']['clauses_sha256']}`).")
+    ar = cl["accepted_rvm"]
+    a(f"- Accepted RVM: `{ar['path']}` pre-closure file sha256 `{ar['pre_closure_file_sha256']}` at "
+      f"`{ar['pre_closure_commit']}` (identical at the brief commit `{ar['brief_commit']}`); requirements-basis sha256 "
+      f"`{ar['requirements_basis_sha256']}` ({ar['basis_hash_rule']}).")
+    a(f"- Frozen rows ({len(cl['frozen_rows'])}): {', '.join(cl['frozen_rows'])}.")
+    a(f"- Discrepancy dispositions: {cl['discrepancy_dispositions']['status']} - "
+      f"{cl['discrepancy_dispositions']['note']}.")
+    a(f"- Pages {cl['unscreened_pages']['pages']}: {cl['unscreened_pages']['disposition']} "
+      f"({_esc(cl['unscreened_pages']['basis'])}; {cl['unscreened_pages']['scope']}).")
     a("")
     a("| RFP clause | page | section | RVM rows (derived) | related rows | note |")
     a("|---|---|---|---|---|---|")

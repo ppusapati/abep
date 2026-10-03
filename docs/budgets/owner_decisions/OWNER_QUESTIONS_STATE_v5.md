@@ -36,7 +36,9 @@ Flight configuration: **hall_icp_neutralizer** (one). Ground reference: `hall_c1
 
 Xe role (A9.19 digest): CONTINGENCY_AND_EMERGENCY - not a parallel/co-equal propellant; Xe capability is retained (the RFP requires the capability and describes the Xe input as 'an extra input system to take care any problems on board unforeseen problems', RFP-P17-05, with separate tanks RFP-P18-08), but its role is contingency.
 
-RFP now: REGISTERED_BY_HASH_PDF_CONTROLLED_EXTERNALLY (RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, sha256 a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00, 40 pages, 37 clauses); RVM re-base OPEN - RFP registered by hash with verbatim transcription and the RVM re-based; closure is the owner's (not declared here).
+RFP now: REGISTERED_BY_HASH_PDF_CONTROLLED_EXTERNALLY (RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, sha256 a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00, 40 pages, 37 clauses); RVM re-base CLOSED by the owner, A9.22 G3 (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json sha256 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49): RVM re-base accepted (pre-closure RVM file sha256 3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305, requirements-basis sha256 1d4a7f0099e937f0c74a8c1be8fc14408b75f211c7990be4672f4eee5f9b66b5); requirement_frozen = true on the RFP_CLAUSE rows; RFP-derived requirements snapshot FROZEN; closure record rfp_rebase.ag15_closure (RP-BRIEF-01 format); not a compliance claim.
+
+A9.22 G3 (`docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json` sha256 `245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49`, decision code AG15_CLOSED_SNAPSHOT_FROZEN): gate: AG-15 (A9.13 S6.22 F9-OQ-03): CLOSED by the owner; state_row: F9-OQ-03 (status ANSWERED_BY_A9_13 unchanged; PERFORMS_OWNER_ACT record added); rfp_rows: requirement_frozen = true on the 22 RFP_CLAUSE rows (basis only; statuses unchanged); rfp_pages_1_15_34_40: OWNER_REVIEWED_NO_ADDITIONAL_TECHNICAL_PERFORMANCE_REQUIREMENT (owner-stated). Closure record `docs/requirements/rvm_a9/rvm_a9_v1.json/rfp_rebase/ag15_closure` (RP-BRIEF-01 (docs/bid/OWNER_DECISION_BRIEF_P0_P1.md item 1; recorder proposal implemented on the owner's A9.22 G3 closure)); a freeze of the requirements basis only: no RVM row status changes and no compliance claim; the architecture stays INVESTIGATION_HYPOTHESIS.
 
 | # | ID | Earlier status | Status | Later decision records (relation: scope) |
 |---|---|---|---|---|
@@ -66,14 +68,14 @@ RFP now: REGISTERED_BY_HASH_PDF_CONTROLLED_EXTERNALLY (RFP DTDF/06/13516/DSP/ABE
 | 382 | F5-OQ-02 | - | ANSWERED_BY_A9_14 | A9.21 HW_PROGRAMME CONFIRMS: S7.2 engineering channel point after S7.1; an engineering freeze candidate, not thrust-optimized |
 | 393 | OQ-F78-04 | - | ANSWERED_BY_A9_13 | A9.21 EXTERNAL_INPUTS INPUT_STAYS_TBD: the host-spacecraft drag ICD stays TBD; D_spacecraft and T - D stay NOT_EVALUATED for freeze |
 | 399 | F9-OQ-02 | - | ANSWERED_BY_A9_13 | A9.21 HW_PROGRAMME CONFIRMS: the measured H-1 thrust / feed map is mandatory and drives the AG-12 performance-derived feed requirement, followed by the statewise AG-13 T - D >= 0 check |
-| 400 | F9-OQ-03 | - | ANSWERED_BY_A9_13 | A9.17 RFP CONFIRMS: AG-15 registration part: the official RFP is registered by hash with provenance in the public repository (PDF in the controlled evidence store) and the RVM is re-based on it; AG-15 closure (owner acceptance; requirement_frozen) stays the owner's |
+| 400 | F9-OQ-03 | - | ANSWERED_BY_A9_13 | A9.17 RFP CONFIRMS: AG-15 registration part: the official RFP is registered by hash with provenance in the public repository (PDF in the controlled evidence store) and the RVM is re-based on it; AG-15 closure (owner acceptance; requirement_frozen) stays the owner's; A9.22 G3_REQUIREMENTS_SNAPSHOT PERFORMS_OWNER_ACT: the owner closes AG-15 (the closure A9.13 S6.22 F9-OQ-03 reserved to the owner): RVM re-base accepted, requirement_frozen = true on the 22 RFP_CLAUSE rows, RFP-derived requirements snapshot FROZEN; owner review of RFP pages 1-15 / 34-40: no additional ABEP technical-performance requirement altering the RVM re-base; basis only - RVM row evidence / status values unchanged, no compliance claim (see a9_22_g3) |
 | 404 | RP-A919-01 | - | ANSWERED_BY_A9_21 | A9.21 ICP_GATE ANSWERS: gate EXISTENCE and PLACEMENT approved (mandatory ICP go / no-go before LOCK-1, fail closed: missing evidence -> NOT_EVALUATED, never GO); NO numerical criterion approved |
 
 Open part: RP-A919-01: numerical GO / NO-GO criteria not approved (preserved for owner review).
 
 Gate location (RP-A919-01 -> GNG-ICP-01, defined in `docs/requirements/rvm_a9/a9_21_icp_gate.py`): `docs/requirements/rvm_a9/rvm_a9_v1.json` owner_approved_gates[id=GNG-ICP-01]; `docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json` pre_lock1_gates[id=GNG-ICP-01] (pointer only; status unchanged).
 
-Items without a state row: A9.17 DATA_SIZE, SPUTTER (data-artifact rules; no owner-question row); A9.18 GOLDEN (golden design point; no owner-question row); A9.21 H2_6 (H2-6 builder frozen, live-source check in CI; no owner-question row); A9.21 RFQ_DISPATCH (quotation packages finalized here; dispatch by owner / procurement).
+Items without a state row: A9.17 DATA_SIZE, SPUTTER (data-artifact rules; no owner-question row); A9.18 GOLDEN (golden design point; no owner-question row); A9.21 H2_6 (H2-6 builder frozen, live-source check in CI; no owner-question row); A9.21 RFQ_DISPATCH (quotation packages finalized here; dispatch by owner / procurement); A9.22 G1, G2, G4 .. G9 (layer-separation audit items; no owner-question row; applied by their own governed migrations).
 
 Superseded by A9.19 (ROLE of Xe only):
 
@@ -308,6 +310,7 @@ Superseded by A9.19 (ROLE of Xe only):
 - **A9.19 (flight architecture / Xe contingency role)** `docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json` sha256 `20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16`: later_owner_decisions records (pointer, json / md sha256, verbatim excerpt, relation, scope); status AMENDED_BY / ANSWERED_BY only where the relation is SUPERSEDES / AMENDS / ANSWERS
 - **A9.20 (C1 ground-only reference)** `docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json` sha256 `9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6`: later_owner_decisions records (pointer, json / md sha256, verbatim excerpt, relation, scope); status AMENDED_BY / ANSWERED_BY only where the relation is SUPERSEDES / AMENDS / ANSWERS
 - **A9.21 (open items + hardware programme)** `docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json` sha256 `78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549`: later_owner_decisions records (pointer, json / md sha256, verbatim excerpt, relation, scope); status AMENDED_BY / ANSWERED_BY only where the relation is SUPERSEDES / AMENDS / ANSWERS
+- **A9.22 (layer separation G1-G9)** `docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json` sha256 `245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49`: later_owner_decisions records (pointer, json / md sha256, verbatim excerpt, relation, scope); status AMENDED_BY / ANSWERED_BY only where the relation is SUPERSEDES / AMENDS / ANSWERS
 
 ## Pins
 
@@ -340,5 +343,7 @@ Superseded by A9.19 (ROLE of Xe only):
 - `docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md` sha256 `2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c`
 - `docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json` sha256 `78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549`
 - `docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md` sha256 `01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440`
+- `docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json` sha256 `245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49`
+- `docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md` sha256 `749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77`
 
 Verbatim answers are cut from the pinned .md records; the full text is in the JSON rows (`answer_excerpt`). No PASS, no winner, no answer invented.

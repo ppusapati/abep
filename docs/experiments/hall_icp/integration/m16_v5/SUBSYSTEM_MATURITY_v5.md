@@ -470,3 +470,5 @@ Blockers removed by effect: {"AUTHORIZES_WORK": 8, "CHANGED_BY_ANSWERS": 5, "REQ
 * `docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md` `2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c`
 * `docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json` `78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549`
 * `docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md` `01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440`
+* `docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json` `245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49`
+* `docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md` `749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77`

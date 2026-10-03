@@ -12,8 +12,11 @@ This module maps EVERY registered clause to RVM rows and labels every RVM row wi
                               50 W mount heat A9.12 S5.4)
 
 Nothing here sets a status: statuses still come from rvm_rules.assign_status (no PASS without a determining verified
-measurement; A9.13 S6.22). requirement_frozen stays false on every RFP row: the transcription is registered, but AG-15 is
-closed only by the owner and the interpretation readings below are recorded for DRDO clarification.
+measurement; A9.13 S6.22). requirement_frozen: the owner closed AG-15 (A9.22 G3, 2026-10-03): freeze_rfp_rows sets
+requirement_frozen = true on every RFP_CLAUSE row before status evaluation and record_closure writes the closure record
+(rfp_rebase.ag15_closure, recorder proposal RP-BRIEF-01 format) after every module has run; the requirements-basis hash
+of the final RVM must equal the accepted one (fail closed). Freezing the basis is not compliance: statuses still come
+only from rvm_rules. The interpretation readings below stay recorded for DRDO clarification.
 
 stdlib only; deterministic; fail closed (registration identity, PDF hash, clause-transcription hash, clause coverage).
 """
@@ -46,8 +49,170 @@ A917 = {"json": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decision
         "md_sha256": "540212c0c8862528e549555244f0fd39f8f9c9272f84dfb450bfef9dc54eba13"}
 
 
+# owner decision A9.22 G3 (2026-10-03): AG-15 closed, RFP-derived requirements snapshot FROZEN. Immutable record: json +
+# verbatim md pinned by sha256 (the md governs). Closure record format = recorder proposal RP-BRIEF-01
+# (docs/bid/OWNER_DECISION_BRIEF_P0_P1.md item 1) adapted to the A9.22 record (the owner closed AG-15 inside A9.22, not
+# in a separate AG15_CLOSURE file).
+A922 = {"json": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
+        "json_sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49",
+        "md": "docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md",
+        "md_sha256": "749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77"}
+A922_ITEM = "G3_REQUIREMENTS_SNAPSHOT"
+A922_CODE = "AG15_CLOSED_SNAPSHOT_FROZEN"
+# verbatim owner text (checked against the pinned md, whitespace-normalized)
+A922_CLOSE_VERBATIM = "AG-15 is approved for closure."
+A922_PAGES_VERBATIM = ("The previously unscreened RFP pages have now been reviewed and do not introduce an additional ABEP "
+                       "technical-performance requirement that alters the current RVM technical re-base.")
+A922_FROZEN_VERBATIM = ("This freezes the requirements basis only.\nIt does not mean the architecture has demonstrated "
+                        "compliance. Individual RVM rows retain their existing evidence/status values until determining "
+                        "evidence exists.")
+SNAPSHOT_STATUS = "FROZEN"
+# the RVM the closure accepts: the pre-closure RVM at the closing base commit (byte-identical to the RVM the owner
+# decision brief quoted at 66fe963 and to the bid source bbc480c)
+ACCEPTED_RVM = {"path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+                "pre_closure_commit": "9eb302c06241c8e8a369334a6bdc5bc559227143",
+                "pre_closure_file_sha256": "3b89fe6ca26068f5b91124898db7c0910e65d9543f091a0d496b3bb978358305",
+                "brief_commit": "66fe963657a5bffea4f8d7bcb77c418c5f98e26d"}
+# requirements-basis content hash (BASIS_HASH_RULE) of that pre-closure RVM; the frozen basis is exactly this content.
+ACCEPTED_BASIS_SHA256 = "1d4a7f0099e937f0c74a8c1be8fc14408b75f211c7990be4672f4eee5f9b66b5"
+BASIS_ROW_FIELDS = ("id", "title", "category", "requirement_text", "requirement_basis", "requirement_origin",
+                    "rfp_clauses", "related_rfp_clauses", "limit")
+BASIS_REBASE_FIELDS = ("registration", "clause_coverage", "not_system_requirements", "discrepancies")
+BASIS_HASH_RULE = ("sha256 of json.dumps({'rfp_clause_rows': [{f: row[f] for f in " + repr(BASIS_ROW_FIELDS) + "} for "
+                   "every RFP_CLAUSE row in RVM order], 'row_origins': {row id: requirement_origin for every row}, "
+                   "plus rfp_rebase[k] for k in " + repr(BASIS_REBASE_FIELDS) + "}, ensure_ascii=False, sort_keys=True, "
+                   "separators=(',', ':')); requirement_frozen, statuses, evidence and notes are outside the basis")
+
+
 class RebaseError(RuntimeError):
     pass
+
+
+def requirements_basis(doc: dict) -> dict:
+    rows = doc["rows"]
+    rb = doc["rfp_rebase"]
+    out = {"rfp_clause_rows": [{f: r.get(f) for f in BASIS_ROW_FIELDS} for r in rows
+                               if r.get("requirement_origin") == "RFP_CLAUSE"],
+           "row_origins": {r["id"]: r.get("requirement_origin") for r in rows}}
+    for k in BASIS_REBASE_FIELDS:
+        out[k] = rb.get(k)
+    return out
+
+
+def requirements_basis_sha256(doc: dict) -> str:
+    return hashlib.sha256(json.dumps(requirements_basis(doc), ensure_ascii=False, sort_keys=True,
+                                     separators=(",", ":")).encode("utf-8")).hexdigest()
+
+
+def _norm(s: str) -> str:
+    return " ".join(s.split())
+
+
+def load_a922() -> dict:
+    """The owner's AG-15 closure (A9.22 G3). Fail closed on any hash / identity / code / verbatim mismatch."""
+    for k in ("json", "md"):
+        p = ROOT / A922[k]
+        if not p.is_file():
+            raise RebaseError(f"A9.22 decision missing: {A922[k]}")
+        got = _sha(p)
+        if got != A922[k + "_sha256"]:
+            raise RebaseError(f"A9.22 decision changed: {A922[k]} sha256 {got} (decision files are immutable)")
+    d = json.loads((ROOT / A922["json"]).read_text(encoding="utf-8"))
+    if d.get("decided_by") != "owner":
+        raise RebaseError("A9.22 is not an owner decision record")
+    if d.get("verbatim") != {"path": A922["md"], "sha256": A922["md_sha256"]}:
+        raise RebaseError("A9.22 json verbatim record != pinned md path / sha256")
+    code = (d.get("decisions") or {}).get(A922_ITEM)
+    if not isinstance(code, str) or not code.startswith(A922_CODE):
+        raise RebaseError(f"A9.22 {A922_ITEM} decision code is not {A922_CODE}")
+    md = _norm((ROOT / A922["md"]).read_text(encoding="utf-8").split("\n---\n", 1)[1])
+    for t in (A922_CLOSE_VERBATIM, A922_PAGES_VERBATIM, A922_FROZEN_VERBATIM):
+        if _norm(t) not in md:
+            raise RebaseError(f"A9.22 verbatim excerpt not found: {t[:60]!r}")
+    return d
+
+
+def cite_a922() -> str:
+    return (f"A9.22 {A922_ITEM} ({A922['json']} sha256 {A922['json_sha256']}; verbatim {A922['md']} sha256 "
+            f"{A922['md_sha256']})")
+
+
+def rfp_clause_row_ids(table: dict) -> list:
+    return [rid for rid, m in table.items() if m["origin"] == "RFP_CLAUSE"]
+
+
+def freeze_rfp_rows(rows: list, table: dict) -> list:
+    """A9.22 G3: requirement_frozen = true on every RFP_CLAUSE row (owner AG-15 closure), applied to the raw rows BEFORE
+    status evaluation so that every status is assigned on the frozen basis. Statuses are not touched here."""
+    load_a922()
+    ids = rfp_clause_row_ids(table)
+    by = {r["id"]: r for r in rows}
+    if not set(ids) <= set(by):
+        raise RebaseError(f"RFP_CLAUSE rows missing from the RVM: {sorted(set(ids) - set(by))}")
+    for rid in ids:
+        if by[rid]["requirement_frozen"] is not False:
+            raise RebaseError(f"{rid}: an RFP row arrives frozen from the rows module (only the A9.22 closure freezes)")
+        by[rid]["requirement_frozen"] = True
+    return ids
+
+
+def rows_of(doc: dict, clauses: list) -> list:
+    return [r["id"] for r in doc["rows"] if r.get("requirement_origin") == "RFP_CLAUSE"
+            and set(clauses) & set(r.get("rfp_clauses") or [])]
+
+
+def closure_record(doc: dict, frozen_ids: list, pre_closure_status: str) -> dict:
+    """RP-BRIEF-01 closure record (A9.22 G3). Fails closed when the requirements basis differs from the accepted one."""
+    basis = requirements_basis_sha256(doc)
+    if basis != ACCEPTED_BASIS_SHA256:
+        raise RebaseError(f"requirements basis sha256 {basis} != the basis the owner froze ({ACCEPTED_BASIS_SHA256}): "
+                          "the RFP-derived requirements snapshot is FROZEN (A9.22 G3); a basis change needs a new owner "
+                          "decision")
+    rfp_rows = [r["id"] for r in doc["rows"] if r["requirement_origin"] == "RFP_CLAUSE"]
+    if rfp_rows != list(frozen_ids) or not all(r["requirement_frozen"] is True for r in doc["rows"]
+                                               if r["requirement_origin"] == "RFP_CLAUSE"):
+        raise RebaseError("frozen rows != the RFP_CLAUSE rows")
+    reg = doc["rfp_rebase"]["registration"]
+    return {
+        "format": "RP-BRIEF-01 (docs/bid/OWNER_DECISION_BRIEF_P0_P1.md item 1; recorder proposal implemented on the "
+                  "owner's A9.22 G3 closure)",
+        "decision_code": "AG15_CLOSED",
+        "decision": {"item": A922_ITEM, "code": A922_CODE, "json": A922["json"], "json_sha256": A922["json_sha256"],
+                     "md": A922["md"], "md_sha256": A922["md_sha256"], "pointer": f"{A922['json']}#/decisions/{A922_ITEM}",
+                     "decided_by": "owner", "date": "2026-10-03",
+                     "verbatim_excerpts": [A922_CLOSE_VERBATIM, A922_FROZEN_VERBATIM]},
+        "accepted_registration": {"path": REG_REL, "pdf_sha256": reg["pdf_sha256"],
+                                  "clauses_sha256": reg["clauses_sha256"], "n_clauses": reg["n_clauses"]},
+        "accepted_rvm": dict(ACCEPTED_RVM, requirements_basis_sha256=ACCEPTED_BASIS_SHA256,
+                             basis_hash_rule=BASIS_HASH_RULE,
+                             note="the pre-closure RVM the owner accepted (file sha256 at the closing base commit; "
+                                  "byte-identical at the brief commit); the closure changes only requirement_frozen on "
+                                  "the frozen rows and the closure fields, so the requirements-basis hash of the current "
+                                  "RVM must equal requirements_basis_sha256"),
+        "frozen_rows": list(frozen_ids),
+        "requirements_snapshot": SNAPSHOT_STATUS,
+        "discrepancy_dispositions": {
+            "status": "AS_RECORDED",
+            "note": "A9.22 G3 closes AG-15 without amending any discrepancy disposition: each DISC keeps the "
+                    "disposition and the owner / DRDO action recorded in rfp_rebase.discrepancies (DRDO clarifications "
+                    "stay open there); nothing is accepted or answered for DRDO here",
+            "dispositions": {d["id"]: d["disposition"] for d in doc["rfp_rebase"]["discrepancies"]},
+            "phrases_overtaken_by_the_closure": [
+                {"id": d["id"], "phrase": "requirement_frozen stays false", "rows": rows_of(doc, d["rfp_clauses"]),
+                 "now": "requirement_frozen = true on these RFP_CLAUSE rows (A9.22 G3); the disposition text is kept as "
+                        "recorded and the reading and its owner / DRDO action are unchanged"}
+                for d in doc["rfp_rebase"]["discrepancies"] if "requirement_frozen stays false" in d["disposition"]]},
+        "unscreened_pages": {
+            "pages": "1-15, 34-40",
+            "disposition": "OWNER_REVIEWED_NO_ADDITIONAL_TECHNICAL_PERFORMANCE_REQUIREMENT",
+            "basis": "owner statement (A9.22 G3), verbatim: " + A922_PAGES_VERBATIM,
+            "scope": "owner-stated review of the owner-held PDF; the page contents are not transcribed or screened in "
+                     "the repository and nothing else is recorded about them",
+            "registration_record": REG_REL + "#/page_coverage/owner_page_review"},
+        "what_it_is_not": "a freeze of the requirements basis only (A9.22 G3): not a compliance claim; every RVM row "
+                          "keeps its evidence / status values until determining evidence exists",
+        "pre_closure_ag_15_status": pre_closure_status,
+    }
 
 
 def _sha(p: Path) -> str:
@@ -262,8 +427,8 @@ ITEM_TOKENS = {
     "RVM-IT-17": {"RFP-P19-05": "minimum 75% IC"}, "RVM-IT-20": {"RFP-P19-01": "Ignition Time"},
 }
 RECORDED_STATUS = "REQUIREMENT_AS_RECORDED (verify against the official RFP)"
-REGISTERED_ITEM_STATUS = ("RFP_CLAUSE_REGISTERED (verbatim clause in the registration; AG-15 closure is the owner's, "
-                          "requirement not frozen)")
+REGISTERED_ITEM_STATUS = ("RFP_CLAUSE_REGISTERED (verbatim clause in the registration; AG-15 closed by the owner, "
+                          "A9.22 G3: requirement basis frozen, compliance not implied)")
 ITEM_EXTRA = {
     "RVM-IT-09": {"owner_reading": "OWNER_READING (DISC-02): wet incl. Xe + tank (owner row 5); the registered RFP "
                                    "prints '< 40kg' (RFP-P18-11) without stating wet or dry; recorded for DRDO "
@@ -360,6 +525,29 @@ def coverage(reg: dict, rows: list) -> list:
     return out
 
 
+PRE_CLOSURE_AG15_STATUS = ("OPEN - RFP registered by hash with verbatim transcription and the RVM re-based; closure is "
+                           "the owner's (not declared here)")
+CLOSED_AG15_STATUS = ("CLOSED by the owner, A9.22 G3 (" + A922["json"] + " sha256 " + A922["json_sha256"] + "): RVM "
+                      "re-base accepted (pre-closure RVM file sha256 " + ACCEPTED_RVM["pre_closure_file_sha256"] +
+                      ", requirements-basis sha256 " + ACCEPTED_BASIS_SHA256 + "); requirement_frozen = true on the "
+                      "RFP_CLAUSE rows; RFP-derived requirements snapshot FROZEN; closure record rfp_rebase.ag15_closure "
+                      "(RP-BRIEF-01 format); not a compliance claim")
+
+
+def record_closure(doc: dict, frozen_ids: list) -> dict:
+    """A9.22 G3: write the AG-15 closure record into the re-base (after every module has run, so the basis hash is the
+    one of the final RVM). Fail closed."""
+    load_a922()
+    rb = doc["rfp_rebase"]
+    if rb["ag_15_status"] != PRE_CLOSURE_AG15_STATUS:
+        raise RebaseError("AG-15 closure recorded twice")
+    rb["ag15_closure"] = closure_record(doc, frozen_ids, rb["ag_15_status"])
+    rb["ag_15_status"] = CLOSED_AG15_STATUS
+    rb["requirements_snapshot"] = SNAPSHOT_STATUS
+    rb["decisions"].append(cite_a922())
+    return doc
+
+
 def apply(doc: dict, reg: dict, secondary_basis: str) -> dict:
     load_a917()
     ids = {c["id"] for c in reg["clauses"]}
@@ -407,15 +595,16 @@ def apply(doc: dict, reg: dict, secondary_basis: str) -> dict:
                       "OWNER_ALLOCATION": "owner-given internal design allocation, not an RFP gate"}[m["origin"]],
             "decisions": [cite_a917(), L.cite("F9-OQ-03")] + [L.cite(q) for q in m.get("decisions", [])],
             "as_carried": prior,
-            "requirement_frozen_note": ("stays false: the RFP transcription is registered (AG-15 step) but AG-15 "
-                                        "closes only by owner verification; interpretation readings are listed in "
-                                        "rfp_rebase.discrepancies") if m["origin"] == "RFP_CLAUSE" else
+            "requirement_frozen_note": ("true: AG-15 closed by the owner, RFP-derived requirements snapshot FROZEN ("
+                                        + cite_a922() + "); this freezes the requirement basis only, never compliance "
+                                        "(the row's evidence / status values are unchanged); interpretation readings "
+                                        "stay listed in rfp_rebase.discrepancies") if m["origin"] == "RFP_CLAUSE" else
             "unchanged (" + str(r["requirement_frozen"]) + ")",
         }
         if m.get("note"):
             r["rfp_rebase"]["note"] = m["note"]
-        if m["origin"] == "RFP_CLAUSE" and r["requirement_frozen"]:
-            raise RebaseError(f"{rid}: an RFP row cannot be frozen before AG-15 closes")
+        if m["origin"] == "RFP_CLAUSE" and r["requirement_frozen"] is not True:
+            raise RebaseError(f"{rid}: RFP row not frozen although AG-15 is closed (A9.22 G3; freeze_rfp_rows first)")
     for it in doc["items"]:
         if it["id"] not in ITEMS:
             raise RebaseError(f"item {it['id']} not mapped")
@@ -455,9 +644,10 @@ def apply(doc: dict, reg: dict, secondary_basis: str) -> dict:
         "rule": "every RVM row cites the RFP clause id(s) it derives from or is labelled DERIVED_PROJECT_REQUIREMENT / "
                 "OWNER_ALLOCATION; every registered clause maps to at least one row or is a recorded programmatic "
                 "item; statuses unchanged by the re-base (rvm_rules; no PASS without determining evidence, A9.13 "
-                "S6.22); requirement_frozen stays false on RFP rows until the owner closes AG-15",
-        "ag_15_status": "OPEN - RFP registered by hash with verbatim transcription and the RVM re-based; closure is "
-                        "the owner's (not declared here)",
+                "S6.22); requirement_frozen = true on every RFP_CLAUSE row since the owner closed AG-15 (A9.22 G3: "
+                "the requirement basis is frozen, compliance is not implied)",
+        "ag_15_status": PRE_CLOSURE_AG15_STATUS,
+        "requirements_snapshot": "PENDING_AG15_CLOSURE_RECORD",
         "origin_counts": {o: sum(1 for r in doc["rows"] if r["requirement_origin"] == o) for o in ORIGINS},
         "clause_coverage": cov,
         "not_system_requirements": [{"clause_id": k, "class": v[0], "why": v[1]}
