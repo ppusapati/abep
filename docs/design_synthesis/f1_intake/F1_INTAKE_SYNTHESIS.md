@@ -25,10 +25,19 @@ What this is not:
 ## Coverage rule
 - **frozen_surface**: used only at an exact grid node (L/d, phi, alpha, theta, kernel, species) AND at its build state (200.0, 150.0) (alt km, F10.7); never interpolated across the atmosphere, never extrapolated
 - **direct_tpmc**: abep_sim.intake_tpmc.intake_response at phi = 1 (pure channel response; phi applied exactly, pinned by a test), deterministic crc32 seeds, n per point = F1-P-12; converged iff unresolved fraction <= 1e-3, else MODEL_ERROR (fail closed)
-- **orbit_states**: ['h200_f150', 'h180_f70', 'h180_f230', 'h230_f70', 'h230_f230']
-- **orbit_state_basis**: RFP band corners 180/230 km x F10.7 70/230 (extremes present in the frozen dataset) plus the surface build state 200 km / F10.7 150. Local-time states: NOT_IN_FROZEN_DATASET (the dataset is orbit-averaged over local solar time); live MSIS not used (rule 3)
+- **orbit_states**: 197 states (index 0 `h200_f150` = design-case reference point; the rest = the required design states, ids in the JSON)
+- **orbit_state_basis**: index 0: design-case reference point h200_f150 (surface build state, orbit-averaged atmosphere_msis21_v1); then every required state of the frozen design-state set v2 atmosphere_msis21_orbit_v1_design_states_v2 (sha256 60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049): nominal states and physical extrema of density / composition / temperature / local time / solar activity of the frozen orbit-resolved dataset (A9.14 S9.8 OD3). No subset; live MSIS not used (rule 3)
+- **orbit_basis_label**: BROAD_ENVELOPE_ALL_INCLINATIONS_ALL_LTAN_NOT_MISSION_ICD
+- **design_state_coverage**: NOT_COVERED: intake_surface_v1 was built at one orbit-averaged state (200 km, F10.7 150); every design-state point is direct TPMC with registered seeds
+- **design_state_set**: `atmosphere_msis21_orbit_v1_design_states_v2` (`abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json`, sha256 `60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049`), 196 required states (47 in the nominal mission scenario ECSS_LT_MODERATE); scenarios ['ECSS_LT_HIGH', 'ECSS_LT_LOW', 'ECSS_LT_MODERATE', 'ECSS_ST_HIGH']; altitudes [180.0, 195.0, 215.0, 230.0] km; labels {'ENVELOPE_MAX_T_K': 1, 'ENVELOPE_MAX_rho_kg_m3': 1, 'ENVELOPE_MAX_x_N2': 1, 'ENVELOPE_MAX_x_O': 1, 'ENVELOPE_MAX_x_O2': 1, 'ENVELOPE_MIN_T_K': 1, 'ENVELOPE_MIN_rho_kg_m3': 1, 'ENVELOPE_MIN_x_N2': 1, 'ENVELOPE_MIN_x_O': 1, 'ENVELOPE_MIN_x_O2': 1, 'LST_PEAK': 16, 'LST_TROUGH': 16, 'MAX_T_K': 16, 'MAX_rho_kg_m3': 16, 'MAX_x_N2': 16, 'MAX_x_O': 16, 'MAX_x_O2': 16, 'MIN_T_K': 16, 'MIN_rho_kg_m3': 16, 'MIN_x_N2': 16, 'MIN_x_O': 16, 'MIN_x_O2': 16, 'NOMINAL_MEDIAN_RHO': 16}; orbit basis **BROAD_ENVELOPE_ALL_INCLINATIONS_ALL_LTAN_NOT_MISSION_ICD**: inclination and LTAN are not specified (A9.21 EXTERNAL_INPUTS: not in the RFP; the old 96.3 deg dawn-dusk code default is never mission truth; A9.17 ORBIT: TBD from DRDO / spacecraft ICD / PDR mission definition). The design-state set v2 covers every latitude -90..90 deg and every local time, so it does not depend on an orbit assumption; it is a broad design envelope, not a mission trajectory. A registered orbit narrows it in a new version. Speed: V_ORB_INERTIAL_CIRCULAR: free-stream speed = circular inertial orbital speed sqrt(mu / (R_E + h)) at the state altitude (abep_sim.atmosphere.orbital_velocity, the F1 convention since A9.7); Earth co-rotation and thermospheric winds are NOT included (they depend on the TBD inclination / LTAN; the set carries no relative velocity). Composition: rho = total NRLMSIS 2.1 mass density of the state (all species); mass fractions of O, N2, O2 renormalised over those three (He, Ar, N dropped from the composition, as abep_sim.atmosphere does); n = rho / m_mean. Subset used: False (no subsampling: the set designates no design subset; every required state is evaluated).
+- **design_states**: 196 required-state records (scenario, altitude, latitude, local time, longitude, day of year, labels) in the JSON
 - **species**: ['O', 'N2', 'O2']
 - **theta**: 0 deg at every state; 5 deg (largest frozen node) at the design state for the off-axis objective
+
+## State-set change (history)
+- Superseded: ['h200_f150', 'h180_f70', 'h180_f230', 'h230_f70', 'h230_f230'] (h200_f150 (surface build state) + 180 / 230 km x F10.7 70 / 230 corners of the orbit-averaged atmosphere_msis21_v1 (hand-picked; no local time, latitude or season); SUPERSEDED_BY_DESIGN_STATE_SET_V2 (A9.14 S9.8 OD3; A9.13 S6.14 OQ-F4-05)). Reason: A9.14 S9.8 OD3 (design states come from the versioned orbit-resolved dataset; no hand-picked F10.7 / density points) and A9.13 S6.14 OQ-F4-05 (application-matrix residual RVF-03).
+- Superseded output `docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json` at 61eefc4 (sha256 `85c79045047a6b09a10c8f199782b25defad2b5446386fa68496a16cf41c2ff2`, 503 direct runs); feasible candidates of 144 per scenario: design case {'maxwell_a0': 120, 'maxwell_a0.2': 120, 'maxwell_a0.5': 120, 'maxwell_a0.8': 120, 'maxwell_a1': 120, 'cll_a0': 120, 'cll_a0.2': 120, 'cll_a0.5': 120, 'cll_a0.8': 120, 'cll_a1': 120}, envelope {'maxwell_a0': 48, 'maxwell_a0.2': 48, 'maxwell_a0.5': 48, 'maxwell_a0.8': 48, 'maxwell_a1': 48, 'cll_a0': 48, 'cll_a0.2': 48, 'cll_a0.5': 48, 'cll_a0.8': 48, 'cll_a1': 48}.
+- Intake structural mass label (A9.13 S6.1 / F1Q-02 (BUDGETING_ASSUMPTION_SOURCED_BEFORE_LOCK_1)): PARAMETRIC_SENSITIVITY, BUDGETING_ONLY; never CBE, FROZEN_INTAKE_MASS, STRUCTURAL_QUALIFICATION; SOURCED_STRUCTURAL_DEFINITION_REQUIRED_BEFORE_LOCK_1.
 
 ## Parameters
 | id | name | value | units | evidence class | status | source |
@@ -47,10 +56,11 @@ What this is not:
 | F1-P-12 | direct TPMC particles per point | 3000 | - | numerical-setting | STUDY_SETTING | this study |
 | F1-P-13 | frozen-surface particles per point | 12000 | - | numerical-setting | FROZEN | abep_sim/data/intake_surface_v1.json n_per_point |
 | F1-P-14 | K_back (Clausing) particles per evaluation | 20000 | - | numerical-setting | CODE_DEFAULT | abep_sim/intake_tpmc.py clausing_transmission signature |
-| F1-P-15 | relative flow speed | V_orbital | m s^-1 | model-derived | KNOWN_LIMITATION | docs/interfaces/UPSTREAM_ICD.md IF-A0 V_mps (partial) |
+| F1-P-15 | relative flow speed | V_orbital | m s^-1 | model-derived | KNOWN_LIMITATION (inclination / LTAN TBD, A9.21) | abep_sim/atmosphere.py orbital_velocity; docs/interfaces/UPSTREAM_ICD.md IF-A0 V_mps (partial) |
 | F1-P-16 | frontal-area design grid | [0.25, 0.5, 0.75, 1.0, 1.25, 1.5] | m^2 | assumed | DESIGN_GRID | feed_state_closure_v1.json published_comparables LIT-01 (Andreussi 2022 Table 1) |
 | F1-P-17 | channel-diameter design grid | [5.0, 10.0, 20.0] | mm | assumed | DESIGN_GRID | this study |
 | F1-P-18 | L/d and phi design grid | {'L_over_d': [3.0, 5.0, 10.0, 20.0], 'phi': [0.8, 0.9]} | - | model-derived | DESIGN_GRID | intake_surface_v1.json grid |
+| F1-P-19 | orbit / atmosphere state set | atmosphere_msis21_orbit_v1_design_states_v2 | - | model-derived | FROZEN_DATASET (A9.14 S9.8 OD3; broad envelope, not a mission orbit) | abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json sha256 60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049 |
 
 ## Design space and objectives
 Variables: {'area_m2': [0.25, 0.5, 0.75, 1.0, 1.25, 1.5], 'd_mm': [5.0, 10.0, 20.0], 'L_over_d': [3.0, 5.0, 10.0, 20.0], 'phi': [0.8, 0.9]} (144 candidates). Scenario axes: {'alpha': [0.0, 0.2, 0.5, 0.8, 1.0], 'scattering': ['maxwell', 'cll']}. alpha and the kernel are TBD evidence inputs: every scenario gets its own Pareto set; no scenario is chosen by the search.
@@ -106,48 +116,52 @@ Non-dominated groups (A m^2, L/d, phi; d values tie, F1-02), listed in grid orde
 ## Pareto sets: envelope (worst case of each objective over the evaluated orbit states (worst state recorded); feasibility requires every state)
 | scenario | non-dominated | within noise | dominated | infeasible | p_ref-invariant |
 |---|---|---|---|---|---|
-| maxwell_a0 | 48 | 0 | 0 | 96 | True |
-| maxwell_a0.2 | 48 | 0 | 0 | 96 | True |
-| maxwell_a0.5 | 48 | 0 | 0 | 96 | True |
-| maxwell_a0.8 | 48 | 0 | 0 | 96 | True |
-| maxwell_a1 | 48 | 0 | 0 | 96 | True |
-| cll_a0 | 36 | 0 | 12 | 96 | True |
-| cll_a0.2 | 48 | 0 | 0 | 96 | True |
-| cll_a0.5 | 48 | 0 | 0 | 96 | True |
-| cll_a0.8 | 48 | 0 | 0 | 96 | True |
-| cll_a1 | 48 | 0 | 0 | 96 | True |
+| maxwell_a0 | 24 | 0 | 0 | 120 | True |
+| maxwell_a0.2 | 24 | 0 | 0 | 120 | True |
+| maxwell_a0.5 | 24 | 0 | 0 | 120 | True |
+| maxwell_a0.8 | 24 | 0 | 0 | 120 | True |
+| maxwell_a1 | 24 | 0 | 0 | 120 | True |
+| cll_a0 | 24 | 0 | 0 | 120 | True |
+| cll_a0.2 | 24 | 0 | 0 | 120 | True |
+| cll_a0.5 | 24 | 0 | 0 | 120 | True |
+| cll_a0.8 | 24 | 0 | 0 | 120 | True |
+| cll_a1 | 24 | 0 | 0 | 120 | True |
 
 Non-dominated groups (A m^2, L/d, phi; d values tie, F1-02), listed in grid order, not ranked:
 
-- `maxwell_a0`: (0.25, 3, 0.8), (0.25, 3, 0.9), (0.25, 5, 0.8), (0.25, 5, 0.9), (0.25, 10, 0.8), (0.25, 10, 0.9), (0.25, 20, 0.8), (0.25, 20, 0.9), (0.5, 3, 0.8), (0.5, 3, 0.9), (0.5, 5, 0.8), (0.5, 5, 0.9), (0.5, 10, 0.8), (0.5, 10, 0.9), (0.5, 20, 0.8), (0.5, 20, 0.9)
-- `maxwell_a0.2`: (0.25, 3, 0.8), (0.25, 3, 0.9), (0.25, 5, 0.8), (0.25, 5, 0.9), (0.25, 10, 0.8), (0.25, 10, 0.9), (0.25, 20, 0.8), (0.25, 20, 0.9), (0.5, 3, 0.8), (0.5, 3, 0.9), (0.5, 5, 0.8), (0.5, 5, 0.9), (0.5, 10, 0.8), (0.5, 10, 0.9), (0.5, 20, 0.8), (0.5, 20, 0.9)
-- `maxwell_a0.5`: (0.25, 3, 0.8), (0.25, 3, 0.9), (0.25, 5, 0.8), (0.25, 5, 0.9), (0.25, 10, 0.8), (0.25, 10, 0.9), (0.25, 20, 0.8), (0.25, 20, 0.9), (0.5, 3, 0.8), (0.5, 3, 0.9), (0.5, 5, 0.8), (0.5, 5, 0.9), (0.5, 10, 0.8), (0.5, 10, 0.9), (0.5, 20, 0.8), (0.5, 20, 0.9)
-- `maxwell_a0.8`: (0.25, 3, 0.8), (0.25, 3, 0.9), (0.25, 5, 0.8), (0.25, 5, 0.9), (0.25, 10, 0.8), (0.25, 10, 0.9), (0.25, 20, 0.8), (0.25, 20, 0.9), (0.5, 3, 0.8), (0.5, 3, 0.9), (0.5, 5, 0.8), (0.5, 5, 0.9), (0.5, 10, 0.8), (0.5, 10, 0.9), (0.5, 20, 0.8), (0.5, 20, 0.9)
-- `maxwell_a1`: (0.25, 3, 0.8), (0.25, 3, 0.9), (0.25, 5, 0.8), (0.25, 5, 0.9), (0.25, 10, 0.8), (0.25, 10, 0.9), (0.25, 20, 0.8), (0.25, 20, 0.9), (0.5, 3, 0.8), (0.5, 3, 0.9), (0.5, 5, 0.8), (0.5, 5, 0.9), (0.5, 10, 0.8), (0.5, 10, 0.9), (0.5, 20, 0.8), (0.5, 20, 0.9)
-- `cll_a0`: (0.25, 3, 0.8), (0.25, 3, 0.9), (0.25, 5, 0.8), (0.25, 5, 0.9), (0.25, 10, 0.8), (0.25, 10, 0.9), (0.5, 3, 0.8), (0.5, 3, 0.9), (0.5, 5, 0.8), (0.5, 5, 0.9), (0.5, 10, 0.8), (0.5, 10, 0.9)
-- `cll_a0.2`: (0.25, 3, 0.8), (0.25, 3, 0.9), (0.25, 5, 0.8), (0.25, 5, 0.9), (0.25, 10, 0.8), (0.25, 10, 0.9), (0.25, 20, 0.8), (0.25, 20, 0.9), (0.5, 3, 0.8), (0.5, 3, 0.9), (0.5, 5, 0.8), (0.5, 5, 0.9), (0.5, 10, 0.8), (0.5, 10, 0.9), (0.5, 20, 0.8), (0.5, 20, 0.9)
-- `cll_a0.5`: (0.25, 3, 0.8), (0.25, 3, 0.9), (0.25, 5, 0.8), (0.25, 5, 0.9), (0.25, 10, 0.8), (0.25, 10, 0.9), (0.25, 20, 0.8), (0.25, 20, 0.9), (0.5, 3, 0.8), (0.5, 3, 0.9), (0.5, 5, 0.8), (0.5, 5, 0.9), (0.5, 10, 0.8), (0.5, 10, 0.9), (0.5, 20, 0.8), (0.5, 20, 0.9)
-- `cll_a0.8`: (0.25, 3, 0.8), (0.25, 3, 0.9), (0.25, 5, 0.8), (0.25, 5, 0.9), (0.25, 10, 0.8), (0.25, 10, 0.9), (0.25, 20, 0.8), (0.25, 20, 0.9), (0.5, 3, 0.8), (0.5, 3, 0.9), (0.5, 5, 0.8), (0.5, 5, 0.9), (0.5, 10, 0.8), (0.5, 10, 0.9), (0.5, 20, 0.8), (0.5, 20, 0.9)
-- `cll_a1`: (0.25, 3, 0.8), (0.25, 3, 0.9), (0.25, 5, 0.8), (0.25, 5, 0.9), (0.25, 10, 0.8), (0.25, 10, 0.9), (0.25, 20, 0.8), (0.25, 20, 0.9), (0.5, 3, 0.8), (0.5, 3, 0.9), (0.5, 5, 0.8), (0.5, 5, 0.9), (0.5, 10, 0.8), (0.5, 10, 0.9), (0.5, 20, 0.8), (0.5, 20, 0.9)
+- `maxwell_a0`: (0.25, 3, 0.8), (0.25, 3, 0.9), (0.25, 5, 0.8), (0.25, 5, 0.9), (0.25, 10, 0.8), (0.25, 10, 0.9), (0.25, 20, 0.8), (0.25, 20, 0.9)
+- `maxwell_a0.2`: (0.25, 3, 0.8), (0.25, 3, 0.9), (0.25, 5, 0.8), (0.25, 5, 0.9), (0.25, 10, 0.8), (0.25, 10, 0.9), (0.25, 20, 0.8), (0.25, 20, 0.9)
+- `maxwell_a0.5`: (0.25, 3, 0.8), (0.25, 3, 0.9), (0.25, 5, 0.8), (0.25, 5, 0.9), (0.25, 10, 0.8), (0.25, 10, 0.9), (0.25, 20, 0.8), (0.25, 20, 0.9)
+- `maxwell_a0.8`: (0.25, 3, 0.8), (0.25, 3, 0.9), (0.25, 5, 0.8), (0.25, 5, 0.9), (0.25, 10, 0.8), (0.25, 10, 0.9), (0.25, 20, 0.8), (0.25, 20, 0.9)
+- `maxwell_a1`: (0.25, 3, 0.8), (0.25, 3, 0.9), (0.25, 5, 0.8), (0.25, 5, 0.9), (0.25, 10, 0.8), (0.25, 10, 0.9), (0.25, 20, 0.8), (0.25, 20, 0.9)
+- `cll_a0`: (0.25, 3, 0.8), (0.25, 3, 0.9), (0.25, 5, 0.8), (0.25, 5, 0.9), (0.25, 10, 0.8), (0.25, 10, 0.9), (0.25, 20, 0.8), (0.25, 20, 0.9)
+- `cll_a0.2`: (0.25, 3, 0.8), (0.25, 3, 0.9), (0.25, 5, 0.8), (0.25, 5, 0.9), (0.25, 10, 0.8), (0.25, 10, 0.9), (0.25, 20, 0.8), (0.25, 20, 0.9)
+- `cll_a0.5`: (0.25, 3, 0.8), (0.25, 3, 0.9), (0.25, 5, 0.8), (0.25, 5, 0.9), (0.25, 10, 0.8), (0.25, 10, 0.9), (0.25, 20, 0.8), (0.25, 20, 0.9)
+- `cll_a0.8`: (0.25, 3, 0.8), (0.25, 3, 0.9), (0.25, 5, 0.8), (0.25, 5, 0.9), (0.25, 10, 0.8), (0.25, 10, 0.9), (0.25, 20, 0.8), (0.25, 20, 0.9)
+- `cll_a1`: (0.25, 3, 0.8), (0.25, 3, 0.9), (0.25, 5, 0.8), (0.25, 5, 0.9), (0.25, 10, 0.8), (0.25, 10, 0.9), (0.25, 20, 0.8), (0.25, 20, 0.9)
 
 ## Diagnostics
 - Surface reproduction (direct TPMC vs frozen node, build state): all within 3 sigma = True
 - C_D replicate calibration: rel SD 0.002156 at n = 3000 (5 seeds)
-- Envelope bracket over 130 frozen grid states: True
-- Direct TPMC runs in this build: 503
+- S_O over the 196 required design states: 5.643 (MAX_T_K[ECSS_ST_HIGH,230km], ENVELOPE_MAX_T_K) to 11.16 (MIN_T_K[ECSS_LT_LOW,180km], ENVELOPE_MIN_T_K)
+- S_N2 over the 196 required design states: 7.466 (MAX_T_K[ECSS_ST_HIGH,230km], ENVELOPE_MAX_T_K) to 14.77 (MIN_T_K[ECSS_LT_LOW,180km], ENVELOPE_MIN_T_K)
+- S_O2 over the 196 required design states: 7.981 (MAX_T_K[ECSS_ST_HIGH,230km], ENVELOPE_MAX_T_K) to 15.79 (MIN_T_K[ECSS_LT_LOW,180km], ENVELOPE_MIN_T_K)
+- rhoV_kg_m2_s over the 196 required design states: 1.857e-07 (MIN_rho_kg_m3[ECSS_LT_LOW,230km], ENVELOPE_MIN_rho_kg_m3) to 8.593e-06 (MAX_rho_kg_m3[ECSS_ST_HIGH,180km], ENVELOPE_MAX_rho_kg_m3)
+- q_Pa over the 196 required design states: 0.0007217 (MIN_rho_kg_m3[ECSS_LT_LOW,230km], ENVELOPE_MIN_rho_kg_m3) to 0.03351 (MAX_rho_kg_m3[ECSS_ST_HIGH,180km], ENVELOPE_MAX_rho_kg_m3)
+- Direct TPMC runs in this build: 23543
 - Compressor burden sweep p_ref = [0.05, 0.1, 0.2, 0.3, 0.5, 1.0] Pa: compressor_burden(p_ref) = p_ref x compressor_burden_per_Pa (candidate_metrics); lower bound, no floor at 1 (< 1 means p_passive alone exceeds p_ref at zero net flow)
 
 ## Findings
 - **F1-01** (model-derived): HISTORICAL (pre-fix production code, before owner decision A9.9 S2.1): abep_sim.intake.IntakeSurface recombined species rows by MASS fraction, although each species row's C_D is normalised by the mixture dynamic pressure of the build atmosphere (C_D_row = (m_s/m_mean) C_D_s) and CR_passive is a number-density ratio (mole weighting applies). At {'L_over_d': 10.0, 'phi': 0.9, 'alpha': 1.0, 'scattering': 'maxwell', 'state': 'h200_f150'} that pre-fix convention gives C_D x1.0802 and CR_passive x1.0654 relative to the species-consistent recombination (this lane's value; the ratios quantify the superseded convention, re-evaluated from the species rows). Handling: FIXED in production: abep_sim/intake_tpmc.py IntakeSurface now recombines the species rows by their physical definitions (F1Q-01 ANSWERED A9.9 S2.1 YES_PRODUCTION_FIX); this lane recombines from the species rows directly, consistent with the fixed production code.
 - **F1-02** (model-derived): in the free-molecular TPMC every output (eta_c, C_D, K_back, CR_passive) is invariant to the channel diameter d at fixed L/d (trajectories scale with R and L), and the geometric wall area 2 phi A L/d is d-independent; d changes only intake depth L and cell count. CR_passive and K_back are also independent of phi. Candidates differing only in d therefore tie in every objective (reported as d-collapsed groups). Handling: pinned by tests (d-invariance, phi reconstruction).
 - **F1-03** (model-derived): compressor burden = p_ref / p_passive is a monotone transform of p_passive at every p_ref; the Pareto status of every candidate is identical across the p_ref sweep [0.05, 0.1, 0.2, 0.3, 0.5, 1.0] Pa in every view and scenario: True. Handling: p_ref stays TBD; no value was needed for the filter.
-- **F1-04** (model-derived): hard constraint C-DRAG-RFP (intake-face drag <= RFP thrust max) and MODEL_ERROR fail closed; design_case: infeasible per scenario {'maxwell_a0': 24, 'maxwell_a0.2': 24, 'maxwell_a0.5': 24, 'maxwell_a0.8': 24, 'maxwell_a1': 24, 'cll_a0': 24, 'cll_a0.2': 24, 'cll_a0.5': 24, 'cll_a0.8': 24, 'cll_a1': 24}; envelope: infeasible per scenario {'maxwell_a0': 96, 'maxwell_a0.2': 96, 'maxwell_a0.5': 96, 'maxwell_a0.8': 96, 'maxwell_a1': 96, 'cll_a0': 96, 'cll_a0.2': 96, 'cll_a0.5': 96, 'cll_a0.8': 96, 'cll_a1': 96}. Handling: infeasible candidates are kept with reasons, never ranked.
+- **F1-04** (model-derived): hard constraint C-DRAG-RFP (intake-face drag <= RFP thrust max) and MODEL_ERROR fail closed; design_case: infeasible per scenario {'maxwell_a0': 24, 'maxwell_a0.2': 24, 'maxwell_a0.5': 24, 'maxwell_a0.8': 24, 'maxwell_a1': 24, 'cll_a0': 24, 'cll_a0.2': 24, 'cll_a0.5': 24, 'cll_a0.8': 24, 'cll_a1': 24}; envelope: infeasible per scenario {'maxwell_a0': 120, 'maxwell_a0.2': 120, 'maxwell_a0.5': 120, 'maxwell_a0.8': 120, 'maxwell_a1': 120, 'cll_a0': 120, 'cll_a0.2': 120, 'cll_a0.5': 120, 'cll_a0.8': 120, 'cll_a1': 120}. Handling: infeasible candidates are kept with reasons, never ranked.
 - **F1-05** (model-derived): collection vs passive compression trade at the design case (phi max, mixture): maxwell_a0: L/d 3 eta_c 0.900 CR 52 | L/d 20 eta_c 0.900 CR 52; maxwell_a0.2: L/d 3 eta_c 0.868 CR 72 | L/d 20 eta_c 0.715 CR 133; maxwell_a0.5: L/d 3 eta_c 0.818 CR 99 | L/d 20 eta_c 0.507 CR 197; maxwell_a0.8: L/d 3 eta_c 0.766 CR 128 | L/d 20 eta_c 0.351 CR 235; maxwell_a1: L/d 3 eta_c 0.736 CR 154 | L/d 20 eta_c 0.278 CR 260; cll_a0: L/d 3 eta_c 0.900 CR 52 | L/d 20 eta_c 0.900 CR 52; cll_a0.2: L/d 3 eta_c 0.900 CR 75 | L/d 20 eta_c 0.900 CR 167; cll_a0.5: L/d 3 eta_c 0.900 CR 109 | L/d 20 eta_c 0.874 CR 345; cll_a0.8: L/d 3 eta_c 0.899 CR 152 | L/d 20 eta_c 0.637 CR 431; cll_a1: L/d 3 eta_c 0.736 CR 154 | L/d 20 eta_c 0.278 CR 262. Handling: this is the trade the Pareto set exposes; alpha is a TBD scenario, not a choice.
 - **F1-06** (model-derived): direct TPMC at the surface build state reproduces the frozen surface nodes within 3 sigma: True (z-scores in surface_reproduction_check). Handling: diagnostic of build-state / normalisation consistency only.
-- **F1-07** (model-derived): over all 130 frozen-atmosphere grid states in 180-230 km (all F10.7), the extremes of the species speed ratios, rho V and q occur at evaluated states: True. Handling: basis for the corner-state envelope; interior states are not evaluated.
+- **F1-07** (model-derived): over the 196 required states of atmosphere_msis21_orbit_v1_design_states_v2 (every scenario x altitude node with its density / composition / temperature / local-time extrema) the free-stream ranges are: S_O 5.643..11.16 (max at MIN_T_K[ECSS_LT_LOW,180km]); S_N2 7.466..14.77 (max at MIN_T_K[ECSS_LT_LOW,180km]); S_O2 7.981..15.79 (max at MIN_T_K[ECSS_LT_LOW,180km]); rhoV_kg_m2_s 1.857e-07..8.593e-06 (max at MAX_rho_kg_m3[ECSS_ST_HIGH,180km]); q_Pa 0.0007217..0.03351 (max at MAX_rho_kg_m3[ECSS_ST_HIGH,180km]). Handling: every required state is evaluated (no corner bracketing, no subset); orbit basis BROAD_ENVELOPE_ALL_INCLINATIONS_ALL_LTAN_NOT_MISSION_ICD.
 - **F1-08** (model-derived): relative collection loss per degree of pointing (secant 0-5 deg, design case) spans 0.0008-0.0408 per deg across candidates and scenarios. Handling: objective; the pointing budget is an AOCS-envelope requirement (F1Q-03 ANSWERED A9.13 S6.2 AOCS_ENVELOPE_REQUIRED); its value is not yet supplied.
-- **F1-10** (model-derived): the non-dominated filter removes few feasible candidates (dominated or within-noise counts per scenario: {'design_case': {'maxwell_a0': 30, 'maxwell_a0.2': 0, 'maxwell_a0.5': 0, 'maxwell_a0.8': 0, 'maxwell_a1': 0, 'cll_a0': 60, 'cll_a0.2': 0, 'cll_a0.5': 0, 'cll_a0.8': 0, 'cll_a1': 0}, 'envelope': {'maxwell_a0': 0, 'maxwell_a0.2': 0, 'maxwell_a0.5': 0, 'maxwell_a0.8': 0, 'maxwell_a1': 0, 'cll_a0': 12, 'cll_a0.2': 0, 'cll_a0.5': 0, 'cll_a0.8': 0, 'cll_a1': 0}}): within a scenario A trades captured flow against drag and mass, and L/d trades eta_c and off-axis tolerance against passive compression; candidates are removed mainly where longer channels add mass without a compression or collection gain (near-specular scenarios). Handling: the Pareto sets are the deliverable; narrowing them needs the TBD inputs (alpha, p_ref, structure, pointing) or downstream objectives (F2-F7), not a scalar weighting here.
-- **F1-09** (assumed): m_intake is TBD for every candidate (wall thickness, coating and support fraction have no evidence). Under the labelled PARAMETRIC_SENSITIVITY_CASE SC-CODE-DEFAULT it spans 0.66-29.85 kg over the grid. Mass dominance uses (wall area, frontal area), which implies mass dominance for ANY positive structural parameters. Handling: F1Q-02 ANSWERED A9.13 S6.1 BUDGETING_ASSUMPTION_SOURCED_BEFORE_LOCK_1: labelled budgeting assumption, sourced before LOCK-1.
+- **F1-10** (model-derived): the non-dominated filter removes few feasible candidates (dominated or within-noise counts per scenario: {'design_case': {'maxwell_a0': 30, 'maxwell_a0.2': 0, 'maxwell_a0.5': 0, 'maxwell_a0.8': 0, 'maxwell_a1': 0, 'cll_a0': 60, 'cll_a0.2': 0, 'cll_a0.5': 0, 'cll_a0.8': 0, 'cll_a1': 0}, 'envelope': {'maxwell_a0': 0, 'maxwell_a0.2': 0, 'maxwell_a0.5': 0, 'maxwell_a0.8': 0, 'maxwell_a1': 0, 'cll_a0': 0, 'cll_a0.2': 0, 'cll_a0.5': 0, 'cll_a0.8': 0, 'cll_a1': 0}}): within a scenario A trades captured flow against drag and mass, and L/d trades eta_c and off-axis tolerance against passive compression; candidates are removed mainly where longer channels add mass without a compression or collection gain (near-specular scenarios). Handling: the Pareto sets are the deliverable; narrowing them needs the TBD inputs (alpha, p_ref, structure, pointing) or downstream objectives (F2-F7), not a scalar weighting here.
+- **F1-09** (assumed): m_intake is TBD for every candidate (wall thickness, coating and support fraction have no evidence). Under the labelled PARAMETRIC_SENSITIVITY_CASE SC-CODE-DEFAULT it spans 0.66-29.85 kg over the grid. Mass dominance uses (wall area, frontal area), which implies mass dominance for ANY positive structural parameters. Handling: F1Q-02 ANSWERED A9.13 S6.1 BUDGETING_ASSUMPTION_SOURCED_BEFORE_LOCK_1: PARAMETRIC_SENSITIVITY, BUDGETING_ONLY (never CBE, FROZEN_INTAKE_MASS, STRUCTURAL_QUALIFICATION); SOURCED_STRUCTURAL_DEFINITION_REQUIRED_BEFORE_LOCK_1.
 
 ## IF-A1 record for F2 (filter stage)
 Record `f1_if_a1_intake_exit_v1`; IF-A1 intake -> filter (docs/interfaces/UPSTREAM_ICD.md); consumers abep_sim/design/filter_stage.py (F2-IF-01) and abep_sim/design/plenum_feed.py (F4-ID-01). Plane: intake exit plane = back face of the channel array (plenum side), upstream of any filter.
@@ -159,7 +173,7 @@ Record `f1_if_a1_intake_exit_v1`; IF-A1 intake -> filter (docs/interfaces/UPSTRE
 - `K_back`: single-channel Clausing back-transmission (for the filter/plenum backflow coupling)
 - `net_flow_law`: mdot_net,s(p_s) = mdot_fwd,s (1 - p_s / p_passive,s) (free-molecular plenum balance)
 - Not included: no filter is applied (intake_tpmc's placeholder filter fields are never used here; the filter is F2's model); no intake-drag or spacecraft fields (they go to F7, not IF-A1)
-- Records per unit area: 400 in the JSON; producer `abep_sim.design.intake_synthesis.if_a1_record(evaluator, candidate, state, scenario, theta)`.
+- Records per unit area: 15760 in the JSON; producer `abep_sim.design.intake_synthesis.if_a1_record(evaluator, candidate, state, scenario, theta)`.
 
 ## Interface demands
 | id | direction | counterpart | status | content |
@@ -189,7 +203,8 @@ Status from `docs/budgets/owner_decisions/owner_questions_state_v5.json` (as rai
 
 ## Limitations
 - single-channel TPMC (no edge / inter-channel effects), fixed T_wall, Maxwell or CLL with alpha_n = alpha_t
-- orbit-averaged atmosphere only (no local time, no winds, V_rel = V_orb)
+- V_rel = V_orb (inertial circular): Earth co-rotation and thermospheric winds not included (inclination / LTAN TBD, A9.21; the design-state set carries no relative velocity)
+- the design-state set is a broad envelope (every inclination and LTAN), not a mission orbit: statewise results are design-envelope results, never mission-ICD results (BROAD_ENVELOPE_ALL_INCLINATIONS_ALL_LTAN_NOT_MISSION_ICD)
 - off-axis objective evaluated at the design state only; theta > 5 deg not evaluated
 - K_back unresolved fraction is not returned by intake_response (only the forward trace's)
 - free-molecular validity inside the plenum is not checked here (p_passive is reported)
@@ -200,6 +215,8 @@ Status from `docs/budgets/owner_decisions/owner_questions_state_v5.json` (as rai
 - `abep_sim/data/intake_surface_v1.json` sha256 `5b26b7fd60272537dd0e719a122cb874233c6dd777202ab164b159cc7215d425`
 - `abep_sim/data/atmosphere_msis21_v1.csv` sha256 `5e108c6e5cb7c03ed9b741233fafbc71c7813987e1ff3d0596b04c99c4a9bff7`
 - `abep_sim/data/atmosphere_msis21_v1.json` sha256 `38a6f662521a8795b28186ccab5fbb007da59a861f59fde50400e7092e181160`
+- `abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json` sha256 `60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049`
+- `abep_sim/data/atmosphere_msis21_orbit_v1.json` sha256 `f06416b1e11f07ec32434515b616935ed5eeaae1faac75586bce0961b6bcf97b`
 - `docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md` sha256 `fb51328d6fe07a6eaf257ef9ef9592cb0c0039ae3e8cf04ef0420007c985b129`
 
 ## Regenerate

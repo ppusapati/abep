@@ -39,8 +39,10 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
 from abep_sim.design import architecture_optimizer as ao  # noqa: E402
+from abep_sim.design import intake_synthesis as isy  # noqa: E402
 from abep_sim.design import plenum_feed as pf  # noqa: E402
 from abep_sim.design import robust_optimizer as ro  # noqa: E402
+from abep_sim.design import upstream_a9_13 as u13  # noqa: E402
 
 OUT_DIR_REL = "docs/design_synthesis/f7_f8_optimizer"
 SCRIPT_REL = f"{OUT_DIR_REL}/build_f7_f8_optimizer.py"
@@ -52,7 +54,20 @@ TEST_REL = "tests/test_design_f7_f8_optimizer.py"
 BASE_COMMIT = "1bcfe0e4ba2242ebd8deaf1263fa98d85f75f631"
 SIG = 7
 N_MC = 100
-OWNER_FLOW_RANGE_MGPS = (0.38, 3.2)       # characterization COVERAGE only (A9.13 S6.21; owner row 73 range), never a gate
+OWNER_FLOW_RANGE_MGPS = (u13.GROUND_CHARACTERIZATION_ONLY_MGPS, 3.2)   # characterization COVERAGE only (A9.13 S6.13 /
+#                                                                        S6.21; owner row 73 range), never a gate
+# A9.14 S9.8 OD3 / A9.13 S6.14: F7 / F8 now run over every F1 state (design-case reference + the required states of the
+# frozen design-state set v2). The builder keeps no output history; the superseded five-state run is recorded here
+# (facts of the committed outputs at 61eefc4).
+STATE_SET_HISTORY = {
+    "superseded_state_set": isy.HISTORY_FIVE_STATE_SET,
+    "superseded_outputs": {
+        "commit": "61eefc4",
+        "f7_f8_optimizer_v1.json": "45e055ccae563440180f89a6c26415357abd51064cc6296bfbf14139ffee517b",
+        "f7_upstream_pareto_v1.json": "7a282dd217cd876999c5c65b3a445449175bfa3362a3b59bed74ed120a9bb0c9",
+        "f8_robust_candidates_v1.json": "43adc213f7f7b7f34fdda5e494033fcac52615ec7627777a010b1e2497d5927d"},
+    "reason": "A9.14 S9.8 OD3; A9.13 S6.14 OQ-F4-05 (application-matrix residual RVF-03)",
+}
 
 PINNED = (
     "docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md",
@@ -271,8 +286,9 @@ def parameters():
     p("F78-P-06", [o[0] for o in ao.UPSTREAM_OBJECTIVES], "-", "upstream Pareto objectives (directions in "
       "upstream_objectives); weak dominance, ties kept, infeasible / out-of-domain vectors never enter",
       "abep_sim/design/architecture_optimizer.py UPSTREAM_OBJECTIVES / pareto_mask", "definition", "DEFINITION")
-    p("F78-P-07", "single setpoint for all five orbit states", "-", "a vector is feasible only if every orbit state is "
-      "feasible at the one set pressure (F4 single-setpoint frontier; the scheduled alternative is F4 OQ-F4-01)",
+    p("F78-P-07", "single setpoint for every F1 state", "-", "a vector is feasible only if every F1 state (design-case "
+      f"reference + all {len(isy.required_states())} required states of {isy.DESIGN_STATE_SET_ID}) is feasible at "
+      "the one set pressure (F4 single-setpoint frontier; the scheduled alternative is F4 OQ-F4-01)",
       f"{ao.F4_REL} requirement_sweep.feasibility_rule", "definition", "DEFINITION")
     p("F78-P-08", N_MC, "-", "TPMC-statistics Monte Carlo draws per (candidate, scenario)", "this study",
       "numerical-setting", "STUDY_SETTING")
@@ -288,6 +304,15 @@ def parameters():
     p("F78-P-12", "TBD", "N", "spacecraft body / array drag D_body", "none (F1-ID-08)", "TBD", "TBD")
     p("F78-P-13", "TBD", "N", "thrust T of H-1 on the delivered feed", f"{ao.ENS_REL} (members = [])", "TBD",
       "NOT_EVALUATED (no admitted Hall response map)")
+    p("F78-P-14", isy.DESIGN_STATE_SET_ID, "-", f"orbit / atmosphere states: design-case reference "
+      f"{isy.DESIGN_STATE.id} + every required state of the frozen design-state set v2 (sha256 "
+      f"{isy.DESIGN_STATE_SET_SHA256}); broad envelope, {isy.ORBIT_BASIS_LABEL}", f"{ao.F1_REL} coverage_rule",
+      "model-derived", "FROZEN_DATASET (A9.14 S9.8 OD3; all states, no subset)")
+    p("F78-P-15", "PENDING_EVIDENCE", "mixed", "flight feed requirement: performance-derived only (A9.13 S6.21, rank 1 "
+      "of the S6.13 owner order); needs the measured / validated H-1 thrust-versus-feed map; never lowered to a "
+      "deliverable frontier, a state subset or 0.38 mg/s (ground characterization only)",
+      "abep_sim/design/upstream_a9_13.py flight_feed_requirement / refuse_feed_requirement_lowering", "TBD",
+      "PENDING_EVIDENCE")
     return P
 
 
@@ -376,8 +401,8 @@ def findings(inp, f7sum, totals, sysd, f8, pars):
     F.append({"id": "F78-02", "evidence_class": "model-derived", "finding":
               f"nominal context (filter none, WALL-G0): the all-state delivered-flow frontier is "
               f"{best['frontier_mdot_delivered_min_mgps']} mg/s ({best['scenario']}, P_set {best['P_set_Pa']} Pa, "
-              f"{best['frontier_attained_by']}); Pareto members reaching the lower end of the 0.38-3.2 mg/s "
-              f"characterization coverage (A9.13 S6.21: coverage only, not a requirement or gate) at every state: "
+              f"{best['frontier_attained_by']}); Pareto members reaching 0.38 mg/s (ground characterization only, "
+              f"A9.13 S6.13 / S6.21: never a flight requirement or gate) at every state: "
               f"{sum(r['n_pareto_reaching_coverage_0.38_mgps'] for r in rows)} (all contexts). Compare F4-01 (single-setpoint "
               f"frontier {_f4_single_frontier()} mg/s)"})
     byP = Counter()
@@ -437,8 +462,9 @@ def findings(inp, f7sum, totals, sysd, f8, pars):
     rel = [v["rel_change"] for d in f8["pointing"].values() for v in d.values() if v["rel_change"] is not None]
     flips = sum(1 for d in f8["pointing"].values() for v in d.values() if v["status_theta0"] != v["status_theta5"])
     F.append({"id": "F8-03", "evidence_class": "model-derived (frozen surface node)", "finding":
-              f"pointing node theta = 5 deg (design state only): delivered-flow change {rnd([min(rel), max(rel)]) if rel else None}"
-              f" on the robust members, {flips} status changes; the corner states have no theta node (NOT_EVALUATED)"})
+              f"pointing node theta = 5 deg (design-case reference point only): delivered-flow change "
+              f"{rnd([min(rel), max(rel)]) if rel else None} on the robust members, {flips} status changes; the "
+              f"required design states have no theta node (NOT_EVALUATED)"})
     wl = Counter(v["n_scenarios_feasible"] for v in f8["wall"].values())
     F.append({"id": "F8-04", "evidence_class": "model-derived (uncited DB gamma prior)", "finding":
               f"wall-recombination case WALL-TI64-DB: robust members feasible in n of 10 scenarios {dict(sorted(wl.items()))}"})
@@ -456,6 +482,31 @@ def findings(inp, f7sum, totals, sysd, f8, pars):
               f"Hall set {f8['gates_after']['hall_credible_set']}, A9.2 statuses verbatim, H-1 article "
               f"{f8['gates_after']['h1_article_freeze_state'].split(' ')[0]})"})
     return F
+
+
+def statewise_gate_records() -> dict:
+    """AG-13 (HC-08) and AG-12 (HC-11) evaluated over EVERY required design state (A9.13 S6.15 / S6.21, A9.14 S9.7 /
+    S9.8): thrust has no admitted Hall member, the host-spacecraft drag ICD and the validated H-1 map do not exist, so
+    both are NOT_EVALUATED over the full required set (never satisfied, never evaluated on a subset)."""
+    sts = [{"state_id": sid} for sid in ao.required_state_ids()]
+
+    def thrust(st):
+        return {"value_N": None, "status": u13.VALUE_TBD, "state_id": st["state_id"],
+                "source": "no admitted Hall transport member (credible set EMPTY)"}
+
+    def drag(st):
+        return {"value_N": None, "status": u13.VALUE_TBD, "state_id": st["state_id"],
+                "source": "host-spacecraft drag ICD absent (A9.21 EXTERNAL_INPUTS)"}
+
+    ag13 = ao.statewise_T_minus_D(sts, thrust, drag)
+    ag12 = u13.feed_state_sufficiency(sts, lambda st: {"status": u13.VALUE_TBD}, thrust, h1_map=None)
+    keep = ("constraint", "gate", "rule", "status", "reason", "n_required_states", "value_status", "h1_map_status",
+            "fixed_mass_flow_gate")
+    return {"required_state_set": isy.DESIGN_STATE_SET_ID, "n_required_states": len(sts),
+            "orbit_basis": isy.ORBIT_BASIS_LABEL,
+            "AG-13_HC-08": {k: ag13[k] for k in keep if k in ag13},
+            "AG-12_HC-11": {**{k: ag12[k] for k in keep if k in ag12}, "n_required_states": len(sts)},
+            "flight_feed_requirement": u13.flight_feed_requirement()}
 
 
 def robust_section(f8):
@@ -510,6 +561,11 @@ def assemble(inp, blocks, pars, f7sum, totals, sysd, f8):
         "masses: proxies (intake wall area, plenum volume) where TBD; the compressor mass is the DragCompressor "
         "model's (code defaults), never a CBE",
         "probabilities only over the quantified TPMC statistics; scenario sets carry counts and worst cases only",
+        "orbit states: the frozen design-state set v2 is a broad envelope over every inclination / LTAN (A9.21: not "
+        "specified; no code-default orbit as mission truth); every statewise result is a design-envelope result ("
+        + isy.ORBIT_BASIS_LABEL + "), V_rel = V_orb (no co-rotation / winds)",
+        "intake structural mass (A9.13 S6.1 / F1Q-02): PARAMETRIC_SENSITIVITY, budgeting only; never a CBE, frozen "
+        "intake mass or structural qualification; sourced structural definition required before LOCK-1",
     ]
     exemplar = sysd.pop("exemplar")
     return {
@@ -545,6 +601,15 @@ def assemble(inp, blocks, pars, f7sum, totals, sysd, f8):
         "system_evaluation": rnd(sysd), "system_evaluation_exemplar": rnd(exemplar),
         "unlock_evidence": dict(ao.UNLOCK),
         "uq_axes": list(ro.UQ_AXES),
+        "design_state_set": dict(inp.f1["coverage_rule"]["design_state_set"]),
+        "orbit_basis_label": isy.ORBIT_BASIS_LABEL,
+        "evaluated_states": {"n": len(ao.states()), "design_case_reference": ao.DESIGN_STATE,
+                             "n_required": len(ao.required_state_ids()),
+                             "ids_in": f"{ao.F1_REL} coverage_rule.orbit_states"},
+        "statewise_gate_records": statewise_gate_records(),
+        "flow_gap_owner_order": u13.flow_gap_record(),
+        "intake_structural_mass_label": isy.f1q02_label(),
+        "state_set_history": STATE_SET_HISTORY,
         "robust": robust_section(f8),
         "architecture_questions": ao.architecture_questions(),
         "tpmc_backend_policy": ao.tpmc_backend_policy(),
@@ -668,6 +733,35 @@ def render_md(doc: dict) -> str:
     L += ["", "## Interface demands", "", "| id | direction | counterpart | content | status |", "|---|---|---|---|---|"]
     for d in doc["interface_demands"]:
         L.append(f"| {d['id']} | {d['direction']} | {d['counterpart']} | {d['content']} | {d['status']} |")
+    ds = doc["design_state_set"]
+    L += ["", "## Orbit-state set (A9.14 S9.8 OD3)", "",
+          f"- `{ds['design_state_set_id']}` sha256 `{ds['sha256']}`: {doc['evaluated_states']['n_required']} required "
+          f"states + design-case reference {doc['evaluated_states']['design_case_reference']} = "
+          f"{doc['evaluated_states']['n']} evaluated F1 states (no subset). Orbit basis **{doc['orbit_basis_label']}**: "
+          f"{ds['orbit_basis_note']}"]
+    sg = doc["statewise_gate_records"]
+    L += [f"- AG-13 / HC-08 over the {sg['n_required_states']} required states: **{sg['AG-13_HC-08']['status']}** "
+          f"({sg['AG-13_HC-08'].get('reason')}).",
+          f"- AG-12 / HC-11 over the {sg['n_required_states']} required states: **{sg['AG-12_HC-11']['status']}** "
+          f"({sg['AG-12_HC-11'].get('reason')}).",
+          f"- HC-09 intake-face drag: evaluated at every F1 state (drag_intake_max_N = maximum over all "
+          f"{doc['evaluated_states']['n']} states)."]
+    h = doc["state_set_history"]
+    L += [f"- Superseded: {h['superseded_state_set']['state_ids']} ({h['superseded_state_set']['status']}); outputs "
+          f"at {h['superseded_outputs']['commit']}: " + ", ".join(f"`{k}` {v[:12]}" for k, v in
+                                                                 h["superseded_outputs"].items() if k != "commit") + "."]
+    fg = doc["flow_gap_owner_order"]
+    L += ["", f"## Flow gap: owner order ({fg['authority']})", ""]
+    L += [f"{o['rank']}. **{o['lever']}** ({o['authority']}; {o['status']}): {o['what']}"
+          + (f"; needs {o['needs']}" if o.get("needs") else "") for o in fg["order"]]
+    L += ["", f"- {fg['rule']}.", f"- {fg['ground_characterization_mgps']} mg/s: {fg['ground_characterization_role']}.",
+          f"- Higher-density-only operation: {fg['dense_state_only_operation']['role']}; "
+          f"{fg['dense_state_only_operation']['rule']}.",
+          f"- Flight feed requirement: {fg['flight_feed_requirement']['status']} "
+          f"({fg['flight_feed_requirement']['needs']})."]
+    lab = doc["intake_structural_mass_label"]
+    L += ["", f"## Intake structural mass ({lab['authority']})", "",
+          f"- {lab['label']}, {lab['use']}: never {', '.join(lab['not'])}; {lab['lock1_condition']}."]
     L += ["", "## Open owner questions (new)", ""]
     for q in doc["open_owner_questions"]:
         L.append(f"- **{q['id']}**: {q['question']} (needed for: {q['needed_for']})")

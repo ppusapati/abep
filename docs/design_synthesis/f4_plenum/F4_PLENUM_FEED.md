@@ -30,7 +30,7 @@ The study couples the F1 intake records, the F2 filter stage, the F3 compressor 
 | F4-P-08 | TBD | Hz | metering-valve actuator bandwidth f_v (first-order lag tau_v = 1/(2 pi f_v)) | SRC-H23 H23-18 (TBD; evaluated at 0.1 / 1 / 10 Hz there, assumed) | TBD | TBD |
 | F4-P-09 | TBD | - | valve authority r = A_eq,max / A_eq at the design operating point | SRC-H23 H23-07 (valve authority r = 1..3, assumed there) | TBD | TBD |
 | F4-P-10 | TBD | mixed | H-1 required inlet state (mdot_s, P, T, x_s, transient tolerances) | SRC-F5 IFD-F4-01..05 (TBD) | TBD | TBD (parametric requirement sweep, see requirement_sweep) |
-| F4-P-11 | TBD | - | orbit-scale modulation of the free-stream density (the frozen atmosphere is orbit-averaged; local-time states NOT_IN_FROZEN_DATASET) | SRC-F1 coverage_rule | TBD | TBD |
+| F4-P-11 | TBD | - | orbit-scale modulation of the free-stream density along one revolution: the F1 states are points of the orbit-resolved design-state set v2 (local time, latitude, season and solar activity extrema), but the revolution through them needs the inclination / LTAN, which are TBD (A9.21; no code default as mission truth), so no amplitude is derived from the dataset (A9.13 S6.14: no invented amplitude); the parametric sinusoid stays a labelled sensitivity | SRC-F1 coverage_rule | TBD | TBD |
 | F4-P-12 | 0.02 | - | settling / recovery band (metric definition, not a requirement) | definition | definition | DEFINITION |
 | F4-P-13 | {'method': 'LSODA', 'rtol': 1e-05, 'reference_method': 'BDF', 'rtol_convergence_reference': 1e-08, 'atol_scaled': 1e-11} | - | scipy.integrate.solve_ivp, stiff-safe LSODA (automatic stiff BDF switching) with analytic Jacobian, restarted at every event; a sample is re-run with BDF at the reference tolerance (numerical_convergence) | definition | definition | DEFINITION |
 | F4-P-14 | 1e-06 | - | mass-conservation gate: |m(t) - m(0) - (integrated in - out)| / integrated throughput (CLAUDE.md rule 4) | definition | definition | DEFINITION |
@@ -59,11 +59,11 @@ Filter cases (F2 API):
 | x_plenum.f_valve | 1.0 | Hz | F4-P-08 nominal parametric; sensitivity [0.1, 10.0] | PARAMETRIC_SENSITIVITY |
 | x_plenum.authority | 3.0 | - | F4-P-09 | PARAMETRIC_SENSITIVITY |
 | x_compressor | 55 F3 designs | - | union of the F3 per-case Pareto ids (a subset of the 210 designs passing F3's inlet-independent gates; INT-01 limitation) | INPUT_SET |
-| x_intake | {'area_m2': [0.25, 0.5, 0.75, 1.0, 1.25, 1.5], 'candidates_d_collapsed': 48, 'scenarios': ['maxwell_a0', 'maxwell_a0.2', 'maxwell_a0.5', 'maxwell_a0.8', 'maxwell_a1', 'cll_a0', 'cll_a0.2', 'cll_a0.5', 'cll_a0.8', 'cll_a1'], 'states': ['h200_f150', 'h180_f70', 'h180_f230', 'h230_f70', 'h230_f230']} | - | every F1 candidate (d-invariant, F1-02) x F1 surface scenario x F1 orbit state | INPUT_SET |
+| x_intake | {'area_m2': [0.25, 0.5, 0.75, 1.0, 1.25, 1.5], 'candidates_d_collapsed': 48, 'scenarios': ['maxwell_a0', 'maxwell_a0.2', 'maxwell_a0.5', 'maxwell_a0.8', 'maxwell_a1', 'cll_a0', 'cll_a0.2', 'cll_a0.5', 'cll_a0.8', 'cll_a1'], 'states': '197 F1 states (ids in the JSON)'} | - | every F1 candidate (d-invariant, F1-02) x F1 surface scenario x F1 orbit state | INPUT_SET |
 
 ## Requirement sweep (parametric; characterization coverage only, A9.13 S6.21)
 
-P_req = [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 1.0, 10.0] Pa; mdot_req = [0.03, 0.1, 0.2, 0.38, 0.6, 1.0, 1.3, 2.0, 3.2] mg/s. minimum plenum (valve-upstream, IF-A4) pressure demanded by the downstream path; the plenum setpoint P_set >= P_req on the grid; feasible P_set maximizes the delivered flow. single setpoint: exists P_set >= P_req on the grid with every one of the five F1 orbit states FEASIBLE and min-over-states mdot >= mdot_req; scheduled setpoint: per state its own admissible P_set >= P_req, min over states of the per-state best flow >= mdot_req.
+P_req = [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 1.0, 10.0] Pa; mdot_req = [0.03, 0.1, 0.2, 0.38, 0.6, 1.0, 1.3, 2.0, 3.2] mg/s. minimum plenum (valve-upstream, IF-A4) pressure demanded by the downstream path; the plenum setpoint P_set >= P_req on the grid; feasible P_set maximizes the delivered flow. single setpoint: exists P_set >= P_req on the grid with every F1 state (design-case reference + every required design state) FEASIBLE and min-over-states mdot >= mdot_req; scheduled setpoint: per state its own admissible P_set >= P_req, min over states of the per-state best flow >= mdot_req.
 
 ## Steady feasibility regions
 
@@ -73,134 +73,136 @@ The frontier is the largest mdot_req that is feasible at each P_req, taking the 
 
 | scenario | 0.002 Pa | 0.005 Pa | 0.01 Pa | 0.02 Pa | 0.05 Pa | 0.1 Pa | 0.2 Pa | 1 Pa | 10 Pa |
 |---|---|---|---|---|---|---|---|---|---|
-| maxwell_a0 | S 0.0231 / Sch 0.0294 | S 0.0231 / Sch 0.0231 | S 0.0131 / Sch 0.0131 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a0.2 | S 0.0502 / Sch 0.063 | S 0.0502 / Sch 0.0581 | S 0.0502 / Sch 0.0502 | S 0.035 / Sch 0.035 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a0.5 | S 0.0606 / Sch 0.0699 | S 0.0606 / Sch 0.0664 | S 0.0606 / Sch 0.0606 | S 0.0493 / Sch 0.0493 | S 0.0182 / Sch 0.0182 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a0.8 | S 0.0629 / Sch 0.0722 | S 0.0629 / Sch 0.0687 | S 0.0629 / Sch 0.0629 | S 0.0516 / Sch 0.0516 | S 0.0266 / Sch 0.0266 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a1 | S 0.0635 / Sch 0.0742 | S 0.0635 / Sch 0.0702 | S 0.0635 / Sch 0.0636 | S 0.0541 / Sch 0.0541 | S 0.0279 / Sch 0.0279 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0 | S 0.0231 / Sch 0.0294 | S 0.0231 / Sch 0.0231 | S 0.0131 / Sch 0.0131 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0.2 | S 0.0501 / Sch 0.0787 | S 0.0501 / Sch 0.0738 | S 0.0501 / Sch 0.0657 | S 0.0501 / Sch 0.0501 | S 0.00709 / Sch 0.00709 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0.5 | S 0.0983 / Sch 0.119 | S 0.0983 / Sch 0.116 | S 0.0983 / Sch 0.11 | S 0.0983 / Sch 0.0983 | S 0.0654 / Sch 0.0654 | S 0.0153 / Sch 0.0153 | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0.8 | S 0.0962 / Sch 0.112 | S 0.0962 / Sch 0.109 | S 0.0962 / Sch 0.104 | S 0.0962 / Sch 0.0962 | S 0.0727 / Sch 0.0727 | S 0.0362 / Sch 0.0362 | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a1 | S 0.064 / Sch 0.0769 | S 0.064 / Sch 0.0729 | S 0.064 / Sch 0.0663 | S 0.0546 / Sch 0.0546 | S 0.0279 / Sch 0.0279 | S 0.000824 / Sch 0.000824 | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0 | S - / Sch 0.00607 | S - / Sch 0.000174 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0.2 | S 0.00415 / Sch 0.015 | S 0.00415 / Sch 0.0109 | S 0.00415 / Sch 0.00442 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0.5 | S 0.00945 / Sch 0.0164 | S 0.00945 / Sch 0.0138 | S 0.00945 / Sch 0.00945 | S 0.00144 / Sch 0.00144 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0.8 | S 0.00973 / Sch 0.017 | S 0.00973 / Sch 0.0141 | S 0.00973 / Sch 0.00973 | S 0.00405 / Sch 0.00405 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a1 | S 0.011 / Sch 0.0181 | S 0.011 / Sch 0.0149 | S 0.011 / Sch 0.011 | S 0.00458 / Sch 0.00458 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0 | S - / Sch 0.00607 | S - / Sch 0.000175 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0.2 | S - / Sch 0.0186 | S - / Sch 0.0145 | S - / Sch 0.00784 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0.5 | S 0.011 / Sch 0.0264 | S 0.011 / Sch 0.0238 | S 0.011 / Sch 0.0194 | S 0.011 / Sch 0.011 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0.8 | S 0.013 / Sch 0.0253 | S 0.013 / Sch 0.0226 | S 0.013 / Sch 0.0187 | S 0.013 / Sch 0.013 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a1 | S 0.0109 / Sch 0.0177 | S 0.0109 / Sch 0.0146 | S 0.0109 / Sch 0.0109 | S 0.00443 / Sch 0.00443 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
 
 ### F4-FIL-T0.9|WALL-G0|V0.01
 
 | scenario | 0.002 Pa | 0.005 Pa | 0.01 Pa | 0.02 Pa | 0.05 Pa | 0.1 Pa | 0.2 Pa | 1 Pa | 10 Pa |
 |---|---|---|---|---|---|---|---|---|---|
-| maxwell_a0 | S 0.0228 / Sch 0.029 | S 0.0228 / Sch 0.0228 | S 0.0129 / Sch 0.0129 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a0.2 | S 0.0496 / Sch 0.0623 | S 0.0496 / Sch 0.0575 | S 0.0496 / Sch 0.0496 | S 0.0346 / Sch 0.0346 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a0.5 | S 0.0601 / Sch 0.0694 | S 0.0601 / Sch 0.0659 | S 0.0601 / Sch 0.0601 | S 0.0489 / Sch 0.0489 | S 0.0181 / Sch 0.0181 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a0.8 | S 0.0624 / Sch 0.0717 | S 0.0624 / Sch 0.0682 | S 0.0624 / Sch 0.0624 | S 0.0512 / Sch 0.0512 | S 0.0264 / Sch 0.0264 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a1 | S 0.0631 / Sch 0.0735 | S 0.0631 / Sch 0.0696 | S 0.0631 / Sch 0.0631 | S 0.0537 / Sch 0.0537 | S 0.0278 / Sch 0.0278 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0 | S 0.0228 / Sch 0.029 | S 0.0228 / Sch 0.0228 | S 0.0129 / Sch 0.0129 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0.2 | S 0.0495 / Sch 0.0779 | S 0.0495 / Sch 0.073 | S 0.0495 / Sch 0.065 | S 0.0495 / Sch 0.0495 | S 0.00701 / Sch 0.00701 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0.5 | S 0.0975 / Sch 0.118 | S 0.0975 / Sch 0.115 | S 0.0975 / Sch 0.109 | S 0.0975 / Sch 0.0975 | S 0.0649 / Sch 0.0649 | S 0.0152 / Sch 0.0152 | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0.8 | S 0.0957 / Sch 0.111 | S 0.0957 / Sch 0.108 | S 0.0957 / Sch 0.104 | S 0.0957 / Sch 0.0957 | S 0.0723 / Sch 0.0723 | S 0.036 / Sch 0.036 | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a1 | S 0.0636 / Sch 0.0762 | S 0.0636 / Sch 0.0722 | S 0.0636 / Sch 0.0657 | S 0.0542 / Sch 0.0542 | S 0.0277 / Sch 0.0277 | S 0.000821 / Sch 0.000821 | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0 | S - / Sch 0.00592 | S - / Sch 0.000169 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0.2 | S 0.00409 / Sch 0.0148 | S 0.00409 / Sch 0.0107 | S 0.00409 / Sch 0.00435 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0.5 | S 0.00935 / Sch 0.0163 | S 0.00935 / Sch 0.0136 | S 0.00935 / Sch 0.00935 | S 0.00143 / Sch 0.00143 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0.8 | S 0.00963 / Sch 0.0168 | S 0.00963 / Sch 0.0139 | S 0.00963 / Sch 0.00963 | S 0.00402 / Sch 0.00402 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a1 | S 0.0109 / Sch 0.0178 | S 0.0109 / Sch 0.0147 | S 0.0109 / Sch 0.0109 | S 0.00456 / Sch 0.00456 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0 | S - / Sch 0.00592 | S - / Sch 0.000171 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0.2 | S - / Sch 0.0183 | S - / Sch 0.0142 | S - / Sch 0.00771 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0.5 | S 0.0108 / Sch 0.0262 | S 0.0108 / Sch 0.0235 | S 0.0108 / Sch 0.0192 | S 0.0108 / Sch 0.0108 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0.8 | S 0.0129 / Sch 0.0251 | S 0.0129 / Sch 0.0224 | S 0.0129 / Sch 0.0185 | S 0.0129 / Sch 0.0129 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a1 | S 0.0108 / Sch 0.0175 | S 0.0108 / Sch 0.0144 | S 0.0108 / Sch 0.0108 | S 0.0044 / Sch 0.0044 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
 
 ### F4-FIL-T0.7|WALL-G0|V0.01
 
 | scenario | 0.002 Pa | 0.005 Pa | 0.01 Pa | 0.02 Pa | 0.05 Pa | 0.1 Pa | 0.2 Pa | 1 Pa | 10 Pa |
 |---|---|---|---|---|---|---|---|---|---|
-| maxwell_a0 | S 0.0218 / Sch 0.0278 | S 0.0218 / Sch 0.0218 | S 0.0124 / Sch 0.0124 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a0.2 | S 0.0481 / Sch 0.0604 | S 0.0481 / Sch 0.0557 | S 0.0481 / Sch 0.0481 | S 0.0335 / Sch 0.0335 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a0.5 | S 0.0588 / Sch 0.0678 | S 0.0588 / Sch 0.0644 | S 0.0588 / Sch 0.0588 | S 0.0478 / Sch 0.0478 | S 0.0177 / Sch 0.0177 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a0.8 | S 0.061 / Sch 0.0701 | S 0.061 / Sch 0.0666 | S 0.061 / Sch 0.061 | S 0.05 / Sch 0.05 | S 0.026 / Sch 0.026 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a1 | S 0.0619 / Sch 0.0717 | S 0.0619 / Sch 0.0678 | S 0.0619 / Sch 0.0619 | S 0.0527 / Sch 0.0527 | S 0.0272 / Sch 0.0272 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0 | S 0.0218 / Sch 0.0278 | S 0.0218 / Sch 0.0218 | S 0.0124 / Sch 0.0124 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0.2 | S 0.048 / Sch 0.0755 | S 0.048 / Sch 0.0707 | S 0.048 / Sch 0.063 | S 0.048 / Sch 0.048 | S 0.00678 / Sch 0.00678 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0.5 | S 0.0954 / Sch 0.116 | S 0.0954 / Sch 0.112 | S 0.0954 / Sch 0.107 | S 0.0954 / Sch 0.0954 | S 0.0634 / Sch 0.0634 | S 0.0149 / Sch 0.0149 | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0.8 | S 0.0942 / Sch 0.109 | S 0.0942 / Sch 0.106 | S 0.0942 / Sch 0.102 | S 0.0942 / Sch 0.0942 | S 0.0711 / Sch 0.0711 | S 0.0354 / Sch 0.0354 | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a1 | S 0.0624 / Sch 0.0743 | S 0.0624 / Sch 0.0704 | S 0.0624 / Sch 0.0641 | S 0.0532 / Sch 0.0532 | S 0.0272 / Sch 0.0272 | S 0.00081 / Sch 0.00081 | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0 | S - / Sch 0.00553 | S - / Sch 0.000158 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0.2 | S 0.00416 / Sch 0.0141 | S 0.00416 / Sch 0.0103 | S 0.00416 / Sch 0.00416 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0.5 | S 0.00909 / Sch 0.0158 | S 0.00909 / Sch 0.0133 | S 0.00909 / Sch 0.00909 | S 0.00139 / Sch 0.00139 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0.8 | S 0.00936 / Sch 0.0161 | S 0.00936 / Sch 0.0135 | S 0.00936 / Sch 0.00936 | S 0.00395 / Sch 0.00395 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a1 | S 0.0106 / Sch 0.0172 | S 0.0106 / Sch 0.0142 | S 0.0106 / Sch 0.0106 | S 0.0045 / Sch 0.0045 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0 | S - / Sch 0.00553 | S - / Sch 0.000159 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0.2 | S 0.00168 / Sch 0.0175 | S 0.00168 / Sch 0.0136 | S 0.00168 / Sch 0.00738 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0.5 | S 0.0105 / Sch 0.0254 | S 0.0105 / Sch 0.0229 | S 0.0105 / Sch 0.0187 | S 0.0105 / Sch 0.0105 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0.8 | S 0.0126 / Sch 0.0244 | S 0.0126 / Sch 0.0218 | S 0.0126 / Sch 0.0182 | S 0.0126 / Sch 0.0126 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a1 | S 0.0106 / Sch 0.017 | S 0.0106 / Sch 0.014 | S 0.0106 / Sch 0.0106 | S 0.00434 / Sch 0.00434 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
 
 ### F4-FIL-T0.5|WALL-G0|V0.01
 
 | scenario | 0.002 Pa | 0.005 Pa | 0.01 Pa | 0.02 Pa | 0.05 Pa | 0.1 Pa | 0.2 Pa | 1 Pa | 10 Pa |
 |---|---|---|---|---|---|---|---|---|---|
-| maxwell_a0 | S 0.0203 / Sch 0.0259 | S 0.0203 / Sch 0.0203 | S 0.0115 / Sch 0.0115 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a0.2 | S 0.0455 / Sch 0.0572 | S 0.0455 / Sch 0.0528 | S 0.0455 / Sch 0.0455 | S 0.0317 / Sch 0.0317 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a0.5 | S 0.0565 / Sch 0.0652 | S 0.0565 / Sch 0.0619 | S 0.0565 / Sch 0.0565 | S 0.046 / Sch 0.046 | S 0.017 / Sch 0.017 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a0.8 | S 0.0586 / Sch 0.0673 | S 0.0586 / Sch 0.064 | S 0.0586 / Sch 0.0586 | S 0.0481 / Sch 0.0481 | S 0.0253 / Sch 0.0253 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a1 | S 0.0599 / Sch 0.0685 | S 0.0599 / Sch 0.0648 | S 0.0599 / Sch 0.0599 | S 0.051 / Sch 0.051 | S 0.0263 / Sch 0.0263 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0 | S 0.0203 / Sch 0.0259 | S 0.0203 / Sch 0.0203 | S 0.0115 / Sch 0.0115 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0.2 | S 0.0573 / Sch 0.0715 | S 0.0573 / Sch 0.067 | S 0.0573 / Sch 0.0597 | S 0.0454 / Sch 0.0454 | S 0.00641 / Sch 0.00641 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0.5 | S 0.0918 / Sch 0.111 | S 0.0918 / Sch 0.108 | S 0.0918 / Sch 0.103 | S 0.0918 / Sch 0.0918 | S 0.061 / Sch 0.061 | S 0.0143 / Sch 0.0143 | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0.8 | S 0.0916 / Sch 0.106 | S 0.0916 / Sch 0.103 | S 0.0916 / Sch 0.0994 | S 0.0916 / Sch 0.0916 | S 0.0691 / Sch 0.0691 | S 0.0344 / Sch 0.0344 | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a1 | S 0.0613 / Sch 0.071 | S 0.0613 / Sch 0.0673 | S 0.0613 / Sch 0.0613 | S 0.0514 / Sch 0.0514 | S 0.0263 / Sch 0.0263 | S 0.000792 / Sch 0.000792 | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0 | S - / Sch 0.00495 | S - / Sch 0.000141 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0.2 | S 0.00385 / Sch 0.0131 | S 0.00385 / Sch 0.00952 | S 0.00385 / Sch 0.00385 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0.5 | S 0.00865 / Sch 0.0151 | S 0.00865 / Sch 0.0126 | S 0.00865 / Sch 0.00865 | S 0.00132 / Sch 0.00132 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0.8 | S 0.0089 / Sch 0.0153 | S 0.0089 / Sch 0.0129 | S 0.0089 / Sch 0.0089 | S 0.00382 / Sch 0.00382 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a1 | S 0.0102 / Sch 0.0163 | S 0.0102 / Sch 0.0135 | S 0.0102 / Sch 0.0102 | S 0.00439 / Sch 0.00439 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0 | S - / Sch 0.00495 | S - / Sch 0.000142 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0.2 | S 0.00161 / Sch 0.0163 | S 0.00161 / Sch 0.0126 | S 0.00161 / Sch 0.00684 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0.5 | S 0.01 / Sch 0.0242 | S 0.01 / Sch 0.0218 | S 0.01 / Sch 0.0178 | S 0.01 / Sch 0.01 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0.8 | S 0.0122 / Sch 0.0232 | S 0.0122 / Sch 0.0207 | S 0.0122 / Sch 0.0176 | S 0.0122 / Sch 0.0122 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a1 | S 0.0102 / Sch 0.016 | S 0.0102 / Sch 0.0134 | S 0.0102 / Sch 0.0102 | S 0.00423 / Sch 0.00423 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
 
 ### F4-FIL-PLACEHOLDER|WALL-G0|V0.01
 
 | scenario | 0.002 Pa | 0.005 Pa | 0.01 Pa | 0.02 Pa | 0.05 Pa | 0.1 Pa | 0.2 Pa | 1 Pa | 10 Pa |
 |---|---|---|---|---|---|---|---|---|---|
-| maxwell_a0 | S 0.0185 / Sch 0.0243 | S 0.0185 / Sch 0.0185 | S 0.00954 / Sch 0.00954 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a0.2 | S 0.0453 / Sch 0.0574 | S 0.0453 / Sch 0.0528 | S 0.0453 / Sch 0.0453 | S 0.0311 / Sch 0.0311 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a0.5 | S 0.0569 / Sch 0.0658 | S 0.0569 / Sch 0.0624 | S 0.0569 / Sch 0.0569 | S 0.0462 / Sch 0.0462 | S 0.0165 / Sch 0.0165 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a0.8 | S 0.059 / Sch 0.068 | S 0.059 / Sch 0.0646 | S 0.059 / Sch 0.059 | S 0.0483 / Sch 0.0483 | S 0.0253 / Sch 0.0253 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a1 | S 0.0604 / Sch 0.0691 | S 0.0604 / Sch 0.0653 | S 0.0604 / Sch 0.0604 | S 0.0513 / Sch 0.0513 | S 0.0262 / Sch 0.0262 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0 | S 0.0185 / Sch 0.0243 | S 0.0185 / Sch 0.0185 | S 0.00955 / Sch 0.00955 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0.2 | S 0.0449 / Sch 0.0717 | S 0.0449 / Sch 0.0671 | S 0.0449 / Sch 0.0595 | S 0.0449 / Sch 0.0449 | S 0.00477 / Sch 0.00477 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0.5 | S 0.0924 / Sch 0.112 | S 0.0924 / Sch 0.109 | S 0.0924 / Sch 0.103 | S 0.0924 / Sch 0.0924 | S 0.061 / Sch 0.061 | S 0.0133 / Sch 0.0133 | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0.8 | S 0.0923 / Sch 0.107 | S 0.0923 / Sch 0.104 | S 0.0923 / Sch 0.1 | S 0.0923 / Sch 0.0923 | S 0.0695 / Sch 0.0695 | S 0.0343 / Sch 0.0343 | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a1 | S 0.0616 / Sch 0.0717 | S 0.0616 / Sch 0.0679 | S 0.0616 / Sch 0.0616 | S 0.0518 / Sch 0.0518 | S 0.0263 / Sch 0.0263 | S 0.000549 / Sch 0.000549 | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0 | S - / Sch 0.0045 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0.2 | S 0.00361 / Sch 0.0132 | S 0.00361 / Sch 0.0095 | S 0.00361 / Sch 0.00361 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0.5 | S 0.00869 / Sch 0.0153 | S 0.00869 / Sch 0.0128 | S 0.00869 / Sch 0.00869 | S 0.00116 / Sch 0.00116 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0.8 | S 0.00894 / Sch 0.0156 | S 0.00894 / Sch 0.013 | S 0.00894 / Sch 0.00894 | S 0.0038 / Sch 0.0038 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a1 | S 0.0103 / Sch 0.0165 | S 0.0103 / Sch 0.0137 | S 0.0103 / Sch 0.0103 | S 0.00439 / Sch 0.00439 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0 | S - / Sch 0.0045 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0.2 | S 0.00114 / Sch 0.0165 | S 0.00114 / Sch 0.0127 | S 0.00114 / Sch 0.00663 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0.5 | S 0.00999 / Sch 0.0246 | S 0.00999 / Sch 0.0221 | S 0.00999 / Sch 0.018 | S 0.00999 / Sch 0.00999 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0.8 | S 0.0123 / Sch 0.0235 | S 0.0123 / Sch 0.021 | S 0.0123 / Sch 0.0178 | S 0.0123 / Sch 0.0123 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a1 | S 0.0102 / Sch 0.0162 | S 0.0102 / Sch 0.0136 | S 0.0102 / Sch 0.0102 | S 0.00423 / Sch 0.00423 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
 
 ### F4-FIL-NONE|WALL-TI64-DB|V0.001
 
 | scenario | 0.002 Pa | 0.005 Pa | 0.01 Pa | 0.02 Pa | 0.05 Pa | 0.1 Pa | 0.2 Pa | 1 Pa | 10 Pa |
 |---|---|---|---|---|---|---|---|---|---|
-| maxwell_a0 | S 0.0235 / Sch 0.0295 | S 0.0235 / Sch 0.0235 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a0.2 | S 0.0509 / Sch 0.063 | S 0.0509 / Sch 0.0583 | S 0.0509 / Sch 0.0509 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a0.5 | S 0.0611 / Sch 0.0699 | S 0.0611 / Sch 0.0665 | S 0.0611 / Sch 0.0611 | S 0.051 / Sch 0.051 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a0.8 | S 0.0593 / Sch 0.0723 | S 0.0593 / Sch 0.0688 | S 0.0593 / Sch 0.0633 | S 0.0532 / Sch 0.0532 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a1 | S 0.0639 / Sch 0.0742 | S 0.0639 / Sch 0.0703 | S 0.0639 / Sch 0.0641 | S 0.0555 / Sch 0.0555 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0 | S 0.0235 / Sch 0.0295 | S 0.0235 / Sch 0.0235 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0.2 | S 0.052 / Sch 0.0788 | S 0.052 / Sch 0.074 | S 0.052 / Sch 0.0663 | S 0.052 / Sch 0.052 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0.5 | S 0.0994 / Sch 0.119 | S 0.0994 / Sch 0.116 | S 0.0994 / Sch 0.11 | S 0.0994 / Sch 0.0994 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0.8 | S 0.0971 / Sch 0.112 | S 0.0971 / Sch 0.109 | S 0.0971 / Sch 0.105 | S 0.0971 / Sch 0.0971 | S 0.0768 / Sch 0.0768 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a1 | S 0.0644 / Sch 0.0769 | S 0.0644 / Sch 0.073 | S 0.0644 / Sch 0.0668 | S 0.0559 / Sch 0.0559 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0.2 | S - / Sch 0.0151 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0.5 | S - / Sch 0.0165 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0.8 | S - / Sch 0.0171 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a1 | S - / Sch 0.0181 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0.2 | S - / Sch 0.0187 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0.5 | S - / Sch 0.0265 | S - / Sch 0.0241 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0.8 | S - / Sch 0.0254 | S - / Sch 0.0229 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a1 | S - / Sch 0.0178 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
 
 ### F4-FIL-NONE|WALL-TI64-DB|V0.01
 
 | scenario | 0.002 Pa | 0.005 Pa | 0.01 Pa | 0.02 Pa | 0.05 Pa | 0.1 Pa | 0.2 Pa | 1 Pa | 10 Pa |
 |---|---|---|---|---|---|---|---|---|---|
-| maxwell_a0 | S - / Sch 0.0297 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a0.2 | S 0.0523 / Sch 0.0631 | S 0.0523 / Sch 0.0588 | S 0.0523 / Sch 0.0523 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a0.5 | S 0.0583 / Sch 0.07 | S 0.0583 / Sch 0.0669 | S 0.0583 / Sch 0.0622 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a0.8 | S 0.0604 / Sch 0.0723 | S 0.0604 / Sch 0.0692 | S 0.0604 / Sch 0.0644 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a1 | S 0.0602 / Sch 0.0743 | S 0.0602 / Sch 0.0707 | S 0.0602 / Sch 0.0653 | S 0.0455 / Sch 0.0455 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0 | S - / Sch 0.0297 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0.2 | S 0.0499 / Sch 0.0788 | S 0.0499 / Sch 0.0744 | S 0.0499 / Sch 0.0677 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0.5 | S 0.102 / Sch 0.119 | S 0.102 / Sch 0.116 | S 0.102 / Sch 0.111 | S 0.102 / Sch 0.102 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0.8 | S 0.0989 / Sch 0.112 | S 0.0989 / Sch 0.109 | S 0.0989 / Sch 0.105 | S 0.0989 / Sch 0.0989 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a1 | S 0.0607 / Sch 0.077 | S 0.0607 / Sch 0.0734 | S 0.0607 / Sch 0.068 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0.2 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0.5 | S - / Sch 0.0167 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0.8 | S - / Sch 0.017 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a1 | S - / Sch 0.0183 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0.2 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0.5 | S - / Sch 0.0266 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0.8 | S - / Sch 0.0255 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a1 | S - / Sch 0.018 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
 
 ### F4-FIL-NONE|WALL-TI64-DB|V0.1
 
 | scenario | 0.002 Pa | 0.005 Pa | 0.01 Pa | 0.02 Pa | 0.05 Pa | 0.1 Pa | 0.2 Pa | 1 Pa | 10 Pa |
 |---|---|---|---|---|---|---|---|---|---|
-| maxwell_a0 | S - / Sch 0.0302 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a0.2 | S - / Sch 0.0634 | S - / Sch 0.0599 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a0.5 | S - / Sch 0.0702 | S - / Sch 0.0677 | S - / Sch 0.0638 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a0.8 | S 0.0431 / Sch 0.0726 | S 0.0431 / Sch 0.07 | S 0.0431 / Sch 0.066 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| maxwell_a1 | S 0.0509 / Sch 0.0746 | S 0.0509 / Sch 0.0716 | S 0.0509 / Sch 0.0671 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0 | S - / Sch 0.0302 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0.2 | S - / Sch 0.0791 | S - / Sch 0.0754 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0.5 | S - / Sch 0.117 | S - / Sch 0.117 | S - / Sch 0.113 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a0.8 | S 0.0933 / Sch 0.109 | S 0.0933 / Sch 0.109 | S 0.0933 / Sch 0.106 | S 0.0933 / Sch 0.101 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
-| cll_a1 | S 0.0492 / Sch 0.0772 | S 0.0492 / Sch 0.0742 | S 0.0492 / Sch 0.0697 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0.2 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0.5 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a0.8 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| maxwell_a1 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0.2 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0.5 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a0.8 | S - / Sch 0.0238 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
+| cll_a1 | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - | S - / Sch - |
 
-### Single-state best flow (filter none, WALL-G0) [mg/s]
+### Single-state best flow (filter none, WALL-G0) [mg/s]: minimum over the states and the binding state
 
-- maxwell_a0: h200_f150 ['0.146', '0.153', '0.142', '0.12', '0.057', '-', '-', '-', '-']; h180_f70 ['-', '0.218', '0.208', '0.187', '0.128', '0.0336', '-', '-', '-']; h180_f230 ['-', '0.351', '0.341', '0.32', '0.261', '0.167', '-', '-', '-']; h230_f70 ['0.0328', '0.0258', '0.0147', '-', '-', '-', '-', '-', '-']; h230_f230 ['0.108', '0.1', '0.0885', '0.0655', '0.00109', '-', '-', '-', '-']
-- maxwell_a0.2: h200_f150 ['0.141', '0.359', '0.349', '0.33', '0.273', '0.182', '-', '-', '-']; h180_f70 ['-', '0.376', '0.492', '0.474', '0.422', '0.338', '-', '-', '-']; h180_f230 ['-', '0.368', '0.67', '0.655', '0.61', '0.536', '-', '-', '-']; h230_f70 ['0.0835', '0.0771', '0.0667', '0.0467', '-', '-', '-', '-', '-']; h230_f230 ['0.142', '0.237', '0.227', '0.205', '0.144', '0.0474', '-', '-', '-']
-- maxwell_a0.5: h200_f150 ['-', '0.369', '0.437', '0.421', '0.373', '0.296', '-', '-', '-']; h180_f70 ['-', '0.379', '0.629', '0.615', '0.574', '0.506', '-', '-', '-']; h180_f230 ['-', '-', '0.709', '0.695', '0.661', '0.608', '-', '-', '-']; h230_f70 ['0.11', '0.105', '0.0956', '0.0782', '0.0291', '-', '-', '-', '-']; h230_f230 ['0.138', '0.294', '0.285', '0.266', '0.213', '0.13', '-', '-', '-']
-- maxwell_a0.8: h200_f150 ['0.139', '0.367', '0.444', '0.428', '0.38', '0.31', '-', '-', '-']; h180_f70 ['-', '0.378', '0.634', '0.62', '0.578', '0.522', '-', '-', '-']; h180_f230 ['-', '0.362', '0.741', '0.73', '0.697', '0.644', '-', '-', '-']; h230_f70 ['0.117', '0.112', '0.105', '0.0902', '0.0494', '-', '-', '-', '-']; h230_f230 ['0.141', '0.314', '0.305', '0.287', '0.234', '0.162', '-', '-', '-']
-- maxwell_a1: h200_f150 ['0.128', '0.363', '0.471', '0.456', '0.413', '0.343', '-', '-', '-']; h180_f70 ['-', '0.357', '0.683', '0.67', '0.633', '0.573', '-', '-', '-']; h180_f230 ['-', '0.307', '0.742', '0.779', '0.742', '0.681', '-', '-', '-']; h230_f70 ['0.122', '0.117', '0.109', '0.0931', '0.0493', '-', '-', '-', '-']; h230_f230 ['0.138', '0.315', '0.307', '0.29', '0.242', '0.171', '-', '-', '-']
-- cll_a0: h200_f150 ['0.146', '0.153', '0.142', '0.12', '0.0571', '-', '-', '-', '-']; h180_f70 ['-', '0.218', '0.208', '0.187', '0.128', '0.0336', '-', '-', '-']; h180_f230 ['-', '0.351', '0.341', '0.32', '0.261', '0.167', '-', '-', '-']; h230_f70 ['0.0328', '0.0258', '0.0147', '-', '-', '-', '-', '-', '-']; h230_f230 ['0.108', '0.1', '0.0885', '0.0654', '0.00105', '-', '-', '-', '-']
-- cll_a0.2: h200_f150 ['-', '0.359', '0.437', '0.417', '0.359', '0.265', '-', '-', '-']; h180_f70 ['-', '0.375', '0.601', '0.583', '0.531', '0.446', '-', '-', '-']; h180_f230 ['-', '0.369', '0.662', '0.833', '0.787', '0.712', '-', '-', '-']; h230_f70 ['0.104', '0.0978', '0.0872', '0.0667', '0.00951', '-', '-', '-', '-']; h230_f230 ['0.142', '0.313', '0.302', '0.28', '0.218', '0.118', '-', '-', '-']
-- cll_a0.5: h200_f150 ['-', '0.365', '0.733', '0.748', '0.699', '0.619', '-', '-', '-']; h180_f70 ['-', '0.376', '0.727', '0.996', '0.953', '0.884', '-', '-', '-']; h180_f230 ['-', '-', '0.732', '1.24', '1.21', '1.16', '-', '-', '-']; h230_f70 ['0.14', '0.183', '0.174', '0.156', '0.104', '0.0247', '-', '-', '-']; h230_f230 ['0.141', '0.349', '0.532', '0.513', '0.459', '0.37', '-', '-', '-']
-- cll_a0.8: h200_f150 ['-', '0.366', '0.739', '0.773', '0.734', '0.67', '-', '-', '-']; h180_f70 ['-', '0.371', '0.716', '1.04', '1.01', '0.955', '-', '-', '-']; h180_f230 ['-', '-', '0.712', '1.19', '1.15', '1.1', '-', '-', '-']; h230_f70 ['0.143', '0.199', '0.192', '0.177', '0.134', '0.0673', '-', '-', '-']; h230_f230 ['-', '0.354', '0.557', '0.542', '0.498', '0.426', '-', '-', '-']
-- cll_a1: h200_f150 ['0.128', '0.368', '0.471', '0.457', '0.413', '0.343', '-', '-', '-']; h180_f70 ['-', '0.366', '0.674', '0.661', '0.625', '0.564', '-', '-', '-']; h180_f230 ['-', '0.313', '0.741', '0.774', '0.737', '0.676', '-', '-', '-']; h230_f70 ['0.123', '0.118', '0.109', '0.0935', '0.0551', '0.00169', '-', '-', '-']; h230_f230 ['0.143', '0.32', '0.312', '0.295', '0.248', '0.172', '-', '-', '-']
+Per-state values for every F1 state are in the JSON (steady.per_state_frontier_filter_none_wall_g0).
+
+- maxwell_a0: 0.002 Pa: - (70 states without a feasible chain); 0.005 Pa: - (5 states without a feasible chain); 0.01 Pa: - (5 states without a feasible chain); 0.02 Pa: - (18 states without a feasible chain); 0.05 Pa: - (53 states without a feasible chain); 0.1 Pa: - (114 states without a feasible chain); 0.2 Pa: - (197 states without a feasible chain); 1 Pa: - (197 states without a feasible chain); 10 Pa: - (197 states without a feasible chain)
+- maxwell_a0.2: 0.002 Pa: - (93 states without a feasible chain); 0.005 Pa: - (12 states without a feasible chain); 0.01 Pa: 0.0079 at ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184; 0.02 Pa: - (5 states without a feasible chain); 0.05 Pa: - (16 states without a feasible chain); 0.1 Pa: - (40 states without a feasible chain); 0.2 Pa: - (197 states without a feasible chain); 1 Pa: - (197 states without a feasible chain); 10 Pa: - (197 states without a feasible chain)
+- maxwell_a0.5: 0.002 Pa: - (110 states without a feasible chain); 0.005 Pa: - (22 states without a feasible chain); 0.01 Pa: 0.0225 at ds2:ECSS_LT_LOW:alt230:lat-80.0000:lst21:lon0:doy184; 0.02 Pa: 0.0035 at ds2:ECSS_LT_LOW:alt230:lat-80.0000:lst21:lon0:doy184; 0.05 Pa: - (8 states without a feasible chain); 0.1 Pa: - (23 states without a feasible chain); 0.2 Pa: - (197 states without a feasible chain); 1 Pa: - (197 states without a feasible chain); 10 Pa: - (197 states without a feasible chain)
+- maxwell_a0.8: 0.002 Pa: - (91 states without a feasible chain); 0.005 Pa: - (9 states without a feasible chain); 0.01 Pa: 0.0283 at ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184; 0.02 Pa: 0.0124 at ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184; 0.05 Pa: - (5 states without a feasible chain); 0.1 Pa: - (16 states without a feasible chain); 0.2 Pa: - (197 states without a feasible chain); 1 Pa: - (197 states without a feasible chain); 10 Pa: - (197 states without a feasible chain)
+- maxwell_a1: 0.002 Pa: - (67 states without a feasible chain); 0.005 Pa: - (4 states without a feasible chain); 0.01 Pa: 0.0304 at ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184; 0.02 Pa: 0.0159 at ds2:ECSS_LT_LOW:alt230:lat-80.0000:lst21:lon0:doy184; 0.05 Pa: - (5 states without a feasible chain); 0.1 Pa: - (13 states without a feasible chain); 0.2 Pa: - (197 states without a feasible chain); 1 Pa: - (197 states without a feasible chain); 10 Pa: - (197 states without a feasible chain)
+- cll_a0: 0.002 Pa: - (70 states without a feasible chain); 0.005 Pa: - (5 states without a feasible chain); 0.01 Pa: - (5 states without a feasible chain); 0.02 Pa: - (18 states without a feasible chain); 0.05 Pa: - (53 states without a feasible chain); 0.1 Pa: - (114 states without a feasible chain); 0.2 Pa: - (197 states without a feasible chain); 1 Pa: - (197 states without a feasible chain); 10 Pa: - (197 states without a feasible chain)
+- cll_a0.2: 0.002 Pa: - (98 states without a feasible chain); 0.005 Pa: - (17 states without a feasible chain); 0.01 Pa: 0.0139 at ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184; 0.02 Pa: - (3 states without a feasible chain); 0.05 Pa: - (12 states without a feasible chain); 0.1 Pa: - (32 states without a feasible chain); 0.2 Pa: - (197 states without a feasible chain); 1 Pa: - (197 states without a feasible chain); 10 Pa: - (197 states without a feasible chain)
+- cll_a0.5: 0.002 Pa: - (121 states without a feasible chain); 0.005 Pa: - (33 states without a feasible chain); 0.01 Pa: 0.0462 at ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184; 0.02 Pa: 0.0263 at ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184; 0.05 Pa: - (5 states without a feasible chain); 0.1 Pa: - (12 states without a feasible chain); 0.2 Pa: - (197 states without a feasible chain); 1 Pa: - (197 states without a feasible chain); 10 Pa: - (197 states without a feasible chain)
+- cll_a0.8: 0.002 Pa: - (134 states without a feasible chain); 0.005 Pa: - (43 states without a feasible chain); 0.01 Pa: - (4 states without a feasible chain); 0.02 Pa: 0.0389 at ds2:ECSS_LT_LOW:alt230:lat-80.0000:lst21:lon0:doy184; 0.05 Pa: - (3 states without a feasible chain); 0.1 Pa: - (8 states without a feasible chain); 0.2 Pa: - (197 states without a feasible chain); 1 Pa: - (197 states without a feasible chain); 10 Pa: - (197 states without a feasible chain)
+- cll_a1: 0.002 Pa: - (67 states without a feasible chain); 0.005 Pa: - (4 states without a feasible chain); 0.01 Pa: 0.0299 at ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184; 0.02 Pa: 0.0152 at ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184; 0.05 Pa: - (5 states without a feasible chain); 0.1 Pa: - (13 states without a feasible chain); 0.2 Pa: - (197 states without a feasible chain); 1 Pa: - (197 states without a feasible chain); 10 Pa: - (197 states without a feasible chain)
 
 ### Downstream conductance compatible with the 0.1 Pa domain cap
 
@@ -215,16 +217,11 @@ The frontier is the largest mdot_req that is feasible at each P_req, taking the 
 
 Basis rule: Rule: (1) scenarios = the F1 surface scenarios with the lowest and the highest maximum frontier flow (filter none, WALL-G0, single setpoint); (2) per basis scenario and in-domain P_set with all-state-feasible chains (filter none, TRANSIENT_WALL): the chains non-dominated over the F4 steady objectives (min-over-states delivered flow max, compressor electrical power min, compressor mass min); intake area / mass / drag stay F1 objectives; (3) the orbit check (orbit_quasi_static) at every amplitude; chains failing it at the SMALLEST amplitude are infeasible at every amplitude evaluated and are not simulated (kept with their reasons). Steady-dominated chains are not transient- evaluated (counted, reason STEADY_DOMINATED_NOT_TRANSIENT_EVALUATED).
 
-Basis scenarios: ['maxwell_a0', 'cll_a0.5']. Rows: 1225, simulated: 1128.
+Basis scenarios: ['cll_a0', 'cll_a0.8']. Rows: 7, simulated: 0.
 
 | scenario | P_set Pa | all-state chains | steady ND | simulated | orbit-infeasible (smallest amplitude) |
 |---|---|---|---|---|---|
-| maxwell_a0 | 0.005 | 272 | 42 | 11 | 31 |
-| maxwell_a0 | 0.01 | 144 | 14 | 14 | 0 |
-| cll_a0.5 | 0.01 | 158 | 43 | 12 | 31 |
-| cll_a0.5 | 0.02 | 254 | 50 | 37 | 13 |
-| cll_a0.5 | 0.05 | 76 | 32 | 20 | 12 |
-| cll_a0.5 | 0.1 | 16 | 10 | 0 | 10 |
+| cll_a0.8 | 0.02 | 28 | 7 | 0 | 7 |
 
 Metric definitions:
 
@@ -246,511 +243,31 @@ Objectives (all minimized): ['V_m3', 'valve_travel', 'settling_max_s', 'peak_dev
 
 | scenario | P_set Pa | orbit amp. | evaluated | status counts | Pareto members |
 |---|---|---|---|---|---|
-| cll_a0.5 | 0.01 | 0.1 | 175 | {'FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS': 144, 'INFEASIBLE': 7, 'NOT_EVALUATED_OUT_OF_DOMAIN': 24} | 108 |
-| cll_a0.5 | 0.01 | 0.2 | 175 | {'INFEASIBLE': 54, 'NOT_EVALUATED_OUT_OF_DOMAIN': 121} | 0 |
-| cll_a0.5 | 0.02 | 0.1 | 457 | {'FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS': 444, 'INFEASIBLE': 8, 'NOT_EVALUATED_OUT_OF_DOMAIN': 5} | 198 |
-| cll_a0.5 | 0.02 | 0.2 | 457 | {'FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS': 72, 'INFEASIBLE': 284, 'NOT_EVALUATED_OUT_OF_DOMAIN': 101} | 46 |
-| cll_a0.5 | 0.05 | 0.1 | 252 | {'FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS': 240, 'INFEASIBLE': 12} | 135 |
-| cll_a0.5 | 0.05 | 0.2 | 252 | {'INFEASIBLE': 252} | 0 |
-| cll_a0.5 | 0.1 | 0.1 | 10 | {'INFEASIBLE': 10} | 0 |
-| cll_a0.5 | 0.1 | 0.2 | 10 | {'INFEASIBLE': 10} | 0 |
-| maxwell_a0 | 0.005 | 0.1 | 163 | {'FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS': 132, 'INFEASIBLE': 8, 'NOT_EVALUATED_OUT_OF_DOMAIN': 23} | 77 |
-| maxwell_a0 | 0.005 | 0.2 | 163 | {'INFEASIBLE': 49, 'NOT_EVALUATED_OUT_OF_DOMAIN': 114} | 0 |
-| maxwell_a0 | 0.01 | 0.1 | 168 | {'FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS': 168} | 97 |
-| maxwell_a0 | 0.01 | 0.2 | 168 | {'INFEASIBLE': 168} | 0 |
+| cll_a0.8 | 0.02 | 0.1 | 7 | {'INFEASIBLE': 3, 'NOT_EVALUATED_OUT_OF_DOMAIN': 4} | 0 |
+| cll_a0.8 | 0.02 | 0.2 | 7 | {'INFEASIBLE': 3, 'NOT_EVALUATED_OUT_OF_DOMAIN': 4} | 0 |
 
 ### Offered to H-1 (Pareto members, design state; PARAMETRIC_SENSITIVITY)
 
 | member | amp. | mdot mg/s | P Pa | T K | x_O / x_N2 / x_O2 (flow) | settle s | peak dev | travel | ripple xfer | P_el W |
 |---|---|---|---|---|---|---|---|---|---|---|
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T4-A1-U2-D0-Ti6Al4V-H0.5|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.2478 | 0.01 | 350 | 0.568 / 0.409 / 0.023 | 3.087 | 0.2212 | 0.3854 | 0.976 | 9.012 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T4-A1-U2-D0-Ti6Al4V-H0.5|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2478 | 0.01 | 350 | 0.568 / 0.409 / 0.023 | 34.4 | 0.22 | 0.378 | 0.976 | 9.012 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T4-A1-U2-D0-Ti6Al4V-H0.5|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2478 | 0.01 | 350 | 0.568 / 0.409 / 0.023 | 0.3335 | 0.2159 | 0.3854 | 0.976 | 9.012 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T4-A1-U2-D0-Ti6Al4V-H0.5|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.2478 | 0.01 | 350 | 0.568 / 0.409 / 0.023 | 4.908 | 0.2159 | 0.3854 | 0.976 | 9.012 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T4-A1-U2-D0-Ti6Al4V-H0.5|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2478 | 0.01 | 350 | 0.568 / 0.409 / 0.023 | 34.4 | 0.2149 | 0.378 | 0.4087 | 9.012 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T4-A1-U2-D0-Ti6Al4V-H0.5|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2478 | 0.01 | 350 | 0.568 / 0.409 / 0.023 | 0.3335 | 0.1929 | 0.3854 | 0.4087 | 9.012 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T4-A1-U2-D0-Ti6Al4V-H0.5|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.2478 | 0.01 | 350 | 0.568 / 0.409 / 0.023 | 4.908 | 0.193 | 0.3854 | 0.4087 | 9.012 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T4-A1-U2-D0-Ti6Al4V-H0.5|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.2478 | 0.01 | 350 | 0.568 / 0.409 / 0.023 | 3.087 | 0.1941 | 0.3854 | 0.04474 | 9.012 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T4-A1-U2-D0-Ti6Al4V-H0.5|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2478 | 0.01 | 350 | 0.568 / 0.409 / 0.023 | 34.4 | 0.1945 | 0.378 | 0.04474 | 9.012 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T4-A1-U2-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2478 | 0.01 | 350 | 0.568 / 0.409 / 0.023 | 0.304 | 0.1373 | 0.3888 | 0.04474 | 9.012 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T5-A1-U2-D0-Ti6Al4V-H0.25|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.2528 | 0.01 | 350 | 0.569 / 0.408 / 0.0229 | 3.087 | 0.2273 | 0.3753 | 0.9701 | 9.113 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T5-A1-U2-D0-Ti6Al4V-H0.25|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2528 | 0.01 | 350 | 0.569 / 0.408 / 0.0229 | 34.4 | 0.2283 | 0.3691 | 0.9701 | 9.113 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T5-A1-U2-D0-Ti6Al4V-H0.25|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2528 | 0.01 | 350 | 0.569 / 0.408 / 0.0229 | 0.3335 | 0.2216 | 0.3753 | 0.9701 | 9.113 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T5-A1-U2-D0-Ti6Al4V-H0.25|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.2528 | 0.01 | 350 | 0.569 / 0.408 / 0.0229 | 4.473 | 0.2216 | 0.3753 | 0.9701 | 9.113 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T5-A1-U2-D0-Ti6Al4V-H0.25|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2528 | 0.01 | 350 | 0.569 / 0.408 / 0.0229 | 34.4 | 0.2228 | 0.3691 | 0.3712 | 9.113 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T5-A1-U2-D0-Ti6Al4V-H0.25|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2528 | 0.01 | 350 | 0.569 / 0.408 / 0.0229 | 0.3335 | 0.1972 | 0.3753 | 0.3712 | 9.113 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T5-A1-U2-D0-Ti6Al4V-H0.25|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.2528 | 0.01 | 350 | 0.569 / 0.408 / 0.0229 | 4.473 | 0.1974 | 0.3753 | 0.3712 | 9.113 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T5-A1-U2-D0-Ti6Al4V-H0.25|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.2528 | 0.01 | 350 | 0.569 / 0.408 / 0.0229 | 3.087 | 0.1986 | 0.3753 | 0.03995 | 9.113 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T5-A1-U2-D0-Ti6Al4V-H0.25|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2528 | 0.01 | 350 | 0.569 / 0.408 / 0.0229 | 34.4 | 0.2015 | 0.3692 | 0.03995 | 9.113 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T5-A1-U2-D0-Ti6Al4V-H0.25|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2528 | 0.01 | 350 | 0.569 / 0.408 / 0.0229 | 0.2771 | 0.1393 | 0.381 | 0.03995 | 9.113 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T5-A1-U2-D0-Ti6Al4V-H0.5|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2571 | 0.01 | 350 | 0.57 / 0.407 / 0.0228 | 34.4 | 0.2302 | 0.3679 | 0.9747 | 9.118 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T5-A1-U2-D0-Ti6Al4V-H0.5|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2571 | 0.01 | 350 | 0.57 / 0.407 / 0.0228 | 0.3335 | 0.2235 | 0.3739 | 0.9747 | 9.118 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T5-A1-U2-D0-Ti6Al4V-H0.5|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.2571 | 0.01 | 350 | 0.57 / 0.407 / 0.0228 | 4.473 | 0.2235 | 0.3739 | 0.9747 | 9.118 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T5-A1-U2-D0-Ti6Al4V-H0.5|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2571 | 0.01 | 350 | 0.57 / 0.407 / 0.0228 | 34.4 | 0.2246 | 0.3679 | 0.3998 | 9.118 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T5-A1-U2-D0-Ti6Al4V-H0.5|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2571 | 0.01 | 350 | 0.57 / 0.407 / 0.0228 | 0.3335 | 0.1989 | 0.3739 | 0.3998 | 9.118 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T5-A1-U2-D0-Ti6Al4V-H0.5|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.2571 | 0.01 | 350 | 0.57 / 0.407 / 0.0228 | 4.473 | 0.1991 | 0.3739 | 0.3998 | 9.118 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T5-A1-U2-D0-Ti6Al4V-H0.5|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.2571 | 0.01 | 350 | 0.57 / 0.407 / 0.0228 | 3.087 | 0.2003 | 0.3739 | 0.04357 | 9.118 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T5-A1-U2-D0-Ti6Al4V-H0.5|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2571 | 0.01 | 350 | 0.57 / 0.407 / 0.0228 | 34.4 | 0.2031 | 0.3679 | 0.04357 | 9.118 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T5-A1-U2-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2571 | 0.01 | 350 | 0.57 / 0.407 / 0.0228 | 0.2771 | 0.1405 | 0.3795 | 0.04357 | 9.118 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.2581 | 0.01 | 350 | 0.571 / 0.406 / 0.0227 | 3.087 | 0.2362 | 0.3688 | 0.9691 | 9.208 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2581 | 0.01 | 350 | 0.571 / 0.406 / 0.0227 | 31.35 | 0.2371 | 0.3634 | 0.9691 | 9.208 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2581 | 0.01 | 350 | 0.571 / 0.406 / 0.0227 | 0.3335 | 0.23 | 0.3688 | 0.9691 | 9.208 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.2581 | 0.01 | 350 | 0.571 / 0.406 / 0.0227 | 4.473 | 0.2301 | 0.3688 | 0.9691 | 9.208 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.01|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.2581 | 0.01 | 350 | 0.571 / 0.406 / 0.0227 | 3.087 | 0.2301 | 0.3688 | 0.3655 | 9.208 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2581 | 0.01 | 350 | 0.571 / 0.406 / 0.0227 | 31.35 | 0.2311 | 0.3634 | 0.3655 | 9.208 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2581 | 0.01 | 350 | 0.571 / 0.406 / 0.0227 | 0.304 | 0.2039 | 0.3688 | 0.3655 | 9.208 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.2581 | 0.01 | 350 | 0.571 / 0.406 / 0.0227 | 4.473 | 0.2041 | 0.3688 | 0.3655 | 9.208 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.2581 | 0.01 | 350 | 0.571 / 0.406 / 0.0227 | 3.087 | 0.2054 | 0.3688 | 0.03924 | 9.208 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2581 | 0.01 | 350 | 0.571 / 0.406 / 0.0227 | 31.35 | 0.2083 | 0.3635 | 0.03924 | 9.208 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2581 | 0.01 | 350 | 0.571 / 0.406 / 0.0227 | 0.2771 | 0.143 | 0.3761 | 0.03924 | 9.208 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.2621 | 0.01 | 350 | 0.572 / 0.405 / 0.0227 | 3.087 | 0.2375 | 0.368 | 0.9739 | 9.217 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2621 | 0.01 | 350 | 0.572 / 0.405 / 0.0227 | 31.35 | 0.2384 | 0.3626 | 0.9739 | 9.217 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2621 | 0.01 | 350 | 0.572 / 0.405 / 0.0227 | 0.304 | 0.2313 | 0.368 | 0.9739 | 9.217 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2621 | 0.01 | 350 | 0.572 / 0.405 / 0.0227 | 31.35 | 0.2324 | 0.3626 | 0.3941 | 9.217 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2621 | 0.01 | 350 | 0.572 / 0.405 / 0.0227 | 0.304 | 0.2052 | 0.368 | 0.3941 | 9.217 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.2621 | 0.01 | 350 | 0.572 / 0.405 / 0.0227 | 4.473 | 0.2053 | 0.368 | 0.3941 | 9.217 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2621 | 0.01 | 350 | 0.572 / 0.405 / 0.0227 | 31.35 | 0.2094 | 0.3627 | 0.04285 | 9.217 |
-| `cll_a0.5|P0.01|A0.25_Ld10_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2621 | 0.01 | 350 | 0.572 / 0.405 / 0.0227 | 0.2771 | 0.1439 | 0.375 | 0.04285 | 9.217 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.8|T5-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.1275 | 0.01 | 350 | 0.539 / 0.436 / 0.0251 | 3.387 | 0.2204 | 0.3879 | 0.9189 | 8.781 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.8|T5-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.1275 | 0.01 | 350 | 0.539 / 0.436 / 0.0251 | 34.4 | 0.2192 | 0.3802 | 0.9189 | 8.781 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.8|T5-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1275 | 0.01 | 350 | 0.539 / 0.436 / 0.0251 | 0.3335 | 0.212 | 0.3879 | 0.9189 | 8.781 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.8|T5-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.1275 | 0.01 | 350 | 0.539 / 0.436 / 0.0251 | 4.908 | 0.212 | 0.3879 | 0.9189 | 8.781 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.8|T5-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.1275 | 0.01 | 350 | 0.539 / 0.436 / 0.0251 | 3.387 | 0.2121 | 0.3879 | 0.2269 | 8.781 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.8|T5-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.1275 | 0.01 | 350 | 0.539 / 0.436 / 0.0251 | 34.4 | 0.2112 | 0.3802 | 0.2269 | 8.781 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.8|T5-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1275 | 0.01 | 350 | 0.539 / 0.436 / 0.0251 | 0.3335 | 0.1802 | 0.3879 | 0.2269 | 8.781 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.8|T5-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.1275 | 0.01 | 350 | 0.539 / 0.436 / 0.0251 | 4.908 | 0.1805 | 0.3879 | 0.2269 | 8.781 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.8|T5-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.1275 | 0.01 | 350 | 0.539 / 0.436 / 0.0251 | 3.387 | 0.1824 | 0.3879 | 0.02329 | 8.781 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.8|T5-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.1275 | 0.01 | 350 | 0.539 / 0.436 / 0.0251 | 34.4 | 0.1847 | 0.3802 | 0.02329 | 8.781 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.8|T5-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1275 | 0.01 | 350 | 0.539 / 0.436 / 0.0251 | 0.2525 | 0.1176 | 0.4375 | 0.02329 | 8.781 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.8|T5-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.1283 | 0.01 | 350 | 0.539 / 0.436 / 0.0251 | 34.4 | 0.2192 | 0.3801 | 0.9201 | 8.784 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.8|T5-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1283 | 0.01 | 350 | 0.539 / 0.436 / 0.0251 | 0.3335 | 0.212 | 0.3878 | 0.9201 | 8.784 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.8|T5-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.1283 | 0.01 | 350 | 0.539 / 0.436 / 0.0251 | 4.908 | 0.212 | 0.3878 | 0.9201 | 8.784 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.8|T5-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.1283 | 0.01 | 350 | 0.539 / 0.436 / 0.0251 | 34.4 | 0.2112 | 0.3801 | 0.2287 | 8.784 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.8|T5-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1283 | 0.01 | 350 | 0.539 / 0.436 / 0.0251 | 0.3335 | 0.1803 | 0.3878 | 0.2287 | 8.784 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.8|T5-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.1283 | 0.01 | 350 | 0.539 / 0.436 / 0.0251 | 4.908 | 0.1806 | 0.3878 | 0.2287 | 8.784 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.8|T5-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.1283 | 0.01 | 350 | 0.539 / 0.436 / 0.0251 | 34.4 | 0.1848 | 0.3801 | 0.02349 | 8.784 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.8|T5-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1283 | 0.01 | 350 | 0.539 / 0.436 / 0.0251 | 0.2525 | 0.1177 | 0.4368 | 0.02349 | 8.784 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.9|T5-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1325 | 0.01 | 350 | 0.538 / 0.437 / 0.0252 | 0.2525 | 0.1187 | 0.4336 | 0.02417 | 8.787 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.9|T5-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.1334 | 0.01 | 350 | 0.538 / 0.437 / 0.0252 | 3.387 | 0.2205 | 0.3877 | 0.9253 | 8.789 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.9|T5-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.1334 | 0.01 | 350 | 0.538 / 0.437 / 0.0252 | 34.4 | 0.2193 | 0.38 | 0.9253 | 8.789 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.9|T5-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1334 | 0.01 | 350 | 0.538 / 0.437 / 0.0252 | 0.3335 | 0.2122 | 0.3877 | 0.9253 | 8.789 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.9|T5-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.1334 | 0.01 | 350 | 0.538 / 0.437 / 0.0252 | 4.908 | 0.2123 | 0.3877 | 0.9253 | 8.789 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.9|T5-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.1334 | 0.01 | 350 | 0.538 / 0.437 / 0.0252 | 34.4 | 0.2114 | 0.38 | 0.237 | 8.789 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.9|T5-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1334 | 0.01 | 350 | 0.538 / 0.437 / 0.0252 | 0.3335 | 0.1811 | 0.3877 | 0.237 | 8.789 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.9|T5-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.1334 | 0.01 | 350 | 0.538 / 0.437 / 0.0252 | 4.908 | 0.1814 | 0.3877 | 0.237 | 8.789 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.9|T5-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.1334 | 0.01 | 350 | 0.538 / 0.437 / 0.0252 | 34.4 | 0.1854 | 0.3801 | 0.02439 | 8.789 |
-| `cll_a0.5|P0.01|A0.25_Ld3_phi0.9|T5-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1334 | 0.01 | 350 | 0.538 / 0.437 / 0.0252 | 0.2525 | 0.1189 | 0.4329 | 0.02439 | 8.789 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.8|T6-A1-U0-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.1614 | 0.01 | 350 | 0.549 / 0.427 / 0.0243 | 34.4 | 0.2194 | 0.3892 | 0.9864 | 8.625 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.8|T6-A1-U0-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1614 | 0.01 | 350 | 0.549 / 0.427 / 0.0243 | 0.3335 | 0.2141 | 0.3984 | 0.9864 | 8.625 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.8|T6-A1-U0-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.1614 | 0.01 | 350 | 0.549 / 0.427 / 0.0243 | 4.908 | 0.2141 | 0.3984 | 0.9864 | 8.625 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.8|T6-A1-U0-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.1614 | 0.01 | 350 | 0.549 / 0.427 / 0.0243 | 34.4 | 0.2129 | 0.3892 | 0.515 | 8.625 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.8|T6-A1-U0-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1614 | 0.01 | 350 | 0.549 / 0.427 / 0.0243 | 0.3335 | 0.1869 | 0.3984 | 0.515 | 8.625 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.8|T6-A1-U0-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.1614 | 0.01 | 350 | 0.549 / 0.427 / 0.0243 | 4.908 | 0.1871 | 0.3984 | 0.515 | 8.625 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.8|T6-A1-U0-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.1614 | 0.01 | 350 | 0.549 / 0.427 / 0.0243 | 3.387 | 0.1886 | 0.3984 | 0.05996 | 8.625 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.8|T6-A1-U0-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.1614 | 0.01 | 350 | 0.549 / 0.427 / 0.0243 | 34.4 | 0.1898 | 0.3892 | 0.05996 | 8.625 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.8|T6-A1-U0-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1614 | 0.01 | 350 | 0.549 / 0.427 / 0.0243 | 0.2771 | 0.1277 | 0.4157 | 0.05996 | 8.625 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.25|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.1685 | 0.01 | 350 | 0.55 / 0.426 / 0.0242 | 3.387 | 0.2209 | 0.3934 | 0.9698 | 8.766 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.25|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.1685 | 0.01 | 350 | 0.55 / 0.426 / 0.0242 | 34.4 | 0.2195 | 0.3849 | 0.9698 | 8.766 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.25|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1685 | 0.01 | 350 | 0.55 / 0.426 / 0.0242 | 0.3335 | 0.2141 | 0.3934 | 0.9698 | 8.766 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.25|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.1685 | 0.01 | 350 | 0.55 / 0.426 / 0.0242 | 4.908 | 0.2141 | 0.3934 | 0.9698 | 8.766 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.25|V0.01|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.1685 | 0.01 | 350 | 0.55 / 0.426 / 0.0242 | 3.387 | 0.2142 | 0.3934 | 0.3693 | 8.766 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.25|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.1685 | 0.01 | 350 | 0.55 / 0.426 / 0.0242 | 34.4 | 0.2131 | 0.3849 | 0.3693 | 8.766 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.25|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1685 | 0.01 | 350 | 0.55 / 0.426 / 0.0242 | 0.3335 | 0.1869 | 0.3934 | 0.3693 | 8.766 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.25|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.1685 | 0.01 | 350 | 0.55 / 0.426 / 0.0242 | 4.908 | 0.1872 | 0.3934 | 0.3693 | 8.766 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.25|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.1685 | 0.01 | 350 | 0.55 / 0.426 / 0.0242 | 3.387 | 0.1887 | 0.3934 | 0.03971 | 8.766 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.25|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.1685 | 0.01 | 350 | 0.55 / 0.426 / 0.0242 | 34.4 | 0.1898 | 0.3849 | 0.03971 | 8.766 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.25|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1685 | 0.01 | 350 | 0.55 / 0.426 / 0.0242 | 0.2525 | 0.1275 | 0.4109 | 0.03971 | 8.766 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.25|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.1776 | 0.01 | 350 | 0.549 / 0.427 / 0.0243 | 3.387 | 0.2209 | 0.3933 | 0.9726 | 8.774 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.25|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.1776 | 0.01 | 350 | 0.549 / 0.427 / 0.0243 | 34.4 | 0.2196 | 0.3848 | 0.9726 | 8.774 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.25|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1776 | 0.01 | 350 | 0.549 / 0.427 / 0.0243 | 0.3335 | 0.2144 | 0.3933 | 0.9726 | 8.774 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.25|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.1776 | 0.01 | 350 | 0.549 / 0.427 / 0.0243 | 4.908 | 0.2144 | 0.3933 | 0.9726 | 8.774 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.25|V0.01|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.1776 | 0.01 | 350 | 0.549 / 0.427 / 0.0243 | 3.387 | 0.2145 | 0.3933 | 0.3859 | 8.774 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.25|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.1776 | 0.01 | 350 | 0.549 / 0.427 / 0.0243 | 34.4 | 0.2133 | 0.3848 | 0.3859 | 8.774 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.25|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1776 | 0.01 | 350 | 0.549 / 0.427 / 0.0243 | 0.3335 | 0.1878 | 0.3933 | 0.3859 | 8.774 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.25|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.1776 | 0.01 | 350 | 0.549 / 0.427 / 0.0243 | 4.908 | 0.188 | 0.3933 | 0.3859 | 8.774 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.25|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.1776 | 0.01 | 350 | 0.549 / 0.427 / 0.0243 | 3.387 | 0.1896 | 0.3933 | 0.04179 | 8.774 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.25|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.1776 | 0.01 | 350 | 0.549 / 0.427 / 0.0243 | 34.4 | 0.1905 | 0.3849 | 0.04179 | 8.774 |
-| `cll_a0.5|P0.01|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.25|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1776 | 0.01 | 350 | 0.549 / 0.427 / 0.0243 | 0.2771 | 0.1291 | 0.4073 | 0.04179 | 8.774 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.2 | 0.2467 | 0.02 | 350 | 0.563 / 0.414 / 0.0232 | 3.087 | 0.2337 | 0.3699 | 0.8971 | 9.265 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3` | 0.2 | 0.2467 | 0.02 | 350 | 0.563 / 0.414 / 0.0232 | 34.4 | 0.2346 | 0.3644 | 0.8971 | 9.265 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3` | 0.2 | 0.2467 | 0.02 | 350 | 0.563 / 0.414 / 0.0232 | 0.3335 | 0.2235 | 0.3699 | 0.8971 | 9.265 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti3_fv1_r3` | 0.2 | 0.2467 | 0.02 | 350 | 0.563 / 0.414 / 0.0232 | 4.473 | 0.2235 | 0.3699 | 0.8971 | 9.265 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti0.3_fv1_r3` | 0.2 | 0.2467 | 0.02 | 350 | 0.563 / 0.414 / 0.0232 | 3.087 | 0.2237 | 0.3699 | 0.199 | 9.265 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti3_fv1_r3` | 0.2 | 0.2467 | 0.02 | 350 | 0.563 / 0.414 / 0.0232 | 34.4 | 0.2249 | 0.3644 | 0.199 | 9.265 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti0.3_fv1_r3` | 0.2 | 0.2467 | 0.02 | 350 | 0.563 / 0.414 / 0.0232 | 0.304 | 0.1869 | 0.3699 | 0.199 | 9.265 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti3_fv1_r3` | 0.2 | 0.2467 | 0.02 | 350 | 0.563 / 0.414 / 0.0232 | 4.473 | 0.1873 | 0.3699 | 0.199 | 9.265 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.2 | 0.2467 | 0.02 | 350 | 0.563 / 0.414 / 0.0232 | 3.087 | 0.1899 | 0.3699 | 0.0203 | 9.265 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti3_fv1_r3` | 0.2 | 0.2467 | 0.02 | 350 | 0.563 / 0.414 / 0.0232 | 34.4 | 0.1951 | 0.3644 | 0.0203 | 9.265 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti0.3_fv1_r3` | 0.2 | 0.2467 | 0.02 | 350 | 0.563 / 0.414 / 0.0232 | 0.2525 | 0.1205 | 0.4441 | 0.0203 | 9.265 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti3_fv1_r3` | 0.2 | 0.2467 | 0.02 | 350 | 0.563 / 0.414 / 0.0232 | 4.908 | 0.1223 | 0.4424 | 0.0203 | 9.265 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.2 | 0.2476 | 0.02 | 350 | 0.563 / 0.414 / 0.0232 | 3.087 | 0.2338 | 0.3699 | 0.8982 | 9.271 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3` | 0.2 | 0.2476 | 0.02 | 350 | 0.563 / 0.414 / 0.0232 | 34.4 | 0.2347 | 0.3643 | 0.8982 | 9.271 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3` | 0.2 | 0.2476 | 0.02 | 350 | 0.563 / 0.414 / 0.0232 | 0.3335 | 0.2236 | 0.3699 | 0.8982 | 9.271 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti3_fv1_r3` | 0.2 | 0.2476 | 0.02 | 350 | 0.563 / 0.414 / 0.0232 | 4.473 | 0.2236 | 0.3699 | 0.8982 | 9.271 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti3_fv1_r3` | 0.2 | 0.2476 | 0.02 | 350 | 0.563 / 0.414 / 0.0232 | 34.4 | 0.225 | 0.3643 | 0.2002 | 9.271 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti0.3_fv1_r3` | 0.2 | 0.2476 | 0.02 | 350 | 0.563 / 0.414 / 0.0232 | 0.304 | 0.187 | 0.3699 | 0.2002 | 9.271 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti3_fv1_r3` | 0.2 | 0.2476 | 0.02 | 350 | 0.563 / 0.414 / 0.0232 | 4.473 | 0.1874 | 0.3699 | 0.2002 | 9.271 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.2 | 0.2476 | 0.02 | 350 | 0.563 / 0.414 / 0.0232 | 3.087 | 0.19 | 0.3699 | 0.02043 | 9.271 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti3_fv1_r3` | 0.2 | 0.2476 | 0.02 | 350 | 0.563 / 0.414 / 0.0232 | 34.4 | 0.1952 | 0.3644 | 0.02043 | 9.271 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti0.3_fv1_r3` | 0.2 | 0.2476 | 0.02 | 350 | 0.563 / 0.414 / 0.0232 | 0.2525 | 0.1206 | 0.4437 | 0.02043 | 9.271 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti3_fv1_r3` | 0.2 | 0.2476 | 0.02 | 350 | 0.563 / 0.414 / 0.0232 | 4.908 | 0.1224 | 0.4421 | 0.02043 | 9.271 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti0.3_fv1_r3` | 0.2 | 0.2648 | 0.02 | 350 | 0.561 / 0.415 / 0.0233 | 0.2525 | 0.1223 | 0.4354 | 0.02178 | 9.29 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.2 | 0.2658 | 0.02 | 350 | 0.562 / 0.415 / 0.0233 | 3.087 | 0.2339 | 0.3698 | 0.9098 | 9.296 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3` | 0.2 | 0.2658 | 0.02 | 350 | 0.562 / 0.415 / 0.0233 | 34.4 | 0.2348 | 0.3643 | 0.9098 | 9.296 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3` | 0.2 | 0.2658 | 0.02 | 350 | 0.562 / 0.415 / 0.0233 | 0.3335 | 0.2243 | 0.3698 | 0.9098 | 9.296 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti3_fv1_r3` | 0.2 | 0.2658 | 0.02 | 350 | 0.562 / 0.415 / 0.0233 | 4.473 | 0.2243 | 0.3698 | 0.9098 | 9.296 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti3_fv1_r3` | 0.2 | 0.2658 | 0.02 | 350 | 0.562 / 0.415 / 0.0233 | 34.4 | 0.2256 | 0.3643 | 0.2142 | 9.296 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti0.3_fv1_r3` | 0.2 | 0.2658 | 0.02 | 350 | 0.562 / 0.415 / 0.0233 | 0.304 | 0.1887 | 0.3698 | 0.2142 | 9.296 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti3_fv1_r3` | 0.2 | 0.2658 | 0.02 | 350 | 0.562 / 0.415 / 0.0233 | 4.473 | 0.1891 | 0.3698 | 0.2142 | 9.296 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.2 | 0.2658 | 0.02 | 350 | 0.562 / 0.415 / 0.0233 | 3.087 | 0.1915 | 0.3698 | 0.02192 | 9.296 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti3_fv1_r3` | 0.2 | 0.2658 | 0.02 | 350 | 0.562 / 0.415 / 0.0233 | 34.4 | 0.1965 | 0.3644 | 0.02192 | 9.296 |
-| `cll_a0.5|P0.02|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti0.3_fv1_r3` | 0.2 | 0.2658 | 0.02 | 350 | 0.562 / 0.415 / 0.0233 | 0.2525 | 0.1225 | 0.435 | 0.02192 | 9.296 |
-| `cll_a0.5|P0.02|A0.5_Ld20_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.001|Kp0.3_Ti3_fv1_r3` | 0.2 | 0.4589 | 0.02 | 350 | 0.56 / 0.416 / 0.0234 | 34.4 | 0.2341 | 0.3653 | 0.9622 | 9.93 |
-| `cll_a0.5|P0.02|A0.5_Ld20_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.1|Kp3_Ti0.3_fv1_r3` | 0.2 | 0.4589 | 0.02 | 350 | 0.56 / 0.416 / 0.0234 | 0.2525 | 0.1381 | 0.3833 | 0.03529 | 9.93 |
-| `cll_a0.5|P0.02|A0.5_Ld20_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.2 | 0.4672 | 0.02 | 350 | 0.561 / 0.415 / 0.0233 | 3.087 | 0.2347 | 0.3698 | 0.9681 | 9.976 |
-| `cll_a0.5|P0.02|A0.5_Ld20_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|Kp0.3_Ti3_fv1_r3` | 0.2 | 0.4672 | 0.02 | 350 | 0.561 / 0.415 / 0.0233 | 34.4 | 0.2357 | 0.3643 | 0.9681 | 9.976 |
-| `cll_a0.5|P0.02|A0.5_Ld20_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|Kp3_Ti0.3_fv1_r3` | 0.2 | 0.4672 | 0.02 | 350 | 0.561 / 0.415 / 0.0233 | 0.3335 | 0.2282 | 0.3698 | 0.9681 | 9.976 |
-| `cll_a0.5|P0.02|A0.5_Ld20_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|Kp3_Ti3_fv1_r3` | 0.2 | 0.4672 | 0.02 | 350 | 0.561 / 0.415 / 0.0233 | 4.473 | 0.2282 | 0.3698 | 0.9681 | 9.976 |
-| `cll_a0.5|P0.02|A0.5_Ld20_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.01|Kp0.3_Ti0.3_fv1_r3` | 0.2 | 0.4672 | 0.02 | 350 | 0.561 / 0.415 / 0.0233 | 3.087 | 0.2283 | 0.3698 | 0.3602 | 9.976 |
-| `cll_a0.5|P0.02|A0.5_Ld20_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.01|Kp0.3_Ti3_fv1_r3` | 0.2 | 0.4672 | 0.02 | 350 | 0.561 / 0.415 / 0.0233 | 34.4 | 0.2293 | 0.3643 | 0.3602 | 9.976 |
-| `cll_a0.5|P0.02|A0.5_Ld20_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.01|Kp3_Ti0.3_fv1_r3` | 0.2 | 0.4672 | 0.02 | 350 | 0.561 / 0.415 / 0.0233 | 0.304 | 0.201 | 0.3698 | 0.3602 | 9.976 |
-| `cll_a0.5|P0.02|A0.5_Ld20_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.01|Kp3_Ti3_fv1_r3` | 0.2 | 0.4672 | 0.02 | 350 | 0.561 / 0.415 / 0.0233 | 4.473 | 0.2012 | 0.3698 | 0.3602 | 9.976 |
-| `cll_a0.5|P0.02|A0.5_Ld20_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.1|Kp0.3_Ti3_fv1_r3` | 0.2 | 0.4672 | 0.02 | 350 | 0.561 / 0.415 / 0.0233 | 34.4 | 0.2057 | 0.3643 | 0.03858 | 9.976 |
-| `cll_a0.5|P0.02|A0.5_Ld20_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti0.3_fv1_r3` | 0.2 | 0.4672 | 0.02 | 350 | 0.561 / 0.415 / 0.0233 | 0.2525 | 0.1391 | 0.3818 | 0.03858 | 9.976 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.25|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.2112 | 0.05 | 350 | 0.542 / 0.433 / 0.0246 | 3.387 | 0.2182 | 0.3962 | 0.5264 | 9.95 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.25|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2112 | 0.05 | 350 | 0.542 / 0.433 / 0.0246 | 34.4 | 0.2168 | 0.3873 | 0.5264 | 9.95 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.25|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2112 | 0.05 | 350 | 0.542 / 0.433 / 0.0246 | 0.3335 | 0.2017 | 0.3962 | 0.5264 | 9.95 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.25|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.2112 | 0.05 | 350 | 0.542 / 0.433 / 0.0246 | 4.908 | 0.2018 | 0.3962 | 0.5264 | 9.95 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.25|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2112 | 0.05 | 350 | 0.542 / 0.433 / 0.0246 | 34.4 | 0.2018 | 0.3873 | 0.0618 | 9.95 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.25|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2112 | 0.05 | 350 | 0.542 / 0.433 / 0.0246 | 0.3335 | 0.1547 | 0.3962 | 0.0618 | 9.95 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.25|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.2112 | 0.05 | 350 | 0.542 / 0.433 / 0.0246 | 4.908 | 0.1554 | 0.3962 | 0.0618 | 9.95 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.25|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.2112 | 0.05 | 350 | 0.542 / 0.433 / 0.0246 | 3.387 | 0.16 | 0.3962 | 0.006192 | 9.95 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.25|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2112 | 0.05 | 350 | 0.542 / 0.433 / 0.0246 | 34.4 | 0.1688 | 0.3875 | 0.006192 | 9.95 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.25|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2112 | 0.05 | 350 | 0.542 / 0.433 / 0.0246 | 0.4833 | 0.08835 | 0.5953 | 0.006192 | 9.95 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.25|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.2112 | 0.05 | 350 | 0.542 / 0.433 / 0.0246 | 4.908 | 0.09195 | 0.5216 | 0.006192 | 9.95 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.5|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.2164 | 0.05 | 350 | 0.544 / 0.431 / 0.0245 | 3.387 | 0.2182 | 0.3929 | 0.561 | 9.965 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.5|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2164 | 0.05 | 350 | 0.544 / 0.431 / 0.0245 | 34.4 | 0.2169 | 0.3845 | 0.561 | 9.965 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.5|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2164 | 0.05 | 350 | 0.544 / 0.431 / 0.0245 | 0.3335 | 0.2016 | 0.3929 | 0.561 | 9.965 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.5|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.2164 | 0.05 | 350 | 0.544 / 0.431 / 0.0245 | 4.908 | 0.2017 | 0.3929 | 0.561 | 9.965 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.5|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2164 | 0.05 | 350 | 0.544 / 0.431 / 0.0245 | 34.4 | 0.2019 | 0.3845 | 0.06762 | 9.965 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.5|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2164 | 0.05 | 350 | 0.544 / 0.431 / 0.0245 | 0.3335 | 0.1546 | 0.3929 | 0.06762 | 9.965 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.5|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.2164 | 0.05 | 350 | 0.544 / 0.431 / 0.0245 | 4.908 | 0.1554 | 0.3929 | 0.06762 | 9.965 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.5|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.2164 | 0.05 | 350 | 0.544 / 0.431 / 0.0245 | 3.387 | 0.1599 | 0.3929 | 0.006777 | 9.965 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.5|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2164 | 0.05 | 350 | 0.544 / 0.431 / 0.0245 | 34.4 | 0.1686 | 0.3847 | 0.006777 | 9.965 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2164 | 0.05 | 350 | 0.544 / 0.431 / 0.0245 | 0.4833 | 0.08823 | 0.5933 | 0.006777 | 9.965 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.2164 | 0.05 | 350 | 0.544 / 0.431 / 0.0245 | 4.908 | 0.0917 | 0.5197 | 0.006777 | 9.965 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2301 | 0.05 | 350 | 0.549 / 0.427 / 0.0242 | 34.4 | 0.2171 | 0.3777 | 0.6417 | 10.05 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2301 | 0.05 | 350 | 0.549 / 0.427 / 0.0242 | 0.3335 | 0.2017 | 0.385 | 0.6417 | 10.05 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.2301 | 0.05 | 350 | 0.549 / 0.427 / 0.0242 | 4.908 | 0.2017 | 0.385 | 0.6417 | 10.05 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.2301 | 0.05 | 350 | 0.549 / 0.427 / 0.0242 | 3.087 | 0.2023 | 0.385 | 0.08338 | 10.05 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2301 | 0.05 | 350 | 0.549 / 0.427 / 0.0242 | 34.4 | 0.2019 | 0.3777 | 0.08338 | 10.05 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2301 | 0.05 | 350 | 0.549 / 0.427 / 0.0242 | 0.3335 | 0.1544 | 0.385 | 0.08338 | 10.05 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.2301 | 0.05 | 350 | 0.549 / 0.427 / 0.0242 | 4.908 | 0.1552 | 0.385 | 0.08338 | 10.05 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.2301 | 0.05 | 350 | 0.549 / 0.427 / 0.0242 | 3.087 | 0.1595 | 0.385 | 0.008366 | 10.05 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2301 | 0.05 | 350 | 0.549 / 0.427 / 0.0242 | 34.4 | 0.1682 | 0.3779 | 0.008366 | 10.05 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.2301 | 0.05 | 350 | 0.549 / 0.427 / 0.0242 | 4.908 | 0.0944 | 0.5145 | 0.008366 | 10.05 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.25|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.2121 | 0.05 | 350 | 0.543 / 0.433 / 0.0246 | 3.387 | 0.2182 | 0.3961 | 0.5289 | 9.96 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.25|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2121 | 0.05 | 350 | 0.543 / 0.433 / 0.0246 | 34.4 | 0.2168 | 0.3872 | 0.5289 | 9.96 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.25|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2121 | 0.05 | 350 | 0.543 / 0.433 / 0.0246 | 0.3335 | 0.2017 | 0.3961 | 0.5289 | 9.96 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.25|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.2121 | 0.05 | 350 | 0.543 / 0.433 / 0.0246 | 4.908 | 0.2018 | 0.3961 | 0.5289 | 9.96 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.25|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2121 | 0.05 | 350 | 0.543 / 0.433 / 0.0246 | 34.4 | 0.2019 | 0.3872 | 0.0622 | 9.96 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.25|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2121 | 0.05 | 350 | 0.543 / 0.433 / 0.0246 | 0.3335 | 0.1548 | 0.3961 | 0.0622 | 9.96 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.25|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.2121 | 0.05 | 350 | 0.543 / 0.433 / 0.0246 | 4.908 | 0.1555 | 0.3961 | 0.0622 | 9.96 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.25|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.2121 | 0.05 | 350 | 0.543 / 0.433 / 0.0246 | 3.387 | 0.1601 | 0.3961 | 0.006232 | 9.96 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.25|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2121 | 0.05 | 350 | 0.543 / 0.433 / 0.0246 | 34.4 | 0.1689 | 0.3874 | 0.006232 | 9.96 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.25|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2121 | 0.05 | 350 | 0.543 / 0.433 / 0.0246 | 0.4833 | 0.08843 | 0.5947 | 0.006232 | 9.96 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.25|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.2121 | 0.05 | 350 | 0.543 / 0.433 / 0.0246 | 4.908 | 0.09202 | 0.5214 | 0.006232 | 9.96 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.2172 | 0.05 | 350 | 0.544 / 0.431 / 0.0245 | 3.387 | 0.2182 | 0.3928 | 0.5635 | 9.976 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2172 | 0.05 | 350 | 0.544 / 0.431 / 0.0245 | 34.4 | 0.2169 | 0.3844 | 0.5635 | 9.976 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2172 | 0.05 | 350 | 0.544 / 0.431 / 0.0245 | 0.3335 | 0.2016 | 0.3928 | 0.5635 | 9.976 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.2172 | 0.05 | 350 | 0.544 / 0.431 / 0.0245 | 4.908 | 0.2017 | 0.3928 | 0.5635 | 9.976 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.01|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.2172 | 0.05 | 350 | 0.544 / 0.431 / 0.0245 | 3.387 | 0.2023 | 0.3928 | 0.06805 | 9.976 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2172 | 0.05 | 350 | 0.544 / 0.431 / 0.0245 | 34.4 | 0.2019 | 0.3844 | 0.06805 | 9.976 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2172 | 0.05 | 350 | 0.544 / 0.431 / 0.0245 | 0.3335 | 0.1547 | 0.3928 | 0.06805 | 9.976 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.2172 | 0.05 | 350 | 0.544 / 0.431 / 0.0245 | 4.908 | 0.1554 | 0.3928 | 0.06805 | 9.976 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.2172 | 0.05 | 350 | 0.544 / 0.431 / 0.0245 | 3.387 | 0.1599 | 0.3928 | 0.006821 | 9.976 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2172 | 0.05 | 350 | 0.544 / 0.431 / 0.0245 | 34.4 | 0.1686 | 0.3846 | 0.006821 | 9.976 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2172 | 0.05 | 350 | 0.544 / 0.431 / 0.0245 | 0.4833 | 0.08835 | 0.5926 | 0.006821 | 9.976 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.2172 | 0.05 | 350 | 0.544 / 0.431 / 0.0245 | 4.908 | 0.09177 | 0.5194 | 0.006821 | 9.976 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.231 | 0.05 | 350 | 0.549 / 0.427 / 0.0242 | 3.087 | 0.2182 | 0.3849 | 0.644 | 10.06 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.231 | 0.05 | 350 | 0.549 / 0.427 / 0.0242 | 34.4 | 0.2171 | 0.3776 | 0.644 | 10.06 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.231 | 0.05 | 350 | 0.549 / 0.427 / 0.0242 | 0.3335 | 0.2017 | 0.3849 | 0.644 | 10.06 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.231 | 0.05 | 350 | 0.549 / 0.427 / 0.0242 | 4.908 | 0.2018 | 0.3849 | 0.644 | 10.06 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.231 | 0.05 | 350 | 0.549 / 0.427 / 0.0242 | 3.087 | 0.2023 | 0.3849 | 0.08388 | 10.06 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.231 | 0.05 | 350 | 0.549 / 0.427 / 0.0242 | 34.4 | 0.2019 | 0.3776 | 0.08388 | 10.06 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.231 | 0.05 | 350 | 0.549 / 0.427 / 0.0242 | 0.3335 | 0.1544 | 0.3849 | 0.08388 | 10.06 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.231 | 0.05 | 350 | 0.549 / 0.427 / 0.0242 | 4.908 | 0.1553 | 0.3849 | 0.08388 | 10.06 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.231 | 0.05 | 350 | 0.549 / 0.427 / 0.0242 | 3.087 | 0.1596 | 0.3849 | 0.008418 | 10.06 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.231 | 0.05 | 350 | 0.549 / 0.427 / 0.0242 | 34.4 | 0.1683 | 0.3778 | 0.008418 | 10.06 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.231 | 0.05 | 350 | 0.549 / 0.427 / 0.0242 | 4.908 | 0.0945 | 0.5143 | 0.008418 | 10.06 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2318 | 0.05 | 350 | 0.543 / 0.433 / 0.0246 | 0.4405 | 0.08996 | 0.5806 | 0.007255 | 9.984 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.2318 | 0.05 | 350 | 0.543 / 0.433 / 0.0246 | 4.908 | 0.09342 | 0.5161 | 0.007255 | 9.984 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.247 | 0.05 | 350 | 0.547 / 0.428 / 0.0243 | 0.4405 | 0.09278 | 0.5743 | 0.008974 | 10.07 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.247 | 0.05 | 350 | 0.547 / 0.428 / 0.0243 | 4.908 | 0.09603 | 0.5106 | 0.008974 | 10.07 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.2328 | 0.05 | 350 | 0.543 / 0.432 / 0.0246 | 3.387 | 0.2184 | 0.3927 | 0.5898 | 9.996 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2328 | 0.05 | 350 | 0.543 / 0.432 / 0.0246 | 34.4 | 0.2171 | 0.3843 | 0.5898 | 9.996 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2328 | 0.05 | 350 | 0.543 / 0.432 / 0.0246 | 0.3335 | 0.2026 | 0.3927 | 0.5898 | 9.996 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.2328 | 0.05 | 350 | 0.543 / 0.432 / 0.0246 | 4.908 | 0.2027 | 0.3927 | 0.5898 | 9.996 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2328 | 0.05 | 350 | 0.543 / 0.432 / 0.0246 | 34.4 | 0.2026 | 0.3843 | 0.07284 | 9.996 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2328 | 0.05 | 350 | 0.543 / 0.432 / 0.0246 | 0.3335 | 0.1564 | 0.3927 | 0.07284 | 9.996 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.2328 | 0.05 | 350 | 0.543 / 0.432 / 0.0246 | 4.908 | 0.1572 | 0.3927 | 0.07284 | 9.996 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2328 | 0.05 | 350 | 0.543 / 0.432 / 0.0246 | 34.4 | 0.1697 | 0.3845 | 0.007303 | 9.996 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2328 | 0.05 | 350 | 0.543 / 0.432 / 0.0246 | 0.4405 | 0.09006 | 0.5798 | 0.007303 | 9.996 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.2328 | 0.05 | 350 | 0.543 / 0.432 / 0.0246 | 4.908 | 0.09351 | 0.5158 | 0.007303 | 9.996 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2481 | 0.05 | 350 | 0.547 / 0.428 / 0.0243 | 34.4 | 0.2173 | 0.3775 | 0.6702 | 10.08 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2481 | 0.05 | 350 | 0.547 / 0.428 / 0.0243 | 0.3335 | 0.2025 | 0.3849 | 0.6702 | 10.08 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.2481 | 0.05 | 350 | 0.547 / 0.428 / 0.0243 | 4.908 | 0.2026 | 0.3849 | 0.6702 | 10.08 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.2481 | 0.05 | 350 | 0.547 / 0.428 / 0.0243 | 3.087 | 0.2031 | 0.3849 | 0.08995 | 10.08 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2481 | 0.05 | 350 | 0.547 / 0.428 / 0.0243 | 34.4 | 0.2028 | 0.3775 | 0.08995 | 10.08 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2481 | 0.05 | 350 | 0.547 / 0.428 / 0.0243 | 0.3335 | 0.1564 | 0.3849 | 0.08995 | 10.08 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.2481 | 0.05 | 350 | 0.547 / 0.428 / 0.0243 | 4.908 | 0.1571 | 0.3849 | 0.08995 | 10.08 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.2481 | 0.05 | 350 | 0.547 / 0.428 / 0.0243 | 3.087 | 0.1614 | 0.3849 | 0.009031 | 10.08 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.2481 | 0.05 | 350 | 0.547 / 0.428 / 0.0243 | 34.4 | 0.1693 | 0.3777 | 0.009031 | 10.08 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.2481 | 0.05 | 350 | 0.547 / 0.428 / 0.0243 | 0.4405 | 0.09292 | 0.5737 | 0.009031 | 10.08 |
-| `cll_a0.5|P0.05|A0.25_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.2481 | 0.05 | 350 | 0.547 / 0.428 / 0.0243 | 4.908 | 0.09616 | 0.5103 | 0.009031 | 10.08 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.3327 | 0.05 | 350 | 0.541 / 0.435 / 0.0248 | 34.4 | 0.218 | 0.3774 | 0.7691 | 10.19 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.3327 | 0.05 | 350 | 0.541 / 0.435 / 0.0248 | 0.3335 | 0.2059 | 0.3847 | 0.7691 | 10.19 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.3327 | 0.05 | 350 | 0.541 / 0.435 / 0.0248 | 4.908 | 0.206 | 0.3847 | 0.7691 | 10.19 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.3327 | 0.05 | 350 | 0.541 / 0.435 / 0.0248 | 34.4 | 0.2057 | 0.3774 | 0.1195 | 10.19 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.3327 | 0.05 | 350 | 0.541 / 0.435 / 0.0248 | 0.3335 | 0.1641 | 0.3847 | 0.1195 | 10.19 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.3327 | 0.05 | 350 | 0.541 / 0.435 / 0.0248 | 4.908 | 0.1646 | 0.3847 | 0.1195 | 10.19 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.3327 | 0.05 | 350 | 0.541 / 0.435 / 0.0248 | 34.4 | 0.1737 | 0.3775 | 0.01203 | 10.19 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.3327 | 0.05 | 350 | 0.541 / 0.435 / 0.0248 | 4.908 | 0.103 | 0.4921 | 0.01203 | 10.19 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.4245 | 0.05 | 350 | 0.545 / 0.43 / 0.0244 | 0.304 | 0.1058 | 0.4875 | 0.01458 | 11.24 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.4245 | 0.05 | 350 | 0.545 / 0.43 / 0.0244 | 4.908 | 0.1082 | 0.4751 | 0.01458 | 11.24 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.4361 | 0.05 | 350 | 0.547 / 0.429 / 0.0243 | 0.304 | 0.1072 | 0.4851 | 0.0159 | 11.34 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.4361 | 0.05 | 350 | 0.547 / 0.429 / 0.0243 | 4.908 | 0.1095 | 0.4725 | 0.0159 | 11.34 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.3345 | 0.05 | 350 | 0.541 / 0.434 / 0.0248 | 34.4 | 0.2181 | 0.3773 | 0.7715 | 10.21 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.3345 | 0.05 | 350 | 0.541 / 0.434 / 0.0248 | 0.3335 | 0.206 | 0.3846 | 0.7715 | 10.21 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.3345 | 0.05 | 350 | 0.541 / 0.434 / 0.0248 | 4.908 | 0.206 | 0.3846 | 0.7715 | 10.21 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.3345 | 0.05 | 350 | 0.541 / 0.434 / 0.0248 | 3.087 | 0.2064 | 0.3846 | 0.1204 | 10.21 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.3345 | 0.05 | 350 | 0.541 / 0.434 / 0.0248 | 34.4 | 0.2057 | 0.3773 | 0.1204 | 10.21 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.3345 | 0.05 | 350 | 0.541 / 0.434 / 0.0248 | 0.3335 | 0.1642 | 0.3846 | 0.1204 | 10.21 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.3345 | 0.05 | 350 | 0.541 / 0.434 / 0.0248 | 4.908 | 0.1647 | 0.3846 | 0.1204 | 10.21 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.3345 | 0.05 | 350 | 0.541 / 0.434 / 0.0248 | 3.087 | 0.1682 | 0.3846 | 0.01212 | 10.21 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.3345 | 0.05 | 350 | 0.541 / 0.434 / 0.0248 | 34.4 | 0.1738 | 0.3774 | 0.01212 | 10.21 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.3345 | 0.05 | 350 | 0.541 / 0.434 / 0.0248 | 4.908 | 0.1032 | 0.4917 | 0.01212 | 10.21 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.3248 | 0.05 | 350 | 0.535 / 0.439 / 0.0252 | 0.3659 | 0.09916 | 0.5255 | 0.01011 | 10.1 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.3248 | 0.05 | 350 | 0.535 / 0.439 / 0.0252 | 4.908 | 0.102 | 0.4958 | 0.01011 | 10.1 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.35 | 0.05 | 350 | 0.539 / 0.436 / 0.0249 | 0.3335 | 0.1016 | 0.5179 | 0.01265 | 10.22 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.35 | 0.05 | 350 | 0.539 / 0.436 / 0.0249 | 4.908 | 0.1042 | 0.4886 | 0.01265 | 10.22 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.4535 | 0.05 | 350 | 0.544 / 0.432 / 0.0245 | 0.304 | 0.1077 | 0.4788 | 0.01556 | 11.28 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.4535 | 0.05 | 350 | 0.544 / 0.432 / 0.0245 | 4.908 | 0.1099 | 0.4705 | 0.01556 | 11.28 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.4663 | 0.05 | 350 | 0.546 / 0.43 / 0.0244 | 0.2771 | 0.109 | 0.4761 | 0.01699 | 11.38 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.4663 | 0.05 | 350 | 0.546 / 0.43 / 0.0244 | 4.908 | 0.111 | 0.4677 | 0.01699 | 11.38 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.3267 | 0.05 | 350 | 0.536 / 0.439 / 0.0252 | 0.3659 | 0.09931 | 0.5246 | 0.01019 | 10.12 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.3267 | 0.05 | 350 | 0.536 / 0.439 / 0.0252 | 4.908 | 0.1021 | 0.4954 | 0.01019 | 10.12 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.3521 | 0.05 | 350 | 0.54 / 0.436 / 0.0249 | 3.087 | 0.2193 | 0.3845 | 0.7869 | 10.23 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.3521 | 0.05 | 350 | 0.54 / 0.436 / 0.0249 | 34.4 | 0.2182 | 0.3773 | 0.7869 | 10.23 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.3521 | 0.05 | 350 | 0.54 / 0.436 / 0.0249 | 0.3335 | 0.2065 | 0.3845 | 0.7869 | 10.23 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.3521 | 0.05 | 350 | 0.54 / 0.436 / 0.0249 | 4.908 | 0.2065 | 0.3845 | 0.7869 | 10.23 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.3521 | 0.05 | 350 | 0.54 / 0.436 / 0.0249 | 3.087 | 0.2069 | 0.3845 | 0.1265 | 10.23 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.3521 | 0.05 | 350 | 0.54 / 0.436 / 0.0249 | 34.4 | 0.2062 | 0.3773 | 0.1265 | 10.23 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.3521 | 0.05 | 350 | 0.54 / 0.436 / 0.0249 | 0.3335 | 0.1654 | 0.3845 | 0.1265 | 10.23 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.3521 | 0.05 | 350 | 0.54 / 0.436 / 0.0249 | 4.908 | 0.166 | 0.3845 | 0.1265 | 10.23 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.3521 | 0.05 | 350 | 0.54 / 0.436 / 0.0249 | 3.087 | 0.1693 | 0.3845 | 0.01275 | 10.23 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.3521 | 0.05 | 350 | 0.54 / 0.436 / 0.0249 | 34.4 | 0.1747 | 0.3774 | 0.01275 | 10.23 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.3521 | 0.05 | 350 | 0.54 / 0.436 / 0.0249 | 0.3335 | 0.1018 | 0.5171 | 0.01275 | 10.23 |
-| `cll_a0.5|P0.05|A0.5_Ld20_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.3521 | 0.05 | 350 | 0.54 / 0.436 / 0.0249 | 4.908 | 0.1043 | 0.4882 | 0.01275 | 10.23 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T5-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07276 | 0.005 | 350 | 0.534 / 0.441 / 0.0255 | 34.4 | 0.2194 | 0.3815 | 0.9366 | 8.59 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T5-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07276 | 0.005 | 350 | 0.534 / 0.441 / 0.0255 | 0.3335 | 0.2129 | 0.3894 | 0.9366 | 8.59 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T5-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.07276 | 0.005 | 350 | 0.534 / 0.441 / 0.0255 | 4.908 | 0.213 | 0.3894 | 0.9366 | 8.59 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T5-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07276 | 0.005 | 350 | 0.534 / 0.441 / 0.0255 | 34.4 | 0.212 | 0.3815 | 0.2582 | 8.59 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T5-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07276 | 0.005 | 350 | 0.534 / 0.441 / 0.0255 | 0.3335 | 0.1832 | 0.3894 | 0.2582 | 8.59 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T5-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.07276 | 0.005 | 350 | 0.534 / 0.441 / 0.0255 | 4.908 | 0.1834 | 0.3894 | 0.2582 | 8.59 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T5-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.07276 | 0.005 | 350 | 0.534 / 0.441 / 0.0255 | 3.387 | 0.1851 | 0.3894 | 0.02672 | 8.59 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T5-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07276 | 0.005 | 350 | 0.534 / 0.441 / 0.0255 | 34.4 | 0.1869 | 0.3816 | 0.02672 | 8.59 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T5-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07276 | 0.005 | 350 | 0.534 / 0.441 / 0.0255 | 0.2525 | 0.1219 | 0.4241 | 0.02672 | 8.59 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T5-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07332 | 0.005 | 350 | 0.534 / 0.441 / 0.0255 | 34.4 | 0.2194 | 0.3814 | 0.9377 | 8.591 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T5-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07332 | 0.005 | 350 | 0.534 / 0.441 / 0.0255 | 0.3335 | 0.213 | 0.3893 | 0.9377 | 8.591 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T5-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.07332 | 0.005 | 350 | 0.534 / 0.441 / 0.0255 | 4.908 | 0.213 | 0.3893 | 0.9377 | 8.591 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T5-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07332 | 0.005 | 350 | 0.534 / 0.441 / 0.0255 | 34.4 | 0.2121 | 0.3814 | 0.2606 | 8.591 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T5-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07332 | 0.005 | 350 | 0.534 / 0.441 / 0.0255 | 0.3335 | 0.1833 | 0.3893 | 0.2606 | 8.591 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T5-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.07332 | 0.005 | 350 | 0.534 / 0.441 / 0.0255 | 4.908 | 0.1836 | 0.3893 | 0.2606 | 8.591 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T5-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.07332 | 0.005 | 350 | 0.534 / 0.441 / 0.0255 | 3.387 | 0.1853 | 0.3893 | 0.02698 | 8.591 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T5-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07332 | 0.005 | 350 | 0.534 / 0.441 / 0.0255 | 34.4 | 0.1871 | 0.3814 | 0.02698 | 8.591 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T5-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07332 | 0.005 | 350 | 0.534 / 0.441 / 0.0255 | 0.2525 | 0.122 | 0.4233 | 0.02698 | 8.591 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07591 | 0.005 | 350 | 0.537 / 0.438 / 0.0253 | 34.4 | 0.2269 | 0.3697 | 0.9326 | 8.621 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07591 | 0.005 | 350 | 0.537 / 0.438 / 0.0253 | 0.3335 | 0.2177 | 0.3759 | 0.9326 | 8.621 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.07591 | 0.005 | 350 | 0.537 / 0.438 / 0.0253 | 4.473 | 0.2177 | 0.3759 | 0.9326 | 8.621 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07591 | 0.005 | 350 | 0.537 / 0.438 / 0.0253 | 34.4 | 0.219 | 0.3697 | 0.2502 | 8.621 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07591 | 0.005 | 350 | 0.537 / 0.438 / 0.0253 | 0.3335 | 0.1862 | 0.3759 | 0.2502 | 8.621 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.07591 | 0.005 | 350 | 0.537 / 0.438 / 0.0253 | 4.908 | 0.1865 | 0.3759 | 0.2502 | 8.621 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.07591 | 0.005 | 350 | 0.537 / 0.438 / 0.0253 | 3.087 | 0.1886 | 0.3759 | 0.02583 | 8.621 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07591 | 0.005 | 350 | 0.537 / 0.438 / 0.0253 | 34.4 | 0.1928 | 0.3698 | 0.02583 | 8.621 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07591 | 0.005 | 350 | 0.537 / 0.438 / 0.0253 | 0.2525 | 0.1237 | 0.4204 | 0.02583 | 8.621 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.5|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.08797 | 0.005 | 350 | 0.535 / 0.44 / 0.0255 | 3.387 | 0.221 | 0.3992 | 0.9762 | 8.541 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.5|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.08797 | 0.005 | 350 | 0.535 / 0.44 / 0.0255 | 34.4 | 0.2195 | 0.3899 | 0.9762 | 8.541 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.5|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.08797 | 0.005 | 350 | 0.535 / 0.44 / 0.0255 | 0.3335 | 0.2146 | 0.3992 | 0.9762 | 8.541 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.5|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.08797 | 0.005 | 350 | 0.535 / 0.44 / 0.0255 | 4.908 | 0.2146 | 0.3992 | 0.9762 | 8.541 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.5|V0.01|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.08797 | 0.005 | 350 | 0.535 / 0.44 / 0.0255 | 3.387 | 0.2147 | 0.3992 | 0.4104 | 8.541 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.5|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.08797 | 0.005 | 350 | 0.535 / 0.44 / 0.0255 | 34.4 | 0.2134 | 0.3899 | 0.4104 | 8.541 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.5|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.08797 | 0.005 | 350 | 0.535 / 0.44 / 0.0255 | 0.3335 | 0.1884 | 0.3992 | 0.4104 | 8.541 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.5|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.08797 | 0.005 | 350 | 0.535 / 0.44 / 0.0255 | 4.908 | 0.1886 | 0.3992 | 0.4104 | 8.541 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.5|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.08797 | 0.005 | 350 | 0.535 / 0.44 / 0.0255 | 34.4 | 0.1909 | 0.3899 | 0.04497 | 8.541 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.08797 | 0.005 | 350 | 0.535 / 0.44 / 0.0255 | 0.2771 | 0.1301 | 0.4111 | 0.04497 | 8.541 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.1038 | 0.005 | 350 | 0.539 / 0.436 / 0.0251 | 34.4 | 0.2199 | 0.3766 | 0.9838 | 8.585 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1038 | 0.005 | 350 | 0.539 / 0.436 / 0.0251 | 0.3335 | 0.2148 | 0.3838 | 0.9838 | 8.585 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.1038 | 0.005 | 350 | 0.539 / 0.436 / 0.0251 | 4.908 | 0.2148 | 0.3838 | 0.9838 | 8.585 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.1038 | 0.005 | 350 | 0.539 / 0.436 / 0.0251 | 34.4 | 0.2139 | 0.3766 | 0.4809 | 8.585 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1038 | 0.005 | 350 | 0.539 / 0.436 / 0.0251 | 0.3335 | 0.189 | 0.3838 | 0.4809 | 8.585 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.1038 | 0.005 | 350 | 0.539 / 0.436 / 0.0251 | 4.908 | 0.1892 | 0.3838 | 0.4809 | 8.585 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.1038 | 0.005 | 350 | 0.539 / 0.436 / 0.0251 | 34.4 | 0.1916 | 0.3766 | 0.05477 | 8.585 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A1-U1-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1038 | 0.005 | 350 | 0.539 / 0.436 / 0.0251 | 0.2771 | 0.131 | 0.3949 | 0.05477 | 8.585 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.1125 | 0.005 | 350 | 0.541 / 0.434 / 0.0249 | 34.4 | 0.2249 | 0.3714 | 0.9637 | 8.785 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.1125 | 0.005 | 350 | 0.541 / 0.434 / 0.0249 | 34.4 | 0.219 | 0.3714 | 0.3395 | 8.785 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1125 | 0.005 | 350 | 0.541 / 0.434 / 0.0249 | 0.2771 | 0.1341 | 0.3879 | 0.03607 | 8.785 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.116 | 0.005 | 350 | 0.542 / 0.433 / 0.0248 | 0.2771 | 0.1359 | 0.3854 | 0.03973 | 8.776 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07649 | 0.005 | 350 | 0.537 / 0.438 / 0.0253 | 34.4 | 0.227 | 0.3696 | 0.9338 | 8.622 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07649 | 0.005 | 350 | 0.537 / 0.438 / 0.0253 | 0.3335 | 0.2178 | 0.3759 | 0.9338 | 8.622 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.07649 | 0.005 | 350 | 0.537 / 0.438 / 0.0253 | 4.473 | 0.2178 | 0.3759 | 0.9338 | 8.622 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07649 | 0.005 | 350 | 0.537 / 0.438 / 0.0253 | 34.4 | 0.2192 | 0.3696 | 0.2525 | 8.622 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07649 | 0.005 | 350 | 0.537 / 0.438 / 0.0253 | 0.3335 | 0.1864 | 0.3759 | 0.2525 | 8.622 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.07649 | 0.005 | 350 | 0.537 / 0.438 / 0.0253 | 4.908 | 0.1867 | 0.3759 | 0.2525 | 8.622 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.07649 | 0.005 | 350 | 0.537 / 0.438 / 0.0253 | 3.087 | 0.1887 | 0.3759 | 0.02609 | 8.622 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07649 | 0.005 | 350 | 0.537 / 0.438 / 0.0253 | 34.4 | 0.193 | 0.3697 | 0.02609 | 8.622 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07649 | 0.005 | 350 | 0.537 / 0.438 / 0.0253 | 0.2525 | 0.1239 | 0.4197 | 0.02609 | 8.622 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.5|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.09044 | 0.005 | 350 | 0.534 / 0.441 / 0.0256 | 3.387 | 0.221 | 0.3992 | 0.9774 | 8.544 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.5|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.09044 | 0.005 | 350 | 0.534 / 0.441 / 0.0256 | 34.4 | 0.2195 | 0.3898 | 0.9774 | 8.544 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.5|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.09044 | 0.005 | 350 | 0.534 / 0.441 / 0.0256 | 0.3335 | 0.2147 | 0.3992 | 0.9774 | 8.544 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.5|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.09044 | 0.005 | 350 | 0.534 / 0.441 / 0.0256 | 4.908 | 0.2147 | 0.3992 | 0.9774 | 8.544 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.5|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.09044 | 0.005 | 350 | 0.534 / 0.441 / 0.0256 | 34.4 | 0.2135 | 0.3898 | 0.4197 | 8.544 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.5|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.09044 | 0.005 | 350 | 0.534 / 0.441 / 0.0256 | 0.3335 | 0.189 | 0.3992 | 0.4197 | 8.544 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.5|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.09044 | 0.005 | 350 | 0.534 / 0.441 / 0.0256 | 4.908 | 0.1891 | 0.3992 | 0.4197 | 8.544 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.5|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.09044 | 0.005 | 350 | 0.534 / 0.441 / 0.0256 | 34.4 | 0.1914 | 0.3899 | 0.04619 | 8.544 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.09044 | 0.005 | 350 | 0.534 / 0.441 / 0.0256 | 0.2771 | 0.131 | 0.4097 | 0.04619 | 8.544 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.107 | 0.005 | 350 | 0.538 / 0.437 / 0.0252 | 3.087 | 0.221 | 0.3837 | 0.9847 | 8.589 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.107 | 0.005 | 350 | 0.538 / 0.437 / 0.0252 | 34.4 | 0.2199 | 0.3766 | 0.9847 | 8.589 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.107 | 0.005 | 350 | 0.538 / 0.437 / 0.0252 | 0.3335 | 0.2149 | 0.3837 | 0.9847 | 8.589 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.107 | 0.005 | 350 | 0.538 / 0.437 / 0.0252 | 4.908 | 0.2149 | 0.3837 | 0.9847 | 8.589 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.107 | 0.005 | 350 | 0.538 / 0.437 / 0.0252 | 34.4 | 0.214 | 0.3766 | 0.492 | 8.589 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.107 | 0.005 | 350 | 0.538 / 0.437 / 0.0252 | 0.3335 | 0.1897 | 0.3837 | 0.492 | 8.589 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.107 | 0.005 | 350 | 0.538 / 0.437 / 0.0252 | 4.908 | 0.1898 | 0.3837 | 0.492 | 8.589 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.107 | 0.005 | 350 | 0.538 / 0.437 / 0.0252 | 34.4 | 0.192 | 0.3766 | 0.05642 | 8.589 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.9|T6-A1-U1-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.107 | 0.005 | 350 | 0.538 / 0.437 / 0.0252 | 0.2771 | 0.1319 | 0.3934 | 0.05642 | 8.589 |
-| `maxwell_a0|P0.005|A0.25_Ld5_phi0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1199 | 0.005 | 350 | 0.541 / 0.434 / 0.0249 | 0.2771 | 0.1368 | 0.384 | 0.04103 | 8.781 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07026 | 0.01 | 350 | 0.522 / 0.451 / 0.0263 | 34.4 | 0.2181 | 0.3846 | 0.7998 | 8.747 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07026 | 0.01 | 350 | 0.522 / 0.451 / 0.0263 | 0.3335 | 0.2071 | 0.3931 | 0.7998 | 8.747 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.07026 | 0.01 | 350 | 0.522 / 0.451 / 0.0263 | 4.908 | 0.2071 | 0.3931 | 0.7998 | 8.747 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07026 | 0.01 | 350 | 0.522 / 0.451 / 0.0263 | 34.4 | 0.2066 | 0.3846 | 0.1321 | 8.747 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07026 | 0.01 | 350 | 0.522 / 0.451 / 0.0263 | 0.3335 | 0.1669 | 0.3931 | 0.1321 | 8.747 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.07026 | 0.01 | 350 | 0.522 / 0.451 / 0.0263 | 4.908 | 0.1675 | 0.3931 | 0.1321 | 8.747 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.07026 | 0.01 | 350 | 0.522 / 0.451 / 0.0263 | 3.387 | 0.1708 | 0.3931 | 0.01332 | 8.747 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07026 | 0.01 | 350 | 0.522 / 0.451 / 0.0263 | 34.4 | 0.1758 | 0.3848 | 0.01332 | 8.747 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07026 | 0.01 | 350 | 0.522 / 0.451 / 0.0263 | 0.3335 | 0.1013 | 0.5146 | 0.01332 | 8.747 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.07026 | 0.01 | 350 | 0.522 / 0.451 / 0.0263 | 4.908 | 0.104 | 0.4908 | 0.01332 | 8.747 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1074 | 0.01 | 350 | 0.528 / 0.446 / 0.0259 | 0.2771 | 0.1137 | 0.4575 | 0.02051 | 8.998 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.07083 | 0.01 | 350 | 0.522 / 0.451 / 0.0263 | 3.387 | 0.2194 | 0.3929 | 0.8027 | 8.749 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07083 | 0.01 | 350 | 0.522 / 0.451 / 0.0263 | 34.4 | 0.2181 | 0.3845 | 0.8027 | 8.749 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07083 | 0.01 | 350 | 0.522 / 0.451 / 0.0263 | 0.3335 | 0.2071 | 0.3929 | 0.8027 | 8.749 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.07083 | 0.01 | 350 | 0.522 / 0.451 / 0.0263 | 4.908 | 0.2072 | 0.3929 | 0.8027 | 8.749 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07083 | 0.01 | 350 | 0.522 / 0.451 / 0.0263 | 34.4 | 0.2067 | 0.3845 | 0.1334 | 8.749 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07083 | 0.01 | 350 | 0.522 / 0.451 / 0.0263 | 0.3335 | 0.167 | 0.3929 | 0.1334 | 8.749 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07083 | 0.01 | 350 | 0.522 / 0.451 / 0.0263 | 34.4 | 0.1759 | 0.3846 | 0.01346 | 8.749 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07083 | 0.01 | 350 | 0.522 / 0.451 / 0.0263 | 0.3335 | 0.1014 | 0.5135 | 0.01346 | 8.749 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.07083 | 0.01 | 350 | 0.522 / 0.451 / 0.0263 | 4.908 | 0.1042 | 0.4903 | 0.01346 | 8.749 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.0718 | 0.01 | 350 | 0.521 / 0.452 / 0.0264 | 3.387 | 0.2195 | 0.393 | 0.8058 | 8.749 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.0718 | 0.01 | 350 | 0.521 / 0.452 / 0.0264 | 34.4 | 0.2182 | 0.3846 | 0.8058 | 8.749 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.0718 | 0.01 | 350 | 0.521 / 0.452 / 0.0264 | 0.3335 | 0.2072 | 0.393 | 0.8058 | 8.749 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.0718 | 0.01 | 350 | 0.521 / 0.452 / 0.0264 | 4.908 | 0.2073 | 0.393 | 0.8058 | 8.749 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.0718 | 0.01 | 350 | 0.521 / 0.452 / 0.0264 | 3.387 | 0.2076 | 0.393 | 0.1348 | 8.749 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.0718 | 0.01 | 350 | 0.521 / 0.452 / 0.0264 | 34.4 | 0.2068 | 0.3846 | 0.1348 | 8.749 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.0718 | 0.01 | 350 | 0.521 / 0.452 / 0.0264 | 0.3335 | 0.1674 | 0.393 | 0.1348 | 8.749 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.0718 | 0.01 | 350 | 0.521 / 0.452 / 0.0264 | 4.908 | 0.1679 | 0.393 | 0.1348 | 8.749 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.0718 | 0.01 | 350 | 0.521 / 0.452 / 0.0264 | 3.387 | 0.1713 | 0.393 | 0.0136 | 8.749 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.0718 | 0.01 | 350 | 0.521 / 0.452 / 0.0264 | 34.4 | 0.1761 | 0.3847 | 0.0136 | 8.749 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.0718 | 0.01 | 350 | 0.521 / 0.452 / 0.0264 | 0.3335 | 0.1018 | 0.5117 | 0.0136 | 8.749 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.0718 | 0.01 | 350 | 0.521 / 0.452 / 0.0264 | 4.908 | 0.1046 | 0.4895 | 0.0136 | 8.749 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.111 | 0.01 | 350 | 0.526 / 0.448 / 0.026 | 0.2771 | 0.1145 | 0.4536 | 0.02118 | 9.003 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.07239 | 0.01 | 350 | 0.522 / 0.452 / 0.0264 | 3.387 | 0.2195 | 0.3929 | 0.8086 | 8.752 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07239 | 0.01 | 350 | 0.522 / 0.452 / 0.0264 | 34.4 | 0.2182 | 0.3845 | 0.8086 | 8.752 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07239 | 0.01 | 350 | 0.522 / 0.452 / 0.0264 | 0.3335 | 0.2073 | 0.3929 | 0.8086 | 8.752 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.07239 | 0.01 | 350 | 0.522 / 0.452 / 0.0264 | 3.387 | 0.2077 | 0.3929 | 0.1362 | 8.752 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07239 | 0.01 | 350 | 0.522 / 0.452 / 0.0264 | 34.4 | 0.2068 | 0.3845 | 0.1362 | 8.752 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07239 | 0.01 | 350 | 0.522 / 0.452 / 0.0264 | 0.3335 | 0.1676 | 0.3929 | 0.1362 | 8.752 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.07239 | 0.01 | 350 | 0.522 / 0.452 / 0.0264 | 4.908 | 0.1681 | 0.3929 | 0.1362 | 8.752 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07239 | 0.01 | 350 | 0.522 / 0.452 / 0.0264 | 34.4 | 0.1762 | 0.3846 | 0.01374 | 8.752 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07239 | 0.01 | 350 | 0.522 / 0.452 / 0.0264 | 0.3335 | 0.102 | 0.5106 | 0.01374 | 8.752 |
-| `maxwell_a0|P0.01|A0.25_Ld5_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.07239 | 0.01 | 350 | 0.522 / 0.452 / 0.0264 | 4.908 | 0.1048 | 0.4889 | 0.01374 | 8.752 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.07775 | 0.01 | 350 | 0.518 / 0.455 / 0.0267 | 3.387 | 0.2196 | 0.3928 | 0.8267 | 8.757 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07775 | 0.01 | 350 | 0.518 / 0.455 / 0.0267 | 34.4 | 0.2183 | 0.3844 | 0.8267 | 8.757 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07775 | 0.01 | 350 | 0.518 / 0.455 / 0.0267 | 0.3335 | 0.208 | 0.3928 | 0.8267 | 8.757 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.07775 | 0.01 | 350 | 0.518 / 0.455 / 0.0267 | 4.908 | 0.2081 | 0.3928 | 0.8267 | 8.757 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07775 | 0.01 | 350 | 0.518 / 0.455 / 0.0267 | 34.4 | 0.2075 | 0.3844 | 0.1453 | 8.757 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07775 | 0.01 | 350 | 0.518 / 0.455 / 0.0267 | 0.3335 | 0.1694 | 0.3928 | 0.1453 | 8.757 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.07775 | 0.01 | 350 | 0.518 / 0.455 / 0.0267 | 4.908 | 0.1699 | 0.3928 | 0.1453 | 8.757 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07775 | 0.01 | 350 | 0.518 / 0.455 / 0.0267 | 34.4 | 0.1774 | 0.3846 | 0.01469 | 8.757 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07775 | 0.01 | 350 | 0.518 / 0.455 / 0.0267 | 0.3335 | 0.1041 | 0.5003 | 0.01469 | 8.757 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.07775 | 0.01 | 350 | 0.518 / 0.455 / 0.0267 | 4.908 | 0.1066 | 0.484 | 0.01469 | 8.757 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.1258 | 0.01 | 350 | 0.521 / 0.452 / 0.0264 | 34.4 | 0.1849 | 0.3844 | 0.02391 | 9.024 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.8|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1258 | 0.01 | 350 | 0.521 / 0.452 / 0.0264 | 0.2771 | 0.1182 | 0.4398 | 0.02391 | 9.024 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.07843 | 0.01 | 350 | 0.518 / 0.455 / 0.0267 | 3.387 | 0.2197 | 0.3927 | 0.8294 | 8.76 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07843 | 0.01 | 350 | 0.518 / 0.455 / 0.0267 | 34.4 | 0.2184 | 0.3843 | 0.8294 | 8.76 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07843 | 0.01 | 350 | 0.518 / 0.455 / 0.0267 | 0.3335 | 0.2081 | 0.3927 | 0.8294 | 8.76 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.07843 | 0.01 | 350 | 0.518 / 0.455 / 0.0267 | 4.908 | 0.2081 | 0.3927 | 0.8294 | 8.76 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07843 | 0.01 | 350 | 0.518 / 0.455 / 0.0267 | 34.4 | 0.2075 | 0.3843 | 0.1469 | 8.76 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07843 | 0.01 | 350 | 0.518 / 0.455 / 0.0267 | 0.3335 | 0.1696 | 0.3927 | 0.1469 | 8.76 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.07843 | 0.01 | 350 | 0.518 / 0.455 / 0.0267 | 4.908 | 0.1701 | 0.3927 | 0.1469 | 8.76 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.07843 | 0.01 | 350 | 0.518 / 0.455 / 0.0267 | 3.387 | 0.173 | 0.3927 | 0.01485 | 8.76 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07843 | 0.01 | 350 | 0.518 / 0.455 / 0.0267 | 34.4 | 0.1775 | 0.3844 | 0.01485 | 8.76 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07843 | 0.01 | 350 | 0.518 / 0.455 / 0.0267 | 0.3335 | 0.1043 | 0.4991 | 0.01485 | 8.76 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.8|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.07843 | 0.01 | 350 | 0.518 / 0.455 / 0.0267 | 4.908 | 0.1068 | 0.4833 | 0.01485 | 8.76 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.07868 | 0.01 | 350 | 0.517 / 0.456 / 0.0268 | 3.387 | 0.2197 | 0.3928 | 0.8296 | 8.759 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07868 | 0.01 | 350 | 0.517 / 0.456 / 0.0268 | 34.4 | 0.2184 | 0.3844 | 0.8296 | 8.759 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07868 | 0.01 | 350 | 0.517 / 0.456 / 0.0268 | 0.3335 | 0.2081 | 0.3928 | 0.8296 | 8.759 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.07868 | 0.01 | 350 | 0.517 / 0.456 / 0.0268 | 4.908 | 0.2082 | 0.3928 | 0.8296 | 8.759 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07868 | 0.01 | 350 | 0.517 / 0.456 / 0.0268 | 34.4 | 0.2076 | 0.3844 | 0.147 | 8.759 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07868 | 0.01 | 350 | 0.517 / 0.456 / 0.0268 | 0.3335 | 0.1697 | 0.3928 | 0.147 | 8.759 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.07868 | 0.01 | 350 | 0.517 / 0.456 / 0.0268 | 4.908 | 0.1702 | 0.3928 | 0.147 | 8.759 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.07868 | 0.01 | 350 | 0.517 / 0.456 / 0.0268 | 3.387 | 0.1731 | 0.3928 | 0.01486 | 8.759 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07868 | 0.01 | 350 | 0.517 / 0.456 / 0.0268 | 34.4 | 0.1776 | 0.3845 | 0.01486 | 8.759 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07868 | 0.01 | 350 | 0.517 / 0.456 / 0.0268 | 0.3335 | 0.1044 | 0.4987 | 0.01486 | 8.759 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.07868 | 0.01 | 350 | 0.517 / 0.456 / 0.0268 | 4.908 | 0.1069 | 0.4832 | 0.01486 | 8.759 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.1283 | 0.01 | 350 | 0.521 / 0.453 / 0.0265 | 34.4 | 0.2192 | 0.3843 | 0.9251 | 9.027 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1283 | 0.01 | 350 | 0.521 / 0.453 / 0.0265 | 0.3335 | 0.2121 | 0.3927 | 0.9251 | 9.027 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.1283 | 0.01 | 350 | 0.521 / 0.453 / 0.0265 | 4.908 | 0.2122 | 0.3927 | 0.9251 | 9.027 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.1283 | 0.01 | 350 | 0.521 / 0.453 / 0.0265 | 34.4 | 0.2112 | 0.3843 | 0.2368 | 9.027 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1283 | 0.01 | 350 | 0.521 / 0.453 / 0.0265 | 0.3335 | 0.1808 | 0.3927 | 0.2368 | 9.027 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.1283 | 0.01 | 350 | 0.521 / 0.453 / 0.0265 | 4.908 | 0.1811 | 0.3927 | 0.2368 | 9.027 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.1283 | 0.01 | 350 | 0.521 / 0.453 / 0.0265 | 3.387 | 0.183 | 0.3927 | 0.02436 | 9.027 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.1283 | 0.01 | 350 | 0.521 / 0.453 / 0.0265 | 34.4 | 0.1852 | 0.3843 | 0.02436 | 9.027 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.1283 | 0.01 | 350 | 0.521 / 0.453 / 0.0265 | 0.2771 | 0.1187 | 0.4377 | 0.02436 | 9.027 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07938 | 0.01 | 350 | 0.517 / 0.456 / 0.0268 | 34.4 | 0.2184 | 0.3843 | 0.8324 | 8.761 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07938 | 0.01 | 350 | 0.517 / 0.456 / 0.0268 | 0.3335 | 0.2082 | 0.3927 | 0.8324 | 8.761 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti3_fv1_r3` | 0.1 | 0.07938 | 0.01 | 350 | 0.517 / 0.456 / 0.0268 | 4.908 | 0.2082 | 0.3927 | 0.8324 | 8.761 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.07938 | 0.01 | 350 | 0.517 / 0.456 / 0.0268 | 3.387 | 0.2085 | 0.3927 | 0.1485 | 8.761 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07938 | 0.01 | 350 | 0.517 / 0.456 / 0.0268 | 34.4 | 0.2076 | 0.3843 | 0.1485 | 8.761 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07938 | 0.01 | 350 | 0.517 / 0.456 / 0.0268 | 0.3335 | 0.1698 | 0.3927 | 0.1485 | 8.761 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.01|Kp3_Ti3_fv1_r3` | 0.1 | 0.07938 | 0.01 | 350 | 0.517 / 0.456 / 0.0268 | 4.908 | 0.1703 | 0.3927 | 0.1485 | 8.761 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti0.3_fv1_r3` | 0.1 | 0.07938 | 0.01 | 350 | 0.517 / 0.456 / 0.0268 | 3.387 | 0.1733 | 0.3927 | 0.01502 | 8.761 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp0.3_Ti3_fv1_r3` | 0.1 | 0.07938 | 0.01 | 350 | 0.517 / 0.456 / 0.0268 | 34.4 | 0.1777 | 0.3844 | 0.01502 | 8.761 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti0.3_fv1_r3` | 0.1 | 0.07938 | 0.01 | 350 | 0.517 / 0.456 / 0.0268 | 0.3335 | 0.1047 | 0.4975 | 0.01502 | 8.761 |
-| `maxwell_a0|P0.01|A0.5_Ld5_phi0.9|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.1|Kp3_Ti3_fv1_r3` | 0.1 | 0.07938 | 0.01 | 350 | 0.517 / 0.456 / 0.0268 | 4.908 | 0.1071 | 0.4825 | 0.01502 | 8.761 |
 
 ## Sensitivity, verification, checks
 
-- Valve bandwidth sensitivity: 24 Pareto members re-run at (0.1, 10.0) Hz (rows in the JSON).
-- Orbit quasi-static vs transient (A0.25_Ld5_phi0.8|T5-A0-U2-D0-Ti6Al4V-H0.75, h200_f150, P 0.005 Pa): rel. diff min/max flow 0.0002991 / 4.993e-06; plenum pressure deviation 0.0002722.
-- Orbit quasi-static vs transient (A0.25_Ld5_phi0.8|T5-A2-U2-D0-Ti6Al4V-H0.75, h200_f150, P 0.005 Pa): rel. diff min/max flow 0.0002989 / 4.99e-06; plenum pressure deviation 0.0002721.
-- Orbit quasi-static vs transient (A0.25_Ld5_phi0.8|T6-A0-U2-D0-Ti6Al4V-H0.75, h200_f150, P 0.005 Pa): rel. diff min/max flow 0.0002773 / 4.827e-06; plenum pressure deviation 0.0002557.
-- Convergence maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T5-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti0.3_fv1_r3: same status True, rel. diff {'settling_max_s': 0.0, 'peak_deviation_max': 1.9398114e-06, 'valve_travel': 6.7345893e-07}.
-- Convergence maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T5-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp0.3_Ti3_fv1_r3: same status True, rel. diff {'settling_max_s': 0.0, 'peak_deviation_max': 4.3913593e-06, 'valve_travel': 1.4102127e-06}.
-- Convergence maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T5-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti0.3_fv1_r3: same status True, rel. diff {'settling_max_s': 0.0, 'peak_deviation_max': 3.8571812e-07, 'valve_travel': 1.2948598e-06}.
-- Convergence maxwell_a0|P0.005|A0.25_Ld5_phi0.8|T5-A0-U2-D0-Ti6Al4V-H0.75|V0.001|Kp3_Ti3_fv1_r3: same status True, rel. diff {'settling_max_s': 0.0, 'peak_deviation_max': 2.314598e-07, 'valve_travel': 1.0098105e-07}.
+- Valve bandwidth sensitivity: 0 Pareto members re-run at (0.1, 10.0) Hz (rows in the JSON).
 - Reservoir.steady_state cross-check: p rel. diff 2.22e-16, species flow 6.661e-16; size_orifice_for_pressure 2.22e-16; cascade vs DragCompressor._run_once 0; F1 escape probability vs phi K_back 1.065e-06.
 
 ## Findings
 
-- **F4-01** (model-derived (PARAMETRIC_SENSITIVITY inputs)): all-orbit-state deliverable flow is small: with one plenum setpoint for all five F1 orbit states the frontier (max over the 48 F1 intake candidates x 55 F3 compressors, filter none, WALL-G0) is 0.09832 mg/s (cll_a0.5, P_req 0.002 Pa); with a setpoint scheduled per orbit state it is 0.1192 mg/s (cll_a0.5, P_req 0.002 Pa). Chains reaching the lower end of the 0.38-3.2 mg/s characterization coverage (0.38 mg/s; A9.13 S6.21: coverage only, not a flight requirement or gate) at every state: 0. Single-state values reach 1.244 mg/s
-- **F4-02** (model-derived): the lowest-supply orbit state binds: the min-over-states flow is set by h230_f70 in 35 of 35 (scenario, P_req) cells with all states in domain (per_state_frontier)
-- **F4-03** (inferred (domain) + model-derived): domain: every P_req > 0.1 Pa is NOT_EVALUATED_OUT_OF_DOMAIN (A9.13 S6.8; F3 cap propagated); the highest P_req with an all-state-feasible chain is 0.1 Pa. The H2-3 analog IF-A5 pressure 5.74-1216 Pa (H23-06, ECHT-size illustration) lies entirely above the cap. To accept the feed at <= 0.1 Pa the whole downstream path must have a molecular conductance >= 1.35 m^3/s for 1.3 mg/s of N2 (orifice-equivalent 105 cm^2), see conductance_demand
-- **F4-04** (model-derived): a lower pressure bound exists too: at P_set = 0.002 Pa, 98057 of 132000 chain-state points leave the Gaede characteristic domain (K < 1: the throughput exceeds the turbo row's S p capacity when the plenum is drawn down; points counted over every F1 record x F3 design, one point may carry several reasons). Each chain has an admissible plenum window [characteristic limit, min(dead-head, 0.1 Pa)]; reasons over in-domain targets: {'F1_INTAKE_INFEASIBLE_AT_STATE': 184800, 'FEASIBLE_POINT_NO_REASON': 271428, 'GAEDE_CHARACTERISTIC_OUTSIDE_K_1_TO_K0': 168672, 'TARGET_AT_OR_ABOVE_DEAD_HEAD_PRESSURE': 277140}
-- **F4-05** (model-derived): the plenum is not an orbit-scale buffer at <= 0.1 Pa: plenum time constants 0.000222-0.197 s and inventory ride-through 0.00029-0.183 s over V = 0.001-0.1 m^3 (orbital period ~5.3e3 s); orbit-scale supply changes pass to the delivered flow (quasi-static) and the volume trades mass against high-frequency attenuation: ripple transfer at the compressor shaft frequency (upper bound) 0.526-0.986 at 0.001 m^3 vs 0.00619-0.06 at 0.1 m^3
-- **F4-06** (model-derived (uncited DB prior gamma)): plenum wall O recombination couples volume to deliverable pressure: O + O -> O2 halves the number of O particles, lowering the dead-head pressure. All-state-feasible chains at P_req 0.01 Pa (all scenarios): WALL-G0 3356; WALL-TI64-DB (gamma 0.017) by V: {'0.001': 1132, '0.01': 253, '0.1': 30}
-- **F4-07** (model-derived (PARAMETRIC_SENSITIVITY filter cases)): filter effect on the scheduled-setpoint frontier (max over scenarios, mg/s): {'F4-FIL-NONE': 0.119186, 'F4-FIL-T0.9': 0.118252, 'F4-FIL-T0.7': 0.115662, 'F4-FIL-T0.5': 0.111277, 'F4-FIL-PLACEHOLDER': 0.112355} (gap-reflection series model; every filter number is a labelled parametric case)
-- **F4-08** (model-derived): transient study: 1128 simulated cases; feasible at orbit amplitude 0.1: 1128, 0.2: 72; Pareto members {'0.1': 615, '0.2': 46}. Larger orbit amplitudes fail mostly by valve saturation (authority r = 3) or by leaving the characteristic domain at the high-density states
-- **F4-09** (model-derived): valve-bandwidth sensitivity (F4-P-08 TBD): 0 status changes in 48 re-runs of Pareto members at [0.1, 10.0] Hz
-- **F4-10** (model-derived (numerics)): numerics: quasi-static orbit check vs full transient max relative flow difference 0.0002990530528648172 (plenum pressure held within 0.00027221917462960654); LSODA rtol 1e-05 vs BDF rtol 1e-08: same status True, max objective difference 4.3913592665534296e-06; mass-conservation residual max 7.47e-16 (gate 1e-06)
+- **F4-01** (model-derived (PARAMETRIC_SENSITIVITY inputs)): all-orbit-state deliverable flow: with one plenum setpoint for all 197 F1 states (design-case reference + every required design state of atmosphere_msis21_orbit_v1_design_states_v2) the frontier (max over the 48 F1 intake candidates x 55 F3 compressors, filter none, WALL-G0) is 0.01296 mg/s (cll_a0.8, P_req 0.002 Pa); with a setpoint scheduled per orbit state it is 0.02644 mg/s (cll_a0.5, P_req 0.002 Pa). Chains reaching 0.38 mg/s (ground characterization only, A9.13 S6.13 / S6.21: never a flight requirement or gate) at every state: 0. Single-state values reach 1.587 mg/s. Orbit basis BROAD_ENVELOPE_ALL_INCLINATIONS_ALL_LTAN_NOT_MISSION_ICD
+- **F4-02** (model-derived): the lowest-supply orbit state binds: the min-over-states flow is set by ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184 in 9 of 13 (scenario, P_req) cells with all states in domain (per_state_frontier)
+- **F4-03** (inferred (domain) + model-derived): domain: every P_req > 0.1 Pa is NOT_EVALUATED_OUT_OF_DOMAIN (A9.13 S6.8; F3 cap propagated); the highest P_req with an all-state-feasible chain is 0.02 Pa. The H2-3 analog IF-A5 pressure 5.74-1216 Pa (H23-06, ECHT-size illustration) lies entirely above the cap. To accept the feed at <= 0.1 Pa the whole downstream path must have a molecular conductance >= 1.35 m^3/s for 1.3 mg/s of N2 (orifice-equivalent 105 cm^2), see conductance_demand
+- **F4-04** (model-derived): a lower pressure bound exists too: at P_set = 0.002 Pa, 3898412 of 5200800 chain-state points leave the Gaede characteristic domain (K < 1: the throughput exceeds the turbo row's S p capacity when the plenum is drawn down; points counted over every F1 record x F3 design, one point may carry several reasons). Each chain has an admissible plenum window [characteristic limit, min(dead-head, 0.1 Pa)]; reasons over in-domain targets: {'F1_INTAKE_INFEASIBLE_AT_STATE': 7571520, 'FEASIBLE_POINT_NO_REASON': 10658343, 'FEED_ORIFICE_KNUDSEN_UPPER_BOUND_BELOW_FREE_MOLECULAR_LIMIT': 78, 'GAEDE_CHARACTERISTIC_OUTSIDE_K_1_TO_K0': 6672699, 'TARGET_AT_OR_ABOVE_DEAD_HEAD_PRESSURE': 10746654}
+- **F4-05** (model-derived): no transient case was simulated (no chain is feasible at every F1 state on the transient basis): plenum time constants, ride-through and ripple transfer are NOT_EVALUATED
+- **F4-06** (model-derived (uncited DB prior gamma)): plenum wall O recombination couples volume to deliverable pressure: O + O -> O2 halves the number of O particles, lowering the dead-head pressure. All-state-feasible chains at P_req 0.01 Pa (all scenarios): WALL-G0 237; WALL-TI64-DB (gamma 0.017) by V: {'0.001': 0, '0.01': 0, '0.1': 0}
+- **F4-07** (model-derived (PARAMETRIC_SENSITIVITY filter cases)): filter effect on the scheduled-setpoint frontier (max over scenarios, mg/s): {'F4-FIL-NONE': 0.02644, 'F4-FIL-T0.9': 0.026176, 'F4-FIL-T0.7': 0.02545, 'F4-FIL-T0.5': 0.024239, 'F4-FIL-PLACEHOLDER': 0.024595} (gap-reflection series model; every filter number is a labelled parametric case)
+- **F4-08** (model-derived): transient study: 0 simulated cases; feasible at orbit amplitude 0.1: 0, 0.2: 0; Pareto members {'0.1': 0, '0.2': 0}. Larger orbit amplitudes fail mostly by valve saturation (authority r = 3) or by leaving the characteristic domain at the high-density states
+- **F4-09** (model-derived): valve-bandwidth sensitivity (F4-P-08 TBD): 0 status changes in 0 re-runs of Pareto members at [0.1, 10.0] Hz
+- **F4-10** (model-derived (numerics)): numerics: quasi-static orbit check vs full transient max relative flow difference None (plenum pressure held within None); LSODA rtol 1e-05 vs BDF rtol 1e-08: same status True, max objective difference None; mass-conservation residual max - (gate 1e-06)
 - **F4-11** (model-derived): coupled compressor inlet: F3 evaluated every design at p_in = p_passive (the F1 zero-net-flow pressure, where the F1 net flow is zero); in the coupled solution p_in < p_passive and the delivered flow follows mdot_fwd (1 - p_in / p_passive) minus the compressor back-leak: closes F1-ID-04 / IFD-F3-05 for the parametric inputs
 - **F4-12** (inferred): MODE_STRICT returns NOT_EVALUATED (12 blockers); every number here is PARAMETRIC_SENSITIVITY: not a plenum design, not a valve specification, not a requirement, no PASS
 
@@ -772,13 +289,30 @@ Objectives (all minimized): ['V_m3', 'valve_travel', 'settling_max_s', 'peak_dev
 | F4-ID-12 | F4 <-> H2-3 | docs/hardware/h2/h2_3_gas_path_plenum/ | plenum volume, metering-valve bandwidth / authority, wall recombination class (GP-D03), compressor ripple (H23-17); F4 evaluates them parametrically | DEMANDED (TBD) |
 | F4-ID-13 | F4 -> F9 | docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json (F9-ID-04) | plenum / valve / feed rows: VALUE TBD, PARAMETRIC_SENSITIVITY ranges only | INFORMATIONAL |
 
-## Open owner questions (new)
+## Open owner questions (as raised; current owner state applied)
 
-- **OQ-F4-01**: Plenum setpoint across orbit states: one fixed setpoint (single-setpoint frontier) or a setpoint scheduled with the slowly varying orbit state (scheduled frontier)? The all-state deliverable flow differs between them (F4-01). Proposed: none proposed. Needed by: F7 coupled vector; control / start sequence (F9).
-- **OQ-F4-02**: The compressor's evidence domain caps the plenum at 0.1 Pa while the H2-3 analog feed path needs 5.7-1216 Pa at IF-A5. Either the downstream path (valve + line + isolator + distributor + H-1) is designed for a molecular conductance >= the conductance_demand values, or a compressor regime above 0.1 Pa is pursued (transitional model / T-1 data, OQ-F3-03). Which is the design direction? Proposed: none proposed. Needed by: LOCK-1 (H1F-IN-04, IFS-F4-02).
-- **OQ-F4-03**: Confirm the F4 transient-quality metric definitions (2 % band, 60 s window, the E0..E7 event sequence, orbit-modulation amplitude cases) as the basis on which H-1 tolerances are set at LOCK-2 (F5 IFD-F4-05)? Proposed: none proposed. Needed by: LOCK-2.
-- **OQ-F4-04**: The all-state deliverable flow of every evaluated chain is below the lower end of the owner ground characterization range (0.38 mg/s, row 73). Which lever is to be studied: larger capture (F1 drag-limited at h180_f230), operation restricted to the higher-density states, or a different feed requirement? Proposed: none proposed. Needed by: F7 / F9.
-- **OQ-F4-05**: Orbit-scale density modulation: the frozen atmosphere is orbit-averaged. Supply an amplitude basis or authorize an orbit-resolved frozen dataset (CLAUDE.md rule 1 rebuild)? Proposed: none proposed. Needed by: next F4 revision.
+- **OQ-F4-01** (ANSWERED (A9.13 S6.10, decision code SCHEDULED_BASELINE_FIXED_FALLBACK)): Plenum setpoint across orbit states: one fixed setpoint (single-setpoint frontier) or a setpoint scheduled with the slowly varying orbit state (scheduled frontier)? The all-state deliverable flow differs between them (F4-01). Proposed: none proposed. Needed by: F7 coupled vector; control / start sequence (F9).
+- **OQ-F4-02** (ANSWERED (A9.13 S6.11, decision code HIGHER_PRESSURE_COMPRESSION_PRIMARY)): The compressor's evidence domain caps the plenum at 0.1 Pa while the H2-3 analog feed path needs 5.7-1216 Pa at IF-A5. Either the downstream path (valve + line + isolator + distributor + H-1) is designed for a molecular conductance >= the conductance_demand values, or a compressor regime above 0.1 Pa is pursued (transitional model / T-1 data, OQ-F3-03). Which is the design direction? Proposed: none proposed. Needed by: LOCK-1 (H1F-IN-04, IFS-F4-02).
+- **OQ-F4-03** (ANSWERED (A9.13 S6.12, decision code YES_PROVISIONAL)): Confirm the F4 transient-quality metric definitions (2 % band, 60 s window, the E0..E7 event sequence, orbit-modulation amplitude cases) as the basis on which H-1 tolerances are set at LOCK-2 (F5 IFD-F4-05)? Proposed: none proposed. Needed by: LOCK-2.
+- **OQ-F4-04** (ANSWERED (A9.13 S6.13, decision code NO_REQUIREMENT_RELAXATION)): The all-state deliverable flow of every evaluated chain is below the lower end of the owner ground characterization range (0.38 mg/s, row 73). Which lever is to be studied: larger capture (F1 drag-limited at h180_f230), operation restricted to the higher-density states, or a different feed requirement? Proposed: none proposed. Needed by: F7 / F9.
+- **OQ-F4-05** (ANSWERED (A9.13 S6.14, decision code ORBIT_RESOLVED_DATASET_AUTHORISED)): Orbit-scale density modulation: the frozen atmosphere is orbit-averaged. Supply an amplitude basis or authorize an orbit-resolved frozen dataset (CLAUDE.md rule 1 rebuild)? Proposed: none proposed. Needed by: next F4 revision.
+
+## Flow gap: owner order (A9.13 S6.13 / OQ-F4-04 (NO_REQUIREMENT_RELAXATION))
+
+1. **PERFORMANCE_DERIVED_H1_FEED_REQUIREMENT** (A9.13 S6.21 / F9-OQ-02; PENDING_EVIDENCE): derive the minimum feed state from the required drag-compensation thrust at every required state through the measured / validated H-1 thrust-versus-feed map (AG-12); needs measured / validated H-1 thrust-versus-feed map (none exists)
+2. **CAPTURE_COLLECTION** (A9.13 S6.13; OPEN): raise capture / collection within the drag (S6.15 statewise), mass and pointing constraints
+3. **COMPRESSOR_DOMAIN_PUMPING_FEED_EFFICIENCY** (A9.13 S6.13; OPEN): compressor domain, pumping and feed efficiency
+4. **SCHEDULED_SETPOINT** (A9.13 S6.10 / OQ-F4-01; OPEN): orbit-state-scheduled plenum setpoint (baseline control mode, not frozen)
+
+- no requirement relaxation: the flight feed requirement is performance-derived (rank 1, S6.21) and is PENDING_EVIDENCE until a measured / validated H-1 thrust-versus-feed map exists; it is never lowered to a deliverable frontier, a state subset or a characterization value.
+- 0.38 mg/s: GROUND_CHARACTERIZATION_ONLY_NEVER_A_FLIGHT_REQUIREMENT.
+- Higher-density-only operation: SENSITIVITY_ONLY_NOT_BASELINE; operation restricted to higher-density states is a sensitivity; it cannot be baseline while it violates S6.15 (T - D >= 0 at EVERY required state); S6.15 is NOT_EVALUATED today, so it is never baseline-admissible.
+- Flight feed requirement: PENDING_EVIDENCE (measured / validated H-1 thrust-versus-feed map (none exists)).
+
+## Orbit-state set
+
+- `atmosphere_msis21_orbit_v1_design_states_v2` sha256 `60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049`: 196 required states + the design-case reference point h200_f150 (index 0). Orbit basis **BROAD_ENVELOPE_ALL_INCLINATIONS_ALL_LTAN_NOT_MISSION_ICD**. inclination and LTAN are not specified (A9.21 EXTERNAL_INPUTS: not in the RFP; the old 96.3 deg dawn-dusk code default is never mission truth; A9.17 ORBIT: TBD from DRDO / spacecraft ICD / PDR mission definition). The design-state set v2 covers every latitude -90..90 deg and every local time, so it does not depend on an orbit assumption; it is a broad design envelope, not a mission trajectory. A registered orbit narrows it in a new version.
+- Superseded: ['h200_f150', 'h180_f70', 'h180_f230', 'h230_f70', 'h230_f230'] (SUPERSEDED_BY_DESIGN_STATE_SET_V2 (A9.14 S9.8 OD3; A9.13 S6.14 OQ-F4-05)); outputs at 61eefc4: `f4_plenum_feed_v1.json` 10037175cfc8, `f4_plenum_chains_v1.json` f4c57fb81204, `f4_plenum_transients_v1.json` d47dc74f60c3.
 
 ## M16 impact
 
@@ -792,7 +326,7 @@ Objectives (all minimized): ['V_m3', 'valve_travel', 'settling_max_s', 'peak_dev
 - free-molecular linear Gaede characteristic only (no transitional regime, no K < 1 branch, so no start-up from an empty plenum: start-up / Xe-to-air transition NOT_EVALUATED, IFD-F4-05 part)
 - compressor-inlet node quasi-steady (inlet volume TBD); compressor speed constant (no rpm control)
 - valve + downstream path lumped into one molecular orifice; downstream back-pressure neglected
-- frozen atmosphere orbit-averaged; orbit modulation is a labelled parametric sinusoid
+- F1 states = design-case reference + the required states of the frozen design-state set v2 (broad envelope over every inclination / LTAN, BROAD_ENVELOPE_ALL_INCLINATIONS_ALL_LTAN_NOT_MISSION_ICD); V_rel = V_orb (no co-rotation / winds); orbit modulation is a labelled parametric sinusoid (no revolution without a registered orbit)
 - no wall recombination in the compressor or the inlet node (DragCompressor carries none)
 - settling times resolved on a log sample grid (upper bounds at sampling resolution)
 - transients simulated only on the documented transient basis; other chains carry steady results only
@@ -807,7 +341,7 @@ Objectives (all minimized): ['V_m3', 'valve_travel', 'settling_max_s', 'peak_dev
 - F4-P-08 (valve bandwidth): TBD; needs metering-valve class (H3)
 - F4-P-09 (valve authority): TBD; needs metering-valve sizing
 - F4-P-10 (H-1 required inlet state): TBD; needs F5 IFD-F4-01..05 / Phase 1
-- F4-P-11 (orbit-scale density modulation): TBD; needs orbit-resolved free stream (not in the frozen dataset)
+- F4-P-11 (orbit-scale density modulation): TBD; needs registered inclination / LTAN (mission ICD) to sample a revolution of the orbit-resolved dataset
 - F4-P-18 (compressor-inlet node volume): TBD; needs duct geometry
 - F4-H1-TOL (measured H-1 feed tolerances (pressure, flow, composition, ripple)): TBD; needs LOCK-2 H-1 feed-sensitivity measurement (A9.13 S6.12 / S6.17)
 - F4-SCHEDULE (orbit-state setpoint schedule (baseline control mode)): NOT_FROZEN; needs validated compressor / feed / H-1 domains (A9.13 S6.10)

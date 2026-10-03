@@ -15,6 +15,7 @@ import pytest
 
 from abep_sim import bus_boundary_a9 as bb
 from abep_sim.design import architecture_optimizer as ao
+from abep_sim.design import intake_synthesis as isy
 from abep_sim.design import plenum_feed as pf
 from abep_sim.design import robust_optimizer as ro
 from abep_sim.design import upstream_a9_13 as u13
@@ -38,7 +39,9 @@ def inp():
 def small_ctx(inp):
     cands = ("A0.25_Ld10_phi0.8", "A0.5_Ld20_phi0.8", "A1.5_Ld3_phi0.9")
     # F3 front-union members (A1 = the 0.196 m^2 LI2015 area; the A2 grid bound moved with the W1 S6.8 re-pin)
-    comps = ("T3-A1-U2-D0-Ti6Al4V-H0.25", "T6-A1-U1-D0-Ti6Al4V-H0.25")
+    # (T6-A1-U2-D0 replaces T6-A1-U1-D0 since A9.14 S9.8 OD3: with every required design state, A0.25_Ld10_phi0.8 is
+    # all-state feasible only with the former; the committed nominal cll_a0.8 Pareto set contains that pair)
+    comps = ("T3-A1-U2-D0-Ti6Al4V-H0.25", "T6-A1-U2-D0-Ti6Al4V-H0.25")
     return ao.upstream_context(inp, "cll_a0.8", "F4-FIL-NONE", "WALL-G0", candidates=cands, compressors=comps)
 
 
@@ -103,7 +106,7 @@ def test_upstream_context_matches_scalar_reference(inp, small_ctx):
     # infeasible vectors carry no objective (fail closed)
     bad = ~small_ctx["feasible"]
     assert bad.any() and np.isnan(arr["mdot_delivered_min_kgps"][bad]).all()
-    # the drag-infeasible intake (A1.5 > 25 mN at h180_f230, F1 C-DRAG-RFP) is never feasible
+    # the drag-infeasible intake (A1.5 > 25 mN at the dense design states, F1 C-DRAG-RFP) is never feasible
     assert not small_ctx["feasible"][2].any()
 
 
@@ -292,8 +295,9 @@ def test_plant_with_overrides_identity_and_effect(inp):
 
 
 def test_perturbed_zero_draw_is_identity(inp):
-    rec = inp.records[("A0.25_Ld10_phi0.8", "cll_a0.8", "h180_f70")]
-    se = ro.record_se_index(inp.f1)[(10.0, 0.8, "cll_a0.8", "h180_f70")]
+    st = ao.required_state_ids()[0]
+    rec = inp.records[("A0.25_Ld10_phi0.8", "cll_a0.8", st)]
+    se = ro.record_se_index(inp.f1)[(10.0, 0.8, "cll_a0.8", st)]
     z = {s: 0.0 for s in ao.SPECIES}
     r2 = ro.perturbed(rec, 0.25, se, z, z)
     assert r2.mdot_fwd_kgps == rec.mdot_fwd_kgps and r2.p_passive_Pa == rec.p_passive_Pa
@@ -539,3 +543,57 @@ def test_thrust_minus_drag_inherits_intake_drag_status(monkeypatch):
     o = ao.thrust_minus_drag(0.01, 1e-5, t, db, ROOT, intake_drag=_meas(0.005))
     assert o["status"] == ao.EVALUATED and o["value"] == pytest.approx(0.03 - 0.005 - 0.002)
     assert ao.thrust_minus_drag(0.01, 1e-5, t, db, ROOT, intake_drag=_syn(0.005))["status"] == ao.SYNTHETIC_ONLY
+
+
+# ------------------------------------------------------------------------- A9.14 S9.8 OD3 / A9.13 S6.1 / S6.13
+def test_states_are_the_design_state_set(inp):
+    assert ao.STATES == ao.states() == tuple(s.id for s in isy.envelope_states())
+    assert ao.STATES[0] == ao.DESIGN_STATE and ao.STATES[1:] == ao.required_state_ids()
+    assert len(ao.required_state_ids()) == len(isy.load_design_state_set()["states"])
+    assert tuple(inp.f1["coverage_rule"]["orbit_states"]) == ao.STATES
+    assert {k[2] for k in inp.records} == set(ao.STATES)
+    atm = [a for a in ro.UQ_AXES if a["axis"] == "atmosphere"][0]
+    assert atm["members"] == list(ao.STATES) and atm["design_state_set_sha256"] == isy.DESIGN_STATE_SET_SHA256
+
+
+def test_upstream_context_refuses_a_stale_f1_state_set(inp, monkeypatch):
+    full = ao.states()
+    monkeypatch.setattr(ao, "states", lambda: full[:5])
+    with pytest.raises(RuntimeError):
+        ao.load_upstream_inputs(ROOT)
+
+
+def test_f1q02_intake_mass_is_budgeting_only():
+    for bad in ("CBE", "FROZEN_INTAKE_MASS", "STRUCTURAL_QUALIFICATION"):
+        with pytest.raises(isy.IntakeMassUseError):
+            ao.intake_mass_code_default(0.5, 10.0, 0.9, use=bad)
+    with pytest.raises(isy.IntakeMassUseError):                    # an unlabelled intake mass never enters m_wet
+        ao.wet_mass("hall_icp_neutralizer", {"AL-01": {"m_intake_parametric_kg": 1.0}})
+    rec = ao.intake_mass_budget_record(0.5, 10.0, 0.9)
+    o = ao.wet_mass("hall_icp_neutralizer", {"AL-01": rec})
+    assert o["status"] == ao.NOT_EVALUATED                         # never a CBE, m_wet stays NOT_EVALUATED
+    line = [x for x in o["lines"] if x["line"] == "AL-01"][0]
+    assert line["design_parametric"]["f1q02"]["use"] == "BUDGETING_ONLY" and line["cbe_kg"] is None
+    blk = {b["block"]: b for b in ao.design_vector_blocks(ROOT)}["x_intake"]
+    st = [v for v in blk["variables"] if v["id"] == "x_intake.structure"][0]
+    assert st["f1q02"] == isy.f1q02_label()
+
+
+def test_committed_design_states_flow_gap_and_f1q02(main_doc):
+    d = main_doc
+    assert d["design_state_set"]["sha256"] == isy.DESIGN_STATE_SET_SHA256
+    assert d["orbit_basis_label"] == isy.ORBIT_BASIS_LABEL
+    assert d["evaluated_states"]["n"] == len(ao.STATES) and d["evaluated_states"]["n_required"] == len(ao.STATES) - 1
+    sg = d["statewise_gate_records"]
+    assert sg["n_required_states"] == len(ao.required_state_ids())
+    for k in ("AG-13_HC-08", "AG-12_HC-11"):
+        assert sg[k]["status"] == ao.C_NOT_EVALUATED and sg[k]["n_required_states"] == sg["n_required_states"]
+    assert sg["flight_feed_requirement"]["status"] == "PENDING_EVIDENCE"
+    fg = d["flow_gap_owner_order"]
+    assert fg == u13.flow_gap_record() and fg["order"][0]["lever"] == "PERFORMANCE_DERIVED_H1_FEED_REQUIREMENT"
+    assert d["intake_structural_mass_label"] == isy.f1q02_label()
+    assert d["state_set_history"]["superseded_state_set"]["state_ids"] == isy.HISTORY_FIVE_STATE_SET["state_ids"]
+    items = {i["id"]: i for i in d["items"]}
+    assert items["F78-P-15"]["value"] == "PENDING_EVIDENCE" and items["F78-P-14"]["value"] == isy.DESIGN_STATE_SET_ID
+    md = MD.read_text(encoding="utf-8")
+    assert "PERFORMANCE_DERIVED_H1_FEED_REQUIREMENT" in md and isy.ORBIT_BASIS_LABEL in md

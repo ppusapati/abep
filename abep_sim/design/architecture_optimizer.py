@@ -52,6 +52,17 @@ Design decisions recorded here (evidence discipline, CLAUDE.md rules 3, 6, 10; d
 Not wired into archengine; no existing module is modified; golden benchmarks cannot move. Nothing here is a design, a
 selection, a winner, a requirement or a PASS.
 
+A9.14 S9.8 OD3 / A9.13 S6.14 OQ-F4-05 (design states): ``states()`` = the F1 states = the design-case reference point
+h200_f150 (index 0; design-case values, a_eq and ripple reference) + EVERY required state of the frozen design-state set
+atmosphere_msis21_orbit_v1_design_states_v2 (sha256-pinned in intake_synthesis; fail closed when missing or altered).
+HC-09 ('intake-face drag at every orbit state'), the all-state upstream feasibility and the AG-12 / AG-13 statewise
+records run over that full set; no subset is taken. The set is a broad envelope (every inclination / LTAN; A9.21: no
+code-default orbit as mission truth), so every result carries isy.ORBIT_BASIS_LABEL.
+A9.13 S6.1 / F1Q-02: an intake structural mass (honeycomb wall / coating / support) is a PARAMETRIC_SENSITIVITY for
+budgeting only; ``intake_mass_code_default`` and ``wet_mass`` refuse any other use and never book it as a CBE.
+A9.13 S6.13 / OQ-F4-04: the flow gap is worked in the owner order (u13.flow_gap_record); 0.38 mg/s is ground
+characterization only; a state-subset (higher-density-only) result is a sensitivity, never baseline.
+
 A9.13 / A9.14 / A9.15 / A9.17 owner decisions applied (A9.16 step 3 design layer; shared rules and decision hashes in
 abep_sim/design/upstream_a9_13.py; requirement source docs/requirements/rfp_official/rfp_registration_v1.json):
   * S6.15 / OQ-F78-01 + A9.14 S9.7: HC-08 (AG-13) is a hard STATEWISE constraint T_available(state) -
@@ -108,8 +119,25 @@ LANE = "fo_a9_7_f7_f8_coupled_optimizer"
 LANE_KEY = "A9_7_F78"
 DIRECTIVE = "docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md"
 SPECIES = ("O", "N2", "O2")
-STATES = tuple(s.id for s in isy.ENVELOPE_STATES)          # h200_f150 (design state) + the four RFP-band corners
 DESIGN_STATE = isy.DESIGN_STATE.id
+ORBIT_BASIS_LABEL = isy.ORBIT_BASIS_LABEL
+
+
+def states() -> tuple:
+    """F1 state ids every statewise check runs over: design-case reference (index 0) + every required design state of
+    the frozen design-state set v2 (A9.14 S9.8 OD3). Loading fails closed when the set is missing or altered."""
+    return tuple(s.id for s in isy.envelope_states())
+
+
+def required_state_ids() -> tuple:
+    return tuple(s.id for s in isy.required_states())
+
+
+def __getattr__(name):
+    # STATES is resolved lazily (the design-state set is repository-only data; importing the module must not need it)
+    if name == "STATES":
+        return states()
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 LABEL_PARAMETRIC = "PARAMETRIC_SENSITIVITY"
 SYN_CLASS = "SYNTHETIC_TEST_DATA_NOT_EVIDENCE"
 FORBIDDEN_STATUS_WORDS = ("PASS", "SELECTED", "WINNER", "QUALIFIED", "OPTIMUM")
@@ -234,7 +262,15 @@ def design_vector_blocks(repo: Path = REPO) -> list[dict]:
              "TBD", "CONTEXT_AXIS (uncertainty, F8)"),
         _var("x_intake.structure", "x_intake", "(t_wall, coating, support)", "TBD", "mixed", "structural inputs "
              "of the geometric mass model are TBD (F1-P-02..05); the code-default case is a labelled parametric "
-             "sensitivity case; the wall area is the mass proxy", f"{F1_REL} items F1-P-02..05", "TBD", "TBD"),
+             "sensitivity case; the wall area is the mass proxy. A9.13 S6.1 / F1Q-02: PARAMETRIC_SENSITIVITY, budgeting "
+             "only; never a CBE, frozen intake mass or structural qualification; sourced structural definition "
+             "required before LOCK-1", f"{F1_REL} items F1-P-02..05", "TBD", "TBD", f1q02=isy.f1q02_label()),
+        _var("x_intake.orbit_states", "x_intake", "orbit / atmosphere states", {
+             "design_state_set": isy.DESIGN_STATE_SET_ID, "sha256": isy.DESIGN_STATE_SET_SHA256,
+             "n_required_states": len(isy.required_states()), "design_case_reference": DESIGN_STATE,
+             "orbit_basis": isy.ORBIT_BASIS_LABEL}, "-", "every required state of the frozen design-state set v2 "
+             "(A9.14 S9.8 OD3) plus the design-case reference point; broad envelope, inclination / LTAN TBD (A9.21)",
+             f"{F1_REL} coverage_rule.design_state_set", "model-derived", "FROZEN_DATASET (all states evaluated)"),
     ]})
 
     blocks.append({"block": "x_filter", "lane": "F2 (through F4 filter cases)", "path": F2_REL,
@@ -378,10 +414,11 @@ UPSTREAM_TARGETS_PA = (0.002, 0.005, 0.01, 0.02, 0.05, 0.1)   # F4 requirement s
 VOLUMES_M3 = (1e-3, 1e-2, 1e-1)                                # F4 search grid x_plenum.V
 WALL_CASES = ("WALL-G0", "WALL-TI64-DB")                       # F4-P-06 parametric cases
 UPSTREAM_OBJECTIVES = (
-    ("mdot_delivered_min_kgps", "max", "kg/s", "delivered (valve) total flow, minimum over the five orbit states at "
-     "one plenum set pressure (single setpoint for all states)"),
-    ("drag_intake_max_N", "min", "N", "intake-face drag, maximum over the five orbit states (F1 convention: full "
-     "aperture, spacecraft body excluded)"),
+    ("mdot_delivered_min_kgps", "max", "kg/s", "delivered (valve) total flow, minimum over every F1 state (design-case "
+     "reference + every required design state of the frozen design-state set v2) at one plenum set pressure (single "
+     "setpoint for all states)"),
+    ("drag_intake_max_N", "min", "N", "intake-face drag, maximum over every F1 state (F1 convention: full aperture, "
+     "spacecraft body excluded)"),
     ("P_compressor_el_max_W", "min", "W", "compressor electrical input (DragCompressor model, code-default "
      "coefficients), maximum over states"),
     ("m_compressor_max_kg", "min", "kg", "compressor mass of the DragCompressor model (code-default coefficients; "
@@ -423,7 +460,7 @@ def drag_table(f1: dict) -> dict:
     (the F1 candidate_state_metrics expression; reproduces F1 candidate_metrics drag_N to the 6-digit rounding, test).
     SE combined in quadrature from C_D_species_se."""
     cols = f1["species_table"]["columns"]
-    atm = {s.id: s.atm() for s in isy.ENVELOPE_STATES}
+    atm = {s.id: s.atm() for s in isy.envelope_states()}
     wkey = {"O": "fO", "N2": "fN2", "O2": "fO2"}
     acc: dict = {}
     for row in f1["species_table"]["rows"]:
@@ -451,9 +488,13 @@ def load_upstream_inputs(repo: Path = REPO) -> UpstreamInputs:
                 geom[_cid(A, float(Ld), float(phi))] = (A, float(Ld), float(phi))
     cands = tuple(sorted(geom, key=lambda c: geom[c]))
     scenarios = tuple(f1["pareto"]["envelope"].keys())
+    sts = states()
+    if tuple(f1["coverage_rule"]["orbit_states"]) != sts:
+        raise RuntimeError("F1 deliverable was not evaluated on the current state set (design-case reference + the "
+                           "required states of the pinned design-state set v2): regenerate F1")
     for c in cands:
         for sc in scenarios:
-            for st in STATES:
+            for st in sts:
                 if (c, sc, st) not in records:
                     raise RuntimeError(f"F1 record missing for {c} {sc} {st}")
     f4 = read_json(F4_REL, repo)
@@ -495,11 +536,22 @@ def ripple_transfer_arrays(side_e: Mapping, plant: pf.CompressorPlant, pl: pf.Pl
     return out
 
 
-def intake_mass_code_default(A: float, Ld: float, phi: float) -> float:
+def intake_mass_code_default(A: float, Ld: float, phi: float, use: str = isy.F1Q02_USE) -> float:
     """F1 geometric intake mass under the labelled code-default structural case (PARAMETRIC_SENSITIVITY_CASE; every
-    structural input except the Al density is uncited). d-invariant at fixed L/d (test)."""
+    structural input except the Al density is uncited). d-invariant at fixed L/d (test). A9.13 S6.1 / F1Q-02: budgeting
+    sensitivity only; any other ``use`` (CBE, frozen intake mass, structural qualification) is refused."""
+    isy.require_budgeting_use(use)
     d0 = isy.GeometryCandidate(A, 10.0, Ld, phi)
-    return isy.intake_mass(d0, isy.STRUCTURAL_CODE_DEFAULT)["m_intake_kg"]
+    return isy.intake_mass(d0, isy.STRUCTURAL_CODE_DEFAULT, use=use)["m_intake_kg"]
+
+
+INTAKE_MASS_LINE = "AL-01"        # mass/power v3 line 'intake/filter/duct'
+
+
+def intake_mass_budget_record(A: float, Ld: float, phi: float) -> dict:
+    """The intake structural mass as a mass/power design-parametric record (F1Q-02 labelled; never a CBE)."""
+    return {"m_intake_parametric_kg": intake_mass_code_default(A, Ld, phi), "status": LABEL_PARAMETRIC,
+            "structural_case": isy.STRUCTURAL_CODE_DEFAULT.id, "f1q02": isy.f1q02_label()}
 
 
 def design_id(cand: str, filt: str, comp: str, V: float, P: float) -> str:
@@ -527,6 +579,7 @@ def upstream_context(inp: UpstreamInputs, scenario: str, filt: str, wall: str, v
     if scenario not in inp.scenarios:
         raise OptimizerError(f"unknown scenario {scenario!r}")
     fc = inp.filters[filt]
+    STATES = states()
     recs = [inp.records[(c, scenario, st)] for c in cands for st in STATES]
     side = pf.intake_side(recs, fc)
     f1ok = np.array([r.f1_status == "FEASIBLE_AT_STATE" for r in recs])
@@ -585,7 +638,7 @@ def upstream_context(inp: UpstreamInputs, scenario: str, filt: str, wall: str, v
     capt = np.empty(nC)
     for ci, c in enumerate(cands):
         A, Ld, phi = inp.geometry[c]
-        dd = [inp.drag_per_area[(scenario, Ld, phi, st)] for st in STATES]
+        dd = [inp.drag_per_area[(scenario, Ld, phi, st)] for st in STATES]   # HC-09: every F1 state
         j = int(np.argmax([x[0] for x in dd]))
         drag[ci], drag_se[ci] = A * dd[j][0], A * dd[j][1]
         capt[ci] = min(sum(inp.records[(c, scenario, st)].mdot_fwd_kgps.values()) for st in STATES)
@@ -931,6 +984,9 @@ def wet_mass(config: str, design_masses: Mapping | None = None, supplied: Mappin
               "exceedance_kg": w.get("exceedance_kg")} for w in wets]
     lines = []
     dm = dict(design_masses or {})
+    if INTAKE_MASS_LINE in dm:
+        # A9.13 S6.1 / F1Q-02: an intake structural mass enters only as a labelled budgeting sensitivity (fail closed)
+        isy.require_f1q02_label(dm[INTAKE_MASS_LINE])
     for ln in mp["lines"][config]:
         lid = ln["line"]
         val = ln.get("value") or {}

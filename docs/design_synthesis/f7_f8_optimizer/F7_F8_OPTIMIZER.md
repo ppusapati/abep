@@ -8,7 +8,7 @@ What this is not: not an architecture selection, design, optimum, winner, requir
 
 | block | lane | state | variables |
 |---|---|---|---|
-| x_intake | F1 | SEARCHED | 7 |
+| x_intake | F1 | SEARCHED | 8 |
 | x_filter | F2 (through F4 filter cases) | CONTEXT_AXIS_NOT_SEARCHED | 3 |
 | x_compressor | F3 | SEARCHED | 13 |
 | x_plenum | F4 | SEARCHED | 9 |
@@ -19,26 +19,26 @@ What this is not: not an architecture selection, design, optimum, winner, requir
 
 ## Findings
 
-- **F78-01** (model-derived (PARAMETRIC_SENSITIVITY inputs)): upstream sub-problem F1 -> F2 -> F3 -> F4 searched over 48 d-collapsed intakes x 55 compressors x 3 volumes x 6 set pressures in 600 contexts (10 surface scenarios x 5 filter cases x 2 wall cases x 6 P_set): 22282 Pareto members in 290 non-empty contexts; vector statuses {'FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS': 100267, 'INFEASIBLE': 1786886, 'NOT_EVALUATED_OUT_OF_DOMAIN': 2864847}
-- **F78-02** (model-derived): nominal context (filter none, WALL-G0): the all-state delivered-flow frontier is 0.09832423 mg/s (cll_a0.5, P_set 0.02 Pa, A0.5_Ld20_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.02); Pareto members reaching the lower end of the 0.38-3.2 mg/s characterization coverage (A9.13 S6.21: coverage only, not a requirement or gate) at every state: 0 (all contexts). Compare F4-01 (single-setpoint frontier 0.09832 mg/s)
-- **F78-03** (model-derived): set pressures with any all-state-feasible vector (number of contexts): {0.005: 70, 0.01: 90, 0.02: 75, 0.05: 40, 0.1: 15}; the others fail by dead-head (high P_set) or by leaving the Gaede characteristic domain (low P_set); reason counts over all vectors {'F1_INTAKE_INFEASIBLE_AT_STATE': 3168000, 'GAEDE_CHARACTERISTIC_OUTSIDE_K_1_TO_K0': 2864847, 'TARGET_AT_OR_ABOVE_DEAD_HEAD_PRESSURE': 2898279}
-- **F78-04** (model-derived (PARAMETRIC filter cases)): frontier by filter case (WALL-G0, max over scenarios and P_set, mg/s): {'F4-FIL-NONE': 0.09832423, 'F4-FIL-PLACEHOLDER': 0.0924078, 'F4-FIL-T0.5': 0.09175043, 'F4-FIL-T0.7': 0.09539459, 'F4-FIL-T0.9': 0.09754749}; the filter is a context axis because its protection benefit is NOT_EVALUATED
-- **F78-05** (inferred): system level: for all {'hall_icp_neutralizer': 2925} nominal Pareto evaluations every system objective (T - D, P_bus, m_wet, Q_reject, I_e,cap - I_d,max, life) is NOT_EVALUATED and every RVM hard constraint except the intake-face drag bound HC-09 is NOT_EVALUATED (fail closed); full-system ranking REFUSED_INCOMPLETE for every flight configuration ['hall_icp_neutralizer'] (A9.19 / A9.20: C1 is a GROUND_REFERENCE, never evaluated as a flight candidate) (missing counts {'T_minus_D_spacecraft_N': 2925, 'P_bus_W': 2925, 'm_wet_kg': 2925, 'Q_reject_W': 2925, 'I_e_cap_minus_I_d_max_A': 2925, 'life_material': 2925})
-- **F78-06** (model-derived (code-default coefficients)): P_bus: the official A9-02 ledger is PARTIAL_BOUNDARY (compressor load TBD, row 22) with lower bound 0 W; the parametric sensitivity ledger booking the F3/F4 compressor draw has lower bound [8.439032, 14.69768] W on the nominal Pareto members (vs the 300 W common allocation, an allocation not a gate)
-- **F78-07** (model-derived (code-default coefficients; allocation context)): compressor model mass on the nominal Pareto members [4.189245, 10.90722] kg; 2655 member evaluations exceed the 5.5 kg AL-02 allocation (parametric value vs allocation; neither is a CBE; never merged)
-- **F8-01** (model-derived): 843 unique upstream survivors (nominal-context Pareto members over all scenarios and P_set); feasible-scenario tiers (n scenarios feasible: count) {1: 48, 2: 169, 3: 78, 4: 70, 5: 98, 6: 128, 7: 83, 8: 130, 9: 23, 10: 16}; feasible in all 10 surface scenarios: 16; robust Pareto members per P_set {0.01: 8}; worst-case (over the 10 scenarios) delivered flow of the robust members [0.002933262, 0.01134189] mg/s (compare the best single-scenario frontier in F78-02: the price of requiring feasibility in every TBD surface scenario)
-- **F8-02** (model-derived (quantified TPMC statistics only)): seeded TPMC Monte Carlo (100 draws per candidate and scenario): over the 4146 (survivor, scenario) pairs that are nominally feasible, P_feasible ranges [0.43, 1.0] (190 pairs below 1: candidates at a domain or dead-head boundary); on the robust Pareto members the minimum over scenarios is [1.0, 1.0]. The F1 statistical SEs are ~1e-4 relative (e.g. mdot_fwd SE / value), so the TBD surface-scenario set, not TPMC statistics, dominates robustness
-- **F8-03** (model-derived (frozen surface node)): pointing node theta = 5 deg (design state only): delivered-flow change [-0.1231031, -0.001058445] on the robust members, 0 status changes; the corner states have no theta node (NOT_EVALUATED)
-- **F8-04** (model-derived (uncited DB gamma prior)): wall-recombination case WALL-TI64-DB: robust members feasible in n of 10 scenarios {5: 1, 6: 4, 7: 1, 8: 2}
-- **F8-05** (model-derived (local elasticity, no range implied)): largest |d ln mdot_delivered / d ln c| over the robust members: [('turbo_kK', 24.85822), ('turbo_kS', 0.8074347), ('leak_conductance_m3_s', 0.003947125)]; drag-channel coefficients (h, w, L, xi, R_rotor) have zero effect because every front design has N_drag = 0 (F3-01): closing tests on the turbo-row coefficients (compressor_downselect T-1 / T-2) matter most
+- **F78-01** (model-derived (PARAMETRIC_SENSITIVITY inputs)): upstream sub-problem F1 -> F2 -> F3 -> F4 searched over 48 d-collapsed intakes x 55 compressors x 3 volumes x 6 set pressures in 600 contexts (10 surface scenarios x 5 filter cases x 2 wall cases x 6 P_set): 1279 Pareto members in 62 non-empty contexts; vector statuses {'FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS': 4647, 'INFEASIBLE': 1423108, 'NOT_EVALUATED_OUT_OF_DOMAIN': 3324245}
+- **F78-02** (model-derived): nominal context (filter none, WALL-G0): the all-state delivered-flow frontier is 0.01296072 mg/s (cll_a0.8, P_set 0.02 Pa, A0.25_Ld20_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.02); Pareto members reaching 0.38 mg/s (ground characterization only, A9.13 S6.13 / S6.21: never a flight requirement or gate) at every state: 0 (all contexts). Compare F4-01 (single-setpoint frontier 0.01296 mg/s)
+- **F78-03** (model-derived): set pressures with any all-state-feasible vector (number of contexts): {0.01: 32, 0.02: 30}; the others fail by dead-head (high P_set) or by leaving the Gaede characteristic domain (low P_set); reason counts over all vectors {'F1_INTAKE_INFEASIBLE_AT_STATE': 3960000, 'FEED_ORIFICE_KNUDSEN_UPPER_BOUND_BELOW_FREE_MOLECULAR_LIMIT': 1459, 'GAEDE_CHARACTERISTIC_OUTSIDE_K_1_TO_K0': 3323594, 'TARGET_AT_OR_ABOVE_DEAD_HEAD_PRESSURE': 3795091}
+- **F78-04** (model-derived (PARAMETRIC filter cases)): frontier by filter case (WALL-G0, max over scenarios and P_set, mg/s): {'F4-FIL-PLACEHOLDER': 0.01228532, 'F4-FIL-T0.5': 0.01221734, 'F4-FIL-T0.7': 0.01263133, 'F4-FIL-NONE': 0.01296072, 'F4-FIL-T0.9': 0.01287368}; the filter is a context axis because its protection benefit is NOT_EVALUATED
+- **F78-05** (inferred): system level: for all {'hall_icp_neutralizer': 231} nominal Pareto evaluations every system objective (T - D, P_bus, m_wet, Q_reject, I_e,cap - I_d,max, life) is NOT_EVALUATED and every RVM hard constraint except the intake-face drag bound HC-09 is NOT_EVALUATED (fail closed); full-system ranking REFUSED_INCOMPLETE for every flight configuration ['hall_icp_neutralizer'] (A9.19 / A9.20: C1 is a GROUND_REFERENCE, never evaluated as a flight candidate) (missing counts {'T_minus_D_spacecraft_N': 231, 'P_bus_W': 231, 'm_wet_kg': 231, 'Q_reject_W': 231, 'I_e_cap_minus_I_d_max_A': 231, 'life_material': 231})
+- **F78-06** (model-derived (code-default coefficients)): P_bus: the official A9-02 ledger is PARTIAL_BOUNDARY (compressor load TBD, row 22) with lower bound 0 W; the parametric sensitivity ledger booking the F3/F4 compressor draw has lower bound [8.812819, 11.14411] W on the nominal Pareto members (vs the 300 W common allocation, an allocation not a gate)
+- **F78-07** (model-derived (code-default coefficients; allocation context)): compressor model mass on the nominal Pareto members [5.288994, 10.90722] kg; 224 member evaluations exceed the 5.5 kg AL-02 allocation (parametric value vs allocation; neither is a CBE; never merged)
+- **F8-01** (model-derived): 90 unique upstream survivors (nominal-context Pareto members over all scenarios and P_set); feasible-scenario tiers (n scenarios feasible: count) {1: 13, 2: 25, 3: 24, 4: 17, 5: 9, 6: 2}; feasible in all 10 surface scenarios: 0; robust Pareto members per P_set {}; worst-case (over the 10 scenarios) delivered flow of the robust members None mg/s (compare the best single-scenario frontier in F78-02: the price of requiring feasibility in every TBD surface scenario)
+- **F8-02** (model-derived (quantified TPMC statistics only)): seeded TPMC Monte Carlo (100 draws per candidate and scenario): over the 260 (survivor, scenario) pairs that are nominally feasible, P_feasible ranges [0.22, 1.0] (55 pairs below 1: candidates at a domain or dead-head boundary); on the robust Pareto members the minimum over scenarios is None. The F1 statistical SEs are ~1e-4 relative (e.g. mdot_fwd SE / value), so the TBD surface-scenario set, not TPMC statistics, dominates robustness
+- **F8-03** (model-derived (frozen surface node)): pointing node theta = 5 deg (design-case reference point only): delivered-flow change None on the robust members, 0 status changes; the required design states have no theta node (NOT_EVALUATED)
+- **F8-04** (model-derived (uncited DB gamma prior)): wall-recombination case WALL-TI64-DB: robust members feasible in n of 10 scenarios {}
+- **F8-05** (model-derived (local elasticity, no range implied)): largest |d ln mdot_delivered / d ln c| over the robust members: []; drag-channel coefficients (h, w, L, xi, R_rotor) have zero effect because every front design has N_drag = 0 (F3-01): closing tests on the turbo-row coefficients (compressor_downselect T-1 / T-2) matter most
 - **F8-06** (inferred): evidence gates unchanged by the robust filter: True (credible Hall set EMPTY, A9.2 statuses verbatim, H-1 article NOT_FROZEN)
 
 ## Upstream objectives (Pareto, PARAMETRIC_SENSITIVITY)
 
 | key | sense | units | definition |
 |---|---|---|---|
-| mdot_delivered_min_kgps | max | kg/s | delivered (valve) total flow, minimum over the five orbit states at one plenum set pressure (single setpoint for all states) |
-| drag_intake_max_N | min | N | intake-face drag, maximum over the five orbit states (F1 convention: full aperture, spacecraft body excluded) |
+| mdot_delivered_min_kgps | max | kg/s | delivered (valve) total flow, minimum over every F1 state (design-case reference + every required design state of the frozen design-state set v2) at one plenum set pressure (single setpoint for all states) |
+| drag_intake_max_N | min | N | intake-face drag, maximum over every F1 state (F1 convention: full aperture, spacecraft body excluded) |
 | P_compressor_el_max_W | min | W | compressor electrical input (DragCompressor model, code-default coefficients), maximum over states |
 | m_compressor_max_kg | min | kg | compressor mass of the DragCompressor model (code-default coefficients; PARAMETRIC, not a CBE), maximum over states (torque-dependent motor term) |
 | intake_wall_area_m2 | min | m^2 | intake honeycomb wall area 2 phi A L/d: mass proxy (structural inputs TBD; monotone for any positive wall areal mass) |
@@ -48,40 +48,17 @@ What this is not: not an architecture selection, design, optimum, winner, requir
 
 | scenario | P_set [Pa] | evaluated | feasible | Pareto | frontier [mg/s] | >= 0.38 mg/s (coverage only) |
 |---|---|---|---|---|---|---|
-| cll_a0 | 0.005 | 7920 | 816 | 132 | 0.02312 | 0 |
-| cll_a0 | 0.01 | 7920 | 432 | 42 | 0.01313 | 0 |
-| cll_a0.2 | 0.01 | 7920 | 684 | 90 | 0.04805 | 0 |
-| cll_a0.2 | 0.02 | 7920 | 456 | 63 | 0.05011 | 0 |
-| cll_a0.2 | 0.05 | 7920 | 36 | 12 | 0.007094 | 0 |
-| cll_a0.5 | 0.01 | 7920 | 474 | 73 | 0.05625 | 0 |
-| cll_a0.5 | 0.02 | 7920 | 762 | 116 | 0.09832 | 0 |
-| cll_a0.5 | 0.05 | 7920 | 228 | 44 | 0.06541 | 0 |
-| cll_a0.5 | 0.1 | 7920 | 48 | 12 | 0.01535 | 0 |
-| cll_a0.8 | 0.01 | 7920 | 294 | 85 | 0.06204 | 0 |
-| cll_a0.8 | 0.02 | 7920 | 1065 | 180 | 0.09625 | 0 |
-| cll_a0.8 | 0.05 | 7920 | 468 | 86 | 0.07269 | 0 |
-| cll_a0.8 | 0.1 | 7920 | 144 | 26 | 0.03623 | 0 |
-| cll_a1 | 0.005 | 7920 | 108 | 24 | 0.03144 | 0 |
-| cll_a1 | 0.01 | 7920 | 1059 | 225 | 0.06404 | 0 |
-| cll_a1 | 0.02 | 7920 | 1008 | 167 | 0.05457 | 0 |
-| cll_a1 | 0.05 | 7920 | 360 | 72 | 0.02793 | 0 |
-| cll_a1 | 0.1 | 7920 | 36 | 12 | 0.0008244 | 0 |
-| maxwell_a0 | 0.005 | 7920 | 816 | 132 | 0.02312 | 0 |
-| maxwell_a0 | 0.01 | 7920 | 432 | 42 | 0.01313 | 0 |
-| maxwell_a0.2 | 0.005 | 7920 | 18 | 5 | 0.02724 | 0 |
-| maxwell_a0.2 | 0.01 | 7920 | 825 | 97 | 0.05021 | 0 |
-| maxwell_a0.2 | 0.02 | 7920 | 384 | 49 | 0.035 | 0 |
-| maxwell_a0.5 | 0.01 | 7920 | 912 | 166 | 0.06059 | 0 |
-| maxwell_a0.5 | 0.02 | 7920 | 696 | 102 | 0.04935 | 0 |
-| maxwell_a0.5 | 0.05 | 7920 | 108 | 22 | 0.01822 | 0 |
-| maxwell_a0.8 | 0.005 | 7920 | 66 | 16 | 0.03641 | 0 |
-| maxwell_a0.8 | 0.01 | 7920 | 984 | 210 | 0.06289 | 0 |
-| maxwell_a0.8 | 0.02 | 7920 | 900 | 139 | 0.05161 | 0 |
-| maxwell_a0.8 | 0.05 | 7920 | 216 | 44 | 0.02657 | 0 |
-| maxwell_a1 | 0.005 | 7920 | 120 | 27 | 0.02986 | 0 |
-| maxwell_a1 | 0.01 | 7920 | 1002 | 197 | 0.06349 | 0 |
-| maxwell_a1 | 0.02 | 7920 | 984 | 156 | 0.05409 | 0 |
-| maxwell_a1 | 0.05 | 7920 | 336 | 60 | 0.02795 | 0 |
+| cll_a0.5 | 0.02 | 7920 | 33 | 11 | 0.01095 | 0 |
+| cll_a0.8 | 0.02 | 7920 | 84 | 24 | 0.01296 | 0 |
+| cll_a1 | 0.01 | 7920 | 147 | 40 | 0.01091 | 0 |
+| cll_a1 | 0.02 | 7920 | 108 | 26 | 0.004425 | 0 |
+| maxwell_a0.2 | 0.01 | 7920 | 12 | 4 | 0.004148 | 0 |
+| maxwell_a0.5 | 0.01 | 7920 | 42 | 14 | 0.00945 | 0 |
+| maxwell_a0.5 | 0.02 | 7920 | 18 | 6 | 0.001443 | 0 |
+| maxwell_a0.8 | 0.01 | 7920 | 72 | 24 | 0.009735 | 0 |
+| maxwell_a0.8 | 0.02 | 7920 | 72 | 17 | 0.00405 | 0 |
+| maxwell_a1 | 0.01 | 7920 | 150 | 39 | 0.01099 | 0 |
+| maxwell_a1 | 0.02 | 7920 | 108 | 26 | 0.004584 | 0 |
 
 ## System objectives (every vector)
 
@@ -106,48 +83,40 @@ What this is not: not an architecture selection, design, optimum, winner, requir
 | HC-06 | RVM-17 | thermal margin below validated limits >= 50 K | NOT_EVALUATED | no evaluable value (fail closed: never counted as satisfied) |
 | HC-07 | RVM-12 | cumulative firing time capability > 15000 h | NOT_EVALUATED | no evaluable value (fail closed: never counted as satisfied) |
 | HC-08 | AG-13 (owner decision A9.13 S6.15 / OQ-F78-01; A9.14 S9.7 statewise quantifier) | T_available(state) - D_spacecraft(state) at EVERY required state (statewise; worst state governs; the orbit average never hides a deficit) T_available(state) - D_spacecraft(state) at EVERY required state (statewise; worst state governs; the orbit average never hides a deficit) | NOT_EVALUATED | no statewise record over the required state set (a single value never closes a statewise constraint; A9.13 S6.15 / S6.21 / A9.14 S9.7) |
-| HC-09 | F1 C-DRAG-RFP (RFP thrust max as recorded, F1-P-11) | intake-face drag at every orbit state <= 0.025 N | MET_ON_PARAMETRIC_VALUES_SENSITIVITY_ONLY_NOT_MET | value 0.0103365 N (PARAMETRIC_SENSITIVITY_ONLY): sensitivity comparison only, never counted as satisfied (fail closed) |
+| HC-09 | F1 C-DRAG-RFP (RFP thrust max as recorded, F1-P-11) | intake-face drag at every orbit state <= 0.025 N | MET_ON_PARAMETRIC_VALUES_SENSITIVITY_ONLY_NOT_MET | value 0.0170136 N (PARAMETRIC_SENSITIVITY_ONLY): sensitivity comparison only, never counted as satisfied (fail closed) |
 | HC-10 | A9.15 RFP-compliant propellant policy | ambient-air AND Xe operating capability with two separate propellant tanks / paths (1 = both demonstrated) >= 1 - | NOT_EVALUATED | no evaluable value (fail closed: never counted as satisfied) |
 | HC-11 | AG-12 (owner decision A9.13 S6.21 / F9-OQ-02) | statewise feed-state sufficiency (mdot, P, T, composition, ripple) vs the requirement derived from the required thrust and a VALIDATED H-1 map (no fixed mg/s gate) statewise feed-state sufficiency (mdot, P, T, composition, ripple) vs the requirement derived from the required thrust and a VALIDATED H-1 map (no fixed mg/s gate) | NOT_EVALUATED | no statewise record over the required state set (a single value never closes a statewise constraint; A9.13 S6.15 / S6.21 / A9.14 S9.7) |
 | HC-12 | A9.13 S6.17 / S6.12 feed-quality | compressor / plenum ripple <= measured H-1 ripple tolerance compressor / plenum ripple <= measured H-1 ripple tolerance | NOT_EVALUATED | upstream_a9_13 ripple_feed_quality status NOT_EVALUATED |
 
 ## Full-system ranking
 
-- hall_icp_neutralizer: **REFUSED_INCOMPLETE** - system objectives (incl. the life / material indicator gate) not EVALUATED for some or all candidates (fail closed, no subset ranking) (missing counts {'T_minus_D_spacecraft_N': 2925, 'P_bus_W': 2925, 'm_wet_kg': 2925, 'Q_reject_W': 2925, 'I_e_cap_minus_I_d_max_A': 2925, 'life_material': 2925})
+- hall_icp_neutralizer: **REFUSED_INCOMPLETE** - system objectives (incl. the life / material indicator gate) not EVALUATED for some or all candidates (fail closed, no subset ranking) (missing counts {'T_minus_D_spacecraft_N': 231, 'P_bus_W': 231, 'm_wet_kg': 231, 'Q_reject_W': 231, 'I_e_cap_minus_I_d_max_A': 231, 'life_material': 231})
 
 ## F8 uncertainty axes
 
 | axis | treatment | quantified | basis |
 |---|---|---|---|
-| atmosphere | SCENARIO_SET | False | frozen NRLMSIS 2.1 dataset (orbit-averaged): the design state and the four RFP-band corners (F1 coverage_rule); no probability over solar activity / altitude is sourced |
+| atmosphere | SCENARIO_SET | False | design-case reference point h200_f150 (orbit-averaged, surface build state) + every required state of the frozen design-state set v2 (nominal states and physical extrema of density, composition, temperature, local time and solar activity; A9.14 S9.8 OD3; F1 coverage_rule); no probability over the states is sourced; broad envelope, inclination / LTAN TBD (A9.21) |
 | intake_surface_state | SCENARIO_SET | False | alpha in {0, 0.2, 0.5, 0.8, 1} (TBD, F1-P-07); no measured accommodation |
 | gas_surface_interaction | SCENARIO_SET | False | Maxwell / CLL kernels (TBD, F1-P-08); carried jointly with alpha (10 scenarios) |
 | tpmc_statistics | SEEDED_MONTE_CARLO | True | 1-sigma binomial SEs of the committed F1 IF-A1 records (mdot_fwd_s, p_passive_s, independent normal draws per species and state) and the replicate-calibrated C_D SE (drag); model-form uncertainty is NOT in these SEs (F1 conventions.uncertainty) |
-| pointing_theta | DETERMINISTIC_NODE | False | theta = 5 deg frozen-surface node at the design state only (per-species eta_c and CR ratios vs theta 0); the AOCS pointing budget is TBD (F1-P-09); the four corner states have no theta node |
+| pointing_theta | DETERMINISTIC_NODE | False | theta = 5 deg frozen-surface node at the design-case reference point only (per-species eta_c and CR ratios vs theta 0); the AOCS pointing budget is TBD (F1-P-09); the required design states have no theta node |
 | wall_recombination | SCENARIO_SET | False | WALL-G0 (gamma 0 bound) vs WALL-TI64-DB (uncited DB prior), F4-P-06 TBD |
 | compressor_performance | LOCAL_ELASTICITY | False | every DragCompressor coefficient is an uncited code default with NO sourced range (F3 coefficients, compressor_downselect CD-01): d ln(objective) / d ln(coefficient) by central difference; no distribution is invented |
 | feed_state | NOT_EVALUATED | False | H-1 required inlet state TBD (F4-P-10, F5 IFD-F4-01..05); P_set is a requirement-level context axis; feed-path conductance steps are in F4's transient study (E3/E4) |
 | hall_response | NOT_EVALUATED | False | credible Hall set EMPTY; P5-N2 v1 INCONCLUSIVE; no admitted response map |
 | rf_efficiency | NOT_EVALUATED | False | flight RF source efficiency TBD (MPV2-P08); RF ratings TBD_AFTER_IMPEDANCE_MAP |
 | thermal_parameters | NOT_EVALUATED | False | P3 geometry / emittance / conductance inputs TBD; chain gas temperature assumed 350 K (F4-P-01) |
-| orbit_scale_density_modulation | NOT_EVALUATED | False | F4-P-11 TBD (frozen atmosphere orbit-averaged); F4 parametric amplitudes 0.1 / 0.2 are reported there |
+| orbit_scale_density_modulation | NOT_EVALUATED | False | F4-P-11 TBD (a revolution through the orbit-resolved states needs the TBD inclination / LTAN, A9.21); F4 parametric amplitudes 0.1 / 0.2 are reported there |
 
 ## F8 robust Pareto filter
 
 candidates nominally feasible in EVERY surface scenario (fail closed), compared on worst-case objectives over the scenario set plus the minimum TPMC P_feasible; per set pressure; a set, never a winner; evidence-gate statuses unchanged (gate_snapshot before == after)
 
-Survivors 843; feasible-scenario tiers {'1': 48, '2': 169, '3': 78, '4': 70, '5': 98, '6': 128, '7': 83, '8': 130, '9': 23, '10': 16}; feasible in all scenarios 16; evidence gates unchanged: True.
+Survivors 90; feasible-scenario tiers {'1': 13, '2': 25, '3': 24, '4': 17, '5': 9, '6': 2}; feasible in all scenarios 0; evidence gates unchanged: True.
 
 | P_set [Pa] | design | worst mdot [mg/s] | worst drag [mN] | worst P_el [W] | m_comp [kg] | P_feas,min |
 |---|---|---|---|---|---|---|
-| 0.01 | A0.25_Ld3_phi0.8 / F4-FIL-NONE / T6-A0-U2-D0-Ti6Al4V-H0.75 / V0.001 / P0.01 | 0.007101 | 10.44 | 9.229 | 7.488 | 1 |
-| 0.01 | A0.25_Ld3_phi0.8 / F4-FIL-NONE / T6-A1-U2-D0-Ti6Al4V-H0.25 / V0.001 / P0.01 | 0.008755 | 10.44 | 9.594 | 10.91 | 1 |
-| 0.01 | A0.25_Ld3_phi0.8 / F4-FIL-NONE / T6-A1-U2-D0-Ti6Al4V-H0.5 / V0.001 / P0.01 | 0.01096 | 10.44 | 9.628 | 10.91 | 1 |
-| 0.01 | A0.25_Ld3_phi0.8 / F4-FIL-NONE / T6-A2-U2-D0-Ti6Al4V-H0.75 / V0.001 / P0.01 | 0.0072 | 10.44 | 9.235 | 7.525 | 1 |
-| 0.01 | A0.25_Ld3_phi0.9 / F4-FIL-NONE / T6-A1-U1-D0-Ti6Al4V-H0.75 / V0.001 / P0.01 | 0.002933 | 10.4 | 9.331 | 10.91 | 1 |
-| 0.01 | A0.25_Ld3_phi0.9 / F4-FIL-NONE / T6-A1-U2-D0-Ti6Al4V-H0.25 / V0.001 / P0.01 | 0.009046 | 10.4 | 9.641 | 10.91 | 1 |
-| 0.01 | A0.25_Ld3_phi0.9 / F4-FIL-NONE / T6-A1-U2-D0-Ti6Al4V-H0.5 / V0.001 / P0.01 | 0.01134 | 10.4 | 9.678 | 10.91 | 1 |
-| 0.01 | A0.25_Ld5_phi0.9 / F4-FIL-NONE / T6-A1-U2-D0-Ti6Al4V-H0.5 / V0.001 / P0.01 | 0.01134 | 10.48 | 9.803 | 10.91 | 1 |
 
 ## Architecture questions
 
@@ -200,6 +169,30 @@ Survivors 843; feasible-scenario tiers {'1': 48, '2': 169, '3': 78, '4': 70, '5'
 | F78-ID-16 | F7/F8 -> F9 | docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json (F9-ID-07) | upstream Pareto sets per context, robust Pareto set, full-system ranking status REFUSED_INCOMPLETE with the unlock evidence map; F9 carries sets, never a silently selected point | PROVIDED |
 | F78-ID-17 | F7/F8 -> F0 | docs/performance/ | workload: F7 steady sweeps + F8 Monte Carlo (CPU printed by the builder; no Rust kernel needed: no TPMC runs here) | PROVIDED |
 
+## Orbit-state set (A9.14 S9.8 OD3)
+
+- `atmosphere_msis21_orbit_v1_design_states_v2` sha256 `60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049`: 196 required states + design-case reference h200_f150 = 197 evaluated F1 states (no subset). Orbit basis **BROAD_ENVELOPE_ALL_INCLINATIONS_ALL_LTAN_NOT_MISSION_ICD**: inclination and LTAN are not specified (A9.21 EXTERNAL_INPUTS: not in the RFP; the old 96.3 deg dawn-dusk code default is never mission truth; A9.17 ORBIT: TBD from DRDO / spacecraft ICD / PDR mission definition). The design-state set v2 covers every latitude -90..90 deg and every local time, so it does not depend on an orbit assumption; it is a broad design envelope, not a mission trajectory. A registered orbit narrows it in a new version.
+- AG-13 / HC-08 over the 196 required states: **NOT_EVALUATED** (thrust and / or spacecraft drag not evaluated at every required state (no admitted Hall member / host-spacecraft ICD); NOT_EVALUATED, never counted as satisfied).
+- AG-12 / HC-11 over the 196 required states: **NOT_EVALUATED** (no validated H-1 thrust-versus-feed map exists (AG-12 NOT_EVALUATED until it does)).
+- HC-09 intake-face drag: evaluated at every F1 state (drag_intake_max_N = maximum over all 197 states).
+- Superseded: ['h200_f150', 'h180_f70', 'h180_f230', 'h230_f70', 'h230_f230'] (SUPERSEDED_BY_DESIGN_STATE_SET_V2 (A9.14 S9.8 OD3; A9.13 S6.14 OQ-F4-05)); outputs at 61eefc4: `f7_f8_optimizer_v1.json` 45e055ccae56, `f7_upstream_pareto_v1.json` 7a282dd217cd, `f8_robust_candidates_v1.json` 43adc213f7f7.
+
+## Flow gap: owner order (A9.13 S6.13 / OQ-F4-04 (NO_REQUIREMENT_RELAXATION))
+
+1. **PERFORMANCE_DERIVED_H1_FEED_REQUIREMENT** (A9.13 S6.21 / F9-OQ-02; PENDING_EVIDENCE): derive the minimum feed state from the required drag-compensation thrust at every required state through the measured / validated H-1 thrust-versus-feed map (AG-12); needs measured / validated H-1 thrust-versus-feed map (none exists)
+2. **CAPTURE_COLLECTION** (A9.13 S6.13; OPEN): raise capture / collection within the drag (S6.15 statewise), mass and pointing constraints
+3. **COMPRESSOR_DOMAIN_PUMPING_FEED_EFFICIENCY** (A9.13 S6.13; OPEN): compressor domain, pumping and feed efficiency
+4. **SCHEDULED_SETPOINT** (A9.13 S6.10 / OQ-F4-01; OPEN): orbit-state-scheduled plenum setpoint (baseline control mode, not frozen)
+
+- no requirement relaxation: the flight feed requirement is performance-derived (rank 1, S6.21) and is PENDING_EVIDENCE until a measured / validated H-1 thrust-versus-feed map exists; it is never lowered to a deliverable frontier, a state subset or a characterization value.
+- 0.38 mg/s: GROUND_CHARACTERIZATION_ONLY_NEVER_A_FLIGHT_REQUIREMENT.
+- Higher-density-only operation: SENSITIVITY_ONLY_NOT_BASELINE; operation restricted to higher-density states is a sensitivity; it cannot be baseline while it violates S6.15 (T - D >= 0 at EVERY required state); S6.15 is NOT_EVALUATED today, so it is never baseline-admissible.
+- Flight feed requirement: PENDING_EVIDENCE (measured / validated H-1 thrust-versus-feed map (none exists)).
+
+## Intake structural mass (A9.13 S6.1 / F1Q-02 (BUDGETING_ASSUMPTION_SOURCED_BEFORE_LOCK_1))
+
+- PARAMETRIC_SENSITIVITY, BUDGETING_ONLY: never CBE, FROZEN_INTAKE_MASS, STRUCTURAL_QUALIFICATION; SOURCED_STRUCTURAL_DEFINITION_REQUIRED_BEFORE_LOCK_1.
+
 ## Open owner questions (new)
 
 - **OQ-F78-01**: Is drag compensation T - D_spacecraft >= 0 (HC-08) a hard architecture constraint, and at which orbit states / averaging (instantaneous at every state, or orbit-averaged)? It is carried as a derived constraint, not an RVM row. (needed for: HC-08 and the full-system ranking)
@@ -215,6 +208,8 @@ Survivors 843; feasible-scenario tiers {'1': 48, '2': 169, '3': 78, '4': 70, '5'
 - single-channel TPMC intake model with Maxwell / CLL kernels at frozen-surface nodes (F1 limitations)
 - masses: proxies (intake wall area, plenum volume) where TBD; the compressor mass is the DragCompressor model's (code defaults), never a CBE
 - probabilities only over the quantified TPMC statistics; scenario sets carry counts and worst cases only
+- orbit states: the frozen design-state set v2 is a broad envelope over every inclination / LTAN (A9.21: not specified; no code-default orbit as mission truth); every statewise result is a design-envelope result (BROAD_ENVELOPE_ALL_INCLINATIONS_ALL_LTAN_NOT_MISSION_ICD), V_rel = V_orb (no co-rotation / winds)
+- intake structural mass (A9.13 S6.1 / F1Q-02): PARAMETRIC_SENSITIVITY, budgeting only; never a CBE, frozen intake mass or structural qualification; sourced structural definition required before LOCK-1
 
 ## m16 impact
 

@@ -13,7 +13,9 @@ import numpy as np
 import pytest
 
 from abep_sim.design import filter_stage as fs
+from abep_sim.design import intake_synthesis as isy
 from abep_sim.design import plenum_feed as pf
+from abep_sim.design import upstream_a9_13 as u13
 from abep_sim.reservoir import size_orifice_for_pressure
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,7 +26,21 @@ JSON_CHAINS = OUT / "f4_plenum_chains_v1.json"
 JSON_TRANS = OUT / "f4_plenum_transients_v1.json"
 MD = OUT / "F4_PLENUM_FEED.md"
 MODULE = ROOT / "abep_sim/design/plenum_feed.py"
-STATES = ("h200_f150", "h180_f70", "h180_f230", "h230_f70", "h230_f230")
+# A9.14 S9.8 OD3: every F1 state = design-case reference h200_f150 + every required design state (v2 set)
+STATES = tuple(s.id for s in isy.envelope_states())
+
+
+def _labelled(label):
+    st = [s.id for s in isy.required_states() if label in s.labels]
+    assert len(st) == 1, label
+    return st[0]
+
+
+DENSEST = _labelled("ENVELOPE_MAX_rho_kg_m3")       # replaces the superseded corner h180_f230
+RAREST = _labelled("ENVELOPE_MIN_rho_kg_m3")        # replaces the superseded corner h230_f70
+# a state sample for the vectorized == scalar identity (as many states as the superseded five-state set, chosen by the
+# set's own extremum labels, never by convenience): reference + density / temperature envelope extrema
+STATE_SAMPLE = ("h200_f150", DENSEST, RAREST, _labelled("ENVELOPE_MAX_T_K"), _labelled("ENVELOPE_MIN_T_K"))
 
 
 @pytest.fixture(scope="module")
@@ -184,14 +200,14 @@ def test_target_above_domain_is_ood_without_flow(recs, grid):
 
 
 def test_characteristic_violation_is_ood_without_flow(recs, grid):
-    ch = pf.Chain(recs[("A0.5_Ld3_phi0.9", "maxwell_a1", "h180_f230")], pf.filter_none(), _plant(grid), _pl())
+    ch = pf.Chain(recs[("A0.5_Ld3_phi0.9", "maxwell_a1", DENSEST)], pf.filter_none(), _plant(grid), _pl())
     op = pf.steady_operating_point(ch, 0.001)
     assert op["status"] == pf.ST_OOD and op["offered"] is None
     assert pf.R_CHARACTERISTIC in op["reasons"] and op["domain_diagnostics"]["compressor_K_min"] < 1.0
 
 
 def test_deadhead_is_infeasible(recs, grid):
-    ch = pf.Chain(recs[("A0.5_Ld3_phi0.9", "maxwell_a1", "h230_f70")], pf.filter_none(),
+    ch = pf.Chain(recs[("A0.5_Ld3_phi0.9", "maxwell_a1", RAREST)], pf.filter_none(),
                   _plant(grid, "T1-A0-U2-D0-Ti6Al4V"), _pl())
     op = pf.steady_operating_point(ch, 0.05)
     assert op["status"] == pf.ST_INFEASIBLE and pf.R_DEADHEAD in op["reasons"] and op["offered"] is None
@@ -200,7 +216,7 @@ def test_deadhead_is_infeasible(recs, grid):
 
 def test_vectorized_sweep_matches_scalar(recs, grid):
     its = [recs[(c, sc, s)] for c in ("A0.25_Ld20_phi0.8", "A0.5_Ld3_phi0.9") for sc in ("cll_a0.8", "maxwell_a1")
-           for s in STATES]
+           for s in STATE_SAMPLE]
     targets = (0.001, 0.005, 0.02, 0.05, 0.1, 0.2)
     for fc in (pf.filter_none(), pf.filter_parametric(0.7)):
         pc, pl = _plant(grid), _pl()
@@ -302,8 +318,17 @@ def test_committed_study_structure_and_labels(main_doc):
     assert d["deliverable_status"].startswith("PARAMETRIC_SENSITIVITY")
     assert d["strict_mode"]["status"] == pf.ST_NOT_EVALUATED
     for k in ("items", "interface_demands", "open_owner_questions", "m16_impact", "findings", "requirement_sweep",
-              "metric_definitions", "pareto", "offered_to_h1", "steady", "transient", "checks"):
+              "metric_definitions", "pareto", "steady", "transient", "checks"):
         assert d[k], k
+    # offered_to_h1 holds the transient Pareto members; it may be empty only when no basis chain was simulated, and
+    # then every basis chain must carry its orbit-check reasons (never an unexplained empty set)
+    assert isinstance(d["offered_to_h1"], list)
+    if not d["offered_to_h1"]:
+        assert d["transient"]["n_simulated"] == 0 and all(not p["pareto_ids"] for p in d["pareto"])
+        for c in d["transient"]["contexts"]:
+            assert set(c["not_simulated_orbit_infeasible_at_smallest_amplitude"]) == set(c["steady_nondominated"])
+            amin = str(min(float(a) for a in next(iter(c["orbit_check_reasons"].values()))))
+            assert all(c["orbit_check_reasons"][cid][amin] for cid in c["steady_nondominated"])
     for p in d["items"]:
         for k in ("id", "value", "units", "basis", "source", "evidence_class", "status"):
             assert k in p
@@ -347,8 +372,19 @@ def test_committed_pareto_members_feasible_and_offered(main_doc):
 
 def test_committed_transient_sample_reproduces(main_doc, f1, grid):
     """Recompute one committed simulated row from the module (the builder itself is checked with --check)."""
-    rows = [r for r in json.loads(JSON_TRANS.read_text(encoding="utf-8"))["rows"] if r["objectives"] is not None]
-    assert rows
+    all_rows = json.loads(JSON_TRANS.read_text(encoding="utf-8"))["rows"]
+    rows = [r for r in all_rows if r["objectives"] is not None]
+    if not rows:
+        # no chain survived the orbit check on the full design-state set: every committed row is NOT_SIMULATED with
+        # its reasons, and the module still reproduces a transient at the design-case reference (independent check)
+        assert all_rows and all(r["event_sequence_status"] == "NOT_SIMULATED_ORBIT_INFEASIBLE_AT_SMALLEST_AMPLITUDE"
+                                and all(x["reasons"] for x in r["by_orbit_amplitude"].values()) for r in all_rows)
+        rec = [x for x in pf.load_f1_records(f1, [0.25], scenarios=["cll_a0.8"], states=["h200_f150"])
+               if x.candidate == "A0.25_Ld20_phi0.8"][0]
+        x = pf.transient_case(pf.filter_none(), _plant(grid), _pl(V=1e-3), pf.Controller(3.0, 0.3, 1.0, 3.0), rec,
+                              0.02)
+        assert x["summary"]["mass_residual_rel"] < pf.MASS_TOL
+        return
     r = rows[0]
     recs = pf.load_f1_records(f1, [float(r["candidate"].split("_")[0][1:])], scenarios=[r["scenario"]],
                               states=["h200_f150"])
@@ -452,3 +488,75 @@ def test_transient_domain_reasons_include_thermal_limit():
     assert pf._domain_reasons([seg]) == []
     hot = dict(seg, T_comp_max_K=650.0)
     assert pf.R_THERMAL in pf._domain_reasons([seg, hot])
+
+
+# ------------------------------------------------------------------------- A9.14 S9.8 OD3 / A9.13 S6.13
+def test_f1_records_cover_every_design_state(f1, recs):
+    assert tuple(f1["coverage_rule"]["orbit_states"]) == STATES
+    assert {k[2] for k in recs} == set(STATES)
+    it = recs[("A0.5_Ld3_phi0.9", "maxwell_a1", DENSEST)]
+    assert it.alt_km == isy.state_alt_km(DENSEST)
+    # the F1 C-DRAG-RFP reasons name design-state ids (they contain ':'); the parser maps them to known states only
+    inf = pf.f1_state_infeasibility(f1)
+    named = {st for d in inf.values() for st in d}
+    assert named and named <= set(STATES)
+
+
+def test_f1_reason_parser_refuses_unknown_state(f1):
+    bad = json.loads(json.dumps({"coverage_rule": f1["coverage_rule"], "infeasible_reasons": {"envelope": {
+        "maxwell_a1": {"A1_d10_Ld3_phi0.9": ["C-DRAG-RFP at h180_f230: 30.00 mN"]}}}}))
+    with pytest.raises(RuntimeError):
+        pf.f1_state_infeasibility(bad)
+
+
+def test_committed_study_uses_design_state_set(main_doc):
+    d = main_doc
+    assert d["design_state_set"]["sha256"] == isy.DESIGN_STATE_SET_SHA256
+    assert d["orbit_basis_label"] == isy.ORBIT_BASIS_LABEL
+    xi = [v for v in d["search_variables"] if v["id"] == "x_intake"][0]
+    assert tuple(xi["value"]["states"]) == STATES
+    assert d["state_set_history"]["superseded_state_set"]["state_ids"] == isy.HISTORY_FIVE_STATE_SET["state_ids"]
+    for k, v in d["steady"]["per_state_frontier_filter_none_wall_g0"].items():
+        assert tuple(v) == STATES, k
+
+
+def test_flow_gap_owner_order_recorded(main_doc):
+    """A9.13 S6.13 / OQ-F4-04: owner order recorded; 0.38 mg/s ground characterization only; no relaxation."""
+    fg = main_doc["flow_gap_owner_order"]
+    assert [o["lever"] for o in fg["order"]] == ["PERFORMANCE_DERIVED_H1_FEED_REQUIREMENT", "CAPTURE_COLLECTION",
+                                                 "COMPRESSOR_DOMAIN_PUMPING_FEED_EFFICIENCY", "SCHEDULED_SETPOINT"]
+    assert fg["order"][0]["status"] == "PENDING_EVIDENCE"
+    assert fg["ground_characterization_role"] == "GROUND_CHARACTERIZATION_ONLY_NEVER_A_FLIGHT_REQUIREMENT"
+    assert fg["flight_feed_requirement"]["status"] == "PENDING_EVIDENCE" and fg["flight_feed_requirement"]["value"] is None
+    assert main_doc["requirement_sweep"]["flow_gap_owner_order"] == fg
+    q = [x for x in main_doc["open_owner_questions"] if x["id"] == "OQ-F4-04"][0]
+    assert q["owner_answer_applied"] == fg
+    md = MD.read_text(encoding="utf-8")
+    assert "PERFORMANCE_DERIVED_H1_FEED_REQUIREMENT" in md and "GROUND_CHARACTERIZATION_ONLY" in md
+
+
+@pytest.mark.parametrize("basis", ["GROUND_CHARACTERIZATION", "CHARACTERIZATION_COVERAGE", "DELIVERABLE_FRONTIER",
+                                   "DENSE_STATE_ONLY", "STATE_SUBSET", "FIXED_MASS_FLOW_GATE", "unknown"])
+def test_feed_requirement_never_lowered(basis):
+    with pytest.raises(u13.A913RuleError):
+        u13.refuse_feed_requirement_lowering(basis)
+    with pytest.raises(u13.A913RuleError):
+        u13.refuse_feed_requirement_lowering(u13.PERFORMANCE_DERIVED_BASIS + "_X", 0.38)
+    u13.refuse_feed_requirement_lowering(u13.PERFORMANCE_DERIVED_BASIS)       # the only admissible basis
+
+
+def test_dense_state_subset_is_sensitivity_not_baseline(recs, grid):
+    """S6.13: scheduled operation on the higher-density states only is labelled SENSITIVITY_ONLY_NOT_BASELINE."""
+    dense = [s.id for s in isy.required_states() if s.alt_km == 180.0]
+    its = [recs[("A0.25_Ld20_phi0.8", "cll_a0.8", st)] for st in dense]
+    sch = u13.FixedSetpoint(0.02, "PARAMETRIC_SENSITIVITY", "test")
+    r = pf.scheduled_operation(pf.filter_none(), _plant(grid), _pl(), its, sch)
+    assert r["state_coverage"]["coverage"] == u13.STATE_SUBSET and r["operation_role"] == u13.DENSE_STATE_ONLY_ROLE
+    assert r["state_coverage"]["baseline_admissible_by_coverage"] is False
+    full = u13.state_coverage(list(STATES), [s.id for s in isy.required_states()])
+    assert full["coverage"] == u13.FULL_STATE_SET
+    cls = u13.dense_state_only_operation(dense, [s.id for s in isy.required_states()],
+                                         {"status": u13.C_MET})
+    assert cls["role"] == u13.DENSE_STATE_ONLY_ROLE                      # even with S6.15 met, a subset is not baseline
+    cls = u13.dense_state_only_operation(list(STATES), [s.id for s in isy.required_states()], None)
+    assert cls["role"] == "BASELINE_BLOCKED_S6_15_NOT_MET"               # full set, S6.15 NOT_EVALUATED today
