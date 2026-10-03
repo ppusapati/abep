@@ -379,3 +379,14 @@ def test_malformed_inputs_refused():
     r = P.entry_status("H1-S7.2", {"completed": {"H1-S7.1": done()},
                                    "registrations": {"H1-S7.2-PRE-01": dict(femm(), sha256="not-a-hash")}})
     assert r["status"] == P.NOT_STARTABLE_PRECONDITION
+
+
+def test_rendered_order_is_a_listing_not_a_sequence():
+    """Review 2026-10-03: steps without predecessors (ICP-AR-REF, P2-MAP, COUPLED-H1-ICP, H1-THRUST-FEED-MAP) must not
+    be rendered as following the previous item ('a -> b'): A9.21 orders only what the predecessors record."""
+    md = B.render_md(P.document())
+    assert "it is not a sequence" in md and "Governing text: " in md
+    for key in ("H1", "P1", "P2", "P3", "P4"):
+        txt = "\n".join(P.render_view_md(load(P.ARTIFACTS[key])["a9_21_programme"]))
+        assert "Order: " not in txt and " -> ".join(s["id"] for s in P.STEPS[:2]) not in txt
+        assert "not a sequence" in txt

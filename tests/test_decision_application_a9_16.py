@@ -420,6 +420,31 @@ def test_matrix_applications_are_verifiable():
         assert r.returncode == 0, c
 
 
+def test_matrix_cited_commits_touch_their_artifacts():
+    """Review 2026-10-03: a cited (commit, artifact) pair must be a commit that changed that artifact (git show), so
+    the matrix never points at a commit that does not contain the claimed change (A9.19 a9_19_architecture.py was
+    cited at 56e7327, which does not touch it; F0-OQ-02 REGISTRATION.json at 61373fd, likewise). Scope: every
+    application outside the A9.16 step-1 lane table MX.LANES."""
+    import subprocess
+    step1 = set(MX.LANES)
+    seen = set()
+    for e in MXDOC["entries"]:
+        for a in e["applications"]:
+            if a["lane"] in step1 or (a["commit"], a["artifact"]) in seen:
+                continue
+            seen.add((a["commit"], a["artifact"]))
+            if subprocess.run(["git", "-C", str(ROOT), "cat-file", "-e", a["commit"] + "^{commit}"],
+                              capture_output=True).returncode != 0:
+                pytest.skip("git history not available")
+            out = subprocess.run(["git", "-C", str(ROOT), "show", "--format=", "--name-only", a["commit"], "--",
+                                  a["artifact"]], capture_output=True, text=True).stdout.strip()
+            if not out:   # merge commit: compare with its first parent
+                out = subprocess.run(["git", "-C", str(ROOT), "diff", "--name-only", a["commit"] + "^1",
+                                      a["commit"], "--", a["artifact"]], capture_output=True, text=True).stdout.strip()
+            assert out, (e["decision"], e["question_id"], a["lane"], a["commit"][:7], a["artifact"])
+    assert seen
+
+
 def test_matrix_refuses_unverifiable_lane_result(monkeypatch):
     lanes = dict(MX.LANES)
     c, art, q = lanes["P3"]

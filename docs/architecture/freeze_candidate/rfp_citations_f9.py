@@ -28,6 +28,9 @@ import json
 REGISTERED = "REGISTERED_CLAUSE"
 UNMAPPED = "UNMAPPED_NO_RVM_MAPPED_CLAUSE"
 REGISTRATION_PATH = "docs/requirements/rfp_official/rfp_registration_v1.json"
+# the F9 record -> RVM row table (CORRESPONDENCE) is the recorder's, checked against the artifacts; it is not an owner
+# mapping and not part of the RVM re-base (review 2026-10-03, evidence discipline)
+CORRESPONDENCE_STATUS = "RECORDER_READING_OWNER_MAY_REVERSE"
 RVM_PATH = "docs/requirements/rvm_a9/rvm_a9_v1.json"
 A915 = "A9.15 governing_rule"
 
@@ -156,8 +159,11 @@ def _relabel(rec: dict, m: dict, pending) -> None:
         rec["rfp_rvm_rows"] = list(m["rows"])
         rec["rfp_correspondence"] = list(m["correspondence"])
         rec["rfp_citation_note"] = ("registered clause(s) " + ", ".join(m["clauses"]) + " (" + REGISTRATION_PATH
-                                    + "), mapped as the RVM re-base maps " + ", ".join(m["rows"]) + "; AG-15 closure "
-                                    "is the owner's, requirement_frozen stays false")
+                                    + "), the rfp_clauses the RVM re-base maps for " + ", ".join(m["rows"])
+                                    + "; the record -> RVM row correspondence is a " + CORRESPONDENCE_STATUS
+                                    + " (" + ", ".join(sorted({c["kind"] for c in m["correspondence"]}))
+                                    + "); AG-15 closure is the owner's, requirement_frozen stays false")
+        rec["rfp_correspondence_status"] = CORRESPONDENCE_STATUS
     else:
         rec["rfp_citation_unmapped_reason"] = m["reason"]
 
@@ -225,6 +231,11 @@ def apply(doc: dict, rvm: dict, answer, pending: str) -> dict:
                     "correspondence verified against the artifacts); the step-1 label is kept as "
                     "rfp_citation_status_as_applied; a record without a registered correspondence is "
                     + UNMAPPED + " with its reason; AG-15 closure stays the owner's",
+            "correspondence_status": CORRESPONDENCE_STATUS + ": the F9 record -> RVM row correspondence "
+                                     "(rfp_citations_f9.CORRESPONDENCE) is the recorder's reading, verified against the "
+                                     "artifacts (VERBATIM_FACT: the RFP fact quoted in the owner's answer matches the RVM "
+                                     "row text); only the clause ids per RVM row come from the RVM re-base; the owner may "
+                                     "reverse a correspondence (AG-15 closure pending)",
             "registration": REGISTRATION_PATH, "rvm": RVM_PATH + "#/rfp_rebase",
             "statuses": {"REGISTERED_CLAUSE": "registered clause ids, mapped through the RVM re-base",
                          UNMAPPED: "no RVM-mapped clause for the requirement the record cites (reason recorded)"},

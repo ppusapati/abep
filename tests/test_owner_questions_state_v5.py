@@ -361,3 +361,12 @@ def test_gate_location_fails_closed():
     bad_f9["pre_lock1_gates"][0]["placement"] = "AFTER_LOCK-1"
     with pytest.raises(SystemExit):
         B.icp_gate_location(rows, RVM_DOC, bad_f9)
+
+
+def test_md_step1_rfp_rule_labelled_history():
+    """Review 2026-10-03: the step-1 'document is not registered' rule is history once the RFP is registered by hash;
+    the companion document must not state it as the current rule next to 'RFP now: REGISTERED_BY_HASH...'."""
+    md = (ROOT / "docs/budgets/owner_decisions/OWNER_QUESTIONS_STATE_v5.md").read_text(encoding="utf-8")
+    assert "\nRFP rule: " not in md
+    assert "RFP rule (A9.16 step-1 application rule, history;" in md
+    assert "RFP now: REGISTERED_BY_HASH" in md

@@ -170,7 +170,7 @@ CODE_APPS = {
                       "b9b738733a6cab9cf32dcf65cf0f7f1e4a2e2855", ["s10_1_thresholds", "(A9.14 S10.1) applied unchanged"],
                       "PORT_CANDIDATE >= 60 s / MARGINAL >= 10 s applied unchanged to the dedicated baseline")],
     "F0-OQ-02": [_app("A9.17", "docs/performance/dedicated_baseline_2026_10_01/REGISTRATION.json",
-                      "61373fd21609268c9901a7910a9d948bed0df286", ["A9.14 S10.2 F0-OQ-02", "machine"],
+                      "b9b738733a6cab9cf32dcf65cf0f7f1e4a2e2855", ["A9.14 S10.2 F0-OQ-02", "machine"],
                       "dedicated unloaded-machine baseline registered with machine / toolchain / thread metadata")],
     "RUST-OQ-02": [_app("STEP3", ".github/workflows/rust-parity.yml", "3bd06cd3d25d9a6563c1ef5f3f57ce658910ca1a",
                         ["RUST-OQ-02 = OPTIONAL_RUST_CI_MANDATORY_PARITY_ON_RUST_CHANGES"],
@@ -232,7 +232,7 @@ LATER = tuple(X.ORDER)
 # this lane (owner-question state v5 + M16 v4; committed before this matrix so the pointer is verifiable)
 A919_RVM_COMMIT = "1eb021c91da662fe277d098cc11ab35c3d28afc7"       # RVM rows RVM-28..30, re-applied on the finalize RVM
 A919_BUDGETS_COMMIT = "4cd79e6425472ece6835d4c254710cdfe036b31a"   # mass / power v3 + Xe v3 A9.19 / A9.20
-A919_DESIGN_COMMIT = "56e73270a96669a4760e4e11c4244e78fa6e4d03"    # abep_sim/design/a9_19_architecture.py
+A919_DESIGN_COMMIT = "90f0137842ddd59dcfc99444fc98ba46c808edd0"    # abep_sim/design/a9_19_architecture.py (adds FLIGHT_CONFIGURATIONS)
 A919_INTEGRATION_COMMIT = "f280cf4401fe1f428352b5657e97881f38cc7c79"  # F9 Xe role, H2-6 live-source CI check
 RECORDS_A917_21_COMMIT = "42453f5fdb10a645ea88ef90f56aad851d2c6520"  # state v5 + M16 v4 A9.17 .. A9.21 records
 A921_AL08_BUDGETS_COMMIT = "6a69ac52dcca091212c0dfc4cd10abcbd2e1bdcc"  # mass / power v3 AL-08 + Xe v3 XV3-IF-02 A9.21 label

@@ -778,7 +778,9 @@ def render_view_md(view: dict) -> list:
     """Markdown lines for a stage artifact's companion document."""
     out = ["", "## A9.21 hardware-programme place (owner items 6-11)", "",
            f"Programme record `{view['programme_record']}` (sha256 `{view['programme_record_sha256']}`); decision "
-           f"{view['decision']}.", "", "Order: " + " -> ".join(view["order"]), ""]
+           f"{view['decision']}.", "",
+           "Listing order (owner items 6-11; not a sequence: the only binding precedence is each step's predecessors "
+           "below and in the programme record): " + ", ".join(view["order"]), ""]
     for n, txt in view["owner_items_verbatim"].items():
         out.append(f"> {txt}")
         out.append("")
