@@ -1282,6 +1282,130 @@
    "produces": "fo_a9_7_consolidated_verification",
    "kind": "follow_on_launch",
    "note": "owner A9.7 2026-10-01; launched operationally in waves (F0/F1/F2/F3/F5/F6 -> F4/Rust -> F7/F8 -> F9 -> verification)"
+  },
+  {
+   "id": "T_A9_APPLY_P1",
+   "prerequisites": [
+    {
+     "id": "od_a9_8_s1_p1_start",
+     "state": "approved"
+    },
+    {
+     "id": "od_a9_10_s3_p1_later_stage",
+     "state": "approved"
+    },
+    {
+     "id": "od_a9_11_s4_p2",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_apply_p1",
+   "kind": "follow_on_launch",
+   "note": "owner A9.8/A9.10/A9.11/A9.12 'apply in the decision-application step' (execution sections, 2026-10-01); launched 2026-10-03 in waves (P1/P2/P3-P4/RFQ -> state/integration -> verification)"
+  },
+  {
+   "id": "T_A9_APPLY_P2",
+   "prerequisites": [
+    {
+     "id": "od_a9_8_s1_p1_start",
+     "state": "approved"
+    },
+    {
+     "id": "od_a9_10_s3_p1_later_stage",
+     "state": "approved"
+    },
+    {
+     "id": "od_a9_11_s4_p2",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_apply_p2",
+   "kind": "follow_on_launch",
+   "note": "owner A9.8/A9.10/A9.11/A9.12 'apply in the decision-application step' (execution sections, 2026-10-01); launched 2026-10-03 in waves (P1/P2/P3-P4/RFQ -> state/integration -> verification)"
+  },
+  {
+   "id": "T_A9_APPLY_P3_P4",
+   "prerequisites": [
+    {
+     "id": "od_a9_8_s1_p1_start",
+     "state": "approved"
+    },
+    {
+     "id": "od_a9_12_s5_p3_p4",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_apply_p3_p4",
+   "kind": "follow_on_launch",
+   "note": "owner A9.8/A9.10/A9.11/A9.12 'apply in the decision-application step' (execution sections, 2026-10-01); launched 2026-10-03 in waves (P1/P2/P3-P4/RFQ -> state/integration -> verification)"
+  },
+  {
+   "id": "T_A9_APPLY_RFQ",
+   "prerequisites": [
+    {
+     "id": "od_a9_8_s1_p1_start",
+     "state": "approved"
+    },
+    {
+     "id": "od_a9_10_s3_p1_later_stage",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_apply_rfq",
+   "kind": "follow_on_launch",
+   "note": "owner A9.8/A9.10/A9.11/A9.12 'apply in the decision-application step' (execution sections, 2026-10-01); launched 2026-10-03 in waves (P1/P2/P3-P4/RFQ -> state/integration -> verification)"
+  },
+  {
+   "id": "T_A9_APPLY_STATE_INTEGRATION",
+   "prerequisites": [
+    {
+     "id": "od_a9_8_s1_p1_start",
+     "state": "approved"
+    },
+    {
+     "id": "od_a9_9_s2_model_change",
+     "state": "approved"
+    },
+    {
+     "id": "od_a9_10_s3_p1_later_stage",
+     "state": "approved"
+    },
+    {
+     "id": "od_a9_11_s4_p2",
+     "state": "approved"
+    },
+    {
+     "id": "od_a9_12_s5_p3_p4",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_apply_state_integration",
+   "kind": "follow_on_launch",
+   "note": "owner A9.8/A9.10/A9.11/A9.12 'apply in the decision-application step' (execution sections, 2026-10-01); launched 2026-10-03 in waves (P1/P2/P3-P4/RFQ -> state/integration -> verification)"
+  },
+  {
+   "id": "T_A9_APPLY_CONSOLIDATED_VERIFICATION",
+   "prerequisites": [
+    {
+     "id": "od_a9_8_s1_p1_start",
+     "state": "approved"
+    },
+    {
+     "id": "od_a9_10_s3_p1_later_stage",
+     "state": "approved"
+    },
+    {
+     "id": "od_a9_11_s4_p2",
+     "state": "approved"
+    },
+    {
+     "id": "od_a9_12_s5_p3_p4",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_apply_consolidated_verification",
+   "kind": "follow_on_launch",
+   "note": "owner A9.8/A9.10/A9.11/A9.12 'apply in the decision-application step' (execution sections, 2026-10-01); launched 2026-10-03 in waves (P1/P2/P3-P4/RFQ -> state/integration -> verification)"
   }
  ]
 }

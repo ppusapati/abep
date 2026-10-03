@@ -1374,6 +1374,42 @@
    "kind": "follow_on",
    "title": "A9.7 design synthesis: one consolidated verification of the A9.7 batch",
    "verification": "deferred to fo_a9_7_consolidated_verification"
+  },
+  {
+   "id": "fo_a9_apply_p1",
+   "kind": "follow_on",
+   "title": "A9.8-A9.12 application: P1 ICP bench (S1.1-S1.5, S1.15, S1.16, S3.1-S3.9, S4.1, P1 side of S3.8)",
+   "verification": "deferred to fo_a9_apply_consolidated_verification"
+  },
+  {
+   "id": "fo_a9_apply_p2",
+   "kind": "follow_on",
+   "title": "A9.8-A9.12 application: P2 impedance map (S4.2-S4.7, P2 side of S3.8, S1.6 metrology split as referenced by P2)",
+   "verification": "deferred to fo_a9_apply_consolidated_verification"
+  },
+  {
+   "id": "fo_a9_apply_p3_p4",
+   "kind": "follow_on",
+   "title": "A9.8-A9.12 application: P3 coupled thermal + P4 anode/collector materials (S1.7, S5.1-S5.14)",
+   "verification": "deferred to fo_a9_apply_consolidated_verification"
+  },
+  {
+   "id": "fo_a9_apply_rfq",
+   "kind": "follow_on",
+   "title": "A9.8-A9.12 application: RFQ v2 procurement packages (S1.6, S1.8-S1.14, S3.9, S3.10)",
+   "verification": "deferred to fo_a9_apply_consolidated_verification"
+  },
+  {
+   "id": "fo_a9_apply_state_integration",
+   "kind": "follow_on",
+   "title": "A9.8-A9.12 application: owner-question state v5, RVM/M16 refresh and cross-lane integration",
+   "verification": "deferred to fo_a9_apply_consolidated_verification"
+  },
+  {
+   "id": "fo_a9_apply_consolidated_verification",
+   "kind": "follow_on",
+   "title": "A9.8-A9.12 application: one consolidated verification of the application batch",
+   "verification": "deferred to fo_a9_apply_consolidated_verification"
   }
  ],
  "owner_dispositions": [
@@ -1501,6 +1537,66 @@
    },
    "decision_states": {
     "A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS_RECORDED": "approved"
+   },
+   "immutability": "never edited after commit; later owner amendments are new addendum files"
+  },
+  {
+   "id": "od_a9_8_s1_p1_start",
+   "file": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+   "states": {
+    "pending": "no disposition file",
+    "approved": "decision A9_8_S1_P1_START_DECISIONS_RECORDED"
+   },
+   "decision_states": {
+    "A9_8_S1_P1_START_DECISIONS_RECORDED": "approved"
+   },
+   "immutability": "never edited after commit; later owner amendments are new addendum files"
+  },
+  {
+   "id": "od_a9_9_s2_model_change",
+   "file": "docs/decisions/OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json",
+   "states": {
+    "pending": "no disposition file",
+    "approved": "decision A9_9_S2_MODEL_CHANGE_DECISIONS_RECORDED"
+   },
+   "decision_states": {
+    "A9_9_S2_MODEL_CHANGE_DECISIONS_RECORDED": "approved"
+   },
+   "immutability": "never edited after commit; later owner amendments are new addendum files"
+  },
+  {
+   "id": "od_a9_10_s3_p1_later_stage",
+   "file": "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+   "states": {
+    "pending": "no disposition file",
+    "approved": "decision A9_10_S3_P1_LATER_STAGE_DECISIONS_RECORDED"
+   },
+   "decision_states": {
+    "A9_10_S3_P1_LATER_STAGE_DECISIONS_RECORDED": "approved"
+   },
+   "immutability": "never edited after commit; later owner amendments are new addendum files"
+  },
+  {
+   "id": "od_a9_11_s4_p2",
+   "file": "docs/decisions/OD_2026_10_01_A9_11_s4_p2_owner_decisions.json",
+   "states": {
+    "pending": "no disposition file",
+    "approved": "decision A9_11_S4_P2_DECISIONS_RECORDED"
+   },
+   "decision_states": {
+    "A9_11_S4_P2_DECISIONS_RECORDED": "approved"
+   },
+   "immutability": "never edited after commit; later owner amendments are new addendum files"
+  },
+  {
+   "id": "od_a9_12_s5_p3_p4",
+   "file": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "states": {
+    "pending": "no disposition file",
+    "approved": "decision A9_12_S5_P3_P4_DECISIONS_RECORDED"
+   },
+   "decision_states": {
+    "A9_12_S5_P3_P4_DECISIONS_RECORDED": "approved"
    },
    "immutability": "never edited after commit; later owner amendments are new addendum files"
   }

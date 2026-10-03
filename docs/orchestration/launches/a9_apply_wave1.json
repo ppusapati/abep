@@ -1,0 +1,14 @@
+{
+ "schema": "launch_brief_v1",
+ "wave": "A9.8-A9.12 decision application, wave 1",
+ "launched_utc": "2026-10-03",
+ "baseline": "main b1e5b76 (Checkpoint 6); execution branch claude/quirky-maxwell-6imhlw",
+ "mechanism": "one Agent subagent per lane, each in an isolated git worktree; lane commits merged into the execution branch by the operator; downstream sha pins refreshed afterwards in fo_a9_apply_state_integration by rebuilding in the registered order (P4, XE, P1, P2, P3, MP, RFQ, RVM, owner-question state, M16)",
+ "lanes": {
+  "fo_a9_apply_p1": {"trigger": "T_A9_APPLY_P1", "decisions": ["S1.1-S1.5", "S1.15", "S1.16", "S3.1-S3.9", "S4.1", "S3.8 (P1 side)"], "paths": "docs/experiments/hall_icp/p1_icp_bench/, tests/test_p1_icp_bench*.py"},
+  "fo_a9_apply_p2": {"trigger": "T_A9_APPLY_P2", "decisions": ["S4.2-S4.7", "S3.8 (P2 side)", "S1.6 (P2 references)"], "paths": "docs/experiments/hall_icp/p2_impedance_map/, tests/test_p2_*.py"},
+  "fo_a9_apply_p3_p4": {"trigger": "T_A9_APPLY_P3_P4", "decisions": ["S1.7", "S5.1-S5.14"], "paths": "docs/experiments/hall_icp/p3_coupled_thermal/, docs/experiments/hall_icp/p4_anode_materials/, tests/test_p3_*.py, tests/test_p4_*.py"},
+  "fo_a9_apply_rfq": {"trigger": "T_A9_APPLY_RFQ", "decisions": ["S1.6", "S1.8-S1.14", "S3.9", "S3.10"], "paths": "docs/procurement/rfq_a9_v2/, tests/test_rfq_a9_v2*.py"}
+ },
+ "binding": ["no numerical value is invented: only owner-supplied numbers (k_loss = k_agreement = k_transition = 2.0, 1.20 bound factor, 50/100/25 W allocation, 600 W temporary allocation, 50 K, 10 K) are entered; every other value stays a registration with its registration point", "decision files, CLAUDE.md, HISTORY, runtime state, ledgers and owner-question state are not edited by lane agents", "no production model, frozen dataset or golden change in this wave (A9.9 model changes are separate controlled changes)", "no merge to main"]
+}
