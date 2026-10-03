@@ -3222,3 +3222,34 @@ Owner instruction 2026-10-03: rapid delivery; review, verification and fixes run
   refuses an empty excerpt. Guards only: every output reproduces; regression tests added. Open for the owner: AG-15
   closure is detected by an `ag_15_status` "CLOSED" prefix without an owner-decision citation (format of the owner's
   closure record to be decided).
+
+## 2026-10-03 — Design layer on the frozen design-state set v2 (OD3 / OQ-F4-05); F1Q-02; OQ-F4-04; F9 empty robust set
+
+- **Design states (lane 405296e).** F1-F8 evaluate the 196 required states of `atmosphere_msis21_orbit_v1_design_states_v2`
+  (sha256 60073e21...4049; 4 ECSS scenarios x 4 altitudes; per node the median-density nominal state, density / x_O /
+  x_N2 / x_O2 / temperature extrema and local-time density peak/trough, plus 10 envelope extrema) plus the h200_f150
+  design-case reference. No subsampling (the set designates none); pinned and cross-checked against the dataset
+  manifest, fail closed (`DesignStateSetError`). Label `BROAD_ENVELOPE_ALL_INCLINATIONS_ALL_LTAN_NOT_MISSION_ICD` on
+  every output (A9.21: inclination / LTAN are not mission truth). The frozen intake surface v1 covers no design state:
+  all 23,520 design-state points use direct TPMC with registered seeds (seeded process-pool prefill, bit-identical to
+  serial). Superseded five-state results kept as `state_set_history` (ids, output sha256, feasibility counts).
+- **Results.** F1 envelope-feasible intakes 48 -> 24 of 144 per scenario (C-DRAG-RFP intake-face drag binding at dense
+  ECSS_ST_HIGH 180 km; peak q 0.0335 Pa); F4 all-state frontier 0.0983 -> 0.0130 mg/s (scheduled 0.119 -> 0.0264),
+  binding at ECSS_LT_LOW 230 km; no transient-basis chain passes the orbit check (valve saturation / outside the Gaede
+  characteristic), offered_to_h1 0; F7 feasible vectors 100,267 -> 4,647, Pareto 22,282 -> 1,279; F8 survivors 843 -> 90,
+  all-10-scenario feasible 0: **robust Pareto set empty**. 0.38 mg/s still reached by no member.
+- **F1Q-02 (S6.1).** Intake mass is PARAMETRIC_SENSITIVITY / budgeting only (never a CBE, frozen mass or structural
+  qualification); sourced structural definition required before LOCK-1; `ao.wet_mass` refuses an unlabelled intake mass.
+- **OQ-F4-04 (S6.13).** Owner flow-gap order recorded in F4 / F7; `refuse_feed_requirement_lowering` rejects any
+  feed-requirement basis other than performance-derived (0.38 mg/s is ground characterization only); dense-state-only
+  operation is SENSITIVITY_ONLY_NOT_BASELINE.
+- **F9 (lane d9030ca).** Robust-set parameters (AFC-UP-IN-01/02/03/09, CO-01/02/05/06/08/09, PL-01/02/08; VF-06 for the
+  empty offered feed) carry EMPTY_ROBUST_SET_NOT_EVALUATED with null ranges (no crash, no fabricated range); every
+  upstream number in F9 text is read from the F1-F8 outputs and checked against their findings (old 0.0983 / 0.119 mg/s
+  and similar hard-coded values removed; as-raised owner-question text kept verbatim with `as_raised_numbers` notes). New
+  design finding **F9-DF-01** for the owner: under the full registered design-state envelope no robust upstream design
+  survives; not a requirement failure and no relaxation proposed (A9.13 S6.13); owner flow-gap order cited. Status stays
+  INVESTIGATION_HYPOTHESIS.
+- **Integration.** F4 -> F7/F8 rebuilt for the current H-1 pin (pin-only diffs; F4 23 min, F7/F8 40 min single-process),
+  then F9 and the matrix. F0 performance MD re-rendered (live F1 direct-run count). Open: the F1 output is now 36.7 MB
+  (was 1.9 MB) — storage form is an owner call (A9.17 DATA_SIZE intent: avoid bloating Git history).
