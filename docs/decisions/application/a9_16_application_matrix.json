@@ -224,18 +224,18 @@
   "A9.21": 8
  },
  "counts": {
-  "APPLIED": 145,
+  "APPLIED": 146,
   "BLOCKED": 4,
   "NOT_APPLICABLE_TO_ARTIFACTS": 3,
-  "PARTIAL": 5,
+  "PARTIAL": 4,
   "SUPERSEDED_BY_LATER_DECISION": 2
  },
  "residual_counts": {
-  "BLOCKED": 21,
+  "BLOCKED": 20,
   "OPEN_OWNER_QUESTION": 1,
   "PENDING_EVIDENCE": 7,
   "PENDING_FINALIZE_DESIGN_REGEN": 21,
-  "PENDING_OWNER_ACCEPTANCE": 5
+  "PENDING_OWNER_ACCEPTANCE": 6
  },
  "rules": [
   {
@@ -7446,8 +7446,7 @@
    "decision_json": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
    "decision_json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
    "pointer": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json#/decisions/HW_PROGRAMME",
-   "status": "PARTIAL",
-   "status_reason": "programme order recorded in M16 v4 (per row) and state v5 (confirmations); the campaign / stage artifacts (H-1 FEMM S7.1 -> S7.2, P1 stage map incl. separate air/N2 ICP-45 and Xe-mode campaigns, P2 calibration gate, P3 -> P4) are not re-sequenced here",
+   "status": "APPLIED",
    "applications": [
     {
      "lane": "A9_17_21_RECORDS",
@@ -7468,13 +7467,79 @@
       "\"HW_PROGRAMME\""
      ],
      "what": "state v5: confirmations on P1Q-07, F5-OQ-01 / 02, F9-OQ-02, P1-IT-52 / 55, P2Q-07, P4-OQ-03"
+    },
+    {
+     "lane": "A9.21",
+     "artifact": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json",
+     "commit": "364a5ab3f1d61206bce54cc1a160570e8947f185",
+     "status": "APPLIED",
+     "record_locations": [
+      "\"H1-S7.1\"",
+      "\"C1-REF\"",
+      "\"ICP-45N\"",
+      "\"ICP-XE-MODE\"",
+      "\"P2-MAP\"",
+      "\"P4-ACCEPTANCE-EXPOSURE\"",
+      "\"H1-THRUST-FEED-MAP\""
+     ],
+     "what": "programme-order record: A9.21 items 6-11 as 14 ordered steps with predecessors and entry preconditions (fail closed: never PASS / GO / START_AUTHORISED; recorder readings RR-01..RR-03 for the owner)"
+    },
+    {
+     "lane": "A9.21",
+     "artifact": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+     "commit": "364a5ab3f1d61206bce54cc1a160570e8947f185",
+     "status": "APPLIED",
+     "record_locations": [
+      "hw_programme_a9_21_v1.json"
+     ],
+     "what": "H-1: S7.1 FEMM points before S7.2 engineering channel point (programme record pinned)"
+    },
+    {
+     "lane": "A9.21",
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "commit": "364a5ab3f1d61206bce54cc1a160570e8947f185",
+     "status": "APPLIED",
+     "record_locations": [
+      "hw_programme_a9_21_v1.json"
+     ],
+     "what": "P1: C1 reference before P1-S7; Ar reference -> air/N2 ICP-45 -> Xe mode, one gas/mode per campaign with its own domain and provenance"
+    },
+    {
+     "lane": "A9.21",
+     "artifact": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "commit": "364a5ab3f1d61206bce54cc1a160570e8947f185",
+     "status": "APPLIED",
+     "record_locations": [
+      "hw_programme_a9_21_v1.json"
+     ],
+     "what": "P2: map only after the in-house V/I calibration + uncertainty budget freeze"
+    },
+    {
+     "lane": "A9.21",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
+     "commit": "364a5ab3f1d61206bce54cc1a160570e8947f185",
+     "status": "APPLIED",
+     "record_locations": [
+      "hw_programme_a9_21_v1.json"
+     ],
+     "what": "P3: after coupled H-1 + ICP"
+    },
+    {
+     "lane": "A9.21",
+     "artifact": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+     "commit": "364a5ab3f1d61206bce54cc1a160570e8947f185",
+     "status": "APPLIED",
+     "record_locations": [
+      "hw_programme_a9_21_v1.json"
+     ],
+     "what": "P4: acceptance exposure only after LOCK-2 is frozen"
     }
    ],
    "residual": [
     {
-     "status": "BLOCKED",
-     "what": "re-sequence the campaign / stage artifacts to the approved order",
-     "where": "docs/hardware/h1_freeze_candidate/, docs/experiments/hall_icp/p1_icp_bench/, p2_impedance_map/, p3_coupled_thermal/, p4_anode_materials/"
+     "status": "PENDING_OWNER_ACCEPTANCE",
+     "what": "recorder readings RR-01 (Ar reference keeps its per-stage freeze points; 'close before it starts' applied to the two registered campaigns), RR-02 (C1-REF after H1-S7.2) and RR-03 (step ids) recorded in the programme record for the owner to accept or reverse",
+     "where": "owner"
     },
     {
      "status": "PENDING_EVIDENCE",

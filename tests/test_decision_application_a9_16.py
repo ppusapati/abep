@@ -482,7 +482,7 @@ def test_matrix_later_decisions_truthful_statuses():
         assert e["pointer"].startswith(X.LOADED["A9.19"]["json"] + "#/")
     assert _later("A9.20", "answer")["status"] == "APPLIED"
     want = {"PERF_RERUN": "BLOCKED", "AL08": "APPLIED", "H2_6": "APPLIED", "ICP_GATE": "APPLIED",
-            "BID_CLOSE": "NOT_APPLICABLE_TO_ARTIFACTS", "HW_PROGRAMME": "PARTIAL", "EXTERNAL_INPUTS": "APPLIED",
+            "BID_CLOSE": "NOT_APPLICABLE_TO_ARTIFACTS", "HW_PROGRAMME": "APPLIED", "EXTERNAL_INPUTS": "APPLIED",
             "RFQ_DISPATCH": "NOT_APPLICABLE_TO_ARTIFACTS"}
     for item, st in want.items():
         e = _later("A9.21", item)
@@ -496,6 +496,17 @@ def test_matrix_later_decisions_truthful_statuses():
     locs = {a["artifact"]: a.get("record_pointer", "") for a in gate["applications"]}
     assert locs[MX.RVM_REL].startswith("/owner_approved_gates/") and "GNG-ICP-01" in locs[MX.RVM_REL]
     assert locs[MX.F9_REL].startswith("/pre_lock1_gates/") and "GNG-ICP-01" in locs[MX.F9_REL]
+    hw = _later("A9.21", "HW_PROGRAMME")
+    # the order is applied to the stage artifacts through one programme record; the hardware runs and the owner's
+    # acceptance of the recorder readings remain open (never closed by the record itself)
+    hw_arts = {a["artifact"] for a in hw["applications"]}
+    assert "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json" in hw_arts
+    assert {"docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+            "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+            "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+            "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
+            "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json"} <= hw_arts
+    assert {r["status"] for r in hw["residual"]} == {"PENDING_OWNER_ACCEPTANCE", "PENDING_EVIDENCE"}
     al08 = _later("A9.21", "AL08")
     assert {r["status"] for r in al08["residual"]} == {"PENDING_EVIDENCE"}
     locs = {a["artifact"]: a.get("record_pointer", "") for a in al08["applications"]}

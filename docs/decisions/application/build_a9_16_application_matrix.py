@@ -212,6 +212,7 @@ A919_INTEGRATION_COMMIT = "f280cf4401fe1f428352b5657e97881f38cc7c79"  # F9 Xe ro
 RECORDS_A917_21_COMMIT = "42453f5fdb10a645ea88ef90f56aad851d2c6520"  # state v5 + M16 v4 A9.17 .. A9.21 records
 A921_AL08_BUDGETS_COMMIT = "6a69ac52dcca091212c0dfc4cd10abcbd2e1bdcc"  # mass / power v3 AL-08 + Xe v3 XV3-IF-02 A9.21 label
 A921_ICP_GATE_COMMIT = "eae96c820ef86c281dc7ffafd6bb698ee0b2b96f"      # RVM + F9 GNG-ICP-01 registration (A9.21 ICP_GATE)
+A921_HW_PROGRAMME_COMMIT = "364a5ab3f1d61206bce54cc1a160570e8947f185"  # programme-order record consumed by H-1, P1-P4
 V5_REL = "docs/budgets/owner_decisions/owner_questions_state_v5.json"
 M16_REL = "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json"
 RVM_REL = "docs/requirements/rvm_a9/rvm_a9_v1.json"
@@ -355,7 +356,24 @@ LATER_APPS = {
         _rec(M16_REL, ['"HW_PROGRAMME"'], "M16 v4: programme order attached to rows 9 / 10 / 11 / 13 / 15 / 18 / 19 / "
                                           "20 / 21"),
         _rec(V5_REL, ['"HW_PROGRAMME"'], "state v5: confirmations on P1Q-07, F5-OQ-01 / 02, F9-OQ-02, P1-IT-52 / 55, "
-                                         "P2Q-07, P4-OQ-03")],
+                                         "P2Q-07, P4-OQ-03"),
+        _app("A9.21", "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json", A921_HW_PROGRAMME_COMMIT,
+             ['"H1-S7.1"', '"C1-REF"', '"ICP-45N"', '"ICP-XE-MODE"', '"P2-MAP"', '"P4-ACCEPTANCE-EXPOSURE"',
+              '"H1-THRUST-FEED-MAP"'],
+             "programme-order record: A9.21 items 6-11 as 14 ordered steps with predecessors and entry preconditions "
+             "(fail closed: never PASS / GO / START_AUTHORISED; recorder readings RR-01..RR-03 for the owner)"),
+        _app("A9.21", "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json", A921_HW_PROGRAMME_COMMIT,
+             ["hw_programme_a9_21_v1.json"], "H-1: S7.1 FEMM points before S7.2 engineering channel point (programme "
+                                             "record pinned)"),
+        _app("A9.21", "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json", A921_HW_PROGRAMME_COMMIT,
+             ["hw_programme_a9_21_v1.json"], "P1: C1 reference before P1-S7; Ar reference -> air/N2 ICP-45 -> Xe mode, "
+                                             "one gas/mode per campaign with its own domain and provenance"),
+        _app("A9.21", "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json", A921_HW_PROGRAMME_COMMIT,
+             ["hw_programme_a9_21_v1.json"], "P2: map only after the in-house V/I calibration + uncertainty budget freeze"),
+        _app("A9.21", "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
+             A921_HW_PROGRAMME_COMMIT, ["hw_programme_a9_21_v1.json"], "P3: after coupled H-1 + ICP"),
+        _app("A9.21", "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json", A921_HW_PROGRAMME_COMMIT,
+             ["hw_programme_a9_21_v1.json"], "P4: acceptance exposure only after LOCK-2 is frozen")],
     ("A9.21", "EXTERNAL_INPUTS"): [
         _rec(V5_REL, ['"TBD_EXTERNAL_INPUT'], "state v5: F1Q-03, OQ-F78-04, OD3, OQ-F4-05 external_input_status"),
         _rec(M16_REL, ['"EXTERNAL_INPUTS"'], "M16 v4 row 1")],
@@ -370,10 +388,6 @@ LATER_STATUS = {
     ("A9.21", "BID_CLOSE"): ("NOT_APPLICABLE_TO_ARTIFACTS", "an operational submission deadline (DefProc tender "
                              "2026_DRDO_788433_1), not a requirement of the registered RFP (not in the PDF); recorded in "
                              "state v5 WEB-ACC-2"),
-    ("A9.21", "HW_PROGRAMME"): ("PARTIAL", "programme order recorded in M16 v4 (per row) and state v5 (confirmations); "
-                                "the campaign / stage artifacts (H-1 FEMM S7.1 -> S7.2, P1 stage map incl. separate "
-                                "air/N2 ICP-45 and Xe-mode campaigns, P2 calibration gate, P3 -> P4) are not re-sequenced "
-                                "here"),
     ("A9.21", "RFQ_DISPATCH"): ("NOT_APPLICABLE_TO_ARTIFACTS", "the quotation packages exist in the repository "
                                 "(docs/procurement/rfq_a9_v3); dispatch is an owner / procurement act"),
 }
@@ -401,9 +415,10 @@ LATER_RESIDUAL = {
 ],
     ("A9.21", "ICP_GATE"): [("PENDING_OWNER_ACCEPTANCE", "numerical GO / NO-GO criteria: not approved; the recorder "
                              "proposal text (RP-A919-01 (a) - (c)) is preserved for owner review", "owner")],
-    ("A9.21", "HW_PROGRAMME"): [("BLOCKED", "re-sequence the campaign / stage artifacts to the approved order",
-                                 "docs/hardware/h1_freeze_candidate/, docs/experiments/hall_icp/p1_icp_bench/, "
-                                 "p2_impedance_map/, p3_coupled_thermal/, p4_anode_materials/"),
+    ("A9.21", "HW_PROGRAMME"): [("PENDING_OWNER_ACCEPTANCE", "recorder readings RR-01 (Ar reference keeps its "
+                                 "per-stage freeze points; 'close before it starts' applied to the two registered "
+                                 "campaigns), RR-02 (C1-REF after H1-S7.2) and RR-03 (step ids) recorded in the programme "
+                                 "record for the owner to accept or reverse", "owner"),
                                 ("PENDING_EVIDENCE", "the hardware runs themselves (FEMM, H-1 + C1 reference "
                                  "characterization, ICP campaigns, P2 map, coupled thermal, measured thrust / feed map)",
                                  "hardware programme")],
