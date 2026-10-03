@@ -3136,3 +3136,29 @@ that launched it ended before its lanes merged. It was re-run from fd91185 as th
   both; golden OK; ci_checks 11/11. No production physics module, frozen dataset or golden changed.
 - **Still open (not this step):** 13 F9 parameters keep `rfp_citation_status = OWNER_STATED_PENDING_RFP_REGISTRATION`
   (needs per-parameter clause mapping); A9.21 ICP_GATE / AL08 artifact registration / HW_PROGRAMME re-sequencing.
+
+## 2026-10-03 — A9.21 applied: ICP go/no-go gate, RFP clause citations in F9, AL-08 detection, hardware programme order
+
+- **ICP gate (lane eae96c8).** `GNG-ICP-01`: mandatory ICP go/no-go before LOCK-1 with its own id (AG-01..AG-15 unchanged),
+  defined once in `docs/requirements/rvm_a9/a9_21_icp_gate.py`, recorded in the RVM (`owner_approved_gates`) and
+  re-evaluated in F9 (`pre_lock1_gates`, `lock1_precondition.lock1_release_reportable = false`). Status NOT_EVALUATED;
+  criteria PENDING_OWNER_ACCEPTANCE; RP-A919-01 (a)-(c) kept verbatim as `proposed_criteria_for_owner_review` (never
+  evaluated; criteria reusing it are refused). GO only with owner-accepted criteria and sha-pinned MET evidence for each.
+- **F9 RFP citations (lane eae96c8).** The F9 records still labelled OWNER_STATED_PENDING_RFP_REGISTRATION (10 records)
+  and the two REQUIREMENT_AS_RECORDED parameters cite registered clause ids read from the RVM rows at build time
+  (`docs/architecture/freeze_candidate/rfp_citations_f9.py`; `a9_16_lib` untouched). Five links (AG-12 / F9-OQ-02,
+  F2-OQ-01, F2-OQ-03) rest on the RFP fact quoted in the owner's answer matching the RVM row text, not on a direct RVM
+  citation; recorded as such. The old label is kept as `rfp_citation_status_as_applied`.
+- **Hardware programme order (lane 364a5ab).** One record, `docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json`
+  (14 ordered steps from the verbatim A9.21 items 6-11, predecessors and entry preconditions, each naming its existing
+  enforcing rule), consumed and sha-pinned by H-1 and P1-P4. Fail closed: no step startable while a predecessor or a
+  registration is missing; no PASS / GO / START_AUTHORISED. H-1 S7.2 waits for every authorised FEMM point; one gas/mode per
+  ICP campaign with its own domain id and provenance; P2 map after the frozen in-house V/I calibration + uncertainty
+  budget; P4 acceptance exposure after LOCK-2; AG-12 stays NOT_EVALUATED without a measured thrust/feed map. Recorder
+  readings RR-01..RR-03 await the owner.
+- **Application matrix (8d277df, d8c24d4).** Structural record checks: AL08 APPLIED (A9.21 label on the AL-08 line and
+  XV3-IF-02; quotation re-base PENDING_EVIDENCE), ICP_GATE APPLIED (criteria PENDING_OWNER_ACCEPTANCE), HW_PROGRAMME
+  APPLIED (hardware runs PENDING_EVIDENCE; RR-01..03 PENDING_OWNER_ACCEPTANCE). Counts: APPLIED 146, PARTIAL 4, BLOCKED 4,
+  NOT_APPLICABLE_TO_ARTIFACTS 3, SUPERSEDED_BY_LATER_DECISION 2.
+- **Regenerated:** F4 -> F7/F8 -> F9 -> matrix (H-1 pin). Checks: 3830 passed / 5 skipped / 1 xfailed, rule-9 outcome check
+  passes, golden OK, ci_checks 11/11. No production physics module, frozen dataset or golden changed.
