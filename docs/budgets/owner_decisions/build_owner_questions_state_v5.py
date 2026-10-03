@@ -28,11 +28,17 @@ immutable (its committed JSON is pinned by sha256 here; v4 is never rebuilt by t
 7. RP-A919-01 carries 'gate_location' (pointer only, checked at build time): the gate approved by A9.21 ICP_GATE,
    GNG-ICP-01, now lives in the RVM owner_approved_gates and the F9 pre_lock1_gates (defined once in
    docs/requirements/rvm_a9/a9_21_icp_gate.py); the row's status, status_detail and open_part are unchanged.
+8. A9.22 G3 (owner, 2026-10-03; pinned through a9_later_lib): AG-15 is closed and the RFP-derived requirements
+   snapshot is FROZEN. Row F9-OQ-03 (ANSWERED_BY_A9_13, unchanged) gets a PERFORMS_OWNER_ACT record (the owner closure
+   A9.13 S6.22 reserved to the owner); 'a9_22_g3' records the closure with pointers + sha256 (decision json / md, the
+   RVM closure record rfp_rebase.ag15_closure, the 22 frozen RFP_CLAUSE rows, the registration owner_page_review, the
+   F9 AG-15 gate) and is checked against them at build time (fail closed). The other A9.22 items (G1, G2, G4 .. G9)
+   have no owner-question row here.
 
 A v4 TBD_OWNER row with no owner answer stays TBD_OWNER. Nothing is answered here that the owner did not answer; the
 step-1 RFP-cited facts ('RFP(1)') keep rfp_citation_status OWNER_STATED_PENDING_RFP_REGISTRATION as the record of
-that state (the RFP has since been registered by hash, A9.17 RFP, and the RVM re-based; AG-15 closure stays the
-owner's - see 'rfp_registration_now'). Missing or unexpected ids raise.
+that state (the RFP has since been registered by hash, A9.17 RFP, and the RVM re-based; the owner closed AG-15 in
+A9.22 G3 - see 'rfp_registration_now' and 'a9_22_g3'). Missing or unexpected ids raise.
 
 stdlib only.
 
@@ -194,7 +200,13 @@ LATER_NOTES = {
                                                                                                "through": "For the RFP"}),
                   "AG-15 registration part: the official RFP is registered by hash with provenance in the public "
                   "repository (PDF in the controlled evidence store) and the RVM is re-based on it; AG-15 closure "
-                  "(owner acceptance; requirement_frozen) stays the owner's")],
+                  "(owner acceptance; requirement_frozen) stays the owner's"),
+                 ("A9.22", "G3_REQUIREMENTS_SNAPSHOT", "PERFORMS_OWNER_ACT", ("3. Requirements snapshot", {"a922": True}),
+                  "the owner closes AG-15 (the closure A9.13 S6.22 F9-OQ-03 reserved to the owner): RVM re-base "
+                  "accepted, requirement_frozen = true on the 22 RFP_CLAUSE rows, RFP-derived requirements snapshot "
+                  "FROZEN; owner review of RFP pages 1-15 / 34-40: no additional ABEP technical-performance requirement "
+                  "altering the RVM re-base; basis only - RVM row evidence / status values unchanged, no compliance "
+                  "claim (see a9_22_g3)")],
 }
 NEW_ROW_ID = "RP-A919-01"
 LATER_STATUS_TEXT = {
@@ -321,9 +333,22 @@ def superseded_statements():
     ]
 
 
+def a922_section(start: str) -> str:
+    """Verbatim A9.22 numbered section (the start line through the line before the next numbered item); A9.22 sections
+    contain blank / bullet lines, so X.block (which stops at a blank line) does not fit. Checked by X.verbatim."""
+    lines = X.LOADED["A9.22"]["body"].splitlines()
+    hits = [i for i, ln in enumerate(lines) if ln.startswith(start)]
+    if len(hits) != 1:
+        raise SystemExit(f"A9.22: section {start!r} found {len(hits)} times")
+    j = next((k for k in range(hits[0] + 1, len(lines)) if lines[k][:1].isdigit() and ". " in lines[k][:4]), len(lines))
+    return X.verbatim("A9.22", "\n".join(ln.rstrip() for ln in lines[hits[0]:j]).strip())
+
+
 def _excerpt(dec, ex, row_id, item):
     if ex is None:
         ex = _EXCERPT[(row_id, item)]
+    if isinstance(ex, tuple) and ex[1].get("a922"):
+        return a922_section(ex[0])
     if isinstance(ex, tuple):
         start, kw = ex
         return X.block(kw.get("key", dec), start, through=kw.get("through", "Decision:"))
@@ -354,11 +379,73 @@ def rfp_registration_now(reg: dict, rvm: dict) -> dict:
     return {"registration": {"path": REL(RFP_REG), "status": reg["status"], "rfp_number": doc["rfp_number"],
                              "pdf_sha256": doc["sha256"], "pages": doc["pages"], "n_clauses": len(reg["clauses"]),
                              "pdf_in_repository": doc["committed_to_repository"]},
-            "rvm_rebase": {"path": REL(RVM), "id": rb["id"], "ag_15_status": rb["ag_15_status"]},
+            "rvm_rebase": {"path": REL(RVM), "id": rb["id"], "ag_15_status": rb["ag_15_status"],
+                           "requirements_snapshot": rb.get("requirements_snapshot"),
+                           "ag15_closure": REL(RVM) + "#/rfp_rebase/ag15_closure"},
             "rule": "the step-1 rfp_citation_status OWNER_STATED_PENDING_RFP_REGISTRATION on rows answered by A9.8 .. "
                     "A9.15 records the state when those answers were applied; the RFP is now registered by hash (A9.17 "
-                    "RFP) and the RVM re-based on it; AG-15 closure (owner acceptance; requirement_frozen) stays the "
-                    "owner's and is not declared here"}
+                    "RFP) and the RVM re-based on it; the owner closed AG-15 (A9.22 G3: requirement_frozen = true on "
+                    "the RFP_CLAUSE rows, requirements snapshot FROZEN, basis only - see a9_22_g3); nothing is declared "
+                    "here beyond the owner's record"}
+
+
+A922_KEY, A922_ITEM = "A9.22", "G3_REQUIREMENTS_SNAPSHOT"
+F9_AG15 = "AG-15"
+
+
+def a922_g3(rvm: dict, reg: dict, f9: dict) -> dict:
+    """A9.22 G3 record with pointers + sha256, checked against the RVM closure record, the registration and the F9
+    AG-15 gate (fail closed: any disagreement raises)."""
+    d = X.LOADED[A922_KEY]
+    code = X.decision_code(A922_KEY, A922_ITEM)
+    if code != "AG15_CLOSED_SNAPSHOT_FROZEN":
+        raise SystemExit(f"A9.22 {A922_ITEM}: decision code {code!r} is not AG15_CLOSED_SNAPSHOT_FROZEN")
+    rb = rvm["rfp_rebase"]
+    cl = rb.get("ag15_closure")
+    if not isinstance(cl, dict):
+        raise SystemExit("RVM rfp_rebase.ag15_closure missing: AG-15 closure not recorded in the RVM")
+    dec = cl["decision"]
+    if (dec["json"], dec["json_sha256"], dec["md"], dec["md_sha256"], dec["item"]) != (
+            d["json"], d["json_sha256"], d["md"], d["md_sha256"], A922_ITEM):
+        raise SystemExit("RVM ag15_closure does not cite the pinned A9.22 G3 record (path / sha256 / item)")
+    rfp_rows = [r["id"] for r in rvm["rows"] if r["requirement_origin"] == "RFP_CLAUSE"]
+    frozen = [r["id"] for r in rvm["rows"] if r["requirement_origin"] == "RFP_CLAUSE" and r["requirement_frozen"] is True]
+    if cl["frozen_rows"] != rfp_rows or frozen != rfp_rows:
+        raise SystemExit("RVM ag15_closure frozen_rows != the RFP_CLAUSE rows, or a row is not frozen")
+    if rb.get("requirements_snapshot") != "FROZEN":
+        raise SystemExit("RVM requirements_snapshot is not FROZEN")
+    pr = reg["page_coverage"].get("owner_page_review") or {}
+    if pr.get("decision", {}).get("json_sha256") != d["json_sha256"]:
+        raise SystemExit("registration owner_page_review does not cite the pinned A9.22 record")
+    g = [x for x in f9["architecture_gates"] if x["id"] == F9_AG15]
+    if len(g) != 1 or g[0]["evidence_sufficient_for_freeze"] is not True:
+        raise SystemExit("F9 AG-15 is not closed on the owner closure record (rebuild F9 after the RVM)")
+    oc = g[0]["blocking_evidence"]["assessment"]["evidence_parts"].get("owner_closure_recorded") or {}
+    if oc.get("decision", {}).get("json_sha256") != d["json_sha256"]:
+        raise SystemExit("F9 AG-15 owner_closure_recorded does not cite the pinned A9.22 record")
+    return {
+        "decision": A922_KEY, "item": A922_ITEM, "decision_code": code, "pointer": X.pointer(A922_KEY, A922_ITEM),
+        "decision_json": d["json"], "decision_json_sha256": d["json_sha256"], "decision_md": d["md"],
+        "decision_md_sha256": d["md_sha256"], "verbatim_excerpt": a922_section("3. Requirements snapshot"),
+        "answers": {"gate": "AG-15 (A9.13 S6.22 F9-OQ-03): CLOSED by the owner",
+                    "state_row": "F9-OQ-03 (status ANSWERED_BY_A9_13 unchanged; PERFORMS_OWNER_ACT record added)",
+                    "rfp_rows": "requirement_frozen = true on the 22 RFP_CLAUSE rows (basis only; statuses unchanged)",
+                    "rfp_pages_1_15_34_40": pr["status"] + " (owner-stated)"},
+        "rvm_closure_record": {"path": REL(RVM), "pointer": "/rfp_rebase/ag15_closure", "format": cl["format"],
+                               "decision_code": cl["decision_code"], "frozen_rows": cl["frozen_rows"],
+                               "requirements_snapshot": rb["requirements_snapshot"],
+                               "accepted_rvm_pre_closure_file_sha256": cl["accepted_rvm"]["pre_closure_file_sha256"],
+                               "accepted_rvm_pre_closure_commit": cl["accepted_rvm"]["pre_closure_commit"],
+                               "requirements_basis_sha256": cl["accepted_rvm"]["requirements_basis_sha256"],
+                               "discrepancy_dispositions": cl["discrepancy_dispositions"]["status"]},
+        "registration_page_review": {"path": REL(RFP_REG), "pointer": "/page_coverage/owner_page_review",
+                                     "status": pr["status"]},
+        "f9_gate": {"path": REL(F9), "locator": f"architecture_gates[id={F9_AG15}]",
+                    "current_status": g[0]["current_status"], "evidence_sufficient_for_freeze": True,
+                    "architecture_status": f9["architecture_status"]},
+        "not_this": "a freeze of the requirements basis only: no RVM row status changes and no compliance claim; the "
+                    "architecture stays " + f9["architecture_status"],
+        "other_a9_22_items": "G1, G2, G4 .. G9: no owner-question row; applied by their own governed migrations"}
 
 
 def apply_later(rows: list, rvm: dict, reg: dict) -> dict:
@@ -565,6 +652,7 @@ def build():
     reg = json.loads(RFP_REG.read_text(encoding="utf-8"))
     later = apply_later(rows, rvm, reg)
     gate_loc = icp_gate_location(rows, rvm, f9)
+    g3 = a922_g3(rvm, reg, f9)
 
     counts, tbd_blocks = {}, {}
     for r in rows:
@@ -654,7 +742,9 @@ def build():
                 "A9.17 DATA_SIZE, SPUTTER (data-artifact rules; no owner-question row)",
                 "A9.18 GOLDEN (golden design point; no owner-question row)",
                 "A9.21 H2_6 (H2-6 builder frozen, live-source check in CI; no owner-question row)",
-                "A9.21 RFQ_DISPATCH (quotation packages finalized here; dispatch by owner / procurement)"],
+                "A9.21 RFQ_DISPATCH (quotation packages finalized here; dispatch by owner / procurement)",
+                "A9.22 G1, G2, G4 .. G9 (layer-separation audit items; no owner-question row; applied by their own "
+                "governed migrations)"],
             "owner_asked_recorder": "A9.20 verbatim also asks the recorder 'is it good to remove hollow cathode' - "
                                     "not an owner-question row; RP-A919-01 (ICP go / no-go) answers it on the "
                                     "recorder side and A9.21 ICP_GATE approves that gate's existence and placement",
@@ -662,6 +752,7 @@ def build():
                                                      "owner review)"}],
             "gate_location": {"row": NEW_ROW_ID, **gate_loc}},
         "rfp_registration_now": rfp_registration_now(reg, rvm),
+        "a9_22_g3": g3,
         "owner_answers_applied": applied + applied_later,
         "open_owner_questions": [r["id"] for r in rows if r["status"] == "TBD_OWNER"],
         "open_owner_questions_note": "TBD_OWNER rows: questions with no owner answer yet (raised since v4 or unanswered)",
@@ -709,6 +800,11 @@ def render_md(doc):
                                f"{reg['registration']['pdf_sha256']}, {reg['registration']['pages']} pages, "
                                f"{reg['registration']['n_clauses']} clauses); RVM re-base "
                                f"{reg['rvm_rebase']['ag_15_status']}") + ".", "",
+            "A9.22 G3 (`" + doc["a9_22_g3"]["decision_json"] + "` sha256 `" + doc["a9_22_g3"]["decision_json_sha256"]
+            + "`, decision code " + doc["a9_22_g3"]["decision_code"] + "): " + cell(
+                "; ".join(f"{k}: {v}" for k, v in doc["a9_22_g3"]["answers"].items())) + ". Closure record `"
+            + doc["a9_22_g3"]["rvm_closure_record"]["path"] + doc["a9_22_g3"]["rvm_closure_record"]["pointer"]
+            + "` (" + doc["a9_22_g3"]["rvm_closure_record"]["format"] + "); " + doc["a9_22_g3"]["not_this"] + ".", "",
             "| # | ID | Earlier status | Status | Later decision records (relation: scope) |", "|---|---|---|---|---|"]
     out += [f"| {r['no']} | {r['id']} | {r.get('pre_a9_17_status', '-')} | {r['status']} | "
             + cell("; ".join(f"{x['decision']} {x['item']} {x['relation']}: {x['scope']}"

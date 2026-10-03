@@ -230,12 +230,50 @@ def test_required_rows_present_for_both_configurations(doc):
                 assert a["id"]
 
 
-def test_rfp_rows_not_frozen_and_no_interpretation_frozen(doc):
+def test_rfp_rows_frozen_only_by_the_owner_ag15_closure(doc):
+    """A9.22 G3: the owner closed AG-15; exactly the RFP_CLAUSE rows are frozen, the closure record lists them, and the
+    freeze changes no status (statuses are computed on the frozen basis; no row is PASS)."""
+    rfp = [r["id"] for r in doc["rows"] if r["requirement_origin"] == "RFP_CLAUSE"]
+    assert len(rfp) == 22
     for r in doc["rows"]:
-        if r["category"] in ("rfp_recorded", "rfp_inferred_from_repo_text", "rfp_registered") \
-                or r["requirement_origin"] == "RFP_CLAUSE":
-            assert r["requirement_frozen"] is False, r["id"]
+        if r["requirement_origin"] == "RFP_CLAUSE":
+            assert r["requirement_frozen"] is True, r["id"]
+            assert "A9.22 G3" in r["rfp_rebase"]["requirement_frozen_note"], r["id"]
+    cl = doc["rfp_rebase"]["ag15_closure"]
+    assert cl["frozen_rows"] == rfp and cl["decision_code"] == "AG15_CLOSED"
+    assert cl["decision"]["json_sha256"] == hashlib.sha256((REPO / cl["decision"]["json"]).read_bytes()).hexdigest()
+    assert cl["decision"]["md_sha256"] == hashlib.sha256((REPO / cl["decision"]["md"]).read_bytes()).hexdigest()
+    assert cl["requirements_snapshot"] == doc["rfp_rebase"]["requirements_snapshot"] == "FROZEN"
+    assert cl["accepted_rvm"]["requirements_basis_sha256"] == RB.requirements_basis_sha256(doc)
+    assert cl["unscreened_pages"]["disposition"] == "OWNER_REVIEWED_NO_ADDITIONAL_TECHNICAL_PERFORMANCE_REQUIREMENT"
+    assert set(cl["discrepancy_dispositions"]["dispositions"]) == {d["id"] for d in doc["rfp_rebase"]["discrepancies"]}
+    assert doc["rfp_rebase"]["ag_15_status"].startswith("CLOSED") and cl["decision"]["json_sha256"] in \
+        doc["rfp_rebase"]["ag_15_status"]
+    assert all(c["status"] != "PASS" for r in doc["rows"] for c in r["configurations"].values())
     assert doc["rfp_document_in_repository"] is False
+
+
+def test_ag15_closure_fails_closed():
+    """An RFP row frozen by the rows module, or a changed requirements basis, is refused (a basis change needs a new
+    owner decision)."""
+    import copy
+    rows = [{"id": "RVM-01", "requirement_frozen": True}]
+    with pytest.raises(RB.RebaseError):
+        RB.freeze_rfp_rows(rows, {"RVM-01": {"origin": "RFP_CLAUSE"}})
+    d = copy.deepcopy(_rvm())
+    d["rfp_rebase"].pop("ag15_closure")
+    d["rfp_rebase"]["ag_15_status"] = RB.PRE_CLOSURE_AG15_STATUS
+    ids = d["rfp_rebase"]["ag15_closure"]["frozen_rows"] if "ag15_closure" in d["rfp_rebase"] else \
+        [r["id"] for r in d["rows"] if r["requirement_origin"] == "RFP_CLAUSE"]
+    d2 = copy.deepcopy(d)
+    d2["rows"][0]["requirement_text"] += " (edited)"
+    with pytest.raises(RB.RebaseError):
+        RB.record_closure(d2, ids)
+    d3 = copy.deepcopy(d)
+    next(r for r in d3["rows"] if r["requirement_origin"] == "RFP_CLAUSE")["requirement_frozen"] = False
+    with pytest.raises(RB.RebaseError):
+        RB.record_closure(d3, ids)
+    assert RB.record_closure(copy.deepcopy(d), ids)["rfp_rebase"]["requirements_snapshot"] == "FROZEN"
 
 
 def _evaluated_cells(doc, key):
@@ -427,7 +465,7 @@ def test_every_row_cites_rfp_clauses_or_is_labelled(doc):
         if r["requirement_origin"] == "RFP_CLAUSE":
             assert r["rfp_clauses"], r["id"]
             assert r["requirement_basis"].startswith("RFP_CLAUSE "), r["id"]
-            assert r["requirement_frozen"] is False, r["id"]          # AG-15 closure is the owner's
+            assert r["requirement_frozen"] is True, r["id"]           # AG-15 closed by the owner (A9.22 G3)
             cited = {s["clause_id"]: s for s in r["sources"] if s["kind"] == "rfp_official_clause"}
             assert set(cited) == set(r["rfp_clauses"]), r["id"]
             for cid, s in cited.items():            # verbatim copy of the registered transcription
@@ -498,7 +536,7 @@ def test_discrepancies_recorded(doc):
     assert d["DISC-01"]["disposition"].startswith("UNVERIFIED_BY_RFP_DOCUMENT")
     assert d["DISC-02"]["rfp_clauses"] == ["RFP-P18-11"] and "wet or dry not stated" in d["DISC-02"]["rfp"]
     assert set(d["DISC-03"]["rfp_clauses"]) == {"RFP-P18-03", "RFP-P19-05"}
-    assert "AG-15" in doc["rfp_rebase"]["gate"] and doc["rfp_rebase"]["ag_15_status"].startswith("OPEN")
+    assert "AG-15" in doc["rfp_rebase"]["gate"] and doc["rfp_rebase"]["ag_15_status"].startswith("CLOSED")
 
 
 def test_absent_artifact_kind_never_passes():
@@ -559,7 +597,7 @@ def test_rfp01_reads_a915_applied_v3_packages():
 
 def test_rfp03_rvf04_rfp_citation_status_follows_registration():
     """RFP-03 / RVF-04: no step-1 'pending registration' citation status survives; registered clause ids cited; the
-    step-1 label is history; requirement_frozen stays false (AG-15 is the owner's)."""
+    step-1 label is history; requirement_frozen = true on RFP_CLAUSE rows since the owner closed AG-15 (A9.22 G3)."""
     d = _rvm()
 
     def walk(o):
@@ -583,8 +621,8 @@ def test_rfp03_rvf04_rfp_citation_status_follows_registration():
     assert "pending" not in by["RVM-09"]["a9_16"]["note"]
     assert "RFP-P18-09" in by["RVM-19"]["a9_16"]["rebased_on"] and "pending" not in by["RVM-19"]["a9_16"]["rebased_on"]
     assert "not registered" not in d["a9_16_rfp_rule"] and "registered by hash" in d["a9_16_rfp_rule"]
-    assert "requirement_frozen stays false" in d["a9_16_rfp_rule"]
-    assert all(r["requirement_frozen"] is False for r in d["rows"] if r["requirement_origin"] == "RFP_CLAUSE")
+    assert "the owner closed AG-15 (A9.22 G3)" in d["a9_16_rfp_rule"]
+    assert all(r["requirement_frozen"] is True for r in d["rows"] if r["requirement_origin"] == "RFP_CLAUSE")
 
 
 def test_rfp04_items_rebased_on_registered_clauses():
@@ -651,7 +689,7 @@ def test_a919_new_rows_traced_and_never_pass(doc):
     assert r28["requirement_basis"].startswith("OWNER_ARCHITECTURE_DECISION A9.19")
     # two supply modes: RFP clauses (verbatim sources) + the owner's Xe role
     assert r29["requirement_origin"] == "RFP_CLAUSE" and r29["rfp_clauses"] == ["RFP-P18-08", "RFP-P17-05"]
-    assert r29["requirement_frozen"] is False and "contingency / emergency" in r29["requirement_text"]
+    assert r29["requirement_frozen"] is True and "contingency / emergency" in r29["requirement_text"]   # A9.22 G3
     assert any(s["kind"] == "owner_decision" and s["key"] == "xenon_role" for s in r29["sources"])
     # C1 ground-only, outside every flight budget
     assert r30["requirement_origin"] == "OWNER_ALLOCATION" and r30["limit"]["value"] == 0

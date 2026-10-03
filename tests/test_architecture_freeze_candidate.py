@@ -53,7 +53,12 @@ def test_committed_outputs_are_current(b, built):
 def test_architecture_stays_investigation_hypothesis(doc, b):
     assert doc["architecture_status"] == "INVESTIGATION_HYPOTHESIS"
     assert doc["frozen_reference_flight_architecture"] is False
-    assert all(g["evidence_sufficient_for_freeze"] is False for g in doc["architecture_gates"])
+    # AG-15 is the only sufficient gate: closed by the owner on the A9.22 G3 closure record (basis only); every other
+    # gate stays insufficient, so the architecture stays INVESTIGATION_HYPOTHESIS
+    assert all(g["evidence_sufficient_for_freeze"] is False for g in doc["architecture_gates"] if g["id"] != "AG-15")
+    ag15 = {g["id"]: g for g in doc["architecture_gates"]}["AG-15"]
+    assert ag15["evidence_sufficient_for_freeze"] is True
+    assert "owner_closure_recorded" in ag15["blocking_evidence"]["assessment"]["evidence_parts"]
     # the rule itself: one insufficient gate keeps the hypothesis status; all sufficient would freeze
     assert b.architecture_status([{"evidence_sufficient_for_freeze": True}]) == "FROZEN_REFERENCE_FLIGHT_ARCHITECTURE"
     assert b.architecture_status([{"evidence_sufficient_for_freeze": True},
@@ -411,7 +416,7 @@ def test_ag15_fail_closed_on_missing_or_inconsistent_registration(ag15):
     reg = _j(REG_PATH)
     rvm = _j("docs/requirements/rvm_a9/rvm_a9_v1.json")
     sha = hashlib.sha256((ROOT / REG_PATH).read_bytes()).hexdigest()
-    assert ag15.assess(reg, rvm, sha)["status"] == ag15.STATUS_EVIDENCE_PRESENT
+    assert ag15.assess(reg, rvm, sha)["status"] == ag15.STATUS_CLOSABLE         # owner closure recorded (A9.22 G3)
     refused = ag15.STATUS_REFUSED
     assert ag15.assess(None, rvm, sha)["status"] == refused                       # registration missing
     assert ag15.assess(reg, None, sha)["status"] == refused                       # RVM / re-base missing
@@ -450,18 +455,56 @@ def test_ag15_fail_closed_on_missing_or_inconsistent_registration(ag15):
     tampered(no_rfp_rows)
 
 
-def test_ag15_closes_only_on_recorded_owner_closure(ag15):
+def test_ag15_closes_only_on_recorded_owner_closure(ag15, tmp_path):
+    """A9.22 G3 / RP-BRIEF-01: AG-15 closes only on the owner closure record (decision path + sha256 matching the file,
+    frozen_rows == the RFP_CLAUSE rows, all frozen, accepted requirements basis); a 'CLOSED' text prefix never closes
+    it, and any inconsistency is REFUSED (fail closed)."""
     import copy
     reg = _j(REG_PATH)
-    rvm = copy.deepcopy(_j("docs/requirements/rvm_a9/rvm_a9_v1.json"))
+    rvm0 = _j("docs/requirements/rvm_a9/rvm_a9_v1.json")
     sha = hashlib.sha256((ROOT / REG_PATH).read_bytes()).hexdigest()
+    out = ag15.assess(reg, rvm0, sha)
+    rfp_rows = [r["id"] for r in rvm0["rows"] if r["requirement_origin"] == "RFP_CLAUSE"]
+    assert out["status"] == ag15.STATUS_CLOSABLE and out["closes"] is True and out["remaining_conditions"] == []
+    oc = out["evidence_parts"]["owner_closure_recorded"]
+    assert oc["frozen_rows"] == rfp_rows and len(rfp_rows) == 22
+    assert oc["decision"]["json_sha256"] == hashlib.sha256((ROOT / oc["decision"]["json"]).read_bytes()).hexdigest()
+    de = ag15.determining_evidence(reg, sha, out)
+    assert de[0]["class"] == "OFFICIAL_SOURCE_DOCUMENT_REGISTERED" and de[0]["owner_closure"]["decision_json_sha256"] \
+        == oc["decision"]["json_sha256"]
+
+    # text prefix without a record: never closes (rows unfrozen) / refused (rows frozen without a record)
+    rvm = copy.deepcopy(rvm0)
+    rvm["rfp_rebase"].pop("ag15_closure")
     rvm["rfp_rebase"]["ag_15_status"] = "CLOSED by owner (hypothetical)"
-    assert ag15.assess(reg, rvm, sha)["closes"] is False                           # RFP rows still unfrozen
+    assert ag15.assess(reg, rvm, sha)["status"] == ag15.STATUS_REFUSED
     for r in rvm["rows"]:
         if r["requirement_origin"] == "RFP_CLAUSE":
-            r["requirement_frozen"] = True
-    out = ag15.assess(reg, rvm, sha)
-    assert out["status"] == ag15.STATUS_CLOSABLE and out["closes"] is True and out["remaining_conditions"] == []
+            r["requirement_frozen"] = False
+    o2 = ag15.assess(reg, rvm, sha)
+    assert o2["status"] == ag15.STATUS_EVIDENCE_PRESENT and o2["closes"] is False
+    assert [c["id"] for c in o2["remaining_conditions"]] == ["AG15-RC-01"]
+
+    def refused(fn, reg_fn=None, root=None):
+        v, r2 = copy.deepcopy(rvm0), copy.deepcopy(reg)
+        fn(v)
+        if reg_fn:
+            reg_fn(r2)
+        o = ag15.assess(r2, v, sha, root=root)
+        assert o["status"] == ag15.STATUS_REFUSED and o["closes"] is False and o["errors"], fn
+    cl = lambda v: v["rfp_rebase"]["ag15_closure"]                                       # noqa: E731
+    refused(lambda v: cl(v)["decision"].__setitem__("json_sha256", "0" * 64))           # sha does not match the file
+    refused(lambda v: cl(v)["decision"].__setitem__("json", "docs/decisions/OD_nonexistent.json"))
+    refused(lambda v: cl(v).__setitem__("decision_code", "AG15_KEPT_OPEN"))
+    refused(lambda v: cl(v).__setitem__("frozen_rows", cl(v)["frozen_rows"][:-1]))       # frozen list != RFP rows
+    refused(lambda v: next(r for r in v["rows"] if r["requirement_origin"] == "RFP_CLAUSE")
+            .__setitem__("requirement_frozen", False))                                   # one RFP row unfrozen
+    refused(lambda v: next(r for r in v["rows"] if r["requirement_origin"] == "RFP_CLAUSE")
+            .__setitem__("requirement_text", "changed after the closure"))                # basis changed
+    refused(lambda v: cl(v)["accepted_registration"].__setitem__("clauses_sha256", "0" * 64))
+    refused(lambda v: v["rfp_rebase"].__setitem__("ag_15_status", "CLOSED (no citation)"))
+    refused(lambda v: None, reg_fn=lambda r: r["page_coverage"].pop("owner_page_review"))
+    refused(lambda v: None, root=tmp_path)                                                # decision file missing
 
 
 def test_builder_refuses_missing_or_inconsistent_registration():

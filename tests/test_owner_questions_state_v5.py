@@ -295,17 +295,33 @@ def test_a9_21_rows_and_recorder_proposal():
         assert "pre_a9_17_status" not in r
     for qid in ("P1Q-07", "F5-OQ-01", "F5-OQ-02", "F9-OQ-02", "F0-OQ-02", "F9-OQ-03"):
         r = _row(qid)
-        assert {x["relation"] for x in r["later_owner_decisions"]} <= {"CONFIRMS", "INPUT_STAYS_TBD"}, qid
+        ok = {"CONFIRMS", "INPUT_STAYS_TBD"} | ({"PERFORMS_OWNER_ACT"} if qid == "F9-OQ-03" else set())
+        assert {x["relation"] for x in r["later_owner_decisions"]} <= ok, qid
         assert "pre_a9_17_status" not in r
     assert DOC["counts"]["ANSWERED_BY_A9_21"] == 1 and DOC["counts"]["AMENDED_BY_A9_21"] == 2
 
 
-def test_rfp_registration_now_and_ag15_open():
+def test_rfp_registration_now_and_ag15_closed_by_a9_22():
     now = DOC["rfp_registration_now"]
     assert now["registration"]["status"] == "REGISTERED_BY_HASH_PDF_CONTROLLED_EXTERNALLY"
     assert now["registration"]["pdf_sha256"] == REG["document"]["sha256"]
     assert now["registration"]["pdf_in_repository"] is False
-    assert now["rvm_rebase"]["ag_15_status"].startswith("OPEN")
+    assert now["rvm_rebase"]["ag_15_status"].startswith("CLOSED") and now["rvm_rebase"]["requirements_snapshot"] == "FROZEN"
+    g3 = DOC["a9_22_g3"]                                 # A9.22 G3 recorded with pointers + sha256
+    assert g3["decision_code"] == "AG15_CLOSED_SNAPSHOT_FROZEN" and g3["decision_json_sha256"] == X.LOADED["A9.22"]["json_sha256"]
+    assert g3["rvm_closure_record"]["frozen_rows"] == [r["id"] for r in RVM_DOC["rows"]
+                                                      if r["requirement_origin"] == "RFP_CLAUSE"]
+    assert g3["f9_gate"]["evidence_sufficient_for_freeze"] is True
+    assert g3["f9_gate"]["architecture_status"] == "INVESTIGATION_HYPOTHESIS"
+    f9oq3 = _row("F9-OQ-03")
+    assert f9oq3["status"] == "ANSWERED_BY_A9_13"                     # the owner act changes no row status
+    rec = [x for x in f9oq3["later_owner_decisions"] if x["decision"] == "A9.22"]
+    assert len(rec) == 1 and rec[0]["relation"] == "PERFORMS_OWNER_ACT"
+    assert "AG-15 is approved for closure." in rec[0]["verbatim_excerpt"]
+    bad_rvm = copy.deepcopy(RVM_DOC)
+    bad_rvm["rfp_rebase"]["ag15_closure"]["frozen_rows"] = bad_rvm["rfp_rebase"]["ag15_closure"]["frozen_rows"][1:]
+    with pytest.raises(SystemExit):
+        B.a922_g3(bad_rvm, REG, json.loads(B.F9.read_text(encoding="utf-8")))
     bad = copy.deepcopy(REG)
     bad["status"] = "DRAFT"
     with pytest.raises(SystemExit):

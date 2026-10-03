@@ -24,8 +24,8 @@ Record-level application (row statuses are still assigned by rvm_rules.assign_st
 RFP citations (A9.16 repair RFP-03 / RVF-04): the official RFP is registered by hash with a verbatim clause transcription
 (docs/requirements/rfp_official/rfp_registration_v1.json, A9.17 RFP), so every RFP-cited fact of a re-based row carries
 rfp_citation_status REGISTERED_CLAUSE with the clause ids (registered_rfp_citations, run after the rfp_rebase); the
-step-1 label OWNER_STATED_PENDING_RFP_REGISTRATION is kept as history (rfp_citation_status_as_applied). AG-15 closure is
-the owner's, so requirement_frozen stays false for RFP rows.
+step-1 label OWNER_STATED_PENDING_RFP_REGISTRATION is kept as history (rfp_citation_status_as_applied). AG-15 was closed
+by the owner (A9.22 G3, rfp_rebase.ag15_closure): requirement_frozen = true on the RFP_CLAUSE rows (basis only).
 """
 from __future__ import annotations
 
@@ -136,7 +136,7 @@ ROW_RECORDS = {
                           "rfp_citation_status": L.RFP_PENDING,
                           "note": "the owner's statement that the RFP requires ionizing N2 and nascent / atomic O "
                                   "(A9.13 S6.3, A9.15) is confirmed by the registered clauses RFP-P17-05 / RFP-P17-02 "
-                                  "(AG-15 closure is the owner's)"}, None),
+                                  "(AG-15 closed by the owner, A9.22 G3)"}, None),
     "RVM-10": (["XA9Q-07", "XA9Q-01", "OD6"], {
         "propellant_policy": "A9.15 governing rule: " + L.a915_governing_statement(),
         "air_plus_xe": "DUAL_PROPELLANT_CAPABILITY: separate selectable ambient-air and Xenon operating modes with "
@@ -242,8 +242,9 @@ def apply(doc: dict) -> dict:
     doc["a9_16_rfp_rule"] = ("the official RFP is registered by hash with a verbatim clause transcription (" +
                              REGISTRATION_REL + ", A9.17 RFP); RFP-cited facts carry rfp_citation_status " + REGISTERED +
                              " with the registered clause ids (the step-1 label " + L.RFP_PENDING + " is kept as "
-                             "rfp_citation_status_as_applied history); AG-15 closure is the owner's, so "
-                             "requirement_frozen stays false for every RFP row until the owner closes AG-15")
+                             "rfp_citation_status_as_applied history); the owner closed AG-15 (A9.22 G3), so "
+                             "requirement_frozen = true on every RFP_CLAUSE row (requirement basis frozen; no status "
+                             "changes, no compliance claim)")
     doc["a9_16_owner_answers_applied"] = (
         [L.applied_row(q, ARTIFACT, [rid], "row a9_16 record; open reading OWNER_DECIDED", [TEST])
          for rid, (qids, _, _) in ROW_RECORDS.items() for q in qids]
@@ -265,7 +266,7 @@ def _registered(rec: dict, clauses: list, where: str) -> None:
     rec["rfp_citation_status"] = REGISTERED
     rec["rfp_clause_ids"] = list(clauses)
     rec["rfp_citation_note"] = ("registered clause(s) " + ", ".join(clauses) + " (" + REGISTRATION_REL + "); AG-15 "
-                                "closure is the owner's, requirement_frozen stays false")
+                                "closed by the owner (A9.22 G3): RFP_CLAUSE rows frozen, basis only")
 
 
 def registered_rfp_citations(doc: dict) -> dict:

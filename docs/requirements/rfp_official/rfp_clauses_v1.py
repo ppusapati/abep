@@ -18,6 +18,8 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
+sys.path.insert(0, str(ROOT / "docs" / "requirements" / "rvm_a9"))
+import rfp_rebase as RB  # noqa: E402  (A9.22 G3 owner page review: decision pins + verbatim check)
 RVM_REL = "docs/requirements/rvm_a9/rvm_a9_v1.json"   # RVM re-base output (built FIRST: build_rvm_a9.py, then this file)
 OUT_JSON = HERE / "rfp_registration_v1.json"
 OUT_MD = HERE / "RFP_REGISTRATION_v1.md"
@@ -139,6 +141,28 @@ PAGES_NOT_SCREENED = "pages 1-15 and 34-40 were not screened for requirement-bea
                      "about their content"
 
 
+def owner_page_review():
+    """A9.22 G3 (owner, 2026-10-03): the owner's review disposition of the pages the registration did not screen.
+    Owner-stated only: nothing is transcribed from those pages and nothing is recorded about their content beyond the
+    owner's statement. Fails closed on any A9.22 hash / identity / verbatim mismatch."""
+    try:
+        RB.load_a922()
+    except RB.RebaseError as e:
+        raise SystemExit(f"A9.22 owner page review: {e}")
+    return {"pages": "1-15, 34-40",
+            "status": "OWNER_REVIEWED_NO_ADDITIONAL_TECHNICAL_PERFORMANCE_REQUIREMENT",
+            "owner_statement_verbatim": RB.A922_PAGES_VERBATIM,
+            "decision": {"item": RB.A922_ITEM, "code": RB.A922_CODE, "json": RB.A922["json"],
+                         "json_sha256": RB.A922["json_sha256"], "md": RB.A922["md"], "md_sha256": RB.A922["md_sha256"],
+                         "pointer": RB.A922["json"] + "#/decisions/" + RB.A922_ITEM},
+            "evidence_class": "owner statement (A9.22 G3); not a repository screening or transcription",
+            "scope": "the owner reviewed the owner-held PDF pages 1-15 and 34-40 and states they introduce no additional "
+                     "ABEP technical-performance requirement that alters the RVM technical re-base; the repository does "
+                     "not transcribe, screen or characterise those pages (no clause registered from them, nothing "
+                     "assumed about their other content)",
+            "supersedes_status": "UNSCREENED_PENDING_OWNER_PAGE_REVIEW (pages_not_screened_as_registered)"}
+
+
 def page_coverage():
     """Coverage record (RFP-07): registered clause pages + screened-out items; fails closed on an unknown class or a
     Part IV(B) item that is neither registered nor screened."""
@@ -159,7 +183,8 @@ def page_coverage():
             raise SystemExit(f"{sec}: must be either registered or screened out (exactly one)")
     return {"pages_with_registered_clauses": sorted({c[1] for c in CLAUSES}),
             "pages_screened_for_clauses": PAGES_SCREENED_FOR_CLAUSES,
-            "pages_not_screened": PAGES_NOT_SCREENED,
+            "pages_not_screened_as_registered": PAGES_NOT_SCREENED,
+            "owner_page_review": owner_page_review(),
             "screened_out": out,
             "rule": "every Part IV(B) item (no waivers, RFP-P21-03) is either a registered clause (3: RFP-P27-01, "
                     "5: RFP-P27-02) or screened out here as PROGRAMMATIC_BID_QUALIFICATION; Part IV(C) criteria other "
@@ -216,6 +241,8 @@ def rvm_mapping(clause_ids):
         "regenerate": "python docs/requirements/rvm_a9/build_rvm_a9.py && python docs/requirements/rfp_official/rfp_clauses_v1.py",
         "rule": rb["rule"],
         "ag_15_status": rb["ag_15_status"],
+        "requirements_snapshot": rb["requirements_snapshot"],
+        "ag15_closure": RVM_REL + "#/rfp_rebase/ag15_closure",
         "clauses_sha256": rb["registration"]["clauses_sha256"],
         "clauses": [{"clause_id": c["clause_id"], "rvm_rows": c["rvm_rows"], "related_rvm_rows": c["related_rvm_rows"],
                      **({"not_system_requirement": c["not_system_requirement"]} if "not_system_requirement" in c else {}),
@@ -242,8 +269,10 @@ def build():
         "clauses": [{"id": i, "page": p, "section": s, "text": t} for i, p, s, t in CLAUSES],
         "owner_rfp_fact_check": [dict(zip(("statement", "result", "clause_ids", "note"), r)) for r in OWNER_FACT_CHECK],
         "requirements_to_check_against_rvm": [{"clause_id": c, "summary": s} for c, s in NEW_REQUIREMENTS_NOT_IN_RVM_CHECK],
-        "ag_15": "the official RFP is registered with immutable identity (sha256); RVM re-basing against these clauses is "
-                 "the next AG-15 step (A9.16 step 3, after the step-1 RVM changes land)",
+        "ag_15": "the official RFP is registered with immutable identity (sha256); the RVM is re-based against these "
+                 "clauses (rvm_mapping) and AG-15 is closed by the owner (A9.22 G3; closure record "
+                 + RVM_REL + " rfp_rebase.ag15_closure): RFP-derived requirements snapshot FROZEN, basis only, not "
+                 "compliance",
         "rvm_mapping": rvm_mapping([c[0] for c in CLAUSES]),
         "page_coverage": page_coverage(),
     }
@@ -285,7 +314,11 @@ def render_md(d):
     L += ["", "## Page coverage and screened-out items (A9.16 repair RFP-07)", "",
           f"Pages with registered clauses: {', '.join(str(p) for p in pc['pages_with_registered_clauses'])}. Pages "
           f"screened for clauses: {pc['pages_screened_for_clauses'][0]}-{pc['pages_screened_for_clauses'][-1]}. "
-          f"{pc['pages_not_screened']}.", "", f"Rule: {pc['rule']}.", "",
+          f"As registered: {pc['pages_not_screened_as_registered']}.", "",
+          f"Owner page review (A9.22 G3, `{pc['owner_page_review']['decision']['json']}` sha256 "
+          f"`{pc['owner_page_review']['decision']['json_sha256']}`): pages {pc['owner_page_review']['pages']} "
+          f"{pc['owner_page_review']['status']} - owner statement, verbatim: \"{pc['owner_page_review']['owner_statement_verbatim']}\" "
+          f"({pc['owner_page_review']['scope']}).", "", f"Rule: {pc['rule']}.", "",
           "| Page | Section | Heading (as read) | Class | Why not registered |", "|---|---|---|---|---|"]
     L += [f"| {r['page']} | {r['section']} | {r['heading_as_read']} | {r['class']} | {r['why_not_registered']}"
           + (f" ({r['no_waiver']})" if r.get("no_waiver") else "") + " |" for r in pc["screened_out"]]

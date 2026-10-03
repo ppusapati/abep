@@ -168,8 +168,14 @@ def apply_gates(gates: list, ref, upstream_frontier_mg_s: float) -> list:
         "register the official RFP in the repository evidence system with immutable provenance / sha256 and re-base "
         "the RVM requirements against it; secondary transcriptions are not enough (A9.13 F9-OQ-03 AG-15 clarification)")
     g["sources"] = g["sources"] + [dsrc("F9-OQ-03")]
+    a15 = g["blocking_evidence"]["assessment"]
     for gg in gates:
-        assert gg["evidence_sufficient_for_freeze"] is False
+        if gg["id"] == "AG-15" and gg["evidence_sufficient_for_freeze"]:
+            # only on the owner closure record (A9.22 G3; ag15_f9 fail-closed check) and determining evidence
+            assert a15["closes"] and a15["determining_evidence"]["closes"], "AG-15"
+            assert "owner_closure_recorded" in a15["evidence_parts"], "AG-15"
+            continue
+        assert gg["evidence_sufficient_for_freeze"] is False, gg["id"]
     return gates
 
 
