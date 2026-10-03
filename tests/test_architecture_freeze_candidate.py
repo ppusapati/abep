@@ -477,3 +477,99 @@ def test_builder_refuses_missing_or_inconsistent_registration():
     with pytest.raises(SystemExit) as e:
         b3.ag15_assessment()
     assert "REFUSED" in str(e.value)
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# design-state set v2: F9 re-derives every F1 / F4 / F7 / F8-derived value; an empty robust set fails closed
+# ---------------------------------------------------------------------------------------------------------------------
+def _f78():
+    return _j("docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json")
+
+
+def test_empty_robust_set_yields_explicit_status_never_a_range(doc, b):
+    f78 = _f78()
+    members = [m for blk in f78["robust"]["robust_pareto_by_P_set"].values() for m in blk["members"]]
+    rs = doc["upstream_pareto"]["robust_set"]
+    if members:
+        assert rs["status"] == b.ROBUST_NON_EMPTY and rs["status_summary"] is None
+        return
+    assert rs["status"] == b.EMPTY_ROBUST == "EMPTY_ROBUST_SET_NOT_EVALUATED"
+    assert rs["n_members"] == 0 and rs["members"] == [] and rs["n_all_scenario_feasible_total"] == 0
+    assert f78["robust"]["all_scenario_feasible"] == 0
+    rows = [r for r in doc["parameters"] if isinstance(r["value"], dict) and "robust_set_status" in r["value"]]
+    assert {r["id"] for r in rows} >= {"AFC-UP-IN-01", "AFC-UP-IN-09", "AFC-UP-CO-05", "AFC-UP-CO-06",
+                                       "AFC-UP-CO-08", "AFC-UP-CO-09", "AFC-UP-PL-01", "AFC-UP-PL-02", "AFC-UP-PL-08"}
+    for r in rows:
+        assert r["value"]["robust_set_status"] == b.EMPTY_ROBUST, r["id"]
+        for k, v in r["value"].items():
+            if k.startswith("robust_set_range") or k == "robust_set_worst_case_range_mg_s":
+                assert v is None, (r["id"], k)          # never a fabricated range
+            if k == "robust_set_values":
+                assert v == [], r["id"]
+        assert r["freeze_status"] != "FREEZE_CANDIDATE"
+    # offered feed records: explicit empty status with the transient reasons read from F4
+    f4 = _j("docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json")
+    vf06 = {r["id"]: r for r in doc["parameters"]}["AFC-UP-VF-06"]["value"]
+    if not f4["offered_to_h1"]:
+        assert vf06["status"] == b.EMPTY_OFFERED and vf06["n_records"] == 0 and vf06["P_range_Pa"] is None
+        assert vf06["orbit_check_failure_reason_counts"]
+    # design finding for the owner: recorded, no requirement relaxation, owner flow-gap order cited verbatim
+    df = doc["design_findings_for_owner"]
+    assert [d["id"] for d in df] == ["F9-DF-01"]
+    assert df[0]["status"] == b.EMPTY_ROBUST and df[0]["requirement_relaxation_proposed"] is False
+    assert df[0]["flow_gap_owner_order"] == f78["flow_gap_owner_order"]
+    assert "NO_REQUIREMENT_RELAXATION" in df[0]["finding"] and "no robust upstream design survives" in df[0]["finding"]
+    assert any(f["id"] == "F9-07" and f["design_finding"] == "F9-DF-01" for f in doc["findings"])
+    assert doc["architecture_status"] == "INVESTIGATION_HYPOTHESIS"
+
+
+def test_empty_set_helpers_fail_closed(b):
+    assert b.robust_range({"members": []}, []) is None
+    assert b.robust_range({"members": [{}]}, [2.0, 1.0]) == [1.0, 2.0]
+    with pytest.raises(SystemExit):
+        b._rng([])
+
+
+def test_upstream_text_values_equal_current_outputs(doc):
+    """No hard-coded F4 / F7 / F8 numbers: the values in F9 are the values in the current lane outputs."""
+    f78, f4 = _f78(), _j("docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json")
+    cols = f78["upstream_pareto_summary"]["columns"]
+    rows = [dict(zip(cols, r)) for r in f78["upstream_pareto_summary"]["rows"]]
+    f7front = max(r["frontier_mdot_delivered_min_mgps"] for r in rows if r["filter"] == "F4-FIL-NONE"
+                  and r["wall"] == "WALL-G0" and r["frontier_mdot_delivered_min_mgps"] is not None)
+    single, sched = [], []
+    for blk in f4["steady"]["feasibility_regions"].values():
+        if blk["filter"] == "F4-FIL-NONE" and blk["wall"] == "WALL-G0":
+            for e in (e for lst in blk["per_scenario"].values() for e in lst):
+                single += [e["frontier_mdot_mgps"]] if e["frontier_mdot_mgps"] is not None else []
+                s = (e.get("scheduled_setpoint") or {}).get("frontier_mdot_mgps")
+                sched += [s] if s is not None else []
+    by = {r["id"]: r for r in doc["parameters"]}
+    pl08 = by["AFC-UP-PL-08"]["value"]
+    assert pl08["f7_nominal_context_all_state_frontier_mg_s"] == f7front
+    assert pl08["all_state_single_setpoint_frontier_mg_s"] == max(single)
+    assert pl08["all_state_scheduled_frontier_mg_s"] == max(sched)
+    fnd = {f["id"]: f["finding"] for f in doc["findings"]}
+    assert f"all-state frontier {f7front} mg/s" in fnd["F9-03"]
+    ag12 = {g["id"]: g for g in doc["architecture_gates"]}["AG-12"]
+    assert f"({f7front} mg/s all-state" in ag12["blocking_evidence"]["engineering_warning"]
+    rs = doc["upstream_pareto"]["robust_set"]
+    if doc["design_findings_for_owner"]:
+        ev = doc["design_findings_for_owner"][0]["evidence"]
+        f8rows = _j("docs/design_synthesis/f7_f8_optimizer/f8_robust_candidates_v1.json")["rows"]
+        assert ev["F8"]["survivors"] == len(f8rows)
+        assert ev["F8"]["all_scenario_feasible"] == f78["robust"]["all_scenario_feasible"] == \
+            rs["n_all_scenario_feasible_total"]
+        assert ev["F7"]["vector_status_totals"] == f78["upstream_status_totals"]
+        assert ev["F7"]["n_pareto_members"] == sum(r["n_pareto"] for r in rows)
+        assert ev["F4"]["offered_to_h1_records"] == len(f4["offered_to_h1"])
+    # superseded F7 / F4 numbers occur only in the as-raised owner-question text, labelled as history
+    stale = ("0.09832", "0.1192", "0.119186")
+    rest = {k: v for k, v in doc.items() if k != "open_owner_questions"}
+    assert not any(s in json.dumps(rest) for s in stale)
+    for q in doc["open_owner_questions"]:
+        if any(s in json.dumps(q) for s in stale):
+            assert q["as_raised_numbers"] and q["current_upstream_values"]["all_state_frontier_mg_s_F7"] == f7front
+    src = BUILDER.read_text(encoding="utf-8").split("F9_QUESTIONS = [", 1)[0]
+    assert not any(s in src for s in stale)
+    assert not any(s in (LANE / "a9_16_f9.py").read_text(encoding="utf-8") for s in stale)

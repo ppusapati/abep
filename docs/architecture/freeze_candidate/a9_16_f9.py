@@ -113,7 +113,7 @@ def ag13_statewise(states: list, spacecraft_icd_registered: bool) -> dict:
             "per_state_margin_N": m, "rule": "hard statewise constraint; the orbit average is reported only"}
 
 
-def apply_gates(gates: list, ref) -> list:
+def apply_gates(gates: list, ref, upstream_frontier_mg_s: float) -> list:
     by = {g["id"]: g for g in gates}
     for g in gates:
         g["owner_approved"] = {"decision": L.cite("F9-OQ-03"),
@@ -141,9 +141,9 @@ def apply_gates(gates: list, ref) -> list:
         "removed": "the 0.38 mg/s (and ~1.3 mg/s) fixed-number gate: not flight requirements",
         "characterization_coverage_mg_s": list(CHARACTERIZATION_COVERAGE_MG_S),
         "characterization_coverage_role": "CHARACTERIZATION_COVERAGE_ONLY_NOT_A_PASS_FAIL_REQUIREMENT",
-        "engineering_warning": "the parametric upstream frontier (0.09832423 mg/s all-state, single setpoint) is low "
-                               "relative to the ground-characterization envelope: an engineering warning, not a "
-                               "demonstrated requirement failure (A9.13 owner_statements.flight_flow_requirement)",
+        "engineering_warning": f"the parametric upstream frontier ({upstream_frontier_mg_s} mg/s all-state, single "
+                               "setpoint; read from the current F7 outputs by the F9 builder) is low relative to the "
+                               "ground-characterization envelope: an engineering warning, not a demonstrated requirement failure (A9.13 owner_statements.flight_flow_requirement)",
         "evaluator": "a9_16_f9.ag12_feed_state_sufficiency (fail closed; refuses a fixed mg/s gate)",
         "rfp_citation_status": L.RFP_PENDING}
     g["sources"] = g["sources"] + [dsrc("F9-OQ-02"), dsrc("OQ-F4-04")]
