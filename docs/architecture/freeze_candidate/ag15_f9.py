@@ -139,8 +139,10 @@ def assess(registration, rvm, registration_file_sha256=None) -> dict:
         for s in r.get("sources") or []:
             if isinstance(s, dict) and s.get("kind") == "rfp_official_clause" and s.get("pdf_sha256") != pdf_sha:
                 errors.append(f"{r.get('id')}: rfp_official_clause source pdf_sha256 != registered sha256")
-    if rb.get("origin_counts") and rb["origin_counts"] != origin_counts:
-        errors.append("RVM re-base origin_counts disagree with the rows")
+    if rb.get("origin_counts") != origin_counts:
+        errors.append("RVM re-base origin_counts missing or disagree with the rows")
+    if not rfp_rows:
+        errors.append("no RVM row has requirement_origin RFP_CLAUSE: the RVM is not re-based on the registered RFP")
     if errors:
         return _refused(errors, registration_file_sha256)
 

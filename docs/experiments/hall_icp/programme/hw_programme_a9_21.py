@@ -162,12 +162,37 @@ def v_registered(reg, name):
     return _registration_reasons(reg, name)
 
 
+H1_FREEZE_CANDIDATE_REL = "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json"
+
+
+def authorised_femm_points():
+    """The authorised S7.1 analysis points as the H-1 freeze candidate records them (femm_analysis_points, A9.14
+    F5-OQ-01; a9_16_h1.femm_analysis_points). Fail closed: refused when the record is missing or names none."""
+    p = ROOT / H1_FREEZE_CANDIDATE_REL
+    try:
+        pts = json.loads(p.read_text(encoding="utf-8"))["femm_analysis_points"]["points"]
+    except (OSError, ValueError, KeyError, TypeError) as e:
+        raise ProgrammeError(f"authorised FEMM analysis points unreadable from {H1_FREEZE_CANDIDATE_REL}: {e!r}")
+    auth = [x["probe"] for x in pts if isinstance(x, dict) and x.get("authorised_analysis_point") is True]
+    if not auth:
+        raise ProgrammeError(f"{H1_FREEZE_CANDIDATE_REL} records no authorised FEMM analysis point")
+    return auth
+
+
 def v_femm_points(reg, name):
-    """S7.1 output: the authorised FEMM analysis points (A9.14 F5-OQ-01) each with a registered result record."""
+    """S7.1 output: the authorised FEMM analysis points (A9.14 F5-OQ-01) each with a registered result record. The
+    registration's authorised_points must include every point the H-1 record authorises (a self-declared subset is
+    not 'every authorised point')."""
     why = _registration_reasons(reg, name)
     if why:
         return why
-    return s7_1_results_cover_points(reg.get("authorised_points"), reg.get("results"))
+    declared = reg.get("authorised_points")
+    if isinstance(declared, list):
+        omitted = [p for p in authorised_femm_points() if p not in declared]
+        if omitted:
+            why.append(f"{name}: authorised_points omit the H-1 authorised analysis points {omitted} "
+                       f"({H1_FREEZE_CANDIDATE_REL} femm_analysis_points)")
+    return why + s7_1_results_cover_points(declared, reg.get("results"))
 
 
 def v_i_d_max(reg, name):
@@ -450,7 +475,16 @@ def entry_status(step_id, evidence=None):
                 continue
             if camp.get("programme_step") != step_id:
                 raise ProgrammeError(f"{step_id}: campaign is registered for {camp.get('programme_step')!r}")
-            campaign = icp_campaign_check(camp, ev.get("other_campaigns", ()), ev.get("ar_reference_domain_ids", ()))
+            others, ar_ids = ev.get("other_campaigns") or (), ev.get("ar_reference_domain_ids") or ()
+            campaign = icp_campaign_check(camp, others, ar_ids)
+            # the separation checks need what they compare against (an omitted set is not 'no conflict')
+            if not ar_ids:
+                pre_why.append(f"{pre['id']}: Ar reference (P1) stage domain ids not supplied; own-domain separation "
+                               "cannot be checked")
+            for earlier in ICP_CAMPAIGN_STEPS[:ICP_CAMPAIGN_STEPS.index(step_id)]:
+                if not any(isinstance(o, dict) and o.get("programme_step") == earlier for o in others):
+                    pre_why.append(f"{pre['id']}: the {earlier} campaign registration is not supplied; own-domain / "
+                                   "own-provenance separation cannot be checked")
             pre_why += campaign["missing"]
             late += campaign["late"]
             continue
@@ -579,6 +613,10 @@ def icp_campaign_check(campaign, other_campaigns=(), ar_reference_domain_ids=())
         if not isinstance(o, dict):
             raise ProgrammeError("other_campaigns entries must be campaign objects")
         if o.get("campaign_id") == campaign["campaign_id"]:
+            if o.get("programme_step") != step:
+                raise ProgrammeError(f"campaign_id {campaign['campaign_id']!r} is registered for both "
+                                     f"{o.get('programme_step')!r} and {step!r}: one gas / mode per campaign "
+                                     "(A9.21 item 8)")
             continue
         odom = (o.get("operating_domain") or {}).get("domain_id")
         if odom == dom["domain_id"] and o.get("programme_step") != step:

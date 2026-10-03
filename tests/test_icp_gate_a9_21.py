@@ -8,9 +8,11 @@ Run: python -m pytest -q tests/test_icp_gate_a9_21.py
 from __future__ import annotations
 
 import copy
+import hashlib
 import importlib.util
 import json
 import sys
+import tempfile
 from pathlib import Path
 
 import pytest
@@ -36,10 +38,26 @@ G = _load("a9_21_icp_gate_under_test", RVM_DIR / "a9_21_icp_gate.py")
 F21 = _load("a9_21_f9_under_test", F9_DIR / "a9_21_f9.py")
 RVM = json.loads(RVM_JSON.read_text(encoding="utf-8"))
 F9 = json.loads(F9_JSON.read_text(encoding="utf-8"))
-SHA = "a" * 64
-ACCEPTED = {"status": "OWNER_ACCEPTED", "owner_decision": {"path": "docs/decisions/OD_future_owner_criteria.json",
-                                                           "sha256": SHA},
+# synthetic test root: the cited owner decision and evidence files exist there with the pinned sha256 (TEST DATA ONLY)
+TROOT = Path(tempfile.mkdtemp(prefix="icp_gate_test_"))
+
+
+def _put(rel, text):
+    f = TROOT / rel
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_text(text, encoding="utf-8")
+    return hashlib.sha256(f.read_bytes()).hexdigest()
+
+
+DEC_SHA = _put("docs/decisions/OD_future_owner_criteria.json", '{"test": "synthetic owner criteria"}')
+SHA = _put("docs/evidence/x.json", '{"test": "synthetic evidence"}')
+DEC = {"path": "docs/decisions/OD_future_owner_criteria.json", "sha256": DEC_SHA}
+ACCEPTED = {"status": "OWNER_ACCEPTED", "owner_decision": DEC,
             "items": [{"id": "C1", "text": "owner criterion one"}, {"id": "C2", "text": "owner criterion two"}]}
+
+
+def _evaluate(criteria, evidence):
+    return G.evaluate(criteria, evidence, root=TROOT)
 
 
 def _ev(cid, result="MET", sha=SHA):
@@ -109,37 +127,58 @@ def test_recorder_proposal_preserved_verbatim_and_disposition_recorded():
 @pytest.mark.parametrize("criteria", [None, "PENDING_OWNER_ACCEPTANCE", {}, {"status": "PENDING_OWNER_ACCEPTANCE"}])
 def test_never_go_without_accepted_criteria(criteria):
     full = [_ev("C1"), _ev("C2")]
-    assert G.evaluate(criteria, full)["status"] == "NOT_EVALUATED"
-    assert G.evaluate(criteria, [])["status"] == "NOT_EVALUATED"
+    assert _evaluate(criteria, full)["status"] == "NOT_EVALUATED"
+    assert _evaluate(criteria, [])["status"] == "NOT_EVALUATED"
 
 
 def test_never_go_without_evidence():
-    assert G.evaluate(ACCEPTED, [])["status"] == "NOT_EVALUATED"
-    assert G.evaluate(ACCEPTED, None)["status"] == "NOT_EVALUATED"
-    r = G.evaluate(ACCEPTED, [_ev("C1")])
+    assert _evaluate(ACCEPTED, [])["status"] == "NOT_EVALUATED"
+    assert _evaluate(ACCEPTED, None)["status"] == "NOT_EVALUATED"
+    r = _evaluate(ACCEPTED, [_ev("C1")])
     assert r["status"] == "NOT_EVALUATED" and r["missing"] == ["C2"]
-    assert G.evaluate(ACCEPTED, [_ev("C1"), _ev("C2", sha="not-a-sha")])["status"] == "NOT_EVALUATED"
-    assert G.evaluate(ACCEPTED, [_ev("C1"), _ev("C2", result="PASS")])["status"] == "NOT_EVALUATED"
+    assert _evaluate(ACCEPTED, [_ev("C1"), _ev("C2", sha="not-a-sha")])["status"] == "NOT_EVALUATED"
+    assert _evaluate(ACCEPTED, [_ev("C1"), _ev("C2", result="PASS")])["status"] == "NOT_EVALUATED"
     nodec = dict(ACCEPTED, owner_decision={"path": "x.json"})
-    assert G.evaluate(nodec, [_ev("C1"), _ev("C2")])["status"] == "NOT_EVALUATED"
+    assert _evaluate(nodec, [_ev("C1"), _ev("C2")])["status"] == "NOT_EVALUATED"
     # only owner-accepted criteria with registered evidence for every criterion decide
-    assert G.evaluate(ACCEPTED, [_ev("C1"), _ev("C2")])["status"] == "GO"
-    assert G.evaluate(ACCEPTED, [_ev("C1"), _ev("C2", "NOT_MET")])["status"] == "NO_GO"
+    assert _evaluate(ACCEPTED, [_ev("C1"), _ev("C2")])["status"] == "GO"
+    assert _evaluate(ACCEPTED, [_ev("C1"), _ev("C2", "NOT_MET")])["status"] == "NO_GO"
+
+
+def test_unverifiable_citations_never_go():
+    """Review fix: a well-formed but unverifiable sha pin (file missing, sha mismatch, path outside the root) is
+    missing evidence, never GO."""
+    full = [_ev("C1"), _ev("C2")]
+    outside = Path(tempfile.mkdtemp(prefix="icp_gate_outside_")) / "OD_outside.json"
+    outside.write_text('{"test": "synthetic owner criteria"}', encoding="utf-8")
+    for bad in ({"path": "docs/decisions/NO_SUCH.json", "sha256": DEC_SHA},          # file missing
+                {"path": DEC["path"], "sha256": "b" * 64},                            # sha mismatch
+                {"path": "../" + outside.parent.name + "/" + outside.name, "sha256": DEC_SHA},  # escapes the root
+                {"path": str(outside), "sha256": DEC_SHA}):                           # absolute, outside the root
+        r = _evaluate(dict(ACCEPTED, owner_decision=bad), full)
+        assert r["status"] == "NOT_EVALUATED", bad
+    for src in ({"path": "docs/evidence/missing.json", "sha256": SHA}, {"path": "docs/evidence/x.json",
+                                                                         "sha256": "c" * 64}):
+        ev = [_ev("C1"), dict(_ev("C2"), source=src)]
+        r = _evaluate(ACCEPTED, ev)
+        assert r["status"] == "NOT_EVALUATED" and r["missing"] == ["C2"], src
+    # default root is the repository: the synthetic files do not exist there
+    assert G.evaluate(ACCEPTED, full)["status"] == "NOT_EVALUATED"
 
 
 def test_proposal_text_never_used_as_criteria():
     full = [_ev("a"), _ev("b"), _ev("c"), _ev("C1"), _ev("C2")]
     pc = _rvm_gate()["proposed_criteria_for_owner_review"]
-    assert G.evaluate(pc, full)["status"] == "NOT_EVALUATED"
-    forged = dict(pc, status="OWNER_ACCEPTED", owner_decision={"path": "x.json", "sha256": SHA},
+    assert _evaluate(pc, full)["status"] == "NOT_EVALUATED"
+    forged = dict(pc, status="OWNER_ACCEPTED", owner_decision=DEC,
                   items=[{"id": "C1", "text": "x"}, {"id": "C2", "text": "y"}])
-    assert G.evaluate(forged, full)["status"] == "NOT_EVALUATED"           # carries the RP-A919-01 source
+    assert _evaluate(forged, full)["status"] == "NOT_EVALUATED"           # carries the RP-A919-01 source
     text = G.proposal()["proposal"]
     parts = [text.split("(a) ")[1].split("; (b)")[0], text.split("(b) ")[1].split("; (c)")[0],
              text.split("(c) ")[1].rstrip(".")]
-    copied = {"status": "OWNER_ACCEPTED", "owner_decision": {"path": "x.json", "sha256": SHA},
+    copied = {"status": "OWNER_ACCEPTED", "owner_decision": DEC,
               "items": [{"id": k, "text": t} for k, t in zip("abc", parts)]}
-    assert G.evaluate(copied, full)["status"] == "NOT_EVALUATED"           # proposal wording copied into items
+    assert _evaluate(copied, full)["status"] == "NOT_EVALUATED"           # proposal wording copied into items
 
 
 # ------------------------------------------------------------------------------------------ LOCK-1
@@ -150,6 +189,9 @@ def test_lock1_cannot_be_reported_released_while_gate_not_go():
     assert G.lock1_release_reportable([{"status": "NO_GO", "mandatory": True}]) is False
     assert G.lock1_release_reportable([]) is False
     assert G.lock1_release_reportable([{"status": "GO", "mandatory": True}]) is True
+    # review fix: no mandatory gate in the list is not 'all mandatory gates GO' (all([]) is not a release)
+    assert G.lock1_release_reportable([{"status": "NOT_EVALUATED", "mandatory": False}]) is False
+    assert G.lock1_release_reportable([{"status": "GO", "mandatory": False}]) is False
 
 
 def test_architecture_status_never_frozen_while_pre_lock1_gate_not_go():

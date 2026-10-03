@@ -118,13 +118,29 @@ def _uses_proposal(criteria: dict) -> bool:
                if isinstance(i, dict))
 
 
-def evaluate(criteria, evidence) -> dict:
+def _pinned_file_ok(ref: dict, root: Path) -> bool:
+    """True only when ref = {'path', 'sha256'} names an existing file inside root whose sha256 equals the pin."""
+    import hashlib
+    path, sha = ref.get("path"), str(ref.get("sha256", ""))
+    if not isinstance(path, str) or not path.strip() or not _HEX64.match(sha):
+        return False
+    base = Path(root).resolve()
+    p = (base / path).resolve()
+    if base not in p.parents or not p.is_file():
+        return False
+    return hashlib.sha256(p.read_bytes()).hexdigest() == sha
+
+
+def evaluate(criteria, evidence, root=None) -> dict:
     """Fail-closed evaluation of GNG-ICP-01. Returns {'status', 'reason', ...}; never GO without evidence.
 
     criteria: None / the string PENDING_OWNER_ACCEPTANCE (today), or an owner-accepted record
               {'status': 'OWNER_ACCEPTED', 'owner_decision': {'path', 'sha256'}, 'items': [{'id', 'text'}, ...]}.
     evidence: list of {'criterion_id', 'result': 'MET' | 'NOT_MET', 'source': {'path', 'sha256'}}.
+    Every cited path (owner decision, evidence source) must exist under `root` (default: the repository) with the
+    pinned sha256; a citation that does not verify counts as missing (NOT_EVALUATED).
     """
+    root = ROOT if root is None else Path(root)
     if not isinstance(criteria, dict) or criteria.get("status") != CRITERIA_ACCEPTED:
         return {"status": NOT_EVALUATED, "reason": "no owner-accepted GO / NO-GO criterion (criteria "
                                                    + CRITERIA_PENDING + "); fail closed (A9.21)"}
@@ -134,6 +150,9 @@ def evaluate(criteria, evidence) -> dict:
     dec = criteria.get("owner_decision") or {}
     if not dec.get("path") or not _HEX64.match(str(dec.get("sha256", ""))):
         return {"status": NOT_EVALUATED, "reason": "criteria carry no owner decision citation (path + sha256)"}
+    if not _pinned_file_ok(dec, root):
+        return {"status": NOT_EVALUATED, "reason": "owner decision citation does not verify (file missing or sha256 "
+                                                   "mismatch)"}
     items = criteria.get("items") or []
     ids = [i.get("id") for i in items if isinstance(i, dict)]
     if not ids or len(ids) != len(items) or any(not i for i in ids) or len(set(ids)) != len(ids):
@@ -143,7 +162,7 @@ def evaluate(criteria, evidence) -> dict:
         if not isinstance(e, dict):
             continue
         src = e.get("source") or {}
-        if e.get("result") in RESULTS and src.get("path") and _HEX64.match(str(src.get("sha256", ""))):
+        if e.get("result") in RESULTS and isinstance(src, dict) and _pinned_file_ok(src, root):
             by.setdefault(e.get("criterion_id"), []).append(e["result"])
     missing = [i for i in ids if not by.get(i)]
     if missing:
@@ -157,8 +176,8 @@ def evaluate(criteria, evidence) -> dict:
 
 def lock1_release_reportable(gates) -> bool:
     """LOCK-1 may be reported released only when every mandatory pre-LOCK-1 gate is GO (fail closed)."""
-    gates = list(gates or [])
-    return bool(gates) and all(g.get("status") == GO for g in gates if g.get("mandatory", True))
+    mandatory = [g for g in (gates or []) if g.get("mandatory", True)]
+    return bool(mandatory) and all(g.get("status") == GO for g in mandatory)
 
 
 def gate_record() -> dict:
