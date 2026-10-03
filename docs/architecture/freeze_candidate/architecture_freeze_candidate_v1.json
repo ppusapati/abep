@@ -415,7 +415,7 @@
   },
   "F1": {
    "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
-   "sha256": "85c79045047a6b09a10c8f199782b25defad2b5446386fa68496a16cf41c2ff2"
+   "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
   },
   "F2": {
    "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
@@ -431,7 +431,7 @@
   },
   "F4": {
    "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
-   "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+   "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
   },
   "F5": {
    "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
@@ -443,15 +443,15 @@
   },
   "F78": {
    "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
-   "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+   "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
   },
   "F7P": {
    "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
-   "sha256": "7a282dd217cd876999c5c65b3a445449175bfa3362a3b59bed74ed120a9bb0c9"
+   "sha256": "423e74ded14e5d5df640a9cc5818c8d8478b194573270ec379b1eb9359c1c455"
   },
   "F8R": {
    "path": "docs/design_synthesis/f7_f8_optimizer/f8_robust_candidates_v1.json",
-   "sha256": "43adc213f7f7b7f34fdda5e494033fcac52615ec7627777a010b1e2497d5927d"
+   "sha256": "2ec7e059ebc55d9b83f4c8f0e3cd43e2cebcbe665933e7ce9ecf1a43451f4e8d"
   },
   "OQ4": {
    "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
@@ -704,259 +704,26 @@
  },
  "upstream_pareto": {
   "robust_set": {
+   "status": "EMPTY_ROBUST_SET_NOT_EVALUATED",
    "rule": "candidates nominally feasible in EVERY surface scenario (fail closed), compared on worst-case objectives over the scenario set plus the minimum TPMC P_feasible; per set pressure; a set, never a winner; evidence-gate statuses unchanged (gate_snapshot before == after)",
-   "members": [
-    {
-     "design_id": "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|P0.01",
-     "intake": "A0.25_Ld3_phi0.8",
-     "area_m2": 0.25,
-     "L_over_d": 3.0,
-     "phi": 0.8,
-     "filter": "F4-FIL-NONE",
-     "compressor": "T6-A0-U2-D0-Ti6Al4V-H0.75",
-     "V_m3": 0.001,
-     "P_set_Pa": 0.01,
-     "mdot_delivered_min_kgps": 7.101047e-09,
-     "drag_intake_max_N": 0.01044394,
-     "P_compressor_el_max_W": 9.229227,
-     "m_compressor_max_kg": 7.48849,
-     "intake_wall_area_m2": 1.2,
-     "plenum_V_m3": 0.001,
-     "P_feasible_tpmc_min": 1.0
-    },
-    {
-     "design_id": "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.001|P0.01",
-     "intake": "A0.25_Ld3_phi0.8",
-     "area_m2": 0.25,
-     "L_over_d": 3.0,
-     "phi": 0.8,
-     "filter": "F4-FIL-NONE",
-     "compressor": "T6-A1-U2-D0-Ti6Al4V-H0.25",
-     "V_m3": 0.001,
-     "P_set_Pa": 0.01,
-     "mdot_delivered_min_kgps": 8.754536e-09,
-     "drag_intake_max_N": 0.01044394,
-     "P_compressor_el_max_W": 9.594151,
-     "m_compressor_max_kg": 10.90722,
-     "intake_wall_area_m2": 1.2,
-     "plenum_V_m3": 0.001,
-     "P_feasible_tpmc_min": 1.0
-    },
-    {
-     "design_id": "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01",
-     "intake": "A0.25_Ld3_phi0.8",
-     "area_m2": 0.25,
-     "L_over_d": 3.0,
-     "phi": 0.8,
-     "filter": "F4-FIL-NONE",
-     "compressor": "T6-A1-U2-D0-Ti6Al4V-H0.5",
-     "V_m3": 0.001,
-     "P_set_Pa": 0.01,
-     "mdot_delivered_min_kgps": 1.09637e-08,
-     "drag_intake_max_N": 0.01044394,
-     "P_compressor_el_max_W": 9.627535,
-     "m_compressor_max_kg": 10.90722,
-     "intake_wall_area_m2": 1.2,
-     "plenum_V_m3": 0.001,
-     "P_feasible_tpmc_min": 1.0
-    },
-    {
-     "design_id": "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|P0.01",
-     "intake": "A0.25_Ld3_phi0.8",
-     "area_m2": 0.25,
-     "L_over_d": 3.0,
-     "phi": 0.8,
-     "filter": "F4-FIL-NONE",
-     "compressor": "T6-A2-U2-D0-Ti6Al4V-H0.75",
-     "V_m3": 0.001,
-     "P_set_Pa": 0.01,
-     "mdot_delivered_min_kgps": 7.200363e-09,
-     "drag_intake_max_N": 0.01044394,
-     "P_compressor_el_max_W": 9.23485,
-     "m_compressor_max_kg": 7.525281,
-     "intake_wall_area_m2": 1.2,
-     "plenum_V_m3": 0.001,
-     "P_feasible_tpmc_min": 1.0
-    },
-    {
-     "design_id": "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U1-D0-Ti6Al4V-H0.75|V0.001|P0.01",
-     "intake": "A0.25_Ld3_phi0.9",
-     "area_m2": 0.25,
-     "L_over_d": 3.0,
-     "phi": 0.9,
-     "filter": "F4-FIL-NONE",
-     "compressor": "T6-A1-U1-D0-Ti6Al4V-H0.75",
-     "V_m3": 0.001,
-     "P_set_Pa": 0.01,
-     "mdot_delivered_min_kgps": 2.933262e-09,
-     "drag_intake_max_N": 0.01040334,
-     "P_compressor_el_max_W": 9.331351,
-     "m_compressor_max_kg": 10.90722,
-     "intake_wall_area_m2": 1.35,
-     "plenum_V_m3": 0.001,
-     "P_feasible_tpmc_min": 1.0
-    },
-    {
-     "design_id": "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.001|P0.01",
-     "intake": "A0.25_Ld3_phi0.9",
-     "area_m2": 0.25,
-     "L_over_d": 3.0,
-     "phi": 0.9,
-     "filter": "F4-FIL-NONE",
-     "compressor": "T6-A1-U2-D0-Ti6Al4V-H0.25",
-     "V_m3": 0.001,
-     "P_set_Pa": 0.01,
-     "mdot_delivered_min_kgps": 9.046324e-09,
-     "drag_intake_max_N": 0.01040334,
-     "P_compressor_el_max_W": 9.64062,
-     "m_compressor_max_kg": 10.90722,
-     "intake_wall_area_m2": 1.35,
-     "plenum_V_m3": 0.001,
-     "P_feasible_tpmc_min": 1.0
-    },
-    {
-     "design_id": "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01",
-     "intake": "A0.25_Ld3_phi0.9",
-     "area_m2": 0.25,
-     "L_over_d": 3.0,
-     "phi": 0.9,
-     "filter": "F4-FIL-NONE",
-     "compressor": "T6-A1-U2-D0-Ti6Al4V-H0.5",
-     "V_m3": 0.001,
-     "P_set_Pa": 0.01,
-     "mdot_delivered_min_kgps": 1.133642e-08,
-     "drag_intake_max_N": 0.01040334,
-     "P_compressor_el_max_W": 9.677633,
-     "m_compressor_max_kg": 10.90722,
-     "intake_wall_area_m2": 1.35,
-     "plenum_V_m3": 0.001,
-     "P_feasible_tpmc_min": 1.0
-    },
-    {
-     "design_id": "A0.25_Ld5_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01",
-     "intake": "A0.25_Ld5_phi0.9",
-     "area_m2": 0.25,
-     "L_over_d": 5.0,
-     "phi": 0.9,
-     "filter": "F4-FIL-NONE",
-     "compressor": "T6-A1-U2-D0-Ti6Al4V-H0.5",
-     "V_m3": 0.001,
-     "P_set_Pa": 0.01,
-     "mdot_delivered_min_kgps": 1.134189e-08,
-     "drag_intake_max_N": 0.0104758,
-     "P_compressor_el_max_W": 9.802569,
-     "m_compressor_max_kg": 10.90722,
-     "intake_wall_area_m2": 2.25,
-     "plenum_V_m3": 0.001,
-     "P_feasible_tpmc_min": 1.0
-    }
-   ],
-   "per_member_f7_extremes": {
-    "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|P0.01": {
-     "T_comp_max_K": [
-      314.894,
-      315.693
-     ],
-     "xO_flow": [
-      0.411034,
-      0.658188
-     ],
-     "kn_upper_min": 6.67097
-    },
-    "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.001|P0.01": {
-     "T_comp_max_K": [
-      315.67,
-      316.577
-     ],
-     "xO_flow": [
-      0.414999,
-      0.664262
-     ],
-     "kn_upper_min": 5.89123
-    },
-    "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01": {
-     "T_comp_max_K": [
-      315.74,
-      316.691
-     ],
-     "xO_flow": [
-      0.416525,
-      0.665508
-     ],
-     "kn_upper_min": 5.84884
-    },
-    "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.75|V0.001|P0.01": {
-     "T_comp_max_K": [
-      314.905,
-      315.709
-     ],
-     "xO_flow": [
-      0.411148,
-      0.65833
-     ],
-     "kn_upper_min": 6.65434
-    },
-    "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U1-D0-Ti6Al4V-H0.75|V0.001|P0.01": {
-     "T_comp_max_K": [
-      315.637,
-      316.072
-     ],
-     "xO_flow": [
-      0.428529,
-      0.659663
-     ],
-     "kn_upper_min": 5.81174
-    },
-    "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.001|P0.01": {
-     "T_comp_max_K": [
-      315.7,
-      316.693
-     ],
-     "xO_flow": [
-      0.413769,
-      0.662743
-     ],
-     "kn_upper_min": 5.69535
-    },
-    "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01": {
-     "T_comp_max_K": [
-      315.773,
-      316.816
-     ],
-     "xO_flow": [
-      0.415244,
-      0.663962
-     ],
-     "kn_upper_min": 5.65167
-    },
-    "A0.25_Ld5_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01": {
-     "T_comp_max_K": [
-      315.773,
-      317.129
-     ],
-     "xO_flow": [
-      0.415116,
-      0.67193
-     ],
-     "kn_upper_min": 5.29718
-    }
-   },
-   "n_members": 8,
-   "n_all_scenario_feasible": {
-    "0.01": 16
-   },
+   "members": [],
+   "per_member_f7_extremes": {},
+   "n_members": 0,
+   "n_all_scenario_feasible": {},
+   "n_all_scenario_feasible_total": 0,
+   "status_summary": "EMPTY_ROBUST_SET_NOT_EVALUATED: F8 robust Pareto set has 0 members (90 F7 nominal-context survivors, all-10-scenario feasible 0, at most 6 of 10 scenarios feasible); F7 feasible vectors 4647, Pareto members 1279; F1 envelope-feasible intakes per scenario 24 of 144 (intake-face drag binding at ECSS_ST_HIGH 180 km in 1200 of 1200 infeasible records); F4 all-state frontier 0.01296 mg/s single / 0.02644 mg/s scheduled, flow binding at ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184 in 9 of 13 cells; transient basis: 0 of 7 chains pass the orbit check (0 simulated), offered_to_h1 records 0",
+   "empty_set_rule": "an empty robust set yields EMPTY_ROBUST_SET_NOT_EVALUATED with the counts and binding reasons read from F1 / F4 / F7 / F8; every robust-set range is null (never fabricated, never a crash)",
    "source": {
     "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
     "pointer": "/robust/robust_pareto_by_P_set",
-    "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+    "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
    }
   },
   "nominal_pareto_union": {
-   "n_members": 843,
+   "n_members": 90,
    "value_sets": {
     "area_m2": [
-     0.25,
-     0.5
+     0.25
     ],
     "L_over_d": [
      3.0,
@@ -969,35 +736,12 @@
      0.9
     ],
     "compressor": [
-     "T2-A1-U1-D0-Ti6Al4V-H0.5",
-     "T2-A1-U1-D0-Ti6Al4V-H0.75",
-     "T2-A1-U2-D0-Ti6Al4V-H0.5",
-     "T3-A0-U2-D0-Ti6Al4V-H0.5",
-     "T3-A0-U2-D0-Ti6Al4V-H0.75",
-     "T3-A1-U1-D0-Ti6Al4V-H0.25",
-     "T3-A1-U1-D0-Ti6Al4V-H0.5",
-     "T3-A1-U1-D0-Ti6Al4V-H0.75",
-     "T3-A1-U2-D0-Ti6Al4V-H0.25",
-     "T3-A1-U2-D0-Ti6Al4V-H0.5",
-     "T3-A2-U2-D0-Ti6Al4V-H0.5",
-     "T3-A2-U2-D0-Ti6Al4V-H0.75",
      "T4-A0-U2-D0-Ti6Al4V-H0.75",
-     "T4-A1-U0-D0-Ti6Al4V-H0.75",
-     "T4-A1-U1-D0-Ti6Al4V-H0.25",
-     "T4-A1-U1-D0-Ti6Al4V-H0.5",
-     "T4-A1-U1-D0-Ti6Al4V-H0.75",
-     "T4-A1-U2-D0-Ti6Al4V-H0.25",
-     "T4-A1-U2-D0-Ti6Al4V-H0.5",
-     "T4-A2-U2-D0-Ti6Al4V-H0.5",
      "T4-A2-U2-D0-Ti6Al4V-H0.75",
      "T5-A0-U2-D0-Ti6Al4V-H0.75",
-     "T5-A1-U0-D0-Ti6Al4V-H0.75",
-     "T5-A1-U1-D0-Ti6Al4V-H0.25",
-     "T5-A1-U1-D0-Ti6Al4V-H0.5",
      "T5-A1-U1-D0-Ti6Al4V-H0.75",
      "T5-A1-U2-D0-Ti6Al4V-H0.25",
      "T5-A1-U2-D0-Ti6Al4V-H0.5",
-     "T5-A2-U2-D0-Ti6Al4V-H0.25",
      "T5-A2-U2-D0-Ti6Al4V-H0.75",
      "T6-A0-U2-D0-Ti6Al4V-H0.25",
      "T6-A0-U2-D0-Ti6Al4V-H0.5",
@@ -1008,7 +752,6 @@
      "T6-A1-U1-D0-Ti6Al4V-H0.75",
      "T6-A1-U2-D0-Ti6Al4V-H0.25",
      "T6-A1-U2-D0-Ti6Al4V-H0.5",
-     "T6-A2-U2-D0-Ti6Al4V-H0.25",
      "T6-A2-U2-D0-Ti6Al4V-H0.5",
      "T6-A2-U2-D0-Ti6Al4V-H0.75"
     ],
@@ -1016,17 +759,14 @@
      0.001
     ],
     "P_set_Pa": [
-     0.005,
      0.01,
-     0.02,
-     0.05,
-     0.1
+     0.02
     ]
    },
    "source": {
     "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
     "pointer": "/contexts",
-    "sha256": "7a282dd217cd876999c5c65b3a445449175bfa3362a3b59bed74ed120a9bb0c9"
+    "sha256": "423e74ded14e5d5df640a9cc5818c8d8478b194573270ec379b1eb9359c1c455"
    },
    "check": "equals the F8 survivor set (f8_robust_candidates_v1 rows)"
   },
@@ -1061,12 +801,10 @@
    "name": "intake frontal (ram) area A",
    "value": {
     "kind": "PARETO_SET",
-    "robust_set_values": [
-     0.25
-    ],
+    "robust_set_status": "EMPTY_ROBUST_SET_NOT_EVALUATED",
+    "robust_set_values": [],
     "nominal_pareto_union_values": [
-     0.25,
-     0.5
+     0.25
     ]
    },
    "units": "m^2",
@@ -1078,26 +816,26 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
      "pointer": "/contexts",
-     "sha256": "7a282dd217cd876999c5c65b3a445449175bfa3362a3b59bed74ed120a9bb0c9",
+     "sha256": "423e74ded14e5d5df640a9cc5818c8d8478b194573270ec379b1eb9359c1c455",
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/7/finding",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     },
     {
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
      "pointer": "/design_space/variables/area_m2",
-     "sha256": "85c79045047a6b09a10c8f199782b25defad2b5446386fa68496a16cf41c2ff2"
+     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
     }
    ],
-   "basis": "robust set = F8 members feasible in all 10 TBD surface scenarios and non-dominated on worst-case objectives (P_set 0.01 Pa); union = every F7 nominal-context Pareto member",
+   "basis": "robust set = F8 members feasible in all 10 TBD surface scenarios and non-dominated on worst-case objectives (robust P_set: none (robust set empty)); union = every F7 nominal-context Pareto member",
    "freeze_status": "OPEN",
    "evidence_to_advance": [
     "owner rule for a named representative of the Pareto set or for carrying the set to LOCK-1 (F9-OQ-01)",
@@ -1114,10 +852,8 @@
    "name": "channel aspect ratio L/d",
    "value": {
     "kind": "PARETO_SET",
-    "robust_set_values": [
-     3.0,
-     5.0
-    ],
+    "robust_set_status": "EMPTY_ROBUST_SET_NOT_EVALUATED",
+    "robust_set_values": [],
     "nominal_pareto_union_values": [
      3.0,
      5.0,
@@ -1133,18 +869,18 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
      "pointer": "/contexts",
-     "sha256": "7a282dd217cd876999c5c65b3a445449175bfa3362a3b59bed74ed120a9bb0c9",
+     "sha256": "423e74ded14e5d5df640a9cc5818c8d8478b194573270ec379b1eb9359c1c455",
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
      "pointer": "/design_space/variables/L_over_d",
-     "sha256": "85c79045047a6b09a10c8f199782b25defad2b5446386fa68496a16cf41c2ff2"
+     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
     }
    ],
    "basis": "F1 trade (F1-05): L/d trades collection efficiency and off-axis tolerance against passive compression",
@@ -1162,10 +898,8 @@
    "name": "open-area fraction phi",
    "value": {
     "kind": "PARETO_SET",
-    "robust_set_values": [
-     0.8,
-     0.9
-    ],
+    "robust_set_status": "EMPTY_ROBUST_SET_NOT_EVALUATED",
+    "robust_set_values": [],
     "nominal_pareto_union_values": [
      0.8,
      0.9
@@ -1179,18 +913,18 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
      "pointer": "/contexts",
-     "sha256": "7a282dd217cd876999c5c65b3a445449175bfa3362a3b59bed74ed120a9bb0c9",
+     "sha256": "423e74ded14e5d5df640a9cc5818c8d8478b194573270ec379b1eb9359c1c455",
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
      "pointer": "/design_space/variables/phi",
-     "sha256": "85c79045047a6b09a10c8f199782b25defad2b5446386fa68496a16cf41c2ff2"
+     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
     }
    ],
    "basis": "frozen intake-surface nodes 0.8 / 0.9",
@@ -1218,12 +952,12 @@
     {
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
      "pointer": "/findings/1/finding",
-     "sha256": "85c79045047a6b09a10c8f199782b25defad2b5446386fa68496a16cf41c2ff2"
+     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/design_vector/blocks/0/variables/1",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     }
    ],
    "basis": "F1-02; F7 collapses d",
@@ -1245,17 +979,17 @@
     {
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
      "pointer": "/items/1",
-     "sha256": "85c79045047a6b09a10c8f199782b25defad2b5446386fa68496a16cf41c2ff2"
+     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
     },
     {
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
      "pointer": "/items/4",
-     "sha256": "85c79045047a6b09a10c8f199782b25defad2b5446386fa68496a16cf41c2ff2"
+     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
     },
     {
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
      "pointer": "/open_owner_questions/1/question",
-     "sha256": "85c79045047a6b09a10c8f199782b25defad2b5446386fa68496a16cf41c2ff2"
+     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -1289,17 +1023,17 @@
     {
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
      "pointer": "/items/6",
-     "sha256": "85c79045047a6b09a10c8f199782b25defad2b5446386fa68496a16cf41c2ff2"
+     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
     },
     {
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
      "pointer": "/items/7",
-     "sha256": "85c79045047a6b09a10c8f199782b25defad2b5446386fa68496a16cf41c2ff2"
+     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/1/question",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     }
    ],
    "basis": "no measured accommodation for any Vyovrinda surface",
@@ -1322,17 +1056,17 @@
     {
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
      "pointer": "/items/8",
-     "sha256": "85c79045047a6b09a10c8f199782b25defad2b5446386fa68496a16cf41c2ff2"
+     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
     },
     {
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
      "pointer": "/open_owner_questions/2/question",
-     "sha256": "85c79045047a6b09a10c8f199782b25defad2b5446386fa68496a16cf41c2ff2"
+     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/9/finding",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -1369,7 +1103,7 @@
     {
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
      "pointer": "/items/5",
-     "sha256": "85c79045047a6b09a10c8f199782b25defad2b5446386fa68496a16cf41c2ff2"
+     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
     }
    ],
    "basis": "F1-P-06; UPSTREAM_ICD G-07",
@@ -1385,30 +1119,36 @@
    "name": "intake-face drag of the robust set (max over orbit states)",
    "value": {
     "kind": "PARETO_SET",
-    "robust_set_range_N": [
-     0.0104033,
-     0.0104758
-    ],
+    "robust_set_status": "EMPTY_ROBUST_SET_NOT_EVALUATED",
+    "robust_set_range_N": null,
+    "binding_drag_state_group_counts_F1_envelope": {
+     "ECSS_ST_HIGH 180 km": 1200
+    },
     "hard_constraint": "HC-09 intake-face drag <= 25 mN (necessary, not sufficient; below the limit on PARAMETRIC values for every nominal Pareto evaluation, so sensitivity only: never counted as met)"
    },
    "units": "N",
    "tolerance": "TPMC statistical SE ~1e-4 relative (F8-02); the TBD surface scenario dominates",
    "evidence_class": "model-derived",
-   "evidence_note": "HC-09 MET_ON_PARAMETRIC_VALUES_SENSITIVITY_ONLY_NOT_MET in hall_icp_neutralizer: 2925 evaluations (F7; a parametric value is sensitivity information only and never counts as a met hard constraint)",
+   "evidence_note": "HC-09 MET_ON_PARAMETRIC_VALUES_SENSITIVITY_ONLY_NOT_MET in hall_icp_neutralizer: 231 evaluations (F7; a parametric value is sensitivity information only and never counts as a met hard constraint)",
    "value_label": "PARETO_SET",
    "source": [
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/hard_constraints/8",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
+    },
+    {
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+     "pointer": "/infeasible_reasons/envelope",
+     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
     }
    ],
-   "basis": "F8 worst case over the 10 scenarios; spacecraft body / array drag excluded (TBD, OQ-F78-04)",
+   "basis": "F8 worst case over the 10 scenarios; spacecraft body / array drag excluded (TBD, OQ-F78-04); binding (scenario, altitude) of the F1 envelope drag exceedances read from F1 infeasible_reasons",
    "freeze_status": "OPEN",
    "evidence_to_advance": [
     "spacecraft frontal geometry / D_spacecraft (OQ-F78-04)",
@@ -1428,7 +1168,7 @@
     {
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
      "pointer": "/findings/9/finding",
-     "sha256": "85c79045047a6b09a10c8f199782b25defad2b5446386fa68496a16cf41c2ff2"
+     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
     },
     {
      "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -1680,7 +1420,8 @@
    "name": "compressor topology",
    "value": {
     "kind": "PARETO_SET",
-    "robust_set": "turbo-molecular rows only (N_drag = 0)",
+    "robust_set_status": "EMPTY_ROBUST_SET_NOT_EVALUATED",
+    "robust_set": null,
     "nominal_pareto_union_all_turbo_only": true,
     "drag_stage_designs_feasible": 0
    },
@@ -1698,13 +1439,13 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
      "pointer": "/contexts",
-     "sha256": "7a282dd217cd876999c5c65b3a445449175bfa3362a3b59bed74ed120a9bb0c9",
+     "sha256": "423e74ded14e5d5df640a9cc5818c8d8478b194573270ec379b1eb9359c1c455",
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     }
    ],
    "basis": "F3 bounded design search; F7 / F8 Pareto",
@@ -1722,83 +1463,15 @@
    "name": "compressor design set (F3 design ids)",
    "value": {
     "kind": "PARETO_SET",
-    "robust_set": {
-     "T6-A0-U2-D0-Ti6Al4V-H0.75": {
-      "N_turbo": 6,
-      "A_turbo_m2": 0.1128299365,
-      "R_turbo_m": 0.2865155563,
-      "u_tip_turbo_mps": 290.0115167,
-      "rpm": 9665.813689,
-      "N_drag": 0,
-      "rotor_material": "Ti6Al4V"
-     },
-     "T6-A1-U1-D0-Ti6Al4V-H0.75": {
-      "N_turbo": 6,
-      "A_turbo_m2": 0.1963495408,
-      "R_turbo_m": 0.377964473,
-      "u_tip_turbo_mps": 258.3213882,
-      "rpm": 6526.506396,
-      "N_drag": 0,
-      "rotor_material": "Ti6Al4V"
-     },
-     "T6-A1-U2-D0-Ti6Al4V-H0.25": {
-      "N_turbo": 6,
-      "A_turbo_m2": 0.1963495408,
-      "R_turbo_m": 0.2581988897,
-      "u_tip_turbo_mps": 281.1155735,
-      "rpm": 10396.85333,
-      "N_drag": 0,
-      "rotor_material": "Ti6Al4V"
-     },
-     "T6-A1-U2-D0-Ti6Al4V-H0.5": {
-      "N_turbo": 6,
-      "A_turbo_m2": 0.1963495408,
-      "R_turbo_m": 0.2886751346,
-      "u_tip_turbo_mps": 290.6899682,
-      "rpm": 9615.946745,
-      "N_drag": 0,
-      "rotor_material": "Ti6Al4V"
-     },
-     "T6-A2-U2-D0-Ti6Al4V-H0.75": {
-      "N_turbo": 6,
-      "A_turbo_m2": 0.1137287437,
-      "R_turbo_m": 0.287654489,
-      "u_tip_turbo_mps": 290.369323,
-      "rpm": 9639.421215,
-      "N_drag": 0,
-      "rotor_material": "Ti6Al4V"
-     }
-    },
+    "robust_set_status": "EMPTY_ROBUST_SET_NOT_EVALUATED",
+    "robust_set": {},
     "nominal_pareto_union_ids": [
-     "T2-A1-U1-D0-Ti6Al4V-H0.5",
-     "T2-A1-U1-D0-Ti6Al4V-H0.75",
-     "T2-A1-U2-D0-Ti6Al4V-H0.5",
-     "T3-A0-U2-D0-Ti6Al4V-H0.5",
-     "T3-A0-U2-D0-Ti6Al4V-H0.75",
-     "T3-A1-U1-D0-Ti6Al4V-H0.25",
-     "T3-A1-U1-D0-Ti6Al4V-H0.5",
-     "T3-A1-U1-D0-Ti6Al4V-H0.75",
-     "T3-A1-U2-D0-Ti6Al4V-H0.25",
-     "T3-A1-U2-D0-Ti6Al4V-H0.5",
-     "T3-A2-U2-D0-Ti6Al4V-H0.5",
-     "T3-A2-U2-D0-Ti6Al4V-H0.75",
      "T4-A0-U2-D0-Ti6Al4V-H0.75",
-     "T4-A1-U0-D0-Ti6Al4V-H0.75",
-     "T4-A1-U1-D0-Ti6Al4V-H0.25",
-     "T4-A1-U1-D0-Ti6Al4V-H0.5",
-     "T4-A1-U1-D0-Ti6Al4V-H0.75",
-     "T4-A1-U2-D0-Ti6Al4V-H0.25",
-     "T4-A1-U2-D0-Ti6Al4V-H0.5",
-     "T4-A2-U2-D0-Ti6Al4V-H0.5",
      "T4-A2-U2-D0-Ti6Al4V-H0.75",
      "T5-A0-U2-D0-Ti6Al4V-H0.75",
-     "T5-A1-U0-D0-Ti6Al4V-H0.75",
-     "T5-A1-U1-D0-Ti6Al4V-H0.25",
-     "T5-A1-U1-D0-Ti6Al4V-H0.5",
      "T5-A1-U1-D0-Ti6Al4V-H0.75",
      "T5-A1-U2-D0-Ti6Al4V-H0.25",
      "T5-A1-U2-D0-Ti6Al4V-H0.5",
-     "T5-A2-U2-D0-Ti6Al4V-H0.25",
      "T5-A2-U2-D0-Ti6Al4V-H0.75",
      "T6-A0-U2-D0-Ti6Al4V-H0.25",
      "T6-A0-U2-D0-Ti6Al4V-H0.5",
@@ -1809,7 +1482,6 @@
      "T6-A1-U1-D0-Ti6Al4V-H0.75",
      "T6-A1-U2-D0-Ti6Al4V-H0.25",
      "T6-A1-U2-D0-Ti6Al4V-H0.5",
-     "T6-A2-U2-D0-Ti6Al4V-H0.25",
      "T6-A2-U2-D0-Ti6Al4V-H0.5",
      "T6-A2-U2-D0-Ti6Al4V-H0.75"
     ]
@@ -1822,12 +1494,12 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
      "pointer": "/contexts",
-     "sha256": "7a282dd217cd876999c5c65b3a445449175bfa3362a3b59bed74ed120a9bb0c9",
+     "sha256": "423e74ded14e5d5df640a9cc5818c8d8478b194573270ec379b1eb9359c1c455",
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
@@ -1926,13 +1598,11 @@
    "name": "compressor electrical power (robust set, max over states)",
    "value": {
     "kind": "PARETO_SET",
-    "robust_set_range_W": [
-     9.22923,
-     9.80257
-    ],
+    "robust_set_status": "EMPTY_ROBUST_SET_NOT_EVALUATED",
+    "robust_set_range_W": null,
     "nominal_pareto_range_W": [
-     8.439032,
-     14.69768
+     8.812819,
+     11.14411
     ]
    },
    "units": "W",
@@ -1944,7 +1614,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
@@ -1954,7 +1624,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/5",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     }
    ],
    "basis": "DragCompressor model through F3 / F4 / F7",
@@ -1971,12 +1641,10 @@
    "name": "compressor mass (robust set)",
    "value": {
     "kind": "PARETO_SET",
-    "robust_set_range_kg": [
-     7.48849,
-     10.9072
-    ],
+    "robust_set_status": "EMPTY_ROBUST_SET_NOT_EVALUATED",
+    "robust_set_range_kg": null,
     "nominal_pareto_range_kg": [
-     4.189245,
+     5.288994,
      10.90722
     ],
     "AL-02_allocation_kg": 5.5
@@ -1989,7 +1657,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
@@ -1999,7 +1667,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/6",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     },
     {
      "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -2050,10 +1718,8 @@
    "name": "compressor lumped temperature (robust set)",
    "value": {
     "kind": "PARETO_SET",
-    "robust_set_range_K": [
-     314.894,
-     317.129
-    ]
+    "robust_set_status": "EMPTY_ROBUST_SET_NOT_EVALUATED",
+    "robust_set_range_K": null
    },
    "units": "K",
    "tolerance": "n/a (parametric-sensitivity range; no design tolerance exists)",
@@ -2064,7 +1730,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
      "pointer": "/contexts",
-     "sha256": "7a282dd217cd876999c5c65b3a445449175bfa3362a3b59bed74ed120a9bb0c9",
+     "sha256": "423e74ded14e5d5df640a9cc5818c8d8478b194573270ec379b1eb9359c1c455",
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
@@ -2086,10 +1752,8 @@
    "name": "delivered-flow atomic-O mole fraction (robust set)",
    "value": {
     "kind": "PARETO_SET",
-    "robust_set_range": [
-     0.411034,
-     0.67193
-    ]
+    "robust_set_status": "EMPTY_ROBUST_SET_NOT_EVALUATED",
+    "robust_set_range": null
    },
    "units": "-",
    "tolerance": "n/a (parametric-sensitivity range; no design tolerance exists)",
@@ -2099,7 +1763,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
      "pointer": "/contexts",
-     "sha256": "7a282dd217cd876999c5c65b3a445449175bfa3362a3b59bed74ed120a9bb0c9",
+     "sha256": "423e74ded14e5d5df640a9cc5818c8d8478b194573270ec379b1eb9359c1c455",
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
@@ -2122,9 +1786,8 @@
    "name": "plenum volume V",
    "value": {
     "kind": "PARETO_SET",
-    "robust_set_values": [
-     0.001
-    ],
+    "robust_set_status": "EMPTY_ROBUST_SET_NOT_EVALUATED",
+    "robust_set_values": [],
     "nominal_pareto_union_values": [
      0.001
     ]
@@ -2137,18 +1800,18 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
      "pointer": "/contexts",
-     "sha256": "7a282dd217cd876999c5c65b3a445449175bfa3362a3b59bed74ed120a9bb0c9",
+     "sha256": "423e74ded14e5d5df640a9cc5818c8d8478b194573270ec379b1eb9359c1c455",
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/search_variables/0",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     }
    ],
    "basis": "volume trades the mass proxy against shaft-frequency ripple attenuation; the plenum is not an orbit-scale buffer at <= 0.1 Pa (F4-05)",
@@ -2166,15 +1829,11 @@
    "name": "plenum set pressure P_set",
    "value": {
     "kind": "PARETO_SET",
-    "robust_set_values": [
-     0.01
-    ],
+    "robust_set_status": "EMPTY_ROBUST_SET_NOT_EVALUATED",
+    "robust_set_values": [],
     "nominal_pareto_union_values": [
-     0.005,
      0.01,
-     0.02,
-     0.05,
-     0.1
+     0.02
     ]
    },
    "units": "Pa",
@@ -2185,21 +1844,21 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
      "pointer": "/contexts",
-     "sha256": "7a282dd217cd876999c5c65b3a445449175bfa3362a3b59bed74ed120a9bb0c9",
+     "sha256": "423e74ded14e5d5df640a9cc5818c8d8478b194573270ec379b1eb9359c1c455",
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/2/finding",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     }
    ],
-   "basis": "robust members exist only at P_set 0.01 Pa; all-state-feasible contexts exist for 0.005-0.1 Pa",
+   "basis": "robust-member P_set: none (robust set empty); F7 set pressures with any all-state-feasible vector: 0.01, 0.02 Pa (read from F7 upstream_pareto_summary)",
    "freeze_status": "OPEN",
    "evidence_to_advance": [
     "H-1 required inlet pressure (H1F-IN-04)",
@@ -2220,7 +1879,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -2253,7 +1912,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/0",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     }
    ],
    "basis": "F4-P-01 = F1 T_wall",
@@ -2298,12 +1957,12 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/5",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/10/finding",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     }
    ],
    "basis": "F4-P-06; owner GP-D03",
@@ -2311,7 +1970,7 @@
    "evidence_to_advance": [
     "coupon / witness evidence of the selected lining (GP-D03)"
    ],
-   "note": "robust members lose feasibility in 2-5 of the 10 surface scenarios under WALL-TI64-DB (F8-04)"
+   "note": "F8-04 (read from F7/F8): wall-recombination case WALL-TI64-DB: robust members feasible in n of 10 scenarios {} (EMPTY_ROBUST_SET_NOT_EVALUATED: no robust member exists to evaluate under WALL-TI64-DB)"
   },
   {
    "id": "AFC-UP-PL-07",
@@ -2326,7 +1985,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/4",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     }
    ],
    "basis": "F4-P-05",
@@ -2342,12 +2001,11 @@
    "name": "delivered total flow offered by the upstream chain (min over orbit states)",
    "value": {
     "kind": "PARETO_SET",
-    "robust_set_worst_case_range_mg_s": [
-     0.00293326,
-     0.0113419
-    ],
-    "all_state_single_setpoint_frontier_mg_s": 0.09832423,
-    "all_state_scheduled_frontier_mg_s": 0.119186,
+    "robust_set_status": "EMPTY_ROBUST_SET_NOT_EVALUATED",
+    "robust_set_worst_case_range_mg_s": null,
+    "all_state_single_setpoint_frontier_mg_s": 0.012960718,
+    "all_state_scheduled_frontier_mg_s": 0.02644028,
+    "f7_nominal_context_all_state_frontier_mg_s": 0.01296072,
     "owner_ground_characterization_range_mg_s": [
      0.38,
      3.2
@@ -2362,22 +2020,22 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/1/finding",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/findings/0/finding",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
-     "pointer": "/findings/6/finding",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "pointer": "/steady/feasibility_regions",
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     },
     {
      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
@@ -2387,7 +2045,7 @@
      "note": "owner row 73"
     }
    ],
-   "basis": "F4 / F7 frontiers under parametric inputs; the owner range (row 73) is characterization context, not a flight requirement",
+   "basis": "F4 / F7 frontiers under parametric inputs (values read from F4 steady.feasibility_regions and F7 upstream_pareto_summary); the owner range (row 73) is characterization context, not a flight requirement",
    "freeze_status": "OPEN",
    "evidence_to_advance": [
     "owner-defined delivered-flow requirement at the H-1 inlet for the gate UG-FLOW (F9-OQ-02)",
@@ -2409,7 +2067,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/15",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     },
     {
      "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -2447,12 +2105,12 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/search_variables/1",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/pareto",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     },
     {
      "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
@@ -2472,7 +2130,7 @@
    "section": "UPSTREAM",
    "subsection": "valves_feed",
    "name": "metering-valve bandwidth",
-   "value": "TBD - parametric 1 Hz; sensitivity 0.1-10 Hz changed no status (F4-09)",
+   "value": "TBD - parametric 1 Hz; sensitivity cases 0.1 / 1 / 10 Hz: not run - no F4 transient Pareto member exists to re-run (F4-09)",
    "units": "Hz",
    "tolerance": "TBD",
    "evidence_class": null,
@@ -2480,12 +2138,17 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/7",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
+    },
+    {
+     "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
+     "pointer": "/sensitivity_valve_bandwidth",
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/findings/8/finding",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     }
    ],
    "basis": "F4-P-08",
@@ -2507,7 +2170,17 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/8",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
+    },
+    {
+     "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
+     "pointer": "/findings/7/finding",
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
+    },
+    {
+     "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
+     "pointer": "/transient/contexts",
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     }
    ],
    "basis": "F4-P-09",
@@ -2515,7 +2188,7 @@
    "evidence_to_advance": [
     "metering-valve sizing"
    ],
-   "note": "larger orbit amplitudes fail mostly by valve saturation at authority 3 (F4-08)"
+   "note": "orbit-check failure reasons on the transient basis (read from F4 transient.contexts): {\"amplitude 0.1: GAEDE_CHARACTERISTIC_OUTSIDE_K_1_TO_K0\": 4, \"amplitude 0.1: VALVE_SATURATED_SETPOINT_NOT_MAINTAINED\": 7, \"amplitude 0.2: GAEDE_CHARACTERISTIC_OUTSIDE_K_1_TO_K0\": 4, \"amplitude 0.2: VALVE_SATURATED_SETPOINT_NOT_MAINTAINED\": 7} (F4-08)"
   },
   {
    "id": "AFC-UP-VF-04",
@@ -2534,17 +2207,17 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/steady/conductance_demand",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/findings/2/finding",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/1",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     }
    ],
    "basis": "F4-03: the H2-3 analog IF-A5 pressure 5.74-1216 Pa lies above the compressor domain cap",
@@ -2572,7 +2245,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/9",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     }
    ],
    "basis": "F5 IFD-F4-01..05; F4-P-10",
@@ -2589,21 +2262,18 @@
    "name": "feed-state records offered to H-1 (mdot_s, P, T, x_s, transient quality)",
    "value": {
     "kind": "PARETO_SET",
-    "n_records": 463,
-    "P_range_Pa": [
-     0.005,
-     0.05
-    ],
-    "mdot_total_range_mg_s_design_state": [
-     0.0702635,
-     0.467175
-    ],
-    "T_K": [
-     350.0
-    ],
-    "design_state": [
-     "h200_f150"
-    ]
+    "status": "EMPTY_NO_OFFERED_FEED_RECORDS_NOT_EVALUATED",
+    "n_records": 0,
+    "P_range_Pa": null,
+    "mdot_total_range_mg_s_design_state": null,
+    "transient_basis_chains_orbit_checked": 7,
+    "transient_simulated_chains": 0,
+    "orbit_check_failure_reason_counts": {
+     "amplitude 0.1: GAEDE_CHARACTERISTIC_OUTSIDE_K_1_TO_K0": 4,
+     "amplitude 0.1: VALVE_SATURATED_SETPOINT_NOT_MAINTAINED": 7,
+     "amplitude 0.2: GAEDE_CHARACTERISTIC_OUTSIDE_K_1_TO_K0": 4,
+     "amplitude 0.2: VALVE_SATURATED_SETPOINT_NOT_MAINTAINED": 7
+    }
    },
    "units": "mg/s; Pa; K; -",
    "tolerance": "n/a (parametric-sensitivity range; no design tolerance exists)",
@@ -2613,10 +2283,20 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/offered_to_h1",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
+    },
+    {
+     "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
+     "pointer": "/transient/contexts",
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
+    },
+    {
+     "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
+     "pointer": "/findings/4/finding",
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     }
    ],
-   "basis": "F4 transient Pareto members at the design state h200_f150 (single-state values; the all-state frontier is AFC-UP-PL-08)",
+   "basis": "F4 transient Pareto members at the design state h200_f150 (single-state values; the all-state frontier is AFC-UP-PL-08); no chain passes the orbit check on the transient basis, so no record is offered (never a fabricated range)",
    "freeze_status": "OPEN",
    "evidence_to_advance": [
     "F4 MODE_STRICT blockers closed (F4 strict_mode)",
@@ -6822,7 +6502,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/hard_constraints/4",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     }
    ],
    "basis": "I_e,cap = I_on - I_off (discharge OFF, signed; A9.4 P1Q-10 / A9.5 P1Q-16)",
@@ -7425,8 +7105,8 @@
    "value": {
     "kind": "PARETO_SET",
     "nominal_pareto_range_W": [
-     8.439032,
-     14.69768
+     8.812819,
+     11.14411
     ],
     "official_ledger": "TBD"
    },
@@ -7438,7 +7118,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/system_evaluation/parametric_P_bus_lower_bound_W_range",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     },
     {
      "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
@@ -8130,7 +7810,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/0",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     }
    ],
    "basis": "UPSTREAM_ICD G-07",
@@ -8300,12 +7980,12 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/metric_definitions",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -9660,7 +9340,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/T",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     }
    ],
    "evidence_plan_steps": [
@@ -9755,7 +9435,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/I_e_margin",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     }
    ],
    "evidence_plan_steps": [
@@ -9803,7 +9483,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/Q_reject",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     }
    ],
    "evidence_plan_steps": [
@@ -10019,7 +9699,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/P_bus",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     }
    ],
    "evidence_plan_steps": [
@@ -10063,7 +9743,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/m_wet",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     }
    ],
    "evidence_plan_steps": [
@@ -10114,7 +9794,7 @@
      3.2
     ],
     "characterization_coverage_role": "CHARACTERIZATION_COVERAGE_ONLY_NOT_A_PASS_FAIL_REQUIREMENT",
-    "engineering_warning": "the parametric upstream frontier (0.09832423 mg/s all-state, single setpoint) is low relative to the ground-characterization envelope: an engineering warning, not a demonstrated requirement failure (A9.13 owner_statements.flight_flow_requirement)",
+    "engineering_warning": "the parametric upstream frontier (0.01296072 mg/s all-state, single setpoint; read from the current F7 outputs by the F9 builder) is low relative to the ground-characterization envelope: an engineering warning, not a demonstrated requirement failure (A9.13 owner_statements.flight_flow_requirement)",
     "evaluator": "a9_16_f9.ag12_feed_state_sufficiency (fail closed; refuses a fixed mg/s gate)",
     "rfp_citation_status": "REGISTERED_CLAUSE",
     "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
@@ -10146,7 +9826,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/strict_mode",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
@@ -10156,7 +9836,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/1",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -10216,12 +9896,12 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/D_spacecraft",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/hard_constraints/7",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -10785,12 +10465,12 @@
     {
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
      "pointer": "/findings/0",
-     "sha256": "85c79045047a6b09a10c8f199782b25defad2b5446386fa68496a16cf41c2ff2"
+     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
     },
     {
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
      "pointer": "/species_recombination_bias",
-     "sha256": "85c79045047a6b09a10c8f199782b25defad2b5446386fa68496a16cf41c2ff2"
+     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
     },
     {
      "path": "abep_sim/intake_tpmc.py",
@@ -10902,7 +10582,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/checks/size_orifice_note",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     },
     {
      "path": "docs/interfaces/UPSTREAM_ICD.md",
@@ -12767,7 +12447,7 @@
     "source": {
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "85c79045047a6b09a10c8f199782b25defad2b5446386fa68496a16cf41c2ff2"
+     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
     }
    },
    {
@@ -12777,7 +12457,7 @@
     "source": {
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
      "pointer": "/open_owner_questions/1",
-     "sha256": "85c79045047a6b09a10c8f199782b25defad2b5446386fa68496a16cf41c2ff2"
+     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
     }
    },
    {
@@ -12787,7 +12467,7 @@
     "source": {
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "85c79045047a6b09a10c8f199782b25defad2b5446386fa68496a16cf41c2ff2"
+     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
     }
    },
    {
@@ -12797,7 +12477,7 @@
     "source": {
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
      "pointer": "/open_owner_questions/3",
-     "sha256": "85c79045047a6b09a10c8f199782b25defad2b5446386fa68496a16cf41c2ff2"
+     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
     }
    },
    {
@@ -12887,7 +12567,7 @@
     "source": {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     }
    },
    {
@@ -12897,7 +12577,7 @@
     "source": {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/1",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     }
    },
    {
@@ -12907,7 +12587,7 @@
     "source": {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     }
    },
    {
@@ -12917,7 +12597,7 @@
     "source": {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/3",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     }
    },
    {
@@ -12927,7 +12607,7 @@
     "source": {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/4",
-     "sha256": "bccbbb3ff05a92baf536b6f0241d3fec6595ba64364b61751a13d90be14dc17d"
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
     }
    },
    {
@@ -13027,7 +12707,7 @@
     "source": {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     }
    },
    {
@@ -13037,7 +12717,7 @@
     "source": {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/1",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     }
    },
    {
@@ -13047,7 +12727,7 @@
     "source": {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     }
    },
    {
@@ -13057,7 +12737,7 @@
     "source": {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/3",
-     "sha256": "70f24d4cfd79f87433458e6c8e11d81e409b9c1bba722eaec171ff6859c3da01"
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
     }
    },
    {
@@ -13269,7 +12949,15 @@
    "status_when_raised": "TBD_OWNER",
    "decision": "A9.13 F9-OQ-01 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)",
    "decision_code": "CARRY_SET_DEFER_REPRESENTATIVE",
-   "answer_verbatim": "20. S6.20 — F9-OQ-01 — CARRY THE ROBUST PARETO SET TO LOCK-1; DO NOT SELECT ONE REPRESENTATIVE YET.\n\nCarry a versioned robust Pareto set rather than a single upstream representative.\nThe currently reported nine-member set shall not be frozen verbatim because it must be regenerated after:\n\n* S2 production-model corrections;\n* intake-surface v2;\n* filter implementation/evidence;\n* the compressor search is expanded beyond the currently inherited F3-front subset;\n* T-1/T-2 data;\n* DI-1.3 surface evidence.\n\nOnly after those closures may an explicit representative-selection rule be proposed.\nUntil then downstream studies that require a single point shall either evaluate all remaining Pareto members or explicitly label a selected member as an engineering reference, not the frozen architecture.\nDecision: carry the set; defer representative selection."
+   "answer_verbatim": "20. S6.20 — F9-OQ-01 — CARRY THE ROBUST PARETO SET TO LOCK-1; DO NOT SELECT ONE REPRESENTATIVE YET.\n\nCarry a versioned robust Pareto set rather than a single upstream representative.\nThe currently reported nine-member set shall not be frozen verbatim because it must be regenerated after:\n\n* S2 production-model corrections;\n* intake-surface v2;\n* filter implementation/evidence;\n* the compressor search is expanded beyond the currently inherited F3-front subset;\n* T-1/T-2 data;\n* DI-1.3 surface evidence.\n\nOnly after those closures may an explicit representative-selection rule be proposed.\nUntil then downstream studies that require a single point shall either evaluate all remaining Pareto members or explicitly label a selected member as an engineering reference, not the frozen architecture.\nDecision: carry the set; defer representative selection.",
+   "as_raised_numbers": "upstream numbers in the question text are the values when the question was raised (before the design-state set v2 re-evaluation of F1-F8); history, not current",
+   "current_upstream_values": {
+    "robust_set_status": "EMPTY_ROBUST_SET_NOT_EVALUATED",
+    "robust_set_members": 0,
+    "robust_P_set_Pa": [],
+    "all_state_frontier_mg_s_F7": 0.01296072,
+    "all_state_scheduled_frontier_mg_s_F4": 0.02644028
+   }
   },
   {
    "id": "F9-OQ-02",
@@ -13282,6 +12970,14 @@
    "decision_code": "PERFORMANCE_DERIVED_FEED_STATE",
    "answer_verbatim": "21. S6.21 — F9-OQ-02 — DO NOT SET A FIXED FLIGHT MASS-FLOW REQUIREMENT; DERIVE IT FROM THE MEASURED H-1 THRUST MAP AND THE RFP DRAG-COMPENSATION REQUIREMENT.\n\nThere is no basis for setting `0.38 mg/s` as the flight requirement. Likewise, the existing approximately `1.3 mg/s` sizing value shall not become a flight requirement merely because it appears in an earlier design basis.\nThe official RFP instead defines the functional orbit and thrust requirement: 180–230 km, intake specification dependent on air density/solar activity, and 12–25 mN thrust for expected drag compensation. RFP(1)\nRedefine AG-12 as a feed-state sufficiency gate, not a fixed-number mass-flow gate.\nFor each required orbit/environment state:\n\n1. determine the required drag-compensation thrust from the registered spacecraft drag basis;\n2. use the measured/validated H-1 map for the actual atmospheric composition to determine the minimum feed state required to produce that thrust within the admitted power/thermal envelope;\n3. require the upstream chain to deliver at least that feed state.\n\nThe feed-state record shall include at least:\n\n* mass flow;\n* pressure;\n* temperature;\n* species composition;\n* applicable transient/ripple quality.\n\nUntil the validated H-1 thrust-versus-feed map exists, AG-12 remains `NOT_EVALUATED`.\nThe 0.38–3.2 mg/s ground range remains useful for characterization coverage but not as an architecture PASS/FAIL requirement.\nDecision: performance-derived, state-specific feed requirement; no arbitrary fixed mg/s flight gate.",
    "rfp_citation_status": "REGISTERED_CLAUSE",
+   "as_raised_numbers": "upstream numbers in the question text are the values when the question was raised (before the design-state set v2 re-evaluation of F1-F8); history, not current",
+   "current_upstream_values": {
+    "robust_set_status": "EMPTY_ROBUST_SET_NOT_EVALUATED",
+    "robust_set_members": 0,
+    "robust_P_set_Pa": [],
+    "all_state_frontier_mg_s_F7": 0.01296072,
+    "all_state_scheduled_frontier_mg_s_F4": 0.02644028
+   },
    "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
    "rfp_clause_ids": [
     "RFP-P18-04",
@@ -13329,6 +13025,472 @@
    "decision_code": "YES_ALL_FIVE",
    "answer_verbatim": "5. S2.5 — F9-OQ-04 — AUTHORISE ALL FIVE CONTROLLED FIXES.\nMCC-02 — Gaede clipping:\nFix. Preserve/report the unclipped Gaede characteristic. If the physical relation produces `K < 1`, do not silently convert that state into a valid `K = 1` compressor result. Flag it as outside the admitted model/stage-capacity domain and exclude it from valid design evidence. A clipped value may be retained only as a labelled diagnostic quantity.\nMCC-03 — rotor allowable fallback:\nFix together with S2.3. Remove the uncited generic material-DB yield as an implicit production acceptance criterion. Rotor qualification must use the registered strength-basis record. Missing structural evidence gives `NOT_EVALUATED`, not an assumed PASS.\nMCC-05 — `max_hits < 1` non-termination:\nFix. Validate the input before particle tracing. `max_hits` and related hit-budget parameters shall have valid positive integer domains. Invalid input shall be rejected explicitly; the routine must never hang or depend on accidental loop behaviour.\nMCC-06 — unknown scattering-model fallback:\nFix. An unrecognised wall-scattering model shall raise/refuse an invalid configuration. It shall never silently fall back to Maxwell. Maxwell and CLL must be explicitly selected and recorded.\nMCC-07 — invalid CLL accommodation coefficients:\nFix. Require finite CLL accommodation inputs inside their admitted physical interval [0,1] before simulation. NaN, infinity or out-of-range coefficients shall be rejected explicitly before entering the kernel; they shall not produce NaNs downstream or be silently clipped.\nFor all five changes:\n   * add focused unit/regression tests;\n   * run the complete golden suite;\n   * document each change separately in `docs/HISTORY.md`;\n   * regenerate downstream artifacts where results genuinely change;\n   * preserve old benchmark/provenance records;\n   * never retune unrelated parameters merely to reproduce the previous golden values.\nDecision: YES — all five controlled model fixes are authorised.",
    "application_status": "PENDING_STEP_2_MODEL_CHANGE"
+  }
+ ],
+ "design_findings_for_owner": [
+  {
+   "id": "F9-DF-01",
+   "status": "EMPTY_ROBUST_SET_NOT_EVALUATED",
+   "finding": "under the full registered design-state envelope (atmosphere_msis21_orbit_v1_design_states_v2, sha256 60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049, 196 required states, BROAD_ENVELOPE_ALL_INCLINATIONS_ALL_LTAN_NOT_MISSION_ICD) no robust upstream design survives. EMPTY_ROBUST_SET_NOT_EVALUATED: F8 robust Pareto set has 0 members (90 F7 nominal-context survivors, all-10-scenario feasible 0, at most 6 of 10 scenarios feasible); F7 feasible vectors 4647, Pareto members 1279; F1 envelope-feasible intakes per scenario 24 of 144 (intake-face drag binding at ECSS_ST_HIGH 180 km in 1200 of 1200 infeasible records); F4 all-state frontier 0.01296 mg/s single / 0.02644 mg/s scheduled, flow binding at ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184 in 9 of 13 cells; transient basis: 0 of 7 chains pass the orbit check (0 simulated), offered_to_h1 records 0. Binding reasons read from the lane outputs: intake-face drag at the dense ECSS_ST_HIGH 180 km states (F1 C-DRAG-RFP, 1200 records); all-state delivered flow at ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184 (F4, 9 of 13 cells); transient-basis orbit check failures {\"amplitude 0.1: GAEDE_CHARACTERISTIC_OUTSIDE_K_1_TO_K0\": 4, \"amplitude 0.1: VALVE_SATURATED_SETPOINT_NOT_MAINTAINED\": 7, \"amplitude 0.2: GAEDE_CHARACTERISTIC_OUTSIDE_K_1_TO_K0\": 4, \"amplitude 0.2: VALVE_SATURATED_SETPOINT_NOT_MAINTAINED\": 7} (F4). This is a design finding for the owner, not a demonstrated requirement failure and not a proposal to relax any requirement (A9.13 S6.13 / OQ-F4-04 (NO_REQUIREMENT_RELAXATION): no requirement relaxation: the flight feed requirement is performance-derived (rank 1, S6.21) and is PENDING_EVIDENCE until a measured / validated H-1 thrust-versus-feed map exists; it is never lowered to a deliverable frontier, a state subset or a characterization value). Owner flow-gap order (as recorded in F7): 1 PERFORMANCE_DERIVED_H1_FEED_REQUIREMENT (A9.13 S6.21 / F9-OQ-02; PENDING_EVIDENCE); 2 CAPTURE_COLLECTION (A9.13 S6.13; OPEN); 3 COMPRESSOR_DOMAIN_PUMPING_FEED_EFFICIENCY (A9.13 S6.13; OPEN); 4 SCHEDULED_SETPOINT (A9.13 S6.10 / OQ-F4-01; OPEN). Dense-state-only operation: SENSITIVITY_ONLY_NOT_BASELINE.",
+   "for": "owner",
+   "requirement_relaxation_proposed": false,
+   "flow_gap_owner_order": {
+    "authority": "A9.13 S6.13 / OQ-F4-04 (NO_REQUIREMENT_RELAXATION)",
+    "decision_record": {
+     "json": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+     "json_sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+     "id": "S6.13 / OQ-F4-04"
+    },
+    "order": [
+     {
+      "rank": 1,
+      "lever": "PERFORMANCE_DERIVED_H1_FEED_REQUIREMENT",
+      "authority": "A9.13 S6.21 / F9-OQ-02",
+      "what": "derive the minimum feed state from the required drag-compensation thrust at every required state through the measured / validated H-1 thrust-versus-feed map (AG-12)",
+      "status": "PENDING_EVIDENCE",
+      "needs": "measured / validated H-1 thrust-versus-feed map (none exists)"
+     },
+     {
+      "rank": 2,
+      "lever": "CAPTURE_COLLECTION",
+      "authority": "A9.13 S6.13",
+      "what": "raise capture / collection within the drag (S6.15 statewise), mass and pointing constraints",
+      "status": "OPEN"
+     },
+     {
+      "rank": 3,
+      "lever": "COMPRESSOR_DOMAIN_PUMPING_FEED_EFFICIENCY",
+      "authority": "A9.13 S6.13",
+      "what": "compressor domain, pumping and feed efficiency",
+      "status": "OPEN"
+     },
+     {
+      "rank": 4,
+      "lever": "SCHEDULED_SETPOINT",
+      "authority": "A9.13 S6.10 / OQ-F4-01",
+      "what": "orbit-state-scheduled plenum setpoint (baseline control mode, not frozen)",
+      "status": "OPEN"
+     }
+    ],
+    "rule": "no requirement relaxation: the flight feed requirement is performance-derived (rank 1, S6.21) and is PENDING_EVIDENCE until a measured / validated H-1 thrust-versus-feed map exists; it is never lowered to a deliverable frontier, a state subset or a characterization value",
+    "ground_characterization_mgps": 0.38,
+    "ground_characterization_role": "GROUND_CHARACTERIZATION_ONLY_NEVER_A_FLIGHT_REQUIREMENT",
+    "dense_state_only_operation": {
+     "role": "SENSITIVITY_ONLY_NOT_BASELINE",
+     "rule": "operation restricted to higher-density states is a sensitivity; it cannot be baseline while it violates S6.15 (T - D >= 0 at EVERY required state); S6.15 is NOT_EVALUATED today, so it is never baseline-admissible"
+    },
+    "flight_feed_requirement": {
+     "status": "PENDING_EVIDENCE",
+     "value": null,
+     "basis": "PERFORMANCE_DERIVED_VALIDATED_H1_MAP",
+     "needs": "measured / validated H-1 thrust-versus-feed map (none exists)",
+     "authority": [
+      "A9.13 S6.13 / OQ-F4-04 (NO_REQUIREMENT_RELAXATION)",
+      "A9.13 S6.21 / F9-OQ-02"
+     ]
+    }
+   },
+   "evidence": {
+    "F1": {
+     "envelope_feasible_per_scenario": {
+      "maxwell_a0": {
+       "feasible": 24,
+       "candidates": 144
+      },
+      "maxwell_a0.2": {
+       "feasible": 24,
+       "candidates": 144
+      },
+      "maxwell_a0.5": {
+       "feasible": 24,
+       "candidates": 144
+      },
+      "maxwell_a0.8": {
+       "feasible": 24,
+       "candidates": 144
+      },
+      "maxwell_a1": {
+       "feasible": 24,
+       "candidates": 144
+      },
+      "cll_a0": {
+       "feasible": 24,
+       "candidates": 144
+      },
+      "cll_a0.2": {
+       "feasible": 24,
+       "candidates": 144
+      },
+      "cll_a0.5": {
+       "feasible": 24,
+       "candidates": 144
+      },
+      "cll_a0.8": {
+       "feasible": 24,
+       "candidates": 144
+      },
+      "cll_a1": {
+       "feasible": 24,
+       "candidates": 144
+      }
+     },
+     "envelope_infeasible_candidate_scenario_records": 1200,
+     "envelope_infeasibility_reason_counts": {
+      "C-DRAG-RFP": 68832
+     },
+     "binding_drag_state_group_counts": {
+      "ECSS_ST_HIGH 180 km": 1200
+     },
+     "binding_rule": "for each envelope-infeasible (scenario, candidate) record: the (scenario, altitude) of its largest intake-face drag exceedance (C-DRAG-RFP, drag > RFP thrust max 25 mN)",
+     "source": [
+      {
+       "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+       "pointer": "/candidate_metrics/envelope",
+       "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+      },
+      {
+       "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+       "pointer": "/infeasible_reasons/envelope",
+       "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+      },
+      {
+       "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+       "pointer": "/findings/3/finding",
+       "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+      }
+     ]
+    },
+    "F4": {
+     "all_state_single_setpoint_frontier_mg_s": 0.012960718,
+     "all_state_scheduled_frontier_mg_s": 0.02644028,
+     "highest_P_req_with_all_state_feasible_chain_Pa": 0.02,
+     "flow_binding_state_counts": {
+      "ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184": 9,
+      "ds2:ECSS_LT_LOW:alt230:lat-80.0000:lst21:lon0:doy184": 4
+     },
+     "flow_binding_cells_all_states_in_domain": 13,
+     "transient_basis_chains_orbit_checked": 7,
+     "transient_simulated_chains": 0,
+     "transient_chains_failing_orbit_check_at_smallest_amplitude": 7,
+     "transient_chains_passing_orbit_check": 0,
+     "transient_orbit_check_failure_reason_counts": {
+      "amplitude 0.1: GAEDE_CHARACTERISTIC_OUTSIDE_K_1_TO_K0": 4,
+      "amplitude 0.1: VALVE_SATURATED_SETPOINT_NOT_MAINTAINED": 7,
+      "amplitude 0.2: GAEDE_CHARACTERISTIC_OUTSIDE_K_1_TO_K0": 4,
+      "amplitude 0.2: VALVE_SATURATED_SETPOINT_NOT_MAINTAINED": 7
+     },
+     "offered_to_h1_records": 0,
+     "source": [
+      {
+       "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
+       "pointer": "/steady/feasibility_regions",
+       "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
+      },
+      {
+       "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
+       "pointer": "/findings/0/finding",
+       "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
+      },
+      {
+       "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
+       "pointer": "/steady/per_state_frontier_filter_none_wall_g0",
+       "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
+      },
+      {
+       "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
+       "pointer": "/findings/1/finding",
+       "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
+      },
+      {
+       "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
+       "pointer": "/transient/contexts",
+       "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
+      },
+      {
+       "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
+       "pointer": "/offered_to_h1",
+       "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
+      },
+      {
+       "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
+       "pointer": "/findings/4/finding",
+       "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
+      }
+     ]
+    },
+    "F7": {
+     "vector_status_totals": {
+      "FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS": 4647,
+      "INFEASIBLE": 1423108,
+      "NOT_EVALUATED_OUT_OF_DOMAIN": 3324245
+     },
+     "vector_reason_totals": {
+      "F1_INTAKE_INFEASIBLE_AT_STATE": 3960000,
+      "FEED_ORIFICE_KNUDSEN_UPPER_BOUND_BELOW_FREE_MOLECULAR_LIMIT": 1459,
+      "GAEDE_CHARACTERISTIC_OUTSIDE_K_1_TO_K0": 3323594,
+      "TARGET_AT_OR_ABOVE_DEAD_HEAD_PRESSURE": 3795091
+     },
+     "n_pareto_members": 1279,
+     "n_contexts": 600,
+     "n_nonempty_contexts": 62,
+     "set_pressures_with_all_state_feasible_vectors_Pa": [
+      0.01,
+      0.02
+     ],
+     "highest_all_state_feasible_set_pressure_Pa": 0.02,
+     "nominal_all_state_frontier_mg_s": 0.01296072,
+     "source": [
+      {
+       "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
+       "pointer": "/upstream_pareto_summary",
+       "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
+      },
+      {
+       "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
+       "pointer": "/upstream_status_totals",
+       "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
+      },
+      {
+       "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
+       "pointer": "/upstream_reason_totals",
+       "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
+      },
+      {
+       "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
+       "pointer": "/findings/0/finding",
+       "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
+      },
+      {
+       "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
+       "pointer": "/findings/1/finding",
+       "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
+      },
+      {
+       "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
+       "pointer": "/findings/2/finding",
+       "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
+      }
+     ]
+    },
+    "F8": {
+     "survivors": 90,
+     "n_surface_scenarios": 10,
+     "all_scenario_feasible": 0,
+     "feasible_scenario_tiers": {
+      "1": 13,
+      "2": 25,
+      "3": 24,
+      "4": 17,
+      "5": 9,
+      "6": 2
+     },
+     "max_feasible_scenarios": 6,
+     "survivors_infeasible_per_scenario": {
+      "maxwell_a0": 90,
+      "maxwell_a0.2": 86,
+      "maxwell_a0.5": 70,
+      "maxwell_a0.8": 45,
+      "maxwell_a1": 12,
+      "cll_a0": 90,
+      "cll_a0.2": 90,
+      "cll_a0.5": 79,
+      "cll_a0.8": 65,
+      "cll_a1": 13
+     },
+     "source": [
+      {
+       "path": "docs/design_synthesis/f7_f8_optimizer/f8_robust_candidates_v1.json",
+       "pointer": "/rows",
+       "sha256": "2ec7e059ebc55d9b83f4c8f0e3cd43e2cebcbe665933e7ce9ecf1a43451f4e8d"
+      },
+      {
+       "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
+       "pointer": "/robust/all_scenario_feasible",
+       "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
+      },
+      {
+       "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
+       "pointer": "/findings/7/finding",
+       "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
+      }
+     ]
+    },
+    "flow_gap_owner_order": {
+     "authority": "A9.13 S6.13 / OQ-F4-04 (NO_REQUIREMENT_RELAXATION)",
+     "decision_record": {
+      "json": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+      "json_sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+      "id": "S6.13 / OQ-F4-04"
+     },
+     "order": [
+      {
+       "rank": 1,
+       "lever": "PERFORMANCE_DERIVED_H1_FEED_REQUIREMENT",
+       "authority": "A9.13 S6.21 / F9-OQ-02",
+       "what": "derive the minimum feed state from the required drag-compensation thrust at every required state through the measured / validated H-1 thrust-versus-feed map (AG-12)",
+       "status": "PENDING_EVIDENCE",
+       "needs": "measured / validated H-1 thrust-versus-feed map (none exists)"
+      },
+      {
+       "rank": 2,
+       "lever": "CAPTURE_COLLECTION",
+       "authority": "A9.13 S6.13",
+       "what": "raise capture / collection within the drag (S6.15 statewise), mass and pointing constraints",
+       "status": "OPEN"
+      },
+      {
+       "rank": 3,
+       "lever": "COMPRESSOR_DOMAIN_PUMPING_FEED_EFFICIENCY",
+       "authority": "A9.13 S6.13",
+       "what": "compressor domain, pumping and feed efficiency",
+       "status": "OPEN"
+      },
+      {
+       "rank": 4,
+       "lever": "SCHEDULED_SETPOINT",
+       "authority": "A9.13 S6.10 / OQ-F4-01",
+       "what": "orbit-state-scheduled plenum setpoint (baseline control mode, not frozen)",
+       "status": "OPEN"
+      }
+     ],
+     "rule": "no requirement relaxation: the flight feed requirement is performance-derived (rank 1, S6.21) and is PENDING_EVIDENCE until a measured / validated H-1 thrust-versus-feed map exists; it is never lowered to a deliverable frontier, a state subset or a characterization value",
+     "ground_characterization_mgps": 0.38,
+     "ground_characterization_role": "GROUND_CHARACTERIZATION_ONLY_NEVER_A_FLIGHT_REQUIREMENT",
+     "dense_state_only_operation": {
+      "role": "SENSITIVITY_ONLY_NOT_BASELINE",
+      "rule": "operation restricted to higher-density states is a sensitivity; it cannot be baseline while it violates S6.15 (T - D >= 0 at EVERY required state); S6.15 is NOT_EVALUATED today, so it is never baseline-admissible"
+     },
+     "flight_feed_requirement": {
+      "status": "PENDING_EVIDENCE",
+      "value": null,
+      "basis": "PERFORMANCE_DERIVED_VALIDATED_H1_MAP",
+      "needs": "measured / validated H-1 thrust-versus-feed map (none exists)",
+      "authority": [
+       "A9.13 S6.13 / OQ-F4-04 (NO_REQUIREMENT_RELAXATION)",
+       "A9.13 S6.21 / F9-OQ-02"
+      ]
+     }
+    },
+    "design_state_set": {
+     "design_state_set_id": "atmosphere_msis21_orbit_v1_design_states_v2",
+     "sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+     "n_required_states": 196,
+     "orbit_basis_label": "BROAD_ENVELOPE_ALL_INCLINATIONS_ALL_LTAN_NOT_MISSION_ICD"
+    }
+   },
+   "architecture_status_effect": "none (INVESTIGATION_HYPOTHESIS unchanged; no gate status changes)",
+   "sources": [
+    {
+     "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
+     "pointer": "/flow_gap_owner_order",
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
+    },
+    {
+     "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
+     "pointer": "/robust",
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
+    },
+    {
+     "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
+     "pointer": "/design_state_set",
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
+    },
+    {
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+     "pointer": "/candidate_metrics/envelope",
+     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+    },
+    {
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+     "pointer": "/infeasible_reasons/envelope",
+     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+    },
+    {
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+     "pointer": "/findings/3/finding",
+     "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e"
+    },
+    {
+     "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
+     "pointer": "/steady/feasibility_regions",
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
+    },
+    {
+     "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
+     "pointer": "/findings/0/finding",
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
+    },
+    {
+     "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
+     "pointer": "/steady/per_state_frontier_filter_none_wall_g0",
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
+    },
+    {
+     "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
+     "pointer": "/findings/1/finding",
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
+    },
+    {
+     "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
+     "pointer": "/transient/contexts",
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
+    },
+    {
+     "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
+     "pointer": "/offered_to_h1",
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
+    },
+    {
+     "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
+     "pointer": "/findings/4/finding",
+     "sha256": "1b47ce1be3e9e5c56a9d292207f3f75b145d1f4148911cf67016271489900984"
+    },
+    {
+     "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
+     "pointer": "/upstream_pareto_summary",
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
+    },
+    {
+     "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
+     "pointer": "/upstream_status_totals",
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
+    },
+    {
+     "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
+     "pointer": "/upstream_reason_totals",
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
+    },
+    {
+     "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
+     "pointer": "/findings/0/finding",
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
+    },
+    {
+     "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
+     "pointer": "/findings/1/finding",
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
+    },
+    {
+     "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
+     "pointer": "/findings/2/finding",
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
+    },
+    {
+     "path": "docs/design_synthesis/f7_f8_optimizer/f8_robust_candidates_v1.json",
+     "pointer": "/rows",
+     "sha256": "2ec7e059ebc55d9b83f4c8f0e3cd43e2cebcbe665933e7ce9ecf1a43451f4e8d"
+    },
+    {
+     "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
+     "pointer": "/robust/all_scenario_feasible",
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
+    },
+    {
+     "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
+     "pointer": "/findings/7/finding",
+     "sha256": "6ae47255d19f9d965a2da6640d2c8d639a3cd82ac85a2f2d4974cd32d8bc808f"
+    }
+   ]
   }
  ],
  "a9_16_owner_answers_applied": [
@@ -14433,12 +14595,12 @@
   {
    "id": "F9-02",
    "evidence_class": "model-derived (PARAMETRIC_SENSITIVITY inputs)",
-   "finding": "upstream Pareto: robust set 8 members (all at P_set 0.01 Pa, filter context none, compressor T6-A0-U2-D0-Ti6Al4V-H0.75, T6-A1-U1-D0-Ti6Al4V-H0.75, T6-A1-U2-D0-Ti6Al4V-H0.25, T6-A1-U2-D0-Ti6Al4V-H0.5, T6-A2-U2-D0-Ti6Al4V-H0.75); nominal-context Pareto union 843 members; carried as sets, no representative selected (F9-OQ-01)"
+   "finding": "upstream Pareto: robust set EMPTY_ROBUST_SET_NOT_EVALUATED (0 members; F8 all-scenario-feasible 0); nominal-context Pareto union 90 members carried as a set; no robust-set range is reported for any parameter (null + status, never fabricated); no representative selected (F9-OQ-01)"
   },
   {
    "id": "F9-03",
    "evidence_class": "model-derived (PARAMETRIC_SENSITIVITY inputs)",
-   "finding": "upstream flow gap: robust worst-case delivered flow [0.00293326, 0.0113419] mg/s and all-state frontier 0.09832 mg/s, low relative to the 0.38-3.2 mg/s ground-characterization coverage (row 73): an engineering warning, not a demonstrated requirement failure; 0.38 and ~1.3 mg/s are not flight requirements and AG-12 is the statewise feed-state sufficiency gate (A9.13 F9-OQ-02)"
+   "finding": "upstream flow gap: robust set EMPTY_ROBUST_SET_NOT_EVALUATED; all-state frontier 0.01296072 mg/s (F7, single setpoint; F4 scheduled 0.02644 mg/s), low relative to the 0.38-3.2 mg/s ground-characterization coverage (row 73): an engineering warning, not a demonstrated requirement failure; 0.38 and ~1.3 mg/s are not flight requirements and AG-12 is the statewise feed-state sufficiency gate (A9.13 F9-OQ-02)"
   },
   {
    "id": "F9-04",
@@ -14454,6 +14616,12 @@
    "id": "F9-06",
    "evidence_class": "inferred",
    "finding": "owner roll-up: 95 state v4 TBD_OWNER rows, 34 A9.7 lane questions (F0-F8, Rust), 4 new F9 questions; all answered by the owner (A9.8 .. A9.14, A9.15 amendments); state v5 TBD_OWNER: 2 (MPV3Q-01, XV3Q-01)"
+  },
+  {
+   "id": "F9-07",
+   "evidence_class": "model-derived (PARAMETRIC_SENSITIVITY inputs)",
+   "finding": "under the full registered design-state envelope (atmosphere_msis21_orbit_v1_design_states_v2, sha256 60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049, 196 required states, BROAD_ENVELOPE_ALL_INCLINATIONS_ALL_LTAN_NOT_MISSION_ICD) no robust upstream design survives. EMPTY_ROBUST_SET_NOT_EVALUATED: F8 robust Pareto set has 0 members (90 F7 nominal-context survivors, all-10-scenario feasible 0, at most 6 of 10 scenarios feasible); F7 feasible vectors 4647, Pareto members 1279; F1 envelope-feasible intakes per scenario 24 of 144 (intake-face drag binding at ECSS_ST_HIGH 180 km in 1200 of 1200 infeasible records); F4 all-state frontier 0.01296 mg/s single / 0.02644 mg/s scheduled, flow binding at ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184 in 9 of 13 cells; transient basis: 0 of 7 chains pass the orbit check (0 simulated), offered_to_h1 records 0. Binding reasons read from the lane outputs: intake-face drag at the dense ECSS_ST_HIGH 180 km states (F1 C-DRAG-RFP, 1200 records); all-state delivered flow at ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184 (F4, 9 of 13 cells); transient-basis orbit check failures {\"amplitude 0.1: GAEDE_CHARACTERISTIC_OUTSIDE_K_1_TO_K0\": 4, \"amplitude 0.1: VALVE_SATURATED_SETPOINT_NOT_MAINTAINED\": 7, \"amplitude 0.2: GAEDE_CHARACTERISTIC_OUTSIDE_K_1_TO_K0\": 4, \"amplitude 0.2: VALVE_SATURATED_SETPOINT_NOT_MAINTAINED\": 7} (F4). This is a design finding for the owner, not a demonstrated requirement failure and not a proposal to relax any requirement (A9.13 S6.13 / OQ-F4-04 (NO_REQUIREMENT_RELAXATION): no requirement relaxation: the flight feed requirement is performance-derived (rank 1, S6.21) and is PENDING_EVIDENCE until a measured / validated H-1 thrust-versus-feed map exists; it is never lowered to a deliverable frontier, a state subset or a characterization value). Owner flow-gap order (as recorded in F7): 1 PERFORMANCE_DERIVED_H1_FEED_REQUIREMENT (A9.13 S6.21 / F9-OQ-02; PENDING_EVIDENCE); 2 CAPTURE_COLLECTION (A9.13 S6.13; OPEN); 3 COMPRESSOR_DOMAIN_PUMPING_FEED_EFFICIENCY (A9.13 S6.13; OPEN); 4 SCHEDULED_SETPOINT (A9.13 S6.10 / OQ-F4-01; OPEN). Dense-state-only operation: SENSITIVITY_ONLY_NOT_BASELINE.",
+   "design_finding": "F9-DF-01"
   }
  ],
  "m16_impact": [
