@@ -1,0 +1,36 @@
+{
+ "schema": "abep_config_manifest_v1",
+ "id": "config_manifest_v1",
+ "generated_by": "scripts/config/build_config.py",
+ "regenerate": "python scripts/config/build_config.py  (check: --check)",
+ "files": {
+  "README.md": {
+   "sha256": "b3080704d0190b32ceb0125f1a3e086d76a3b372ea03014ad6b6bd6be7f0aee7",
+   "bytes": 1986
+  },
+  "architecture/hall_icp_neutralizer_v1.json": {
+   "sha256": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3",
+   "bytes": 6652
+  },
+  "environment/design_state_set_ref_v1.json": {
+   "sha256": "0674ef1b6adfb1473127da4586e22b89dfb25a5970a0319c007e91fa4c02bbd9",
+   "bytes": 1179
+  },
+  "hardware/hardware_bounds_v1.json": {
+   "sha256": "714c32cd027539c872842ddea983e693a528bbf0780c7ccf1e5de8bd59b73337",
+   "bytes": 2627
+  },
+  "mission/mission_scenario_v1.json": {
+   "sha256": "afdac50676f0d9723c768d83cbe9eec61de48f8a1994f1ad21bb662a1da6ca3b",
+   "bytes": 3005
+  },
+  "model_set/physics_model_set_v1.json": {
+   "sha256": "27f62a66b2d84b14dd384f7f0e328ccb453691bfc44f94e985d5f8e6b73c7980",
+   "bytes": 17585
+  },
+  "requirements/rfp_constraints_v1.json": {
+   "sha256": "e17c212f7601d3bcdaefca7f490436b473d6df064cce81d88ff9ce2fe60ffef0",
+   "bytes": 18460
+  }
+ }
+}

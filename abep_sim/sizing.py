@@ -7,7 +7,7 @@ pressure, required active ratio, compressor power, intake area, drag and T/D.
 """
 from __future__ import annotations
 import pandas as pd
-from .constants import RFP, K_B
+from .constants import K_B
 from .atmosphere import atmosphere
 from .intake import IntakeParams, CompressorParams, collection, passive_compression
 from .thruster import CARDS
