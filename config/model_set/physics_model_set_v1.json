@@ -1,0 +1,478 @@
+{
+ "schema": "abep_config_physics_model_set_v1",
+ "id": "physics_model_set_v1",
+ "layer": "PHYSICS",
+ "scope": "abep_sim/*.py (the physics package; abep_sim/design/ is the design layer and is not listed)",
+ "generated_by": "scripts/config/build_config.py",
+ "regenerate": "python scripts/config/build_config.py  (check: --check)",
+ "rule": "any change of a listed source or data file makes this model set stale (scripts/config/build_config.py --check); a physics change is a model change under CLAUDE.md rules 1-2",
+ "modules": [
+  {
+   "path": "abep_sim/__init__.py",
+   "sha256": "9f07ae9939f7e0246121cb1f589b8576ebc6a996b274b2ef54aa0f29ee685e25",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/__main__.py",
+   "sha256": "fe2eb77722cd083f90b11e1dd960f70e78215073baa8f9f2f9dc12d8f44c002c",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/aochem.py",
+   "sha256": "ed10bf0173025dde8044268f25f6dcf939f5b7e1cc9a2c01aff2b4461df25411",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/arch_boundary.py",
+   "sha256": "8dfc309a5d2c717913fd4961bc660f8bab92ed2c59356f5a78bff3ef4392eeae",
+   "version_labels": {
+    "BOUNDARY_VERSION": "bus_power_boundary_v1"
+   }
+  },
+  {
+   "path": "abep_sim/arch_compare.py",
+   "sha256": "23b6ffe7b218238b7ad5e3a9964a47227cc1236373a53990319043c381ef5722",
+   "version_labels": {
+    "HARNESS_VERSION": "arch_compare_v1",
+    "EXPECTED_BOUNDARY_VERSION": "bus_power_boundary_v1",
+    "HALL_MAP_INDEX_SCHEMA": "arch_compare_hall_map_index_v1",
+    "SPECS_SCHEMA": "arch_compare_specs_v1",
+    "UPSTREAM_SCHEMA": "arch_compare_upstream_v1"
+   }
+  },
+  {
+   "path": "abep_sim/archengine.py",
+   "sha256": "2968d1840373768c03c9e1fe8cf6d43e7e2545326107bbc5b16467ff1ee38e8e",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/atmosphere.py",
+   "sha256": "690d6931bb595c14736db9d9c284fb4e2f98727a8749262edebe3d8621e87e8b",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/atmosphere_orbit.py",
+   "sha256": "eeaeba27d4174be412b774d8fe580712205ee401210f962fb23c14069ce78b0c",
+   "version_labels": {
+    "DATASET_ID": "atmosphere_msis21_orbit_v1",
+    "PYMSIS_VERSION_BUILT": "0.13.0"
+   }
+  },
+  {
+   "path": "abep_sim/atmosphere_orbit_v2.py",
+   "sha256": "87a3de0f811453557842913542e1027d75337aadfc2ae2bd1dd027ae18e995bd",
+   "version_labels": {
+    "DATASET_ID": "atmosphere_msis21_hwm14_orbit_v2",
+    "HWM14_VERSION": "HWM14.123114",
+    "GFORTRAN_VERSION_BUILT": "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0"
+   }
+  },
+  {
+   "path": "abep_sim/breakeven.py",
+   "sha256": "fad317b74c3f1359d849c62a7b487f2e26d8ccb3be05a35c15b515ea6d948767",
+   "version_labels": {
+    "BREAKEVEN_VERSION": "breakeven_v1",
+    "BOUNDARY_VERSION": "bus_power_boundary_v1"
+   }
+  },
+  {
+   "path": "abep_sim/bus_boundary_a9.py",
+   "sha256": "7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a",
+   "version_labels": {
+    "BOUNDARY_VERSION": "bus_power_boundary_a9_v1",
+    "V1_BOUNDARY_VERSION": "bus_power_boundary_v1"
+   }
+  },
+  {
+   "path": "abep_sim/cathode_integration.py",
+   "sha256": "9c8e776b851c112da89b0621a2e1da0dd128ab647229214b81aed19c3e0561b0",
+   "version_labels": {
+    "CATHODE_INTEGRATION_VERSION": "cathode_integration_v1",
+    "BOUNDARY_VERSION": "bus_power_boundary_v1"
+   }
+  },
+  {
+   "path": "abep_sim/compressor.py",
+   "sha256": "7a8dfe5b64d269474863410f6e42a886c6d3f57015c05491880d65251dfafc75",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/compressor_transitional.py",
+   "sha256": "45f866b02592c6b633f12862c088cd3cdbe858506c3848d9231d6cfc1b9ba53c",
+   "version_labels": {
+    "SCHEMA": "compressor_transitional_candidate_v1",
+    "VERSION": "1.0.0",
+    "MODEL_ID": "skovorodko2002_plane_couette_poiseuille_slip_eq1"
+   }
+  },
+  {
+   "path": "abep_sim/configuration.py",
+   "sha256": "d847ce1ed176c7d234f032be095d26fabc7a3f6a03ddb357461868c0c523a2fd",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/constants.py",
+   "sha256": "b88848341c2d6da7ae5afcc01b44be10eac9c2b214912b8e2e394b4c6c8cf74a",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/convergence.py",
+   "sha256": "51408a5ca7418c8bcda4057fb6f4c07f41ac2474375fd867b37f7114b293ef93",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/explorer.py",
+   "sha256": "dc4ba7b30d39f2df3d2c95c63e29ca51bb1635ae0c230d64a246a9481bd0ed18",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/golden.py",
+   "sha256": "eeebe9a2d6b60c24a8226fdc0879bfdc5f4d3df494095a21e5ba6e0a7948ba53",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/hall1d.py",
+   "sha256": "adfaf7a18a5a40a99fef2985541d8c092b3cfe4524090424e3af990af423d772",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/hall_ensemble.py",
+   "sha256": "218f890c8444af1f593396da5051e38d2d093bbb3cb0bc976cc44b01b67df704",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/hall_map.py",
+   "sha256": "e466f94c9058e2ab949a4a4a451d3438c046b1abd91933815467590f90a707e0",
+   "version_labels": {
+    "SCHEMA_NAME": "hall_map_schema_v1"
+   }
+  },
+  {
+   "path": "abep_sim/hallmap_registry.py",
+   "sha256": "3af0f29e2848130a9c19eeb8f6efe1d6a5abbbf499a11dc757632bd926440a85",
+   "version_labels": {
+    "RECORD_SCHEMA": "hallmap_registry_record_v1",
+    "REGISTRY_SCHEMA_FILE": "schemas/hallmap/hallmap_registry_v1.json"
+   }
+  },
+  {
+   "path": "abep_sim/hard_gates.py",
+   "sha256": "a36fe3c9065291f0fe5be3f17e179d5b691f00c013f7f8ef299fa89db896dda8",
+   "version_labels": {
+    "MATRIX_SCHEMA": "hard_gate_matrix_v1",
+    "EVIDENCE_SCHEMA": "hard_gate_evidence_v1",
+    "RESULT_SCHEMA": "hard_gate_evaluation_v1",
+    "RESULT_SET_SCHEMA": "hard_gate_evaluation_set_v1"
+   }
+  },
+  {
+   "path": "abep_sim/intake.py",
+   "sha256": "d46c23af40d413094babbe9d2121238c7b6f768341ffb3789d3d50c1d0f66687",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/intake_surface_v2_spec.py",
+   "sha256": "a34568abe619bb1c2113bbae83aea8305847d638865dd0a78fbd9a5a8d8392bc",
+   "version_labels": {
+    "SPEC_ID": "intake_surface_v2_spec_v1"
+   }
+  },
+  {
+   "path": "abep_sim/intake_tpmc.py",
+   "sha256": "dcddf947c273d71d2f030895cd8ea9916919f816401c20e30b7ca4d177172433",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/interstage.py",
+   "sha256": "bc4b9987a832209d1417f6646d2a44c72b8d79bac18f896089647bcd1ed93174",
+   "version_labels": {
+    "MODEL_VERSION": "interstage_v1",
+    "SCHEMA_ID": "interstage_v1"
+   }
+  },
+  {
+   "path": "abep_sim/life.py",
+   "sha256": "3519ec2c2778b8cc06ba1f57910b78512072aa2cd07fa3662d51a679f19a95cc",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/magnet_power.py",
+   "sha256": "adf2905d90b7dd17b59071759d0a62b245fa065b0c3375c74df4e3476b7bb523",
+   "version_labels": {
+    "MAGNET_POWER_VERSION": "magnet_power_v1"
+   }
+  },
+  {
+   "path": "abep_sim/mass_bom.py",
+   "sha256": "c785aeb14b789b20a20a796ab86d8acd354760b52ac30827b395a623430e4a39",
+   "version_labels": {
+    "BOM_VERSION": "mass_bom_v1",
+    "BOM_SCHEMA_PATH": "schemas/architecture_comparison/mass_bom_v1.schema.json"
+   }
+  },
+  {
+   "path": "abep_sim/materials.py",
+   "sha256": "08e2ddddfc9380780e71bc15957fa82a9e879fc36046c266c669b037c2194feb",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/mission5.py",
+   "sha256": "b559d188d29b51ec795bbb0de0d0c0d1842148c4d6f693edd738a71e45edb464",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/mission_env.py",
+   "sha256": "117782f17c94ecc29aa2c17c7eb2fb408b10bfde3f06ce6c0ecd22a773e8f40b",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/mission_uq.py",
+   "sha256": "2209684fd6e0a4d8c1e3f91339498f417128be2fcd99e697a3d6785375c62cca",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/orbit_atm.py",
+   "sha256": "22bc98b3780f276c5eff38d555e1c2a8cc87efe5544704767da288bbf4060798",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/plasma_chem.py",
+   "sha256": "67926b9c03d35338a767bf6fc8b23c69eaa4131b9c6d49ddc6956e6b6acb0d43",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/plasma_devices.py",
+   "sha256": "503428b3238595be6e49fdc44ed5228107d164830dad88993d3be061c0c74ef1",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/ppu.py",
+   "sha256": "56879d06242761774830a38b421dd2b367bc8fe16c02eab88cb40e0db7d4c521",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/radiation.py",
+   "sha256": "591d6c685d98738863987f90d810568fbcee5bf626ea1537737e752dbd655597",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/rate_tables.py",
+   "sha256": "ea9880b0d5a474e93083346f29694f2fa820ffce01aca001ea4610893ac04909",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/reservoir.py",
+   "sha256": "9a7894a47169f1d77e8c66a196002c5456e955b9eb72d81bb9e1440c90ae29af",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/rotor_strength.py",
+   "sha256": "59f7ba95bf5d4268b184304defddb36bbfca219c79a0cc8fde91e5031bc61d9b",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/sizing.py",
+   "sha256": "e82ec817d7addb613a8ccfd33622b620edc8a6c92cea5019ddf3b85e95f1b5b9",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/spacecraft_reference_drag.py",
+   "sha256": "3a96ede5705622e29c161229c1abf916817a5fc197a0e93914df6937022a90a2",
+   "version_labels": {
+    "SCHEMA": "abep.spacecraft_reference_drag.v1"
+   }
+  },
+  {
+   "path": "abep_sim/statewise.py",
+   "sha256": "ec90f2282467e4877c4d10c32f12368f400102bd5889da49902077cdfb55e63e",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/sweep.py",
+   "sha256": "cc15298b9a6b756c212ec86c6b41626cc10529225a3b03ff96f814e8d00723c8",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/system.py",
+   "sha256": "d95d01e35fd5968cc4f1ac31b24d2e8904bb51c85ffeec7e4aad1812734981ad",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/thermal.py",
+   "sha256": "3ad94b716dd78e863ad441a78ffdc7fd3ef38b2764a7aabaace6876a2f1444fb",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/thermal_life.py",
+   "sha256": "dce2048233746ecc596866c1d561c8828f820c7960b9778db0d6d66a9c86d83c",
+   "version_labels": {
+    "LIMITS_SCHEMA": "thermal_life_limits_v1",
+    "INPUTS_SCHEMA": "thermal_life_inputs_v1",
+    "RESULT_SCHEMA": "thermal_life_result_v1"
+   }
+  },
+  {
+   "path": "abep_sim/thresholds.py",
+   "sha256": "6597adaf2ce8b2c58e47626d9cbe54dba63de863e3407fb32263e6a4b89ad057",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/thruster.py",
+   "sha256": "bb3b67f4d4a398529a89799f5293d46e16e1046c0f1ddc5a0177f90efc7a2b80",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/transient.py",
+   "sha256": "996ab3b3a4cea5f147e43b5510c99b45155b85d668df369aa8e26d9e09e02147",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/uncertainty.py",
+   "sha256": "5ce4afae33c1b74ce52fa0ac795b176f2e6c2b64fb7245e8a7226215801da3cc",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/uq6.py",
+   "sha256": "1904030d40925dba37eb65402acdf77c5ec517c97210043ce74605efc617cb87",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/uq_modular.py",
+   "sha256": "e90de34d032b7ebd15f218331c970948a86f11274bbf11edd721d9b27af3dbe4",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/validation.py",
+   "sha256": "e6853e417e6d2143b3bdc6fdb49b3c0f1d69a807b6125d49ba57019f8ba8c62f",
+   "version_labels": {}
+  },
+  {
+   "path": "abep_sim/xe_ledger.py",
+   "sha256": "8a89fa7da7e7eb7f786a7327e1721ea29c59db7c0721ea64646f812bd4afedf0",
+   "version_labels": {
+    "LEDGER_VERSION": "xe_ledger_v1"
+   }
+  }
+ ],
+ "data": [
+  {
+   "path": "abep_sim/data/golden_v2.json",
+   "sha256": "561c81616178a91ca0a95ad2af7cb9d2452ca9abb981b2d2320175d994fe3cb0"
+  },
+  {
+   "path": "abep_sim/data/golden_v1.json",
+   "sha256": "1f7fbb626f79e38d743bf69516e9ea62b8ddef2ff2726d2f0fd4f4df6b377fb8"
+  },
+  {
+   "path": "abep_sim/data/intake_surface_v1.json",
+   "sha256": "5b26b7fd60272537dd0e719a122cb874233c6dd777202ab164b159cc7215d425"
+  },
+  {
+   "path": "abep_sim/data/intake_surface_v1.csv",
+   "sha256": "62b804924d801f913420a05142d4fe62137a7619eca17ae7786da5bef005c09a"
+  },
+  {
+   "path": "abep_sim/data/atmosphere_msis21_v1.json",
+   "sha256": "38a6f662521a8795b28186ccab5fbb007da59a861f59fde50400e7092e181160"
+  },
+  {
+   "path": "abep_sim/data/atmosphere_msis21_v1.csv",
+   "sha256": "5e108c6e5cb7c03ed9b741233fafbc71c7813987e1ff3d0596b04c99c4a9bff7"
+  },
+  {
+   "path": "abep_sim/data/atmosphere_msis21_orbit_v1.json",
+   "sha256": "f06416b1e11f07ec32434515b616935ed5eeaae1faac75586bce0961b6bcf97b"
+  },
+  {
+   "path": "abep_sim/data/atmosphere_msis21_orbit_v1.csv.gz",
+   "sha256": "71ce01c377a355a3e706d50e79fe08b2336d0e60b8b3e294f1d8e2c5b6a18ace"
+  },
+  {
+   "path": "abep_sim/data/atmosphere_msis21_orbit_v1_design_states.json",
+   "sha256": "d8bd369bf4aa4ae321ecced094f2c02356be67e2c3f4acbe70264f700b419a40"
+  },
+  {
+   "path": "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json",
+   "sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049"
+  },
+  {
+   "path": "abep_sim/data/atmosphere_msis21_hwm14_orbit_v2.json",
+   "sha256": "e56e6ff093d7590ab767e58c02c27882117146df3cf678dfd468c07bfea25c75"
+  },
+  {
+   "path": "abep_sim/data/atmosphere_msis21_hwm14_orbit_v2.csv.gz",
+   "sha256": "03238acea56442b9a3d5554f5596bfe766d0654deacc43ff13482e8fe646629d"
+  },
+  {
+   "path": "abep_sim/data/atmosphere_msis21_hwm14_orbit_v2.disturbance.csv.gz",
+   "sha256": "0c27e740a75618e28818ac071f4156766c7839855ea0aecd06506c913d18fcec"
+  },
+  {
+   "path": "hallthruster_bridge/PINNED.toml",
+   "sha256": "26a00c8a156a5a5e9a58f9796f657ea12f59d87ac2da3d6507ac7347b4765280"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/rate_validity.toml",
+   "sha256": "64b51be96ef30d6024a99ad9bc0b47384ba3c2434a4c096403cc2b1aa0290e3a"
+  },
+  {
+   "path": "abep_sim/data/rates/PROVENANCE.md",
+   "sha256": "45a2a1ff12587149620420a019f227ed978a80b1de81c435315a5424817e58de"
+  },
+  {
+   "path": "abep_sim/data/rates/elastic_N2.dat",
+   "sha256": "552dc41542d9552d6fda3a4319409b07ff442e30ac7be4d20557e4ca7ed0f12d"
+  },
+  {
+   "path": "abep_sim/data/rates/ionization_N2_N2+.dat",
+   "sha256": "bbddadf6d5d80a9143b9482656069cde5ef9dfd05a270c08c751f1d2bd2b14e2"
+  }
+ ],
+ "version_labels_flat": {
+  "arch_boundary.BOUNDARY_VERSION": "bus_power_boundary_v1",
+  "arch_compare.HARNESS_VERSION": "arch_compare_v1",
+  "arch_compare.EXPECTED_BOUNDARY_VERSION": "bus_power_boundary_v1",
+  "arch_compare.HALL_MAP_INDEX_SCHEMA": "arch_compare_hall_map_index_v1",
+  "arch_compare.SPECS_SCHEMA": "arch_compare_specs_v1",
+  "arch_compare.UPSTREAM_SCHEMA": "arch_compare_upstream_v1",
+  "atmosphere_orbit.DATASET_ID": "atmosphere_msis21_orbit_v1",
+  "atmosphere_orbit.PYMSIS_VERSION_BUILT": "0.13.0",
+  "atmosphere_orbit_v2.DATASET_ID": "atmosphere_msis21_hwm14_orbit_v2",
+  "atmosphere_orbit_v2.HWM14_VERSION": "HWM14.123114",
+  "atmosphere_orbit_v2.GFORTRAN_VERSION_BUILT": "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "breakeven.BREAKEVEN_VERSION": "breakeven_v1",
+  "breakeven.BOUNDARY_VERSION": "bus_power_boundary_v1",
+  "bus_boundary_a9.BOUNDARY_VERSION": "bus_power_boundary_a9_v1",
+  "bus_boundary_a9.V1_BOUNDARY_VERSION": "bus_power_boundary_v1",
+  "cathode_integration.CATHODE_INTEGRATION_VERSION": "cathode_integration_v1",
+  "cathode_integration.BOUNDARY_VERSION": "bus_power_boundary_v1",
+  "compressor_transitional.SCHEMA": "compressor_transitional_candidate_v1",
+  "compressor_transitional.VERSION": "1.0.0",
+  "compressor_transitional.MODEL_ID": "skovorodko2002_plane_couette_poiseuille_slip_eq1",
+  "hall_map.SCHEMA_NAME": "hall_map_schema_v1",
+  "hallmap_registry.RECORD_SCHEMA": "hallmap_registry_record_v1",
+  "hallmap_registry.REGISTRY_SCHEMA_FILE": "schemas/hallmap/hallmap_registry_v1.json",
+  "hard_gates.MATRIX_SCHEMA": "hard_gate_matrix_v1",
+  "hard_gates.EVIDENCE_SCHEMA": "hard_gate_evidence_v1",
+  "hard_gates.RESULT_SCHEMA": "hard_gate_evaluation_v1",
+  "hard_gates.RESULT_SET_SCHEMA": "hard_gate_evaluation_set_v1",
+  "intake_surface_v2_spec.SPEC_ID": "intake_surface_v2_spec_v1",
+  "interstage.MODEL_VERSION": "interstage_v1",
+  "interstage.SCHEMA_ID": "interstage_v1",
+  "magnet_power.MAGNET_POWER_VERSION": "magnet_power_v1",
+  "mass_bom.BOM_VERSION": "mass_bom_v1",
+  "mass_bom.BOM_SCHEMA_PATH": "schemas/architecture_comparison/mass_bom_v1.schema.json",
+  "spacecraft_reference_drag.SCHEMA": "abep.spacecraft_reference_drag.v1",
+  "thermal_life.LIMITS_SCHEMA": "thermal_life_limits_v1",
+  "thermal_life.INPUTS_SCHEMA": "thermal_life_inputs_v1",
+  "thermal_life.RESULT_SCHEMA": "thermal_life_result_v1",
+  "xe_ledger.LEDGER_VERSION": "xe_ledger_v1"
+ },
+ "numerical_methods_flat": {
+  "hallthruster.package": "HallThruster.jl",
+  "hallthruster.version": "0.23.1",
+  "hallthruster.commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+  "reaction_set.version": "abep-n2n-0.11",
+  "reaction_set.status": "COMPLETE_FOR_P5_N2_VALIDATION"
+ }
+}

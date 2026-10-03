@@ -1,0 +1,100 @@
+{
+ "schema": "abep_config_mission_scenario_v1",
+ "id": "mission_scenario_v1",
+ "layer": "FROZEN_ENGINEERING_CONFIGURATION",
+ "title": "Operating-scenario inputs the physics takes today from the RFP constants (values unchanged)",
+ "generated_by": "scripts/config/build_config.py",
+ "regenerate": "python scripts/config/build_config.py  (check: --check)",
+ "requirements_snapshot": {
+  "id": "rfp_constraints_v1",
+  "path": "config/requirements/rfp_constraints_v1.json",
+  "sha256": "dcd3524a6fcd152e73e1aa8d53d7d868e32665c5330bb5497423ecf59840c1aa",
+  "snapshot_status": "PROVISIONAL"
+ },
+ "rule": "Phase A changes no consumer and no number: these are the values physics uses today. Switching a consumer to read this file is a later lane; the 26,000 -> 26,280 h change is the governed A9.22 G1 migration.",
+ "inputs": {
+  "altitude_domain_km": {
+   "value": [
+    180,
+    230
+   ],
+   "units": "km",
+   "source": {
+    "snapshot_field": "mission_domain.altitude_km",
+    "rvm_row": "RVM-01"
+   }
+  },
+  "xe_sizing_thrust_target_mN": {
+   "value": 12,
+   "units": "mN",
+   "role": "thrust target for Xe sizing (today: RFP.thrust_min_mN)",
+   "source": {
+    "snapshot_field": "rfp_constraints_compat.thrust_min_mN",
+    "rvm_row": "RVM-02",
+    "rfp_clauses": [
+     "RFP-P18-06"
+    ],
+    "status": "PROVISIONAL"
+   }
+  },
+  "commanded_thrust_cap_mN": {
+   "value": 25,
+   "units": "mN",
+   "role": "commanded-thrust cap (today: RFP.thrust_max_mN)",
+   "source": {
+    "snapshot_field": "rfp_constraints_compat.thrust_max_mN",
+    "rvm_row": "RVM-03",
+    "rfp_clauses": [
+     "RFP-P18-06",
+     "RFP-P18-10"
+    ],
+    "status": "PROVISIONAL"
+   }
+  },
+  "p_bus_throttling_cap_W": {
+   "value": 1500,
+   "units": "W",
+   "role": "P_bus throttling cap (today: RFP.power_max_W and literals 1500)",
+   "source": {
+    "snapshot_field": "rfp_constraints_compat.power_max_W",
+    "rvm_row": "RVM-04",
+    "rfp_clauses": [
+     "RFP-P18-10",
+     "RFP-P18-01"
+    ],
+    "status": "PROVISIONAL"
+   }
+  },
+  "mission_hours": {
+   "authoritative_basis_h": 26280,
+   "legacy_mission_hours_in_use": 26000,
+   "legacy_label": "PENDING_GOVERNED_MIGRATION_A9_22_G1",
+   "units": "h",
+   "consumers_not_switched": [
+    "abep_sim/constants.py RFPConstraints.mission_hours (via this config, value 26000)",
+    "abep_sim/life.py LifeInputs.mission_h (literal 26000.0)",
+    "abep_sim/mission5.py run_phase5 / run_mission_generic hours = RFP.mission_hours",
+    "abep_sim/archengine.py firing_hours = RFP.mission_hours",
+    "abep_sim/system.py fluence(atm, RFP.mission_hours); Budgets.duty_cycle",
+    "abep_sim/mission_uq.py (docstring and horizon)"
+   ],
+   "source": {
+    "snapshot_field": "mission_duration",
+    "rvm_row": "RVM-13"
+   }
+  },
+  "firing_hours": {
+   "value": 15000,
+   "units": "h",
+   "label": "SUBSYSTEM_FIRING_LIFE_ASSUMPTION",
+   "source": {
+    "snapshot_field": "rfp_constraints_compat.ignition_hours",
+    "rvm_row": "RVM-12",
+    "rfp_clauses": [
+     "RFP-P19-01"
+    ],
+    "status": "PROVISIONAL"
+   }
+  }
+ }
+}
