@@ -1,0 +1,23 @@
+{
+ "schema": "bid_technical_baseline_v1",
+ "decided_by": "owner",
+ "decided_utc": "2026-10-03",
+ "decision_verbatim": "Freeze the repository state for the bid | Claude head `bbc480c`, CI green | Record this exact SHA as the technical source used for the bid. Do not continue changing architecture underneath the proposal.",
+ "tender": {"id": "2026_DRDO_788433_1", "rfp": "DTDF/06/13516/DSP/ABEP/X/L/M/01", "operational_deadline": "2026-10-05 17:00 (A9.21 BID_CLOSE; DefProc, unless a corrigendum changes it)"},
+ "bid_technical_source": {
+  "branch": "claude/nifty-ramanujan-w68f9z",
+  "commit": "bbc480cd6aacaa40c39eb459a056b942fe996b32",
+  "tag": "bid-technical-baseline-2026-10-05",
+  "verification_at_commit": "full suite 3871 passed / 5 skipped / 1 xfailed; rule-9 outcome check pass; golden OK; ci_checks 11/11 (2026-10-03)"
+ },
+ "rules": [
+  "every technical number, status or claim in the submission package cites this commit (or a file at this commit)",
+  "commits after this SHA are post-freeze engineering work; they are not bid sources unless the owner re-freezes",
+  "architecture changes are not made underneath the proposal; post-freeze work is recorded as post-freeze"
+ ],
+ "post_freeze_commits_known_at_freeze": {
+  "range": "bbc480c..32c9e63",
+  "content": "design layer moved to the frozen 196-state design-state set v2 (A9.14 S9.8 OD3 / A9.13 S6.14 OQ-F4-05); F9 empty robust set; F1Q-02 / OQ-F4-04 records",
+  "owner_attention": "at bbc480c the F1-F8 upstream design results rest on five hand-picked orbit-averaged states, which owner decision OD3 says must be replaced by the versioned design-state set; under that set (32c9e63) no robust upstream design survives (F9-DF-01: F8 robust Pareto set empty; F4 all-state frontier 0.0130 mg/s; no transient chain passes the orbit check). The submission must therefore not claim robust upstream (intake/compressor/feed) closure from the bbc480c F7/F8 numbers; owner to decide whether to cite them as five-state screening results or re-freeze at 32c9e63."
+ }
+}
