@@ -14,7 +14,7 @@
   "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json": "10d79026f1a65e0c2a9fa9e1f9a5f9abc9d162692711857bd43575f3095c8d4e"
  },
  "input_pins": {
-  "docs/architecture_comparison/feed_state_closure/feed_state_closure_v2.json": "2ba4b922295f086a02d97a5a699868050c4bbfee18eb64357e60d944bf6860be",
+  "docs/architecture_comparison/feed_state_closure/feed_state_closure_v2.json": "d48e64d81b119cb30561591fc1dca339d6565003839ea92ab8f32d120d9445f1",
   "scripts/architecture/build_feed_envelope.py": "32f96ba06ed01efaed3e827e09b66c8d794073fc53ebef474b7dff512d39d99e",
   "abep_sim/compressor.py": "7a8dfe5b64d269474863410f6e42a886c6d3f57015c05491880d65251dfafc75",
   "abep_sim/intake.py": "d46c23af40d413094babbe9d2121238c7b6f768341ffb3789d3d50c1d0f66687",

@@ -100,7 +100,7 @@
    },
    {
     "path": "abep_sim/system.py",
-    "sha256": "75e5b47cf3e7a8b00774c19399b22d2b30bddd2a1401ad8cd35dd67933be7a51"
+    "sha256": "3a2f4e230dcd2f879510c6cff12ee8d801dbddc27786d6bfec51290cdc362f84"
    },
    {
     "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",

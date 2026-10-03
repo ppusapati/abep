@@ -3437,3 +3437,39 @@ consumer, `abep_sim/system.py` (Phase B raw closure). Intentional model-basis ch
   public names unchanged), so importing the package no longer imports the assessment layer.
 - Decision dossier re-pinned (`scripts/architecture/build_decision_dossier.py`; arch_compare.py sha and the bus boundary
   v2 schema now present in schemas/interfaces).
+
+## 2026-10-03 — A9.22 programme-runner layer: physics / design modules no longer import the assessment layer (NO numeric change)
+
+Owner directive A9.22 (four layers REQUIREMENTS -> FROZEN CONFIGURATION -> PHYSICS -> ASSESSMENT; physics never
+depends on assessment) and the A9.23 governing rule (compliance labels only in a backward-compatibility wrapper layer).
+Code commit ce639f1. The orchestration / compatibility code that combined physics and assessment moved to a new package
+`abep_sim/programme/` (it may import both layers). Every function is a relocation; outputs are identical (same keys,
+order and values):
+
+- `programme.closure.evaluate` = the legacy merged record (was `system.evaluate`). `system.evaluate` stays as a lazy
+  delegating compatibility entry only because immutable records name it (upstream ICD v1, `rtm_v1.json`
+  `abep_sim/system.py::evaluate`, the identity-fixture generators). `programme.closure.close_architecture` / `run_all` =
+  archengine's design-only closure + the evaluation-only closure constraint flags at their original record position.
+- `programme.sweep` (moved from `abep_sim/sweep.py`; console script `abep-sim` and `python -m abep_sim` re-pointed),
+  `programme.uq_modular` (evaluate_sample / run_uq + uq_success; `uq_modular.sample_closure` keeps the physics),
+  `programme.arch_compare.compare_architectures` (= `arch_compare.compare_architectures_unassessed` + rfp_flags,
+  constraint_robustness, rfp_limits; `python -m abep_sim.arch_compare run` delegates), `programme.design_synthesis`
+  (F7/F8 runners context_pareto, bus_power, evaluate_system, rank_full_system, statewise_T_minus_D from
+  architecture_optimizer; feed_quality from plenum_feed).
+- Deprecated design-layer shims removed (callers use `abep_sim.assessment.design_gates`): `design/owner_state.py`,
+  `upstream_a9_13.__getattr__`, `architecture_optimizer` HARD_CONSTRAINTS / PRE_EVALUATED_OBJECTIVES /
+  evaluate_constraints / system_pareto, `robust_optimizer.gate_snapshot`.
+- Raw-key consumers read `system.physics_closure` instead of the merged record (archengine.gas_path_state,
+  mission5.run_phase5, golden gas records; the golden v1 refusal label `chk_compressor_feasible` is the raw
+  `comp_feasible` it always equalled). Legacy studies that need the merged record's assessment flags (sizing,
+  thresholds, uncertainty, uq6, mission_uq) import `programme.closure.evaluate`.
+- `tests/test_layer_separation_physics.py`: ASSESSMENT_IMPORT_ALLOWLIST 13 -> 1 (archengine.rfp_preset: RTM v1, pinned
+  by the immutable subsystem maturity v1/v2, references `abep_sim/archengine.py::rfp_preset`); new shrink-only
+  PROGRAMME_IMPORT_ALLOWLIST (10 physics -> programme edges = transitive assessment dependencies, each with its reason;
+  none from abep_sim/design/).
+- Verification: golden check OK without regeneration; evaluate identity fixtures (9eb302c, g1) pass; old-vs-new
+  byte comparisons of arch_compare (5 cases), close_architecture (24 cases) and the UQ evaluate_sample / run_uq.
+- Pin-only rebuilds (content otherwise byte-identical): config model set + MANIFEST, feed_state_closure v2,
+  compressor_downselect v2, F3 synthesis, F4 plenum, F7/F8, architecture freeze candidate, decision dossier. Perf:
+  chained drift addendum `DRIFT_AFTER_A9_22_PROGRAMME_LAYER.json` (6 profiled sources; timings not re-measured; A9.18
+  PERF_RERUN still owed).

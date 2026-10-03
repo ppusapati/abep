@@ -1,0 +1,83 @@
+{
+ "schema": "perf_baseline_source_drift_v1",
+ "id": "DRIFT_AFTER_A9_22_PROGRAMME_LAYER",
+ "status": "HISTORICAL_SOURCE_DRIFT",
+ "recorded_utc_date": "2026-10-03",
+ "recorded_at_base_commit": "f090b9380f47549b7f33f2bed0aba9c10aa7ad9b",
+ "chains_on": "docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_22.json",
+ "authority": {
+  "A9.22 layer separation (four layers; programme-runner layer split: physics / design modules no longer import the assessment layer)": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
+  "A9.18 GOLDEN and PERF_RERUN": "docs/decisions/OD_2026_10_01_A9_18_golden_and_baseline_owner_decisions.json"
+ },
+ "statement": "Profiled sources changed again after DRIFT_AFTER_A9_22 by the A9.22 programme-layer split (no numerical change): system.evaluate became a delegating compatibility entry (implementation in abep_sim/programme/closure.py); archengine.close_architecture no longer attaches the evaluation-only closure constraint flags (abep_sim.programme.closure.close_architecture does) and gas_path_state reads the raw closure; uq_modular keeps the per-sample physics (sample_closure) while evaluate_sample / run_uq moved to abep_sim/programme/uq_modular.py (the profiled workload uq_modular_run_uq now imports it there); uq6 imports the merged record from the programme layer; mission5.run_phase5 and the golden gas records read system.physics_closure (identical raw values). Each entry's old sha256 is DRIFT_AFTER_A9_22's new sha256. The recorded timings are NOT re-measured, NOT altered and NOT fabricated; they remain valid only for the code state they were measured on. The owner rerun (A9.18 PERF_RERUN) is REQUIRED before any Rust performance admission.",
+ "owner_rerun_required": true,
+ "rust_performance_admission": "BLOCKED_UNTIL_A9_18_PERF_RERUN",
+ "drifted_files": [
+  {
+   "path": "abep_sim/system.py",
+   "old_sha256": "75e5b47cf3e7a8b00774c19399b22d2b30bddd2a1401ad8cd35dd67933be7a51",
+   "old_git_blob": "7d995456bc3b3c96065912dc3f7a73c992b9a448",
+   "chains_on": "docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_22.json",
+   "new_sha256": "3a2f4e230dcd2f879510c6cff12ee8d801dbddc27786d6bfec51290cdc362f84",
+   "new_git_blob": "b5d79e694fbb279b34c4df21c5751a3f16331fac",
+   "changed_by_commits": [
+    "ce639f1"
+   ]
+  },
+  {
+   "path": "abep_sim/archengine.py",
+   "old_sha256": "4dc28f3a448ea85439ecb616ca2632fa5e2d8b1d18bf897cee9751f1bec13264",
+   "old_git_blob": "5e6b1c9776f12234eec4a544d43e052aa27b6428",
+   "chains_on": "docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_22.json",
+   "new_sha256": "12f5ff2c4ca773b0856b93468afc078172f5de52350fa433b418c86aac60f97d",
+   "new_git_blob": "abf7888168f04a0da1b01e213919f38a6c4fa498",
+   "changed_by_commits": [
+    "ce639f1"
+   ]
+  },
+  {
+   "path": "abep_sim/uq_modular.py",
+   "old_sha256": "1a5cb74223113d0d5671e901550605baa1cee462cdc8efcbc2810a9125d4b79c",
+   "old_git_blob": "6f8df9b92030559f667fcfdb29f94d66863d7f0a",
+   "chains_on": "docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_22.json",
+   "new_sha256": "2d804e8924649328e8ec0f43dacc4c72a002086e455f8ecd00be95305298479e",
+   "new_git_blob": "2dd988d6951a3fd94eb6787313d272546cafa9d7",
+   "changed_by_commits": [
+    "ce639f1"
+   ]
+  },
+  {
+   "path": "abep_sim/uq6.py",
+   "old_sha256": "78db1a74559e2950c2dcd49dc2ce037f88fe3308e3d37180abbe0b82b4f16b94",
+   "old_git_blob": "343cc361d2ca6f024f32573d8dede85ae5364b02",
+   "chains_on": "docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_22.json",
+   "new_sha256": "a5494eb94c297ca8d9111f6436e7c29c4c6e6a24e18d41b005b6a12d4bb6c43e",
+   "new_git_blob": "f0e363bf1d0315a54ab1eac24db65d800b7094ab",
+   "changed_by_commits": [
+    "ce639f1"
+   ]
+  },
+  {
+   "path": "abep_sim/mission5.py",
+   "old_sha256": "1c93f31dd425f66e0a419961e57a0909bd0fb6d5049094c7ac2ead54abdb209a",
+   "old_git_blob": "9e2b00f83f0a3f671c1c5f162849056729d75ac7",
+   "chains_on": "docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_22.json",
+   "new_sha256": "a793451896bd3e99a0be20add777a952c0824b4f0b8f7630f7e32a2dab35b245",
+   "new_git_blob": "78f98d4bfa657336313d74f2588e0eee8442b930",
+   "changed_by_commits": [
+    "ce639f1"
+   ]
+  },
+  {
+   "path": "abep_sim/golden.py",
+   "old_sha256": "096e4b133eaa580436d41c2a511ee8c9390dc6aa593c671fee3556a605bf6b00",
+   "old_git_blob": "5d2dbc287fd45d3e20adbcebb4167e75346100cb",
+   "chains_on": "docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_22.json",
+   "new_sha256": "c455203bc6616ddc6d171ed10472f3d4635cf7655f75b00ecb704674865c5c07",
+   "new_git_blob": "ef479da17c9eeb63ff42b486d234aa702943334d",
+   "changed_by_commits": [
+    "ce639f1"
+   ]
+  }
+ ]
+}

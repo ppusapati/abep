@@ -33,9 +33,9 @@
   "docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md": "fb51328d6fe07a6eaf257ef9ef9592cb0c0039ae3e8cf04ef0420007c985b129",
   "docs/decisions/OD_2026_10_01_A9_7_architecture_freeze_design_synthesis.json": "3199a670c901967ae4dca930022470b024cac14b263335da0adc3d423c37f372",
   "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854",
-  "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json": "89b55969221af1c13b2f4b2c919118c0cc0ef00e3fa86ef5edd23ba081412217",
+  "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json": "6871975696f7b40dac897c52b529266eb053ecbf4ea7ab17cb3e3fbdac73a27b",
   "docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json": "74a52aa749e1d071f76957e4f9ef4929c9d8ab302b183da3c5a5d9ba8d6d6923",
-  "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json": "1c94798b113bae85e7d18a2147c40ad68fa86aea08db7cece4875082c00ad4e5",
+  "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json": "cd5da1b8bc4b97f3b32c627be7016aa17016045975f90fa392e202e6eec78785",
   "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json": "50a7fa11a92d162ae28b864f53794b333c1d779104ff558fcf61c2eb24955de0",
   "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
  },

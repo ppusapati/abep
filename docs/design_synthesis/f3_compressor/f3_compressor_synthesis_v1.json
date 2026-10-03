@@ -18,7 +18,7 @@
  ],
  "determinism": "no random numbers are used (grid search); outputs rounded to 10 significant digits",
  "pins": {
-  "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json": "f43da5ebc72dbff9a1fe275be83348b78778fb2b1223899f311115613d021c29",
+  "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json": "d086b981e7cb8ff6c6096e7768d89de0b9d8c5ad760308672a90ec75b97b718d",
   "docs/procurement/web_track_v1/threads/R1_compressor.json": "d30c49cef7ecabe0e957b566cc1bb8b0e0e43552db627b1bc8eb7d6cdb510bca",
   "docs/decisions/OD_2026_09_29_owner_answers_147.json": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
   "docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md": "fb51328d6fe07a6eaf257ef9ef9592cb0c0039ae3e8cf04ef0420007c985b129",

@@ -392,7 +392,7 @@ Status: **PROPOSED for owner review (not a design freeze, not an architecture ra
 - decision `docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A1_controls.json` sha256 `04c5a6f46ed2cb3e3fb174bcc7305d129e15ef53af2349d2a8abc4f6d8975992`
 - decision `docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json` sha256 `f82fb78cc0f608c03fd37d9ecbede6aab4ec525eecf5f8a47619eca35e1e73b6`
 - decision `docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json` sha256 `10d79026f1a65e0c2a9fa9e1f9a5f9abc9d162692711857bd43575f3095c8d4e`
-- input `docs/architecture_comparison/feed_state_closure/feed_state_closure_v2.json` sha256 `2ba4b922295f086a02d97a5a699868050c4bbfee18eb64357e60d944bf6860be`
+- input `docs/architecture_comparison/feed_state_closure/feed_state_closure_v2.json` sha256 `d48e64d81b119cb30561591fc1dca339d6565003839ea92ab8f32d120d9445f1`
 - input `scripts/architecture/build_feed_envelope.py` sha256 `32f96ba06ed01efaed3e827e09b66c8d794073fc53ebef474b7dff512d39d99e`
 - input `abep_sim/compressor.py` sha256 `7a8dfe5b64d269474863410f6e42a886c6d3f57015c05491880d65251dfafc75`
 - input `abep_sim/intake.py` sha256 `d46c23af40d413094babbe9d2121238c7b6f768341ffb3789d3d50c1d0f66687`

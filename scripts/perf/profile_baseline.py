@@ -67,7 +67,8 @@ DRIFT_REL = "docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_9.jso
 # record's new_sha256). The current bytes of every drifted file must equal the last recorded new_sha256 (SW-05: a
 # recorded drift is never an allowance for any later change).
 DRIFT_ADDENDA_REL = ("docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_18_REPAIR.json",
-                     "docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_22.json")
+                     "docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_22.json",
+                     "docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_22_PROGRAMME_LAYER.json")
 TEST_REL = "tests/test_perf_baseline.py"
 P3_LIB_REL = "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py"
 P3_BUILDER_REL = "docs/experiments/hall_icp/p3_coupled_thermal/build_p3_coupled_thermal.py"
