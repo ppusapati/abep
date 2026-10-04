@@ -3506,3 +3506,25 @@ order and values):
   compressor_downselect v2, F3 synthesis, F4 plenum, F7/F8, architecture freeze candidate, decision dossier. Perf:
   chained drift addendum `DRIFT_AFTER_A9_22_PROGRAMME_LAYER.json` (6 profiled sources; timings not re-measured; A9.18
   PERF_RERUN still owed).
+
+## 2026-10-04 — Optional Rust CI re-pointed to the parity v2 records (closes the A9.14 S10.4 v2 open item; NO numeric change)
+
+Owner decisions A9.14 S10.4 RUST-OQ-02 (`OPTIONAL_RUST_CI_MANDATORY_PARITY_ON_RUST_CHANGES`) and S10.3 RUST-OQ-01
+(`PYTHON_CANONICAL_FOR_FROZEN_AND_SCORE_BEARING`), `docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md`.
+Closes "Open (outside this lane's paths)" of the 2026-10-01 A9.14 S10.4 v2 re-registration entry.
+- `.github/workflows/rust-parity.yml` now reads `parity_prereg_v2.json` / `parity_report_v2.json` (+ `.md`), the records
+  `scripts/verify_abep_core.py` and `abep_sim/design/tpmc_backend.py` already read: rustc-pin step, campaign-history
+  length, campaign report copy/upload/summary and the re-admission gate. Same fail-closed logic and step conditions.
+- Renamed because the copied v2 rules require it (v2 `decision_rules.no_retuning` is v1's text unchanged, so after a v2
+  failure the only path is a code fix plus `parity_prereg_v3` with a new seed; v2 `reference_implementation.rule` also
+  names v3): `REFUSED_V1_RERUN_AFTER_FAILURE` -> `REFUSED_V2_RERUN_AFTER_FAILURE`; the reference refusal now says "needs
+  parity_prereg_v3"; refusal step names say v2; the global scoring concurrency group `rust-parity-v1-scoring` ->
+  `rust-parity-v2-scoring` (it serialises executions of the v2 scoring seed). Kept: the `--source-status` output keys
+  `v1_scoring_failure_on_record` / `v1_rerun_after_failure_on_record` (emitted by the unchanged `verify_abep_core.py`;
+  already evaluated against the v2 prereg sha256 and seed), the error codes `UNRECORDED_SOURCE_CHANGE`,
+  `NOTHING_TO_SCORE`, `REFUSED_REFERENCE_CHANGED`, triggers, pins (rustc 1.94.1 is the v2 `build_provenance.rustc`).
+- `tests/test_rust_ci_workflow.py` reads the v2 records; new `test_workflow_reads_the_registration_in_force` (every
+  executed step names the CLI's `REPORT_REL` / `MD_REL` / v2 prereg and none of the v1 records; the v1 records still
+  match the sha256 values in v2 `supersedes`). `docs/ci/RUST_PARITY.md` describes v2.
+- Unchanged: Rust sources, `intake_tpmc.py`, `tpmc_backend.py`, `verify_abep_core.py`, frozen data, the v1 and v2
+  parity records. No scoring seed spent (no campaign run).

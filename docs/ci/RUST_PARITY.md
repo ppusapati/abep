@@ -13,10 +13,26 @@ The machine-readable companion is `docs/decisions/OD_2026_10_01_A9_14_s7_s10_own
   score-bearing evidence come from the Python reference (`abep_sim/intake_tpmc.py`). An admitted Rust kernel may
   accelerate exploration, CI parity checks and non-authoritative runs only.
 
-The pre-registration is `docs/performance/abep_core/parity_prereg_v1.json` (sha256
-`dd12856bc384cb96643ffb5f8cd4fbc7df1c4d1adcc619bd210ddfa26c8102a8`, the value the report records). The record is
-`docs/performance/abep_core/parity_report_v1.json` with its `.md`. Both run through `scripts/verify_abep_core.py`
-(lane `fo_a9_7_rust_kernels`).
+The registration in force is **parity v2** (A9.14 S10.4 re-registration after the A9.9 reference change). The
+pre-registration is `docs/performance/abep_core/parity_prereg_v2.json` (sha256
+`98be24c170b5340e753b3630bda40f6d8ad970005561b13b12e1f108353bf365`, the value the report records). The record is
+`docs/performance/abep_core/parity_report_v2.json` with its `.md`. Both run through `scripts/verify_abep_core.py`
+(lane `fo_a9_7_rust_kernels`), and `abep_sim/design/tpmc_backend.py` binds admission to the same v2 report.
+
+v2 copies every v1 parameter unchanged (`copied_from_v1_unchanged`: workloads, vectors, n, observables, exact
+invariants, z = 5, aggregate 4, `campaign_seeds` with scoring seed 20261001, `decision_rules` including `no_retuning`);
+only the pinned reference sha256 changes (`dcddf947…`, was `ea0100b9…`). The v1 records (`parity_prereg_v1.json`
+sha256 `dd12856b…`, `parity_report_v1.json` / `.md`) are **immutable history**: the workflow no longer reads them,
+and `tests/test_rust_ci_workflow.py` checks that their bytes still equal the hashes v2 records in `supersedes`.
+
+How the copied v1 rules read under v2 (no new rule; the wording follows the registration in force):
+
+* `decision_rules.no_retuning` says "a code fix plus parity_prereg_v2 with a new scoring_master_seed; the v1 record
+  stays". Applied to v2 it means: after a `NOT_ADMITTED` v2 execution, only a code fix plus a **new pre-registration
+  (`parity_prereg_v3`)** with a new `scoring_master_seed`; the v2 record stays. v2's own
+  `reference_implementation.rule` likewise names v3 for a changed reference.
+* A "scoring execution" is a `campaign_history` entry with the v2 `scoring_master_seed` under the v2 prereg sha256
+  (`scoring_history_flags`). The three v1 executions live only in the v1 report and are not part of the v2 history.
 
 ## What runs, and when
 
@@ -30,7 +46,7 @@ normal CI.
 * `push` to `main` or the execution branch `claude/nifty-ramanujan-w68f9z` (the same branches as `ci.yml`), and
   `pull_request`. Both only when a path below changes. **These events never run the scoring campaign.**
 * `workflow_dispatch`, which runs it by hand. Its boolean input `run_scoring_campaign` (default `false`) is the **only**
-  way the workflow spends the v1 scoring seed.
+  way the workflow spends the v2 scoring seed.
 
 The paths are `abep_core/**`, `abep_sim/design/tpmc_backend.py`, `abep_sim/intake_tpmc.py` (the reference, which is bound
 by the prereg), `scripts/verify_abep_core.py`, `docs/performance/abep_core/**` and the workflow file itself.
@@ -41,13 +57,13 @@ One job, `abep_core build + parity (optional)`, runs these steps:
 
 | step | condition | what it does |
 |---|---|---|
-| source status | always | `verify_abep_core.py --source-status`: each `PROVENANCE_SOURCES` sha256 against `build_provenance.source_sha256`; reference against the prereg; `campaign_history` length; v1 failure / rerun flags |
-| reference refusal | reference sha256 ≠ prereg | fails with `REFUSED_REFERENCE_CHANGED`; a changed reference needs `parity_prereg_v2`, so no campaign runs |
-| committed-rerun refusal | the committed `campaign_history` records a v1 scoring execution after a non-`ADMITTED` v1 execution | fails with `REFUSED_V1_RERUN_AFTER_FAILURE` |
+| source status | always | `verify_abep_core.py --source-status` (v2 records): each `PROVENANCE_SOURCES` sha256 against `parity_report_v2.json` `build_provenance.source_sha256`; reference against `parity_prereg_v2.json`; `campaign_history` length; v2 failure / rerun flags (output keys still named `v1_*`, see below) |
+| reference refusal | reference sha256 ≠ `parity_prereg_v2` `sha256_at_registration` | fails with `REFUSED_REFERENCE_CHANGED`; a changed reference needs `parity_prereg_v3`, so no campaign runs |
+| committed-rerun refusal | the committed `campaign_history` records a v2 scoring execution after a non-`ADMITTED` v2 execution | fails with `REFUSED_V2_RERUN_AFTER_FAILURE` |
 | record check | sources match the record | `verify_abep_core.py --check` without the extension: every verdict, count, vector and the MD re-derived; sources bound |
 | nothing-to-score refusal | scoring requested and sources match the record | fails with `NOTHING_TO_SCORE`; the seed is not spent |
-| v1 rerun refusal | scoring requested and the committed record holds a non-`ADMITTED` v1 execution | fails with `REFUSED_V1_RERUN_AFTER_FAILURE` (`decision_rules.no_retuning`) |
-| toolchain | always | `rustup toolchain install 1.94.1 --profile minimal`; must equal `build_provenance.rustc` exactly |
+| v2 rerun refusal | scoring requested and the committed record holds a non-`ADMITTED` v2 execution | fails with `REFUSED_V2_RERUN_AFTER_FAILURE` (`decision_rules.no_retuning`) |
+| toolchain | always | `rustup toolchain install 1.94.1 --profile minimal`; must equal `parity_report_v2.json` `build_provenance.rustc` exactly |
 | Rust unit tests | always | `cargo test --release --locked` in `abep_core/` |
 | build | always | `maturin==1.15.0` in a scratch venv (`--system-site-packages`), then `maturin develop --release --locked`; never the repository environment |
 | extension pytest, recorded binary | sources match and the CI binary is the recorded one | `pytest tests/test_tpmc_backend.py tests/test_rust_ci_workflow.py` with the scratch-venv Python: every real-extension branch |
@@ -55,13 +71,13 @@ One job, `abep_core build + parity (optional)`, runs these steps:
 | parity suite | always (extension built) | `verify_abep_core.py --dev --strict`: the full development comparison with `development_master_seed`. It fails on any per-test, aggregate or invariant disagreement. It is **not scored and not a verdict**, and it admits nothing |
 | bitwise reproduction | sources match and the CI binary equals `build_provenance.extension_sha256` | `--check --recompute 3` |
 | unrecorded change, fail closed | sources differ from the record and scoring not requested | fails with `UNRECORDED_SOURCE_CHANGE` after the development smoke |
-| full campaign | sources differ and scoring requested | `verify_abep_core.py`: the pre-registered scoring campaign (scoring seed 20261001, z = 5, aggregate threshold 4, 593 vectors) |
-| upload | the campaign step reported `report_written=true` | the report JSON + MD copied to `$RUNNER_TEMP` after the campaign grew `campaign_history`, as artifact `abep_core-parity-report-<run_id>-<attempt>`, kept 90 days; the new history entry is also printed to the job summary |
-| re-admission gate | the campaign ran | `--check` with the CI binary, then **fails unless every kernel verdict is `ADMITTED`** |
+| full campaign | sources differ and scoring requested | `verify_abep_core.py`: the v2 pre-registered scoring campaign (scoring seed 20261001, z = 5, aggregate threshold 4, 593 vectors) |
+| upload | the campaign step reported `report_written=true` | `parity_report_v2.json` + `.md` copied to `$RUNNER_TEMP` after the campaign grew `campaign_history`, as artifact `abep_core-parity-report-<run_id>-<attempt>`, kept 90 days; the new history entry is also printed to the job summary |
+| re-admission gate | the campaign ran | `--check` with the CI binary, then **fails unless every kernel verdict in `parity_report_v2.json` is `ADMITTED`** |
 
 Nothing in the workflow reads secrets. It has `contents: read` only, and nothing is pushed or committed.
 
-Scoring runs share one global concurrency group (`rust-parity-v1-scoring`, no cancellation), whatever the ref, so two
+Scoring runs share one global concurrency group (`rust-parity-v2-scoring`, no cancellation), whatever the ref, so two
 scoring executions never run in parallel. All other runs are grouped per ref.
 
 ### The two record-bound tests deselected for a non-recorded CI binary
@@ -103,7 +119,7 @@ routes:
 
 **Sources changed, scoring requested.** The full pre-registered campaign runs on the CI binary, and the job fails unless
 every kernel re-derives `ADMITTED`. Before it starts, the job refuses if the committed record already holds a
-non-`ADMITTED` v1 execution, or if the sources match the record. Even when it re-admits, the kernel is not `ADMITTED` *on
+non-`ADMITTED` v2 execution, or if the sources match the record. Even when it re-admits, the kernel is not `ADMITTED` *on
 the committed tree* until that report is committed:
 
 * `tpmc_backend` binds admission to the committed report;
@@ -114,12 +130,13 @@ The workflow ends with a warning that says this.
 ## Rules that bind the CI campaign (from the prereg, not new rules)
 
 * **No execution may be discarded** (`campaign_seeds.development_rule`). A CI scoring execution is an execution of the
-  v1 scoring campaign. Its report artifact must be committed to the repository, which appends to `campaign_history`,
+  v2 scoring campaign. Its report artifact must be committed to the repository, which appends to `campaign_history`,
   **whatever its verdict**.
-* **No retuning** (`decision_rules.no_retuning`). After a `NOT_ADMITTED` verdict, the only path forward is a code fix plus
-  `parity_prereg_v2` with a new `scoring_master_seed`. A second v1 scoring run of the same seed after a failure is not a
-  re-admission. The workflow enforces this mechanically against the committed record in two places:
-  * the v1 rerun refusal before a scoring run;
+* **No retuning** (`decision_rules.no_retuning`, copied unchanged from v1). After a `NOT_ADMITTED` v2 verdict, the only
+  path forward is a code fix plus `parity_prereg_v3` with a new `scoring_master_seed`. A second v2 scoring run of the same
+  seed after a failure is not a re-admission. The workflow enforces this mechanically against the committed record in two
+  places:
+  * the v2 rerun refusal before a scoring run;
   * the committed-rerun refusal on every run, which turns red if such a rerun was ever committed.
 * **The seed is spent only deliberately.** Push and pull-request events never score, so the same change cannot start two
   scoring executions (for example a push to a branch that also has an open PR). The dispatch input defaults to `false`.
@@ -131,7 +148,7 @@ The workflow ends with a warning that says this.
 
 | pin | value | source | evidence class |
 |---|---|---|---|
-| Rust toolchain | 1.94.1 | `parity_report_v1.json` `build_provenance.rustc` = `rustc 1.94.1 (e408947bf 2026-03-25)`; the workflow compares the full string | recorded build provenance |
+| Rust toolchain | 1.94.1 | `parity_report_v2.json` `build_provenance.rustc` = `rustc 1.94.1 (e408947bf 2026-03-25)` (same as v1); the workflow compares the full string | recorded build provenance |
 | maturin | 1.15.0 | version installed in the scratch build venv that produced the recorded extension, observed 2026-10-01; **not** recorded in `build_provenance`; `abep_core/README.md` allows `>=1.5,<2` | observed, not recorded |
 | Python | 3.11 | `ci.yml` `PYTHON_VERSION`; `build_provenance.python` = 3.11.15; extension tag `cpython-311` | recorded / repository convention |
 | Rust crates | `Cargo.lock` | committed lock file, `--locked` on build and test | repository |
@@ -151,8 +168,11 @@ observable or vector. `campaign()`, `check()` and the scoring code are unchanged
   * whether the reference matches the prereg;
   * whether the importable extension is the recorded binary;
   * `campaign_history_length`;
-  * `v1_scoring_failure_on_record`, `v1_rerun_after_failure_on_record` (`scoring_history_flags`: a v1 execution is an
-    entry with the prereg's `scoring_master_seed` under the current prereg sha256).
+  * `v1_scoring_failure_on_record`, `v1_rerun_after_failure_on_record` (`scoring_history_flags`: a scoring execution is
+    an entry with the prereg's `scoring_master_seed` under the current prereg sha256). Since v2 these legacy key names
+    report **v2** executions (the script reads `parity_prereg_v2.json` / `parity_report_v2.json`); they were not renamed
+    because `scripts/verify_abep_core.py` is the recorded campaign wrapper and was left unchanged. The workflow step
+    names and error codes say v2.
 
   With `--github-output` it also appends `key=value` lines for the workflow.
 * `--dev --strict`: the full development comparison (no `--only` / `--limit`). It exits 1 when the pre-registered
@@ -168,7 +188,9 @@ observable or vector. `campaign()`, `check()` and the scoring code are unchanged
 * a walk of the step conditions for push, pull_request and dispatch. It covers changed and unchanged sources, a
   recorded failure, a committed rerun, and a campaign that did or did not write its report;
 * the global scoring concurrency group;
-* the pinned toolchain against the report;
+* the pinned toolchain against the v2 report;
+* that every executed step reads the v2 records the CLI reads (`REPORT_REL`, `MD_REL`, `parity_prereg_v2`) and none of
+  the v1 records, and that the v1 records still match the hashes in v2 `supersedes`;
 * the absence of secrets and of extra permissions;
 * that the workflow is not a required context.
 
@@ -193,5 +215,8 @@ extension it runs the real-extension smoke. It never skips (CLAUDE.md rule 9).
   Committing a locally run campaign in the same change stays the preferred route.
 * The workflow table in `docs/ci/CI.md` does not list `rust-parity.yml` yet. That file is outside this lane; this
   document is the reference.
+* **v2 re-point (2026-10-04).** The workflow and its test were re-pointed from the v1 records to v2 (step names,
+  `REFUSED_V2_RERUN_AFTER_FAILURE`, concurrency group `rust-parity-v2-scoring`; see `docs/HISTORY.md`). This closes the
+  open item of the 2026-10-01 A9.14 S10.4 v2 re-registration entry.
 * This workflow has not run on GitHub yet. Its first run will show the real build time and whether the runner binary
   differs from the recorded one, which is expected.

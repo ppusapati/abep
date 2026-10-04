@@ -3,10 +3,14 @@
 Owner decision A9.14 S10.4 (RUST-OQ-02, OPTIONAL_RUST_CI_MANDATORY_PARITY_ON_RUST_CHANGES;
 docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md, json sha256 c6c00b7f...). Structural checks of the workflow
 (triggers, steps, conditions, pins, no secrets, not a required context), a walk of the step conditions for the events
-that matter (fail-closed on an unrecorded Rust change; the v1 scoring seed spent only on an explicit dispatch; no v1 rerun
+that matter (fail-closed on an unrecorded Rust change; the v2 scoring seed spent only on an explicit dispatch; no v2 rerun
 after a recorded failure; upload only of a report the campaign wrote), plus the non-interactive CLI entry points of
 scripts/verify_abep_core.py exercised without a Rust toolchain, and a real-extension smoke when abep_core is importable.
 Never skips (CLAUDE.md rule 9). No campaign is run.
+
+Registration in force: parity v2 (parity_prereg_v2.json / parity_report_v2.json, the records verify_abep_core.py and
+tpmc_backend.py read since A9.14 S10.4). The v1 records are immutable history; this file only checks that the workflow no
+longer reads them.
 """
 from __future__ import annotations
 
@@ -24,8 +28,9 @@ import yaml  # PyYAML is locked (requirements-lock.txt); imported directly so a 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WF = os.path.join(ROOT, ".github", "workflows", "rust-parity.yml")
 CI_YML = os.path.join(ROOT, ".github", "workflows", "ci.yml")
-REPORT = os.path.join(ROOT, "docs", "performance", "abep_core", "parity_report_v1.json")
-PREREG = os.path.join(ROOT, "docs", "performance", "abep_core", "parity_prereg_v1.json")
+REPORT = os.path.join(ROOT, "docs", "performance", "abep_core", "parity_report_v2.json")
+PREREG = os.path.join(ROOT, "docs", "performance", "abep_core", "parity_prereg_v2.json")
+V1_RECORDS = ("parity_prereg_v1.json", "parity_report_v1.json", "parity_report_v1.md")   # immutable history, never read
 DOC = os.path.join(ROOT, "docs", "ci", "RUST_PARITY.md")
 OD_JSON = os.path.join(ROOT, "docs", "decisions", "OD_2026_10_01_A9_14_s7_s10_owner_decisions.json")
 OD_JSON_SHA256 = "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c"
@@ -82,6 +87,26 @@ def test_watched_paths_cover_every_provenance_source():
     V = _verify()
     for src in V.PROVENANCE_SOURCES:
         assert src in WATCHED_PATHS or (src.startswith("abep_core/") and "abep_core/**" in WATCHED_PATHS), src
+
+
+def test_workflow_reads_the_registration_in_force():
+    """The workflow reads the records verify_abep_core.py / tpmc_backend.py read (v2), never the v1 history."""
+    V = _verify()
+    assert V.PREREG_REL.endswith("/parity_prereg_v2.json") and V.REPORT_REL.endswith("/parity_report_v2.json")
+    _, text = _load(WF)
+    code = "\n".join(s.get("run", "") for s in _steps())          # every executed step, not the header comments
+    assert V.REPORT_REL in code and V.MD_REL in code
+    assert "parity_prereg_v2" in code and "parity_prereg_v3" in code   # reference refusal names the next registration
+    for old in V1_RECORDS + ("parity_prereg_v1", "parity_report_v1", "REFUSED_V1_", "rust-parity-v1-"):
+        assert old not in code, old
+    assert "rust-parity-v1-" not in text and "REFUSED_V1_" not in text
+    # the v1 records stay unchanged history: their bytes equal the hashes v2 records in `supersedes`
+    sup = json.load(open(PREREG))["supersedes"]
+    for rel, sha in ((sup["path"], sup["sha256"]), (sup["v1_report"]["path"], sup["v1_report"]["sha256"]),
+                     (sup["v1_report"]["md"], sup["v1_report"]["md_sha256"])):
+        assert os.path.basename(rel) in V1_RECORDS
+        with open(os.path.join(ROOT, rel), "rb") as fh:
+            assert hashlib.sha256(fh.read()).hexdigest() == sha, rel
 
 
 # --------------------------------------------------------------------------------------- permissions / secrets / pins
@@ -159,8 +184,8 @@ def _src(match, failure=False, rerun=False):
 
 def test_step_order_and_conditions():
     names = [s.get("name", s.get("uses")) for s in _steps()]
-    order = ["Sources vs the recorded build", "Refuse a changed Python reference", "Refuse a committed v1 rerun",
-             "Parity record check", "Refuse a scoring request with nothing to score", "Refuse a v1 scoring rerun",
+    order = ["Sources vs the recorded build", "Refuse a changed Python reference", "Refuse a committed v2 rerun",
+             "Parity record check", "Refuse a scoring request with nothing to score", "Refuse a v2 scoring rerun",
              "Install the pinned Rust toolchain", "Pure-Rust unit tests", "Build abep_core", "Extension state",
              "Extension-dependent pytest - recorded binary", "Extension-dependent pytest - CI binary",
              "Parity suite", "Bitwise reproduction", "Unrecorded source change - fail closed",
@@ -200,7 +225,7 @@ def test_extension_dependent_pytest_runs_with_the_built_extension():
 
 
 def test_scoring_campaign_only_on_explicit_dispatch_and_must_readmit():
-    """RUSTCI-1: push / pull_request never spend the v1 scoring seed; they fail closed on an unrecorded change."""
+    """RUSTCI-1: push / pull_request never spend the v2 scoring seed; they fail closed on an unrecorded change."""
     doc, _ = _load(WF)
     inp = doc["on"]["workflow_dispatch"]["inputs"]["run_scoring_campaign"]
     assert inp["type"] == "boolean" and inp["default"] is False
@@ -214,11 +239,11 @@ def test_scoring_campaign_only_on_explicit_dispatch_and_must_readmit():
     gate = _step("Campaign re-admits every kernel")
     assert gate["if"] == CHANGED + " && " + SCORING
     assert "--check" in gate["run"] and 'x == "ADMITTED"' in gate["run"] and "sys.exit(" in gate["run"]
-    for name in ("Refuse a scoring request with nothing to score", "Refuse a v1 scoring rerun"):
+    for name in ("Refuse a scoring request with nothing to score", "Refuse a v2 scoring rerun"):
         assert _step(name)["if"].startswith(SCORING + " && ") and "exit 1" in _step(name)["run"]
     assert _step("Refuse a scoring request with nothing to score")["if"].endswith(UNCHANGED)
-    assert _step("Refuse a v1 scoring rerun")["if"].endswith("steps.src.outputs.v1_scoring_failure_on_record == 'true'")
-    assert _step("Refuse a committed v1 rerun")["if"] == "steps.src.outputs.v1_rerun_after_failure_on_record == 'true'"
+    assert _step("Refuse a v2 scoring rerun")["if"].endswith("steps.src.outputs.v1_scoring_failure_on_record == 'true'")
+    assert _step("Refuse a committed v2 rerun")["if"] == "steps.src.outputs.v1_rerun_after_failure_on_record == 'true'"
 
 
 def test_simulated_events():
@@ -238,11 +263,11 @@ def test_simulated_events():
     ran, _ = _simulate("workflow_dispatch", True, _src(False), ext, False)   # refused / crashed before write_report
     assert has(ran, camp) and not has(ran, up)
     ran, ok = _simulate("workflow_dispatch", True, _src(False, failure=True), ext, True)
-    assert not has(ran, camp) and not has(ran, up) and not ok          # no v1 rerun after a recorded failure
+    assert not has(ran, camp) and not has(ran, up) and not ok          # no v2 rerun after a recorded failure
     ran, ok = _simulate("workflow_dispatch", True, _src(True), ext, True)
     assert not has(ran, camp) and not ok                                # nothing to score: the seed is not spent
     ran, ok = _simulate("push", False, _src(True, failure=True, rerun=True), ext, False)
-    assert not ok and not has(ran, camp)                                # a committed v1 rerun after a failure fails
+    assert not ok and not has(ran, camp)                                # a committed v2 rerun after a failure fails
     for event in ("push", "pull_request", "workflow_dispatch"):          # recorded sources: green path, no campaign
         ran, ok = _simulate(event, False, _src(True), ext, False)
         assert ok and not has(ran, camp) and has(ran, "Parity record check") and has(ran, "Note when the CI binary")
@@ -254,7 +279,7 @@ def test_simulated_events():
 def test_concurrency_serialises_scoring_globally():
     doc, _ = _load(WF)
     grp = doc["concurrency"]["group"]
-    assert SCORING in grp and "'rust-parity-v1-scoring'" in grp and "github.ref" in grp
+    assert SCORING in grp and "'rust-parity-v2-scoring'" in grp and "github.ref" in grp
     assert doc["concurrency"]["cancel-in-progress"] is False
 
 
@@ -298,8 +323,8 @@ def test_doc_cites_owner_decision():
     assert "OPTIONAL_RUST_CI_MANDATORY_PARITY_ON_RUST_CHANGES" in od and "PYTHON_CANONICAL_FOR_FROZEN_AND_SCORE_BEARING" in od
     doc = open(DOC, encoding="utf-8").read()
     for s in (OD_JSON_SHA256, "S10.4", "RUST-OQ-02", "S10.3", "OPTIONAL_RUST_CI_MANDATORY_PARITY_ON_RUST_CHANGES",
-              "PYTHON_CANONICAL_FOR_FROZEN_AND_SCORE_BEARING", "parity_prereg_v1.json", "UNRECORDED_SOURCE_CHANGE",
-              "REFUSED_V1_RERUN_AFTER_FAILURE", "run_scoring_campaign"):
+              "PYTHON_CANONICAL_FOR_FROZEN_AND_SCORE_BEARING", "parity_prereg_v2.json", "parity_report_v2.json",
+              "UNRECORDED_SOURCE_CHANGE", "REFUSED_V2_RERUN_AFTER_FAILURE", "rust-parity-v2-scoring", "run_scoring_campaign"):
         assert s in doc, s
     _, text = _load(WF)
     assert "S10.4" in text and "OPTIONAL_RUST_CI_MANDATORY_PARITY_ON_RUST_CHANGES" in text
@@ -316,17 +341,18 @@ def test_source_status_entry_point(tmp_path, capsys):
     for k in V.SOURCE_STATUS_KEYS:
         assert lines[k] == ("true" if st[k] else "false")
     # compare with the record the CLI reads (V.REPORT_REL; parity registration v2 since A9.14 S10.4), not the v1 record
+    assert os.path.join(ROOT, V.REPORT_REL) == REPORT and os.path.join(ROOT, V.PREREG_REL) == PREREG
     rep = json.load(open(os.path.join(ROOT, V.REPORT_REL)))
     assert lines["campaign_history_length"] == str(len(rep["campaign_history"])) == str(st["campaign_history_length"])
     current = {s: V.sha256_file(s) for s in V.PROVENANCE_SOURCES}
     assert st["sources_match_recorded_build"] == (current == rep["build_provenance"]["source_sha256"])
     assert st["recorded_verdicts"] == rep["verdicts"]
-    # the committed record holds only ADMITTED v1 executions
+    # the committed v2 record holds only ADMITTED v2 executions (flags keep their v1_* key names; evaluated against v2)
     assert st["v1_scoring_failure_on_record"] is False and st["v1_rerun_after_failure_on_record"] is False
 
 
 def test_scoring_history_flags():
-    """RUSTCI-1: the record is read against decision_rules.no_retuning (a failure; a v1 rerun after one)."""
+    """RUSTCI-1: the v2 record is read against v2 decision_rules.no_retuning (a failure; a v2 rerun after one)."""
     V = _verify()
     pre = json.load(open(PREREG))
     sha = V.sha256_file(V.PREREG_REL)
@@ -341,7 +367,7 @@ def test_scoring_history_flags():
     assert V.scoring_history_flags([bad, ok], pre, sha) == (True, True)
     assert V.scoring_history_flags([bad, bad], pre, sha) == (True, True)
     assert V.scoring_history_flags([dict(ok, verdicts={})], pre, sha) == (True, False)   # no verdict is not ADMITTED
-    assert V.scoring_history_flags([other_seed, ok], pre, sha) == (False, False)          # not a v1 scoring execution
+    assert V.scoring_history_flags([other_seed, ok], pre, sha) == (False, False)          # not a v2 scoring execution
     assert V.scoring_history_flags([other_prereg, ok], pre, sha) == (False, False)
     rep = json.load(open(REPORT))
     assert V.scoring_history_flags(rep["campaign_history"], pre, sha) == (False, False)
