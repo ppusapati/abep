@@ -451,7 +451,7 @@
   },
   "F78": {
    "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
-   "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+   "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
   },
   "F7P": {
    "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
@@ -724,7 +724,7 @@
    "source": {
     "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
     "pointer": "/robust/robust_pareto_by_P_set",
-    "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+    "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
    }
   },
   "nominal_pareto_union": {
@@ -824,7 +824,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
@@ -835,7 +835,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/7/finding",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
@@ -877,7 +877,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
@@ -921,7 +921,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
@@ -965,7 +965,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/design_vector/blocks/0/variables/1",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     }
    ],
    "basis": "F1-02; F7 collapses d",
@@ -1041,7 +1041,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/1/question",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     }
    ],
    "basis": "no measured accommodation for any Vyovrinda surface",
@@ -1074,7 +1074,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/9/finding",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -1143,12 +1143,12 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/hard_constraints/8",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
@@ -1453,7 +1453,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     }
    ],
    "basis": "F3 bounded design search; F7 / F8 Pareto",
@@ -1502,7 +1502,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
@@ -1622,7 +1622,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
@@ -1632,7 +1632,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/5",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     }
    ],
    "basis": "DragCompressor model through F3 / F4 / F7",
@@ -1665,7 +1665,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
@@ -1675,7 +1675,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/6",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -1808,7 +1808,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
@@ -1852,7 +1852,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
@@ -1863,7 +1863,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/2/finding",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     }
    ],
    "basis": "robust-member P_set: none (robust set empty); F7 set pressures with any all-state-feasible vector: 0.01, 0.02 Pa (read from F7 upstream_pareto_summary)",
@@ -1970,7 +1970,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/10/finding",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     }
    ],
    "basis": "F4-P-06; owner GP-D03",
@@ -2028,12 +2028,12 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/1/finding",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
@@ -6510,7 +6510,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/hard_constraints/4",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     }
    ],
    "basis": "I_e,cap = I_on - I_off (discharge OFF, signed; A9.4 P1Q-10 / A9.5 P1Q-16)",
@@ -7126,7 +7126,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/system_evaluation/parametric_P_bus_lower_bound_W_range",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
@@ -9348,7 +9348,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/T",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     }
    ],
    "evidence_plan_steps": [
@@ -9443,7 +9443,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/I_e_margin",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     }
    ],
    "evidence_plan_steps": [
@@ -9491,7 +9491,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/Q_reject",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     }
    ],
    "evidence_plan_steps": [
@@ -9707,7 +9707,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/P_bus",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     }
    ],
    "evidence_plan_steps": [
@@ -9751,7 +9751,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/m_wet",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     }
    ],
    "evidence_plan_steps": [
@@ -9844,7 +9844,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/1",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -9904,12 +9904,12 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/D_spacecraft",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/hard_constraints/7",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -12760,7 +12760,7 @@
     "source": {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     }
    },
    {
@@ -12770,7 +12770,7 @@
     "source": {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/1",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     }
    },
    {
@@ -12780,7 +12780,7 @@
     "source": {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     }
    },
    {
@@ -12790,7 +12790,7 @@
     "source": {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/3",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     }
    },
    {
@@ -13296,32 +13296,32 @@
       {
        "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
        "pointer": "/upstream_pareto_summary",
-       "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+       "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
       },
       {
        "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
        "pointer": "/upstream_status_totals",
-       "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+       "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
       },
       {
        "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
        "pointer": "/upstream_reason_totals",
-       "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+       "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
       },
       {
        "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
        "pointer": "/findings/0/finding",
-       "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+       "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
       },
       {
        "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
        "pointer": "/findings/1/finding",
-       "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+       "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
       },
       {
        "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
        "pointer": "/findings/2/finding",
-       "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+       "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
       }
      ]
     },
@@ -13359,12 +13359,12 @@
       {
        "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
        "pointer": "/robust/all_scenario_feasible",
-       "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+       "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
       },
       {
        "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
        "pointer": "/findings/7/finding",
-       "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+       "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
       }
      ]
     },
@@ -13436,17 +13436,17 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/flow_gap_owner_order",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/design_state_set",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
@@ -13501,32 +13501,32 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/upstream_pareto_summary",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/upstream_status_totals",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/upstream_reason_totals",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/0/finding",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/1/finding",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/2/finding",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f8_robust_candidates_v1.json",
@@ -13536,12 +13536,12 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/all_scenario_feasible",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/7/finding",
-     "sha256": "27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07"
+     "sha256": "abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43"
     }
    ]
   }

@@ -30,6 +30,7 @@ from pathlib import Path
 from typing import Callable, Mapping, Sequence
 
 from .. import bus_boundary_a9_v2 as bb
+from ..configuration import load_gate_thresholds
 from ..design import a9_19_architecture as a919
 from ..design import architecture_optimizer as ao
 from ..design import engineering_constraints as ec
@@ -48,44 +49,55 @@ REPO = Path(__file__).resolve().parents[2]
 
 
 # ================================================================================================= F7 hard constraints
-# (moved from abep_sim/design/architecture_optimizer.py; limits from the engineering-constraints seam)
+# (moved from abep_sim/design/architecture_optimizer.py). Limits: HC-01..HC-04 from the engineering-constraints seam
+# (abep_sim/design/engineering_constraints.py REQUIREMENT_LIMITS); HC-05..HC-12 from the assessment-layer threshold
+# artefact config/assessment/gate_thresholds_v1.json (A9.24 item 5, owner decision 2026-10-04): HC-05 M_n,LB > 0,
+# HC-06 50 K protection margin against hardware-bound limits (never in thermal equations), HC-07 15,000 h firing-life
+# basis (mission 26,280 h separate), HC-08 T - D >= 0, HC-10 capability evidence, HC-11 feed_available - feed_required
+# >= 0, HC-12 TBD -> NOT_EVALUATED (no default). HC-09 stays the design-generation filter (engineering constraints,
+# A9.22 G2 Option 1) and is reported here as well. Values identical to the former design-module literals.
+GATE_THRESHOLDS = load_gate_thresholds()
+HARD_CONSTRAINT_LIMITS = {**ec.REQUIREMENT_LIMITS, **GATE_THRESHOLDS["limits"]}
 
 
 HARD_CONSTRAINTS = (
     {"id": "HC-01", "rvm": "RVM-02", "rfp": "RFP-P18-06", "quantity": "T (sustained, atmospheric propellant)",
-     "comparator": ">=", "limit": ec.HARD_CONSTRAINT_LIMITS["HC-01"], "units": "N", "objective": "thrust_N", "category": "rfp_recorded"},
+     "comparator": ">=", "limit": HARD_CONSTRAINT_LIMITS["HC-01"], "units": "N", "objective": "thrust_N", "category": "rfp_recorded"},
     {"id": "HC-02", "rvm": "RVM-03", "rfp": "RFP-P18-06; RFP-P18-10",
      "quantity": "demonstrated thrust capability at P_bus < 1500 W", "comparator": ">=",
-     "limit": ec.HARD_CONSTRAINT_LIMITS["HC-02"], "units": "N", "objective": "thrust_capability_N", "category": "rfp_recorded"},
+     "limit": HARD_CONSTRAINT_LIMITS["HC-02"], "units": "N", "objective": "thrust_capability_N", "category": "rfp_recorded"},
     {"id": "HC-03", "rvm": "RVM-04", "rfp": "RFP-P18-10", "quantity": "P_bus,1ms,max (steady and start-up, A9-02 gate)",
-     "comparator": "<", "limit": ec.HARD_CONSTRAINT_LIMITS["HC-03"], "units": "W", "objective": "P_bus_W", "category": "rfp_recorded"},
+     "comparator": "<", "limit": HARD_CONSTRAINT_LIMITS["HC-03"], "units": "W", "objective": "P_bus_W", "category": "rfp_recorded"},
     {"id": "HC-04", "rvm": "RVM-06", "rfp": "RFP-P18-11", "quantity": "wet propulsion-system mass", "comparator": "<",
-     "limit": ec.HARD_CONSTRAINT_LIMITS["HC-04"], "units": "kg", "objective": "m_wet_kg", "category": "rfp_recorded"},
-    {"id": "HC-05", "rvm": "RVM-15", "quantity": "I_e,cap - I_d,max,H1 (one-sided LCB)", "comparator": ">",
-     "limit": ec.HARD_CONSTRAINT_LIMITS["HC-05"], "units": "A", "objective": "I_e_cap_minus_I_d_max_A", "category": "derived_from_owner_decision"},
+     "limit": HARD_CONSTRAINT_LIMITS["HC-04"], "units": "kg", "objective": "m_wet_kg", "category": "rfp_recorded"},
+    {"id": "HC-05", "rvm": "RVM-15",
+     "quantity": "M_n,LB: lower uncertainty bound of M_n = I_e,cap / I_d,max,H1 - 1 (A9.24 item 5; the point "
+                 "difference I_e,cap - I_d,max is never the acceptance criterion; no lower bound -> NOT_EVALUATED)",
+     "comparator": ">", "limit": HARD_CONSTRAINT_LIMITS["HC-05"], "units": "-", "objective": "M_n_LB",
+     "category": "derived_from_owner_decision"},
     {"id": "HC-06", "rvm": "RVM-17", "quantity": "thermal margin below validated limits", "comparator": ">=",
-     "limit": ec.HARD_CONSTRAINT_LIMITS["HC-06"], "units": "K", "objective": "thermal_margin_K", "category": "derived_project"},
+     "limit": HARD_CONSTRAINT_LIMITS["HC-06"], "units": "K", "objective": "thermal_margin_K", "category": "derived_project"},
     {"id": "HC-07", "rvm": "RVM-12", "rfp": "RFP-P19-01", "quantity": "cumulative firing time capability",
-     "comparator": ">", "limit": ec.HARD_CONSTRAINT_LIMITS["HC-07"], "units": "h", "objective": "firing_life_h", "category": "rfp_recorded"},
+     "comparator": ">", "limit": HARD_CONSTRAINT_LIMITS["HC-07"], "units": "h", "objective": "firing_life_h", "category": "rfp_recorded"},
     {"id": "HC-08", "rvm": "AG-13 (owner decision A9.13 S6.15 / OQ-F78-01; A9.14 S9.7 statewise quantifier)",
      "rfp": "RFP-P18-04; RFP-P18-06",
      "quantity": "T_available(state) - D_spacecraft(state) at EVERY required state (statewise; worst state governs; "
-                 "the orbit average never hides a deficit)", "comparator": ">=", "limit": ec.HARD_CONSTRAINT_LIMITS["HC-08"], "units": "N",
+                 "the orbit average never hides a deficit)", "comparator": ">=", "limit": HARD_CONSTRAINT_LIMITS["HC-08"], "units": "N",
      "objective": "statewise_T_minus_D", "category": "owner_decision_hard_statewise", "statewise": True},
     {"id": "HC-09", "rvm": "F1 C-DRAG-RFP (RFP thrust max as recorded, F1-P-11)",
-     "quantity": "intake-face drag at every orbit state", "comparator": "<=", "limit": ec.HARD_CONSTRAINT_LIMITS["HC-09"], "units": "N",
+     "quantity": "intake-face drag at every orbit state", "comparator": "<=", "limit": HARD_CONSTRAINT_LIMITS["HC-09"], "units": "N",
      "objective": "drag_intake_max_N", "category": "upstream (evaluable now; necessary, not sufficient)"},
     {"id": "HC-10", "rvm": "A9.15 RFP-compliant propellant policy", "rfp": "RFP-P18-08; RFP-P17-05",
      "quantity": "ambient-air AND Xe operating capability with two separate propellant tanks / paths "
-                 "(1 = both demonstrated)", "comparator": ">=", "limit": ec.HARD_CONSTRAINT_LIMITS["HC-10"], "units": "-",
+                 "(1 = both demonstrated)", "comparator": ">=", "limit": HARD_CONSTRAINT_LIMITS["HC-10"], "units": "-",
      "objective": "propellant_capability", "category": "rfp_recorded"},
     {"id": "HC-11", "rvm": "AG-12 (owner decision A9.13 S6.21 / F9-OQ-02)", "rfp": "RFP-P18-06; RFP-P18-05",
      "quantity": "statewise feed-state sufficiency (mdot, P, T, composition, ripple) vs the requirement derived from "
-                 "the required thrust and a VALIDATED H-1 map (no fixed mg/s gate)", "comparator": ">=", "limit": ec.HARD_CONSTRAINT_LIMITS["HC-11"],
+                 "the required thrust and a VALIDATED H-1 map (no fixed mg/s gate)", "comparator": ">=", "limit": HARD_CONSTRAINT_LIMITS["HC-11"],
      "units": "-", "objective": "feed_state_sufficiency", "category": "owner_decision_hard_statewise",
      "statewise": True},
     {"id": "HC-12", "rvm": "A9.13 S6.17 / S6.12 feed-quality", "rfp": "-",
-     "quantity": "compressor / plenum ripple <= measured H-1 ripple tolerance", "comparator": "<=", "limit": ec.HARD_CONSTRAINT_LIMITS["HC-12"],
+     "quantity": "compressor / plenum ripple <= measured H-1 ripple tolerance", "comparator": "<=", "limit": HARD_CONSTRAINT_LIMITS["HC-12"],
      "units": "-", "objective": "ripple_feed_quality", "category": "owner_decision_hard_constraint"},
 )
 
@@ -132,6 +144,16 @@ def evaluate_constraints(values: Mapping) -> list[dict]:
                     basis += "; orbit average non-negative but a state is below zero (the statewise result governs)"
             out.append({"id": c["id"], "rvm": c["rvm"], "rfp": c.get("rfp"), "quantity": c["quantity"],
                         "rule": c["quantity"], "status": st, "value_status": vst, "basis": basis})
+            continue
+        if c["id"] == "HC-05" and (rec is None or not rec.get("uncertainty_basis")):
+            # A9.24 item 5 (owner correction 2026-10-04): HC-05 is evaluated only on the lower uncertainty bound of
+            # M_n = I_e,cap / I_d,max,H1 - 1; without uncertainty evidence it is NOT_EVALUATED (fail closed)
+            out.append({"id": c["id"], "rvm": c["rvm"], "rfp": c.get("rfp"), "quantity": c["quantity"],
+                        "rule": f"{c['comparator']} {c['limit']:g} {c['units']}", "status": C_NOT_EVALUATED,
+                        "value_status": None if rec is None else rec.get("status"),
+                        "basis": "no lower uncertainty bound M_n,LB of M_n = I_e,cap / I_d,max,H1 - 1 with its "
+                                 "uncertainty basis (fail closed: NOT_EVALUATED; a point difference I_e,cap - "
+                                 "I_d,max never closes HC-05)"})
             continue
         if rec is not None and c["id"] == "HC-03" and rec.get("gate_verdict") is not None:
             gv = rec["gate_verdict"]

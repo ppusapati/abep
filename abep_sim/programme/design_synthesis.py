@@ -176,6 +176,11 @@ def evaluate_system(upstream_row: Mapping | None, config: str, design: Mapping |
     if cvals["ripple_feed_quality"] is None and row.get("ripple_transfer_shaft") is not None:
         cvals["ripple_feed_quality"] = dg.ripple_feed_quality(row["ripple_transfer_shaft"], u13.VALUE_PARAMETRIC,
                                                               u13.h1_tolerance_tbd("ripple"))
+    # HC-05 (A9.24 item 5): a supplied lower uncertainty bound of M_n = I_e,cap / I_d,max,H1 - 1 with its uncertainty
+    # basis; the point difference objective above never reaches the HC-05 comparison
+    mn = s.get("M_n_LB")
+    cvals["M_n_LB"] = None if mn is None else {**ao.supplied_objective("M_n_LB", mn, "-"),
+                                               "uncertainty_basis": mn.get("uncertainty_basis")}
     prop = dg.propellant_paths_check(s.get("propellant_paths", ao.MODELLED_PROPELLANT_PATHS))
     cvals["propellant_capability"] = ao.supplied_objective("propellant_capability", s.get("propellant_capability"), "-")
     cons = dg.evaluate_constraints(cvals)

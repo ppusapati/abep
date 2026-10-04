@@ -146,7 +146,7 @@
    "kind": "LIMIT",
    "status": "FROZEN",
    "consumed_by": [
-    "config/mission/mission_scenario_v1.json mission_hours (mission-integration horizon set equal to it)"
+    "config/mission/mission_scenario_v2.json mission_hours initial_basis (provenance only; the mission-integration horizon is an independently versioned operating choice, A9.24 item 4)"
    ],
    "g1_status": "APPLIED",
    "historical_value": {
@@ -173,7 +173,7 @@
    "status": "FROZEN",
    "consumed_by": [
     "abep_sim/operating_inputs.py FIRING_HOURS (firing-integrated basis)",
-    "abep_sim/design/engineering_constraints.py FIRING_LIFE_MIN_H / HC-07"
+    "config/assessment/gate_thresholds_v1.json HC-07 (assessment only, A9.24 item 5)"
    ],
    "label": "SUBSYSTEM_FIRING_LIFE_ASSUMPTION",
    "provenance": {
@@ -239,7 +239,8 @@
    "kind": "GENERATION_FILTER",
    "status": "FROZEN",
    "consumed_by": [
-    "abep_sim/design/engineering_constraints.py INTAKE_DRAG_GENERATION_LIMIT_N (F1 C-DRAG-RFP) / HC-09"
+    "abep_sim/design/engineering_constraints.py INTAKE_DRAG_GENERATION_LIMIT_N (F1 C-DRAG-RFP generation filter)",
+    "config/assessment/gate_thresholds_v1.json HC-09 (also reported in assessment, A9.24 item 5)"
    ],
    "derived_from": "thrust_capability_mN",
    "note": "A9.22 G2 Option 1: C-DRAG-RFP stays a generation filter (intake-face drag <= thrust maximum); Option 2 (assessment-only) is a separately approved change",

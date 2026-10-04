@@ -244,6 +244,7 @@ def _syn_eval(row, thrust, pbus_scale, mwet, design_id, measured_bus=False):
     sup = {"thrust": _syn(thrust), "thrust_capability": _syn(0.03), "spacecraft_drag": _syn(0.002),
            "bus": _syn_ledgers("hall_icp_neutralizer", pbus_scale, measured_bus),
            "m_wet": dict(_syn(mwet), all_terms_resolved=True), "Q_reject": _syn(300.0), "I_e_margin": _syn(1.0),
+           "M_n_LB": dict(_syn(0.2), uncertainty_basis="SYNTHETIC_TEST_FIXTURE"),
            "thermal_margin": _syn(60.0), "firing_life": _syn(16000.0), "life_material": _syn(1.0),
            "drag_intake_max": _syn(0.005), "propellant_capability": _syn(1.0),
            **_statewise_records(u13.VALUE_SYNTHETIC, thrust)}
@@ -425,6 +426,7 @@ def _evidence_eval(monkeypatch, row, design_id, cons_rec):
     sup = {"thrust": _meas(0.02), "thrust_capability": _meas(0.03), "spacecraft_drag": _meas(0.002),
            "bus": _syn_ledgers("hall_icp_neutralizer", 1.0, measured=True),
            "m_wet": dict(_meas(30.0), all_terms_resolved=True), "Q_reject": _meas(300.0), "I_e_margin": _meas(1.0),
+           "M_n_LB": dict(_meas(0.2), uncertainty_basis="TEST_FIXTURE_NOT_EVIDENCE"),
            "thermal_margin": cons_rec(60.0), "firing_life": cons_rec(16000.0), "life_material": _meas(1.0),
            "drag_intake_max": _meas(0.005), "propellant_capability": _meas(1.0),
            **_statewise_records(u13.VALUE_EVIDENCE, 0.02, hall_admitted=True)}
