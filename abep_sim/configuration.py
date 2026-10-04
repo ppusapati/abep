@@ -62,11 +62,12 @@ SOURCES_OF_TRUTH_REL = "SOURCES_OF_TRUTH.json"
 # edited scenario is refused even with a refreshed MANIFEST: a new operating scenario needs a new file, id, version
 # and pin here.
 OPERATING_SCENARIO_PIN = {"id": "mission_scenario_v2", "scenario_version": 2,
-                          "sha256": "554fcd3f19850ffe92f86aaaa3914840ecc9b80d384ec7a735954a0e61004cb9"}
+                          "sha256": "885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49"}
 OPERATING_CHOICE_KEYS = {"xe_sizing_thrust_target_mN": "thrust_sustained_min_mN",
                          "commanded_thrust_cap_mN": "thrust_capability_mN",
                          "p_bus_throttling_cap_W": "p_bus_max_W",
-                         "mission_hours": "mission_life_h"}
+                         "mission_hours": "mission_life_h",
+                         "firing_hours": "firing_life_h"}     # owner ruling 2026-10-04: independent of HC-07
 
 # constraint ids of config/constraints/engineering_constraints_v1.json the loaders require
 CONSTRAINT_IDS = ("altitude_band_km", "thrust_sustained_min_mN", "thrust_capability_mN", "p_bus_max_W",
@@ -286,21 +287,16 @@ def load_engineering_constraints(root: Optional[Path] = None) -> dict:
 
 def load_operating_inputs(root: Optional[Path] = None) -> dict:
     """Operating inputs of the physics seam (abep_sim.operating_inputs): the operating-scenario choices of
-    config/mission/mission_scenario_v2.json (frozen, pinned by OPERATING_SCENARIO_PIN; A9.24 item 4: never copied from
-    the constraints) plus the constraint values it references (by id) from
-    config/constraints/engineering_constraints_v1.json.
+    config/mission/mission_scenario_v2.json only (frozen, pinned by OPERATING_SCENARIO_PIN; A9.24 item 4 and the owner
+    ruling of 2026-10-04: mission_hours, firing_hours, Xe-sizing thrust target, commanded-thrust cap and P_bus
+    throttling cap are explicit operating choices, never copied from or read from the engineering constraints; the
+    wet-mass limit and the altitude band are not operating inputs).
 
     The physics layer never opens the requirements snapshot. Fails closed on any missing or non-numeric value, on an
     input that restates a referenced constraint, and on a mission basis not recorded as the applied A9.22 G1 basis."""
-    ms = load_mission_scenario(root, verify_constraints=True)
-    ec = load_engineering_constraints(root)
+    ms = load_mission_scenario(root, verify_constraints=False)   # physics seam: no constraints file read at all
     inp = ms.get("inputs") or {}
     w = "mission_scenario.inputs"
-
-    def ref(key, cid):
-        e = inp.get(key) or {}
-        if e.get("kind") != "CONSTRAINT_REFERENCE" or e.get("constraint_ref") != cid or "value" in e:
-            raise ConfigurationError(f"{w}.{key}: expected a value-free CONSTRAINT_REFERENCE to {cid}")
 
     def choice(key, cid):
         e = inp.get(key) or {}
@@ -317,21 +313,21 @@ def load_operating_inputs(root: Optional[Path] = None) -> dict:
     fh = inp.get("firing_hours") or {}
     if fh.get("label") != "SUBSYSTEM_FIRING_LIFE_ASSUMPTION":
         raise ConfigurationError(f"{w}.firing_hours: label {fh.get('label')!r} != SUBSYSTEM_FIRING_LIFE_ASSUMPTION")
-    ref("altitude_domain_km", "altitude_band_km")
-    ref("wet_mass_limit_kg", "wet_mass_max_kg")
-    ref("firing_hours", "firing_life_h")
+    # owner ruling 2026-10-04: no input reads a value from the engineering constraints. The wet-mass limit and the
+    # altitude band are engineering / assessment / domain constraints, never operating-scenario inputs.
+    for k in ("wet_mass_limit_kg", "altitude_domain_km"):
+        if k in inp:
+            raise ConfigurationError(f"{w}.{k}: not an operating-scenario input (engineering / assessment constraint)")
     return {
         "mission_hours": choice("mission_hours", "mission_life_h"),
         "historical_mission_hours": _num_field(mh.get("historical_note") or {}, "value_h",
                                                f"{w}.mission_hours.historical_note"),
-        "firing_hours": ec["ignition_hours"],
-        "firing_hours_label": ec["firing_hours_label"],
+        "firing_hours": choice("firing_hours", "firing_life_h"),
+        "firing_hours_label": fh["label"],
         "thrust_min_mN": choice("xe_sizing_thrust_target_mN", "thrust_sustained_min_mN"),
         "thrust_max_mN": choice("commanded_thrust_cap_mN", "thrust_capability_mN"),
         "P_bus_max_W": choice("p_bus_throttling_cap_W", "p_bus_max_W"),
-        "mass_max_kg": ec["mass_max_kg"],
-        "altitude_domain_km": (ec["alt_min_km"], ec["alt_max_km"]),
-        "source": f"config/{MISSION_REL} + config/{CONSTRAINTS_REL}",
+        "source": f"config/{MISSION_REL}",
     }
 
 

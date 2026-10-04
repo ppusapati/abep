@@ -5,11 +5,11 @@
  "regenerate": "python scripts/config/build_config.py  (check: --check)",
  "files": {
   "README.md": {
-   "sha256": "37bf63a35c8d6842c4dde14da68c7ad843fa81d6a87aef08eac33ffca5a9437f",
+   "sha256": "14509afc0f6629561d507d65178c014c800938dd496ae0f72a8c1ecdc3b013c1",
    "bytes": 5506
   },
   "SOURCES_OF_TRUTH.json": {
-   "sha256": "38e0b3adef71846e5332af9df0b9e0382409b5018fbd44d95c325fc357607bf7",
+   "sha256": "275f70c23f2bb3d798b7db048b6a65e65bd39b6270c895f9b61763fa595b7af5",
    "bytes": 6584
   },
   "architecture/hall_icp_neutralizer_v1.json": {
@@ -21,8 +21,8 @@
    "bytes": 6583
   },
   "constraints/engineering_constraints_v1.json": {
-   "sha256": "81fa1df817fb249d87b1fca0d335e0d250912afe9f54fd94222cd9a057d57fbf",
-   "bytes": 10499
+   "sha256": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e",
+   "bytes": 10822
   },
   "environment/design_state_set_ref_v1.json": {
    "sha256": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484",
@@ -37,11 +37,11 @@
    "bytes": 3976
   },
   "mission/mission_scenario_v2.json": {
-   "sha256": "554fcd3f19850ffe92f86aaaa3914840ecc9b80d384ec7a735954a0e61004cb9",
-   "bytes": 7046
+   "sha256": "885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49",
+   "bytes": 7775
   },
   "model_set/physics_model_set_v1.json": {
-   "sha256": "e598d29fff16a0f1ad909c328c2a4fee33c0bdafaea5dab2a971f86bc526f7cb",
+   "sha256": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1",
    "bytes": 17596
   },
   "requirements/rfp_constraints_v1.json": {

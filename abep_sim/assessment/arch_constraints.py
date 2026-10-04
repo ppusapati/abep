@@ -29,13 +29,17 @@ from .. import operating_inputs as OI
 def design_constraints(*, P_bus_max_W: float | None = None, m_max_kg: float | None = None,
                        T_min_mN: float | None = None, T_max_mN: float | None = None,
                        life_min_h: float | None = None, **kw):
-    """The constraint preset a caller hands to archengine (defaults from abep_sim.operating_inputs)."""
+    """The constraint preset a caller hands to archengine. Defaults: operating choices from abep_sim.operating_inputs;
+    the wet-mass limit from the engineering constraints and the firing-life floor from the HC-07 assessment threshold
+    (owner ruling 2026-10-04: neither is an operating-scenario input)."""
     from ..archengine import DesignConstraints
+    from ..configuration import load_engineering_constraints, load_gate_thresholds
     return DesignConstraints(P_bus_max_W=OI.P_BUS_MAX_W if P_bus_max_W is None else P_bus_max_W,
-                             m_max_kg=OI.MASS_MAX_KG if m_max_kg is None else m_max_kg,
+                             m_max_kg=load_engineering_constraints()["mass_max_kg"] if m_max_kg is None else m_max_kg,
                              T_min_mN=OI.THRUST_MIN_mN if T_min_mN is None else T_min_mN,
                              T_max_mN=OI.THRUST_MAX_mN if T_max_mN is None else T_max_mN,
-                             life_min_h=OI.FIRING_HOURS if life_min_h is None else life_min_h, **kw)
+                             life_min_h=load_gate_thresholds()["limits"]["HC-07"] if life_min_h is None else life_min_h,
+                             **kw)
 
 
 def closure_constraint_flags(T_mN: float, mev_kg: float, life_h: float, dc) -> dict:

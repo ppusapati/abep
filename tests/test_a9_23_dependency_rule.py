@@ -106,7 +106,7 @@ def test_sources_of_truth_one_artefact_per_role_and_pins_match():
     assert src["frozen_engineering_constraints"]["artefact"] == "config/constraints/engineering_constraints_v1.json"
     assert src["physics_model_set"]["artefact"] == "config/model_set/physics_model_set_v1.json"
     assert src["raw_simulation_result"]["artefact"] == "schemas/results/raw_closure_v2.json"
-    assert src["assessment_result"]["artefact"] == "schemas/results/closure_assessment_v1.json"
+    assert src["assessment_result"]["artefact"] == "schemas/results/closure_assessment_v2.json"
     assert src["requirements_provenance"]["artefact"] == "config/requirements/rfp_constraints_v1.json"
     assert src["requirements_provenance"]["layer"] == "PROVENANCE"
     # design states: the data file via the config reference, pinned by the dataset manifest and the reference
@@ -122,7 +122,7 @@ def test_sources_of_truth_one_artefact_per_role_and_pins_match():
     from abep_sim import system
     from abep_sim.assessment import closure_checks as cc
     assert src["raw_simulation_result"]["id"] == system.RAW_CLOSURE_SCHEMA_VERSION == "raw_closure_v2"
-    assert src["assessment_result"]["id"] == cc.ASSESSMENT_SCHEMA_VERSION == "closure_assessment_v1"
+    assert src["assessment_result"]["id"] == cc.ASSESSMENT_SCHEMA_VERSION == "closure_assessment_v2"
 
 
 def _claims(path: Path):
@@ -196,7 +196,7 @@ def test_result_schemas_match_actual_outputs():
     from abep_sim.assessment import assess, constraints_from_config, priors_from_config
     from abep_sim.assessment import FORBIDDEN_RAW_PREFIXES, FORBIDDEN_RAW_KEYS
     raw_s = _json(ROOT / "schemas/results/raw_closure_v2.json")
-    as_s = _json(ROOT / "schemas/results/closure_assessment_v1.json")
+    as_s = _json(ROOT / "schemas/results/closure_assessment_v2.json")
     c = _parametric_cfg()
     raw = physics_closure(c)
     _conforms(raw, raw_s)
@@ -451,6 +451,21 @@ def test_thrust_floor_threshold_changes_assessment_not_scenario_or_raw_physics(t
     assert cfg.load_engineering_constraints(cfg_copy)["thrust_min_mN"] == 14.0
 
 
+def test_hc07_threshold_changes_assessment_not_firing_hours_or_raw_physics(tmp_path, cfg_copy):
+    """Owner ruling 2026-10-04 (item 3 + couplings, section 4): the physics firing / integration duration is the
+    operating choice mission_scenario_v2 firing_hours (15,000 h); the HC-07 firing-life acceptance threshold resolves
+    to the engineering constraint firing_life_h. Changing that threshold alone changes the assessment limit only:
+    raw physics byte-identical, firing_hours and the scenario file unchanged."""
+    base = _run_closure_and_assessment(tmp_path, CONFIG)
+    _edit_constraint(cfg_copy, "firing_life_h", 20000)
+    mod = _run_closure_and_assessment(tmp_path, cfg_copy)
+    assert mod["raw"] == base["raw"], "raw physics changed when only the HC-07 firing-life threshold changed"
+    assert mod["gate_limits"]["HC-07"] == 20000 != base["gate_limits"]["HC-07"] == 15000
+    assert mod["oi"] == base["oi"] and mod["oi"]["firing_hours"] == 15000.0
+    assert cfg.load_operating_inputs(cfg_copy)["firing_hours"] == 15000.0
+    assert (cfg_copy / cfg.MISSION_REL).read_bytes() == (CONFIG / cfg.MISSION_REL).read_bytes()
+
+
 def test_edited_operating_scenario_needs_a_new_version(cfg_copy):
     """A9.24 item 4: changing an operating choice needs a new scenario version. An edited scenario is refused even
     with a refreshed manifest (code-side pin: id, scenario_version, sha256); so is a relabelled id / version."""
@@ -458,7 +473,8 @@ def test_edited_operating_scenario_needs_a_new_version(cfg_copy):
     p = cfg_copy / cfg.MISSION_REL
     for edit in (lambda d: d["inputs"]["xe_sizing_thrust_target_mN"].update(value=13),
                  lambda d: d.update(scenario_version=3, id="mission_scenario_v3"),
-                 lambda d: d["inputs"]["p_bus_throttling_cap_W"].update(value=1400)):
+                 lambda d: d["inputs"]["p_bus_throttling_cap_W"].update(value=1400),
+                 lambda d: d["inputs"]["firing_hours"].update(value=16000)):      # owner ruling 2026-10-04
         shutil.copy2(CONFIG / cfg.MISSION_REL, p)
         d = _json(p)
         edit(d)
@@ -481,12 +497,14 @@ def test_operating_choices_are_independent_of_the_constraints():
     assert "sha256" not in ms["engineering_constraints"]
     want = {"xe_sizing_thrust_target_mN": (12, "thrust_sustained_min_mN"),
             "commanded_thrust_cap_mN": (25, "thrust_capability_mN"),
-            "p_bus_throttling_cap_W": (1500, "p_bus_max_W"), "mission_hours": (26280, "mission_life_h")}
+            "p_bus_throttling_cap_W": (1500, "p_bus_max_W"), "mission_hours": (26280, "mission_life_h"),
+            "firing_hours": (15000, "firing_life_h")}          # owner ruling 2026-10-04 (independent of HC-07)
     for k, (v, cid) in want.items():
         e = ms["inputs"][k]
         assert e["kind"] == "OPERATING_SCENARIO_CHOICE" and e["value"] == v, k
         assert e["initial_basis"]["constraint_id"] == cid and e["initial_basis"]["role"] == "PROVENANCE_ONLY", k
         assert "set_equal_to_constraint" not in e, k
+    assert set(ms["inputs"]) == set(want)                   # no wet-mass / altitude-band entry (owner ruling)
     assert cfg.OPERATING_CHOICE_KEYS == {k: cid for k, (v, cid) in want.items()}
     # historical v1 is kept byte-identical and listed, never loaded
     assert ms["supersedes"]["sha256"] == _sha(CONFIG / cfg.MISSION_V1_REL) == cfg.load_manifest()["files"][

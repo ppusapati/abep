@@ -26,13 +26,20 @@ from __future__ import annotations
 from dataclasses import dataclass, asdict
 from typing import Optional
 
-ASSESSMENT_SCHEMA_VERSION = "closure_assessment_v1"
+# v2 (A9.24 item 3, owner ruling modified 3a, 2026-10-04): governed assessment-semantic correction. New
+# chk_thrust_air_ge_sustained_min (T_air >= thrust_sustained_min_mN, the authoritative RVM-02 / 12 mN compliance check,
+# used by the hard-check aggregates) and chk_thrust_air_ge_operating_target (T_air >= the operating target T_req, no
+# requirement meaning); chk_thrust_air_ge_req kept only as LEGACY_COMPATIBILITY / OPERATING_TARGET_MET (deprecated
+# alias of the operating-target comparison, no RVM pointer, not in any compliance aggregate).
+ASSESSMENT_SCHEMA_VERSION = "closure_assessment_v2"
 RAW_SCHEMA_VERSION = "raw_closure_v2"          # must equal abep_sim.system.RAW_CLOSURE_SCHEMA_VERSION
 RVM_SOURCE = "docs/requirements/rvm_a9/rvm_a9_v1.json"
 
 # Check name -> RVM row ids it points to (pointer only; empty = no RVM row; the check is an internal/model gate).
 REQUIREMENT_POINTERS: dict[str, tuple[str, ...]] = {
-    "thrust_air_ge_req": ("RVM-02",),           # THRUST_12MN_SUSTAINED
+    "thrust_air_ge_sustained_min": ("RVM-02",), # THRUST_12MN_SUSTAINED (A9.24 item 3: the authoritative compliance check)
+    "thrust_air_ge_operating_target": (),       # operating target met (T_req); no requirement meaning
+    "thrust_air_ge_req": (),                    # LEGACY_COMPATIBILITY / OPERATING_TARGET_MET (deprecated alias)
     "thrust_peak_25mN": ("RVM-03",),            # THRUST_25MN_CAPABILITY
     "power_air": ("RVM-04", "RVM-05"),          # PBUS_LT_1500W_FULL_BUS; P_cap = 1.5 kW x (1 - margin) ~ 1.35 kW allocation
     "power_peak": ("RVM-04", "RVM-05"),
@@ -48,8 +55,9 @@ REQUIREMENT_POINTERS: dict[str, tuple[str, ...]] = {
     "thermal": ("RVM-17",),                     # THERMAL_CLOSURE
 }
 
-# Hard RFP checks (pre-split `hard` list; `thermal` is appended on the engineering path).
-HARD_CHECKS = ("thrust_air_ge_req", "thrust_peak_25mN", "power_air", "power_peak", "mass", "life",
+# Hard RFP checks (pre-split `hard` list; `thermal` is appended on the engineering path). A9.24 item 3: the 12 mN
+# sustained-thrust entry is thrust_air_ge_sustained_min (was the operating-target comparison thrust_air_ge_req).
+HARD_CHECKS = ("thrust_air_ge_sustained_min", "thrust_peak_25mN", "power_air", "power_peak", "mass", "life",
                "ic_total", "ic_thruster", "compressor_feasible")
 IC_CHECKS = ("ic_total", "ic_thruster")
 
@@ -65,6 +73,7 @@ FORBIDDEN_RAW_KEYS = ("hall_preferred", "feasible", "rfp_compliant", "abep_close
 @dataclass(frozen=True)
 class Constraints:
     """Requirement limits / programme targets the raw closure is assessed against."""
+    thrust_sustained_min_mN: float  # sustained-thrust compliance minimum (RVM-02; A9.24 item 3), not the operating target
     thrust_max_mN: float          # peak-capability point (RFP 25 mN)
     power_max_W: float            # RFP bus-power limit
     p_margin_frac: float          # power margin held against power_max_W
@@ -101,7 +110,7 @@ def constraints_from_config(cfg, root=None) -> Constraints:
     from ..configuration import load_engineering_constraints
     ec = load_engineering_constraints(root)
     b = cfg.budgets
-    return Constraints(thrust_max_mN=ec["thrust_max_mN"], power_max_W=ec["power_max_W"],
+    return Constraints(thrust_sustained_min_mN=ec["thrust_min_mN"], thrust_max_mN=ec["thrust_max_mN"], power_max_W=ec["power_max_W"],
                        p_margin_frac=b.p_margin_frac, mass_max_kg=ec["mass_max_kg"], ic_total_min=ec["ic_total_min"],
                        ic_thruster_min=ec["ic_subsystem_min"]["thruster"], m_cbe_target_kg=b.m_cbe_target_kg)
 
@@ -142,7 +151,7 @@ def assess(raw: dict, constraints: Constraints, priors: AssessmentPriors) -> dic
     P_cap = c.power_max_W * (1 - c.p_margin_frac)
     ic_thr, ic_total = ic_metrics(raw, priors)
     checks = {
-        "thrust_air_ge_req": raw["T_air_N"] >= raw["T_req_N"],
+        "thrust_air_ge_req": raw["T_air_N"] >= raw["T_req_N"],   # LEGACY_COMPATIBILITY / OPERATING_TARGET_MET
         "thrust_peak_25mN": raw["T_peak_N"] >= c.thrust_max_mN * 1e-3 * c.thrust_peak_rel_tol,
         "power_air": raw["P_total_air_W"] <= P_cap,
         "power_peak": raw["P_total_peak_W"] <= P_cap,
@@ -165,6 +174,9 @@ def assess(raw: dict, constraints: Constraints, priors: AssessmentPriors) -> dic
         technical = technical + ["thermal"]
     else:
         checks["life"] = raw["life_margin"] >= c.life_margin_min
+    # A9.24 item 3 (appended so every pre-existing key keeps its position): operating target vs compliance minimum
+    checks["thrust_air_ge_operating_target"] = checks["thrust_air_ge_req"]
+    checks["thrust_air_ge_sustained_min"] = raw["T_air_N"] >= c.thrust_sustained_min_mN * 1e-3
     rfp_compliant = all(checks[k] for k in hard)
     abep_closed = rfp_compliant and checks["net_drag_comp_air"]
     technical_compliant = all(checks[k] for k in technical)

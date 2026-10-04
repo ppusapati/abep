@@ -133,10 +133,10 @@ def test_cross_pins_are_checked(cfg_copy):
     cons.write_text(json.dumps(d, indent=1), encoding="utf-8")
     _remanifest(cfg_copy)
     assert cfg.load_mission_scenario(cfg_copy)["id"] == "mission_scenario_v2"
-    del d["constraints"]["wet_mass_max_kg"]
+    del d["constraints"]["firing_life_h"]                 # an initial_basis provenance id that no longer exists
     cons.write_text(json.dumps(d, indent=1), encoding="utf-8")
     _remanifest(cfg_copy)
-    with pytest.raises(cfg.ConfigurationError, match="wet_mass_max_kg"):
+    with pytest.raises(cfg.ConfigurationError, match="firing_life_h"):
         cfg.load_mission_scenario(cfg_copy)
     assert cfg.load_mission_scenario(cfg_copy, verify_constraints=False)["id"] == "mission_scenario_v2"
     # design-state reference: a wrong target hash is refused
@@ -210,18 +210,21 @@ def test_mission_scenario_records_g1_applied_and_the_historical_constant():
     assert "legacy_mission_hours_in_use" not in ms["mission_hours"]
     assert ms["mission_hours"]["historical_note"]["value_h"] == 26000
     assert ms["mission_hours"]["historical_note"]["label"] == "HISTORICAL_CONSTANT_NOT_CONSUMED"
-    assert "value" not in ms["wet_mass_limit_kg"] and ms["wet_mass_limit_kg"]["constraint_ref"] == "wet_mass_max_kg"
+    # owner ruling 2026-10-04: the wet-mass limit and the altitude band are not operating-scenario inputs
+    assert "wet_mass_limit_kg" not in ms and "altitude_domain_km" not in ms
     assert ec["wet_mass_max_kg"]["value"] == 40 and ec["wet_mass_max_kg"]["comparator"] == "<"
     snap = cfg.load_requirements_snapshot()
     assert snap["rfp_constraints_compat"]["mission_hours"]["value"] == 26000          # constants.RFP compat, immutable
     assert snap["rfp_constraints_compat"]["mission_hours"]["label"] == "HISTORICAL_CONSTANT_NOT_CONSUMED"
     assert snap["mission_duration"]["g1_status"] == "APPLIED"
     assert "PENDING_GOVERNED_MIGRATION_A9_22_G1" not in json.dumps(snap) + json.dumps(ms)
-    assert ms["firing_hours"]["label"] == "SUBSYSTEM_FIRING_LIFE_ASSUMPTION" and "value" not in ms["firing_hours"]
+    # owner ruling 2026-10-04: firing_hours is an independent operating choice (initial_basis firing_life_h, provenance)
+    assert ms["firing_hours"]["label"] == "SUBSYSTEM_FIRING_LIFE_ASSUMPTION" and ms["firing_hours"]["value"] == 15000
+    assert ms["firing_hours"]["kind"] == "OPERATING_SCENARIO_CHOICE"
+    assert ms["firing_hours"]["initial_basis"]["constraint_id"] == "firing_life_h"
     assert ec["firing_life_h"] == {**ec["firing_life_h"], "value": 15000, "label": "SUBSYSTEM_FIRING_LIFE_ASSUMPTION"}
     assert (ms["xe_sizing_thrust_target_mN"]["value"], ms["commanded_thrust_cap_mN"]["value"],
             ms["p_bus_throttling_cap_W"]["value"], ec["altitude_band_km"]["value"]) == (12, 25, 1500, [180, 230])
-    assert "value" not in ms["altitude_domain_km"]
 
 
 # ------------------------------------------------------------------------------------------------ architecture

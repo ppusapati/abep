@@ -59,6 +59,28 @@ G1_SCALED_KEYS = G1_MOVED_KEYS[:4]                       # linear in the mission
 G1_ADDED_KEYS = ("ao_fluence_basis_h", "eng_R_mission", "eng_R_mission_h")
 G1_FACTOR = 26280.0 / 26000.0
 
+# A9.24 item 3 (owner ruling modified 3a, 2026-10-04): governed assessment-semantic addition. Two new assessment keys
+# appended after every pre-existing key; the fixtures stay unedited. chk_thrust_air_ge_operating_target must equal the
+# legacy chk_thrust_air_ge_req (operating target met); chk_thrust_air_ge_sustained_min = T_air >= 12 mN (RVM-02).
+# Rows where the two differ are listed exactly; no aggregate (feasible / rfp_compliant / abep_closed /
+# technical_compliant / technical_closed) changes in any fixture row (all other values are still compared).
+ITEM3_ADDED_KEYS = ("chk_thrust_air_ge_operating_target", "chk_thrust_air_ge_sustained_min")
+ITEM3_DIFFERING_ROWS = {112: {"T_required_mN": 20.0, "operating_target_met": False, "sustained_min_met": True}}
+
+
+def _check_item3(i: int, r: dict):
+    assert list(r)[-2:] == list(ITEM3_ADDED_KEYS)
+    assert r["chk_thrust_air_ge_operating_target"] is r["chk_thrust_air_ge_req"]
+    if abs(r["T_air_mN"] - 12.0) > 1e-9:                    # away from the boundary the mN record decides it
+        assert r["chk_thrust_air_ge_sustained_min"] is (r["T_air_mN"] >= 12.0)
+    if r["chk_thrust_air_ge_sustained_min"] != r["chk_thrust_air_ge_operating_target"]:
+        exp = ITEM3_DIFFERING_ROWS.get(i)
+        assert exp is not None, f"row {i}: operating-target and 12 mN compliance results differ (not registered)"
+        assert (r["chk_thrust_air_ge_operating_target"], r["chk_thrust_air_ge_sustained_min"]) == \
+            (exp["operating_target_met"], exp["sustained_min_met"])
+    else:
+        assert i not in ITEM3_DIFFERING_ROWS
+
 
 # Cross-platform numerical-identity rule for the fixtures (owner decision 2026-10-04, A9.24 steering response item 1,
 # Option A, exact form A1-A6). Purpose: cross-platform identity of the SAME physics implementation, not a scientific
@@ -138,7 +160,7 @@ def _decode(e):
 
 def _check_against_9eb302c(row, r: dict):
     """Identity (cross-platform rule A1/A2/A3) vs the 9eb302c record except the explicitly listed G1 keys (checked by their scaling)."""
-    keys = [k for k in r if k not in G1_ADDED_KEYS]
+    keys = [k for k in r if k not in G1_ADDED_KEYS + ITEM3_ADDED_KEYS]
     assert keys == row["keys"], "key set / order changed (beyond the listed G1 additions)"
     assert set(G1_ADDED_KEYS[:1]) <= set(r)
     old = dict(zip(row["keys"], row["values"]))
@@ -169,8 +191,9 @@ def test_evaluate_identical_to_base_commit(i):
     _check_against_9eb302c(row, r)
     if FIX_G1 is not None:                                  # post-G1 reference: no exclusion
         g = FIX_G1["rows"][i]
-        assert g["config"] == row["config"] and list(r) == g["keys"]
-        got = [GEN.encode(r[k]) for k in r]
+        assert g["config"] == row["config"] and [k for k in r if k not in ITEM3_ADDED_KEYS] == g["keys"]
+        _check_item3(i, r)
+        got = [GEN.encode(r[k]) for k in r if k not in ITEM3_ADDED_KEYS]
         diff = [(k, a, b) for k, a, b in zip(g["keys"], got, g["values"]) if not _enc_equal(a, b, k)]
         assert not diff, f"numerical / type change vs the G1 fixture: {diff[:5]}"
 
@@ -238,7 +261,7 @@ def test_constraint_change_moves_assessment_not_raw():
 
 def test_requirement_pointers_exist_in_rvm():
     rows = {r["id"]: r for r in json.loads(RVM.read_text())["rows"]}
-    expect_keys = {"thrust_air_ge_req": "THRUST_12MN_SUSTAINED", "thrust_peak_25mN": "THRUST_25MN_CAPABILITY",
+    expect_keys = {"thrust_air_ge_sustained_min": "THRUST_12MN_SUSTAINED", "thrust_peak_25mN": "THRUST_25MN_CAPABILITY",
                    "mass": "MASS_LT_40KG_WET", "ic_total": "INDIGENOUS_CONTENT", "hall_preferred": "HALL_PREFERENCE",
                    "thermal": "THERMAL_CLOSURE"}
     for chk, ids in REQUIREMENT_POINTERS.items():

@@ -26,8 +26,10 @@ def test_no_direct_rfp_in_physics_modules(mod):
 
 def test_operating_inputs_seam_values():
     assert OI.FIRING_HOURS == RFP.ignition_hours
-    assert (OI.THRUST_MIN_mN, OI.THRUST_MAX_mN, OI.P_BUS_MAX_W, OI.MASS_MAX_KG) == \
-        (RFP.thrust_min_mN, RFP.thrust_max_mN, RFP.power_max_W, RFP.mass_max_kg)
+    assert (OI.THRUST_MIN_mN, OI.THRUST_MAX_mN, OI.P_BUS_MAX_W) == \
+        (RFP.thrust_min_mN, RFP.thrust_max_mN, RFP.power_max_W)
+    # owner ruling 2026-10-04: the wet-mass limit is an engineering / assessment constraint, not an operating input
+    assert not hasattr(OI, "MASS_MAX_KG") and "mass_max_kg" not in OI.as_dict()
     assert set(OI.as_dict()) >= {"mission_hours", "firing_hours", "source"}
 
 
@@ -38,10 +40,12 @@ def test_seams_read_the_frozen_config_with_identical_values():
     from abep_sim.design import engineering_constraints as ec
     v = cfg.load_operating_inputs()
     assert (OI.MISSION_HOURS, OI.FIRING_HOURS, OI.HISTORICAL_MISSION_HOURS_PRE_A9_22) == (26280.0, 15000.0, 26000.0)
-    assert (OI.THRUST_MIN_mN, OI.THRUST_MAX_mN, OI.P_BUS_MAX_W, OI.MASS_MAX_KG) == (12.0, 25.0, 1500.0, 40.0)
+    assert (OI.THRUST_MIN_mN, OI.THRUST_MAX_mN, OI.P_BUS_MAX_W) == (12.0, 25.0, 1500.0)
+    assert set(v) == {"mission_hours", "historical_mission_hours", "firing_hours", "firing_hours_label",
+                      "thrust_min_mN", "thrust_max_mN", "P_bus_max_W", "source"}   # no wet mass / altitude band
     assert OI.FIRING_HOURS_LABEL == "SUBSYSTEM_FIRING_LIFE_ASSUMPTION"
     assert v["mission_hours"] == OI.MISSION_HOURS and OI.SOURCE.startswith("config/mission/mission_scenario_v2.json")
-    for x in (OI.MISSION_HOURS, OI.FIRING_HOURS, OI.THRUST_MIN_mN, OI.THRUST_MAX_mN, OI.P_BUS_MAX_W, OI.MASS_MAX_KG):
+    for x in (OI.MISSION_HOURS, OI.FIRING_HOURS, OI.THRUST_MIN_mN, OI.THRUST_MAX_mN, OI.P_BUS_MAX_W):
         assert type(x) is float
     assert ec.SOURCE.startswith("config/constraints/engineering_constraints_v1.json")
     for rel in (("operating_inputs.py",), ("design", "engineering_constraints.py")):
@@ -86,9 +90,12 @@ def test_rfp_preset_built_by_assessment_layer():
     a, b = rfp_preset(), design_constraints()
     assert a == b
     assert (a.P_bus_max_W, a.m_max_kg, a.T_min_mN, a.T_max_mN, a.life_min_h) == \
-        (OI.P_BUS_MAX_W, OI.MASS_MAX_KG, OI.THRUST_MIN_mN, OI.THRUST_MAX_mN, OI.FIRING_HOURS)
+        (OI.P_BUS_MAX_W, 40.0, OI.THRUST_MIN_mN, OI.THRUST_MAX_mN, 15000.0)
+    from abep_sim.configuration import load_engineering_constraints, load_gate_thresholds
+    assert a.m_max_kg == load_engineering_constraints()["mass_max_kg"]          # engineering constraint
+    assert a.life_min_h == load_gate_thresholds()["limits"]["HC-07"]            # HC-07 threshold, not OI.FIRING_HOURS
     c = design_constraints(P_bus_max_W=2500.0, m_max_kg=None)
-    assert c.P_bus_max_W == 2500.0 and c.m_max_kg == OI.MASS_MAX_KG   # None means "seam default" here
+    assert c.P_bus_max_W == 2500.0 and c.m_max_kg == 40.0   # None means "constraint default" here
 
 
 def test_closure_constraint_flags():
@@ -120,8 +127,10 @@ def test_mass_screen_routed_through_assessment():
     from abep_sim.assessment.arch_constraints import mass_plausibility_screen
     per = {a: mass_bom.architecture_items(a) for a in mass_bom.ARCHITECTURES}
     sm = mass_bom.SYSTEM_MARGIN["proposed_fraction"]
-    assert mass_plausibility_screen(per, threshold_kg=OI.MASS_MAX_KG, system_margin_fraction=sm) == \
-        mass_bom.plausibility_screen(per, threshold_kg=OI.MASS_MAX_KG, system_margin_fraction=sm)
+    from abep_sim.configuration import load_engineering_constraints
+    m_max = load_engineering_constraints()["mass_max_kg"]
+    assert mass_plausibility_screen(per, threshold_kg=m_max, system_margin_fraction=sm) == \
+        mass_bom.plausibility_screen(per, threshold_kg=m_max, system_margin_fraction=sm)
 
 
 def test_hard_gates_routed_through_assessment():

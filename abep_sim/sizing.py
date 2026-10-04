@@ -62,7 +62,10 @@ def sizing_table(architectures=("hall_1stage", "hall_ecr"), targets_mN=(12.0, 25
                         "O_survival_to_thruster": r["O_survival"], "rfp_compliant": r["rfp_compliant"], "abep_closed": r["abep_closed"],
                         "fails": ",".join(k[4:] for k in r if k.startswith("chk_") and not r[k]
                                           and k not in ("chk_net_drag_comp_air", "chk_hall_preferred",
-                                                        "chk_thrust_air_ge_req")),
+                                                        "chk_thrust_air_ge_req", "chk_thrust_air_ge_operating_target",
+                                                        # sized to the operating target by construction; the 12 mN
+                                                        # compliance result stays in rfp_compliant (A9.24 item 3)
+                                                        "chk_thrust_air_ge_sustained_min")),
                     })
     return pd.DataFrame(rows)
 

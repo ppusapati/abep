@@ -5,12 +5,13 @@ clause ids; requirements reach physics only as frozen engineering inputs. Physic
 parameters (mission_hours, firing_hours, thrust_cap_mN, P_bus_max_W, mass limits as DesignConstraints, ...) that their
 callers supply. Where no caller supplies one, the default comes from this module, and only from this module.
 
-Source (A9.23; A9.24 item 4): the operating-scenario choices of config/mission/mission_scenario_v2.json (Xe-sizing
-thrust target, commanded-thrust cap, P_bus throttling cap, mission-integration horizon: explicit, independently
-versioned frozen values with initial_basis provenance, never copied from the constraints; a changed choice needs a new
-scenario version) and the frozen engineering constraints it
-references by id from config/constraints/engineering_constraints_v1.json (wet-mass limit, firing-life assumption,
-altitude band), read through abep_sim.configuration.load_operating_inputs (sha256-checked against config/MANIFEST.json;
+Source (A9.23; A9.24 item 4; owner ruling 2026-10-04): the operating-scenario choices of
+config/mission/mission_scenario_v2.json ONLY (mission-integration horizon, firing / integration duration, Xe-sizing
+thrust target, commanded-thrust cap, P_bus throttling cap: explicit, independently versioned frozen values with
+initial_basis provenance, never copied from or read from the engineering constraints; a changed choice needs a new
+scenario version). The wet-mass limit and the altitude band are engineering / assessment / domain constraints and are not
+operating inputs (the frozen design-state set is the physics environment). Read through
+abep_sim.configuration.load_operating_inputs (sha256-checked against config/MANIFEST.json and OPERATING_SCENARIO_PIN;
 fails closed, no fallback, CLAUDE.md rule 3). This module never opens the requirements snapshot (config/requirements/)
 or anything under docs/requirements/; nothing here is an RFP parser: these are plain numbers with a provenance string.
 The values are identical to the pre-re-point values (tests/test_a9_22_operating_inputs.py pins them).
@@ -43,11 +44,10 @@ HISTORICAL_MISSION_HOURS_PRE_A9_22: float = _V["historical_mission_hours"]
 THRUST_MIN_mN: float = _V["thrust_min_mN"]
 THRUST_MAX_mN: float = _V["thrust_max_mN"]          # thrust cap / upper constraint
 P_BUS_MAX_W: float = _V["P_bus_max_W"]
-MASS_MAX_KG: float = _V["mass_max_kg"]
 
 
 def as_dict() -> dict:
     """The current operating inputs with their source (for provenance blocks in outputs)."""
     return {"mission_hours": MISSION_HOURS, "mission_hours_basis": "A9.22 G1 MISSION_DURATION_26280_H",
             "firing_hours": FIRING_HOURS, "firing_hours_label": FIRING_HOURS_LABEL, "thrust_min_mN": THRUST_MIN_mN,
-            "thrust_max_mN": THRUST_MAX_mN, "P_bus_max_W": P_BUS_MAX_W, "mass_max_kg": MASS_MAX_KG, "source": SOURCE}
+            "thrust_max_mN": THRUST_MAX_mN, "P_bus_max_W": P_BUS_MAX_W, "source": SOURCE}

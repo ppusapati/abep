@@ -18,7 +18,7 @@
  "supporting_inputs": {
   "operating_scenario": {
    "artefact": "config/mission/mission_scenario_v2.json",
-   "sha256": "554fcd3f19850ffe92f86aaaa3914840ecc9b80d384ec7a735954a0e61004cb9",
+   "sha256": "885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49",
    "role": "frozen, independently versioned operating-scenario choices (A9.24 item 4; constraint-derived inputs referenced, not restated)",
    "pinned_by": [
     "abep_sim/configuration.py OPERATING_SCENARIO_PIN",
@@ -60,7 +60,7 @@
    "artefact": "config/constraints/engineering_constraints_v1.json",
    "id": "engineering_constraints_v1",
    "schema": "abep_config_engineering_constraints_v1",
-   "sha256": "81fa1df817fb249d87b1fca0d335e0d250912afe9f54fd94222cd9a057d57fbf",
+   "sha256": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e",
    "pinned_by": [
     "config/MANIFEST.json"
    ],
@@ -88,7 +88,7 @@
    "artefact": "config/model_set/physics_model_set_v1.json",
    "id": "physics_model_set_v1",
    "schema": "abep_config_physics_model_set_v1",
-   "sha256": "e598d29fff16a0f1ad909c328c2a4fee33c0bdafaea5dab2a971f86bc526f7cb",
+   "sha256": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1",
    "pinned_by": [
     "config/MANIFEST.json"
    ],
@@ -110,14 +110,14 @@
   },
   "assessment_result": {
    "layer": "ASSESSMENT",
-   "artefact": "schemas/results/closure_assessment_v1.json",
-   "id": "closure_assessment_v1",
+   "artefact": "schemas/results/closure_assessment_v2.json",
+   "id": "closure_assessment_v2",
    "schema": "https://json-schema.org/draft/2020-12/schema",
-   "sha256": "eccc5b7fe074cacf803c9079ad34389fb3e3f4e784de98b0f3f0743e48bc05af",
+   "sha256": "c31c453853fb62e65ccd958092616542c2111f9f9df321cf9cd4107e9d45971c",
    "pinned_by": [
     "config/SOURCES_OF_TRUTH.json"
    ],
-   "role": "schema closure_assessment_v1 of the assessment / compliance result (raw result + frozen constraints)",
+   "role": "schema closure_assessment_v2 of the assessment / compliance result (raw result + frozen constraints)",
    "producer": "abep_sim.assessment.assess",
    "generated_by": "scripts/config/build_result_schemas.py"
   },

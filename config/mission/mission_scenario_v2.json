@@ -26,21 +26,11 @@
  "engineering_constraints": {
   "id": "engineering_constraints_v1",
   "path": "config/constraints/engineering_constraints_v1.json",
-  "binding": "BY_ID_FOR_CONSTRAINT_REFERENCE_INPUTS_ONLY",
-  "note": "no sha256 pin of the constraints file (A9.24 item 4: changing a compliance threshold alone must not invalidate or change this scenario); the constraints file itself stays sha256-checked against config/MANIFEST.json"
+  "binding": "NONE_FOR_VALUES (initial_basis provenance only)",
+  "note": "no input of this scenario reads a value from the engineering constraints; no sha256 pin of the constraints file (changing a compliance threshold alone must not invalidate or change this scenario)"
  },
- "rule": "abep_sim/operating_inputs.py (physics seam) reads this file through abep_sim.configuration.load_operating_inputs (fail closed: the config/MANIFEST.json sha256 AND the code-side pin OPERATING_SCENARIO_PIN must match). Inputs of kind OPERATING_SCENARIO_CHOICE are explicit frozen engineering choices consumed by physics; their initial_basis names the engineering constraint they were first set equal to (provenance only, never re-read). Changing a compliance threshold alone may change the assessment and must not change raw physics; changing a choice here may change raw physics and requires a new scenario file, id and scenario_version (A9.24 item 4). Inputs of kind CONSTRAINT_REFERENCE carry no value (single source: engineering_constraints_v1).",
+ "rule": "abep_sim/operating_inputs.py (physics seam) reads this file through abep_sim.configuration.load_operating_inputs (fail closed: the config/MANIFEST.json sha256 AND the code-side pin OPERATING_SCENARIO_PIN must match). Inputs of kind OPERATING_SCENARIO_CHOICE are explicit frozen engineering choices consumed by physics; their initial_basis names the engineering constraint they were first set equal to (provenance only, never re-read). Changing a compliance threshold alone may change the assessment and must not change raw physics; changing a choice here may change raw physics and requires a new scenario file, id and scenario_version (A9.24 item 4).",
  "inputs": {
-  "altitude_domain_km": {
-   "kind": "CONSTRAINT_REFERENCE",
-   "constraint_ref": "altitude_band_km",
-   "units": "km",
-   "source": {
-    "snapshot_field": "mission_domain.altitude_km",
-    "rvm_row": "RVM-01"
-   },
-   "note": "value not restated here: read from engineering_constraints_v1 constraints.altitude_band_km"
-  },
   "xe_sizing_thrust_target_mN": {
    "value": 12,
    "units": "mN",
@@ -83,12 +73,6 @@
     "note": "the engineering constraint this choice was initially set equal to (mission_scenario_v1); never re-read: a later change of the constraint changes the assessment only, not this value"
    }
   },
-  "wet_mass_limit_kg": {
-   "kind": "CONSTRAINT_REFERENCE",
-   "constraint_ref": "wet_mass_max_kg",
-   "units": "kg",
-   "note": "value not restated here: read from engineering_constraints_v1 constraints.wet_mass_max_kg"
-  },
   "mission_hours": {
    "value": 26280,
    "units": "h",
@@ -117,11 +101,28 @@
    }
   },
   "firing_hours": {
-   "kind": "CONSTRAINT_REFERENCE",
-   "constraint_ref": "firing_life_h",
+   "value": 15000,
    "units": "h",
-   "label": "SUBSYSTEM_FIRING_LIFE_ASSUMPTION",
-   "note": "value not restated here: read from engineering_constraints_v1 constraints.firing_life_h"
+   "kind": "OPERATING_SCENARIO_CHOICE",
+   "role": "firing / integration duration used by physics and firing-integrated quantities (operating choice; the HC-07 firing-life acceptance threshold is separate: config/assessment/gate_thresholds_v1.json -> engineering_constraints_v1 firing_life_h, assessment only)",
+   "initial_basis": {
+    "constraint_id": "firing_life_h",
+    "constraints_artefact": "engineering_constraints_v1",
+    "constraints_sha256_at_freeze": "62ca800de8ce66ce72eead5b6f2fbc2b285e487e95aadaf89ce702c4a4c0e09c",
+    "value_at_freeze": 15000,
+    "role": "PROVENANCE_ONLY",
+    "note": "the engineering constraint this choice was initially set equal to; never re-read: a later change of the HC-07 threshold / firing_life_h constraint changes the assessment only, not this value"
+   },
+   "label": "SUBSYSTEM_FIRING_LIFE_ASSUMPTION"
   }
+ },
+ "revision": {
+  "date": "2026-10-04",
+  "authority": "owner ruling on item 3 + operating/constraint couplings (2026-10-04) sections 4-7",
+  "changes": [
+   "firing_hours: CONSTRAINT_REFERENCE -> OPERATING_SCENARIO_CHOICE value 15000 h (unchanged value), initial_basis firing_life_h (provenance only); independent of the HC-07 threshold",
+   "wet_mass_limit_kg and altitude_domain_km references removed: the 40 kg wet-mass limit is an engineering / assessment constraint (and an explicit design-synthesis filter where used), never an operating-scenario input; the altitude band is a frozen domain constraint validating the frozen 196-state design-state set, which is the actual physics environment input"
+  ],
+  "numeric_change": "none"
  }
 }

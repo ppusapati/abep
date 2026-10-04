@@ -1,4 +1,4 @@
-"""Build the result schemas schemas/results/raw_closure_v2.json and closure_assessment_v1.json (A9.23 source-of-truth
+"""Build the result schemas schemas/results/raw_closure_v2.json and closure_assessment_v2.json (A9.23 source-of-truth
 index; no numerical change, no physics edit).
 
 Owner directive A9.23 (docs/decisions/OD_2026_10_03_A9_23_*): raw physical results and the assessment / compliance
@@ -26,7 +26,7 @@ if str(ROOT) not in sys.path:
 OUT = ROOT / "schemas" / "results"
 GENERATED_BY = "scripts/config/build_result_schemas.py"
 REGENERATE = "python scripts/config/build_result_schemas.py  (check: --check)"
-RAW_FILE, ASSESS_FILE = "raw_closure_v2.json", "closure_assessment_v1.json"
+RAW_FILE, ASSESS_FILE = "raw_closure_v2.json", "closure_assessment_v2.json"   # v2: A9.24 item 3 (v1 kept as history)
 JSON_SCHEMA = "https://json-schema.org/draft/2020-12/schema"
 
 # Reference configurations, one per closure path (the same set tests/test_layer_separation_physics.py runs).

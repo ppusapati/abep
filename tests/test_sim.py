@@ -65,7 +65,8 @@ def test_passive_floor_on_outlet_pressure():
 
 def test_hard_gate_includes_12mN_on_air():
     r = evaluate(Config("hall_1stage", 230, "low", IntakeParams(area_m2=0.5), CompressorParams(ratio=500)))
-    assert r["chk_thrust_air_ge_req"] is False and r["rfp_compliant"] is False
+    assert r["chk_thrust_air_ge_sustained_min"] is False and r["rfp_compliant"] is False   # A9.24 item 3
+    assert r["chk_thrust_air_ge_req"] is r["chk_thrust_air_ge_operating_target"] is False   # T_req = 12 mN here
 
 
 def test_classification_hierarchy():

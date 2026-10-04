@@ -3655,3 +3655,32 @@ companion json `..._owner_decisions.json`). Builds on the A9.22 layer separation
   only the HC-05 table text, units and objective and the evaluation rule and basis strings changed. The Pareto and
   robust records are byte-identical. Pin-only rebuild of the architecture freeze candidate (sha256 of the F7 record).
   Synthetic F7/F8 test fixtures now also supply `M_n_LB` with an uncertainty basis.
+
+## 2026-10-04 — Owner ruling on item 3 (modified 3a) and the operating / constraint couplings: governed assessment-semantic correction + firing_hours decoupled (NO raw-physics change)
+
+- **Item 3 (modified 3a).** `abep_sim/assessment/closure_checks.py`, assessment schema `closure_assessment_v2`
+  (`schemas/results/closure_assessment_v2.json`; v1 file kept as history):
+  `chk_thrust_air_ge_sustained_min` = T_air >= `thrust_sustained_min_mN` (12 mN, engineering constraint) is the
+  authoritative RVM-02 / 12 mN compliance check and replaces the operating-target comparison in `HARD_CHECKS`
+  (feasible / rfp_compliant / abep_closed / technical_compliant / technical_closed). `chk_thrust_air_ge_operating_target`
+  = T_air >= T_req (operating target, no requirement meaning). `chk_thrust_air_ge_req` is kept only as
+  LEGACY_COMPATIBILITY / OPERATING_TARGET_MET (deprecated alias, no RVM pointer). `Constraints` gains
+  `thrust_sustained_min_mN`. The two new keys are appended after every existing key of the merged record.
+  Consumers: `mission_uq` `rfp_12mN_on_air_at_mean_solar` reads the compliance flag; `sizing` keeps its "fails"
+  diagnostic unchanged (sized to the operating target by construction).
+- **Assessment-only changes (all 122 identity-fixture rows checked).** Exactly one row differs between the operating
+  target and the 12 mN compliance result: row 112 (hall_ecr, 200 km, mean solar, intake 1.0 m2, CR 500,
+  T_required 20 mN, body 0.3 m2): T_air = 13.66 mN, operating target met False (unchanged), sustained minimum met
+  True (new). No aggregate changes in any row (row 112 stays rfp_compliant / technical_compliant False on its other
+  checks). Raw physics unchanged: every pre-existing key of every row reproduces the fixtures (the fixtures are not
+  edited; `ITEM3_ADDED_KEYS` / `ITEM3_DIFFERING_ROWS` in `tests/test_raw_assessment_split.py` register the addition).
+- **firing_hours decoupled (sections 4-7).** `config/mission/mission_scenario_v2.json` (amended before any consumer
+  used the published copy; value unchanged; new `OPERATING_SCENARIO_PIN` sha256 885b1f70...): `firing_hours = 15000 h`
+  is an OPERATING_SCENARIO_CHOICE (initial_basis firing_life_h, provenance only); the HC-07 threshold still resolves
+  to the engineering constraint `firing_life_h` (gate_thresholds_v1). `load_operating_inputs` reads the scenario only
+  (no engineering-constraints read). `wet_mass_limit_kg` and `altitude_domain_km` references removed from the
+  scenario and `operating_inputs.MASS_MAX_KG` removed: the wet-mass limit is an engineering / assessment constraint
+  (archengine's search preset `arch_constraints.design_constraints` now takes it from the constraints and its
+  life floor from HC-07); the altitude band stays a frozen domain constraint over the frozen 196-state set.
+  New test: changing the HC-07 threshold alone changes the assessment limit only (raw physics byte-identical,
+  firing_hours 15000 unchanged); an edited firing_hours is refused without a new scenario version.

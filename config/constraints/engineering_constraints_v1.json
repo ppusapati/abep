@@ -36,7 +36,7 @@
    "status": "FROZEN",
    "consumed_by": [
     "abep_sim/design/engineering_constraints.py MISSION_DOMAIN_ALTITUDE_KM (design-state domain check)",
-    "abep_sim/operating_inputs.py (altitude domain)"
+    "frozen design-state set v2 domain validation (the states themselves are the physics input; owner ruling 2026-10-04: never an operating-scenario input)"
    ],
    "note": "A9.22 G5: frozen mission / design-state domain constraint (mission_domain.altitude_km)",
    "provenance": {
@@ -125,7 +125,7 @@
    "status": "FROZEN",
    "consumed_by": [
     "abep_sim/design/engineering_constraints.py M_WET_MAX_KG / HC-04",
-    "abep_sim/operating_inputs.py MASS_MAX_KG (design-constraint default handed to callers)",
+    "abep_sim/assessment/arch_constraints.py design_constraints default m_max_kg (archengine search preset)",
     "abep_sim/assessment/closure_checks.py Constraints.mass_max_kg"
    ],
    "provenance": {
@@ -172,8 +172,9 @@
    "kind": "LIMIT",
    "status": "FROZEN",
    "consumed_by": [
-    "abep_sim/operating_inputs.py FIRING_HOURS (firing-integrated basis)",
-    "config/assessment/gate_thresholds_v1.json HC-07 (assessment only, A9.24 item 5)"
+    "config/assessment/gate_thresholds_v1.json HC-07 (assessment only, A9.24 item 5)",
+    "abep_sim/assessment/arch_constraints.py design_constraints default life_min_h (via HC-07)",
+    "config/mission/mission_scenario_v2.json firing_hours initial_basis (provenance only; the physics firing duration is an independent operating choice, owner ruling 2026-10-04)"
    ],
    "label": "SUBSYSTEM_FIRING_LIFE_ASSUMPTION",
    "provenance": {

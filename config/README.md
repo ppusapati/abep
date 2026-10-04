@@ -40,7 +40,7 @@ checks each exists, matches its pin, and that no second file claims the same rol
 | frozen design-state set (vleo_design_states_v2) | `abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json` via `config/environment/design_state_set_ref_v1.json` | dataset manifest `abep_sim/data/atmosphere_msis21_orbit_v1.json` + the config reference |
 | physics model / version set | `config/model_set/physics_model_set_v1.json` | `config/MANIFEST.json` |
 | raw simulation result | schema `raw_closure_v2` = `schemas/results/raw_closure_v2.json` (producer `abep_sim.system.physics_closure`) | `config/SOURCES_OF_TRUTH.json` |
-| assessment / compliance result | schema `closure_assessment_v1` = `schemas/results/closure_assessment_v1.json` (producer `abep_sim.assessment.assess`) | `config/SOURCES_OF_TRUTH.json` |
+| assessment / compliance result | schema `closure_assessment_v2` = `schemas/results/closure_assessment_v2.json` (producer `abep_sim.assessment.assess`) | `config/SOURCES_OF_TRUTH.json` |
 | requirements (provenance layer) | `config/requirements/rfp_constraints_v1.json` | `config/MANIFEST.json` |
 
 The result schemas are generated from the actual outputs by `scripts/config/build_result_schemas.py` (`--check`).
