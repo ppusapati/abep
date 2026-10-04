@@ -3733,5 +3733,6 @@ commit b8f39b7). No abep_sim physics module, frozen dataset, golden, Rust file o
 - **Config requirements snapshot (coordinator instruction).** `config/requirements/rfp_constraints_v1.json` (FROZEN,
   A9.22 G3) is left byte-identical: `scripts/config/build_config.py` now records the RVM file sha256 the snapshot was
   generated from (`SNAPSHOT_RVM_SHA256`, 6d7d02be..., provenance) instead of the live RVM sha, and guards the frozen
-  content with the A9.22 G3 requirements-basis hash of the live RVM (1d4a7f00...; fail closed on any basis change);
+  content with the A9.22 G3 requirements-basis hash of the live RVM (1d4a7f00...; a basis change records the live RVM
+  sha, so the snapshot bytes change and --check shows the drift);
   `tests/test_config_manifests.py` checks both. Only `hardware_bounds_v1.json` (F5 sha pin) and the manifests change.

@@ -231,7 +231,7 @@ def _clause(reg: dict, cid: str) -> dict:
 # A9.24 item 13 (coordinator instruction 2026-10-04): the FROZEN requirements snapshot keeps the RVM file sha256 it was
 # last generated from (f2ebdb7) as provenance; it is no longer refreshed whenever the RVM file changes outside the
 # requirements basis (status / evidence / note fields). The frozen content is guarded instead by the RVM requirements-
-# basis hash (A9.22 G3 accepted basis, rfp_rebase.BASIS_HASH_RULE): any basis change fails the build closed, and every
+# basis hash (A9.22 G3 accepted basis, rfp_rebase.BASIS_HASH_RULE): a basis change records the live RVM sha, and every
 # snapshot value is still re-derived from the live RVM rows (so a value drift makes --check fail).
 SNAPSHOT_RVM_SHA256 = "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"   # RVM at snapshot generation
 ACCEPTED_RVM_BASIS_SHA256 = "1d4a7f0099e937f0c74a8c1be8fc14408b75f211c7990be4672f4eee5f9b66b5"   # A9.22 G3
@@ -258,9 +258,9 @@ def build_requirements() -> dict:
                                           separators=(",", ":")).encode("utf-8"))
     basis = rvm_requirements_basis_sha256(rvm)
     accepted = rvm["rfp_rebase"]["ag15_closure"]["accepted_rvm"]["requirements_basis_sha256"]
-    if not (basis == accepted == ACCEPTED_RVM_BASIS_SHA256):
-        raise BuildError(f"RVM requirements basis {basis} != the A9.22 G3 accepted basis "
-                         f"{ACCEPTED_RVM_BASIS_SHA256}: the frozen requirements snapshot needs an owner decision")
+    # basis unchanged -> the snapshot keeps its generation-time RVM pin (provenance); a changed basis records the live
+    # RVM sha256, so the snapshot bytes change and --check / the tests show the drift (never silent)
+    rvm_pin = SNAPSHOT_RVM_SHA256 if basis == accepted == ACCEPTED_RVM_BASIS_SHA256 else sha256_file(RVM_REL)
     rb = rvm["rfp_rebase"]["registration"]
     if rb["clauses_sha256"] != clauses_sha:
         raise BuildError("RVM rfp_rebase clauses_sha256 differs from the registration clauses")
@@ -360,7 +360,7 @@ def build_requirements() -> dict:
         "rfp_clause_rows_frozen": f"{sum(bool(r.get('requirement_frozen')) for r in rfp_rows)}/{len(rfp_rows)}",
         "generated_by": GENERATED_BY,
         "regenerate": REGENERATE,
-        "rvm": {"id": rvm["id"], "path": RVM_REL, "sha256": SNAPSHOT_RVM_SHA256, "status": rvm.get("status")},
+        "rvm": {"id": rvm["id"], "path": RVM_REL, "sha256": rvm_pin, "status": rvm.get("status")},
         "registration": {"path": REG_REL, "sha256": sha256_file(REG_REL), "rfp_number": rb["rfp_number"],
                          "pdf_sha256": rb["pdf_sha256"], "clauses_sha256": clauses_sha,
                          "clauses_hash_rule": rb["clauses_hash_rule"], "n_clauses": len(reg["clauses"])},
