@@ -149,6 +149,37 @@ Open-item classes:
 - `DEFERRED_TO_FREEZE_GATE`: an owner-deferred value frozen at its later gate from the procured / calibrated hardware (A9.8 P1-IT-52: no numbers invented now); the supplier quotes capability ranges; A9.4 / A9.6 allow P1_NEEDED lines to be sent for quotation; not blocking
 - `BLOCKING_SEND`: must be closed before the line can be sent (freeze point NOW and not a supplier answer, or an unmet send precondition such as the controlled H-1 drawing set)
 
+## Owner dispatch authorization (A9.24 item 10)
+
+> Owner (A9.24 10_rfq): "AUTHORIZED FOR QUOTATION ONLY for: RFQ3-RF RFQ3-GAS RFQ3-VAC RFQ3-HALLEL RFQ3-MECH RFQ3-RFMET"
+> Owner (A9.24 10_rfq): "This permits: - quotation; - technical clarification; - datasheets; - capability information; - mass/power information; - lead time."
+> Owner (A9.24 10_rfq): "It does NOT authorize: - purchase order; - advance payment; - supplier selection; - binding commitment."
+> Owner (A9.24 10_rfq): "Do not dispatch: RFQ3-THRUST until its blocking quantity issue is resolved."
+> Owner (A9.24 10_rfq): "Do not dispatch: RFQ3-H1FAB until controlled H-1 drawings exist."
+
+Permits: quotation; technical clarification; datasheets; capability information; mass/power information; lead time. NOT authorized: purchase order; advance payment; supplier selection; binding commitment.
+
+Rule: authorization applies to the package's A9.21 NOW subset; an authorized package must be READY_FOR_OWNER_DISPATCH (rule function a9_24_dispatch_status, fail closed); DO_NOT_DISPATCH packages never become authorized automatically when their condition clears. Sent by the repository: **False**; dispatch record: NONE_IN_REPOSITORY (the owner sends; the repository and Claude never contact a supplier).
+
+| package | authorization | dispatch status | condition | cover note |
+|---|---|---|---|---|
+| RFQ3-RF | AUTHORIZED_FOR_QUOTATION_ONLY | AUTHORIZED_PENDING_OWNER_SEND | - | docs/procurement/rfq_a9_v3/dispatch/RFQ3-RF_COVER.md |
+| RFQ3-GAS | AUTHORIZED_FOR_QUOTATION_ONLY | AUTHORIZED_PENDING_OWNER_SEND | - | docs/procurement/rfq_a9_v3/dispatch/RFQ3-GAS_COVER.md |
+| RFQ3-VAC | AUTHORIZED_FOR_QUOTATION_ONLY | AUTHORIZED_PENDING_OWNER_SEND | - | docs/procurement/rfq_a9_v3/dispatch/RFQ3-VAC_COVER.md |
+| RFQ3-HALLEL | AUTHORIZED_FOR_QUOTATION_ONLY | AUTHORIZED_PENDING_OWNER_SEND | - | docs/procurement/rfq_a9_v3/dispatch/RFQ3-HALLEL_COVER.md |
+| RFQ3-MECH | AUTHORIZED_FOR_QUOTATION_ONLY | AUTHORIZED_PENDING_OWNER_SEND | - | docs/procurement/rfq_a9_v3/dispatch/RFQ3-MECH_COVER.md |
+| RFQ3-THRUST | DO_NOT_DISPATCH | DO_NOT_DISPATCH | until its blocking quantity issue is resolved | - |
+| RFQ3-RFMET | AUTHORIZED_FOR_QUOTATION_ONLY | AUTHORIZED_PENDING_OWNER_SEND | - | docs/procurement/rfq_a9_v3/dispatch/RFQ3-RFMET_COVER.md |
+| RFQ3-H1FAB | DO_NOT_DISPATCH | DO_NOT_DISPATCH | until controlled H-1 drawings exist | - |
+
+Status vocabulary:
+
+- `AUTHORIZED_PENDING_OWNER_SEND`: AUTHORIZED_FOR_QUOTATION_ONLY by the owner (A9.24 item 10); the owner / procurement sends it outside the repository; nothing has been sent from here
+- `DO_NOT_DISPATCH`: owner instruction (A9.24 item 10): not to be dispatched while its stated condition is unmet
+- `DO_NOT_DISPATCH_CONDITION_MET_AWAITING_OWNER_AUTHORIZATION`: the stated blocking condition no longer shows in the readiness record; dispatch still needs a new owner authorization (never automatic)
+
+No-commitment clause (cover notes): This request is for quotation and information only. It is not a purchase order, not an offer to contract, not a supplier selection and not a binding commitment of any kind; no advance payment will be made against it. Responding creates no obligation for either party. Any purchase would require a separate written purchase order issued by P9E/Vyovrinda under its own authorization after a separate owner decision.
+
 ## Xe storage / flow quotation split and AL-08 (A9.21 AL08)
 
 > Owner (A9.21 AL08): "Xe-hardware floor: wait for quotations before formally rebasing AL-08. Keep 6.05 kg only as a provisional planning floor, not a frozen allocation."
@@ -741,6 +772,8 @@ H3 gate: QUOTATION PACKAGES v3 READY FOR OWNER DISPATCH (P1 subset first; H-1 bu
 | A9.20 | docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md | 2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c |
 | A9.21 | docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json | 78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549 |
 | A9.21 | docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md | 01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440 |
+| A9.24 | docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json | fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c |
+| A9.24 | docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md | 9a2c950befd20dc38c63a3c56d4443ce7a30f1630903ada618b054638325b1d7 |
 | V2_JSON | docs/procurement/rfq_a9_v2/rfq_a9_v2.json | 6960f2927ece5a171d851bc10bc2314e99ef448b1e6f7d5ba84b93d2226795cb |
 | V2_MD | docs/procurement/rfq_a9_v2/RFQ_A9_V2.md | 80b9cbd08d0366336950f3496b92a28b9c8c40d7ab17af3c3cc2d9e7452ac01c |
 | V2_BUILDER | docs/procurement/rfq_a9_v2/build_rfq_a9_v2.py | 4aa6ce0dfbc1698e27c2b737fb2f1c7f3efb55efc08969a4de22484acedb8964 |

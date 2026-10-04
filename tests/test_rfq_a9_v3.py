@@ -47,6 +47,8 @@ PINNED = {
         "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
     "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json":
         "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+    "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json":
+        "fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c",
 }
 # (decision key, question id) the lane must apply (lane list of the A9.16 RFQ step)
 REQUIRED_APPLIED = [
@@ -904,3 +906,73 @@ def test_a921_package_markdown_carries_checklist():
         t = f.read_text(encoding="utf-8")
         assert "## Dispatch readiness checklist (A9.21 item 15)" in t, f.name
         assert "Dispatched by the repository: False; purchase authorized: False" in t, f.name
+        assert "## Owner dispatch authorization (A9.24 item 10)" in t, f.name
+
+
+# ------------------------------------------------------------------------- A9.24 item 10: owner dispatch authorization
+A924_JSON = "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json"
+A924_JSON_SHA = "fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c"
+A924_AUTH = ["RFQ3-RF", "RFQ3-GAS", "RFQ3-VAC", "RFQ3-HALLEL", "RFQ3-MECH", "RFQ3-RFMET"]
+
+
+def test_a924_authorization_matches_owner_record(doc):
+    assert _sha(A924_JSON) == A924_JSON_SHA
+    rec = json.loads((REPO / A924_JSON).read_text(encoding="utf-8"))["items"]["10_rfq"]
+    da = doc["dispatch_authorization_a9_24"]
+    st = {x["package"]: x for x in da["packages"]}
+    assert set(st) == set(PKGS)
+    assert rec["AUTHORIZED_FOR_QUOTATION_ONLY"] == A924_AUTH
+    for pid in A924_AUTH:
+        assert st[pid]["authorization"] == "AUTHORIZED_FOR_QUOTATION_ONLY"
+        assert st[pid]["dispatch_status"] == "AUTHORIZED_PENDING_OWNER_SEND"
+        assert st[pid]["cover_note"] == f"docs/procurement/rfq_a9_v3/dispatch/{pid}_COVER.md"
+    for pid in rec["DO_NOT_DISPATCH"]:
+        assert st[pid]["authorization"] == "DO_NOT_DISPATCH" and st[pid]["dispatch_status"] == "DO_NOT_DISPATCH"
+        assert st[pid]["cover_note"] is None and st[pid]["condition"] == rec["DO_NOT_DISPATCH"][pid]
+    assert da["permits"] == rec["permits"] and da["not_authorized"] == rec["not_authorized"]
+    assert da["sent_by_repository"] is False and da["dispatch_record"].startswith("NONE_IN_REPOSITORY")
+    assert all(d["key"] == "A9.24" and d["json_sha256"] == A924_JSON_SHA for d in da["decision"])
+    pk = {p["id"]: p for p in doc["packages"]}
+    ev = pk["RFQ3-THRUST"]["dispatch_readiness"]["a9_24_authorization"]["condition_evidence"]
+    assert ev["blocking_lines"] == ["TH-L09"]
+    for p in doc["packages"]:
+        a = p["dispatch_readiness"]["a9_24_authorization"]
+        assert not any(a[k] for k in ("sent_by_repository", "purchase_order", "advance_payment", "supplier_selection",
+                                      "binding_commitment"))
+
+
+def test_a924_cover_notes_exist_exactly_and_carry_terms(doc):
+    d = LANE / "dispatch"
+    assert sorted(f.name for f in d.iterdir()) == sorted(f"{p}_COVER.md" for p in A924_AUTH)
+    pk = {p["id"]: p for p in doc["packages"]}
+    for pid in A924_AUTH:
+        t = (d / f"{pid}_COVER.md").read_text(encoding="utf-8")
+        assert "Status: AUTHORIZED_PENDING_OWNER_SEND" in t and "QUOTATION ONLY" in t
+        assert "## No-commitment clause" in t and "not a binding commitment" in t
+        for x in ("purchase order", "advance payment", "supplier selection", "binding commitment"):
+            assert f"- {x}" in t
+        for li in pk[pid]["dispatch_readiness"]["now_subset"]["lines"]:
+            assert f"| {li} |" in t
+        assert not re.search(r"(₹|\bINR\b|\bUSD\b|\$\s?\d)", t)
+        assert "Sent by the repository: False" in t
+
+
+def test_a924_dispatch_status_fails_closed(mod, doc):
+    pk = {p["id"]: p for p in doc["packages"]}
+    rd = copy.deepcopy(pk["RFQ3-RF"]["dispatch_readiness"])
+    rd["now_subset"]["readiness"] = "NOT_READY_BLOCKING_TBD"
+    rd["now_subset"]["blocking"] = ["quantity"]
+    with pytest.raises(ValueError):
+        mod.a9_24_dispatch_status("RFQ3-RF", rd)
+    th = copy.deepcopy(pk["RFQ3-THRUST"]["dispatch_readiness"])
+    th["now_subset"]["readiness"] = "READY_FOR_OWNER_DISPATCH"
+    th["now_subset"]["blocking"] = []
+    for x in th["lines"]:
+        x["blocking_open_items"] = []
+    got = mod.a9_24_dispatch_status("RFQ3-THRUST", th)
+    assert got["dispatch_status"] == "DO_NOT_DISPATCH_CONDITION_MET_AWAITING_OWNER_AUTHORIZATION"
+    assert got["authorization"] == "DO_NOT_DISPATCH"
+    with pytest.raises(KeyError):
+        mod.a9_24_dispatch_status("RFQ3-NOPE", th)
+    with pytest.raises(ValueError):
+        mod._check_a9_24_record({"AUTHORIZED_FOR_QUOTATION_ONLY": A924_AUTH + ["RFQ3-THRUST"]})

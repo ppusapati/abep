@@ -226,6 +226,18 @@
    "path": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
    "sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
    "immutable": true
+  },
+  {
+   "key": "A9.24",
+   "path": "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json",
+   "sha256": "fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c",
+   "immutable": true
+  },
+  {
+   "key": "A9.24",
+   "path": "docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md",
+   "sha256": "9a2c950befd20dc38c63a3c56d4443ce7a30f1630903ada618b054638325b1d7",
+   "immutable": true
   }
  ],
  "v2_pins": [
@@ -4693,7 +4705,28 @@
     ],
     "dispatched_by_repository": false,
     "purchase_authorized": false,
-    "owner_action": "owner / procurement sends the request for quotation outside the repository and keeps the dispatch record outside it (A9.21 item 15); no purchase order"
+    "owner_action": "owner / procurement sends the request for quotation outside the repository and keeps the dispatch record outside it (A9.21 item 15); no purchase order",
+    "a9_24_authorization": {
+     "authorization": "AUTHORIZED_FOR_QUOTATION_ONLY",
+     "dispatch_status": "AUTHORIZED_PENDING_OWNER_SEND",
+     "condition": null,
+     "condition_evidence": null,
+     "decisions": [
+      {
+       "key": "A9.24",
+       "id": "10_rfq",
+       "json_path": "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json",
+       "json_sha256": "fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c"
+      }
+     ],
+     "cover_note": "docs/procurement/rfq_a9_v3/dispatch/RFQ3-RF_COVER.md",
+     "dispatch_scope": "NOW subset lines (A9.21 READY_FOR_OWNER_DISPATCH); LATER-tagged lines stay with the later campaign set unless the owner adds them (RF3-FLAG-07)",
+     "sent_by_repository": false,
+     "purchase_order": false,
+     "advance_payment": false,
+     "supplier_selection": false,
+     "binding_commitment": false
+    }
    }
   },
   {
@@ -12914,7 +12947,28 @@
     ],
     "dispatched_by_repository": false,
     "purchase_authorized": false,
-    "owner_action": "owner / procurement sends the request for quotation outside the repository and keeps the dispatch record outside it (A9.21 item 15); no purchase order"
+    "owner_action": "owner / procurement sends the request for quotation outside the repository and keeps the dispatch record outside it (A9.21 item 15); no purchase order",
+    "a9_24_authorization": {
+     "authorization": "AUTHORIZED_FOR_QUOTATION_ONLY",
+     "dispatch_status": "AUTHORIZED_PENDING_OWNER_SEND",
+     "condition": null,
+     "condition_evidence": null,
+     "decisions": [
+      {
+       "key": "A9.24",
+       "id": "10_rfq",
+       "json_path": "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json",
+       "json_sha256": "fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c"
+      }
+     ],
+     "cover_note": "docs/procurement/rfq_a9_v3/dispatch/RFQ3-GAS_COVER.md",
+     "dispatch_scope": "NOW subset lines (A9.21 READY_FOR_OWNER_DISPATCH); LATER-tagged lines stay with the later campaign set unless the owner adds them (RF3-FLAG-07)",
+     "sent_by_repository": false,
+     "purchase_order": false,
+     "advance_payment": false,
+     "supplier_selection": false,
+     "binding_commitment": false
+    }
    }
   },
   {
@@ -15453,7 +15507,28 @@
     ],
     "dispatched_by_repository": false,
     "purchase_authorized": false,
-    "owner_action": "owner / procurement sends the request for quotation outside the repository and keeps the dispatch record outside it (A9.21 item 15); no purchase order"
+    "owner_action": "owner / procurement sends the request for quotation outside the repository and keeps the dispatch record outside it (A9.21 item 15); no purchase order",
+    "a9_24_authorization": {
+     "authorization": "AUTHORIZED_FOR_QUOTATION_ONLY",
+     "dispatch_status": "AUTHORIZED_PENDING_OWNER_SEND",
+     "condition": null,
+     "condition_evidence": null,
+     "decisions": [
+      {
+       "key": "A9.24",
+       "id": "10_rfq",
+       "json_path": "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json",
+       "json_sha256": "fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c"
+      }
+     ],
+     "cover_note": "docs/procurement/rfq_a9_v3/dispatch/RFQ3-VAC_COVER.md",
+     "dispatch_scope": "NOW subset lines (A9.21 READY_FOR_OWNER_DISPATCH); LATER-tagged lines stay with the later campaign set unless the owner adds them (RF3-FLAG-07)",
+     "sent_by_repository": false,
+     "purchase_order": false,
+     "advance_payment": false,
+     "supplier_selection": false,
+     "binding_commitment": false
+    }
    }
   },
   {
@@ -21749,7 +21824,28 @@
     ],
     "dispatched_by_repository": false,
     "purchase_authorized": false,
-    "owner_action": "owner / procurement sends the request for quotation outside the repository and keeps the dispatch record outside it (A9.21 item 15); no purchase order"
+    "owner_action": "owner / procurement sends the request for quotation outside the repository and keeps the dispatch record outside it (A9.21 item 15); no purchase order",
+    "a9_24_authorization": {
+     "authorization": "AUTHORIZED_FOR_QUOTATION_ONLY",
+     "dispatch_status": "AUTHORIZED_PENDING_OWNER_SEND",
+     "condition": null,
+     "condition_evidence": null,
+     "decisions": [
+      {
+       "key": "A9.24",
+       "id": "10_rfq",
+       "json_path": "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json",
+       "json_sha256": "fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c"
+      }
+     ],
+     "cover_note": "docs/procurement/rfq_a9_v3/dispatch/RFQ3-HALLEL_COVER.md",
+     "dispatch_scope": "NOW subset lines (A9.21 READY_FOR_OWNER_DISPATCH); LATER-tagged lines stay with the later campaign set unless the owner adds them (RF3-FLAG-07)",
+     "sent_by_repository": false,
+     "purchase_order": false,
+     "advance_payment": false,
+     "supplier_selection": false,
+     "binding_commitment": false
+    }
    }
   },
   {
@@ -23863,7 +23959,28 @@
     ],
     "dispatched_by_repository": false,
     "purchase_authorized": false,
-    "owner_action": "owner / procurement sends the request for quotation outside the repository and keeps the dispatch record outside it (A9.21 item 15); no purchase order"
+    "owner_action": "owner / procurement sends the request for quotation outside the repository and keeps the dispatch record outside it (A9.21 item 15); no purchase order",
+    "a9_24_authorization": {
+     "authorization": "AUTHORIZED_FOR_QUOTATION_ONLY",
+     "dispatch_status": "AUTHORIZED_PENDING_OWNER_SEND",
+     "condition": null,
+     "condition_evidence": null,
+     "decisions": [
+      {
+       "key": "A9.24",
+       "id": "10_rfq",
+       "json_path": "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json",
+       "json_sha256": "fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c"
+      }
+     ],
+     "cover_note": "docs/procurement/rfq_a9_v3/dispatch/RFQ3-MECH_COVER.md",
+     "dispatch_scope": "NOW subset lines (A9.21 READY_FOR_OWNER_DISPATCH); LATER-tagged lines stay with the later campaign set unless the owner adds them (RF3-FLAG-07)",
+     "sent_by_repository": false,
+     "purchase_order": false,
+     "advance_payment": false,
+     "supplier_selection": false,
+     "binding_commitment": false
+    }
    }
   },
   {
@@ -27258,7 +27375,36 @@
     ],
     "dispatched_by_repository": false,
     "purchase_authorized": false,
-    "owner_action": "owner / procurement sends the request for quotation outside the repository and keeps the dispatch record outside it (A9.21 item 15); no purchase order"
+    "owner_action": "owner / procurement sends the request for quotation outside the repository and keeps the dispatch record outside it (A9.21 item 15); no purchase order",
+    "a9_24_authorization": {
+     "authorization": "DO_NOT_DISPATCH",
+     "dispatch_status": "DO_NOT_DISPATCH",
+     "condition": "until its blocking quantity issue is resolved",
+     "condition_evidence": {
+      "now_readiness": "NOT_READY_BLOCKING_TBD",
+      "blocking_items": [
+       "quantity"
+      ],
+      "blocking_lines": [
+       "TH-L09"
+      ]
+     },
+     "decisions": [
+      {
+       "key": "A9.24",
+       "id": "10_rfq",
+       "json_path": "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json",
+       "json_sha256": "fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c"
+      }
+     ],
+     "cover_note": null,
+     "dispatch_scope": null,
+     "sent_by_repository": false,
+     "purchase_order": false,
+     "advance_payment": false,
+     "supplier_selection": false,
+     "binding_commitment": false
+    }
    }
   },
   {
@@ -29324,7 +29470,28 @@
     ],
     "dispatched_by_repository": false,
     "purchase_authorized": false,
-    "owner_action": "owner / procurement sends the request for quotation outside the repository and keeps the dispatch record outside it (A9.21 item 15); no purchase order"
+    "owner_action": "owner / procurement sends the request for quotation outside the repository and keeps the dispatch record outside it (A9.21 item 15); no purchase order",
+    "a9_24_authorization": {
+     "authorization": "AUTHORIZED_FOR_QUOTATION_ONLY",
+     "dispatch_status": "AUTHORIZED_PENDING_OWNER_SEND",
+     "condition": null,
+     "condition_evidence": null,
+     "decisions": [
+      {
+       "key": "A9.24",
+       "id": "10_rfq",
+       "json_path": "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json",
+       "json_sha256": "fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c"
+      }
+     ],
+     "cover_note": "docs/procurement/rfq_a9_v3/dispatch/RFQ3-RFMET_COVER.md",
+     "dispatch_scope": "NOW subset lines (A9.21 READY_FOR_OWNER_DISPATCH); LATER-tagged lines stay with the later campaign set unless the owner adds them (RF3-FLAG-07)",
+     "sent_by_repository": false,
+     "purchase_order": false,
+     "advance_payment": false,
+     "supplier_selection": false,
+     "binding_commitment": false
+    }
    }
   },
   {
@@ -31363,7 +31530,46 @@
     ],
     "dispatched_by_repository": false,
     "purchase_authorized": false,
-    "owner_action": "owner / procurement sends the request for quotation outside the repository and keeps the dispatch record outside it (A9.21 item 15); no purchase order"
+    "owner_action": "owner / procurement sends the request for quotation outside the repository and keeps the dispatch record outside it (A9.21 item 15); no purchase order",
+    "a9_24_authorization": {
+     "authorization": "DO_NOT_DISPATCH",
+     "dispatch_status": "DO_NOT_DISPATCH",
+     "condition": "until controlled H-1 drawings exist",
+     "condition_evidence": {
+      "now_readiness": "NOT_READY_AWAITING_CONTROLLED_H1_DRAWINGS",
+      "blocking_items": [
+       "RFQ3-H1FAB-N02",
+       "quantity"
+      ],
+      "blocking_lines": [
+       "H1-L01",
+       "H1-L02",
+       "H1-L03",
+       "H1-L04",
+       "H1-L05",
+       "H1-L06",
+       "H1-L07",
+       "H1-L08",
+       "H1-L09",
+       "H1-O01"
+      ]
+     },
+     "decisions": [
+      {
+       "key": "A9.24",
+       "id": "10_rfq",
+       "json_path": "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json",
+       "json_sha256": "fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c"
+      }
+     ],
+     "cover_note": null,
+     "dispatch_scope": null,
+     "sent_by_repository": false,
+     "purchase_order": false,
+     "advance_payment": false,
+     "supplier_selection": false,
+     "binding_commitment": false
+    }
    }
   }
  ],
@@ -32294,6 +32500,373 @@
      "quantity"
     ],
     "common_interface": "RFQ3-CIF v3"
+   }
+  ]
+ },
+ "dispatch_authorization_a9_24": {
+  "decision": [
+   {
+    "type": "owner_decision",
+    "key": "A9.24",
+    "id": "10_rfq",
+    "sequenced_no": null,
+    "answer": {
+     "AUTHORIZED_FOR_QUOTATION_ONLY": [
+      "RFQ3-RF",
+      "RFQ3-GAS",
+      "RFQ3-VAC",
+      "RFQ3-HALLEL",
+      "RFQ3-MECH",
+      "RFQ3-RFMET"
+     ],
+     "permits": [
+      "quotation",
+      "technical clarification",
+      "datasheets",
+      "capability information",
+      "mass/power information",
+      "lead time"
+     ],
+     "not_authorized": [
+      "purchase order",
+      "advance payment",
+      "supplier selection",
+      "binding commitment"
+     ],
+     "DO_NOT_DISPATCH": {
+      "RFQ3-THRUST": "until its blocking quantity issue is resolved",
+      "RFQ3-H1FAB": "until controlled H-1 drawings exist"
+     }
+    },
+    "quote": "AUTHORIZED FOR QUOTATION ONLY for: RFQ3-RF RFQ3-GAS RFQ3-VAC RFQ3-HALLEL RFQ3-MECH RFQ3-RFMET",
+    "path": "docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md",
+    "md_sha256": "9a2c950befd20dc38c63a3c56d4443ce7a30f1630903ada618b054638325b1d7",
+    "json_path": "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json",
+    "json_sha256": "fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c"
+   },
+   {
+    "type": "owner_decision",
+    "key": "A9.24",
+    "id": "10_rfq",
+    "sequenced_no": null,
+    "answer": {
+     "AUTHORIZED_FOR_QUOTATION_ONLY": [
+      "RFQ3-RF",
+      "RFQ3-GAS",
+      "RFQ3-VAC",
+      "RFQ3-HALLEL",
+      "RFQ3-MECH",
+      "RFQ3-RFMET"
+     ],
+     "permits": [
+      "quotation",
+      "technical clarification",
+      "datasheets",
+      "capability information",
+      "mass/power information",
+      "lead time"
+     ],
+     "not_authorized": [
+      "purchase order",
+      "advance payment",
+      "supplier selection",
+      "binding commitment"
+     ],
+     "DO_NOT_DISPATCH": {
+      "RFQ3-THRUST": "until its blocking quantity issue is resolved",
+      "RFQ3-H1FAB": "until controlled H-1 drawings exist"
+     }
+    },
+    "quote": "This permits: - quotation; - technical clarification; - datasheets; - capability information; - mass/power information; - lead time.",
+    "path": "docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md",
+    "md_sha256": "9a2c950befd20dc38c63a3c56d4443ce7a30f1630903ada618b054638325b1d7",
+    "json_path": "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json",
+    "json_sha256": "fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c"
+   },
+   {
+    "type": "owner_decision",
+    "key": "A9.24",
+    "id": "10_rfq",
+    "sequenced_no": null,
+    "answer": {
+     "AUTHORIZED_FOR_QUOTATION_ONLY": [
+      "RFQ3-RF",
+      "RFQ3-GAS",
+      "RFQ3-VAC",
+      "RFQ3-HALLEL",
+      "RFQ3-MECH",
+      "RFQ3-RFMET"
+     ],
+     "permits": [
+      "quotation",
+      "technical clarification",
+      "datasheets",
+      "capability information",
+      "mass/power information",
+      "lead time"
+     ],
+     "not_authorized": [
+      "purchase order",
+      "advance payment",
+      "supplier selection",
+      "binding commitment"
+     ],
+     "DO_NOT_DISPATCH": {
+      "RFQ3-THRUST": "until its blocking quantity issue is resolved",
+      "RFQ3-H1FAB": "until controlled H-1 drawings exist"
+     }
+    },
+    "quote": "It does NOT authorize: - purchase order; - advance payment; - supplier selection; - binding commitment.",
+    "path": "docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md",
+    "md_sha256": "9a2c950befd20dc38c63a3c56d4443ce7a30f1630903ada618b054638325b1d7",
+    "json_path": "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json",
+    "json_sha256": "fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c"
+   },
+   {
+    "type": "owner_decision",
+    "key": "A9.24",
+    "id": "10_rfq",
+    "sequenced_no": null,
+    "answer": {
+     "AUTHORIZED_FOR_QUOTATION_ONLY": [
+      "RFQ3-RF",
+      "RFQ3-GAS",
+      "RFQ3-VAC",
+      "RFQ3-HALLEL",
+      "RFQ3-MECH",
+      "RFQ3-RFMET"
+     ],
+     "permits": [
+      "quotation",
+      "technical clarification",
+      "datasheets",
+      "capability information",
+      "mass/power information",
+      "lead time"
+     ],
+     "not_authorized": [
+      "purchase order",
+      "advance payment",
+      "supplier selection",
+      "binding commitment"
+     ],
+     "DO_NOT_DISPATCH": {
+      "RFQ3-THRUST": "until its blocking quantity issue is resolved",
+      "RFQ3-H1FAB": "until controlled H-1 drawings exist"
+     }
+    },
+    "quote": "Do not dispatch: RFQ3-THRUST until its blocking quantity issue is resolved.",
+    "path": "docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md",
+    "md_sha256": "9a2c950befd20dc38c63a3c56d4443ce7a30f1630903ada618b054638325b1d7",
+    "json_path": "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json",
+    "json_sha256": "fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c"
+   },
+   {
+    "type": "owner_decision",
+    "key": "A9.24",
+    "id": "10_rfq",
+    "sequenced_no": null,
+    "answer": {
+     "AUTHORIZED_FOR_QUOTATION_ONLY": [
+      "RFQ3-RF",
+      "RFQ3-GAS",
+      "RFQ3-VAC",
+      "RFQ3-HALLEL",
+      "RFQ3-MECH",
+      "RFQ3-RFMET"
+     ],
+     "permits": [
+      "quotation",
+      "technical clarification",
+      "datasheets",
+      "capability information",
+      "mass/power information",
+      "lead time"
+     ],
+     "not_authorized": [
+      "purchase order",
+      "advance payment",
+      "supplier selection",
+      "binding commitment"
+     ],
+     "DO_NOT_DISPATCH": {
+      "RFQ3-THRUST": "until its blocking quantity issue is resolved",
+      "RFQ3-H1FAB": "until controlled H-1 drawings exist"
+     }
+    },
+    "quote": "Do not dispatch: RFQ3-H1FAB until controlled H-1 drawings exist.",
+    "path": "docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md",
+    "md_sha256": "9a2c950befd20dc38c63a3c56d4443ce7a30f1630903ada618b054638325b1d7",
+    "json_path": "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json",
+    "json_sha256": "fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c"
+   }
+  ],
+  "permits": [
+   "quotation",
+   "technical clarification",
+   "datasheets",
+   "capability information",
+   "mass/power information",
+   "lead time"
+  ],
+  "not_authorized": [
+   "purchase order",
+   "advance payment",
+   "supplier selection",
+   "binding commitment"
+  ],
+  "status_vocabulary": {
+   "AUTHORIZED_PENDING_OWNER_SEND": "AUTHORIZED_FOR_QUOTATION_ONLY by the owner (A9.24 item 10); the owner / procurement sends it outside the repository; nothing has been sent from here",
+   "DO_NOT_DISPATCH": "owner instruction (A9.24 item 10): not to be dispatched while its stated condition is unmet",
+   "DO_NOT_DISPATCH_CONDITION_MET_AWAITING_OWNER_AUTHORIZATION": "the stated blocking condition no longer shows in the readiness record; dispatch still needs a new owner authorization (never automatic)"
+  },
+  "rule": "authorization applies to the package's A9.21 NOW subset; an authorized package must be READY_FOR_OWNER_DISPATCH (rule function a9_24_dispatch_status, fail closed); DO_NOT_DISPATCH packages never become authorized automatically when their condition clears",
+  "sent_by_repository": false,
+  "dispatch_record": "NONE_IN_REPOSITORY (the owner sends; the repository and Claude never contact a supplier)",
+  "no_commitment_clause": "This request is for quotation and information only. It is not a purchase order, not an offer to contract, not a supplier selection and not a binding commitment of any kind; no advance payment will be made against it. Responding creates no obligation for either party. Any purchase would require a separate written purchase order issued by P9E/Vyovrinda under its own authorization after a separate owner decision.",
+  "cover_notes_rule": "one dispatch-ready cover note per authorized package under docs/procurement/rfq_a9_v3/dispatch/; no supplier, contact, price or date is filled in (owner fields are marked OWNER TO FILL)",
+  "packages": [
+   {
+    "package": "RFQ3-RF",
+    "authorization": "AUTHORIZED_FOR_QUOTATION_ONLY",
+    "dispatch_status": "AUTHORIZED_PENDING_OWNER_SEND",
+    "condition": null,
+    "cover_note": "docs/procurement/rfq_a9_v3/dispatch/RFQ3-RF_COVER.md",
+    "now_lines": [
+     "RF-L01",
+     "RF-L02",
+     "RF-L03",
+     "RF-L04",
+     "RF-L05",
+     "RF-L07",
+     "RF-L08",
+     "RF-L09",
+     "RF-L10",
+     "RF-L11",
+     "RF-L19"
+    ]
+   },
+   {
+    "package": "RFQ3-GAS",
+    "authorization": "AUTHORIZED_FOR_QUOTATION_ONLY",
+    "dispatch_status": "AUTHORIZED_PENDING_OWNER_SEND",
+    "condition": null,
+    "cover_note": "docs/procurement/rfq_a9_v3/dispatch/RFQ3-GAS_COVER.md",
+    "now_lines": [
+     "GAS-L01",
+     "GAS-O01",
+     "GAS-L04",
+     "GAS-L07",
+     "GAS-L12",
+     "GAS-L13",
+     "GAS-L14",
+     "GAS-L16",
+     "GAS-L17"
+    ]
+   },
+   {
+    "package": "RFQ3-VAC",
+    "authorization": "AUTHORIZED_FOR_QUOTATION_ONLY",
+    "dispatch_status": "AUTHORIZED_PENDING_OWNER_SEND",
+    "condition": null,
+    "cover_note": "docs/procurement/rfq_a9_v3/dispatch/RFQ3-VAC_COVER.md",
+    "now_lines": [
+     "VAC-L01",
+     "VAC-L02",
+     "VAC-L03",
+     "VAC-L04",
+     "VAC-L05",
+     "VAC-L07"
+    ]
+   },
+   {
+    "package": "RFQ3-HALLEL",
+    "authorization": "AUTHORIZED_FOR_QUOTATION_ONLY",
+    "dispatch_status": "AUTHORIZED_PENDING_OWNER_SEND",
+    "condition": null,
+    "cover_note": "docs/procurement/rfq_a9_v3/dispatch/RFQ3-HALLEL_COVER.md",
+    "now_lines": [
+     "HE-L01",
+     "HE-L02",
+     "HE-L03",
+     "HE-L04",
+     "HE-L05",
+     "HE-L15",
+     "HE-L16",
+     "HE-L17",
+     "HE-L18",
+     "HE-L19"
+    ]
+   },
+   {
+    "package": "RFQ3-MECH",
+    "authorization": "AUTHORIZED_FOR_QUOTATION_ONLY",
+    "dispatch_status": "AUTHORIZED_PENDING_OWNER_SEND",
+    "condition": null,
+    "cover_note": "docs/procurement/rfq_a9_v3/dispatch/RFQ3-MECH_COVER.md",
+    "now_lines": [
+     "ME-L01",
+     "ME-L02",
+     "ME-L03",
+     "ME-L05",
+     "ME-L06",
+     "ME-L07",
+     "ME-L08",
+     "ME-L09"
+    ]
+   },
+   {
+    "package": "RFQ3-THRUST",
+    "authorization": "DO_NOT_DISPATCH",
+    "dispatch_status": "DO_NOT_DISPATCH",
+    "condition": "until its blocking quantity issue is resolved",
+    "cover_note": null,
+    "now_lines": [
+     "TH-L04",
+     "TH-L05",
+     "TH-L06",
+     "TH-L07",
+     "TH-L08",
+     "TH-L09",
+     "TH-L10"
+    ]
+   },
+   {
+    "package": "RFQ3-RFMET",
+    "authorization": "AUTHORIZED_FOR_QUOTATION_ONLY",
+    "dispatch_status": "AUTHORIZED_PENDING_OWNER_SEND",
+    "condition": null,
+    "cover_note": "docs/procurement/rfq_a9_v3/dispatch/RFQ3-RFMET_COVER.md",
+    "now_lines": [
+     "RF-L12",
+     "RF-L13",
+     "RF-L14",
+     "RF-L15",
+     "RF-L16",
+     "RF-L17",
+     "RF-L18",
+     "RF-O01",
+     "RFM-L01"
+    ]
+   },
+   {
+    "package": "RFQ3-H1FAB",
+    "authorization": "DO_NOT_DISPATCH",
+    "dispatch_status": "DO_NOT_DISPATCH",
+    "condition": "until controlled H-1 drawings exist",
+    "cover_note": null,
+    "now_lines": [
+     "H1-L01",
+     "H1-L02",
+     "H1-L03",
+     "H1-L04",
+     "H1-L05",
+     "H1-L06",
+     "H1-L07",
+     "H1-L08",
+     "H1-L09",
+     "H1-O01"
+    ]
    }
   ]
  },
