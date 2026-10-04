@@ -235,6 +235,15 @@ NOW subset: **READY_FOR_OWNER_DISPATCH**; LATER subset: -. Dispatched by the rep
 - [x] no NOW line has a blocking open item
 - [x] no price, supplier name, ranking or purchase authorization (compliance record)
 
+## Owner dispatch authorization (A9.24 item 10)
+
+Authorization: **AUTHORIZED_FOR_QUOTATION_ONLY**; dispatch status: **AUTHORIZED_PENDING_OWNER_SEND**. AUTHORIZED_FOR_QUOTATION_ONLY by the owner (A9.24 item 10); the owner / procurement sends it outside the repository; nothing has been sent from here.
+
+Permits: quotation; technical clarification; datasheets; capability information; mass/power information; lead time. NOT authorized: purchase order; advance payment; supplier selection; binding commitment.
+
+Cover note: `docs/procurement/rfq_a9_v3/dispatch/RFQ3-RFMET_COVER.md`. Scope: NOW subset lines (A9.21 READY_FOR_OWNER_DISPATCH); LATER-tagged lines stay with the later campaign set unless the owner adds them (RF3-FLAG-07).
+
+
 | line | set | readiness | supplier answers | deferred to gate | blocking | reason | send state |
 |---|---|---|---|---|---|---|---|
 | RF-L12 | NOW | READY_FOR_OWNER_DISPATCH | - | - | - | owner-authorised send state; no blocking open item | READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized |

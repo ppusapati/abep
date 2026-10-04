@@ -295,6 +295,13 @@ NOW subset: **NOT_READY_BLOCKING_TBD**; LATER subset: LATER_NOT_IN_CURRENT_DISPA
 - [ ] no NOW line has a blocking open item
 - [x] no price, supplier name, ranking or purchase authorization (compliance record)
 
+## Owner dispatch authorization (A9.24 item 10)
+
+Authorization: **DO_NOT_DISPATCH**; dispatch status: **DO_NOT_DISPATCH** (until its blocking quantity issue is resolved). owner instruction (A9.24 item 10): not to be dispatched while its stated condition is unmet.
+
+Condition evidence: NOW readiness NOT_READY_BLOCKING_TBD; blocking items quantity; blocking lines TH-L09.
+
+
 | line | set | readiness | supplier answers | deferred to gate | blocking | reason | send state |
 |---|---|---|---|---|---|---|---|
 | TH-L01 | LATER | LATER_NOT_IN_CURRENT_DISPATCH | - | RFQ2-THRUST-R04, RFQ2-THRUST-R10, RFQ2-THRUST-R13, RFQ2-THRUST-R14, RFQ2-THRUST-R15, RFQ2-THRUST-R17, RFQ2-THRUST-R18 | - | dispatch tag LATER (LATER (sent with the later campaign set); purchase order NOT authorized) | LATER (sent with the later campaign set); purchase order NOT authorized |

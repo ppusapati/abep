@@ -11,6 +11,7 @@ Writes
   docs/procurement/rfq_a9_v3/RFQ_A9_V3.md                            companion document (rendered from the JSON data)
   docs/procurement/rfq_a9_v3/packages/RFQ3-00_common_interface.md    common top-level interface document
   docs/procurement/rfq_a9_v3/packages/RFQ3-0N_<slug>.md              one sendable package per supplier speciality
+  docs/procurement/rfq_a9_v3/dispatch/<package>_COVER.md             A9.24 cover note per authorized package
 
 What v3 changes (owner decisions; the verbatim .md of each decision governs, quotes are checked verbatim at build time)
   * A9.8 P2Q-02      new separate RF-metrology package RFQ3-RFMET under the common interface specification;
@@ -30,6 +31,9 @@ What v3 changes (owner decisions; the verbatim .md of each decision governs, quo
     planning floor (older allocation kept as labelled history); item 15 RFQ_DISPATCH - per-package dispatch-readiness
     record and checklist (READY_FOR_OWNER_DISPATCH / NOT_READY_* / LATER_NOT_IN_CURRENT_DISPATCH); the repository never
     dispatches and no purchase is ever authorized here.
+  * A9.24 (in place): item 10 RFQ dispatch - RFQ3-RF / GAS / VAC / HALLEL / MECH / RFMET AUTHORIZED_FOR_QUOTATION_ONLY
+    (status AUTHORIZED_PENDING_OWNER_SEND; one cover note per package under dispatch/), RFQ3-THRUST (TH-L09 quantity)
+    and RFQ3-H1FAB (controlled H-1 drawings) DO_NOT_DISPATCH; rule function a9_24_dispatch_status (fail closed).
 
 Rules implemented here
   * requirement and line ids are stable across revisions (v2 ids kept); new v3 ids carry the RFQ3- prefix; package ids
@@ -130,9 +134,17 @@ DECISIONS = {
               "json_sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
               "md": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
               "md_sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440"},
+    # A9.24 (2026-10-04): item 10 RFQ dispatch - six packages AUTHORIZED FOR QUOTATION ONLY; RFQ3-THRUST and RFQ3-H1FAB
+    # DO NOT DISPATCH until their blocking conditions are resolved (the repository still never sends anything)
+    "A9.24": {"json": "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json",
+              "json_sha256": "fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c",
+              "md": "docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md",
+              "md_sha256": "9a2c950befd20dc38c63a3c56d4443ce7a30f1630903ada618b054638325b1d7"},
 }
 # owner decisions whose json 'decisions' table maps a key to a plain answer string (no per-question record)
 STRING_DECISION_KEYS = ("A9.21",)
+# owner decisions whose json carries an 'items' table (item key -> answer string or structured record)
+ITEM_DECISION_KEYS = ("A9.24",)
 # single-record owner decisions (no per-question 'decisions' table in their json): the allowed record keys
 SINGLE_RECORD_KEYS = {"A9.19": ("architecture", "xenon_role", "amends"), "A9.20": ("answer",)}
 STATE_V4 = "docs/budgets/owner_decisions/owner_questions_state_v4.json"   # read for ids only; never pinned (mutable)
@@ -235,6 +247,11 @@ def OD(key: str, qid: str, quote: str) -> dict:
         ans = js.get("decisions", {}).get(qid)
         if not isinstance(ans, str) or js.get("decided_by") != "owner":
             raise KeyError(f"{key} has no owner decision {qid}")
+        seq = None
+    elif key in ITEM_DECISION_KEYS:
+        ans = (js.get("items") or {}).get(qid)
+        if ans is None or js.get("decided_by") != "owner":
+            raise KeyError(f"{key} has no owner decision item {qid}")
         seq = None
     elif key in SINGLE_RECORD_KEYS:
         if qid not in SINGLE_RECORD_KEYS[key] or qid not in js:
@@ -2089,6 +2106,182 @@ def compute_dispatch_readiness(doc: dict, s: dict) -> None:
                      for r in rows]}
 
 
+# ------------------------------------------------------------------------ A9.24 item 10: owner dispatch authorization
+DISPATCH_DIR = LANE_DIR + "/dispatch"
+A924_AUTHORIZED = ["RFQ3-RF", "RFQ3-GAS", "RFQ3-VAC", "RFQ3-HALLEL", "RFQ3-MECH", "RFQ3-RFMET"]
+A924_DO_NOT_DISPATCH = {
+    # package: (owner condition, readiness state that proves the condition is still unmet, blocking line ids)
+    "RFQ3-THRUST": ("until its blocking quantity issue is resolved", "NOT_READY_BLOCKING_TBD", ["TH-L09"]),
+    "RFQ3-H1FAB": ("until controlled H-1 drawings exist", "NOT_READY_AWAITING_CONTROLLED_H1_DRAWINGS", None),
+}
+A924_PERMITS = ["quotation", "technical clarification", "datasheets", "capability information",
+                "mass/power information", "lead time"]
+A924_NOT_AUTHORIZED = ["purchase order", "advance payment", "supplier selection", "binding commitment"]
+A924_STATUS = {
+    "AUTHORIZED_PENDING_OWNER_SEND": "AUTHORIZED_FOR_QUOTATION_ONLY by the owner (A9.24 item 10); the owner / "
+                                     "procurement sends it outside the repository; nothing has been sent from here",
+    "DO_NOT_DISPATCH": "owner instruction (A9.24 item 10): not to be dispatched while its stated condition is unmet",
+    "DO_NOT_DISPATCH_CONDITION_MET_AWAITING_OWNER_AUTHORIZATION":
+        "the stated blocking condition no longer shows in the readiness record; dispatch still needs a new owner "
+        "authorization (never automatic)",
+}
+NO_COMMITMENT_CLAUSE = (
+    "This request is for quotation and information only. It is not a purchase order, not an offer to contract, not a "
+    "supplier selection and not a binding commitment of any kind; no advance payment will be made against it. "
+    "Responding creates no obligation for either party. Any purchase would require a separate written purchase order "
+    "issued by P9E/Vyovrinda under its own authorization after a separate owner decision.")
+
+
+def s_a9_24() -> dict:
+    return {
+        "A924-AUTH": OD("A9.24", "10_rfq", "AUTHORIZED FOR QUOTATION ONLY for: RFQ3-RF RFQ3-GAS RFQ3-VAC RFQ3-HALLEL "
+                                           "RFQ3-MECH RFQ3-RFMET"),
+        "A924-PERMITS": OD("A9.24", "10_rfq", "This permits: - quotation; - technical clarification; - datasheets; - "
+                                              "capability information; - mass/power information; - lead time."),
+        "A924-NOT": OD("A9.24", "10_rfq", "It does NOT authorize: - purchase order; - advance payment; - supplier "
+                                          "selection; - binding commitment."),
+        "A924-THRUST": OD("A9.24", "10_rfq", "Do not dispatch: RFQ3-THRUST until its blocking quantity issue is "
+                                             "resolved."),
+        "A924-H1FAB": OD("A9.24", "10_rfq", "Do not dispatch: RFQ3-H1FAB until controlled H-1 drawings exist."),
+    }
+
+
+def _check_a9_24_record(ans) -> None:
+    """The A9.24 json item must carry exactly the package lists this builder applies (fail closed on any drift)."""
+    if not isinstance(ans, dict):
+        raise ValueError("A9.24 10_rfq: structured record expected")
+    bad = []
+    if ans.get("AUTHORIZED_FOR_QUOTATION_ONLY") != A924_AUTHORIZED:
+        bad.append("AUTHORIZED_FOR_QUOTATION_ONLY")
+    if ans.get("permits") != A924_PERMITS:
+        bad.append("permits")
+    if ans.get("not_authorized") != A924_NOT_AUTHORIZED:
+        bad.append("not_authorized")
+    dnd = ans.get("DO_NOT_DISPATCH") or {}
+    if set(dnd) != set(A924_DO_NOT_DISPATCH) or any(dnd[k] != v[0] for k, v in A924_DO_NOT_DISPATCH.items()):
+        bad.append("DO_NOT_DISPATCH")
+    if set(A924_AUTHORIZED) | set(A924_DO_NOT_DISPATCH) != set(PKG_ORDER) or \
+            set(A924_AUTHORIZED) & set(A924_DO_NOT_DISPATCH):
+        bad.append("package partition")
+    if bad:
+        raise ValueError("A9.24 10_rfq record differs from the applied authorization: " + ", ".join(bad))
+
+
+def a9_24_dispatch_status(pkg_id: str, readiness: dict) -> dict:
+    """A9.24 item 10 dispatch status of one package (fail closed). An authorized package must be READY_FOR_OWNER_DISPATCH
+    in its A9.21 NOW-subset record, else the build refuses. A DO_NOT_DISPATCH package stays DO_NOT_DISPATCH while its
+    blocking condition shows in the readiness record; once it no longer shows, the status becomes
+    DO_NOT_DISPATCH_CONDITION_MET_AWAITING_OWNER_AUTHORIZATION - never AUTHORIZED by itself."""
+    now = readiness["now_subset"]
+    if pkg_id in A924_AUTHORIZED:
+        if now["readiness"] != "READY_FOR_OWNER_DISPATCH" or now["blocking"]:
+            raise ValueError(f"{pkg_id}: owner-authorized for quotation but its NOW subset is {now['readiness']} "
+                             f"(blocking {now['blocking']}); re-record before dispatch")
+        return {"authorization": "AUTHORIZED_FOR_QUOTATION_ONLY", "dispatch_status": "AUTHORIZED_PENDING_OWNER_SEND",
+                "condition": None, "condition_evidence": None}
+    if pkg_id not in A924_DO_NOT_DISPATCH:
+        raise KeyError(f"{pkg_id}: no A9.24 item 10 disposition")
+    cond, state, lines = A924_DO_NOT_DISPATCH[pkg_id]
+    blocked_lines = sorted(x["line"] for x in readiness["lines"] if x["set"] == "NOW" and x["blocking_open_items"])
+    if lines is not None and now["readiness"] == state and blocked_lines != sorted(lines):
+        raise ValueError(f"{pkg_id}: blocking lines {blocked_lines} differ from the recorded {lines}")
+    unmet = now["readiness"] == state
+    ev = {"now_readiness": now["readiness"], "blocking_items": list(now["blocking"]),
+          "blocking_lines": blocked_lines}
+    return {"authorization": "DO_NOT_DISPATCH",
+            "dispatch_status": "DO_NOT_DISPATCH" if unmet else
+            "DO_NOT_DISPATCH_CONDITION_MET_AWAITING_OWNER_AUTHORIZATION",
+            "condition": cond, "condition_evidence": ev}
+
+
+def cover_file(pkg_id: str) -> str:
+    return f"{DISPATCH_DIR}/{pkg_id}_COVER.md"
+
+
+def compute_dispatch_authorization(doc: dict, s: dict) -> None:
+    _check_a9_24_record(s["A924-AUTH"]["answer"])
+    dec = [s[k] for k in ("A924-AUTH", "A924-PERMITS", "A924-NOT", "A924-THRUST", "A924-H1FAB")]
+    rows = []
+    for p in doc["packages"]:
+        st = a9_24_dispatch_status(p["id"], p["dispatch_readiness"])
+        src = [s["A924-AUTH"], s["A924-PERMITS"], s["A924-NOT"]] if p["id"] in A924_AUTHORIZED else \
+            [s["A924-THRUST" if p["id"] == "RFQ3-THRUST" else "A924-H1FAB"]]
+        rec = dict(st, decisions=_decisions_of(src),
+                   cover_note=cover_file(p["id"]) if st["dispatch_status"] == "AUTHORIZED_PENDING_OWNER_SEND" else None,
+                   dispatch_scope=("NOW subset lines (A9.21 READY_FOR_OWNER_DISPATCH); LATER-tagged lines stay with the "
+                                   "later campaign set unless the owner adds them (RF3-FLAG-07)")
+                   if st["dispatch_status"] == "AUTHORIZED_PENDING_OWNER_SEND" else None,
+                   sent_by_repository=False, purchase_order=False, advance_payment=False, supplier_selection=False,
+                   binding_commitment=False)
+        p["dispatch_readiness"]["a9_24_authorization"] = rec
+        rows.append({"package": p["id"], "authorization": rec["authorization"],
+                     "dispatch_status": rec["dispatch_status"], "condition": rec["condition"],
+                     "cover_note": rec["cover_note"], "now_lines": list(p["dispatch_readiness"]["now_subset"]["lines"])})
+    doc["dispatch_authorization_a9_24"] = {
+        "decision": dec, "permits": list(A924_PERMITS), "not_authorized": list(A924_NOT_AUTHORIZED),
+        "status_vocabulary": dict(A924_STATUS),
+        "rule": "authorization applies to the package's A9.21 NOW subset; an authorized package must be "
+                "READY_FOR_OWNER_DISPATCH (rule function a9_24_dispatch_status, fail closed); DO_NOT_DISPATCH packages "
+                "never become authorized automatically when their condition clears",
+        "sent_by_repository": False, "dispatch_record": "NONE_IN_REPOSITORY (the owner sends; the repository and "
+                                                        "Claude never contact a supplier)",
+        "no_commitment_clause": NO_COMMITMENT_CLAUSE,
+        "cover_notes_rule": "one dispatch-ready cover note per authorized package under " + DISPATCH_DIR + "/; no "
+                            "supplier, contact, price or date is filled in (owner fields are marked OWNER TO FILL)",
+        "packages": rows}
+
+
+def render_cover(doc: dict, p: dict) -> str:
+    a = p["dispatch_readiness"]["a9_24_authorization"]
+    da = doc["dispatch_authorization_a9_24"]
+    cif = p["dispatch_readiness"]["common_interface"]
+    now = set(p["dispatch_readiness"]["now_subset"]["lines"])
+    li_now = [li for li in p["line_items"] if li["id"] in now]
+    li_later = [li for li in p["line_items"] if li["id"] not in now]
+    q = [d for d in da["decision"] if d["key"] == "A9.24"][:3]
+    L_ = [f"# Request for quotation - cover note - {p['id']} ({p['owner_family']})", "",
+          f"Generated by `{THIS_SCRIPT}` from `{OUT_JSON}`; do not edit by hand.", "",
+          f"**Status: {a['dispatch_status']}** - {A924_STATUS[a['dispatch_status']]}.", "",
+          "**QUOTATION ONLY - NO PURCHASE, NO COMMITMENT.**", "",
+          "Owner basis (A9.24 item 10, `" + DECISIONS["A9.24"]["md"] + "`, sha256 `" + DECISIONS["A9.24"]["md_sha256"] +
+          "`):", ""]
+    L_ += [f"> {x['quote']}" for x in q]
+    L_ += ["", "## Addressing (owner to complete before sending)", "",
+           "- To: OWNER TO FILL (supplier and contact are chosen by the owner / procurement; none is named here)",
+           "- From: P9E/Vyovrinda procurement (OWNER TO FILL: sender name and contact)",
+           "- RFQ reference: " + p["id"] + " (package revision v3)",
+           "- Date sent: OWNER TO FILL",
+           "- Response requested by: OWNER TO FILL", "",
+           "## Request", "",
+           f"P9E/Vyovrinda requests a quotation and technical information for the items of package {p['id']} "
+           f"(`{p['package_file']}`), to be read together with the common interface document {cif['id']} "
+           f"{cif['revision']} (`{cif['file']}`, rendered sha256 `{cif['rendered_sha256']}`). The attached package text "
+           "governs; this note does not change any requirement.", "",
+           "### Lines in this request", ""]
+    L_ += _table(li_now, [("line", lambda x: x["id"]), ("item", lambda x: x["item"]), ("qty", lambda x: x["qty"]),
+                          ("option", lambda x: "OPTION" if x["option_line"] else "")])
+    if li_later:
+        L_ += ["", "Not in this request (dispatch tag LATER; sent with the later campaign set unless the owner adds "
+                   "them): " + ", ".join(x["id"] for x in li_later) + "."]
+    L_ += ["", "## Response items requested", "",
+           "This request permits the following, and only the following (A9.24 item 10):", ""]
+    L_ += [f"- {x}" for x in A924_PERMITS]
+    L_ += ["", "Per the package, the supplier is asked to state:", ""]
+    L_ += [f"- {x['text']}" for x in p["supplier_must_state"]]
+    L_ += ["- open items marked SUPPLIER_TO_ANSWER in the package dispatch-readiness table",
+           "- for owner-deferred values (DEFERRED_TO_FREEZE_GATE): the offered capability range; no value is frozen "
+           "by the response", "",
+           "## Not authorized by this request", ""]
+    L_ += [f"- {x}" for x in A924_NOT_AUTHORIZED]
+    L_ += ["", "## No-commitment clause", "", NO_COMMITMENT_CLAUSE, "",
+           "## Record", "",
+           "- Sent by the repository: False (the owner / procurement sends this note and keeps the dispatch record "
+           "outside the repository)",
+           "- Package readiness (A9.21 item 15): " + p["dispatch_readiness"]["now_subset"]["readiness"],
+           "- Prices: none recorded in the repository; commercial terms go to the owner directly", ""]
+    return "\n".join(L_)
+
+
 def patch_interface_demands(doc, s) -> None:
     fixes = {
         "IFD-03": {"to": "RFQ3-RFMET (and RFQ3-RF for RF-N06 / N08 / N09 / N13 / N16)",
@@ -2245,6 +2438,7 @@ def build() -> dict:
     c = Ctx(doc)
     src = S()
     src.update(s_a9_21())
+    src.update(s_a9_24())
     apply_decisions(c, src)
     apply_stale_text_fixes(c, src)
     apply_a9_19_20(c, src)
@@ -2779,11 +2973,12 @@ def _top_level(doc, v2, c: Ctx, s) -> None:
                   "re-bases or freezes AL-08 (rule function al08_quote_split_status)",
         "c1_branch": AL08_C1, "budgets_record_checked": MASS_POWER_V3}
     compute_dispatch_readiness(doc, s)
+    compute_dispatch_authorization(doc, s)
     order = ["schema", "id", "title", "revision_of", "lane", "follow_on", "trigger", "status", "a9_status", "base_commit",
              "generated_by", "companion_document", "test", "banner", "rfp_propellant_policy", "vocabulary",
              "decision_pins_v3", "v2_pins", "never_pinned_v3", "standing_facts", "common_interface", "packages",
-             "superseded_lines_v3", "p1_dispatch_first", "dispatch_readiness_a9_21", "al08_quotation_split_a9_21",
-             "a9_6_sec13_coverage", "instrument_coverage",
+             "superseded_lines_v3", "p1_dispatch_first", "dispatch_readiness_a9_21", "dispatch_authorization_a9_24",
+             "al08_quotation_split_a9_21", "a9_6_sec13_coverage", "instrument_coverage",
              "not_in_this_revision", "resolved_not_in_previous_revision", "change_log", "traceability_matrix",
              "interface_demands", "owner_answers_applied", "open_owner_questions", "recorder_flags_v3",
              "historical_reuse", "m16_impact", "h3_h4_inputs", "merged_cross_lane", "bus_boundary_repoint_a9_22",
@@ -2922,6 +3117,17 @@ def render_package(p: dict) -> str:
            f"{rd['common_interface']['revision']} (`{rd['common_interface']['file']}`, rendered sha256 "
            f"`{rd['common_interface']['rendered_sha256']}`). Owner action: {rd['owner_action']}.", ""]
     L_ += [f"- [{'x' if c_['ok'] else ' '}] {c_['check']}" for c_ in rd["checklist"]]
+    au = rd["a9_24_authorization"]
+    L_ += ["", "## Owner dispatch authorization (A9.24 item 10)", "",
+           f"Authorization: **{au['authorization']}**; dispatch status: **{au['dispatch_status']}**" +
+           (f" ({au['condition']})" if au["condition"] else "") + ". " + A924_STATUS[au["dispatch_status"]] + ".", ""]
+    if au["cover_note"]:
+        L_ += ["Permits: " + "; ".join(A924_PERMITS) + ". NOT authorized: " + "; ".join(A924_NOT_AUTHORIZED) + ".", "",
+               f"Cover note: `{au['cover_note']}`. Scope: {au['dispatch_scope']}.", ""]
+    elif au["condition_evidence"]:
+        ev = au["condition_evidence"]
+        L_ += [f"Condition evidence: NOW readiness {ev['now_readiness']}; blocking items "
+               f"{', '.join(ev['blocking_items']) or '-'}; blocking lines {', '.join(ev['blocking_lines']) or '-'}.", ""]
     L_ += [""]
     L_ += _table(rd["lines"], [("line", lambda x: x["line"]), ("set", lambda x: x["set"]),
                                ("readiness", lambda x: x["readiness"]),
@@ -2998,6 +3204,18 @@ def render_main(d: dict) -> str:
                                   ("CIF", lambda x: x["common_interface"])])
     L_ += ["", "Status vocabulary:", ""] + [f"- `{k}`: {v}" for k, v in dr["status_vocabulary"].items()]
     L_ += ["", "Open-item classes:", ""] + [f"- `{k}`: {v}" for k, v in dr["open_item_classes"].items()]
+    da = d["dispatch_authorization_a9_24"]
+    L_ += ["", "## Owner dispatch authorization (A9.24 item 10)", ""]
+    L_ += [f"> Owner (A9.24 {x['id']}): \"{x['quote']}\"" for x in da["decision"]]
+    L_ += ["", "Permits: " + "; ".join(da["permits"]) + ". NOT authorized: " + "; ".join(da["not_authorized"]) + ".",
+           "", f"Rule: {da['rule']}. Sent by the repository: **{da['sent_by_repository']}**; dispatch record: "
+               f"{da['dispatch_record']}.", ""]
+    L_ += _table(da["packages"], [("package", lambda x: x["package"]), ("authorization", lambda x: x["authorization"]),
+                                  ("dispatch status", lambda x: x["dispatch_status"]),
+                                  ("condition", lambda x: x["condition"] or "-"),
+                                  ("cover note", lambda x: x["cover_note"] or "-")])
+    L_ += ["", "Status vocabulary:", ""] + [f"- `{k}`: {v}" for k, v in da["status_vocabulary"].items()]
+    L_ += ["", "No-commitment clause (cover notes): " + da["no_commitment_clause"]]
     sp = d["al08_quotation_split_a9_21"]
     L_ += ["", "## Xe storage / flow quotation split and AL-08 (A9.21 AL08)", ""]
     L_ += [f"> Owner (A9.21 AL08): \"{x['quote']}\"" for x in sp["decision"]]
@@ -3070,6 +3288,9 @@ def outputs(doc: dict) -> dict:
              doc["common_interface"]["package_file"]: render_cif(doc["common_interface"])}
     for p in doc["packages"]:
         files[p["package_file"]] = render_package(p)
+        cov = p["dispatch_readiness"]["a9_24_authorization"]["cover_note"]
+        if cov:
+            files[cov] = render_cover(doc, p)
     return files
 
 
@@ -3091,12 +3312,17 @@ def main(argv=None) -> int:
         extra = sorted(set(os.listdir(_abs(PKG_DIR))) - {os.path.basename(k) for k in files if k.startswith(PKG_DIR)}) \
             if os.path.isdir(_abs(PKG_DIR)) else []
         bad += [f"{PKG_DIR}/{x} (stale extra file)" for x in extra]
+        extra = sorted(set(os.listdir(_abs(DISPATCH_DIR))) - {os.path.basename(k) for k in files
+                                                             if k.startswith(DISPATCH_DIR)}) \
+            if os.path.isdir(_abs(DISPATCH_DIR)) else []
+        bad += [f"{DISPATCH_DIR}/{x} (stale extra file)" for x in extra]
         if bad:
             print("STALE: " + ", ".join(bad))
             return 1
         print(f"OK: {len(files)} outputs reproduce")
         return 0
     os.makedirs(_abs(PKG_DIR), exist_ok=True)
+    os.makedirs(_abs(DISPATCH_DIR), exist_ok=True)
     for rel, txt in files.items():
         with open(_abs(rel), "w", encoding="utf-8") as fh:
             fh.write(txt)

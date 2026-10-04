@@ -228,6 +228,13 @@ NOW subset: **NOT_READY_AWAITING_CONTROLLED_H1_DRAWINGS**; LATER subset: -. Disp
 - [ ] no NOW line has a blocking open item
 - [x] no price, supplier name, ranking or purchase authorization (compliance record)
 
+## Owner dispatch authorization (A9.24 item 10)
+
+Authorization: **DO_NOT_DISPATCH**; dispatch status: **DO_NOT_DISPATCH** (until controlled H-1 drawings exist). owner instruction (A9.24 item 10): not to be dispatched while its stated condition is unmet.
+
+Condition evidence: NOW readiness NOT_READY_AWAITING_CONTROLLED_H1_DRAWINGS; blocking items RFQ3-H1FAB-N02, quantity; blocking lines H1-L01, H1-L02, H1-L03, H1-L04, H1-L05, H1-L06, H1-L07, H1-L08, H1-L09, H1-O01.
+
+
 | line | set | readiness | supplier answers | deferred to gate | blocking | reason | send state |
 |---|---|---|---|---|---|---|---|
 | H1-L01 | NOW | NOT_READY_AWAITING_CONTROLLED_H1_DRAWINGS | - | - | RFQ3-H1FAB-N02, quantity | h1_fab_send_state blockers: content_sha256, open_items: blockers for the quoted parts | SEND_ONLY_WITH_CONTROLLED_H1_DRAWINGS (P1 engineering article: drawing ID, revision, content hash under P9e / Vyovrinda configuration control, A9.10 OQ-RFQV2-10; the LOCK-1 release of A9.14 F5-OQ-04 is the basis of the FLIGHT H-1, not a precondition for quoting P1 hardware); quotation / specification only (A9.10 OQ-RFQV2-10); purchase order NOT authorized |
