@@ -1,0 +1,116 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_2026_10_04_A9_25_pre_bid_owner_decisions",
+ "decided_by": "owner",
+ "date": "2026-10-04",
+ "decision": "A9_25_PRE_BID_OWNER_DECISIONS_RECORDED",
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_04_A9_25_PRE_BID_OWNER_DECISIONS.md",
+  "sha256": "159ea2049e3cc05ce7a18b3e6bbdf6fee97c168a74f23fd2359cfef3a1d26106",
+  "method": "exact text extracted from the session transcript; per-message text sha256"
+ },
+ "messages": [
+  {
+   "n": 1,
+   "key": "STEERING_DIRECTIVE",
+   "utc": "2026-10-04T09:08:50Z",
+   "text_sha256": "8a91a34844a3e142f161bc9d36b24cefe24adc845f4c41a542fcd4c763b87a1c",
+   "chars": 17301,
+   "summary": "current steering directive (topology decided, physical design INVESTIGATION_HYPOTHESIS, simulation layering, priorities, C1/LaB6 policy, ICP, GNG-ICP-01, hard gates, Rust end state and method, bid vs Rust, branch safety, steering report request)"
+  },
+  {
+   "n": 2,
+   "key": "STEERING_RESPONSE",
+   "utc": "2026-10-04T09:15:53Z",
+   "text_sha256": "e7d6787ab31e15222fbccedd61743820b471cbf95e0bd7d05f1cc3fea939044c",
+   "chars": 14778,
+   "summary": "owner decisions on the steering report (CI floating-point fix approved, items 3-5 approved, AFI-01..05 dispositions, archengine guard, accelerators golden label, legacy module retirement != deletion, FEMM 4.2 primary solver, provisional Hiperco B-H, 520-1040 A-turns analysis sweep only, bid freeze sequence)"
+  },
+  {
+   "n": 3,
+   "key": "RUST_PLAN_LAB6_RULE",
+   "utc": "2026-10-04T09:45:23Z",
+   "text_sha256": "f1cc6ef40fcadd76ca3ab9e46c4d4c8386cdbf59b117ca46b4b52192bebcba58",
+   "chars": 2636,
+   "summary": "Rust plan stays isolated; LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator; four-class migration classification; parity only for retained selected-architecture physics"
+  },
+  {
+   "n": 4,
+   "key": "CI_PORTABILITY_OPTION_A",
+   "utc": "2026-10-04T10:01:02Z",
+   "text_sha256": "564f7309e666da76556f7539cab7f22fb33dca629d6ba07f9ebed625edcd13b5",
+   "chars": 6143,
+   "summary": "cross-platform fixture identity comparator, exact form A1-A6 (residual allowlist |x|<=1e-14; other floats rel<=1e-13 AND <=512 ULP; rest exact)"
+  },
+  {
+   "n": 5,
+   "key": "ITEM3_MODIFIED_3A_AND_COUPLINGS",
+   "utc": "2026-10-04T10:46:38Z",
+   "text_sha256": "d06ca1d6d1f596a2b2443e0d2ea42c907dd3822d4c668443d4cf8421241b88cd",
+   "chars": 8455,
+   "summary": "item 3 modified 3a (operating target vs 12 mN compliance flag; aggregates use the new flag); firing_hours decoupled into the operating scenario; wet mass and altitude band not operating inputs; final layering"
+  },
+  {
+   "n": 6,
+   "key": "ITEM3_PROCEED",
+   "utc": "2026-10-04T10:50:24Z",
+   "text_sha256": "445286d7208fbe214b71afceb79d95ba2d571216ce80a8ad16cdf11219528314",
+   "chars": 5686,
+   "summary": "sequencing: items 4-5 checkpoint push, item 3 + firing_hours as a separate commit, then AFI corrections; bid freeze order"
+  },
+  {
+   "n": 7,
+   "key": "ITEM3_ACCEPTED_SCENARIO_VERSIONING",
+   "utc": "2026-10-04T11:15:40Z",
+   "text_sha256": "dc8575c772a4bcd963de7f545d5661ebfaa9bb9deb915d6cb21fb2e1805e59ce",
+   "chars": 4105,
+   "summary": "46f7060 accepted; in-place mission_scenario_v2 revision accepted; v2 immutable after the bid freeze (later changes -> mission_scenario_v3); narrow AFI corrections approved"
+  },
+  {
+   "n": 8,
+   "key": "FINAL_PRE_BID_AFI_RESOLUTION",
+   "utc": "2026-10-04T16:31:16Z",
+   "text_sha256": "a48dfcbb9fa33421bf19ff45fa241070c22a8379a3eb4e887b661fb8ceb93624",
+   "chars": 14984,
+   "summary": "AFI-01-S1 keep second series latch; AFI-05-S1 no re-freeze, owner-confirmed current-architecture reading; C1 GROUND_REFERENCE_ONLY; AFI-03; RFQ3-GAS successor; bid mass basis mass_power_a9_v4; Xe 2/5/10 kg sensitivity cases; mass NOT CLOSED; AL-07 kept; decision recording; two-SHA discipline; network builder; validation; perf baseline then Rust plan revision"
+  }
+ ],
+ "owner_decision_summary": {
+  "rust_end_state": "ZERO Python active execution dependency (A9.24 item 1; steering directive sections 13-14); HallThruster.jl stays the Hall solver",
+  "rust_lab6_rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator; four-class classification (active selected-architecture physics -> migrate under parity; ground reference -> only if the future test toolchain needs it; historical regression -> not ported; active-flight inconsistency -> resolve first); supersedes the rejected plan rule 'LaB6 paths are ported unchanged pending the audit'",
+  "ci_portability": "cross-platform fixture identity: RESIDUAL_NOISE_FIELDS (|x|<=1e-14 both sides), other finite floats rel<=1e-13 AND <=512 ULP, everything else exact; same-process bit-exact (implemented acce885 -> 367f4fb)",
+  "physics_assessment_separation": "physics produces raw results; assessment compares with frozen engineering constraints; RFP/RVM never a simulation dependency (A9.23; steering directive section 3)",
+  "item_3": "modified 3a: thrust_air_ge_sustained_min authoritative RVM-02 / 12 mN compliance flag used by hard checks; thrust_air_ge_operating_target separate; thrust_air_ge_req deprecated alias; row 112 governed assessment-semantic correction (implemented 46f7060)",
+  "firing_hours_scenario": "mission_scenario_v2.firing_hours = 15000 h operating choice; HC-07 threshold independent; wet mass and altitude band are not operating inputs (46f7060)",
+  "mission_scenario_v2_versioning": "in-place pre-freeze revision accepted; mission_scenario_v2 immutable once the final pre-Rust bid baseline is frozen; later semantic changes -> mission_scenario_v3",
+  "AFI-01-S1": "OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH: two series latches (0.170 + 0.170) + one PFCV (0.115) = 0.455 kg; AL-08 CBE floor 4.929 kg, MEV planning floor 5.9148 kg; second latch current function = SECOND SERIES FLIGHT XE ISOLATION VALVE (mass provenance from the earlier two-branch analog); the cathode-feed PFCV stays removed",
+  "AFI-02": "AL-07 6.0 kg kept: PROVISIONAL_CONSERVATIVE_ANALOG_FLOOR containing legacy functions; AFI-02-RA1 open",
+  "AFI-03": "inherited P3 cathode node NOT_USABLE_FOR_FLIGHT_THERMAL_CLOSURE; P3 v2 not rewritten; successor cathodeless thermal model post-bid",
+  "AFI-05-S1": "OWNER_CONFIRMED_CURRENT_ARCHITECTURE_READING: frozen RVM-16 basis untouched; no flight keeper; AO/O compatibility applies to actual AO/O-exposed components; no graphite as current flight baseline for O/AO-exposed plasma-facing or electron-source surfaces until coupon evidence; not a universal graphite prohibition; no compliance-status change",
+  "C1": "GROUND_REFERENCE_ONLY; never flight hardware, fallback, electron source, Xe, mass, power, thermal load or closure; historical CONTROL_FALLBACK only as labelled verbatim provenance",
+  "RFQ3-GAS": "governed successor revision / addendum; v3 preserved; current AL-08 context CBE 4.929 / MEV 5.9148 kg PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (internal planning floor, not a supplier maximum); quotation split tank / regulator / two series latches / anode-Xe-contingency PFCV / plumbing / mounting-thermal; C1 lines GROUND_ONLY_LAB_EQUIPMENT; dispatch the successor if v3 GAS not yet sent, else a controlled addendum; other five packages unchanged",
+  "bid_mass_basis": "docs/budgets/mass_power_a9_v4 is the active flight mass source; legacy card-closure Xe 5.676 kg / MEV 49.96 kg are historical/model-regression only",
+  "xe_load": "not frozen; 2 / 5 / 10 kg loaded-Xe sensitivity / planning cases; dry before margin 33.8101, margin 6.7620, dry known-line 40.5721, wet 42.5721 / 45.5721 / 50.5721 kg, DOES_NOT_CLOSE; CURRENT PROVISIONAL PLANNING / EVIDENCE FLOOR (not complete CBE)",
+  "bid_mass_wording": "< 40 kg accepted as requirement / design target; MASS COMPLIANCE INCOMPLETE_EVIDENCE / NOT YET CLOSED; active mass-reduction / quote-based rebase task; no relaxation, no false PASS",
+  "two_sha_discipline": "TECHNICAL SOURCE SHA (validated successor of 4c2b3b3) vs PACKAGE / FREEZE-RECORD SHA (bid_technical_baseline_v2 + regenerated package pin the technical source SHA)",
+  "network_builder": "build_tables_nist107_o.py: NOT_RERUN_NETWORK_UNAVAILABLE / UNAFFECTED_BY_FREEZE_CHANGES",
+  "after_freeze": "PRE_RUST_REFERENCE_BASELINE on the exact technical source SHA; then revise the isolated Rust plan (LaB6 not ported); then post-bid Rust migration"
+ },
+ "implementing_commits": {
+  "ci_portability": [
+   "acce885",
+   "367f4fb"
+  ],
+  "items_4_5": [
+   "c5078be"
+  ],
+  "item_3_firing_hours": [
+   "46f7060"
+  ],
+  "afi_candidate": [
+   "b2b5abb",
+   "cb9e54e",
+   "4c2b3b3"
+  ]
+ }
+}
