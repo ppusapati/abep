@@ -1,13 +1,13 @@
 """A9.22 items 6-7 (Phase B): raw physics closure separated from the assessment layer, with no numerical change.
 
 * evaluate() must reproduce (key set, key order, value types exactly; finite floats bit for bit on the generating
-  machine and within FLOAT_IDENTITY_MAX_ULP = 4 ULP across platforms), the records frozen at base
+  machine and under the cross-platform identity rule A1/A2 below on other platforms), the records frozen at base
   commit 9eb302c before the split (tests/fixtures/evaluate_identity_base_9eb302c.json, generated once by
   tests/fixtures/make_evaluate_identity_fixture.py at that commit), EXCEPT the keys moved or added by the governed
   A9.22 G1 baseline change (system.py completion; docs/HISTORY.md 'A9.22 G1 governed baseline change (system.py
   completion)'), which are listed explicitly below (G1_MOVED_KEYS, G1_ADDED_KEYS) and checked against the 26,280 /
   26,000 h scaling instead. The 9eb302c fixture is kept unedited as the historical no-change proof of Phase B.
-* The same records must reproduce, with no exclusion and under the same 4-ULP portability rule, the post-G1 fixture
+* The same records must reproduce, with no exclusion and under the same cross-platform identity rule, the post-G1 fixture
   tests/fixtures/evaluate_identity_g1.json (generated once by tests/fixtures/make_evaluate_identity_fixture_g1.py at
   the G1 completion commit): the reference for future no-change checks.
 * physics_closure() (schema raw_closure_v2) carries no chk_* / rfp_* / ic_* / hall_preferred / compliance keys.
@@ -60,15 +60,34 @@ G1_ADDED_KEYS = ("ao_fluence_basis_h", "eng_R_mission", "eng_R_mission_h")
 G1_FACTOR = 26280.0 / 26000.0
 
 
-# Cross-platform floating-point portability rule (owner approval 2026-10-04, A9.24 steering response item 1).
-# The identity fixtures were generated on the execution container; the GitHub ubuntu runner reproduces the same
-# records except for last-bit float differences (observed 1-2 ULP, e.g. C_D 2.0549076096691596 vs 2.05490760966916,
-# active_ratio 16.534084977161054 vs 16.53408497716106; CI run 37190383021). Finite floats may differ by at most
-# FLOAT_IDENTITY_MAX_ULP units in the last place; every other value (ints, bools, strings, None, NaN/inf, container
-# kinds, lengths, key sets and order) must match exactly. This is a portability rule for numerically identical
-# records, not a scientific tolerance; same-process comparisons below stay bit-exact.
-FLOAT_IDENTITY_MAX_ULP = 4
+# Cross-platform numerical-identity rule for the fixtures (owner decision 2026-10-04, A9.24 steering response item 1,
+# Option A, exact form A1-A6). Purpose: cross-platform identity of the SAME physics implementation, not a scientific
+# acceptance tolerance. The identity fixtures were generated on the execution container; GitHub ubuntu runners
+# reproduce the records except for floating-point rounding differences that depend on the runner hardware:
+#   run 37190383021: C_D 2.0549076096691596 vs 2.05490760966916 (1 ULP), active_ratio 16.534084977161054 vs
+#                    16.53408497716106 (2 ULP);
+#   run 37192387572 (pymsis-present leg): xe_peak_mgps 0.007530565601447853 vs 0.0075305656014480705 (251 ULP, rel
+#                    2.9e-14), xe_aug_kg (227 ULP, rel 2.9e-14), eng_R_26000h (47 ULP), m_mga_kg (24 ULP);
+#                    res_balance_residual_rel 9.07e-17 vs 3.48e-17 (two roundoff residues of a closed balance).
+# A2 ordinary finite floats: equal, or (relative difference <= 1e-13 AND ULP distance <= 512); a zero never matches a
+#    non-zero. 1e-13 is about 3.4x the worst observed relative difference (2.9e-14), 512 ULP about 2x the worst
+#    observed ULP distance (251): limited portability headroom only.
+# A1 residual / closure-noise fields (explicit allowlist, mathematically zero): no ULP comparison; both the actual and
+#    the reference value must satisfy |x| <= 1e-14. The conservation gate itself is unchanged and separately enforced.
+# A3 everything else exact: ints, bools, strings, None, NaN (only NaN), +/-inf, container kinds, lengths, key sets and
+#    key order. A4 same-process comparisons in this file stay bit-exact.
+FLOAT_IDENTITY_MAX_REL = 1e-13
+FLOAT_IDENTITY_MAX_ULP = 512
+RESIDUAL_ABS_MAX = 1e-14
+# Only fields demonstrated to be roundoff residues of a quantity that is mathematically zero:
+#   res_balance_residual_rel = max per-species |inflow + recombination source - outflow - sink| / total inflow at the
+#   returned reservoir steady state (abep_sim/reservoir.py steady_state; system.py passes it through).
+RESIDUAL_NOISE_FIELDS = frozenset({"res_balance_residual_rel"})
 _FLOAT_TAGS = ("float", "np_float")
+
+
+def _ulp_distance(a: float, b: float) -> float:
+    return abs(a - b) / max(math.ulp(a), math.ulp(b))
 
 
 def _float_close(a: float, b: float) -> bool:
@@ -76,11 +95,27 @@ def _float_close(a: float, b: float) -> bool:
         return math.isnan(a) and math.isnan(b)
     if math.isinf(a) or math.isinf(b):
         return a == b
-    return abs(a - b) <= FLOAT_IDENTITY_MAX_ULP * max(math.ulp(a), math.ulp(b))
+    if a == b:
+        return True
+    if a == 0.0 or b == 0.0:
+        return False
+    return abs(a - b) / max(abs(a), abs(b)) <= FLOAT_IDENTITY_MAX_REL and _ulp_distance(a, b) <= FLOAT_IDENTITY_MAX_ULP
 
 
-def _enc_equal(a, b) -> bool:
-    """Equality of two GEN.encode() values under the <= 4 ULP float portability rule (everything else exact)."""
+def _residual_ok(a, b) -> bool:
+    if not (isinstance(a, dict) and isinstance(b, dict) and list(a) == list(b) and len(a) == 1
+            and next(iter(a)) in _FLOAT_TAGS):
+        return False
+    tag = next(iter(a))
+    x, y = float(a[tag]), float(b[tag])
+    return math.isfinite(x) and math.isfinite(y) and abs(x) <= RESIDUAL_ABS_MAX and abs(y) <= RESIDUAL_ABS_MAX
+
+
+def _enc_equal(a, b, key: str | None = None) -> bool:
+    """Equality of two GEN.encode() values under the cross-platform identity rule (A1 for RESIDUAL_NOISE_FIELDS,
+    A2 for other finite floats, A3 exact for everything else)."""
+    if key in RESIDUAL_NOISE_FIELDS:
+        return _residual_ok(a, b)
     if isinstance(a, dict) and isinstance(b, dict):
         if list(a) != list(b):
             return False
@@ -102,12 +137,12 @@ def _decode(e):
 
 
 def _check_against_9eb302c(row, r: dict):
-    """Identity (4-ULP float portability rule) vs the 9eb302c record except the explicitly listed G1 keys (checked by their scaling)."""
+    """Identity (cross-platform rule A1/A2/A3) vs the 9eb302c record except the explicitly listed G1 keys (checked by their scaling)."""
     keys = [k for k in r if k not in G1_ADDED_KEYS]
     assert keys == row["keys"], "key set / order changed (beyond the listed G1 additions)"
     assert set(G1_ADDED_KEYS[:1]) <= set(r)
     old = dict(zip(row["keys"], row["values"]))
-    diff = [(k, GEN.encode(r[k]), old[k]) for k in keys if k not in G1_MOVED_KEYS and not _enc_equal(GEN.encode(r[k]), old[k])]
+    diff = [(k, GEN.encode(r[k]), old[k]) for k in keys if k not in G1_MOVED_KEYS and not _enc_equal(GEN.encode(r[k]), old[k], k)]
     assert not diff, f"numerical / type change vs base commit 9eb302c outside the G1 keys: {diff[:5]}"
     assert r["ao_fluence_basis_h"] == 26280.0
     for k in G1_SCALED_KEYS:
@@ -136,7 +171,7 @@ def test_evaluate_identical_to_base_commit(i):
         g = FIX_G1["rows"][i]
         assert g["config"] == row["config"] and list(r) == g["keys"]
         got = [GEN.encode(r[k]) for k in r]
-        diff = [(k, a, b) for k, a, b in zip(g["keys"], got, g["values"]) if not _enc_equal(a, b)]
+        diff = [(k, a, b) for k, a, b in zip(g["keys"], got, g["values"]) if not _enc_equal(a, b, k)]
         assert not diff, f"numerical / type change vs the G1 fixture: {diff[:5]}"
 
 
@@ -268,16 +303,31 @@ def test_dead_logic_removed():
 
 
 def test_float_identity_rule_is_narrow():
-    """The portability comparator admits <= 4 ULP on finite floats only; everything else stays exact."""
-    x = 2.0549076096691596
-    up = lambda v, n: v + n * math.ulp(v)
+    """A5: the cross-platform comparator (owner Option A exact form)."""
     F = lambda v: {"float": repr(v)}
-    assert _enc_equal(F(x), F(2.05490760966916))                       # the observed 1-ULP runner difference
-    assert _enc_equal(F(x), F(up(x, 4))) and not _enc_equal(F(x), F(up(x, 5)))
-    assert not _enc_equal(F(x), F(x * (1 + 1e-12)))                    # not a decimal / relative tolerance
-    assert _enc_equal(F(float("nan")), F(float("nan"))) and not _enc_equal(F(float("nan")), F(1.0))
-    assert _enc_equal(F(float("inf")), F(float("inf"))) and not _enc_equal(F(float("inf")), F(float("-inf")))
-    assert not _enc_equal(F(1e308), F(float("inf")))
+    up = lambda v, n: v + n * math.ulp(v)
+    # 1. the observed worst case (251 ULP, rel 2.9e-14) passes
+    assert _enc_equal(F(0.007530565601447853), F(0.0075305656014480705))
+    assert _enc_equal(F(2.0549076096691596), F(2.05490760966916))
+    # 2. > 512 ULP fails even though the relative difference is below 1e-13
+    x = 1.9375                                    # near the top of a binade: 513 ULP is rel 5.9e-14 < 1e-13
+    assert (513 * math.ulp(x)) / x < FLOAT_IDENTITY_MAX_REL
+    assert _enc_equal(F(x), F(up(x, 512))) and not _enc_equal(F(x), F(up(x, 513)))
+    # 3. relative > 1e-13 fails even when the ULP count is small (subnormal range: 1 ULP is a large relative step)
+    t = 5 * math.ulp(0.0)
+    assert _ulp_distance(t, t + math.ulp(0.0)) <= 1 and not _enc_equal(F(t), F(t + math.ulp(0.0)))
+    # 4. residual values: both <= 1e-14 pass without any ULP / relative comparison
+    assert _enc_equal(F(9.074563138469054e-17), F(3.4771690530582354e-17), "res_balance_residual_rel")
+    assert not _enc_equal(F(9.074563138469054e-17), F(3.4771690530582354e-17))      # not for unlisted fields
+    # 5. a residual above 1e-14 (either side) fails
+    assert not _enc_equal(F(2e-14), F(3e-17), "res_balance_residual_rel")
+    assert not _enc_equal(F(3e-17), F(2e-14), "res_balance_residual_rel")
+    assert not _enc_equal(F(float("nan")), F(0.0), "res_balance_residual_rel")
+    assert not _enc_equal({"int": 0}, F(0.0), "res_balance_residual_rel")
+    assert RESIDUAL_NOISE_FIELDS == {"res_balance_residual_rel"}
+    # 6. zero vs non-zero ordinary fields fail; exact zeros pass
+    assert not _enc_equal(F(0.0), F(1e-300)) and not _enc_equal(F(1e-300), F(0.0)) and _enc_equal(F(0.0), F(0.0))
+    # 7. int / bool / string / None / container differences fail
     assert not _enc_equal({"int": 3}, {"int": 4}) and not _enc_equal({"int": 3}, F(3.0))
     assert not _enc_equal(True, False) and not _enc_equal(True, 1) and not _enc_equal("a", "b")
     assert not _enc_equal(None, F(0.0)) and _enc_equal(None, None)
@@ -286,3 +336,7 @@ def test_float_identity_rule_is_narrow():
     assert not _enc_equal({"list": [F(1.0)]}, {"tuple": [F(1.0)]})
     assert not _enc_equal({"map": [["a", F(1.0)]]}, {"map": [["b", F(1.0)]]})
     assert _enc_equal({"map": [["a", {"list": [F(x)]}]]}, {"map": [["a", {"list": [F(up(x, 2))]}]]})
+    # 8. NaN / inf exact
+    assert _enc_equal(F(float("nan")), F(float("nan"))) and not _enc_equal(F(float("nan")), F(1.0))
+    assert _enc_equal(F(float("inf")), F(float("inf"))) and not _enc_equal(F(float("inf")), F(float("-inf")))
+    assert not _enc_equal(F(1.7976931348623157e308), F(float("inf")))

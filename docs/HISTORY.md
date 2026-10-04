@@ -3583,3 +3583,23 @@ Owner decisions A9.24 items 10 and 11, `docs/decisions/OD_2026_10_04_A9_24_RUST_
   have added a seventh for zstandard). Following the repo convention (locked deps are imported directly, never skipped),
   `jsonschema==4.26.0` and `zstandard==0.25.0` are pinned and both tests import them directly. Rule 9 is unchanged
   (exactly 5 SUPERSEDED skips, 1 strict xfail) on both legs.
+
+## 2026-10-04 — CI portability repair, second step (owner decision Option A, exact form A1–A6); supersedes the 4-ULP rule
+
+- **Why the 4-ULP rule was insufficient.** On `acce885` the pymsis-absent leg went fully green (5 skips, 1 xfail,
+  rule 9, golden), but the pymsis-present leg, on a different runner, failed 7 identity rows (116–120) with larger
+  rounding differences: `xe_peak_mgps` 251 ULP (rel 2.9e-14), `xe_aug_kg` 227 ULP, `eng_R_26000h` 47 ULP, `m_mga_kg`
+  24 ULP, `pl_f_cx` 8 ULP, and `res_balance_residual_rel` 9.07e-17 vs 3.48e-17 (run 37192387572). Not pymsis-related;
+  runner-hardware rounding of the same implementation.
+- **Rule now (test-only, `tests/test_raw_assessment_split.py`).**
+  A1: an explicit allowlist `RESIDUAL_NOISE_FIELDS = {res_balance_residual_rel}` (the reservoir species mass-balance
+  residual, mathematically zero): both actual and reference must satisfy |x| <= 1e-14; no ULP comparison. The
+  conservation gate is unchanged and enforced separately.
+  A2: other finite floats equal, or relative difference <= 1e-13 AND ULP distance <= 512 (both); zero never matches
+  non-zero. 1e-13 is about 3.4x the worst observed relative difference (2.9e-14), not more; 512 ULP about 2x the worst
+  observed 251 ULP.
+  A3: ints, bools, strings, None, NaN, +/-inf, container kinds, lengths, key sets and order exact. A4: same-process
+  checks stay bit-exact. A5: `test_float_identity_rule_is_narrow` covers the eight required cases.
+- **A6.** This step changes only test portability logic and this history entry (the jsonschema / zstandard locks of the
+  previous step stay). No physics output, model, coefficient, constraint, scenario, design state, gate threshold,
+  golden reference, requirement or architecture status changed.
