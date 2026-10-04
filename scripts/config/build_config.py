@@ -13,8 +13,14 @@ source:
   constraints/engineering_constraints_v1.json frozen engineering constraints (A9.23), values read from the snapshot
                                               just built (requirements extraction -> engineering constraints; the
                                               only derivation path); requirement ids carried as provenance only
-  mission/mission_scenario_v1.json            operating-scenario choices (set from the constraints) + references
-                                              (id + sha256) to the constraints it does not restate
+  mission/mission_scenario_v2.json            NOT GENERATED (A9.24 item 4): the frozen, independently versioned
+                                              operating scenario; verified against abep_sim/configuration.py
+                                              OPERATING_SCENARIO_PIN and listed in the manifest as it is (no value
+                                              is derived from the constraints or the snapshot)
+  mission/mission_scenario_v1.json            NOT GENERATED: historical scenario v1 (superseded), verified against
+                                              MISSION_V1_SHA256 and listed as it is
+  assessment/gate_thresholds_v1.json          assessment-layer HC-05..HC-12 thresholds (A9.24 item 5) with status /
+                                              provenance per gate; HC-07 / HC-09 referenced from the constraints
   environment/design_state_set_ref_v1.json    reference (id, path, sha256, manifest sha256) to the frozen design states
   hardware/hardware_bounds_v1.json            index of hardware-limit sources (path + sha256 + locator; no values)
   model_set/physics_model_set_v1.json         physics module sources, frozen data hashes, version labels in code
@@ -52,7 +58,12 @@ A9_REL = "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_
 ARCH_FILE = "architecture/hall_icp_neutralizer_v1.json"
 REQ_FILE = "requirements/rfp_constraints_v1.json"
 CONSTRAINTS_FILE = "constraints/engineering_constraints_v1.json"
-MISSION_FILE = "mission/mission_scenario_v1.json"
+MISSION_FILE = "mission/mission_scenario_v2.json"           # frozen, pinned, never generated (A9.24 item 4)
+MISSION_V1_FILE = "mission/mission_scenario_v1.json"        # historical, never generated, never loaded
+MISSION_V1_SHA256 = "a01b56a6ec7a79cb3b37c6356542d093c618632388edefb150881bf03fbe7ba0"
+GATES_FILE = "assessment/gate_thresholds_v1.json"
+A924 = {"md": "docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md",
+        "json": "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json"}
 DS_REF_FILE = "environment/design_state_set_ref_v1.json"
 HW_FILE = "hardware/hardware_bounds_v1.json"
 MODEL_SET_FILE = "model_set/physics_model_set_v1.json"
@@ -428,7 +439,8 @@ def build_constraints(snapshot: dict, snapshot_bytes: bytes) -> dict:
             _prov("rfp_constraints_compat.mass_max_kg", comp["mass_max_kg"]), comp["mass_max_kg"]["status"]),
         "mission_life_h": entry(
             life["authoritative_basis_h"], "h", life_lim["comparator"], "LIMIT",
-            ["config/mission/mission_scenario_v1.json mission_hours (mission-integration horizon set equal to it)"],
+            ["config/mission/mission_scenario_v2.json mission_hours initial_basis (provenance only; the "
+             "mission-integration horizon is an independently versioned operating choice, A9.24 item 4)"],
             _prov("mission_duration.authoritative_basis_h", life), life["status"],
             g1_status=life["g1_status"],
             historical_value={"value_h": comp["mission_hours"]["value"], "label": HISTORICAL_LABEL,
@@ -437,7 +449,7 @@ def build_constraints(snapshot: dict, snapshot_bytes: bytes) -> dict:
         "firing_life_h": entry(
             fire["value_h"], "h", fire_lim["comparator"], "LIMIT",
             ["abep_sim/operating_inputs.py FIRING_HOURS (firing-integrated basis)",
-             "abep_sim/design/engineering_constraints.py FIRING_LIFE_MIN_H / HC-07"],
+             "config/assessment/gate_thresholds_v1.json HC-07 (assessment only, A9.24 item 5)"],
             _prov("subsystem_firing_life.value_h", fire), fire["status"], label=fire["label"]),
         "propellant_capability": entry(
             {"ambient_atmosphere": air_row["limit"]["value"], "xe": xe_row["limit"]["value"]}, "-",
@@ -448,7 +460,8 @@ def build_constraints(snapshot: dict, snapshot_bytes: bytes) -> dict:
                  "config/architecture/hall_icp_neutralizer_v1.json supply modes)"),
         "intake_drag_generation_limit_mN": entry(
             tmax["value"], "mN", "<=", "GENERATION_FILTER",
-            ["abep_sim/design/engineering_constraints.py INTAKE_DRAG_GENERATION_LIMIT_N (F1 C-DRAG-RFP) / HC-09"],
+            ["abep_sim/design/engineering_constraints.py INTAKE_DRAG_GENERATION_LIMIT_N (F1 C-DRAG-RFP generation "
+             "filter)", "config/assessment/gate_thresholds_v1.json HC-09 (also reported in assessment, A9.24 item 5)"],
             _prov("rfp_constraints_compat.thrust_max_mN", tmax), tmax["status"],
             derived_from="thrust_capability_mN",
             note="A9.22 G2 Option 1: C-DRAG-RFP stays a generation filter (intake-face drag <= thrust maximum); "
@@ -511,63 +524,113 @@ G1_MIGRATED_CONSUMERS = [
     "abep_sim/archengine.py mission-integrated Xe basis (default operating_inputs.MISSION_HOURS)",
     "abep_sim/system.py AO fluence / erosion depths, cathode starts, eng_R_mission (operating_inputs.MISSION_HOURS)",
 ]
-OPERATING_CHOICE = "OPERATING_SCENARIO_CHOICE"
-CONSTRAINT_REFERENCE = "CONSTRAINT_REFERENCE"
-OPERATING_CHOICE_RULE = ("an operating-scenario choice, distinct from the engineering constraint it was set equal to "
-                         "when this file was built (set_equal_to_constraint): physics consumes the choice; the "
-                         "assessment compares results with the constraint. Editing the constraint file alone changes "
-                         "the assessment, not this choice")
 
 
-def build_mission(constraints: dict, constraints_bytes: bytes) -> dict:
+def _code_pin(name: str) -> dict:
+    """A literal pin assigned in abep_sim/configuration.py (read with ast: importing abep_sim would load config/)."""
+    for node in ast.parse((ROOT / "abep_sim/configuration.py").read_text(encoding="utf-8")).body:
+        if isinstance(node, ast.Assign) and len(node.targets) == 1 and getattr(node.targets[0], "id", None) == name:
+            return ast.literal_eval(node.value)
+    raise BuildError(f"abep_sim/configuration.py carries no {name}")
+
+
+def _frozen_scenario_bytes() -> tuple[bytes, bytes]:
+    """A9.24 item 4: the operating scenario is a frozen, independently versioned artefact. It is never generated from
+    the engineering constraints; this builder only verifies scenario v2 against its code-side pin
+    (abep_sim/configuration.py OPERATING_SCENARIO_PIN) and the historical v1 against MISSION_V1_SHA256."""
+    pin = _code_pin("OPERATING_SCENARIO_PIN")
+    out = []
+    for rel, want in ((MISSION_FILE, pin["sha256"]), (MISSION_V1_FILE, MISSION_V1_SHA256)):
+        p = CONFIG / rel
+        if not p.is_file():
+            raise BuildError(f"config/{rel} missing (frozen scenario; never generated)")
+        b = p.read_bytes()
+        if sha256_bytes(b) != want:
+            raise BuildError(f"config/{rel} sha256 {sha256_bytes(b)} != pinned {want}: a changed operating scenario "
+                             "needs a new scenario version (A9.24 item 4)")
+        out.append(b)
+    d = json.loads(out[0])
+    if (d.get("id"), d.get("scenario_version")) != (pin["id"], pin["scenario_version"]):
+        raise BuildError(f"config/{MISSION_FILE}: id / scenario_version differ from the pin {pin}")
+    return out[0], out[1]
+
+
+# ============================================================================================== assessment gate thresholds
+def build_gate_thresholds(constraints: dict) -> dict:
+    """A9.24 item 5 (owner decision 2026-10-04): HC-05..HC-12 dispositions as assessment-layer thresholds. The values
+    are the currently registered thresholds (identical to the former literals of abep_sim/design/engineering_
+    constraints.py); HC-07 and HC-09 are value-free references to the engineering constraints (single source)."""
     c = constraints["constraints"]
+    for cid in ("firing_life_h", "intake_drag_generation_limit_mN"):
+        if cid not in c:
+            raise BuildError(f"engineering constraints carry no {cid}")
+    a924 = "A9.24 item 5 (" + A924["md"] + ")"
 
-    def ref(cid, **kw):
-        e = c[cid]
-        return {"kind": CONSTRAINT_REFERENCE, "constraint_ref": cid, "units": e["units"], **kw,
-                "note": f"value not restated here: read from engineering_constraints_v1 constraints.{cid}"}
+    def thr(value, units, comparator, layer, criterion, provenance, status="FROZEN", **kw):
+        return {"kind": "THRESHOLD", "value": value, "units": units, "comparator": comparator, "status": status,
+                "layer": layer, "criterion": criterion, **kw, "provenance": provenance}
 
-    def choice(cid, role, **kw):
-        e = c[cid]
-        return {"value": e["value"], "units": e["units"], "kind": OPERATING_CHOICE, "role": role,
-                "set_equal_to_constraint": cid, **kw}
+    def ref(cid, units, scale, comparator, layer, criterion, provenance, **kw):
+        return {"kind": "CONSTRAINT_REFERENCE", "constraint_ref": cid, "constraint_units": c[cid]["units"],
+                "units": units, "scale_to_gate_units": scale, "comparator": comparator, "status": c[cid]["status"],
+                "layer": layer, "criterion": criterion, **kw, "provenance": provenance}
 
-    def snap_src(cid):
-        p = c[cid]["provenance"]
-        return {"snapshot_field": p["snapshot_field"], "rvm_row": p["rvm_row"]}
-
+    gates = {
+        "HC-05": thr(0.0, "A", ">", "ASSESSMENT_ONLY",
+                     "M_n,LB > 0: one-sided lower confidence bound of the ICP electron-current margin "
+                     "I_e,cap - I_d,max,H1; physics produces the currents and their uncertainties",
+                     [a924, "owner decision (I_e,cap - I_d,max,H1 > 0; former HC-05 literal I_E_MARGIN_MIN_A)"]),
+        "HC-06": thr(50.0, "K", ">=", "ASSESSMENT_PROTECTION_POLICY",
+                     "temperature margin >= 50 K below the validated hardware-bound temperature limits "
+                     "(config/hardware/hardware_bounds_v1.json index); applied by assessment / protection logic, "
+                     "never inside thermal equations; physics produces temperatures / heat loads",
+                     [a924, "registered protection / acceptance margin (former HC-06 literal THERMAL_MARGIN_MIN_K)"]),
+        "HC-07": ref("firing_life_h", "h", 1.0, ">", "ASSESSMENT_ONLY",
+                     "predicted / measured subsystem firing life > the 15,000 h subsystem firing-life basis; the "
+                     "mission duration (26,280 h, operating scenario) is separate",
+                     [a924, "engineering constraint firing_life_h (single source)"]),
+        "HC-08": thr(0.0, "N", ">=", "ASSESSMENT_ONLY",
+                     "T_available(state) - D_spacecraft(state) >= 0 at every required state (statewise); physics "
+                     "computes T and D independently",
+                     [a924, "AG-13, owner decision A9.13 S6.15 (former HC-08 literal STATEWISE_T_MINUS_D_MIN_N)"]),
+        "HC-09": ref("intake_drag_generation_limit_mN", "N", 1e-3, "<=",
+                     "DESIGN_GENERATION_FILTER_ALSO_REPORTED_IN_ASSESSMENT",
+                     "intake-face drag <= 25 mN at every orbit state: F1-F8 design-generation filter (A9.22 G2 "
+                     "Option 1, read from the frozen engineering configuration, not RFP parsing) and reported in "
+                     "assessment; assessment-only (C-DRAG-RFP Option 2) needs a separate owner approval",
+                     [a924, "engineering constraint intake_drag_generation_limit_mN (single source)"]),
+        "HC-10": thr(1.0, "-", ">=", "ASSESSMENT_ONLY",
+                     "ambient atmospheric mode AND Xe contingency capability evaluated as architecture / capability "
+                     "evidence (1 = both demonstrated); no physics equation carries this requirement",
+                     [a924, "A9.15 RFP-compliant propellant policy (former HC-10 literal PROPELLANT_CAPABILITY_MIN)"]),
+        "HC-11": thr(0.0, "-", ">=", "ASSESSMENT_ONLY",
+                     "feed_available - feed_required >= 0 (statewise feed-state sufficiency, registered formulation: "
+                     "minimum relative field margin); the requirement comes from the measured / validated H-1 "
+                     "performance basis when available and is never reduced to the presently achievable feed",
+                     [a924, "AG-12, owner decision A9.13 S6.21 (former HC-11 literal FEED_STATE_SUFFICIENCY_MIN)"]),
+        "HC-12": thr(None, "-", "<=", "ASSESSMENT_ONLY",
+                     "compressor / plenum ripple <= measured H-1 ripple tolerance; threshold TBD until measured H-1 "
+                     "evidence establishes the permissible ripple basis; no default is invented",
+                     [a924, "A9.13 S6.17 / S6.12 feed quality"], status="TBD_PENDING_MEASURED_H1",
+                     evaluation_until_frozen="NOT_EVALUATED"),
+    }
     return {
-        "schema": "abep_config_mission_scenario_v1",
-        "id": "mission_scenario_v1",
-        "layer": "FROZEN_ENGINEERING_CONFIGURATION",
-        "title": "Operating-scenario choices consumed by the physics seam; constraint-derived inputs are references to "
-                 "engineering_constraints_v1 (not restated)",
+        "schema": "abep_config_gate_thresholds_v1",
+        "id": "gate_thresholds_v1",
+        "layer": "ASSESSMENT_THRESHOLDS",
+        "title": "Hard-gate thresholds HC-05..HC-12 of the assessment layer (A9.24 item 5); physics / design modules "
+                 "hold none of these values (HC-09 is also the design-generation filter, read from the engineering "
+                 "constraints)",
         "generated_by": GENERATED_BY,
         "regenerate": REGENERATE,
+        "governing_decision_a9_24": decision_ref(A924["json"], A924["md"]),
         "engineering_constraints": {"id": constraints["id"], "path": "config/" + CONSTRAINTS_FILE,
-                                    "sha256": sha256_bytes(constraints_bytes), "set_status": constraints["set_status"]},
-        "rule": "abep_sim/operating_inputs.py (physics seam) reads this file and engineering_constraints_v1 through "
-                "abep_sim.configuration.load_operating_inputs (fail closed; the constraints pin above is verified). "
-                "Inputs of kind CONSTRAINT_REFERENCE carry no value (single source: engineering_constraints_v1); inputs "
-                f"of kind {OPERATING_CHOICE} are {OPERATING_CHOICE_RULE}. The 26,000 -> 26,280 h change is the "
-                "governed A9.22 G1 migration, APPLIED (docs/HISTORY.md).",
-        "inputs": {
-            "altitude_domain_km": ref("altitude_band_km", source=snap_src("altitude_band_km")),
-            "xe_sizing_thrust_target_mN": choice("thrust_sustained_min_mN",
-                                                 "thrust target for Xe sizing / T_req floor of the closure"),
-            "commanded_thrust_cap_mN": choice("thrust_capability_mN", "commanded-thrust cap"),
-            "p_bus_throttling_cap_W": choice("p_bus_max_W", "P_bus throttling cap"),
-            "wet_mass_limit_kg": ref("wet_mass_max_kg"),
-            "mission_hours": {**choice("mission_life_h", "mission-integration horizon (mission-duration basis for "
-                                       "mission-integrated quantities; A9.22 G1)"),
-                              "authoritative_basis_h": c["mission_life_h"]["value"],
-                              "label": "MISSION_DURATION_BASIS",
-                              "g1_status": G1_STATUS,
-                              "g1_migrated_consumers": G1_MIGRATED_CONSUMERS,
-                              "historical_note": dict(c["mission_life_h"]["historical_value"]),
-                              "source": snap_src("mission_life_h")},
-            "firing_hours": ref("firing_life_h", label=c["firing_life_h"]["label"]),
-        },
+                                    "binding": "BY_ID (CONSTRAINT_REFERENCE gates)"},
+        "rule": "read by abep_sim.configuration.load_gate_thresholds for the assessment layer "
+                "(abep_sim/assessment/design_gates.py HARD_CONSTRAINT_LIMITS); a CONSTRAINT_REFERENCE gate carries no "
+                "value (single source: the engineering constraints, x scale_to_gate_units); a TBD gate has value "
+                "null and evaluates NOT_EVALUATED; changing a threshold changes the assessment only, never raw physics",
+        "gates": gates,
     }
 
 
@@ -765,8 +828,17 @@ def build_sources_of_truth(files: dict[str, bytes]) -> dict:
                 "or artefact id); tests/test_a9_23_dependency_rule.py enforces it",
         "supporting_inputs": {
             "operating_scenario": {"artefact": "config/" + MISSION_FILE, "sha256": sha256_bytes(files[MISSION_FILE]),
-                                   "role": "operating-scenario choices (constraint-derived inputs referenced, not "
-                                           "restated)"},
+                                   "role": "frozen, independently versioned operating-scenario choices (A9.24 item 4; "
+                                           "constraint-derived inputs referenced, not restated)",
+                                   "pinned_by": ["abep_sim/configuration.py OPERATING_SCENARIO_PIN",
+                                                 "config/MANIFEST.json"],
+                                   "supersedes": {"artefact": "config/" + MISSION_V1_FILE,
+                                                  "sha256": sha256_bytes(files[MISSION_V1_FILE]),
+                                                  "status": "HISTORICAL_SUPERSEDED_NOT_LOADED"}},
+            "assessment_gate_thresholds": {"artefact": "config/" + GATES_FILE,
+                                           "sha256": sha256_bytes(files[GATES_FILE]),
+                                           "role": "HC-05..HC-12 assessment thresholds (A9.24 item 5)",
+                                           "loader": "abep_sim.configuration.load_gate_thresholds"},
             "hardware_bounds_index": {"artefact": "config/" + HW_FILE, "sha256": sha256_bytes(files[HW_FILE]),
                                       "role": "index of hardware-limit sources (no copied values)"},
         },
@@ -797,7 +869,9 @@ numerical change routed through these files (docs/HISTORY.md).
 | `architecture/hall_icp_neutralizer_v1.json` | frozen architecture | A9.19 / A9.20 / A9.15 flight architecture, status INVESTIGATION_HYPOTHESIS; loaded by `abep_sim/design/a9_19_architecture.py` |
 | `constraints/engineering_constraints_v1.json` | frozen engineering constraints | every frozen numerical / categorical constraint (altitude band, thrust envelope, P_bus, wet mass, mission life, firing-life assumption, propellant capability, C-DRAG generation limit, IC minima, Hall preference) with units, comparator, FROZEN / PROVISIONAL status and provenance (snapshot sha256 + row / clause ids as provenance only); generated from the requirements snapshot |
 | `requirements/rfp_constraints_v1.json` | requirements (provenance) | snapshot generated from the RVM limit fields (row ids, clause ids, RVM + registration sha256); FROZEN / PROVISIONAL derived from `requirement_frozen`; the only input of the engineering constraints |
-| `mission/mission_scenario_v1.json` | operating scenario | operating-scenario choices (Xe-sizing thrust target, commanded-thrust cap, P_bus throttling cap, mission-integration horizon 26,280 h, A9.22 G1 APPLIED) and references (id + sha256) to the constraints it does not restate (altitude band, wet mass, firing life); read by `abep_sim/operating_inputs.py` |
+| `mission/mission_scenario_v2.json` | operating scenario (frozen, not generated) | A9.24 item 4: independently versioned operating-scenario choices (Xe-sizing thrust target 12 mN, commanded-thrust cap 25 mN, P_bus throttling cap 1500 W, mission-integration horizon 26,280 h, A9.22 G1 APPLIED), each with `initial_basis` provenance naming the engineering constraint (never re-read), plus value-free references by id to the constraints it does not restate (altitude band, wet mass, firing life); pinned by id + scenario_version + sha256 in `abep_sim/configuration.py` OPERATING_SCENARIO_PIN; read by `abep_sim/operating_inputs.py`. A changed scenario needs a new version |
+| `mission/mission_scenario_v1.json` | historical | superseded scenario v1 (choices regenerated from the constraints); kept byte-identical, never loaded |
+| `assessment/gate_thresholds_v1.json` | assessment thresholds | A9.24 item 5: HC-05..HC-12 thresholds with layer / status / provenance per gate (HC-07, HC-09 referenced from the constraints; HC-12 null, TBD_PENDING_MEASURED_H1 -> NOT_EVALUATED); read by `abep_sim.configuration.load_gate_thresholds` for `abep_sim/assessment/design_gates.py` |
 | `environment/design_state_set_ref_v1.json` | frozen design states | reference (never a copy) to the frozen design-state set v2 and its dataset manifest |
 | `hardware/hardware_bounds_v1.json` | configuration | index (path + sha256 + locator) of hardware-limit sources; no copied values |
 | `model_set/physics_model_set_v1.json` | physics | physics module sources, frozen data hashes, version labels, HallThruster.jl pin / reaction set |
@@ -831,8 +905,9 @@ def build_all() -> dict[str, bytes]:
     snap = build_requirements()
     out[REQ_FILE] = snap_b = dumps(snap)
     cons = build_constraints(snap, snap_b)
-    out[CONSTRAINTS_FILE] = cons_b = dumps(cons)
-    out[MISSION_FILE] = dumps(build_mission(cons, cons_b))
+    out[CONSTRAINTS_FILE] = dumps(cons)
+    out[MISSION_FILE], out[MISSION_V1_FILE] = _frozen_scenario_bytes()
+    out[GATES_FILE] = dumps(build_gate_thresholds(cons))
     out[DS_REF_FILE] = dumps(build_design_state_ref())
     out[HW_FILE] = dumps(build_hardware())
     out[MODEL_SET_FILE] = dumps(build_model_set())

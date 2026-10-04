@@ -10,8 +10,9 @@ Checks
   (a)   physics modules (abep_sim/** except abep_sim/assessment/** and the configuration loader) never reference the
         requirements snapshot / its loaders, never import (module level, transitively) a module that does, and run /
         import with config/requirements and docs/requirements hidden.
-  (b)   changing a frozen constraint threshold (P_bus limit, temp config copy) changes the assessment, raw physics
-        stays byte-identical.
+  (b)   changing a frozen constraint threshold (P_bus limit, sustained-thrust floor, temp config copy) changes the
+        assessment, raw physics stays byte-identical and the operating scenario (file and values) is untouched
+        (A9.24 item 4); an edited operating scenario is refused unless it is a new pinned version.
   (c)   changing a physics model parameter changes raw physics; the requirements snapshot and the engineering
         constraints (files, builder output and loaded values) are untouched.
   (d)   swapping the design-state set reference does not rewrite the architecture artefact or its loaded values.
@@ -66,16 +67,12 @@ def _remanifest(root: Path):
 
 
 def _edit_constraint(root: Path, cid: str, value):
-    """Change one frozen constraint value in a config copy and refresh the pins (the scenario's constraints pin and the
-    manifest), as a rebuild of the pins would; the operating-scenario choices are not touched."""
+    """Change one frozen constraint value in a config copy and refresh the manifest, as a rebuild of the pins would.
+    A9.24 item 4: the operating scenario does not pin the constraints and is not touched."""
     p = root / cfg.CONSTRAINTS_REL
     d = _json(p)
     d["constraints"][cid]["value"] = value
     p.write_text(json.dumps(d, indent=1) + "\n", encoding="utf-8")
-    m = root / cfg.MISSION_REL
-    ms = _json(m)
-    ms["engineering_constraints"]["sha256"] = _sha(p)
-    m.write_text(json.dumps(ms, indent=1) + "\n", encoding="utf-8")
     _remanifest(root)
 
 
@@ -392,10 +389,13 @@ sys.path.insert(0, sys.argv[1])
 from abep_sim.intake import IntakeParams, CompressorParams
 from abep_sim.system import Config, physics_closure
 from abep_sim.assessment import assess, constraints_from_config, priors_from_config
+from abep_sim.assessment import design_gates as dg
+from abep_sim import operating_inputs as OI
 c = Config("hall_1stage", 200, "mean", IntakeParams(area_m2=1.5), CompressorParams(ratio=500), vd_V=250)
 raw = physics_closure(c)
 a = assess(raw, constraints_from_config(c), priors_from_config(c))
-print(json.dumps({"raw": json.dumps(raw, sort_keys=True), "assess": a}))
+print(json.dumps({"raw": json.dumps(raw, sort_keys=True), "assess": a, "oi": OI.as_dict(),
+                  "gate_limits": dg.HARD_CONSTRAINT_LIMITS}))
 '''
 
 
@@ -427,9 +427,70 @@ def test_constraint_threshold_changes_assessment_not_raw_physics(tmp_path, cfg_c
     assert a1["chk_power_air"] != a0["chk_power_air"]
     assert a1["chk_power_peak"] == (raw["P_total_peak_W"] <= new_limit * (1 - margin))
     assert (CONFIG / cfg.REQUIREMENTS_REL).read_bytes() == snap_before
-    # the operating-scenario choices are untouched (the P_bus throttling cap is not the constraint)
+    # the operating-scenario choices are untouched (the P_bus throttling cap is not the constraint; A9.24 item 4)
     assert cfg.load_operating_inputs(cfg_copy)["P_bus_max_W"] == 1500.0
     assert cfg.load_engineering_constraints(cfg_copy)["power_max_W"] == new_limit
+    assert (cfg_copy / cfg.MISSION_REL).read_bytes() == (CONFIG / cfg.MISSION_REL).read_bytes()
+    assert mod["oi"] == base["oi"]
+    assert mod["gate_limits"]["HC-03"] == new_limit != base["gate_limits"]["HC-03"]
+
+
+def test_thrust_floor_threshold_changes_assessment_not_scenario_or_raw_physics(tmp_path, cfg_copy):
+    """A9.24 items 3-4: the Xe-sizing thrust target (operating scenario, 12 mN) is not the sustained-thrust floor
+    (engineering constraint): changing the floor changes the assessment limits only; raw physics is byte-identical
+    and the operating scenario (file and the four choices) is unchanged."""
+    base = _run_closure_and_assessment(tmp_path, CONFIG)
+    _edit_constraint(cfg_copy, "thrust_sustained_min_mN", 14)
+    mod = _run_closure_and_assessment(tmp_path, cfg_copy)
+    assert mod["raw"] == base["raw"], "raw physics changed when only the sustained-thrust floor changed"
+    assert mod["gate_limits"]["HC-01"] == 14 * 1e-3 != base["gate_limits"]["HC-01"] == 0.012
+    assert mod["oi"] == base["oi"]
+    assert (mod["oi"]["thrust_min_mN"], mod["oi"]["thrust_max_mN"], mod["oi"]["P_bus_max_W"],
+            mod["oi"]["mission_hours"]) == (12.0, 25.0, 1500.0, 26280.0)
+    assert (cfg_copy / cfg.MISSION_REL).read_bytes() == (CONFIG / cfg.MISSION_REL).read_bytes()
+    assert cfg.load_engineering_constraints(cfg_copy)["thrust_min_mN"] == 14.0
+
+
+def test_edited_operating_scenario_needs_a_new_version(cfg_copy):
+    """A9.24 item 4: changing an operating choice needs a new scenario version. An edited scenario is refused even
+    with a refreshed manifest (code-side pin: id, scenario_version, sha256); so is a relabelled id / version."""
+    assert cfg.load_operating_inputs(cfg_copy)["thrust_min_mN"] == 12.0
+    p = cfg_copy / cfg.MISSION_REL
+    for edit in (lambda d: d["inputs"]["xe_sizing_thrust_target_mN"].update(value=13),
+                 lambda d: d.update(scenario_version=3, id="mission_scenario_v3"),
+                 lambda d: d["inputs"]["p_bus_throttling_cap_W"].update(value=1400)):
+        shutil.copy2(CONFIG / cfg.MISSION_REL, p)
+        d = _json(p)
+        edit(d)
+        p.write_text(json.dumps(d, indent=1) + "\n", encoding="utf-8")
+        _remanifest(cfg_copy)
+        with pytest.raises(cfg.ConfigurationError, match="does not match its pin"):
+            cfg.load_operating_inputs(cfg_copy)
+    # the builder refuses an edited scenario as well (it never regenerates it)
+    b = _builder()
+    assert b.MISSION_FILE == cfg.MISSION_REL
+    pin = b._code_pin("OPERATING_SCENARIO_PIN")
+    assert pin == cfg.OPERATING_SCENARIO_PIN and pin["sha256"] == _sha(CONFIG / cfg.MISSION_REL)
+
+
+def test_operating_choices_are_independent_of_the_constraints():
+    """A9.24 item 4: the four operating choices carry explicit values with initial_basis provenance naming the
+    constraint; the builder does not derive them (a changed requirement leaves the scenario bytes unchanged)."""
+    ms = cfg.load_mission_scenario()
+    assert ms["id"] == "mission_scenario_v2" and ms["scenario_version"] == 2 and ms["status"] == "FROZEN"
+    assert "sha256" not in ms["engineering_constraints"]
+    want = {"xe_sizing_thrust_target_mN": (12, "thrust_sustained_min_mN"),
+            "commanded_thrust_cap_mN": (25, "thrust_capability_mN"),
+            "p_bus_throttling_cap_W": (1500, "p_bus_max_W"), "mission_hours": (26280, "mission_life_h")}
+    for k, (v, cid) in want.items():
+        e = ms["inputs"][k]
+        assert e["kind"] == "OPERATING_SCENARIO_CHOICE" and e["value"] == v, k
+        assert e["initial_basis"]["constraint_id"] == cid and e["initial_basis"]["role"] == "PROVENANCE_ONLY", k
+        assert "set_equal_to_constraint" not in e, k
+    assert cfg.OPERATING_CHOICE_KEYS == {k: cid for k, (v, cid) in want.items()}
+    # historical v1 is kept byte-identical and listed, never loaded
+    assert ms["supersedes"]["sha256"] == _sha(CONFIG / cfg.MISSION_V1_REL) == cfg.load_manifest()["files"][
+        cfg.MISSION_V1_REL]["sha256"]
 
 
 # ============================================================================================ (c) physics -> not requirements
@@ -518,7 +579,8 @@ def test_constraints_are_derived_from_the_snapshot_only(monkeypatch):
     out = b.build_all()
     assert out[b.CONSTRAINTS_FILE] == (CONFIG / cons_rel).read_bytes()
     assert out[b.MISSION_FILE] == (CONFIG / cfg.MISSION_REL).read_bytes()
-    # ... and a changed requirement (RVM P_bus limit) flows snapshot -> constraints -> scenario pin, nowhere else
+    # ... and a changed requirement (RVM P_bus limit) flows snapshot -> constraints, nowhere else (A9.24 item 4: the
+    # operating scenario is not regenerated and keeps its bytes)
     real = b.read_json
 
     def rvm_changed(rel):
@@ -534,8 +596,7 @@ def test_constraints_are_derived_from_the_snapshot_only(monkeypatch):
     c2 = json.loads(out2[b.CONSTRAINTS_FILE])
     assert c2["constraints"]["p_bus_max_W"]["value"] == 1400
     assert c2["provenance"]["requirements_snapshot"]["sha256"] == hashlib.sha256(out2[b.REQ_FILE]).hexdigest()
-    assert json.loads(out2[b.MISSION_FILE])["engineering_constraints"]["sha256"] == \
-        hashlib.sha256(out2[b.CONSTRAINTS_FILE]).hexdigest()
+    assert out2[b.MISSION_FILE] == out[b.MISSION_FILE] and out2[b.MISSION_V1_FILE] == out[b.MISSION_V1_FILE]
     for k in (b.ARCH_FILE, b.DS_REF_FILE, b.HW_FILE, b.MODEL_SET_FILE):
         assert out2[k] == out[k], k
 
@@ -558,24 +619,23 @@ def test_only_the_builder_writes_the_engineering_constraints():
 
 
 def test_physics_seams_read_values_only_from_constraints_and_scenario(cfg_copy):
-    """The scenario restates no constraint value; the seams fail closed when a constraint is missing or the scenario's
-    constraints pin is stale."""
+    """The scenario restates no constraint value; the seams fail closed when a constraint is missing. A9.24 item 4:
+    the scenario carries no constraints sha256 pin, so an edited constraints file (refreshed manifest) still loads."""
     ms = cfg.load_mission_scenario()
     for k, e in ms["inputs"].items():
         assert e["kind"] in ("CONSTRAINT_REFERENCE", "OPERATING_SCENARIO_CHOICE"), k
         if e["kind"] == "CONSTRAINT_REFERENCE":
             assert "value" not in e and e["constraint_ref"] in cfg.CONSTRAINT_IDS, k
         else:
-            assert e["set_equal_to_constraint"] in cfg.CONSTRAINT_IDS, k
-    assert ms["engineering_constraints"]["sha256"] == _sha(CONFIG / cfg.CONSTRAINTS_REL)
-    # stale pin
+            assert e["initial_basis"]["constraint_id"] in cfg.CONSTRAINT_IDS, k
+    assert "sha256" not in ms["engineering_constraints"]
+    # an edited constraints file (manifest refreshed) does not invalidate the scenario
     p = cfg_copy / cfg.CONSTRAINTS_REL
     d = _json(p)
     d["title"] += " (edited)"
     p.write_text(json.dumps(d, indent=1) + "\n", encoding="utf-8")
     _remanifest(cfg_copy)
-    with pytest.raises(cfg.ConfigurationError, match="pins engineering constraints"):
-        cfg.load_operating_inputs(cfg_copy)
+    assert cfg.load_operating_inputs(cfg_copy) == cfg.load_operating_inputs()
     # constraint missing
     del d["constraints"]["firing_life_h"]
     p.write_text(json.dumps(d, indent=1) + "\n", encoding="utf-8")

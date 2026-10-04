@@ -40,7 +40,7 @@ def test_seams_read_the_frozen_config_with_identical_values():
     assert (OI.MISSION_HOURS, OI.FIRING_HOURS, OI.HISTORICAL_MISSION_HOURS_PRE_A9_22) == (26280.0, 15000.0, 26000.0)
     assert (OI.THRUST_MIN_mN, OI.THRUST_MAX_mN, OI.P_BUS_MAX_W, OI.MASS_MAX_KG) == (12.0, 25.0, 1500.0, 40.0)
     assert OI.FIRING_HOURS_LABEL == "SUBSYSTEM_FIRING_LIFE_ASSUMPTION"
-    assert v["mission_hours"] == OI.MISSION_HOURS and OI.SOURCE.startswith("config/mission/mission_scenario_v1.json")
+    assert v["mission_hours"] == OI.MISSION_HOURS and OI.SOURCE.startswith("config/mission/mission_scenario_v2.json")
     for x in (OI.MISSION_HOURS, OI.FIRING_HOURS, OI.THRUST_MIN_mN, OI.THRUST_MAX_mN, OI.P_BUS_MAX_W, OI.MASS_MAX_KG):
         assert type(x) is float
     assert ec.SOURCE.startswith("config/constraints/engineering_constraints_v1.json")
@@ -67,6 +67,9 @@ def test_operating_inputs_fail_closed(tmp_path, monkeypatch):
     man = json.loads((root / cfg.MANIFEST_REL).read_text())
     man["files"][rel]["sha256"] = hashlib.sha256((root / rel).read_bytes()).hexdigest()
     (root / cfg.MANIFEST_REL).write_text(json.dumps(man))
+    with pytest.raises(cfg.ConfigurationError, match="does not match its pin"):      # A9.24 item 4: code-side pin
+        cfg.load_operating_inputs(root)
+    monkeypatch.setitem(cfg.OPERATING_SCENARIO_PIN, "sha256", hashlib.sha256((root / rel).read_bytes()).hexdigest())
     with pytest.raises(cfg.ConfigurationError, match="APPLIED"):
         cfg.load_operating_inputs(root)
 

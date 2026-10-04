@@ -13,8 +13,14 @@ pins them):
   * ``MISSION_DOMAIN_ALTITUDE_KM`` - A9.22 G5: ``mission_domain.altitude_km = [180, 230]``, a frozen mission /
     design-state domain constraint (the design-state loader checks every state lies inside it), with provenance back
     to the requirements snapshot; not a runtime dependency on the RFP.
-  * ``HARD_CONSTRAINT_LIMITS`` - the numeric limits of the F7 hard-constraint table (the table itself, with its
-    RVM / RFP labels, is an assessment definition: abep_sim/assessment/design_gates.py).
+  * ``REQUIREMENT_LIMITS`` - the requirement-derived limits HC-01..HC-04 (thrust floor / capability, P_bus, wet
+    mass) of the F7 hard-constraint table. The table itself, with its RVM / RFP labels, is an assessment definition
+    (abep_sim/assessment/design_gates.py HARD_CONSTRAINT_LIMITS). A9.24 item 5 (owner decision 2026-10-04): the
+    HC-05..HC-12 thresholds (electron-current margin, 50 K thermal protection margin, firing-life basis, statewise
+    T - D, propellant capability, feed-state sufficiency, H-1 ripple) are assessment-layer values held in
+    config/assessment/gate_thresholds_v1.json; this design module holds none of them. HC-09 stays the design-
+    generation filter above (INTAKE_DRAG_GENERATION_LIMIT_N, frozen engineering configuration) and is also reported
+    in assessment.
 
 Source (A9.23 owner directive 2026-10-03, docs/decisions/OD_2026_10_03_A9_23_*): the frozen engineering-constraints
 artefact config/constraints/engineering_constraints_v1.json ONLY (values), read through
@@ -56,28 +62,16 @@ INTAKE_DRAG_GENERATION_LIMIT_N = INTAKE_DRAG_GENERATION_LIMIT_MN * 1e-3
 MISSION_DOMAIN_ALTITUDE_KM = (_S.alt_min_km, _S.alt_max_km)
 MISSION_DOMAIN = {"altitude_km": MISSION_DOMAIN_ALTITUDE_KM, "provenance": PROVENANCE, "source": SOURCE}
 
-# ------------------------------------------------------------------------------------------------ hard-constraint limits
-# Requirement-derived (frozen snapshot) limits
+# ------------------------------------------------------------------------------------------------ requirement limits
+# Requirement-derived (frozen engineering-constraint) limits HC-01..HC-04. HC-05..HC-12 thresholds are assessment-layer
+# values (A9.24 item 5): config/assessment/gate_thresholds_v1.json via abep_sim/assessment/design_gates.py.
 THRUST_SUSTAINED_MIN_N = THRUST_MIN_MN * 1e-3          # HC-01
 THRUST_CAPABILITY_MIN_N = THRUST_MAX_MN * 1e-3         # HC-02
 P_BUS_MAX_W = _S.power_max_W                           # HC-03
 M_WET_MAX_KG = _S.mass_max_kg                          # HC-04
-FIRING_LIFE_MIN_H = _S.ignition_hours                  # HC-07 (subsystem firing-life requirement)
-INTAKE_DRAG_MAX_N = INTAKE_DRAG_GENERATION_LIMIT_MN * 1e-3   # HC-09 (same bound as the F1 generation filter)
-# Owner-decision / project-derived limits (not requirement-snapshot values)
-I_E_MARGIN_MIN_A = 0.0                                 # HC-05 I_e,cap - I_d,max,H1 > 0 (owner decision)
-THERMAL_MARGIN_MIN_K = 50.0                            # HC-06 >= 50 K below validated limits (project)
-STATEWISE_T_MINUS_D_MIN_N = 0.0                        # HC-08 AG-13 (owner decision A9.13 S6.15)
-PROPELLANT_CAPABILITY_MIN = 1.0                        # HC-10 both propellant paths demonstrated
-FEED_STATE_SUFFICIENCY_MIN = 0.0                       # HC-11 AG-12 (owner decision A9.13 S6.21)
-RIPPLE_TOLERANCE = None                                # HC-12 measured H-1 ripple tolerance (TBD)
 
-HARD_CONSTRAINT_LIMITS = {
-    "HC-01": THRUST_SUSTAINED_MIN_N, "HC-02": THRUST_CAPABILITY_MIN_N, "HC-03": P_BUS_MAX_W, "HC-04": M_WET_MAX_KG,
-    "HC-05": I_E_MARGIN_MIN_A, "HC-06": THERMAL_MARGIN_MIN_K, "HC-07": FIRING_LIFE_MIN_H,
-    "HC-08": STATEWISE_T_MINUS_D_MIN_N, "HC-09": INTAKE_DRAG_MAX_N, "HC-10": PROPELLANT_CAPABILITY_MIN,
-    "HC-11": FEED_STATE_SUFFICIENCY_MIN, "HC-12": RIPPLE_TOLERANCE,
-}
+REQUIREMENT_LIMITS = {"HC-01": THRUST_SUSTAINED_MIN_N, "HC-02": THRUST_CAPABILITY_MIN_N, "HC-03": P_BUS_MAX_W,
+                      "HC-04": M_WET_MAX_KG}
 
 
 def snapshot() -> dict:
@@ -85,4 +79,4 @@ def snapshot() -> dict:
     return {"source": SOURCE, "provenance": PROVENANCE,
             "intake_drag_generation_limit_N": INTAKE_DRAG_GENERATION_LIMIT_N,
             "mission_domain": {"altitude_km": list(MISSION_DOMAIN_ALTITUDE_KM)},
-            "hard_constraint_limits": dict(HARD_CONSTRAINT_LIMITS)}
+            "requirement_limits": dict(REQUIREMENT_LIMITS)}

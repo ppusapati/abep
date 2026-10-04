@@ -1,0 +1,131 @@
+{
+ "schema": "abep_config_gate_thresholds_v1",
+ "id": "gate_thresholds_v1",
+ "layer": "ASSESSMENT_THRESHOLDS",
+ "title": "Hard-gate thresholds HC-05..HC-12 of the assessment layer (A9.24 item 5); physics / design modules hold none of these values (HC-09 is also the design-generation filter, read from the engineering constraints)",
+ "generated_by": "scripts/config/build_config.py",
+ "regenerate": "python scripts/config/build_config.py  (check: --check)",
+ "governing_decision_a9_24": {
+  "json": "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json",
+  "json_sha256": "fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c",
+  "md": "docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md",
+  "md_sha256": "9a2c950befd20dc38c63a3c56d4443ce7a30f1630903ada618b054638325b1d7"
+ },
+ "engineering_constraints": {
+  "id": "engineering_constraints_v1",
+  "path": "config/constraints/engineering_constraints_v1.json",
+  "binding": "BY_ID (CONSTRAINT_REFERENCE gates)"
+ },
+ "rule": "read by abep_sim.configuration.load_gate_thresholds for the assessment layer (abep_sim/assessment/design_gates.py HARD_CONSTRAINT_LIMITS); a CONSTRAINT_REFERENCE gate carries no value (single source: the engineering constraints, x scale_to_gate_units); a TBD gate has value null and evaluates NOT_EVALUATED; changing a threshold changes the assessment only, never raw physics",
+ "gates": {
+  "HC-05": {
+   "kind": "THRESHOLD",
+   "value": 0.0,
+   "units": "A",
+   "comparator": ">",
+   "status": "FROZEN",
+   "layer": "ASSESSMENT_ONLY",
+   "criterion": "M_n,LB > 0: one-sided lower confidence bound of the ICP electron-current margin I_e,cap - I_d,max,H1; physics produces the currents and their uncertainties",
+   "provenance": [
+    "A9.24 item 5 (docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md)",
+    "owner decision (I_e,cap - I_d,max,H1 > 0; former HC-05 literal I_E_MARGIN_MIN_A)"
+   ]
+  },
+  "HC-06": {
+   "kind": "THRESHOLD",
+   "value": 50.0,
+   "units": "K",
+   "comparator": ">=",
+   "status": "FROZEN",
+   "layer": "ASSESSMENT_PROTECTION_POLICY",
+   "criterion": "temperature margin >= 50 K below the validated hardware-bound temperature limits (config/hardware/hardware_bounds_v1.json index); applied by assessment / protection logic, never inside thermal equations; physics produces temperatures / heat loads",
+   "provenance": [
+    "A9.24 item 5 (docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md)",
+    "registered protection / acceptance margin (former HC-06 literal THERMAL_MARGIN_MIN_K)"
+   ]
+  },
+  "HC-07": {
+   "kind": "CONSTRAINT_REFERENCE",
+   "constraint_ref": "firing_life_h",
+   "constraint_units": "h",
+   "units": "h",
+   "scale_to_gate_units": 1.0,
+   "comparator": ">",
+   "status": "FROZEN",
+   "layer": "ASSESSMENT_ONLY",
+   "criterion": "predicted / measured subsystem firing life > the 15,000 h subsystem firing-life basis; the mission duration (26,280 h, operating scenario) is separate",
+   "provenance": [
+    "A9.24 item 5 (docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md)",
+    "engineering constraint firing_life_h (single source)"
+   ]
+  },
+  "HC-08": {
+   "kind": "THRESHOLD",
+   "value": 0.0,
+   "units": "N",
+   "comparator": ">=",
+   "status": "FROZEN",
+   "layer": "ASSESSMENT_ONLY",
+   "criterion": "T_available(state) - D_spacecraft(state) >= 0 at every required state (statewise); physics computes T and D independently",
+   "provenance": [
+    "A9.24 item 5 (docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md)",
+    "AG-13, owner decision A9.13 S6.15 (former HC-08 literal STATEWISE_T_MINUS_D_MIN_N)"
+   ]
+  },
+  "HC-09": {
+   "kind": "CONSTRAINT_REFERENCE",
+   "constraint_ref": "intake_drag_generation_limit_mN",
+   "constraint_units": "mN",
+   "units": "N",
+   "scale_to_gate_units": 0.001,
+   "comparator": "<=",
+   "status": "FROZEN",
+   "layer": "DESIGN_GENERATION_FILTER_ALSO_REPORTED_IN_ASSESSMENT",
+   "criterion": "intake-face drag <= 25 mN at every orbit state: F1-F8 design-generation filter (A9.22 G2 Option 1, read from the frozen engineering configuration, not RFP parsing) and reported in assessment; assessment-only (C-DRAG-RFP Option 2) needs a separate owner approval",
+   "provenance": [
+    "A9.24 item 5 (docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md)",
+    "engineering constraint intake_drag_generation_limit_mN (single source)"
+   ]
+  },
+  "HC-10": {
+   "kind": "THRESHOLD",
+   "value": 1.0,
+   "units": "-",
+   "comparator": ">=",
+   "status": "FROZEN",
+   "layer": "ASSESSMENT_ONLY",
+   "criterion": "ambient atmospheric mode AND Xe contingency capability evaluated as architecture / capability evidence (1 = both demonstrated); no physics equation carries this requirement",
+   "provenance": [
+    "A9.24 item 5 (docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md)",
+    "A9.15 RFP-compliant propellant policy (former HC-10 literal PROPELLANT_CAPABILITY_MIN)"
+   ]
+  },
+  "HC-11": {
+   "kind": "THRESHOLD",
+   "value": 0.0,
+   "units": "-",
+   "comparator": ">=",
+   "status": "FROZEN",
+   "layer": "ASSESSMENT_ONLY",
+   "criterion": "feed_available - feed_required >= 0 (statewise feed-state sufficiency, registered formulation: minimum relative field margin); the requirement comes from the measured / validated H-1 performance basis when available and is never reduced to the presently achievable feed",
+   "provenance": [
+    "A9.24 item 5 (docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md)",
+    "AG-12, owner decision A9.13 S6.21 (former HC-11 literal FEED_STATE_SUFFICIENCY_MIN)"
+   ]
+  },
+  "HC-12": {
+   "kind": "THRESHOLD",
+   "value": null,
+   "units": "-",
+   "comparator": "<=",
+   "status": "TBD_PENDING_MEASURED_H1",
+   "layer": "ASSESSMENT_ONLY",
+   "criterion": "compressor / plenum ripple <= measured H-1 ripple tolerance; threshold TBD until measured H-1 evidence establishes the permissible ripple basis; no default is invented",
+   "evaluation_until_frozen": "NOT_EVALUATED",
+   "provenance": [
+    "A9.24 item 5 (docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md)",
+    "A9.13 S6.17 / S6.12 feed quality"
+   ]
+  }
+ }
+}

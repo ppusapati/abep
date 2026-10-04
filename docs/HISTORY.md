@@ -3528,3 +3528,45 @@ Closes "Open (outside this lane's paths)" of the 2026-10-01 A9.14 S10.4 v2 re-re
   match the sha256 values in v2 `supersedes`). `docs/ci/RUST_PARITY.md` describes v2.
 - Unchanged: Rust sources, `intake_tpmc.py`, `tpmc_backend.py`, `verify_abep_core.py`, frozen data, the v1 and v2
   parity records. No scoring seed spent (no campaign run).
+
+## 2026-10-04 — A9.24 items 4 and 5: operating scenario decoupled from the constraints; HC-05..HC-12 thresholds moved to the assessment layer (NO numeric change); item 3 STOPPED
+
+Owner decisions A9.24 (`docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md`, items 3-5;
+companion json `..._owner_decisions.json`). Builds on the A9.22 layer separation and the A9.23 dependency rule.
+- **Item 4 (operating choices decoupled).** New frozen artefact `config/mission/mission_scenario_v2.json` (id
+  `mission_scenario_v2`, `scenario_version` 2, status FROZEN). The four operating choices carry explicit values (Xe-sizing
+  thrust target 12 mN, commanded-thrust cap 25 mN, P_bus throttling cap 1500 W, mission-integration horizon 26,280 h).
+  Each has an `initial_basis` that names the engineering constraint it was first set equal to; this is provenance only
+  and is never re-read. The file is NOT generated. `scripts/config/build_config.py` only verifies it against the
+  code-side pin `abep_sim/configuration.py OPERATING_SCENARIO_PIN` (id + version + sha256) and lists it in the manifest.
+  It no longer derives any scenario value from the constraints or the snapshot. The scenario no longer pins the
+  constraints sha256, so changing a threshold cannot invalidate it. The loader refuses an edited scenario even when the
+  manifest has been refreshed: a changed choice needs a new scenario file, id, version and pin. `mission_scenario_v1.json`
+  is kept byte-identical (sha256 a01b56a6…, still named by the A9.16 application matrix) as HISTORICAL_SUPERSEDED_NOT_LOADED.
+  Physics consumes identical values (`operating_inputs`: 12 / 25 / 1500 / 26280, firing 15000, mass 40).
+- **Item 5 (HC-05..HC-12).** New generated artefact `config/assessment/gate_thresholds_v1.json`. It records layer, status,
+  criterion and provenance per gate: HC-05 `> 0` A (M_n,LB); HC-06 50 K ASSESSMENT_PROTECTION_POLICY, applied against
+  hardware-bound limits and never in thermal equations; HC-07 is a reference to `firing_life_h` (15,000 h; the mission
+  26,280 h is separate); HC-08 `>= 0` N; HC-09 is a reference to `intake_drag_generation_limit_mN`, a design-generation
+  filter (Option 1) that is also reported in assessment; HC-10 1; HC-11 `>= 0`, with the requirement never reduced to
+  the achievable feed; HC-12 value null, TBD_PENDING_MEASURED_H1 -> NOT_EVALUATED. It is loaded by
+  `abep_sim.configuration.load_gate_thresholds`. `abep_sim/assessment/design_gates.py HARD_CONSTRAINT_LIMITS` is built
+  from it plus `engineering_constraints.REQUIREMENT_LIMITS` (HC-01..HC-04). The design seam no longer holds the
+  HC-05..HC-12 literals or `HARD_CONSTRAINT_LIMITS`; no immutable record named them. Limits are identical: the F7 hard
+  constraint table equals the committed F7 record.
+- **Item 3 (thrust compliance check): NOT APPLIED, stopped as the lane rule requires.** Pointing
+  `chk_thrust_air_ge_req` at `thrust_sustained_min_mN` instead of the raw `T_req_N` would flip a merged-record flag. In
+  the evaluate identity fixtures (`evaluate_identity_base_9eb302c.json` and `evaluate_identity_g1.json`), row 112 has
+  `T_required_mN = 20` and T_air = 13.66 mN: today the flag is False (13.66 < 20); under the item 3 wording it would be
+  True (>= 12). The check is unchanged pending an owner ruling. The raw closure still emits no requirement PASS/FAIL
+  (raw_closure_v2 has no chk_/rfp_/ic_/classification key).
+- Tests: new `tests/test_a9_24_gate_thresholds.py`. `tests/test_a9_23_dependency_rule.py` adds: thrust-floor change ->
+  assessment limits only, raw byte-identical, scenario unchanged; an edited scenario needs a new version; operating
+  choices are independent of the constraints. The P_bus threshold test now also asserts the scenario bytes and values
+  are unchanged. Adapted: `test_config_manifests.py`, `test_a9_22_operating_inputs.py`,
+  `test_design_layer_separation.py`.
+- Pin-only rebuilds: config MANIFEST / SOURCES_OF_TRUTH / README / model set; engineering_constraints_v1.json
+  `consumed_by` labels only (values unchanged). Golden check OK without regeneration.
+- Open coupling, reported and not changed (outside the four choices item 4 names): physics still reads `firing_life_h`
+  (the HC-07 threshold), `wet_mass_max_kg` and `altitude_band_km` by CONSTRAINT_REFERENCE. A change to those thresholds
+  would still reach physics inputs.

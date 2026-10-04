@@ -12,7 +12,11 @@ sha256-pinned configuration files. This module is that interface:
   config/constraints/engineering_constraints_v1.json    frozen engineering constraints (values; provenance labels only)
   config/requirements/rfp_constraints_v1.json           requirements snapshot (PROVENANCE layer; read only by the
                                                         assessment loaders below, never by physics / design seams)
-  config/mission/mission_scenario_v1.json               operating-scenario choices + references to the constraints
+  config/mission/mission_scenario_v2.json               frozen operating scenario (A9.24 item 4): independently versioned
+                                                        operating-scenario choices + value-free references to constraints;
+                                                        pinned here by id + version + sha256 (OPERATING_SCENARIO_PIN)
+  config/mission/mission_scenario_v1.json               HISTORICAL (superseded by v2, kept byte-identical, never loaded)
+  config/assessment/gate_thresholds_v1.json             assessment-layer HC-05..HC-12 gate thresholds (A9.24 item 5)
   config/environment/design_state_set_ref_v1.json       REFERENCE to the frozen design-state set v2 (never a copy)
   config/hardware/hardware_bounds_v1.json               INDEX of hardware-limit sources (path + sha256 + locator)
   config/model_set/physics_model_set_v1.json            physics module / data hashes and version labels
@@ -45,11 +49,24 @@ MANIFEST_REL = "MANIFEST.json"
 ARCHITECTURE_REL = "architecture/hall_icp_neutralizer_v1.json"
 REQUIREMENTS_REL = "requirements/rfp_constraints_v1.json"
 CONSTRAINTS_REL = "constraints/engineering_constraints_v1.json"
-MISSION_REL = "mission/mission_scenario_v1.json"
+MISSION_REL = "mission/mission_scenario_v2.json"
+MISSION_V1_REL = "mission/mission_scenario_v1.json"        # HISTORICAL (A9.24 item 4: superseded by v2; never loaded)
+GATE_THRESHOLDS_REL = "assessment/gate_thresholds_v1.json"
 DESIGN_STATE_REF_REL = "environment/design_state_set_ref_v1.json"
 HARDWARE_BOUNDS_REL = "hardware/hardware_bounds_v1.json"
 MODEL_SET_REL = "model_set/physics_model_set_v1.json"
 SOURCES_OF_TRUTH_REL = "SOURCES_OF_TRUTH.json"
+
+# A9.24 item 4 (owner decision 2026-10-04): the operating scenario is an independently versioned frozen artefact, not
+# regenerated from the engineering constraints. The loader accepts exactly this scenario (id, version, sha256); an
+# edited scenario is refused even with a refreshed MANIFEST: a new operating scenario needs a new file, id, version
+# and pin here.
+OPERATING_SCENARIO_PIN = {"id": "mission_scenario_v2", "scenario_version": 2,
+                          "sha256": "554fcd3f19850ffe92f86aaaa3914840ecc9b80d384ec7a735954a0e61004cb9"}
+OPERATING_CHOICE_KEYS = {"xe_sizing_thrust_target_mN": "thrust_sustained_min_mN",
+                         "commanded_thrust_cap_mN": "thrust_capability_mN",
+                         "p_bus_throttling_cap_W": "p_bus_max_W",
+                         "mission_hours": "mission_life_h"}
 
 # constraint ids of config/constraints/engineering_constraints_v1.json the loaders require
 CONSTRAINT_IDS = ("altitude_band_km", "thrust_sustained_min_mN", "thrust_capability_mN", "p_bus_max_W",
@@ -168,17 +185,34 @@ def load_engineering_constraints_file(root: Optional[Path] = None) -> dict:
 
 
 def load_mission_scenario(root: Optional[Path] = None, verify_constraints: bool = True) -> dict:
-    """The operating scenario; with ``verify_constraints`` its pin of the engineering-constraints file is checked."""
+    """The frozen operating scenario (A9.24 item 4), checked against MANIFEST.json AND the code-side pin
+    ``OPERATING_SCENARIO_PIN`` (id, scenario_version, sha256): an edited scenario is refused even when the manifest was
+    refreshed; a changed scenario needs a new version. The scenario does not pin the engineering-constraints sha256
+    (a threshold change must not invalidate it); with ``verify_constraints`` the constraint ids it references are
+    checked to exist in the (manifest-checked) constraints file."""
     d = load_verified(MISSION_REL, root)
-    if d.get("schema") != "abep_config_mission_scenario_v1":
+    if d.get("schema") != "abep_config_mission_scenario_v2":
         raise ConfigurationError("mission scenario: unexpected schema")
+    root_ = Path(root) if root is not None else config_root()
+    got = _sha256_file(root_ / MISSION_REL)
+    pin = OPERATING_SCENARIO_PIN
+    if (d.get("id"), d.get("scenario_version"), got) != (pin["id"], pin["scenario_version"], pin["sha256"]):
+        raise ConfigurationError(
+            f"operating scenario (id {d.get('id')!r}, scenario_version {d.get('scenario_version')!r}, sha256 {got}) does "
+            f"not match its pin {pin} (A9.24 item 4: a changed operating scenario needs a new scenario version)")
+    if d.get("status") != "FROZEN":
+        raise ConfigurationError(f"mission scenario: status {d.get('status')!r} != FROZEN")
     if verify_constraints:
-        root_ = Path(root) if root is not None else config_root()
-        pin = d.get("engineering_constraints") or {}
-        got = _sha256_file(root_ / CONSTRAINTS_REL) if (root_ / CONSTRAINTS_REL).is_file() else None
-        if got is None or got != pin.get("sha256"):
-            raise ConfigurationError(f"mission scenario pins engineering constraints sha256 {pin.get('sha256')}, "
-                                     f"found {got}")
+        ecf = load_engineering_constraints_file(root)
+        cons = ecf.get("constraints") or {}
+        ec_ref = d.get("engineering_constraints") or {}
+        if ec_ref.get("id") != ecf.get("id"):
+            raise ConfigurationError(f"mission scenario references engineering constraints {ec_ref.get('id')!r}")
+        for k, e in (d.get("inputs") or {}).items():
+            cid = e.get("constraint_ref") or (e.get("initial_basis") or {}).get("constraint_id")
+            if cid not in cons:
+                raise ConfigurationError(f"mission scenario input {k}: constraint {cid!r} not in the engineering "
+                                         "constraints")
     return d
 
 
@@ -252,8 +286,9 @@ def load_engineering_constraints(root: Optional[Path] = None) -> dict:
 
 def load_operating_inputs(root: Optional[Path] = None) -> dict:
     """Operating inputs of the physics seam (abep_sim.operating_inputs): the operating-scenario choices of
-    config/mission/mission_scenario_v1.json plus the constraint values it references (by id) from
-    config/constraints/engineering_constraints_v1.json (the scenario's sha256 pin of that file is verified).
+    config/mission/mission_scenario_v2.json (frozen, pinned by OPERATING_SCENARIO_PIN; A9.24 item 4: never copied from
+    the constraints) plus the constraint values it references (by id) from
+    config/constraints/engineering_constraints_v1.json.
 
     The physics layer never opens the requirements snapshot. Fails closed on any missing or non-numeric value, on an
     input that restates a referenced constraint, and on a mission basis not recorded as the applied A9.22 G1 basis."""
@@ -269,8 +304,11 @@ def load_operating_inputs(root: Optional[Path] = None) -> dict:
 
     def choice(key, cid):
         e = inp.get(key) or {}
-        if e.get("kind") != "OPERATING_SCENARIO_CHOICE" or e.get("set_equal_to_constraint") != cid:
-            raise ConfigurationError(f"{w}.{key}: expected an OPERATING_SCENARIO_CHOICE set from {cid}")
+        ib = e.get("initial_basis") or {}
+        if e.get("kind") != "OPERATING_SCENARIO_CHOICE" or ib.get("constraint_id") != cid \
+                or ib.get("role") != "PROVENANCE_ONLY" or "set_equal_to_constraint" in e:
+            raise ConfigurationError(f"{w}.{key}: expected an independently versioned OPERATING_SCENARIO_CHOICE with "
+                                     f"initial_basis {cid} (provenance only)")
         return _num_field(e, "value", f"{w}.{key}")
 
     mh = inp.get("mission_hours") or {}
@@ -295,6 +333,47 @@ def load_operating_inputs(root: Optional[Path] = None) -> dict:
         "altitude_domain_km": (ec["alt_min_km"], ec["alt_max_km"]),
         "source": f"config/{MISSION_REL} + config/{CONSTRAINTS_REL}",
     }
+
+
+GATE_IDS = ("HC-05", "HC-06", "HC-07", "HC-08", "HC-09", "HC-10", "HC-11", "HC-12")
+
+
+def load_gate_thresholds(root: Optional[Path] = None) -> dict:
+    """Assessment-layer hard-gate thresholds HC-05..HC-12 (A9.24 item 5) from config/assessment/gate_thresholds_v1.json
+    (manifest-checked, fail closed). Returns {"limits": {gate id -> threshold in the gate's table units or None},
+    "gates": the file's gate records, "id", "source"}. A CONSTRAINT_REFERENCE gate (HC-07 firing life, HC-09 intake-drag
+    generation limit) is resolved from the engineering constraints (single source); a TBD gate (HC-12) has no value and
+    no default (its evaluation is NOT_EVALUATED). Read by the assessment layer only."""
+    d = load_verified(GATE_THRESHOLDS_REL, root)
+    if d.get("schema") != "abep_config_gate_thresholds_v1":
+        raise ConfigurationError("gate thresholds: unexpected schema")
+    gates = d.get("gates") or {}
+    if tuple(gates) != GATE_IDS:
+        raise ConfigurationError(f"gate thresholds: gates {tuple(gates)} != {GATE_IDS}")
+    ec = None
+    limits = {}
+    for gid, g in gates.items():
+        w = f"gate_thresholds.gates.{gid}"
+        if g.get("kind") == "CONSTRAINT_REFERENCE":
+            if "value" in g:
+                raise ConfigurationError(f"{w}: a CONSTRAINT_REFERENCE carries no value")
+            ec = ec if ec is not None else load_engineering_constraints_file(root)["constraints"]
+            cid = g.get("constraint_ref")
+            if cid not in ec:
+                raise ConfigurationError(f"{w}: constraint {cid!r} not in the engineering constraints")
+            limits[gid] = _num_field(ec[cid], "value", f"{w}.{cid}") * _num_field(g, "scale_to_gate_units", w)
+        elif g.get("kind") == "THRESHOLD":
+            if g.get("status") == "TBD_PENDING_MEASURED_H1":
+                if g.get("value") is not None:
+                    raise ConfigurationError(f"{w}: a TBD threshold carries no value (no default is invented)")
+                limits[gid] = None
+            else:
+                if g.get("status") != "FROZEN":
+                    raise ConfigurationError(f"{w}: status {g.get('status')!r} not FROZEN / TBD_PENDING_MEASURED_H1")
+                limits[gid] = _num_field(g, "value", w)
+        else:
+            raise ConfigurationError(f"{w}: kind {g.get('kind')!r} not THRESHOLD / CONSTRAINT_REFERENCE")
+    return {"limits": limits, "gates": gates, "id": d["id"], "source": f"config/{GATE_THRESHOLDS_REL}"}
 
 
 def load_design_state_set_ref(root: Optional[Path] = None, verify_target: bool = True) -> dict:

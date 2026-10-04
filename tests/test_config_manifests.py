@@ -125,15 +125,20 @@ def test_missing_or_unlisted_files_are_refused(cfg_copy):
 
 
 def test_cross_pins_are_checked(cfg_copy):
-    # mission scenario pins the engineering constraints it references (A9.23; no longer the requirements snapshot)
+    # A9.24 item 4: the mission scenario references the engineering constraints by id only (no sha256 pin); a
+    # referenced constraint id that is missing is refused
     cons = cfg_copy / cfg.CONSTRAINTS_REL
     d = json.loads(cons.read_text(encoding="utf-8"))
     d["title"] += " (edited)"
     cons.write_text(json.dumps(d, indent=1), encoding="utf-8")
     _remanifest(cfg_copy)
-    with pytest.raises(cfg.ConfigurationError, match="engineering constraints"):
+    assert cfg.load_mission_scenario(cfg_copy)["id"] == "mission_scenario_v2"
+    del d["constraints"]["wet_mass_max_kg"]
+    cons.write_text(json.dumps(d, indent=1), encoding="utf-8")
+    _remanifest(cfg_copy)
+    with pytest.raises(cfg.ConfigurationError, match="wet_mass_max_kg"):
         cfg.load_mission_scenario(cfg_copy)
-    assert cfg.load_mission_scenario(cfg_copy, verify_constraints=False)["id"] == "mission_scenario_v1"
+    assert cfg.load_mission_scenario(cfg_copy, verify_constraints=False)["id"] == "mission_scenario_v2"
     # design-state reference: a wrong target hash is refused
     ref = cfg_copy / cfg.DESIGN_STATE_REF_REL
     d = json.loads(ref.read_text(encoding="utf-8"))
@@ -195,7 +200,8 @@ def test_constants_rfp_equals_todays_values_field_by_field():
 def test_mission_scenario_records_g1_applied_and_the_historical_constant():
     ms = cfg.load_mission_scenario()["inputs"]
     ec = cfg.load_engineering_constraints_file()["constraints"]
-    assert ms["mission_hours"]["value"] == ms["mission_hours"]["authoritative_basis_h"] == 26280
+    assert ms["mission_hours"]["value"] == ms["mission_hours"]["initial_basis"]["value_at_freeze"] == 26280
+    assert ms["mission_hours"]["initial_basis"]["constraint_id"] == "mission_life_h"
     assert ms["mission_hours"]["kind"] == "OPERATING_SCENARIO_CHOICE"
     assert ec["mission_life_h"]["value"] == 26280 and ec["mission_life_h"]["g1_status"] == "APPLIED"
     assert ec["mission_life_h"]["historical_value"] == {**ec["mission_life_h"]["historical_value"], "value_h": 26000,

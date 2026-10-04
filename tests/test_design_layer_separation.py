@@ -102,11 +102,18 @@ def test_engineering_constraints_values_equal_pre_a9_22_literals():
     assert ec.INTAKE_DRAG_GENERATION_LIMIT_MN == 25.0
     assert ec.INTAKE_DRAG_GENERATION_LIMIT_N == 25.0 * 1e-3 == 0.025
     assert ec.MISSION_DOMAIN_ALTITUDE_KM == (180.0, 230.0)
-    assert ec.HARD_CONSTRAINT_LIMITS == {
+    # A9.24 item 5: the limits table lives in the assessment layer (HC-05..HC-12 from
+    # config/assessment/gate_thresholds_v1.json); values identical to the former design-module literals
+    assert dg.HARD_CONSTRAINT_LIMITS == {
         "HC-01": 0.012, "HC-02": 0.025, "HC-03": 1500.0, "HC-04": 40.0, "HC-05": 0.0, "HC-06": 50.0, "HC-07": 15000.0,
         "HC-08": 0.0, "HC-09": 0.025, "HC-10": 1.0, "HC-11": 0.0, "HC-12": None}
-    for k, v in ec.HARD_CONSTRAINT_LIMITS.items():
+    for k, v in dg.HARD_CONSTRAINT_LIMITS.items():
         assert v is None or type(v) is float, k
+    assert ec.REQUIREMENT_LIMITS == {k: dg.HARD_CONSTRAINT_LIMITS[k] for k in ("HC-01", "HC-02", "HC-03", "HC-04")}
+    assert dg.HARD_CONSTRAINT_LIMITS["HC-09"] == ec.INTAKE_DRAG_GENERATION_LIMIT_N      # filter also reported
+    for name in ("HARD_CONSTRAINT_LIMITS", "I_E_MARGIN_MIN_A", "THERMAL_MARGIN_MIN_K", "STATEWISE_T_MINUS_D_MIN_N",
+                 "PROPELLANT_CAPABILITY_MIN", "FEED_STATE_SUFFICIENCY_MIN", "RIPPLE_TOLERANCE", "FIRING_LIFE_MIN_H"):
+        assert not hasattr(ec, name), name
     from abep_sim.design import intake_synthesis as isy
     assert isy.MISSION_DOMAIN_ALTITUDE_KM == (180.0, 230.0)
     assert ec.snapshot()["mission_domain"]["altitude_km"] == [180.0, 230.0]
