@@ -3528,3 +3528,39 @@ Closes "Open (outside this lane's paths)" of the 2026-10-01 A9.14 S10.4 v2 re-re
   match the sha256 values in v2 `supersedes`). `docs/ci/RUST_PARITY.md` describes v2.
 - Unchanged: Rust sources, `intake_tpmc.py`, `tpmc_backend.py`, `verify_abep_core.py`, frozen data, the v1 and v2
   parity records. No scoring seed spent (no campaign run).
+
+## 2026-10-04 — A9.24 items 10 and 11: RFQ quotation-only dispatch authorization; F1 archive upload record (NO numeric change)
+
+Owner decisions A9.24 items 10 and 11, `docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md`
+(json sha256 `fdbb4561…`). No physics, model or numerical value changed; the goldens are unaffected.
+- **Item 10 (RFQ v3, in place through the builder):** `docs/procurement/rfq_a9_v3/build_rfq_a9_v3.py` pins A9.24 and records
+  `dispatch_authorization_a9_24`. RFQ3-RF / GAS / VAC / HALLEL / MECH / RFMET are `AUTHORIZED_FOR_QUOTATION_ONLY` with status
+  `AUTHORIZED_PENDING_OWNER_SEND`. This permits quotation, technical clarification, datasheets, capability information,
+  mass/power information and lead time. It does NOT authorize a purchase order, advance payment, supplier selection or a
+  binding commitment. RFQ3-THRUST is `DO_NOT_DISPATCH` (blocking quantity, TH-L09), and so is RFQ3-H1FAB (no controlled H-1
+  drawings). The rule function `a9_24_dispatch_status` fails closed: an authorized package must be READY_FOR_OWNER_DISPATCH,
+  and a DO_NOT_DISPATCH package whose condition clears becomes `..._CONDITION_MET_AWAITING_OWNER_AUTHORIZATION`, never
+  AUTHORIZED automatically. One generated cover note per authorized package is in `dispatch/<id>_COVER.md`. Each lists the
+  NOW lines and response items, states the quotation-only terms and carries a no-commitment clause. It names no supplier,
+  contact, price or date; those fields are marked OWNER TO FILL. Nothing is sent from the repository. v1/v2 are untouched.
+  Downstream builders (RVM, M16 v5, A9.16 matrix, bus-boundary stage 2 / inventory, bid package) were re-checked and are
+  current.
+- **Item 11 (F1 archive):** `scripts/evidence/f1_archive.py` changes:
+  - `build --out-dir/--check`.
+  - New `verify-download <path> [--record]`, which checks sha256, size, zstd decode, tar sha256, per-member size/sha256,
+    metadata and the originals when present, and prints a committable record.
+  - The manifest is now reproducible from git alone: no HEAD-dependent blob, and the LFS-status text is in the builder.
+
+  The manifest adds:
+  - a model-set hash: the sources at the generating commit plus the frozen-data pins. `model_set_id` is
+    NOT_REGISTERED_AT_GENERATING_COMMIT;
+  - config cross-checks at 4b5563b, informational only;
+  - `upload_authorization` (A9.24 item 11, quotes verbatim);
+  - `storage.preferred`: status AUTHORIZED_TO_UPLOAD, download URL, `authoritative: false` until a downloaded copy has been
+    verified and its record committed;
+  - `a9_24_item_11_checklist` (all PRESENT).
+
+  The archive bytes are unchanged: sha256 `c29623c0…`, 2,011,661 B; tar `a03f5e10…`, 36,730,880 B. The rebuild in the
+  scratchpad matched. The upload is a manual owner step because there is no working release-creation capability: the `gh`
+  token is invalid, and the tag had no release (404). The steps are in `docs/evidence_archives/f1_intake/UPLOAD_STEPS.md`.
+  The A9.16 matrix G9 check now expects the AUTHORIZED_TO_UPLOAD status.

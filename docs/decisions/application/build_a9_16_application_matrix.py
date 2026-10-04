@@ -563,7 +563,9 @@ LATER_APPS = {
              "deterministic F1 evidence archive manifest (archive sha256 / size, generating commit, architecture / "
              "design-state-set / input-manifest hashes, command, timestamp, per-file sha256, classification)",
              {"node": "/storage/preferred", "checks": {"kind": ("startswith", "GitHub Release asset"),
-                                                       "status": ("equals", "PENDING_OWNER_UPLOAD")}}),
+                                                       # A9.24 item 11 advanced PENDING_OWNER_UPLOAD -> authorized
+                                                       "status": ("startswith", "AUTHORIZED_TO_UPLOAD (A9.24 item 11)"),
+                                                       "authoritative": ("equals", False)}}),
         _app("A9.22", "docs/design_synthesis/f1_intake/f1_core_view.py", A922_G9_COMMIT,
              ['CORE_SCHEMA = "f1_intake_synthesis_v1_core"', "def expand_core"],
              "compact F1 core view for consumers (lossless)"),
