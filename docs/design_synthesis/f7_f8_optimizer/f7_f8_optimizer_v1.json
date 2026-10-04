@@ -9635,11 +9635,11 @@
   {
    "id": "HC-05",
    "rvm": "RVM-15",
-   "quantity": "I_e,cap - I_d,max,H1 (one-sided LCB)",
+   "quantity": "M_n,LB: lower uncertainty bound of M_n = I_e,cap / I_d,max,H1 - 1 (A9.24 item 5; the point difference I_e,cap - I_d,max is never the acceptance criterion; no lower bound -> NOT_EVALUATED)",
    "comparator": ">",
    "limit": 0.0,
-   "units": "A",
-   "objective": "I_e_cap_minus_I_d_max_A",
+   "units": "-",
+   "objective": "M_n_LB",
    "category": "derived_from_owner_decision"
   },
   {
@@ -10254,11 +10254,11 @@
     "id": "HC-05",
     "rvm": "RVM-15",
     "rfp": null,
-    "quantity": "I_e,cap - I_d,max,H1 (one-sided LCB)",
-    "rule": "> 0 A",
+    "quantity": "M_n,LB: lower uncertainty bound of M_n = I_e,cap / I_d,max,H1 - 1 (A9.24 item 5; the point difference I_e,cap - I_d,max is never the acceptance criterion; no lower bound -> NOT_EVALUATED)",
+    "rule": "> 0 -",
     "status": "NOT_EVALUATED",
-    "value_status": "NOT_EVALUATED",
-    "basis": "no evaluable value (fail closed: never counted as satisfied)"
+    "value_status": null,
+    "basis": "no lower uncertainty bound M_n,LB of M_n = I_e,cap / I_d,max,H1 - 1 with its uncertainty basis (fail closed: NOT_EVALUATED; a point difference I_e,cap - I_d,max never closes HC-05)"
    },
    {
     "id": "HC-06",

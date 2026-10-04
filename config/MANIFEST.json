@@ -9,7 +9,7 @@
    "bytes": 5506
   },
   "SOURCES_OF_TRUTH.json": {
-   "sha256": "16edc6e78abb5a0e1c04fc64662850c0d11b813b77af2159501f3f70f477c0a0",
+   "sha256": "38e0b3adef71846e5332af9df0b9e0382409b5018fbd44d95c325fc357607bf7",
    "bytes": 6584
   },
   "architecture/hall_icp_neutralizer_v1.json": {
@@ -17,8 +17,8 @@
    "bytes": 6652
   },
   "assessment/gate_thresholds_v1.json": {
-   "sha256": "3898f9ecc8d2cfd45e42d219e5598798a3c79fa0a5bdebe62b2af148ab3111c0",
-   "bytes": 6352
+   "sha256": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b",
+   "bytes": 6583
   },
   "constraints/engineering_constraints_v1.json": {
    "sha256": "81fa1df817fb249d87b1fca0d335e0d250912afe9f54fd94222cd9a057d57fbf",

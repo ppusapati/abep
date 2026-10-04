@@ -3570,3 +3570,14 @@ companion json `..._owner_decisions.json`). Builds on the A9.22 layer separation
 - Open coupling, reported and not changed (outside the four choices item 4 names): physics still reads `firing_life_h`
   (the HC-07 threshold), `wet_mass_max_kg` and `altitude_band_km` by CONSTRAINT_REFERENCE. A change to those thresholds
   would still reach physics inputs.
+- **HC-05 owner correction (2026-10-04, relayed by the lane coordinator).** The assessment criterion is now the
+  uncertainty-aware form M_n = I_e,cap / I_d,max,H1 - 1, with acceptance M_n,LB > 0 (the lower uncertainty bound).
+  The point difference I_e,cap - I_d,max is never the acceptance criterion. `design_gates.HARD_CONSTRAINTS` HC-05 now
+  has objective `M_n_LB`, units `-`, threshold 0.0. `evaluate_constraints` returns NOT_EVALUATED unless an `M_n_LB`
+  record that carries its `uncertainty_basis` is supplied. `programme/design_synthesis.evaluate_system` accepts it
+  under the `M_n_LB` key; the I_e,cap - I_d,max system objective itself is unchanged.
+  `gate_thresholds_v1.json` HC-05 records the criterion and `evaluation_without_lower_bound = NOT_EVALUATED`. HC-12
+  remains NOT_EVALUATED. Committed records: HC-05 was and stays NOT_EVALUATED (no ICP-45 data). F7/F8 was rebuilt;
+  only the HC-05 table text, units and objective and the evaluation rule and basis strings changed. The Pareto and
+  robust records are byte-identical. Pin-only rebuild of the architecture freeze candidate (sha256 of the F7 record).
+  Synthetic F7/F8 test fixtures now also supply `M_n_LB` with an uncertainty basis.

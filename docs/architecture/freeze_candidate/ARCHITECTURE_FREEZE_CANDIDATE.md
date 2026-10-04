@@ -795,7 +795,7 @@ Consumed (sha256 at build time; drift reported by `--check`):
 - `docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json` cd5da1b8bc4b97f3b32c627be7016aa17016045975f90fa392e202e6eec78785
 - `docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json` 50a7fa11a92d162ae28b864f53794b333c1d779104ff558fcf61c2eb24955de0
 - `docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json` eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450
-- `docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json` 27d6bd891b6e80296af46b9860c910decbc1a9c31407bb3d13f5af2676827f07
+- `docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json` abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43
 - `docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json` 423e74ded14e5d5df640a9cc5818c8d8478b194573270ec379b1eb9359c1c455
 - `docs/design_synthesis/f7_f8_optimizer/f8_robust_candidates_v1.json` 2ec7e059ebc55d9b83f4c8f0e3cd43e2cebcbe665933e7ce9ecf1a43451f4e8d
 - `docs/budgets/owner_decisions/owner_questions_state_v4.json` 6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67

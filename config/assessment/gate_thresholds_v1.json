@@ -21,14 +21,16 @@
   "HC-05": {
    "kind": "THRESHOLD",
    "value": 0.0,
-   "units": "A",
+   "units": "-",
    "comparator": ">",
    "status": "FROZEN",
    "layer": "ASSESSMENT_ONLY",
-   "criterion": "M_n,LB > 0: one-sided lower confidence bound of the ICP electron-current margin I_e,cap - I_d,max,H1; physics produces the currents and their uncertainties",
+   "criterion": "M_n,LB > 0, where M_n = I_e,cap / I_d,max,H1 - 1 and M_n,LB is its lower uncertainty bound; the point difference I_e,cap - I_d,max is never the acceptance criterion; without uncertainty evidence (a lower bound) for the inputs HC-05 is NOT_EVALUATED; physics produces the currents and their uncertainties",
+   "evaluation_without_lower_bound": "NOT_EVALUATED",
    "provenance": [
     "A9.24 item 5 (docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md)",
-    "owner decision (I_e,cap - I_d,max,H1 > 0; former HC-05 literal I_E_MARGIN_MIN_A)"
+    "owner correction 2026-10-04 (uncertainty-aware ratio form)",
+    "former HC-05 literal I_E_MARGIN_MIN_A = 0.0"
    ]
   },
   "HC-06": {

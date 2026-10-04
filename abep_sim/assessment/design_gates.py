@@ -70,8 +70,11 @@ HARD_CONSTRAINTS = (
      "comparator": "<", "limit": HARD_CONSTRAINT_LIMITS["HC-03"], "units": "W", "objective": "P_bus_W", "category": "rfp_recorded"},
     {"id": "HC-04", "rvm": "RVM-06", "rfp": "RFP-P18-11", "quantity": "wet propulsion-system mass", "comparator": "<",
      "limit": HARD_CONSTRAINT_LIMITS["HC-04"], "units": "kg", "objective": "m_wet_kg", "category": "rfp_recorded"},
-    {"id": "HC-05", "rvm": "RVM-15", "quantity": "I_e,cap - I_d,max,H1 (one-sided LCB)", "comparator": ">",
-     "limit": HARD_CONSTRAINT_LIMITS["HC-05"], "units": "A", "objective": "I_e_cap_minus_I_d_max_A", "category": "derived_from_owner_decision"},
+    {"id": "HC-05", "rvm": "RVM-15",
+     "quantity": "M_n,LB: lower uncertainty bound of M_n = I_e,cap / I_d,max,H1 - 1 (A9.24 item 5; the point "
+                 "difference I_e,cap - I_d,max is never the acceptance criterion; no lower bound -> NOT_EVALUATED)",
+     "comparator": ">", "limit": HARD_CONSTRAINT_LIMITS["HC-05"], "units": "-", "objective": "M_n_LB",
+     "category": "derived_from_owner_decision"},
     {"id": "HC-06", "rvm": "RVM-17", "quantity": "thermal margin below validated limits", "comparator": ">=",
      "limit": HARD_CONSTRAINT_LIMITS["HC-06"], "units": "K", "objective": "thermal_margin_K", "category": "derived_project"},
     {"id": "HC-07", "rvm": "RVM-12", "rfp": "RFP-P19-01", "quantity": "cumulative firing time capability",
@@ -141,6 +144,16 @@ def evaluate_constraints(values: Mapping) -> list[dict]:
                     basis += "; orbit average non-negative but a state is below zero (the statewise result governs)"
             out.append({"id": c["id"], "rvm": c["rvm"], "rfp": c.get("rfp"), "quantity": c["quantity"],
                         "rule": c["quantity"], "status": st, "value_status": vst, "basis": basis})
+            continue
+        if c["id"] == "HC-05" and (rec is None or not rec.get("uncertainty_basis")):
+            # A9.24 item 5 (owner correction 2026-10-04): HC-05 is evaluated only on the lower uncertainty bound of
+            # M_n = I_e,cap / I_d,max,H1 - 1; without uncertainty evidence it is NOT_EVALUATED (fail closed)
+            out.append({"id": c["id"], "rvm": c["rvm"], "rfp": c.get("rfp"), "quantity": c["quantity"],
+                        "rule": f"{c['comparator']} {c['limit']:g} {c['units']}", "status": C_NOT_EVALUATED,
+                        "value_status": None if rec is None else rec.get("status"),
+                        "basis": "no lower uncertainty bound M_n,LB of M_n = I_e,cap / I_d,max,H1 - 1 with its "
+                                 "uncertainty basis (fail closed: NOT_EVALUATED; a point difference I_e,cap - "
+                                 "I_d,max never closes HC-05)"})
             continue
         if rec is not None and c["id"] == "HC-03" and rec.get("gate_verdict") is not None:
             gv = rec["gate_verdict"]

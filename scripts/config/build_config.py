@@ -576,10 +576,14 @@ def build_gate_thresholds(constraints: dict) -> dict:
                 "layer": layer, "criterion": criterion, **kw, "provenance": provenance}
 
     gates = {
-        "HC-05": thr(0.0, "A", ">", "ASSESSMENT_ONLY",
-                     "M_n,LB > 0: one-sided lower confidence bound of the ICP electron-current margin "
-                     "I_e,cap - I_d,max,H1; physics produces the currents and their uncertainties",
-                     [a924, "owner decision (I_e,cap - I_d,max,H1 > 0; former HC-05 literal I_E_MARGIN_MIN_A)"]),
+        "HC-05": thr(0.0, "-", ">", "ASSESSMENT_ONLY",
+                     "M_n,LB > 0, where M_n = I_e,cap / I_d,max,H1 - 1 and M_n,LB is its lower uncertainty bound; "
+                     "the point difference I_e,cap - I_d,max is never the acceptance criterion; without uncertainty "
+                     "evidence (a lower bound) for the inputs HC-05 is NOT_EVALUATED; physics produces the currents "
+                     "and their uncertainties",
+                     [a924, "owner correction 2026-10-04 (uncertainty-aware ratio form)",
+                      "former HC-05 literal I_E_MARGIN_MIN_A = 0.0"],
+                     evaluation_without_lower_bound="NOT_EVALUATED"),
         "HC-06": thr(50.0, "K", ">=", "ASSESSMENT_PROTECTION_POLICY",
                      "temperature margin >= 50 K below the validated hardware-bound temperature limits "
                      "(config/hardware/hardware_bounds_v1.json index); applied by assessment / protection logic, "

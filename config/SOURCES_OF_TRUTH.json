@@ -32,7 +32,7 @@
   },
   "assessment_gate_thresholds": {
    "artefact": "config/assessment/gate_thresholds_v1.json",
-   "sha256": "3898f9ecc8d2cfd45e42d219e5598798a3c79fa0a5bdebe62b2af148ab3111c0",
+   "sha256": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b",
    "role": "HC-05..HC-12 assessment thresholds (A9.24 item 5)",
    "loader": "abep_sim.configuration.load_gate_thresholds"
   },
