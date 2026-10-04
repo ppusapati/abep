@@ -275,6 +275,19 @@
    "anode thermal closure": "UNRESOLVED",
    "coupled H-1/ICP thermal closure": "UNRESOLVED",
    "C1 conventional reference": "CONTROL_FALLBACK"
+  },
+  "a9_2_statuses_label": "HISTORICAL_QUOTE (A9.2 / A9-10 table, verbatim); current statuses: current_statuses",
+  "current_statuses": {
+   "Hall->ICP architecture": "INVESTIGATION_HYPOTHESIS",
+   "ICP electron-current capacity": "PENDING_ICP45",
+   "ICP RF power closure": "PENDING_HARDWARE",
+   "RF matching architecture": "LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT",
+   "RF component ratings": "TBD_AFTER_IMPEDANCE_MAP",
+   "316L flight anode": "REJECTED_AS_CURRENT_BASELINE",
+   "final anode material": "OPEN",
+   "anode thermal closure": "UNRESOLVED",
+   "coupled H-1/ICP thermal closure": "UNRESOLVED",
+   "C1 conventional reference": "GROUND_REFERENCE_ONLY (A9.20 ground-only laboratory reference; A9.19 / A9.24 item 13: no C1 flight fallback; never in flight architecture, mass, power, Xe or thermal closure)"
   }
  },
  "what_this_is_not": [
@@ -421,7 +434,7 @@
   },
   "P4": {
    "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
-   "sha256": "6d224b5f88745600a0adc0a58ab6f0324f9cc2d43993dc0a33159fd067f75633"
+   "sha256": "f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b"
   },
   "MP2": {
    "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -437,7 +450,7 @@
   },
   "OQ5": {
    "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
-   "sha256": "ee8b5a9a0daddc25d1b007e63dae5e708babe87569ff487bfac3c09036449575"
+   "sha256": "8a29c4180f4387afb6168986442ddb1c08b1f9a692ad85cdf0630799de3cd4fd"
   },
   "PREREG": {
    "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
@@ -1175,7 +1188,7 @@
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/interface_demands/2/status",
-     "sha256": "6d224b5f88745600a0adc0a58ab6f0324f9cc2d43993dc0a33159fd067f75633"
+     "sha256": "f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b"
     }
    ],
    "basis": "row 75 / GD-02; H2-1 interface demand to H2-3 (annulus = channel h, d_mean); P4 ID-03 PENDING",
@@ -1204,7 +1217,7 @@
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/fixed_statuses/316L_FLIGHT_ANODE",
-     "sha256": "6d224b5f88745600a0adc0a58ab6f0324f9cc2d43993dc0a33159fd067f75633"
+     "sha256": "f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b"
     }
    ],
    "basis": "A9.2 sec. 3: 316L allowed only as engineering / shakedown material, coupon candidate or low-temperature development component",
@@ -1225,12 +1238,12 @@
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/fixed_statuses/FINAL_ANODE_MATERIAL",
-     "sha256": "6d224b5f88745600a0adc0a58ab6f0324f9cc2d43993dc0a33159fd067f75633"
+     "sha256": "f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b"
     },
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/final_material_status",
-     "sha256": "6d224b5f88745600a0adc0a58ab6f0324f9cc2d43993dc0a33159fd067f75633"
+     "sha256": "f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b"
     },
     {
      "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
@@ -1337,7 +1350,7 @@
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/findings",
-     "sha256": "6d224b5f88745600a0adc0a58ab6f0324f9cc2d43993dc0a33159fd067f75633"
+     "sha256": "f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b"
     },
     {
      "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
@@ -2707,12 +2720,12 @@
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/candidates",
-     "sha256": "6d224b5f88745600a0adc0a58ab6f0324f9cc2d43993dc0a33159fd067f75633"
+     "sha256": "f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b"
     },
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/candidate_screening_states",
-     "sha256": "6d224b5f88745600a0adc0a58ab6f0324f9cc2d43993dc0a33159fd067f75633"
+     "sha256": "f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b"
     }
    ],
    "basis": "P4 framework (APP-ANODE)",
@@ -4981,7 +4994,7 @@
    "source": {
     "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/243",
-    "sha256": "ee8b5a9a0daddc25d1b007e63dae5e708babe87569ff487bfac3c09036449575"
+    "sha256": "8a29c4180f4387afb6168986442ddb1c08b1f9a692ad85cdf0630799de3cd4fd"
    }
   },
   {
@@ -4991,7 +5004,7 @@
    "source": {
     "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/254",
-    "sha256": "ee8b5a9a0daddc25d1b007e63dae5e708babe87569ff487bfac3c09036449575"
+    "sha256": "8a29c4180f4387afb6168986442ddb1c08b1f9a692ad85cdf0630799de3cd4fd"
    }
   },
   {
@@ -5001,7 +5014,7 @@
    "source": {
     "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/255",
-    "sha256": "ee8b5a9a0daddc25d1b007e63dae5e708babe87569ff487bfac3c09036449575"
+    "sha256": "8a29c4180f4387afb6168986442ddb1c08b1f9a692ad85cdf0630799de3cd4fd"
    }
   },
   {
@@ -5011,7 +5024,7 @@
    "source": {
     "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/256",
-    "sha256": "ee8b5a9a0daddc25d1b007e63dae5e708babe87569ff487bfac3c09036449575"
+    "sha256": "8a29c4180f4387afb6168986442ddb1c08b1f9a692ad85cdf0630799de3cd4fd"
    }
   },
   {
@@ -5021,7 +5034,7 @@
    "source": {
     "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/257",
-    "sha256": "ee8b5a9a0daddc25d1b007e63dae5e708babe87569ff487bfac3c09036449575"
+    "sha256": "8a29c4180f4387afb6168986442ddb1c08b1f9a692ad85cdf0630799de3cd4fd"
    }
   },
   {
@@ -5031,7 +5044,7 @@
    "source": {
     "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/299",
-    "sha256": "ee8b5a9a0daddc25d1b007e63dae5e708babe87569ff487bfac3c09036449575"
+    "sha256": "8a29c4180f4387afb6168986442ddb1c08b1f9a692ad85cdf0630799de3cd4fd"
    }
   },
   {
@@ -5041,7 +5054,7 @@
    "source": {
     "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/343",
-    "sha256": "ee8b5a9a0daddc25d1b007e63dae5e708babe87569ff487bfac3c09036449575"
+    "sha256": "8a29c4180f4387afb6168986442ddb1c08b1f9a692ad85cdf0630799de3cd4fd"
    }
   },
   {
@@ -5051,7 +5064,7 @@
    "source": {
     "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/327",
-    "sha256": "ee8b5a9a0daddc25d1b007e63dae5e708babe87569ff487bfac3c09036449575"
+    "sha256": "8a29c4180f4387afb6168986442ddb1c08b1f9a692ad85cdf0630799de3cd4fd"
    }
   },
   {
@@ -5061,7 +5074,7 @@
    "source": {
     "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/328",
-    "sha256": "ee8b5a9a0daddc25d1b007e63dae5e708babe87569ff487bfac3c09036449575"
+    "sha256": "8a29c4180f4387afb6168986442ddb1c08b1f9a692ad85cdf0630799de3cd4fd"
    }
   },
   {
@@ -5071,7 +5084,7 @@
    "source": {
     "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/330",
-    "sha256": "ee8b5a9a0daddc25d1b007e63dae5e708babe87569ff487bfac3c09036449575"
+    "sha256": "8a29c4180f4387afb6168986442ddb1c08b1f9a692ad85cdf0630799de3cd4fd"
    }
   }
  ],

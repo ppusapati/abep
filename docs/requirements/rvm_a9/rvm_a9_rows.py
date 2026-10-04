@@ -360,8 +360,10 @@ def build_rows(B, ctx):
         "requirement_text": "hall_icp_neutralizer: ICP-45 capacity I_e,cap = I_e,collector,RFON - "
                             "I_e,collector,RFOFF (signed, discharge-OFF, anode disconnected and floating, Kirchhoff "
                             "admission) >= I_d,max,H1 with the pre-registered one-sided margin before any score-bearing "
-                            "point; Hall-ON is NEUTRALIZATION_CONSISTENCY only. hall_c1_reference: heated Xe-fed LaB6 C1 "
-                            "sized to the measured / derived current demand (CONTROL_FALLBACK).",
+                            "point; Hall-ON is NEUTRALIZATION_CONSISTENCY only. hall_c1_reference (GROUND_REFERENCE_ONLY, "
+                            "A9.20; never a flight or fallback flight configuration): heated Xe-fed LaB6 C1 sized to "
+                            "the measured / derived current demand for the ground H-1 reference only (owner row 88; "
+                            "the A9.2 status CONTROL_FALLBACK is history).",
         "sources": [ctx.decision("A91", "ICP-45", "I_e,cap >= I_d,max"),
                     ctx.decision("A93", "OQ-A907-02", "H1_REGISTERED_MAX"),
                     ctx.decision("A94", "P1Q-10", "OFF"), ctx.decision("A94", "P1Q-13", "FLOATING"),

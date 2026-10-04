@@ -846,7 +846,7 @@ Owner numbers used: k_loss = 2.0, reverification_V_DC = 700.0, reverification_du
 
 Existing tests updated (behaviour changed by an owner decision): test_topology_control_paths, test_stable_region_and_facility_check, test_extraction_topology_rules, test_a94_capacity_record_refusals, test_a94_not_evaluated_until_registration, test_a95_eligibility_conditions, test_a95_unmeasured_return_paths_excluded_uniformly, test_a96_sec14_invalid_pair_excluded, test_a96_p1q19_alternatives_side_by_side, test_a96_derived_resolutions_and_open_questions, test_a94_answered_questions_moved, test_stable_region_handoff_fields_match_p2_consumer, test_e2_open_circuit_only_for_floating_anode_or_registered, test_met02_loss_needs_at_power_verification, test_sw01_stable_criteria_validated, test_sw02_stable_region_failure_branches, test_sw_r2_01_synthetic_handoff_never_opens_measured_p2_map, test_met06_at_power_check_tied_to_characterization_and_registered_k
 
-Statuses: ICP45 = NOT_EVALUATED until registered; ICP_COUPLED_THERMAL UNRESOLVED; RF ratings TBD_AFTER_IMPEDANCE_MAP; anode material OPEN; C1 CONTROL_FALLBACK; no PASS anywhere
+Statuses: ICP45 = NOT_EVALUATED until registered; ICP_COUPLED_THERMAL UNRESOLVED; RF ratings TBD_AFTER_IMPEDANCE_MAP; anode material OPEN; C1 GROUND_REFERENCE_ONLY (A9.20 / A9.24 item 13; the A9.2 CONTROL_FALLBACK is history); no PASS anywhere
 
 Pinning: the P1 json / reducer / campaign are sha-pinned or read by other packages (state v4, RVM, M16 v4, RFQ v2, F6): the integration lane re-pins; nothing outside this lane's paths was edited
 

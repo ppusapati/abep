@@ -202,6 +202,11 @@ RFQ_V2_LINES = {
 _LINE_RE = r"\b(?:RF|GAS|VAC|HE|ME|TH)-[LO]\d\d\b"
 
 
+# A9.24 item 13 (owner messages 2026-10-04): current C1 status; the A9.2 CONTROL_FALLBACK is a labelled quote only
+C1_GROUND_REFERENCE_ONLY = ("GROUND_REFERENCE_ONLY (A9.20 ground-only laboratory reference; A9.19 / A9.24 item 13: "
+           "no C1 flight fallback; "
+           "never in flight architecture, mass, power, Xe or thermal closure)")
+
 def rfq_coverage_check(rfq2):
     """XL-12: the RFQ v2 lines cited per P2 instrument equal the RFQ v2 instrument_coverage lines of that id."""
     cov = {e["id"]: e for e in rfq2["instrument_coverage"]["p2_instruments"]}
@@ -1659,6 +1664,8 @@ def build():
         "status": "PREPARATION_ONLY_NOT_RUN (plasma impedance map waits for the P1 stable region; A9.3)",
         "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
         "a9_2_statuses_carried": a910,
+        "a9_2_statuses_label": "HISTORICAL_QUOTE (A9.2 / A9-10 table, verbatim); the current statuses are current_statuses (A9.24 item 13)",
+        "current_statuses": {k: (C1_GROUND_REFERENCE_ONLY if v == "CONTROL_FALLBACK" else v) for k, v in a910.items()},
         "generated_by": SCRIPT_REL, "companion_document": f"{LANE_REL}/{MD_NAME}", "test": TEST_REL,
         "what_this_is_not": ["the plasma impedance map (not run, not predicted)",
                              "a prediction of impedance, thrust, efficiency, discharge or electron current or plasma "

@@ -89,6 +89,19 @@
   "coupled H-1/ICP thermal closure": "UNRESOLVED",
   "C1 conventional reference": "CONTROL_FALLBACK"
  },
+ "a9_2_statuses_label": "HISTORICAL_QUOTE (A9.2 / A9-10 table, verbatim); the current statuses are current_statuses (A9.24 item 13)",
+ "current_statuses": {
+  "Hall->ICP architecture": "INVESTIGATION_HYPOTHESIS",
+  "ICP electron-current capacity": "PENDING_ICP45",
+  "ICP RF power closure": "PENDING_HARDWARE",
+  "RF matching architecture": "LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT",
+  "RF component ratings": "TBD_AFTER_IMPEDANCE_MAP",
+  "316L flight anode": "REJECTED_AS_CURRENT_BASELINE",
+  "final anode material": "OPEN",
+  "anode thermal closure": "UNRESOLVED",
+  "coupled H-1/ICP thermal closure": "UNRESOLVED",
+  "C1 conventional reference": "GROUND_REFERENCE_ONLY (A9.20 ground-only laboratory reference; A9.19 / A9.24 item 13: no C1 flight fallback; never in flight architecture, mass, power, Xe or thermal closure)"
+ },
  "a9_6_fixed_statuses_carried": {
   "316L_FLIGHT_ANODE": "REJECTED_AS_CURRENT_BASELINE",
   "FINAL_ANODE_MATERIAL": "OPEN",
@@ -371,11 +384,11 @@
   },
   {
    "key": "MP",
-   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "path": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
    "identity": {
-    "id": "mass_power_a9_v3"
+    "id": "mass_power_a9_v4"
    },
-   "role": "A9.16 mass + power v3 (A9.14 / A9.15 applied)",
+   "role": "mass + power v4 (v3 + A9.24 AFI-01 AL-08 re-base)",
    "why": "mutable package: read at build time, identity checked, never pinned"
   },
   {
@@ -1695,12 +1708,12 @@
     "hall_icp_neutralizer": {
      "status": "NOT_EVALUATED",
      "rule": "R7-NOT-EVALUATED",
-     "reason": "no determining evaluation with evidenced terms: mass_power_a9_v3:power.configurations.hall_icp_neutralizer.rfp_gate_1ms [BUDGET_EVALUATION], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PBUS [PLAN_OR_FRAMEWORK]",
+     "reason": "no determining evaluation with evidenced terms: mass_power_a9_v4:power.configurations.hall_icp_neutralizer.rfp_gate_1ms [BUDGET_EVALUATION], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PBUS [PLAN_OR_FRAMEWORK]",
      "current_evidence_state": "LEDGER EVALUATED, NOT_EVALUABLE - steady ledger PARTIAL_BOUNDARY, 22 TBD, P_bus lower bound 0.0 W; P_bus,1ms,max gate NOT_EVALUABLE in all 7 registered steps; slots with a CBE 0, measured 0 || PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK",
      "artifacts": [
       {
-       "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
-       "id": "mass_power_a9_v3:power.configurations.hall_icp_neutralizer.rfp_gate_1ms",
+       "path": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
+       "id": "mass_power_a9_v4:power.configurations.hall_icp_neutralizer.rfp_gate_1ms",
        "role": "DETERMINING",
        "kind": "BUDGET_EVALUATION",
        "evidence_state": "LEDGER EVALUATED, NOT_EVALUABLE - steady ledger PARTIAL_BOUNDARY, 22 TBD, P_bus lower bound 0.0 W; P_bus,1ms,max gate NOT_EVALUABLE in all 7 registered steps; slots with a CBE 0, measured 0",
@@ -1974,12 +1987,12 @@
     "hall_icp_neutralizer": {
      "status": "NOT_EVALUATED",
      "rule": "R7-NOT-EVALUATED",
-     "reason": "no determining evaluation with evidenced terms: mass_power_a9_v3:power.configurations.hall_icp_neutralizer.phases.steady.design_allocation_1350W [BUDGET_EVALUATION], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PALLOC [PLAN_OR_FRAMEWORK]",
+     "reason": "no determining evaluation with evidenced terms: mass_power_a9_v4:power.configurations.hall_icp_neutralizer.phases.steady.design_allocation_1350W [BUDGET_EVALUATION], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PALLOC [PLAN_OR_FRAMEWORK]",
      "current_evidence_state": "ALLOCATION CHECK EVALUATED, NOT_EVALUABLE - 22 TBD loads; P_ICP,available = 1350 - P_common - P_Hall - P_other,active: NOT_EVALUABLE (upper bound 1350.0 W) || PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK",
      "artifacts": [
       {
-       "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
-       "id": "mass_power_a9_v3:power.configurations.hall_icp_neutralizer.phases.steady.design_allocation_1350W",
+       "path": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
+       "id": "mass_power_a9_v4:power.configurations.hall_icp_neutralizer.phases.steady.design_allocation_1350W",
        "role": "DETERMINING",
        "kind": "BUDGET_EVALUATION",
        "evidence_state": "ALLOCATION CHECK EVALUATED, NOT_EVALUABLE - 22 TBD loads; P_ICP,available = 1350 - P_common - P_Hall - P_other,active: NOT_EVALUABLE (upper bound 1350.0 W)",
@@ -2320,15 +2333,15 @@
     "hall_icp_neutralizer": {
      "status": "INCOMPLETE_EVIDENCE",
      "rule": "R6-INCOMPLETE",
-     "reason": "evaluation run with evidenced terms but inconclusive: mass_power_a9_v3:rollups[hall_icp_neutralizer] (3 evidenced term(s))",
-     "current_evidence_state": "BUDGET EVALUATED (mass_power_a9_v3, A9.14 / A9.15 applied), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; HARD_40_WET: floor-only 13.548-13.548 kg vs < 40.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 40.75 kg; wet_known 42.75 / 45.75 / 50.75 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 3 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
+     "reason": "evaluation run with evidenced terms but inconclusive: mass_power_a9_v4:rollups[hall_icp_neutralizer] (3 evidenced term(s))",
+     "current_evidence_state": "BUDGET EVALUATED (mass_power_a9_v4, A9.14 / A9.15 applied; A9.24 AFI-01 AL-08 re-base), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; HARD_40_WET: floor-only 13.433-13.433 kg vs < 40.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 40.57 kg; wet_known 42.57 / 45.57 / 50.57 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 3 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
      "artifacts": [
       {
-       "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
-       "id": "mass_power_a9_v3:rollups[hall_icp_neutralizer]",
+       "path": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
+       "id": "mass_power_a9_v4:rollups[hall_icp_neutralizer]",
        "role": "DETERMINING",
        "kind": "BUDGET_EVALUATION",
-       "evidence_state": "BUDGET EVALUATED (mass_power_a9_v3, A9.14 / A9.15 applied), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; HARD_40_WET: floor-only 13.548-13.548 kg vs < 40.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 40.75 kg; wet_known 42.75 / 45.75 / 50.75 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 3 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
+       "evidence_state": "BUDGET EVALUATED (mass_power_a9_v4, A9.14 / A9.15 applied; A9.24 AFI-01 AL-08 re-base), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; HARD_40_WET: floor-only 13.433-13.433 kg vs < 40.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 40.57 kg; wet_known 42.57 / 45.57 / 50.57 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 3 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
        "evaluated": true,
        "verified": false,
        "measured": false,
@@ -2357,7 +2370,7 @@
            },
            {
             "line": "AL-08",
-            "floor_kg": 5.044
+            "floor_kg": 4.929
            }
           ],
           "evidence_floor_definition": "analog planning value of other hardware or a Vyovrinda preliminary design point, copied by pointer from verified deliverables; not a CBE and not a physical lower bound",
@@ -2365,41 +2378,41 @@
           "floor_only_readings": [
            {
             "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=2.0",
-            "floor_only_kg": 13.548
+            "floor_only_kg": 13.433
            },
            {
             "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=5.0",
-            "floor_only_kg": 13.548
+            "floor_only_kg": 13.433
            },
            {
             "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=10.0",
-            "floor_only_kg": 13.548
+            "floor_only_kg": 13.433
            }
           ],
           "floor_fail_check": {
            "exceeds_every_reading": false,
            "n_readings": 3,
            "n_exceeding": 0,
-           "min_floor_kg": 13.548,
-           "max_floor_kg": 13.548
+           "min_floor_kg": 13.433,
+           "max_floor_kg": 13.433
           },
           "mixed_basis_states": [
            {
             "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=2.0",
-            "dry_known_kg": 40.7464421,
-            "wet_known_kg": 42.7464421,
+            "dry_known_kg": 40.57212631,
+            "wet_known_kg": 42.57212631,
             "state": "DOES_NOT_CLOSE"
            },
            {
             "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=5.0",
-            "dry_known_kg": 40.7464421,
-            "wet_known_kg": 45.7464421,
+            "dry_known_kg": 40.57212631,
+            "wet_known_kg": 45.57212631,
             "state": "DOES_NOT_CLOSE"
            },
            {
             "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=10.0",
-            "dry_known_kg": 40.7464421,
-            "wet_known_kg": 50.7464421,
+            "dry_known_kg": 40.57212631,
+            "wet_known_kg": 50.57212631,
             "state": "DOES_NOT_CLOSE"
            }
           ],
@@ -2410,7 +2423,7 @@
           },
           "v3_owner_reading": {
            "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)",
-           "dry_known_kg": 40.7464421,
+           "dry_known_kg": 40.57212631,
            "lines_without_value": [
             "AL-09"
            ],
@@ -2646,15 +2659,15 @@
     "hall_icp_neutralizer": {
      "status": "INCOMPLETE_EVIDENCE",
      "rule": "R6-INCOMPLETE",
-     "reason": "evaluation run with evidenced terms but inconclusive: mass_power_a9_v3:rollups[hall_icp_neutralizer] (3 evidenced term(s))",
-     "current_evidence_state": "BUDGET EVALUATED (mass_power_a9_v3, A9.14 / A9.15 applied), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; INTERNAL_34: floor-only 13.548-13.548 kg vs <= 34.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 40.75 kg; wet_known 42.75 / 45.75 / 50.75 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; INTERNAL_36: floor-only 13.548-13.548 kg vs <= 36.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 40.75 kg; wet_known 42.75 / 45.75 / 50.75 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 6 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
+     "reason": "evaluation run with evidenced terms but inconclusive: mass_power_a9_v4:rollups[hall_icp_neutralizer] (3 evidenced term(s))",
+     "current_evidence_state": "BUDGET EVALUATED (mass_power_a9_v4, A9.14 / A9.15 applied; A9.24 AFI-01 AL-08 re-base), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; INTERNAL_34: floor-only 13.433-13.433 kg vs <= 34.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 40.57 kg; wet_known 42.57 / 45.57 / 50.57 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; INTERNAL_36: floor-only 13.433-13.433 kg vs <= 36.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 40.57 kg; wet_known 42.57 / 45.57 / 50.57 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 6 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
      "artifacts": [
       {
-       "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
-       "id": "mass_power_a9_v3:rollups[hall_icp_neutralizer]",
+       "path": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
+       "id": "mass_power_a9_v4:rollups[hall_icp_neutralizer]",
        "role": "DETERMINING",
        "kind": "BUDGET_EVALUATION",
-       "evidence_state": "BUDGET EVALUATED (mass_power_a9_v3, A9.14 / A9.15 applied), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; INTERNAL_34: floor-only 13.548-13.548 kg vs <= 34.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 40.75 kg; wet_known 42.75 / 45.75 / 50.75 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; INTERNAL_36: floor-only 13.548-13.548 kg vs <= 36.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 40.75 kg; wet_known 42.75 / 45.75 / 50.75 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 6 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
+       "evidence_state": "BUDGET EVALUATED (mass_power_a9_v4, A9.14 / A9.15 applied; A9.24 AFI-01 AL-08 re-base), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; INTERNAL_34: floor-only 13.433-13.433 kg vs <= 34.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 40.57 kg; wet_known 42.57 / 45.57 / 50.57 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; INTERNAL_36: floor-only 13.433-13.433 kg vs <= 36.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 40.57 kg; wet_known 42.57 / 45.57 / 50.57 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 6 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
        "evaluated": true,
        "verified": false,
        "measured": false,
@@ -2683,7 +2696,7 @@
            },
            {
             "line": "AL-08",
-            "floor_kg": 5.044
+            "floor_kg": 4.929
            }
           ],
           "evidence_floor_definition": "analog planning value of other hardware or a Vyovrinda preliminary design point, copied by pointer from verified deliverables; not a CBE and not a physical lower bound",
@@ -2691,41 +2704,41 @@
           "floor_only_readings": [
            {
             "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=2.0",
-            "floor_only_kg": 13.548
+            "floor_only_kg": 13.433
            },
            {
             "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=5.0",
-            "floor_only_kg": 13.548
+            "floor_only_kg": 13.433
            },
            {
             "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=10.0",
-            "floor_only_kg": 13.548
+            "floor_only_kg": 13.433
            }
           ],
           "floor_fail_check": {
            "exceeds_every_reading": false,
            "n_readings": 3,
            "n_exceeding": 0,
-           "min_floor_kg": 13.548,
-           "max_floor_kg": 13.548
+           "min_floor_kg": 13.433,
+           "max_floor_kg": 13.433
           },
           "mixed_basis_states": [
            {
             "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=2.0",
-            "dry_known_kg": 40.7464421,
-            "wet_known_kg": 42.7464421,
+            "dry_known_kg": 40.57212631,
+            "wet_known_kg": 42.57212631,
             "state": "DOES_NOT_CLOSE"
            },
            {
             "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=5.0",
-            "dry_known_kg": 40.7464421,
-            "wet_known_kg": 45.7464421,
+            "dry_known_kg": 40.57212631,
+            "wet_known_kg": 45.57212631,
             "state": "DOES_NOT_CLOSE"
            },
            {
             "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=10.0",
-            "dry_known_kg": 40.7464421,
-            "wet_known_kg": 50.7464421,
+            "dry_known_kg": 40.57212631,
+            "wet_known_kg": 50.57212631,
             "state": "DOES_NOT_CLOSE"
            }
           ],
@@ -2736,7 +2749,7 @@
           },
           "v3_owner_reading": {
            "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)",
-           "dry_known_kg": 40.7464421,
+           "dry_known_kg": 40.57212631,
            "lines_without_value": [
             "AL-09"
            ],
@@ -2759,7 +2772,7 @@
            },
            {
             "line": "AL-08",
-            "floor_kg": 5.044
+            "floor_kg": 4.929
            }
           ],
           "evidence_floor_definition": "analog planning value of other hardware or a Vyovrinda preliminary design point, copied by pointer from verified deliverables; not a CBE and not a physical lower bound",
@@ -2767,41 +2780,41 @@
           "floor_only_readings": [
            {
             "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=2.0",
-            "floor_only_kg": 13.548
+            "floor_only_kg": 13.433
            },
            {
             "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=5.0",
-            "floor_only_kg": 13.548
+            "floor_only_kg": 13.433
            },
            {
             "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=10.0",
-            "floor_only_kg": 13.548
+            "floor_only_kg": 13.433
            }
           ],
           "floor_fail_check": {
            "exceeds_every_reading": false,
            "n_readings": 3,
            "n_exceeding": 0,
-           "min_floor_kg": 13.548,
-           "max_floor_kg": 13.548
+           "min_floor_kg": 13.433,
+           "max_floor_kg": 13.433
           },
           "mixed_basis_states": [
            {
             "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=2.0",
-            "dry_known_kg": 40.7464421,
-            "wet_known_kg": 42.7464421,
+            "dry_known_kg": 40.57212631,
+            "wet_known_kg": 42.57212631,
             "state": "DOES_NOT_CLOSE"
            },
            {
             "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=5.0",
-            "dry_known_kg": 40.7464421,
-            "wet_known_kg": 45.7464421,
+            "dry_known_kg": 40.57212631,
+            "wet_known_kg": 45.57212631,
             "state": "DOES_NOT_CLOSE"
            },
            {
             "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=10.0",
-            "dry_known_kg": 40.7464421,
-            "wet_known_kg": 50.7464421,
+            "dry_known_kg": 40.57212631,
+            "wet_known_kg": 50.57212631,
             "state": "DOES_NOT_CLOSE"
            }
           ],
@@ -2812,7 +2825,7 @@
           },
           "v3_owner_reading": {
            "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)",
-           "dry_known_kg": 40.7464421,
+           "dry_known_kg": 40.57212631,
            "lines_without_value": [
             "AL-09"
            ],
@@ -5084,8 +5097,8 @@
        }
       },
       {
-       "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
-       "id": "mass_power_a9_v3:power.configurations.hall_icp_neutralizer.phases.startup",
+       "path": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
+       "id": "mass_power_a9_v4:power.configurations.hall_icp_neutralizer.phases.startup",
        "role": "SUPPORTING",
        "kind": "BUDGET_EVALUATION",
        "evidence_state": "SEQUENCE RULES RULES_NOT_EVALUABLE (5 rules not evaluable; template bus_boundary_a9_v2.SEQUENCE_TEMPLATES (PROPOSED, row 112))",
@@ -5257,7 +5270,7 @@
    "key": "NEUTRALIZATION",
    "category": "derived_from_owner_decision",
    "title": "Beam neutralization / electron-current capacity (ICP-45 or C1)",
-   "requirement_text": "hall_icp_neutralizer: ICP-45 capacity I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF (signed, discharge-OFF, anode disconnected and floating, Kirchhoff admission) >= I_d,max,H1 with the pre-registered one-sided margin before any score-bearing point; Hall-ON is NEUTRALIZATION_CONSISTENCY only. hall_c1_reference: heated Xe-fed LaB6 C1 sized to the measured / derived current demand (CONTROL_FALLBACK).",
+   "requirement_text": "hall_icp_neutralizer: ICP-45 capacity I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF (signed, discharge-OFF, anode disconnected and floating, Kirchhoff admission) >= I_d,max,H1 with the pre-registered one-sided margin before any score-bearing point; Hall-ON is NEUTRALIZATION_CONSISTENCY only. hall_c1_reference (GROUND_REFERENCE_ONLY, A9.20; never a flight or fallback flight configuration): heated Xe-fed LaB6 C1 sized to the measured / derived current demand for the ground H-1 reference only (owner row 88; the A9.2 status CONTROL_FALLBACK is history).",
    "sources": [
     {
      "kind": "owner_decision",
@@ -6166,6 +6179,18 @@
      "requirement_text": "AO-exposed and O / O2-wetted materials qualified in a dedicated AO programme (AO-beam test recorded as 'RFP 4.1a', verify); 316L REJECTED_AS_CURRENT_BASELINE for the flight anode; final anode / collector material OPEN until coupon evidence; no graphite flight keeper for O / AO exposure; no silver in O / AO-wetted gas-path parts."
     },
     "requirement_frozen_note": "true: AG-15 closed by the owner, RFP-derived requirements snapshot FROZEN (A9.22 G3_REQUIREMENTS_SNAPSHOT (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json sha256 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49; verbatim docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md sha256 749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77)); this freezes the requirement basis only, never compliance (the row's evidence / status values are unchanged); interpretation readings stay listed in rfp_rebase.discrepancies"
+   },
+   "a9_24_current_architecture_reading": {
+    "applied_by": "A9.24 item 13 / AFI-05 (owner messages 2026-10-04, relayed by the orchestrating session; not recorded verbatim in the repository)",
+    "title": "Atomic-oxygen / material compatibility (AO-beam test; anode, RF/ICP electron-source / neutralizer, collector, plasma-facing and gas-path materials)",
+    "requirement_text": "All parts in intake, compressor and thruster take care of nascent atomic-oxygen erosion for the lifetime (RFP-P19-04); materials compatible with VLEO nascent oxygen (RFP-P17-02); coating and surface tests with atomic-oxygen beam exposure and erosion-yield measurement (RFP-P19-06 a); space-qualified materials and processes for the QM (RFP-P19-02). Owner rules carried: 316L REJECTED_AS_CURRENT_BASELINE for the flight anode; final anode / collector material OPEN until coupon evidence; no graphite as the flight baseline for O / AO-exposed plasma-facing / electron-source parts (current-architecture reading of owner row 94, RECORDER_INTERPRETATION_OWNER_MAY_REVERSE); no silver in O / AO-wetted gas-path parts.",
+    "keeper_reading": {
+     "owner_row_94_verbatim": "Do not use graphite as the flight baseline for an O/AO-exposed keeper. Screen refractory/oxygen-resistant or ceramic-shielded alternatives with biased exposure coupons; freeze material only after erosion/oxidation evidence.",
+     "architecture_fact": "no flight keeper exists in hall_icp_neutralizer (A9.19: one Hall + one RF/ICP electron-source / neutralizer, no conventional hollow cathode; A9.20: C1 ground-only)",
+     "reading": "the owner's graphite exclusion (stated for an O/AO-exposed keeper) is applied to O / AO-exposed plasma-facing / electron-source parts of the current architecture",
+     "status": "RECORDER_INTERPRETATION_OWNER_MAY_REVERSE"
+    },
+    "frozen_basis": "title / requirement_text of this row are the A9.22 G3 frozen requirements basis (sha256 1d4a7f0099e937f0c74a8c1be8fc14408b75f211c7990be4672f4eee5f9b66b5) and stay verbatim; re-wording them would change the frozen basis hash and needs a recorded owner decision (stop item AFI-05-S1)"
    }
   },
   {
@@ -6304,14 +6329,14 @@
      "status": "NOT_EVALUATED",
      "rule": "R7-NOT-EVALUATED",
      "reason": "no determining evaluation with evidenced terms: p3_coupled_thermal_v2:fail_closed_evaluations [FRAMEWORK_EVALUATION]",
-     "current_evidence_state": "FRAMEWORK RUN, FAIL-CLOSED - ICP_COUPLED_THERMAL UNRESOLVED and ANODE_THERMAL_CLOSURE UNRESOLVED; heat terms Q_Hall->ICP INCOMPLETE_EVIDENCE, Q_collector INCOMPLETE_EVIDENCE, Q_RF/match INCOMPLETE_EVIDENCE, Q_plume INCOMPLETE_EVIDENCE, coupled_network INCOMPLETE_EVIDENCE; 0 heat term(s) / network evaluated on evidenced inputs (every one refused as INCOMPLETE_EVIDENCE when 0); 6 analog / model-derived framework input(s) exist but are not evaluated terms; never a thermal PASS (A9.2, A9.6)",
+     "current_evidence_state": "FRAMEWORK RUN, FAIL-CLOSED - ICP_COUPLED_THERMAL UNRESOLVED and ANODE_THERMAL_CLOSURE UNRESOLVED; heat terms Q_Hall->ICP INCOMPLETE_EVIDENCE, Q_collector INCOMPLETE_EVIDENCE, Q_RF/match INCOMPLETE_EVIDENCE, Q_plume INCOMPLETE_EVIDENCE, coupled_network INCOMPLETE_EVIDENCE; the inherited H2-5 C-1 cathode-body node CB / Q_cath 9-101 W is a ground-article C1 term, NOT_USABLE_FOR_FLIGHT_THERMAL_CLOSURE (A9.24 AFI-03); 0 heat term(s) / network evaluated on evidenced inputs (every one refused as INCOMPLETE_EVIDENCE when 0); 6 analog / model-derived framework input(s) exist but are not evaluated terms; never a thermal PASS (A9.2, A9.6)",
      "artifacts": [
       {
        "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
        "id": "p3_coupled_thermal_v2:fail_closed_evaluations",
        "role": "DETERMINING",
        "kind": "FRAMEWORK_EVALUATION",
-       "evidence_state": "FRAMEWORK RUN, FAIL-CLOSED - ICP_COUPLED_THERMAL UNRESOLVED and ANODE_THERMAL_CLOSURE UNRESOLVED; heat terms Q_Hall->ICP INCOMPLETE_EVIDENCE, Q_collector INCOMPLETE_EVIDENCE, Q_RF/match INCOMPLETE_EVIDENCE, Q_plume INCOMPLETE_EVIDENCE, coupled_network INCOMPLETE_EVIDENCE; 0 heat term(s) / network evaluated on evidenced inputs (every one refused as INCOMPLETE_EVIDENCE when 0); 6 analog / model-derived framework input(s) exist but are not evaluated terms; never a thermal PASS (A9.2, A9.6)",
+       "evidence_state": "FRAMEWORK RUN, FAIL-CLOSED - ICP_COUPLED_THERMAL UNRESOLVED and ANODE_THERMAL_CLOSURE UNRESOLVED; heat terms Q_Hall->ICP INCOMPLETE_EVIDENCE, Q_collector INCOMPLETE_EVIDENCE, Q_RF/match INCOMPLETE_EVIDENCE, Q_plume INCOMPLETE_EVIDENCE, coupled_network INCOMPLETE_EVIDENCE; the inherited H2-5 C-1 cathode-body node CB / Q_cath 9-101 W is a ground-article C1 term, NOT_USABLE_FOR_FLIGHT_THERMAL_CLOSURE (A9.24 AFI-03); 0 heat term(s) / network evaluated on evidenced inputs (every one refused as INCOMPLETE_EVIDENCE when 0); 6 analog / model-derived framework input(s) exist but are not evaluated terms; never a thermal PASS (A9.2, A9.6)",
        "evaluated": true,
        "verified": false,
        "measured": false,
@@ -9116,7 +9141,7 @@
    "verification_methods": [
     "inspection"
    ],
-   "verification_note": "inspection of the flight mass / power and Xe accounting v3 (mass_power_a9_v3 / xe_accounting_a9_v3) refreshed for A9.19 / A9.20 by the budgets lane (the immutable v2 budgets still book hall_c1_reference and are history only, never evidence here) and of the RFQ v3 classification RFQ3-HALLEL-N03 (procurement, never evidence)",
+   "verification_note": "inspection of the flight mass / power v4 and Xe accounting v3 (mass_power_a9_v4, the A9.24 AFI-01 successor of mass_power_a9_v3 / xe_accounting_a9_v3) refreshed for A9.19 / A9.20 by the budgets lane (the immutable v2 budgets still book hall_c1_reference and are history only, never evidence here) and of the RFQ v3 classification RFQ3-HALLEL-N03 (procurement, never evidence)",
    "open_readings": [],
    "rtm_xref": [],
    "lane24_gates": [],
@@ -9129,15 +9154,15 @@
     "hall_icp_neutralizer": {
      "status": "NOT_EVALUATED",
      "rule": "R7-NOT-EVALUATED",
-     "reason": "no determining evaluation with evidenced terms: mass_power_a9_v3 [PLAN_OR_FRAMEWORK], xe_accounting_a9_v3 [PLAN_OR_FRAMEWORK]",
-     "current_evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_DECISIONS_APPLIED_PENDING_INTEGRATION_VERIFICATION || PLANNED / FRAMEWORK ONLY - nothing measured; package status PARAMETRIC_XE_ACCOUNTING_V3 - owner decisions applied; every total with a TBD input REFUSED; nothing frozen; no winner; no PASS",
+     "reason": "no determining evaluation with evidenced terms: mass_power_a9_v4 [PLAN_OR_FRAMEWORK], xe_accounting_a9_v3 [PLAN_OR_FRAMEWORK]",
+     "current_evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_AFI_CORRECTIONS_APPLIED_PENDING_INTEGRATION_VERIFICATION || PLANNED / FRAMEWORK ONLY - nothing measured; package status PARAMETRIC_XE_ACCOUNTING_V3 - owner decisions applied; every total with a TBD input REFUSED; nothing frozen; no winner; no PASS",
      "artifacts": [
       {
-       "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
-       "id": "mass_power_a9_v3",
+       "path": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
+       "id": "mass_power_a9_v4",
        "role": "DETERMINING",
        "kind": "PLAN_OR_FRAMEWORK",
-       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_DECISIONS_APPLIED_PENDING_INTEGRATION_VERIFICATION",
+       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_AFI_CORRECTIONS_APPLIED_PENDING_INTEGRATION_VERIFICATION",
        "evaluated": false,
        "verified": false,
        "measured": false,
@@ -9150,8 +9175,8 @@
        "lower_bound_verified": false,
        "exceeds_limit_every_reading": null,
        "detail": {
-        "name": "A9 mass + power integration v3: one MEV reading, 20 % system margin, rebased AL-04 / AL-07 / AL-08, controls / harness split, decided mappings, LOADED Xe, evidence-based dry / wet vs 40 kg; A9.19 / A9.20: single flight configuration hall_icp_neutralizer, Xe contingency / emergency, C1 ground-only",
-        "why": "flight mass / power v3, to be refreshed for A9.19 / A9.20 without C1 (budgets lane); the immutable v2 still books hall_c1_reference as history and is not evidence here"
+        "name": "A9 mass + power integration v4: v3 with the AL-08 cathode-feed PFCV removed (AFI-01), the AL-07 analog-floor label (AFI-02) and C1 = GROUND_REFERENCE_ONLY; roll-ups recomputed exactly as v3",
+        "why": "flight mass / power v4 (successor of v3), to be refreshed for A9.19 / A9.20 without C1 (budgets lane); the immutable v2 still books hall_c1_reference as history and is not evidence here"
        }
       },
       {
@@ -10009,9 +10034,9 @@
  "interface_demands": [
   {
    "id": "RVM-ID-01",
-   "direction": "RVM <- mass/power v3",
-   "counterpart": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json (rollups, lines, power)",
-   "content": "mass rows: < 40 kg wet and 34 / 36 kg from the v3 single-owner-reading roll-ups (no CBE); power rows: < 1.5 kW and 1.35 kW from the A9 ledger (all loads TBD); consumed as RVM-04 / -05 / -06 / -07 (v2, MPV2-ID-11, is immutable history)",
+   "direction": "RVM <- mass/power v4",
+   "counterpart": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json (rollups, lines, power)",
+   "content": "mass rows: < 40 kg wet and 34 / 36 kg from the v4 single-owner-reading roll-ups (no CBE); power rows: < 1.5 kW and 1.35 kW from the A9 ledger (all loads TBD); consumed as RVM-04 / -05 / -06 / -07 (v2, MPV2-ID-11, is immutable history)",
    "status": "CONSUMED"
   },
   {
@@ -10259,7 +10284,7 @@
    ],
    "answer_sha256": "d932abe4b14343c0cb6f8a6a9057d67c66a5484d1226abd97a0cccd636b973da",
    "owner_answer_verbatim": "CONFIRM C1 only as the conventional reference/fallback: heated Xe-fed LaB6 hollow cathode sized to the measured/derived current demand. It is not the primary flight neutralizer if the downstream ICP succeeds.",
-   "how_applied": "RVM-15 C1 sized to the measured / derived current demand (CONTROL_FALLBACK)"
+   "how_applied": "RVM-15 C1 sized to the measured / derived current demand, ground reference only (GROUND_REFERENCE_ONLY, A9.20; the A9.2 CONTROL_FALLBACK is history)"
   },
   {
    "row": 93,
@@ -10277,7 +10302,7 @@
    ],
    "answer_sha256": "964e5c0b663476e25b6659c2eb8c9e6f85500e2afd5a77bbf8ace4e6c579585e",
    "owner_answer_verbatim": "Do not use graphite as the flight baseline for an O/AO-exposed keeper. Screen refractory/oxygen-resistant or ceramic-shielded alternatives with biased exposure coupons; freeze material only after erosion/oxidation evidence.",
-   "how_applied": "RVM-16 no graphite flight keeper for O / AO exposure"
+   "how_applied": "RVM-16 no graphite as the flight baseline for O / AO-exposed plasma-facing / electron-source parts (the owner text names a keeper; no flight keeper exists in hall_icp_neutralizer, A9.19; RECORDER_INTERPRETATION_OWNER_MAY_REVERSE)"
   },
   {
    "row": 102,
@@ -12252,5 +12277,12 @@
     "tests/test_icp_gate_a9_21.py"
    ]
   }
- ]
+ ],
+ "a9_24_afi05": {
+  "rows": [
+   "RVM-16"
+  ],
+  "stop_item": "AFI-05-S1",
+  "note": "current-architecture reading only; no requirement, status or basis field changed"
+ }
 }

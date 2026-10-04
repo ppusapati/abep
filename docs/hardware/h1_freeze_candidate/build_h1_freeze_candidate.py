@@ -1047,6 +1047,13 @@ def build_document() -> dict:
             "p1_p2": "no data",
             "a9": A19.A9_STANDING,
             "a9_2_statuses": get("A92", "/decisions/a9_10_statuses"),
+            # A9.24 item 13 (owner messages 2026-10-04): a9_2_statuses is only the labelled A9.2 historical quote
+            "a9_2_statuses_label": "HISTORICAL_QUOTE (A9.2 / A9-10 table, verbatim); current statuses: "
+                                   "current_statuses",
+            "current_statuses": {k: ("GROUND_REFERENCE_ONLY (A9.20 ground-only laboratory reference; A9.19 / A9.24 item 13: no C1 flight "
+                                  "fallback; never in flight architecture, mass, power, Xe or thermal closure)"
+                                     if v == "CONTROL_FALLBACK" else v)
+                                 for k, v in get("A92", "/decisions/a9_10_statuses").items()},
         },
         "what_this_is_not": [
             "not a Hall performance prediction: no thrust, T - D, discharge current, efficiency or plasma state",

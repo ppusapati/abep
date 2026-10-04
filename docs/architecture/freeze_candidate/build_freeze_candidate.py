@@ -107,7 +107,8 @@ CONSUMED = {
     # A9 / A9.x deliverables
     "OQ4": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
     "OQ5": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
-    "MP3": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+    # A9.24 AFI-01: the current mass / power package is the v4 successor of v3 (AL-08 cathode-feed re-base)
+    "MP4": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
     "RVM": "docs/requirements/rvm_a9/rvm_a9_v1.json",
     "RFP": AG15.REGISTRATION_PATH,      # official RFP registration (by hash; PDF controlled externally, A9.17 RFP)
     "MP2": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -1423,7 +1424,8 @@ def build_gates(us: dict) -> list:
     G("AG-05", "coupled H-1 / ICP thermal closure",
       get("A92", "/decisions/a9_10_statuses/coupled H-1~1ICP thermal closure"), False,
       "P3 framework inputs TBD: ICP geometry P3-G-01..08, emittances, conductances, Q_RF/match and Q_collector from "
-      "P1 / P2, Q_plume from Phase-1; no thermal PASS from a negligible-coupling calculation (A9.2)",
+      "P1 / P2, Q_plume from Phase-1; no thermal PASS from a negligible-coupling calculation (A9.2); "
+      + P3_C1_NODE_LABEL,
       [ref("P3", "/closure_statuses"), ref("A92", "/decisions/icp_coupled_thermal"),
        ref("F78", "/unlock_evidence/Q_reject")], ["EP-03", "EP-04", "EP-05", "EP-06"])
     G("AG-06", "anode thermal closure", get("A92", "/decisions/a9_10_statuses/anode thermal closure"), False,
@@ -1788,7 +1790,21 @@ def a92_statuses() -> dict:
             "superseded_as_flight_status": {
                 k: "historical A9.2 status; superseded by A9.19 / A9.20: C1 is " + A19.A.GROUND_ONLY_LAB_EQUIPMENT
                    + " (ground reference only), not a flight control / fallback configuration"
-                for k, v in js.items() if v == "CONTROL_FALLBACK"}}
+                for k, v in js.items() if v == "CONTROL_FALLBACK"},
+            # A9.24 item 13 (owner messages 2026-10-04): the CURRENT statuses; 'statuses' above is only the labelled
+            # A9.2 historical quote (C1 never a flight fallback; never in flight mass / power / Xe / thermal closure)
+            "statuses_label": "HISTORICAL_QUOTE (A9.2 / A9-10 table, verbatim); the current statuses are "
+                              "current_statuses",
+            "current_statuses": {k: (C1_GROUND_REFERENCE_ONLY if v == "CONTROL_FALLBACK" else v)
+                                 for k, v in js.items()}}
+
+
+# A9.24 AFI-03 (label only; P3 v2 evidence unchanged): the P3 v2 coupled network inherits the pinned H2-5 C-1 node
+P3_C1_NODE_LABEL = ("P3 v2 inherits the H2-5 C-1 cathode-body node CB and Q_cath 9-101 W (H25-10): a ground-article "
+                    "C1 term, NOT_USABLE_FOR_FLIGHT_THERMAL_CLOSURE (A9.24 AFI-03; hall_icp_neutralizer has no "
+                    "cathode; the flight coupled case must zero Q_cath and drop CB)")
+C1_GROUND_REFERENCE_ONLY = ("GROUND_REFERENCE_ONLY (A9.20 ground-only laboratory reference; A9.19 / A9.24 item 13: no "
+                            "C1 flight fallback; never in flight architecture, mass, power, Xe or thermal closure)")
 
 
 def interface_demands() -> list:
@@ -2027,9 +2043,11 @@ def render_md(doc: dict) -> str:
          f"({doc['configuration']['ground_reference']['c1_status']}; A9.20). {doc['deliverable_status']}.", "",
          "## What this is not", ""]
     L += [f"- {x}" for x in doc["what_this_is_not"]]
-    L += ["", "## A9.2 statuses (verbatim)", "", "| item | status |", "|---|---|"]
+    L += ["", "## Current statuses (A9.2 values as a labelled historical quote)", "",
+          "| item | current status | A9.2 historical quote |", "|---|---|---|"]
     sup = doc["a9_2_statuses"]["superseded_as_flight_status"]
-    L += [f"| {k} | {v}" + (f" ({sup[k]})" if k in sup else "") + " |"
+    cur = doc["a9_2_statuses"]["current_statuses"]
+    L += [f"| {k} | {cur[k]} | {v}" + (f" ({sup[k]})" if k in sup else "") + " |"
           for k, v in doc["a9_2_statuses"]["statuses"].items()]
     L += ["", "## Architecture-level gates", "",
           "| id | gate | current status | sufficient | evidence steps |", "|---|---|---|---|---|"]

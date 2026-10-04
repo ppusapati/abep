@@ -500,5 +500,6 @@ def incorporation(red, fw, rules, selfcheck):
                         "state v4, RVM, M16 v4, F6, freeze candidate): the integration lane re-pins / rebuilds; nothing "
                         "outside this lane's paths was edited; cross-lane pair texts (XL-nn) unchanged",
         "statuses_unchanged": "RF_COMPONENT_RATINGS TBD_AFTER_IMPEDANCE_MAP; ICP_COUPLED_THERMAL UNRESOLVED; anode OPEN; "
-                              "ICP45 NOT_EVALUATED; C1 CONTROL_FALLBACK; no PASS anywhere",
+                              "ICP45 NOT_EVALUATED; C1 GROUND_REFERENCE_ONLY (A9.20 / A9.24 item 13; the A9.2 "
+                              "CONTROL_FALLBACK is history); no PASS anywhere",
     }

@@ -241,6 +241,11 @@ XL_PAIRS = {  # pair: (counterpart package, counterpart id, quantity, units, sta
 }
 
 
+# A9.24 item 13 (owner messages 2026-10-04): current C1 status; the A9.2 CONTROL_FALLBACK is a labelled quote only
+C1_GROUND_REFERENCE_ONLY = ("GROUND_REFERENCE_ONLY (A9.20 ground-only laboratory reference; A9.19 / A9.24 item 13: "
+           "no C1 flight fallback; "
+           "never in flight architecture, mass, power, Xe or thermal closure)")
+
 def xref(pair):
     """The shared description of one cross-lane interface pair (identical on both sides)."""
     pkg, cid, quantity, units, status = XL_PAIRS[pair]
@@ -2514,6 +2519,8 @@ def build_doc():
         "m16_impact": m16_impact(),
         "h3_h4_inputs": h3_h4(),
         "a9_2_statuses_carried_unchanged": a9_2_statuses(),
+        "a9_2_statuses_label": "HISTORICAL_QUOTE (A9.2 / A9-10 table, verbatim); the current statuses are current_statuses (A9.24 item 13)",
+        "current_statuses": {k: (C1_GROUND_REFERENCE_ONLY if v == "CONTROL_FALLBACK" else v) for k, v in a9_2_statuses().items()},
         "compliance": ["no performance prediction; no invented thresholds (TBD / PROPOSED / owner-given only; the "
                        "closure factor 3 and the 2 % are A9.5 owner values)",
                        "no Julia; no archengine wiring; no change outside " + REL + "/ and tests/test_p1_icp_bench.py",

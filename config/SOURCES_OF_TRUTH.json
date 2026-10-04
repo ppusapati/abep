@@ -38,7 +38,7 @@
   },
   "hardware_bounds_index": {
    "artefact": "config/hardware/hardware_bounds_v1.json",
-   "sha256": "e061c624f70a5b2dbeb6be0f57a4518bf9046ca060f70e4a05ac5af172c2841d",
+   "sha256": "952f70a5e850f94bb9d3de52eba492eaa62821b8e85102c51d4895a8887e64b6",
    "role": "index of hardware-limit sources (no copied values)"
   }
  },

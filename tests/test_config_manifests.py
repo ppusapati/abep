@@ -277,7 +277,11 @@ def test_snapshot_provenance_points_to_rvm_rows_and_registration():
     snap = cfg.load_requirements_snapshot()
     rvm = json.loads((ROOT / snap["rvm"]["path"]).read_text(encoding="utf-8"))
     reg_path = ROOT / snap["registration"]["path"]
-    assert snap["rvm"]["sha256"] == _sha(ROOT / snap["rvm"]["path"])
+    # A9.24: the snapshot keeps the RVM sha256 it was generated from (provenance); the frozen content is guarded by
+    # the A9.22 G3 requirements-basis hash of the live RVM
+    bc = _builder()
+    assert snap["rvm"]["sha256"] == bc.SNAPSHOT_RVM_SHA256
+    assert bc.rvm_requirements_basis_sha256(rvm) == bc.ACCEPTED_RVM_BASIS_SHA256
     assert snap["registration"]["sha256"] == _sha(reg_path)
     reg = json.loads(reg_path.read_text(encoding="utf-8"))
     clause_ids = {c["id"] for c in reg["clauses"]}

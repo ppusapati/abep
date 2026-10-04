@@ -248,15 +248,15 @@ def build_rows(B, ctx) -> list:
         "limit": {"quantity": "C1 mass / power / Xe booked in flight budgets", "comparator": "==", "value": 0,
                   "units": "kg / W / kg"},
         "verification_methods": ["inspection"],
-        "verification_note": "inspection of the flight mass / power and Xe accounting v3 (mass_power_a9_v3 / "
-                             "xe_accounting_a9_v3) refreshed for A9.19 / A9.20 by the budgets lane (the immutable v2 "
+        "verification_note": "inspection of the flight mass / power v4 and Xe accounting v3 (mass_power_a9_v4, "
+                             "the A9.24 AFI-01 successor of mass_power_a9_v3 / xe_accounting_a9_v3) refreshed for A9.19 / A9.20 by the budgets lane (the immutable v2 "
                              "budgets still book hall_c1_reference and are history only, never evidence here) "
                              "and of the RFQ v3 classification RFQ3-HALLEL-N03 (procurement, never evidence)",
         "open_readings": [], "rtm_xref": [], "lane24_gates": [], "m16_rows": [],
         "configuration_applicability": {"hall_icp_neutralizer": "FLIGHT budgets must exclude C1 (A9.20)",
                                         "hall_c1_reference": CELL_APPLICABILITY_C1},
         "artifacts": cells(
-            lambda: [plan(ctx, "MP", "@doc", why="flight mass / power v3, to be refreshed for A9.19 / A9.20 without C1 "
+            lambda: [plan(ctx, "MP", "@doc", why="flight mass / power v4 (successor of v3), to be refreshed for A9.19 / A9.20 without C1 "
                                                   "(budgets lane); the immutable v2 still books hall_c1_reference as "
                                                   "history and is not evidence here"),
                      plan(ctx, "XE", "@doc", why="flight Xe accounting v3, to be refreshed for A9.19 / A9.20 without C1 "

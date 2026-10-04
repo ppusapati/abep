@@ -21,6 +21,8 @@
 * **p1_p2**: no data
 * **a9**: OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE; A9.19 flight: one Hall + one RF/ICP neutralizer for AIR_PRIMARY and XE_CONTINGENCY, no conventional hollow cathode; A9.20: C1 GROUND_ONLY_LAB_EQUIPMENT (was CONTROL_FALLBACK)
 * **a9_2_statuses**: {"Hall->ICP architecture": "INVESTIGATION_HYPOTHESIS", "ICP electron-current capacity": "PENDING_ICP45", "ICP RF power closure": "PENDING_HARDWARE", "RF matching architecture": "LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT", "RF component ratings": "TBD_AFTER_IMPEDANCE_MAP", "316L flight anode": "REJECTED_AS_CURRENT_BASELINE", "final anode material": "OPEN", "anode thermal closure": "UNRESOLVED", "coup...
+* **a9_2_statuses_label**: HISTORICAL_QUOTE (A9.2 / A9-10 table, verbatim); current statuses: current_statuses
+* **current_statuses**: {"Hall->ICP architecture": "INVESTIGATION_HYPOTHESIS", "ICP electron-current capacity": "PENDING_ICP45", "ICP RF power closure": "PENDING_HARDWARE", "RF matching architecture": "LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT", "RF component ratings": "TBD_AFTER_IMPEDANCE_MAP", "316L flight anode": "REJECTED_AS_CURRENT_BASELINE", "final anode material": "OPEN", "anode thermal closure": "UNRESOLVED", "coup...
 
 ## What this is not
 
@@ -492,11 +494,11 @@ Consumed verified deliverables (sha256 at build time; `--check` reports drift):
 * `schemas/interfaces/icp_neutralizer_icd_v1.json` `8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c`
 * `docs/experiments/hardware/hardware_requirements_v1.json` `0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0`
 * `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json` `1db2b13e82389fc824acc24f6b6b9aafb11b950b9c5546347cc8037b2bdb132a`
-* `docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json` `6d224b5f88745600a0adc0a58ab6f0324f9cc2d43993dc0a33159fd067f75633`
+* `docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json` `f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b`
 * `docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json` `c1a7875fdd0e27b3425cc02ba915ab61bcf9760ac032d294b69a887a91e78459`
 * `docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json` `fde0ddac723b62ab9bdc9789fa738c74198de23b8d150fd67b1b89d9e9d2d2ae`
 * `docs/budgets/owner_decisions/owner_questions_state_v4.json` `6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67`
-* `docs/budgets/owner_decisions/owner_questions_state_v5.json` `ee8b5a9a0daddc25d1b007e63dae5e708babe87569ff487bfac3c09036449575`
+* `docs/budgets/owner_decisions/owner_questions_state_v5.json` `8a29c4180f4387afb6168986442ddb1c08b1f9a692ad85cdf0630799de3cd4fd`
 * `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` `f082a6d3eabf07485d447ace927f69e8980acbcc8eff54d0cd21f196e20a0afe`
 * `hallthruster_bridge/ensemble/transport_ensemble_v0.json` `2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b`
 * `hallthruster_bridge/validation/VALIDATION_RELEASE_v1.json` `0a57a397883141be20196853b7d722404dc3cb20c72fba666121fd43507dc97c`

@@ -156,8 +156,9 @@ REFS = {
            "P4 anode / collector materials framework"),
     # A9.16 repair RFP-01: the A9.15-applied v3 packages (v2 are immutable history whose readings A9.14 / A9.15
     # retired: XA9Q-07 = YES, XV2Q-01 NOT APPLICABLE, MQ-01 single MEV reading, XA9Q-01 / MQ-09 LOADED)
-    "MP": ("docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json", "id", "mass_power_a9_v3",
-           "A9.16 mass + power v3 (A9.14 / A9.15 applied)"),
+    # A9.24 AFI-01: the current flight mass / power package is the v4 successor of v3 (AL-08 cathode-feed re-base)
+    "MP": ("docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json", "id", "mass_power_a9_v4",
+           "mass + power v4 (v3 + A9.24 AFI-01 AL-08 re-base)"),
     "XE": ("docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json", "id", "xe_accounting_a9_v3",
            "A9.16 Xe accounting v3 (A9.14 / A9.15 applied)"),
     "AOL": ("docs/experiments/lifetime_ao/ao_lifetime_register_v5.json", "schema", "ao_lifetime_register_v5",
@@ -178,6 +179,11 @@ REFS = {
 class BuildError(RuntimeError):
     pass
 
+
+# A9.24 item 13 (owner messages 2026-10-04): current C1 status; the A9.2 CONTROL_FALLBACK is a labelled quote only
+C1_GROUND_REFERENCE_ONLY = ("GROUND_REFERENCE_ONLY (A9.20 ground-only laboratory reference; A9.19 / A9.24 item 13: "
+           "no C1 flight fallback; "
+           "never in flight architecture, mass, power, Xe or thermal closure)")
 
 def sha256_file(p):
     h = hashlib.sha256()
@@ -578,7 +584,8 @@ def probe_mass(ctx, cfg, references):
     verdict = ("FAIL not admissible: (a) floor-only sums exceed the limit in "
                f"{n_exc} of {n_all} admissible readings (FAIL needs all), and (b) the floors are not verified lower "
                "bounds; per-reading results reported, status INCOMPLETE_EVIDENCE")
-    state = ("BUDGET EVALUATED (mass_power_a9_v3, A9.14 / A9.15 applied), INCONCLUSIVE - no CBE and no measured mass; "
+    state = (f"BUDGET EVALUATED ({mp['id']}, A9.14 / A9.15 applied; A9.24 AFI-01 AL-08 re-base), INCONCLUSIVE - "
+             "no CBE and no measured mass; "
              "evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; "
              + "; ".join(parts) + "; " + verdict)
     a = _art(REFS["MP"][0], f"{mp['id']}:rollups[{cfg}]", "DETERMINING", "BUDGET_EVALUATION", state,
@@ -645,7 +652,9 @@ def probe_p3(ctx, cfg):
     numerical = any(fce[t]["status"] == "NUMERICAL_FAILURE" for t in terms)
     if cfg == "hall_icp_neutralizer":
         scope = ("ICP_COUPLED_THERMAL UNRESOLVED and ANODE_THERMAL_CLOSURE UNRESOLVED; heat terms " +
-                 ", ".join(f"{t} {fce[t]['status']}" for t in terms))
+                 ", ".join(f"{t} {fce[t]['status']}" for t in terms) +
+                 "; the inherited H2-5 C-1 cathode-body node CB / Q_cath 9-101 W is a ground-article C1 term, "
+                 "NOT_USABLE_FOR_FLIGHT_THERMAL_CLOSURE (A9.24 AFI-03)")
     else:
         scope = ("ANODE_THERMAL_CLOSURE UNRESOLVED (shared H-1 anode; A9.2 anode_approach); the ICP heat terms do "
                  "not apply to this configuration; the H-1 network is only method-checked against H2-5 (no "
@@ -855,8 +864,8 @@ def build_interface_demands(ctx):
         return {"id": iid, "direction": direction, "counterpart": counterpart, "content": content, "status": status}
 
     return [
-        idd("RVM-ID-01", "RVM <- mass/power v3", f"{REFS['MP'][0]} (rollups, lines, power)",
-            "mass rows: < 40 kg wet and 34 / 36 kg from the v3 single-owner-reading roll-ups (no CBE); power rows: "
+        idd("RVM-ID-01", "RVM <- mass/power v4", f"{REFS['MP'][0]} (rollups, lines, power)",
+            "mass rows: < 40 kg wet and 34 / 36 kg from the v4 single-owner-reading roll-ups (no CBE); power rows: "
             "< 1.5 kW and 1.35 kW from the A9 ledger (all loads TBD); consumed as RVM-04 / -05 / -06 / -07 (v2, "
             "MPV2-ID-11, is immutable history)", "CONSUMED", ("MP", "@doc")),
         idd("RVM-ID-02", "RVM <- Xe accounting v3", f"{REFS['XE'][0]} (evaluations, reading_axes_resolved)",
@@ -922,9 +931,12 @@ OWNER_ROWS_APPLIED = [
     (55, "RVM-19 limited redundancy carried beside the recorded no-SPF statement"),
     (86, "RVM-17 >= 50 K margin, 20 % heat-load margin"),
     (87, "RVM-17 no unsourced anode target"),
-    (88, "RVM-15 C1 sized to the measured / derived current demand (CONTROL_FALLBACK)"),
+    (88, "RVM-15 C1 sized to the measured / derived current demand, ground reference only (GROUND_REFERENCE_ONLY, "
+         "A9.20; the A9.2 CONTROL_FALLBACK is history)"),
     (93, "RVM-14 120 s dwell cap, two retries (preliminary)"),
-    (94, "RVM-16 no graphite flight keeper for O / AO exposure"),
+    (94, "RVM-16 no graphite as the flight baseline for O / AO-exposed plasma-facing / electron-source parts "
+         "(the owner text names a keeper; no flight keeper exists in hall_icp_neutralizer, A9.19; "
+         "RECORDER_INTERPRETATION_OWNER_MAY_REVERSE)"),
     (102, "RVM-09 delivered species state measured; O survival never assumed"),
     (103, "RVM-16 no silver in O / AO-wetted parts"),
     (106, "RVM-16 flight anode material open until coupon evidence"),
@@ -1099,6 +1111,8 @@ def build_doc():
         "hall_status": {"credible_set": "EMPTY", "p5_n2_v1": "INCONCLUSIVE (permanent)",
                         "absolute_0d_results": "WITHDRAWN"},
         "a9_2_statuses_carried": a92,
+        "a9_2_statuses_label": "HISTORICAL_QUOTE (A9.2 / A9-10 table, verbatim); the current statuses are current_statuses (A9.24 item 13)",
+        "current_statuses": {k: (C1_GROUND_REFERENCE_ONLY if v == "CONTROL_FALLBACK" else v) for k, v in a92.items()},
         "a9_6_fixed_statuses_carried": pins["A96"]["summary"]["fixed_statuses"],
         "pins": [{"key": k, "path": v[0], "sha256": v[1], "role": v[2]} for k, v in PINS.items()],
         "referenced_not_pinned": [{"key": k, "path": v[0], "identity": {v[1]: v[2]}, "role": v[3],
@@ -1155,12 +1169,57 @@ def build_doc():
         doc = RB.record_closure(doc, frozen_ids)   # A9.22 G3 closure record (RP-BRIEF-01), on the final RVM
     except RB.RebaseError as e:
         raise BuildError(str(e)) from e
+    doc = apply_a9_24_afi05(doc)                   # A9.24 AFI-05: RVM-16 reading outside the frozen basis
     R.assert_status_vocabulary(doc)
     R.assert_no_pass_without_measurement(doc)
     for r in rows:
         for c in CONFIGS:
             if r["configurations"][c]["status"] == "PASS":
                 raise BuildError(f"{r['id']}/{c}: PASS produced although no verified measurement exists in the repo")
+    return doc
+
+
+# A9.24 item 13 / AFI-05 (owner messages 2026-10-04): RVM-16 names a flight keeper although hall_icp_neutralizer has
+# none (A9.19 / A9.20). Its title / requirement_text are the RFP-derived requirements basis that the owner FROZE
+# (A9.22 G3, rfp_rebase.ACCEPTED_BASIS_SHA256): they are not rewritten here (a basis change needs a recorded owner
+# decision; stop item AFI-05-S1). The current-architecture wording is carried as a labelled reading outside the basis.
+AFI05_TITLE = ("Atomic-oxygen / material compatibility (AO-beam test; anode, RF/ICP electron-source / neutralizer, "
+               "collector, plasma-facing and gas-path materials)")
+AFI05_TEXT = ("All parts in intake, compressor and thruster take care of nascent atomic-oxygen erosion for the lifetime "
+              "(RFP-P19-04); materials compatible with VLEO nascent oxygen (RFP-P17-02); coating and surface tests with "
+              "atomic-oxygen beam exposure and erosion-yield measurement (RFP-P19-06 a); space-qualified materials and "
+              "processes for the QM (RFP-P19-02). Owner rules carried: 316L REJECTED_AS_CURRENT_BASELINE for the flight "
+              "anode; final anode / collector material OPEN until coupon evidence; no graphite as the flight baseline "
+              "for O / AO-exposed plasma-facing / electron-source parts (current-architecture reading of owner row 94, "
+              "RECORDER_INTERPRETATION_OWNER_MAY_REVERSE); no silver in O / AO-wetted gas-path parts.")
+
+
+def apply_a9_24_afi05(doc):
+    """Add the A9.24 AFI-05 current-architecture reading to RVM-16 (outside the frozen requirements basis)."""
+    by = {r["id"]: r for r in doc["rows"]}
+    r = by["RVM-16"]
+    if "keeper" not in r["title"] or "no graphite flight keeper" not in r["requirement_text"]:
+        raise BuildError("RVM-16 frozen wording changed: review the A9.24 AFI-05 reading")
+    q94 = [s for s in r["sources"] if s.get("row") == 94]
+    if len(q94) != 1 or "keeper" not in q94[0].get("verbatim", ""):
+        raise BuildError("RVM-16: owner row 94 verbatim source not found exactly once")
+    r["a9_24_current_architecture_reading"] = {
+        "applied_by": "A9.24 item 13 / AFI-05 (owner messages 2026-10-04, relayed by the orchestrating session; not "
+                      "recorded verbatim in the repository)",
+        "title": AFI05_TITLE,
+        "requirement_text": AFI05_TEXT,
+        "keeper_reading": {
+            "owner_row_94_verbatim": q94[0]["verbatim"],
+            "architecture_fact": "no flight keeper exists in hall_icp_neutralizer (A9.19: one Hall + one RF/ICP "
+                                 "electron-source / neutralizer, no conventional hollow cathode; A9.20: C1 ground-only)",
+            "reading": "the owner's graphite exclusion (stated for an O/AO-exposed keeper) is applied to O / AO-exposed "
+                       "plasma-facing / electron-source parts of the current architecture",
+            "status": "RECORDER_INTERPRETATION_OWNER_MAY_REVERSE"},
+        "frozen_basis": "title / requirement_text of this row are the A9.22 G3 frozen requirements basis (sha256 "
+                        + RB.ACCEPTED_BASIS_SHA256 + ") and stay verbatim; re-wording them would change the frozen "
+                        "basis hash and needs a recorded owner decision (stop item AFI-05-S1)"}
+    doc["a9_24_afi05"] = {"rows": ["RVM-16"], "stop_item": "AFI-05-S1",
+                          "note": "current-architecture reading only; no requirement, status or basis field changed"}
     return doc
 
 
@@ -1369,6 +1428,13 @@ def render_md(doc):
             rest = {k: v for k, v in r["a9_19"].items() if k != "decisions"}
             if rest:
                 a(f"- {r['id']}: " + _esc("; ".join(f"{k}: {v}" for k, v in rest.items())))
+    a("")
+    for r in doc["rows"]:
+        x24 = r.get("a9_24_current_architecture_reading")
+        if x24:
+            k = x24["keeper_reading"]
+            a(f"- {r['id']} A9.24 AFI-05 current-architecture reading ({x24['applied_by']}): title "
+              f"\"{_esc(x24['title'])}\"; {_esc(k['reading'])} ({k['status']}); {_esc(x24['frozen_basis'])}.")
     a("")
     a("Owner answers applied (A9.19 / A9.20):")
     a("")

@@ -137,7 +137,7 @@ def test_h2_6_live_source_verification_gates_ci(monkeypatch):
 # ----------------------------------------------------------------------------------------------------------- RFP-02
 def test_optimizer_reads_the_a9_15_applied_budgets():
     from abep_sim.design import architecture_optimizer as ao
-    assert ao.MP_REL.endswith("mass_power_a9_v3/mass_power_a9_v3.json")
+    assert ao.MP_REL.endswith("mass_power_a9_v4/mass_power_a9_v4.json")      # A9.24 AFI-01 successor of v3
     assert ao.RFQ_REL.endswith("rfq_a9_v3/rfq_a9_v3.json")
     assert ao.P3_REL.endswith("p3_coupled_thermal_v2.json")
     mp = _j(ao.MP_REL)

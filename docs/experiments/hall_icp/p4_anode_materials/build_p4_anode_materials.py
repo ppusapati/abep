@@ -67,6 +67,11 @@ SCR = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(SCR)
 
 
+# A9.24 item 13 (owner messages 2026-10-04): current C1 status; the A9.2 CONTROL_FALLBACK is a labelled quote only
+C1_GROUND_REFERENCE_ONLY = ("GROUND_REFERENCE_ONLY (A9.20 ground-only laboratory reference; A9.19 / A9.24 item 13: "
+           "no C1 flight fallback; "
+           "never in flight architecture, mass, power, Xe or thermal closure)")
+
 def _load_local(name, fname):
     sp = importlib.util.spec_from_file_location(name, str(HERE / fname))
     m = importlib.util.module_from_spec(sp)
@@ -1500,7 +1505,9 @@ def build_doc(pins):
                              "a procurement or purchase", "an owner decision (the A9.12 / A9.13 decisions are "
                              "applied as fail-closed rules; every deferred number stays a registration slot)"],
         "fixed_statuses": fixed,
-        "a9_status": pins["A92"]["decisions"]["a9_10_statuses"],
+        "a9_status": {k: (C1_GROUND_REFERENCE_ONLY if v == "CONTROL_FALLBACK" else v) for k, v in pins["A92"]["decisions"]["a9_10_statuses"].items()},
+        "a9_2_statuses_historical_quote": {"label": "HISTORICAL_QUOTE (A9.2 / A9-10 table, verbatim); the current statuses are current_statuses (A9.24 item 13)",
+                                           "statuses": pins["A92"]["decisions"]["a9_10_statuses"]},
         "pins": {k: {"path": v[0], "sha256": v[1], "role": v[2]} for k, v in sorted(PINS.items())},
         "never_pinned": list(NEVER_PINNED), "merged_cross_lane": xlane_report(None),
         "vocabulary": {"gate_outcomes": list(SCR.GATE_OUTCOMES),

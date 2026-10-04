@@ -486,5 +486,6 @@ def incorporation(red, camp, rules):
         "pinning_note": "the P1 json / reducer / campaign are sha-pinned or read by other packages (state v4, RVM, M16 "
                         "v4, RFQ v2, F6): the integration lane re-pins; nothing outside this lane's paths was edited",
         "statuses_unchanged": "ICP45 = NOT_EVALUATED until registered; ICP_COUPLED_THERMAL UNRESOLVED; RF ratings "
-                              "TBD_AFTER_IMPEDANCE_MAP; anode material OPEN; C1 CONTROL_FALLBACK; no PASS anywhere",
+                              "TBD_AFTER_IMPEDANCE_MAP; anode material OPEN; C1 GROUND_REFERENCE_ONLY (A9.20 / A9.24 item 13; "
+                              "the A9.2 CONTROL_FALLBACK is history); no PASS anywhere",
     }

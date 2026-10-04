@@ -3684,3 +3684,54 @@ companion json `..._owner_decisions.json`). Builds on the A9.22 layer separation
   life floor from HC-07); the altitude band stays a frozen domain constraint over the frozen 196-state set.
   New test: changing the HC-07 threshold alone changes the assessment limit only (raw physics byte-identical,
   firing_hours 15000 unchanged); an edited firing_hours is refused without a new scenario version.
+
+## 2026-10-04 — A9.24 item 13 follow-on: owner-approved narrow pre-bid corrections AFI-01 / AFI-02 (label) / AFI-05 / C1 wording (NO raw-physics change)
+
+Authority: owner messages 2026-10-04 (relayed by the orchestrating session; no verbatim decision file in the repository),
+acting on the read-only cathode-path audit `docs/audits/a9_24_cathode_path_audit_v1.md` (branch `lane-a924-cathode`,
+commit b8f39b7). No abep_sim physics module, frozen dataset, golden, Rust file or immutable record was edited.
+
+- **AFI-01 — mass / power v4** (`docs/budgets/mass_power_a9_v4/`, new successor; v3 pinned by sha256 and read as data +
+  rule functions, never edited). AL-08 (MQ-05 floor 5.044 kg = H2-7 H27-09 tank 3.5 + H27-11 regulator 0.974 + H27-12
+  valves 0.57 kg, where H27-12 = H27-31 2 branches 'ignition/transition feed and cathode feed' x H27-32 latch 170 g +
+  PFCV 115 g): the cathode-feed-branch PFCV (AN-MOOG-PFCV 0.115 kg, part of A9B-C04) is removed (no flight function in
+  hall_icp_neutralizer; the A9 flight BOM keeps one PFCV, A9B-11). The cathode-branch latch (0.170 kg) is **retained
+  pending owner (stop item AFI-01-S1)**: owner row 55 requires dual series isolation on the high-pressure Xe path, the
+  A9 flight BOM books two latches (A9B-10) and F9 AFC-UP-VF-07 carries the rule; removing it would put the floor below
+  the A9 flight valve set (0.455 kg, MA9-ID-04). Result: valves 0.57 -> 0.455 kg; AL-08 CBE floor 5.044 -> 4.929 kg; MEV
+  planning floor 6.0528 -> 5.9148 kg (still provisional, A9.21). Roll-ups recomputed with the v3 rules (identity of v3
+  reproduced first): non-harness known 32.2576 -> 32.1196 kg; harness 1.697768 -> 1.690505 kg; system margin
+  6.791074 -> 6.762021 kg; **dry known 40.7464 -> 40.5721 kg; wet known 42.7464 / 45.7464 / 50.7464 -> 42.5721 /
+  45.5721 / 50.5721 kg at 2 / 5 / 10 kg loaded Xe**, HARD_40_WET still DOES_NOT_CLOSE in all three; MQ-10 reduction
+  need at 2 kg Xe 2.1743 -> 2.0363 kg. If the owner also removes the latch: AL-08 CBE 4.759 kg / MEV 5.7108 kg.
+- **AFI-02 (label only).** AL-07 keeps the owner's 6.0 kg MEV analog floor; v4 labels it
+  PROVISIONAL_CONSERVATIVE_OWNER_ANALOG_FLOOR / CONTAINS_LEGACY_FUNCTIONS_NOT_PRESENT_IN_CURRENT_FLIGHT_ARCHITECTURE /
+  REBASE_REQUIRED_FROM_CURRENT_LOAD_CONVERTER_CBE with open action AFI-02-RA1.
+- **Consumers re-pointed to v4:** RVM (`REFS["MP"]`), M16 v5 (`MP4`), F9 (`MP4`: AFC-SY-MASS-AL-08 / -ROLL / XE-08),
+  F7/F8 (`architecture_optimizer.MP_REL`, design layer; `robust_optimizer` carries `current_statuses`). Not re-pointed:
+  the bid package (every number cites the bid-freeze commit bbc480c; re-point at the new A9.24 item-9 bid freeze), RFQ v3
+  (owner-authorized quotation dispatch package; its GAS-R28 AL-08 context stays 6.0528 kg until re-authorized), the
+  A9.16 application matrix and the A9.22 G8 migration / inventory records (application / migration history), Xe
+  accounting v3 (does not read mass / power), owner-questions state v5 (reads only the carried MPV3Q-01 question).
+- **AFI-05 — RVM-16.** Its title / text are the A9.22 G3 FROZEN requirements basis (sha256 1d4a7f00...); they are not
+  rewritten (stop item AFI-05-S1: a basis change needs a recorded owner decision). RVM-16 now carries
+  `a9_24_current_architecture_reading` (title "... anode, RF/ICP electron-source / neutralizer, collector,
+  plasma-facing and gas-path materials"; graphite exclusion read as applying to O / AO-exposed plasma-facing /
+  electron-source parts, RECORDER_INTERPRETATION_OWNER_MAY_REVERSE; owner row 94 verbatim kept). Row-94 how_applied
+  text updated. RVM-15 (derived, outside the basis): the hall_c1_reference requirement text reads
+  GROUND_REFERENCE_ONLY (A9.2 CONTROL_FALLBACK history); its title "(ICP-45 or C1)" is kept because the immutable
+  M16 v4 builder reads live RVM titles (changing it would make M16 v4 stale).
+- **C1 wording.** Current statuses read C1 = GROUND_REFERENCE_ONLY with the A9.2 CONTROL_FALLBACK kept only as a
+  labelled historical quote: mass / power v4, F9 (`a9_2_statuses.current_statuses`, Markdown table), H-1 freeze
+  candidate (`standing_facts.current_statuses`), P1 / P2 (`statuses_unchanged` sentences + `current_statuses`), P4
+  (`a9_status` current, A9.2 quote beside), RVM (`current_statuses`), owner-questions state v5 (`a9_status`), F7/F8
+  gate snapshot. AFI-03 label (P3 v2 untouched): F9 AG-05, RVM P3 probe and F7/F8 Q_reject state that the inherited
+  H2-5 C-1 node CB / Q_cath 9-101 W is NOT_USABLE_FOR_FLIGHT_THERMAL_CLOSURE.
+- **Rebuilt:** mass / power v4, P4, P2, P1, H-1 freeze candidate, F4 (full run; output differs only in the F5 sha pin),
+  RVM, F7/F8 (full run: wet envelope / AL-08 / Q_reject text change; Pareto and robust files byte-identical), F9,
+  owner-questions state v5, M16 v5, config. Goldens unchanged (`python -m abep_sim.golden check` OK).
+- **Config requirements snapshot (coordinator instruction).** `config/requirements/rfp_constraints_v1.json` (FROZEN,
+  A9.22 G3) is left byte-identical: `scripts/config/build_config.py` now records the RVM file sha256 the snapshot was
+  generated from (`SNAPSHOT_RVM_SHA256`, 6d7d02be..., provenance) instead of the live RVM sha, and guards the frozen
+  content with the A9.22 G3 requirements-basis hash of the live RVM (1d4a7f00...; fail closed on any basis change);
+  `tests/test_config_manifests.py` checks both. Only `hardware_bounds_v1.json` (F5 sha pin) and the manifests change.

@@ -442,9 +442,9 @@
     "use": "flight Xe scenario booking"
    },
    {
-    "key": "MP3",
-    "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
-    "identity": "mass_power_a9_v3",
+    "key": "MP4",
+    "path": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
+    "identity": "mass_power_a9_v4",
     "use": "AL-08 A9.21 label"
    },
    {
@@ -1610,10 +1610,10 @@
      "id": "AL-08",
      "kind": "AL08_PROVISIONAL",
      "category": "EXTERNAL_INPUT",
-     "artifact": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+     "artifact": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
      "locator": "lines.hall_icp_neutralizer[line=AL-08]",
      "state": "PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN",
-     "detail": "PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (A9.21 KEEP_6_05KG_PROVISIONAL_WAIT_FOR_QUOTES_TO_REBASE_AL08): the 6.0528 kg AL-08 MEV planning floor is kept only as a provisional planning floor, not a frozen allocation; AL-08 is formally re-base...",
+     "detail": "PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (A9.21 AL08): the AL-08 MEV planning floor stays a provisional planning floor, not a frozen allocation; v4 removes only the C1 cathode-feed PFCV identified from the repository (AFI-01, owner messages...",
      "origin": "v5 (answers A9.8 .. A9.21 / programme / gate)"
     },
     {
@@ -1992,10 +1992,10 @@
      "id": "AL-08",
      "kind": "AL08_PROVISIONAL",
      "category": "EXTERNAL_INPUT",
-     "artifact": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+     "artifact": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
      "locator": "lines.hall_icp_neutralizer[line=AL-08]",
      "state": "PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN",
-     "detail": "PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (A9.21 KEEP_6_05KG_PROVISIONAL_WAIT_FOR_QUOTES_TO_REBASE_AL08): the 6.0528 kg AL-08 MEV planning floor is kept only as a provisional planning floor, not a frozen allocation; AL-08 is formally re-base...",
+     "detail": "PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (A9.21 AL08): the AL-08 MEV planning floor stays a provisional planning floor, not a frozen allocation; v4 removes only the C1 cathode-feed PFCV identified from the repository (AFI-01, owner messages...",
      "origin": "v5 (answers A9.8 .. A9.21 / programme / gate)"
     },
     {

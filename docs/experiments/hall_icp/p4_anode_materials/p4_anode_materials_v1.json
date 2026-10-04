@@ -72,7 +72,22 @@
   "final anode material": "OPEN",
   "anode thermal closure": "UNRESOLVED",
   "coupled H-1/ICP thermal closure": "UNRESOLVED",
-  "C1 conventional reference": "CONTROL_FALLBACK"
+  "C1 conventional reference": "GROUND_REFERENCE_ONLY (A9.20 ground-only laboratory reference; A9.19 / A9.24 item 13: no C1 flight fallback; never in flight architecture, mass, power, Xe or thermal closure)"
+ },
+ "a9_2_statuses_historical_quote": {
+  "label": "HISTORICAL_QUOTE (A9.2 / A9-10 table, verbatim); the current statuses are current_statuses (A9.24 item 13)",
+  "statuses": {
+   "Hall->ICP architecture": "INVESTIGATION_HYPOTHESIS",
+   "ICP electron-current capacity": "PENDING_ICP45",
+   "ICP RF power closure": "PENDING_HARDWARE",
+   "RF matching architecture": "LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT",
+   "RF component ratings": "TBD_AFTER_IMPEDANCE_MAP",
+   "316L flight anode": "REJECTED_AS_CURRENT_BASELINE",
+   "final anode material": "OPEN",
+   "anode thermal closure": "UNRESOLVED",
+   "coupled H-1/ICP thermal closure": "UNRESOLVED",
+   "C1 conventional reference": "CONTROL_FALLBACK"
+  }
  },
  "pins": {
   "A9": {

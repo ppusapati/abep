@@ -228,12 +228,39 @@ def _clause(reg: dict, cid: str) -> dict:
     raise BuildError(f"clause {cid} not in the RFP registration")
 
 
+# A9.24 item 13 (coordinator instruction 2026-10-04): the FROZEN requirements snapshot keeps the RVM file sha256 it was
+# last generated from (f2ebdb7) as provenance; it is no longer refreshed whenever the RVM file changes outside the
+# requirements basis (status / evidence / note fields). The frozen content is guarded instead by the RVM requirements-
+# basis hash (A9.22 G3 accepted basis, rfp_rebase.BASIS_HASH_RULE): any basis change fails the build closed, and every
+# snapshot value is still re-derived from the live RVM rows (so a value drift makes --check fail).
+SNAPSHOT_RVM_SHA256 = "6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264"   # RVM at snapshot generation
+ACCEPTED_RVM_BASIS_SHA256 = "1d4a7f0099e937f0c74a8c1be8fc14408b75f211c7990be4672f4eee5f9b66b5"   # A9.22 G3
+BASIS_ROW_FIELDS = ("id", "title", "category", "requirement_text", "requirement_basis", "requirement_origin",
+                    "rfp_clauses", "related_rfp_clauses", "limit")
+BASIS_REBASE_FIELDS = ("registration", "clause_coverage", "not_system_requirements", "discrepancies")
+
+
+def rvm_requirements_basis_sha256(rvm: dict) -> str:
+    """The A9.22 G3 requirements-basis hash (same rule as docs/requirements/rvm_a9/rfp_rebase.py BASIS_HASH_RULE)."""
+    out = {"rfp_clause_rows": [{f: r.get(f) for f in BASIS_ROW_FIELDS} for r in rvm["rows"]
+                               if r.get("requirement_origin") == "RFP_CLAUSE"],
+           "row_origins": {r["id"]: r.get("requirement_origin") for r in rvm["rows"]}}
+    for k in BASIS_REBASE_FIELDS:
+        out[k] = rvm["rfp_rebase"].get(k)
+    return sha256_bytes(json.dumps(out, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8"))
+
+
 def build_requirements() -> dict:
     rvm = read_json(RVM_REL)
     reg = read_json(REG_REL)
     rows = {r["id"]: r for r in rvm["rows"]}
     clauses_sha = sha256_bytes(json.dumps(reg["clauses"], ensure_ascii=False, sort_keys=True,
                                           separators=(",", ":")).encode("utf-8"))
+    basis = rvm_requirements_basis_sha256(rvm)
+    accepted = rvm["rfp_rebase"]["ag15_closure"]["accepted_rvm"]["requirements_basis_sha256"]
+    if not (basis == accepted == ACCEPTED_RVM_BASIS_SHA256):
+        raise BuildError(f"RVM requirements basis {basis} != the A9.22 G3 accepted basis "
+                         f"{ACCEPTED_RVM_BASIS_SHA256}: the frozen requirements snapshot needs an owner decision")
     rb = rvm["rfp_rebase"]["registration"]
     if rb["clauses_sha256"] != clauses_sha:
         raise BuildError("RVM rfp_rebase clauses_sha256 differs from the registration clauses")
@@ -333,7 +360,7 @@ def build_requirements() -> dict:
         "rfp_clause_rows_frozen": f"{sum(bool(r.get('requirement_frozen')) for r in rfp_rows)}/{len(rfp_rows)}",
         "generated_by": GENERATED_BY,
         "regenerate": REGENERATE,
-        "rvm": {"id": rvm["id"], "path": RVM_REL, "sha256": sha256_file(RVM_REL), "status": rvm.get("status")},
+        "rvm": {"id": rvm["id"], "path": RVM_REL, "sha256": SNAPSHOT_RVM_SHA256, "status": rvm.get("status")},
         "registration": {"path": REG_REL, "sha256": sha256_file(REG_REL), "rfp_number": rb["rfp_number"],
                          "pdf_sha256": rb["pdf_sha256"], "clauses_sha256": clauses_sha,
                          "clauses_hash_rule": rb["clauses_hash_rule"], "n_clauses": len(reg["clauses"])},

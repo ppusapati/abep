@@ -35,8 +35,8 @@
   "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854",
   "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json": "6871975696f7b40dac897c52b529266eb053ecbf4ea7ab17cb3e3fbdac73a27b",
   "docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json": "74a52aa749e1d071f76957e4f9ef4929c9d8ab302b183da3c5a5d9ba8d6d6923",
-  "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json": "cd5da1b8bc4b97f3b32c627be7016aa17016045975f90fa392e202e6eec78785",
-  "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json": "50a7fa11a92d162ae28b864f53794b333c1d779104ff558fcf61c2eb24955de0",
+  "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json": "fffb223023f944f166112acf017af277a50ede84695cb78f933dd5ca918fd3a9",
+  "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8",
   "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450"
  },
  "referenced_not_pinned": [
@@ -45,9 +45,9 @@
    "use": "F2 filter-stage deliverable (filter cases are built through abep_sim/design/filter_stage.py)"
   },
   {
-   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "path": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
    "use": "mass/power v3 (A9.15-applied): slot TBD texts, allocations, wet roll-ups (mutable package; identity checked)",
-   "identity": "mass_power_a9_v3"
+   "identity": "mass_power_a9_v4"
   },
   {
    "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
@@ -1296,7 +1296,7 @@
       "value": 13560000.0,
       "units": "Hz",
       "basis": "13.56 MHz ICP drive (row 72 / A9)",
-      "source": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json items_v2 MPV2-P07; abep_sim/bus_boundary_a9_v2.py RF_FREQUENCY_HZ",
+      "source": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json items_v2 MPV2-P07; abep_sim/bus_boundary_a9_v2.py RF_FREQUENCY_HZ",
       "evidence_class": "owner-allocation",
       "status": "OWNER_GIVEN"
      },
@@ -1313,7 +1313,7 @@
       ],
       "units": "-",
       "basis": "flight-representative DC-RF source, directional coupler, 50-ohm line, local adjustable match, antenna (A9.2 / A9.3 decisions)",
-      "source": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json power.icp_rf_chain",
+      "source": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json power.icp_rf_chain",
       "evidence_class": "assumed",
       "status": "LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT"
      },
@@ -1335,7 +1335,7 @@
       "value": "TBD",
       "units": "-",
       "basis": "TBD - requires a measured FLIGHT_REPRESENTATIVE_DC_RF_SOURCE (P_DC,in -> P_RF)",
-      "source": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json items_v2 MPV2-P08",
+      "source": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json items_v2 MPV2-P08",
       "evidence_class": "TBD",
       "status": "TBD"
      },
@@ -9920,8 +9920,8 @@
      "a CBE or measured mass for every mass/power v3 BOM line (no CBE exists) plus the Xe load case (XA9Q-01 / MQ-09) and the MQ-01 margin reading decided by the owner"
     ],
     "wet_known_allocation_envelope_kg": [
-     42.74644,
-     50.74644
+     42.57213,
+     50.57213
     ],
     "wet_rollup_states": [
      "DOES_NOT_CLOSE"
@@ -9929,25 +9929,25 @@
     "wet_rollup_by_xe_case": [
      {
       "xe_case_kg": 2.0,
-      "wet_known_kg": 42.74644,
+      "wet_known_kg": 42.57213,
       "state": "DOES_NOT_CLOSE",
-      "exceedance_kg": 2.746442
+      "exceedance_kg": 2.572126
      },
      {
       "xe_case_kg": 5.0,
-      "wet_known_kg": 45.74644,
+      "wet_known_kg": 45.57213,
       "state": "DOES_NOT_CLOSE",
-      "exceedance_kg": 5.746442
+      "exceedance_kg": 5.572126
      },
      {
       "xe_case_kg": 10.0,
-      "wet_known_kg": 50.74644,
+      "wet_known_kg": 50.57213,
       "state": "DOES_NOT_CLOSE",
-      "exceedance_kg": 10.74644
+      "exceedance_kg": 10.57213
      }
     ],
     "owner_reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)",
-    "budget_source": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json rollups[configuration=hall_icp_neutralizer].wet[reference=HARD_40_WET]",
+    "budget_source": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json rollups[configuration=hall_icp_neutralizer].wet[reference=HARD_40_WET]",
     "lines": [
      {
       "line": "AL-01",
@@ -10034,11 +10034,11 @@
       "line": "AL-08",
       "name": "complete Xe storage/flow hardware: tank, regulator, valves, plumbing, mounting, thermal (REQUIRED_RFP_XE_CAPABILITY; role CONTINGENCY_EMERGENCY, A9.19)",
       "allocation_kg": 1.5,
-      "evidence_floor_kg": 5.044,
+      "evidence_floor_kg": 4.929,
       "cbe_kg": null,
       "measured_kg": null,
       "design_parametric": null,
-      "budget_value_kg": 6.0528,
+      "budget_value_kg": 5.9148,
       "budget_value_governs": "MEV_PLANNING_FLOOR"
      },
      {
@@ -10084,7 +10084,7 @@
     "units": "W",
     "evidence_class": null,
     "source": null,
-    "reason": "P3 framework FRAMEWORK_IMPLEMENTED_INPUTS_TBD; fail-closed evaluations {'Q_RF/match': 'INCOMPLETE_EVIDENCE', 'Q_collector': 'INCOMPLETE_EVIDENCE', 'Q_plume': 'INCOMPLETE_EVIDENCE', 'Q_Hall->ICP': 'INCOMPLETE_EVIDENCE', 'coupled_network': 'INCOMPLETE_EVIDENCE'}; ICP_COUPLED_THERMAL and ANODE_THERMAL_CLOSURE UNRESOLVED (never reported as PASS)",
+    "reason": "P3 framework FRAMEWORK_IMPLEMENTED_INPUTS_TBD; fail-closed evaluations {'Q_RF/match': 'INCOMPLETE_EVIDENCE', 'Q_collector': 'INCOMPLETE_EVIDENCE', 'Q_plume': 'INCOMPLETE_EVIDENCE', 'Q_Hall->ICP': 'INCOMPLETE_EVIDENCE', 'coupled_network': 'INCOMPLETE_EVIDENCE'}; ICP_COUPLED_THERMAL and ANODE_THERMAL_CLOSURE UNRESOLVED (never reported as PASS); the H2-5 C-1 cathode-body node CB / Q_cath 9-101 W inherited by P3 v2 is a ground-article C1 term, NOT_USABLE_FOR_FLIGHT_THERMAL_CLOSURE (A9.24 AFI-03)",
     "unlock": [
      "the P3 coupled network solved: ICP geometry P3-G-01..08, emittances P3-R-01..04, conductances P3-K-01..06, heat terms from P1/P2 data (Q_RF/match, Q_collector) and Phase-1 plume data (Q_plume)"
     ],
@@ -10720,7 +10720,7 @@
    "treatment": "NOT_EVALUATED",
    "quantified": false,
    "basis": "flight RF source efficiency TBD (MPV2-P08); RF ratings TBD_AFTER_IMPEDANCE_MAP",
-   "source": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json"
+   "source": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json"
   },
   {
    "axis": "thermal_parameters",
@@ -10996,7 +10996,19 @@
     "C1 conventional reference": "CONTROL_FALLBACK"
    },
    "a9_19_20_supersessions": {
-    "C1 conventional reference": "GROUND_ONLY_LAB_EQUIPMENT (A9.20; the carried A9.2 'CONTROL_FALLBACK' is superseded: C1 is never flight hardware and no hall_c1_reference flight configuration exists after A9.19)"
+    "C1 conventional reference": "GROUND_REFERENCE_ONLY (A9.20 C1_GROUND_ONLY_LABORATORY_REFERENCE; A9.24 item 13: no C1 flight fallback; C1 never enters flight architecture, mass, power, Xe, thermal closure or a fallback flight configuration)"
+   },
+   "current_statuses": {
+    "Hall->ICP architecture": "INVESTIGATION_HYPOTHESIS",
+    "ICP electron-current capacity": "PENDING_ICP45",
+    "ICP RF power closure": "PENDING_HARDWARE",
+    "RF matching architecture": "LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT",
+    "RF component ratings": "TBD_AFTER_IMPEDANCE_MAP",
+    "316L flight anode": "REJECTED_AS_CURRENT_BASELINE",
+    "final anode material": "OPEN",
+    "anode thermal closure": "UNRESOLVED",
+    "coupled H-1/ICP thermal closure": "UNRESOLVED",
+    "C1 conventional reference": "GROUND_REFERENCE_ONLY (A9.20 C1_GROUND_ONLY_LABORATORY_REFERENCE; A9.24 item 13: no C1 flight fallback; C1 never enters flight architecture, mass, power, Xe, thermal closure or a fallback flight configuration)"
    },
    "h1_article_freeze_state": "NOT_FROZEN (OPEN / TBD items remain; FREEZE_CANDIDATE items are candidates only)",
    "rvm_hall_status": {
@@ -11044,7 +11056,19 @@
     "C1 conventional reference": "CONTROL_FALLBACK"
    },
    "a9_19_20_supersessions": {
-    "C1 conventional reference": "GROUND_ONLY_LAB_EQUIPMENT (A9.20; the carried A9.2 'CONTROL_FALLBACK' is superseded: C1 is never flight hardware and no hall_c1_reference flight configuration exists after A9.19)"
+    "C1 conventional reference": "GROUND_REFERENCE_ONLY (A9.20 C1_GROUND_ONLY_LABORATORY_REFERENCE; A9.24 item 13: no C1 flight fallback; C1 never enters flight architecture, mass, power, Xe, thermal closure or a fallback flight configuration)"
+   },
+   "current_statuses": {
+    "Hall->ICP architecture": "INVESTIGATION_HYPOTHESIS",
+    "ICP electron-current capacity": "PENDING_ICP45",
+    "ICP RF power closure": "PENDING_HARDWARE",
+    "RF matching architecture": "LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT",
+    "RF component ratings": "TBD_AFTER_IMPEDANCE_MAP",
+    "316L flight anode": "REJECTED_AS_CURRENT_BASELINE",
+    "final anode material": "OPEN",
+    "anode thermal closure": "UNRESOLVED",
+    "coupled H-1/ICP thermal closure": "UNRESOLVED",
+    "C1 conventional reference": "GROUND_REFERENCE_ONLY (A9.20 C1_GROUND_ONLY_LABORATORY_REFERENCE; A9.24 item 13: no C1 flight fallback; C1 never enters flight architecture, mass, power, Xe, thermal closure or a fallback flight configuration)"
    },
    "h1_article_freeze_state": "NOT_FROZEN (OPEN / TBD items remain; FREEZE_CANDIDATE items are candidates only)",
    "rvm_hall_status": {
@@ -11132,7 +11156,7 @@
    "id": "AQ-06",
    "question": "Does the system close < 40 kg wet?",
    "answer_state": "CANNOT_ANSWER",
-   "basis": "no CBE for any BOM line (m_wet NOT_EVALUATED); mass/power v3 wet roll-ups against HARD_40_WET (MEV-level owner reading, Xe cases 2 / 5 / 10 kg): hall_icp_neutralizer ['DOES_NOT_CLOSE'] (known terms 42.75-50.75 kg) (flight configuration only; A9.19 / A9.20: C1 is a GROUND_REFERENCE, never a flight roll-up)",
+   "basis": "no CBE for any BOM line (m_wet NOT_EVALUATED); mass/power v3 wet roll-ups against HARD_40_WET (MEV-level owner reading, Xe cases 2 / 5 / 10 kg): hall_icp_neutralizer ['DOES_NOT_CLOSE'] (known terms 42.57-50.57 kg) (flight configuration only; A9.19 / A9.20: C1 is a GROUND_REFERENCE, never a flight roll-up)",
    "unlock": [
     "a CBE or measured mass for every mass/power v3 BOM line (no CBE exists) plus the Xe load case (XA9Q-01 / MQ-09) and the MQ-01 margin reading decided by the owner"
    ]
@@ -11380,7 +11404,7 @@
   {
    "id": "F78-ID-15",
    "direction": "mass/power v3 -> F7",
-   "counterpart": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "counterpart": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
    "content": "A9-02 slot TBD texts, allocations, evidence floors, wet roll-ups; F7 returns design-parametric masses in a separate column (never merged)",
    "status": "CONSUMED / PROVIDED"
   },

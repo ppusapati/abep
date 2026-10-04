@@ -575,6 +575,19 @@ def later_superseded_statements() -> list:
     return out
 
 
+# A9.24 item 13 (owner messages 2026-10-04): the current A9 status line states C1 as GROUND_REFERENCE_ONLY; the v4
+# line (A9.2 CONTROL_FALLBACK) is kept only as a labelled historical quote
+C1_A92 = "C1 CONTROL_FALLBACK"
+C1_NOW = ("C1 GROUND_REFERENCE_ONLY (A9.20 ground-only laboratory reference; no C1 flight fallback, A9.19 / A9.24 "
+          "item 13; the A9.2 CONTROL_FALLBACK is history)")
+
+
+def a9_status_current(v4_status: str) -> str:
+    if v4_status.count(C1_A92) != 1:
+        raise SystemExit("v4 a9_status no longer carries the A9.2 C1 status exactly once: review the A9.24 wording")
+    return v4_status.replace(C1_A92, C1_NOW)
+
+
 def build():
     v4 = load_v4()
     seq = sequenced()
@@ -695,7 +708,10 @@ def build():
         "id": "owner_questions_state_v5",
         "lane": "A9.16 step 1 integration (decision application)",
         "status": "STATE_RECORD_FOR_OWNER (answers come only from the owner)",
-        "a9_status": v4["a9_status"],
+        "a9_status": a9_status_current(v4["a9_status"]),
+        "a9_status_v4_historical_quote": {"label": "HISTORICAL_QUOTE (owner_questions_state_v4 a9_status, verbatim; "
+                                                   "its C1 CONTROL_FALLBACK is the superseded A9.2 status)",
+                                          "text": v4["a9_status"]},
         "supersedes_for_use": f"{REL(V4)} (kept immutable; pinned)",
         "generated_by": "docs/budgets/owner_decisions/build_owner_questions_state_v5.py",
         "companion_document": REL(OUT_MD), "companion_csv": REL(OUT_CSV),

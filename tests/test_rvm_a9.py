@@ -568,7 +568,8 @@ def _rvm():
 def test_rfp01_reads_a915_applied_v3_packages():
     """RFP-01: the RVM evaluates the A9.15-applied v3 budgets (no retired XA9Q-07 / USABLE / CBE-level readings) and
     records the v3 DOES_NOT_CLOSE as evidence state without turning it into a FAIL."""
-    assert B.REFS["MP"][0].endswith("mass_power_a9_v3.json") and B.REFS["MP"][2] == "mass_power_a9_v3"
+    # A9.24 AFI-01: the current mass / power package is the v4 successor of v3
+    assert B.REFS["MP"][0].endswith("mass_power_a9_v4.json") and B.REFS["MP"][2] == "mass_power_a9_v4"
     assert B.REFS["XE"][0].endswith("xe_accounting_a9_v3.json") and B.REFS["XE"][2] == "xe_accounting_a9_v3"
     assert B.REFS["RFQ2"][2] == "RFQ_A9_V3"
     d = _rvm()
@@ -578,7 +579,7 @@ def test_rfp01_reads_a915_applied_v3_packages():
     by = {r["id"]: r for r in d["rows"]}
     cell = by["RVM-06"]["configurations"]["hall_icp_neutralizer"]
     assert cell["status"] == "INCOMPLETE_EVIDENCE"
-    assert "mass_power_a9_v3" in cell["current_evidence_state"]
+    assert "mass_power_a9_v4" in cell["current_evidence_state"]
     assert "DOES_NOT_CLOSE 3" in cell["current_evidence_state"]
     an = next(a for a in cell["artifacts"] if a.get("detail", {}).get("analyses"))["detail"]["analyses"][0]
     assert {m["state"] for m in an["mixed_basis_states"]} == {"DOES_NOT_CLOSE"}
@@ -589,7 +590,7 @@ def test_rfp01_reads_a915_applied_v3_packages():
                  if a["path"].endswith("xe_accounting_a9_v3.json")]
     assert xe_states and all("RA-FUNC APPLIES" in s for s in xe_states)
     ids = {i["id"]: i for i in d["interface_demands"]}
-    assert "v3" in ids["RVM-ID-01"]["direction"] and "v3" in ids["RVM-ID-02"]["direction"]
+    assert "v4" in ids["RVM-ID-01"]["direction"] and "v3" in ids["RVM-ID-02"]["direction"]   # A9.24 AFI-01: MP v4
     for rid in ("RVM-15", "RVM-18"):
         paths = {a["path"] for c in by[rid]["configurations"].values() for a in c["artifacts"]}
         assert "docs/procurement/rfq_a9_v2/rfq_a9_v2.json" not in paths
@@ -780,7 +781,7 @@ def test_rv19_10_ground_reference_cells_not_applicable_and_v3_budget_evidence(do
     # RVM-30 determining evidence: v3 budgets, never the immutable v2 budgets
     arts = by["RVM-30"]["configurations"]["hall_icp_neutralizer"]["artifacts"]
     det = [a for a in arts if a["role"] == "DETERMINING"]
-    assert {a["path"] for a in det} == {"docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+    assert {a["path"] for a in det} == {"docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
                                         "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json"}
     assert not any("_a9_v2/" in a["path"] for a in arts)       # no v2 budget, no v2 RFQ cited on RVM-30
     rfq = [a for a in arts if a["kind"] == "PROCUREMENT"]
@@ -812,7 +813,7 @@ def test_a919_c1_retirement_from_v3_flight_budgets_detected_and_fail_closed():
     """A9.19 / A9.20: the RVM follows the v3 flight budgets. While they carry hall_c1_reference the C1 cells stay the
     labelled ground-reference evaluation; a retirement must be labelled in BOTH budgets (retired-history column in
     mass/power, retired_flight_configuration in Xe, no flight C1 Xe scenario) or the build fails closed."""
-    assert B.REFS["MP"][0].endswith("mass_power_a9_v3.json") and B.REFS["XE"][0].endswith("xe_accounting_a9_v3.json")
+    assert B.REFS["MP"][0].endswith("mass_power_a9_v4.json") and B.REFS["XE"][0].endswith("xe_accounting_a9_v3.json")
     ctx = _budget_ctx()
     cur = B.c1_retired_from_flight_budgets(ctx)
     mp, xe = copy.deepcopy(ctx.r["MP"]), copy.deepcopy(ctx.r["XE"])
@@ -850,3 +851,18 @@ def test_a919_c1_retirement_from_v3_flight_budgets_detected_and_fail_closed():
     assert B.probe_xe(rctx, c1) == {B.RETIRED_KEY: "xe"}
     assert B.probe_power(rctx, c1) == {B.RETIRED_KEY: "power"}
     assert B.RETIRED_KEY not in B.probe_xe(rctx, "hall_icp_neutralizer")
+
+
+def test_a9_24_afi05_rvm16_reading_outside_frozen_basis():
+    """A9.24 AFI-05: RVM-16 carries the current-architecture (no flight keeper) reading as a labelled record; its frozen
+    basis title / text (A9.22 G3) and the owner row-94 verbatim quote stay unchanged."""
+    d = _rvm()
+    r = {x["id"]: x for x in d["rows"]}["RVM-16"]
+    x = r["a9_24_current_architecture_reading"]
+    assert "keeper" not in x["title"] and "keeper" not in x["requirement_text"]
+    assert "RF/ICP electron-source / neutralizer" in x["title"]
+    assert x["keeper_reading"]["status"] == "RECORDER_INTERPRETATION_OWNER_MAY_REVERSE"
+    assert x["keeper_reading"]["owner_row_94_verbatim"].startswith("Do not use graphite as the flight baseline for an "
+                                                                   "O/AO-exposed keeper")
+    assert "no graphite flight keeper" in r["requirement_text"]          # frozen basis (A9.22 G3) untouched
+    assert d["a9_24_afi05"]["stop_item"] == "AFI-05-S1"

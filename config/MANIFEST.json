@@ -9,7 +9,7 @@
    "bytes": 5506
   },
   "SOURCES_OF_TRUTH.json": {
-   "sha256": "275f70c23f2bb3d798b7db048b6a65e65bd39b6270c895f9b61763fa595b7af5",
+   "sha256": "c4ce2251a7f2d92e708a1c80f7c712fde6f4119725b8d972259ae89c5a942279",
    "bytes": 6584
   },
   "architecture/hall_icp_neutralizer_v1.json": {
@@ -29,7 +29,7 @@
    "bytes": 1188
   },
   "hardware/hardware_bounds_v1.json": {
-   "sha256": "e061c624f70a5b2dbeb6be0f57a4518bf9046ca060f70e4a05ac5af172c2841d",
+   "sha256": "952f70a5e850f94bb9d3de52eba492eaa62821b8e85102c51d4895a8887e64b6",
    "bytes": 2627
   },
   "mission/mission_scenario_v1.json": {

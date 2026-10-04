@@ -20,6 +20,19 @@
   "coupled H-1/ICP thermal closure": "UNRESOLVED",
   "C1 conventional reference": "CONTROL_FALLBACK"
  },
+ "a9_2_statuses_label": "HISTORICAL_QUOTE (A9.2 / A9-10 table, verbatim); the current statuses are current_statuses (A9.24 item 13)",
+ "current_statuses": {
+  "Hall->ICP architecture": "INVESTIGATION_HYPOTHESIS",
+  "ICP electron-current capacity": "PENDING_ICP45",
+  "ICP RF power closure": "PENDING_HARDWARE",
+  "RF matching architecture": "LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT",
+  "RF component ratings": "TBD_AFTER_IMPEDANCE_MAP",
+  "316L flight anode": "REJECTED_AS_CURRENT_BASELINE",
+  "final anode material": "OPEN",
+  "anode thermal closure": "UNRESOLVED",
+  "coupled H-1/ICP thermal closure": "UNRESOLVED",
+  "C1 conventional reference": "GROUND_REFERENCE_ONLY (A9.20 ground-only laboratory reference; A9.19 / A9.24 item 13: no C1 flight fallback; never in flight architecture, mass, power, Xe or thermal closure)"
+ },
  "generated_by": "docs/experiments/hall_icp/p2_impedance_map/build_p2_impedance_prep.py",
  "companion_document": "docs/experiments/hall_icp/p2_impedance_map/P2_IMPEDANCE_PREP.md",
  "test": "tests/test_p2_impedance_prep.py",
@@ -7211,7 +7224,7 @@
    "tests/test_p2_impedance_prep.py::test_no_prediction_no_rating_no_pass (ICPQ-11 owner-given)"
   ],
   "pinning_note": "the P2 json / reducer / framework are read or sha-pinned by other packages (P1, P3, RFQ v2, state v4, RVM, M16 v4, F6, freeze candidate): the integration lane re-pins / rebuilds; nothing outside this lane's paths was edited; cross-lane pair texts (XL-nn) unchanged",
-  "statuses_unchanged": "RF_COMPONENT_RATINGS TBD_AFTER_IMPEDANCE_MAP; ICP_COUPLED_THERMAL UNRESOLVED; anode OPEN; ICP45 NOT_EVALUATED; C1 CONTROL_FALLBACK; no PASS anywhere"
+  "statuses_unchanged": "RF_COMPONENT_RATINGS TBD_AFTER_IMPEDANCE_MAP; ICP_COUPLED_THERMAL UNRESOLVED; anode OPEN; ICP45 NOT_EVALUATED; C1 GROUND_REFERENCE_ONLY (A9.20 / A9.24 item 13; the A9.2 CONTROL_FALLBACK is history); no PASS anywhere"
  },
  "a9_19_incorporation": {
   "decisions": [

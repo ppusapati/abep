@@ -16,20 +16,20 @@ Flight configuration: `hall_icp_neutralizer` (one Hall + one RF/ICP neutralizer,
 - no PASS, no winner; no owner question answered
 - no existing module, frozen dataset, decision, CLAUDE.md or HISTORY modified; not wired into archengine
 
-## A9.2 statuses (verbatim)
+## Current statuses (A9.2 values as a labelled historical quote)
 
-| item | status |
-|---|---|
-| Hall->ICP architecture | INVESTIGATION_HYPOTHESIS |
-| ICP electron-current capacity | PENDING_ICP45 |
-| ICP RF power closure | PENDING_HARDWARE |
-| RF matching architecture | LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT |
-| RF component ratings | TBD_AFTER_IMPEDANCE_MAP |
-| 316L flight anode | REJECTED_AS_CURRENT_BASELINE |
-| final anode material | OPEN |
-| anode thermal closure | UNRESOLVED |
-| coupled H-1/ICP thermal closure | UNRESOLVED |
-| C1 conventional reference | CONTROL_FALLBACK (historical A9.2 status; superseded by A9.19 / A9.20: C1 is GROUND_ONLY_LAB_EQUIPMENT (ground reference only), not a flight control / fallback configuration) |
+| item | current status | A9.2 historical quote |
+|---|---|---|
+| Hall->ICP architecture | INVESTIGATION_HYPOTHESIS | INVESTIGATION_HYPOTHESIS |
+| ICP electron-current capacity | PENDING_ICP45 | PENDING_ICP45 |
+| ICP RF power closure | PENDING_HARDWARE | PENDING_HARDWARE |
+| RF matching architecture | LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT | LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT |
+| RF component ratings | TBD_AFTER_IMPEDANCE_MAP | TBD_AFTER_IMPEDANCE_MAP |
+| 316L flight anode | REJECTED_AS_CURRENT_BASELINE | REJECTED_AS_CURRENT_BASELINE |
+| final anode material | OPEN | OPEN |
+| anode thermal closure | UNRESOLVED | UNRESOLVED |
+| coupled H-1/ICP thermal closure | UNRESOLVED | UNRESOLVED |
+| C1 conventional reference | GROUND_REFERENCE_ONLY (A9.20 ground-only laboratory reference; A9.19 / A9.24 item 13: no C1 flight fallback; never in flight architecture, mass, power, Xe or thermal closure) | CONTROL_FALLBACK (historical A9.2 status; superseded by A9.19 / A9.20: C1 is GROUND_ONLY_LAB_EQUIPMENT (ground reference only), not a flight control / fallback configuration) |
 
 ## Architecture-level gates
 
@@ -57,7 +57,7 @@ Blocking evidence per gate:
 - **AG-02**: no admitted Hall transport closure: no design-specific Hall map exists, so thrust T, T - D, I_d,max, Hall discharge power and wall life are NOT_EVALUATED for every design vector
 - **AG-03**: P5-N2 v1 stays INCONCLUSIVE and is never rewritten; closure needs a separately preregistered successor held-out predictive validation that admits a Hall-transport member (A9.13 F9-OQ-03 AG-03 clarification)
 - **AG-04**: I_d,max,H1 not registered (needs measured H-1 operation); no P1 data (P1 plan ENGINEERING_TEST_PLAN_DRAFT_NOT_SCORE_BEARING)
-- **AG-05**: P3 framework inputs TBD: ICP geometry P3-G-01..08, emittances, conductances, Q_RF/match and Q_collector from P1 / P2, Q_plume from Phase-1; no thermal PASS from a negligible-coupling calculation (A9.2)
+- **AG-05**: P3 framework inputs TBD: ICP geometry P3-G-01..08, emittances, conductances, Q_RF/match and Q_collector from P1 / P2, Q_plume from Phase-1; no thermal PASS from a negligible-coupling calculation (A9.2); P3 v2 inherits the H2-5 C-1 cathode-body node CB and Q_cath 9-101 W (H25-10): a ground-article C1 term, NOT_USABLE_FOR_FLIGHT_THERMAL_CLOSURE (A9.24 AFI-03; hall_icp_neutralizer has no cathode; ...
 - **AG-06**: anode heat-removal path design (A9.2 sec. 4 investigation list) and the measured deposited discharge-power fraction
 - **AG-07**: P4: no candidate has gate-admissible evidence (all gate cells INCOMPLETE_EVIDENCE); 316L REJECTED_AS_CURRENT_BASELINE
 - **AG-08**: P2 impedance map not run (PREPARATION_ONLY_NOT_RUN; waits for the P1 stable region)
@@ -414,12 +414,12 @@ Freeze-status roll-up (205 parameters): {"FREEZE_CANDIDATE": 53, "OPEN": 71, "TB
 | AFC-SY-MASS-AL-05 | dry allocation AL-05 ICP neutralizer | 2.0 kg | n/a (allocation, not a CBE) | owner-allocation (ALLOCATION) | docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json#/lines/hall_icp_neutralizer/4; docs/decisions/OD_2026_09_29_owner_answers_147.json#/answers/53/owner_answ... | OPEN |
 | AFC-SY-MASS-AL-06 | dry allocation AL-06 RF generator/matching | 1.5 kg | n/a (allocation, not a CBE) | owner-allocation (ALLOCATION) | docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json#/lines/hall_icp_neutralizer/5; docs/decisions/OD_2026_09_29_owner_answers_147.json#/answers/53/owner_answ... | OPEN |
 | AFC-SY-MASS-AL-07 | dry allocation AL-07 Hall PPU | 6.0 kg (MEV planning floor) | n/a (planning floor, not a CBE) | owner-allocation (ALLOCATION) | docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json#/lines/hall_icp_neutralizer/6; docs/decisions/OD_2026_09_29_owner_answers_147.json#/answers/53/owner_answ... | OPEN |
-| AFC-SY-MASS-AL-08 | dry allocation AL-08 Xe hardware | 6.0528 kg (MEV planning floor) | n/a (planning floor, not a CBE) | owner-allocation (ALLOCATION) | docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json#/lines/hall_icp_neutralizer/7; docs/decisions/OD_2026_09_29_owner_answers_147.json#/answers/53/owner_answ... | OPEN |
+| AFC-SY-MASS-AL-08 | dry allocation AL-08 Xe hardware | 5.9148 kg (MEV planning floor) | n/a (planning floor, not a CBE) | owner-allocation (ALLOCATION) | docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json#/lines/hall_icp_neutralizer/7; docs/decisions/OD_2026_09_29_owner_answers_147.json#/answers/53/owner_answ... | OPEN |
 | AFC-SY-MASS-AL-09 | dry allocation AL-09 controls/harness | 1.0 kg | n/a (allocation, not a CBE) | owner-allocation (ALLOCATION) | docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json#/lines/hall_icp_neutralizer/8; docs/decisions/OD_2026_09_29_owner_answers_147.json#/answers/53/owner_answ... | OPEN |
 | AFC-SY-MASS-AL-10 | dry allocation AL-10 structure/thermal | 2.5 kg | n/a (allocation, not a CBE) | owner-allocation (ALLOCATION) | docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json#/lines/hall_icp_neutralizer/9; docs/decisions/OD_2026_09_29_owner_answers_147.json#/answers/53/owner_answ... | OPEN |
 | AFC-SY-MASS-WET | wet propulsion-system mass gate (incl. Xe + tank) | 40 kg (strict <) | n/a (decision / rule) | requirement-as-recorded (REQUIREMENT_AS_RECORDED) | docs/requirements/rvm_a9/rvm_a9_v1.json#/rows/5; docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json#/items/37 | OPEN |
 | AFC-SY-MASS-INT | internal design allocations | [34, 36] kg (wet) | n/a (allocation, not a CBE) | owner-allocation (ALLOCATION) | docs/decisions/OD_2026_09_29_owner_answers_147.json#/answers/52/owner_answer_verbatim; docs/requirements/rvm_a9/rvm_a9_v1.json#/rows/6 | FREEZE_CANDIDATE |
-| AFC-SY-MASS-ROLL | dry roll-ups (allocations / with evidence floors) under the open margin readings | {"reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)", "dry_known_kg": 40.7464421, "system_margin_kg": 6.791073684, "reserve_kg": 0.0, ... kg (dry, known part) | n/a (roll-up of allocations and floors; no CBE) | model-derived | docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json#/rollups; docs/budgets/owner_decisions/owner_questions_state_v4.json#/rows/250/question; docs/budgets/mas... | TBD_AFTER_EVIDENCE |
+| AFC-SY-MASS-ROLL | dry roll-ups (allocations / with evidence floors) under the open margin readings | {"reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)", "dry_known_kg": 40.57212631, "system_margin_kg": 6.762021052, "reserve_kg": 0.0,... kg (dry, known part) | n/a (roll-up of allocations and floors; no CBE) | model-derived | docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json#/rollups; docs/budgets/owner_decisions/owner_questions_state_v4.json#/rows/250/question; docs/budgets/mas... | TBD_AFTER_EVIDENCE |
 
 #### thermal interfaces
 
@@ -457,7 +457,7 @@ Freeze-status roll-up (205 parameters): {"FREEZE_CANDIDATE": 53, "OPEN": 71, "TB
 | AFC-SY-XE-05 | Xe storage temperature for tank sizing | 323.0 K | n/a (decision / rule) | owner-allocation (RULE) | docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json#/items/24; docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json#/items/24 | FREEZE_CANDIDATE |
 | AFC-SY-XE-06 | Xe tank MEOP and proof / burst factors | TBD - XV2-28 / XV2-29 MPa; - | TBD | - | docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json#/items/27; docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json#/items/28; docs/decisions/OD_2... | TBD_AFTER_EVIDENCE |
 | AFC-SY-XE-07 | stored-Xe subsystem screening cap (share of 40 kg) | 0.25 - | n/a (decision / rule) | owner-allocation (RULE) | docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json#/items/38; docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json#/items/38 | FREEZE_CANDIDATE |
-| AFC-SY-XE-08 | Xe hardware evidence floor vs AL-08 allocation | {"AL-08_MEV_planning_floor_kg": 6.0528, "evidence_floor_cbe_kg": 5.044} kg | n/a (allocation, not a CBE) | model-derived | docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json#/lines/hall_icp_neutralizer/7; docs/budgets/owner_decisions/owner_questions_state_v4.json#/rows/245/quest... | OPEN |
+| AFC-SY-XE-08 | Xe hardware evidence floor vs AL-08 allocation | {"AL-08_MEV_planning_floor_kg": 5.9148, "evidence_floor_cbe_kg": 4.929} kg | n/a (allocation, not a CBE) | model-derived | docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json#/lines/hall_icp_neutralizer/7; docs/budgets/owner_decisions/owner_questions_state_v4.json#/rows/245/quest... | OPEN |
 
 ## Model-change candidates (owner decision + HISTORY entry required; none implemented)
 
@@ -792,16 +792,16 @@ Consumed (sha256 at build time; drift reported by `--check`):
 - `docs/design_synthesis/f2_filter/f2_filter_stage_v1.json` abd5989e56fb49772e8d49a5f88afc7ab3165b485eff2f792fb598d77c89f1d2
 - `docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json` 6871975696f7b40dac897c52b529266eb053ecbf4ea7ab17cb3e3fbdac73a27b
 - `docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json` 74a52aa749e1d071f76957e4f9ef4929c9d8ab302b183da3c5a5d9ba8d6d6923
-- `docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json` cd5da1b8bc4b97f3b32c627be7016aa17016045975f90fa392e202e6eec78785
-- `docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json` 50a7fa11a92d162ae28b864f53794b333c1d779104ff558fcf61c2eb24955de0
+- `docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json` fffb223023f944f166112acf017af277a50ede84695cb78f933dd5ca918fd3a9
+- `docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json` 36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8
 - `docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json` eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450
-- `docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json` abe7cc848065e4db6d2e515baca74dc3ee92f76d3264c8f5326223c11c75de43
+- `docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json` 43941fbe70546393ec592534b95b4640aded50b190e6f3fcdbd6da7b48f92d71
 - `docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json` 423e74ded14e5d5df640a9cc5818c8d8478b194573270ec379b1eb9359c1c455
 - `docs/design_synthesis/f7_f8_optimizer/f8_robust_candidates_v1.json` 2ec7e059ebc55d9b83f4c8f0e3cd43e2cebcbe665933e7ce9ecf1a43451f4e8d
 - `docs/budgets/owner_decisions/owner_questions_state_v4.json` 6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67
-- `docs/budgets/owner_decisions/owner_questions_state_v5.json` ee8b5a9a0daddc25d1b007e63dae5e708babe87569ff487bfac3c09036449575
-- `docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json` 96764681d13d05f2f566ec04417049c65f1116955ba91870a7d3a713c0d5098a
-- `docs/requirements/rvm_a9/rvm_a9_v1.json` 6d7d02beba5498b839497ee6824b15f850738aef40d3a6190ad09cf115006264
+- `docs/budgets/owner_decisions/owner_questions_state_v5.json` 8a29c4180f4387afb6168986442ddb1c08b1f9a692ad85cdf0630799de3cd4fd
+- `docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json` dc596f0bfe1eb824f5317ddab926c58113fa8a2918628584eb59e0e526aac3f7
+- `docs/requirements/rvm_a9/rvm_a9_v1.json` 3a6ea2e9ac331c89eaef6d9e546df3d318319ffc92707f09ddd47e8a93bb84ba
 - `docs/requirements/rfp_official/rfp_registration_v1.json` c126be5eef7b9ec6340776ed035eeaa0ced1c4dd2ec585383f3d3a5977d174a0
 - `docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json` c1a7875fdd0e27b3425cc02ba915ab61bcf9760ac032d294b69a887a91e78459
 - `docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json` fde0ddac723b62ab9bdc9789fa738c74198de23b8d150fd67b1b89d9e9d2d2ae
@@ -809,10 +809,10 @@ Consumed (sha256 at build time; drift reported by `--check`):
 - `docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json` 8240f49dbdfe9eef3dc2a1ab854a276e27a8eb435ddb2f6c62e48be5e511e0fe
 - `docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json` de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980
 - `schemas/interfaces/icp_neutralizer_icd_v1.json` 8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c
-- `docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json` 3f99a90c9491106a030bfce8043dd456a37537c220795b2bc1caff058b2139db
-- `docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json` 9e1343a529e4c8e68ffcbf69b598edff680271a93494fddbcc7bba27b521c334
+- `docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json` d0a696c597c839802a405d6607abe03a1dc5e5bb917cd11405a86aa3be9e4f08
+- `docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json` cdd4b04d79fbee4e22d76d2734bb170ce5e8a8eab54b47e93c0b6e15dd8a0a87
 - `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json` 1db2b13e82389fc824acc24f6b6b9aafb11b950b9c5546347cc8037b2bdb132a
-- `docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json` 6d224b5f88745600a0adc0a58ab6f0324f9cc2d43993dc0a33159fd067f75633
+- `docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json` f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b
 - `hallthruster_bridge/ensemble/transport_ensemble_v0.json` 2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b
 - `hallthruster_bridge/validation/VALIDATION_RELEASE_v1.json` 0a57a397883141be20196853b7d722404dc3cb20c72fba666121fd43507dc97c
 - `docs/interfaces/UPSTREAM_ICD.md` 4445031cbeb2710395298f2c1d12ca5893c17afd9f50d6b8ab9210ce4171180a

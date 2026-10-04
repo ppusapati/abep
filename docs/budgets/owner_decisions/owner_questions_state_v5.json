@@ -3,7 +3,11 @@
  "id": "owner_questions_state_v5",
  "lane": "A9.16 step 1 integration (decision application)",
  "status": "STATE_RECORD_FOR_OWNER (answers come only from the owner)",
- "a9_status": "Hall -> downstream 13.56 MHz ICP neutralizer INVESTIGATION_HYPOTHESIS; C1 CONTROL_FALLBACK; no status here is a PASS; no winner declared",
+ "a9_status": "Hall -> downstream 13.56 MHz ICP neutralizer INVESTIGATION_HYPOTHESIS; C1 GROUND_REFERENCE_ONLY (A9.20 ground-only laboratory reference; no C1 flight fallback, A9.19 / A9.24 item 13; the A9.2 CONTROL_FALLBACK is history); no status here is a PASS; no winner declared",
+ "a9_status_v4_historical_quote": {
+  "label": "HISTORICAL_QUOTE (owner_questions_state_v4 a9_status, verbatim; its C1 CONTROL_FALLBACK is the superseded A9.2 status)",
+  "text": "Hall -> downstream 13.56 MHz ICP neutralizer INVESTIGATION_HYPOTHESIS; C1 CONTROL_FALLBACK; no status here is a PASS; no winner declared"
+ },
  "supersedes_for_use": "docs/budgets/owner_decisions/owner_questions_state_v4.json (kept immutable; pinned)",
  "generated_by": "docs/budgets/owner_decisions/build_owner_questions_state_v5.py",
  "companion_document": "docs/budgets/owner_decisions/OWNER_QUESTIONS_STATE_v5.md",

@@ -133,6 +133,8 @@ def design_gate_snapshot(repo=ao.REPO, rvm_snapshot: dict | None = None) -> dict
     snap = {"hall_credible_set": hall["credible_set"], "hall_admitted_members": list(hall["admitted_members"]),
             "a9_2_statuses": dict(mp["statuses"]["a9_2_statuses"]),
             "a9_19_20_supersessions": dict(mp["statuses"].get("a9_19_20_supersessions", {})),
+            # A9.24 item 13: the current statuses (C1 GROUND_REFERENCE_ONLY); a9_2_statuses is the A9.2 quote
+            "current_statuses": dict(mp["statuses"].get("current_statuses", {})),
             "h1_article_freeze_state": f5["article_freeze_state"]}
     snap.update(rvm_snapshot or {})
     return snap

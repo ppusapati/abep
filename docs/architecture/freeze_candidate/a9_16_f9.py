@@ -292,35 +292,37 @@ def apply_rows(rows: list, ref, get) -> list:
     note(r, ["RVMQ-01", "OD12"], rfp_citation_status=L.RFP_PENDING)
 
     mp3_lines = {"AFC-SY-MASS-AL-04": (3, "MQ-03", 4.2048), "AFC-SY-MASS-AL-07": (6, "MQ-04", 6.0),
-                 "AFC-SY-MASS-AL-08": (7, "MQ-05", 6.0528)}
+                 "AFC-SY-MASS-AL-08": (7, "MQ-05", 5.9148)}      # A9.24 AFI-01 re-base (mass / power v4)
     for rid, (idx, qid, floor) in mp3_lines.items():
         r = by[rid]
-        line = get("MP3", f"/lines/hall_icp_neutralizer/{idx}")
+        line = get("MP4", f"/lines/hall_icp_neutralizer/{idx}")
         assert line["line"] == rid.split("-", 3)[-1], rid
-        part = [x for x in get("MP3", "/rollups/0/parts") if x["line"] == line["line"]][0]
+        part = [x for x in get("MP4", "/rollups/0/parts") if x["line"] == line["line"]][0]
         assert part["used"] == "MEV_PLANNING_FLOOR" and math.isclose(part["kg"], floor), (rid, part)
         _set(r, value=floor, units="kg (MEV planning floor)", tolerance="n/a (planning floor, not a CBE)",
              evidence_class="owner-allocation", value_label="ALLOCATION",
              basis=f"A9.14 {qid}: MEV planning floor (owner-stated); replaced by 1.20 x the actual CBE when it exists "
-                   "(mass / power v3)",
+                   "(mass / power v4" + ("; A9.24 AFI-01: cathode-feed PFCV removed from the 6.0528 kg owner floor, "
+                                         "latch pending owner AFI-01-S1" if qid == "MQ-05" else "") + ")",
              freeze_status="OPEN", evidence_to_advance=["CBE (then weighed article) for the line"])
-        r["source"] = r["source"] + [ref("MP3", f"/lines/hall_icp_neutralizer/{idx}"), dsrc(qid)]
+        r["source"] = r["source"] + [ref("MP4", f"/lines/hall_icp_neutralizer/{idx}"), dsrc(qid)]
         note(r, [qid, "MQ-01"])
 
     r = by["AFC-SY-MASS-ROLL"]
-    roll = get("MP3", "/rollups/0")
+    roll = get("MP4", "/rollups/0")
     _set(r, value={"reading": roll["reading"], "dry_known_kg": roll["dry_known_kg"],
                    "system_margin_kg": roll["system_margin_kg"], "reserve_kg": roll["reserve_kg"],
                    "lines_without_value": roll["lines_without_value"],
                    "wet_vs_40kg": {str(w["xe_case_kg"]): w["state"] for w in roll["wet"]
                                    if w["reference"] == "HARD_40_WET"}},
-         basis="mass / power v3 single MEV reading (A9.14 MQ-01 / MQ-02 / MQ-10): 20 % system margin replaces the 4 kg "
+         basis="mass / power v4 (v3 + A9.24 AFI-01 AL-08 re-base) single MEV reading (A9.14 MQ-01 / MQ-02 / MQ-10): "
+               "20 % system margin replaces the 4 kg "
                "reserve; mass closure by redesign, never by margin relaxation",
          note="evidence-based wet mass does not close against 40 kg at 2 / 5 / 10 kg loaded Xe (MQ-10: reduce actual "
               "CBE; no margin relaxation)",
          freeze_status="TBD_AFTER_EVIDENCE",
          evidence_to_advance=["CBE for every BOM line", "controls line AL-09 allocation (MPV3Q-01, TBD_OWNER)"])
-    r["source"] = r["source"] + [ref("MP3", "/rollups/0"), dsrc("MQ-02"), dsrc("MQ-10")]
+    r["source"] = r["source"] + [ref("MP4", "/rollups/0"), dsrc("MQ-02"), dsrc("MQ-10")]
     note(r, ["MQ-01", "MQ-02", "MQ-10"])
 
     r = by["AFC-SY-CTL-01"]
@@ -379,11 +381,16 @@ def apply_rows(rows: list, ref, get) -> list:
     note(r, ["XA9Q-06", "OQ-RFQ-09"])
 
     r = by["AFC-SY-XE-08"]
-    _set(r, value={"AL-08_MEV_planning_floor_kg": 6.0528, "evidence_floor_cbe_kg": 5.044},
+    al08 = get("MP4", "/lines/hall_icp_neutralizer/7")
+    assert al08["line"] == "AL-08" and math.isclose(al08["value"]["value_kg"], 5.9148), al08["value"]
+    _set(r, value={"AL-08_MEV_planning_floor_kg": al08["value"]["value_kg"],
+                   "evidence_floor_cbe_kg": al08["evidence_floor_cbe_kg"]},
          basis="A9.14 MQ-05: AL-08 = complete Xe storage / flow hardware (tank, regulator, valves, plumbing, mounting, "
-               "thermal); planning floor replaced by quotations / design",
+               "thermal); planning floor replaced by quotations / design; A9.24 AFI-01 (mass / power v4): the C1 "
+               "cathode-feed PFCV removed from the v3 6.0528 / 5.044 kg floor, cathode-branch latch retained pending "
+               "owner (AFI-01-S1, row 55 dual series isolation)",
          freeze_status="OPEN", evidence_to_advance=["quotations / design CBE for the complete Xe hardware"])
-    r["source"] = r["source"] + [ref("MP3", "/lines/hall_icp_neutralizer/7"), dsrc("MQ-05")]
+    r["source"] = r["source"] + [ref("MP4", "/lines/hall_icp_neutralizer/7"), dsrc("MQ-05")]
     note(r, ["MQ-05"])
 
     # A9.16 repair F8: the Xe rows are re-pointed to the current Xe accounting v3 / mass-power v3 (the v2 / state-v4
@@ -400,10 +407,10 @@ def apply_rows(rows: list, ref, get) -> list:
                 "AFC-SY-XE-05": [_find("XE3", "/items", "id", "XV2-25")],
                 "AFC-SY-XE-06": [_find("XE3", "/items", "id", "XV2-28"), _find("XE3", "/items", "id", "XV2-29")],
                 "AFC-SY-XE-07": [_find("XE3", "/items", "id", "XV2-39")],
-                "AFC-SY-XE-08": [_find("MP3", "/lines/hall_icp_neutralizer", "line", "AL-08")]}
+                "AFC-SY-XE-08": [_find("MP4", "/lines/hall_icp_neutralizer", "line", "AL-08")]}
     for rid, ptrs in xe3_ptrs.items():
         r = by[rid]
-        key = "MP3" if rid == "AFC-SY-XE-08" else "XE3"
+        key = "MP4" if rid == "AFC-SY-XE-08" else "XE3"
         hist = []
         for x in r["source"]:
             if isinstance(x, dict) and x.get("path", "").endswith(("xe_accounting_a9_v2.json",
@@ -421,8 +428,8 @@ def apply_rows(rows: list, ref, get) -> list:
         r["source"] = r["source"] + cur
         r["current_sources"] = [c["path"] + c["pointer"] for c in cur]
         r.setdefault("a9_16", {})["current_source_rule"] = (
-            "xe_accounting_a9_v3 / mass_power_a9_v3 / state v5 govern; the v2 / v4 sources are history (A9.16 "
-            "repair F8)")
+            "xe_accounting_a9_v3 / mass_power_a9_v4 / state v5 govern; the v2 / v4 sources are history (A9.16 "
+            "repair F8; mass / power v4 since A9.24 AFI-01)")
         if rid not in touched:
             touched.append(rid)
     return touched

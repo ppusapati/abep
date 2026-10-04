@@ -164,9 +164,10 @@ P1_REL = "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json"
 P2_REL = "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json"
 P3_REL = "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json"   # supersedes v1 (A9.16)
 P4_REL = "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json"
-MP_REL = "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json"          # A9.15-applied (RFP-02); v2 = history
-# RV19-11: the A9.19 hollow-cathode refusal reads the current mass / power package (v3), never the immutable v2
-# history (MP_REL is already v3 since the A9.16 RFP-02 repair; kept as a named alias for the refusal reader)
+# A9.24 AFI-01: the current mass / power package is v4 (v3 + the AL-08 cathode-feed re-base); v3 / v2 = history
+MP_REL = "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json"
+# RV19-11: the A9.19 hollow-cathode refusal reads the current mass / power package, never the immutable v2 history
+# (kept as a named alias for the refusal reader; the name predates v4)
 MP_V3_REL = MP_REL
 RFQ_REL = "docs/procurement/rfq_a9_v3/rfq_a9_v3.json"                    # A9.15-applied (RFP-02); v2 = history
 RVM_REL = "docs/requirements/rvm_a9/rvm_a9_v1.json"
@@ -944,7 +945,9 @@ def heat_rejection(compressor_P_W: float | None, supplied: Mapping | None = None
     fce = {k: v["status"] for k, v in p3["fail_closed_evaluations"].items()}
     return _obj("Q_reject_W", NOT_EVALUATED, None, "W",
                 reason=f"P3 framework {p3['status']}; fail-closed evaluations {fce}; ICP_COUPLED_THERMAL and "
-                       "ANODE_THERMAL_CLOSURE UNRESOLVED (never reported as PASS)", unlock=[UNLOCK["Q_reject"]],
+                       "ANODE_THERMAL_CLOSURE UNRESOLVED (never reported as PASS); the H2-5 C-1 cathode-body node CB / "
+                       "Q_cath 9-101 W inherited by P3 v2 is a ground-article C1 term, "
+                       "NOT_USABLE_FOR_FLIGHT_THERMAL_CLOSURE (A9.24 AFI-03)", unlock=[UNLOCK["Q_reject"]],
                 p3_evaluations=fce,
                 partial={"compressor_local_dissipation_upper_bound_W": compressor_P_W,
                          "basis": "electrical input = local dissipation + energy carried by the gas, so the local "
