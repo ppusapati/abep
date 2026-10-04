@@ -211,7 +211,7 @@ def test_no_c1_in_v2_configuration_lists():
 
 
 def test_schema_v2_validates_icp_ledger_input():
-    jsonschema = pytest.importorskip("jsonschema")
+    import jsonschema  # locked (requirements-lock.txt): a missing dep fails, never adds a skip (rule 9)
     s2 = _load(V2_SCHEMA)
     slots = B2.installed_slots(ICP)
     loads, effs = _synthetic(slots)

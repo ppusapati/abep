@@ -1,12 +1,13 @@
 """A9.22 items 6-7 (Phase B): raw physics closure separated from the assessment layer, with no numerical change.
 
-* evaluate() must reproduce, bit for bit (key set, key order, value types, float repr), the records frozen at base
+* evaluate() must reproduce (key set, key order, value types exactly; finite floats bit for bit on the generating
+  machine and within FLOAT_IDENTITY_MAX_ULP = 4 ULP across platforms), the records frozen at base
   commit 9eb302c before the split (tests/fixtures/evaluate_identity_base_9eb302c.json, generated once by
   tests/fixtures/make_evaluate_identity_fixture.py at that commit), EXCEPT the keys moved or added by the governed
   A9.22 G1 baseline change (system.py completion; docs/HISTORY.md 'A9.22 G1 governed baseline change (system.py
   completion)'), which are listed explicitly below (G1_MOVED_KEYS, G1_ADDED_KEYS) and checked against the 26,280 /
   26,000 h scaling instead. The 9eb302c fixture is kept unedited as the historical no-change proof of Phase B.
-* The same records must reproduce, bit for bit with no exclusion, the post-G1 fixture
+* The same records must reproduce, with no exclusion and under the same 4-ULP portability rule, the post-G1 fixture
   tests/fixtures/evaluate_identity_g1.json (generated once by tests/fixtures/make_evaluate_identity_fixture_g1.py at
   the G1 completion commit): the reference for future no-change checks.
 * physics_closure() (schema raw_closure_v2) carries no chk_* / rfp_* / ic_* / hall_preferred / compliance keys.
@@ -19,6 +20,7 @@ import dataclasses
 import importlib.util
 import inspect
 import json
+import math
 from pathlib import Path
 
 import pandas as pd
@@ -58,17 +60,54 @@ G1_ADDED_KEYS = ("ao_fluence_basis_h", "eng_R_mission", "eng_R_mission_h")
 G1_FACTOR = 26280.0 / 26000.0
 
 
+# Cross-platform floating-point portability rule (owner approval 2026-10-04, A9.24 steering response item 1).
+# The identity fixtures were generated on the execution container; the GitHub ubuntu runner reproduces the same
+# records except for last-bit float differences (observed 1-2 ULP, e.g. C_D 2.0549076096691596 vs 2.05490760966916,
+# active_ratio 16.534084977161054 vs 16.53408497716106; CI run 37190383021). Finite floats may differ by at most
+# FLOAT_IDENTITY_MAX_ULP units in the last place; every other value (ints, bools, strings, None, NaN/inf, container
+# kinds, lengths, key sets and order) must match exactly. This is a portability rule for numerically identical
+# records, not a scientific tolerance; same-process comparisons below stay bit-exact.
+FLOAT_IDENTITY_MAX_ULP = 4
+_FLOAT_TAGS = ("float", "np_float")
+
+
+def _float_close(a: float, b: float) -> bool:
+    if math.isnan(a) or math.isnan(b):
+        return math.isnan(a) and math.isnan(b)
+    if math.isinf(a) or math.isinf(b):
+        return a == b
+    return abs(a - b) <= FLOAT_IDENTITY_MAX_ULP * max(math.ulp(a), math.ulp(b))
+
+
+def _enc_equal(a, b) -> bool:
+    """Equality of two GEN.encode() values under the <= 4 ULP float portability rule (everything else exact)."""
+    if isinstance(a, dict) and isinstance(b, dict):
+        if list(a) != list(b):
+            return False
+        if len(a) == 1:
+            (tag,) = a
+            if tag in _FLOAT_TAGS:
+                return _float_close(float(a[tag]), float(b[tag]))
+            if tag in ("list", "tuple"):
+                return len(a[tag]) == len(b[tag]) and all(_enc_equal(x, y) for x, y in zip(a[tag], b[tag]))
+            if tag == "map":
+                return (len(a[tag]) == len(b[tag]) and [k for k, _ in a[tag]] == [k for k, _ in b[tag]]
+                        and all(_enc_equal(x, y) for (_, x), (_, y) in zip(a[tag], b[tag])))
+        return a == b
+    return type(a) is type(b) and a == b
+
+
 def _decode(e):
     return float(e["float"]) if "float" in e else e["int"]
 
 
 def _check_against_9eb302c(row, r: dict):
-    """Bit-for-bit vs the 9eb302c record except the explicitly listed G1 keys (checked by their scaling)."""
+    """Identity (4-ULP float portability rule) vs the 9eb302c record except the explicitly listed G1 keys (checked by their scaling)."""
     keys = [k for k in r if k not in G1_ADDED_KEYS]
     assert keys == row["keys"], "key set / order changed (beyond the listed G1 additions)"
     assert set(G1_ADDED_KEYS[:1]) <= set(r)
     old = dict(zip(row["keys"], row["values"]))
-    diff = [(k, GEN.encode(r[k]), old[k]) for k in keys if k not in G1_MOVED_KEYS and GEN.encode(r[k]) != old[k]]
+    diff = [(k, GEN.encode(r[k]), old[k]) for k in keys if k not in G1_MOVED_KEYS and not _enc_equal(GEN.encode(r[k]), old[k])]
     assert not diff, f"numerical / type change vs base commit 9eb302c outside the G1 keys: {diff[:5]}"
     assert r["ao_fluence_basis_h"] == 26280.0
     for k in G1_SCALED_KEYS:
@@ -97,7 +136,7 @@ def test_evaluate_identical_to_base_commit(i):
         g = FIX_G1["rows"][i]
         assert g["config"] == row["config"] and list(r) == g["keys"]
         got = [GEN.encode(r[k]) for k in r]
-        diff = [(k, a, b) for k, a, b in zip(g["keys"], got, g["values"]) if a != b]
+        diff = [(k, a, b) for k, a, b in zip(g["keys"], got, g["values"]) if not _enc_equal(a, b)]
         assert not diff, f"numerical / type change vs the G1 fixture: {diff[:5]}"
 
 
@@ -226,3 +265,24 @@ def test_dead_logic_removed():
     src = inspect.getsource(transient)
     assert "ignition_req_met" not in src.replace('always-true "ignition_req_met" flag was removed', "")
     assert "or True" not in src
+
+
+def test_float_identity_rule_is_narrow():
+    """The portability comparator admits <= 4 ULP on finite floats only; everything else stays exact."""
+    x = 2.0549076096691596
+    up = lambda v, n: v + n * math.ulp(v)
+    F = lambda v: {"float": repr(v)}
+    assert _enc_equal(F(x), F(2.05490760966916))                       # the observed 1-ULP runner difference
+    assert _enc_equal(F(x), F(up(x, 4))) and not _enc_equal(F(x), F(up(x, 5)))
+    assert not _enc_equal(F(x), F(x * (1 + 1e-12)))                    # not a decimal / relative tolerance
+    assert _enc_equal(F(float("nan")), F(float("nan"))) and not _enc_equal(F(float("nan")), F(1.0))
+    assert _enc_equal(F(float("inf")), F(float("inf"))) and not _enc_equal(F(float("inf")), F(float("-inf")))
+    assert not _enc_equal(F(1e308), F(float("inf")))
+    assert not _enc_equal({"int": 3}, {"int": 4}) and not _enc_equal({"int": 3}, F(3.0))
+    assert not _enc_equal(True, False) and not _enc_equal(True, 1) and not _enc_equal("a", "b")
+    assert not _enc_equal(None, F(0.0)) and _enc_equal(None, None)
+    assert not _enc_equal({"np_int": 1}, {"np_int": 2}) and not _enc_equal({"np_bool": True}, {"np_bool": False})
+    assert not _enc_equal({"list": [F(1.0)]}, {"list": [F(1.0), F(1.0)]})
+    assert not _enc_equal({"list": [F(1.0)]}, {"tuple": [F(1.0)]})
+    assert not _enc_equal({"map": [["a", F(1.0)]]}, {"map": [["b", F(1.0)]]})
+    assert _enc_equal({"map": [["a", {"list": [F(x)]}]]}, {"map": [["a", {"list": [F(up(x, 2))]}]]})

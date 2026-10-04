@@ -3564,3 +3564,22 @@ Owner decisions A9.24 items 10 and 11, `docs/decisions/OD_2026_10_04_A9_24_RUST_
   scratchpad matched. The upload is a manual owner step because there is no working release-creation capability: the `gh`
   token is invalid, and the tag had no release (404). The steps are in `docs/evidence_archives/f1_intake/UPLOAD_STEPS.md`.
   The A9.16 matrix G9 check now expects the AUTHORIZED_TO_UPLOAD status.
+
+## 2026-10-04 — CI portability repair (owner steering response item 1): 4-ULP float identity rule, locked test dependencies
+
+- **Cause.** GitHub CI (`ci.yml`, both pymsis legs) failed on every push since `204c7d3`: 9 failures, all in
+  `tests/test_raw_assessment_split.py` (identity rows 114–120 and two `physics_closure_is_raw_only` rows). The identity
+  fixtures (`evaluate_identity_base_9eb302c.json`, `evaluate_identity_g1.json`) were generated on the execution container;
+  the ubuntu runner reproduces every record except last-bit float differences, e.g. `C_D` 2.0549076096691596 vs
+  2.05490760966916 (1 ULP), `active_ratio` 16.534084977161054 vs 16.53408497716106 (2 ULP), `drag_mN` 12.12157581257632 vs
+  12.121575812576323 (1 ULP) (run 37190383021). Not a physics difference; locally the tests passed bit for bit.
+- **Fix (test-only).** Fixture comparisons use `_enc_equal`: finite floats within `FLOAT_IDENTITY_MAX_ULP = 4`
+  (`|a - b| <= 4 max(ulp(a), ulp(b))`); ints, bools, strings, None, NaN/inf, container kinds, lengths, key sets and order
+  stay exact. Same-process comparisons (raw unchanged by assessment) stay bit-exact. `test_float_identity_rule_is_narrow`
+  pins the rule (4 ULP pass, 5 ULP fail, 1e-12 relative fail, NaN/inf/type cases). No fixture, model, golden, gate or
+  requirement value changed.
+- **Sixth skip.** Not pymsis-related: both legs reported 6 skips because `tests/test_bus_boundary_a9_v2.py` used
+  `pytest.importorskip("jsonschema")` and jsonschema was not in `requirements-lock.txt` (`test_f1_archive_a9_24.py` would
+  have added a seventh for zstandard). Following the repo convention (locked deps are imported directly, never skipped),
+  `jsonschema==4.26.0` and `zstandard==0.25.0` are pinned and both tests import them directly. Rule 9 is unchanged
+  (exactly 5 SUPERSEDED skips, 1 strict xfail) on both legs.

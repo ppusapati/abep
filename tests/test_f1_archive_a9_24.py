@@ -63,7 +63,7 @@ def test_upload_authorized_not_authoritative(fa, man):
 
 
 def test_verify_download_fails_closed(fa, tmp_path, capsys):
-    pytest.importorskip("zstandard")
+    import zstandard  # noqa: F401  locked (requirements-lock.txt): a missing dep fails, never adds a skip (rule 9)
     f = tmp_path / "F1_INTAKE_SYNTHESIS_v1_405296e.tar.zst"
     f.write_bytes(b"not an archive" * 10)
     assert fa.verify_download(str(f), str(tmp_path / "rec.json")) == 1
