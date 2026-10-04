@@ -144,7 +144,8 @@ def test_rv19_11_elements_read_mass_power_v3_content():
     assert {e["id"] for e in els if e["kind"] == "mass_line"} == {ln["line"] for ln in lines}
     n_fc = sum(len(ln.get("floor_constituents") or []) for ln in lines)
     assert sum(e["kind"] == "floor_constituent" for e in els) == n_fc
-    assert sum(e["kind"] == "c1_branch" for e in els) == sum("c1_branch" in ln for ln in lines)
+    assert sum(e["kind"] == "c1_branch" and not e["id"].endswith(".embedded_c1_cathode_xe_branch")
+               for e in els) == sum("c1_branch" in ln for ln in lines)
     # any embedded C1 branch is quoted from the ground reference's own text (kg present there, never invented)
     gtxt = json.dumps([ls for _, ls in ao.ground_reference_lines(mp, "hall_c1_reference")])
     for e in els:
@@ -157,6 +158,20 @@ def test_rv19_11_elements_read_mass_power_v3_content():
         if e["booking"] == a919.C1_BOOKING_CONDITIONAL and e["kind"] != "c1_branch":
             assert a919.is_conditional_c1_text(e["name"])
     assert rec["check"] != "PASS"
+
+
+def test_a9_25_al08_embedded_c1_branch_resolved():
+    """A9.25 message 8 (AFI-01-S1): the re-based flight AL-08 states that no C1 hardware remains in its floor, so the
+    historical ground-reference text ('C1 cathode Xe branch 0.285 kg ... inside the AL-08 floor') is reported as an
+    absence statement, not a flagged provision; without that statement the embedded flag would still stand."""
+    els = ao.flight_configuration_elements("hall_icp_neutralizer")
+    rec = a919.refuse_hollow_cathode_elements("hall_icp_neutralizer", els)
+    assert rec["check"] == a919.CHECK_CLEAN and rec["c1_provisions_flagged"] == []
+    emb = [e for e in rec["c1_absence_statements"] if e["id"] == "AL-08.embedded_c1_cathode_xe_branch"]
+    assert len(emb) == 1 and emb[0]["state"].startswith("NO_C1_HARDWARE_IN_FLIGHT_FLOOR (NONE")
+    assert emb[0]["kg_history"] == 0.285 and emb[0]["in_line"] is False
+    assert ao._floor_c1_resolution({"line": "AL-08"}) is None
+    assert ao._floor_c1_resolution({"c1_hardware_in_flight_al08": "0.285 kg C1 branch"}) is None
 
 
 def test_rv19_11_booked_c1_content_refused():

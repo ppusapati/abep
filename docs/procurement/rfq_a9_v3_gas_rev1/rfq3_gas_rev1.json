@@ -1,0 +1,259 @@
+{
+ "schema": "rfq3_gas_rev1",
+ "id": "RFQ3_GAS_REV1",
+ "date": "2026-10-04",
+ "base_commit": "9c5fee0440e0ee26963826381582ca6c8e7772ff",
+ "title": "RFQ3-GAS rev1: GAS-only successor revision of the authorized RFQ v3 gas/metrology package (A9.25 message 8 section 5); v3 preserved",
+ "status": "AUTHORIZED_PENDING_OWNER_SEND (quotation only; successor of RFQ3-GAS v3)",
+ "generated_by": "docs/procurement/rfq_a9_v3_gas_rev1/build_rfq3_gas_rev1.py",
+ "companion_document": "docs/procurement/rfq_a9_v3_gas_rev1/RFQ3_GAS_REV1.md",
+ "test": "tests/test_rfq3_gas_rev1.py",
+ "decided_by": {
+  "decision": "A9.25",
+  "message": 8,
+  "key": "FINAL_PRE_BID_AFI_RESOLUTION",
+  "section": 5,
+  "text_sha256": "a48dfcbb9fa33421bf19ff45fa241070c22a8379a3eb4e887b661fb8ceb93624",
+  "md": "docs/decisions/OD_2026_10_04_A9_25_PRE_BID_OWNER_DECISIONS.md",
+  "md_sha256": "159ea2049e3cc05ce7a18b3e6bbdf6fee97c168a74f23fd2359cfef3a1d26106",
+  "json": "docs/decisions/OD_2026_10_04_A9_25_pre_bid_owner_decisions.json",
+  "json_sha256": "c05fcc45de0194e60ef30b93aa91294c54a7762d129dac69e933e9a679679385"
+ },
+ "owner_section_5_verbatim": "Do not overwrite the authorized RFQ v3 historical package.\nCreate the smallest governed successor revision / addendum permitted by the\nrepository conventions for RFQ3-GAS.\nThe active RFQ context must no longer present:\n    AL-08 MEV = 6.0528 kg\n    AL-08 CBE = 5.044 kg\nas the current planning values.\nUpdate current context to:\n    AL-08 CBE planning floor = 4.929 kg\n    AL-08 MEV planning floor = 5.9148 kg\nand explicitly state:\n    PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN\nbecause:\n- plumbing remains TBD;\n- mounting/thermal remains TBD;\n- quotations still replace/rebase provisional component floors.\nThe supplier quotation split itself remains:\n- tank;\n- regulator;\n- two series isolation latches;\n- anode/Xe-contingency proportional flow control;\n- plumbing;\n- mounting/thermal;\n- other explicitly classified items.\nC1-specific quotation lines remain:\n    GROUND_ONLY_LAB_EQUIPMENT\nand must never be included in flight AL-08.\nImportant:\n5.9148 kg is an INTERNAL PLANNING FLOOR.\nIt is NOT a supplier maximum-mass requirement unless separately approved.\nSuppliers should state their offered component masses.\nIf RFQ3-GAS has NOT yet been externally sent:\n    dispatch only the revised successor package.\nIf the old RFQ3-GAS has already been externally sent:\n    preserve it and issue the revised information as a controlled addendum.\nDo not change the other five authorized RFQ packages merely because GAS has a\nnew revision.",
+ "revision_of": {
+  "package": "RFQ3-GAS",
+  "v3_rule": "v3 (authorized RFQ package, A9.24 item 10) is NEVER overwritten; read as pinned data",
+  "pins": {
+   "V3_JSON": {
+    "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+    "sha256": "2252523956cd8b281fb33cae2d18fe38028b8b43ad3e5e424cceafed35bef300"
+   },
+   "V3_MD": {
+    "path": "docs/procurement/rfq_a9_v3/RFQ_A9_V3.md",
+    "sha256": "6c99fac775820fea23e5f8f5bed75000792cc42e5e45f31f3c70b315bfd299b1"
+   },
+   "V3_BUILDER": {
+    "path": "docs/procurement/rfq_a9_v3/build_rfq_a9_v3.py",
+    "sha256": "cfa874903c83cca3cb09d416ab990f219bc225b2d515a599f1965963d79db57f"
+   },
+   "V3_CIF": {
+    "path": "docs/procurement/rfq_a9_v3/packages/RFQ3-00_common_interface.md",
+    "sha256": "e4b2f647151fa40b0a8a6b90b9068cb8b08690c106d1e1d8a616e08e7e76d311"
+   },
+   "V3_GAS_PKG": {
+    "path": "docs/procurement/rfq_a9_v3/packages/RFQ3-02_gas_metrology.md",
+    "sha256": "1078e0e95087682ddeed79e074507bec53ed03f287bd4936f12b9760ecbc4935"
+   },
+   "V3_GAS_COVER": {
+    "path": "docs/procurement/rfq_a9_v3/dispatch/RFQ3-GAS_COVER.md",
+    "sha256": "29c2c81dd9bc2fef0f406cf10b81b320fba6f6292a0956ab05472da7121cb5f2"
+   }
+  }
+ },
+ "outputs": {
+  "package": "docs/procurement/rfq_a9_v3_gas_rev1/packages/RFQ3-02_gas_metrology_rev1.md",
+  "package_sha256": "335c511a35317f9b9e930d803b3f10ed188c872856afe1712d01446c2bc85a5a",
+  "cover_note": "docs/procurement/rfq_a9_v3_gas_rev1/dispatch/RFQ3-GAS_REV1_COVER.md",
+  "cover_note_sha256": "9223fabb88dc9a1db5f4a03a44d4c102c6fb607be55eba10dc43afa824feaaad",
+  "addendum": "docs/procurement/rfq_a9_v3_gas_rev1/dispatch/RFQ3-GAS_REV1_ADDENDUM.md",
+  "addendum_sha256": "b9677fd24d443b11bf208bd8b68cb7ae8ac3fd0e35929f6e4c676da26c36f9ad"
+ },
+ "current_al08_context": {
+  "AL-08_CBE_planning_floor_kg": 4.929,
+  "AL-08_MEV_planning_floor_kg": 5.9148,
+  "status": "PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN",
+  "tbd_floor_constituents": [
+   "plumbing, mounting/thermal"
+  ],
+  "internal_planning_floor_not_supplier_requirement": true,
+  "source": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
+  "source_sha256_at_build": "37264ab6c7cf5c422cb93356fcd9a8e67323f73b1257e1eb1426410229c8a6c4"
+ },
+ "superseded_v3_context": {
+  "AL-08_MEV_planning_floor_kg": 6.0528,
+  "AL-08_evidence_floor_cbe_kg": 5.044,
+  "label": "HISTORY - not current"
+ },
+ "rfq2_gas_r28_rev1_value": {
+  "AL-08_CBE_planning_floor_kg": 4.929,
+  "AL-08_MEV_planning_floor_kg": 5.9148,
+  "AL-08_status": "PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (A9.21; A9.25 message 8 section 5): CURRENT provisional planning / evidence floor, NOT frozen and NOT a complete CBE - plumbing remains TBD; mounting/thermal remains TBD; quotations still replace / re-base the provisional component floors",
+  "internal_planning_floor": "5.9148 kg is an INTERNAL planning floor; it is NOT a supplier maximum-mass requirement (none is approved); suppliers state their offered component masses per split category",
+  "valve_planning_basis": "valves 0.455 kg = two series isolation latches (0.170 + 0.170 kg analog, dual series isolation on the high-pressure Xe path, owner row 55) + one anode / Xe-contingency proportional flow-control valve (0.115 kg analog); planning analogs only, replaced by the quoted masses",
+  "c1_lines": "GROUND_ONLY_LAB_EQUIPMENT: C1-specific lines (GAS-L05, GAS-L06, GAS-L15, GAS-O03) are quoted as a separate offer section and are NEVER included in flight AL-08; no conventional hollow-cathode hardware is in flight AL-08 (A9.25 message 8 section 1)",
+  "note": "A9.14 MQ-05 (OWNER_DECIDED): AL-08 includes the complete Xe storage / flow hardware (tank, regulator, valves, plumbing, mounting, thermal); supplier states mass per split category and per case",
+  "source": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json lines[hall_icp_neutralizer][line=AL-08] (evidence_floor_cbe_kg, value, a9_21_status, c1_hardware_in_flight_al08; AFI-01-S1 resolved; checked at build time)",
+  "history": {
+   "label": "HISTORY - RFQ v3 AL-08 context, not current (superseded by RFQ3-GAS rev1, A9.25 message 8 section 5)",
+   "v3_AL-08_MEV_planning_floor_kg": 6.0528,
+   "v3_AL-08_evidence_floor_cbe_kg": 5.044,
+   "v3_source": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json lines[hall_icp_neutralizer][line=AL-08] (owner_mev_planning_floor_kg, evidence_floor_cbe_kg, a9_21_status, c1_branch; checked at build time)",
+   "v3_c1_branch_note": "NOT in the flight AL-08 (A9.19 / A9.20); the owner notes the analog-derived figure may contain about 0.285 kg of C1 cathode-branch hardware, which the split quotations separate (A9.21) - resolved: cathode-feed PFCV removed and the second latch is the second series flight Xe isolation valve (mass_power_a9_v4 AFI-01; A9.25 message 8)",
+   "AL-08_owner_allocation_kg_row54": 1.5
+  }
+ },
+ "quotation_split": [
+  {
+   "category": "tank",
+   "lines": [
+    "GAS-L08"
+   ],
+   "booking": "FLIGHT_AL08"
+  },
+  {
+   "category": "regulator",
+   "lines": [
+    "GAS-L09"
+   ],
+   "booking": "FLIGHT_AL08"
+  },
+  {
+   "category": "two series isolation latches",
+   "lines": [
+    "GAS-L11"
+   ],
+   "booking": "FLIGHT_AL08"
+  },
+  {
+   "category": "anode / Xe-contingency proportional flow control",
+   "lines": [
+    "GAS-L10"
+   ],
+   "booking": "FLIGHT_AL08"
+  },
+  {
+   "category": "plumbing",
+   "lines": [
+    "GAS-L18"
+   ],
+   "booking": "FLIGHT_AL08"
+  },
+  {
+   "category": "mounting/thermal",
+   "lines": [
+    "GAS-L19"
+   ],
+   "booking": "FLIGHT_AL08"
+  },
+  {
+   "category": "other explicitly classified items",
+   "lines": [
+    "GAS-L04"
+   ],
+   "booking": "CLASSIFIED_PER_LINE (v3 AL08_OUTSIDE_SPLIT: Xe anode-path MFC(s), mass stated on its own line; AL-08 membership not decided here)"
+  },
+  {
+   "category": "C1-specific lines",
+   "lines": [
+    "GAS-L05",
+    "GAS-L06",
+    "GAS-L15",
+    "GAS-O03"
+   ],
+   "booking": "GROUND_ONLY_LAB_EQUIPMENT (never in flight AL-08; separate offer section)"
+  }
+ ],
+ "split_mapping_note": "recorder mapping of the owner's split wording onto the v3 lines (RF3-FLAG-06 carried; the owner may re-map); GAS-L11 = series pair (qty 2); GAS-L10 = low-flow FCU",
+ "c1_lines": {
+  "lines": [
+   "GAS-L05",
+   "GAS-L06",
+   "GAS-L15",
+   "GAS-O03"
+  ],
+  "status": "GROUND_ONLY_LAB_EQUIPMENT",
+  "in_flight_al08": false
+ },
+ "dispatch": {
+  "v3_rfq3_gas_dispatch_status": "UNKNOWN_TO_REPOSITORY (v3 record: AUTHORIZED_PENDING_OWNER_SEND; the repository never sends and holds no external dispatch record)",
+  "rev1_dispatch_status": "AUTHORIZED_PENDING_OWNER_SEND (quotation only; A9.24 item 10 authorization of RFQ3-GAS, revised per A9.25 message 8 section 5); nothing sent from the repository",
+  "if_v3_not_sent": "the owner dispatches ONLY this successor package (packages/RFQ3-02_gas_metrology_rev1.md with dispatch/RFQ3-GAS_REV1_COVER.md); the v3 RFQ3-GAS package is then not sent",
+  "if_v3_already_sent": "v3 is preserved as sent; this revision is issued to the same recipients as the controlled addendum dispatch/RFQ3-GAS_REV1_ADDENDUM.md (it supersedes the v3 AL-08 mass context only)",
+  "other_packages": "RFQ3-RF / RFQ3-VAC / RFQ3-HALLEL / RFQ3-MECH / RFQ3-RFMET unchanged (v3 files pinned)",
+  "quotation_only": "unchanged: quotation, technical clarification, datasheets, capability information, mass/power information, lead time; NOT authorized: purchase order, advance payment, supplier selection, binding commitment"
+ },
+ "authorized_v3_packages": [
+  "RFQ3-RF",
+  "RFQ3-GAS",
+  "RFQ3-VAC",
+  "RFQ3-HALLEL",
+  "RFQ3-MECH",
+  "RFQ3-RFMET"
+ ],
+ "unchanged_packages": {
+  "RFQ3-RF": {
+   "package": "docs/procurement/rfq_a9_v3/packages/RFQ3-01_rf.md",
+   "package_sha256": "0ae15107fb05d70acba5e4204d47f1d388ed867de17694f77e7426d76b89224f",
+   "cover_note": "docs/procurement/rfq_a9_v3/dispatch/RFQ3-RF_COVER.md",
+   "cover_sha256": "0de9b3f0fc074ded3cb44c829320fc569738dfa6410ffaed79b35343eba803e8",
+   "state": "UNCHANGED"
+  },
+  "RFQ3-VAC": {
+   "package": "docs/procurement/rfq_a9_v3/packages/RFQ3-03_vacuum_facility.md",
+   "package_sha256": "c4b19a5c2ade1660def4e8e744d6c497e0d46109c002ef5afd0f6b7b6d76efc6",
+   "cover_note": "docs/procurement/rfq_a9_v3/dispatch/RFQ3-VAC_COVER.md",
+   "cover_sha256": "28ee0bb3cd3acf534d440b682b148578f4c2e2eecee8c0d8aaa661720296613a",
+   "state": "UNCHANGED"
+  },
+  "RFQ3-HALLEL": {
+   "package": "docs/procurement/rfq_a9_v3/packages/RFQ3-04_hall_electrical.md",
+   "package_sha256": "d7f8af8fbd8676d9726c8470edfe4dea6543a63d8ef7da91f4f614dc9b6c6a48",
+   "cover_note": "docs/procurement/rfq_a9_v3/dispatch/RFQ3-HALLEL_COVER.md",
+   "cover_sha256": "6d338597b67a998da12ea46d75e6233b37c9a8a3a5f1f86e3f0a36799a1bd24b",
+   "state": "UNCHANGED"
+  },
+  "RFQ3-MECH": {
+   "package": "docs/procurement/rfq_a9_v3/packages/RFQ3-05_mechanical_icp_fabrication.md",
+   "package_sha256": "9e21f9f70bc102b157616aeae643c6a0fce954687ab61018627de8a37b29ad0e",
+   "cover_note": "docs/procurement/rfq_a9_v3/dispatch/RFQ3-MECH_COVER.md",
+   "cover_sha256": "d76b5c22324e246f5d7bbdc38089c1e4400f9a9d2e4f57c1f88da91c77ef2c60",
+   "state": "UNCHANGED"
+  },
+  "RFQ3-RFMET": {
+   "package": "docs/procurement/rfq_a9_v3/packages/RFQ3-07_rf_metrology.md",
+   "package_sha256": "cd06ae7c20e2fcb1458b40b1e6864527f74c651e78dddd3d9c74fd2e9552dd0c",
+   "cover_note": "docs/procurement/rfq_a9_v3/dispatch/RFQ3-RFMET_COVER.md",
+   "cover_sha256": "f210b473aa0f7cb0a28f13918757928c2f438e53e5c5b99c3e1614789552603d",
+   "state": "UNCHANGED"
+  }
+ },
+ "substitutions": [
+  {
+   "what": "RFQ2-GAS-R28 mass-context value (v3 AL-08 6.0528 / 5.044 kg -> mass_power_a9_v4 4.929 / 5.9148 kg)",
+   "count": 4
+  },
+  {
+   "what": "RFQ2-GAS-R28 v3 change note labelled history",
+   "count": 1
+  },
+  {
+   "what": "'Xe/cathode branch' wording (RFQ2-GAS-R23 / RFQ2-GAS-N07) given the rev1 reading",
+   "count": 2
+  },
+  {
+   "what": "title",
+   "count": 1
+  },
+  {
+   "what": "provenance line + 'Revision rev1' section",
+   "count": 1
+  },
+  {
+   "what": "cover title",
+   "count": 1
+  },
+  {
+   "what": "cover provenance + dispatch rule",
+   "count": 1
+  },
+  {
+   "what": "cover RFQ reference",
+   "count": 1
+  },
+  {
+   "what": "cover package path",
+   "count": 1
+  }
+ ],
+ "no_new_numbers": "every number is read from pinned v3 data or mass_power_a9_v4 (cross-checked against A9.25 message 8); no price, supplier, PO or selection"
+}

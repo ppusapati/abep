@@ -10409,13 +10409,12 @@
     }
    ]
   },
-  "hollow_cathode_check": "NO_HOLLOW_CATHODE_ELEMENT_LISTED_C1_PROVISIONS_FLAGGED_PENDING_BUDGET_REFRESH",
-  "c1_provisions_flagged": [
-   "AL-08.embedded_c1_cathode_xe_branch"
-  ],
+  "hollow_cathode_check": "NO_HOLLOW_CATHODE_ELEMENT_LISTED",
+  "c1_provisions_flagged": [],
   "c1_absence_statements": [
    "AL-07",
-   "AL-08.c1_branch"
+   "AL-08.c1_branch",
+   "AL-08.embedded_c1_cathode_xe_branch"
   ],
   "system_not_evaluated": [
    "T_minus_D",

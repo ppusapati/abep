@@ -1,7 +1,7 @@
 """Tests for the A9 mass + power integration v4 (A9.24 AFI pre-bid corrections; successor of the immutable v3).
 
 Checks reproducibility, the v3 pins (v3 never edited), the AFI-01 AL-08 re-base (only the C1 cathode-feed PFCV removed,
-the cathode-branch latch kept as the open stop item AFI-01-S1), roll-ups recomputed exactly as v3 (20 % system margin on
+the second latch kept: AFI-01-S1 OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH, A9.25 message 8), roll-ups recomputed exactly as v3 (20 % system margin on
 the current pre-margin sum, row-60 harness, LOADED Xe 2 / 5 / 10 kg, no margin relaxation), every other line unchanged,
 AFI-02 AL-07 label with the 6.0 kg owner floor unchanged, and C1 = GROUND_REFERENCE_ONLY with A9.2 only quoted.
 Run: python -m pytest -q tests/test_mass_power_a9_v4.py
@@ -64,9 +64,16 @@ def test_al08_rebase(doc):
     assert a["new"] == {"valves_kg": 0.455, "floor_cbe_kg": 4.929, "mev_kg": 5.9148}
     assert [r["kg"] for r in a["removed"]] == [0.115] and "A9B-C04" in a["removed"][0]["source_ids"]
     assert [r["kg"] for r in a["retained_valves"]] == [0.17, 0.115, 0.17]
-    s = a["stop_items"][0]
-    assert s["id"] == "AFI-01-S1" and s["state"] == "RETAINED_PENDING_OWNER"
-    assert s["if_owner_removes"]["mev_kg"] == 5.7108
+    assert a["stop_items"] == []                                          # A9.25 message 8: no open stop item
+    s = a["resolved_stop_items"][0]
+    assert s["id"] == "AFI-01-S1" and s["state"] == "OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH"
+    assert s["current_function"] == "SECOND SERIES FLIGHT XE ISOLATION VALVE" and s["numbers_changed"] is False
+    assert s["decided_by"]["message"] == 8 and s["decided_by"]["key"] == "FINAL_PRE_BID_AFI_RESOLUTION"
+    assert s["rejected_alternative"]["mev_kg"] == 5.7108                  # owner: do not use (history only)
+    latch2 = a["retained_valves"][2]
+    assert latch2["current_function"] == "SECOND SERIES FLIGHT XE ISOLATION VALVE"
+    assert "cathode" not in latch2["what"] and latch2["mass_provenance"].startswith("HISTORICAL")
+    assert a["c1_hardware_in_flight_al08"].startswith("NONE")
     ln = _line(doc, "AL-08")
     assert ln["evidence_floor_cbe_kg"] == 4.929 and ln["value"]["value_kg"] == 5.9148
     assert ln["value"]["governs"] == "MEV_PLANNING_FLOOR" and ln["floor_is_partial"] is True
@@ -121,3 +128,21 @@ def test_c1_status_current(doc):
     assert st["current_statuses"]["C1 conventional reference"].startswith("GROUND_REFERENCE_ONLY")
     assert st["a9_2_statuses_label"].startswith("HISTORICAL_QUOTE")
     assert st["a9_2_statuses"]["C1 conventional reference"] == "CONTROL_FALLBACK"      # verbatim A9.2 quote
+
+
+def test_a9_25_resolution_and_mass_wording(doc):
+    """A9.25 message 8: AFI-01-S1 resolved (no open owner question), mass wording, AL-07 kept, numbers unchanged."""
+    assert doc["open_register_status"]["AFI-01-S1"].startswith("RESOLVED: OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH")
+    assert doc["open_register_status"]["AFI-02-RA1"] == "OPEN"
+    ms = doc["mass_status"]
+    assert ms["reading"].startswith("CURRENT PROVISIONAL PLANNING / EVIDENCE FLOOR")
+    assert ms["mass_compliance"].startswith("INCOMPLETE_EVIDENCE / NOT YET CLOSED")
+    assert "PROVISIONAL_CONSERVATIVE_ANALOG_FLOOR" in doc["afi_corrections"]["AFI-02"]["a9_25_confirmation"]
+    f = doc["flight_rollup_vs_40kg"][0]
+    assert round(f["dry_known_kg"], 4) == 40.5721                        # values approved at 4c2b3b3, unchanged
+    assert {c: round(v, 4) for c, v in f["wet_known_kg_by_loaded_case"].items()} == \
+        {"2.0": 42.5721, "5.0": 45.5721, "10.0": 50.5721}
+    r = doc["rollups"][0]
+    assert (round(r["nominal_dry_known_kg"], 4), round(r["system_margin_kg"], 4)) == (33.8101, 6.762)
+    assert set(f["hard_40_wet_state_by_loaded_case"].values()) == {"DOES_NOT_CLOSE"}
+    assert "RETAINED_PENDING_OWNER" not in json.dumps(doc["lines"])

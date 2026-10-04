@@ -303,7 +303,8 @@ def apply_rows(rows: list, ref, get) -> list:
              evidence_class="owner-allocation", value_label="ALLOCATION",
              basis=f"A9.14 {qid}: MEV planning floor (owner-stated); replaced by 1.20 x the actual CBE when it exists "
                    "(mass / power v4" + ("; A9.24 AFI-01: cathode-feed PFCV removed from the 6.0528 kg owner floor, "
-                                         "latch pending owner AFI-01-S1" if qid == "MQ-05" else "") + ")",
+                                         "second series latch kept (AFI-01-S1 OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH, "
+                                         "A9.25 message 8)" if qid == "MQ-05" else "") + ")",
              freeze_status="OPEN", evidence_to_advance=["CBE (then weighed article) for the line"])
         r["source"] = r["source"] + [ref("MP4", f"/lines/hall_icp_neutralizer/{idx}"), dsrc(qid)]
         note(r, [qid, "MQ-01"])
@@ -387,8 +388,10 @@ def apply_rows(rows: list, ref, get) -> list:
                    "evidence_floor_cbe_kg": al08["evidence_floor_cbe_kg"]},
          basis="A9.14 MQ-05: AL-08 = complete Xe storage / flow hardware (tank, regulator, valves, plumbing, mounting, "
                "thermal); planning floor replaced by quotations / design; A9.24 AFI-01 (mass / power v4): the C1 "
-               "cathode-feed PFCV removed from the v3 6.0528 / 5.044 kg floor, cathode-branch latch retained pending "
-               "owner (AFI-01-S1, row 55 dual series isolation)",
+               "cathode-feed PFCV removed from the v3 6.0528 / 5.044 kg floor; valves 0.455 kg = latch #1 0.170 + "
+               "latch #2 0.170 (SECOND SERIES FLIGHT XE ISOLATION VALVE, row 55 dual series isolation; AFI-01-S1 "
+               "OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH, A9.25 message 8) + PFCV 0.115; no conventional "
+               "hollow-cathode hardware remains in flight AL-08; PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN",
          freeze_status="OPEN", evidence_to_advance=["quotations / design CBE for the complete Xe hardware"])
     r["source"] = r["source"] + [ref("MP4", "/lines/hall_icp_neutralizer/7"), dsrc("MQ-05")]
     note(r, ["MQ-05"])

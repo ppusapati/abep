@@ -2,9 +2,9 @@
  "schema": "mass_power_a9_v4",
  "id": "mass_power_a9_v4",
  "lane": "a9_24_afi_pre_bid_corrections",
- "directive": "owner messages 2026-10-04: narrow pre-bid corrections AFI-01 (AL-08 cathode-feed re-base), AFI-02 (AL-07 label only), C1 status wording (A9.24 item 13)",
+ "directive": "owner messages 2026-10-04: narrow pre-bid corrections AFI-01 (AL-08 cathode-feed re-base), AFI-02 (AL-07 label only), C1 status wording (A9.24 item 13); A9.25 message 8 FINAL_PRE_BID_AFI_RESOLUTION: AFI-01-S1 OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH (no number changed)",
  "title": "A9 mass + power integration v4: v3 with the AL-08 cathode-feed PFCV removed (AFI-01), the AL-07 analog-floor label (AFI-02) and C1 = GROUND_REFERENCE_ONLY; roll-ups recomputed exactly as v3",
- "status": "DRAFT_AFI_CORRECTIONS_APPLIED_PENDING_INTEGRATION_VERIFICATION",
+ "status": "AFI_CORRECTIONS_APPLIED_OWNER_RESOLVED_A9_25_PROVISIONAL_PLANNING_FLOOR",
  "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
  "date": "2026-10-04",
  "base_commit": "46f7060a34200f9c72384c795311fc551f6ea17a",
@@ -1614,16 +1614,16 @@
       "status": null
      },
      {
-      "what": "Xe valves (re-based, mass_power_a9_v4 AFI-01): retained set 1 x latch + 1 x PFCV (anode / Xe-contingency feed) + 1 x latch (second series HP isolation, pending owner)",
+      "what": "Xe valves (re-based, mass_power_a9_v4 AFI-01): retained set latch #1 + latch #2 (dual series flight Xe isolation, owner row 55; A9.25 message 8) + 1 x PFCV (anode / Xe-contingency feed)",
       "kg": 0.455,
       "evidence_class": "inferred",
       "status": null,
       "parts": [
        {
-        "what": "Xe isolation latch, anode / Xe-contingency feed branch (H2-7 H27-12 branch 1; AN-MOOG-LATCH-18)",
+        "what": "Xe latch isolation valve #1: first series flight Xe isolation valve on the high-pressure Xe path, anode / Xe-contingency feed (H2-7 H27-12 branch 1; AN-MOOG-LATCH-18)",
         "kg": 0.17,
         "evidence_class": "inferred",
-        "status": "RETAINED (flight function: Xe contingency / emergency feed to the Hall anode, A9.19; A9B-10)",
+        "status": "RETAINED (flight function: series isolation of the Xe contingency / emergency feed to the Hall anode, A9.19; owner row 55 dual series isolation; A9B-10)",
         "source_ids": [
          "H27-12",
          "H27-31",
@@ -1644,10 +1644,12 @@
         ]
        },
        {
-        "what": "Xe isolation latch from the H2-7 cathode-feed branch, retained as the second series isolation valve on the high-pressure Xe path (AN-MOOG-LATCH-18)",
+        "what": "Xe latch isolation valve #2: SECOND SERIES FLIGHT XE ISOLATION VALVE on the high-pressure Xe path (AN-MOOG-LATCH-18 mass analog)",
         "kg": 0.17,
         "evidence_class": "inferred",
-        "status": "RETAINED_PENDING_OWNER (STOP item AFI-01-S1: H2-7 placed it on the cathode branch, but owner row 55 requires dual series isolation on the high-pressure Xe path and the A9 flight BOM books two series latches, A9B-10; removing it is an owner call)",
+        "current_function": "SECOND SERIES FLIGHT XE ISOLATION VALVE",
+        "status": "OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH (A9.25 message 8 section 1, AFI-01-S1 resolved): owner row 55 'dual series isolation on the high-pressure Xe path'; A9 flight BOM two series latches (A9B-10); F9 AFC-UP-VF-07. Not a C1 / cathode-feed valve",
+        "mass_provenance": "HISTORICAL: the 0.170 kg mass originated from the cathode-feed-branch latch of the earlier H2-7 two-branch analog (H27-12 = H27-31 2 branches x H27-32 latch + PFCV); that branch assignment is mass provenance only, not the valve's current function",
         "source_ids": [
          "H27-12",
          "H27-31",
@@ -1655,7 +1657,8 @@
          "AN-MOOG-LATCH-18",
          "A9B-10",
          "row 55",
-         "AFC-UP-VF-07"
+         "AFC-UP-VF-07",
+         "A9.25 message 8"
         ]
        }
       ]
@@ -1682,11 +1685,12 @@
      "A9.20 answer (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3)",
      "A9.21 AL08 (docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json sha256 78766d3adaaa)",
      "owner row 55 (docs/decisions/OD_2026_09_29_owner_answers_147.json sha256 50e39a4deac7)",
-     "AFI-01 owner-approved re-base (owner messages 2026-10-04; record status OWNER_MESSAGE_RELAYED_BY_ORCHESTRATING_SESSION_NOT_IN_REPOSITORY)"
+     "AFI-01 owner-approved re-base (owner messages 2026-10-04; record status OWNER_MESSAGE_RELAYED_BY_ORCHESTRATING_SESSION_NOT_IN_REPOSITORY)",
+     "A9.25 message 8 section 1 AFI-01-S1 OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH (docs/decisions/OD_2026_10_04_A9_25_pre_bid_owner_decisions.json sha256 c05fcc45de01)"
     ],
     "owner_mev_planning_floor_kg": null,
     "rebase_rule": "complete Xe storage/flow hardware (MQ-05 scope unchanged); MEV planning floor = 1.20 x the re-based 4.929 kg CBE floor = 5.9148 kg (v3: owner-stated 6.0528 kg from 5.044 kg); quotations/design replace it",
-    "a9_21_status": "PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (A9.21 AL08): the AL-08 MEV planning floor stays a provisional planning floor, not a frozen allocation; v4 removes only the C1 cathode-feed PFCV identified from the repository (AFI-01, owner messages 2026-10-04); quotations still split tank, regulator, valves, plumbing and mounting/thermal before the final re-base",
+    "a9_21_status": "PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (A9.21 AL08): the AL-08 MEV planning floor stays a provisional planning floor, not a frozen allocation; v4 removes only the C1 cathode-feed PFCV identified from the repository (AFI-01, owner messages 2026-10-04) and keeps the second series latch (A9.25 message 8: OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH); quotations still split tank, regulator, valves, plumbing and mounting/thermal before the final re-base",
     "c1_branch": {
      "state": "NO_C1_XE_BRANCH_IN_FLIGHT (A9.19 / A9.20)",
      "in_AL08": false
@@ -1718,7 +1722,8 @@
      ]
     },
     "evidence_class_of_value": "MEV planning floor = 1.20 x re-based analog floor (not a CBE); constituent classes inferred",
-    "owner_mev_planning_floor_kg_v3": 6.0528
+    "owner_mev_planning_floor_kg_v3": 6.0528,
+    "c1_hardware_in_flight_al08": "NONE: no conventional hollow-cathode hardware remains in flight AL-08 (A9.25 message 8 section 1); the cathode-feed PFCV is removed and the second latch's current function is flight Xe series isolation"
    },
    {
     "line": "AL-09",
@@ -2847,7 +2852,7 @@
   ],
   "reading": "the v2 C1 figure is an incomplete analog floor (0.2 kg cathode-unit low end, inferred, PRELIMINARY; shield / mount and filter / getter TBD), never a CBE; it is ground lab-equipment information only now; the ground C1 module is weighed per serial on GA-01 (row 116)",
   "flight_numbers_effect": "v4: see afi_corrections.changes_old_new (v3 text above is history)",
-  "flight_v4": "v4 removes the cathode-feed PFCV (0.115 kg CBE) from the AL-08 floor; the cathode-branch latch (0.170 kg) is retained pending owner (row 55 dual series isolation; AFI-01-S1)"
+  "flight_v4": "v4 removes the cathode-feed PFCV (0.115 kg CBE) from the AL-08 floor; the second 0.170 kg latch is kept as the SECOND SERIES FLIGHT XE ISOLATION VALVE (row 55 dual series isolation; AFI-01-S1 OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH, A9.25 message 8); no conventional hollow-cathode hardware remains in flight AL-08"
  },
  "xe_v3_import": {
   "source": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
@@ -6552,7 +6557,7 @@
   "OQ-A910-05": "OWNER_DECIDED",
   "OQ-A910-06": "OWNER_DECIDED (A9.12 S5.8 YES_600W_TEMPORARY: 600 W = 500 W x 1.20 kept temporarily as the RF-path heat allocation - not a rating / flight point / ICP-43 bound / delivered power - then superseded by the P2-derived RF thermal envelope; p3_a9_16_rules.rf_thermal_basis)",
   "MPV3Q-01": "OPEN",
-  "AFI-01-S1": "OPEN (owner)",
+  "AFI-01-S1": "RESOLVED: OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH (A9.25 message 8)",
   "AFI-02-RA1": "OPEN"
  },
  "open_owner_questions": [
@@ -6568,7 +6573,7 @@
   "A9B-C07 (C1 keeper/heater telemetry): its pre-A9.19 recorder mapping to AL-09 (MQ-07 sensor rule) is history; it is GROUND_ONLY_LAB_EQUIPMENT now (A9.20)",
   "FOR THE OWNER (observation, nothing changed): the AL-08 planning floor is the owner's 5.044 kg H2-7 figure (MQ-05) and stays as decided; v2 describes its H2-7 two-branch valve set (0.57 kg) as including the C1 cathode Xe branch (v2 AL-C1 floor arithmetic, c1_mass_check); with no flight C1 after A9.19 / A9.20, whether AL-08 is re-based to a single-branch set is for the owner / quotations (v2 records the single-branch reading arithmetic in its AL-08 floor_arithmetic); no number is changed here",
   "INTERNAL_34 / INTERNAL_36 (row 53) carried as internal references beside the 40 kg hard gate",
-  "AFI-01 (v4): the v3 recorder flag on the H2-7 two-branch valve set is answered for the PFCV only; the cathode-branch latch is the open stop item AFI-01-S1 (owner call)",
+  "AFI-01 (v4): the v3 recorder flag on the H2-7 two-branch valve set is answered: the cathode-feed PFCV is removed; the second latch is kept as the second series flight Xe isolation valve (AFI-01-S1 OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH, A9.25 message 8)",
   "AFI-02 (v4): AL-07 6.0 kg owner analog floor kept; label PROVISIONAL_CONSERVATIVE_OWNER_ANALOG_FLOOR + open re-base action AFI-02-RA1"
  ],
  "owner_answers_applied": [
@@ -7074,10 +7079,10 @@
    ],
    "retained_valves": [
     {
-     "what": "Xe isolation latch, anode / Xe-contingency feed branch (H2-7 H27-12 branch 1; AN-MOOG-LATCH-18)",
+     "what": "Xe latch isolation valve #1: first series flight Xe isolation valve on the high-pressure Xe path, anode / Xe-contingency feed (H2-7 H27-12 branch 1; AN-MOOG-LATCH-18)",
      "kg": 0.17,
      "evidence_class": "inferred",
-     "status": "RETAINED (flight function: Xe contingency / emergency feed to the Hall anode, A9.19; A9B-10)",
+     "status": "RETAINED (flight function: series isolation of the Xe contingency / emergency feed to the Hall anode, A9.19; owner row 55 dual series isolation; A9B-10)",
      "source_ids": [
       "H27-12",
       "H27-31",
@@ -7098,10 +7103,12 @@
      ]
     },
     {
-     "what": "Xe isolation latch from the H2-7 cathode-feed branch, retained as the second series isolation valve on the high-pressure Xe path (AN-MOOG-LATCH-18)",
+     "what": "Xe latch isolation valve #2: SECOND SERIES FLIGHT XE ISOLATION VALVE on the high-pressure Xe path (AN-MOOG-LATCH-18 mass analog)",
      "kg": 0.17,
      "evidence_class": "inferred",
-     "status": "RETAINED_PENDING_OWNER (STOP item AFI-01-S1: H2-7 placed it on the cathode branch, but owner row 55 requires dual series isolation on the high-pressure Xe path and the A9 flight BOM books two series latches, A9B-10; removing it is an owner call)",
+     "current_function": "SECOND SERIES FLIGHT XE ISOLATION VALVE",
+     "status": "OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH (A9.25 message 8 section 1, AFI-01-S1 resolved): owner row 55 'dual series isolation on the high-pressure Xe path'; A9 flight BOM two series latches (A9B-10); F9 AFC-UP-VF-07. Not a C1 / cathode-feed valve",
+     "mass_provenance": "HISTORICAL: the 0.170 kg mass originated from the cathode-feed-branch latch of the earlier H2-7 two-branch analog (H27-12 = H27-31 2 branches x H27-32 latch + PFCV); that branch assignment is mass provenance only, not the valve's current function",
      "source_ids": [
       "H27-12",
       "H27-31",
@@ -7109,7 +7116,8 @@
       "AN-MOOG-LATCH-18",
       "A9B-10",
       "row 55",
-      "AFC-UP-VF-07"
+      "AFC-UP-VF-07",
+      "A9.25 message 8"
      ]
     }
    ],
@@ -7122,18 +7130,37 @@
     "cathode-feed PFCV 0.115 kg (removed)"
    ],
    "c1_only_items_beyond_expected": [],
-   "stop_items": [
+   "c1_hardware_in_flight_al08": "NONE (A9.25 message 8 section 1: no conventional hollow-cathode hardware remains in flight AL-08)",
+   "stop_items": [],
+   "resolved_stop_items": [
     {
      "id": "AFI-01-S1",
-     "item": "cathode-feed-branch isolation latch (AN-MOOG-LATCH-18, 0.170 kg)",
-     "state": "RETAINED_PENDING_OWNER",
-     "why": "the expected removal (one latch + one PFCV = 0.285 kg, A9B-C04) would leave a single latch on the high-pressure Xe path; owner row 55 (H27-Q4, the question that the H2-7 single-string set H27-32 left open) requires 'dual series isolation on the high-pressure Xe path', the A9 flight BOM books two series latches (A9B-10, 0.34 kg) plus one PFCV (A9B-11) = 0.455 kg (MA9-ID-04), and F9 AFC-UP-VF-07 carries that rule as FREEZE_CANDIDATE. Whether the H2-7 cathode-branch latch is C1-only (then a row-55 second latch must be booked instead: same 0.455 kg) or removed outright is an owner call, not made here",
-     "if_owner_removes": {
+     "item": "second 0.170 kg Xe latch (AN-MOOG-LATCH-18 mass analog)",
+     "state": "OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH",
+     "state_before": "RETAINED_PENDING_OWNER (mass_power_a9_v4 at 4c2b3b3)",
+     "decided_by": {
+      "decision": "A9.25",
+      "message": 8,
+      "key": "FINAL_PRE_BID_AFI_RESOLUTION",
+      "utc": "2026-10-04T16:31:16Z",
+      "text_sha256": "a48dfcbb9fa33421bf19ff45fa241070c22a8379a3eb4e887b661fb8ceb93624",
+      "md": "docs/decisions/OD_2026_10_04_A9_25_PRE_BID_OWNER_DECISIONS.md",
+      "md_sha256": "159ea2049e3cc05ce7a18b3e6bbdf6fee97c168a74f23fd2359cfef3a1d26106",
+      "json": "docs/decisions/OD_2026_10_04_A9_25_pre_bid_owner_decisions.json",
+      "json_sha256": "c05fcc45de0194e60ef30b93aa91294c54a7762d129dac69e933e9a679679385"
+     },
+     "decision": "KEEP the second 0.170 kg latch valve; flight Xe valve architecture = latch isolation valve #1 + latch isolation valve #2 + one proportional flow-control valve (the two latches implement the approved dual series isolation on the high-pressure Xe path, owner row 55)",
+     "current_function": "SECOND SERIES FLIGHT XE ISOLATION VALVE",
+     "not": "a C1 / cathode-feed valve (its mass provenance from the earlier two-branch analog is history only)",
+     "why_held": "the expected removal (one latch + one PFCV = 0.285 kg, A9B-C04) would have left a single latch on the high-pressure Xe path, below the row-55 dual series isolation (A9B-10 two series latches + A9B-11 one PFCV = 0.455 kg, MA9-ID-04; F9 AFC-UP-VF-07)",
+     "rejected_alternative": {
       "valves_kg": 0.285,
       "floor_cbe_kg": 4.759,
       "mev_kg": 5.7108,
-      "note": "AL-08 CBE 4.759 kg, MEV 5.7108 kg (the 0.285 kg reading); the valve set would then be below the A9 flight valve set 0.455 kg required by row 55"
-     }
+      "note": "owner: 'Do not use 5.7108 kg' (it would leave the flight Xe path below the approved dual-series isolation architecture); history only, never applied"
+     },
+     "pfcv": "the removed cathode-feed PFCV (0.115 kg) stays removed (it existed solely for cathode-feed metering)",
+     "numbers_changed": false
     }
    ],
    "sources": {
@@ -7250,7 +7277,8 @@
     "REBASE_REQUIRED_FROM_CURRENT_LOAD_CONVERTER_CBE"
    ],
    "number_changed": false,
-   "open_rebase_action": "AFI-02-RA1"
+   "open_rebase_action": "AFI-02-RA1",
+   "a9_25_confirmation": "A9.25 message 8 section 9: AL-07 kept at 6.0 kg for this freeze, status PROVISIONAL_CONSERVATIVE_ANALOG_FLOOR (the analog includes legacy functions not present in the cathodeless architecture; label PROVISIONAL_CONSERVATIVE_OWNER_ANALOG_FLOOR here); AFI-02-RA1 remains OPEN; no reduction invented"
   },
   "C1_STATUS": {
    "current": "GROUND_REFERENCE_ONLY (A9.20 C1_GROUND_ONLY_LABORATORY_REFERENCE; A9.24 item 13: no C1 flight fallback; C1 never enters flight architecture, mass, power, Xe, thermal closure or a fallback flight configuration)",
@@ -7423,5 +7451,11 @@
    }
   ],
   "unchanged": "every other line value, the retired C1 history column, BOM, power, Xe import, budget reference and owner citations (copied from pinned v3)"
+ },
+ "mass_status": {
+  "reading": "CURRENT PROVISIONAL PLANNING / EVIDENCE FLOOR (not a complete CBE: several lines remain allocations / analog floors / TBD; A9.25 message 8 sections 7-8)",
+  "mass_compliance": "INCOMPLETE_EVIDENCE / NOT YET CLOSED (the < 40 kg requirement is kept as a design target / requirement and is not relaxed; active mass-reduction / quote-based re-base task; A9.25 message 8 section 8)",
+  "xe_cases": "loaded Xe 2 / 5 / 10 kg are SENSITIVITY / PLANNING CASES; the flight Xe load is NOT YET FROZEN and none of them is the selected Xe load (A9.25 message 8 section 7)",
+  "source": "A9.25 message 8 sections 6-8 (mass_power_a9_v4 is the active flight mass source)"
  }
 }

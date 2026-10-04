@@ -861,8 +861,18 @@ def test_a9_24_afi05_rvm16_reading_outside_frozen_basis():
     x = r["a9_24_current_architecture_reading"]
     assert "keeper" not in x["title"] and "keeper" not in x["requirement_text"]
     assert "RF/ICP electron-source / neutralizer" in x["title"]
-    assert x["keeper_reading"]["status"] == "RECORDER_INTERPRETATION_OWNER_MAY_REVERSE"
+    k = x["keeper_reading"]
+    assert k["status"] == "OWNER_CONFIRMED_CURRENT_ARCHITECTURE_READING"            # A9.25 message 8 section 2
+    assert k["status_before"].startswith("RECORDER_INTERPRETATION_OWNER_MAY_REVERSE")
+    assert k["confirmed_by"]["decision"] == "A9.25" and k["confirmed_by"]["message"] == 8
+    c = k["owner_clarification"]
+    assert "no flight keeper" in c["keeper"] and "NOT a universal prohibition on graphite" in c["graphite"]
+    assert c["ao_o_exposed_components"][:2] == ["anode", "RF/ICP electron-source / neutralizer plasma-facing surfaces"]
+    assert c["compliance_status"].startswith("UNCHANGED")
     assert x["keeper_reading"]["owner_row_94_verbatim"].startswith("Do not use graphite as the flight baseline for an "
                                                                    "O/AO-exposed keeper")
     assert "no graphite flight keeper" in r["requirement_text"]          # frozen basis (A9.22 G3) untouched
-    assert d["a9_24_afi05"]["stop_item"] == "AFI-05-S1"
+    assert d["a9_24_afi05"]["stop_item"] is None
+    assert d["a9_24_afi05"]["resolved_stop_item"]["id"] == "AFI-05-S1"
+    assert d["a9_24_afi05"]["resolved_stop_item"]["state"] == "OWNER_CONFIRMED_CURRENT_ARCHITECTURE_READING"
+    assert "OWNER_MAY_REVERSE" not in json.dumps(r["a9_24_current_architecture_reading"]["requirement_text"])

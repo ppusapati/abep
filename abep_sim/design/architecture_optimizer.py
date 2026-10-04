@@ -1093,17 +1093,38 @@ def flight_configuration_elements(config: str, repo: Path = REPO) -> list[dict]:
     flight_lines = mp["lines"][config]
     for ln in flight_lines:
         els += _line_hc_elements(ln, config)
-    present = {ln.get("line") for ln in flight_lines}
+    present = {ln.get("line"): ln for ln in flight_lines}
     for gcfg in GROUND_REFERENCE_CONFIGURATIONS:
         for where, glines in ground_reference_lines(mp, gcfg):
             for ln in glines:
                 m = _EMBEDDED_C1_RE.search(str(ln.get("floor_arithmetic", "")))
                 if m and m.group(3) in present:
+                    src = f"{MP_V3_REL} {where}.{gcfg}.{ln.get('line')}.floor_arithmetic"
+                    absent = _floor_c1_resolution(present[m.group(3)])
+                    if absent:
+                        # the flight line itself was re-based and states that no C1 hardware remains in its floor
+                        # (mass / power v4 AFI-01 + A9.25 message 8 AFI-01-S1): the historical ground-reference text
+                        # is reported as an absence statement (re-verified by the refusal), no longer flagged
+                        els.append({"id": f"{m.group(3)}.embedded_c1_cathode_xe_branch",
+                                    "name": "C1 cathode Xe branch", "kind": "c1_branch",
+                                    "state": f"NO_C1_HARDWARE_IN_FLIGHT_FLOOR ({absent[1]})", "in_line": False,
+                                    "kg_history": float(m.group(1)), "ref": m.group(2),
+                                    "booking": a919.C1_DECLARED_ABSENT,
+                                    "source": f"{src}; {MP_V3_REL} lines.{config}.{m.group(3)}.{absent[0]}"})
+                        continue
                     els.append({"id": f"{m.group(3)}.embedded_c1_cathode_xe_branch", "name": "C1 cathode Xe branch",
                                 "kind": "embedded_floor_branch", "kg": float(m.group(1)), "ref": m.group(2),
-                                "booking": a919.C1_BOOKING_EMBEDDED,
-                                "source": f"{MP_V3_REL} {where}.{gcfg}.{ln.get('line')}.floor_arithmetic"})
+                                "booking": a919.C1_BOOKING_EMBEDDED, "source": src})
     return els
+
+
+def _floor_c1_resolution(line: Mapping) -> tuple[str, str] | None:
+    """(key, statement) when a flight budget line states that NO C1 hardware remains in its floor (a field named
+    c1_hardware_in_flight* whose text starts with 'NONE'); None otherwise (the embedded flag then stands)."""
+    for k, v in line.items():
+        if str(k).startswith("c1_hardware_in_flight") and isinstance(v, str) and v.strip().upper().startswith("NONE"):
+            return k, v
+    return None
 
 
 def ground_reference_lines(mp: Mapping, gcfg: str) -> list[tuple[str, list]]:

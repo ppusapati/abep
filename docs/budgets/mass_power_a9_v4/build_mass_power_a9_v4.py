@@ -16,11 +16,13 @@ closure_state); v3 is never edited. v4 = v3 with exactly these changes:
     single string). Under hall_icp_neutralizer (A9.19: no conventional hollow cathode; A9.20: C1 ground-only; ICP feed
     G-REUSE, m_Xe,ICP = 0, own flow_control_icp_feed line) the cathode-feed branch has no flight function. Removed: the
     cathode-branch proportional flow-control valve (AN-MOOG-PFCV, 115 g; the A9 flight BOM keeps ONE PFCV, A9B-11, 'one
-    branch only in A9 (the C1 cathode-feed branch drops out of flight, OQ-A902-04)'). NOT removed (STOP item, owner
-    call): the cathode-branch latch (AN-MOOG-LATCH-18, 170 g): owner row 55 (H27-Q4, the H2-7 single-string question)
-    requires 'dual series isolation on the high-pressure Xe path', the current A9 flight BOM books two series latches
-    (A9B-10, 0.34 kg) and F9 carries AFC-UP-VF-07 as FREEZE_CANDIDATE, so without the second latch the floor would fall
-    below the A9 flight valve set (0.455 kg, mass_a9 MA9-ID-04). Result: valves 0.57 -> 0.455 kg, AL-08 CBE floor
+    branch only in A9 (the C1 cathode-feed branch drops out of flight, OQ-A902-04)'). NOT removed: the second 0.170 kg
+    latch (AN-MOOG-LATCH-18 mass analog). It was held as stop item AFI-01-S1 until the owner decided it (A9.25 message 8
+    FINAL_PRE_BID_AFI_RESOLUTION, section 1: OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH). Its CURRENT FUNCTION is the
+    SECOND SERIES FLIGHT XE ISOLATION VALVE (owner row 55 'dual series isolation on the high-pressure Xe path'; A9
+    flight BOM A9B-10, two series latches 0.34 kg; F9 AFC-UP-VF-07); only its mass provenance comes from the cathode-feed
+    branch of the earlier H2-7 two-branch analog. No conventional hollow-cathode hardware remains in flight AL-08.
+    Result: valves 0.57 -> 0.455 kg (latch #1 0.170 + latch #2 0.170 + PFCV 0.115), AL-08 CBE floor
     5.044 -> 4.929 kg, MEV planning floor 6.0528 -> 5.9148 kg (x 1.20, row 57 / MQ-05 rule unchanged). Tank, regulator,
     plumbing and mounting/thermal (TBD, pending) are unchanged. The floor stays a PROVISIONAL planning floor
     (quotations / design replace it; A9.21).
@@ -82,6 +84,11 @@ PINS = {
     "A9_20": ("docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
               "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6"),
     "A9_24_MD": ("docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md", None),
+    # A9.25 message 8 (FINAL_PRE_BID_AFI_RESOLUTION): the governed owner record that resolves AFI-01-S1
+    "A9_25_MD": ("docs/decisions/OD_2026_10_04_A9_25_PRE_BID_OWNER_DECISIONS.md",
+                 "159ea2049e3cc05ce7a18b3e6bbdf6fee97c168a74f23fd2359cfef3a1d26106"),
+    "A9_25_JSON": ("docs/decisions/OD_2026_10_04_A9_25_pre_bid_owner_decisions.json",
+                   "c05fcc45de0194e60ef30b93aa91294c54a7762d129dac69e933e9a679679385"),
 }
 AUDIT = {"path": "docs/audits/a9_24_cathode_path_audit_v1.md", "commit": "b8f39b7", "branch": "lane-a924-cathode",
          "items": ["AFI-01", "AFI-02", "AFI-05"],
@@ -101,7 +108,25 @@ LATCH, PFCV = "AN-MOOG-LATCH-18", "AN-MOOG-PFCV"
 OLD_VALVES = {"what": "Xe valves (H2-7 H27-12, 2 x (latch + PFCV))", "kg": 0.57}
 OLD = {"floor_cbe_kg": 5.044, "mev_kg": 6.0528}
 EXPECTED_NEW = {"valves_kg": 0.455, "floor_cbe_kg": 4.929, "mev_kg": 5.9148}     # cross-check of the arithmetic
-STOP_LATCH_ALT = {"valves_kg": 0.285, "floor_cbe_kg": 4.759, "mev_kg": 5.7108}   # NOT applied (owner call)
+# the single-latch reading the owner REJECTED (A9.25 message 8 section 1: 'Do not use 5.7108 kg'); kept as history only
+REJECTED_LATCH_ALT = {"valves_kg": 0.285, "floor_cbe_kg": 4.759, "mev_kg": 5.7108}
+# A9.25 message 8 (verbatim record docs/decisions/OD_2026_10_04_A9_25_PRE_BID_OWNER_DECISIONS.md)
+A9_25_MESSAGE = {"n": 8, "key": "FINAL_PRE_BID_AFI_RESOLUTION",
+                 "text_sha256": "a48dfcbb9fa33421bf19ff45fa241070c22a8379a3eb4e887b661fb8ceb93624"}
+A9_25_TOKENS = ("KEEP the second 0.170 kg latch valve", "SECOND SERIES FLIGHT XE ISOLATION VALVE",
+                "No conventional hollow-cathode hardware remains in flight AL-08",
+                "OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH", "CURRENT PROVISIONAL PLANNING / EVIDENCE FLOOR",
+                "INCOMPLETE_EVIDENCE / NOT YET CLOSED", "PROVISIONAL_CONSERVATIVE_ANALOG_FLOOR")
+AFI01_S1_STATE = "OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH"
+LATCH2_FUNCTION = "SECOND SERIES FLIGHT XE ISOLATION VALVE"
+MASS_WORDING = {
+    "reading": "CURRENT PROVISIONAL PLANNING / EVIDENCE FLOOR (not a complete CBE: several lines remain allocations / "
+               "analog floors / TBD; A9.25 message 8 sections 7-8)",
+    "mass_compliance": "INCOMPLETE_EVIDENCE / NOT YET CLOSED (the < 40 kg requirement is kept as a design target / "
+                       "requirement and is not relaxed; active mass-reduction / quote-based re-base task; A9.25 message "
+                       "8 section 8)",
+    "xe_cases": "loaded Xe 2 / 5 / 10 kg are SENSITIVITY / PLANNING CASES; the flight Xe load is NOT YET FROZEN and none "
+                "of them is the selected Xe load (A9.25 message 8 section 7)"}
 
 C1_CURRENT = ("GROUND_REFERENCE_ONLY (A9.20 C1_GROUND_ONLY_LABORATORY_REFERENCE; A9.24 item 13: no C1 flight "
               "fallback; C1 never enters flight architecture, mass, power, Xe, thermal closure or a fallback flight "
@@ -175,13 +200,40 @@ def sources() -> dict:
     for tok in ("hall_icp_neutralizer", "C1 flight fallback", "conventional hollow cathode"):
         if tok not in md24:
             raise RebaseError(f"A9.24 item 13 token {tok!r} missing")
+    a925 = _a9_25_message8()
     return {
         "latch_kg": g[LATCH], "pfcv_kg": g[PFCV], "h27": params, "analogs": {k: an[k] for k in (LATCH, PFCV)},
         "A9B-10": fl["A9B-10"], "A9B-11": fl["A9B-11"], "A9B-C04": c1["A9B-C04"], "MA9-ID-04": ida["MA9-ID-04"],
         "row55": _answer(rows, 55, "dual series isolation on the high-pressure Xe path"),
         "row90": _answer(rows, 90, "two independent isolation valves in series"),
-        "a9_19_architecture": a919["architecture"], "a9_20_answer": a920["answer"],
+        "a9_19_architecture": a919["architecture"], "a9_20_answer": a920["answer"], "a9_25": a925,
     }
+
+
+def _a9_25_message8() -> dict:
+    """The A9.25 message 8 owner record (verbatim text sha256 and the tokens this successor applies; fail closed)."""
+    md = (REPO / PINS["A9_25_MD"][0]).read_text(encoding="utf-8")
+    head = f"## Message {A9_25_MESSAGE['n']} — {A9_25_MESSAGE['key']} — "
+    if md.count(head) != 1:
+        raise RebaseError("A9.25 message 8 heading not found exactly once")
+    body = md.split(head, 1)[1]
+    if f"text sha256 `{A9_25_MESSAGE['text_sha256']}`" not in body.splitlines()[0]:
+        raise RebaseError("A9.25 message 8 text sha256 changed")
+    text = body.split("````text\n", 1)[1].split("\n````", 1)[0]
+    if hashlib.sha256(text.encode("utf-8")).hexdigest() != A9_25_MESSAGE["text_sha256"]:
+        raise RebaseError("A9.25 message 8 verbatim text does not reproduce its recorded sha256")
+    flat = " ".join(text.split())
+    for tok in A9_25_TOKENS:
+        if tok not in flat:
+            raise RebaseError(f"A9.25 message 8 token {tok!r} missing")
+    js = _load(PINS["A9_25_JSON"][0])
+    m8 = [m for m in js["messages"] if m["n"] == A9_25_MESSAGE["n"]]
+    if len(m8) != 1 or m8[0]["key"] != A9_25_MESSAGE["key"] or m8[0]["text_sha256"] != A9_25_MESSAGE["text_sha256"]:
+        raise RebaseError("A9.25 JSON message 8 record does not match the verbatim record")
+    return {"decision": "A9.25", "message": A9_25_MESSAGE["n"], "key": A9_25_MESSAGE["key"],
+            "utc": m8[0]["utc"], "text_sha256": A9_25_MESSAGE["text_sha256"],
+            "md": PINS["A9_25_MD"][0], "md_sha256": PINS["A9_25_MD"][1],
+            "json": PINS["A9_25_JSON"][0], "json_sha256": PINS["A9_25_JSON"][1]}
 
 
 def rk(x):
@@ -211,20 +263,27 @@ def rebase_al08(line: dict, src: dict, m) -> tuple[dict, dict]:
     latch, pfcv = src["latch_kg"], src["pfcv_kg"]
     if rk(2 * (latch + pfcv)) != OLD_VALVES["kg"]:
         raise RebaseError("H2-7 H27-12 = 2 x (latch + PFCV) no longer reproduces 0.57 kg")
+    a925 = src["a9_25"]
     kept = [
-        {"what": "Xe isolation latch, anode / Xe-contingency feed branch (H2-7 H27-12 branch 1; AN-MOOG-LATCH-18)",
-         "kg": latch, "evidence_class": "inferred", "status": "RETAINED (flight function: Xe contingency / emergency "
-         "feed to the Hall anode, A9.19; A9B-10)", "source_ids": ["H27-12", "H27-31", LATCH, "A9B-10"]},
+        {"what": "Xe latch isolation valve #1: first series flight Xe isolation valve on the high-pressure Xe path, "
+                 "anode / Xe-contingency feed (H2-7 H27-12 branch 1; AN-MOOG-LATCH-18)",
+         "kg": latch, "evidence_class": "inferred", "status": "RETAINED (flight function: series isolation of the Xe "
+         "contingency / emergency feed to the Hall anode, A9.19; owner row 55 dual series isolation; A9B-10)",
+         "source_ids": ["H27-12", "H27-31", LATCH, "A9B-10"]},
         {"what": "Xe proportional flow-control valve, anode / Xe-contingency feed branch (H2-7 H27-12 branch 1; "
                  "AN-MOOG-PFCV)", "kg": pfcv, "evidence_class": "inferred",
          "status": "RETAINED (A9B-11 'Xe anode-feed proportional flow control'; one PFCV in the A9 flight BOM)",
          "source_ids": ["H27-12", "H27-31", PFCV, "A9B-11"]},
-        {"what": "Xe isolation latch from the H2-7 cathode-feed branch, retained as the second series isolation valve "
-                 "on the high-pressure Xe path (AN-MOOG-LATCH-18)", "kg": latch, "evidence_class": "inferred",
-         "status": "RETAINED_PENDING_OWNER (STOP item AFI-01-S1: H2-7 placed it on the cathode branch, but owner row "
-                   "55 requires dual series isolation on the high-pressure Xe path and the A9 flight BOM books two "
-                   "series latches, A9B-10; removing it is an owner call)",
-         "source_ids": ["H27-12", "H27-31", "H27-32", LATCH, "A9B-10", "row 55", "AFC-UP-VF-07"]},
+        {"what": f"Xe latch isolation valve #2: {LATCH2_FUNCTION} on the high-pressure Xe path (AN-MOOG-LATCH-18 "
+                 "mass analog)", "kg": latch, "evidence_class": "inferred",
+         "current_function": LATCH2_FUNCTION,
+         "status": f"{AFI01_S1_STATE} (A9.25 message 8 section 1, AFI-01-S1 resolved): owner row 55 'dual series "
+                   "isolation on the high-pressure Xe path'; A9 flight BOM two series latches (A9B-10); F9 "
+                   "AFC-UP-VF-07. Not a C1 / cathode-feed valve",
+         "mass_provenance": "HISTORICAL: the 0.170 kg mass originated from the cathode-feed-branch latch of the earlier "
+                            "H2-7 two-branch analog (H27-12 = H27-31 2 branches x H27-32 latch + PFCV); that branch "
+                            "assignment is mass provenance only, not the valve's current function",
+         "source_ids": ["H27-12", "H27-31", "H27-32", LATCH, "A9B-10", "row 55", "AFC-UP-VF-07", "A9.25 message 8"]},
     ]
     removed = [{"what": "Xe proportional flow-control valve of the H2-7 cathode-feed branch (AN-MOOG-PFCV)",
                 "kg": pfcv, "evidence_class": "inferred", "source_ids": ["H27-12", "H27-31", PFCV, "A9B-C04"],
@@ -245,8 +304,8 @@ def rebase_al08(line: dict, src: dict, m) -> tuple[dict, dict]:
     new = copy.deepcopy(line)
     new_cons = copy.deepcopy(other)
     new_cons[idx[0]:idx[0]] = [{"what": "Xe valves (re-based, mass_power_a9_v4 AFI-01): retained set "
-                                        "1 x latch + 1 x PFCV (anode / Xe-contingency feed) + 1 x latch (second series "
-                                        "HP isolation, pending owner)", "kg": valves, "evidence_class": "inferred",
+                                        "latch #1 + latch #2 (dual series flight Xe isolation, owner row 55; A9.25 "
+                                        "message 8) + 1 x PFCV (anode / Xe-contingency feed)", "kg": valves, "evidence_class": "inferred",
                                 "status": None, "parts": kept}]
     tank, reg = (c["kg"] for c in other[:2])
     new.update(
@@ -262,15 +321,21 @@ def rebase_al08(line: dict, src: dict, m) -> tuple[dict, dict]:
                      "5.044 kg); quotations/design replace it"),
         a9_21_status=("PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (A9.21 AL08): the AL-08 MEV planning floor stays a "
                       "provisional planning floor, not a frozen allocation; v4 removes only the C1 cathode-feed PFCV "
-                      "identified from the repository (AFI-01, owner messages 2026-10-04); quotations still split tank, "
+                      "identified from the repository (AFI-01, owner messages 2026-10-04) and keeps the second series "
+                      "latch (A9.25 message 8: OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH); quotations still split tank, "
                       "regulator, valves, plumbing and mounting/thermal before the final re-base"),
+        c1_hardware_in_flight_al08=("NONE: no conventional hollow-cathode hardware remains in flight AL-08 (A9.25 "
+                                    "message 8 section 1); the cathode-feed PFCV is removed and the second latch's "
+                                    "current function is flight Xe series isolation"),
         value=mev,
         evidence_class_of_value=("MEV planning floor = 1.20 x re-based analog floor (not a CBE); constituent classes "
                                  "inferred"))
     new["owner_answers_applied"] = line["owner_answers_applied"] + [
         f"owner row 55 ({PINS['ANSWERS_147'][0]} sha256 {PINS['ANSWERS_147'][1][:12]})",
         "AFI-01 owner-approved re-base (owner messages 2026-10-04; record status "
-        "OWNER_MESSAGE_RELAYED_BY_ORCHESTRATING_SESSION_NOT_IN_REPOSITORY)"]
+        "OWNER_MESSAGE_RELAYED_BY_ORCHESTRATING_SESSION_NOT_IN_REPOSITORY)",
+        f"A9.25 message 8 section 1 AFI-01-S1 {AFI01_S1_STATE} ({PINS['A9_25_JSON'][0]} sha256 "
+        f"{PINS['A9_25_JSON'][1][:12]})"]
     record = {
         "id": "AFI-01", "line": "AL-08", "configuration": FLIGHT,
         "old": {"valves_kg": OLD_VALVES["kg"], "floor_cbe_kg": OLD["floor_cbe_kg"], "mev_kg": OLD["mev_kg"],
@@ -284,19 +349,28 @@ def rebase_al08(line: dict, src: dict, m) -> tuple[dict, dict]:
                                "plumbing, mounting/thermal (TBD, pending; H27-10 / H27-13)"],
         "c1_only_items_found": ["cathode-feed PFCV 0.115 kg (removed)"],
         "c1_only_items_beyond_expected": [],
-        "stop_items": [{
-            "id": "AFI-01-S1", "item": "cathode-feed-branch isolation latch (AN-MOOG-LATCH-18, 0.170 kg)",
-            "state": "RETAINED_PENDING_OWNER",
-            "why": "the expected removal (one latch + one PFCV = 0.285 kg, A9B-C04) would leave a single latch on the "
-                   "high-pressure Xe path; owner row 55 (H27-Q4, the question that the H2-7 single-string set H27-32 "
-                   "left open) requires 'dual series isolation on the high-pressure Xe path', the A9 flight BOM books "
-                   "two series latches (A9B-10, 0.34 kg) plus one PFCV (A9B-11) = 0.455 kg (MA9-ID-04), and F9 "
-                   "AFC-UP-VF-07 carries that rule as FREEZE_CANDIDATE. Whether the H2-7 cathode-branch latch is "
-                   "C1-only (then a row-55 second latch must be booked instead: same 0.455 kg) or removed outright is "
-                   "an owner call, not made here",
-            "if_owner_removes": dict(STOP_LATCH_ALT, note="AL-08 CBE 4.759 kg, MEV 5.7108 kg (the 0.285 kg reading); "
-                                                          "the valve set would then be below the A9 flight valve set "
-                                                          "0.455 kg required by row 55")}],
+        "c1_hardware_in_flight_al08": "NONE (A9.25 message 8 section 1: no conventional hollow-cathode hardware "
+                                      "remains in flight AL-08)",
+        "stop_items": [],
+        "resolved_stop_items": [{
+            "id": "AFI-01-S1", "item": "second 0.170 kg Xe latch (AN-MOOG-LATCH-18 mass analog)",
+            "state": AFI01_S1_STATE, "state_before": "RETAINED_PENDING_OWNER (mass_power_a9_v4 at 4c2b3b3)",
+            "decided_by": a925,
+            "decision": "KEEP the second 0.170 kg latch valve; flight Xe valve architecture = latch isolation valve #1 "
+                        "+ latch isolation valve #2 + one proportional flow-control valve (the two latches implement "
+                        "the approved dual series isolation on the high-pressure Xe path, owner row 55)",
+            "current_function": LATCH2_FUNCTION,
+            "not": "a C1 / cathode-feed valve (its mass provenance from the earlier two-branch analog is history only)",
+            "why_held": "the expected removal (one latch + one PFCV = 0.285 kg, A9B-C04) would have left a single "
+                        "latch on the high-pressure Xe path, below the row-55 dual series isolation (A9B-10 two "
+                        "series latches + A9B-11 one PFCV = 0.455 kg, MA9-ID-04; F9 AFC-UP-VF-07)",
+            "rejected_alternative": dict(REJECTED_LATCH_ALT, note="owner: 'Do not use 5.7108 kg' (it would leave the "
+                                                                   "flight Xe path below the approved dual-series "
+                                                                   "isolation architecture); history only, never "
+                                                                   "applied"),
+            "pfcv": "the removed cathode-feed PFCV (0.115 kg) stays removed (it existed solely for cathode-feed "
+                    "metering)",
+            "numbers_changed": False}],
         "sources": {"H27": {k: {"value": src["h27"][k]["value"], "name": src["h27"][k]["name"],
                                 "source": src["h27"][k]["source"]} for k in ("H27-12", "H27-31", "H27-32")},
                     "analogs": {k: {"value_g": v["value"], "device": v["device"], "source": v["source"],
@@ -391,10 +465,11 @@ def build_doc() -> dict:
     d.update({
         "schema": SCHEMA_ID, "id": SCHEMA_ID, "lane": "a9_24_afi_pre_bid_corrections",
         "directive": "owner messages 2026-10-04: narrow pre-bid corrections AFI-01 (AL-08 cathode-feed re-base), AFI-02 "
-                     "(AL-07 label only), C1 status wording (A9.24 item 13)",
+                     "(AL-07 label only), C1 status wording (A9.24 item 13); A9.25 message 8 FINAL_PRE_BID_AFI_"
+                     "RESOLUTION: AFI-01-S1 OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH (no number changed)",
         "title": "A9 mass + power integration v4: v3 with the AL-08 cathode-feed PFCV removed (AFI-01), the AL-07 "
                  "analog-floor label (AFI-02) and C1 = GROUND_REFERENCE_ONLY; roll-ups recomputed exactly as v3",
-        "status": "DRAFT_AFI_CORRECTIONS_APPLIED_PENDING_INTEGRATION_VERIFICATION",
+        "status": "AFI_CORRECTIONS_APPLIED_OWNER_RESOLVED_A9_25_PROVISIONAL_PLANNING_FLOOR",
         "date": DATE, "base_commit": BASE_COMMIT, "generated_by": SCRIPT_REL,
         "companion_document": f"{LANE_REL}/{MD_NAME}", "test": TEST_REL,
         "revision_of": {"path": PINS["V3_JSON"][0], "sha256": PINS["V3_JSON"][1], "md": PINS["V3_MD"][0],
@@ -416,27 +491,40 @@ def build_doc() -> dict:
             "basis": "v3 rollup() on the v3 lines with AL-08 re-based (AFI-01); every other line is v3's"}],
         "afi_corrections": {"AFI-01": record, "AFI-02": {"line": "AL-07", "labels": AL07_LABELS,
                                                          "number_changed": False,
-                                                         "open_rebase_action": "AFI-02-RA1"},
+                                                         "open_rebase_action": "AFI-02-RA1",
+                                                         "a9_25_confirmation": (
+                                                             "A9.25 message 8 section 9: AL-07 kept at 6.0 kg for "
+                                                             "this freeze, status PROVISIONAL_CONSERVATIVE_ANALOG_FLOOR "
+                                                             "(the analog includes legacy functions not present in "
+                                                             "the cathodeless architecture; label "
+                                                             "PROVISIONAL_CONSERVATIVE_OWNER_ANALOG_FLOOR here); "
+                                                             "AFI-02-RA1 remains OPEN; no reduction invented")},
                             "C1_STATUS": {"current": C1_CURRENT, "a9_2_historical_quote": "CONTROL_FALLBACK"},
                             "changes_old_new": changes,
                             "unchanged": "every other line value, the retired C1 history column, BOM, power, Xe "
                                          "import, budget reference and owner citations (copied from pinned v3)"},
         "c1_mass_check": dict(v3["c1_mass_check"],
                               flight_v4="v4 removes the cathode-feed PFCV (0.115 kg CBE) from the AL-08 floor; the "
-                                        "cathode-branch latch (0.170 kg) is retained pending owner (row 55 dual series "
-                                        "isolation; AFI-01-S1)",
+                                        "second 0.170 kg latch is kept as the SECOND SERIES FLIGHT XE ISOLATION VALVE "
+                                        "(row 55 dual series isolation; AFI-01-S1 OWNER_DECIDED_KEEP_SECOND_SERIES_"
+                                        "LATCH, A9.25 message 8); no conventional hollow-cathode hardware remains in "
+                                        "flight AL-08",
                               flight_numbers_effect="v4: see afi_corrections.changes_old_new (v3 text above is "
                                                     "history)"),
         "recorder_flags": v3["recorder_flags"] + [
-            "AFI-01 (v4): the v3 recorder flag on the H2-7 two-branch valve set is answered for the PFCV only; the "
-            "cathode-branch latch is the open stop item AFI-01-S1 (owner call)",
+            "AFI-01 (v4): the v3 recorder flag on the H2-7 two-branch valve set is answered: the cathode-feed PFCV "
+            "is removed; the second latch is kept as the second series flight Xe isolation valve (AFI-01-S1 "
+            "OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH, A9.25 message 8)",
             "AFI-02 (v4): AL-07 6.0 kg owner analog floor kept; label PROVISIONAL_CONSERVATIVE_OWNER_ANALOG_FLOOR + "
             "open re-base action AFI-02-RA1"],
     })
     d["open_register_status"] = dict(v3["open_register_status"],
                                      **{"MQ-08": "DERIVED (owner_questions_state_v4; v4: H2-7 arithmetic minus the "
                                                  "cathode-feed PFCV, AFI-01)",
-                                        "AFI-01-S1": "OPEN (owner)", "AFI-02-RA1": "OPEN"})
+                                        "AFI-01-S1": "RESOLVED: OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH (A9.25 "
+                                                     "message 8)", "AFI-02-RA1": "OPEN"})
+    d["mass_status"] = dict(MASS_WORDING, source="A9.25 message 8 sections 6-8 (mass_power_a9_v4 is the active flight "
+                                                 "mass source)")
     d["compliance"] = dict(v3["compliance"],
                            no_new_numbers="every number is copied from pinned v3 / H2-7 / mass_a9 or is deterministic "
                                           "arithmetic on those (v3 rule functions)",
@@ -483,8 +571,16 @@ def render_md(d: dict) -> str:
           f"floor {a['new']['mev_kg']:g} kg (delta CBE {a['delta']['cbe_kg']:g} kg, MEV {a['delta']['mev_kg']:g} kg).",
           ""]
     for s in a["stop_items"]:
-        L += [f"**STOP item {s['id']}** ({s['state']}): {s['item']}. {s['why']}. If the owner removes it: "
-              f"{s['if_owner_removes']['note']}.", ""]
+        L += [f"**STOP item {s['id']}** ({s['state']}): {s['item']}.", ""]
+    for s in a["resolved_stop_items"]:
+        dec = s["decided_by"]
+        L += [f"**{s['id']} resolved: `{s['state']}`** ({dec['decision']} message {dec['message']} {dec['key']}, "
+              f"{dec['utc']}, text sha256 `{dec['text_sha256'][:12]}...`; was {s['state_before']}). {s['decision']}. "
+              f"Current function of latch #2: **{s['current_function']}**; not {s['not']}. {s['pfcv']}. Rejected "
+              f"alternative (history, never applied): valves {s['rejected_alternative']['valves_kg']:g} kg, CBE "
+              f"{s['rejected_alternative']['floor_cbe_kg']:g} kg, MEV {s['rejected_alternative']['mev_kg']:g} kg - "
+              f"{s['rejected_alternative']['note']}.", ""]
+    L += [f"C1 hardware in flight AL-08: {a['c1_hardware_in_flight_al08']}.", ""]
     L += ["## Old -> new (flight configuration `hall_icp_neutralizer`)", ""]
     L += _table(["quantity", "old (v3)", "new (v4)", "state old", "state new"],
                 [[c["quantity"], c["old"], c["new"], c.get("state_old"), c.get("state_new")]
@@ -514,6 +610,11 @@ def render_md(d: dict) -> str:
         L += ["TBD / unresolved terms:", ""] + [f"* {t}" for t in r["tbd"]] + [""]
     L += ["MQ-10: the margin reading is not relaxed; closure requires reducing actual subsystem CBE through redesign, "
           "integration or lighter qualified parts.", "",
+          "## Mass status (A9.25 message 8)", "",
+          f"* Reading: {d['mass_status']['reading']}.",
+          f"* Mass compliance: {d['mass_status']['mass_compliance']}.",
+          f"* Xe cases: {d['mass_status']['xe_cases']}.",
+          f"* AL-07: {d['afi_corrections']['AFI-02']['a9_25_confirmation']}.", "",
           "## Current statuses (C1 = GROUND_REFERENCE_ONLY)", ""]
     L += _table(["item", "current status"], [[k, v] for k, v in d["statuses"]["current_statuses"].items()])
     L += [f"{d['statuses']['a9_2_statuses_label']}: "

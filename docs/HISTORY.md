@@ -3736,3 +3736,57 @@ commit b8f39b7). No abep_sim physics module, frozen dataset, golden, Rust file o
   content with the A9.22 G3 requirements-basis hash of the live RVM (1d4a7f00...; a basis change records the live RVM
   sha, so the snapshot bytes change and --check shows the drift);
   `tests/test_config_manifests.py` checks both. Only `hardware_bounds_v1.json` (F5 sha pin) and the manifests change.
+
+## 2026-10-04 — A9.25 message 8 FINAL_PRE_BID_AFI_RESOLUTION: AFI-01-S1 / AFI-05-S1 resolved, RFQ3-GAS rev1 (NO raw-physics change, NO numeric change)
+
+Authority: `docs/decisions/OD_2026_10_04_A9_25_PRE_BID_OWNER_DECISIONS.md` message 8 (text sha256 a48dfcbb...; JSON
+companion `OD_2026_10_04_A9_25_pre_bid_owner_decisions.json`), acting on the verified pre-freeze engineering candidate
+4c2b3b3. No abep_sim physics module, frozen dataset, golden, Rust file, bid-package file (`docs/bid/**`) or immutable
+record was edited. Every approved number is unchanged vs 4c2b3b3.
+
+- **AFI-01-S1 -> OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH** (mass / power v4 builder + regenerated outputs; A9.25 md/json
+  pinned by sha256, message-8 text re-hashed and token-checked at build). Flight Xe valves 0.455 kg = latch #1 0.170 +
+  latch #2 0.170 + PFCV 0.115; latch #2's current function is the SECOND SERIES FLIGHT XE ISOLATION VALVE (owner row 55
+  dual series isolation; A9B-10), with its mass provenance (cathode-feed branch of the earlier H2-7 two-branch analog)
+  kept as history only; the cathode-feed PFCV stays removed; AL-08 states `c1_hardware_in_flight_al08 = NONE`. The
+  5.7108 kg single-latch reading is recorded as the owner-rejected alternative. `stop_items` empty; open register
+  AFI-01-S1 RESOLVED. Numbers unchanged: AL-08 CBE floor 4.929 kg, MEV planning floor 5.9148 kg; nominal dry 33.8101 kg,
+  system margin 6.7620 kg, dry known 40.5721 kg; wet 42.5721 / 45.5721 / 50.5721 kg at 2 / 5 / 10 kg loaded Xe
+  (sensitivity / planning cases, flight Xe load NOT YET FROZEN), HARD_40_WET DOES_NOT_CLOSE. New `mass_status`: CURRENT
+  PROVISIONAL PLANNING / EVIDENCE FLOOR (not a complete CBE); mass compliance INCOMPLETE_EVIDENCE / NOT YET CLOSED. AL-07
+  stays 6.0 kg PROVISIONAL_CONSERVATIVE_ANALOG_FLOOR (legacy functions; AFI-02-RA1 OPEN). Package status
+  AFI_CORRECTIONS_APPLIED_OWNER_RESOLVED_A9_25_PROVISIONAL_PLANNING_FLOOR.
+- **F7/F8 hollow-cathode check.** The ground-reference history text "C1 cathode Xe branch 0.285 kg ... inside the AL-08
+  floor" was flagged EMBEDDED_IN_FLOOR (check ..._C1_PROVISIONS_FLAGGED_PENDING_BUDGET_REFRESH). The design-layer
+  `architecture_optimizer.flight_configuration_elements` now reports it as an absence statement (DECLARED_ABSENT,
+  re-verified by the refusal) when the flight line itself states `c1_hardware_in_flight* = NONE...`; otherwise the flag
+  stands. Check now NO_HOLLOW_CATHODE_ELEMENT_LISTED. F7/F8 rebuilt in full; Pareto and robust files byte-identical;
+  robust set still empty.
+- **AFI-05-S1 -> OWNER_CONFIRMED_CURRENT_ARCHITECTURE_READING** (RVM builder): RVM-16 frozen title / text / basis hash
+  (1d4a7f00...) / RFP provenance untouched (no re-freeze); the reading carries the owner clarification (no flight
+  keeper in hall_icp_neutralizer; AO / O compatibility applies to the actual AO / O-exposed components: anode; RF/ICP
+  electron-source / neutralizer plasma-facing surfaces; collector / bias electrode where applicable; gas-path surfaces;
+  other AO / O-exposed plasma-facing parts; graphite not the current flight baseline for an O / AO-exposed
+  plasma-facing or electron-source surface until coupon evidence; NOT a universal graphite prohibition; final
+  materials evidence-dependent). No compliance status changed. F9 AL-08 text updated (latch decided).
+- **RFQ3-GAS rev1** (`docs/procurement/rfq_a9_v3_gas_rev1/`, new builder `build_rfq3_gas_rev1.py --check`; test
+  `tests/test_rfq3_gas_rev1.py`). RFQ v3 is NOT overwritten (pinned and read as data). The successor package is the v3
+  GAS text with controlled, count-checked substitutions: RFQ2-GAS-R28 mass context -> AL-08 CBE planning floor 4.929 kg /
+  MEV planning floor 5.9148 kg (read from mass / power v4), PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (plumbing and
+  mounting/thermal TBD; quotations replace / re-base provisional floors); 5.9148 kg is an INTERNAL planning floor, not a
+  supplier maximum-mass requirement; v3 6.0528 / 5.044 kg kept only as labelled HISTORY; 'Xe/cathode branch' wording
+  given the rev1 reading (flight HP Xe path, two series latches). Split: tank; regulator; two series isolation latches;
+  anode / Xe-contingency proportional flow control; plumbing; mounting/thermal; other classified items; C1 lines
+  GROUND_ONLY_LAB_EQUIPMENT, never in flight AL-08. Dispatch: v3 GAS dispatch status UNKNOWN_TO_REPOSITORY (record
+  AUTHORIZED_PENDING_OWNER_SEND); if not sent, the owner dispatches only rev1 (successor package + cover); if already
+  sent, rev1 is issued as the controlled addendum. Other five packages unchanged (pinned). Quotation-only terms unchanged.
+- **C1 / AFI-03** (verified, no change): C1 = GROUND_REFERENCE_ONLY in every current status (A9.2 CONTROL_FALLBACK only
+  as labelled history / decision-key pointers); P3 node NOT_USABLE_FOR_FLIGHT_THERMAL_CLOSURE (P3 v2 untouched).
+- **Not rerun:** `docs/chemistry/o_o2/v0/build_tables_nist107_o.py` — NOT_RERUN_NETWORK_UNAVAILABLE /
+  UNAFFECTED_BY_FREEZE_CHANGES (container has no network; builder and its inputs unchanged by this work; no external
+  data fetched or refreshed).
+- **Rebuilt:** mass / power v4, RVM, F7/F8 (full run; only `f7_f8_optimizer_v1.json` hollow-cathode fields change;
+  `f7_upstream_pareto_v1.json` and `f8_robust_candidates_v1.json` byte-identical; feasible in all scenarios 0, robust
+  set empty), F9 (AL-08 basis text), RFQ3-GAS rev1 (new). Every other builder `--check` reproduces unchanged (M16 v5,
+  owner-questions state v5, A9.16 matrix, config manifests, P1-P4, H-1). F4 and F1 not rerun (inputs untouched).
+  Validation: pytest 4198 passed / 5 skipped / 1 xfailed (Rule 9 PASS); ci_checks 11/11; golden OK; config --check OK.

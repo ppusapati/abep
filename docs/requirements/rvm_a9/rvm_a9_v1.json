@@ -6183,14 +6183,40 @@
    "a9_24_current_architecture_reading": {
     "applied_by": "A9.24 item 13 / AFI-05 (owner messages 2026-10-04, relayed by the orchestrating session; not recorded verbatim in the repository)",
     "title": "Atomic-oxygen / material compatibility (AO-beam test; anode, RF/ICP electron-source / neutralizer, collector, plasma-facing and gas-path materials)",
-    "requirement_text": "All parts in intake, compressor and thruster take care of nascent atomic-oxygen erosion for the lifetime (RFP-P19-04); materials compatible with VLEO nascent oxygen (RFP-P17-02); coating and surface tests with atomic-oxygen beam exposure and erosion-yield measurement (RFP-P19-06 a); space-qualified materials and processes for the QM (RFP-P19-02). Owner rules carried: 316L REJECTED_AS_CURRENT_BASELINE for the flight anode; final anode / collector material OPEN until coupon evidence; no graphite as the flight baseline for O / AO-exposed plasma-facing / electron-source parts (current-architecture reading of owner row 94, RECORDER_INTERPRETATION_OWNER_MAY_REVERSE); no silver in O / AO-wetted gas-path parts.",
+    "requirement_text": "All parts in intake, compressor and thruster take care of nascent atomic-oxygen erosion for the lifetime (RFP-P19-04); materials compatible with VLEO nascent oxygen (RFP-P17-02); coating and surface tests with atomic-oxygen beam exposure and erosion-yield measurement (RFP-P19-06 a); space-qualified materials and processes for the QM (RFP-P19-02). Owner rules carried: 316L REJECTED_AS_CURRENT_BASELINE for the flight anode; final anode / collector material OPEN until coupon evidence; no graphite as the flight baseline for O / AO-exposed plasma-facing / electron-source parts until coupon evidence supports it (current-architecture reading of owner row 94, OWNER_CONFIRMED_CURRENT_ARCHITECTURE_READING, A9.25 message 8; not a universal graphite prohibition); no silver in O / AO-wetted gas-path parts.",
     "keeper_reading": {
      "owner_row_94_verbatim": "Do not use graphite as the flight baseline for an O/AO-exposed keeper. Screen refractory/oxygen-resistant or ceramic-shielded alternatives with biased exposure coupons; freeze material only after erosion/oxidation evidence.",
      "architecture_fact": "no flight keeper exists in hall_icp_neutralizer (A9.19: one Hall + one RF/ICP electron-source / neutralizer, no conventional hollow cathode; A9.20: C1 ground-only)",
      "reading": "the owner's graphite exclusion (stated for an O/AO-exposed keeper) is applied to O / AO-exposed plasma-facing / electron-source parts of the current architecture",
-     "status": "RECORDER_INTERPRETATION_OWNER_MAY_REVERSE"
+     "status": "OWNER_CONFIRMED_CURRENT_ARCHITECTURE_READING",
+     "status_before": "RECORDER_INTERPRETATION_OWNER_MAY_REVERSE (A9.24 AFI-05, at 4c2b3b3)",
+     "confirmed_by": {
+      "decision": "A9.25",
+      "message": 8,
+      "key": "FINAL_PRE_BID_AFI_RESOLUTION",
+      "section": 2,
+      "text_sha256": "a48dfcbb9fa33421bf19ff45fa241070c22a8379a3eb4e887b661fb8ceb93624",
+      "md": "docs/decisions/OD_2026_10_04_A9_25_PRE_BID_OWNER_DECISIONS.md",
+      "md_sha256": "159ea2049e3cc05ce7a18b3e6bbdf6fee97c168a74f23fd2359cfef3a1d26106",
+      "json": "docs/decisions/OD_2026_10_04_A9_25_pre_bid_owner_decisions.json",
+      "json_sha256": "c05fcc45de0194e60ef30b93aa91294c54a7762d129dac69e933e9a679679385"
+     },
+     "owner_clarification": {
+      "keeper": "for hall_icp_neutralizer there is no flight keeper; references to the historical flight keeper are not interpreted as requiring a keeper",
+      "ao_o_compatibility_applies_to": "the actual AO/O-exposed components of the selected architecture, as applicable: anode; RF/ICP electron-source / neutralizer plasma-facing surfaces; collector / bias electrode where applicable; gas-path surfaces; other AO/O-exposed plasma-facing parts",
+      "ao_o_exposed_components": [
+       "anode",
+       "RF/ICP electron-source / neutralizer plasma-facing surfaces",
+       "collector / bias electrode where applicable",
+       "gas-path surfaces",
+       "other AO/O-exposed plasma-facing parts"
+      ],
+      "graphite": "do not use graphite as the CURRENT FLIGHT BASELINE for an O/AO-exposed plasma-facing or electron-source surface until appropriate erosion / oxidation coupon evidence supports it; this is NOT a universal prohibition on graphite everywhere in the system (graphite outside the relevant O/AO exposure environment is not excluded)",
+      "final_materials": "evidence-dependent",
+      "compliance_status": "UNCHANGED (A9.25 message 8 section 2: no requirement compliance status change because of this interpretation)"
+     }
     },
-    "frozen_basis": "title / requirement_text of this row are the A9.22 G3 frozen requirements basis (sha256 1d4a7f0099e937f0c74a8c1be8fc14408b75f211c7990be4672f4eee5f9b66b5) and stay verbatim; re-wording them would change the frozen basis hash and needs a recorded owner decision (stop item AFI-05-S1)"
+    "frozen_basis": "title / requirement_text of this row are the A9.22 G3 frozen requirements basis (sha256 1d4a7f0099e937f0c74a8c1be8fc14408b75f211c7990be4672f4eee5f9b66b5) and stay verbatim with the official RFP provenance; the owner decided NOT to alter / re-freeze that basis (A9.25 message 8 section 2, former stop item AFI-05-S1); the current-architecture reading is the mechanism"
    }
   },
   {
@@ -9155,14 +9181,14 @@
      "status": "NOT_EVALUATED",
      "rule": "R7-NOT-EVALUATED",
      "reason": "no determining evaluation with evidenced terms: mass_power_a9_v4 [PLAN_OR_FRAMEWORK], xe_accounting_a9_v3 [PLAN_OR_FRAMEWORK]",
-     "current_evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_AFI_CORRECTIONS_APPLIED_PENDING_INTEGRATION_VERIFICATION || PLANNED / FRAMEWORK ONLY - nothing measured; package status PARAMETRIC_XE_ACCOUNTING_V3 - owner decisions applied; every total with a TBD input REFUSED; nothing frozen; no winner; no PASS",
+     "current_evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status AFI_CORRECTIONS_APPLIED_OWNER_RESOLVED_A9_25_PROVISIONAL_PLANNING_FLOOR || PLANNED / FRAMEWORK ONLY - nothing measured; package status PARAMETRIC_XE_ACCOUNTING_V3 - owner decisions applied; every total with a TBD input REFUSED; nothing frozen; no winner; no PASS",
      "artifacts": [
       {
        "path": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
        "id": "mass_power_a9_v4",
        "role": "DETERMINING",
        "kind": "PLAN_OR_FRAMEWORK",
-       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_AFI_CORRECTIONS_APPLIED_PENDING_INTEGRATION_VERIFICATION",
+       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status AFI_CORRECTIONS_APPLIED_OWNER_RESOLVED_A9_25_PROVISIONAL_PLANNING_FLOOR",
        "evaluated": false,
        "verified": false,
        "measured": false,
@@ -10302,7 +10328,7 @@
    ],
    "answer_sha256": "964e5c0b663476e25b6659c2eb8c9e6f85500e2afd5a77bbf8ace4e6c579585e",
    "owner_answer_verbatim": "Do not use graphite as the flight baseline for an O/AO-exposed keeper. Screen refractory/oxygen-resistant or ceramic-shielded alternatives with biased exposure coupons; freeze material only after erosion/oxidation evidence.",
-   "how_applied": "RVM-16 no graphite as the flight baseline for O / AO-exposed plasma-facing / electron-source parts (the owner text names a keeper; no flight keeper exists in hall_icp_neutralizer, A9.19; RECORDER_INTERPRETATION_OWNER_MAY_REVERSE)"
+   "how_applied": "RVM-16 no graphite as the flight baseline for O / AO-exposed plasma-facing / electron-source parts (the owner text names a keeper; no flight keeper exists in hall_icp_neutralizer, A9.19; OWNER_CONFIRMED_CURRENT_ARCHITECTURE_READING, A9.25 message 8; not a universal graphite prohibition)"
   },
   {
    "row": 102,
@@ -12282,7 +12308,22 @@
   "rows": [
    "RVM-16"
   ],
-  "stop_item": "AFI-05-S1",
+  "stop_item": null,
+  "resolved_stop_item": {
+   "id": "AFI-05-S1",
+   "state": "OWNER_CONFIRMED_CURRENT_ARCHITECTURE_READING",
+   "decided_by": {
+    "decision": "A9.25",
+    "message": 8,
+    "key": "FINAL_PRE_BID_AFI_RESOLUTION",
+    "section": 2,
+    "text_sha256": "a48dfcbb9fa33421bf19ff45fa241070c22a8379a3eb4e887b661fb8ceb93624",
+    "md": "docs/decisions/OD_2026_10_04_A9_25_PRE_BID_OWNER_DECISIONS.md",
+    "md_sha256": "159ea2049e3cc05ce7a18b3e6bbdf6fee97c168a74f23fd2359cfef3a1d26106",
+    "json": "docs/decisions/OD_2026_10_04_A9_25_pre_bid_owner_decisions.json",
+    "json_sha256": "c05fcc45de0194e60ef30b93aa91294c54a7762d129dac69e933e9a679679385"
+   }
+  },
   "note": "current-architecture reading only; no requirement, status or basis field changed"
  }
 }

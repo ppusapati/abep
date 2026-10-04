@@ -936,7 +936,7 @@ OWNER_ROWS_APPLIED = [
     (93, "RVM-14 120 s dwell cap, two retries (preliminary)"),
     (94, "RVM-16 no graphite as the flight baseline for O / AO-exposed plasma-facing / electron-source parts "
          "(the owner text names a keeper; no flight keeper exists in hall_icp_neutralizer, A9.19; "
-         "RECORDER_INTERPRETATION_OWNER_MAY_REVERSE)"),
+         "OWNER_CONFIRMED_CURRENT_ARCHITECTURE_READING, A9.25 message 8; not a universal graphite prohibition)"),
     (102, "RVM-09 delivered species state measured; O survival never assumed"),
     (103, "RVM-16 no silver in O / AO-wetted parts"),
     (106, "RVM-16 flight anode material open until coupon evidence"),
@@ -1181,8 +1181,25 @@ def build_doc():
 
 # A9.24 item 13 / AFI-05 (owner messages 2026-10-04): RVM-16 names a flight keeper although hall_icp_neutralizer has
 # none (A9.19 / A9.20). Its title / requirement_text are the RFP-derived requirements basis that the owner FROZE
-# (A9.22 G3, rfp_rebase.ACCEPTED_BASIS_SHA256): they are not rewritten here (a basis change needs a recorded owner
-# decision; stop item AFI-05-S1). The current-architecture wording is carried as a labelled reading outside the basis.
+# (A9.22 G3, rfp_rebase.ACCEPTED_BASIS_SHA256): they are not rewritten here. The current-architecture wording is carried
+# as a labelled reading outside the basis. A9.25 message 8 section 2 (former stop item AFI-05-S1): the owner does NOT
+# re-freeze the basis and CONFIRMS the current-architecture reading (OWNER_CONFIRMED_CURRENT_ARCHITECTURE_READING) with
+# a clarification (no flight keeper; AO / O compatibility of the actual AO / O-exposed parts; graphite not the current
+# flight baseline for an O / AO-exposed plasma-facing or electron-source surface until coupon evidence; not a universal
+# graphite prohibition). No compliance status changes.
+A9_25_MD = ("docs/decisions/OD_2026_10_04_A9_25_PRE_BID_OWNER_DECISIONS.md",
+            "159ea2049e3cc05ce7a18b3e6bbdf6fee97c168a74f23fd2359cfef3a1d26106")
+A9_25_JSON = ("docs/decisions/OD_2026_10_04_A9_25_pre_bid_owner_decisions.json",
+              "c05fcc45de0194e60ef30b93aa91294c54a7762d129dac69e933e9a679679385")
+A9_25_M8 = {"n": 8, "key": "FINAL_PRE_BID_AFI_RESOLUTION",
+            "text_sha256": "a48dfcbb9fa33421bf19ff45fa241070c22a8379a3eb4e887b661fb8ceb93624"}
+AFI05_STATUS = "OWNER_CONFIRMED_CURRENT_ARCHITECTURE_READING"
+AFI05_TOKENS = ("Do NOT alter/re-freeze the A9.22 G3 frozen RVM-16 requirement basis", "there is no flight keeper",
+                "OWNER_CONFIRMED_CURRENT_ARCHITECTURE_READING", "This is NOT a universal prohibition on graphite",
+                "Do NOT change requirement compliance status because of this interpretation")
+AFI05_AO_SCOPE = ["anode", "RF/ICP electron-source / neutralizer plasma-facing surfaces",
+                  "collector / bias electrode where applicable", "gas-path surfaces",
+                  "other AO/O-exposed plasma-facing parts"]
 AFI05_TITLE = ("Atomic-oxygen / material compatibility (AO-beam test; anode, RF/ICP electron-source / neutralizer, "
                "collector, plasma-facing and gas-path materials)")
 AFI05_TEXT = ("All parts in intake, compressor and thruster take care of nascent atomic-oxygen erosion for the lifetime "
@@ -1190,8 +1207,30 @@ AFI05_TEXT = ("All parts in intake, compressor and thruster take care of nascent
               "atomic-oxygen beam exposure and erosion-yield measurement (RFP-P19-06 a); space-qualified materials and "
               "processes for the QM (RFP-P19-02). Owner rules carried: 316L REJECTED_AS_CURRENT_BASELINE for the flight "
               "anode; final anode / collector material OPEN until coupon evidence; no graphite as the flight baseline "
-              "for O / AO-exposed plasma-facing / electron-source parts (current-architecture reading of owner row 94, "
-              "RECORDER_INTERPRETATION_OWNER_MAY_REVERSE); no silver in O / AO-wetted gas-path parts.")
+              "for O / AO-exposed plasma-facing / electron-source parts until coupon evidence supports it "
+              "(current-architecture reading of owner row 94, OWNER_CONFIRMED_CURRENT_ARCHITECTURE_READING, A9.25 "
+              "message 8; not a universal graphite prohibition); no silver in O / AO-wetted gas-path parts.")
+
+
+def _a9_25_message8() -> dict:
+    """The A9.25 message 8 owner record (pinned files, verbatim-text sha256, applied tokens; fail closed)."""
+    for rel, want in (A9_25_MD, A9_25_JSON):
+        if hashlib.sha256((REPO / rel).read_bytes()).hexdigest() != want:
+            raise BuildError(f"A9.25 owner record {rel} changed (pinned sha256 {want[:12]})")
+    md = (REPO / A9_25_MD[0]).read_text(encoding="utf-8")
+    head = f"## Message {A9_25_M8['n']} — {A9_25_M8['key']} — "
+    if md.count(head) != 1:
+        raise BuildError("A9.25 message 8 heading not found exactly once")
+    text = md.split(head, 1)[1].split("````text\n", 1)[1].split("\n````", 1)[0]
+    if hashlib.sha256(text.encode("utf-8")).hexdigest() != A9_25_M8["text_sha256"]:
+        raise BuildError("A9.25 message 8 verbatim text does not reproduce its recorded sha256")
+    flat = " ".join(text.split())
+    for tok in AFI05_TOKENS:
+        if tok not in flat:
+            raise BuildError(f"A9.25 message 8 token {tok!r} missing")
+    return {"decision": "A9.25", "message": A9_25_M8["n"], "key": A9_25_M8["key"], "section": 2,
+            "text_sha256": A9_25_M8["text_sha256"], "md": A9_25_MD[0], "md_sha256": A9_25_MD[1],
+            "json": A9_25_JSON[0], "json_sha256": A9_25_JSON[1]}
 
 
 def apply_a9_24_afi05(doc):
@@ -1203,6 +1242,7 @@ def apply_a9_24_afi05(doc):
     q94 = [s for s in r["sources"] if s.get("row") == 94]
     if len(q94) != 1 or "keeper" not in q94[0].get("verbatim", ""):
         raise BuildError("RVM-16: owner row 94 verbatim source not found exactly once")
+    a925 = _a9_25_message8()
     r["a9_24_current_architecture_reading"] = {
         "applied_by": "A9.24 item 13 / AFI-05 (owner messages 2026-10-04, relayed by the orchestrating session; not "
                       "recorded verbatim in the repository)",
@@ -1214,11 +1254,28 @@ def apply_a9_24_afi05(doc):
                                  "electron-source / neutralizer, no conventional hollow cathode; A9.20: C1 ground-only)",
             "reading": "the owner's graphite exclusion (stated for an O/AO-exposed keeper) is applied to O / AO-exposed "
                        "plasma-facing / electron-source parts of the current architecture",
-            "status": "RECORDER_INTERPRETATION_OWNER_MAY_REVERSE"},
+            "status": AFI05_STATUS,
+            "status_before": "RECORDER_INTERPRETATION_OWNER_MAY_REVERSE (A9.24 AFI-05, at 4c2b3b3)",
+            "confirmed_by": a925,
+            "owner_clarification": {
+                "keeper": "for hall_icp_neutralizer there is no flight keeper; references to the historical flight "
+                          "keeper are not interpreted as requiring a keeper",
+                "ao_o_compatibility_applies_to": "the actual AO/O-exposed components of the selected architecture, "
+                                                 "as applicable: " + "; ".join(AFI05_AO_SCOPE),
+                "ao_o_exposed_components": list(AFI05_AO_SCOPE),
+                "graphite": "do not use graphite as the CURRENT FLIGHT BASELINE for an O/AO-exposed plasma-facing or "
+                            "electron-source surface until appropriate erosion / oxidation coupon evidence supports it; "
+                            "this is NOT a universal prohibition on graphite everywhere in the system (graphite outside "
+                            "the relevant O/AO exposure environment is not excluded)",
+                "final_materials": "evidence-dependent",
+                "compliance_status": "UNCHANGED (A9.25 message 8 section 2: no requirement compliance status change "
+                                     "because of this interpretation)"}},
         "frozen_basis": "title / requirement_text of this row are the A9.22 G3 frozen requirements basis (sha256 "
-                        + RB.ACCEPTED_BASIS_SHA256 + ") and stay verbatim; re-wording them would change the frozen "
-                        "basis hash and needs a recorded owner decision (stop item AFI-05-S1)"}
-    doc["a9_24_afi05"] = {"rows": ["RVM-16"], "stop_item": "AFI-05-S1",
+                        + RB.ACCEPTED_BASIS_SHA256 + ") and stay verbatim with the official RFP provenance; the owner "
+                        "decided NOT to alter / re-freeze that basis (A9.25 message 8 section 2, former stop item "
+                        "AFI-05-S1); the current-architecture reading is the mechanism"}
+    doc["a9_24_afi05"] = {"rows": ["RVM-16"], "stop_item": None,
+                          "resolved_stop_item": {"id": "AFI-05-S1", "state": AFI05_STATUS, "decided_by": a925},
                           "note": "current-architecture reading only; no requirement, status or basis field changed"}
     return doc
 
@@ -1434,7 +1491,11 @@ def render_md(doc):
         if x24:
             k = x24["keeper_reading"]
             a(f"- {r['id']} A9.24 AFI-05 current-architecture reading ({x24['applied_by']}): title "
-              f"\"{_esc(x24['title'])}\"; {_esc(k['reading'])} ({k['status']}); {_esc(x24['frozen_basis'])}.")
+              f"\"{_esc(x24['title'])}\"; {_esc(k['reading'])} ({k['status']}, {k['confirmed_by']['decision']} message "
+              f"{k['confirmed_by']['message']}); owner clarification: "
+              + _esc("; ".join(f"{c}: {v}" for c, v in k["owner_clarification"].items()
+                               if c != "ao_o_exposed_components"))
+              + f"; {_esc(x24['frozen_basis'])}.")
     a("")
     a("Owner answers applied (A9.19 / A9.20):")
     a("")
