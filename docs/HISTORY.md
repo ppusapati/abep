@@ -4130,3 +4130,29 @@ main, and the bid record `5eee4b8` / `b5849af` / `2de86ab`. `git diff 2de86ab..H
   `config/MANIFEST.json` (`abep_config_manifest_v1`) verification (unpinned file or hash / size mismatch -> MODEL_ERROR).
 - `cargo test --workspace --locked`: 6 passed, 0 ignored; clippy -D warnings and rustfmt clean. Python suite and
   `scripts/ci_checks.py` unaffected (11/11).
+
+## 2026-10-05 — New-physics preregistrations NP-THERMAL-CATHODELESS v1 and NP-ICP-NEUTRALIZER v1 (A9.29 secs. 4, 13; DOCS ONLY, no implementation)
+
+- `docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/` (lane D, ES-4, SC-WP-06; lock `e3e6859c` / `e3337c8f`):
+  - A lumped Hall + RF/ICP cathodeless thermal network: nodes, equations, heat sources and an energy boundary at the
+    spacecraft interface.
+  - There is no cathode node and no `Q_cath`: the H2-5 C-1 nodes are excluded per AFI-03. The 50 K margin, HC-06 and
+    material limits are assessment-only. Anode properties are parameterised over the P4 candidates, status OPEN.
+  - Interfaces: IF-ICP-THERMAL-v1 and IF-HALL-THERMAL-v1. Hall heat from maps is NOT_EVALUATED while the credible
+    transport set is empty.
+  - 10 open owner questions (OQ-NPT-01..10). They block only the affected absolute outputs, never the parametric model or
+    its analytic cases.
+- `docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/` (lane C, ES-NP-ICP, SC-WP-03; lock `5d496ea6` / `3af97940`):
+  - A predictive steady 0-D inductive discharge model of the downstream 13.56 MHz ICP neutralizer.
+  - I_e,cap comes from an explicit electrode current balance in the owner's discharge-OFF configuration, signed and never
+    clipped. The Hall-ON configuration is a NOT_EVALUATED contract while the credible Hall set is empty.
+  - Three coupling modes: absorbed-power input, P2-calibrated, and transformer-predicted. The predicted mode is not
+    admissible until its formulas are verified.
+  - Uses the N2/N set abep-n2n-0.11 with its validity limits. O/O2, Xe and Ar are INCOMPLETE_EVIDENCE.
+  - Interfaces: IF-ICP-HALL / BUS / THERMAL / FEED. Each watt enters through the supply that powers it, and the forward +
+    bias power closes against the partition.
+  - M_n and HC-05 are assessment-only.
+  - 15 open owner questions (OQ-NPICP-01..15) and 11 recorded conflicts (CONF-01..11).
+- Both records were first drafted on `e5528bd` and aligned to plan v3.1 before merge. The locks were regenerated with a
+  `regenerated` note. The gate is A9.29 sec. 13: no implementation before the preregistration is committed. The v3
+  "owner review before any Rust code" step is superseded and kept as evidence.
