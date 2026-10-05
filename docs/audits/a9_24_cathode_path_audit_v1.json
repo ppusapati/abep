@@ -1,0 +1,413 @@
+{
+ "schema": "abep_audit_cathode_paths_v1",
+ "id": "a9_24_cathode_path_audit_v1",
+ "title": "A9.24 item 13 cathode-path audit: every LaB6 / hollow-cathode / C1 / cathode code and budget path, classified",
+ "status": "AUDIT_ONLY_NO_CHANGE",
+ "date": "2026-10-04",
+ "branch": "lane-a924-cathode",
+ "base_commit": "4b5563b643aa2103d999484ce4ccf5e2eca040e3",
+ "companion_document": "docs/audits/a9_24_cathode_path_audit_v1.md",
+ "governing_records": {
+  "A9.24_item_13": "docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md (section 13 IMPORTANT CATHODE CORRECTION)",
+  "A9.19": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md (one Hall + one RF/ICP neutralizer, no conventional hollow cathode)",
+  "A9.20": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md (C1 GROUND_ONLY_LAB_REFERENCE)",
+  "A9.22_G4": "docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md item 4 (cathodeless golden; LaB6 HISTORICAL_NON_FLIGHT_REGRESSION)",
+  "active_architecture_config": "config/architecture/hall_icp_neutralizer_v1.json"
+ },
+ "what_this_is_not": [
+  "not a fix: no code, data, budget, golden, test or configuration was changed",
+  "not a rerun: every numeric impact below is an estimate obtained by reading committed values and code, never by running a builder or the simulator",
+  "not a decision: ACTIVE_FLIGHT_INCONSISTENCY entries are reported for the owner before any numerical baseline is altered (A9.24 item 13)"
+ ],
+ "classification_vocabulary": {
+  "ACTIVE_FLIGHT_INCONSISTENCY": "reached by the active hall_icp_neutralizer production chain (programme / design synthesis F1-F9, golden active reference case, mass / power / Xe budgets, RVM, bid package) and carries or assumes a hollow cathode / LaB6 / C1 term that the cathodeless flight architecture does not have",
+  "GROUND_REFERENCE": "C1 / cathode content explicitly scoped to the ground-only laboratory reference (H-1 I_d,max,H1,Ar characterization; C1-vs-ICP bench control) and kept out of the flight budgets",
+  "HISTORICAL_REGRESSION": "legacy or superseded paths (pre-A9 cards and archengine LaB6 neutralizer, A5-era Hall-only / RF+Hall / ECR+Hall comparison lanes, superseded budget versions, golden historical cases, convergence / performance workloads, tests) that no active hall_icp_neutralizer chain consumes"
+ },
+ "severity_vocabulary_for_active_inconsistencies": {
+  "NUMERIC": "a committed flight number (budget line / roll-up) contains a cathode share",
+  "LATENT": "an active-chain code path instantiates or carries a cathode term, but no currently reported flight number depends on it",
+  "LABEL": "requirement / record text in an active document still names a flight cathode element; no number"
+ },
+ "method": [
+  "fetched origin/claude/nifty-ramanujan-w68f9z at 4b5563b and branched lane-a924-cathode",
+  "searched abep_sim/**, scripts/**, docs/**/build_*.py and helper modules, hallthruster_bridge python, config/**, schemas/**, tests/** for LaB6Cathode, Cathode, XE_CATHODE, MW_AIR_CATHODE, lab6_xe, hollow_cathode, cathode_*, keeper, heater, C1 / c1_, xe_cathode, cathode_starts, cathode_life",
+  "traced every hit to its callers (import graph and call sites) and to the committed JSON products and bid documents that carry its numbers",
+  "decided reachability from the active chain: hall_icp_neutralizer is not a thruster.CARDS card and not an archengine architecture; the active chain is the F1-F8 design-synthesis modules (abep_sim/design/*, abep_sim/programme/design_synthesis.py), bus_boundary_a9_v2, the golden case hall_icp_neutralizer_reference, the mass/power v3, Xe accounting v3, RFQ v3, RVM, M16 v5, F9 and the bid package"
+ ],
+ "summary": {
+  "ACTIVE_FLIGHT_INCONSISTENCY": {"count": 5, "ids": ["AFI-01", "AFI-02", "AFI-03", "AFI-04", "AFI-05"], "numeric": ["AFI-01", "AFI-02"], "latent": ["AFI-03", "AFI-04"], "label": ["AFI-05"]},
+  "GROUND_REFERENCE": {"count": 10, "ids": ["GR-01", "GR-02", "GR-03", "GR-04", "GR-05", "GR-06", "GR-07", "GR-08", "GR-09", "GR-10"]},
+  "HISTORICAL_REGRESSION": {"count": 15, "ids": ["HR-01", "HR-02", "HR-03", "HR-04", "HR-05", "HR-06", "HR-07", "HR-08", "HR-09", "HR-10", "HR-11", "HR-12", "HR-13", "HR-14", "HR-15"]},
+  "headline": "No active hall_icp_neutralizer code path instantiates LaB6Cathode. The LaB6Cathode class is reached only from the legacy card closure (system.py plasma_physics branch) and the archengine lab6_xe neutralizer, both HISTORICAL_REGRESSION. The active-chain inconsistencies are two budget floors whose analog values embed conventional-cathode hardware (AL-08 Xe valves, AL-07 PPU), the P3 v2 coupled-thermal adapter inheriting the H2-5 C-1 cathode heat node, the golden active reference case being computed through the LaB6-carded hall_1stage closure (no numeric effect), and the RVM-16 flight keeper wording.",
+  "cathode_starts_541_547": "HISTORICAL_REGRESSION (HR-03): produced only by abep_sim/system.py physics_closure engineering branch for legacy thruster.CARDS architectures; not reached by hall_icp_neutralizer; carried by no budget, F-chain or bid document"
+ },
+ "answer_cathode_starts_541_to_547": {
+  "producer": "abep_sim/system.py:369 LifeInputs(cathode_starts=int(mission_h / 24 * 0.5)) -> abep_sim/life.py:98-104 cathode_life() returns 'starts' -> abep_sim/system.py:417 eng_cathode_starts",
+  "arithmetic": "int(26000 / 24 * 0.5) = int(541.67) = 541 (pre-G1); int(26280 / 24 * 0.5) = int(547.5) = 547 (A9.22 G1 mission basis)",
+  "condition": "only when Config.engineering_physics = True, for a Config.architecture that is a key of abep_sim/thruster.py CARDS (hall_1stage, hall_ecr, hall_rf, hall_1stage_mwcat, rf_gridded_ion, ecr_gridless, helicon); there is no hall_icp_neutralizer card",
+  "callers": ["abep_sim/programme/closure.py:20 evaluate (system.evaluate compatibility entry) when engineering_physics=True", "abep_sim/uq6.py:168 monte_carlo6 / :240 robust_design", "tests/fixtures/make_evaluate_identity_fixture*.py (identity rows 119-121)", "tests/test_raw_assessment_split.py (G1_MOVED_KEYS)"],
+  "carried_by": ["tests/fixtures/evaluate_identity_g1.json", "tests/fixtures/evaluate_identity_base_9eb302c.json (541, history)", "docs/HISTORY.md A9.22 G1 table", "schemas/results/raw_closure_v2.json (field eng_cathode_starts)"],
+  "not_carried_by": "no mass/power v3, Xe accounting v3, F1-F9, M16 v5, RVM or bid package number (searched)",
+  "related": "abep_sim/mission5.py:96 also sets cathode_starts=int(hours/24*0.5) but its reliability call omits the cathode item, so no output depends on it",
+  "classification": "HISTORICAL_REGRESSION"
+ },
+ "entries": [
+  {
+   "id": "AFI-01",
+   "classification": "ACTIVE_FLIGHT_INCONSISTENCY",
+   "severity": "NUMERIC",
+   "title": "AL-08 Xe storage/flow MEV planning floor embeds a two-branch Xe valve set including the C1 cathode-feed branch",
+   "locations": [
+    {"file": "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py", "lines": "140 (OWNER_MEV_FLOORS AL-08 6.0528), 558-568 (AL-08 rebase)"},
+    {"file": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json", "pointer": "lines.hall_icp_neutralizer[line=AL-08].floor_constituents[2] ('Xe valves (H2-7 H27-12, 2 x (latch + PFCV))' 0.57 kg), .floor_arithmetic, .a9_21_status, rollups[0], flight_rollup_vs_40kg[0]"},
+    {"file": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json", "pointer": "retired_flight_configuration_history.lines.hall_c1_reference[AL-C1].floor_arithmetic ('the C1 cathode Xe branch 0.285 kg (A9B-C04) is already inside the AL-08 floor (H2-7 H27-12 two-branch 0.57 kg)')"},
+    {"file": "abep_sim/design/architecture_optimizer.py", "lines": "1078 (_EMBEDDED_C1_RE), 1081-1103 (flight_configuration_elements surfaces AL-08.embedded_c1_cathode_xe_branch)"},
+    {"file": "docs/hardware/h2/h2_7_mechanical_bom/h2_7_mechanical_bom_v1.json", "pointer": "H27-12 (two latch + PFCV branches: anode feed + C-1 cathode feed)"}
+   ],
+   "caller_chain": "mass_power_a9_v3 builder (OWNER_MEV_FLOORS) -> mass_power_a9_v3.json AL-08 6.0528 kg -> rollups / flight_rollup_vs_40kg -> abep_sim/design/architecture_optimizer.flight_configuration_elements -> abep_sim/programme/design_synthesis.py:146 refuse_hollow_cathode_elements -> F7/F8 system_evaluation_exemplar.hollow_cathode_check = NO_HOLLOW_CATHODE_ELEMENT_LISTED_C1_PROVISIONS_FLAGGED_PENDING_BUDGET_REFRESH; c1_provisions_flagged = [AL-08.embedded_c1_cathode_xe_branch]",
+   "feeds_numbers": {"AL-08_MEV_kg": 6.0528, "AL-08_CBE_floor_kg": 5.044, "nonharness_known_kg": 32.2576, "dry_known_kg": 40.7464421, "wet_known_kg_by_Xe_case": {"2.0": 42.7464421, "5.0": 45.7464421, "10.0": 50.7464421}, "hard_40_wet": "DOES_NOT_CLOSE (all cases)"},
+   "carried_by_documents": ["docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json", "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json (architecture_questions[6], system_evaluation_exemplar)", "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json", "docs/procurement/rfq_a9_v3/rfq_a9_v3.json packages[1].line_items[9] (AL-08 status, 0.285 kg note)", "docs/bid/package/02_TECHNICAL_APPROACH.md sec. 2.2 / 5 (AL-08 6.05 kg; 'about 0.285 kg of C1 branch hardware may be inside')", "docs/bid/package/04_RISK_REGISTER.md R-07 (dry 40.75, wet 42.75/45.75/50.75)"],
+   "evidence": "The flight AL-08 floor constituent is the H2-7 two-branch valve set (2 x latch + PFCV = 0.57 kg). The repository's own retired AL-C1 text states the C1 cathode Xe branch 0.285 kg is inside that floor; A9.21 recorded the owner decision KEEP_6_05KG_PROVISIONAL_WAIT_FOR_QUOTES_TO_REBASE_AL08 and the active line carries the note 'the analog-derived figure may contain about 0.285 kg of C1 cathode-branch hardware'. The F7/F8 refusal flags it (CHECK_FLAGGED) rather than refusing.",
+   "already_owner_recorded": "yes (A9.21 AL08: provisional until quotations split the C1-specific branch)",
+   "numeric_impact_estimate": {
+    "basis": "read-only arithmetic on committed values; MEV = 1.20 x CBE floor (owner rule MQ-05); dry_known = nonharness x (1/0.95) x 1.20 = nonharness x 1.263158 (harness 5 % of nominal dry, 20 % system margin, as in rollups[0])",
+    "range_low_removal": {"assumption": "A9 single-branch reading already in floor_arithmetic (0.455 kg valves instead of 0.57)", "delta_CBE_kg": -0.115, "delta_MEV_kg": -0.138, "AL-08_MEV_kg": 5.9148, "dry_known_kg": 40.5721, "wet_2kg_Xe_kg": 42.5721},
+    "range_high_removal": {"assumption": "remove the full 0.285 kg C1 branch", "delta_CBE_kg": -0.285, "delta_MEV_kg": -0.342, "AL-08_MEV_kg": 5.7108, "dry_known_kg": 40.3144, "wet_2kg_Xe_kg": 42.3144},
+    "verdict_change": "none: dry_known stays above 40 kg and every wet case stays DOES_NOT_CLOSE (closing wet 40 kg at 2 kg Xe needs >= 2.75 kg dry reduction)"
+   },
+   "owner_decision_needed": "whether to re-base AL-08 now (single-branch floor) or keep the A9.21 provisional floor until quotations split the C1-specific branch"
+  },
+  {
+   "id": "AFI-02",
+   "classification": "ACTIVE_FLIGHT_INCONSISTENCY",
+   "severity": "NUMERIC",
+   "title": "AL-07 Hall PPU MEV planning floor is a full Hall-PPU analog that the repository itself says contains the C1 heater / keeper / cathode-common supplies",
+   "locations": [
+    {"file": "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py", "lines": "19 (AL-07 MEV floor 6.0 kg = 5.0 kg lowest PPU analog), 140 (OWNER_MEV_FLOORS AL-07 6.0), 491 (flight line name 'no C1 electronics')"},
+    {"file": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json", "pointer": "lines.hall_icp_neutralizer[line=AL-07].floor_constituents[0] (SETS PPU 100-500 W analog 5.0 kg), .c1_electronics = NOT_BOOKED"},
+    {"file": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json", "pointer": "retired_flight_configuration_history.lines.hall_c1_reference[AL-C1].floor_arithmetic ('C1 supplies (A9B-C03) inside the AL-07 PPU analogs: not added twice')"}
+   ],
+   "caller_chain": "mass_power_a9_v3 builder -> AL-07 6.0 kg -> rollups[0] nonharness_known 32.2576 -> dry_known 40.746 -> F7/F8, F9, bid R-07; architecture_optimizer._line_hc_elements books AL-07 as C1_DECLARED_ABSENT (name text 'no C1 electronics') and does not inspect the analog basis",
+   "feeds_numbers": {"AL-07_MEV_kg": 6.0, "AL-07_CBE_floor_kg": 5.0},
+   "carried_by_documents": ["docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json", "docs/bid/package/02_TECHNICAL_APPROACH.md sec. 2.2", "docs/bid/package/04_RISK_REGISTER.md R-07", "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json (c1_absence_statements = [AL-07, ...])"],
+   "evidence": "Flight AL-07 declares no C1 electronics, but its floor value is the lowest admissible measured Hall-thruster PPU analog (SETS PPU; NG EM1 6.1, TAS Mk1 10.9 kg alternatives). The retired AL-C1 history line states the C1 supplies are inside those AL-07 analogs, so the analog floor carries conventional-cathode heater / keeper supply mass that the cathodeless flight PPU does not need. Unlike AL-08 this is not flagged by the F7/F8 hollow-cathode refusal (the regex only scans the ground line's text for an embedded Xe branch).",
+   "already_owner_recorded": "no (AL-07 not named in A9.21; the floor itself is owner-stated A9.14 MQ-04)",
+   "numeric_impact_estimate": {
+    "basis": "read-only; the repository holds no split of the analog PPU mass into cathode supplies",
+    "delta": "NOT_QUANTIFIABLE_FROM_REPOSITORY (direction: lower AL-07 by the cathode-supply share; the AL-07 floor_arithmetic notes the flight RF generator / matching, about 1.5 kg, is NOT contained in the analogs, which may offset it)",
+    "sensitivity": "each 0.1 kg of AL-07 CBE floor removed -> -0.12 kg MEV -> -0.152 kg dry_known",
+    "verdict_change": "dry_known reaches 40 kg only if >= 0.49 kg CBE is removed from AL-07 alone; wet 40 kg cannot close from this item (needs >= 2.75 kg dry reduction at 2 kg Xe)"
+   },
+   "owner_decision_needed": "whether AL-07 should be re-based on a cathodeless PPU analog / quotation (RFQ3-HALLEL) or kept as the owner-stated planning floor with an explicit embedded-cathode-supply flag like AL-08"
+  },
+  {
+   "id": "AFI-03",
+   "classification": "ACTIVE_FLIGHT_INCONSISTENCY",
+   "severity": "LATENT",
+   "title": "P3 v2 coupled H-1 / ICP thermal adapter inherits the H2-5 v1 C-1 cathode heat load and cathode-body node",
+   "locations": [
+    {"file": "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py", "lines": "961-1003 (H2-5 adapter; boundary ('rad_env','CB')), 988 h25_coupled_network (calls h25.assemble: loads incl. CB = Q_cath_W)"},
+    {"file": "docs/experiments/hall_icp/p3_coupled_thermal/build_p3_coupled_thermal_v2.py", "lines": "111-115 (pins H2-5 v1 JSON + builder), 873-893 h25_reproduction (runs the coupled network at H2-5 range midpoints, P_d 1350 W), 1100 a9_2_statuses_carried ('C1 conventional reference' = CONTROL_FALLBACK, no A9.19/A9.20 supersession)"},
+    {"file": "docs/hardware/h2/h2_5_thermal_network/build_h2_5_thermal_network.py", "lines": "321 (H25-10 Q_cath_W [9, 101] W, scope FLIGHT_REPRESENTATIVE), 491 (NODES incl. CB), 501 (CB 'cathode body + keeper', C-1, FLIGHT_REPRESENTATIVE), 575 (load CB = Q_cath_W), 602 (cond CB-BP), 635 (rad_env CB)"},
+    {"file": "docs/experiments/hall_icp/p3_coupled_thermal/p3_a9_16_rules.py", "lines": "36 (DISSIPATED_CATEGORIES includes 'cathode'; vocabulary only)"}
+   ],
+   "caller_chain": "build_p3_coupled_thermal_v2.py -> p3_thermal_lib.h25_coupled_network -> build_h2_5_thermal_network.assemble (imported read-only) -> node CB with Q_cath; A9 binding status 'coupled H-1/ICP thermal closure UNRESOLVED' is the future consumer",
+   "feeds_numbers": {"reported_now": "h25_reproduction.max_abs_dT_K (method check, temperatures NOT reported); parametric view factors (geometry only)", "depends_on_Q_cath_now": "no reported number"},
+   "carried_by_documents": ["docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json", "docs/experiments/hall_icp/p3_coupled_thermal/P3_COUPLED_THERMAL_V2.md", "docs/hardware/h2/h2_5_thermal_network/h2_5_thermal_network_v1.json"],
+   "evidence": "H2-5 v1 models the pre-A9 H-1 test article with a C-1 cathode (Q_cath 9-101 W into a cathode-body node conducting to the back plate) and labels C-1 FLIGHT_REPRESENTATIVE. P3 v2 couples ICP bodies to that pinned network unchanged ('boundaries (WO open back, BP rear, CB, mount) and all internal links are kept unchanged'). For the C1 ground reference this heat is legitimate; for the cathodeless flight coupled closure it is a non-existent load. P3 v2 also carries the A9.2 status CONTROL_FALLBACK for C1 with no A9.19/A9.20 supersession note (F7/F8, F9 and H-1 freeze candidate carry one).",
+   "already_owner_recorded": "no",
+   "numeric_impact_estimate": {
+    "now": "none (no reported P3 v2 number depends on Q_cath; the reproduction check compares the adapter with H2-5 itself)",
+    "future": "a coupled flight thermal closure built on h25_coupled_network without overriding Q_cath would add 9-101 W (midpoint 55 W) at the H-1 cathode-body / back-plate path; removing it lowers back-plate-side temperatures (magnitude not estimable without a solve)"
+   },
+   "owner_decision_needed": "whether the flight coupled thermal case must zero Q_cath / drop node CB (keeping it only for the C1 ground-reference case), and whether P3 v2's carried CONTROL_FALLBACK label gets the A9.20 supersession"
+  },
+  {
+   "id": "AFI-04",
+   "classification": "ACTIVE_FLIGHT_INCONSISTENCY",
+   "severity": "LATENT",
+   "title": "Golden active reference case hall_icp_neutralizer_reference (and the golden design-point selection) is computed through system.physics_closure on the LaB6-carded legacy card hall_1stage",
+   "locations": [
+    {"file": "abep_sim/golden.py", "lines": "190-197 (_gas_record: physics_closure(Config('hall_1stage', ...))), 229-235 (admissibility), 410-455 (case_hall_icp_neutralizer_reference uses _gas_record and archengine.make_gas_fn)"},
+    {"file": "abep_sim/archengine.py", "lines": "990-998 (gas_path_state: physics_closure(Config('hall_1stage', ...)))"},
+    {"file": "abep_sim/thruster.py", "lines": "96 (XE_CATHODE xe_hollow 0.05 mg/s, 40 W), 106-111 (hall_1stage card, cathode=XE_CATHODE, 'Xe-fed LaB6 cathode'), 193-194 (performance adds cathode power and flow)"},
+    {"file": "abep_sim/system.py", "lines": "225 (performance(card ...)), 303 (xe_cath_kg), 453 (xe_cathode_kg output)"}
+   ],
+   "caller_chain": "abep_sim/golden.py case_hall_icp_neutralizer_reference / case_gas_path / admissibility -> _gas_record and archengine.gas_path_state -> system.physics_closure(Config('hall_1stage')) -> thruster.performance(card with XE_CATHODE) -> raw keys; golden reads only gas-path / AO / intake / compressor keys",
+   "feeds_numbers": {"golden_v2_hall_icp_case": "mdot_air_mgps, p_in_Pa, fO_inlet, fO2_inlet, eta_c, C_D, intake_drag_mN, P_comp_W, statuses, AO exposure, intake / compressor mass lines", "cathode_dependent_keys_read": "none"},
+   "carried_by_documents": ["abep_sim/data/golden_v2.json cases.hall_icp_neutralizer_reference, cases.gas_path, cases.design_point_selection"],
+   "evidence": "Every key the golden active case reads is computed in physics_closure before / independently of card.cathode (system.py 109-160; p_target_Pa is passed, so card.p_min_Pa is not used); plasma_physics and engineering_physics are False, so LaB6Cathode and cathode_life are not instantiated. The card's cathode only feeds discarded outputs (T, P_thruster, Isp, xe_cathode_kg). golden_v2 hall_icp case contains no cathode value (checked).",
+   "already_owner_recorded": "no",
+   "numeric_impact_estimate": {"now": "zero for every golden_v2 value of the active case (read-only check of the code path)", "risk": "a Rust port of physics_closure / gas_path_state reproduces the LaB6-carded card as part of the active upstream reference"},
+   "owner_decision_needed": "whether the active reference / upstream gas path should be computed through a cathode-free (upstream-only) entry instead of the hall_1stage card"
+  },
+  {
+   "id": "AFI-05",
+   "classification": "ACTIVE_FLIGHT_INCONSISTENCY",
+   "severity": "LABEL",
+   "title": "RVM-16 (AO / material compatibility) still names a flight keeper and maps to the M16 cathode row without an A9.19 annotation",
+   "locations": [
+    {"file": "docs/requirements/rvm_a9/rvm_a9_rows.py", "lines": "398-402 (title '... anode, collector, keeper, gas path'; requirement text 'no graphite flight keeper for O / AO exposure'), 359 (RVM-15 title '(ICP-45 or C1)')"},
+    {"file": "docs/requirements/rvm_a9/rfp_rebase.py", "lines": "336 (same RVM-16 title)"},
+    {"file": "docs/requirements/rvm_a9/a9_19_rvm.py", "lines": "351, 360 (A9.19 / A9.20 amend RVM-04/-12/-14/-15/-10/-30; RVM-16 not listed)"},
+    {"file": "docs/requirements/rvm_a9/rvm_a9_v1.json", "pointer": "rows[15] (RVM-16 m16_rows[0].key = cathode)"}
+   ],
+   "caller_chain": "rvm_a9 builders -> rvm_a9_v1.json -> F9 architecture_gates[0].blocking_evidence.rows[15] and rows[14] -> docs/bid/OWNER_DECISION_BRIEF_P0_P1.md:123",
+   "feeds_numbers": {},
+   "carried_by_documents": ["docs/requirements/rvm_a9/rvm_a9_v1.json", "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json", "docs/bid/OWNER_DECISION_BRIEF_P0_P1.md (line 123)", "docs/bid/owner_decision_brief_p0_p1.json"],
+   "evidence": "The flight architecture has no keeper (A9.19); RVM-04 carries an explicit A9.19 c1_supplies note, RVM-16 does not. The bid package proper (01-05) does not carry the keeper wording (searched).",
+   "already_owner_recorded": "no",
+   "numeric_impact_estimate": {"now": "none (text only)"},
+   "owner_decision_needed": "whether RVM-16 drops the keeper / cathode-row mapping for the flight column (C1 keeper AO evidence stays ground-reference)"
+  },
+  {
+   "id": "GR-01",
+   "classification": "GROUND_REFERENCE",
+   "title": "A9 bus-power boundary C1 slots and C1 start sequence",
+   "locations": [{"file": "abep_sim/bus_boundary_a9.py", "lines": "161-180 (c1_heater, c1_keeper, c1_common_tie, filter_getter), 232 (hall_c1_reference slots), 255-256, 277-297 (C-S2..C-S6 C1 sequence), 385-391 / 824-845 (heater rules)"}, {"file": "abep_sim/bus_boundary_a9_v2.py", "lines": "5-7, 50, 56-67 (C1 only in GROUND_REFERENCE_TEST_METADATA; never installed)"}, {"file": "docs/architecture_comparison/power_boundary_a9/build_bus_power_boundary_a9.py"}, {"file": "docs/architecture_comparison/power_boundary_a9_v2/build_bus_power_boundary_a9_v2.py"}],
+   "caller_chain": "architecture_optimizer / design_synthesis use bus_boundary_a9_v2.installed_slots('hall_icp_neutralizer') (no C1 slot); v1 C1 configuration retained for the ground reference",
+   "feeds_numbers": {"flight": "none (every slot load TBD; no C1 slot installed in the flight configuration)"},
+   "evidence": "v2 CONFIGURATIONS = (hall_icp_neutralizer,); C1 only as ground-reference metadata (A9.22 G8); mass_power_a9_v3 power section: 'C1 slots ... are never flight P_bus loads'"
+  },
+  {
+   "id": "GR-02",
+   "classification": "GROUND_REFERENCE",
+   "title": "Xe accounting v3: C1 ground-test ledger lines; flight P-FL-C1 is a configuration-scope zero",
+   "locations": [{"file": "docs/budgets/xe_accounting_a9_v3/build_xe_accounting_a9_v3.py"}, {"file": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json", "pointer": "ledger_lines[1] P-FL-C1 ('not booked: no C1 in the ICP flight configuration'), ledger_lines[14..] C1-GT-* (configuration hall_c1_reference, a9_20_role GROUND_ONLY_LAB_REFERENCE), propellant_policy.c1_flight_xe_now.booked = false"}],
+   "caller_chain": "standalone builder; F7/F8 / bid cite #/status",
+   "feeds_numbers": {"flight_cathode_xe": 0},
+   "evidence": "propellant_policy.xenon_role.normal_atmospheric_operation = 'no cathode Xe flow (no hollow cathode, A9.19)'"
+  },
+  {
+   "id": "GR-03",
+   "classification": "GROUND_REFERENCE",
+   "title": "RFQ v3 C1 items (quotation only)",
+   "locations": [{"file": "docs/procurement/rfq_a9_v3/build_rfq_a9_v3.py"}, {"file": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json", "pointer": "rfp_propellant_policy.a9_20_c1_role.lines (HE-L10/L11/L12, GAS-L05/L06/L15, GAS-O03; RFQ3-HALLEL-N03), packages[1].line_items[5..7] (C1 Xe controllers / getter, c1_branch 'separate offer section; GROUND_ONLY_LAB_EQUIPMENT; never inside the flight AL-08')"}],
+   "caller_chain": "standalone builder; A9.24 item 10 dispatch (quotation only)",
+   "feeds_numbers": {"flight": "none"},
+   "evidence": "every C1 line labelled GROUND_ONLY_LAB_EQUIPMENT (A9.20); the AL-08 'C1-specific branch' split category exists to remove AFI-01's embedded branch"
+  },
+  {
+   "id": "GR-04",
+   "classification": "GROUND_REFERENCE",
+   "title": "Mass/power v3 retired C1 column, AL-C1 and A9B-C01..C07 items",
+   "locations": [{"file": "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py", "lines": "28, 42, 295, 499 (history line names)"}, {"file": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json", "pointer": "retired_flight_configuration_history, c1_mass_check, items A9B-C01..C07 (configurations.hall_icp_neutralizer = NOT_INSTALLED)"}],
+   "caller_chain": "architecture_optimizer.ground_reference_lines reads the retired column only to surface AFI-01",
+   "feeds_numbers": {"flight": "none (flight_rollup_vs_40kg.numerically_unchanged_vs_pre_a9_19 = true)"},
+   "evidence": "c1_mass_check.flight_numbers_effect = none"
+  },
+  {
+   "id": "GR-05",
+   "classification": "GROUND_REFERENCE",
+   "title": "Hall->ICP experiment framework: C1 as bench control / H-1 reference characterization",
+   "locations": [{"file": "docs/experiments/hall_icp/prereg_framework/build_hall_icp_prereg_framework.py", "lines": "475 (C1 heater / keeper / cathode Xe settings of the C1 configuration)"}, {"file": "docs/experiments/hall_icp/uncertainty_budget/build_hall_icp_uncertainty_budget.py"}, {"file": "docs/experiments/hall_icp/validation_inputs/build_hall_icp_validation_inputs.py"}, {"file": "docs/experiments/hall_icp/p1_icp_bench/build_p1_icp_bench.py; p1_reducer.py; p1_a9_19_application.py; a9_16_application.py"}, {"file": "docs/experiments/hall_icp/programme/hw_programme_a9_21.py (C1-REF step)"}, {"file": "docs/experiments/hall_icp/integration/a9_10_overlay.py"}],
+   "caller_chain": "experiment-planning builders; bid 03_DEVELOPMENT_AND_TEST_PLAN.md step 3 C1-REF",
+   "feeds_numbers": {"flight": "none (planning / bench-control content; no flight value)"},
+   "evidence": "C1 role GROUND_ONLY_LAB_EQUIPMENT: H-1 I_d,max,H1,Ar characterization and C1-vs-ICP bench control (config/architecture/hall_icp_neutralizer_v1.json constants.c1_role)"
+  },
+  {
+   "id": "GR-06",
+   "classification": "GROUND_REFERENCE",
+   "title": "H2 hardware-definition lanes (H-1 + C-1 test article) and their A9 revision",
+   "locations": [{"file": "docs/hardware/h2/h2_2_cathode_integration/build_h2_2_cathode_integration.py"}, {"file": "docs/hardware/h2/h2_4_ppu_bus/build_h2_4_ppu_bus.py (keeper / heater supplies; bid 02 sec. 6: 'now apply only to the ground C1 reference')"}, {"file": "docs/hardware/h2/h2_5_thermal_network/build_h2_5_thermal_network.py (C-1 node; see AFI-03 for its reuse in P3 v2)"}, {"file": "docs/hardware/h2/h2_6_diagnostics_fixture/build_h2_6_diagnostics_fixture.py"}, {"file": "docs/hardware/h2/h2_7_mechanical_bom/build_h2_7_mechanical_bom.py (C1 items; H27-12 two-branch valves feed AFI-01)"}, {"file": "docs/hardware/h2/h2_1_hall_chamber_magnet, h2_3_gas_path_plenum builders"}, {"file": "docs/hardware/h2_a9_revisions/build_h2_a9_revisions.py"}],
+   "caller_chain": "standalone builders; their JSON is read by mass/power, P3 and RFQ lanes",
+   "feeds_numbers": {"flight": "only through AFI-01 (H27-12 valves) and AFI-03 (H2-5 Q_cath)"},
+   "evidence": "H2 lanes describe the H-1 flight-representative TEST ARTICLE with C-1; after A9.19 / A9.20 the C-1 content is ground reference. Stale scope label: H2-5 tags C-1 nodes FLIGHT_REPRESENTATIVE (build_h2_5_thermal_network.py:321, 501)"
+  },
+  {
+   "id": "GR-07",
+   "classification": "GROUND_REFERENCE",
+   "title": "ICP neutralizer ICD and evidence: IP-C1 datum, cathode-common N-CC, C1-vs-ICP comparison",
+   "locations": [{"file": "docs/interfaces/icp_neutralizer/build_icp_neutralizer_icd.py"}, {"file": "docs/evidence/icp_neutralizer/build_icp_neutralizer_evidence.py"}],
+   "caller_chain": "standalone builders; bid 02 table cites the ICD",
+   "feeds_numbers": {"flight": "none"},
+   "evidence": "C1 interface items apply to hall_c1_reference (ground); RFQ v3 common_interface items[10] N-CC 'C1 cathode common (hall_c1_reference)'"
+  },
+  {
+   "id": "GR-08",
+   "classification": "GROUND_REFERENCE",
+   "title": "M16 v5 subsystem-maturity row 'cathode' (shielded Xe-fed LaB6 hollow cathode) and the Xe-metering cathode-feed wording",
+   "locations": [{"file": "docs/experiments/hall_icp/integration/m16_v5/m16_v5_rows.py; build_subsystem_maturity_v5.py"}, {"file": "docs/experiments/hall_icp/integration/m16_v5/subsystem_maturity_v5.json", "pointer": "rows[10] key cathode; rows[7] xe_metering"}, {"file": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json", "pointer": "rows[10].a9_19_20.configuration_status = 'GROUND_ONLY_LAB_REFERENCE (A9.20): NOT_A_FLIGHT_SUBSYSTEM'"}],
+   "caller_chain": "M16 v5 builder; RVM m16_rows mapping (see AFI-05)",
+   "feeds_numbers": {"rollup": "execution_states_v5 BLOCKED 20 includes this ground-reference row"},
+   "evidence": "the v4 a9_19_20 labels classify the row GROUND_REFERENCE_ITEM / SUPERSEDED_FOR_FLIGHT_PRE_A9_19; note for the owner: the v5 rollup counts it among the 20 BLOCKED rows (a programme count, not a flight number)"
+  },
+  {
+   "id": "GR-09",
+   "classification": "GROUND_REFERENCE",
+   "title": "F2 candidate FC-07 'Xe cathode-line filter / getter' (C1 LaB6 branch, out of F2 scope)",
+   "locations": [{"file": "docs/design_synthesis/f2_filter/build_f2_filter.py", "lines": "270-271, 464"}, {"file": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json", "pointer": "candidate_concepts[7]"}],
+   "caller_chain": "F2 builder (listed, out of scope; no number)",
+   "feeds_numbers": {"flight": "none"},
+   "evidence": "described as a Xe-path item outside F2; the text lacks the A9.20 GROUND_ONLY tag (cosmetic)"
+  },
+  {
+   "id": "GR-10",
+   "classification": "GROUND_REFERENCE",
+   "title": "Frozen configuration: ground_reference_configuration hall_c1_reference and the C1 ground-only constraint row",
+   "locations": [{"file": "config/architecture/hall_icp_neutralizer_v1.json", "pointer": "constants.ground_reference_configuration, constants.c1_role"}, {"file": "config/requirements/rfp_constraints_v1.json", "lines": "439-481"}, {"file": "scripts/config/build_config.py", "lines": "126, 156"}],
+   "caller_chain": "abep_sim/design/a9_19_architecture.py loads it",
+   "feeds_numbers": {"flight": "none"},
+   "evidence": "records the A9.19 / A9.20 split itself"
+  },
+  {
+   "id": "HR-01",
+   "classification": "HISTORICAL_REGRESSION",
+   "title": "LaB6Cathode class (Richardson + O-poisoning + evaporation, heater 30 W, keeper 15 W, Xe 0.05 mg/s)",
+   "locations": [{"file": "abep_sim/plasma_devices.py", "lines": "251-300 (class LaB6Cathode, operate), 344-349 (n_seed_keeper ignition prior inside the withdrawn 0-D Hall)"}],
+   "caller_chain": "only abep_sim/system.py:231/257 (plasma_physics branch, legacy cards) and abep_sim/archengine.py:79 (Neutralizer 'lab6_xe'); tests/test_sim.py:245-246",
+   "feeds_numbers": {"active_flight": "none"},
+   "evidence": "no import from abep_sim/design/*, abep_sim/programme/design_synthesis.py, bus_boundary_a9_v2 or any F1-F9 / budget builder (import graph searched)"
+  },
+  {
+   "id": "HR-02",
+   "classification": "HISTORICAL_REGRESSION",
+   "title": "thruster.py card cathodes (XE_CATHODE xe_hollow 0.05 mg/s 40 W; MW_AIR_CATHODE) and their use in performance / sweep / transient",
+   "locations": [{"file": "abep_sim/thruster.py", "lines": "43-49, 96-97, 106-155 (hall_1stage, hall_ecr, hall_rf, rf_gridded_ion use XE_CATHODE; hall_1stage_mwcat MW_AIR), 193-194"}, {"file": "abep_sim/programme/sweep.py", "lines": "29-58 (CARDS grid, card_overrides incl. cathode)"}, {"file": "abep_sim/transient.py", "lines": "139"}, {"file": "abep_sim/assessment/closure_checks.py", "lines": "111-113, 161 (life check includes cathode flag)"}],
+   "caller_chain": "system.physics_closure / programme.closure.evaluate / programme.sweep (python -m abep_sim) / uq6 / mission_uq / sizing / thresholds / uncertainty",
+   "feeds_numbers": {"active_flight": "none (no hall_icp_neutralizer card; the only active use is the cathode-inert gas path of AFI-04)"},
+   "evidence": "hall_icp_neutralizer is not a key of CARDS"
+  },
+  {
+   "id": "HR-03",
+   "classification": "HISTORICAL_REGRESSION",
+   "title": "system.physics_closure cathode terms (cathode Xe, cathode power, cathode_assy 1.1 kg, cathode life / starts, reliability) - producer of eng_cathode_starts 541 -> 547",
+   "locations": [{"file": "abep_sim/system.py", "lines": "231, 257 (LaB6Cathode), 260 (mdot incl. cathode), 303 (xe_cath_kg), 327-328, 347 (P_cath -> thermal nodes; abep_sim/thermal.py:136), 368-373 (LifeInputs cathode_T_K, cathode_starts=int(mission_h/24*0.5) -> life.cathode_life -> reliability), 378, 386 (cathode_assy 1.1 kg), 417 (eng_cathode_life_h, eng_cathode_starts), 453 (xe_cathode_kg)"}, {"file": "abep_sim/life.py", "lines": "38-40, 98-104 (cathode_life)"}],
+   "caller_chain": "programme.closure.evaluate (system.evaluate) / sweep / uq6.monte_carlo6 / robust_design / mission5.run_phase5 / mission_uq / sizing / thresholds / uncertainty; identity fixtures",
+   "feeds_numbers": {"eng_cathode_starts": "541 -> 547 (identity rows 119-121)", "xe_cathode_kg": "legacy cards", "active_flight": "none"},
+   "carried_by_documents": ["tests/fixtures/evaluate_identity_g1.json", "docs/HISTORY.md (A9.22 G1)", "schemas/results/raw_closure_v2.json", "config/mission/mission_scenario_v1.json:66 (lists 'cathode starts' as a G1 consumer of the mission basis)"],
+   "evidence": "see answer_cathode_starts_541_to_547"
+  },
+  {
+   "id": "HR-04",
+   "classification": "HISTORICAL_REGRESSION",
+   "title": "archengine Neutralizer 'lab6_xe' (LaB6 operate, keeper converter, 1.1 kg, Xe 0.05 mg/s x firing hours x 1.2) and the other cathode neutralizers mw_air / rf_cathode",
+   "locations": [{"file": "abep_sim/archengine.py", "lines": "28, 64-120 (Neutralizer.operate; 78-82 LaB6), 135-140 (NEUTRALIZERS), 166-185 (FLIGHT_EXCLUDED_NEUTRALIZERS = lab6_xe only; require_flight_eligible), 549-565, 701-712 (keeper / cathode_src converters), 749-756 (xe_kg, neutralizer mass/class), 921 (dark-channel 45 W keeper), 976-986 (run_all flight=True)"}, {"file": "abep_sim/programme/closure.py", "lines": "27-64"}, {"file": "abep_sim/programme/uq_modular.py", "lines": "37"}],
+   "caller_chain": "golden architecture_closure / mission / nonconverged_reference; golden case_accelerators; convergence.py; programme.uq_modular.run_uq; scripts/perf/profile_baseline.py; tests",
+   "feeds_numbers": {"active_flight": "none (no caller passes flight=True outside tests; hall_icp_neutralizer is not an archengine architecture)"},
+   "evidence": "A9.22 G4 guard refuses lab6_xe for flight purposes. Observation O-2: mw_air and rf_cathode (air-fed plasma-bridge cathodes) are not in FLIGHT_EXCLUDED_NEUTRALIZERS and would pass a flight=True closure; golden.py:392 states rf_cathode does not represent the A9 ICP"
+  },
+  {
+   "id": "HR-05",
+   "classification": "HISTORICAL_REGRESSION",
+   "title": "Golden LaB6 cases",
+   "locations": [{"file": "abep_sim/golden.py", "lines": "99-133 (HISTORICAL_NON_FLIGHT_* and guard), 214-226 (_closure_cached on hall_internal+hall+lab6_xe), 310-321 (_accelerator_values: ecr+grids+lab6_xe, ecr+hall+lab6_xe), 349-372 (case_accelerators, case_architecture_closure, case_mission), 460-501 (nonconverged_reference)"}, {"file": "abep_sim/data/golden_v2.json", "pointer": "cases.architecture_closure, cases.mission (HISTORICAL_NON_FLIGHT_REGRESSION); cases.accelerators.ecr_hall.P_neut_W = 34.554 W (role CANONICAL)"}],
+   "caller_chain": "python -m abep_sim.golden check (gate 6)",
+   "feeds_numbers": {"active_flight": "none"},
+   "evidence": "A9.22 G4 roles. Observation O-3: case 'accelerators' is role CANONICAL although ecr_hall.P_neut_W is the LaB6 neutralizer power; only that key depends on the cathode"
+  },
+  {
+   "id": "HR-06",
+   "classification": "HISTORICAL_REGRESSION",
+   "title": "mission5 cathode terms",
+   "locations": [{"file": "abep_sim/mission5.py", "lines": "96 (cathode_starts, not used by its reliability call), 190 (xe_cathode_kg_actual if 'lab6' in architecture)"}],
+   "caller_chain": "golden mission case, convergence.py, profile_baseline, tests",
+   "feeds_numbers": {"active_flight": "none"},
+   "evidence": "propagates archengine results only"
+  },
+  {
+   "id": "HR-07",
+   "classification": "HISTORICAL_REGRESSION",
+   "title": "Legacy UQ / sizing on system.evaluate (cathode Xe and cathode reliability inside)",
+   "locations": [{"file": "abep_sim/uq6.py", "lines": "120, 168, 227 (xe_kg = xe_cathode_kg + xe_aug_kg), 240, 285"}, {"file": "abep_sim/mission_uq.py"}, {"file": "abep_sim/sizing.py"}, {"file": "abep_sim/thresholds.py"}, {"file": "abep_sim/uncertainty.py"}],
+   "caller_chain": "no docs/ or scripts/ builder imports them except scripts/perf/profile_baseline.py (uq6.robust_design)",
+   "feeds_numbers": {"active_flight": "none"},
+   "evidence": "the A9.7 F8 robust optimizer is abep_sim/design/robust_optimizer.py (no cathode)"
+  },
+  {
+   "id": "HR-08",
+   "classification": "HISTORICAL_REGRESSION",
+   "title": "convergence gate workloads on hall_internal+hall+lab6_xe",
+   "locations": [{"file": "abep_sim/convergence.py", "lines": "76-82, 95-101"}],
+   "caller_chain": "gate 5 numerical convergence; docs/traceability/build_rtm.py:431 cites convergence.run_all",
+   "feeds_numbers": {"active_flight": "none"},
+   "evidence": "numerical-convergence evidence on the historical closure"
+  },
+  {
+   "id": "HR-09",
+   "classification": "HISTORICAL_REGRESSION",
+   "title": "Performance baseline workloads on LaB6 / hall_1stage (input to A9.24 items 6-7 Rust migration ordering)",
+   "locations": [{"file": "scripts/perf/profile_baseline.py", "lines": "10-15, 171-178 (close_architecture hall_internal+hall+lab6_xe), 311-316 (run_uq lab6), 321-328 (uq6.robust_design hall_1stage), 334-350 (mission on the lab6 closure)"}, {"file": "docs/performance/dedicated_baseline_2026_10_01/baseline.json"}, {"file": "docs/performance/PERFORMANCE_BASELINE_98fbbb9.json"}],
+   "caller_chain": "A9.24 item 6 PERFORMANCE RERUN ('becomes the profiling/reference input for Rust migration prioritisation'); item 7 order 4 mission propagation, 5 UQ / Monte Carlo driver",
+   "feeds_numbers": {"active_flight": "none (software timings)"},
+   "evidence": "the profiled whole-system, UQ and mission workloads are the LaB6 / card closures; flagged so the migration ordering is not read as making them active flight paths"
+  },
+  {
+   "id": "HR-10",
+   "classification": "HISTORICAL_REGRESSION",
+   "title": "Result schema raw_closure_v2 with cathode fields",
+   "locations": [{"file": "scripts/config/build_result_schemas.py", "lines": "38, 109"}, {"file": "schemas/results/raw_closure_v2.json", "pointer": "xe_cathode_kg, eng_cathode_life_h, eng_cathode_starts"}],
+   "caller_chain": "A9.23 result schemas of system.physics_closure",
+   "feeds_numbers": {"active_flight": "none"},
+   "evidence": "schema of the legacy card closure; a Rust output-schema parity test would carry these fields"
+  },
+  {
+   "id": "HR-11",
+   "classification": "HISTORICAL_REGRESSION",
+   "title": "A5-era three-architecture comparison lanes (Hall-only / RF+Hall / ECR+Hall, each with a Xe-fed LaB6 cathode)",
+   "locations": [{"file": "abep_sim/cathode_integration.py (lane_19; whole module)"}, {"file": "docs/architecture_comparison/cathode_integration/derive_cathode_integration_v1.py"}, {"file": "abep_sim/arch_boundary.py", "lines": "34-61 (cathode_keeper, cathode_heater)"}, {"file": "abep_sim/breakeven.py", "lines": "40"}, {"file": "abep_sim/hard_gates.py + docs/architecture_comparison/hard_gates/*"}, {"file": "abep_sim/thermal_life.py", "lines": "14, 34-35, 67-69, 832-928 (cathode node, LaB6 life)"}, {"file": "abep_sim/mass_bom.py", "lines": "131 (ARCHITECTURES hall_only/rf_hall/ecr_hall), 294, 308-314 (common 'cathode' item and PPU boundary incl. cathode_keeper/heater)"}, {"file": "abep_sim/xe_ledger.py (m_cathode term) + docs/budgets/xe_ledger/build_xe_ledger.py"}, {"file": "docs builders: architecture_comparison/{veto_layer, aux_bus, electrical_closure, overlays/hall_sustainment, experiment_package, compressor_downselect, lock1, feed_state_closure}, evidence/{hall_sustainment, ecr_source}, experiments/{phase1_prereg_framework, lifetime_ao (AOL-M04/M05), instrumentation, capability_demo, hardware}, interfaces/preionizer_module, milestones/bundle1, controls (dual_feed_state_machine), scripts/architecture/{build_comparison_grid, build_feed_envelope, build_decision_dossier, build_breakeven_surfaces, scaling_similarity}"}],
+   "caller_chain": "standalone A5-era builders and lane modules; not imported by abep_sim/design/*, programme/design_synthesis or any A9 budget",
+   "feeds_numbers": {"active_flight": "none"},
+   "evidence": "CLAUDE.md A9: the upstream RF/ECR pre-ionizer campaign (A5 Phase-1 topology, phase1_prereg_framework_v1, LOCK-1 D-01..D-04) and the RF||Hall v2 branch / A8 are historical; their architectures are not hall_icp_neutralizer"
+  },
+  {
+   "id": "HR-12",
+   "classification": "HISTORICAL_REGRESSION",
+   "title": "Superseded A9 budget / procurement / maturity versions with C1 flight columns",
+   "locations": [{"file": "docs/budgets/mass_a9/build_mass_a9.py"}, {"file": "docs/budgets/mass_power_a9_v2/build_mass_power_a9_v2.py"}, {"file": "docs/budgets/xe_ledger_a9/build_xe_ledger_a9.py"}, {"file": "docs/budgets/xe_accounting_a9_v2/build_xe_accounting_a9_v2.py"}, {"file": "docs/procurement/rfq_a9/build_rfq_a9.py; docs/procurement/rfq_a9_v2/build_rfq_a9_v2.py"}, {"file": "docs/budgets/subsystem_maturity/build_subsystem_maturity.py; docs/experiments/hall_icp/integration/m16_v3, m16_v4"}, {"file": "docs/budgets/owner_decisions/build_owner_questions_state_v4.py, build_owner_questions_consolidated.py (never run, CLAUDE.md)"}],
+   "caller_chain": "immutable history; superseded by mass_power v3, Xe accounting v3, RFQ v3, M16 v5, owner questions v5",
+   "feeds_numbers": {"active_flight": "none"},
+   "evidence": "revision_of / supersedes_for_use pins in the v3 / v5 products"
+  },
+  {
+   "id": "HR-13",
+   "classification": "HISTORICAL_REGRESSION",
+   "title": "Upstream ICD v1 and dual-feed state machine cathode fields",
+   "locations": [{"file": "docs/interfaces/UPSTREAM_ICD.md (IF-A5 mdot_cathode_air_kgps, IF-X2 mdot_xe_cathode_kgps), schemas/interfaces/upstream_icd_v1.json"}, {"file": "docs/controls/DUAL_FEED_STATES.md, schemas/controls/dual_feed_state_machine_v1.json"}],
+   "caller_chain": "producers are thruster.Cathode / archengine.Neutralizer (HR-02 / HR-04); owner decision 'keep upstream ICD as is' (commit b9c717d)",
+   "feeds_numbers": {"active_flight": "none"},
+   "evidence": "ICD v1 draft, code baseline 7b219ba, pre-A9.19"
+  },
+  {
+   "id": "HR-14",
+   "classification": "HISTORICAL_REGRESSION",
+   "title": "HallThruster bridge P5 cases: the P5 test's cathode Xe flow is recorded, not modelled",
+   "locations": [{"file": "hallthruster_bridge/cases/p5_n2.json, p5_xenon.json, p5_xenon_coil_sensitivity.json ('cathode Xe 0.44 mg/s', 'Xenon cathode flow (0.44 mg/s) not modelled (1-D)')"}],
+   "caller_chain": "validation inputs (published P5 hardware metadata)",
+   "feeds_numbers": {"active_flight": "none"},
+   "evidence": "no cathode model in hallthruster_bridge python (searched); experimental metadata of a third-party thruster"
+  },
+  {
+   "id": "HR-15",
+   "classification": "HISTORICAL_REGRESSION",
+   "title": "Tests exercising the historical cathode paths",
+   "locations": [{"file": "tests/test_sim.py", "lines": "245-246 (LaB6Cathode), 311-316, 342-404, 515-545 (lab6_xe / mw_air closures)"}, {"file": "tests/test_raw_assessment_split.py and tests/fixtures/evaluate_identity_*.json (eng_cathode_starts)"}, {"file": "tests/test_golden_a9_18.py, test_compressor_gaede_domain_mcc02.py:122, test_gaspath_convergence_g03_g05.py:174, test_a99_review_fixes.py, test_a9_22_operating_inputs.py:187-192 (flight refusal of lab6_xe)"}, {"file": "tests/test_cathode_integration.py, test_thermal_life_framework.py, test_xe_ledger.py, test_xe_ledger_a9.py, test_hard_gates.py, test_veto_layer.py, test_aux_bus_comparison.py, test_bundle1.py, test_h2_*.py, test_cathode_dossier.py, test_subsystem_maturity.py, test_upstream_icd.py, test_dual_feed_state_machine.py"}],
+   "caller_chain": "python -m pytest -q tests",
+   "feeds_numbers": {"active_flight": "none"},
+   "evidence": "regression / guard tests of HR-01..HR-13 (several use hall_internal+hall+lab6_xe only as a convenient archengine architecture for gas-path refusal checks)"
+  }
+ ],
+ "guards_not_cathode_uses": [
+  {"file": "abep_sim/design/a9_19_architecture.py", "lines": "112, 157-237", "what": "hollow_cathode_elements / refuse_hollow_cathode_elements / CHECK_CLEAN / CHECK_FLAGGED"},
+  {"file": "abep_sim/design/architecture_optimizer.py", "lines": "1044-1120", "what": "flight_configuration_elements, ground_reference_lines (surface AFI-01)"},
+  {"file": "abep_sim/programme/design_synthesis.py", "lines": "142-146, 184", "what": "hollow_cathode_check in evaluate_system"},
+  {"file": "abep_sim/assessment/design_gates.py", "lines": "385-387, 411", "what": "HC-10 refuses a Xe path feeding c1 / hollow_cathode / cathode_ elements"},
+  {"file": "abep_sim/archengine.py", "lines": "166-185, 976-986", "what": "FLIGHT_EXCLUDED_NEUTRALIZERS (lab6_xe) and run_all(flight=True)"},
+  {"file": "abep_sim/golden.py", "lines": "99-133", "what": "require_flight_eligible_case / load_case"},
+  {"file": "scripts/config/build_config.py", "lines": "126, 156", "what": "conventional_hollow_cathode = NONE check"},
+  {"file": "tests/test_design_a9_19_architecture.py, test_single_flight_configuration.py, test_a9_22_operating_inputs.py", "what": "guard tests"}
+ ],
+ "observations": [
+  {"id": "O-1", "text": "config/model_set/physics_model_set_v1.json hashes every abep_sim module (archengine, plasma_devices, system, thruster, life, thermal_life, uq6, mission5, ...) with no active / historical role. The A9.24 bid freeze records a model-set hash and A9.24 item 7 asks to migrate 'the whole active Python stack' (system closure, architecture engine, sweep, ...). Nothing machine-readable marks the LaB6 / card paths HR-01..HR-08 as historical, so the Rust migration could port them as active paths. Recommendation for the owner: decide a retirement / HISTORICAL label for these paths before migration ordering, per A9.24 item 13 ('Do NOT silently fix it inside the Rust migration')."},
+  {"id": "O-2", "text": "archengine's A9.22 G4 flight guard excludes only lab6_xe. The air-fed plasma-bridge cathode neutralizers mw_air and rf_cathode remain flight-eligible in require_flight_eligible / run_all(flight=True); golden.py:392 states rf_cathode does not represent the A9 ICP. No active caller uses flight=True, so no number is affected."},
+  {"id": "O-3", "text": "golden_v2 case 'accelerators' (role CANONICAL) evaluates ecr+grids+lab6_xe and ecr+hall+lab6_xe; ecr_hall.P_neut_W = 34.554 W is the LaB6 neutralizer power. It is not labelled HISTORICAL_NON_FLIGHT_REGRESSION; removing the LaB6 neutralizer would change only that key."},
+  {"id": "O-4", "text": "Stale A9.2 status 'C1 conventional reference = CONTROL_FALLBACK' is carried verbatim (pinned) in F7/F8, F9, the H-1 freeze candidate and P3 v2. F7/F8 (a9_19_20_supersessions), F9 and H-1 carry the A9.20 supersession elsewhere in the record; P3 v2 does not (part of AFI-03)."}
+ ],
+ "verification": {
+  "no_code_or_number_changed": true,
+  "files_added": ["docs/audits/a9_24_cathode_path_audit_v1.json", "docs/audits/a9_24_cathode_path_audit_v1.md"],
+  "builders_run": [],
+  "simulator_runs": []
+ }
+}
