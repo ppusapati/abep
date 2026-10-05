@@ -3911,3 +3911,36 @@ supersedes the A9.7 "do not rewrite in Rust" decision, and A9.14 S10.3 per compo
   gates; 51 pull-forward dependencies detected, handled by kernel-granularity contracts), `parity_contract_template_v1.json`
   (generalised from `parity_prereg_v2`), `CI_PLAN.md` (item 8; the v1 -> v2 re-point is already done in 6e5465a).
 - Unchanged: all Python and Rust code, CI workflows, configuration, frozen data, goldens, parity records.
+
+## 2026-10-05 — Rust migration programme v2: LaB6 rule replaced, four-class inventory, PRE_RUST re-ranking, bid pair (DOCS / PLAN ONLY; NO numeric change)
+
+Owner decisions A9.24 items 1, 6, 7, 8, 13, 14 and A9.25 message 1 secs. 9 / 13 / 14, message 2 secs. 5 / 6 / 8 / 9 / 10,
+message 3 (RUST_PLAN_LAB6_RULE, in full), message 8 secs. 4 / 17; A9.27 preamble (protect the bid pair) and sec. 4
+(classification governs before runtime). Lane `lane-rustplan-v2`: the isolated plan branch `lane-a924-rustplan` (3d705d2)
+merged onto the execution branch at 2de86ab, then revised. Status
+`PROPOSED_PLAN_V2_FOR_OWNER_REVIEW` (A9.25 msg 3 step 7: revise / review / merge before any substantive Rust wave).
+- **Rule replaced.** v1 RM-R15 ("known physics inconsistencies are ported as they are" = "LaB6 paths are ported unchanged
+  pending the audit") is REJECTED_AND_SUPERSEDED: **LaB6 / conventional hollow-cathode paths are NOT ported into the active
+  Rust simulator** (LaB6Cathode, lab6_xe, Xe hollow-cathode heater / keeper, C1 flight fallback, hollow-cathode Hall cards,
+  multi-family selection machinery). New rules RM-R19..R24 (four-class gate, parity only on retained physics, RETIRE !=
+  DELETE, resolve AFI first, no legacy crate / forbidden-identifier scan, frozen bid pair) and RM-R25 (A9.27 sec. 4 ordering
+  key: architecture relevance, then evidence / parity eligibility, then measured performance).
+- `component_inventory_v2.json` / `.md` (re-measured at 2de86ab: 451 Python files, 227 components; three new docs components):
+  ACTIVE_SELECTED_ARCHITECTURE_PHYSICS 135 (175,499 lines), GROUND_REFERENCE_ONLY 7 (H2-1..H2-7), HISTORICAL_LEGACY_REGRESSION
+  84 (73,767 lines; the owner-approved section-E modules plus legacy-only consumers, superseded record versions and the
+  historical A5 / upstream-pre-ionizer machinery), ACTIVE_FLIGHT_INCONSISTENCY 1 (`mass_power_a9_v5`, AFI-02 open); 0
+  unclassified, 9 provisional (RM-OQ-07). Extract-and-parity kernels K-GASPATH (system.py gas path), K-GAS-LIFE, K-MASS-RULES,
+  K-P3-RAYS (already in icp_thermal_lib), K-GOLDEN-COMPARE. No class-A simulator / design module loads class H / G / F at run
+  time (two tooling exceptions recorded).
+- `migration_order_v2.json`: PRE_RUST_REFERENCE_BASELINE (5eee4b8) mapped to v2; the port-target ranking (W1 88.98 s > W2 4.80
+  s > W3 2.14 s > W5 0.04 s; F8 unprofiled) reproduces the item-7 order, so no item-7 wave moves; 112.40 of 208.36 addressable
+  s sit on retired paths (uq_modular, archengine, uq6). Waves W0-W17 (W4 = the active F8 robust optimizer, not uq6 /
+  uq_modular; W5 = cathode-free icp_thermal_lib, P3 v2 cathode node not ported) plus lanes GR / RET / AFI; prerequisites
+  P-01..P-05 (incl. the post-bid active hall_icp_neutralizer golden and AFI-02-RA1).
+- `programme_v2.json`, `parity_contract_template_v2.json` (v1 + classification gate), revised `PROGRAMME.md` and `CI_PLAN.md`:
+  bid technical source 5eee4b8 and package / freeze record b5849af recorded (package lineage: 2de86ab, A9.27 package-level
+  post-source bid text, still pinning 5eee4b8); the `bid_source_guard` proposal protects that pair;
+  `mission_scenario_v2` (sha256 885b1f70…) immutable after the freeze (changes -> v3); end-state acceptance (item 14), CI plan
+  (item 8) and the parity template kept; owner questions RM-OQ-01..09.
+- Unchanged: v1 plan files (history), all Python and Rust code, CI workflows, configuration, frozen data, goldens, parity
+  records. The inventory / order were produced by an uncommitted scratch script (method recorded in the JSON).
