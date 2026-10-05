@@ -1,0 +1,38 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_2026_10_05_A9_30_push_authorization_o_o2_chemistry_and_bus_boundary_rulings",
+ "decided_by": "owner",
+ "date": "2026-10-05",
+ "decision": "A9_30_PUSH_AUTHORIZATION_O_O2_CHEMISTRY_BUS_BOUNDARY",
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_05_A9_30_PUSH_AUTHORIZATION_O_O2_CHEMISTRY_AND_BUS_BOUNDARY_RULINGS.md",
+  "sha256": "17401e982c1acc2b58847d919a75a473e981d2233d952153d8234e410578a42f",
+  "method": "exact text extracted from the session transcript"
+ },
+ "messages": [
+  {
+   "n": 1,
+   "key": "PUSH_AUTHORIZATION_O_O2_CHEMISTRY_AND_BUS_BOUNDARY",
+   "utc": "2026-10-05T11:17:51.161Z",
+   "text_sha256": "465f2d95e808f3bef5f4d2488e21112b3dca7b033c72ceb40ddc6c1eb7124618",
+   "chars": 8427
+  }
+ ],
+ "owner_decision_summary": {
+  "push": "push local integration/simulation-complete to origin/integration/simulation-complete with an explicit refspec; fetch first; the remote head (e5528bd) must be an ancestor of the local head; on divergence STOP, reconcile normally, validate, then push; never --force / --force-with-lease; never push main; never modify main or claude/nifty-ramanujan-w68f9z; no history rewrite; report the git ls-remote SHA",
+  "plan_v3_1": "lane-rustplan-v2 eb78b4a (or a clean descendant with only approved v3.1 corrections) merged into integration before the next push; no new broad planning cycle",
+  "o_o2_chemistry": "AUTHORIZED now for the ACTIVE selected RF/ICP neutralizer model only (architecture-specific); the old sequencing restriction (CLAUDE.md next-work item 4) must not prevent completion; does NOT reopen the P5 Hall-transport campaign, plasma_chem.py as an active module, or old multi-family plasma models; narrow preregistered chemistry contract NP-ICP-CHEM-AIR; species justified from the registered 180-230 km design states (O, O2, N2, N, Xe for contingency where materially present / applicable; none merely for completeness); per process: source / provenance, electron-energy / T_e domain, uncertainty / evidence class, threshold, conservation, interpolation / extrapolation rule; minimum processes: ionization, relevant dissociation, dominant excitation / inelastic loss, wall / recombination, neutral loss / residence, Xe ionization; atomic O never replaced by an N2-only surrogate; existing rate data reused only with valid provenance, matching domain and applicability (never inherited because plasma_chem.py used it); insufficient evidence -> INCOMPLETE_EVIDENCE or an uncertainty envelope; no fabricated coefficients",
+  "air_primary_admission": "the predictive RF/ICP model may be developed structurally in parallel, but AIR_PRIMARY predictive admission is not claimed until NP-ICP-CHEM-AIR is committed and its required chemistry set is admitted for the model domain; Xe-contingency portions may proceed where their evidence is sufficient; the gate does not block provenance / config, atmosphere, TPMC, intake, compressor, feed or Rust infrastructure",
+  "bus_boundary": "ACTIVE hall_icp_neutralizer uses bus_power_boundary_a9_v2; bus_power_boundary_v1 is historical / superseded for active flight closure where it carries cathode heater / keeper assumptions, preserved, never silently rewritten; active flight bus ledger contains only selected-architecture loads (Hall discharge / anode, Hall magnet, RF generator, matching network, RF/ICP neutralizer, compressor / drive, valves / feed control, controls / electronics / sensors, thermal-control electrical loads, startup / transient / concurrent cases); flight C1 loads NONE; C1 heater / keeper GROUND_REFERENCE_ONLY, never in active flight bus closure; 1.5 kW limit ASSESSMENT ONLY (raw physics produces the load ledger; assessment checks P_bus <= requirement without feedback)",
+  "abep_core_hash": "admitted abep_core source bytes are not modified until a deliberate new TPMC parity registration; source-hash CI check; formatting only on intended workspace members (no repository-wide formatter that can rewrite abep_core); any source byte change -> new preregistration, rerun admission / parity, record; never a stale admission hash across modified source",
+  "checkpoints": "push validated integration checkpoints frequently (prereg committed where required, affected tests pass, governance checks pass, no admitted predecessor corrupted); not a merge to main",
+  "continue": "continue the parallel lanes without stopping after the push; priority A infra / provenance, B atmosphere + 196 states, C TPMC / intake / upstream, D predictive RF/ICP, E cathodeless thermal; then Hall bridge, spacecraft T-D, power, mass, materials / life, mission, F7/F8 + UQ, assessment, CLI, active golden, zero-Python CI",
+  "next_report": "A pushed integration SHA; B workspace / crates; C config / provenance verifier; D atmosphere / 196 states; E TPMC / intake / upstream; F RF/ICP incl. NP-ICP-CHEM-AIR; G cathodeless thermal; H Hall bridge if started; I tests and CI; J unresolved evidence / physics blockers"
+ },
+ "resolves": {
+  "NP-ICP-NEUTRALIZER OQ-NPICP-01 / CONF-01": "bus_power_boundary_a9_v2 (sec. 5)",
+  "NP-ICP-NEUTRALIZER OQ-NPICP-06 / CONF-05": "O / O2 chemistry authorized for the active RF/ICP model via NP-ICP-CHEM-AIR (secs. 3-4)",
+  "B2 fmt finding": "members-only formatting; abep_core source-hash protection (sec. 6)"
+ },
+ "immutable_after_commit": true
+}

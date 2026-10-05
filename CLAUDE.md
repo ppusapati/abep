@@ -247,7 +247,10 @@ air + Xe.
    stability} is populated or explicitly unavailable, each with units, operating point, evidence/source, uncertainty/status and
    derivation (P_feed, T_feed = feed-state pressure and temperature). P_bus = all electrical power crossing the spacecraft-side DC
    boundary (discharge + pre-ionizer + cathode + magnets + PPU losses + gas path incl. compressor/flow control + controls/thermal);
-   never absorbed RF, ECR source or Hall discharge-only power. **v2 chemistry:** Question A (is a wider domain source-supported?)
+   never absorbed RF, ECR source or Hall discharge-only power. **A9.30:** for the ACTIVE `hall_icp_neutralizer`
+   architecture the bus boundary is `bus_power_boundary_a9_v2`. `bus_power_boundary_v1` is history, preserved and never
+   rewritten, and is superseded for active flight closure where it carries cathode heater/keeper loads. Flight C1 loads are
+   NONE; the C1 heater/keeper is GROUND_REFERENCE_ONLY. The 1.5 kW limit is assessment-only. **v2 chemistry:** Question A (is a wider domain source-supported?)
    and Question B (conditional on A, which excitation representation is supportable?) stay separate; Johnson-low remains a
    sensitivity until B supports it. **Execution provenance:** running jobs never altered; future campaigns record thread/BLAS
    environment, Julia version and HallThruster commit per run; orchestration runtime (daemon PID, Monitor, restart semantics,
@@ -274,6 +277,13 @@ air + Xe.
    Blocked by the driver until every rate file in `propellants/n2_n.toml` exists. P5 B(z) shape is now available
    (`hallthruster_bridge/bfield/`, Peterson 2001; N₂ setpoints use 130 G). Still missing: ECHT B(z), B_max, per-point data.
 4. Only if 1–3 succeed: O₂/O chemistry, then intake-delivered mixtures.
+   **A9.30 (2026-10-05):** this sequencing no longer blocks the active `hall_icp_neutralizer` simulator.
+   - O/O₂ chemistry is authorized now for the active RF/ICP neutralizer model only, through the narrow preregistered
+     contract NP-ICP-CHEM-AIR. Atomic O is never replaced by an N₂-only surrogate. No coefficient is fabricated; missing
+     evidence is INCOMPLETE_EVIDENCE or an uncertainty envelope.
+   - AIR_PRIMARY predictive admission waits for that chemistry set to be admitted. Xe-contingency work may proceed on
+     sufficient evidence.
+   - It does not reopen the P5 Hall campaign, `plasma_chem.py` or multi-family plasma models.
 5. Interchange schema `hallthruster_bridge/hall_map_schema_v1.json` is defined and shared (driver emits it, `hall_map.py`
    derives `REQUIRED_FIELDS` from it, a test checks both). All fields now have producers: wall ion flux/energy are
    re-evaluated from the solver's WallSheath Bohm-flux model (`bridge_lib.jl`, checked against the solver's own

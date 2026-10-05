@@ -4156,3 +4156,29 @@ main, and the bid record `5eee4b8` / `b5849af` / `2de86ab`. `git diff 2de86ab..H
 - Both records were first drafted on `e5528bd` and aligned to plan v3.1 before merge. The locks were regenerated with a
   `regenerated` note. The gate is A9.29 sec. 13: no implementation before the preregistration is committed. The v3
   "owner review before any Rust code" step is superseded and kept as evidence.
+
+## 2026-10-05 — A9.30 owner authorization: integration push, O/O2 chemistry for the active RF/ICP model, bus boundary (no physics change)
+
+- Verbatim record:
+  `docs/decisions/OD_2026_10_05_A9_30_PUSH_AUTHORIZATION_O_O2_CHEMISTRY_AND_BUS_BOUNDARY_RULINGS.md` / `.json`
+  (message sha256 `465f2d95`).
+- Push of `integration/simulation-complete` to origin is authorized under these conditions:
+  - Fetch first; the remote head must be an ancestor of the local head.
+  - No force, no push of main, no history rewrite.
+  - Validated checkpoints are pushed frequently.
+- O/O2 chemistry is authorized now for the active RF/ICP neutralizer model only, under the preregistered contract
+  NP-ICP-CHEM-AIR.
+  - AIR_PRIMARY predictive admission waits for that chemistry to be admitted. Xe contingency may proceed on sufficient
+    evidence.
+  - The P5 campaign, `plasma_chem.py` and the multi-family models are not reopened.
+  - This resolves NP-ICP OQ-NPICP-06 / CONF-05.
+- Bus boundary for the active architecture is `bus_power_boundary_a9_v2`. `bus_power_boundary_v1` is history.
+  - Flight C1 loads are NONE; the C1 heater / keeper is GROUND_REFERENCE_ONLY.
+  - The 1.5 kW limit is assessment-only.
+  - This resolves OQ-NPICP-01 / CONF-01.
+- `abep_core` source bytes stay hash-bound to `parity_report_v2`:
+  - Formatting is members-only (`cargo fmt -- --check`), never `cargo fmt --all`.
+  - A source-hash CI check is required.
+  - Any byte change requires a new preregistration and a parity rerun.
+- CLAUDE.md gets narrow A9.30 notes on next-work item 4 (O/O2) and the admissibility paragraph (bus boundary).
+  Historical text and decision files are not rewritten.
