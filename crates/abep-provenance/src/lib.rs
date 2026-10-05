@@ -6,6 +6,7 @@
 
 pub mod bid_guard;
 pub mod git;
+pub mod run_record;
 
 use abep_types::{AbepError, AbepResult};
 use serde::Deserialize;
