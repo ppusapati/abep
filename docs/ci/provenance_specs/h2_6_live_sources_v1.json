@@ -1,0 +1,965 @@
+{
+ "schema": "abep_live_source_spec_v1",
+ "id": "h2_6_live_sources_v1",
+ "check": "h2_6_live_sources",
+ "status": "VERIFICATION_SPEC (data for the generic Rust provenance verifier, crates/abep-provenance verifier::live_sources)",
+ "semantics_source": {
+  "python": "docs/hardware/h2/h2_6_diagnostics_fixture/build_h2_6_diagnostics_fixture.py::verify_sources, called by scripts/ci_checks.py::check_h2_6_live_sources",
+  "python_sha256": "18498a0508eb2d4e8b0dad7acf2161ecbd458c2a3077af1eb99fac2a8d15cd24",
+  "contract": "docs/rust_migration/contracts/C-PROVENANCE-VERIFIER/parity_prereg_v1.json"
+ },
+ "what_this_is": [
+  "the check semantics of verify_sources() as data: the evidence pins and the consumed values come from the immutable H2-6 record; each group names a live source, how Python reads it, and the ordered value checks with their live locators and comparison rules",
+  "H2-6 consumed-input names are identities of historical evidence (H2 v1, immutable); no H2-6 architecture content is computed here; the S_eff cross-check reads the record's derived value"
+ ],
+ "consumed_record": {
+  "path": "docs/hardware/h2/h2_6_diagnostics_fixture/h2_6_diagnostics_fixture_v1.json",
+  "sha256": "bc7d6b049067c6fbd5489bda32ee9c8c1af36508576db4619b08d2c4ec196a56",
+  "pin_lists": [
+   "authority_pins",
+   "deliverable_pins"
+  ],
+  "inputs_key": "inputs",
+  "binding": "a missing or changed record fails closed (MODEL_ERROR) before any value check"
+ },
+ "pin_label": "h2_6 pin",
+ "locator_steps": {
+  "key": "d[k]: KeyError(k) if absent, TypeError if not subscriptable by a string",
+  "get": "d.get(k): None if absent, TypeError (AttributeError) if not a dict",
+  "by_id": "first element x of the iteration with isinstance(x, dict) and x.get(field) == equals, else KeyError(equals)",
+  "map": "{x[key_field]: x[value_field] (value_absent 'error') or x.get(value_field) (value_absent 'none') for x in it}: key evaluated first, last duplicate wins",
+  "float_keys_sorted": "sorted(float(k) for k in it)"
+ },
+ "ops": {
+  "compare": "cmp(name, live, consumed, rel_tol): both numbers (int, float or bool) -> math.isclose(float(live), float(consumed), rel_tol, abs_tol = 0.0); else live != consumed (Python ==)",
+  "contains": "needle not in live",
+  "equals_literal": "live != literal"
+ },
+ "group_rule": "a group's source is read first; FileNotFoundError -> SOURCE_MISSING (group label) and the group stops; a KeyError while evaluating the group (catch_key_error) -> SOURCE_KEY_MISSING (the key) and the group stops; any other error aborts the whole check (RAISED)",
+ "groups": [
+  {
+   "label": "constants",
+   "source": "abep_sim/constants.py",
+   "format": "python_literals",
+   "catch_key_error": false,
+   "missing_file_message": "source missing: <error>",
+   "python_literals": {
+    "assign_names": [
+     "K_B",
+     "AMU"
+    ],
+    "dict_binop_left": {
+     "name": "M_SPECIES",
+     "key_template": "M_{key}_u"
+    },
+    "class_annassign": {
+     "class": "RFPConstraints",
+     "key_template": "RFP.{field}"
+    }
+   },
+   "checks": [
+    {
+     "name": "K_B",
+     "op": "compare",
+     "live": [
+      {
+       "get": "K_B"
+      }
+     ],
+     "consumed": {
+      "input": "K_B"
+     }
+    },
+    {
+     "name": "AMU",
+     "op": "compare",
+     "live": [
+      {
+       "get": "AMU"
+      }
+     ],
+     "consumed": {
+      "input": "AMU"
+     }
+    },
+    {
+     "name": "M_N2_u",
+     "op": "compare",
+     "live": [
+      {
+       "get": "M_N2_u"
+      }
+     ],
+     "consumed": {
+      "input": "M_N2_u"
+     }
+    },
+    {
+     "name": "M_O2_u",
+     "op": "compare",
+     "live": [
+      {
+       "get": "M_O2_u"
+      }
+     ],
+     "consumed": {
+      "input": "M_O2_u"
+     }
+    },
+    {
+     "name": "M_Xe_u",
+     "op": "compare",
+     "live": [
+      {
+       "get": "M_Xe_u"
+      }
+     ],
+     "consumed": {
+      "input": "M_Xe_u"
+     }
+    },
+    {
+     "name": "thrust_min_mN",
+     "op": "compare",
+     "live": [
+      {
+       "get": "RFP.thrust_min_mN"
+      }
+     ],
+     "consumed": {
+      "input": "thrust_min_mN"
+     }
+    },
+    {
+     "name": "thrust_max_mN",
+     "op": "compare",
+     "live": [
+      {
+       "get": "RFP.thrust_max_mN"
+      }
+     ],
+     "consumed": {
+      "input": "thrust_max_mN"
+     }
+    },
+    {
+     "name": "power_max_W",
+     "op": "compare",
+     "live": [
+      {
+       "get": "RFP.power_max_W"
+      }
+     ],
+     "consumed": {
+      "input": "power_max_W"
+     }
+    },
+    {
+     "name": "firing_hours_min_h",
+     "op": "compare",
+     "live": [
+      {
+       "get": "RFP.ignition_hours"
+      }
+     ],
+     "consumed": {
+      "input": "firing_hours_min_h"
+     }
+    }
+   ]
+  },
+  {
+   "label": "A5",
+   "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json",
+   "format": "json",
+   "catch_key_error": true,
+   "missing_file_message": "A5 source: <repr(error)>",
+   "checks": [
+    {
+     "name": "mdot_xe_cathode_design_mgps",
+     "op": "compare",
+     "live": [
+      {
+       "key": "xe_mass_allocation"
+      },
+      {
+       "key": "cathode_flow_design_target_mg_s"
+      }
+     ],
+     "consumed": {
+      "input": "mdot_xe_cathode_design_mgps"
+     }
+    },
+    {
+     "name": "mdot_xe_cathode_upper_mgps",
+     "op": "compare",
+     "live": [
+      {
+       "key": "xe_mass_allocation"
+      },
+      {
+       "key": "cathode_flow_experimental_upper_test_point_mg_s"
+      }
+     ],
+     "consumed": {
+      "input": "mdot_xe_cathode_upper_mgps"
+     }
+    },
+    {
+     "name": "w_O2_range",
+     "op": "contains",
+     "live": [
+      {
+       "key": "phase1_branch_decision"
+      },
+      {
+       "key": "test_matrix"
+      }
+     ],
+     "needle": "0.42-0.60"
+    },
+    {
+     "name": "a5_thrust_target_mN",
+     "op": "equals_literal",
+     "live": [
+      {
+       "key": "allocations_and_requirements"
+      },
+      {
+       "map": {
+        "key_field": "quantity",
+        "value_field": "value",
+        "value_absent": "error"
+       }
+      },
+      {
+       "get": "thrust operating target"
+      }
+     ],
+     "literal": "15-22 mN"
+    },
+    {
+     "name": "a5_pbus_allocation_W",
+     "op": "equals_literal",
+     "live": [
+      {
+       "key": "allocations_and_requirements"
+      },
+      {
+       "map": {
+        "key_field": "quantity",
+        "value_field": "value",
+        "value_absent": "error"
+       }
+      },
+      {
+       "get": "bus-power design allocation"
+      }
+     ],
+     "literal": "<= 1.30-1.35 kW"
+    }
+   ]
+  },
+  {
+   "label": "W1",
+   "source": "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json",
+   "format": "json",
+   "catch_key_error": true,
+   "missing_file_message": "W1 source: <repr(error)>",
+   "checks": [
+    {
+     "name": "mdot_anode_min_kgps",
+     "op": "compare",
+     "live": [
+      {
+       "key": "mfc_range_requirement"
+      },
+      {
+       "key": "mdot_min_kgps"
+      }
+     ],
+     "consumed": {
+      "input": "mdot_anode_min_kgps"
+     }
+    },
+    {
+     "name": "mdot_anode_max_kgps",
+     "op": "compare",
+     "live": [
+      {
+       "key": "mfc_range_requirement"
+      },
+      {
+       "key": "mdot_max_kgps"
+      }
+     ],
+     "consumed": {
+      "input": "mdot_anode_max_kgps"
+     }
+    },
+    {
+     "name": "mdot_anode_max_accum_kgps",
+     "op": "compare",
+     "live": [
+      {
+       "key": "mfc_range_requirement"
+      },
+      {
+       "key": "mdot_max_with_accumulation_kgps"
+      }
+     ],
+     "consumed": {
+      "input": "mdot_anode_max_accum_kgps"
+     }
+    },
+    {
+     "name": "mdot_O2_max_W1_kgps",
+     "op": "compare",
+     "live": [
+      {
+       "key": "mfc_range_requirement"
+      },
+      {
+       "key": "O2_max_kgps"
+      }
+     ],
+     "consumed": {
+      "input": "mdot_O2_max_W1_kgps"
+     }
+    }
+   ]
+  },
+  {
+   "label": "W4",
+   "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
+   "format": "json",
+   "catch_key_error": true,
+   "missing_file_message": "W4 source: <repr(error)>",
+   "checks": [
+    {
+     "name": "u_T_max_by_n[4]",
+     "op": "compare",
+     "live": [
+      {
+       "key": "requirement_basis"
+      },
+      {
+       "key": "lane25_by_n"
+      },
+      {
+       "key": "4"
+      },
+      {
+       "key": "u_T_max"
+      },
+      {
+       "key": "value"
+      }
+     ],
+     "consumed": {
+      "input": "u_T_max_by_n",
+      "index": "4"
+     }
+    },
+    {
+     "name": "u_P_max_by_n[4]",
+     "op": "compare",
+     "live": [
+      {
+       "key": "requirement_basis"
+      },
+      {
+       "key": "lane25_by_n"
+      },
+      {
+       "key": "4"
+      },
+      {
+       "key": "u_P_max"
+      },
+      {
+       "key": "value"
+      }
+     ],
+     "consumed": {
+      "input": "u_P_max_by_n",
+      "index": "4"
+     }
+    },
+    {
+     "name": "u_T_max_by_n[6]",
+     "op": "compare",
+     "live": [
+      {
+       "key": "requirement_basis"
+      },
+      {
+       "key": "lane25_by_n"
+      },
+      {
+       "key": "6"
+      },
+      {
+       "key": "u_T_max"
+      },
+      {
+       "key": "value"
+      }
+     ],
+     "consumed": {
+      "input": "u_T_max_by_n",
+      "index": "6"
+     }
+    },
+    {
+     "name": "u_P_max_by_n[6]",
+     "op": "compare",
+     "live": [
+      {
+       "key": "requirement_basis"
+      },
+      {
+       "key": "lane25_by_n"
+      },
+      {
+       "key": "6"
+      },
+      {
+       "key": "u_P_max"
+      },
+      {
+       "key": "value"
+      }
+     ],
+     "consumed": {
+      "input": "u_P_max_by_n",
+      "index": "6"
+     }
+    },
+    {
+     "name": "u_T_max_by_n[8]",
+     "op": "compare",
+     "live": [
+      {
+       "key": "requirement_basis"
+      },
+      {
+       "key": "lane25_by_n"
+      },
+      {
+       "key": "8"
+      },
+      {
+       "key": "u_T_max"
+      },
+      {
+       "key": "value"
+      }
+     ],
+     "consumed": {
+      "input": "u_T_max_by_n",
+      "index": "8"
+     }
+    },
+    {
+     "name": "u_P_max_by_n[8]",
+     "op": "compare",
+     "live": [
+      {
+       "key": "requirement_basis"
+      },
+      {
+       "key": "lane25_by_n"
+      },
+      {
+       "key": "8"
+      },
+      {
+       "key": "u_P_max"
+      },
+      {
+       "key": "value"
+      }
+     ],
+     "consumed": {
+      "input": "u_P_max_by_n",
+      "index": "8"
+     }
+    },
+    {
+     "name": "k_one_sided",
+     "op": "compare",
+     "live": [
+      {
+       "key": "derived"
+      },
+      {
+       "key": "k_one_sided"
+      },
+      {
+       "key": "value"
+      }
+     ],
+     "consumed": {
+      "input": "k_one_sided"
+     }
+    },
+    {
+     "name": "u_abs_planning(T)",
+     "op": "compare",
+     "live": [
+      {
+       "key": "proposed_thresholds"
+      },
+      {
+       "map": {
+        "key_field": "id",
+        "value_field": "value",
+        "value_absent": "error"
+       }
+      },
+      {
+       "key": "I-U-ABS-T"
+      }
+     ],
+     "consumed": {
+      "input": "u_abs_planning"
+     }
+    },
+    {
+     "name": "u_abs_planning(P)",
+     "op": "compare",
+     "live": [
+      {
+       "key": "proposed_thresholds"
+      },
+      {
+       "map": {
+        "key_field": "id",
+        "value_field": "value",
+        "value_absent": "error"
+       }
+      },
+      {
+       "key": "I-U-ABS-P"
+      }
+     ],
+     "consumed": {
+      "input": "u_abs_planning"
+     }
+    },
+    {
+     "name": "I_d_noise_floor_frac",
+     "op": "compare",
+     "live": [
+      {
+       "key": "proposed_thresholds"
+      },
+      {
+       "map": {
+        "key_field": "id",
+        "value_field": "value",
+        "value_absent": "error"
+       }
+      },
+      {
+       "key": "I-U-ID-FLOOR"
+      }
+     ],
+     "consumed": {
+      "input": "I_d_noise_floor_frac"
+     }
+    },
+    {
+     "name": "u_abs_grid",
+     "op": "compare",
+     "live": [
+      {
+       "key": "derived"
+      },
+      {
+       "key": "absolute_thrust_gate"
+      },
+      {
+       "float_keys_sorted": true
+      }
+     ],
+     "consumed": {
+      "input": "u_abs_grid",
+      "as_float_list": true
+     }
+    },
+    {
+     "name": "mfc_accuracy_fs",
+     "op": "compare",
+     "live": [
+      {
+       "key": "derived"
+      },
+      {
+       "key": "mfc_relative_u_by_setpoint_fraction"
+      },
+      {
+       "key": "1.0"
+      },
+      {
+       "key": "value"
+      }
+     ],
+     "consumed": {
+      "input": "mfc_accuracy_fs"
+     }
+    }
+   ]
+  },
+  {
+   "label": "W3",
+   "source": "docs/experiments/hardware/hardware_requirements_v1.json",
+   "format": "json",
+   "catch_key_error": true,
+   "missing_file_message": "W3 source: <repr(error)>",
+   "checks": [
+    {
+     "name": "I_d_bound_A",
+     "op": "compare",
+     "live": [
+      {
+       "key": "derived_numbers"
+      },
+      {
+       "key": "outputs"
+      },
+      {
+       "key": "I_d_bound_envelope_max_A"
+      },
+      {
+       "key": "value"
+      }
+     ],
+     "consumed": {
+      "input": "I_d_bound_A"
+     }
+    },
+    {
+     "name": "theta_align_max_n4_deg",
+     "op": "compare",
+     "live": [
+      {
+       "key": "derived_numbers"
+      },
+      {
+       "key": "outputs"
+      },
+      {
+       "key": "theta_align_max_n4_deg"
+      },
+      {
+       "key": "value"
+      }
+     ],
+     "consumed": {
+      "input": "theta_align_max_n4_deg"
+     }
+    },
+    {
+     "name": "B_res_2p45GHz_T",
+     "op": "compare",
+     "live": [
+      {
+       "key": "derived_numbers"
+      },
+      {
+       "key": "outputs"
+      },
+      {
+       "key": "B_res_ecr_2p45GHz_T"
+      },
+      {
+       "key": "value"
+      }
+     ],
+     "consumed": {
+      "input": "B_res_2p45GHz_T"
+     }
+    },
+    {
+     "name": "B_res_5p8GHz_T",
+     "op": "compare",
+     "live": [
+      {
+       "key": "derived_numbers"
+      },
+      {
+       "key": "outputs"
+      },
+      {
+       "key": "B_res_ecr_5p8GHz_T"
+      },
+      {
+       "key": "value"
+      }
+     ],
+     "consumed": {
+      "input": "B_res_5p8GHz_T"
+     }
+    },
+    {
+     "name": "u_inst_max_n4",
+     "op": "compare",
+     "live": [
+      {
+       "key": "derived_numbers"
+      },
+      {
+       "key": "inputs"
+      },
+      {
+       "key": "u_inst_max_n4"
+      },
+      {
+       "key": "value"
+      }
+     ],
+     "consumed": {
+      "input": "u_inst_max_n4"
+     }
+    },
+    {
+     "name": "V_d_rating_upper_V",
+     "op": "compare",
+     "live": [
+      {
+       "key": "requirements"
+      },
+      {
+       "by_id": {
+        "field": "id",
+        "equals": "HW-ENV-01"
+       }
+      },
+      {
+       "key": "values"
+      },
+      {
+       "key": "V_d_rating_upper_V"
+      },
+      {
+       "key": "value"
+      }
+     ],
+     "consumed": {
+      "input": "V_d_rating_upper_V"
+     }
+    },
+    {
+     "name": "calibrations_min",
+     "op": "compare",
+     "live": [
+      {
+       "key": "requirements"
+      },
+      {
+       "by_id": {
+        "field": "id",
+        "equals": "HW-SVC-02"
+       }
+      },
+      {
+       "key": "values"
+      },
+      {
+       "key": "calibrations_before_min"
+      },
+      {
+       "key": "value"
+      }
+     ],
+     "consumed": {
+      "input": "calibrations_min"
+     }
+    }
+   ]
+  },
+  {
+   "label": "lane 25",
+   "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json",
+   "format": "json",
+   "catch_key_error": true,
+   "missing_file_message": "lane 25 source: <repr(error)>",
+   "checks": [
+    {
+     "name": "remount_K",
+     "op": "compare",
+     "live": [
+      {
+       "key": "thresholds"
+      },
+      {
+       "map": {
+        "key_field": "id",
+        "value_field": "value",
+        "value_absent": "none"
+       }
+      },
+      {
+       "key": "T-S1-REMOUNT-CYCLES"
+      }
+     ],
+     "consumed": {
+      "input": "remount_K"
+     }
+    },
+    {
+     "name": "remount_r",
+     "op": "compare",
+     "live": [
+      {
+       "key": "thresholds"
+      },
+      {
+       "map": {
+        "key_field": "id",
+        "value_field": "value",
+        "value_absent": "none"
+       }
+      },
+      {
+       "key": "T-S1-READINGS-PER-CYCLE"
+      }
+     ],
+     "consumed": {
+      "input": "remount_r"
+     }
+    },
+    {
+     "name": "pb_elev_factor",
+     "op": "compare",
+     "live": [
+      {
+       "key": "thresholds"
+      },
+      {
+       "map": {
+        "key_field": "id",
+        "value_field": "value",
+        "value_absent": "none"
+       }
+      },
+      {
+       "key": "T-PB-ELEV-FACTOR"
+      }
+     ],
+     "consumed": {
+      "input": "pb_elev_factor"
+     }
+    },
+    {
+     "name": "S_eff N2 1e-5 Torr cross-check",
+     "op": "compare",
+     "live": [
+      {
+       "key": "derived_numbers"
+      },
+      {
+       "key": "S_eff_required_per_mgps"
+      },
+      {
+       "key": "N2"
+      },
+      {
+       "key": "1.0e-05 Torr"
+      },
+      {
+       "key": "value"
+      }
+     ],
+     "consumed": {
+      "record_path": [
+       "derived",
+       "S_eff_per_mgps",
+       "N2",
+       "1.0e-05 Torr",
+       "value"
+      ]
+     },
+     "rel_tol": 0.0001
+    }
+   ]
+  },
+  {
+   "label": "capability demo",
+   "source": "docs/experiments/capability_demo/capability_demo_prep_v1.json",
+   "format": "json",
+   "catch_key_error": true,
+   "missing_file_message": "capability demo source: <repr(error)>",
+   "checks": [
+    {
+     "name": "mfc_min_fraction_fs",
+     "op": "compare",
+     "live": [
+      {
+       "key": "proposed_thresholds"
+      },
+      {
+       "map": {
+        "key_field": "id",
+        "value_field": "value",
+        "value_absent": "error"
+       }
+      },
+      {
+       "key": "CD-P-MFC-MINFRAC"
+      }
+     ],
+     "consumed": {
+      "input": "mfc_min_fraction_fs"
+     }
+    },
+    {
+     "name": "cd_bz_maps",
+     "op": "compare",
+     "live": [
+      {
+       "key": "proposed_thresholds"
+      },
+      {
+       "map": {
+        "key_field": "id",
+        "value_field": "value",
+        "value_absent": "error"
+       }
+      },
+      {
+       "key": "CD-P-BZ-MAPS"
+      }
+     ],
+     "consumed": {
+      "input": "cd_bz_maps"
+     }
+    },
+    {
+     "name": "cd_bz_cycles",
+     "op": "compare",
+     "live": [
+      {
+       "key": "proposed_thresholds"
+      },
+      {
+       "map": {
+        "key_field": "id",
+        "value_field": "value",
+        "value_absent": "error"
+       }
+      },
+      {
+       "key": "CD-P-BZ-CYCLES"
+      }
+     ],
+     "consumed": {
+      "input": "cd_bz_cycles"
+     }
+    }
+   ]
+  }
+ ]
+}
