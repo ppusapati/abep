@@ -6,6 +6,9 @@
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
+pub mod pyjson;
+mod pyjson_unicode;
+
 /// Evaluation status of a raw-physics or evidence result.
 ///
 /// The serialized names are the repository vocabulary (`NOT_EVALUATED`, `INCOMPLETE_EVIDENCE`, `OUT_OF_DOMAIN`,
