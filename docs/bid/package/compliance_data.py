@@ -8,6 +8,7 @@ build_package.py from facts read at the technical source (source_facts.py); no n
 here. Status vocabulary (STATUSES) is defined in STATUS_DEFINITIONS. Nothing here is a test result, a PASS or a GO.
 """
 import json
+import pathlib
 import os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -17,8 +18,8 @@ BASELINE_V1 = "docs/bid/bid_technical_baseline.json"
 
 
 def _technical_source_sha() -> str:
-    with open(os.path.join(ROOT, BASELINE_V2), encoding="utf-8") as f:
-        sha = json.load(f)["bid_technical_source"]["commit"]
+    # read-only (pathlib read_text): this module never writes any file
+    sha = json.loads(pathlib.Path(ROOT, BASELINE_V2).read_text(encoding="utf-8"))["bid_technical_source"]["commit"]
     assert len(sha) == 40 and all(ch in "0123456789abcdef" for ch in sha), sha
     return sha
 

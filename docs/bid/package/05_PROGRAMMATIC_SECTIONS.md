@@ -5,7 +5,7 @@ organisational, commercial, staffing, facility-ownership, partner or certificati
 field below that needs such a fact is marked `OWNER_INPUT_REQUIRED` with its checklist id (README.md). Nothing here is
 invented: no IC percentage, facility, partner, ISO status, price or staff name.
 
-Technical cross-references point to files at the technical source commit `b0937e8` (`b0937e88b4ad21cb31c5778aac4b3dca88fdd94a`, pinned by
+Technical cross-references point to files at the technical source commit `5eee4b8` (`5eee4b8c82a9403b6bb82d5f8d324526f5d6399b`, pinned by
 `docs/bid/bid_technical_baseline_v2.json`).
 
 ## 1. Indigenous content plan (RFP-P19-05, RFP-P18-03 a; Part IV(C) 2)
@@ -17,7 +17,7 @@ selected; RFQ v3 (`docs/procurement/rfq_a9_v3/rfq_a9_v3.json`) is COMPLETED_FOR_
 successor (`docs/procurement/rfq_a9_v3_gas_rev1/rfq3_gas_rev1.json`) is quotation-only; RVM-18
 NOT_EVALUATED.
 
-| subsystem (RFP-P19-05) | BoM lines (mass record mass_power_a9_v4) | RFP minimum | planned IC % | basis of computation | make / buy, origin |
+| subsystem (RFP-P19-05) | BoM lines (mass record mass_power_a9_v5) | RFP minimum | planned IC % | basis of computation | make / buy, origin |
 |---|---|---|---|---|---|
 | Space-qualified thruster | AL-04 H-1 head + magnet; AL-05 ICP neutralizer | > 80 % | OWNER_INPUT_REQUIRED (OIR-IC-01) | OWNER_INPUT_REQUIRED (OIR-IC-01) | OWNER_INPUT_REQUIRED (OIR-IC-02) |
 | Intake system | AL-01 intake / filter / duct | > 80 % | OWNER_INPUT_REQUIRED (OIR-IC-01) | OWNER_INPUT_REQUIRED (OIR-IC-01) | OWNER_INPUT_REQUIRED (OIR-IC-02) |

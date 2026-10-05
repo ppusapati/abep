@@ -1,6 +1,6 @@
 # 03 - Development and test plan
 
-**Status: DRAFT_FOR_OWNER_REVIEW.** Technical source: commit `b0937e8` (`b0937e88b4ad21cb31c5778aac4b3dca88fdd94a`, pinned by
+**Status: DRAFT_FOR_OWNER_REVIEW.** Technical source: commit `5eee4b8` (`5eee4b8c82a9403b6bb82d5f8d324526f5d6399b`, pinned by
 `docs/bid/bid_technical_baseline_v2.json`); every cited path is a file at that commit. **No calendar date is stated.**
 The only times used are the RFP's own T0 offsets and payment percentages (RFP-P20-04 .. RFP-P21-02). T0 is not set
 (RVM-25), and resourcing the hardware order inside these offsets is an owner confirmation (OIR-SCH-01).
@@ -29,9 +29,9 @@ The only times used are the RFP's own T0 offsets and payment percentages (RFP-P2
 Source: `docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json` `#/steps` (generated companion
 `HW_PROGRAMME_A9_21.md`); decision `docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json`.
 Only the predecessor column binds; the listing order is not a sequence. Entry statuses are read from the programme record
-at b0937e8; none of them is a test result or a start authorisation.
+at 5eee4b8; none of them is a test result or a start authorisation.
 
-| # | step | what | predecessor (basis) | entry status at b0937e8 |
+| # | step | what | predecessor (basis) | entry status at 5eee4b8 |
 |---|---|---|---|---|
 | 1 | H1-S7.1 | FEMM magnetostatics of MC-1 at the authorised analysis points | - | NOT_STARTABLE_PRECONDITION_MISSING |
 | 2 | H1-S7.2 | H-1 engineering channel point (magnetic feasibility, thermal margin, mass, packaging, manufacturability; not thrust-optimised) | H1-S7.1 (EXPLICIT_A9_21) | NOT_STARTABLE_PREDECESSOR_INCOMPLETE |
@@ -53,7 +53,7 @@ freeze; coupled H-1 + ICP -> P3 -> P4; measured thrust / feed map -> AG-12 -> AG
 
 ## 3. Gates
 
-| gate | placement | status at b0937e8 (verbatim) | criteria | source |
+| gate | placement | status at 5eee4b8 (verbatim) | criteria | source |
 |---|---|---|---|---|
 | GNG-ICP-01 ICP go / no-go | mandatory, before LOCK-1 | NOT_EVALUATED | criteria PENDING_OWNER_ACCEPTANCE (no numerical criterion approved; recorder proposal RP-A919-01 preserved for review only) | `docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json` `#/pre_lock1_gates[id=GNG-ICP-01]` |
 | LOCK-1 | after D-01..D-15 and GNG-ICP-01 | not releasable (`lock1_release_reportable` false) | owner decisions D-01..D-15 | `docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json` `#/lock1_precondition` |
@@ -79,9 +79,9 @@ The mapping below is this package's proposal. It uses only the RFP's offsets and
 
 | RFP milestone | offset / payment | RFP content (registered clause) | programme content proposed for this milestone | evidence entering the review |
 |---|---|---|---|---|
-| M1 PDR-1 (Hardware) | T0+09 months, 15 % | preliminary mechanical / electrical design, BoM, preliminary test plan, EM clearance; PDR document, CAD / EDA, test-facility document (RFP-P20-04) | H1-S7.1 FEMM and H1-S7.2 channel point; GNG-ICP-01 criteria accepted by the owner; D-01..D-15 -> LOCK-1 preparation; PPU block diagram and electronics FMEA / redundancy concept; mass-closure actions (AL-07 current cathodeless PPU CBE / requote; AL-08 quote / design rebase; AL-04 completed Hall-head CBE; AL-09 design-derived CBE; actual routed harness; subsystem integration / structural optimization); upstream flow-gap levers in the owner order (F9-DF-01); RFQ quotations returned (AL-08 rebase); test-facility document (OIR-FAC-01..04) | H-1 freeze-candidate definition, RVM, mass record mass_power_a9_v4, bus boundary v2, instrumentation definition, RFQ v3 packages and the RFQ3-GAS rev1 successor |
+| M1 PDR-1 (Hardware) | T0+09 months, 15 % | preliminary mechanical / electrical design, BoM, preliminary test plan, EM clearance; PDR document, CAD / EDA, test-facility document (RFP-P20-04) | H1-S7.1 FEMM and H1-S7.2 channel point; GNG-ICP-01 criteria accepted by the owner; D-01..D-15 -> LOCK-1 preparation; PPU block diagram and electronics FMEA / redundancy concept; mass-closure actions (AL-07 current cathodeless PPU CBE / requote; AL-08 quote / design rebase; AL-04 completed Hall-head CBE; AL-09 design-derived CBE; actual routed harness; subsystem integration / structural optimization); upstream flow-gap levers in the owner order (F9-DF-01); RFQ quotations returned (AL-08 rebase); test-facility document (OIR-FAC-01..04) | H-1 freeze-candidate definition, RVM, mass record mass_power_a9_v5, bus boundary v2, instrumentation definition, RFQ v3 packages and the RFQ3-GAS rev1 successor |
 | M2 PDR-2 (Algorithms, Software, Test plan) | T0+12 months, 10 % | PSE software preliminary design, FDIR, telemetry (MATLAB and C), test-facility readiness (RFP-P20-05) | PSE / PPU controller software preliminary design incl. start-up sequencing (SEQ-1) and FDIR; 1553B / discrete ICD; C1-REF on the built H-1 (I_d,max,H1,Ar registered; C1 GROUND_REFERENCE_ONLY); ICP-AR-REF commissioning; P2 calibration and uncertainty budget frozen; S1 stand / metrology qualification | bus-boundary sequencing, P1 / P2 frameworks |
-| M3 CDR | T0+20 months, 20 % | EM thruster and EM PSE realized and demonstrated with STORAGE input, not intake (RFP-P20-06) | GNG-ICP-01 evaluated -> LOCK-1 -> S1 -> LOCK-2; ICP-45A, ICP-45N, ICP-XE-MODE campaigns; P2-MAP; COUPLED-H1-ICP on stored N2 and Xe; measured H-1 thrust / feed map; AG-12 evaluated | measured records (none exist at b0937e8) |
+| M3 CDR | T0+20 months, 20 % | EM thruster and EM PSE realized and demonstrated with STORAGE input, not intake (RFP-P20-06) | GNG-ICP-01 evaluated -> LOCK-1 -> S1 -> LOCK-2; ICP-45A, ICP-45N, ICP-XE-MODE campaigns; P2-MAP; COUPLED-H1-ICP on stored N2 and Xe; measured H-1 thrust / feed map; AG-12 evaluated | measured records (none exist at 5eee4b8) |
 | M4 EM intake; QM PSE and thruster | T0+24 months, 35 % | EM intake with compressor and storage; QM PSE and thruster testing (RFP-P21-01); exit criterion: qualified thruster with O and N2 (RFP-P20-03) | P3-THERMAL; P4-ACCEPTANCE-EXPOSURE; EM intake / compressor / storage with the RFP-P19-06 b rarefied-gas test; AG-13 statewise check once the host drag ICD exists; QM PSE and thruster tests on N2 and O2-bearing gas (NO_ATOMIC_O) plus the AO programme | measured records |
 | M5 QM integration, ENTEST, delivery | T0+36 months, 20 % | QM intake, total QM ABEP integration, ENTEST qualification, documentation and delivery (RFP-P21-02) | QM integration and ENTEST against the PDR-issued specification (launch vibration / shock, AO, radiation, thermal, ThermoVac); ATP after DDR / CDR | QM test reports |
 
@@ -91,7 +91,7 @@ The owner must decide how the bid presents this (OIR-SCH-01).
 
 ## 5. RFP test requirements (RFP-P19-06) and how they are planned
 
-| RFP 4.1 item | plan at b0937e8 | gap / owner input |
+| RFP 4.1 item | plan at 5eee4b8 | gap / owner input |
 |---|---|---|
 | a) AO-beam coating / surface tests, erosion-yield measurement | AO / lifetime register v5 (`docs/experiments/lifetime_ao/ao_lifetime_register_v5.json`): witness coupons, AOL-EX-01 / -02 ground exposure, post-test SEM / EDS / XPS; P4 screens | ground AO facility and target fluence (AOL-OQ-05) -> OIR-FAC-04 |
 | b) rarefied gas with prescribed mg/s and velocity for intake-erosion tests | none: no facility or test record exists (RVM-22) | OIR-FAC-03 |
@@ -105,6 +105,6 @@ capability (RFP-P30-01; DISC-10).
 
 Every RFP-derived requirement is carried by a row of `docs/requirements/rvm_a9/rvm_a9_v1.json` with its verification
 methods (analysis, inspection, test). Status rules: no PASS without determining evidence; implementation completeness
-is never compliance. AG-15 (owner closure of the RVM re-base against the registered RFP) at b0937e8: DETERMINING_EVIDENCE_PRESENT_NO_REMAINING_CONDITION;
+is never compliance. AG-15 (owner closure of the RVM re-base against the registered RFP) at 5eee4b8: DETERMINING_EVIDENCE_PRESENT_NO_REMAINING_CONDITION;
 `requirement_frozen` is true on 22 of 22 RFP-clause rows (A9.22 G3 requirements
 snapshot). This freezes the requirement basis only, never compliance: every row keeps its evidence status.

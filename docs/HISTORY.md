@@ -3852,3 +3852,19 @@ are reused from the pinned v3 builder).
   and are labelled HISTORICAL / SENSITIVITY; `lines[].value.value_kg` and `margin_convention` (10 % bid basis) present.
 - Validation: pytest 4216 passed / 5 skipped / 1 xfailed (`ci_checks --pytest-junit`: Rule 9 PASS); ci_checks 11/11;
   golden OK; config `--check` OK; F7/F8 `--check` OK (full 45 min run); every affected builder `--check` OK.
+
+## 2026-10-05 — Bid package / freeze-record commit (two-SHA discipline, A9.25 message 8 sections 12-14, A9.26)
+
+- **TECHNICAL SOURCE SHA:** `5eee4b8c82a9403b6bb82d5f8d324526f5d6399b` (A9.26 mass-policy successor; GitHub CI run
+  37263814635 green on all jobs; local pytest 4216 / 5 skipped / 1 xfailed, Rule-9, ci_checks 11/11, golden, config and
+  affected builders --check). `build_tables_nist107_o.py` NOT_RERUN_NETWORK_UNAVAILABLE / UNAFFECTED_BY_FREEZE_CHANGES.
+- **This commit (PACKAGE / FREEZE-RECORD):** `docs/bid/bid_technical_baseline_v2.json` pins the technical source
+  (`bid_technical_source.commit`); `docs/bid/package/**` regenerated from it (every evidence citation read with
+  `git show 5eee4b8:<path>`; mass numbers read from `mass_power_a9_v5`). It is not a technical source. v1
+  (`bid_technical_baseline.json`, bbc480c) kept byte-identical as history.
+- Mass in the package (A9.26 section 7): requirement < 40 kg wet; proposal design target nominal dry <= 34 kg + 10 % +
+  2 kg Xe -> 39.4 kg wet (target, not evidence); current provisional planning / evidence roll-up 38.35 kg dry,
+  40.35 / 43.35 / 48.35 kg wet (DOES_NOT_CLOSE); MASS INCOMPLETE_EVIDENCE / NOT_YET_CLOSED. All 37 clause statuses
+  unchanged; gate statuses carried verbatim; no PASS / compliance claim.
+- `compliance_data.py` reads the freeze record with pathlib (read-only) so the A9.23 single-writer check of the
+  engineering-constraints file stays exact.
