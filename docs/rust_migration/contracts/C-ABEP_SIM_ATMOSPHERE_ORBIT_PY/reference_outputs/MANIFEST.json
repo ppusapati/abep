@@ -1,0 +1,12 @@
+{
+ "schema": "abep_rust_parity_reference_outputs_v1",
+ "contract_id": "PARITY-C-ABEP_SIM_ATMOSPHERE_ORBIT_PY-V1",
+ "captured_at_python_commit": "96db5524ec917e99e507def24f3ee0b263c78ebc",
+ "captured_at_head": "ace0a7aac3cfe1aefe54d8cdff52f736ae0e9c3d",
+ "files": {
+  "inputs.json.gz": "5e64e32e348ca6c63e6d38bd6015c1317ae8977a0252ebe9e23d19f878b49843",
+  "python_outputs.json.gz": "e9531dbadcba354d6bc804d1b3ac10dd110c64b2d2c26ee7ecdb5257693144f1",
+  "rust_outputs_at_scoring.json.gz": "afdacb76a662ac265f5fc10fbb6fce3f8b34fcb398d006cd4bc72daf6c91b897"
+ },
+ "format": "deterministic gzip (mtime 0) of compact JSON (Python json: non-finite floats as NaN / Infinity tokens); python_outputs: id -> [status, value, exception class]"
+}

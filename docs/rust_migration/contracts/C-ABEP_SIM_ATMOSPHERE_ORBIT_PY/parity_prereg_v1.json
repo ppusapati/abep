@@ -1,0 +1,3175 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-ABEP_SIM_ATMOSPHERE_ORBIT_PY-V1",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "component": {
+  "inventory_id": "C-ABEP_SIM_ATMOSPHERE_ORBIT_PY",
+  "inventory_path": "docs/rust_migration/component_inventory_v3_1.json",
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "migration_wave": "W1 (atmosphere_orbit.py, intake_synthesis.py); W6 (atmosphere_orbit_v2.py)",
+  "scope": "coupled group (one contract, RM-R01): orbit-resolved frozen atmosphere v1 reader / accessor / orbit sampler / design-state selection and check, the frozen HWM14 orbit v2 wind paths the 196-state execution needs, and the design layer's frozen design-state set loader with its per-state environment view; plus the complete 196-state execution composed from them (A9.29 sec. 6)",
+  "coupled_components": [
+   {
+    "inventory_id": "C-ABEP_SIM_ATMOSPHERE_ORBIT_PY",
+    "functions": [
+     "load",
+     "read_csv_bytes",
+     "_missing_data_error",
+     "_trig_weights",
+     "_lagrange_weights",
+     "_axis_weights",
+     "Domain / DOMAIN",
+     "_check_domain",
+     "state",
+     "_state_dict",
+     "node_state",
+     "orbit_states",
+     "_pool_arrays",
+     "_select_design_states_v2",
+     "_lat_refinement_sensitivity",
+     "design_states_v2",
+     "load_design_states",
+     "check (frozen-data part, DIV-D-03)"
+    ]
+   },
+   {
+    "inventory_id": "C-ABEP_SIM_ATMOSPHERE_ORBIT_V2_PY",
+    "functions": [
+     "load",
+     "_read_gz",
+     "_require_files",
+     "read_csv_bytes",
+     "read_dist_csv_bytes",
+     "_parse",
+     "_periodic_cubic_weights",
+     "_dist_weights",
+     "_check_domain",
+     "wind",
+     "state"
+    ]
+   },
+   {
+    "inventory_id": "C-ABEP_SIM_DESIGN_INTAKE_SYNTHESIS_PY",
+    "functions": [
+     "load_design_state_set",
+     "DesignStateSetError",
+     "DesignState (fields, atm, record)",
+     "_design_state",
+     "required_states"
+    ],
+    "note": "function subset (RM-R17) of an SC-WP-02 component: the per-state environment view the 196-state execution produces; every other intake_synthesis function stays PYTHON_REFERENCE for SC-WP-02"
+   }
+  ],
+  "functions_or_entry_points": [
+   "abep_sim/atmosphere_orbit.py::{load, state, node_state, orbit_states, design_states_v2, load_design_states, Domain, check}",
+   "abep_sim/atmosphere_orbit_v2.py::{load, wind, state}",
+   "abep_sim/design/intake_synthesis.py::{load_design_state_set, DesignState.atm, DesignState.record, required_states}",
+   "196-state execution: for every required state of load_design_state_set() in file order -> DesignState.atm(), DesignState.record(), re-evaluation of the state from the frozen dataset (node_state for evaluation 'grid_node', state() otherwise) compared with the stored values under DESIGN_V2_REL_TOL, and atmosphere_orbit_v2.wind() at the state coordinates"
+  ],
+  "out_of_scope": [
+   "atmosphere_orbit.py: build, msis_points, _grid_points, _rows_text, _fmt*, _year_independence, _metadata, _authority, _pymsis_version, correct_metadata, _rho_composition_check, _write_json, _gzip_bytes, _write_gz, _container_record, storage_fields, write_design_states_v2, _design_states_v2_text, _design_v2_record, _interpolation_validation, _check_subset_record / _compare_subset producer re-run (live NRLMSIS or rule-1 regeneration / writers: RM-OQ-02, CLAUDE.md rule 1, RM-R41)",
+   "atmosphere_orbit.py: design_states (v1 selection rule), _select_design_states, reachable_lat_max_deg, _lat_refinement_sensitivity of v1, _design_states_text (the immutable v1 set is traceability-only; its file is still hash-verified by load_design_states('v1') and check())",
+   "atmosphere_orbit.py: orbit_coverage, mission_env_orbit_assumption (metadata helpers), statewise_quantifier (re-export of abep_sim/statewise.py, its own component)",
+   "atmosphere_orbit_v2.py: HWM14Runner, hwm14_dir, fetch_hwm14, gfortran_version, _compile, nrl_reference_check, hwm14_points, build, check, _interpolation_validation, _node_reproduction, distribution_snapshot (HWM14 is not a runtime dependency; regeneration is a separately governed native tool, RM-OQ-02)",
+   "atmosphere_orbit_v2.py: relative_flow, flow_state, orbit_states (v2): not needed by the 196-state execution (design states carry no spacecraft velocity; intake_synthesis V_REL_BASIS = inertial circular, no co-rotation / wind); they stay PYTHON_REFERENCE and need their own contract (or an owner retirement) before SC-WP-01 admission is complete"
+  ],
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS (all three coupled components)",
+  "extract_kernel_id": "NOT_APPLICABLE",
+  "active_toolchain_requirement": "NOT_APPLICABLE",
+  "excluded_legacy_paths": [],
+  "owner_disposition_a9_28": "NOT_APPLICABLE",
+  "simulation_completion_wp": "SC-WP-01 (intake_synthesis subset: SC-WP-02 component, consumed by SC-WP-01's 196-state execution)",
+  "owner_disposition_a9_29": "RM-OQ-02 OWNER_DECIDED_A9_29 (sec. 6): Rust implements deterministic loading, schema / domain checks, hash verification and state selection over the frozen hash-pinned dataset; no live regeneration on the critical path; the complete 196-state execution; the frozen HWM14 wind accessor migrates; the HWM14 build / fetch path (gfortran) is a rule-1 regeneration tool, not ported onto the critical path"
+ },
+ "date": "2026-10-05",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of this component was executed (lane B1, ES-2, SC-WP-01). The registration commit is recorded in the report, not here.",
+ "supersedes": {
+  "path": null,
+  "sha256": null,
+  "reason": null
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "lane": {
+  "id": "B1",
+  "execution_step": "ES-2",
+  "work_package": "SC-WP-01",
+  "branch": "lane-es2-env",
+  "authority": "A9.29 secs. 6, 13 (RM-OQ-02); simulation_completion_programme_v1_1.json SC-WP-01"
+ },
+ "reference_implementation": {
+  "python_commit": "96db5524ec917e99e507def24f3ee0b263c78ebc",
+  "python_commit_note": "96db552 = integration/simulation-complete lineage (Rust workspace skeleton); integration/simulation-complete later advanced to 35c06e4 with a docs-only merge; abep_sim/ is identical at both. The bid record 5eee4b8 / 2de86ab is never a reference commit for new work",
+  "files": [
+   {
+    "path": "abep_sim/atmosphere_orbit.py",
+    "sha256_at_registration": "eeaeba27d4174be412b774d8fe580712205ee401210f962fb23c14069ce78b0c"
+   },
+   {
+    "path": "abep_sim/atmosphere_orbit_v2.py",
+    "sha256_at_registration": "87a3de0f811453557842913542e1027d75337aadfc2ae2bd1dd027ae18e995bd"
+   },
+   {
+    "path": "abep_sim/design/intake_synthesis.py",
+    "sha256_at_registration": "104ac561c05d8516c0571bc88339d69c4ab6abc78f8bfeeacea8696e557f2191"
+   },
+   {
+    "path": "abep_sim/design/engineering_constraints.py",
+    "sha256_at_registration": "c4f70d306ec4b2e8e5bfff8d8aac347df4961fd573e5a87ccd2dd4fc599bf5fd"
+   },
+   {
+    "path": "abep_sim/configuration.py",
+    "sha256_at_registration": "45900b79e3639ab382ec740bbd6b453d03e58ab7bd6368f93abdc17cabdacacc"
+   },
+   {
+    "path": "abep_sim/atmosphere.py",
+    "sha256_at_registration": "690d6931bb595c14736db9d9c284fb4e2f98727a8749262edebe3d8621e87e8b"
+   },
+   {
+    "path": "abep_sim/constants.py",
+    "sha256_at_registration": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7"
+   },
+   {
+    "path": "abep_sim/mission_env.py",
+    "sha256_at_registration": "f568fba29678852565b03821e85dd7cce1fb18ec623ab2ca282e521a97f164af"
+   }
+  ],
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration; a changed reference requires a new contract version",
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4",
+   "scipy": "1.17.1",
+   "pandas": "3.0.2",
+   "pymsis": "0.13.0 installed; NOT used by any registered entry point (frozen-data paths only; check() is scored in its pymsis-absent configuration)",
+   "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+   "blas": "scipy-openblas 0.3.31.188.0 bundled with numpy (DYNAMIC_ARCH, USE64BITINT)",
+   "numpy_simd": "baseline X86_V2; dispatch X86_V3 / X86_V4 / AVX512_ICL / AVX512_SPR enabled on the registration host (Intel Xeon @ 2.10GHz, AVX512F): numpy float64 log / exp / cos on arrays run AVX512 SIMD loops, not glibc libm",
+   "thread_env": {
+    "OMP_NUM_THREADS": "1 (set by the harness for every reference run)",
+    "OPENBLAS_NUM_THREADS": "1 (set by the harness for every reference run)"
+   },
+   "recorded_again_at_scoring": "python / numpy / scipy / pandas versions, numpy SIMD dispatch, BLAS, CPU model and thread env are re-read and written into the report; a version change is INPUT_MISMATCH (not a verdict)"
+  }
+ },
+ "rust_implementation": {
+  "crate": "abep-data (verified frozen readers, design-state set loader and selection) + abep-atmos (accessors, orbit sampler, design-state selection rule, check, 196-state execution)",
+  "functions_or_entry_points": [
+   "abep_data::orbit_v1::load, abep_data::hwm14_v2::load, abep_data::design_states::{DesignStateSet::load, read_design_states_file}",
+   "abep_atmos::orbit::{OrbitAtmosphere::load, OrbitAtmosphere::state, OrbitAtmosphere::node_state, OrbitAtmosphere::orbit_states, DOMAIN, check_domain}",
+   "abep_atmos::design_states::{design_states_v2, load_design_states, check}",
+   "abep_atmos::wind::{WindAtmosphere::load, WindAtmosphere::wind, WindAtmosphere::state}",
+   "abep_atmos::design_state_set::{DesignState::atm, DesignState::record, required_states, select}",
+   "abep_atmos::execution::{run_design_state_set, Environment::load, execute_states}",
+   "CLI: cargo run --release --locked -p abep-atmos --bin abep-env-parity (JSON request on stdin, JSON results on stdout) entries 'orbit_load', 'orbit_state', 'orbit_node_state', 'orbit_states', 'wind', 'state_v2', 'design_states_v2', 'load_design_states', 'design_state_set', 'execution', 'check'"
+  ],
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (rust-toolchain.toml channel 1.94.1)",
+  "provenance_sources": [
+   "Cargo.toml",
+   "Cargo.lock",
+   "rust-toolchain.toml",
+   "crates/abep-types/src/**",
+   "crates/abep-provenance/src/**",
+   "crates/abep-data/src/**",
+   "crates/abep-atmos/src/**"
+  ],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it"
+ },
+ "governing_hashes": {
+  "config_manifest": {
+   "path": "config/MANIFEST.json",
+   "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+  },
+  "architecture_hash": "NOT_APPLICABLE: architecture-independent environment physics (SC-WP-01 relevance: every selected-architecture layer consumes it)",
+  "model_set_hash": {
+   "path": "config/model_set/physics_model_set_v1.json",
+   "sha256": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1",
+   "role": "pins every frozen data file read by this contract (data[] entries)"
+  },
+  "design_state_set_hash": {
+   "path": "config/environment/design_state_set_ref_v1.json",
+   "ref_sha256": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484",
+   "design_state_set_sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049"
+  },
+  "rule": "both implementations must report these exact values for every run; a mismatch voids the run (status INPUT_MISMATCH, not a verdict)"
+ },
+ "pinned_inputs_sha256": {
+  "abep_sim/data/atmosphere_msis21_orbit_v1.json": "f06416b1e11f07ec32434515b616935ed5eeaae1faac75586bce0961b6bcf97b",
+  "abep_sim/data/atmosphere_msis21_orbit_v1.csv.gz": "71ce01c377a355a3e706d50e79fe08b2336d0e60b8b3e294f1d8e2c5b6a18ace",
+  "abep_sim/data/atmosphere_msis21_orbit_v1_design_states.json": "d8bd369bf4aa4ae321ecced094f2c02356be67e2c3f4acbe70264f700b419a40",
+  "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+  "abep_sim/data/atmosphere_msis21_hwm14_orbit_v2.json": "e56e6ff093d7590ab767e58c02c27882117146df3cf678dfd468c07bfea25c75",
+  "abep_sim/data/atmosphere_msis21_hwm14_orbit_v2.csv.gz": "03238acea56442b9a3d5554f5596bfe766d0654deacc43ff13482e8fe646629d",
+  "abep_sim/data/atmosphere_msis21_hwm14_orbit_v2.disturbance.csv.gz": "0c27e740a75618e28818ac071f4156766c7839855ea0aecd06506c913d18fcec",
+  "config/MANIFEST.json": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883",
+  "config/model_set/physics_model_set_v1.json": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1",
+  "config/environment/design_state_set_ref_v1.json": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484",
+  "config/constraints/engineering_constraints_v1.json": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e"
+ },
+ "frozen_data_read_only": [
+  "abep_sim/data/atmosphere_msis21_orbit_v1.json",
+  "abep_sim/data/atmosphere_msis21_orbit_v1.csv.gz",
+  "abep_sim/data/atmosphere_msis21_orbit_v1_design_states.json",
+  "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json",
+  "abep_sim/data/atmosphere_msis21_hwm14_orbit_v2.json",
+  "abep_sim/data/atmosphere_msis21_hwm14_orbit_v2.csv.gz",
+  "abep_sim/data/atmosphere_msis21_hwm14_orbit_v2.disturbance.csv.gz"
+ ],
+ "hash_pins": {
+  "atmosphere_msis21_orbit_v1.json": [
+   "model set data[]",
+   "design_state_set_ref manifest.sha256"
+  ],
+  "atmosphere_msis21_orbit_v1.csv.gz": [
+   "model set data[] (container)",
+   "sidecar container.sha256 + container.bytes",
+   "sidecar sha256 = c0ce282e99695be8cae0834270c5b9ff7853033255665abda7ec18c307566164 (uncompressed CSV; also design_state_set_ref dataset_sha256, v2 composition.thermodynamic_state.csv_sha256, atmosphere_orbit_v2.V1_CSV_SHA256, intake_synthesis.DESIGN_STATE_DATASET_SHA256)"
+  ],
+  "atmosphere_msis21_orbit_v1_design_states_v2.json": [
+   "model set data[]",
+   "design_state_set_ref sha256",
+   "sidecar design_states_file_v2.sha256",
+   "intake_synthesis.DESIGN_STATE_SET_SHA256 = 60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049"
+  ],
+  "atmosphere_msis21_orbit_v1_design_states.json": [
+   "model set data[]",
+   "sidecar design_states_file.sha256"
+  ],
+  "atmosphere_msis21_hwm14_orbit_v2.json": [
+   "model set data[]"
+  ],
+  "atmosphere_msis21_hwm14_orbit_v2.csv.gz": [
+   "model set data[] (container)",
+   "sidecar container.sha256",
+   "sidecar sha256 (uncompressed)"
+  ],
+  "atmosphere_msis21_hwm14_orbit_v2.disturbance.csv.gz": [
+   "model set data[] (container)",
+   "sidecar disturbance_file.container.sha256",
+   "sidecar disturbance_file.sha256 (uncompressed)"
+  ],
+  "config/constraints/engineering_constraints_v1.json": [
+   "config/MANIFEST.json (mission-domain altitude band constraints.altitude_band_km of load_design_state_set)"
+  ],
+  "rule": "Rust verifies every pin of the files an entry point reads, on every load; a missing file or a mismatch is MODEL_ERROR (CLAUDE.md rules 1, 3; A9.29 sec. 6). The model-set and design_state_set_ref pins are Rust-only (DIV-D-01)"
+ },
+ "inputs": {
+  "harness": "scripts/rust_migration/es2_env_parity.py (committed after this contract and before any comparison; implements the generators below verbatim; a deviation is a CONTRACT_DEFECT -> new contract version)",
+  "golden_vectors": {
+   "source": "the frozen design-state files and the registered entries without free parameters",
+   "count": "1 x orbit_load, 1 x design_states_v2, 2 x load_design_states (v2, v1), 1 x design_state_set (196 states + 196 id lookups + 3 unknown ids), 1 x execution (196 states), 1 x check",
+   "list_or_generator": "pristine repository tree"
+  },
+  "edge_cases": [
+   {
+    "id": "E-D-01",
+    "entry": "orbit_state, wind, state_v2",
+    "inputs": [
+     180.0,
+     -90.0,
+     0.0,
+     -180.0,
+     1.0,
+     "ECSS_LT_LOW"
+    ],
+    "note": "lower domain corner (alt_km, lat_deg, lst_h, lon_deg, doy, scenario)"
+   },
+   {
+    "id": "E-D-02",
+    "entry": "orbit_state, wind, state_v2",
+    "inputs": [
+     230.0,
+     90.0,
+     24.0,
+     360.0,
+     365.0,
+     "ECSS_ST_HIGH"
+    ],
+    "note": "upper domain corner"
+   },
+   {
+    "id": "E-D-03",
+    "entry": "orbit_state, wind, state_v2",
+    "inputs": [
+     200.0,
+     0.0,
+     24.0,
+     0.0,
+     172.0,
+     "ECSS_LT_MODERATE"
+    ],
+    "note": "lst 24 == 0 (periodic)"
+   },
+   {
+    "id": "E-D-04",
+    "entry": "orbit_state, wind, state_v2",
+    "inputs": [
+     200.0,
+     45.0,
+     12.0,
+     359.999999,
+     300.0,
+     "ECSS_LT_HIGH"
+    ],
+    "note": "longitude just below 360"
+   },
+   {
+    "id": "E-D-05",
+    "entry": "orbit_state, wind, state_v2",
+    "inputs": [
+     215.0,
+     -37.5,
+     7.25,
+     -179.5,
+     364.5,
+     "ECSS_LT_MODERATE"
+    ],
+    "note": "doy between the last node 320 and the 366 wrap"
+   },
+   {
+    "id": "E-D-06",
+    "entry": "orbit_state, wind, state_v2",
+    "inputs": [
+     195.0,
+     89.99,
+     5.0,
+     100.0,
+     1.0,
+     "ECSS_LT_LOW"
+    ],
+    "note": "next to the pole"
+   },
+   {
+    "id": "E-D-07",
+    "entry": "orbit_state, wind, state_v2",
+    "inputs": [
+     180.0,
+     37.0,
+     21.0,
+     240.0,
+     47.0,
+     "ECSS_LT_HIGH"
+    ],
+    "note": "coordinates of the first design state (off-node latitude)"
+   },
+   {
+    "id": "E-D-08",
+    "entry": "orbit_state, wind, state_v2",
+    "inputs": [
+     230.0,
+     0.0,
+     0.0,
+     0.0,
+     365.0,
+     "ECSS_ST_HIGH"
+    ],
+    "note": "last domain day"
+   },
+   {
+    "id": "E-D-O-01",
+    "entry": "orbit_states",
+    "inputs": {
+     "alt_km": 200.0,
+     "inclination_deg": 96.33,
+     "ltan_h": 6.0,
+     "scenario": "ECSS_LT_MODERATE",
+     "doy": 80.0,
+     "ut_start_h": 0.0,
+     "n_samples": 16.0
+    },
+    "note": "mission_env CODE_DEFAULT dawn-dusk SSO"
+   },
+   {
+    "id": "E-D-O-02",
+    "entry": "orbit_states",
+    "inputs": {
+     "alt_km": 180.0,
+     "inclination_deg": 0.0,
+     "ltan_h": 12.0,
+     "scenario": "ECSS_LT_LOW",
+     "doy": 1.0,
+     "ut_start_h": 0.0,
+     "n_samples": 8.0
+    },
+    "note": "equatorial prograde"
+   },
+   {
+    "id": "E-D-O-03",
+    "entry": "orbit_states",
+    "inputs": {
+     "alt_km": 230.0,
+     "inclination_deg": 180.0,
+     "ltan_h": 0.0,
+     "scenario": "ECSS_ST_HIGH",
+     "doy": 200.0,
+     "ut_start_h": 12.0,
+     "n_samples": 8.0
+    },
+    "note": "equatorial retrograde"
+   },
+   {
+    "id": "E-D-O-04",
+    "entry": "orbit_states",
+    "inputs": {
+     "alt_km": 210.0,
+     "inclination_deg": 90.0,
+     "ltan_h": 18.0,
+     "scenario": "ECSS_LT_HIGH",
+     "doy": 150.0,
+     "ut_start_h": 5.0,
+     "n_samples": 4.0
+    },
+    "note": "polar; a sample at u = pi/2"
+   },
+   {
+    "id": "E-D-O-05",
+    "entry": "orbit_states",
+    "inputs": {
+     "alt_km": 200.0,
+     "inclination_deg": 97.0,
+     "ltan_h": 10.5,
+     "scenario": "ECSS_LT_MODERATE",
+     "doy": 365.0,
+     "ut_start_h": 0.0,
+     "n_samples": 8.0
+    },
+    "note": "last day, inside the year"
+   },
+   {
+    "id": "E-D-O-06",
+    "entry": "orbit_states",
+    "inputs": {
+     "alt_km": 200.0,
+     "inclination_deg": 97.0,
+     "ltan_h": 10.5,
+     "scenario": "ECSS_LT_MODERATE",
+     "doy": 100.0,
+     "ut_start_h": 30.0,
+     "n_samples": 8.0
+    },
+    "note": "ut_start >= 24 h: doy_k = doy + 1"
+   },
+   {
+    "id": "E-D-N-01",
+    "entry": "orbit_node_state",
+    "inputs": "(i_doy, i_alt, i_lat, i_lon, i_lst) = (0,0,0,0,0) and (7,3,18,5,7) for every scenario (8 vectors)",
+    "note": "grid corners"
+   },
+   {
+    "id": "E-D-L-01",
+    "entry": "load_design_states",
+    "inputs": {
+     "version": "v2"
+    },
+    "note": "current set"
+   },
+   {
+    "id": "E-D-L-02",
+    "entry": "load_design_states",
+    "inputs": {
+     "version": "v1"
+    },
+    "note": "immutable v1 set (hash-verified load only)"
+   },
+   {
+    "id": "E-D-S-01",
+    "entry": "design_state_set",
+    "inputs": {
+     "lookup": [
+      "ds2:bogus",
+      "h200_f150",
+      ""
+     ]
+    },
+    "note": "ids absent from the set (h200_f150 is the SC-WP-02 design-case reference point, not a member)"
+   }
+  ],
+  "randomized_domain": {
+   "entries": [
+    {
+     "entry_index": 0,
+     "entry": "orbit_state (interior)",
+     "count": 1600,
+     "draw": "for s in [\"ECSS_LT_LOW\", \"ECSS_LT_MODERATE\", \"ECSS_LT_HIGH\", \"ECSS_ST_HIGH\"]: alt = rng_0.uniform(180.0, 230.0, 400); lat = rng_0.uniform(-90.0, 90.0, 400); lst = rng_0.uniform(0.0, 24.0, 400); lon = rng_0.uniform(-180.0, 360.0, 400); doy = rng_0.uniform(1.0, 365.0, 400); vector i = (alt[i], lat[i], lst[i], lon[i], doy[i], s)"
+    },
+    {
+     "entry_index": 1,
+     "entry": "orbit_state (at grid nodes)",
+     "count": 200,
+     "draw": "i_doy = rng_1.integers(0, 8, 200); i_alt = rng_1.integers(0, 4, 200); i_lat = rng_1.integers(0, 19, 200); i_lon = rng_1.integers(0, 6, 200); i_lst = rng_1.integers(0, 8, 200); i_s = rng_1.integers(0, 4, 200); vector i = state(ALT_KM[i_alt], LAT_DEG[i_lat], LST_H[i_lst], LON_DEG[i_lon], DOY[i_doy], SCENARIO_ORDER[i_s])"
+    },
+    {
+     "entry_index": 2,
+     "entry": "orbit_node_state",
+     "count": 200,
+     "draw": "as entry 1 with rng_2; vector i = node_state(i_doy, i_alt, i_lat, i_lon, i_lst, SCENARIO_ORDER[i_s])"
+    },
+    {
+     "entry_index": 3,
+     "entry": "orbit_states",
+     "count": 40,
+     "draw": "alt = rng_3.uniform(180.0, 230.0, 40); inc = rng_3.uniform(0.0, 180.0, 40); ltan = rng_3.uniform(0.0, 24.0, 40); i_s = rng_3.integers(0, 4, 40); doy = rng_3.integers(1, 365, 40); ut0 = rng_3.uniform(0.0, 24.0, 40); n = rng_3.integers(4, 49, 40); vector i = orbit_states(alt[i], inc[i], ltan[i], SCENARIO_ORDER[i_s[i]], float(doy[i]), ut0[i], float(n[i]))"
+    },
+    {
+     "entry_index": 4,
+     "entry": "wind (interior); the first 100 vectors of each scenario also state_v2",
+     "count": 1200,
+     "draw": "as entry 0 with rng_4 and 300 vectors per scenario"
+    }
+   ],
+   "domain_note": "numerical parity domain only; not a physics, design or evidence claim"
+  },
+  "vector_totals": {
+   "orbit_state": "1600 interior + 200 node + 8 edge + 14 domain-error = 1822",
+   "orbit_node_state": "200 + 8 corner + 3 error = 211",
+   "orbit_states": "40 + 6 edge + 17 domain-error = 63 orbits",
+   "wind": "1200 + 8 edge + 14 domain-error = 1222",
+   "state_v2": "400 + 8 edge + 14 domain-error = 422",
+   "design_states_v2": 1,
+   "load_design_states": "2 + 2 error",
+   "design_state_set": 1,
+   "execution": 1,
+   "check": 1,
+   "refusal_trees": "10 trees x the entries listed per tree"
+  }
+ },
+ "campaign_seeds": {
+  "applicable": true,
+  "scoring_master_seed": 731905204,
+  "development_master_seed": 731905104,
+  "derivation": "rng_e = numpy.random.default_rng(numpy.random.SeedSequence([master_seed, e])) with e the entry index listed in inputs.randomized_domain; one generator per entry, draws in the registered order; the draws define input values only (both implementations are deterministic)",
+  "entry_indices": {
+   "orbit_state_interior": 0,
+   "orbit_state_nodes": 1,
+   "orbit_node_state": 2,
+   "orbit_states": 3,
+   "wind": 4
+  },
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the existing admitted stochastic / statistical parity contract; the roles are registered separately and never merged",
+   "design_uq_sampling_stream": "NOT_APPLICABLE: no design / UQ sampling in the component",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE: no TPMC call",
+   "other_streams": "NOT_APPLICABLE: neither implementation draws random numbers; the harness draws the input vectors once (numpy default_rng) and passes identical float values (JSON shortest round-trip repr) to both implementations",
+   "migration_parity_dataset": "seeds, draw order and captured reference outputs stay exactly reproducible (immutable)",
+   "after_rust_authority": "not applicable (no RNG in the component)"
+  },
+  "rng_streams_v3": "not applicable (no RNG inside either implementation)",
+  "development_rule": "development comparisons use development_master_seed only and are never scored or reported as a verdict; every execution with scoring_master_seed is appended to campaign_history and the report is committed whatever its verdict"
+ },
+ "observables": {
+  "orbit_load": {
+   "list": [
+    {
+     "name": "status",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "load()"
+    },
+    {
+     "name": "dataset sha256",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "load()"
+    },
+    {
+     "name": "shape (8, 4, 19, 6, 8)",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "load()"
+    },
+    {
+     "name": "grid axes",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "load()"
+    },
+    {
+     "name": "row_count 116736",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "load()"
+    },
+    {
+     "name": "scenario order",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "load()"
+    }
+   ]
+  },
+  "orbit_state": {
+   "list": [
+    {
+     "name": "status",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "EVALUATED or the mapped status of the Python exception"
+    },
+    {
+     "name": "key order",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "the dict keys in order: alt_km, lat_deg, lst_h, lon_deg, doy, scenario, f107, f107a, ap, rho_kg_m3, n_N2_m3, n_O2_m3, n_O_m3, n_He_m3, n_Ar_m3, n_N_m3, n_total_m3, T_K, x_O, x_N2, x_O2, x_N, x_He, x_Ar, source, evaluation, interp_max_rel_err_rho"
+    },
+    {
+     "name": "alt_km",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "lat_deg",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "doy",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "scenario",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "f107",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "f107a",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "ap",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "source",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "evaluation",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "interp_max_rel_err_rho",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "lst_h",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "float(x) % period (CPython float remainder)"
+    },
+    {
+     "name": "lon_deg",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "float(x) % period (CPython float remainder)"
+    },
+    {
+     "name": "rho_kg_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "n_N2_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "n_O2_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "n_O_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "n_He_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "n_Ar_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "n_N_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "n_total_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "T_K",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "x_O",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "x_N2",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "x_O2",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "x_N",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "x_He",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "x_Ar",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    }
+   ]
+  },
+  "orbit_node_state": {
+   "list": [
+    {
+     "name": "status",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "EVALUATED or the mapped status of the Python exception"
+    },
+    {
+     "name": "key order",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "the dict keys in order: alt_km, lat_deg, lst_h, lon_deg, doy, scenario, f107, f107a, ap, rho_kg_m3, n_N2_m3, n_O2_m3, n_O_m3, n_He_m3, n_Ar_m3, n_N_m3, n_total_m3, T_K, x_O, x_N2, x_O2, x_N, x_He, x_Ar, source, evaluation, interp_max_rel_err_rho"
+    },
+    {
+     "name": "alt_km",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "lat_deg",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "doy",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "scenario",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "f107",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "f107a",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "ap",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "source",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "evaluation",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "interp_max_rel_err_rho",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "lst_h",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "float(x) % period (CPython float remainder)"
+    },
+    {
+     "name": "lon_deg",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "float(x) % period (CPython float remainder)"
+    },
+    {
+     "name": "rho_kg_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "n_N2_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "n_O2_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "n_O_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "n_He_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "n_Ar_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "n_N_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "n_total_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "T_K",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "x_O",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "x_N2",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "x_O2",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "x_N",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "x_He",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "x_Ar",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    }
+   ]
+  },
+  "orbit_states": {
+   "list": [
+    {
+     "name": "status",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "orbit_states(...)"
+    },
+    {
+     "name": "number of states",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "orbit_states(...)"
+    },
+    {
+     "name": "key order",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "the dict keys in order: alt_km, lat_deg, lst_h, lon_deg, doy, scenario, f107, f107a, ap, rho_kg_m3, n_N2_m3, n_O2_m3, n_O_m3, n_He_m3, n_Ar_m3, n_N_m3, n_total_m3, T_K, x_O, x_N2, x_O2, x_N, x_He, x_Ar, source, evaluation, interp_max_rel_err_rho"
+    },
+    {
+     "name": "alt_km",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied / formatted value"
+    },
+    {
+     "name": "doy",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied / formatted value"
+    },
+    {
+     "name": "scenario",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied / formatted value"
+    },
+    {
+     "name": "f107",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied / formatted value"
+    },
+    {
+     "name": "f107a",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied / formatted value"
+    },
+    {
+     "name": "ap",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied / formatted value"
+    },
+    {
+     "name": "source",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied / formatted value"
+    },
+    {
+     "name": "evaluation",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied / formatted value"
+    },
+    {
+     "name": "interp_max_rel_err_rho",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied / formatted value"
+    },
+    {
+     "name": "inclination_deg",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied / formatted value"
+    },
+    {
+     "name": "ltan_h",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied / formatted value"
+    },
+    {
+     "name": "orbit_inputs_status",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied / formatted value"
+    },
+    {
+     "name": "wind_included",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied / formatted value"
+    },
+    {
+     "name": "wind_open_item",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied / formatted value"
+    },
+    {
+     "name": "state_id",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied / formatted value"
+    },
+    {
+     "name": "geometry",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied / formatted value"
+    },
+    {
+     "name": "lat_deg",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4
+     },
+     "definition": "orbit geometry (glibc libm in both; norm via BLAS ddot in numpy)"
+    },
+    {
+     "name": "lst_h",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4
+     },
+     "definition": "orbit geometry (glibc libm in both; norm via BLAS ddot in numpy)"
+    },
+    {
+     "name": "lon_deg",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4
+     },
+     "definition": "orbit geometry (glibc libm in both; norm via BLAS ddot in numpy)"
+    },
+    {
+     "name": "t_s",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4
+     },
+     "definition": "orbit geometry (glibc libm in both; norm via BLAS ddot in numpy)"
+    },
+    {
+     "name": "u_deg",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4
+     },
+     "definition": "orbit geometry (glibc libm in both; norm via BLAS ddot in numpy)"
+    },
+    {
+     "name": "ut_h",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4
+     },
+     "definition": "orbit geometry (glibc libm in both; norm via BLAS ddot in numpy)"
+    },
+    {
+     "name": "v_orb_m_s",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4
+     },
+     "definition": "orbit geometry (glibc libm in both; norm via BLAS ddot in numpy)"
+    },
+    {
+     "name": "v_rel_corot_m_s",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4
+     },
+     "definition": "orbit geometry (glibc libm in both; norm via BLAS ddot in numpy)"
+    },
+    {
+     "name": "weight",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4
+     },
+     "definition": "orbit geometry (glibc libm in both; norm via BLAS ddot in numpy)"
+    },
+    {
+     "name": "rho_kg_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated state at the sample"
+    },
+    {
+     "name": "n_N2_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated state at the sample"
+    },
+    {
+     "name": "n_O2_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated state at the sample"
+    },
+    {
+     "name": "n_O_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated state at the sample"
+    },
+    {
+     "name": "n_He_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated state at the sample"
+    },
+    {
+     "name": "n_Ar_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated state at the sample"
+    },
+    {
+     "name": "n_N_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated state at the sample"
+    },
+    {
+     "name": "n_total_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated state at the sample"
+    },
+    {
+     "name": "T_K",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated state at the sample"
+    },
+    {
+     "name": "x_O",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated state at the sample"
+    },
+    {
+     "name": "x_N2",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated state at the sample"
+    },
+    {
+     "name": "x_O2",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated state at the sample"
+    },
+    {
+     "name": "x_N",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated state at the sample"
+    },
+    {
+     "name": "x_He",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated state at the sample"
+    },
+    {
+     "name": "x_Ar",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated state at the sample"
+    },
+    {
+     "name": "flux_corot_kg_m2_s",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated state at the sample"
+    }
+   ]
+  },
+  "wind": {
+   "list": [
+    {
+     "name": "status",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "as orbit_state"
+    },
+    {
+     "name": "key order",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "u_mer_quiet_m_s, u_zon_quiet_m_s, u_mer_dist_m_s, u_zon_dist_m_s, u_mer_m_s, u_zon_m_s, ap_hwm, wind_model, wind_source, wind_interp_max_abs_err_m_s"
+    },
+    {
+     "name": "u_mer_quiet_m_s",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "a_abs": 1e-09
+     },
+     "definition": "interpolated HWM14 wind component (m/s)"
+    },
+    {
+     "name": "u_zon_quiet_m_s",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "a_abs": 1e-09
+     },
+     "definition": "interpolated HWM14 wind component (m/s)"
+    },
+    {
+     "name": "u_mer_dist_m_s",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "a_abs": 1e-09
+     },
+     "definition": "interpolated HWM14 wind component (m/s)"
+    },
+    {
+     "name": "u_zon_dist_m_s",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "a_abs": 1e-09
+     },
+     "definition": "interpolated HWM14 wind component (m/s)"
+    },
+    {
+     "name": "u_mer_m_s",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "a_abs": 1e-09
+     },
+     "definition": "interpolated HWM14 wind component (m/s)"
+    },
+    {
+     "name": "u_zon_m_s",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "a_abs": 1e-09
+     },
+     "definition": "interpolated HWM14 wind component (m/s)"
+    },
+    {
+     "name": "ap_hwm",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "copied value"
+    },
+    {
+     "name": "wind_model",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "copied value"
+    },
+    {
+     "name": "wind_source",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "copied value"
+    },
+    {
+     "name": "wind_interp_max_abs_err_m_s",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "copied value"
+    }
+   ]
+  },
+  "state_v2": {
+   "list": [
+    {
+     "name": "status",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "EVALUATED or the mapped status of the Python exception"
+    },
+    {
+     "name": "key order",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "the dict keys in order: alt_km, lat_deg, lst_h, lon_deg, doy, scenario, f107, f107a, ap, rho_kg_m3, n_N2_m3, n_O2_m3, n_O_m3, n_He_m3, n_Ar_m3, n_N_m3, n_total_m3, T_K, x_O, x_N2, x_O2, x_N, x_He, x_Ar, source, evaluation, interp_max_rel_err_rho"
+    },
+    {
+     "name": "alt_km",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "lat_deg",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "doy",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "scenario",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "f107",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "f107a",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "ap",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "source",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "evaluation",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "interp_max_rel_err_rho",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "echo / copied value"
+    },
+    {
+     "name": "lst_h",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "float(x) % period (CPython float remainder)"
+    },
+    {
+     "name": "lon_deg",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "float(x) % period (CPython float remainder)"
+    },
+    {
+     "name": "rho_kg_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "n_N2_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "n_O2_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "n_O_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "n_He_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "n_Ar_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "n_N_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "n_total_m3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "T_K",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "x_O",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "x_N2",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "x_O2",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "x_N",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "x_He",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "x_Ar",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "interpolated (exp of the separable log interpolation) or stored grid value and its sums / ratios"
+    },
+    {
+     "name": "u_mer_quiet_m_s",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "a_abs": 1e-09
+     },
+     "definition": "as wind"
+    },
+    {
+     "name": "u_zon_quiet_m_s",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "a_abs": 1e-09
+     },
+     "definition": "as wind"
+    },
+    {
+     "name": "u_mer_dist_m_s",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "a_abs": 1e-09
+     },
+     "definition": "as wind"
+    },
+    {
+     "name": "u_zon_dist_m_s",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "a_abs": 1e-09
+     },
+     "definition": "as wind"
+    },
+    {
+     "name": "u_mer_m_s",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "a_abs": 1e-09
+     },
+     "definition": "as wind"
+    },
+    {
+     "name": "u_zon_m_s",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "a_abs": 1e-09
+     },
+     "definition": "as wind"
+    },
+    {
+     "name": "ap_hwm",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "copied value / label"
+    },
+    {
+     "name": "wind_model",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "copied value / label"
+    },
+    {
+     "name": "wind_source",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "copied value / label"
+    },
+    {
+     "name": "wind_interp_max_abs_err_m_s",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "copied value / label"
+    },
+    {
+     "name": "dataset_id",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "copied value / label"
+    },
+    {
+     "name": "dataset_status",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "copied value / label"
+    }
+   ]
+  },
+  "design_states_v2": {
+   "list": [
+    {
+     "name": "document structure: key order, list lengths, every non-float leaf (ids, labels, strings, booleans, n_states)",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "design_states_v2()"
+    },
+    {
+     "name": "states[*].{alt_km, lat_deg, lst_h, lon_deg, doy, f107, f107a, ap, interp_max_rel_err_rho}",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "copied values"
+    },
+    {
+     "name": "latitude_band_deg",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "copied values"
+    },
+    {
+     "name": "latitude_pool_step_deg",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "copied values"
+    },
+    {
+     "name": "lat_refinement_sensitivity.fine_step_deg",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "copied values"
+    },
+    {
+     "name": "states[*].{rho_kg_m3, n_N2_m3, n_O2_m3, n_O_m3, n_He_m3, n_Ar_m3, n_N_m3, n_total_m3, T_K, x_O, x_N2, x_O2, x_N, x_He, x_Ar}",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-10
+     },
+     "definition": "as orbit_state"
+    },
+    {
+     "name": "lat_refinement_sensitivity.max_abs_rel_change_of_extrema.{rho_kg_m3, x_O, x_N2, x_O2, T_K}",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "display_units": 1,
+      "rule": "|rust - py| <= 10^(floor(log10|py|) - 3): one unit in the last digit of the reference's '%.3e' rounding"
+     },
+     "definition": "float(f'{v:.3e}') of the extrema refinement change"
+    }
+   ]
+  },
+  "load_design_states": {
+   "list": [
+    {
+     "name": "status",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "both parse the same verified bytes"
+    },
+    {
+     "name": "every leaf of the returned document",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "both parse the same verified bytes"
+    }
+   ]
+  },
+  "design_state_set": {
+   "list": [
+    {
+     "name": "status",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "copied / looked-up values"
+    },
+    {
+     "name": "required state ids in file order",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "copied / looked-up values"
+    },
+    {
+     "name": "DesignState fields",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "copied / looked-up values"
+    },
+    {
+     "name": "record() fields",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "copied / looked-up values"
+    },
+    {
+     "name": "atm(): alt_km, f107, f107a, ap, rho, T, state_id, source, V_basis, orbit_basis",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "copied / looked-up values"
+    },
+    {
+     "name": "selection: found / absent for every id and the 3 unknown ids",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "copied / looked-up values"
+    },
+    {
+     "name": "atm(): fO, fN2, fO2, m_mean, n, V, flux_kg_m2_s, p_ambient_Pa, n_O",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4
+     },
+     "definition": "basic operations / sqrt on identical stored inputs"
+    }
+   ]
+  },
+  "execution": {
+   "list": [
+    {
+     "name": "run status",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "196-state execution"
+    },
+    {
+     "name": "n_states",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "196-state execution"
+    },
+    {
+     "name": "per-state status",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "196-state execution"
+    },
+    {
+     "name": "per-state state_id (file order)",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "196-state execution"
+    },
+    {
+     "name": "per-state environment: the design_state_set atm() EXACT_VALUE fields",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "196-state execution"
+    },
+    {
+     "name": "per-state frozen_dataset_reproduction.{evaluation, reproduced}",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "196-state execution"
+    },
+    {
+     "name": "per-state wind.{ap_hwm, wind_model, wind_source, wind_interp_max_abs_err_m_s}",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "196-state execution"
+    },
+    {
+     "name": "per-state environment: atm() ULP fields",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4
+     },
+     "definition": "as design_state_set"
+    },
+    {
+     "name": "per-state wind components",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "a_abs": 1e-09
+     },
+     "definition": "as wind"
+    },
+    {
+     "name": "per-state frozen_dataset_reproduction.max_abs_rel_diff",
+     "tolerance_class": "NOT_SCORED",
+     "definition": "reported only (a difference of near-equal numbers); its pass condition <= DESIGN_V2_REL_TOL is the scored boolean 'reproduced'"
+    }
+   ]
+  },
+  "check": {
+   "list": [
+    {
+     "name": "status",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "check() with the reference in its pymsis-absent configuration (DIV-D-03); problems / notes text reported, not scored"
+    },
+    {
+     "name": "ok",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "check() with the reference in its pymsis-absent configuration (DIV-D-03); problems / notes text reported, not scored"
+    }
+   ]
+  }
+ },
+ "tolerance_classes": {
+  "EXACT_BYTES": "files / serialized outputs byte-identical (sha256 equal); not used by this contract except where an observable says so",
+  "EXACT_VALUE": "integers, strings, enums, booleans, statuses, error codes, schema shape, and floats that are copied (not computed): equal (floats compared by value, -0.0 == 0.0)",
+  "ULP_BOUNDED": "|rust - py| <= k_ulp * ulp(py) OR |rust - py| <= r_rel * |py| OR |rust - py| <= a_abs, with k_ulp / r_rel / a_abs fixed per observable below (an absent clause is not applied). The relative clause is scaled by |py|, NOT by max(1, |py|) as in the template's proposal: the observables span 1e-12 .. 1e17, so an absolute floor of r_rel would accept nonsense for small quantities; scaling by |py| is strictly tighter for |py| < 1 and identical otherwise. ulp(py) = 2^(floor(log2|py|) - 52) (py = 0: smallest subnormal)",
+  "SOLVER_TOLERANCE": "not used (no iterative solver)",
+  "STATISTICAL": "not used (deterministic component)",
+  "EXACT_STREAM": "not used (no RNG in either implementation; the harness RNG only draws input vectors)"
+ },
+ "tolerance_basis": {
+  "independence": "fixed from an a priori floating-point analysis of the registered algorithms, before any Rust code or Python-vs-Rust comparison existed. Inputs of the analysis are properties of the frozen data and of the reference functions only: max |ln v| over the stored grid = 37.54 (n_O, ECSS_ST_HIGH); max |quiet wind| 253.6 m/s, max |disturbance wind| 575.1 m/s; Lebesgue constants of the registered weight functions over the domain (max sum |w|): doy 1.848, lst 1.848, lon 1.667, alt 1.459, lat 1.631; disturbance lat 1.631, lon 1.250, lst 1.250; np.loadtxt and Rust str::parse both give the correctly rounded doubles (checked on the reference side)",
+  "which_operations_differ": "identical in both (expected bit-identical): CSV parsing; every IEEE basic operation evaluated in the same order (the theta argument of the trigonometric weights, the Lagrange and periodic-cubic weights, np.interp of the doy warp (X86_V2 baseline: no FMA), Python float remainder / floor-division, the _state_dict sums and ratios); glibc libm calls made by CPython math and Rust std alike (asin, atan2, sin, cos, sqrt, exp, log on scalars). Different: (i) numpy's AVX512 SIMD float64 log of the grid, exp of the result and cos inside the trigonometric weights (<= 4 ulp each, numpy's documented SIMD bound) against glibc (< 1 ulp); (ii) the summation order of the separable contractions (np.tensordot -> OpenBLAS dgemv, np.einsum) against Rust's sequential loop; (iii) np.linalg.norm (OpenBLAS ddot) against a sequential sum of squares",
+  "bound_log_interpolated": "per axis a (order doy, alt, lat, lon, lst): D_a <= L_a D_(a-1) + sum_k |dw_k| X_a + 2 gamma_m L_a X_a with X_a = (prod_(b<a) L_b) * 37.54, gamma_m = m 2^-53, |dw_k| <= 9.3e-16 per trigonometric weight (5 ulp cos differences through w = (1 + 2 sum cos(k theta) + cos(m theta / 2)) / m) and 0 for Lagrange / periodic-cubic weights, D_0 = 5 ulp(37.54) = 3.55e-14: D_doy 4.8e-13, D_alt 7.9e-13, D_lat 1.4e-12, D_lon 3.7e-12, D_lst 9.8e-12; the final exp maps the absolute log difference to a relative one (+ 5 ulp): <= 1.0e-11 relative for rho, n_s, T; sums n_total <= 1.0e-11; ratios x_s <= 2.0e-11; flux = rho |v_rel| <= 1.0e-11 + 2 ulp",
+  "bound_wind": "same recursion on linear values (no log / exp): quiet part (X_0 = 253.6 m/s, 5 axes) <= 6.2e-11 m/s; disturbance part (X_0 = 575.1 m/s; doy trigonometric, lat Lagrange, lon / lst periodic cubic) <= 2.3e-11 m/s; total <= 8.6e-11 m/s",
+  "bound_geometry": "orbit geometry and DesignState.atm(): identical operations except the 3-term norm (<= 2 ulp)",
+  "registered": {
+   "REL10 (log-interpolated fields and their sums / ratios)": "k_ulp 4 or r_rel 1e-10 (scale |py|): 5x above the a priori worst case for ratios (2.0e-11) and 5e3 below the 7-significant-digit storage resolution of the grid (5e-7)",
+   "WIND (wind components)": "k_ulp 4 or a_abs 1e-9 m/s: 11x above the a priori worst case (8.6e-11 m/s) and 1e5 below the stored 1e-4 m/s resolution; absolute because wind components change sign",
+   "ULP4 (geometry, atm())": "k_ulp 4 (template proposal)",
+   "DISPLAY (lat_refinement_sensitivity)": "one unit in the last displayed digit of the reference's '%.3e' rounding: a float64 difference can flip that rounding only at a half-unit boundary, and a flip moves the value by exactly one unit",
+   "DESIGN_V2_REL_TOL (INV-D-01, execution 'reproduced', check())": "1e-12, the reference's own registered re-derivation tolerance (atmosphere_orbit.DESIGN_V2_REL_TOL), used verbatim, never widened; the a priori worst case for a design state (only the latitude axis off-node) is 4e-13"
+  }
+ },
+ "exact_invariants": [
+  {
+   "id": "INV-D-01",
+   "statement": "Rust design_states_v2() against the frozen file atmosphere_msis21_orbit_v1_design_states_v2.json: identical structure, key order, ids, labels, strings and non-float values; every float within DESIGN_V2_REL_TOL 1e-12 (atmosphere_orbit._design_v2_compare semantics). The Python reference re-derives the file byte-identically on the registration host (check() ok, no note)",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-D-02",
+   "statement": "196-state execution: n_states = 196 = the file's n_states; ids equal the file's ids in file order and are unique; every state EVALUATED; every re-evaluated state reproduces the stored values within DESIGN_V2_REL_TOL; the run reports the design-state set sha256 60073e21... and dataset sha256 c0ce282e...",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-D-03",
+   "statement": "double-run determinism: the Rust CLI run twice in two processes produces byte-identical stdout for every request; the Python reference evaluated twice produces identical values; the Rust execution serialized twice in one process is byte-identical",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-D-04",
+   "statement": "node reproduction: state() at grid-node coordinates equals node_state() within REL10 in both implementations",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-D-05",
+   "statement": "pin consistency: every pin listed in hash_pins agrees with the file bytes and with the other pins of the same file (Rust load)",
+   "required_in_both": false
+  }
+ ],
+ "conservation_checks": {
+  "applicable": true,
+  "checks": [
+   {
+    "id": "CONS-D-01",
+    "statement": "species partition of every Rust state output: |sum_s x_s - 1| <= 1e-14 over the six stored species",
+    "evaluated_on": "Rust outputs (Python recorded)",
+    "tolerance": "1e-14"
+   },
+   {
+    "id": "CONS-D-02",
+    "statement": "n_total_m3 equals the left-to-right sum of the six n_s in SPECIES order, bit for bit",
+    "evaluated_on": "Rust outputs",
+    "tolerance": "0"
+   },
+   {
+    "id": "CONS-D-03",
+    "statement": "DesignState.atm(): |fO + fN2 + fO2 - 1| <= 1e-14 and |n m_mean / rho - 1| <= 1e-14",
+    "evaluated_on": "Rust outputs (Python recorded)",
+    "tolerance": "1e-14"
+   },
+   {
+    "id": "CONS-D-04",
+    "statement": "wind: u_mer_m_s = u_mer_quiet_m_s + u_mer_dist_m_s and the same for the zonal component, bit for bit",
+    "evaluated_on": "Rust outputs",
+    "tolerance": "0"
+   }
+  ],
+  "not_applicable_template_checks": "CONS-01..03 (source mass / power balance, energy ledger): no source, power or ledger in the environment layer"
+ },
+ "domain_and_error_parity": {
+  "mapping": {
+   "ValueError (domain / argument refusal; not json.JSONDecodeError)": "OUT_OF_DOMAIN",
+   "KeyError (unknown scenario key)": "OUT_OF_DOMAIN",
+   "IndexError (grid index)": "OUT_OF_DOMAIN",
+   "OverflowError (int(inf))": "OUT_OF_DOMAIN",
+   "FileNotFoundError (frozen file missing; _missing_data_error)": "MODEL_ERROR",
+   "RuntimeError incl. DesignStateSetError (hash / record / grid / schema refusal)": "MODEL_ERROR",
+   "json.JSONDecodeError (corrupt frozen JSON)": "MODEL_ERROR",
+   "Rust-only pin / schema refusal": "MODEL_ERROR"
+  },
+  "expected_rust_per_tree_entry": "the second element of each 'expected' pair: Rust outcome per entry; the first is the Python outcome; equal statuses unless a documented divergence names the case",
+  "cases": [
+   {
+    "id": "DE-D-01",
+    "entry": "orbit_state, wind, state_v2",
+    "inputs": [
+     179.999,
+     0.0,
+     0.0,
+     0.0,
+     100.0,
+     "ECSS_LT_MODERATE"
+    ],
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-02",
+    "entry": "orbit_state, wind, state_v2",
+    "inputs": [
+     230.001,
+     0.0,
+     0.0,
+     0.0,
+     100.0,
+     "ECSS_LT_MODERATE"
+    ],
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-03",
+    "entry": "orbit_state, wind, state_v2",
+    "inputs": [
+     200.0,
+     -90.001,
+     0.0,
+     0.0,
+     100.0,
+     "ECSS_LT_MODERATE"
+    ],
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-04",
+    "entry": "orbit_state, wind, state_v2",
+    "inputs": [
+     200.0,
+     90.001,
+     0.0,
+     0.0,
+     100.0,
+     "ECSS_LT_MODERATE"
+    ],
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-05",
+    "entry": "orbit_state, wind, state_v2",
+    "inputs": [
+     200.0,
+     0.0,
+     -1e-09,
+     0.0,
+     100.0,
+     "ECSS_LT_MODERATE"
+    ],
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-06",
+    "entry": "orbit_state, wind, state_v2",
+    "inputs": [
+     200.0,
+     0.0,
+     24.000001,
+     0.0,
+     100.0,
+     "ECSS_LT_MODERATE"
+    ],
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-07",
+    "entry": "orbit_state, wind, state_v2",
+    "inputs": [
+     200.0,
+     0.0,
+     0.0,
+     -180.001,
+     100.0,
+     "ECSS_LT_MODERATE"
+    ],
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-08",
+    "entry": "orbit_state, wind, state_v2",
+    "inputs": [
+     200.0,
+     0.0,
+     0.0,
+     360.001,
+     100.0,
+     "ECSS_LT_MODERATE"
+    ],
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-09",
+    "entry": "orbit_state, wind, state_v2",
+    "inputs": [
+     200.0,
+     0.0,
+     0.0,
+     0.0,
+     0.999,
+     "ECSS_LT_MODERATE"
+    ],
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-10",
+    "entry": "orbit_state, wind, state_v2",
+    "inputs": [
+     200.0,
+     0.0,
+     0.0,
+     0.0,
+     365.001,
+     "ECSS_LT_MODERATE"
+    ],
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-11",
+    "entry": "orbit_state, wind, state_v2",
+    "inputs": [
+     "NaN",
+     0.0,
+     0.0,
+     0.0,
+     100.0,
+     "ECSS_LT_MODERATE"
+    ],
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-12",
+    "entry": "orbit_state, wind, state_v2",
+    "inputs": [
+     200.0,
+     "+inf",
+     0.0,
+     0.0,
+     100.0,
+     "ECSS_LT_MODERATE"
+    ],
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-13",
+    "entry": "orbit_state, wind, state_v2",
+    "inputs": [
+     200.0,
+     0.0,
+     0.0,
+     0.0,
+     100.0,
+     "ECSS_LT_MEDIUM"
+    ],
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "unknown scenario"
+   },
+   {
+    "id": "DE-D-14",
+    "entry": "orbit_state, wind, state_v2",
+    "inputs": [
+     200.0,
+     0.0,
+     0.0,
+     0.0,
+     100.0,
+     ""
+    ],
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "unknown scenario"
+   },
+   {
+    "id": "DE-D-15",
+    "entry": "orbit_node_state",
+    "inputs": {
+     "idx": [
+      0,
+      0,
+      19,
+      0,
+      0
+     ],
+     "scenario": "ECSS_LT_LOW"
+    },
+    "expected_python": "IndexError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "index"
+   },
+   {
+    "id": "DE-D-16",
+    "entry": "orbit_node_state",
+    "inputs": {
+     "idx": [
+      8,
+      0,
+      0,
+      0,
+      0
+     ],
+     "scenario": "ECSS_LT_LOW"
+    },
+    "expected_python": "IndexError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "index"
+   },
+   {
+    "id": "DE-D-17",
+    "entry": "orbit_node_state",
+    "inputs": {
+     "idx": [
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "scenario": "X"
+    },
+    "expected_python": "KeyError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "unknown scenario"
+   },
+   {
+    "id": "DE-D-18",
+    "entry": "orbit_states",
+    "inputs": {
+     "alt_km": 200.0,
+     "inclination_deg": 97.0,
+     "ltan_h": 10.5,
+     "scenario": "ECSS_LT_MODERATE",
+     "doy": 100.0,
+     "ut_start_h": 0.0,
+     "n_samples": 3.0
+    },
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-19",
+    "entry": "orbit_states",
+    "inputs": {
+     "alt_km": 200.0,
+     "inclination_deg": 97.0,
+     "ltan_h": 10.5,
+     "scenario": "ECSS_LT_MODERATE",
+     "doy": 100.0,
+     "ut_start_h": 0.0,
+     "n_samples": 4.5
+    },
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-20",
+    "entry": "orbit_states",
+    "inputs": {
+     "alt_km": 200.0,
+     "inclination_deg": 97.0,
+     "ltan_h": 10.5,
+     "scenario": "ECSS_LT_MODERATE",
+     "doy": 10.5,
+     "ut_start_h": 0.0,
+     "n_samples": 8.0
+    },
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-21",
+    "entry": "orbit_states",
+    "inputs": {
+     "alt_km": 200.0,
+     "inclination_deg": 97.0,
+     "ltan_h": 10.5,
+     "scenario": "ECSS_LT_MODERATE",
+     "doy": 0.0,
+     "ut_start_h": 0.0,
+     "n_samples": 8.0
+    },
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-22",
+    "entry": "orbit_states",
+    "inputs": {
+     "alt_km": 200.0,
+     "inclination_deg": 97.0,
+     "ltan_h": 10.5,
+     "scenario": "ECSS_LT_MODERATE",
+     "doy": 366.0,
+     "ut_start_h": 0.0,
+     "n_samples": 8.0
+    },
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-23",
+    "entry": "orbit_states",
+    "inputs": {
+     "alt_km": 200.0,
+     "inclination_deg": -0.1,
+     "ltan_h": 10.5,
+     "scenario": "ECSS_LT_MODERATE",
+     "doy": 100.0,
+     "ut_start_h": 0.0,
+     "n_samples": 8.0
+    },
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-24",
+    "entry": "orbit_states",
+    "inputs": {
+     "alt_km": 200.0,
+     "inclination_deg": 180.1,
+     "ltan_h": 10.5,
+     "scenario": "ECSS_LT_MODERATE",
+     "doy": 100.0,
+     "ut_start_h": 0.0,
+     "n_samples": 8.0
+    },
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-25",
+    "entry": "orbit_states",
+    "inputs": {
+     "alt_km": 250.0,
+     "inclination_deg": 97.0,
+     "ltan_h": 10.5,
+     "scenario": "ECSS_LT_MODERATE",
+     "doy": 100.0,
+     "ut_start_h": 0.0,
+     "n_samples": 8.0
+    },
+    "expected_python": "ValueError (state domain)",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-26",
+    "entry": "orbit_states",
+    "inputs": {
+     "alt_km": 200.0,
+     "inclination_deg": 97.0,
+     "ltan_h": 10.5,
+     "scenario": "ECSS_LT_MODERATE",
+     "doy": 365.0,
+     "ut_start_h": 23.5,
+     "n_samples": 8.0
+    },
+    "expected_python": "ValueError (end of the dataset year)",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-27",
+    "entry": "orbit_states",
+    "inputs": {
+     "alt_km": 200.0,
+     "inclination_deg": 97.0,
+     "ltan_h": 10.5,
+     "scenario": "ECSS_LT_MEDIUM",
+     "doy": 100.0,
+     "ut_start_h": 0.0,
+     "n_samples": 8.0
+    },
+    "expected_python": "ValueError (state)",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-28",
+    "entry": "orbit_states",
+    "inputs": {
+     "alt_km": 200.0,
+     "inclination_deg": 97.0,
+     "ltan_h": 10.5,
+     "scenario": "ECSS_LT_MODERATE",
+     "doy": 100.0,
+     "ut_start_h": "NaN",
+     "n_samples": 8.0
+    },
+    "expected_python": "ValueError (int(nan))",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-29",
+    "entry": "orbit_states",
+    "inputs": {
+     "alt_km": 200.0,
+     "inclination_deg": 97.0,
+     "ltan_h": "NaN",
+     "scenario": "ECSS_LT_MODERATE",
+     "doy": 100.0,
+     "ut_start_h": 0.0,
+     "n_samples": 8.0
+    },
+    "expected_python": "ValueError (state lst)",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-30",
+    "entry": "orbit_states",
+    "inputs": {
+     "alt_km": 200.0,
+     "inclination_deg": "NaN",
+     "ltan_h": 10.5,
+     "scenario": "ECSS_LT_MODERATE",
+     "doy": 100.0,
+     "ut_start_h": 0.0,
+     "n_samples": 8.0
+    },
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-31",
+    "entry": "orbit_states",
+    "inputs": {
+     "alt_km": 200.0,
+     "inclination_deg": 97.0,
+     "ltan_h": 10.5,
+     "scenario": "ECSS_LT_MODERATE",
+     "doy": 100.0,
+     "ut_start_h": "+inf",
+     "n_samples": 8.0
+    },
+    "expected_python": "ValueError (int(nan))",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-32",
+    "entry": "orbit_states",
+    "inputs": {
+     "alt_km": 200.0,
+     "inclination_deg": 97.0,
+     "ltan_h": 10.5,
+     "scenario": "ECSS_LT_MODERATE",
+     "doy": 100.0,
+     "ut_start_h": 0.0,
+     "n_samples": "NaN"
+    },
+    "expected_python": "ValueError (int(nan))",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-33",
+    "entry": "orbit_states",
+    "inputs": {
+     "alt_km": 200.0,
+     "inclination_deg": 97.0,
+     "ltan_h": 10.5,
+     "scenario": "ECSS_LT_MODERATE",
+     "doy": 100.0,
+     "ut_start_h": 0.0,
+     "n_samples": "+inf"
+    },
+    "expected_python": "OverflowError (int(inf))",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-34",
+    "entry": "orbit_states",
+    "inputs": {
+     "alt_km": 200.0,
+     "inclination_deg": 97.0,
+     "ltan_h": 10.5,
+     "scenario": "ECSS_LT_MODERATE",
+     "doy": "+inf",
+     "ut_start_h": 0.0,
+     "n_samples": 8.0
+    },
+    "expected_python": "OverflowError (int(inf))",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "domain"
+   },
+   {
+    "id": "DE-D-35",
+    "entry": "load_design_states",
+    "inputs": {
+     "version": "v3"
+    },
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "unknown version"
+   },
+   {
+    "id": "DE-D-36",
+    "entry": "load_design_states",
+    "inputs": {
+     "version": ""
+    },
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "unknown version"
+   },
+   {
+    "id": "RF-D-01",
+    "entry": "refusal tree: orbit_load, wind_load (WindAtmosphere::load / atmosphere_orbit_v2.load), load_design_states(v2), design_state_set, execution, check",
+    "inputs": {
+     "tree": "atmosphere_msis21_orbit_v1.csv.gz removed"
+    },
+    "expected": {
+     "orbit_load": [
+      "FileNotFoundError",
+      "MODEL_ERROR"
+     ],
+     "wind_load": [
+      "FileNotFoundError",
+      "MODEL_ERROR"
+     ],
+     "load_design_states(v2)": [
+      "FileNotFoundError",
+      "MODEL_ERROR"
+     ],
+     "design_state_set": [
+      "returns",
+      "EVALUATED"
+     ],
+     "execution": [
+      "FileNotFoundError",
+      "MODEL_ERROR"
+     ],
+     "check": [
+      "FileNotFoundError",
+      "MODEL_ERROR"
+     ]
+    },
+    "message_key": "per entry"
+   },
+   {
+    "id": "RF-D-02",
+    "entry": "refusal tree: orbit_load, wind_load (WindAtmosphere::load / atmosphere_orbit_v2.load), load_design_states(v2), design_state_set, execution, check",
+    "inputs": {
+     "tree": "atmosphere_msis21_orbit_v1.csv.gz gzip-header MTIME byte (offset 4) 0x00 -> 0x01 (the decompressed CSV is unchanged; only the container differs)"
+    },
+    "expected": {
+     "orbit_load": [
+      "RuntimeError",
+      "MODEL_ERROR"
+     ],
+     "wind_load": [
+      "RuntimeError",
+      "MODEL_ERROR"
+     ],
+     "load_design_states(v2)": [
+      "RuntimeError",
+      "MODEL_ERROR"
+     ],
+     "design_state_set": [
+      "returns",
+      "EVALUATED"
+     ],
+     "execution": [
+      "RuntimeError",
+      "MODEL_ERROR"
+     ],
+     "check": [
+      "returns ok=False",
+      "ok=False"
+     ]
+    },
+    "message_key": "per entry"
+   },
+   {
+    "id": "RF-D-03",
+    "entry": "refusal tree: orbit_load, wind_load (WindAtmosphere::load / atmosphere_orbit_v2.load), load_design_states(v2), design_state_set, execution, check",
+    "inputs": {
+     "tree": "atmosphere_msis21_orbit_v1.json removed"
+    },
+    "expected": {
+     "orbit_load": [
+      "FileNotFoundError",
+      "MODEL_ERROR"
+     ],
+     "wind_load": [
+      "FileNotFoundError",
+      "MODEL_ERROR"
+     ],
+     "load_design_states(v2)": [
+      "FileNotFoundError",
+      "MODEL_ERROR"
+     ],
+     "design_state_set": [
+      "DesignStateSetError",
+      "MODEL_ERROR"
+     ],
+     "execution": [
+      "DesignStateSetError",
+      "MODEL_ERROR"
+     ],
+     "check": [
+      "FileNotFoundError",
+      "MODEL_ERROR"
+     ]
+    },
+    "message_key": "per entry"
+   },
+   {
+    "id": "RF-D-04",
+    "entry": "refusal tree: orbit_load, wind_load (WindAtmosphere::load / atmosphere_orbit_v2.load), load_design_states(v2), design_state_set, execution, check",
+    "inputs": {
+     "tree": "atmosphere_msis21_orbit_v1_design_states_v2.json with one byte changed inside the 'producer' string ('python -m' -> 'pythoN -m'; valid JSON)"
+    },
+    "expected": {
+     "orbit_load": [
+      "returns",
+      "EVALUATED"
+     ],
+     "wind_load": [
+      "returns",
+      "EVALUATED"
+     ],
+     "load_design_states(v2)": [
+      "RuntimeError",
+      "MODEL_ERROR"
+     ],
+     "design_state_set": [
+      "DesignStateSetError",
+      "MODEL_ERROR"
+     ],
+     "execution": [
+      "DesignStateSetError",
+      "MODEL_ERROR"
+     ],
+     "check": [
+      "returns ok=False",
+      "ok=False"
+     ]
+    },
+    "message_key": "per entry"
+   },
+   {
+    "id": "RF-D-05",
+    "entry": "refusal tree: orbit_load, wind_load (WindAtmosphere::load / atmosphere_orbit_v2.load), load_design_states(v2), design_state_set, execution, check",
+    "inputs": {
+     "tree": "atmosphere_msis21_orbit_v1_design_states_v2.json removed"
+    },
+    "expected": {
+     "orbit_load": [
+      "returns",
+      "EVALUATED"
+     ],
+     "wind_load": [
+      "returns",
+      "EVALUATED"
+     ],
+     "load_design_states(v2)": [
+      "FileNotFoundError",
+      "MODEL_ERROR"
+     ],
+     "design_state_set": [
+      "DesignStateSetError",
+      "MODEL_ERROR"
+     ],
+     "execution": [
+      "DesignStateSetError",
+      "MODEL_ERROR"
+     ],
+     "check": [
+      "returns ok=False",
+      "ok=False"
+     ]
+    },
+    "message_key": "per entry"
+   },
+   {
+    "id": "RF-D-06",
+    "entry": "refusal tree: orbit_load, wind_load (WindAtmosphere::load / atmosphere_orbit_v2.load), load_design_states(v2), design_state_set, execution, check",
+    "inputs": {
+     "tree": "atmosphere_msis21_hwm14_orbit_v2.csv.gz removed"
+    },
+    "expected": {
+     "orbit_load": [
+      "returns",
+      "EVALUATED"
+     ],
+     "wind_load": [
+      "FileNotFoundError",
+      "MODEL_ERROR"
+     ],
+     "load_design_states(v2)": [
+      "returns",
+      "EVALUATED"
+     ],
+     "design_state_set": [
+      "returns",
+      "EVALUATED"
+     ],
+     "execution": [
+      "FileNotFoundError",
+      "MODEL_ERROR"
+     ],
+     "check": [
+      "returns ok=True",
+      "ok=True"
+     ]
+    },
+    "message_key": "per entry"
+   },
+   {
+    "id": "RF-D-07",
+    "entry": "refusal tree: orbit_load, wind_load (WindAtmosphere::load / atmosphere_orbit_v2.load), load_design_states(v2), design_state_set, execution, check",
+    "inputs": {
+     "tree": "atmosphere_msis21_hwm14_orbit_v2.disturbance.csv.gz gzip-header MTIME byte (offset 4) 0x00 -> 0x01"
+    },
+    "expected": {
+     "orbit_load": [
+      "returns",
+      "EVALUATED"
+     ],
+     "wind_load": [
+      "RuntimeError",
+      "MODEL_ERROR"
+     ],
+     "load_design_states(v2)": [
+      "returns",
+      "EVALUATED"
+     ],
+     "design_state_set": [
+      "returns",
+      "EVALUATED"
+     ],
+     "execution": [
+      "RuntimeError",
+      "MODEL_ERROR"
+     ],
+     "check": [
+      "returns ok=True",
+      "ok=True"
+     ]
+    },
+    "message_key": "per entry"
+   },
+   {
+    "id": "RF-D-08",
+    "entry": "refusal tree: orbit_load, wind_load (WindAtmosphere::load / atmosphere_orbit_v2.load), load_design_states(v2), design_state_set, execution, check",
+    "inputs": {
+     "tree": "atmosphere_msis21_hwm14_orbit_v2.json removed"
+    },
+    "expected": {
+     "orbit_load": [
+      "returns",
+      "EVALUATED"
+     ],
+     "wind_load": [
+      "FileNotFoundError",
+      "MODEL_ERROR"
+     ],
+     "load_design_states(v2)": [
+      "returns",
+      "EVALUATED"
+     ],
+     "design_state_set": [
+      "returns",
+      "EVALUATED"
+     ],
+     "execution": [
+      "FileNotFoundError",
+      "MODEL_ERROR"
+     ],
+     "check": [
+      "returns ok=True",
+      "ok=True"
+     ]
+    },
+    "message_key": "per entry"
+   },
+   {
+    "id": "RF-D-09",
+    "entry": "refusal tree: orbit_load, wind_load (WindAtmosphere::load / atmosphere_orbit_v2.load), load_design_states(v2), design_state_set, execution, check",
+    "inputs": {
+     "tree": "DIV-D-01: the design-state file altered as RF-D-04 AND the orbit sidecar JSON re-pinned to it (design_states_file_v2.sha256 set to the altered file's sha256, written back with json.dump(indent=1))"
+    },
+    "expected": {
+     "orbit_load": [
+      "returns (sidecar not hash-checked)",
+      "MODEL_ERROR"
+     ],
+     "wind_load": [
+      "returns",
+      "MODEL_ERROR"
+     ],
+     "load_design_states(v2)": [
+      "returns (record matches)",
+      "MODEL_ERROR"
+     ],
+     "design_state_set": [
+      "DesignStateSetError",
+      "MODEL_ERROR"
+     ],
+     "execution": [
+      "DesignStateSetError",
+      "MODEL_ERROR"
+     ],
+     "check": [
+      "returns ok=False",
+      "MODEL_ERROR"
+     ]
+    },
+    "message_key": "per entry"
+   },
+   {
+    "id": "RF-D-10",
+    "entry": "refusal tree: orbit_load, wind_load (WindAtmosphere::load / atmosphere_orbit_v2.load), load_design_states(v2), design_state_set, execution, check",
+    "inputs": {
+     "tree": "DIV-D-01: config/model_set/physics_model_set_v1.json with one byte changed inside its 'id' string (the copied config/MANIFEST.json then no longer matches it)"
+    },
+    "expected": {
+     "orbit_load": [
+      "returns (the reference reads no model set)",
+      "MODEL_ERROR"
+     ],
+     "wind_load": [
+      "returns",
+      "MODEL_ERROR"
+     ],
+     "load_design_states(v2)": [
+      "returns",
+      "MODEL_ERROR"
+     ],
+     "design_state_set": [
+      "returns",
+      "MODEL_ERROR"
+     ],
+     "execution": [
+      "returns",
+      "MODEL_ERROR"
+     ],
+     "check": [
+      "returns ok=True",
+      "MODEL_ERROR"
+     ]
+    },
+    "message_key": "per entry"
+   }
+  ],
+  "python_harness_redirection": "refusal trees are temporary directories holding a copy of config/ and of abep_sim/data/ (unchanged files symlinked); the harness sets the module path constants (atmosphere_orbit: DATA_DIR, GZ_PATH, LEGACY_CSV_PATH, JSON_PATH, DESIGN_PATH, DESIGN_V2_PATH; atmosphere_orbit_v2: DATA_DIR, GZ_PATH, DIST_GZ_PATH, JSON_PATH; intake_synthesis: DATA_DIR) to the tree, clears atmosphere_orbit._CACHE, atmosphere_orbit_v2._CACHE and the lru caches of load_design_state_set / required_states, and restores everything afterwards; the Rust CLI receives --repo-root <tree>. Python's configuration reads (engineering constraints) use the repository's own config/, which the tree copies byte for byte",
+  "mapping_rule": "every Python exception class / status used by the component maps to exactly one Rust error variant / status; no Rust path may return a value where Python fails, or fail where Python returns (CLAUDE.md rule 3), except the documented divergences, whose expected outcomes are registered above and scored as such",
+  "documented_divergence": [
+   {
+    "id": "DIV-D-01",
+    "statement": "Rust additionally pins the frozen files through config/MANIFEST.json -> config/model_set/physics_model_set_v1.json and config/environment/design_state_set_ref_v1.json (hash_pins); the reference trusts its sidecar JSONs. A consistently re-pinned sidecar (RF-D-09) or an altered model set (RF-D-10) -> Python returns, Rust MODEL_ERROR",
+    "disposition": "A9.29 sec. 6 hash verification against the existing pins; registered outcomes RF-D-09 / RF-D-10"
+   },
+   {
+    "id": "DIV-D-02",
+    "statement": "Rust's v1 load also checks the five key columns (doy, alt_km, lat_deg, lon_deg, lst_h) of every row against the canonical row order, which the reference relies on without checking (its v2 load checks them)",
+    "disposition": "defence in depth; cannot trigger on the hash-pinned data; no vector"
+   },
+   {
+    "id": "DIV-D-03",
+    "statement": "check() ports the frozen-data part only: CSV sha256, container sha256 / bytes, CSV byte count, legacy uncompressed copy absent, header, row_count, check-subset sha256, v1 design-state file hash, v2 design-state file hash and its re-derivation within DESIGN_V2_REL_TOL, design_states_file_v2 record fields. Not ported: the pymsis producer re-run and rho composition regression (live NRLMSIS, RM-OQ-02), the gzip re-encoding identity (producer-side container encoding), equality of the descriptive metadata with the producer's module definitions (_metadata, ERRATA, GZIP_SPEC: builder records, RM-R41), the v1 design_states() re-derivation (immutable traceability-only set, RM-R41). Scored with the reference in its supported pymsis-absent configuration (the harness sets atmosphere_orbit._pymsis_version to return None)",
+    "disposition": "ok is scored EXACT on the pristine tree and RF-D-02 / 04..08; on RF-D-09 / 10 Rust refuses (DIV-D-01)"
+   },
+   {
+    "id": "DIV-D-04",
+    "statement": "node_state indices are unsigned in Rust: numpy's negative-index wrap is not representable; an index beyond the axis -> Python IndexError <-> Rust OUT_OF_DOMAIN (DE-D-15/16)",
+    "disposition": "no negative-index vector"
+   },
+   {
+    "id": "DIV-D-05",
+    "statement": "orbit_states(None, ...) -> Python ValueError; the Rust API has no None",
+    "disposition": "not representable; no vector"
+   },
+   {
+    "id": "DIV-D-06",
+    "statement": "the reference memoizes load() / load_design_state_set() / required_states() per process; Rust loads explicitly and holds the loaded data by value (pure functions of the frozen bytes)",
+    "disposition": "no observable"
+   }
+  ]
+ },
+ "schema_parity": {
+  "schemas": [
+   "NOT_APPLICABLE: no JSON schema file; the Rust records serialize the reference dict keys in the reference order (observables 'key order')"
+  ],
+  "rules": [
+   "field names, units, types identical",
+   "ordering identical where it carries meaning (dict key order, design-state order, orbit sample order)",
+   "Rust record types tested against the same key lists",
+   "labels (dataset_status, orbit_inputs_status, orbit_basis, V_basis) identical (value_status_preservation)"
+  ]
+ },
+ "golden_and_reference_cases": {
+  "references": [
+   "captured Python outputs of every vector at python_commit",
+   "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json (INV-D-01, read as committed)"
+  ],
+  "rule": "references are read as committed; they are never regenerated to make Rust pass (RM-R11); a disagreement is investigated and classified (RUST_DEFECT | PYTHON_REFERENCE_DEFECT (own governance, new contract version) | CONTRACT_DEFECT (new contract version))",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_ATMOSPHERE_ORBIT_PY/reference_outputs/",
+   "captured_at_python_commit": "96db5524ec917e99e507def24f3ee0b263c78ebc",
+   "sha256_manifest": "reference_outputs/MANIFEST.json, written by the scoring run",
+   "purpose": "lets CI check Rust against the Python reference after Python is retired from active execution"
+  },
+  "historical_golden_rule": "RM-R28: golden_v2 cases are historical and not used here"
+ },
+ "julia_bridge": {
+  "applicable": false,
+  "reason": "no HallThruster.jl path; environment layer only",
+  "hallthruster_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5 (recorded for completeness; not used)"
+ },
+ "performance_measurement": {
+  "status": "reported, not a decision criterion (A9.24 items 1 and 6); no matching PRE_RUST_REFERENCE_BASELINE workload exists for the environment layer",
+  "workloads": [
+   {
+    "id": "PERF-D-01",
+    "description": "design_states_v2() full derivation incl. lat_refinement_sensitivity (dataset already loaded)"
+   },
+   {
+    "id": "PERF-D-02",
+    "description": "the 196-state execution including the verified loads of the orbit and wind datasets"
+   },
+   {
+    "id": "PERF-D-03",
+    "description": "the 1600 interior orbit_state vectors (dataset already loaded)"
+   }
+  ],
+  "repeats": 3,
+  "statistic": "median wall-clock per implementation in one session on one machine; speed-up = median_python / median_rust",
+  "machine_manifest": "recorded in the report"
+ },
+ "decision_rules": {
+  "per_test": "every scored observable of every vector meets its tolerance class; every status (EVALUATED / OUT_OF_DOMAIN / MODEL_ERROR) is EXACT_VALUE-equal to the mapped Python outcome",
+  "aggregate": "NOT_APPLICABLE (no STATISTICAL entry point)",
+  "exact_invariants_required": true,
+  "conservation_required": true,
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "verdict": "ADMITTED iff every per-test, invariant, conservation, domain/error and schema check passes and every reference file matches sha256_at_registration; PARITY_PASS <=> ADMITTED, PARITY_FAIL <=> NOT_ADMITTED",
+  "verdict_vocabulary": [
+   "ADMITTED",
+   "NOT_ADMITTED",
+   "REFUSED_REFERENCE_CHANGED",
+   "INPUT_MISMATCH",
+   "NOT_RUN_RUST_UNAVAILABLE",
+   "REFUSED_CLASSIFICATION"
+  ],
+  "parity_vocabulary": [
+   "PARITY_PASS",
+   "PARITY_FAIL"
+  ],
+  "meaning_of_ADMITTED": "A9.24 item 1: Rust becomes authoritative for this component (within the registered domain); new production results for it come from Rust and carry implementation = rust, rust_commit and this contract id; the Python component may then be retired from active execution. It is NOT physics validation.",
+  "no_retuning": "tolerances, observables, inputs, n, seeds and rules are fixed; after NOT_ADMITTED only a code fix plus a new contract version with a fresh scoring_master_seed may follow; the failed report stays; no execution is discarded",
+  "disagreement_rule": "never rewrite a Python result, golden, fixture or frozen dataset to make Rust pass (RM-R11)",
+  "observable_scope": "observables are restricted to retained selected-architecture physics; an observable that depends on an excluded legacy path is not registered (RM-R20)",
+  "scoring_once": "the scoring comparison runs once (scoring_master_seed); the harness refuses a second scoring run when parity_report_v1.json exists; development runs (development_master_seed) never write a report"
+ },
+ "bid_boundary": {
+  "statement": "this contract and its Rust implementation are post-bid-freeze work; no output of it may be cited by the bid package unless the owner re-freezes (PROGRAMME.md section 4; bid_source_guard)",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b (technical source) / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (package / freeze record, A9.28; lineage b5849affae22a6709ad217a184f6fe896d15410a -> 2de86ab); A9.29 sec. 3: 2de86ab is the terminal owner-authorized package state",
+  "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+ },
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, threshold or requirement",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27)",
+  "not a gate PASS: absent determining evidence stays NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN / MODEL_ERROR (RM-R31)"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-ABEP_SIM_ATMOSPHERE_ORBIT_PY/parity_report_v1.json (+ .md)",
+  "runner": "scripts/rust_migration/es2_env_parity.py",
+  "report_fields": [
+   "contract_sha256",
+   "python_commit",
+   "reference_sha256",
+   "rust_commit",
+   "build_provenance (rustc, Cargo.lock sha256, source sha256)",
+   "environment",
+   "per-test results",
+   "aggregates",
+   "invariants",
+   "conservation",
+   "domain/error",
+   "schema",
+   "performance",
+   "verdicts",
+   "campaign_history",
+   "ledger_update_requested"
+  ]
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator (A9.25 message 3)",
+  "checks": [
+   "component.migration_class is ACTIVE_SELECTED_ARCHITECTURE_PHYSICS (inventory v3.1 row, classification_confidence_v3_1 PLAN_APPROVED_A9_29)",
+   "no observable, input or code path of the contract belongs to the excluded legacy vocabulary (LaB6Cathode, lab6_xe, Xe hollow-cathode heater / keeper, C1 flight fallback, hollow-cathode Hall cards, multi-family selection); the component has no not_ported_parts in the inventory",
+   "the Python harness traverses no legacy path to reach the scored functions",
+   "the Rust implementation contains none of the forbidden identifiers (CI_PLAN.md sec. 1 principle 6)",
+   "not a GROUND_TEST_PROGRAMME_ONLY contract (no abep-groundtest dependency)"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict): the contract cannot be registered"
+ },
+ "value_status_preservation": {
+  "rule": "RM-R27: no provisional / analog / allocation input is promoted by migration to CBE, measured or frozen truth",
+  "inputs": [
+   {
+    "id": "HWM14 orbit v2 wind",
+    "value": "every wind / state_v2 output",
+    "value_status": "DESIGN_ENVELOPE_PARAMETRIC (A9.17 WINDS)",
+    "open_action": "real orbit TBD (A9.17 ORBIT)",
+    "committed_labels": [
+     "dataset_status = DESIGN_ENVELOPE_PARAMETRIC"
+    ]
+   },
+   {
+    "id": "orbit_states inclination / LTAN",
+    "value": "caller-supplied",
+    "value_status": "PARAMETRIC (caller-supplied; not a requirement input)",
+    "open_action": "A9.17 ORBIT",
+    "committed_labels": [
+     "orbit_inputs_status",
+     "wind_included = False",
+     "wind_open_item = ATM-OI-01"
+    ]
+   },
+   {
+    "id": "design-state set v2 orbit basis",
+    "value": "196 states",
+    "value_status": "BROAD_ENVELOPE (inclination / LTAN TBD from the official mission ICD)",
+    "open_action": "A9.17 ORBIT / A9.21 EXTERNAL_INPUTS",
+    "committed_labels": [
+     "orbit_basis",
+     "atm() orbit_basis = BROAD_ENVELOPE_ALL_INCLINATIONS_ALL_LTAN_NOT_MISSION_ICD",
+     "atm() V_basis = V_ORB_INERTIAL_CIRCULAR ... (no co-rotation / wind)"
+    ]
+   }
+  ],
+  "check": "VS-D-01..03: the Rust outputs carry each label exactly (EXACT_VALUE observables); VS-D-04 (Rust-only): every execution record's wind block carries dataset_status DESIGN_ENVELOPE_PARAMETRIC and used_in_free_stream_velocity = false, consistent with V_basis"
+ },
+ "new_physics_verification": {
+  "applies_when": "contract_kind = NEW_PHYSICS (otherwise NOT_APPLICABLE)",
+  "status": "NOT_APPLICABLE",
+  "reason": "EXISTING_PHYSICS_PARITY contract"
+ }
+}

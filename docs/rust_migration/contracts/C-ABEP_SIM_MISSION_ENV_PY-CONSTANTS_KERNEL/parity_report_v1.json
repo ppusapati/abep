@@ -1,0 +1,526 @@
+{
+ "schema": [],
+ "contract": {
+  "id": "PARITY-C-ABEP_SIM_MISSION_ENV_PY-CONSTANTS_KERNEL-V1",
+  "path": "docs/rust_migration/contracts/C-ABEP_SIM_MISSION_ENV_PY-CONSTANTS_KERNEL/parity_prereg_v1.json",
+  "sha256": "83cc3513cccbab30b59c7fc4a4bd86e2b79574137755a64035d9786f1911c8e8",
+  "registration_commit": "a838533c14c5f2efca0d7db9915917a39017aea1"
+ },
+ "date_utc": "2026-10-05T13:38:17Z",
+ "python_commit": "96db5524ec917e99e507def24f3ee0b263c78ebc",
+ "reference_sha256": {
+  "abep_sim/mission_env.py": {
+   "registered": "f568fba29678852565b03821e85dd7cce1fb18ec623ab2ca282e521a97f164af",
+   "at_scoring": "f568fba29678852565b03821e85dd7cce1fb18ec623ab2ca282e521a97f164af"
+  },
+  "abep_sim/constants.py": {
+   "registered": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7",
+   "at_scoring": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7"
+  }
+ },
+ "rust_commit": "80ac7c78b0259d2a2e8fed81e74a9dc44c4ed879",
+ "build_provenance": {
+  "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+  "cargo": "cargo 1.94.1 (29ea6fb6a 2026-03-24)",
+  "cargo_lock_sha256": "25ffa86730d04f18769444e4fc7262305e640d2887d2c7b0eb91df4f0eafc805",
+  "source_sha256": {
+   "Cargo.lock": "25ffa86730d04f18769444e4fc7262305e640d2887d2c7b0eb91df4f0eafc805",
+   "Cargo.toml": "2ba9b186b90dc2fdced410198d52703ecd061b38cad83f7186d0aaa4c7bfcf5e",
+   "crates/abep-atmos/src/mission_env_kernel.rs": "c48e3c0952a2c09a3095b3904a5622b4f85c7d2d33c8a8f7d843e491dff6de73",
+   "crates/abep-atmos/src/pyfloat.rs": "3591be912ce26f94fdba00dde6d19375514532370b748f84af05cd7b77af4457",
+   "crates/abep-types/src/constants.rs": "c97e39931d145db143398e3d5de9eb4f9ba86943a75b3c1302df82c01b4efd1d",
+   "crates/abep-types/src/lib.rs": "1ba60bca0d0c78a64c121111233f48b60a21caa132d2d8292c81d0f898ccf2af",
+   "rust-toolchain.toml": "7e44dbedb86596d94974ef8cb279f0e81496ea92b519c14940259661496f8499"
+  },
+  "harness": {
+   "path": "scripts/rust_migration/es2_env_parity.py",
+   "sha256": "9def17b8a6d22acb4538a9bfcb8f17cfc9ec4b40dbf5dc3e39a276eed25e5fbb"
+  },
+  "binary": "target/release/abep-env-parity (cargo build --release --locked)"
+ },
+ "environment": {
+  "python": "3.11.15",
+  "numpy": "2.4.4",
+  "scipy": "1.17.1",
+  "pandas": "3.0.2",
+  "numpy_simd_baseline": [
+   "X86_V2"
+  ],
+  "numpy_simd_dispatch": [
+   "X86_V3",
+   "X86_V4",
+   "AVX512_ICL",
+   "AVX512_SPR"
+  ],
+  "numpy_simd_avx512f_enabled": true,
+  "blas": "scipy-openblas 0.3.31.188.0",
+  "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+  "platform": "Linux-6.18.44-fc-v70-x86_64-with-glibc2.39",
+  "thread_env": {
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1"
+  },
+  "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312"
+ },
+ "mode": "scoring",
+ "scoring_master_seed": 731905203,
+ "n_vectors": 439,
+ "per_test": {
+  "observables": [
+   {
+    "entry": "mission_env_constants",
+    "observable": "status",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "mission_env_constants",
+    "observable": "J2 (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "mission_env_constants",
+    "observable": "OMEGA_E (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "spacecraft_defaults",
+    "observable": "status",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "spacecraft_defaults",
+    "observable": "field names and order",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "spacecraft_defaults",
+    "observable": "mass_kg (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "spacecraft_defaults",
+    "observable": "bus_frontal_m2 (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "spacecraft_defaults",
+    "observable": "bus_cd (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "spacecraft_defaults",
+    "observable": "array_area_m2 (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "spacecraft_defaults",
+    "observable": "array_edge_on",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "spacecraft_defaults",
+    "observable": "array_thickness_m (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "spacecraft_defaults",
+    "observable": "array_span_m (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "spacecraft_defaults",
+    "observable": "array_eff (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "spacecraft_defaults",
+    "observable": "array_deg_per_yr (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "spacecraft_defaults",
+    "observable": "array_angle_from_thrust_axis_deg (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "spacecraft_defaults",
+    "observable": "array_distance_m (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "spacecraft_defaults",
+    "observable": "pointing_sigma_deg (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "spacecraft_defaults",
+    "observable": "eps_eff (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "spacecraft_defaults",
+    "observable": "bus_housekeeping_W (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "spacecraft_defaults",
+    "observable": "inc_deg (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "spacecraft_defaults",
+    "observable": "ltan_h (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "spacecraft_defaults",
+    "observable": "intake_cd_ref (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "sso_inclination_deg",
+    "observable": "status",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 437,
+    "n_fail": 0,
+    "n_bit_identical": 437,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "sso_inclination_deg",
+    "observable": "inclination_deg",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 429,
+    "n_fail": 0,
+    "n_bit_identical": 429,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   }
+  ],
+  "n_failures": 0,
+  "failures_first_50": []
+ },
+ "aggregates": "NOT_APPLICABLE (no STATISTICAL entry point)",
+ "domain_error": {
+  "vectors": [
+   {
+    "vector": "DE-C-01",
+    "entry": "sso_inclination_deg",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-C-02",
+    "entry": "sso_inclination_deg",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-C-03",
+    "entry": "sso_inclination_deg",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ZeroDivisionError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-C-04",
+    "entry": "sso_inclination_deg",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-C-05",
+    "entry": "sso_inclination_deg",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "OverflowError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-C-06",
+    "entry": "sso_inclination_deg",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ZeroDivisionError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-C-07",
+    "entry": "sso_inclination_deg",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ZeroDivisionError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-C-08",
+    "entry": "sso_inclination_deg",
+    "python": "EVALUATED",
+    "python_exception": null,
+    "rust": "OUT_OF_DOMAIN",
+    "documented_divergence": "DIV-C-01",
+    "ok": true
+   }
+  ],
+  "refusal_trees": []
+ },
+ "invariants": {
+  "determinism": {
+   "rust_two_processes_byte_identical": true,
+   "rust_stdout_sha256": "a7fd24ffe7974c07463bf7606d929c65cc094b0f2ede581e612bce323f5f5972",
+   "python_two_evaluations_equal": true
+  },
+  "governing_hashes": {
+   "python": {
+    "config_manifest_sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883",
+    "model_set_sha256": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1",
+    "design_state_set_ref_sha256": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484",
+    "design_state_set_sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049"
+   },
+   "rust": {
+    "config_manifest_sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883",
+    "design_state_set_ref_sha256": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484",
+    "design_state_set_sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+    "model_set_sha256": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1"
+   },
+   "equal_and_registered": true
+  }
+ },
+ "conservation": [],
+ "performance": {
+  "status": "reported, never a decision criterion",
+  "workloads": [],
+  "campaign_timing": {
+   "python_reference_s": 0.001580377999744087,
+   "rust_cli_wall_s": 0.005285035999804677,
+   "rust_per_request_s_sum": 0.000183144
+  },
+  "rust_per_request_timing_top10": [
+   {
+    "id": "G-C-S-00",
+    "elapsed_s": 1.6835e-05
+   },
+   {
+    "id": "G-C-01",
+    "elapsed_s": 7.539e-06
+   },
+   {
+    "id": "DE-C-01",
+    "elapsed_s": 6.88e-06
+   },
+   {
+    "id": "G-C-02",
+    "elapsed_s": 3.833e-06
+   },
+   {
+    "id": "R-C-0-275",
+    "elapsed_s": 3.552e-06
+   },
+   {
+    "id": "DE-C-05",
+    "elapsed_s": 1.006e-06
+   },
+   {
+    "id": "DE-C-02",
+    "elapsed_s": 9.27e-07
+   },
+   {
+    "id": "DE-C-07",
+    "elapsed_s": 8.51e-07
+   },
+   {
+    "id": "R-C-0-079",
+    "elapsed_s": 7.48e-07
+   },
+   {
+    "id": "R-C-0-169",
+    "elapsed_s": 7.46e-07
+   }
+  ]
+ },
+ "checks": {
+  "per_test": true,
+  "refusal_trees": true,
+  "determinism": true,
+  "governing": true,
+  "all": true
+ },
+ "verdict": "ADMITTED",
+ "parity_verdict": "PARITY_PASS",
+ "campaign_history": [
+  {
+   "date_utc": "2026-10-05T13:38:17Z",
+   "mode": "scoring",
+   "seed": 731905203,
+   "verdict": "PARITY_PASS",
+   "executions": 1
+  }
+ ],
+ "reference_outputs": {
+  "path": "docs/rust_migration/contracts/C-ABEP_SIM_MISSION_ENV_PY-CONSTANTS_KERNEL/reference_outputs",
+  "manifest_sha256": "3fa6829c1148ac2047e278562b0afda225e0e4483de38953e205e5d8d430915a"
+ },
+ "ledger_update_requested": [
+  {
+   "component": "C-ABEP_SIM_MISSION_ENV_PY",
+   "requested_status": "KERNEL_ADMITTED (RM-R17); module stays PYTHON_REFERENCE",
+   "scope": "J2, OMEGA_E, Spacecraft defaults, sso_inclination_deg",
+   "authoritative_implementation": "rust: abep_atmos::mission_env_kernel"
+  }
+ ],
+ "notes": [
+  "harness: the contracts say the harness is committed 'after this contract and before any comparison'. It was developed with development-seed comparisons (never scored, no report) and committed before the single scoring run; every scored generator, tolerance and decision rule is the registered one. Recorded as a disclosure, not a change of the contract"
+ ],
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, threshold or requirement",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27)",
+  "not a gate PASS: absent determining evidence stays NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN / MODEL_ERROR (RM-R31)"
+ ]
+}

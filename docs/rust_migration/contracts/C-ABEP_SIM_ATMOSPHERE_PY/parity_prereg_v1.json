@@ -1,0 +1,943 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-ABEP_SIM_ATMOSPHERE_PY-V1",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "component": {
+  "inventory_id": "C-ABEP_SIM_ATMOSPHERE_PY",
+  "inventory_path": "docs/rust_migration/component_inventory_v3_1.json",
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "migration_wave": "W1E",
+  "scope": "named function subset (kernel granularity, RM-R17) = the whole retained production path of the module: the frozen NRLMSIS 2.1 orbit-averaged scenario reader",
+  "functions_or_entry_points": [
+   "abep_sim/atmosphere.py::atmosphere (frozen-scenario branch: orbit_average=True, lat_deg=None, lon_deg=None, ap=15.0, date=FROZEN_EPOCH, use_msis None/False, ABEP_ATMOSPHERE unset or 'frozen', ABEP_ALLOW_TABLE_ATMOSPHERE unset)",
+   "abep_sim/atmosphere.py::_interp_frozen",
+   "abep_sim/atmosphere.py::_frozen",
+   "abep_sim/atmosphere.py::orbital_velocity"
+  ],
+  "out_of_scope": [
+   "abep_sim/atmosphere.py::atmosphere live-NRLMSIS branch (pymsis; use_msis=True or any non-scenario argument): RM-OQ-02 OWNER_DECIDED_A9_29 sec. 6 - no live NRLMSIS regeneration and no Fortran FFI on the critical path",
+   "abep_sim/atmosphere.py::_interp_table / _TABLE / _SOLAR_F107-label table branch (opt-in ABEP_ALLOW_TABLE_ATMOSPHERE=1 approximate built-in table; not a production path)",
+   "abep_sim/atmosphere.py `build` CLI (rule-1 regeneration tool, RM-OQ-02)",
+   "abep_sim/atmosphere.py::_MSIS_CACHE (history-dependent memo; see DIV-A-03)"
+  ],
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+  "extract_kernel_id": "NOT_APPLICABLE",
+  "active_toolchain_requirement": "NOT_APPLICABLE",
+  "excluded_legacy_paths": [],
+  "owner_disposition_a9_28": "NOT_APPLICABLE",
+  "simulation_completion_wp": "SC-WP-01",
+  "owner_disposition_a9_29": "RM-OQ-02 OWNER_DECIDED_A9_29 (sec. 6): Rust implements deterministic loading, schema / domain checks, hash verification and state selection over the frozen hash-pinned dataset; no live regeneration on the critical path"
+ },
+ "date": "2026-10-05",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of this component was executed (lane B1, ES-2, SC-WP-01). The registration commit is recorded in the report, not here.",
+ "supersedes": {
+  "path": null,
+  "sha256": null,
+  "reason": null
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "lane": {
+  "id": "B1",
+  "execution_step": "ES-2",
+  "work_package": "SC-WP-01",
+  "branch": "lane-es2-env",
+  "authority": "A9.29 secs. 6, 13 (RM-OQ-02); simulation_completion_programme_v1_1.json SC-WP-01"
+ },
+ "reference_implementation": {
+  "python_commit": "96db5524ec917e99e507def24f3ee0b263c78ebc",
+  "python_commit_note": "96db552 = integration/simulation-complete lineage (Rust workspace skeleton); integration/simulation-complete later advanced to 35c06e4 with a docs-only merge; abep_sim/ is identical at both. The bid record 5eee4b8 / 2de86ab is never a reference commit for new work",
+  "files": [
+   {
+    "path": "abep_sim/atmosphere.py",
+    "sha256_at_registration": "690d6931bb595c14736db9d9c284fb4e2f98727a8749262edebe3d8621e87e8b"
+   },
+   {
+    "path": "abep_sim/constants.py",
+    "sha256_at_registration": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7"
+   }
+  ],
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration; a changed reference requires a new contract version",
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4",
+   "scipy": "1.17.1",
+   "pandas": "3.0.2",
+   "pymsis": "0.13.0 installed; NOT used by any registered entry point (frozen-data paths only; check() is scored in its pymsis-absent configuration)",
+   "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+   "blas": "scipy-openblas 0.3.31.188.0 bundled with numpy (DYNAMIC_ARCH, USE64BITINT)",
+   "numpy_simd": "baseline X86_V2; dispatch X86_V3 / X86_V4 / AVX512_ICL / AVX512_SPR enabled on the registration host (Intel Xeon @ 2.10GHz, AVX512F): numpy float64 log / exp / cos on arrays run AVX512 SIMD loops, not glibc libm",
+   "thread_env": {
+    "OMP_NUM_THREADS": "1 (set by the harness for every reference run)",
+    "OPENBLAS_NUM_THREADS": "1 (set by the harness for every reference run)"
+   },
+   "recorded_again_at_scoring": "python / numpy / scipy / pandas versions, numpy SIMD dispatch, BLAS, CPU model and thread env are re-read and written into the report; a version change is INPUT_MISMATCH (not a verdict)"
+  }
+ },
+ "rust_implementation": {
+  "crate": "abep-atmos (physics) + abep-data (frozen reader)",
+  "functions_or_entry_points": [
+   "abep_atmos::msis21::atmosphere(&Msis21Frozen, alt_km: f64, solar: Solar) -> AbepResult<AtmosphereState>",
+   "abep_atmos::msis21::interp_frozen",
+   "abep_atmos::msis21::Msis21Frozen::load(repo_root) (wraps abep_data::msis21_v1::load)",
+   "abep_atmos::msis21::orbital_velocity(alt_km: f64) -> AbepResult<f64>",
+   "CLI: cargo run --release --locked -p abep-atmos --bin abep-env-parity (JSON request on stdin, JSON results on stdout) entries 'atmosphere', 'orbital_velocity', 'msis21_load'"
+  ],
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (rust-toolchain.toml channel 1.94.1)",
+  "provenance_sources": [
+   "Cargo.toml",
+   "Cargo.lock",
+   "rust-toolchain.toml",
+   "crates/abep-types/src/**",
+   "crates/abep-provenance/src/**",
+   "crates/abep-data/src/**",
+   "crates/abep-atmos/src/**"
+  ],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it (A9.14 S10.4 RUSTCI-1, generalised)"
+ },
+ "governing_hashes": {
+  "config_manifest": {
+   "path": "config/MANIFEST.json",
+   "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+  },
+  "architecture_hash": "NOT_APPLICABLE: architecture-independent environment physics (SC-WP-01 relevance: every selected-architecture layer consumes it)",
+  "model_set_hash": {
+   "path": "config/model_set/physics_model_set_v1.json",
+   "sha256": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1",
+   "role": "pins every frozen data file read by this contract (data[] entries)"
+  },
+  "design_state_set_hash": "NOT_APPLICABLE",
+  "rule": "both implementations must report these exact values for every run; a mismatch voids the run (status INPUT_MISMATCH, not a verdict)"
+ },
+ "pinned_inputs_sha256": {
+  "abep_sim/data/atmosphere_msis21_v1.csv": "5e108c6e5cb7c03ed9b741233fafbc71c7813987e1ff3d0596b04c99c4a9bff7",
+  "abep_sim/data/atmosphere_msis21_v1.json": "38a6f662521a8795b28186ccab5fbb007da59a861f59fde50400e7092e181160",
+  "config/MANIFEST.json": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883",
+  "config/model_set/physics_model_set_v1.json": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1"
+ },
+ "frozen_data_read_only": [
+  "abep_sim/data/atmosphere_msis21_v1.csv",
+  "abep_sim/data/atmosphere_msis21_v1.json"
+ ],
+ "hash_pins": {
+  "abep_sim/data/atmosphere_msis21_v1.csv": [
+   "config/MANIFEST.json -> config/model_set/physics_model_set_v1.json data[] sha256 (full)",
+   "abep_sim/data/atmosphere_msis21_v1.json sha256_16 (16-hex prefix of the CSV sha256)"
+  ],
+  "abep_sim/data/atmosphere_msis21_v1.json": [
+   "config/MANIFEST.json -> config/model_set/physics_model_set_v1.json data[] sha256"
+  ],
+  "rule": "Rust verifies every pin on load; any mismatch or missing file is MODEL_ERROR (CLAUDE.md rules 1, 3; A9.29 sec. 6). Python's _frozen() verifies none of them (DIV-A-02)"
+ },
+ "inputs": {
+  "harness": "scripts/rust_migration/es2_env_parity.py (committed after this contract and before any comparison; implements the generators below verbatim; a deviation is a CONTRACT_DEFECT -> new contract version)",
+  "golden_vectors": {
+   "source": "registered grid: every node of the frozen CSV",
+   "count": 380,
+   "list_or_generator": "atmosphere(alt_km, solar=f107) for alt_km in 150.0, 152.0, ..., 300.0 (76 values, 150 + 2 i) and f107 in (70.0, 100.0, 150.0, 190.0, 230.0) (numeric solar); loop order f107 outer, alt inner"
+  },
+  "edge_cases": [
+   {
+    "id": "E-A-01",
+    "inputs": {
+     "alt_km": 200.0,
+     "solar": "low"
+    },
+    "note": "label -> F10.7 70"
+   },
+   {
+    "id": "E-A-02",
+    "inputs": {
+     "alt_km": 200.0,
+     "solar": "mean"
+    },
+    "note": "label -> F10.7 150 (design point)"
+   },
+   {
+    "id": "E-A-03",
+    "inputs": {
+     "alt_km": 200.0,
+     "solar": "high"
+    },
+    "note": "label -> F10.7 230"
+   },
+   {
+    "id": "E-A-04",
+    "inputs": {
+     "alt_km": 180.0,
+     "solar": "mean"
+    },
+    "note": "RFP lower altitude"
+   },
+   {
+    "id": "E-A-05",
+    "inputs": {
+     "alt_km": 230.0,
+     "solar": "mean"
+    },
+    "note": "RFP upper altitude"
+   },
+   {
+    "id": "E-A-06",
+    "inputs": {
+     "alt_km": 150.0,
+     "solar": 70.0
+    },
+    "note": "domain corner"
+   },
+   {
+    "id": "E-A-07",
+    "inputs": {
+     "alt_km": 300.0,
+     "solar": 230.0
+    },
+    "note": "domain corner"
+   },
+   {
+    "id": "E-A-08",
+    "inputs": {
+     "alt_km": 150.0,
+     "solar": 230.0
+    },
+    "note": "domain corner"
+   },
+   {
+    "id": "E-A-09",
+    "inputs": {
+     "alt_km": 300.0,
+     "solar": 70.0
+    },
+    "note": "domain corner"
+   },
+   {
+    "id": "E-A-10",
+    "inputs": {
+     "alt_km": 205.5,
+     "solar": 110.0
+    },
+    "note": "between nodes in both axes"
+   },
+   {
+    "id": "E-A-11",
+    "inputs": {
+     "alt_km": 299.999999,
+     "solar": 229.999999
+    },
+    "note": "just inside the upper ends"
+   },
+   {
+    "id": "E-A-12",
+    "inputs": {
+     "alt_km": 150.000001,
+     "solar": 70.000001
+    },
+    "note": "just inside the lower ends"
+   },
+   {
+    "id": "E-A-13",
+    "inputs": {
+     "alt_km": 200.0000001,
+     "solar": 150.0
+    },
+    "note": "next to a node"
+   },
+   {
+    "id": "E-A-14",
+    "inputs": {
+     "alt_km": 0.0
+    },
+    "entry": "orbital_velocity",
+    "note": "surface radius"
+   },
+   {
+    "id": "E-A-15",
+    "inputs": {
+     "alt_km": 200.0
+    },
+    "entry": "orbital_velocity",
+    "note": "design altitude"
+   },
+   {
+    "id": "E-A-16",
+    "inputs": {
+     "alt_km": -6370.999
+    },
+    "entry": "orbital_velocity",
+    "note": "radius 1 m"
+   },
+   {
+    "id": "E-A-17",
+    "inputs": {
+     "alt_km": 1000000.0
+    },
+    "entry": "orbital_velocity",
+    "note": "far field"
+   }
+  ],
+  "randomized_domain": {
+   "entries": [
+    {
+     "entry_index": 0,
+     "entry": "atmosphere (numeric solar)",
+     "count": 800,
+     "draw": "alt = rng_0.uniform(150.0, 300.0, 800); f107 = rng_0.uniform(70.0, 230.0, 800); vector i = (alt[i], f107[i])"
+    },
+    {
+     "entry_index": 1,
+     "entry": "atmosphere (solar label)",
+     "count": 200,
+     "draw": "alt = rng_1.uniform(150.0, 300.0, 200); k = rng_1.integers(0, 3, 200); vector i = (alt[i], ('low', 'mean', 'high')[k[i]])"
+    },
+    {
+     "entry_index": 2,
+     "entry": "orbital_velocity",
+     "count": 300,
+     "draw": "alt = rng_2.uniform(-6000.0, 40000.0, 300)"
+    }
+   ],
+   "domain_note": "numerical parity domain only; not a physics, design or evidence claim"
+  },
+  "orbital_velocity_golden": {
+   "count": 41,
+   "list": "alt_km = 0.0, 10.0, ..., 400.0 (10 i)"
+  },
+  "vector_totals": {
+   "atmosphere": "380 golden + 13 edge + 1000 randomized + 10 domain-error = 1403",
+   "orbital_velocity": "41 golden + 4 edge + 300 randomized + 5 domain-error = 350",
+   "msis21_load / refusal": "1 pristine + 3 refusal trees"
+  }
+ },
+ "campaign_seeds": {
+  "applicable": true,
+  "scoring_master_seed": 731905201,
+  "development_master_seed": 731905101,
+  "derivation": "rng_e = numpy.random.default_rng(numpy.random.SeedSequence([master_seed, e])) with e the entry index listed in inputs.randomized_domain; one generator per entry, draws in the registered order; the draws define input values only (both implementations are deterministic)",
+  "entry_indices": {
+   "atmosphere_numeric": 0,
+   "atmosphere_label": 1,
+   "orbital_velocity": 2
+  },
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the existing admitted stochastic / statistical parity contract; the roles are registered separately and never merged",
+   "design_uq_sampling_stream": "NOT_APPLICABLE: no design / UQ sampling in the component",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE: no TPMC call",
+   "other_streams": "NOT_APPLICABLE: neither implementation draws random numbers; the harness draws the input vectors once (numpy default_rng) and passes identical float values (JSON shortest round-trip repr) to both implementations",
+   "migration_parity_dataset": "seeds, draw order and captured reference outputs stay exactly reproducible (immutable)",
+   "after_rust_authority": "not applicable (no RNG in the component)"
+  },
+  "rng_streams_v3": "not applicable (no RNG inside either implementation)",
+  "development_rule": "development comparisons use development_master_seed only and are never scored or reported as a verdict; every execution with scoring_master_seed is appended to campaign_history and the report is committed whatever its verdict"
+ },
+ "observables": {
+  "atmosphere": {
+   "list": [
+    {
+     "name": "rho",
+     "units": "kg m-3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-12
+     },
+     "definition": "atmosphere(alt_km, solar)['rho']"
+    },
+    {
+     "name": "fO",
+     "units": "1",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-12
+     },
+     "definition": "atmosphere(alt_km, solar)['fO']"
+    },
+    {
+     "name": "fN2",
+     "units": "1",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-12
+     },
+     "definition": "atmosphere(alt_km, solar)['fN2']"
+    },
+    {
+     "name": "fO2",
+     "units": "1",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-12
+     },
+     "definition": "atmosphere(alt_km, solar)['fO2']"
+    },
+    {
+     "name": "T",
+     "units": "K",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-12
+     },
+     "definition": "atmosphere(alt_km, solar)['T']"
+    },
+    {
+     "name": "m_mean",
+     "units": "kg",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-12
+     },
+     "definition": "atmosphere(alt_km, solar)['m_mean']"
+    },
+    {
+     "name": "n",
+     "units": "m-3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-12
+     },
+     "definition": "atmosphere(alt_km, solar)['n']"
+    },
+    {
+     "name": "flux_kg_m2_s",
+     "units": "kg m-2 s-1",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-12
+     },
+     "definition": "atmosphere(alt_km, solar)['flux_kg_m2_s']"
+    },
+    {
+     "name": "p_ambient_Pa",
+     "units": "Pa",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-12
+     },
+     "definition": "atmosphere(alt_km, solar)['p_ambient_Pa']"
+    },
+    {
+     "name": "n_O",
+     "units": "m-3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-12
+     },
+     "definition": "atmosphere(alt_km, solar)['n_O']"
+    },
+    {
+     "name": "V",
+     "units": "m s-1",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4
+     },
+     "definition": "atmosphere(...)['V'] = orbital_velocity(alt_km)"
+    },
+    {
+     "name": "alt_km",
+     "units": "km (echo)",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "atmosphere(...)['alt_km']"
+    },
+    {
+     "name": "solar",
+     "units": "label or F10.7 (echo)",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "atmosphere(...)['solar']"
+    },
+    {
+     "name": "f107",
+     "units": "sfu",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "atmosphere(...)['f107']"
+    },
+    {
+     "name": "f107a",
+     "units": "sfu",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "atmosphere(...)['f107a']"
+    },
+    {
+     "name": "ap",
+     "units": "1",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "atmosphere(...)['ap']"
+    },
+    {
+     "name": "epoch",
+     "units": "ISO string",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "atmosphere(...)['epoch']"
+    },
+    {
+     "name": "source",
+     "units": "string",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "atmosphere(...)['source']"
+    },
+    {
+     "name": "status",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "EVALUATED if Python returns; else the mapped status of the Python exception (domain_and_error_parity.mapping)"
+    }
+   ]
+  },
+  "orbital_velocity": {
+   "list": [
+    {
+     "name": "V",
+     "units": "m s-1",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4
+     },
+     "definition": "sqrt(MU_EARTH / (R_EARTH + alt_km * 1e3))"
+    },
+    {
+     "name": "status",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "as atmosphere"
+    }
+   ]
+  },
+  "msis21_load": {
+   "list": [
+    {
+     "name": "status",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "pristine tree: EVALUATED; refusal trees: mapped status"
+    },
+    {
+     "name": "sha256_16",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "_frozen()['meta']['sha256_16']"
+    },
+    {
+     "name": "grid",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "sorted unique alt_km (76) and f107 (5) axes of the frozen CSV"
+    }
+   ]
+  }
+ },
+ "tolerance_classes": {
+  "EXACT_BYTES": "files / serialized outputs byte-identical (sha256 equal); not used by this contract except where an observable says so",
+  "EXACT_VALUE": "integers, strings, enums, booleans, statuses, error codes, schema shape, and floats that are copied (not computed): equal (floats compared by value, -0.0 == 0.0)",
+  "ULP_BOUNDED": "|rust - py| <= k_ulp * ulp(py) OR |rust - py| <= r_rel * |py| OR |rust - py| <= a_abs, with k_ulp / r_rel / a_abs fixed per observable below (an absent clause is not applied). The relative clause is scaled by |py|, NOT by max(1, |py|) as in the template's proposal: the observables span 1e-12 .. 1e17, so an absolute floor of r_rel would accept nonsense for small quantities; scaling by |py| is strictly tighter for |py| < 1 and identical otherwise. ulp(py) = 2^(floor(log2|py|) - 52) (py = 0: smallest subnormal)",
+  "SOLVER_TOLERANCE": "not used (no iterative solver)",
+  "STATISTICAL": "not used (deterministic component)",
+  "EXACT_STREAM": "not used (no RNG in either implementation; the harness RNG only draws input vectors)"
+ },
+ "tolerance_basis": {
+  "independence": "fixed from an a priori floating-point analysis of the two registered algorithms on the frozen inputs, before any Rust code or Python-vs-Rust comparison existed; the only measurements used are properties of the inputs and of the reference environment (max |ln rho| of the frozen CSV = 25.42; pandas parses the CSV to the correctly rounded doubles; numpy dispatches AVX512 SIMD float64 log / exp)",
+  "which_operations_differ": "Rust (glibc libm via std) and CPython math (glibc libm) evaluate math.exp / math.log / math.sqrt identically; IEEE basic operations in the same order are identical; np.interp is compiled for the X86_V2 baseline (no FMA contraction possible) and is reproduced operation by operation. The only differing operation is np.log(d.rho) on the 76-node column, which numpy evaluates with its AVX512 SIMD loop (<= 4 ulp, numpy's documented SIMD transcendental bound) while Rust uses glibc log (< 1 ulp)",
+  "bound_rho": "node log difference <= 5 ulp(25.42) = 1.78e-14; np.interp is an affine combination with weights in [0, 1] (+ <= 2 roundings of 3.55e-15 each); math.exp then math.log add <= 1 ulp(25.42); the F10.7 combination (1-w) log a + w log b adds <= 2 roundings; the final exp turns the absolute log difference into a relative one: |rho_rust / rho_py - 1| <= 3.4e-14",
+  "bound_derived": "fO, fN2, fO2, T: identical inputs and operations (expected bit-identical); m_mean, n, flux, p_ambient, n_O: rho's bound plus <= 4 roundings (<= 1e-15)",
+  "registered": "r_rel = 1e-12 (scale |py|) for every interpolated / derived float: ~29x above the a priori bound and 5e3 below the 9-significant-digit storage resolution of the CSV (5e-9), so no data, interpolation or formula defect can hide under it; k_ulp = 4 (template proposal) for V, which is a correctly rounded sqrt of a correctly rounded quotient in both implementations"
+ },
+ "exact_invariants": [
+  {
+   "id": "INV-A-01",
+   "statement": "double-run determinism: the Rust CLI run twice in two processes on the same request produces byte-identical stdout; the Python reference evaluated twice (cache cleared) produces identical values",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-A-02",
+   "statement": "every frozen node is reproduced: at (node alt, node F10.7) the Rust rho equals the stored CSV rho within r_rel 1e-12 and fO / fN2 / fO2 / T equal the stored values exactly",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-A-03",
+   "statement": "Rust load verifies all pins of hash_pins and refuses the refusal trees",
+   "required_in_both": false
+  }
+ ],
+ "conservation_checks": {
+  "applicable": true,
+  "checks": [
+   {
+    "id": "CONS-A-01",
+    "statement": "number-density / mass-density closure of the derived state: |n * m_mean / rho - 1| <= 1e-14",
+    "evaluated_on": "Rust outputs (Python outputs recorded)",
+    "tolerance": "1e-14 relative"
+   },
+   {
+    "id": "CONS-A-02",
+    "statement": "ideal-gas closure: |p_ambient_Pa / (n * K_B * T) - 1| <= 1e-14",
+    "evaluated_on": "Rust outputs (Python outputs recorded)",
+    "tolerance": "1e-14 relative"
+   }
+  ],
+  "not_applicable_template_checks": "CONS-01..03 (source mass / power balance, architecture energy ledger): no source, power or ledger in the frozen reader"
+ },
+ "domain_and_error_parity": {
+  "mapping": {
+   "ValueError (frozen-domain refusal of _interp_frozen; math domain error)": "OUT_OF_DOMAIN",
+   "KeyError (unknown solar label)": "OUT_OF_DOMAIN",
+   "ZeroDivisionError (orbital_velocity at zero radius)": "OUT_OF_DOMAIN",
+   "FileNotFoundError (frozen CSV / JSON missing)": "MODEL_ERROR",
+   "Rust-only hash / schema refusal": "MODEL_ERROR"
+  },
+  "cases": [
+   {
+    "id": "DE-A-01",
+    "inputs": {
+     "alt_km": 149.999,
+     "solar": "mean"
+    },
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "frozen atmosphere covers"
+   },
+   {
+    "id": "DE-A-02",
+    "inputs": {
+     "alt_km": 300.001,
+     "solar": "mean"
+    },
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "frozen atmosphere covers"
+   },
+   {
+    "id": "DE-A-03",
+    "inputs": {
+     "alt_km": 200.0,
+     "solar": 69.999
+    },
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "frozen atmosphere covers"
+   },
+   {
+    "id": "DE-A-04",
+    "inputs": {
+     "alt_km": 200.0,
+     "solar": 230.001
+    },
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "frozen atmosphere covers"
+   },
+   {
+    "id": "DE-A-05",
+    "inputs": {
+     "alt_km": "NaN",
+     "solar": "mean"
+    },
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "frozen atmosphere covers"
+   },
+   {
+    "id": "DE-A-06",
+    "inputs": {
+     "alt_km": "+inf",
+     "solar": "mean"
+    },
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "frozen atmosphere covers"
+   },
+   {
+    "id": "DE-A-07",
+    "inputs": {
+     "alt_km": "-inf",
+     "solar": 150.0
+    },
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "frozen atmosphere covers"
+   },
+   {
+    "id": "DE-A-08",
+    "inputs": {
+     "alt_km": 200.0,
+     "solar": "NaN"
+    },
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "frozen atmosphere covers"
+   },
+   {
+    "id": "DE-A-09",
+    "inputs": {
+     "alt_km": 200.0,
+     "solar": "medium"
+    },
+    "expected_python": "KeyError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "solar label"
+   },
+   {
+    "id": "DE-A-10",
+    "inputs": {
+     "alt_km": 200.0,
+     "solar": ""
+    },
+    "expected_python": "KeyError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "solar label"
+   },
+   {
+    "id": "DE-A-11",
+    "entry": "orbital_velocity",
+    "inputs": {
+     "alt_km": -6371.0
+    },
+    "expected_python": "ZeroDivisionError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "radius"
+   },
+   {
+    "id": "DE-A-12",
+    "entry": "orbital_velocity",
+    "inputs": {
+     "alt_km": -6400.0
+    },
+    "expected_python": "ValueError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "radius"
+   },
+   {
+    "id": "DE-A-13",
+    "entry": "orbital_velocity",
+    "inputs": {
+     "alt_km": "NaN"
+    },
+    "expected_python": "returns nan",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "DIV-A-04"
+   },
+   {
+    "id": "DE-A-14",
+    "entry": "orbital_velocity",
+    "inputs": {
+     "alt_km": "+inf"
+    },
+    "expected_python": "returns 0.0",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "DIV-A-04"
+   },
+   {
+    "id": "DE-A-15",
+    "entry": "orbital_velocity",
+    "inputs": {
+     "alt_km": "-inf"
+    },
+    "expected_python": "returns -0.0",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "DIV-A-04"
+   },
+   {
+    "id": "RF-A-01",
+    "entry": "msis21_load + atmosphere(200.0, 'mean')",
+    "inputs": {
+     "tree": "copy of the repository config/ and abep_sim/data/ with atmosphere_msis21_v1.csv removed"
+    },
+    "expected_python": "FileNotFoundError",
+    "expected_rust": "MODEL_ERROR",
+    "message_key": "missing"
+   },
+   {
+    "id": "RF-A-02",
+    "entry": "msis21_load + atmosphere(200.0, 'mean')",
+    "inputs": {
+     "tree": "as RF-A-01 but atmosphere_msis21_v1.json removed (CSV present)"
+    },
+    "expected_python": "FileNotFoundError",
+    "expected_rust": "MODEL_ERROR",
+    "message_key": "missing"
+   },
+   {
+    "id": "RF-A-03",
+    "entry": "msis21_load + atmosphere(200.0, 'mean')",
+    "inputs": {
+     "tree": "as RF-A-01 but atmosphere_msis21_v1.csv present with the rho field of the alt 200 / F10.7 150 row changed in its last printed digit (one byte)"
+    },
+    "expected_python": "returns a value (no hash check in _frozen)",
+    "expected_rust": "MODEL_ERROR",
+    "message_key": "DIV-A-02 (sha256 mismatch)"
+   }
+  ],
+  "python_harness_redirection": "refusal trees are temporary directories; the harness points the reference at them by setting the module global abep_sim.atmosphere.__file__ to <tree>/abep_sim/atmosphere.py (the data directory is derived from it at call time) and clearing _FROZEN and _MSIS_CACHE; the Rust CLI receives --repo-root <tree>; the tree carries an unmodified copy of config/",
+  "mapping_rule": "every Python exception class / status used by the component maps to exactly one Rust error variant / status; no Rust path may return a value where Python fails, or fail where Python returns (CLAUDE.md rule 3: no silent fallbacks), except the documented divergences below, whose expected outcomes are registered here and scored as such",
+  "documented_divergence": [
+   {
+    "id": "DIV-A-01",
+    "statement": "Rust never reads ABEP_ATMOSPHERE / ABEP_ALLOW_TABLE_ATMOSPHERE and has no live-NRLMSIS or built-in-table branch; its API takes only (alt_km, solar), so Python's non-scenario arguments (ap, date, lat_deg, lon_deg, orbit_average=False, use_msis=True) have no Rust counterpart",
+    "disposition": "RM-OQ-02 OWNER_DECIDED_A9_29 (A9.29 sec. 6); no vector"
+   },
+   {
+    "id": "DIV-A-02",
+    "statement": "Rust verifies the CSV and JSON sha256 against config/MANIFEST.json -> physics_model_set_v1 and the sidecar sha256_16 prefix; Python _frozen() reads them unverified",
+    "disposition": "required by A9.29 sec. 6 (hash verification) and CLAUDE.md rules 1, 3; scored by RF-A-03 with the registered divergent outcome"
+   },
+   {
+    "id": "DIV-A-03",
+    "statement": "Python atmosphere() memoizes on round(alt_km, 3) but evaluates at the unrounded alt_km, so in one process a later call whose altitude rounds to an earlier key returns the earlier result (history-dependent; CLAUDE.md rule 5 requires caches to be pure functions of their keys). Rust has no memo",
+    "disposition": "the harness clears _MSIS_CACHE before every reference call, so every reference output is the pure evaluation; recorded as a PYTHON_REFERENCE observation for its own governance, not changed here"
+   },
+   {
+    "id": "DIV-A-04",
+    "statement": "orbital_velocity with a non-finite altitude: Python returns nan / 0.0 / -0.0; Rust refuses with OUT_OF_DOMAIN",
+    "disposition": "fail-closed (CLAUDE.md rule 3); scored by DE-A-13..15 with the registered divergent outcome"
+   },
+   {
+    "id": "DIV-A-05",
+    "statement": "Rust takes f64 inputs only; a Python int input is echoed as int in the result dict",
+    "disposition": "the harness passes floats only; no vector"
+   }
+  ]
+ },
+ "schema_parity": {
+  "schemas": [
+   "NOT_APPLICABLE: no JSON schema file; the Rust AtmosphereState serializes the Python dict keys in the Python order"
+  ],
+  "rules": [
+   "field names, units, types identical (keys of the Python dict: alt_km, solar, f107, ap, rho, fO, fN2, fO2, m_mean, n, T, V, flux_kg_m2_s, p_ambient_Pa, source, epoch, f107a, n_O)",
+   "ordering identical where it carries meaning (dict key order checked)",
+   "Rust record types tested against the same key list",
+   "evidence_status / raw-vs-assessment labels: not applicable (raw physics only; no requirement label)"
+  ]
+ },
+ "golden_and_reference_cases": {
+  "references": [
+   "captured Python outputs of the vectors above at python_commit"
+  ],
+  "rule": "references are read as committed; they are never regenerated to make Rust pass (RM-R11); a disagreement is investigated and classified (RUST_DEFECT | PYTHON_REFERENCE_DEFECT (own governance, new contract version) | CONTRACT_DEFECT (new contract version))",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_ATMOSPHERE_PY/reference_outputs/",
+   "captured_at_python_commit": "96db5524ec917e99e507def24f3ee0b263c78ebc",
+   "sha256_manifest": "reference_outputs/MANIFEST.json, written by the scoring run",
+   "purpose": "lets CI check Rust against the Python reference after Python is retired from active execution"
+  },
+  "historical_golden_rule": "RM-R28: golden_v2 'atmosphere' is historical; it may serve only as an optional development vector and is never a scored case"
+ },
+ "julia_bridge": {
+  "applicable": false,
+  "reason": "no HallThruster.jl path; environment layer only",
+  "hallthruster_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5 (recorded for completeness; not used)"
+ },
+ "performance_measurement": {
+  "status": "reported, not a decision criterion (A9.24 items 1 and 6); no matching PRE_RUST_REFERENCE_BASELINE workload exists for the environment layer",
+  "workloads": [
+   {
+    "id": "PERF-A-01",
+    "description": "the 1000 randomized atmosphere() vectors, one batch (Python: cache cleared per call; Rust: one CLI process including the verified load)"
+   }
+  ],
+  "repeats": 3,
+  "statistic": "median wall-clock per implementation in one session on one machine; speed-up = median_python / median_rust",
+  "machine_manifest": "recorded in the report"
+ },
+ "decision_rules": {
+  "per_test": "every scored observable of every vector meets its tolerance class; every status (EVALUATED / OUT_OF_DOMAIN / MODEL_ERROR) is EXACT_VALUE-equal to the mapped Python outcome",
+  "aggregate": "NOT_APPLICABLE (no STATISTICAL entry point)",
+  "exact_invariants_required": true,
+  "conservation_required": true,
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "verdict": "ADMITTED iff every per-test, invariant, conservation, domain/error and schema check passes and every reference file matches sha256_at_registration; PARITY_PASS <=> ADMITTED, PARITY_FAIL <=> NOT_ADMITTED",
+  "verdict_vocabulary": [
+   "ADMITTED",
+   "NOT_ADMITTED",
+   "REFUSED_REFERENCE_CHANGED",
+   "INPUT_MISMATCH",
+   "NOT_RUN_RUST_UNAVAILABLE",
+   "REFUSED_CLASSIFICATION"
+  ],
+  "parity_vocabulary": [
+   "PARITY_PASS",
+   "PARITY_FAIL"
+  ],
+  "meaning_of_ADMITTED": "A9.24 item 1: Rust becomes authoritative for this component (within the registered domain); new production results for it come from Rust and carry implementation = rust, rust_commit and this contract id; the Python component may then be retired from active execution. It is NOT physics validation.",
+  "no_retuning": "tolerances, observables, inputs, n, seeds and rules are fixed; after NOT_ADMITTED only a code fix plus a new contract version with a fresh scoring_master_seed may follow; the failed report stays; no execution is discarded",
+  "disagreement_rule": "never rewrite a Python result, golden, fixture or frozen dataset to make Rust pass (RM-R11)",
+  "observable_scope": "observables are restricted to retained selected-architecture physics; an observable that depends on an excluded legacy path is not registered (RM-R20)",
+  "scoring_once": "the scoring comparison runs once (scoring_master_seed); the harness refuses a second scoring run when parity_report_v1.json exists; development runs (development_master_seed) never write a report"
+ },
+ "bid_boundary": {
+  "statement": "this contract and its Rust implementation are post-bid-freeze work; no output of it may be cited by the bid package unless the owner re-freezes (PROGRAMME.md section 4; bid_source_guard)",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b (technical source) / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (package / freeze record, A9.28; lineage b5849affae22a6709ad217a184f6fe896d15410a -> 2de86ab); A9.29 sec. 3: 2de86ab is the terminal owner-authorized package state",
+  "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+ },
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, threshold or requirement",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27)",
+  "not a gate PASS: absent determining evidence stays NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN / MODEL_ERROR (RM-R31)"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-ABEP_SIM_ATMOSPHERE_PY/parity_report_v1.json (+ .md generated from it)",
+  "runner": "scripts/rust_migration/es2_env_parity.py (Python harness calling the Rust CLI while the reference is active); records campaign_history",
+  "report_fields": [
+   "contract_sha256",
+   "python_commit",
+   "reference_sha256",
+   "rust_commit",
+   "build_provenance (rustc, Cargo.lock sha256, source sha256)",
+   "environment",
+   "per-test results",
+   "aggregates",
+   "invariants",
+   "conservation",
+   "domain/error",
+   "schema",
+   "performance",
+   "verdicts",
+   "campaign_history",
+   "ledger_update_requested"
+  ]
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator (A9.25 message 3)",
+  "checks": [
+   "component.migration_class is ACTIVE_SELECTED_ARCHITECTURE_PHYSICS (inventory v3.1 row, classification_confidence_v3_1 PLAN_APPROVED_A9_29)",
+   "no observable, input or code path of the contract belongs to the excluded legacy vocabulary (LaB6Cathode, lab6_xe, Xe hollow-cathode heater / keeper, C1 flight fallback, hollow-cathode Hall cards, multi-family selection); the component has no not_ported_parts in the inventory",
+   "the Python harness traverses no legacy path to reach the scored functions",
+   "the Rust implementation contains none of the forbidden identifiers (CI_PLAN.md sec. 1 principle 6)",
+   "not a GROUND_TEST_PROGRAMME_ONLY contract (no abep-groundtest dependency)"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict): the contract cannot be registered"
+ },
+ "value_status_preservation": {
+  "rule": "RM-R27: no provisional / analog / allocation input is promoted by migration to CBE, measured or frozen truth",
+  "inputs": [],
+  "status": "NOT_APPLICABLE: the frozen NRLMSIS dataset is already FROZEN rule-1 data; the reader adds no label"
+ },
+ "new_physics_verification": {
+  "applies_when": "contract_kind = NEW_PHYSICS (otherwise NOT_APPLICABLE)",
+  "status": "NOT_APPLICABLE",
+  "reason": "EXISTING_PHYSICS_PARITY contract"
+ }
+}
