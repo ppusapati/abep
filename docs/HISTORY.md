@@ -4118,3 +4118,15 @@ main, and the bid record `5eee4b8` / `b5849af` / `2de86ab`. `git diff 2de86ab..H
   - `scripts/ci_checks.py` passes 11/11, and pytest gives 4226 passed / 5 skipped / 1 xfailed.
 - One v3 step is replaced: "owner review before any Rust code" for new physics becomes the A9.29 sec. 13 gate, "no
   implementation before the preregistration is committed". The v3 wording is kept in an `evidence_v3` field.
+
+## 2026-10-05 — Rust workspace skeleton (A9.29 lane A, ES-1 step 1; no physics, no number changed)
+
+- New: root `Cargo.toml` workspace (members `crates/*`, `abep_core` excluded and unchanged), `rust-toolchain.toml`
+  (rustc 1.94.1 = the parity_report_v2 build toolchain, + rustfmt / clippy), `rustfmt.toml`, `Cargo.lock`, `/target/`
+  ignored.
+- `crates/abep-types`: fail-closed status vocabulary (`EVALUATED`, `NOT_EVALUATED`, `INCOMPLETE_EVIDENCE`,
+  `OUT_OF_DOMAIN`, `MODEL_ERROR`; no PASS / FAIL in raw physics) and `AbepError` mapped one-to-one onto it.
+- `crates/abep-provenance`: sha256 of bytes / files, verified reads, repository-root discovery, and
+  `config/MANIFEST.json` (`abep_config_manifest_v1`) verification (unpinned file or hash / size mismatch -> MODEL_ERROR).
+- `cargo test --workspace --locked`: 6 passed, 0 ignored; clippy -D warnings and rustfmt clean. Python suite and
+  `scripts/ci_checks.py` unaffected (11/11).

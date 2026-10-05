@@ -14,3 +14,6 @@ hallthruster_bridge/out/
 # integrator removes it from the index (git rm --cached) after the archive is stored and hash-verified.
 /docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json
 docs/evidence_archives/**/*.tar.zst
+
+# Rust workspace build output (A9.29 lane A)
+/target/
