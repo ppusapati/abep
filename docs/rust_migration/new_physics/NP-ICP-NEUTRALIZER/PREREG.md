@@ -7,9 +7,9 @@
 | status | **`PREREGISTERED_NOT_IMPLEMENTED`** |
 | method | `NEW_PHYSICS`: preregistered model → Rust → analytic and independent-evidence verification → admission. No synthetic Python reference. |
 | target crate | `abep-icp` (migration class `ACTIVE_SELECTED_ARCHITECTURE`; never depends on `abep-groundtest` or `abep-assess`) |
-| work package | SC-WP-03 (owner); couples to SC-WP-02, SC-WP-05, SC-WP-06, SC-WP-11 |
+| work package | SC-WP-03 (owner; plan v3.1 element NP-ICP-NEUTRALIZER, `required: true`; step ES-NP-ICP); couples to SC-WP-02, SC-WP-05, SC-WP-06, SC-WP-09, SC-WP-11 |
 | lane | A9.29 sec. 13 LANE C |
-| registered | 2026-10-05, base `e5528bd` (integration/simulation-complete at the A9.29 record) |
+| registered | 2026-10-05. First drafted on `e5528bd` (first commit `7e1b349`). Aligned to plan v3.1 on the local integration head `35c06e4` (plan merge `a5a59ea`, plan commit `eb78b4a`), before any implementation. |
 | machine-readable | `prereg_v1.json` (same folder). If the two disagree, the JSON is authoritative. |
 | lock | `prereg_lock_v1.json` (sha256 of both files, frozen at commit) |
 | drafted by | agent session for lane C. Not reviewed by the owner. Nothing here is an owner decision. |
@@ -30,7 +30,9 @@ to an equation, input contract, status rule, tolerance or comparison criterion a
 preregistration and a new model_version. Clearing a "verify" item is a verification addendum. If the source differs
 from the text here, a v2 preregistration comes first.
 
-**Implementation gate.** After this commit, the verified core may be implemented: `CFG-CAP-OFF`, coupling mode
+**Implementation gate.** No implementation before this preregistration is committed (A9.29 sec. 13; plan v3.1
+`programme_v3_1.json` new_physics_lifecycle `gate_a9_29`; ES-NP-ICP; minimum_scope `gating`). After this commit, the
+verified core may be implemented: `CFG-CAP-OFF`, coupling mode
 `CM-ABS`, every status path, the conservation checks and the analytic limiting cases. Each open owner item and each
 verify item blocks only the modes or outputs listed against it.
 
@@ -50,10 +52,17 @@ verify item blocks only the modes or outputs listed against it.
 - CLAUDE.md rules 3, 4, 6, 10 and the A9 section; `docs/EVIDENCE.md`.
 - `config/architecture/hall_icp_neutralizer_v1.json`, `config/assessment/gate_thresholds_v1.json`,
   `docs/audits/a9_24_cathode_path_audit_v1.md`.
-- Plan: `origin/lane-rustplan-v2` at `1236f91` (plan v3 reviewed by A9.29). SC-WP-03 owns `abep-icp`. Plan v3.1 is not
-  in the base commit (CONF-04).
-- Consumer of IF-ICP-THERMAL-v1: NP-THERMAL-CATHODELESS v1, committed in `c093ff2` on `lane-np-thermal-prereg` (lock:
-  `prereg_v1.json` `7bd3bf07…`, `PREREG.md` `a3fbca02…`; full hashes in the JSON). §11 aligns with its keys and rules.
+- Plan v3.1 (`eb78b4a`, merged into integration/simulation-complete at `a5a59ea`; sha256 in the JSON):
+  - `simulation_completion_programme_v1_1.json`: SC-WP-03 element NP-ICP-NEUTRALIZER (`NEW_PHYSICS`, `required: true`)
+    with its `minimum_scope`; SC-WP-03 fail-closed gates [8..11] and admission criteria [5..7]; ES-NP-ICP (lane C);
+    RM-OQ-12 closed as `PREDICTIVE_RF_ICP_MODEL_REQUIRED_FOR_SIMULATION_COMPLETE`.
+  - `programme_v3_1.json`: `np_icp_neutralizer` (same minimum scope), rules RM-R34 and RM-R31, new-physics lifecycle.
+  - `SIMULATION_COMPLETION_PROGRAMME.md` (v1.1).
+  - Plan v3 (`1236f91`) is kept only as superseded evidence (CONF-04).
+- Consumer of IF-ICP-THERMAL-v1: NP-THERMAL-CATHODELESS v1 as merged (`lane-np-thermal-prereg` `fa10c76`, merge
+  `35c06e4`; lock: `prereg_v1.json` `e3e6859c…`, `PREREG.md` `e3337c8f…`; full hashes in the JSON). Its first lock was
+  `c093ff2`; `fa10c76` changed only its gate and plan references, not the IF-ICP-THERMAL-v1 keys. §11 aligns with it.
+- CLAUDE.md is re-pinned at this alignment (`30afe1d` changed rules 2 and 9 only).
 
 Evidence records used (sha256 in the JSON): the ICP neutralizer evidence extraction (Takahashi 2024 TK-xx, survey
 S-01..S-08, lawful-acquisition list LA-01..LA-09), the cathode evidence dossier (Schwertheim 2025), P1 bench, P2
@@ -346,8 +355,8 @@ Every output carries its own status. A non-converged output has value null.
 
 ### IF-ICP-THERMAL-v1 (losses into the cathodeless thermal model)
 
-Consumer: NP-THERMAL-CATHODELESS v1, committed in `c093ff2` (keys IK-01..IK-07, checks IFI-1..IFI-5, energy-source
-rule HS-00, open alignment OQ-NPT-02, gap CF-04). This record aligns with it.
+Consumer: NP-THERMAL-CATHODELESS v1 as merged (`fa10c76`, merge `35c06e4`; keys IK-01..IK-07, checks IFI-1..IFI-5,
+energy-source rule HS-00, open alignment OQ-NPT-02, gap CF-04). This record aligns with it.
 
 **Energy-source rule.** Each watt enters through the interface of the supply that powers it. No watt enters twice.
 - The five deposited prescribed keys (`Q_icp_plasma_wall_W`, `Q_icp_coil_ohmic_W`, `Q_icp_match_W`,
@@ -559,7 +568,8 @@ Fail-closed tests (asserted results; nothing skipped; A9.29 RM-OQ-05):
   5. an admission record pins the Rust commit, the test log and this lock's sha256.
 - Paths are admitted separately. The core (CFG-CAP-OFF, CM-ABS) can be VERIFIED while CM-PRED is not admissible
   (VER-03..05) and CM-CAL has no data.
-- Every output carries `validation_status = NOT_VALIDATED` until a domain cell reaches `VALIDATED_BENCH` (VC-04).
+- Every output carries `validation_status = NOT_VALIDATED` until a domain cell reaches `VALIDATED_BENCH` (VC-04;
+  plan v3.1 RM-R31, new-physics lifecycle VERIFIED → ADMITTED).
 - With the core VERIFIED and every unavailable quantity failing closed, the model fills the predictive RF/ICP block of
   the A9.29 sec. 15 chain. "Software complete" never turns `NOT_EVALUATED` into PASS.
 - An independent cross-check is optional and non-authoritative.
@@ -650,7 +660,7 @@ verification addendum records the source read and confirms the text (verify gate
 | CONF-01 | brief and CLAUDE.md admissibility name `bus_power_boundary_v1` (A5-era: hall_only / rf_hall / ecr_hall, cathode components, no ICP) | sec. 4 bus coupling; A9.22 G8 | target `bus_power_boundary_a9_v2`; OQ-NPICP-01 |
 | CONF-02 | A9-04 uncertainty budget UB-DQ-NEUT: I_e,cap = max over a Hall-ON bias sweep; "no neutralizer electron current is predicted" | A9.4 P1Q-10 / A9.5 P1Q-16 discharge-OFF measurand; sec. 4 predictive requirement | later owner decisions govern; A9-04 stays immutable history |
 | CONF-03 | A9.14 F6-OQ-03: geometry-response model only after separate predictive validation | sec. 4 predictive model (constraint on use) | EX-11 |
-| CONF-04 | plan v3 treats the predictive model as conditional on RM-OQ-12; plan v3.1 absent at `e5528bd` | sec. 4 closes RM-OQ-12 as required; secs. 12-13 order plan merge before lanes | cite A9.29 directly; v3.1 should list NP-ICP-NEUTRALIZER under SC-WP-03 |
+| CONF-04 | plan v3 (`1236f91`) treated the predictive model as conditional on RM-OQ-12; plan v3.1 was absent at the first drafting base `e5528bd` | sec. 4 closes RM-OQ-12 as required | **resolved by plan v3.1** (`eb78b4a`, merged `a5a59ea`): the model is unconditional (SC-WP-03 element `required: true`, RM-R34, `np_icp_neutralizer`; engineer-weeks now unconditional). References re-pointed and re-pinned; v3 kept as superseded evidence; traced in §23 |
 | CONF-05 | CLAUDE.md next-work item 4 gates O2/O chemistry | sec. 15 requires AIR_PRIMARY (O-dominated air) | AIR_PRIMARY fails closed; OQ-NPICP-06 |
 | CONF-06 | `plasma_chem.py` defaults h_l = 0.4, `EPS_C` fits, unverified Arrhenius rates | sec. 4 no invented values, no wholesale port | EX-01 |
 | CONF-07 | the seven prescribed thermal keys cannot close P_fwd | sec. 4 conservation; rule 4 | additional keys; OQ-NPICP-08 |
@@ -720,6 +730,32 @@ verification addendum records the source read and confirms the text (verify gate
 | P1/P2 hardware evidence when available; | VAL-HW-01..07 |
 | preregistered comparison criteria. | VC-01..06, §17 |
 | No synthetic Python reference is required. | method, §16 principles |
+
+**Plan v3.1 SC-WP-03 NP-ICP-NEUTRALIZER** (`simulation_completion_programme_v1_1.json`; `programme_v3_1.json`)
+
+| plan v3.1 item | fields |
+|---|---|
+| minimum_scope inputs and raw outputs (incl. "electron current available for neutralization (I_e,cap)") | INPUTS and RAW PHYSICS OUTPUTS rows above; OUT-06, OUT-07, EQ-11 |
+| coupling I_e,cap → Hall demand; consumer SC-WP-03 neutralization / coupled thrust; margin only in SC-WP-11 | IF-ICP-HALL-v1, §12 |
+| coupling demand → bus power; consumer SC-WP-05 bus-power ledger | IF-ICP-BUS-v1, EQ-15, CC-06 |
+| coupling losses → cathodeless thermal; consumer SC-WP-06 NP-THERMAL-CATHODELESS | IF-ICP-THERMAL-v1, EQ-16, CC-05 |
+| coupling gas consumption → feed / mission; consumers SC-WP-03 coupled thrust / flow and SC-WP-09 mission | IF-ICP-FEED-v1, EQ-17, CC-02 |
+| assessment_separation; no_invention; modes | EX-05, EX-08, §12, CM-CAL / CM-PRED, DOM-08..10, FC-10..12 |
+| validation_basis_for_admission; no_synthetic_python_reference | CC, LC, VAL-PUB, VAL-HW, VC-01..06, §17, method |
+| excluded (plasma_chem wholesale; LaB6, hollow-cathode, ECR, stage-1) | EX-01..04 |
+| preregistration path; gating | this folder; implementation gate |
+| validation_status_after_admission (RM-R31) | §17 |
+| gate [8] calibrated-quantity bench evidence absent → NOT_EVALUATED | FC-04, EX-08, NE-02 |
+| gate [9] outside the preregistered domain, per mode → OUT_OF_DOMAIN | DOM-01..13, FC-06 |
+| gate [10] non-converged plasma state → MODEL_ERROR | FC-09, NV-05 |
+| gate [11] measured validation absent (VERIFIED) → NOT_EVALUATED | §17, NE-12, NE-13 |
+| admission [5] own commit before implementation; validation basis; modes with provenance and domain | implementation gate, §16, §17, §5 |
+| admission [6] no HC-05 / threshold / RFP label; M_n only in SC-WP-11; abep-icp never depends on abep-assess | EX-05, §12, FC-10, FC-11, FC-12 |
+| admission [7] couplings present and conservative | IF-ICP-HALL/BUS/THERMAL/FEED-v1, CC-02, CC-04..06 |
+| ES-NP-ICP deliverables | §2, §3, §5, §16, implementation gate |
+| RM-R34 | method, §2, §3, §5, §12 |
+
+Every v3.1 item maps to an existing field. No modelling content was added for this alignment.
 
 **Other sec. 4 rules**: "NEW PHYSICS" → method; "Do NOT port plasma_chem.py wholesale" → EX-01, CONF-06; "Do NOT
 inherit LaB6, hollow-cathode, ECR or legacy stage-1 topology" → EX-02, EX-03, EX-04; "a new preregistered model

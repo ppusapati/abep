@@ -10,21 +10,23 @@
  "target_crate": "abep-icp",
  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE (flight-runtime crate; it never depends on GROUND_TEST_PROGRAMME_ONLY code such as abep-groundtest, A9.29 sec. 1)",
  "work_packages": {
-  "owner": "SC-WP-03 propulsion (active RF/ICP physics, electron neutralization; target crates incl. abep-icp)",
+  "owner": "SC-WP-03 propulsion: plan v3.1 element NP-ICP-NEUTRALIZER (method NEW_PHYSICS, required: true; target crates incl. abep-icp); first-execution step ES-NP-ICP (lane C); execution task of RM-OQ-12: Lane C (ES-NP-ICP), then SC-WP-03 W9",
   "coupled": [
    "SC-WP-05 electrical (IF-ICP-BUS-v1; abep-icp also listed there)",
    "SC-WP-06 thermal, NP-THERMAL-CATHODELESS (IF-ICP-THERMAL-v1)",
-   "SC-WP-02 upstream / plenum-feed (IF-ICP-FEED-v1)",
+   "SC-WP-02 upstream / plenum-feed (producer of the delivered feed state consumed through IF-ICP-FEED-v1)",
+   "SC-WP-09 mission integration (gas / Xe use through IF-ICP-FEED-v1; plan v3.1 work_packages[SC-WP-09].a9_29_np_icp_coupling)",
    "SC-WP-11 assessment (M_n and HC-05 are evaluated there only)"
   ]
  },
  "lane": "A9.29 sec. 13 LANE C (NP-ICP-NEUTRALIZER preregistration)",
  "registered": "2026-10-05",
- "base_commit": "e5528bdd22412014796771b615dc40f2b3bcc2ca (integration/simulation-complete at the A9.29 record)",
+ "base_commit": "35c06e4 (local integration/simulation-complete head merged into this branch: plan v3.1 merge a5a59ea128f13efb758676966bace1e47cf141ea of plan commit eb78b4ae82996dcf6c54bbca86930b6471a1a6f0, CLAUDE.md update 30afe1d, Rust workspace skeleton 96db5524ec917e99e507def24f3ee0b263c78ebc, merged NP-THERMAL-CATHODELESS prereg fa10c76)",
+ "first_drafted_on": "e5528bdd22412014796771b615dc40f2b3bcc2ca (integration/simulation-complete at the A9.29 record; first commit 7e1b349)",
  "drafted_by": "agent session for lane C; not reviewed by the owner",
  "decided_by": "No statement in this file is an owner decision. Owner decisions are cited by record and sha256. Items that need an owner decision are listed in open_owner_items and are not resolved here.",
  "change_rule": "Frozen by prereg_lock_v1.json at commit. Any later change is a dated addendum file in this folder, never an edit. A change to an equation, an input contract, a status rule, a tolerance or a comparison criterion after implementation starts is a new preregistration version (v2) and a new model_version. Clearing a 'verify' item is a verification addendum that records the locator read; if the source differs from the text here, a v2 preregistration is required before that code path is admitted.",
- "implementation_gate": "A9.29 sec. 13: no implementation before this preregistration is committed. After the commit, implementation of the verified core may start: configuration CFG-CAP-OFF, coupling mode CM-ABS, all status paths, conservation checks and analytic limiting cases. Each open owner item and each 'verify' item blocks only the modes or outputs listed against it.",
+ "implementation_gate": "A9.29 sec. 13: no implementation before this preregistration is committed (plan v3.1: programme_v3_1.json lifecycle.new_physics_lifecycle.gate_a9_29 and transition (none) -> PREREG_MODEL; simulation_completion_programme_v1_1.json ES-NP-ICP and work_packages[SC-WP-03].elements[NP-ICP-NEUTRALIZER].minimum_scope.gating). After the commit, implementation of the verified core may start: configuration CFG-CAP-OFF, coupling mode CM-ABS, all status paths, conservation checks and analytic limiting cases. Each open owner item and each 'verify' item blocks only the modes or outputs listed against it.",
 
  "governing_records": [
   {"path": "docs/decisions/OD_2026_10_05_A9_29_RUST_PLAN_V3_1_RULINGS_AND_START_AUTHORIZATION.md", "sha256": "5c223f6df59f579deb1ef4788fecf5857c6fa3ff4f365f23738b2c1b7f251989", "role": "sec. 4 RM-OQ-12 minimum scope (verbatim, traced in scope_traceability); sec. 13 lane C; sec. 14 speed rule; sec. 15 full selected architecture"},
@@ -43,7 +45,7 @@
   {"path": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json", "sha256": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49", "role": "layer separation; G8 CREATE_BUS_BOUNDARY_A9_V2 (hall_icp_neutralizer bus boundary)"},
   {"path": "docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md", "sha256": "9a2c950befd20dc38c63a3c56d4443ce7a30f1630903ada618b054638325b1d7", "role": "item 5: HC-05 ASSESSMENT ONLY, M_n,LB > 0; physics produces currents and uncertainties"},
   {"path": "docs/decisions/OD_2026_10_04_A9_25_PRE_BID_OWNER_DECISIONS.md", "sha256": "159ea2049e3cc05ce7a18b3e6bbdf6fee97c168a74f23fd2359cfef3a1d26106", "role": "sec. 10: each ICP campaign / mode has its own registered domain, gas mode, pressure-match rule, calibration basis, stable-region criteria, uncertainty; no Ar point transferred into flight-air evidence; sec. 11 GNG-ICP-01 (assessment)"},
-  {"path": "CLAUDE.md", "sha256": "c70b83d43608e2b953b790ee61e44380484eb2a02f69bda3a203ea6996920436", "role": "rules 3 (no silent fallbacks), 4 (conservation), 6 (cite data; mark memory 'verify'), 10 (evidence semantics); A9 section; next-work item 4 (O2/O gate) and item 5 (chemistry_trustworthy)"},
+  {"path": "CLAUDE.md", "sha256": "18036818bebb661e187604e7be5de74e44cd8b84a8353923af9453a9ecca4be9", "role": "rules 3 (no silent fallbacks), 4 (conservation), 6 (cite data; mark memory 'verify'), 9 (Rust-era test rule, CA-04), 10 (evidence semantics); A9 section; next-work item 4 (O2/O gate) and item 5 (chemistry_trustworthy). Re-pinned at the plan v3.1 alignment (30afe1d changed rules 2 and 9 only; first pin c70b83d43608e2b953b790ee61e44380484eb2a02f69bda3a203ea6996920436 at e5528bd)"},
   {"path": "docs/EVIDENCE.md", "sha256": "a2950352141890c12ad33e66766cd003215c807cb29203d21df090349ab90b61", "role": "evidence levels 1-7, quantity types, four attributes of every input"},
   {"path": "config/architecture/hall_icp_neutralizer_v1.json", "sha256": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3", "role": "active architecture; supply modes AIR_PRIMARY / XE_CONTINGENCY; icp_feed_gas_baseline G-REUSE (declared variant G-XE); C1 GROUND_ONLY_LAB_EQUIPMENT"},
   {"path": "config/assessment/gate_thresholds_v1.json", "sha256": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b", "role": "HC-05 ASSESSMENT_ONLY: M_n,LB > 0, else NOT_EVALUATED"},
@@ -80,14 +82,29 @@
   {"path": "abep_sim/icp_thermal_lib.py", "sha256": "ffd8e9d904e2e67993404a0cdd058b5cf3a892034593b29cebc51b85438d0fca", "role": "q_collector energy-per-particle convention (Goebel & Katz 2008 locators); its surface terms are marked 'verify' there"}
  ],
  "plan_reference": {
-  "branch": "origin/lane-rustplan-v2",
-  "commit": "1236f911b326b308ec9019d7e3561a34b478c449 (the plan v3 commit reviewed by A9.29)",
+  "plan": "Rust migration plan v3.1 (status PLAN_V3_1_A9_29_RULINGS_APPLIED): plan commit eb78b4ae82996dcf6c54bbca86930b6471a1a6f0, merged into integration/simulation-complete at a5a59ea128f13efb758676966bace1e47cf141ea; present in this branch through the merge of 35c06e4",
   "files": {
-   "docs/rust_migration/SIMULATION_COMPLETION_PROGRAMME.md": "19ee1cc854ab07d7830657a659991fa7f54830ba9969aceb14fb89c3e1423a30",
-   "docs/rust_migration/simulation_completion_programme_v1.json": "985c2e761b51ed1a607cc0ebcfad59b8aa009e205dd6f3339889dff122ff7a5f"
+   "docs/rust_migration/simulation_completion_programme_v1_1.json": "5e672943892b0035f05562e68dae1ca279acd4a4bd625641a559e53711f4643a",
+   "docs/rust_migration/SIMULATION_COMPLETION_PROGRAMME.md": "5916e2ffca861a779dd7e1e4de02ae792e24ea3c396f0854c9ef4244a15a89d4",
+   "docs/rust_migration/programme_v3_1.json": "b595c4fc740223cb8da10886c358410ffab2cfd38befbe97543237d1b4dee70f"
   },
-  "relevant_content": "SC-WP-03 target crates abep-julia-bridge, abep-hall, abep-chem, abep-icp; SC-WP-05 also lists abep-icp; 'A predictive ICP neutralizer plasma model would be NEW_PHYSICS. Its scope is RM-OQ-12' (A9.29 closes RM-OQ-12 as PREDICTIVE_RF_ICP_MODEL_REQUIRED_FOR_SIMULATION_COMPLETE).",
-  "note": "Plan v3.1 is not present at the base commit (docs/rust_migration/ does not exist at e5528bd). See CONF-04."
+  "relevant_content": [
+   "simulation_completion_programme_v1_1.json work_packages[SC-WP-03].elements[2]: element 'NP-ICP-NEUTRALIZER' (method NEW_PHYSICS, required: true) with minimum_scope (inputs, raw_physics_outputs, system_coupling with named consumers, assessment_separation, no_invention, modes, validation_basis_for_admission, no_synthetic_python_reference, excluded, preregistration, gating, validation_status_after_admission)",
+   "simulation_completion_programme_v1_1.json work_packages[SC-WP-03].determining_evidence_gates_fail_closed[8..11] and admission_criteria[5..7] (NP-ICP-NEUTRALIZER)",
+   "simulation_completion_programme_v1_1.json work_packages[SC-WP-05 / SC-WP-06 / SC-WP-09].a9_29_np_icp_coupling",
+   "simulation_completion_programme_v1_1.json first_execution_sequence: lane C = ES-NP-ICP (deliverables)",
+   "simulation_completion_programme_v1_1.json open_owner_questions RM-OQ-12: OWNER_DECIDED_A9_29, closed_as PREDICTIVE_RF_ICP_MODEL_REQUIRED_FOR_SIMULATION_COMPLETE; execution task Lane C (ES-NP-ICP), then SC-WP-03 W9",
+   "programme_v3_1.json np_icp_neutralizer (same minimum scope) and rules RM-R34 (predictive RF/ICP neutralizer model, NEW PHYSICS REQUIRED) and RM-R31 (validation_status NOT_VALIDATED until measured evidence; software admission is not a gate PASS)",
+   "programme_v3_1.json lifecycle.new_physics_lifecycle: PREREG_MODEL -> RUST_IMPL -> VERIFIED -> ADMITTED; gate_a9_29 'no implementation before its preregistration is committed'"
+  ],
+  "superseded_v3_evidence_only": {
+   "commit": "origin/lane-rustplan-v2 1236f911b326b308ec9019d7e3561a34b478c449 (plan v3 reviewed by A9.29)",
+   "files": {
+    "docs/rust_migration/SIMULATION_COMPLETION_PROGRAMME.md @ 1236f91": "19ee1cc854ab07d7830657a659991fa7f54830ba9969aceb14fb89c3e1423a30",
+    "docs/rust_migration/simulation_completion_programme_v1.json (unchanged in the tree)": "985c2e761b51ed1a607cc0ebcfad59b8aa009e205dd6f3339889dff122ff7a5f"
+   },
+   "note": "v3 treated the predictive model as conditional on RM-OQ-12; kept only as history (CONF-04)"
+  }
  },
 
  "scope": {
@@ -304,7 +321,7 @@
   },
   "IF-ICP-THERMAL-v1": {
    "purpose": "couple RF/ICP losses into the cathodeless thermal model NP-THERMAL-CATHODELESS (A9.29 sec. 4)",
-   "consumer_record": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/prereg_v1.json and PREREG.md, committed in c093ff2 (lock sha256: prereg_v1.json 7bd3bf074e0dfcf95586b8ae080fa630a4556443feb272b6b7c157c3bee926ad, PREREG.md a3fbca02239577232793cb85dbef9148b6dd9951903a7008b87fd5748b5603d8): keys IK-01..IK-07, checks IFI-1..IFI-5, energy-source rule HS-00, open alignment OQ-NPT-02, interface gap CF-04",
+   "consumer_record": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/prereg_v1.json and PREREG.md as merged into integration/simulation-complete (lane-np-thermal-prereg fa10c76, merge 35c06e4; lock sha256: prereg_v1.json e3e6859cf61703c27254e9c231ff4637f7d20ea743c8d881b9e55c8ba9d27c5c, PREREG.md e3337c8fece492f40eea7452b9834c9678d6fd52696d018588f542a801cc28aa): keys IK-01..IK-07, checks IFI-1..IFI-5, energy-source rule HS-00, open alignment OQ-NPT-02, interface gap CF-04. Its first lock was c093ff2; fa10c76 changed only its gate and plan references, not the IF-ICP-THERMAL-v1 keys",
    "supply_attribution_rule": "Each watt enters through the interface of the supply that powers it; no watt enters twice (consumer HS-00). The five deposited prescribed keys (Q_icp_plasma_wall_W, Q_icp_coil_ohmic_W, Q_icp_match_W, Q_icp_extraction_W, Q_icp_radiation_W) are RF-powered only; the producer declares rf_powered_only = true (enables consumer IFI-5) and every one of them is >= 0 (consumer IFI-2).",
    "hall_powered_heat_excluded": "Q_icp_plasma_wall_W never contains heating driven by the Hall discharge-current return through the neutralizer (ICD ICP-43 discharge-path term, carried on the Hall side as IF-HALL-THERMAL-v1 Q_hall_return_to_icp_W) nor Hall plume interception (ICD ICP-29, carried as Q_hall_plume_to_icp_W). In v1 the Hall discharge is OFF in CFG-CAP-OFF, so no such term exists; CFG-FLIGHT-HALL-ON is NOT_EVALUATED; a v2 Hall-ON sub-model keeps this rule.",
    "attribution_convention": "Per surface j (model-derived, exact): deposited heat Q_j = L_j + C_j, where L_j = e A_j [Gamma_e,j (2 T_e + max(0, phi_p - V_j)) + Gamma_i,j T_e / 2] is the energy the RF-heated electron population loses through surface j (EQ-07), and C_j = I_j (phi_p - V_j) is the energy exchanged with the external circuit at surface j (I_j = net positive current from the plasma into j). Floating surfaces have I_j = 0, so Q_j = L_j. sum_j C_j = P_icp_collector_bias_W = -sum_j I_j V_j. RF-powered keys use L_j; bias-powered keys use C_j.",
@@ -456,7 +473,7 @@
  "admission_rule": {
   "software_admission": "The model is admitted as VERIFIED when, on the integration line: (1) this preregistration and its lock are committed; (2) abep-icp passes every LC, CC, NV and FC item above under cargo test --workspace --locked; (3) the abep-chem rate evaluator it uses is admitted (SC-WP-03); (4) every 'verify' item on an admitted code path is cleared by a verification addendum; (5) an admission record pins the Rust commit, the test log and this lock's sha256.",
   "partial_admission": "Code paths are admitted separately: the core (CFG-CAP-OFF, CM-ABS) may be VERIFIED while CM-PRED stays NOT ADMISSIBLE (VER-03..05) and CM-CAL stays without data.",
-  "validation_status": "Admission is software admission. Every output carries validation_status NOT_VALIDATED until a domain cell reaches VALIDATED_BENCH under VC-04 (plan programme rule: a NEW_PHYSICS model is admitted as verified).",
+  "validation_status": "Admission is software admission. Every output carries validation_status NOT_VALIDATED until a domain cell reaches VALIDATED_BENCH under VC-04 (plan v3.1: RM-R31; new_physics_lifecycle VERIFIED -> ADMITTED; minimum_scope.validation_status_after_admission).",
   "simulation_complete_role": "With the core VERIFIED and every unavailable quantity failing closed, the model fills the predictive RF/ICP block of the A9.29 sec. 15 chain. 'Software complete' never turns NOT_EVALUATED into PASS (A9.28 msg 2 sec. 14).",
   "independent_cross_check": "optional, non-authoritative (A9.28 msg 1 sec. 5)"
  },
@@ -531,7 +548,7 @@
   {"id": "CONF-01", "where": "lane brief and CLAUDE.md admissibility text name bus_power_boundary_v1; schemas/architecture_comparison/bus_power_boundary_v1.json enumerates hall_only / rf_hall / ecr_hall with cathode_keeper / cathode_heater common components and no ICP component", "against": "A9.29 sec. 4 (couple RF/ICP demand into bus power) and A9.22 G8 (bus_power_boundary_a9_v2 for hall_icp_neutralizer)", "handling": "IF-ICP-BUS-v1 targets bus_power_boundary_a9_v2; OQ-NPICP-01"},
   {"id": "CONF-02", "where": "docs/experiments/hall_icp/uncertainty_budget (A9-04) UB-DQ-NEUT defines I_e,cap = max I_e,src over a bias sweep with the Hall as electron sink and states 'no neutralizer electron current is predicted; capacity is measured'", "against": "later owner decisions A9.4 P1Q-10 / A9.5 P1Q-16 (discharge-OFF, I_on - I_off, signed) and A9.29 sec. 4 (predictive model required)", "handling": "the later owner decisions govern; the A9-04 record stays immutable history; this model maps to P1-IT-38"},
   {"id": "CONF-03", "where": "A9.14 S7.8 F6-OQ-03: a geometry-response model only after separate predictive validation; F6 search scope BUILT_GEOMETRIES_ONLY", "against": "A9.29 sec. 4 requires a predictive model (no conflict in scope; a constraint on use)", "handling": "EX-11: no F6 geometry-search use before VALIDATED_BENCH on built geometries"},
-  {"id": "CONF-04", "where": "plan v3 (1236f91) SC-WP-03 treats the predictive model as conditional on RM-OQ-12 with no size; plan v3.1 is not present at base commit e5528bd (docs/rust_migration/ absent)", "against": "A9.29 sec. 4 closes RM-OQ-12 as PREDICTIVE_RF_ICP_MODEL_REQUIRED_FOR_SIMULATION_COMPLETE; sec. 12-13 order plan merge before lanes", "handling": "this preregistration cites A9.29 directly and the plan by commit; the v3.1 plan should list NP-ICP-NEUTRALIZER under SC-WP-03"},
+  {"id": "CONF-04", "where": "plan v3 (1236f91) SC-WP-03 treated the predictive model as conditional on RM-OQ-12 with no size; plan v3.1 was not present at the first drafting base e5528bd", "against": "A9.29 sec. 4 closes RM-OQ-12 as PREDICTIVE_RF_ICP_MODEL_REQUIRED_FOR_SIMULATION_COMPLETE", "handling": "RESOLVED BY PLAN v3.1 (eb78b4a, merged a5a59ea): the predictive model is unconditional (SC-WP-03 element NP-ICP-NEUTRALIZER required: true; RM-R34; np_icp_neutralizer minimum scope; size note: the new-physics engineer-weeks are now unconditional). References re-pointed to v3.1 and re-pinned (plan_reference); v3 kept only as superseded evidence. Traced in scope_traceability.PLAN_V3_1_SC_WP_03."},
   {"id": "CONF-05", "where": "CLAUDE.md next-work item 4: O2/O chemistry only if items 1-3 succeed", "against": "A9.29 sec. 15 requires AIR_PRIMARY to be represented; air at 180-230 km is O-dominated", "handling": "AIR_PRIMARY is represented and fails closed (INCOMPLETE_EVIDENCE); OQ-NPICP-06"},
   {"id": "CONF-06", "where": "abep_sim/plasma_chem.py: Chamber default h_l = 0.4, EPS_C fits, unverified Arrhenius RATES (CLAUDE.md next-work 6: N2 fit about 3x low)", "against": "A9.29 sec. 4 (no invented values; no wholesale port)", "handling": "EX-01; the SC-WP-03 kernel audit must not carry these into abep-chem"},
   {"id": "CONF-07", "where": "prescribed IF-ICP-THERMAL-v1 key set (seven keys)", "against": "energy closure of P_icp_rf_forward_W (A9.29 sec. 4 conservation; CLAUDE.md rule 4)", "handling": "additional keys defined; OQ-NPICP-08"},
@@ -598,7 +615,252 @@
    {"section": "13 LANE C", "rule": "No implementation before its preregistration is committed.", "fields": ["implementation_gate", "status"]},
    {"section": "14", "rule": "speed never weakens provenance, preregistration, conservation, determinism, domain checks, requirement/physics separation, uncertainty, fail-closed semantics", "fields": ["governing_records", "conservation_checks", "numerical_verification", "domain_checks", "assessment_separation", "uncertainty_handling", "status_vocabulary"]},
    {"section": "15", "rule": "AIR_PRIMARY and XE_CONTINGENCY both represented; flight hollow cathode NONE; C1 ground test / reference only", "fields": ["operating_modes", "EX-02", "EX-06"]}
-  ]
+  ],
+  "PLAN_V3_1_SC_WP_03": {
+   "source": "docs/rust_migration/simulation_completion_programme_v1_1.json work_packages[SC-WP-03] (element NP-ICP-NEUTRALIZER, gates, admission criteria), first_execution_sequence ES-NP-ICP; docs/rust_migration/programme_v3_1.json np_icp_neutralizer, RM-R34, RM-R31, lifecycle.new_physics_lifecycle",
+   "minimum_scope": [
+    {
+     "item": "inputs (the nine A9.29 sec. 4 inputs)",
+     "fields": [
+      "scope_traceability.INPUTS"
+     ]
+    },
+    {
+     "item": "raw_physics_outputs, incl. 'electron current available for neutralization (I_e,cap)'",
+     "fields": [
+      "scope_traceability.RAW_PHYSICS_OUTPUTS",
+      "OUT-06",
+      "OUT-07",
+      "EQ-11"
+     ]
+    },
+    {
+     "item": "system_coupling: I_e,cap to Hall discharge-current demand; consumer SC-WP-03 neutralization / coupled thrust element; margin only in SC-WP-11",
+     "fields": [
+      "IF-ICP-HALL-v1",
+      "assessment_separation.assessment_only"
+     ]
+    },
+    {
+     "item": "system_coupling: RF/ICP electrical demand into bus power; consumer SC-WP-05 bus-power ledger",
+     "fields": [
+      "IF-ICP-BUS-v1",
+      "EQ-15",
+      "CC-06"
+     ]
+    },
+    {
+     "item": "system_coupling: RF/ICP losses into the cathodeless thermal model; consumer SC-WP-06 NP-THERMAL-CATHODELESS",
+     "fields": [
+      "IF-ICP-THERMAL-v1",
+      "EQ-16",
+      "CC-05"
+     ]
+    },
+    {
+     "item": "system_coupling: gas consumption into the feed / mission model; consumers SC-WP-03 coupled thrust / flow element and SC-WP-09 mission integration",
+     "fields": [
+      "IF-ICP-FEED-v1",
+      "EQ-17",
+      "work_packages.coupled",
+      "CC-02"
+     ]
+    },
+    {
+     "item": "assessment_separation (no HC-05 PASS/FAIL, thresholds or RFP labels; raw I_e,cap; M_n only in SC-WP-11; NOT_EVALUATED / uncertainty when bench evidence is absent)",
+     "fields": [
+      "scope_traceability.ASSESSMENT_SEPARATION",
+      "EX-05",
+      "FC-10",
+      "FC-11",
+      "FC-12"
+     ]
+    },
+    {
+     "item": "no_invention (coupling efficiency, impedance, extraction efficiency, stable operating regions)",
+     "fields": [
+      "EX-08",
+      "coupling_modes",
+      "EQ-11",
+      "VAL-HW-06"
+     ]
+    },
+    {
+     "item": "modes: calibrated and uncalibrated, provenance and domain explicit per mode",
+     "fields": [
+      "coupling_modes",
+      "DOM-08",
+      "DOM-09",
+      "DOM-10",
+      "OUT-12"
+     ]
+    },
+    {
+     "item": "validation_basis_for_admission (conservation, analytic limiting cases, published evidence, P1/P2 evidence when available, preregistered criteria)",
+     "fields": [
+      "scope_traceability.VALIDATION",
+      "admission_rule"
+     ]
+    },
+    {
+     "item": "no_synthetic_python_reference",
+     "fields": [
+      "method_path",
+      "validation_plan.principles"
+     ]
+    },
+    {
+     "item": "excluded: wholesale plasma_chem port; LaB6, hollow-cathode, ECR, legacy stage-1 topology",
+     "fields": [
+      "EX-01",
+      "EX-02",
+      "EX-03",
+      "EX-04"
+     ]
+    },
+    {
+     "item": "preregistration path docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/prereg_v1.json + PREREG.md",
+     "fields": [
+      "id",
+      "prereg_lock_v1.json"
+     ]
+    },
+    {
+     "item": "gating: no implementation before the preregistration is committed",
+     "fields": [
+      "implementation_gate",
+      "status"
+     ]
+    },
+    {
+     "item": "validation_status_after_admission: NOT_VALIDATED until measured evidence; software admission is not a gate PASS (RM-R31)",
+     "fields": [
+      "admission_rule.validation_status",
+      "admission_rule.simulation_complete_role"
+     ]
+    }
+   ],
+   "fail_closed_gates": [
+    {
+     "gate": "[8] determining RF/ICP bench evidence absent for a calibrated quantity -> NOT_EVALUATED",
+     "fields": [
+      "FC-04",
+      "status_vocabulary.NOT_EVALUATED",
+      "EX-08",
+      "NE-02"
+     ]
+    },
+    {
+     "gate": "[9] state outside the preregistered domain (per calibrated / uncalibrated mode) -> OUT_OF_DOMAIN",
+     "fields": [
+      "domain_checks",
+      "FC-06",
+      "status_vocabulary.OUT_OF_DOMAIN"
+     ]
+    },
+    {
+     "gate": "[10] non-converged plasma state -> MODEL_ERROR",
+     "fields": [
+      "FC-09",
+      "NV-05",
+      "status_vocabulary.MODEL_ERROR"
+     ]
+    },
+    {
+     "gate": "[11] measured validation absent (model admitted as VERIFIED) -> NOT_EVALUATED",
+     "fields": [
+      "admission_rule.validation_status",
+      "NE-12",
+      "NE-13"
+     ]
+    }
+   ],
+   "admission_criteria": [
+    {
+     "criterion": "[5] preregistration committed in its own commit before any implementation; admission by conservation, analytic limiting cases, published evidence, P1/P2 evidence when available and preregistered criteria; calibrated / uncalibrated modes carry explicit provenance and domain",
+     "fields": [
+      "implementation_gate",
+      "admission_rule.software_admission",
+      "validation_plan",
+      "coupling_modes"
+     ]
+    },
+    {
+     "criterion": "[6] raw outputs carry no HC-05 PASS/FAIL, threshold or RFP label; M_n only in SC-WP-11; crate-graph test abep-icp never depends on abep-assess",
+     "fields": [
+      "EX-05",
+      "assessment_separation",
+      "FC-10",
+      "FC-11",
+      "FC-12"
+     ]
+    },
+    {
+     "criterion": "[7] couplings present and conservative: I_e,cap to Hall demand, demand to the SC-WP-05 bus ledger, losses to the SC-WP-06 thermal model, gas consumption to the feed / SC-WP-09 mission model",
+     "fields": [
+      "IF-ICP-HALL-v1",
+      "IF-ICP-BUS-v1",
+      "IF-ICP-THERMAL-v1",
+      "IF-ICP-FEED-v1",
+      "CC-02",
+      "CC-04",
+      "CC-05",
+      "CC-06"
+     ]
+    }
+   ],
+   "es_np_icp_deliverables": [
+    {
+     "deliverable": "prereg_v1.json + PREREG.md for the predictive downstream 13.56 MHz RF/ICP electron source / neutralizer",
+     "fields": [
+      "id",
+      "scope"
+     ]
+    },
+    {
+     "deliverable": "the sec. 4 minimum scope incl. calibrated / uncalibrated modes and the validation basis",
+     "fields": [
+      "scope_traceability.INPUTS",
+      "scope_traceability.RAW_PHYSICS_OUTPUTS",
+      "scope_traceability.SYSTEM_COUPLING",
+      "scope_traceability.ASSESSMENT_SEPARATION",
+      "scope_traceability.VALIDATION"
+     ]
+    },
+    {
+     "deliverable": "explicit exclusions (no plasma_chem wholesale port; no LaB6 / hollow-cathode / ECR / stage-1; no invented efficiency, impedance, extraction efficiency or stable region; no HC-05 / threshold / RFP label in raw physics; no synthetic Python reference)",
+     "fields": [
+      "exclusions",
+      "method_path"
+     ]
+    },
+    {
+     "deliverable": "no implementation before the preregistration is committed",
+     "fields": [
+      "implementation_gate"
+     ]
+    }
+   ],
+   "rules": [
+    {
+     "rule": "RM-R34 (predictive RF/ICP neutralizer model: NEW PHYSICS REQUIRED for SIMULATION_COMPLETE)",
+     "fields": [
+      "method",
+      "scope",
+      "exclusions",
+      "coupling_modes",
+      "assessment_separation"
+     ]
+    },
+    {
+     "rule": "RM-R31 (validation_status NOT_VALIDATED until measured evidence)",
+     "fields": [
+      "admission_rule.validation_status"
+     ]
+    }
+   ],
+   "result": "every v3.1 minimum_scope item, fail-closed gate, admission criterion, ES-NP-ICP deliverable and rule RM-R34 maps to an existing field; no modelling content was added for this alignment"
+  }
  },
 
  "references": [
