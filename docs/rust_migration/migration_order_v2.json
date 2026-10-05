@@ -1,0 +1,2322 @@
+{
+ "schema": "abep_rust_migration_order_v2",
+ "id": "RUSTMIG-ORDER-V2",
+ "status": "PROPOSED_PLAN_V2_FOR_OWNER_REVIEW",
+ "supersedes": {
+  "path": "docs/rust_migration/migration_order_v1.json",
+  "sha256": "8f310cbb073cf31fc7f308db719703514a842ced5b3eac5886082a99d9b185e7",
+  "status": "HISTORICAL_UNCHANGED"
+ },
+ "governing_record": {
+  "A9.24": "items 6 and 7",
+  "A9.25": "message 2 sec. 14, message 3, message 8 sec. 17",
+  "A9.27": "sec. 4: classification governs BEFORE runtime; ordering = architecture relevance first, evidence / parity eligibility second, measured performance third; slow legacy uq_modular / archengine are retired, not ported; active intake response-surface work remains a genuine target"
+ },
+ "inventory": {
+  "path": "docs/rust_migration/component_inventory_v2.json",
+  "inventoried_at_commit": "2de86abefacbd36ce7516d3cf017f6258bd7e7a2"
+ },
+ "reprioritisation_input": {
+  "baseline": "docs/performance/pre_rust_reference_baseline_5eee4b8/",
+  "registration_sha256": "ae383b091d89c0cede4d0f49c673073be4740bf3eaa97c0288d5ba083833340b",
+  "baseline_json_sha256": "23714fe933a57e396f95f6054b796f9a2a22b65897cf1f2c96d765995169ab63",
+  "measured_commit": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b (bid technical source)",
+  "machine": "Claude Code cloud container (Xeon 2.10 GHz); DIFFERENT_MACHINE from the 2026-10-01 dedicated baseline; the baseline's own relative ranking is used",
+  "status": "REGISTERED (A9.24 item 6; A9.25 message 2 sec. 14 / message 8 sec. 17)",
+  "role": "ORDERS the waves; never GATES a wave or a component (A9.24 item 6); performance never decides whether a component is eventually migrated - every class-A component is scheduled, and classes G / H / F follow the owner rules, not timings. Ordering key (A9.27 sec. 4): (1) architecture relevance (the four-class classification), (2) evidence / parity eligibility (a retained-physics reference exists), (3) measured performance",
+  "a9_27_status": "the owner accepts this baseline (adce2e9) as POST-FREEZE evidence; it does not alter the bid technical source",
+  "ranking_mapped_to_v2": [
+   {
+    "rank": 1,
+    "workload": "uq_modular_run_uq",
+    "addressable_interpreter_s": 94.86,
+    "reference_workload_s": 110.24,
+    "judgement": "PORT_CANDIDATE",
+    "v2_role": "NOT_A_PORT_TARGET",
+    "v2_wave": "RET",
+    "target": "abep_sim/uq_modular.py + archengine + plasma_devices / plasma_chem hotspots (class H, section E)"
+   },
+   {
+    "rank": 2,
+    "workload": "intake_response_surface_reduced",
+    "addressable_interpreter_s": 88.98,
+    "reference_workload_s": 150.68,
+    "judgement": "PORT_CANDIDATE",
+    "v2_role": "PORT_TARGET",
+    "v2_wave": "W1",
+    "target": "abep_sim/intake_tpmc.py response layer on the admitted Kernel 1"
+   },
+   {
+    "rank": 3,
+    "workload": "archengine_close_architecture",
+    "addressable_interpreter_s": 16.28,
+    "reference_workload_s": 18.94,
+    "judgement": "MARGINAL",
+    "v2_role": "NOT_A_PORT_TARGET",
+    "v2_wave": "RET",
+    "target": "abep_sim/archengine.py close_architecture (class H, section E)"
+   },
+   {
+    "rank": 4,
+    "workload": "system_evaluate_gas_path",
+    "addressable_interpreter_s": 2.89,
+    "reference_workload_s": 2.9,
+    "judgement": "NOT_A_BOTTLENECK",
+    "v2_role": "PORT_TARGET_EXTRACTED_KERNEL",
+    "v2_wave": "W2",
+    "target": "K-GASPATH (system.physics_closure gas path; hotspots compressor._run_once, reservoir.steady_state, compressor._gaede_record)"
+   },
+   {
+    "rank": 5,
+    "workload": "mission_run_generic",
+    "addressable_interpreter_s": 2.14,
+    "reference_workload_s": 3.11,
+    "judgement": "NOT_A_BOTTLENECK",
+    "v2_role": "PORT_TARGET_KERNEL_ONLY",
+    "v2_wave": "W3",
+    "target": "mission_env.propagate; the mission5.run_mission_generic / archengine propulsion-map driver and transient._grid_state are class H"
+   },
+   {
+    "rank": 6,
+    "workload": "compressor_size_for",
+    "addressable_interpreter_s": 1.91,
+    "reference_workload_s": 1.91,
+    "judgement": "NOT_A_BOTTLENECK",
+    "v2_role": "PORT_TARGET",
+    "v2_wave": "W2",
+    "target": "abep_sim/compressor.py DragCompressor.size_for"
+   },
+   {
+    "rank": 7,
+    "workload": "uq6_robust_design",
+    "addressable_interpreter_s": 1.26,
+    "reference_workload_s": 1.48,
+    "judgement": "NOT_A_BOTTLENECK",
+    "v2_role": "NOT_A_PORT_TARGET",
+    "v2_wave": "RET",
+    "target": "abep_sim/uq6.py (class H, section E); the active UQ driver is the F8 robust optimizer (W4), not in the baseline's fixed F0 workload set"
+   },
+   {
+    "rank": 8,
+    "workload": "p3_view_factors_verify",
+    "addressable_interpreter_s": 0.04,
+    "reference_workload_s": 0.05,
+    "judgement": "NOT_A_BOTTLENECK",
+    "v2_role": "PORT_TARGET",
+    "v2_wave": "W5",
+    "target": "icp_thermal_lib.view_factors (source-identical to the profiled p3_thermal_lib.view_factors)"
+   }
+  ],
+  "addressable_s_on_retired_paths": 112.4,
+  "addressable_s_on_port_targets": 95.96,
+  "port_target_addressable_s_by_wave": {
+   "W1": 88.98,
+   "W2": 4.8,
+   "W3": 2.14,
+   "W5": 0.04
+  },
+  "result": "Among port targets the ranking is W1 (88.98 s) > W2 (2.89 + 1.91 = 4.80 s) > W3 (2.14 s) > W5 (0.04 s); W4 (the active F8 robust optimizer) is not in the baseline's fixed F0 workload set and keeps its item-7 position. This is exactly the item-7 initial order, so no item-7 wave moves. 112.40 s of the 208.36 s addressable total sits on retired paths (uq_modular, archengine, uq6): those timings motivate retiring them, not porting them. Waves W6-W17 are unprofiled and keep the item-7 list order (atmosphere / orbit, chemistry, Hall interface and bridge, ICP, thermal / life, mass, assessment and gates, configuration, CLI, evidence builders, CI)."
+ },
+ "ordering_rules": [
+  "Ordering key (A9.27 sec. 4): architecture relevance first (class A or an extract kernel), evidence / parity eligibility second, measured performance third; slow legacy workloads are retired, not ported.",
+  "Item-7 initial order kept for active physics: W0 TPMC (admitted), W1 intake / design-state geometry sweep, W2 compressor / gas path, W3 mission propagation, W4 UQ / Monte Carlo driver = the active F8 robust optimizer (not uq6 / uq_modular), W5 P3 ray sampling (cathode-free icp_thermal_lib; the P3 v2 cathode node is not ported).",
+  "Only class-A components and the extract_and_parity_kernels of other components are scheduled in waves W1-W17. Class H is the RET lane (not ported), class G the GR lane (on demand), class F the AFI lane (blocked until resolved).",
+  "The migration does not stop after W5: every class-A component is scheduled (item 7, zero Python execution dependency); classes G and H reach the end state by formal retirement, not by a port (item 14: 'or has been formally retired').",
+  "Profiling ORDERS, never GATES (item 6); no Rust kernel is blocked for lack of a per-kernel profile.",
+  "Dependency closure: a Rust component never calls Python at run time. A class-A dependency in a later wave is pulled forward under its own contract (kernel granularity, RM-R17); a class-A component may never depend on a class H / G / F component - each such edge found is listed in dependency_findings and must be removed by extracting the retained kernel, never by porting the legacy module.",
+  "Kernel granularity: an extract-and-parity kernel is a function subset of a class-H module; only that subset is ported and parity-tested; the surrounding module stays Python history.",
+  "Evidence builders (W15) port after the components they import are admitted; until then they stay Python and keep producing the reference outputs.",
+  "One component (or one tightly coupled group named in its contract) per parity contract; no big-bang wave admission (item 1).",
+  "Nothing here applies to the bid source: the bid technical source 5eee4b8 and package b5849af are frozen (PROGRAMME.md sec. 4); every wave is post-freeze."
+ ],
+ "prerequisites": [
+  {
+   "id": "P-01",
+   "what": "owner review and merge of this plan v2 (A9.25 message 3 step 7)",
+   "blocks": "every wave"
+  },
+  {
+   "id": "P-02",
+   "what": "post-bid, separately governed ACTIVE golden / reference case for the cathodeless hall_icp_neutralizer (A9.25 message 2 secs. 6 and 9; golden-change governance; the historical golden is not deleted)",
+   "blocks": "the Rust `abep golden check` (W16) and the preferred parity reference of K-GASPATH / K-GAS-LIFE (W2 may proceed against captured Python outputs of the retained kernel)"
+  },
+  {
+   "id": "P-03",
+   "what": "AFI-02-RA1: re-base AL-07 on the hall_icp_neutralizer load / converter CBE or quotation (owner: do not invent the reduction)",
+   "blocks": "the mass record successor in W11 (lane AFI)"
+  },
+  {
+   "id": "P-04",
+   "what": "post-bid cathodeless successor thermal model if required (AFI-03; A9.25 message 2 sec. 5)",
+   "blocks": "the W5 successor-model contract only (icp_thermal_lib proceeds)"
+  },
+  {
+   "id": "P-05",
+   "what": "owner confirmation of the provisional classifications (RM-OQ-07)",
+   "blocks": "nothing scheduled; a reclassification moves a component between a wave and a lane"
+  }
+ ],
+ "pulled_forward_dependencies_detected": [
+  {
+   "component": "abep_sim/atmosphere_orbit.py",
+   "wave": "W1",
+   "needs": "abep_sim/mission_env.py",
+   "needs_wave": "W3",
+   "via": "abep_sim/mission_env.py",
+   "resolution": "pull mission_env::{OMEGA_E, Spacecraft, sso_inclination_deg} into W1 under its own kernel contract"
+  },
+  {
+   "component": "abep_sim/icp_bench_lib.py",
+   "wave": "W9",
+   "needs": "docs/experiments/hall_icp/p1_icp_bench/",
+   "needs_wave": "W15b",
+   "via": "docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py",
+   "resolution": "experiment_p1_reducer() loads the full P1 reducer (experiment code, 'not used by design computations'); port that reducer with icp_bench_lib in W9 or leave the function out of the W9 contract until W15b"
+  }
+ ],
+ "class_A_runtime_dependencies_on_non_A_components": [
+  {
+   "component": "scripts/ci_checks.py",
+   "depends_on": "docs/hardware/h2/h2_6_diagnostics_fixture/",
+   "via": "docs/hardware/h2/h2_6_diagnostics_fixture/build_h2_6_diagnostics_fixture.py",
+   "dependency_class": "GROUND_REFERENCE_ONLY",
+   "resolution": "check h2_6_live_sources loads the class-G H2-6 builder (verify_sources): W16 either ports that function as a class-G migration the active CI genuinely requires, or retires the check together with the immutable H2 v1 history (RM-OQ-09)"
+  },
+  {
+   "component": "scripts/perf/profile_baseline.py",
+   "depends_on": "abep_sim/archengine.py",
+   "via": "abep_sim/archengine.py",
+   "dependency_class": "HISTORICAL_LEGACY_REGRESSION",
+   "resolution": "legacy workloads (uq_modular, archengine, uq6, mission5 driver, system.evaluate wrapper) are timed for continuity only; abep-perf ports the active workloads, never these modules"
+  },
+  {
+   "component": "scripts/perf/profile_baseline.py",
+   "depends_on": "abep_sim/mission5.py",
+   "via": "abep_sim/mission5.py",
+   "dependency_class": "HISTORICAL_LEGACY_REGRESSION",
+   "resolution": "legacy workloads (uq_modular, archengine, uq6, mission5 driver, system.evaluate wrapper) are timed for continuity only; abep-perf ports the active workloads, never these modules"
+  },
+  {
+   "component": "scripts/perf/profile_baseline.py",
+   "depends_on": "abep_sim/programme/closure.py",
+   "via": "abep_sim/programme/closure.py",
+   "dependency_class": "HISTORICAL_LEGACY_REGRESSION",
+   "resolution": "legacy workloads (uq_modular, archengine, uq6, mission5 driver, system.evaluate wrapper) are timed for continuity only; abep-perf ports the active workloads, never these modules"
+  },
+  {
+   "component": "scripts/perf/profile_baseline.py",
+   "depends_on": "abep_sim/programme/uq_modular.py",
+   "via": "abep_sim/programme/uq_modular.py",
+   "dependency_class": "HISTORICAL_LEGACY_REGRESSION",
+   "resolution": "legacy workloads (uq_modular, archengine, uq6, mission5 driver, system.evaluate wrapper) are timed for continuity only; abep-perf ports the active workloads, never these modules"
+  },
+  {
+   "component": "scripts/perf/profile_baseline.py",
+   "depends_on": "abep_sim/system.py",
+   "via": "abep_sim/system.py",
+   "dependency_class": "HISTORICAL_LEGACY_REGRESSION",
+   "resolution": "legacy workloads (uq_modular, archengine, uq6, mission5 driver, system.evaluate wrapper) are timed for continuity only; abep-perf ports the active workloads, never these modules"
+  },
+  {
+   "component": "scripts/perf/profile_baseline.py",
+   "depends_on": "abep_sim/uq6.py",
+   "via": "abep_sim/uq6.py",
+   "dependency_class": "HISTORICAL_LEGACY_REGRESSION",
+   "resolution": "legacy workloads (uq_modular, archengine, uq6, mission5 driver, system.evaluate wrapper) are timed for continuity only; abep-perf ports the active workloads, never these modules"
+  }
+ ],
+ "waves": [
+  {
+   "wave": "W0",
+   "name": "TPMC intake kernel (Kernel 1) - ADMITTED",
+   "kind": "WAVE",
+   "status": "ADMITTED (Kernel 1)",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_INTAKE_TPMC_PY",
+     "component": "abep_sim/intake_tpmc.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "ADMITTED_KERNEL_PLUS_MIGRATE_REMAINDER",
+     "loc_total": 475,
+     "sub_wave": "W0+W1"
+    }
+   ],
+   "extract_and_parity_kernels": [],
+   "component_count": 1,
+   "loc_total": 475,
+   "note": "abep_sim/intake_tpmc.py is a split component: its trace kernels K1-K5 are ADMITTED (parity v2); it is counted again in W1"
+  },
+  {
+   "wave": "W1E",
+   "name": "enablers pulled forward (constants, materials, configuration / operating inputs / engineering constraints, frozen atmosphere reader, A9.19 architecture rules)",
+   "kind": "WAVE",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_ATMOSPHERE_PY",
+     "component": "abep_sim/atmosphere.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 171,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_CONFIGURATION_PY",
+     "component": "abep_sim/configuration.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 480,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_CONSTANTS_PY",
+     "component": "abep_sim/constants.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 37,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_DESIGN_A9_19_ARCHITECTURE_PY",
+     "component": "abep_sim/design/a9_19_architecture.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 293,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_DESIGN_ENGINEERING_CONSTRAINTS_PY",
+     "component": "abep_sim/design/engineering_constraints.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 82,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_MATERIALS_PY",
+     "component": "abep_sim/materials.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 104,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_OPERATING_INPUTS_PY",
+     "component": "abep_sim/operating_inputs.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 53,
+     "sub_wave": null
+    }
+   ],
+   "extract_and_parity_kernels": [],
+   "component_count": 7,
+   "loc_total": 1220
+  },
+  {
+   "wave": "W1",
+   "name": "intake / design-state geometry sweep (item 7 #2; PRE_RUST rank 2)",
+   "kind": "WAVE",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_ATMOSPHERE_ORBIT_PY",
+     "component": "abep_sim/atmosphere_orbit.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 1479,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_DESIGN_INTAKE_SYNTHESIS_PY",
+     "component": "abep_sim/design/intake_synthesis.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 1598,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_INTAKE_PY",
+     "component": "abep_sim/intake.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 130,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_INTAKE_SURFACE_V2_SPEC_PY",
+     "component": "abep_sim/intake_surface_v2_spec.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 189,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_INTAKE_TPMC_PY",
+     "component": "abep_sim/intake_tpmc.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "ADMITTED_KERNEL_PLUS_MIGRATE_REMAINDER",
+     "loc_total": 475,
+     "sub_wave": "W0+W1"
+    },
+    {
+     "id": "C-ABEP_SIM_SPACECRAFT_REFERENCE_DRAG_PY",
+     "component": "abep_sim/spacecraft_reference_drag.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 560,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_STATEWISE_PY",
+     "component": "abep_sim/statewise.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 76,
+     "sub_wave": null
+    }
+   ],
+   "extract_and_parity_kernels": [],
+   "component_count": 7,
+   "loc_total": 4507,
+   "pre_rust_addressable_interpreter_s": 88.98,
+   "note": "intake_tpmc response layer (intake_response, response_surface, build_frozen_surface, IntakeSurface) on the admitted kernels; mission_env::{OMEGA_E, Spacecraft, sso_inclination_deg} pulled forward for atmosphere_orbit"
+  },
+  {
+   "wave": "W2",
+   "name": "compressor design search / gas path incl. the extracted K-GASPATH and K-GAS-LIFE kernels (item 7 #3; PRE_RUST ranks 4 and 6)",
+   "kind": "WAVE",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_AOCHEM_PY",
+     "component": "abep_sim/aochem.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 113,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_COMPRESSOR_PY",
+     "component": "abep_sim/compressor.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 317,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_DESIGN_COMPRESSOR_SYNTHESIS_PY",
+     "component": "abep_sim/design/compressor_synthesis.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 995,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_DESIGN_FILTER_STAGE_PY",
+     "component": "abep_sim/design/filter_stage.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 1065,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_DESIGN_PLENUM_FEED_PY",
+     "component": "abep_sim/design/plenum_feed.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 1511,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_DESIGN_UPSTREAM_A9_13_PY",
+     "component": "abep_sim/design/upstream_a9_13.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 818,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_RESERVOIR_PY",
+     "component": "abep_sim/reservoir.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 180,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_ROTOR_STRENGTH_PY",
+     "component": "abep_sim/rotor_strength.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 281,
+     "sub_wave": null
+    }
+   ],
+   "extract_and_parity_kernels": [
+    "K-GASPATH",
+    "K-GAS-LIFE"
+   ],
+   "component_count": 8,
+   "loc_total": 5280,
+   "pre_rust_addressable_interpreter_s": 4.8,
+   "note": "K-GASPATH / K-GAS-LIFE are function subsets of class-H modules (system.py, archengine.py, life.py); preferred parity reference = the post-bid active hall_icp_neutralizer golden (P-02), else captured Python outputs of the retained kernel"
+  },
+  {
+   "wave": "W3",
+   "name": "mission propagation: mission_env.propagate (item 7 #4; PRE_RUST rank 5, legacy driver excluded)",
+   "kind": "WAVE",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_MISSION_ENV_PY",
+     "component": "abep_sim/mission_env.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 173,
+     "sub_wave": null
+    }
+   ],
+   "extract_and_parity_kernels": [],
+   "component_count": 1,
+   "loc_total": 173,
+   "pre_rust_addressable_interpreter_s": 2.14,
+   "note": "only mission_env; the mission5 / transient / mission_uq drivers are class H"
+  },
+  {
+   "wave": "W4",
+   "name": "UQ / Monte Carlo driver = the active F8 robust optimizer, with F7, H-1 geometry and the A9 bus boundary pulled forward (item 7 #5; legacy uq6 / uq_modular retired)",
+   "kind": "WAVE",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_BUS_BOUNDARY_A9_PY",
+     "component": "abep_sim/bus_boundary_a9.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 956,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY",
+     "component": "abep_sim/bus_boundary_a9_v2.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 122,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY",
+     "component": "abep_sim/design/architecture_optimizer.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 1262,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_DESIGN_ROBUST_OPTIMIZER_PY",
+     "component": "abep_sim/design/robust_optimizer.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 453,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_H1_GEOMETRY_PY",
+     "component": "abep_sim/h1_geometry.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 64,
+     "sub_wave": null
+    }
+   ],
+   "extract_and_parity_kernels": [],
+   "component_count": 5,
+   "loc_total": 2857,
+   "note": "F8 is the active UQ / Monte Carlo driver; F7, H-1 geometry and the A9 bus boundary are pulled forward; parity class for F8's numpy PCG64 streams and its TPMC calls is RM-OQ-03"
+  },
+  {
+   "wave": "W5",
+   "name": "P3 ray sampling (icp_thermal_lib, cathode-free); the post-bid cathodeless successor thermal model joins here (item 7 #6; PRE_RUST rank 8)",
+   "kind": "WAVE",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_ICP_THERMAL_LIB_PY",
+     "component": "abep_sim/icp_thermal_lib.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 509,
+     "sub_wave": null
+    }
+   ],
+   "extract_and_parity_kernels": [
+    "K-P3-RAYS"
+   ],
+   "component_count": 1,
+   "loc_total": 509,
+   "pre_rust_addressable_interpreter_s": 0.04,
+   "note": "icp_thermal_lib carries the cathode-free P3 ray / view-factor subset; the P3 v2 package (cathode node) is class H; the post-bid cathodeless successor thermal model joins this wave when it exists (P-04, RM-OQ-08)"
+  },
+  {
+   "wave": "W6",
+   "name": "atmosphere / orbit wrappers (HWM14 orbit atmosphere v2)",
+   "kind": "WAVE",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_ATMOSPHERE_ORBIT_V2_PY",
+     "component": "abep_sim/atmosphere_orbit_v2.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 1180,
+     "sub_wave": null
+    }
+   ],
+   "extract_and_parity_kernels": [],
+   "component_count": 1,
+   "loc_total": 1180
+  },
+  {
+   "wave": "W7",
+   "name": "chemistry support for HallThruster.jl (rate tables, rate-table builders, closed N2 audits, O / O2 v0, D-X5)",
+   "kind": "WAVE",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_RATE_TABLES_PY",
+     "component": "abep_sim/rate_tables.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 66,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_CHEMISTRY_N2_DOMAIN_EXTENSION_DX5",
+     "component": "docs/chemistry/n2_domain_extension/dx5/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 509,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_CHEMISTRY_N2_DOMAIN_EXTENSION_DX5_ACQUISITION",
+     "component": "docs/chemistry/n2_domain_extension/dx5/acquisition/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_OR_FORMALLY_RETIRE",
+     "loc_total": 335,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_CHEMISTRY_N2_DOMAIN_EXTENSION_DX5_CURATION",
+     "component": "docs/chemistry/n2_domain_extension/dx5/curation/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_OR_FORMALLY_RETIRE",
+     "loc_total": 224,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_CHEMISTRY_O_O2_V0",
+     "component": "docs/chemistry/o_o2/v0/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 710,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_AUDIT_N2_COMPLETENESS_FINAL_PY",
+     "component": "scripts/audit_n2_completeness_final.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_OR_FORMALLY_RETIRE",
+     "loc_total": 210,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_AUDIT_N2_DISSOCIATIVE_IONIZATION_PY",
+     "component": "scripts/audit_n2_dissociative_ionization.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_OR_FORMALLY_RETIRE",
+     "loc_total": 126,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_AUDIT_N2_VIBRATIONAL_EXCITATION_PY",
+     "component": "scripts/audit_n2_vibrational_excitation.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_OR_FORMALLY_RETIRE",
+     "loc_total": 183,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_BUILD_MULTIPLY_CHARGED_TABLES_PY",
+     "component": "scripts/build_multiply_charged_tables.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 156,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_BUILD_N2_DISSOCIATION_TABLE_PY",
+     "component": "scripts/build_n2_dissociation_table.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 65,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_BUILD_N2_DISSOCIATIVE_IONIZATION_TABLE_PY",
+     "component": "scripts/build_n2_dissociative_ionization_table.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 97,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_BUILD_N2_ELASTIC_SONG2023_TABLE_PY",
+     "component": "scripts/build_n2_elastic_song2023_table.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 78,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_BUILD_N2_ELECTRONIC_EXCITATION_TABLES_PY",
+     "component": "scripts/build_n2_electronic_excitation_tables.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 147,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_BUILD_N2_IONIZATION_SONG2023_TABLE_PY",
+     "component": "scripts/build_n2_ionization_song2023_table.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 69,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_BUILD_N2_ROTATIONAL_TABLES_PY",
+     "component": "scripts/build_n2_rotational_tables.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 42,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_BUILD_N2_TO_N_Z2PLUS_TABLE_PY",
+     "component": "scripts/build_n2_to_n_z2plus_table.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 62,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_BUILD_N2_VIBRATIONAL_TABLES_PY",
+     "component": "scripts/build_n2_vibrational_tables.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 74,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_BUILD_N_ELASTIC_TABLES_PY",
+     "component": "scripts/build_n_elastic_tables.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 125,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_BUILD_N_IONIZATION_TABLE_PY",
+     "component": "scripts/build_n_ionization_table.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 66,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_BUILD_N_Z1PLUS_TO_Z2PLUS_TABLE_PY",
+     "component": "scripts/build_n_z1plus_to_z2plus_table.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 66,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_CHEMISTRY_N2_DOMAIN_EXTENSION_REQUIREMENTS_PY",
+     "component": "scripts/chemistry/n2_domain_extension_requirements.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_OR_FORMALLY_RETIRE",
+     "loc_total": 892,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_MAKE_N2_VARIANT_CONFIGS_PY",
+     "component": "scripts/make_n2_variant_configs.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 98,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_N2_CLOSURE_TABLE_PY",
+     "component": "scripts/n2_closure_table.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_OR_FORMALLY_RETIRE",
+     "loc_total": 136,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_SUMMARIZE_BLIND_ENVELOPE_PY",
+     "component": "scripts/summarize_blind_envelope.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_OR_FORMALLY_RETIRE",
+     "loc_total": 79,
+     "sub_wave": null
+    }
+   ],
+   "extract_and_parity_kernels": [],
+   "component_count": 24,
+   "loc_total": 4615
+  },
+  {
+   "wave": "W8",
+   "name": "Hall accelerator interface (HallMap, ensemble gate, registry) + Rust<->Julia bridge + Hall-transport validation / O4 tooling",
+   "kind": "WAVE",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_HALL_ENSEMBLE_PY",
+     "component": "abep_sim/hall_ensemble.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 168,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_HALL_MAP_PY",
+     "component": "abep_sim/hall_map.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 99,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_HALLMAP_REGISTRY_PY",
+     "component": "abep_sim/hallmap_registry.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 572,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_O4_DISPOSITION_MATRIX",
+     "component": "docs/o4/disposition_matrix/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 667,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_O4_JOHNSONLOW_ASSESSMENT",
+     "component": "docs/o4/johnsonlow_assessment/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 739,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_V2_QUESTION_A",
+     "component": "docs/v2/question_a/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_OR_FORMALLY_RETIRE",
+     "loc_total": 751,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_VALIDATION_HALL_TRANSPORT_V2_PREREG",
+     "component": "docs/validation/hall_transport_v2_prereg/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 72,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_AUDIT_P5_N2_CAMPAIGN_RECORDS_PY",
+     "component": "scripts/audit_p5_n2_campaign_records.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 61,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_AUDIT_P5_N2_MEASUREMENTS_PY",
+     "component": "scripts/audit_p5_n2_measurements.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_OR_FORMALLY_RETIRE",
+     "loc_total": 187,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_DIGITIZE_P5_BFIELD_PY",
+     "component": "scripts/digitize_p5_bfield.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_OR_FORMALLY_RETIRE",
+     "loc_total": 59,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_FORENSICS_P5_N2_V1_EXB_PHYSICS_PY",
+     "component": "scripts/forensics/p5_n2_v1_exb_physics.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_OR_FORMALLY_RETIRE",
+     "loc_total": 604,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_FORENSICS_P5_N2_V1_OOD_ATTRIBUTION_PY",
+     "component": "scripts/forensics/p5_n2_v1_ood_attribution.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_OR_FORMALLY_RETIRE",
+     "loc_total": 994,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_FORENSICS_P5_N2_V1_SCOREABLE_SUBSET_PY",
+     "component": "scripts/forensics/p5_n2_v1_scoreable_subset.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_OR_FORMALLY_RETIRE",
+     "loc_total": 1386,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_FREEZE_P5_N2_DATASET_PY",
+     "component": "scripts/freeze_p5_n2_dataset.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 141,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_IDENTIFY_P5_TRANSPORT_PY",
+     "component": "scripts/identify_p5_transport.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_OR_FORMALLY_RETIRE",
+     "loc_total": 256,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_MAKE_P5_N2_CASES_PY",
+     "component": "scripts/make_p5_n2_cases.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 68,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_MAKE_P5_N2_LAUNCH_MANIFESTS_PY",
+     "component": "scripts/make_p5_n2_launch_manifests.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 80,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_MAKE_P5_XENON_CASES_PY",
+     "component": "scripts/make_p5_xenon_cases.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 68,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_MAKE_VALIDATION_RELEASE_PY",
+     "component": "scripts/make_validation_release.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 106,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_ORCHESTRATION_LANE_STATUS_PY",
+     "component": "scripts/orchestration/lane_status.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 303,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_ORCHESTRATION_O4_SCORE_DATASET_PY",
+     "component": "scripts/orchestration/o4_score_dataset.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 51,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_ORCHESTRATION_TRIGGER_LEDGER_PY",
+     "component": "scripts/orchestration/trigger_ledger.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 167,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_REPORT_P5_N2_CAMPAIGN_PY",
+     "component": "scripts/report_p5_n2_campaign.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 144,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_RESCORE_P5_AXIAL_THRUST_PY",
+     "component": "scripts/rescore_p5_axial_thrust.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_OR_FORMALLY_RETIRE",
+     "loc_total": 141,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_SCORE_P5_N2_CAMPAIGN_PY",
+     "component": "scripts/score_p5_n2_campaign.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 235,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_SCORE_P5_N2_FROZEN_PY",
+     "component": "scripts/score_p5_n2_frozen.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 95,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_SCORE_P5_N2_STAGED_PY",
+     "component": "scripts/score_p5_n2_staged.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 169,
+     "sub_wave": null
+    }
+   ],
+   "extract_and_parity_kernels": [],
+   "component_count": 27,
+   "loc_total": 8383
+  },
+  {
+   "wave": "W9",
+   "name": "ICP neutralizer design (F6 + bench / impedance helpers, P1 / P2 reducers pulled forward) and H-1 magnet power",
+   "kind": "WAVE",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_DESIGN_ICP_GEOMETRY_SYNTHESIS_PY",
+     "component": "abep_sim/design/icp_geometry_synthesis.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 806,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_ICP_BENCH_LIB_PY",
+     "component": "abep_sim/icp_bench_lib.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 174,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_MAGNET_POWER_PY",
+     "component": "abep_sim/magnet_power.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 336,
+     "sub_wave": null
+    }
+   ],
+   "extract_and_parity_kernels": [],
+   "component_count": 3,
+   "loc_total": 1316
+  },
+  {
+   "wave": "W10",
+   "name": "thermal / life accounting (thermal_life: Hall discharge and magnet parts; LaB6 / RF / ECR parts not ported)",
+   "kind": "WAVE",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_THERMAL_LIFE_PY",
+     "component": "abep_sim/thermal_life.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 979,
+     "sub_wave": null
+    }
+   ],
+   "extract_and_parity_kernels": [],
+   "component_count": 1,
+   "loc_total": 979
+  },
+  {
+   "wave": "W11",
+   "name": "mass and Xe accounting (Xe accounting v3; K-MASS-RULES; the AFI-02-resolved mass successor)",
+   "kind": "WAVE",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-DOCS_BUDGETS_XE_ACCOUNTING_A9_V3",
+     "component": "docs/budgets/xe_accounting_a9_v3/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 1430,
+     "sub_wave": null
+    }
+   ],
+   "extract_and_parity_kernels": [
+    "K-MASS-RULES"
+   ],
+   "component_count": 1,
+   "loc_total": 1430,
+   "note": "the active mass record builder (mass_power_a9_v5) is class F (AFI-02 open): its corrected successor joins W11 after AFI-02-RA1 (P-03); Xe accounting v3 and K-MASS-RULES proceed"
+  },
+  {
+   "wave": "W12",
+   "name": "assessment and hard gates (design gates HC-01..HC-12, F7 / F8 programme runners)",
+   "kind": "WAVE",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_ASSESSMENT_DESIGN_GATES_PY",
+     "component": "abep_sim/assessment/design_gates.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 506,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_PROGRAMME_DESIGN_SYNTHESIS_PY",
+     "component": "abep_sim/programme/design_synthesis.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 296,
+     "sub_wave": null
+    }
+   ],
+   "extract_and_parity_kernels": [],
+   "component_count": 2,
+   "loc_total": 802,
+   "note": "the active hard gates are HC-01..HC-12 in design_gates + config/assessment/gate_thresholds_v1.json; HC-12 stays NOT_EVALUATED; abep_sim/hard_gates.py (multi-family) is class H"
+  },
+  {
+   "wave": "W13",
+   "name": "configuration builders / loaders and hash verification",
+   "kind": "WAVE",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-SCRIPTS_CONFIG_BUILD_CONFIG_PY",
+     "component": "scripts/config/build_config.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 980,
+     "sub_wave": null
+    }
+   ],
+   "extract_and_parity_kernels": [],
+   "component_count": 1,
+   "loc_total": 980
+  },
+  {
+   "wave": "W14",
+   "name": "CLI: the new `abep` entry point (no Python entry point is ported)",
+   "kind": "WAVE",
+   "status": "PLANNED",
+   "components": [],
+   "extract_and_parity_kernels": [],
+   "component_count": 0,
+   "loc_total": 0,
+   "note": "no Python entry point is ported (the abep_sim package entry points are class H); the Rust CLI is new code over admitted components"
+  },
+  {
+   "wave": "W15",
+   "name": "evidence builders of the active chain (a: design synthesis / architecture; b: A9 hall_icp experiments, hardware, interfaces, procurement, evidence registers; c: requirements, decisions, owner questions, bid package)",
+   "kind": "WAVE",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-DOCS_ARCHITECTURE_FREEZE_CANDIDATE",
+     "component": "docs/architecture/freeze_candidate/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 3602,
+     "sub_wave": "W15a"
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_POWER_BOUNDARY_A9_V2",
+     "component": "docs/architecture_comparison/power_boundary_a9_v2/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 1501,
+     "sub_wave": "W15a"
+    },
+    {
+     "id": "C-DOCS_BID_PACKAGE",
+     "component": "docs/bid/package/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_OR_FORMALLY_RETIRE",
+     "loc_total": 1506,
+     "sub_wave": "W15c"
+    },
+    {
+     "id": "C-DOCS_BUDGETS_OWNER_DECISIONS",
+     "component": "docs/budgets/owner_decisions/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 3844,
+     "sub_wave": "W15c"
+    },
+    {
+     "id": "C-DOCS_DECISIONS_APPLICATION",
+     "component": "docs/decisions/application/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 1824,
+     "sub_wave": "W15c"
+    },
+    {
+     "id": "C-DOCS_DESIGN_SYNTHESIS_F1_INTAKE",
+     "component": "docs/design_synthesis/f1_intake/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 821,
+     "sub_wave": "W15a"
+    },
+    {
+     "id": "C-DOCS_DESIGN_SYNTHESIS_F2_FILTER",
+     "component": "docs/design_synthesis/f2_filter/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 708,
+     "sub_wave": "W15a"
+    },
+    {
+     "id": "C-DOCS_DESIGN_SYNTHESIS_F3_COMPRESSOR",
+     "component": "docs/design_synthesis/f3_compressor/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 561,
+     "sub_wave": "W15a"
+    },
+    {
+     "id": "C-DOCS_DESIGN_SYNTHESIS_F4_PLENUM",
+     "component": "docs/design_synthesis/f4_plenum/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 1423,
+     "sub_wave": "W15a"
+    },
+    {
+     "id": "C-DOCS_DESIGN_SYNTHESIS_F6_ICP_GEOMETRY",
+     "component": "docs/design_synthesis/f6_icp_geometry/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 607,
+     "sub_wave": "W15a"
+    },
+    {
+     "id": "C-DOCS_DESIGN_SYNTHESIS_F7_F8_OPTIMIZER",
+     "component": "docs/design_synthesis/f7_f8_optimizer/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 810,
+     "sub_wave": "W15a"
+    },
+    {
+     "id": "C-DOCS_DESIGN_SYNTHESIS_SPACECRAFT_REFERENCE_DRAG",
+     "component": "docs/design_synthesis/spacecraft_reference_drag/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 157,
+     "sub_wave": "W15a"
+    },
+    {
+     "id": "C-DOCS_EVIDENCE_HALL_SUSTAINMENT",
+     "component": "docs/evidence/hall_sustainment/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 1531,
+     "sub_wave": "W15b"
+    },
+    {
+     "id": "C-DOCS_EVIDENCE_ICP_NEUTRALIZER",
+     "component": "docs/evidence/icp_neutralizer/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 1222,
+     "sub_wave": "W15b"
+    },
+    {
+     "id": "C-DOCS_EVIDENCE_SPUTTER_YIELDS_V1",
+     "component": "docs/evidence/sputter_yields_v1/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 864,
+     "sub_wave": "W15b"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_HALL_ICP_INTEGRATION",
+     "component": "docs/experiments/hall_icp/integration/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 6623,
+     "sub_wave": "W15b"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_HALL_ICP_INTEGRATION_M16_V5",
+     "component": "docs/experiments/hall_icp/integration/m16_v5/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 1135,
+     "sub_wave": "W15b"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_HALL_ICP_P1_ICP_BENCH",
+     "component": "docs/experiments/hall_icp/p1_icp_bench/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 8197,
+     "sub_wave": "W15b"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_HALL_ICP_P2_IMPEDANCE_MAP",
+     "component": "docs/experiments/hall_icp/p2_impedance_map/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 6539,
+     "sub_wave": "W15b"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_HALL_ICP_P4_ANODE_MATERIALS",
+     "component": "docs/experiments/hall_icp/p4_anode_materials/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 2800,
+     "sub_wave": "W15b"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_HALL_ICP_PREREG_FRAMEWORK",
+     "component": "docs/experiments/hall_icp/prereg_framework/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 1171,
+     "sub_wave": "W15b"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_HALL_ICP_PROGRAMME",
+     "component": "docs/experiments/hall_icp/programme/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 882,
+     "sub_wave": "W15b"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_HALL_ICP_UNCERTAINTY_BUDGET",
+     "component": "docs/experiments/hall_icp/uncertainty_budget/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 1899,
+     "sub_wave": "W15b"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_HALL_ICP_VALIDATION_INPUTS",
+     "component": "docs/experiments/hall_icp/validation_inputs/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 945,
+     "sub_wave": "W15b"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_HARDWARE",
+     "component": "docs/experiments/hardware/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 266,
+     "sub_wave": "W15b"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_INSTRUMENTATION",
+     "component": "docs/experiments/instrumentation/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 2006,
+     "sub_wave": "W15b"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_LIFETIME_AO",
+     "component": "docs/experiments/lifetime_ao/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 2558,
+     "sub_wave": "W15b"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_MAGNET_COIL",
+     "component": "docs/experiments/magnet_coil/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 1283,
+     "sub_wave": "W15b"
+    },
+    {
+     "id": "C-DOCS_HARDWARE_H1_FREEZE_CANDIDATE",
+     "component": "docs/hardware/h1_freeze_candidate/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 1875,
+     "sub_wave": "W15a"
+    },
+    {
+     "id": "C-DOCS_HARDWARE_H2_A9_REVISIONS",
+     "component": "docs/hardware/h2_a9_revisions/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 3493,
+     "sub_wave": "W15b"
+    },
+    {
+     "id": "C-DOCS_INTERFACES_ICP_NEUTRALIZER",
+     "component": "docs/interfaces/icp_neutralizer/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 1550,
+     "sub_wave": "W15b"
+    },
+    {
+     "id": "C-DOCS_PROCUREMENT_RFQ_A9_V3",
+     "component": "docs/procurement/rfq_a9_v3/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 3334,
+     "sub_wave": "W15b"
+    },
+    {
+     "id": "C-DOCS_REQUIREMENTS_RFP_OFFICIAL",
+     "component": "docs/requirements/rfp_official/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 351,
+     "sub_wave": "W15c"
+    },
+    {
+     "id": "C-DOCS_REQUIREMENTS_RVM_A9",
+     "component": "docs/requirements/rvm_a9/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 4172,
+     "sub_wave": "W15c"
+    },
+    {
+     "id": "C-SCRIPTS_EVIDENCE_EVIDENCE_ARCHIVE_PY",
+     "component": "scripts/evidence/evidence_archive.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 124,
+     "sub_wave": "W15a"
+    },
+    {
+     "id": "C-SCRIPTS_EVIDENCE_F1_ARCHIVE_PY",
+     "component": "scripts/evidence/f1_archive.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 504,
+     "sub_wave": "W15a"
+    },
+    {
+     "id": "C-SCRIPTS_EXPERIMENTS_S1_READINESS_PY",
+     "component": "scripts/experiments/s1_readiness.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 632,
+     "sub_wave": "W15b"
+    },
+    {
+     "id": "C-SCRIPTS_EXPERIMENTS_S1A_READINESS_PY",
+     "component": "scripts/experiments/s1a_readiness.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 774,
+     "sub_wave": "W15b"
+    },
+    {
+     "id": "C-DOCS_PROCUREMENT_RFQ_A9_V3_GAS_REV1",
+     "component": "docs/procurement/rfq_a9_v3_gas_rev1/",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 471,
+     "sub_wave": "W15b"
+    }
+   ],
+   "extract_and_parity_kernels": [],
+   "component_count": 39,
+   "loc_total": 74565
+  },
+  {
+   "wave": "W16",
+   "name": "CI / check / parity / performance utilities and the test suite",
+   "kind": "WAVE",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_DESIGN_TPMC_BACKEND_PY",
+     "component": "abep_sim/design/tpmc_backend.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "RETIRE_AT_END_STATE_MIGRATION_TOOLING",
+     "loc_total": 313,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_CI_CHECKS_PY",
+     "component": "scripts/ci_checks.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 566,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_PERF_PROFILE_BASELINE_PY",
+     "component": "scripts/perf/profile_baseline.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 1328,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_VERIFY_ABEP_CORE_PY",
+     "component": "scripts/verify_abep_core.py",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "RETIRE_AT_END_STATE_MIGRATION_TOOLING",
+     "loc_total": 1189,
+     "sub_wave": null
+    },
+    {
+     "id": "C-TESTS",
+     "component": "tests",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": 63307,
+     "sub_wave": null
+    },
+    {
+     "id": "C-GITHUB_WORKFLOWS_YML_INLINE_PYTHON",
+     "component": ".github/workflows/*.yml (inline python)",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+     "loc_total": null,
+     "sub_wave": null
+    }
+   ],
+   "extract_and_parity_kernels": [
+    "K-GOLDEN-COMPARE"
+   ],
+   "component_count": 6,
+   "loc_total": 66703,
+   "note": "the Rust golden check covers the retained-kernel cases of golden_v2 and the post-bid active golden; historical cases stay reproducible from the historical reference environment (RM-OQ-06)"
+  },
+  {
+   "wave": "W17",
+   "name": "final: retire the abep_core PyO3 binding layer and every remaining Python entry point; static proof that no active path imports a class-H module",
+   "kind": "WAVE",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_CORE_PYO3_MATURIN_BINDING_LAYER",
+     "component": "abep_core PyO3 / maturin binding layer",
+     "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+     "port_disposition": "RETIRE_AT_END_STATE_MIGRATION_TOOLING",
+     "loc_total": null,
+     "sub_wave": null
+    }
+   ],
+   "extract_and_parity_kernels": [],
+   "component_count": 1,
+   "loc_total": 0,
+   "note": "end state: static proof that no active path imports a class-H module; Python-free CI (CI_PLAN.md sec. 5)"
+  },
+  {
+   "wave": "GR",
+   "name": "GROUND_REFERENCE_ONLY on demand: migrated only when an active test / evidence tool is shown to require it",
+   "kind": "LANE_NOT_A_PORT_WAVE",
+   "status": "ON_DEMAND",
+   "components": [
+    {
+     "id": "C-DOCS_HARDWARE_H2_H2_1_HALL_CHAMBER_MAGNET",
+     "component": "docs/hardware/h2/h2_1_hall_chamber_magnet/",
+     "migration_class": "GROUND_REFERENCE_ONLY",
+     "port_disposition": "MIGRATE_ONLY_IF_ACTIVE_TOOLCHAIN_REQUIRES",
+     "loc_total": 1649,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_HARDWARE_H2_H2_2_CATHODE_INTEGRATION",
+     "component": "docs/hardware/h2/h2_2_cathode_integration/",
+     "migration_class": "GROUND_REFERENCE_ONLY",
+     "port_disposition": "MIGRATE_ONLY_IF_ACTIVE_TOOLCHAIN_REQUIRES",
+     "loc_total": 1775,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_HARDWARE_H2_H2_3_GAS_PATH_PLENUM",
+     "component": "docs/hardware/h2/h2_3_gas_path_plenum/",
+     "migration_class": "GROUND_REFERENCE_ONLY",
+     "port_disposition": "MIGRATE_ONLY_IF_ACTIVE_TOOLCHAIN_REQUIRES",
+     "loc_total": 2147,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_HARDWARE_H2_H2_4_PPU_BUS",
+     "component": "docs/hardware/h2/h2_4_ppu_bus/",
+     "migration_class": "GROUND_REFERENCE_ONLY",
+     "port_disposition": "MIGRATE_ONLY_IF_ACTIVE_TOOLCHAIN_REQUIRES",
+     "loc_total": 1663,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_HARDWARE_H2_H2_5_THERMAL_NETWORK",
+     "component": "docs/hardware/h2/h2_5_thermal_network/",
+     "migration_class": "GROUND_REFERENCE_ONLY",
+     "port_disposition": "MIGRATE_ONLY_IF_ACTIVE_TOOLCHAIN_REQUIRES",
+     "loc_total": 1434,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_HARDWARE_H2_H2_6_DIAGNOSTICS_FIXTURE",
+     "component": "docs/hardware/h2/h2_6_diagnostics_fixture/",
+     "migration_class": "GROUND_REFERENCE_ONLY",
+     "port_disposition": "MIGRATE_ONLY_IF_ACTIVE_TOOLCHAIN_REQUIRES",
+     "loc_total": 2286,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_HARDWARE_H2_H2_7_MECHANICAL_BOM",
+     "component": "docs/hardware/h2/h2_7_mechanical_bom/",
+     "migration_class": "GROUND_REFERENCE_ONLY",
+     "port_disposition": "MIGRATE_ONLY_IF_ACTIVE_TOOLCHAIN_REQUIRES",
+     "loc_total": 1548,
+     "sub_wave": null
+    }
+   ],
+   "extract_and_parity_kernels": [],
+   "component_count": 7,
+   "loc_total": 12502,
+   "note": "the only known active requirement is scripts/ci_checks.py check h2_6_live_sources (RM-OQ-09)"
+  },
+  {
+   "wave": "RET",
+   "name": "HISTORICAL_LEGACY_REGRESSION: not ported; retired from the production execution graph (RETIRE != DELETE)",
+   "kind": "LANE_NOT_A_PORT_WAVE",
+   "status": "RETIREMENT_PLANNED_POST_BID",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_PACKAGE_ENTRY_POINTS",
+     "component": "abep_sim/(package entry points)",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 56,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_ARCH_BOUNDARY_PY",
+     "component": "abep_sim/arch_boundary.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 158,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_ARCH_COMPARE_PY",
+     "component": "abep_sim/arch_compare.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 890,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_ARCHENGINE_PY",
+     "component": "abep_sim/archengine.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1014,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_ASSESSMENT_ARCH_CONSTRAINTS_PY",
+     "component": "abep_sim/assessment/arch_constraints.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 97,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_ASSESSMENT_CLOSURE_CHECKS_PY",
+     "component": "abep_sim/assessment/closure_checks.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 221,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_BREAKEVEN_PY",
+     "component": "abep_sim/breakeven.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 746,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_CATHODE_INTEGRATION_PY",
+     "component": "abep_sim/cathode_integration.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1065,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_COMPRESSOR_TRANSITIONAL_PY",
+     "component": "abep_sim/compressor_transitional.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 489,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_CONVERGENCE_PY",
+     "component": "abep_sim/convergence.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 124,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_EXPLORER_PY",
+     "component": "abep_sim/explorer.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 111,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_GOLDEN_PY",
+     "component": "abep_sim/golden.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 654,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_HALL1D_PY",
+     "component": "abep_sim/hall1d.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 189,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_HARD_GATES_PY",
+     "component": "abep_sim/hard_gates.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1054,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_INTERSTAGE_PY",
+     "component": "abep_sim/interstage.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1917,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_LIFE_PY",
+     "component": "abep_sim/life.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 139,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_MASS_BOM_PY",
+     "component": "abep_sim/mass_bom.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 880,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_MISSION5_PY",
+     "component": "abep_sim/mission5.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 195,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_MISSION_UQ_PY",
+     "component": "abep_sim/mission_uq.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 120,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_ORBIT_ATM_PY",
+     "component": "abep_sim/orbit_atm.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 100,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_PLASMA_CHEM_PY",
+     "component": "abep_sim/plasma_chem.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 261,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_PLASMA_DEVICES_PY",
+     "component": "abep_sim/plasma_devices.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 553,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_PPU_PY",
+     "component": "abep_sim/ppu.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 116,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_PROGRAMME_ARCH_COMPARE_PY",
+     "component": "abep_sim/programme/arch_compare.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 78,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_PROGRAMME_CLOSURE_PY",
+     "component": "abep_sim/programme/closure.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 64,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_PROGRAMME_SWEEP_PY",
+     "component": "abep_sim/programme/sweep.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 195,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_PROGRAMME_UQ_MODULAR_PY",
+     "component": "abep_sim/programme/uq_modular.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 57,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_RADIATION_PY",
+     "component": "abep_sim/radiation.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 94,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_SIZING_PY",
+     "component": "abep_sim/sizing.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 95,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_SYSTEM_PY",
+     "component": "abep_sim/system.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 476,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_THERMAL_PY",
+     "component": "abep_sim/thermal.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 138,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_THRESHOLDS_PY",
+     "component": "abep_sim/thresholds.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 94,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_THRUSTER_PY",
+     "component": "abep_sim/thruster.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 211,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_TRANSIENT_PY",
+     "component": "abep_sim/transient.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 205,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_UNCERTAINTY_PY",
+     "component": "abep_sim/uncertainty.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 256,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_UQ6_PY",
+     "component": "abep_sim/uq6.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 293,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_UQ_MODULAR_PY",
+     "component": "abep_sim/uq_modular.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 100,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_VALIDATION_PY",
+     "component": "abep_sim/validation.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 111,
+     "sub_wave": null
+    },
+    {
+     "id": "C-ABEP_SIM_XE_LEDGER_PY",
+     "component": "abep_sim/xe_ledger.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 460,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_AUX_BUS",
+     "component": "docs/architecture_comparison/aux_bus/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1162,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_CATHODE_INTEGRATION",
+     "component": "docs/architecture_comparison/cathode_integration/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 65,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_COMPRESSOR_DOWNSELECT",
+     "component": "docs/architecture_comparison/compressor_downselect/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1315,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_ELECTRICAL_CLOSURE_TOOLS",
+     "component": "docs/architecture_comparison/electrical_closure/tools/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 864,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_EXPERIMENT_PACKAGE",
+     "component": "docs/architecture_comparison/experiment_package/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1766,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_EXPERIMENT_PROTOCOL",
+     "component": "docs/architecture_comparison/experiment_protocol/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 509,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_FAILURE_TREE",
+     "component": "docs/architecture_comparison/failure_tree/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 314,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_FEED_STATE_CLOSURE",
+     "component": "docs/architecture_comparison/feed_state_closure/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1518,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_HALL_REFERENCE",
+     "component": "docs/architecture_comparison/hall_reference/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 414,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_LOCK1",
+     "component": "docs/architecture_comparison/lock1/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1461,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_MINIMUM_DECISIVE_EXPERIMENT",
+     "component": "docs/architecture_comparison/minimum_decisive_experiment/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 821,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_OVERLAYS_ECR",
+     "component": "docs/architecture_comparison/overlays/ecr/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1994,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_OVERLAYS_HALL_SUSTAINMENT",
+     "component": "docs/architecture_comparison/overlays/hall_sustainment/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 2248,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_OVERLAYS_RF",
+     "component": "docs/architecture_comparison/overlays/rf/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1509,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_POWER_BOUNDARY_TOOLS",
+     "component": "docs/architecture_comparison/power_boundary/tools/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 312,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_POWER_BOUNDARY_A9",
+     "component": "docs/architecture_comparison/power_boundary_a9/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1049,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_VETO_LAYER",
+     "component": "docs/architecture_comparison/veto_layer/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1478,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_BUDGETS_MASS_A9",
+     "component": "docs/budgets/mass_a9/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1844,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_BUDGETS_MASS_POWER_A9_V2",
+     "component": "docs/budgets/mass_power_a9_v2/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1767,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_BUDGETS_MASS_POWER_A9_V3",
+     "component": "docs/budgets/mass_power_a9_v3/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1421,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_BUDGETS_SUBSYSTEM_MATURITY",
+     "component": "docs/budgets/subsystem_maturity/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 2745,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_BUDGETS_XE_ACCOUNTING_A9_V2",
+     "component": "docs/budgets/xe_accounting_a9_v2/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1510,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_BUDGETS_XE_LEDGER",
+     "component": "docs/budgets/xe_ledger/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1088,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_BUDGETS_XE_LEDGER_A9",
+     "component": "docs/budgets/xe_ledger_a9/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1400,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_EVIDENCE_COMPRESSOR_TRANSITIONAL",
+     "component": "docs/evidence/compressor_transitional/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 494,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_EVIDENCE_ECR_SOURCE",
+     "component": "docs/evidence/ecr_source/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1184,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_EVIDENCE_RF_SOURCE",
+     "component": "docs/evidence/rf_source/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 218,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_CAPABILITY_DEMO",
+     "component": "docs/experiments/capability_demo/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 2080,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_HALL_ICP_INTEGRATION_M16_V4",
+     "component": "docs/experiments/hall_icp/integration/m16_v4/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1332,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_HALL_ICP_P3_COUPLED_THERMAL",
+     "component": "docs/experiments/hall_icp/p3_coupled_thermal/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 4927,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_PHASE1_PREREG_FRAMEWORK",
+     "component": "docs/experiments/phase1_prereg_framework/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1702,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_INTERFACES_PREIONIZER_MODULE",
+     "component": "docs/interfaces/preionizer_module/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1439,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_MILESTONES_BUNDLE1",
+     "component": "docs/milestones/bundle1/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 2165,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_PROCUREMENT_RFQ_A9",
+     "component": "docs/procurement/rfq_a9/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1919,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_PROCUREMENT_RFQ_A9_V2",
+     "component": "docs/procurement/rfq_a9_v2/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 3707,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_TRACEABILITY",
+     "component": "docs/traceability/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 704,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_ARCHITECTURE_BUILD_BREAKEVEN_SURFACES_PY",
+     "component": "scripts/architecture/build_breakeven_surfaces.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 790,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_ARCHITECTURE_BUILD_COMPARISON_GRID_PY",
+     "component": "scripts/architecture/build_comparison_grid.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1017,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_ARCHITECTURE_BUILD_DECISION_DOSSIER_PY",
+     "component": "scripts/architecture/build_decision_dossier.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1036,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_ARCHITECTURE_BUILD_FEED_ENVELOPE_PY",
+     "component": "scripts/architecture/build_feed_envelope.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1668,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_ARCHITECTURE_SCALING_SIMILARITY_PY",
+     "component": "scripts/architecture/scaling_similarity.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 1759,
+     "sub_wave": null
+    },
+    {
+     "id": "C-SCRIPTS_CONFIG_BUILD_RESULT_SCHEMAS_PY",
+     "component": "scripts/config/build_result_schemas.py",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 161,
+     "sub_wave": null
+    },
+    {
+     "id": "C-TESTS_FIXTURES",
+     "component": "tests/fixtures",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 164,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_BUDGETS_MASS_POWER_A9_V4",
+     "component": "docs/budgets/mass_power_a9_v4/",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": 651,
+     "sub_wave": null
+    },
+    {
+     "id": "C-DOCS_ORCHESTRATION_RUNNER_SCRIPTS_SH_INLINE_PYTHON",
+     "component": "docs/orchestration/runner_scripts/*.sh (inline python)",
+     "migration_class": "HISTORICAL_LEGACY_REGRESSION",
+     "port_disposition": "NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH",
+     "loc_total": null,
+     "sub_wave": null
+    }
+   ],
+   "extract_and_parity_kernels": [],
+   "component_count": 84,
+   "loc_total": 73767,
+   "note": "RETIRE != DELETE: source, history and evidence kept; removed from the production execution graph post-bid"
+  },
+  {
+   "wave": "AFI",
+   "name": "ACTIVE_FLIGHT_INCONSISTENCY: not ported; resolved against hall_icp_neutralizer first, then the corrected successor joins its wave",
+   "kind": "LANE_NOT_A_PORT_WAVE",
+   "status": "BLOCKED_UNTIL_RESOLVED",
+   "components": [
+    {
+     "id": "C-DOCS_BUDGETS_MASS_POWER_A9_V5",
+     "component": "docs/budgets/mass_power_a9_v5/",
+     "migration_class": "ACTIVE_FLIGHT_INCONSISTENCY",
+     "port_disposition": "NOT_PORTED_RESOLVE_AGAINST_HALL_ICP_FIRST",
+     "loc_total": 874,
+     "sub_wave": null
+    }
+   ],
+   "extract_and_parity_kernels": [],
+   "component_count": 1,
+   "loc_total": 874,
+   "note": "resolution is an owner-governed record change in Python (no number is invented by the migration)"
+  }
+ ]
+}

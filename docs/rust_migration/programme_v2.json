@@ -1,0 +1,708 @@
+{
+ "schema": "abep_rust_migration_programme_v2",
+ "id": "RUSTMIG-PROGRAMME-V2",
+ "status": "PROPOSED_PLAN_V2_FOR_OWNER_REVIEW",
+ "date": "2026-10-05",
+ "human_readable": "docs/rust_migration/PROGRAMME.md",
+ "supersedes": {
+  "path": "docs/rust_migration/programme_v1.json",
+  "sha256": "81e1ceb110993e1e38824b52b8681f51576be35bb68cc4a37e87f9e87a27c644",
+  "status": "HISTORICAL_UNCHANGED (kept byte-identical)",
+  "why": "A9.25 message 3 rejects v1 rule RM-R15 and requires the four-class classification and an updated inventory / dependency graph before the plan is merged; A9.25 message 8 sec. 17 orders this revision after the PRE_RUST_REFERENCE_BASELINE"
+ },
+ "governing_records": [
+  {
+   "path": "docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md",
+   "md_sha256": "9a2c950befd20dc38c63a3c56d4443ce7a30f1630903ada618b054638325b1d7",
+   "json": "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json",
+   "json_sha256": "fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c",
+   "items": [
+    1,
+    2,
+    6,
+    7,
+    8,
+    9,
+    13,
+    14
+   ]
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_04_A9_25_PRE_BID_OWNER_DECISIONS.md",
+   "md_sha256": "159ea2049e3cc05ce7a18b3e6bbdf6fee97c168a74f23fd2359cfef3a1d26106",
+   "json": "docs/decisions/OD_2026_10_04_A9_25_pre_bid_owner_decisions.json",
+   "json_sha256": "c05fcc45de0194e60ef30b93aa91294c54a7762d129dac69e933e9a679679385",
+   "messages": {
+    "1": "STEERING_DIRECTIVE secs. 9, 13, 14, 15, 18",
+    "2": "STEERING_RESPONSE secs. 4, 5, 6, 8, 9, 10, 14, 15",
+    "3": "RUST_PLAN_LAB6_RULE (in full)",
+    "8": "FINAL_PRE_BID_AFI_RESOLUTION secs. 4, 12-14, 17"
+   }
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_05_A9_27_FINAL_BID_OWNER_RULINGS.md",
+   "md_sha256": "ec775c1c2126b5aa5a7f5350a55a7e080d2d771b449fdb6a2d8a11cb2dd3a577",
+   "json": "docs/decisions/OD_2026_10_05_A9_27_final_bid_owner_rulings.json",
+   "json_sha256": "858577587beec007d1131acc17b17ce47f9c46c12d3c00021b7010715460a2fe",
+   "sections": {
+    "preamble": "protect the frozen bid pair: technical source 5eee4b8, package / freeze record b5849af; do not move the technical source to later performance / Rust-planning commits",
+    "4": "PRE_RUST baseline at adce2e9 accepted as POST-FREEZE evidence; classification governs BEFORE runtime: architecture relevance first, evidence / parity eligibility second, measured performance third; slow legacy uq_modular / archengine are retired, not ported; extract only architecture-independent kernels still required; active intake response-surface work remains a genuine target",
+    "5": "stale owner-question state v5 (MPV3Q-01) repaired post-bid by a successor record"
+   }
+  },
+  {
+   "path": "git show b8f39b7:docs/audits/a9_24_cathode_path_audit_v1.md",
+   "note": "cathode-path audit v1 (branch lane-a924-cathode; not merged into the execution branch): HR / GR / AFI-01..05; AFI-01 / 03 / 05 since resolved, AFI-02 open, AFI-04 owner-classified HISTORICAL_REGRESSION_COMPATIBILITY"
+  },
+  {
+   "path": "docs/performance/pre_rust_reference_baseline_5eee4b8/REGISTRATION.json",
+   "sha256": "ae383b091d89c0cede4d0f49c673073be4740bf3eaa97c0288d5ba083833340b",
+   "baseline_json_sha256": "23714fe933a57e396f95f6054b796f9a2a22b65897cf1f2c96d765995169ab63"
+  }
+ ],
+ "supersedes_per_a9_24": [
+  {
+   "record": "docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md",
+   "section": "Computational-language decision (Do not rewrite the simulator in Rust)",
+   "status": "SUPERSEDED_BY_A9_24_ITEM_1"
+  },
+  {
+   "record": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "section": "S10.3 PYTHON_CANONICAL_FOR_FROZEN_AND_SCORE_BEARING",
+   "status": "SUPERSEDED_PER_COMPONENT_ON_ADMISSION"
+  }
+ ],
+ "still_in_force": [
+  "A9.14 S10.4 OPTIONAL_RUST_CI_MANDATORY_PARITY_ON_RUST_CHANGES (extended by CI_PLAN.md)",
+  "CLAUDE.md rules 1-10 (frozen data, goldens, no silent fallbacks, conservation, pure caches, citations, HallThruster pin, no new propulsion families, test outcome contract, evidence rules)",
+  "A9.25 message 1 sec. 17 (repository / branch safety) and sec. 20 (governance master rules)"
+ ],
+ "scope_of_this_record": "docs/plan only: no Python, Rust, CI workflow, configuration, frozen data or numeric change",
+ "end_state": {
+  "python_execution_dependency": "ZERO",
+  "rust_authoritative_for": [
+   "physics modules except the Hall solver",
+   "design-space generation",
+   "mission propagation",
+   "UQ / Monte Carlo orchestration",
+   "architecture closure",
+   "assessment / compliance",
+   "hard gates",
+   "configuration loading / hash verification",
+   "evidence builders",
+   "CLI tools",
+   "deterministic result generation",
+   "validation / parity tooling now in Python"
+  ],
+  "hall_solver": {
+   "authority": "HallThruster.jl",
+   "version": "0.23.1",
+   "commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+   "pin_file": "hallthruster_bridge/PINNED.toml",
+   "integration": "Rust<->Julia process bridge (abep-julia-bridge), PROGRAMME.md section 7"
+  },
+  "python_source_after_end_state": "immutable history only (Git history, retired tag or clearly retired directory); historical evidence never deleted",
+  "active_rust_architecture": {
+   "id": "hall_icp_neutralizer",
+   "config": "config/architecture/hall_icp_neutralizer_v1.json",
+   "composition": [
+    "Hall accelerator",
+    "downstream RF/ICP electron source / neutralizer",
+    "AIR_PRIMARY",
+    "XE_CONTINGENCY",
+    "no conventional hollow cathode"
+   ],
+   "c1": "GROUND_REFERENCE_ONLY laboratory hardware; never flight hardware, fallback, electron source, Xe, mass, power, thermal load or closure",
+   "source": "A9.25 message 3; A9.19 / A9.20; bid_technical_baseline_v2 rules"
+  }
+ },
+ "lifecycle": {
+  "states": [
+   "PYTHON_REFERENCE",
+   "PREREG_PARITY",
+   "RUST_IMPL",
+   "PARITY_PASS",
+   "ADMITTED",
+   "PYTHON_RETIRED_FROM_ACTIVE"
+  ],
+  "side_states": [
+   "NOT_ADMITTED",
+   "FORMALLY_RETIRED_NOT_PORTED",
+   "GROUND_REFERENCE_ON_DEMAND",
+   "NOT_PORTED_RETIREMENT_PENDING",
+   "NOT_PORTED_BLOCKED_ACTIVE_FLIGHT_INCONSISTENCY"
+  ],
+  "transitions": [
+   {
+    "from": "PYTHON_REFERENCE",
+    "to": "PREREG_PARITY",
+    "evidence": "parity contract (template v1) committed in its own commit before any comparison; sha256 in the ledger"
+   },
+   {
+    "from": "PREREG_PARITY",
+    "to": "RUST_IMPL",
+    "evidence": "Rust commit + source sha256; cargo test green; never served for production"
+   },
+   {
+    "from": "RUST_IMPL",
+    "to": "PARITY_PASS",
+    "evidence": "scoring execution of the registered contract: every verdict ADMITTED; report committed whatever the verdict"
+   },
+   {
+    "from": "RUST_IMPL",
+    "to": "NOT_ADMITTED",
+    "evidence": "scoring execution with a failing verdict; report committed"
+   },
+   {
+    "from": "NOT_ADMITTED",
+    "to": "PREREG_PARITY",
+    "evidence": "code fix + NEW contract version with fresh scoring seeds (no_retuning)"
+   },
+   {
+    "from": "PARITY_PASS",
+    "to": "ADMITTED",
+    "evidence": "ledger flip + HISTORY entry + CI job for the component; new production results for it come from Rust and carry implementation/rust_commit/contract_id"
+   },
+   {
+    "from": "ADMITTED",
+    "to": "PYTHON_RETIRED_FROM_ACTIVE",
+    "evidence": "static check: no active execution path imports or invokes the Python component"
+   },
+   {
+    "from": "PYTHON_REFERENCE",
+    "to": "FORMALLY_RETIRED_NOT_PORTED",
+    "evidence": "explicit owner/lane decision in HISTORY; outputs kept byte-identical"
+   },
+   {
+    "from": "NOT_PORTED_RETIREMENT_PENDING",
+    "to": "FORMALLY_RETIRED_NOT_PORTED",
+    "evidence": "class H: owner / lane decision in HISTORY + static check that no active path imports or runs it; source kept"
+   },
+   {
+    "from": "GROUND_REFERENCE_ON_DEMAND",
+    "to": "PREREG_PARITY",
+    "evidence": "class G: a recorded requirement of the active test / evidence toolchain, then the class-A path"
+   },
+   {
+    "from": "GROUND_REFERENCE_ON_DEMAND",
+    "to": "FORMALLY_RETIRED_NOT_PORTED",
+    "evidence": "class G, no requirement at the end state"
+   },
+   {
+    "from": "NOT_PORTED_BLOCKED_ACTIVE_FLIGHT_INCONSISTENCY",
+    "to": "FORMALLY_RETIRED_NOT_PORTED",
+    "evidence": "class F: owner-governed resolution recorded; the corrected successor is a new class-A component (PYTHON_REFERENCE)"
+   }
+  ],
+  "ledger_proposed": "docs/rust_migration/migration_state_v1.json (created by the first implementation PR; one row per inventory v2 component with migration_class, status and authoritative_implementation python | rust | retired)",
+  "kernel_1": {
+   "status": "ADMITTED",
+   "scope": "abep_sim/intake_tpmc.py trace kernels K1-K5 via abep_core",
+   "records": [
+    "docs/performance/abep_core/parity_prereg_v2.json",
+    "docs/performance/abep_core/parity_report_v2.json",
+    "scripts/verify_abep_core.py",
+    "abep_sim/design/tpmc_backend.py"
+   ],
+   "default_backend_today": "python",
+   "open_question": "RM-OQ-01"
+  }
+ },
+ "migration_classification": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator.",
+  "rejected_rule": "LaB6 paths are ported unchanged pending the audit (v1 RM-R15; REJECTED_AND_SUPERSEDED by A9.25 message 3)",
+  "classes": {
+   "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS": "migrate to Rust under pre-registered parity / admission",
+   "GROUND_REFERENCE_ONLY": "migrate only if the future active test / evidence toolchain genuinely requires it; never include it in flight architecture execution",
+   "HISTORICAL_LEGACY_REGRESSION": "do not port; preserve its Python implementation and historical commit / evidence for reproducibility",
+   "ACTIVE_FLIGHT_INCONSISTENCY": "do not port; resolve the inconsistency against hall_icp_neutralizer first, then migrate only the corrected selected-architecture implementation"
+  },
+  "not_ported_as_active_flight_functionality": [
+   "LaB6Cathode",
+   "lab6_xe",
+   "Xe hollow-cathode heater / keeper logic",
+   "C1 flight-fallback logic",
+   "legacy Hall cards whose flight topology contains a hollow cathode",
+   "historical multi-family architecture-selection machinery merely for parity (archengine families, mw_air, rf_cathode, ECR-Hall, gridded / nozzle / MPD / PIT / thermal)"
+  ],
+  "section_e_retire_not_port": [
+   "thruster CARDS",
+   "plasma_devices",
+   "cathode_integration",
+   "archengine",
+   "arch_compare",
+   "breakeven",
+   "interstage",
+   "hall1d",
+   "compressor_transitional",
+   "sizing",
+   "thresholds",
+   "uncertainty",
+   "uq6",
+   "uq_modular",
+   "mission_uq",
+   "convergence",
+   "explorer"
+  ],
+  "section_e_source": "A9.25 message 2 sec. 10 (owner approval of the steering report section E; RETIRE != DELETE)",
+  "parity_rule": "parity is required against the authoritative Python implementation of physics RETAINED in the selected architecture; it is NOT a requirement to preserve obsolete architecture errors or retired hardware topology",
+  "extract_rule": "where useful physical calculations are embedded inside legacy Python modules, extract and parity-test only those architecture-independent physical kernels; do not port the surrounding obsolete LaB6 / multi-family logic",
+  "inventory": "docs/rust_migration/component_inventory_v2.json",
+  "counts": {
+   "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS": 135,
+   "GROUND_REFERENCE_ONLY": 7,
+   "HISTORICAL_LEGACY_REGRESSION": 84,
+   "ACTIVE_FLIGHT_INCONSISTENCY": 1
+  },
+  "loc_by_class": {
+   "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS": 175499,
+   "GROUND_REFERENCE_ONLY": 12502,
+   "HISTORICAL_LEGACY_REGRESSION": 73767,
+   "ACTIVE_FLIGHT_INCONSISTENCY": 874
+  },
+  "extract_and_parity_kernels": [
+   "K-GASPATH",
+   "K-GAS-LIFE",
+   "K-MASS-RULES",
+   "K-P3-RAYS",
+   "K-GOLDEN-COMPARE"
+  ],
+  "provisional": [
+   "abep_sim/plasma_chem.py",
+   "docs/architecture_comparison/compressor_downselect/",
+   "docs/architecture_comparison/feed_state_closure/",
+   "docs/evidence/hall_sustainment/",
+   "docs/experiments/capability_demo/",
+   "docs/experiments/hardware/",
+   "docs/experiments/instrumentation/",
+   "scripts/experiments/s1_readiness.py",
+   "scripts/experiments/s1a_readiness.py"
+  ],
+  "unclassified": 0
+ },
+ "rules": [
+  {
+   "id": "RM-R01",
+   "rule": "no big bang: component-by-component (or a tightly coupled group named in one contract); a wave is a schedule, never an admission unit",
+   "source": "item 1"
+  },
+  {
+   "id": "RM-R02",
+   "rule": "exact input parity: byte-identical inputs, each with sha256",
+   "source": "item 1"
+  },
+  {
+   "id": "RM-R03",
+   "rule": "exact architecture/config/model-set/design-state-set hashes recorded by both runs; mismatch voids the comparison",
+   "source": "item 1"
+  },
+  {
+   "id": "RM-R04",
+   "rule": "deterministic seeds where applicable; development seed vs scoring seed; scoring seed spent once",
+   "source": "item 1"
+  },
+  {
+   "id": "RM-R05",
+   "rule": "tolerances preregistered before any comparison, per observable, by parity class",
+   "source": "item 1"
+  },
+  {
+   "id": "RM-R06",
+   "rule": "output-schema parity; byte-identical evidence where the contract says EXACT_BYTES (Python-compatible JSON/CSV float formatting)",
+   "source": "item 1"
+  },
+  {
+   "id": "RM-R07",
+   "rule": "conservation checks on Rust outputs: source mass/power balances exact; energy ledger residual < 2 %",
+   "source": "item 1; CLAUDE.md rule 4"
+  },
+  {
+   "id": "RM-R08",
+   "rule": "domain/error parity: same failure class/status for invalid and out-of-domain inputs; documented divergences listed; no silent fallbacks",
+   "source": "item 1; CLAUDE.md rule 3"
+  },
+  {
+   "id": "RM-R09",
+   "rule": "performance measured (same machine, same session), reported, never a decision criterion",
+   "source": "item 1; item 6"
+  },
+  {
+   "id": "RM-R10",
+   "rule": "provenance: Python reference commit + file sha256, Rust commit + source sha256, toolchain, Cargo.lock sha256, Julia/HallThruster where relevant, thread/BLAS env",
+   "source": "item 1"
+  },
+  {
+   "id": "RM-R11",
+   "rule": "never rewrite Python results, goldens, frozen data or fixtures to make Rust pass; every disagreement is investigated and classified (Rust defect / Python reference defect under its own governance / contract defect -> new version), never resolved by tolerance change",
+   "source": "item 1"
+  },
+  {
+   "id": "RM-R12",
+   "rule": "no_retuning: after NOT_ADMITTED only a code fix plus a new contract version with fresh scoring seeds; no execution discarded",
+   "source": "parity_prereg_v2 decision_rules.no_retuning, generalised"
+  },
+  {
+   "id": "RM-R13",
+   "rule": "reference freeze: a contract binds the reference sha256; a changed reference refuses scoring (REFUSED_REFERENCE_CHANGED) until a new contract version",
+   "source": "parity_prereg_v2 reference_implementation.rule, generalised"
+  },
+  {
+   "id": "RM-R14",
+   "rule": "layer separation becomes crate dependency rules: physics crates never depend on abep-assess/abep-evidence (A9.22/A9.23; A9.24 items 3-5)",
+   "source": "items 3-5; A9.22/A9.23"
+  },
+  {
+   "id": "RM-R15",
+   "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator. Not ported as active flight functionality: LaB6Cathode, lab6_xe, Xe hollow-cathode heater / keeper logic, C1 flight-fallback logic, legacy Hall cards whose flight topology contains a hollow cathode, historical multi-family architecture-selection machinery kept merely for parity",
+   "source": "A9.25 message 3 (RUST_PLAN_LAB6_RULE); message 8 sec. 17; message 1 sec. 9",
+   "replaces": {
+    "rule_v1": "known physics inconsistencies are ported as is (A9.24 item 13 LaB6 paths: audit and owner decision first)",
+    "owner_wording_of_the_rejected_rule": "LaB6 paths are ported unchanged pending the audit",
+    "status": "REJECTED_AND_SUPERSEDED (A9.25 message 3)"
+   }
+  },
+  {
+   "id": "RM-R16",
+   "rule": "rule-1/2 frozen data and goldens are read byte-for-byte, never regenerated by the migration",
+   "source": "CLAUDE.md rules 1-2"
+  },
+  {
+   "id": "RM-R17",
+   "rule": "kernel granularity allowed: a contract may admit a function subset of a module; the module retires only when all its functions are admitted",
+   "source": "Kernel 1 precedent; migration_order_v1 pull-forward findings"
+  },
+  {
+   "id": "RM-R18",
+   "rule": "after admission, new production results for the component come from Rust",
+   "source": "item 1"
+  },
+  {
+   "id": "RM-R19",
+   "rule": "four-class gate: every inventory component carries exactly one migration_class (ACTIVE_SELECTED_ARCHITECTURE_PHYSICS / GROUND_REFERENCE_ONLY / HISTORICAL_LEGACY_REGRESSION / ACTIVE_FLIGHT_INCONSISTENCY); a parity contract may be registered only for a class-A component or an extract_and_parity_kernel; a class-G component needs a recorded active test / evidence-toolchain requirement first; class H is never contracted; class F only after its resolution, for the corrected successor",
+   "source": "A9.25 message 3; message 1 sec. 14 step 2"
+  },
+  {
+   "id": "RM-R20",
+   "rule": "parity is required only against the authoritative Python implementation of physics RETAINED in the selected architecture; it is never a requirement to preserve obsolete architecture errors or retired hardware topology. Where a retained kernel sits inside a legacy module, only that function subset is extracted and parity-tested; any legacy path the Python harness executes to reach it must be shown not to influence the scored observables",
+   "source": "A9.25 message 3 (important parity rule); message 2 sec. 10"
+  },
+  {
+   "id": "RM-R21",
+   "rule": "RETIRE != DELETE: class-H (and unrequired class-G) Python stays as source and history; it leaves the production execution graph post-bid; historical simulations stay reproducible from their historical commit / reference environment; no historical evidence, golden or decision record is rewritten",
+   "source": "A9.25 message 2 secs. 8 and 10; A9.24 item 14"
+  },
+  {
+   "id": "RM-R22",
+   "rule": "an ACTIVE_FLIGHT_INCONSISTENCY is resolved against hall_icp_neutralizer in its own owner-governed change before any port; the migration never changes a numerical baseline and never invents a value to resolve one (A9.24 item 13: report before altering the baseline)",
+   "source": "A9.24 item 13; A9.25 message 1 sec. 9, message 2 sec. 4, message 3 class 4"
+  },
+  {
+   "id": "RM-R23",
+   "rule": "no class-A Rust crate depends on, re-implements or carries a class-H / G / F code path; the workspace has no legacy crate; a forbidden-identifier scan (CI_PLAN.md sec. 1 principle 6) enforces it",
+   "source": "A9.25 message 3; message 2 sec. 10 ('do not let the new Rust implementation inherit obsolete architecture merely for parity')"
+  },
+  {
+   "id": "RM-R24",
+   "rule": "the bid pair is frozen: technical source 5eee4b8 and package / freeze-record b5849af (package-level post-source bid-text updates such as A9.27 / 2de86ab only under an owner decision record and always pinning 5eee4b8); config/mission/mission_scenario_v2.json is immutable after the freeze (any change is mission_scenario_v3); no Rust output enters the bid package without an owner re-freeze",
+   "source": "A9.24 items 2 and 9; A9.25 message 8 secs. 12-14; A9.25 owner_decision_summary mission_scenario_v2_versioning; A9.27 preamble"
+  },
+  {
+   "id": "RM-R25",
+   "rule": "migration ordering key: architecture relevance first (the four-class classification), evidence / parity eligibility second, measured performance third; a slow legacy workload is retired, never ported because it is slow",
+   "source": "A9.27 sec. 4; A9.24 item 6"
+  }
+ ],
+ "bid_boundary": {
+  "rule": "the bid uses the last completely verified pre-migration implementation; migration is post-freeze; no partially migrated mixed implementation may silently become the bid source (A9.24 items 2 and 9)",
+  "bid_technical_source": {
+   "commit": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b",
+   "role": "TECHNICAL SOURCE SHA: code, configs, architecture, engineering records and numerical outputs of the bid",
+   "verification": "docs/bid/bid_technical_baseline_v2.json bid_technical_source.verification_record"
+  },
+  "bid_package_freeze_record": {
+   "commit": "b5849affae22a6709ad217a184f6fe896d15410a",
+   "role": "PACKAGE / FREEZE-RECORD SHA: docs/bid/** (bid_technical_baseline_v2 + regenerated package) pinning the technical source",
+   "bid_technical_baseline_v2_sha256": "987a0d4eb9a4dc7b93b71ca2b338c9245bae63610c79ce0ecfff4ce721b60d1d",
+   "named_by": "A9.25 message 8 secs. 12-14; A9.27 preamble ('Protect the frozen bid pair')",
+   "python_files_differing_from_technical_source": [
+    "docs/bid/package/build_package.py",
+    "docs/bid/package/compliance_data.py",
+    "docs/bid/package/source_facts.py",
+    "tests/test_bid_package.py"
+   ]
+  },
+  "package_level_post_source_updates": [
+   {
+    "commit": "2de86abefacbd36ce7516d3cf017f6258bd7e7a2",
+    "decision": "A9.27 final bid rulings (bid text only: RFP-P19-03, RFP-P18-08 split, OIR-DOC-01, Part IV(A)-(H) submission checklist)",
+    "pins_technical_source": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b",
+    "bid_technical_baseline_v2_sha256": "259aa09e1c5bc1b2745f573c70e876537a7312e360f10831c76163d91e374dfb",
+    "marker": "governing_decisions[id=A9.27].package_level_post_source_allowed = true; in_technical_source = false"
+   }
+  ],
+  "two_sha_discipline": "A9.25 message 8 sec. 13: the package commit pins the technical source and does not become a technical source",
+  "pre_rust_reference_baseline": "docs/performance/pre_rust_reference_baseline_5eee4b8/ (measured on the technical source; registered at adce2e9)",
+  "mission_scenario_v2": {
+   "path": "config/mission/mission_scenario_v2.json",
+   "sha256_at_technical_source": "885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49",
+   "rule": "immutable after the freeze; a later semantic change is mission_scenario_v3 with its own pin (A9.25 owner_decision_summary mission_scenario_v2_versioning)"
+  },
+  "other_pinned_at_technical_source": {
+   "config/MANIFEST.json": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883",
+   "config/model_set/physics_model_set_v1.json": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1",
+   "config/constraints/engineering_constraints_v1.json": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e",
+   "config/assessment/gate_thresholds_v1.json": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b",
+   "config/architecture/hall_icp_neutralizer_v1.json": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3",
+   "abep_sim/data/golden_v2.json": "9d51da259323d19c388ac6e6f5a134b2eae90c11bbaeedd59ac37252d5477567",
+   "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049"
+  },
+  "proposed_guard": {
+   "bid_source_manifest": "docs/bid/bid_source_manifest_v1.json, generated once by the first implementation PR from the pair: (a) sha256 of every file at 5eee4b8 that the package cites or executes (read with git show 5eee4b8:<path>), (b) sha256 of every docs/bid/** file at b5849af and at each owner-authorised package-level post-source commit (2de86ab), with the authorising decision record, (c) mission_scenario_v2 sha256, (d) migration state at the freeze (every component python-authoritative; Kernel 1 admitted as an optional backend, default python)",
+   "ci_check": "bid_source_guard (ci_checks.py check while Python CI exists, later `abep ci bid-source-guard`) FAILS when: a docs/bid/** file differs from its bytes in the recorded package lineage (b5849af, then owner-authorised package-level post-source commits such as 2de86ab) without a new owner decision record or re-freeze; bid_technical_baseline_v2.json does not pin 5eee4b8; the package builder is run against any tree other than git show 5eee4b8:<path>; a bid-cited file at the technical source is not byte-identical to the manifest; config/mission/mission_scenario_v2.json changes; any bid-cited evidence carries implementation: rust provenance",
+   "tag": "the pair is recorded as immutable SHAs even where repository infrastructure prevents a tag (A9.25 message 2 sec. 12 step 8)",
+   "result_provenance": "every Rust-produced result carries implementation, rust_commit, contract_id",
+   "only_exit": "an explicit owner re-freeze naming a new technical source and package"
+  },
+  "implemented_by": "the first migration implementation PR (not this record)"
+ },
+ "parity_classes": [
+  "EXACT_BYTES",
+  "EXACT_VALUE",
+  "ULP_BOUNDED",
+  "SOLVER_TOLERANCE",
+  "STATISTICAL",
+  "EXACT_STREAM"
+ ],
+ "julia_bridge": {
+  "current_python_mechanism": "out-of-process, file-based: Python writes case/job JSON, spawns `julia --project=hallthruster_bridge <script>.jl <in> <out>` (scripts/identify_p5_transport.py subprocess.Popen per worker; launch manifests from scripts/make_p5_n2_launch_manifests.py executed by docs/orchestration/runner_scripts/*.sh), reads JSON/JSONL; consumers hall_map.py (schema-derived REQUIRED_FIELDS, pin rejection), hall_ensemble.py, hallmap_registry.py, thermal_life.py, score/freeze/forensics scripts",
+  "julia_entry_points": [
+   "hallthruster_bridge/run_cases.jl",
+   "hallthruster_bridge/identify_worker.jl",
+   "hallthruster_bridge/campaign/p5_n2_campaign.jl",
+   "hallthruster_bridge/checks/blind_state_envelope.jl",
+   "hallthruster_bridge/checks/chemistry_validity_check.jl",
+   "hallthruster_bridge/checks/wall_flux_consistency.jl"
+  ],
+  "julia_version_in_manifest": "1.11.7",
+  "proposal": [
+   "keep the process boundary and the JSON/JSONL contract; Julia scripts unchanged",
+   "std::process::Command launcher with an environment allow-list; launch-equivalence parity (argv, env, input bytes) + EXACT_BYTES record comparison",
+   "pin checked in Rust (PINNED.toml/Manifest.toml) and in Julia (check_pin())",
+   "per-run execution provenance sidecar (Julia version, HallThruster commit, threads/BLAS, host, argv, input sha256)",
+   "Hall-map record types generated from hall_map_schema_v1.json; trustworthy / wall_life_trustworthy / chemistry_trustworthy / ensemble_member_id rules unchanged; HallMap loads admitted members only",
+   "resumable sharded workers and transactional trigger ledger semantics",
+   "no in-process embedding (jlrs) now"
+  ]
+ },
+ "cargo_workspace_proposal": {
+  "status": "PROPOSAL_ONLY_NO_CRATE_CREATED",
+  "root": "Cargo.toml (workspace, members crates/*) + rust-toolchain.toml",
+  "crates": [
+   "abep-types",
+   "abep-provenance",
+   "abep-rng",
+   "abep-config",
+   "abep-data",
+   "abep-atmos",
+   "abep-intake",
+   "abep-gaspath",
+   "abep-chem",
+   "abep-mission",
+   "abep-subsystems",
+   "abep-hall",
+   "abep-julia-bridge",
+   "abep-icp",
+   "abep-design",
+   "abep-uq",
+   "abep-assess",
+   "abep-evidence",
+   "abep-parity",
+   "abep-perf",
+   "abep-cli"
+  ],
+  "abep_core": "unchanged standalone crate outside the workspace while parity v2 binds its Cargo.toml/Cargo.lock/src sha256; consumed as a path dependency after a registered build-equivalence addendum; PyO3 feature retires at W20",
+  "dependency_rule": "types <- provenance <- config/data <- physics crates (atmos, intake, gaspath, chem, mission, subsystems, hall, icp) <- design / uq <- assess <- evidence <- cli; physics never depends on assess / evidence; no crate depends on class-H / G / F code",
+  "changes_from_v1": [
+   "abep-closure dropped: the legacy system closure, archengine, arch_compare and breakeven are class H",
+   "abep-hall: no 0-D legacy Hall (withdrawn; golden 'hall' case is historical)",
+   "abep-subsystems: no cathode library; thermal = icp_thermal_lib + thermal_life (Hall discharge / magnet) + the post-bid cathodeless successor model; mass = K-MASS-RULES + the AFI-02-resolved successor; life = K-GAS-LIFE",
+   "abep-icp added: F6 ICP geometry + bench / impedance reducers",
+   "abep-uq slimmed: seeded scenario sampling for the F8 robust optimizer; no uq6 / uq_modular / mission_uq / Sobol port",
+   "no crate hosts class-H logic (there is no legacy crate)"
+  ]
+ },
+ "order": {
+  "file": "docs/rust_migration/migration_order_v2.json",
+  "profiling_role": "ORDER, not GATE",
+  "pre_rust_reference_baseline": "REGISTERED (docs/performance/pre_rust_reference_baseline_5eee4b8/)",
+  "waves": [
+   "W0",
+   "W1E",
+   "W1",
+   "W2",
+   "W3",
+   "W4",
+   "W5",
+   "W6",
+   "W7",
+   "W8",
+   "W9",
+   "W10",
+   "W11",
+   "W12",
+   "W13",
+   "W14",
+   "W15",
+   "W16",
+   "W17"
+  ],
+  "lanes": [
+   "GR",
+   "RET",
+   "AFI"
+  ],
+  "result": "Among port targets the ranking is W1 (88.98 s) > W2 (2.89 + 1.91 = 4.80 s) > W3 (2.14 s) > W5 (0.04 s); W4 (the active F8 robust optimizer) is not in the baseline's fixed F0 workload set and keeps its item-7 position. This is exactly the item-7 initial order, so no item-7 wave moves. 112.40 s of the 208.36 s addressable total sits on retired paths (uq_modular, archengine, uq6): those timings motivate retiring them, not porting them. Waves W6-W17 are unprofiled and keep the item-7 list order (atmosphere / orbit, chemistry, Hall interface and bridge, ICP, thermal / life, mass, assessment and gates, configuration, CLI, evidence builders, CI).",
+  "prerequisites": [
+   {
+    "id": "P-01",
+    "what": "owner review and merge of this plan v2 (A9.25 message 3 step 7)",
+    "blocks": "every wave"
+   },
+   {
+    "id": "P-02",
+    "what": "post-bid, separately governed ACTIVE golden / reference case for the cathodeless hall_icp_neutralizer (A9.25 message 2 secs. 6 and 9; golden-change governance; the historical golden is not deleted)",
+    "blocks": "the Rust `abep golden check` (W16) and the preferred parity reference of K-GASPATH / K-GAS-LIFE (W2 may proceed against captured Python outputs of the retained kernel)"
+   },
+   {
+    "id": "P-03",
+    "what": "AFI-02-RA1: re-base AL-07 on the hall_icp_neutralizer load / converter CBE or quotation (owner: do not invent the reduction)",
+    "blocks": "the mass record successor in W11 (lane AFI)"
+   },
+   {
+    "id": "P-04",
+    "what": "post-bid cathodeless successor thermal model if required (AFI-03; A9.25 message 2 sec. 5)",
+    "blocks": "the W5 successor-model contract only (icp_thermal_lib proceeds)"
+   },
+   {
+    "id": "P-05",
+    "what": "owner confirmation of the provisional classifications (RM-OQ-07)",
+    "blocks": "nothing scheduled; a reclassification moves a component between a wave and a lane"
+   }
+  ]
+ },
+ "inventory_summary": {
+  "file": "docs/rust_migration/component_inventory_v2.json",
+  "inventoried_at_commit": "2de86abefacbd36ce7516d3cf017f6258bd7e7a2",
+  "components_total": 227,
+  "python_files": 451,
+  "loc_total_all_python": 262642,
+  "loc_total_excluding_tests": 199171,
+  "components_by_migration_class": {
+   "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS": 135,
+   "GROUND_REFERENCE_ONLY": 7,
+   "HISTORICAL_LEGACY_REGRESSION": 84,
+   "ACTIVE_FLIGHT_INCONSISTENCY": 1
+  },
+  "components_admitted": 1
+ },
+ "end_state_acceptance_checklist": [
+  {
+   "id": "E1",
+   "criterion": "normal simulator execution requires no Python interpreter",
+   "check": "abep CLI end-to-end over the active chain (F1-F8 design synthesis, mission propagation, F8 robust UQ, assessment / gates, evidence builds) in a container without python3 on PATH; no retired (class-H) path is exercised"
+  },
+  {
+   "id": "E2",
+   "criterion": "production sweeps require no Python",
+   "check": "abep sweep reproduces the registered design-state-set / F1 / F7 sweep references Python-free (the legacy card sweep is retired, not ported)"
+  },
+  {
+   "id": "E3",
+   "criterion": "config generation/loading requires no Python",
+   "check": "abep config build --check reproduces config/MANIFEST.json byte-identically Python-free"
+  },
+  {
+   "id": "E4",
+   "criterion": "assessment/gates require no Python",
+   "check": "abep assess / hard-gate (HC-01..HC-12) outputs equal the captured references Python-free; HC-12 NOT_EVALUATED until evidence"
+  },
+  {
+   "id": "E5",
+   "criterion": "evidence builders require no Python",
+   "check": "every W18 builder ADMITTED (abep build <id> --check byte-identical) or FORMALLY_RETIRED_NOT_PORTED"
+  },
+  {
+   "id": "E6",
+   "criterion": "normal CI requires no Python for the ABEP simulator",
+   "check": "static workflow scan: no setup-python / python / pip / pytest in the simulator CI jobs; Python-free runner image"
+  },
+  {
+   "id": "E7",
+   "criterion": "every active Python implementation has an admitted Rust replacement or has been formally retired",
+   "check": "migration_state_v1.json complete: every class-A component ADMITTED + PYTHON_RETIRED_FROM_ACTIVE (or FORMALLY_RETIRED_NOT_PORTED where its disposition allows); every class-G / H component FORMALLY_RETIRED_NOT_PORTED (or admitted under a recorded requirement); no class-F component remains; the inventory re-run at the end-state commit finds no unlisted component"
+  },
+  {
+   "id": "E8",
+   "criterion": "HallThruster.jl integration still works",
+   "check": "abep hall pin-check + abep hall smoke green; non-pinned Hall maps rejected"
+  },
+  {
+   "id": "E9",
+   "criterion": "all required evidence provenance remains intact",
+   "check": "abep ci verifies MANIFEST.json, prereg locks, audit manifests, validation release, evidence sha256 chains"
+  },
+  {
+   "id": "E10",
+   "criterion": "Python source only as immutable historical/reference material; historical evidence not deleted",
+   "check": "no active build / test / workflow path references the retired Python sources (classes H and unrequired G included); historical simulations remain reproducible from their historical commit / reference environment; evidence files unchanged"
+  }
+ ],
+ "open_owner_questions": [
+  {
+   "id": "RM-OQ-01",
+   "question": "Flip tpmc_backend DEFAULT_BACKEND to rust (item 1: new production results from Rust) as its own post-freeze step, or together with the W1 response-layer admission?",
+   "proposed_default": "together with W1 admission; frozen intake_surface_v1 unchanged"
+  },
+  {
+   "id": "RM-OQ-02",
+   "question": "Live NRLMSIS rebuilds: Fortran FFI build-time feature or retired Python tag?",
+   "proposed_default": "Fortran FFI feature msis-build"
+  },
+  {
+   "id": "RM-OQ-03",
+   "question": "W4 (the active F8 robust optimizer: numpy default_rng PCG64 streams from stable ids, plus TPMC calls into Kernel 1) parity class: EXACT_STREAM (port numpy PCG64 + Generator; Kernel 1 re-registered on the same stream) or STATISTICAL?",
+   "proposed_default": "EXACT_STREAM"
+  },
+  {
+   "id": "RM-OQ-04",
+   "question": "Mechanics of formal retirement for class H (owner-approved in principle by A9.25 msg 2 sec. 10 and msg 3): retired git tag, a clearly retired directory, or both; and when class-H modules leave the production import graph (post-bid, after the active golden P-02 exists)",
+   "proposed_default": "a retired tag at the last commit before removal from the import graph, plus labelling in a governed role-bearing model set; no file moves before the active golden exists",
+   "v1_question_status": "v1 RM-OQ-04 (retire the 17 historical candidates) is ANSWERED for class H by A9.25 msg 2 sec. 10 / msg 3"
+  },
+  {
+   "id": "RM-OQ-05",
+   "question": "Rust-era equivalent of CLAUDE.md rule 9 (test outcome contract) at end state",
+   "proposed_default": "owner-approved CLAUDE.md revision mapping 5 skipped / 1 strict xfail to cargo test equivalents"
+  },
+  {
+   "id": "RM-OQ-06",
+   "question": "CLAUDE.md rule 2 at the end state for the historical golden_v2 cases (architecture_closure, mission, hall, source_plasma, accelerators, nonconverged_reference, design_point_selection) that the Rust golden check does not reproduce: a historical-reproducibility job on the retired Python at the historical reference environment (outside normal simulator CI), or frozen without re-execution",
+   "proposed_default": "historical-reproducibility job, manual / scheduled, outside the simulator CI (item 14 E6 unaffected)"
+  },
+  {
+   "id": "RM-OQ-07",
+   "question": "Confirm the 9 PROVISIONAL classifications: abep_sim/plasma_chem.py -> HISTORICAL_LEGACY_REGRESSION; docs/architecture_comparison/compressor_downselect/ -> HISTORICAL_LEGACY_REGRESSION; docs/architecture_comparison/feed_state_closure/ -> HISTORICAL_LEGACY_REGRESSION; docs/evidence/hall_sustainment/ -> ACTIVE_SELECTED_ARCHITECTURE_PHYSICS; docs/experiments/capability_demo/ -> HISTORICAL_LEGACY_REGRESSION; docs/experiments/hardware/ -> ACTIVE_SELECTED_ARCHITECTURE_PHYSICS; docs/experiments/instrumentation/ -> ACTIVE_SELECTED_ARCHITECTURE_PHYSICS; scripts/experiments/s1_readiness.py -> ACTIVE_SELECTED_ARCHITECTURE_PHYSICS; scripts/experiments/s1a_readiness.py -> ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+   "proposed_default": "as listed"
+  },
+  {
+   "id": "RM-OQ-08",
+   "question": "The post-bid active hall_icp_neutralizer golden (P-02) and the cathodeless successor thermal model (P-04) have no Python reference yet: author them first in Python under their own governance and then migrate, or author them directly in Rust under their own validation / golden governance (no parity possible)",
+   "proposed_default": "author in Python first (keeps one reference implementation per item 1), then migrate under a contract"
+  },
+  {
+   "id": "RM-OQ-09",
+   "question": "scripts/ci_checks.py check h2_6_live_sources loads the class-G H2-6 builder: port its verify_sources() as a class-G migration the active CI requires, or retire the check with the immutable H2 v1 history",
+   "proposed_default": "port verify_sources() only (the CI requirement is genuine while H2-6 consumed values feed active records)"
+  }
+ ]
+}

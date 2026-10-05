@@ -1,0 +1,26 @@
+# ABEP Rust workspace (A9.29 lane A, ES-1; plan docs/rust_migration/programme_v3_1.json, cargo_workspace_proposal).
+# Target simulator = Rust; Hall solver = HallThruster.jl (pinned, CLAUDE.md rule 7); Python = migration reference.
+# abep_core/ stays a standalone crate outside the workspace while parity_report_v2 binds its Cargo.toml / Cargo.lock /
+# src sha256 (excluded below); workspace crates consume it as a path dependency only after the registered
+# build-equivalence addendum (ES-3).
+[workspace]
+resolver = "2"
+members = ["crates/*"]
+exclude = ["abep_core"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.94.1"
+publish = false
+license = "LicenseRef-Proprietary"
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["float_roundtrip"] }
+sha2 = "0.10"
+abep-types = { path = "crates/abep-types" }
+abep-provenance = { path = "crates/abep-provenance" }
+
+[profile.release]
+opt-level = 3
