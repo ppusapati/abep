@@ -69,6 +69,18 @@
     "in_technical_source": true,
     "json_sha256": "18dada24a90fb1a5d17e903bf8eb9f77af622106f9ddfc59ea1f182054b80b76",
     "md_sha256": "5f40294de9ab736cedd7a24a393b0333823c2624e3469f6b1f775250a85803e5"
+   },
+   {
+    "id": "A9.27",
+    "what": "final bid rulings: OIR-DOC-01 REVIEW_COMPLETE_SUBMISSION_FORM_COMPLETION_PENDING (Part IV(A)-(H) forms and submission controls); RFP-P19-03 COMPLY (system composition only); RFP-P18-08 split (separate tanks / paths COMPLY BY DESIGN; functional dual-propellant capability PLANNED / NOT YET DEMONSTRATED; clause stays COMPLY_PLANNED_WITH_EVIDENCE_PATH); bid pair protected",
+    "json": "docs/decisions/OD_2026_10_05_A9_27_final_bid_owner_rulings.json",
+    "md": "docs/decisions/OD_2026_10_05_A9_27_FINAL_BID_OWNER_RULINGS.md",
+    "locator": "#/owner_decision_summary",
+    "in_technical_source": false,
+    "package_level_post_source_allowed": true,
+    "json_sha256": "858577587beec007d1131acc17b17ce47f9c46c12d3c00021b7010715460a2fe",
+    "provenance": "post-source owner decision: committed in the package history, not in the technical source",
+    "md_sha256": "ec775c1c2126b5aa5a7f5350a55a7e080d2d771b449fdb6a2d8a11cb2dd3a577"
    }
   ],
   "ag15": {

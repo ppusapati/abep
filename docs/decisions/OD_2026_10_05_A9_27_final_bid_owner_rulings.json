@@ -1,0 +1,34 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_2026_10_05_A9_27_final_bid_owner_rulings",
+ "decided_by": "owner",
+ "date": "2026-10-05",
+ "decision": "A9_27_FINAL_BID_RULINGS",
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_05_A9_27_FINAL_BID_OWNER_RULINGS.md",
+  "sha256": "ec775c1c2126b5aa5a7f5350a55a7e080d2d771b449fdb6a2d8a11cb2dd3a577",
+  "method": "exact text extracted from the session transcript"
+ },
+ "messages": [
+  {
+   "n": 1,
+   "key": "FINAL_BID_RULINGS",
+   "utc": "2026-10-05T05:26:13.889Z",
+   "text_sha256": "f3af158fe287af92519013cf5e5d3cf5e168f619df6f7eea2c40ef5ba972742d",
+   "chars": 6078
+  }
+ ],
+ "bid_pair_protected": {
+  "technical_source": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b",
+  "package_freeze_record": "b5849affae22a6709ad217a184f6fe896d15410a",
+  "rule": "the bid technical source is not moved to later performance / Rust-planning commits"
+ },
+ "owner_decision_summary": {
+  "OIR-DOC-01": "REVIEW_COMPLETE_SUBMISSION_FORM_COMPLETION_PENDING: owner reviewed the previously unscreened RFP pages; final submission must account for Part IV(A) DPR, IV(B) Firm Essential Qualification Criteria, IV(C) Technical Capability Evaluation, IV(D) Industry Profile (letterhead where required, supporting annexures), IV(E) Non-Disclosure Undertaking (letterhead), IV(F) Acceptance Letter (letterhead), IV(G) Eligibility Certificate (letterhead), IV(H) Undertaking-cum-Checklist (Submitted Yes/No and Annexure numbers); controls: technical and financial bids separate; financial bid in the provided format; prescribed financial-bid format / filename unmodified; no project cost / price information in the technical bid; uploads per the RFP submission requirements; the final Part IV(H) checklist reconciles the annexures actually submitted. Closes only when the final submission set is checked against these forms and annexure numbers are populated. Submission-readiness item, not a physics / architecture gate.",
+  "RFP-P19-03": "COMPLY: the offered architecture contains the three subsystem categories (air intake + compressor / storage; power supply electronics; thruster). Qualification: COMPLY confirms the proposed system composition only; it does not claim that performance, qualification or determining evidence of each subsystem is complete. No engineering gate status changes.",
+  "RFP-P18-08": "overall clause stays COMPLY_PLANNED_WITH_EVIDENCE_PATH; A. separate propellant tanks / paths: COMPLY BY DESIGN (part of the offered architecture); B. functional ambient-air + Xe capability: PLANNED / NOT YET DEMONSTRATED with the existing evidence / test path; the whole clause is not COMPLY",
+  "performance_baseline": "adce2e9 accepted as POST-FREEZE evidence; does not alter the bid technical source; Rust ordering: architecture relevance first, evidence / parity eligibility second, measured performance third; legacy uq_modular / archengine retired not ported; active intake response surface remains a genuine target",
+  "MPV3Q-01": "resolved by A9.26 (AL-09 = 1.0 kg PROVISIONAL_OWNER_ALLOCATION, not CBE / measured); stale owner-question state repaired post-bid by a successor record unless a submitted bid document shows it open (then correct before submission)",
+  "priority": "Part IV(A)-(H) audit; annexure / checklist mapping; no price / cost in the technical bid; apply only the P19-03 / P18-08 rulings; regenerate / check the package; final file-by-file completeness audit; submit; do not disturb 5eee4b8"
+ }
+}

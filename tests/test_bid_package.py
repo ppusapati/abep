@@ -218,7 +218,12 @@ def test_governing_decisions_pinned_and_post_source_ones_flagged(source_availabl
             post.append(g)
     readme = _md("README.md")
     m = _matrix()
-    if post:
+    # a package-level owner ruling made after the technical source (A9.27: the owner protects the bid pair) does not
+    # make the source non-final; any other post-source governing decision does
+    blocking = [g for g in post if not g.get("package_level_post_source_allowed")]
+    allowed = {d["id"] for d in cd.GOVERNING_DECISIONS if d.get("package_level_post_source_allowed")}
+    assert {g["id"] for g in post if g.get("package_level_post_source_allowed")} <= allowed == {"A9.27"}
+    if blocking:
         assert "SOURCE NOT YET FINAL FOR THE BID" in readme
         assert facts["source_status"].startswith("NOT_FINAL_FOR_BID")
         assert m["source_findings"]
@@ -343,7 +348,9 @@ def test_architecture_wording_and_c1_ground_reference_only():
 def test_compliance_classes_honest():
     m = _matrix()
     st = {c["id"]: c["status"] for c in m["clauses"]}
-    assert {k for k, v in st.items() if v == "COMPLY"} == {"RFP-P18-07"}  # offer property only (thruster type)
+    # offer properties only: thruster type; system composition (owner ruling A9.27, composition only, no evidence claim)
+    assert {k for k, v in st.items() if v == "COMPLY"} == {"RFP-P18-07", "RFP-P19-03"}
+    assert st["RFP-P18-08"] == "COMPLY_PLANNED_WITH_EVIDENCE_PATH"     # A9.27: the whole clause is not COMPLY
     for cid in ("RFP-P18-06", "RFP-P18-10", "RFP-P18-11", "RFP-P19-01", "RFP-P17-03", "RFP-P17-05"):
         assert st[cid] == "NOT_YET_DEMONSTRATED", cid
     for c in m["clauses"]:
@@ -396,3 +403,28 @@ def test_generated_package_current_and_checklist_complete(source_available):
         text = _md(name)
         assert "DRAFT_FOR_OWNER_REVIEW" in text, name
         assert "{{" not in text and "}}" not in text, name
+
+
+def test_a9_27_rulings_and_submission_checklist():
+    """Owner ruling A9.27: RFP-P19-03 COMPLY (composition only), RFP-P18-08 split (tanks / paths COMPLY BY DESIGN;
+    functional dual-propellant capability PLANNED / NOT YET DEMONSTRATED), OIR-DOC-01 review complete / form completion
+    pending, Part IV(A)-(H) checklist present, and no price / currency information anywhere in the technical package."""
+    import re
+    pkg = os.path.join(ROOT, "docs", "bid", "package")
+    m = json.load(open(os.path.join(pkg, "compliance_matrix_v1.json"), encoding="utf-8"))
+    rows = {c["id"]: c for c in m["clauses"]} if "clauses" in m else {c["id"]: c for c in m["rows"]}
+    p19 = rows["RFP-P19-03"]["response"]
+    assert "confirms the proposed system composition only" in p19 and "does not claim" in p19
+    p18 = rows["RFP-P18-08"]["response"]
+    assert "COMPLY BY DESIGN" in p18 and "PLANNED / NOT YET DEMONSTRATED" in p18
+    cl = open(os.path.join(pkg, "06_SUBMISSION_CHECKLIST.md"), encoding="utf-8").read()
+    for part in ("IV(A)", "IV(B)", "IV(C)", "IV(D)", "IV(E)", "IV(F)", "IV(G)", "IV(H)"):
+        assert f"| {part} |" in cl, part
+    assert "REVIEW_COMPLETE_SUBMISSION_FORM_COMPLETION_PENDING" in cl
+    readme = open(os.path.join(pkg, "README.md"), encoding="utf-8").read()
+    assert "REVIEW_COMPLETE_SUBMISSION_FORM_COMPLETION_PENDING" in readme and "NOT screened" not in readme
+    money = re.compile(r"(₹|\bINR\b|\bRs\.?\s*\d|\blakhs?\b|\bcrores?\b|\bUSD\b|\$\s*\d)", re.IGNORECASE)
+    for name in sorted(os.listdir(pkg)):
+        if name.endswith(".md"):
+            txt = open(os.path.join(pkg, name), encoding="utf-8").read()
+            assert not money.search(txt), (name, money.search(txt).group(0))

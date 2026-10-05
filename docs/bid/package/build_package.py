@@ -32,9 +32,9 @@ import source_facts as sf  # noqa: E402
 REG_PATH = sf.REG
 F9_PATH = sf.F9
 MD_ORDER = ["README.md", "01_COMPLIANCE_MATRIX.md", "02_TECHNICAL_APPROACH.md", "03_DEVELOPMENT_AND_TEST_PLAN.md",
-            "04_RISK_REGISTER.md", "05_PROGRAMMATIC_SECTIONS.md"]
+            "04_RISK_REGISTER.md", "05_PROGRAMMATIC_SECTIONS.md", "06_SUBMISSION_CHECKLIST.md"]
 TEMPLATED = ["README.md", "02_TECHNICAL_APPROACH.md", "03_DEVELOPMENT_AND_TEST_PLAN.md", "04_RISK_REGISTER.md",
-             "05_PROGRAMMATIC_SECTIONS.md"]
+             "05_PROGRAMMATIC_SECTIONS.md", "06_SUBMISSION_CHECKLIST.md"]
 PLACEHOLDER = re.compile(r"\{\{([A-Z0-9_]+)\}\}")
 
 
@@ -276,13 +276,14 @@ def build_md(j: dict, T: dict) -> str:
         st = st if len(st) <= 160 else st[:157] + "..."
         L.append(f"| {g['id']} | {md_escape(g['gate'])} | {md_escape(st)} | "
                  f"{str(g['evidence_sufficient_for_freeze']).lower()} |")
-    L += ["", "## RFP pages not screened by the repository", "", j["rfp_pages_not_screened"] + "."]
+    L += ["", "## RFP pages not transcribed by the repository", "", j["rfp_pages_not_screened"] + "."]
     if j["rfp_pages_owner_review"]:
         r = j["rfp_pages_owner_review"]
         L += ["", f"Owner page review (`{REG_PATH}` `#/page_coverage/owner_page_review`): {r['status']} - \"{r['owner_statement_verbatim']}\" "
                   "This covers technical-performance requirements only; the repository does not transcribe those pages."]
-    L += ["", "The owner must still check those pages for mandatory formats, annexures, declarations and compliance-statement "
-              "formats (OIR-DOC-01).", ""]
+    L += ["", "Owner ruling A9.27: the owner has reviewed those pages including the formats; OIR-DOC-01 = "
+              "REVIEW_COMPLETE_SUBMISSION_FORM_COMPLETION_PENDING (Part IV(A)-(H) forms and submission controls; "
+              "06_SUBMISSION_CHECKLIST.md).", ""]
     return "\n".join(L)
 
 
@@ -437,6 +438,8 @@ def baseline_facts(F: dict, src: sf.Source, j: dict) -> dict:
         at = src.exists(d["json"]) and src.exists(d["md"])
         rec = {"id": d["id"], "what": d["what"], "json": d["json"], "md": d["md"], "locator": d["locator"],
                "in_technical_source": at}
+        if d.get("package_level_post_source_allowed"):
+            rec["package_level_post_source_allowed"] = True
         for k in ("json", "md"):
             if at:
                 rec[k + "_sha256"] = _sha256(src.text(d[k]).encode("utf-8"))

@@ -75,4 +75,4 @@ and all commercial formats: OWNER_INPUT_REQUIRED (OIR-COM-01).
 | Completed projects: high-power electronics, space structure / thermal, high vacuum | Part IV(C) 1 | OWNER_INPUT_REQUIRED (OIR-ORG-03) |
 | Present TRL of indigenous EP system | Part IV(C) 3 | OWNER_INPUT_REQUIRED (OIR-ORG-03). Note: the repository holds no hardware test of the proposed system; a TRL claim must rest on the owner's own heritage evidence |
 | Bench-top prototype demonstration with test results | Part IV(C) 4 e | OWNER_INPUT_REQUIRED: no Vyovrinda bench test result exists in the repository |
-| DPR template (pp. 22-25) and industry profile (pp. 32-33) | screened from the PDF text layer only | OWNER_INPUT_REQUIRED (OIR-DOC-01) |
+| Part IV(A)-(H) forms (DPR, essential qualification criteria, technical capability evaluation, industry profile, NDA, acceptance letter, eligibility certificate, undertaking-cum-checklist) | owner review complete (A9.27) | REVIEW_COMPLETE_SUBMISSION_FORM_COMPLETION_PENDING (OIR-DOC-01; 06_SUBMISSION_CHECKLIST.md) |

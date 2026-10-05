@@ -20,8 +20,8 @@ Statuses never claim more than the evidence shows. At `5eee4b8` no RVM row of th
 
 | status | clauses |
 |---|---|
-| COMPLY | 1 |
-| COMPLY_PLANNED_WITH_EVIDENCE_PATH | 16 |
+| COMPLY | 2 |
+| COMPLY_PLANNED_WITH_EVIDENCE_PATH | 15 |
 | PARTIAL | 1 |
 | NOT_YET_DEMONSTRATED | 10 |
 | OWNER_INPUT_REQUIRED | 9 |
@@ -52,7 +52,7 @@ Statuses never claim more than the evidence shows. At `5eee4b8` no RVM row of th
 | RFP-P18-12 | 18 | Part III 2 Electrical Interface | COMPLY_PLANNED_WITH_EVIDENCE_PATH | RVM-20, RVM-14 |
 | RFP-P19-01 | 19 | Part III 2 Life Cycle and Maintainability | NOT_YET_DEMONSTRATED | RVM-12, RVM-13 |
 | RFP-P19-02 | 19 | Part III 2 Material Specifications | COMPLY_PLANNED_WITH_EVIDENCE_PATH | RVM-16, RVM-21 |
-| RFP-P19-03 | 19 | Part III 2 Subsystems | COMPLY_PLANNED_WITH_EVIDENCE_PATH | RVM-08 |
+| RFP-P19-03 | 19 | Part III 2 Subsystems | COMPLY | RVM-08 |
 | RFP-P19-04 | 19 | Part III 2 Environment | COMPLY_PLANNED_WITH_EVIDENCE_PATH | RVM-16, RVM-21, RVM-17, RVM-27 |
 | RFP-P19-05 | 19 | Part III 3 Indigenous Content | OWNER_INPUT_REQUIRED | RVM-18 |
 | RFP-P19-06 | 19 | Part III 4.1 Testing | PARTIAL | RVM-16, RVM-22 |
@@ -289,7 +289,7 @@ Statuses never claim more than the evidence shows. At `5eee4b8` no RVM row of th
 
 > RFP (verbatim transcription): Compatible for using Ambient air (at the functional orbit altitude of 180-230km) and Xenon as propellant. Two separate propellant tanks for ambient air and xenon.
 
-**Response.** Two separate supply modes with separate storage are proposed: ambient air (AIR_PRIMARY; intake -> compressor -> gas chamber / plenum) and Xe (XE_CONTINGENCY / emergency; dedicated Xe storage and flow hardware, AL-08: tank, regulator, two series latch isolation valves + one proportional flow-control valve, plumbing, mounting / thermal; owner decision AFI-01-S1). AL-08 = 5.9148 kg is a MEV planning floor, PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (plumbing and mounting / thermal TBD; quotations rebase it, RFQ3-GAS rev1); no conventional hollow-cathode hardware is in flight AL-08. The flight Xe load is NOT FROZEN (2 / 5 / 10 kg are planning / sensitivity cases). No frozen feed-system design or demonstration exists (RVM-29).
+**Response.** Two separate supply modes with separate storage are proposed: ambient air (AIR_PRIMARY; intake -> compressor -> gas chamber / plenum) and Xe (XE_CONTINGENCY / emergency; dedicated Xe storage and flow hardware, AL-08: tank, regulator, two series latch isolation valves + one proportional flow-control valve, plumbing, mounting / thermal; owner decision AFI-01-S1). AL-08 = 5.9148 kg is a MEV planning floor, PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (plumbing and mounting / thermal TBD; quotations rebase it, RFQ3-GAS rev1); no conventional hollow-cathode hardware is in flight AL-08. The flight Xe load is NOT FROZEN (2 / 5 / 10 kg are planning / sensitivity cases). No frozen feed-system design or demonstration exists (RVM-29). Owner ruling A9.27 - the clause has two separable aspects: (A) separate propellant tanks / paths: COMPLY BY DESIGN - separate ambient-air and Xe tanks / supply paths are part of the offered architecture; (B) functional ambient-air + Xe capability: PLANNED / NOT YET DEMONSTRATED - the system is designed for both propellants and the determining functional demonstration follows the evidence / test path above. The clause as a whole therefore stays COMPLY_PLANNED_WITH_EVIDENCE_PATH; no functional dual-propellant capability is claimed as demonstrated.
 
 **Evidence at 5eee4b8:**
 
@@ -384,11 +384,11 @@ Statuses never claim more than the evidence shows. At `5eee4b8` no RVM row of th
 - `docs/requirements/rvm_a9/rvm_a9_v1.json` #/rows[id=RVM-16]
 - `docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json` #/steps[id=P4-ACCEPTANCE-EXPOSURE]
 
-### RFP-P19-03 (p. 19, Part III 2 Subsystems) - COMPLY_PLANNED_WITH_EVIDENCE_PATH
+### RFP-P19-03 (p. 19, Part III 2 Subsystems) - COMPLY
 
 > RFP (verbatim transcription): The overall system shall consist of the following sub-systems a. Air Intake and Compressor storage b. Power Supply Electronics c. Thruster
 
-**Response.** Subsystem breakdown adopted: a. Air intake and compressor storage (F1 intake, F2 filter, F3 compressor, F4 gas chamber / plenum, valves; plus the separate Xe storage and valve path); b. Power supply electronics (propulsion PPU incl. RF generator / matching, valve drivers, 1553B / discrete interface); c. Thruster (H-1 Hall accelerator with magnetic circuit and anode / gas distributor, and the downstream RF-ICP neutralizer). Mapping in 02_TECHNICAL_APPROACH.md section 2.2.
+**Response.** Subsystem breakdown adopted: a. Air intake and compressor storage (F1 intake, F2 filter, F3 compressor, F4 gas chamber / plenum, valves; plus the separate Xe storage and valve path); b. Power supply electronics (propulsion PPU incl. RF generator / matching, valve drivers, 1553B / discrete interface); c. Thruster (H-1 Hall accelerator with magnetic circuit and anode / gas distributor, and the downstream RF-ICP neutralizer). Mapping in 02_TECHNICAL_APPROACH.md section 2.2. COMPLY (owner ruling A9.27) confirms the proposed system composition only: it does not claim that the performance, qualification or determining evidence of each subsystem has already been completed; no engineering gate status changes.
 
 **Evidence at 5eee4b8:**
 
@@ -611,10 +611,10 @@ Source: `docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.jso
 | AG-15 | requirement basis (official RFP registered + RVM re-based; A9.13 S6.22) | DETERMINING_EVIDENCE_PRESENT_NO_REMAINING_CONDITION | true |
 | GNG-ICP-01 | ICP go / no-go (mandatory, before LOCK-1) for the single Hall + RF/ICP neutralizer flight architecture (A9.19: no hollow-cathode fallback) | NOT_EVALUATED | false |
 
-## RFP pages not screened by the repository
+## RFP pages not transcribed by the repository
 
 pages 1-15 and 34-40 were not screened for requirement-bearing clauses in this record (bid / legal / programmatic front and back matter per the document structure, not verified page by page): status UNSCREENED_PENDING_OWNER_PAGE_REVIEW of the owner-held PDF; nothing is assumed about their content.
 
 Owner page review (`docs/requirements/rfp_official/rfp_registration_v1.json` `#/page_coverage/owner_page_review`): OWNER_REVIEWED_NO_ADDITIONAL_TECHNICAL_PERFORMANCE_REQUIREMENT - "The previously unscreened RFP pages have now been reviewed and do not introduce an additional ABEP technical-performance requirement that alters the current RVM technical re-base." This covers technical-performance requirements only; the repository does not transcribe those pages.
 
-The owner must still check those pages for mandatory formats, annexures, declarations and compliance-statement formats (OIR-DOC-01).
+Owner ruling A9.27: the owner has reviewed those pages including the formats; OIR-DOC-01 = REVIEW_COMPLETE_SUBMISSION_FORM_COMPLETION_PENDING (Part IV(A)-(H) forms and submission controls; 06_SUBMISSION_CHECKLIST.md).

@@ -17,8 +17,8 @@
   "OWNER_INPUT_REQUIRED": "the response depends on organisational, commercial or design-authority information that the repository does not hold; the owner must supply it"
  },
  "status_counts": {
-  "COMPLY": 1,
-  "COMPLY_PLANNED_WITH_EVIDENCE_PATH": 16,
+  "COMPLY": 2,
+  "COMPLY_PLANNED_WITH_EVIDENCE_PATH": 15,
   "PARTIAL": 1,
   "NOT_YET_DEMONSTRATED": 10,
   "OWNER_INPUT_REQUIRED": 9
@@ -567,7 +567,7 @@
    "section": "Part III 2 Propellant for propulsion system",
    "rfp_text_verbatim": "Compatible for using Ambient air (at the functional orbit altitude of 180-230km) and Xenon as propellant. Two separate propellant tanks for ambient air and xenon.",
    "status": "COMPLY_PLANNED_WITH_EVIDENCE_PATH",
-   "response": "Two separate supply modes with separate storage are proposed: ambient air (AIR_PRIMARY; intake -> compressor -> gas chamber / plenum) and Xe (XE_CONTINGENCY / emergency; dedicated Xe storage and flow hardware, AL-08: tank, regulator, two series latch isolation valves + one proportional flow-control valve, plumbing, mounting / thermal; owner decision AFI-01-S1). AL-08 = 5.9148 kg is a MEV planning floor, PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (plumbing and mounting / thermal TBD; quotations rebase it, RFQ3-GAS rev1); no conventional hollow-cathode hardware is in flight AL-08. The flight Xe load is NOT FROZEN (2 / 5 / 10 kg are planning / sensitivity cases). No frozen feed-system design or demonstration exists (RVM-29).",
+   "response": "Two separate supply modes with separate storage are proposed: ambient air (AIR_PRIMARY; intake -> compressor -> gas chamber / plenum) and Xe (XE_CONTINGENCY / emergency; dedicated Xe storage and flow hardware, AL-08: tank, regulator, two series latch isolation valves + one proportional flow-control valve, plumbing, mounting / thermal; owner decision AFI-01-S1). AL-08 = 5.9148 kg is a MEV planning floor, PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (plumbing and mounting / thermal TBD; quotations rebase it, RFQ3-GAS rev1); no conventional hollow-cathode hardware is in flight AL-08. The flight Xe load is NOT FROZEN (2 / 5 / 10 kg are planning / sensitivity cases). No frozen feed-system design or demonstration exists (RVM-29). Owner ruling A9.27 - the clause has two separable aspects: (A) separate propellant tanks / paths: COMPLY BY DESIGN - separate ambient-air and Xe tanks / supply paths are part of the offered architecture; (B) functional ambient-air + Xe capability: PLANNED / NOT YET DEMONSTRATED - the system is designed for both propellants and the determining functional demonstration follows the evidence / test path above. The clause as a whole therefore stays COMPLY_PLANNED_WITH_EVIDENCE_PATH; no functional dual-propellant capability is claimed as demonstrated.",
    "rvm_rows": [
     "RVM-08",
     "RVM-10",
@@ -804,8 +804,8 @@
    "page": 19,
    "section": "Part III 2 Subsystems",
    "rfp_text_verbatim": "The overall system shall consist of the following sub-systems a. Air Intake and Compressor storage b. Power Supply Electronics c. Thruster",
-   "status": "COMPLY_PLANNED_WITH_EVIDENCE_PATH",
-   "response": "Subsystem breakdown adopted: a. Air intake and compressor storage (F1 intake, F2 filter, F3 compressor, F4 gas chamber / plenum, valves; plus the separate Xe storage and valve path); b. Power supply electronics (propulsion PPU incl. RF generator / matching, valve drivers, 1553B / discrete interface); c. Thruster (H-1 Hall accelerator with magnetic circuit and anode / gas distributor, and the downstream RF-ICP neutralizer). Mapping in 02_TECHNICAL_APPROACH.md section 2.2.",
+   "status": "COMPLY",
+   "response": "Subsystem breakdown adopted: a. Air intake and compressor storage (F1 intake, F2 filter, F3 compressor, F4 gas chamber / plenum, valves; plus the separate Xe storage and valve path); b. Power supply electronics (propulsion PPU incl. RF generator / matching, valve drivers, 1553B / discrete interface); c. Thruster (H-1 Hall accelerator with magnetic circuit and anode / gas distributor, and the downstream RF-ICP neutralizer). Mapping in 02_TECHNICAL_APPROACH.md section 2.2. COMPLY (owner ruling A9.27) confirms the proposed system composition only: it does not claim that the performance, qualification or determining evidence of each subsystem has already been completed; no engineering gate status changes.",
    "rvm_rows": [
     "RVM-08"
    ],
@@ -1455,7 +1455,9 @@
    "subsystem integration / structural optimization"
   ]
  },
- "post_source_governing_decisions": [],
+ "post_source_governing_decisions": [
+  "docs/decisions/OD_2026_10_05_A9_27_final_bid_owner_rulings.json"
+ ],
  "source_findings": [],
  "owner_inputs": {
   "OIR-IC-01": "Indigenous-content plan figures: per-subsystem IC % (thruster, intake, compressor + storage, PSE) and project IC % with the computation basis (RFP-P19-05 / RFP-P18-03 a; Part IV(C) 2 scoring).",
@@ -1481,7 +1483,7 @@
   "OIR-SCH-01": "T0 assumption and confirmation that the A9.21 hardware order can be resourced inside the RFP milestone offsets (no dates beyond T0 offsets are stated by this package).",
   "OIR-RSK-01": "Likelihood / impact rating and risk owner for each technical risk R-01..R-13 (04_RISK_REGISTER.md); the repository holds no risk scoring.",
   "OIR-COM-01": "Cost / price breakdown, payment-milestone acceptance and all commercial formats (commercial bid; not in this technical package).",
-  "OIR-DOC-01": "Mandatory formats / annexures on RFP pages 1-15 and 34-40 (NOT screened by the repository) and the DPR template pp. 22-25 / industry profile pp. 32-33 (screened from the text layer only)."
+  "OIR-DOC-01": "REVIEW_COMPLETE_SUBMISSION_FORM_COMPLETION_PENDING (owner ruling A9.27): the owner has reviewed the previously unscreened RFP pages. The final submission must account for Part IV(A) Detailed Project Report (DPR); IV(B) Firm Essential Qualification Criteria; IV(C) Technical Capability Evaluation; IV(D) Industry Profile (firm letterhead where required, with supporting annexures); IV(E) Non-Disclosure Undertaking (letterhead); IV(F) Acceptance Letter (letterhead); IV(G) Eligibility Certificate (letterhead); IV(H) Undertaking-cum-Checklist (Submitted Yes/No and Annexure numbers). Controls: technical and financial bids separate; financial bid only in the provided format with the prescribed format / filename unmodified; no project cost / price information in the technical bid; uploads per the RFP submission requirements; the final IV(H) checklist reconciles the annexures actually submitted. Closes only when the final submission set is checked against these forms and the annexure numbers are populated (06_SUBMISSION_CHECKLIST.md). Submission-readiness item, not a physics / architecture gate."
  },
  "resolved_owner_inputs": {
   "OIR-TEC-01": "Upstream-closure citation basis: RESOLVED by owner decision A9.24 item 9 ('Choose B': do not submit against bbc480c; re-freeze with the frozen 196-state design-state set and the empty robust upstream-set finding). The earlier F7/F8 design-state caveat no longer applies; the package cites the upstream results at the technical source only.",

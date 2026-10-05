@@ -3881,3 +3881,17 @@ are reused from the pinned v3 builder).
 - Ranking (addressable interpreter time): uq_modular_run_uq, intake_response_surface_reduced, archengine
   close_architecture, ... Legacy / historical workloads (uq_modular, archengine card closures, uq6, 0-D Hall) are timed
   for continuity only and are not port targets under the owner four-class rule. Performance only, not physics evidence.
+
+## 2026-10-05 — Final bid rulings A9.27 applied to the package (technical source 5eee4b8 unchanged)
+
+- `docs/decisions/OD_2026_10_05_A9_27_FINAL_BID_OWNER_RULINGS.md` / `.json` (verbatim; bid pair protected: technical
+  source 5eee4b8, package / freeze record b5849af -> superseded by this package commit for the bid text only).
+- RFP-P19-03 -> COMPLY (system composition only; no performance / qualification / evidence claim; no gate change).
+  RFP-P18-08 stays COMPLY_PLANNED_WITH_EVIDENCE_PATH with the split: (A) separate tanks / paths COMPLY BY DESIGN;
+  (B) functional ambient-air + Xe capability PLANNED / NOT YET DEMONSTRATED. Status counts: COMPLY 2, COMPLY_PLANNED 15,
+  PARTIAL 1, NOT_YET_DEMONSTRATED 10, OWNER_INPUT_REQUIRED 9.
+- OIR-DOC-01 -> REVIEW_COMPLETE_SUBMISSION_FORM_COMPLETION_PENDING; new generated `06_SUBMISSION_CHECKLIST.md`
+  (Part IV(A)-(H) mapping, PROPOSED annexure numbering for the owner to confirm, submission controls, final file-by-file
+  check). Test: no price / currency information in any package file; A9.27 is a package-level post-source decision
+  (does not make the technical source non-final). MPV3Q-01 appears in no package document (only the internal owner
+  brief, not for upload); the stale owner-question state record is repaired post-bid.

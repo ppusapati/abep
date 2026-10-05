@@ -31,6 +31,7 @@ not quoted. Mass: {{MASS_STATUS}} (section 9 of `02_TECHNICAL_APPROACH.md`).
 | `03_DEVELOPMENT_AND_TEST_PLAN.md` | A9.21 hardware order, gates (GNG-ICP-01 before LOCK-1), proposed mapping onto M1-M5 at the RFP T0 offsets, RFP-P19-06 tests | Part III para 4.1, 7 | DRAFT_FOR_OWNER_REVIEW (generated) |
 | `04_RISK_REGISTER.md` | top technical risks R-01..R-13 with repository mitigations | Part III para 6 | DRAFT_FOR_OWNER_REVIEW (generated) |
 | `05_PROGRAMMATIC_SECTIONS.md` | skeletons: indigenous-content plan, facilities, team / collaboration, certification, cost / commercial, company credentials | RFP-P18-03, RFP-P19-05, RFP-P20-01, RFP-P27-01 / -02, RFP-P30-01, Part IV(B) / (C) | DRAFT_FOR_OWNER_REVIEW - SKELETON (generated) |
+| `06_SUBMISSION_CHECKLIST.md` | Part IV(A)-(H) form mapping, proposed annexure numbering, submission controls, final file-by-file check | OIR-DOC-01 (A9.27) | REVIEW_COMPLETE_SUBMISSION_FORM_COMPLETION_PENDING (generated) |
 | `docx/*.docx` | Word renderings of the six Markdown files above (generated; the Markdown is the source) | - | DRAFT_FOR_OWNER_REVIEW (generated) |
 | `compliance_data.py`, `source_facts.py`, `build_package.py`, `templates/` | data, technical-source reader, generator and document templates (`--check` verifies every generated file) | - | tooling |
 
@@ -46,14 +47,14 @@ PASS / GO for any gate that is not PASS / GO at the technical source; every owne
 The single COMPLY (RFP-P18-07, "Hall effect preferable") states the offered thruster type only; no Hall performance is
 demonstrated.
 
-## RFP pages NOT screened by the repository - owner must check the formats
+## RFP pages 1-15 and 34-40 - owner review complete, form completion pending (A9.27)
 
 The repository's RFP registration (`docs/requirements/rfp_official/rfp_registration_v1.json`, 40-page PDF registered by
-sha256) screened pages 16-33 only. **Pages 1-15 and 34-40 (bid / legal / format front and back matter) were NOT
-screened or transcribed by the repository**; at the technical source the registration records an {{PAGE_REVIEW}}. That
-review says nothing about formats: the owner must still check those pages for mandatory formats, annexures, declarations,
-undertakings, compliance-statement formats and submission instructions, and must fill the DPR template (pp. 22-25) and
-the industry profile (pp. 32-33), which were screened from the PDF text layer only (OIR-DOC-01).
+sha256) transcribes pages 16-33 only; at the technical source it records an {{PAGE_REVIEW}}. The owner has since reviewed
+the remaining pages including the formats (owner ruling A9.27): OIR-DOC-01 = REVIEW_COMPLETE_SUBMISSION_FORM_COMPLETION_PENDING.
+The final submission must account for Part IV(A)-(H) and the submission controls; see `06_SUBMISSION_CHECKLIST.md`.
+OIR-DOC-01 closes only when the final submission set has been checked against those forms and the annexure numbers are
+populated.
 
 ## Owner-input checklist (every OWNER_INPUT_REQUIRED item)
 

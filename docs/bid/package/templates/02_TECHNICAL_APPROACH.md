@@ -219,4 +219,4 @@ Governing owner decisions: A9.25 message 8 sections 6-8 (`docs/decisions/OD_2026
 - no PASS / GO for any gate; GNG-ICP-01, AG-12, AG-13 and ICP-45 are NOT_EVALUATED;
 - no frozen physical design or design point; no CBE mass and no mass compliance ({{MASS_STATUS}});
 - no robust upstream closure (robust upstream set EMPTY, F9-DF-01);
-- nothing about RFP pages 1-15 and 34-40 (not screened by the repository).
+- no transcription of RFP pages 1-15 and 34-40: the owner has reviewed them (A9.27, OIR-DOC-01 REVIEW_COMPLETE_SUBMISSION_FORM_COMPLETION_PENDING); the Part IV(A)-(H) forms are completed in the submission set (06_SUBMISSION_CHECKLIST.md).

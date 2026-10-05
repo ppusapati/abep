@@ -60,6 +60,7 @@ A921 = "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_own
 A924 = "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json"
 A925 = "docs/decisions/OD_2026_10_04_A9_25_pre_bid_owner_decisions.json"
 A926 = "docs/decisions/OD_2026_10_05_A9_26_mass_budget_owner_decisions.json"
+A927 = "docs/decisions/OD_2026_10_05_A9_27_final_bid_owner_rulings.json"
 PIVOT = "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json"
 ENS = "hallthruster_bridge/ensemble/transport_ensemble_v0.json"
 VAL = "hallthruster_bridge/validation/VALIDATION_RELEASE_v1.json"
@@ -112,6 +113,15 @@ GOVERNING_DECISIONS = [
                                                    "successor is the technical source",
      "json": A926, "locator": "#/owner_decision_summary",
      "md": "docs/decisions/OD_2026_10_05_A9_26_MASS_BUDGET_OWNER_DECISIONS.md"},
+    {"id": "A9.27", "what": "final bid rulings: OIR-DOC-01 REVIEW_COMPLETE_SUBMISSION_FORM_COMPLETION_PENDING (Part IV(A)-(H) "
+                             "forms and submission controls); RFP-P19-03 COMPLY (system composition only); RFP-P18-08 split "
+                             "(separate tanks / paths COMPLY BY DESIGN; functional dual-propellant capability PLANNED / NOT "
+                             "YET DEMONSTRATED; clause stays COMPLY_PLANNED_WITH_EVIDENCE_PATH); bid pair protected",
+     "json": A927, "locator": "#/owner_decision_summary",
+     "md": "docs/decisions/OD_2026_10_05_A9_27_FINAL_BID_OWNER_RULINGS.md",
+     # package-level ruling made after the technical source: the owner protects the bid pair and does not move the
+     # technical source for it (A9.27 'Do not disturb the frozen technical source 5eee4b8')
+     "package_level_post_source_allowed": True},
 ]
 
 # A9.26 message 2 (mass presentation; owner values, bound to the A9.26 record by tests/test_bid_package.py)
@@ -307,8 +317,14 @@ CLAUSES = {
                  "floor, PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (plumbing and mounting / thermal TBD; quotations rebase "
                  "it, RFQ3-GAS rev1); no conventional hollow-cathode hardware is in flight AL-08. The flight Xe load is "
                  "NOT FROZEN ({{XE_CASES}} kg are planning / sensitivity cases). No frozen feed-system design or "
-                 "demonstration exists (RVM-29).",
-        evidence=[ev(A919, "#/architecture/propellant_supply_modes"), ev(F9, "#/configuration/flight_architecture"),
+                 "demonstration exists (RVM-29). Owner ruling A9.27 - the clause has two separable aspects: "
+                 "(A) separate propellant tanks / paths: COMPLY BY DESIGN - separate ambient-air and Xe tanks / supply "
+                 "paths are part of the offered architecture; (B) functional ambient-air + Xe capability: PLANNED / NOT "
+                 "YET DEMONSTRATED - the system is designed for both propellants and the determining functional "
+                 "demonstration follows the evidence / test path above. The clause as a whole therefore stays "
+                 "COMPLY_PLANNED_WITH_EVIDENCE_PATH; no functional dual-propellant capability is claimed as demonstrated.",
+        evidence=[ev(A927, "#/owner_decision_summary/RFP-P18-08", if_at_source=True),
+                  ev(A919, "#/architecture/propellant_supply_modes"), ev(F9, "#/configuration/flight_architecture"),
                   ev(MASS, "#/lines/hall_icp_neutralizer[line=AL-08]"), ev(A925, "#/owner_decision_summary/AFI-01-S1"),
                   ev(A925, "#/owner_decision_summary/xe_load"), ev(RFQG, "#/current_al08_context"),
                   ev(RVM, "#/rows[id=RVM-29]"), ev(XE3, "#/status")],
@@ -378,13 +394,17 @@ CLAUSES = {
                   ev(HWP, "#/steps[id=P4-ACCEPTANCE-EXPOSURE]")],
         rvm=["RVM-16", "RVM-21"]),
     "RFP-P19-03": dict(
-        status="COMPLY_PLANNED_WITH_EVIDENCE_PATH",
+        status="COMPLY",
         response="Subsystem breakdown adopted: a. Air intake and compressor storage (F1 intake, F2 filter, F3 "
                  "compressor, F4 gas chamber / plenum, valves; plus the separate Xe storage and valve path); b. Power "
                  "supply electronics (propulsion PPU incl. RF generator / matching, valve drivers, 1553B / discrete "
                  "interface); c. Thruster (H-1 Hall accelerator with magnetic circuit and anode / gas distributor, "
-                 "and the downstream RF-ICP neutralizer). Mapping in 02_TECHNICAL_APPROACH.md section 2.2.",
-        evidence=[ev(MASS, "#/lines/hall_icp_neutralizer"), ev(BPB, "#/slots"), ev(A919, "#/architecture"),
+                 "and the downstream RF-ICP neutralizer). Mapping in 02_TECHNICAL_APPROACH.md section 2.2. COMPLY "
+                 "(owner ruling A9.27) confirms the proposed system composition only: it does not claim that the "
+                 "performance, qualification or determining evidence of each subsystem has already been completed; no "
+                 "engineering gate status changes.",
+        evidence=[ev(A927, "#/owner_decision_summary/RFP-P19-03", if_at_source=True),
+                  ev(MASS, "#/lines/hall_icp_neutralizer"), ev(BPB, "#/slots"), ev(A919, "#/architecture"),
                   ev(RVM, "#/rows[id=RVM-08]")],
         rvm=["RVM-08"]),
     "RFP-P19-04": dict(
@@ -562,8 +582,18 @@ OWNER_INPUTS = {
                   "the repository holds no risk scoring.",
     "OIR-COM-01": "Cost / price breakdown, payment-milestone acceptance and all commercial formats (commercial bid; "
                   "not in this technical package).",
-    "OIR-DOC-01": "Mandatory formats / annexures on RFP pages 1-15 and 34-40 (NOT screened by the repository) and "
-                  "the DPR template pp. 22-25 / industry profile pp. 32-33 (screened from the text layer only).",
+    "OIR-DOC-01": "REVIEW_COMPLETE_SUBMISSION_FORM_COMPLETION_PENDING (owner ruling A9.27): the owner has reviewed the "
+                  "previously unscreened RFP pages. The final submission must account for Part IV(A) Detailed Project "
+                  "Report (DPR); IV(B) Firm Essential Qualification Criteria; IV(C) Technical Capability Evaluation; "
+                  "IV(D) Industry Profile (firm letterhead where required, with supporting annexures); IV(E) "
+                  "Non-Disclosure Undertaking (letterhead); IV(F) Acceptance Letter (letterhead); IV(G) Eligibility "
+                  "Certificate (letterhead); IV(H) Undertaking-cum-Checklist (Submitted Yes/No and Annexure numbers). "
+                  "Controls: technical and financial bids separate; financial bid only in the provided format with the "
+                  "prescribed format / filename unmodified; no project cost / price information in the technical bid; "
+                  "uploads per the RFP submission requirements; the final IV(H) checklist reconciles the annexures "
+                  "actually submitted. Closes only when the final submission set is checked against these forms and the "
+                  "annexure numbers are populated (06_SUBMISSION_CHECKLIST.md). Submission-readiness item, not a "
+                  "physics / architecture gate.",
 }
 
 # Owner inputs of the earlier (bbc480c-based) draft that the owner has since decided; kept so the trail stays visible
