@@ -1,0 +1,36 @@
+{
+  "id": "np_thermal_cathodeless_vs_net_registration_v1",
+  "model_id": "NP-THERMAL-CATHODELESS",
+  "prereg_sha256": "e3e6859cf61703c27254e9c231ff4637f7d20ea743c8d881b9e55c8ba9d27c5c",
+  "registered": "2026-10-05",
+  "rule": "prereg analytic_limiting_cases.vs_net: VS-NET is the synthetic verification network, registered as one SYNTHETIC_TEST_DATA_NOT_EVIDENCE input set with its sha256 before the first scored run; its parameters are verification inputs, never physical values. Committed alone, before the implementation commit and before the scored verification run.",
+  "vs_net_path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/verification/vs_net_v1.json",
+  "vs_net_sha256": "64c4bf335354bd9ffc7e4de602156d3ca26b1b6ee614e30558ccc94c897ec9a9",
+  "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+  "schema": "abep_np_thermal_case_v1",
+  "builder": "crates/abep-subsystems/tests/support/vs_net.rs::build (the file is its byte-identical output; tests/vs_net.rs checks the bytes and this sha256)",
+  "content": {
+    "nodes": "all 17 registered node ids (11 REQUIRED, 6 CONDITIONAL present) plus J_ISO, a massless series junction (E-04) between H1_ANODE and H1_BACKPLATE",
+    "links": "22: LUMPED_G 14, CONTACT 4, CONDUCTION 4 (shapes SLAB x2, CYLINDRICAL_SHELL, SHAPE_FACTOR; k forms CONSTANT, POLYNOMIAL, PIECEWISE_LINEAR)",
+    "enclosures": "E_INT (internal surfaces, closed on B_FACILITY) and E_EXT (external surfaces, SCI-C host surface HOST_PANEL, closed on SPACE)",
+    "boundaries": "B_SC as SCI-A links, SCI-B prescribed flux (F_SC_RI) and SCI-C host surface; B_PPU_RF link; B_FEED links; SPACE; ENV on 5 external surfaces; B_FACILITY",
+    "property_forms": "c_p, k and emittance records use CONSTANT, POLYNOMIAL and PIECEWISE_LINEAR forms, each with a [T_min, T_max] range",
+    "interfaces": "IF-HALL-THERMAL-v1 (HK-01..HK-09, FIXED_POWER coils inner / outer / trim) and IF-ICP-THERMAL-v1 (IK-01..IK-07, rf_powered_only = true); registered and producer-predicted partitions with EXPORT shares; match co-located on N_MATCH",
+    "case": "SYNTHETIC_VERIFICATION, NP_THERMAL_NETWORK, hall_icp_neutralizer, AIR_PRIMARY, STEADY, every sink / host / boundary temperature 250 K, T_init 300 K",
+    "records": 189
+  },
+  "design_conditions": [
+    "View factors follow the area-proportional closed-sphere construction F_kl = a_l / sum(a) (a = surface area; a sink weight for SPACE / B_FACILITY), so reciprocity and summation hold to round-off (verify V-18; synthetic only).",
+    "Every node has a conduction path to a boundary or a radiation path to a sink (no floating node).",
+    "AL-06 premise: tau_max (largest C_i / G_i,lin at T_s) must bound the slowest relaxation of the network, otherwise T(30 tau_max) cannot equal the steady solution. R_HALL is therefore a heavy, weakly coupled radiator (5 kg x 900 J/(kg K); 0.2 W/K to H1_BACKPLATE), whose own time constant dominates tau_max. Development record (before registration): a first draft with R_HALL 0.5 kg and 2 W/K had tau_max = 217 s while its collective mode was about 2.6e3 s and left 0.50 K at 30 tau_max; the network, not the criterion, was changed."
+  ],
+  "transformations_used_by_verification": {
+    "AL-05": "zero every interface key, Q_thermal_control_W, the SCI-B flux and the environment fluxes (S, q_OLR, rho); supply mode NON_FIRING; every sink / host / boundary temperature T_s in {3, 250, 300} K",
+    "AL-06": "sinks 250 K; T_init 250 K (the AL-05 equilibrium); TRANSIENT to 30 tau_max with dt = tau_max / 200, tau_max from the AL-05 run at 250 K; compared with the STEADY run of the same loads",
+    "AL-10": "single-key edits of the interface records (IFH-2/3/4, IFI-2/3/4/5, missing key, INCOMPLETE_EVIDENCE key, NOT_EVALUATED key) and N_MATCH removed with match_colocated = false",
+    "FT-01, FT-16": "FLIGHT_CONDITIONAL relabelling: every record TBD (no value), sinks SPACE, interface keys NOT_EVALUATED by the producer",
+    "FT-05, FT-07, FT-16": "PARAMETRIC relabelling (evidence class assumed, test-fixture source; outputs labelled PARAMETRIC_NOT_A_PREDICTION and never quoted)",
+    "bench domain": "BENCH_REPLICA relabelling of the FT-01 case with B_FACILITY sinks and no ENV",
+    "where": "crates/abep-subsystems/tests/support/verify.rs and vs_net.rs"
+  }
+}
