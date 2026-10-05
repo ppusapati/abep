@@ -1,0 +1,12 @@
+{
+ "id": "np_icp_neutralizer_prereg_lock_v1",
+ "model_id": "NP-ICP-NEUTRALIZER",
+ "locked": "2026-10-05",
+ "note": "sha256 of the final NP-ICP-NEUTRALIZER v1 preregistration (A9.29 sec. 4 RM-OQ-12 / sec. 13 lane C; SC-WP-03, target crate abep-icp; docs only, status PREREGISTERED_NOT_IMPLEMENTED); any change after this lock is a new, dated addendum or version, never an edit",
+ "base_commit": "e5528bdd22412014796771b615dc40f2b3bcc2ca",
+ "files_relative_to": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/",
+ "files": {
+  "prereg_v1.json": "6f925b20818810f2614cfff2d4f320d698d6efecbc9a66b90131ecef9939556e",
+  "PREREG.md": "596b6c9d637a7b38535d8b57751ebf6bcd38bb3309a3fd30c3692ffdb33e3eac"
+ }
+}
