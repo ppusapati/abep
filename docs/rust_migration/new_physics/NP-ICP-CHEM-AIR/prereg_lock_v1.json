@@ -1,0 +1,14 @@
+{
+ "id": "np_icp_chem_air_prereg_lock_v1",
+ "model_id": "NP-ICP-CHEM-AIR",
+ "parent_model_id": "NP-ICP-NEUTRALIZER",
+ "locked": "2026-10-05",
+ "note": "sha256 of the final NP-ICP-CHEM-AIR v1 preregistration (A9.30 secs. 3-4; chemistry contract of NP-ICP-NEUTRALIZER; docs only, status PREREGISTERED_NOT_IMPLEMENTED; no rate table built, no rate computed); any change after this lock is a new, dated addendum or version, never an edit",
+ "base_commit": "3e1891b7a7b10e2fdca091ca348cfee2f02ced11",
+ "files_relative_to": "docs/rust_migration/new_physics/NP-ICP-CHEM-AIR/",
+ "files": {
+  "prereg_v1.json": "24b74bc6e485e9156059b132c8f5ccb4b854b971a58b879eb34a960b76f70e9a",
+  "PREREG.md": "556cdc9b598e9d67306f77f05d68b2ea87d06a520777d715407c261546a5a642"
+ },
+ "species_computation": "design-state file sha256 60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049; script and output sha256 recorded in prereg_v1.json species_set.computation (script text embedded there)"
+}
