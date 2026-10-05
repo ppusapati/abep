@@ -4216,3 +4216,26 @@ main, and the bid record `5eee4b8` / `b5849af` / `2de86ab`. `git diff 2de86ab..H
   - `cargo test --workspace --locked`;
   - guard, register and isolation checks.
 - **Results.** cargo test: 33 passed, 0 ignored. `ci_checks`: 12/12. pytest: 4232 passed, 5 skipped, 1 xfailed.
+
+## 2026-10-05 — NP-ICP-CHEM-AIR preregistration v1 (A9.30 secs. 3-4; DOCS ONLY, no implementation)
+
+- `docs/rust_migration/new_physics/NP-ICP-CHEM-AIR/` (lock: prereg_v1.json `24b74bc6`, PREREG.md `556cdc9b`). The
+  narrow chemistry contract for the active RF/ICP neutralizer model.
+- **Species.** Taken from the 196 frozen design states (free-stream mole fractions), with the materiality rule "> 1 % in any
+  state". The 1 % is the frozen N2 promotion threshold, plus named / product / low-IE clauses.
+  - O: 0.05-0.86. N2: 0.08-0.88. O2: up to 0.078. N: up to 0.089.
+  - O, N2, O2 and N are retained. Xe is retained for XE_CONTINGENCY only.
+  - He (up to 0.068) and Ar (up to 0.016) exceed 1 % in some states. Both are held for owner bounds (OQ-CHEM-01). NO is held
+    for an ionization bound (OQ-CHEM-02).
+  - Flight composition reaches the ICP only through the delivered feed. A gas-path composition change is not registered, so
+    those points are NOT_EVALUATED.
+- **Processes.** 64 in total (54 air, 10 Xe): 16 IN_REPO_VERIFIED, 21 SOURCE_IDENTIFIED_TO_ACQUIRE, 27 INCOMPLETE_EVIDENCE.
+  - The abep-n2n-0.11 tables are reused by reference; their Hall-campaign verdicts do not transfer.
+  - Atomic O has its own ionization, elastic and excitation data. An N2 surrogate is refused by test.
+  - Wall recombination and quenching are carried as [0, 1] envelopes while the vessel material is open.
+- **Admission.** T_e 2-30 eV. The N2 completeness thresholds (F_P / F_ion > 1 %, F_S > 5 %) apply, plus collisional-power,
+  electron-loss and negative-ion metrics at 1 %. AIR_PRIMARY and XE_CONTINGENCY are admitted independently. Neither is
+  admitted today.
+- **Build plan.** New `data/chemistry/icp/`, one provenance-backed table per commit. The Hall propellant set and its pins stay
+  untouched.
+- 15 open owner questions (OQ-CHEM-01..15) and 12 recorded conflicts.
