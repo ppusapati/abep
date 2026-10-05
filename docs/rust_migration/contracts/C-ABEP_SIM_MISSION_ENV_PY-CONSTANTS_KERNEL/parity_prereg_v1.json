@@ -1,0 +1,476 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-ABEP_SIM_MISSION_ENV_PY-CONSTANTS_KERNEL-V1",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "component": {
+  "inventory_id": "C-ABEP_SIM_MISSION_ENV_PY",
+  "inventory_path": "docs/rust_migration/component_inventory_v3_1.json",
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "migration_wave": "W1 (pulled forward from W3)",
+  "kernel_basis": "component_inventory_v3_1.json dependency_findings.pulled_forward_dependencies_detected: 'pull mission_env::{OMEGA_E, Spacecraft, sso_inclination_deg} into W1 under its own kernel contract'; the inventory assigns this kernel no K-id (extract_and_parity_kernels lists only class-H extracts), so this contract is a function-subset contract of the class-A component (RM-R17) in its own directory (one directory per contract)",
+  "scope": "named function subset (kernel granularity, RM-R17): J2, OMEGA_E, Spacecraft (dataclass defaults), sso_inclination_deg",
+  "functions_or_entry_points": [
+   "abep_sim/mission_env.py::J2",
+   "abep_sim/mission_env.py::OMEGA_E",
+   "abep_sim/mission_env.py::Spacecraft",
+   "abep_sim/mission_env.py::sso_inclination_deg"
+  ],
+  "out_of_scope": [
+   "abep_sim/mission_env.py: SOLAR_CONST, ARRAY_AREAL_KG_M2, worst_eclipse_fraction, array_area_for, pointing_factors and every other function: stay PYTHON_REFERENCE for the W3 / SC-WP-09 contract"
+  ],
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+  "extract_kernel_id": "NOT_APPLICABLE (no K-id registered; see kernel_basis)",
+  "active_toolchain_requirement": "NOT_APPLICABLE",
+  "excluded_legacy_paths": [],
+  "owner_disposition_a9_28": "NOT_APPLICABLE",
+  "simulation_completion_wp": "SC-WP-01 (element 'orbit / design states': mission_env::Spacecraft, sso_inclination_deg; inventory row SC-WP-09)",
+  "owner_disposition_a9_29": "NOT_APPLICABLE"
+ },
+ "date": "2026-10-05",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of this component was executed (lane B1, ES-2, SC-WP-01). The registration commit is recorded in the report, not here.",
+ "supersedes": {
+  "path": null,
+  "sha256": null,
+  "reason": null
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "lane": {
+  "id": "B1",
+  "execution_step": "ES-2",
+  "work_package": "SC-WP-01",
+  "branch": "lane-es2-env",
+  "authority": "A9.29 secs. 6, 13 (RM-OQ-02); simulation_completion_programme_v1_1.json SC-WP-01"
+ },
+ "reference_implementation": {
+  "python_commit": "96db5524ec917e99e507def24f3ee0b263c78ebc",
+  "python_commit_note": "96db552 = integration/simulation-complete lineage (Rust workspace skeleton); integration/simulation-complete later advanced to 35c06e4 with a docs-only merge; abep_sim/ is identical at both. The bid record 5eee4b8 / 2de86ab is never a reference commit for new work",
+  "files": [
+   {
+    "path": "abep_sim/mission_env.py",
+    "sha256_at_registration": "f568fba29678852565b03821e85dd7cce1fb18ec623ab2ca282e521a97f164af"
+   },
+   {
+    "path": "abep_sim/constants.py",
+    "sha256_at_registration": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7"
+   }
+  ],
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration; a changed reference requires a new contract version",
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4",
+   "scipy": "1.17.1",
+   "pandas": "3.0.2",
+   "pymsis": "0.13.0 installed; NOT used by any registered entry point (frozen-data paths only; check() is scored in its pymsis-absent configuration)",
+   "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+   "blas": "scipy-openblas 0.3.31.188.0 bundled with numpy (DYNAMIC_ARCH, USE64BITINT)",
+   "numpy_simd": "baseline X86_V2; dispatch X86_V3 / X86_V4 / AVX512_ICL / AVX512_SPR enabled on the registration host (Intel Xeon @ 2.10GHz, AVX512F): numpy float64 log / exp / cos on arrays run AVX512 SIMD loops, not glibc libm",
+   "thread_env": {
+    "OMP_NUM_THREADS": "1 (set by the harness for every reference run)",
+    "OPENBLAS_NUM_THREADS": "1 (set by the harness for every reference run)"
+   },
+   "recorded_again_at_scoring": "python / numpy / scipy / pandas versions, numpy SIMD dispatch, BLAS, CPU model and thread env are re-read and written into the report; a version change is INPUT_MISMATCH (not a verdict)"
+  }
+ },
+ "rust_implementation": {
+  "crate": "abep-atmos (module mission_env_kernel; the future abep-mission crate depends on abep-atmos, so the kernel sits below it without a dependency cycle)",
+  "functions_or_entry_points": [
+   "abep_atmos::mission_env_kernel::{J2, OMEGA_E}",
+   "abep_atmos::mission_env_kernel::Spacecraft (Default = the dataclass defaults)",
+   "abep_atmos::mission_env_kernel::sso_inclination_deg(alt_km: f64) -> AbepResult<f64>",
+   "CLI: cargo run --release --locked -p abep-atmos --bin abep-env-parity (JSON request on stdin, JSON results on stdout) entries 'mission_env_constants', 'spacecraft_defaults', 'sso_inclination_deg'"
+  ],
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (rust-toolchain.toml channel 1.94.1)",
+  "provenance_sources": [
+   "Cargo.toml",
+   "Cargo.lock",
+   "rust-toolchain.toml",
+   "crates/abep-types/src/**",
+   "crates/abep-atmos/src/mission_env_kernel.rs",
+   "crates/abep-atmos/src/pyfloat.rs"
+  ],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it"
+ },
+ "governing_hashes": {
+  "config_manifest": {
+   "path": "config/MANIFEST.json",
+   "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+  },
+  "architecture_hash": "NOT_APPLICABLE: architecture-independent environment physics (SC-WP-01 relevance: every selected-architecture layer consumes it)",
+  "model_set_hash": "NOT_APPLICABLE: no frozen data file is read",
+  "design_state_set_hash": "NOT_APPLICABLE",
+  "rule": "both implementations must report these exact values for every run; a mismatch voids the run (status INPUT_MISMATCH, not a verdict)"
+ },
+ "pinned_inputs_sha256": {
+  "abep_sim/mission_env.py": "f568fba29678852565b03821e85dd7cce1fb18ec623ab2ca282e521a97f164af",
+  "abep_sim/constants.py": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7"
+ },
+ "frozen_data_read_only": [],
+ "inputs": {
+  "harness": "scripts/rust_migration/es2_env_parity.py",
+  "golden_vectors": {
+   "source": "registered list",
+   "count": 26,
+   "list_or_generator": "sso_inclination_deg at alt_km = 180.0, 195.0, 200.0, 215.0, 230.0 and 0.0, 50.0, ..., 1000.0 (21 values, 50 i); the constants J2, OMEGA_E and the 17 Spacecraft() field defaults"
+  },
+  "edge_cases": [
+   {
+    "id": "E-C-01",
+    "inputs": {
+     "alt_km": -6370.0
+    },
+    "note": "radius 1 km (valid, ~90 deg)"
+   },
+   {
+    "id": "E-C-02",
+    "inputs": {
+     "alt_km": 3000.0
+    },
+    "note": "high SSO"
+   },
+   {
+    "id": "E-C-03",
+    "inputs": {
+     "alt_km": -100.0
+    },
+    "note": "below the surface, valid formula"
+   }
+  ],
+  "randomized_domain": {
+   "entries": [
+    {
+     "entry_index": 0,
+     "entry": "sso_inclination_deg",
+     "count": 400,
+     "draw": "alt = rng_0.uniform(-1000.0, 4000.0, 400)"
+    }
+   ],
+   "domain_note": "numerical parity domain only; not a physics, design or evidence claim"
+  },
+  "vector_totals": {
+   "sso_inclination_deg": "26 golden + 3 edge + 400 randomized + 8 domain-error = 437",
+   "constants": "J2, OMEGA_E",
+   "spacecraft_defaults": "17 fields"
+  }
+ },
+ "campaign_seeds": {
+  "applicable": true,
+  "scoring_master_seed": 731905203,
+  "development_master_seed": 731905103,
+  "derivation": "rng_e = numpy.random.default_rng(numpy.random.SeedSequence([master_seed, e])) with e the entry index listed in inputs.randomized_domain; one generator per entry, draws in the registered order; the draws define input values only (both implementations are deterministic)",
+  "entry_indices": {
+   "sso_inclination_deg": 0
+  },
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the existing admitted stochastic / statistical parity contract; the roles are registered separately and never merged",
+   "design_uq_sampling_stream": "NOT_APPLICABLE: no design / UQ sampling in the component",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE: no TPMC call",
+   "other_streams": "NOT_APPLICABLE: neither implementation draws random numbers; the harness draws the input vectors once (numpy default_rng) and passes identical float values (JSON shortest round-trip repr) to both implementations",
+   "migration_parity_dataset": "seeds, draw order and captured reference outputs stay exactly reproducible (immutable)",
+   "after_rust_authority": "not applicable (no RNG in the component)"
+  },
+  "rng_streams_v3": "not applicable (no RNG inside either implementation)",
+  "development_rule": "development comparisons use development_master_seed only and are never scored or reported as a verdict; every execution with scoring_master_seed is appended to campaign_history and the report is committed whatever its verdict"
+ },
+ "observables": {
+  "mission_env_constants": {
+   "list": [
+    {
+     "name": "J2",
+     "units": "1",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "bit pattern equal",
+     "definition": "1.08262668e-3"
+    },
+    {
+     "name": "OMEGA_E",
+     "units": "rad s-1",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "bit pattern equal",
+     "definition": "7.2921159e-5"
+    }
+   ]
+  },
+  "spacecraft_defaults": {
+   "list": [
+    {
+     "name": "Spacecraft().<field> for the 17 fields mass_kg, bus_frontal_m2, bus_cd, array_area_m2, array_edge_on, array_thickness_m, array_span_m, array_eff, array_deg_per_yr, array_angle_from_thrust_axis_deg, array_distance_m, pointing_sigma_deg, eps_eff, bus_housekeeping_W, inc_deg, ltan_h, intake_cd_ref (+ the field order)",
+     "units": "as the dataclass",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "bit pattern / bool equal; field names and order equal",
+     "definition": "dataclasses.fields(Spacecraft) defaults"
+    }
+   ]
+  },
+  "sso_inclination_deg": {
+   "list": [
+    {
+     "name": "inclination_deg",
+     "units": "deg",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4
+     },
+     "definition": "degrees(acos(-w_s / (1.5 n J2 (R_EARTH / a)^2))), a = R_EARTH + 1e3 alt, n = sqrt(MU / a^3), w_s = 2 pi / (365.25 * 86400)"
+    },
+    {
+     "name": "status",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "EVALUATED or the mapped status of the Python exception"
+    }
+   ]
+  }
+ },
+ "tolerance_classes": {
+  "EXACT_BYTES": "files / serialized outputs byte-identical (sha256 equal); not used by this contract except where an observable says so",
+  "EXACT_VALUE": "integers, strings, enums, booleans, statuses, error codes, schema shape, and floats that are copied (not computed): equal (floats compared by value, -0.0 == 0.0)",
+  "ULP_BOUNDED": "|rust - py| <= k_ulp * ulp(py) OR |rust - py| <= r_rel * |py| OR |rust - py| <= a_abs, with k_ulp / r_rel / a_abs fixed per observable below (an absent clause is not applied). The relative clause is scaled by |py|, NOT by max(1, |py|) as in the template's proposal: the observables span 1e-12 .. 1e17, so an absolute floor of r_rel would accept nonsense for small quantities; scaling by |py| is strictly tighter for |py| < 1 and identical otherwise. ulp(py) = 2^(floor(log2|py|) - 52) (py = 0: smallest subnormal)",
+  "SOLVER_TOLERANCE": "not used (no iterative solver)",
+  "STATISTICAL": "not used (deterministic component)",
+  "EXACT_STREAM": "not used (no RNG in either implementation; the harness RNG only draws input vectors)"
+ },
+ "tolerance_basis": {
+  "independence": "fixed before any comparison from the operation list",
+  "registered": "k_ulp = 4 (template proposal): both implementations evaluate glibc pow / sqrt / acos (CPython float ** int and math.* call libm; Rust powf / sqrt / acos call the same libm) and IEEE basic operations in the same order; the only admissible difference is LLVM rewriting pow(x, 2.0) as x*x (correctly rounded) against glibc pow (< 1 ulp), i.e. <= 1 ulp of (R/a)^2, which acos near -0.11 maps to < 1 ulp of the result"
+ },
+ "exact_invariants": [
+  {
+   "id": "INV-C-01",
+   "statement": "double-run determinism of the CLI output (byte-identical) and of the Python values",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-C-02",
+   "statement": "the Spacecraft defaults are compile-time values: Spacecraft::default() equals itself across runs and carries the 17 fields in the dataclass order",
+   "required_in_both": true
+  }
+ ],
+ "conservation_checks": {
+  "applicable": false,
+  "reason": "constants and a closed-form orbit relation",
+  "checks": []
+ },
+ "domain_and_error_parity": {
+  "mapping": {
+   "ValueError (math domain error: sqrt of a negative, acos outside [-1, 1])": "OUT_OF_DOMAIN",
+   "ZeroDivisionError": "OUT_OF_DOMAIN",
+   "OverflowError (float ** int)": "OUT_OF_DOMAIN"
+  },
+  "cases": [
+   {
+    "id": "DE-C-01",
+    "inputs": {
+     "alt_km": 10000.0
+    },
+    "expected_python": "ValueError (acos)",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "no sun-synchronous inclination"
+   },
+   {
+    "id": "DE-C-02",
+    "inputs": {
+     "alt_km": 1000000.0
+    },
+    "expected_python": "ValueError (acos)",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "no sun-synchronous inclination"
+   },
+   {
+    "id": "DE-C-03",
+    "inputs": {
+     "alt_km": -6371.0
+    },
+    "expected_python": "ZeroDivisionError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "zero radius"
+   },
+   {
+    "id": "DE-C-04",
+    "inputs": {
+     "alt_km": -7000.0
+    },
+    "expected_python": "ValueError (sqrt)",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "negative radius"
+   },
+   {
+    "id": "DE-C-05",
+    "inputs": {
+     "alt_km": 1e+103
+    },
+    "expected_python": "OverflowError (a ** 3)",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "overflow"
+   },
+   {
+    "id": "DE-C-06",
+    "inputs": {
+     "alt_km": "+inf"
+    },
+    "expected_python": "ZeroDivisionError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "zero denominator"
+   },
+   {
+    "id": "DE-C-07",
+    "inputs": {
+     "alt_km": "-inf"
+    },
+    "expected_python": "ZeroDivisionError",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "zero denominator"
+   },
+   {
+    "id": "DE-C-08",
+    "inputs": {
+     "alt_km": "NaN"
+    },
+    "expected_python": "returns nan",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "message_key": "DIV-C-01"
+   }
+  ],
+  "mapping_rule": "every Python exception class maps to exactly one Rust error variant / status; no Rust path returns a value where Python fails, or fails where Python returns, except DIV-C-01",
+  "documented_divergence": [
+   {
+    "id": "DIV-C-01",
+    "statement": "sso_inclination_deg(nan): Python returns nan; Rust refuses (OUT_OF_DOMAIN)",
+    "disposition": "fail-closed (CLAUDE.md rule 3); scored by DE-C-08 with the registered divergent outcome"
+   },
+   {
+    "id": "DIV-C-02",
+    "statement": "Spacecraft is a mutable dataclass in Python; the Rust struct is a plain value with Default; construction with overrides is not an observable here",
+    "disposition": "only the defaults are registered"
+   }
+  ]
+ },
+ "schema_parity": {
+  "schemas": [
+   "NOT_APPLICABLE"
+  ],
+  "rules": [
+   "Spacecraft field names, order, types (f64 / bool) and units identical"
+  ]
+ },
+ "golden_and_reference_cases": {
+  "references": [
+   "captured Python outputs at python_commit"
+  ],
+  "rule": "references are read as committed; never regenerated (RM-R11)",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_MISSION_ENV_PY-CONSTANTS_KERNEL/reference_outputs/",
+   "captured_at_python_commit": "96db5524ec917e99e507def24f3ee0b263c78ebc",
+   "sha256_manifest": "reference_outputs/MANIFEST.json, written by the scoring run",
+   "purpose": "lets CI check Rust against the Python reference after Python is retired"
+  },
+  "historical_golden_rule": "RM-R28: not used"
+ },
+ "julia_bridge": {
+  "applicable": false,
+  "reason": "no HallThruster.jl path; environment layer only",
+  "hallthruster_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5 (recorded for completeness; not used)"
+ },
+ "performance_measurement": {
+  "status": "NOT_APPLICABLE: closed-form kernel",
+  "workloads": [],
+  "repeats": 0
+ },
+ "decision_rules": {
+  "per_test": "every scored observable of every vector meets its tolerance class; every status (EVALUATED / OUT_OF_DOMAIN / MODEL_ERROR) is EXACT_VALUE-equal to the mapped Python outcome",
+  "aggregate": "NOT_APPLICABLE (no STATISTICAL entry point)",
+  "exact_invariants_required": true,
+  "conservation_required": false,
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "verdict": "ADMITTED iff every per-test, invariant, conservation, domain/error and schema check passes and every reference file matches sha256_at_registration; PARITY_PASS <=> ADMITTED, PARITY_FAIL <=> NOT_ADMITTED",
+  "verdict_vocabulary": [
+   "ADMITTED",
+   "NOT_ADMITTED",
+   "REFUSED_REFERENCE_CHANGED",
+   "INPUT_MISMATCH",
+   "NOT_RUN_RUST_UNAVAILABLE",
+   "REFUSED_CLASSIFICATION"
+  ],
+  "parity_vocabulary": [
+   "PARITY_PASS",
+   "PARITY_FAIL"
+  ],
+  "meaning_of_ADMITTED": "A9.24 item 1: Rust becomes authoritative for this component (within the registered domain); new production results for it come from Rust and carry implementation = rust, rust_commit and this contract id; the Python component may then be retired from active execution. It is NOT physics validation.",
+  "no_retuning": "tolerances, observables, inputs, n, seeds and rules are fixed; after NOT_ADMITTED only a code fix plus a new contract version with a fresh scoring_master_seed may follow; the failed report stays; no execution is discarded",
+  "disagreement_rule": "never rewrite a Python result, golden, fixture or frozen dataset to make Rust pass (RM-R11)",
+  "observable_scope": "observables are restricted to retained selected-architecture physics; an observable that depends on an excluded legacy path is not registered (RM-R20)",
+  "scoring_once": "the scoring comparison runs once (scoring_master_seed); the harness refuses a second scoring run when parity_report_v1.json exists; development runs (development_master_seed) never write a report"
+ },
+ "bid_boundary": {
+  "statement": "this contract and its Rust implementation are post-bid-freeze work; no output of it may be cited by the bid package unless the owner re-freezes (PROGRAMME.md section 4; bid_source_guard)",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b (technical source) / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (package / freeze record, A9.28; lineage b5849affae22a6709ad217a184f6fe896d15410a -> 2de86ab); A9.29 sec. 3: 2de86ab is the terminal owner-authorized package state",
+  "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+ },
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, threshold or requirement",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27)",
+  "not a gate PASS: absent determining evidence stays NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN / MODEL_ERROR (RM-R31)"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-ABEP_SIM_MISSION_ENV_PY-CONSTANTS_KERNEL/parity_report_v1.json (+ .md)",
+  "runner": "scripts/rust_migration/es2_env_parity.py",
+  "report_fields": [
+   "contract_sha256",
+   "python_commit",
+   "reference_sha256",
+   "rust_commit",
+   "build_provenance (rustc, Cargo.lock sha256, source sha256)",
+   "environment",
+   "per-test results",
+   "aggregates",
+   "invariants",
+   "conservation",
+   "domain/error",
+   "schema",
+   "performance",
+   "verdicts",
+   "campaign_history",
+   "ledger_update_requested"
+  ]
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator (A9.25 message 3)",
+  "checks": [
+   "component.migration_class is ACTIVE_SELECTED_ARCHITECTURE_PHYSICS (inventory v3.1 row, classification_confidence_v3_1 PLAN_APPROVED_A9_29)",
+   "no observable, input or code path of the contract belongs to the excluded legacy vocabulary (LaB6Cathode, lab6_xe, Xe hollow-cathode heater / keeper, C1 flight fallback, hollow-cathode Hall cards, multi-family selection); the component has no not_ported_parts in the inventory",
+   "the Python harness traverses no legacy path to reach the scored functions",
+   "the Rust implementation contains none of the forbidden identifiers (CI_PLAN.md sec. 1 principle 6)",
+   "not a GROUND_TEST_PROGRAMME_ONLY contract (no abep-groundtest dependency)"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict): the contract cannot be registered"
+ },
+ "value_status_preservation": {
+  "rule": "RM-R27: no provisional / analog / allocation input is promoted by migration to CBE, measured or frozen truth",
+  "inputs": [
+   {
+    "id": "Spacecraft.inc_deg / Spacecraft.ltan_h",
+    "value": "96.33 deg / 6.0 h",
+    "value_status": "CODE_DEFAULT / PARAMETRIC (A9.17 ORBIT; atmosphere_orbit.ORBIT_STATUS)",
+    "open_action": "inclination / LTAN TBD from the official mission ICD (A9.17 ORBIT, A9.21 EXTERNAL_INPUTS)",
+    "committed_labels": [
+     "CODE_DEFAULT / PARAMETRIC",
+     "never a requirement input"
+    ]
+   }
+  ],
+  "check": "VS-C-01: the Rust Spacecraft documents inc_deg / ltan_h as CODE_DEFAULT / PARAMETRIC and exposes the label constant ORBIT_DEFAULT_STATUS = 'CODE_DEFAULT / PARAMETRIC'; no requirement / CBE / measured label"
+ },
+ "new_physics_verification": {
+  "applies_when": "contract_kind = NEW_PHYSICS (otherwise NOT_APPLICABLE)",
+  "status": "NOT_APPLICABLE",
+  "reason": "EXISTING_PHYSICS_PARITY contract"
+ }
+}
