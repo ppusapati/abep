@@ -13,7 +13,7 @@ use abep_intake::freestream::FreeStream;
 use abep_intake::message_key;
 use abep_intake::surface::{surface_v2_gate, FrozenIntakeSurfaces, SurfaceEval};
 use abep_intake::tpmc_response::{
-    clausing_transmission, intake_response, response_surface, IntakeGeometry, IntakeResponse,
+    clausing_transmission, intake_response, response_surface, IntakeGeometry, IntakeResponse, RESPONSE_FIELDS,
 };
 use abep_types::{AbepError, AbepResult};
 use serde_json::{json, Map, Value};
@@ -163,7 +163,7 @@ fn response_json(r: &IntakeResponse) -> Value {
         "eta_open": out(r.eta_open), "unresolved_fraction": out(r.unresolved_fraction), "converged": r.converged,
         "scattering": r.scattering, "K_back_scattering": r.k_back_scattering, "mean_wall_hits": out(r.mean_wall_hits),
         "mass_kg": out(r.mass_kg), "alpha": out(r.alpha), "theta_deg": out(r.theta_deg), "L_over_d": out(r.l_over_d),
-        "phi": out(r.phi), "d_mm": out(r.d_mm), "status": r.status.as_str(),
+        "phi": out(r.phi), "d_mm": out(r.d_mm), "status": r.status.as_str(), "fields": RESPONSE_FIELDS,
     })
 }
 
@@ -280,7 +280,9 @@ fn call(ctx: &Ctx, c: &Value) -> AbepResult<Value> {
                                  "cpu_clock": "/proc/self/schedstat (single-threaded process)"}));
             }
             let rows = run()?;
-            Ok(json!({"rows": rows.iter().map(|r| {
+            let mut columns: Vec<&str> = RESPONSE_FIELDS.to_vec();
+            columns.push("species");
+            Ok(json!({"columns": columns, "rows": rows.iter().map(|r| {
                 let mut v = response_json(&r.response);
                 v["species"] = json!(r.species);
                 v

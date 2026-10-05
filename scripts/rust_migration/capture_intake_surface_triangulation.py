@@ -33,6 +33,7 @@ sys.path.insert(0, ROOT)
 from abep_sim.intake_tpmc import frozen_surface_path  # noqa: E402
 
 OUT = os.path.join(ROOT, "crates", "abep-intake", "data", "intake_surface_v1_delaunay_v1.json")
+SEARCH_OUT = os.path.join(ROOT, "crates", "abep-intake", "data", "intake_surface_v1_delaunay_v1_search.json")
 AXES = ["L_over_d", "phi", "alpha", "theta_deg"]
 COLUMNS = ["eta_c", "C_D", "CR_passive", "K_back", "mass_kg"]
 
@@ -53,13 +54,17 @@ def main() -> None:
             pts = d[AXES].values
             for col in COLUMNS:
                 ip = LinearNDInterpolator(pts, d[col].values, rescale=True)
+                t = ip.tri
                 cur = {"points": np.asarray(pts, dtype=np.float64), "offset": ip.offset, "scale": ip.scale,
-                       "simplices": ip.tri.simplices, "degenerate": np.isnan(ip.tri.transform[:, 0, 0])}
+                       "simplices": t.simplices, "degenerate": np.isnan(t.transform[:, 0, 0]),
+                       "transform": t.transform, "neighbors": t.neighbors, "equations": t.equations,
+                       "paraboloid": np.array([t.paraboloid_scale, t.paraboloid_shift]),
+                       "min_bound": t.min_bound, "max_bound": t.max_bound}
                 if ref is None:
                     ref = cur
                 else:
                     for k in cur:
-                        if not np.array_equal(cur[k], ref[k]):
+                        if not np.array_equal(cur[k], ref[k], equal_nan=k == "transform"):
                             raise SystemExit(f"triangulation input/output {k} differs for {scat}/{sp}/{col}")
                 n_checked += 1
     so = open(_qhull.__file__, "rb").read()
@@ -104,6 +109,37 @@ def main() -> None:
         json.dump(doc, f, indent=1)
         f.write("\n")
     print(OUT, doc["counts"], sha(OUT))
+    # Search structures of scipy's simplex location (Delaunay.find_simplex / LinearNDInterpolator): the reference
+    # triangulation is non-conforming across some interior grid faces (Qhull 'Qt' on cospherical cells), so the value
+    # at a face point depends on which containing simplex scipy's walk reaches; Rust replicates that walk with these.
+    search = {
+        "schema": "abep_intake_surface_delaunay_search_v1",
+        "id": "INTAKE-SURFACE-V1-DELAUNAY-SEARCH-V1",
+        "what": "scipy Delaunay search structures of the triangulation in intake_surface_v1_delaunay_v1.json, captured "
+                "from the reference; used by the Rust surface to replicate scipy's _find_simplex walk",
+        "triangulation": {"path": os.path.relpath(OUT, ROOT), "sha256": sha(OUT)},
+        "reference": doc["reference"],
+        "identical_across": doc["identical_across"].replace("simplices and degenerate flags",
+                                                            "simplices, degenerate flags, transform, neighbors, "
+                                                            "equations, paraboloid scale / shift, min / max bound"),
+        "transform": [None if np.isnan(tr[0, 0]) else tr.tolist() for tr in ref["transform"]],
+        "transform_layout": "per simplex (ndim + 1) x ndim: rows 0..3 = inverse of T[i][j] = p[s_j][i] - p[s_4][i], "
+                            "row 4 = rescaled vertex s_4; null = degenerate (scipy NaN)",
+        "neighbors": ref["neighbors"].tolist(),
+        "equations": ref["equations"].tolist(),
+        "paraboloid_scale": float(ref["paraboloid"][0]),
+        "paraboloid_shift": float(ref["paraboloid"][1]),
+        "min_bound": ref["min_bound"].tolist(),
+        "max_bound": ref["max_bound"].tolist(),
+        "eps": "100 * DBL_EPSILON", "eps_broad": "sqrt(DBL_EPSILON)",
+        "algorithm": "scipy.spatial._qhull _find_simplex (start 0: lifted-paraboloid walk with _distplane, then "
+                     "_find_simplex_directed, brute-force fallback with the degenerate-neighbour rule), as used by "
+                     "LinearNDInterpolator._evaluate_double with one query per call",
+    }
+    with open(SEARCH_OUT, "w") as f:
+        json.dump(search, f, indent=None, separators=(",", ":"))
+        f.write("\n")
+    print(SEARCH_OUT, sha(SEARCH_OUT))
 
 
 if __name__ == "__main__":

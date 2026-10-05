@@ -3,12 +3,18 @@
 //!
 //! The reference interpolates with scipy `LinearNDInterpolator(rescale=True)`: linear interpolation in the Qhull
 //! Delaunay simplex that contains the rescaled query. The v1 grid is a full tensor product, so that triangulation is
-//! degenerate (16 cospherical corners per cell) and the interpolant depends on the simplices Qhull returned. This module
-//! reads the reference's own triangulation (captured, hash-pinned) instead of re-triangulating, checks it against the
-//! frozen grid on every load, and recombines the species rows by the A9.9 S2.1 physical definitions.
+//! degenerate (16 cospherical corners per cell) and the interpolant depends on the simplices Qhull returned. That
+//! triangulation is also non-conforming across some interior grid faces (Qhull 'Qt' triangulates the shared face
+//! differently on its two sides), so at such a face the reference value depends on which containing simplex scipy's
+//! search reaches. This module therefore reads the reference's own triangulation and search structures (captured,
+//! hash-pinned) and replicates scipy's `_find_simplex` walk and barycentric arithmetic, checks the capture against
+//! the frozen grid on every load, and recombines the species rows by the A9.9 S2.1 physical definitions.
 
 use crate::constants::species_mass;
-use crate::frozen::{read_surface_v1, read_triangulation_v1, SurfaceRow, Triangulation, TRIANGULATION_V1};
+use crate::frozen::{
+    read_search_v1, read_surface_v1, read_triangulation_v1, SearchStructures, SurfaceRow, Triangulation,
+    TRIANGULATION_V1,
+};
 use crate::refuse;
 use abep_types::{AbepError, AbepResult, EvalStatus};
 use std::collections::BTreeMap;
@@ -18,6 +24,8 @@ pub const AXES: [&str; 4] = ["L_over_d", "phi", "alpha", "theta_deg"];
 pub const RECOMBINATION: &str = "species_consistent_v2_A9.9_S2.1";
 /// scipy `_qhull` eps: a query is inside a simplex when every barycentric coordinate lies in [-eps, 1 + eps].
 pub const FIND_SIMPLEX_EPS: f64 = 100.0 * f64::EPSILON;
+/// scipy `_qhull` eps_broad (leeway towards a degenerate neighbour in the brute-force search).
+pub const FIND_SIMPLEX_EPS_BROAD: f64 = 1.4901161193847656e-8; // sqrt(DBL_EPSILON), exact
 /// Strings of the reference `IntakeSurface.domain()` (copied verbatim).
 pub const DOMAIN_ATMOSPHERE_STATE: &str =
     "single build state (not an axis); off-build use is an approximation, see intake_surface_v2_spec";
@@ -31,13 +39,189 @@ const CR_PASSIVE: usize = 2;
 const K_BACK: usize = 3;
 const MASS_KG: usize = 4;
 
+/// The reference Delaunay structure (scipy `DelaunayInfo`): simplices, barycentric transforms (None = degenerate),
+/// neighbours, lifted facet equations, paraboloid scale / shift and bounds, in rescaled coordinates.
 #[derive(Debug, Clone)]
-struct Simplex {
-    verts: [usize; 5],
-    /// inverse of T[i][j] = p[verts[j]][i] - p[verts[4]][i]
-    tinv: [[f64; 4]; 4],
-    /// rescaled coordinates of verts[4]
-    r: [f64; 4],
+struct Delaunay {
+    verts: Vec<[usize; 5]>,
+    transform: Vec<Option<[[f64; 4]; 5]>>,
+    neighbors: Vec<[i64; 5]>,
+    equations: Vec<[f64; 6]>,
+    paraboloid_scale: f64,
+    paraboloid_shift: f64,
+    min_bound: [f64; 4],
+    max_bound: [f64; 4],
+}
+
+/// scipy `_barycentric_coordinates`.
+fn barycentric(t: &[[f64; 4]; 5], x: &[f64; 4]) -> [f64; 5] {
+    let mut c = [0.0; 5];
+    c[4] = 1.0;
+    for i in 0..4 {
+        let mut ci = 0.0;
+        for ((tij, xj), rj) in t[i].iter().zip(x).zip(&t[4]) {
+            ci += tij * (xj - rj);
+        }
+        c[i] = ci;
+        c[4] -= ci;
+    }
+    c
+}
+
+#[inline]
+fn within(c: f64, lo: f64, hi: f64) -> bool {
+    lo <= c && c <= hi
+}
+
+impl Delaunay {
+    /// scipy `_is_point_fully_outside`.
+    fn fully_outside(&self, x: &[f64; 4], eps: f64) -> bool {
+        (0..4).any(|i| x[i] < self.min_bound[i] - eps || x[i] > self.max_bound[i] + eps)
+    }
+
+    /// scipy `_find_simplex_bruteforce`.
+    fn bruteforce(&self, x: &[f64; 4], c: &mut [f64; 5], eps: f64, eps_broad: f64) -> Option<usize> {
+        if self.fully_outside(x, eps) {
+            return None;
+        }
+        for (isimplex, t) in self.transform.iter().enumerate() {
+            match t {
+                Some(t) => {
+                    // _barycentric_inside: stops at the first coordinate outside
+                    c[4] = 1.0;
+                    let mut inside = true;
+                    for i in 0..4 {
+                        let mut ci = 0.0;
+                        for ((tij, xj), rj) in t[i].iter().zip(x).zip(&t[4]) {
+                            ci += tij * (xj - rj);
+                        }
+                        c[i] = ci;
+                        c[4] -= ci;
+                        if !within(ci, -eps, 1.0 + eps) {
+                            inside = false;
+                            break;
+                        }
+                    }
+                    if inside && within(c[4], -eps, 1.0 + eps) {
+                        return Some(isimplex);
+                    }
+                }
+                None => {
+                    for &nb in &self.neighbors[isimplex] {
+                        if nb == -1 {
+                            continue;
+                        }
+                        let nb = nb as usize;
+                        let Some(tn) = &self.transform[nb] else { continue };
+                        *c = barycentric(tn, x);
+                        let inside = (0..5).all(|m| {
+                            let lo = if self.neighbors[nb][m] == isimplex as i64 { -eps_broad } else { -eps };
+                            within(c[m], lo, 1.0 + eps)
+                        });
+                        if inside {
+                            return Some(nb);
+                        }
+                    }
+                }
+            }
+        }
+        None
+    }
+
+    /// scipy `_find_simplex_directed`.
+    fn directed(&self, x: &[f64; 4], c: &mut [f64; 5], start: usize, eps: f64, eps_broad: f64) -> Option<usize> {
+        let mut isimplex = start as i64;
+        for _ in 0..(1 + self.verts.len() / 4) {
+            if isimplex == -1 {
+                return None;
+            }
+            let s = isimplex as usize;
+            let Some(t) = &self.transform[s] else {
+                // NaN transform: every coordinate test fails ("we've failed utterly")
+                return self.bruteforce(x, c, eps, eps_broad);
+            };
+            let mut inside = 1;
+            for k in 0..5 {
+                if k == 4 {
+                    c[4] = 1.0;
+                    for j in 0..4 {
+                        c[4] -= c[j];
+                    }
+                } else {
+                    let mut ck = 0.0;
+                    for ((tkj, xj), rj) in t[k].iter().zip(x).zip(&t[4]) {
+                        ck += tkj * (xj - rj);
+                    }
+                    c[k] = ck;
+                }
+                if c[k] < -eps {
+                    let m = self.neighbors[s][k];
+                    if m == -1 {
+                        return None;
+                    }
+                    isimplex = m;
+                    inside = -1;
+                    break;
+                } else if c[k] <= 1.0 + eps {
+                    // inside this coordinate
+                } else {
+                    inside = 0;
+                }
+            }
+            match inside {
+                -1 => continue,
+                1 => return Some(s),
+                _ => return self.bruteforce(x, c, eps, eps_broad),
+            }
+        }
+        self.bruteforce(x, c, eps, eps_broad)
+    }
+
+    /// scipy `_find_simplex` with start 0 (LinearNDInterpolator, one query per call): walk on the lifted paraboloid
+    /// to a facet with positive plane distance, then the directed search.
+    fn find_simplex(&self, x: &[f64; 4], c: &mut [f64; 5]) -> Option<usize> {
+        let (eps, eps_broad) = (FIND_SIMPLEX_EPS, FIND_SIMPLEX_EPS_BROAD);
+        if self.fully_outside(x, eps) || self.verts.is_empty() {
+            return None;
+        }
+        let mut z = [x[0], x[1], x[2], x[3], 0.0];
+        for xi in x {
+            z[4] += xi * xi;
+        }
+        z[4] *= self.paraboloid_scale;
+        z[4] += self.paraboloid_shift;
+        let dist = |k: usize| {
+            let e = &self.equations[k];
+            let mut d = e[5];
+            for (eq, zq) in e.iter().zip(&z) {
+                d += eq * zq;
+            }
+            d
+        };
+        let mut isimplex = 0usize;
+        let mut best = dist(isimplex);
+        let mut changed = true;
+        while changed {
+            if best > 0.0 {
+                break;
+            }
+            changed = false;
+            for k in 0..5 {
+                let nb = self.neighbors[isimplex][k];
+                if nb == -1 {
+                    continue;
+                }
+                let d = dist(nb as usize);
+                if d > best + eps * (1.0 + best.abs()) {
+                    // scipy jumps here and continues the same k loop on the new simplex's neighbours
+                    isimplex = nb as usize;
+                    best = d;
+                    changed = true;
+                }
+            }
+        }
+        self.directed(x, c, isimplex, eps, eps_broad)
+    }
 }
 
 /// Per-species outputs of a surface evaluation (reference `out["species"][s]`).
@@ -89,7 +273,7 @@ pub struct IntakeSurface {
     m_mean_build_kg: f64,
     offset: [f64; 4],
     scale: [f64; 4],
-    simplices: Vec<Simplex>,
+    delaunay: Delaunay,
 }
 
 /// Both scattering tables of the frozen v1 (the reference `intake._tpmc_surface` cache, built explicitly).
@@ -160,9 +344,10 @@ fn det4_int(m: [[i64; 4]; 4]) -> i64 {
     d
 }
 
-/// Structural checks of the captured triangulation against the grid (contract rust_load_checks (c), (d)); returns
-/// the non-degenerate simplices with their barycentric transforms.
-fn check_triangulation(tri: &Triangulation) -> AbepResult<Vec<Simplex>> {
+/// Structural checks of the captured triangulation and search structures against the grid (contract
+/// rust_load_checks (c), (d), plus: transforms equal an independent inverse to 1e-10, their last row is the rescaled
+/// vertex bitwise, None exactly for the degenerate simplices, neighbours symmetric, bounds bitwise).
+fn check_triangulation(tri: &Triangulation, search: SearchStructures) -> AbepResult<Delaunay> {
     let n = tri.points.len() as f64;
     let mut offset = [0.0; 4];
     let mut lo = [f64::INFINITY; 4];
@@ -214,8 +399,7 @@ fn check_triangulation(tri: &Triangulation) -> AbepResult<Vec<Simplex>> {
         .map(|p| std::array::from_fn(|j| (p[j] - tri.rescale.offset[j]) / tri.rescale.scale[j]))
         .collect();
     let mut cell_volume: BTreeMap<[i64; 4], i64> = BTreeMap::new();
-    let mut out = Vec::new();
-    for (s, &degenerate) in tri.simplices.iter().zip(&tri.degenerate) {
+    for (k, (s, &degenerate)) in tri.simplices.iter().zip(&tri.degenerate).enumerate() {
         let ii: Vec<[i64; 4]> = s.iter().map(|&k| idx[k]).collect();
         let cell: [i64; 4] = std::array::from_fn(|j| ii.iter().map(|v| v[j]).min().unwrap());
         if (0..4).any(|j| ii.iter().map(|v| v[j]).max().unwrap() - cell[j] > 1) {
@@ -225,14 +409,25 @@ fn check_triangulation(tri: &Triangulation) -> AbepResult<Vec<Simplex>> {
         if degenerate != (det == 0) {
             return Err(model(format!("simplex {s:?}: degenerate flag {degenerate} but index-space det {det}")));
         }
-        if degenerate {
-            continue;
+        if degenerate != search.transform[k].is_none() {
+            return Err(model(format!("simplex {k}: transform presence disagrees with the degenerate flag")));
         }
+        for (m, &nb) in search.neighbors[k].iter().enumerate() {
+            if nb >= 0 && !search.neighbors[nb as usize].contains(&(k as i64)) {
+                return Err(model(format!("simplex {k}: neighbour {m} ({nb}) does not list it back")));
+            }
+        }
+        let Some(t) = &search.transform[k] else { continue };
         *cell_volume.entry(cell).or_default() += det.abs();
         let r = rescaled[s[4]];
-        let t: [[f64; 4]; 4] = std::array::from_fn(|i| std::array::from_fn(|j| rescaled[s[j]][i] - r[i]));
-        let tinv = invert4(t).ok_or_else(|| model(format!("simplex {s:?} is singular")))?;
-        out.push(Simplex { verts: *s, tinv, r });
+        if (0..4).any(|j| t[4][j].to_bits() != r[j].to_bits()) {
+            return Err(model(format!("simplex {k}: transform row 4 is not the rescaled last vertex")));
+        }
+        let tm: [[f64; 4]; 4] = std::array::from_fn(|i| std::array::from_fn(|j| rescaled[s[j]][i] - r[i]));
+        let tinv = invert4(tm).ok_or_else(|| model(format!("simplex {s:?} is singular")))?;
+        if (0..4).any(|i| (0..4).any(|j| (t[i][j] - tinv[i][j]).abs() > 1e-10 * tinv[i][j].abs().max(1.0))) {
+            return Err(model(format!("simplex {k}: captured transform differs from the inverse of its matrix")));
+        }
     }
     let n_cells: usize = axes.iter().map(|a| a.len() - 1).product();
     if cell_volume.len() != n_cells || cell_volume.values().any(|&v| v != 24) {
@@ -240,7 +435,23 @@ fn check_triangulation(tri: &Triangulation) -> AbepResult<Vec<Simplex>> {
             "non-degenerate simplices do not tile every grid cell exactly (|det| sum 4! per cell)".into(),
         ));
     }
-    Ok(out)
+    for j in 0..4 {
+        let lo = rescaled.iter().map(|p| p[j]).fold(f64::INFINITY, f64::min);
+        let hi = rescaled.iter().map(|p| p[j]).fold(f64::NEG_INFINITY, f64::max);
+        if lo.to_bits() != search.min_bound[j].to_bits() || hi.to_bits() != search.max_bound[j].to_bits() {
+            return Err(model(format!("axis {}: captured min / max bound differ from the rescaled grid", AXES[j])));
+        }
+    }
+    Ok(Delaunay {
+        verts: tri.simplices.clone(),
+        transform: search.transform,
+        neighbors: search.neighbors,
+        equations: search.equations,
+        paraboloid_scale: search.paraboloid_scale,
+        paraboloid_shift: search.paraboloid_shift,
+        min_bound: search.min_bound,
+        max_bound: search.max_bound,
+    })
 }
 
 impl FrozenIntakeSurfaces {
@@ -249,10 +460,11 @@ impl FrozenIntakeSurfaces {
     pub fn load(repo_root: &Path, m_mean_build_kg: f64) -> AbepResult<Self> {
         let rows = read_surface_v1(repo_root)?;
         let tri = read_triangulation_v1(repo_root)?;
-        let simplices = check_triangulation(&tri)?;
+        let search = read_search_v1(repo_root, tri.simplices.len())?;
+        let delaunay = check_triangulation(&tri, search)?;
         Ok(FrozenIntakeSurfaces {
-            maxwell: IntakeSurface::build(&rows, "maxwell", &tri, &simplices, m_mean_build_kg)?,
-            cll: IntakeSurface::build(&rows, "cll", &tri, &simplices, m_mean_build_kg)?,
+            maxwell: IntakeSurface::build(&rows, "maxwell", &tri, &delaunay, m_mean_build_kg)?,
+            cll: IntakeSurface::build(&rows, "cll", &tri, &delaunay, m_mean_build_kg)?,
         })
     }
 
@@ -274,7 +486,7 @@ impl IntakeSurface {
         rows: &[SurfaceRow],
         scattering: &str,
         tri: &Triangulation,
-        simplices: &[Simplex],
+        delaunay: &Delaunay,
         m_mean_build_kg: f64,
     ) -> AbepResult<Self> {
         let sub: Vec<&SurfaceRow> = rows.iter().filter(|r| r.scattering == scattering).collect();
@@ -328,7 +540,7 @@ impl IntakeSurface {
             m_mean_build_kg,
             offset: tri.rescale.offset,
             scale: tri.rescale.scale,
-            simplices: simplices.to_vec(),
+            delaunay: delaunay.clone(),
         })
     }
 
@@ -364,23 +576,17 @@ impl IntakeSurface {
         [l_over_d, phi, alpha, theta_deg].iter().zip(&self.bounds).all(|(&v, &(lo, hi))| lo <= v && v <= hi)
     }
 
-    /// Containing non-degenerate simplex (first in captured order) and its barycentric coordinates.
-    fn locate(&self, x: [f64; 4]) -> Option<(&Simplex, [f64; 5])> {
+    /// The simplex scipy selects for a query (index into the captured triangulation) and its barycentric
+    /// coordinates; None outside the hull.
+    fn locate(&self, x: [f64; 4]) -> Option<(usize, [f64; 5])> {
         let xr: [f64; 4] = std::array::from_fn(|j| (x[j] - self.offset[j]) / self.scale[j]);
-        self.simplices.iter().find_map(|s| {
-            let mut c = [0.0; 5];
-            c[4] = 1.0;
-            // scipy _barycentric_coordinates: c_i = sum_j Tinv[i][j] (x_j - r_j), c_4 = 1 - c_0 - c_1 - c_2 - c_3
-            for i in 0..4 {
-                let mut ci = 0.0;
-                for ((t, x), r) in s.tinv[i].iter().zip(&xr).zip(&s.r) {
-                    ci += t * (x - r);
-                }
-                c[i] = ci;
-                c[4] -= ci;
-            }
-            c.iter().all(|ck| (-FIND_SIMPLEX_EPS..=1.0 + FIND_SIMPLEX_EPS).contains(ck)).then_some((s, c))
-        })
+        let mut c = [0.0; 5];
+        self.delaunay.find_simplex(&xr, &mut c).map(|s| (s, c))
+    }
+
+    /// Index of the simplex the reference would interpolate in (diagnostics; None outside the hull).
+    pub fn selected_simplex(&self, l_over_d: f64, phi: f64, alpha: f64, theta_deg: f64) -> Option<usize> {
+        self.locate([l_over_d, phi, alpha, theta_deg]).map(|(s, _)| s)
     }
 
     fn rows(&self, x: [f64; 4]) -> AbepResult<Vec<[f64; N_COLS]>> {
@@ -396,7 +602,7 @@ impl IntakeSurface {
             .map(|sp| {
                 std::array::from_fn(|col| {
                     let mut out = 0.0;
-                    for (ck, &v) in c.iter().zip(&s.verts) {
+                    for (ck, &v) in c.iter().zip(&self.delaunay.verts[s]) {
                         out += ck * self.values[sp][col][v];
                     }
                     out

@@ -21,6 +21,25 @@ pub const K_BACK_SCATTERING: &str = "maxwell";
 pub const CLAUSING_N: usize = 20000;
 /// Registered unresolved-particle criterion of the reference (`converged = unresolved <= 1e-3`).
 pub const UNRESOLVED_TOL: f64 = 1e-3;
+/// Output fields of intake_response in the reference dict order (response_surface appends "species").
+pub const RESPONSE_FIELDS: [&str; 16] = [
+    "eta_c",
+    "C_D",
+    "K_back",
+    "CR_passive",
+    "eta_open",
+    "unresolved_fraction",
+    "converged",
+    "scattering",
+    "K_back_scattering",
+    "mean_wall_hits",
+    "mass_kg",
+    "alpha",
+    "theta_deg",
+    "L_over_d",
+    "phi",
+    "d_mm",
+];
 
 /// Reference `IntakeGeometry` (defaults identical).
 #[derive(Debug, Clone, Copy, PartialEq)]

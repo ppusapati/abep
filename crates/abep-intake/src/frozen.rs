@@ -142,3 +142,47 @@ pub fn read_triangulation_v1(repo_root: &Path) -> AbepResult<Triangulation> {
     }
     Ok(t)
 }
+
+pub const SEARCH_V1: &str = "crates/abep-intake/data/intake_surface_v1_delaunay_v1_search.json";
+pub const SEARCH_V1_SHA256: &str = "e6f254b3f089123b2c8eadaac7adf66b6d64f823540a4ed8cb4d86cba301b3fd";
+
+/// scipy Delaunay search structures of the captured triangulation (schema `abep_intake_surface_delaunay_search_v1`):
+/// what `Delaunay.find_simplex` / `LinearNDInterpolator` use to choose the containing simplex.
+#[derive(Debug, Clone, Deserialize)]
+pub struct SearchStructures {
+    pub schema: String,
+    pub triangulation: FileRef,
+    /// per simplex: rows 0..3 = barycentric transform, row 4 = rescaled last vertex; None = degenerate
+    pub transform: Vec<Option<[[f64; 4]; 5]>>,
+    pub neighbors: Vec<[i64; 5]>,
+    pub equations: Vec<[f64; 6]>,
+    pub paraboloid_scale: f64,
+    pub paraboloid_shift: f64,
+    pub min_bound: [f64; 4],
+    pub max_bound: [f64; 4],
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct FileRef {
+    pub path: String,
+    pub sha256: String,
+}
+
+/// Read the captured search structures (sha256-verified) and check they belong to the captured triangulation.
+pub fn read_search_v1(repo_root: &Path, n_simplices: usize) -> AbepResult<SearchStructures> {
+    let bytes = read_verified(&repo_root.join(SEARCH_V1), SEARCH_V1_SHA256)?;
+    let s: SearchStructures = serde_json::from_slice(&bytes).map_err(|e| schema(SEARCH_V1, e.to_string()))?;
+    if s.schema != "abep_intake_surface_delaunay_search_v1"
+        || s.triangulation.path != TRIANGULATION_V1
+        || s.triangulation.sha256 != TRIANGULATION_V1_SHA256
+        || s.transform.len() != n_simplices
+        || s.neighbors.len() != n_simplices
+        || s.equations.len() != n_simplices
+    {
+        return Err(schema(SEARCH_V1, "schema, triangulation binding or array length mismatch"));
+    }
+    if s.neighbors.iter().flatten().any(|&k| k < -1 || k >= n_simplices as i64) {
+        return Err(schema(SEARCH_V1, "neighbor index out of range"));
+    }
+    Ok(s)
+}
