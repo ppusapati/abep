@@ -1233,8 +1233,8 @@ def write_report(cname: str, cdir: str, contract: dict, res: dict, rust: Rust, s
                               "verdict": verdict}],
         "what_this_is_not": contract["what_this_is_not"],
     }
-    report["implementation_change_since_registration"] = IMPLEMENTATION_CHANGE
-    report["owner_finding"] = OWNER_FINDING
+    report["deviation_from_registered_evaluation_text"] = deviation(cname)
+    report["finding_B2-OF-01"] = finding()
     report["ledger_update_requested"] = ledger(cname, contract, verdict, report)
     with open(os.path.join(cdir, "parity_report_v1.json"), "w") as f:
         json.dump(enc(report), f, indent=1)
@@ -1262,6 +1262,49 @@ IMPLEMENTATION_CHANGE = {
                              "inverse is kept as a load-time cross-check of the captured transforms (1e-10)",
     "unchanged": "observables, tolerances, vector rules, n, seeds, decision rules and pinned inputs of both contracts",
 }
+
+SURVEY = "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_TPMC_PY/finding_B2-OF-01_face_survey_v1.json"
+
+
+def deviation(cname: str) -> dict:
+    d = dict(IMPLEMENTATION_CHANGE)
+    d["statement"] = ("The Rust simplex selection deviates from the evaluation text registered in "
+                      "PARITY-C-ABEP_SIM_INTAKE_TPMC_PY-V1. The observables, tolerances and seeds are unchanged "
+                      "(as are vector rules, n, decision rules and pinned inputs).")
+    d["applies_to"] = ("E4 IntakeSurface of this contract" if cname == "intake_tpmc" else
+                       "the TPMC branch of collection (F3), which evaluates the same frozen surface; this contract "
+                       "does not describe the simplex search itself, and its pinned triangulation capture is unchanged")
+    return d
+
+
+def finding() -> dict:
+    sv = json.load(open(rel(SURVEY)))
+    per_face = {}
+    for scat, t in sv["tables"].items():
+        for f in t["faces"]:
+            m = {c: max(f["max_relative_spread"][sp][c] for sp in f["max_relative_spread"])
+                 for c in ("eta_c", "C_D", "CR_passive", "K_back", "mass_kg")}
+            per_face[f"{scat}: {f['face']}"] = {"non_conforming_points": f"{f['non_conforming_points']} / {f['points']}",
+                                                "max_relative_jump": m}
+    return {
+        "id": "B2-OF-01",
+        "property_of": "the FROZEN PYTHON REFERENCE (abep_sim.intake_tpmc.IntakeSurface over "
+                       "abep_sim/data/intake_surface_v1.csv with scipy 1.17.1 LinearNDInterpolator / Qhull 8.0.2), "
+                       "NOT the Rust port; the Rust port reproduces it by replicating scipy's simplex search",
+        "classification": OWNER_FINDING["classification"],
+        "statement": "the reference interpolant is discontinuous across interior grid faces: at a point on such a "
+                     "face its value is that of whichever containing simplex scipy's walk reaches",
+        "affected_axes": sv["affected_faces"],
+        "max_relative_jump_per_field": {c: {k: v for k, v in w.items() if k != "point"}
+                                        for c, w in sv["max_relative_spread_per_field"].items()},
+        "per_face": per_face,
+        "default_points_checked": {scat: t["default_points_checked"] for scat, t in sv["tables"].items()},
+        "survey": {"path": SURVEY, "sha256": sha(rel(SURVEY)), "method": sv["method"], "generator": sv["generator"]},
+        "rust_behaviour": OWNER_FINDING["rust_behaviour"],
+        "owner_question": OWNER_FINDING["owner_question"],
+        "coordinator_disposition": "2026-10-05: keep faithful parity for this migration; the interpolant is not "
+                                   "changed; B2-OF-01 is carried to the owner as an open question",
+    }
 
 OWNER_FINDING = {
     "id": "B2-OF-01",
@@ -1326,11 +1369,20 @@ def write_md(cdir: str, rep: dict) -> None:
               f"{p['python']['median_wall_s']:.3f} s wall / {p['python']['median_cpu_s']:.3f} s CPU; Rust median "
               f"{p['rust']['median_wall_s']:.4f} s wall / {p['rust']['median_cpu_s']:.4f} s CPU; speed-up "
               f"{p['speedup_wall']:.1f}x wall. {p['threads']}."]
-    L += ["", f"Implementation change since registration: {rep['implementation_change_since_registration']['finding']}"
-          f"; {rep['implementation_change_since_registration']['change_before_scoring']}. Unchanged: "
-          f"{rep['implementation_change_since_registration']['unchanged']}.",
-          "", f"Owner finding {rep['owner_finding']['id']} ({rep['owner_finding']['classification']}): "
-          f"{rep['owner_finding']['statement']}. Question: {rep['owner_finding']['owner_question']}"]
+    dv, fd = rep["deviation_from_registered_evaluation_text"], rep["finding_B2-OF-01"]
+    L += ["", "## Deviation from the registered evaluation text", "", dv["statement"], "",
+          f"- registered: {dv['registered_description']}", f"- finding: {dv['finding']}",
+          f"- change before scoring: {dv['change_before_scoring']}", f"- applies to: {dv['applies_to']}",
+          f"- unchanged: {dv['unchanged']}",
+          "", "## Finding B2-OF-01 — a property of the frozen Python reference, not of the Rust port", "",
+          f"{fd['property_of']}. {fd['statement']}. Classification: {fd['classification']}. "
+          f"{fd['coordinator_disposition']}.", "",
+          f"Affected interior faces: {', '.join(fd['affected_axes'])} (phi has no interior grid value).", "",
+          "| field | max relative jump between containing simplices | where |", "|---|---|---|"]
+    for c, w in fd["max_relative_jump_per_field"].items():
+        L.append(f"| {c} | {w['spread']:.3g} | {w['scattering']}, {w['species']}, {w['face']} |")
+    L += ["", f"Survey: `{fd['survey']['path']}` (sha256 `{fd['survey']['sha256']}`), {fd['survey']['method']}.",
+          f"Owner question: {fd['owner_question']}"]
     L += ["", "ADMITTED is software parity with the Python reference inside the registered domain, not physics "
           "validation and not a gate PASS.", ""]
     with open(os.path.join(cdir, "parity_report_v1.md"), "w") as f:

@@ -890,5 +890,301 @@
   "verdict": "ADMITTED",
   "scope": "named function subset (kernel granularity, RM-R17): the intake response layer and the frozen intake surface reader / interpolant of abep_sim/intake_tpmc.py",
   "note": "requested for docs/rust_migration/migration_state_v1.json (owned by lane A1); not edited here"
+ },
+ "deviation_from_registered_evaluation_text": {
+  "what": "IntakeSurface simplex selection",
+  "registered_description": "PARITY-C-ABEP_SIM_INTAKE_TPMC_PY-V1 rust_implementation.interpolant_reproduction.rust_evaluation: the first non-degenerate simplex in captured order whose barycentric coordinates lie in [-eps, 1 + eps], Tinv from Gaussian elimination; it also stated that values on shared faces agree up to rounding",
+  "finding": "the development comparison (development seed 7, E4 face vector E4-F28; not a verdict) showed that the reference triangulation is non-conforming across some interior grid faces (Qhull 'Qt' triangulates a shared cospherical face differently on its two sides), so the reference value at such a face point depends on which containing simplex scipy's search reaches; the stated face continuity is false",
+  "change_before_scoring": "the Rust surface replicates scipy's _find_simplex (lifted-paraboloid walk from simplex 0, directed search, brute-force fallback) and barycentric arithmetic with the reference's captured search structures crates/abep-intake/data/intake_surface_v1_delaunay_v1_search.json (sha256 e6f254b3f089123b2c8eadaac7adf66b6d64f823540a4ed8cb4d86cba301b3fd, same capture script; the pinned triangulation capture 247601cf... is unchanged and still verified); the independent Gaussian-elimination inverse is kept as a load-time cross-check of the captured transforms (1e-10)",
+  "unchanged": "observables, tolerances, vector rules, n, seeds, decision rules and pinned inputs of both contracts",
+  "statement": "The Rust simplex selection deviates from the evaluation text registered in PARITY-C-ABEP_SIM_INTAKE_TPMC_PY-V1. The observables, tolerances and seeds are unchanged (as are vector rules, n, decision rules and pinned inputs).",
+  "applies_to": "E4 IntakeSurface of this contract"
+ },
+ "finding_B2-OF-01": {
+  "id": "B2-OF-01",
+  "property_of": "the FROZEN PYTHON REFERENCE (abep_sim.intake_tpmc.IntakeSurface over abep_sim/data/intake_surface_v1.csv with scipy 1.17.1 LinearNDInterpolator / Qhull 8.0.2), NOT the Rust port; the Rust port reproduces it by replicating scipy's simplex search",
+  "classification": "PYTHON_REFERENCE_DEFECT candidate (own governance; not resolved by the migration, RM-R11 / RM-R22)",
+  "statement": "the reference interpolant is discontinuous across interior grid faces: at a point on such a face its value is that of whichever containing simplex scipy's walk reaches",
+  "affected_axes": [
+   "L_over_d = 10",
+   "L_over_d = 5",
+   "alpha = 0.2",
+   "alpha = 0.5",
+   "alpha = 0.8",
+   "theta_deg = 2"
+  ],
+  "max_relative_jump_per_field": {
+   "eta_c": {
+    "spread": 0.03768632268222069,
+    "scattering": "maxwell",
+    "species": "N2",
+    "face": "theta_deg = 2"
+   },
+   "C_D": {
+    "spread": 0.002217463318732964,
+    "scattering": "cll",
+    "species": "O",
+    "face": "theta_deg = 2"
+   },
+   "CR_passive": {
+    "spread": 0.1733934754224049,
+    "scattering": "cll",
+    "species": "N2",
+    "face": "theta_deg = 2"
+   },
+   "K_back": {
+    "spread": 0.061172634747115436,
+    "scattering": "cll",
+    "species": "O2",
+    "face": "theta_deg = 2"
+   },
+   "mass_kg": {
+    "spread": 0.03729597039010955,
+    "scattering": "maxwell",
+    "species": "N2",
+    "face": "alpha = 0.2"
+   }
+  },
+  "per_face": {
+   "maxwell: L_over_d = 5": {
+    "non_conforming_points": "20 / 60",
+    "max_relative_jump": {
+     "eta_c": 0.005803414175244114,
+     "C_D": 0.0002699154347048292,
+     "CR_passive": 0.007315458948589495,
+     "K_back": 0.0058598969508370105,
+     "mass_kg": 1.9976921784732587e-16
+    }
+   },
+   "maxwell: L_over_d = 10": {
+    "non_conforming_points": "14 / 60",
+    "max_relative_jump": {
+     "eta_c": 0.015373903135956055,
+     "C_D": 0.0006244669597869313,
+     "CR_passive": 0.024705573349712528,
+     "K_back": 0.010690578560988569,
+     "mass_kg": 1.9054145466665393e-16
+    }
+   },
+   "maxwell: alpha = 0.2": {
+    "non_conforming_points": "43 / 60",
+    "max_relative_jump": {
+     "eta_c": 0.010893514493675321,
+     "C_D": 0.00036892522086068546,
+     "CR_passive": 0.03452049552550579,
+     "K_back": 0.014268898571730275,
+     "mass_kg": 0.03729597039010955
+    }
+   },
+   "maxwell: alpha = 0.5": {
+    "non_conforming_points": "38 / 60",
+    "max_relative_jump": {
+     "eta_c": 0.012327752077340428,
+     "C_D": 0.0004999019270264299,
+     "CR_passive": 0.0319948706456294,
+     "K_back": 0.007772035726205279,
+     "mass_kg": 0.028637673902938813
+    }
+   },
+   "maxwell: alpha = 0.8": {
+    "non_conforming_points": "5 / 60",
+    "max_relative_jump": {
+     "eta_c": 0.009130336838407298,
+     "C_D": 0.0004045195453363648,
+     "CR_passive": 0.0004080734238484636,
+     "K_back": 0.00011451985457712416,
+     "mass_kg": 0.025310538427418233
+    }
+   },
+   "maxwell: theta_deg = 2": {
+    "non_conforming_points": "34 / 60",
+    "max_relative_jump": {
+     "eta_c": 0.03768632268222069,
+     "C_D": 0.0017608465594885767,
+     "CR_passive": 0.11769222142730956,
+     "K_back": 0.06075133086085581,
+     "mass_kg": 0.027576691965349554
+    }
+   },
+   "cll: L_over_d = 5": {
+    "non_conforming_points": "19 / 60",
+    "max_relative_jump": {
+     "eta_c": 0.010810896885650288,
+     "C_D": 0.000506145977643731,
+     "CR_passive": 0.009848323511583853,
+     "K_back": 0.010581752850539862,
+     "mass_kg": 1.9976921784732587e-16
+    }
+   },
+   "cll: L_over_d = 10": {
+    "non_conforming_points": "14 / 60",
+    "max_relative_jump": {
+     "eta_c": 0.00039421812821070936,
+     "C_D": 2.5506541495939887e-05,
+     "CR_passive": 0.009169959444125306,
+     "K_back": 0.003901596599860759,
+     "mass_kg": 1.9054145466665393e-16
+    }
+   },
+   "cll: alpha = 0.2": {
+    "non_conforming_points": "43 / 60",
+    "max_relative_jump": {
+     "eta_c": 0.0001868384672052323,
+     "C_D": 5.011817167326398e-06,
+     "CR_passive": 0.008108450045168853,
+     "K_back": 0.0060079291911876885,
+     "mass_kg": 0.03729597039010955
+    }
+   },
+   "cll: alpha = 0.5": {
+    "non_conforming_points": "38 / 60",
+    "max_relative_jump": {
+     "eta_c": 0.005656565856053995,
+     "C_D": 0.0003625421409551933,
+     "CR_passive": 0.02235374400366875,
+     "K_back": 0.018954882716244573,
+     "mass_kg": 0.028637673902938813
+    }
+   },
+   "cll: alpha = 0.8": {
+    "non_conforming_points": "5 / 60",
+    "max_relative_jump": {
+     "eta_c": 0.003173252912444922,
+     "C_D": 0.00020771915334610796,
+     "CR_passive": 0.00027390647264426626,
+     "K_back": 0.00013454254114325903,
+     "mass_kg": 0.025310538427418233
+    }
+   },
+   "cll: theta_deg = 2": {
+    "non_conforming_points": "34 / 60",
+    "max_relative_jump": {
+     "eta_c": 0.036433461800432325,
+     "C_D": 0.002217463318732964,
+     "CR_passive": 0.1733934754224049,
+     "K_back": 0.061172634747115436,
+     "mass_kg": 0.027576691965349554
+    }
+   }
+  },
+  "default_points_checked": {
+   "maxwell": [
+    {
+     "point": [
+      10.0,
+      0.85,
+      0.5,
+      0.0
+     ],
+     "max_relative_spread": 1.8894056475075715e-16
+    },
+    {
+     "point": [
+      5.0,
+      0.85,
+      0.8,
+      0.0
+     ],
+     "max_relative_spread": 2.8415071837634318e-16
+    },
+    {
+     "point": [
+      10.0,
+      0.85,
+      0.95,
+      0.0
+     ],
+     "max_relative_spread": 1.3702932677296868e-16
+    },
+    {
+     "point": [
+      3.0,
+      0.85,
+      0.5,
+      0.0
+     ],
+     "max_relative_spread": 1.6351024739785166e-16
+    },
+    {
+     "point": [
+      5.0,
+      0.85,
+      0.8,
+      2.0
+     ],
+     "max_relative_spread": 1.8882126697431662e-16
+    }
+   ],
+   "cll": [
+    {
+     "point": [
+      10.0,
+      0.85,
+      0.5,
+      0.0
+     ],
+     "max_relative_spread": 1.8894056475075715e-16
+    },
+    {
+     "point": [
+      5.0,
+      0.85,
+      0.8,
+      0.0
+     ],
+     "max_relative_spread": 2.286762151648108e-16
+    },
+    {
+     "point": [
+      10.0,
+      0.85,
+      0.95,
+      0.0
+     ],
+     "max_relative_spread": 1.1701338792423656e-16
+    },
+    {
+     "point": [
+      3.0,
+      0.85,
+      0.5,
+      0.0
+     ],
+     "max_relative_spread": 1.6357454827024902e-16
+    },
+    {
+     "point": [
+      5.0,
+      0.85,
+      0.8,
+      2.0
+     ],
+     "max_relative_spread": 1.8882126697431662e-16
+    }
+   ]
+  },
+  "survey": {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_TPMC_PY/finding_B2-OF-01_face_survey_v1.json",
+   "sha256": "4b30eaca5bbd2560426917c3c9ed11c447ef0ec4ce963e372dba4af98673e03f",
+   "method": "per scattering table and interior face (axis at an interior grid value), 60 points with the other axes uniform in the table range (numpy default_rng(0), draws in axis order); every non-degenerate reference simplex containing the rescaled point within eps = 100 DBL_EPSILON is evaluated; spread = (max - min) / |mean| of the interpolated row value per field and species; a point is non-conforming when any spread exceeds 1e-12. phi has no interior grid value (2 values), hence no interior face",
+   "generator": {
+    "path": "scripts/rust_migration/survey_intake_surface_faces.py",
+    "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 python3 scripts/rust_migration/survey_intake_surface_faces.py"
+   }
+  },
+  "rust_behaviour": "reproduces the reference including this path dependence (scipy walk replication)",
+  "owner_question": "keep the reference interpolant as is (parity), or replace it by a deliberate conforming interpolant (e.g. multilinear or a fixed Kuhn triangulation) as a registered intake-ROM model change (rule 1/2: new version, HISTORY, evidence that depends on it re-run)?",
+  "coordinator_disposition": "2026-10-05: keep faithful parity for this migration; the interpolant is not changed; B2-OF-01 is carried to the owner as an open question"
+ },
+ "annotation_after_scoring": {
+  "date": "2026-10-05",
+  "reason": "coordinator requirement: state the deviation from the registered evaluation text and the discontinuity survey explicitly in both parity reports",
+  "added_fields": [
+   "deviation_from_registered_evaluation_text",
+   "finding_B2-OF-01",
+   "annotation_after_scoring"
+  ],
+  "unchanged": "every field written by the scoring execution (verdict, results, provenance, campaign_history) is byte-for-byte the value committed in 554bc94; parity_report_v1.md is regenerated from this JSON",
+  "scored_report_sha256_before_annotation": "d879b71b6cea4dea32e4be594b659071f05b0ab7682b0f76c0e552ce3e90e4f9"
  }
 }
