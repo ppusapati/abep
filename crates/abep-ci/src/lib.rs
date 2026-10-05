@@ -3,4 +3,5 @@
 
 pub mod acceptance_report;
 pub mod groundtest;
+pub mod ledger;
 pub mod test_register;
