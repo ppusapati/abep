@@ -140,7 +140,7 @@ pub struct Dict {
 }
 
 impl Dict {
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Dict { entries: Vec::new() }
     }
 

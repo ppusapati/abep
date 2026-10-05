@@ -19,8 +19,10 @@ license = "LicenseRef-Proprietary"
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["float_roundtrip"] }
 sha2 = "0.10"
+toml = { version = "0.8", default-features = false, features = ["parse"] }
 abep-types = { path = "crates/abep-types" }
 abep-provenance = { path = "crates/abep-provenance" }
+abep-config = { path = "crates/abep-config" }
 
 [profile.release]
 opt-level = 3
