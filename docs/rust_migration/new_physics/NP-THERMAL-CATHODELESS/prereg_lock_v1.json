@@ -3,10 +3,11 @@
  "model_id": "NP-THERMAL-CATHODELESS",
  "locked": "2026-10-05",
  "note": "sha256 of the final NP-THERMAL-CATHODELESS v1 preregistration (ES-4 / SC-WP-06, docs only, status PREREGISTERED_NOT_IMPLEMENTED); any change after this lock is a new, dated version or addendum, never an edit",
- "base_commit": "e5528bdd22412014796771b615dc40f2b3bcc2ca",
+ "base_commit": "96db5524ec917e99e507def24f3ee0b263c78ebc",
  "files_relative_to": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/",
  "files": {
-  "prereg_v1.json": "7bd3bf074e0dfcf95586b8ae080fa630a4556443feb272b6b7c157c3bee926ad",
-  "PREREG.md": "a3fbca02239577232793cb85dbef9148b6dd9951903a7008b87fd5748b5603d8"
- }
+  "prereg_v1.json": "e3e6859cf61703c27254e9c231ff4637f7d20ea743c8d881b9e55c8ba9d27c5c",
+  "PREREG.md": "e3337c8fece492f40eea7452b9834c9678d6fd52696d018588f542a801cc28aa"
+ },
+ "regenerated": "2026-10-05, before any merge or implementation, to align the implementation gate and the plan references to plan v3.1 (A9.29 sec. 13; plan merge a5a59ea, integration head 96db552); first lock at c093ff2 on base e5528bd"
 }

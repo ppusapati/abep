@@ -6,15 +6,21 @@
 * Model: the cathodeless thermal model of the selected flight architecture `hall_icp_neutralizer`. That architecture is one
   Hall thruster plus one downstream 13.56 MHz RF/ICP electron source / neutralizer, with no hollow cathode.
 * Work package SC-WP-06, execution step ES-4, lane D (A9.29 sec. 13). Target crate `abep-subsystems::thermal`.
-* Base: `integration/simulation-complete` at `e5528bd`.
+* Base: `integration/simulation-complete` at `96db552`. Plan v3.1 was merged there at `a5a59ea` (plan commit `eb78b4a`).
+  The record was first drafted on `e5528bd`.
 * Machine-readable record (authoritative): `prereg_v1.json`. Lock: `prereg_lock_v1.json`. Where this page and the JSON
   differ, the JSON governs and the difference is a defect, fixed only by a new version.
-* **No implementation before review.** No Rust code is written before this record is committed (A9.29 sec. 13). The owner
-  reviews it before any Rust code (ES-4; RM-OQ-08; new-physics lifecycle). Owner review state: `PENDING_OWNER_REVIEW`.
+* **No implementation before the preregistration is committed.** This is the gate of A9.29 sec. 13 (lane D), plan v3.1
+  ES-4 and the v3.1 new-physics lifecycle (`gate_a9_29`). Committing and locking this record satisfies it (IG-02).
+  * Plan v3.1 replaced the v3 step "owner review before any Rust code" (RM-OQ-08). That wording is superseded and kept only
+    as evidence (GR-27..GR-31).
+  * The open owner questions (§ 23) do not block implementation of the parametric model or its analytic verification
+    cases. Where one blocks a specific absolute result, the affected outputs stay `NOT_EVALUATED` /
+    `INCOMPLETE_EVIDENCE` (IG-05).
 
 ## 1. Governing records
 
-The JSON pins every record by sha256 (`governing_records` GR-01..GR-26).
+The JSON pins every record by sha256 (`governing_records` GR-01..GR-31).
 
 * A9.29 (`OD_2026_10_05_A9_29_*`):
   * sec. 4: couple the RF/ICP losses into the cathodeless thermal model, and keep raw physics free of assessment;
@@ -25,11 +31,14 @@ The JSON pins every record by sha256 (`governing_records` GR-01..GR-26).
   * msg 1 sec. 5, RM-OQ-08: no Python cathodeless model is built as a parity target. The model is preregistered,
     implemented directly in Rust and admitted by independent verification.
   * msg 2 secs. 7, 8, 10 and 14.
-* The plan at `origin/lane-rustplan-v2` `1236f91`:
-  * `SIMULATION_COMPLETION_PROGRAMME.md` and `simulation_completion_programme_v1.json` (SC-WP-06; ES-4);
-  * `programme_v3.json` (new-physics lifecycle; workspace);
+* The plan v3.1 records in the tree (plan commit `eb78b4a`, merged at `a5a59ea`):
+  * `SIMULATION_COMPLETION_PROGRAMME.md` and `simulation_completion_programme_v1_1.json` (SC-WP-06; lane D / ES-4,
+    including its `replaced_from_v1` field);
+  * `programme_v3_1.json` (new-physics lifecycle incl. `gate_a9_29`; workspace);
   * `CI_PLAN.md` (principles 6 and 9);
-  * `parity_contract_template_v3.json` (the `new_physics_verification` block, which the JSON mirrors).
+  * `parity_contract_template_v3_1.json` (the `new_physics_verification` block incl. `gate_a9_29`, which the JSON
+    mirrors).
+* The plan v3 records (`1236f91`) are kept only as superseded evidence (GR-27..GR-31).
 * CLAUDE.md rules 3, 4, 6 and 10. The A9 binding statuses: anode material OPEN; anode and coupled H-1/ICP thermal closure
   UNRESOLVED, never reported as PASS.
 * The cathode-path audit AFI-03; `gate_thresholds_v1.json` (HC-06); `hardware_bounds_v1.json`; the architecture config;
@@ -684,7 +693,9 @@ Validation is separate from verification.
 
 ## 19. Admission rule
 
-* **ADM-01, `PREREG_MODEL`.** This record is committed alone and locked. The owner reviews it before any Rust code.
+* **ADM-01, `PREREG_MODEL`.** This record is committed in its own commit and sha256-locked. Implementation may start once it
+  is committed (A9.29 sec. 13; plan v3.1 ES-4; IG-02). The plan v3 owner-review step is superseded and kept only as
+  evidence.
 * **ADM-02, `RUST_IMPL`.** The code goes in `abep-subsystems::thermal`. `cargo test --workspace --locked` is green, and
   outputs are `NOT_VALIDATED`.
 * **ADM-03, `VERIFIED`.** This requires AL-01..AL-11, every CONS check, FT-01..FT-18, DET and IV-01 / IV-02 (plus IV-03
@@ -752,6 +763,9 @@ Each of V-01..V-08 and V-18 is recalled from memory; none is in the repository.
 
 ## 23. Open owner questions (listed, not resolved)
 
+These questions stay open. They do not block implementation of the parametric model or its analytic verification cases.
+Where one blocks a specific absolute result, the affected outputs stay `NOT_EVALUATED` / `INCOMPLETE_EVIDENCE` (IG-05).
+
 * **OQ-NPT-01. Spacecraft interface without an ICD.** Can the owner mount cases (row 85; A9.12 OQ-A907-06; P3-M-05) act as
   registered `B_SC` cases for labelled flight runs, and in which form (SCI-A or SCI-B)? Or does the flight case stay
   `NOT_EVALUATED` until a host ICD exists?
@@ -782,11 +796,14 @@ Each of V-01..V-08 and V-18 is recalled from memory; none is in the repository.
 
 * **CF-01, base.** The worktree started at `b1e5b76` (main), not at the stated base `e5528bd`. The new branch was pointed at
   `e5528bd` before any work, and no other branch was touched.
-* **CF-02, plan state.** Plan v3 (`1236f91`) is not merged into `integration/simulation-complete`.
-  * No v3.1 plan exists yet, and `docs/rust_migration/` does not exist at the base.
-  * The plan references are pinned to the `1236f91` blobs.
-  * A9.29 runs lane D in parallel.
-  * The integration branch has since moved to `30afe1d` (CLAUDE.md CA-01..CA-04, no physics), with no content conflict.
+* **CF-02, plan state.** Plan v3.1 (plan commit `eb78b4a`, merged at `a5a59ea`) is in this branch, which merged the
+  integration head `96db552` (Rust workspace skeleton).
+  * The plan references now point to the v3.1 records (GR-05..GR-09). The v3 records (`1236f91`) are kept only as
+    superseded evidence (GR-27..GR-31).
+  * v3.1 replaced the ES-4 "owner review before any Rust code" with "no implementation before the preregistration is
+    committed" (A9.29 sec. 13; IG-02).
+  * CLAUDE.md stays pinned at `e5528bd` (GR-10). The CA-01..CA-04 update (`30afe1d`) changed none of the rules or A9
+    statuses used here.
 * **CF-03, retained kernels.** The kernels listed in SC-WP-06 (K-P3-RAYS, `thermal_life`) are not ported here. They have
   their own contracts and feed this model only as registered inputs.
 * **CF-04, interface gap.** IF-ICP-THERMAL-v1 has no key for:

@@ -14,10 +14,12 @@
  "execution_step": "ES-4",
  "lane": "LANE D (A9.29 sec. 13)",
  "target_crate": "abep-subsystems::thermal",
- "target_crate_note": "crate abep-subsystems, module thermal (SC-WP-06 target_crates; programme_v3 workspace rule 'abep-subsystems::thermal hosts the NEW cathodeless thermal model (directly in Rust)'). This record creates no crate, module, Rust file or Python file.",
+ "target_crate_note": "crate abep-subsystems, module thermal (SC-WP-06 target_crates; programme_v3_1 cargo_workspace_proposal rule 'abep-subsystems::thermal hosts the NEW cathodeless thermal model (directly in Rust)'). This record creates no crate, module, Rust file or Python file.",
  "base": {
   "branch": "integration/simulation-complete",
-  "commit": "e5528bdd22412014796771b615dc40f2b3bcc2ca"
+  "commit": "96db5524ec917e99e507def24f3ee0b263c78ebc",
+  "first_drafted_on": "e5528bdd22412014796771b615dc40f2b3bcc2ca",
+  "plan_v3_1": "plan commit eb78b4ae82996dcf6c54bbca86930b6471a1a6f0, merged into integration/simulation-complete at a5a59ea128f13efb758676966bace1e47cf141ea"
  },
  "files": {
   "machine_readable": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/prereg_v1.json",
@@ -32,11 +34,11 @@
   {"id": "GR-02", "path": "docs/decisions/OD_2026_10_05_A9_29_rust_plan_v3_1_rulings_and_start_authorization.json", "sha256": "51645f0ea6d0a2b02e029694ca6714854011be45cbe3d6adca53ce975453fc8d", "used": "companion of GR-01"},
   {"id": "GR-03", "path": "docs/decisions/OD_2026_10_05_A9_28_RUST_PLAN_RULINGS_AND_SIMULATION_COMPLETION_DIRECTIVE.md", "sha256": "7877bdc923fb07876b211924965767800f4f3a8efc46095f4dc3d471733fb54c", "used": "msg 1 sec. 5 RM-OQ-08; msg 2 secs. 7, 8, 10, 14"},
   {"id": "GR-04", "path": "docs/decisions/OD_2026_10_05_A9_28_rust_plan_rulings_and_simulation_completion_directive.json", "sha256": "928e0588a635c7df5795b917863cd2035875da6d39cbee2756164deecc2e41e2", "used": "companion of GR-03"},
-  {"id": "GR-05", "path": "docs/rust_migration/SIMULATION_COMPLETION_PROGRAMME.md", "at": "origin/lane-rustplan-v2 1236f911b326b308ec9019d7e3561a34b478c449", "sha256": "19ee1cc854ab07d7830657a659991fa7f54830ba9969aceb14fb89c3e1423a30", "used": "SC-WP-06; sec. 7 ES-4"},
-  {"id": "GR-06", "path": "docs/rust_migration/simulation_completion_programme_v1.json", "at": "origin/lane-rustplan-v2 1236f911b326b308ec9019d7e3561a34b478c449", "sha256": "985c2e761b51ed1a607cc0ebcfad59b8aa009e205dd6f3339889dff122ff7a5f", "used": "work_packages[SC-WP-06] (elements, fail-closed gates, admission criteria, excluded legacy); first_execution_sequence ES-4"},
-  {"id": "GR-07", "path": "docs/rust_migration/programme_v3.json", "at": "origin/lane-rustplan-v2 1236f911b326b308ec9019d7e3561a34b478c449", "sha256": "2c8baf6f32e9ee10f324c2fe46425bc17b705150808ef0ea225d4bf8b864fc82", "used": "lifecycle.new_physics_lifecycle; workspace (abep-subsystems::thermal)"},
-  {"id": "GR-08", "path": "docs/rust_migration/CI_PLAN.md", "at": "origin/lane-rustplan-v2 1236f911b326b308ec9019d7e3561a34b478c449", "sha256": "0b814c456a1c1d285dd16d24cf207a2c312d58adcdf825cffd8671010d0dd49a", "used": "principle 6 (forbidden identifiers), principle 9 (new-physics verification jobs)"},
-  {"id": "GR-09", "path": "docs/rust_migration/parity_contract_template_v3.json", "at": "origin/lane-rustplan-v2 1236f911b326b308ec9019d7e3561a34b478c449", "sha256": "40bf57e0cc0cafdaa43316a229dbe2491465d58a27f750b5cfadeef2027e5321", "used": "contract.new_physics_verification block shape (mirrored in new_physics_verification below)"},
+  {"id": "GR-05", "path": "docs/rust_migration/SIMULATION_COMPLETION_PROGRAMME.md", "at": "plan v3.1 (eb78b4a; merged a5a59ea)", "sha256": "5916e2ffca861a779dd7e1e4de02ae792e24ea3c396f0854c9ef4244a15a89d4", "used": "SC-WP-06; sec. 7 lane D / ES-4 (v3.1 wording: 'No implementation before the preregistration is committed (A9.29 sec. 13; replaces the v1 owner review before any Rust code)')"},
+  {"id": "GR-06", "path": "docs/rust_migration/simulation_completion_programme_v1_1.json", "at": "plan v3.1 (eb78b4a; merged a5a59ea)", "sha256": "5e672943892b0035f05562e68dae1ca279acd4a4bd625641a559e53711f4643a", "used": "first_execution_sequence: lanes (lane D = ES-4) and ES-4 deliverables incl. 'no implementation before the preregistration is committed (A9.29 sec. 13)' and field replaced_from_v1; work_packages[SC-WP-06] (elements, fail-closed gates, admission criteria, excluded legacy, a9_29_np_icp_coupling)"},
+  {"id": "GR-07", "path": "docs/rust_migration/programme_v3_1.json", "at": "plan v3.1 (eb78b4a; merged a5a59ea)", "sha256": "b595c4fc740223cb8da10886c358410ffab2cfd38befbe97543237d1b4dee70f", "used": "lifecycle.new_physics_lifecycle (gate_a9_29; transitions[0].evidence, with evidence_v3 keeping the superseded v3 owner-review wording); cargo_workspace_proposal (abep-subsystems::thermal)"},
+  {"id": "GR-08", "path": "docs/rust_migration/CI_PLAN.md", "at": "plan v3.1 (eb78b4a; merged a5a59ea)", "sha256": "12e185d99f1e49ea92bd7a62bd47200adaa6374290c429f4dff5970cfacdf0bc", "used": "principle 6 (forbidden identifiers), principle 9 (new-physics verification jobs)"},
+  {"id": "GR-09", "path": "docs/rust_migration/parity_contract_template_v3_1.json", "at": "plan v3.1 (eb78b4a; merged a5a59ea)", "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171", "used": "contract.new_physics_verification block shape incl. gate_a9_29 (mirrored in new_physics_verification below)"},
   {"id": "GR-10", "path": "CLAUDE.md", "at": "e5528bdd22412014796771b615dc40f2b3bcc2ca", "sha256": "c70b83d43608e2b953b790ee61e44380484eb2a02f69bda3a203ea6996920436", "used": "rules 3, 4, 6, 10; A9 binding statuses (anode material OPEN; anode and coupled H-1/ICP thermal closure UNRESOLVED, never PASS)"},
   {"id": "GR-11", "path": "docs/EVIDENCE.md", "sha256": "a2950352141890c12ad33e66766cd003215c807cb29203d21df090349ab90b61", "used": "evidence classes (rule 10)"},
   {"id": "GR-12", "path": "docs/audits/a9_24_cathode_path_audit_v1.md", "sha256": "6b556bd787b093b53e9566bb76a73ffc5a6703f6794273d0ca512c89a9aa85ed", "used": "AFI-03 (H2-5 C-1 node CB / Q_cath inherited by P3 v2)"},
@@ -53,7 +55,12 @@
   {"id": "GR-23", "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json", "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16", "used": "one Hall + one RF/ICP neutralizer; no conventional hollow cathode; two supply modes"},
   {"id": "GR-24", "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json", "sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6", "used": "C1 ground-only laboratory reference"},
   {"id": "GR-25", "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json", "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03", "used": "anode_316L, anode_approach, icp_coupled_thermal, radiative_view_requirement, rf_measurement_reference, OQ-A907-11 (local match)"},
-  {"id": "GR-26", "path": "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json", "sha256": "fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c", "used": "item 5 (HC gates in assessment only)"}
+  {"id": "GR-26", "path": "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json", "sha256": "fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c", "used": "item 5 (HC gates in assessment only)"},
+  {"id": "GR-27", "path": "docs/rust_migration/SIMULATION_COMPLETION_PROGRAMME.md", "at": "plan v3, origin/lane-rustplan-v2 1236f911b326b308ec9019d7e3561a34b478c449", "sha256": "19ee1cc854ab07d7830657a659991fa7f54830ba9969aceb14fb89c3e1423a30", "role": "SUPERSEDED_V3_EVIDENCE_ONLY", "used": "v3 ES-4 'Owner review before any Rust code' (superseded by v3.1, IG-02)"},
+  {"id": "GR-28", "path": "docs/rust_migration/simulation_completion_programme_v1.json", "at": "plan v3 (unchanged in the tree)", "sha256": "985c2e761b51ed1a607cc0ebcfad59b8aa009e205dd6f3339889dff122ff7a5f", "role": "SUPERSEDED_V3_EVIDENCE_ONLY", "used": "v3 ES-4 deliverable 'owner review before any Rust code (RM-OQ-08)'"},
+  {"id": "GR-29", "path": "docs/rust_migration/programme_v3.json", "at": "plan v3 (unchanged in the tree)", "sha256": "2c8baf6f32e9ee10f324c2fe46425bc17b705150808ef0ea225d4bf8b864fc82", "role": "SUPERSEDED_V3_EVIDENCE_ONLY", "used": "v3 new_physics_lifecycle transition evidence '... owner review'"},
+  {"id": "GR-30", "path": "docs/rust_migration/CI_PLAN.md", "at": "plan v3, origin/lane-rustplan-v2 1236f911b326b308ec9019d7e3561a34b478c449", "sha256": "0b814c456a1c1d285dd16d24cf207a2c312d58adcdf825cffd8671010d0dd49a", "role": "SUPERSEDED_V3_EVIDENCE_ONLY", "used": "v3 principles 6 and 9 (same content as GR-08)"},
+  {"id": "GR-31", "path": "docs/rust_migration/parity_contract_template_v3.json", "at": "plan v3 (unchanged in the tree)", "sha256": "40bf57e0cc0cafdaa43316a229dbe2491465d58a27f750b5cfadeef2027e5321", "role": "SUPERSEDED_V3_EVIDENCE_ONLY", "used": "v3 new_physics_verification block (no gate_a9_29)"}
  ],
 
  "context_records_read_not_ported": {
@@ -92,9 +99,10 @@
 
  "implementation_gate": [
   {"id": "IG-01", "rule": "No NP-THERMAL-CATHODELESS Rust code before this preregistration is committed (A9.29 sec. 13 lane D: 'No implementation before preregistration'). This commit satisfies the 'committed' condition only."},
-  {"id": "IG-02", "rule": "Owner review before any Rust code (ES-4 deliverable 3; new_physics_lifecycle transition PREREG_MODEL -> RUST_IMPL: 'preregistration ... committed in its own commit before any Rust code; owner review').", "state": "PENDING_OWNER_REVIEW"},
+  {"id": "IG-02", "rule": "Implementation gate (plan v3.1): no implementation before the preregistration is committed. Sources: A9.29 sec. 13 lane D ('No implementation before preregistration'); simulation_completion_programme_v1_1.json first_execution_sequence ES-4 deliverable 'no implementation before the preregistration is committed (A9.29 sec. 13)' and its field replaced_from_v1; programme_v3_1.json lifecycle.new_physics_lifecycle gate_a9_29 and transitions[0].evidence. Committing and locking this record satisfies the gate.", "state": "SATISFIED_ON_COMMIT", "superseded": "The plan v3 step 'owner review before any Rust code (RM-OQ-08)' (v3 ES-4 deliverable 3; v3 new_physics_lifecycle transition evidence) is SUPERSEDED by plan v3.1 and kept only as evidence (programme_v3_1 transitions[0].evidence_v3; GR-27..GR-31)."},
   {"id": "IG-03", "rule": "The preregistration is committed alone (no code, no other record changed), and its two files are sha256-locked in prereg_lock_v1.json."},
-  {"id": "IG-04", "rule": "Verification cases (SYNTHETIC_VERIFICATION) need only the SC-WP-12 foundation (abep-types status enums, abep-provenance). Flight cases need SC-WP-12, SC-WP-02, SC-WP-03 (incl. NP-ICP-NEUTRALIZER), SC-WP-05 (SC-WP-06 depends_on) and SC-WP-01 / SC-WP-09 for environment and eclipse inputs."}
+  {"id": "IG-04", "rule": "Verification cases (SYNTHETIC_VERIFICATION) need only the SC-WP-12 foundation (abep-types status enums, abep-provenance). Flight cases need SC-WP-12, SC-WP-02, SC-WP-03 (incl. NP-ICP-NEUTRALIZER), SC-WP-05 (SC-WP-06 depends_on) and SC-WP-01 / SC-WP-09 for environment and eclipse inputs."},
+  {"id": "IG-05", "rule": "The open owner questions OQ-NPT-01..OQ-NPT-10 stay listed and open. They do not block implementation of the parametric model or of its analytic verification cases. Where one blocks a specific absolute result, the affected outputs stay NOT_EVALUATED / INCOMPLETE_EVIDENCE (status_vocabulary; not_evaluated_today)."}
  ],
 
  "architecture_scope": [
@@ -462,7 +470,7 @@
  },
 
  "admission_rule": [
-  {"id": "ADM-01", "rule": "PREREG_MODEL: this record committed alone and locked; owner review before any Rust code (IG-02)."},
+  {"id": "ADM-01", "rule": "PREREG_MODEL: this record committed in its own commit and sha256-locked. Implementation may start once it is committed (A9.29 sec. 13; plan v3.1 ES-4; IG-02). The plan v3 owner-review step is superseded and kept only as evidence (IG-02)."},
   {"id": "ADM-02", "rule": "RUST_IMPL: code in abep-subsystems::thermal; cargo test --workspace --locked green; outputs carry validation_status = NOT_VALIDATED."},
   {"id": "ADM-03", "rule": "VERIFIED iff AL-01..AL-11, every CONS criterion, FT-01..FT-18, DET-01..DET-03, IV-01 and IV-02 meet their criteria (IV-03 when performed). The verification report is committed whatever the verdict. A failure gives NOT_ADMITTED; only a code fix plus a new prereg version may follow, with no retuning against the verification cases."},
   {"id": "ADM-04", "rule": "ADMITTED after VERIFIED: migration-ledger flip, docs/HISTORY.md entry, and a CI job bound to this prereg's sha256 (CI_PLAN principle 9)."},
@@ -532,7 +540,7 @@
 
  "conflicts_and_notes": [
   {"id": "CF-01", "kind": "repository state", "text": "The task named base e5528bd on integration/simulation-complete; the worktree started at b1e5b76 (main). The new branch lane-np-thermal-prereg was pointed at e5528bd before any work; no other branch was touched."},
-  {"id": "CF-02", "kind": "plan state", "text": "Plan v3 (1236f91) is not merged into integration/simulation-complete and no v3.1 plan exists in the repository; docs/rust_migration/ does not exist at the base. Plan references are pinned to the 1236f91 blobs (GR-05..GR-09). A9.29 approves v3 subject to the v3.1 rulings and starts lane D in parallel. integration/simulation-complete has since advanced to 30afe1d (CLAUDE.md CA-01..CA-04, no physics); no content conflict."},
+  {"id": "CF-02", "kind": "plan state", "text": "Plan v3.1 (plan commit eb78b4a, merged into integration/simulation-complete at a5a59ea) is in this branch since it merged the integration head 96db552 (Rust workspace skeleton). The plan references are re-pointed to the v3.1 records (GR-05..GR-09); the v3 records at 1236f91 are kept only as superseded evidence (GR-27..GR-31). v3.1 replaced the ES-4 'owner review before any Rust code' with 'no implementation before the preregistration is committed' (A9.29 sec. 13; IG-02). The record was first drafted on e5528bd; CLAUDE.md stays pinned at e5528bd (GR-10) because the CA-01..CA-04 update (30afe1d) changed none of the rules or A9 statuses used here."},
   {"id": "CF-03", "kind": "scope", "text": "SC-WP-06 also lists EXISTING_PHYSICS_PARITY kernels (K-P3-RAYS; thermal_life Hall / magnet). This record ports neither: they belong to separate parity contracts and enter this model only as registered inputs (ADM-06)."},
   {"id": "CF-04", "kind": "interface gap", "text": "IF-ICP-THERMAL-v1 has no key for Hall-discharge-powered collector heating (ICD ICP-43 Q_coll), Hall-plume interception (ICP-29; A9.14 ICPQ-09), the collector-bias supply or reflected RF power. This record carries the first two in IF-HALL-THERMAL-v1 (HK-08, HK-09) under the energy-source rule and books the rest at B_PPU_RF. If NP-ICP puts Q_coll inside Q_icp_plasma_wall_W, the heat would be counted twice (MODEL_ERROR at integration). Alignment: OQ-NPT-02."},
   {"id": "CF-05", "kind": "naming", "text": "'heater' is a forbidden load / component name in crates/** (CI_PLAN principle 6), but thermal-control dissipation (bus slot thermal_control) is legitimate. Named Q_thermal_control_W (OQ-NPT-08)."},
@@ -574,6 +582,7 @@
    ],
    "evidence_validation_plan": "validation_plan (EV-01..EV-05, CVS-01..CVS-05, VC-01..VC-06); until measured evidence passes VC, validation_status NOT_VALIDATED and dependent gates NOT_EVALUATED"
   },
+  "gate_a9_29": "no implementation before the preregistration is committed (A9.29 sec. 13); see implementation_gate IG-02",
   "python_scratch_rule": "A Python scratch calculation appears only as IV-01 with authoritative = false. It never becomes an active dependency or a CI dependency (A9.28 msg 1 sec. 5; RM-R26).",
   "verdict": "ADMITTED iff every analytic case, conservation check, domain / fail-closed test, determinism check and independent verification meets its criterion (ADM-03, ADM-04). Admission is software verification, not physical validation and not a gate PASS."
  },
@@ -593,7 +602,7 @@
   {"id": "TR-12", "requirement": "ES-4 deliverable 1: evidence / validation plan", "source": "GR-06 ES-4", "fields": ["validation_plan", "independent_verification"]},
   {"id": "TR-13", "requirement": "ES-4 deliverable 2: explicit exclusion of the H2-5 C-1 node / Q_cath (AFI-03)", "source": "GR-06 ES-4; GR-12", "fields": ["EX-01", "EX-02", "nodes.excluded", "FT-10"]},
   {"id": "TR-14", "requirement": "ES-4 deliverable 2: 50 K margin out of the equations (HC-06 is assessment)", "source": "GR-06 ES-4; GR-14", "fields": ["EX-03", "EX-04", "outputs.rule", "FT-17"]},
-  {"id": "TR-15", "requirement": "ES-4 deliverable 3: owner review before any Rust code (RM-OQ-08)", "source": "GR-06 ES-4", "fields": ["implementation_gate IG-02", "ADM-01", "status"]},
+  {"id": "TR-15", "requirement": "ES-4 (plan v3.1) deliverable: no implementation before the preregistration is committed (A9.29 sec. 13); replaces the plan v3 deliverable 'owner review before any Rust code (RM-OQ-08)', kept only as evidence", "source": "GR-06 first_execution_sequence ES-4 (deliverables, replaced_from_v1); GR-07 lifecycle.new_physics_lifecycle.gate_a9_29; GR-01 sec. 13", "fields": ["implementation_gate IG-01", "IG-02", "IG-05", "ADM-01", "status"]},
   {"id": "TR-16", "requirement": "SC-WP-06 admission: prereg committed alone before any Rust code", "source": "GR-06 SC-WP-06 admission_criteria[0]", "fields": ["IG-01", "IG-03", "ADM-01"]},
   {"id": "TR-17", "requirement": "SC-WP-06 admission: analytic cases (isothermal radiator, two-node conduction, zero-source equilibrium, view-factor reciprocity / enclosure)", "source": "GR-06 SC-WP-06 admission_criteria[1]", "fields": ["AL-01", "AL-02", "AL-05", "AL-07", "AL-08"]},
   {"id": "TR-18", "requirement": "SC-WP-06 admission: sources = rejected + stored within the preregistered residual (rule 4)", "source": "GR-06 SC-WP-06 admission_criteria[2]", "fields": ["CONS-S1", "CONS-S2", "CONS-T1", "CONS-L1"]},
@@ -620,7 +629,8 @@
   {"id": "TR-39", "requirement": "Task: IF-ICP-THERMAL-v1 with exactly the seven keys; Q_icp_extraction_W treatment stated", "source": "lane D task", "fields": ["IK-01..IK-07", "IK-04"]},
   {"id": "TR-40", "requirement": "Task: IF-HALL-THERMAL-v1 named keys from hall_map_schema_v1 plus magnet ohmic loss; NOT_EVALUATED while the credible set is EMPTY; parametric loads for verification", "source": "lane D task", "fields": ["HK-01..HK-11", "NE-01", "registered_inputs.case_classes"]},
   {"id": "TR-41", "requirement": "Task: outputs raw only with the status vocabulary", "source": "lane D task", "fields": ["outputs", "status_vocabulary"]},
-  {"id": "TR-42", "requirement": "Task: open owner questions listed, not resolved", "source": "lane D task", "fields": ["open_owner_questions"]}
+  {"id": "TR-42", "requirement": "Task: open owner questions listed, not resolved", "source": "lane D task", "fields": ["open_owner_questions"]},
+  {"id": "TR-43", "requirement": "ES-4 (plan v3.1) deliverable: RF/ICP waste heat from the NP-ICP-NEUTRALIZER raw outputs through a declared interface; Hall waste heat from admitted Hall maps only (A9.29 sec. 4)", "source": "GR-06 first_execution_sequence ES-4; work_packages[SC-WP-06].a9_29_np_icp_coupling", "fields": ["heat_sources.IF-ICP-THERMAL-v1", "IK-01..IK-07", "heat_sources.IF-HALL-THERMAL-v1.admission_gate", "FT-01", "FT-02", "NE-01"], "note": "IF-HALL-THERMAL-v1 accepts map-derived values only from admitted members; it also accepts measured hardware data carrying an evidence record (the thermal_life G11 rule) and registered parametric values in SYNTHETIC_VERIFICATION / PARAMETRIC cases only"}
  ],
 
  "change_control": [
