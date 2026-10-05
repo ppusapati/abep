@@ -1,0 +1,632 @@
+{
+ "schema": "abep_new_physics_prereg_v1",
+ "id": "NP-THERMAL-CATHODELESS",
+ "prereg_version": 1,
+ "model_version": "1.0.0",
+ "title": "Cathodeless Hall + downstream RF/ICP neutralizer lumped thermal network (hall_icp_neutralizer)",
+ "status": "PREREGISTERED_NOT_IMPLEMENTED",
+ "method": "NEW_PHYSICS",
+ "contract_kind": "NEW_PHYSICS",
+ "lifecycle_state": "PREREG_MODEL",
+ "validation_status": "NOT_VALIDATED",
+ "date": "2026-10-05",
+ "work_package": "SC-WP-06",
+ "execution_step": "ES-4",
+ "lane": "LANE D (A9.29 sec. 13)",
+ "target_crate": "abep-subsystems::thermal",
+ "target_crate_note": "crate abep-subsystems, module thermal (SC-WP-06 target_crates; programme_v3 workspace rule 'abep-subsystems::thermal hosts the NEW cathodeless thermal model (directly in Rust)'). This record creates no crate, module, Rust file or Python file.",
+ "base": {
+  "branch": "integration/simulation-complete",
+  "commit": "e5528bdd22412014796771b615dc40f2b3bcc2ca"
+ },
+ "files": {
+  "machine_readable": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/prereg_v1.json",
+  "human_readable": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/PREREG.md",
+  "lock": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/prereg_lock_v1.json"
+ },
+ "authority_rule": "This JSON is authoritative. PREREG.md restates it for people. Where they differ, the JSON governs and the difference is a defect to fix by a new version.",
+ "numbers_policy": "This record contains no physical property, view factor, geometry, load, environment or limit value. The numbers that appear are: (a) preregistered numerical tolerances and solver settings (numerics, conservation); (b) verification vectors labelled SYNTHETIC_TEST_DATA_NOT_EVIDENCE (analytic_limiting_cases); (c) the exact Stefan-Boltzmann constant (registered source nist_codata_sigma in schemas/thermal_life/limits_v1.json); (d) two literature criteria marked verify (Biot 0.1, coverage factor 2); (e) the RFP altitude band 180-230 km and identifiers / sha256 of repository records; (f) owner-registered values quoted only to state that they stay out of the equations (HC-06 50 K, mount allocations 25 / 50 / 100 W, heat-load factor 1.20).",
+
+ "governing_records": [
+  {"id": "GR-01", "path": "docs/decisions/OD_2026_10_05_A9_29_RUST_PLAN_V3_1_RULINGS_AND_START_AUTHORIZATION.md", "sha256": "5c223f6df59f579deb1ef4788fecf5857c6fa3ff4f365f23738b2c1b7f251989", "used": "sec. 4 (couple RF/ICP losses into the cathodeless thermal model; assessment separation), sec. 9 (Rust-era test rule), sec. 13 lane D, sec. 14, sec. 15"},
+  {"id": "GR-02", "path": "docs/decisions/OD_2026_10_05_A9_29_rust_plan_v3_1_rulings_and_start_authorization.json", "sha256": "51645f0ea6d0a2b02e029694ca6714854011be45cbe3d6adca53ce975453fc8d", "used": "companion of GR-01"},
+  {"id": "GR-03", "path": "docs/decisions/OD_2026_10_05_A9_28_RUST_PLAN_RULINGS_AND_SIMULATION_COMPLETION_DIRECTIVE.md", "sha256": "7877bdc923fb07876b211924965767800f4f3a8efc46095f4dc3d471733fb54c", "used": "msg 1 sec. 5 RM-OQ-08; msg 2 secs. 7, 8, 10, 14"},
+  {"id": "GR-04", "path": "docs/decisions/OD_2026_10_05_A9_28_rust_plan_rulings_and_simulation_completion_directive.json", "sha256": "928e0588a635c7df5795b917863cd2035875da6d39cbee2756164deecc2e41e2", "used": "companion of GR-03"},
+  {"id": "GR-05", "path": "docs/rust_migration/SIMULATION_COMPLETION_PROGRAMME.md", "at": "origin/lane-rustplan-v2 1236f911b326b308ec9019d7e3561a34b478c449", "sha256": "19ee1cc854ab07d7830657a659991fa7f54830ba9969aceb14fb89c3e1423a30", "used": "SC-WP-06; sec. 7 ES-4"},
+  {"id": "GR-06", "path": "docs/rust_migration/simulation_completion_programme_v1.json", "at": "origin/lane-rustplan-v2 1236f911b326b308ec9019d7e3561a34b478c449", "sha256": "985c2e761b51ed1a607cc0ebcfad59b8aa009e205dd6f3339889dff122ff7a5f", "used": "work_packages[SC-WP-06] (elements, fail-closed gates, admission criteria, excluded legacy); first_execution_sequence ES-4"},
+  {"id": "GR-07", "path": "docs/rust_migration/programme_v3.json", "at": "origin/lane-rustplan-v2 1236f911b326b308ec9019d7e3561a34b478c449", "sha256": "2c8baf6f32e9ee10f324c2fe46425bc17b705150808ef0ea225d4bf8b864fc82", "used": "lifecycle.new_physics_lifecycle; workspace (abep-subsystems::thermal)"},
+  {"id": "GR-08", "path": "docs/rust_migration/CI_PLAN.md", "at": "origin/lane-rustplan-v2 1236f911b326b308ec9019d7e3561a34b478c449", "sha256": "0b814c456a1c1d285dd16d24cf207a2c312d58adcdf825cffd8671010d0dd49a", "used": "principle 6 (forbidden identifiers), principle 9 (new-physics verification jobs)"},
+  {"id": "GR-09", "path": "docs/rust_migration/parity_contract_template_v3.json", "at": "origin/lane-rustplan-v2 1236f911b326b308ec9019d7e3561a34b478c449", "sha256": "40bf57e0cc0cafdaa43316a229dbe2491465d58a27f750b5cfadeef2027e5321", "used": "contract.new_physics_verification block shape (mirrored in new_physics_verification below)"},
+  {"id": "GR-10", "path": "CLAUDE.md", "at": "e5528bdd22412014796771b615dc40f2b3bcc2ca", "sha256": "c70b83d43608e2b953b790ee61e44380484eb2a02f69bda3a203ea6996920436", "used": "rules 3, 4, 6, 10; A9 binding statuses (anode material OPEN; anode and coupled H-1/ICP thermal closure UNRESOLVED, never PASS)"},
+  {"id": "GR-11", "path": "docs/EVIDENCE.md", "sha256": "a2950352141890c12ad33e66766cd003215c807cb29203d21df090349ab90b61", "used": "evidence classes (rule 10)"},
+  {"id": "GR-12", "path": "docs/audits/a9_24_cathode_path_audit_v1.md", "sha256": "6b556bd787b093b53e9566bb76a73ffc5a6703f6794273d0ca512c89a9aa85ed", "used": "AFI-03 (H2-5 C-1 node CB / Q_cath inherited by P3 v2)"},
+  {"id": "GR-13", "path": "docs/audits/a9_24_cathode_path_audit_v1.json", "sha256": "2482a2d8fb929755f5f8cb6a334e6d4a7c5f69a6eefbe38916f01a726ef9144c", "used": "companion of GR-12"},
+  {"id": "GR-14", "path": "config/assessment/gate_thresholds_v1.json", "sha256": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b", "used": "HC-06 layer ASSESSMENT_PROTECTION_POLICY: 'applied by assessment / protection logic, never inside thermal equations; physics produces temperatures / heat loads'"},
+  {"id": "GR-15", "path": "config/hardware/hardware_bounds_v1.json", "sha256": "952f70a5e850f94bb9d3de52eba492eaa62821b8e85102c51d4895a8887e64b6", "used": "index of the temperature-limit sources consumed by HC-06 (assessment inputs, never model inputs)"},
+  {"id": "GR-16", "path": "config/architecture/hall_icp_neutralizer_v1.json", "sha256": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3", "used": "architecture identity, supply modes, C1 role"},
+  {"id": "GR-17", "path": "schemas/interfaces/bus_power_boundary_a9_v2.json", "sha256": "6c01742e3b1088a7aa9ed05674ba4cf83f2322259c80273ecccdfc032886f20a", "used": "installed slots and variants of hall_icp_neutralizer (icp_rf_source plane generator_dc_input, icp_matching_network, icp_collector_bias, hall_magnet_inner / outer / trim, thermal_control; variants active_cooling, icp_assist_magnet, flow_control_icp_feed)"},
+  {"id": "GR-18", "path": "hallthruster_bridge/hall_map_schema_v1.json", "sha256": "f371b43bced1020d55e2b28303c877220f41395767cdf6ebab6019475e9bdde9", "used": "Hall-side field basis of IF-HALL-THERMAL-v1"},
+  {"id": "GR-19", "path": "hallthruster_bridge/ensemble/transport_ensemble_v0.json", "sha256": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b", "used": "members [] (credible Hall transport set EMPTY)"},
+  {"id": "GR-20", "path": "hallthruster_bridge/PINNED.toml", "sha256": "26a00c8a156a5a5e9a58f9796f657ea12f59d87ac2da3d6507ac7347b4765280", "used": "HallThruster.jl pin (rule 7) for Hall-map provenance"},
+  {"id": "GR-21", "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json", "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f", "used": "A9 architecture and status"},
+  {"id": "GR-22", "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json", "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d", "used": "OQ-A907-03 (bounding corners), OQ-A907-06 (isolated mount + dedicated radiator; mount allocations), OQ-A907-09 (1.20 on dissipated loads), OQ-A907-10, P3Q-02 (model class + correlation plan)"},
+  {"id": "GR-23", "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json", "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16", "used": "one Hall + one RF/ICP neutralizer; no conventional hollow cathode; two supply modes"},
+  {"id": "GR-24", "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json", "sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6", "used": "C1 ground-only laboratory reference"},
+  {"id": "GR-25", "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json", "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03", "used": "anode_316L, anode_approach, icp_coupled_thermal, radiative_view_requirement, rf_measurement_reference, OQ-A907-11 (local match)"},
+  {"id": "GR-26", "path": "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json", "sha256": "fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c", "used": "item 5 (HC gates in assessment only)"}
+ ],
+
+ "context_records_read_not_ported": {
+  "rule": "Read for node / interface naming and as context only. NP-THERMAL-CATHODELESS is new physics: no equation, default, node set or number below is ported. Retained kernels named in SC-WP-06 (K-P3-RAYS; the thermal_life Hall-discharge / magnet kernels) are migrated under their own EXISTING_PHYSICS_PARITY contracts; this model consumes their outputs only as registered inputs (view factors, IF-HALL-THERMAL-v1 values) and its admission does not depend on them.",
+  "records": [
+   {"id": "CX-01", "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json", "sha256": "43910a675a82d00b977768b0e31606e9c98fca2eaf7e8e0bffe47b3f42f20ce8"},
+   {"id": "CX-02", "path": "docs/experiments/hall_icp/p3_coupled_thermal/P3_COUPLED_THERMAL.md", "sha256": "68bbadb94b510d2dcd4526d3345ac28a250827ae7524685a3e980fd0f270d406"},
+   {"id": "CX-03", "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json", "sha256": "1db2b13e82389fc824acc24f6b6b9aafb11b950b9c5546347cc8037b2bdb132a", "note": "P3-G / P3-R / P3-K / P3-P1 / P3-P2 / P3-H / P3-C item ids are cited as the future suppliers of registered inputs"},
+   {"id": "CX-04", "path": "docs/experiments/hall_icp/p3_coupled_thermal/P3_COUPLED_THERMAL_V2.md", "sha256": "9c31a92b5dbc415c02eaa78e4ef6f2205d93b400d48a88658044b3720af9c7ef"},
+   {"id": "CX-05", "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json", "sha256": "f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b", "note": "candidates CAND-01..CAND-16; final_material_status APP-ANODE OPEN, APP-COLLECTOR OPEN"},
+   {"id": "CX-06", "path": "abep_sim/thermal.py", "sha256": "3ad94b716dd78e863ad441a78ffdc7fd3ef38b2764a7aabaace6876a2f1444fb", "note": "class H; default_nodes (incl. its cathode node and code-default properties) not ported"},
+   {"id": "CX-07", "path": "abep_sim/thermal_life.py", "sha256": "dce2048233746ecc596866c1d561c8828f820c7960b9778db0d6d66a9c86d83c", "note": "Hall wall / anode / coil kernels under their own parity contract; LaB6 / cathode / RF / ECR parts not ported"},
+   {"id": "CX-08", "path": "abep_sim/icp_thermal_lib.py", "sha256": "ffd8e9d904e2e67993404a0cdd058b5cf3a892034593b29cebc51b85438d0fca", "note": "K-P3-RAYS (cathode-free) under its own parity contract"},
+   {"id": "CX-09", "path": "docs/thermal_life/THERMAL_LIFE_FRAMEWORK.md", "sha256": "c07c9441505669ee6d4c3fcd3cf54d2e03dc749ea991f99098e64c193d6f134e"},
+   {"id": "CX-10", "path": "schemas/thermal_life/limits_v1.json", "sha256": "0df363f76dcb6efcef41bc0a07e1775b6255c2c9d84b185228862958ef827dbb", "note": "registered sources nist_codata_sigma, nbs_hb100_1966, goebel_katz_2008_ch7 and their relations"},
+   {"id": "CX-11", "path": "schemas/ledgers/thermal_rejection_ledger_v1.json", "sha256": "118d65c23412b8d98ad53199c86944d9f0eb44f580af95ad222582d24126add6", "note": "legacy three-architecture ledger; its closure identity pattern (electrical in = internal heat + exported + transferred) is reused in words only"},
+   {"id": "CX-12", "path": "docs/hardware/h2/h2_5_thermal_network/h2_5_thermal_network_v1.json", "sha256": "68c5be61443d0ef1c7308c4aba265426137292dcf9363e57903e0a1f6c8bc083", "note": "GROUND_REFERENCE test-article network with the C-1 nodes CB / CE / CK; excluded (AFI-03); node ids used only as a naming crosswalk; its registered external sources (EXT-NASA-TM2001, EXT-MYERS2016, EXT-MAZOUFFRE2005, EXT-MARTINEZ2014, EXT-HENNINGER1984, EXT-NBS-ARMCO1967, EXT-HENZE2021, EXT-NIST-CRYO) are cited at their primary references"},
+   {"id": "CX-13", "path": "schemas/interfaces/icp_neutralizer_icd_v1.json", "sha256": "8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c", "note": "ICP-06, ICP-07, ICP-13, ICP-21, ICP-22, ICP-29, ICP-36, ICP-37, ICP-38, ICP-43, ICP-47"},
+   {"id": "CX-14", "path": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json", "sha256": "092e4ca8e1827dd2e9558058a204f46510f2633316ce188e7126b697ec6d0b53", "note": "Takahashi et al. 2024 (TK-26, TK-27, TK-62): published analog, context only, never scaled"},
+   {"id": "CX-15", "path": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json", "sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a", "note": "COUPLED-H1-ICP -> P3-THERMAL (NOT_STARTABLE_PREDECESSOR_INCOMPLETE)"},
+   {"id": "CX-16", "path": "config/mission/mission_scenario_v2.json", "sha256": "885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49"},
+   {"id": "CX-17", "path": "config/environment/design_state_set_ref_v1.json", "sha256": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484"}
+  ]
+ },
+
+ "what_this_is_not": [
+  "not an implementation: no Rust, Python or Julia code is written; status PREREGISTERED_NOT_IMPLEMENTED",
+  "not a thermal result and not a thermal PASS: anode thermal closure and coupled H-1/ICP thermal closure stay UNRESOLVED (A9; CLAUDE.md)",
+  "not a port of the P3 v2 h25_coupled_network, the H2-5 network or abep_sim/thermal.py default_nodes (A9.28 msg 2 sec. 8; SC-WP-06 excluded_legacy_not_ported)",
+  "not a Hall performance prediction: Hall heat enters only through IF-HALL-THERMAL-v1; the credible Hall transport set is EMPTY",
+  "not an RF/ICP plasma model: RF/ICP heat enters only through IF-ICP-THERMAL-v1 from NP-ICP-NEUTRALIZER",
+  "not an assessment: no margin, limit, PASS/FAIL, HC status or requirement threshold is computed or carried",
+  "not a material or geometry selection: anode material OPEN, collector material OPEN, H-1 and ICP geometry TBD",
+  "not a change to any frozen dataset, golden, threshold, budget or decision record"
+ ],
+
+ "implementation_gate": [
+  {"id": "IG-01", "rule": "No NP-THERMAL-CATHODELESS Rust code before this preregistration is committed (A9.29 sec. 13 lane D: 'No implementation before preregistration'). This commit satisfies the 'committed' condition only."},
+  {"id": "IG-02", "rule": "Owner review before any Rust code (ES-4 deliverable 3; new_physics_lifecycle transition PREREG_MODEL -> RUST_IMPL: 'preregistration ... committed in its own commit before any Rust code; owner review').", "state": "PENDING_OWNER_REVIEW"},
+  {"id": "IG-03", "rule": "The preregistration is committed alone (no code, no other record changed), and its two files are sha256-locked in prereg_lock_v1.json."},
+  {"id": "IG-04", "rule": "Verification cases (SYNTHETIC_VERIFICATION) need only the SC-WP-12 foundation (abep-types status enums, abep-provenance). Flight cases need SC-WP-12, SC-WP-02, SC-WP-03 (incl. NP-ICP-NEUTRALIZER), SC-WP-05 (SC-WP-06 depends_on) and SC-WP-01 / SC-WP-09 for environment and eclipse inputs."}
+ ],
+
+ "architecture_scope": [
+  {"id": "AS-01", "text": "Configuration hall_icp_neutralizer only (GR-16). Any other configuration, including hall_c1_reference, is refused (MODEL_ERROR)."},
+  {"id": "AS-02", "text": "One Hall accelerator (H-1) and one downstream 13.56 MHz RF/ICP electron source / neutralizer. Flight conventional hollow cathode: NONE. C1: GROUND_REFERENCE_ONLY; it is never a node, a load, a boundary or a case configuration of this model (A9.19, A9.20, A9.29 sec. 15)."},
+  {"id": "AS-03", "text": "Supply modes AIR_PRIMARY and XE_CONTINGENCY are both represented as case inputs. The thermal equations are gas-agnostic; the mode changes the interface loads. NON_FIRING is a case state for standby / cold cases (interface discharge and RF keys zero by registration, never by default)."},
+  {"id": "AS-04", "text": "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE is carried unchanged; this record never promotes the architecture."},
+  {"id": "AS-05", "text": "Place in the A9.29 sec. 15 chain: power -> cathodeless thermal -> mass. Consumes: coupled thrust / neutralization and NP-ICP-NEUTRALIZER (SC-WP-03), power / magnets / thermal_control slot (SC-WP-05), frozen atmosphere and design states (SC-WP-01), eclipse and attitude inputs (SC-WP-09). Supplies raw temperatures and heat flows to materials / life (SC-WP-08), mass (thermal hardware, SC-WP-07), mission (SC-WP-09), robust / UQ (SC-WP-10) and assessment (SC-WP-11, HC-06)."}
+ ],
+
+ "exclusions": [
+  {"id": "EX-01", "text": "No cathode node. The H2-5 C-1 nodes CB (cathode body + keeper), CE (LaB6 emitter) and CK (keeper) are excluded per AFI-03 (GR-12). The flight hollow cathode is NONE."},
+  {"id": "EX-02", "text": "No Q_cath, keeper, cathode-heater or emitter term in any equation, interface key, node, link or output. A topology, interface record or case containing such an identifier is refused (MODEL_ERROR, FT-10). The crate passes the CI_PLAN principle-6 forbidden-identifier scan; this record uses the cathode vocabulary only in exclusion statements."},
+  {"id": "EX-03", "text": "The HC-06 50 K margin is not in the equations. HC-06 is ASSESSMENT_PROTECTION_POLICY (GR-14): assessment consumes the raw temperatures. The model holds no margin and emits no margin."},
+  {"id": "EX-04", "text": "No material temperature limit (T_max, T_validated,continuous, insulation class, coating limit) is a model input or field. Limits are assessment inputs (GR-15 index, schemas/thermal_life/limits_v1.json)."},
+  {"id": "EX-05", "text": "Not ported: P3 v2 h25_coupled_network (C-1 node CB, Q_cath), the H2-5 network (class G), abep_sim/thermal.py default_nodes (class H) and its code-default properties (A9.28 msg 2 sec. 8; SC-WP-06)."},
+  {"id": "EX-06", "text": "No pre-ionizer module slot (H2-5 PIM). The upstream pre-ionizer campaign is historical (A9)."},
+  {"id": "EX-07", "text": "The A9.12 OQ-A907-09 heat-load factor 1.20 is not applied inside the equations. If assessment needs it, the assessment case builder scales the registered dissipated loads and labels the case (OQ-NPT-04)."},
+  {"id": "EX-08", "text": "No requirement parsing in raw physics: the crate reads no file under docs/requirements/** or docs/decisions/** and no RFP clause; it reads only frozen configuration and registered inputs."},
+  {"id": "EX-09", "text": "No owner allocation enters the equations: the mount-heat allocations 25 / 50 / 100 W (A9.12 OQ-A907-06), the temporary RF thermal allocation (A9.12 OQ-A910-06) and the ICP-43 bounding rule (A9.12 ICPQ-10) are assessment / design-allocation quantities."}
+ ],
+
+ "nodes": {
+  "rule": "Lumped, isothermal nodes. Every node and link is registered; there is no default node, link, conductance or property. A REQUIRED node must be present in every case. A CONDITIONAL node is present only when the registered design has the part; when absent, every load mapped to it must be re-mapped by a registered partition (else INCOMPLETE_EVIDENCE).",
+  "thermal_mass_representation": "C_i(T) = sum over parts p of m_p * c_p,p(T) [J/K]. Stored-energy change H_i(T) - H_i(T_a) = integral from T_a to T of C_i(T') dT', evaluated exactly for the registered c_p form (piecewise-linear table or polynomial). Masses come from registered geometry / BOM records (SC-WP-07), c_p(T) from registered material records with a temperature validity range. A node with C_i = 0 is allowed only as a registered massless series node (an algebraic constraint in transients).",
+  "node_record_fields": ["id", "group", "represents", "presence", "parts [{part_id, material_record_id, mass_kg_record_id}]", "surfaces [{surface_id, area_record_id, eps_IR_record_id, alpha_solar_record_id, enclosure_id, external (bool)}]", "biot_geometry {volume_record_id, conduction_area_record_id, k_record_id}", "receives_interface_keys", "case_classes_allowed"],
+  "solved": [
+   {"id": "H1_ANODE", "group": "HALL_BODY", "represents": "anode / gas distributor", "presence": "REQUIRED", "material": "anode material OPEN: one registered P4 candidate property set per run (anode_material_candidate_id in CAND-01..CAND-16, CX-05). CAND-01 (316L) is REJECTED_AS_CURRENT_BASELINE for the flight anode: allowed only in BENCH_REPLICA / PARAMETRIC engineering cases (FT-16). An UNPOPULATED candidate gives INCOMPLETE_EVIDENCE. P4 datasheet records are bulk, no-plasma, typical values: they carry that applicability domain.", "thermal_mass": "lumped C(T)", "receives_interface_keys": ["Q_hall_anode_W", "Q_hall_plasma_radiation_W (registered share)"], "naming_crosswalk_context_only": "H2-5 AN"},
+   {"id": "H1_WALL_IN", "group": "HALL_BODY", "represents": "inner discharge-channel wall (ceramic)", "presence": "REQUIRED", "material": "registered wall-ceramic grade (none selected here); k(T), c_p(T), eps(T) records with temperature validity are required", "thermal_mass": "lumped C(T)", "receives_interface_keys": ["Q_hall_wall_inner_W", "Q_hall_plasma_radiation_W (registered share)"], "naming_crosswalk_context_only": "H2-5 WI"},
+   {"id": "H1_WALL_OUT", "group": "HALL_BODY", "represents": "outer discharge-channel wall (ceramic)", "presence": "REQUIRED", "material": "as H1_WALL_IN", "thermal_mass": "lumped C(T)", "receives_interface_keys": ["Q_hall_wall_outer_W", "Q_hall_plasma_radiation_W (registered share)"], "naming_crosswalk_context_only": "H2-5 WO"},
+   {"id": "H1_POLE_IN", "group": "HALL_BODY", "represents": "inner magnetic core + inner front pole piece", "presence": "REQUIRED", "material": "registered soft-magnetic grade (none selected here)", "thermal_mass": "lumped C(T)", "receives_interface_keys": ["Q_hall_pole_W (registered share)", "Q_hall_plasma_radiation_W (registered share)", "Q_icp_radiation_W (registered share, if registered)"], "naming_crosswalk_context_only": "H2-5 PI"},
+   {"id": "H1_POLE_OUT", "group": "HALL_BODY", "represents": "outer magnetic shell + outer front pole piece (carries the exterior lateral and front-annulus surfaces)", "presence": "REQUIRED", "material": "registered soft-magnetic grade", "thermal_mass": "lumped C(T)", "receives_interface_keys": ["Q_hall_pole_W (registered share)", "Q_hall_plasma_radiation_W (registered share)", "Q_icp_radiation_W (registered share, if registered)"], "naming_crosswalk_context_only": "H2-5 PO"},
+   {"id": "H1_BACKPLATE", "group": "HALL_BODY", "represents": "back pole / back plate of the magnetic circuit; carries the anode isolators, the feed-line interface and the thruster mount", "presence": "REQUIRED", "material": "registered soft-magnetic grade", "thermal_mass": "lumped C(T)", "receives_interface_keys": [], "naming_crosswalk_context_only": "H2-5 BP"},
+   {"id": "H1_COIL_IN", "group": "HALL_MAGNET", "represents": "inner electromagnet winding (copper, insulation and bobbin lumped)", "presence": "REQUIRED", "material": "registered conductor / insulation / bobbin records", "thermal_mass": "lumped C(T)", "receives_interface_keys": ["Q_hall_coil_inner_W | (I_hall_coil_inner_A, R_hall_coil_inner_ref_ohm, T_hall_coil_inner_ref_K)"], "naming_crosswalk_context_only": "H2-5 CI"},
+   {"id": "H1_COIL_OUT", "group": "HALL_MAGNET", "represents": "outer electromagnet winding(s) (lumped)", "presence": "REQUIRED", "material": "as H1_COIL_IN", "thermal_mass": "lumped C(T)", "receives_interface_keys": ["Q_hall_coil_outer_W | (I_hall_coil_outer_A, R_hall_coil_outer_ref_ohm, T_hall_coil_outer_ref_K)"], "naming_crosswalk_context_only": "H2-5 CO"},
+   {"id": "H1_COIL_TRIM", "group": "HALL_MAGNET", "represents": "trim winding", "presence": "CONDITIONAL (bus slot hall_magnet_trim is installed in bus_power_boundary_a9_v2; the physical winding exists only if the registered H-1 design has it)", "material": "as H1_COIL_IN", "thermal_mass": "lumped C(T)", "receives_interface_keys": ["Q_hall_coil_trim_W | (I_hall_coil_trim_A, R_hall_coil_trim_ref_ohm, T_hall_coil_trim_ref_K)"]},
+   {"id": "N_VESSEL", "group": "ICP_NEUTRALIZER", "represents": "ICP discharge vessel (dielectric tube / plasma-chamber wall)", "presence": "REQUIRED", "material": "registered dielectric (not selected; P3-R-03 emittance TBD)", "thermal_mass": "lumped C(T)", "receives_interface_keys": ["Q_icp_plasma_wall_W (share)", "Q_icp_radiation_W (share)", "Q_hall_plume_to_icp_W (share)", "Q_hall_plasma_radiation_W (registered share, if registered)"]},
+   {"id": "N_ANTENNA", "group": "ICP_NEUTRALIZER", "represents": "13.56 MHz antenna / coil incl. in-vacuum leads", "presence": "REQUIRED", "material": "registered conductor (and coating / insulation if any)", "thermal_mass": "lumped C(T)", "receives_interface_keys": ["Q_icp_coil_ohmic_W (share)", "Q_icp_plasma_wall_W (share, only if exposed to the plasma)", "Q_icp_radiation_W (share)"]},
+   {"id": "N_COLLECTOR", "group": "ICP_NEUTRALIZER", "represents": "ion-collecting electrode (Takahashi-type topology; ICD ICP-21)", "presence": "CONDITIONAL (registered ICP topology; ICD ICP-21 TBD)", "material": "collector material OPEN (FINAL_COLLECTOR_MATERIAL OPEN, CX-05): registered candidate property set per run", "thermal_mass": "lumped C(T)", "receives_interface_keys": ["Q_icp_plasma_wall_W (share)", "Q_icp_coil_ohmic_W (induced share, registered)", "Q_icp_radiation_W (share)", "Q_hall_return_to_icp_W", "Q_hall_plume_to_icp_W (share)", "Q_hall_plasma_radiation_W (registered share, if registered)"]},
+   {"id": "N_HOUSING", "group": "ICP_NEUTRALIZER", "represents": "module housing / RF shield / feedthrough body", "presence": "CONDITIONAL", "material": "registered", "thermal_mass": "lumped C(T)", "receives_interface_keys": ["Q_icp_coil_ohmic_W (induced share, registered)", "Q_icp_plasma_wall_W (share)", "Q_icp_radiation_W (share)", "Q_hall_plume_to_icp_W (share)", "Q_hall_plasma_radiation_W (registered share, if registered)"]},
+   {"id": "N_MATCH", "group": "ICP_NEUTRALIZER", "represents": "local matching network on / immediately adjacent to the module (ICD ICP-13; A9.2 OQ-A907-11, development choice; flight implementation deferred)", "presence": "CONDITIONAL: present iff the registered switch match_colocated = true", "material": "registered component masses / c_p", "thermal_mass": "lumped C(T)", "receives_interface_keys": ["Q_icp_match_W (if match_colocated)"]},
+   {"id": "N_MOUNT", "group": "ICP_NEUTRALIZER", "represents": "neutralizer mounting structure: flight bracket (registered attachment to H1_BACKPLATE, to B_SC, or both); in BENCH_REPLICA cases the KC-1 carrier on the moving thrust platform (A9.14 ICPQ-03)", "presence": "REQUIRED", "material": "registered", "thermal_mass": "lumped C(T)", "receives_interface_keys": ["Q_hall_plume_to_icp_W (share, if registered)"]},
+   {"id": "R_HALL", "group": "RADIATOR", "represents": "dedicated Hall radiator panel and its heat-path doubler (A9.12 OQ-A907-06: thermally isolated H-1 mount + dedicated radiator / rejection path)", "presence": "CONDITIONAL (design registration)", "material": "registered panel / coating records", "thermal_mass": "lumped C(T)", "receives_interface_keys": []},
+   {"id": "R_ICP", "group": "RADIATOR", "represents": "dedicated ICP radiator or high-emittance outward panel when it is a separate body (A9.2 radiative_view_requirement); otherwise the ICP outward surfaces belong to N_HOUSING / N_VESSEL", "presence": "CONDITIONAL (design registration)", "material": "registered", "thermal_mass": "lumped C(T)", "receives_interface_keys": []}
+  ],
+  "boundaries": [
+   {"id": "B_SC", "represents": "spacecraft mounting interface", "kind": "BOUNDARY_CONDITION (see spacecraft_interface SCI-A / SCI-B / SCI-C)"},
+   {"id": "B_PPU_RF", "represents": "PPU / RF-generator interface", "kind": "BOOKING BOUNDARY: heat booked here (generator conversion loss, reflected power absorbed at the generator, line losses outside the module, magnet-supply and bias-supply losses, the match loss when match_colocated = false) is reported raw and not solved. An optional registered conductive link (harness / bracket) to a registered interface temperature may be declared; there is none by default."},
+   {"id": "B_FEED", "represents": "propellant feed-line interface at the anode gas inlet and the ICP gas inlet", "kind": "optional registered conductive link to a registered feed-line temperature; propellant enthalpy flow is neglected (A-04)"},
+   {"id": "SPACE", "represents": "environment radiative sink", "kind": "black enclosure surface at registered T_space (OQ-NPT-07); every external enclosure closes on it in flight cases"},
+   {"id": "ENV", "represents": "environment loads: solar, albedo, planetary IR (OLR), free-molecular aerodynamic heating", "kind": "registered absorbed-flux inputs per external surface (E-06); not a node"},
+   {"id": "B_FACILITY", "represents": "ground facility enclosure walls", "kind": "BENCH_REPLICA cases only: replaces SPACE and ENV; temperature measured per run (owner row 131; ~300 K is a planning case only, never a score-bearing input)"}
+  ],
+  "excluded": [
+   {"id": "CB", "source": "H2-5", "reason": "C-1 cathode body + keeper: excluded per AFI-03 (no node, no Q_cath)"},
+   {"id": "CE", "source": "H2-5", "reason": "C-1 LaB6 emitter: excluded per AFI-03"},
+   {"id": "CK", "source": "H2-5", "reason": "C-1 keeper: excluded per AFI-03"},
+   {"id": "PIM", "source": "H2-5", "reason": "pre-ionizer slot: historical upstream pre-ionizer campaign (A9)"},
+   {"id": "COMP, GP", "source": "H2-5", "reason": "upstream compressor / gas-path demand nodes: outside this model (SC-WP-02); only B_FEED links may connect"},
+   {"id": "PPU", "source": "H2-5", "reason": "represented only as the B_PPU_RF boundary"},
+   {"id": "intake, compressor, thruster, magnets, stage1_source, cathode, ppu", "source": "abep_sim/thermal.py default_nodes", "reason": "class H legacy node set with code-default properties: not ported"}
+  ],
+  "refinement_rule": "Subdividing a registered node into sub-nodes of the same group, materials and interface keys (for Biot compliance, D-02) is a registered discretization refinement recorded with its input hashes; it is not a model change. A new node group, a new interface key or a new link type is a new preregistration version."
+ },
+
+ "equations": {
+  "notation": "i, j: solved nodes; b: boundaries; k, l: surfaces; e: radiation enclosures; T in K; Q in W (positive into the receiving node); sigma = 5.670374419e-8 W m^-2 K^-4 (CODATA 2022, exact; registered source nist_codata_sigma).",
+  "items": [
+   {"id": "E-01", "name": "transient node energy balance (enthalpy form)", "form": "dH_i/dt = Q_src,i(t, T) + Q_tc,i(t) + Q_env,i(t) + sum_j Q_cond,j->i + sum_b Q_bc,b->i + Q_rad,i", "terms": "Q_src,i interface deposition (E-07, E-09); Q_tc,i registered thermal-control dissipation (Q_thermal_control_W); Q_env,i absorbed environment (E-06); Q_cond conduction (E-03, E-04); Q_bc boundary links (E-08); Q_rad,i net radiative gain (E-05)", "source": "first law for a lumped body; lumped-capacitance method: Incropera & DeWitt, Fundamentals of Heat and Mass Transfer, ch. 5 (verify V-01)"},
+   {"id": "E-02", "name": "steady state", "form": "0 = right-hand side of E-01 for every solved node (dH_i/dt = 0)", "source": "as E-01"},
+   {"id": "E-03", "name": "conduction through a registered material segment (Kirchhoff transform)", "form": "Q_cond,j->i = S_ij * (Theta_m(T_j) - Theta_m(T_i)), Theta_m(T) = integral from T* to T of k_m(T') dT'; S_ij = A / L (slab), 2 pi L / ln(r_o / r_i) (cylindrical shell) or a registered shape factor with its source", "properties": "exact for steady 1-D conduction with k(T); antisymmetric in (i, j), so the link conserves energy exactly; Theta_m evaluated exactly for the registered k(T) form", "source": "Kirchhoff transformation: Carslaw & Jaeger, Conduction of Heat in Solids, 2nd ed. (verify V-04); shape factors: Incropera & DeWitt ch. 3 (verify V-01)"},
+   {"id": "E-04", "name": "contact and lumped conductances", "form": "Q = h_c * A_c * (T_j - T_i) for a registered joint (h_c record with its temperature range), or Q = G_ij * (T_j - T_i) for a registered measured assembly conductance (isolators, feed tube, straps, brackets). Composite paths in series use registered massless nodes, so no series formula approximates a temperature-dependent path.", "source": "thermal contact resistance: Incropera & DeWitt ch. 3 (verify V-01)"},
+   {"id": "E-05", "name": "radiative exchange: gray, diffuse, opaque surfaces in the IR band (net-radiation / radiosity method)", "form": "for every enclosure e and surface k in e: J_k = eps_k sigma T_k^4 + (1 - eps_k) G_k, G_k = sum_l F_kl J_l; net emitted power q_k = A_k eps_k (sigma T_k^4 - G_k); Q_rad,i = - sum over surfaces k of node i of q_k. SPACE (flight) or B_FACILITY (bench) is a black surface with J = sigma T_sink^4. Input checks: summation sum_l F_kl = 1 and reciprocity A_k F_kl = A_l F_lk (D-07, AL-07). The q_k form stays valid for eps_k = 1 (no division by 1 - eps_k). Equivalent script-F exchange factors may be reported.", "rules": "an opening (channel exit, ICP bore) is not a surface: surfaces that see each other through it belong to one enclosure; view factors are registered inputs from a producer (closed forms, or K-P3-RAYS under its own parity contract)", "source": "Modest, Radiative Heat Transfer (net radiation method) (verify V-02); Siegel & Howell, Thermal Radiation Heat Transfer (verify V-03); configuration factors: Howell catalog, registered EXT-HOWELL-CATALOG entries C-40, C-41, C-52, C-77, C-80, C-81 (CX-04)"},
+   {"id": "E-06", "name": "environment loads per external surface s", "form": "Q_sol,s = alpha_s * S(t) * A_s * F_sun,s(t) * nu(t); Q_alb,s = alpha_s * a(t) * S(t) * A_s * F_alb,s(t); Q_ir,s = eps_s * q_OLR(t) * A_s * F_earth,s(t); Q_aero,s = alpha_E,s * 0.5 * rho * V_rel^3 * A_ram,s; Q_env,i = sum over external surfaces of node i", "inputs": "alpha_s solar-band absorptance, eps_s IR-band emittance (two-band gray); S, a, q_OLR registered hot / cold values (candidate primary source NASA/TM-2001-211221, registered EXT-NASA-TM2001 sha256 a6ea8902b65e59ef3932d1a1f84c5b3a45938f240344b1d8a7465e79a625467e; applicability verify V-09); nu(t) illumination function and F_sun / F_alb / F_earth from SC-WP-09 orbit and the registered attitude / geometry; rho and V_rel from the frozen atmosphere / design states (SC-WP-01); alpha_E energy accommodation (registered)", "source": "absorbed-flux formulation: Gilmore (ed.), Spacecraft Thermal Control Handbook, Vol. I (verify V-05); free-molecular hyperthermal heating 0.5 rho V^3 alpha_E: Schaaf & Chambre, Flow of Rarefied Gases, or Bird, Molecular Gas Dynamics (verify V-06)", "note": "emission of external surfaces goes to SPACE through E-05; Earth IR and albedo enter only as absorbed fluxes (standard external-flux approximation, verify V-05)"},
+   {"id": "E-07", "name": "interface deposition", "form": "Q_src,i = sum over interface keys of w_key,i * Q_key; for every key: sum_i w_key,i + w_key,EXPORT + w_key,BOUNDARY = 1 exactly", "rule": "the weights w are registered inputs, or predicted by the producer and passed in the interface record; a key with a missing weight set is INCOMPLETE_EVIDENCE; weights are never fitted inside this model"},
+   {"id": "E-08", "name": "boundary conditions", "form": "SCI-A: Q_bc = G_sc,a (T_sc - T_a); SCI-B: Q_bc = q_sc,a(t) prescribed; SCI-C: spacecraft surfaces as enclosure members at registered T and eps; B_PPU_RF / B_FEED optional links: Q_bc = G_b,i (T_b - T_i)"},
+   {"id": "E-09", "name": "electromagnet winding load", "form": "FIXED_POWER mode: Q_coil = registered Q_hall_coil_X_W (steady or ZOH series). CONSTANT_CURRENT_R_OF_T mode: Q_coil = I^2 * R_ref * r(T) / r(T_ref), r from the registered copper resistivity relation inside its domain; evaluation outside the relation's domain gives OUT_OF_DOMAIN (no extrapolation)", "source": "registered relation copper_linear_resistance (NBS Handbook 100, pp. 3-4) and the Roeser ratio table in schemas/thermal_life/limits_v1.json (CX-10)"},
+   {"id": "E-10", "name": "steady-state solution", "form": "Newton-Raphson on R(T) = 0 (R_i = right-hand side of E-02) with the analytic Jacobian; backtracking line search on ||R||_2 (numerical aid only; the converged state is independent of it); stopping per NUM-01"},
+   {"id": "E-11", "name": "transient integration", "form": "implicit Euler on the enthalpy form: H_i(T_i^{n+1}) - H_i(T_i^n) = dt_n * RHS_i(t_{n+1}, T^{n+1}); every breakpoint of every registered time series is a step boundary and sources are zero-order-hold step values, so the input energy per step is exact; Newton per step (NUM-03); step control per NUM-04 / CONS-T2; formal order p = 1"},
+   {"id": "E-12", "name": "orbit handling", "form": "ORBIT_TRANSIENT_PERIODIC: E-11 over repeated orbits with time-resolved nu(t) and loads until CONS-T3; reports T_i(t) and per-orbit raw min / max / mean. ORBIT_AVERAGE_STEADY: E-02 with orbit-averaged loads (integral of load over the orbit divided by the period); reported as an orbit-mean-load steady state, never as the time mean or the extremes of the periodic solution (T^4 nonlinearity)"},
+   {"id": "E-13", "name": "interface-derived raw quantities", "form": "Sigma_dep,H = Q_hall_anode_W + Q_hall_wall_inner_W + Q_hall_wall_outer_W + Q_hall_pole_W + (1 - w_EXPORT) Q_hall_plasma_radiation_W + Q_hall_return_to_icp_W; P_hall_exported_W = P_hall_discharge_W - Sigma_dep,H - Q_hall_plume_to_icp_W; P_hall_unattributed_W = P_hall_discharge_W - P_hall_jet_W - Sigma_dep,H; Sigma_I = Q_icp_plasma_wall_W + Q_icp_coil_ohmic_W + Q_icp_match_W + Q_icp_extraction_W + Q_icp_radiation_W; Q_icp_boundary_W = P_icp_bus_W - Sigma_I", "rule": "these quantities are reported raw; P_hall_unattributed_W is deposited on no node by default (OQ-NPT-09)"},
+   {"id": "E-14", "name": "global energy statement", "form": "sum_i dH_i/dt = sum of deposited interface heat + sum Q_tc + sum Q_env - net radiation to SPACE (or B_FACILITY) - sum Q to B_SC - sum Q to B_PPU_RF links - sum Q to B_FEED links", "rule": "checked by CONS-S2 (steady) and CONS-T1 (transient)"}
+  ],
+  "link_types": {
+   "CONDUCTION": "registered material segment (E-03)",
+   "CONTACT": "registered joint (E-04)",
+   "LUMPED_G": "registered measured assembly conductance (E-04)",
+   "RADIATION": "enclosure exchange (E-05)",
+   "rule": "Conduction exists only where a link is registered; the topology record is the complete declaration and is hashed. Radiation-only paths are pairs that share an enclosure but no registered solid link (for example the anode and channel walls across the channel, coil-to-pole gaps that are not bonded, the H-1 front faces and the ICP, the vessel and an unbonded antenna). Whether a given pair is radiation-only is a design registration, never a default."
+  }
+ },
+
+ "heat_sources": {
+  "HS-00_energy_source_rule": "Each watt enters the model through the interface of the supply that powers it. Hall discharge supply -> IF-HALL-THERMAL-v1 discharge keys (including the discharge-current return heating at the neutralizer and Hall-plume interception on it). Hall magnet supplies -> IF-HALL-THERMAL-v1 coil keys. RF/ICP chain (generator, line, match, antenna, ICP plasma, collector bias) -> IF-ICP-THERMAL-v1. Thermal-control dissipation -> Q_thermal_control_W. Environment -> ENV inputs. No watt enters twice; the model creates no watt.",
+  "interface_record_format": {
+   "record_fields": ["interface_id", "interface_version", "producer_id", "producer_version", "producer_prereg_sha256", "case_id", "case_class", "supply_mode", "design_state_id", "operating_point_id", "time_basis (STEADY | ZOH_SERIES with breakpoints_s)", "keys {key: value_record}", "partitions {key: {receiving id: weight}} (when the producer predicts them)"],
+   "value_record": ["value (number or series)", "units", "status (EVALUATED | NOT_EVALUATED | INCOMPLETE_EVIDENCE | OUT_OF_DOMAIN | MODEL_ERROR)", "evidence_class", "source", "uncertainty", "applicability_domain", "validation_status"],
+   "rule": "A value_record missing any field is MODEL_ERROR (malformed). A key whose status is not EVALUATED propagates its status to the run (no zero-fill, rule 3). The producer owns key definitions; this record registers the consumer-side semantics. A mismatch found at integration is MODEL_ERROR and needs a versioned interface (v2), never a silent remap."
+  },
+  "IF-HALL-THERMAL-v1": {
+   "producers": "HallThruster.jl outputs through the bridge (hall_map_schema_v1 fields), the retained Hall-discharge kernels of thermal_life under their own parity contract, the coupled thrust / neutralization layer (SC-WP-03), the magnet model (SC-WP-05), or measured hardware data with an evidence record",
+   "admission_gate": "A map-derived value is accepted only from an ADMITTED transport-ensemble member's Hall-map point that is trustworthy and wall_life_trustworthy and carries the pinned HallThruster.jl commit (value_record additionally carries ensemble_member_id, hallthruster_commit, map_meta_sha256, trustworthy, wall_life_trustworthy; same gate as thermal_life G11). A screening candidate (sgb-screen-*) gives NOT_EVALUATED; a non-pinned commit gives MODEL_ERROR. The credible set is EMPTY today (GR-19), so every map-derived key is NOT_EVALUATED.",
+   "keys": [
+    {"id": "HK-01", "key": "P_hall_discharge_W", "units": "W", "role": "reference (identities IFH-3 / IFH-4); never deposited", "basis": "hall_map_schema_v1 discharge_power_W (computed)"},
+    {"id": "HK-02", "key": "P_hall_jet_W", "units": "W", "role": "reference: lower bound of the exported directed kinetic power; never deposited", "basis": "anode_eff x discharge_power_W = T^2 / (2 mdot_anode) (hall_map_schema_v1 anode_eff definition). By the Cauchy-Schwarz inequality T^2 / (2 mdot) does not exceed the kinetic power of a beam with velocity spread and divergence, so IFH-3 is a necessary condition."},
+    {"id": "HK-03", "key": "Q_hall_anode_W", "units": "W", "receiving": {"H1_ANODE": "1"}, "basis": "measured, or 2 I_d T_e,anode (Goebel & Katz 2008 Eq. 7.3-53, registered relation anode_heat) via the retained kernel; T_e,anode is NOT a hall_map_schema_v1 field (no producer today)"},
+    {"id": "HK-04", "key": "Q_hall_wall_inner_W", "units": "W", "receiving": {"H1_WALL_IN": "1"}, "basis": "e Gamma_i eps_i A_wall + e Gamma_i 2 T_e,w / (1 - gamma) A_wall (registered relations wall_ion_heat, wall_electron_heat) from wall_ion_flux_m2s and wall_ion_energy_eV (schema, computed; channel-averaged over both walls); T_e,w and gamma must come from the same solve and are NOT schema fields; the inner / outer split is a registered input unless the producer resolves it"},
+    {"id": "HK-05", "key": "Q_hall_wall_outer_W", "units": "W", "receiving": {"H1_WALL_OUT": "1"}, "basis": "as HK-04"},
+    {"id": "HK-06", "key": "Q_hall_pole_W", "units": "W", "receiving": "registered partition over {H1_POLE_IN, H1_POLE_OUT}", "basis": "plasma particle heat to exposed pole faces / covers; no hall_map_schema_v1 field (no producer today); measured or registered parametric only"},
+    {"id": "HK-07", "key": "Q_hall_plasma_radiation_W", "units": "W", "receiving": "registered partition over {H1_ANODE, H1_WALL_IN, H1_WALL_OUT, H1_POLE_IN, H1_POLE_OUT, ICP nodes facing the exit, EXPORT}", "basis": "optical / UV emission of the Hall plasma (electron excitation losses); not a hall_map_schema_v1 field (no producer today)"},
+    {"id": "HK-08", "key": "Q_hall_return_to_icp_W", "units": "W", "receiving": {"N_COLLECTOR": "1 (or a registered partition over ICP nodes when N_COLLECTOR is absent)"}, "basis": "heat deposited at the neutralizer by the Hall discharge current closing through it (ICD ICP-22, ICP-43 Q_coll); powered by the discharge supply; producer = coupled thrust / neutralization layer with the NP-ICP sheath state; how the HallThruster.jl discharge power spans this coupling is verify V-12; no producer today"},
+    {"id": "HK-09", "key": "Q_hall_plume_to_icp_W", "units": "W", "receiving": "registered partition over {N_VESSEL, N_COLLECTOR, N_HOUSING, N_MOUNT}, or the plume-interception result of K-P3-RAYS with a measured angular current distribution (P3-H-03)", "basis": "Hall-plume ion power intercepted by the ICP structure (ICD ICP-29; A9.14 ICPQ-09: stays inside the system boundary, never corrected away); no producer today"},
+    {"id": "HK-10", "key": "Q_hall_coil_inner_W | Q_hall_coil_outer_W | Q_hall_coil_trim_W", "units": "W", "receiving": {"H1_COIL_IN / H1_COIL_OUT / H1_COIL_TRIM": "1"}, "mode": "FIXED_POWER", "basis": "SC-WP-05 magnet model at a stated coil temperature, or measured"},
+    {"id": "HK-11", "key": "I_hall_coil_X_A, R_hall_coil_X_ref_ohm, T_hall_coil_X_ref_K (X in inner, outer, trim)", "units": "A, ohm, K", "receiving": {"H1_COIL_X": "I^2 R(T) by E-09"}, "mode": "CONSTANT_CURRENT_R_OF_T", "basis": "SC-WP-05 magnet design (constant-current drive)"}
+   ],
+   "mode_key": "magnet_load_mode in {FIXED_POWER, CONSTANT_CURRENT_R_OF_T}, registered per case",
+   "checks": [
+    {"id": "IFH-1", "check": "every required key present with a complete value_record; units as registered", "on_failure": "MODEL_ERROR (malformed) / INCOMPLETE_EVIDENCE (TBD) / NOT_EVALUATED (governed absence)"},
+    {"id": "IFH-2", "check": "every Q / P / I / R value >= 0", "on_failure": "MODEL_ERROR"},
+    {"id": "IFH-3", "check": "Sigma_dep,H <= P_hall_discharge_W - P_hall_jet_W + eps_if", "on_failure": "MODEL_ERROR (interface energy inconsistency; never tuned)"},
+    {"id": "IFH-4", "check": "Sigma_dep,H + Q_hall_plume_to_icp_W <= P_hall_discharge_W + eps_if", "on_failure": "MODEL_ERROR"}
+   ],
+   "status_today": "NOT_EVALUATED for every absolute value (credible Hall transport set EMPTY; no measured H-1 data). Registered parametric values are allowed in SYNTHETIC_VERIFICATION and PARAMETRIC cases only."
+  },
+  "IF-ICP-THERMAL-v1": {
+   "producer": "NP-ICP-NEUTRALIZER (parallel preregistration, LANE C; A9.29 sec. 4 'couple RF/ICP losses into the cathodeless thermal model')",
+   "keys": [
+    {"id": "IK-01", "key": "Q_icp_plasma_wall_W", "units": "W", "consumer_semantics": "heat delivered by the RF-sustained ICP plasma to the module's internal surfaces (particle and sheath heating)", "receiving": "per-surface split predicted by NP-ICP when available, else registered partition f_pw over {N_VESSEL, N_COLLECTOR, N_ANTENNA (only if plasma-exposed), N_HOUSING}; sum = 1"},
+    {"id": "IK-02", "key": "Q_icp_coil_ohmic_W", "units": "W", "consumer_semantics": "RF ohmic dissipation in the antenna / coil conductor and, where the producer includes them, induced (eddy-current) losses in nearby conductive parts", "receiving": "N_ANTENNA, with registered induced shares to N_COLLECTOR / N_HOUSING when declared (context: the published analog attributes most RF power to electrode heating by eddy currents, CX-14 TK-27; context only, never scaled)"},
+    {"id": "IK-03", "key": "Q_icp_match_W", "units": "W", "consumer_semantics": "loss in the matching network", "receiving": "N_MATCH when match_colocated = true; otherwise booked at B_PPU_RF (not solved)"},
+    {"id": "IK-04", "key": "Q_icp_extraction_W", "units": "W", "consumer_semantics": "power carried by the extracted electrons into the Hall plume (deposited downstream, not on the neutralizer)", "receiving": "EXPORT: deposited on no node; leaves the control volume and is reported raw in P_exported_W. Re-deposition on H-1, ICP or spacecraft surfaces is not modelled in v1 (A-05)."},
+    {"id": "IK-05", "key": "Q_icp_radiation_W", "units": "W", "consumer_semantics": "optical / UV power radiated by the ICP plasma (line and continuum emission); not the IR emission of solid surfaces, which E-05 computes", "receiving": "registered partition f_rad over {N_VESSEL, N_ANTENNA, N_COLLECTOR, N_HOUSING, H1_POLE_IN, H1_POLE_OUT, EXPORT}; never routed through the gray IR enclosure"},
+    {"id": "IK-06", "key": "P_icp_rf_forward_W", "units": "W", "consumer_semantics": "forward RF power at the generator-side reference plane (A9.2 rf_measurement_reference: P_forward is never plasma power)", "receiving": "none: reference for IFI-3 / IFI-5 only"},
+    {"id": "IK-07", "key": "P_icp_bus_W", "units": "W", "consumer_semantics": "ICP electrical demand at the spacecraft DC boundary (bus_power_boundary_a9_v2; icp_rf_source at plane generator_dc_input, plus the other ICP slots the producer declares)", "receiving": "none: reference; Q_icp_boundary_W = P_icp_bus_W - Sigma_I is booked at B_PPU_RF and reported raw"}
+   ],
+   "checks": [
+    {"id": "IFI-1", "check": "all seven keys present with complete value_records; units W", "on_failure": "MODEL_ERROR / INCOMPLETE_EVIDENCE / NOT_EVALUATED as IFH-1"},
+    {"id": "IFI-2", "check": "every value >= 0", "on_failure": "MODEL_ERROR"},
+    {"id": "IFI-3", "check": "P_icp_rf_forward_W <= P_icp_bus_W + eps_if", "on_failure": "MODEL_ERROR"},
+    {"id": "IFI-4", "check": "Sigma_I <= P_icp_bus_W + eps_if", "on_failure": "MODEL_ERROR"},
+    {"id": "IFI-5", "check": "Sigma_I <= P_icp_rf_forward_W + eps_if, applied only when the producer declares rf_powered_only = true for the five heat / export keys", "on_failure": "MODEL_ERROR"}
+   ],
+   "alignment_items": "the bus slots inside P_icp_bus_W, the home of the collector-bias supply power, whether Q_icp_match_W includes the line between generator and match, the exclusion of Hall-powered heat (HK-08, HK-09) from these keys, and who predicts the f_pw / f_rad partitions are open (OQ-NPT-02)",
+   "status_today": "NOT_EVALUATED (NP-ICP-NEUTRALIZER not implemented or admitted; P1 / P2 evidence absent; ICP45 NOT_EVALUATED; RF ratings TBD_AFTER_IMPEDANCE_MAP)"
+  },
+  "HS-TC_thermal_control": {"key": "Q_thermal_control_W", "units": "W", "receiving": "registered per node", "rule": "registered schedule (steady or ZOH series) for the bus slot thermal_control; no control law in v1 (A-09). Named after the bus slot: the token 'heater' is a forbidden load name in crates/** (CI_PLAN principle 6; CF-05)."},
+  "HS-ENV_environment": {"rule": "registered boundary inputs per external surface and case (E-06): S, a, q_OLR, F_sun, F_alb, F_earth, nu(t), rho, V_rel, alpha_E, A_ram, T_space. Altitude domain 180-230 km through the 196 frozen design states (design_states_v2). No environment value is set in this record.", "status_today": "flight view factors and attitude NOT_EVALUATED (no spacecraft ICD); S / a / q_OLR candidate source registered (applicability verify V-09)"}
+ },
+
+ "energy_boundaries": [
+  {"id": "EB-01", "inside": "The control volume holds the solid parts of the Hall thruster body (anode, channel walls, pole pieces, magnetic circuit, back plate, coils), the RF/ICP neutralizer module (vessel, antenna, collector, housing, co-located match, mounting structure), the dedicated radiators and every registered link between them."},
+  {"id": "EB-02", "outside": "Outside the volume: the Hall discharge plasma and the ICP plasma (their physics stays in HallThruster.jl and NP-ICP-NEUTRALIZER; they enter only as interface keys); the plume and beam; the PPU and RF generator (B_PPU_RF); the spacecraft (B_SC); the upstream chain (intake, filter, compressor, plenum, valves, Xe tank: SC-WP-02; only registered B_FEED links); the environment (ENV, SPACE)."},
+  {"id": "EB-03", "crossing_terms": "In: deposited interface heat, Q_thermal_control_W, absorbed environment, inflow through boundary links. Out: net radiation to SPACE / B_FACILITY, conduction to B_SC / B_PPU_RF / B_FEED. Exported, never deposited: P_hall_exported_W (incl. the jet), Q_icp_extraction_W, the EXPORT shares of Q_hall_plasma_radiation_W and Q_icp_radiation_W. Booked at the boundary, not solved: Q_icp_boundary_W, Q_icp_match_W when not co-located, supply losses declared by producers."},
+  {"id": "EB-04", "text": "There is no electrical model inside. Electrical powers (P_hall_discharge_W, P_icp_bus_W, P_icp_rf_forward_W) are references for the interface identities only."},
+  {"id": "EB-05", "text": "System-level reconciliation of booked flows with the SC-WP-05 bus ledger is CONS-L1 (CLAUDE.md rule 4), outside the thermal equations."}
+ ],
+
+ "spacecraft_interface": {
+  "options": [
+   {"id": "SCI-A", "kind": "CONDUCTANCE_TO_FIXED_T", "form": "Q = G_sc,a (T_sc - T_a) at each registered attachment node a (H1_BACKPLATE through the isolated mount, N_MOUNT, R_HALL, R_ICP as registered)", "inputs": "G_sc,a [W/K], T_sc [K] per case, each a registered record"},
+   {"id": "SCI-B", "kind": "PRESCRIBED_FLUX", "form": "Q = q_sc,a(t) prescribed at each attachment (for example from a host ICD stating an interface heat flow); the attachment temperature is then a model output", "inputs": "q_sc,a [W] per case"},
+   {"id": "SCI-C", "kind": "RADIATIVE_VIEW_TO_SPACECRAFT", "form": "host spacecraft surfaces as enclosure members at registered temperature and emittance (host geometry)", "inputs": "host surface areas, view factors, eps, T"}
+  ],
+  "outputs": "Q_sc_interface_W and the temperature of every attachment node, raw",
+  "status_today": "No host-spacecraft thermal ICD exists: FLIGHT_CONDITIONAL runs are NOT_EVALUATED for the spacecraft interface. The owner mount cases (owner row 85; A9.12 OQ-A907-06; P3-M-05) are candidate registered boundary cases pending OQ-NPT-01. The owner mount-heat allocations 25 / 50 / 100 W are assessment allocations and never enter the equations (EX-09)."
+ },
+
+ "registered_inputs": {
+  "record_format": ["id", "quantity", "value | bounds | table (with interpolation rule)", "units", "source (path + sha256, or citation + locator)", "evidence_class (measured | digitized | inferred | reconstructed | model-derived | assumed | owner-allocation | published analog | SYNTHETIC_TEST_DATA_NOT_EVIDENCE)", "uncertainty", "applicability_domain (incl. temperature validity range)", "validation_status", "status (REGISTERED | TBD | TBD_AFTER_EVIDENCE | OPEN | REFUSED | NOT_EVALUATED)"],
+  "rules": [
+   "Every property, geometry, view factor, conductance, partition, environment value and boundary value is a registered input record (CLAUDE.md rules 6 and 10). There is no default.",
+   "A missing field is MODEL_ERROR. A TBD / TBD_AFTER_EVIDENCE / OPEN record needed by the case gives INCOMPLETE_EVIDENCE. A REFUSED upstream value is never reconstructed.",
+   "SYNTHETIC_TEST_DATA_NOT_EVIDENCE records may not be mixed with evidence records in one case (MODEL_ERROR).",
+   "Owner-allocation records may appear only where a decision record names them as inputs; none is a model input in v1."
+  ],
+  "classes": [
+   {"id": "RI-GEOM", "content": "areas, volumes, lengths, masses", "future_suppliers": "H-1 frozen geometry (PENDING), P3-G-01..08 (TBD), ICP module drawing (ICD ICP-07), SC-WP-07 BOM", "status_today": "TBD"},
+   {"id": "RI-MAT", "content": "k(T), c_p(T), density, copper resistivity relation; each with a temperature validity range", "future_suppliers": "P4 property records (anode / collector candidates; datasheet bulk, typical, no-plasma domain), sourced ceramic / soft-magnetic / conductor records; registered relations in schemas/thermal_life/limits_v1.json", "status_today": "anode OPEN, collector OPEN, other materials not selected"},
+   {"id": "RI-OPT", "content": "eps_IR(T), alpha_solar per surface and finish", "future_suppliers": "P3-R-01..05 (TBD / analog), coating records (A9.12 OQ-A907-08)", "status_today": "TBD"},
+   {"id": "RI-COND", "content": "contact conductances, isolator / strap / bracket conductances", "future_suppliers": "P3-K-01..07 (TBD / assumed analog)", "status_today": "TBD"},
+   {"id": "RI-VF", "content": "view-factor sets per enclosure", "future_suppliers": "closed forms (Howell catalog), K-P3-RAYS under its parity contract", "status_today": "geometry TBD"},
+   {"id": "RI-ENV", "content": "S, a, q_OLR, F_sun, F_alb, F_earth, nu(t), rho, V_rel, alpha_E, A_ram, T_space", "future_suppliers": "NASA/TM-2001-211221 (registered EXT-NASA-TM2001), SC-WP-01 frozen states, SC-WP-09 propagation, host ICD", "status_today": "flight attitude / view factors TBD"},
+   {"id": "RI-SC", "content": "spacecraft interface records (SCI-A / B / C)", "future_suppliers": "host-spacecraft thermal ICD", "status_today": "NOT_EVALUATED (no ICD)"},
+   {"id": "RI-PART", "content": "interface partitions (f_pw, f_rad, induced shares, Hall pole / radiation / plume shares, inner / outer wall split)", "future_suppliers": "NP-ICP, coupled neutralization layer, K-P3-RAYS, bench evidence", "status_today": "TBD"},
+   {"id": "RI-LOAD", "content": "IF-HALL-THERMAL-v1 and IF-ICP-THERMAL-v1 records; Q_thermal_control_W", "future_suppliers": "see heat_sources", "status_today": "NOT_EVALUATED"},
+   {"id": "RI-CASE", "content": "case_class, configuration, supply_mode, design_state_id, time basis, initial temperatures T_init, solver mode (STEADY | ORBIT_AVERAGE_STEADY | TRANSIENT | ORBIT_TRANSIENT_PERIODIC), magnet_load_mode, match_colocated, anode / collector candidate ids", "future_suppliers": "case builders", "status_today": "defined here"},
+   {"id": "RI-NUM", "content": "numerical settings", "future_suppliers": "this preregistration (numerics, conservation)", "status_today": "FIXED"}
+  ],
+  "case_classes": [
+   {"id": "SYNTHETIC_VERIFICATION", "rule": "only SYNTHETIC_TEST_DATA_NOT_EVIDENCE inputs; outputs never quoted as physical values"},
+   {"id": "PARAMETRIC", "rule": "registered parametric loads / geometry; outputs labelled PARAMETRIC_NOT_A_PREDICTION; never an absolute flight result"},
+   {"id": "BENCH_REPLICA", "rule": "ground hall_icp_neutralizer test article (never hall_c1_reference); B_FACILITY sink measured per run; calibration / validation use only"},
+   {"id": "FLIGHT_CONDITIONAL", "rule": "flight configuration with every input registered; results conditional on the listed evidence classes; today NOT_EVALUATED"}
+  ]
+ },
+
+ "outputs": {
+  "rule": "Raw physics only. No margin, limit, PASS / FAIL, compliance label, requirement threshold or HC status. No output key starts with chk_, rfp_ or ic_, and none is named feasible, margin, limit, pass, fail or compliant (FT-17). Material temperature limits and the HC-06 50 K margin are applied by assessment to these raw temperatures.",
+  "items": [
+   {"id": "O-01", "key": "run_status", "content": "CONVERGED | MODEL_ERROR | OUT_OF_DOMAIN | NOT_EVALUATED | INCOMPLETE_EVIDENCE (precedence in status_vocabulary)"},
+   {"id": "O-02", "key": "status_reasons", "content": "every reason found: [{code, node | key | input id, detail}]"},
+   {"id": "O-03", "key": "T_node_K", "content": "steady node temperatures (STEADY, ORBIT_AVERAGE_STEADY)"},
+   {"id": "O-04", "key": "T_node_K_series, t_s", "content": "transient node temperatures at every accepted step"},
+   {"id": "O-05", "key": "T_node_orbit_stats_K", "content": "per-orbit raw min / max / mean of the periodic solution (ORBIT_TRANSIENT_PERIODIC)"},
+   {"id": "O-06", "key": "dH_node_J", "content": "stored-energy change of every node since the initial state (transient)"},
+   {"id": "O-07", "key": "Q_link_W", "content": "signed heat flow of every conduction / contact / lumped link"},
+   {"id": "O-08", "key": "Q_rad_net_W", "content": "net radiative gain per surface and per node; optional pairwise exchange"},
+   {"id": "O-09", "key": "Q_env_abs_W", "content": "absorbed environment per external surface by component (solar, albedo, olr, aero)"},
+   {"id": "O-10", "key": "Q_to_sink_W", "content": "net radiation to SPACE (or B_FACILITY) per node"},
+   {"id": "O-11", "key": "Q_boundary_W", "content": "Q_sc_interface_W per attachment, B_PPU_RF booked heat (Q_icp_boundary_W, Q_icp_match_W when not co-located, link flows), B_FEED link flows"},
+   {"id": "O-12", "key": "Q_source_node_W", "content": "deposited interface heat per node and key, and Q_thermal_control_W per node"},
+   {"id": "O-13", "key": "P_exported_W", "content": "P_hall_exported_W, P_hall_unattributed_W, Q_icp_extraction_W, EXPORT shares of Q_hall_plasma_radiation_W and Q_icp_radiation_W"},
+   {"id": "O-14", "key": "energy_balance", "content": "per-node residual_W, global residual_W, Q_scale_W, transient energy-integral residual_J (cumulative and worst step)"},
+   {"id": "O-15", "key": "convergence", "content": "Newton iterations, last max |dT|, step-refinement max |dT| (u_num,t), periodic max |dT|, accepted step count"},
+   {"id": "O-16", "key": "domain_diagnostics", "content": "Biot number per node, property-domain evaluations, internal-gradient estimate Q_i L_c,i / (k_i A_i) per node"},
+   {"id": "O-17", "key": "provenance", "content": "model id and version, prereg sha256, implementation = rust, rust_commit, input-set sha256, interface record sha256s, architecture / config / model-set / design-state-set hashes (SC-WP-13), case_class, supply_mode, design_state_id, ensemble_member_id when Hall heat comes from a map, validation_status = NOT_VALIDATED"}
+  ],
+  "on_refusal": "For MODEL_ERROR, NOT_EVALUATED and INCOMPLETE_EVIDENCE no temperature or heat flow is emitted as a result. For OUT_OF_DOMAIN no temperature is emitted as a result; domain_diagnostics names the node, criterion and value. A half-converged or extrapolated state is never emitted (rule 3)."
+ },
+
+ "status_vocabulary": {
+  "values": ["CONVERGED", "MODEL_ERROR", "OUT_OF_DOMAIN", "NOT_EVALUATED", "INCOMPLETE_EVIDENCE"],
+  "definitions": [
+   {"id": "ST-01", "status": "MODEL_ERROR", "when": "malformed record, interface identity violated (IFH / IFI), view-factor set inconsistent, floating node, forbidden identifier, refused configuration or candidate, non-convergence (NUM caps)"},
+   {"id": "ST-02", "status": "NOT_EVALUATED", "when": "determining evidence is absent by governance: no admitted Hall member (credible set EMPTY), NP-ICP not admitted, no host-spacecraft ICD, an interface key with status NOT_EVALUATED"},
+   {"id": "ST-03", "status": "INCOMPLETE_EVIDENCE", "when": "a registered input needed by the case is TBD / TBD_AFTER_EVIDENCE / OPEN / REFUSED, or a CONDITIONAL node is absent without a registered re-mapping"},
+   {"id": "ST-04", "status": "OUT_OF_DOMAIN", "when": "a property, relation or interface value would be used outside its validity range, Bi > 0.1 at a node, a design state outside design_states_v2, an uninstallable variant (active_cooling, icp_assist_magnet)"},
+   {"id": "ST-05", "status": "CONVERGED", "when": "solved, every CONS criterion met, every domain check met"}
+  ],
+  "precedence": "Checks run in this order and every reason is recorded: (1) record and topology validation -> MODEL_ERROR; (2) evidence availability -> NOT_EVALUATED, then INCOMPLETE_EVIDENCE; (3) solve -> MODEL_ERROR if NUM caps are reached; (4) domain checks -> OUT_OF_DOMAIN; else CONVERGED. run_status is the first status reached in the order MODEL_ERROR, NOT_EVALUATED, INCOMPLETE_EVIDENCE, OUT_OF_DOMAIN, CONVERGED."
+ },
+
+ "assumptions": [
+  {"id": "A-01", "text": "Nodes are isothermal lumped bodies; validity is checked by the Biot criterion (D-02)."},
+  {"id": "A-02", "text": "Surfaces are opaque, gray and diffuse in the IR band. Environment absorption uses the solar-band absorptance; IR absorption and emission use the IR-band emittance (two-band treatment, verify V-05, V-15). Room-temperature emittance data are usable only inside their registered temperature range."},
+  {"id": "A-03", "text": "The Hall channel plasma and the ICP plasma are transparent in the IR enclosure. Their optical emission enters only as interface source terms with registered partitions (verify V-17)."},
+  {"id": "A-04", "text": "No convection and no gas conduction (orbit vacuum; bench facility at registered high vacuum, D-04). Propellant enthalpy flow through the anode and the ICP vessel is neglected in v1."},
+  {"id": "A-05", "text": "Exported power (plume, beam, extracted electrons, escaping plasma radiation) is not re-deposited on H-1, ICP or spacecraft surfaces, except through the registered key Q_hall_plume_to_icp_W."},
+  {"id": "A-06", "text": "Interface heat values are taken as given. The thermal model never re-derives plasma physics and never fits a plasma quantity."},
+  {"id": "A-07", "text": "Time-varying inputs are zero-order-hold series with registered breakpoints."},
+  {"id": "A-08", "text": "Properties of a node are evaluated at the node temperature. A Kirchhoff-transformed link takes the two node temperatures as its end temperatures; this is exact for the link and an approximation of lumping."},
+  {"id": "A-09", "text": "No thermostat or control law in v1: Q_thermal_control_W is a registered schedule."},
+  {"id": "A-10", "text": "Passive thermal architecture only (ICD ICP-38 'passive (proposed)'). The bus variant active_cooling gives OUT_OF_DOMAIN."},
+  {"id": "A-11", "text": "Geometry is fixed: view factors are registered inputs with no thermal distortion. An opening is not a surface."},
+  {"id": "A-12", "text": "Eclipse (umbra / penumbra), Earth-IR and albedo factors come from SC-WP-09 and the registered attitude; the model computes no orbit geometry."},
+  {"id": "A-13", "text": "The deep-space sink temperature T_space is a registered input (OQ-NPT-07)."},
+  {"id": "A-14", "text": "Electrical isolation hardware enters only through registered conductances. The only electro-thermal coupling inside the model is the coil R(T) of E-09."},
+  {"id": "A-15", "text": "Contact conductances are temperature-independent unless the registered record states a temperature dependence."},
+  {"id": "A-16", "text": "Material and surface properties are those of the registered record. Ageing, atomic-oxygen exposure, sputter deposits and erosion are not modelled (SC-WP-08 owns them); end-of-life property sets are registered case inputs."},
+  {"id": "A-17", "text": "DC magnet fields cause no eddy heating. RF induced heating in conductive parts enters only through the Q_icp_coil_ohmic_W partition."}
+ ],
+
+ "domains": [
+  {"id": "D-01", "domain": "property validity", "rule": "Every property record carries [T_min, T_max]. An evaluation outside it gives OUT_OF_DOMAIN. There is no extrapolation and no clamping."},
+  {"id": "D-02", "domain": "lumped capacitance (Biot)", "rule": "Bi_i = h_eff,i * L_c,i / k_i <= 0.1, with L_c,i = V_i / A_s,i and h_eff,i = (sum of link conductances of node i + sum over its radiating surfaces of 4 eps sigma T_i^3 A) / A_s,i, evaluated at the solution. Violation gives OUT_OF_DOMAIN with the node id; the remedy is a registered subdivision (refinement_rule). Threshold source: Incropera & DeWitt (verify V-01). SYNTHETIC_VERIFICATION cases are exempt and labelled BIOT_NOT_APPLICABLE_SYNTHETIC."},
+  {"id": "D-03", "domain": "radiation model", "rule": "eps / alpha records must cover the node temperatures (D-01). A record flagged non-gray inside a band is refused unless a two-band split is registered."},
+  {"id": "D-04", "domain": "vacuum", "rule": "BENCH_REPLICA cases register the facility pressure and, before any data, the criterion under which A-04 holds for that facility. Otherwise OUT_OF_DOMAIN."},
+  {"id": "D-05", "domain": "operating states", "rule": "Configuration hall_icp_neutralizer. supply_mode in {AIR_PRIMARY, XE_CONTINGENCY, NON_FIRING} for FLIGHT_CONDITIONAL; bench gases (e.g. BENCH_AR_ENGINEERING_GROUND_ONLY, N2) only in BENCH_REPLICA. Design state in design_states_v2 (180-230 km, 196 states). Variants active_cooling and icp_assist_magnet are outside v1. Otherwise OUT_OF_DOMAIN."},
+  {"id": "D-06", "domain": "interface values", "rule": "A key with status OUT_OF_DOMAIN propagates OUT_OF_DOMAIN; with NOT_EVALUATED, NOT_EVALUATED."},
+  {"id": "D-07", "domain": "topology and view factors", "rule": "Every solved node has a conduction or radiation path to a sink or boundary, else MODEL_ERROR (floating node). Each enclosure satisfies |sum_l F_kl - 1| <= 1e-9 for every k and |A_k F_kl - A_l F_lk| <= 1e-9 * max(A_k F_kl, A_l F_lk) for every pair, else MODEL_ERROR; symmetrization is the producer's registered step, never silent here."},
+  {"id": "D-08", "domain": "steady-state convergence", "rule": "NUM-01 and CONS-S1 / CONS-S2."},
+  {"id": "D-09", "domain": "time handling", "rule": "Peak and minimum temperatures come only from TRANSIENT or ORBIT_TRANSIENT_PERIODIC runs. ORBIT_AVERAGE_STEADY yields orbit-mean-load temperatures only (E-12). The ratio of the largest node time constant to the orbit period is reported raw."},
+  {"id": "D-10", "domain": "temperature range", "rule": "There is no global range; the valid range of a run is the intersection of the property validity ranges it uses (D-01)."}
+ ],
+
+ "numerics": [
+  {"id": "NUM-01", "rule": "Steady Newton stops when CONS-S1 and CONS-S2 hold and the last max |dT| <= 1e-8 K. Cap: 100 iterations, then MODEL_ERROR."},
+  {"id": "NUM-02", "rule": "The initial guess is the registered case input T_init (no hidden default)."},
+  {"id": "NUM-03", "rule": "Per transient step: Newton stops when the last max |dT| <= 1e-9 K (quadratic convergence leaves a round-off-level step residual); stored energy is evaluated relative to the initial state to limit round-off. Cap: 50 iterations, then the step is halved. CONS-T1 is the gate on the accumulated result."},
+  {"id": "NUM-04", "rule": "Step control by step doubling against CONS-T2. Cap: 20 successive halvings of a step, then MODEL_ERROR. The step sequence is deterministic."},
+  {"id": "NUM-05", "rule": "Periodic orbits: at most 200 orbits to meet CONS-T3, then MODEL_ERROR."},
+  {"id": "NUM-06", "rule": "IEEE-754 binary64. Reductions run in registered node-id order. No result depends on thread count."},
+  {"id": "NUM-07", "rule": "Linear solves: dense LU with partial pivoting (the network is small)."},
+  {"id": "NUM-08", "definition": "Q_scale = sum_i |Q_src,i| + sum_i |Q_tc,i| + sum_s |Q_env,s| + sum_b |Q_bc,b| + sum over external surfaces of |net radiation to the sink|, at the evaluated state."},
+  {"id": "NUM-09", "definition": "eps_if = 1e-6 * (reference power of the identity) + 1e-9 W; the reference is P_hall_discharge_W for IFH-3 / IFH-4, P_icp_bus_W for IFI-3 / IFI-4 and P_icp_rf_forward_W for IFI-5."}
+ ],
+
+ "conservation": [
+  {"id": "CONS-S1", "name": "steady per-node residual", "criterion": "|R_i| <= 1e-9 * Q_scale + 1e-9 W for every solved node"},
+  {"id": "CONS-S2", "name": "steady global balance", "criterion": "|sum of deposited interface heat + sum Q_tc + sum Q_env - net radiation to the sink - sum boundary outflows| <= 1e-9 * Q_scale + 1e-9 W"},
+  {"id": "CONS-T1", "name": "transient energy integral (stored energy change = integrated net heat)", "criterion": "for every step and cumulatively from t0: |dH_total - sum_n dt_n * Q_net,n| <= 1e-8 * max(sum_n dt_n * Q_abs,n, |dH_total|) + 1e-6 J, with dH_total = sum_i (H_i(T_i(t)) - H_i(T_i(t0))) evaluated exactly from the registered c_p forms and Q_net,n the scheme-consistent net inflow of step n (Q_abs,n the sum of magnitudes)"},
+  {"id": "CONS-T2", "name": "time-step refinement", "criterion": "max over nodes and accepted output times of |T_dt - T_dt/2| <= 1e-2 K; the value is reported as u_num,t"},
+  {"id": "CONS-T3", "name": "periodic steady state", "criterion": "max over nodes and orbit phase of |T_i(t + P) - T_i(t)| <= 1e-3 K"},
+  {"id": "CONS-I1", "name": "interface identities", "criterion": "IFH-3, IFH-4, IFI-3, IFI-4, IFI-5 with eps_if (NUM-09)"},
+  {"id": "CONS-I2", "name": "deposition bookkeeping", "criterion": "sum over keys of (deposited + exported + boundary-booked) = sum of interface key inputs, within 1e-12 relative + 1e-12 W (E-07 weights sum to 1)"},
+  {"id": "CONS-L1", "name": "system energy ledger (CLAUDE.md rule 4)", "criterion": "the thermal model's booked flows reconcile with the SC-WP-05 bus ledger in the system energy-ledger check with residual < 2 %; evaluated by that system check, not inside the thermal equations"}
+ ],
+
+ "analytic_limiting_cases": {
+  "rule": "Software verification criteria for the Rust implementation (CI_PLAN principle 9). They are not model outputs and not gate statuses. Every vector is SYNTHETIC_TEST_DATA_NOT_EVIDENCE. sigma = 5.670374419e-8 W m^-2 K^-4. Every case must also meet the CONS criteria that apply to it.",
+  "cases": [
+   {"id": "AL-01", "case": "single isothermal radiator", "setup": "one node, one external surface (area A, emittance eps, F = 1 to SPACE at T_s), constant load Q, steady", "closed_form": "T = (Q / (eps sigma A) + T_s^4)^(1/4)", "vectors": {"Q_W": [1, 100, 1000], "eps": [0.1, 0.5, 1.0], "A_m2": [0.01, 0.1, 1.0], "T_s_K": [0, 300]}, "pass_criterion": "|T - T_exact| <= 1e-6 K for all 54 combinations"},
+   {"id": "AL-02", "case": "two-node series conduction", "setup": "node 1 with load Q, LUMPED_G link G1 to node 2, LUMPED_G link G2 from node 2 to a fixed boundary T_b, no radiation, steady", "closed_form": "T2 = T_b + Q / G2; T1 = T2 + Q / G1 (series resistance 1/G1 + 1/G2); both link flows = Q", "vectors": {"Q_W": [1, 10, 50], "G1_W_per_K": [0.1, 1, 10], "G2_W_per_K": [0.1, 1, 10], "T_b_K": [250, 300]}, "pass_criterion": "|dT| <= 1e-6 K at both nodes; |link flow - Q| <= 1e-9 * Q + 1e-9 W"},
+   {"id": "AL-02b", "case": "conduction with linear k(T) (Kirchhoff transform)", "setup": "node with load Q, CONDUCTION link of shape factor S to a boundary T_b = T0, k(T) = k0 (1 + beta (T - T0)), steady", "closed_form": "x = T1 - T0; Q = S k0 (x + beta x^2 / 2); x = Q / (S k0) for beta = 0, else x = (-1 + sqrt(1 + 2 beta Q / (S k0))) / beta", "vectors": {"Q_W": [1, 10], "S_m": [0.1, 1.0], "k0_W_per_m_K": [10, 100], "beta_per_K": [-0.001, 0, 0.001], "T0_K": [300]}, "pass_criterion": "|dT| <= 1e-6 K"},
+   {"id": "AL-03", "case": "first-order transient", "setup": "node of constant capacity C, LUMPED_G link G to boundary T_b, initial T0, step load Q at t = 0, integrate to 10 tau", "closed_form": "T(t) = T_inf + (T0 - T_inf) exp(-t / tau), T_inf = T_b + Q / G, tau = C / G", "vectors": {"C_J_per_K": [100, 1000], "G_W_per_K": [0.5, 5], "Q_W": [0, 100], "T0_K": [250, 350], "T_b_K": [300]}, "pass_criterion": "(a) with dt = tau / 1000: max over t of |T - T_exact| <= 1e-3 * |T_inf - T0|; (b) observed order p_obs = log2(e(dt) / e(dt / 2)) with dt = tau / 100 satisfies |p_obs - 1| <= 0.1; (c) CONS-T1 at every step"},
+   {"id": "AL-04", "case": "radiative two-surface enclosure", "setup": "closed enclosure of two gray surfaces with F11 = 1 - F12, F12 and A1 / A2 given; (a) both temperatures prescribed; (b) surface 1 on a node with load Q, surface 2 on a fixed boundary T2", "closed_form": "Q12 = sigma (T1^4 - T2^4) / ((1 - eps1) / (eps1 A1) + 1 / (A1 F12) + (1 - eps2) / (eps2 A2)); concentric cylinders / parallel plates: F12 = 1; sphere patches: F12 = A2 / (A1 + A2)", "vectors": {"eps1": [0.05, 0.5, 1.0], "eps2": [0.05, 0.5, 1.0], "geometry": ["concentric, A1 = 0.1 m2, A1/A2 in {0.1, 0.5, 1.0}, F12 = 1", "sphere split into two patches, A1 = 0.1 m2, A2 in {0.1, 0.4} m2, F12 = A2 / (A1 + A2)"], "prescribed_T1_T2_K": [[400, 300], [300, 400], [1000, 3]], "loaded_Q_W": [10, 100], "loaded_T2_K": [300]}, "source": "general two-surface enclosure formula (Incropera & DeWitt ch. 13, verify V-01); spherical-enclosure view factor F_ij = A_j / A_total (verify V-18)", "pass_criterion": "(a) |Q12 - exact| <= 1e-9 * |exact| + 1e-12 W; (b) |T1 - T1_exact| <= 1e-6 K, with T1_exact = (Q R_tot / sigma + T2^4)^(1/4) and R_tot the denominator above"},
+   {"id": "AL-05", "case": "zero load gives sink equilibrium", "setup": "the synthetic full-topology network VS-NET (every REQUIRED and CONDITIONAL node, every link type, two enclosures, all boundaries) with all interface loads, Q_tc and environment loads zero; every boundary and SPACE at T_s", "closed_form": "T_i = T_s for every node; every link flow = 0", "vectors": {"T_s_K": [3, 250, 300]}, "pass_criterion": "|T_i - T_s| <= 1e-6 K; |link flow| <= 1e-9 W"},
+   {"id": "AL-06", "case": "energy conservation under a step load", "setup": "VS-NET from its zero-load equilibrium at T_s = 250 K; registered synthetic loads stepped on at t = 0+; integrate to t_end = 30 tau_max (tau_max = largest C_i / G_i,lin evaluated at T_s, G_i,lin including 4 eps sigma T_s^3 A)", "closed_form": "dH_total(0 -> t) = integral of Q_net dt; T(t_end) = steady solution of the same loads", "pass_criterion": "CONS-T1 at every step and cumulatively; |T_i(t_end) - T_i,steady| <= 1e-3 K for every node"},
+   {"id": "AL-07", "case": "view-factor reciprocity and enclosure summation", "setup": "(a) two coaxial disks closed by SPACE with closed-form F (Howell C-41, registered EXT-HOWELL-CATALOG; radii and spacing synthetic); (b) the same set with one F perturbed by 1e-6 (relative); (c) the same set with one row sum perturbed by 1e-6", "closed_form": "A_k F_kl = A_l F_lk; sum_l F_kl = 1 (SPACE closes the enclosure)", "pass_criterion": "(a) accepted; (b) and (c) refused with MODEL_ERROR (D-07)"},
+   {"id": "AL-08", "case": "isothermal closed enclosure and black-body limit", "setup": "sphere split into four patches with area fractions 0.1, 0.2, 0.3, 0.4 and F_kl = A_l / A_total (verify V-18); eps = 0.05, 0.3, 0.7, 1.0", "closed_form": "(a) all patches at 300 K: every net exchange = 0; (b) all eps = 1 with prescribed T = 300, 400, 500, 600 K: Q_kl = sigma A_k F_kl (T_k^4 - T_l^4)", "pass_criterion": "(a) |q_k| <= 1e-12 * sigma A_k T^4; (b) |Q_kl - exact| <= 1e-9 * |exact|"},
+   {"id": "AL-09", "case": "environment bookkeeping on a one-sided plate", "setup": "one node, one external surface of 1 m2, back adiabatic, sink SPACE at 0 K, normal solar flux S_syn, IR flux q_syn with F_e, ram flux q_aero,syn with alpha_E = 1", "closed_form": "T = ((alpha S_syn + eps q_syn F_e + alpha_E q_aero,syn) / (eps sigma))^(1/4)", "vectors": {"alpha": [0.2, 0.9], "eps": [0.1, 0.9], "S_syn_W_m2": [1000, 1400], "q_syn_W_m2": [0, 200], "F_e": [0, 0.5], "q_aero_syn_W_m2": [0, 25]}, "pass_criterion": "|T - T_exact| <= 1e-6 K; the reported Q_env_abs_W components equal their closed forms within 1e-12 relative"},
+   {"id": "AL-10", "case": "interface bookkeeping and refusals", "setup": "synthetic IF-HALL-THERMAL-v1 and IF-ICP-THERMAL-v1 records on VS-NET: one consistent set; one set violating each of IFH-2, IFH-3, IFH-4, IFI-2, IFI-3, IFI-4; one with a missing key; one with a key status TBD; one with a key status NOT_EVALUATED", "closed_form": "CONS-I2 identity; Q_icp_extraction_W deposited on no node; Q_icp_match_W on N_MATCH iff match_colocated", "pass_criterion": "consistent set: CONS-I2 holds and every key lands on its registered receivers with its registered weights; violating sets: MODEL_ERROR; missing key: MODEL_ERROR; TBD: INCOMPLETE_EVIDENCE; NOT_EVALUATED: NOT_EVALUATED"},
+   {"id": "AL-11", "case": "winding self-heating with R(T) (CONSTANT_CURRENT_R_OF_T)", "setup": "coil node, current I, R(T) = R_ref (1 + a (T - T_ref)) with a synthetic validity domain [200, 1000] K, LUMPED_G link G to T_b, steady", "closed_form": "T = (G T_b + I^2 R_ref (1 - a T_ref)) / (G - I^2 R_ref a) when G > I^2 R_ref a; otherwise no steady state below the domain bound", "vectors": {"R_ref_ohm": [1], "a_per_K": [0, 0.004], "T_ref_K": [293.15], "I_A": [1, 3], "G_W_per_K": [0.1, 1], "T_b_K": [300], "runaway_case": {"I_A": 10, "G_W_per_K": 0.1, "a_per_K": 0.004}}, "pass_criterion": "|dT| <= 1e-6 K for the 8 regular combinations; the runaway case returns OUT_OF_DOMAIN (relation domain bound reached), never an extrapolated temperature"}
+  ],
+  "vs_net": "VS-NET is the synthetic verification network: every node id of this record with synthetic parameters, registered as one SYNTHETIC_TEST_DATA_NOT_EVIDENCE input set with its sha256 in the verification report before the first scored run. Its parameters are verification inputs, never physical values."
+ },
+
+ "fail_closed_tests": [
+  {"id": "FT-01", "case": "FLIGHT_CONDITIONAL case whose Hall keys must come from the credible transport set (EMPTY)", "expected": "NOT_EVALUATED, reason CREDIBLE_HALL_TRANSPORT_SET_EMPTY, asserted explicitly (A9.29 sec. 9: not an xfail, not a skip)"},
+  {"id": "FT-02", "case": "Hall value from a screening candidate (sgb-screen-*) / from a non-pinned HallThruster.jl commit", "expected": "NOT_EVALUATED / MODEL_ERROR"},
+  {"id": "FT-03", "case": "a needed input with status TBD, TBD_AFTER_EVIDENCE or OPEN", "expected": "INCOMPLETE_EVIDENCE listing the input ids"},
+  {"id": "FT-04", "case": "record missing evidence_class, uncertainty, applicability_domain or validation_status, or with wrong units", "expected": "MODEL_ERROR"},
+  {"id": "FT-05", "case": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE record in a non-synthetic case", "expected": "MODEL_ERROR"},
+  {"id": "FT-06", "case": "property evaluation outside its validity range", "expected": "OUT_OF_DOMAIN, no temperature emitted"},
+  {"id": "FT-07", "case": "Bi > 0.1 at a node of a non-synthetic case", "expected": "OUT_OF_DOMAIN naming the node"},
+  {"id": "FT-08", "case": "Newton or step-refinement or periodic cap reached", "expected": "MODEL_ERROR"},
+  {"id": "FT-09", "case": "floating node", "expected": "MODEL_ERROR"},
+  {"id": "FT-10", "case": "topology, interface record or case containing a cathode / keeper / emitter / Q_cath / LaB6 / C1 node, key or link", "expected": "MODEL_ERROR (refusal)"},
+  {"id": "FT-11", "case": "configuration other than hall_icp_neutralizer (e.g. hall_c1_reference)", "expected": "MODEL_ERROR (refusal)"},
+  {"id": "FT-12", "case": "bus variant active_cooling or icp_assist_magnet installed", "expected": "OUT_OF_DOMAIN"},
+  {"id": "FT-13", "case": "IFH-3, IFH-4, IFI-3, IFI-4 or IFI-5 violated", "expected": "MODEL_ERROR"},
+  {"id": "FT-14", "case": "view-factor set violating D-07", "expected": "MODEL_ERROR"},
+  {"id": "FT-15", "case": "design state outside design_states_v2", "expected": "OUT_OF_DOMAIN"},
+  {"id": "FT-16", "case": "anode candidate CAND-01 (316L) in a FLIGHT_CONDITIONAL case", "expected": "MODEL_ERROR (REJECTED_AS_CURRENT_BASELINE); allowed and labelled in BENCH_REPLICA / PARAMETRIC engineering cases"},
+  {"id": "FT-17", "case": "static scan of the output schema", "expected": "no key named margin, limit, pass, fail, compliant or feasible; no key prefixed chk_, rfp_ or ic_; validation_status present and NOT_VALIDATED"},
+  {"id": "FT-18", "case": "interface key with status NOT_EVALUATED", "expected": "run NOT_EVALUATED; the key is never replaced by zero"}
+ ],
+
+ "determinism": [
+  {"id": "DET-01", "rule": "Byte-identical outputs on two runs of the same inputs."},
+  {"id": "DET-02", "rule": "Byte-identical outputs across thread counts."},
+  {"id": "DET-03", "rule": "Every output carries implementation = rust, rust_commit, the prereg sha256 and the input hashes (O-17)."}
+ ],
+
+ "independent_verification": [
+  {"id": "IV-01", "source": "Python scratch cross-check: an independent evaluation of the closed forms of AL-01..AL-11 and an independent steady and transient solve of VS-NET with a different algorithm (fixed-point relaxation for the steady state; a different implicit integrator for the transient)", "authoritative": false, "tolerance": "steady temperatures 1e-6 K; transient temperatures at matched refinement 1e-2 K; energy totals 1e-8 relative", "rule": "Never a CI dependency, never a reference, never an active-path dependency (A9.28 msg 1 sec. 5). A disagreement blocks the VERIFIED verdict until the verification report explains it; nothing is tuned to remove it."},
+  {"id": "IV-02", "source": "published closed-form benchmark: two parallel coaxial gray disks closed by SPACE with Howell catalog factors C-40 / C-41 (registered EXT-HOWELL-CATALOG); the three-surface radiosity system solved by hand in closed form", "authoritative": false, "tolerance": "net exchange 1e-9 relative"},
+  {"id": "IV-03", "source": "worked examples of a standard heat-transfer text (radiation exchange, composite wall, lumped transient), transcribed with page locators (verify V-01)", "authoritative": false, "tolerance": "the text's reported precision", "rule": "NOT_PERFORMED if the text cannot be accessed lawfully; no number is quoted here"}
+ ],
+
+ "validation_plan": {
+  "rule": "Validation is separate from verification. Until measured evidence passes the comparison criteria, every output carries validation_status = NOT_VALIDATED, and anode and coupled H-1/ICP thermal closure stay UNRESOLVED. A validation outcome never sets a requirement or gate status.",
+  "evidence_candidates": [
+   {"id": "EV-01", "evidence": "P3 / S1a coupled bench on the ground hall_icp_neutralizer article: module temperatures (P1-M-21; P3-P1-07), calorimetric collector energy balance (P3-P1-09; A9.8 P3Q-01 option C), ICD ICP-43 thermocouple map + energy balance with RF on / off and discharge-current steps; programme step COUPLED-H1-ICP -> P3-THERMAL (CX-15)", "status": "NO_DATA (predecessor incomplete)", "facility_sink": "measured per run (owner row 131)"},
+   {"id": "EV-02", "evidence": "P1 ICP bench, discharge-OFF capacity records (A9.4 P1Q-10): ICP-module thermal response without Hall loads", "status": "NO_DATA", "note": "Ar engineering data validate the thermal structure only; Ar loads are never transferred to air (SC-WP-03 rule)"},
+   {"id": "EV-03", "evidence": "published Hall thruster thermal data: J. Myers et al., 'Hall Thruster Thermal Modeling and Test Data Correlation', AIAA Propulsion and Energy Forum 2016, NTRS 20170000961 (registered EXT-MYERS2016, sha256 8a9f79089c8630123b2e1ec8ad0740dcd3141377d897462ca1ebcbf7d5c8e85f); S. Mazouffre et al., IEPC-2005-063 IR thermography (registered EXT-MAZOUFFRE2005, sha256 b1f0a23e4102ae009dcb55d28758a19696b15bc36d2183766096196642df8a81); R. A. Martinez, H. Dao, M. L. R. Walker, J. Propulsion and Power 30(1), 2014, DOI 10.2514/1.B34897 (registered EXT-MARTINEZ2014, sha256 039e3620d1e4fabaf4fa3d4bf8cf2c6dc6e1b18eadb9c6198f4ab108fb431b61)", "status": "CANDIDATE_APPLICABILITY_VERIFY (V-10)", "rule": "BENCH_REPLICA of the published article only; xenon, different geometry and facility; these articles carry hollow cathodes, so a dataset is usable only if the cathode lies outside the replica boundary and enters only through published boundary temperatures / fluxes; never as a node or a Q_cath term; otherwise NOT_APPLICABLE; no number is taken here"},
+   {"id": "EV-04", "evidence": "published RF / ICP source thermal data: Takahashi et al., J. Electr. Propuls. 3:18 (2024) (registered, CX-14) reports qualitative electrode heating and thermal repeatability issues (TK-27, TK-62) and no temperatures, so it is not quantitative validation; further candidates (RF ion-thruster thermal modelling with test correlation; ICP / helicon source wall or antenna temperature measurements) are to be located under the standing rules (published sources only, no author contact)", "status": "CANDIDATE_TO_LOCATE_VERIFY (V-11)"},
+   {"id": "EV-05", "evidence": "flight data", "status": "NONE"}
+  ],
+  "calibration_validation_separation": [
+   {"id": "CVS-01", "rule": "Calibration parameters may come only from this list: contact / assembly conductances, as-built effective emittances, interface partitions, the unattributed-power bounding fraction if the owner registers one (OQ-NPT-09). The list is registered with the dataset split before any data are seen."},
+   {"id": "CVS-02", "rule": "Calibration and validation datasets are disjoint by run id. Each validation set holds at least one operating point not used in calibration along every varied axis (RF power, discharge power, supply mode or gas)."},
+   {"id": "CVS-03", "rule": "Dataset files are sha256-frozen before scoring. Scoring runs once."},
+   {"id": "CVS-04", "rule": "No refit after validation scoring. A re-calibration needs a new prereg version and new validation data. A failed validation stays recorded and is never rewritten."},
+   {"id": "CVS-05", "rule": "The P3Q-02 correlation-plan slots (P3-C-01 sensor locations, P3-C-02 measurement uncertainty, P3-C-03 comparison quantities, P3-C-04 residual band, P3-C-05 sensor placement / contact treatment) are registered before the data are evaluated (A9.12 P3Q-02)."}
+  ],
+  "comparison_criteria": [
+   {"id": "VC-01", "rule": "Comparison quantities are the registered sensor temperatures and calorimetric heat flows (P3-C-03)."},
+   {"id": "VC-02", "rule": "Comparison error E_q = S_q - D_q (simulation minus data). Validation uncertainty u_val,q = sqrt(u_num^2 + u_input^2 + u_D^2) at one standard uncertainty: u_num from CONS-T2 and the steady tolerance, u_input from propagating the registered input uncertainties, u_D from the registered sensor uncertainty incl. placement / contact (P3-C-02, P3-C-05). Source: ASME V&V 20-2009 (verify V-07)."},
+   {"id": "VC-03", "rule": "A quantity is CONSISTENT if |E_q| <= 2 * u_val,q (coverage factor 2; JCGM 100:2008, verify V-08), else INCONSISTENT."},
+   {"id": "VC-04", "rule": "The owner residual band (P3-C-04, TBD) must also hold. Until it is registered, the validation outcome is NOT_EVALUATED."},
+   {"id": "VC-05", "rule": "If two sensors on one node differ by more than 2 * sqrt(u_D1^2 + u_D2^2), the node has an UNREPRESENTED_GRADIENT. Per A9.12 P3Q-02, a finer multi-node model (a new prereg version) is then required before any LOCK-1 thermal closure."},
+   {"id": "VC-06", "rule": "Dataset outcome: VALIDATED_WITHIN_TESTED_DOMAIN if every quantity is CONSISTENT, VC-04 holds and VC-05 raises no gradient; VALIDATION_INCONSISTENT if any quantity is INCONSISTENT (permanent for that dataset); NOT_EVALUATED otherwise. The validated domain is the tested operating envelope only."}
+  ]
+ },
+
+ "admission_rule": [
+  {"id": "ADM-01", "rule": "PREREG_MODEL: this record committed alone and locked; owner review before any Rust code (IG-02)."},
+  {"id": "ADM-02", "rule": "RUST_IMPL: code in abep-subsystems::thermal; cargo test --workspace --locked green; outputs carry validation_status = NOT_VALIDATED."},
+  {"id": "ADM-03", "rule": "VERIFIED iff AL-01..AL-11, every CONS criterion, FT-01..FT-18, DET-01..DET-03, IV-01 and IV-02 meet their criteria (IV-03 when performed). The verification report is committed whatever the verdict. A failure gives NOT_ADMITTED; only a code fix plus a new prereg version may follow, with no retuning against the verification cases."},
+  {"id": "ADM-04", "rule": "ADMITTED after VERIFIED: migration-ledger flip, docs/HISTORY.md entry, and a CI job bound to this prereg's sha256 (CI_PLAN principle 9)."},
+  {"id": "ADM-05", "rule": "Admission is software verification. It is not validation and not a gate PASS. Anode and coupled H-1/ICP thermal closure stay UNRESOLVED and no thermal result is ever reported as PASS."},
+  {"id": "ADM-06", "rule": "The retained kernels (K-P3-RAYS; thermal_life Hall / magnet kernels) are admitted under their own parity contracts. NP-THERMAL-CATHODELESS admission does not depend on them; they only produce registered inputs."}
+ ],
+
+ "uncertainty": [
+  {"id": "U-01", "rule": "Every input record carries its uncertainty (bounds or distribution) and evidence class (rule 10)."},
+  {"id": "U-02", "rule": "The model is deterministic. Uncertainty is propagated outside it (SC-WP-10): corner / interval sweeps over registered bounds and sampled UQ with the registered RNG policy. Each member is a full raw run; envelopes are reported raw; no margin is formed."},
+  {"id": "U-03", "rule": "Hall transport: one run per ADMITTED ensemble member, as an unweighted scenario set, once the credible set is non-empty. Today there is none."},
+  {"id": "U-04", "rule": "TBD partitions are carried as registered bounds (a scenario set), never fitted silently."},
+  {"id": "U-05", "rule": "Numerical uncertainty u_num (CONS-T2 and the steady tolerances) is reported."},
+  {"id": "U-06", "rule": "Model-form uncertainty (lumping, gray-diffuse surfaces, neglected gas enthalpy) is not quantified before validation; outputs stay NOT_VALIDATED."},
+  {"id": "U-07", "rule": "Bounding-corner admissibility (A9.12 OQ-A907-03) and the search allowance (A9.12 OQ-A907-10) are assessment-layer rules. The thermal model evaluates whatever registered cases it is given."},
+  {"id": "U-08", "rule": "Optional raw sensitivities dT_i/dx_j come from the converged Jacobian (implicit-function theorem). No margin is formed from them."}
+ ],
+
+ "not_evaluated_today": [
+  {"id": "NE-01", "item": "absolute Hall heat loads (IF-HALL-THERMAL-v1)", "status": "NOT_EVALUATED", "reason": "credible Hall transport set EMPTY (GR-19); no admitted Hall map; no measured H-1 data"},
+  {"id": "NE-02", "item": "absolute RF/ICP heat loads (IF-ICP-THERMAL-v1)", "status": "NOT_EVALUATED", "reason": "NP-ICP-NEUTRALIZER not implemented or admitted; P1 / P2 evidence absent; ICP45 NOT_EVALUATED; RF ratings TBD_AFTER_IMPEDANCE_MAP"},
+  {"id": "NE-03", "item": "geometry (H-1 frozen geometry; P3-G-01..08; ICP module drawing)", "status": "INCOMPLETE_EVIDENCE"},
+  {"id": "NE-04", "item": "optical properties (P3-R-01..04; H-1 exterior analog only)", "status": "INCOMPLETE_EVIDENCE"},
+  {"id": "NE-05", "item": "conductances (P3-K-01..06 TBD; H-1 internal links analog / assumed)", "status": "INCOMPLETE_EVIDENCE"},
+  {"id": "NE-06", "item": "anode and collector materials", "status": "INCOMPLETE_EVIDENCE", "reason": "FINAL_ANODE_MATERIAL OPEN, FINAL_COLLECTOR_MATERIAL OPEN; properties candidate-parameterized; no flight result"},
+  {"id": "NE-07", "item": "spacecraft thermal interface", "status": "NOT_EVALUATED", "reason": "no host-spacecraft ICD"},
+  {"id": "NE-08", "item": "flight environment view factors and attitude", "status": "NOT_EVALUATED", "reason": "no spacecraft ICD"},
+  {"id": "NE-09", "item": "measured thermal validation", "status": "NOT_EVALUATED", "reason": "no data; validation_status NOT_VALIDATED; anode and coupled H-1/ICP thermal closure UNRESOLVED, never PASS"},
+  {"id": "NE-10", "item": "interface partitions (f_pw, f_rad, induced shares, Hall pole / radiation / plume shares, inner / outer wall split)", "status": "INCOMPLETE_EVIDENCE"},
+  {"id": "NE-11", "item": "Hall quantities that are not hall_map_schema_v1 fields (T_e at anode and walls, SEE yield, plasma radiation loss, pole heat flux)", "status": "NOT_EVALUATED", "reason": "no producer"},
+  {"id": "NE-12", "item": "FLIGHT_CONDITIONAL run status today", "status": "NOT_EVALUATED", "reason": "precedence of NE-01 / NE-02 / NE-07; every INCOMPLETE_EVIDENCE reason is listed beside it. SYNTHETIC_VERIFICATION and PARAMETRIC cases run once implemented."}
+ ],
+
+ "verify_items": [
+  {"id": "V-01", "item": "F. P. Incropera, D. P. DeWitt et al., Fundamentals of Heat and Mass Transfer: lumped capacitance and the Bi < 0.1 criterion, conduction shape factors, contact resistance, two-surface enclosure formula and radiation networks. Edition, chapter and equation numbers from memory; not in the repository."},
+  {"id": "V-02", "item": "M. F. Modest, Radiative Heat Transfer (net radiation method). Edition and chapter from memory."},
+  {"id": "V-03", "item": "R. Siegel, J. R. Howell, Thermal Radiation Heat Transfer. Edition from memory."},
+  {"id": "V-04", "item": "H. S. Carslaw, J. C. Jaeger, Conduction of Heat in Solids, 2nd ed.: Kirchhoff transformation for k(T). Section from memory."},
+  {"id": "V-05", "item": "D. G. Gilmore (ed.), Spacecraft Thermal Control Handbook, Vol. I: absorbed-flux formulation of solar / albedo / Earth-IR loads and two-band alpha / eps practice. Edition from memory."},
+  {"id": "V-06", "item": "Free-molecular hyperthermal heating 0.5 rho V^3 alpha_E: S. A. Schaaf, P. L. Chambre, Flow of Rarefied Gases, or G. A. Bird, Molecular Gas Dynamics and the Direct Simulation of Gas Flows. From memory; no registered source in the repository."},
+  {"id": "V-07", "item": "ASME V&V 20-2009, Standard for Verification and Validation in Computational Fluid Dynamics and Heat Transfer: E and u_val definitions. From memory."},
+  {"id": "V-08", "item": "JCGM 100:2008 (GUM): coverage factor 2. From memory."},
+  {"id": "V-09", "item": "Applicability of the registered NASA/TM-2001-211221 parameters to 180-230 km (90-minute averaging tables; albedo / OLR referenced to R_E + 30 km per the H2-5 note)."},
+  {"id": "V-10", "item": "Applicability of EXT-MYERS2016, EXT-MAZOUFFRE2005 and EXT-MARTINEZ2014 as BENCH_REPLICA validation data (xenon, hollow-cathode-equipped, different geometry and facility)."},
+  {"id": "V-11", "item": "Existence and content of published RF / ICP source thermal measurements beyond Takahashi 2024; to be located."},
+  {"id": "V-12", "item": "How the pinned HallThruster.jl discharge power I_d V_d spans the neutralizer coupling (cathode-coupling treatment), i.e. whether Q_hall_return_to_icp_W is inside discharge_power_W. To be read from the pinned source."},
+  {"id": "V-13", "item": "Uniqueness of the steady state of a conduction + radiation network with positive conductances (monotone-operator argument). Recalled from memory; not used as a criterion because the solver detects non-convergence regardless."},
+  {"id": "V-14", "item": "Goebel & Katz 2008 publisher details, recorded as 'from memory: verify' in schemas/thermal_life/limits_v1.json; the equations and page locators are registered there."},
+  {"id": "V-15", "item": "Use of room-temperature or band emittances at operating temperature (an H2-5 limitation): per record."},
+  {"id": "V-16", "item": "Gray-diffuse opaque treatment of ceramic channel walls with band-dependent emissivity."},
+  {"id": "V-17", "item": "IR transparency of the Hall and ICP plasmas at the operating densities."},
+  {"id": "V-18", "item": "Spherical-enclosure view factor F_ij = A_j / A_total (used only to build synthetic AL-04 / AL-08 vectors). From memory."}
+ ],
+
+ "open_owner_questions": [
+  {"id": "OQ-NPT-01", "question": "Spacecraft interface before a host ICD: may the owner mount cases (owner row 85; A9.12 OQ-A907-06; P3-M-05) serve as registered B_SC boundary cases for labelled FLIGHT_CONDITIONAL runs, and with which form (SCI-A conductance + temperature, or SCI-B prescribed flux)? Or must flight runs stay NOT_EVALUATED until the host ICD exists?"},
+  {"id": "OQ-NPT-02", "question": "IF-ICP-THERMAL-v1 alignment with NP-ICP-NEUTRALIZER: (a) which bus slots P_icp_bus_W includes (icp_rf_source, icp_matching_network, icp_collector_bias); (b) where the collector-bias supply power is carried; (c) confirm that Hall-discharge-powered heat at the neutralizer (ICP-43 Q_coll) and Hall-plume interception (ICP-29) are excluded from the seven ICP keys and carried in IF-HALL-THERMAL-v1 (HK-08, HK-09); (d) whether Q_icp_match_W includes the line between generator and match; (e) whether NP-ICP predicts the f_pw / f_rad partitions or this model registers them."},
+  {"id": "OQ-NPT-03", "question": "A9.12 P3Q-02 accepted 'lumped H2-5 network + P3 radiosity enclosure' as the initial LOCK-1 model class. Does that acceptance, with its correlation plan (P3-C-01..05) and finer-model escalation, transfer to NP-THERMAL-CATHODELESS?"},
+  {"id": "OQ-NPT-04", "question": "Confirm that the 1.20 heat-load factor (A9.12 OQ-A907-09) is applied by the assessment / case-construction layer to registered dissipated loads, never inside the thermal equations (EX-07)."},
+  {"id": "OQ-NPT-05", "question": "Flight thermal topology: a dedicated Hall radiator (R_HALL) and a separate ICP radiator (R_ICP), or ICP outward surfaces as radiators; and is the flight neutralizer mounted to the H-1 back plate, to the spacecraft, or both?"},
+  {"id": "OQ-NPT-06", "question": "Validation data: may published hollow-cathode-equipped xenon Hall thermal datasets (Myers 2016, Mazouffre 2005, Martinez 2014) be used as BENCH_REPLICA candidates with the cathode outside the replica boundary, or are they excluded?"},
+  {"id": "OQ-NPT-07", "question": "Orbit sink and environment basis: T_space = 0 K (cosmic background neglected, as H2-5) or the cosmic background temperature; and is NASA/TM-2001-211221 the accepted environment-parameter source for 180-230 km?"},
+  {"id": "OQ-NPT-08", "question": "Forbidden identifiers: CI_PLAN principle 6 forbids 'heater' as a load or component name in crates/**. This record names thermal-control power Q_thermal_control_W after the bus slot. Confirm the naming, or narrow the scan to cathode-heater terms."},
+  {"id": "OQ-NPT-09", "question": "Unattributed Hall discharge power (P_hall_unattributed_W = P_d - P_jet - deposited heat) is reported raw and deposited on no node. Is a registered bounding deposition case required for design studies, and onto which nodes?"},
+  {"id": "OQ-NPT-10", "question": "Is free-molecular ram heating on propulsion and radiator surfaces in scope for flight cases (it depends on the spacecraft geometry and attitude ICD)?"}
+ ],
+
+ "conflicts_and_notes": [
+  {"id": "CF-01", "kind": "repository state", "text": "The task named base e5528bd on integration/simulation-complete; the worktree started at b1e5b76 (main). The new branch lane-np-thermal-prereg was pointed at e5528bd before any work; no other branch was touched."},
+  {"id": "CF-02", "kind": "plan state", "text": "Plan v3 (1236f91) is not merged into integration/simulation-complete and no v3.1 plan exists in the repository; docs/rust_migration/ does not exist at the base. Plan references are pinned to the 1236f91 blobs (GR-05..GR-09). A9.29 approves v3 subject to the v3.1 rulings and starts lane D in parallel. integration/simulation-complete has since advanced to 30afe1d (CLAUDE.md CA-01..CA-04, no physics); no content conflict."},
+  {"id": "CF-03", "kind": "scope", "text": "SC-WP-06 also lists EXISTING_PHYSICS_PARITY kernels (K-P3-RAYS; thermal_life Hall / magnet). This record ports neither: they belong to separate parity contracts and enter this model only as registered inputs (ADM-06)."},
+  {"id": "CF-04", "kind": "interface gap", "text": "IF-ICP-THERMAL-v1 has no key for Hall-discharge-powered collector heating (ICD ICP-43 Q_coll), Hall-plume interception (ICP-29; A9.14 ICPQ-09), the collector-bias supply or reflected RF power. This record carries the first two in IF-HALL-THERMAL-v1 (HK-08, HK-09) under the energy-source rule and books the rest at B_PPU_RF. If NP-ICP puts Q_coll inside Q_icp_plasma_wall_W, the heat would be counted twice (MODEL_ERROR at integration). Alignment: OQ-NPT-02."},
+  {"id": "CF-05", "kind": "naming", "text": "'heater' is a forbidden load / component name in crates/** (CI_PLAN principle 6), but thermal-control dissipation (bus slot thermal_control) is legitimate. Named Q_thermal_control_W (OQ-NPT-08)."},
+  {"id": "CF-06", "kind": "model class", "text": "A9.12 P3Q-02 accepted a model class built on the H2-5 network, which carries the C-1 node (AFI-03) and is not ported. Its transfer to this model needs the owner (OQ-NPT-03)."},
+  {"id": "CF-07", "kind": "Hall map schema", "text": "hall_map_schema_v1 has no anode-heat, wall-electron-temperature, SEE-yield, plasma-radiation or pole-heat field. HK-03, HK-06, HK-07 and parts of HK-04 / HK-05 have no producer today. A schema extension is a bridge change owned by SC-WP-03 (HallThruster.jl pin unchanged)."},
+  {"id": "CF-08", "kind": "consistency", "text": "ICD ICP-37 / P3-M-02 state the >= 50 K margin as an ICD thermal requirement. That is consistent with HC-06 being assessment-only: the requirement is assessed on the raw temperatures this model emits."},
+  {"id": "CF-09", "kind": "consistency", "text": "The legacy thermal_rejection_ledger_v1 and abep_sim/thermal.py carry a cathode node and the three historical architectures; neither is used. Node limits T_max_K indexed by config/hardware/hardware_bounds_v1.json remain assessment inputs."}
+ ],
+
+ "new_physics_verification": {
+  "applies_when": "contract_kind = NEW_PHYSICS",
+  "model_id": "NP-THERMAL-CATHODELESS",
+  "preregistration": {
+   "nodes": "nodes.solved (17 node ids), nodes.boundaries (B_SC, B_PPU_RF, B_FEED, SPACE, ENV, B_FACILITY), nodes.excluded (CB, CE, CK, PIM, COMP, GP, PPU, thermal.py default_nodes)",
+   "equations": "equations.items E-01..E-14; equations.link_types",
+   "heat_or_mass_or_energy_sources": "heat_sources: HS-00 energy-source rule; IF-HALL-THERMAL-v1 HK-01..HK-11 and IFH-1..IFH-4; IF-ICP-THERMAL-v1 IK-01..IK-07 and IFI-1..IFI-5; HS-TC; HS-ENV",
+   "boundaries": "energy_boundaries EB-01..EB-05; spacecraft_interface SCI-A..SCI-C; E-05, E-06, E-08",
+   "assumptions": "assumptions A-01..A-17",
+   "domains": "domains D-01..D-10 (outside -> OUT_OF_DOMAIN)",
+   "conservation_checks": "conservation CONS-S1, CONS-S2, CONS-T1, CONS-T2, CONS-T3, CONS-I1, CONS-I2, CONS-L1 (tolerances fixed in this record)",
+   "analytic_limiting_cases": [
+    {"id": "AL-01", "case": "single isothermal radiator", "closed_form": "T = (Q / (eps sigma A) + T_s^4)^(1/4)", "tolerance": "1e-6 K"},
+    {"id": "AL-02", "case": "two-node series conduction", "closed_form": "T1 - T_b = Q (1/G1 + 1/G2)", "tolerance": "1e-6 K"},
+    {"id": "AL-02b", "case": "linear k(T) slab", "closed_form": "Q = S k0 (x + beta x^2 / 2)", "tolerance": "1e-6 K"},
+    {"id": "AL-03", "case": "first-order transient", "closed_form": "T_inf + (T0 - T_inf) exp(-t / tau), tau = C / G", "tolerance": "1e-3 relative at dt = tau / 1000; |p_obs - 1| <= 0.1"},
+    {"id": "AL-04", "case": "two-surface radiative enclosure", "closed_form": "Q12 = sigma (T1^4 - T2^4) / ((1 - eps1)/(eps1 A1) + 1/(A1 F12) + (1 - eps2)/(eps2 A2))", "tolerance": "1e-9 relative; 1e-6 K"},
+    {"id": "AL-05", "case": "zero load -> sink equilibrium", "closed_form": "T_i = T_s", "tolerance": "1e-6 K"},
+    {"id": "AL-06", "case": "energy conservation under a step load", "closed_form": "dH = integral of Q_net dt", "tolerance": "CONS-T1; 1e-3 K to steady state"},
+    {"id": "AL-07", "case": "view-factor reciprocity / summation", "closed_form": "A_k F_kl = A_l F_lk; sum F = 1", "tolerance": "accept / refuse exactly"},
+    {"id": "AL-08", "case": "isothermal enclosure; black-body limit", "closed_form": "q_k = 0; Q_kl = sigma A_k F_kl (T_k^4 - T_l^4)", "tolerance": "1e-12; 1e-9 relative"},
+    {"id": "AL-09", "case": "environment bookkeeping plate", "closed_form": "T = ((alpha S + eps q F_e + alpha_E q_aero) / (eps sigma))^(1/4)", "tolerance": "1e-6 K"},
+    {"id": "AL-10", "case": "interface bookkeeping and refusals", "closed_form": "CONS-I2", "tolerance": "exact statuses"},
+    {"id": "AL-11", "case": "winding R(T) self-heating", "closed_form": "T = (G T_b + I^2 R_ref (1 - a T_ref)) / (G - I^2 R_ref a)", "tolerance": "1e-6 K; runaway -> OUT_OF_DOMAIN"}
+   ],
+   "independent_verification": [
+    {"id": "IV-01", "source": "Python scratch cross-check (non-authoritative)", "authoritative": false, "tolerance": "1e-6 K steady; 1e-2 K transient; 1e-8 relative energy"},
+    {"id": "IV-02", "source": "Howell catalog C-40 / C-41 closed-form three-surface benchmark", "authoritative": false, "tolerance": "1e-9 relative"},
+    {"id": "IV-03", "source": "standard-text worked examples (verify V-01)", "authoritative": false, "tolerance": "the text's reported precision"}
+   ],
+   "evidence_validation_plan": "validation_plan (EV-01..EV-05, CVS-01..CVS-05, VC-01..VC-06); until measured evidence passes VC, validation_status NOT_VALIDATED and dependent gates NOT_EVALUATED"
+  },
+  "python_scratch_rule": "A Python scratch calculation appears only as IV-01 with authoritative = false. It never becomes an active dependency or a CI dependency (A9.28 msg 1 sec. 5; RM-R26).",
+  "verdict": "ADMITTED iff every analytic case, conservation check, domain / fail-closed test, determinism check and independent verification meets its criterion (ADM-03, ADM-04). Admission is software verification, not physical validation and not a gate PASS."
+ },
+
+ "scope_traceability": [
+  {"id": "TR-01", "requirement": "ES-4 deliverable 1: nodes", "source": "GR-06 first_execution_sequence ES-4", "fields": ["nodes.solved", "nodes.boundaries", "nodes.thermal_mass_representation"]},
+  {"id": "TR-02", "requirement": "ES-4 deliverable 1: equations", "source": "GR-06 ES-4", "fields": ["equations.items E-01..E-14", "equations.link_types"]},
+  {"id": "TR-03", "requirement": "ES-4 deliverable 1: heat sources", "source": "GR-06 ES-4", "fields": ["heat_sources"]},
+  {"id": "TR-04", "requirement": "ES-4 deliverable 1: radiative / conductive boundaries", "source": "GR-06 ES-4", "fields": ["E-03", "E-04", "E-05", "E-08", "nodes.boundaries", "energy_boundaries"]},
+  {"id": "TR-05", "requirement": "ES-4 deliverable 1: spacecraft interface", "source": "GR-06 ES-4", "fields": ["spacecraft_interface SCI-A..SCI-C", "nodes.boundaries B_SC", "NE-07", "OQ-NPT-01"]},
+  {"id": "TR-06", "requirement": "ES-4 deliverable 1: RF/ICP waste heat", "source": "GR-06 ES-4; A9.29 sec. 4", "fields": ["heat_sources.IF-ICP-THERMAL-v1 IK-01..IK-07", "IFI-1..IFI-5", "E-07", "E-13"]},
+  {"id": "TR-07", "requirement": "ES-4 deliverable 1: Hall waste heat", "source": "GR-06 ES-4", "fields": ["heat_sources.IF-HALL-THERMAL-v1 HK-01..HK-11", "IFH-1..IFH-4", "E-09", "E-13"]},
+  {"id": "TR-08", "requirement": "ES-4 deliverable 1: assumptions", "source": "GR-06 ES-4", "fields": ["assumptions A-01..A-17"]},
+  {"id": "TR-09", "requirement": "ES-4 deliverable 1: domains", "source": "GR-06 ES-4", "fields": ["domains D-01..D-10", "numerics"]},
+  {"id": "TR-10", "requirement": "ES-4 deliverable 1: conservation checks", "source": "GR-06 ES-4", "fields": ["conservation CONS-*"]},
+  {"id": "TR-11", "requirement": "ES-4 deliverable 1: analytic limiting cases", "source": "GR-06 ES-4", "fields": ["analytic_limiting_cases AL-01..AL-11"]},
+  {"id": "TR-12", "requirement": "ES-4 deliverable 1: evidence / validation plan", "source": "GR-06 ES-4", "fields": ["validation_plan", "independent_verification"]},
+  {"id": "TR-13", "requirement": "ES-4 deliverable 2: explicit exclusion of the H2-5 C-1 node / Q_cath (AFI-03)", "source": "GR-06 ES-4; GR-12", "fields": ["EX-01", "EX-02", "nodes.excluded", "FT-10"]},
+  {"id": "TR-14", "requirement": "ES-4 deliverable 2: 50 K margin out of the equations (HC-06 is assessment)", "source": "GR-06 ES-4; GR-14", "fields": ["EX-03", "EX-04", "outputs.rule", "FT-17"]},
+  {"id": "TR-15", "requirement": "ES-4 deliverable 3: owner review before any Rust code (RM-OQ-08)", "source": "GR-06 ES-4", "fields": ["implementation_gate IG-02", "ADM-01", "status"]},
+  {"id": "TR-16", "requirement": "SC-WP-06 admission: prereg committed alone before any Rust code", "source": "GR-06 SC-WP-06 admission_criteria[0]", "fields": ["IG-01", "IG-03", "ADM-01"]},
+  {"id": "TR-17", "requirement": "SC-WP-06 admission: analytic cases (isothermal radiator, two-node conduction, zero-source equilibrium, view-factor reciprocity / enclosure)", "source": "GR-06 SC-WP-06 admission_criteria[1]", "fields": ["AL-01", "AL-02", "AL-05", "AL-07", "AL-08"]},
+  {"id": "TR-18", "requirement": "SC-WP-06 admission: sources = rejected + stored within the preregistered residual (rule 4)", "source": "GR-06 SC-WP-06 admission_criteria[2]", "fields": ["CONS-S1", "CONS-S2", "CONS-T1", "CONS-L1"]},
+  {"id": "TR-19", "requirement": "SC-WP-06 admission: independent verification, non-authoritative cross-check; HC-06 only in assessment", "source": "GR-06 SC-WP-06 admission_criteria[3]", "fields": ["IV-01..IV-03", "EX-03"]},
+  {"id": "TR-20", "requirement": "SC-WP-06 admission: no hollow-cathode node, Q_cath or keeper term (forbidden-identifier scan)", "source": "GR-06 SC-WP-06 admission_criteria[4]; GR-08 principle 6", "fields": ["EX-01", "EX-02", "FT-10", "CF-05"]},
+  {"id": "TR-21", "requirement": "SC-WP-06 admission: K-P3-RAYS and thermal_life kernels PARITY_PASS", "source": "GR-06 SC-WP-06 admission_criteria[5]", "fields": ["ADM-06", "CF-03", "context_records_read_not_ported.rule"]},
+  {"id": "TR-22", "requirement": "SC-WP-06 fail-closed gates (measured validation absent; anode / coupled closure; P3-G / R / K TBD; Hall heat needs admitted map; spacecraft ICD absent; outside domain)", "source": "GR-06 SC-WP-06 determining_evidence_gates_fail_closed", "fields": ["NE-09", "NE-06", "NE-03", "NE-04", "NE-05", "NE-01", "NE-07", "status_vocabulary", "domains"]},
+  {"id": "TR-23", "requirement": "A9.28 RM-OQ-08: equations, energy boundaries, node definitions, assumptions, model domains, conservation criteria, analytic limiting cases, independent evidence / validation cases", "source": "GR-03 msg 1 sec. 5", "fields": ["equations", "energy_boundaries", "nodes", "assumptions", "domains", "conservation", "analytic_limiting_cases", "independent_verification", "validation_plan"]},
+  {"id": "TR-24", "requirement": "A9.28 RM-OQ-08: admission by independent verification; Python scratch only as cross-check; no Python model as parity target", "source": "GR-03 msg 1 sec. 5", "fields": ["ADM-03", "IV-01", "new_physics_verification.python_scratch_rule", "what_this_is_not"]},
+  {"id": "TR-25", "requirement": "A9.28 msg 2 sec. 8: do not port the old P3 cathode-node model; preregister nodes, equations, heat sources, boundaries, spacecraft interface, RF/ICP and Hall waste heat, assumptions, domains, conservation, analytic cases, evidence plan", "source": "GR-03 msg 2 sec. 8", "fields": ["EX-05", "TR-01..TR-12"]},
+  {"id": "TR-26", "requirement": "A9.28 msg 2 sec. 7: credible Hall set EMPTY stays visible", "source": "GR-03 msg 2 sec. 7", "fields": ["NE-01", "FT-01", "IF-HALL-THERMAL-v1.admission_gate"]},
+  {"id": "TR-27", "requirement": "A9.28 msg 2 sec. 14: fail closed when determining evidence is absent (measured thermal validation named)", "source": "GR-03 msg 2 sec. 14", "fields": ["status_vocabulary", "NE-*", "outputs.on_refusal"]},
+  {"id": "TR-28", "requirement": "A9.29 sec. 4: couple RF/ICP losses into the cathodeless thermal model", "source": "GR-01 sec. 4", "fields": ["heat_sources.IF-ICP-THERMAL-v1", "E-07"]},
+  {"id": "TR-29", "requirement": "A9.29 sec. 4: assessment separation (no HC / threshold / compliance label in raw physics)", "source": "GR-01 sec. 4", "fields": ["EX-03", "EX-04", "EX-08", "EX-09", "outputs.rule", "FT-17"]},
+  {"id": "TR-30", "requirement": "A9.29 sec. 9 (RM-OQ-05): missing evidence asserted as a fail-closed result; empty credible set asserted, not xfailed", "source": "GR-01 sec. 9", "fields": ["fail_closed_tests FT-01..FT-18"]},
+  {"id": "TR-31", "requirement": "A9.29 sec. 13 lane D: preregister NP-THERMAL-CATHODELESS; no implementation before preregistration", "source": "GR-01 sec. 13", "fields": ["id", "status", "implementation_gate"]},
+  {"id": "TR-32", "requirement": "A9.29 sec. 14: provenance, preregistration, conservation, determinism, domain checks, requirement / physics separation, uncertainty, fail-closed semantics", "source": "GR-01 sec. 14", "fields": ["governing_records", "O-17", "conservation", "determinism", "domains", "EX-08", "uncertainty", "status_vocabulary"]},
+  {"id": "TR-33", "requirement": "A9.29 sec. 15: cathodeless thermal in the chain; AIR_PRIMARY and XE_CONTINGENCY represented; hollow cathode NONE; C1 ground reference only", "source": "GR-01 sec. 15", "fields": ["AS-01..AS-05", "D-05", "EX-01", "FT-11"]},
+  {"id": "TR-34", "requirement": "CLAUDE.md rule 3: no silent fallbacks; report non-convergence", "source": "GR-10", "fields": ["NUM-01..NUM-05", "FT-08", "FT-18", "outputs.on_refusal"]},
+  {"id": "TR-35", "requirement": "CLAUDE.md rule 4: conservation is a gate", "source": "GR-10", "fields": ["conservation"]},
+  {"id": "TR-36", "requirement": "CLAUDE.md rule 6: cite data; mark memory as verify; invent no geometry", "source": "GR-10", "fields": ["numbers_policy", "registered_inputs", "verify_items"]},
+  {"id": "TR-37", "requirement": "CLAUDE.md rule 10: source, uncertainty, applicability domain, validation status on every input", "source": "GR-10", "fields": ["registered_inputs.record_format", "heat_sources.interface_record_format", "U-01"]},
+  {"id": "TR-38", "requirement": "A9 binding statuses: anode material OPEN; anode and coupled H-1/ICP thermal closure UNRESOLVED, never PASS", "source": "GR-10; GR-25", "fields": ["nodes.solved H1_ANODE", "NE-06", "NE-09", "ADM-05", "FT-16"]},
+  {"id": "TR-39", "requirement": "Task: IF-ICP-THERMAL-v1 with exactly the seven keys; Q_icp_extraction_W treatment stated", "source": "lane D task", "fields": ["IK-01..IK-07", "IK-04"]},
+  {"id": "TR-40", "requirement": "Task: IF-HALL-THERMAL-v1 named keys from hall_map_schema_v1 plus magnet ohmic loss; NOT_EVALUATED while the credible set is EMPTY; parametric loads for verification", "source": "lane D task", "fields": ["HK-01..HK-11", "NE-01", "registered_inputs.case_classes"]},
+  {"id": "TR-41", "requirement": "Task: outputs raw only with the status vocabulary", "source": "lane D task", "fields": ["outputs", "status_vocabulary"]},
+  {"id": "TR-42", "requirement": "Task: open owner questions listed, not resolved", "source": "lane D task", "fields": ["open_owner_questions"]}
+ ],
+
+ "change_control": [
+  {"id": "CC-01", "rule": "Any change after the lock is a new version (prereg_v2.json + PREREG.md revision + new lock) or a dated addendum file. This file is never edited."},
+  {"id": "CC-02", "rule": "A change of interface keys or semantics is a new interface version (IF-ICP-THERMAL-v2, IF-HALL-THERMAL-v2) recorded on both sides."},
+  {"id": "CC-03", "rule": "Tolerances, pass criteria, comparison criteria and the calibration / validation split are never relaxed after results are seen."},
+  {"id": "CC-04", "rule": "A registered node subdivision (nodes.refinement_rule) is a discretization refinement recorded with its input hashes, not a version change."}
+ ]
+}

@@ -1,0 +1,12 @@
+{
+ "id": "np_thermal_cathodeless_prereg_lock_v1",
+ "model_id": "NP-THERMAL-CATHODELESS",
+ "locked": "2026-10-05",
+ "note": "sha256 of the final NP-THERMAL-CATHODELESS v1 preregistration (ES-4 / SC-WP-06, docs only, status PREREGISTERED_NOT_IMPLEMENTED); any change after this lock is a new, dated version or addendum, never an edit",
+ "base_commit": "e5528bdd22412014796771b615dc40f2b3bcc2ca",
+ "files_relative_to": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/",
+ "files": {
+  "prereg_v1.json": "7bd3bf074e0dfcf95586b8ae080fa630a4556443feb272b6b7c157c3bee926ad",
+  "PREREG.md": "a3fbca02239577232793cb85dbef9148b6dd9951903a7008b87fd5748b5603d8"
+ }
+}
