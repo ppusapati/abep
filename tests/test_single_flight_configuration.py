@@ -30,7 +30,7 @@ REPO = Path(__file__).resolve().parents[1]
 FLIGHT = "hall_icp_neutralizer"
 RETIRED = "hall_c1_reference"
 
-SCAN_ROOTS = ("docs/budgets/mass_power_a9_v3", "docs/budgets/mass_power_a9_v4", "docs/budgets/xe_accounting_a9_v3", "docs/hardware/h1_freeze_candidate",
+SCAN_ROOTS = ("docs/budgets/mass_power_a9_v3", "docs/budgets/mass_power_a9_v4", "docs/budgets/mass_power_a9_v5", "docs/budgets/xe_accounting_a9_v3", "docs/hardware/h1_freeze_candidate",
               "docs/design_synthesis", "docs/architecture_comparison")
 REQUIRED = ("docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
             "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
@@ -45,8 +45,10 @@ REQUIRED = ("docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
             "docs/design_synthesis/f7_f8_optimizer/f8_robust_candidates_v1.json",
             # A9.22 G8: the current A9-02 boundary (flight configuration only; C1 as ground-reference metadata)
             "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
-            # A9.24 AFI-01: the current mass / power successor of v3
-            "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json")
+            # A9.24 AFI-01: the mass / power successor of v3 (history since A9.26)
+            "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
+            # A9.26: the current mass / power successor of v4
+            "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json")
 # pre-A9.19 A9-02 boundary v1 (2026-09-29), immutable history (A9.22 G8). After the stage-2 migration the live chain
 # (P1, P2, mass/power v3, Xe v3, RFQ v3, M16 v5, F7/F8, RVM, F9) cites bus_power_boundary_a9_v2; v1 stays sha-pinned by
 # the immutable deliverables (RFQ v1/v2, M16 v3/v4, mass/Xe v1/v2, H2 revisions, A9-10, core integration, owner brief)

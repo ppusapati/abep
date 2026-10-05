@@ -188,6 +188,11 @@ def test_f9_records():
     by = {r["id"]: r for r in F9DOC["parameters"]}
     assert by["AFC-SY-MASS-AL-04"]["value"] == 4.2048 and by["AFC-SY-MASS-AL-07"]["value"] == 6.0
     assert by["AFC-SY-MASS-AL-08"]["value"] == 5.9148      # A9.24 AFI-01 (mass / power v4; v3 owner floor 6.0528)
+    # A9.26 (mass / power v5): 10 % system margin for the bid basis, AL-09 1.0 kg; the roll-up still does not close
+    roll = by["AFC-SY-MASS-ROLL"]["value"]
+    assert roll["system_margin_fraction"] == 0.1 and roll["lines_without_value"] == []
+    assert round(roll["dry_known_kg"], 4) == 38.349 and set(roll["wet_vs_40kg"].values()) == {"DOES_NOT_CLOSE"}
+    assert roll["mass_status"] == "MASS INCOMPLETE_EVIDENCE / NOT_YET_CLOSED"
     assert by["AFC-SY-XE-03"]["freeze_status"] == "FREEZE_CANDIDATE"
     # A9.15 'Xe is not a contingency' is superseded by A9.19 (xenon_role CONTINGENCY_EMERGENCY; the capability stays
     # RFP-required): the F9 value states the capability AND the A9.19 role, and never the superseded wording
@@ -219,7 +224,7 @@ def test_f9_repair_f8_rollup_status_and_current_xe_sources():
     by = {r["id"]: r for r in F9DOC["parameters"]}
     for rid in ("AFC-SY-XE-01", "AFC-SY-XE-03", "AFC-SY-XE-04", "AFC-SY-XE-06", "AFC-SY-XE-08"):
         cur = by[rid]["current_sources"]
-        assert cur and all(c.startswith(("docs/budgets/xe_accounting_a9_v3/", "docs/budgets/mass_power_a9_v4/",
+        assert cur and all(c.startswith(("docs/budgets/xe_accounting_a9_v3/", "docs/budgets/mass_power_a9_v5/",
                                          "docs/budgets/owner_decisions/owner_questions_state_v5.json")) for c in cur), rid
         for x in by[rid]["source"]:
             if isinstance(x, dict) and x["path"].endswith(("xe_accounting_a9_v2.json", "owner_questions_state_v4.json")):

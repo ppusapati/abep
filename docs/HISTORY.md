@@ -3790,3 +3790,65 @@ record was edited. Every approved number is unchanged vs 4c2b3b3.
   set empty), F9 (AL-08 basis text), RFQ3-GAS rev1 (new). Every other builder `--check` reproduces unchanged (M16 v5,
   owner-questions state v5, A9.16 matrix, config manifests, P1-P4, H-1). F4 and F1 not rerun (inputs untouched).
   Validation: pytest 4198 passed / 5 skipped / 1 xfailed (Rule 9 PASS); ci_checks 11/11; golden OK; config --check OK.
+
+## 2026-10-05 — A9.26 mass-budget policy for the bid baseline: mass / power v5 (10 % system margin, AL-09 1.0 kg; NO raw-physics change)
+
+Authority: `docs/decisions/OD_2026_10_05_A9_26_MASS_BUDGET_OWNER_DECISIONS.md` message 2
+MASS_BUDGET_DECISIONS_PRE_BID_FREEZE (text sha256 c240fca3...; JSON companion
+`OD_2026_10_05_A9_26_mass_budget_owner_decisions.json`), on the execution branch at 7fdc9db. Governed mass-policy
+correction only: no abep_sim physics module, frozen dataset, golden, Rust file, bid-package file (`docs/bid/**`) or
+immutable record was edited; mass / power v4, v3 and v2 are untouched (v4 is read as pinned data, the v3 rule functions
+are reused from the pinned v3 builder).
+
+- **Mass / power v5** (`docs/budgets/mass_power_a9_v5/`, builder `build_mass_power_a9_v5.py --check`, test
+  `tests/test_mass_power_a9_v5.py`). Changes vs v4, all builder-computed (never hard-coded; the owner's approximate
+  values are cross-checked and a material difference stops the build):
+  - system margin for the ACTIVE proposal / bid basis 20 % -> **10 %** (supersedes the A9.14 MQ-02 reading for the bid
+    baseline only). The 20 % line-level planning uplift stays on the floor-derived lines AL-04 / AL-07 / AL-08 (values
+    unchanged 4.2048 / 6.0 / 5.9148 kg); effective line x system factor 1.32 (not 1.44); margin audit records this as
+    intentional governance, not an accidental double margin.
+  - **AL-09** controls / electronics / valve drivers / flight sensors: none (TBD_OWNER, excluded) -> **1.0 kg**
+    PROVISIONAL_OWNER_ALLOCATION / NOT_CBE / NOT_MEASURED; harness separate under the row-60 5/95 rule; **MPV3Q-01
+    OWNER_DECIDED (A9.26)**; no other line changed (fail-closed check: every other line byte-identical to v4).
+  - roll-up (old v4 -> new v5): non-harness 32.1196 -> 33.1196 kg; harness 1.6905 -> 1.7431 kg; nominal dry 33.8101 ->
+    34.8627 kg; system margin 6.7620 (20 %) -> 3.4863 kg (10 %); dry 40.5721 (dry_known_partial, AL-09 excluded) ->
+    **38.3490 kg** dry planning mass; wet 42.5721 / 45.5721 / 50.5721 -> **40.3490 / 43.3490 / 48.3490 kg** at 2 / 5 / 10
+    kg loaded Xe. HARD_40_WET (< 40 kg, not relaxed): DOES_NOT_CLOSE in all three cases (unchanged state); the 2 kg
+    planning / reference case is 0.3490 kg above. Max allowable dry < 38 / < 35 / < 30 kg; dry reduction needed > 0.349
+    / 3.349 / 8.349 kg. Labels: CURRENT PROVISIONAL PLANNING / EVIDENCE FLOOR (not a complete CBE); **MASS
+    INCOMPLETE_EVIDENCE / NOT_YET_CLOSED**; no PASS.
+  - new labelled blocks: proposal design target (nominal dry <= 34.0 kg, 10 %, 2 kg Xe planning reference -> 39.4 kg
+    wet; 42.4 / 47.4 kg at the 5 / 10 kg sensitivities; DESIGN TARGET, not achieved evidence; 2 kg not the selected Xe
+    load); internal allocation target (row-54 allocations with AL-09 1.0 kg = 24.0 kg + harness 1.2632 kg + 10 % =
+    27.7895 kg dry; INTERNAL ALLOCATION TARGET, NOT EVIDENCE OF MASS COMPLIANCE); the 24 kg + 20 % = 28.8 kg budget
+    reference relabelled HISTORICAL / INTERNAL ALLOCATION PROVENANCE; HISTORICAL / CONSERVATIVE SENSITIVITY 20 % roll-up
+    (recomputed with AL-09: dry 41.8353 kg, wet 43.8353 / 46.8353 / 51.8353 kg; the v4 AL-09-excluded 40.5721 kg kept as
+    history); mass-closure actions MCA-01..06 (AL-07 cathodeless PPU CBE / requote = AFI-02-RA1; AL-08 quote / design
+    rebase; AL-04 completed Hall-head CBE; AL-09 design-derived CBE; routed harness; integration / structural
+    optimisation).
+  - carried unchanged from v4: AFI-01 / AFI-01-S1 (OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH), AFI-02 / AFI-02-RA1 (OPEN),
+    C1 = GROUND_REFERENCE_ONLY, BOM, power, Xe import, retired C1 history column.
+- **Consumers re-pointed v4 -> v5** (design-layer path constants / references only): `abep_sim/design/
+  architecture_optimizer.py` MP_REL (alias MP_V3_REL), F7/F8 builder identity, RVM builder REFS["MP"] (+ mass-row
+  evidence text), M16 v5 REFERENCED["MP5"], F9 CONSUMED["MP5"] (+ A9.26 json / md pinned; AFC-SY-MASS-ROLL basis /
+  value / evidence_to_advance; AL-04 / AL-07 / AL-08 / XE-08 sources). RFQ3-GAS rev1 deliberately keeps reading v4
+  (AL-08 identical in v4 and v5; the authorized dispatch package's content is unchanged). The owner-question state v5
+  (built from immutable mass / power v3) still lists MPV3Q-01 as TBD_OWNER until a state successor applies A9.26
+  (recorder flag; not done in this lane).
+- **Regenerated:** RVM (RVM-06 mass cell still INCOMPLETE_EVIDENCE / R6-INCOMPLETE, DOES_NOT_CLOSE 3 of 3, no status
+  change; text now dry 38.35 kg, wet 40.35 / 43.35 / 48.35 kg, MASS INCOMPLETE_EVIDENCE / NOT_YET_CLOSED); F7/F8 full
+  run (only `f7_f8_optimizer_v1.json` / MD change: m_wet NOT_EVALUATED unchanged, wet roll-up envelope 42.57-50.57 ->
+  40.35-48.35 kg, HARD_40_WET exceedances 2.572 / 5.572 / 10.572 -> 0.349 / 3.349 / 8.349 kg, states DOES_NOT_CLOSE
+  unchanged, AL-09 budget value null -> 1.0 kg ALLOCATION_MEV, AQ-06 CANNOT_ANSWER unchanged; `f7_upstream_pareto_v1.json`
+  and `f8_robust_candidates_v1.json` byte-identical; 90 survivors, feasible in all scenarios 0, robust set empty; ranking
+  REFUSED_INCOMPLETE); F9 (AFC-SY-MASS-ROLL value / basis / note / evidence_to_advance, mass-row sources -> v5, A9.26
+  pinned; every freeze status and gate status unchanged: 76 TBD_AFTER_EVIDENCE / 71 OPEN / 53 FREEZE_CANDIDATE / 5
+  TBD_OWNER); M16 v5 (MP4 -> MP5 reference only; 20 BLOCKED / 1 SUPERSEDED_FOR_PRIMARY_LINE unchanged). Every other
+  builder `--check` reproduces unchanged (mass / power v2 / v3 / v4, owner-question state v5, A9.16 matrix, H-1, RFQ3-GAS
+  rev1, config manifests). F4 / F1 not rerun (inputs untouched; no pin of a changed file found).
+- **Not rerun:** `docs/chemistry/o_o2/v0/build_tables_nist107_o.py` — NOT_RERUN_NETWORK_UNAVAILABLE / unaffected.
+- **Schema compatibility (coordinator request):** `rollups` holds exactly one active `hall_icp_neutralizer` roll-up with
+  the v4 keys and wet / HARD_40_WET shape; the 20 % sensitivity and the v4 AL-09-excluded figure live outside `rollups`
+  and are labelled HISTORICAL / SENSITIVITY; `lines[].value.value_kg` and `margin_convention` (10 % bid basis) present.
+- Validation: pytest 4216 passed / 5 skipped / 1 xfailed (`ci_checks --pytest-junit`: Rule 9 PASS); ci_checks 11/11;
+  golden OK; config `--check` OK; F7/F8 `--check` OK (full 45 min run); every affected builder `--check` OK.

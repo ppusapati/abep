@@ -410,6 +410,14 @@
   "A922_MD": {
    "path": "docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md",
    "sha256": "749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77"
+  },
+  "A926": {
+   "path": "docs/decisions/OD_2026_10_05_A9_26_mass_budget_owner_decisions.json",
+   "sha256": "18dada24a90fb1a5d17e903bf8eb9f77af622106f9ddfc59ea1f182054b80b76"
+  },
+  "A926_MD": {
+   "path": "docs/decisions/OD_2026_10_05_A9_26_MASS_BUDGET_OWNER_DECISIONS.md",
+   "sha256": "5f40294de9ab736cedd7a24a393b0333823c2624e3469f6b1f775250a85803e5"
   }
  },
  "consumed": {
@@ -451,7 +459,7 @@
   },
   "F78": {
    "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
-   "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+   "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
   },
   "F7P": {
    "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
@@ -469,13 +477,13 @@
    "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
    "sha256": "8a29c4180f4387afb6168986442ddb1c08b1f9a692ad85cdf0630799de3cd4fd"
   },
-  "MP4": {
-   "path": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
-   "sha256": "37264ab6c7cf5c422cb93356fcd9a8e67323f73b1257e1eb1426410229c8a6c4"
+  "MP5": {
+   "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+   "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a"
   },
   "RVM": {
    "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-   "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+   "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
   },
   "RFP": {
    "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
@@ -737,7 +745,7 @@
    "source": {
     "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
     "pointer": "/robust/robust_pareto_by_P_set",
-    "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+    "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
    }
   },
   "nominal_pareto_union": {
@@ -837,7 +845,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
@@ -848,7 +856,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/7/finding",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
@@ -890,7 +898,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
@@ -934,7 +942,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
@@ -978,7 +986,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/design_vector/blocks/0/variables/1",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     }
    ],
    "basis": "F1-02; F7 collapses d",
@@ -1054,7 +1062,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/1/question",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     }
    ],
    "basis": "no measured accommodation for any Vyovrinda surface",
@@ -1087,7 +1095,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/9/finding",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -1156,12 +1164,12 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/hard_constraints/8",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
@@ -1466,7 +1474,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     }
    ],
    "basis": "F3 bounded design search; F7 / F8 Pareto",
@@ -1515,7 +1523,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
@@ -1635,7 +1643,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
@@ -1645,7 +1653,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/5",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     }
    ],
    "basis": "DragCompressor model through F3 / F4 / F7",
@@ -1678,7 +1686,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
@@ -1688,7 +1696,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/6",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -1821,7 +1829,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
@@ -1865,7 +1873,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
@@ -1876,7 +1884,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/2/finding",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     }
    ],
    "basis": "robust-member P_set: none (robust set empty); F7 set pressures with any all-state-feasible vector: 0.01, 0.02 Pa (read from F7 upstream_pareto_summary)",
@@ -1983,7 +1991,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/10/finding",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     }
    ],
    "basis": "F4-P-06; owner GP-D03",
@@ -2041,12 +2049,12 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/1/finding",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
@@ -6523,7 +6531,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/hard_constraints/4",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     }
    ],
    "basis": "I_e,cap = I_on - I_off (discharge OFF, signed; A9.4 P1Q-10 / A9.5 P1Q-16)",
@@ -6879,7 +6887,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+     "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
@@ -7108,7 +7116,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rows/3/configurations/hall_icp_neutralizer",
-     "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+     "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
     }
    ],
    "basis": "mass_power v2 (A9-02 boundary)",
@@ -7139,7 +7147,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/system_evaluation/parametric_P_bus_lower_bound_W_range",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
@@ -7290,9 +7298,9 @@
      "note": "owner row 54"
     },
     {
-     "path": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
+     "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
      "pointer": "/lines/hall_icp_neutralizer/3",
-     "sha256": "37264ab6c7cf5c422cb93356fcd9a8e67323f73b1257e1eb1426410229c8a6c4"
+     "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
@@ -7302,7 +7310,7 @@
      "note": "A9.14 MQ-03 (S8.8)"
     }
    ],
-   "basis": "A9.14 MQ-03: MEV planning floor (owner-stated); replaced by 1.20 x the actual CBE when it exists (mass / power v4)",
+   "basis": "A9.14 MQ-03: MEV planning floor (owner-stated); replaced by 1.20 x the actual CBE when it exists (mass / power v5)",
    "freeze_status": "OPEN",
    "evidence_to_advance": [
     "CBE (then weighed article) for the line"
@@ -7398,9 +7406,9 @@
      "note": "owner row 54"
     },
     {
-     "path": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
+     "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
      "pointer": "/lines/hall_icp_neutralizer/6",
-     "sha256": "37264ab6c7cf5c422cb93356fcd9a8e67323f73b1257e1eb1426410229c8a6c4"
+     "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
@@ -7410,7 +7418,7 @@
      "note": "A9.14 MQ-04 (S8.9)"
     }
    ],
-   "basis": "A9.14 MQ-04: MEV planning floor (owner-stated); replaced by 1.20 x the actual CBE when it exists (mass / power v4)",
+   "basis": "A9.14 MQ-04: MEV planning floor (owner-stated); replaced by 1.20 x the actual CBE when it exists (mass / power v5)",
    "freeze_status": "OPEN",
    "evidence_to_advance": [
     "CBE (then weighed article) for the line"
@@ -7446,9 +7454,9 @@
      "note": "owner row 54"
     },
     {
-     "path": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
+     "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
      "pointer": "/lines/hall_icp_neutralizer/7",
-     "sha256": "37264ab6c7cf5c422cb93356fcd9a8e67323f73b1257e1eb1426410229c8a6c4"
+     "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
@@ -7458,7 +7466,7 @@
      "note": "A9.14 MQ-05 (S8.10)"
     }
    ],
-   "basis": "A9.14 MQ-05: MEV planning floor (owner-stated); replaced by 1.20 x the actual CBE when it exists (mass / power v4; A9.24 AFI-01: cathode-feed PFCV removed from the 6.0528 kg owner floor, second series latch kept (AFI-01-S1 OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH, A9.25 message 8))",
+   "basis": "A9.14 MQ-05: MEV planning floor (owner-stated); replaced by 1.20 x the actual CBE when it exists (mass / power v5; A9.24 AFI-01: cathode-feed PFCV removed from the 6.0528 kg owner floor, second series latch kept (AFI-01-S1 OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH, A9.25 message 8))",
    "freeze_status": "OPEN",
    "evidence_to_advance": [
     "CBE (then weighed article) for the line"
@@ -7544,7 +7552,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rows/5",
-     "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+     "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
     },
     {
      "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
@@ -7600,7 +7608,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rows/6",
-     "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+     "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
     }
    ],
    "basis": "owner row 53 (both evaluated; 40 kg stays the hard limit)",
@@ -7613,18 +7621,18 @@
    "subsection": "mass_budget",
    "name": "dry roll-ups (allocations / with evidence floors) under the open margin readings",
    "value": {
-    "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)",
-    "dry_known_kg": 40.57212631,
-    "system_margin_kg": 6.762021052,
+    "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading; A9.26: 10 % system margin, active proposal / bid basis)",
+    "dry_known_kg": 38.34901052,
+    "system_margin_kg": 3.486273684,
     "reserve_kg": 0.0,
-    "lines_without_value": [
-     "AL-09"
-    ],
+    "system_margin_fraction": 0.1,
+    "lines_without_value": [],
     "wet_vs_40kg": {
      "2.0": "DOES_NOT_CLOSE",
      "5.0": "DOES_NOT_CLOSE",
      "10.0": "DOES_NOT_CLOSE"
-    }
+    },
+    "mass_status": "MASS INCOMPLETE_EVIDENCE / NOT_YET_CLOSED"
    },
    "units": "kg (dry, known part)",
    "tolerance": "n/a (roll-up of allocations and floors; no CBE)",
@@ -7642,9 +7650,14 @@
      "sha256": "6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67"
     },
     {
-     "path": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
+     "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
      "pointer": "/rollups/0",
-     "sha256": "37264ab6c7cf5c422cb93356fcd9a8e67323f73b1257e1eb1426410229c8a6c4"
+     "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a"
+    },
+    {
+     "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+     "pointer": "/mass_status",
+     "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
@@ -7659,21 +7672,33 @@
      "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
      "pinned": true,
      "note": "A9.14 MQ-10 (S8.14)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_05_A9_26_mass_budget_owner_decisions.json",
+     "pointer": "/owner_decision_summary",
+     "sha256": "18dada24a90fb1a5d17e903bf8eb9f77af622106f9ddfc59ea1f182054b80b76",
+     "pinned": true
     }
    ],
-   "basis": "mass / power v4 (v3 + A9.24 AFI-01 AL-08 re-base) single MEV reading (A9.14 MQ-01 / MQ-02 / MQ-10): 20 % system margin replaces the 4 kg reserve; mass closure by redesign, never by margin relaxation",
+   "basis": "mass / power v5 (v4 + A9.26 bid mass policy) single MEV reading (A9.14 MQ-01 / MQ-10; A9.26 message 2): 10 % system margin on the current pre-margin nominal dry for the proposal / bid basis (the A9.14 MQ-02 20 % reading kept as historical / conservative sensitivity), no reserve; 20 % line uplift kept on AL-04 / AL-07 / AL-08; AL-09 1.0 kg PROVISIONAL_OWNER_ALLOCATION (MPV3Q-01 OWNER_DECIDED A9.26); mass closure by CBE / quotation / design re-base, never by requirement relaxation",
    "freeze_status": "TBD_AFTER_EVIDENCE",
    "evidence_to_advance": [
     "CBE for every BOM line",
-    "controls line AL-09 allocation (MPV3Q-01, TBD_OWNER)"
+    "AL-07 cathodeless PPU CBE / requote",
+    "AL-08 quote / design re-base",
+    "AL-04 completed Hall-head CBE",
+    "AL-09 design-derived CBE (replaces the A9.26 1.0 kg provisional owner allocation)",
+    "routed harness",
+    "subsystem integration / structural optimisation"
    ],
-   "note": "evidence-based wet mass does not close against 40 kg at 2 / 5 / 10 kg loaded Xe (MQ-10: reduce actual CBE; no margin relaxation)",
+   "note": "current provisional planning / evidence roll-up does not close against 40 kg wet at 2 / 5 / 10 kg loaded Xe (2 kg planning / reference case ~0.35 kg above); MASS INCOMPLETE_EVIDENCE / NOT_YET_CLOSED (A9.26; MQ-10: reduce actual CBE)",
    "a9_16": {
     "decisions": [
      "A9.14 MQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
      "A9.14 MQ-02 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
      "A9.14 MQ-10 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
-    ]
+    ],
+    "a9_26": "A9.26 message 2 (OD_2026_10_05_A9_26): 10 % system margin for the proposal / bid basis supersedes the MQ-02 20 % reading for the bid baseline only; AL-09 = 1.0 kg; MPV3Q-01 closed"
    }
   },
   {
@@ -8122,7 +8147,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rows/9",
-     "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+     "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
@@ -8179,7 +8204,7 @@
     ],
     "rfp_citation_status": "REGISTERED_CLAUSE",
     "icp_gas_mode": "unchanged: A9.1 G-REUSE primary; G-XE a declared ICP-feed variant",
-    "current_source_rule": "xe_accounting_a9_v3 / mass_power_a9_v4 / state v5 govern; the v2 / v4 sources are history (A9.16 repair F8; mass / power v4 since A9.24 AFI-01)",
+    "current_source_rule": "xe_accounting_a9_v3 / mass_power_a9_v5 / state v5 govern; the v2 / v4 sources are history (A9.16 repair F8; mass / power v4 since A9.24 AFI-01, v5 since A9.26)",
     "rfp_citation_status_as_applied": "OWNER_STATED_PENDING_RFP_REGISTRATION",
     "rfp_clause_ids": [
      "RFP-P18-08",
@@ -8261,7 +8286,7 @@
     "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json/items/20"
    ],
    "a9_16": {
-    "current_source_rule": "xe_accounting_a9_v3 / mass_power_a9_v4 / state v5 govern; the v2 / v4 sources are history (A9.16 repair F8; mass / power v4 since A9.24 AFI-01)"
+    "current_source_rule": "xe_accounting_a9_v3 / mass_power_a9_v5 / state v5 govern; the v2 / v4 sources are history (A9.16 repair F8; mass / power v4 since A9.24 AFI-01, v5 since A9.26)"
    }
   },
   {
@@ -8339,7 +8364,7 @@
      "A9.14 MQ-09 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
      "A9.14 OQ-A910-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     ],
-    "current_source_rule": "xe_accounting_a9_v3 / mass_power_a9_v4 / state v5 govern; the v2 / v4 sources are history (A9.16 repair F8; mass / power v4 since A9.24 AFI-01)"
+    "current_source_rule": "xe_accounting_a9_v3 / mass_power_a9_v5 / state v5 govern; the v2 / v4 sources are history (A9.16 repair F8; mass / power v4 since A9.24 AFI-01, v5 since A9.26)"
    },
    "current_sources": [
     "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json/items/29",
@@ -8393,7 +8418,7 @@
     "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json/items/23"
    ],
    "a9_16": {
-    "current_source_rule": "xe_accounting_a9_v3 / mass_power_a9_v4 / state v5 govern; the v2 / v4 sources are history (A9.16 repair F8; mass / power v4 since A9.24 AFI-01)"
+    "current_source_rule": "xe_accounting_a9_v3 / mass_power_a9_v5 / state v5 govern; the v2 / v4 sources are history (A9.16 repair F8; mass / power v4 since A9.24 AFI-01, v5 since A9.26)"
    }
   },
   {
@@ -8426,7 +8451,7 @@
     "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json/items/24"
    ],
    "a9_16": {
-    "current_source_rule": "xe_accounting_a9_v3 / mass_power_a9_v4 / state v5 govern; the v2 / v4 sources are history (A9.16 repair F8; mass / power v4 since A9.24 AFI-01)"
+    "current_source_rule": "xe_accounting_a9_v3 / mass_power_a9_v5 / state v5 govern; the v2 / v4 sources are history (A9.16 repair F8; mass / power v4 since A9.24 AFI-01, v5 since A9.26)"
    }
   },
   {
@@ -8486,7 +8511,7 @@
      "A9.14 XA9Q-06 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
      "A9.14 OQ-RFQ-09 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     ],
-    "current_source_rule": "xe_accounting_a9_v3 / mass_power_a9_v4 / state v5 govern; the v2 / v4 sources are history (A9.16 repair F8; mass / power v4 since A9.24 AFI-01)"
+    "current_source_rule": "xe_accounting_a9_v3 / mass_power_a9_v5 / state v5 govern; the v2 / v4 sources are history (A9.16 repair F8; mass / power v4 since A9.24 AFI-01, v5 since A9.26)"
    },
    "current_sources": [
     "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json/items/27",
@@ -8523,7 +8548,7 @@
     "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json/items/38"
    ],
    "a9_16": {
-    "current_source_rule": "xe_accounting_a9_v3 / mass_power_a9_v4 / state v5 govern; the v2 / v4 sources are history (A9.16 repair F8; mass / power v4 since A9.24 AFI-01)"
+    "current_source_rule": "xe_accounting_a9_v3 / mass_power_a9_v5 / state v5 govern; the v2 / v4 sources are history (A9.16 repair F8; mass / power v4 since A9.24 AFI-01, v5 since A9.26)"
    }
   },
   {
@@ -8553,9 +8578,9 @@
      "role": "HISTORY (A9.7 basis); the current source is listed in current_sources"
     },
     {
-     "path": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
+     "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
      "pointer": "/lines/hall_icp_neutralizer/7",
-     "sha256": "37264ab6c7cf5c422cb93356fcd9a8e67323f73b1257e1eb1426410229c8a6c4"
+     "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
@@ -8565,12 +8590,12 @@
      "note": "A9.14 MQ-05 (S8.10)"
     },
     {
-     "path": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
+     "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
      "pointer": "/lines/hall_icp_neutralizer/7",
-     "sha256": "37264ab6c7cf5c422cb93356fcd9a8e67323f73b1257e1eb1426410229c8a6c4"
+     "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a"
     }
    ],
-   "basis": "A9.14 MQ-05: AL-08 = complete Xe storage / flow hardware (tank, regulator, valves, plumbing, mounting, thermal); planning floor replaced by quotations / design; A9.24 AFI-01 (mass / power v4): the C1 cathode-feed PFCV removed from the v3 6.0528 / 5.044 kg floor; valves 0.455 kg = latch #1 0.170 + latch #2 0.170 (SECOND SERIES FLIGHT XE ISOLATION VALVE, row 55 dual series isolation; AFI-01-S1 OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH, A9.25 message 8) + PFCV 0.115; no conventional hollow-cathode hardware remains in flight AL-08; PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN",
+   "basis": "A9.14 MQ-05: AL-08 = complete Xe storage / flow hardware (tank, regulator, valves, plumbing, mounting, thermal); planning floor replaced by quotations / design; A9.24 AFI-01 (mass / power v4, unchanged in v5): the C1 cathode-feed PFCV removed from the v3 6.0528 / 5.044 kg floor; valves 0.455 kg = latch #1 0.170 + latch #2 0.170 (SECOND SERIES FLIGHT XE ISOLATION VALVE, row 55 dual series isolation; AFI-01-S1 OWNER_DECIDED_KEEP_SECOND_SERIES_LATCH, A9.25 message 8) + PFCV 0.115; no conventional hollow-cathode hardware remains in flight AL-08; PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN",
    "freeze_status": "OPEN",
    "evidence_to_advance": [
     "quotations / design CBE for the complete Xe hardware"
@@ -8579,10 +8604,10 @@
     "decisions": [
      "A9.14 MQ-05 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     ],
-    "current_source_rule": "xe_accounting_a9_v3 / mass_power_a9_v4 / state v5 govern; the v2 / v4 sources are history (A9.16 repair F8; mass / power v4 since A9.24 AFI-01)"
+    "current_source_rule": "xe_accounting_a9_v3 / mass_power_a9_v5 / state v5 govern; the v2 / v4 sources are history (A9.16 repair F8; mass / power v4 since A9.24 AFI-01, v5 since A9.26)"
    },
    "current_sources": [
-    "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json/lines/hall_icp_neutralizer/7"
+    "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json/lines/hall_icp_neutralizer/7"
    ]
   }
  ],
@@ -8724,7 +8749,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/0/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -8743,7 +8768,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/1/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -8763,7 +8788,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/2/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -8779,11 +8804,11 @@
        "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
-      "blocking": "no determining evaluation with evidenced terms: mass_power_a9_v4:power.configurations.hall_icp_neutralizer.rfp_gate_1ms [BUDGET_EVALUATION], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PBUS [PLAN_OR_FRAMEWORK]",
+      "blocking": "no determining evaluation with evidenced terms: mass_power_a9_v5:power.configurations.hall_icp_neutralizer.rfp_gate_1ms [BUDGET_EVALUATION], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PBUS [PLAN_OR_FRAMEWORK]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/3/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -8796,11 +8821,11 @@
        "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
-      "blocking": "no determining evaluation with evidenced terms: mass_power_a9_v4:power.configurations.hall_icp_neutralizer.phases.steady.design_allocation_1350W [BUDGET_EVALUATION], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PALLOC [PLAN_OR_FRAMEWORK]",
+      "blocking": "no determining evaluation with evidenced terms: mass_power_a9_v5:power.configurations.hall_icp_neutralizer.phases.steady.design_allocation_1350W [BUDGET_EVALUATION], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PALLOC [PLAN_OR_FRAMEWORK]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/4/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -8815,11 +8840,11 @@
        "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE"
       },
       "rule": "R6-INCOMPLETE",
-      "blocking": "evaluation run with evidenced terms but inconclusive: mass_power_a9_v4:rollups[hall_icp_neutralizer] (3 evidenced term(s))",
+      "blocking": "evaluation run with evidenced terms but inconclusive: mass_power_a9_v5:rollups[hall_icp_neutralizer] (3 evidenced term(s))",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/5/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -8832,11 +8857,11 @@
        "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE"
       },
       "rule": "R6-INCOMPLETE",
-      "blocking": "evaluation run with evidenced terms but inconclusive: mass_power_a9_v4:rollups[hall_icp_neutralizer] (3 evidenced term(s))",
+      "blocking": "evaluation run with evidenced terms but inconclusive: mass_power_a9_v5:rollups[hall_icp_neutralizer] (3 evidenced term(s))",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/6/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -8859,7 +8884,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/7/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -8879,7 +8904,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/8/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -8900,7 +8925,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/9/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -8919,7 +8944,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/10/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -8938,7 +8963,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/11/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -8957,7 +8982,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/12/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -8974,7 +8999,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/13/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -8991,7 +9016,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/14/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -9013,7 +9038,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/15/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -9030,7 +9055,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/16/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -9050,7 +9075,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/17/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -9070,7 +9095,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/18/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -9090,7 +9115,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/19/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -9111,7 +9136,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/20/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -9131,7 +9156,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/21/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -9150,7 +9175,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/22/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -9169,7 +9194,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/23/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -9193,7 +9218,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/24/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -9214,7 +9239,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/25/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -9231,7 +9256,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/26/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -9248,7 +9273,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/27/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -9268,7 +9293,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/28/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      },
      {
@@ -9281,11 +9306,11 @@
        "hall_icp_neutralizer": "NOT_EVALUATED"
       },
       "rule": "R7-NOT-EVALUATED",
-      "blocking": "no determining evaluation with evidenced terms: mass_power_a9_v4 [PLAN_OR_FRAMEWORK], xe_accounting_a9_v3 [PLAN_OR_FRAMEWORK]",
+      "blocking": "no determining evaluation with evidenced terms: mass_power_a9_v5 [PLAN_OR_FRAMEWORK], xe_accounting_a9_v3 [PLAN_OR_FRAMEWORK]",
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/29/configurations/hall_icp_neutralizer",
-       "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+       "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
       }
      }
     ],
@@ -9305,17 +9330,17 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/status_counts/hall_icp_neutralizer",
-     "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+     "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
     },
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rfp_registered_in_repository",
-     "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+     "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
     },
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rfp_rebase/ag_15_status",
-     "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+     "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
     }
    ],
    "evidence_plan_steps": [
@@ -9361,7 +9386,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/T",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     }
    ],
    "evidence_plan_steps": [
@@ -9456,7 +9481,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/I_e_margin",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     }
    ],
    "evidence_plan_steps": [
@@ -9504,7 +9529,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/Q_reject",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     }
    ],
    "evidence_plan_steps": [
@@ -9720,7 +9745,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/P_bus",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     }
    ],
    "evidence_plan_steps": [
@@ -9759,12 +9784,12 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rows/5/configurations/hall_icp_neutralizer",
-     "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+     "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/m_wet",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     }
    ],
    "evidence_plan_steps": [
@@ -9857,7 +9882,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/1",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -9917,12 +9942,12 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/D_spacecraft",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/hard_constraints/7",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -10189,12 +10214,12 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rfp_rebase/clause_coverage",
-     "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+     "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
     },
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rfp_rebase/ag_15_status",
-     "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+     "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
     },
     {
      "path": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
@@ -10206,7 +10231,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rfp_rebase/ag15_closure",
-     "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+     "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
     },
     {
      "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
@@ -10287,7 +10312,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/owner_approved_gates/0",
-     "sha256": "874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841"
+     "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
     },
     {
      "path": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json",
@@ -12773,7 +12798,7 @@
     "source": {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     }
    },
    {
@@ -12783,7 +12808,7 @@
     "source": {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/1",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     }
    },
    {
@@ -12793,7 +12818,7 @@
     "source": {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     }
    },
    {
@@ -12803,7 +12828,7 @@
     "source": {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/3",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     }
    },
    {
@@ -13309,32 +13334,32 @@
       {
        "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
        "pointer": "/upstream_pareto_summary",
-       "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+       "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
       },
       {
        "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
        "pointer": "/upstream_status_totals",
-       "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+       "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
       },
       {
        "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
        "pointer": "/upstream_reason_totals",
-       "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+       "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
       },
       {
        "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
        "pointer": "/findings/0/finding",
-       "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+       "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
       },
       {
        "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
        "pointer": "/findings/1/finding",
-       "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+       "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
       },
       {
        "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
        "pointer": "/findings/2/finding",
-       "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+       "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
       }
      ]
     },
@@ -13372,12 +13397,12 @@
       {
        "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
        "pointer": "/robust/all_scenario_feasible",
-       "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+       "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
       },
       {
        "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
        "pointer": "/findings/7/finding",
-       "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+       "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
       }
      ]
     },
@@ -13449,17 +13474,17 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/flow_gap_owner_order",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/design_state_set",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
@@ -13514,32 +13539,32 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/upstream_pareto_summary",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/upstream_status_totals",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/upstream_reason_totals",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/0/finding",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/1/finding",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/2/finding",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f8_robust_candidates_v1.json",
@@ -13549,12 +13574,12 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/all_scenario_feasible",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/7/finding",
-     "sha256": "137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e"
+     "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8"
     }
    ]
   }

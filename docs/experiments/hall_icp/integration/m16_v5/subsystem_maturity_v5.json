@@ -442,9 +442,9 @@
     "use": "flight Xe scenario booking"
    },
    {
-    "key": "MP4",
-    "path": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
-    "identity": "mass_power_a9_v4",
+    "key": "MP5",
+    "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+    "identity": "mass_power_a9_v5",
     "use": "AL-08 A9.21 label"
    },
    {
@@ -1610,7 +1610,7 @@
      "id": "AL-08",
      "kind": "AL08_PROVISIONAL",
      "category": "EXTERNAL_INPUT",
-     "artifact": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
+     "artifact": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
      "locator": "lines.hall_icp_neutralizer[line=AL-08]",
      "state": "PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN",
      "detail": "PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (A9.21 AL08): the AL-08 MEV planning floor stays a provisional planning floor, not a frozen allocation; v4 removes only the C1 cathode-feed PFCV identified from the repository (AFI-01, owner messages...",
@@ -1992,7 +1992,7 @@
      "id": "AL-08",
      "kind": "AL08_PROVISIONAL",
      "category": "EXTERNAL_INPUT",
-     "artifact": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
+     "artifact": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
      "locator": "lines.hall_icp_neutralizer[line=AL-08]",
      "state": "PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN",
      "detail": "PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN (A9.21 AL08): the AL-08 MEV planning floor stays a provisional planning floor, not a frozen allocation; v4 removes only the C1 cathode-feed PFCV identified from the repository (AFI-01, owner messages...",

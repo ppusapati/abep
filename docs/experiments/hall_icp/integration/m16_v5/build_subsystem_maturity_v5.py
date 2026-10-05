@@ -111,8 +111,9 @@ REFERENCED = {
            "ARCHITECTURE_FREEZE_CANDIDATE_v1", "GNG-ICP-01 pre_lock1_gates / lock1_precondition"),
     "XE3": ("docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json", "id", "xe_accounting_a9_v3",
             "flight Xe scenario booking"),
-    # A9.24 AFI-01: the current flight mass / power package is the v4 successor of v3 (AL-08 cathode-feed re-base)
-    "MP4": ("docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json", "id", "mass_power_a9_v4", "AL-08 A9.21 label"),
+    # A9.24 AFI-01: v4 = v3 + the AL-08 cathode-feed re-base; A9.26: the current flight mass / power package is the v5
+    # successor of v4 (10 % system margin for the bid basis, AL-09 1.0 kg); AL-08 is unchanged from v4
+    "MP5": ("docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json", "id", "mass_power_a9_v5", "AL-08 A9.21 label"),
     "S1A": ("docs/experiments/s1a_readiness/s1a_readiness_status_current.json", "schema",
             "abep_s1a_readiness_report_v1", "S1a readiness conditions"),
     "P4": ("docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json", "id", "p4_anode_materials_v1",
@@ -333,11 +334,11 @@ def resolve_v5(ctx: Ctx, kind: str, ident: str, v4row: dict) -> dict:
         return {**base, "category": cat, "artifact": REFERENCED["XE3"][0], "locator": f"evaluations[scenario={ident}]",
                 "state": st, "detail": "TBD lines: " + ", ".join(e["booking"].get("tbd_lines", []))}
     if kind == "AL08_PROVISIONAL":
-        ln = _one(ctx.docs["MP4"]["lines"]["hall_icp_neutralizer"], "line", ident, "mass / power v4 lines")
+        ln = _one(ctx.docs["MP5"]["lines"]["hall_icp_neutralizer"], "line", ident, "mass / power v5 lines")
         st = str(ln.get("a9_21_status", ""))
         if not st.startswith("PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN"):
             raise BuildError(f"{ident}: a9_21_status {st[:60]!r} is no longer the provisional floor")
-        return {**base, "category": cat, "artifact": REFERENCED["MP4"][0],
+        return {**base, "category": cat, "artifact": REFERENCED["MP5"][0],
                 "locator": f"lines.hall_icp_neutralizer[line={ident}]", "state": "PROVISIONAL_PLANNING_FLOOR_NOT_FROZEN",
                 "detail": _clip(st)}
     if kind == "S1A_CONDITION":

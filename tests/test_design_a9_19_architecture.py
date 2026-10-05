@@ -135,7 +135,7 @@ def test_applied_row_cites_decision_hashes():
 def test_rv19_11_elements_read_mass_power_v3_content():
     """RV19-11: the refusal reads the current mass/power v3 package (not the immutable v2 history) and sees line
     content (floor constituents, c1_branch, the C1 branch embedded in the AL-08 floor), not line names only."""
-    assert ao.MP_V3_REL == "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json"   # A9.24 AFI-01 (v4 = current)
+    assert ao.MP_V3_REL == "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json"   # A9.26 (v5 = current)
     els = ao.flight_configuration_elements("hall_icp_neutralizer")
     srcs = {e.get("source", "").split(" ")[0] for e in els if e.get("kind") != "power_slot"}
     assert srcs == {ao.MP_V3_REL}

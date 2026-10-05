@@ -568,8 +568,8 @@ def _rvm():
 def test_rfp01_reads_a915_applied_v3_packages():
     """RFP-01: the RVM evaluates the A9.15-applied v3 budgets (no retired XA9Q-07 / USABLE / CBE-level readings) and
     records the v3 DOES_NOT_CLOSE as evidence state without turning it into a FAIL."""
-    # A9.24 AFI-01: the current mass / power package is the v4 successor of v3
-    assert B.REFS["MP"][0].endswith("mass_power_a9_v4.json") and B.REFS["MP"][2] == "mass_power_a9_v4"
+    # A9.26: the current mass / power package is the v5 successor of v4 (v4 = A9.24 AFI-01 successor of v3)
+    assert B.REFS["MP"][0].endswith("mass_power_a9_v5.json") and B.REFS["MP"][2] == "mass_power_a9_v5"
     assert B.REFS["XE"][0].endswith("xe_accounting_a9_v3.json") and B.REFS["XE"][2] == "xe_accounting_a9_v3"
     assert B.REFS["RFQ2"][2] == "RFQ_A9_V3"
     d = _rvm()
@@ -579,7 +579,8 @@ def test_rfp01_reads_a915_applied_v3_packages():
     by = {r["id"]: r for r in d["rows"]}
     cell = by["RVM-06"]["configurations"]["hall_icp_neutralizer"]
     assert cell["status"] == "INCOMPLETE_EVIDENCE"
-    assert "mass_power_a9_v4" in cell["current_evidence_state"]
+    assert "mass_power_a9_v5" in cell["current_evidence_state"]
+    assert "MASS INCOMPLETE_EVIDENCE / NOT_YET_CLOSED" in cell["current_evidence_state"]      # A9.26
     assert "DOES_NOT_CLOSE 3" in cell["current_evidence_state"]
     an = next(a for a in cell["artifacts"] if a.get("detail", {}).get("analyses"))["detail"]["analyses"][0]
     assert {m["state"] for m in an["mixed_basis_states"]} == {"DOES_NOT_CLOSE"}
@@ -781,7 +782,7 @@ def test_rv19_10_ground_reference_cells_not_applicable_and_v3_budget_evidence(do
     # RVM-30 determining evidence: v3 budgets, never the immutable v2 budgets
     arts = by["RVM-30"]["configurations"]["hall_icp_neutralizer"]["artifacts"]
     det = [a for a in arts if a["role"] == "DETERMINING"]
-    assert {a["path"] for a in det} == {"docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
+    assert {a["path"] for a in det} == {"docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
                                         "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json"}
     assert not any("_a9_v2/" in a["path"] for a in arts)       # no v2 budget, no v2 RFQ cited on RVM-30
     rfq = [a for a in arts if a["kind"] == "PROCUREMENT"]
@@ -813,7 +814,7 @@ def test_a919_c1_retirement_from_v3_flight_budgets_detected_and_fail_closed():
     """A9.19 / A9.20: the RVM follows the v3 flight budgets. While they carry hall_c1_reference the C1 cells stay the
     labelled ground-reference evaluation; a retirement must be labelled in BOTH budgets (retired-history column in
     mass/power, retired_flight_configuration in Xe, no flight C1 Xe scenario) or the build fails closed."""
-    assert B.REFS["MP"][0].endswith("mass_power_a9_v4.json") and B.REFS["XE"][0].endswith("xe_accounting_a9_v3.json")
+    assert B.REFS["MP"][0].endswith("mass_power_a9_v5.json") and B.REFS["XE"][0].endswith("xe_accounting_a9_v3.json")
     ctx = _budget_ctx()
     cur = B.c1_retired_from_flight_budgets(ctx)
     mp, xe = copy.deepcopy(ctx.r["MP"]), copy.deepcopy(ctx.r["XE"])

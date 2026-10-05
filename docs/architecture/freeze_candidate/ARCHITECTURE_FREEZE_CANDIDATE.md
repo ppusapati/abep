@@ -419,7 +419,7 @@ Freeze-status roll-up (205 parameters): {"FREEZE_CANDIDATE": 53, "OPEN": 71, "TB
 | AFC-SY-MASS-AL-10 | dry allocation AL-10 structure/thermal | 2.5 kg | n/a (allocation, not a CBE) | owner-allocation (ALLOCATION) | docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json#/lines/hall_icp_neutralizer/9; docs/decisions/OD_2026_09_29_owner_answers_147.json#/answers/53/owner_answ... | OPEN |
 | AFC-SY-MASS-WET | wet propulsion-system mass gate (incl. Xe + tank) | 40 kg (strict <) | n/a (decision / rule) | requirement-as-recorded (REQUIREMENT_AS_RECORDED) | docs/requirements/rvm_a9/rvm_a9_v1.json#/rows/5; docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json#/items/37 | OPEN |
 | AFC-SY-MASS-INT | internal design allocations | [34, 36] kg (wet) | n/a (allocation, not a CBE) | owner-allocation (ALLOCATION) | docs/decisions/OD_2026_09_29_owner_answers_147.json#/answers/52/owner_answer_verbatim; docs/requirements/rvm_a9/rvm_a9_v1.json#/rows/6 | FREEZE_CANDIDATE |
-| AFC-SY-MASS-ROLL | dry roll-ups (allocations / with evidence floors) under the open margin readings | {"reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)", "dry_known_kg": 40.57212631, "system_margin_kg": 6.762021052, "reserve_kg": 0.0,... kg (dry, known part) | n/a (roll-up of allocations and floors; no CBE) | model-derived | docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json#/rollups; docs/budgets/owner_decisions/owner_questions_state_v4.json#/rows/250/question; docs/budgets/mas... | TBD_AFTER_EVIDENCE |
+| AFC-SY-MASS-ROLL | dry roll-ups (allocations / with evidence floors) under the open margin readings | {"reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading; A9.26: 10 % system margin, active proposal / bid basis)", "dry_known_kg": 38.34901... kg (dry, known part) | n/a (roll-up of allocations and floors; no CBE) | model-derived | docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json#/rollups; docs/budgets/owner_decisions/owner_questions_state_v4.json#/rows/250/question; docs/budgets/mas... | TBD_AFTER_EVIDENCE |
 
 #### thermal interfaces
 
@@ -783,6 +783,8 @@ Pinned (immutable, sha256 verified):
 - `docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md` 01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440
 - `docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json` 245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49
 - `docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md` 749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77
+- `docs/decisions/OD_2026_10_05_A9_26_mass_budget_owner_decisions.json` 18dada24a90fb1a5d17e903bf8eb9f77af622106f9ddfc59ea1f182054b80b76
+- `docs/decisions/OD_2026_10_05_A9_26_MASS_BUDGET_OWNER_DECISIONS.md` 5f40294de9ab736cedd7a24a393b0333823c2624e3469f6b1f775250a85803e5
 
 Consumed (sha256 at build time; drift reported by `--check`):
 
@@ -795,13 +797,13 @@ Consumed (sha256 at build time; drift reported by `--check`):
 - `docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json` fffb223023f944f166112acf017af277a50ede84695cb78f933dd5ca918fd3a9
 - `docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json` 36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8
 - `docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json` eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450
-- `docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json` 137803a951ab750e459f165fb06bfd5891a66d083412f44c3f4561cb35938a8e
+- `docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json` 39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8
 - `docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json` 423e74ded14e5d5df640a9cc5818c8d8478b194573270ec379b1eb9359c1c455
 - `docs/design_synthesis/f7_f8_optimizer/f8_robust_candidates_v1.json` 2ec7e059ebc55d9b83f4c8f0e3cd43e2cebcbe665933e7ce9ecf1a43451f4e8d
 - `docs/budgets/owner_decisions/owner_questions_state_v4.json` 6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67
 - `docs/budgets/owner_decisions/owner_questions_state_v5.json` 8a29c4180f4387afb6168986442ddb1c08b1f9a692ad85cdf0630799de3cd4fd
-- `docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json` 37264ab6c7cf5c422cb93356fcd9a8e67323f73b1257e1eb1426410229c8a6c4
-- `docs/requirements/rvm_a9/rvm_a9_v1.json` 874f37b432b5609355e81643101682e9828138ab1c57e3784366125486329841
+- `docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json` 3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a
+- `docs/requirements/rvm_a9/rvm_a9_v1.json` f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4
 - `docs/requirements/rfp_official/rfp_registration_v1.json` c126be5eef7b9ec6340776ed035eeaa0ced1c4dd2ec585383f3d3a5977d174a0
 - `docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json` c1a7875fdd0e27b3425cc02ba915ab61bcf9760ac032d294b69a887a91e78459
 - `docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json` fde0ddac723b62ab9bdc9789fa738c74198de23b8d150fd67b1b89d9e9d2d2ae

@@ -87,6 +87,12 @@ PINS.update(A21.pins())
 # A9.22 G3 (immutable; json + verbatim md): the owner's AG-15 closure decision, pinned as ag15_f9 pins it
 PINS["A922"] = (AG15.CLOSURE_DECISION["json"], AG15.CLOSURE_DECISION["json_sha256"])
 PINS["A922_MD"] = (AG15.CLOSURE_DECISION["md"], AG15.CLOSURE_DECISION["md_sha256"])
+# A9.26 (immutable; json + verbatim md): the owner mass-budget policy for the bid baseline (10 % system margin,
+# AL-09 1.0 kg provisional owner allocation; applied by mass / power v5, cited by the AFC-SY-MASS-ROLL row)
+PINS["A926"] = ("docs/decisions/OD_2026_10_05_A9_26_mass_budget_owner_decisions.json",
+                "18dada24a90fb1a5d17e903bf8eb9f77af622106f9ddfc59ea1f182054b80b76")
+PINS["A926_MD"] = ("docs/decisions/OD_2026_10_05_A9_26_MASS_BUDGET_OWNER_DECISIONS.md",
+                   "5f40294de9ab736cedd7a24a393b0333823c2624e3469f6b1f775250a85803e5")
 # Mutable / revisable inputs: read-only, sha256 recorded at build time (drift is reported by --check).
 CONSUMED = {
     # A9.7 lanes (all merged in the base of this lane)
@@ -107,8 +113,9 @@ CONSUMED = {
     # A9 / A9.x deliverables
     "OQ4": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
     "OQ5": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
-    # A9.24 AFI-01: the current mass / power package is the v4 successor of v3 (AL-08 cathode-feed re-base)
-    "MP4": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
+    # A9.24 AFI-01: v4 = v3 + the AL-08 cathode-feed re-base; A9.26: the current mass / power package is the v5
+    # successor of v4 (10 % system margin for the bid basis, AL-09 1.0 kg provisional owner allocation)
+    "MP5": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
     "RVM": "docs/requirements/rvm_a9/rvm_a9_v1.json",
     "RFP": AG15.REGISTRATION_PATH,      # official RFP registration (by hash; PDF controlled externally, A9.17 RFP)
     "MP2": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",

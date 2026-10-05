@@ -45,9 +45,9 @@
    "use": "F2 filter-stage deliverable (filter cases are built through abep_sim/design/filter_stage.py)"
   },
   {
-   "path": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
+   "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
    "use": "mass/power v3 (A9.15-applied): slot TBD texts, allocations, wet roll-ups (mutable package; identity checked)",
-   "identity": "mass_power_a9_v4"
+   "identity": "mass_power_a9_v5"
   },
   {
    "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
@@ -1296,7 +1296,7 @@
       "value": 13560000.0,
       "units": "Hz",
       "basis": "13.56 MHz ICP drive (row 72 / A9)",
-      "source": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json items_v2 MPV2-P07; abep_sim/bus_boundary_a9_v2.py RF_FREQUENCY_HZ",
+      "source": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json items_v2 MPV2-P07; abep_sim/bus_boundary_a9_v2.py RF_FREQUENCY_HZ",
       "evidence_class": "owner-allocation",
       "status": "OWNER_GIVEN"
      },
@@ -1313,7 +1313,7 @@
       ],
       "units": "-",
       "basis": "flight-representative DC-RF source, directional coupler, 50-ohm line, local adjustable match, antenna (A9.2 / A9.3 decisions)",
-      "source": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json power.icp_rf_chain",
+      "source": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json power.icp_rf_chain",
       "evidence_class": "assumed",
       "status": "LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT"
      },
@@ -1335,7 +1335,7 @@
       "value": "TBD",
       "units": "-",
       "basis": "TBD - requires a measured FLIGHT_REPRESENTATIVE_DC_RF_SOURCE (P_DC,in -> P_RF)",
-      "source": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json items_v2 MPV2-P08",
+      "source": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json items_v2 MPV2-P08",
       "evidence_class": "TBD",
       "status": "TBD"
      },
@@ -9915,13 +9915,13 @@
     "units": "kg",
     "evidence_class": null,
     "source": null,
-    "reason": "no CBE or measured mass exists for any BOM line (mass/power v3); the wet roll-ups of the owner reading 'MEV_LEVEL_EVIDENCE_BASED (the single owner reading)' against the 40 kg wet limit are ['DOES_NOT_CLOSE'] for the Xe load cases [2.0, 5.0, 10.0] kg",
+    "reason": "no CBE or measured mass exists for any BOM line (mass/power v3); the wet roll-ups of the owner reading 'MEV_LEVEL_EVIDENCE_BASED (the single owner reading; A9.26: 10 % system margin, active proposal / bid basis)' against the 40 kg wet limit are ['DOES_NOT_CLOSE'] for the Xe load cases [2.0, 5.0, 10.0] kg",
     "unlock": [
      "a CBE or measured mass for every mass/power v3 BOM line (no CBE exists) plus the Xe load case (XA9Q-01 / MQ-09) and the MQ-01 margin reading decided by the owner"
     ],
     "wet_known_allocation_envelope_kg": [
-     42.57213,
-     50.57213
+     40.34901,
+     48.34901
     ],
     "wet_rollup_states": [
      "DOES_NOT_CLOSE"
@@ -9929,25 +9929,25 @@
     "wet_rollup_by_xe_case": [
      {
       "xe_case_kg": 2.0,
-      "wet_known_kg": 42.57213,
+      "wet_known_kg": 40.34901,
       "state": "DOES_NOT_CLOSE",
-      "exceedance_kg": 2.572126
+      "exceedance_kg": 0.3490105
      },
      {
       "xe_case_kg": 5.0,
-      "wet_known_kg": 45.57213,
+      "wet_known_kg": 43.34901,
       "state": "DOES_NOT_CLOSE",
-      "exceedance_kg": 5.572126
+      "exceedance_kg": 3.349011
      },
      {
       "xe_case_kg": 10.0,
-      "wet_known_kg": 50.57213,
+      "wet_known_kg": 48.34901,
       "state": "DOES_NOT_CLOSE",
-      "exceedance_kg": 10.57213
+      "exceedance_kg": 8.349011
      }
     ],
-    "owner_reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)",
-    "budget_source": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json rollups[configuration=hall_icp_neutralizer].wet[reference=HARD_40_WET]",
+    "owner_reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading; A9.26: 10 % system margin, active proposal / bid basis)",
+    "budget_source": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json rollups[configuration=hall_icp_neutralizer].wet[reference=HARD_40_WET]",
     "lines": [
      {
       "line": "AL-01",
@@ -10049,8 +10049,8 @@
       "cbe_kg": null,
       "measured_kg": null,
       "design_parametric": null,
-      "budget_value_kg": null,
-      "budget_value_governs": null
+      "budget_value_kg": 1.0,
+      "budget_value_governs": "ALLOCATION_MEV"
      },
      {
       "line": "AL-10",
@@ -10719,7 +10719,7 @@
    "treatment": "NOT_EVALUATED",
    "quantified": false,
    "basis": "flight RF source efficiency TBD (MPV2-P08); RF ratings TBD_AFTER_IMPEDANCE_MAP",
-   "source": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json"
+   "source": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json"
   },
   {
    "axis": "thermal_parameters",
@@ -11155,7 +11155,7 @@
    "id": "AQ-06",
    "question": "Does the system close < 40 kg wet?",
    "answer_state": "CANNOT_ANSWER",
-   "basis": "no CBE for any BOM line (m_wet NOT_EVALUATED); mass/power v3 wet roll-ups against HARD_40_WET (MEV-level owner reading, Xe cases 2 / 5 / 10 kg): hall_icp_neutralizer ['DOES_NOT_CLOSE'] (known terms 42.57-50.57 kg) (flight configuration only; A9.19 / A9.20: C1 is a GROUND_REFERENCE, never a flight roll-up)",
+   "basis": "no CBE for any BOM line (m_wet NOT_EVALUATED); mass/power v3 wet roll-ups against HARD_40_WET (MEV-level owner reading, Xe cases 2 / 5 / 10 kg): hall_icp_neutralizer ['DOES_NOT_CLOSE'] (known terms 40.35-48.35 kg) (flight configuration only; A9.19 / A9.20: C1 is a GROUND_REFERENCE, never a flight roll-up)",
    "unlock": [
     "a CBE or measured mass for every mass/power v3 BOM line (no CBE exists) plus the Xe load case (XA9Q-01 / MQ-09) and the MQ-01 margin reading decided by the owner"
    ]
@@ -11403,7 +11403,7 @@
   {
    "id": "F78-ID-15",
    "direction": "mass/power v3 -> F7",
-   "counterpart": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
+   "counterpart": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
    "content": "A9-02 slot TBD texts, allocations, evidence floors, wet roll-ups; F7 returns design-parametric masses in a separate column (never merged)",
    "status": "CONSUMED / PROVIDED"
   },

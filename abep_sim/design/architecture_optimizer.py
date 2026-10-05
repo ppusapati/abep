@@ -164,10 +164,11 @@ P1_REL = "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json"
 P2_REL = "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json"
 P3_REL = "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json"   # supersedes v1 (A9.16)
 P4_REL = "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json"
-# A9.24 AFI-01: the current mass / power package is v4 (v3 + the AL-08 cathode-feed re-base); v3 / v2 = history
-MP_REL = "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json"
+# A9.26: the current mass / power package is v5 (v4 + the A9.26 bid mass policy: 10 % system margin, AL-09 1.0 kg);
+# v4 (A9.24 AFI-01 AL-08 re-base) / v3 / v2 = history
+MP_REL = "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json"
 # RV19-11: the A9.19 hollow-cathode refusal reads the current mass / power package, never the immutable v2 history
-# (kept as a named alias for the refusal reader; the name predates v4)
+# (kept as a named alias for the refusal reader; the name predates v4 / v5)
 MP_V3_REL = MP_REL
 RFQ_REL = "docs/procurement/rfq_a9_v3/rfq_a9_v3.json"                    # A9.15-applied (RFP-02); v2 = history
 RVM_REL = "docs/requirements/rvm_a9/rvm_a9_v1.json"

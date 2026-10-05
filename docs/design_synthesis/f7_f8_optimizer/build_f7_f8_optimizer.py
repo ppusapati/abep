@@ -96,7 +96,7 @@ REFERENCED_NOT_PINNED = (
     ("abep_sim/bus_boundary_a9_v2.py", "A9-02 bus boundary v2 (A9.22 G8; called, never modified)"),
     (ao.F5_BUILDER_REL, "F5 geometric_admissibility (imported by path, read-only)"),
 )
-IDENTITY = {ao.MP_REL: "mass_power_a9_v4", ao.P3_REL: "p3_coupled_thermal_v2", ao.P4_REL: "p4_anode_materials_v1",
+IDENTITY = {ao.MP_REL: "mass_power_a9_v5", ao.P3_REL: "p3_coupled_thermal_v2", ao.P4_REL: "p4_anode_materials_v1",
             ao.RVM_REL: "rvm_a9_v1", ao.P1_REL: "p1_icp_bench_v1", ao.P2_REL: "p2_impedance_prep_v1"}
 
 

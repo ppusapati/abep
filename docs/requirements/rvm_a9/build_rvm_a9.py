@@ -156,9 +156,10 @@ REFS = {
            "P4 anode / collector materials framework"),
     # A9.16 repair RFP-01: the A9.15-applied v3 packages (v2 are immutable history whose readings A9.14 / A9.15
     # retired: XA9Q-07 = YES, XV2Q-01 NOT APPLICABLE, MQ-01 single MEV reading, XA9Q-01 / MQ-09 LOADED)
-    # A9.24 AFI-01: the current flight mass / power package is the v4 successor of v3 (AL-08 cathode-feed re-base)
-    "MP": ("docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json", "id", "mass_power_a9_v4",
-           "mass + power v4 (v3 + A9.24 AFI-01 AL-08 re-base)"),
+    # A9.24 AFI-01: v4 = v3 + the AL-08 cathode-feed re-base; A9.26: the current flight mass / power package is the v5
+    # successor of v4 (10 % system margin for the bid basis, AL-09 1.0 kg provisional owner allocation)
+    "MP": ("docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json", "id", "mass_power_a9_v5",
+           "mass + power v5 (v4 + A9.26 bid mass policy: 10 % system margin, AL-09 1.0 kg)"),
     "XE": ("docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json", "id", "xe_accounting_a9_v3",
            "A9.16 Xe accounting v3 (A9.14 / A9.15 applied)"),
     "AOL": ("docs/experiments/lifetime_ao/ao_lifetime_register_v5.json", "schema", "ao_lifetime_register_v5",
@@ -584,7 +585,9 @@ def probe_mass(ctx, cfg, references):
     verdict = ("FAIL not admissible: (a) floor-only sums exceed the limit in "
                f"{n_exc} of {n_all} admissible readings (FAIL needs all), and (b) the floors are not verified lower "
                "bounds; per-reading results reported, status INCOMPLETE_EVIDENCE")
-    state = (f"BUDGET EVALUATED ({mp['id']}, A9.14 / A9.15 applied; A9.24 AFI-01 AL-08 re-base), INCONCLUSIVE - "
+    state = (f"BUDGET EVALUATED ({mp['id']}, A9.14 / A9.15 applied; A9.24 AFI-01 AL-08 re-base; A9.26 10 % "
+             "system margin (bid basis) and AL-09 1.0 kg provisional owner allocation; "
+             f"{mp['mass_status']['status']}), INCONCLUSIVE - "
              "no CBE and no measured mass; "
              "evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; "
              + "; ".join(parts) + "; " + verdict)

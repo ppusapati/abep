@@ -384,11 +384,11 @@
   },
   {
    "key": "MP",
-   "path": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
+   "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
    "identity": {
-    "id": "mass_power_a9_v4"
+    "id": "mass_power_a9_v5"
    },
-   "role": "mass + power v4 (v3 + A9.24 AFI-01 AL-08 re-base)",
+   "role": "mass + power v5 (v4 + A9.26 bid mass policy: 10 % system margin, AL-09 1.0 kg)",
    "why": "mutable package: read at build time, identity checked, never pinned"
   },
   {
@@ -1708,12 +1708,12 @@
     "hall_icp_neutralizer": {
      "status": "NOT_EVALUATED",
      "rule": "R7-NOT-EVALUATED",
-     "reason": "no determining evaluation with evidenced terms: mass_power_a9_v4:power.configurations.hall_icp_neutralizer.rfp_gate_1ms [BUDGET_EVALUATION], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PBUS [PLAN_OR_FRAMEWORK]",
+     "reason": "no determining evaluation with evidenced terms: mass_power_a9_v5:power.configurations.hall_icp_neutralizer.rfp_gate_1ms [BUDGET_EVALUATION], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PBUS [PLAN_OR_FRAMEWORK]",
      "current_evidence_state": "LEDGER EVALUATED, NOT_EVALUABLE - steady ledger PARTIAL_BOUNDARY, 22 TBD, P_bus lower bound 0.0 W; P_bus,1ms,max gate NOT_EVALUABLE in all 7 registered steps; slots with a CBE 0, measured 0 || PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK",
      "artifacts": [
       {
-       "path": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
-       "id": "mass_power_a9_v4:power.configurations.hall_icp_neutralizer.rfp_gate_1ms",
+       "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+       "id": "mass_power_a9_v5:power.configurations.hall_icp_neutralizer.rfp_gate_1ms",
        "role": "DETERMINING",
        "kind": "BUDGET_EVALUATION",
        "evidence_state": "LEDGER EVALUATED, NOT_EVALUABLE - steady ledger PARTIAL_BOUNDARY, 22 TBD, P_bus lower bound 0.0 W; P_bus,1ms,max gate NOT_EVALUABLE in all 7 registered steps; slots with a CBE 0, measured 0",
@@ -1987,12 +1987,12 @@
     "hall_icp_neutralizer": {
      "status": "NOT_EVALUATED",
      "rule": "R7-NOT-EVALUATED",
-     "reason": "no determining evaluation with evidenced terms: mass_power_a9_v4:power.configurations.hall_icp_neutralizer.phases.steady.design_allocation_1350W [BUDGET_EVALUATION], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PALLOC [PLAN_OR_FRAMEWORK]",
+     "reason": "no determining evaluation with evidenced terms: mass_power_a9_v5:power.configurations.hall_icp_neutralizer.phases.steady.design_allocation_1350W [BUDGET_EVALUATION], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PALLOC [PLAN_OR_FRAMEWORK]",
      "current_evidence_state": "ALLOCATION CHECK EVALUATED, NOT_EVALUABLE - 22 TBD loads; P_ICP,available = 1350 - P_common - P_Hall - P_other,active: NOT_EVALUABLE (upper bound 1350.0 W) || PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK",
      "artifacts": [
       {
-       "path": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
-       "id": "mass_power_a9_v4:power.configurations.hall_icp_neutralizer.phases.steady.design_allocation_1350W",
+       "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+       "id": "mass_power_a9_v5:power.configurations.hall_icp_neutralizer.phases.steady.design_allocation_1350W",
        "role": "DETERMINING",
        "kind": "BUDGET_EVALUATION",
        "evidence_state": "ALLOCATION CHECK EVALUATED, NOT_EVALUABLE - 22 TBD loads; P_ICP,available = 1350 - P_common - P_Hall - P_other,active: NOT_EVALUABLE (upper bound 1350.0 W)",
@@ -2333,15 +2333,15 @@
     "hall_icp_neutralizer": {
      "status": "INCOMPLETE_EVIDENCE",
      "rule": "R6-INCOMPLETE",
-     "reason": "evaluation run with evidenced terms but inconclusive: mass_power_a9_v4:rollups[hall_icp_neutralizer] (3 evidenced term(s))",
-     "current_evidence_state": "BUDGET EVALUATED (mass_power_a9_v4, A9.14 / A9.15 applied; A9.24 AFI-01 AL-08 re-base), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; HARD_40_WET: floor-only 13.433-13.433 kg vs < 40.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 40.57 kg; wet_known 42.57 / 45.57 / 50.57 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 3 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
+     "reason": "evaluation run with evidenced terms but inconclusive: mass_power_a9_v5:rollups[hall_icp_neutralizer] (3 evidenced term(s))",
+     "current_evidence_state": "BUDGET EVALUATED (mass_power_a9_v5, A9.14 / A9.15 applied; A9.24 AFI-01 AL-08 re-base; A9.26 10 % system margin (bid basis) and AL-09 1.0 kg provisional owner allocation; MASS INCOMPLETE_EVIDENCE / NOT_YET_CLOSED), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; HARD_40_WET: floor-only 13.433-13.433 kg vs < 40.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 38.35 kg; wet_known 40.35 / 43.35 / 48.35 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 3 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
      "artifacts": [
       {
-       "path": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
-       "id": "mass_power_a9_v4:rollups[hall_icp_neutralizer]",
+       "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+       "id": "mass_power_a9_v5:rollups[hall_icp_neutralizer]",
        "role": "DETERMINING",
        "kind": "BUDGET_EVALUATION",
-       "evidence_state": "BUDGET EVALUATED (mass_power_a9_v4, A9.14 / A9.15 applied; A9.24 AFI-01 AL-08 re-base), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; HARD_40_WET: floor-only 13.433-13.433 kg vs < 40.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 40.57 kg; wet_known 42.57 / 45.57 / 50.57 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 3 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
+       "evidence_state": "BUDGET EVALUATED (mass_power_a9_v5, A9.14 / A9.15 applied; A9.24 AFI-01 AL-08 re-base; A9.26 10 % system margin (bid basis) and AL-09 1.0 kg provisional owner allocation; MASS INCOMPLETE_EVIDENCE / NOT_YET_CLOSED), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; HARD_40_WET: floor-only 13.433-13.433 kg vs < 40.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 38.35 kg; wet_known 40.35 / 43.35 / 48.35 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 3 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
        "evaluated": true,
        "verified": false,
        "measured": false,
@@ -2399,20 +2399,20 @@
           "mixed_basis_states": [
            {
             "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=2.0",
-            "dry_known_kg": 40.57212631,
-            "wet_known_kg": 42.57212631,
+            "dry_known_kg": 38.34901052,
+            "wet_known_kg": 40.34901052,
             "state": "DOES_NOT_CLOSE"
            },
            {
             "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=5.0",
-            "dry_known_kg": 40.57212631,
-            "wet_known_kg": 45.57212631,
+            "dry_known_kg": 38.34901052,
+            "wet_known_kg": 43.34901052,
             "state": "DOES_NOT_CLOSE"
            },
            {
             "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=10.0",
-            "dry_known_kg": 40.57212631,
-            "wet_known_kg": 50.57212631,
+            "dry_known_kg": 38.34901052,
+            "wet_known_kg": 48.34901052,
             "state": "DOES_NOT_CLOSE"
            }
           ],
@@ -2422,11 +2422,9 @@
            "CLOSES": 0
           },
           "v3_owner_reading": {
-           "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)",
-           "dry_known_kg": 40.57212631,
-           "lines_without_value": [
-            "AL-09"
-           ],
+           "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading; A9.26: 10 % system margin, active proposal / bid basis)",
+           "dry_known_kg": 38.34901052,
+           "lines_without_value": [],
            "all_terms_resolved": false
           },
           "fail_rule": "FAIL only if a VERIFIED lower-bound floor exceeds the limit under EVERY admissible reading (v3: the single owner reading MEV_LEVEL_EVIDENCE_BASED x LOADED x the 2/5/10 kg Xe design cases); the v3 roll-up states (owner MEV allocations + MEV planning floors) are recorded as current evidence state but are not verified lower bounds, so a DOES_NOT_CLOSE there is not a FAIL (MQ-10 redesign lever)"
@@ -2659,15 +2657,15 @@
     "hall_icp_neutralizer": {
      "status": "INCOMPLETE_EVIDENCE",
      "rule": "R6-INCOMPLETE",
-     "reason": "evaluation run with evidenced terms but inconclusive: mass_power_a9_v4:rollups[hall_icp_neutralizer] (3 evidenced term(s))",
-     "current_evidence_state": "BUDGET EVALUATED (mass_power_a9_v4, A9.14 / A9.15 applied; A9.24 AFI-01 AL-08 re-base), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; INTERNAL_34: floor-only 13.433-13.433 kg vs <= 34.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 40.57 kg; wet_known 42.57 / 45.57 / 50.57 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; INTERNAL_36: floor-only 13.433-13.433 kg vs <= 36.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 40.57 kg; wet_known 42.57 / 45.57 / 50.57 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 6 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
+     "reason": "evaluation run with evidenced terms but inconclusive: mass_power_a9_v5:rollups[hall_icp_neutralizer] (3 evidenced term(s))",
+     "current_evidence_state": "BUDGET EVALUATED (mass_power_a9_v5, A9.14 / A9.15 applied; A9.24 AFI-01 AL-08 re-base; A9.26 10 % system margin (bid basis) and AL-09 1.0 kg provisional owner allocation; MASS INCOMPLETE_EVIDENCE / NOT_YET_CLOSED), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; INTERNAL_34: floor-only 13.433-13.433 kg vs <= 34.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 38.35 kg; wet_known 40.35 / 43.35 / 48.35 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; INTERNAL_36: floor-only 13.433-13.433 kg vs <= 36.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 38.35 kg; wet_known 40.35 / 43.35 / 48.35 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 6 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
      "artifacts": [
       {
-       "path": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
-       "id": "mass_power_a9_v4:rollups[hall_icp_neutralizer]",
+       "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+       "id": "mass_power_a9_v5:rollups[hall_icp_neutralizer]",
        "role": "DETERMINING",
        "kind": "BUDGET_EVALUATION",
-       "evidence_state": "BUDGET EVALUATED (mass_power_a9_v4, A9.14 / A9.15 applied; A9.24 AFI-01 AL-08 re-base), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; INTERNAL_34: floor-only 13.433-13.433 kg vs <= 34.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 40.57 kg; wet_known 42.57 / 45.57 / 50.57 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; INTERNAL_36: floor-only 13.433-13.433 kg vs <= 36.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 40.57 kg; wet_known 42.57 / 45.57 / 50.57 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 6 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
+       "evidence_state": "BUDGET EVALUATED (mass_power_a9_v5, A9.14 / A9.15 applied; A9.24 AFI-01 AL-08 re-base; A9.26 10 % system margin (bid basis) and AL-09 1.0 kg provisional owner allocation; MASS INCOMPLETE_EVIDENCE / NOT_YET_CLOSED), INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; INTERNAL_34: floor-only 13.433-13.433 kg vs <= 34.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 38.35 kg; wet_known 40.35 / 43.35 / 48.35 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; INTERNAL_36: floor-only 13.433-13.433 kg vs <= 36.0 kg, exceeding in 0 of 3 readings; v3 single owner reading MEV_LEVEL_EVIDENCE_BASED (dry_known 38.35 kg; wet_known 40.35 / 43.35 / 48.35 kg at the 2.0/5.0/10.0 kg Xe cases) DOES_NOT_CLOSE 3 / NOT_EVALUABLE 0 of 3; FAIL not admissible: (a) floor-only sums exceed the limit in 0 of 6 admissible readings (FAIL needs all), and (b) the floors are not verified lower bounds; per-reading results reported, status INCOMPLETE_EVIDENCE",
        "evaluated": true,
        "verified": false,
        "measured": false,
@@ -2725,20 +2723,20 @@
           "mixed_basis_states": [
            {
             "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=2.0",
-            "dry_known_kg": 40.57212631,
-            "wet_known_kg": 42.57212631,
+            "dry_known_kg": 38.34901052,
+            "wet_known_kg": 40.34901052,
             "state": "DOES_NOT_CLOSE"
            },
            {
             "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=5.0",
-            "dry_known_kg": 40.57212631,
-            "wet_known_kg": 45.57212631,
+            "dry_known_kg": 38.34901052,
+            "wet_known_kg": 43.34901052,
             "state": "DOES_NOT_CLOSE"
            },
            {
             "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=10.0",
-            "dry_known_kg": 40.57212631,
-            "wet_known_kg": 50.57212631,
+            "dry_known_kg": 38.34901052,
+            "wet_known_kg": 48.34901052,
             "state": "DOES_NOT_CLOSE"
            }
           ],
@@ -2748,11 +2746,9 @@
            "CLOSES": 0
           },
           "v3_owner_reading": {
-           "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)",
-           "dry_known_kg": 40.57212631,
-           "lines_without_value": [
-            "AL-09"
-           ],
+           "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading; A9.26: 10 % system margin, active proposal / bid basis)",
+           "dry_known_kg": 38.34901052,
+           "lines_without_value": [],
            "all_terms_resolved": false
           },
           "fail_rule": "FAIL only if a VERIFIED lower-bound floor exceeds the limit under EVERY admissible reading (v3: the single owner reading MEV_LEVEL_EVIDENCE_BASED x LOADED x the 2/5/10 kg Xe design cases); the v3 roll-up states (owner MEV allocations + MEV planning floors) are recorded as current evidence state but are not verified lower bounds, so a DOES_NOT_CLOSE there is not a FAIL (MQ-10 redesign lever)"
@@ -2801,20 +2797,20 @@
           "mixed_basis_states": [
            {
             "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=2.0",
-            "dry_known_kg": 40.57212631,
-            "wet_known_kg": 42.57212631,
+            "dry_known_kg": 38.34901052,
+            "wet_known_kg": 40.34901052,
             "state": "DOES_NOT_CLOSE"
            },
            {
             "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=5.0",
-            "dry_known_kg": 40.57212631,
-            "wet_known_kg": 45.57212631,
+            "dry_known_kg": 38.34901052,
+            "wet_known_kg": 43.34901052,
             "state": "DOES_NOT_CLOSE"
            },
            {
             "reading": "MEV_LEVEL_EVIDENCE_BASED|LOADED|xe_case=10.0",
-            "dry_known_kg": 40.57212631,
-            "wet_known_kg": 50.57212631,
+            "dry_known_kg": 38.34901052,
+            "wet_known_kg": 48.34901052,
             "state": "DOES_NOT_CLOSE"
            }
           ],
@@ -2824,11 +2820,9 @@
            "CLOSES": 0
           },
           "v3_owner_reading": {
-           "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)",
-           "dry_known_kg": 40.57212631,
-           "lines_without_value": [
-            "AL-09"
-           ],
+           "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading; A9.26: 10 % system margin, active proposal / bid basis)",
+           "dry_known_kg": 38.34901052,
+           "lines_without_value": [],
            "all_terms_resolved": false
           },
           "fail_rule": "FAIL only if a VERIFIED lower-bound floor exceeds the limit under EVERY admissible reading (v3: the single owner reading MEV_LEVEL_EVIDENCE_BASED x LOADED x the 2/5/10 kg Xe design cases); the v3 roll-up states (owner MEV allocations + MEV planning floors) are recorded as current evidence state but are not verified lower bounds, so a DOES_NOT_CLOSE there is not a FAIL (MQ-10 redesign lever)"
@@ -5097,8 +5091,8 @@
        }
       },
       {
-       "path": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
-       "id": "mass_power_a9_v4:power.configurations.hall_icp_neutralizer.phases.startup",
+       "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+       "id": "mass_power_a9_v5:power.configurations.hall_icp_neutralizer.phases.startup",
        "role": "SUPPORTING",
        "kind": "BUDGET_EVALUATION",
        "evidence_state": "SEQUENCE RULES RULES_NOT_EVALUABLE (5 rules not evaluable; template bus_boundary_a9_v2.SEQUENCE_TEMPLATES (PROPOSED, row 112))",
@@ -9180,15 +9174,15 @@
     "hall_icp_neutralizer": {
      "status": "NOT_EVALUATED",
      "rule": "R7-NOT-EVALUATED",
-     "reason": "no determining evaluation with evidenced terms: mass_power_a9_v4 [PLAN_OR_FRAMEWORK], xe_accounting_a9_v3 [PLAN_OR_FRAMEWORK]",
-     "current_evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status AFI_CORRECTIONS_APPLIED_OWNER_RESOLVED_A9_25_PROVISIONAL_PLANNING_FLOOR || PLANNED / FRAMEWORK ONLY - nothing measured; package status PARAMETRIC_XE_ACCOUNTING_V3 - owner decisions applied; every total with a TBD input REFUSED; nothing frozen; no winner; no PASS",
+     "reason": "no determining evaluation with evidenced terms: mass_power_a9_v5 [PLAN_OR_FRAMEWORK], xe_accounting_a9_v3 [PLAN_OR_FRAMEWORK]",
+     "current_evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status A9_26_MASS_POLICY_APPLIED_PROVISIONAL_PLANNING_FLOOR_MASS_NOT_YET_CLOSED || PLANNED / FRAMEWORK ONLY - nothing measured; package status PARAMETRIC_XE_ACCOUNTING_V3 - owner decisions applied; every total with a TBD input REFUSED; nothing frozen; no winner; no PASS",
      "artifacts": [
       {
-       "path": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json",
-       "id": "mass_power_a9_v4",
+       "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+       "id": "mass_power_a9_v5",
        "role": "DETERMINING",
        "kind": "PLAN_OR_FRAMEWORK",
-       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status AFI_CORRECTIONS_APPLIED_OWNER_RESOLVED_A9_25_PROVISIONAL_PLANNING_FLOOR",
+       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status A9_26_MASS_POLICY_APPLIED_PROVISIONAL_PLANNING_FLOOR_MASS_NOT_YET_CLOSED",
        "evaluated": false,
        "verified": false,
        "measured": false,
@@ -9201,7 +9195,7 @@
        "lower_bound_verified": false,
        "exceeds_limit_every_reading": null,
        "detail": {
-        "name": "A9 mass + power integration v4: v3 with the AL-08 cathode-feed PFCV removed (AFI-01), the AL-07 analog-floor label (AFI-02) and C1 = GROUND_REFERENCE_ONLY; roll-ups recomputed exactly as v3",
+        "name": "A9 mass + power integration v5: v4 with the A9.26 bid mass policy (10 % system margin, AL-09 1.0 kg provisional owner allocation); roll-ups recomputed; MASS INCOMPLETE_EVIDENCE / NOT_YET_CLOSED",
         "why": "flight mass / power v4 (successor of v3), to be refreshed for A9.19 / A9.20 without C1 (budgets lane); the immutable v2 still books hall_c1_reference as history and is not evidence here"
        }
       },
@@ -10061,7 +10055,7 @@
   {
    "id": "RVM-ID-01",
    "direction": "RVM <- mass/power v4",
-   "counterpart": "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json (rollups, lines, power)",
+   "counterpart": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json (rollups, lines, power)",
    "content": "mass rows: < 40 kg wet and 34 / 36 kg from the v4 single-owner-reading roll-ups (no CBE); power rows: < 1.5 kW and 1.35 kW from the A9 ledger (all loads TBD); consumed as RVM-04 / -05 / -06 / -07 (v2, MPV2-ID-11, is immutable history)",
    "status": "CONSUMED"
   },
