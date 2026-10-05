@@ -95,6 +95,11 @@ Everything else (signed commits, linear history, merge queue, code owners, conve
   optional: A9.14 S10.4, RUST-OQ-02 = `OPTIONAL_RUST_CI_MANDATORY_PARITY_ON_RUST_CHANGES`
   (`docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md`). Normal CI stays runnable without Rust;
   `docs/ci/RUST_PARITY.md`.
+* **The Rust workspace workflow is not a required check yet.** `.github/workflows/rust-workspace.yml` (job
+  `Rust workspace (fmt, clippy, cargo test, bid guard, test register, groundtest isolation)`, ES-1) runs on every pull
+  request and on pushes to `main` / `integration/simulation-complete`. Under `docs/rust_migration/CI_PLAN.md` v3.1 § 1
+  principle 4 (plan structure approved by the owner, A9.29) the Rust jobs become required status checks only when the
+  first non-Kernel-1 component is admitted; that PR updates this file.
 * No other workflow exists today. Any future workflow becomes required only by a new owner decision, recorded here.
 
 ## 3. Preconditions (in this order)

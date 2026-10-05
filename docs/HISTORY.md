@@ -4182,3 +4182,37 @@ main, and the bid record `5eee4b8` / `b5849af` / `2de86ab`. `git diff 2de86ab..H
   - Any byte change requires a new preregistration and a parity rerun.
 - CLAUDE.md gets narrow A9.30 notes on next-work item 4 (O/O2) and the admissibility paragraph (bus boundary).
   Historical text and decision files are not rewritten.
+
+## 2026-10-05 — ES-1 lane A1: bid source guard, migration ledger, Rust-era test rule, groundtest isolation, run record, Rust CI (A9.29 secs. 1, 3, 9; A9.30 sec. 6; no physics, no number changed)
+
+- **Bid source guard (RM-OQ-11, NI-BID-SOURCE-GUARD).**
+  - The acceptance was preregistered alone, before any implementation: `docs/rust_migration/contracts/BID_SOURCE_GUARD/acceptance_v1.json`
+    (sha256 `8d23e1f1…`, 25 cases).
+  - `docs/bid/bid_source_manifest_v1.json` is the only new path under `docs/bid/`. It records technical source 5eee4b8 (root
+    tree, sha256 of the 53 files the package cites or its builder reads), lineage b5849af -> 2de86ab (docs/bid tree ids,
+    sha256 of every file), mission_scenario_v2 `885b1f70…` and an empty `owner_change_authorizations`.
+  - The Rust guard `abep_provenance::bid_guard` is primary; `scripts/ci_checks.py` adds it as a 12th check, `bid_source_guard`
+    (the 11 checks are unchanged). Without full git history the result is NOT_EVALUATED, never a pass.
+  - Single acceptance run at `ec6879f`: **ACCEPTED**. All 25 cases meet their expectations in both Rust and Python, and the two
+    agree on every case. The current tree passes (`acceptance_report_v1.{json,md}`).
+- **Migration ledger** `docs/rust_migration/migration_state_v1.json`: 227 rows, with ids equal to inventory v3_1.
+  - Kernel 1 is an ADMITTED partial admission of `abep_sim/intake_tpmc.py` (evidence `parity_report_v2.json`); the rest of
+    the file stays PYTHON_REFERENCE.
+  - NI-BID-SOURCE-GUARD is ADMITTED (ledger flip, this entry, CI jobs).
+  - Rows change only on admission evidence, through `status_history` plus a HISTORY entry.
+- **`crates/abep-ci`** (non-flight tooling) holds:
+  - the ledger check;
+  - the Rust-era test rule, with an empty register `docs/rust_migration/test_register/platform_tests_v1.json` and no
+    `#[ignore]` in the workspace;
+  - groundtest isolation through `cargo metadata`, vacuous until `abep-groundtest` exists;
+  - an explicit assertion of the empty Hall credible set;
+  - the acceptance writer and the `abep-ci` CLI.
+- **`abep_provenance::run_record`**: a deterministic sidecar holding the git commit, rustc, the Cargo.lock / MANIFEST /
+  model-set / design-state-set / architecture sha256, the HallThruster.jl pin and the thread / BLAS / Julia environment.
+- **`.github/workflows/rust-workspace.yml`**: not a required check yet (CI_PLAN § 1 principle 4); `ci.yml` is untouched. Steps:
+  - abep_core sources == parity_report_v2 sha256 (A9.30 sec. 6);
+  - `cargo fmt -- --check` (members only);
+  - clippy `-D warnings`;
+  - `cargo test --workspace --locked`;
+  - guard, register and isolation checks.
+- **Results.** cargo test: 33 passed, 0 ignored. `ci_checks`: 12/12. pytest: 4232 passed, 5 skipped, 1 xfailed.

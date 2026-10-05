@@ -22,6 +22,11 @@ and they never read campaign records (hallthruster_bridge/out/ and any run outpu
   ensemble_gate            abep_sim.hall_ensemble.load_ensemble() loads; require_admitted refuses every screening candidate
   h2_6_live_sources        review finding SW-02: the H2-6 builder's verify_sources() reports no consumed value that differs from
                            its live source (the builder is immutable H2 v1 history, so the gate lives here, not in its --check)
+  bid_source_guard         A9.29 sec. 3: docs/bid/** equals the terminal package state 2de86ab (docs/bid/bid_source_manifest_v1.json
+                           is the only added path), mission_scenario_v2 unchanged, and in git the lineage 5eee4b8 -> b5849af ->
+                           2de86ab -> HEAD, the recorded tree ids and file hashes hold. Needs full history: in a shallow clone
+                           the history part is NOT_EVALUATED and the check fails. Same semantics as the primary Rust guard
+                           (crates/abep-provenance/src/bid_guard.rs; acceptance_v1.json in docs/rust_migration/contracts/)
 
 "Fresh generation" runs each generator's OWN write path (its __main__, default arguments) inside WriteCapture: builtins.open /
 io.open in a writing mode return in-memory buffers, directory creation is a no-op, every move / remove / copy call raises and
@@ -34,11 +39,16 @@ Rule 9 holds only in a FULL-HISTORY clone: several provenance tests (e.g. tests/
 tests/test_v2_question_a_brief.py) resolve pinned lane commits with `git show` and skip when those objects are absent, as in a
 shallow (depth-1) checkout. This mode therefore also fails, with an explicit reason, when the repository is shallow.
 
-Usage: python scripts/ci_checks.py [--list] [--only NAME[,NAME...]] [--pytest-junit PATH]      exit 0 pass, 1 fail, 2 usage
+Separate mode, used once for the bid_source_guard acceptance report (writes only temporary directories, removed after):
+  python scripts/ci_checks.py --bid-guard-acceptance       JSON results of every preregistered case on stdout
+
+Usage: python scripts/ci_checks.py [--list] [--only NAME[,NAME...]] [--pytest-junit PATH] [--bid-guard-acceptance]
+       exit 0 pass, 1 fail, 2 usage
 """
 from __future__ import annotations
 
-import builtins, contextlib, hashlib, importlib.util, io, json, locale, os, runpy, shutil, subprocess, sys, time, tomllib
+import builtins, contextlib, hashlib, importlib.util, io, json, locale, os, runpy, shutil, stat, subprocess, sys, tempfile
+import time, tomllib
 import xml.etree.ElementTree as ET
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -457,6 +467,537 @@ def check_h2_6_live_sources():
     return bad, f"{_rel(H2_6_BUILDER)} verify_sources(): consumed values == live sources"
 
 
+# ------------------------------------------------------------------------------------------------------- bid source guard
+# A9.29 sec. 3 (RM-OQ-11), CI_PLAN.md § 3. Semantics, codes and tamper cases are preregistered in BID_ACCEPTANCE; the
+# primary implementation is Rust (crates/abep-provenance/src/bid_guard.rs). Same manifest, same codes.
+BID_TECHNICAL_SOURCE = "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b"
+BID_TERMINAL = "2de86abefacbd36ce7516d3cf017f6258bd7e7a2"
+BID_LINEAGE = ["b5849affae22a6709ad217a184f6fe896d15410a", BID_TERMINAL]
+BID_MISSION_PATH = "config/mission/mission_scenario_v2.json"
+BID_MISSION_SHA256 = "885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49"
+BID_MANIFEST_PATH = "docs/bid/bid_source_manifest_v1.json"
+BID_MANIFEST_SCHEMA = "abep_bid_source_manifest_v1"
+BID_ROOT = "docs/bid/"
+BID_BASELINE = "docs/bid/bid_technical_baseline_v2.json"
+BID_IGNORED_PATTERN = "**/__pycache__/*.pyc"
+BID_DECISION_PREFIX = "docs/decisions/OD_"
+BID_ACCEPTANCE = "docs/rust_migration/contracts/BID_SOURCE_GUARD/acceptance_v1.json"
+BID_ACCEPTANCE_SHA256 = "8d23e1f16d63dcbe2ce27f1ad48712d118808270d0ae5ab2ab2a2a6eb60ab1c6"
+
+
+class _GitError(Exception):
+    pass
+
+
+def _is_hex(s, n: int) -> bool:
+    return isinstance(s, str) and len(s) == n and all(c in "0123456789abcdef" for c in s)
+
+
+def _safe_rel(p) -> bool:
+    return (isinstance(p, str) and p != "" and not p.startswith("/") and "\\" not in p
+            and all(seg not in ("", ".", "..") for seg in p.split("/")))
+
+
+def _field(v, key):
+    if not isinstance(v, dict) or key not in v:
+        raise ValueError(f"missing field {key}")
+    return v[key]
+
+
+def _str_field(v, key) -> str:
+    s = _field(v, key)
+    if not isinstance(s, str):
+        raise ValueError(f"field {key} is not a string")
+    return s
+
+
+def _hex_field(v, key, n) -> str:
+    s = _str_field(v, key)
+    if not _is_hex(s, n):
+        raise ValueError(f"field {key} is not {n} lower-case hex digits")
+    return s
+
+
+def _bid_file_map(v, key, prefix) -> dict:
+    obj = _field(v, key)
+    if not isinstance(obj, dict) or not obj:
+        raise ValueError(f"field {key} is not a non-empty object")
+    out = {}
+    for path, rec in obj.items():
+        if not _safe_rel(path) or not path.startswith(prefix):
+            raise ValueError(f"{key}: path {path!r} is not a safe relative path under {prefix!r}")
+        sha = _hex_field(rec, "sha256", 64)
+        n = rec.get("bytes")
+        if "bytes" in rec and not (type(n) is int and 0 <= n < 2 ** 64):
+            raise ValueError(f"{key}[{path}]: bytes is not a non-negative integer")
+        out[path] = (sha, n)
+    return out
+
+
+def bid_parse_manifest(data: bytes) -> dict:
+    v = json.loads(data)
+    if _str_field(v, "schema") != BID_MANIFEST_SCHEMA:
+        raise ValueError(f"schema is not {BID_MANIFEST_SCHEMA}")
+    ts = _field(v, "technical_source")
+    lineage_v = _field(v, "package_lineage")
+    if not isinstance(lineage_v, list) or not lineage_v:
+        raise ValueError("package_lineage is not a non-empty list")
+    lineage = [{"commit": _hex_field(e, "commit", 40), "docs_bid_tree": _hex_field(e, "docs_bid_tree", 40),
+                "files": _bid_file_map(e, "files", BID_ROOT)} for e in lineage_v]
+    mission = _field(v, "mission_scenario_v2")
+    ignored = _field(v, "ignored_generated_artifacts")
+    if not isinstance(ignored, list) or [x.get("pattern") if isinstance(x, dict) else None
+                                         for x in ignored] != [BID_IGNORED_PATTERN]:
+        raise ValueError(f"ignored_generated_artifacts must be exactly [{BID_IGNORED_PATTERN}]")
+    auths = _field(v, "owner_change_authorizations")
+    if not isinstance(auths, list):
+        raise ValueError("owner_change_authorizations is not a list")
+    return {"technical_source": _hex_field(ts, "commit", 40), "technical_source_tree": _hex_field(ts, "tree", 40),
+            "technical_source_files": _bid_file_map(ts, "files", ""), "lineage": lineage,
+            "terminal": _hex_field(_field(v, "terminal_package_state"), "commit", 40),
+            "manifest_path": _str_field(v, "manifest_path"), "mission_path": _str_field(mission, "path"),
+            "mission_sha256": _hex_field(mission, "sha256", 64), "authorizations": auths}
+
+
+def _finding(code, path, detail):
+    return {"code": code, "path": path, "detail": detail}
+
+
+def _part(findings):
+    findings = sorted(findings, key=lambda f: (f["code"], f["path"], f["detail"]))
+    return {"status": "FAIL" if findings else "PASS", "findings": findings}
+
+
+def _not_evaluated(detail):
+    return {"status": "NOT_EVALUATED", "findings": [_finding("HISTORY_NOT_AVAILABLE", "", detail)]}
+
+
+def _compare(rec, data: bytes):
+    sha, n = rec
+    got = hashlib.sha256(data).hexdigest()
+    if got != sha:
+        return f"sha256 {got} != {sha}"
+    if n is not None and n != len(data):
+        return f"{len(data)} bytes != {n}"
+    return None
+
+
+def _bid_validate_authorization(a, root, protected, claimed):
+    rec = _field(a, "decision_record")
+    rpath = _str_field(rec, "path")
+    rsha = _hex_field(rec, "sha256", 64)
+    if not rpath.startswith(BID_DECISION_PREFIX) or not _safe_rel(rpath):
+        raise ValueError(f"decision record {rpath!r} is not under {BID_DECISION_PREFIX}")
+    try:
+        with open(os.path.join(root, rpath), "rb") as f:
+            data = f.read()
+    except OSError as e:
+        raise ValueError(f"decision record {rpath}: {e}") from None
+    if hashlib.sha256(data).hexdigest() != rsha:
+        raise ValueError(f"decision record {rpath}: sha256 differs from the authorization")
+    changes = _field(a, "changes")
+    if not isinstance(changes, list) or not changes:
+        raise ValueError("changes is not a non-empty list")
+    out, seen = [], set()
+    for c in changes:
+        path, action = _str_field(c, "path"), _str_field(c, "action")
+        if not _safe_rel(path) or not path.startswith(BID_ROOT) or path == BID_MANIFEST_PATH:
+            raise ValueError(f"{path!r} is not an authorizable docs/bid path")
+        if path in claimed or path in seen:
+            raise ValueError(f"{path} is authorized twice")
+        seen.add(path)
+        if action in ("MODIFY", "ADD"):
+            if (action == "MODIFY") != (path in protected):
+                raise ValueError(f"{action} of {path}: protected = {path in protected}")
+            after = c.get("sha256_after")
+            if not _is_hex(after, 64):
+                raise ValueError(f"{action} of {path} needs a 64-hex sha256_after")
+            out.append((path, (after, None)))
+        elif action == "REMOVE":
+            if path not in protected:
+                raise ValueError(f"REMOVE of {path}: not a protected file")
+            if "sha256_after" in c:
+                raise ValueError(f"REMOVE of {path} carries sha256_after")
+            out.append((path, None))
+        else:
+            raise ValueError(f"action {action!r} is not MODIFY / ADD / REMOVE")
+    return out
+
+
+def _bid_files_part(root, m):
+    """F-01..F-08 on the working tree; returns (part, expected {path: (sha256, bytes) | None = absent})."""
+    out = []
+    for ok, field, detail in (
+            (m["technical_source"] == BID_TECHNICAL_SOURCE, "technical_source.commit", m["technical_source"]),
+            (m["terminal"] == BID_TERMINAL, "terminal_package_state.commit", m["terminal"]),
+            ([e["commit"] for e in m["lineage"]] == BID_LINEAGE, "package_lineage", "lineage commits"),
+            (m["lineage"][-1]["commit"] == m["terminal"], "terminal_package_state.commit", "not the last lineage entry"),
+            (m["mission_path"] == BID_MISSION_PATH, "mission_scenario_v2.path", m["mission_path"]),
+            (m["mission_sha256"] == BID_MISSION_SHA256, "mission_scenario_v2.sha256", m["mission_sha256"]),
+            (m["manifest_path"] == BID_MANIFEST_PATH, "manifest_path", m["manifest_path"])):
+        if not ok:
+            out.append(_finding("LINEAGE_RECORD_MISMATCH", field, detail))
+    protected = m["lineage"][-1]["files"]
+    expected = dict(protected)
+    claimed = set()
+    for i, a in enumerate(m["authorizations"]):
+        try:
+            changes = _bid_validate_authorization(a, root, protected, claimed)
+        except ValueError as e:
+            out.append(_finding("AUTHORIZATION_INVALID", f"owner_change_authorizations[{i}]", str(e)))
+            continue
+        for path, e in changes:
+            claimed.add(path)
+            expected[path] = e
+    for path, rec in expected.items():
+        p = os.path.join(root, path)
+        try:
+            st = os.lstat(p)
+        except OSError:
+            if rec is not None:
+                out.append(_finding("BID_FILE_MISSING", path, "absent from the working tree"))
+            continue
+        if rec is None:
+            out.append(_finding("BID_FILE_UNLISTED", path, "removed by authorization but present"))
+        elif not stat.S_ISREG(st.st_mode):
+            out.append(_finding("BID_FILE_MODIFIED", path, "not a regular file"))
+        else:
+            with open(p, "rb") as f:
+                diff = _compare(rec, f.read())
+            if diff:
+                out.append(_finding("BID_FILE_MODIFIED", path, diff))
+    for rel, is_file in _bid_walk(root, BID_ROOT.rstrip("/")):
+        parts = rel.split("/")
+        ignored = is_file and len(parts) > 1 and parts[-2] == "__pycache__" and parts[-1].endswith(".pyc")
+        if rel in expected or rel == BID_MANIFEST_PATH or ignored:
+            continue
+        out.append(_finding("BID_FILE_UNLISTED", rel, "not a file of the terminal package state"))
+    try:
+        with open(os.path.join(root, BID_MISSION_PATH), "rb") as f:
+            got = hashlib.sha256(f.read()).hexdigest()
+        if got != BID_MISSION_SHA256:
+            out.append(_finding("MISSION_SCENARIO_CHANGED", BID_MISSION_PATH, f"sha256 {got}"))
+    except OSError as e:
+        out.append(_finding("MISSION_SCENARIO_CHANGED", BID_MISSION_PATH, f"unreadable: {e}"))
+    try:
+        with open(os.path.join(root, BID_BASELINE), "rb") as f:
+            src = json.loads(f.read()).get("bid_technical_source")
+        pin = src.get("commit") if isinstance(src, dict) else None
+    except (OSError, ValueError, AttributeError):
+        pin = None
+    if pin != BID_TECHNICAL_SOURCE:
+        out.append(_finding("TECHNICAL_SOURCE_PIN_CHANGED", BID_BASELINE, f"bid_technical_source.commit = {pin!r}"))
+    return _part(out), expected
+
+
+def _bid_walk(root, rel):
+    try:
+        names = sorted(os.listdir(os.path.join(root, rel)))
+    except OSError:
+        return []
+    out = []
+    for n in names:
+        r = f"{rel}/{n}"
+        try:
+            st = os.lstat(os.path.join(root, r))
+        except OSError:
+            out.append((r, False))
+            continue
+        if stat.S_ISDIR(st.st_mode):
+            out += _bid_walk(root, r)
+        else:
+            out.append((r, stat.S_ISREG(st.st_mode)))
+    return out
+
+
+_GIT_ENV_DROP = ("GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_OBJECT_DIRECTORY", "GIT_ALTERNATE_OBJECT_DIRECTORIES")
+
+
+def _git_run(repo, args, input_bytes=None):
+    env = {k: v for k, v in os.environ.items() if k not in _GIT_ENV_DROP}
+    return subprocess.run(["git", "-C", repo, *args], input=input_bytes, capture_output=True, env=env)
+
+
+def _git_cat_file(repo, requests, with_content):
+    if not requests:
+        return []
+    r = _git_run(repo, ["cat-file", "--batch" if with_content else "--batch-check"],
+                 "".join(q + "\n" for q in requests).encode())
+    if r.returncode != 0:
+        raise _GitError(f"git cat-file exited with {r.returncode}")
+    raw, pos, out = r.stdout, 0, []
+    for _ in requests:
+        end = raw.index(b"\n", pos)
+        header = raw[pos:end].decode("utf-8", "replace")
+        pos = end + 1
+        if header.endswith((" missing", " ambiguous")):
+            out.append(None)
+            continue
+        oid, kind, size = header.split(" ")
+        content = None
+        if with_content:
+            content = raw[pos:pos + int(size)]
+            pos += int(size) + 1
+        out.append((oid, kind, content))
+    return out
+
+
+def _git_ls_tree(repo, rev, path):
+    r = _git_run(repo, ["ls-tree", "-r", "-z", "--full-tree", rev, path])
+    if r.returncode != 0:
+        raise _GitError(f"git ls-tree {rev} {path}: {r.stderr.decode(errors='replace').strip()}")
+    out = {}
+    for rec in r.stdout.split(b"\0"):
+        if rec:
+            meta, name = rec.decode("utf-8", "replace").split("\t", 1)
+            out[name] = meta.split(" ")[2]
+    return out
+
+
+def _git_is_ancestor(repo, a, b):
+    r = _git_run(repo, ["merge-base", "--is-ancestor", a, b])
+    if r.returncode not in (0, 1):
+        raise _GitError(f"git merge-base --is-ancestor {a} {b}: {r.stderr.decode(errors='replace').strip()}")
+    return r.returncode == 0
+
+
+def _bid_history_part(repo, head, m, expected):
+    """H-00..H-07 against a full-history repository (repo None = no history: NOT_EVALUATED)."""
+    if repo is None:
+        return _not_evaluated("no git repository given")
+    try:
+        r = _git_run(repo, ["rev-parse", "--is-shallow-repository"])
+    except OSError as e:
+        return _not_evaluated(f"cannot run git: {e}")
+    if r.returncode != 0:
+        return _not_evaluated(f"not a git repository: {r.stderr.decode(errors='replace').strip()}")
+    flag = r.stdout.decode().strip()
+    if flag == "true":
+        return _not_evaluated("shallow clone: the lineage cannot be verified; fetch full history "
+                              "(actions/checkout fetch-depth: 0)")
+    if flag != "false":
+        return _part([_finding("GIT_ERROR", "", f"rev-parse --is-shallow-repository printed {flag!r}")])
+    try:
+        return _part(_bid_history_checks(repo, head, m, expected))
+    except (_GitError, OSError, ValueError) as e:
+        return _part([_finding("GIT_ERROR", "", str(e))])
+
+
+def _bid_history_checks(repo, head, m, expected):
+    out = []
+    revs = [("technical_source.commit", m["technical_source"])]
+    revs += [(f"package_lineage[{i}].commit", e["commit"]) for i, e in enumerate(m["lineage"])]
+    revs += [("terminal_package_state.commit", m["terminal"]), ("head", head)]
+    for (label, rev), item in zip(revs, _git_cat_file(repo, [f"{r}^{{commit}}" for _, r in revs], False)):
+        if item is None:
+            out.append(_finding("GIT_ERROR" if label == "head" else "LINEAGE_COMMIT_MISSING", label,
+                                f"{rev} is not a commit of this repository"))
+    if out:
+        return out
+    lineage = m["lineage"]
+    pairs = [(m["technical_source"], lineage[0]["commit"])]
+    pairs += [(a["commit"], b["commit"]) for a, b in zip(lineage, lineage[1:])]
+    pairs.append((m["terminal"], head))
+    for a, b in pairs:
+        if not _git_is_ancestor(repo, a, b):
+            out.append(_finding("LINEAGE_ANCESTRY_BROKEN", f"{a}..{b}", f"{a} is not an ancestor of {b}"))
+    trees = [(f"{m['technical_source']}^{{tree}}", m["technical_source_tree"])]
+    trees += [(f"{e['commit']}:docs/bid", e["docs_bid_tree"]) for e in lineage]
+    for (req, want), item in zip(trees, _git_cat_file(repo, [t for t, _ in trees], False)):
+        got = item[0] if item else "missing"
+        if got != want:
+            out.append(_finding("TREE_HASH_MISMATCH", req, f"{got} != recorded {want}"))
+    reqs, lineage_trees = [], []
+    for e in lineage:
+        t = _git_ls_tree(repo, e["commit"], BID_ROOT.rstrip("/"))
+        for p in sorted(set(t) ^ set(e["files"])):
+            out.append(_finding("LINEAGE_FILES_MISMATCH", p, f"file sets differ at {e['commit']}"))
+        lineage_trees.append(t)
+    head_tree = _git_ls_tree(repo, head, BID_ROOT.rstrip("/"))
+    for e, t in zip(lineage, lineage_trees):
+        reqs += [t[p] for p in sorted(e["files"]) if p in t]
+    reqs += [f"{m['technical_source']}:{p}" for p in sorted(m["technical_source_files"])]
+    reqs += [head_tree[p] for p in sorted(expected) if expected[p] is not None and p in head_tree]
+    reqs.append(f"{head}:{BID_MISSION_PATH}")
+    items = iter(_git_cat_file(repo, reqs, True))
+
+    def nxt():
+        it = next(items, None)
+        return it[2] if it is not None and it[1] == "blob" else None
+
+    for e, t in zip(lineage, lineage_trees):
+        for p in sorted(e["files"]):
+            if p not in t:
+                continue
+            d = nxt()
+            diff = _compare(e["files"][p], d) if d is not None else f"unreadable at {e['commit']}"
+            if diff:
+                out.append(_finding("LINEAGE_FILES_MISMATCH", p, f"at {e['commit']}: {diff}"))
+    for p in sorted(m["technical_source_files"]):
+        d = nxt()
+        diff = _compare(m["technical_source_files"][p], d) if d is not None else "absent at the technical source"
+        if diff:
+            out.append(_finding("TECHNICAL_SOURCE_FILE_MISMATCH", p, diff))
+    for p in sorted(expected):
+        rec = expected[p]
+        if rec is not None and p in head_tree:
+            d = nxt()
+            diff = _compare(rec, d) if d is not None else f"unreadable at {head}"
+            if diff:
+                out.append(_finding("BID_FILE_MODIFIED", p, f"committed at {head}: {diff}"))
+        elif rec is not None:
+            out.append(_finding("BID_FILE_MISSING", p, f"not committed at {head}"))
+        elif p in head_tree:
+            out.append(_finding("BID_FILE_UNLISTED", p, f"removed by authorization but committed at {head}"))
+    for p in sorted(head_tree):
+        if p not in expected and p != BID_MANIFEST_PATH:
+            out.append(_finding("BID_FILE_UNLISTED", p, f"committed at {head}, not a terminal package file"))
+    d = nxt()
+    if d is None:
+        out.append(_finding("MISSION_SCENARIO_CHANGED", BID_MISSION_PATH, f"absent at {head}"))
+    elif hashlib.sha256(d).hexdigest() != BID_MISSION_SHA256:
+        out.append(_finding("MISSION_SCENARIO_CHANGED", BID_MISSION_PATH, f"committed at {head}: sha256 differs"))
+    return out
+
+
+def bid_source_guard(tree_root: str = ROOT, history_repo: str | None = ROOT, head: str = "HEAD") -> dict:
+    """{overall, files, history}: overall FAIL if a part fails, NOT_EVALUATED if history is, PASS only if both pass."""
+    try:
+        with open(os.path.join(tree_root, BID_MANIFEST_PATH), "rb") as f:
+            m = bid_parse_manifest(f.read())
+    except (OSError, ValueError) as e:
+        bad = _part([_finding("MANIFEST_INVALID", BID_MANIFEST_PATH, str(e))])
+        return {"overall": "FAIL", "files": bad, "history": dict(bad)}
+    files, expected = _bid_files_part(tree_root, m)
+    history = _bid_history_part(history_repo, head, m, expected)
+    if "FAIL" in (files["status"], history["status"]):
+        overall = "FAIL"
+    else:
+        overall = "NOT_EVALUATED" if history["status"] == "NOT_EVALUATED" else "PASS"
+    return {"overall": overall, "files": files, "history": history}
+
+
+def check_bid_source_guard(root: str = ROOT):
+    """A9.29 sec. 3: docs/bid/** equals the terminal package state 2de86ab (only the manifest added), mission_scenario_v2
+    unchanged, lineage 5eee4b8 -> b5849af -> 2de86ab -> HEAD verified in git. Needs a full-history clone."""
+    r = bid_source_guard(root, root, "HEAD")
+    bad = [f"{part} {r[part]['status']}: {f['code']} {f['path']}: {f['detail']}"
+           for part in ("files", "history") for f in r[part]["findings"]] if r["overall"] != "PASS" else []
+    return bad, (f"overall {r['overall']} (files {r['files']['status']}, history {r['history']['status']}): terminal "
+                 f"package state {BID_TERMINAL[:7]}, technical source {BID_TECHNICAL_SOURCE[:7]}, "
+                 f"mission_scenario_v2 {BID_MISSION_SHA256[:8]}")
+
+
+def _json_pointer_slot(doc, pointer):
+    parts = [p.replace("~1", "/").replace("~0", "~") for p in pointer.split("/")[1:]]
+    cur = doc
+    for p in parts[:-1]:
+        cur = cur[int(p)] if isinstance(cur, list) else cur[p]
+    last = parts[-1]
+    return cur, (int(last) if isinstance(cur, list) else last)
+
+
+def _bid_apply(dest, op):
+    kind = op["op"]
+    if kind in ("manifest_set", "manifest_reverse"):
+        p = os.path.join(dest, BID_MANIFEST_PATH)
+        with open(p, "rb") as f:
+            doc = json.loads(f.read())
+        parent, key = _json_pointer_slot(doc, op["pointer"])
+        parent[key]                                                 # KeyError / IndexError: the pointer must exist
+        if kind == "manifest_set":
+            parent[key] = op["value"]
+        else:
+            parent[key].reverse()
+        with open(p, "w", encoding="utf-8") as f:
+            json.dump(doc, f, indent=1)
+        return
+    p = os.path.join(dest, op["path"])
+    if kind == "append_bytes":
+        with open(p, "ab") as f:
+            f.write(bytes.fromhex(op["hex"]))
+    elif kind == "delete":
+        os.remove(p)
+    elif kind == "create":
+        os.makedirs(os.path.dirname(p), exist_ok=True)
+        with open(p, "wb") as f:
+            f.write(op["text"].encode("utf-8"))
+    elif kind == "replace_all":
+        with open(p, "rb") as f:
+            text = f.read().decode("utf-8")
+        with open(p, "wb") as f:
+            f.write(text.replace(op["old"], op["new"]).encode("utf-8"))
+    else:
+        raise ValueError(f"unknown op {kind}")
+
+
+def _bid_scratch_repos(base):
+    full = os.path.join(base, "full")
+    _git_ok(base, ["init", "-q", "full"])
+    for i in range(2):
+        with open(os.path.join(full, "f.txt"), "w", encoding="utf-8") as f:
+            f.write(f"{i}\n")
+        _git_ok(full, ["add", "f.txt"])
+        _git_ok(full, ["-c", "user.name=abep-acceptance", "-c", "user.email=abep-acceptance@invalid",
+                       "-c", "commit.gpgsign=false", "commit", "-q", "-m", "scratch"])
+    _git_ok(base, ["clone", "-q", "--depth", "1", f"file://{full}", "shallow"])
+    return full, os.path.join(base, "shallow")
+
+
+def _git_ok(repo, args):
+    r = _git_run(repo, args)
+    if r.returncode != 0:
+        raise RuntimeError(f"git {' '.join(args)}: {r.stderr.decode(errors='replace').strip()}")
+
+
+def bid_case_summary(case_id, r):
+    part = lambda p: {"status": p["status"], "codes": sorted({f["code"] for f in p["findings"]})}  # noqa: E731
+    return {"id": case_id, "overall": r["overall"], "files": part(r["files"]), "history": part(r["history"])}
+
+
+def bid_expectation_problems(case, r):
+    e, problems = case["expected"], []
+    for what, got in (("overall", r["overall"]), ("files", r["files"]["status"]), ("history", r["history"]["status"])):
+        if got != e[what]:
+            problems.append(f"{what} {got}, expected {e[what]}")
+    for part in ("files", "history"):
+        got = {f["code"] for f in r[part]["findings"]}
+        problems += [f"{part}: required code {c} not reported (got {sorted(got)})"
+                     for c in e["required_codes"][part] if c not in got]
+    return problems
+
+
+def bid_guard_acceptance(root: str = ROOT) -> list[dict]:
+    """Run every preregistered case (BID_ACCEPTANCE, sha256-pinned): [{id, summary, problems, report}]. Writes only
+    temporary directories, removed afterwards."""
+    with open(os.path.join(root, BID_ACCEPTANCE), "rb") as f:
+        data = f.read()
+    if hashlib.sha256(data).hexdigest() != BID_ACCEPTANCE_SHA256:
+        raise ValueError(f"{BID_ACCEPTANCE} differs from its preregistered sha256")
+    cases = json.loads(data)["acceptance_cases"]["cases"]
+    with open(os.path.join(root, BID_MANIFEST_PATH), "rb") as f:
+        terminal_files = sorted(json.loads(f.read())["package_lineage"][-1]["files"])
+    results = []
+    with tempfile.TemporaryDirectory(prefix="abep-bidguard-") as tmp:
+        full, shallow = _bid_scratch_repos(tmp)
+        for n, case in enumerate(cases):
+            tree = root
+            if case["tree"] == "COPY":
+                tree = os.path.join(tmp, f"case{n}")
+                for p in terminal_files + [BID_MANIFEST_PATH, BID_MISSION_PATH]:
+                    os.makedirs(os.path.dirname(os.path.join(tree, p)), exist_ok=True)
+                    shutil.copyfile(os.path.join(root, p), os.path.join(tree, p))
+                for op in case["tamper"]:
+                    _bid_apply(tree, op)
+            elif case["tree"] != "REPOSITORY" or case["tamper"]:
+                raise ValueError(f"{case['id']}: invalid tree / tamper combination")
+            repo = {"REPOSITORY": root, "NONE": None, "SCRATCH_SHALLOW": shallow, "SCRATCH_FULL": full}[case["history"]]
+            r = bid_source_guard(tree, repo, case["head"])
+            results.append({"id": case["id"], "summary": bid_case_summary(case["id"], r),
+                            "problems": bid_expectation_problems(case, r), "report": r})
+    return results
+
+
 # ------------------------------------------------------------------------------------------------------------ pytest outcome
 def check_full_history(root: str = ROOT) -> list[str]:
     """Rule 9 is defined on a full-history clone (history-dependent provenance tests skip otherwise). [] = full history."""
@@ -508,6 +1049,7 @@ CHECKS = {
     "multiply_charged_tables": check_multiply_charged_tables,
     "ensemble_gate": check_ensemble_gate,
     "h2_6_live_sources": check_h2_6_live_sources,
+    "bid_source_guard": check_bid_source_guard,
 }
 
 
@@ -539,6 +1081,12 @@ def main(argv=None) -> int:
     if "--list" in argv:
         print("\n".join(CHECKS))
         return 0
+    if "--bid-guard-acceptance" in argv:
+        results = bid_guard_acceptance()
+        print(json.dumps({"implementation": "python", "python": sys.version.split()[0],
+                          "cases": [r["summary"] for r in results],
+                          "problems": {r["id"]: r["problems"] for r in results if r["problems"]}}, indent=1))
+        return 1 if any(r["problems"] for r in results) else 0
     if "--pytest-junit" in argv:
         i = argv.index("--pytest-junit")
         if i + 1 >= len(argv):
