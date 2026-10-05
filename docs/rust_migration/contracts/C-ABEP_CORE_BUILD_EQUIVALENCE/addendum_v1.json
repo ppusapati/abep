@@ -1,0 +1,154 @@
+{
+ "schema": "abep_core_build_equivalence_addendum_v1",
+ "id": "ADDENDUM-ABEP-CORE-BUILD-EQUIVALENCE-V1",
+ "date": "2026-10-05",
+ "status": "PRE_REGISTERED_BEFORE_ANY_EXECUTION",
+ "registration_statement": "Written and committed in its own commit before any workspace build of abep_core and before any output comparison. At registration no workspace crate depends on abep_core, no case of cases_v1.json has been executed by any build, and no digest exists. The equalities, builds, case set, seeds, serialization and decision rule below are fixed; a change is a new addendum version (v2) and this record stays.",
+ "lane": "B2 (ES-3 intake part of SC-WP-02), branch lane-es3-intake",
+ "purpose": "Register what must be equal, and how it is checked, before workspace crates consume the admitted Kernel-1 TPMC library abep_core as a path dependency (rlib, without the `python` / `extension-module` features). abep_core stays a standalone crate outside the workspace (root Cargo.toml exclude) while parity_report_v2 binds its Cargo.toml / Cargo.lock / src sha256, and it is never modified.",
+ "governing_records": [
+  "docs/decisions/OD_2026_10_05_A9_29_RUST_PLAN_V3_1_RULINGS_AND_START_AUTHORIZATION.md secs. 5 (RM-OQ-01: the Rust simulator calls the admitted Rust TPMC library directly; no DEFAULT_BACKEND flip), 7 (RM-OQ-03: TPMC keeps its admitted statistical contract), 11 (abep_core's Rust TPMC becomes a normal Rust library dependency)",
+  "docs/rust_migration/programme_v3_1.json cargo_workspace_proposal.abep_core / abep_core_a9_29 ('consumed as a path dependency after a registered build-equivalence addendum'), rules RM-R35, RM-R37, RM-R40",
+  "docs/rust_migration/simulation_completion_programme_v1_1.json first_execution_sequence ES-3 deliverable 1",
+  "docs/rust_migration/CI_PLAN.md wave table row W0 ('build-equivalence step: K1-K5 on the registered vectors with the development seed, bitwise against the recorded extension, run as a contract addendum')",
+  "Cargo.toml (workspace root) comment on exclude = [\"abep_core\"]"
+ ],
+ "inventory_rows": {
+  "path": "docs/rust_migration/component_inventory_v3_1.json",
+  "sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "rows": [
+   "C-ABEP_SIM_INTAKE_TPMC_PY (Kernel 1 trace kernels ADMITTED; class ACTIVE_SELECTED_ARCHITECTURE_PHYSICS; simulation_completion_wp SC-WP-02)",
+   "C-ABEP_CORE_PYO3_MATURIN_BINDING_LAYER (PyO3 / maturin layer: migration tooling, never enabled by a workspace crate; retired at W17)"
+  ]
+ },
+ "admitted_basis": {
+  "parity_report_v2": {
+   "path": "docs/performance/abep_core/parity_report_v2.json",
+   "sha256": "ed3867776bb8c21a108e6de94cf86ade7adce0ea5695bc6bb4da023b9a52ae45",
+   "verdicts": {
+    "K1_entry": "ADMITTED",
+    "K2_diffuse": "ADMITTED",
+    "K3_cll": "ADMITTED",
+    "K4_trace": "ADMITTED",
+    "K5_clausing": "ADMITTED"
+   }
+  },
+  "parity_prereg_v2": {
+   "path": "docs/performance/abep_core/parity_prereg_v2.json",
+   "sha256": "98be24c170b5340e753b3630bda40f6d8ad970005561b13b12e1f108353bf365"
+  },
+  "recorded_build_provenance": {
+   "source_sha256": {
+    "abep_core/Cargo.toml": "cfb3054985ea94ccc54b9c7b370b6ca39b5d3c4dac6e59228f527c69320c123d",
+    "abep_core/Cargo.lock": "5d1ae2c3c0e4092ba8add152cb67f6b767ec2e29b4babdf3d4a8d826a6ca5aaa",
+    "abep_core/pyproject.toml": "309994da507b37a6cf43300f42e0c888ad68462d0a3ace843c7a1b1f7b94806d",
+    "abep_core/src/lib.rs": "2d8cf0e117bed74bd2922c43ce7c45d80d2073c7c78028d8481e85f37e651169",
+    "abep_core/src/rng.rs": "eadfe1a0417353f2baf9522c722ac8035989c54ae3565fc23681fea8257a5777",
+    "abep_core/src/tpmc.rs": "96867112eee01ab0cdcecbfcc7433d0dbc6a7cf8bc17ed3ef67fdbb5eb3d614c"
+   },
+   "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+   "cargo": "cargo 1.94.1 (29ea6fb6a 2026-03-24)",
+   "build_profile": "release (opt-level 3, lto fat, codegen-units 1; abep_core/Cargo.toml)",
+   "extension_file": "abep_core.cpython-311-x86_64-linux-gnu.so",
+   "extension_sha256": "eb586f0386e793fadf4e7a2c4ce204679694b45c30b4627e77c84c9a175c8b6b",
+   "source": "parity_report_v2.json build_provenance (copied verbatim)"
+  }
+ },
+ "what_must_be_equal": {
+  "EQ-01_sources": "the six abep_core files listed in admitted_basis.recorded_build_provenance.source_sha256 are byte-identical to those sha256 values when every build below is made (checked before any build). A mismatch refuses the check (REFUSED_SOURCE_CHANGED); abep_core is read only and is never edited to make a build pass.",
+  "EQ-02_toolchain": "every build uses rustc 1.94.1 (e408947bf 2026-03-25) / cargo 1.94.1 (29ea6fb6a 2026-03-24), the parity_report_v2 toolchain pinned by rust-toolchain.toml. A different toolchain refuses the check (REFUSED_TOOLCHAIN).",
+  "EQ-03_feature_set": "the workspace consumes abep_core with default-features = false and no feature: in `cargo metadata --format-version 1 --locked` of the workspace, the resolved abep_core node has an empty feature list and no package named pyo3, numpy, pyo3-ffi or maturin is in the resolved graph. The `python` / `extension-module` features are never enabled by a workspace crate.",
+  "EQ-04_outputs": "for every case of cases_v1.json, the output bytes (serialization below) of each candidate build equal those of the reference build: same per-case sha256, hence bit-identical outputs.",
+  "not_required_to_be_equal": "object code. The workspace profiles differ from abep_core's own [profile.release] (lto = \"fat\", codegen-units = 1 apply only when abep_core is the root crate; as a dependency it is compiled with the root workspace's profile: dev = opt-level 0, release = opt-level 3 with Cargo's default lto / codegen-units). Equivalence is therefore shown on outputs, not assumed from the sources."
+ },
+ "builds": {
+  "S0_standalone_gate": {
+   "what": "`cargo test --release --locked` with --manifest-path abep_core/Cargo.toml, run from the repository root (rust-toolchain.toml applies), CARGO_TARGET_DIR outside the source tree so nothing is written under abep_core/",
+   "requirement": "every abep_core unit test passes (it is the standalone release build of the crate's own tests). abep_core cannot be given an output-dumping test without modifying it, so the standalone release OUTPUTS are taken from B0."
+  },
+  "B0_reference_recorded_extension": {
+   "what": "the recorded extension itself (sha256 eb586f0386e793fadf4e7a2c4ce204679694b45c30b4627e77c84c9a175c8b6b, built by maturin from the six sources with abep_core's own [profile.release], i.e. the standalone release build that parity_report_v2 admitted), driven through its Python functions flux_weighted_entry / diffuse / cll / trace_channel / clausing_transmission with the case seeds and inputs",
+   "role": "REFERENCE for EQ-04",
+   "availability_rule": "the extension file actually loaded must have the recorded sha256; if it is absent or differs, the check is NOT_RUN_EXTENSION_UNAVAILABLE (no rebuilt or substitute binary is used as reference)"
+  },
+  "B1_workspace_release_standalone_profile": {
+   "what": "workspace path dependency (crates/abep-intake -> abep_core, rlib, default-features = false), `--release` with abep_core's own release settings applied to the build by command-line profile override: opt-level 3, lto \"fat\", codegen-units 1",
+   "role": "candidate"
+  },
+  "B2_workspace_debug": {
+   "what": "workspace path dependency, the workspace dev profile (debug, opt-level 0)",
+   "role": "candidate"
+  },
+  "B3_workspace_release": {
+   "what": "workspace path dependency, the workspace [profile.release] as committed (opt-level 3; Cargo defaults for lto and codegen-units)",
+   "role": "candidate"
+  }
+ },
+ "case_set": {
+  "path": "docs/rust_migration/contracts/C-ABEP_CORE_BUILD_EQUIVALENCE/cases_v1.json",
+  "sha256": "8baf28d54b37aa9c6d4bab3b209c0f34b7f26afc5ea41dafd56f5bd39965d564",
+  "generator": {
+   "path": "docs/rust_migration/contracts/C-ABEP_CORE_BUILD_EQUIVALENCE/make_cases_v1.py",
+   "sha256": "75b81b39379a1844f1ed1f9f990bd5f438d07586bba183c2375814d2f3f00ce3"
+  },
+  "source": "the golden vectors and edge cases of the Kernel-1 comparison set (parity_prereg_v2.json comparison_set; the randomized domain is not used)",
+  "counts": {
+   "K1_entry": 14,
+   "K2_diffuse": 10,
+   "K3_cll": 29,
+   "K4_trace": 377,
+   "K5_clausing": 63,
+   "total": 493
+  },
+  "per_kernel": {
+   "K1_entry": "9 golden (3 theta x 3 species, 200 km mean) + E1-01..E1-05; n = 2000 (prereg v2 n_per_replicate), one draw per case",
+   "K2_diffuse": "6 golden (3 species x normal sets plus_z / x_y_wall) + E2-01..E2-04; T_w 350 K unless the edge case sets it; n = 20000",
+   "K3_cll": "27 golden (3 species x 9 (alpha_n, alpha_t) pairs) + E3-01, E3-02; n = 20000; v_in = abep_core flux_weighted_entry(input_seed, n, V, 5 deg, T, m) at 200 km mean; normals = x_y_wall",
+   "K4_trace": "360 golden (4 L/d x 5 alpha x 3 theta x 3 species x 2 scattering, n = 8000) + E4-01..E4-17 (n = 4000); v0 = abep_core flux_weighted_entry(input_seed, n, V, theta, T, m); T_w 350 K, d 10 mm, max_hits 200, max_hits_cap 5000, unresolved_tol 1e-3 unless the edge case sets them; CLL alpha_n = alpha_t = alpha unless set",
+   "K5_clausing": "60 golden (4 L/d x 5 alpha x 3 species, Maxwell) + E5-01..E5-03; T_w 350 K; n = 20000"
+  },
+  "seeds": "development_master_seed = 1 (parity_prereg_v2 campaign_seeds.development_master_seed; CI_PLAN W0: 'with the development seed'). seed = numpy.random.default_rng(numpy.random.SeedSequence([1, j, k, 1])).integers(0, 2**64, dtype=uint64) (the prereg v2 Rust-seed derivation), input_seed the same with s = 2; j = kernel index K1=1..K5=5, k = case index within the kernel. Written explicitly into cases_v1.json. The scoring master seed 20261001 is not used.",
+  "inputs": "every floating input is written into cases_v1.json as its shortest round-trip decimal, so all builds read identical bits: V and T from abep_sim.atmosphere.atmosphere(200.0, 'mean', use_msis=False); m from abep_sim.constants.M_SPECIES; R = 0.005 m; L = L/d x 0.01 m; theta in radians (math.radians). Normal sets are explicit vectors; normal i of a set is set[i mod len(set)]. K3 and K4 inputs drawn by abep_core itself (input_seed) differ from prereg v2's numpy-drawn shared inputs; equivalence needs identical inputs across builds, not the v2 inputs.",
+  "deviation_from_prereg_v2_inputs": "documented above (input generation, one K1 draw per case, deterministic x_y_wall normals); none of it is a parity claim against the Python reference, which parity_report_v2 already settled"
+ },
+ "execution": {
+  "kernel_calls": {
+   "K1_entry": "v = flux_weighted_entry(seed, n, v_drift, theta, t, m)",
+   "K2_diffuse": "v = diffuse(seed, normals(n), t_w, m)",
+   "K3_cll": "v_in = flux_weighted_entry(input_seed, n, v_drift, theta, t, m); v = cll(seed, v_in, normals(n), t_w, m, alpha_n, alpha_t)",
+   "K4_trace": "v0 = flux_weighted_entry(input_seed, n, v_drift, theta, t, m); (collected, v, hits, back, unresolved) = trace_channel(seed, v0, r, l, alpha, t_w, m, max_hits, scattering, alpha_n, alpha_t, unresolved_tol, max_hits_cap)",
+   "K5_clausing": "k = clausing_transmission(seed, r, l, alpha, t_w, m, n)",
+   "seeding": "each call starts a fresh abep_core Rng::new(seed), exactly as the extension's Python functions do"
+  },
+  "serialization": "per case, the bytes hashed (sha256) are the concatenation, in this order, of: K1 v; K2 v; K3 v_in then v; K4 v0, collected, v, hits, back, unresolved; K5 k. f64 = 8-byte little-endian IEEE-754 bit pattern (arrays row-major, (n, 3) as x, y, z per row); bool = one byte 0x00 / 0x01; i64 = 8-byte little-endian two's complement. Total digest = sha256 of the per-case lower-case hex digests joined by '\\n' in case order.",
+  "runner": "one case-runner implementation for B1-B3 (in crates/abep-intake) and one Python driver for B0, both reading cases_v1.json; added after this registration"
+ },
+ "decision_rule": {
+  "verdict_vocabulary": [
+   "EQUIVALENT",
+   "NOT_EQUIVALENT",
+   "REFUSED_SOURCE_CHANGED",
+   "REFUSED_TOOLCHAIN",
+   "NOT_RUN_EXTENSION_UNAVAILABLE"
+  ],
+  "rule": "EQUIVALENT iff S0 passes, EQ-01, EQ-02 and EQ-03 hold, and for every one of the 493 cases the per-case sha256 of B1, B2 and B3 each equals that of B0. Any differing case makes the verdict NOT_EQUIVALENT; every differing case is listed. No tolerance applies: equality is bitwise.",
+  "executions": "the check is executed once for v1 and the result committed whatever the verdict (result_v1.json + .md next to this file); no execution is discarded",
+  "meaning_of_EQUIVALENT": "workspace crates may consume abep_core as a path dependency (rlib, no python feature); within the tested profiles (dev, workspace release, release with abep_core's own settings) the workspace build reproduces the admitted Kernel-1 binary bit for bit, so the Kernel-1 ADMITTED status of parity_report_v2 carries over to this consumption. It admits nothing else (intake_response, response_surface, IntakeSurface and intake.py need their own contracts), it is not physics evidence, and it does not re-score the Python-vs-Rust statistical parity (A9.29 sec. 7: TPMC keeps its admitted statistical contract).",
+  "meaning_of_NOT_EQUIVALENT": "no workspace crate may call abep_core until the cause is classified and a new addendum version passes; abep_core itself is not edited by this lane",
+  "regression_guard": "after an EQUIVALENT verdict, the recorded B0 per-case digests become a cargo integration test of crates/abep-intake that replays the full case set under whichever profile the test runs in and requires bitwise equality (CLAUDE.md rule 9: no ignored test). It must also hold after any change of abep_core sources (which already needs a new parity report), the toolchain, Cargo.lock or a workspace profile."
+ },
+ "what_this_is_not": [
+  "not a new parity campaign against the Python reference (parity_report_v2 stands; this addendum only shows that a different build of the same sources gives the same bits)",
+  "not a change to abep_core, its Cargo.toml / Cargo.lock / sources, the recorded extension or parity_report_v2",
+  "not a change of the Python wrapper default (abep_sim/design/tpmc_backend.py DEFAULT_BACKEND stays 'python'; RM-OQ-01, no flip step)",
+  "not physics evidence, not a gate PASS"
+ ],
+ "bid_boundary": "post-bid-freeze work; the bid technical source 5eee4b8c82a9403b6bb82d5f8d324526f5d6399b and terminal package state 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 are untouched",
+ "registered_at_parent_commit": "96db5524ec917e99e507def24f3ee0b263c78ebc",
+ "workspace_state_at_registration": {
+  "Cargo.toml": "401ec453d8f8d9496eca6fd404c367ee382570e2b7022b5ce986645536acf339",
+  "Cargo.lock": "6565d3ee7ecaf962f5226491b53abd577faea972eae6bd729be1d6c12c554fa3",
+  "rust-toolchain.toml": "7e44dbedb86596d94974ef8cb279f0e81496ea92b519c14940259661496f8499",
+  "note": "the workspace gains crates/abep-intake (path dependency on abep_core) only after this commit; the result records the Cargo.toml / Cargo.lock / profile state actually built"
+ }
+}
