@@ -1,10 +1,92 @@
-# Rust migration programme v2 (A9.24 / A9.25): zero Python execution dependency, cathodeless active architecture
+# Rust migration programme v3 (A9.24 / A9.25 / A9.28): zero Python execution dependency, cathodeless active architecture
 
-**Status: `PROPOSED_PLAN_V2_FOR_OWNER_REVIEW`. This is a docs / plan record only.** It changes no Python, Rust, CI workflow,
+**Status: `PROPOSED_PLAN_V3_FOR_OWNER_REVIEW`. This is a docs / plan record only.** It changes no Python, Rust, CI workflow,
 configuration, frozen data or number.
 
-This revision is step 7 of the owner's order (A9.25 message 3: "only then revise/review/merge the Rust migration plan"). The
-earlier steps are done:
+## What changed from v2 (A9.28, 2026-10-05)
+
+v3 applies the owner's A9.28 rulings on plan v2 and the simulation completion directive. The governing record is
+`docs/decisions/OD_2026_10_05_A9_28_RUST_PLAN_RULINGS_AND_SIMULATION_COMPLETION_DIRECTIVE.md`: message 1 is the
+rulings, message 2 the directive, both read in full.
+
+**How the revision was made.** It is built on `lane-rustplan-v2` at `e01716d`, merged (no conflicts) with
+`integration/simulation-complete` at `ea1a598`. That branch reconciled main's checkpoints #31-#36 once (record
+`docs/integration/main_reconciliation_2026_10_05.json`). After owner review, v3 merges into
+`integration/simulation-complete`, **not** into main (msg 1 sec. 8, msg 2 sec. 5). The v2 files (`programme_v2.json`,
+`component_inventory_v2.*`, `migration_order_v2.json`, `parity_contract_template_v2.json`) and the v1 files are kept
+byte-identical as history. The v3 records are `*_v3.json` / `component_inventory_v3.md`, plus the new
+`SIMULATION_COMPLETION_PROGRAMME.md` / `simulation_completion_programme_v1.json`.
+
+**Classifications ruled (msg 1 secs. 2-3; closes RM-OQ-07).**
+
+* `mass_power_a9_v5` is reclassified from class F to `ACTIVE_SELECTED_ARCHITECTURE_ENGINEERING_ASSESSMENT` (class A,
+  W11).
+  * AL-07 6.0 kg is a `PROVISIONAL_LEGACY_DERIVED_ANALOG_INPUT`, and `AFI-02-RA1_OPEN` stands.
+  * The generic mass-accounting / margin / harness / roll-up logic migrates.
+  * The 6.0 kg value is never promoted by migration to CBE, measured mass or frozen flight truth.
+* `plasma_chem.py` is a `HISTORICAL_LEGACY_MODULE`. Only architecture-independent kernels are extracted, and only if
+  needed. Its `system.py` path is entangled with the legacy cards and `LaB6Cathode`.
+* The compressor down-select is `HISTORICAL` / `RETIRE_FROM_ACTIVE_GRAPH`.
+* The feed-state closure is `GROUND_TEST_PROGRAMME_ONLY` and `NOT_FLIGHT_RUNTIME`. It is retained until successor
+  feed-qualification records exist.
+* The capability demo is `GROUND_TEST_PROGRAMME_ONLY` / `ACTIVE_EVIDENCE_TOOLING`.
+* Hall sustainment is `REFERENCE_EVIDENCE_ONLY`.
+* The hardware / instrumentation experiments are `GROUND_TEST_PROGRAMME_ONLY`.
+* S1 / S1a readiness is `GROUND_TEST_PROGRAMME_ONLY` / `ACTIVE_GATE_TOOLING`. Rust equivalents are needed eventually.
+
+**The new owner class `GROUND_TEST_PROGRAMME_ONLY`** (lane GT, crate `abep-groundtest`) is never flight runtime. No
+class-F component remains.
+
+**Owner questions decided by A9.28.**
+
+* **RM-OQ-06.** Historical goldens are immutable and reproducible from the historical Python environment. They are not
+  Rust parity cases. CLAUDE.md rule 2 applies to the ACTIVE canonical golden set; the CLAUDE.md update is a separate
+  later commit. The `hall_icp_neutralizer` golden is created only from the admitted active chain.
+* **RM-OQ-08.** The cathodeless thermal model is new physics. It is preregistered, implemented directly in Rust and
+  admitted by independent verification, with no synthetic Python reference.
+* **RM-OQ-09.** The H2-6 check semantics are ported into a generic Rust provenance verifier. The Python check is
+  retired from active CI only after that verifier is admitted.
+
+**New rules RM-R26..R32:**
+
+* new physics;
+* value-status preservation;
+* historical goldens;
+* replace integrity checks, never drop them;
+* ground-test isolation;
+* fail closed on absent evidence;
+* integration discipline.
+
+**New owner questions:** RM-OQ-10..12.
+
+**The A9.28 protected bid record** is technical source `5eee4b8` / package-freeze record `2de86ab` (lineage `b5849af`
+→ `2de86ab`).
+
+**The simulation completion programme** (msg 2) has seventeen work packages, one per layer of section 6. It covers:
+
+* each package's method (`EXISTING_PHYSICS_PARITY` / `NEW_PHYSICS` / `NEW_INFRASTRUCTURE_ACCEPTANCE` / audit);
+* fail-closed evidence gates and admission criteria;
+* the order (architecture relevance, then evidence / admission eligibility, then PRE_RUST runtime);
+* the Hall physics boundary;
+* the first execution sequence;
+* the exit criteria: the main-merge pre-PR checklist (sec. 16), completion report A–N (sec. 18) and the zero-Python
+  end state (sec. 13).
+
+**Findings of this revision** (inventory v3):
+
+* `bus_boundary_a9.check_startup_sequence` carries a C1 heater / keeper rule. It is ground reference and is not
+  ported into flight crates.
+* After RM-OQ-06, `K-GASPATH` / `K-GAS-LIFE` have no active consumer except historical golden cases. They are extracted
+  only if an active consumer is confirmed.
+* There is no active mission-integration or reliability implementation, so both are new elements.
+* The active ICP code is evidence-gated, with no predictive plasma model (RM-OQ-12).
+
+The v2 text below is revised in place where A9.28 changes it.
+
+## v2 basis (A9.24 / A9.25)
+
+The v2 revision was step 7 of the owner's order (A9.25 message 3: "only then revise/review/merge the Rust migration plan").
+The earlier steps are done:
 
 * bid technical source `5eee4b8c82a9403b6bb82d5f8d324526f5d6399b`;
 * package / freeze record `b5849affae22a6709ad217a184f6fe896d15410a`;
@@ -44,11 +126,20 @@ Governing records, read verbatim:
     architecture-independent kernels still required are extracted; active intake response-surface work remains a genuine
     target;
   * sec. 5: the stale owner-question state v5 (MPV3Q-01) is repaired post-bid by a successor record.
-* The cathode-path audit v1, `git show b8f39b7:docs/audits/a9_24_cathode_path_audit_v1.md`. It is on branch
-  `lane-a924-cathode` and is not merged into the execution branch. Its classes are HR (historical regression), GR (ground
-  reference) and AFI-01..05 (active-flight inconsistency). AFI-01, -03 and -05 are now resolved, AFI-02 is open, and the owner
-  classified AFI-04 as `HISTORICAL_REGRESSION_COMPATIBILITY`.
+* The cathode-path audit v1. v2 read it as `git show b8f39b7:docs/audits/a9_24_cathode_path_audit_v1.md`; it is now
+  in-tree on the integration branch as `docs/audits/a9_24_cathode_path_audit_v1.md` (merged at `dcab602`). Its classes
+  are:
+  * HR (historical regression);
+  * GR (ground reference);
+  * AFI-01..05 (active-flight inconsistency).
+
+  Their states today: AFI-01, -03 and -05 are resolved. AFI-02 is open as a value-status action (AFI-02-RA1; A9.28).
+  The owner classified AFI-04 as `HISTORICAL_REGRESSION_COMPATIBILITY`.
 * `docs/performance/pre_rust_reference_baseline_5eee4b8/REGISTRATION.json` and `baseline.json` (the ranking).
+* **v3:**
+  * `docs/decisions/OD_2026_10_05_A9_28_RUST_PLAN_RULINGS_AND_SIMULATION_COMPLETION_DIRECTIVE.md` (md sha256
+    `7877bdc9…3fb54c`; json `928e0588…41e2`), messages 1 and 2 in full;
+  * `docs/integration/main_reconciliation_2026_10_05.json` (sha256 `2eae9810…5d80`).
 
 A9.24 supersedes A9.7's "do not rewrite the simulator in Rust" (`SUPERSEDED_BY_A9_24_ITEM_1`). It also supersedes A9.14
 S10.3 `PYTHON_CANONICAL_FOR_FROZEN_AND_SCORE_BEARING`, per component on admission. A9.14 S10.4
@@ -58,12 +149,13 @@ Machine-readable companions in this directory:
 
 | file | content |
 |---|---|
-| `programme_v2.json` | end state, active architecture, lifecycle, the four-class rule, rules RM-R01..R25, the bid pair and guard, item-14 checklist, workspace, owner questions |
-| `component_inventory_v2.json` / `.md` | 227 components (224 Python-file components + 3 non-`.py` paths; 451 Python files), each with class, basis, disposition, wave, kernels, not-ported parts |
-| `migration_order_v2.json` | waves W0–W17 and lanes GR / RET / AFI; the PRE_RUST ranking mapped to them; prerequisites P-01..P-05 |
-| `parity_contract_template_v2.json` | the per-component pre-registration template; v1 plus a classification gate |
-| `CI_PLAN.md` | the incremental Rust CI plan (item 8), revised for v2 |
-| `*_v1.*` | v1, unchanged history |
+| `programme_v3.json` | end state, active architecture, lifecycle (incl. the new-physics lifecycle), the five-class rule, rules RM-R01..R32, the bid record and guard, integration line, item-14 checklist, main-merge pre-PR checklist, completion report A–N, workspace, owner questions (RM-OQ-06..09 decided by A9.28; RM-OQ-10..12 new) |
+| `component_inventory_v3.json` / `.md` | 227 components (224 Python-file components + 3 non-`.py` paths; 451 Python files), each with class, basis, disposition, wave, A9.28 owner disposition, simulation-completion work package, kernels, not-ported parts; new items with no Python reference |
+| `migration_order_v3.json` | waves W0–W17 and lanes GR / GT / RET / AFI; the PRE_RUST ranking mapped to them; prerequisites P-01..P-06 |
+| `parity_contract_template_v3.json` | the per-component pre-registration template; v2 plus `contract_kind` (parity vs new-physics verification), value-status preservation and the five-class gate |
+| `SIMULATION_COMPLETION_PROGRAMME.md` / `simulation_completion_programme_v1.json` | the A9.28 simulation completion programme: seventeen layer work packages, order, Hall boundary, first execution sequence, exit criteria |
+| `CI_PLAN.md` | the incremental Rust CI plan (item 8), revised for v3 |
+| `*_v1.*`, `*_v2.*` | v1 and v2, unchanged history |
 
 ---
 
@@ -94,28 +186,57 @@ These statements are A9.24 items 1 and 14, verbatim in substance.
 * **Python source is not deleted.** Until a class-A component is admitted, its Python code is the migration reference. After
   that, it stays only as immutable history: in Git, under a retired tag, or in a clearly retired directory. Class-H and class-G
   Python is kept the same way and stays reproducible from its historical commit. Historical evidence is never deleted.
+* **The scope of zero Python (A9.28 message 2 sec. 13).** Normal simulation, design sweeps, mission propagation, UQ,
+  assessment, gates, configuration / hash handling, the evidence / provenance builders that remain operational, and
+  normal CI all run without Python. Python may remain only for archived historical reproduction, after the
+  corresponding active Rust components are admitted.
+* **Simulation complete (A9.28 message 2 sec. 6)** means an admitted active implementation of every applicable
+  selected-architecture layer (`SIMULATION_COMPLETION_PROGRAMME.md`). Absent determining hardware evidence stays fail
+  closed (`NOT_EVALUATED` / `INCOMPLETE_EVIDENCE` / `OUT_OF_DOMAIN` / `MODEL_ERROR`). Software completion is never a
+  gate PASS (sec. 14).
 
-## 2. Migration classification (A9.25 message 3)
+## 2. Migration classification (A9.25 message 3; A9.28 message 1)
 
 **LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator.**
 
-Each component in `component_inventory_v2.json` has exactly one primary class:
+Each component in `component_inventory_v3.json` has exactly one primary class. A9.28 adds the owner class
+`GROUND_TEST_PROGRAMME_ONLY`:
 
 | class | owner rule | where it goes | components | lines |
 |---|---|---|---:|---:|
-| `ACTIVE_SELECTED_ARCHITECTURE_PHYSICS` | migrate to Rust under pre-registered parity / admission | waves W0–W17 | 135 | 175,499 |
+| `ACTIVE_SELECTED_ARCHITECTURE_PHYSICS` | migrate to Rust under pre-registered parity / admission | waves W0–W17 | 132 | 172,695 |
 | `GROUND_REFERENCE_ONLY` | migrate only if the future active test / evidence toolchain genuinely requires it; never in flight execution | lane GR (on demand) | 7 | 12,502 |
-| `HISTORICAL_LEGACY_REGRESSION` | do not port; keep the Python implementation and historical commit / evidence for reproducibility | lane RET | 84 | 73,767 |
-| `ACTIVE_FLIGHT_INCONSISTENCY` | do not port; resolve against `hall_icp_neutralizer` first, then migrate only the corrected implementation | lane AFI | 1 | 874 |
+| `GROUND_TEST_PROGRAMME_ONLY` (A9.28) | ground-test programme tooling; never flight runtime; `ACTIVE_GATE_TOOLING` / `ACTIVE_EVIDENCE_TOOLING` need Rust equivalents eventually; hardware / instrumentation migrate where retained; the feed-state closure is retained until successor records exist | lane GT (`abep-groundtest`) | 6 | 7,276 |
+| `HISTORICAL_LEGACY_REGRESSION` | do not port; keep the Python implementation and historical commit / evidence for reproducibility | lane RET | 82 | 70,169 |
+| `ACTIVE_FLIGHT_INCONSISTENCY` | do not port; resolve against `hall_icp_neutralizer` first, then migrate only the corrected implementation | lane AFI (empty at v3) | 0 | 0 |
+
+**A9.28 owner dispositions (verbatim labels in `owner_disposition_a9_28`).**
+
+| component | v2 → v3 class | owner disposition | v3 port disposition |
+|---|---|---|---|
+| `docs/budgets/mass_power_a9_v5/` | F → A (W11) | `ACTIVE_SELECTED_ARCHITECTURE_ENGINEERING_ASSESSMENT`; AL-07 `PROVISIONAL_LEGACY_DERIVED_ANALOG_INPUT`; `AFI-02-RA1_OPEN` | `MIGRATE_GENERIC_LOGIC_PRESERVE_VALUE_STATUS` |
+| `abep_sim/plasma_chem.py` | H → H | `HISTORICAL_LEGACY_MODULE`; `EXTRACT_ARCHITECTURE_INDEPENDENT_KERNELS_ONLY_IF_NEEDED` | `NOT_PORTED_EXTRACT_ARCH_INDEPENDENT_KERNELS_ONLY_IF_NEEDED` |
+| `docs/architecture_comparison/compressor_downselect/` | H → H | `HISTORICAL`; `RETIRE_FROM_ACTIVE_GRAPH` | `NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH` |
+| `docs/architecture_comparison/feed_state_closure/` | H → T | `GROUND_TEST_PROGRAMME_ONLY`; `NOT_FLIGHT_RUNTIME`; `RETAIN_UNTIL_SUCCESSOR_FEED_QUALIFICATION_RECORDS_EXIST` | same (RM-OQ-10) |
+| `docs/experiments/capability_demo/` | H → T | `GROUND_TEST_PROGRAMME_ONLY`; `ACTIVE_EVIDENCE_TOOLING`; never flight execution | `MIGRATE_ACTIVE_GROUND_TEST_TOOLING` |
+| `docs/evidence/hall_sustainment/` | A → A | `REFERENCE_EVIDENCE_ONLY`; `NOT_FLIGHT_RUNTIME` | `MIGRATE_OR_FORMALLY_RETIRE` |
+| `docs/experiments/hardware/` | A → T | `GROUND_TEST_PROGRAMME_ONLY`; migrate only where the active evidence / toolchain still requires them | `MIGRATE_WHERE_RETAINED_IN_ACTIVE_EVIDENCE_TOOLCHAIN` |
+| `docs/experiments/instrumentation/` | A → T | `GROUND_TEST_PROGRAMME_ONLY`; migrate where retained in the active evidence / toolchain | `MIGRATE_WHERE_RETAINED_IN_ACTIVE_EVIDENCE_TOOLCHAIN` |
+| `scripts/experiments/s1_readiness.py` | A → T | `GROUND_TEST_PROGRAMME_ONLY`; `ACTIVE_GATE_TOOLING` | `MIGRATE_ACTIVE_GROUND_TEST_TOOLING` |
+| `scripts/experiments/s1a_readiness.py` | A → T | `GROUND_TEST_PROGRAMME_ONLY`; `ACTIVE_GATE_TOOLING` | `MIGRATE_ACTIVE_GROUND_TEST_TOOLING` |
 
 **How the classes are read.**
 
 * Class A means "belongs to the active selected architecture" (A9.25 msg 1 sec. 14, step 2). It therefore includes that
   architecture's design, assessment, configuration, evidence and CI toolchain, which A9.24 item 1 makes Rust-owned.
+* Class T is the A9.28 owner class for ground-test programme tooling. Retained S1 / S1a / evidence gates are not flight
+  physics, but they need Rust equivalents for the zero-Python end state (A9.28 msg 1 sec. 3). They live in
+  `abep-groundtest`, and no flight-runtime crate may depend on it (RM-R30).
 * Each classification carries its basis (owner record, audit item or repository evidence) and a confidence:
-  * established: 62 components;
+  * established: 61 components;
   * proposed by this lane: 156;
-  * provisional, with owner confirmation requested: 9 (RM-OQ-07).
+  * owner-decided by A9.28: 10 (the nine v2 provisional rows plus `mass_power_a9_v5`);
+  * provisional: 0.
 * Nothing is unclassified.
 
 **Not ported as active flight functionality, wherever it sits:**
@@ -144,9 +265,20 @@ They are class H in the inventory. So are other modules whose only consumers are
 * `golden.py` (AFI-04);
 * `life`, `mass_bom`, `ppu`, `thermal`, `transient`, `mission5`, `radiation`, `orbit_atm`, `validation`, `xe_ledger`,
   `arch_boundary` and `hard_gates`;
+* `plasma_chem.py`, owner-confirmed by A9.28 as a `HISTORICAL_LEGACY_MODULE`;
+* the compressor down-select, owner-confirmed by A9.28 as `HISTORICAL`;
 * the A5 multi-family comparison builders;
 * the superseded record versions;
 * the historical A5 upstream pre-ionizer campaign (A9 decision of 2026-09-29).
+
+**What RETIRE means (A9.28 msg 2 sec. 11):**
+
+* not imported by active production execution;
+* not required by the normal simulator CLI;
+* not required by normal CI, except explicit historical-regression jobs;
+* not ported merely for completeness.
+
+Historical modules stay in Git for provenance and reproducibility.
 
 **Parity rule.** Parity is required against the authoritative Python implementation of physics the selected architecture
 retains. It is not a requirement to preserve obsolete architecture errors or retired hardware topology.
@@ -154,17 +286,28 @@ retains. It is not a requirement to preserve obsolete architecture errors or ret
 **Extract-and-parity kernels.** Where a retained physical calculation sits inside a legacy module, only that function subset
 is ported and parity-tested:
 
-| kernel | inside | wave | what it is |
-|---|---|---|---|
-| `K-GASPATH` | `abep_sim/system.py` | W2 | the air-mode gas-path closure: collection → compressor → reservoir → orifice, plus AO inlet composition; `p_target_Pa` supplied |
-| `K-GAS-LIFE` | `abep_sim/archengine.py` + `abep_sim/life.py` | W2 | the gas-state wrapper with intake / blade AO-coating life (`intake_life`, `blade_life`) |
-| `K-MASS-RULES` | `docs/budgets/mass_power_a9_v3/` | W11 | the fail-closed mass roll-up rules the v4 / v5 builders import unchanged |
-| `K-P3-RAYS` | `docs/experiments/hall_icp/p3_coupled_thermal/` | W5 | P3 ray / view-factor / plume functions, already copied verbatim (cathode-free) into `abep_sim/icp_thermal_lib.py` |
-| `K-GOLDEN-COMPARE` | `abep_sim/golden.py` | W16 | the generic golden comparison harness (tooling) |
+| kernel | inside | wave | work package | what it is |
+|---|---|---|---|---|
+| `K-GASPATH` | `abep_sim/system.py` | W2 | SC-WP-02 | the air-mode gas-path closure: collection → compressor → reservoir → orifice, plus AO inlet composition; `p_target_Pa` supplied. **v3: extracted only if an active consumer is confirmed** |
+| `K-GAS-LIFE` | `abep_sim/archengine.py` + `abep_sim/life.py` | W2 | SC-WP-08 | the gas-state wrapper with intake / blade AO-coating life (`intake_life`, `blade_life`). **v3: extracted only if an active consumer is confirmed** |
+| `K-MASS-RULES` | `docs/budgets/mass_power_a9_v3/` | W11 | SC-WP-07 | the fail-closed mass roll-up rules the v4 / v5 builders import unchanged |
+| `K-P3-RAYS` | `docs/experiments/hall_icp/p3_coupled_thermal/` | W5 | SC-WP-06 | P3 ray / view-factor / plume functions, already copied verbatim (cathode-free) into `abep_sim/icp_thermal_lib.py` |
+| `K-GOLDEN-COMPARE` | `abep_sim/golden.py` | W16 | SC-WP-15 | the generic golden comparison harness (tooling); in v3 it is the comparator of the new active golden |
 
-**Candidate kernels** are listed for seven more modules: `thruster`, `thermal`, `ppu`, `radiation`, `mass_bom`, `life` and the
-Hall reference. They are architecture-independent functions with no active consumer today, and they are extracted only when
-one appears (A9.25 msg 2 sec. 8).
+**Why K-GASPATH / K-GAS-LIFE are gated (v3 finding).** After RM-OQ-06 their v2 active consumers are historical:
+
+* the golden_v2 `gas_path` case and the `hall_icp_neutralizer_reference` upstream / AO keys;
+* class-H `archengine.gas_path_state`.
+
+The active F-chain reaches the compressor and the plenum through `compressor_synthesis` and `plenum_feed`. The SC-WP-02
+/ SC-WP-08 contracts decide whether an active consumer exists, as does the active golden's cathode-free upstream entry
+(AFI-04). Architecture relevance comes first, so the PRE_RUST rank-4 timing alone does not justify the port.
+
+**Candidate kernels** are listed for eight modules: `thruster`, `thermal`, `ppu`, `radiation`, `mass_bom`, `life`, the
+Hall reference and (A9.28) `plasma_chem`. They are architecture-independent functions with no active consumer today,
+and they are extracted only when one appears (A9.25 msg 2 sec. 8; A9.28 msg 2 sec. 9). Every extracted kernel needs
+provenance, an applicability domain and preregistered parity / verification. No LaB6 dependency may enter the active
+chain.
 
 Class-A modules can also contain logic that is not ported:
 
@@ -174,19 +317,30 @@ Class-A modules can also contain logic that is not ported:
   its post-bid successor record, not the stale v5, becomes the parity reference;
 * `profile_baseline.py`: the legacy workloads.
 
-The ground-reference parts inside class-A records stay `GROUND_REFERENCE_ONLY` and never enter flight execution. Examples are
-the C1 slot of the A9 bus boundary, the C1-GT Xe lines, the RFQ C1 lines and the C1 arm of the Hall→ICP experiments.
+The ground-reference parts inside class-A records stay `GROUND_REFERENCE_ONLY` and never enter flight execution. Examples:
+
+* the C1 slot of the A9 bus boundary;
+* **v3:** the `hall_c1_reference` start-up rule `bus_boundary_a9._heater_rule`, with its `c1_*` slots and peak events;
+* the C1-GT Xe lines and the RFQ C1 lines;
+* the C1 arm of the Hall→ICP experiments.
 
 **AFI status (cathode audit v1 → today).**
 
 * AFI-01 (the AL-08 C1 cathode-feed branch) is resolved in mass / power v4 / v5. The v3 record is historical evidence.
-* **AFI-02 is open.** AL-07 = 6.0 kg is a `PROVISIONAL_CONSERVATIVE_ANALOG_FLOOR` that contains legacy C1 functions;
-  AFI-02-RA1 is the re-base action. So `docs/budgets/mass_power_a9_v5/` is the single class-F component. It is not ported
-  until the re-base, and the migration invents no reduction.
+* **AFI-02 is open as a value-status action (A9.28 msg 1 sec. 2).** `docs/budgets/mass_power_a9_v5/` is no longer class
+  F. It is `ACTIVE_SELECTED_ARCHITECTURE_ENGINEERING_ASSESSMENT` (class A, W11), and its generic mass-accounting /
+  margin / harness / roll-up logic migrates.
+  * AL-07 = 6.0 kg keeps `AL-07_VALUE_STATUS = PROVISIONAL_LEGACY_DERIVED_ANALOG_INPUT` and `AFI-02-RA1_OPEN`.
+  * The committed record labels stay byte-identical: `PROVISIONAL_CONSERVATIVE_OWNER_ANALOG_FLOOR`,
+    `CONTAINS_LEGACY_FUNCTIONS_NOT_PRESENT_IN_CURRENT_FLIGHT_ARCHITECTURE`,
+    `REBASE_REQUIRED_FROM_CURRENT_LOAD_CONVERTER_CBE`.
+  * The migration never promotes the value to CBE, measured mass or frozen flight truth (RM-R27).
+  * AFI-02-RA1 remains the only action that rebases it, and the migration invents no reduction.
 * AFI-03 (the P3 v2 cathode node) is resolved by owner labelling. P3 v2 is class H, and its ray kernels are already in
-  `icp_thermal_lib`.
-* AFI-04 (the golden computed through `hall_1stage`) is `HISTORICAL_REGRESSION_COMPATIBILITY`. The LaB6 path is not ported, and
-  an active `hall_icp_neutralizer` golden is created post-bid (P-02).
+  `icp_thermal_lib`. The cathodeless successor thermal model is new physics, built directly in Rust (RM-OQ-08).
+* AFI-04 (the golden computed through `hall_1stage`) is `HISTORICAL_REGRESSION_COMPATIBILITY`. The LaB6 path is not
+  ported. The active `hall_icp_neutralizer` golden is generated only from the admitted active Rust chain (RM-OQ-06,
+  SC-WP-15).
 * AFI-05 (the RVM-16 keeper wording) is resolved.
 
 **Dependency findings** (runtime imports and dynamic loads, re-derived at `2de86ab`).
@@ -200,17 +354,26 @@ the C1 slot of the A9 bus boundary, the C1-GT Xe lines, the RFQ C1 lines and the
   * the experiment-only P1 reducer for `icp_bench_lib` (W9).
 * Of the 162 test files, 98 import only class-A modules and 64 exercise class H / G / F code. The second group stays with the
   retired Python.
+* **v3 findings** (`component_inventory_v3.json` `dependency_findings.v3_findings`):
+  * the C1 heater / keeper start-up rule in `bus_boundary_a9.check_startup_sequence` (ground reference, not ported);
+  * `python -m abep_sim` runs the class-H legacy card sweep, so no Python entry point is ported;
+  * there is no active mission integration and no active reliability implementation (new elements of SC-WP-09 /
+    SC-WP-08);
+  * the active ICP code is an evidence-gated framework without a predictive plasma model (RM-OQ-12);
+  * `K-GASPATH` / `K-GAS-LIFE` lost their active golden consumer.
+  * The Python tree is unchanged since `2de86ab` (`git diff 2de86ab..HEAD -- '*.py'` is empty), so the v2 dependency
+    analysis carries over.
 
 ## 3. Component lifecycle
 
 Each component has exactly one status. Status changes are recorded in a migration-state ledger, proposed as
-`docs/rust_migration/migration_state_v1.json` and created by the first implementation PR, with one row per inventory-v2
-component. Each change also gets a docs/HISTORY.md entry.
+`docs/rust_migration/migration_state_v1.json` and created by the first implementation PR (ES-1), with one row per
+inventory-v3 component. Each change also gets a docs/HISTORY.md entry.
 
 | status | meaning | evidence needed to enter it |
 |---|---|---|
 | `PYTHON_REFERENCE` | Python is authoritative and is the migration reference (class A) | default for class A, except Kernel 1 |
-| `PREREG_PARITY` | a parity contract from template v2 is committed **in its own commit before any comparison**. The commit fixes the reference commit and file sha256, the inputs, seeds, observables, tolerances, decision rules and the classification gate | the contract file and its sha256 recorded in the ledger |
+| `PREREG_PARITY` | a parity contract from template v3 (v2 for history) is committed **in its own commit before any comparison**. The commit fixes the reference commit and file sha256, the inputs, seeds, observables, tolerances, decision rules and the classification gate | the contract file and its sha256 recorded in the ledger |
 | `RUST_IMPL` | the Rust implementation exists and passes `cargo test`. It is never served for production | Rust commit and source sha256 |
 | `PARITY_PASS` | the scoring execution returns `ADMITTED` for every kernel / observable group | parity report (JSON + MD) committed whatever the verdict |
 | `ADMITTED` | Rust is authoritative, and new production results come from Rust (item 1). Results carry `implementation: rust` and the Rust commit | owner-visible HISTORY entry; ledger flip; CI job added (CI_PLAN.md) |
@@ -223,6 +386,20 @@ component. Each change also gets a docs/HISTORY.md entry.
 
 `PARITY_PASS` and `ADMITTED` are separate states on purpose. A pass is a numerical fact; admission makes Rust authoritative.
 
+**New physics (A9.28 msg 1 sec. 5; RM-R26)** follows its own lifecycle:
+
+1. **`PREREG_MODEL`.** The preregistration (template v3 `new_physics_verification`) is committed in its own commit
+   before any Rust code. It covers equations, energy boundaries, nodes, assumptions, domains, conservation criteria,
+   analytic limiting cases and the independent evidence / validation cases. The owner reviews it.
+2. **`RUST_IMPL`.** The Rust implementation exists.
+3. **`VERIFIED`.** The analytic limiting cases, conservation, domain tests and independent verification all pass.
+4. **`ADMITTED`.**
+
+* There is no synthetic Python reference. A Python scratch calculation may serve only as an independent,
+  non-authoritative cross-check.
+* Admitted new-physics outputs carry `validation_status = NOT_VALIDATED` until measured evidence exists. Software
+  admission is not a gate PASS.
+
 **Kernel 1, the TPMC intake trace kernels K1–K5, is `ADMITTED`.** Its records are `abep_core/`, `parity_prereg_v2.json` +
 `parity_report_v2.json`, `scripts/verify_abep_core.py` and `abep_sim/design/tpmc_backend.py`.
 
@@ -233,7 +410,7 @@ component. Each change also gets a docs/HISTORY.md entry.
 ## 4. Migration rules (binding for every contract)
 
 RM-R01..R14 and R16..R18 are unchanged from v1 (item 1 verbatim, plus their operational consequences). RM-R15 is replaced.
-RM-R19..R25 are new.
+RM-R19..R25 are new in v2. RM-R19, R24 and R25 gain A9.28 sources in v3, and RM-R26..R32 are new in v3.
 
 1. **No big bang.** Migration goes component by component, or by a tightly coupled group that one contract names. A wave is
    a scheduling unit, never an admission unit.
@@ -273,8 +450,10 @@ RM-R19..R25 are new.
 17. **Kernel granularity is allowed.** A contract may admit a function subset of a module. For class-H modules this is the
     only way anything inside them is ported (§ 2 kernels).
 18. **After admission**, new production results for the component come from Rust.
-19. **Four-class gate.**
-    * A contract may be registered only for a class-A component or an extract-and-parity kernel.
+19. **Class gate** (five classes since A9.28).
+    * A contract may be registered only for a class-A component or an extract-and-parity kernel. A class-T
+      (`GROUND_TEST_PROGRAMME_ONLY`) component may also be contracted when its owner sub-disposition migrates it:
+      `ACTIVE_GATE_TOOLING` / `ACTIVE_EVIDENCE_TOOLING`, or retained by the active evidence toolchain.
     * Class G needs a recorded active-toolchain requirement first.
     * Class H is never contracted.
     * Class F is contracted only as its corrected successor.
@@ -289,13 +468,65 @@ RM-R19..R25 are new.
     owner-governed change. The migration never alters a numerical baseline and never invents a value (A9.24 item 13).
 23. **No inheritance of obsolete architecture.** No Rust crate depends on, re-implements or carries a class-H / G / F path, and
     there is no legacy crate. A forbidden-identifier scan enforces this (CI_PLAN.md § 1, principle 6).
-24. **The bid pair is frozen** (§ 5). Package-level post-source bid-text updates, such as A9.27 / `2de86ab`, happen only under
-    an owner decision record and always pin `5eee4b8`. `mission_scenario_v2` is immutable after the freeze; a later change is
-    `mission_scenario_v3`.
-25. **Ordering key** (A9.27 sec. 4): architecture relevance first (the four classes), evidence / parity eligibility second,
-    measured performance third. A slow legacy workload is retired; it is never ported because it is slow.
+24. **The bid record is frozen** (§ 5). A9.28 msg 2 sec. 1 names technical source `5eee4b8` and package / freeze record
+    `2de86ab`; the lineage is `b5849af` → `2de86ab`, both pinning `5eee4b8`. Package-level post-source bid-text updates
+    happen only under an owner decision record and always pin `5eee4b8`. `mission_scenario_v2` is immutable after the
+    freeze; a later change is `mission_scenario_v3`.
+25. **Ordering key** (A9.27 sec. 4; A9.28 msg 1 sec. 7, msg 2 sec. 15):
+    * architecture relevance first (the classes);
+    * evidence / admission eligibility second;
+    * measured performance third.
 
-## 5. Bid boundary (A9.24 items 2 and 9; A9.25 message 8 secs. 12–14; A9.27)
+    A slow legacy workload is retired; it is never ported because it is slow. The `PRE_RUST_REFERENCE_BASELINE` orders
+    only active retained components.
+26. **New physics** (A9.28 msg 1 sec. 5; msg 2 secs. 8, 10). Genuinely new selected-architecture physics, such as the
+    cathodeless thermal model, follows the new-physics lifecycle (§ 3):
+    * it is preregistered, implemented directly in Rust and admitted by independent verification;
+    * no Python model is written merely to create a parity target;
+    * a Python scratch calculation may only be an independent cross-check, never an authoritative active dependency.
+27. **Value-status preservation** (A9.28 msg 1 sec. 2). Migration never promotes a provisional / analog / allocation
+    input to CBE, measured or frozen truth. `mass_power_a9_v5` AL-07 6.0 kg stays
+    `PROVISIONAL_LEGACY_DERIVED_ANALOG_INPUT` with `AFI-02-RA1_OPEN` until the owner-governed rebase.
+28. **Historical goldens** (A9.28 msg 1 secs. 4–5; msg 2 secs. 11–12).
+    * golden_v1 / golden_v2, including their LaB6 / hollow-cathode cases, stay immutable and reproducible from their
+      historical Python / reference environment.
+    * They are not mandatory Rust end-state parity cases. They are not deleted, and not rewritten to match the selected
+      architecture.
+    * CLAUDE.md rule 2 applies to the ACTIVE canonical golden set. The CLAUDE.md update is a separate later commit, CA-01.
+    * The `hall_icp_neutralizer` golden is created only from the admitted active Rust chain.
+29. **Replace integrity checks, never drop them** (A9.28 msg 1 sec. 6). A Python check that active CI depends on (the H2-6
+    source check) leaves active CI only after:
+    * its check semantics are ported, preferably as a generic Rust provenance verifier;
+    * the verifier is admitted;
+    * CI is re-pointed.
+
+    Obsolete architecture assumptions inside such checks are not ported, and historical evidence stays immutable.
+30. **Ground-test isolation** (A9.28 msg 1 sec. 3). Class-T tooling is never flight runtime. It lives in
+    `abep-groundtest`, and no flight-runtime crate may depend on it. Retained S1 / S1a / evidence gates still need Rust
+    equivalents for the zero-Python end state.
+31. **Fail closed on absent evidence** (A9.28 msg 2 secs. 7, 14). Software completion never converts `NOT_EVALUATED` /
+    `INCOMPLETE_EVIDENCE` / `OUT_OF_DOMAIN` / `MODEL_ERROR` into PASS, and it never fabricates hardware evidence. The
+    credible Hall transport set stays visibly EMPTY until the governed validation admits a member.
+32. **Integration discipline** (A9.28 msg 2 secs. 3, 5, 16–18).
+    * The plan and the implementation merge into `integration/simulation-complete`.
+    * main receives one coherent admitted simulation baseline, through a NEW PR, after the pre-PR checklist and the A–N
+      completion report (`SIMULATION_COMPLETION_PROGRAMME.md` § 8).
+    * PR #37 is not reused.
+
+## 5. Bid boundary (A9.24 items 2 and 9; A9.25 message 8 secs. 12–14; A9.27; A9.28 message 2 sec. 1)
+
+**The A9.28 protected bid record** is technical source `5eee4b8c82a9403b6bb82d5f8d324526f5d6399b` with package /
+freeze record `2de86abefacbd36ce7516d3cf017f6258bd7e7a2`.
+
+* It is immutable historical evidence.
+* Later simulation development never rewrites these records. It never makes a later commit appear to have been the
+  submitted technical source.
+* A9.25 / A9.27 named `b5849af` as the package / freeze record. `2de86ab` is its owner-authorised package-level
+  successor (A9.27), and both pin `5eee4b8`.
+* The guard protects the whole lineage `b5849af` → `2de86ab`. Whether `2de86ab` is the terminal package state is
+  RM-OQ-11.
+
+The v2 detail follows.
 
 * **Technical source SHA:** `5eee4b8c82a9403b6bb82d5f8d324526f5d6399b`. Its code, configs, architecture, engineering records
   and numerical outputs define the bid. It was verified by:
@@ -361,8 +592,8 @@ A contract that fails the classification gate is `REFUSED_CLASSIFICATION`. That 
 
 ## 7. External-dependency strategy
 
-These choices are unchanged from v1. The full list per component is in `component_inventory_v2.json`
-(`rust_equivalents_needed`).
+These choices are unchanged from v1. The full list per component is in `component_inventory_v3.json`
+(`rust_equivalents_needed`, carried from v2).
 
 * **numpy / scipy.** Hand-port the algorithms the reference actually uses (`scipy.stats`, `scipy.integrate`,
   `scipy.interpolate`, `scipy.constants` pinned to scipy 1.17.1). A generic crate is not swapped in where it would change the
@@ -400,6 +631,16 @@ forensics scripts. The proposed `abep-julia-bridge` crate works as follows:
 In v2 the bridge is admitted in **W8**, together with the Hall-transport validation / O4 tooling. In v1 it was W18a. The
 executed campaign runner scripts are class H and are not ported.
 
+**A9.28 message 2 sec. 7** (`SIMULATION_COMPLETION_PROGRAMME.md` § 6; SC-WP-03):
+
+* HallThruster.jl remains authoritative. No Hall physics is rewritten in Rust merely to remove Julia.
+* Rust owns orchestration only.
+* The interface is deterministic, version-pinned (`PINNED.toml` commit `bfb3019f…`; Julia 1.11.7) and
+  provenance-recorded (one sidecar per run).
+* The credible transport set is EMPTY. That absence of determining Hall calibration evidence stays visible as
+  `NOT_EVALUATED`.
+* Screening candidates are never turned into admitted members without the governed validation process.
+
 ## 9. Proposed Cargo workspace layout (proposal only: no crate is created by this record)
 
 ```
@@ -408,7 +649,7 @@ rust-toolchain.toml         # pinned toolchain (1.94.1 = parity_report_v2 build_
 crates/
   abep-types/        units, shared records, error/status enums, Python-compatible JSON float formatter, schema types
   abep-provenance/   sha256, manifests, config / architecture / model-set / design-state-set hashes, bid_source_manifest +
-                     migration_state readers, run-record sidecars
+                     migration_state readers, run-record sidecars, the generic provenance verifier (RM-OQ-09)
   abep-rng/          numpy-compatible PCG64 + SeedSequence + Generator (EXACT_STREAM); re-exports the Kernel-1 stream
   abep-config/       config/** loaders, operating scenario (mission_scenario_v2, immutable), engineering constraints
                      (incl. the HC-09 Option-1 generation filter), gate thresholds
@@ -420,9 +661,10 @@ crates/
                      F2-F4 synthesis, A9.13 upstream rules (W2)
   abep-chem/         rate tables + HallThruster.jl rate-table builders (W7); no 0-D global source model
   abep-mission/      mission_env propagation, statewise, spacecraft reference drag (W1 / W3)
-  abep-subsystems/   power (A9 bus boundary v1 / v2, H-1 magnet power), thermal (icp_thermal_lib P3 rays, thermal_life
-                     Hall-discharge / magnet parts, the post-bid cathodeless successor model), mass (K-MASS-RULES + the
-                     AFI-02-resolved successor), Xe accounting v3; NO cathode library
+  abep-subsystems/   power (A9 bus boundary v1 / v2 flight configuration, H-1 magnet power; NO C1 heater / keeper rule),
+                     thermal (icp_thermal_lib P3 rays, thermal_life Hall-discharge / magnet parts, the NEW cathodeless
+                     model written directly in Rust), mass (K-MASS-RULES + the mass_power_a9_v5 generic logic with the
+                     AL-07 value status preserved), life / materials, Xe accounting v3; NO cathode library
   abep-hall/         HallMap / ensemble gate / registry (schema-typed); NO 0-D Hall
   abep-julia-bridge/ HallThruster.jl process bridge (section 8)
   abep-icp/          F6 ICP geometry + bench / impedance reducers (W9)
@@ -431,6 +673,8 @@ crates/
   abep-uq/           seeded scenario sampling used by F8; no uq6 / uq_modular / mission_uq / Sobol port
   abep-assess/       design gates HC-01..HC-12 (HC-12 NOT_EVALUATED until evidence); physics crates may NOT depend on it
   abep-evidence/     byte-exact JSON / CSV / MD / xlsx / docx writers + one module per class-A builder (W15)
+  abep-groundtest/   class-T ground-test programme tooling (S1 / S1a gates, capability demo, hardware / instrumentation
+                     definitions); no flight-runtime crate may depend on it (RM-R30)
   abep-parity/       contract runner, classification gate, captured-reference comparison, golden comparator
   abep-perf/         performance harness (active workloads only)
   abep-cli/          the `abep` binary (W14): sweep, golden check, build <evidence>, hall …, parity …, perf …, ci …
@@ -446,29 +690,38 @@ Changes from v1:
 * `abep-icp` is added;
 * `abep-uq` is slimmed.
 
+Changes from v2 (A9.28):
+
+* `abep-groundtest` is added;
+* `abep-subsystems::thermal` hosts the new cathodeless model, written directly in Rust;
+* `abep-subsystems::power` excludes the C1 start-up rule;
+* `abep-provenance` hosts the generic provenance verifier.
+
 No crate hosts class-H logic. The dependency rule is checked mechanically:
 
 ```
 types ← provenance ← config / data ← physics crates (atmos, intake, gaspath, chem, mission, subsystems, hall, icp)
-      ← design / uq ← assess ← evidence ← cli
+      ← design / uq ← assess ← evidence / groundtest ← cli
 ```
 
-Physics crates never depend on `abep-assess` or `abep-evidence`, and no crate depends on class-H / G / F code.
+Physics crates never depend on `abep-assess`, `abep-evidence` or `abep-groundtest`. No crate depends on class-H / G /
+F code.
 
-## 10. Order and prioritisation (items 6 and 7; `migration_order_v2.json`)
+## 10. Order and prioritisation (items 6 and 7; A9.28 msg 1 sec. 7, msg 2 sec. 15; `migration_order_v3.json`)
 
 **The `PRE_RUST_REFERENCE_BASELINE` orders the waves; it never gates them.** It was measured on `5eee4b8` and registered at
 `adce2e9`, and A9.27 accepts it as post-freeze evidence. All active Python is scheduled for retirement whatever its speed
 benefit.
 
-**Ordering key (A9.27 sec. 4; RM-R25):**
+**Ordering key (A9.27 sec. 4; A9.28; RM-R25):**
 
-1. architecture relevance: the four classes decide *whether* something is ported;
+1. architecture relevance: the classes decide *whether* something is ported;
 2. evidence / parity eligibility: a retained-physics reference must exist;
 3. measured performance, which only orders what the first two admit.
 
 So a slow legacy workload is retired, never ported because it is slow. The active intake response-surface work stays a genuine
-migration and performance target.
+migration and performance target, and F8 robust optimisation is active and may migrate (A9.28 msg 1 sec. 7). The
+`SIMULATION_COMPLETION_PROGRAMME.md` § 4 applies the same key to the seventeen layer work packages (admission order).
 
 Its ranking maps onto v2 like this. "Addressable" is interpreter time the baseline counts as removable.
 
@@ -477,7 +730,7 @@ Its ranking maps onto v2 like this. "Addressable" is interpreter time the baseli
 | 1 | `uq_modular_run_uq` | 94.86 | **not a port target** (class H, section E); motivates retirement |
 | 2 | `intake_response_surface_reduced` | 88.98 | W1: TPMC response layer on the admitted Kernel 1 |
 | 3 | `archengine_close_architecture` | 16.28 | **not a port target** (class H, section E); motivates retirement |
-| 4 | `system_evaluate_gas_path` | 2.89 | W2: extracted kernel `K-GASPATH` |
+| 4 | `system_evaluate_gas_path` | 2.89 | W2: extracted kernel `K-GASPATH` (v3: only if an active consumer is confirmed) |
 | 5 | `mission_run_generic` | 2.14 | W3: `mission_env.propagate` only (the mission5 / archengine-map driver is class H) |
 | 6 | `compressor_size_for` | 1.91 | W2 |
 | 7 | `uq6_robust_design` | 1.26 | **not a port target** (class H, section E); the active UQ driver is F8 (W4), which is not in the baseline's fixed workload set |
@@ -501,32 +754,35 @@ W6–W17 are unprofiled and keep the item-7 list order.
 | W2 | compressor design search / gas path: compressor, reservoir, rotor strength, AO chemistry, F2, F3, F4, A9.13 upstream + `K-GASPATH`, `K-GAS-LIFE` | 8 | 5,280 |
 | W3 | mission propagation: `mission_env` | 1 | 173 |
 | W4 | UQ / Monte Carlo driver = the **active F8 robust optimizer** (not uq6 / uq_modular), with F7, H-1 geometry and the A9 bus boundary v1 / v2 pulled forward | 5 | 2,857 |
-| W5 | P3 ray sampling: `icp_thermal_lib` (cathode-free); the post-bid cathodeless successor thermal model joins when it exists; the P3 v2 cathode node is **not** ported | 1 | 509 |
+| W5 | P3 ray sampling: `icp_thermal_lib` (cathode-free); the NEW cathodeless thermal model (`NP-THERMAL-CATHODELESS`) is preregistered here and written directly in Rust (RM-OQ-08); the P3 v2 cathode node is **not** ported | 1 | 509 |
 | W6 | atmosphere / orbit wrappers: HWM14 orbit atmosphere v2 | 1 | 1,180 |
 | W7 | chemistry support for HallThruster.jl: rate tables, rate-table builders, closed N2 audits, O / O2 v0, D-X5 | 24 | 4,615 |
 | W8 | Hall accelerator interface (HallMap, ensemble gate, registry) + Rust↔Julia bridge + Hall-transport validation / O4 tooling | 27 | 8,383 |
 | W9 | ICP neutralizer design (F6, bench / impedance helpers) + H-1 magnet power | 3 | 1,316 |
 | W10 | thermal / life accounting: `thermal_life` (Hall discharge / magnet; LaB6, RF and ECR parts not ported) | 1 | 979 |
-| W11 | mass and Xe accounting: Xe accounting v3, `K-MASS-RULES`; the mass record successor after AFI-02-RA1 | 1 | 1,430 |
+| W11 | mass and Xe accounting: Xe accounting v3, `K-MASS-RULES`, `mass_power_a9_v5` generic logic (AL-07 value status preserved, A9.28) | 2 | 2,304 |
 | W12 | assessment and hard gates: design gates HC-01..HC-12, F7 / F8 programme runners | 2 | 802 |
 | W13 | configuration builders / loaders and hash verification | 1 | 980 |
 | W14 | CLI: the new `abep` entry point (no Python entry point is ported) | 0 | 0 |
-| W15 | evidence builders of the active chain: a (12) design synthesis / architecture, b (22) A9 hall_icp experiments, hardware, interfaces, procurement, evidence registers, c (5) requirements, decisions, owner questions, bid package | 39 | 74,565 |
-| W16 | CI / check / parity / performance utilities and the test suite | 6 | 66,703 |
+| W15 | evidence builders of the active chain: a (12) design synthesis / architecture, b (18) A9 hall_icp experiments, interfaces, procurement, evidence registers, c (5) requirements, decisions, owner questions, bid package | 35 | 70,887 |
+| W16 | CI / check / parity / performance utilities, the test suite, the provenance-verifier cut-over and the NEW active `hall_icp_neutralizer` golden | 6 | 66,703 |
 | W17 | final: retire the abep_core PyO3 binding layer and every remaining Python entry point; static proof that no active path imports class H | 1 | – |
 | lane GR | `GROUND_REFERENCE_ONLY`, on demand (H2-1..H2-7) | 7 | 12,502 |
-| lane RET | `HISTORICAL_LEGACY_REGRESSION`, not ported; retired from the production graph post-bid | 84 | 73,767 |
-| lane AFI | `ACTIVE_FLIGHT_INCONSISTENCY`: `mass_power_a9_v5` until AFI-02-RA1 | 1 | 874 |
+| lane GT | `GROUND_TEST_PROGRAMME_ONLY` (A9.28): S1 / S1a, capability demo, hardware / instrumentation, feed-state closure | 6 | 7,276 |
+| lane RET | `HISTORICAL_LEGACY_REGRESSION`, not ported; retired from the production graph post-bid | 82 | 70,169 |
+| lane AFI | `ACTIVE_FLIGHT_INCONSISTENCY`: empty at v3 (A9.28 reclassified `mass_power_a9_v5`) | 0 | 0 |
 
-`abep_sim/intake_tpmc.py` is counted in both W0 and W1. These prerequisites come from `migration_order_v2.json`:
+`abep_sim/intake_tpmc.py` is counted in both W0 and W1. New items with no Python reference (`NP-*`, `NI-*`) are listed
+per wave in `migration_order_v3.json`. These prerequisites come from `migration_order_v3.json`:
 
-| id | prerequisite | what it blocks |
-|---|---|---|
-| P-01 | owner review and merge of this plan | every wave |
-| P-02 | the post-bid, separately governed **active `hall_icp_neutralizer` golden** (A9.25 msg 2 secs. 6 and 9) | the Rust golden check, and the preferred parity reference of `K-GASPATH` / `K-GAS-LIFE`. W2 may proceed against captured Python outputs |
-| P-03 | AFI-02-RA1 | the mass record successor in W11 |
-| P-04 | the cathodeless successor thermal model, if required | only its own W5 contract |
-| P-05 | owner confirmation of the provisional classes | nothing scheduled |
+| id | prerequisite | what it blocks | state |
+|---|---|---|---|
+| P-01 | owner review of plan v3 and its merge into `integration/simulation-complete` (never directly into main) | every wave, contract / preregistration commit and Rust crate | OPEN |
+| P-02 | the active `hall_icp_neutralizer` golden | nothing upstream: it is an output of the admitted active chain (SC-WP-15). W2 parity uses captured Python outputs | RESCOPED_A9_28 |
+| P-03 | AFI-02-RA1 | only a change of the AL-07 value or status; it no longer blocks the W11 migration | OPEN_VALUE_STATUS_ACTION |
+| P-04 | the cathodeless thermal model preregistration (directly in Rust) | the `NP-THERMAL-CATHODELESS` implementation only | OPEN |
+| P-05 | owner confirmation of the provisional classes | nothing | CLOSED_OWNER_DECIDED_A9_28 |
+| P-06 | RM-OQ-12 (scope of a predictive RF/ICP model) | `NP-ICP-PREDICTIVE-MODEL` only | OPEN |
 
 The migration does not stop after W5: the objective is zero Python. Classes G and H reach the end state by formal
 retirement, not by a port.
@@ -541,46 +797,103 @@ Python counts as eliminated only when **all** of these hold. Each item has a mec
 | E2 | production sweeps require no Python | `abep sweep` reproduces the registered design-state-set / F1 / F7 sweep references Python-free. The legacy card sweep is retired, not ported |
 | E3 | config generation/loading requires no Python | `abep config build --check` reproduces `config/MANIFEST.json` byte-identically, Python-free |
 | E4 | assessment/gates require no Python | `abep assess` / hard-gate (HC-01..HC-12) outputs equal the captured references Python-free; HC-12 stays `NOT_EVALUATED` until evidence exists |
-| E5 | evidence builders require no Python | every class-A builder is either ADMITTED (`abep build <id> --check` byte-identical) or FORMALLY_RETIRED_NOT_PORTED |
+| E5 | evidence builders require no Python | every class-A / class-T builder is either ADMITTED (`abep build <id> --check` byte-identical) or FORMALLY_RETIRED_NOT_PORTED |
 | E6 | normal CI requires no Python for the ABEP simulator | the simulator CI jobs contain no `setup-python`, `python`, `pip` or `pytest` steps (static workflow scan) |
 | E7 | every active Python implementation has an admitted Rust replacement or is formally retired | `migration_state_v1.json` is complete: class A ADMITTED + PYTHON_RETIRED_FROM_ACTIVE (or formally retired where its disposition allows); classes G / H FORMALLY_RETIRED_NOT_PORTED (or admitted under a recorded requirement); no class F remains; the inventory re-run at the end-state commit finds no unlisted component |
 | E8 | HallThruster.jl integration still works | `abep hall pin-check` + `abep hall smoke` green; Hall maps still rejected for a non-pinned commit |
 | E9 | all required evidence provenance remains intact | every committed evidence file's sha256 is unchanged or superseded by a recorded version; provenance links verify under `abep ci` |
-| E10 | Python remains only as immutable history | no active build / test / workflow path references the retired sources (class H and unrequired class G included); historical simulations remain reproducible from their historical commit / reference environment (RM-OQ-06); historical evidence is not deleted |
+| E10 | Python remains only as immutable history | no active build / test / workflow path references the retired sources (class H and unrequired class G included); historical simulations and historical goldens remain reproducible from their historical commit / reference environment (RM-OQ-06, OWNER_DECIDED A9.28); historical evidence is not deleted |
 
-## 12. Open questions for the owner (recorded, not decided here)
+**Programme exit criteria (A9.28 msg 2 secs. 16 and 18).** Two more conditions apply before any final PR to main:
 
-* **RM-OQ-01.** Flip `tpmc_backend.DEFAULT_BACKEND` to `rust` as its own post-freeze step, or together with the W1 admission?
-  *Proposed default:* together with W1; the frozen `intake_surface_v1` is unchanged.
-* **RM-OQ-02.** Live NRLMSIS (and HWM14) rebuilds: a Fortran-FFI build-time feature, or a retired Python tag? *Proposed default:*
-  the FFI feature.
-* **RM-OQ-03.** Parity class for W4, the F8 robust optimizer, given its numpy PCG64 streams and its TPMC calls into Kernel 1. The
-  options are `EXACT_STREAM` (port PCG64 + Generator, with Kernel 1 re-registered on that stream) or `STATISTICAL`. *Proposed
-  default:* `EXACT_STREAM`.
-* **RM-OQ-04 (revised).** v1's question (retire the 17 historical candidates) is answered for class H by A9.25 msg 2 sec. 10 and
-  msg 3. What remains is the mechanics: a retired tag, a retired directory, or both, and when class H leaves the production
-  import graph. *Proposed default:* a retired tag plus labelling in a governed, role-bearing model set, with no file move before
-  the active golden (P-02) exists.
-* **RM-OQ-05.** The Rust-era equivalent of CLAUDE.md rule 9 (5 skipped, 1 strict xfail), as an owner-approved CLAUDE.md revision.
-* **RM-OQ-06 (new).** CLAUDE.md rule 2 at the end state for the historical golden_v2 cases that the Rust golden check does not
-  reproduce: `architecture_closure`, `mission`, `hall`, `source_plasma`, `accelerators`, `nonconverged_reference` and
-  `design_point_selection`. *Proposed default:* a historical-reproducibility job on the retired Python, outside the simulator
-  CI.
-* **RM-OQ-07 (new).** Confirm the 9 provisional classifications:
-  * `abep_sim/plasma_chem.py` → H. It is not on the section-E list, but every consumer is legacy;
-  * `compressor_downselect/` → H;
-  * `feed_state_closure/` → H;
-  * `capability_demo/` → H;
-  * `evidence/hall_sustainment/` → A;
-  * `experiments/hardware/` → A;
-  * `experiments/instrumentation/` → A;
-  * `scripts/experiments/s1_readiness.py` → A;
-  * `scripts/experiments/s1a_readiness.py` → A.
+* the main-merge pre-PR checklist (18 items) holds;
+* the completion report A–N is delivered.
 
-  All nine are pivot-era or mixed-consumer items.
-* **RM-OQ-08 (new).** The active golden (P-02) and the cathodeless successor thermal model (P-04) have no Python reference yet.
-  Author them in Python first and then migrate, or author them directly in Rust under their own validation and golden
-  governance? *Proposed default:* Python first.
-* **RM-OQ-09 (new).** The CI check `h2_6_live_sources` loads the class-G H2-6 builder. Port its `verify_sources()` as a class-G
-  migration the active CI genuinely requires, or retire the check with the H2 v1 history? *Proposed default:* port
-  `verify_sources()` only.
+`SIMULATION_COMPLETION_PROGRAMME.md` § 8 and `programme_v3.json` give both, with a mechanical check and an owning work
+package per item. "Simulation complete" is never claimed from a test count.
+
+## 12. Owner questions
+
+**Decided by A9.28 (message 1).**
+
+* **RM-OQ-06: OWNER_DECIDED A9.28 (sec. 4).** CLAUDE.md rule 2 applies to the ACTIVE canonical golden set.
+  * Historical / withdrawn goldens remain immutable and reproducible from their historical Python / reference
+    environment.
+  * They are **not** mandatory Rust end-state parity cases. They are not deleted, and not rewritten to match the
+    selected architecture.
+  * Rust is not required to reproduce the LaB6 / hollow-cathode historical goldens.
+  * CLAUDE.md is updated after the bid so the distinction is explicit. That is action CA-01, a separate later commit;
+    this record does not edit CLAUDE.md.
+  * The new active `hall_icp_neutralizer` golden is created only after the active Rust chain is admitted.
+  * Superseded proposed default: a historical-reproducibility job outside the simulator CI. This survives as the
+    mechanism for reproducing historical goldens.
+* **RM-OQ-07: OWNER_DECIDED A9.28 (secs. 2-3).** The classifications and dispositions are in the § 2 table. The v2
+  proposed defaults are superseded where they differ:
+  * the feed-state closure and the capability demo are class T, not H;
+  * hardware, instrumentation and S1 / S1a are class T, not A;
+  * Hall sustainment is `REFERENCE_EVIDENCE_ONLY`;
+  * `mass_power_a9_v5` is class A, not F.
+* **RM-OQ-08: OWNER_DECIDED A9.28 (sec. 5).** The v2 proposed default ("Python first") is rejected.
+  * No new Python cathodeless thermal model is built merely to create a Rust parity target.
+  * The model is implemented directly in Rust after preregistration, and admitted by independent verification.
+  * A Python scratch calculation may be only an independent cross-check.
+  * Migrated existing physics follows Python reference → preregistered parity → Rust admission. New physics follows
+    preregistered model → analytic / evidence validation → Rust admission.
+  * The active golden is generated only from the admitted active chain.
+* **RM-OQ-09: OWNER_DECIDED A9.28 (sec. 6).** The check is not simply retired while active CI depends on it.
+  * The CHECK SEMANTICS are ported: source hashes, provenance, pinned owner decisions, expected values and deterministic
+    source verification. A generic Rust provenance verifier is preferred, covering H2-6 and similar builders.
+  * Obsolete H2-6 architecture assumptions are not ported.
+  * Once the verifier is admitted and normal CI is re-pointed, the Python H2-6 source check retires from active CI.
+  * Historical H2-6 evidence remains immutable.
+
+**Still open (recorded, not decided here).**
+
+* **RM-OQ-01.** Flip `tpmc_backend.DEFAULT_BACKEND` to `rust` as its own post-freeze step, or together with the W1
+  admission? *Proposed default:* together with W1; the frozen `intake_surface_v1` is unchanged.
+* **RM-OQ-02.** Live NRLMSIS (and HWM14) rebuilds: a Fortran-FFI build-time feature, or a retired Python tag? *Proposed
+  default:* the FFI feature.
+* **RM-OQ-03.** The parity class for W4, the F8 robust optimizer, given its numpy PCG64 streams and its TPMC calls into
+  Kernel 1. The options are:
+  * `EXACT_STREAM`: port PCG64 + Generator, with Kernel 1 re-registered on that stream;
+  * `STATISTICAL`.
+
+  *Proposed default:* `EXACT_STREAM`.
+* **RM-OQ-04 (revised).** The mechanics of class-H retirement: a retired tag, a retired directory or both, and when
+  class H leaves the production import graph. A9.28 msg 2 sec. 11 defines what RETIRE means. *Proposed default:* a
+  retired tag plus labelling in a governed, role-bearing model set, with no file move before the active golden exists.
+* **RM-OQ-05.** The Rust-era equivalent of CLAUDE.md rule 9 (5 skipped, 1 strict xfail), as an owner-approved
+  CLAUDE.md revision.
+* **RM-OQ-10 (new).** The feed-state closure is `GROUND_TEST_PROGRAMME_ONLY` and is retained until successor
+  feed-qualification records exist. If no successor exists when the zero-Python end state is reached, should its
+  builder be ported into `abep-groundtest`, or should its outputs be frozen as reference evidence and its `--check`
+  taken out of normal CI? *Proposed default:* freeze as reference evidence.
+* **RM-OQ-11 (new).** A9.28 names `2de86ab` as the package / freeze record, where A9.25 / A9.27 named `b5849af`. Confirm
+  that `2de86ab` is the terminal package state guarded by `bid_source_guard`; the lineage is `b5849af` → `2de86ab`.
+  *Proposed default:* yes. Any later `docs/bid/**` change needs a new owner decision record.
+* **RM-OQ-12 (new).** The scope of "active RF/ICP physics" (A9.28 msg 2 sec. 6). Is the evidence-gated ICP framework
+  (F6 + P1 / P2 reducers, fail closed without bench data) plus the audited `plasma_chem` kernels sufficient? Or is a
+  predictive RF/ICP neutralizer plasma model (`NEW_PHYSICS`, preregistered) part of "simulation complete"? *Proposed
+  default:* the framework and the audit now; a predictive model only when the owner names the engineering decision that
+  needs it (A9.25 msg 1 sec. 18).
+
+**Actions not done in this record.**
+
+* **CA-01:** CLAUDE.md rule 2 → the ACTIVE canonical golden set, with the historical-golden distinction (A9.28 msg 1
+  sec. 4). A separate later commit.
+* **CA-02:** the CLAUDE.md "Execution baseline" paragraph → `integration/simulation-complete`.
+* **CA-03:** the A9.25 msg 1 sec. 16 staleness update.
+* **CA-04:** the Rust-era rule 9, after RM-OQ-05.
+
+## 13. Integration line and main-merge policy (A9.28 message 2 secs. 3, 5, 16, 17)
+
+* **`integration/simulation-complete`** is the simulation integration line.
+  * It is based on the development line `claude/nifty-ramanujan-w68f9z` at `dcab602`.
+  * main's checkpoints #31-#36 were reconciled into it once, with history preserved, a per-file evidence resolution
+    and no blanket ours / theirs. The record is `docs/integration/main_reconciliation_2026_10_05.json`.
+* **This plan merges into the integration branch** after owner review. It never merges directly into main.
+* **main receives one coherent admitted simulation baseline** after the 18-item pre-PR checklist and the A–N completion
+  report. It arrives through a NEW PR `integration/simulation-complete → main`.
+* **PR #37** is not reused or merged. It is eventually closed as `SUPERSEDED_BY_SIMULATION_INTEGRATION`, once the
+  integration branch holds all governed history.
+* **Divergence.** The integration branch is kept up to date with main, so another large divergence is avoided.

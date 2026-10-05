@@ -1,10 +1,33 @@
-# Rust CI plan v2 (A9.24 item 8; A9.25 message 3)
+# Rust CI plan v3 (A9.24 item 8; A9.25 message 3; A9.28)
 
-**Status: `PROPOSED_PLAN_V2_FOR_OWNER_REVIEW`.** This file is a plan. It changes no workflow: `.github/workflows/ci.yml`,
+**Status: `PROPOSED_PLAN_V3_FOR_OWNER_REVIEW`.** This file is a plan. It changes no workflow: `.github/workflows/ci.yml`,
 `rust-parity.yml` and `julia-smoke.yml` are untouched. Each step below lands only with the implementation PR that admits the
-subsystem it covers. Programme: `PROGRAMME.md`. Order: `migration_order_v2.json`. Inventory: `component_inventory_v2.json`.
+subsystem it covers.
 
-What v2 changes from v1 (v1 is in Git history at `3d705d2`):
+* Programme: `PROGRAMME.md`.
+* Order: `migration_order_v3.json`.
+* Inventory: `component_inventory_v3.json`.
+* Layer work packages and exit criteria: `SIMULATION_COMPLETION_PROGRAMME.md`.
+
+**What v3 changes from v2** (A9.28 messages 1 and 2; v2 is in Git history at `e01716d`):
+
+* **Golden scope.** RM-OQ-06 is OWNER_DECIDED. golden_v1 / v2 are historical, immutable and reproducible from the
+  historical Python environment. They are **not** Rust end-state parity cases. The Rust golden check runs the NEW
+  active `hall_icp_neutralizer` golden, which is generated only from the admitted active chain (SC-WP-15). While Python
+  CI exists, `python -m abep_sim.golden check` keeps running as today. CLAUDE.md rule 2 is unchanged until the separate
+  CA-01 commit.
+* **The H2-6 source check.** RM-OQ-09 is OWNER_DECIDED. Its check semantics move into the generic Rust provenance
+  verifier (SC-WP-12). `ci_checks.py` `h2_6_live_sources` leaves active CI only after the verifier is admitted and
+  normal CI is re-pointed.
+* **New principles:**
+  * 8: ground-test isolation;
+  * 9: new-physics verification jobs, with no Python reference;
+  * 10: value-status preservation.
+* **The A9.28 protected bid record:** `bid_source_guard` protects `5eee4b8` / `2de86ab` (lineage `b5849af` → `2de86ab`).
+* **The integration line.** Every Rust job runs on `integration/simulation-complete`. main receives one admitted
+  baseline after the 18-item pre-PR checklist (§ 6).
+
+What v2 changed from v1 (v1 is in Git history at `3d705d2`):
 
 * The waves are renumbered to `migration_order_v2.json`.
 * CI only ever covers class-A components and extract-and-parity kernels.
@@ -16,6 +39,8 @@ What v2 changes from v1 (v1 is in Git history at `3d705d2`):
 
 Authority:
 
+* A9.28 message 1 secs. 4-6 and message 2 secs. 7, 11-18 (goldens, new physics, H2-6, historical code, active golden,
+  zero Python, main-merge policy, completion report).
 * A9.24 item 8, verbatim in substance: "Update rust-parity CI from v1 to the current v2 TPMC parity record. After that,
   extend Rust CI incrementally for every admitted subsystem." The item also lists the final CI contents and says "Do not
   change Kernel 1 physics while updating CI".
@@ -57,8 +82,25 @@ that the v1 records are immutable. Kernel 1 physics was not changed. No further 
    *recognise* hollow-cathode text in order to refuse it. The other is quoted provenance strings in labelled history fields.
    Any new occurrence fails.
 7. **Classification gate (new, RM-R19).** `abep parity check` refuses (`REFUSED_CLASSIFICATION`) any contract whose
-   component is not class A or an extract-and-parity kernel. A class-G contract passes only with a recorded active-toolchain
-   requirement.
+   component is not class A or an extract-and-parity kernel. Two exceptions:
+   * a class-G contract passes only with a recorded active-toolchain requirement;
+   * a class-T (`GROUND_TEST_PROGRAMME_ONLY`) contract passes only with a migrating owner sub-disposition.
+8. **Ground-test isolation (v3, RM-R30).** A crate-graph check fails if any flight-runtime crate depends on
+   `abep-groundtest`. The flight-runtime crates are the physics crates plus `abep-design`, `abep-uq` and `abep-assess`.
+   Class-T tooling (S1 / S1a gates, capability demo, hardware / instrumentation definitions) never runs in flight
+   execution.
+9. **New-physics verification jobs (v3, RM-R26).** A `NEW_PHYSICS` component, such as `NP-THERMAL-CATHODELESS`, has no
+   Python-reference parity job. Its CI instead runs:
+   * the preregistered analytic limiting cases;
+   * the conservation checks;
+   * the domain tests;
+   * the independent-verification vectors.
+
+   Each is bound to its prereg sha256. Outputs must carry `validation_status = NOT_VALIDATED` until measured evidence is
+   registered. A Python scratch cross-check is never a CI dependency.
+10. **Value-status preservation (v3, RM-R27).** For `mass_power_a9_v5` (and any record with provisional inputs), CI checks
+    that the Rust output carries AL-07 = 6.0 kg with the committed labels and the A9.28 status
+    `PROVISIONAL_LEGACY_DERIVED_ANALOG_INPUT` / `AFI-02-RA1_OPEN`. Any CBE / measured / frozen label on it fails.
 
 ## 2. Per-admitted-component CI increment (template)
 
@@ -77,24 +119,39 @@ these steps:
 | conservation | the contract's `CONS-xx` checks on the Rust outputs | when applicable |
 | config/hash | `abep config verify`: `config/MANIFEST.json`, the architecture, model-set and design-state-set hashes equal the contract's `governing_hashes` | when applicable |
 | schema | Rust outputs validate against the named `schemas/**`; record types match the schema field sets | when applicable |
-| golden / reference | `abep golden check` over the golden cases the component's retained physics reproduces (see below), against the **unchanged** `golden_v2.json`, and over the post-bid active `hall_icp_neutralizer` golden once it exists (P-02) | from the wave that admits the golden's dependencies |
+| golden / reference | captured-reference parity of the component's retained physics. golden_v2 keys may serve as optional development vectors only. `abep golden check` over the NEW active `hall_icp_neutralizer` golden once SC-WP-15 creates it | from SC-WP-15 |
+| new-physics verification | principle 9 (analytic cases, conservation, domains, independent verification), bound to the prereg sha256 | NEW_PHYSICS components only |
+| ground-test isolation | principle 8 crate-graph check | always |
 | forbidden identifiers | principle 6 | always |
 | scoring (dispatch only) | the full pre-registered campaign with the scoring seed, report upload and re-admission gate | `workflow_dispatch` input only |
 
-**Golden scope (v2).**
+**Golden scope (v3; RM-OQ-06 OWNER_DECIDED A9.28).**
 
-* **The Rust golden check reproduces:**
-  * `atmosphere` (W1E);
-  * `intake` (W1);
-  * `gas_path` (W2, `K-GASPATH`);
-  * the upstream / AO keys of `hall_icp_neutralizer_reference` (W2, `K-GASPATH` + `K-GAS-LIFE`);
-  * the gas-path refusal part of `nonconverged_reference` (W2 domain/error parity).
-* **The historical cases are not reproduced by Rust:** `architecture_closure`, `mission`, `hall`, `source_plasma`,
-  `accelerators`, `design_point_selection` and the rest of `nonconverged_reference`.
-  * They are class H / AFI-04 `HISTORICAL_REGRESSION_COMPATIBILITY`.
-  * The owner labels `accelerators` LEGACY / NOT CURRENT FLIGHT CANONICAL.
-  * While Python CI exists, they stay checked by `python -m abep_sim.golden check` (CLAUDE.md rule 2).
-  * At the end state they are reproduced from the historical reference environment (RM-OQ-06).
+* **golden_v1 / golden_v2 are historical references.**
+  * They are immutable, never deleted and never rewritten.
+  * They stay reproducible from the historical Python / reference environment.
+  * They are **not** mandatory Rust end-state parity cases.
+  * Rust is not required to reproduce the LaB6 / hollow-cathode historical goldens. That covers `architecture_closure`,
+    `mission`, `hall`, `source_plasma`, `accelerators`, `design_point_selection`, `nonconverged_reference`, and the
+    `hall_1stage`-computed `hall_icp_neutralizer_reference` (AFI-04).
+* **Their retained-physics keys may still serve contracts** as optional development vectors: `atmosphere`, `intake`,
+  `gas_path`, and the upstream / AO keys of `hall_icp_neutralizer_reference`. The scored reference of every contract
+  is the captured Python output of the retained component.
+* **While Python CI exists,** `python -m abep_sim.golden check` keeps running unchanged (CLAUDE.md rule 2 as written
+  today). The CLAUDE.md update that makes rule 2 apply to the ACTIVE canonical golden set is a separate later commit
+  (CA-01). At the end state, the historical cases run only in the separate historical-reproduction job, outside the
+  simulator CI.
+* **The Rust `abep golden check`** runs the NEW active `hall_icp_neutralizer` golden. That golden is generated only from
+  the admitted active Rust chain, under golden-change governance (SC-WP-15). It covers:
+  * deterministic input configuration;
+  * raw physics;
+  * conservation;
+  * architecture identity;
+  * no conventional hollow cathode;
+  * applicable statewise outputs;
+  * assessment separation.
+
+  Its values carry the chain's fail-closed statuses as computed. They are never PASS by construction.
 * `golden_v2.json` is never regenerated, and no Rust result is ever written into it.
 
 ### Wave-specific additions (waves of `migration_order_v2.json`)
@@ -102,32 +159,34 @@ these steps:
 | wave | extra CI content |
 |---|---|
 | W0 (Kernel 1) | the existing `rust-parity.yml`, unchanged. A workspace path-dependency use of `abep_core` adds a **build-equivalence** step: K1–K5 on the registered vectors with the development seed, bitwise against the recorded extension, run as a contract addendum |
-| W1E / W1 | frozen-data readers: sha256 of `atmosphere_msis21_v1.*`, `intake_surface_v1.*` and the 196-state design-state set v2 against `config/MANIFEST.json` / the rule-1 provenance. The intake response surface is reproduced against `intake_surface_v1` (statistical or exact class as contracted). The `atmosphere` and `intake` golden cases |
-| W2 | gas-path convergence and domain cases: `test_gaspath_convergence_g03_g05.py` and `test_compressor_gaede_domain_mcc02.py` become cargo tests through captured references. `K-GASPATH` and `K-GAS-LIFE` golden keys. A harness-independence check that the Python reference path through `Config("hall_1stage")` reads no card field (RM-R20) |
+| W1E / W1 | frozen-data readers: sha256 of `atmosphere_msis21_v1.*`, `intake_surface_v1.*` and the 196-state design-state set v2 against `config/MANIFEST.json` / the rule-1 provenance. The intake response surface is reproduced against `intake_surface_v1` (statistical or exact class as contracted). The golden_v2 `atmosphere` / `intake` keys only as optional development vectors (RM-OQ-06). W1E also lands `bid_source_guard` and the migration-state ledger (ES-1) |
+| W2 | gas-path convergence and domain cases: `test_gaspath_convergence_g03_g05.py` and `test_compressor_gaede_domain_mcc02.py` become cargo tests through captured references. `K-GASPATH` / `K-GAS-LIFE` only if an active consumer is confirmed (v3 finding); then a harness-independence check that the Python reference path through `Config("hall_1stage")` reads no card field (RM-R20) |
 | W3 | mission propagation: orbit and eclipse invariants, energy balance (`mission_env` only) |
 | W4 | F8 / F7: the RNG self-test of the class chosen in RM-OQ-03 (for `EXACT_STREAM`, numpy PCG64 / SeedSequence vectors captured from numpy 2.4.4); the F7 / F8 study outputs, with the empty robust upstream set, as captured references |
-| W5 | P3 view factors: reciprocity and enclosure-sum invariants at `RES_VERIFY`; source identity with the profiled function |
+| W5 | P3 view factors: reciprocity and enclosure-sum invariants at `RES_VERIFY`; source identity with the profiled function. `NP-THERMAL-CATHODELESS`: principle 9 jobs (no Python reference); a forbidden-identifier scan for any cathode node / `Q_cath` term |
 | W6 | HWM14 executable build and run smoke (the existing Fortran path, now launched by Rust) |
 | W7 | rate-table builders reproduce `abep_sim/data/rates/` and `hallthruster_bridge/propellants/*.dat` byte-identically; `rate_validity.toml` coverage moves from `ci_checks.py` |
 | W8 | the Julia bridge (§ 4); O4 / facility pipeline record checks; the `HallMap` pin and schema checks |
-| W9–W11 | conservation gate (rule 4) on every closure output. W11 adds the mass roll-up rules (`K-MASS-RULES`) against the committed v4 / v5 records. The **class-F** mass record (`mass_power_a9_v5`) gets **no Rust CI** until AFI-02-RA1 creates its corrected successor |
+| W9–W11 | conservation gate (rule 4) on every closure output. W11 adds the mass roll-up rules (`K-MASS-RULES`) and the `mass_power_a9_v5` generic logic (class A since A9.28) against the committed v4 / v5 records, with the principle-10 value-status check on AL-07. The electrical port excludes the `hall_c1_reference` start-up rule; the forbidden-identifier scan covers `c1_heater` / `c1_keeper` in flight crates |
 | W12 | assessment and hard gates: the raw-physics vs assessment split (A9.22; A9.24 items 3–5) is checked as a crate-graph test, so physics crates cannot depend on `abep-assess`. HC-12 stays `NOT_EVALUATED`. HC-05 uses `M_n,LB > 0` and is `NOT_EVALUATED` without uncertainty evidence |
 | W13 | `abep config build --check` reproduces `config/**` and `MANIFEST.json` byte-identically. `mission_scenario_v2` is verified against its frozen pin, never rebuilt |
 | W15 | per class-A builder, `abep build <id> --check` must give byte-identical committed outputs. Class-H builders get no Rust job |
-| W16 | the `scripts/ci_checks.py` checks are ported one by one to `abep ci <check>`. Each is run once against both implementations and must give identical pass / fail on a seeded set of corrupted trees; then the Python check is retired. `h2_6_live_sources` depends on the class-G H2-6 builder: RM-OQ-09 decides whether `verify_sources()` is ported or the check retires |
+| W16 | the `scripts/ci_checks.py` checks are ported one by one to `abep ci <check>`. Each is run once against both implementations and must give identical pass / fail on a seeded set of corrupted trees; then the Python check is retired. `h2_6_live_sources` (RM-OQ-09 OWNER_DECIDED A9.28): its semantics are covered by the generic Rust provenance verifier (SC-WP-12: source hashes, provenance, pinned owner decisions, expected values, deterministic source verification; obsolete H2-6 architecture assumptions not ported); the Python check retires from active CI only after the verifier is admitted and CI is re-pointed. The active `hall_icp_neutralizer` golden job (SC-WP-15) |
+| GT | class-T ground-test tooling (`abep-groundtest`): per-builder `--check` byte identity for `ACTIVE_GATE_TOOLING` / `ACTIVE_EVIDENCE_TOOLING`; principle 8 isolation |
 | W17 | the end-state jobs of § 5 |
 
 ## 3. `bid_source_guard` (PROGRAMME.md § 5)
 
-The first implementation PR adds this check: `ci_checks.py --only bid_source_guard`, later `abep ci bid-source-guard`. It
-**protects the pair**:
+The first implementation PR (ES-1) adds this check: `ci_checks.py --only bid_source_guard`, later
+`abep ci bid-source-guard`. It **protects the A9.28 protected bid record**:
 
 * technical source `5eee4b8c82a9403b6bb82d5f8d324526f5d6399b`;
-* package / freeze record `b5849affae22a6709ad217a184f6fe896d15410a`.
+* package / freeze record `2de86abefacbd36ce7516d3cf017f6258bd7e7a2`, named by A9.28 message 2 sec. 1.
 
-The pair is named by A9.25 message 8 and again by A9.27. The package lineage after the freeze record is recorded in the
-manifest. Today that is `2de86ab` (A9.27): a package-level post-source bid-text update that still pins `5eee4b8`, whose
-authorising decision record marks `package_level_post_source_allowed`.
+The package lineage is `b5849affae22a6709ad217a184f6fe896d15410a`, named by A9.25 message 8 and A9.27, followed by
+`2de86ab`. `2de86ab` is the A9.27 package-level post-source bid-text update; it still pins `5eee4b8`, and its
+authorising decision record marks `package_level_post_source_allowed`. Both bytes sets are recorded in the manifest.
+Whether `2de86ab` is the terminal package state is RM-OQ-11.
 
 It fails in any of these cases:
 
@@ -168,7 +227,7 @@ It runs in normal CI.
 | conservation | rule-4 gates on the active closure and design outputs | E1 |
 | config/hash validation | `abep config build --check`, `abep config verify`, prereg locks, audit `MANIFEST.json`, validation-release links, `bid_source_guard` | E3, E9 |
 | schema compatibility | every output validated against `schemas/**`; Hall-map schema | E4, E9 |
-| golden/reference cases | `abep golden check` (unchanged `golden_v2.json`, retained-physics cases) + the active `hall_icp_neutralizer` golden + captured-reference parity for every admitted component | E2, E4, E5 |
+| golden/reference cases | `abep golden check` on the active `hall_icp_neutralizer` golden (SC-WP-15) + captured-reference parity for every admitted component; golden_v1 / v2 (unchanged) only in the historical-reproduction job outside the simulator CI (RM-OQ-06, A9.28) | E2, E4, E5 |
 | no forbidden Python runtime dependency after final migration | see below | E1, E6, E10 |
 
 **"No forbidden Python runtime dependency" check (end state).** It has four parts.
@@ -185,15 +244,33 @@ It runs in normal CI.
    * The forbidden-identifier scan (§ 1, principle 6) is green.
 3. **Retirement completeness (class H / G).**
    * No active build, test or workflow path imports or runs a class-H module or an unrequired class-G module. The check is a
-     static import scan against `component_inventory_v2.json` and its end-state re-run.
+     static import scan against `component_inventory_v3.json` and its end-state re-run.
    * Historical reproducibility, such as the historical golden cases, runs only in the separate historical-reference job,
-     never in simulator CI (RM-OQ-06).
+     never in simulator CI (RM-OQ-06, OWNER_DECIDED A9.28).
 4. **Ledger completeness.**
-   * In `docs/rust_migration/migration_state_v1.json`, every class-A component is `ADMITTED` + `PYTHON_RETIRED_FROM_ACTIVE`
-     or `FORMALLY_RETIRED_NOT_PORTED`.
+   * In `docs/rust_migration/migration_state_v1.json`, every class-A and class-T component is `ADMITTED` +
+     `PYTHON_RETIRED_FROM_ACTIVE` or `FORMALLY_RETIRED_NOT_PORTED`.
    * Every class-G / H component is `FORMALLY_RETIRED_NOT_PORTED`, or admitted under a recorded requirement.
    * No class-F component remains.
    * A re-run of the inventory at the end-state commit finds no active Python component outside the retired tag or directory.
 
 Until the end state, `ci.yml` (Python) stays the required CI. Rust jobs move from optional to required as § 1, principle 4,
 describes.
+
+## 6. Main-merge pre-PR checklist and completion report (A9.28 message 2 secs. 16 and 18)
+
+All CI described here runs on `integration/simulation-complete`. main is not touched incrementally. Before the NEW PR
+`integration/simulation-complete → main`, every item of the 18-item pre-PR checklist must be green on the integration
+head. The checklist is in `SIMULATION_COMPLETION_PROGRAMME.md` § 8.1, with a mechanical check and an owning work package
+per item. In short:
+
+* Rust + HallThruster.jl only, and no active LaB6 / hollow-cathode path;
+* the selected-architecture identity invariant, and every retained Python component migrated or explicitly historical;
+* clean install, deterministic outputs, conservation, and config / hash integrity;
+* the active golden green, the full Rust tests and the Hall interface tests;
+* 196-state execution, robust / UQ execution and the assessment separation tests;
+* no silent fallbacks, and no requirement parsing in raw physics;
+* GitHub CI green, and no uncommitted / generated drift.
+
+The completion report A–N (§ 8.2 there) quotes the CI run ids (item L) and the zero-Python proof (item D, from the E1
+/ E6 / E10 checks above). Only then is owner authorization requested. PR #37 is not reused.
