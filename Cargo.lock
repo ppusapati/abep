@@ -3,6 +3,17 @@
 version = 4
 
 [[package]]
+name = "abep-intake"
+version = "0.1.0"
+dependencies = [
+ "abep-provenance",
+ "abep-types",
+ "abep_core",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "abep-provenance"
 version = "0.1.0"
 dependencies = [
@@ -19,6 +30,10 @@ dependencies = [
  "serde",
  "serde_json",
 ]
+
+[[package]]
+name = "abep_core"
+version = "0.1.0"
 
 [[package]]
 name = "block-buffer"
