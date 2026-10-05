@@ -3868,3 +3868,16 @@ are reused from the pinned v3 builder).
   unchanged; gate statuses carried verbatim; no PASS / compliance claim.
 - `compliance_data.py` reads the freeze record with pathlib (read-only) so the A9.23 single-writer check of the
   engineering-constraints file stays exact.
+
+## 2026-10-05 — PRE_RUST_REFERENCE_BASELINE on the bid technical source 5eee4b8 (A9.24 item 6; A9.25 message 8 section 17)
+
+- `docs/performance/pre_rust_reference_baseline_5eee4b8/`: full `scripts/perf/profile_baseline.py` run from a clean
+  detached checkout of exactly `5eee4b8c82a9403b6bb82d5f8d324526f5d6399b` (BLAS / OMP threads = 1), into a NEW folder;
+  previous baselines untouched. Wall 267.4 s (harness 266.2 s), CPU 262.5 + 3.8 s, peak RSS 290 MB, exit 0; machine
+  manifests before / after, 15 s load / memory samples, evidence sha256 in `REGISTRATION.json`.
+- Machine: Claude Code cloud container (Xeon 2.10 GHz, Linux, Python 3.11) - DIFFERENT_MACHINE from the 2026-10-01
+  dedicated baseline (owner Windows i7-11700K); timings not directly comparable; the owner may repeat the same command
+  at 5eee4b8 on the dedicated machine into another new folder.
+- Ranking (addressable interpreter time): uq_modular_run_uq, intake_response_surface_reduced, archengine
+  close_architecture, ... Legacy / historical workloads (uq_modular, archengine card closures, uq6, 0-D Hall) are timed
+  for continuity only and are not port targets under the owner four-class rule. Performance only, not physics evidence.

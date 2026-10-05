@@ -1,0 +1,37 @@
+{
+ "utc": "2026-10-05T04:57:56Z",
+ "loadavg": [
+  1.0166015625,
+  0.6337890625,
+  0.27783203125
+ ],
+ "platform": "Linux-6.18.44-fc-v70-x86_64-with-glibc2.39",
+ "python": "3.11.15 (main, Mar  3 2026, 09:26:23) [GCC 13.3.0]",
+ "cpu": {
+  "model": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+  "logical_cpus": 4
+ },
+ "memory": {
+  "MemTotal": "16480968 kB",
+  "MemAvailable": "15994160 kB"
+ },
+ "nproc_affinity": 4,
+ "packages": {
+  "numpy": "2.4.4",
+  "scipy": "1.17.1",
+  "pandas": "3.0.2",
+  "matplotlib": "3.10.8",
+  "pymsis": "0.13.0",
+  "jsonschema": "4.26.0",
+  "zstandard": "0.25.0"
+ },
+ "thread_env": {
+  "OMP_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "NUMEXPR_NUM_THREADS": "1"
+ },
+ "numpy_config": "Build Dependencies:\n  blas:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.11.14/lib/python3.11/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.11.14/lib/python3.11/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.31.188.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.31.188.0\n  lapack:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.11.14/lib/python3.11/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.11.14/lib/python3.11/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.31.188.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.31.188.0\nCompilers:\n  c:\n    commands: cc\n    linker: ld.bfd\n    name: gcc\n    version: 14.2.1\n  c++:\n    commands: c++\n    linker: ld.bfd\n    name: gcc\n    version: 14.2.1\n  cython:\n    commands: cython\n    linker: cython\n    name: cython\n    version: 3.2.4\nMachine Information:\n  build:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\n  host:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\nPython Information:\n  path: /tmp/build-env-ejdxbsb6/bin/python\n  version: '3.11'\nSIMD Extensions:\n  baseline:\n  - X86_V2\n  found:\n  - X86_V3\n  - X86_V4\n  - AVX512_ICL\n  - AVX512_SPR\n\n",
+ "git_head": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b",
+ "git_status_clean": true
+}

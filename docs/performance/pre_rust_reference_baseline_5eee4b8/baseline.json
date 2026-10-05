@@ -1,0 +1,3744 @@
+{
+ "schema": "abep_performance_baseline_v1",
+ "lane": "fo_a9_7_f0_profiling",
+ "directive": "docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md (sec. F0)",
+ "mode": "full",
+ "base_commit_label": "98fbbb9",
+ "base_commit_note": "main 98fbbb9 = A9.7 protected baseline. Every profiled source file is byte-identical between 98fbbb9 and the measured HEAD (checked at generation, recorded per file); later commits only add docs and the empty abep_sim/design package, which is not profiled.",
+ "measured_head": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b",
+ "generated_utc_date": "2026-10-05",
+ "commands": {
+  "full": "python scripts/perf/profile_baseline.py",
+  "quick": "python scripts/perf/profile_baseline.py --quick --out-json <path> [--only <ids>]",
+  "check": "python scripts/perf/profile_baseline.py --check",
+  "render_md": "python scripts/perf/profile_baseline.py --render-md",
+  "rederive": "python scripts/perf/profile_baseline.py --rederive",
+  "test": "python -m pytest -q tests/test_perf_baseline.py"
+ },
+ "environment": {
+  "cpu_model": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+  "logical_cpus": 4,
+  "cpus_available_to_process": 4,
+  "machine": "x86_64",
+  "os": "Linux 6.18.44-fc-v70",
+  "python": "3.11.15",
+  "python_implementation": "CPython",
+  "numpy": "2.4.4",
+  "scipy": "1.17.1",
+  "pandas": "3.0.2",
+  "blas": {
+   "blas": {
+    "name": "scipy-openblas",
+    "version": "0.3.31.188.0",
+    "openblas configuration": "OpenBLAS 0.3.31.188.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY Haswell MAX_THREADS=64"
+   },
+   "lapack": {
+    "name": "scipy-openblas",
+    "version": "0.3.31.188.0",
+    "openblas configuration": "OpenBLAS 0.3.31.188.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY Haswell MAX_THREADS=64"
+   }
+  },
+  "thread_env": {
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1",
+   "MKL_NUM_THREADS": "1"
+  },
+  "loadavg_at_start": [
+   1.02,
+   0.63,
+   0.27
+  ],
+  "concurrency_note": "measured on a shared machine; other A9.7 lane worktrees may run concurrently - per-workload 1-minute load averages are recorded; treat timings as +-tens of percent, ranking as order-of-magnitude"
+ },
+ "profiled_sources": [
+  {
+   "path": "abep_sim/intake_tpmc.py",
+   "sha256": "dcddf947c273d71d2f030895cd8ea9916919f816401c20e30b7ca4d177172433",
+   "git_blob": "5954d0bc49d25d3ea55f6b0fcd4a340d2338b0d2",
+   "identical_to_98fbbb9": false
+  },
+  {
+   "path": "abep_sim/intake.py",
+   "sha256": "d46c23af40d413094babbe9d2121238c7b6f768341ffb3789d3d50c1d0f66687",
+   "git_blob": "ada3d4a8c994b93be707489e90943d5ba6445357",
+   "identical_to_98fbbb9": false
+  },
+  {
+   "path": "abep_sim/compressor.py",
+   "sha256": "7a8dfe5b64d269474863410f6e42a886c6d3f57015c05491880d65251dfafc75",
+   "git_blob": "6ffec028e2a40f00ba389e6e7c8fe6ccc7cda180",
+   "identical_to_98fbbb9": false
+  },
+  {
+   "path": "abep_sim/reservoir.py",
+   "sha256": "9a7894a47169f1d77e8c66a196002c5456e955b9eb72d81bb9e1440c90ae29af",
+   "git_blob": "2607a5cac2290da7357c93a7c9ad64f87e842353",
+   "identical_to_98fbbb9": false
+  },
+  {
+   "path": "abep_sim/system.py",
+   "sha256": "3a2f4e230dcd2f879510c6cff12ee8d801dbddc27786d6bfec51290cdc362f84",
+   "git_blob": "b5d79e694fbb279b34c4df21c5751a3f16331fac",
+   "identical_to_98fbbb9": false
+  },
+  {
+   "path": "abep_sim/archengine.py",
+   "sha256": "12f5ff2c4ca773b0856b93468afc078172f5de52350fa433b418c86aac60f97d",
+   "git_blob": "abf7888168f04a0da1b01e213919f38a6c4fa498",
+   "identical_to_98fbbb9": false
+  },
+  {
+   "path": "abep_sim/uq_modular.py",
+   "sha256": "55d4f0b3e9b3c4691579f13ae2c07a59a4f6bad2c484b2c1ca4d29f503933c2e",
+   "git_blob": "cff9271afb1da37eb229d42750fe7adbed49cebb",
+   "identical_to_98fbbb9": false
+  },
+  {
+   "path": "abep_sim/uq6.py",
+   "sha256": "a5494eb94c297ca8d9111f6436e7c29c4c6e6a24e18d41b005b6a12d4bb6c43e",
+   "git_blob": "f0e363bf1d0315a54ab1eac24db65d800b7094ab",
+   "identical_to_98fbbb9": false
+  },
+  {
+   "path": "abep_sim/mission_env.py",
+   "sha256": "f568fba29678852565b03821e85dd7cce1fb18ec623ab2ca282e521a97f164af",
+   "git_blob": "523bb484a5c8df8cd720465a9a273abe9dffa9e3",
+   "identical_to_98fbbb9": false
+  },
+  {
+   "path": "abep_sim/mission5.py",
+   "sha256": "a793451896bd3e99a0be20add777a952c0824b4f0b8f7630f7e32a2dab35b245",
+   "git_blob": "78f98d4bfa657336313d74f2588e0eee8442b930",
+   "identical_to_98fbbb9": false
+  },
+  {
+   "path": "abep_sim/atmosphere.py",
+   "sha256": "690d6931bb595c14736db9d9c284fb4e2f98727a8749262edebe3d8621e87e8b",
+   "git_blob": "61a848f113a1605d68e9b932959ff9bfd2488fb0",
+   "identical_to_98fbbb9": true
+  },
+  {
+   "path": "abep_sim/plasma_chem.py",
+   "sha256": "67926b9c03d35338a767bf6fc8b23c69eaa4131b9c6d49ddc6956e6b6acb0d43",
+   "git_blob": "e37c5983913a98790a76ba2cff5f97267deae5cd",
+   "identical_to_98fbbb9": true
+  },
+  {
+   "path": "abep_sim/plasma_devices.py",
+   "sha256": "503428b3238595be6e49fdc44ed5228107d164830dad88993d3be061c0c74ef1",
+   "git_blob": "7a75cd7eb8a3e7076758731e3d2c400949e4867a",
+   "identical_to_98fbbb9": true
+  },
+  {
+   "path": "abep_sim/golden.py",
+   "sha256": "c455203bc6616ddc6d171ed10472f3d4635cf7655f75b00ecb704674865c5c07",
+   "git_blob": "ef479da17c9eeb63ff42b486d234aa702943334d",
+   "identical_to_98fbbb9": false
+  },
+  {
+   "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py",
+   "sha256": "99aaf0052b26a4e57adfcb9467465a558ad291752154bfaa2534c74fa75715e1",
+   "git_blob": "eacc79363806182cee2530fbca9011f6b943d484",
+   "identical_to_98fbbb9": true
+  },
+  {
+   "path": "docs/experiments/hall_icp/p3_coupled_thermal/build_p3_coupled_thermal.py",
+   "sha256": "2e8b2d4715cd711de4dbd617a423b37f5fe44ce0ec635a3bd3a11dc712a637b0",
+   "git_blob": "1b66daa7db34426285f8a9e6c58e74394ec1bb95",
+   "identical_to_98fbbb9": true
+  }
+ ],
+ "workload_spec_sha256": "138511a6af4095696d55835daaea28196bef5297d2f870ae013fdf46891fde46",
+ "parameters": [
+  {
+   "id": "F0-P-01",
+   "value": 3,
+   "units": "repeats",
+   "basis": "A9.7 F0 lane brief: median of >= 3 repeats (full mode); quick mode is a smoke run",
+   "source": "scripts/perf/profile_baseline.py",
+   "evidence_class": "assumed (harness choice, not physics evidence)",
+   "status": "DEFINED"
+  },
+  {
+   "id": "F0-P-02",
+   "value": 60.0,
+   "units": "s",
+   "basis": "addressable interpreter time of the reference workload above which a native port is a candidate (preregistered before the full run)",
+   "source": "scripts/perf/profile_baseline.py",
+   "evidence_class": "assumed (harness choice, not physics evidence)",
+   "status": "DEFINED"
+  },
+  {
+   "id": "F0-P-03",
+   "value": 10.0,
+   "units": "s",
+   "basis": "below: not a bottleneck",
+   "source": "scripts/perf/profile_baseline.py",
+   "evidence_class": "assumed (harness choice, not physics evidence)",
+   "status": "DEFINED"
+  },
+  {
+   "id": "F0-P-04",
+   "value": 15,
+   "units": "functions",
+   "basis": "cProfile rows kept per list",
+   "source": "scripts/perf/profile_baseline.py",
+   "evidence_class": "assumed (harness choice, not physics evidence)",
+   "status": "DEFINED"
+  },
+  {
+   "id": "F0-P-05",
+   "value": "cleared before every repeat",
+   "units": "-",
+   "basis": "archengine _ION_CACHE/_NEUT_CACHE/_GAS_CACHE (pure functions of their keys, rule 5): cold-solver timing; frozen data files warmed once untimed",
+   "source": "scripts/perf/profile_baseline.py",
+   "evidence_class": "assumed (harness choice, not physics evidence)",
+   "status": "DEFINED"
+  }
+ ],
+ "workloads": [
+  {
+   "id": "tpmc_trace_channel",
+   "category": "tpmc_particle_tracing",
+   "entry_point": "abep_sim.intake_tpmc.trace_channel (forward trace; entry from _flux_weighted_entry)",
+   "description": "forward test-particle trace through one honeycomb channel, 200 km mean NRLMSIS (frozen), mean molecular mass, L/d 5, d 10 mm, Maxwell alpha 0.8, theta 0",
+   "params": {
+    "n": 20000,
+    "L_over_d": 5.0,
+    "alpha": 0.8,
+    "seed": 11
+   },
+   "unit_of_work": "particles",
+   "covered_by": "intake_response_surface_reduced",
+   "reference": null,
+   "scaling_probe": {
+    "points": [
+     {
+      "n": 2000,
+      "median_wall_s": 0.0229
+     },
+     {
+      "n": 20000,
+      "median_wall_s": 0.0737
+     }
+    ],
+    "work_ratio": 10.0,
+    "time_ratio": 3.218,
+    "time_ratio_over_work_ratio": 0.322,
+    "reading": "close to 1: cost scales with array size (numpy-level work dominates); well below 1: fixed per-call / per-step interpreter overhead dominates"
+   },
+   "repeats": 3,
+   "wall_s": [
+    0.0944,
+    0.0745,
+    0.0757
+   ],
+   "cpu_s": [
+    0.0921,
+    0.0745,
+    0.0757
+   ],
+   "median_wall_s": 0.0757,
+   "median_cpu_s": 0.0757,
+   "cpu_over_wall": 1.0,
+   "units_of_work": 20000,
+   "median_wall_s_per_unit": 3.8e-06,
+   "loadavg_1min_before_after": [
+    0.12,
+    0.2
+   ],
+   "output_fingerprint": {
+    "collected_frac": 0.76515,
+    "mean_wall_hits": 5.8624,
+    "unresolved": 0.0
+   },
+   "deterministic_across_repeats": true,
+   "profile": {
+    "profiled_wall_s": 0.0915,
+    "total_function_calls": 31452,
+    "function_calls_per_profiled_s": 343583.4,
+    "tottime_fractions": {
+     "project_python": 0.6262,
+     "interpreter_builtin": 0.0216,
+     "stdlib_python": 0.0002,
+     "library_python_wrapper": 0.2224,
+     "native_array_call": 0.1295
+    },
+    "interpreter_level_fraction": 0.648,
+    "numpy_level_fraction": 0.3519,
+    "top_by_cumulative": [
+     {
+      "function": "abep_sim/intake_tpmc.py:147(trace_channel)",
+      "ncalls": 1,
+      "tottime_s": 0.037,
+      "cumtime_s": 0.0821,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:112(_diffuse)",
+      "ncalls": 103,
+      "tottime_s": 0.0112,
+      "cumtime_s": 0.0387,
+      "class": "project_python"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/numeric.py:1567(cross)",
+      "ncalls": 309,
+      "tottime_s": 0.0073,
+      "cumtime_s": 0.0204,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/numeric.py:1493(moveaxis)",
+      "ncalls": 927,
+      "tottime_s": 0.0034,
+      "cumtime_s": 0.0111,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:103(_flux_weighted_entry)",
+      "ncalls": 1,
+      "tottime_s": 0.0058,
+      "cumtime_s": 0.0091,
+      "class": "project_python"
+     },
+     {
+      "function": "<method 'reduce' of 'numpy.ufunc' objects>",
+      "ncalls": 524,
+      "tottime_s": 0.0083,
+      "cumtime_s": 0.0083,
+      "class": "native_array_call"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/linalg/_linalg.py:2598(norm)",
+      "ncalls": 206,
+      "tottime_s": 0.0018,
+      "cumtime_s": 0.0066,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/numeric.py:1431(normalize_axis_tuple)",
+      "ncalls": 1854,
+      "tottime_s": 0.0041,
+      "cumtime_s": 0.0062,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:94(_drifting_maxwellian)",
+      "ncalls": 1,
+      "tottime_s": 0.0031,
+      "cumtime_s": 0.0031,
+      "class": "project_python"
+     },
+     {
+      "function": "<method 'sum' of 'numpy.ndarray' objects>",
+      "ncalls": 104,
+      "tottime_s": 0.0001,
+      "cumtime_s": 0.0026,
+      "class": "native_array_call"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/_methods.py:47(_sum)",
+      "ncalls": 104,
+      "tottime_s": 0.0001,
+      "cumtime_s": 0.0025,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/shape_base.py:378(stack)",
+      "ncalls": 104,
+      "tottime_s": 0.0013,
+      "cumtime_s": 0.0018,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'astype' of 'numpy.ndarray' objects>",
+      "ncalls": 618,
+      "tottime_s": 0.0012,
+      "cumtime_s": 0.0012,
+      "class": "native_array_call"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/numeric.py:1480(<genexpr>)",
+      "ncalls": 3708,
+      "tottime_s": 0.0008,
+      "cumtime_s": 0.0012,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<built-in method builtins.len>",
+      "ncalls": 6596,
+      "tottime_s": 0.0007,
+      "cumtime_s": 0.0007,
+      "class": "interpreter_builtin"
+     }
+    ],
+    "top_by_tottime": [
+     {
+      "function": "abep_sim/intake_tpmc.py:147(trace_channel)",
+      "ncalls": 1,
+      "tottime_s": 0.037,
+      "cumtime_s": 0.0821,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:112(_diffuse)",
+      "ncalls": 103,
+      "tottime_s": 0.0112,
+      "cumtime_s": 0.0387,
+      "class": "project_python"
+     },
+     {
+      "function": "<method 'reduce' of 'numpy.ufunc' objects>",
+      "ncalls": 524,
+      "tottime_s": 0.0083,
+      "cumtime_s": 0.0083,
+      "class": "native_array_call"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/numeric.py:1567(cross)",
+      "ncalls": 309,
+      "tottime_s": 0.0073,
+      "cumtime_s": 0.0204,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:103(_flux_weighted_entry)",
+      "ncalls": 1,
+      "tottime_s": 0.0058,
+      "cumtime_s": 0.0091,
+      "class": "project_python"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/numeric.py:1431(normalize_axis_tuple)",
+      "ncalls": 1854,
+      "tottime_s": 0.0041,
+      "cumtime_s": 0.0062,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/numeric.py:1493(moveaxis)",
+      "ncalls": 927,
+      "tottime_s": 0.0034,
+      "cumtime_s": 0.0111,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:94(_drifting_maxwellian)",
+      "ncalls": 1,
+      "tottime_s": 0.0031,
+      "cumtime_s": 0.0031,
+      "class": "project_python"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/linalg/_linalg.py:2598(norm)",
+      "ncalls": 206,
+      "tottime_s": 0.0018,
+      "cumtime_s": 0.0066,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/shape_base.py:378(stack)",
+      "ncalls": 104,
+      "tottime_s": 0.0013,
+      "cumtime_s": 0.0018,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'astype' of 'numpy.ndarray' objects>",
+      "ncalls": 618,
+      "tottime_s": 0.0012,
+      "cumtime_s": 0.0012,
+      "class": "native_array_call"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/numeric.py:1480(<genexpr>)",
+      "ncalls": 3708,
+      "tottime_s": 0.0008,
+      "cumtime_s": 0.0012,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<built-in method builtins.len>",
+      "ncalls": 6596,
+      "tottime_s": 0.0007,
+      "cumtime_s": 0.0007,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method numpy.lib.array_utils.normalize_axis_index>",
+      "ncalls": 2889,
+      "tottime_s": 0.0006,
+      "cumtime_s": 0.0006,
+      "class": "native_array_call"
+     },
+     {
+      "function": "<method 'transpose' of 'numpy.ndarray' objects>",
+      "ncalls": 927,
+      "tottime_s": 0.0005,
+      "cumtime_s": 0.0005,
+      "class": "native_array_call"
+     }
+    ],
+    "project_hotspots_by_tottime": [
+     "abep_sim/intake_tpmc.py:147(trace_channel)",
+     "abep_sim/intake_tpmc.py:112(_diffuse)",
+     "abep_sim/intake_tpmc.py:103(_flux_weighted_entry)",
+     "abep_sim/intake_tpmc.py:94(_drifting_maxwellian)",
+     "abep_sim/intake_tpmc.py:64(_check_hit_budget)"
+    ],
+    "cprofile_overhead_ratio": 1.209
+   },
+   "port_judgement": {
+    "judgement": "COVERED_BY",
+    "covered_by": "intake_response_surface_reduced",
+    "basis": "kernel-level measurement; ranked through the workload that calls it (avoids double counting)"
+   }
+  },
+  {
+   "id": "tpmc_intake_response",
+   "category": "tpmc_particle_tracing",
+   "entry_point": "abep_sim.intake_tpmc.intake_response",
+   "description": "one response point = forward trace (n particles) + Clausing back-transmission (fixed n=20000 in clausing_transmission) + momentum/mass bookkeeping; L/d 5, phi 0.85, alpha 0.8, theta 0",
+   "params": {
+    "n": 20000,
+    "L_over_d": 5.0,
+    "alpha": 0.8,
+    "seed": 0
+   },
+   "unit_of_work": "response points",
+   "covered_by": "intake_response_surface_reduced",
+   "reference": null,
+   "repeats": 3,
+   "wall_s": [
+    0.1969,
+    0.1836,
+    0.1814
+   ],
+   "cpu_s": [
+    0.1968,
+    0.1836,
+    0.1814
+   ],
+   "median_wall_s": 0.1836,
+   "median_cpu_s": 0.1836,
+   "cpu_over_wall": 1.0,
+   "units_of_work": 1,
+   "median_wall_s_per_unit": 0.1836307,
+   "loadavg_1min_before_after": [
+    0.2,
+    0.2
+   ],
+   "output_fingerprint": {
+    "CR_passive": 159.400064787,
+    "C_D": 2.05412702173,
+    "K_back": 0.24835,
+    "eta_c": 0.64362,
+    "mean_wall_hits": 6.09425,
+    "unresolved_fraction": 0.0
+   },
+   "deterministic_across_repeats": true,
+   "profile": {
+    "profiled_wall_s": 0.2251,
+    "total_function_calls": 74760,
+    "function_calls_per_profiled_s": 332129.2,
+    "tottime_fractions": {
+     "project_python": 0.6148,
+     "interpreter_builtin": 0.0212,
+     "stdlib_python": 0.0001,
+     "library_python_wrapper": 0.2212,
+     "native_array_call": 0.1427
+    },
+    "interpreter_level_fraction": 0.6361,
+    "numpy_level_fraction": 0.3639,
+    "top_by_cumulative": [
+     {
+      "function": "abep_sim/intake_tpmc.py:224(intake_response)",
+      "ncalls": 1,
+      "tottime_s": 0.0005,
+      "cumtime_s": 0.225,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:147(trace_channel)",
+      "ncalls": 2,
+      "tottime_s": 0.096,
+      "cumtime_s": 0.2109,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:212(clausing_transmission)",
+      "ncalls": 1,
+      "tottime_s": 0.0001,
+      "cumtime_s": 0.1209,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:112(_diffuse)",
+      "ncalls": 245,
+      "tottime_s": 0.0328,
+      "cumtime_s": 0.1024,
+      "class": "project_python"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/numeric.py:1567(cross)",
+      "ncalls": 735,
+      "tottime_s": 0.0183,
+      "cumtime_s": 0.0498,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/numeric.py:1493(moveaxis)",
+      "ncalls": 2205,
+      "tottime_s": 0.0079,
+      "cumtime_s": 0.0262,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'reduce' of 'numpy.ufunc' objects>",
+      "ncalls": 1240,
+      "tottime_s": 0.0233,
+      "cumtime_s": 0.0233,
+      "class": "native_array_call"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/linalg/_linalg.py:2598(norm)",
+      "ncalls": 490,
+      "tottime_s": 0.0048,
+      "cumtime_s": 0.0187,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/numeric.py:1431(normalize_axis_tuple)",
+      "ncalls": 4410,
+      "tottime_s": 0.0098,
+      "cumtime_s": 0.0149,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:103(_flux_weighted_entry)",
+      "ncalls": 1,
+      "tottime_s": 0.0058,
+      "cumtime_s": 0.0091,
+      "class": "project_python"
+     },
+     {
+      "function": "<method 'sum' of 'numpy.ndarray' objects>",
+      "ncalls": 245,
+      "tottime_s": 0.0002,
+      "cumtime_s": 0.007,
+      "class": "native_array_call"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/_methods.py:47(_sum)",
+      "ncalls": 245,
+      "tottime_s": 0.0002,
+      "cumtime_s": 0.0068,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/shape_base.py:378(stack)",
+      "ncalls": 246,
+      "tottime_s": 0.0033,
+      "cumtime_s": 0.0044,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'astype' of 'numpy.ndarray' objects>",
+      "ncalls": 1470,
+      "tottime_s": 0.0035,
+      "cumtime_s": 0.0035,
+      "class": "native_array_call"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:94(_drifting_maxwellian)",
+      "ncalls": 1,
+      "tottime_s": 0.0032,
+      "cumtime_s": 0.0032,
+      "class": "project_python"
+     }
+    ],
+    "top_by_tottime": [
+     {
+      "function": "abep_sim/intake_tpmc.py:147(trace_channel)",
+      "ncalls": 2,
+      "tottime_s": 0.096,
+      "cumtime_s": 0.2109,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:112(_diffuse)",
+      "ncalls": 245,
+      "tottime_s": 0.0328,
+      "cumtime_s": 0.1024,
+      "class": "project_python"
+     },
+     {
+      "function": "<method 'reduce' of 'numpy.ufunc' objects>",
+      "ncalls": 1240,
+      "tottime_s": 0.0233,
+      "cumtime_s": 0.0233,
+      "class": "native_array_call"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/numeric.py:1567(cross)",
+      "ncalls": 735,
+      "tottime_s": 0.0183,
+      "cumtime_s": 0.0498,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/numeric.py:1431(normalize_axis_tuple)",
+      "ncalls": 4410,
+      "tottime_s": 0.0098,
+      "cumtime_s": 0.0149,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/numeric.py:1493(moveaxis)",
+      "ncalls": 2205,
+      "tottime_s": 0.0079,
+      "cumtime_s": 0.0262,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:103(_flux_weighted_entry)",
+      "ncalls": 1,
+      "tottime_s": 0.0058,
+      "cumtime_s": 0.0091,
+      "class": "project_python"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/linalg/_linalg.py:2598(norm)",
+      "ncalls": 490,
+      "tottime_s": 0.0048,
+      "cumtime_s": 0.0187,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'astype' of 'numpy.ndarray' objects>",
+      "ncalls": 1470,
+      "tottime_s": 0.0035,
+      "cumtime_s": 0.0035,
+      "class": "native_array_call"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/shape_base.py:378(stack)",
+      "ncalls": 246,
+      "tottime_s": 0.0033,
+      "cumtime_s": 0.0044,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:94(_drifting_maxwellian)",
+      "ncalls": 1,
+      "tottime_s": 0.0032,
+      "cumtime_s": 0.0032,
+      "class": "project_python"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/numeric.py:1480(<genexpr>)",
+      "ncalls": 8820,
+      "tottime_s": 0.0021,
+      "cumtime_s": 0.0028,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<built-in method builtins.len>",
+      "ncalls": 15683,
+      "tottime_s": 0.0017,
+      "cumtime_s": 0.0017,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method numpy.lib.array_utils.normalize_axis_index>",
+      "ncalls": 6871,
+      "tottime_s": 0.0013,
+      "cumtime_s": 0.0013,
+      "class": "native_array_call"
+     },
+     {
+      "function": "<method 'transpose' of 'numpy.ndarray' objects>",
+      "ncalls": 2205,
+      "tottime_s": 0.001,
+      "cumtime_s": 0.001,
+      "class": "native_array_call"
+     }
+    ],
+    "project_hotspots_by_tottime": [
+     "abep_sim/intake_tpmc.py:147(trace_channel)",
+     "abep_sim/intake_tpmc.py:112(_diffuse)",
+     "abep_sim/intake_tpmc.py:103(_flux_weighted_entry)",
+     "abep_sim/intake_tpmc.py:94(_drifting_maxwellian)",
+     "abep_sim/intake_tpmc.py:224(intake_response)"
+    ],
+    "cprofile_overhead_ratio": 1.226
+   },
+   "port_judgement": {
+    "judgement": "COVERED_BY",
+    "covered_by": "intake_response_surface_reduced",
+    "basis": "kernel-level measurement; ranked through the workload that calls it (avoids double counting)"
+   }
+  },
+  {
+   "id": "intake_response_surface_reduced",
+   "category": "intake_response_surface",
+   "entry_point": "abep_sim.intake_tpmc.response_surface",
+   "description": "reduced product grid of the frozen-build axes (all four L/d, three alphas spanning 0..1, one phi, theta 0, species N2) at the frozen-build particle count",
+   "params": {
+    "L_over_d": [
+     3,
+     5,
+     10,
+     20
+    ],
+    "phis": [
+     0.8
+    ],
+    "alphas": [
+     0.0,
+     0.5,
+     1.0
+    ],
+    "thetas": [
+     0.0
+    ],
+    "species": [
+     "N2"
+    ],
+    "n": 20000
+   },
+   "unit_of_work": "response points",
+   "covered_by": null,
+   "reference": {
+    "id": "frozen_intake_surface_build",
+    "units_of_work": 360,
+    "basis": "abep_sim/intake_tpmc.py build_frozen_surface: response_surface defaults 4 L/d x 2 phi x 5 alpha x 3 theta x 3 species = 360 points at n=20000 (python -m abep_sim.intake_tpmc build)",
+    "method": "EXTRAPOLATED: median seconds per reduced-grid point x 360 (per-point cost varies with L/d, alpha, theta and species mass; the reduced grid samples L/d and alpha only); checked against one direct measurement (frozen_intake_surface_build)"
+   },
+   "repeats": 3,
+   "wall_s": [
+    5.0226,
+    5.0745,
+    4.8944
+   ],
+   "cpu_s": [
+    5.0145,
+    5.0738,
+    4.8936
+   ],
+   "median_wall_s": 5.0226,
+   "median_cpu_s": 5.0145,
+   "cpu_over_wall": 0.998,
+   "units_of_work": 12,
+   "median_wall_s_per_unit": 0.4185537,
+   "loadavg_1min_before_after": [
+    0.2,
+    0.37
+   ],
+   "output_fingerprint": {
+    "max_unresolved": 0.0002,
+    "points": 12,
+    "sum_C_D": 32.93023868,
+    "sum_eta_c": 7.67972
+   },
+   "deterministic_across_repeats": true,
+   "profile": {
+    "profiled_wall_s": 6.1485,
+    "total_function_calls": 2833511,
+    "function_calls_per_profiled_s": 460845.1,
+    "tottime_fractions": {
+     "project_python": 0.564,
+     "interpreter_builtin": 0.0265,
+     "stdlib_python": 0.0,
+     "library_python_wrapper": 0.2655,
+     "native_array_call": 0.1439
+    },
+    "interpreter_level_fraction": 0.5905,
+    "numpy_level_fraction": 0.4094,
+    "top_by_cumulative": [
+     {
+      "function": "abep_sim/intake_tpmc.py:278(response_surface)",
+      "ncalls": 1,
+      "tottime_s": 0.0003,
+      "cumtime_s": 6.1477,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:224(intake_response)",
+      "ncalls": 12,
+      "tottime_s": 0.0031,
+      "cumtime_s": 6.1458,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:147(trace_channel)",
+      "ncalls": 24,
+      "tottime_s": 2.4677,
+      "cumtime_s": 5.9902,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:212(clausing_transmission)",
+      "ncalls": 12,
+      "tottime_s": 0.0005,
+      "cumtime_s": 3.4297,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:112(_diffuse)",
+      "ncalls": 9303,
+      "tottime_s": 0.8939,
+      "cumtime_s": 3.1013,
+      "class": "project_python"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/numeric.py:1567(cross)",
+      "ncalls": 27909,
+      "tottime_s": 0.5859,
+      "cumtime_s": 1.6468,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/numeric.py:1493(moveaxis)",
+      "ncalls": 83727,
+      "tottime_s": 0.2712,
+      "cumtime_s": 0.914,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'reduce' of 'numpy.ufunc' objects>",
+      "ncalls": 46706,
+      "tottime_s": 0.628,
+      "cumtime_s": 0.628,
+      "class": "native_array_call"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/linalg/_linalg.py:2598(norm)",
+      "ncalls": 18606,
+      "tottime_s": 0.1459,
+      "cumtime_s": 0.5279,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/numeric.py:1431(normalize_axis_tuple)",
+      "ncalls": 167454,
+      "tottime_s": 0.337,
+      "cumtime_s": 0.5211,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'sum' of 'numpy.ndarray' objects>",
+      "ncalls": 9306,
+      "tottime_s": 0.0072,
+      "cumtime_s": 0.1936,
+      "class": "native_array_call"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/_methods.py:47(_sum)",
+      "ncalls": 9306,
+      "tottime_s": 0.0054,
+      "cumtime_s": 0.1864,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/shape_base.py:378(stack)",
+      "ncalls": 9315,
+      "tottime_s": 0.0923,
+      "cumtime_s": 0.1313,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:103(_flux_weighted_entry)",
+      "ncalls": 12,
+      "tottime_s": 0.0671,
+      "cumtime_s": 0.1034,
+      "class": "project_python"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/numeric.py:1480(<genexpr>)",
+      "ncalls": 334908,
+      "tottime_s": 0.0734,
+      "cumtime_s": 0.1019,
+      "class": "library_python_wrapper"
+     }
+    ],
+    "top_by_tottime": [
+     {
+      "function": "abep_sim/intake_tpmc.py:147(trace_channel)",
+      "ncalls": 24,
+      "tottime_s": 2.4677,
+      "cumtime_s": 5.9902,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:112(_diffuse)",
+      "ncalls": 9303,
+      "tottime_s": 0.8939,
+      "cumtime_s": 3.1013,
+      "class": "project_python"
+     },
+     {
+      "function": "<method 'reduce' of 'numpy.ufunc' objects>",
+      "ncalls": 46706,
+      "tottime_s": 0.628,
+      "cumtime_s": 0.628,
+      "class": "native_array_call"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/numeric.py:1567(cross)",
+      "ncalls": 27909,
+      "tottime_s": 0.5859,
+      "cumtime_s": 1.6468,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/numeric.py:1431(normalize_axis_tuple)",
+      "ncalls": 167454,
+      "tottime_s": 0.337,
+      "cumtime_s": 0.5211,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/numeric.py:1493(moveaxis)",
+      "ncalls": 83727,
+      "tottime_s": 0.2712,
+      "cumtime_s": 0.914,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/linalg/_linalg.py:2598(norm)",
+      "ncalls": 18606,
+      "tottime_s": 0.1459,
+      "cumtime_s": 0.5279,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/shape_base.py:378(stack)",
+      "ncalls": 9315,
+      "tottime_s": 0.0923,
+      "cumtime_s": 0.1313,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'astype' of 'numpy.ndarray' objects>",
+      "ncalls": 55818,
+      "tottime_s": 0.0821,
+      "cumtime_s": 0.0821,
+      "class": "native_array_call"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/numeric.py:1480(<genexpr>)",
+      "ncalls": 334908,
+      "tottime_s": 0.0734,
+      "cumtime_s": 0.1019,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:103(_flux_weighted_entry)",
+      "ncalls": 12,
+      "tottime_s": 0.0671,
+      "cumtime_s": 0.1034,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method builtins.len>",
+      "ncalls": 595535,
+      "tottime_s": 0.0623,
+      "cumtime_s": 0.0623,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method numpy.lib.array_utils.normalize_axis_index>",
+      "ncalls": 260633,
+      "tottime_s": 0.0474,
+      "cumtime_s": 0.0474,
+      "class": "native_array_call"
+     },
+     {
+      "function": "<method 'transpose' of 'numpy.ndarray' objects>",
+      "ncalls": 83727,
+      "tottime_s": 0.039,
+      "cumtime_s": 0.039,
+      "class": "native_array_call"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:94(_drifting_maxwellian)",
+      "ncalls": 12,
+      "tottime_s": 0.0349,
+      "cumtime_s": 0.035,
+      "class": "project_python"
+     }
+    ],
+    "project_hotspots_by_tottime": [
+     "abep_sim/intake_tpmc.py:147(trace_channel)",
+     "abep_sim/intake_tpmc.py:112(_diffuse)",
+     "abep_sim/intake_tpmc.py:103(_flux_weighted_entry)",
+     "abep_sim/intake_tpmc.py:94(_drifting_maxwellian)",
+     "abep_sim/intake_tpmc.py:224(intake_response)"
+    ],
+    "cprofile_overhead_ratio": 1.224
+   },
+   "port_judgement": {
+    "reference_workload_id": "frozen_intake_surface_build",
+    "reference_workload_s": 150.68,
+    "reference_workload_s_measured": 141.53,
+    "interpreter_level_fraction": 0.5905,
+    "addressable_interpreter_s_upper_bound": 88.98,
+    "judgement": "PORT_CANDIDATE",
+    "thresholds_s": {
+     "port": 60.0,
+     "marginal": 10.0
+    }
+   }
+  },
+  {
+   "id": "compressor_size_for",
+   "category": "compressor_search",
+   "entry_point": "abep_sim.compressor.DragCompressor.size_for",
+   "description": "exhaustive turbo-rows x drag-stages x rpm search (default bounds) with the exact inputs that golden case gas_path A0.7 passes (captured in-process from system.evaluate)",
+   "params": {
+    "calls": 20
+   },
+   "unit_of_work": "size_for calls",
+   "covered_by": null,
+   "reference": {
+    "id": "uq6_pareto_default",
+    "units_of_work": 200,
+    "basis": "abep_sim/uq6.py pareto(n_designs=200) and monte_carlo6(n=200) defaults: one system.evaluate -> one size_for per design/sample; the F3 synthesis search is PENDING abep_sim/design/compressor_synthesis.py",
+    "method": "EXTRAPOLATED: median seconds per call x 200"
+   },
+   "repeats": 3,
+   "wall_s": [
+    0.1886,
+    0.1917,
+    0.1907
+   ],
+   "cpu_s": [
+    0.1886,
+    0.1917,
+    0.1907
+   ],
+   "median_wall_s": 0.1907,
+   "median_cpu_s": 0.1907,
+   "cpu_over_wall": 1.0,
+   "units_of_work": 20,
+   "median_wall_s_per_unit": 0.009533,
+   "loadavg_1min_before_after": [
+    0.42,
+    0.42
+   ],
+   "output_fingerprint": {
+    "CR_active": 16.5340849772,
+    "P_el_W": 26.6473240367,
+    "mass_kg": 6.66721787645,
+    "n_stages": 0,
+    "rpm": 9188,
+    "sized": true,
+    "turbo_rows": 4
+   },
+   "deterministic_across_repeats": true,
+   "profile": {
+    "profiled_wall_s": 0.5608,
+    "total_function_calls": 1023661,
+    "function_calls_per_profiled_s": 1825396.2,
+    "tottime_fractions": {
+     "project_python": 0.8048,
+     "interpreter_builtin": 0.1952,
+     "stdlib_python": 0.0001,
+     "library_python_wrapper": 0.0,
+     "native_array_call": 0.0
+    },
+    "interpreter_level_fraction": 1.0001,
+    "numpy_level_fraction": 0.0,
+    "top_by_cumulative": [
+     {
+      "function": "abep_sim/compressor.py:274(size_for)",
+      "ncalls": 20,
+      "tottime_s": 0.0072,
+      "cumtime_s": 0.5605,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:119(run)",
+      "ncalls": 1760,
+      "tottime_s": 0.0233,
+      "cumtime_s": 0.5528,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:197(_run_once)",
+      "ncalls": 3180,
+      "tottime_s": 0.2187,
+      "cumtime_s": 0.4937,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:166(_gaede_record)",
+      "ncalls": 61440,
+      "tottime_s": 0.0737,
+      "cumtime_s": 0.1074,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:181(_gaede_summary)",
+      "ncalls": 3180,
+      "tottime_s": 0.0253,
+      "cumtime_s": 0.0597,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method builtins.max>",
+      "ncalls": 235500,
+      "tottime_s": 0.0392,
+      "cumtime_s": 0.0474,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/compressor.py:111(_cbar)",
+      "ncalls": 61440,
+      "tottime_s": 0.0257,
+      "cumtime_s": 0.0311,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method builtins.min>",
+      "ncalls": 64640,
+      "tottime_s": 0.0198,
+      "cumtime_s": 0.0274,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method math.sqrt>",
+      "ncalls": 129260,
+      "tottime_s": 0.0122,
+      "cumtime_s": 0.0122,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method builtins.all>",
+      "ncalls": 3180,
+      "tottime_s": 0.0021,
+      "cumtime_s": 0.0097,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/compressor.py:94(sizing_mode)",
+      "ncalls": 9560,
+      "tottime_s": 0.0044,
+      "cumtime_s": 0.0097,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:147(<genexpr>)",
+      "ncalls": 12720,
+      "tottime_s": 0.007,
+      "cumtime_s": 0.0097,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:99(u_max)",
+      "ncalls": 3200,
+      "tottime_s": 0.0029,
+      "cumtime_s": 0.0094,
+      "class": "project_python"
+     },
+     {
+      "function": "<method 'setdefault' of 'dict' objects>",
+      "ncalls": 61440,
+      "tottime_s": 0.0079,
+      "cumtime_s": 0.0079,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/compressor.py:148(<genexpr>)",
+      "ncalls": 11240,
+      "tottime_s": 0.0058,
+      "cumtime_s": 0.0078,
+      "class": "project_python"
+     }
+    ],
+    "top_by_tottime": [
+     {
+      "function": "abep_sim/compressor.py:197(_run_once)",
+      "ncalls": 3180,
+      "tottime_s": 0.2187,
+      "cumtime_s": 0.4937,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:166(_gaede_record)",
+      "ncalls": 61440,
+      "tottime_s": 0.0737,
+      "cumtime_s": 0.1074,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method builtins.max>",
+      "ncalls": 235500,
+      "tottime_s": 0.0392,
+      "cumtime_s": 0.0474,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/compressor.py:111(_cbar)",
+      "ncalls": 61440,
+      "tottime_s": 0.0257,
+      "cumtime_s": 0.0311,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:181(_gaede_summary)",
+      "ncalls": 3180,
+      "tottime_s": 0.0253,
+      "cumtime_s": 0.0597,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:119(run)",
+      "ncalls": 1760,
+      "tottime_s": 0.0233,
+      "cumtime_s": 0.5528,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method builtins.min>",
+      "ncalls": 64640,
+      "tottime_s": 0.0198,
+      "cumtime_s": 0.0274,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method math.sqrt>",
+      "ncalls": 129260,
+      "tottime_s": 0.0122,
+      "cumtime_s": 0.0122,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<method 'setdefault' of 'dict' objects>",
+      "ncalls": 61440,
+      "tottime_s": 0.0079,
+      "cumtime_s": 0.0079,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/compressor.py:191(<genexpr>)",
+      "ncalls": 64620,
+      "tottime_s": 0.0077,
+      "cumtime_s": 0.0077,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method math.exp>",
+      "ncalls": 61440,
+      "tottime_s": 0.0074,
+      "cumtime_s": 0.0074,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/compressor.py:274(size_for)",
+      "ncalls": 20,
+      "tottime_s": 0.0072,
+      "cumtime_s": 0.5605,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:147(<genexpr>)",
+      "ncalls": 12720,
+      "tottime_s": 0.007,
+      "cumtime_s": 0.0097,
+      "class": "project_python"
+     },
+     {
+      "function": "<method 'get' of 'dict' objects>",
+      "ncalls": 61440,
+      "tottime_s": 0.007,
+      "cumtime_s": 0.007,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<method 'append' of 'list' objects>",
+      "ncalls": 64620,
+      "tottime_s": 0.0067,
+      "cumtime_s": 0.0067,
+      "class": "interpreter_builtin"
+     }
+    ],
+    "project_hotspots_by_tottime": [
+     "abep_sim/compressor.py:197(_run_once)",
+     "abep_sim/compressor.py:166(_gaede_record)",
+     "abep_sim/compressor.py:111(_cbar)",
+     "abep_sim/compressor.py:181(_gaede_summary)",
+     "abep_sim/compressor.py:119(run)"
+    ],
+    "cprofile_overhead_ratio": 2.941
+   },
+   "port_judgement": {
+    "reference_workload_id": "uq6_pareto_default",
+    "reference_workload_s": 1.91,
+    "reference_workload_s_measured": null,
+    "interpreter_level_fraction": 1.0001,
+    "addressable_interpreter_s_upper_bound": 1.91,
+    "judgement": "NOT_A_BOTTLENECK",
+    "thresholds_s": {
+     "port": 60.0,
+     "marginal": 10.0
+    }
+   }
+  },
+  {
+   "id": "compressor_run",
+   "category": "compressor_search",
+   "entry_point": "abep_sim.compressor.DragCompressor.run (self-consistent leak iteration)",
+   "description": "repeated operating-point evaluations at the golden gas_path A0.7 inputs and default geometry",
+   "params": {
+    "calls": 500
+   },
+   "unit_of_work": "run calls",
+   "covered_by": "compressor_size_for",
+   "reference": null,
+   "repeats": 3,
+   "wall_s": [
+    1.2211,
+    1.2202,
+    1.2287
+   ],
+   "cpu_s": [
+    1.221,
+    1.2201,
+    1.2285
+   ],
+   "median_wall_s": 1.2211,
+   "median_cpu_s": 1.221,
+   "cpu_over_wall": 1.0,
+   "units_of_work": 500,
+   "median_wall_s_per_unit": 0.0024422,
+   "loadavg_1min_before_after": [
+    0.42,
+    0.47
+   ],
+   "output_fingerprint": {
+    "P_el_W": 146.139012553,
+    "calls": 500,
+    "sum_CR_active": 500.0
+   },
+   "deterministic_across_repeats": true,
+   "profile": {
+    "profiled_wall_s": 3.6311,
+    "total_function_calls": 6704002,
+    "function_calls_per_profiled_s": 1846294.0,
+    "tottime_fractions": {
+     "project_python": 0.8048,
+     "interpreter_builtin": 0.1952,
+     "stdlib_python": 0.0,
+     "library_python_wrapper": 0.0,
+     "native_array_call": 0.0
+    },
+    "interpreter_level_fraction": 1.0,
+    "numpy_level_fraction": 0.0,
+    "top_by_cumulative": [
+     {
+      "function": "abep_sim/compressor.py:119(run)",
+      "ncalls": 500,
+      "tottime_s": 0.1312,
+      "cumtime_s": 3.6285,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:197(_run_once)",
+      "ncalls": 20000,
+      "tottime_s": 1.4611,
+      "cumtime_s": 3.3161,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:166(_gaede_record)",
+      "ncalls": 420000,
+      "tottime_s": 0.4878,
+      "cumtime_s": 0.7211,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:181(_gaede_summary)",
+      "ncalls": 20000,
+      "tottime_s": 0.1687,
+      "cumtime_s": 0.4241,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method builtins.max>",
+      "ncalls": 1540500,
+      "tottime_s": 0.2648,
+      "cumtime_s": 0.3169,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/compressor.py:111(_cbar)",
+      "ncalls": 420000,
+      "tottime_s": 0.1733,
+      "cumtime_s": 0.2103,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method builtins.min>",
+      "ncalls": 440000,
+      "tottime_s": 0.1342,
+      "cumtime_s": 0.1871,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method math.sqrt>",
+      "ncalls": 880000,
+      "tottime_s": 0.0819,
+      "cumtime_s": 0.0819,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/compressor.py:147(<genexpr>)",
+      "ncalls": 80000,
+      "tottime_s": 0.0447,
+      "cumtime_s": 0.0618,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:94(sizing_mode)",
+      "ncalls": 60000,
+      "tottime_s": 0.0276,
+      "cumtime_s": 0.0612,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:99(u_max)",
+      "ncalls": 20000,
+      "tottime_s": 0.0166,
+      "cumtime_s": 0.0574,
+      "class": "project_python"
+     },
+     {
+      "function": "<method 'setdefault' of 'dict' objects>",
+      "ncalls": 420000,
+      "tottime_s": 0.0538,
+      "cumtime_s": 0.0538,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/compressor.py:191(<genexpr>)",
+      "ncalls": 440000,
+      "tottime_s": 0.0529,
+      "cumtime_s": 0.0529,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:192(<listcomp>)",
+      "ncalls": 20000,
+      "tottime_s": 0.052,
+      "cumtime_s": 0.052,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method math.exp>",
+      "ncalls": 420000,
+      "tottime_s": 0.0503,
+      "cumtime_s": 0.0503,
+      "class": "interpreter_builtin"
+     }
+    ],
+    "top_by_tottime": [
+     {
+      "function": "abep_sim/compressor.py:197(_run_once)",
+      "ncalls": 20000,
+      "tottime_s": 1.4611,
+      "cumtime_s": 3.3161,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:166(_gaede_record)",
+      "ncalls": 420000,
+      "tottime_s": 0.4878,
+      "cumtime_s": 0.7211,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method builtins.max>",
+      "ncalls": 1540500,
+      "tottime_s": 0.2648,
+      "cumtime_s": 0.3169,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/compressor.py:111(_cbar)",
+      "ncalls": 420000,
+      "tottime_s": 0.1733,
+      "cumtime_s": 0.2103,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:181(_gaede_summary)",
+      "ncalls": 20000,
+      "tottime_s": 0.1687,
+      "cumtime_s": 0.4241,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method builtins.min>",
+      "ncalls": 440000,
+      "tottime_s": 0.1342,
+      "cumtime_s": 0.1871,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/compressor.py:119(run)",
+      "ncalls": 500,
+      "tottime_s": 0.1312,
+      "cumtime_s": 3.6285,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method math.sqrt>",
+      "ncalls": 880000,
+      "tottime_s": 0.0819,
+      "cumtime_s": 0.0819,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<method 'setdefault' of 'dict' objects>",
+      "ncalls": 420000,
+      "tottime_s": 0.0538,
+      "cumtime_s": 0.0538,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/compressor.py:191(<genexpr>)",
+      "ncalls": 440000,
+      "tottime_s": 0.0529,
+      "cumtime_s": 0.0529,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:192(<listcomp>)",
+      "ncalls": 20000,
+      "tottime_s": 0.052,
+      "cumtime_s": 0.052,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method math.exp>",
+      "ncalls": 420000,
+      "tottime_s": 0.0503,
+      "cumtime_s": 0.0503,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<method 'get' of 'dict' objects>",
+      "ncalls": 420000,
+      "tottime_s": 0.0461,
+      "cumtime_s": 0.0461,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/compressor.py:147(<genexpr>)",
+      "ncalls": 80000,
+      "tottime_s": 0.0447,
+      "cumtime_s": 0.0618,
+      "class": "project_python"
+     },
+     {
+      "function": "<method 'append' of 'list' objects>",
+      "ncalls": 440000,
+      "tottime_s": 0.0436,
+      "cumtime_s": 0.0436,
+      "class": "interpreter_builtin"
+     }
+    ],
+    "project_hotspots_by_tottime": [
+     "abep_sim/compressor.py:197(_run_once)",
+     "abep_sim/compressor.py:166(_gaede_record)",
+     "abep_sim/compressor.py:111(_cbar)",
+     "abep_sim/compressor.py:181(_gaede_summary)",
+     "abep_sim/compressor.py:119(run)"
+    ],
+    "cprofile_overhead_ratio": 2.974
+   },
+   "port_judgement": {
+    "judgement": "COVERED_BY",
+    "covered_by": "compressor_size_for",
+    "basis": "kernel-level measurement; ranked through the workload that calls it (avoids double counting)"
+   }
+  },
+  {
+   "id": "system_evaluate_gas_path",
+   "category": "whole_system_evaluation",
+   "entry_point": "abep_sim.system.evaluate (golden case gas_path A0.7)",
+   "description": "Config('hall_1stage', 200 km, mean, TPMC intake A 0.7 m2 alpha 0.8 L/d 5, ratio 2000, Vd 275, gaspath_physics=True) exactly as abep_sim/golden.py case_gas_path",
+   "params": {
+    "area": 0.7,
+    "calls": 20
+   },
+   "unit_of_work": "evaluations",
+   "covered_by": null,
+   "reference": {
+    "id": "uq6_monte_carlo_default",
+    "units_of_work": 200,
+    "basis": "abep_sim/uq6.py monte_carlo6(n=200) default (one system.evaluate per sample; that path also enables plasma/engineering physics, so this is a lower bound per sample)",
+    "method": "EXTRAPOLATED: median seconds per evaluation x 200"
+   },
+   "repeats": 3,
+   "wall_s": [
+    0.2901,
+    0.2969,
+    0.2882
+   ],
+   "cpu_s": [
+    0.29,
+    0.2968,
+    0.2882
+   ],
+   "median_wall_s": 0.2901,
+   "median_cpu_s": 0.29,
+   "cpu_over_wall": 1.0,
+   "units_of_work": 20,
+   "median_wall_s_per_unit": 0.0145072,
+   "loadavg_1min_before_after": [
+    0.51,
+    0.51
+   ],
+   "output_fingerprint": {
+    "C_D": 2.05490760967,
+    "P_comp_W": 26.6473240367,
+    "drag_mN": 12.1215758126,
+    "eta_c": 0.643894588016,
+    "mdot_air_mgps": 0.975342595967,
+    "p_in_Pa": 0.0498443470782
+   },
+   "deterministic_across_repeats": true,
+   "profile": {
+    "profiled_wall_s": 0.8412,
+    "total_function_calls": 1653901,
+    "function_calls_per_profiled_s": 1966176.7,
+    "tottime_fractions": {
+     "project_python": 0.7837,
+     "interpreter_builtin": 0.2068,
+     "stdlib_python": 0.0069,
+     "library_python_wrapper": 0.0021,
+     "native_array_call": 0.0006
+    },
+    "interpreter_level_fraction": 0.9974,
+    "numpy_level_fraction": 0.0027,
+    "top_by_cumulative": [
+     {
+      "function": "abep_sim/programme/closure.py:20(evaluate)",
+      "ncalls": 20,
+      "tottime_s": 0.0004,
+      "cumtime_s": 0.8407,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/system.py:106(physics_closure)",
+      "ncalls": 20,
+      "tottime_s": 0.002,
+      "cumtime_s": 0.8278,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:274(size_for)",
+      "ncalls": 20,
+      "tottime_s": 0.0073,
+      "cumtime_s": 0.5521,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:119(run)",
+      "ncalls": 1760,
+      "tottime_s": 0.0231,
+      "cumtime_s": 0.5442,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:197(_run_once)",
+      "ncalls": 3180,
+      "tottime_s": 0.2149,
+      "cumtime_s": 0.4859,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/reservoir.py:48(steady_state)",
+      "ncalls": 1280,
+      "tottime_s": 0.085,
+      "cumtime_s": 0.2545,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/reservoir.py:108(size_orifice_for_pressure)",
+      "ncalls": 20,
+      "tottime_s": 0.0023,
+      "cumtime_s": 0.253,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method builtins.max>",
+      "ncalls": 376520,
+      "tottime_s": 0.0757,
+      "cumtime_s": 0.1326,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/compressor.py:166(_gaede_record)",
+      "ncalls": 61440,
+      "tottime_s": 0.0732,
+      "cumtime_s": 0.1063,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:181(_gaede_summary)",
+      "ncalls": 3180,
+      "tottime_s": 0.0251,
+      "cumtime_s": 0.0592,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/reservoir.py:76(<genexpr>)",
+      "ncalls": 107520,
+      "tottime_s": 0.0412,
+      "cumtime_s": 0.0587,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method builtins.all>",
+      "ncalls": 30160,
+      "tottime_s": 0.0097,
+      "cumtime_s": 0.0409,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/compressor.py:111(_cbar)",
+      "ncalls": 61440,
+      "tottime_s": 0.0252,
+      "cumtime_s": 0.0305,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method builtins.min>",
+      "ncalls": 64780,
+      "tottime_s": 0.0196,
+      "cumtime_s": 0.0275,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/reservoir.py:77(<genexpr>)",
+      "ncalls": 56320,
+      "tottime_s": 0.0194,
+      "cumtime_s": 0.0262,
+      "class": "project_python"
+     }
+    ],
+    "top_by_tottime": [
+     {
+      "function": "abep_sim/compressor.py:197(_run_once)",
+      "ncalls": 3180,
+      "tottime_s": 0.2149,
+      "cumtime_s": 0.4859,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/reservoir.py:48(steady_state)",
+      "ncalls": 1280,
+      "tottime_s": 0.085,
+      "cumtime_s": 0.2545,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method builtins.max>",
+      "ncalls": 376520,
+      "tottime_s": 0.0757,
+      "cumtime_s": 0.1326,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/compressor.py:166(_gaede_record)",
+      "ncalls": 61440,
+      "tottime_s": 0.0732,
+      "cumtime_s": 0.1063,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/reservoir.py:76(<genexpr>)",
+      "ncalls": 107520,
+      "tottime_s": 0.0412,
+      "cumtime_s": 0.0587,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:111(_cbar)",
+      "ncalls": 61440,
+      "tottime_s": 0.0252,
+      "cumtime_s": 0.0305,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:181(_gaede_summary)",
+      "ncalls": 3180,
+      "tottime_s": 0.0251,
+      "cumtime_s": 0.0592,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:119(run)",
+      "ncalls": 1760,
+      "tottime_s": 0.0231,
+      "cumtime_s": 0.5442,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method builtins.min>",
+      "ncalls": 64780,
+      "tottime_s": 0.0196,
+      "cumtime_s": 0.0275,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/reservoir.py:77(<genexpr>)",
+      "ncalls": 56320,
+      "tottime_s": 0.0194,
+      "cumtime_s": 0.0262,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/reservoir.py:36(_cbar)",
+      "ncalls": 40960,
+      "tottime_s": 0.0176,
+      "cumtime_s": 0.0214,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method math.sqrt>",
+      "ncalls": 171780,
+      "tottime_s": 0.016,
+      "cumtime_s": 0.016,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/reservoir.py:79(<dictcomp>)",
+      "ncalls": 25600,
+      "tottime_s": 0.0124,
+      "cumtime_s": 0.0124,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method builtins.abs>",
+      "ncalls": 131520,
+      "tottime_s": 0.0102,
+      "cumtime_s": 0.0102,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:401(<dictcomp>)",
+      "ncalls": 60,
+      "tottime_s": 0.0099,
+      "cumtime_s": 0.0122,
+      "class": "project_python"
+     }
+    ],
+    "project_hotspots_by_tottime": [
+     "abep_sim/compressor.py:197(_run_once)",
+     "abep_sim/reservoir.py:48(steady_state)",
+     "abep_sim/compressor.py:166(_gaede_record)",
+     "abep_sim/reservoir.py:76(<genexpr>)",
+     "abep_sim/compressor.py:111(_cbar)"
+    ],
+    "cprofile_overhead_ratio": 2.9
+   },
+   "port_judgement": {
+    "reference_workload_id": "uq6_monte_carlo_default",
+    "reference_workload_s": 2.9,
+    "reference_workload_s_measured": null,
+    "interpreter_level_fraction": 0.9974,
+    "addressable_interpreter_s_upper_bound": 2.89,
+    "judgement": "NOT_A_BOTTLENECK",
+    "thresholds_s": {
+     "port": 60.0,
+     "marginal": 10.0
+    }
+   }
+  },
+  {
+   "id": "archengine_close_architecture",
+   "category": "whole_system_evaluation",
+   "entry_point": "abep_sim.archengine.close_architecture (golden cases architecture_closure and mission)",
+   "description": "nested constrained closure of hall_internal+hall+lab6_xe at 2.5 kW, area 1.3, p_level 0.05, arrays sized, mission envelope; solver caches cleared before every repeat (cold)",
+   "params": {},
+   "unit_of_work": "closures",
+   "covered_by": null,
+   "physics_note": "drives the superseded 0-D Hall closure (plasma_devices / archengine Hall branch); absolute Hall results are withdrawn (CLAUDE.md 'Superseded / withdrawn') - timed only, outputs never quoted",
+   "reference": {
+    "id": "golden_check",
+    "units_of_work": 2,
+    "basis": "abep_sim/golden.py: case_architecture_closure and case_mission each run this closure once per python -m abep_sim.golden check (CLAUDE.md rule 2 gate)",
+    "method": "EXTRAPOLATED: median seconds x 2 (the second call shares no cache in a cold process only if caches are cleared; in practice it is warm, so this is an upper bound)"
+   },
+   "repeats": 3,
+   "wall_s": [
+    9.4947,
+    9.4689,
+    9.4451
+   ],
+   "cpu_s": [
+    9.4913,
+    9.4675,
+    9.4429
+   ],
+   "median_wall_s": 9.4689,
+   "median_cpu_s": 9.4675,
+   "cpu_over_wall": 1.0,
+   "units_of_work": 1,
+   "median_wall_s_per_unit": 9.4688509,
+   "loadavg_1min_before_after": [
+    0.51,
+    0.71
+   ],
+   "output_fingerprint": {
+    "P_bus_W": 2458.73010151,
+    "T_mN": 51.2734154589,
+    "ledger_resid": 1.84952122483e-16,
+    "status": "MODEL_NOT_CONVERGED",
+    "x_L_ch": 0.12,
+    "x_Vd": 300.0
+   },
+   "deterministic_across_repeats": true,
+   "profile": {
+    "profiled_wall_s": 25.9769,
+    "total_function_calls": 44541402,
+    "function_calls_per_profiled_s": 1714655.3,
+    "tottime_fractions": {
+     "project_python": 0.7018,
+     "interpreter_builtin": 0.158,
+     "stdlib_python": 0.0,
+     "library_python_wrapper": 0.0792,
+     "native_array_call": 0.061
+    },
+    "interpreter_level_fraction": 0.8598,
+    "numpy_level_fraction": 0.1402,
+    "top_by_cumulative": [
+     {
+      "function": "abep_sim/archengine.py:628(close_architecture)",
+      "ncalls": 1,
+      "tottime_s": 0.0025,
+      "cumtime_s": 25.9765,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/archengine.py:468(_propulsion)",
+      "ncalls": 69,
+      "tottime_s": 0.0028,
+      "cumtime_s": 25.8793,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/plasma_devices.py:512(hall_run_coupled)",
+      "ncalls": 69,
+      "tottime_s": 0.0028,
+      "cumtime_s": 25.8703,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/plasma_devices.py:364(hall_discharge_transient)",
+      "ncalls": 69,
+      "tottime_s": 0.0182,
+      "cumtime_s": 25.8636,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/plasma_devices.py:417(T_of_n)",
+      "ncalls": 9457,
+      "tottime_s": 0.8353,
+      "cumtime_s": 25.5541,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/plasma_devices.py:443(g)",
+      "ncalls": 9319,
+      "tottime_s": 0.0374,
+      "cumtime_s": 25.4536,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/plasma_devices.py:398(balance)",
+      "ncalls": 903777,
+      "tottime_s": 4.6957,
+      "cumtime_s": 24.3208,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/archengine.py:771(_at)",
+      "ncalls": 44,
+      "tottime_s": 0.0005,
+      "cumtime_s": 16.5525,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/plasma_devices.py:390(rates)",
+      "ncalls": 903915,
+      "tottime_s": 4.2103,
+      "cumtime_s": 15.9073,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/plasma_devices.py:420(<listcomp>)",
+      "ncalls": 9457,
+      "tottime_s": 0.2621,
+      "cumtime_s": 12.8085,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/plasma_chem.py:61(k_rate)",
+      "ncalls": 3615936,
+      "tottime_s": 4.8086,
+      "cumtime_s": 9.6176,
+      "class": "project_python"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/lib/_function_base_impl.py:1538(interp)",
+      "ncalls": 903984,
+      "tottime_s": 1.1862,
+      "cumtime_s": 3.4557,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "abep_sim/plasma_chem.py:75(eps_c)",
+      "ncalls": 2711745,
+      "tottime_s": 1.3234,
+      "cumtime_s": 1.7721,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method builtins.sum>",
+      "ncalls": 1792258,
+      "tottime_s": 0.9371,
+      "cumtime_s": 1.6731,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method numpy._core._multiarray_umath.interp>",
+      "ncalls": 903984,
+      "tottime_s": 1.4363,
+      "cumtime_s": 1.4363,
+      "class": "native_array_call"
+     }
+    ],
+    "top_by_tottime": [
+     {
+      "function": "abep_sim/plasma_chem.py:61(k_rate)",
+      "ncalls": 3615936,
+      "tottime_s": 4.8086,
+      "cumtime_s": 9.6176,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/plasma_devices.py:398(balance)",
+      "ncalls": 903777,
+      "tottime_s": 4.6957,
+      "cumtime_s": 24.3208,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/plasma_devices.py:390(rates)",
+      "ncalls": 903915,
+      "tottime_s": 4.2103,
+      "cumtime_s": 15.9073,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method numpy._core._multiarray_umath.interp>",
+      "ncalls": 903984,
+      "tottime_s": 1.4363,
+      "cumtime_s": 1.4363,
+      "class": "native_array_call"
+     },
+     {
+      "function": "abep_sim/plasma_chem.py:75(eps_c)",
+      "ncalls": 2711745,
+      "tottime_s": 1.3234,
+      "cumtime_s": 1.7721,
+      "class": "project_python"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/lib/_function_base_impl.py:1538(interp)",
+      "ncalls": 903984,
+      "tottime_s": 1.1862,
+      "cumtime_s": 3.4557,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<built-in method builtins.sum>",
+      "ncalls": 1792258,
+      "tottime_s": 0.9371,
+      "cumtime_s": 1.6731,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method builtins.max>",
+      "ncalls": 5446181,
+      "tottime_s": 0.929,
+      "cumtime_s": 0.9317,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/plasma_devices.py:417(T_of_n)",
+      "ncalls": 9457,
+      "tottime_s": 0.8353,
+      "cumtime_s": 25.5541,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/plasma_devices.py:402(<genexpr>)",
+      "ncalls": 3546480,
+      "tottime_s": 0.7343,
+      "cumtime_s": 0.7343,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method math.exp>",
+      "ncalls": 6337769,
+      "tottime_s": 0.716,
+      "cumtime_s": 0.716,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/plasma_devices.py:356(_sheath_drop)",
+      "ncalls": 903777,
+      "tottime_s": 0.5869,
+      "cumtime_s": 0.7565,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/materials.py:58(see_yield)",
+      "ncalls": 907296,
+      "tottime_s": 0.5493,
+      "cumtime_s": 0.6558,
+      "class": "project_python"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/lib/_type_check_impl.py:270(iscomplexobj)",
+      "ncalls": 903984,
+      "tottime_s": 0.4476,
+      "cumtime_s": 0.558,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'get' of 'dict' objects>",
+      "ncalls": 3620609,
+      "tottime_s": 0.4132,
+      "cumtime_s": 0.4132,
+      "class": "interpreter_builtin"
+     }
+    ],
+    "project_hotspots_by_tottime": [
+     "abep_sim/plasma_chem.py:61(k_rate)",
+     "abep_sim/plasma_devices.py:398(balance)",
+     "abep_sim/plasma_devices.py:390(rates)",
+     "abep_sim/plasma_chem.py:75(eps_c)",
+     "abep_sim/plasma_devices.py:417(T_of_n)"
+    ],
+    "cprofile_overhead_ratio": 2.743
+   },
+   "port_judgement": {
+    "reference_workload_id": "golden_check",
+    "reference_workload_s": 18.94,
+    "reference_workload_s_measured": null,
+    "interpreter_level_fraction": 0.8598,
+    "addressable_interpreter_s_upper_bound": 16.28,
+    "judgement": "MARGINAL",
+    "thresholds_s": {
+     "port": 60.0,
+     "marginal": 10.0
+    },
+    "qualifier": "DEFER_PORT: drives the superseded 0-D Hall closure (plasma_devices / archengine Hall branch); absolute Hall results are withdrawn (CLAUDE.md 'Superseded / withdrawn') - timed only, outputs never quoted; porting a driver of withdrawn physics adds no decision value - re-profile the F7/F8 driver once it exists"
+   }
+  },
+  {
+   "id": "uq_modular_run_uq",
+   "category": "uq_monte_carlo",
+   "entry_point": "abep_sim.uq_modular.run_uq",
+   "description": "one batch of paired samples (each sample re-runs propulsion at mean / solar-min / solar-max captured flow with shared prior draws) for hall_internal+hall+lab6_xe, Vd 300, L_ch 0.20, area 1.0, p_level 0.05, A_array 6, P_cap 1500 (tests/test_sim.py test_v131_modular_uq_runs)",
+   "params": {
+    "n": 6,
+    "seed": 1
+   },
+   "unit_of_work": "paired samples",
+   "covered_by": null,
+   "physics_note": "drives the superseded 0-D Hall closure (plasma_devices / archengine Hall branch); absolute Hall results are withdrawn (CLAUDE.md 'Superseded / withdrawn') - timed only, outputs never quoted",
+   "reference": {
+    "id": "run_uq_default",
+    "units_of_work": 200,
+    "basis": "abep_sim/uq_modular.py run_uq(n=200) default",
+    "method": "EXTRAPOLATED: median seconds per sample x 200"
+   },
+   "repeats": 3,
+   "wall_s": [
+    3.7575,
+    3.2734,
+    3.3073
+   ],
+   "cpu_s": [
+    3.7215,
+    3.2719,
+    3.3066
+   ],
+   "median_wall_s": 3.3073,
+   "median_cpu_s": 3.3066,
+   "cpu_over_wall": 1.0,
+   "units_of_work": 6,
+   "median_wall_s_per_unit": 0.5512086,
+   "loadavg_1min_before_after": [
+    0.81,
+    0.84
+   ],
+   "output_fingerprint": {
+    "P_close": 0.0,
+    "P_ignite": 1.0,
+    "n": 6,
+    "ratio_q50": 0.94674912315,
+    "sum_T_mN": 198.798860074
+   },
+   "deterministic_across_repeats": true,
+   "profile": {
+    "profiled_wall_s": 9.0586,
+    "total_function_calls": 15608089,
+    "function_calls_per_profiled_s": 1723010.7,
+    "tottime_fractions": {
+     "project_python": 0.7009,
+     "interpreter_builtin": 0.1595,
+     "stdlib_python": 0.0001,
+     "library_python_wrapper": 0.0782,
+     "native_array_call": 0.0614
+    },
+    "interpreter_level_fraction": 0.8605,
+    "numpy_level_fraction": 0.1396,
+    "top_by_cumulative": [
+     {
+      "function": "abep_sim/programme/uq_modular.py:32(run_uq)",
+      "ncalls": 1,
+      "tottime_s": 0.0003,
+      "cumtime_s": 9.0584,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/programme/uq_modular.py:18(evaluate_sample)",
+      "ncalls": 6,
+      "tottime_s": 0.0001,
+      "cumtime_s": 9.0409,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/uq_modular.py:41(sample_closure)",
+      "ncalls": 6,
+      "tottime_s": 0.0004,
+      "cumtime_s": 9.0408,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/archengine.py:468(_propulsion)",
+      "ncalls": 24,
+      "tottime_s": 0.0009,
+      "cumtime_s": 8.8627,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/plasma_devices.py:512(hall_run_coupled)",
+      "ncalls": 24,
+      "tottime_s": 0.001,
+      "cumtime_s": 8.8595,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/plasma_devices.py:364(hall_discharge_transient)",
+      "ncalls": 24,
+      "tottime_s": 0.0066,
+      "cumtime_s": 8.8571,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/plasma_devices.py:417(T_of_n)",
+      "ncalls": 3216,
+      "tottime_s": 0.2907,
+      "cumtime_s": 8.7522,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/plasma_devices.py:443(g)",
+      "ncalls": 3168,
+      "tottime_s": 0.013,
+      "cumtime_s": 8.7105,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/plasma_devices.py:398(balance)",
+      "ncalls": 311406,
+      "tottime_s": 1.6065,
+      "cumtime_s": 8.3139,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/uq_modular.py:63(run)",
+      "ncalls": 18,
+      "tottime_s": 0.0001,
+      "cumtime_s": 6.6648,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/plasma_devices.py:390(rates)",
+      "ncalls": 311454,
+      "tottime_s": 1.4281,
+      "cumtime_s": 5.4471,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/plasma_devices.py:420(<listcomp>)",
+      "ncalls": 3216,
+      "tottime_s": 0.0885,
+      "cumtime_s": 4.3276,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/plasma_chem.py:61(k_rate)",
+      "ncalls": 1245912,
+      "tottime_s": 1.6484,
+      "cumtime_s": 3.2974,
+      "class": "project_python"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/lib/_function_base_impl.py:1538(interp)",
+      "ncalls": 311478,
+      "tottime_s": 0.3967,
+      "cumtime_s": 1.1837,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "abep_sim/plasma_chem.py:75(eps_c)",
+      "ncalls": 934362,
+      "tottime_s": 0.4575,
+      "cumtime_s": 0.6167,
+      "class": "project_python"
+     }
+    ],
+    "top_by_tottime": [
+     {
+      "function": "abep_sim/plasma_chem.py:61(k_rate)",
+      "ncalls": 1245912,
+      "tottime_s": 1.6484,
+      "cumtime_s": 3.2974,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/plasma_devices.py:398(balance)",
+      "ncalls": 311406,
+      "tottime_s": 1.6065,
+      "cumtime_s": 8.3139,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/plasma_devices.py:390(rates)",
+      "ncalls": 311454,
+      "tottime_s": 1.4281,
+      "cumtime_s": 5.4471,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method numpy._core._multiarray_umath.interp>",
+      "ncalls": 311478,
+      "tottime_s": 0.5035,
+      "cumtime_s": 0.5035,
+      "class": "native_array_call"
+     },
+     {
+      "function": "abep_sim/plasma_chem.py:75(eps_c)",
+      "ncalls": 934362,
+      "tottime_s": 0.4575,
+      "cumtime_s": 0.6167,
+      "class": "project_python"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/lib/_function_base_impl.py:1538(interp)",
+      "ncalls": 311478,
+      "tottime_s": 0.3967,
+      "cumtime_s": 1.1837,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<built-in method builtins.max>",
+      "ncalls": 1946372,
+      "tottime_s": 0.3434,
+      "cumtime_s": 0.3574,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "<built-in method builtins.sum>",
+      "ncalls": 621629,
+      "tottime_s": 0.3226,
+      "cumtime_s": 0.5756,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/plasma_devices.py:417(T_of_n)",
+      "ncalls": 3216,
+      "tottime_s": 0.2907,
+      "cumtime_s": 8.7522,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/plasma_devices.py:402(<genexpr>)",
+      "ncalls": 1224136,
+      "tottime_s": 0.2524,
+      "cumtime_s": 0.2524,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method math.exp>",
+      "ncalls": 2194709,
+      "tottime_s": 0.2457,
+      "cumtime_s": 0.2457,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/plasma_devices.py:356(_sheath_drop)",
+      "ncalls": 311406,
+      "tottime_s": 0.1905,
+      "cumtime_s": 0.2423,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/materials.py:58(see_yield)",
+      "ncalls": 312630,
+      "tottime_s": 0.1887,
+      "cumtime_s": 0.2253,
+      "class": "project_python"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/lib/_type_check_impl.py:270(iscomplexobj)",
+      "ncalls": 311486,
+      "tottime_s": 0.1532,
+      "cumtime_s": 0.1911,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'get' of 'dict' objects>",
+      "ncalls": 1258692,
+      "tottime_s": 0.1423,
+      "cumtime_s": 0.1423,
+      "class": "interpreter_builtin"
+     }
+    ],
+    "project_hotspots_by_tottime": [
+     "abep_sim/plasma_chem.py:61(k_rate)",
+     "abep_sim/plasma_devices.py:398(balance)",
+     "abep_sim/plasma_devices.py:390(rates)",
+     "abep_sim/plasma_chem.py:75(eps_c)",
+     "abep_sim/plasma_devices.py:417(T_of_n)"
+    ],
+    "cprofile_overhead_ratio": 2.739
+   },
+   "port_judgement": {
+    "reference_workload_id": "run_uq_default",
+    "reference_workload_s": 110.24,
+    "reference_workload_s_measured": null,
+    "interpreter_level_fraction": 0.8605,
+    "addressable_interpreter_s_upper_bound": 94.86,
+    "judgement": "PORT_CANDIDATE",
+    "thresholds_s": {
+     "port": 60.0,
+     "marginal": 10.0
+    },
+    "qualifier": "DEFER_PORT: drives the superseded 0-D Hall closure (plasma_devices / archengine Hall branch); absolute Hall results are withdrawn (CLAUDE.md 'Superseded / withdrawn') - timed only, outputs never quoted; porting a driver of withdrawn physics adds no decision value - re-profile the F7/F8 driver once it exists"
+   }
+  },
+  {
+   "id": "uq6_robust_design",
+   "category": "robust_design_search",
+   "entry_point": "abep_sim.uq6.robust_design (only robust-design routine in the base; A9.7 F7/F8 optimizer not yet built)",
+   "description": "one candidate design (area 0.7, L_ch 0.20, Vd 275, xe_aug_h 500, hall_1stage) through monte_carlo6 (correlated priors, full chain + mission ROM)",
+   "params": {
+    "n_mc": 3,
+    "seed": 5
+   },
+   "unit_of_work": "MC samples",
+   "covered_by": null,
+   "physics_note": "drives the superseded 0-D Hall closure (plasma_devices / archengine Hall branch); absolute Hall results are withdrawn (CLAUDE.md 'Superseded / withdrawn') - timed only, outputs never quoted",
+   "reference": {
+    "id": "robust_design_default_per_candidate",
+    "units_of_work": 60,
+    "basis": "abep_sim/uq6.py robust_design(n_mc=60) default, per candidate (candidate count is set by the caller; F8 robust optimisation is PENDING, lane fo_a9_7_f7_f8_coupled_optimizer)",
+    "method": "EXTRAPOLATED: median seconds per sample x 60 (one candidate)"
+   },
+   "repeats": 3,
+   "wall_s": [
+    0.0779,
+    0.0736,
+    0.0742
+   ],
+   "cpu_s": [
+    0.0773,
+    0.0736,
+    0.0742
+   ],
+   "median_wall_s": 0.0742,
+   "median_cpu_s": 0.0742,
+   "cpu_over_wall": 1.0,
+   "units_of_work": 3,
+   "median_wall_s_per_unit": 0.0247265,
+   "loadavg_1min_before_after": [
+    0.86,
+    0.86
+   ],
+   "output_fingerprint": {
+    "P_compliant": 0.0,
+    "P_mission_ok": 0.0,
+    "TD_sc_end_p10": 1.58908468578
+   },
+   "deterministic_across_repeats": true,
+   "profile": {
+    "profiled_wall_s": 0.1913,
+    "total_function_calls": 310575,
+    "function_calls_per_profiled_s": 1623834.3,
+    "tottime_fractions": {
+     "project_python": 0.6732,
+     "interpreter_builtin": 0.1696,
+     "stdlib_python": 0.0098,
+     "library_python_wrapper": 0.1268,
+     "native_array_call": 0.0206
+    },
+    "interpreter_level_fraction": 0.8526,
+    "numpy_level_fraction": 0.1474,
+    "top_by_cumulative": [
+     {
+      "function": "abep_sim/uq6.py:240(robust_design)",
+      "ncalls": 1,
+      "tottime_s": 0.0001,
+      "cumtime_s": 0.1909,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/uq6.py:168(monte_carlo6)",
+      "ncalls": 1,
+      "tottime_s": 0.0001,
+      "cumtime_s": 0.1866,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/uq6.py:92(evaluate_full)",
+      "ncalls": 3,
+      "tottime_s": 0.0003,
+      "cumtime_s": 0.1831,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/programme/closure.py:20(evaluate)",
+      "ncalls": 3,
+      "tottime_s": 0.0001,
+      "cumtime_s": 0.1777,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/system.py:106(physics_closure)",
+      "ncalls": 3,
+      "tottime_s": 0.0008,
+      "cumtime_s": 0.1752,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:274(size_for)",
+      "ncalls": 3,
+      "tottime_s": 0.0012,
+      "cumtime_s": 0.0843,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:119(run)",
+      "ncalls": 263,
+      "tottime_s": 0.0037,
+      "cumtime_s": 0.083,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:197(_run_once)",
+      "ncalls": 470,
+      "tottime_s": 0.0327,
+      "cumtime_s": 0.074,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/thermal.py:103(size_radiator)",
+      "ncalls": 3,
+      "tottime_s": 0.0003,
+      "cumtime_s": 0.045,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/thermal.py:52(solve_network)",
+      "ncalls": 156,
+      "tottime_s": 0.0175,
+      "cumtime_s": 0.0443,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/reservoir.py:48(steady_state)",
+      "ncalls": 192,
+      "tottime_s": 0.0128,
+      "cumtime_s": 0.0386,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/reservoir.py:108(size_orifice_for_pressure)",
+      "ncalls": 3,
+      "tottime_s": 0.0003,
+      "cumtime_s": 0.0384,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method builtins.max>",
+      "ncalls": 56489,
+      "tottime_s": 0.0119,
+      "cumtime_s": 0.0204,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/compressor.py:166(_gaede_record)",
+      "ncalls": 9030,
+      "tottime_s": 0.0109,
+      "cumtime_s": 0.016,
+      "class": "project_python"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/linalg/_linalg.py:363(solve)",
+      "ncalls": 724,
+      "tottime_s": 0.0049,
+      "cumtime_s": 0.0127,
+      "class": "library_python_wrapper"
+     }
+    ],
+    "top_by_tottime": [
+     {
+      "function": "abep_sim/compressor.py:197(_run_once)",
+      "ncalls": 470,
+      "tottime_s": 0.0327,
+      "cumtime_s": 0.074,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/thermal.py:52(solve_network)",
+      "ncalls": 156,
+      "tottime_s": 0.0175,
+      "cumtime_s": 0.0443,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/reservoir.py:48(steady_state)",
+      "ncalls": 192,
+      "tottime_s": 0.0128,
+      "cumtime_s": 0.0386,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method builtins.max>",
+      "ncalls": 56489,
+      "tottime_s": 0.0119,
+      "cumtime_s": 0.0204,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/compressor.py:166(_gaede_record)",
+      "ncalls": 9030,
+      "tottime_s": 0.0109,
+      "cumtime_s": 0.016,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/reservoir.py:76(<genexpr>)",
+      "ncalls": 16128,
+      "tottime_s": 0.0062,
+      "cumtime_s": 0.0088,
+      "class": "project_python"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/linalg/_linalg.py:363(solve)",
+      "ncalls": 724,
+      "tottime_s": 0.0049,
+      "cumtime_s": 0.0127,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "abep_sim/compressor.py:111(_cbar)",
+      "ncalls": 9030,
+      "tottime_s": 0.0039,
+      "cumtime_s": 0.0047,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:181(_gaede_summary)",
+      "ncalls": 470,
+      "tottime_s": 0.0039,
+      "cumtime_s": 0.009,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/compressor.py:119(run)",
+      "ncalls": 263,
+      "tottime_s": 0.0037,
+      "cumtime_s": 0.083,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method builtins.sum>",
+      "ncalls": 4272,
+      "tottime_s": 0.0032,
+      "cumtime_s": 0.0065,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:401(<dictcomp>)",
+      "ncalls": 18,
+      "tottime_s": 0.0032,
+      "cumtime_s": 0.0038,
+      "class": "project_python"
+     },
+     {
+      "function": "<built-in method builtins.min>",
+      "ncalls": 9620,
+      "tottime_s": 0.003,
+      "cumtime_s": 0.0042,
+      "class": "interpreter_builtin"
+     },
+     {
+      "function": "abep_sim/reservoir.py:77(<genexpr>)",
+      "ncalls": 8448,
+      "tottime_s": 0.0029,
+      "cumtime_s": 0.0041,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/reservoir.py:36(_cbar)",
+      "ncalls": 6144,
+      "tottime_s": 0.0027,
+      "cumtime_s": 0.0033,
+      "class": "project_python"
+     }
+    ],
+    "project_hotspots_by_tottime": [
+     "abep_sim/compressor.py:197(_run_once)",
+     "abep_sim/thermal.py:52(solve_network)",
+     "abep_sim/reservoir.py:48(steady_state)",
+     "abep_sim/compressor.py:166(_gaede_record)",
+     "abep_sim/reservoir.py:76(<genexpr>)"
+    ],
+    "cprofile_overhead_ratio": 2.578
+   },
+   "port_judgement": {
+    "reference_workload_id": "robust_design_default_per_candidate",
+    "reference_workload_s": 1.48,
+    "reference_workload_s_measured": null,
+    "interpreter_level_fraction": 0.8526,
+    "addressable_interpreter_s_upper_bound": 1.26,
+    "judgement": "NOT_A_BOTTLENECK",
+    "thresholds_s": {
+     "port": 60.0,
+     "marginal": 10.0
+    },
+    "qualifier": "DEFER_PORT: drives the superseded 0-D Hall closure (plasma_devices / archengine Hall branch); absolute Hall results are withdrawn (CLAUDE.md 'Superseded / withdrawn') - timed only, outputs never quoted; porting a driver of withdrawn physics adds no decision value - re-profile the F7/F8 driver once it exists"
+   }
+  },
+  {
+   "id": "mission_run_generic",
+   "category": "mission_propagation",
+   "entry_point": "abep_sim.mission5.run_mission_generic -> abep_sim.mission_env.propagate",
+   "description": "secular J2 / energy-balance propagator (orbit-averaged: no intra-orbit resolution, so 'one orbit-day' = 24 h / dt_h steps) with TPMC-ROM intake and AO ageing per step; golden case_mission set-up (closure result reused, propulsion map, P_bus_max 2500 W)",
+   "params": {
+    "hours": 26000.0,
+    "dt_h": 6.0
+   },
+   "unit_of_work": "propagator steps",
+   "covered_by": null,
+   "physics_note": "drives the superseded 0-D Hall closure (plasma_devices / archengine Hall branch); absolute Hall results are withdrawn (CLAUDE.md 'Superseded / withdrawn') - timed only, outputs never quoted (the closure feeds the thrust map)",
+   "reference": {
+    "id": "rfp_mission_26000h",
+    "units_of_work": 4333,
+    "basis": "abep_sim/constants.py RFP.mission_hours = 26000 h at dt_h 6 (run_mission_generic default)",
+    "method": "MEASURED directly (the full-mode workload is the 26000 h mission)"
+   },
+   "setup_note": "closure computed once in set-up (untimed) unless archengine_close_architecture ran first",
+   "repeats": 3,
+   "wall_s": [
+    3.253,
+    3.0653,
+    3.1101
+   ],
+   "cpu_s": [
+    3.2515,
+    3.0647,
+    3.1087
+   ],
+   "median_wall_s": 3.1101,
+   "median_cpu_s": 3.1087,
+   "cpu_over_wall": 1.0,
+   "units_of_work": 4333,
+   "median_wall_s_per_unit": 0.0007178,
+   "loadavg_1min_before_after": [
+    0.86,
+    0.88
+   ],
+   "output_fingerprint": {
+    "D_mean_mN": 34.6787307149,
+    "T_mean_mN": 34.6787307149,
+    "fired_hours": 25998.0,
+    "min_alt_km": 200.0,
+    "mission_closed": true
+   },
+   "deterministic_across_repeats": true,
+   "profile": {
+    "profiled_wall_s": 4.5471,
+    "total_function_calls": 2170398,
+    "function_calls_per_profiled_s": 477316.1,
+    "tottime_fractions": {
+     "project_python": 0.6312,
+     "interpreter_builtin": 0.0506,
+     "stdlib_python": 0.0064,
+     "library_python_wrapper": 0.2247,
+     "native_array_call": 0.0871
+    },
+    "interpreter_level_fraction": 0.6882,
+    "numpy_level_fraction": 0.3118,
+    "top_by_cumulative": [
+     {
+      "function": "abep_sim/mission5.py:130(run_mission_generic)",
+      "ncalls": 1,
+      "tottime_s": 0.0007,
+      "cumtime_s": 4.547,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/mission_env.py:133(propagate)",
+      "ncalls": 1,
+      "tottime_s": 0.0786,
+      "cumtime_s": 4.5453,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/mission5.py:146(drag_fn)",
+      "ncalls": 4333,
+      "tottime_s": 0.0426,
+      "cumtime_s": 4.2761,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/intake.py:62(collection)",
+      "ncalls": 4333,
+      "tottime_s": 0.0792,
+      "cumtime_s": 2.5785,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:408(__call__)",
+      "ncalls": 4333,
+      "tottime_s": 0.0774,
+      "cumtime_s": 2.4769,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:431(<dictcomp>)",
+      "ncalls": 4333,
+      "tottime_s": 0.0134,
+      "cumtime_s": 2.1493,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:400(_row)",
+      "ncalls": 12999,
+      "tottime_s": 0.0323,
+      "cumtime_s": 2.1358,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:401(<dictcomp>)",
+      "ncalls": 12999,
+      "tottime_s": 1.622,
+      "cumtime_s": 2.0669,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/mission_env.py:83(spacecraft_drag)",
+      "ncalls": 4333,
+      "tottime_s": 0.0279,
+      "cumtime_s": 1.4657,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/mission_env.py:76(pointing_factors)",
+      "ncalls": 4333,
+      "tottime_s": 0.4776,
+      "cumtime_s": 1.4378,
+      "class": "project_python"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/lib/_function_base_impl.py:4052(percentile)",
+      "ncalls": 4333,
+      "tottime_s": 0.0333,
+      "cumtime_s": 0.6834,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/lib/_function_base_impl.py:4500(_quantile_unchecked)",
+      "ncalls": 4333,
+      "tottime_s": 0.0117,
+      "cumtime_s": 0.6077,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/lib/_function_base_impl.py:3815(_ureduce)",
+      "ncalls": 4335,
+      "tottime_s": 0.015,
+      "cumtime_s": 0.5961,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/lib/_function_base_impl.py:4639(_quantile_ureduce_func)",
+      "ncalls": 4333,
+      "tottime_s": 0.0121,
+      "cumtime_s": 0.579,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/lib/_function_base_impl.py:4714(_quantile)",
+      "ncalls": 4333,
+      "tottime_s": 0.1004,
+      "cumtime_s": 0.5603,
+      "class": "library_python_wrapper"
+     }
+    ],
+    "top_by_tottime": [
+     {
+      "function": "abep_sim/intake_tpmc.py:401(<dictcomp>)",
+      "ncalls": 12999,
+      "tottime_s": 1.622,
+      "cumtime_s": 2.0669,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/mission_env.py:76(pointing_factors)",
+      "ncalls": 4333,
+      "tottime_s": 0.4776,
+      "cumtime_s": 1.4378,
+      "class": "project_python"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/lib/_stride_tricks_impl.py:514(broadcast_arrays)",
+      "ncalls": 64995,
+      "tottime_s": 0.1194,
+      "cumtime_s": 0.4346,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/lib/_stride_tricks_impl.py:446(_broadcast_shape)",
+      "ncalls": 64995,
+      "tottime_s": 0.1106,
+      "cumtime_s": 0.1206,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "abep_sim/transient.py:59(_grid_state)",
+      "ncalls": 12999,
+      "tottime_s": 0.1019,
+      "cumtime_s": 0.1256,
+      "class": "project_python"
+     },
+     {
+      "function": "<method 'partition' of 'numpy.ndarray' objects>",
+      "ncalls": 4334,
+      "tottime_s": 0.1016,
+      "cumtime_s": 0.1016,
+      "class": "native_array_call"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/lib/_function_base_impl.py:4714(_quantile)",
+      "ncalls": 4333,
+      "tottime_s": 0.1004,
+      "cumtime_s": 0.5603,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/_ufunc_config.py:496(inner)",
+      "ncalls": 4333,
+      "tottime_s": 0.0903,
+      "cumtime_s": 0.103,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'reduce' of 'numpy.ufunc' objects>",
+      "ncalls": 34696,
+      "tottime_s": 0.0852,
+      "cumtime_s": 0.0852,
+      "class": "native_array_call"
+     },
+     {
+      "function": "<built-in method numpy.array>",
+      "ncalls": 259981,
+      "tottime_s": 0.0796,
+      "cumtime_s": 0.0796,
+      "class": "native_array_call"
+     },
+     {
+      "function": "abep_sim/intake.py:62(collection)",
+      "ncalls": 4333,
+      "tottime_s": 0.0792,
+      "cumtime_s": 2.5785,
+      "class": "project_python"
+     },
+     {
+      "function": "abep_sim/mission_env.py:133(propagate)",
+      "ncalls": 1,
+      "tottime_s": 0.0786,
+      "cumtime_s": 4.5453,
+      "class": "project_python"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/lib/_stride_tricks_impl.py:575(<listcomp>)",
+      "ncalls": 64995,
+      "tottime_s": 0.078,
+      "cumtime_s": 0.1576,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "abep_sim/intake_tpmc.py:408(__call__)",
+      "ncalls": 4333,
+      "tottime_s": 0.0774,
+      "cumtime_s": 2.4769,
+      "class": "project_python"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/lib/_function_base_impl.py:4679(_get_indexes)",
+      "ncalls": 4333,
+      "tottime_s": 0.0489,
+      "cumtime_s": 0.1143,
+      "class": "library_python_wrapper"
+     }
+    ],
+    "project_hotspots_by_tottime": [
+     "abep_sim/intake_tpmc.py:401(<dictcomp>)",
+     "abep_sim/mission_env.py:76(pointing_factors)",
+     "abep_sim/transient.py:59(_grid_state)",
+     "abep_sim/intake.py:62(collection)",
+     "abep_sim/mission_env.py:133(propagate)"
+    ],
+    "cprofile_overhead_ratio": 1.462
+   },
+   "port_judgement": {
+    "reference_workload_id": "rfp_mission_26000h",
+    "reference_workload_s": 3.11,
+    "reference_workload_s_measured": null,
+    "interpreter_level_fraction": 0.6882,
+    "addressable_interpreter_s_upper_bound": 2.14,
+    "judgement": "NOT_A_BOTTLENECK",
+    "thresholds_s": {
+     "port": 60.0,
+     "marginal": 10.0
+    },
+    "qualifier": "DEFER_PORT: drives the superseded 0-D Hall closure (plasma_devices / archengine Hall branch); absolute Hall results are withdrawn (CLAUDE.md 'Superseded / withdrawn') - timed only, outputs never quoted (the closure feeds the thrust map); porting a driver of withdrawn physics adds no decision value - re-profile the F7/F8 driver once it exists"
+   }
+  },
+  {
+   "id": "p3_view_factors_verify",
+   "category": "p3_view_factor",
+   "entry_point": "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py::view_factors",
+   "description": "full two-body enclosure of the P3 builder's closed_form_verification() (SYNTHETIC normalized geometry, every zone emits; 7 zones) at the verification resolution RES_VERIFY read from docs/experiments/hall_icp/p3_coupled_thermal/build_p3_coupled_thermal.py",
+   "params": {
+    "res": [
+     16,
+     32,
+     64
+    ],
+    "res_source": "RES_VERIFY",
+    "emitting_zones": [
+     "H.up",
+     "H.down",
+     "H.outer",
+     "I.up",
+     "I.down",
+     "I.outer",
+     "I.bore"
+    ]
+   },
+   "unit_of_work": "view_factors calls",
+   "covered_by": null,
+   "reference": {
+    "id": "p3_closed_form_verification",
+    "units_of_work": 1,
+    "basis": "build_p3_coupled_thermal.py closed_form_verification(): this full-enclosure call plus six single-emitter calls (one emitting zone each) at RES_VERIFY; the parametric study runs at RES_STUDY and is not extrapolated here",
+    "method": "EXTRAPOLATED: median seconds per full-enclosure call x 1 (the six single-emitter calls of the same function are not included)"
+   },
+   "scaling_probe": {
+    "points": [
+     {
+      "res": [
+       8,
+       16,
+       32
+      ],
+      "median_wall_s": 0.0064
+     },
+     {
+      "res": [
+       16,
+       32,
+       64
+      ],
+      "median_wall_s": 0.0459
+     }
+    ],
+    "work_ratio": 8.0,
+    "time_ratio": 7.172,
+    "time_ratio_over_work_ratio": 0.896,
+    "reading": "close to 1: cost scales with array size (numpy-level work dominates); well below 1: fixed per-call / per-step interpreter overhead dominates"
+   },
+   "repeats": 3,
+   "wall_s": [
+    0.0741,
+    0.0449,
+    0.0454
+   ],
+   "cpu_s": [
+    0.0741,
+    0.0449,
+    0.0454
+   ],
+   "median_wall_s": 0.0454,
+   "median_cpu_s": 0.0454,
+   "cpu_over_wall": 1.0,
+   "units_of_work": 1,
+   "median_wall_s_per_unit": 0.0453928,
+   "loadavg_1min_before_after": [
+    0.89,
+    0.89
+   ],
+   "output_fingerprint": {
+    "F_H.down_I.up": 0.515014648438,
+    "rays_per_call": 229376,
+    "reciprocity_max_rel": 0.00215053763441,
+    "summation_max_abs": 0.0,
+    "surfaces": 7
+   },
+   "deterministic_across_repeats": true,
+   "profile": {
+    "profiled_wall_s": 0.0467,
+    "total_function_calls": 2449,
+    "function_calls_per_profiled_s": 52405.6,
+    "tottime_fractions": {
+     "project_python": 0.8558,
+     "interpreter_builtin": 0.0043,
+     "stdlib_python": 0.0003,
+     "library_python_wrapper": 0.1054,
+     "native_array_call": 0.0342
+    },
+    "interpreter_level_fraction": 0.8604,
+    "numpy_level_fraction": 0.1396,
+    "top_by_cumulative": [
+     {
+      "function": "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:496(view_factors)",
+      "ncalls": 1,
+      "tottime_s": 0.0008,
+      "cumtime_s": 0.0464,
+      "class": "project_python"
+     },
+     {
+      "function": "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:420(trace)",
+      "ncalls": 7,
+      "tottime_s": 0.0028,
+      "cumtime_s": 0.0402,
+      "class": "project_python"
+     },
+     {
+      "function": "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:367(_first_hits)",
+      "ncalls": 7,
+      "tottime_s": 0.0351,
+      "cumtime_s": 0.036,
+      "class": "project_python"
+     },
+     {
+      "function": "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:464(emit_zone)",
+      "ncalls": 7,
+      "tottime_s": 0.0002,
+      "cumtime_s": 0.0053,
+      "class": "project_python"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/shape_base.py:378(stack)",
+      "ncalls": 14,
+      "tottime_s": 0.0026,
+      "cumtime_s": 0.0027,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:455(_dirs_cosine)",
+      "ncalls": 7,
+      "tottime_s": 0.0006,
+      "cumtime_s": 0.0011,
+      "class": "project_python"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/numeric.py:323(full)",
+      "ncalls": 35,
+      "tottime_s": 0.0008,
+      "cumtime_s": 0.0009,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/fromnumeric.py:48(_wrapfunc)",
+      "ncalls": 21,
+      "tottime_s": 0.0,
+      "cumtime_s": 0.0006,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/lib/_shape_base_impl.py:1199(tile)",
+      "ncalls": 21,
+      "tottime_s": 0.0002,
+      "cumtime_s": 0.0005,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/lib/_function_base_impl.py:5050(meshgrid)",
+      "ncalls": 7,
+      "tottime_s": 0.0001,
+      "cumtime_s": 0.0005,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/fromnumeric.py:2436(any)",
+      "ncalls": 63,
+      "tottime_s": 0.0001,
+      "cumtime_s": 0.0004,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'repeat' of 'numpy.ndarray' objects>",
+      "ncalls": 28,
+      "tottime_s": 0.0004,
+      "cumtime_s": 0.0004,
+      "class": "native_array_call"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/fromnumeric.py:86(_wrapreduction_any_all)",
+      "ncalls": 63,
+      "tottime_s": 0.0001,
+      "cumtime_s": 0.0003,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/lib/_stride_tricks_impl.py:514(broadcast_arrays)",
+      "ncalls": 7,
+      "tottime_s": 0.0,
+      "cumtime_s": 0.0003,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'reduce' of 'numpy.ufunc' objects>",
+      "ncalls": 77,
+      "tottime_s": 0.0003,
+      "cumtime_s": 0.0003,
+      "class": "native_array_call"
+     }
+    ],
+    "top_by_tottime": [
+     {
+      "function": "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:367(_first_hits)",
+      "ncalls": 7,
+      "tottime_s": 0.0351,
+      "cumtime_s": 0.036,
+      "class": "project_python"
+     },
+     {
+      "function": "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:420(trace)",
+      "ncalls": 7,
+      "tottime_s": 0.0028,
+      "cumtime_s": 0.0402,
+      "class": "project_python"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/shape_base.py:378(stack)",
+      "ncalls": 14,
+      "tottime_s": 0.0026,
+      "cumtime_s": 0.0027,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:496(view_factors)",
+      "ncalls": 1,
+      "tottime_s": 0.0008,
+      "cumtime_s": 0.0464,
+      "class": "project_python"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/numeric.py:323(full)",
+      "ncalls": 35,
+      "tottime_s": 0.0008,
+      "cumtime_s": 0.0009,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:455(_dirs_cosine)",
+      "ncalls": 7,
+      "tottime_s": 0.0006,
+      "cumtime_s": 0.0011,
+      "class": "project_python"
+     },
+     {
+      "function": "<method 'repeat' of 'numpy.ndarray' objects>",
+      "ncalls": 28,
+      "tottime_s": 0.0004,
+      "cumtime_s": 0.0004,
+      "class": "native_array_call"
+     },
+     {
+      "function": "<method 'reduce' of 'numpy.ufunc' objects>",
+      "ncalls": 77,
+      "tottime_s": 0.0003,
+      "cumtime_s": 0.0003,
+      "class": "native_array_call"
+     },
+     {
+      "function": "<built-in method numpy.zeros>",
+      "ncalls": 28,
+      "tottime_s": 0.0003,
+      "cumtime_s": 0.0003,
+      "class": "native_array_call"
+     },
+     {
+      "function": "<method 'searchsorted' of 'numpy.ndarray' objects>",
+      "ncalls": 7,
+      "tottime_s": 0.0003,
+      "cumtime_s": 0.0003,
+      "class": "native_array_call"
+     },
+     {
+      "function": "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:464(emit_zone)",
+      "ncalls": 7,
+      "tottime_s": 0.0002,
+      "cumtime_s": 0.0053,
+      "class": "project_python"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/lib/_stride_tricks_impl.py:373(_broadcast_to)",
+      "ncalls": 14,
+      "tottime_s": 0.0002,
+      "cumtime_s": 0.0002,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/lib/_shape_base_impl.py:1199(tile)",
+      "ncalls": 21,
+      "tottime_s": 0.0002,
+      "cumtime_s": 0.0005,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "/usr/local/lib/python3.11/dist-packages/numpy/_core/_ufunc_config.py:472(__enter__)",
+      "ncalls": 14,
+      "tottime_s": 0.0001,
+      "cumtime_s": 0.0002,
+      "class": "library_python_wrapper"
+     },
+     {
+      "function": "<method 'copy' of 'numpy.ndarray' objects>",
+      "ncalls": 21,
+      "tottime_s": 0.0001,
+      "cumtime_s": 0.0001,
+      "class": "native_array_call"
+     }
+    ],
+    "project_hotspots_by_tottime": [
+     "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:367(_first_hits)",
+     "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:420(trace)",
+     "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:496(view_factors)",
+     "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:455(_dirs_cosine)",
+     "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:464(emit_zone)"
+    ],
+    "cprofile_overhead_ratio": 1.029
+   },
+   "port_judgement": {
+    "reference_workload_id": "p3_closed_form_verification",
+    "reference_workload_s": 0.05,
+    "reference_workload_s_measured": null,
+    "interpreter_level_fraction": 0.8604,
+    "addressable_interpreter_s_upper_bound": 0.04,
+    "judgement": "NOT_A_BOTTLENECK",
+    "thresholds_s": {
+     "port": 60.0,
+     "marginal": 10.0
+    },
+    "scaling_time_over_work": 0.896
+   }
+  },
+  {
+   "id": "frozen_intake_surface_build",
+   "category": "intake_response_surface",
+   "entry_point": "abep_sim.intake_tpmc.response_surface (exact computation of build_frozen_surface)",
+   "description": "the complete frozen intake-surface computation (360 points, n=20000, species O/N2/O2); no file is written; one repeat only (checks the reduced-grid extrapolation)",
+   "params": {
+    "n": 20000
+   },
+   "unit_of_work": "response points",
+   "covered_by": "intake_response_surface_reduced",
+   "reference": null,
+   "repeats_override": 1,
+   "cprofile": false,
+   "repeats": 1,
+   "wall_s": [
+    141.5343
+   ],
+   "cpu_s": [
+    141.5064
+   ],
+   "median_wall_s": 141.5343,
+   "median_cpu_s": 141.5064,
+   "cpu_over_wall": 1.0,
+   "units_of_work": 360,
+   "median_wall_s_per_unit": 0.3931508,
+   "loadavg_1min_before_after": [
+    0.89,
+    1.02
+   ],
+   "output_fingerprint": {
+    "points": 360,
+    "sum_C_D": 891.771620444,
+    "sum_eta_c": 234.436885564
+   },
+   "deterministic_across_repeats": true,
+   "port_judgement": {
+    "judgement": "COVERED_BY",
+    "covered_by": "intake_response_surface_reduced",
+    "basis": "kernel-level measurement; ranked through the workload that calls it (avoids double counting)"
+   }
+  }
+ ],
+ "ranking": [
+  {
+   "id": "uq_modular_run_uq",
+   "category": "uq_monte_carlo",
+   "addressable_interpreter_s_upper_bound": 94.86,
+   "reference_workload_s": 110.24,
+   "judgement": "PORT_CANDIDATE",
+   "deferred": true,
+   "rank": 1
+  },
+  {
+   "id": "intake_response_surface_reduced",
+   "category": "intake_response_surface",
+   "addressable_interpreter_s_upper_bound": 88.98,
+   "reference_workload_s": 150.68,
+   "judgement": "PORT_CANDIDATE",
+   "deferred": false,
+   "rank": 2
+  },
+  {
+   "id": "archengine_close_architecture",
+   "category": "whole_system_evaluation",
+   "addressable_interpreter_s_upper_bound": 16.28,
+   "reference_workload_s": 18.94,
+   "judgement": "MARGINAL",
+   "deferred": true,
+   "rank": 3
+  },
+  {
+   "id": "system_evaluate_gas_path",
+   "category": "whole_system_evaluation",
+   "addressable_interpreter_s_upper_bound": 2.89,
+   "reference_workload_s": 2.9,
+   "judgement": "NOT_A_BOTTLENECK",
+   "deferred": false,
+   "rank": 4
+  },
+  {
+   "id": "mission_run_generic",
+   "category": "mission_propagation",
+   "addressable_interpreter_s_upper_bound": 2.14,
+   "reference_workload_s": 3.11,
+   "judgement": "NOT_A_BOTTLENECK",
+   "deferred": true,
+   "rank": 5
+  },
+  {
+   "id": "compressor_size_for",
+   "category": "compressor_search",
+   "addressable_interpreter_s_upper_bound": 1.91,
+   "reference_workload_s": 1.91,
+   "judgement": "NOT_A_BOTTLENECK",
+   "deferred": false,
+   "rank": 6
+  },
+  {
+   "id": "uq6_robust_design",
+   "category": "robust_design_search",
+   "addressable_interpreter_s_upper_bound": 1.26,
+   "reference_workload_s": 1.48,
+   "judgement": "NOT_A_BOTTLENECK",
+   "deferred": true,
+   "rank": 7
+  },
+  {
+   "id": "p3_view_factors_verify",
+   "category": "p3_view_factor",
+   "addressable_interpreter_s_upper_bound": 0.04,
+   "reference_workload_s": 0.05,
+   "judgement": "NOT_A_BOTTLENECK",
+   "deferred": false,
+   "rank": 8
+  }
+ ],
+ "rust_order_comparison": [
+  {
+   "a9_7_position": 1,
+   "a9_7_item": "TPMC particle-tracing kernel",
+   "f0_category": "tpmc_particle_tracing",
+   "f0_rank": 2,
+   "f0_judgement": "PORT_CANDIDATE",
+   "f0_deferred": false,
+   "via": "tpmc_trace_channel is a kernel of intake_response_surface_reduced (COVERED_BY); rank shown is that workload's"
+  },
+  {
+   "a9_7_position": 2,
+   "a9_7_item": "large intake geometry-grid generation",
+   "f0_category": "intake_response_surface",
+   "f0_rank": 2,
+   "f0_judgement": "PORT_CANDIDATE",
+   "f0_deferred": false,
+   "via": null
+  },
+  {
+   "a9_7_position": 3,
+   "a9_7_item": "compressor design-space search",
+   "f0_category": "compressor_search",
+   "f0_rank": 6,
+   "f0_judgement": "NOT_A_BOTTLENECK",
+   "f0_deferred": false,
+   "via": null
+  },
+  {
+   "a9_7_position": 4,
+   "a9_7_item": "Monte-Carlo/full-chain UQ driver",
+   "f0_category": "uq_monte_carlo",
+   "f0_rank": 1,
+   "f0_judgement": "PORT_CANDIDATE",
+   "f0_deferred": true,
+   "via": null
+  },
+  {
+   "a9_7_position": 5,
+   "a9_7_item": "mission propagation",
+   "f0_category": "mission_propagation",
+   "f0_rank": 5,
+   "f0_judgement": "NOT_A_BOTTLENECK",
+   "f0_deferred": true,
+   "via": null
+  },
+  {
+   "a9_7_position": 6,
+   "a9_7_item": "P3 ray/view-factor sampling",
+   "f0_category": "p3_view_factor",
+   "f0_rank": 8,
+   "f0_judgement": "NOT_A_BOTTLENECK",
+   "f0_deferred": false,
+   "via": null
+  }
+ ],
+ "robust_design_search_status": {
+  "exists_in_base": true,
+  "routine": "abep_sim.uq6.robust_design (legacy phase-6 routine over the superseded 0-D Hall chain)",
+  "a9_7_f8_robust_optimizer": "PENDING (lane fo_a9_7_f7_f8_coupled_optimizer; not in base)"
+ },
+ "findings": [
+  "1. uq_modular_run_uq: reference workload run_uq_default ~ 110.24 s; interpreter-level share 0.8605; addressable <= 94.86 s -> PORT_CANDIDATE (DEFER: legacy driver of withdrawn physics); hotspots abep_sim/plasma_chem.py:61(k_rate), abep_sim/plasma_devices.py:398(balance), abep_sim/plasma_devices.py:390(rates)",
+  "2. intake_response_surface_reduced: reference workload frozen_intake_surface_build ~ 150.68 s; interpreter-level share 0.5905; addressable <= 88.98 s -> PORT_CANDIDATE; hotspots abep_sim/intake_tpmc.py:147(trace_channel), abep_sim/intake_tpmc.py:112(_diffuse), abep_sim/intake_tpmc.py:103(_flux_weighted_entry)",
+  "3. archengine_close_architecture: reference workload golden_check ~ 18.94 s; interpreter-level share 0.8598; addressable <= 16.28 s -> MARGINAL (DEFER: legacy driver of withdrawn physics); hotspots abep_sim/plasma_chem.py:61(k_rate), abep_sim/plasma_devices.py:398(balance), abep_sim/plasma_devices.py:390(rates)",
+  "4. system_evaluate_gas_path: reference workload uq6_monte_carlo_default ~ 2.9 s; interpreter-level share 0.9974; addressable <= 2.89 s -> NOT_A_BOTTLENECK; hotspots abep_sim/compressor.py:197(_run_once), abep_sim/reservoir.py:48(steady_state), abep_sim/compressor.py:166(_gaede_record)",
+  "5. mission_run_generic: reference workload rfp_mission_26000h ~ 3.11 s; interpreter-level share 0.6882; addressable <= 2.14 s -> NOT_A_BOTTLENECK (DEFER: legacy driver of withdrawn physics); hotspots abep_sim/intake_tpmc.py:401(<dictcomp>), abep_sim/mission_env.py:76(pointing_factors), abep_sim/transient.py:59(_grid_state)",
+  "6. compressor_size_for: reference workload uq6_pareto_default ~ 1.91 s; interpreter-level share 1.0001; addressable <= 1.91 s -> NOT_A_BOTTLENECK; hotspots abep_sim/compressor.py:197(_run_once), abep_sim/compressor.py:166(_gaede_record), abep_sim/compressor.py:111(_cbar)",
+  "7. uq6_robust_design: reference workload robust_design_default_per_candidate ~ 1.48 s; interpreter-level share 0.8526; addressable <= 1.26 s -> NOT_A_BOTTLENECK (DEFER: legacy driver of withdrawn physics); hotspots abep_sim/compressor.py:197(_run_once), abep_sim/thermal.py:52(solve_network), abep_sim/reservoir.py:48(steady_state)",
+  "8. p3_view_factors_verify: reference workload p3_closed_form_verification ~ 0.05 s; interpreter-level share 0.8604; addressable <= 0.04 s -> NOT_A_BOTTLENECK; hotspots docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:367(_first_hits), docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:420(trace), docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py:496(view_factors)",
+  "Frozen intake-surface build measured once at 141.5343 s vs 150.68 s extrapolated from the reduced grid (ratio 0.94).",
+  "Scaling probe tpmc_trace_channel: 10.0x more work cost 3.218x more time (time/work 0.322): fixed per-step / per-call interpreter overhead is a large share at the smaller size.",
+  "Scaling probe p3_view_factors_verify: 8.0x more work cost 7.172x more time (time/work 0.896): array work dominates.",
+  "Per-call costs for budgeting the A9.7 synthesis searches (machine-specific runtimes, not physics): tpmc_intake_response 0.1836307 s per response point; compressor_size_for 0.009533 s per size_for call; compressor_run 0.0024422 s per run call; system_evaluate_gas_path 0.0145072 s per evaluation; uq_modular_run_uq 0.5512086 s per paired sample; uq6_robust_design 0.0247265 s per MC sample."
+ ],
+ "interface_demands": [
+  {
+   "id": "F0-ID-01",
+   "direction": "F0 -> rust",
+   "counterparty": "fo_a9_7_rust_kernels (PENDING abep_core/)",
+   "demand": "port only workloads ranked PORT_CANDIDATE without a DEFER qualifier; keep a Python wrapper with identical I/O; re-run this harness (same commands) on the Rust-enabled tree and report the same keys",
+   "status": "OPEN"
+  },
+  {
+   "id": "F0-ID-02",
+   "direction": "rust -> F0",
+   "counterparty": "fo_a9_7_rust_kernels (PENDING abep_core/)",
+   "demand": "for every admitted kernel: the preregistered numerical tolerance and the Python-reference vs Rust parity record, so the post-port baseline can cite them",
+   "status": "PENDING"
+  },
+  {
+   "id": "F0-ID-03",
+   "direction": "F1 -> F0",
+   "counterparty": "fo_a9_7_f1_intake_synthesis (PENDING abep_sim/design/intake_synthesis.py)",
+   "demand": "the number of intake_response / response_surface points and the particle count per candidate of the F1 Pareto search, so the TPMC usage weight can be replaced by the real F1 call count",
+   "status": "PENDING"
+  },
+  {
+   "id": "F0-ID-04",
+   "direction": "F3 -> F0",
+   "counterparty": "fo_a9_7_f3_compressor_synthesis (PENDING abep_sim/design/compressor_synthesis.py)",
+   "demand": "the number of DragCompressor.run evaluations per F3 design search",
+   "status": "PENDING"
+  },
+  {
+   "id": "F0-ID-05",
+   "direction": "F7/F8 -> F0",
+   "counterparty": "fo_a9_7_f7_f8_coupled_optimizer (path not yet registered)",
+   "demand": "the F7/F8 driver entry point and sample counts; the UQ / robust-design workloads here time legacy drivers of withdrawn 0-D Hall physics and must be re-profiled on the new driver before any port decision",
+   "status": "PENDING"
+  },
+  {
+   "id": "F0-ID-06",
+   "direction": "F6 -> F0",
+   "counterparty": "fo_a9_7_f6_icp_geometry (PENDING abep_sim/design/icp_geometry_synthesis.py)",
+   "demand": "view-factor calls per ICP geometry candidate and their resolution (the F6 search waits for P1/P2 evidence)",
+   "status": "PENDING"
+  },
+  {
+   "id": "F0-ID-07",
+   "direction": "F0 -> F1/F3/F6/F7",
+   "counterparty": "all A9.7 synthesis lanes",
+   "demand": "measured per-call costs (median_wall_s_per_unit) for budgeting search sizes; values are machine-specific runtimes, never physics inputs",
+   "status": "SUPPLIED"
+  }
+ ],
+ "open_owner_questions": [
+  {
+   "id": "F0-OQ-01",
+   "question": "Accept the preregistered port thresholds (PORT_CANDIDATE >= 60 s, MARGINAL >= 10 s of addressable interpreter time per reference workload) or set others before the Rust lane selects kernels?",
+   "default_if_unanswered": "thresholds as registered; Rust lane may not port a NOT_A_BOTTLENECK workload"
+  },
+  {
+   "id": "F0-OQ-02",
+   "question": "Should the baseline be re-measured on a dedicated (unloaded) machine before a Rust kernel is admitted, given that this run shared the CPU with other A9.7 lanes?",
+   "default_if_unanswered": "rankings are used as order-of-magnitude only; the Rust lane re-measures Python vs Rust on the same machine in one session"
+  }
+ ],
+ "m16_impact": [
+  {
+   "m16_row": null,
+   "state_change": "none - F0 measures software runtime only; no requirement, evidence or gate status changes"
+  }
+ ],
+ "what_this_is_not": [
+  "physics evidence of any kind",
+  "a performance requirement or acceptance criterion",
+  "a quotation of any Hall, thrust or mission result (several workloads drive withdrawn 0-D Hall physics; outputs appear only as determinism fingerprints)",
+  "a port decision (the Rust lane decides within the A9.7 admission rules)"
+ ],
+ "total_harness_wall_s": 266.2
+}
