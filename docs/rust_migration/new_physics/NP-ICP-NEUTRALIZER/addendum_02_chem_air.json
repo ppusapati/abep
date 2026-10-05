@@ -1,0 +1,249 @@
+{
+ "schema": "new_physics_prereg_addendum_v1",
+ "id": "NP-ICP-NEUTRALIZER_addendum_02_chem_air",
+ "model_id": "NP-ICP-NEUTRALIZER",
+ "date": "2026-10-05",
+ "applies_to": {
+  "prereg": "prereg_v1.json",
+  "prereg_lock": "prereg_lock_v1.json",
+  "locked_sha256": {
+   "prereg_v1.json": "5d496ea6538ef65999c3cb8b1f4274622dc060889b1cf14f46a0a02a855a91a8",
+   "PREREG.md": "3af97940032b2ebff530d92c886a6690ceca30a21ed6d8bf5354d7cca79f36cc"
+  },
+  "prereg_lock_sha256": "e98747e04694bf849164350be3ef4c7b458fccc918777c224066eebf55fa82af",
+  "preceding_addenda": [
+   {
+    "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/addendum_01_a9_30.json",
+    "sha256": "f8e122492bde654d74a155f4544e51ce0b13ed639b2f510aa453384e333569c9"
+   }
+  ]
+ },
+ "governing_record": {
+  "path": "docs/decisions/OD_2026_10_05_A9_30_PUSH_AUTHORIZATION_O_O2_CHEMISTRY_AND_BUS_BOUNDARY_RULINGS.md",
+  "sha256": "17401e982c1acc2b58847d919a75a473e981d2233d952153d8234e410578a42f",
+  "message_text_sha256": "465f2d95e808f3bef5f4d2488e21112b3dca7b033c72ceb40ddc6c1eb7124618",
+  "sections": "3-4"
+ },
+ "chemistry_contract": {
+  "id": "NP-ICP-CHEM-AIR",
+  "version": "v1",
+  "status": "PREREGISTERED_NOT_IMPLEMENTED",
+  "prereg": "docs/rust_migration/new_physics/NP-ICP-CHEM-AIR/prereg_v1.json",
+  "lock": "docs/rust_migration/new_physics/NP-ICP-CHEM-AIR/prereg_lock_v1.json",
+  "lock_sha256": "f42c22699a31acd4e29854823150d7b7c75b35eb8718fb90ade83bdd3d7e46ef",
+  "locked_sha256": {
+   "prereg_v1.json": "24b74bc6e485e9156059b132c8f5ccb4b854b971a58b879eb34a960b76f70e9a",
+   "PREREG.md": "556cdc9b598e9d67306f77f05d68b2ea87d06a520777d715407c261546a5a642"
+  },
+  "commit": "a9bdc332d57e52bb422a9e221b1f51900f94c2fb",
+  "interface": "IF-CHEM-REG-v1 (abep-chem provider, abep-icp consumer)"
+ },
+ "nature": "re-pointing only: chemistry inputs, gap rows and chemistry domain checks of prereg_v1 now name their source in the committed NP-ICP-CHEM-AIR v1 contract (A9.30 secs. 3-4; NP-ICP-CHEM-AIR CONF-CHEM-01..04). prereg_v1 and its lock are unchanged; no equation, input key, output key, status rule, tolerance, comparison criterion or admission criterion of prereg_v1 is edited or relaxed. Every entry below is IDENTICAL (same rule, new pointer) or STRICTER_OR_EQUAL (the contract adds conditions); none is weaker. Where the contract and prereg_v1 differ, the stricter text applies.",
+ "repointings": [
+  {
+   "item": "IN-16 (chemistry set)",
+   "was": "producer hallthruster_bridge/propellants; N2/N REGISTERED; O/O2, Xe, Ar INCOMPLETE_EVIDENCE",
+   "now": "producer IF-CHEM-REG-v1 (NP-ICP-CHEM-AIR registry under data/chemistry/icp/, drafted location OQ-CHEM-05). The abep-n2n-0.11 N2/N tables are reused by reference (path + sha256, NP-ICP-CHEM-AIR reuse_pins; hallthruster_bridge/ is never edited). Per-process status, source, domain, threshold, conservation and interpolation rule: NP-ICP-CHEM-AIR processes[] (AIR-*, XE-*). Ar stays INCOMPLETE_EVIDENCE (EM-AR not covered by the contract).",
+   "effect": "STRICTER_OR_EQUAL",
+   "why": "same tables and statuses; the Hall verdicts no longer transfer automatically (contract RU-03, CA-11), and every registry file needs a contract validity entry"
+  },
+  {
+   "item": "IN-05 (atmospheric species and delivered composition)",
+   "was": "INCOMPLETE_EVIDENCE (delivered O/O2 split TBD; O/O2 chemistry unpromoted)",
+   "now": "species set and composition entry: NP-ICP-CHEM-AIR species_set (MR-0..MR-7 on the 196 design states; composition_entry). Delivered composition still not registered -> NOT_EVALUATED for flight points (contract SP-06); He / Ar / NO materiality bounds SB-He, SB-Ar, SB-NO added (contract SP-04)",
+   "effect": "STRICTER_OR_EQUAL",
+   "why": "adds species-materiality conditions; the delivered-composition status is unchanged"
+  },
+  {
+   "item": "IN-06 (Xe contingency feed) and operating mode XE_CONTINGENCY / EM-XE",
+   "was": "INCOMPLETE_EVIDENCE (no Xe rate set)",
+   "now": "Xe processes XE-ION-01..03, XE-EXC-01..02, XE-EL-01, XE-REC-01, XE-WALL-01, XE-NL-01; admission NP-ICP-CHEM-AIR admission_criteria.XE_CONTINGENCY (AD-XE-01..06), independent of every AIR item (A9.30 sec. 4)",
+   "effect": "STRICTER_OR_EQUAL",
+   "why": "INCOMPLETE_EVIDENCE today, as in v1; leaving it needs AD-XE-02..04"
+  },
+  {
+   "item": "operating mode AIR_PRIMARY (and addendum_01 G-A930-AIR)",
+   "was": "INCOMPLETE_EVIDENCE (O/O2 chemistry unpromoted; O/O2 split TBD); addendum_01: INCOMPLETE_EVIDENCE until NP-ICP-CHEM-AIR is committed and its set admitted",
+   "now": "'admitted for the model domain' = NP-ICP-CHEM-AIR admission_criteria.AIR_PRIMARY AD-AIR-01..10 over D-CHEM; reason NP_ICP_CHEM_AIR_NOT_ADMITTED (addendum_01) stays until then",
+   "effect": "STRICTER_OR_EQUAL",
+   "why": "defines the addendum_01 gate; nothing is admitted today"
+  },
+  {
+   "item": "operating mode EM-O2B",
+   "was": "N2 + O2, NO_ATOMIC_O; O2 tables unpromoted; negative ions not represented",
+   "now": "uses the full AIR set (atomic O appears as a dissociation product even with a NO_ATOMIC_O feed; contract species_set.retained.EM_modes, OQ-CHEM-11)",
+   "effect": "STRICTER_OR_EQUAL",
+   "why": "adds the atomic-O processes as requirements"
+  },
+  {
+   "item": "operating mode EM-N2 and NE-06",
+   "was": "chemistry exists within its limits; ICP completeness not audited",
+   "now": "N2/N subset of the contract registry; ICP completeness by CA-ICP-v1 on CG-N2",
+   "effect": "IDENTICAL",
+   "why": "same tables; the not-audited status stays until CA-ICP-v1 verdicts exist"
+  },
+  {
+   "item": "EQ-06 / sec. 8 'semantics' (rate integral and validity semantics)",
+   "was": "direct Maxwellian integral of the registered representation via abep-chem; rate_validity.toml entry required; activity beyond limit -> OUT_OF_DOMAIN; unresolved -> INCOMPLETE_EVIDENCE",
+   "now": "contract common_rules IX-01..IX-08 (same integral, same 1e-12 reaction-weighted semantics; validity entries in data/chemistry/icp/rate_validity_icp.toml, mirrored for reused Hall tables)",
+   "effect": "IDENTICAL",
+   "why": "same rule, new registry file"
+  },
+  {
+   "item": "sec. 8 'reused_tables' and 'reaction_set'",
+   "was": "abep-n2n-0.11 tables listed in sec. 8; reaction set abep-n2n-0.11 with its variant configurations",
+   "now": "contract processes AIR-ION-03, -04, -06..-10, AIR-DIS-01, AIR-EXC-01..03, AIR-EL-01..02 and reuse_pins (43 tables, sha256); ICP reaction-set labels abep-icp-air-0.x / abep-icp-xe-0.x (drafted, OQ-CHEM-06); variants stay an unweighted scenario set (IX-08 = UQ-02)",
+   "effect": "IDENTICAL",
+   "why": "same tables and variants; label separated from the Hall label"
+  },
+  {
+   "item": "sec. 8 'never_used'",
+   "was": "HallThruster.jl-shipped ionization_N2_N2+.dat and elastic_N2.dat; every plasma_chem.py rate or constant",
+   "now": "unchanged; also contract EXC-02, RU-04 (aochem.py values never used)",
+   "effect": "STRICTER_OR_EQUAL",
+   "why": "adds aochem.py to the exclusion"
+  },
+  {
+   "item": "sec. 8 'completeness_domain' and OQ-NPICP-04",
+   "was": "Hall-domain N2/N verdict does not transfer; ICP-domain audit is OQ-NPICP-04",
+   "now": "contract completeness_audit CA-ICP-v1 (domain D-CHEM, thresholds copied from n2_completeness_audit_v1 plus F_P_coll, F_e_loss, alpha_neg at 1 %, ambiguity and cross-check addenda verbatim). OQ-NPICP-04 stays OPEN for the owner; the contract drafts an answer, it does not decide it",
+   "effect": "STRICTER_OR_EQUAL",
+   "why": "same thresholds plus three added metrics"
+  },
+  {
+   "item": "sec. 8 'process_class_completeness_gate'",
+   "was": "every process class modelled or excluded with a justification; unaddressed -> INCOMPLETE_EVIDENCE",
+   "now": "unchanged; implemented per species and class by the contract registry (AD-AIR-02)",
+   "effect": "IDENTICAL",
+   "why": "same gate"
+  },
+  {
+   "item": "CHG-01 (atomic O)",
+   "was": "MT and excitation not built; ionization v0 DRAFT",
+   "now": "AIR-ION-01 (IN_REPO_VERIFIED, scenario pair), AIR-EL-04 (to acquire), AIR-EXC-09 (to acquire), AIR-EXC-10, AIR-ION-15; AD-AIR-07; atomic O never an N2 surrogate (contract EXC-05, UE-05, FC-CHEM-05)",
+   "effect": "STRICTER_OR_EQUAL",
+   "why": "blocks AIR_PRIMARY and EM-O2B as before"
+  },
+  {
+   "item": "CHG-02 (O2)",
+   "was": "v0 DRAFT unpromoted; dissociation double counting below 13.5 eV; excitation above 20 eV; vib / rot",
+   "now": "AIR-ION-02, -05, -11 and AIR-EL-03 (version-of-record check), AIR-DIS-02 (INCOMPLETE_EVIDENCE; envelope only per UE-02), AIR-EXC-04..08",
+   "effect": "STRICTER_OR_EQUAL",
+   "why": "same gaps, now per process"
+  },
+  {
+   "item": "CHG-03 (negative ions)",
+   "was": "O- not represented; closes with a sourced attachment / detachment / mutual-neutralization set and a v2 preregistration; blocks any O2-bearing case",
+   "now": "AIR-NEG-01..04 and NEG-CRIT (contract completeness_audit). Any O2-bearing case stays INCOMPLETE_EVIDENCE. A passed NEG-CRIT is evidence for, not a substitute for, the v2 preregistration CHG-03 already requires",
+   "effect": "STRICTER_OR_EQUAL",
+   "why": "no relaxation: the v2 requirement stands"
+  },
+  {
+   "item": "CHG-04 (Xe)",
+   "was": "no Xe electron-impact set",
+   "now": "XE-ION-01..03, XE-EXC-01..02, XE-EL-01, XE-REC-01 (sources to acquire; contract VER-CHEM-13)",
+   "effect": "STRICTER_OR_EQUAL",
+   "why": "same status today"
+  },
+  {
+   "item": "CHG-05 (Ar)",
+   "was": "no Ar set (EM-AR)",
+   "now": "unchanged; not covered by the contract (its SB-Ar bound needs Ar data only for materiality in air)",
+   "effect": "IDENTICAL",
+   "why": "no change"
+  },
+  {
+   "item": "CHG-06 (ion-neutral cross sections for h factors)",
+   "was": "parent-owned (IN-17)",
+   "now": "unchanged and parent-owned; the contract only references it (AIR-IM-02, XE-IM-01)",
+   "effect": "IDENTICAL",
+   "why": "no change"
+  },
+  {
+   "item": "CHG-07 / IN-18 (wall recombination / quenching)",
+   "was": "[0, 1] two-point envelope until sourced",
+   "now": "AIR-WALL-02..04, -06 with the same [0, 1] envelopes (UE-02); molecular-ion wall branching pair AIR-WALL-01 added",
+   "effect": "STRICTER_OR_EQUAL",
+   "why": "same envelope plus one more bounding pair"
+  },
+  {
+   "item": "CHG-08 / IN-23 (radiative vs metastable disposition)",
+   "was": "bounding pair",
+   "now": "AIR-EXC-12, XE-EXC-02 (same bounding pair)",
+   "effect": "IDENTICAL",
+   "why": "same pair"
+  },
+  {
+   "item": "CHG-09 (atomic N excitation)",
+   "was": "not registered; decided by the ICP completeness audit",
+   "now": "AIR-EXC-11 (tier 2, INCOMPLETE_EVIDENCE)",
+   "effect": "IDENTICAL",
+   "why": "same status"
+  },
+  {
+   "item": "DOM-01 (3/2 T_e <= table limit for every active reaction)",
+   "was": "OUT_OF_DOMAIN",
+   "now": "same check against the contract validity entries (IX-04, IX-05)",
+   "effect": "IDENTICAL",
+   "why": "same rule"
+  },
+  {
+   "item": "DOM-02 (N2/N: 2 <= T_e <= 30 eV; vib / rot from 0.2 eV)",
+   "was": "applies to N2/N",
+   "now": "contract domain D-CHEM: 2 <= T_e <= 30 eV for every AIR and XE set; low-threshold window 0.2-30 eV only for the channels listed in D-CHEM; outside -> OUT_OF_DOMAIN. Extending the lower limit is OQ-CHEM-03 (owner)",
+   "effect": "STRICTER_OR_EQUAL",
+   "why": "the same bounds now also apply to O/O2 and Xe"
+  },
+  {
+   "item": "DOM-03 (no unresolved file; no file without an entry)",
+   "was": "INCOMPLETE_EVIDENCE / MODEL_ERROR",
+   "now": "same, plus registry lock / sha256 mismatch -> MODEL_ERROR (contract IX-06, consumption rules, FC-CHEM-01, FC-CHEM-04)",
+   "effect": "STRICTER_OR_EQUAL",
+   "why": "adds pin checks"
+  },
+  {
+   "item": "DOM-12 (no electronegative species)",
+   "was": "INCOMPLETE_EVIDENCE",
+   "now": "unchanged outcome: an O2-bearing case is INCOMPLETE_EVIDENCE. The contract's NEG-CRIT is the preregistered evidence test the parent will consult; changing DOM-12 to admit an electropositive treatment for O2-bearing cases needs a parent v2 preregistration (as CHG-03 states), never this addendum",
+   "effect": "IDENTICAL",
+   "why": "no relaxation (NP-ICP-CHEM-AIR CONF-CHEM-04 handled as a reference only)"
+  },
+  {
+   "item": "DOM-13 (Maxwellian EEDF)",
+   "was": "flag MAXWELLIAN_ASSUMED",
+   "now": "unchanged; also the contract domain condition",
+   "effect": "IDENTICAL",
+   "why": "same"
+  },
+  {
+   "item": "NE-03 / NE-04 (AIR_PRIMARY, EM-O2B; XE_CONTINGENCY, EM-XE)",
+   "was": "INCOMPLETE_EVIDENCE",
+   "now": "same statuses; reasons point to the contract items above and admission_criteria.today",
+   "effect": "IDENTICAL",
+   "why": "same"
+  },
+  {
+   "item": "OQ-NPICP-05 (Xe and Ar sources)",
+   "was": "open",
+   "now": "still OPEN; Xe candidates listed in the contract XE set (OQ-CHEM-13); Ar unchanged",
+   "effect": "IDENTICAL",
+   "why": "not resolved here"
+  },
+  {
+   "item": "OUT-12 (per-reaction chemistry validity)",
+   "was": "per-reaction validity reported",
+   "now": "same, keyed by contract process ids; provenance adds the contract lock sha256 and registry sha256 (IF-CHEM-REG-v1)",
+   "effect": "IDENTICAL",
+   "why": "identifier mapping only"
+  },
+  {
+   "item": "sec. 15 fail-closed tests and sec. 17 admission rule",
+   "was": "LC / CC / NV / FC items; abep-chem rate evaluator admitted",
+   "now": "unchanged, plus the contract's FC-CHEM-01..10 on the chemistry path and, per mode, the contract admission (AD-AIR / AD-XE)",
+   "effect": "STRICTER_OR_EQUAL",
+   "why": "adds tests and conditions only"
+  }
+ ],
+ "unchanged": "prereg_v1.json and PREREG.md (locked sha256 above) and prereg_lock_v1.json; addendum_01; every OQ-NPICP item other than as noted (OQ-NPICP-04 and -05 stay OPEN); every CONF item; every equation, input / output key, tolerance, status rule and comparison criterion.",
+ "consistency_rule": "If prereg_v1, addendum_01 and NP-ICP-CHEM-AIR v1 differ on a chemistry item, the strictest text applies. A future change to any re-pointed item follows the change rule of the document that owns it (parent: v2 / dated addendum; contract: v2 / dated addendum)."
+}
