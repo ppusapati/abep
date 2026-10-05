@@ -13,6 +13,7 @@ contexts required checks on `main` (exact names and procedure: `docs/ci/BRANCH_P
 |---|---|---|
 | `.github/workflows/ci.yml` | `pull_request`, `push` to `main` or to the pinned execution branch `claude/nifty-ramanujan-w68f9z` | job **integrity**: `python scripts/ci_checks.py`; job **tests** (pymsis present / absent): `python -m pytest -q tests`, the rule-9 outcome check, `python -m abep_sim.golden check` |
 | `.github/workflows/julia-smoke.yml` | `workflow_dispatch` only (manual, with a confirmation box) | pinned HallThruster.jl install and **one** `P5N2_SMOKE=1` construction job; never score-bearing |
+| `.github/workflows/rust-workspace.yml` | `pull_request`, `push` to `main` or `integration/simulation-complete`; full history; not required yet (CI_PLAN.md § 1 principle 4) | pinned rustc 1.94.1; abep_core sources == `parity_report_v2` sha256 (A9.30 sec. 6); `cargo fmt -- --check` (members only); clippy `-D warnings`; `cargo test --workspace --locked`; `abep-ci` bid-source-guard, test-register, groundtest-isolation |
 
 To make CI a merge gate, the repository owner has to mark the three status contexts (`Repository integrity
 (scripts/ci_checks.py)`, `Tests + golden benchmarks (pymsis present)`, `Tests + golden benchmarks (pymsis absent)`) as
