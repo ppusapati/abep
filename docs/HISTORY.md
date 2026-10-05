@@ -3895,3 +3895,24 @@ are reused from the pinned v3 builder).
   check). Test: no price / currency information in any package file; A9.27 is a package-level post-source decision
   (does not make the technical source non-final). MPV3Q-01 appears in no package document (only the internal owner
   brief, not for upload); the stale owner-question state record is repaired post-bid.
+
+## 2026-10-05 — CLAUDE.md governance update CA-01..CA-04 + language direction (A9.29 sec. 10; no physics change)
+
+- Governing record: `docs/decisions/OD_2026_10_05_A9_29_RUST_PLAN_V3_1_RULINGS_AND_START_AUTHORIZATION.md` secs. 8-11 and 15.
+  It is done before substantive Rust implementation, as sec. 10 requires. Historical decision files are not rewritten.
+- **CA-01.** Rule 2 now applies to the ACTIVE canonical golden set. `golden_v1` / `golden_v2` are immutable archive/regression
+  history. They stay reproducible in the Python reference environment and are not Rust end-state parity cases (A9.28 RM-OQ-06).
+- **CA-02.** The execution baseline is `integration/simulation-complete`. The 2026-09-26 pin of
+  `claude/nifty-ramanujan-w68f9z` at `debce16` is recorded as history.
+- **CA-03.** Stale pre-Rust / pre-bid wording updated:
+  - "Python owns the whole chain" is replaced by the language direction: target simulator Rust, Hall solver HallThruster.jl,
+    Python as migration reference until admitted and then archive-only.
+  - The frozen bid pair is stated (5eee4b8 / 2de86ab, lineage b5849af -> 2de86ab).
+  - The A9.29 sec. 15 simulation-complete chain is stated.
+  - The key-modules list is labelled as the Python migration reference.
+- **CA-04.** Rule 9 has two parts:
+  - The Rust-era active rule (RM-OQ-05): `cargo test --workspace --locked` all pass, no silent skip, fail-closed assertions
+    for missing evidence, the empty Hall credible set asserted explicitly, and a registered platform/hardware test class.
+  - The Python migration-reference counts (5 skipped / 1 strict xfail), kept as archive-era reproduction metadata. Python CI
+    and `scripts/ci_checks.py` are unchanged.
+- No code, configuration, frozen data, golden or number changed.
