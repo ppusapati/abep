@@ -19,8 +19,12 @@ license = "LicenseRef-Proprietary"
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["float_roundtrip"] }
 sha2 = "0.10"
+# gzip decompression of the frozen .csv.gz datasets (A9.17 DATA_SIZE canonical storage); default pure-Rust backend.
+flate2 = "1"
 abep-types = { path = "crates/abep-types" }
 abep-provenance = { path = "crates/abep-provenance" }
+abep-data = { path = "crates/abep-data" }
+abep-atmos = { path = "crates/abep-atmos" }
 
 [profile.release]
 opt-level = 3
