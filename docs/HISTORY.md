@@ -4130,3 +4130,36 @@ main, and the bid record `5eee4b8` / `b5849af` / `2de86ab`. `git diff 2de86ab..H
   `config/MANIFEST.json` (`abep_config_manifest_v1`) verification (unpinned file or hash / size mismatch -> MODEL_ERROR).
 - `cargo test --workspace --locked`: 6 passed, 0 ignored; clippy -D warnings and rustfmt clean. Python suite and
   `scripts/ci_checks.py` unaffected (11/11).
+
+## 2026-10-05 — ES-2 environment in Rust: frozen atmosphere, orbit / design states and the 196-state execution (lane B1, SC-WP-01; A9.29 sec. 6; no number changed)
+
+- Four parity contracts, each committed alone before any comparison (template v3.1; Python reference `96db552`):
+  - `C-ABEP_SIM_ATMOSPHERE_PY` (`481570d`, sha256 `37bcef92…`): the frozen-scenario reader of `atmosphere.py`.
+  - `C-ABEP_SIM_CONSTANTS_PY` (`12df461`, `1f7bef49…`): the physical constants. `RFPConstraints` stays out of physics.
+  - `C-ABEP_SIM_MISSION_ENV_PY-CONSTANTS_KERNEL` (`a838533`, `83cc3513…`): J2, OMEGA_E, `Spacecraft`,
+    `sso_inclination_deg`. The inventory has no K-id for this pulled-forward kernel, so it is a function-subset contract.
+  - `C-ABEP_SIM_ATMOSPHERE_ORBIT_PY` (`a5a84e6`, `fd7b9f75…`): a coupled group with the `atmosphere_orbit_v2` frozen wind
+    paths and the `intake_synthesis` design-state loader / view, plus the 196-state execution.
+  - Tolerances come from an a priori floating-point bound: r_rel 1e-12 (atmosphere.py), 1e-10 (orbit log interpolation),
+    1e-9 m/s (winds), k_ulp 4 (geometry), and the reference's own DESIGN_V2_REL_TOL 1e-12 for the frozen-file re-derivation.
+- Rust (`433c402`): `abep-types::constants`; new `abep-data` (hash-pinned readers: `config/MANIFEST.json` → model set,
+  design-state set reference, sidecar container / CSV sha256; missing or altered data is MODEL_ERROR); new `abep-atmos`
+  (msis21, mission_env kernel, orbit accessor / sampler, HWM14 v2 winds, design_states_v2 selection rule, frozen-data
+  check, design-state view, 196-state execution, `abep-env-parity` CLI). No live NRLMSIS / HWM14, no Fortran FFI. New
+  workspace dependency `flate2`. Harness `scripts/rust_migration/es2_env_parity.py` (`7caaca2`).
+- One scoring run per contract, all **PARITY_PASS**; reports and captured reference outputs committed in `7f43b4f`,
+  `80ac7c7`, `ace0a7a` and `69481e5`:
+  - atmosphere.py: 1754 vectors, every field bit-identical.
+  - constants: all ten bit-identical.
+  - mission_env kernel: everything bit-identical, refusals matched.
+  - orbit group: 3749 vectors, 158085 observations, max relative difference 4.6e-14 (log-interpolated), 1.1e-13 m/s
+    (winds), 64 domain-error vectors and 10 refusal trees as registered.
+- 196-state execution: 196 / 196 EVALUATED, ids in file order, every state reproduced from the frozen dataset (max
+  1.42e-14 ≤ 1e-12), set `60073e21…`, dataset `c0ce282e…`; two runs byte-identical.
+- Open: `atmosphere_orbit_v2` relative_flow / flow_state / orbit_states stay PYTHON_REFERENCE (not needed by the
+  execution; own contract or owner retirement before SC-WP-01 completes). Python-reference observations: the
+  `atmosphere()` memo keyed on round(alt, 3) is not a pure function of its key (rule 5); `_frozen()` keeps a half-filled
+  cache after a failed JSON read. The harness was developed with development-seed comparisons before its commit
+  (disclosed in the reports).
+- `cargo test --workspace --locked`: 29 passed, 0 ignored; clippy -D warnings and rustfmt (members) clean;
+  `scripts/ci_checks.py` 11/11; pytest 4226 passed, 5 skipped, 1 xfailed.
