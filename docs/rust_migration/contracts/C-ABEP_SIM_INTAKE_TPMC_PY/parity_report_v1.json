@@ -1,0 +1,894 @@
+{
+ "schema": "abep_rust_parity_report_v3_1",
+ "contract": {
+  "id": "PARITY-C-ABEP_SIM_INTAKE_TPMC_PY-V1",
+  "path": "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_TPMC_PY/parity_prereg_v1.json",
+  "sha256": "1e6a80fbeb848b4e229ad35438f88f4d8f5041658ab71ade6a1d81aa87e66a6d"
+ },
+ "contract_sha256": "1e6a80fbeb848b4e229ad35438f88f4d8f5041658ab71ade6a1d81aa87e66a6d",
+ "verdict": "ADMITTED",
+ "entry_points": {
+  "E1_intake_response": {
+   "result": "PARITY_PASS",
+   "counts": {
+    "AGREE_EXACT": 114,
+    "WITHIN": 310,
+    "PASS": 159
+   },
+   "aggregate": {
+    "C_D": {
+     "N": 53,
+     "abs_sum_z_over_sqrtN": 1.2406754558146524,
+     "within": true
+    },
+    "K_back": {
+     "N": 53,
+     "abs_sum_z_over_sqrtN": 0.03240439338825362,
+     "within": true
+    },
+    "CR_passive": {
+     "N": 53,
+     "abs_sum_z_over_sqrtN": 0.568629221717986,
+     "within": true
+    },
+    "mean_wall_hits": {
+     "N": 53,
+     "abs_sum_z_over_sqrtN": 0.5947137961949378,
+     "within": true
+    },
+    "eta_c": {
+     "N": 41,
+     "abs_sum_z_over_sqrtN": 1.156024981840617,
+     "within": true
+    },
+    "eta_open": {
+     "N": 41,
+     "abs_sum_z_over_sqrtN": 1.1560249818413277,
+     "within": true
+    },
+    "unresolved_fraction": {
+     "N": 16,
+     "abs_sum_z_over_sqrtN": 2.2212421263131508,
+     "within": true
+    }
+   }
+  },
+  "E2_clausing_transmission": {
+   "result": "PARITY_PASS",
+   "counts": {
+    "WITHIN": 11
+   },
+   "aggregate": {
+    "K_back": {
+     "N": 11,
+     "abs_sum_z_over_sqrtN": 0.07399306704588937,
+     "within": true
+    }
+   }
+  },
+  "E3_response_surface": {
+   "result": "PARITY_PASS",
+   "counts": {
+    "PASS": 72
+   },
+   "aggregate": {}
+  },
+  "E4_IntakeSurface": {
+   "result": "PARITY_PASS",
+   "counts": {
+    "PASS": 17143
+   },
+   "aggregate": {}
+  },
+  "E5_surface_v2_gate": {
+   "result": "PARITY_PASS",
+   "counts": {
+    "PASS": 1
+   },
+   "aggregate": {}
+  }
+ },
+ "invariants": {
+  "INV-09_rust_status": true,
+  "INV-02": {
+   "python": true,
+   "rust": true
+  },
+  "INV-06": {
+   "python": true,
+   "rust": true
+  },
+  "INV-07": {
+   "python": true,
+   "rust": true
+  },
+  "INV-03": {
+   "python": true,
+   "rust": true
+  },
+  "INV-01_E4": {
+   "python": true,
+   "rust": true
+  },
+  "INV-01_E1_E2": {
+   "python": true,
+   "rust": true
+  },
+  "INV-04": {
+   "held": true,
+   "interpolators_checked": 30
+  },
+  "INV-08": {
+   "held": true,
+   "rust": {
+    "AMU": 1.6605390666e-27,
+    "K_B": 1.380649e-23,
+    "K_B_abep_core": 1.380649e-23,
+    "M_SPECIES": {
+     "N2": 4.64950938648e-26,
+     "O": 2.65686250656e-26,
+     "O2": 5.31372501312e-26,
+     "Xe": 2.1802877944458e-25
+    }
+   }
+  },
+  "INV-05_frozen_unchanged": {
+   "held": true
+  }
+ },
+ "conservation": {
+  "CONS-01": {
+   "python": true,
+   "rust": true
+  }
+ },
+ "domain_error": {
+  "all_pass": true,
+  "cases": [
+   {
+    "id": "DE-01",
+    "python": {
+     "class": "ValueError",
+     "key": "OUT_OF_BOUNDS",
+     "message": "intake ROM extrapolation: L/d=2.999, phi=0.85, alpha=0.5, theta=0.0 outside {'L_over_d': (np.int64(3), np.int64(20)), 'phi': (np.float64(0.8), np.float64(0.9)), 'alpha': (np.float64(0.0), np.float64(1.0)), 'theta_deg': (np.float64(0.0), np.float64(5.0))}"
+    },
+    "rust": {
+     "key": "OUT_OF_BOUNDS",
+     "message": "OUT_OF_DOMAIN: OUT_OF_BOUNDS: intake ROM extrapolation: L/d=2.999, phi=0.85, alpha=0.5, theta=0 outside [(3.0, 20.0), (0.8, 0.9), (0.0, 1.0), (0.0, 5.0)]",
+     "status": "OUT_OF_DOMAIN"
+    },
+    "expected_python_key": "OUT_OF_BOUNDS",
+    "expected_rust": [
+     "OUT_OF_BOUNDS",
+     "OUT_OF_DOMAIN"
+    ],
+    "status": "PASS"
+   },
+   {
+    "id": "DE-02",
+    "python": {
+     "class": "ValueError",
+     "key": "OUT_OF_BOUNDS",
+     "message": "intake ROM extrapolation: L/d=10.0, phi=0.95, alpha=0.5, theta=0.0 outside {'L_over_d': (np.int64(3), np.int64(20)), 'phi': (np.float64(0.8), np.float64(0.9)), 'alpha': (np.float64(0.0), np.float64(1.0)), 'theta_deg': (np.float64(0.0), np.float64(5.0))}"
+    },
+    "rust": {
+     "key": "OUT_OF_BOUNDS",
+     "message": "OUT_OF_DOMAIN: OUT_OF_BOUNDS: intake ROM extrapolation: L/d=10, phi=0.95, alpha=0.5, theta=0 outside [(3.0, 20.0), (0.8, 0.9), (0.0, 1.0), (0.0, 5.0)]",
+     "status": "OUT_OF_DOMAIN"
+    },
+    "expected_python_key": "OUT_OF_BOUNDS",
+    "expected_rust": [
+     "OUT_OF_BOUNDS",
+     "OUT_OF_DOMAIN"
+    ],
+    "status": "PASS"
+   },
+   {
+    "id": "DE-03",
+    "python": {
+     "class": "ValueError",
+     "key": "OUT_OF_BOUNDS",
+     "message": "intake ROM extrapolation: L/d=10.0, phi=0.85, alpha=-0.01, theta=0.0 outside {'L_over_d': (np.int64(3), np.int64(20)), 'phi': (np.float64(0.8), np.float64(0.9)), 'alpha': (np.float64(0.0), np.float64(1.0)), 'theta_deg': (np.float64(0.0), np.float64(5.0))}"
+    },
+    "rust": {
+     "key": "OUT_OF_BOUNDS",
+     "message": "OUT_OF_DOMAIN: OUT_OF_BOUNDS: intake ROM extrapolation: L/d=10, phi=0.85, alpha=-0.01, theta=0 outside [(3.0, 20.0), (0.8, 0.9), (0.0, 1.0), (0.0, 5.0)]",
+     "status": "OUT_OF_DOMAIN"
+    },
+    "expected_python_key": "OUT_OF_BOUNDS",
+    "expected_rust": [
+     "OUT_OF_BOUNDS",
+     "OUT_OF_DOMAIN"
+    ],
+    "status": "PASS"
+   },
+   {
+    "id": "DE-04",
+    "python": {
+     "class": "ValueError",
+     "key": "OUT_OF_BOUNDS",
+     "message": "intake ROM extrapolation: L/d=10.0, phi=0.85, alpha=1.0000001, theta=0.0 outside {'L_over_d': (np.int64(3), np.int64(20)), 'phi': (np.float64(0.8), np.float64(0.9)), 'alpha': (np.float64(0.0), np.float64(1.0)), 'theta_deg': (np.float64(0.0), np.float64(5.0))}"
+    },
+    "rust": {
+     "key": "OUT_OF_BOUNDS",
+     "message": "OUT_OF_DOMAIN: OUT_OF_BOUNDS: intake ROM extrapolation: L/d=10, phi=0.85, alpha=1.0000001, theta=0 outside [(3.0, 20.0), (0.8, 0.9), (0.0, 1.0), (0.0, 5.0)]",
+     "status": "OUT_OF_DOMAIN"
+    },
+    "expected_python_key": "OUT_OF_BOUNDS",
+    "expected_rust": [
+     "OUT_OF_BOUNDS",
+     "OUT_OF_DOMAIN"
+    ],
+    "status": "PASS"
+   },
+   {
+    "id": "DE-05",
+    "python": {
+     "class": "ValueError",
+     "key": "OUT_OF_BOUNDS",
+     "message": "intake ROM extrapolation: L/d=10.0, phi=0.85, alpha=0.5, theta=5.5 outside {'L_over_d': (np.int64(3), np.int64(20)), 'phi': (np.float64(0.8), np.float64(0.9)), 'alpha': (np.float64(0.0), np.float64(1.0)), 'theta_deg': (np.float64(0.0), np.float64(5.0))}"
+    },
+    "rust": {
+     "key": "OUT_OF_BOUNDS",
+     "message": "OUT_OF_DOMAIN: OUT_OF_BOUNDS: intake ROM extrapolation: L/d=10, phi=0.85, alpha=0.5, theta=5.5 outside [(3.0, 20.0), (0.8, 0.9), (0.0, 1.0), (0.0, 5.0)]",
+     "status": "OUT_OF_DOMAIN"
+    },
+    "expected_python_key": "OUT_OF_BOUNDS",
+    "expected_rust": [
+     "OUT_OF_BOUNDS",
+     "OUT_OF_DOMAIN"
+    ],
+    "status": "PASS"
+   },
+   {
+    "id": "DE-06",
+    "python": {
+     "class": "ValueError",
+     "key": "OUT_OF_BOUNDS",
+     "message": "intake ROM extrapolation: L/d=10.0, phi=0.85, alpha=0.5, theta=nan outside {'L_over_d': (np.int64(3), np.int64(20)), 'phi': (np.float64(0.8), np.float64(0.9)), 'alpha': (np.float64(0.0), np.float64(1.0)), 'theta_deg': (np.float64(0.0), np.float64(5.0))}"
+    },
+    "rust": {
+     "key": "OUT_OF_BOUNDS",
+     "message": "OUT_OF_DOMAIN: OUT_OF_BOUNDS: intake ROM extrapolation: L/d=10, phi=0.85, alpha=0.5, theta=NaN outside [(3.0, 20.0), (0.8, 0.9), (0.0, 1.0), (0.0, 5.0)]",
+     "status": "OUT_OF_DOMAIN"
+    },
+    "expected_python_key": "OUT_OF_BOUNDS",
+    "expected_rust": [
+     "OUT_OF_BOUNDS",
+     "OUT_OF_DOMAIN"
+    ],
+    "status": "PASS"
+   },
+   {
+    "id": "DE-07",
+    "python": {
+     "class": "ValueError",
+     "key": "FRACTIONS_REQUIRED",
+     "message": "intake ROM: a species-resolved table needs explicit free-stream mass fractions ['N2', 'O', 'O2'] (no default composition is assumed)"
+    },
+    "rust": {
+     "key": "FRACTIONS_REQUIRED",
+     "message": "OUT_OF_DOMAIN: FRACTIONS_REQUIRED: intake ROM: a species-resolved table needs explicit free-stream mass fractions [\"N2\", \"O\", \"O2\"]",
+     "status": "OUT_OF_DOMAIN"
+    },
+    "expected_python_key": "FRACTIONS_REQUIRED",
+    "expected_rust": [
+     "FRACTIONS_REQUIRED",
+     "OUT_OF_DOMAIN"
+    ],
+    "status": "PASS"
+   },
+   {
+    "id": "DE-08",
+    "python": {
+     "class": "ValueError",
+     "key": "FRACTIONS_REQUIRED",
+     "message": "intake ROM: a species-resolved table needs explicit free-stream mass fractions ['N2', 'O', 'O2'] (no default composition is assumed)"
+    },
+    "rust": {
+     "key": "FRACTIONS_REQUIRED",
+     "message": "OUT_OF_DOMAIN: FRACTIONS_REQUIRED: intake ROM: a species-resolved table needs explicit free-stream mass fractions [\"N2\", \"O\", \"O2\"]",
+     "status": "OUT_OF_DOMAIN"
+    },
+    "expected_python_key": "FRACTIONS_REQUIRED",
+    "expected_rust": [
+     "FRACTIONS_REQUIRED",
+     "OUT_OF_DOMAIN"
+    ],
+    "status": "PASS"
+   },
+   {
+    "id": "DE-09",
+    "python": {
+     "class": "ValueError",
+     "key": "FRACTION_INVALID",
+     "message": "intake ROM: mass fractions must be finite and >= 0, got {'O': -0.1}"
+    },
+    "rust": {
+     "key": "FRACTION_INVALID",
+     "message": "OUT_OF_DOMAIN: FRACTION_INVALID: intake ROM: mass fractions must be finite and >= 0, got [(\"O\", -0.1)]",
+     "status": "OUT_OF_DOMAIN"
+    },
+    "expected_python_key": "FRACTION_INVALID",
+    "expected_rust": [
+     "FRACTION_INVALID",
+     "OUT_OF_DOMAIN"
+    ],
+    "status": "PASS"
+   },
+   {
+    "id": "DE-10",
+    "python": {
+     "class": "ValueError",
+     "key": "FRACTION_INVALID",
+     "message": "intake ROM: mass fractions must be finite and >= 0, got {'O': nan}"
+    },
+    "rust": {
+     "key": "FRACTION_INVALID",
+     "message": "OUT_OF_DOMAIN: FRACTION_INVALID: intake ROM: mass fractions must be finite and >= 0, got [(\"O\", NaN)]",
+     "status": "OUT_OF_DOMAIN"
+    },
+    "expected_python_key": "FRACTION_INVALID",
+    "expected_rust": [
+     "FRACTION_INVALID",
+     "OUT_OF_DOMAIN"
+    ],
+    "status": "PASS"
+   },
+   {
+    "id": "DE-11",
+    "python": {
+     "class": "ValueError",
+     "key": "FRACTION_INVALID",
+     "message": "intake ROM: mass fractions must be finite and >= 0, got {'O': inf}"
+    },
+    "rust": {
+     "key": "FRACTION_INVALID",
+     "message": "OUT_OF_DOMAIN: FRACTION_INVALID: intake ROM: mass fractions must be finite and >= 0, got [(\"O\", inf)]",
+     "status": "OUT_OF_DOMAIN"
+    },
+    "expected_python_key": "FRACTION_INVALID",
+    "expected_rust": [
+     "FRACTION_INVALID",
+     "OUT_OF_DOMAIN"
+    ],
+    "status": "PASS"
+   },
+   {
+    "id": "DE-12",
+    "python": {
+     "class": "ValueError",
+     "key": "FOREIGN_SPECIES",
+     "message": "intake ROM: species ['Ar'] with non-zero fraction are not in the frozen table ['N2', 'O', 'O2'] (no silent drop / renormalisation)"
+    },
+    "rust": {
+     "key": "FOREIGN_SPECIES",
+     "message": "OUT_OF_DOMAIN: FOREIGN_SPECIES: intake ROM: species [\"Ar\"] with non-zero fraction are not in the frozen table [\"N2\", \"O\", \"O2\"]",
+     "status": "OUT_OF_DOMAIN"
+    },
+    "expected_python_key": "FOREIGN_SPECIES",
+    "expected_rust": [
+     "FOREIGN_SPECIES",
+     "OUT_OF_DOMAIN"
+    ],
+    "status": "PASS"
+   },
+   {
+    "id": "DE-13",
+    "python": {
+     "class": "ValueError",
+     "key": "ALL_ZERO",
+     "message": "intake ROM: all mass fractions are zero for species ['N2', 'O', 'O2']"
+    },
+    "rust": {
+     "key": "ALL_ZERO",
+     "message": "OUT_OF_DOMAIN: ALL_ZERO: intake ROM: all mass fractions are zero for species [\"N2\", \"O\", \"O2\"]",
+     "status": "OUT_OF_DOMAIN"
+    },
+    "expected_python_key": "ALL_ZERO",
+    "expected_rust": [
+     "ALL_ZERO",
+     "OUT_OF_DOMAIN"
+    ],
+    "status": "PASS"
+   },
+   {
+    "id": "DE-14[0.0]",
+    "python": {
+     "class": "ValueError",
+     "key": "M_MEAN_BUILD_REQUIRED",
+     "message": "IntakeSurface: a species-resolved table needs m_mean_build_kg (mixture mean molecular mass of the build atmosphere that normalises the C_D rows); no default is assumed"
+    },
+    "rust": {
+     "key": "M_MEAN_BUILD_REQUIRED",
+     "message": "OUT_OF_DOMAIN: M_MEAN_BUILD_REQUIRED: IntakeSurface: a species-resolved table needs m_mean_build_kg (finite, > 0); no default is assumed",
+     "status": "OUT_OF_DOMAIN"
+    },
+    "expected_python_key": "M_MEAN_BUILD_REQUIRED",
+    "expected_rust": [
+     "M_MEAN_BUILD_REQUIRED",
+     "OUT_OF_DOMAIN"
+    ],
+    "status": "PASS"
+   },
+   {
+    "id": "DE-14[-1.0]",
+    "python": {
+     "class": "ValueError",
+     "key": "M_MEAN_BUILD_REQUIRED",
+     "message": "IntakeSurface: a species-resolved table needs m_mean_build_kg (mixture mean molecular mass of the build atmosphere that normalises the C_D rows); no default is assumed"
+    },
+    "rust": {
+     "key": "M_MEAN_BUILD_REQUIRED",
+     "message": "OUT_OF_DOMAIN: M_MEAN_BUILD_REQUIRED: IntakeSurface: a species-resolved table needs m_mean_build_kg (finite, > 0); no default is assumed",
+     "status": "OUT_OF_DOMAIN"
+    },
+    "expected_python_key": "M_MEAN_BUILD_REQUIRED",
+    "expected_rust": [
+     "M_MEAN_BUILD_REQUIRED",
+     "OUT_OF_DOMAIN"
+    ],
+    "status": "PASS"
+   },
+   {
+    "id": "DE-14[nan]",
+    "python": {
+     "class": "ValueError",
+     "key": "M_MEAN_BUILD_REQUIRED",
+     "message": "IntakeSurface: a species-resolved table needs m_mean_build_kg (mixture mean molecular mass of the build atmosphere that normalises the C_D rows); no default is assumed"
+    },
+    "rust": {
+     "key": "M_MEAN_BUILD_REQUIRED",
+     "message": "OUT_OF_DOMAIN: M_MEAN_BUILD_REQUIRED: IntakeSurface: a species-resolved table needs m_mean_build_kg (finite, > 0); no default is assumed",
+     "status": "OUT_OF_DOMAIN"
+    },
+    "expected_python_key": "M_MEAN_BUILD_REQUIRED",
+    "expected_rust": [
+     "M_MEAN_BUILD_REQUIRED",
+     "OUT_OF_DOMAIN"
+    ],
+    "status": "PASS"
+   },
+   {
+    "id": "DE-14[inf]",
+    "python": {
+     "class": "ValueError",
+     "key": "M_MEAN_BUILD_REQUIRED",
+     "message": "IntakeSurface: a species-resolved table needs m_mean_build_kg (mixture mean molecular mass of the build atmosphere that normalises the C_D rows); no default is assumed"
+    },
+    "rust": {
+     "key": "M_MEAN_BUILD_REQUIRED",
+     "message": "OUT_OF_DOMAIN: M_MEAN_BUILD_REQUIRED: IntakeSurface: a species-resolved table needs m_mean_build_kg (finite, > 0); no default is assumed",
+     "status": "OUT_OF_DOMAIN"
+    },
+    "expected_python_key": "M_MEAN_BUILD_REQUIRED",
+    "expected_rust": [
+     "M_MEAN_BUILD_REQUIRED",
+     "OUT_OF_DOMAIN"
+    ],
+    "status": "PASS"
+   },
+   {
+    "id": "DE-20",
+    "python": {
+     "class": "ValueError",
+     "key": "UNKNOWN_SCATTERING",
+     "message": "intake_tpmc: unknown wall-scattering model 'specular'; admitted models are ('maxwell', 'cll') (exact, case-sensitive; no fallback)"
+    },
+    "rust": {
+     "key": "UNKNOWN_SCATTERING",
+     "message": "OUT_OF_DOMAIN: UNKNOWN_SCATTERING: intake_tpmc: unknown wall-scattering model \"specular\"; admitted models are [\"maxwell\", \"cll\"]",
+     "status": "OUT_OF_DOMAIN"
+    },
+    "expected_python_key": "UNKNOWN_SCATTERING",
+    "expected_rust": [
+     "UNKNOWN_SCATTERING",
+     "OUT_OF_DOMAIN"
+    ],
+    "status": "PASS"
+   },
+   {
+    "id": "DE-21",
+    "python": {
+     "class": "ValueError",
+     "key": "UNKNOWN_SCATTERING",
+     "message": "intake_tpmc: unknown wall-scattering model 'Maxwell'; admitted models are ('maxwell', 'cll') (exact, case-sensitive; no fallback)"
+    },
+    "rust": {
+     "key": "UNKNOWN_SCATTERING",
+     "message": "OUT_OF_DOMAIN: UNKNOWN_SCATTERING: intake_tpmc: unknown wall-scattering model \"Maxwell\"; admitted models are [\"maxwell\", \"cll\"]",
+     "status": "OUT_OF_DOMAIN"
+    },
+    "expected_python_key": "UNKNOWN_SCATTERING",
+    "expected_rust": [
+     "UNKNOWN_SCATTERING",
+     "OUT_OF_DOMAIN"
+    ],
+    "status": "PASS"
+   },
+   {
+    "id": "DE-22",
+    "python": {
+     "class": "ValueError",
+     "key": "ACCOMMODATION_INVALID",
+     "message": "intake_tpmc: Maxwell alpha (diffuse fraction) must be finite and inside [0, 1], got 1.5"
+    },
+    "rust": {
+     "key": "ACCOMMODATION_INVALID",
+     "message": "OUT_OF_DOMAIN: ACCOMMODATION_INVALID: intake_tpmc: Maxwell alpha (diffuse fraction) must be finite and inside [0, 1], got 1.5",
+     "status": "OUT_OF_DOMAIN"
+    },
+    "expected_python_key": "ACCOMMODATION_INVALID",
+    "expected_rust": [
+     "ACCOMMODATION_INVALID",
+     "OUT_OF_DOMAIN"
+    ],
+    "status": "PASS"
+   },
+   {
+    "id": "DE-23",
+    "python": {
+     "class": "ValueError",
+     "key": "ACCOMMODATION_INVALID",
+     "message": "intake_tpmc: CLL alpha (used as alpha_n) must be finite and inside [0, 1], got -0.1"
+    },
+    "rust": {
+     "key": "ACCOMMODATION_INVALID",
+     "message": "OUT_OF_DOMAIN: ACCOMMODATION_INVALID: intake_tpmc: CLL alpha (used as alpha_n) must be finite and inside [0, 1], got -0.1",
+     "status": "OUT_OF_DOMAIN"
+    },
+    "expected_python_key": "ACCOMMODATION_INVALID",
+    "expected_rust": [
+     "ACCOMMODATION_INVALID",
+     "OUT_OF_DOMAIN"
+    ],
+    "status": "PASS"
+   },
+   {
+    "id": "DE-24",
+    "python": {
+     "class": "ValueError",
+     "key": "ACCOMMODATION_INVALID",
+     "message": "intake_tpmc: Maxwell alpha (diffuse fraction) must be finite and inside [0, 1], got nan"
+    },
+    "rust": {
+     "key": "ACCOMMODATION_INVALID",
+     "message": "OUT_OF_DOMAIN: ACCOMMODATION_INVALID: intake_tpmc: Maxwell alpha (diffuse fraction) must be finite and inside [0, 1], got NaN",
+     "status": "OUT_OF_DOMAIN"
+    },
+    "expected_python_key": "ACCOMMODATION_INVALID",
+    "expected_rust": [
+     "ACCOMMODATION_INVALID",
+     "OUT_OF_DOMAIN"
+    ],
+    "status": "PASS"
+   },
+   {
+    "id": "DE-25",
+    "python": {
+     "class": "ValueError",
+     "key": "UNKNOWN_SCATTERING",
+     "message": "intake_tpmc: unknown wall-scattering model 'diffuse'; admitted models are ('maxwell', 'cll') (exact, case-sensitive; no fallback)"
+    },
+    "rust": {
+     "key": "UNKNOWN_SCATTERING",
+     "message": "OUT_OF_DOMAIN: UNKNOWN_SCATTERING: intake_tpmc: unknown wall-scattering model \"diffuse\"; admitted models are [\"maxwell\", \"cll\"]",
+     "status": "OUT_OF_DOMAIN"
+    },
+    "expected_python_key": "UNKNOWN_SCATTERING",
+    "expected_rust": [
+     "UNKNOWN_SCATTERING",
+     "OUT_OF_DOMAIN"
+    ],
+    "status": "PASS"
+   },
+   {
+    "id": "DE-26",
+    "python": {
+     "class": "KeyError",
+     "key": "UNKNOWN_SPECIES",
+     "message": "'Ar'"
+    },
+    "rust": {
+     "key": "UNKNOWN_SPECIES",
+     "message": "OUT_OF_DOMAIN: UNKNOWN_SPECIES: response_surface: no molecular mass for species \"Ar\"",
+     "status": "OUT_OF_DOMAIN"
+    },
+    "expected_python_key": "UNKNOWN_SPECIES",
+    "expected_rust": [
+     "UNKNOWN_SPECIES",
+     "OUT_OF_DOMAIN"
+    ],
+    "status": "PASS"
+   },
+   {
+    "id": "DE-27",
+    "python": {
+     "class": "ValueError",
+     "key": "ACCOMMODATION_INVALID",
+     "message": "intake_tpmc: Maxwell alpha (diffuse fraction) must be finite and inside [0, 1], got 2.0"
+    },
+    "rust": {
+     "key": "ACCOMMODATION_INVALID",
+     "message": "OUT_OF_DOMAIN: ACCOMMODATION_INVALID: intake_tpmc: Maxwell alpha (diffuse fraction) must be finite and inside [0, 1], got 2",
+     "status": "OUT_OF_DOMAIN"
+    },
+    "expected_python_key": "ACCOMMODATION_INVALID",
+    "expected_rust": [
+     "ACCOMMODATION_INVALID",
+     "OUT_OF_DOMAIN"
+    ],
+    "status": "PASS"
+   }
+  ]
+ },
+ "schema_parity": {
+  "all_pass": true,
+  "checks": {
+   "E1_key_set": true,
+   "IntakeGeometry_defaults": true
+  }
+ },
+ "python_commit": "ed6b27af8eba3702747e34d5d3286717d3642e96",
+ "git_dirty": true,
+ "rust_commit": "ed6b27af8eba3702747e34d5d3286717d3642e96",
+ "reference_sha256": {
+  "abep_sim/intake_tpmc.py": true,
+  "abep_sim/constants.py": true,
+  "abep_sim/atmosphere.py": true,
+  "abep_sim/intake_surface_v2_spec.py": true
+ },
+ "pinned_inputs_verified": {
+  "abep_sim/data/intake_surface_v1.csv": true,
+  "abep_sim/data/intake_surface_v1.json": true,
+  "abep_sim/data/atmosphere_msis21_v1.csv": true,
+  "abep_sim/data/atmosphere_msis21_v1.json": true,
+  "docs/performance/abep_core/parity_report_v2.json": true,
+  "docs/rust_migration/contracts/C-ABEP_CORE_BUILD_EQUIVALENCE/result_v1.json": true,
+  "crates/abep-intake/data/intake_surface_v1_delaunay_v1.json": true
+ },
+ "build_provenance": {
+  "source_sha256": {
+   "Cargo.toml": "70bebd42025a4a1ad7a605f558d070f55e393310c7f2947463a3b64e4f6d6af7",
+   "Cargo.lock": "18ccdca4a8e76522f5386c7b734258d5d87ca1c6d1f9aef470385e32ae4bde32",
+   "rust-toolchain.toml": "7e44dbedb86596d94974ef8cb279f0e81496ea92b519c14940259661496f8499",
+   "crates/abep-intake/Cargo.toml": "7ce157d248563bb85a054dcf385590bbffbe6b7911aa0eaebe34e4c0bd85026b",
+   "crates/abep-intake/data/intake_surface_v1_delaunay_v1.json": "247601cf51cff450759a2148179242e8085eb8fb0b878d87e44ea86e644faf7b",
+   "crates/abep-intake/examples/intake_parity.rs": "922d370695c743c98c814c418e06a83ca3e577a4c65b096f56852afdbdb2adf0",
+   "crates/abep-intake/src/build_equivalence.rs": "77d5bd2067aa0b352864378640aa5bfc2bdb13c8e7e619d3340d714bc7f4ac27",
+   "crates/abep-intake/src/collection.rs": "bca4ee705fa3871d993752442f77831a15634b3483f310fff14e713f5b462674",
+   "crates/abep-intake/src/constants.rs": "5e2775dbbc91d9e8e0bb4b9bc6550a21638f9af8d51f2a21396e0313009784ae",
+   "crates/abep-intake/src/freestream.rs": "823794cc8c928a7872cf7fb266556b48913ea860889c31f7b7aea9cbaa4cde71",
+   "crates/abep-intake/src/frozen.rs": "0d6d6108cbeebb74b6c9f243843cd2553e89bafa12ff825ec36e18a0d3e97263",
+   "crates/abep-intake/src/lib.rs": "570280263e1829bdaa4ab9e37aace5f983c8b391f22aef2cac0522c0ab56aff8",
+   "crates/abep-intake/src/surface.rs": "1303ea57d0e211f61e45b42de5a0baee492c660d7ded7989ab05b55b3de586d0",
+   "crates/abep-intake/src/tpmc_response.rs": "e152f9866484853a2baece1009e25503e58a228087751a0cd9fba4674fe56d53",
+   "abep_core/Cargo.toml": "cfb3054985ea94ccc54b9c7b370b6ca39b5d3c4dac6e59228f527c69320c123d",
+   "abep_core/Cargo.lock": "5d1ae2c3c0e4092ba8add152cb67f6b767ec2e29b4babdf3d4a8d826a6ca5aaa",
+   "abep_core/src/lib.rs": "2d8cf0e117bed74bd2922c43ce7c45d80d2073c7c78028d8481e85f37e651169",
+   "abep_core/src/rng.rs": "eadfe1a0417353f2baf9522c722ac8035989c54ae3565fc23681fea8257a5777",
+   "abep_core/src/tpmc.rs": "96867112eee01ab0cdcecbfcc7433d0dbc6a7cf8bc17ed3ef67fdbb5eb3d614c"
+  },
+  "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+  "cargo": "cargo 1.94.1 (29ea6fb6a 2026-03-24)",
+  "build_profile": "release (workspace [profile.release]: opt-level 3)",
+  "harness": {
+   "path": "scripts/rust_migration/parity_intake.py",
+   "sha256": "f27a0feb4249d338b34ac96ec5e62c5854bb45e6092e2e36d664f5a9bd65595c"
+  },
+  "executable_sha256": "a5f416145c23007b4c0862b1b529c35de9695b74efb7998e228471a3f1ff9da2"
+ },
+ "environment": {
+  "python": "3.11.15",
+  "numpy": "2.4.4",
+  "scipy": "1.17.1",
+  "pandas": "3.0.2",
+  "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+  "machine": {
+   "utc": "2026-10-05T13:34:28Z",
+   "platform": "Linux-6.18.44-fc-v70-x86_64-with-glibc2.39",
+   "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+   "logical_cpus": 4,
+   "memory": {
+    "MemTotal": "16480968 kB",
+    "MemAvailable": "14940544 kB"
+   },
+   "loadavg": [
+    3.3828125,
+    2.697265625,
+    2.12548828125
+   ],
+   "thread_env": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "RAYON_NUM_THREADS": null
+   }
+  }
+ },
+ "scoring_master_seed": 2026100521,
+ "performance": {
+  "status": "reported, not a decision criterion (RM-R09)",
+  "workload": "intake_response_surface_reduced",
+  "definition": "scripts/perf/profile_baseline.py w_response_surface with rs_full (12 points, n 20000)",
+  "params": {
+   "L_over_d": [
+    3,
+    5,
+    10,
+    20
+   ],
+   "phis": [
+    0.8
+   ],
+   "alphas": [
+    0.0,
+    0.5,
+    1.0
+   ],
+   "thetas": [
+    0.0
+   ],
+   "species": [
+    "N2"
+   ],
+   "n": 20000
+  },
+  "points": {
+   "python": 12,
+   "rust": 12
+  },
+  "python": {
+   "wall_s": [
+    5.161151861000008,
+    4.948859258000084,
+    4.983778104999828
+   ],
+   "cpu_s": [
+    5.157716568000012,
+    4.948431597999985,
+    4.9832561969999745
+   ],
+   "median_wall_s": 4.983778104999828,
+   "median_cpu_s": 4.9832561969999745,
+   "clock": "time.perf_counter / time.process_time"
+  },
+  "rust": {
+   "wall_s": [
+    0.782971346,
+    0.790361204,
+    0.788416176
+   ],
+   "cpu_s": [
+    0.783883888,
+    0.7879878709999999,
+    0.7916627720000005
+   ],
+   "median_wall_s": 0.788416176,
+   "median_cpu_s": 0.7879878709999999,
+   "clock": "std::time::Instant / /proc/self/schedstat (single-threaded process)",
+   "build": "release example intake_parity"
+  },
+  "speedup_wall": 6.321252983779252,
+  "speedup_cpu": 6.324026524261026,
+  "warm_up": "one untimed call per implementation",
+  "repeats": 3,
+  "baseline_reference": {
+   "path": "docs/performance/pre_rust_reference_baseline_5eee4b8/baseline.json",
+   "recorded_python_median_wall_s_at_5eee4b8": 5.023,
+   "note": "quoted, not reused; the Python timing above is this session's"
+  },
+  "threads": "Python: OMP / OPENBLAS / MKL / NUMEXPR = 1 (as the baseline); Rust: single-threaded (no thread pool in abep-intake or abep_core)",
+  "machine_before": {
+   "utc": "2026-10-05T13:34:04Z",
+   "platform": "Linux-6.18.44-fc-v70-x86_64-with-glibc2.39",
+   "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+   "logical_cpus": 4,
+   "memory": {
+    "MemTotal": "16480968 kB",
+    "MemAvailable": "15156204 kB"
+   },
+   "loadavg": [
+    4.013671875,
+    2.7421875,
+    2.12451171875
+   ],
+   "thread_env": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "RAYON_NUM_THREADS": null
+   }
+  },
+  "machine_after": {
+   "utc": "2026-10-05T13:34:27Z",
+   "platform": "Linux-6.18.44-fc-v70-x86_64-with-glibc2.39",
+   "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+   "logical_cpus": 4,
+   "memory": {
+    "MemTotal": "16480968 kB",
+    "MemAvailable": "14932536 kB"
+   },
+   "loadavg": [
+    3.3828125,
+    2.697265625,
+    2.12548828125
+   ],
+   "thread_env": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "RAYON_NUM_THREADS": null
+   }
+  }
+ },
+ "captured_reference_outputs": {
+  "sha256_manifest": {
+   "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_TPMC_PY/reference_outputs/E4_evaluations.json": "61d8c27df493e2fb8b1928f84c6fe890ad311b6cb52cdab75ed06a428ea37a66",
+   "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_TPMC_PY/reference_outputs/E3.json": "593ed2b66d27cdff9b608ef02d058f83864c9cc367e3976af6c94b7bfa3f2a02",
+   "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_TPMC_PY/reference_outputs/domain_error.json": "db3a0475a4260893f2ace4ab1247d79cd4fcb70dcfd91b298d455da46e1f2a37",
+   "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_TPMC_PY/reference_outputs/m_mean_build_kg.json": "e74256303c083f12018e12d72e2c2e4590e87c117e7d65d3ebc57941b9ff1f00",
+   "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_TPMC_PY/reference_outputs/E1_replicates.json": "c89e28c4749dc0d76a1bf638c3ae7b5ce027c0d21cc0eada6692ade70f9364f3"
+  },
+  "captured_at_python_commit": "ed6b27af8eba3702747e34d5d3286717d3642e96"
+ },
+ "per_test_results": {
+  "path": "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_TPMC_PY/parity_report_v1_tests.json",
+  "sha256": "d31cad4b8fb90410f2c847c81b00e0edca0d93ad39164a645318324918c40b22",
+  "failures": {
+   "E1_intake_response": [],
+   "E2_clausing_transmission": [],
+   "E3_response_surface": [],
+   "E4_IntakeSurface": [],
+   "E5_surface_v2_gate": []
+  }
+ },
+ "timings": {
+  "E1_s": 241.8
+ },
+ "campaign_history": [
+  {
+   "utc": "2026-10-05T13:29:31Z",
+   "git_head": "ed6b27af8eba3702747e34d5d3286717d3642e96",
+   "git_dirty": true,
+   "mode": "score",
+   "scoring_master_seed": 2026100521,
+   "verdict": "ADMITTED"
+  }
+ ],
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, threshold or requirement (intake_surface_v1 is read, never regenerated)",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27)",
+  "not a gate PASS: absent determining evidence stays NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN / MODEL_ERROR (RM-R31); the intake surface v2 stays NOT_EVALUATED until its axes are registered",
+  "not a re-scoring of Kernel 1 and not a change of the Python wrapper default (RM-OQ-01)"
+ ],
+ "implementation_change_since_registration": {
+  "what": "IntakeSurface simplex selection",
+  "registered_description": "PARITY-C-ABEP_SIM_INTAKE_TPMC_PY-V1 rust_implementation.interpolant_reproduction.rust_evaluation: the first non-degenerate simplex in captured order whose barycentric coordinates lie in [-eps, 1 + eps], Tinv from Gaussian elimination; it also stated that values on shared faces agree up to rounding",
+  "finding": "the development comparison (development seed 7, E4 face vector E4-F28; not a verdict) showed that the reference triangulation is non-conforming across some interior grid faces (Qhull 'Qt' triangulates a shared cospherical face differently on its two sides), so the reference value at such a face point depends on which containing simplex scipy's search reaches; the stated face continuity is false",
+  "change_before_scoring": "the Rust surface replicates scipy's _find_simplex (lifted-paraboloid walk from simplex 0, directed search, brute-force fallback) and barycentric arithmetic with the reference's captured search structures crates/abep-intake/data/intake_surface_v1_delaunay_v1_search.json (sha256 e6f254b3f089123b2c8eadaac7adf66b6d64f823540a4ed8cb4d86cba301b3fd, same capture script; the pinned triangulation capture 247601cf... is unchanged and still verified); the independent Gaussian-elimination inverse is kept as a load-time cross-check of the captured transforms (1e-10)",
+  "unchanged": "observables, tolerances, vector rules, n, seeds, decision rules and pinned inputs of both contracts"
+ },
+ "owner_finding": {
+  "id": "B2-OF-01",
+  "classification": "PYTHON_REFERENCE_DEFECT candidate (own governance; not resolved by the migration, RM-R11 / RM-R22)",
+  "statement": "abep_sim.intake_tpmc.IntakeSurface (scipy LinearNDInterpolator over the Qhull triangulation of the degenerate v1 tensor grid) is discontinuous across interior grid faces: points with L/d = 5 or 10, alpha = 0.2 / 0.5 / 0.8 or theta = 2 deg get the value of whichever containing simplex scipy's walk reaches. A Python-only survey (60 random points per interior face, N2 rows) found jumps between containing simplices up to 1.7e-1 relative in CR_passive (theta = 2 deg), 6e-2 in K_back, 3.8e-2 in eta_c, 3.7e-2 in mass_kg (alpha faces) and 1.3e-3 in C_D. The active default points checked ((10, 0.85, 0.5, 0), (5, 0.85, 0.8, 0), (10, 0.85, 0.95, 0), (3, 0.85, 0.5, 0), (5, 0.85, 0.8, 2)) agree to rounding",
+  "rust_behaviour": "reproduces the reference including this path dependence (scipy walk replication)",
+  "owner_question": "keep the reference interpolant as is (parity), or replace it by a deliberate conforming interpolant (e.g. multilinear or a fixed Kuhn triangulation) as a registered intake-ROM model change (rule 1/2: new version, HISTORY, evidence that depends on it re-run)?"
+ },
+ "ledger_update_requested": {
+  "component": "C-ABEP_SIM_INTAKE_TPMC_PY",
+  "requested_status": "ADMITTED",
+  "contract_id": "PARITY-C-ABEP_SIM_INTAKE_TPMC_PY-V1",
+  "contract_sha256": "1e6a80fbeb848b4e229ad35438f88f4d8f5041658ab71ade6a1d81aa87e66a6d",
+  "report": "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_TPMC_PY/parity_report_v1.json",
+  "verdict": "ADMITTED",
+  "scope": "named function subset (kernel granularity, RM-R17): the intake response layer and the frozen intake surface reader / interpolant of abep_sim/intake_tpmc.py",
+  "note": "requested for docs/rust_migration/migration_state_v1.json (owned by lane A1); not edited here"
+ }
+}
