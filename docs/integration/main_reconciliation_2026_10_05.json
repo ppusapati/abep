@@ -1,0 +1,391 @@
+{
+ "schema": "main_reconciliation_v1",
+ "date": "2026-10-05",
+ "authority": "owner ABEP SIMULATION COMPLETION DIRECTIVE sections 3 and 17",
+ "integration_branch": "integration/simulation-complete",
+ "development_base": "dcab60234a3252ff699fe774f05e0fa39d02b4ae",
+ "main_head": "b1e5b761a40f82ca225dc412d17a87585653d4ff",
+ "main_only_commits": [
+  "b1e5b761a40f82ca225dc412d17a87585653d4ff Checkpoint 6: A9.7 architecture-freeze design synthesis (verified) + owner decision records A9.8\u2013A9.12 (#36)",
+  "98fbbb9b1cf12d238ec845b5a6cbb6c3be92fd3b Checkpoint 5: A9.5/A9.6 implementation-first batch + consolidated verification (#35)",
+  "eef8b851fdf99d023eaea57951deddc5fca55778 Checkpoint 4: A9.3 P1 ICP bench, P2 impedance prep, RFQ v2 (A9.3/A9.4 applied) (#34)",
+  "20f14d8fb71b8e47f018dbb5b1e404462f9dd469 Checkpoint 3: A9 Hall \u2192 downstream RF-ICP neutralizer investigation (#33)",
+  "7caaf1301d004bf4e32d35607ed7f0b8b09606c0 Checkpoint 2: H2 hardware wave + owner decision pack / A9 records (#32)",
+  "15981ae1b31aa00e48fe1745a07e8a3784608320 A7 integration checkpoint: merge claude/nifty-ramanujan-w68f9z into main (#31)"
+ ],
+ "method": "git merge (no strategy option) of origin/main into the development base; every conflicted path checked: main's blob was searched in the full development-line history of that path; all 53 main blobs are earlier development-line states (main's checkpoints #31-#36 are squash merges of earlier development states), so the development side is the later governed implementation for each; every non-conflicted path of the merge result equals the development base (no older content re-introduced). Main's six commits are preserved as merge parents (history kept, nothing discarded).",
+ "conflicts": [
+  {
+   "path": "abep_sim/design/architecture_optimizer.py",
+   "main_blob": "0b02c3cb3fbe908ba36332a2db0f1c5a23df339d",
+   "dev_blob": "c6b92ef40a42ec3d285b8104b21501cb5daccb04",
+   "main_blob_last_seen_in_dev_at": "e2d8f9acf9dcb5156a897c93fc73e56692a98504",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "abep_sim/design/compressor_synthesis.py",
+   "main_blob": "3e89a72cb3633e6fbfeabf58c60d401679bb1dd5",
+   "dev_blob": "d87b32eda18add327fc8b21f410ea7e585ca1bdb",
+   "main_blob_last_seen_in_dev_at": "e2d8f9acf9dcb5156a897c93fc73e56692a98504",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "abep_sim/design/filter_stage.py",
+   "main_blob": "b97ae23b9eacb1f8bde30661e44e6f062b15bfff",
+   "dev_blob": "8df8c26bffcf7d52cf8e5211cccad1ad04ee69c8",
+   "main_blob_last_seen_in_dev_at": "fddd66d7fccb54ed261793dc6ff435ace4a6102d",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "abep_sim/design/icp_geometry_synthesis.py",
+   "main_blob": "eda900034eac0478265e0399bf99f25b9213f9a6",
+   "dev_blob": "37f4f1319abd2570799c7c4e1ecb96786c289168",
+   "main_blob_last_seen_in_dev_at": "e2d8f9acf9dcb5156a897c93fc73e56692a98504",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "abep_sim/design/intake_synthesis.py",
+   "main_blob": "97719db67eca6c384e0b69c2c8e1a1827773215c",
+   "dev_blob": "6f6b93804dab771f6c6e0f005672eff36ca15993",
+   "main_blob_last_seen_in_dev_at": "fddd66d7fccb54ed261793dc6ff435ace4a6102d",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "abep_sim/design/plenum_feed.py",
+   "main_blob": "5a851ab4ac0aeb4728137367fd33c1777564ead0",
+   "dev_blob": "228bb581571091a55b0b95fd48665082e91095ba",
+   "main_blob_last_seen_in_dev_at": "e2d8f9acf9dcb5156a897c93fc73e56692a98504",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "abep_sim/design/robust_optimizer.py",
+   "main_blob": "23e6decb4669c03eb16116b5166cf1d7d9a24bac",
+   "dev_blob": "45de6588c2c5554cc437a8173e2c1afe1b0ae411",
+   "main_blob_last_seen_in_dev_at": "fddd66d7fccb54ed261793dc6ff435ace4a6102d",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "abep_sim/design/tpmc_backend.py",
+   "main_blob": "846b2ae4e834a1b5908757e78e4e2412fb53fe77",
+   "dev_blob": "82444e9902acd79229ed9f590656ba0b81e9121b",
+   "main_blob_last_seen_in_dev_at": "86018a8fa77bda89709b7a9e5e5a30cf66640e74",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/HISTORY.md",
+   "main_blob": "6481ee506fe24e96824a71c5caa14a9646241945",
+   "dev_blob": "3fbcce491de9e0cacc71b25fde182b6993fceec6",
+   "main_blob_last_seen_in_dev_at": "7eba615662378ea01f20b8c77f8eaab3822cf67a",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/architecture/freeze_candidate/ARCHITECTURE_FREEZE_CANDIDATE.md",
+   "main_blob": "b6ed417c7aeb2ef47db6077aef57efa74ffb962a",
+   "dev_blob": "93a8c8bbf609f5b290e08365db49f01d5910efd4",
+   "main_blob_last_seen_in_dev_at": "4745b0218e88b48ad6190ee2a8f7356d1731ff36",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+   "main_blob": "0edddc10102996edcbe7a9543b3f9e25920452bb",
+   "dev_blob": "59b8e088512e324753429a20bb5066719088fea8",
+   "main_blob_last_seen_in_dev_at": "4745b0218e88b48ad6190ee2a8f7356d1731ff36",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/architecture/freeze_candidate/build_freeze_candidate.py",
+   "main_blob": "6714c31aa8dd1b7a111679dc65a27d702cbfe950",
+   "dev_blob": "8fc75233d3d7284f9595ba836624d87382b5a45b",
+   "main_blob_last_seen_in_dev_at": "86018a8fa77bda89709b7a9e5e5a30cf66640e74",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/budgets/owner_decisions/OWNER_QUESTIONS_SEQUENCED_v1.md",
+   "main_blob": "64abb9eebe66988d8e8d03c9c3d4a0ff0b60be1f",
+   "dev_blob": "815d44097f88c93decba837c5b638611f24c4ad5",
+   "main_blob_last_seen_in_dev_at": "dedac3178cdfe184461e3abe6e31cdaafeeaa96a",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/budgets/owner_decisions/build_owner_questions_sequenced.py",
+   "main_blob": "c6a4c1a601f26af95db8837ab615df9cd77afcc5",
+   "dev_blob": "09b39d558d588a6a0c288d48017b84443c93cc88",
+   "main_blob_last_seen_in_dev_at": "a295bf36871ee60e8ca1297a12b5ae2c7d72f03e",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/budgets/owner_decisions/owner_questions_sequenced_v1.csv",
+   "main_blob": "5496b0f892de968d5fdc0ffda028199d59cc08d1",
+   "dev_blob": "443992b8e55e8f322ec5cdd4cad842d32ab93ba5",
+   "main_blob_last_seen_in_dev_at": "dedac3178cdfe184461e3abe6e31cdaafeeaa96a",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/design_synthesis/f1_intake/F1_INTAKE_SYNTHESIS.md",
+   "main_blob": "7c7b0c7a38bc5aba2adb66f409c73df6ca4de786",
+   "dev_blob": "4823c2fcbd65503b92fee1b0ad4b4e2f5970514c",
+   "main_blob_last_seen_in_dev_at": "fddd66d7fccb54ed261793dc6ff435ace4a6102d",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/design_synthesis/f1_intake/build_f1_intake.py",
+   "main_blob": "bf5594051ee8e8691385ebe85f2f312830430374",
+   "dev_blob": "6e4b0f800cf51e077472bb029743011d7aeb24ae",
+   "main_blob_last_seen_in_dev_at": "fddd66d7fccb54ed261793dc6ff435ace4a6102d",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+   "main_blob": "6fe92fc3d593e4971db3e07dd381533270661fc3",
+   "dev_blob": "a04f61933040e1c3504e4f72107e3f8d72ee782a",
+   "main_blob_last_seen_in_dev_at": "fddd66d7fccb54ed261793dc6ff435ace4a6102d",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/design_synthesis/f2_filter/F2_FILTER_STAGE.md",
+   "main_blob": "8aa3120138656293ccdb3190e5eb7c8d7668cb58",
+   "dev_blob": "0e2345bd2e729898ac7bfbc20e9fc962d3f8173b",
+   "main_blob_last_seen_in_dev_at": "fddd66d7fccb54ed261793dc6ff435ace4a6102d",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/design_synthesis/f2_filter/build_f2_filter.py",
+   "main_blob": "d9267f2f9830b2448b509db9be659c826698b4b2",
+   "dev_blob": "2502b40a74af2897f5f208666cc78c6ce1e29fb1",
+   "main_blob_last_seen_in_dev_at": "fddd66d7fccb54ed261793dc6ff435ace4a6102d",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
+   "main_blob": "f1245a703323204ea9e297207ce5ff2d9b4c6170",
+   "dev_blob": "cff22f676b1b57a0f311bb6e050f91f650d82134",
+   "main_blob_last_seen_in_dev_at": "fddd66d7fccb54ed261793dc6ff435ace4a6102d",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/design_synthesis/f3_compressor/F3_COMPRESSOR_SYNTHESIS.md",
+   "main_blob": "e3fe7718a8590a15b5cf258c19e8d4fc44fb6552",
+   "dev_blob": "746ab0c7531e8c67fd21155d0590ca8818e9cd9e",
+   "main_blob_last_seen_in_dev_at": "fddd66d7fccb54ed261793dc6ff435ace4a6102d",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/design_synthesis/f3_compressor/build_f3_compressor.py",
+   "main_blob": "17b00f6d681a3cbfe31410a9750a7e13923bae8b",
+   "dev_blob": "9ea6c46300d3d0c26d318713dca4fc07704a6263",
+   "main_blob_last_seen_in_dev_at": "fddd66d7fccb54ed261793dc6ff435ace4a6102d",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json",
+   "main_blob": "ba1b57e69e0b35d45d856e4045eae36e3358e240",
+   "dev_blob": "123fe227008031a139c284656337e35be2ef29bc",
+   "main_blob_last_seen_in_dev_at": "d6f0a9746abd8a5cea671dd4f10d32745fb5afdf",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
+   "main_blob": "8e996aa10399fb90be4c32497bf274c46259a74c",
+   "dev_blob": "4bf3aeeec8ed19feb1828a2edcccd7c0959c2048",
+   "main_blob_last_seen_in_dev_at": "fddd66d7fccb54ed261793dc6ff435ace4a6102d",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/design_synthesis/f4_plenum/F4_PLENUM_FEED.md",
+   "main_blob": "65adbeac3513439486ca43e84bafdf6b6bac97ff",
+   "dev_blob": "2bcb379ee88b2f8e47176d7da42d61de47442e28",
+   "main_blob_last_seen_in_dev_at": "fddd66d7fccb54ed261793dc6ff435ace4a6102d",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/design_synthesis/f4_plenum/build_f4_plenum.py",
+   "main_blob": "cba642a1ed90b2bfa586f57ca66a1dc189d2859b",
+   "dev_blob": "0fcc39a3ce72939a5e79ea2bb7e5af291846429a",
+   "main_blob_last_seen_in_dev_at": "fddd66d7fccb54ed261793dc6ff435ace4a6102d",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/design_synthesis/f4_plenum/f4_plenum_chains_v1.json",
+   "main_blob": "65e694b755e1ab34170924071e0fe64fee06ebc4",
+   "dev_blob": "4ccf251bc52d2fb24ff704e795a118f3ab27c492",
+   "main_blob_last_seen_in_dev_at": "d13708b556a47404cb0843562bbd0b927c03324e",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
+   "main_blob": "75a5d4c73e9ca8c7725903983d5dfcc59e92d575",
+   "dev_blob": "77aff43a3a073dfa86d16743eb157f653011765c",
+   "main_blob_last_seen_in_dev_at": "86018a8fa77bda89709b7a9e5e5a30cf66640e74",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/design_synthesis/f4_plenum/f4_plenum_transients_v1.json",
+   "main_blob": "d96fdb4b706437e411e2aa41aae4bb4a0cd7e85c",
+   "dev_blob": "615ad9666a04bc8d49f843c63704b841648968a1",
+   "main_blob_last_seen_in_dev_at": "d13708b556a47404cb0843562bbd0b927c03324e",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/design_synthesis/f6_icp_geometry/F6_ICP_GEOMETRY.md",
+   "main_blob": "2a3f4091e17a928a726084e9a05177444897722b",
+   "dev_blob": "e1a5ff45cd4c4c811fdc1d1148f67f1ffebb5806",
+   "main_blob_last_seen_in_dev_at": "fddd66d7fccb54ed261793dc6ff435ace4a6102d",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/design_synthesis/f6_icp_geometry/build_f6_icp_geometry.py",
+   "main_blob": "0debcc80ca6cda9a3c87ae621f01d2a7c96d47fb",
+   "dev_blob": "51d3bd4db1979ed25210831d69caebde18d288c5",
+   "main_blob_last_seen_in_dev_at": "fddd66d7fccb54ed261793dc6ff435ace4a6102d",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
+   "main_blob": "2398d27ec461bd4da71ca8e74a01bdc14af1199f",
+   "dev_blob": "a29feda7fcb78285ff75e483c0929265a59231d8",
+   "main_blob_last_seen_in_dev_at": "fddd66d7fccb54ed261793dc6ff435ace4a6102d",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/design_synthesis/f7_f8_optimizer/F7_F8_OPTIMIZER.md",
+   "main_blob": "3203d19f335b596565aa00f2eb9c6c83d5ec3030",
+   "dev_blob": "f0e929af9a8f54dbe5da1879e85dc0e19a450309",
+   "main_blob_last_seen_in_dev_at": "86018a8fa77bda89709b7a9e5e5a30cf66640e74",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/design_synthesis/f7_f8_optimizer/build_f7_f8_optimizer.py",
+   "main_blob": "e7de4ad70e0d2aaaed6904a226f1c05c329d2fb1",
+   "dev_blob": "522545f87ed355ae343c4cfe6ec57d6bda91739a",
+   "main_blob_last_seen_in_dev_at": "fddd66d7fccb54ed261793dc6ff435ace4a6102d",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
+   "main_blob": "491eec54232820dec8f18452e9f9bb430d4aebf4",
+   "dev_blob": "8a3e1b6da596de1da82b6df53d424b4ae92ae396",
+   "main_blob_last_seen_in_dev_at": "86018a8fa77bda89709b7a9e5e5a30cf66640e74",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
+   "main_blob": "0f19954fcbb171b3ba08f0cd071ef96cb8b97433",
+   "dev_blob": "8ab7a417f39ce7650e26603564d303479885eb6b",
+   "main_blob_last_seen_in_dev_at": "89cafce97030b6c0487299af61dfe2b7350b1df1",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/design_synthesis/f7_f8_optimizer/f8_robust_candidates_v1.json",
+   "main_blob": "d99d8b2206ce0429d9e903734943e1df7babfca6",
+   "dev_blob": "a4c045e34c8a17aa2bc544dbba44602c3a2cfa2e",
+   "main_blob_last_seen_in_dev_at": "89cafce97030b6c0487299af61dfe2b7350b1df1",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/hardware/h1_freeze_candidate/H1_FREEZE_CANDIDATE.md",
+   "main_blob": "d6e9a44c543bc2813934b6a4642425e7b680c784",
+   "dev_blob": "c5fa6cf661d3edf63d34abe87c34bfa6955e60aa",
+   "main_blob_last_seen_in_dev_at": "86018a8fa77bda89709b7a9e5e5a30cf66640e74",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/hardware/h1_freeze_candidate/build_h1_freeze_candidate.py",
+   "main_blob": "36c870934a6ee0f09033fb500e3245a0f990faf0",
+   "dev_blob": "2cc4ff8ae62d5a0743a0a71581ead80f3f3a8eb4",
+   "main_blob_last_seen_in_dev_at": "86018a8fa77bda89709b7a9e5e5a30cf66640e74",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+   "main_blob": "6c4ad4fd6620e0ed8e691af17327c806999a1d1c",
+   "dev_blob": "e7f05df10183adb6c6a039705047c44e9d5ecb49",
+   "main_blob_last_seen_in_dev_at": "86018a8fa77bda89709b7a9e5e5a30cf66640e74",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/orchestration/runtime_state.json",
+   "main_blob": "1479711bb2783b94aef9c6ad43b3df0f2099d793",
+   "dev_blob": "8127c7223df4de13d60ed7f0ff8b30367f71229a",
+   "main_blob_last_seen_in_dev_at": "dedac3178cdfe184461e3abe6e31cdaafeeaa96a",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "docs/performance/PERFORMANCE_BASELINE_98fbbb9.md",
+   "main_blob": "4368087b71803e3764485084b684f7b716b1ae40",
+   "dev_blob": "cd3c26d356cd20b3ecc9ba7915f1b77ddb6cb44b",
+   "main_blob_last_seen_in_dev_at": "4745b0218e88b48ad6190ee2a8f7356d1731ff36",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "scripts/perf/profile_baseline.py",
+   "main_blob": "dc698cb20b33714da86af73be8300e2948c6bcd7",
+   "dev_blob": "3d6812d7d7f71afc79a9639210b63d481fe9445c",
+   "main_blob_last_seen_in_dev_at": "86018a8fa77bda89709b7a9e5e5a30cf66640e74",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "scripts/verify_abep_core.py",
+   "main_blob": "6bbf7e1f2cd912739a51c77ea8eec6d6b6cb7dad",
+   "dev_blob": "73676648c2453b3de8961f363314f80f1cda4ac1",
+   "main_blob_last_seen_in_dev_at": "86018a8fa77bda89709b7a9e5e5a30cf66640e74",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "tests/test_architecture_freeze_candidate.py",
+   "main_blob": "0e131b768799ddad0a8ac4bac1229b2932ace068",
+   "dev_blob": "9942e457c3fe06b72faaebae8c871579d1181305",
+   "main_blob_last_seen_in_dev_at": "86018a8fa77bda89709b7a9e5e5a30cf66640e74",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "tests/test_design_f1_intake.py",
+   "main_blob": "afc3fdd533b639ef5118dbee3f69f35a987a1bf5",
+   "dev_blob": "d6bf8d3482069e56c90f07e8561e31e7836e5a61",
+   "main_blob_last_seen_in_dev_at": "fddd66d7fccb54ed261793dc6ff435ace4a6102d",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "tests/test_design_f3_compressor.py",
+   "main_blob": "22bb1b5a566966fbaf9a3b4e6f5684e564c43525",
+   "dev_blob": "6c9a111e12e6305512dae7f589ca2d95cc4d0ce7",
+   "main_blob_last_seen_in_dev_at": "e2d8f9acf9dcb5156a897c93fc73e56692a98504",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "tests/test_design_f4_plenum.py",
+   "main_blob": "505f763571cbf6313386473671149dfe3b44422b",
+   "dev_blob": "ea9cafcb8b5ff55f5e45521e1f24e7cf2ecacbd7",
+   "main_blob_last_seen_in_dev_at": "e2d8f9acf9dcb5156a897c93fc73e56692a98504",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "tests/test_design_f7_f8_optimizer.py",
+   "main_blob": "039de8660559a7c68b33d89c72c13cee45613f70",
+   "dev_blob": "d0e0ab149de6cc025591a6be87d2acf924dd6076",
+   "main_blob_last_seen_in_dev_at": "e2d8f9acf9dcb5156a897c93fc73e56692a98504",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "tests/test_h1_freeze_candidate.py",
+   "main_blob": "1e9532dcca7543d8c65867e38b959c94c7582190",
+   "dev_blob": "8995a31d44997d398d7204bd3b3c369c9bcfde95",
+   "main_blob_last_seen_in_dev_at": "86018a8fa77bda89709b7a9e5e5a30cf66640e74",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "tests/test_perf_baseline.py",
+   "main_blob": "264c62607b91c813aa037af0ca2052f55db82cef",
+   "dev_blob": "574c588558b28075d8b46f03d25e70377d892fe7",
+   "main_blob_last_seen_in_dev_at": "7ba1ff0ac36192b3b8894e8b6c4062f92c8fd62b",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  },
+  {
+   "path": "tests/test_tpmc_backend.py",
+   "main_blob": "7f7f6bfc6dd3e70d007974ab93e28d4bc63ca8b5",
+   "dev_blob": "29972c879c34b6752a5450d37441254959c744b6",
+   "main_blob_last_seen_in_dev_at": "86018a8fa77bda89709b7a9e5e5a30cf66640e74",
+   "resolution": "DEV_SIDE (later governed implementation; main's blob is an earlier development-line state)"
+  }
+ ],
+ "main_unique_content": []
+}
