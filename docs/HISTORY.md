@@ -3895,3 +3895,19 @@ are reused from the pinned v3 builder).
   check). Test: no price / currency information in any package file; A9.27 is a package-level post-source decision
   (does not make the technical source non-final). MPV3Q-01 appears in no package document (only the internal owner
   brief, not for upload); the stale owner-question state record is repaired post-bid.
+
+## 2026-10-04 — A9.24 Rust migration programme v1: plan, inventory, order, parity template, CI plan (DOCS ONLY; NO numeric change)
+
+Owner decisions A9.24 items 1, 2, 6, 7, 8, 14 (`docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md`;
+supersedes the A9.7 "do not rewrite in Rust" decision, and A9.14 S10.3 per component on admission). Lane
+`lane-a924-rustplan`; merges only AFTER the item-9 bid freeze (the bid source stays pre-migration).
+- New `docs/rust_migration/`: `PROGRAMME.md` + `programme_v1.json` (end state: zero Python execution dependency,
+  HallThruster.jl authoritative via a process-boundary Rust<->Julia bridge; lifecycle PYTHON_REFERENCE -> PREREG_PARITY ->
+  RUST_IMPL -> PARITY_PASS -> ADMITTED -> PYTHON_RETIRED_FROM_ACTIVE; rules RM-R01..R18; bid boundary with a proposed
+  `bid_source_manifest_v1.json` + `bid_source_guard` check; item-14 checklist E1-E10; proposed Cargo workspace; owner
+  questions RM-OQ-01..05), `component_inventory_v1.json` / `.md` (224 components: 442 Python files, 257,604 lines,
+  195,421 outside tests; Kernel 1 the only ADMITTED; 17 historical/superseded retirement candidates),
+  `migration_order_v1.json` (waves W0-W20 in item-7 order; re-ranking PENDING the item-6 rerun; profiling orders, never
+  gates; 51 pull-forward dependencies detected, handled by kernel-granularity contracts), `parity_contract_template_v1.json`
+  (generalised from `parity_prereg_v2`), `CI_PLAN.md` (item 8; the v1 -> v2 re-point is already done in 6e5465a).
+- Unchanged: all Python and Rust code, CI workflows, configuration, frozen data, goldens, parity records.

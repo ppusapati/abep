@@ -1,0 +1,412 @@
+{
+ "schema": "abep_rust_migration_programme_v1",
+ "id": "RUSTMIG-PROGRAMME-V1",
+ "status": "PROPOSED_PLAN_POST_BID_FREEZE",
+ "date": "2026-10-04",
+ "human_readable": "docs/rust_migration/PROGRAMME.md",
+ "governing_record": {
+  "path": "docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md",
+  "md_sha256": "9a2c950befd20dc38c63a3c56d4443ce7a30f1630903ada618b054638325b1d7",
+  "json": "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json",
+  "json_sha256": "fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c",
+  "items": [
+   1,
+   2,
+   6,
+   7,
+   8,
+   14
+  ]
+ },
+ "supersedes_per_a9_24": [
+  {
+   "record": "docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md",
+   "section": "Computational-language decision (Do not rewrite the simulator in Rust)",
+   "status": "SUPERSEDED_BY_A9_24_ITEM_1"
+  },
+  {
+   "record": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "section": "S10.3 PYTHON_CANONICAL_FOR_FROZEN_AND_SCORE_BEARING",
+   "status": "SUPERSEDED_PER_COMPONENT_ON_ADMISSION"
+  }
+ ],
+ "still_in_force": [
+  "A9.14 S10.4 OPTIONAL_RUST_CI_MANDATORY_PARITY_ON_RUST_CHANGES (extended by CI_PLAN.md)",
+  "CLAUDE.md rules 1-10 (frozen data, goldens, no silent fallbacks, conservation, pure caches, citations, HallThruster pin, no new propulsion families, test outcome contract, evidence rules)"
+ ],
+ "scope_of_this_record": "docs/plan only: no Python, Rust, CI workflow, configuration, frozen data or numeric change",
+ "end_state": {
+  "python_execution_dependency": "ZERO",
+  "rust_authoritative_for": [
+   "physics modules except the Hall solver",
+   "design-space generation",
+   "mission propagation",
+   "UQ / Monte Carlo orchestration",
+   "architecture closure",
+   "assessment / compliance",
+   "hard gates",
+   "configuration loading / hash verification",
+   "evidence builders",
+   "CLI tools",
+   "deterministic result generation",
+   "validation / parity tooling now in Python"
+  ],
+  "hall_solver": {
+   "authority": "HallThruster.jl",
+   "version": "0.23.1",
+   "commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+   "pin_file": "hallthruster_bridge/PINNED.toml",
+   "integration": "Rust<->Julia process bridge (abep-julia-bridge), PROGRAMME.md section 7"
+  },
+  "python_source_after_end_state": "immutable history only (Git history, retired tag or clearly retired directory); historical evidence never deleted"
+ },
+ "lifecycle": {
+  "states": [
+   "PYTHON_REFERENCE",
+   "PREREG_PARITY",
+   "RUST_IMPL",
+   "PARITY_PASS",
+   "ADMITTED",
+   "PYTHON_RETIRED_FROM_ACTIVE"
+  ],
+  "side_states": [
+   "NOT_ADMITTED",
+   "FORMALLY_RETIRED_NOT_PORTED"
+  ],
+  "transitions": [
+   {
+    "from": "PYTHON_REFERENCE",
+    "to": "PREREG_PARITY",
+    "evidence": "parity contract (template v1) committed in its own commit before any comparison; sha256 in the ledger"
+   },
+   {
+    "from": "PREREG_PARITY",
+    "to": "RUST_IMPL",
+    "evidence": "Rust commit + source sha256; cargo test green; never served for production"
+   },
+   {
+    "from": "RUST_IMPL",
+    "to": "PARITY_PASS",
+    "evidence": "scoring execution of the registered contract: every verdict ADMITTED; report committed whatever the verdict"
+   },
+   {
+    "from": "RUST_IMPL",
+    "to": "NOT_ADMITTED",
+    "evidence": "scoring execution with a failing verdict; report committed"
+   },
+   {
+    "from": "NOT_ADMITTED",
+    "to": "PREREG_PARITY",
+    "evidence": "code fix + NEW contract version with fresh scoring seeds (no_retuning)"
+   },
+   {
+    "from": "PARITY_PASS",
+    "to": "ADMITTED",
+    "evidence": "ledger flip + HISTORY entry + CI job for the component; new production results for it come from Rust and carry implementation/rust_commit/contract_id"
+   },
+   {
+    "from": "ADMITTED",
+    "to": "PYTHON_RETIRED_FROM_ACTIVE",
+    "evidence": "static check: no active execution path imports or invokes the Python component"
+   },
+   {
+    "from": "PYTHON_REFERENCE",
+    "to": "FORMALLY_RETIRED_NOT_PORTED",
+    "evidence": "explicit owner/lane decision in HISTORY; outputs kept byte-identical"
+   }
+  ],
+  "ledger_proposed": "docs/rust_migration/migration_state_v1.json (created by the first implementation PR; one row per inventory component with status and authoritative_implementation python|rust)",
+  "kernel_1": {
+   "status": "ADMITTED",
+   "scope": "abep_sim/intake_tpmc.py trace kernels K1-K5 via abep_core",
+   "records": [
+    "docs/performance/abep_core/parity_prereg_v2.json",
+    "docs/performance/abep_core/parity_report_v2.json",
+    "scripts/verify_abep_core.py",
+    "abep_sim/design/tpmc_backend.py"
+   ],
+   "default_backend_today": "python",
+   "open_question": "RM-OQ-01"
+  }
+ },
+ "rules": [
+  {
+   "id": "RM-R01",
+   "rule": "no big bang: component-by-component (or a tightly coupled group named in one contract); a wave is a schedule, never an admission unit",
+   "source": "item 1"
+  },
+  {
+   "id": "RM-R02",
+   "rule": "exact input parity: byte-identical inputs, each with sha256",
+   "source": "item 1"
+  },
+  {
+   "id": "RM-R03",
+   "rule": "exact architecture/config/model-set/design-state-set hashes recorded by both runs; mismatch voids the comparison",
+   "source": "item 1"
+  },
+  {
+   "id": "RM-R04",
+   "rule": "deterministic seeds where applicable; development seed vs scoring seed; scoring seed spent once",
+   "source": "item 1"
+  },
+  {
+   "id": "RM-R05",
+   "rule": "tolerances preregistered before any comparison, per observable, by parity class",
+   "source": "item 1"
+  },
+  {
+   "id": "RM-R06",
+   "rule": "output-schema parity; byte-identical evidence where the contract says EXACT_BYTES (Python-compatible JSON/CSV float formatting)",
+   "source": "item 1"
+  },
+  {
+   "id": "RM-R07",
+   "rule": "conservation checks on Rust outputs: source mass/power balances exact; energy ledger residual < 2 %",
+   "source": "item 1; CLAUDE.md rule 4"
+  },
+  {
+   "id": "RM-R08",
+   "rule": "domain/error parity: same failure class/status for invalid and out-of-domain inputs; documented divergences listed; no silent fallbacks",
+   "source": "item 1; CLAUDE.md rule 3"
+  },
+  {
+   "id": "RM-R09",
+   "rule": "performance measured (same machine, same session), reported, never a decision criterion",
+   "source": "item 1; item 6"
+  },
+  {
+   "id": "RM-R10",
+   "rule": "provenance: Python reference commit + file sha256, Rust commit + source sha256, toolchain, Cargo.lock sha256, Julia/HallThruster where relevant, thread/BLAS env",
+   "source": "item 1"
+  },
+  {
+   "id": "RM-R11",
+   "rule": "never rewrite Python results, goldens, frozen data or fixtures to make Rust pass; every disagreement is investigated and classified (Rust defect / Python reference defect under its own governance / contract defect -> new version), never resolved by tolerance change",
+   "source": "item 1"
+  },
+  {
+   "id": "RM-R12",
+   "rule": "no_retuning: after NOT_ADMITTED only a code fix plus a new contract version with fresh scoring seeds; no execution discarded",
+   "source": "parity_prereg_v2 decision_rules.no_retuning, generalised"
+  },
+  {
+   "id": "RM-R13",
+   "rule": "reference freeze: a contract binds the reference sha256; a changed reference refuses scoring (REFUSED_REFERENCE_CHANGED) until a new contract version",
+   "source": "parity_prereg_v2 reference_implementation.rule, generalised"
+  },
+  {
+   "id": "RM-R14",
+   "rule": "layer separation becomes crate dependency rules: physics crates never depend on abep-assess/abep-evidence (A9.22/A9.23; A9.24 items 3-5)",
+   "source": "items 3-5; A9.22/A9.23"
+  },
+  {
+   "id": "RM-R15",
+   "rule": "known physics inconsistencies are ported as is (A9.24 item 13 LaB6 paths: audit and owner decision first)",
+   "source": "item 13"
+  },
+  {
+   "id": "RM-R16",
+   "rule": "rule-1/2 frozen data and goldens are read byte-for-byte, never regenerated by the migration",
+   "source": "CLAUDE.md rules 1-2"
+  },
+  {
+   "id": "RM-R17",
+   "rule": "kernel granularity allowed: a contract may admit a function subset of a module; the module retires only when all its functions are admitted",
+   "source": "Kernel 1 precedent; migration_order_v1 pull-forward findings"
+  },
+  {
+   "id": "RM-R18",
+   "rule": "after admission, new production results for the component come from Rust",
+   "source": "item 1"
+  }
+ ],
+ "bid_boundary": {
+  "rule": "the bid uses the last completely verified pre-migration implementation (item-9 freeze B); migration is post-freeze; no partially migrated mixed implementation may silently become the bid source",
+  "bid_freeze_sha": "PENDING (item-9 lane; recorded in docs/bid/bid_technical_baseline.json)",
+  "this_lane_merges": "only after the bid-freeze SHA is recorded",
+  "proposed_guard": {
+   "bid_source_manifest": "docs/bid/bid_source_manifest_v1.json generated once at the freeze commit: commit, tag, sha256 of every file the bid package cites or executes (abep_sim/**, config/**, abep_sim/data/**, cited builders and outputs, abep_core sources + DEFAULT_BACKEND), migration state at freeze",
+   "migration_state": "docs/rust_migration/migration_state_v1.json authoritative_implementation per component",
+   "ci_check": "bid_source_guard: fail if bid-package inputs differ from the manifest without an owner re-freeze record; fail if any bid-cited evidence carries implementation: rust provenance; fail if a rust-authoritative component's files are cited by the bid package other than at the manifest's frozen versions",
+   "tag": "bid tag immutable; bid package build verifies the manifest commit and refuses another tree",
+   "result_provenance": "every Rust-produced result carries implementation, rust_commit, contract_id",
+   "only_exit": "an explicit owner re-freeze"
+  },
+  "implemented_by": "the first migration implementation PR (not this record)"
+ },
+ "parity_classes": [
+  "EXACT_BYTES",
+  "EXACT_VALUE",
+  "ULP_BOUNDED",
+  "SOLVER_TOLERANCE",
+  "STATISTICAL",
+  "EXACT_STREAM"
+ ],
+ "julia_bridge": {
+  "current_python_mechanism": "out-of-process, file-based: Python writes case/job JSON, spawns `julia --project=hallthruster_bridge <script>.jl <in> <out>` (scripts/identify_p5_transport.py subprocess.Popen per worker; launch manifests from scripts/make_p5_n2_launch_manifests.py executed by docs/orchestration/runner_scripts/*.sh), reads JSON/JSONL; consumers hall_map.py (schema-derived REQUIRED_FIELDS, pin rejection), hall_ensemble.py, hallmap_registry.py, thermal_life.py, score/freeze/forensics scripts",
+  "julia_entry_points": [
+   "hallthruster_bridge/run_cases.jl",
+   "hallthruster_bridge/identify_worker.jl",
+   "hallthruster_bridge/campaign/p5_n2_campaign.jl",
+   "hallthruster_bridge/checks/blind_state_envelope.jl",
+   "hallthruster_bridge/checks/chemistry_validity_check.jl",
+   "hallthruster_bridge/checks/wall_flux_consistency.jl"
+  ],
+  "julia_version_in_manifest": "1.11.7",
+  "proposal": [
+   "keep the process boundary and the JSON/JSONL contract; Julia scripts unchanged",
+   "std::process::Command launcher with an environment allow-list; launch-equivalence parity (argv, env, input bytes) + EXACT_BYTES record comparison",
+   "pin checked in Rust (PINNED.toml/Manifest.toml) and in Julia (check_pin())",
+   "per-run execution provenance sidecar (Julia version, HallThruster commit, threads/BLAS, host, argv, input sha256)",
+   "Hall-map record types generated from hall_map_schema_v1.json; trustworthy / wall_life_trustworthy / chemistry_trustworthy / ensemble_member_id rules unchanged; HallMap loads admitted members only",
+   "resumable sharded workers and transactional trigger ledger semantics",
+   "no in-process embedding (jlrs) now"
+  ]
+ },
+ "cargo_workspace_proposal": {
+  "status": "PROPOSAL_ONLY_NO_CRATE_CREATED",
+  "root": "Cargo.toml (workspace, members crates/*) + rust-toolchain.toml",
+  "crates": [
+   "abep-types",
+   "abep-provenance",
+   "abep-rng",
+   "abep-config",
+   "abep-data",
+   "abep-atmos",
+   "abep-intake",
+   "abep-gaspath",
+   "abep-chem",
+   "abep-mission",
+   "abep-subsystems",
+   "abep-hall",
+   "abep-julia-bridge",
+   "abep-closure",
+   "abep-design",
+   "abep-uq",
+   "abep-assess",
+   "abep-evidence",
+   "abep-parity",
+   "abep-perf",
+   "abep-cli"
+  ],
+  "abep_core": "unchanged standalone crate outside the workspace while parity v2 binds its Cargo.toml/Cargo.lock/src sha256; consumed as a path dependency after a registered build-equivalence addendum; PyO3 feature retires at W20",
+  "dependency_rule": "types <- provenance <- config/data <- physics crates <- closure/design/uq <- assess <- evidence <- cli; physics never depends on assess/evidence"
+ },
+ "order": {
+  "file": "docs/rust_migration/migration_order_v1.json",
+  "profiling_role": "ORDER, not GATE",
+  "item_6_rerun": "PENDING",
+  "waves": [
+   "W0",
+   "W1E",
+   "W1",
+   "W2",
+   "W3",
+   "W4",
+   "W5",
+   "W6",
+   "W7",
+   "W8",
+   "W9",
+   "W10",
+   "W11",
+   "W12",
+   "W13",
+   "W14",
+   "W15",
+   "W16",
+   "W17",
+   "W18",
+   "W19",
+   "W20"
+  ]
+ },
+ "inventory_summary": {
+  "file": "docs/rust_migration/component_inventory_v1.json",
+  "components_total": 224,
+  "python_files": 442,
+  "loc_total_all_python": 257604,
+  "loc_total_excluding_tests": 195421,
+  "components_admitted": 1
+ },
+ "end_state_acceptance_checklist": [
+  {
+   "id": "E1",
+   "criterion": "normal simulator execution requires no Python interpreter",
+   "check": "abep CLI end-to-end (closure, archengine, mission, UQ) in a container without python3 on PATH"
+  },
+  {
+   "id": "E2",
+   "criterion": "production sweeps require no Python",
+   "check": "abep sweep reproduces registered sweep references Python-free"
+  },
+  {
+   "id": "E3",
+   "criterion": "config generation/loading requires no Python",
+   "check": "abep config build --check reproduces config/MANIFEST.json byte-identically Python-free"
+  },
+  {
+   "id": "E4",
+   "criterion": "assessment/gates require no Python",
+   "check": "abep assess / hard-gate outputs equal captured references Python-free"
+  },
+  {
+   "id": "E5",
+   "criterion": "evidence builders require no Python",
+   "check": "every W18 builder ADMITTED (abep build <id> --check byte-identical) or FORMALLY_RETIRED_NOT_PORTED"
+  },
+  {
+   "id": "E6",
+   "criterion": "normal CI requires no Python for the ABEP simulator",
+   "check": "static workflow scan: no setup-python / python / pip / pytest in the simulator CI jobs; Python-free runner image"
+  },
+  {
+   "id": "E7",
+   "criterion": "every active Python implementation has an admitted Rust replacement or has been formally retired",
+   "check": "migration_state_v1.json complete; inventory re-run at the end-state commit finds no unlisted component"
+  },
+  {
+   "id": "E8",
+   "criterion": "HallThruster.jl integration still works",
+   "check": "abep hall pin-check + abep hall smoke green; non-pinned Hall maps rejected"
+  },
+  {
+   "id": "E9",
+   "criterion": "all required evidence provenance remains intact",
+   "check": "abep ci verifies MANIFEST.json, prereg locks, audit manifests, validation release, evidence sha256 chains"
+  },
+  {
+   "id": "E10",
+   "criterion": "Python source only as immutable historical/reference material; historical evidence not deleted",
+   "check": "no active build/test/workflow path references the retired Python sources; evidence files unchanged"
+  }
+ ],
+ "open_owner_questions": [
+  {
+   "id": "RM-OQ-01",
+   "question": "Flip tpmc_backend DEFAULT_BACKEND to rust (item 1: new production results from Rust) as its own post-freeze step, or together with the W1 response-layer admission?",
+   "proposed_default": "together with W1 admission; frozen intake_surface_v1 unchanged"
+  },
+  {
+   "id": "RM-OQ-02",
+   "question": "Live NRLMSIS rebuilds: Fortran FFI build-time feature or retired Python tag?",
+   "proposed_default": "Fortran FFI feature msis-build"
+  },
+  {
+   "id": "RM-OQ-03",
+   "question": "W4 UQ/MC parity class: EXACT_STREAM (port numpy PCG64 + Generator) or STATISTICAL?",
+   "proposed_default": "EXACT_STREAM"
+  },
+  {
+   "id": "RM-OQ-04",
+   "question": "Formally retire (not port) the 17 HISTORICAL_LINE_OR_SUPERSEDED_CANDIDATE components?",
+   "proposed_default": "retire; outputs kept byte-identical"
+  },
+  {
+   "id": "RM-OQ-05",
+   "question": "Rust-era equivalent of CLAUDE.md rule 9 (test outcome contract) at end state",
+   "proposed_default": "owner-approved CLAUDE.md revision mapping 5 skipped / 1 strict xfail to cargo test equivalents"
+  }
+ ]
+}
