@@ -1,0 +1,57 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_2026_10_05_A9_28_rust_plan_rulings_and_simulation_completion_directive",
+ "decided_by": "owner",
+ "date": "2026-10-05",
+ "decision": "A9_28_RUST_PLAN_RULINGS_AND_SIMULATION_COMPLETION",
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_05_A9_28_RUST_PLAN_RULINGS_AND_SIMULATION_COMPLETION_DIRECTIVE.md",
+  "sha256": "7877bdc923fb07876b211924965767800f4f3a8efc46095f4dc3d471733fb54c",
+  "method": "exact text extracted from the session transcript"
+ },
+ "messages": [
+  {
+   "n": 1,
+   "key": "RUST_PLAN_V2_RULINGS",
+   "utc": "2026-10-05T08:02:07.588Z",
+   "text_sha256": "4987b0d204583e7569154cf33f8b4d52c578667f600fc785fd1aef42b8c16d57",
+   "chars": 5862
+  },
+  {
+   "n": 2,
+   "key": "SIMULATION_COMPLETION_DIRECTIVE",
+   "utc": "2026-10-05T08:25:35.800Z",
+   "text_sha256": "a2d8586c894892ace84c95af8bb60188a0daee8e83689f6090f24c3c62a0b688",
+   "chars": 13261
+  }
+ ],
+ "protected_bid_record": {
+  "technical_source": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b",
+  "package_freeze_record": "2de86abefacbd36ce7516d3cf017f6258bd7e7a2"
+ },
+ "owner_decision_summary": {
+  "priority": "complete the ABEP simulator, then integrate cleanly into main; RFP-form / Part-IV work stopped unless the owner returns to it",
+  "integration_line": "integration/simulation-complete from the development state; main's checkpoints #31-#36 reconciled once (no blanket ours/theirs; evidence per conflict; history preserved); main untouched until the complete simulator is admitted; final NEW PR integration/simulation-complete -> main; PR #37 eventually closed SUPERSEDED_BY_SIMULATION_INTEGRATION",
+  "architecture": "hall_icp_neutralizer only; AIR_PRIMARY + XE_CONTINGENCY; flight hollow cathode NONE; C1 GROUND_REFERENCE_ONLY; no broad family re-selection; obsolete families not ported",
+  "rust_plan_rulings": {
+   "mass_power_a9_v5": "ACTIVE_SELECTED_ARCHITECTURE_ENGINEERING_ASSESSMENT; AL-07 6.0 kg PROVISIONAL_LEGACY_DERIVED_ANALOG_INPUT, AFI-02-RA1 open, never promoted to CBE / measured / frozen truth",
+   "plasma_chem": "HISTORICAL_LEGACY_MODULE; extract architecture-independent kernels only if the selected architecture needs them",
+   "compressor_downselect": "HISTORICAL / RETIRE_FROM_ACTIVE_GRAPH",
+   "feed_state_closure": "GROUND_TEST_PROGRAMME_ONLY, NOT_FLIGHT_RUNTIME, retained until successor feed-qualification records exist",
+   "capability_demo": "GROUND_TEST_PROGRAMME_ONLY / ACTIVE_EVIDENCE_TOOLING",
+   "hall_sustainment": "REFERENCE_EVIDENCE_ONLY, NOT_FLIGHT_RUNTIME",
+   "hardware_instrumentation_experiments": "GROUND_TEST_PROGRAMME_ONLY (migrate where retained in the active evidence toolchain)",
+   "S1_S1a_readiness": "GROUND_TEST_PROGRAMME_ONLY / ACTIVE_GATE_TOOLING (Rust equivalents eventually)",
+   "historical_goldens": "immutable, reproducible from the historical Python environment, not Rust parity cases, not deleted / rewritten; CLAUDE.md rule 2 applies to the active canonical golden set (CLAUDE.md updated post-bid); new hall_icp_neutralizer golden only from the admitted active chain",
+   "new_physics": "cathodeless thermal model (and other genuinely new physics) implemented directly in Rust after preregistration; admitted by independent verification; no synthetic Python reference",
+   "H2-6_source_check": "port the check semantics to a generic Rust provenance verifier; retire the Python check from CI only after admission; historical H2-6 evidence immutable",
+   "ordering": "architecture relevance first, evidence / admission eligibility second, measured runtime third; retired code never ported for speed"
+  },
+  "simulation_complete_definition": "admitted active implementation of environment, upstream (TPMC intake, filter, compressor, plenum, feed dynamics), propulsion (gas state, RF/ICP, HallThruster.jl bridge, Hall acceleration, neutralization, coupled thrust / flow), spacecraft interaction (intake drag, reference drag interface, statewise T-D), electrical (PPU / loads, RF generator / matching, bus power, start-up / concurrent loads), new cathodeless thermal, mass accounting, materials / life, mission propagation / integration, F7/F8 synthesis, robust optimisation, UQ, assessment separation, HC gates, RVM mapping, config / hash / provenance, deterministic CLI, active builders, active canonical golden, CI, clean install",
+  "hall": "HallThruster.jl authoritative; Rust owns orchestration; deterministic, version-pinned, provenance-recorded interface; credible transport set stays empty / visible; screening candidates never admitted without governed validation",
+  "evidence": "software completion never converts NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN / MODEL_ERROR into PASS; no fabricated hardware evidence",
+  "end_state": "zero Python active execution dependency (simulation, sweeps, mission, UQ, assessment, gates, config / hash, operational builders, normal CI); Python only for archived historical reproduction",
+  "main_merge_policy": "one coherent admitted baseline; pre-PR checklist (Rust + HallThruster.jl only, no LaB6 path, invariant architecture identity, clean install, deterministic, conservation, config / hash, active golden, Rust tests, Hall interface tests, 196-state, robust / UQ, assessment separation, no silent fallbacks, no requirement parsing in physics, CI green, no drift)",
+  "completion_report": "A integration SHA; B dependency graph; C language inventory; D zero-Python proof; E HallThruster.jl pin; F architecture invariant; G active golden; H 196-state; I robust / UQ; J hardware-evidence gates; K clean install; L CI; M comparison vs the bid technical source; N main-merge plan; then request owner authorization"
+ }
+}
