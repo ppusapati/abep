@@ -1,0 +1,392 @@
+{
+ "schema": "abep_rust_parity_contract_template_v3_1",
+ "id": "RUSTMIG-PARITY-CONTRACT-TEMPLATE-V3-1",
+ "status": "TEMPLATE",
+ "revises": {
+  "path": "docs/rust_migration/parity_contract_template_v3.json",
+  "sha256": "40bf57e0cc0cafdaa43316a229dbe2491465d58a27f750b5cfadeef2027e5321",
+  "status": "HISTORICAL_UNCHANGED",
+  "why_a_new_version": "v3 has one campaign_seeds.rng_streams choice per contract, so a contract over a component that draws design / UQ samples AND calls the TPMC kernel (F8 robust_optimizer.tpmc_monte_carlo) could register only one stream policy for both, and programme v3 RM-OQ-03 proposed re-registering Kernel 1 on the design stream. A9.29 sec. 7 requires the two to be distinguished",
+  "changes": [
+   "campaign_seeds.rng_streams replaced by rng_stream_roles: design / UQ sampling stream (EXACT_STREAM) and TPMC particle-tracing stream (the admitted Kernel-1 statistical contract) registered separately (A9.29 sec. 7, RM-OQ-03)",
+   "tolerance_classes.EXACT_STREAM scoped to the design / UQ sampling stream (A9.29 sec. 7)",
+   "new_physics_verification: gate 'no implementation before the preregistration is committed' (A9.29 sec. 13) and the NP-ICP-NEUTRALIZER minimum-scope pointer (A9.29 sec. 4)",
+   "classification gate: GROUND_TEST_PROGRAMME_ONLY OWNER_APPROVED (A9.29 sec. 1)",
+   "bid boundary: 2de86ab terminal package state (A9.29 sec. 3)",
+   "references re-pointed to component_inventory_v3_1.json / simulation_completion_programme_v1_1.json / programme_v3_1.json",
+   "everything else of v3 kept unchanged"
+  ]
+ },
+ "generalised_from": {
+  "path": "docs/performance/abep_core/parity_prereg_v2.json",
+  "sha256": "98be24c170b5340e753b3630bda40f6d8ad970005561b13b12e1f108353bf365",
+  "id": "PARITY-PREREG-ABEP-CORE-TPMC-V2",
+  "what_is_kept": "pre-registration in its own commit before any comparison; reference sha256 binding with REFUSED_REFERENCE_CHANGED; scoring vs development seeds; per-test + aggregate statistical rules (z = 5, aggregate 4) for RNG-driven observables; exact invariants in both implementations; documented divergences; speed-up reported, not decided on; no_retuning; campaign_history (no execution discarded); immutable superseded versions",
+  "what_is_generalised": "any component (not only TPMC kernels); deterministic parity classes (EXACT_BYTES / EXACT_VALUE / ULP_BOUNDED / SOLVER_TOLERANCE / EXACT_STREAM) besides STATISTICAL; conservation, schema and domain/error parity sections; config/architecture hash binding; Rust-native (non-PyO3) execution; Julia-bridge provenance; admission meaning under A9.24 (Rust authoritative after admission)"
+ },
+ "governing_record": "A9.24 items 1, 7, 8, 14; A9.25 message 3 (four classes; parity only on retained physics); docs/rust_migration/PROGRAMME.md section 3 (rules RM-R01..RM-R25); A9.28 messages 1-2; PROGRAMME.md rules RM-R01..RM-R32; A9.29 secs. 1, 3, 4, 7, 13; PROGRAMME.md rules RM-R01..RM-R42",
+ "usage": [
+  "Copy to docs/rust_migration/contracts/<component_id>/parity_prereg_v1.json (one directory per contract; the report goes next to it as parity_report_v1.json + .md).",
+  "Before copying: look the component up in docs/rust_migration/component_inventory_v3_1.json. Only a component with migration_class ACTIVE_SELECTED_ARCHITECTURE_PHYSICS, a GROUND_TEST_PROGRAMME_ONLY component whose disposition migrates it, or an extract_and_parity_kernel id, may get a contract. A GROUND_REFERENCE_ONLY component needs a recorded requirement of the active test / evidence toolchain first. HISTORICAL_LEGACY_REGRESSION is never contracted; ACTIVE_FLIGHT_INCONSISTENCY only after its resolution, for the corrected successor (RM-R19).",
+  "Replace every <...> placeholder and every value marked FILL; delete nothing (a section that does not apply says NOT_APPLICABLE with a reason).",
+  "Commit the filled contract ALONE, before any Python-vs-Rust comparison; record its sha256 in docs/rust_migration/migration_state_v1.json (status PREREG_PARITY).",
+  "Development comparisons use development_master_seed only and are never scored or reported as a verdict.",
+  "A changed reference, tolerance, observable, input set, seed, n or decision rule requires a NEW contract version (v2, v3 ...) with fresh scoring seeds; earlier versions and their reports stay immutable.",
+  "Genuinely new physics (no Python reference) uses contract_kind NEW_PHYSICS: fill new_physics_verification, mark the Python-reference sections NOT_APPLICABLE (no synthetic Python reference may be created, RM-R26), and commit the preregistration alone before any Rust code.",
+  "A contract whose component both draws design / UQ samples and calls the TPMC kernel fills both rng_stream_roles entries; it never re-registers the TPMC kernel on the design / UQ stream (A9.29 sec. 7)."
+ ],
+ "contract": {
+  "schema": "abep_rust_parity_contract_v3_1",
+  "id": "PARITY-<COMPONENT_ID>-V<N>",
+  "component": {
+   "inventory_id": "<C-... from docs/rust_migration/component_inventory_v3_1.json, or NP-... for new physics>",
+   "inventory_sha256": "FILL",
+   "migration_wave": "<W..>",
+   "scope": "<whole module | named function subset (kernel granularity, RM-R17) | coupled group: list>",
+   "functions_or_entry_points": [
+    "<python path::function or CLI>"
+   ],
+   "out_of_scope": [
+    "<functions of the same module not covered; they stay PYTHON_REFERENCE>"
+   ],
+   "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS (required) | GROUND_TEST_PROGRAMME_ONLY (migrating disposition only) | GROUND_REFERENCE_ONLY (only with active_toolchain_requirement below)",
+   "extract_kernel_id": "<K-... from component_inventory_v3_1.json extract_and_parity_kernels, or NOT_APPLICABLE>",
+   "active_toolchain_requirement": "<class G only: the active test / evidence tool that requires it and its record; else NOT_APPLICABLE>",
+   "excluded_legacy_paths": [
+    "<the component's not_ported_parts from the inventory: functions / branches the Rust implementation must NOT reproduce>"
+   ],
+   "owner_disposition_a9_28": "<verbatim owner labels from the inventory row, or NOT_APPLICABLE>",
+   "simulation_completion_wp": "<SC-WP-.. from simulation_completion_programme_v1_1.json>",
+   "owner_disposition_a9_29": "<verbatim owner text from the inventory row (owner_disposition_a9_29), or NOT_APPLICABLE>"
+  },
+  "date": "FILL",
+  "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+  "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of this component was executed. FILL commit after registration in the report, not here.",
+  "supersedes": {
+   "path": "<previous contract version or null>",
+   "sha256": "<or null>",
+   "reason": "<reference change | code fix after NOT_ADMITTED | contract defect>"
+  },
+  "reference_implementation": {
+   "python_commit": "FILL (full SHA on integration/simulation-complete; the bid record 5eee4b8 / 2de86ab is never a reference commit for new work)",
+   "files": [
+    {
+     "path": "<abep_sim/...py>",
+     "sha256_at_registration": "FILL"
+    }
+   ],
+   "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration; a changed reference requires a new contract version",
+   "environment": {
+    "python": "3.11.x",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "pandas": "3.0.2",
+    "requirements_lock_sha256": "FILL",
+    "blas": "FILL",
+    "thread_env": {
+     "OMP_NUM_THREADS": "FILL",
+     "OPENBLAS_NUM_THREADS": "FILL"
+    }
+   }
+  },
+  "rust_implementation": {
+   "crate": "<abep-...>",
+   "functions_or_entry_points": [
+    "<crate::path::fn or `abep <subcommand>`>"
+   ],
+   "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+   "toolchain": "<rustc version pinned in rust-toolchain.toml>",
+   "provenance_sources": [
+    "<Cargo.toml>",
+    "<Cargo.lock>",
+    "<crate src files>"
+   ],
+   "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it (A9.14 S10.4 RUSTCI-1, generalised)"
+  },
+  "governing_hashes": {
+   "config_manifest": {
+    "path": "config/MANIFEST.json",
+    "sha256": "FILL"
+   },
+   "architecture_hash": "FILL or NOT_APPLICABLE",
+   "model_set_hash": "FILL or NOT_APPLICABLE",
+   "design_state_set_hash": "FILL or NOT_APPLICABLE",
+   "rule": "both implementations must report these exact values for every run; a mismatch voids the run (status INPUT_MISMATCH, not a verdict)"
+  },
+  "pinned_inputs_sha256": {
+   "<path>": "FILL"
+  },
+  "frozen_data_read_only": [
+   "<abep_sim/data/... frozen files used; never regenerated (CLAUDE.md rule 1)>"
+  ],
+  "inputs": {
+   "golden_vectors": {
+    "source": "<goldens / fixtures / committed outputs / registered grid>",
+    "count": "FILL",
+    "list_or_generator": "FILL"
+   },
+   "edge_cases": [
+    {
+     "id": "E-01",
+     "inputs": {},
+     "note": "FILL"
+    }
+   ],
+   "randomized_domain": {
+    "count": "FILL or 0",
+    "draw": "FILL (one generator per entry point, seeded from campaign_seeds)",
+    "domain_note": "numerical parity domain only; not a physics, design or evidence claim"
+   },
+   "vector_totals": {
+    "<entry point>": "FILL"
+   }
+  },
+  "campaign_seeds": {
+   "applicable": "true | false (deterministic component)",
+   "scoring_master_seed": "FILL (fresh for every contract version)",
+   "development_master_seed": "FILL",
+   "derivation": "FILL (e.g. numpy.random.SeedSequence([master, entry_index, vector_index]) as parity_prereg_v2)",
+   "rng_stream_roles": {
+    "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the existing admitted stochastic / statistical parity contract; the roles are registered separately and never merged",
+    "design_uq_sampling_stream": "FILL or NOT_APPLICABLE: EXACT_STREAM - the registered numpy PCG64 / SeedSequence / Generator stream semantics (abep-rng) reproducing the Python reference samples of the active UQ / F8 sampling",
+    "tpmc_particle_tracing_stream": "FILL or NOT_APPLICABLE: the admitted Kernel-1 contract (docs/performance/abep_core/parity_prereg_v2.json / parity_report_v2.json: STATISTICAL, Rust xoshiro256++); never re-registered on the design / UQ stream",
+    "other_streams": "FILL: EXACT_STREAM or STATISTICAL with the reason, or NOT_APPLICABLE",
+    "migration_parity_dataset": "seeds, stream semantics and captured reference samples of the migration parity campaign stay exactly reproducible (immutable)",
+    "after_rust_authority": "new UQ campaigns may use the registered Rust RNG policy; this never changes the migration parity dataset"
+   },
+   "rng_streams_v3": "FILL: identical streams (EXACT_STREAM: numpy PCG64 + Generator ported in abep-rng) | different streams (STATISTICAL) (v3 field; replaced by rng_stream_roles)",
+   "development_rule": "development comparisons use development_master_seed only and are never scored or reported as a verdict; every execution with scoring_master_seed is appended to campaign_history and the report is committed whatever its verdict"
+  },
+  "observables": {
+   "<entry point>": {
+    "list": [
+     {
+      "name": "<observable>",
+      "units": "<SI>",
+      "tolerance_class": "EXACT_BYTES | EXACT_VALUE | ULP_BOUNDED | SOLVER_TOLERANCE | STATISTICAL | EXACT_STREAM",
+      "tolerance": "FILL (see tolerance_classes)",
+      "definition": "FILL"
+     }
+    ],
+    "replicates_per_implementation": "FILL (STATISTICAL only)",
+    "se_method": "FILL (STATISTICAL only)"
+   }
+  },
+  "tolerance_classes": {
+   "EXACT_BYTES": "files / serialized outputs byte-identical (sha256 equal); JSON written with the Python-compatible formatter (shortest round-trip float repr, Python exponent form, same indent/separators/key order)",
+   "EXACT_VALUE": "integers, strings, enums, booleans, statuses, error codes, schema shape: equal",
+   "ULP_BOUNDED": "|rust - py| <= k_ulp ulp(py) OR <= r_rel * max(1, |py|); k_ulp and r_rel FILL per observable (proposal k_ulp 4, r_rel 1e-12)",
+   "SOLVER_TOLERANCE": "convergence status EXACT_VALUE; solution |rust - py| <= abs_tol + rel_tol * |py| with abs_tol / rel_tol FILL and tied to the solver's own tolerance; iteration counts reported, not scored",
+   "STATISTICAL": "per test |mean_rust - mean_py| <= z * sqrt(se_py^2 + se_rust^2), z FILL (parity v2: 5.0); zero-se rule |diff| <= 1e-12 * max(1, |mean_py|); aggregate |sum z_i| / sqrt(N) <= FILL (parity v2: 4.0); conditional observables NOT_SCORED below a FILL minimum count",
+   "EXACT_STREAM": "RNG streams identical by construction (ported bit generator and distribution algorithms); then ULP_BOUNDED or EXACT_BYTES as listed per observable; A9.29 sec. 7: applies to the design / UQ sampling stream, never to the TPMC particle-tracing kernel"
+  },
+  "exact_invariants": [
+   {
+    "id": "INV-01",
+    "statement": "FILL (partitions, counts, shapes/types, determinism under the same seed in BOTH implementations)",
+    "required_in_both": true
+   }
+  ],
+  "conservation_checks": {
+   "applicable": "true | false",
+   "checks": [
+    {
+     "id": "CONS-01",
+     "statement": "source mass balance closes exactly (CLAUDE.md rule 4)",
+     "evaluated_on": "Rust outputs (and Python outputs, recorded)",
+     "tolerance": "FILL"
+    },
+    {
+     "id": "CONS-02",
+     "statement": "source power balance closes exactly",
+     "evaluated_on": "Rust outputs",
+     "tolerance": "FILL"
+    },
+    {
+     "id": "CONS-03",
+     "statement": "architecture energy ledger residual < 2 % (absolute comparison for near-zero ledger_resid, as golden check since 2026-09-25)",
+     "evaluated_on": "Rust outputs",
+     "tolerance": "0.02"
+    }
+   ]
+  },
+  "domain_and_error_parity": {
+   "cases": [
+    {
+     "id": "DE-01",
+     "inputs": {},
+     "expected_python": "<exception class / status (MODEL_ERROR | INFEASIBLE | sustained=False | ValueError ...)>",
+     "expected_rust": "<typed error / status mapped 1:1>",
+     "message_key": "FILL"
+    }
+   ],
+   "mapping_rule": "every Python exception class / status used by the component maps to exactly one Rust error variant / status; no Rust path may return a value where Python fails, or fail where Python returns (CLAUDE.md rule 3: no silent fallbacks)",
+   "documented_divergence": [
+    {
+     "id": "DIV-01",
+     "statement": "FILL or none",
+     "disposition": "FILL"
+    }
+   ]
+  },
+  "schema_parity": {
+   "schemas": [
+    "<schemas/... JSON schema paths or NOT_APPLICABLE>"
+   ],
+   "rules": [
+    "field names, units, types identical",
+    "ordering identical where it carries meaning (CSV columns, JSON arrays)",
+    "Rust record types generated from or tested against the same schema files",
+    "evidence_status / raw-vs-assessment labels (A9.22) identical"
+   ]
+  },
+  "golden_and_reference_cases": {
+   "references": [
+    "<abep_sim/data/golden_v2.json entries | tests/fixtures/... | committed outputs>"
+   ],
+   "rule": "references are read as committed; they are never regenerated to make Rust pass (RM-R11); a disagreement is investigated and classified (RUST_DEFECT | PYTHON_REFERENCE_DEFECT (own governance, new contract version) | CONTRACT_DEFECT (new contract version))",
+   "captured_reference_outputs": {
+    "path": "docs/rust_migration/contracts/<component_id>/reference_outputs/",
+    "captured_at_python_commit": "FILL",
+    "sha256_manifest": "FILL",
+    "purpose": "lets CI check Rust against the Python reference after Python is retired from active execution"
+   },
+   "historical_golden_rule": "RM-R28: golden_v1 / golden_v2 cases are historical; they may serve as optional development vectors of retained physics but are never scored end-state parity cases; the scored reference is the captured Python output of the retained component"
+  },
+  "julia_bridge": {
+   "applicable": "true | false",
+   "hallthruster_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+   "julia_version": "FILL (Manifest.toml julia_version)",
+   "launch_equivalence": "argv, environment allow-list and input JSON bytes identical between the Python and Rust launchers (EXACT_BYTES)",
+   "record_comparison": "run records EXACT_BYTES for deterministic Julia outputs under identical Julia version / threads / BLAS",
+   "execution_provenance": "per-run sidecar: Julia version, HallThruster commit, thread/BLAS env, host, argv, input sha256"
+  },
+  "performance_measurement": {
+   "status": "reported, not a decision criterion (A9.24 items 1 and 6)",
+   "workloads": [
+    {
+     "id": "FILL",
+     "description": "FILL (preferably the matching active workload of PRE_RUST_REFERENCE_BASELINE, docs/performance/pre_rust_reference_baseline_5eee4b8/baseline.json; never a retired workload)"
+    }
+   ],
+   "repeats": 3,
+   "statistic": "median wall-clock and median process CPU per implementation in one session on one machine; speed-up = median_python / median_rust",
+   "machine_manifest": "recorded before and after (CPU, RAM, OS, toolchains, thread env)"
+  },
+  "decision_rules": {
+   "per_test": "every scored observable meets its tolerance class",
+   "aggregate": "FILL (STATISTICAL entry points) or NOT_APPLICABLE",
+   "exact_invariants_required": true,
+   "conservation_required": "true if conservation_checks.applicable",
+   "domain_error_parity_required": true,
+   "schema_parity_required": true,
+   "verdict": "ADMITTED iff every per-test, aggregate, invariant, conservation, domain/error and schema check passes and every reference file matches sha256_at_registration",
+   "verdict_vocabulary": [
+    "ADMITTED",
+    "NOT_ADMITTED",
+    "REFUSED_REFERENCE_CHANGED",
+    "INPUT_MISMATCH",
+    "NOT_RUN_RUST_UNAVAILABLE",
+    "REFUSED_CLASSIFICATION"
+   ],
+   "meaning_of_ADMITTED": "A9.24 item 1: Rust becomes authoritative for this component (within the registered domain); new production results for it come from Rust and carry implementation = rust, rust_commit and this contract id; the Python component may then be retired from active execution. It is NOT physics validation.",
+   "no_retuning": "tolerances, observables, inputs, n, seeds and rules are fixed; after NOT_ADMITTED only a code fix plus a new contract version with a fresh scoring_master_seed may follow; the failed report stays; no execution is discarded",
+   "disagreement_rule": "never rewrite a Python result, golden, fixture or frozen dataset to make Rust pass (RM-R11)",
+   "observable_scope": "observables are restricted to retained selected-architecture physics; an observable that depends on an excluded legacy path is not registered (RM-R20)"
+  },
+  "bid_boundary": {
+   "statement": "this contract and its Rust implementation are post-bid-freeze work; no output of it may be cited by the bid package unless the owner re-freezes (PROGRAMME.md section 4; bid_source_guard)",
+   "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b (technical source) / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (package / freeze record, A9.28; lineage b5849affae22a6709ad217a184f6fe896d15410a -> 2de86ab); A9.29 sec. 3: 2de86ab is the terminal owner-authorized package state",
+   "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+  },
+  "what_this_is_not": [
+   "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+   "not a change of any frozen dataset, golden, threshold or requirement",
+   "not authority before admission: until ADMITTED the Python reference is authoritative",
+   "not a promotion of any provisional input (RM-R27)",
+   "not a gate PASS: absent determining evidence stays NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN / MODEL_ERROR (RM-R31)"
+  ],
+  "outputs": {
+   "report": "docs/rust_migration/contracts/<component_id>/parity_report_v<N>.json (+ .md generated from it)",
+   "runner": "abep-parity (Rust) or, while the reference is active, a Python harness that calls the Rust CLI; both record campaign_history",
+   "report_fields": [
+    "contract_sha256",
+    "python_commit",
+    "reference_sha256",
+    "rust_commit",
+    "build_provenance (rustc, Cargo.lock sha256, source sha256)",
+    "environment",
+    "per-test results",
+    "aggregates",
+    "invariants",
+    "conservation",
+    "domain/error",
+    "schema",
+    "performance",
+    "verdicts",
+    "campaign_history"
+   ]
+  },
+  "classification_gate": {
+   "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator (A9.25 message 3)",
+   "checks": [
+    "component.migration_class is ACTIVE_SELECTED_ARCHITECTURE_PHYSICS, a migrating GROUND_TEST_PROGRAMME_ONLY disposition, or GROUND_REFERENCE_ONLY with a recorded requirement",
+    "no observable, input or code path of the contract belongs to excluded_legacy_paths (LaB6Cathode, lab6_xe, Xe hollow-cathode heater / keeper, C1 flight fallback, hollow-cathode Hall cards, multi-family selection)",
+    "if the Python harness must traverse a legacy path to reach the retained kernel (e.g. Config('hall_1stage') for K-GASPATH), the contract states why that path cannot influence the scored observables and registers a check of it (INV-xx)",
+    "the Rust implementation contains none of the forbidden identifiers (CI_PLAN.md sec. 1 principle 6) outside the refusal-guard vocabulary",
+    "a GROUND_TEST_PROGRAMME_ONLY contract targets abep-groundtest; no flight-runtime crate may depend on it (RM-R30) (OWNER_APPROVED A9.29 sec. 1; cargo metadata check)"
+   ],
+   "failure": "REFUSED_CLASSIFICATION (not a verdict): the contract cannot be registered"
+  },
+  "contract_kind": "EXISTING_PHYSICS_PARITY | NEW_PHYSICS",
+  "value_status_preservation": {
+   "rule": "RM-R27: no provisional / analog / allocation input is promoted by migration to CBE, measured or frozen truth",
+   "inputs": [
+    {
+     "id": "<e.g. AL-07>",
+     "value": "<as committed>",
+     "value_status": "<e.g. PROVISIONAL_LEGACY_DERIVED_ANALOG_INPUT>",
+     "open_action": "<e.g. AFI-02-RA1_OPEN>",
+     "committed_labels": [
+      "<labels as committed>"
+     ]
+    }
+   ],
+   "check": "VS-xx: the Rust output carries each input's value and labels exactly; any CBE / measured / frozen label fails"
+  },
+  "new_physics_verification": {
+   "applies_when": "contract_kind = NEW_PHYSICS (otherwise NOT_APPLICABLE)",
+   "model_id": "<NP-...>",
+   "preregistration": {
+    "nodes": "FILL",
+    "equations": "FILL",
+    "heat_or_mass_or_energy_sources": "FILL",
+    "boundaries": "FILL (radiative / conductive / spacecraft interface where applicable)",
+    "assumptions": "FILL",
+    "domains": "FILL (inputs outside -> OUT_OF_DOMAIN)",
+    "conservation_checks": "FILL (residual tolerance fixed here)",
+    "analytic_limiting_cases": [
+     {
+      "id": "AL-xx",
+      "case": "FILL",
+      "closed_form": "FILL",
+      "tolerance": "FILL"
+     }
+    ],
+    "independent_verification": [
+     {
+      "id": "IV-xx",
+      "source": "FILL (published benchmark / independent cross-check)",
+      "authoritative": false,
+      "tolerance": "FILL"
+     }
+    ],
+    "evidence_validation_plan": "FILL (what measured evidence would validate it; until then validation_status NOT_VALIDATED and dependent gates NOT_EVALUATED)"
+   },
+   "python_scratch_rule": "a Python scratch calculation may be listed only under independent_verification with authoritative = false; it never becomes an active dependency (RM-R26)",
+   "verdict": "ADMITTED iff every analytic case, conservation check, domain test and independent verification passes; admission is software verification, not physical validation and not a gate PASS",
+   "gate_a9_29": "no implementation before the preregistration is committed (A9.29 sec. 13)",
+   "np_icp_neutralizer_a9_29": "when model_id = NP-ICP-NEUTRALIZER the preregistration also covers the A9.29 sec. 4 minimum scope recorded in simulation_completion_programme_v1_1.json (SC-WP-03 element NP-ICP-NEUTRALIZER, minimum_scope): inputs, raw physics outputs, system coupling, assessment separation (raw I_e,cap; M_n = I_e,cap / I_d,max,H1 - 1 only in assessment; no HC-05 PASS/FAIL, threshold or RFP compliance label in raw physics), calibrated / uncalibrated modes with explicit provenance and domain, no invented coupling efficiency / impedance / extraction efficiency / stable operating region, and the validation basis (conservation, analytic limiting cases, applicable published evidence, P1 / P2 hardware evidence when available, preregistered comparison criteria)"
+  }
+ }
+}
