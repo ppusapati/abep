@@ -3,7 +3,7 @@
 //! development vector file instead.
 
 use abep_types::pyjson::{
-    dumps, encode_string, float_repr, json_float, loads, py_isprintable, py_repr_str, DumpOptions, Value,
+    dumps, encode_string, float_repr, json_float, loads, py_isprintable, py_isword, py_repr_str, DumpOptions, Value,
 };
 use sha2::{Digest, Sha256};
 use std::path::PathBuf;
@@ -131,10 +131,8 @@ fn strings_encode_and_repr_like_cpython() {
     }
 }
 
-#[test]
-fn isprintable_table_matches_cpython_for_every_code_point() {
-    let v = vectors();
-    let ranges: Vec<(u32, u32)> = get(&v, "non_printable")
+fn ranges(v: &Value, key: &str) -> Vec<(u32, u32)> {
+    get(v, key)
         .as_list()
         .unwrap()
         .iter()
@@ -146,11 +144,19 @@ fn isprintable_table_matches_cpython_for_every_code_point() {
             };
             (n(&r[0]), n(&r[1]))
         })
-        .collect();
+        .collect()
+}
+
+#[test]
+fn character_tables_match_cpython_for_every_code_point() {
+    let v = vectors();
+    let non_printable = ranges(&v, "non_printable");
+    let word = ranges(&v, "word");
+    let inside = |t: &[(u32, u32)], cp: u32| t.iter().any(|&(lo, hi)| (lo..=hi).contains(&cp));
     for cp in 0..=0x10FFFFu32 {
         if let Some(c) = char::from_u32(cp) {
-            let want = !ranges.iter().any(|&(lo, hi)| (lo..=hi).contains(&cp));
-            assert_eq!(py_isprintable(c), want, "U+{cp:04X}");
+            assert_eq!(py_isprintable(c), !inside(&non_printable, cp), "isprintable U+{cp:04X}");
+            assert_eq!(py_isword(c), inside(&word, cp), "word U+{cp:04X}");
         }
     }
 }
