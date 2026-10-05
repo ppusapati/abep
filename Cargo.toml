@@ -24,3 +24,8 @@ abep-provenance = { path = "crates/abep-provenance" }
 
 [profile.release]
 opt-level = 3
+
+# sha256 of large frozen files (the 36.7 MB f1 intake record read by the bid guard's history part) stays fast in
+# test builds; it changes no result.
+[profile.dev.package.sha2]
+opt-level = 3

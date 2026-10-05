@@ -4,6 +4,9 @@
 //! CLAUDE.md rule 1: frozen data and configuration carry hashes and are verified on every load; a mismatch is a
 //! `MODEL_ERROR`, never a warning (rule 3, no silent fallbacks).
 
+pub mod bid_guard;
+pub mod git;
+
 use abep_types::{AbepError, AbepResult};
 use serde::Deserialize;
 use sha2::{Digest, Sha256};
