@@ -3,15 +3,53 @@
 ## What this is
 ABEP-VLEO physics simulator for Vyovrinda Aerospace's DRDO TDF bid (RFP DTDF/06/13516/DSP/ABEP/X/L/M/01; bid close
 05 Oct 2026). RFP envelope: 180–230 km, 12–25 mN, < 1.5 kW, < 40 kg, 26,000 h mission, > 15,000 h firing, Hall preferred,
-air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-discharge physics only.
+air + Xe.
+
+## Current phase and language direction (A9.28 / A9.29, 2026-10-05; CA-02, CA-03)
+- **The bid is frozen.** Technical source `5eee4b8c82a9403b6bb82d5f8d324526f5d6399b`. Terminal package / freeze record
+  `2de86abefacbd36ce7516d3cf017f6258bd7e7a2`, lineage `b5849af` → `2de86ab`. Both are immutable evidence. Never rewrite them, and
+  never present a later commit as the submitted source. Any later change to the historical bid package needs a new explicit owner
+  decision. No RFP document work in this phase unless the owner asks. The working RFP deadline is 12 Oct 2026.
+- **Current work is simulation completion** for the selected architecture `hall_icp_neutralizer`
+  (`docs/decisions/OD_2026_10_05_A9_28_*`, `OD_2026_10_05_A9_29_*`; plan `docs/rust_migration/`, v3.1). The chain is complete only
+  when the full A9.29 sec. 15 chain runs end to end under Rust + HallThruster.jl with zero Python production dependency.
+  The chain: atmosphere/orbit → TPMC intake → filter → compressor → plenum/feed → predictive 13.56 MHz RF/ICP neutralizer +
+  HallThruster.jl Hall → coupled thrust/neutralization → drag / T-D → power → cathodeless thermal → mass → materials/life →
+  mission → robust/UQ → separate assessment/gates.
+  - It covers AIR_PRIMARY and XE_CONTINGENCY.
+  - There is no flight hollow cathode. C1 is ground test / reference only.
+- **Language direction.**
+  - Target simulator = **Rust**. Hall solver = **HallThruster.jl** (pinned, rule 7). Rust owns orchestration across a deterministic,
+    pinned, provenance-recorded process boundary.
+  - Python = **migration reference** until each component is admitted, then **archive-only**.
+  - Existing physics: Python reference → preregistered parity → Rust → admission → Python retired.
+  - New physics (NP-ICP-NEUTRALIZER, NP-THERMAL-CATHODELESS): preregistered model → Rust → analytic/independent-evidence
+    verification → admission. No synthetic Python reference. No implementation before its preregistration is committed.
+  - End-state production stack: Rust simulator + HallThruster.jl + versioned configuration / evidence data. No production
+    dependency on python, python3, pip, virtualenv, PyO3 or maturin. The `abep_core` PyO3 interface is migration tooling; its Rust
+    TPMC becomes a normal Rust library.
+  - Python files stay at their current paths during migration. At cutover, archive them as tag `python-final-reference-<date>`
+    plus branch `archive/python-final-reference` and `docs/archive/PYTHON_FINAL_REFERENCE.md` / `python_final_reference.json`
+    (A9.29 sec. 8).
+- **Execution baseline is `integration/simulation-complete`** (CA-02).
+  - `main` is never modified directly; it receives this line only through a new owner-authorized PR.
+  - `claude/nifty-ramanujan-w68f9z` (`dcab602`) is the historical bid-era development branch.
+- Speed never weakens provenance, preregistration, conservation, determinism, model-domain checks, requirement/physics
+  separation, uncertainty handling or fail-closed evidence semantics (A9.29 sec. 14).
 
 ## Rules (do not break these)
 1. **Frozen data is the reference behaviour.** `abep_sim/data/atmosphere_msis21_v1.*`, `intake_surface_v1.*`,
    `golden_v2.json` (canonical since A9.18; `golden_v1.json` kept as history), `rates/` carry hashes/provenance. Never regenerate them casually. Rebuild only on an intentional model
    change, via `python -m abep_sim.atmosphere build`, `python -m abep_sim.intake_tpmc build`, `python -m abep_sim.golden generate`,
    and record why in docs/HISTORY.md.
-2. **Golden benchmarks must reproduce** (`python -m abep_sim.golden check` → OK). If a change moves them, it is a model
-   change: justify it, regenerate, and log it.
+2. **Active canonical golden benchmarks must reproduce.** If a change moves them, it is a model change: justify it, regenerate,
+   and log it.
+   - Scope (CA-01, A9.28 RM-OQ-06): rule 2 applies to the ACTIVE canonical golden set. The active `hall_icp_neutralizer` golden is
+     generated only from the admitted active Rust chain.
+   - Historical goldens (`golden_v1.json`, `golden_v2.json`) are archive/regression history. They are immutable, never deleted and
+     never rewritten. They stay reproducible from their historical Python reference environment
+     (`python -m abep_sim.golden check` → OK, kept green while Python remains the migration reference). They are not Rust
+     end-state parity cases.
 3. **No silent fallbacks.** Atmosphere defaults to the frozen NRLMSIS dataset; live MSIS only when asked. Solvers must report
    non-convergence (`sustained=False`, `status=MODEL_ERROR/INFEASIBLE`), never return half-converged states.
 4. **Conservation is a gate.** Source mass/power balances close exactly; architecture energy ledger residual < 2 %.
@@ -21,8 +59,17 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
 7. **HallThruster.jl is pinned** to v0.23.1, commit `bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5`
    (`hallthruster_bridge/PINNED.toml`). Every Hall map must carry that commit; `abep_sim/hall_map.py` rejects others.
 8. **No new propulsion families** until the physics baseline is frozen. Stabilise, don't expand.
-9. Tests: `python -m pytest -q tests`. Expected: all pass, 5 skipped (superseded 0-D Hall calibration — do not "fix" them by
-   re-tuning), 1 strict xfail (`test_v16_blind_validation_p5_nitrogen`, gate 3 — must turn green only via the new Hall solver).
+9. **Tests (CA-04, A9.29 RM-OQ-05).**
+   - **Active (Rust) CI:** `cargo test --workspace --locked`, and every active test passes. No active production test is silently
+     ignored or skipped.
+     - Missing physical evidence is not a skip. Tests assert the fail-closed result (`NOT_EVALUATED`, `INCOMPLETE_EVIDENCE`,
+       `OUT_OF_DOMAIN`, `MODEL_ERROR`).
+     - The empty Hall credible transport set is an expected governed state. It is asserted explicitly, not xfailed.
+     - Platform/hardware tests that cannot run in normal CI go in a separate registered test class with reason, owner/evidence
+       basis, execution environment and required trigger. They never drop out of the test inventory.
+   - **Python migration reference** (while it exists): `python -m pytest -q tests`. Expected: all pass, 5 skipped (superseded
+     0-D Hall calibration — do not "fix" them by re-tuning) and 1 strict xfail (`test_v16_blind_validation_p5_nitrogen`, gate 3).
+     These counts are archive-era reproduction metadata, not the active production rule.
 10. **Published data are evidence, not immutable truth** (docs/EVIDENCE.md is part of these baseline rules). Preserve reported values and provenance, but
    distinguish measured, digitized, inferred, reconstructed, model-derived and assumed quantities. Each input carries
    source, uncertainty, applicability domain and validation status. Don't tune the simulator merely to force agreement
@@ -182,8 +229,8 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    break-even surfaces, hard-gate eliminations). **Fan-out rule:** whenever a lane finishes, immediately ask whether its result lets
    another lane start, removes a dependency, or creates a new parallel branch; never fall back to a sequential queue.
    **O4 first stage:** Johnson-low trigger FIRED (scored 2026-09-26) → its three pre-registered escalations are running.
-   **Execution baseline (pinned until merged):** branch `claude/nifty-ramanujan-w68f9z` at `debce16` — `main` (daa0e75) does not
-   contain the orchestration governance; nobody works from `main` for execution until the merge (`runtime_state.json`).
+   **Execution baseline:** superseded by CA-02. It is now `integration/simulation-complete` (see "Current phase" above). The
+   2026-09-26 pin of `claude/nifty-ramanujan-w68f9z` at `debce16` is history (`runtime_state.json`).
    **Operating model (binding; owner decisions 2026-09-26): `docs/orchestration/OPERATING_MODEL.md`.** Machine ids in
    `lane_registry_v1.json` (lane_NN_*, ds_*, fo_*; break-even = lane_28_break_even); follow-on work launches ONLY from
    `trigger_registry_v1.json` (incl. T_O4_SCORE / T_O4_ESCALATE / T_O4_DISPOSITION_MATRIX / T_JOHNSONLOW_ESCALATION_ASSESSMENT /
@@ -252,6 +299,7 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    table into `plasma_chem` is a model change (goldens move, log it).
 
 ## Key modules
+Python migration reference (`abep_sim/`; archive-only once the Rust replacement is admitted, CA-03):
 `atmosphere.py` (frozen NRLMSIS), `intake.py`/`intake_tpmc.py` (TPMC ROM, Maxwell + CLL), `compressor.py`, `reservoir.py`,
 `plasma_chem.py` (global source model; T_e-parameterised solver), `plasma_devices.py` (0-D Hall — superseded; cathodes),
 `archengine.py` (modular architecture engine, nested constrained search, energy ledger, mission envelope),

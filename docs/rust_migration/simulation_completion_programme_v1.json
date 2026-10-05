@@ -1,0 +1,2935 @@
+{
+ "schema": "abep_simulation_completion_programme_v1",
+ "id": "SIM-COMPLETION-PROGRAMME-V1",
+ "status": "PROPOSED_PLAN_V3_FOR_OWNER_REVIEW",
+ "date": "2026-10-05",
+ "human_readable": "docs/rust_migration/SIMULATION_COMPLETION_PROGRAMME.md",
+ "governing_records": [
+  {
+   "path": "docs/decisions/OD_2026_10_05_A9_28_RUST_PLAN_RULINGS_AND_SIMULATION_COMPLETION_DIRECTIVE.md",
+   "md_sha256": "7877bdc923fb07876b211924965767800f4f3a8efc46095f4dc3d471733fb54c",
+   "json": "docs/decisions/OD_2026_10_05_A9_28_rust_plan_rulings_and_simulation_completion_directive.json",
+   "json_sha256": "928e0588a635c7df5795b917863cd2035875da6d39cbee2756164deecc2e41e2",
+   "messages": {
+    "1": "RUST_PLAN_V2_RULINGS (secs. 1-8, in full)",
+    "2": "SIMULATION_COMPLETION_DIRECTIVE (secs. 1-18, in full)"
+   }
+  },
+  {
+   "path": "docs/integration/main_reconciliation_2026_10_05.json",
+   "sha256": "2eae98102f75bd42c79a3ead6d3966bde4df12f93b9475cfce44b0ec570f5d80",
+   "note": "integration/simulation-complete = development dcab602 + main b1e5b76 (checkpoints #31-#36) reconciled once; 53 conflicts, every one DEV_SIDE on per-file evidence; main's six commits preserved as merge parents; main_unique_content []"
+  },
+  {
+   "path": "docs/audits/a9_24_cathode_path_audit_v1.md",
+   "md_sha256": "6b556bd787b093b53e9566bb76a73ffc5a6703f6794273d0ca512c89a9aa85ed",
+   "json": "docs/audits/a9_24_cathode_path_audit_v1.json",
+   "json_sha256": "2482a2d8fb929755f5f8cb6a334e6d4a7c5f69a6eefbe38916f01a726ef9144c",
+   "note": "cathode-path audit v1, now in-tree on the integration branch (merged at dcab602 from b8f39b7)"
+  },
+  {
+   "path": "docs/rust_migration/programme_v3.json",
+   "role": "migration rules, lifecycle, classes"
+  }
+ ],
+ "scope_of_this_record": "docs / plan only: no Python, Rust, CI workflow, configuration, frozen data or numeric change",
+ "priority": "A9.28 msg 2: complete the ABEP simulator, then integrate it cleanly into main; RFP-form / Part-IV work is stopped unless the owner returns to it",
+ "protected_bid_record": {
+  "technical_source": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b",
+  "package_freeze_record": "2de86abefacbd36ce7516d3cf017f6258bd7e7a2",
+  "package_lineage": [
+   "b5849affae22a6709ad217a184f6fe896d15410a (bid package / freeze-record commit, A9.25 msg 8 secs. 12-14; named by A9.27)",
+   "2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (A9.27 package-level post-source bid text; named PACKAGE / FREEZE RECORD by A9.28 msg 2 sec. 1)"
+  ],
+  "rule": "immutable historical evidence; later simulation development never rewrites these records or makes a later commit appear to have been the submitted technical source (A9.28 msg 2 sec. 1); enforced by bid_source_guard (SC-WP-12)"
+ },
+ "integration_branch": {
+  "name": "integration/simulation-complete",
+  "head_when_this_plan_was_revised": "ea1a5989ed667d4bfc0d068e083b30b0abb500c8",
+  "base": "development line claude/nifty-ramanujan-w68f9z at dcab60234a3252ff699fe774f05e0fa39d02b4ae",
+  "main_reconciliation": {
+   "record": "docs/integration/main_reconciliation_2026_10_05.json",
+   "sha256": "2eae98102f75bd42c79a3ead6d3966bde4df12f93b9475cfce44b0ec570f5d80",
+   "main_head": "b1e5b761a40f82ca225dc412d17a87585653d4ff",
+   "main_only_checkpoints": "#31-#36 (15981ae, 7caaf13, 20f14d8, eef8b85, 98fbbb9, b1e5b76)",
+   "result": "53 conflicts, all resolved to the later governed development side on per-file evidence; main's commits preserved as merge parents; no main-unique content"
+  },
+  "rules": [
+   "main stays untouched until the complete simulator is admitted (A9.28 msg 2 secs. 3, 16)",
+   "no incremental merges into main while the simulator is half migrated",
+   "keep the integration branch up to date with main and avoid another large divergence (sec. 17)",
+   "this plan (v3) merges into integration/simulation-complete after owner review, not into main (sec. 5)",
+   "final PR: a NEW PR integration/simulation-complete -> main; PR #37 is not reused and is eventually closed SUPERSEDED_BY_SIMULATION_INTEGRATION once the integration branch holds all governed history (sec. 16)"
+  ]
+ },
+ "active_architecture": {
+  "id": "hall_icp_neutralizer",
+  "config": "config/architecture/hall_icp_neutralizer_v1.json",
+  "topology": "rarefied atmospheric intake -> filter -> compressor -> plenum / feed -> Hall accelerator + downstream 13.56 MHz RF/ICP electron source / neutralizer",
+  "propellant_modes": [
+   "AIR_PRIMARY",
+   "XE_CONTINGENCY"
+  ],
+  "flight_conventional_hollow_cathode": "NONE",
+  "c1": "GROUND_REFERENCE_ONLY",
+  "rules": [
+   "no broad architecture-family re-selection",
+   "obsolete families are not ported because Python holds them",
+   "historical LaB6 / hollow-cathode functionality is not ported into active Rust"
+  ]
+ },
+ "method_vocabulary": {
+  "EXISTING_PHYSICS_PARITY": "retained existing physics / behaviour: Python reference -> preregistered parity contract (own commit, before any comparison) -> Rust implementation -> parity / conservation / domain / determinism tests -> admission -> Python removed from the active execution path (A9.28 msg 2 sec. 10). The Python reference is never modified to make Rust pass.",
+  "NEW_PHYSICS": "genuinely new selected-architecture physics: preregistered model (nodes / equations / boundaries / assumptions / domains / conservation / analytic limiting cases / evidence plan) -> Rust implementation -> analytic and independent-evidence verification -> admission (A9.28 msg 1 sec. 5, msg 2 secs. 8 and 10). No synthetic Python reference is created for parity; a Python scratch calculation may serve only as an independent, non-authoritative cross-check.",
+  "NEW_INFRASTRUCTURE_ACCEPTANCE": "new infrastructure with no Python reference to reproduce (the `abep` CLI, the active golden, the zero-Python CI runner, clean install): preregistered acceptance checks -> Rust implementation -> acceptance run -> admission. Not physics; it never relabels a gate status.",
+  "AUDIT_THEN_EXTRACT_ONLY_IF_NEEDED": "legacy module (class H): audit its architecture-independent kernels first; extract only those the selected architecture actually needs, each with provenance, applicability domain and preregistered parity / verification (A9.28 msg 1 sec. 3, msg 2 sec. 9); the module itself is never ported."
+ },
+ "fail_closed_status_vocabulary": [
+  "NOT_EVALUATED",
+  "INCOMPLETE_EVIDENCE",
+  "OUT_OF_DOMAIN",
+  "MODEL_ERROR"
+ ],
+ "software_complete_is_not_gate_pass": "A9.28 msg 2 sec. 14: do not wait for unavailable hardware evidence to finish the software, do not fabricate it; where determining evidence is absent the complete simulator fails closed (NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN / MODEL_ERROR); 'software complete' never turns those gates into PASS",
+ "definition_of_simulation_complete": "A9.28 msg 2 sec. 6: an ADMITTED active implementation of every applicable selected-architecture layer (the seventeen work packages below)",
+ "work_packages": [
+  {
+   "id": "SC-WP-01",
+   "layer": "environment",
+   "title": "Environment: atmosphere and orbit / design states",
+   "section_6_items": [
+    "atmosphere",
+    "orbit / design states"
+   ],
+   "methods": [
+    "EXISTING_PHYSICS_PARITY"
+   ],
+   "elements": [
+    {
+     "element": "atmosphere (frozen NRLMSIS 2.1 dataset reader)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/atmosphere.py::atmosphere",
+      "abep_sim/atmosphere.py::_interp_frozen",
+      "abep_sim/atmosphere.py::_frozen",
+      "abep_sim/atmosphere.py::orbital_velocity"
+     ],
+     "data": [
+      "abep_sim/data/atmosphere_msis21_v1.json",
+      "abep_sim/data/atmosphere_msis21_v1.csv"
+     ],
+     "notes": "frozen data read byte-for-byte (CLAUDE.md rule 1); live NRLMSIS only when asked (rule 3); a live / rebuild path is RM-OQ-02 (open)"
+    },
+    {
+     "element": "orbit / design states (196-state set v2, orbit atmosphere v1, HWM14 orbit atmosphere v2)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/atmosphere_orbit.py::load",
+      "abep_sim/atmosphere_orbit.py::state",
+      "abep_sim/atmosphere_orbit.py::orbit_states",
+      "abep_sim/atmosphere_orbit.py::design_states_v2",
+      "abep_sim/atmosphere_orbit.py::load_design_states",
+      "abep_sim/atmosphere_orbit.py::Domain",
+      "abep_sim/atmosphere_orbit.py::check",
+      "abep_sim/atmosphere_orbit_v2.py::HWM14Runner",
+      "abep_sim/atmosphere_orbit_v2.py::wind",
+      "abep_sim/atmosphere_orbit_v2.py::relative_flow",
+      "abep_sim/atmosphere_orbit_v2.py::flow_state",
+      "abep_sim/atmosphere_orbit_v2.py::orbit_states",
+      "abep_sim/design/intake_synthesis.py::load_design_state_set",
+      "abep_sim/mission_env.py::Spacecraft",
+      "abep_sim/mission_env.py::sso_inclination_deg"
+     ],
+     "data": [
+      "abep_sim/data/atmosphere_msis21_orbit_v1.json",
+      "abep_sim/data/atmosphere_msis21_orbit_v1.csv.gz",
+      "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json",
+      "abep_sim/data/atmosphere_msis21_hwm14_orbit_v2.json",
+      "config/environment/design_state_set_ref_v1.json"
+     ],
+     "notes": "mission_env constants (OMEGA_E, Spacecraft, sso_inclination_deg) are pulled forward under their own kernel contract (v2 dependency finding); HWM14 stays a compiled Fortran executable launched by Rust (std::process::Command); 196 states read and hashed (sha256 60073e21...), never regenerated"
+    }
+   ],
+   "selected_architecture_relevance": "every selected-architecture layer consumes the frozen atmosphere and the 196-state design-state set (AIR_PRIMARY intake flow, AO exposure, drag, mission); architecture-independent retained physics / data",
+   "target_crates": [
+    "abep-data",
+    "abep-atmos"
+   ],
+   "depends_on": [
+    "SC-WP-12"
+   ],
+   "determining_evidence_gates_fail_closed": [
+    {
+     "gate": "state outside the frozen grid / Domain",
+     "status": "OUT_OF_DOMAIN",
+     "source": "abep_sim/atmosphere_orbit.py::_check_domain"
+    },
+    {
+     "gate": "frozen dataset missing or hash mismatch",
+     "status": "MODEL_ERROR",
+     "source": "abep_sim/atmosphere_orbit.py::_missing_data_error; config/MANIFEST.json"
+    },
+    {
+     "gate": "HWM14 executable unavailable (no silent fallback to zero wind)",
+     "status": "MODEL_ERROR",
+     "source": "abep_sim/atmosphere_orbit_v2.py::HWM14Unavailable"
+    }
+   ],
+   "admission_criteria": [
+    "per-component parity contracts (template v3) PARITY_PASS: ULP_BOUNDED on interpolated fields, EXACT_VALUE on statuses / state ids / domain errors",
+    "frozen-data sha256 equal to config/MANIFEST.json and the rule-1 provenance; 196-state set sha256 60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+    "domain / error parity (OUT_OF_DOMAIN, missing data, HWM14 unavailable) and double-run determinism",
+    "golden_v2 `atmosphere` may be used as an optional development parity vector; it is historical and NOT an end-state Rust parity case (RM-OQ-06, A9.28)"
+   ],
+   "inventory_components": [
+    "C-ABEP_SIM_ATMOSPHERE_ORBIT_PY",
+    "C-ABEP_SIM_ATMOSPHERE_ORBIT_V2_PY",
+    "C-ABEP_SIM_ATMOSPHERE_PY"
+   ],
+   "extract_and_parity_kernels": [],
+   "excluded_legacy_not_ported": [
+    "abep_sim/orbit_atm.py (class H: Phase-1 live-pymsis orbit atmosphere)"
+   ],
+   "waves_v3": [
+    "W1E",
+    "W1",
+    "W6"
+   ],
+   "size_estimate": {
+    "python_loc_to_migrate": 2830,
+    "python_loc_migrate_or_formally_retire": 0,
+    "python_test_loc_replaced_by_contract_tests": 0,
+    "new_work_engineer_weeks": null,
+    "indicative_engineer_weeks": [
+     4.7,
+     9.4
+    ],
+    "size_class": "M",
+    "basis": "INDICATIVE PLANNING HEURISTIC, not evidence: 300-600 migrated Python lines per engineer-week (contract + Rust + tests + report), plus the stated new-physics / infrastructure weeks; kernels inside class-H modules and MIGRATE_OR_FORMALLY_RETIRE builders are not counted in the range"
+   }
+  },
+  {
+   "id": "SC-WP-02",
+   "layer": "upstream",
+   "title": "Upstream: TPMC intake, filter, compressor, plenum, feed dynamics",
+   "section_6_items": [
+    "intake TPMC",
+    "filter",
+    "compressor",
+    "plenum",
+    "feed dynamics"
+   ],
+   "methods": [
+    "EXISTING_PHYSICS_PARITY"
+   ],
+   "elements": [
+    {
+     "element": "intake TPMC (Kernel 1 trace kernels ADMITTED; response layer, F1 intake synthesis)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/intake_tpmc.py::trace_channel",
+      "abep_sim/intake_tpmc.py::intake_response",
+      "abep_sim/intake_tpmc.py::response_surface",
+      "abep_sim/intake_tpmc.py::IntakeSurface",
+      "abep_sim/intake_tpmc.py::clausing_transmission",
+      "abep_sim/intake.py::collection",
+      "abep_sim/intake.py::compress",
+      "abep_sim/intake.py::passive_compression",
+      "abep_sim/design/intake_synthesis.py::Evaluator",
+      "abep_sim/design/intake_synthesis.py::run_study",
+      "abep_sim/design/intake_synthesis.py::candidate_state_metrics",
+      "abep_sim/design/intake_synthesis.py::pareto_filter",
+      "abep_sim/intake_surface_v2_spec.py::build_intake_surface_v2",
+      "abep_sim/design/tpmc_backend.py::trace_channel"
+     ],
+     "data": [
+      "abep_sim/data/intake_surface_v1.json",
+      "abep_sim/data/intake_surface_v1.csv",
+      "docs/performance/abep_core/parity_report_v2.json"
+     ],
+     "notes": "PRE_RUST rank 2 (intake_response_surface_reduced, 88.98 s addressable): the highest active runtime target. Parity class STATISTICAL (Kernel-1 xoshiro256++ precedent) or EXACT_STREAM per contract; intake_surface_v1 is never regenerated (rule 1); DEFAULT_BACKEND flip is RM-OQ-01 (open)"
+    },
+    {
+     "element": "filter",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/design/filter_stage.py::FilterStage",
+      "abep_sim/design/filter_stage.py::cole_transmission_probability",
+      "abep_sim/design/filter_stage.py::perforated_plate_alpha",
+      "abep_sim/design/filter_stage.py::tbd_species_transport"
+     ],
+     "data": [],
+     "notes": "F2 FC-07 Xe cathode-line getter stays GROUND_REFERENCE_ONLY (not in flight crates)"
+    },
+    {
+     "element": "compressor (DragCompressor, F3 synthesis, rotor strength, extracted K-GASPATH)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/compressor.py::DragCompressor",
+      "abep_sim/design/compressor_synthesis.py::evaluate_design",
+      "abep_sim/design/compressor_synthesis.py::synthesize",
+      "abep_sim/design/compressor_synthesis.py::stage_trace",
+      "abep_sim/design/compressor_synthesis.py::pareto_front",
+      "abep_sim/design/compressor_synthesis.py::strict_blockers",
+      "abep_sim/rotor_strength.py::qualify_rotor",
+      "abep_sim/system.py::physics_closure"
+     ],
+     "data": [],
+     "notes": "K-GASPATH = the gas-path subset of system.physics_closure only, extracted only if an active consumer is confirmed (v3 finding: its golden_v2 consumers are historical) (class-H module; the hall_1stage card, its Xe cathode and p_min_Pa default are NOT ported; RM-R20 harness-independence check; if extracted it pulls aochem.inlet_composition forward under its own kernel contract); compressor down-select is HISTORICAL / RETIRE_FROM_ACTIVE_GRAPH (A9.28)"
+    },
+    {
+     "element": "plenum",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/design/plenum_feed.py::Plenum",
+      "abep_sim/design/plenum_feed.py::Chain",
+      "abep_sim/design/plenum_feed.py::solve_pressures",
+      "abep_sim/design/plenum_feed.py::steady_operating_point",
+      "abep_sim/design/plenum_feed.py::steady_sweep",
+      "abep_sim/reservoir.py::Reservoir",
+      "abep_sim/reservoir.py::size_orifice_for_pressure"
+     ],
+     "data": [],
+     "notes": "SOLVER_TOLERANCE parity class; bisection failure is reported, never half-converged"
+    },
+    {
+     "element": "feed dynamics (transients, control, ripple, orbit operation, A9.13 setpoint rules)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/design/plenum_feed.py::TransientRun",
+      "abep_sim/design/plenum_feed.py::Controller",
+      "abep_sim/design/plenum_feed.py::event_sequence",
+      "abep_sim/design/plenum_feed.py::ripple_transfer",
+      "abep_sim/design/plenum_feed.py::orbit_simulated",
+      "abep_sim/design/plenum_feed.py::compare_control_modes",
+      "abep_sim/design/plenum_feed.py::scheduled_operation",
+      "abep_sim/reservoir.py::startup_transient",
+      "abep_sim/design/upstream_a9_13.py::SetpointSchedule",
+      "abep_sim/design/upstream_a9_13.py::FixedSetpoint",
+      "abep_sim/design/upstream_a9_13.py::controller_view",
+      "abep_sim/design/upstream_a9_13.py::classify_pressure_target"
+     ],
+     "data": [],
+     "notes": "feed-state closure (pivot W1) is GROUND_TEST_PROGRAMME_ONLY / NOT_FLIGHT_RUNTIME (A9.28): it is not part of this flight-runtime WP"
+    }
+   ],
+   "selected_architecture_relevance": "AIR_PRIMARY flight topology: rarefied intake -> filter -> compressor -> plenum / feed (A9.28 msg 2 sec. 4); intake response-surface work is a genuine active migration / performance target (A9.27 sec. 4, A9.28 msg 1 sec. 7)",
+   "target_crates": [
+    "abep-intake",
+    "abep-gaspath"
+   ],
+   "depends_on": [
+    "SC-WP-12",
+    "SC-WP-01"
+   ],
+   "determining_evidence_gates_fail_closed": [
+    {
+     "gate": "TPMC / gas-path solver not converged",
+     "status": "MODEL_ERROR",
+     "source": "intake_synthesis hard constraints; golden_v1 GASPATH_MODEL_NOT_CONVERGED point"
+    },
+    {
+     "gate": "compressor load (ICD row 22) not supplied",
+     "status": "NOT_EVALUATED",
+     "source": "abep_sim/design/architecture_optimizer.py::official_ledger (slot TBD)"
+    },
+    {
+     "gate": "F3 coefficients code-default / rotor basis not registered",
+     "status": "NOT_EVALUATED",
+     "source": "abep_sim/rotor_strength.py::qualify_rotor; F3 PARAMETRIC_ONLY labels"
+    },
+    {
+     "gate": "filter species transport TBD",
+     "status": "INCOMPLETE_EVIDENCE",
+     "source": "abep_sim/design/filter_stage.py::tbd_species_transport"
+    },
+    {
+     "gate": "intake surface v2 axes unregistered",
+     "status": "NOT_EVALUATED",
+     "source": "abep_sim/intake_surface_v2_spec.py::IntakeSurfaceV2Blocked"
+    },
+    {
+     "gate": "feed state outside the registered pressure domain",
+     "status": "OUT_OF_DOMAIN",
+     "source": "abep_sim/design/upstream_a9_13.py::pressure_domain_status"
+    },
+    {
+     "gate": "robust upstream set EMPTY stays visible (never filled by a representative point)",
+     "status": "NOT_EVALUATED",
+     "source": "abep_sim/design/upstream_a9_13.py::RepresentativeSelectionRefused"
+    }
+   ],
+   "admission_criteria": [
+    "per-component contracts PARITY_PASS (STATISTICAL / EXACT_STREAM for TPMC-driven outputs, SOLVER_TOLERANCE for plenum / transients, EXACT_VALUE for statuses / blockers)",
+    "conservation: source mass balance across intake -> compressor -> plenum closes exactly (CLAUDE.md rule 4)",
+    "domain / error parity incl. the non-converged reference point and the HC-09 Option-1 generation filter read from the frozen engineering configuration (never parsed from the RFP)",
+    "K-GASPATH harness-independence check: the Python path through Config('hall_1stage') reads no card field (RM-R20)"
+   ],
+   "inventory_components": [
+    "C-ABEP_SIM_COMPRESSOR_PY",
+    "C-ABEP_SIM_DESIGN_COMPRESSOR_SYNTHESIS_PY",
+    "C-ABEP_SIM_DESIGN_FILTER_STAGE_PY",
+    "C-ABEP_SIM_DESIGN_INTAKE_SYNTHESIS_PY",
+    "C-ABEP_SIM_DESIGN_PLENUM_FEED_PY",
+    "C-ABEP_SIM_DESIGN_UPSTREAM_A9_13_PY",
+    "C-ABEP_SIM_INTAKE_PY",
+    "C-ABEP_SIM_INTAKE_SURFACE_V2_SPEC_PY",
+    "C-ABEP_SIM_INTAKE_TPMC_PY",
+    "C-ABEP_SIM_RESERVOIR_PY",
+    "C-ABEP_SIM_ROTOR_STRENGTH_PY"
+   ],
+   "extract_and_parity_kernels": [
+    "K-GASPATH"
+   ],
+   "excluded_legacy_not_ported": [
+    "abep_sim/compressor_transitional.py (section E)",
+    "docs/architecture_comparison/compressor_downselect/ (HISTORICAL, A9.28)",
+    "abep_sim/system.py card closure / evaluate() / engineering_physics branch (K-GASPATH only)"
+   ],
+   "waves_v3": [
+    "W0",
+    "W1",
+    "W2"
+   ],
+   "size_estimate": {
+    "python_loc_to_migrate": 7559,
+    "python_loc_migrate_or_formally_retire": 0,
+    "python_test_loc_replaced_by_contract_tests": 0,
+    "new_work_engineer_weeks": null,
+    "indicative_engineer_weeks": [
+     12.6,
+     25.2
+    ],
+    "size_class": "L",
+    "basis": "INDICATIVE PLANNING HEURISTIC, not evidence: 300-600 migrated Python lines per engineer-week (contract + Rust + tests + report), plus the stated new-physics / infrastructure weeks; kernels inside class-H modules and MIGRATE_OR_FORMALLY_RETIRE builders are not counted in the range"
+   }
+  },
+  {
+   "id": "SC-WP-03",
+   "layer": "propulsion",
+   "title": "Propulsion: gas state, active RF/ICP, HallThruster.jl bridge, Hall acceleration, neutralization, coupled thrust / flow",
+   "section_6_items": [
+    "atmospheric / Xe gas state",
+    "active RF/ICP physics",
+    "HallThruster.jl bridge",
+    "Hall acceleration",
+    "electron neutralization",
+    "coupled thrust / flow"
+   ],
+   "methods": [
+    "AUDIT_THEN_EXTRACT_ONLY_IF_NEEDED",
+    "EXISTING_PHYSICS_PARITY"
+   ],
+   "elements": [
+    {
+     "element": "atmospheric / Xe gas state (AIR_PRIMARY, XE_CONTINGENCY)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/design/upstream_a9_13.py::flight_feed_requirement",
+      "abep_sim/design/upstream_a9_13.py::pressure_domain_status",
+      "abep_sim/design/upstream_a9_13.py::flow_gap_record",
+      "abep_sim/design/plenum_feed.py::IntakeState",
+      "abep_sim/design/a9_19_architecture.py::classify_gas",
+      "abep_sim/design/a9_19_architecture.py::check_supply_mode",
+      "abep_sim/design/a9_19_architecture.py::propellant_path_roles",
+      "docs/budgets/xe_accounting_a9_v3/build_xe_accounting_a9_v3.py::xe_system_capability"
+     ],
+     "data": [
+      "config/architecture/hall_icp_neutralizer_v1.json"
+     ],
+     "notes": "two supply modes of one Hall + one RF/ICP neutralizer; Xe is contingency / emergency (A9.19 / A9.20)"
+    },
+    {
+     "element": "active RF/ICP physics (evidence-gated ICP framework: F6, P1 bench reducer helpers)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/design/icp_geometry_synthesis.py::evaluate",
+      "abep_sim/design/icp_geometry_synthesis.py::capacity_objective",
+      "abep_sim/design/icp_geometry_synthesis.py::rf_power_objective",
+      "abep_sim/design/icp_geometry_synthesis.py::plume_objective",
+      "abep_sim/design/icp_geometry_synthesis.py::collector_objective",
+      "abep_sim/design/icp_geometry_synthesis.py::geometric_screening",
+      "abep_sim/design/icp_geometry_synthesis.py::pareto_filter",
+      "abep_sim/icp_bench_lib.py::validate_map",
+      "abep_sim/icp_bench_lib.py::experiment_p1_reducer",
+      "docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py::derive_rf",
+      "docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py::classify_stable_region",
+      "docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py::reduce"
+     ],
+     "data": [
+      "docs/evidence/icp_neutralizer/"
+     ],
+     "notes": "the active code holds no predictive ICP plasma model: it reduces bench evidence and refuses (NOT_EVALUATED / TBD_AFTER_IMPEDANCE_MAP) without it"
+    },
+    {
+     "element": "RF/ICP kernel audit of plasma_chem.py (HISTORICAL_LEGACY_MODULE)",
+     "method": "AUDIT_THEN_EXTRACT_ONLY_IF_NEEDED",
+     "python_implementations": [
+      "abep_sim/plasma_chem.py::k_rate",
+      "abep_sim/plasma_chem.py::eps_c",
+      "abep_sim/plasma_chem.py::Chamber",
+      "abep_sim/plasma_chem.py::solve_global",
+      "abep_sim/rate_tables.py::maxwellian_rate"
+     ],
+     "data": [],
+     "notes": "candidate kernels only: Maxwellian rate from cross-section tables (rate_tables, W7), Bohm wall flux / effusion conductance / particle-power balance structure of solve_global. The literature-class Arrhenius fits are unverified (CLAUDE.md next-work 6: N2 fit ~3x low) and are not extracted. The module's system.py execution path (legacy cards, LaB6Cathode) is never ported. Any predictive ICP neutralizer plasma model is NEW_PHYSICS and its scope is owner question RM-OQ-12"
+    },
+    {
+     "element": "HallThruster.jl bridge (process boundary, pin, HallMap / ensemble gate / registry, chemistry support)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/hall_map.py::HallMap",
+      "abep_sim/hall_map.py::pinned_commit",
+      "abep_sim/hall_map.py::missing_fields",
+      "abep_sim/hall_ensemble.py::load_ensemble",
+      "abep_sim/hall_ensemble.py::require_admitted",
+      "abep_sim/hall_ensemble.py::screening_ids",
+      "abep_sim/hall_ensemble.py::_check_o4",
+      "abep_sim/hallmap_registry.py::verify",
+      "abep_sim/hallmap_registry.py::register",
+      "abep_sim/hallmap_registry.py::validate_record",
+      "abep_sim/rate_tables.py::write_hallthruster_table",
+      "scripts/make_p5_n2_launch_manifests.py",
+      "scripts/identify_p5_transport.py",
+      "hallthruster_bridge/bridge_lib.jl::check_pin",
+      "hallthruster_bridge/run_cases.jl",
+      "hallthruster_bridge/identify_worker.jl",
+      "hallthruster_bridge/campaign/p5_n2_campaign.jl",
+      "hallthruster_bridge/checks/chemistry_validity_check.jl",
+      "hallthruster_bridge/checks/wall_flux_consistency.jl"
+     ],
+     "data": [
+      "hallthruster_bridge/PINNED.toml",
+      "hallthruster_bridge/Manifest.toml",
+      "hallthruster_bridge/hall_map_schema_v1.json",
+      "hallthruster_bridge/propellants/rate_validity.toml",
+      "hallthruster_bridge/ensemble/transport_ensemble_v0.json"
+     ],
+     "notes": "HallThruster.jl stays authoritative and unchanged (programme section 7); Rust owns orchestration only"
+    },
+    {
+     "element": "Hall acceleration (Hall response gating, H-1 geometry admissibility)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/design/architecture_optimizer.py::hall_admissibility",
+      "abep_sim/design/architecture_optimizer.py::hall_response_status",
+      "abep_sim/design/architecture_optimizer.py::hall_gated_thrust",
+      "abep_sim/h1_geometry.py::geometric_admissibility"
+     ],
+     "data": [],
+     "notes": "Hall discharge physics is HallThruster.jl's (never rewritten in Rust, A9.28 msg 2 sec. 7); the withdrawn 0-D Hall (plasma_devices, hall1d) is class H"
+    },
+    {
+     "element": "electron neutralization (RF/ICP electron-current capacity and margin, GNG-ICP-01 inputs)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/design/architecture_optimizer.py::electron_margin",
+      "docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py::icp45a_evaluate",
+      "docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py::i_e_cap_signed",
+      "docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py::kirchhoff_closure",
+      "docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py::neutralization_consistency"
+     ],
+     "data": [],
+     "notes": "ICP-45 capacity is discharge-OFF, I_e,cap = I_on - I_off signed (A9.6); flight hollow cathode NONE; C1 GROUND_REFERENCE_ONLY is never a flight electron source"
+    },
+    {
+     "element": "coupled thrust / flow (thrust from admitted Hall members on the delivered feed state)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/design/architecture_optimizer.py::thrust_minus_drag",
+      "abep_sim/programme/design_synthesis.py::evaluate_system",
+      "abep_sim/programme/design_synthesis.py::feed_quality",
+      "abep_sim/design/upstream_a9_13.py::refuse_feed_requirement_lowering"
+     ],
+     "data": [],
+     "notes": "the coupling is admitted as fail-closed orchestration; an absolute thrust exists only from an ADMITTED Hall member + design-specific Hall map, or measured H-1 thrust"
+    }
+   ],
+   "selected_architecture_relevance": "the propulsion core of hall_icp_neutralizer: Hall accelerator + downstream 13.56 MHz RF/ICP electron source / neutralizer, AIR_PRIMARY + XE_CONTINGENCY, no conventional hollow cathode",
+   "target_crates": [
+    "abep-julia-bridge",
+    "abep-hall",
+    "abep-chem",
+    "abep-icp"
+   ],
+   "depends_on": [
+    "SC-WP-12",
+    "SC-WP-01",
+    "SC-WP-02"
+   ],
+   "determining_evidence_gates_fail_closed": [
+    {
+     "gate": "credible Hall transport set EMPTY (no admitted member)",
+     "status": "NOT_EVALUATED",
+     "source": "abep_sim/design/architecture_optimizer.py::hall_gated_thrust; ensemble/transport_ensemble_v0.json"
+    },
+    {
+     "gate": "measured H-1 map / design-specific Hall map (own geometry and B(z)) absent",
+     "status": "NOT_EVALUATED",
+     "source": "CLAUDE.md next-work 1 flow; HallMap loads admitted members only"
+    },
+    {
+     "gate": "chemistry tables used beyond their validity limit (T_e > 30 eV for the 45 eV-capped family)",
+     "status": "OUT_OF_DOMAIN",
+     "source": "checks/chemistry_validity_check.jl; propellants/rate_validity.toml"
+    },
+    {
+     "gate": "Hall map from a non-pinned HallThruster.jl commit",
+     "status": "MODEL_ERROR",
+     "source": "abep_sim/hall_map.py::pinned_commit (rejects)"
+    },
+    {
+     "gate": "I_d,max,H1 not registered -> ICP45 capacity",
+     "status": "NOT_EVALUATED",
+     "source": "A9.6: ICP45 = NOT_EVALUATED until I_d,max,H1 is registered; ICP capacity PENDING_ICP45"
+    },
+    {
+     "gate": "P1 / P2 bench data absent (RF ratings TBD_AFTER_IMPEDANCE_MAP)",
+     "status": "NOT_EVALUATED",
+     "source": "abep_sim/design/icp_geometry_synthesis.py::rf_matching_objective"
+    },
+    {
+     "gate": "Ar result transferred to air / N2 flight evidence",
+     "status": "NOT_EVALUATED",
+     "source": "A9.25 msg 1 sec. 10 (no Ar -> flight-air transfer)"
+    },
+    {
+     "gate": "O4 dispositions incomplete for an admission record",
+     "status": "NOT_EVALUATED",
+     "source": "abep_sim/hall_ensemble.py::_check_o4"
+    }
+   ],
+   "admission_criteria": [
+    "bridge: launch equivalence (argv, environment allow-list, input bytes) and EXACT_BYTES run records against the Python-launched job; pin checked in Rust (PINNED.toml / Manifest.toml) and in Julia (check_pin)",
+    "HallMap / ensemble / registry: EXACT_VALUE schema and admission semantics (admitted members only; screening candidates rejected; non-pinned commit rejected; trustworthy / wall_life_trustworthy / chemistry_trustworthy rules unchanged)",
+    "RF/ICP framework and neutralization reducers: parity on registered synthetic-test vectors labelled SYNTHETIC_TEST_ONLY_NOT_EVIDENCE plus the committed evidence records (EXACT_BYTES)",
+    "plasma_chem: a committed kernel-audit record before any extraction; an extracted kernel needs its own provenance, domain and preregistered verification; no LaB6 dependency enters the active chain",
+    "credible-set emptiness is visible in every propulsion output that needs Hall performance"
+   ],
+   "inventory_components": [
+    "C-ABEP_SIM_DESIGN_ICP_GEOMETRY_SYNTHESIS_PY",
+    "C-ABEP_SIM_H1_GEOMETRY_PY",
+    "C-ABEP_SIM_HALLMAP_REGISTRY_PY",
+    "C-ABEP_SIM_HALL_ENSEMBLE_PY",
+    "C-ABEP_SIM_HALL_MAP_PY",
+    "C-ABEP_SIM_ICP_BENCH_LIB_PY",
+    "C-ABEP_SIM_RATE_TABLES_PY",
+    "C-DOCS_CHEMISTRY_N2_DOMAIN_EXTENSION_DX5",
+    "C-DOCS_CHEMISTRY_N2_DOMAIN_EXTENSION_DX5_ACQUISITION",
+    "C-DOCS_CHEMISTRY_N2_DOMAIN_EXTENSION_DX5_CURATION",
+    "C-DOCS_CHEMISTRY_O_O2_V0",
+    "C-DOCS_EXPERIMENTS_HALL_ICP_P1_ICP_BENCH",
+    "C-DOCS_O4_DISPOSITION_MATRIX",
+    "C-DOCS_O4_JOHNSONLOW_ASSESSMENT",
+    "C-DOCS_V2_QUESTION_A",
+    "C-DOCS_VALIDATION_HALL_TRANSPORT_V2_PREREG",
+    "C-SCRIPTS_AUDIT_N2_COMPLETENESS_FINAL_PY",
+    "C-SCRIPTS_AUDIT_N2_DISSOCIATIVE_IONIZATION_PY",
+    "C-SCRIPTS_AUDIT_N2_VIBRATIONAL_EXCITATION_PY",
+    "C-SCRIPTS_AUDIT_P5_N2_CAMPAIGN_RECORDS_PY",
+    "C-SCRIPTS_AUDIT_P5_N2_MEASUREMENTS_PY",
+    "C-SCRIPTS_BUILD_MULTIPLY_CHARGED_TABLES_PY",
+    "C-SCRIPTS_BUILD_N2_DISSOCIATION_TABLE_PY",
+    "C-SCRIPTS_BUILD_N2_DISSOCIATIVE_IONIZATION_TABLE_PY",
+    "C-SCRIPTS_BUILD_N2_ELASTIC_SONG2023_TABLE_PY",
+    "C-SCRIPTS_BUILD_N2_ELECTRONIC_EXCITATION_TABLES_PY",
+    "C-SCRIPTS_BUILD_N2_IONIZATION_SONG2023_TABLE_PY",
+    "C-SCRIPTS_BUILD_N2_ROTATIONAL_TABLES_PY",
+    "C-SCRIPTS_BUILD_N2_TO_N_Z2PLUS_TABLE_PY",
+    "C-SCRIPTS_BUILD_N2_VIBRATIONAL_TABLES_PY",
+    "C-SCRIPTS_BUILD_N_ELASTIC_TABLES_PY",
+    "C-SCRIPTS_BUILD_N_IONIZATION_TABLE_PY",
+    "C-SCRIPTS_BUILD_N_Z1PLUS_TO_Z2PLUS_TABLE_PY",
+    "C-SCRIPTS_CHEMISTRY_N2_DOMAIN_EXTENSION_REQUIREMENTS_PY",
+    "C-SCRIPTS_DIGITIZE_P5_BFIELD_PY",
+    "C-SCRIPTS_FORENSICS_P5_N2_V1_EXB_PHYSICS_PY",
+    "C-SCRIPTS_FORENSICS_P5_N2_V1_OOD_ATTRIBUTION_PY",
+    "C-SCRIPTS_FORENSICS_P5_N2_V1_SCOREABLE_SUBSET_PY",
+    "C-SCRIPTS_FREEZE_P5_N2_DATASET_PY",
+    "C-SCRIPTS_IDENTIFY_P5_TRANSPORT_PY",
+    "C-SCRIPTS_MAKE_N2_VARIANT_CONFIGS_PY",
+    "C-SCRIPTS_MAKE_P5_N2_CASES_PY",
+    "C-SCRIPTS_MAKE_P5_N2_LAUNCH_MANIFESTS_PY",
+    "C-SCRIPTS_MAKE_P5_XENON_CASES_PY",
+    "C-SCRIPTS_MAKE_VALIDATION_RELEASE_PY",
+    "C-SCRIPTS_N2_CLOSURE_TABLE_PY",
+    "C-SCRIPTS_ORCHESTRATION_LANE_STATUS_PY",
+    "C-SCRIPTS_ORCHESTRATION_O4_SCORE_DATASET_PY",
+    "C-SCRIPTS_ORCHESTRATION_TRIGGER_LEDGER_PY",
+    "C-SCRIPTS_REPORT_P5_N2_CAMPAIGN_PY",
+    "C-SCRIPTS_RESCORE_P5_AXIAL_THRUST_PY",
+    "C-SCRIPTS_SCORE_P5_N2_CAMPAIGN_PY",
+    "C-SCRIPTS_SCORE_P5_N2_FROZEN_PY",
+    "C-SCRIPTS_SCORE_P5_N2_STAGED_PY",
+    "C-SCRIPTS_SUMMARIZE_BLIND_ENVELOPE_PY"
+   ],
+   "extract_and_parity_kernels": [],
+   "excluded_legacy_not_ported": [
+    "abep_sim/plasma_devices.py (LaB6Cathode, 0-D Hall)",
+    "abep_sim/hall1d.py",
+    "abep_sim/thruster.py CARDS / XE_CATHODE",
+    "abep_sim/interstage.py (upstream pre-ionizer)",
+    "abep_sim/plasma_chem.py module (only audited kernels may be extracted)",
+    "docs/orchestration/runner_scripts/*.sh (executed campaign runners)"
+   ],
+   "waves_v3": [
+    "W4",
+    "W7",
+    "W8",
+    "W9"
+   ],
+   "size_estimate": {
+    "python_loc_to_migrate": 15676,
+    "python_loc_migrate_or_formally_retire": 6563,
+    "python_test_loc_replaced_by_contract_tests": 0,
+    "new_work_engineer_weeks": [
+     6,
+     12
+    ],
+    "indicative_engineer_weeks": [
+     32.1,
+     64.3
+    ],
+    "size_class": "XL",
+    "basis": "INDICATIVE PLANNING HEURISTIC, not evidence: 300-600 migrated Python lines per engineer-week (contract + Rust + tests + report), plus the stated new-physics / infrastructure weeks; kernels inside class-H modules and MIGRATE_OR_FORMALLY_RETIRE builders are not counted in the range",
+    "new_work_note": "only if the owner rules (RM-OQ-12) that a predictive ICP neutralizer plasma model is part of 'active RF/ICP physics'; otherwise 0"
+   }
+  },
+  {
+   "id": "SC-WP-04",
+   "layer": "spacecraft interaction",
+   "title": "Spacecraft interaction: intake drag, reference spacecraft drag interface, statewise T - D",
+   "section_6_items": [
+    "intake drag",
+    "reference spacecraft drag interface",
+    "statewise T-D"
+   ],
+   "methods": [
+    "EXISTING_PHYSICS_PARITY"
+   ],
+   "elements": [
+    {
+     "element": "intake drag (F1 intake-face drag per state)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/design/intake_synthesis.py::candidate_state_metrics",
+      "abep_sim/design/intake_synthesis.py::_c_solid_row",
+      "abep_sim/intake_tpmc.py::intake_response",
+      "abep_sim/design/architecture_optimizer.py::drag_table"
+     ],
+     "data": [],
+     "notes": "PARAMETRIC_ONLY while the surface scenario is a TBD context axis"
+    },
+    {
+     "element": "reference spacecraft drag interface",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/spacecraft_reference_drag.py::reference_drag",
+      "abep_sim/spacecraft_reference_drag.py::ReferenceCase",
+      "abep_sim/spacecraft_reference_drag.py::statewise_margin",
+      "abep_sim/spacecraft_reference_drag.py::density_free_table",
+      "abep_sim/spacecraft_reference_drag.py::build_document",
+      "docs/design_synthesis/spacecraft_reference_drag/build_spacecraft_reference_drag.py",
+      "abep_sim/mission_env.py::spacecraft_drag"
+     ],
+     "data": [],
+     "notes": "a reference interface, not the host spacecraft: the host drag ICD does not exist"
+    },
+    {
+     "element": "statewise T - D (raw quantities; HC-08 criterion stays in assessment)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/statewise.py::statewise_quantifier",
+      "abep_sim/design/upstream_a9_13.py::statewise_envelope",
+      "abep_sim/design/upstream_a9_13.py::reference_drag_fn",
+      "abep_sim/design/architecture_optimizer.py::thrust_minus_drag",
+      "abep_sim/programme/design_synthesis.py::statewise_T_minus_D"
+     ],
+     "data": [],
+     "notes": "physics computes T and D independently (A9.24 item 5 HC-08)"
+    }
+   ],
+   "selected_architecture_relevance": "the thrust-minus-drag balance of the ABEP spacecraft at every design state is the selected architecture's sustainment question",
+   "target_crates": [
+    "abep-intake",
+    "abep-mission"
+   ],
+   "depends_on": [
+    "SC-WP-12",
+    "SC-WP-01",
+    "SC-WP-02",
+    "SC-WP-03"
+   ],
+   "determining_evidence_gates_fail_closed": [
+    {
+     "gate": "host-spacecraft drag ICD (D_body) absent (F1-ID-08)",
+     "status": "NOT_EVALUATED",
+     "source": "abep_sim/design/architecture_optimizer.py::thrust_minus_drag"
+    },
+    {
+     "gate": "T from a non-admitted Hall response",
+     "status": "NOT_EVALUATED",
+     "source": "abep_sim/design/architecture_optimizer.py::thrust_minus_drag (credible set EMPTY)"
+    },
+    {
+     "gate": "intake drag surface scenario TBD",
+     "status": "INCOMPLETE_EVIDENCE",
+     "source": "PARAMETRIC_ONLY label of the F1 intake-face drag"
+    }
+   ],
+   "admission_criteria": [
+    "parity contracts PARITY_PASS on all 196 states (statewise records EXACT_VALUE on statuses, ULP_BOUNDED / STATISTICAL on drag values as contracted)",
+    "no requirement value parsed inside the statewise physics (HC-08 / HC-09 evaluated in SC-WP-11)",
+    "the C-DRAG-RFP Option-1 generation filter is read from the frozen engineering configuration (Option 2 not approved, A9.24 item 12)"
+   ],
+   "inventory_components": [
+    "C-ABEP_SIM_SPACECRAFT_REFERENCE_DRAG_PY",
+    "C-ABEP_SIM_STATEWISE_PY",
+    "C-DOCS_DESIGN_SYNTHESIS_SPACECRAFT_REFERENCE_DRAG"
+   ],
+   "extract_and_parity_kernels": [],
+   "excluded_legacy_not_ported": [
+    "abep_sim/mission5.py drag / mission driver (class H)"
+   ],
+   "waves_v3": [
+    "W1"
+   ],
+   "size_estimate": {
+    "python_loc_to_migrate": 793,
+    "python_loc_migrate_or_formally_retire": 0,
+    "python_test_loc_replaced_by_contract_tests": 0,
+    "new_work_engineer_weeks": null,
+    "indicative_engineer_weeks": [
+     1.3,
+     2.6
+    ],
+    "size_class": "S",
+    "basis": "INDICATIVE PLANNING HEURISTIC, not evidence: 300-600 migrated Python lines per engineer-week (contract + Rust + tests + report), plus the stated new-physics / infrastructure weeks; kernels inside class-H modules and MIGRATE_OR_FORMALLY_RETIRE builders are not counted in the range"
+   }
+  },
+  {
+   "id": "SC-WP-05",
+   "layer": "electrical",
+   "title": "Electrical: PPU / load model, RF generator / matching, bus-power accounting, start-up / concurrent loads",
+   "section_6_items": [
+    "PPU/load model",
+    "RF generator/matching",
+    "bus-power accounting",
+    "startup/concurrent-load behaviour"
+   ],
+   "methods": [
+    "EXISTING_PHYSICS_PARITY"
+   ],
+   "elements": [
+    {
+     "element": "PPU / load model (A9-02 slot ledger, H-1 magnet power, consumer inventory)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/bus_boundary_a9.py::installed_slots",
+      "abep_sim/bus_boundary_a9.py::ledger",
+      "abep_sim/bus_boundary_a9.py::allocation_checks",
+      "abep_sim/bus_boundary_a9_v2.py::_rebind",
+      "abep_sim/design/architecture_optimizer.py::official_ledger",
+      "abep_sim/magnet_power.py::coil_design",
+      "abep_sim/magnet_power.py::electromagnet",
+      "abep_sim/magnet_power.py::coil_power_continuous_W",
+      "abep_sim/magnet_power.py::permanent_magnet",
+      "docs/architecture_comparison/power_boundary_a9_v2/build_bus_power_boundary_a9_v2.py",
+      "docs/architecture_comparison/power_boundary_a9_v2/build_consumer_inventory.py",
+      "docs/experiments/magnet_coil/build_magnet_coil_qualification.py"
+     ],
+     "data": [],
+     "notes": "a converter-efficiency kernel (abep_sim/ppu.py::Converter, class H) is extracted only if the preregistered load model needs it and its provenance passes; keeper / heater / stage-1 loads are never ported"
+    },
+    {
+     "element": "RF generator / matching (P2 impedance framework, RF power planes)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "docs/experiments/hall_icp/p2_impedance_map/p2_framework.py::ladder_abcd",
+      "docs/experiments/hall_icp/p2_impedance_map/p2_framework.py::dissipated_fraction_matched",
+      "docs/experiments/hall_icp/p2_impedance_map/p2_framework.py::verify_line_match_loss",
+      "docs/experiments/hall_icp/p2_impedance_map/p2_framework.py::vi_power_and_impedance",
+      "docs/experiments/hall_icp/p2_impedance_map/p2_framework.py::sol_correct",
+      "docs/experiments/hall_icp/p2_impedance_map/p2_framework.py::parse_touchstone",
+      "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_reducer.py",
+      "abep_sim/bus_boundary_a9.py::rf_power_planes",
+      "abep_sim/bus_boundary_a9.py::icp_power_allocation_check",
+      "docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py::p_bus_from_generator_input"
+     ],
+     "data": [],
+     "notes": "RF matching LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT; RF ratings TBD_AFTER_IMPEDANCE_MAP; P_mains is never P_bus"
+    },
+    {
+     "element": "bus-power accounting (raw P_bus on bus_power_boundary_v1 / A9-02)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/bus_boundary_a9.py::ledger",
+      "abep_sim/bus_boundary_a9.py::p_bus_1ms_max",
+      "abep_sim/programme/design_synthesis.py::bus_power"
+     ],
+     "data": [],
+     "notes": "the RFP power gate (bus_boundary_a9.rfp_power_gate) is a requirement check and moves to abep-assess (SC-WP-11); P_bus = all electrical power crossing the spacecraft-side DC boundary"
+    },
+    {
+     "element": "start-up / concurrent-load behaviour (flight configuration)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/bus_boundary_a9.py::check_startup_sequence",
+      "abep_sim/bus_boundary_a9.py::_peak_rises"
+     ],
+     "data": [],
+     "notes": "the C1 heater / keeper rule (bus_boundary_a9._heater_rule, c1_* slots and peak events of the hall_c1_reference configuration) is GROUND_REFERENCE_ONLY and is not ported into flight crates"
+    }
+   ],
+   "selected_architecture_relevance": "P_bus < 1.5 kW full-system gate; Hall discharge + magnets + RF/ICP generator + compressor + flow control + thermal + housekeeping on one spacecraft-side boundary",
+   "target_crates": [
+    "abep-subsystems::power",
+    "abep-icp"
+   ],
+   "depends_on": [
+    "SC-WP-12",
+    "SC-WP-02",
+    "SC-WP-03"
+   ],
+   "determining_evidence_gates_fail_closed": [
+    {
+     "gate": "measured RF impedance (P2 map) absent",
+     "status": "NOT_EVALUATED",
+     "source": "TBD_AFTER_IMPEDANCE_MAP (A9.2 binding status)"
+    },
+    {
+     "gate": "installed slot loads / converter efficiencies TBD",
+     "status": "INCOMPLETE_EVIDENCE",
+     "source": "abep_sim/design/architecture_optimizer.py::official_ledger (OFFICIAL_A9_02_STATE)"
+    },
+    {
+     "gate": "no conformant gate measurement on the p_bus_1ms_max basis",
+     "status": "NOT_EVALUATED",
+     "source": "abep_sim/bus_boundary_a9.py::_gate_measurement (A9.1 OQ-A902-01)"
+    },
+    {
+     "gate": "start-up rule not classifiable with TBD loads",
+     "status": "NOT_EVALUATED",
+     "source": "check_startup_sequence RULES_NOT_EVALUABLE"
+    }
+   ],
+   "admission_criteria": [
+    "parity contracts PARITY_PASS on the hall_icp_neutralizer configuration (EXACT_VALUE ledgers / statuses, ULP_BOUNDED arithmetic)",
+    "conservation: ledger closure (sum of slot loads / efficiencies = P_bus) exact; energy-ledger residual < 2 %",
+    "crate-graph proof that the RFP power gate lives in abep-assess, not in abep-subsystems",
+    "forbidden-identifier scan green (no keeper / heater load names outside ground-reference crates)"
+   ],
+   "inventory_components": [
+    "C-ABEP_SIM_BUS_BOUNDARY_A9_PY",
+    "C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY",
+    "C-ABEP_SIM_MAGNET_POWER_PY",
+    "C-DOCS_ARCHITECTURE_COMPARISON_POWER_BOUNDARY_A9_V2",
+    "C-DOCS_EXPERIMENTS_HALL_ICP_P2_IMPEDANCE_MAP",
+    "C-DOCS_EXPERIMENTS_MAGNET_COIL"
+   ],
+   "extract_and_parity_kernels": [],
+   "excluded_legacy_not_ported": [
+    "abep_sim/ppu.py PPU / default_ppu / load_modes (class H)",
+    "hall_c1_reference configuration and C1 slots (GROUND_REFERENCE_ONLY)",
+    "docs/architecture_comparison/electrical_closure/tools/ (A5 multi-family)"
+   ],
+   "waves_v3": [
+    "W4",
+    "W9",
+    "W15b"
+   ],
+   "size_estimate": {
+    "python_loc_to_migrate": 10737,
+    "python_loc_migrate_or_formally_retire": 0,
+    "python_test_loc_replaced_by_contract_tests": 0,
+    "new_work_engineer_weeks": null,
+    "indicative_engineer_weeks": [
+     17.9,
+     35.8
+    ],
+    "size_class": "L",
+    "basis": "INDICATIVE PLANNING HEURISTIC, not evidence: 300-600 migrated Python lines per engineer-week (contract + Rust + tests + report), plus the stated new-physics / infrastructure weeks; kernels inside class-H modules and MIGRATE_OR_FORMALLY_RETIRE builders are not counted in the range"
+   }
+  },
+  {
+   "id": "SC-WP-06",
+   "layer": "thermal",
+   "title": "Thermal: NEW cathodeless Hall + RF/ICP thermal model (directly in Rust)",
+   "section_6_items": [
+    "NEW cathodeless Hall + RF/ICP thermal model"
+   ],
+   "methods": [
+    "EXISTING_PHYSICS_PARITY",
+    "NEW_PHYSICS"
+   ],
+   "elements": [
+    {
+     "element": "NEW cathodeless coupled thermal model (nodes, equations, heat sources, radiative / conductive boundaries, spacecraft interface, RF/ICP and Hall waste heat)",
+     "method": "NEW_PHYSICS",
+     "python_implementations": [],
+     "data": [],
+     "notes": "RM-OQ-08 OWNER_DECIDED A9.28: preregister, implement directly in Rust, admit by independent verification; no synthetic Python reference; a Python scratch calculation only as an independent, non-authoritative cross-check"
+    },
+    {
+     "element": "retained geometric radiation kernels (K-P3-RAYS, already cathode-free in icp_thermal_lib)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/icp_thermal_lib.py::view_factors",
+      "abep_sim/icp_thermal_lib.py::trace",
+      "abep_sim/icp_thermal_lib.py::emit_zone",
+      "abep_sim/icp_thermal_lib.py::plume_interception",
+      "abep_sim/icp_thermal_lib.py::q_collector",
+      "abep_sim/icp_thermal_lib.py::h1_body",
+      "abep_sim/icp_thermal_lib.py::Body",
+      "abep_sim/icp_thermal_lib.py::vf_annulus_to_parallel_coaxial_annulus"
+     ],
+     "data": [],
+     "notes": "PRE_RUST rank 8 (p3_view_factors_verify, 0.04 s); reciprocity / enclosure-sum invariants"
+    },
+    {
+     "element": "retained Hall-discharge / magnet heat-source and winding kernels",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/thermal_life.py::hall_wall_ion_heat_W",
+      "abep_sim/thermal_life.py::hall_wall_electron_heat_W",
+      "abep_sim/thermal_life.py::hall_anode_heat_W",
+      "abep_sim/thermal_life.py::hallmap_wall_inputs",
+      "abep_sim/thermal_life.py::rejected_heat_W",
+      "abep_sim/thermal_life.py::solve_node_temperature",
+      "abep_sim/thermal_life.py::coil_resistance_from_geometry",
+      "abep_sim/thermal_life.py::winding_temperature_rise_mil_prf_27",
+      "abep_sim/thermal_life.py::insulation_allowable_C",
+      "abep_sim/design/architecture_optimizer.py::heat_rejection"
+     ],
+     "data": [],
+     "notes": "LaB6 emitter / evaporation / cathode node and RF / ECR source checks of thermal_life are not ported"
+    }
+   ],
+   "selected_architecture_relevance": "anode and coupled H-1 / ICP thermal closure is UNRESOLVED and must be modelled for the cathodeless flight topology; the old P3 / H2-5 network carries a C-1 cathode node (AFI-03, NOT_USABLE_FOR_FLIGHT_THERMAL_CLOSURE)",
+   "target_crates": [
+    "abep-subsystems::thermal"
+   ],
+   "depends_on": [
+    "SC-WP-12",
+    "SC-WP-02",
+    "SC-WP-03",
+    "SC-WP-05"
+   ],
+   "determining_evidence_gates_fail_closed": [
+    {
+     "gate": "measured thermal validation absent",
+     "status": "NOT_EVALUATED",
+     "source": "A9.28 msg 2 sec. 14; model admitted as VERIFIED, validation status NOT_VALIDATED"
+    },
+    {
+     "gate": "anode / coupled H-1-ICP thermal closure",
+     "status": "INCOMPLETE_EVIDENCE",
+     "source": "A9 binding status UNRESOLVED (never reported as PASS)"
+    },
+    {
+     "gate": "ICP geometry P3-G-01..08, emittances P3-R-01..04, conductances P3-K-01..06 TBD",
+     "status": "INCOMPLETE_EVIDENCE",
+     "source": "abep_sim/design/architecture_optimizer.py::UNLOCK['Q_reject']"
+    },
+    {
+     "gate": "Hall waste heat needs an admitted Hall map (credible set EMPTY)",
+     "status": "NOT_EVALUATED",
+     "source": "abep_sim/thermal_life.py::_require_admitted_member"
+    },
+    {
+     "gate": "spacecraft thermal interface (host ICD) absent",
+     "status": "NOT_EVALUATED",
+     "source": "no host-spacecraft ICD in the repository"
+    },
+    {
+     "gate": "state outside the preregistered model domain",
+     "status": "OUT_OF_DOMAIN",
+     "source": "NP-THERMAL prereg"
+    }
+   ],
+   "admission_criteria": [
+    "preregistration committed in its own commit before any Rust code: nodes, equations, heat sources, radiative / conductive boundaries, spacecraft interface, RF/ICP waste heat, Hall waste heat, assumptions, domains, conservation checks, analytic limiting cases, evidence / validation plan (A9.28 msg 2 sec. 8)",
+    "analytic limiting cases pass (single isothermal radiator T = (Q / (eps sigma A) + T_sink^4)^(1/4); two-node conduction; zero-source equilibrium at the sink; view-factor reciprocity and enclosure sums)",
+    "conservation: sum of heat sources = rejected + stored within the preregistered residual (CLAUDE.md rule 4)",
+    "independent verification (published benchmark or an independent cross-check calculation that is not an authoritative dependency); HC-06 50 K margin applied only in assessment, never in the equations",
+    "no hollow-cathode node, Q_cath or keeper term (forbidden-identifier scan)",
+    "K-P3-RAYS and the thermal_life kernels: parity contracts PARITY_PASS"
+   ],
+   "inventory_components": [
+    "C-ABEP_SIM_ICP_THERMAL_LIB_PY",
+    "C-ABEP_SIM_THERMAL_LIFE_PY"
+   ],
+   "extract_and_parity_kernels": [
+    "K-P3-RAYS"
+   ],
+   "excluded_legacy_not_ported": [
+    "docs/experiments/hall_icp/p3_coupled_thermal/ h25_coupled_network (C-1 node CB, Q_cath)",
+    "docs/hardware/h2/h2_5_thermal_network/ (GROUND_REFERENCE_ONLY test article)",
+    "abep_sim/thermal.py default_nodes (class H; generic solve_network / size_radiator / aero_heating_W_m2 only if the prereg chooses to reuse them, as extract kernels)"
+   ],
+   "waves_v3": [
+    "W5",
+    "W10"
+   ],
+   "size_estimate": {
+    "python_loc_to_migrate": 1488,
+    "python_loc_migrate_or_formally_retire": 0,
+    "python_test_loc_replaced_by_contract_tests": 0,
+    "new_work_engineer_weeks": [
+     6,
+     12
+    ],
+    "indicative_engineer_weeks": [
+     8.5,
+     17.0
+    ],
+    "size_class": "L",
+    "basis": "INDICATIVE PLANNING HEURISTIC, not evidence: 300-600 migrated Python lines per engineer-week (contract + Rust + tests + report), plus the stated new-physics / infrastructure weeks; kernels inside class-H modules and MIGRATE_OR_FORMALLY_RETIRE builders are not counted in the range"
+   }
+  },
+  {
+   "id": "SC-WP-07",
+   "layer": "mass",
+   "title": "Mass: selected-flight architecture mass accounting, margin / accounting rules, Xe sensitivity",
+   "section_6_items": [
+    "selected-flight architecture mass accounting",
+    "margin/accounting rules",
+    "Xe sensitivity"
+   ],
+   "methods": [
+    "EXISTING_PHYSICS_PARITY"
+   ],
+   "elements": [
+    {
+     "element": "selected-flight architecture mass accounting (mass_power_a9_v5)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "docs/budgets/mass_power_a9_v5/build_mass_power_a9_v5.py::build_doc",
+      "docs/budgets/mass_power_a9_v5/build_mass_power_a9_v5.py::rollup_v5",
+      "docs/budgets/mass_power_a9_v5/build_mass_power_a9_v5.py::unresolved_v5",
+      "docs/budgets/mass_power_a9_v5/build_mass_power_a9_v5.py::set_al09",
+      "abep_sim/design/architecture_optimizer.py::wet_mass"
+     ],
+     "data": [
+      "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json"
+     ],
+     "notes": "A9.28: ACTIVE_SELECTED_ARCHITECTURE_ENGINEERING_ASSESSMENT; AL-07 6.0 kg = PROVISIONAL_LEGACY_DERIVED_ANALOG_INPUT, AFI-02-RA1_OPEN; never promoted by migration to CBE, measured mass or frozen flight truth"
+    },
+    {
+     "element": "margin / accounting rules (K-MASS-RULES and the v5 bid-margin reading)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py::line_mev_value",
+      "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py::harness_row60",
+      "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py::closure_state",
+      "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py::_unresolved",
+      "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py::rollup",
+      "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py::system_margin",
+      "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py::rk",
+      "docs/budgets/mass_power_a9_v5/build_mass_power_a9_v5.py::system_margin_bid",
+      "docs/budgets/mass_power_a9_v5/build_mass_power_a9_v5.py::assert_bid_margin_reading"
+     ],
+     "data": [],
+     "notes": "generic mass-accounting / margin / harness / roll-up logic is active and migrates (A9.28)"
+    },
+    {
+     "element": "Xe sensitivity (2 / 5 / 10 kg planning cases; Xe accounting v3)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "docs/budgets/xe_accounting_a9_v3/build_xe_accounting_a9_v3.py::case_split_loaded",
+      "docs/budgets/xe_accounting_a9_v3/build_xe_accounting_a9_v3.py::design_cases",
+      "docs/budgets/xe_accounting_a9_v3/build_xe_accounting_a9_v3.py::evaluate",
+      "docs/budgets/xe_accounting_a9_v3/build_xe_accounting_a9_v3.py::ignition_booking_s",
+      "docs/budgets/xe_accounting_a9_v3/build_xe_accounting_a9_v3.py::book_reserve_and_residual"
+     ],
+     "data": [],
+     "notes": "the Xe load is not frozen; cases are sensitivity / planning only (A9.25 msg 8 sec. 7)"
+    }
+   ],
+   "selected_architecture_relevance": "< 40 kg wet full-system gate; the flight mass record of the selected architecture and its Xe contingency load",
+   "target_crates": [
+    "abep-subsystems::mass"
+   ],
+   "depends_on": [
+    "SC-WP-12",
+    "SC-WP-03",
+    "SC-WP-05"
+   ],
+   "determining_evidence_gates_fail_closed": [
+    {
+     "gate": "no CBE or measured mass for any BOM line",
+     "status": "NOT_EVALUATED",
+     "source": "abep_sim/design/architecture_optimizer.py::wet_mass"
+    },
+    {
+     "gate": "mass compliance",
+     "status": "INCOMPLETE_EVIDENCE",
+     "source": "A9.25 msg 8 sec. 8 (MASS INCOMPLETE_EVIDENCE / NOT_YET_CLOSED; DOES_NOT_CLOSE stays visible)"
+    },
+    {
+     "gate": "AL-07 value status (PROVISIONAL_LEGACY_DERIVED_ANALOG_INPUT, AFI-02-RA1 open)",
+     "status": "INCOMPLETE_EVIDENCE",
+     "source": "A9.28 msg 1 sec. 2"
+    }
+   ],
+   "admission_criteria": [
+    "EXACT_BYTES regeneration of the committed mass_power_a9_v5 / xe_accounting_a9_v3 records (labels included)",
+    "value-status preservation test: the Rust output carries AL-07 = 6.0 kg with its committed labels and the A9.28 migration status PROVISIONAL_LEGACY_DERIVED_ANALOG_INPUT / AFI-02-RA1_OPEN; any CBE / measured / frozen label on AL-07 fails the contract",
+    "roll-up arithmetic: dry = non-harness x (1 / 0.95) x line factors x system margin reproduced exactly"
+   ],
+   "inventory_components": [
+    "C-DOCS_BUDGETS_MASS_POWER_A9_V5",
+    "C-DOCS_BUDGETS_XE_ACCOUNTING_A9_V3"
+   ],
+   "extract_and_parity_kernels": [
+    "K-MASS-RULES"
+   ],
+   "excluded_legacy_not_ported": [
+    "abep_sim/mass_bom.py (class H; geometry / pressure-vessel functions are candidate kernels only)",
+    "docs/budgets/mass_power_a9_v2|v3|v4 records (history; v3 rules = K-MASS-RULES)",
+    "abep_sim/xe_ledger.py, docs/budgets/xe_ledger*/ (class H)"
+   ],
+   "waves_v3": [
+    "W11"
+   ],
+   "size_estimate": {
+    "python_loc_to_migrate": 2304,
+    "python_loc_migrate_or_formally_retire": 0,
+    "python_test_loc_replaced_by_contract_tests": 0,
+    "new_work_engineer_weeks": null,
+    "indicative_engineer_weeks": [
+     3.8,
+     7.7
+    ],
+    "size_class": "M",
+    "basis": "INDICATIVE PLANNING HEURISTIC, not evidence: 300-600 migrated Python lines per engineer-week (contract + Rust + tests + report), plus the stated new-physics / infrastructure weeks; kernels inside class-H modules and MIGRATE_OR_FORMALLY_RETIRE builders are not counted in the range"
+   }
+  },
+  {
+   "id": "SC-WP-08",
+   "layer": "materials/life",
+   "title": "Materials / life: AO exposure, erosion, firing / mission life quantities, applicable reliability",
+   "section_6_items": [
+    "AO exposure",
+    "erosion",
+    "firing/mission life quantities",
+    "applicable reliability quantities"
+   ],
+   "methods": [
+    "AUDIT_THEN_EXTRACT_ONLY_IF_NEEDED",
+    "EXISTING_PHYSICS_PARITY"
+   ],
+   "elements": [
+    {
+     "element": "AO exposure",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/aochem.py::ao_flux",
+      "abep_sim/aochem.py::fluence",
+      "abep_sim/aochem.py::erosion_depth_um",
+      "abep_sim/aochem.py::recombination_fraction",
+      "abep_sim/aochem.py::inlet_composition",
+      "abep_sim/aochem.py::material_report",
+      "abep_sim/materials.py::Material",
+      "abep_sim/materials.py::surface_ageing_alpha",
+      "abep_sim/life.py::intake_life",
+      "abep_sim/life.py::blade_life",
+      "docs/experiments/lifetime_ao/build_ao_lifetime_register.py::compute_ao_environment"
+     ],
+     "data": [],
+     "notes": "K-GAS-LIFE = life.intake_life / blade_life + the archengine gas-state wrapper only"
+    },
+    {
+     "element": "erosion (sputter yields, wall sputter index, Hall wall flux)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "docs/evidence/sputter_yields_v1/build_sputter_yields_v1.py::yamamura_tawara",
+      "docs/evidence/sputter_yields_v1/build_sputter_yields_v1.py::apid_fit",
+      "docs/experiments/lifetime_ao/build_ao_lifetime_register.py::compute_wall_sputter_index",
+      "abep_sim/thermal_life.py::hallmap_wall_inputs"
+     ],
+     "data": [],
+     "notes": "Hall wall erosion uses Hall-map wall flux only with wall_life_trustworthy"
+    },
+    {
+     "element": "firing / mission life quantities (raw; HC-07 comparison in assessment)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/design/architecture_optimizer.py::life_material_indicators",
+      "docs/experiments/hall_icp/p4_anode_materials/p4_screening.py::evaluate_gate",
+      "docs/experiments/hall_icp/p4_anode_materials/p4_screening.py::candidate_screening_state",
+      "docs/experiments/hall_icp/p4_anode_materials/p4_screening.py::final_material_status"
+     ],
+     "data": [],
+     "notes": "15,000 h firing-life basis is an assessment threshold; mission 26,280 h is separate"
+    },
+    {
+     "element": "applicable reliability quantities",
+     "method": "AUDIT_THEN_EXTRACT_ONLY_IF_NEEDED",
+     "python_implementations": [
+      "abep_sim/life.py::reliability",
+      "abep_sim/life.py::magnet_life",
+      "abep_sim/life.py::compressor_life"
+     ],
+     "data": [],
+     "notes": "no active selected-architecture reliability implementation exists; the generic series / Weibull functions of the class-H life.py are candidate kernels (without the R_26000h legacy key) and are extracted only if the preregistered reliability scope needs them; otherwise a preregistered NEW_PHYSICS element"
+    }
+   ],
+   "selected_architecture_relevance": "AO / erosion life of intake, filter, compressor, anode / collector and Hall walls governs the 26,280 h mission and the > 15,000 h firing basis",
+   "target_crates": [
+    "abep-subsystems::life",
+    "abep-subsystems::materials"
+   ],
+   "depends_on": [
+    "SC-WP-12",
+    "SC-WP-01",
+    "SC-WP-02",
+    "SC-WP-03",
+    "SC-WP-06"
+   ],
+   "determining_evidence_gates_fail_closed": [
+    {
+     "gate": "P4 anode-material gate cells (all 352 INCOMPLETE_EVIDENCE); anode material OPEN; 316L REJECTED",
+     "status": "INCOMPLETE_EVIDENCE",
+     "source": "docs/experiments/hall_icp/p4_anode_materials/"
+    },
+    {
+     "gate": "Hall wall-erosion life needs an admitted Hall map with wall_life_trustworthy",
+     "status": "NOT_EVALUATED",
+     "source": "CLAUDE.md next-work 5; abep_sim/hall_map.py::HallMap"
+    },
+    {
+     "gate": "AO coupon / material test evidence absent",
+     "status": "INCOMPLETE_EVIDENCE",
+     "source": "UNLOCK['life'] (owner row 132)"
+    },
+    {
+     "gate": "bearing / motor life",
+     "status": "NOT_EVALUATED",
+     "source": "abep_sim/design/architecture_optimizer.py::life_material_indicators"
+    },
+    {
+     "gate": "reliability without life-test / reliability evidence",
+     "status": "NOT_EVALUATED",
+     "source": "this programme (no active reliability model)"
+    }
+   ],
+   "admission_criteria": [
+    "parity contracts PARITY_PASS for aochem, materials, K-GAS-LIFE, sputter / AO register kernels, P4 screening",
+    "no life quantity is EVALUATED as life without its evidence (status vocabulary EXACT_VALUE)",
+    "reliability: either an extracted kernel with provenance / domain / preregistered verification, or a preregistered NEW_PHYSICS element verified analytically; never the LEGACY_RELIABILITY_HORIZON_H key"
+   ],
+   "inventory_components": [
+    "C-ABEP_SIM_AOCHEM_PY",
+    "C-DOCS_EVIDENCE_SPUTTER_YIELDS_V1",
+    "C-DOCS_EXPERIMENTS_HALL_ICP_P4_ANODE_MATERIALS",
+    "C-DOCS_EXPERIMENTS_LIFETIME_AO"
+   ],
+   "extract_and_parity_kernels": [
+    "K-GAS-LIFE"
+   ],
+   "excluded_legacy_not_ported": [
+    "abep_sim/life.py cathode_life / LifeInputs.cathode_* / hall_channel_life (class H)",
+    "abep_sim/radiation.py (class H; candidate kernels only)"
+   ],
+   "waves_v3": [
+    "W1E",
+    "W2",
+    "W15b"
+   ],
+   "size_estimate": {
+    "python_loc_to_migrate": 6335,
+    "python_loc_migrate_or_formally_retire": 0,
+    "python_test_loc_replaced_by_contract_tests": 0,
+    "new_work_engineer_weeks": [
+     2,
+     4
+    ],
+    "indicative_engineer_weeks": [
+     12.6,
+     25.1
+    ],
+    "size_class": "L",
+    "basis": "INDICATIVE PLANNING HEURISTIC, not evidence: 300-600 migrated Python lines per engineer-week (contract + Rust + tests + report), plus the stated new-physics / infrastructure weeks; kernels inside class-H modules and MIGRATE_OR_FORMALLY_RETIRE builders are not counted in the range",
+    "new_work_note": "only if the reliability scope is not covered by extracted kernels"
+   }
+  },
+  {
+   "id": "SC-WP-09",
+   "layer": "mission",
+   "title": "Mission: state propagation and mission integration",
+   "section_6_items": [
+    "state propagation",
+    "mission integration"
+   ],
+   "methods": [
+    "EXISTING_PHYSICS_PARITY",
+    "NEW_PHYSICS"
+   ],
+   "elements": [
+    {
+     "element": "state propagation (mission_env kernel; mission_scenario_v2)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/mission_env.py::propagate",
+      "abep_sim/mission_env.py::Spacecraft",
+      "abep_sim/mission_env.py::eclipse_fraction",
+      "abep_sim/mission_env.py::beta_angle",
+      "abep_sim/mission_env.py::worst_eclipse_fraction",
+      "abep_sim/mission_env.py::array_area_for",
+      "abep_sim/mission_env.py::pointing_factors",
+      "abep_sim/configuration.py::load_mission_scenario"
+     ],
+     "data": [
+      "config/mission/mission_scenario_v2.json"
+     ],
+     "notes": "PRE_RUST rank 5 (mission_run_generic, 2.14 s) maps to propagate only; mission_scenario_v2 is immutable (sha256 885b1f70...; a change is mission_scenario_v3)"
+    },
+    {
+     "element": "mission integration for hall_icp_neutralizer (statewise T - D, feed, P_bus, Xe use, firing hours, AO fluence over the mission scenario)",
+     "method": "NEW_PHYSICS",
+     "python_implementations": [],
+     "data": [],
+     "notes": "no active selected-architecture mission integration exists: mission5.run_mission_generic and the archengine propulsion-map driver are class H. Preregistered integration model; analytic verification (constant-rate integrals, Xe / energy ledger conservation); outputs fail closed where their inputs are NOT_EVALUATED"
+    }
+   ],
+   "selected_architecture_relevance": "the 26,280 h mission basis and the statewise sustainment / Xe contingency consumption of the selected architecture",
+   "target_crates": [
+    "abep-mission"
+   ],
+   "depends_on": [
+    "SC-WP-12",
+    "SC-WP-01",
+    "SC-WP-03",
+    "SC-WP-04",
+    "SC-WP-05",
+    "SC-WP-07",
+    "SC-WP-08"
+   ],
+   "determining_evidence_gates_fail_closed": [
+    {
+     "gate": "T - D not evaluated (credible set EMPTY, host drag ICD absent)",
+     "status": "NOT_EVALUATED",
+     "source": "SC-WP-04"
+    },
+    {
+     "gate": "Xe load not frozen",
+     "status": "NOT_EVALUATED",
+     "source": "A9.25 msg 8 sec. 7"
+    },
+    {
+     "gate": "scenario outside mission_scenario_v2",
+     "status": "OUT_OF_DOMAIN",
+     "source": "A9.25 scenario versioning"
+    }
+   ],
+   "admission_criteria": [
+    "propagation: parity contract PARITY_PASS (orbit / eclipse invariants, energy balance)",
+    "integration: preregistration committed first; analytic limiting cases and ledger conservation pass; NOT_EVALUATED inputs propagate as NOT_EVALUATED (never zero-filled)"
+   ],
+   "inventory_components": [
+    "C-ABEP_SIM_MISSION_ENV_PY"
+   ],
+   "extract_and_parity_kernels": [],
+   "excluded_legacy_not_ported": [
+    "abep_sim/mission5.py",
+    "abep_sim/mission_uq.py",
+    "abep_sim/transient.py",
+    "abep_sim/radiation.py"
+   ],
+   "waves_v3": [
+    "W3"
+   ],
+   "size_estimate": {
+    "python_loc_to_migrate": 173,
+    "python_loc_migrate_or_formally_retire": 0,
+    "python_test_loc_replaced_by_contract_tests": 0,
+    "new_work_engineer_weeks": [
+     3,
+     6
+    ],
+    "indicative_engineer_weeks": [
+     3.3,
+     6.6
+    ],
+    "size_class": "M",
+    "basis": "INDICATIVE PLANNING HEURISTIC, not evidence: 300-600 migrated Python lines per engineer-week (contract + Rust + tests + report), plus the stated new-physics / infrastructure weeks; kernels inside class-H modules and MIGRATE_OR_FORMALLY_RETIRE builders are not counted in the range"
+   }
+  },
+  {
+   "id": "SC-WP-10",
+   "layer": "uncertainty/design",
+   "title": "Uncertainty / design: active F7/F8 design synthesis, robust optimisation, UQ for the selected architecture",
+   "section_6_items": [
+    "active F7/F8 design synthesis",
+    "robust optimization",
+    "UQ for the selected architecture"
+   ],
+   "methods": [
+    "EXISTING_PHYSICS_PARITY"
+   ],
+   "elements": [
+    {
+     "element": "F7/F8 design synthesis",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/design/architecture_optimizer.py::design_vector_blocks",
+      "abep_sim/design/architecture_optimizer.py::upstream_context",
+      "abep_sim/design/architecture_optimizer.py::pareto_mask",
+      "abep_sim/design/architecture_optimizer.py::nondominated_layers",
+      "abep_sim/design/architecture_optimizer.py::flight_configuration_elements",
+      "abep_sim/design/architecture_optimizer.py::architecture_questions",
+      "abep_sim/programme/design_synthesis.py::context_pareto",
+      "abep_sim/programme/design_synthesis.py::evaluate_system",
+      "abep_sim/programme/design_synthesis.py::rank_full_system"
+     ],
+     "data": [],
+     "notes": "A9.19 single flight configuration; hollow-cathode refusal guard"
+    },
+    {
+     "element": "robust optimisation",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/design/robust_optimizer.py::scenario_robustness",
+      "abep_sim/design/robust_optimizer.py::robust_pareto",
+      "abep_sim/design/robust_optimizer.py::carried_robust_set",
+      "abep_sim/design/robust_optimizer.py::survivors",
+      "abep_sim/design/robust_optimizer.py::stable_seed",
+      "abep_sim/design/architecture_optimizer.py::robust_pareto_set",
+      "abep_sim/design/architecture_optimizer.py::require_all_admitted_scenarios",
+      "abep_sim/design/upstream_a9_13.py::robust_over_scenarios",
+      "abep_sim/design/upstream_a9_13.py::RobustParetoSet"
+     ],
+     "data": [],
+     "notes": "F8 robust optimisation is active and may migrate (A9.28 msg 1 sec. 7); parity class RM-OQ-03 (open)"
+    },
+    {
+     "element": "UQ for the selected architecture",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/design/robust_optimizer.py::tpmc_monte_carlo",
+      "abep_sim/design/robust_optimizer.py::pointing_sensitivity",
+      "abep_sim/design/robust_optimizer.py::compressor_elasticities",
+      "abep_sim/design/robust_optimizer.py::perturbed"
+     ],
+     "data": [],
+     "notes": "uq6 / uq_modular / mission_uq / uncertainty / Sobol are class H: retired, not ported although uq_modular is PRE_RUST rank 1 (94.86 s)"
+    }
+   ],
+   "selected_architecture_relevance": "the active design / UQ driver of hall_icp_neutralizer (F1-F8 chain)",
+   "target_crates": [
+    "abep-design",
+    "abep-uq",
+    "abep-rng"
+   ],
+   "depends_on": [
+    "SC-WP-12",
+    "SC-WP-01",
+    "SC-WP-02",
+    "SC-WP-03",
+    "SC-WP-04",
+    "SC-WP-05",
+    "SC-WP-06",
+    "SC-WP-07",
+    "SC-WP-08",
+    "SC-WP-09"
+   ],
+   "determining_evidence_gates_fail_closed": [
+    {
+     "gate": "robust upstream set EMPTY",
+     "status": "NOT_EVALUATED",
+     "source": "F7/F8 record; A9.24 item 9 (empty robust upstream set finding)"
+    },
+    {
+     "gate": "objective not rankable (T, Q_reject, I_e margin, m_wet, life)",
+     "status": "NOT_EVALUATED",
+     "source": "Pareto REFUSED_INCOMPLETE (no subset ranking)"
+    },
+    {
+     "gate": "scenario not admitted",
+     "status": "NOT_EVALUATED",
+     "source": "abep_sim/design/architecture_optimizer.py::require_all_admitted_scenarios"
+    }
+   ],
+   "admission_criteria": [
+    "parity contracts PARITY_PASS: EXACT_STREAM (numpy PCG64 / SeedSequence port) or STATISTICAL per RM-OQ-03; EXACT_VALUE Pareto membership and refusal statuses",
+    "the F7/F8 study outputs reproduced from captured references (empty robust upstream set included)",
+    "196-state robust / UQ execution end to end in Rust (pre-PR checklist item)"
+   ],
+   "inventory_components": [
+    "C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY",
+    "C-ABEP_SIM_DESIGN_ROBUST_OPTIMIZER_PY",
+    "C-ABEP_SIM_PROGRAMME_DESIGN_SYNTHESIS_PY"
+   ],
+   "extract_and_parity_kernels": [],
+   "excluded_legacy_not_ported": [
+    "abep_sim/uq6.py",
+    "abep_sim/uq_modular.py",
+    "abep_sim/programme/uq_modular.py",
+    "abep_sim/mission_uq.py",
+    "abep_sim/uncertainty.py",
+    "abep_sim/archengine.py",
+    "abep_sim/arch_compare.py",
+    "abep_sim/breakeven.py",
+    "abep_sim/explorer.py",
+    "abep_sim/sizing.py",
+    "abep_sim/thresholds.py",
+    "abep_sim/convergence.py"
+   ],
+   "waves_v3": [
+    "W4",
+    "W12"
+   ],
+   "size_estimate": {
+    "python_loc_to_migrate": 2011,
+    "python_loc_migrate_or_formally_retire": 0,
+    "python_test_loc_replaced_by_contract_tests": 0,
+    "new_work_engineer_weeks": null,
+    "indicative_engineer_weeks": [
+     3.4,
+     6.7
+    ],
+    "size_class": "M",
+    "basis": "INDICATIVE PLANNING HEURISTIC, not evidence: 300-600 migrated Python lines per engineer-week (contract + Rust + tests + report), plus the stated new-physics / infrastructure weeks; kernels inside class-H modules and MIGRATE_OR_FORMALLY_RETIRE builders are not counted in the range"
+   }
+  },
+  {
+   "id": "SC-WP-11",
+   "layer": "assessment",
+   "title": "Assessment: requirement-independent raw physics, separate requirement assessment, HC gates, RVM mapping",
+   "section_6_items": [
+    "requirements-independent raw physics",
+    "separate requirement assessment",
+    "HC gates",
+    "RVM mapping where needed by engineering assessment"
+   ],
+   "methods": [
+    "EXISTING_PHYSICS_PARITY"
+   ],
+   "elements": [
+    {
+     "element": "requirement-independent raw physics (layer separation)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/configuration.py::physics_configuration",
+      "abep_sim/configuration.py::assessment_configuration",
+      "tests/test_raw_assessment_split.py",
+      "tests/test_layer_separation_physics.py",
+      "tests/test_design_layer_separation.py"
+     ],
+     "data": [],
+     "notes": "becomes a crate-graph rule: physics crates never depend on abep-assess / abep-evidence"
+    },
+    {
+     "element": "separate requirement assessment",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/assessment/design_gates.py::evaluate_constraints",
+      "abep_sim/assessment/design_gates.py::hard_constraint_partition",
+      "abep_sim/assessment/design_gates.py::gate_snapshot",
+      "abep_sim/assessment/design_gates.py::status_label",
+      "abep_sim/bus_boundary_a9.py::rfp_power_gate"
+     ],
+     "data": [
+      "config/assessment/gate_thresholds_v1.json"
+     ],
+     "notes": ""
+    },
+    {
+     "element": "HC gates (HC-01..HC-12)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/assessment/design_gates.py::bus_power_gate",
+      "abep_sim/assessment/design_gates.py::ripple_feed_quality",
+      "abep_sim/assessment/design_gates.py::statewise_drag_compensation",
+      "abep_sim/assessment/design_gates.py::feed_state_sufficiency",
+      "abep_sim/assessment/design_gates.py::propellant_paths_check",
+      "abep_sim/assessment/design_gates.py::pareto_s6_17"
+     ],
+     "data": [],
+     "notes": "A9.24 item 5 dispositions: HC-05 M_n,LB > 0; HC-06 50 K; HC-07 15,000 h; HC-08 T - D >= 0; HC-09 Option 1; HC-10 capability; HC-11 feed_available - feed_required >= 0; HC-12 NOT_EVALUATED"
+    },
+    {
+     "element": "RVM mapping (where needed by engineering assessment) and GNG-ICP-01",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "docs/requirements/rvm_a9/build_rvm_a9.py::build_doc",
+      "docs/requirements/rvm_a9/build_rvm_a9.py::evaluate_rows",
+      "docs/requirements/rvm_a9/rvm_rules.py::assign_status",
+      "docs/requirements/rvm_a9/rvm_rules.py::assert_no_pass_without_measurement",
+      "docs/requirements/rvm_a9/a9_21_icp_gate.py::evaluate",
+      "docs/requirements/rvm_a9/a9_21_icp_gate.py::gate_record",
+      "abep_sim/assessment/design_gates.py::rvm_gate_snapshot"
+     ],
+     "data": [],
+     "notes": "RVM-16 current-architecture reading (AFI-05 resolved)"
+    }
+   ],
+   "selected_architecture_relevance": "the assessment layer of the selected architecture: physics emits raw quantities, assessment evaluates thresholds (A9.22 / A9.23, A9.24 items 3-5)",
+   "target_crates": [
+    "abep-assess"
+   ],
+   "depends_on": [
+    "SC-WP-12",
+    "SC-WP-03",
+    "SC-WP-04",
+    "SC-WP-05",
+    "SC-WP-06",
+    "SC-WP-07",
+    "SC-WP-08",
+    "SC-WP-09",
+    "SC-WP-10"
+   ],
+   "determining_evidence_gates_fail_closed": [
+    {
+     "gate": "HC-12 H-1 ripple threshold",
+     "status": "NOT_EVALUATED",
+     "source": "A9.24 item 5 (no value invented)"
+    },
+    {
+     "gate": "HC-05 without uncertainty evidence (M_n,LB)",
+     "status": "NOT_EVALUATED",
+     "source": "A9.24 item 5"
+    },
+    {
+     "gate": "HC-11 feed_required without the measured / validated H-1 basis",
+     "status": "NOT_EVALUATED",
+     "source": "A9.24 item 5; refuse_feed_requirement_lowering"
+    },
+    {
+     "gate": "GNG-ICP-01 C1 / C2 / C3 not all MET",
+     "status": "NOT_EVALUATED",
+     "source": "A9.25 msg 1 sec. 11 (missing evidence is NOT_EVALUATED, not PASS)"
+    },
+    {
+     "gate": "RVM PASS without measurement",
+     "status": "INCOMPLETE_EVIDENCE",
+     "source": "docs/requirements/rvm_a9/rvm_rules.py::assert_no_pass_without_measurement"
+    }
+   ],
+   "admission_criteria": [
+    "parity contracts PARITY_PASS (EXACT_VALUE statuses / verdicts; EXACT_BYTES RVM records)",
+    "assessment-separation tests: changing a compliance threshold alone changes assessment, never raw physics (A9.24 item 4 invariant), proven on the 196-state set",
+    "crate-graph test: no physics crate depends on abep-assess; no requirement parsing in raw physics"
+   ],
+   "inventory_components": [
+    "C-ABEP_SIM_ASSESSMENT_DESIGN_GATES_PY",
+    "C-DOCS_REQUIREMENTS_RFP_OFFICIAL",
+    "C-DOCS_REQUIREMENTS_RVM_A9"
+   ],
+   "extract_and_parity_kernels": [],
+   "excluded_legacy_not_ported": [
+    "abep_sim/hard_gates.py, abep_sim/assessment/arch_constraints.py, abep_sim/assessment/closure_checks.py (class H)",
+    "docs/traceability/ RTM v1 (class H)"
+   ],
+   "waves_v3": [
+    "W12",
+    "W15c"
+   ],
+   "size_estimate": {
+    "python_loc_to_migrate": 5029,
+    "python_loc_migrate_or_formally_retire": 0,
+    "python_test_loc_replaced_by_contract_tests": 0,
+    "new_work_engineer_weeks": null,
+    "indicative_engineer_weeks": [
+     8.4,
+     16.8
+    ],
+    "size_class": "L",
+    "basis": "INDICATIVE PLANNING HEURISTIC, not evidence: 300-600 migrated Python lines per engineer-week (contract + Rust + tests + report), plus the stated new-physics / infrastructure weeks; kernels inside class-H modules and MIGRATE_OR_FORMALLY_RETIRE builders are not counted in the range"
+   }
+  },
+  {
+   "id": "SC-WP-12",
+   "layer": "infrastructure: configuration / hash / provenance",
+   "title": "Configuration / hash / provenance (incl. shared enablers, architecture identity, generic provenance verifier, bid guard)",
+   "section_6_items": [
+    "configuration/hash/provenance"
+   ],
+   "methods": [
+    "EXISTING_PHYSICS_PARITY",
+    "NEW_INFRASTRUCTURE_ACCEPTANCE"
+   ],
+   "elements": [
+    {
+     "element": "configuration loaders, builders and hashes",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/configuration.py::load_manifest",
+      "abep_sim/configuration.py::load_verified",
+      "abep_sim/configuration.py::load_architecture",
+      "abep_sim/configuration.py::load_engineering_constraints",
+      "abep_sim/configuration.py::load_operating_inputs",
+      "abep_sim/configuration.py::load_gate_thresholds",
+      "abep_sim/configuration.py::load_design_state_set_ref",
+      "abep_sim/configuration.py::load_hardware_bounds",
+      "abep_sim/configuration.py::load_model_set",
+      "abep_sim/configuration.py::model_set_drift",
+      "abep_sim/configuration.py::SimulationConfiguration",
+      "scripts/config/build_config.py::build_all",
+      "scripts/config/build_config.py::build_architecture",
+      "scripts/config/build_config.py::build_constraints",
+      "scripts/config/build_config.py::build_gate_thresholds",
+      "scripts/config/build_config.py::build_design_state_ref",
+      "scripts/config/build_config.py::build_model_set",
+      "scripts/config/build_config.py::build_sources_of_truth",
+      "abep_sim/constants.py::RFPConstraints",
+      "abep_sim/operating_inputs.py::as_dict",
+      "abep_sim/design/engineering_constraints.py::snapshot"
+     ],
+     "data": [
+      "config/MANIFEST.json",
+      "config/SOURCES_OF_TRUTH.json"
+     ],
+     "notes": ""
+    },
+    {
+     "element": "shared W1E enablers (physical constants, materials property DB) consumed by SC-WP-02 / 06 / 08 / 09",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/constants.py::RFPConstraints",
+      "abep_sim/materials.py::Material",
+      "abep_sim/materials.py::DB",
+      "abep_sim/materials.py::table",
+      "abep_sim/materials.py::surface_ageing_alpha"
+     ],
+     "data": [],
+     "notes": "owned here so that the layer work packages stay acyclic (compressor, reservoir and mission_env read materials.DB)"
+    },
+    {
+     "element": "selected-architecture identity invariant (hall_icp_neutralizer; flight hollow cathode NONE; C1 GROUND_REFERENCE_ONLY)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/design/a9_19_architecture.py::require_flight_configuration",
+      "abep_sim/design/a9_19_architecture.py::refuse_hollow_cathode_elements",
+      "abep_sim/design/a9_19_architecture.py::hollow_cathode_elements",
+      "abep_sim/design/a9_19_architecture.py::ground_reference",
+      "abep_sim/design/a9_19_architecture.py::verify_decision_records"
+     ],
+     "data": [
+      "config/architecture/hall_icp_neutralizer_v1.json"
+     ],
+     "notes": ""
+    },
+    {
+     "element": "generic Rust provenance verifier (RM-OQ-09: H2-6 check semantics and similar builders)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "scripts/ci_checks.py::check_h2_6_live_sources",
+      "docs/hardware/h2/h2_6_diagnostics_fixture/build_h2_6_diagnostics_fixture.py::verify_sources",
+      "scripts/ci_checks.py::verify_sha_map",
+      "scripts/ci_checks.py::check_prereg_lock",
+      "scripts/ci_checks.py::check_audit_manifest",
+      "scripts/ci_checks.py::check_hallthruster_pin"
+     ],
+     "data": [],
+     "notes": "ports the CHECK SEMANTICS (source hashes, provenance, pinned owner decisions, expected values, deterministic source verification); obsolete H2-6 architecture assumptions are not ported; the Python check leaves active CI only after admission and CI re-pointing; H2-6 evidence immutable"
+    },
+    {
+     "element": "bid_source_guard + bid_source_manifest_v1 and the migration-state ledger",
+     "method": "NEW_INFRASTRUCTURE_ACCEPTANCE",
+     "python_implementations": [],
+     "data": [
+      "docs/bid/bid_technical_baseline_v2.json",
+      "config/mission/mission_scenario_v2.json"
+     ],
+     "notes": "protects technical source 5eee4b8 and package / freeze record 2de86ab (lineage b5849af -> 2de86ab)"
+    }
+   ],
+   "selected_architecture_relevance": "every result carries the architecture / config / model-set / design-state-set hashes; the architecture identity invariant is a pre-PR checklist item",
+   "target_crates": [
+    "abep-types",
+    "abep-provenance",
+    "abep-config",
+    "abep-data"
+   ],
+   "depends_on": [],
+   "determining_evidence_gates_fail_closed": [
+    {
+     "gate": "config / architecture / model-set / design-state-set hash mismatch",
+     "status": "MODEL_ERROR",
+     "source": "abep_sim/configuration.py::load_verified (refuses)"
+    },
+    {
+     "gate": "hollow-cathode element in a flight configuration",
+     "status": "MODEL_ERROR",
+     "source": "abep_sim/design/a9_19_architecture.py::refuse_hollow_cathode_elements"
+    },
+    {
+     "gate": "mission_scenario_v2 changed",
+     "status": "MODEL_ERROR",
+     "source": "bid_source_guard (sha256 885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49)"
+    }
+   ],
+   "admission_criteria": [
+    "`abep config build --check` reproduces config/** and MANIFEST.json byte-identically (EXACT_BYTES)",
+    "provenance verifier: identical pass / fail to the Python checks on the current tree and on a preregistered seeded set of corrupted trees; then ci_checks h2_6_live_sources is retired from active CI",
+    "architecture identity: refusal parity on registered hollow-cathode / C1 texts (EXACT_VALUE)",
+    "bid_source_guard fails on every preregistered tamper case and passes on the recorded lineage"
+   ],
+   "inventory_components": [
+    "C-ABEP_SIM_CONFIGURATION_PY",
+    "C-ABEP_SIM_CONSTANTS_PY",
+    "C-ABEP_SIM_DESIGN_A9_19_ARCHITECTURE_PY",
+    "C-ABEP_SIM_DESIGN_ENGINEERING_CONSTRAINTS_PY",
+    "C-ABEP_SIM_MATERIALS_PY",
+    "C-ABEP_SIM_OPERATING_INPUTS_PY",
+    "C-SCRIPTS_CONFIG_BUILD_CONFIG_PY"
+   ],
+   "extract_and_parity_kernels": [],
+   "excluded_legacy_not_ported": [
+    "scripts/config/build_result_schemas.py (class H: raw_closure_v2 cathode fields)",
+    "docs/hardware/h2/h2_6_diagnostics_fixture/ builder itself (class G; not ported)"
+   ],
+   "waves_v3": [
+    "W1E",
+    "W13",
+    "W16"
+   ],
+   "size_estimate": {
+    "python_loc_to_migrate": 2029,
+    "python_loc_migrate_or_formally_retire": 0,
+    "python_test_loc_replaced_by_contract_tests": 0,
+    "new_work_engineer_weeks": [
+     2,
+     4
+    ],
+    "indicative_engineer_weeks": [
+     5.4,
+     10.8
+    ],
+    "size_class": "M",
+    "basis": "INDICATIVE PLANNING HEURISTIC, not evidence: 300-600 migrated Python lines per engineer-week (contract + Rust + tests + report), plus the stated new-physics / infrastructure weeks; kernels inside class-H modules and MIGRATE_OR_FORMALLY_RETIRE builders are not counted in the range"
+   }
+  },
+  {
+   "id": "SC-WP-13",
+   "layer": "infrastructure: deterministic CLI",
+   "title": "Deterministic `abep` CLI",
+   "section_6_items": [
+    "deterministic CLI"
+   ],
+   "methods": [
+    "NEW_INFRASTRUCTURE_ACCEPTANCE"
+   ],
+   "elements": [
+    {
+     "element": "the `abep` binary (sweep, run --states 196, robust, assess, golden check, build <id> --check, config, hall pin-check / smoke / schema-check, parity, ci, perf)",
+     "method": "NEW_INFRASTRUCTURE_ACCEPTANCE",
+     "python_implementations": [
+      "abep_sim/__main__.py",
+      "abep_sim/atmosphere_orbit.py::main",
+      "scripts/config/build_config.py::main",
+      "scripts/ci_checks.py::main"
+     ],
+     "data": [],
+     "notes": "no Python entry point is ported: `python -m abep_sim` runs the class-H legacy card sweep (abep_sim/programme/sweep.py) and is retired; each subcommand's outputs inherit the parity of the admitted components it runs"
+    }
+   ],
+   "selected_architecture_relevance": "normal simulation, sweeps, mission, UQ, assessment and gates run through it (A9.28 msg 2 sec. 13)",
+   "target_crates": [
+    "abep-cli"
+   ],
+   "depends_on": [
+    "SC-WP-12"
+   ],
+   "determining_evidence_gates_fail_closed": [
+    {
+     "gate": "subcommand reaches a non-admitted component",
+     "status": "NOT_EVALUATED",
+     "source": "refusal, never a silent Python fallback (CLAUDE.md rule 3)"
+    }
+   ],
+   "admission_criteria": [
+    "double-run byte identity of every subcommand output (and --threads 1 vs default)",
+    "every output carries implementation = rust, rust_commit, contract_id and the four governing hashes",
+    "status vocabulary preserved; exit codes registered"
+   ],
+   "inventory_components": [],
+   "extract_and_parity_kernels": [],
+   "excluded_legacy_not_ported": [
+    "abep_sim/programme/sweep.py (class H)",
+    "abep_sim/explorer.py (class H)"
+   ],
+   "waves_v3": [
+    "W14"
+   ],
+   "size_estimate": {
+    "python_loc_to_migrate": 0,
+    "python_loc_migrate_or_formally_retire": 0,
+    "python_test_loc_replaced_by_contract_tests": 0,
+    "new_work_engineer_weeks": [
+     2,
+     4
+    ],
+    "indicative_engineer_weeks": [
+     2.0,
+     4.0
+    ],
+    "size_class": "S",
+    "basis": "INDICATIVE PLANNING HEURISTIC, not evidence: 300-600 migrated Python lines per engineer-week (contract + Rust + tests + report), plus the stated new-physics / infrastructure weeks; kernels inside class-H modules and MIGRATE_OR_FORMALLY_RETIRE builders are not counted in the range"
+   }
+  },
+  {
+   "id": "SC-WP-14",
+   "layer": "infrastructure: builders / evidence generation that remains active",
+   "title": "Active builders and evidence generation (incl. ground-test programme tooling)",
+   "section_6_items": [
+    "builders/evidence generation that remains active"
+   ],
+   "methods": [
+    "EXISTING_PHYSICS_PARITY"
+   ],
+   "elements": [
+    {
+     "element": "design-synthesis / architecture / hardware builders (W15a)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "docs/design_synthesis/f7_f8_optimizer/build_f7_f8_optimizer.py::build",
+      "docs/design_synthesis/f1_intake/build_f1_intake.py",
+      "docs/design_synthesis/f2_filter/build_f2_filter.py",
+      "docs/design_synthesis/f3_compressor/build_f3_compressor.py",
+      "docs/design_synthesis/f4_plenum/build_f4_plenum.py",
+      "docs/design_synthesis/f6_icp_geometry/build_f6_icp_geometry.py",
+      "docs/architecture/freeze_candidate/build_freeze_candidate.py",
+      "docs/hardware/h1_freeze_candidate/build_h1_freeze_candidate.py",
+      "scripts/evidence/evidence_archive.py",
+      "scripts/evidence/f1_archive.py"
+     ],
+     "data": [],
+     "notes": "EXACT_BYTES regeneration (`abep build <id> --check`)"
+    },
+    {
+     "element": "A9 hall_icp experiments, interfaces, procurement, evidence registers (W15b)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "docs/experiments/hall_icp/integration/m16_v5/build_subsystem_maturity_v5.py",
+      "docs/experiments/hall_icp/uncertainty_budget/build_hall_icp_uncertainty_budget.py",
+      "docs/interfaces/icp_neutralizer/build_icp_neutralizer_icd.py",
+      "docs/evidence/icp_neutralizer/build_icp_neutralizer_evidence.py",
+      "docs/evidence/hall_sustainment/build_hall_sustainment_matrix.py"
+     ],
+     "data": [],
+     "notes": "hall_sustainment = REFERENCE_EVIDENCE_ONLY / NOT_FLIGHT_RUNTIME (A9.28): port or formally retire; its committed outputs stay immutable reference evidence"
+    },
+    {
+     "element": "decisions / owner questions / bid package (W15c)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "docs/bid/package/build_package.py"
+     ],
+     "data": [],
+     "notes": "the bid package stays pinned to 5eee4b8 (bid_source_guard); the stale owner-question state v5 (MPV3Q-01) is repaired by a successor record (A9.27 sec. 5), never rewritten"
+    },
+    {
+     "element": "ground-test programme tooling (class GROUND_TEST_PROGRAMME_ONLY, A9.28)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "scripts/experiments/s1_readiness.py",
+      "scripts/experiments/s1a_readiness.py",
+      "docs/experiments/capability_demo/build_capability_demo_prep.py",
+      "docs/experiments/capability_demo/capability_analysis.py",
+      "docs/experiments/hardware/build_hardware_definition.py",
+      "docs/experiments/instrumentation/build_instrumentation_definition.py",
+      "docs/architecture_comparison/feed_state_closure/build_feed_state_closure.py"
+     ],
+     "data": [],
+     "notes": "S1 / S1a = ACTIVE_GATE_TOOLING and capability demo = ACTIVE_EVIDENCE_TOOLING: Rust equivalents eventually (zero-Python target); hardware / instrumentation migrate where retained in the active evidence toolchain; feed-state closure retained until successor feed-qualification records exist (RM-OQ-10). Never flight runtime: crate abep-groundtest, which no flight crate may depend on"
+    }
+   ],
+   "selected_architecture_relevance": "the operational evidence / provenance builders of the selected architecture and its ground-test programme (A9.28 msg 2 sec. 13: builders that remain operational)",
+   "target_crates": [
+    "abep-evidence",
+    "abep-groundtest"
+   ],
+   "depends_on": [
+    "SC-WP-01",
+    "SC-WP-02",
+    "SC-WP-03",
+    "SC-WP-04",
+    "SC-WP-05",
+    "SC-WP-06",
+    "SC-WP-07",
+    "SC-WP-08",
+    "SC-WP-09",
+    "SC-WP-10",
+    "SC-WP-11",
+    "SC-WP-12"
+   ],
+   "determining_evidence_gates_fail_closed": [
+    {
+     "gate": "builder input pin / reference changed",
+     "status": "MODEL_ERROR",
+     "source": "REFUSED_REFERENCE_CHANGED (RM-R13); builders' verify_pins()"
+    },
+    {
+     "gate": "a builder turning NOT_EVALUATED / INCOMPLETE_EVIDENCE into PASS",
+     "status": "INCOMPLETE_EVIDENCE",
+     "source": "A9.25 msg 8 sec. 14; rvm_rules.assert_no_pass_without_measurement"
+    }
+   ],
+   "admission_criteria": [
+    "per builder: `abep build <id> --check` byte-identical to the committed outputs (EXACT_BYTES), or FORMALLY_RETIRED_NOT_PORTED where the disposition allows (MIGRATE_OR_FORMALLY_RETIRE, REFERENCE_EVIDENCE_ONLY)",
+    "class-T tooling isolated in abep-groundtest (crate-graph test)"
+   ],
+   "inventory_components": [
+    "C-DOCS_ARCHITECTURE_COMPARISON_FEED_STATE_CLOSURE",
+    "C-DOCS_ARCHITECTURE_FREEZE_CANDIDATE",
+    "C-DOCS_BID_PACKAGE",
+    "C-DOCS_BUDGETS_OWNER_DECISIONS",
+    "C-DOCS_DECISIONS_APPLICATION",
+    "C-DOCS_DESIGN_SYNTHESIS_F1_INTAKE",
+    "C-DOCS_DESIGN_SYNTHESIS_F2_FILTER",
+    "C-DOCS_DESIGN_SYNTHESIS_F3_COMPRESSOR",
+    "C-DOCS_DESIGN_SYNTHESIS_F4_PLENUM",
+    "C-DOCS_DESIGN_SYNTHESIS_F6_ICP_GEOMETRY",
+    "C-DOCS_DESIGN_SYNTHESIS_F7_F8_OPTIMIZER",
+    "C-DOCS_EVIDENCE_HALL_SUSTAINMENT",
+    "C-DOCS_EVIDENCE_ICP_NEUTRALIZER",
+    "C-DOCS_EXPERIMENTS_CAPABILITY_DEMO",
+    "C-DOCS_EXPERIMENTS_HALL_ICP_INTEGRATION",
+    "C-DOCS_EXPERIMENTS_HALL_ICP_INTEGRATION_M16_V5",
+    "C-DOCS_EXPERIMENTS_HALL_ICP_PREREG_FRAMEWORK",
+    "C-DOCS_EXPERIMENTS_HALL_ICP_PROGRAMME",
+    "C-DOCS_EXPERIMENTS_HALL_ICP_UNCERTAINTY_BUDGET",
+    "C-DOCS_EXPERIMENTS_HALL_ICP_VALIDATION_INPUTS",
+    "C-DOCS_EXPERIMENTS_HARDWARE",
+    "C-DOCS_EXPERIMENTS_INSTRUMENTATION",
+    "C-DOCS_HARDWARE_H1_FREEZE_CANDIDATE",
+    "C-DOCS_HARDWARE_H2_A9_REVISIONS",
+    "C-DOCS_INTERFACES_ICP_NEUTRALIZER",
+    "C-DOCS_PROCUREMENT_RFQ_A9_V3",
+    "C-DOCS_PROCUREMENT_RFQ_A9_V3_GAS_REV1",
+    "C-SCRIPTS_EVIDENCE_EVIDENCE_ARCHIVE_PY",
+    "C-SCRIPTS_EVIDENCE_F1_ARCHIVE_PY",
+    "C-SCRIPTS_EXPERIMENTS_S1A_READINESS_PY",
+    "C-SCRIPTS_EXPERIMENTS_S1_READINESS_PY"
+   ],
+   "extract_and_parity_kernels": [],
+   "excluded_legacy_not_ported": [
+    "A5 multi-family builders (docs/architecture_comparison/* class H, scripts/architecture/*)",
+    "superseded record versions (mass_a9, mass_power v2-v4, xe_ledger_a9, xe_accounting v2, RFQ v1 / v2, M16 v2-v4, owner-question v2-v4 builders)",
+    "owner-question v1 consolidated builder (never run: it rewrites its xlsx)"
+   ],
+   "waves_v3": [
+    "W15",
+    "GT"
+   ],
+   "size_estimate": {
+    "python_loc_to_migrate": 45186,
+    "python_loc_migrate_or_formally_retire": 4555,
+    "python_test_loc_replaced_by_contract_tests": 0,
+    "new_work_engineer_weeks": null,
+    "indicative_engineer_weeks": [
+     75.3,
+     150.6
+    ],
+    "size_class": "XL",
+    "basis": "INDICATIVE PLANNING HEURISTIC, not evidence: 300-600 migrated Python lines per engineer-week (contract + Rust + tests + report), plus the stated new-physics / infrastructure weeks; kernels inside class-H modules and MIGRATE_OR_FORMALLY_RETIRE builders are not counted in the range"
+   }
+  },
+  {
+   "id": "SC-WP-15",
+   "layer": "infrastructure: active canonical golden",
+   "title": "Active canonical hall_icp_neutralizer golden",
+   "section_6_items": [
+    "active canonical golden"
+   ],
+   "methods": [
+    "EXISTING_PHYSICS_PARITY",
+    "NEW_INFRASTRUCTURE_ACCEPTANCE"
+   ],
+   "elements": [
+    {
+     "element": "generic golden comparator (K-GOLDEN-COMPARE)",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "abep_sim/golden.py::_compare",
+      "abep_sim/golden.py::check"
+     ],
+     "data": [
+      "abep_sim/data/golden_v2.json"
+     ],
+     "notes": "same pass / fail on a seeded set of perturbed copies; golden_v1 / v2 stay immutable historical references, reproducible from the historical Python environment, NOT Rust parity cases (RM-OQ-06)"
+    },
+    {
+     "element": "NEW active canonical hall_icp_neutralizer golden",
+     "method": "NEW_INFRASTRUCTURE_ACCEPTANCE",
+     "python_implementations": [],
+     "data": [],
+     "notes": "generated only from the admitted active Rust chain (A9.28 msg 1 secs. 4-5, msg 2 sec. 12); covers deterministic input configuration, raw physics, conservation, architecture identity, no conventional hollow cathode, applicable statewise outputs and assessment separation; created under golden-change governance"
+    }
+   ],
+   "selected_architecture_relevance": "the eventual CLAUDE.md rule-2 golden of the active architecture",
+   "target_crates": [
+    "abep-parity",
+    "abep-cli"
+   ],
+   "depends_on": [
+    "SC-WP-01",
+    "SC-WP-02",
+    "SC-WP-03",
+    "SC-WP-04",
+    "SC-WP-05",
+    "SC-WP-06",
+    "SC-WP-07",
+    "SC-WP-08",
+    "SC-WP-09",
+    "SC-WP-10",
+    "SC-WP-11",
+    "SC-WP-12",
+    "SC-WP-13"
+   ],
+   "determining_evidence_gates_fail_closed": [
+    {
+     "gate": "golden requested before the active chain is admitted",
+     "status": "NOT_EVALUATED",
+     "source": "A9.28 msg 2 sec. 12 (do not create it until sufficiently admitted)"
+    },
+    {
+     "gate": "golden values carry the chain's gate statuses as computed (never PASS by construction)",
+     "status": "NOT_EVALUATED",
+     "source": "A9.28 msg 2 sec. 14"
+    }
+   ],
+   "admission_criteria": [
+    "every dependency WP admitted (or its elements explicitly fail-closed with recorded statuses)",
+    "golden generated twice from clean installs: byte-identical",
+    "owner golden-change governance record; HISTORY entry; CLAUDE.md rule-2 update as its own commit"
+   ],
+   "inventory_components": [],
+   "extract_and_parity_kernels": [
+    "K-GOLDEN-COMPARE"
+   ],
+   "excluded_legacy_not_ported": [
+    "golden_v2 historical cases (architecture_closure, mission, hall, source_plasma, accelerators, nonconverged_reference, design_point_selection) and the hall_1stage-computed hall_icp_neutralizer_reference (AFI-04 HISTORICAL_REGRESSION_COMPATIBILITY)"
+   ],
+   "waves_v3": [
+    "W16"
+   ],
+   "size_estimate": {
+    "python_loc_to_migrate": 0,
+    "python_loc_migrate_or_formally_retire": 0,
+    "python_test_loc_replaced_by_contract_tests": 0,
+    "new_work_engineer_weeks": [
+     2,
+     3
+    ],
+    "indicative_engineer_weeks": [
+     2.0,
+     3.0
+    ],
+    "size_class": "S",
+    "basis": "INDICATIVE PLANNING HEURISTIC, not evidence: 300-600 migrated Python lines per engineer-week (contract + Rust + tests + report), plus the stated new-physics / infrastructure weeks; kernels inside class-H modules and MIGRATE_OR_FORMALLY_RETIRE builders are not counted in the range"
+   }
+  },
+  {
+   "id": "SC-WP-16",
+   "layer": "infrastructure: CI",
+   "title": "CI (incremental Rust CI to zero-Python simulator CI)",
+   "section_6_items": [
+    "CI"
+   ],
+   "methods": [
+    "EXISTING_PHYSICS_PARITY",
+    "NEW_INFRASTRUCTURE_ACCEPTANCE"
+   ],
+   "elements": [
+    {
+     "element": "ci_checks.py checks -> `abep ci <check>`",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      "scripts/ci_checks.py::CHECKS",
+      "scripts/ci_checks.py::check_parse_json_toml",
+      "scripts/ci_checks.py::check_rate_validity_coverage",
+      "scripts/ci_checks.py::check_variant_configs",
+      "scripts/ci_checks.py::check_p5_n2_cases",
+      "scripts/ci_checks.py::check_launch_manifests",
+      "scripts/ci_checks.py::check_multiply_charged_tables",
+      "scripts/ci_checks.py::check_ensemble_gate",
+      "scripts/ci_checks.py::check_pytest_outcomes"
+     ],
+     "data": [],
+     "notes": "each check ported once, run against both implementations on seeded corrupted trees, then the Python check is retired"
+    },
+    {
+     "element": "workflows, perf harness, migration tooling, tests",
+     "method": "EXISTING_PHYSICS_PARITY",
+     "python_implementations": [
+      ".github/workflows/ci.yml",
+      ".github/workflows/julia-smoke.yml",
+      ".github/workflows/rust-parity.yml",
+      "scripts/perf/profile_baseline.py",
+      "scripts/verify_abep_core.py",
+      "abep_sim/design/tpmc_backend.py::admission_status",
+      "tests"
+     ],
+     "data": [],
+     "notes": "tests become cargo tests through captured references as components are admitted; tests of class H / G code stay with the retired Python"
+    },
+    {
+     "element": "zero-Python simulator CI runner",
+     "method": "NEW_INFRASTRUCTURE_ACCEPTANCE",
+     "python_implementations": [],
+     "data": [],
+     "notes": "container without python3 / pip; static workflow scan; forbidden-identifier scan; historical reproduction job outside the simulator CI (RM-OQ-06)"
+    }
+   ],
+   "selected_architecture_relevance": "normal CI is part of the zero-Python end state (A9.28 msg 2 sec. 13)",
+   "target_crates": [
+    "abep-cli",
+    "abep-parity",
+    "abep-perf"
+   ],
+   "depends_on": [
+    "SC-WP-12",
+    "SC-WP-13"
+   ],
+   "determining_evidence_gates_fail_closed": [
+    {
+     "gate": "unrecorded Rust source change of an admitted component",
+     "status": "MODEL_ERROR",
+     "source": "UNRECORDED_SOURCE_CHANGE (CI_PLAN.md principle 2)"
+    }
+   ],
+   "admission_criteria": [
+    "every ci_checks check: identical pass / fail Python vs Rust on the seeded corrupted-tree set",
+    "simulator jobs green with no setup-python / python / pip / pytest step (static scan) in a Python-free image",
+    "GitHub CI green on the integration branch"
+   ],
+   "inventory_components": [
+    "C-ABEP_CORE_PYO3_MATURIN_BINDING_LAYER",
+    "C-ABEP_SIM_DESIGN_TPMC_BACKEND_PY",
+    "C-GITHUB_WORKFLOWS_YML_INLINE_PYTHON",
+    "C-SCRIPTS_CI_CHECKS_PY",
+    "C-SCRIPTS_PERF_PROFILE_BASELINE_PY",
+    "C-SCRIPTS_VERIFY_ABEP_CORE_PY",
+    "C-TESTS"
+   ],
+   "extract_and_parity_kernels": [],
+   "excluded_legacy_not_ported": [
+    "legacy perf workloads (uq_modular, archengine, uq6, mission5 driver, system.evaluate)"
+   ],
+   "waves_v3": [
+    "W16",
+    "W17"
+   ],
+   "size_estimate": {
+    "python_loc_to_migrate": 1894,
+    "python_loc_migrate_or_formally_retire": 0,
+    "python_test_loc_replaced_by_contract_tests": 63307,
+    "new_work_engineer_weeks": [
+     3,
+     5
+    ],
+    "indicative_engineer_weeks": [
+     6.2,
+     11.3
+    ],
+    "size_class": "M",
+    "basis": "INDICATIVE PLANNING HEURISTIC, not evidence: 300-600 migrated Python lines per engineer-week (contract + Rust + tests + report), plus the stated new-physics / infrastructure weeks; kernels inside class-H modules and MIGRATE_OR_FORMALLY_RETIRE builders are not counted in the range"
+   }
+  },
+  {
+   "id": "SC-WP-17",
+   "layer": "infrastructure: clean-install reproducibility",
+   "title": "Clean-install reproducibility",
+   "section_6_items": [
+    "clean-install reproducibility"
+   ],
+   "methods": [
+    "NEW_INFRASTRUCTURE_ACCEPTANCE"
+   ],
+   "elements": [
+    {
+     "element": "clean install from pinned artefacts (rust-toolchain, Cargo.lock, Julia 1.11.7 + HallThruster.jl bfb3019f..., frozen data, HWM14 source pinned by sha256)",
+     "method": "NEW_INFRASTRUCTURE_ACCEPTANCE",
+     "python_implementations": [
+      "requirements-lock.txt",
+      "hallthruster_bridge/setup.jl",
+      "hallthruster_bridge/Manifest.toml",
+      "abep_sim/atmosphere_orbit_v2.py::fetch_hwm14"
+     ],
+     "data": [],
+     "notes": "today's gate 1 (clean-install reproducibility) passes for Python; the Rust end state re-proves it Python-free; HWM14 / NRLMSIS sources are pinned by sha256 and never fetched silently"
+    }
+   ],
+   "selected_architecture_relevance": "pre-PR checklist (clean install) and completion report item K",
+   "target_crates": [
+    "abep-cli"
+   ],
+   "depends_on": [
+    "SC-WP-12",
+    "SC-WP-13",
+    "SC-WP-15",
+    "SC-WP-16"
+   ],
+   "determining_evidence_gates_fail_closed": [
+    {
+     "gate": "pinned artefact missing / network unavailable for a pinned source",
+     "status": "MODEL_ERROR",
+     "source": "recorded as NOT_RERUN_NETWORK_UNAVAILABLE; never fabricated (A9.25 msg 8 sec. 15)"
+    }
+   ],
+   "admission_criteria": [
+    "two independent clean installs produce byte-identical outputs for config check, 196-state run, robust / UQ, assessment, active golden and every `abep build --check`",
+    "no python3 on PATH; Julia Manifest.toml has no PyCall-class dependency"
+   ],
+   "inventory_components": [],
+   "extract_and_parity_kernels": [],
+   "excluded_legacy_not_ported": [],
+   "waves_v3": [
+    "W17"
+   ],
+   "size_estimate": {
+    "python_loc_to_migrate": 0,
+    "python_loc_migrate_or_formally_retire": 0,
+    "python_test_loc_replaced_by_contract_tests": 0,
+    "new_work_engineer_weeks": [
+     1,
+     2
+    ],
+    "indicative_engineer_weeks": [
+     1.0,
+     2.0
+    ],
+    "size_class": "S",
+    "basis": "INDICATIVE PLANNING HEURISTIC, not evidence: 300-600 migrated Python lines per engineer-week (contract + Rust + tests + report), plus the stated new-physics / infrastructure weeks; kernels inside class-H modules and MIGRATE_OR_FORMALLY_RETIRE builders are not counted in the range"
+   }
+  }
+ ],
+ "work_package_order": {
+  "key": "architecture relevance FIRST, evidence / admission eligibility SECOND, PRE_RUST measured runtime THIRD (A9.27 sec. 4; A9.28 msg 1 sec. 7, msg 2 sec. 15)",
+  "retired_not_ported_despite_runtime": [
+   "uq_modular_run_uq 94.86 s (rank 1)",
+   "archengine_close_architecture 16.28 s (rank 3)",
+   "uq6_robust_design 1.26 s (rank 7)"
+  ],
+  "order": [
+   {
+    "rank": 1,
+    "wp": "SC-WP-12",
+    "architecture_relevance": "foundation: every WP needs types / hashes / provenance / ledger / bid guard / shared enablers",
+    "evidence_admission_eligibility": "Python reference exists (configuration.py, build_config.py, constants.py, materials.py, ci_checks.py)",
+    "pre_rust_measured_runtime": "not profiled"
+   },
+   {
+    "rank": 2,
+    "wp": "SC-WP-01",
+    "architecture_relevance": "all physics consumes the frozen atmosphere and the 196-state set",
+    "evidence_admission_eligibility": "Python reference + frozen data",
+    "pre_rust_measured_runtime": "not profiled (W1E / W1 / W6)"
+   },
+   {
+    "rank": 3,
+    "wp": "SC-WP-02",
+    "architecture_relevance": "AIR_PRIMARY flight path",
+    "evidence_admission_eligibility": "Python reference; Kernel 1 already ADMITTED",
+    "pre_rust_measured_runtime": "highest active runtime: intake response surface 88.98 s (rank 2), gas path 2.89 s (rank 4), compressor sizing 1.91 s (rank 6)"
+   },
+   {
+    "rank": 4,
+    "wp": "SC-WP-03",
+    "architecture_relevance": "propulsion core (Hall + RF/ICP neutralizer)",
+    "evidence_admission_eligibility": "bridge / gates / reducers have Python references; determining evidence absent (fail closed); predictive ICP model awaits RM-OQ-12",
+    "pre_rust_measured_runtime": "not profiled"
+   },
+   {
+    "rank": 5,
+    "wp": "SC-WP-04",
+    "architecture_relevance": "statewise sustainment balance",
+    "evidence_admission_eligibility": "Python reference; host drag ICD absent (fail closed)",
+    "pre_rust_measured_runtime": "not profiled"
+   },
+   {
+    "rank": 6,
+    "wp": "SC-WP-05",
+    "architecture_relevance": "P_bus < 1.5 kW full-system gate",
+    "evidence_admission_eligibility": "Python reference; RF impedance / slot loads absent (fail closed)",
+    "pre_rust_measured_runtime": "not profiled"
+   },
+   {
+    "rank": 7,
+    "wp": "SC-WP-07",
+    "architecture_relevance": "< 40 kg wet full-system gate",
+    "evidence_admission_eligibility": "Python reference; AL-07 value status preserved",
+    "pre_rust_measured_runtime": "not profiled"
+   },
+   {
+    "rank": 8,
+    "wp": "SC-WP-06",
+    "architecture_relevance": "anode / coupled H-1-ICP thermal closure UNRESOLVED",
+    "evidence_admission_eligibility": "NEW_PHYSICS: preregistration first (may start at P-01); ray / heat-source kernels have a Python reference",
+    "pre_rust_measured_runtime": "p3_view_factors_verify 0.04 s (rank 8)"
+   },
+   {
+    "rank": 9,
+    "wp": "SC-WP-08",
+    "architecture_relevance": "life basis (26,280 h mission, 15,000 h firing basis)",
+    "evidence_admission_eligibility": "Python reference; reliability needs audit / prereg; material evidence absent",
+    "pre_rust_measured_runtime": "not profiled"
+   },
+   {
+    "rank": 10,
+    "wp": "SC-WP-09",
+    "architecture_relevance": "26,280 h mission basis",
+    "evidence_admission_eligibility": "propagation has a Python reference (its element is admitted early, W3); integration is NEW_PHYSICS and needs SC-WP-04 / 05 / 07 / 08",
+    "pre_rust_measured_runtime": "mission_run_generic 2.14 s (rank 5; propagate only)"
+   },
+   {
+    "rank": 11,
+    "wp": "SC-WP-10",
+    "architecture_relevance": "the active design / UQ driver",
+    "evidence_admission_eligibility": "Python reference; admission needs its physics inputs admitted",
+    "pre_rust_measured_runtime": "F8 not in the fixed workload set; uq_modular / uq6 retired, not ported"
+   },
+   {
+    "rank": 12,
+    "wp": "SC-WP-11",
+    "architecture_relevance": "assessment layer of the selected architecture",
+    "evidence_admission_eligibility": "Python reference",
+    "pre_rust_measured_runtime": "not profiled"
+   },
+   {
+    "rank": 13,
+    "wp": "SC-WP-14",
+    "architecture_relevance": "operational evidence builders and ground-test tooling",
+    "evidence_admission_eligibility": "Python reference; ports after the components they import",
+    "pre_rust_measured_runtime": "not profiled"
+   },
+   {
+    "rank": 14,
+    "wp": "SC-WP-13",
+    "architecture_relevance": "normal execution entry point",
+    "evidence_admission_eligibility": "new infrastructure over admitted components",
+    "pre_rust_measured_runtime": "n/a"
+   },
+   {
+    "rank": 15,
+    "wp": "SC-WP-15",
+    "architecture_relevance": "active canonical golden",
+    "evidence_admission_eligibility": "only after the active chain is admitted",
+    "pre_rust_measured_runtime": "n/a"
+   },
+   {
+    "rank": 16,
+    "wp": "SC-WP-16",
+    "architecture_relevance": "normal CI",
+    "evidence_admission_eligibility": "incremental from the first admission; zero-Python at the end",
+    "pre_rust_measured_runtime": "n/a"
+   },
+   {
+    "rank": 17,
+    "wp": "SC-WP-17",
+    "architecture_relevance": "clean-install reproducibility",
+    "evidence_admission_eligibility": "final acceptance",
+    "pre_rust_measured_runtime": "n/a"
+   }
+  ],
+  "note": "the order is the layer ADMISSION order; component waves (migration_order_v3.json) keep the item-7 scheduling, and docs-only preregistrations / audits may start at P-01"
+ },
+ "hall_physics_boundary": {
+  "authority": "HallThruster.jl remains authoritative for Hall-discharge physics; no Hall physics is rewritten in Rust to remove Julia (A9.28 msg 2 sec. 7)",
+  "pin": {
+   "version": "0.23.1",
+   "commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+   "pin_file": "hallthruster_bridge/PINNED.toml",
+   "julia": "1.11.7 (hallthruster_bridge/Manifest.toml)",
+   "upgrade_policy": "never moved automatically; an upgrade is a physics-model change (PINNED.toml)"
+  },
+  "rust_owns": "orchestration: case / job generation, launch, sharding, resumption, record reading, Hall-map typing, admission gating, provenance",
+  "process_boundary": [
+   "std::process::Command launch of `julia --project=hallthruster_bridge <script>.jl <in> <out>`; no in-process embedding",
+   "argv and an environment allow-list fixed per job; thread / BLAS environment pinned and recorded",
+   "inputs written as canonical JSON with sha256; outputs read as JSON / JSONL with sha256",
+   "pin checked on both sides: Rust parses PINNED.toml / Manifest.toml, Julia runs check_pin() (bridge_lib.jl)"
+  ],
+  "determinism": "same inputs + same pin + same thread environment -> byte-identical run records; launch equivalence with the Python-launched job while both exist",
+  "provenance_sidecar_per_run": [
+   "Julia version",
+   "HallThruster commit",
+   "threads / BLAS",
+   "host",
+   "argv",
+   "input sha256",
+   "output sha256",
+   "rust_commit",
+   "contract_id"
+  ],
+  "credible_set": "EMPTY today (hallthruster_bridge/ensemble/transport_ensemble_v0.json members []); every output that needs Hall performance shows NOT_EVALUATED with reason 'credible Hall transport set EMPTY'",
+  "screening_candidates": "sgb-screen-01..09 are never admitted, never produce design Hall maps and never enter the trade or UQ without the governed validation process (pre-registered predictive evidence not used in selection, no retuning, a <= 1/16, O4 dispositions complete)",
+  "unchanged_rules": [
+   "HallMap loads admitted members only",
+   "non-pinned Hall maps rejected",
+   "chemistry_trustworthy / rate_validity.toml (no silent chemistry extrapolation)",
+   "wall_life_trustworthy separate from performance trustworthy",
+   "P5-N2 v1 outcome stays INCONCLUSIVE permanently"
+  ]
+ },
+ "active_golden": {
+  "historical": "golden_v1 / golden_v2 immutable historical references, reproducible from the historical Python environment, not Rust end-state parity cases, never deleted or rewritten (RM-OQ-06)",
+  "new": "hall_icp_neutralizer active canonical golden generated only from the admitted active chain (SC-WP-15)",
+  "covers": [
+   "deterministic input configuration",
+   "raw physics",
+   "conservation",
+   "architecture identity",
+   "no conventional hollow cathode",
+   "applicable statewise outputs",
+   "assessment separation"
+  ],
+  "claude_md_action": "CA-01 (separate later commit, not in this record): make CLAUDE.md rule 2 apply to the ACTIVE canonical golden set and state the historical-golden distinction"
+ },
+ "zero_python_end_state": {
+  "target": "ZERO PYTHON ACTIVE EXECUTION DEPENDENCY (A9.28 msg 2 sec. 13)",
+  "covers": [
+   "simulation",
+   "design sweeps",
+   "mission propagation",
+   "UQ",
+   "assessment",
+   "gates",
+   "configuration / hash handling",
+   "evidence / provenance builders that remain operational",
+   "normal CI"
+  ],
+  "python_may_remain_for": "archived historical reproduction only, after the corresponding active Rust components are admitted",
+  "retire_means": [
+   "not imported by active production execution",
+   "not required by the normal simulator CLI",
+   "not required by normal CI except explicit historical-regression jobs",
+   "not ported merely for completeness"
+  ],
+  "mechanical_checks": "programme_v3.json end_state_acceptance_checklist E1-E10 and CI_PLAN.md sec. 5"
+ },
+ "exit_criteria": {
+  "main_merge_pre_pr_checklist": [
+   {
+    "n": 1,
+    "item": "all active production execution uses Rust + HallThruster.jl only",
+    "check": "Python-free container run of the `abep` CLI over the active chain (E1); static scan for Command::new(\"python...\") and pyo3 in cargo tree",
+    "wp": [
+     "SC-WP-13",
+     "SC-WP-16"
+    ]
+   },
+   {
+    "n": 2,
+    "item": "no active LaB6 / hollow-cathode path",
+    "check": "forbidden-identifier scan of crates/** (CI_PLAN principle 6) + static import scan: no class-H module reachable from an active path",
+    "wp": [
+     "SC-WP-16"
+    ]
+   },
+   {
+    "n": 3,
+    "item": "selected architecture identity invariant",
+    "check": "architecture hash = config/architecture/hall_icp_neutralizer_v1.json pin; refuse_hollow_cathode_elements parity; flight hollow cathode NONE; C1 GROUND_REFERENCE_ONLY in every output",
+    "wp": [
+     "SC-WP-12"
+    ]
+   },
+   {
+    "n": 4,
+    "item": "all retained Python components either migrated or explicitly historical",
+    "check": "migration_state_v1.json complete (E7): class A / T ADMITTED + PYTHON_RETIRED_FROM_ACTIVE or FORMALLY_RETIRED_NOT_PORTED; class G / H FORMALLY_RETIRED_NOT_PORTED",
+    "wp": [
+     "SC-WP-12",
+     "SC-WP-16"
+    ]
+   },
+   {
+    "n": 5,
+    "item": "clean install",
+    "check": "SC-WP-17 acceptance (two clean installs, byte-identical)",
+    "wp": [
+     "SC-WP-17"
+    ]
+   },
+   {
+    "n": 6,
+    "item": "deterministic outputs",
+    "check": "double-run and thread-count byte identity of every CLI output",
+    "wp": [
+     "SC-WP-13",
+     "SC-WP-16"
+    ]
+   },
+   {
+    "n": 7,
+    "item": "conservation checks",
+    "check": "rule-4 gates: source mass / power balances exact, energy-ledger residual < 2 %, thermal heat balance within its preregistered residual",
+    "wp": [
+     "SC-WP-02",
+     "SC-WP-05",
+     "SC-WP-06",
+     "SC-WP-09"
+    ]
+   },
+   {
+    "n": 8,
+    "item": "config / hash integrity",
+    "check": "`abep config build --check`, `abep config verify`, prereg locks, audit manifests, validation-release links, bid_source_guard",
+    "wp": [
+     "SC-WP-12"
+    ]
+   },
+   {
+    "n": 9,
+    "item": "active golden green",
+    "check": "`abep golden check` on the active hall_icp_neutralizer golden",
+    "wp": [
+     "SC-WP-15"
+    ]
+   },
+   {
+    "n": 10,
+    "item": "full Rust tests",
+    "check": "cargo test --locked --workspace incl. the Rust-era rule-9 outcome contract (RM-OQ-05)",
+    "wp": [
+     "SC-WP-16"
+    ]
+   },
+   {
+    "n": 11,
+    "item": "Hall interface tests",
+    "check": "`abep hall pin-check` / `smoke` / `schema-check`; non-pinned maps rejected; credible set EMPTY visible",
+    "wp": [
+     "SC-WP-03"
+    ]
+   },
+   {
+    "n": 12,
+    "item": "196-state execution",
+    "check": "`abep run --states design_states_v2` over all 196 states with the fail-closed statuses recorded",
+    "wp": [
+     "SC-WP-01",
+     "SC-WP-04",
+     "SC-WP-10"
+    ]
+   },
+   {
+    "n": 13,
+    "item": "robust / UQ execution",
+    "check": "F7 / F8 robust optimisation and UQ end to end in Rust; empty robust upstream set reproduced while it is empty",
+    "wp": [
+     "SC-WP-10"
+    ]
+   },
+   {
+    "n": 14,
+    "item": "assessment separation tests",
+    "check": "threshold-only changes move assessment, never raw physics (A9.24 item 4); crate-graph test",
+    "wp": [
+     "SC-WP-11"
+    ]
+   },
+   {
+    "n": 15,
+    "item": "no silent fallbacks",
+    "check": "domain / error parity cases of every contract; refusal tests of the CLI (CLAUDE.md rule 3)",
+    "wp": [
+     "SC-WP-13",
+     "SC-WP-16"
+    ]
+   },
+   {
+    "n": 16,
+    "item": "no requirement parsing in raw physics",
+    "check": "crate-graph: physics crates never depend on abep-assess / abep-config requirement snapshots; static scan for RFP clause reads in physics crates",
+    "wp": [
+     "SC-WP-11",
+     "SC-WP-12"
+    ]
+   },
+   {
+    "n": 17,
+    "item": "GitHub CI green",
+    "check": "all required jobs green on the integration branch head",
+    "wp": [
+     "SC-WP-16"
+    ]
+   },
+   {
+    "n": 18,
+    "item": "no uncommitted / generated drift",
+    "check": "working-tree-unchanged guard after every job; every `abep build --check` byte-identical",
+    "wp": [
+     "SC-WP-14",
+     "SC-WP-16"
+    ]
+   }
+  ],
+  "completion_report_A_to_N": [
+   {
+    "id": "A",
+    "item": "exact integration SHA",
+    "source": "integration/simulation-complete head at completion"
+   },
+   {
+    "id": "B",
+    "item": "execution dependency graph",
+    "source": "cargo metadata + bridge launch graph (SC-WP-13/16)"
+   },
+   {
+    "id": "C",
+    "item": "active-language inventory",
+    "source": "inventory re-run at the completion SHA (Rust / Julia / historical Python)"
+   },
+   {
+    "id": "D",
+    "item": "proof normal execution has zero Python dependency",
+    "source": "E1 / E6 / E10 runs (SC-WP-16)"
+   },
+   {
+    "id": "E",
+    "item": "HallThruster.jl integration and pin",
+    "source": "hall pin-check / smoke / schema-check (SC-WP-03)"
+   },
+   {
+    "id": "F",
+    "item": "selected-architecture invariant proof",
+    "source": "SC-WP-12 identity checks over all outputs"
+   },
+   {
+    "id": "G",
+    "item": "active golden result",
+    "source": "SC-WP-15"
+   },
+   {
+    "id": "H",
+    "item": "full 196-state result",
+    "source": "SC-WP-01 / 04 / 10 run record"
+   },
+   {
+    "id": "I",
+    "item": "robust / UQ result",
+    "source": "SC-WP-10 run record"
+   },
+   {
+    "id": "J",
+    "item": "unresolved hardware-evidence gates",
+    "source": "every determining_evidence_gates_fail_closed entry still NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN / MODEL_ERROR, listed"
+   },
+   {
+    "id": "K",
+    "item": "clean-install result",
+    "source": "SC-WP-17"
+   },
+   {
+    "id": "L",
+    "item": "CI result",
+    "source": "GitHub CI run ids (SC-WP-16)"
+   },
+   {
+    "id": "M",
+    "item": "comparison against the frozen bid technical source",
+    "source": "per-observable comparison of the admitted chain vs 5eee4b8 outputs; differences explained, the bid record untouched"
+   },
+   {
+    "id": "N",
+    "item": "exact main-merge plan",
+    "source": "NEW PR integration/simulation-complete -> main; PR #37 closed SUPERSEDED_BY_SIMULATION_INTEGRATION"
+   }
+  ],
+  "rule": "do not claim 'simulation complete' from a test count; deliver A-N, then request owner authorization to merge into main (A9.28 msg 2 sec. 18)"
+ },
+ "first_execution_sequence": {
+  "gate": "P-01: owner review of plan v3 and its merge into integration/simulation-complete. 'Immediately' below means as soon as P-01 holds, with no further owner decision and no hardware evidence; ES-2 and ES-3 need ES-1's workspace / abep-types / abep-provenance deliverables; ES-4 is docs-only and independent; otherwise the steps run in parallel",
+  "steps": [
+   {
+    "id": "ES-1",
+    "wp": "SC-WP-12",
+    "title": "foundation slice",
+    "deliverables": [
+     "Cargo.toml workspace + rust-toolchain.toml (rustc 1.94.1, the parity_report_v2 build toolchain); abep_core/ untouched and outside the workspace",
+     "crates/abep-types (status / error enums incl. NOT_EVALUATED, INCOMPLETE_EVIDENCE, OUT_OF_DOMAIN, MODEL_ERROR; a Python-compatible JSON float formatter) and crates/abep-provenance (sha256, MANIFEST / model-set / design-state-set hashes, run-record sidecar)",
+     "docs/rust_migration/migration_state_v1.json: one row per component_inventory_v3.json component (status, class, authoritative implementation)",
+     "docs/bid/bid_source_manifest_v1.json + the bid_source_guard check (scripts/ci_checks.py while Python CI exists) protecting 5eee4b8 / b5849af -> 2de86ab and mission_scenario_v2 sha256",
+     "contracts/C-PROVENANCE-VERIFIER/parity_prereg_v1.json (own commit): the H2-6 check semantics (RM-OQ-09) plus prereg_lock / audit_manifest / hallthruster_pin semantics, with a preregistered seeded set of corrupted trees",
+     "contracts/C-ABEP_SIM_CONFIGURATION_PY/parity_prereg_v1.json (own commit): load_manifest / load_verified / loaders, EXACT_VALUE + refusal parity"
+    ]
+   },
+   {
+    "id": "ES-2",
+    "wp": "SC-WP-01",
+    "title": "environment slice",
+    "deliverables": [
+     "contracts for atmosphere.py (frozen reader), constants.py and the mission_env constants kernel, each in its own commit before any comparison",
+     "crates/abep-data (frozen readers, sha256 against config/MANIFEST.json) and crates/abep-atmos",
+     "contract for atmosphere_orbit.py load / state / orbit_states / load_design_states (196 states, sha256 60073e21...)",
+     "parity reports (JSON + MD) committed whatever the verdict; ledger flips + HISTORY on admission"
+    ]
+   },
+   {
+    "id": "ES-3",
+    "wp": "SC-WP-02",
+    "title": "intake TPMC response layer on the admitted Kernel 1",
+    "deliverables": [
+     "contract for intake_tpmc.py intake_response / response_surface / IntakeSurface and intake.py collection / compress (STATISTICAL or EXACT_STREAM on the Kernel-1 stream; reproduction of intake_surface_v1, never regenerated)",
+     "crates/abep-intake consuming abep_core by path after a registered build-equivalence addendum",
+     "PRE_RUST workload intake_response_surface_reduced re-timed on the Rust path (reported, never a criterion)",
+     "RM-OQ-01 (DEFAULT_BACKEND flip) put to the owner with the admission report"
+    ]
+   },
+   {
+    "id": "ES-4",
+    "wp": "SC-WP-06",
+    "title": "cathodeless thermal model preregistration (docs only)",
+    "deliverables": [
+     "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/prereg_v1.json + PREREG.md: nodes, equations, heat sources, radiative / conductive boundaries, spacecraft interface, RF/ICP waste heat, Hall waste heat, assumptions, domains, conservation checks, analytic limiting cases, evidence / validation plan",
+     "explicit exclusion of the H2-5 C-1 node / Q_cath (AFI-03) and of the 50 K margin from the equations (HC-06 is assessment)",
+     "owner review before any Rust code (RM-OQ-08)"
+    ]
+   }
+  ],
+  "next_candidates": [
+   "SC-WP-03 plasma_chem kernel audit record (docs only)",
+   "SC-WP-03 HallThruster.jl bridge contract (launch equivalence)",
+   "SC-WP-09 mission integration preregistration (docs only)"
+  ]
+ },
+ "claude_md_actions_not_done_here": [
+  {
+   "id": "CA-01",
+   "action": "CLAUDE.md rule 2 applies to the ACTIVE canonical golden set; historical golden_v1 / v2 are immutable and reproducible from the historical Python environment",
+   "source": "A9.28 msg 1 sec. 4 ('After the bid, update CLAUDE.md so this distinction is explicit')",
+   "when": "separate later commit"
+  },
+  {
+   "id": "CA-02",
+   "action": "replace the 'Execution baseline (pinned until merged)' paragraph (branch claude/nifty-ramanujan-w68f9z at debce16) with the integration/simulation-complete line",
+   "source": "A9.28 msg 2 secs. 3, 16",
+   "when": "owner-controlled documentation update"
+  },
+  {
+   "id": "CA-03",
+   "action": "top-level staleness (Python authoritative, 26,000 h mission) per A9.25 msg 1 sec. 16",
+   "source": "A9.25 msg 1 sec. 16",
+   "when": "controlled documentation consistency update (already pending)"
+  },
+  {
+   "id": "CA-04",
+   "action": "Rust-era rule 9 outcome contract",
+   "source": "RM-OQ-05 (open)",
+   "when": "after the owner rules"
+  }
+ ],
+ "open_owner_questions": [
+  "RM-OQ-01",
+  "RM-OQ-02",
+  "RM-OQ-03",
+  "RM-OQ-04",
+  "RM-OQ-05",
+  "RM-OQ-10",
+  "RM-OQ-11",
+  "RM-OQ-12"
+ ],
+ "symbol_verification": {
+  "method": "every python_implementations / data entry: path exists at this revision; '::Symbol' is a top-level def / class / assignment (AST) of the .py file, or a 'function <name>' of the .jl file",
+  "references_checked": 388,
+  "paths_found": 388,
+  "symbols_found": 315,
+  "failures": []
+ }
+}

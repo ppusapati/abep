@@ -1,0 +1,6 @@
+# Pinned toolchain = build_provenance.rustc of docs/performance/abep_core/parity_report_v2.json (rustc 1.94.1), the
+# toolchain the admitted Kernel 1 was built and scored with. Changing it is a registered change (CI_PLAN.md).
+[toolchain]
+channel = "1.94.1"
+profile = "minimal"
+components = ["rustfmt", "clippy"]
