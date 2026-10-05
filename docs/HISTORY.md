@@ -4255,3 +4255,32 @@ main, and the bid record `5eee4b8` / `b5849af` / `2de86ab`. `git diff 2de86ab..H
   / `.md`). `cargo test --workspace --locked`: 32 passed, 0 ignored.
 - The Python checks stay in active CI. Retiring `h2_6_live_sources` (and the other three) is requested as a separate later
   step after CI is re-pointed. `scripts/ci_checks.py` unaffected (11/11).
+
+## 2026-10-05 — NP-ICP-NEUTRALIZER v1 implemented in Rust, verification report v1 (A9.29 lane C, SC-WP-03, ES-NP-ICP; new physics, no Python reference, no frozen data changed)
+
+- `crates/abep-icp` (Rust commit `f4b615f`) implements the frozen preregistration (lock `e98747e0`, verified on load) with
+  addendum 01 (A9.30):
+  - steady 0-D inductive discharge: species balances, Bohm losses with registered h and the electrode current balance;
+  - signed I_e,cap with its three bounds;
+  - CM-ABS, and CM-CAL at a registered P2 point; CM-PRED is a status gate only (VER-03..05, VER-13);
+  - CFG-FLIGHT-HALL-ON is a NOT_EVALUATED contract;
+  - the IF-ICP-HALL / BUS (`bus_power_boundary_a9_v2`) / THERMAL / FEED records;
+  - every unregistered input fails closed with a named reason.
+- AIR_PRIMARY is INCOMPLETE_EVIDENCE (`NP_ICP_CHEM_AIR_NOT_ADMITTED`). It names the tier-1 gaps read from the lock-verified
+  NP-ICP-CHEM-AIR registry, and an N2-only surrogate for air is refused. XE and Ar fail closed on their own evidence.
+- N2/N tables are sha256-verified against the NP-ICP-CHEM-AIR reuse pins. Their rates are NOT_EVALUATED until the abep-chem
+  integrator is admitted (EQ-06).
+- Verification (`verification_report_v1.json` / `.md`): LC-01..LC-10, CC-01..CC-07, NV-01..NV-05 and FC-01..FC-16 meet
+  their preregistered criteria on SYNTHETIC_TEST_ONLY cases.
+  - Residuals are ≤ 2.5e-15.
+  - LC-11 is not exercisable (CM-PRED gate). NV-06 is partial: the direct-integral side is NOT_EVALUATED.
+  - `cargo test --workspace --locked`: 116 passed, 0 ignored.
+- Status: IMPLEMENTED_UNVERIFIED, NOT_VALIDATED. Admission items 3, 4 and 5 are open: abep-chem, the verify addenda and the
+  admission record.
+- The N2 CFG-CAP-OFF CM-ABS demonstration is NOT_EVALUATED. Geometry, electrodes, P_abs, neutral source, σ_i / h, B_ICP,
+  the integrator, the ICP registry and the ICP completeness audit are all unregistered.
+- Reported to the owner, with the prereg unedited and the affected paths withheld:
+  - PF-01 and PF-02 (EQ-02 recombination factor; background inflow without τ);
+  - GAP-01..05, including the EQ-16 neutral-energy split that withholds the partition for every real gas;
+  - OBS-01 (route-dependent N²⁺ formation energy in the N2/N headers).
+- `scripts/ci_checks.py` 12/12.
