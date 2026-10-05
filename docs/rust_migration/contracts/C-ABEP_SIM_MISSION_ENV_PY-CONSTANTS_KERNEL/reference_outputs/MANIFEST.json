@@ -1,0 +1,12 @@
+{
+ "schema": "abep_rust_parity_reference_outputs_v1",
+ "contract_id": "PARITY-C-ABEP_SIM_MISSION_ENV_PY-CONSTANTS_KERNEL-V1",
+ "captured_at_python_commit": "96db5524ec917e99e507def24f3ee0b263c78ebc",
+ "captured_at_head": "80ac7c78b0259d2a2e8fed81e74a9dc44c4ed879",
+ "files": {
+  "inputs.json.gz": "1a79611da7ffbdce739cb538d5f740cd1842ff4a7c4051e767278f28d7e5c4d4",
+  "python_outputs.json.gz": "b4cb1103a792b7cd418dcd2c551e4fa41cbd508d2babf242eb68460b4a8a4199",
+  "rust_outputs_at_scoring.json.gz": "77be2dc03dfc3b13d2e6a9bef292c73dbfd2153944e909643a7d6e46e591b014"
+ },
+ "format": "deterministic gzip (mtime 0) of compact JSON (Python json: non-finite floats as NaN / Infinity tokens); python_outputs: id -> [status, value, exception class]"
+}
