@@ -1,0 +1,1009 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-PROVENANCE-VERIFIER-V1",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "governing_records": {
+  "programme": {
+   "path": "docs/rust_migration/programme_v3_1.json",
+   "sha256": "b595c4fc740223cb8da10886c358410ffab2cfd38befbe97543237d1b4dee70f",
+   "rules": "RM-R01..RM-R42, in particular RM-R11, RM-R12, RM-R13, RM-R17, RM-R19, RM-R20, RM-R23, RM-R29"
+  },
+  "simulation_completion": {
+   "path": "docs/rust_migration/simulation_completion_programme_v1_1.json",
+   "sha256": "5e672943892b0035f05562e68dae1ca279acd4a4bd625641a559e53711f4643a",
+   "work_package": "SC-WP-12",
+   "element": "generic Rust provenance verifier (RM-OQ-09: H2-6 check semantics and similar builders)",
+   "admission_criterion": "provenance verifier: identical pass / fail to the Python checks on the current tree and on a preregistered seeded set of corrupted trees; then ci_checks h2_6_live_sources is retired from active CI",
+   "execution_step": "ES-1 deliverable 'contracts/C-PROVENANCE-VERIFIER/parity_prereg_v1.json (own commit)'"
+  },
+  "ci_plan": "docs/rust_migration/CI_PLAN.md section W16 and 'The H2-6 source check' (RM-OQ-09 OWNER_DECIDED A9.28)",
+  "owner_decisions": "A9.28 message 1 sec. 6 (RM-OQ-09; programme rule RM-R29); A9.29 secs. 13-14"
+ },
+ "component": {
+  "inventory_id": "C-SCRIPTS_CI_CHECKS_PY + C-DOCS_HARDWARE_H2_H2_6_DIAGNOSTICS_FIXTURE (coupled group named by SC-WP-12 element 'generic Rust provenance verifier'; check semantics only)",
+  "inventory_rows": [
+   {
+    "id": "C-SCRIPTS_CI_CHECKS_PY",
+    "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+    "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+    "role_here": "function subset: verify_sha_map, check_prereg_lock, check_audit_manifest, check_hallthruster_pin, check_h2_6_live_sources (RM-R17 kernel granularity; the other seven checks stay PYTHON_REFERENCE)"
+   },
+   {
+    "id": "C-DOCS_HARDWARE_H2_H2_6_DIAGNOSTICS_FIXTURE",
+    "migration_class": "GROUND_REFERENCE_ONLY",
+    "port_disposition": "MIGRATE_ONLY_IF_ACTIVE_TOOLCHAIN_REQUIRES",
+    "role_here": "verify_sources() check semantics only (loaded by the active CI check h2_6_live_sources); the builder itself stays class G and is not ported"
+   }
+  ],
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "migration_wave": "W1E (ES-1, SC-WP-12; waves W1E / W13 / W16; the ci_checks.py inventory row is wave W16)",
+  "scope": "coupled group, named function subset (RM-R17): the CHECK SEMANTICS of five ci_checks.py functions and of the H2-6 builder's verify_sources(): source hashes, provenance, pinned owner decisions, expected values, deterministic source verification",
+  "functions_or_entry_points": [
+   "scripts/ci_checks.py::verify_sha_map",
+   "scripts/ci_checks.py::check_prereg_lock",
+   "scripts/ci_checks.py::check_audit_manifest",
+   "scripts/ci_checks.py::check_hallthruster_pin",
+   "scripts/ci_checks.py::check_h2_6_live_sources",
+   "docs/hardware/h2/h2_6_diagnostics_fixture/build_h2_6_diagnostics_fixture.py::verify_sources (with verify_pins, _load, _by_id, _constants)"
+  ],
+  "out_of_scope": [
+   "scripts/ci_checks.py checks parse_json_toml, rate_validity_coverage, variant_configs, p5_n2_cases, launch_manifests, multiply_charged_tables, ensemble_gate (W16, own contracts)",
+   "scripts/ci_checks.py --pytest-junit mode (check_pytest_outcomes, check_full_history): Python-era rule 9 metadata",
+   "scripts/ci_checks.py WriteCapture / run_generator / compare_with_committed / load_script (fresh-generation machinery of the out-of-scope checks)",
+   "build_h2_6_diagnostics_fixture.py everything except verify_sources and its helpers: build, derive, render_md, outputs, check, pending_status, p1dq_coverage, measurement_map, the fixture / facility / architecture content"
+  ],
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS (C-SCRIPTS_CI_CHECKS_PY) + GROUND_REFERENCE_ONLY (C-DOCS_HARDWARE_H2_H2_6_DIAGNOSTICS_FIXTURE, verify_sources check semantics only, under the active_toolchain_requirement below)",
+  "extract_kernel_id": "NOT_APPLICABLE (no K-... kernel; SC-WP-12 element 'generic Rust provenance verifier')",
+  "active_toolchain_requirement": "scripts/ci_checks.py check h2_6_live_sources is part of active Python CI (docs/ci/CI.md; scripts/ci_checks.py CHECKS) and executes verify_sources(); RM-OQ-09 OWNER_DECIDED A9.28 (inventory row notes; programme rule RM-R29: 'integrity checks are replaced, not dropped'); SC-WP-12 names it explicitly",
+  "excluded_legacy_paths": [
+   "H2-6 architecture content is NOT ported: hall_only / rf_hall / ecr_hall, C-1 / cathode Xe flow sizing, ECR resonance, fixture / facility design, derive() (the S_eff and every other H2-6 derivation)",
+   "the Rust verifier reads every consumed value from the immutable H2-6 record (docs/hardware/h2/h2_6_diagnostics_fixture/h2_6_diagnostics_fixture_v1.json, sha256-bound), never from re-derived physics; the only derived value verify_sources compares (S_eff N2 1e-5 Torr) is read from the record's derived section",
+   "no LaB6 / hollow-cathode / C1 flight logic, no archengine family selection (RM-R15, RM-R23): H2-6 consumed-input key names appear only as locator data in the versioned spec file docs/ci/provenance_specs/h2_6_live_sources_v1.json (outside crates/**), never as Rust code paths"
+  ],
+  "owner_disposition_a9_28": "RM-OQ-09 OWNER_DECIDED A9.28: scripts/ci_checks.py check h2_6_live_sources loads this builder's verify_sources(); its CHECK SEMANTICS (source hashes, provenance, pinned owner decisions, expected values, deterministic source verification) are re-implemented by the generic Rust provenance verifier (SC-WP-12); obsolete H2-6 architecture assumptions are not ported; the builder itself stays class G and is not ported; the Python check leaves active CI only after the verifier is admitted and normal CI is re-pointed; H2-6 evidence stays immutable",
+  "simulation_completion_wp": "SC-WP-12",
+  "owner_disposition_a9_29": "NOT_APPLICABLE (neither inventory row carries an owner_disposition_a9_29 field; A9.29 sec. 13 lane A lists 'generic Rust provenance verifier' as an ES-1 deliverable)"
+ },
+ "date": "2026-10-05",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of this component was executed (no Rust verifier code existed when it was written). The registration commit is recorded in the report, not here.",
+ "supersedes": {
+  "path": null,
+  "sha256": null,
+  "reason": "first version"
+ },
+ "reference_implementation": {
+  "python_commit": "96db5524ec917e99e507def24f3ee0b263c78ebc",
+  "files": [
+   {
+    "path": "scripts/ci_checks.py",
+    "sha256_at_registration": "7834474ee8a6af117399e56a335499de586edfb9dbd44279b20d5a92f51cbd3e"
+   },
+   {
+    "path": "docs/hardware/h2/h2_6_diagnostics_fixture/build_h2_6_diagnostics_fixture.py",
+    "sha256_at_registration": "18498a0508eb2d4e8b0dad7acf2161ecbd458c2a3077af1eb99fac2a8d15cd24"
+   }
+  ],
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration in the scoring tree; a changed reference requires a new contract version",
+  "invocation": "each tree's own scripts/ci_checks.py is imported unmodified (importlib, isolated interpreter `python3 -I -B`, cwd = the tree) and run_checks(['prereg_lock', 'audit_manifest', 'hallthruster_pin', 'h2_6_live_sources']) is called; its (problems, note) per check is the Python decision (pass <=> problems == [])",
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4",
+   "scipy": "1.17.1",
+   "pandas": "3.0.2",
+   "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+   "blas": "not used: the five ci_checks functions and verify_sources are standard-library only (json, tomllib, hashlib, ast, math, os); numpy's BLAS (scipy-openblas 0.3.31) is recorded in the report for completeness",
+   "thread_env": {
+    "OMP_NUM_THREADS": "recorded at scoring (unset expected)",
+    "OPENBLAS_NUM_THREADS": "recorded at scoring (unset expected)"
+   }
+  }
+ },
+ "rust_implementation": {
+  "crate": "abep-provenance",
+  "functions_or_entry_points": [
+   "abep_provenance::verifier::run_checks(root, checks) -> Vec<CheckReport>",
+   "abep_provenance::verifier::verify_sha_map (generic sha256 pin map)",
+   "abep_provenance::verifier checks prereg_lock / audit_manifest / hallthruster_pin / live_sources (spec-driven consumed-vs-live value verification)",
+   "binary `abep-provenance-verify --root <tree> --only <checks> --json` (crates/abep-provenance/src/bin/)"
+  ],
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (rust-toolchain.toml)",
+  "provenance_sources": [
+   "Cargo.toml",
+   "Cargo.lock",
+   "rust-toolchain.toml",
+   "crates/abep-types/src/lib.rs",
+   "crates/abep-provenance/Cargo.toml",
+   "crates/abep-provenance/src/lib.rs",
+   "crates/abep-provenance/src/verifier/**",
+   "crates/abep-provenance/src/bin/abep-provenance-verify.rs",
+   "docs/ci/provenance_specs/h2_6_live_sources_v1.json"
+  ],
+  "design_constraints": [
+   "generic engine: sha256 pin maps read from the tree's own records, consumed-vs-live value checks driven by a versioned spec (docs/ci/provenance_specs/h2_6_live_sources_v1.json), TOML key equality; no check-specific numbers in Rust code",
+   "the H2-6 spec names, per verify_sources() group, the live-source locators and the comparison rule; the consumed values and the 15 evidence pins are read from the immutable H2-6 record docs/hardware/h2/h2_6_diagnostics_fixture/h2_6_diagnostics_fixture_v1.json (sha256 bc7d6b049067c6fbd5489bda32ee9c8c1af36508576db4619b08d2c4ec196a56, bound by the spec; a mismatch is MODEL_ERROR) - the record equals the builder's INPUTS / DECISION_PINS + DELIVERABLE_PINS (builder --check, tests/test_h2_6_diagnostics_fixture.py)",
+   "the spec is embedded at compile time and its sha256 is a constant of the verifier (an unrecorded spec change fails a Rust test)",
+   "Python value semantics where the check depends on them: ordered JSON objects (file order; a duplicate key keeps its first position and its last value), int / float / bool distinction, math.isclose(rel_tol, abs_tol = 0), ==, `in`, dict-comprehension last-wins, _by_id first-wins, float() of strings, truthiness",
+   "TOML: crate `toml` =0.8.23 (TOML 1.0.0 via toml_edit 0.22; tomllib is TOML 1.0.0), default features off + `parse`; before parsing, after replacing CRLF by LF, any U+0000-U+0008, U+000B-U+001F or U+007F is a decode error, as tomllib rejects them in every context",
+   "abep_sim/constants.py is read by a fail-closed Python-literal extractor equivalent to verify_sources' ast rules (top-level single-target Assign with a Constant value; the M_SPECIES dict display entries whose value is a BinOp with a Constant left operand; RFPConstraints class-body AnnAssign with a Constant value); a target statement outside the supported grammar is MODEL_ERROR (UNSUPPORTED_SYNTAX), never a silent default",
+   "abort semantics: wherever the Python check lets an exception escape, the Rust check aborts and reports exactly one RAISED finding (earlier findings are discarded, as the Python list is lost with the exception); where Python catches (verify_sources groups: FileNotFoundError / KeyError), Rust reports the group finding and skips the rest of the group",
+   "outputs carry abep_types fail-closed statuses: a check with findings is MODEL_ERROR, a clean check EVALUATED; the verifier never writes into the tree"
+  ],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it (A9.14 S10.4 RUSTCI-1, generalised)"
+ },
+ "governing_hashes": {
+  "config_manifest": {
+   "path": "config/MANIFEST.json",
+   "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+  },
+  "architecture_hash": "NOT_APPLICABLE (the four checks read no architecture configuration)",
+  "model_set_hash": "NOT_APPLICABLE (no model set is read)",
+  "design_state_set_hash": "NOT_APPLICABLE (no design state is read)",
+  "rule": "both implementations evaluate byte-identical trees: the current tree and the corrupted trees are each evaluated by both from the same directory; the scoring tree's pinned inputs must match pinned_inputs_sha256 (else INPUT_MISMATCH, not a verdict)"
+ },
+ "pinned_inputs_sha256": {
+  "hallthruster_bridge/prereg/p5_n2_prereg_lock_v1.json": "71ecd39fa25ea60e2e4aff9474bdd700ec8cd718e819dfdae774594709e805be",
+  "hallthruster_bridge/prereg/p5_n2_validation_criteria_v1.json": "8ca75ae2fac3a47ba008474f706cdfa8b60e3d1cf27429e1a4ad55dc47068462",
+  "hallthruster_bridge/audit/configs/MANIFEST.json": "19e833c902aa9f62f9418105b7540318a9c3d88bd7e4dc07c9f377bcc4dcdcf2",
+  "hallthruster_bridge/PINNED.toml": "26a00c8a156a5a5e9a58f9796f657ea12f59d87ac2da3d6507ac7347b4765280",
+  "hallthruster_bridge/Manifest.toml": "a98c1a6e9cdf491ef602ef7cd1d08371b2bbe3da4e1df74e45a1c9d84f6c5634",
+  "hallthruster_bridge/Project.toml": "6abb74e3e4fd8078904b0035391ba63fa20d27a358f39b085708bb6a8ae6f617",
+  "docs/hardware/h2/h2_6_diagnostics_fixture/h2_6_diagnostics_fixture_v1.json": "bc7d6b049067c6fbd5489bda32ee9c8c1af36508576db4619b08d2c4ec196a56",
+  "abep_sim/constants.py": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7",
+  "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json": "0554136751f5ffc7bd7f62c1c4723acce946ef4f523f43687b95710cc8ace621",
+  "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json": "ff6e15db449151b5cf790088b4641504bd435a48de2d4c6235bf83625d508ef9",
+  "docs/experiments/hardware/hardware_requirements_v1.json": "0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0",
+  "docs/experiments/instrumentation/instrumentation_definition_v1.json": "7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96",
+  "docs/experiments/capability_demo/capability_demo_prep_v1.json": "ba465206f3a9d7773e338e06dc9e98961c3a97d7f89357c2ed3a227f2a924e67",
+  "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json": "54b7b00a60134f2d92f2eb5c9fb49f18d23623a566e04a4b7d70325a0e332509"
+ },
+ "frozen_data_read_only": [
+  "docs/hardware/h2/h2_6_diagnostics_fixture/h2_6_diagnostics_fixture_v1.json (immutable H2 v1 evidence; read, never modified)",
+  "every file pinned by the prereg lock, the P5-N2 criteria inputs_pinned, the audit MANIFEST and the H2-6 evidence pins (read and hashed only)",
+  "corrupted trees are temporary copies; the real repository tree is never mutated (INV-04)"
+ ],
+ "identity_schema": {
+  "finding_identity": "(check, kind, file, key): check in [\"prereg_lock\", \"audit_manifest\", \"hallthruster_pin\", \"h2_6_live_sources\"]; file = repository-relative POSIX path, lexically normalised (posixpath.normpath of base_dir / rel), or '' ; key = string",
+  "pass_rule": "a check passes iff it has zero findings (Python: problems == [])",
+  "kinds": {
+   "MISSING": "a pinned file is absent (verify_sha_map '<label>: <rel> is missing'; verify_pins 'pinned file missing: <rel>'); key = the pin label",
+   "SHA256_MISMATCH": "a pinned file's bytes differ from the recorded sha256 (verify_sha_map '... sha256 ... != pinned ...'; verify_pins 'pinned file altered (re-pin deliberately): <rel>'); key = the pin label",
+   "EMPTY_PIN_SET": "'prereg lock lists no files' (file = the lock, key 'files'); 'MANIFEST lists no configs' (file = the audit MANIFEST, key 'configs')",
+   "UNPINNED": "'mandatory chemistry <c> has no pinned sha256' (file = the P5-N2 criteria, key = c)",
+   "SET_MISMATCH": "'audit snapshot <f>: rate files [...] differ between snapshot and MANIFEST' (file = hallthruster_bridge/audit/configs/<f>, key = the sorted symmetric difference as a compact JSON array, separators (',', ':'), ensure_ascii False)",
+   "ENTRY_COUNT": "'Manifest.toml has <n> HallThruster entries (expected 1)' (file = hallthruster_bridge/Manifest.toml, key 'deps.HallThruster')",
+   "VALUE_MISMATCH": "hallthruster_pin: Manifest.toml <mkey> != PINNED.toml (file Manifest.toml, key = mkey in {repo-rev, version, repo-url}); Project.toml compat (file Project.toml, key 'compat.HallThruster'); h2_6_live_sources: a registered value check failed (file = its live source, key = the value-check name)",
+   "SOURCE_MISSING": "h2_6_live_sources group FileNotFoundError caught ('source missing: ...' for constants, '<group> source: FileNotFoundError(...)'); file = the group source, key = the group label",
+   "SOURCE_KEY_MISSING": "h2_6_live_sources group KeyError caught ('<group> source: KeyError(k)'); file = the group source, key = k",
+   "RAISED": "the check let an exception escape ('check raised <Exc>: <msg>' from run_checks); file = the missing file for FILE_MISSING, else ''; key = the raised class",
+   "UNMAPPED": "a Python problem string matched by no registered pattern (key = the raw string); it can never equal a Rust identity, so it always counts as a disagreement (no message is dropped)"
+  },
+  "raised_classes": {
+   "DECODE_ERROR": "JSONDecodeError, TOMLDecodeError, UnicodeDecodeError",
+   "FILE_MISSING": "FileNotFoundError (file = the path in '[Errno 2] No such file or directory: <path>' relative to the tree root)",
+   "KEY_MISSING:<k>": "KeyError (k = ast.literal_eval(str(e)) rendered with str())",
+   "TYPE_ERROR": "TypeError, AttributeError",
+   "VALUE_ERROR": "ValueError (exact class)",
+   "OTHER:<ExceptionName>": "any other exception class (e.g. OTHER:IsADirectoryError, OTHER:SyntaxError, OTHER:IndexError)",
+   "UNSUPPORTED_SYNTAX": "Rust-only (Python-literal extractor outside its grammar); it never equals a Python identity"
+  }
+ },
+ "python_message_map": {
+  "rule": "each Python problem string is matched with re.fullmatch (flags re.DOTALL) against the patterns of its check, in the order listed; the first match gives the identity; no match gives UNMAPPED",
+  "prereg_lock": [
+   {
+    "pattern": "prereg lock lists no files",
+    "identity": [
+     "EMPTY_PIN_SET",
+     "hallthruster_bridge/prereg/p5_n2_prereg_lock_v1.json",
+     "files"
+    ]
+   },
+   {
+    "pattern": "(?P<label>prereg lock|criteria inputs_pinned\\.(?:measurement_audit|cases|transport_candidates)): (?P<rel>.+) is missing",
+    "identity": [
+     "MISSING",
+     "hallthruster_bridge/<rel>",
+     "<label>"
+    ]
+   },
+   {
+    "pattern": "(?P<label>prereg lock|criteria inputs_pinned\\.(?:measurement_audit|cases|transport_candidates)): (?P<rel>.+) sha256 [0-9a-f]{16}\\.\\.\\. != pinned .{0,16}\\.\\.\\.",
+    "identity": [
+     "SHA256_MISMATCH",
+     "hallthruster_bridge/<rel>",
+     "<label>"
+    ]
+   },
+   {
+    "pattern": "criteria chemistry_configs_sha256: (?P<rel>.+) is missing",
+    "identity": [
+     "MISSING",
+     "hallthruster_bridge/propellants/<rel>",
+     "criteria chemistry_configs_sha256"
+    ]
+   },
+   {
+    "pattern": "criteria chemistry_configs_sha256: (?P<rel>.+) sha256 [0-9a-f]{16}\\.\\.\\. != pinned .{0,16}\\.\\.\\.",
+    "identity": [
+     "SHA256_MISMATCH",
+     "hallthruster_bridge/propellants/<rel>",
+     "criteria chemistry_configs_sha256"
+    ]
+   },
+   {
+    "pattern": "mandatory chemistry (?P<c>.+) has no pinned sha256",
+    "identity": [
+     "UNPINNED",
+     "hallthruster_bridge/prereg/p5_n2_validation_criteria_v1.json",
+     "<c>"
+    ]
+   }
+  ],
+  "audit_manifest": [
+   {
+    "pattern": "MANIFEST lists no configs",
+    "identity": [
+     "EMPTY_PIN_SET",
+     "hallthruster_bridge/audit/configs/MANIFEST.json",
+     "configs"
+    ]
+   },
+   {
+    "pattern": "audit case snapshot: (?P<rel>.+) is missing",
+    "identity": [
+     "MISSING",
+     "hallthruster_bridge/audit/configs/<rel>",
+     "audit case snapshot"
+    ]
+   },
+   {
+    "pattern": "audit case snapshot: (?P<rel>.+) sha256 [0-9a-f]{16}\\.\\.\\. != pinned .{0,16}\\.\\.\\.",
+    "identity": [
+     "SHA256_MISMATCH",
+     "hallthruster_bridge/audit/configs/<rel>",
+     "audit case snapshot"
+    ]
+   },
+   {
+    "pattern": "audit snapshot: (?P<rel>.+) is missing",
+    "identity": [
+     "MISSING",
+     "hallthruster_bridge/audit/configs/<rel>",
+     "audit snapshot"
+    ]
+   },
+   {
+    "pattern": "audit snapshot: (?P<rel>.+) sha256 [0-9a-f]{16}\\.\\.\\. != pinned .{0,16}\\.\\.\\.",
+    "identity": [
+     "SHA256_MISMATCH",
+     "hallthruster_bridge/audit/configs/<rel>",
+     "audit snapshot"
+    ]
+   },
+   {
+    "pattern": "audit snapshot (?P<f>.+?) rate table: (?P<rel>.+) is missing",
+    "identity": [
+     "MISSING",
+     "hallthruster_bridge/propellants/<rel>",
+     "audit snapshot <f> rate table"
+    ]
+   },
+   {
+    "pattern": "audit snapshot (?P<f>.+?) rate table: (?P<rel>.+) sha256 [0-9a-f]{16}\\.\\.\\. != pinned .{0,16}\\.\\.\\.",
+    "identity": [
+     "SHA256_MISMATCH",
+     "hallthruster_bridge/propellants/<rel>",
+     "audit snapshot <f> rate table"
+    ]
+   },
+   {
+    "pattern": "audit snapshot (?P<f>.+?): rate files (?P<diff>\\[.*\\]) differ between snapshot and MANIFEST",
+    "identity": [
+     "SET_MISMATCH",
+     "hallthruster_bridge/audit/configs/<f>",
+     "<compact JSON of ast.literal_eval(diff)>"
+    ]
+   }
+  ],
+  "hallthruster_pin": [
+   {
+    "pattern": "Manifest\\.toml has (?P<n>-?\\d+) HallThruster entries \\(expected 1\\)",
+    "identity": [
+     "ENTRY_COUNT",
+     "hallthruster_bridge/Manifest.toml",
+     "deps.HallThruster"
+    ]
+   },
+   {
+    "pattern": "Manifest\\.toml HallThruster (?P<mkey>repo-rev|version|repo-url) .* != PINNED\\.toml (?:commit|version|repository) .*",
+    "identity": [
+     "VALUE_MISMATCH",
+     "hallthruster_bridge/Manifest.toml",
+     "<mkey>"
+    ]
+   },
+   {
+    "pattern": "Project\\.toml compat HallThruster .* != '=.*'",
+    "identity": [
+     "VALUE_MISMATCH",
+     "hallthruster_bridge/Project.toml",
+     "compat.HallThruster"
+    ]
+   }
+  ],
+  "h2_6_live_sources": [
+   {
+    "pattern": "pinned file missing: (?P<rel>.+)",
+    "identity": [
+     "MISSING",
+     "<rel>",
+     "h2_6 pin"
+    ]
+   },
+   {
+    "pattern": "pinned file altered \\(re-pin deliberately\\): (?P<rel>.+)",
+    "identity": [
+     "SHA256_MISMATCH",
+     "<rel>",
+     "h2_6 pin"
+    ]
+   },
+   {
+    "pattern": "(?P<name><alternation of re.escape(name) over h2_6_value_check_domain names>): live source .* != consumed .*",
+    "identity": [
+     "VALUE_MISMATCH",
+     "<source file of name>",
+     "<name>"
+    ]
+   },
+   {
+    "pattern": "w_O2_range: A5 test_matrix no longer states 0\\.42-0\\.60",
+    "identity": [
+     "VALUE_MISMATCH",
+     "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json",
+     "w_O2_range"
+    ]
+   },
+   {
+    "pattern": "(?P<name>a5_thrust_target_mN|a5_pbus_allocation_W): A5 allocation text changed",
+    "identity": [
+     "VALUE_MISMATCH",
+     "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json",
+     "<name>"
+    ]
+   },
+   {
+    "pattern": "source missing: .*",
+    "identity": [
+     "SOURCE_MISSING",
+     "abep_sim/constants.py",
+     "constants"
+    ]
+   },
+   {
+    "pattern": "(?P<group>A5|W1|W4|W3|lane 25|capability demo) source: FileNotFoundError\\(.*\\)",
+    "identity": [
+     "SOURCE_MISSING",
+     "<source file of group>",
+     "<group>"
+    ]
+   },
+   {
+    "pattern": "(?P<group>A5|W1|W4|W3|lane 25|capability demo) source: KeyError\\((?P<k>.*)\\)",
+    "identity": [
+     "SOURCE_KEY_MISSING",
+     "<source file of group>",
+     "<str(ast.literal_eval(k))>"
+    ]
+   }
+  ],
+  "any_check": [
+   {
+    "pattern": "check raised (?P<exc>[A-Za-z_][A-Za-z0-9_.]*): (?P<msg>.*)",
+    "identity": [
+     "RAISED",
+     "<FILE_MISSING: path relative to the tree root, else ''>",
+     "<raised class of exc / msg>"
+    ],
+    "order": "tried first"
+   }
+  ]
+ },
+ "h2_6_value_check_domain": {
+  "source": "docs/hardware/h2/h2_6_diagnostics_fixture/build_h2_6_diagnostics_fixture.py::verify_sources, in evaluation order",
+  "groups": [
+   {
+    "label": "constants",
+    "source": "abep_sim/constants.py",
+    "names": [
+     "K_B",
+     "AMU",
+     "M_N2_u",
+     "M_O2_u",
+     "M_Xe_u",
+     "thrust_min_mN",
+     "thrust_max_mN",
+     "power_max_W",
+     "firing_hours_min_h"
+    ]
+   },
+   {
+    "label": "A5",
+    "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json",
+    "names": [
+     "mdot_xe_cathode_design_mgps",
+     "mdot_xe_cathode_upper_mgps",
+     "w_O2_range",
+     "a5_thrust_target_mN",
+     "a5_pbus_allocation_W"
+    ]
+   },
+   {
+    "label": "W1",
+    "source": "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json",
+    "names": [
+     "mdot_anode_min_kgps",
+     "mdot_anode_max_kgps",
+     "mdot_anode_max_accum_kgps",
+     "mdot_O2_max_W1_kgps"
+    ]
+   },
+   {
+    "label": "W4",
+    "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
+    "names": [
+     "u_T_max_by_n[4]",
+     "u_P_max_by_n[4]",
+     "u_T_max_by_n[6]",
+     "u_P_max_by_n[6]",
+     "u_T_max_by_n[8]",
+     "u_P_max_by_n[8]",
+     "k_one_sided",
+     "u_abs_planning(T)",
+     "u_abs_planning(P)",
+     "I_d_noise_floor_frac",
+     "u_abs_grid",
+     "mfc_accuracy_fs"
+    ]
+   },
+   {
+    "label": "W3",
+    "source": "docs/experiments/hardware/hardware_requirements_v1.json",
+    "names": [
+     "I_d_bound_A",
+     "theta_align_max_n4_deg",
+     "B_res_2p45GHz_T",
+     "B_res_5p8GHz_T",
+     "u_inst_max_n4",
+     "V_d_rating_upper_V",
+     "calibrations_min"
+    ]
+   },
+   {
+    "label": "lane 25",
+    "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json",
+    "names": [
+     "remount_K",
+     "remount_r",
+     "pb_elev_factor",
+     "S_eff N2 1e-5 Torr cross-check"
+    ]
+   },
+   {
+    "label": "capability demo",
+    "source": "docs/experiments/capability_demo/capability_demo_prep_v1.json",
+    "names": [
+     "mfc_min_fraction_fs",
+     "cd_bz_maps",
+     "cd_bz_cycles"
+    ]
+   }
+  ],
+  "pins": "the 15 paths of the record's authority_pins + deliverable_pins (== the builder's DECISION_PINS + DELIVERABLE_PINS, same order)",
+  "count": 44
+ },
+ "inputs": {
+  "golden_vectors": {
+   "source": "the current tree: the repository working tree at the scoring commit (read only)",
+   "count": 1,
+   "list_or_generator": "CUR-00; expected outcome known from CI before any comparison: all four checks pass in Python (scripts/ci_checks.py 11/11); it is also a development vector"
+  },
+  "edge_cases": "see domain_and_error_parity.cases (DE-01 .. DE-24; deterministic, scoring only)",
+  "randomized_domain": {
+   "count": 168,
+   "draw": "corruption_procedure: 7 classes x 24 trees, seeded from campaign_seeds",
+   "domain_note": "integrity-check parity domain only; not a physics, design or evidence claim"
+  },
+  "vector_totals": {
+   "current tree": 1,
+   "deterministic edge trees": 24,
+   "seeded corrupted trees": 168,
+   "tree evaluations per implementation": 193,
+   "check decisions compared": 772
+  }
+ },
+ "campaign_seeds": {
+  "applicable": true,
+  "scoring_master_seed": 887790081732834691,
+  "development_master_seed": 7917465134902613833,
+  "derivation": "U(tag) = int.from_bytes(hashlib.sha256(f'{master_seed}|{tag}'.encode('utf-8')).digest()[:8], 'big'); pick(seq, tag) = seq[U(tag) % len(seq)]; tag = f'{class_id}|{i}|{field}' with i = 0..n-1 the tree index inside the class",
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the existing admitted stochastic / statistical parity contract; the roles are registered separately and never merged",
+   "design_uq_sampling_stream": "NOT_APPLICABLE (no design / UQ sampling)",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE (no TPMC)",
+   "other_streams": "corruption-selection stream: the sha256 counter derivation above, drawn only by the harness; both implementations then read the same corrupted tree, so no stream needs reproducing in Rust",
+   "migration_parity_dataset": "seeds, derivation and the per-tree corruption manifests are recorded in the report and stay exactly reproducible (immutable)",
+   "after_rust_authority": "NOT_APPLICABLE"
+  },
+  "rng_streams_v3": "NOT_APPLICABLE (v3 field; replaced by rng_stream_roles)",
+  "development_rule": "development comparisons use development_master_seed only (plus the current tree) and are never scored or reported as a verdict; DE-01..DE-24 are scoring-only vectors and are not run through a Python-vs-Rust comparison before scoring; every execution with scoring_master_seed is appended to campaign_history and the report is committed whatever its verdict"
+ },
+ "corruption_procedure": {
+  "pristine_tree": "T0 = `git archive --format=tar <scoring commit>` extracted into a fresh temporary directory; a sha256 manifest of every regular file of T0 is taken before the first and after the last tree (INV-03); every pinned_inputs_sha256 file must match in T0 (else INPUT_MISMATCH)",
+  "tree_construction": "each tree is a fresh temporary directory replicating T0's directories with every regular file hard-linked to T0 (os.link); an operation never writes through a link: delete = os.unlink; modify = read the bytes, os.unlink, write the new bytes to a new file; mkdir only where an edge case says so; the tree is removed after both implementations ran",
+  "json_rewrite": "a JSON edit loads the file with json.loads (dict order = file order), applies the registered change and writes json.dumps(obj, indent=1, ensure_ascii=False) + ('\\n' iff the original ends with b'\\n'), UTF-8",
+  "digit_edit": "positions = offsets of bytes 0x30..0x39; if none, append b'\\n'; else j = positions[U(tag|pos) % len(positions)] and byte j becomes 0x30 + ((byte - 0x30 + 1) % 10)",
+  "populations": {
+   "PIN_PRL": "sorted unique repo-relative paths sha256-pinned by check_prereg_lock in T0: hallthruster_bridge/<lock.files keys>, hallthruster_bridge/<criteria.inputs_pinned[k].file> for k in (measurement_audit, cases, transport_candidates), hallthruster_bridge/propellants/<criteria.inputs_pinned.chemistry_configs_sha256 keys>",
+   "PIN_AUD": "sorted unique paths sha256-pinned by check_audit_manifest in T0: hallthruster_bridge/audit/configs/<MANIFEST.configs keys>, hallthruster_bridge/propellants/<each config's rate_files keys>, hallthruster_bridge/audit/configs/<MANIFEST.case_files keys>",
+   "PIN_H26": "the 15 paths of docs/hardware/h2/h2_6_diagnostics_fixture/h2_6_diagnostics_fixture_v1.json authority_pins + deliverable_pins (sorted)",
+   "R_LOCK": "(lock, ['files', k]) for k in lock.files (file order)",
+   "R_CRIT": "(criteria, ['inputs_pinned', k, 'sha256']) for k in (measurement_audit, cases, transport_candidates), then (criteria, ['inputs_pinned', 'chemistry_configs_sha256', c]) for c in file order",
+   "R_MAN": "for each config f in MANIFEST.configs (file order): (MANIFEST, ['configs', f, 'sha256']) then (MANIFEST, ['configs', f, 'rate_files', r]) for r in file order; then (MANIFEST, ['case_files', c, 'sha256']) for c in file order",
+   "LOCKED": "sorted hallthruster_bridge/<lock.files keys>",
+   "CHEM": "sorted hallthruster_bridge/propellants/<criteria chemistry_configs_sha256 keys>",
+   "SNAP": "sorted hallthruster_bridge/audit/configs/<MANIFEST.configs keys> + hallthruster_bridge/audit/configs/<MANIFEST.case_files keys>"
+  },
+  "n_per_class": 24,
+  "classes": [
+   {
+    "id": "CC-01",
+    "name": "byte flip in a pinned file",
+    "stratum": "s = i % 3 -> [PIN_PRL, PIN_AUD, PIN_H26][s]",
+    "target": "pick(stratum, 'CC-01|i|file')",
+    "operation": "if the file is empty write b'\\x01'; else offset = U('CC-01|i|offset') % size, bit = U('CC-01|i|bit') % 8, byte[offset] ^= 1 << bit"
+   },
+   {
+    "id": "CC-02",
+    "name": "deleted pinned file",
+    "stratum": "s = i % 3 -> [PIN_PRL, PIN_AUD, PIN_H26][s]",
+    "target": "pick(stratum, 'CC-02|i|file')",
+    "operation": "unlink"
+   },
+   {
+    "id": "CC-03",
+    "name": "wrong recorded sha",
+    "stratum": "s = i % 3 -> [R_LOCK, R_CRIT, R_MAN][s]",
+    "target": "pick(stratum, 'CC-03|i|record')",
+    "operation": "the recorded value becomes sha256(f'{master_seed}|CC-03|{i}|sha').hexdigest() (if equal to the old value: sha256 of the same string + '|retry'); json_rewrite"
+   },
+   {
+    "id": "CC-04",
+    "name": "modified prereg-locked file",
+    "stratum": "s = i % 2 -> [LOCKED, CHEM][s]",
+    "target": "pick(stratum, 'CC-04|i|file')",
+    "operation": "digit_edit with tag 'CC-04|i'"
+   },
+   {
+    "id": "CC-05",
+    "name": "modified audit snapshot",
+    "stratum": "none",
+    "target": "SNAP[i % len(SNAP)]",
+    "operation": "digit_edit with tag 'CC-05|i'"
+   },
+   {
+    "id": "CC-06",
+    "name": "wrong HallThruster pin commit",
+    "stratum": "s = i % 2 -> [PINNED.toml commit, Manifest.toml repo-rev][s]",
+    "target": "s = 0: hallthruster_bridge/PINNED.toml, first match of (?m)^commit = \"([0-9a-f]{40})\"; s = 1: hallthruster_bridge/Manifest.toml, first match of (?m)^repo-rev = \"([0-9a-f]{40})\"",
+    "operation": "group 1 becomes sha256(f'{master_seed}|CC-06|{i}|commit').hexdigest()[:40] (if equal: of the same string + '|retry'); no match -> INPUT_MISMATCH"
+   },
+   {
+    "id": "CC-07",
+    "name": "changed H2-6 live source value",
+    "stratum": "s = i % 4 -> the value checks of group [constants, W1, W4, lane 25][s] (the H2-6 live sources that no check under test sha256-pins)",
+    "target": "name = pick(group names in h2_6_value_check_domain order, 'CC-07|i|check'); k = pick([2, 4, 6, 8, 10, 12], 'CC-07|i|delta'); delta = 10.0 ** -k",
+    "operation": {
+     "value": "an int (not bool) live value v becomes v + 1; a float v becomes v * (1.0 + delta) (Python float arithmetic)",
+     "constants": "abep_sim/constants.py text edit of the literal (exactly one match required, else INPUT_MISMATCH): K_B / AMU: (?m)^(NAME = )([^\\s#]+); M_<g>_u: (?m)^(\\s*\"<g>\":\\s*)([^\\s*,]+)(\\s*\\*\\s*AMU); thrust_min_mN / thrust_max_mN / power_max_W / firing_hours_min_h (field ignition_hours): (?m)^(\\s+<field>: float = )([^\\s#]+); the literal becomes repr(new value)",
+     "json": "W1 / W4 / lane 25: the live locator of the named check (as verify_sources reads it; for an id-keyed map the LAST element with that id, as the dict comprehension keeps it) gets the new value; u_abs_grid: the key pick(keys of derived.absolute_thrust_gate in file order, 'CC-07|i|key') is replaced in place by repr(float(key) * (1.0 + delta)); json_rewrite"
+    }
+   }
+  ]
+ },
+ "observables": {
+  "<each of prereg_lock, audit_manifest, hallthruster_pin, h2_6_live_sources> on every tree": {
+   "list": [
+    {
+     "name": "decision",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "pass (zero findings) or fail"
+    },
+    {
+     "name": "failure_identities",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal as sorted multisets",
+     "definition": "the multiset of (kind, file, key) identities (identity_schema); Python identities come from python_message_map"
+    }
+   ],
+   "replicates_per_implementation": "NOT_APPLICABLE (deterministic)",
+   "se_method": "NOT_APPLICABLE (deterministic)"
+  }
+ },
+ "tolerance_classes": {
+  "EXACT_BYTES": "NOT_USED here",
+  "EXACT_VALUE": "integers, strings, enums, booleans, statuses, error codes, schema shape: equal (the only class used)",
+  "ULP_BOUNDED": "NOT_USED (the numeric tolerances inside the checks are part of the check semantics: math.isclose rel_tol 1e-9, 1e-4 for the S_eff cross-check, abs_tol 0)",
+  "SOLVER_TOLERANCE": "NOT_USED",
+  "STATISTICAL": "NOT_USED",
+  "EXACT_STREAM": "NOT_USED"
+ },
+ "exact_invariants": [
+  {
+   "id": "INV-01",
+   "statement": "Rust determinism: two runs of the verifier on the current tree give byte-identical JSON output",
+   "required_in_both": false
+  },
+  {
+   "id": "INV-02",
+   "statement": "neither implementation writes into an evaluated tree: the (relative path, size, mtime_ns, inode) manifest of every tree is identical before and after both runs",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-03",
+   "statement": "the pristine tree T0 is unchanged after the campaign (full sha256 manifest before == after)",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-04",
+   "statement": "the real repository tree is never mutated: `git status --porcelain=v1 -uall` and the sha256 of every pinned_inputs_sha256 file are identical before and after the campaign",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-05",
+   "statement": "the spec sha256 compiled into the verifier equals the sha256 of docs/ci/provenance_specs/h2_6_live_sources_v1.json at the scoring commit, and the spec binds the H2-6 record sha256 bc7d6b049067c6fbd5489bda32ee9c8c1af36508576db4619b08d2c4ec196a56",
+   "required_in_both": false
+  },
+  {
+   "id": "INV-06",
+   "statement": "every corrupted tree differs from T0 only in its registered target path (verified per tree against the operation's recorded result)",
+   "required_in_both": true
+  }
+ ],
+ "conservation_checks": {
+  "applicable": false,
+  "checks": [
+   {
+    "id": "CONS-01",
+    "statement": "NOT_APPLICABLE: integrity checks carry no mass / power / energy balance",
+    "evaluated_on": "NOT_APPLICABLE",
+    "tolerance": "NOT_APPLICABLE"
+   }
+  ]
+ },
+ "domain_and_error_parity": {
+  "cases": [
+   {
+    "id": "DE-01",
+    "operation": "unlink hallthruster_bridge/prereg/p5_n2_prereg_lock_v1.json",
+    "expected_python": "prereg_lock RAISED FILE_MISSING",
+    "expected_rust": "same identity"
+   },
+   {
+    "id": "DE-02",
+    "operation": "hallthruster_bridge/prereg/p5_n2_prereg_lock_v1.json: 'files' becomes {} (json_rewrite)",
+    "expected_python": "prereg_lock EMPTY_PIN_SET",
+    "expected_rust": "same identity"
+   },
+   {
+    "id": "DE-03",
+    "operation": "hallthruster_bridge/prereg/p5_n2_validation_criteria_v1.json: append 'n2_n_unpinned_de03.toml' to mandatory_chemistry (json_rewrite)",
+    "expected_python": "prereg_lock SHA256_MISMATCH (criteria, label 'prereg lock') + UNPINNED n2_n_unpinned_de03.toml",
+    "expected_rust": "same identities"
+   },
+   {
+    "id": "DE-04",
+    "operation": "hallthruster_bridge/prereg/p5_n2_validation_criteria_v1.json: delete inputs_pinned.cases (json_rewrite)",
+    "expected_python": "prereg_lock RAISED KEY_MISSING:cases (the lock finding is lost with the exception)",
+    "expected_rust": "same identity"
+   },
+   {
+    "id": "DE-05",
+    "operation": "unlink hallthruster_bridge/audit/configs/MANIFEST.json",
+    "expected_python": "audit_manifest RAISED FILE_MISSING",
+    "expected_rust": "same identity"
+   },
+   {
+    "id": "DE-06",
+    "operation": "hallthruster_bridge/audit/configs/MANIFEST.json: 'configs' becomes {} (json_rewrite)",
+    "expected_python": "audit_manifest EMPTY_PIN_SET",
+    "expected_rust": "same identity"
+   },
+   {
+    "id": "DE-07",
+    "operation": "hallthruster_bridge/audit/configs/n2_n_0p9_pre_rotation.toml: the first match of (?m)^rate_coeff_file = \"([^\"]+)\" gets group 1 = 'de07_unlisted.dat'",
+    "expected_python": "audit_manifest SHA256_MISMATCH + SET_MISMATCH",
+    "expected_rust": "same identities"
+   },
+   {
+    "id": "DE-08",
+    "operation": "hallthruster_bridge/audit/configs/n2_n_0p10_nominal_pre_hms.toml truncated to its first floor(size / 2) bytes",
+    "expected_python": "audit_manifest RAISED DECODE_ERROR, or SHA256_MISMATCH + SET_MISMATCH if the half parses",
+    "expected_rust": "same identities"
+   },
+   {
+    "id": "DE-09",
+    "operation": "unlink hallthruster_bridge/PINNED.toml",
+    "expected_python": "hallthruster_pin RAISED FILE_MISSING",
+    "expected_rust": "same identity"
+   },
+   {
+    "id": "DE-10",
+    "operation": "hallthruster_bridge/Manifest.toml: every 'deps.HallThruster' becomes 'deps.HallThrusterX'",
+    "expected_python": "hallthruster_pin ENTRY_COUNT",
+    "expected_rust": "same identity"
+   },
+   {
+    "id": "DE-11",
+    "operation": "hallthruster_bridge/Project.toml: 'HallThruster = \"=0.23.1\"' becomes 'HallThruster = \"0.23.1\"'",
+    "expected_python": "hallthruster_pin VALUE_MISMATCH compat.HallThruster",
+    "expected_rust": "same identity"
+   },
+   {
+    "id": "DE-12",
+    "operation": "hallthruster_bridge/PINNED.toml: delete the first line matching (?m)^version = \"0\\.23\\.1\"\\n",
+    "expected_python": "hallthruster_pin RAISED KEY_MISSING:version",
+    "expected_rust": "same identity"
+   },
+   {
+    "id": "DE-13",
+    "operation": "unlink docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json",
+    "expected_python": "h2_6_live_sources SOURCE_MISSING W1",
+    "expected_rust": "same identity"
+   },
+   {
+    "id": "DE-14",
+    "operation": "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json: delete mfc_range_requirement.mdot_max_kgps (json_rewrite)",
+    "expected_python": "h2_6_live_sources SOURCE_KEY_MISSING mdot_max_kgps",
+    "expected_rust": "same identity"
+   },
+   {
+    "id": "DE-15",
+    "operation": "docs/experiments/instrumentation/instrumentation_definition_v1.json: delete 'value' of the last proposed_thresholds element with id 'I-U-ID-FLOOR' (json_rewrite)",
+    "expected_python": "h2_6_live_sources SOURCE_KEY_MISSING value (W4)",
+    "expected_rust": "same identity"
+   },
+   {
+    "id": "DE-16",
+    "operation": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: delete 'value' of the last thresholds element with id 'T-PB-ELEV-FACTOR' (json_rewrite)",
+    "expected_python": "h2_6_live_sources VALUE_MISMATCH pb_elev_factor (live None)",
+    "expected_rust": "same identity"
+   },
+   {
+    "id": "DE-17",
+    "operation": "unlink abep_sim/constants.py",
+    "expected_python": "h2_6_live_sources SOURCE_MISSING constants",
+    "expected_rust": "same identity"
+   },
+   {
+    "id": "DE-18",
+    "operation": "abep_sim/constants.py: 'thrust_min_mN: float = 12.0' becomes 'thrust_min_mN: float = float(12.0)'",
+    "expected_python": "h2_6_live_sources VALUE_MISMATCH thrust_min_mN (not an ast.Constant)",
+    "expected_rust": "same identity"
+   },
+   {
+    "id": "DE-19",
+    "operation": "abep_sim/constants.py: 'K_B = 1.380649e-23' becomes 'K_B = (1.380649e-23)'",
+    "expected_python": "all four pass (a parenthesised literal is an ast.Constant)",
+    "expected_rust": "same"
+   },
+   {
+    "id": "DE-20",
+    "operation": "abep_sim/constants.py: 'AMU = 1.66053906660e-27' becomes 'AMU = 1.660_539_066_60e-27'",
+    "expected_python": "all four pass (same float)",
+    "expected_rust": "same"
+   },
+   {
+    "id": "DE-21",
+    "operation": "docs/experiments/instrumentation/instrumentation_definition_v1.json: add key 'not-a-number': {} at the end of derived.absolute_thrust_gate (json_rewrite)",
+    "expected_python": "h2_6_live_sources RAISED VALUE_ERROR (float() escapes the group)",
+    "expected_rust": "same identity"
+   },
+   {
+    "id": "DE-22",
+    "operation": "docs/experiments/hardware/hardware_requirements_v1.json: delete the requirements element with id 'HW-ENV-01' (json_rewrite)",
+    "expected_python": "h2_6_live_sources SHA256_MISMATCH (W3 pin) + SOURCE_KEY_MISSING HW-ENV-01",
+    "expected_rust": "same identities"
+   },
+   {
+    "id": "DE-23",
+    "operation": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json: the allocations_and_requirements value of quantity 'thrust operating target' becomes '15-23 mN' (json_rewrite)",
+    "expected_python": "h2_6_live_sources SHA256_MISMATCH (A5 pin) + VALUE_MISMATCH a5_thrust_target_mN",
+    "expected_rust": "same identities"
+   },
+   {
+    "id": "DE-24",
+    "operation": "docs/experiments/s1_readiness/s1_readiness_conditions_v1.json: unlink, then mkdir at the same path",
+    "expected_python": "h2_6_live_sources RAISED OTHER:IsADirectoryError",
+    "expected_rust": "same identity"
+   }
+  ],
+  "note": "expected_python is informative (from reading the code); the decision rule compares the actual Python output with the actual Rust output",
+  "mapping_rule": "every Python exception class / status used by the component maps to exactly one Rust error variant / status; no Rust path may return a value where Python fails, or fail where Python returns (CLAUDE.md rule 3: no silent fallbacks); the identity_schema raised_classes give the mapping",
+  "documented_divergence": [
+   {
+    "id": "DIV-01",
+    "statement": "the Rust h2_6_live_sources additionally binds the immutable H2-6 record by sha256 (the source of its consumed values and pins): a changed or missing record fails closed (Rust finding SHA256_MISMATCH / MISSING, key 'consumed record', the value checks are not evaluated) while Python's check reads the builder's INPUTS and passes; the record is in no corruption population and no edge case touches it",
+    "disposition": "Rust strictly stronger; the record is immutable evidence (CLAUDE.md H2-6 rule) and the builder's own --check keeps record == builder"
+   },
+   {
+    "id": "DIV-02",
+    "statement": "the Rust verifier does not execute or read the H2-6 builder: an edit of the builder changes Python's behaviour but not Rust's",
+    "disposition": "the builder is a reference file of this contract (REFUSED_REFERENCE_CHANGED) and immutable H2 v1 history; not exercised"
+   },
+   {
+    "id": "DIV-03",
+    "statement": "abep_sim/constants.py: Rust detects only tokenizer-level Python syntax errors (unterminated string / bracket -> RAISED OTHER:SyntaxError); a deeper syntax error that ast.parse rejects is not detected, and a target statement outside the extractor grammar is UNSUPPORTED_SYNTAX",
+    "disposition": "fail-closed; no registered operation produces either case"
+   },
+   {
+    "id": "DIV-04",
+    "statement": "JSON tokens NaN / Infinity / -Infinity and numbers overflowing f64 are accepted by Python's json and refused by the Rust reader (DECODE_ERROR); integers beyond 64 bits are read as f64 by Rust and as int by Python",
+    "disposition": "fail-closed; none occurs in the pinned inputs and a single byte flip or digit edit cannot create them from the registered files"
+   }
+  ]
+ },
+ "schema_parity": {
+  "schemas": [
+   "NOT_APPLICABLE (no JSON schema file; the identity_schema above is the compared output schema)"
+  ],
+  "rules": [
+   "field names, units, types identical",
+   "ordering identical where it carries meaning (CSV columns, JSON arrays)",
+   "Rust record types generated from or tested against the same schema files",
+   "evidence_status / raw-vs-assessment labels (A9.22) identical"
+  ]
+ },
+ "golden_and_reference_cases": {
+  "references": [
+   "the current tree (CUR-00)",
+   "DE-01 .. DE-24",
+   "the seeded corrupted trees"
+  ],
+  "rule": "references are read as committed; they are never regenerated to make Rust pass (RM-R11); a disagreement is investigated and classified (RUST_DEFECT | PYTHON_REFERENCE_DEFECT (own governance, new contract version) | CONTRACT_DEFECT (new contract version))",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-PROVENANCE-VERIFIER/parity_report_v1.json (per-tree Python problems, Python identities and corruption manifests)",
+   "captured_at_python_commit": "FILL at scoring (the scoring commit; reference files bound by sha256_at_registration)",
+   "sha256_manifest": "FILL at scoring (report)",
+   "purpose": "lets CI check Rust against the Python reference after Python is retired from active execution"
+  },
+  "historical_golden_rule": "RM-R28: not applicable (no golden case is involved)"
+ },
+ "julia_bridge": {
+  "applicable": false,
+  "hallthruster_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5 (only as data compared by hallthruster_pin; no Julia process is started)",
+  "julia_version": "NOT_APPLICABLE",
+  "launch_equivalence": "NOT_APPLICABLE",
+  "record_comparison": "NOT_APPLICABLE",
+  "execution_provenance": "NOT_APPLICABLE"
+ },
+ "performance_measurement": {
+  "status": "reported, not a decision criterion (A9.24 items 1 and 6)",
+  "workloads": [
+   {
+    "id": "PV-ALL-TREES",
+    "description": "wall-clock of each implementation per tree (Python: interpreter start + import + run_checks; Rust: process start + run_checks) summed over the campaign"
+   }
+  ],
+  "repeats": 1,
+  "statistic": "total and median wall-clock per implementation in one session on one machine; speed-up = median_python / median_rust",
+  "machine_manifest": "recorded in the report (CPU, OS, toolchains, thread env)"
+ },
+ "decision_rules": {
+  "per_test": "D2: on every evaluated tree (CUR-00, DE-01..DE-24, the 168 seeded trees) and for every check, the Python decision equals the Rust decision and the sorted identity multisets are equal (an UNMAPPED Python message is a disagreement)",
+  "aggregate": "NOT_APPLICABLE (deterministic; every tree must agree)",
+  "baseline": "D1: on CUR-00 both implementations pass all four checks",
+  "class_exercise": "D3: every class CC-01..CC-07 has at least one tree on which the Python reference fails at least one check (otherwise the class is NOT_EXERCISED and the verdict is PARITY_FAIL)",
+  "exact_invariants_required": true,
+  "conservation_required": false,
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "refusals": "REFUSED_REFERENCE_CHANGED if a reference file differs from sha256_at_registration in the scoring tree; INPUT_MISMATCH if a pinned_inputs_sha256 file differs in T0, a registered operation is inapplicable or a tree fails INV-06; NOT_RUN_RUST_UNAVAILABLE if the verifier does not build with --locked",
+  "verdict": "PARITY_PASS iff D1, D2 (all trees), D3 and INV-01..INV-06 hold, else PARITY_FAIL; ADMITTED iff PARITY_PASS and `cargo fmt -- --check` (workspace members only; never `--all`), `cargo clippy --workspace --all-targets --locked -- -D warnings` and `cargo test --workspace --locked` pass at the scoring commit; otherwise NOT_ADMITTED",
+  "verdict_vocabulary": [
+   "PARITY_PASS",
+   "PARITY_FAIL",
+   "ADMITTED",
+   "NOT_ADMITTED",
+   "REFUSED_REFERENCE_CHANGED",
+   "INPUT_MISMATCH",
+   "NOT_RUN_RUST_UNAVAILABLE",
+   "REFUSED_CLASSIFICATION"
+  ],
+  "meaning_of_ADMITTED": "A9.24 item 1: Rust becomes authoritative for these check semantics; it is NOT physics validation. Retiring ci_checks h2_6_live_sources (and the other three checks) from active CI is a separate later step after CI is re-pointed (SC-WP-12, RM-R29); this contract changes no CI workflow and no Python check",
+  "no_retuning": "tolerances, observables, inputs, n, seeds and rules are fixed; after PARITY_FAIL only a code fix plus a new contract version with a fresh scoring_master_seed may follow; the failed report stays; no execution is discarded",
+  "single_scoring": "the scoring master seed is spent by exactly one execution; the harness refuses to score when parity_report_v1.json exists",
+  "disagreement_rule": "never rewrite a Python result, golden, fixture or frozen dataset to make Rust pass (RM-R11)",
+  "observable_scope": "observables are restricted to the generic check semantics; no observable depends on H2-6 architecture content beyond the identity of a failing value check (RM-R20)",
+  "ledger_rule": "on PARITY_PASS the report lists under ledger_update_requested: C-PROVENANCE-VERIFIER ADMITTED for the five ci_checks functions and the verify_sources check semantics, and that ci_checks h2_6_live_sources (with prereg_lock, audit_manifest, hallthruster_pin) MAY be retired from active CI in a separate later step after CI is re-pointed; migration_state_v1.json is owned by lane A1 and not edited here"
+ },
+ "bid_boundary": {
+  "statement": "this contract and its Rust implementation are post-bid-freeze work; no output of it may be cited by the bid package unless the owner re-freezes (PROGRAMME.md section 4; bid_source_guard)",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b (technical source) / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (package / freeze record, A9.28; lineage b5849affae22a6709ad217a184f6fe896d15410a -> 2de86ab); A9.29 sec. 3: 2de86ab is the terminal owner-authorized package state",
+  "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+ },
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, threshold or requirement",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27)",
+  "not a gate PASS: absent determining evidence stays NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN / MODEL_ERROR (RM-R31)",
+  "not a port of the H2-6 builder or of any H2-6 architecture assumption; not a CI change"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-PROVENANCE-VERIFIER/parity_report_v1.json (+ parity_report_v1.md generated from it)",
+  "runner": "while the reference is active, the Python harness docs/rust_migration/contracts/C-PROVENANCE-VERIFIER/parity_harness.py (written after this contract; its sha256 is recorded in the report) calls the Rust CLI and the unmodified Python checks on the same trees; it records campaign_history",
+  "report_fields": [
+   "contract_sha256",
+   "python_commit",
+   "reference_sha256",
+   "rust_commit",
+   "build_provenance (rustc, Cargo.lock sha256, source sha256)",
+   "environment",
+   "per-test results",
+   "aggregates",
+   "invariants",
+   "conservation",
+   "domain/error",
+   "schema",
+   "performance",
+   "verdicts",
+   "campaign_history",
+   "ledger_update_requested"
+  ]
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator (A9.25 message 3)",
+  "checks": [
+   "component.migration_class: C-SCRIPTS_CI_CHECKS_PY is ACTIVE_SELECTED_ARCHITECTURE_PHYSICS; C-DOCS_HARDWARE_H2_H2_6_DIAGNOSTICS_FIXTURE is GROUND_REFERENCE_ONLY with the recorded active_toolchain_requirement (ci_checks h2_6_live_sources, RM-OQ-09) - PASS",
+   "no observable, input or code path of the contract belongs to excluded_legacy_paths: the observables are check decisions and failure identities; H2-6 consumed values are read from the immutable record as data - PASS",
+   "the Python harness traverses verify_sources, which only reads files; the builder's module-level code defines constants and functions (no build); it cannot influence the scored observables beyond the registered check semantics - PASS",
+   "the Rust implementation contains none of the forbidden identifiers (CI_PLAN.md sec. 1 principle 6): H2-6 key names live only in docs/ci/provenance_specs/h2_6_live_sources_v1.json, outside crates/** - to be confirmed by the report",
+   "not GROUND_TEST_PROGRAMME_ONLY; abep-provenance is infrastructure, not abep-groundtest - PASS"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict): the contract cannot be registered"
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "value_status_preservation": {
+  "rule": "RM-R27: no provisional / analog / allocation input is promoted by migration to CBE, measured or frozen truth",
+  "inputs": [
+   {
+    "id": "NOT_APPLICABLE",
+    "value": "NOT_APPLICABLE",
+    "value_status": "NOT_APPLICABLE",
+    "open_action": "NOT_APPLICABLE",
+    "committed_labels": [
+     "the verifier outputs check decisions only; it carries no value forward"
+    ]
+   }
+  ],
+  "check": "NOT_APPLICABLE"
+ },
+ "new_physics_verification": {
+  "applies_when": "contract_kind = NEW_PHYSICS (otherwise NOT_APPLICABLE)",
+  "model_id": "NOT_APPLICABLE",
+  "preregistration": "NOT_APPLICABLE (EXISTING_PHYSICS_PARITY)",
+  "python_scratch_rule": "NOT_APPLICABLE",
+  "verdict": "NOT_APPLICABLE",
+  "gate_a9_29": "NOT_APPLICABLE",
+  "np_icp_neutralizer_a9_29": "NOT_APPLICABLE"
+ }
+}

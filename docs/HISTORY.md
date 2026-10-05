@@ -4239,3 +4239,19 @@ main, and the bid record `5eee4b8` / `b5849af` / `2de86ab`. `git diff 2de86ab..H
 - **Build plan.** New `data/chemistry/icp/`, one provenance-backed table per commit. The Hall propellant set and its pins stay
   untouched.
 - 15 open owner questions (OQ-CHEM-01..15) and 12 recorded conflicts.
+
+## 2026-10-05 — Generic Rust provenance verifier admitted (A9.29 lane A, ES-1, SC-WP-12, RM-OQ-09; no physics, no number changed)
+
+- Contract `docs/rust_migration/contracts/C-PROVENANCE-VERIFIER/parity_prereg_v1.json` (sha256 `95f06eb3…`) was committed
+  alone in `805d044` before any comparison. It covers the check semantics of `scripts/ci_checks.py` `verify_sha_map`,
+  `check_prereg_lock`, `check_audit_manifest`, `check_hallthruster_pin`, `check_h2_6_live_sources` and the H2-6 builder's
+  `verify_sources()`.
+- `crates/abep-provenance`: new module `verifier` and binary `abep-provenance-verify`. The H2-6 semantics are data
+  (`docs/ci/provenance_specs/h2_6_live_sources_v1.json`, embedded, sha256-pinned). Consumed values and evidence pins are read
+  from the immutable H2-6 record, bound by sha256. No H2-6 architecture content is ported; the builder stays class G. New
+  workspace dependency `toml =0.8.23` (TOML 1.0.0, the spec level of tomllib).
+- Single scoring run (seed 887790081732834691): 193 trees (the current tree, 24 edge trees, 7 corruption classes × 24),
+  772 check decisions. Every decision and failure identity is equal: **PARITY_PASS, ADMITTED** (`parity_report_v1.json`
+  / `.md`). `cargo test --workspace --locked`: 32 passed, 0 ignored.
+- The Python checks stay in active CI. Retiring `h2_6_live_sources` (and the other three) is requested as a separate later
+  step after CI is re-pointed. `scripts/ci_checks.py` unaffected (11/11).
