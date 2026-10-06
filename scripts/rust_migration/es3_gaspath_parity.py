@@ -5,10 +5,12 @@ Implements the vector generators, reference calls, tolerance classes and decisio
 
 * docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_FILTER_STAGE_PY/parity_prereg_v{1,2}.json  (contract key 'filter')
 * docs/rust_migration/contracts/C-ABEP_SIM_COMPRESSOR_PY/parity_prereg_v{1,2}.json           (contract key 'compressor')
-* docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/parity_prereg_v1.json      (contract key 'plenum')
+* docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/parity_prereg_v{1,2}.json  (contract key 'plenum')
 
 The active version of each key is CONTRACT_VERSION; a superseded version keeps its report (immutable). Version 2 of
-the filter and compressor contracts repeats version 1 with fresh seeds (see their 'supersedes' records).
+the filter and compressor contracts repeats version 1 with fresh seeds (see their 'supersedes' records). Version 2 of
+the plenum contract is version 1 minus the entries listed in its scope_reduction_v2.excluded_harness_entries
+(plenum.transient_run P42, plenum.transient_case P43): their vectors are generated and dropped before any call.
 
 The Python reference is called read-only; the Rust side is the `abep-gaspath-parity` binary of crates/abep-gaspath.
 
@@ -106,7 +108,7 @@ def sha_file(p: str) -> str:
         return hashlib.sha256(f.read()).hexdigest()
 
 
-CONTRACT_VERSION = {"filter": 2, "compressor": 2, "plenum": 1}
+CONTRACT_VERSION = {"filter": 2, "compressor": 2, "plenum": 2}
 
 
 def version_of(key: str, version=None) -> int:
@@ -120,6 +122,11 @@ def ref_dir_name(n: int) -> str:
 def load_contract(key: str, version=None) -> tuple[dict, str, str]:
     p = os.path.join(CDIR, CONTRACT_DIRS[key], f"parity_prereg_v{version_of(key, version)}.json")
     return json.load(open(p)), sha_file(p), p
+
+
+def excluded_entries(contract: dict, key: str) -> set:
+    """Entries a scope-reduced contract version removes (scope_reduction_v<n>.excluded_harness_entries)."""
+    return set((contract.get(f"scope_reduction_v{version_of(key)}") or {}).get("excluded_harness_entries", ()))
 
 
 def jnum(x):
@@ -2893,10 +2900,47 @@ LEDGER["plenum"] = [
                 "robust_over_scenarios (SC-WP-09), verify_state_set_decision_records, PROPELLANT_POLICY / AIR_PATH / "
                 "XE_PATH (SC-WP-12), assessment-layer comparison helpers",
      "authoritative_implementation": "rust: abep_gaspath::upstream"}]
+# v2 (scope reduction): the group minus the transient entries P42 / P43, a partial admission of the coupled group
+LEDGER_V = {("plenum", 2): [
+    {"component": "C-ABEP_SIM_DESIGN_PLENUM_FEED_PY", "requested_status": "PARTIAL_ADMISSION (ADMITTED for the scope "
+     "below; the row stays PYTHON_REFERENCE)",
+     "scope": "status vocabulary (status_from_reasons, reasons_from_bits, REASON_BITS and the module constants), "
+              "orbital_period_s, cbar, kT_over_m, IntakeState, f1_candidate_id, FilterCase and the filter-case "
+              "factories (filter_case_from_stage, filter_none / parametric / placeholder, filter_cases), "
+              "CompressorPlant, Plenum, Chain, solve_pressures, area_for_pressure, bisection_failed, lambda_upper_m, "
+              "steady_operating_point, evaluate, intake_side, cascade_arrays, steady_sweep, settling_time, "
+              "segment_metrics, _domain_reasons, ripple_transfer, inlet_node_tau_per_m3, event_sequence, "
+              "orbit_quasi_static, orbit_simulated (incl. the TransientRun / Controller it constructs, Rust Radau "
+              "IIA, DIV-P-01), strict_blockers, pareto_ids, intake_controller_state, scheduled_operation, "
+              "compare_control_modes",
+     "excluded_stays_python_reference": "TransientRun.run as a direct entry (P42 transient_run) and transient_case "
+                                        "(P43): v1 CONTRACT_DEFECT, transient re-specification is a pending owner "
+                                        "decision; they stay PYTHON_REFERENCE until an owner-ruled transient contract "
+                                        "exists",
+     "not_ported": "parameter_registry / REFERENCES / QUASI_STEADY_NOTE (documentation records); load_f1 / "
+                   "f1_state_infeasibility / load_f1_records (F1 readers: lane B2 intake response layer)",
+     "authoritative_implementation": "rust: abep_gaspath::{plenum_feed, transient} for the scope above"},
+    {"component": "C-ABEP_SIM_RESERVOIR_PY", "requested_status": "ADMITTED (whole registered module; no reservoir entry "
+     "is excluded by the v2 scope reduction; part of the coupled group's partial admission)",
+     "scope": "Reservoir (conductance, steady_state), size_orifice_for_pressure (report form), startup_transient",
+     "authoritative_implementation": "rust: abep_gaspath::reservoir"},
+    {"component": "C-ABEP_SIM_DESIGN_UPSTREAM_A9_13_PY", "requested_status": "PARTIAL_ADMISSION (A9.13 setpoint / "
+     "domain / flow-gap / robust-set rules admitted; the row stays PYTHON_REFERENCE)",
+     "scope": "every upstream_a9_13 entry of the contract (P10-P25): pressure_domain_status, classify_pressure_target, "
+              "combine_value_status, constraint_status, ScheduleInput, SetpointSchedule, FixedSetpoint, "
+              "controller_view, H1Tolerance, governing_band, characterization_coverage, refuse_fixed_mass_flow_gate, "
+              "flight_feed_requirement, flow_gap_record, refuse_feed_requirement_lowering, state_coverage, "
+              "RobustParetoSet, refuse_candidate_evidence, verify_decision_records, cite, dense_state_only_operation "
+              "and the constants",
+     "pending": "statewise_envelope / _quantify / reference_drag_fn (SC-WP-04), require_all_admitted_scenarios / "
+                "robust_over_scenarios (SC-WP-09), verify_state_set_decision_records, PROPELLANT_POLICY / AIR_PATH / "
+                "XE_PATH (SC-WP-12), assessment-layer comparison helpers",
+     "authoritative_implementation": "rust: abep_gaspath::upstream"}]}
 LEDGER_FAIL["plenum"] = [{"component": c, "requested_status": "PARITY_FAILED (stays PYTHON_REFERENCE; a code fix needs "
                           "a new contract version with a fresh seed)"}
                          for c in ("C-ABEP_SIM_DESIGN_PLENUM_FEED_PY", "C-ABEP_SIM_RESERVOIR_PY",
                                    "C-ABEP_SIM_DESIGN_UPSTREAM_A9_13_PY")]
+NOTES_V = {}
 NOTES = {"plenum": [
     "entry indices: the contract registers vector counts per P-number; the function assigned to each index is fixed "
     "in the harness docstring (written before the scoring run); P40 (synthetic-segment metrics) is not named in any "
@@ -3031,6 +3075,8 @@ def run_campaign(key: str, mode: str, capture: bool = False, only=None, replay: 
     build_rust()
     gen, pyf, rule, checks = SPEC[key]
     vectors = gen(master)
+    excl = excluded_entries(contract, key)
+    vectors = [v for v in vectors if v["entry"] not in excl]
     replay_checks = {}
     if cap0 is not None:
         replay_checks["vectors_equal_captured"] = json.loads(json.dumps(vectors)) == cap0["inputs"]
@@ -3187,6 +3233,7 @@ def perf(key, vectors):
     return res
 
 
+NOTES_V[("plenum", 2)] = [x for x in NOTES["plenum"] if not x.startswith("pre-scoring disclosure")]
 VERSION_NOTES = {
     ("filter", 2): ["v2 re-binds the build provenance after the shared abep-gaspath source change c3a41fb (compressor "
                     "RUST_DEFECT fix, CLI panic isolation; filter.rs unchanged); v1 (PARITY_PASS) stays; generators, "
@@ -3195,6 +3242,13 @@ VERSION_NOTES = {
                         "rotor_strength::basis_problems on a NaN allowable temperature; fix c3a41fb); generators, "
                         "tolerances and decision rules are those of v1, with fresh seeds. The CLI now records a panic "
                         "as the request's outcome (error_class RUST_PANIC, never equal to a Python class)"],
+    ("plenum", 2): ["v2 is v1 minus the transient entries plenum.transient_run (P42) and plenum.transient_case (P43) "
+                    "(scope_reduction_v2); v1 (PARITY_FAIL, all 247 failures in P42 / P43, classified CONTRACT_DEFECT) "
+                    "stays. Every other observable, tolerance, generator, n and decision rule is v1's, with fresh "
+                    "seeds. The re-specification of the transient observables is a pending owner decision; "
+                    "transient_run / transient_case stay PYTHON_REFERENCE until an owner-ruled transient contract "
+                    "exists. The harness generates the P42 / P43 vectors from their own streams and drops them before "
+                    "any call; CONS-P-03 is evaluated on P45 only; PERF-P-02 (transient_case) is not measured"],
 }
 HARNESS_NOTE = ("harness: the contract says the harness is committed 'after this contract and before the scoring run'. "
                 "It was developed with development-seed comparisons (never scored, no report) and committed before "
@@ -3271,8 +3325,8 @@ def write_report(key, res, perf_rows, out_dir=None):
         "reference_outputs": {"path": os.path.relpath(rdir, ROOT), "manifest_sha256": sha_file(
             os.path.join(rdir, "MANIFEST.json"))},
         "supersedes": contract.get("supersedes"),
-        "ledger_update_requested": LEDGER[key] if passed else LEDGER_FAIL[key],
-        "notes": [HARNESS_NOTE] + NOTES[key] + VERSION_NOTES.get((key, n), []),
+        "ledger_update_requested": LEDGER_V.get((key, n), LEDGER[key]) if passed else LEDGER_FAIL[key],
+        "notes": [HARNESS_NOTE] + NOTES_V.get((key, n), NOTES[key]) + VERSION_NOTES.get((key, n), []),
         "what_this_is_not": contract["what_this_is_not"],
     }
     if res.get("replay"):

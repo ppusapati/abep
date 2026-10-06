@@ -4768,3 +4768,31 @@ partial admission and the row stays PYTHON_REFERENCE. A partial admission change
   - pytest: 4232 passed, 5 skipped, 1 xfailed.
 - **Ledger request** (in the report; the ledger was not edited): NP-ICP-NEUTRALIZER stays RUST_IMPL with evidence v2.
   First, C-ABEP_SIM_RATE_TABLES_PY should apply its own ADMITTED request.
+
+## 2026-10-06 — Plenum / feed parity v2 (SC-WP-02): scope reduction v1 minus P42 / P43; PARITY_FAIL in P45 (one leaf)
+
+- **Contract** `C-ABEP_SIM_DESIGN_PLENUM_FEED_PY` v2 (`8ee5a18c…`, committed alone in `92aec72`): v1 minus the two
+  transient entries `transient_run` (P42) and `transient_case` (P43), 34 vectors including E-P-05. It is a scope
+  reduction only. Every other observable, tolerance, generator, invariant, conservation check and decision rule is v1's
+  verbatim, and nothing is relaxed. Fresh seeds: scoring 731905313, development 731905413. Reason: the v1 report (all 247
+  failures in P42 / P43, CONTRACT_DEFECT). The re-specification of the transient observables is a pending owner
+  decision, and v2 does not make it. `transient_run` / `transient_case` stay PYTHON_REFERENCE until an owner-ruled
+  transient contract exists.
+- **Harness** (`d55e7e0`): a contract-version switch only. The entries in `scope_reduction_v2.excluded_harness_entries`
+  are dropped before any call. The report carries a v2 ledger request (partial admission, transients excluded). No Rust
+  source changed.
+- **Scored once: PARITY_FAIL / NOT_ADMITTED** (`092c8a8`): 3781 vectors, 1 per-test failure.
+  - The failure is P45-0 `orbit_simulated` `P_dev_max_frac`: Rust 0.2242461 vs Python 0.2236362 (rel 2.7e-3, registered
+    1e-3).
+  - Everything else passes: steady, sweep / INV-P-02, quasi-static orbit, reservoir, A9.13 rules, closed forms,
+    determinism and CONS-P-01..04.
+- **Post-scoring classification** (Python reference only, no re-score): CONTRACT_DEFECT, the same family as v1 (iv).
+  - Re-integrating P45-0 with the reference model at Radau 1e-10 / BDF 1e-11 converges to 0.2243043.
+  - The LSODA rtol-1e-5 reference is therefore 3.0e-3 off, and Rust is 2.6e-4 off.
+  - P_dev = |p / r0 - 1| amplifies the relative p error about 5.5x, so the registered 1e-3 sits below the reference's
+    own error.
+  - The same vector shows that the registered abs_tol 1e-6 makes the kg/s summary leaves (`mdot_min/max_kgps`, about
+    1e-10 to 1e-7) effectively unscored. LSODA is 1.7–2.1 % off there; Rust is 8e-5 / 5.4e-3 off.
+- **Open (owner / coordinator):** a transient-tolerance ruling now covers P45 as well as P42 / P43. It must be made
+  before any v3. Changing a tolerance after seeing the failure is not done here (PROGRAMME rule 11). No ledger file was
+  edited; the report requests PARITY_FAILED for the three rows.
