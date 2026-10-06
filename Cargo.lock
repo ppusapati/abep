@@ -65,6 +65,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "abep-mission"
+version = "0.1.0"
+dependencies = [
+ "abep-atmos",
+ "abep-data",
+ "abep-provenance",
+ "abep-types",
+ "serde_json",
+]
+
+[[package]]
 name = "abep-provenance"
 version = "0.1.0"
 dependencies = [
