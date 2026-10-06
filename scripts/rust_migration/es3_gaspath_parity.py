@@ -2987,11 +2987,33 @@ def equal_values(a, b) -> bool:
     return exact_equal(a, b)
 
 
-def run_campaign(key: str, mode: str, capture: bool = False, only=None) -> dict:
+def captured(key):
+    """The reference outputs captured by the single scoring execution of the active version (gz JSON)."""
+    rdir = os.path.join(os.path.dirname(load_contract(key)[2]), ref_dir_name(version_of(key)))
+    rd = {}
+    for name in ("inputs", "python_outputs", "rust_outputs_at_scoring"):
+        with gzip.open(os.path.join(rdir, f"{name}.json.gz")) as f:
+            rd[name] = json.loads(f.read())
+    return rd
+
+
+def run_campaign(key: str, mode: str, capture: bool = False, only=None, replay: bool = False) -> dict:
+    """replay=True (mode 'rerender-score'): rebuild the report of the single scoring execution of the active version
+    from its captured outputs when the report writer failed (truncated report). The scoring vectors, the Python
+    reference outputs and the Rust outputs must equal the captured ones; nothing is re-scored with another seed."""
     contract, contract_sha, cpath = load_contract(key)
     cdir = os.path.dirname(cpath)
     report_path = os.path.join(cdir, f"parity_report_v{version_of(key)}.json")
-    if mode == "score" and os.path.exists(report_path):
+    cap0 = None
+    if replay:
+        try:
+            json.load(open(report_path))
+            sys.exit(f"REFUSED: {report_path} is a complete report; rerender-score only rebuilds a truncated one")
+        except (OSError, ValueError):
+            pass
+        cap0 = captured(key)
+        mode = "score"
+    elif mode == "score" and os.path.exists(report_path):
         sys.exit(f"REFUSED: {report_path} exists; the scoring comparison runs once per contract version")
     changed = [f["path"] for f in contract["reference_implementation"]["files"]
                if sha_file(os.path.join(ROOT, f["path"])) != f["sha256_at_registration"]]
@@ -3009,6 +3031,11 @@ def run_campaign(key: str, mode: str, capture: bool = False, only=None) -> dict:
     build_rust()
     gen, pyf, rule, checks = SPEC[key]
     vectors = gen(master)
+    replay_checks = {}
+    if cap0 is not None:
+        replay_checks["vectors_equal_captured"] = json.loads(json.dumps(vectors)) == cap0["inputs"]
+        if not replay_checks["vectors_equal_captured"]:
+            sys.exit("REFUSED: regenerated scoring vectors differ from the captured inputs")
     if only:
         vectors = [v for v in vectors if re.match(only, v["id"])]
     # INV-C-05 / DIV-P-03: the materials sent to Rust are materials.DB at python_commit
@@ -3020,6 +3047,11 @@ def run_campaign(key: str, mode: str, capture: bool = False, only=None) -> dict:
     t_py = time.perf_counter() - t_py0
     py_out2 = {v["id"]: pyf(v) for v in vectors}
     py_det = all(py_out[k][0] == py_out2[k][0] and equal_values(py_out[k][1], py_out2[k][1]) for k in py_out)
+    if cap0 is not None:
+        replay_checks["python_outputs_equal_captured"] = json.loads(json.dumps(
+            {k: list(v) for k, v in py_out.items()})) == cap0["python_outputs"]
+        if not replay_checks["python_outputs_equal_captured"]:
+            sys.exit("REFUSED: re-evaluated Python reference outputs differ from the captured ones")
     reqs = [{"id": v["id"], "entry": v["entry"], "args": v["args"]} for v in vectors]
     try:
         rust, raw1, timing, wall = run_rust(reqs)
@@ -3034,6 +3066,10 @@ def run_campaign(key: str, mode: str, capture: bool = False, only=None) -> dict:
                                      ["the Rust CLI exited before writing any result; no comparison was made"])
         sys.exit(f"{rep['parity_verdict']}: Rust CLI exited with status {exc.returncode} (report written)")
     rres = {r["id"]: r for r in rust["results"]}
+    if cap0 is not None:
+        replay_checks["rust_outputs_equal_captured"] = json.loads(raw1) == cap0["rust_outputs_at_scoring"]
+        if not replay_checks["rust_outputs_equal_captured"]:
+            sys.exit("REFUSED: the Rust CLI output on the captured inputs differs from the captured scoring output")
 
     t = Tally()
     errors = []
@@ -3084,6 +3120,7 @@ def run_campaign(key: str, mode: str, capture: bool = False, only=None) -> dict:
         "determinism": {"rust_two_processes_byte_identical": raw1 == raw2,
                         "rust_stdout_sha256": hashlib.sha256(raw1).hexdigest(), "python_two_evaluations_equal": py_det},
         "materials_equal_db": mats_ok,
+        "replay": replay_checks or None,
         "timing": {"python_reference_s": t_py, "rust_cli_wall_s": wall,
                    "rust_per_request_s_sum": sum(x["elapsed_s"] for x in timing)},
         "pass": {"per_test": per_test_ok, "determinism": det_ok, "invariants_and_conservation": extra_ok,
@@ -3175,18 +3212,26 @@ def write_report(key, res, perf_rows, out_dir=None):
     n = version_of(key)
     rdir = os.path.join(cdir, ref_dir_name(n))
     os.makedirs(rdir, exist_ok=True)
-    man = {"schema": "abep_rust_parity_reference_outputs_v1", "contract_id": contract["id"],
-           "captured_at_python_commit": contract["reference_implementation"]["python_commit"],
-           "captured_at_head": git("rev-parse", "HEAD"), "files": {}}
-    man["files"]["inputs.json.gz"] = write_gz_json(os.path.join(rdir, "inputs.json.gz"), cap["vectors"])
-    man["files"]["python_outputs.json.gz"] = write_gz_json(os.path.join(rdir, "python_outputs.json.gz"), cap["python"])
-    man["files"]["rust_outputs_at_scoring.json.gz"] = write_gz_json(os.path.join(rdir, "rust_outputs_at_scoring.json.gz"),
-                                                                    json.loads(cap["rust_raw"]))
-    man["format"] = ("deterministic gzip (mtime 0) of compact JSON; python_outputs: id -> [outcome, value | exception "
-                     "class, message]; non-finite floats as the strings 'NaN', '+inf', '-inf'")
-    with open(os.path.join(rdir, "MANIFEST.json"), "w") as f:
-        json.dump(man, f, indent=1)
-        f.write("\n")
+    if res.get("replay"):
+        # the captured outputs of the scoring execution stay as written by it; they must match their manifest
+        man = json.load(open(os.path.join(rdir, "MANIFEST.json")))
+        for fn, h in man["files"].items():
+            if sha_file(os.path.join(rdir, fn)) != h:
+                sys.exit(f"REFUSED: captured {fn} does not match its MANIFEST sha256")
+    else:
+        man = {"schema": "abep_rust_parity_reference_outputs_v1", "contract_id": contract["id"],
+               "captured_at_python_commit": contract["reference_implementation"]["python_commit"],
+               "captured_at_head": git("rev-parse", "HEAD"), "files": {}}
+        man["files"]["inputs.json.gz"] = write_gz_json(os.path.join(rdir, "inputs.json.gz"), cap["vectors"])
+        man["files"]["python_outputs.json.gz"] = write_gz_json(os.path.join(rdir, "python_outputs.json.gz"),
+                                                               cap["python"])
+        man["files"]["rust_outputs_at_scoring.json.gz"] = write_gz_json(
+            os.path.join(rdir, "rust_outputs_at_scoring.json.gz"), json.loads(cap["rust_raw"]))
+        man["format"] = ("deterministic gzip (mtime 0) of compact JSON; python_outputs: id -> [outcome, value | "
+                         "exception class, message]; non-finite floats as the strings 'NaN', '+inf', '-inf'")
+        with open(os.path.join(rdir, "MANIFEST.json"), "w") as f:
+            json.dump(man, f, indent=1)
+            f.write("\n")
     passed = res["pass"]["all"]
     now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     report = {
@@ -3230,6 +3275,15 @@ def write_report(key, res, perf_rows, out_dir=None):
         "notes": [HARNESS_NOTE] + NOTES[key] + VERSION_NOTES.get((key, n), []),
         "what_this_is_not": contract["what_this_is_not"],
     }
+    if res.get("replay"):
+        report["campaign_history"][0].update({
+            "report_regenerated_from_captured_outputs": True,
+            "scoring_execution_head": man.get("captured_at_head"),
+            "regeneration_checks": res["replay"],
+            "why": "the report writer of the scoring execution stopped on a non-finite max_ulp (json allow_nan=False; "
+                   "harness defect, fixed by writing non-finite floats as strings); the comparison was rebuilt from "
+                   "the captured outputs of that single execution"})
+    report = sanitize(report)
     with open(os.path.join(cdir, f"parity_report_v{n}.json"), "w") as f:
         json.dump(report, f, indent=1, allow_nan=False)
         f.write("\n")
@@ -3318,6 +3372,21 @@ def write_failed_execution(key, n, master, n_vectors, commit, diagnosis, notes):
     return report
 
 
+def sanitize(x):
+    """Non-finite floats of a report as the registered strings (JSON has no inf / NaN)."""
+    if isinstance(x, dict):
+        return {k: sanitize(v) for k, v in x.items()}
+    if isinstance(x, list):
+        return [sanitize(v) for v in x]
+    if isinstance(x, float) and not math.isfinite(x):
+        return jnum(x)
+    return x
+
+
+def fmt3(x):
+    return f"{x:.3g}" if isinstance(x, (int, float)) else str(x)
+
+
 def render_md(r):
     L = [f"# Parity report v1 - {r['contract']['id']}", "",
          f"Verdict: **{r['parity_verdict']}** ({r['verdict']}). Generated from the JSON report next to this file.", "",
@@ -3342,8 +3411,8 @@ def render_md(r):
     for o in r["per_test"]["observables"]:
         if o["tolerance_class"] != "EXACT_VALUE" and (o["n_bit_identical"] < o["n"] or o["n_fail"]):
             L.append(f"| {o['entry']} | {o['observable'].replace('|', '/')[:90]} | {o['tolerance_class']} | {o['n']} | "
-                     f"{o['n_fail']} | {o['n_bit_identical']} | {o['max_abs_diff']:.3g} | {o['max_rel_diff']:.3g} | "
-                     f"{o['max_ulp']:.3g} |")
+                     f"{o['n_fail']} | {o['n_bit_identical']} | {fmt3(o['max_abs_diff'])} | "
+                     f"{fmt3(o['max_rel_diff'])} | {fmt3(o['max_ulp'])} |")
     nfl = sum(o["n"] for o in r["per_test"]["observables"] if o["tolerance_class"] != "EXACT_VALUE")
     nbi = sum(o["n_bit_identical"] for o in r["per_test"]["observables"] if o["tolerance_class"] != "EXACT_VALUE")
     nex = sum(o["n"] for o in r["per_test"]["observables"] if o["tolerance_class"] == "EXACT_VALUE")
@@ -3351,8 +3420,8 @@ def render_md(r):
     if r["per_test"]["reported_not_scored"]:
         L += ["Reported, not scored:", ""]
         for u in r["per_test"]["reported_not_scored"]:
-            L.append(f"* {u['entry']} {u['observable']}: n {u['n']}, max abs diff {u['max_abs_diff']:.3g}, max rel "
-                     f"diff {u['max_rel_diff']:.3g}")
+            L.append(f"* {u['entry']} {u['observable']}: n {u['n']}, max abs diff {fmt3(u['max_abs_diff'])}, max rel "
+                     f"diff {fmt3(u['max_rel_diff'])}")
         L.append("")
     L += ["## Domain / error parity", ""]
     bad = [x for x in r["domain_error"]["vectors"] if not x["ok"]]
@@ -3400,6 +3469,13 @@ def main():
         rep = write_failed_execution(key, n, contract["campaign_seeds"]["scoring_master_seed"], d.pop("n_vectors"),
                                      commit, d.pop("diagnosis"), d.pop("notes"))
         print(rep["parity_verdict"], rep["contract"]["id"], "(failed execution recorded)")
+        return
+    if len(sys.argv) == 3 and sys.argv[1] == "rerender-score" and sys.argv[2] in SPEC:
+        key = sys.argv[2]
+        res = run_campaign(key, "score", replay=True)
+        rep = write_report(key, res, perf(key, res["_capture"]["vectors"]))
+        print(rep["parity_verdict"], rep["contract"]["id"], "failures:", rep["per_test"]["n_failures"],
+              "(report rebuilt from the captured outputs)")
         return
     if len(sys.argv) < 3 or sys.argv[1] not in ("dev", "dev-report", "score") or sys.argv[2] not in SPEC:
         sys.exit(__doc__)
