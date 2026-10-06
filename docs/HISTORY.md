@@ -4569,3 +4569,35 @@ row stays PYTHON_REFERENCE (kind python for the remainder).
   PARAMETRIC_SENSITIVITY_ONLY T - D (F-D-01). It also carries a stale 'max over the five orbit states' basis text
   (F-D-02). `mission_env.spacecraft_drag` is not contracted: its only callers are class H and its defaults are unsourced
   (SRD-01).
+
+## 2026-10-06 — SC-WP-07 mass lane: mass accounting in Rust (K-MASS-RULES, mass_power_a9_v5 byte for byte, wet mass, Xe kernels admitted; no record, Python or frozen data changed)
+
+- **Contracts**, each committed alone before any comparison and scored once (branch `lane-wp07-mass` from `1e2f66d`,
+  integration `def19d6` merged before implementation):
+  - `K-MASS-RULES` v1 (`0e962c03…`): **ADMITTED**. 8749 calls on the v3 / v4 / v5 record lines, the registered tests,
+    edge cases and 8400 randomized draws; every float bitwise identical. DIV-K01 / -02: the Rust roll-up refuses a
+    non-flight configuration and any AL-C1 line (C1 GROUND_REFERENCE_ONLY never enters a flight mass).
+  - `C-DOCS_BUDGETS_MASS_POWER_A9_V5` v1 (`3ca4edef…`): **ADMITTED**. The Rust build reproduces the committed frozen
+    record byte for byte (JSON `3ff23429…`, Markdown `50b4867e…`; Rust == Python == committed) from its six pinned
+    inputs; 1729 calls incl. pin / A9.26-record refusals on case trees and `architecture_optimizer.wet_mass`
+    (function subset). Roll-up: non-harness 33.1196 + harness 1.743136842 = nominal 34.86273684 kg, + 10 %
+    3.486273684 = dry **38.34901052 kg**; HARD_40_WET wet **40.34901052 / 43.34901052 / 48.34901052 kg** at 2 / 5 / 10
+    kg loaded Xe, each DOES_NOT_CLOSE; MASS INCOMPLETE_EVIDENCE / NOT_YET_CLOSED. VS-01: AL-07 6.0 kg keeps its
+    committed labels and the A9.28 status PROVISIONAL_LEGACY_DERIVED_ANALOG_INPUT / AFI-02-RA1_OPEN. DIV-V03: the
+    production wet-mass read verifies the record sha256.
+  - `C-DOCS_BUDGETS_XE_ACCOUNTING_A9_V3` v1 (`c3685cb3…`): **ADMITTED for the X1-X6 subset** (LOADED 2 / 5 / 10 kg
+    split, ignition / reserve / residual / ground-supply booking, ledger evaluation). 3590 calls; the split and every
+    committed evaluation reproduce.
+- **`crates/abep-subsystems::mass`** (`rules`, `v5`, `wet_mass`, `xe`, `py` / `pyfmt`, `eval`; CLI `abep-mass`): fail
+  closed, never PASS. The mass gates are NOT_EVALUATED (no CBE / measured line) and INCOMPLETE_EVIDENCE (mass
+  compliance, DOES_NOT_CLOSE visible; AL-07 status). The mission Xe load is an explicit typed input (NOT_ADMITTED).
+  flate2 added as a dev-dependency only (replay of the captured references).
+- **Blocked, reported (not improvised):** the Xe v3 record regeneration and `design_cases` emit verbatim C1 provenance /
+  labelled-history strings that the NP-THERMAL crate-wide principle-6 scan of `crates/abep-subsystems` refuses
+  (`tests/prereg_binding.rs` has no provenance allow-list). An integrator / owner decision is needed, then a v2
+  contract.
+- **Follow-ups:** `src/lib.rs` / `Cargo.toml` of abep-subsystems changed, so the NP-THERMAL verification report's
+  recorded sha256 of those files needs re-recording. The v5 PINS include the v3 / v4 builder `.py` files, which must
+  stay as archived evidence at cutover (or a successor pin set).
+- **Results.** cargo test --workspace --locked: 322 passed, 0 failed, 2 ignored (PT-01 / PT-02). fmt and clippy are
+  clean. `ci_checks`: 12/12. Full pytest: 4232 passed, 5 skipped, 1 xfailed.
