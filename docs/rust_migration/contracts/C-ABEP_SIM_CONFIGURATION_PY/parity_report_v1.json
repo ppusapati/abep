@@ -1,0 +1,457 @@
+{
+ "schema": {
+  "result": "EXACT_BYTES on every generated config file (B-00 equals config/** and MANIFEST.json); loader values EXACT_VALUE including key order and int / float types"
+ },
+ "id": "PARITY-REPORT-C-ABEP_SIM_CONFIGURATION_PY-V1",
+ "lane": "A2 (A9.29 lane A, ES-1; SC-WP-12)",
+ "contract": {
+  "path": "docs/rust_migration/contracts/C-ABEP_SIM_CONFIGURATION_PY/parity_prereg_v1.json",
+  "sha256": "69cf94488ada482c50eb31e7f205a89be073e585eacd7859be76c28da594b236",
+  "id": "PARITY-C-ABEP_SIM_CONFIGURATION_PY-V1",
+  "committed_in": "d7b51d812bd99328193e641b2e1ae8f9c0785075"
+ },
+ "verdict": "ADMITTED",
+ "parity": "PARITY_PASS",
+ "verdict_rule": "ADMITTED (= PARITY_PASS) iff every loader and build observable of every case, every invariant and the W13 admission criterion pass and every reference file matches sha256_at_registration; otherwise NOT_ADMITTED (PARITY_FAIL); INPUT_MISMATCH if a governing hash differs on the reference tree",
+ "python_commit": "96db5524ec917e99e507def24f3ee0b263c78ebc",
+ "reference_sha256": {
+  "abep_sim/configuration.py": "45900b79e3639ab382ec740bbd6b453d03e58ab7bd6368f93abdc17cabdacacc",
+  "scripts/config/build_config.py": "c32f1a0c360027a1d093e780b7d952e59280864b8591dbb2766674b89192cbbf"
+ },
+ "reference_unchanged_at_scoring": true,
+ "pinned_inputs_verified": {
+  "count": 112,
+  "changed": []
+ },
+ "governing_hashes": {
+  "reported_by_both_on_L-D00": {
+   "architecture_sha256": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3",
+   "model_set_sha256": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1",
+   "design_state_set_sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+   "config_manifest_sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+  },
+  "match_contract": true
+ },
+ "rust_commit": "b249a580fb579d81f0c09f7e06d808a0499be72d",
+ "rust_crate_commit": "e26c18fb49a0b14c8fb9796e04a74dc8ee3f6e48",
+ "build_provenance": {
+  "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+  "cargo": "cargo 1.94.1 (29ea6fb6a 2026-03-24)",
+  "profile": "release (cargo build --release --locked -p abep-config)",
+  "cargo_lock_sha256": "d67b12076a5126a9c0b1dca54d4215b9678acfc0113d4f69afe3e27c6ff135e0",
+  "source_sha256": {
+   "Cargo.toml": "615df1bc0740aef98f88c9edb4f7167e7aff0c80af0442a29f36f0793ca7bd64",
+   "Cargo.lock": "d67b12076a5126a9c0b1dca54d4215b9678acfc0113d4f69afe3e27c6ff135e0",
+   "rust-toolchain.toml": "7e44dbedb86596d94974ef8cb279f0e81496ea92b519c14940259661496f8499",
+   "crates/abep-types/Cargo.toml": "a210ee487a186c6edc28a87868e1b2c84094e890586ad159b8d77e16e7e7511f",
+   "crates/abep-types/src/lib.rs": "e4554ac27c789e0a61f4366481cfff80ccf63d6902e05201d3dddd023172b474",
+   "crates/abep-types/src/pyjson.rs": "5ce15fdb06043a01ce8bd441a8e8f1906e74a0c4dd9fea2b9e4505f182a8d88e",
+   "crates/abep-types/src/pyjson_unicode.rs": "c6f59e0936c35051ef1f7d45a6611d3a7269a8d972c900805463f5f0bf6b2a75",
+   "crates/abep-types/tests/data/pyjson_vectors_v1.json": "8d7f76445f758714dd436cb208b243883b38bd95afd8e0e94156ecebed9d12ef",
+   "crates/abep-types/tests/pyjson_vectors.rs": "111021b67c74a663ec4b86baa768de21e19681b8774062d5ac90860a65951c24",
+   "crates/abep-provenance/Cargo.toml": "1f4e014f9ca780bdd31be5a5c62d258f4b0a3f949fa7dedf6faa5a256471070c",
+   "crates/abep-provenance/src/lib.rs": "10c62a00d37441a1de34c7a1fe96483158294d4999d5c5ec3e2da7aac9a9c72a",
+   "crates/abep-provenance/tests/config_manifest.rs": "2674591e5610b528764ec8094b8b1b8e5a94d6999889fd48394e1aaceedd4a34",
+   "crates/abep-config/Cargo.toml": "4094b94939a17d77617f7798ff3d835fca501f03d8a607165177bd193924fb3d",
+   "crates/abep-config/src/architecture.rs": "54430fead6036aeff28dfefef62024efaa07627d5f96071ea6d0f7d644213dc1",
+   "crates/abep-config/src/assessment.rs": "7eba9d4ffa86803d9a576567f8a78f584e1c86e237e828997d5ae3a714faff96",
+   "crates/abep-config/src/builder.rs": "1e4727d274eac17b46b227d399231e85223ec8a84291eb6f3c40c27fae5738b1",
+   "crates/abep-config/src/builder_readme.rs": "f406e9547baf670c84e0f5c8d4a3486d72ff9c59985047c1416f0fd5bbb8d877",
+   "crates/abep-config/src/eval.rs": "af2e75e1ac9a15d8eeacf6433d2f95a7212270358af7fcd12a4e7b9c74921948",
+   "crates/abep-config/src/lib.rs": "bd9ad70b5f0db892a907372845e1b878c39b0b6dd63645c68466eb4fd9fd764d",
+   "crates/abep-config/src/loaders.rs": "ddc990f2c18babf317ebbf15b50bbe8c7604e7a1d77355a742281a8ca8b26a0d",
+   "crates/abep-config/src/main.rs": "e4c1dab19f81714032d7e482ed1f9bacbcc1b57aa34f6527ad4eeb7d27005493",
+   "crates/abep-config/src/py.rs": "cb080db5707729ba6304d552a533ee2cf2058045ab15593146df1fcbf5377c94",
+   "crates/abep-config/src/pysrc.rs": "bd08212f226fb467f59ff04f070887e84fd8abd65e6f3d228eda6670cac0a1f9",
+   "crates/abep-config/src/textmatch.rs": "fc06f54b478b4b20c8df47ff3fe6a921c9f0c78c31da42a85b1f26960d505e3b",
+   "crates/abep-config/tests/architecture.rs": "821d6e5ba8eac289ba8ad548278183b028e4b848e93a3eb323717a61b8e02e09",
+   "crates/abep-config/tests/build_check.rs": "d4559b125eae03381b20c44991d30c368b638e315aa401108da71317e9dee777",
+   "crates/abep-config/tests/common/mod.rs": "58836afb854bfe68b78a28b4cd0b7bb78ae13ae70f90c85b00fba3ba1b03a88f",
+   "crates/abep-config/tests/loaders.rs": "d58c44e12b86e583715d33a85f0a2f2de63ec1ac4562980c7100d761ecc9f79b"
+  }
+ },
+ "environment": {
+  "python": "3.11.15",
+  "numpy": "2.4.4",
+  "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+  "cargo": "cargo 1.94.1 (29ea6fb6a 2026-03-24)",
+  "platform": "Linux 6.18.44-fc-v70 x86_64",
+  "thread_env": {
+   "OMP_NUM_THREADS": null,
+   "OPENBLAS_NUM_THREADS": null
+  },
+  "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312"
+ },
+ "harness_sha256": {
+  "scripts/rust_migration/parity_common.py": "337b1c74847d21f92c17b5f59b34540d30b2aecefa2f20853e9bca1c4ee17e8c",
+  "scripts/rust_migration/parity_config_v1.py": "f9d6b121c4a162ab979dc1ffeb3ac725115d8c3048923e1b8b76a10505370e8a",
+  "scripts/rust_migration/parity_architecture_v1.py": "8505fa8042525ffa5f6102d565d106e39a9d53ae610d1bf622bdae533d939598"
+ },
+ "scoring_execution": {
+  "utc": "2026-10-05T13:32:47Z",
+  "git_head": "b249a580fb579d81f0c09f7e06d808a0499be72d",
+  "git_dirty": false,
+  "mode": "score",
+  "scoring_master_seed": 8251946031,
+  "wall_s": 64.0,
+  "seeded_cases_sha256": "b1c1adb110eb5d5ceaff032dcc47a012af059613b725a7da90478bd5bd777aea",
+  "rust_calls_sha256": {
+   "loaders": "6788add4b335f3baad4c56ac22ff05d1a3f70b1d44de94980771738be1a0fddd",
+   "build": "45903c6df7b8a3e3bd0dec8db21efe76ccb604411a8eeb19f84a4e33e5f63729"
+  },
+  "raw_campaign_result_sha256": "9b8c2ad9b1eef822315dcd90278b69808a112bb2b1727d72744fe68107e80f97",
+  "raw_campaign_result_note": "58 MB raw result (every Python and Rust value) kept outside the repository; reference_outputs/ holds the compact capture"
+ },
+ "per_test": {
+  "loaders": {
+   "cases": 306,
+   "entry_points_per_case": 29,
+   "calls": 8874,
+   "python_outcomes": {
+    "RETURNED": 7759,
+    "RAISED": 1115
+   },
+   "python_exception_classes": {
+    "AttributeError": 13,
+    "ConfigurationError": 712,
+    "JSONDecodeError": 329,
+    "KeyError": 22,
+    "StopIteration": 2,
+    "TypeError": 30,
+    "UnicodeDecodeError": 7
+   },
+   "scored_message_classes": [
+    "ConfigurationError",
+    "BuildError"
+   ],
+   "mismatches": 0,
+   "failures": []
+  },
+  "build": {
+   "cases": 23,
+   "rows": [
+    {
+     "case": "B-00",
+     "python_files": "RETURNED",
+     "python_check": {
+      "exit": 0,
+      "line": "OK: 12 config files current"
+     },
+     "parity": true
+    },
+    {
+     "case": "B-01",
+     "python_files": "RETURNED",
+     "python_check": {
+      "exit": 1,
+      "line": "STALE: ['architecture/hall_icp_neutralizer_v1.json']; unlisted files: []"
+     },
+     "parity": true
+    },
+    {
+     "case": "B-02",
+     "python_files": "RETURNED",
+     "python_check": {
+      "exit": 1,
+      "line": "STALE: []; unlisted files: ['extra/unlisted.json']"
+     },
+     "parity": true
+    },
+    {
+     "case": "B-03",
+     "python_files": "RETURNED",
+     "python_check": {
+      "exit": 1,
+      "line": "STALE: ['hardware/hardware_bounds_v1.json']; unlisted files: []"
+     },
+     "parity": true
+    },
+    {
+     "case": "B-04",
+     "python_files": "RAISED",
+     "python_check": {
+      "class": "BuildError"
+     },
+     "parity": true
+    },
+    {
+     "case": "B-05",
+     "python_files": "RAISED",
+     "python_check": {
+      "class": "BuildError"
+     },
+     "parity": true
+    },
+    {
+     "case": "B-06",
+     "python_files": "RAISED",
+     "python_check": {
+      "class": "BuildError"
+     },
+     "parity": true
+    },
+    {
+     "case": "B-07",
+     "python_files": "RAISED",
+     "python_check": {
+      "class": "BuildError"
+     },
+     "parity": true
+    },
+    {
+     "case": "B-08",
+     "python_files": "RAISED",
+     "python_check": {
+      "class": "BuildError"
+     },
+     "parity": true
+    },
+    {
+     "case": "B-09",
+     "python_files": "RAISED",
+     "python_check": {
+      "class": "BuildError"
+     },
+     "parity": true
+    },
+    {
+     "case": "B-10",
+     "python_files": "RAISED",
+     "python_check": {
+      "class": "BuildError"
+     },
+     "parity": true
+    },
+    {
+     "case": "B-11",
+     "python_files": "RETURNED",
+     "python_check": {
+      "exit": 1,
+      "line": "STALE: ['requirements/rfp_constraints_v1.json', 'constraints/engineering_constraints_v1.json', 'SOURCES_OF_TRUTH.json', 'MANIFEST.json']; unlisted files: []"
+     },
+     "parity": true
+    },
+    {
+     "case": "B-12",
+     "python_files": "RETURNED",
+     "python_check": {
+      "exit": 0,
+      "line": "OK: 12 config files current"
+     },
+     "parity": true
+    },
+    {
+     "case": "B-13",
+     "python_files": "RAISED",
+     "python_check": {
+      "class": "BuildError"
+     },
+     "parity": true
+    },
+    {
+     "case": "B-14",
+     "python_files": "RETURNED",
+     "python_check": {
+      "exit": 1,
+      "line": "STALE: ['model_set/physics_model_set_v1.json', 'SOURCES_OF_TRUTH.json', 'MANIFEST.json']; unlisted files: []"
+     },
+     "parity": true
+    },
+    {
+     "case": "B-15",
+     "python_files": "RETURNED",
+     "python_check": {
+      "exit": 1,
+      "line": "STALE: ['model_set/physics_model_set_v1.json', 'SOURCES_OF_TRUTH.json', 'MANIFEST.json']; unlisted files: []"
+     },
+     "parity": true
+    },
+    {
+     "case": "B-16",
+     "python_files": "RETURNED",
+     "python_check": {
+      "exit": 1,
+      "line": "STALE: ['model_set/physics_model_set_v1.json', 'SOURCES_OF_TRUTH.json', 'MANIFEST.json']; unlisted files: []"
+     },
+     "parity": true
+    },
+    {
+     "case": "B-17",
+     "python_files": "RAISED",
+     "python_check": {
+      "class": "BuildError"
+     },
+     "parity": true
+    },
+    {
+     "case": "B-18",
+     "python_files": "RAISED",
+     "python_check": {
+      "class": "BuildError"
+     },
+     "parity": true
+    },
+    {
+     "case": "B-19",
+     "python_files": "RAISED",
+     "python_check": {
+      "class": "BuildError"
+     },
+     "parity": true
+    },
+    {
+     "case": "B-20",
+     "python_files": "RETURNED",
+     "python_check": {
+      "exit": 1,
+      "line": "STALE: ['model_set/physics_model_set_v1.json', 'SOURCES_OF_TRUTH.json', 'MANIFEST.json']; unlisted files: []"
+     },
+     "parity": true
+    },
+    {
+     "case": "B-21",
+     "python_files": "RETURNED",
+     "python_check": {
+      "exit": 0,
+      "line": "OK: 12 config files current"
+     },
+     "parity": true
+    },
+    {
+     "case": "B-22",
+     "python_files": "RETURNED",
+     "python_check": {
+      "exit": 1,
+      "line": "STALE: ['architecture/hall_icp_neutralizer_v1.json', 'SOURCES_OF_TRUTH.json', 'MANIFEST.json']; unlisted files: []"
+     },
+     "parity": true
+    }
+   ],
+   "mismatches": 0,
+   "failures": []
+  },
+  "w13_admission_criterion": {
+   "pass": true,
+   "exit": 0,
+   "line": "OK: 12 config files current"
+  }
+ },
+ "aggregates": "NOT_APPLICABLE (no STATISTICAL entry point)",
+ "invariants": {
+  "INV-01": {
+   "pass": true,
+   "detail": "Rust eval twice byte-identical (loaders, build); Python results twice identical"
+  },
+  "INV-02": {
+   "pass": true,
+   "detail": "L-D58 load_operating_inputs and L-D57 physics_configuration RETURNED in both implementations"
+  },
+  "INV-03": {
+   "pass": true,
+   "detail": "Rust scenario pin == ast.literal_eval(configuration.OPERATING_SCENARIO_PIN)"
+  },
+  "INV-04": {
+   "pass": true,
+   "detail": "Rust builder constants (decision pins, scenario v1 pin, RVM pins, HW_ENTRIES, DATA_FILES, RESULT_SCHEMAS, file names, README) == Python builder constants"
+  },
+  "INV-05": {
+   "pass": true,
+   "detail": "no string value PASS / FAIL / PASSED / FAILED in the computed loader outputs on the reference tree (verdict-free loaders)"
+  }
+ },
+ "conservation": "NOT_APPLICABLE (contract conservation_checks.applicable = false)",
+ "domain_and_error": {
+  "registered_refusal_classes": "hash mismatch, unpinned file, missing file, schema violations, model-set drift (deterministic cases L-D01..L-D62, environment L-E03, seeded L-S000..L-S239, build B-01..B-22)",
+  "python_exception_classes_matched": {
+   "AttributeError": 13,
+   "ConfigurationError": 712,
+   "JSONDecodeError": 329,
+   "KeyError": 22,
+   "StopIteration": 2,
+   "TypeError": 30,
+   "UnicodeDecodeError": 7
+  },
+  "result": "every Python exception class reproduced by the Rust class name; every ConfigurationError / BuildError text identical"
+ },
+ "documented_divergence_observed": "none in the scored cases (DIV-01..DIV-05 lie outside the registered domain; no case exercised them)",
+ "performance": {
+  "PERF-CFG-01": {
+   "python_s": 0.5718783209999856,
+   "rust_s": 0.07283469700018941,
+   "speedup": 7.851729252041762
+  },
+  "PERF-CFG-02": {
+   "python_s": 0.0018940639999982523,
+   "rust_s": 0.0036647299998548988,
+   "speedup": 0.5168358924322517
+  },
+  "status": "reported, not a decision criterion; PERF-CFG-02 Rust timing includes process start of abep-config eval"
+ },
+ "captured_reference_outputs": {
+  "path": "docs/rust_migration/contracts/C-ABEP_SIM_CONFIGURATION_PY/reference_outputs",
+  "manifest_sha256": "a4bf868d4987cfeaa829d855eeaebf4e4da6c794830977a4c0bbd44c1c4867c7",
+  "files": {
+   "seeded_cases.json": "b1c1adb110eb5d5ceaff032dcc47a012af059613b725a7da90478bd5bd777aea",
+   "loader_results_by_case_sha256.json": "1223cd9153f30caa66852e39a6a27e27c5220a55368582ef3a7ebfce4f5bf92b",
+   "loader_results_L-D00.json": "6fa6c64bbdc114187ad3c13600f2a474e186ecbd6136cf6761b65cc2d8f8aa83",
+   "build_results.json": "80c423bf1f68820099a4bd93d42bb4ec2daa60b3f3ca053e3db6fcc236b6af23"
+  }
+ },
+ "campaign_history": [
+  {
+   "utc": "2026-10-05T13:32:47Z",
+   "git_head": "b249a580fb579d81f0c09f7e06d808a0499be72d",
+   "git_dirty": false,
+   "master_seed": 8251946031,
+   "contract_sha256": "69cf94488ada482c50eb31e7f205a89be073e585eacd7859be76c28da594b236",
+   "source_sha256_digest": "8871c8e53f468aa6c889e8161fdc4393acd7e5be224537d8034f9eb70606f1c6",
+   "verdict": "ADMITTED",
+   "wall_s": 64.0
+  }
+ ],
+ "development_runs": "development runs used development_master_seed 1100 only and are not reported as verdicts",
+ "ledger_update_requested": [
+  {
+   "component": "C-ABEP_SIM_CONFIGURATION_PY",
+   "status": "ADMITTED",
+   "parity": "PARITY_PASS",
+   "contract": "docs/rust_migration/contracts/C-ABEP_SIM_CONFIGURATION_PY/parity_prereg_v1.json",
+   "contract_sha256": "69cf94488ada482c50eb31e7f205a89be073e585eacd7859be76c28da594b236",
+   "report": "parity_report_v1.json",
+   "authoritative_implementation": "rust: crates/abep-config (abep_config::loaders, abep_config::assessment)",
+   "python": "stays at abep_sim/configuration.py as migration reference until its consumers are re-pointed; PYTHON_RETIRED_FROM_ACTIVE not requested; load_rfp_constraints_compat stays PYTHON_REFERENCE (out of scope)"
+  },
+  {
+   "component": "C-SCRIPTS_CONFIG_BUILD_CONFIG_PY",
+   "status": "ADMITTED",
+   "parity": "PARITY_PASS",
+   "contract": "docs/rust_migration/contracts/C-ABEP_SIM_CONFIGURATION_PY/parity_prereg_v1.json",
+   "contract_sha256": "69cf94488ada482c50eb31e7f205a89be073e585eacd7859be76c28da594b236",
+   "report": "parity_report_v1.json",
+   "authoritative_implementation": "rust: abep-config build [--check] (abep_config::builder)",
+   "python": "scripts/config/build_config.py stays as migration reference; W13 CI job may use `abep-config build --check`"
+  },
+  {
+   "component": "C-ABEP_SIM_OPERATING_INPUTS_PY",
+   "status": "unchanged (PYTHON_REFERENCE)",
+   "note": "own contract later (physics-seam consumer)"
+  },
+  {
+   "component": "C-ABEP_SIM_DESIGN_ENGINEERING_CONSTRAINTS_PY",
+   "status": "unchanged (PYTHON_REFERENCE)",
+   "note": "own contract later (abep-design)"
+  },
+  {
+   "component": "C-ABEP_SIM_CONSTANTS_PY",
+   "status": "unchanged (PYTHON_REFERENCE)",
+   "note": "own contract (ES-2, lane B)"
+  }
+ ],
+ "meaning_of_ADMITTED": "A9.24 item 1: Rust becomes authoritative for the configuration loaders and the config builder (within the registered domain); new production configuration identities come from Rust and carry implementation = rust, rust_commit and this contract id; the Python component may then be retired from active execution. It is NOT physics validation.",
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, threshold, requirement, decision record or configuration file",
+  "not a promotion of any provisional input (RM-R27)",
+  "not a gate PASS (RM-R31)"
+ ]
+}

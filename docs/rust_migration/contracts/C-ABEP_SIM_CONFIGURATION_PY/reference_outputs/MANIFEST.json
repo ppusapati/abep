@@ -1,0 +1,10 @@
+{
+ "captured_at_python_commit": "96db5524ec917e99e507def24f3ee0b263c78ebc",
+ "scoring_git_head": "b249a580fb579d81f0c09f7e06d808a0499be72d",
+ "files": {
+  "seeded_cases.json": "b1c1adb110eb5d5ceaff032dcc47a012af059613b725a7da90478bd5bd777aea",
+  "loader_results_by_case_sha256.json": "1223cd9153f30caa66852e39a6a27e27c5220a55368582ef3a7ebfce4f5bf92b",
+  "loader_results_L-D00.json": "6fa6c64bbdc114187ad3c13600f2a474e186ecbd6136cf6761b65cc2d8f8aa83",
+  "build_results.json": "80c423bf1f68820099a4bd93d42bb4ec2daa60b3f3ca053e3db6fcc236b6af23"
+ }
+}

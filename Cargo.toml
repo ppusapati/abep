@@ -27,6 +27,7 @@ abep-types = { path = "crates/abep-types" }
 abep-provenance = { path = "crates/abep-provenance" }
 abep-data = { path = "crates/abep-data" }
 abep-atmos = { path = "crates/abep-atmos" }
+abep-config = { path = "crates/abep-config" }
 
 [profile.release]
 opt-level = 3

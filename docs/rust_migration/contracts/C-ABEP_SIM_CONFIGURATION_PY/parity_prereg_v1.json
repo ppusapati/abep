@@ -1,0 +1,1336 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-ABEP_SIM_CONFIGURATION_PY-V1",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "component": {
+  "inventory_id": "C-ABEP_SIM_CONFIGURATION_PY",
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "migration_wave": "W1E (configuration.py) + W13 (build_config.py: abep config build --check)",
+  "scope": "coupled group: the configuration loaders of abep_sim/configuration.py and the builder of config/** (scripts/config/build_config.py, inventory C-SCRIPTS_CONFIG_BUILD_CONFIG_PY), which produces exactly the files the loaders verify; one contract because `abep config build --check` (EXACT_BYTES) and the loader refusals (EXACT_VALUE) share the same files, hashes and manifest",
+  "coupled_inventory_ids": [
+   "C-ABEP_SIM_CONFIGURATION_PY",
+   "C-SCRIPTS_CONFIG_BUILD_CONFIG_PY"
+  ],
+  "functions_or_entry_points": [
+   "abep_sim/configuration.py::config_root (ABEP_CONFIG_ROOT)",
+   "abep_sim/configuration.py::load_manifest",
+   "abep_sim/configuration.py::load_verified",
+   "abep_sim/configuration.py::load_architecture",
+   "abep_sim/configuration.py::load_requirements_snapshot (assessment layer; needed by assessment_configuration)",
+   "abep_sim/configuration.py::load_engineering_constraints_file",
+   "abep_sim/configuration.py::load_engineering_constraints",
+   "abep_sim/configuration.py::load_mission_scenario",
+   "abep_sim/configuration.py::load_operating_inputs",
+   "abep_sim/configuration.py::load_gate_thresholds",
+   "abep_sim/configuration.py::load_design_state_set_ref",
+   "abep_sim/configuration.py::load_hardware_bounds",
+   "abep_sim/configuration.py::load_model_set",
+   "abep_sim/configuration.py::model_set_drift",
+   "abep_sim/configuration.py::SimulationConfiguration (as_dict) via physics_configuration / assessment_configuration",
+   "scripts/config/build_config.py::build_all (build_architecture, build_requirements, rvm_requirements_basis_sha256, build_constraints, _frozen_scenario_bytes, build_gate_thresholds, build_design_state_ref, build_hardware, build_model_set, _version_labels, build_sources_of_truth, README, MANIFEST)",
+   "scripts/config/build_config.py::main --check"
+  ],
+  "out_of_scope": [
+   "abep_sim/configuration.py::load_rfp_constraints_compat (the abep_sim.constants.RFP compatibility record, assessment data; goes with C-ABEP_SIM_CONSTANTS_PY) - stays PYTHON_REFERENCE",
+   "scripts/config/build_config.py write mode (without --check): the Rust CLI writes the same bytes, but the scored observable is the in-memory build compared byte for byte (the Python write path is not run against the repository's config/)"
+  ],
+  "scope_decisions_inventory_rows": {
+   "C-ABEP_SIM_CONFIGURATION_PY": "IN THIS CONTRACT (loaders, statuses, refusals)",
+   "C-SCRIPTS_CONFIG_BUILD_CONFIG_PY": "IN THIS CONTRACT (coupled: build --check EXACT_BYTES)",
+   "C-ABEP_SIM_OPERATING_INPUTS_PY": "OWN CONTRACT LATER: operating_inputs.py is the physics seam (module constants + as_dict over load_operating_inputs, which this contract admits); its Rust home is the physics-seam consumer, not abep-config",
+   "C-ABEP_SIM_DESIGN_ENGINEERING_CONSTRAINTS_PY": "OWN CONTRACT LATER: the design-layer seam (snapshot over load_engineering_constraints, admitted here); its Rust home is abep-design",
+   "C-ABEP_SIM_CONSTANTS_PY": "OWN CONTRACT (ES-2, lane B: physical constants); RFPConstraints and load_rfp_constraints_compat go with it as assessment compatibility data"
+  },
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+  "classification_rows": {
+   "C-ABEP_SIM_CONFIGURATION_PY": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+   "C-SCRIPTS_CONFIG_BUILD_CONFIG_PY": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS"
+  },
+  "extract_kernel_id": "NOT_APPLICABLE",
+  "active_toolchain_requirement": "NOT_APPLICABLE",
+  "excluded_legacy_paths": [
+   "scripts/config/build_result_schemas.py (class H; its outputs schemas/results/*.json are read as committed inputs and only their sha256 / $id / $schema / x-abep.generated_by enter SOURCES_OF_TRUTH.json)"
+  ],
+  "owner_disposition_a9_28": "NOT_APPLICABLE",
+  "simulation_completion_wp": "SC-WP-12",
+  "owner_disposition_a9_29": "NOT_APPLICABLE"
+ },
+ "date": "2026-10-05",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of this component was executed. No crates/abep-config code exists at registration. The commit is recorded in the report, not here.",
+ "supersedes": {
+  "path": null,
+  "sha256": null,
+  "reason": null
+ },
+ "reference_implementation": {
+  "python_commit": "96db5524ec917e99e507def24f3ee0b263c78ebc",
+  "files": [
+   {
+    "path": "abep_sim/configuration.py",
+    "sha256_at_registration": "45900b79e3639ab382ec740bbd6b453d03e58ab7bd6368f93abdc17cabdacacc"
+   },
+   {
+    "path": "scripts/config/build_config.py",
+    "sha256_at_registration": "c32f1a0c360027a1d093e780b7d952e59280864b8591dbb2766674b89192cbbf"
+   }
+  ],
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration; a changed reference requires a new contract version",
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4 (not used by the component)",
+   "scipy": "1.17.1 (not used)",
+   "pandas": "3.0.2 (not used)",
+   "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+   "blas": "NOT_APPLICABLE (no linear algebra)",
+   "thread_env": {
+    "OMP_NUM_THREADS": "NOT_APPLICABLE",
+    "OPENBLAS_NUM_THREADS": "NOT_APPLICABLE"
+   },
+   "stdlib": "hashlib, json (C scanner), re, ast, tomllib, pathlib"
+  }
+ },
+ "rust_implementation": {
+  "crate": "abep-config",
+  "functions_or_entry_points": [
+   "abep_config::paths::ConfigPaths (repository root + config root; ABEP_CONFIG_ROOT)",
+   "abep_config::loaders::{load_manifest, load_verified, load_architecture, load_engineering_constraints_file, load_engineering_constraints, load_mission_scenario, load_operating_inputs, load_gate_thresholds, load_design_state_set_ref, load_hardware_bounds, load_model_set, model_set_drift, physics_configuration}",
+   "abep_config::assessment::{load_requirements_snapshot, assessment_configuration}",
+   "abep_config::build::{build_all, check}",
+   "`abep-config build --check` (bin of crates/abep-config)",
+   "`abep-config eval` (harness interface: evaluates registered calls, writes results as Python-shaped JSON)"
+  ],
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (rust-toolchain.toml)",
+  "provenance_sources": [
+   "Cargo.toml",
+   "Cargo.lock",
+   "rust-toolchain.toml",
+   "crates/abep-types/**",
+   "crates/abep-provenance/**",
+   "crates/abep-config/**"
+  ],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it",
+  "layering": "A9.22 / A9.23 separation mirrored exactly: the physics seam (load_operating_inputs) reads config/MANIFEST.json and config/mission/mission_scenario_v2.json only; physics_configuration never opens config/requirements/; the requirements snapshot and assessment_configuration live in abep_config::assessment; gate thresholds (HC-05..HC-12) are returned as assessment data only and no loader evaluates a threshold",
+  "manifest_verification": "loaders reproduce the Python verification semantics exactly (schema + files dict; listed; present; sha256); abep_provenance::sha256_hex / read_bytes are the hash primitives; abep_provenance::ConfigManifest (stricter: also byte counts and id) backs the separate whole-tree command `abep-config verify`, which is not a Python entry point and not scored here"
+ },
+ "governing_hashes": {
+  "config_manifest": {
+   "path": "config/MANIFEST.json",
+   "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+  },
+  "architecture_hash": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3",
+  "model_set_hash": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1",
+  "design_state_set_hash": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+  "rule": "both implementations must report these exact values (SimulationConfiguration.architecture_sha256, model_set_sha256, design_state_set_sha256, config_manifest_sha256) on the reference tree; a mismatch voids the run (status INPUT_MISMATCH, not a verdict)"
+ },
+ "pinned_inputs_sha256": {
+  "config/MANIFEST.json": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883",
+  "config/README.md": "14509afc0f6629561d507d65178c014c800938dd496ae0f72a8c1ecdc3b013c1",
+  "config/SOURCES_OF_TRUTH.json": "c4ce2251a7f2d92e708a1c80f7c712fde6f4119725b8d972259ae89c5a942279",
+  "config/architecture/hall_icp_neutralizer_v1.json": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3",
+  "config/assessment/gate_thresholds_v1.json": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b",
+  "config/constraints/engineering_constraints_v1.json": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e",
+  "config/environment/design_state_set_ref_v1.json": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484",
+  "config/hardware/hardware_bounds_v1.json": "952f70a5e850f94bb9d3de52eba492eaa62821b8e85102c51d4895a8887e64b6",
+  "config/mission/mission_scenario_v1.json": "a01b56a6ec7a79cb3b37c6356542d093c618632388edefb150881bf03fbe7ba0",
+  "config/mission/mission_scenario_v2.json": "885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49",
+  "config/model_set/physics_model_set_v1.json": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1",
+  "config/requirements/rfp_constraints_v1.json": "76656e6a7010a39179c8af0c788609b00459f34d5198d3f0bc966da0ef840ef7",
+  "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+  "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+  "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+  "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+  "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903",
+  "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
+  "docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md": "749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77",
+  "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json": "245307aca27b8151d0ef31a6e92f932a95920e604847694481cba6731835dc49",
+  "docs/decisions/OD_2026_10_03_A9_23_SIMULATION_ARCHITECTURE_OWNER_DIRECTIVE.md": "0c187b16cb25d853650ca1ddfe19b5404bf0c87835a753fa0167405cb33ec81d",
+  "docs/decisions/OD_2026_10_03_A9_23_simulation_architecture_owner_directive.json": "7ecf593a150bd8d80cad8cce3ba2db7b1c46704e7d5c0d70779b1bb9480a6775",
+  "docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md": "9a2c950befd20dc38c63a3c56d4443ce7a30f1630903ada618b054638325b1d7",
+  "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json": "fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c",
+  "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+  "docs/requirements/rvm_a9/rvm_a9_v1.json": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4",
+  "docs/requirements/rfp_official/rfp_registration_v1.json": "c126be5eef7b9ec6340776ed035eeaa0ced1c4dd2ec585383f3d3a5977d174a0",
+  "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+  "abep_sim/data/atmosphere_msis21_orbit_v1.json": "f06416b1e11f07ec32434515b616935ed5eeaae1faac75586bce0961b6bcf97b",
+  "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8",
+  "abep_sim/rotor_strength.py": "59f7ba95bf5d4268b184304defddb36bbfca219c79a0cc8fde91e5031bc61d9b",
+  "abep_sim/materials.py": "08e2ddddfc9380780e71bc15957fa82a9e879fc36046c266c669b037c2194feb",
+  "schemas/thermal_life/limits_v1.json": "0df363f76dcb6efcef41bc0a07e1775b6255c2c9d84b185228862958ef827dbb",
+  "abep_sim/thermal.py": "3ad94b716dd78e863ad441a78ffdc7fd3ef38b2764a7aabaace6876a2f1444fb",
+  "docs/hardware/h2/h2_5_thermal_network/h2_5_thermal_network_v1.json": "68c5be61443d0ef1c7308c4aba265426137292dcf9363e57903e0a1f6c8bc083",
+  "abep_sim/compressor.py": "7a8dfe5b64d269474863410f6e42a886c6d3f57015c05491880d65251dfafc75",
+  "abep_sim/__init__.py": "546aa5be0ec2827b0122887bd6292d98e17ddb89be24bda227288e26ff9b6b6e",
+  "abep_sim/__main__.py": "99225ec243f22f924ec7996838686e576748e2297477d030745ff04884f9c756",
+  "abep_sim/aochem.py": "ed10bf0173025dde8044268f25f6dcf939f5b7e1cc9a2c01aff2b4461df25411",
+  "abep_sim/arch_boundary.py": "8dfc309a5d2c717913fd4961bc660f8bab92ed2c59356f5a78bff3ef4392eeae",
+  "abep_sim/arch_compare.py": "f3946249fe7840781211d906a5c8dccedcffab7f4f14df214b35517049db655e",
+  "abep_sim/archengine.py": "12f5ff2c4ca773b0856b93468afc078172f5de52350fa433b418c86aac60f97d",
+  "abep_sim/atmosphere.py": "690d6931bb595c14736db9d9c284fb4e2f98727a8749262edebe3d8621e87e8b",
+  "abep_sim/atmosphere_orbit.py": "eeaeba27d4174be412b774d8fe580712205ee401210f962fb23c14069ce78b0c",
+  "abep_sim/atmosphere_orbit_v2.py": "87a3de0f811453557842913542e1027d75337aadfc2ae2bd1dd027ae18e995bd",
+  "abep_sim/breakeven.py": "fad317b74c3f1359d849c62a7b487f2e26d8ccb3be05a35c15b515ea6d948767",
+  "abep_sim/bus_boundary_a9.py": "7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a",
+  "abep_sim/bus_boundary_a9_v2.py": "8964520ffb55d97eeb93c4b8cc45250026e0c6a0b3082ea58fcfd834ba661e26",
+  "abep_sim/cathode_integration.py": "9c8e776b851c112da89b0621a2e1da0dd128ab647229214b81aed19c3e0561b0",
+  "abep_sim/compressor_transitional.py": "45f866b02592c6b633f12862c088cd3cdbe858506c3848d9231d6cfc1b9ba53c",
+  "abep_sim/configuration.py": "45900b79e3639ab382ec740bbd6b453d03e58ab7bd6368f93abdc17cabdacacc",
+  "abep_sim/constants.py": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7",
+  "abep_sim/convergence.py": "51408a5ca7418c8bcda4057fb6f4c07f41ac2474375fd867b37f7114b293ef93",
+  "abep_sim/explorer.py": "402fc740a8f8e91643beecfe186633c5ae311785b4691d7f049d4e71cc69b7f4",
+  "abep_sim/golden.py": "c455203bc6616ddc6d171ed10472f3d4635cf7655f75b00ecb704674865c5c07",
+  "abep_sim/h1_geometry.py": "c678c86c9176c8008cbebb67442a2ef9fe30d3b91b68d75f0009f9260eca4ca5",
+  "abep_sim/hall1d.py": "adfaf7a18a5a40a99fef2985541d8c092b3cfe4524090424e3af990af423d772",
+  "abep_sim/hall_ensemble.py": "218f890c8444af1f593396da5051e38d2d093bbb3cb0bc976cc44b01b67df704",
+  "abep_sim/hall_map.py": "e466f94c9058e2ab949a4a4a451d3438c046b1abd91933815467590f90a707e0",
+  "abep_sim/hallmap_registry.py": "3af0f29e2848130a9c19eeb8f6efe1d6a5abbbf499a11dc757632bd926440a85",
+  "abep_sim/hard_gates.py": "a36fe3c9065291f0fe5be3f17e179d5b691f00c013f7f8ef299fa89db896dda8",
+  "abep_sim/icp_bench_lib.py": "f153809a003a82144d3e85d25b794508d562fe76e112c4fbd84027aa5e0d593e",
+  "abep_sim/icp_thermal_lib.py": "ffd8e9d904e2e67993404a0cdd058b5cf3a892034593b29cebc51b85438d0fca",
+  "abep_sim/intake.py": "d46c23af40d413094babbe9d2121238c7b6f768341ffb3789d3d50c1d0f66687",
+  "abep_sim/intake_surface_v2_spec.py": "a34568abe619bb1c2113bbae83aea8305847d638865dd0a78fbd9a5a8d8392bc",
+  "abep_sim/intake_tpmc.py": "dcddf947c273d71d2f030895cd8ea9916919f816401c20e30b7ca4d177172433",
+  "abep_sim/interstage.py": "bc4b9987a832209d1417f6646d2a44c72b8d79bac18f896089647bcd1ed93174",
+  "abep_sim/life.py": "e8119a9c09e997553076bf879147b87f99b182a78bf7d6f1f305d6d2d25a71fe",
+  "abep_sim/magnet_power.py": "adf2905d90b7dd17b59071759d0a62b245fa065b0c3375c74df4e3476b7bb523",
+  "abep_sim/mass_bom.py": "c785aeb14b789b20a20a796ab86d8acd354760b52ac30827b395a623430e4a39",
+  "abep_sim/mission5.py": "a793451896bd3e99a0be20add777a952c0824b4f0b8f7630f7e32a2dab35b245",
+  "abep_sim/mission_env.py": "f568fba29678852565b03821e85dd7cce1fb18ec623ab2ca282e521a97f164af",
+  "abep_sim/mission_uq.py": "70e9dc16fcf48d254bc9e91cdbb4eeccce8afccb5118ade7e614c898b788ceaa",
+  "abep_sim/operating_inputs.py": "24161b918d996ed991358021471d3188e5584666479e828617c257b4c816eb99",
+  "abep_sim/orbit_atm.py": "22bc98b3780f276c5eff38d555e1c2a8cc87efe5544704767da288bbf4060798",
+  "abep_sim/plasma_chem.py": "67926b9c03d35338a767bf6fc8b23c69eaa4131b9c6d49ddc6956e6b6acb0d43",
+  "abep_sim/plasma_devices.py": "503428b3238595be6e49fdc44ed5228107d164830dad88993d3be061c0c74ef1",
+  "abep_sim/ppu.py": "56879d06242761774830a38b421dd2b367bc8fe16c02eab88cb40e0db7d4c521",
+  "abep_sim/radiation.py": "591d6c685d98738863987f90d810568fbcee5bf626ea1537737e752dbd655597",
+  "abep_sim/rate_tables.py": "ea9880b0d5a474e93083346f29694f2fa820ffce01aca001ea4610893ac04909",
+  "abep_sim/reservoir.py": "9a7894a47169f1d77e8c66a196002c5456e955b9eb72d81bb9e1440c90ae29af",
+  "abep_sim/sizing.py": "5c252dc9cf76f207694a13898f7b70167c0e60b3917f9a05b889820d3598ba44",
+  "abep_sim/spacecraft_reference_drag.py": "28bcc6bda5e45947ed3bc72e9561a8efbde59f8e9707c7fb864d8d88fa2eaa8d",
+  "abep_sim/statewise.py": "ec90f2282467e4877c4d10c32f12368f400102bd5889da49902077cdfb55e63e",
+  "abep_sim/system.py": "3a2f4e230dcd2f879510c6cff12ee8d801dbddc27786d6bfec51290cdc362f84",
+  "abep_sim/thermal_life.py": "dce2048233746ecc596866c1d561c8828f820c7960b9778db0d6d66a9c86d83c",
+  "abep_sim/thresholds.py": "840697d87c81d889bce4884e53be88c9dcc6b21cd2749aee1e5ab067b82ad2ca",
+  "abep_sim/thruster.py": "3b178d48880f7b10b9e410e5e70e5592edf834bbb223766739ba80ae3082d0db",
+  "abep_sim/transient.py": "92709ea1232a7fb31c02cd4a8d9bc0be7161a66b12c2d4baadd26881f0869daf",
+  "abep_sim/uncertainty.py": "91d9dc6c3e86bbd57a0d7fcac17602a2f8ada0bd49942b6ff589925e35d6e406",
+  "abep_sim/uq6.py": "a5494eb94c297ca8d9111f6436e7c29c4c6e6a24e18d41b005b6a12d4bb6c43e",
+  "abep_sim/uq_modular.py": "55d4f0b3e9b3c4691579f13ae2c07a59a4f6bad2c484b2c1ca4d29f503933c2e",
+  "abep_sim/validation.py": "e6853e417e6d2143b3bdc6fdb49b3c0f1d69a807b6125d49ba57019f8ba8c62f",
+  "abep_sim/xe_ledger.py": "8a89fa7da7e7eb7f786a7327e1721ea29c59db7c0721ea64646f812bd4afedf0",
+  "abep_sim/data/golden_v2.json": "9d51da259323d19c388ac6e6f5a134b2eae90c11bbaeedd59ac37252d5477567",
+  "abep_sim/data/golden_v1.json": "1f7fbb626f79e38d743bf69516e9ea62b8ddef2ff2726d2f0fd4f4df6b377fb8",
+  "abep_sim/data/intake_surface_v1.json": "5b26b7fd60272537dd0e719a122cb874233c6dd777202ab164b159cc7215d425",
+  "abep_sim/data/intake_surface_v1.csv": "62b804924d801f913420a05142d4fe62137a7619eca17ae7786da5bef005c09a",
+  "abep_sim/data/atmosphere_msis21_v1.json": "38a6f662521a8795b28186ccab5fbb007da59a861f59fde50400e7092e181160",
+  "abep_sim/data/atmosphere_msis21_v1.csv": "5e108c6e5cb7c03ed9b741233fafbc71c7813987e1ff3d0596b04c99c4a9bff7",
+  "abep_sim/data/atmosphere_msis21_orbit_v1.csv.gz": "71ce01c377a355a3e706d50e79fe08b2336d0e60b8b3e294f1d8e2c5b6a18ace",
+  "abep_sim/data/atmosphere_msis21_orbit_v1_design_states.json": "d8bd369bf4aa4ae321ecced094f2c02356be67e2c3f4acbe70264f700b419a40",
+  "abep_sim/data/atmosphere_msis21_hwm14_orbit_v2.json": "e56e6ff093d7590ab767e58c02c27882117146df3cf678dfd468c07bfea25c75",
+  "abep_sim/data/atmosphere_msis21_hwm14_orbit_v2.csv.gz": "03238acea56442b9a3d5554f5596bfe766d0654deacc43ff13482e8fe646629d",
+  "abep_sim/data/atmosphere_msis21_hwm14_orbit_v2.disturbance.csv.gz": "0c27e740a75618e28818ac071f4156766c7839855ea0aecd06506c913d18fcec",
+  "hallthruster_bridge/PINNED.toml": "26a00c8a156a5a5e9a58f9796f657ea12f59d87ac2da3d6507ac7347b4765280",
+  "hallthruster_bridge/propellants/rate_validity.toml": "64b51be96ef30d6024a99ad9bc0b47384ba3c2434a4c096403cc2b1aa0290e3a",
+  "abep_sim/data/rates/PROVENANCE.md": "45a2a1ff12587149620420a019f227ed978a80b1de81c435315a5424817e58de",
+  "abep_sim/data/rates/elastic_N2.dat": "552dc41542d9552d6fda3a4319409b07ff442e30ac7be4d20557e4ca7ed0f12d",
+  "abep_sim/data/rates/ionization_N2_N2+.dat": "bbddadf6d5d80a9143b9482656069cde5ef9dfd05a270c08c751f1d2bd2b14e2",
+  "schemas/results/raw_closure_v2.json": "83d1f20055e97b318a9678fa2631b5da3e4328cfbc4e13cc2e2d516ffebb56f8",
+  "schemas/results/closure_assessment_v2.json": "c31c453853fb62e65ccd958092616542c2111f9f9df321cf9cd4107e9d45971c"
+ },
+ "frozen_data_read_only": [
+  "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json",
+  "abep_sim/data/atmosphere_msis21_orbit_v1.json",
+  "abep_sim/data/golden_v2.json",
+  "abep_sim/data/golden_v1.json",
+  "abep_sim/data/intake_surface_v1.json",
+  "abep_sim/data/intake_surface_v1.csv",
+  "abep_sim/data/atmosphere_msis21_v1.json",
+  "abep_sim/data/atmosphere_msis21_v1.csv",
+  "abep_sim/data/atmosphere_msis21_orbit_v1.csv.gz",
+  "abep_sim/data/atmosphere_msis21_orbit_v1_design_states.json",
+  "abep_sim/data/atmosphere_msis21_hwm14_orbit_v2.json",
+  "abep_sim/data/atmosphere_msis21_hwm14_orbit_v2.csv.gz",
+  "abep_sim/data/atmosphere_msis21_hwm14_orbit_v2.disturbance.csv.gz",
+  "abep_sim/data/rates/PROVENANCE.md",
+  "abep_sim/data/rates/elastic_N2.dat",
+  "abep_sim/data/rates/ionization_N2_N2+.dat"
+ ],
+ "inputs": {
+  "golden_vectors": {
+   "source": "the repository tree at the reference commit (config/** and every builder input above) plus registered mutations of temporary copies; nothing in the repository is modified",
+   "count": "loader cases: 63 deterministic + 3 environment + 240 seeded; build cases: 23",
+   "list_or_generator": "deterministic_cases / environment_cases / build_cases below; seeded_mutation_generator below"
+  },
+  "harness": {
+   "runner": "a Python harness (scripts/rust_migration/parity_config_v1.py, committed after this contract) that builds every case tree, runs the Python reference in-process and the Rust CLI (`abep-config eval`, `abep-config build --check`) on the same tree, and writes the report",
+   "case_tree": "a fresh temporary directory per case: <tmp>/config is a real copy of config/ with the case mutations applied; for repo_farm / build cases <tmp>/repo is a symlink farm of the reference tree with real copies only along edited paths (config/ always a real copy)",
+   "python_reference_calls": "configuration functions called with root=<case config dir> after setting configuration.REPO_ROOT to the case repository root (the real repository unless repo_farm); build cases load scripts/config/build_config.py with importlib and set its ROOT / CONFIG to the case tree (as tests/test_config_manifests.py loads it)",
+   "rust_calls": "the same calls through `abep-config eval` with the same repository root, config root, environment value and pin override",
+   "mutation_vocabulary": {
+    "set(file, path, value)": "json.loads, assign at path, write json.dumps(doc, indent=1, ensure_ascii=False) + '\\n'",
+    "delete(file, path)": "as set, deleting the key / list element",
+    "move_last(file, path, key)": "as set, re-inserting the key at the end of the dict",
+    "replace(file, value)": "write json.dumps(value, indent=1) + '\\n'",
+    "bytes(file, how)": "raw byte edit as described",
+    "delete_file / unlist / write / text_replace": "as named (unlist drops the MANIFEST entry, written with json.dumps(man, indent=1) + '\\n')",
+    "remanifest": "re-hash every file listed in MANIFEST.json files (sha256 + bytes; listed files that do not exist keep their entry) and rewrite MANIFEST.json with json.dumps(man, indent=1) + '\\n' (the tests/test_config_manifests.py rule)",
+    "pin_override": "OPERATING_SCENARIO_PIN sha256 := sha256 of the case's mission scenario file (Python: in-place item assignment, restored afterwards, as tests/test_a9_22_operating_inputs.py; Rust: the explicit pin argument of the loader); id and scenario_version unchanged",
+    "repo_farm(edits)": "configuration.REPO_ROOT := the farm (Python); the same repository root (Rust)"
+   }
+  },
+  "edge_cases": {
+   "deterministic_cases": [
+    {
+     "id": "L-D00",
+     "note": "reference tree (config/ copied unchanged)",
+     "mutations": []
+    },
+    {
+     "id": "L-D01",
+     "note": "MANIFEST.json missing",
+     "mutations": [
+      "delete_file(MANIFEST.json)"
+     ]
+    },
+    {
+     "id": "L-D02",
+     "note": "MANIFEST.json schema key removed",
+     "mutations": [
+      "delete(MANIFEST.json, ['schema'])"
+     ]
+    },
+    {
+     "id": "L-D03",
+     "note": "MANIFEST.json files is a list",
+     "mutations": [
+      "set(MANIFEST.json, ['files'], [])"
+     ]
+    },
+    {
+     "id": "L-D04",
+     "note": "MANIFEST.json truncated (not JSON)",
+     "mutations": [
+      "bytes(MANIFEST.json, truncate to first 100 bytes)"
+     ]
+    },
+    {
+     "id": "L-D05",
+     "note": "manifest entry of the architecture lacks sha256",
+     "mutations": [
+      "delete(MANIFEST.json, ['files', 'architecture/hall_icp_neutralizer_v1.json', 'sha256'])"
+     ]
+    },
+    {
+     "id": "L-D06",
+     "note": "architecture file edited, manifest not refreshed",
+     "mutations": [
+      "bytes(architecture/hall_icp_neutralizer_v1.json, append one space before the final newline)"
+     ]
+    },
+    {
+     "id": "L-D07",
+     "note": "constraints file edited, manifest not refreshed",
+     "mutations": [
+      "bytes(constraints/engineering_constraints_v1.json, append one space before the final newline)"
+     ]
+    },
+    {
+     "id": "L-D08",
+     "note": "mission scenario v2 edited, manifest not refreshed",
+     "mutations": [
+      "bytes(mission/mission_scenario_v2.json, append one space before the final newline)"
+     ]
+    },
+    {
+     "id": "L-D09",
+     "note": "gate thresholds unlisted",
+     "mutations": [
+      "unlist(assessment/gate_thresholds_v1.json)"
+     ]
+    },
+    {
+     "id": "L-D10",
+     "note": "design-state reference deleted (still listed)",
+     "mutations": [
+      "delete_file(environment/design_state_set_ref_v1.json)"
+     ]
+    },
+    {
+     "id": "L-D11",
+     "note": "architecture schema changed",
+     "mutations": [
+      "set(architecture/hall_icp_neutralizer_v1.json, ['schema'], 'abep_config_architecture_v0')",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D12",
+     "note": "requirements snapshot_status DRAFT",
+     "mutations": [
+      "set(requirements/rfp_constraints_v1.json, ['snapshot_status'], 'DRAFT')",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D13",
+     "note": "constraints set_status X",
+     "mutations": [
+      "set(constraints/engineering_constraints_v1.json, ['set_status'], 'X')",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D14",
+     "note": "constraint status X",
+     "mutations": [
+      "set(constraints/engineering_constraints_v1.json, ['constraints', 'thrust_sustained_min_mN', 'status'], 'X')",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D15",
+     "note": "constraint firing_life_h removed",
+     "mutations": [
+      "delete(constraints/engineering_constraints_v1.json, ['constraints', 'firing_life_h'])",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D16",
+     "note": "altitude band not a pair",
+     "mutations": [
+      "set(constraints/engineering_constraints_v1.json, ['constraints', 'altitude_band_km', 'value'], [180])",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D17",
+     "note": "firing_life_h label changed",
+     "mutations": [
+      "set(constraints/engineering_constraints_v1.json, ['constraints', 'firing_life_h', 'label'], 'MISSION')",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D18",
+     "note": "mission_life_h g1_status PENDING",
+     "mutations": [
+      "set(constraints/engineering_constraints_v1.json, ['constraints', 'mission_life_h', 'g1_status'], 'PENDING')",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D19",
+     "note": "ic_subsystem_min holds a string",
+     "mutations": [
+      "set(constraints/engineering_constraints_v1.json, ['constraints', 'ic_subsystem_min', 'value', 'pse'], '0.7')",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D20",
+     "note": "hall_preferred is the int 1",
+     "mutations": [
+      "set(constraints/engineering_constraints_v1.json, ['constraints', 'hall_preferred', 'value'], 1)",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D21",
+     "note": "propellant_capability without xe",
+     "mutations": [
+      "delete(constraints/engineering_constraints_v1.json, ['constraints', 'propellant_capability', 'value', 'xe'])",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D22",
+     "note": "thrust value is a string",
+     "mutations": [
+      "set(constraints/engineering_constraints_v1.json, ['constraints', 'thrust_sustained_min_mN', 'value'], '12')",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D23",
+     "note": "thrust value is a bool",
+     "mutations": [
+      "set(constraints/engineering_constraints_v1.json, ['constraints', 'thrust_sustained_min_mN', 'value'], True)",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D24",
+     "note": "constraints id changed (scenario reference)",
+     "mutations": [
+      "set(constraints/engineering_constraints_v1.json, ['id'], 'engineering_constraints_v9')",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D25",
+     "note": "mission scenario schema changed",
+     "mutations": [
+      "set(mission/mission_scenario_v2.json, ['schema'], 'abep_config_mission_scenario_v1')",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D26",
+     "note": "mission scenario re-serialized (sha changes), pin unchanged",
+     "mutations": [
+      "bytes(mission/mission_scenario_v2.json, append one space before the final newline)",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D27",
+     "note": "as L-D26 with the pin overridden to the new sha256",
+     "mutations": [
+      "bytes(mission/mission_scenario_v2.json, append one space before the final newline)",
+      "remanifest",
+      "pin_override"
+     ]
+    },
+    {
+     "id": "L-D28",
+     "note": "mission scenario status DRAFT (pin overridden)",
+     "mutations": [
+      "set(mission/mission_scenario_v2.json, ['status'], 'DRAFT')",
+      "remanifest",
+      "pin_override"
+     ]
+    },
+    {
+     "id": "L-D29",
+     "note": "mission_hours g1_status PENDING (pin overridden)",
+     "mutations": [
+      "set(mission/mission_scenario_v2.json, ['inputs', 'mission_hours', 'g1_status'], 'PENDING')",
+      "remanifest",
+      "pin_override"
+     ]
+    },
+    {
+     "id": "L-D30",
+     "note": "firing_hours label changed (pin overridden)",
+     "mutations": [
+      "set(mission/mission_scenario_v2.json, ['inputs', 'firing_hours', 'label'], 'MISSION')",
+      "remanifest",
+      "pin_override"
+     ]
+    },
+    {
+     "id": "L-D31",
+     "note": "wet-mass limit added as an operating input (pin overridden)",
+     "mutations": [
+      "set(mission/mission_scenario_v2.json, ['inputs', 'wet_mass_limit_kg'], {'value': 40})",
+      "remanifest",
+      "pin_override"
+     ]
+    },
+    {
+     "id": "L-D32",
+     "note": "Xe-sizing thrust target kind changed (pin overridden)",
+     "mutations": [
+      "set(mission/mission_scenario_v2.json, ['inputs', 'xe_sizing_thrust_target_mN', 'kind'], 'CONSTRAINT_COPY')",
+      "remanifest",
+      "pin_override"
+     ]
+    },
+    {
+     "id": "L-D33",
+     "note": "commanded-thrust cap carries set_equal_to_constraint (pin overridden)",
+     "mutations": [
+      "set(mission/mission_scenario_v2.json, ['inputs', 'commanded_thrust_cap_mN', 'set_equal_to_constraint'], True)",
+      "remanifest",
+      "pin_override"
+     ]
+    },
+    {
+     "id": "L-D34",
+     "note": "historical_note removed (pin overridden)",
+     "mutations": [
+      "delete(mission/mission_scenario_v2.json, ['inputs', 'mission_hours', 'historical_note'])",
+      "remanifest",
+      "pin_override"
+     ]
+    },
+    {
+     "id": "L-D35",
+     "note": "P_bus throttling cap value is a string (pin overridden)",
+     "mutations": [
+      "set(mission/mission_scenario_v2.json, ['inputs', 'p_bus_throttling_cap_W', 'value'], '1500')",
+      "remanifest",
+      "pin_override"
+     ]
+    },
+    {
+     "id": "L-D36",
+     "note": "gate order changed (HC-05 moved last)",
+     "mutations": [
+      "move_last(assessment/gate_thresholds_v1.json, ['gates'], 'HC-05')",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D37",
+     "note": "HC-07 constraint reference carries a value",
+     "mutations": [
+      "set(assessment/gate_thresholds_v1.json, ['gates', 'HC-07', 'value'], 15000.0)",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D38",
+     "note": "HC-09 references an unknown constraint",
+     "mutations": [
+      "set(assessment/gate_thresholds_v1.json, ['gates', 'HC-09', 'constraint_ref'], 'no_such_constraint')",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D39",
+     "note": "HC-12 TBD with a value",
+     "mutations": [
+      "set(assessment/gate_thresholds_v1.json, ['gates', 'HC-12', 'value'], 1.0)",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D40",
+     "note": "HC-06 status PROVISIONAL",
+     "mutations": [
+      "set(assessment/gate_thresholds_v1.json, ['gates', 'HC-06', 'status'], 'PROVISIONAL')",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D41",
+     "note": "HC-08 kind OTHER",
+     "mutations": [
+      "set(assessment/gate_thresholds_v1.json, ['gates', 'HC-08', 'kind'], 'OTHER')",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D42",
+     "note": "HC-09 scale is a string",
+     "mutations": [
+      "set(assessment/gate_thresholds_v1.json, ['gates', 'HC-09', 'scale_to_gate_units'], '1e-3')",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D43",
+     "note": "gate thresholds schema changed",
+     "mutations": [
+      "set(assessment/gate_thresholds_v1.json, ['schema'], 'x')",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D44",
+     "note": "design-state reference target sha256 zeroed",
+     "mutations": [
+      "set(environment/design_state_set_ref_v1.json, ['sha256'], '0' * 64)",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D45",
+     "note": "design-state dataset-manifest sha256 zeroed",
+     "mutations": [
+      "set(environment/design_state_set_ref_v1.json, ['manifest', 'sha256'], '0' * 64)",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D46",
+     "note": "design-state reference points to a missing file",
+     "mutations": [
+      "set(environment/design_state_set_ref_v1.json, ['path'], 'abep_sim/data/no_such_design_states.json')",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D47",
+     "note": "hardware entry 0 sha256 zeroed",
+     "mutations": [
+      "set(hardware/hardware_bounds_v1.json, ['entries', 0, 'sha256'], '0' * 64)",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D48",
+     "note": "hardware entry 1 points to a missing file",
+     "mutations": [
+      "set(hardware/hardware_bounds_v1.json, ['entries', 1, 'path'], 'abep_sim/no_such_module.py')",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D49",
+     "note": "no materials_database entry",
+     "mutations": [
+      "set(hardware/hardware_bounds_v1.json, ['entries', 2, 'kind'], 'materials')",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D50",
+     "note": "model set schema changed",
+     "mutations": [
+      "set(model_set/physics_model_set_v1.json, ['schema'], 'x')",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D51",
+     "note": "model set module sha256 zeroed (abep_sim/constants.py)",
+     "mutations": [
+      "set(model_set/physics_model_set_v1.json, ['modules', <index of abep_sim/constants.py>, 'sha256'], '0' * 64)",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D52",
+     "note": "model set data entry points to a missing file",
+     "mutations": [
+      "set(model_set/physics_model_set_v1.json, ['data', 0, 'path'], 'abep_sim/data/no_such_golden.json')",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D53",
+     "note": "model set version label changed",
+     "mutations": [
+      "set(model_set/physics_model_set_v1.json, ['version_labels_flat', 'arch_boundary.BOUNDARY_VERSION'], 'changed')",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D54",
+     "note": "design-state set file changed in the repository (farm)",
+     "mutations": [
+      "repo_farm(bytes(abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json, append one space before the final newline))"
+     ]
+    },
+    {
+     "id": "L-D55",
+     "note": "a hardware-bounds source missing in the repository (farm)",
+     "mutations": [
+      "repo_farm(delete_file(abep_sim/rotor_strength.py))"
+     ]
+    },
+    {
+     "id": "L-D56",
+     "note": "a physics module changed in the repository (farm)",
+     "mutations": [
+      "repo_farm(bytes(abep_sim/constants.py, append the line '# drift\\n'))"
+     ]
+    },
+    {
+     "id": "L-D57",
+     "note": "requirements snapshot deleted: physics seam unaffected, assessment refused",
+     "mutations": [
+      "delete_file(requirements/rfp_constraints_v1.json)"
+     ]
+    },
+    {
+     "id": "L-D58",
+     "note": "requirements, constraints and gate thresholds deleted: operating inputs still load (physics seam reads the scenario only)",
+     "mutations": [
+      "delete_file(requirements/rfp_constraints_v1.json)",
+      "delete_file(constraints/engineering_constraints_v1.json)",
+      "delete_file(assessment/gate_thresholds_v1.json)"
+     ]
+    },
+    {
+     "id": "L-D59",
+     "note": "requirements snapshot schema changed: physics_configuration unaffected",
+     "mutations": [
+      "set(requirements/rfp_constraints_v1.json, ['schema'], 'x')",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D60",
+     "note": "constraints file is not UTF-8",
+     "mutations": [
+      "bytes(constraints/engineering_constraints_v1.json, replace the first byte with 0xff)",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D61",
+     "note": "constraints file is a JSON list",
+     "mutations": [
+      "replace(constraints/engineering_constraints_v1.json, [])",
+      "remanifest"
+     ]
+    },
+    {
+     "id": "L-D62",
+     "note": "manifest entry of the mission scenario is a string",
+     "mutations": [
+      "set(MANIFEST.json, ['files', 'mission/mission_scenario_v2.json'], 'x')"
+     ]
+    }
+   ],
+   "environment_cases": [
+    {
+     "id": "L-E01",
+     "note": "ABEP_CONFIG_ROOT = path of an unchanged copy of config/; every entry point called with root=None",
+     "kind": "copy"
+    },
+    {
+     "id": "L-E02",
+     "note": "ABEP_CONFIG_ROOT = '' (empty: the default <repo>/config); root=None",
+     "kind": "empty"
+    },
+    {
+     "id": "L-E03",
+     "note": "ABEP_CONFIG_ROOT = a directory without MANIFEST.json; root=None",
+     "kind": "missing"
+    }
+   ],
+   "build_cases": [
+    {
+     "id": "B-00",
+     "note": "reference tree",
+     "mutations": []
+    },
+    {
+     "id": "B-01",
+     "note": "config architecture file edited (stale)",
+     "mutations": [
+      "bytes(config/architecture/hall_icp_neutralizer_v1.json, append one space before the final newline)"
+     ]
+    },
+    {
+     "id": "B-02",
+     "note": "unlisted extra file under config/",
+     "mutations": [
+      "write(config/extra/unlisted.json, '{}\\n')"
+     ]
+    },
+    {
+     "id": "B-03",
+     "note": "a generated config file missing",
+     "mutations": [
+      "delete_file(config/hardware/hardware_bounds_v1.json)"
+     ]
+    },
+    {
+     "id": "B-04",
+     "note": "mission scenario v2 edited",
+     "mutations": [
+      "bytes(config/mission/mission_scenario_v2.json, append one space before the final newline)"
+     ]
+    },
+    {
+     "id": "B-05",
+     "note": "mission scenario v1 edited",
+     "mutations": [
+      "bytes(config/mission/mission_scenario_v1.json, append one space before the final newline)"
+     ]
+    },
+    {
+     "id": "B-06",
+     "note": "mission scenario v2 missing",
+     "mutations": [
+      "delete_file(config/mission/mission_scenario_v2.json)"
+     ]
+    },
+    {
+     "id": "B-07",
+     "note": "A9.19 decision record (md) edited",
+     "mutations": [
+      "bytes(docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md, append one space)"
+     ]
+    },
+    {
+     "id": "B-08",
+     "note": "A9.20 decision record (json) edited",
+     "mutations": [
+      "bytes(docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json, append one space before the final newline)"
+     ]
+    },
+    {
+     "id": "B-09",
+     "note": "RFP registration clause RFP-P19-01 text edited (clauses sha256 differs)",
+     "mutations": [
+      "set(docs/requirements/rfp_official/rfp_registration_v1.json, ['clauses', <index of RFP-P19-01>, 'text'], <text> + ' ')"
+     ]
+    },
+    {
+     "id": "B-10",
+     "note": "RVM-01 key renamed (prefix check)",
+     "mutations": [
+      "set(docs/requirements/rvm_a9/rvm_a9_v1.json, ['rows', <index of RVM-01>, 'key'], 'ALT_ENVELOPE')"
+     ]
+    },
+    {
+     "id": "B-11",
+     "note": "RVM-02 limit value 12 -> 13 (requirements basis changes; live RVM sha recorded; values stale)",
+     "mutations": [
+      "set(docs/requirements/rvm_a9/rvm_a9_v1.json, ['rows', <index of RVM-02>, 'limit', 'value'], 13)"
+     ]
+    },
+    {
+     "id": "B-12",
+     "note": "RVM non-basis row field edited (RVM-01 verification_note): the snapshot keeps its generation-time RVM pin (A9.24 item 13) and the check stays OK",
+     "mutations": [
+      "set(docs/requirements/rvm_a9/rvm_a9_v1.json, ['rows', <index of RVM-01>, 'verification_note'], 'edited (B-12)')"
+     ]
+    },
+    {
+     "id": "B-13",
+     "note": "RVM-04 limit removed",
+     "mutations": [
+      "delete(docs/requirements/rvm_a9/rvm_a9_v1.json, ['rows', <index of RVM-04>, 'limit'])"
+     ]
+    },
+    {
+     "id": "B-14",
+     "note": "physics module edited (abep_sim/constants.py)",
+     "mutations": [
+      "bytes(abep_sim/constants.py, append the line '# drift\\n')"
+     ]
+    },
+    {
+     "id": "B-15",
+     "note": "label edge-case module added (abep_sim/zz_labels.py, text label_edge_module below)",
+     "mutations": [
+      "write(abep_sim/zz_labels.py, label_edge_module)"
+     ]
+    },
+    {
+     "id": "B-16",
+     "note": "rates file added",
+     "mutations": [
+      "write(abep_sim/data/rates/zz_new.dat, '1 2\\n')"
+     ]
+    },
+    {
+     "id": "B-17",
+     "note": "hardware-bounds source missing",
+     "mutations": [
+      "delete_file(abep_sim/rotor_strength.py)"
+     ]
+    },
+    {
+     "id": "B-18",
+     "note": "design-state set v2 edited (dataset manifest no longer records it)",
+     "mutations": [
+      "bytes(abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json, append one space before the final newline)"
+     ]
+    },
+    {
+     "id": "B-19",
+     "note": "raw result schema missing",
+     "mutations": [
+      "delete_file(schemas/results/raw_closure_v2.json)"
+     ]
+    },
+    {
+     "id": "B-20",
+     "note": "PINNED.toml reaction-set version edited",
+     "mutations": [
+      "text_replace(hallthruster_bridge/PINNED.toml, 'version = \"abep-n2n-0.11\"', 'version = \"abep-n2n-0.12\"')"
+     ]
+    },
+    {
+     "id": "B-21",
+     "note": "non-module entries in abep_sim/ (notes.txt, upper-case suffix zz.PY): ignored",
+     "mutations": [
+      "write(abep_sim/notes.txt, 'x\\n')",
+      "write(abep_sim/zz.PY, 'ZZ_VERSION = \"no\"\\n')"
+     ]
+    },
+    {
+     "id": "B-22",
+     "note": "A9 pivot record edited (status kept; record sha256 changes)",
+     "mutations": [
+      "bytes(docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json, append one space before the final newline)"
+     ]
+    }
+   ],
+   "label_edge_module": "\"\"\"Parity vectors for the model-set version-label extraction (top-level str-constant assignments).\"\"\"\nZZ_PLAIN_VERSION = \"plain\"\nZZ_CONCAT_VERSION = (\"part-a \"\n                     'part-b' \"\"\"part-c\"\"\")\nZZ_PARCOMMENT_VERSION = (  # comment \"with quotes\"\n    \"a\"  # another ' quote\n    \"b\"\n)\nZZ_RAW_SCHEMA = r\"raw\\nstring\\\"\"\nZZ_ESC_SCHEMA = \"tab\\tnl\\nquote\\\"bs\\\\oct\\101hex\\x41uni\\u00e9wide\\U0001F600cont\\\ninued\"\nZZ_OCT_SCHEMA = \"\\0\\7\\777\"\nZZ_UNKNOWN_ESC_SCHEMA = \"keep \\d \\q\"\nZZ_BYTES_VERSION = b\"bytes are not str\"\nZZ_RB_VERSION = Rb\"raw bytes\"\nZZ_FSTR_VERSION = f\"fstring\"\nZZ_MIXED_VERSION = \"a\" f\"b\"\nZZ_UPPER_VERSION = U\"upper-u prefix\"\nZZ_TUPLE_VERSION = (\"a\",)\nZZ_ANN_VERSION: str = \"annotated\"\nZZ_A_VERSION = ZZ_B_VERSION = \"chained\"\nZZ_NUM_VERSION = 3\nZZ_CALL_VERSION = str(\"x\")\nZZ_SEMI_VERSION = \"first\"; ZZ_SEMI2_VERSION = \"second\"\nx = 1; ZZ_AFTER_EXPR_VERSION = \"after\"\nif True: ZZ_INLINE_IF_VERSION = \"inline\"; ZZ_INLINE_IF2_VERSION = \"inline2\"\nif True:\n    ZZ_NESTED_VERSION = \"nested\"\nelse:\n    ZZ_ELSE_VERSION = \"else\"\n\n\ndef f():\n    ZZ_FN_VERSION = \"fn\"\n    return ZZ_FN_VERSION\n\n\nclass C:\n    ZZ_CLS_VERSION = \"cls\"\n\n\nZZ_CONT_VERSION = \\\n    \"continued\"\nZZ_PAREN_VERSION = (((\"deep\")))\nZZ_DUP_VERSION = \"first\"\nZZ_DUP_VERSION = \"second\"\nZZ_TRIPLE_SCHEMA = '''multi\nline ' \" text'''\nZZ_COMMENT_VERSION = \"x\"  # trailing comment with \"quotes\"\nNOT_A_LABEL = \"ignored\"\nZZ_DICT_SCHEMA_ID = {\"a\": \"b\"}[\"a\"]\nZZ_LAMBDA_VERSION = lambda: \"x\"\nZZ_COND_VERSION = \"a\" if True else \"b\"\nZZ_BINOP_VERSION = \"a\" + \"b\"\nZZ_UNICODE_SPEC_ID = \"H₂O é Ω\"\n"
+  },
+  "randomized_domain": {
+   "count": 240,
+   "draw": "random.Random(scoring_master_seed) (Python, input generation only; both implementations consume the same committed case file). For each case k = 0..239: file = rng.choice(TARGET_FILES); doc = json.loads(reference file); paths = every node below the root in document order (pre-order, dict insertion order, list index order; a path is a list of keys / indices); p = rng.choice(paths); op = rng.choice(['set', 'set', 'set', 'delete']); value = rng.choice(VALUE_POOL) for set; remanifest = rng.random() < 0.9, forced False when file is MANIFEST.json; pin_override = (file == 'mission/mission_scenario_v2.json') and rng.random() < 0.5 (drawn only for that file). Every loader entry point is evaluated on every case",
+   "TARGET_FILES": [
+    "architecture/hall_icp_neutralizer_v1.json",
+    "requirements/rfp_constraints_v1.json",
+    "constraints/engineering_constraints_v1.json",
+    "mission/mission_scenario_v2.json",
+    "assessment/gate_thresholds_v1.json",
+    "environment/design_state_set_ref_v1.json",
+    "hardware/hardware_bounds_v1.json",
+    "model_set/physics_model_set_v1.json",
+    "SOURCES_OF_TRUTH.json",
+    "MANIFEST.json"
+   ],
+   "VALUE_POOL": [
+    "None",
+    "True",
+    "False",
+    "0",
+    "1",
+    "-1",
+    "2.5",
+    "-0.0",
+    "1e300",
+    "10**25",
+    "float('inf')",
+    "''",
+    "'X'",
+    "'FROZEN'",
+    "'PROVISIONAL'",
+    "'APPLIED'",
+    "'THRESHOLD'",
+    "'CONSTRAINT_REFERENCE'",
+    "'TBD_PENDING_MEASURED_H1'",
+    "'SUBSYSTEM_FIRING_LIFE_ASSUMPTION'",
+    "[]",
+    "[1, 2]",
+    "[180, 230]",
+    "{}",
+    "{'value': 1.0}"
+   ],
+   "domain_note": "numerical parity domain only; mutated configuration trees exercise the refusal and schema-violation paths; not a physics, design or evidence claim"
+  },
+  "vector_totals": {
+   "loader entry points per case": 29,
+   "loader cases": 306,
+   "build cases": 23
+  },
+  "loader_entry_points_per_case": [
+   "load_manifest(root)",
+   "load_verified(rel, root) for every rel listed in the reference MANIFEST.json, plus 'requirements/other.json'",
+   "load_architecture(root)",
+   "load_requirements_snapshot(root)",
+   "load_engineering_constraints_file(root)",
+   "load_engineering_constraints(root)",
+   "load_mission_scenario(root, verify_constraints=True)",
+   "load_mission_scenario(root, verify_constraints=False)",
+   "load_operating_inputs(root)",
+   "load_gate_thresholds(root)",
+   "load_design_state_set_ref(root, verify_target=True)",
+   "load_design_state_set_ref(root, verify_target=False)",
+   "load_hardware_bounds(root, verify_targets=True)",
+   "load_hardware_bounds(root, verify_targets=False)",
+   "load_model_set(root)",
+   "model_set_drift(root)",
+   "physics_configuration(root).as_dict()",
+   "assessment_configuration(root).as_dict()"
+  ]
+ },
+ "campaign_seeds": {
+  "applicable": "true (input generation of the seeded mutation cases only; the component is deterministic)",
+  "scoring_master_seed": 8251946031,
+  "development_master_seed": 1100,
+  "derivation": "random.Random(seed) as in inputs.randomized_domain.draw",
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the existing admitted stochastic / statistical parity contract; the roles are registered separately and never merged",
+   "design_uq_sampling_stream": "NOT_APPLICABLE: the component draws no design / UQ samples",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE: the component calls no TPMC kernel",
+   "other_streams": "NOT_APPLICABLE: the harness's random.Random only generates the input cases; both implementations read the same generated cases",
+   "migration_parity_dataset": "seeds and the generated case file stay exactly reproducible (immutable)",
+   "after_rust_authority": "NOT_APPLICABLE"
+  },
+  "rng_streams_v3": "NOT_APPLICABLE (deterministic component)",
+  "development_rule": "development comparisons use development_master_seed only and are never scored or reported as a verdict; the deterministic and build cases may be run in development; every execution with scoring_master_seed is appended to campaign_history and the report is committed whatever its verdict"
+ },
+ "observables": {
+  "loaders (every loader case x every entry point)": {
+   "list": [
+    {
+     "name": "outcome",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "RETURNED or RAISED"
+    },
+    {
+     "name": "value",
+     "units": "as loaded",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "on RETURNED: json.dumps(v, ensure_ascii=False) of the returned value (Python), equal to json.dumps(json.loads(rust_output), ensure_ascii=False); key order, int / float / bool types and float repr included (dict / list / str / int / float / bool / None values; SimulationConfiguration through as_dict())"
+    },
+    {
+     "name": "error_class",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "on RAISED: the Python exception class name; Rust reports the mapped class name (domain_and_error_parity.mapping)"
+    },
+    {
+     "name": "error_message",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "on RAISED with class ConfigurationError: str(exception), character for character (paths are the case paths given identically to both); not scored for Python built-in exception classes (KeyError, TypeError, AttributeError, JSONDecodeError, UnicodeDecodeError, FileNotFoundError, IsADirectoryError, StopIteration, OverflowError, ValueError), whose class is scored"
+    }
+   ],
+   "replicates_per_implementation": "NOT_APPLICABLE",
+   "se_method": "NOT_APPLICABLE"
+  },
+  "build (every build case)": {
+   "list": [
+    {
+     "name": "files",
+     "units": "bytes",
+     "tolerance_class": "EXACT_BYTES",
+     "tolerance": "sha256 equal",
+     "definition": "build_all(): ordered map config-relative path -> sha256 and byte count of every generated file (README.md, MANIFEST.json and the frozen scenarios included), in build_all insertion order"
+    },
+    {
+     "name": "check",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "main(['--check']): exit status and the printed line ('OK: 12 config files current' / 'STALE: [...]; unlisted files: [...]')"
+    },
+    {
+     "name": "build_error",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "on an exception: class (BuildError or the Python built-in class) and, for BuildError, str(exception) character for character"
+    }
+   ]
+  },
+  "admission criterion W13": {
+   "list": [
+    {
+     "name": "abep config build --check on the repository",
+     "units": "bytes",
+     "tolerance_class": "EXACT_BYTES",
+     "tolerance": "byte-identical",
+     "definition": "`abep-config build --check` run on the repository tree exits 0 and prints 'OK: 12 config files current'; its in-memory output equals config/** and config/MANIFEST.json byte for byte (B-00 equals the committed files)"
+    }
+   ]
+  }
+ },
+ "tolerance_classes": {
+  "EXACT_BYTES": "files / serialized outputs byte-identical (sha256 equal); JSON written with the Python-compatible formatter abep_types::pyjson (shortest round-trip float repr with CPython's tie rule, Python exponent form, indent 1, ensure_ascii False, default separators, insertion key order); formatter verified separately against CPython 3.11.15 (crates/abep-types/tests/pyjson_vectors.rs, seed 202610052)",
+  "EXACT_VALUE": "integers, strings, enums, booleans, statuses, error classes, error messages, schema shape: equal",
+  "ULP_BOUNDED": "NOT_APPLICABLE (no arithmetic beyond float() conversion and one product; both are EXACT_VALUE)",
+  "SOLVER_TOLERANCE": "NOT_APPLICABLE",
+  "STATISTICAL": "NOT_APPLICABLE",
+  "EXACT_STREAM": "NOT_APPLICABLE"
+ },
+ "exact_invariants": [
+  {
+   "id": "INV-01",
+   "statement": "determinism: every Rust call evaluated twice in one eval run gives identical output; build_all twice gives identical bytes",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-02",
+   "statement": "physics seam isolation (A9.22 / A9.23): load_operating_inputs succeeds with config/requirements, config/constraints and config/assessment absent (L-D58) and physics_configuration with config/requirements absent (L-D57); both implementations",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-03",
+   "statement": "the Rust operating-scenario pin equals the Python code-side pin OPERATING_SCENARIO_PIN of abep_sim/configuration.py (id, scenario_version, sha256), read with ast.literal_eval as build_config._code_pin does",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-04",
+   "statement": "the Rust decision-record pins, MISSION_V1_SHA256, SNAPSHOT_RVM_SHA256, ACCEPTED_RVM_BASIS_SHA256, HW_ENTRIES, DATA_FILES, RESULT_SCHEMAS, file names and README text equal the Python builder's constants",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-05",
+   "statement": "no loader evaluates a requirement threshold: gate thresholds and engineering constraints are returned as values; no PASS / FAIL appears in any loader output",
+   "required_in_both": true
+  }
+ ],
+ "conservation_checks": {
+  "applicable": "false: configuration loading / building has no mass, power or energy balance (CLAUDE.md rule 4 applies to physics outputs)",
+  "checks": []
+ },
+ "domain_and_error_parity": {
+  "cases": "every loader / build case above is a domain / error case; the registered refusal classes are: hash mismatch (L-D06..L-D08, L-D26, L-D44, L-D45, L-D47, L-D54, L-D56; B-04, B-05, B-07, B-08), unpinned file (L-D09, 'requirements/other.json' in every case; B-02), missing file (L-D01, L-D10, L-D46, L-D48, L-D52, L-D55, L-D57, L-D58, L-E03; B-03, B-06, B-17, B-19), schema violations (L-D02..L-D05, L-D11..L-D25, L-D28..L-D43, L-D49, L-D50, L-D59..L-D62 and the seeded mutations; B-09, B-10, B-13, B-18), model-set drift (L-D51, L-D53, L-D56; B-14..B-16, B-20)",
+  "mapping": {
+   "ConfigurationError": "abep_config::ConfigError class 'ConfigurationError' (AbepError MODEL_ERROR); message scored",
+   "BuildError": "abep_config::ConfigError class 'BuildError' (MODEL_ERROR); message scored",
+   "KeyError / TypeError / AttributeError / StopIteration / OverflowError / ValueError / JSONDecodeError / UnicodeDecodeError / FileNotFoundError / IsADirectoryError": "ConfigError with the same class name (MODEL_ERROR); class scored, message not scored"
+  },
+  "mapping_rule": "every Python exception class raised by the component maps to exactly one Rust ConfigError class name; no Rust path may return a value where Python fails, or fail where Python returns (CLAUDE.md rule 3: no silent fallbacks); every refusal is fail-closed MODEL_ERROR",
+  "documented_divergence": [
+   {
+    "id": "DIV-01",
+    "statement": "a JSON string with a lone UTF-16 surrogate escape: Python holds it in a str, Rust refuses (ValueError)",
+    "disposition": "outside the registered domain (no configuration file contains one; the seeded mutations never write one)"
+   },
+   {
+    "id": "DIV-02",
+    "statement": "model-set label extraction: Rust tokenizes Python source for top-level `NAME = <str literal(s)>` statements instead of running ast.parse; a module with a syntax error raises SyntaxError in Python but is not necessarily refused by Rust; non-ASCII assignment targets (NFKC-normalized by Python) and \\N{...} escapes in a label value are refused by Rust (NotImplementedError); a parenthesized single target `(NAME) = ...` is not recognised",
+    "disposition": "outside the registered domain: the reference abep_sim/*.py and the B-15 label module contain none of these; the scored model-set bytes would expose any difference"
+   },
+   {
+    "id": "DIV-03",
+    "statement": "build_requirements digit captures (\\d+) on clause texts: non-ASCII decimal digits are converted by Python int() but refused by Rust (ValueError)",
+    "disposition": "outside the registered domain (registered clause texts are ASCII)"
+   },
+   {
+    "id": "DIV-04",
+    "statement": "the builder takes the operating-scenario pin from the Rust loader constant instead of parsing abep_sim/configuration.py with ast",
+    "disposition": "INV-03 proves the two pins equal; a changed configuration.py is REFUSED_REFERENCE_CHANGED for this contract anyway"
+   },
+   {
+    "id": "DIV-05",
+    "statement": "nesting deeper than 512 levels: Rust RecursionError at its own limit",
+    "disposition": "outside the registered domain"
+   }
+  ]
+ },
+ "schema_parity": {
+  "schemas": [
+   "config/** document schemas abep_config_manifest_v1, abep_config_architecture_v1, abep_config_requirements_snapshot_v1, abep_config_engineering_constraints_v1, abep_config_mission_scenario_v2, abep_config_gate_thresholds_v1, abep_config_design_state_set_ref_v1, abep_config_hardware_bounds_index_v1, abep_config_physics_model_set_v1, abep_sources_of_truth_v1 (shape defined by the builder)"
+  ],
+  "rules": [
+   "field names, units, types identical (EXACT_BYTES on every generated file)",
+   "ordering identical (insertion order of the builder dicts)",
+   "Rust record types are produced as Python-shaped values and compared through the same serialization",
+   "evidence_status / raw-vs-assessment labels (A9.22) identical: FROZEN / PROVISIONAL, layer labels, ASSESSMENT_ONLY markers carried as data"
+  ]
+ },
+ "golden_and_reference_cases": {
+  "references": [
+   "config/** at the reference commit (generated by scripts/config/build_config.py; `python scripts/config/build_config.py --check` -> OK at registration)"
+  ],
+  "rule": "references are read as committed; they are never regenerated to make Rust pass (RM-R11); a disagreement is investigated and classified (RUST_DEFECT | PYTHON_REFERENCE_DEFECT (own governance, new contract version) | CONTRACT_DEFECT (new contract version))",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_CONFIGURATION_PY/reference_outputs/",
+   "captured_at_python_commit": "96db5524ec917e99e507def24f3ee0b263c78ebc",
+   "sha256_manifest": "FILL at scoring (the harness writes the Python results of every case and their sha256)",
+   "purpose": "lets CI check Rust against the Python reference after Python is retired from active execution"
+  },
+  "historical_golden_rule": "RM-R28: golden_v1 / golden_v2 are hashed as model-set data files only; they are not parity cases"
+ },
+ "julia_bridge": {
+  "applicable": "false",
+  "hallthruster_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5 (read from hallthruster_bridge/PINNED.toml into the model set as data; Julia is not run)",
+  "julia_version": "NOT_APPLICABLE",
+  "launch_equivalence": "NOT_APPLICABLE",
+  "record_comparison": "NOT_APPLICABLE",
+  "execution_provenance": "NOT_APPLICABLE"
+ },
+ "performance_measurement": {
+  "status": "reported, not a decision criterion (A9.24 items 1 and 6)",
+  "workloads": [
+   {
+    "id": "PERF-CFG-01",
+    "description": "build --check on the repository tree"
+   },
+   {
+    "id": "PERF-CFG-02",
+    "description": "physics_configuration on the repository tree"
+   }
+  ],
+  "repeats": 3,
+  "statistic": "median wall-clock per implementation in one session on one machine; speed-up = median_python / median_rust",
+  "machine_manifest": "recorded in the report"
+ },
+ "decision_rules": {
+  "per_test": "every scored observable meets its tolerance class",
+  "aggregate": "NOT_APPLICABLE (no STATISTICAL entry point)",
+  "exact_invariants_required": true,
+  "conservation_required": false,
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "verdict": "ADMITTED (= PARITY_PASS) iff every loader and build observable of every case, every invariant and the W13 admission criterion pass and every reference file matches sha256_at_registration; otherwise NOT_ADMITTED (PARITY_FAIL); INPUT_MISMATCH if a governing hash differs on the reference tree",
+  "verdict_vocabulary": [
+   "ADMITTED",
+   "NOT_ADMITTED",
+   "REFUSED_REFERENCE_CHANGED",
+   "INPUT_MISMATCH",
+   "NOT_RUN_RUST_UNAVAILABLE",
+   "REFUSED_CLASSIFICATION"
+  ],
+  "meaning_of_ADMITTED": "A9.24 item 1: Rust becomes authoritative for the configuration loaders and the config builder (within the registered domain); new production configuration identities come from Rust and carry implementation = rust, rust_commit and this contract id; the Python component may then be retired from active execution. It is NOT physics validation.",
+  "no_retuning": "tolerances, observables, inputs, n, seeds and rules are fixed; after NOT_ADMITTED only a code fix plus a new contract version with a fresh scoring_master_seed may follow; the failed report stays; no execution is discarded",
+  "disagreement_rule": "never rewrite a Python result, golden, fixture, configuration file or frozen dataset to make Rust pass (RM-R11)",
+  "observable_scope": "observables are restricted to the retained configuration interface; no observable depends on an excluded legacy path (RM-R20)"
+ },
+ "bid_boundary": {
+  "statement": "this contract and its Rust implementation are post-bid-freeze work; no output of it may be cited by the bid package unless the owner re-freezes (PROGRAMME.md section 4; bid_source_guard); config/mission/mission_scenario_v2.json (frozen, sha256 885b1f70...) is read and verified, never rebuilt",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b (technical source) / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (package / freeze record, terminal package state, A9.29 sec. 3; lineage b5849affae22a6709ad217a184f6fe896d15410a -> 2de86ab)",
+  "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+ },
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, threshold, requirement or configuration file",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27): FROZEN / PROVISIONAL statuses are carried as data",
+  "not a gate PASS: the loaders return thresholds and constraint values, never an assessment result (RM-R31)"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-ABEP_SIM_CONFIGURATION_PY/parity_report_v1.json (+ .md generated from it)",
+  "runner": "scripts/rust_migration/parity_config_v1.py (Python harness calling the Rust CLI); records campaign_history",
+  "report_fields": [
+   "contract_sha256",
+   "python_commit",
+   "reference_sha256",
+   "rust_commit",
+   "build_provenance (rustc, Cargo.lock sha256, source sha256)",
+   "environment",
+   "per-test results",
+   "aggregates",
+   "invariants",
+   "conservation",
+   "domain/error",
+   "schema",
+   "performance",
+   "verdicts",
+   "campaign_history",
+   "case file sha256",
+   "ledger_update_requested"
+  ]
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator (A9.25 message 3)",
+  "checks": [
+   "component.migration_class is ACTIVE_SELECTED_ARCHITECTURE_PHYSICS for both coupled inventory rows: PASS",
+   "no observable, input or code path of the contract belongs to an excluded legacy path: PASS (the builder copies the C1 GROUND_ONLY role text of the architecture record as data; no cathode model is involved)",
+   "the Python harness traverses no legacy path to reach the component: PASS",
+   "the Rust implementation contains none of the forbidden identifiers (CI_PLAN.md sec. 1 principle 6) outside quoted provenance strings copied from the owner decision records",
+   "not a GROUND_TEST_PROGRAMME_ONLY contract"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict): the contract cannot be registered"
+ },
+ "value_status_preservation": {
+  "rule": "RM-R27: no provisional / analog / allocation input is promoted by migration to CBE, measured or frozen truth",
+  "inputs": [
+   {
+    "id": "engineering constraints / requirements snapshot statuses",
+    "value": "as committed in config/**",
+    "value_status": "FROZEN / PROVISIONAL per row",
+    "open_action": "NOT_APPLICABLE",
+    "committed_labels": [
+     "FROZEN",
+     "PROVISIONAL",
+     "TBD_PENDING_MEASURED_H1",
+     "HISTORICAL_CONSTANT_NOT_CONSUMED",
+     "SUBSYSTEM_FIRING_LIFE_ASSUMPTION"
+    ]
+   }
+  ],
+  "check": "VS-01: covered by EXACT_BYTES of every generated file and EXACT_VALUE of every loaded status"
+ },
+ "new_physics_verification": {
+  "applies_when": "NOT_APPLICABLE (contract_kind EXISTING_PHYSICS_PARITY)"
+ }
+}

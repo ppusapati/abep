@@ -4288,3 +4288,30 @@ main, and the bid record `5eee4b8` / `b5849af` / `2de86ab`. `git diff 2de86ab..H
   (disclosed in the reports).
 - `cargo test --workspace --locked`: 29 passed, 0 ignored; clippy -D warnings and rustfmt (members) clean;
   `scripts/ci_checks.py` 11/11; pytest 4226 passed, 5 skipped, 1 xfailed.
+
+## 2026-10-05 — Configuration layer and active-architecture invariant in Rust (A9.29 lane A2, ES-1 / SC-WP-12; no number changed)
+
+- `abep_types::pyjson`: a Python-compatible JSON writer and parser. It covers CPython `float.__repr__` (including its
+  ties-to-even digit choice, where Rust's own shortest formatting rounds up), the `json.dumps` layouts, `json.loads`,
+  `repr` and the str character classes. It was verified against CPython 3.11.15 on the preregistered seed 202610052:
+  16,258 explicit floats, 1.5 M streamed floats, 1,500 strings, 60 documents and every code point.
+- Two contracts, each committed alone before any comparison:
+  - `C-ABEP_SIM_CONFIGURATION_PY` v1 (sha256 `69cf9448…`): the loaders and the `config/**` builder, coupled with
+    `C-SCRIPTS_CONFIG_BUILD_CONFIG_PY`;
+  - `C-ABEP_SIM_DESIGN_A9_19_ARCHITECTURE_PY` v1 (sha256 `ddec7a18…`): the active-architecture invariant (flight hollow
+    cathode NONE, C1 ground test / reference only), with a Rust sha256 pin of
+    `config/architecture/hall_icp_neutralizer_v1.json`.
+- `crates/abep-config` provides:
+  - the sha256-verified loaders, with the Python refusal semantics. The physics seam reads only the operating
+    scenario, and requirement thresholds are assessment data;
+  - `abep-config build --check`, which reproduces `config/**` and `MANIFEST.json` byte for byte;
+  - `abep_config::architecture`.
+- Each contract was scored once, and both are ADMITTED (PARITY_PASS):
+  - configuration: 8,874 loader calls on 306 case trees plus 23 build cases, 0 mismatches; `abep-config build --check`
+    on the repository gives `OK: 12 config files current`;
+  - architecture: 1,712 calls, 0 mismatches, with DIV-A01 (the hash pin) observed as registered.
+  The ledger updates are requested in the reports (lane A1 owns the ledger). Operating inputs, design engineering
+  constraints and constants keep their own contracts.
+- Tests: `cargo test --workspace --locked` 35 passed, 0 ignored; `scripts/ci_checks.py` 11/11; pytest 4226 passed / 5
+  skipped / 1 xfailed. The A9.23 test "only the builder writes the engineering constraints" now allow-lists the
+  parity harness by name, because the harness writes only temporary case trees.

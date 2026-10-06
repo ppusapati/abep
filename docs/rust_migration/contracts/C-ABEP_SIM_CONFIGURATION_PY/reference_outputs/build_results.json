@@ -1,0 +1,878 @@
+{
+ "B-00": {
+  "build_all": {
+   "outcome": "RETURNED",
+   "value": {
+    "architecture/hall_icp_neutralizer_v1.json": {
+     "sha256": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3",
+     "bytes": 6652
+    },
+    "requirements/rfp_constraints_v1.json": {
+     "sha256": "76656e6a7010a39179c8af0c788609b00459f34d5198d3f0bc966da0ef840ef7",
+     "bytes": 18793
+    },
+    "constraints/engineering_constraints_v1.json": {
+     "sha256": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e",
+     "bytes": 10822
+    },
+    "mission/mission_scenario_v2.json": {
+     "sha256": "885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49",
+     "bytes": 7775
+    },
+    "mission/mission_scenario_v1.json": {
+     "sha256": "a01b56a6ec7a79cb3b37c6356542d093c618632388edefb150881bf03fbe7ba0",
+     "bytes": 3976
+    },
+    "assessment/gate_thresholds_v1.json": {
+     "sha256": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b",
+     "bytes": 6583
+    },
+    "environment/design_state_set_ref_v1.json": {
+     "sha256": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484",
+     "bytes": 1188
+    },
+    "hardware/hardware_bounds_v1.json": {
+     "sha256": "952f70a5e850f94bb9d3de52eba492eaa62821b8e85102c51d4895a8887e64b6",
+     "bytes": 2627
+    },
+    "model_set/physics_model_set_v1.json": {
+     "sha256": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1",
+     "bytes": 17596
+    },
+    "SOURCES_OF_TRUTH.json": {
+     "sha256": "c4ce2251a7f2d92e708a1c80f7c712fde6f4119725b8d972259ae89c5a942279",
+     "bytes": 6584
+    },
+    "README.md": {
+     "sha256": "14509afc0f6629561d507d65178c014c800938dd496ae0f72a8c1ecdc3b013c1",
+     "bytes": 5506
+    },
+    "MANIFEST.json": {
+     "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883",
+     "bytes": 1789
+    }
+   }
+  },
+  "check": {
+   "outcome": "RETURNED",
+   "value": {
+    "exit": 0,
+    "line": "OK: 12 config files current"
+   }
+  }
+ },
+ "B-01": {
+  "build_all": {
+   "outcome": "RETURNED",
+   "value": {
+    "architecture/hall_icp_neutralizer_v1.json": {
+     "sha256": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3",
+     "bytes": 6652
+    },
+    "requirements/rfp_constraints_v1.json": {
+     "sha256": "76656e6a7010a39179c8af0c788609b00459f34d5198d3f0bc966da0ef840ef7",
+     "bytes": 18793
+    },
+    "constraints/engineering_constraints_v1.json": {
+     "sha256": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e",
+     "bytes": 10822
+    },
+    "mission/mission_scenario_v2.json": {
+     "sha256": "885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49",
+     "bytes": 7775
+    },
+    "mission/mission_scenario_v1.json": {
+     "sha256": "a01b56a6ec7a79cb3b37c6356542d093c618632388edefb150881bf03fbe7ba0",
+     "bytes": 3976
+    },
+    "assessment/gate_thresholds_v1.json": {
+     "sha256": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b",
+     "bytes": 6583
+    },
+    "environment/design_state_set_ref_v1.json": {
+     "sha256": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484",
+     "bytes": 1188
+    },
+    "hardware/hardware_bounds_v1.json": {
+     "sha256": "952f70a5e850f94bb9d3de52eba492eaa62821b8e85102c51d4895a8887e64b6",
+     "bytes": 2627
+    },
+    "model_set/physics_model_set_v1.json": {
+     "sha256": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1",
+     "bytes": 17596
+    },
+    "SOURCES_OF_TRUTH.json": {
+     "sha256": "c4ce2251a7f2d92e708a1c80f7c712fde6f4119725b8d972259ae89c5a942279",
+     "bytes": 6584
+    },
+    "README.md": {
+     "sha256": "14509afc0f6629561d507d65178c014c800938dd496ae0f72a8c1ecdc3b013c1",
+     "bytes": 5506
+    },
+    "MANIFEST.json": {
+     "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883",
+     "bytes": 1789
+    }
+   }
+  },
+  "check": {
+   "outcome": "RETURNED",
+   "value": {
+    "exit": 1,
+    "line": "STALE: ['architecture/hall_icp_neutralizer_v1.json']; unlisted files: []"
+   }
+  }
+ },
+ "B-02": {
+  "build_all": {
+   "outcome": "RETURNED",
+   "value": {
+    "architecture/hall_icp_neutralizer_v1.json": {
+     "sha256": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3",
+     "bytes": 6652
+    },
+    "requirements/rfp_constraints_v1.json": {
+     "sha256": "76656e6a7010a39179c8af0c788609b00459f34d5198d3f0bc966da0ef840ef7",
+     "bytes": 18793
+    },
+    "constraints/engineering_constraints_v1.json": {
+     "sha256": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e",
+     "bytes": 10822
+    },
+    "mission/mission_scenario_v2.json": {
+     "sha256": "885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49",
+     "bytes": 7775
+    },
+    "mission/mission_scenario_v1.json": {
+     "sha256": "a01b56a6ec7a79cb3b37c6356542d093c618632388edefb150881bf03fbe7ba0",
+     "bytes": 3976
+    },
+    "assessment/gate_thresholds_v1.json": {
+     "sha256": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b",
+     "bytes": 6583
+    },
+    "environment/design_state_set_ref_v1.json": {
+     "sha256": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484",
+     "bytes": 1188
+    },
+    "hardware/hardware_bounds_v1.json": {
+     "sha256": "952f70a5e850f94bb9d3de52eba492eaa62821b8e85102c51d4895a8887e64b6",
+     "bytes": 2627
+    },
+    "model_set/physics_model_set_v1.json": {
+     "sha256": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1",
+     "bytes": 17596
+    },
+    "SOURCES_OF_TRUTH.json": {
+     "sha256": "c4ce2251a7f2d92e708a1c80f7c712fde6f4119725b8d972259ae89c5a942279",
+     "bytes": 6584
+    },
+    "README.md": {
+     "sha256": "14509afc0f6629561d507d65178c014c800938dd496ae0f72a8c1ecdc3b013c1",
+     "bytes": 5506
+    },
+    "MANIFEST.json": {
+     "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883",
+     "bytes": 1789
+    }
+   }
+  },
+  "check": {
+   "outcome": "RETURNED",
+   "value": {
+    "exit": 1,
+    "line": "STALE: []; unlisted files: ['extra/unlisted.json']"
+   }
+  }
+ },
+ "B-03": {
+  "build_all": {
+   "outcome": "RETURNED",
+   "value": {
+    "architecture/hall_icp_neutralizer_v1.json": {
+     "sha256": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3",
+     "bytes": 6652
+    },
+    "requirements/rfp_constraints_v1.json": {
+     "sha256": "76656e6a7010a39179c8af0c788609b00459f34d5198d3f0bc966da0ef840ef7",
+     "bytes": 18793
+    },
+    "constraints/engineering_constraints_v1.json": {
+     "sha256": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e",
+     "bytes": 10822
+    },
+    "mission/mission_scenario_v2.json": {
+     "sha256": "885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49",
+     "bytes": 7775
+    },
+    "mission/mission_scenario_v1.json": {
+     "sha256": "a01b56a6ec7a79cb3b37c6356542d093c618632388edefb150881bf03fbe7ba0",
+     "bytes": 3976
+    },
+    "assessment/gate_thresholds_v1.json": {
+     "sha256": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b",
+     "bytes": 6583
+    },
+    "environment/design_state_set_ref_v1.json": {
+     "sha256": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484",
+     "bytes": 1188
+    },
+    "hardware/hardware_bounds_v1.json": {
+     "sha256": "952f70a5e850f94bb9d3de52eba492eaa62821b8e85102c51d4895a8887e64b6",
+     "bytes": 2627
+    },
+    "model_set/physics_model_set_v1.json": {
+     "sha256": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1",
+     "bytes": 17596
+    },
+    "SOURCES_OF_TRUTH.json": {
+     "sha256": "c4ce2251a7f2d92e708a1c80f7c712fde6f4119725b8d972259ae89c5a942279",
+     "bytes": 6584
+    },
+    "README.md": {
+     "sha256": "14509afc0f6629561d507d65178c014c800938dd496ae0f72a8c1ecdc3b013c1",
+     "bytes": 5506
+    },
+    "MANIFEST.json": {
+     "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883",
+     "bytes": 1789
+    }
+   }
+  },
+  "check": {
+   "outcome": "RETURNED",
+   "value": {
+    "exit": 1,
+    "line": "STALE: ['hardware/hardware_bounds_v1.json']; unlisted files: []"
+   }
+  }
+ },
+ "B-04": {
+  "build_all": {
+   "outcome": "RAISED",
+   "class": "BuildError",
+   "message": "config/mission/mission_scenario_v2.json sha256 33c46aca048d1bd01a82d87b48870a1a04ae2f2676ca894451c0bd41f98b1186 != pinned 885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49: a changed operating scenario needs a new scenario version (A9.24 item 4)"
+  },
+  "check": {
+   "outcome": "RAISED",
+   "class": "BuildError",
+   "message": "config/mission/mission_scenario_v2.json sha256 33c46aca048d1bd01a82d87b48870a1a04ae2f2676ca894451c0bd41f98b1186 != pinned 885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49: a changed operating scenario needs a new scenario version (A9.24 item 4)"
+  }
+ },
+ "B-05": {
+  "build_all": {
+   "outcome": "RAISED",
+   "class": "BuildError",
+   "message": "config/mission/mission_scenario_v1.json sha256 abe77dce65ffd1d012b43ae2f110efe023de6397166f088d1c1c86ca3dc2a25e != pinned a01b56a6ec7a79cb3b37c6356542d093c618632388edefb150881bf03fbe7ba0: a changed operating scenario needs a new scenario version (A9.24 item 4)"
+  },
+  "check": {
+   "outcome": "RAISED",
+   "class": "BuildError",
+   "message": "config/mission/mission_scenario_v1.json sha256 abe77dce65ffd1d012b43ae2f110efe023de6397166f088d1c1c86ca3dc2a25e != pinned a01b56a6ec7a79cb3b37c6356542d093c618632388edefb150881bf03fbe7ba0: a changed operating scenario needs a new scenario version (A9.24 item 4)"
+  }
+ },
+ "B-06": {
+  "build_all": {
+   "outcome": "RAISED",
+   "class": "BuildError",
+   "message": "config/mission/mission_scenario_v2.json missing (frozen scenario; never generated)"
+  },
+  "check": {
+   "outcome": "RAISED",
+   "class": "BuildError",
+   "message": "config/mission/mission_scenario_v2.json missing (frozen scenario; never generated)"
+  }
+ },
+ "B-07": {
+  "build_all": {
+   "outcome": "RAISED",
+   "class": "BuildError",
+   "message": "owner decision record A9.19 changed; refused (records are immutable)"
+  },
+  "check": {
+   "outcome": "RAISED",
+   "class": "BuildError",
+   "message": "owner decision record A9.19 changed; refused (records are immutable)"
+  }
+ },
+ "B-08": {
+  "build_all": {
+   "outcome": "RAISED",
+   "class": "BuildError",
+   "message": "owner decision record A9.20 changed; refused (records are immutable)"
+  },
+  "check": {
+   "outcome": "RAISED",
+   "class": "BuildError",
+   "message": "owner decision record A9.20 changed; refused (records are immutable)"
+  }
+ },
+ "B-09": {
+  "build_all": {
+   "outcome": "RAISED",
+   "class": "BuildError",
+   "message": "RVM rfp_rebase clauses_sha256 differs from the registration clauses"
+  },
+  "check": {
+   "outcome": "RAISED",
+   "class": "BuildError",
+   "message": "RVM rfp_rebase clauses_sha256 differs from the registration clauses"
+  }
+ },
+ "B-10": {
+  "build_all": {
+   "outcome": "RAISED",
+   "class": "BuildError",
+   "message": "RVM RVM-01 missing or its key does not start with 'ALTITUDE'"
+  },
+  "check": {
+   "outcome": "RAISED",
+   "class": "BuildError",
+   "message": "RVM RVM-01 missing or its key does not start with 'ALTITUDE'"
+  }
+ },
+ "B-11": {
+  "build_all": {
+   "outcome": "RETURNED",
+   "value": {
+    "architecture/hall_icp_neutralizer_v1.json": {
+     "sha256": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3",
+     "bytes": 6652
+    },
+    "requirements/rfp_constraints_v1.json": {
+     "sha256": "60278a9b77e43cb7d1da1110fa63af5c710e030ddc45f1e31012eeb725ddbd21",
+     "bytes": 18793
+    },
+    "constraints/engineering_constraints_v1.json": {
+     "sha256": "32170136bcb56c6e569dc1fd7a292ef487517daed3bc681775b177408a31033c",
+     "bytes": 10822
+    },
+    "mission/mission_scenario_v2.json": {
+     "sha256": "885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49",
+     "bytes": 7775
+    },
+    "mission/mission_scenario_v1.json": {
+     "sha256": "a01b56a6ec7a79cb3b37c6356542d093c618632388edefb150881bf03fbe7ba0",
+     "bytes": 3976
+    },
+    "assessment/gate_thresholds_v1.json": {
+     "sha256": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b",
+     "bytes": 6583
+    },
+    "environment/design_state_set_ref_v1.json": {
+     "sha256": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484",
+     "bytes": 1188
+    },
+    "hardware/hardware_bounds_v1.json": {
+     "sha256": "952f70a5e850f94bb9d3de52eba492eaa62821b8e85102c51d4895a8887e64b6",
+     "bytes": 2627
+    },
+    "model_set/physics_model_set_v1.json": {
+     "sha256": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1",
+     "bytes": 17596
+    },
+    "SOURCES_OF_TRUTH.json": {
+     "sha256": "6d4768549192049ed8a5a461d351063b6b7da00967b88526ffec6c56404d36a7",
+     "bytes": 6584
+    },
+    "README.md": {
+     "sha256": "14509afc0f6629561d507d65178c014c800938dd496ae0f72a8c1ecdc3b013c1",
+     "bytes": 5506
+    },
+    "MANIFEST.json": {
+     "sha256": "23d0e5fa77e4926eba2c80b5279fd802c5f4d1c752e091b0c76fa93f2ac4fe0e",
+     "bytes": 1789
+    }
+   }
+  },
+  "check": {
+   "outcome": "RETURNED",
+   "value": {
+    "exit": 1,
+    "line": "STALE: ['requirements/rfp_constraints_v1.json', 'constraints/engineering_constraints_v1.json', 'SOURCES_OF_TRUTH.json', 'MANIFEST.json']; unlisted files: []"
+   }
+  }
+ },
+ "B-12": {
+  "build_all": {
+   "outcome": "RETURNED",
+   "value": {
+    "architecture/hall_icp_neutralizer_v1.json": {
+     "sha256": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3",
+     "bytes": 6652
+    },
+    "requirements/rfp_constraints_v1.json": {
+     "sha256": "76656e6a7010a39179c8af0c788609b00459f34d5198d3f0bc966da0ef840ef7",
+     "bytes": 18793
+    },
+    "constraints/engineering_constraints_v1.json": {
+     "sha256": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e",
+     "bytes": 10822
+    },
+    "mission/mission_scenario_v2.json": {
+     "sha256": "885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49",
+     "bytes": 7775
+    },
+    "mission/mission_scenario_v1.json": {
+     "sha256": "a01b56a6ec7a79cb3b37c6356542d093c618632388edefb150881bf03fbe7ba0",
+     "bytes": 3976
+    },
+    "assessment/gate_thresholds_v1.json": {
+     "sha256": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b",
+     "bytes": 6583
+    },
+    "environment/design_state_set_ref_v1.json": {
+     "sha256": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484",
+     "bytes": 1188
+    },
+    "hardware/hardware_bounds_v1.json": {
+     "sha256": "952f70a5e850f94bb9d3de52eba492eaa62821b8e85102c51d4895a8887e64b6",
+     "bytes": 2627
+    },
+    "model_set/physics_model_set_v1.json": {
+     "sha256": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1",
+     "bytes": 17596
+    },
+    "SOURCES_OF_TRUTH.json": {
+     "sha256": "c4ce2251a7f2d92e708a1c80f7c712fde6f4119725b8d972259ae89c5a942279",
+     "bytes": 6584
+    },
+    "README.md": {
+     "sha256": "14509afc0f6629561d507d65178c014c800938dd496ae0f72a8c1ecdc3b013c1",
+     "bytes": 5506
+    },
+    "MANIFEST.json": {
+     "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883",
+     "bytes": 1789
+    }
+   }
+  },
+  "check": {
+   "outcome": "RETURNED",
+   "value": {
+    "exit": 0,
+    "line": "OK: 12 config files current"
+   }
+  }
+ },
+ "B-13": {
+  "build_all": {
+   "outcome": "RAISED",
+   "class": "BuildError",
+   "message": "RVM RVM-04 has no limit"
+  },
+  "check": {
+   "outcome": "RAISED",
+   "class": "BuildError",
+   "message": "RVM RVM-04 has no limit"
+  }
+ },
+ "B-14": {
+  "build_all": {
+   "outcome": "RETURNED",
+   "value": {
+    "architecture/hall_icp_neutralizer_v1.json": {
+     "sha256": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3",
+     "bytes": 6652
+    },
+    "requirements/rfp_constraints_v1.json": {
+     "sha256": "76656e6a7010a39179c8af0c788609b00459f34d5198d3f0bc966da0ef840ef7",
+     "bytes": 18793
+    },
+    "constraints/engineering_constraints_v1.json": {
+     "sha256": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e",
+     "bytes": 10822
+    },
+    "mission/mission_scenario_v2.json": {
+     "sha256": "885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49",
+     "bytes": 7775
+    },
+    "mission/mission_scenario_v1.json": {
+     "sha256": "a01b56a6ec7a79cb3b37c6356542d093c618632388edefb150881bf03fbe7ba0",
+     "bytes": 3976
+    },
+    "assessment/gate_thresholds_v1.json": {
+     "sha256": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b",
+     "bytes": 6583
+    },
+    "environment/design_state_set_ref_v1.json": {
+     "sha256": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484",
+     "bytes": 1188
+    },
+    "hardware/hardware_bounds_v1.json": {
+     "sha256": "952f70a5e850f94bb9d3de52eba492eaa62821b8e85102c51d4895a8887e64b6",
+     "bytes": 2627
+    },
+    "model_set/physics_model_set_v1.json": {
+     "sha256": "f043d6c0f75cf9f8311acc23018f6008a97c4d20d58c482108e9985aca69720e",
+     "bytes": 17596
+    },
+    "SOURCES_OF_TRUTH.json": {
+     "sha256": "037d6ce3377988a61cd02e996a687626d6426da2f556310dd5cbd20ccf4996f7",
+     "bytes": 6584
+    },
+    "README.md": {
+     "sha256": "14509afc0f6629561d507d65178c014c800938dd496ae0f72a8c1ecdc3b013c1",
+     "bytes": 5506
+    },
+    "MANIFEST.json": {
+     "sha256": "d5c1b9b885d91d7c5e27486f0440b1f4f73a7844379605b2056847042f6a8d1f",
+     "bytes": 1789
+    }
+   }
+  },
+  "check": {
+   "outcome": "RETURNED",
+   "value": {
+    "exit": 1,
+    "line": "STALE: ['model_set/physics_model_set_v1.json', 'SOURCES_OF_TRUTH.json', 'MANIFEST.json']; unlisted files: []"
+   }
+  }
+ },
+ "B-15": {
+  "build_all": {
+   "outcome": "RETURNED",
+   "value": {
+    "architecture/hall_icp_neutralizer_v1.json": {
+     "sha256": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3",
+     "bytes": 6652
+    },
+    "requirements/rfp_constraints_v1.json": {
+     "sha256": "76656e6a7010a39179c8af0c788609b00459f34d5198d3f0bc966da0ef840ef7",
+     "bytes": 18793
+    },
+    "constraints/engineering_constraints_v1.json": {
+     "sha256": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e",
+     "bytes": 10822
+    },
+    "mission/mission_scenario_v2.json": {
+     "sha256": "885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49",
+     "bytes": 7775
+    },
+    "mission/mission_scenario_v1.json": {
+     "sha256": "a01b56a6ec7a79cb3b37c6356542d093c618632388edefb150881bf03fbe7ba0",
+     "bytes": 3976
+    },
+    "assessment/gate_thresholds_v1.json": {
+     "sha256": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b",
+     "bytes": 6583
+    },
+    "environment/design_state_set_ref_v1.json": {
+     "sha256": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484",
+     "bytes": 1188
+    },
+    "hardware/hardware_bounds_v1.json": {
+     "sha256": "952f70a5e850f94bb9d3de52eba492eaa62821b8e85102c51d4895a8887e64b6",
+     "bytes": 2627
+    },
+    "model_set/physics_model_set_v1.json": {
+     "sha256": "0c5bf0ceb8cf1e630c93d78f860bf24086a713d9d313efb5b28459eb3bd90e31",
+     "bytes": 19251
+    },
+    "SOURCES_OF_TRUTH.json": {
+     "sha256": "3a7a92ea8260fbea3898266a913c03a7a77f98550bcdd37422b57d7b577f8db8",
+     "bytes": 6584
+    },
+    "README.md": {
+     "sha256": "14509afc0f6629561d507d65178c014c800938dd496ae0f72a8c1ecdc3b013c1",
+     "bytes": 5506
+    },
+    "MANIFEST.json": {
+     "sha256": "9f0af3fb5a2ead25e0f0dd34e742aee94e3b3e46cb2fe061a606a262e8b23700",
+     "bytes": 1789
+    }
+   }
+  },
+  "check": {
+   "outcome": "RETURNED",
+   "value": {
+    "exit": 1,
+    "line": "STALE: ['model_set/physics_model_set_v1.json', 'SOURCES_OF_TRUTH.json', 'MANIFEST.json']; unlisted files: []"
+   }
+  }
+ },
+ "B-16": {
+  "build_all": {
+   "outcome": "RETURNED",
+   "value": {
+    "architecture/hall_icp_neutralizer_v1.json": {
+     "sha256": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3",
+     "bytes": 6652
+    },
+    "requirements/rfp_constraints_v1.json": {
+     "sha256": "76656e6a7010a39179c8af0c788609b00459f34d5198d3f0bc966da0ef840ef7",
+     "bytes": 18793
+    },
+    "constraints/engineering_constraints_v1.json": {
+     "sha256": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e",
+     "bytes": 10822
+    },
+    "mission/mission_scenario_v2.json": {
+     "sha256": "885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49",
+     "bytes": 7775
+    },
+    "mission/mission_scenario_v1.json": {
+     "sha256": "a01b56a6ec7a79cb3b37c6356542d093c618632388edefb150881bf03fbe7ba0",
+     "bytes": 3976
+    },
+    "assessment/gate_thresholds_v1.json": {
+     "sha256": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b",
+     "bytes": 6583
+    },
+    "environment/design_state_set_ref_v1.json": {
+     "sha256": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484",
+     "bytes": 1188
+    },
+    "hardware/hardware_bounds_v1.json": {
+     "sha256": "952f70a5e850f94bb9d3de52eba492eaa62821b8e85102c51d4895a8887e64b6",
+     "bytes": 2627
+    },
+    "model_set/physics_model_set_v1.json": {
+     "sha256": "4b81e4b70c6e5198c0ab61eb7252952a09df3c826ca671002202826fbfca1f17",
+     "bytes": 17730
+    },
+    "SOURCES_OF_TRUTH.json": {
+     "sha256": "bc56d9706116eca224ca87ac8541116ca3cdecafead041522161be10ec1c8977",
+     "bytes": 6584
+    },
+    "README.md": {
+     "sha256": "14509afc0f6629561d507d65178c014c800938dd496ae0f72a8c1ecdc3b013c1",
+     "bytes": 5506
+    },
+    "MANIFEST.json": {
+     "sha256": "c4c98a49738f0943fbb37b71bc772e8cdbf598aa39c942520cacc69ec350ca68",
+     "bytes": 1789
+    }
+   }
+  },
+  "check": {
+   "outcome": "RETURNED",
+   "value": {
+    "exit": 1,
+    "line": "STALE: ['model_set/physics_model_set_v1.json', 'SOURCES_OF_TRUTH.json', 'MANIFEST.json']; unlisted files: []"
+   }
+  }
+ },
+ "B-17": {
+  "build_all": {
+   "outcome": "RAISED",
+   "class": "BuildError",
+   "message": "source abep_sim/rotor_strength.py missing"
+  },
+  "check": {
+   "outcome": "RAISED",
+   "class": "BuildError",
+   "message": "source abep_sim/rotor_strength.py missing"
+  }
+ },
+ "B-18": {
+  "build_all": {
+   "outcome": "RAISED",
+   "class": "BuildError",
+   "message": "dataset manifest design_states_file_v2 does not record the design-state file hash"
+  },
+  "check": {
+   "outcome": "RAISED",
+   "class": "BuildError",
+   "message": "dataset manifest design_states_file_v2 does not record the design-state file hash"
+  }
+ },
+ "B-19": {
+  "build_all": {
+   "outcome": "RAISED",
+   "class": "BuildError",
+   "message": "schemas/results/raw_closure_v2.json missing: run python scripts/config/build_result_schemas.py"
+  },
+  "check": {
+   "outcome": "RAISED",
+   "class": "BuildError",
+   "message": "schemas/results/raw_closure_v2.json missing: run python scripts/config/build_result_schemas.py"
+  }
+ },
+ "B-20": {
+  "build_all": {
+   "outcome": "RETURNED",
+   "value": {
+    "architecture/hall_icp_neutralizer_v1.json": {
+     "sha256": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3",
+     "bytes": 6652
+    },
+    "requirements/rfp_constraints_v1.json": {
+     "sha256": "76656e6a7010a39179c8af0c788609b00459f34d5198d3f0bc966da0ef840ef7",
+     "bytes": 18793
+    },
+    "constraints/engineering_constraints_v1.json": {
+     "sha256": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e",
+     "bytes": 10822
+    },
+    "mission/mission_scenario_v2.json": {
+     "sha256": "885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49",
+     "bytes": 7775
+    },
+    "mission/mission_scenario_v1.json": {
+     "sha256": "a01b56a6ec7a79cb3b37c6356542d093c618632388edefb150881bf03fbe7ba0",
+     "bytes": 3976
+    },
+    "assessment/gate_thresholds_v1.json": {
+     "sha256": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b",
+     "bytes": 6583
+    },
+    "environment/design_state_set_ref_v1.json": {
+     "sha256": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484",
+     "bytes": 1188
+    },
+    "hardware/hardware_bounds_v1.json": {
+     "sha256": "952f70a5e850f94bb9d3de52eba492eaa62821b8e85102c51d4895a8887e64b6",
+     "bytes": 2627
+    },
+    "model_set/physics_model_set_v1.json": {
+     "sha256": "9368cfb4ea4d5e6a5dc1e672aeee5b332ba20e4b59c68c6a418084595df96324",
+     "bytes": 17596
+    },
+    "SOURCES_OF_TRUTH.json": {
+     "sha256": "ae8a7f2778887595ee4b83fcc7a603026a2b8542d2237c83433e05527486340c",
+     "bytes": 6584
+    },
+    "README.md": {
+     "sha256": "14509afc0f6629561d507d65178c014c800938dd496ae0f72a8c1ecdc3b013c1",
+     "bytes": 5506
+    },
+    "MANIFEST.json": {
+     "sha256": "523e68733be7ad1e59e9ee1b8de4808b300c3579389c2775602c7585e2fbdc29",
+     "bytes": 1789
+    }
+   }
+  },
+  "check": {
+   "outcome": "RETURNED",
+   "value": {
+    "exit": 1,
+    "line": "STALE: ['model_set/physics_model_set_v1.json', 'SOURCES_OF_TRUTH.json', 'MANIFEST.json']; unlisted files: []"
+   }
+  }
+ },
+ "B-21": {
+  "build_all": {
+   "outcome": "RETURNED",
+   "value": {
+    "architecture/hall_icp_neutralizer_v1.json": {
+     "sha256": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3",
+     "bytes": 6652
+    },
+    "requirements/rfp_constraints_v1.json": {
+     "sha256": "76656e6a7010a39179c8af0c788609b00459f34d5198d3f0bc966da0ef840ef7",
+     "bytes": 18793
+    },
+    "constraints/engineering_constraints_v1.json": {
+     "sha256": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e",
+     "bytes": 10822
+    },
+    "mission/mission_scenario_v2.json": {
+     "sha256": "885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49",
+     "bytes": 7775
+    },
+    "mission/mission_scenario_v1.json": {
+     "sha256": "a01b56a6ec7a79cb3b37c6356542d093c618632388edefb150881bf03fbe7ba0",
+     "bytes": 3976
+    },
+    "assessment/gate_thresholds_v1.json": {
+     "sha256": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b",
+     "bytes": 6583
+    },
+    "environment/design_state_set_ref_v1.json": {
+     "sha256": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484",
+     "bytes": 1188
+    },
+    "hardware/hardware_bounds_v1.json": {
+     "sha256": "952f70a5e850f94bb9d3de52eba492eaa62821b8e85102c51d4895a8887e64b6",
+     "bytes": 2627
+    },
+    "model_set/physics_model_set_v1.json": {
+     "sha256": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1",
+     "bytes": 17596
+    },
+    "SOURCES_OF_TRUTH.json": {
+     "sha256": "c4ce2251a7f2d92e708a1c80f7c712fde6f4119725b8d972259ae89c5a942279",
+     "bytes": 6584
+    },
+    "README.md": {
+     "sha256": "14509afc0f6629561d507d65178c014c800938dd496ae0f72a8c1ecdc3b013c1",
+     "bytes": 5506
+    },
+    "MANIFEST.json": {
+     "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883",
+     "bytes": 1789
+    }
+   }
+  },
+  "check": {
+   "outcome": "RETURNED",
+   "value": {
+    "exit": 0,
+    "line": "OK: 12 config files current"
+   }
+  }
+ },
+ "B-22": {
+  "build_all": {
+   "outcome": "RETURNED",
+   "value": {
+    "architecture/hall_icp_neutralizer_v1.json": {
+     "sha256": "e2efb5b97dbe769016793f12a1003d9b19e406b8c20c1f59a3c2db50fac2a026",
+     "bytes": 6652
+    },
+    "requirements/rfp_constraints_v1.json": {
+     "sha256": "76656e6a7010a39179c8af0c788609b00459f34d5198d3f0bc966da0ef840ef7",
+     "bytes": 18793
+    },
+    "constraints/engineering_constraints_v1.json": {
+     "sha256": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e",
+     "bytes": 10822
+    },
+    "mission/mission_scenario_v2.json": {
+     "sha256": "885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49",
+     "bytes": 7775
+    },
+    "mission/mission_scenario_v1.json": {
+     "sha256": "a01b56a6ec7a79cb3b37c6356542d093c618632388edefb150881bf03fbe7ba0",
+     "bytes": 3976
+    },
+    "assessment/gate_thresholds_v1.json": {
+     "sha256": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b",
+     "bytes": 6583
+    },
+    "environment/design_state_set_ref_v1.json": {
+     "sha256": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484",
+     "bytes": 1188
+    },
+    "hardware/hardware_bounds_v1.json": {
+     "sha256": "952f70a5e850f94bb9d3de52eba492eaa62821b8e85102c51d4895a8887e64b6",
+     "bytes": 2627
+    },
+    "model_set/physics_model_set_v1.json": {
+     "sha256": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1",
+     "bytes": 17596
+    },
+    "SOURCES_OF_TRUTH.json": {
+     "sha256": "e23dfad2229dc083a794734a7e82bfbf5482337f4d2408f4235d5e5b981b86f6",
+     "bytes": 6584
+    },
+    "README.md": {
+     "sha256": "14509afc0f6629561d507d65178c014c800938dd496ae0f72a8c1ecdc3b013c1",
+     "bytes": 5506
+    },
+    "MANIFEST.json": {
+     "sha256": "adddfc95a1e100b1580cee0375999504b49bd9d3764b56da1f02e4561279e23d",
+     "bytes": 1789
+    }
+   }
+  },
+  "check": {
+   "outcome": "RETURNED",
+   "value": {
+    "exit": 1,
+    "line": "STALE: ['architecture/hall_icp_neutralizer_v1.json', 'SOURCES_OF_TRUTH.json', 'MANIFEST.json']; unlisted files: []"
+   }
+  }
+ }
+}
