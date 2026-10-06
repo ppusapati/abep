@@ -133,9 +133,15 @@ name = "abep-mission"
 version = "0.1.0"
 dependencies = [
  "abep-atmos",
+ "abep-chem",
+ "abep-config",
  "abep-data",
+ "abep-hall",
+ "abep-icp",
  "abep-provenance",
+ "abep-subsystems",
  "abep-types",
+ "serde",
  "serde_json",
 ]
 
