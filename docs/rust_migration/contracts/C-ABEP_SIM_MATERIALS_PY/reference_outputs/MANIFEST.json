@@ -1,0 +1,15 @@
+{
+ "captured_at_python_commit": "e462e35ed0ce6092f47e1d1b05119501cf4d7eb6",
+ "scoring_git_head": "36f4b3b8bd8f4a902b6ca0a18fd8ace8b38c74a7",
+ "format": "gzip (mtime 0) of json.dumps(obj, indent=None, ensure_ascii=True, allow_nan=True)",
+ "files": {
+  "calls_v1.json.gz": {
+   "sha256": "0252abf51ab86e29ebc9c59ba78826d709f5f80cd960e665977abb2b1bd0a381",
+   "uncompressed_sha256": "634fbe3d63799b05bc4b637ac7cb7a7bb2062c0ddbfd0c67c12e05519a92e3ca"
+  },
+  "python_results_v1.json.gz": {
+   "sha256": "fb386ce8f5bb11aed5478a45c273bfec8f28d35e19657b235ec66ef71241a7b9",
+   "uncompressed_sha256": "747566b767f9308008ce11684391dc19c36bc7d6498072082bb20af5f8b8c63f"
+  }
+ }
+}
