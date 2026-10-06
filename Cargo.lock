@@ -78,6 +78,7 @@ dependencies = [
 name = "abep-icp"
 version = "0.1.0"
 dependencies = [
+ "abep-chem",
  "abep-provenance",
  "abep-types",
  "serde",

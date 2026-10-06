@@ -2,9 +2,10 @@
 
 mod common;
 
+use abep_chem::registry::Representation;
 use abep_icp::chemistry::{RateSource, SyntheticRate};
 use abep_icp::constants::{NUMERICS, TOL_SOLVE};
-use abep_icp::crosscheck::{nv06_report, ABEP_CHEM_NOT_ADMITTED};
+use abep_icp::crosscheck::{nv06_report, REPRESENTATION_NOT_REGISTERED};
 use abep_icp::testkit::*;
 use abep_icp::{IcpCase, IcpStatus};
 use common::model;
@@ -103,15 +104,39 @@ fn nv05_non_finite_values_give_model_error_with_null_values() {
 #[test]
 fn nv06_direct_integral_vs_dat_reported_per_reaction() {
     let m = model();
-    let rows = nv06_report(m, &[2.0, 5.0, 10.0, 30.0]);
-    assert_eq!(rows.len(), m.n2_set.reactions.len() * 4);
+    let air = &m.chem_registry.air;
+    let tes = [2.0, 5.0, 10.0, 30.0];
+    let rows = nv06_report(m, &tes);
+    assert_eq!(rows.len(), air.channels.len() * tes.len());
+    assert_eq!(air.channels.len(), 43);
+    let mut evaluated = 0;
     for row in &rows {
         let dat = row.dat_rate_m3_s.value.expect("table defined at 3/2 T_e <= 45 eV");
         assert!(dat.is_finite() && dat >= 0.0, "{row:?}");
-        assert_eq!(row.direct_rate_m3_s.status, IcpStatus::NotEvaluated);
-        assert_eq!(row.direct_rate_m3_s.reasons, vec![ABEP_CHEM_NOT_ADMITTED.to_string()]);
-        assert_eq!(row.relative_difference.status, IcpStatus::NotEvaluated);
+        let ch = air.channel(&row.reaction).unwrap();
+        match &ch.representation {
+            Representation::CrossSection { .. } => {
+                // The direct side is the admitted integrator on the registered representation, bit for bit.
+                let k = air.direct_rate(ch, row.t_e_ev).unwrap().k_m3_s;
+                assert_eq!(row.direct_rate_m3_s.value.map(f64::to_bits), Some(k.to_bits()), "{}", row.reaction);
+                let rel = row.relative_difference.value.expect("defined");
+                assert_eq!(rel, (dat - k) / k);
+                // On a table row (3/2 T_e = 3, 15, 45 eV) the .dat is the same integral printed to 7 digits.
+                if row.t_e_ev != 5.0 && k > 1e-290 {
+                    assert!(rel.abs() <= 5e-7, "{} at {} eV: {rel:e}", row.reaction, row.t_e_ev);
+                }
+                evaluated += 1;
+            }
+            Representation::NotRegistered { .. } => {
+                let code = format!("{REPRESENTATION_NOT_REGISTERED}:{}", ch.id);
+                assert_eq!(row.direct_rate_m3_s.status, IcpStatus::IncompleteEvidence);
+                assert_eq!(row.direct_rate_m3_s.reasons, vec![code.clone()]);
+                assert_eq!(row.relative_difference.status, IcpStatus::IncompleteEvidence);
+                assert!(row.direct_rate_m3_s.value.is_none() && row.relative_difference.value.is_none());
+            }
+        }
     }
+    assert_eq!(evaluated, 32 * tes.len());
     // The table cross-check reproduces the registered grid values (ionization_N2_song2023.dat, 3.0 eV row).
     let ion = rows.iter().find(|r| r.file == "ionization_N2_song2023.dat" && r.t_e_ev == 2.0).unwrap();
     assert_eq!(ion.dat_rate_m3_s.value, Some(4.436344e-18));

@@ -10,6 +10,7 @@ license.workspace = true
 [dependencies]
 abep-types.workspace = true
 abep-provenance.workspace = true
+abep-chem.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 toml.workspace = true

@@ -3,7 +3,8 @@
 //!
 //! Method NEW_PHYSICS: preregistered model -> Rust -> analytic / independent-evidence verification -> admission. The
 //! binding contract is `docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/prereg_v1.json` (lock-verified on load),
-//! with addendum 01 (A9.30) and the chemistry contract NP-ICP-CHEM-AIR v1. No Python reference exists or is used;
+//! with addendum 01 (A9.30), addendum 02 and the chemistry contract NP-ICP-CHEM-AIR v1, whose IF-CHEM-REG-v1 registry
+//! (`data/chemistry/icp/`) and admitted rate integrator come from abep-chem. No Python reference exists or is used;
 //! nothing is taken from `abep_sim/plasma_chem.py` (EX-01).
 //!
 //! What is evaluable today: configuration CFG-CAP-OFF in coupling mode CM-ABS (absorbed power as input), CM-CAL at a

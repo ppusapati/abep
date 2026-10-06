@@ -74,6 +74,11 @@ pub struct ValidityRecord {
     pub mean_energy_ev: Option<f64>,
     pub activity_share_beyond_limit: Option<f64>,
     pub status: IcpStatus,
+    /// UQ-06 / NV-06 at the solution, registered tables only: the direct rate (EQ-06) used by the solve, the `.dat`
+    /// interpolation at 3/2 T_e (cross-check, never used) and (dat - direct) / direct.
+    pub direct_rate_m3_s: Option<f64>,
+    pub dat_rate_m3_s: Option<f64>,
+    pub dat_minus_direct_relative: Option<f64>,
 }
 
 /// Per-surface terms of EQ-09 / EQ-16 (OUT-09 detail): fluxes, the attribution pair L_j / C_j and formation release.
@@ -203,6 +208,8 @@ pub struct Provenance {
     pub prereg_sha256: String,
     pub addendum_01_sha256: String,
     pub chem_air_lock_sha256: String,
+    /// IF-CHEM-REG-v1 provenance: contract id, lock sha256, labels and registry sha256 (NP-ICP-CHEM-AIR).
+    pub chem_registry: BTreeMap<String, String>,
     pub input_sha256: BTreeMap<String, String>,
     pub data_files_sha256: BTreeMap<String, String>,
     pub rust_commit: Option<String>,

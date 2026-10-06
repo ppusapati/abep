@@ -1,0 +1,1028 @@
+{
+ "schema": "new_physics_verification_report_v1",
+ "id": "NP-ICP-NEUTRALIZER_verification_report_v2",
+ "model_id": "NP-ICP-NEUTRALIZER",
+ "model_version": "1",
+ "report_version": "2",
+ "date": "2026-10-06",
+ "lane": "lane-np-icp-wiring (NP-ICP integration lane, priority D: BP-S1 registry skeleton, EQ-06 wiring to abep_chem::checked through IF-CHEM-REG-v1, NV-06 direct side)",
+ "method": "NEW_PHYSICS: preregistered model -> Rust -> analytic / independent-evidence verification -> admission. The existing-physics parity method does not apply. No Python reference exists or was created; nothing was ported from abep_sim/plasma_chem.py (EX-01). No preregistration, lock or addendum was edited.",
+ "previous_report": {
+  "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/verification_report_v1.json",
+  "sha256": "11ddb2a2684f1803b7a5fac94cb3307f59cb60e4e9a8e46d2abc2c449f4e5284",
+  "md_path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/verification_report_v1.md",
+  "md_sha256": "80bf66d2c24da48fbd32de59cad262dc2c6d29b6b78f725f6bd7586f63b5ebfe",
+  "status": "immutable evidence; not edited. Every v1 result not listed under what_changed stands as recorded there."
+ },
+ "contract": {
+  "prereg": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/prereg_v1.json",
+  "prereg_sha256": "5d496ea6538ef65999c3cb8b1f4274622dc060889b1cf14f46a0a02a855a91a8",
+  "prereg_md_sha256": "3af97940032b2ebff530d92c886a6690ceca30a21ed6d8bf5354d7cca79f36cc",
+  "prereg_lock_sha256": "e98747e04694bf849164350be3ef4c7b458fccc918777c224066eebf55fa82af",
+  "addendum_01_a9_30_sha256": "f8e122492bde654d74a155f4544e51ce0b13ed639b2f510aa453384e333569c9",
+  "addendum_02_chem_air_sha256": "7c1dd1f70e5e93f810e655fd7b8e177fd3032fbe39fca95954f6b35aec1c2279",
+  "chemistry_contract": "docs/rust_migration/new_physics/NP-ICP-CHEM-AIR/prereg_v1.json (lock sha256 f42c22699a31acd4e29854823150d7b7c75b35eb8718fb90ade83bdd3d7e46ef), interface IF-CHEM-REG-v1, build plan step BP-S1",
+  "chemistry_registry": {
+   "air_label": "abep-icp-air-0.0",
+   "air_registry_sha256": "76b62384435baa1c7ccdec7330d2f2fc077008ab461aa1ec85a5b7ca33490809",
+   "contract_id": "NP-ICP-CHEM-AIR",
+   "contract_lock_sha256": "f42c22699a31acd4e29854823150d7b7c75b35eb8718fb90ade83bdd3d7e46ef",
+   "icp_chem_pinned_sha256": "074daff90b00dd1dd6ca776c845c7897bbd84b4217ec014e70fb374a16f16eb2",
+   "xe_label": "abep-icp-xe-0.0",
+   "xe_registry_sha256": "30a9888c746e95430c57e4f8fa8b44b075eb34fd330aa62dd5e9e1e61a4a382d"
+  },
+  "abep_chem_admission_record": {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_RATE_TABLES_PY/parity_report_v1.json",
+   "sha256": "6864dc0a7b1f3c6c553edf49ed84861ad2115fb08ba5d787bd183804c58fb09e",
+   "reads": "C-ABEP_SIM_RATE_TABLES_PY parity_report_v1: verdict ADMITTED, parity PARITY_PASS, rust commit 75f86a322a7583f003851c77e8e8b398299a449c"
+  }
+ },
+ "implementation": {
+  "crates": [
+   "crates/abep-icp (consumer)",
+   "crates/abep-chem (IF-CHEM-REG-v1 provider: abep_chem::registry, abep_chem::checked)"
+  ],
+  "data": "data/chemistry/icp/ (ICP_CHEM_PINNED.toml, registry_air.toml, registry_xe.toml, rate_validity_icp.toml, reuse_pins.json, registry_schema_v1.json, PROVENANCE.md, xs/ with 32 representations)",
+  "base": "integration/simulation-complete def19d64cc6ca8e079f5fe16292e0dd16b2a8ee9 (branch lane-np-icp-wiring from def354d, fast-forwarded to def19d6 before any commit)",
+  "commits": [
+   {
+    "sha": "f430d7be63b65929347c1d905f602cd4473523eb",
+    "what": "NP-ICP-CHEM-AIR BP-S1 registry skeleton (abep-icp-air-0.0 / abep-icp-xe-0.0) and the abep-chem loader"
+   },
+   {
+    "sha": "e404c1588b427efedcd06e868eb79122c630ee34",
+    "what": "abep-icp EQ-06 wiring to abep_chem::checked through IF-CHEM-REG-v1; statuses from the registry; NV-06 direct side"
+   }
+  ],
+  "rust_commit": "e404c1588b427efedcd06e868eb79122c630ee34",
+  "toolchain": "rustc 1.94.1 (e408947bf 2026-03-25), cargo 1.94.1",
+  "dependencies": "abep-icp gains the workspace path crate abep-chem; no external crate",
+  "commands": [
+   "cargo fmt -- --check (members only)",
+   "cargo clippy --workspace --all-targets --locked -- -D warnings",
+   "cargo test --workspace --locked",
+   "cargo run -p abep-icp --example verification_table --locked (output sha256 776c9d67ec601b0fcd56233ca1c0cfe465bb32ce6219aa8f03478293e04f246d; two runs byte-identical)",
+   "cargo run -p abep-chem --example build_icp_xs --locked (writes data/chemistry/icp/xs/; reproduces the committed files)"
+  ],
+  "tests": {
+   "abep_icp": 63,
+   "abep_icp_ignored": 0,
+   "abep_chem": 40,
+   "abep_chem_ignored": 0,
+   "workspace_passed": 326,
+   "workspace_failed": 0,
+   "workspace_ignored": 2,
+   "workspace_ignored_note": "PT-01 / PT-02, the registered platform tests of abep-julia-bridge (pinned Julia), not of this lane"
+  }
+ },
+ "what_changed": [
+  "BP-S1: the IF-CHEM-REG-v1 registry exists (data/chemistry/icp/, labels abep-icp-air-0.0 / abep-icp-xe-0.0). Every contract process with the contract's status (AIR 15 / 16 / 23, XE 1 / 5 / 4); 43 channels for the reused abep-n2n-0.11 tables (path + sha256, mirrored validity); FC-CHEM-10 Hall isolation check. No new table.",
+  "Direct-rate representations: 32 of the 43 reused tables carry their cross-section points (xs/), extracted unchanged from the committed C-ABEP_SIM_RATE_TABLES_PY v1 capture; the Python reference (INV-02) and the admitted Rust port render each frozen .dat from them byte for byte (re-checked here on three tables). ionization_N.dat (NIST table not committed) and the 10 vibrational rate fits (no fit-parameter file, no admitted rate-fit evaluator) have none.",
+  "EQ-06: a registered table's rate is abep_chem::checked::maxwellian_rate on its registered representation, in the solve and in NV-06; no rate is computed in abep-icp. The v1 gate EQ-06_ABEP_CHEM_INTEGRATOR_NOT_ADMITTED now reads the committed admission record (ADMITTED / PARITY_PASS) and no longer fires; IF-CHEM-REG-v1_ICP_REGISTRY_NOT_BUILT is gone (the registry loads or the model is MODEL_ERROR).",
+  "EM-N2 is built from the registry scenario EM-N2-NOMINAL, checked to name exactly the tables of the parent's pinned n2_n.toml (addendum 02: IDENTICAL). Reaction ids are registry channel ids.",
+  "Status propagation reads the registry: G-A930-AIR, tier-1 gaps, SP-04 (SB-NO for every AIR composition; SB-He / SB-Ar above the 1 % screen), SP-05 (NEG-CRIT NOT_EVALUABLE -> DOM-12), OQ-NPICP-04 (CA-ICP-v1 NOT_RUN), XE on its own registry (SP-07).",
+  "Outputs: per reaction at the solution, the direct rate, the .dat interpolation and their relative difference (UQ-06); OUT-14 provenance carries the registry labels and sha256."
+ ],
+ "outcome": {
+  "verification_status": "IMPLEMENTED_UNVERIFIED",
+  "software_admission": "NOT_ADMITTED: admission-rule items 4 and 5 are open; item 2 is met except LC-11 (not exercisable) and NV-06 for the 11 channels without a registered representation",
+  "validation_status": "NOT_VALIDATED (no P1 / P2 record; published analogs blocked)",
+  "summary": "Admission-rule item 3 is met on committed evidence and the EQ-06 direct path is wired and verified: the solve and NV-06 use abep_chem::checked on registered representations only, bit for bit. VERIFIED is not claimed: the verify items on the core path are not cleared by addenda, no admission record exists, and 11 of the 43 reused channels have no direct-rate representation. AIR_PRIMARY and XE_CONTINGENCY stay INCOMPLETE_EVIDENCE; EM-N2 stays INCOMPLETE_EVIDENCE."
+ },
+ "admission_rule_evaluation": [
+  {
+   "item": 1,
+   "rule": "prereg and lock committed",
+   "state": "MET (lock e98747e0; addenda 01, 02)"
+  },
+  {
+   "item": 2,
+   "rule": "abep-icp passes every LC, CC, NV and FC item under cargo test --workspace --locked",
+   "state": "MET for every exercisable item; LC-11 NOT_EXERCISABLE (CM-PRED gate, VER-03); NV-06 PARTIAL: direct side evaluated and reported for the 32 channels with a registered representation, withheld INCOMPLETE_EVIDENCE for ionization_N and the 10 vibrational channels"
+  },
+  {
+   "item": 3,
+   "rule": "the abep-chem rate evaluator it uses is admitted (SC-WP-03)",
+   "state": "MET on committed admission evidence: C-ABEP_SIM_RATE_TABLES_PY parity_report_v1 verdict ADMITTED, parity PARITY_PASS (rust commit 75f86a3); abep-icp verifies that record (sha256 pinned) on every load and gates EQ-06 on it. The migration ledger row C-ABEP_SIM_RATE_TABLES_PY still reads PYTHON_REFERENCE until lane A1 applies that report's ledger_update_requested"
+  },
+  {
+   "item": 4,
+   "rule": "every verify item on an admitted code path cleared by an addendum",
+   "state": "OPEN, unchanged: VER-01 (every case), VER-12 (every sustained case), VER-06 (electron-saturated collector), VER-02 (elastic loss; now also on the registered-rate path through the elastic channels), VER-07, VER-08, VER-11; CM-PRED additionally VER-03, VER-04, VER-05, VER-13"
+  },
+  {
+   "item": 5,
+   "rule": "admission record pinning the Rust commit, the test log and the lock sha256",
+   "state": "OPEN: an integration-line action (not made by this lane)"
+  }
+ ],
+ "verification_cases_changed": [
+  {
+   "id": "NV-06",
+   "criterion": "direct integral vs .dat interpolation difference reported per reaction (UQ-06)",
+   "tests": [
+    "numerical::nv06_direct_integral_vs_dat_reported_per_reaction",
+    "chemistry_registry::the_solve_uses_the_direct_rates_of_the_registry"
+   ],
+   "result": "PARTIAL: reported for all 43 AIR channels; direct side and difference for 32; 11 withheld INCOMPLETE_EVIDENCE (EQ-06_REPRESENTATION_NOT_REGISTERED:<channel>)",
+   "measured": {
+    "max_abs_rel_on_table_rows": 4.3481267183042307e-07,
+    "note": "3/2 T_e on a 1 eV table row: the .dat is the same integral printed to 7 significant digits"
+   }
+  },
+  {
+   "id": "NV-01",
+   "criterion": "double-run byte identity",
+   "tests": [
+    "chemistry_registry::the_solve_uses_the_direct_rates_of_the_registry"
+   ],
+   "result": "CRITERION_MET on the registered-rate path too"
+  },
+  {
+   "id": "FC-05 / FC-07 / FC-13 / G-A930-AIR",
+   "criterion": "as v1",
+   "tests": [
+    "fail_closed::n2_demonstration_case_is_not_evaluated_with_every_missing_input_listed",
+    "fail_closed::a930_air_primary_gate_and_mode_isolation",
+    "chemistry_registry::air_statuses_propagate_from_the_registry_and_never_reach_xe"
+   ],
+   "result": "CRITERION_MET, statuses now read from the registry"
+  },
+  {
+   "id": "FC-CHEM-04 (abep-icp)",
+   "criterion": "a changed pinned byte is MODEL_ERROR",
+   "tests": [
+    "fail_closed::fc_chem_04_a_changed_pinned_byte_is_model_error"
+   ],
+   "result": "CRITERION_MET, extended to ICP_CHEM_PINNED.toml, registry_air.toml, an xs file and the abep-chem admission record"
+  }
+ ],
+ "fail_closed_chemistry_tests": [
+  {
+   "id": "FC-CHEM-01",
+   "test": "crates/abep-chem/tests/icp_registry.rs::fc_chem_01_a_table_without_a_validity_entry_is_model_error",
+   "result": "ASSERTED (also a mirror that differs from its Hall entry)"
+  },
+  {
+   "id": "FC-CHEM-02",
+   "test": "icp_registry.rs::direct_rates_come_only_from_the_checked_integrator (30 eV next-up refused OUT_OF_DOMAIN); fail_closed::fc06 (DOM-01 names the reaction)",
+   "result": "ASSERTED; in a registered-rate solve the scan never evaluates a table beyond its limit (IN-24_T_E_SCAN_END)"
+  },
+  {
+   "id": "FC-CHEM-03",
+   "test": "icp_registry.rs::fc_chem_03_conservation_violations_are_model_errors; registry unit test conservation_and_formation_energy_rules",
+   "result": "ASSERTED (charge, nuclei, E_r below the formation-energy change)"
+  },
+  {
+   "id": "FC-CHEM-04",
+   "test": "icp_registry.rs::fc_chem_04_changed_pins_are_model_errors; abep-icp fail_closed::fc_chem_04",
+   "result": "ASSERTED"
+  },
+  {
+   "id": "FC-CHEM-05",
+   "test": "icp_registry.rs::fc_chem_05_atomic_o_is_never_a_surrogate; fail_closed::a930 (A9.30_N2_ONLY_SURROGATE_REFUSED)",
+   "result": "ASSERTED"
+  },
+  {
+   "id": "FC-CHEM-06",
+   "test": "chemistry_registry::air_statuses_propagate_from_the_registry_and_never_reach_xe",
+   "result": "ASSERTED: AIR_PRIMARY INCOMPLETE_EVIDENCE naming every tier-1 gap"
+  },
+  {
+   "id": "FC-CHEM-07",
+   "test": "chemistry_registry::air_statuses_propagate_from_the_registry_and_never_reach_xe",
+   "result": "ASSERTED for He above / below the screen; Ar uses the same rule (SB-Ar UNRESOLVED)"
+  },
+  {
+   "id": "FC-CHEM-08",
+   "test": "fail_closed::fc13; chemistry_registry::air_statuses_...",
+   "result": "ASSERTED (DOM-12_NO_NEGATIVE_ION_BALANCE with NEG-CRIT NOT_EVALUABLE)"
+  },
+  {
+   "id": "FC-CHEM-09",
+   "test": "fail_closed::a930_air_primary_gate_and_mode_isolation",
+   "result": "ASSERTED (v1, unchanged)"
+  },
+  {
+   "id": "FC-CHEM-10",
+   "test": "icp_registry.rs::fc_chem_10_hall_chemistry_files_are_unchanged",
+   "result": "ASSERTED (PINNED.toml, rate_validity.toml, the 22 n2_n*.toml, audit/configs/MANIFEST.json, physics_model_set_v1.json; every reuse pin)"
+  }
+ ],
+ "nv06_report": {
+  "T_e_eV": [
+   2.0,
+   3.0,
+   5.0,
+   7.5,
+   10.0,
+   15.0,
+   20.0,
+   30.0
+  ],
+  "definition": "relative difference = (k_dat - k_direct) / k_direct; k_direct = abep_chem::checked::maxwellian_rate on the registered representation (EQ-06), k_dat = linear interpolation of the registered .dat at 3/2 T_e (cross-check only, never used). T_e = 2, 10, 20, 30 eV fall on table rows; 3, 5, 7.5, 15 eV between rows.",
+  "summary": [
+   "On table rows every |difference| <= 4.35e-07: the .dat is the same integral printed to 7 significant digits.",
+   "Between rows the 1 eV linear interpolation overestimates the steep threshold rates at ICP-class T_e: at T_e = 3 eV +238 % (N2 -> N^2+ + N), +153 % (direct N -> N^2+, all three HMS members), +108 % (N2 -> N2^2+), +59 % (N+ -> N^2+), +44 % / +42 % (DI lower / upper), +16 % (N2 -> N2+), +10 % (dissociation); <= 4.7 % for the 16 electronic channels, <= 0.26 % for rotational and elastic. At T_e = 5 eV the same channels give +31 %, +18 %, +11 %, +7.1 %, +6.1 % / +5.7 %, +1.9 %, +1.1 %.",
+   "This is the effect EQ-06 anticipates (direct evaluation chosen because the 1 eV grid is coarse for threshold rates at low mean energy). UQ-06 carries it as a scenario pair in the OUT-13 envelope, which stays NOT_EVALUATED until abep-rng is admitted (IMPL-UQ)."
+  ],
+  "channels": [
+   {
+    "channel": "AIR-ION-03/ionization_N2_song2023",
+    "variant_role": "NOMINAL",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 1.224649570404556e-07,
+    "max_abs_rel_between_rows": 0.1564643242993681,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": 8.444870770802638e-08,
+     "3.0": 0.1564643242993681,
+     "5.0": 0.018696473607761097,
+     "7.5": 0.0021908986758679074,
+     "10.0": -5.4517033236166535e-08,
+     "15.0": -3.42730924561792e-05,
+     "20.0": -1.224649570404556e-07,
+     "30.0": -9.095187604341031e-08
+    }
+   },
+   {
+    "channel": "AIR-ION-04/ionization_N",
+    "variant_role": "NOMINAL",
+    "direct_status": "INCOMPLETE_EVIDENCE",
+    "direct_reasons": [
+     "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-ION-04/ionization_N"
+    ]
+   },
+   {
+    "channel": "AIR-ION-06/dissociative_ionization_N2_upper",
+    "variant_role": "NOMINAL",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 3.7954542966234543e-07,
+    "max_abs_rel_between_rows": 0.41928287306683104,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": -4.626908924687699e-08,
+     "3.0": 0.41928287306683104,
+     "5.0": 0.0573590326235417,
+     "7.5": 0.00867280405381333,
+     "10.0": 5.795279878871012e-09,
+     "15.0": 0.000506699565702594,
+     "20.0": -6.847740046494939e-08,
+     "30.0": -3.7954542966234543e-07
+    }
+   },
+   {
+    "channel": "AIR-ION-06/dissociative_ionization_N2_lower",
+    "variant_role": "VARIANT",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 8.313455373053167e-08,
+    "max_abs_rel_between_rows": 0.43871171457710806,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": -2.626655616657685e-08,
+     "3.0": 0.43871171457710806,
+     "5.0": 0.060647296219300435,
+     "7.5": 0.00917102726753623,
+     "10.0": -1.2514488105665263e-08,
+     "15.0": 0.0005365538675283376,
+     "20.0": -8.313455373053167e-08,
+     "30.0": -3.0968181234707666e-08
+    }
+   },
+   {
+    "channel": "AIR-ION-07/dissociative_ionization_N2_to_N_Z2plus",
+    "variant_role": "NOMINAL",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 2.1955797302413326e-07,
+    "max_abs_rel_between_rows": 2.3758415789488425,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": 4.105776859384549e-08,
+     "3.0": 2.3758415789488425,
+     "5.0": 0.31114453253155405,
+     "7.5": 0.058194084038197084,
+     "10.0": -9.35789609066482e-08,
+     "15.0": 0.0048548372678761005,
+     "20.0": 2.1955797302413326e-07,
+     "30.0": -3.1780394063394094e-08
+    }
+   },
+   {
+    "channel": "AIR-ION-08/ionization_N_to_N_Z2plus_hms2017",
+    "variant_role": "NOMINAL",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 1.714383252960747e-07,
+    "max_abs_rel_between_rows": 1.5348801906702771,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": -1.714383252960747e-07,
+     "3.0": 1.5348801906702771,
+     "5.0": 0.175708944436975,
+     "7.5": 0.02544388123018954,
+     "10.0": 8.260692458388057e-09,
+     "15.0": 0.0014555282842534315,
+     "20.0": -5.63199579176915e-08,
+     "30.0": -1.2116012465671786e-07
+    }
+   },
+   {
+    "channel": "AIR-ION-08/ionization_N_to_N_Z2plus_hms2017_x0p5",
+    "variant_role": "SENSITIVITY",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 1.699480751348746e-07,
+    "max_abs_rel_between_rows": 1.5348798641268566,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": -2.3554935982655007e-09,
+     "3.0": 1.5348798641268566,
+     "5.0": 0.1757091999541979,
+     "7.5": 0.025443790701709934,
+     "10.0": 8.260692458388057e-09,
+     "15.0": 0.0014556398871554703,
+     "20.0": 1.699480751348746e-07,
+     "30.0": 5.973072283687347e-08
+    }
+   },
+   {
+    "channel": "AIR-ION-08/ionization_N_to_N_Z2plus_hms2017_x1p3",
+    "variant_role": "SENSITIVITY",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 8.868910786121146e-08,
+    "max_abs_rel_between_rows": 1.5348798189131525,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": 8.868910786121146e-08,
+     "3.0": 1.5348798189131525,
+     "5.0": 0.17570903878179556,
+     "7.5": 0.025443874266460182,
+     "10.0": 5.828796042512261e-08,
+     "15.0": 0.0014555497463496702,
+     "20.0": -7.372519073170373e-08,
+     "30.0": 8.756008412694303e-08
+    }
+   },
+   {
+    "channel": "AIR-ION-09/ionization_N_Z1plus_to_N_Z2plus",
+    "variant_role": "NOMINAL",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 1.7607757827192847e-07,
+    "max_abs_rel_between_rows": 0.5862732626134278,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": 1.7607757827192847e-07,
+     "3.0": 0.5862732626134278,
+     "5.0": 0.07095927154278554,
+     "7.5": 0.009776874110828494,
+     "10.0": -2.029498330044213e-08,
+     "15.0": 0.0004840233673368122,
+     "20.0": 1.6044357244138526e-08,
+     "30.0": -2.8653775994311358e-08
+    }
+   },
+   {
+    "channel": "AIR-ION-10/ionization_N2_to_N2_Z2plus_upper",
+    "variant_role": "UNCERTAINTY_VARIANT",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 1.2326176603950748e-07,
+    "max_abs_rel_between_rows": 1.0839172648378177,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": -7.851369951578645e-08,
+     "3.0": 1.0839172648378177,
+     "5.0": 0.11182286588044148,
+     "7.5": 0.013328343497283271,
+     "10.0": 8.697565371931177e-08,
+     "15.0": 0.0003883243701701887,
+     "20.0": -1.0085985694804225e-07,
+     "30.0": 1.2326176603950748e-07
+    }
+   },
+   {
+    "channel": "AIR-ION-10/ionization_N2_Z1plus_to_N2_Z2plus_tabata2006",
+    "variant_role": "UNCERTAINTY_VARIANT",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 2.1944887252199378e-07,
+    "max_abs_rel_between_rows": 0.48380933140705823,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": -7.189088082103483e-09,
+     "3.0": 0.48380933140705823,
+     "5.0": 0.05590258863521658,
+     "7.5": 0.007114542151587896,
+     "10.0": 4.138710097381831e-08,
+     "15.0": 0.00025730458055799884,
+     "20.0": 3.5971973562499586e-08,
+     "30.0": 2.1944887252199378e-07
+    }
+   },
+   {
+    "channel": "AIR-DIS-01/dissociation_N2",
+    "variant_role": "NOMINAL",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 1.2575404844911012e-07,
+    "max_abs_rel_between_rows": 0.10145163852579096,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": 1.2575404844911012e-07,
+     "3.0": 0.10145163852579096,
+     "5.0": 0.010599577206277647,
+     "7.5": 0.000805068895344913,
+     "10.0": -2.8515141717416137e-08,
+     "15.0": -0.00016085058252753544,
+     "20.0": 1.2214824022709796e-07,
+     "30.0": -5.4453072082855295e-08
+    }
+   },
+   {
+    "channel": "AIR-EXC-01/excitation_N2_A3Sigma_u",
+    "variant_role": "NOMINAL",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 2.068021063302321e-07,
+    "max_abs_rel_between_rows": 0.006733236209558471,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": 2.068021063302321e-07,
+     "3.0": 0.006733236209558471,
+     "5.0": -0.0032420440564347687,
+     "7.5": -0.0010981693943124884,
+     "10.0": 5.073551640450141e-08,
+     "15.0": -0.00017928630280106636,
+     "20.0": 7.015990675403198e-08,
+     "30.0": -2.2859350085881487e-09
+    }
+   },
+   {
+    "channel": "AIR-EXC-01/excitation_N2_B3Pi_g",
+    "variant_role": "NOMINAL",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 1.2010258401254122e-07,
+    "max_abs_rel_between_rows": 0.0034468814445493207,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": 1.1659491023131959e-07,
+     "3.0": 0.0033092716952786093,
+     "5.0": -0.0034468814445493207,
+     "7.5": -0.0010460083223516607,
+     "10.0": -5.3643759797713084e-08,
+     "15.0": -0.0001762513653483708,
+     "20.0": 1.6051310389059923e-08,
+     "30.0": -1.2010258401254122e-07
+    }
+   },
+   {
+    "channel": "AIR-EXC-01/excitation_N2_W3Delta_u",
+    "variant_role": "NOMINAL",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 1.8358270363968293e-07,
+    "max_abs_rel_between_rows": 0.024788288221943452,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": 3.870703906535759e-08,
+     "3.0": 0.024788288221943452,
+     "5.0": -0.001678357763712844,
+     "7.5": -0.0012331500016723388,
+     "10.0": -1.8358270363968293e-07,
+     "15.0": -0.00026810974088078553,
+     "20.0": 1.250435573011896e-07,
+     "30.0": -1.42390171328753e-07
+    }
+   },
+   {
+    "channel": "AIR-EXC-01/excitation_N2_Bprime3Sigma_u",
+    "variant_role": "NOMINAL",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 4.996074193049709e-08,
+    "max_abs_rel_between_rows": 0.033008044733417514,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": -1.3831368165026526e-08,
+     "3.0": 0.033008044733417514,
+     "5.0": -0.0007899332203448812,
+     "7.5": -0.0011513535093429258,
+     "10.0": 4.996074193049709e-08,
+     "15.0": -0.0002982586569431974,
+     "20.0": -4.867072358767309e-08,
+     "30.0": -3.493657085939061e-08
+    }
+   },
+   {
+    "channel": "AIR-EXC-01/excitation_N2_a1Pi_g",
+    "variant_role": "NOMINAL",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 1.0910741048970635e-07,
+    "max_abs_rel_between_rows": 0.036540979528082156,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": -5.329649011734135e-08,
+     "3.0": 0.036540979528082156,
+     "5.0": 0.001103644784916158,
+     "7.5": -0.0006760644656413116,
+     "10.0": 4.7815352875842764e-09,
+     "15.0": -0.0002834334740741801,
+     "20.0": 1.0910741048970635e-07,
+     "30.0": 6.114287454297129e-08
+    }
+   },
+   {
+    "channel": "AIR-EXC-01/excitation_N2_aprime1Sigma_u",
+    "variant_role": "NOMINAL",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 6.725366886522147e-08,
+    "max_abs_rel_between_rows": 0.03423947520726719,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": 1.541476541664555e-08,
+     "3.0": 0.03423947520726719,
+     "5.0": -0.0007707701144303862,
+     "7.5": -0.0010898083082184651,
+     "10.0": 6.725366886522147e-08,
+     "15.0": -0.0002966683891785331,
+     "20.0": 2.5106235001524134e-09,
+     "30.0": 2.8494668900286893e-08
+    }
+   },
+   {
+    "channel": "AIR-EXC-01/excitation_N2_w1Delta_u",
+    "variant_role": "NOMINAL",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 8.508392397914192e-08,
+    "max_abs_rel_between_rows": 0.03531196561800878,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": 5.1926137185805483e-08,
+     "3.0": 0.03531196561800878,
+     "5.0": -0.0013702356931541654,
+     "7.5": -0.0011975656802656884,
+     "10.0": 5.383415328385152e-09,
+     "15.0": -0.0002412792338832623,
+     "20.0": -1.4961031600497153e-08,
+     "30.0": -8.508392397914192e-08
+    }
+   },
+   {
+    "channel": "AIR-EXC-01/excitation_N2_C3Pi_u",
+    "variant_role": "NOMINAL",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 2.3217430178572434e-07,
+    "max_abs_rel_between_rows": 0.04710768803093783,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": 7.928304888733795e-08,
+     "3.0": 0.04710768803093783,
+     "5.0": -0.0013384360179609285,
+     "7.5": -0.0013408976806751852,
+     "10.0": -2.3217430178572434e-07,
+     "15.0": -0.00028032187831650643,
+     "20.0": -1.0552826528291496e-07,
+     "30.0": 3.1769884652710336e-08
+    }
+   },
+   {
+    "channel": "AIR-EXC-01/excitation_N2_A3Sigma_u_johnsonlow",
+    "variant_role": "SENSITIVITY",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 2.2907013007634887e-07,
+    "max_abs_rel_between_rows": 0.0034521254071986827,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": 2.2907013007634887e-07,
+     "3.0": 0.0034521254071986827,
+     "5.0": -0.0029780324558949167,
+     "7.5": -0.0009743303920469703,
+     "10.0": -1.6754162548933384e-07,
+     "15.0": -0.00019086810100484326,
+     "20.0": -1.837699583728201e-07,
+     "30.0": -1.9850268087304826e-07
+    }
+   },
+   {
+    "channel": "AIR-EXC-01/excitation_N2_B3Pi_g_johnsonlow",
+    "variant_role": "SENSITIVITY",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 2.494890871750962e-07,
+    "max_abs_rel_between_rows": 0.0034458047462239817,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": 2.494890871750962e-07,
+     "3.0": 0.0034458047462239817,
+     "5.0": -0.002860827641305366,
+     "7.5": -0.0009581340264830374,
+     "10.0": 8.895025888044267e-08,
+     "15.0": -0.0002165288777556995,
+     "20.0": 9.447407927055184e-08,
+     "30.0": -1.6963158868939883e-07
+    }
+   },
+   {
+    "channel": "AIR-EXC-01/excitation_N2_W3Delta_u_johnsonlow",
+    "variant_role": "SENSITIVITY",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 2.026708917145999e-07,
+    "max_abs_rel_between_rows": 0.03023051418706933,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": 1.3092909282723343e-07,
+     "3.0": 0.03023051418706933,
+     "5.0": -0.001401689882167267,
+     "7.5": -0.001244626577024764,
+     "10.0": 6.63965411882512e-08,
+     "15.0": -0.00027869770857123544,
+     "20.0": 2.2482645101582523e-08,
+     "30.0": -2.026708917145999e-07
+    }
+   },
+   {
+    "channel": "AIR-EXC-01/excitation_N2_Bprime3Sigma_u_johnsonlow",
+    "variant_role": "SENSITIVITY",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 2.6917750610943467e-08,
+    "max_abs_rel_between_rows": 0.04067193243600035,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": -1.9012976816911673e-08,
+     "3.0": 0.04067193243600035,
+     "5.0": -0.0002622451380675626,
+     "7.5": -0.0011403620380841936,
+     "10.0": 2.6917750610943467e-08,
+     "15.0": -0.00031183822458337505,
+     "20.0": -1.0174890026725342e-08,
+     "30.0": -2.4550194912251484e-08
+    }
+   },
+   {
+    "channel": "AIR-EXC-01/excitation_N2_a1Pi_g_johnsonlow",
+    "variant_role": "SENSITIVITY",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 1.941743814635493e-07,
+    "max_abs_rel_between_rows": 0.04153710956159543,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": -3.875576768666573e-08,
+     "3.0": 0.04153710956159543,
+     "5.0": 0.0015976624003121193,
+     "7.5": -0.0006610064340060811,
+     "10.0": -1.941743814635493e-07,
+     "15.0": -0.00028956425660606037,
+     "20.0": -6.778395001867304e-08,
+     "30.0": 1.5083715242194953e-08
+    }
+   },
+   {
+    "channel": "AIR-EXC-01/excitation_N2_aprime1Sigma_u_johnsonlow",
+    "variant_role": "SENSITIVITY",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 1.1599191127211896e-07,
+    "max_abs_rel_between_rows": 0.03332591030309288,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": -6.008321539801792e-08,
+     "3.0": 0.03332591030309288,
+     "5.0": -0.0006952336245947527,
+     "7.5": -0.001056494725568989,
+     "10.0": -1.0779450488026852e-07,
+     "15.0": -0.0002991938560761682,
+     "20.0": -1.1599191127211896e-07,
+     "30.0": -8.32830992247053e-08
+    }
+   },
+   {
+    "channel": "AIR-EXC-01/excitation_N2_w1Delta_u_johnsonlow",
+    "variant_role": "SENSITIVITY",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 9.947432921636579e-08,
+    "max_abs_rel_between_rows": 0.043064915246657356,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": 9.947432921636579e-08,
+     "3.0": 0.043064915246657356,
+     "5.0": -0.0004110167908677897,
+     "7.5": -0.0011116466123315038,
+     "10.0": -6.121228692523071e-09,
+     "15.0": -0.0002621886487033622,
+     "20.0": -1.0889666718953836e-08,
+     "30.0": -5.885970208816489e-08
+    }
+   },
+   {
+    "channel": "AIR-EXC-01/excitation_N2_C3Pi_u_johnsonlow",
+    "variant_role": "SENSITIVITY",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 2.908790027309487e-07,
+    "max_abs_rel_between_rows": 0.04437575093001111,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": 1.335372804575171e-07,
+     "3.0": 0.04437575093001111,
+     "5.0": -0.0005071883107334014,
+     "7.5": -0.001158124820166908,
+     "10.0": 2.4398235823706125e-07,
+     "15.0": -0.0003075712140249594,
+     "20.0": -2.7159514808260964e-07,
+     "30.0": 2.908790027309487e-07
+    }
+   },
+   {
+    "channel": "AIR-EXC-02/excitation_N2_vib_0_to_1",
+    "variant_role": "NOMINAL",
+    "direct_status": "INCOMPLETE_EVIDENCE",
+    "direct_reasons": [
+     "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_1"
+    ]
+   },
+   {
+    "channel": "AIR-EXC-02/excitation_N2_vib_0_to_2",
+    "variant_role": "NOMINAL",
+    "direct_status": "INCOMPLETE_EVIDENCE",
+    "direct_reasons": [
+     "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_2"
+    ]
+   },
+   {
+    "channel": "AIR-EXC-02/excitation_N2_vib_0_to_3",
+    "variant_role": "NOMINAL",
+    "direct_status": "INCOMPLETE_EVIDENCE",
+    "direct_reasons": [
+     "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_3"
+    ]
+   },
+   {
+    "channel": "AIR-EXC-02/excitation_N2_vib_0_to_4",
+    "variant_role": "NOMINAL",
+    "direct_status": "INCOMPLETE_EVIDENCE",
+    "direct_reasons": [
+     "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_4"
+    ]
+   },
+   {
+    "channel": "AIR-EXC-02/excitation_N2_vib_0_to_5",
+    "variant_role": "NOMINAL",
+    "direct_status": "INCOMPLETE_EVIDENCE",
+    "direct_reasons": [
+     "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_5"
+    ]
+   },
+   {
+    "channel": "AIR-EXC-02/excitation_N2_vib_0_to_6",
+    "variant_role": "NOMINAL",
+    "direct_status": "INCOMPLETE_EVIDENCE",
+    "direct_reasons": [
+     "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_6"
+    ]
+   },
+   {
+    "channel": "AIR-EXC-02/excitation_N2_vib_0_to_7",
+    "variant_role": "NOMINAL",
+    "direct_status": "INCOMPLETE_EVIDENCE",
+    "direct_reasons": [
+     "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_7"
+    ]
+   },
+   {
+    "channel": "AIR-EXC-02/excitation_N2_vib_0_to_8",
+    "variant_role": "NOMINAL",
+    "direct_status": "INCOMPLETE_EVIDENCE",
+    "direct_reasons": [
+     "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_8"
+    ]
+   },
+   {
+    "channel": "AIR-EXC-02/excitation_N2_vib_0_to_9",
+    "variant_role": "NOMINAL",
+    "direct_status": "INCOMPLETE_EVIDENCE",
+    "direct_reasons": [
+     "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_9"
+    ]
+   },
+   {
+    "channel": "AIR-EXC-02/excitation_N2_vib_0_to_10",
+    "variant_role": "NOMINAL",
+    "direct_status": "INCOMPLETE_EVIDENCE",
+    "direct_reasons": [
+     "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_10"
+    ]
+   },
+   {
+    "channel": "AIR-EXC-03/excitation_N2_rot_j0_to_j2",
+    "variant_role": "NOMINAL",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 2.8739426521807546e-07,
+    "max_abs_rel_between_rows": 0.0022755445183762746,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": 9.272523150692202e-08,
+     "3.0": -0.0022755445183762746,
+     "5.0": -0.0008676146317821288,
+     "7.5": -0.00027733179369552935,
+     "10.0": -6.715246150609238e-08,
+     "15.0": -7.920979726624904e-05,
+     "20.0": 5.1609054480110206e-08,
+     "30.0": 2.8739426521807546e-07
+    }
+   },
+   {
+    "channel": "AIR-EXC-03/excitation_N2_rot_j0_to_j4",
+    "variant_role": "NOMINAL",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 7.491002350606041e-08,
+    "max_abs_rel_between_rows": 0.0026147830780689865,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": 2.6158048944083735e-09,
+     "3.0": -0.0026147830780689865,
+     "5.0": 0.0004921294896695762,
+     "7.5": 0.00023962587312325058,
+     "10.0": -5.277592282396734e-08,
+     "15.0": 2.5921700784969555e-05,
+     "20.0": 7.491002350606041e-08,
+     "30.0": 6.836513834441618e-08
+    }
+   },
+   {
+    "channel": "AIR-EL-01/elastic_N2_song2023",
+    "variant_role": "NOMINAL",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 2.761514176338558e-07,
+    "max_abs_rel_between_rows": 0.0021292037438292127,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": -2.9576132332852302e-08,
+     "3.0": -0.0021292037438292127,
+     "5.0": -0.000815381861351927,
+     "7.5": -0.00024742437141615656,
+     "10.0": -3.9511958216592826e-08,
+     "15.0": -5.659877744410839e-05,
+     "20.0": -2.761514176338558e-07,
+     "30.0": -2.0946094437053674e-07
+    }
+   },
+   {
+    "channel": "AIR-EL-02/elastic_N_ragimkhanov2026",
+    "variant_role": "NOMINAL",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 3.5362035693777186e-07,
+    "max_abs_rel_between_rows": 0.0016712668162600836,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": 1.0244644784887704e-07,
+     "3.0": -0.0016712668162600836,
+     "5.0": -0.0009598257268729608,
+     "7.5": -0.00048431578289237097,
+     "10.0": -1.9401890588488212e-08,
+     "15.0": -0.00019411579974065358,
+     "20.0": 3.5362035693777186e-07,
+     "30.0": 1.0571482271210138e-08
+    }
+   },
+   {
+    "channel": "AIR-EL-02/elastic_N_wang2014_bsr",
+    "variant_role": "VARIANT",
+    "direct_status": "CONVERGED",
+    "max_abs_rel_on_table_rows": 4.3481267183042307e-07,
+    "max_abs_rel_between_rows": 0.0019359615223514327,
+    "dat_minus_direct_relative_at_T_e_eV": {
+     "2.0": -3.8618586414452967e-08,
+     "3.0": -0.0019359615223514327,
+     "5.0": -0.000957085730563804,
+     "7.5": -0.00035887500546197135,
+     "10.0": -1.62378848796958e-07,
+     "15.0": -8.684933266012634e-05,
+     "20.0": -3.3059669792665245e-07,
+     "30.0": 4.3481267183042307e-07
+    }
+   }
+  ]
+ },
+ "registered_rate_solve": {
+  "case": "SYN_N2_REGISTERED_RATES: SYNTHETIC_TEST_ONLY floating tube (R 0.02 m, L 0.1 m, h 0.5), REGISTERED_PRESSURE N2 at 1 Pa / 300 K, P_abs 20 W, CM-ABS; chemistry = registered channels AIR-ION-03/ionization_N2_song2023, AIR-EL-01/elastic_N2_song2023, AIR-DIS-01/dissociation_N2 (species N2, N, N2^+; process classes synthetically excluded). It exercises EQ-06 inside a solve; no number is evidence (FC-15 label on every output).",
+  "status": "CONVERGED",
+  "plasma_state": "SUSTAINED",
+  "T_e_eV": 4.981898068763359,
+  "n_e_m3": 5.713468056133e+16,
+  "t_e_scan_end_eV": 30.0,
+  "per_reaction_at_solution": [
+   {
+    "activity_share_beyond_limit": 0.0,
+    "dat_minus_direct_relative": 0.018918192954466218,
+    "dat_rate_m3_s": 1.0489149130816928e-15,
+    "direct_rate_m3_s": 1.029439772824399e-15,
+    "max_mean_energy_ev": 255.0,
+    "mean_energy_ev": 7.472847103145038,
+    "reaction": "AIR-ION-03/ionization_N2_song2023",
+    "status": "CONVERGED",
+    "validity": "verified"
+   },
+   {
+    "activity_share_beyond_limit": 0.0,
+    "dat_minus_direct_relative": -0.0008153512874169519,
+    "dat_rate_m3_s": 1.4884965731537364e-13,
+    "direct_rate_m3_s": 1.4897112111075924e-13,
+    "max_mean_energy_ev": 255.0,
+    "mean_energy_ev": 7.472847103145038,
+    "reaction": "AIR-EL-01/elastic_N2_song2023",
+    "status": "CONVERGED",
+    "validity": "verified"
+   },
+   {
+    "activity_share_beyond_limit": 0.0,
+    "dat_minus_direct_relative": 0.010717080340507081,
+    "dat_rate_m3_s": 1.6670959847780853e-15,
+    "direct_rate_m3_s": 1.649419028534124e-15,
+    "max_mean_energy_ev": 45.0,
+    "mean_energy_ev": 7.472847103145038,
+    "reaction": "AIR-DIS-01/dissociation_N2",
+    "status": "CONVERGED",
+    "validity": "verified"
+   }
+  ],
+  "checks": [
+   "the rate each reaction used equals the registry's direct rate at the converged T_e, bit for bit (cargo test)",
+   "particle balance n_N2 k_iz V = u_B sum(h A) with the registry rate: asserted <= 1e-9 relative in cargo test; 1.1e-16 recomputed from the example output",
+   "T_e is independent of P_abs (20 W vs 200 W, identical bits; linear case, LC-01 form)",
+   "a second evaluation is byte-identical (NV-01)"
+  ]
+ },
+ "v1_suite_regression": "The eight v1 synthetic cases (floating, CFG-CAP-OFF saturated / retarding, excitation bounding pair, X+ -> X2+ nonlinear, FLOW_BALANCE, CM-CAL with bus, P_abs = 0) reproduce their v1 status, T_e, n_e, phi_p and I_e,cap exactly; LC-01..LC-10 values unchanged.",
+ "evaluable_today": {
+  "AIR_PRIMARY": "INCOMPLETE_EVIDENCE: NP_ICP_CHEM_AIR_NOT_ADMITTED (G-A930-AIR, registry abep-icp-air-0.0 NOT_ADMITTED) + tier-1 gaps AIR-ION-02, AIR-ION-05, AIR-DIS-02, AIR-EXC-04, AIR-EXC-05, AIR-EXC-09, AIR-EL-03, AIR-EL-04, AIR-WALL-01..03, AIR-NL-02 + SP-04_SPECIES_BOUND_UNRESOLVED:SB-NO (SB-He / SB-Ar above the screen) + DOM-12 (NEG-CRIT NOT_EVALUABLE) + IN-05",
+  "EM-O2B": "INCOMPLETE_EVIDENCE: follows AIR (SP-07)",
+  "XE_CONTINGENCY / EM-XE": "INCOMPLETE_EVIDENCE: CHG-04_NO_XE_RATE_SET, NP_ICP_CHEM_AIR_XE_NOT_ADMITTED (abep-icp-xe-0.0), tier-1 gaps XE-ION-01, XE-EXC-01, XE-EL-01, XE-WALL-01; no AIR item",
+  "EM-AR": "INCOMPLETE_EVIDENCE: CHG-05 (unchanged)",
+  "EM-N2": "INCOMPLETE_EVIDENCE: 18 of the 29 nominal channels have a direct rate; EQ-06_REPRESENTATION_NOT_REGISTERED for AIR-ION-04/ionization_N and AIR-EXC-02/excitation_N2_vib_0_to_1..10; OQ-NPICP-04 (CA-ICP-v1 NOT_RUN); process-class gate; and every v1 missing physical input (IN-08, IN-10, IN-11, IN-12, IN-17, DOM-06). No geometry or operating point was invented (CLAUDE.md rule 6)."
+ },
+ "implementation_interpretations": [
+  {
+   "id": "INT-16",
+   "item": "T_e scan with registered tables (IN-24)",
+   "choice": "the IN-24 log grid up to the highest T_e at which every registered table of the set is admissible (3/2 T_e <= max_mean_energy_eV), that end added as a scan node and reported (IN-24_T_E_SCAN_END; 30 eV for the 45 eV tables = the D-CHEM upper bound); synthetic sets keep 0.1-150 eV",
+   "why": "IX-05 forbids a rate beyond a table's verified limit, so the v1 grid end (150 eV, chosen to report out-of-domain roots) cannot be evaluated with real tables; a root beyond the end would be OUT_OF_DOMAIN (DOM-01) and is not searched. The declared domain D-CHEM is scanned completely. Recorded for owner acknowledgement (as GAP-05)."
+  },
+  {
+   "id": "INT-17",
+   "item": "CV-03 formation energies (FC-CHEM-03)",
+   "choice": "neutrals 0 (ground-state-neutral reference, EQ-18), an ion the least energy over the registered ionization routes (headers); E_r compared within 1e-12 relative (decimal header sums)",
+   "why": "the registered N^2+ formation energy is route-dependent by 1.5e-4 eV (v1 OBS-01); the least-energy route keeps every registered header admissible and the check still refuses a header below the cheapest registered formation"
+  },
+  {
+   "id": "INT-18",
+   "item": "representations of reused tables",
+   "choice": "stored in xs/ (one file per table) with the capture id, builder script, table and source sha256",
+   "why": "the build plan names xs/ for new tables only, while EQ-06 / IX-01 need a registered representation for every table used; the capture is the parity-verified chain (build plan: production data do not live under docs/)"
+  },
+  {
+   "id": "INT-19",
+   "item": "synthetic sets referencing registry channels",
+   "choice": "allowed for verification; the rates are the registered ones, everything else synthetic, every output labelled SYNTHETIC_TEST_ONLY",
+   "why": "the only way to exercise EQ-06 inside a solve while no real-gas case has its inputs registered"
+  },
+  {
+   "id": "INT-20",
+   "item": "admission-rule item 3 gate",
+   "choice": "abep-icp reads the sha256-pinned abep-chem parity report (verdict ADMITTED, parity PARITY_PASS), not the migration ledger",
+   "why": "the ledger is lane A1's file and has not applied that report yet"
+  },
+  {
+   "id": "INT-21",
+   "item": "electron mass in the rate integral",
+   "choice": "abep_chem uses the reference value 9.10938e-31 kg (the value the frozen tables were integrated with); abep-icp keeps CODATA 2022 in its balances",
+   "why": "EQ-06 asks for the transformation chain of the registered .dat; the difference is 2.0e-7 relative in k (k ~ m_e^-1/2), below the .dat print rounding; recorded, not corrected"
+  },
+  {
+   "id": "INT-22",
+   "item": "SP-04 with a feed in mass flows",
+   "choice": "a screened species present in the feed applies its bound (its mole fraction cannot be shown below the screen)",
+   "why": "fail closed"
+  },
+  {
+   "id": "INT-23",
+   "item": "SP-06",
+   "choice": "AIR_PRIMARY keeps v1's IN-05_DELIVERED_COMPOSITION_TBD (INCOMPLETE_EVIDENCE); SP-06's NOT_EVALUATED for flight design-state points is subsumed (worst status INCOMPLETE_EVIDENCE either way)",
+   "why": "no status is relaxed; recorded for the admission addendum"
+  }
+ ],
+ "preregistration_consistency": {
+  "question": "Do the NP-ICP-CHEM-AIR build plan and the NP-ICP-NEUTRALIZER preregistration (with addenda) disagree on the registry interface? (a disagreement would be a failed preregistration condition and stop this lane)",
+  "finding": "No disagreement. Addendum 02 re-points IN-16, EQ-06 semantics, sec. 8 tables / reaction set and DOM-01..03 to IF-CHEM-REG-v1 as IDENTICAL or STRICTER_OR_EQUAL; the build plan's location, file set and BP-S1 content match what abep-icp consumes. Two gaps, handled without relaxing anything and listed for the owner: the build plan does not say where the reused tables' representations live (INT-18), and neither document says where the consumer pins the registry sha256 (abep-icp pins ICP_CHEM_PINNED.toml, which pins every registry file)."
+ },
+ "observations": [
+  {
+   "id": "OBS-04",
+   "what": "NV-06 between-row differences up to +238 % at T_e = 3 eV for the multiply charged and dissociative channels (nv06_report)",
+   "effect": "confirms EQ-06's direct evaluation; any use of the 1 eV .dat for ICP-class T_e would bias threshold rates upward"
+  },
+  {
+   "id": "OBS-05",
+   "what": "the migration ledger row C-ABEP_SIM_RATE_TABLES_PY reads PYTHON_REFERENCE although its committed parity report reads ADMITTED",
+   "effect": "none on the model (INT-20); for lane A1"
+  },
+  {
+   "id": "OBS-06",
+   "what": "11 of the 29 nominal EM-N2 channels have no direct-rate representation in the repository",
+   "effect": "EM-N2 point results stay INCOMPLETE_EVIDENCE even once the physical inputs are registered, until ionization_N is lawfully registered (NIST SRD 107 table) and the Laporta fit parameters with an admitted rate-fit evaluator exist"
+  }
+ ],
+ "what_stays_open": [
+  "Verify items VER-01, VER-02, VER-06, VER-07, VER-08, VER-11, VER-12 on the core path (and VER-03..05, VER-13 for CM-PRED): need verification addenda (admission-rule item 4).",
+  "Prereg findings PF-01 (EQ-02 recombination factor) and PF-02 (background inflow without tau): owner clarification addendum or v2.",
+  "Prereg gaps GAP-01 (neutral energy split), GAP-02 (atom formation energy disposal), GAP-03 (CARRIED_OUT split), GAP-04 (multi-species H-LIEB), GAP-05 (CC-03 normalisation acknowledgement): owner addenda.",
+  "Admission record (admission-rule item 5): integration-line action.",
+  "NV-06 for ionization_N and the 10 vibrational channels: a lawfully registered representation (later table commits) and, for the rate fits, an admitted rate-fit evaluator.",
+  "CA-ICP-v1 (OQ-NPICP-04): no verdict; every reused process stays included by default, the process-class gate stays unaddressed for 50 (species, class) pairs.",
+  "AIR_PRIMARY admission (AD-AIR-01..10) and XE_CONTINGENCY admission (AD-XE-01..06): BP-S2..S9 and BP-X1..X4.",
+  "Owner items of the chemistry contract used as drafted here: OQ-CHEM-05 (location data/chemistry/icp/), OQ-CHEM-06 (labels abep-icp-air-0.x / abep-icp-xe-0.x).",
+  "INT-16 (registered-table T_e scan end) and INT-17 (CV-03 formation-energy route) for owner acknowledgement."
+ ],
+ "ledger_update_requested": {
+  "file": "docs/rust_migration/migration_state_v1.json (owned by lane A1; not edited here)",
+  "item": "NP-ICP-NEUTRALIZER",
+  "status": "RUST_IMPL (unchanged; VERIFIED not claimed)",
+  "verification_evidence": {
+   "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/verification_report_v2.json",
+   "verification_status": "IMPLEMENTED_UNVERIFIED",
+   "software_admission": "NOT_ADMITTED",
+   "validation_status": "NOT_VALIDATED",
+   "verified_claimed": false
+  },
+  "rust_commit": "e404c1588b427efedcd06e868eb79122c630ee34",
+  "implementation_add": [
+   "crates/abep-chem (src/registry.rs: IF-CHEM-REG-v1 provider)",
+   "data/chemistry/icp/"
+  ],
+  "note": "Admission-rule item 3 met on committed evidence (C-ABEP_SIM_RATE_TABLES_PY parity_report_v1 ADMITTED); NV-06 direct side evaluated for 32 of 43 channels; items 4 and 5 open; PF-01 / PF-02, GAP-01..05 open for the owner. NP-ICP-CHEM-AIR (a contract dependency, not a ledger item): BP-S1 committed at f430d7b, labels abep-icp-air-0.0 / abep-icp-xe-0.0, both NOT_ADMITTED.",
+  "dependency": "the C-ABEP_SIM_RATE_TABLES_PY row should first take its own report's ledger_update_requested (PYTHON_REFERENCE -> ADMITTED)"
+ },
+ "owner_questions": [
+  "Acknowledge INT-16 (T_e scan ends at the highest T_e every registered table admits) and INT-17 (least-energy route for CV-03), or register alternatives.",
+  "Confirm OQ-CHEM-05 / OQ-CHEM-06 as used (data/chemistry/icp/, abep-icp-air-0.0 / abep-icp-xe-0.0) and INT-18 (reused-table representations in xs/).",
+  "Lawful route for a registered ionization_N representation (NIST SRD 107) and for the Laporta 2014 fit parameters with a rate-fit evaluator contract.",
+  "As in v1: PF-01, PF-02, GAP-01..05 addenda; verification addenda for VER-01, VER-02, VER-06, VER-07, VER-08, VER-11, VER-12."
+ ]
+}

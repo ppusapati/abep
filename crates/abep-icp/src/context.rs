@@ -1,6 +1,8 @@
 //! Repository context of NP-ICP-NEUTRALIZER v1: the frozen preregistration (lock-verified), its A9.30 addendum, the
-//! NP-ICP-CHEM-AIR chemistry contract (lock-verified), and every data file the model reads, each sha256-verified against
-//! a pin in one of those frozen records. Nothing is read without a pin; a mismatch is MODEL_ERROR.
+//! NP-ICP-CHEM-AIR chemistry contract (lock-verified), its IF-CHEM-REG-v1 registry (`data/chemistry/icp/`, loaded by
+//! abep-chem; addendum 02 re-points IN-16 there), the admission record of the abep-chem rate integrator (EQ-06,
+//! admission-rule item 3), and every data file the model reads, each sha256-verified against a pin in one of those
+//! records. Nothing is read without a pin; a mismatch is MODEL_ERROR.
 //!
 //! The model never reads `config/assessment/` (FC-12: a gate-threshold change cannot reach a raw output).
 
@@ -8,6 +10,8 @@ use crate::chemistry::{
     ChemistrySet, ClassAddress, DatTable, ProcessClass, RateSource, ReactionDef, ReactionKind, SpeciesDef, Validity,
 };
 use crate::constants::AMU;
+use abep_chem::checked::Validity as ChemValidity;
+use abep_chem::registry::{Channel, ChannelKind, IcpChemRegistry, ModeRegistry, ICP_CHEM_PINNED_SHA256};
 use abep_provenance::{read_bytes, read_verified, sha256_hex, ConfigManifest};
 use abep_types::{AbepError, AbepResult};
 use serde::Serialize;
@@ -28,8 +32,16 @@ pub const CHEM_AIR_LOCK_SHA256: &str = "f42c22699a31acd4e29854823150d7b7c75b35eb
 pub const CONTRACT_ID: &str = "NP-ICP-NEUTRALIZER/prereg_v1+addendum_01_a9_30";
 /// The active bus boundary (A9.22 G8; A9.30 sec. 5).
 pub const ACTIVE_BUS_BOUNDARY: &str = "bus_power_boundary_a9_v2";
-/// The IF-CHEM-REG-v1 registry directory drafted by NP-ICP-CHEM-AIR (build plan BP-S1).
+/// The IF-CHEM-REG-v1 registry directory (NP-ICP-CHEM-AIR build plan BP-S1).
 pub const ICP_CHEM_REGISTRY_DIR: &str = "data/chemistry/icp";
+/// The consumer's pin of `data/chemistry/icp/ICP_CHEM_PINNED.toml` (labels abep-icp-air-0.0 / abep-icp-xe-0.0): a
+/// registry change is a new pin (IF-CHEM-REG-v1 consumption rule: registry sha256 mismatch -> MODEL_ERROR).
+pub const ICP_CHEM_PINNED: &str = ICP_CHEM_PINNED_SHA256;
+/// The EM-N2 scenario of the registry: the nominal N2/N set (addendum 02, IN-16: the tables of n2_n.toml).
+pub const EM_N2_SCENARIO: &str = "EM-N2-NOMINAL";
+/// Admission record of the abep-chem rate integrator (contract C-ABEP_SIM_RATE_TABLES_PY v1): admission-rule item 3.
+pub const ABEP_CHEM_REPORT: &str = "docs/rust_migration/contracts/C-ABEP_SIM_RATE_TABLES_PY/parity_report_v1.json";
+pub const ABEP_CHEM_REPORT_SHA256: &str = "6864dc0a7b1f3c6c553edf49ed84861ad2115fb08ba5d787bd183804c58fb09e";
 /// N2/N set registered by the parent prereg (sec. 8; abep-n2n-0.11).
 pub const N2_SET_CONFIG: &str = "n2_n.toml";
 /// DOM-02 domain of the N2/N set (prereg chemistry.completeness_domain): T_e 2-30 eV, vib / rot from 0.2 eV.
@@ -40,7 +52,6 @@ const RATE_VALIDITY: &str = "hallthruster_bridge/propellants/rate_validity.toml"
 const N2_N_TOML: &str = "hallthruster_bridge/propellants/n2_n.toml";
 const PINNED_TOML: &str = "hallthruster_bridge/PINNED.toml";
 const ENSEMBLE: &str = "hallthruster_bridge/ensemble/transport_ensemble_v0.json";
-const PROPELLANTS: &str = "hallthruster_bridge/propellants";
 
 /// One process of the NP-ICP-CHEM-AIR registry (id, mode AIR / XE, tier, status).
 #[derive(Debug, Clone, PartialEq, Serialize)]
@@ -85,8 +96,14 @@ pub struct IcpModel {
     pub reaction_set_version: String,
     pub supply_modes: Vec<String>,
     pub icp_feed_gas_primary: String,
-    pub icp_registry_present: bool,
+    /// The IF-CHEM-REG-v1 registry (both modes), verified on load.
+    pub chem_registry: IcpChemRegistry,
+    /// The abep-chem integrator's admission record reads ADMITTED / PARITY_PASS (admission-rule item 3).
+    pub abep_chem_admitted: bool,
+    pub abep_chem_admission: String,
+    /// EM-N2: the registry scenario EM-N2-NOMINAL as a chemistry structure.
     pub n2_set: ChemistrySet,
+    /// The `.dat` cross-check table of every AIR registry channel, by file name (NV-06 / UQ-06 only).
     pub n2_tables: BTreeMap<String, DatTable>,
     /// Caller-supplied commit of the Rust source (OUT-14); None is reported as null.
     pub rust_commit: Option<String>,
@@ -160,33 +177,43 @@ impl IcpModel {
         if str_at(&ca, &ca_rel, "/parent_model/lock_sha256")? != PREREG_LOCK_SHA256 {
             return Err(schema(&ca_rel, "NP-ICP-CHEM-AIR does not name this prereg lock as its parent"));
         }
-        let mut chem_air_processes = Vec::new();
-        for p in ca.get("processes").and_then(Value::as_array).into_iter().flatten() {
-            let g = |k: &str| p.get(k).and_then(Value::as_str).unwrap_or("").to_string();
-            chem_air_processes.push(ChemAirProcess {
-                id: g("id"),
-                mode: g("mode"),
-                tier: g("tier"),
-                status: g("status"),
-                reaction: g("reaction"),
-            });
+        // IF-CHEM-REG-v1 registry (provider abep-chem): processes with the contract statuses, channels, validity.
+        let chem_registry = IcpChemRegistry::load(root, ICP_CHEM_PINNED)?;
+        if chem_registry.contract_lock_sha256 != CHEM_AIR_LOCK_SHA256 {
+            return Err(schema(ICP_CHEM_REGISTRY_DIR, "registry of another NP-ICP-CHEM-AIR lock"));
         }
-        if chem_air_processes.is_empty() || chem_air_processes.iter().any(|p| p.id.is_empty() || p.status.is_empty()) {
+        let chem_air_processes: Vec<ChemAirProcess> = [&chem_registry.air, &chem_registry.xe]
+            .into_iter()
+            .flat_map(|m| {
+                m.processes.iter().map(|p| ChemAirProcess {
+                    id: p.id.clone(),
+                    mode: m.mode.clone(),
+                    tier: p.tier.clone(),
+                    status: p.status.as_str().to_string(),
+                    reaction: p.reaction.clone(),
+                })
+            })
+            .collect();
+        let n_contract = ca.get("processes").and_then(Value::as_array).map_or(0, Vec::len);
+        if chem_air_processes.is_empty() || chem_air_processes.len() != n_contract {
             return Err(schema(&ca_rel, "process registry missing or incomplete"));
         }
         let mut chem_air_today = BTreeMap::new();
-        if let Some(t) = ca.pointer("/admission_criteria/today").and_then(Value::as_object) {
-            for (k, v) in t {
-                chem_air_today.insert(k.clone(), v.as_str().unwrap_or("").to_string());
-            }
+        for (k, m) in [("AIR_PRIMARY", &chem_registry.air), ("XE_CONTINGENCY", &chem_registry.xe)] {
+            chem_air_today.insert(k.to_string(), m.admission_today.clone());
         }
-        let mut table_pins: BTreeMap<String, String> = BTreeMap::new();
-        for e in ca.pointer("/reuse_pins/hall_propellant_tables").and_then(Value::as_array).into_iter().flatten() {
-            if let (Some(p), Some(s)) = (e.get("path").and_then(Value::as_str), e.get("sha256").and_then(Value::as_str))
-            {
-                table_pins.insert(p.to_string(), s.to_string());
-            }
-        }
+        // Admission-rule item 3: the admission record of the abep-chem rate evaluator.
+        let rep = json(
+            ABEP_CHEM_REPORT,
+            &rd(ABEP_CHEM_REPORT, ABEP_CHEM_REPORT_SHA256, "abep-icp anchor (abep-chem admission record)")?,
+        )?;
+        let verdict = rep.get("verdict").and_then(Value::as_str).unwrap_or("");
+        let parity = rep.get("parity_verdict").and_then(Value::as_str).unwrap_or("");
+        let abep_chem_admitted = verdict == "ADMITTED" && parity == "PARITY_PASS";
+        let abep_chem_admission = format!(
+            "C-ABEP_SIM_RATE_TABLES_PY parity_report_v1: verdict {verdict}, parity {parity}, rust commit {}",
+            rep.get("rust_commit").and_then(Value::as_str).unwrap_or("?")
+        );
 
         // Hall ensemble (FC-01), validity table, reaction-set label, N2/N config.
         let ens = json(ENSEMBLE, &rd(ENSEMBLE, &pin(ENSEMBLE)?, &prereg_rel)?)?;
@@ -248,12 +275,21 @@ impl IcpModel {
             .collect();
         let icp_feed_gas_primary = str_at(&arch, arch_rel, "/constants/icp_feed_gas_baseline/primary")?.to_string();
 
-        let (n2_set, n2_tables, table_files) = load_n2_set(root, &n2_text, &rate_validity, &table_pins)?;
-        files.extend(table_files.into_iter().map(|(p, s)| ReadFile {
-            path: p,
-            sha256: s,
-            pinned_by: format!("{ca_rel} reuse_pins.hall_propellant_tables"),
-        }));
+        let (n2_set, n2_tables) = em_n2_set(root, &chem_registry.air, &n2_text)?;
+        // The scenario's Hall configuration is the parent's pinned n2_n.toml (addendum 02: the same tables).
+        let sc = chem_registry
+            .air
+            .scenario(EM_N2_SCENARIO)
+            .ok_or_else(|| schema(ICP_CHEM_REGISTRY_DIR, format!("no scenario {EM_N2_SCENARIO}")))?;
+        if sc.hall_config != Some((N2_N_TOML.to_string(), pin(N2_N_TOML)?)) {
+            return Err(schema(ICP_CHEM_REGISTRY_DIR, "EM-N2-NOMINAL is not the parent's pinned n2_n.toml"));
+        }
+        let have: BTreeSet<String> = files.iter().map(|f| f.path.clone()).collect();
+        for (p, s, by) in &chem_registry.files_read {
+            if !have.contains(p) {
+                files.insert(ReadFile { path: p.clone(), sha256: s.clone(), pinned_by: by.clone() });
+            }
+        }
 
         Ok(IcpModel {
             repo_root: root.to_path_buf(),
@@ -271,7 +307,9 @@ impl IcpModel {
             reaction_set_version,
             supply_modes,
             icp_feed_gas_primary,
-            icp_registry_present: root.join(ICP_CHEM_REGISTRY_DIR).join("registry_air.toml").is_file(),
+            chem_registry,
+            abep_chem_admitted,
+            abep_chem_admission,
             n2_set,
             n2_tables,
             rust_commit: None,
@@ -296,156 +334,135 @@ impl IcpModel {
             .filter(|p| p.mode == mode && p.tier.starts_with('1') && p.status != "IN_REPO_VERIFIED")
             .collect()
     }
-}
 
-fn ion_name(sym: &str, z: u32) -> String {
-    if z == 1 {
-        format!("{sym}^+")
-    } else {
-        format!("{sym}^{z}+")
+    /// The registry of a CHEM-AIR mode ("AIR" / "XE").
+    pub fn chem_mode(&self, mode: &str) -> Option<&ModeRegistry> {
+        self.chem_registry.mode(mode)
+    }
+
+    /// The registry channel of a `.dat` file name, in either mode.
+    pub fn chem_channel_for_table(&self, file: &str) -> Option<&Channel> {
+        self.chem_registry.air.channel_for_table(file).or_else(|| self.chem_registry.xe.channel_for_table(file))
+    }
+
+    /// OUT-14 / IF-CHEM-REG-v1 provenance of the chemistry registry.
+    pub fn chem_registry_provenance(&self) -> BTreeMap<String, String> {
+        let r = &self.chem_registry;
+        [
+            ("contract_id", abep_chem::registry::CONTRACT_ID.to_string()),
+            ("contract_lock_sha256", r.contract_lock_sha256.clone()),
+            ("icp_chem_pinned_sha256", r.pinned_sha256.clone()),
+            ("air_label", r.air.label.clone()),
+            ("air_registry_sha256", r.air.registry_sha256.clone()),
+            ("xe_label", r.xe.label.clone()),
+            ("xe_registry_sha256", r.xe.registry_sha256.clone()),
+        ]
+        .into_iter()
+        .map(|(k, v)| (k.to_string(), v))
+        .collect()
     }
 }
 
-/// "N2(+)" -> ("N2", 1); "N(2+)" -> ("N", 2); "N" -> ("N", 0); "2e" / "e" -> None.
-fn parse_token(tok: &str) -> Option<(u32, String, u32)> {
-    let tok = tok.trim();
-    if tok == "e" || (tok.ends_with('e') && tok[..tok.len() - 1].chars().all(|c| c.is_ascii_digit())) {
-        return None;
+fn kind_of(k: ChannelKind) -> ReactionKind {
+    match k {
+        ChannelKind::Ionization => ReactionKind::Ionization,
+        ChannelKind::DissociativeIonization => ReactionKind::DissociativeIonization,
+        ChannelKind::Dissociation => ReactionKind::Dissociation,
+        ChannelKind::ExcitationElectronic => ReactionKind::ExcitationElectronic,
+        ChannelKind::ExcitationVibrational => ReactionKind::ExcitationVibrational,
+        ChannelKind::ExcitationRotational => ReactionKind::ExcitationRotational,
+        ChannelKind::ElasticMomentumTransfer => ReactionKind::ElasticMomentumTransfer,
     }
-    let (sym, z) = match tok.find('(') {
-        Some(i) => {
-            let inner = tok[i + 1..].trim_end_matches(')').trim_end_matches('+');
-            let z = if inner.is_empty() { 1 } else { inner.parse().ok()? };
-            (&tok[..i], z)
-        }
-        None => (tok, 0),
-    };
-    Some((1, sym.to_string(), z))
 }
 
-type N2Load = (ChemistrySet, BTreeMap<String, DatTable>, Vec<(String, String)>);
-
-/// The registered N2/N set (parent sec. 8, abep-n2n-0.11) as a chemistry structure. Each table is sha256-verified
-/// against the NP-ICP-CHEM-AIR reuse pin (an unpinned table is MODEL_ERROR, IF-CHEM-REG-v1); its header gives E_r and
-/// its rows serve only the NV-06 cross-check. Rates are RegisteredTable sources: EQ-06 evaluation needs abep-chem.
-fn load_n2_set(
-    root: &Path,
-    text: &str,
-    validity: &BTreeMap<String, ValidityEntry>,
-    table_pins: &BTreeMap<String, String>,
-) -> AbepResult<N2Load> {
-    let cfg: toml::Table = text.parse().map_err(|e: toml::de::Error| schema(N2_N_TOML, e.to_string()))?;
-    let mut species = Vec::new();
-    for s in cfg.get("species").and_then(|v| v.as_array()).ok_or_else(|| schema(N2_N_TOML, "species"))? {
-        let sym = s.get("symbol").and_then(|v| v.as_str()).ok_or_else(|| schema(N2_N_TOML, "symbol"))?;
-        let mass_u = s.get("mass").and_then(|v| v.as_float()).ok_or_else(|| schema(N2_N_TOML, "mass"))?;
-        let zmax = s.get("max_charge").and_then(|v| v.as_integer()).ok_or_else(|| schema(N2_N_TOML, "max_charge"))?;
-        let n_atoms: u32 = sym.trim_start_matches('N').parse().unwrap_or(1);
-        let elements: BTreeMap<String, u32> = [("N".to_string(), n_atoms)].into();
-        species.push(SpeciesDef {
-            name: sym.to_string(),
-            mass_kg: mass_u * AMU,
-            charge: 0,
-            elements: elements.clone(),
-            electronegative: false,
-            wall_products: vec![],
-            recombines_to: if n_atoms == 1 { Some("N2".into()) } else { None },
-        });
-        for z in 1..=u32::try_from(zmax).map_err(|_| schema(N2_N_TOML, "max_charge"))? {
-            // Ion mass = neutral mass (HallThruster.jl convention; Z m_e / M <= 8e-5).
-            species.push(SpeciesDef {
-                name: ion_name(sym, z),
-                mass_kg: mass_u * AMU,
-                charge: z,
-                elements: elements.clone(),
-                electronegative: false,
-                wall_products: vec![(sym.to_string(), 1)],
-                recombines_to: None,
-            });
-        }
+/// A registry channel's validity entry in this crate's vocabulary.
+pub fn validity_of_channel(v: &ChemValidity) -> Validity {
+    match v {
+        ChemValidity::Verified { max_mean_energy_ev } => Validity::Verified { max_mean_energy_ev: *max_mean_energy_ev },
+        ChemValidity::Unresolved => Validity::Unresolved,
+        ChemValidity::MissingEntry => Validity::MissingEntry,
     }
-    let mut reactions = Vec::new();
-    let mut tables = BTreeMap::new();
-    let mut read = Vec::new();
-    for (i, r) in cfg
+}
+
+type N2Load = (ChemistrySet, BTreeMap<String, DatTable>);
+
+/// EM-N2 (CG-N2): the registry scenario EM-N2-NOMINAL as a chemistry structure (addendum 02 re-points IN-16 to
+/// IF-CHEM-REG-v1). Species, masses, stoichiometry, header energies and validity come from the registry; rates are
+/// RegisteredTable sources, evaluated only through the registry representation and abep_chem::checked (EQ-06). The
+/// parent's pinned n2_n.toml must name the same tables. Every AIR channel's `.dat` is kept for NV-06 only.
+fn em_n2_set(root: &Path, air: &ModeRegistry, n2_toml: &str) -> AbepResult<N2Load> {
+    let rel = ICP_CHEM_REGISTRY_DIR;
+    let sc = air.scenario(EM_N2_SCENARIO).ok_or_else(|| schema(rel, format!("no scenario {EM_N2_SCENARIO}")))?;
+    let channels: Vec<_> = sc
+        .channels
+        .iter()
+        .map(|id| air.channel(id).ok_or_else(|| schema(rel, format!("unknown channel {id}"))))
+        .collect::<AbepResult<_>>()?;
+    let cfg: toml::Table = n2_toml.parse().map_err(|e: toml::de::Error| schema(N2_N_TOML, e.to_string()))?;
+    let cfg_files: BTreeSet<&str> = cfg
         .get("reactions")
         .and_then(|v| v.as_array())
-        .ok_or_else(|| schema(N2_N_TOML, "reactions"))?
-        .iter()
-        .enumerate()
-    {
-        let ty = r.get("type").and_then(|v| v.as_str()).ok_or_else(|| schema(N2_N_TOML, "type"))?;
-        let file = r.get("rate_coeff_file").and_then(|v| v.as_str()).ok_or_else(|| schema(N2_N_TOML, "file"))?;
-        let rel = format!("{PROPELLANTS}/{file}");
-        let sha = table_pins.get(&rel).ok_or_else(|| AbepError::Schema {
-            path: rel.clone(),
-            message: "rate file without a sha256 pin (IF-CHEM-REG-v1: unregistered file -> MODEL_ERROR)".into(),
-        })?;
-        let bytes = read_verified(&root.join(&rel), sha)?;
-        read.push((rel.clone(), sha.clone()));
-        let table = DatTable::parse(&rel, &bytes)?;
-        let (kind, target, products) = match ty {
-            "elastic" | "excitation" => {
-                let t = r.get("target_species").and_then(|v| v.as_str()).ok_or_else(|| schema(N2_N_TOML, "target"))?;
-                let kind = if ty == "elastic" {
-                    ReactionKind::ElasticMomentumTransfer
-                } else if file.contains("_vib_") {
-                    ReactionKind::ExcitationVibrational
-                } else if file.contains("_rot_") {
-                    ReactionKind::ExcitationRotational
-                } else {
-                    ReactionKind::ExcitationElectronic
-                };
-                (kind, t.to_string(), vec![(t.to_string(), 1)])
-            }
-            "electron_impact" => {
-                let eq = r.get("equation").and_then(|v| v.as_str()).ok_or_else(|| schema(N2_N_TOML, "equation"))?;
-                let (lhs, rhs) = eq.split_once("->").ok_or_else(|| schema(N2_N_TOML, format!("equation {eq}")))?;
-                let target = lhs
-                    .split(" + ")
-                    .filter_map(parse_token)
-                    .map(|(_, s, z)| if z == 0 { s } else { ion_name(&s, z) })
-                    .next()
-                    .ok_or_else(|| schema(N2_N_TOML, format!("equation {eq}")))?;
-                let mut prods: BTreeMap<String, u32> = BTreeMap::new();
-                let mut n_ions = 0;
-                for (n, s, z) in rhs.split(" + ").filter_map(parse_token) {
-                    let name = if z == 0 { s } else { ion_name(&s, z) };
-                    if z > 0 {
-                        n_ions += n;
-                    }
-                    *prods.entry(name).or_insert(0) += n;
-                }
-                let total: u32 = prods.values().sum();
-                let kind = match (n_ions, total) {
-                    (0, _) => ReactionKind::Dissociation,
-                    (_, 1) => ReactionKind::Ionization,
-                    _ => ReactionKind::DissociativeIonization,
-                };
-                (kind, target, prods.into_iter().collect())
-            }
-            other => return Err(schema(N2_N_TOML, format!("reaction type {other}"))),
-        };
-        let v = match validity.get(file) {
-            None => Validity::MissingEntry,
-            Some(e) if e.status == "verified" => {
-                Validity::Verified { max_mean_energy_ev: e.max_mean_energy_ev.unwrap() }
-            }
-            Some(_) => Validity::Unresolved,
-        };
-        reactions.push(ReactionDef {
-            id: format!("R{:02}:{}", i + 1, file.trim_end_matches(".dat")),
-            kind,
-            target,
-            products,
-            threshold_ev: table.threshold_ev,
-            rate: RateSource::RegisteredTable { file: file.to_string() },
-            validity: v,
-        });
-        tables.insert(file.to_string(), table);
+        .into_iter()
+        .flatten()
+        .filter_map(|r| r.get("rate_coeff_file").and_then(|v| v.as_str()))
+        .collect();
+    if cfg_files != channels.iter().map(|c| c.table_file()).collect::<BTreeSet<_>>() {
+        return Err(schema(N2_N_TOML, "the registry scenario and n2_n.toml name different tables"));
     }
-    // Process classes addressed by the registered reactions; every other (species, class) pair stays unaddressed:
-    // the Hall completeness verdict does not transfer to ICP conditions (OQ-NPICP-04).
+    let used: BTreeSet<&str> = channels
+        .iter()
+        .flat_map(|c| std::iter::once(c.target.as_str()).chain(c.products.keys().map(String::as_str)))
+        .collect();
+    let neutral_of = |el: &BTreeMap<String, u32>| {
+        air.species.iter().find(|x| x.charge == 0 && &x.elements == el && used.contains(x.id.as_str()))
+    };
+    let mut species = Vec::new();
+    for s in air.species.iter().filter(|s| used.contains(s.id.as_str())) {
+        let mass_amu = s.mass_amu.ok_or_else(|| schema(rel, format!("species {} has no registered mass", s.id)))?;
+        let charge =
+            u32::try_from(s.charge).map_err(|_| schema(rel, format!("{}: negative ions are not in v1", s.id)))?;
+        let wall_products = if charge > 0 {
+            let n =
+                neutral_of(&s.elements).ok_or_else(|| schema(rel, format!("{}: no neutral of its nuclei", s.id)))?;
+            vec![(n.id.clone(), 1)]
+        } else {
+            vec![]
+        };
+        let doubled: BTreeMap<String, u32> = s.elements.iter().map(|(k, n)| (k.clone(), 2 * n)).collect();
+        let recombines_to = if charge == 0 && s.elements.values().sum::<u32>() == 1 {
+            neutral_of(&doubled).map(|x| x.id.clone())
+        } else {
+            None
+        };
+        species.push(SpeciesDef {
+            name: s.id.clone(),
+            mass_kg: mass_amu * AMU,
+            charge,
+            elements: s.elements.clone(),
+            electronegative: false,
+            wall_products,
+            recombines_to,
+        });
+    }
+    let mut tables = BTreeMap::new();
+    for c in &air.channels {
+        let bytes = read_verified(&root.join(&c.table), &c.table_sha256)?;
+        tables.insert(c.table_file().to_string(), DatTable::parse(&c.table, &bytes)?);
+    }
+    let reactions: Vec<ReactionDef> = channels
+        .iter()
+        .map(|c| ReactionDef {
+            id: c.id.clone(),
+            kind: kind_of(c.kind),
+            target: c.target.clone(),
+            products: c.products.iter().map(|(k, n)| (k.clone(), *n)).collect(),
+            threshold_ev: c.threshold_ev,
+            rate: RateSource::RegisteredTable { file: c.table_file().to_string() },
+            validity: validity_of_channel(&c.validity),
+        })
+        .collect();
+    // Process classes addressed by the registered reactions; every other (species, class) pair stays unaddressed
+    // until CA-ICP-v1 decides it (the Hall completeness verdict does not transfer: RU-03, OQ-NPICP-04).
     let mut process_classes: BTreeMap<String, BTreeMap<ProcessClass, ClassAddress>> = BTreeMap::new();
     for r in &reactions {
         process_classes
@@ -453,19 +470,23 @@ fn load_n2_set(
             .or_default()
             .insert(r.kind.process_class(), ClassAddress::Modelled { by: r.id.clone() });
     }
+    let d = &air.domain;
+    if d.t_e_ev != N2_T_E_DOMAIN_EV || d.low_threshold_window_t_e_ev[0] != N2_VIBROT_T_E_MIN_EV {
+        return Err(schema(rel, "D-CHEM differs from the parent DOM-02 bounds"));
+    }
     let set = ChemistrySet {
-        set_id: "abep-n2n-0.11/n2_n.toml".into(),
+        set_id: format!("{}/{EM_N2_SCENARIO}", air.label),
         species,
         reactions,
         process_classes,
-        t_e_domain_ev: N2_T_E_DOMAIN_EV,
-        vibrot_t_e_min_ev: N2_VIBROT_T_E_MIN_EV,
+        t_e_domain_ev: d.t_e_ev,
+        vibrot_t_e_min_ev: d.low_threshold_window_t_e_ev[0],
     };
     let v = set.contract_violations();
     if !v.is_empty() {
-        return Err(schema(N2_N_TOML, v.join("; ")));
+        return Err(schema(rel, v.join("; ")));
     }
-    Ok((set, tables, read))
+    Ok((set, tables))
 }
 
 /// sha256 of a file that is not part of the model inputs (used by tests and the verification example).

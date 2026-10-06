@@ -2,9 +2,10 @@
 //! (prereg sec. 8). Nothing here comes from `abep_sim/plasma_chem.py` (EX-01).
 //!
 //! Rate coefficients (EQ-06) are the direct Maxwellian integral of each registered source representation, through the
-//! separately admitted abep-chem port of `rate_tables.maxwellian_rate`. That evaluator is not in the workspace, so a
-//! registered table is NOT_EVALUATED as a rate here; its 1 eV `.dat` interpolation exists only as the NV-06 / UQ-06
-//! cross-check. Synthetic analytic rates exist for the SYNTHETIC_TEST_ONLY verification cases.
+//! admitted abep-chem port of `rate_tables.maxwellian_rate` (`abep_chem::checked`) and the IF-CHEM-REG-v1 registry
+//! (`data/chemistry/icp/`, NP-ICP-NEUTRALIZER addendum 02). No rate is computed in abep-icp. A registered table without
+//! a registered representation has no rate (INCOMPLETE_EVIDENCE); its 1 eV `.dat` interpolation exists only as the
+//! NV-06 / UQ-06 cross-check. Synthetic analytic rates exist for the SYNTHETIC_TEST_ONLY verification cases.
 
 use abep_types::{AbepError, AbepResult};
 use serde::{Deserialize, Serialize};
@@ -82,7 +83,8 @@ pub enum RateSource {
     Synthetic {
         rate: SyntheticRate,
     },
-    /// A registered table in `hallthruster_bridge/propellants/` (EQ-06 needs abep-chem; the `.dat` is a cross-check).
+    /// A table registered as an IF-CHEM-REG-v1 channel, named by its `.dat` file: the rate is the direct integral of the
+    /// channel's representation through `abep_chem::checked` (EQ-06); the `.dat` is a cross-check only.
     RegisteredTable {
         file: String,
     },
@@ -189,7 +191,8 @@ pub struct ChemistrySet {
 pub enum ChemistryRegistration {
     /// SYNTHETIC_TEST_ONLY set (LC / CC / NV / FC verification).
     Synthetic { set: ChemistrySet },
-    /// A registered propellant configuration in `hallthruster_bridge/propellants/` (sha256-pinned), e.g. `n2_n.toml`.
+    /// A registered set named by its Hall configuration: `n2_n.toml` is the registry scenario EM-N2-NOMINAL (the same
+    /// tables, NP-ICP-NEUTRALIZER addendum 02 IN-16), built from `data/chemistry/icp/`.
     RegisteredSet { config_file: String },
     /// A gas with no registered rate set (Xe, Ar, O / O2): INCOMPLETE_EVIDENCE.
     NotRegistered { gas: String },
