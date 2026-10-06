@@ -1,0 +1,1226 @@
+{
+ "schema": "new_physics_verification_report_v1",
+ "id": "NP-ICP-NEUTRALIZER_verification_report_v1",
+ "model_id": "NP-ICP-NEUTRALIZER",
+ "model_version": "1",
+ "date": "2026-10-05",
+ "lane": "lane-np-icp-impl (A9.29 sec. 13 lane C implementation step; SC-WP-03, ES-NP-ICP)",
+ "method": "NEW_PHYSICS: preregistered model -> Rust -> analytic / independent-evidence verification -> admission. No synthetic Python reference exists or was created; nothing was ported from abep_sim/plasma_chem.py (EX-01).",
+ "contract": {
+  "prereg": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/prereg_v1.json",
+  "prereg_sha256": "5d496ea6538ef65999c3cb8b1f4274622dc060889b1cf14f46a0a02a855a91a8",
+  "prereg_md_sha256": "3af97940032b2ebff530d92c886a6690ceca30a21ed6d8bf5354d7cca79f36cc",
+  "prereg_lock": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/prereg_lock_v1.json",
+  "prereg_lock_sha256": "e98747e04694bf849164350be3ef4c7b458fccc918777c224066eebf55fa82af",
+  "addendum_01_a9_30_sha256": "f8e122492bde654d74a155f4544e51ce0b13ed639b2f510aa453384e333569c9",
+  "chemistry_contract": "docs/rust_migration/new_physics/NP-ICP-CHEM-AIR/prereg_v1.json (lock sha256 f42c22699a31acd4e29854823150d7b7c75b35eb8718fb90ade83bdd3d7e46ef)",
+  "lock_verification": "sha256 of both locked files recomputed before implementation and verified on every IcpModel::load; the prereg was not edited"
+ },
+ "implementation": {
+  "crate": "crates/abep-icp",
+  "rust_commit": "f4b615fb43172658485d4c78b0f83c2b67f318ac",
+  "branch": "lane-np-icp-impl",
+  "base": "a1baee1e1df2e675f1b0c8d4db6f28232366c50a, fast-forwarded to the pushed integration head 7f2d6c538ea9e5b568af4ad619afa0f12b5c22a1 (NP-ICP-CHEM-AIR v1, addendum_01, abep-ci, provenance verifier) before the implementation commit",
+  "toolchain": "rustc 1.94.1 (e408947bf 2026-03-25), cargo 1.94.1",
+  "modules": {
+   "status": "IcpStatus vocabulary (CONVERGED <-> abep_types::EvalStatus::Evaluated), Quantity (value + status + reasons, null unless CONVERGED), evaluation-order precedence",
+   "evidence": "IN-22 evidence records (source, level, quantity type, chain, uncertainty, domain, validation status), SYNTHETIC_TEST_ONLY",
+   "constants": "SI constants, TOL-SOLVE / TOL-CONS / TOL-ANALYTIC, IN-24 numerical settings",
+   "physics": "EQ-04 Bohm speed, mean speeds, EQ-08 floating sheath, EQ-05 H-LIEB, Santeler tau, Debye length",
+   "geometry / case": "IN-01..IN-24 registration types",
+   "chemistry": "species, reactions, rate sources, validity, process-class gate, .dat reader (cross-check only)",
+   "context": "IcpModel: lock-verified prereg, addendum, NP-ICP-CHEM-AIR registry and reuse pins, pinned N2/N set, ensemble, architecture config",
+   "solver": "species balances, quasi-neutrality root scan in T_e, closed-form phi_p per collection regime, n_e branch scan, energy balance",
+   "coupling": "EQ-12 / EQ-13 (CM-CAL), CM-PRED gate, EQ-15 bus plane",
+   "evaluate": "evaluation order, gates, domain checks, conservation, partition and the four interface records",
+   "crosscheck": "NV-06 report",
+   "testkit": "SYNTHETIC_TEST_ONLY case builders and the registered-today real-mode template"
+  },
+  "dependencies": "abep-types, abep-provenance, serde, serde_json and the existing workspace toml (=0.8.23); no new external crate",
+  "commands": [
+   "cargo fmt -- --check (members only)",
+   "cargo clippy --workspace --all-targets --locked -- -D warnings",
+   "cargo test --workspace --locked",
+   "cargo run -p abep-icp --example verification_table --locked (measured values below; output sha256 709f08f0ef3ebf3cf23ea39fb032afb4b059ba5c023e0ca6ea381f516608bb13)",
+   "cargo run -p abep-icp --example dump_case --locked -- <case> (raw output JSON of one case)"
+  ],
+  "tests": {
+   "abep_icp": 57,
+   "abep_icp_ignored": 0,
+   "workspace_total": 116,
+   "workspace_ignored": 0
+  }
+ },
+ "outcome": {
+  "verification_status": "IMPLEMENTED_UNVERIFIED",
+  "software_admission": "NOT_ADMITTED: admission-rule items 3, 4 and 5 are open (see admission_rule_evaluation)",
+  "validation_status": "NOT_VALIDATED (no P1 / P2 record; every published analog blocked by chemistry or geometry gaps)",
+  "summary": "Every LC, CC, NV and FC item that the preregistration makes exercisable today meets its preregistered criterion in cargo test; LC-11 is not exercisable (CM-PRED gate, VER-03) and NV-06 is partial (direct-integral side needs the admitted abep-chem integrator). The core path cannot be called VERIFIED until abep-chem is admitted, the verify items on the core path are cleared by addenda, and an admission record is made on the integration line."
+ },
+ "admission_rule_evaluation": [
+  {
+   "item": 1,
+   "rule": "prereg and lock committed",
+   "state": "MET (lock e98747e0; addendum_01_a9_30)"
+  },
+  {
+   "item": 2,
+   "rule": "abep-icp passes every LC, CC, NV and FC item under cargo test --workspace --locked",
+   "state": "MET for every exercisable item; LC-11 NOT_EXERCISABLE (CM-PRED gate), NV-06 PARTIAL (direct side NOT_EVALUATED)"
+  },
+  {
+   "item": 3,
+   "rule": "the abep-chem rate evaluator it uses is admitted (SC-WP-03)",
+   "state": "OPEN: no abep-chem crate exists; abep_sim/rate_tables.py is PYTHON_REFERENCE (component_inventory_v3_1). The synthetic verification core needs no table rate; every real-gas path does"
+  },
+  {
+   "item": 4,
+   "rule": "every verify item on an admitted code path cleared by an addendum",
+   "state": "OPEN: VER-01 (EQ-03 textbook cross-reference, every case), VER-12 (wall neutralization energy, every sustained case), VER-06 (electron-saturated collector), VER-02 (elastic loss), VER-07 (open end as h_L under H-LIEB), VER-08 (Z > 1), VER-11 (registered dispositions); CM-PRED additionally VER-03, VER-04, VER-05, VER-13"
+  },
+  {
+   "item": 5,
+   "rule": "admission record pinning the Rust commit, the test log and the lock sha256",
+   "state": "OPEN: an integration-line action (not made by this lane)"
+  }
+ ],
+ "verification_cases": [
+  {
+   "id": "LC-01",
+   "criterion": "T_e equal at P_abs, 10 P_abs, 100 P_abs and equal to an independent bisection root of n_g k_iz V = u_B sum h A, <= 1e-9",
+   "tests": [
+    "analytic_cases::lc01_t_e_set_by_particle_balance_independent_of_power"
+   ],
+   "measured": {
+    "max_rel_T_e_vs_independent_root": 1.482880405726091e-16
+   },
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "LC-02",
+   "criterion": "n_e / P_abs constant and = 1 / (e u_B sum h A (E_iz + 2T_e + T_e/2 + V_s)), <= 1e-9",
+   "tests": [
+    "analytic_cases::lc02_n_e_linear_in_absorbed_power_floating_wall_energy_per_pair"
+   ],
+   "measured": {
+    "max_rel_n_e_over_P_abs": 4.740476017488161e-16
+   },
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "LC-03",
+   "criterion": "P_abs = 0: CONVERGED, NOT_SUSTAINED, n_e = I_e_cap = I_production = 0 and every plasma key 0 exactly; CM-CAL / CM-PRED forward power closes into P_refl + Q_line + Q_match + Q_coil (R_p = 0); CM-PRED lists the trivial branch separately",
+   "tests": [
+    "analytic_cases::lc03_zero_absorbed_power_is_not_sustained_with_exact_zeros"
+   ],
+   "measured": {
+    "trivial_branch_P_abs_and_Q_coil_for_185_W_delivered": [
+     0.0,
+     185.0
+    ]
+   },
+   "result": "CRITERION_MET",
+   "note": "CM-ABS case and the EQ-12 trivial-branch chain are exact; the CM-PRED part is a status gate in v1 (VER-03): the test asserts NOT_EVALUATED"
+  },
+  {
+   "id": "LC-04",
+   "criterion": "eta_p = 1/(1 + R_ant/R_p) to 1e-12 for R_ant/R_p in {1, 1e-3, 1e-6}; at 0: eta_p = 1, Q_coil_ohmic = 0 exactly",
+   "tests": [
+    "analytic_cases::lc04_coupling_efficiency_tends_to_one_as_antenna_resistance_vanishes"
+   ],
+   "measured": {
+    "eta_p_at_R_ant_0": 1.0,
+    "Q_coil_at_R_ant_0": 0.0
+   },
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "LC-05",
+   "criterion": "I_e_cap <= (1/4) e h n_e vbar_e A_ec (1 + 1e-12) always; equality to 1e-9 when A_ic >> A_ec and V_ec > phi_p",
+   "tests": [
+    "analytic_cases::lc05_i_e_cap_bounded_by_the_electron_thermal_flux"
+   ],
+   "measured": {
+    "rel_I_e_cap_vs_thermal_limit_saturated": 1.681736784102835e-16,
+    "max_I_e_cap_over_thermal_limit_suite": 1.0000000000000002
+   },
+   "result": "CRITERION_MET",
+   "note": "the saturated case uses the EQ-09 electron-saturation branch (VER-06 on that path)"
+  },
+  {
+   "id": "LC-06",
+   "criterion": "I_e_cap <= ion-collection and production limits (1 + 1e-12); all floating, no electron collector: I_e_cap = 0 exactly",
+   "tests": [
+    "analytic_cases::lc06_i_e_cap_bounded_by_ion_collection_and_production"
+   ],
+   "measured": {
+    "max_I_e_cap_over_ion_collection_limit": 0.17145108734139353,
+    "max_I_e_cap_over_production": 0.014908790203599441,
+    "all_floating_I_e_cap": 0.0
+   },
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "LC-07",
+   "criterion": "V_s = (T_e/2) ln(M / 2 pi m_e) to 1e-12; V_s / T_e rounds to 4.7 for argon",
+   "tests": [
+    "analytic_cases::lc07_floating_sheath_single_species"
+   ],
+   "measured": {
+    "rel_V_s": 0.0,
+    "V_s_over_T_e_40u": 4.679589994336161
+   },
+   "result": "CRITERION_MET",
+   "note": "argon mass 40 u: the repository's round-off convention (tests/test_interstage.py), not a registered datum"
+  },
+  {
+   "id": "LC-08",
+   "criterion": "argon, 3.5 V: u_B rounds to 2.9e3 m/s; h_R = 0.8/3, h_L = 0.86/sqrt(8) to 1e-12, both round to 0.3; h_R -> 0.4 as lambda_i -> inf",
+   "tests": [
+    "analytic_cases::lc08_lieberman_worked_example"
+   ],
+   "measured": {
+    "u_B": 2905.592291376607,
+    "h_R": 0.26666666666666666,
+    "h_L": 0.3040559159102154
+   },
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "LC-09",
+   "criterion": "n = Gamma_in / ((1/4) vbar A) to 1e-12; vbar(N2, 293 K) within 2e-3 of 470 m/s; C' within 2e-3 of 117.5 m^3 s^-1 m^-2",
+   "tests": [
+    "analytic_cases::lc09_free_molecular_effusion"
+   ],
+   "measured": {
+    "rel_n_effusion": 0.0,
+    "vbar_N2_293K_m_s": 470.58496622121515,
+    "C_prime_N2": 117.64624155530379
+   },
+   "result": "CRITERION_MET",
+   "note": "N2 mass 28.0134 u from the pinned n2_n.toml"
+  },
+  {
+   "id": "LC-10",
+   "criterion": "P_abs = RF-powered partition and P_collector_bias = Q_bias_collector + Q_bias_export, each to 1e-10, P_collector_bias = -sum I_j V_j computed independently; per surface Q_j = L_j + C_j to 1e-12; all floating: C_j = 0 exactly",
+   "tests": [
+    "analytic_cases::lc10_partition_closure_with_a_biased_electrode"
+   ],
+   "measured": {
+    "note": "per-surface L_j + C_j compared with the kinetic energy deposited, computed in the test from the exported fluxes, potentials, T_e and phi_p"
+   },
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "LC-11",
+   "criterion": "R_p -> 0 monotonically as n_e -> 0, R_p = 0 at n_e = 0, X -> omega L_11 (EQ-14; admissible only after VER-03)",
+   "tests": [
+    "analytic_cases::lc11_predictive_coupling_is_not_admissible_before_ver03"
+   ],
+   "measured": null,
+   "result": "NOT_EXERCISABLE_GATED",
+   "note": "EQ-14 R_2(n_e), L_2 are from memory (VER-03); v1 implements CM-PRED only as its status gate, so no R_p(n_e) exists to test. The test asserts CM-PRED returns NOT_EVALUATED with VER-03/04/05/13 and no number"
+  },
+  {
+   "id": "CC-01",
+   "criterion": "particle balance per ion and neutral species <= 1e-10",
+   "tests": [
+    "conservation::cc01_cc03_cc07_registered_pressure_single_and_multiply_charged",
+    "conservation::cc01_cc02_flow_balance_with_plasma"
+   ],
+   "result": "CRITERION_MET",
+   "note": "neutral rows only in FLOW_BALANCE (REGISTERED_PRESSURE registers neutral densities, EQ-01)"
+  },
+  {
+   "id": "CC-02",
+   "criterion": "element conservation <= 1e-10 of throughput",
+   "tests": [
+    "conservation::cc01_cc02_flow_balance_with_plasma",
+    "analytic_cases::lc09_free_molecular_effusion"
+   ],
+   "result": "CRITERION_MET",
+   "note": "NOT_EVALUATED in REGISTERED_PRESSURE (no throughput defined)"
+  },
+  {
+   "id": "CC-03",
+   "criterion": "sum I_j = 0, each floating surface, production current = loss current <= 1e-10",
+   "tests": [
+    "conservation::cc01_cc03_cc07_registered_pressure_single_and_multiply_charged"
+   ],
+   "result": "CRITERION_MET",
+   "note": "normalised by the largest current component (GAP-05)"
+  },
+  {
+   "id": "CC-04",
+   "criterion": "P_fwd = P_refl + Q_line + Q_match + Q_coil_ohmic + P_abs <= 1e-10 of P_fwd",
+   "tests": [
+    "conservation::cc04_cc05_cc06_calibrated_chain_partition_and_bus"
+   ],
+   "result": "CRITERION_MET",
+   "note": "CM-CAL at a SYNTHETIC_TEST_ONLY P2 point; NOT_EVALUATED in CM-ABS"
+  },
+  {
+   "id": "CC-05",
+   "criterion": "RF-powered, bias and combined closures for every bounding assignment <= 1e-10; five deposited keys >= 0",
+   "tests": [
+    "conservation::cc04_cc05_cc06_calibrated_chain_partition_and_bus",
+    "conservation::cc05_every_bounding_assignment_closes_and_dispositions_route_energy",
+    "conservation::cc05_nodes_sum_to_the_plasma_wall_key",
+    "conservation::absorbed_power_without_a_sustained_state_breaches_cc05",
+    "analytic_cases::lc10_partition_closure_with_a_biased_electrode"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "CC-06",
+   "criterion": "bus sum <= 1e-10, conversion losses >= 0, P_icp_rf_source_DC_W >= P_icp_rf_forward_W, violating eta_RF refused (MODEL_ERROR)",
+   "tests": [
+    "conservation::cc04_cc05_cc06_calibrated_chain_partition_and_bus",
+    "conservation::cc06_violating_eta_rf_registration_is_refused"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "CC-07",
+   "criterion": "formation energy created = released + carried out <= 1e-10",
+   "tests": [
+    "conservation::cc01_cc03_cc07_registered_pressure_single_and_multiply_charged",
+    "conservation::cc01_cc02_flow_balance_with_plasma"
+   ],
+   "result": "CRITERION_MET",
+   "note": "NOT_EVALUATED for sets with route-dependent formation energies or dissociative channels (GAP-02, OBS-01)"
+  },
+  {
+   "id": "NV-01",
+   "criterion": "double-run byte identity",
+   "tests": [
+    "numerical::nv01_double_run_byte_identity"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "NV-02",
+   "criterion": "thread-count independence",
+   "tests": [
+    "numerical::nv02_thread_count_independence"
+   ],
+   "result": "CRITERION_MET",
+   "note": "single-threaded kernel; 4 concurrent threads give the reference bytes"
+  },
+  {
+   "id": "NV-03",
+   "criterion": "solver and conservation residuals reported",
+   "tests": [
+    "numerical::nv03_solver_and_conservation_residuals_are_reported"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "NV-04",
+   "criterion": "every root of a synthetic two-root case found and reported",
+   "tests": [
+    "numerical::nv04_every_root_of_a_two_root_case_is_reported"
+   ],
+   "result": "CRITERION_MET",
+   "note": "point outputs NOT_EVALUATED (EQUILIBRIUM_SELECTION_NOT_REGISTERED)"
+  },
+  {
+   "id": "NV-05",
+   "criterion": "non-finite value -> MODEL_ERROR with null values",
+   "tests": [
+    "numerical::nv05_non_finite_values_give_model_error_with_null_values"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "NV-06",
+   "criterion": "direct integral vs .dat interpolation difference reported per reaction",
+   "tests": [
+    "numerical::nv06_direct_integral_vs_dat_reported_per_reaction"
+   ],
+   "result": "PARTIAL_DIRECT_SIDE_NOT_EVALUATED",
+   "note": "the .dat side is computed for all 29 N2/N reactions; the direct side and the difference are NOT_EVALUATED (EQ-06_ABEP_CHEM_INTEGRATOR_NOT_ADMITTED): rates come only from the admitted abep-chem integrator (IF-CHEM-REG-v1)"
+  },
+  {
+   "id": "FC-01",
+   "criterion": "empty credible set -> IF-ICP-HALL-v1 NOT_EVALUATED, CREDIBLE_HALL_TRANSPORT_SET_EMPTY",
+   "tests": [
+    "fail_closed::fc01_fc02_hall_interface_not_evaluated_with_both_reasons"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "FC-02",
+   "criterion": "no I_d,max,H1 registration -> NOT_EVALUATED, I_D_MAX_H1_NOT_REGISTERED",
+   "tests": [
+    "fail_closed::fc01_fc02_hall_interface_not_evaluated_with_both_reasons"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "FC-03",
+   "criterion": "CFG-FLIGHT-HALL-ON -> NOT_EVALUATED for OUT-07 and every Hall-dependent output",
+   "tests": [
+    "fail_closed::fc03_flight_hall_on_is_not_evaluated"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "FC-04",
+   "criterion": "CM-CAL without a validated P2 map -> NOT_EVALUATED for OUT-02, RF-plane and bus keys",
+   "tests": [
+    "fail_closed::fc04_calibrated_mode_without_a_validated_p2_map"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "FC-05",
+   "criterion": "missing geometry, electrodes, sigma_i or evidence attribute -> INCOMPLETE_EVIDENCE naming each",
+   "tests": [
+    "fail_closed::fc05_missing_registrations_are_incomplete_evidence_naming_each_item"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "FC-06",
+   "criterion": "3/2 T_e above a used limit -> OUT_OF_DOMAIN naming the reaction; T_e < 2 eV for N2/N -> OUT_OF_DOMAIN",
+   "tests": [
+    "fail_closed::fc06_out_of_domain_names_the_reaction_and_the_n2_domain"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "FC-07",
+   "criterion": "unresolved file -> INCOMPLETE_EVIDENCE; no validity entry -> MODEL_ERROR",
+   "tests": [
+    "fail_closed::fc07_unresolved_and_missing_validity_entries"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "FC-08",
+   "criterion": "G-REUSE -> mdot_icp_dedicated_kg_s = 0 exactly for every species",
+   "tests": [
+    "fail_closed::fc08_g_reuse_books_zero_dedicated_flow_for_every_species"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "FC-09",
+   "criterion": "non-convergence -> MODEL_ERROR, every physics value null",
+   "tests": [
+    "fail_closed::fc09_non_convergence_is_model_error_with_every_physics_value_null"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "FC-10",
+   "criterion": "abep-icp depends on neither abep-assess nor abep-groundtest",
+   "tests": [
+    "fail_closed::fc10_no_assessment_or_groundtest_dependency",
+    "abep-ci workspace_rules (ground-test isolation over FLIGHT_RUNTIME_CRATES incl. abep-icp)"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "FC-11",
+   "criterion": "no forbidden identifiers in source; no HC-05 / GNG-ICP / PASS / FAIL / RFP in outputs",
+   "tests": [
+    "fail_closed::fc11_forbidden_identifiers_and_output_tokens"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "FC-12",
+   "criterion": "a gate-threshold change moves no raw output byte",
+   "tests": [
+    "fail_closed::fc12_a_gate_threshold_change_moves_no_raw_output_byte"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "FC-13",
+   "criterion": "O2-bearing -> INCOMPLETE_EVIDENCE; Xe / Ar -> INCOMPLETE_EVIDENCE",
+   "tests": [
+    "fail_closed::fc13_o2_bearing_xe_and_ar_cases_are_incomplete_evidence"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "FC-14",
+   "criterion": "B_ICP,max > 0 -> INCOMPLETE_EVIDENCE for capacity outputs",
+   "tests": [
+    "fail_closed::fc14_registered_magnetic_field_blocks_capacity_outputs"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "FC-15",
+   "criterion": "SYNTHETIC_TEST_ONLY propagates; mixing refused",
+   "tests": [
+    "fail_closed::fc15_synthetic_label_propagates_and_mixing_is_refused"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "FC-16",
+   "criterion": "thermal record: rf_powered_only, deposited keys >= 0, no Hall-powered key, reflected and bias keys always present",
+   "tests": [
+    "fail_closed::fc16_thermal_record_contract"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "G-A930-AIR",
+   "criterion": "AIR_PRIMARY outputs INCOMPLETE_EVIDENCE, reason NP_ICP_CHEM_AIR_NOT_ADMITTED, every tier-1 gap of the NP-ICP-CHEM-AIR registry named; atomic O never replaced by an N2-only surrogate; XE isolated from AIR statuses (SP-07); mixed Xe/air OUT_OF_DOMAIN (FC-CHEM-09)",
+   "tests": [
+    "fail_closed::a930_air_primary_gate_and_mode_isolation"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "A9.30-BUS",
+   "criterion": "IF-ICP-BUS-v1 targets bus_power_boundary_a9_v2; any other boundary refused; GROUND_FACILITY_ONLY never bus power",
+   "tests": [
+    "fail_closed::a930_active_bus_boundary"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "FC-CHEM-04",
+   "criterion": "a changed pinned byte (table, validity file, prereg, ensemble) -> MODEL_ERROR on load",
+   "tests": [
+    "fail_closed::fc_chem_04_a_changed_pinned_byte_is_model_error"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "PROVENANCE",
+   "criterion": "prereg / addendum / NP-ICP-CHEM-AIR locks verified on load; every data file read through a pin; OUT-14 provenance and lifecycle labels on every output",
+   "tests": [
+    "provenance::locks_and_pinned_files_verify",
+    "provenance::registered_n2_set_structure",
+    "provenance::outputs_carry_provenance_and_lifecycle_labels"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "EQ-11-SAT",
+   "criterion": "I_e_sat_A = maximum of I_e_cap_A over the registered bias range; NOT_EVALUATED without a registered range",
+   "tests": [
+    "fail_closed::i_e_sat_is_the_maximum_over_the_registered_bias_range"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "DOM-05",
+   "criterion": "H-LIEB only for B = 0 and p < 100 mTorr",
+   "tests": [
+    "fail_closed::h_lieb_single_species_and_its_domain"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "WITHHELD-PATHS",
+   "criterion": "paths the prereg does not define operationally are withheld with named reasons (PF-01, PF-02, GAP-01, GAP-04)",
+   "tests": [
+    "fail_closed::withheld_paths_where_the_preregistration_is_not_operational"
+   ],
+   "result": "CRITERION_MET"
+  },
+  {
+   "id": "N2-DEMO",
+   "criterion": "N2 CFG-CAP-OFF CM-ABS demonstration reported NOT_EVALUATED / INCOMPLETE_EVIDENCE with every missing input listed (no fabricated geometry or operating point, CLAUDE.md rule 6)",
+   "tests": [
+    "fail_closed::n2_demonstration_case_is_not_evaluated_with_every_missing_input_listed"
+   ],
+   "result": "CRITERION_MET"
+  }
+ ],
+ "case_suite_measurements": [
+  {
+   "I_e_cap_A": 0.0,
+   "T_e_eV": 2.994774279403973,
+   "binding_limit": "THERMAL_FLUX",
+   "case": "floating",
+   "conservation": [
+    {
+     "id": "CC-01",
+     "status": "CONVERGED",
+     "value": 0.0
+    },
+    {
+     "id": "CC-02",
+     "status": "NOT_EVALUATED",
+     "value": null
+    },
+    {
+     "id": "CC-03",
+     "status": "CONVERGED",
+     "value": 4.376649217245939e-16
+    },
+    {
+     "id": "CC-07",
+     "status": "CONVERGED",
+     "value": 1.7290466043440744e-16
+    }
+   ],
+   "energy_balance_residual": 1.4210854715202002e-16,
+   "max_conservation_or_closure_residual": 4.376649217245939e-16,
+   "n_e_m3": 4.218985588412999e+17,
+   "phi_p_V": null,
+   "plasma_state": "SUSTAINED",
+   "quasi_neutrality_residual": 1.5169523255962115e-16,
+   "status": "CONVERGED",
+   "verify_items_on_path": [
+    "VER-01",
+    "VER-12"
+   ]
+  },
+  {
+   "I_e_cap_A": 0.02063014250951571,
+   "T_e_eV": 2.9667841950222216,
+   "binding_limit": "THERMAL_FLUX",
+   "case": "capoff_saturated",
+   "conservation": [
+    {
+     "id": "CC-01",
+     "status": "CONVERGED",
+     "value": 3.556901024042311e-16
+    },
+    {
+     "id": "CC-02",
+     "status": "NOT_EVALUATED",
+     "value": null
+    },
+    {
+     "id": "CC-03",
+     "status": "CONVERGED",
+     "value": 2.306684802051595e-16
+    },
+    {
+     "id": "CC-07",
+     "status": "CONVERGED",
+     "value": 3.4232539671026575e-16
+    }
+   ],
+   "energy_balance_residual": 1.4210854715202002e-16,
+   "max_conservation_or_closure_residual": 3.556901024042311e-16,
+   "n_e_m3": 4.468153569781255e+17,
+   "phi_p_V": 14.441324644251464,
+   "plasma_state": "SUSTAINED",
+   "quasi_neutrality_residual": 2.8647180093737563e-16,
+   "status": "CONVERGED",
+   "verify_items_on_path": [
+    "VER-01",
+    "VER-06",
+    "VER-12"
+   ]
+  },
+  {
+   "I_e_cap_A": 0.02063014250951571,
+   "T_e_eV": 2.9667841950222216,
+   "binding_limit": "THERMAL_FLUX",
+   "case": "capoff_retarding",
+   "conservation": [
+    {
+     "id": "CC-01",
+     "status": "CONVERGED",
+     "value": 3.556901024042311e-16
+    },
+    {
+     "id": "CC-02",
+     "status": "NOT_EVALUATED",
+     "value": null
+    },
+    {
+     "id": "CC-03",
+     "status": "CONVERGED",
+     "value": 2.306684802051595e-16
+    },
+    {
+     "id": "CC-07",
+     "status": "CONVERGED",
+     "value": 3.4232539671026575e-16
+    }
+   ],
+   "energy_balance_residual": 1.4210854715202002e-16,
+   "max_conservation_or_closure_residual": 3.556901024042311e-16,
+   "n_e_m3": 4.468153569781255e+17,
+   "phi_p_V": 9.441324644251466,
+   "plasma_state": "SUSTAINED",
+   "quasi_neutrality_residual": 2.8647180093737563e-16,
+   "status": "CONVERGED",
+   "verify_items_on_path": [
+    "VER-01",
+    "VER-06",
+    "VER-12"
+   ]
+  },
+  {
+   "I_e_cap_A": 0.01574050062031008,
+   "T_e_eV": 2.9667841950222216,
+   "binding_limit": "THERMAL_FLUX",
+   "case": "excitation_bounding_pair",
+   "conservation": [
+    {
+     "id": "CC-01",
+     "status": "CONVERGED",
+     "value": 0.0
+    },
+    {
+     "id": "CC-02",
+     "status": "NOT_EVALUATED",
+     "value": null
+    },
+    {
+     "id": "CC-03",
+     "status": "CONVERGED",
+     "value": 5.441823434320849e-16
+    },
+    {
+     "id": "CC-07",
+     "status": "CONVERGED",
+     "value": 1.1216640895218494e-16
+    }
+   ],
+   "energy_balance_residual": 2.8421709430404e-16,
+   "max_conservation_or_closure_residual": 5.441823434320849e-16,
+   "n_e_m3": 3.409136606998336e+17,
+   "phi_p_V": 14.441324644251464,
+   "plasma_state": "SUSTAINED",
+   "quasi_neutrality_residual": 1.8773081685438965e-16,
+   "status": "CONVERGED",
+   "verify_items_on_path": [
+    "VER-01",
+    "VER-06",
+    "VER-12"
+   ]
+  },
+  {
+   "I_e_cap_A": 0.02062991400221379,
+   "T_e_eV": 2.96678062430092,
+   "binding_limit": "THERMAL_FLUX",
+   "case": "double_ion_nonlinear",
+   "conservation": [
+    {
+     "id": "CC-01",
+     "status": "CONVERGED",
+     "value": 1.3666226138534637e-16
+    },
+    {
+     "id": "CC-02",
+     "status": "NOT_EVALUATED",
+     "value": null
+    },
+    {
+     "id": "CC-03",
+     "status": "CONVERGED",
+     "value": 2.306692464298519e-16
+    },
+    {
+     "id": "CC-07",
+     "status": "CONVERGED",
+     "value": 0.0
+    }
+   ],
+   "energy_balance_residual": 2.5579538487363543e-15,
+   "max_conservation_or_closure_residual": 2.5266787495477264e-15,
+   "n_e_m3": 4.4681067676455885e+17,
+   "phi_p_V": 14.441279496006887,
+   "plasma_state": "SUSTAINED",
+   "quasi_neutrality_residual": 2.8647480164724883e-16,
+   "status": "CONVERGED",
+   "verify_items_on_path": [
+    "VER-01",
+    "VER-06",
+    "VER-08",
+    "VER-12"
+   ]
+  },
+  {
+   "I_e_cap_A": 0.022286050293176894,
+   "T_e_eV": 2.58988301709715,
+   "binding_limit": "THERMAL_FLUX",
+   "case": "flow_balance",
+   "conservation": [
+    {
+     "id": "CC-01",
+     "status": "CONVERGED",
+     "value": 1.7081134169413203e-16
+    },
+    {
+     "id": "CC-02",
+     "status": "CONVERGED",
+     "value": 2.7206272067174393e-16
+    },
+    {
+     "id": "CC-03",
+     "status": "CONVERGED",
+     "value": 7.847199961446157e-16
+    },
+    {
+     "id": "CC-07",
+     "status": "CONVERGED",
+     "value": 3.1688978647425274e-16
+    }
+   ],
+   "energy_balance_residual": 1.1368683772161603e-15,
+   "max_conservation_or_closure_residual": 1.2621005821390214e-15,
+   "n_e_m3": 5.1660888838467616e+17,
+   "phi_p_V": 12.606694313420821,
+   "plasma_state": "SUSTAINED",
+   "quasi_neutrality_residual": 0.0,
+   "status": "CONVERGED",
+   "verify_items_on_path": [
+    "VER-01",
+    "VER-06",
+    "VER-12"
+   ]
+  },
+  {
+   "I_e_cap_A": 0.030532610914083255,
+   "T_e_eV": 2.9667841950222216,
+   "binding_limit": "THERMAL_FLUX",
+   "case": "calibrated_with_bus",
+   "conservation": [
+    {
+     "id": "CC-01",
+     "status": "CONVERGED",
+     "value": 1.6022076684875278e-16
+    },
+    {
+     "id": "CC-02",
+     "status": "NOT_EVALUATED",
+     "value": null
+    },
+    {
+     "id": "CC-03",
+     "status": "CONVERGED",
+     "value": 5.688783464519139e-16
+    },
+    {
+     "id": "CC-07",
+     "status": "CONVERGED",
+     "value": 0.0
+    }
+   ],
+   "energy_balance_residual": 1.9203857723245952e-16,
+   "max_conservation_or_closure_residual": 5.688783464519139e-16,
+   "n_e_m3": 6.612867283276257e+17,
+   "phi_p_V": 14.441324644251464,
+   "plasma_state": "SUSTAINED",
+   "quasi_neutrality_residual": 1.9356202766038894e-16,
+   "status": "CONVERGED",
+   "verify_items_on_path": [
+    "VER-01",
+    "VER-06",
+    "VER-12"
+   ]
+  },
+  {
+   "I_e_cap_A": 0.0,
+   "T_e_eV": null,
+   "binding_limit": null,
+   "case": "zero_power",
+   "conservation": [
+    {
+     "id": "CC-01",
+     "status": "NOT_EVALUATED",
+     "value": null
+    },
+    {
+     "id": "CC-02",
+     "status": "NOT_EVALUATED",
+     "value": null
+    },
+    {
+     "id": "CC-03",
+     "status": "CONVERGED",
+     "value": 0.0
+    },
+    {
+     "id": "CC-07",
+     "status": "CONVERGED",
+     "value": 0.0
+    }
+   ],
+   "energy_balance_residual": null,
+   "max_conservation_or_closure_residual": 0.0,
+   "n_e_m3": 0.0,
+   "phi_p_V": null,
+   "plasma_state": "NOT_SUSTAINED",
+   "quasi_neutrality_residual": null,
+   "status": "CONVERGED",
+   "verify_items_on_path": [
+    "VER-01"
+   ]
+  }
+ ],
+ "evaluable_today": {
+  "configurations": {
+   "CFG-CAP-OFF": "implemented; evaluable with registered inputs (today: SYNTHETIC_TEST_ONLY verification inputs only)",
+   "CFG-FLIGHT-HALL-ON": "NOT_EVALUATED contract (IN-21; credible Hall transport set EMPTY); asserted by FC-03"
+  },
+  "coupling_modes": {
+   "CM-ABS": "implemented and verified on synthetic cases; no coupling, RF-plane or bus quantity claimed",
+   "CM-CAL": "implemented at a registered, validated, H_MODE P2 map point (EQ-12/13); no P2 data exist -> NOT_EVALUATED (FC-04); P2 interpolation NOT_EVALUATED",
+   "CM-PRED": "status gate only: NOT_EVALUATED, never admissible (VER-03, VER-04, VER-05, VER-13; antenna geometry IN-09 TBD)"
+  },
+  "neutral_modes": {
+   "REGISTERED_PRESSURE": "implemented (linear and nonlinear n_e cases)",
+   "FLOW_BALANCE": "implemented with branch tracking; gamma > 0 and background-with-tau paths withheld (PF-01, PF-02)"
+  },
+  "supply_and_evidence_modes": {
+   "AIR_PRIMARY": "INCOMPLETE_EVIDENCE: NP_ICP_CHEM_AIR_NOT_ADMITTED (G-A930-AIR) + tier-1 gaps AIR-ION-02, AIR-ION-05, AIR-DIS-02, AIR-EXC-04, AIR-EXC-05, AIR-EXC-09, AIR-EL-03, AIR-EL-04, AIR-WALL-01..03, AIR-NL-02; DOM-12; IN-05",
+   "EM-O2B": "INCOMPLETE_EVIDENCE: follows AIR (SP-07) + DOM-12",
+   "XE_CONTINGENCY": "INCOMPLETE_EVIDENCE: CHG-04, NP_ICP_CHEM_AIR_XE_NOT_ADMITTED, tier-1 gaps XE-ION-01, XE-EXC-01, XE-EL-01, XE-WALL-01",
+   "EM-XE": "INCOMPLETE_EVIDENCE: as XE_CONTINGENCY",
+   "EM-AR": "INCOMPLETE_EVIDENCE: CHG-05 (no Ar set)",
+   "EM-N2": "INCOMPLETE_EVIDENCE (n2_demonstration below)"
+  }
+ },
+ "n2_demonstration": {
+  "case": "EM-N2, G-REUSE, CFG-CAP-OFF, CM-ABS, 13.56 MHz, chemistry n2_n.toml (abep-n2n-0.11); every other input left unregistered (no geometry or operating point fabricated, CLAUDE.md rule 6)",
+  "status": "INCOMPLETE_EVIDENCE (no number produced)",
+  "missing_inputs": [
+   {
+    "code": "IN-08_RF_INPUT_NOT_REGISTERED",
+    "status": "NOT_EVALUATED",
+    "what": "P_abs: flight setpoints TBD; no bench record with measured P_abs (VI-RF-05)"
+   },
+   {
+    "code": "IN-10_GEOMETRY_NOT_REGISTERED",
+    "status": "INCOMPLETE_EVIDENCE",
+    "what": "ICP geometry F6-X-01..05, 10..17 TBD; effective volume (OQ-NPICP-12)"
+   },
+   {
+    "code": "IN-11_ELECTRODES_NOT_REGISTERED",
+    "status": "INCOMPLETE_EVIDENCE",
+    "what": "P1-IT-36 extraction topology, ICD ICP-21; bias range for I_e_sat"
+   },
+   {
+    "code": "IN-12_NEUTRAL_SOURCE_NOT_REGISTERED",
+    "status": "INCOMPLETE_EVIDENCE",
+    "what": "p_ICP (VI-GAS-03) or f_in / conductance (VI-GAS-04); OQ-NPICP-14"
+   },
+   {
+    "code": "IN-17_NO_EDGE_FACTOR_SOURCE",
+    "status": "INCOMPLETE_EVIDENCE",
+    "what": "no ion-neutral cross section or sourced h (CHG-06, VER-09)"
+   },
+   {
+    "code": "DOM-06_B_ICP_NOT_REGISTERED",
+    "status": "INCOMPLETE_EVIDENCE",
+    "what": "B_ICP,max (VI-HD-06; OQ-NPICP-03)"
+   },
+   {
+    "code": "EQ-06_ABEP_CHEM_INTEGRATOR_NOT_ADMITTED",
+    "status": "NOT_EVALUATED",
+    "what": "direct Maxwellian rates from the admitted abep-chem port of rate_tables.maxwellian_rate"
+   },
+   {
+    "code": "IF-CHEM-REG-v1_ICP_REGISTRY_NOT_BUILT",
+    "status": "NOT_EVALUATED",
+    "what": "data/chemistry/icp registry (NP-ICP-CHEM-AIR build plan BP-S1)"
+   },
+   {
+    "code": "OQ-NPICP-04_ICP_COMPLETENESS_AUDIT_OPEN",
+    "status": "INCOMPLETE_EVIDENCE",
+    "what": "the Hall completeness verdict does not transfer to ICP conditions"
+   },
+   {
+    "code": "PROCESS_CLASS_GATE_UNADDRESSED",
+    "status": "INCOMPLETE_EVIDENCE",
+    "what": "50 (species, class) pairs: ion-neutral momentum transfer, wall recombination, metastable quenching, volume recombination, attachment, N excitation (CHG-06..09) and ion classes"
+   }
+  ],
+  "after_those_inputs": "the solve would run; the wall / outflow partition keys would still be withheld for N2 by GAP-01 (elastic, vibrational, rotational energy) and GAP-02 (dissociation and dissociative ionization), and CC-07 by OBS-01"
+ },
+ "not_evaluated_today": [
+  {
+   "id": "NE-01",
+   "what": "flight I_e,cap",
+   "status": "INCOMPLETE_EVIDENCE",
+   "why": "geometry, electrodes, chemistry (AIR / XE gates)"
+  },
+  {
+   "id": "NE-02",
+   "what": "R_p, X, eta_p, P_fwd",
+   "status": "NOT_EVALUATED",
+   "why": "no P2 data; CM-PRED gate"
+  },
+  {
+   "id": "NE-03",
+   "what": "AIR_PRIMARY, EM-O2B",
+   "status": "INCOMPLETE_EVIDENCE",
+   "why": "NP_ICP_CHEM_AIR_NOT_ADMITTED + tier-1 gaps; DOM-12; IN-05"
+  },
+  {
+   "id": "NE-04",
+   "what": "XE_CONTINGENCY, EM-XE",
+   "status": "INCOMPLETE_EVIDENCE",
+   "why": "CHG-04; NP-ICP-CHEM-AIR XE tier-1 gaps"
+  },
+  {
+   "id": "NE-05",
+   "what": "EM-AR",
+   "status": "INCOMPLETE_EVIDENCE",
+   "why": "CHG-05"
+  },
+  {
+   "id": "NE-06",
+   "what": "EM-N2 point results",
+   "status": "INCOMPLETE_EVIDENCE",
+   "why": "n2_demonstration"
+  },
+  {
+   "id": "NE-07",
+   "what": "IF-ICP-HALL-v1 coupled result",
+   "status": "NOT_EVALUATED",
+   "why": "CREDIBLE_HALL_TRANSPORT_SET_EMPTY, I_D_MAX_H1_NOT_REGISTERED"
+  },
+  {
+   "id": "NE-08",
+   "what": "CFG-FLIGHT-HALL-ON, I_e_neutralization_available_A",
+   "status": "NOT_EVALUATED",
+   "why": "IN-21; OUT-07 not represented in v1"
+  },
+  {
+   "id": "NE-09",
+   "what": "P_icp_bus_W and every bus key except P_icp_collector_bias_W",
+   "status": "NOT_EVALUATED",
+   "why": "flight eta_RF / eta_bias PENDING; CM-ABS gives no forward power"
+  },
+  {
+   "id": "NE-10",
+   "what": "IF-ICP-THERMAL-v1 values for any real gas",
+   "status": "INCOMPLETE_EVIDENCE / NOT_EVALUATED",
+   "why": "follows NE-01..06; GAP-01, GAP-02; consumed temperatures IN-14 not registered"
+  },
+  {
+   "id": "NE-11",
+   "what": "magnetization domain",
+   "status": "INCOMPLETE_EVIDENCE",
+   "why": "B_ICP not registered; OQ-NPICP-03"
+  },
+  {
+   "id": "NE-12",
+   "what": "any validation status above NOT_VALIDATED",
+   "status": "NOT_EVALUATED",
+   "why": "no P1 / P2 data; VAL-PUB-01..08 blocked"
+  },
+  {
+   "id": "NE-13",
+   "what": "u_model_form",
+   "status": "NOT_EVALUATED",
+   "why": "UQ-05"
+  },
+  {
+   "id": "IMPL-UQ",
+   "what": "OUT-13 sampled envelope (p2.5, p97.5, min, max, u_input)",
+   "status": "NOT_EVALUATED",
+   "why": "UQ-03 sampling needs the admitted abep-rng (SC-WP-10); the IN-23 disposition bounding pair is evaluated"
+  },
+  {
+   "id": "IMPL-SAT",
+   "what": "I_e_sat_A",
+   "status": "NOT_EVALUATED",
+   "why": "EQ-11 bias range not registered (P1-IT-36)"
+  },
+  {
+   "id": "IMPL-COIL-SPLIT",
+   "what": "Q_icp_coil_ohmic_split_W",
+   "status": "NOT_EVALUATED",
+   "why": "induced shares are a registered split, not predicted in v1"
+  }
+ ],
+ "numerical_settings_registered_here": {
+  "basis": "IN-24 / numerical_verification: 'registered per solver'. Numerical policy, not physics.",
+  "t_e_scan": "log grid 0.1-150 eV, 301 points (wider than every chemistry domain so out-of-domain roots are found and reported OUT_OF_DOMAIN)",
+  "n_e_scan": "log grid 1e8-1e21 m^-3, 10 points per decade (cases where n_e does not cancel)",
+  "bisection": "to adjacent doubles; limit 400 halvings -> MODEL_ERROR",
+  "fixed_point": "H-LIEB in FLOW_BALANCE: 500 iterations, relative 1e-14",
+  "phi_p": "closed form per collection regime; regimes cover the real line"
+ },
+ "prereg_findings": [
+  {
+   "id": "PF-01",
+   "where": "EQ-02 (FLOW_BALANCE)",
+   "finding": "the atom wall-recombination term removes (gamma_k/2)(1/4) n_k vbar_k A_wall atoms per second; NP-ICP-CHEM-AIR AIR-WALL-02/03 define gamma as the per-collision recombination probability (O + wall -> 1/2 O2), for which the atom loss is gamma (1/4) n vbar A and the molecule gain half of that. With the [0, 1] physical-bound envelope (IN-18) the literal form cannot reach the physical maximum.",
+   "handling": "gamma > 0 in FLOW_BALANCE is withheld as INCOMPLETE_EVIDENCE (PREREG_FINDING_PF-01_EQ02_ATOM_RECOMBINATION_FACTOR); gamma = 0 is exact under either reading",
+   "needs": "a clarification addendum or v2 (owner)"
+  },
+  {
+   "id": "PF-02",
+   "where": "EQ-02 (FLOW_BALANCE)",
+   "finding": "background inflow Gamma_bg = (1/4) n_b vbar_b sum A_open carries no transmission probability while effusion carries A_open tau; for tau < 1 the no-plasma, no-feed equilibrium is n = n_b (vbar_b / vbar) / tau instead of the reciprocal n = n_b (same T)",
+   "handling": "n_b > 0 with any tau != 1 is withheld as INCOMPLETE_EVIDENCE (PREREG_FINDING_PF-02_BACKGROUND_INFLOW_WITHOUT_TAU)",
+   "needs": "v2 (owner)"
+  }
+ ],
+ "prereg_gaps": [
+  {
+   "id": "GAP-01",
+   "where": "EQ-16 notes",
+   "gap": "elastic and vibrational / rotational energy given to neutrals is 'deposited on the walls ... or carried out with outflowing neutrals in proportion to their loss channels', with no operational split (for a non-recombining molecule effusion is the only particle loss channel, which would carry all neutral heating out)",
+   "handling": "Q_icp_plasma_wall_W, the outflow keys, the extraction / radiation keys and the node split are INCOMPLETE_EVIDENCE (PREREG_GAP_EQ16_NEUTRAL_ENERGY_SPLIT) whenever such a channel is in the set; the solve, I_e_cap and the bias keys are unaffected. Affects every real gas (N2 has elastic, vibrational and rotational channels)",
+   "needs": "addendum / v2"
+  },
+  {
+   "id": "GAP-02",
+   "where": "EQ-16 / EQ-18",
+   "gap": "atom formation energy and dissociation fragment energy need the atom loss channels; REGISTERED_PRESSURE has no atom balance and FLOW_BALANCE needs gamma (PF-01)",
+   "handling": "partition withheld when dissociation or dissociative ionization is in the set (PREREG_GAP_EQ18_ATOM_FORMATION_ENERGY_DISPOSAL)",
+   "needs": "addendum / v2"
+  },
+  {
+   "id": "GAP-03",
+   "where": "IN-23",
+   "gap": "the CARRIED_OUT disposition has no registered split between the open ends",
+   "handling": "withheld (PREREG_GAP_EQ16_CARRIED_OUT_SPLIT); not reachable today (all dispositions UNRESOLVED)",
+   "needs": "addendum"
+  },
+  {
+   "id": "GAP-04",
+   "where": "EQ-05 with IN-17 sigma_i,s",
+   "gap": "per-species sigma_i gives per-species h_j; EQ-08 / EQ-09 define one h per surface",
+   "handling": "multi-species H-LIEB with distinct sigma_i is INCOMPLETE_EVIDENCE (PREREG_GAP_MULTISPECIES_H_LIEB); a single sigma (or equal values) is the registered form",
+   "needs": "addendum / v2 before any multi-ion H-LIEB case"
+  },
+  {
+   "id": "GAP-05",
+   "where": "CC-03",
+   "gap": "'relative to max |I_j|' degenerates when every surface floats (all net currents are rounding noise)",
+   "handling": "normalised by the largest current component (ion or electron) of the surfaces; identical to the registered scale whenever a biased electrode carries current",
+   "needs": "acknowledgement in the admission addendum"
+  }
+ ],
+ "observations": [
+  {
+   "id": "OBS-01",
+   "what": "the registered N2/N headers give a route-dependent N^2+ formation energy: direct N -> N^2+ 44.1354 eV vs N -> N+ -> N^2+ 14.534 + 29.60125 = 44.13525 eV (difference 1.5e-4 eV)",
+   "effect": "CC-07 formation bookkeeping is not exact for the set as registered (NOT_EVALUATED for it); NP-ICP-CHEM-AIR CV-03 records such an excess as energy-loss uncertainty, not as added energy",
+   "action": "none taken; reported"
+  },
+  {
+   "id": "OBS-02",
+   "what": "the HallThruster.jl-shipped ionization_N2_N2+.dat and elastic_N2.dat stay unresolved in rate_validity.toml",
+   "effect": "a case using them is INCOMPLETE_EVIDENCE (FC-07); n2_n.toml uses neither"
+  },
+  {
+   "id": "OBS-03",
+   "what": "FLOW_BALANCE with neutral depletion has two T_e roots at fixed n_e (a low-T_e root and a depleted high-T_e root)",
+   "effect": "handled by branch tracking in the n_e scan; a sign change across a branch-count change is MODEL_ERROR (ROOT_AT_BRANCH_FOLD_UNRESOLVED); a pure-Arrhenius synthetic rate adds a spurious high-T_e root, so the FLOW_BALANCE verification case uses k ~ sqrt(T_e) exp(-E/T_e)"
+  }
+ ],
+ "implementation_interpretations": [
+  {
+   "id": "INT-01",
+   "item": "EQ-07 ion presheath energy for Z > 1",
+   "choice": "sum_s Z_s Gamma_i,s T_e/2 (= (1/2) M u_B^2 with the EQ-04 Z > 1 form; identical to the registered term for Z = 1; the citation registry INTERSTAGE_MODEL.md uses Z(T_e/2 + V_s))",
+   "path": "VER-08 only"
+  },
+  {
+   "id": "INT-02",
+   "item": "I_production_A",
+   "choice": "e V sum_r dZ_r R_r (charge created per event); equal to e V sum R_iz for single ionization",
+   "path": "VER-08 only"
+  },
+  {
+   "id": "INT-03",
+   "item": "formation energy of ions neutralized at the electron sink",
+   "choice": "booked in Q_icp_extraction_W (EQ-18 'carried out (outflow / extraction terms)'); zero for a saturated collector"
+  },
+  {
+   "id": "INT-04",
+   "item": "I_iz_s_A",
+   "choice": "e Z_s x net production of s (= its loss to surfaces), so sum_s I_iz_s = I_production"
+  },
+  {
+   "id": "INT-05",
+   "item": "I_e_sat_A",
+   "choice": "maximum over the registered sweep values; no grid is invented"
+  },
+  {
+   "id": "INT-06",
+   "item": "CM-ABS with P_abs > 0 and no sustained state in the scanned domain",
+   "choice": "MODEL_ERROR CC-05_ABSORBED_POWER_WITHOUT_SINK (literal evaluation order); CONVERGED NOT_SUSTAINED only at P_abs = 0"
+  },
+  {
+   "id": "INT-07",
+   "item": "several equilibria",
+   "choice": "all listed in OUT-12; point outputs NOT_EVALUATED (EQUILIBRIUM_SELECTION_NOT_REGISTERED)"
+  },
+  {
+   "id": "INT-08",
+   "item": "status precedence",
+   "choice": "registration failures decide before input-domain verdicts (evaluation order steps 1 and 2); all reasons listed"
+  },
+  {
+   "id": "INT-09",
+   "item": "phi_p_V with no referenced electrode",
+   "choice": "NOT_EVALUATED (NO_REFERENCED_ELECTRODE)"
+  },
+  {
+   "id": "INT-10",
+   "item": "registered magnetic field > 0 (DOM-06)",
+   "choice": "the whole plasma result is withheld INCOMPLETE_EVIDENCE (a superset of FC-14's capacity outputs)"
+  },
+  {
+   "id": "INT-11",
+   "item": "rate-table pins",
+   "choice": "every table sha256-verified against NP-ICP-CHEM-AIR reuse_pins.hall_propellant_tables (the parent pins rate_validity.toml and n2_n.toml); an unpinned file is MODEL_ERROR (IF-CHEM-REG-v1)"
+  },
+  {
+   "id": "INT-12",
+   "item": "categorical inputs (IN-01..IN-03)",
+   "choice": "evidence level OWNER_DECISION / DEFINITION with matching quantity type"
+  },
+  {
+   "id": "INT-13",
+   "item": "N2/N ion masses",
+   "choice": "equal to the neutral mass (HallThruster.jl convention; Z m_e / M <= 8e-5)"
+  },
+  {
+   "id": "INT-14",
+   "item": "SYNTHETIC_TEST_ONLY supply mode",
+   "choice": "added for the LC cases; labels every output; refused when mixed with evidence (FC-15)"
+  },
+  {
+   "id": "INT-15",
+   "item": "CM-CAL location",
+   "choice": "evaluated only at a registered map point; between points the P2 interpolation rule is NOT_EVALUATED"
+  }
+ ],
+ "brief_vs_prereg": [
+  {
+   "item": "CM-CAL without P2 data",
+   "brief": "INCOMPLETE_EVIDENCE",
+   "prereg": "FC-04 NOT_EVALUATED (status vocabulary: absent bench evidence -> NOT_EVALUATED)",
+   "followed": "prereg"
+  },
+  {
+   "item": "direct Maxwellian integration in abep-icp",
+   "brief": "rate computation by direct Maxwellian integration",
+   "prereg": "EQ-06 / EX-01 and IF-CHEM-REG-v1: rates only from the separately admitted abep-chem integrator; no rate computed in abep-icp",
+   "followed": "prereg: the direct side is NOT_EVALUATED until abep-chem is admitted"
+  }
+ ],
+ "ledger_update_requested": {
+  "file": "docs/rust_migration/migration_state_v1.json (owned by lane A1; not edited here)",
+  "new_item": "NP-ICP-NEUTRALIZER",
+  "status": "NOT_STARTED -> RUST_IMPL (PREREG_MODEL satisfied by the committed prereg and lock)",
+  "contract": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/prereg_v1.json (+ addendum_01_a9_30.json)",
+  "implementation": [
+   "crates/abep-icp"
+  ],
+  "admission_evidence": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/verification_report_v1.json (VERIFIED not claimed)"
+ },
+ "owner_questions": [
+  "PF-01 / PF-02 / GAP-01 / GAP-02 / GAP-04: issue a clarification addendum or a v2 preregistration for the EQ-02 recombination factor, the background-inflow transmission, the neutral-energy split, the atom formation-energy disposal and multi-species H-LIEB edge factors",
+  "GAP-05 and INT-06: accept the CC-03 normalisation and the CC-05 MODEL_ERROR for imposed power without a sustained state, or register alternatives",
+  "Sequence the abep-chem admission (rate_tables.maxwellian_rate parity) and the NP-ICP-CHEM-AIR registry skeleton BP-S1: both block every real-gas rate",
+  "Verification addenda for VER-01, VER-02, VER-06, VER-07, VER-08, VER-11, VER-12 (core paths) and, separately, VER-03..05 / VER-13 for CM-PRED"
+ ]
+}

@@ -43,6 +43,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "abep-icp"
+version = "0.1.0"
+dependencies = [
+ "abep-provenance",
+ "abep-types",
+ "serde",
+ "serde_json",
+ "toml",
+]
+
+[[package]]
 name = "abep-intake"
 version = "0.1.0"
 dependencies = [
