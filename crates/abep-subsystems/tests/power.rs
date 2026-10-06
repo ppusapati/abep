@@ -271,7 +271,9 @@ fn rfp_gate_is_not_in_the_physics_crate() {
         .filter(|n| n.starts_with("abep"))
         .collect();
     direct.sort();
-    assert_eq!(direct, vec!["abep-provenance".to_string(), "abep-types".to_string()]);
+    // SC-WP-08 (materials / life) added the admitted data / Hall-gate crates; both are physics-layer crates.
+    let want = ["abep-data", "abep-hall", "abep-provenance", "abep-types"];
+    assert_eq!(direct, want.iter().map(|s| s.to_string()).collect::<Vec<_>>());
 }
 
 /// DIV-A06: the mass/power record is read only with its registered sha256.
