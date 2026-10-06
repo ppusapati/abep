@@ -4643,3 +4643,58 @@ row stays PYTHON_REFERENCE (kind python for the remainder).
 - **Results.** cargo test --workspace --locked: 255 passed, 0 ignored. fmt (abep-subsystems) and clippy are clean.
   `ci_checks`: 12/12. pytest: 4232 passed, 5 skipped, 1 xfailed. The ledger is not edited;
   `ledger_update_requested` is in each report.
+
+## 2026-10-06 — Migration ledger update 2: Hall bridge, abep-chem, SC-WP-04 drag, SC-WP-07 mass, SC-WP-05 power admissions
+
+Bookkeeping only (`docs/rust_migration/migration_state_v1.json`, owner lane A1). No Python, physics, contract, report or
+Rust source changed. Every sha256 is computed from the committed file. Checked: each contract file has exactly one commit
+(its registration commit), every recorded Python reference file equals the pin in its contract, each recorded Rust commit is
+an ancestor of the integration head. The only code touched is the expected counts in `crates/abep-ci/tests/ledger.rs`:
+(13 admitted rows, 21 admitted partial admissions, 1 admitted new item) from (4, 9, 1). Rule as in ledger update 1: a row is
+fully ADMITTED only if everything not ported from it is formally retired (never to be migrated); otherwise the admission is a
+partial admission and the row stays PYTHON_REFERENCE. A partial admission changes no row status, so it has no
+`status_history` entry.
+
+- **Full admissions** (nine rows, each PYTHON_REFERENCE -> PREREG_PARITY -> RUST_IMPL -> PARITY_PASS -> ADMITTED, evidence =
+  the parity report; Python stays at its paths, PYTHON_RETIRED_FROM_ACTIVE is not requested):
+  - Hall bridge, contract C-HALL-MAP-ENSEMBLE-REGISTRY (crate abep-hall): `C-ABEP_SIM_HALL_MAP_PY`,
+    `C-ABEP_SIM_HALL_ENSEMBLE_PY`, `C-ABEP_SIM_HALLMAP_REGISTRY_PY` (whole modules; the contract lists no unported part).
+  - `C-SCRIPTS_MAKE_P5_N2_LAUNCH_MANIFESTS_PY`, contract C-JULIA-BRIDGE-LAUNCH (crate abep-julia-bridge). Platform tests PT-01
+    / PT-02 are registered and NOT_RUN (no pinned Julia in normal CI); PT-02 (run-record EXACT_BYTES) is pending. It is a
+    separate registered test class, not an unported part, so the row is fully admitted.
+  - SC-WP-04, crate abep-mission: `C-ABEP_SIM_SPACECRAFT_REFERENCE_DRAG_PY`, `C-ABEP_SIM_STATEWISE_PY`,
+    `C-DOCS_DESIGN_SYNTHESIS_SPACECRAFT_REFERENCE_DRAG` (whole module / builder each; the contracts' out_of_scope items
+    belong to other rows).
+  - SC-WP-07: `C-DOCS_BUDGETS_MASS_POWER_A9_V5` (crate abep-subsystems; main() replaced by `abep-mass build-v5 / check-v5`).
+    The AL-07 value status (6.0 kg PROVISIONAL_LEGACY_DERIVED_ANALOG_INPUT, AFI-02-RA1_OPEN) is kept as recorded.
+  - SC-WP-05: `C-ABEP_SIM_MAGNET_POWER_PY`. The one unported item, `ecr_resonance_field_T` (historical ECR family), is read
+    as formally retired: it is the inventory `not_ported_parts` (plan-approved), the ECR line is historical (A9), and its
+    only callers are class-H rows (electrical_closure tools, aux_bus; NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH) and a Python
+    reference test. No owner record names it: this is a ledger-owner reading flagged for the owner to confirm or reverse
+    (reversal = a partial admission).
+- **Partial admissions** (row status unchanged, one ADMITTED entry each, 12 new entries):
+  - `C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY` (four entries): `hall_response_status` (Hall-bridge contract, abep-hall);
+    drag_table / hall_response_status / supplied_objective / _obj / thrust_minus_drag (drag-kernel contract, abep-mission);
+    `wet_mass` (mass v5 contract, abep-subsystems); `official_ledger` (bus boundary v2 contract, abep-subsystems).
+    `hall_response_status` is admitted twice, with two independent evidences, in two crates. **abep-hall's `status` module is
+    the authoritative implementation**; the abep-mission copy (`objective.rs`) is a duplicate to be consolidated onto it later.
+  - `C-ABEP_SIM_RATE_TABLES_PY` (abep-chem): the report requests ADMITTED, but the file I/O of `write_hallthruster_table` is
+    neither ported nor retired by an owner record (frozen data, rule 1; table-builder placement is NP-ICP-CHEM-AIR
+    OQ-CHEM-05), so it is partial. NP-ICP-NEUTRALIZER software_admission item (3) is noted as satisfied by this evidence in
+    the entry; the NP item status is unchanged.
+  - `C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY`: whole module for the flight configuration except `rfp_power_gate` (stays
+    PYTHON_REFERENCE until abep-assess admits it, SC-WP-11) and the ground-reference metadata; still to migrate, so partial.
+    Also `C-ABEP_SIM_BUS_BOUNDARY_A9_PY` (the v1 functions rebound by v2), `C-ABEP_SIM_PROGRAMME_DESIGN_SYNTHESIS_PY`
+    (`bus_power` without `gate_verdict`).
+  - `C-DOCS_EXPERIMENTS_HALL_ICP_P2_IMPEDANCE_MAP` (RF-network kernels; `verify_line_match_loss` deferred) and
+    `C-DOCS_EXPERIMENTS_HALL_ICP_P1_ICP_BENCH` (`p_bus_from_generator_input` only).
+  - `C-DOCS_BUDGETS_XE_ACCOUNTING_A9_V3`: X1-X6; the record and `design_cases` are BLOCKED_GOVERNANCE_CONFLICT.
+  - `C-DOCS_BUDGETS_MASS_POWER_A9_V3`: kernel K-MASS-RULES (class-H host stays NOT_PORTED_RETIREMENT_PENDING).
+- **Not applied.**
+  - `C-SCRIPTS_IDENTIFY_P5_TRANSPORT_PY` -> FORMALLY_RETIRED_NOT_PORTED: the Julia-bridge report only proposes it
+    ("proposed"). A retirement needs an owner record; the row stays PYTHON_REFERENCE. Owner decision pending.
+  - `C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY` and `C-ABEP_SIM_RATE_TABLES_PY` as full ADMITTED, and the Xe, P2 and P1 rows as
+    anything but partial: see above (a part is still to migrate).
+- **Results.** cargo test --workspace --locked: all test binaries pass (0 failed; the 2 ignored are the registered platform
+  tests PT-01 / PT-02); the ledger checker accepted every applied change (nothing forced). `cargo fmt -- --check` is clean.
+  `ci_checks`: 12/12. No Python changed, so pytest was not rerun.

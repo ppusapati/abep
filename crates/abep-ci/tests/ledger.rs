@@ -24,7 +24,7 @@ fn committed_ledger_is_consistent() {
     let r = check(&workspace_repo_root().unwrap()).expect("ledger and inventory load");
     assert!(r.violations.is_empty(), "{:#?}", r.violations);
     assert_eq!(r.rows, 227);
-    assert_eq!((r.admitted_rows, r.admitted_partial, r.new_items_admitted), (4, 9, 1));
+    assert_eq!((r.admitted_rows, r.admitted_partial, r.new_items_admitted), (13, 21, 1));
     let l = ledger();
     let k1 = l["rows"].as_array().unwrap().iter().find(|r| r["id"] == "C-ABEP_SIM_INTAKE_TPMC_PY").unwrap();
     assert_eq!(k1["status"], "PYTHON_REFERENCE");

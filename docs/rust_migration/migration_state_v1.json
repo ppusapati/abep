@@ -90,10 +90,10 @@
    "HISTORICAL_LEGACY_REGRESSION": 82
   },
   "by_status": {
-   "ADMITTED": 4,
+   "ADMITTED": 13,
    "GROUND_REFERENCE_ON_DEMAND": 7,
    "NOT_PORTED_RETIREMENT_PENDING": 82,
-   "PYTHON_REFERENCE": 133,
+   "PYTHON_REFERENCE": 124,
    "RUST_BINDING_TO_RETIRE": 1
   },
   "by_port_disposition": {
@@ -127,12 +127,12 @@
    "none": 89
   },
   "by_authoritative_kind": {
-   "python": 222,
-   "rust": 5
+   "python": 213,
+   "rust": 14
   },
-  "rows_admitted": 4,
-  "partial_admissions_admitted": 9,
-  "rows_with_contract": 4,
+  "rows_admitted": 13,
+  "partial_admissions_admitted": 21,
+  "rows_with_contract": 13,
   "new_items_by_status": {
    "ADMITTED": 1,
    "NOT_STARTED": 8,
@@ -832,12 +832,41 @@
     "kind": "python",
     "paths": [
      "abep_sim/bus_boundary_a9.py"
-    ]
+    ],
+    "admitted_subset": "the v1 functions rebound by v2 -> abep-subsystems abep_subsystems::power (partial_admissions)"
    },
    "contract": null,
    "admission_evidence": null,
    "simulation_completion_wp": "SC-WP-05",
-   "status_history": []
+   "status_history": [],
+   "partial_admissions": [
+    {
+     "scope": "the v1 functions as rebound by v2 for hall_icp_neutralizer (same code objects; function subset, RM-R17)",
+     "status": "ADMITTED",
+     "rust_implementation": {
+      "crate": "abep-subsystems (abep_subsystems::power)",
+      "paths": [
+       "crates/abep-subsystems/src/power/slots.rs",
+       "crates/abep-subsystems/src/power/ledger.rs"
+      ]
+     },
+     "contract": {
+      "path": "docs/rust_migration/contracts/C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY/parity_prereg_v1.json",
+      "id": "PARITY-C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY-V1",
+      "sha256": "d3336303a8f4d62ec146706b3f85f2abaffe6c053238910af3cf4c97c1bf75f6"
+     },
+     "admission_evidence": {
+      "path": "docs/rust_migration/contracts/C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY/parity_report_v1.json",
+      "sha256": "e416e76757eac1ab8a5be5c2b6ee9fe55da31f3d6ff814a62c75727fbeb2c1f0",
+      "verdict": "ADMITTED",
+      "parity_verdict": "PARITY_PASS"
+     },
+     "not_in_scope": "the v1 boundary module itself (bus_power_boundary_a9_v1, hall_c1_reference) is immutable history and is not ported for the active line (A9.30 sec. 5)",
+     "recorded": "2026-10-06",
+     "ci": ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+    }
+   ],
+   "status_note": "status stays PYTHON_REFERENCE for the remainder plus the ADMITTED partial admission(s); the module retires only when everything not ported is migrated or formally retired (RM-R17)"
   },
   {
    "id": "C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY",
@@ -851,12 +880,48 @@
     "kind": "python",
     "paths": [
      "abep_sim/bus_boundary_a9_v2.py"
-    ]
+    ],
+    "admitted_subset": "flight bus_power_boundary_a9_v2 ledger / planes / allocation / start-up (without rfp_power_gate) -> abep-subsystems abep_subsystems::power (partial_admissions)"
    },
    "contract": null,
    "admission_evidence": null,
    "simulation_completion_wp": "SC-WP-05",
-   "status_history": []
+   "status_history": [],
+   "partial_admissions": [
+    {
+     "scope": "whole module for the flight configuration except rfp_power_gate and GROUND_REFERENCE_TEST_METADATA: installed_slots, ledger, p_bus_1ms_max, rf_power_planes, allocation_checks, icp_power_allocation_check, check_startup_sequence (without the transient_gate field)",
+     "status": "ADMITTED",
+     "rust_implementation": {
+      "crate": "abep-subsystems (abep_subsystems::power)",
+      "paths": [
+       "crates/abep-subsystems/src/power/slots.rs",
+       "crates/abep-subsystems/src/power/ledger.rs",
+       "crates/abep-subsystems/src/power/rf_planes.rs",
+       "crates/abep-subsystems/src/power/allocation.rs",
+       "crates/abep-subsystems/src/power/icp_bus.rs",
+       "crates/abep-subsystems/src/power/sequence.rs",
+       "crates/abep-subsystems/src/power/sampling.rs"
+      ]
+     },
+     "contract": {
+      "path": "docs/rust_migration/contracts/C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY/parity_prereg_v1.json",
+      "id": "PARITY-C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY-V1",
+      "sha256": "d3336303a8f4d62ec146706b3f85f2abaffe6c053238910af3cf4c97c1bf75f6"
+     },
+     "admission_evidence": {
+      "path": "docs/rust_migration/contracts/C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY/parity_report_v1.json",
+      "sha256": "e416e76757eac1ab8a5be5c2b6ee9fe55da31f3d6ff814a62c75727fbeb2c1f0",
+      "verdict": "ADMITTED",
+      "parity_verdict": "PARITY_PASS"
+     },
+     "not_in_scope": "rfp_power_gate (the RFP 1.5 kW requirement check, assessment only, A9.30 sec. 5) and the transient_gate field of check_startup_sequence; GROUND_REFERENCE_TEST_METADATA and the C1 ground-reference slots / start-up rule (GROUND_REFERENCE_ONLY)",
+     "pending": "rfp_power_gate (and the transient_gate field it produces) moves to abep-assess (SC-WP-11) and stays PYTHON_REFERENCE until abep-assess admits it: still to migrate, so the row stays PYTHON_REFERENCE with this partial admission, although the report requests ADMITTED for the row",
+     "report_disclosures": "CONS-L1 system check: the registered SYS cases reach their registered statuses and the flight ledger is INCOMPLETE_EVIDENCE; no C1 flight load; 1.5 kW absent from raw physics",
+     "recorded": "2026-10-06",
+     "ci": ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+    }
+   ],
+   "status_note": "status stays PYTHON_REFERENCE for the remainder plus the ADMITTED partial admission(s); the module retires only when everything not ported is migrated or formally retired (RM-R17)"
   },
   {
    "id": "C-ABEP_SIM_CATHODE_INTEGRATION_PY",
@@ -1194,12 +1259,118 @@
     "kind": "python",
     "paths": [
      "abep_sim/design/architecture_optimizer.py"
-    ]
+    ],
+    "admitted_subset": "hall_response_status -> abep-hall abep_hall::status (authoritative; partial_admissions[0]); drag_table, supplied_objective, _obj, thrust_minus_drag (+ a duplicate of hall_response_status) -> abep-mission (partial_admissions); wet_mass -> abep-subsystems abep_subsystems::mass::wet_mass (partial_admissions); official_ledger -> abep-subsystems abep_subsystems::power::official (partial_admissions)"
    },
    "contract": null,
    "admission_evidence": null,
    "simulation_completion_wp": "SC-WP-10",
-   "status_history": []
+   "status_history": [],
+   "partial_admissions": [
+    {
+     "scope": "named function subset (kernel granularity, RM-R17): hall_response_status only; the rest stays PYTHON_REFERENCE (SC-WP-10)",
+     "status": "ADMITTED",
+     "rust_implementation": {
+      "crate": "abep-hall (abep_hall::status)",
+      "paths": [
+       "crates/abep-hall/src/status.rs"
+      ]
+     },
+     "contract": {
+      "path": "docs/rust_migration/contracts/C-HALL-MAP-ENSEMBLE-REGISTRY/parity_prereg_v1.json",
+      "id": "PARITY-C-HALL-MAP-ENSEMBLE-REGISTRY-V1",
+      "sha256": "aa0910d9aaf32964efbdf7c25a5a92d3ae87a4a91ef7ea70cddd3344f680c88e"
+     },
+     "admission_evidence": {
+      "path": "docs/rust_migration/contracts/C-HALL-MAP-ENSEMBLE-REGISTRY/parity_report_v1.json",
+      "sha256": "a8b8888da5e7b47a489150594e7916d7df713507b5047540cf834df42dca3bd0",
+      "verdict": "ADMITTED",
+      "parity_verdict": "PARITY_PASS"
+     },
+     "not_in_scope": "every other function of abep_sim/design/architecture_optimizer.py (hall_admissibility, hall_gated_thrust, thrust_minus_drag and the rest) stays PYTHON_REFERENCE for the SC-WP-10 contract",
+     "authority": "AUTHORITATIVE Rust implementation of hall_response_status: abep_hall::status (crates/abep-hall/src/status.rs). A second ADMITTED evidence for the same function exists in the drag-kernel partial admission (abep-mission, abep_mission::objective); that is a duplicate to be consolidated onto abep-hall::status later (see that entry)",
+     "recorded": "2026-10-06",
+     "ci": ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+    },
+    {
+     "scope": "named function subset (kernel granularity, RM-R17): drag_table, hall_response_status, supplied_objective, _obj, thrust_minus_drag and the vocabulary / UNLOCK texts they emit; plus the Rust-native statewise T - D record over the 196 required design states (abep_mission::statewise_td)",
+     "status": "ADMITTED",
+     "rust_implementation": {
+      "crate": "abep-mission (abep_mission::intake_drag, abep_mission::objective, abep_mission::statewise_td)",
+      "paths": [
+       "crates/abep-mission/src/intake_drag.rs",
+       "crates/abep-mission/src/objective.rs",
+       "crates/abep-mission/src/statewise_td.rs"
+      ]
+     },
+     "contract": {
+      "path": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY-DRAG_KERNEL/parity_prereg_v1.json",
+      "id": "PARITY-C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY-DRAG_KERNEL-V1",
+      "sha256": "8f20c1966c9f4227c184ac3133fc6d20c3dd1f2e1d551105ee8d7fe07e29b85f"
+     },
+     "admission_evidence": {
+      "path": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY-DRAG_KERNEL/parity_report_v1.json",
+      "sha256": "e6f2ccc17b99d70f0059322a81dac6f0be596ce70b1d8a2598d62f6b5fa59859",
+      "verdict": "ADMITTED",
+      "parity_verdict": "PARITY_PASS"
+     },
+     "not_in_scope": "every other function of abep_sim/design/architecture_optimizer.py (load_upstream_inputs, Pareto machinery, P_bus, m_wet, Q_reject, I_e margin, life, hall_gated_thrust, ...) stays PYTHON_REFERENCE for the SC-WP-10 contract; intake_synthesis candidate_state_metrics / _c_solid_row stay with the SC-WP-02 intake_synthesis row; programme/design_synthesis.statewise_T_minus_D and assessment design_gates.statewise_drag_compensation are SC-WP-11",
+     "report_disclosures": "registered divergence DIV-D-01 (pinned governed inputs); findings F-D-01 / F-D-02",
+     "authority": "hall_response_status is also admitted by the Hall-bridge contract in crate abep-hall (abep_hall::status, the authoritative implementation, partial_admissions[0]); the copy here (abep_mission::objective) is a duplicate kept for later consolidation onto abep-hall::status; the duplicate carries its own parity evidence",
+     "recorded": "2026-10-06",
+     "ci": ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+    },
+    {
+     "scope": "named function subset (kernel granularity, RM-R17): wet_mass (with _obj, supplied_objective and intake_synthesis.require_f1q02_label, which it calls)",
+     "status": "ADMITTED",
+     "rust_implementation": {
+      "crate": "abep-subsystems (abep_subsystems::mass::wet_mass)",
+      "paths": [
+       "crates/abep-subsystems/src/mass/wet_mass.rs"
+      ]
+     },
+     "contract": {
+      "path": "docs/rust_migration/contracts/C-DOCS_BUDGETS_MASS_POWER_A9_V5/parity_prereg_v1.json",
+      "id": "PARITY-C-DOCS_BUDGETS_MASS_POWER_A9_V5-V1",
+      "sha256": "3ca4edef06b9f79242e6638db21cf59d609639f8a7ad466108c4538344876ad0"
+     },
+     "admission_evidence": {
+      "path": "docs/rust_migration/contracts/C-DOCS_BUDGETS_MASS_POWER_A9_V5/parity_report_v1.json",
+      "sha256": "b78de50a51ac80dcce0806c86e574ac254eee61c221ae5772950bcca7017cb85",
+      "verdict": "ADMITTED",
+      "parity_verdict": "PARITY_PASS"
+     },
+     "not_in_scope": "every other function of architecture_optimizer.py and intake_synthesis.py stays PYTHON_REFERENCE (SC-WP-10 / other contracts)",
+     "report_disclosures": "evidence is the C-DOCS_BUDGETS_MASS_POWER_A9_V5 report (E7); AL-07 value status unchanged; _obj / supplied_objective are also admitted in the abep-mission drag-kernel entry (the same-named functions in a second crate, see that entry)",
+     "recorded": "2026-10-06",
+     "ci": ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+    },
+    {
+     "scope": "official_ledger only (with _slot_texts, _eff_path); the row stays SC-WP-10",
+     "status": "ADMITTED",
+     "rust_implementation": {
+      "crate": "abep-subsystems (abep_subsystems::power)",
+      "paths": [
+       "crates/abep-subsystems/src/power/official.rs"
+      ]
+     },
+     "contract": {
+      "path": "docs/rust_migration/contracts/C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY/parity_prereg_v1.json",
+      "id": "PARITY-C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY-V1",
+      "sha256": "d3336303a8f4d62ec146706b3f85f2abaffe6c053238910af3cf4c97c1bf75f6"
+     },
+     "admission_evidence": {
+      "path": "docs/rust_migration/contracts/C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY/parity_report_v1.json",
+      "sha256": "e416e76757eac1ab8a5be5c2b6ee9fe55da31f3d6ff814a62c75727fbeb2c1f0",
+      "verdict": "ADMITTED",
+      "parity_verdict": "PARITY_PASS"
+     },
+     "not_in_scope": "every other function of architecture_optimizer.py stays PYTHON_REFERENCE (SC-WP-10)",
+     "recorded": "2026-10-06",
+     "ci": ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+    }
+   ],
+   "status_note": "status stays PYTHON_REFERENCE for the remainder plus the ADMITTED partial admission(s); the module retires only when everything not ported is migrated or formally retired (RM-R17)"
   },
   {
    "id": "C-ABEP_SIM_DESIGN_COMPRESSOR_SYNTHESIS_PY",
@@ -1486,17 +1657,77 @@
    "classification_confidence": "PROPOSED",
    "classification_confidence_v3_1": "PLAN_APPROVED_A9_29",
    "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
-   "status": "PYTHON_REFERENCE",
+   "status": "ADMITTED",
    "authoritative_implementation": {
-    "kind": "python",
+    "kind": "rust",
+    "crate": "abep-hall",
     "paths": [
+     "crates/abep-hall/src/ensemble.rs"
+    ],
+    "admitted_scope": "whole module: load_ensemble (with _check_admission, _check_o4, _o4_result, _sha_ok), require_admitted, member_ids, screening_ids, ADMISSION_FIELDS",
+    "not_ported": "nothing of abep_sim/hall_ensemble.py is left unported (contract inventory_rows role_here: whole module)",
+    "python_reference": [
      "abep_sim/hall_ensemble.py"
-    ]
+    ],
+    "python_note": "the Python file stays at its path as the migration reference; PYTHON_RETIRED_FROM_ACTIVE is not requested"
    },
-   "contract": null,
-   "admission_evidence": null,
+   "contract": {
+    "path": "docs/rust_migration/contracts/C-HALL-MAP-ENSEMBLE-REGISTRY/parity_prereg_v1.json",
+    "id": "PARITY-C-HALL-MAP-ENSEMBLE-REGISTRY-V1",
+    "sha256": "aa0910d9aaf32964efbdf7c25a5a92d3ae87a4a91ef7ea70cddd3344f680c88e"
+   },
+   "admission_evidence": {
+    "path": "docs/rust_migration/contracts/C-HALL-MAP-ENSEMBLE-REGISTRY/parity_report_v1.json",
+    "sha256": "a8b8888da5e7b47a489150594e7916d7df713507b5047540cf834df42dca3bd0",
+    "verdict": "ADMITTED",
+    "parity_verdict": "PARITY_PASS"
+   },
    "simulation_completion_wp": "SC-WP-03",
-   "status_history": []
+   "status_history": [
+    {
+     "from": "PYTHON_REFERENCE",
+     "to": "PREREG_PARITY",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-HALL-MAP-ENSEMBLE-REGISTRY/parity_prereg_v1.json"
+     ],
+     "history_entry": "Parity contract PARITY-C-HALL-MAP-ENSEMBLE-REGISTRY-V1 (sha256 aa0910d9aaf3...) committed alone in a41cf44 before any comparison; the committed file is unchanged since registration."
+    },
+    {
+     "from": "PREREG_PARITY",
+     "to": "RUST_IMPL",
+     "date": "2026-10-06",
+     "evidence": [
+      "crates/abep-hall/src/ensemble.rs",
+      "docs/rust_migration/contracts/C-HALL-MAP-ENSEMBLE-REGISTRY/parity_report_v1.json"
+     ],
+     "history_entry": "Rust implementation abep-hall at a8f906c; the source sha256 values are recorded in the report build_provenance."
+    },
+    {
+     "from": "RUST_IMPL",
+     "to": "PARITY_PASS",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-HALL-MAP-ENSEMBLE-REGISTRY/parity_report_v1.json"
+     ],
+     "history_entry": "Scoring execution of the registered contract (2026-10-06T08:34:33Z, scoring seed 3030373969277244664): report verdict ADMITTED, parity_verdict PARITY_PASS; report committed (sha256 a8b8888da5e7...)."
+    },
+    {
+     "from": "PARITY_PASS",
+     "to": "ADMITTED",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-HALL-MAP-ENSEMBLE-REGISTRY/parity_report_v1.json",
+      "docs/HISTORY.md",
+      ".github/workflows/rust-workspace.yml"
+     ],
+     "history_entry": "Ledger flip on the committed admission evidence (the parity report), HISTORY entry 2026-10-06 (ledger update 2), crate tests in rust-workspace.yml. Admitted scope: whole module: load_ensemble (with _check_admission, _check_o4, _o4_result, _sha_ok), require_admitted, member_ids, screening_ids, ADMISSION_FIELDS. Not ported / out of scope: nothing of abep_sim/hall_ensemble.py is left unported (contract inventory_rows role_here: whole module)."
+    }
+   ],
+   "report_disclosures": "the empty Hall credible transport set is asserted as a governed state (E-01 member_ids empty, E-70 credible set EMPTY, E-63 nine screening candidates refused); cargo gate 255 passed, 0 failed, 2 ignored (the registered platform tests PT-01 / PT-02)",
+   "ci": [
+    ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+   ]
   },
   {
    "id": "C-ABEP_SIM_HALL_MAP_PY",
@@ -1505,17 +1736,79 @@
    "classification_confidence": "PROPOSED",
    "classification_confidence_v3_1": "PLAN_APPROVED_A9_29",
    "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
-   "status": "PYTHON_REFERENCE",
+   "status": "ADMITTED",
    "authoritative_implementation": {
-    "kind": "python",
+    "kind": "rust",
+    "crate": "abep-hall",
     "paths": [
+     "crates/abep-hall/src/hall_map.rs",
+     "crates/abep-hall/src/schema.rs"
+    ],
+    "admitted_scope": "whole module: load_schema / SCHEMA / REQUIRED_FIELDS / REQUIRED_META, missing_fields, pinned_commit, HallMap.__init__, HallMap.__call__",
+    "not_ported": "nothing of abep_sim/hall_map.py is left unported (contract inventory_rows role_here: whole module)",
+    "python_reference": [
      "abep_sim/hall_map.py"
-    ]
+    ],
+    "python_note": "the Python file stays at its path as the migration reference; PYTHON_RETIRED_FROM_ACTIVE is not requested"
    },
-   "contract": null,
-   "admission_evidence": null,
+   "contract": {
+    "path": "docs/rust_migration/contracts/C-HALL-MAP-ENSEMBLE-REGISTRY/parity_prereg_v1.json",
+    "id": "PARITY-C-HALL-MAP-ENSEMBLE-REGISTRY-V1",
+    "sha256": "aa0910d9aaf32964efbdf7c25a5a92d3ae87a4a91ef7ea70cddd3344f680c88e"
+   },
+   "admission_evidence": {
+    "path": "docs/rust_migration/contracts/C-HALL-MAP-ENSEMBLE-REGISTRY/parity_report_v1.json",
+    "sha256": "a8b8888da5e7b47a489150594e7916d7df713507b5047540cf834df42dca3bd0",
+    "verdict": "ADMITTED",
+    "parity_verdict": "PARITY_PASS"
+   },
    "simulation_completion_wp": "SC-WP-03",
-   "status_history": []
+   "status_history": [
+    {
+     "from": "PYTHON_REFERENCE",
+     "to": "PREREG_PARITY",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-HALL-MAP-ENSEMBLE-REGISTRY/parity_prereg_v1.json"
+     ],
+     "history_entry": "Parity contract PARITY-C-HALL-MAP-ENSEMBLE-REGISTRY-V1 (sha256 aa0910d9aaf3...) committed alone in a41cf44 before any comparison; the committed file is unchanged since registration."
+    },
+    {
+     "from": "PREREG_PARITY",
+     "to": "RUST_IMPL",
+     "date": "2026-10-06",
+     "evidence": [
+      "crates/abep-hall/src/hall_map.rs",
+      "crates/abep-hall/src/schema.rs",
+      "docs/rust_migration/contracts/C-HALL-MAP-ENSEMBLE-REGISTRY/parity_report_v1.json"
+     ],
+     "history_entry": "Rust implementation abep-hall at a8f906c; the source sha256 values are recorded in the report build_provenance."
+    },
+    {
+     "from": "RUST_IMPL",
+     "to": "PARITY_PASS",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-HALL-MAP-ENSEMBLE-REGISTRY/parity_report_v1.json"
+     ],
+     "history_entry": "Scoring execution of the registered contract (2026-10-06T08:34:33Z, scoring seed 3030373969277244664): report verdict ADMITTED, parity_verdict PARITY_PASS; report committed (sha256 a8b8888da5e7...)."
+    },
+    {
+     "from": "PARITY_PASS",
+     "to": "ADMITTED",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-HALL-MAP-ENSEMBLE-REGISTRY/parity_report_v1.json",
+      "docs/HISTORY.md",
+      ".github/workflows/rust-workspace.yml"
+     ],
+     "history_entry": "Ledger flip on the committed admission evidence (the parity report), HISTORY entry 2026-10-06 (ledger update 2), crate tests in rust-workspace.yml. Admitted scope: whole module: load_schema / SCHEMA / REQUIRED_FIELDS / REQUIRED_META, missing_fields, pinned_commit, HallMap.__init__, HallMap.__call__. Not ported / out of scope: nothing of abep_sim/hall_map.py is left unported (contract inventory_rows role_here: whole module)."
+    }
+   ],
+   "report_disclosures": "the empty Hall credible transport set is asserted as a governed state (E-01 member_ids empty, E-70 credible set EMPTY, E-63 nine screening candidates refused); cargo gate 255 passed, 0 failed, 2 ignored (the registered platform tests PT-01 / PT-02)",
+   "ci": [
+    ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+   ]
   },
   {
    "id": "C-ABEP_SIM_HALLMAP_REGISTRY_PY",
@@ -1524,17 +1817,77 @@
    "classification_confidence": "PROPOSED",
    "classification_confidence_v3_1": "PLAN_APPROVED_A9_29",
    "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
-   "status": "PYTHON_REFERENCE",
+   "status": "ADMITTED",
    "authoritative_implementation": {
-    "kind": "python",
+    "kind": "rust",
+    "crate": "abep-hall",
     "paths": [
+     "crates/abep-hall/src/registry.rs"
+    ],
+    "admitted_scope": "whole module: validate_record, read_records, verify, lookup_map_meta, build_registration, register, withdraw, load_hall_map_schema_v2, canonical_json_sha256, sha256_canonical_jsonl",
+    "not_ported": "nothing of abep_sim/hallmap_registry.py is left unported (contract inventory_rows role_here: whole module)",
+    "python_reference": [
      "abep_sim/hallmap_registry.py"
-    ]
+    ],
+    "python_note": "the Python file stays at its path as the migration reference; PYTHON_RETIRED_FROM_ACTIVE is not requested"
    },
-   "contract": null,
-   "admission_evidence": null,
+   "contract": {
+    "path": "docs/rust_migration/contracts/C-HALL-MAP-ENSEMBLE-REGISTRY/parity_prereg_v1.json",
+    "id": "PARITY-C-HALL-MAP-ENSEMBLE-REGISTRY-V1",
+    "sha256": "aa0910d9aaf32964efbdf7c25a5a92d3ae87a4a91ef7ea70cddd3344f680c88e"
+   },
+   "admission_evidence": {
+    "path": "docs/rust_migration/contracts/C-HALL-MAP-ENSEMBLE-REGISTRY/parity_report_v1.json",
+    "sha256": "a8b8888da5e7b47a489150594e7916d7df713507b5047540cf834df42dca3bd0",
+    "verdict": "ADMITTED",
+    "parity_verdict": "PARITY_PASS"
+   },
    "simulation_completion_wp": "SC-WP-03",
-   "status_history": []
+   "status_history": [
+    {
+     "from": "PYTHON_REFERENCE",
+     "to": "PREREG_PARITY",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-HALL-MAP-ENSEMBLE-REGISTRY/parity_prereg_v1.json"
+     ],
+     "history_entry": "Parity contract PARITY-C-HALL-MAP-ENSEMBLE-REGISTRY-V1 (sha256 aa0910d9aaf3...) committed alone in a41cf44 before any comparison; the committed file is unchanged since registration."
+    },
+    {
+     "from": "PREREG_PARITY",
+     "to": "RUST_IMPL",
+     "date": "2026-10-06",
+     "evidence": [
+      "crates/abep-hall/src/registry.rs",
+      "docs/rust_migration/contracts/C-HALL-MAP-ENSEMBLE-REGISTRY/parity_report_v1.json"
+     ],
+     "history_entry": "Rust implementation abep-hall at a8f906c; the source sha256 values are recorded in the report build_provenance."
+    },
+    {
+     "from": "RUST_IMPL",
+     "to": "PARITY_PASS",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-HALL-MAP-ENSEMBLE-REGISTRY/parity_report_v1.json"
+     ],
+     "history_entry": "Scoring execution of the registered contract (2026-10-06T08:34:33Z, scoring seed 3030373969277244664): report verdict ADMITTED, parity_verdict PARITY_PASS; report committed (sha256 a8b8888da5e7...)."
+    },
+    {
+     "from": "PARITY_PASS",
+     "to": "ADMITTED",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-HALL-MAP-ENSEMBLE-REGISTRY/parity_report_v1.json",
+      "docs/HISTORY.md",
+      ".github/workflows/rust-workspace.yml"
+     ],
+     "history_entry": "Ledger flip on the committed admission evidence (the parity report), HISTORY entry 2026-10-06 (ledger update 2), crate tests in rust-workspace.yml. Admitted scope: whole module: validate_record, read_records, verify, lookup_map_meta, build_registration, register, withdraw, load_hall_map_schema_v2, canonical_json_sha256, sha256_canonical_jsonl. Not ported / out of scope: nothing of abep_sim/hallmap_registry.py is left unported (contract inventory_rows role_here: whole module)."
+    }
+   ],
+   "report_disclosures": "the empty Hall credible transport set is asserted as a governed state (E-01 member_ids empty, E-70 credible set EMPTY, E-63 nine screening candidates refused); cargo gate 255 passed, 0 failed, 2 ignored (the registered platform tests PT-01 / PT-02)",
+   "ci": [
+    ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+   ]
   },
   {
    "id": "C-ABEP_SIM_HARD_GATES_PY",
@@ -1815,17 +2168,77 @@
    "classification_confidence": "PROPOSED",
    "classification_confidence_v3_1": "PLAN_APPROVED_A9_29",
    "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
-   "status": "PYTHON_REFERENCE",
+   "status": "ADMITTED",
    "authoritative_implementation": {
-    "kind": "python",
+    "kind": "rust",
+    "crate": "abep-subsystems (abep_subsystems::power::magnet)",
     "paths": [
+     "crates/abep-subsystems/src/power/magnet.rs"
+    ],
+    "admitted_scope": "every function and constant of abep_sim/magnet_power.py except ecr_resonance_field_T (MU0_N_PER_A2, MAGNET_POWER_VERSION, ANNEALED_COPPER_IACS, ConductorMaterial, resistance_factor, wire_resistance_ohm, awg_diameter_m, CoreSegment, ampere_turns, coil_power_continuous_W, coil_design, electromagnet, remanence_at_T, permanent_magnet)",
+    "not_ported": "ecr_resonance_field_T and the ecr_magnet component role (historical ECR family): formally retired, never to be migrated. Basis: the plan-approved inventory records it as not_ported_parts (classification PLAN_APPROVED_A9_29); the A9 owner line keeps the RF/ECR upstream pre-ionizer family historical (preserved, never rewritten, not the active architecture); the only Python callers are the HISTORICAL_LEGACY_REGRESSION rows C-DOCS_ARCHITECTURE_COMPARISON_ELECTRICAL_CLOSURE_TOOLS and C-DOCS_ARCHITECTURE_COMPARISON_AUX_BUS (NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH) and a Python migration-reference test; no active consumer. No separate owner retirement record names the function: this is the ledger owner's reading of the inventory not_ported_parts, flagged for the owner to confirm or reverse",
+    "python_reference": [
      "abep_sim/magnet_power.py"
-    ]
+    ],
+    "python_note": "the Python file stays at its path as the migration reference; PYTHON_RETIRED_FROM_ACTIVE is not requested"
    },
-   "contract": null,
-   "admission_evidence": null,
+   "contract": {
+    "path": "docs/rust_migration/contracts/C-ABEP_SIM_MAGNET_POWER_PY/parity_prereg_v1.json",
+    "id": "PARITY-C-ABEP_SIM_MAGNET_POWER_PY-V1",
+    "sha256": "d89bd3fd92666e7745d0c7d3a60533eafd3c72ea36bb3c1aa6ff808c5685d25f"
+   },
+   "admission_evidence": {
+    "path": "docs/rust_migration/contracts/C-ABEP_SIM_MAGNET_POWER_PY/parity_report_v1.json",
+    "sha256": "1a380662f8aef3b67adb9973c0d8d99694ad8ff8515ca6b714e64eefccd1afba",
+    "verdict": "ADMITTED",
+    "parity_verdict": "PARITY_PASS"
+   },
    "simulation_completion_wp": "SC-WP-05",
-   "status_history": []
+   "status_history": [
+    {
+     "from": "PYTHON_REFERENCE",
+     "to": "PREREG_PARITY",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_MAGNET_POWER_PY/parity_prereg_v1.json"
+     ],
+     "history_entry": "Parity contract PARITY-C-ABEP_SIM_MAGNET_POWER_PY-V1 (sha256 d89bd3fd9266...) committed alone in f800ec0 before any comparison; the committed file is unchanged since registration."
+    },
+    {
+     "from": "PREREG_PARITY",
+     "to": "RUST_IMPL",
+     "date": "2026-10-06",
+     "evidence": [
+      "crates/abep-subsystems/src/power/magnet.rs",
+      "docs/rust_migration/contracts/C-ABEP_SIM_MAGNET_POWER_PY/parity_report_v1.json"
+     ],
+     "history_entry": "Rust implementation abep-subsystems (abep_subsystems::power::magnet) at 5ccff78; the source sha256 values are recorded in the report build_provenance."
+    },
+    {
+     "from": "RUST_IMPL",
+     "to": "PARITY_PASS",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_MAGNET_POWER_PY/parity_report_v1.json"
+     ],
+     "history_entry": "Scoring execution of the registered contract (2026-10-06T13:14:35Z, master seed 2805729329): report verdict ADMITTED, parity_verdict PARITY_PASS; report committed (sha256 1a380662f8ae...)."
+    },
+    {
+     "from": "PARITY_PASS",
+     "to": "ADMITTED",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_MAGNET_POWER_PY/parity_report_v1.json",
+      "docs/HISTORY.md",
+      ".github/workflows/rust-workspace.yml"
+     ],
+     "history_entry": "Ledger flip on the committed admission evidence (the parity report), HISTORY entry 2026-10-06 (ledger update 2), crate tests in rust-workspace.yml. Admitted scope: every function and constant of abep_sim/magnet_power.py except ecr_resonance_field_T (MU0_N_PER_A2, MAGNET_POWER_VERSION, ANNEALED_COPPER_IACS, ConductorMaterial, resistance_factor, wire_resistance_ohm, awg_diameter_m, CoreSegment, ampere_turns, coil_power_continuous_W, coil_design, electromagnet, remanence_at_T, permanent_magnet). Not ported / out of scope: ecr_resonance_field_T and the ecr_magnet component role (historical ECR family): formally retired, never to be migrated. Basis: the plan-approved inventory records it as not_ported_parts (classification PLAN_APPROVED_A9_29); the A9 owner line keeps the RF/ECR upstream pre-ionizer family historical (preserved, never rewritten, not the active architecture); the only Python callers are the HISTORICAL_LEGACY_REGRESSION rows C-DOCS_ARCHITECTURE_COMPARISON_ELECTRICAL_CLOSURE_TOOLS and C-DOCS_ARCHITECTURE_COMPARISON_AUX_BUS (NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH) and a Python migration-reference test; no active consumer. No separate owner retirement record names the function: this is the ledger owner's reading of the inventory not_ported_parts, flagged for the owner to confirm or reverse."
+    }
+   ],
+   "ci": [
+    ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+   ],
+   "status_note": "ADMITTED on the reading that ecr_resonance_field_T (historical ECR family, inventory not_ported_parts) is formally retired (never to be migrated); it stays in the Python file as history. If the owner rules that function still to migrate, the admission reverts to a partial admission (ADMITTED -> PYTHON_REFERENCE)"
   },
   {
    "id": "C-ABEP_SIM_MASS_BOM_PY",
@@ -2096,12 +2509,41 @@
     "kind": "python",
     "paths": [
      "abep_sim/programme/design_synthesis.py"
-    ]
+    ],
+    "admitted_subset": "bus_power without gate_verdict -> abep-subsystems abep_subsystems::power::objective (partial_admissions)"
    },
    "contract": null,
    "admission_evidence": null,
    "simulation_completion_wp": "SC-WP-10",
-   "status_history": []
+   "status_history": [],
+   "partial_admissions": [
+    {
+     "scope": "bus_power without its gate_verdict field (the raw P_bus objective); the row stays SC-WP-10",
+     "status": "ADMITTED",
+     "rust_implementation": {
+      "crate": "abep-subsystems (abep_subsystems::power)",
+      "paths": [
+       "crates/abep-subsystems/src/power/objective.rs"
+      ]
+     },
+     "contract": {
+      "path": "docs/rust_migration/contracts/C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY/parity_prereg_v1.json",
+      "id": "PARITY-C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY-V1",
+      "sha256": "d3336303a8f4d62ec146706b3f85f2abaffe6c053238910af3cf4c97c1bf75f6"
+     },
+     "admission_evidence": {
+      "path": "docs/rust_migration/contracts/C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY/parity_report_v1.json",
+      "sha256": "e416e76757eac1ab8a5be5c2b6ee9fe55da31f3d6ff814a62c75727fbeb2c1f0",
+      "verdict": "ADMITTED",
+      "parity_verdict": "PARITY_PASS"
+     },
+     "not_in_scope": "the gate_verdict field of bus_power is an output of rfp_power_gate (assessment, SC-WP-11); every other function of design_synthesis.py stays PYTHON_REFERENCE (SC-WP-10)",
+     "pending": "the gate_verdict field (rfp_power_gate, SC-WP-11) is still to migrate",
+     "recorded": "2026-10-06",
+     "ci": ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+    }
+   ],
+   "status_note": "status stays PYTHON_REFERENCE for the remainder plus the ADMITTED partial admission(s); the module retires only when everything not ported is migrated or formally retired (RM-R17)"
   },
   {
    "id": "C-ABEP_SIM_PROGRAMME_SWEEP_PY",
@@ -2172,12 +2614,44 @@
     "kind": "python",
     "paths": [
      "abep_sim/rate_tables.py"
-    ]
+    ],
+    "admitted_subset": "maxwellian_rate, tail_sensitivity, step_cross_section_rate, write_hallthruster_table (rows / table text / sidecar text) -> abep-chem (partial_admissions)"
    },
    "contract": null,
    "admission_evidence": null,
    "simulation_completion_wp": "SC-WP-03",
-   "status_history": []
+   "status_history": [],
+   "partial_admissions": [
+    {
+     "scope": "maxwellian_rate (tails hold / zero), tail_sensitivity, step_cross_section_rate, write_hallthruster_table (rows, table text, sidecar text; file I/O excluded)",
+     "status": "ADMITTED",
+     "rust_implementation": {
+      "crate": "abep-chem (abep_chem::reference parity behaviour and table rebuilds; abep_chem::checked fail-closed production API, IF-CHEM-REG-v1)",
+      "paths": [
+       "crates/abep-chem/src/reference.rs",
+       "crates/abep-chem/src/checked.rs"
+      ]
+     },
+     "contract": {
+      "path": "docs/rust_migration/contracts/C-ABEP_SIM_RATE_TABLES_PY/parity_prereg_v1.json",
+      "id": "PARITY-C-ABEP_SIM_RATE_TABLES_PY-V1",
+      "sha256": "504be4d2386d27efa35d88d11b44e9b483cd2b39fa65d544d75da4dadada3372"
+     },
+     "admission_evidence": {
+      "path": "docs/rust_migration/contracts/C-ABEP_SIM_RATE_TABLES_PY/parity_report_v1.json",
+      "sha256": "6864dc0a7b1f3c6c553edf49ed84861ad2115fb08ba5d787bd183804c58fb09e",
+      "verdict": "ADMITTED",
+      "parity_verdict": "PARITY_PASS"
+     },
+     "not_in_scope": "the file-system side of write_hallthruster_table (opening / writing `path` and `path + \".source\"`): the Rust API returns the rows, the table text and the sidecar text; no Rust code writes into hallthruster_bridge/ (frozen data, CLAUDE.md rule 1). The scripts/build_*.py table builders are input providers and stay PYTHON_REFERENCE (own rows)",
+     "pending": "the file I/O of write_hallthruster_table is neither ported nor formally retired (no owner record): it stays to migrate, or to be retired by an owner record; the placement of the table builders is NP-ICP-CHEM-AIR OQ-CHEM-05 (open). Under the full-vs-partial rule the row therefore stays PYTHON_REFERENCE with this partial admission, although the report requests ADMITTED for the row",
+     "report_disclosures": "registered divergence DIV-03 and Rust-only invariant INV-06 (fail-closed abep_chem::checked); the report requests row ADMITTED; no table, registry or validity entry is admitted by it",
+     "downstream": "NP-ICP-NEUTRALIZER prereg_v1 software_admission item (3) 'the abep-chem rate evaluator it uses is admitted' is satisfied by this admission (verification_report_v1 admission item 3 / NV-06 direct side can be evaluated once abep-icp is wired to abep_chem::checked by its own lane); recorded here only, the NP-ICP-NEUTRALIZER item status is unchanged",
+     "recorded": "2026-10-06",
+     "ci": ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+    }
+   ],
+   "status_note": "status stays PYTHON_REFERENCE for the remainder plus the ADMITTED partial admission(s); the module retires only when everything not ported is migrated or formally retired (RM-R17)"
   },
   {
    "id": "C-ABEP_SIM_RESERVOIR_PY",
@@ -2243,17 +2717,81 @@
    "classification_confidence": "PROPOSED",
    "classification_confidence_v3_1": "PLAN_APPROVED_A9_29",
    "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
-   "status": "PYTHON_REFERENCE",
+   "status": "ADMITTED",
    "authoritative_implementation": {
-    "kind": "python",
+    "kind": "rust",
+    "crate": "abep-mission",
     "paths": [
+     "crates/abep-mission/src/reference_drag.rs",
+     "crates/abep-mission/src/statewise.rs",
+     "crates/abep-mission/data/spacecraft_reference_register_v1.json"
+    ],
+    "admitted_scope": "whole module: the reference register (DECISIONS, RFP_THRUST_BAND, SOURCES, NOT_ACCESSED, RECORDS, CASES / CASE_BY_ID, FINDINGS, OPEN_ITEMS, INTAKE_ACCOUNTING), ReferenceCase, _integrity, reference_drag, statewise_margin, density_free_table, build_document, case",
+    "not_ported": "nothing of abep_sim/spacecraft_reference_drag.py is left unported; the contract out_of_scope items belong to other rows (the docs builder, design/upstream_a9_13.py::reference_drag_fn, mission_env.spacecraft_drag)",
+    "python_reference": [
      "abep_sim/spacecraft_reference_drag.py"
-    ]
+    ],
+    "python_note": "the Python file stays at its path as the migration reference; PYTHON_RETIRED_FROM_ACTIVE is not requested"
    },
-   "contract": null,
-   "admission_evidence": null,
+   "contract": {
+    "path": "docs/rust_migration/contracts/C-ABEP_SIM_SPACECRAFT_REFERENCE_DRAG_PY/parity_prereg_v1.json",
+    "id": "PARITY-C-ABEP_SIM_SPACECRAFT_REFERENCE_DRAG_PY-V1",
+    "sha256": "22c0aca107f44f24fae48671addf1823a0f361dcc47302f782fc23c9209a64c7"
+   },
+   "admission_evidence": {
+    "path": "docs/rust_migration/contracts/C-ABEP_SIM_SPACECRAFT_REFERENCE_DRAG_PY/parity_report_v1.json",
+    "sha256": "36dc2ee41b624574b01a312d59d40c5140a6ffe48c8616b3474c8d444d6d3ba7",
+    "verdict": "ADMITTED",
+    "parity_verdict": "PARITY_PASS"
+   },
    "simulation_completion_wp": "SC-WP-04",
-   "status_history": []
+   "status_history": [
+    {
+     "from": "PYTHON_REFERENCE",
+     "to": "PREREG_PARITY",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_SPACECRAFT_REFERENCE_DRAG_PY/parity_prereg_v1.json"
+     ],
+     "history_entry": "Parity contract PARITY-C-ABEP_SIM_SPACECRAFT_REFERENCE_DRAG_PY-V1 (sha256 22c0aca107f4...) committed alone in 7a86e31 before any comparison; the committed file is unchanged since registration."
+    },
+    {
+     "from": "PREREG_PARITY",
+     "to": "RUST_IMPL",
+     "date": "2026-10-06",
+     "evidence": [
+      "crates/abep-mission/src/reference_drag.rs",
+      "crates/abep-mission/src/statewise.rs",
+      "crates/abep-mission/data/spacecraft_reference_register_v1.json",
+      "docs/rust_migration/contracts/C-ABEP_SIM_SPACECRAFT_REFERENCE_DRAG_PY/parity_report_v1.json"
+     ],
+     "history_entry": "Rust implementation abep-mission at 57914de; the source sha256 values are recorded in the report build_provenance."
+    },
+    {
+     "from": "RUST_IMPL",
+     "to": "PARITY_PASS",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_SPACECRAFT_REFERENCE_DRAG_PY/parity_report_v1.json"
+     ],
+     "history_entry": "Scoring execution of the registered contract (2026-10-06T09:24:50Z, seed 2026100641): report verdict ADMITTED, parity_verdict PARITY_PASS; report committed (sha256 36dc2ee41b62...)."
+    },
+    {
+     "from": "PARITY_PASS",
+     "to": "ADMITTED",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_SPACECRAFT_REFERENCE_DRAG_PY/parity_report_v1.json",
+      "docs/HISTORY.md",
+      ".github/workflows/rust-workspace.yml"
+     ],
+     "history_entry": "Ledger flip on the committed admission evidence (the parity report), HISTORY entry 2026-10-06 (ledger update 2), crate tests in rust-workspace.yml. Admitted scope: whole module: the reference register (DECISIONS, RFP_THRUST_BAND, SOURCES, NOT_ACCESSED, RECORDS, CASES / CASE_BY_ID, FINDINGS, OPEN_ITEMS, INTAKE_ACCOUNTING), ReferenceCase, _integrity, reference_drag, statewise_margin, density_free_table, build_document, case. Not ported / out of scope: nothing of abep_sim/spacecraft_reference_drag.py is left unported; the contract out_of_scope items belong to other rows (the docs builder, design/upstream_a9_13.py::reference_drag_fn, mission_env.spacecraft_drag)."
+    }
+   ],
+   "report_disclosures": "registered divergence DIV-A-01 (non-finite results refused)",
+   "ci": [
+    ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+   ]
   },
   {
    "id": "C-ABEP_SIM_STATEWISE_PY",
@@ -2262,17 +2800,76 @@
    "classification_confidence": "PROPOSED",
    "classification_confidence_v3_1": "PLAN_APPROVED_A9_29",
    "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
-   "status": "PYTHON_REFERENCE",
+   "status": "ADMITTED",
    "authoritative_implementation": {
-    "kind": "python",
+    "kind": "rust",
+    "crate": "abep-mission",
     "paths": [
+     "crates/abep-mission/src/statewise.rs"
+    ],
+    "admitted_scope": "whole module: statewise_quantifier, A9_14_JSON, A9_14_SHA256",
+    "not_ported": "nothing of abep_sim/statewise.py is left unported; the contract out_of_scope items belong to other rows (the atmosphere_orbit re-export, upstream_a9_13.statewise_envelope, assessment design_gates.statewise_drag_compensation)",
+    "python_reference": [
      "abep_sim/statewise.py"
-    ]
+    ],
+    "python_note": "the Python file stays at its path as the migration reference; PYTHON_RETIRED_FROM_ACTIVE is not requested"
    },
-   "contract": null,
-   "admission_evidence": null,
+   "contract": {
+    "path": "docs/rust_migration/contracts/C-ABEP_SIM_STATEWISE_PY/parity_prereg_v1.json",
+    "id": "PARITY-C-ABEP_SIM_STATEWISE_PY-V1",
+    "sha256": "5a76ef3c1c2c52fa3fcdd72a4ee6d14321a82389f0622713325d45869d90ba4d"
+   },
+   "admission_evidence": {
+    "path": "docs/rust_migration/contracts/C-ABEP_SIM_STATEWISE_PY/parity_report_v1.json",
+    "sha256": "455e3af70609deb044a294c2c133781d74ad4db9569e1f9d3fc538fe7e62266f",
+    "verdict": "ADMITTED",
+    "parity_verdict": "PARITY_PASS"
+   },
    "simulation_completion_wp": "SC-WP-04",
-   "status_history": []
+   "status_history": [
+    {
+     "from": "PYTHON_REFERENCE",
+     "to": "PREREG_PARITY",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_STATEWISE_PY/parity_prereg_v1.json"
+     ],
+     "history_entry": "Parity contract PARITY-C-ABEP_SIM_STATEWISE_PY-V1 (sha256 5a76ef3c1c2c...) committed alone in 8aaa37f before any comparison; the committed file is unchanged since registration."
+    },
+    {
+     "from": "PREREG_PARITY",
+     "to": "RUST_IMPL",
+     "date": "2026-10-06",
+     "evidence": [
+      "crates/abep-mission/src/statewise.rs",
+      "docs/rust_migration/contracts/C-ABEP_SIM_STATEWISE_PY/parity_report_v1.json"
+     ],
+     "history_entry": "Rust implementation abep-mission at 9fe20c2; the source sha256 values are recorded in the report build_provenance."
+    },
+    {
+     "from": "RUST_IMPL",
+     "to": "PARITY_PASS",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_STATEWISE_PY/parity_report_v1.json"
+     ],
+     "history_entry": "Scoring execution of the registered contract (2026-10-06T09:25:08Z, seed 2026100642): report verdict ADMITTED, parity_verdict PARITY_PASS; report committed (sha256 455e3af70609...)."
+    },
+    {
+     "from": "PARITY_PASS",
+     "to": "ADMITTED",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_STATEWISE_PY/parity_report_v1.json",
+      "docs/HISTORY.md",
+      ".github/workflows/rust-workspace.yml"
+     ],
+     "history_entry": "Ledger flip on the committed admission evidence (the parity report), HISTORY entry 2026-10-06 (ledger update 2), crate tests in rust-workspace.yml. Admitted scope: whole module: statewise_quantifier, A9_14_JSON, A9_14_SHA256. Not ported / out of scope: nothing of abep_sim/statewise.py is left unported; the contract out_of_scope items belong to other rows (the atmosphere_orbit re-export, upstream_a9_13.statewise_envelope, assessment design_gates.statewise_drag_compensation)."
+    }
+   ],
+   "ci": [
+    ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+   ]
   },
   {
    "id": "C-ABEP_SIM_SYSTEM_PY",
@@ -2925,12 +3522,41 @@
     "paths": [
      "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py",
      "docs/budgets/mass_power_a9_v3/peak_sampled_gate_a9_v3.py"
-    ]
+    ],
+    "admitted_subset": "K-MASS-RULES kernel -> abep-subsystems abep_subsystems::mass::rules (partial_admissions)"
    },
    "contract": null,
    "admission_evidence": null,
    "simulation_completion_wp": null,
-   "status_history": []
+   "status_history": [],
+   "partial_admissions": [
+    {
+     "scope": "extract_and_parity_kernel K-MASS-RULES: rk, _kg, line_mev_value, system_margin, harness_row60, closure_state, _unresolved, assert_no_margin_relaxation, rollup (v3 builder) + system_margin_bid, assert_bid_margin_reading (v5 builder)",
+     "status": "ADMITTED",
+     "rust_implementation": {
+      "crate": "abep-subsystems (abep_subsystems::mass::rules)",
+      "paths": [
+       "crates/abep-subsystems/src/mass/rules.rs"
+      ]
+     },
+     "contract": {
+      "path": "docs/rust_migration/contracts/K-MASS-RULES/parity_prereg_v1.json",
+      "id": "PARITY-K-MASS-RULES-V1",
+      "sha256": "0e962c03bc01abb9afde184c48c83427c295710310112bb3d23a5e37ac0f302c"
+     },
+     "admission_evidence": {
+      "path": "docs/rust_migration/contracts/K-MASS-RULES/parity_report_v1.json",
+      "sha256": "825f12ec897c108e038e767e5141a9da6ad31348e020c332f1fc2cf77011a676",
+      "verdict": "ADMITTED",
+      "parity_verdict": "PARITY_PASS"
+     },
+     "not_in_scope": "every other function of the v3 builder (S / OD / build_lines / build_bom / budget_reference / al_c1_allocation / c1_xe_branch_booking / xe_hardware_required / rfp_propellant_clauses / import_xe / build_doc / render_md / main): the v3 record is history (class H, NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH); the v5 record functions are the row C-DOCS_BUDGETS_MASS_POWER_A9_V5",
+     "report_disclosures": "registered divergences DIV-K01 / DIV-K02 (Rust refuses a C1 / non-flight roll-up); row status unchanged (class H host, NOT_PORTED_RETIREMENT_PENDING; the v3 record stays history); the active consumer is C-DOCS_BUDGETS_MASS_POWER_A9_V5",
+     "recorded": "2026-10-06",
+     "ci": ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+    }
+   ],
+   "status_note": "status stays NOT_PORTED_RETIREMENT_PENDING (class H host; the v3 record is history); the K-MASS-RULES kernel is the only active part and is ADMITTED as a partial admission (RM-R17)"
   },
   {
    "id": "C-DOCS_BUDGETS_OWNER_DECISIONS",
@@ -3009,12 +3635,41 @@
     "kind": "python",
     "paths": [
      "docs/budgets/xe_accounting_a9_v3/build_xe_accounting_a9_v3.py"
-    ]
+    ],
+    "admitted_subset": "X1-X6 Xe sensitivity / booking kernels -> abep-subsystems abep_subsystems::mass::xe (partial_admissions)"
    },
    "contract": null,
    "admission_evidence": null,
    "simulation_completion_wp": "SC-WP-07",
-   "status_history": []
+   "status_history": [],
+   "partial_admissions": [
+    {
+     "scope": "named function subset X1-X6 (kernel granularity, RM-R17): case_split_loaded, ignition_booking_s, book_reserve_and_residual, ground_supply, eval_line, evaluate",
+     "status": "ADMITTED",
+     "rust_implementation": {
+      "crate": "abep-subsystems (abep_subsystems::mass::xe)",
+      "paths": [
+       "crates/abep-subsystems/src/mass/xe.rs"
+      ]
+     },
+     "contract": {
+      "path": "docs/rust_migration/contracts/C-DOCS_BUDGETS_XE_ACCOUNTING_A9_V3/parity_prereg_v1.json",
+      "id": "PARITY-C-DOCS_BUDGETS_XE_ACCOUNTING_A9_V3-V1",
+      "sha256": "c3685cb3405474a77b8bd87f3afd9170ec0aa3d3deadebb0e89a611665e1723b"
+     },
+     "admission_evidence": {
+      "path": "docs/rust_migration/contracts/C-DOCS_BUDGETS_XE_ACCOUNTING_A9_V3/parity_report_v1.json",
+      "sha256": "4a540233871c8b34640cd394de82f0de83f5688aabaa8aa33d0435275202bdc9",
+      "verdict": "ADMITTED",
+      "parity_verdict": "PARITY_PASS"
+     },
+     "not_in_scope": "build_doc / render / render_md / main, design_cases and the remaining builder functions (S / OD / build_items / build_lines / build_scenarios / split_applicability / split_retired / rfp_clauses / rfp_propellant_clauses / xe_system_capability / c1_flight_xe_booking / meop_basis / icp_xe_getter / _validate_line / read_isotherm / sig6) stay PYTHON_REFERENCE",
+     "pending": "BLOCKED_GOVERNANCE_CONFLICT (principle-6 crate scan, tests/prereg_binding.rs::forbidden_identifier_scan_of_this_crate): the record regeneration and design_cases need an integrator / owner decision, then a v2 contract; still to migrate",
+     "recorded": "2026-10-06",
+     "ci": ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+    }
+   ],
+   "status_note": "status stays PYTHON_REFERENCE for the remainder plus the ADMITTED partial admission(s); the module retires only when everything not ported is migrated or formally retired (RM-R17)"
   },
   {
    "id": "C-DOCS_BUDGETS_XE_LEDGER",
@@ -3276,17 +3931,77 @@
    "classification_confidence": "PROPOSED",
    "classification_confidence_v3_1": "PLAN_APPROVED_A9_29",
    "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
-   "status": "PYTHON_REFERENCE",
+   "status": "ADMITTED",
    "authoritative_implementation": {
-    "kind": "python",
+    "kind": "rust",
+    "crate": "abep-mission (binary abep-reference-drag-record)",
     "paths": [
+     "crates/abep-mission/src/bin/abep_reference_drag_record.rs"
+    ],
+    "admitted_scope": "whole builder: verify_decisions, build_json, render_md (_fmt), render_json, main (--check and write modes); `--check` reproduces the committed v1 record",
+    "not_ported": "nothing of docs/design_synthesis/spacecraft_reference_drag/build_spacecraft_reference_drag.py is left unported; the register and evaluator are the row C-ABEP_SIM_SPACECRAFT_REFERENCE_DRAG_PY",
+    "python_reference": [
      "docs/design_synthesis/spacecraft_reference_drag/build_spacecraft_reference_drag.py"
-    ]
+    ],
+    "python_note": "the Python file stays at its path as the migration reference; PYTHON_RETIRED_FROM_ACTIVE is not requested"
    },
-   "contract": null,
-   "admission_evidence": null,
+   "contract": {
+    "path": "docs/rust_migration/contracts/C-DOCS_DESIGN_SYNTHESIS_SPACECRAFT_REFERENCE_DRAG/parity_prereg_v1.json",
+    "id": "PARITY-C-DOCS_DESIGN_SYNTHESIS_SPACECRAFT_REFERENCE_DRAG-V1",
+    "sha256": "2df6586c15981d4750b1b60798480bc5697e5ac654a99b9a1958da57d6d7e9ee"
+   },
+   "admission_evidence": {
+    "path": "docs/rust_migration/contracts/C-DOCS_DESIGN_SYNTHESIS_SPACECRAFT_REFERENCE_DRAG/parity_report_v1.json",
+    "sha256": "6645b638276342a4b9cff62de9593fd6bb92db8038ca84665126a6940133e958",
+    "verdict": "ADMITTED",
+    "parity_verdict": "PARITY_PASS"
+   },
    "simulation_completion_wp": "SC-WP-04",
-   "status_history": []
+   "status_history": [
+    {
+     "from": "PYTHON_REFERENCE",
+     "to": "PREREG_PARITY",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-DOCS_DESIGN_SYNTHESIS_SPACECRAFT_REFERENCE_DRAG/parity_prereg_v1.json"
+     ],
+     "history_entry": "Parity contract PARITY-C-DOCS_DESIGN_SYNTHESIS_SPACECRAFT_REFERENCE_DRAG-V1 (sha256 2df6586c1598...) committed alone in ad54447 before any comparison; the committed file is unchanged since registration."
+    },
+    {
+     "from": "PREREG_PARITY",
+     "to": "RUST_IMPL",
+     "date": "2026-10-06",
+     "evidence": [
+      "crates/abep-mission/src/bin/abep_reference_drag_record.rs",
+      "docs/rust_migration/contracts/C-DOCS_DESIGN_SYNTHESIS_SPACECRAFT_REFERENCE_DRAG/parity_report_v1.json"
+     ],
+     "history_entry": "Rust implementation abep-mission (binary abep-reference-drag-record) at fd03ae0; the source sha256 values are recorded in the report build_provenance."
+    },
+    {
+     "from": "RUST_IMPL",
+     "to": "PARITY_PASS",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-DOCS_DESIGN_SYNTHESIS_SPACECRAFT_REFERENCE_DRAG/parity_report_v1.json"
+     ],
+     "history_entry": "Scoring execution of the registered contract (2026-10-06T09:25:22Z, deterministic builder (no seed)): report verdict ADMITTED, parity_verdict PARITY_PASS; report committed (sha256 6645b6382763...)."
+    },
+    {
+     "from": "PARITY_PASS",
+     "to": "ADMITTED",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-DOCS_DESIGN_SYNTHESIS_SPACECRAFT_REFERENCE_DRAG/parity_report_v1.json",
+      "docs/HISTORY.md",
+      ".github/workflows/rust-workspace.yml"
+     ],
+     "history_entry": "Ledger flip on the committed admission evidence (the parity report), HISTORY entry 2026-10-06 (ledger update 2), crate tests in rust-workspace.yml. Admitted scope: whole builder: verify_decisions, build_json, render_md (_fmt), render_json, main (--check and write modes); `--check` reproduces the committed v1 record. Not ported / out of scope: nothing of docs/design_synthesis/spacecraft_reference_drag/build_spacecraft_reference_drag.py is left unported; the register and evaluator are the row C-ABEP_SIM_SPACECRAFT_REFERENCE_DRAG_PY."
+    }
+   ],
+   "report_disclosures": "registered divergences DIV-C-01 / DIV-C-02",
+   "ci": [
+    ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+   ]
   },
   {
    "id": "C-DOCS_EVIDENCE_COMPRESSOR_TRANSITIONAL",
@@ -3504,12 +4219,41 @@
      "docs/experiments/hall_icp/p1_icp_bench/p1_campaign.py",
      "docs/experiments/hall_icp/p1_icp_bench/p1_campaign_cli.py",
      "docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py"
-    ]
+    ],
+    "admitted_subset": "p_bus_from_generator_input -> abep-subsystems abep_subsystems::power::rf_match (partial_admissions)"
    },
    "contract": null,
    "admission_evidence": null,
    "simulation_completion_wp": "SC-WP-03",
-   "status_history": []
+   "status_history": [],
+   "partial_admissions": [
+    {
+     "scope": "p1_reducer.p_bus_from_generator_input only (the P_mains refusal: P_mains is never P_bus); the row stays SC-WP-03",
+     "status": "ADMITTED",
+     "rust_implementation": {
+      "crate": "abep-subsystems (abep_subsystems::power::rf_match::p_bus_from_generator_input)",
+      "paths": [
+       "crates/abep-subsystems/src/power/rf_match.rs"
+      ]
+     },
+     "contract": {
+      "path": "docs/rust_migration/contracts/C-DOCS_EXPERIMENTS_HALL_ICP_P2_IMPEDANCE_MAP/parity_prereg_v1.json",
+      "id": "PARITY-C-DOCS_EXPERIMENTS_HALL_ICP_P2_IMPEDANCE_MAP-V1",
+      "sha256": "3486ec4db53a5cd574368743366403708866434a1b7b2851d5934a66bc13e3ea"
+     },
+     "admission_evidence": {
+      "path": "docs/rust_migration/contracts/C-DOCS_EXPERIMENTS_HALL_ICP_P2_IMPEDANCE_MAP/parity_report_v1.json",
+      "sha256": "641c50f24c76932918c15f8f11ef4aa7a593bdbd8ed986b7ebe3799324321b75",
+      "verdict": "ADMITTED",
+      "parity_verdict": "PARITY_PASS"
+     },
+     "not_in_scope": "every other function of the P1 ICP bench package (p1_reducer, p1_campaign, builders, owner-rule applications) stays PYTHON_REFERENCE (SC-WP-03)",
+     "pending": "the rest of the P1 ICP bench package is still to migrate",
+     "recorded": "2026-10-06",
+     "ci": ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+    }
+   ],
+   "status_note": "status stays PYTHON_REFERENCE for the remainder plus the ADMITTED partial admission(s); the module retires only when everything not ported is migrated or formally retired (RM-R17)"
   },
   {
    "id": "C-DOCS_EXPERIMENTS_HALL_ICP_P2_IMPEDANCE_MAP",
@@ -3528,12 +4272,43 @@
      "docs/experiments/hall_icp/p2_impedance_map/p2_a9_19_application.py",
      "docs/experiments/hall_icp/p2_impedance_map/p2_framework.py",
      "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_reducer.py"
-    ]
+    ],
+    "admitted_subset": "P2 RF-network kernels -> abep-subsystems abep_subsystems::power::{cplx, rf_match} (partial_admissions)"
    },
    "contract": null,
    "admission_evidence": null,
    "simulation_completion_wp": "SC-WP-05",
-   "status_history": []
+   "status_history": [],
+   "partial_admissions": [
+    {
+     "scope": "named function subset (kernel granularity, RM-R17): p2_framework.py parse_touchstone, sol_error_terms, sol_correct, ladder_abcd, dissipated_fraction_matched, vi_power_and_impedance; p2_impedance_reducer.py cx, gamma_from_z, z_from_gamma, vswr, gamma_mag_from_powers, s_to_abcd, abcd_to_s, cascade, z_in, deembed_load, transfer_efficiency, correct_reflection, fixture_to_plane, line_peak_stress",
+     "status": "ADMITTED",
+     "rust_implementation": {
+      "crate": "abep-subsystems (abep_subsystems::power::{cplx, rf_match})",
+      "paths": [
+       "crates/abep-subsystems/src/power/cplx.rs",
+       "crates/abep-subsystems/src/power/rf_match.rs"
+      ]
+     },
+     "contract": {
+      "path": "docs/rust_migration/contracts/C-DOCS_EXPERIMENTS_HALL_ICP_P2_IMPEDANCE_MAP/parity_prereg_v1.json",
+      "id": "PARITY-C-DOCS_EXPERIMENTS_HALL_ICP_P2_IMPEDANCE_MAP-V1",
+      "sha256": "3486ec4db53a5cd574368743366403708866434a1b7b2851d5934a66bc13e3ea"
+     },
+     "admission_evidence": {
+      "path": "docs/rust_migration/contracts/C-DOCS_EXPERIMENTS_HALL_ICP_P2_IMPEDANCE_MAP/parity_report_v1.json",
+      "sha256": "641c50f24c76932918c15f8f11ef4aa7a593bdbd8ed986b7ebe3799324321b75",
+      "verdict": "ADMITTED",
+      "parity_verdict": "PARITY_PASS"
+     },
+     "not_in_scope": "verify_line_match_loss (and loss_check_protocol, loss_model_prediction, loss_statistic, network_cpl_to_ant, validate_calibration_set) and every other function of the P2 package, the document builders and owner-rule applications stay PYTHON_REFERENCE",
+     "pending": "verify_line_match_loss and the rest of the P2 package are still to migrate (a later contract version of this component)",
+     "report_disclosures": "binding statuses unchanged: RF matching LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT, RF ratings TBD_AFTER_IMPEDANCE_MAP",
+     "recorded": "2026-10-06",
+     "ci": ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+    }
+   ],
+   "status_note": "status stays PYTHON_REFERENCE for the remainder plus the ADMITTED partial admission(s); the module retires only when everything not ported is migrated or formally retired (RM-R17)"
   },
   {
    "id": "C-DOCS_EXPERIMENTS_HALL_ICP_P3_COUPLED_THERMAL",
@@ -5002,17 +5777,85 @@
    "classification_confidence": "PROPOSED",
    "classification_confidence_v3_1": "PLAN_APPROVED_A9_29",
    "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
-   "status": "PYTHON_REFERENCE",
+   "status": "ADMITTED",
    "authoritative_implementation": {
-    "kind": "python",
+    "kind": "rust",
+    "crate": "abep-julia-bridge",
     "paths": [
+     "crates/abep-julia-bridge/src/manifests.rs",
+     "crates/abep-julia-bridge/src/jobs.rs",
+     "crates/abep-julia-bridge/src/pin.rs",
+     "crates/abep-julia-bridge/src/sidecar.rs",
+     "crates/abep-julia-bridge/src/launch.rs"
+    ],
+    "admitted_scope": "whole module (_inputs, manifest, build, check) plus the launch specification, pin read and per-run sidecar of the contract",
+    "not_ported": "nothing of scripts/make_p5_n2_launch_manifests.py is left unported; the run-record EXACT_BYTES comparison against the Python-launched job is the registered platform test PT-02 (a separate test class, not an unported part)",
+    "python_reference": [
      "scripts/make_p5_n2_launch_manifests.py"
-    ]
+    ],
+    "python_note": "the Python file stays at its path as the migration reference; PYTHON_RETIRED_FROM_ACTIVE is not requested"
    },
-   "contract": null,
-   "admission_evidence": null,
+   "contract": {
+    "path": "docs/rust_migration/contracts/C-JULIA-BRIDGE-LAUNCH/parity_prereg_v1.json",
+    "id": "PARITY-C-JULIA-BRIDGE-LAUNCH-V1",
+    "sha256": "aad2eabf8173f85a194eaeaa51b9611adee5958a97abb6deeb9757705d41f836"
+   },
+   "admission_evidence": {
+    "path": "docs/rust_migration/contracts/C-JULIA-BRIDGE-LAUNCH/parity_report_v1.json",
+    "sha256": "46266d7d637b01856a046f367aebecbf544148e9dbefed6f8a6ebc6370f83588",
+    "verdict": "ADMITTED",
+    "parity_verdict": "PARITY_PASS"
+   },
    "simulation_completion_wp": "SC-WP-03",
-   "status_history": []
+   "status_history": [
+    {
+     "from": "PYTHON_REFERENCE",
+     "to": "PREREG_PARITY",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-JULIA-BRIDGE-LAUNCH/parity_prereg_v1.json"
+     ],
+     "history_entry": "Parity contract PARITY-C-JULIA-BRIDGE-LAUNCH-V1 (sha256 aad2eabf8173...) committed alone in 78d1f7b before any comparison; the committed file is unchanged since registration."
+    },
+    {
+     "from": "PREREG_PARITY",
+     "to": "RUST_IMPL",
+     "date": "2026-10-06",
+     "evidence": [
+      "crates/abep-julia-bridge/src/manifests.rs",
+      "crates/abep-julia-bridge/src/jobs.rs",
+      "crates/abep-julia-bridge/src/pin.rs",
+      "crates/abep-julia-bridge/src/sidecar.rs",
+      "crates/abep-julia-bridge/src/launch.rs",
+      "docs/rust_migration/contracts/C-JULIA-BRIDGE-LAUNCH/parity_report_v1.json"
+     ],
+     "history_entry": "Rust implementation abep-julia-bridge at d9009d3; the source sha256 values are recorded in the report build_provenance."
+    },
+    {
+     "from": "RUST_IMPL",
+     "to": "PARITY_PASS",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-JULIA-BRIDGE-LAUNCH/parity_report_v1.json"
+     ],
+     "history_entry": "Scoring execution of the registered contract (2026-10-06T08:36:12Z, scoring seed 8049142698439059425): report verdict ADMITTED, parity_verdict PARITY_PASS; report committed (sha256 46266d7d637b...)."
+    },
+    {
+     "from": "PARITY_PASS",
+     "to": "ADMITTED",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-JULIA-BRIDGE-LAUNCH/parity_report_v1.json",
+      "docs/HISTORY.md",
+      ".github/workflows/rust-workspace.yml"
+     ],
+     "history_entry": "Ledger flip on the committed admission evidence (the parity report), HISTORY entry 2026-10-06 (ledger update 2), crate tests in rust-workspace.yml. Admitted scope: whole module (_inputs, manifest, build, check) plus the launch specification, pin read and per-run sidecar of the contract. Not ported / out of scope: nothing of scripts/make_p5_n2_launch_manifests.py is left unported; the run-record EXACT_BYTES comparison against the Python-launched job is the registered platform test PT-02 (a separate test class, not an unported part). Platform tests PT-01 / PT-02 (docs/rust_migration/test_register/platform_tests_v1.json) are registered and NOT_RUN: the pinned Julia 1.11.7 / HallThruster.jl v0.23.1 toolchain is not available in normal CI; PT-02 stays pending and is required before any score-bearing campaign launched through abep-julia-bridge."
+    }
+   ],
+   "report_disclosures": "platform test PT-02 (run-record EXACT_BYTES) pending the pinned Julia toolchain; PT-01 NOT_RUN for the same reason",
+   "ci": [
+    ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+   ]
   },
   {
    "id": "C-SCRIPTS_MAKE_P5_XENON_CASES_PY",
@@ -5506,17 +6349,80 @@
    "classification_confidence": "OWNER_DECIDED_A9_28",
    "classification_confidence_v3_1": "OWNER_DECIDED_A9_28",
    "port_disposition": "MIGRATE_GENERIC_LOGIC_PRESERVE_VALUE_STATUS",
-   "status": "PYTHON_REFERENCE",
+   "status": "ADMITTED",
    "authoritative_implementation": {
-    "kind": "python",
+    "kind": "rust",
+    "crate": "abep-subsystems (abep_subsystems::mass::v5)",
     "paths": [
+     "crates/abep-subsystems/src/mass/v5.rs",
+     "crates/abep-subsystems/src/mass/rules.rs"
+    ],
+    "admitted_scope": "the whole builder (build_doc / render_md with verify_pins, a9_26_message2, rollup_v5, unresolved_v5, set_al09, system_margin_bid, assert_bid_margin_reading and the v4 helpers it calls); main() is replaced by `abep-mass build-v5 / check-v5`",
+    "not_ported": "nothing of build_mass_power_a9_v5.py is left unported (main() is replaced by the Rust CLI abep-mass); the v3 / v4 builder functions are class H history or K-MASS-RULES (own contract)",
+    "python_reference": [
      "docs/budgets/mass_power_a9_v5/build_mass_power_a9_v5.py"
-    ]
+    ],
+    "python_note": "the Python file stays at its path as the migration reference; PYTHON_RETIRED_FROM_ACTIVE is not requested"
    },
-   "contract": null,
-   "admission_evidence": null,
+   "contract": {
+    "path": "docs/rust_migration/contracts/C-DOCS_BUDGETS_MASS_POWER_A9_V5/parity_prereg_v1.json",
+    "id": "PARITY-C-DOCS_BUDGETS_MASS_POWER_A9_V5-V1",
+    "sha256": "3ca4edef06b9f79242e6638db21cf59d609639f8a7ad466108c4538344876ad0"
+   },
+   "admission_evidence": {
+    "path": "docs/rust_migration/contracts/C-DOCS_BUDGETS_MASS_POWER_A9_V5/parity_report_v1.json",
+    "sha256": "b78de50a51ac80dcce0806c86e574ac254eee61c221ae5772950bcca7017cb85",
+    "verdict": "ADMITTED",
+    "parity_verdict": "PARITY_PASS"
+   },
    "simulation_completion_wp": "SC-WP-07",
-   "status_history": []
+   "status_history": [
+    {
+     "from": "PYTHON_REFERENCE",
+     "to": "PREREG_PARITY",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-DOCS_BUDGETS_MASS_POWER_A9_V5/parity_prereg_v1.json"
+     ],
+     "history_entry": "Parity contract PARITY-C-DOCS_BUDGETS_MASS_POWER_A9_V5-V1 (sha256 3ca4edef06b9...) committed alone in 76638af before any comparison; the committed file is unchanged since registration."
+    },
+    {
+     "from": "PREREG_PARITY",
+     "to": "RUST_IMPL",
+     "date": "2026-10-06",
+     "evidence": [
+      "crates/abep-subsystems/src/mass/v5.rs",
+      "crates/abep-subsystems/src/mass/rules.rs",
+      "docs/rust_migration/contracts/C-DOCS_BUDGETS_MASS_POWER_A9_V5/parity_report_v1.json"
+     ],
+     "history_entry": "Rust implementation abep-subsystems (abep_subsystems::mass::v5) at 9fbd350; the source sha256 values are recorded in the report build_provenance."
+    },
+    {
+     "from": "RUST_IMPL",
+     "to": "PARITY_PASS",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-DOCS_BUDGETS_MASS_POWER_A9_V5/parity_report_v1.json"
+     ],
+     "history_entry": "Scoring execution of the registered contract (2026-10-06T13:09:34Z, scoring seed 2307932994): report verdict ADMITTED, parity_verdict PARITY_PASS; report committed (sha256 b78de50a51ac...)."
+    },
+    {
+     "from": "PARITY_PASS",
+     "to": "ADMITTED",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-DOCS_BUDGETS_MASS_POWER_A9_V5/parity_report_v1.json",
+      "docs/HISTORY.md",
+      ".github/workflows/rust-workspace.yml"
+     ],
+     "history_entry": "Ledger flip on the committed admission evidence (the parity report), HISTORY entry 2026-10-06 (ledger update 2), crate tests in rust-workspace.yml. Admitted scope: the whole builder (build_doc / render_md with verify_pins, a9_26_message2, rollup_v5, unresolved_v5, set_al09, system_margin_bid, assert_bid_margin_reading and the v4 helpers it calls); main() is replaced by `abep-mass build-v5 / check-v5`. Not ported / out of scope: nothing of build_mass_power_a9_v5.py is left unported (main() is replaced by the Rust CLI abep-mass); the v3 / v4 builder functions are class H history or K-MASS-RULES (own contract). Value status preserved (VS-01): AL-07 6.0 kg PROVISIONAL_LEGACY_DERIVED_ANALOG_INPUT / AFI-02-RA1_OPEN is unchanged by this admission and is never promoted to CBE / measured / frozen truth. The Rust roll-up reproduces dry 38.34901052 kg and wet 40.349 / 43.349 / 48.349 kg DOES_NOT_CLOSE, MASS INCOMPLETE_EVIDENCE."
+    }
+   ],
+   "report_disclosures": "registered divergences DIV-V01 / DIV-V02 (C1 / non-flight roll-up refused), DIV-V03 (production wet-mass read verifies the record sha256); cutover pin note",
+   "ci": [
+    ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+   ],
+   "value_status": "AL-07 6.0 kg PROVISIONAL_LEGACY_DERIVED_ANALOG_INPUT / AFI-02-RA1_OPEN preserved as recorded (VS-01); the admission changes no value status"
   },
   {
    "id": "C-DOCS_PROCUREMENT_RFQ_A9_V3_GAS_REV1",
