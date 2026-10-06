@@ -1,10 +1,12 @@
 //! Headline numbers of the NP-ICP-NEUTRALIZER v1 verification suite, as JSON on stdout:
 //! `cargo run -p abep-icp --example verification_table --locked`. The `cargo test` suite is the authoritative gate;
-//! this only records the measured values for `verification_report_v1.json`. Every case is SYNTHETIC_TEST_ONLY.
+//! this only records the measured values for the verification reports (v1; v2 adds NV-06 with the direct side and the
+//! registered-rate case). Every case is SYNTHETIC_TEST_ONLY; NV-06 compares registered rates only.
 
 use abep_icp::case::{CouplingMode, RfInput};
 use abep_icp::constants::{AMU, E_CHARGE, K_B, M_E};
 use abep_icp::coupling;
+use abep_icp::crosscheck::nv06_report;
 use abep_icp::physics;
 use abep_icp::testkit::*;
 use abep_icp::{IcpModel, IcpResult};
@@ -142,6 +144,44 @@ fn main() {
             "verify_items_on_path": r.verify_items_on_path,
         }));
     }
+    // NV-06 / UQ-06: direct integral (EQ-06, abep_chem::checked) vs the 1 eV .dat interpolation, every AIR channel.
+    let tes = [2.0, 3.0, 5.0, 7.5, 10.0, 15.0, 20.0, 30.0];
+    let nv = nv06_report(&m, &tes);
+    let mut nv06 = Vec::new();
+    for ch in &m.chem_registry.air.channels {
+        let rows: Vec<_> = nv.iter().filter(|r| r.reaction == ch.id).collect();
+        let rels: Vec<(f64, Option<f64>)> = rows.iter().map(|r| (r.t_e_ev, r.relative_difference.value)).collect();
+        let on_row = |t: f64| (1.5 * t).fract() == 0.0;
+        let max_abs = |pred: &dyn Fn(f64) -> bool| {
+            rels.iter()
+                .filter(|(t, _)| pred(*t))
+                .filter_map(|(_, x)| x.map(f64::abs))
+                .fold(None, |a: Option<f64>, x| Some(a.map_or(x, |a| a.max(x))))
+        };
+        nv06.push(json!({
+            "channel": ch.id,
+            "variant_role": ch.variant_role.as_str(),
+            "direct_status": rows[0].direct_rate_m3_s.status,
+            "direct_reasons": rows[0].direct_rate_m3_s.reasons,
+            "max_abs_rel_on_table_rows": max_abs(&on_row),
+            "max_abs_rel_between_rows": max_abs(&|t| !on_row(t)),
+            "rel_at_T_e_eV": rels.iter().map(|(t, x)| json!([t, x])).collect::<Vec<Value>>(),
+            "direct_k_m3_s_at_T_e_eV": rows.iter().map(|r| json!([r.t_e_ev, r.direct_rate_m3_s.value])).collect::<Vec<Value>>(),
+        }));
+    }
+    // The registered-rate solve (SYNTHETIC_TEST_ONLY geometry and power; registered N2 channels).
+    let ids = ["AIR-ION-03/ionization_N2_song2023", "AIR-EL-01/elastic_N2_song2023", "AIR-DIS-01/dissociation_N2"];
+    let set = n2_registered_rate_set(&m, &ids, &["N2", "N", "N2^+"]);
+    let rr = m.evaluate(&synthetic_case("SYN_N2_REGISTERED_RATES", set, floating_surfaces(), &[], 20.0));
+    let registered_rate_case = json!({
+        "status": rr.status,
+        "plasma_state": rr.plasma_state.value,
+        "T_e_eV": rr.equilibria.first().map(|e| e.t_e_ev),
+        "n_e_m3": rr.equilibria.first().map(|e| e.n_e_m3),
+        "scan_end_eV": rr.domain_checks.iter().find(|c| c.id == "IN-24_T_E_SCAN_END").and_then(|c| c.value),
+        "reasons": rr.reason_codes(),
+        "chemistry_validity": rr.chemistry_validity,
+    });
     let (_, p_abs, q_coil) = coupling::antenna_split(185.0, 0.04, 0.0);
     let out = json!({
         "LC-01_max_rel_T_e_vs_independent_root": lc01,
@@ -162,6 +202,10 @@ fn main() {
         "LC-09_vbar_N2_293K": vbar_n2,
         "LC-09_C_prime_N2": 0.25 * vbar_n2,
         "cases": rows,
+        "NV-06": nv06,
+        "registered_rate_case": registered_rate_case,
+        "abep_chem_admission": m.abep_chem_admission,
+        "chem_registry": m.chem_registry_provenance(),
     });
     println!("{}", serde_json::to_string_pretty(&out).unwrap());
 }

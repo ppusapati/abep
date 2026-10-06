@@ -4,12 +4,19 @@
 //! Root finding follows the prereg `numerical_verification` rules: T_e is bracketed on the full registered scan grid
 //! before refinement; every sign change is refined by bisection to adjacent doubles and reported; phi_p is solved in
 //! closed form inside each collection regime (the regimes cover the whole real line); no root is chosen silently.
+//!
+//! Rates (EQ-06): a synthetic rate is evaluated directly; a registered table only through its IF-CHEM-REG-v1
+//! representation and `abep_chem::checked` (never the `.dat`, never beyond the table's verified limit, IX-05). With
+//! registered tables the T_e scan therefore ends at the highest T_e at which every rate of the set is admissible; that
+//! end is a scan node and is reported (a root beyond it would be OUT_OF_DOMAIN under DOM-01 and is not searched).
 
 use crate::chemistry::{ChemistrySet, RateSource, ReactionKind};
 use crate::constants::{NumericalSettings, E_CHARGE, M_E};
 use crate::geometry::{Orientation, SurfaceKind, ThermalNode};
 use crate::physics;
+use abep_chem::checked::{self, CrossSection, Validity as ChemValidity};
 use serde::Serialize;
+use std::sync::Arc;
 
 /// A solver failure. Every variant is reported as MODEL_ERROR with all physics values null (FC-09, NV-05).
 #[derive(Debug, Clone, PartialEq, Serialize)]
@@ -53,6 +60,27 @@ pub enum PreparedNeutrals {
     Flow { inflow_per_s: Vec<f64> },
 }
 
+/// The direct-rate inputs of a registered-table reaction: its registered representation and validity entry
+/// (IF-CHEM-REG-v1); the rate is `abep_chem::checked::maxwellian_rate` (EQ-06).
+#[derive(Debug, Clone, PartialEq)]
+pub struct DirectRate {
+    pub channel: String,
+    pub xs: Arc<CrossSection>,
+    pub validity: ChemValidity,
+}
+
+impl DirectRate {
+    /// The largest T_e [eV] at which the checked integrator admits this table (3/2 T_e <= max_mean_energy_eV).
+    pub fn t_e_max_ev(&self) -> Option<f64> {
+        let ChemValidity::Verified { max_mean_energy_ev } = self.validity else { return None };
+        let mut t = max_mean_energy_ev / 1.5;
+        while 1.5 * t > max_mean_energy_ev {
+            t = t.next_down();
+        }
+        Some(t)
+    }
+}
+
 /// A fully registered, contract-checked case reduced to numbers.
 #[derive(Debug, Clone)]
 pub struct PreparedCase {
@@ -65,6 +93,8 @@ pub struct PreparedCase {
     pub neutrals: PreparedNeutrals,
     pub t_g_k: f64,
     pub p_abs_w: f64,
+    /// Per reaction: Some for a registered table (EQ-06 through abep-chem), None for a synthetic rate.
+    pub direct: Vec<Option<DirectRate>>,
 }
 
 impl PreparedCase {
@@ -93,16 +123,43 @@ impl PreparedCase {
         v
     }
 
-    fn rates(&self, t_e: f64) -> Vec<f64> {
-        self.set
-            .reactions
-            .iter()
-            .map(|r| match &r.rate {
-                RateSource::Synthetic { rate } => rate.eval(t_e),
-                // Never reached: registered tables are gated (EQ-06 needs the admitted abep-chem integrator).
-                RateSource::RegisteredTable { .. } => f64::NAN,
-            })
-            .collect()
+    /// Rate coefficients at T_e. A registered table is evaluated only through `abep_chem::checked`; a refusal there
+    /// (outside the table's validity, an invalid representation) is a solver failure, never a substituted value.
+    pub fn rates(&self, t_e: f64) -> Result<Vec<f64>, SolveFailure> {
+        let mut k = Vec::with_capacity(self.set.reactions.len());
+        for (i, r) in self.set.reactions.iter().enumerate() {
+            k.push(match (&r.rate, &self.direct[i]) {
+                (RateSource::Synthetic { rate }, None) => rate.eval(t_e),
+                (RateSource::RegisteredTable { .. }, Some(d)) => {
+                    match checked::maxwellian_rate(&d.xs, t_e, &d.validity) {
+                        Ok(e) => e.k_m3_s,
+                        Err(e) => {
+                            return fail("EQ-06_RATE_REFUSED", format!("{} at T_e = {t_e} eV: {e}", d.channel));
+                        }
+                    }
+                }
+                _ => return fail("EQ-06_RATE_SOURCE_UNPREPARED", format!("reaction {} has no prepared rate", r.id)),
+            });
+        }
+        Ok(k)
+    }
+
+    /// The upper end of the T_e scan: the registered IN-24 maximum, or the highest T_e at which every registered table
+    /// of the set is admissible, whichever is lower.
+    pub fn t_e_scan_max_ev(&self, num: &NumericalSettings) -> f64 {
+        self.direct.iter().flatten().filter_map(DirectRate::t_e_max_ev).fold(num.t_e_scan_max_ev, f64::min)
+    }
+
+    /// The T_e scan grid: the IN-24 log grid up to [`Self::t_e_scan_max_ev`], that end included as a node.
+    pub fn t_e_grid(&self, num: &NumericalSettings) -> Vec<f64> {
+        let full = log_grid(num.t_e_scan_min_ev, num.t_e_scan_max_ev, num.t_e_scan_points);
+        let top = self.t_e_scan_max_ev(num);
+        if top >= num.t_e_scan_max_ev {
+            return full;
+        }
+        let mut g: Vec<f64> = full.into_iter().filter(|&t| t < top).collect();
+        g.push(top);
+        g
     }
 
     fn h_values(&self, n_g_total: f64) -> Vec<f64> {
@@ -320,7 +377,7 @@ pub fn kinetics(
     collecting: &[bool],
     num: &NumericalSettings,
 ) -> Result<Kinetics, SolveFailure> {
-    let k = c.rates(t_e);
+    let k = c.rates(t_e)?;
     if k.iter().any(|x| !x.is_finite() || *x < 0.0) {
         return fail(
             "NV-05_NON_FINITE_RATE",
@@ -632,7 +689,7 @@ pub fn equilibrium_state(
 
 /// All equilibria at fixed n_e over every regime (inner problem: quasi-neutrality in T_e, current balance in phi_p).
 pub fn inner_equilibria(c: &PreparedCase, n_e: f64, num: &NumericalSettings) -> Result<Vec<Equilibrium>, SolveFailure> {
-    let grid = log_grid(num.t_e_scan_min_ev, num.t_e_scan_max_ev, num.t_e_scan_points);
+    let grid = c.t_e_grid(num);
     let mut out = Vec::new();
     for reg in regimes(c) {
         // Regime 0 of a biased case (every biased surface electron-saturated) has no current-balance root.

@@ -7,14 +7,19 @@ use crate::case::*;
 use crate::chemistry::{ChemistryRegistration, ChemistrySet, ClassAddress, RateSource, ReactionKind, Validity};
 use crate::constants::{NumericalSettings, E_CHARGE, F_RF_REGISTERED_HZ, KN_FREE_MOLECULAR_MIN, K_B, NUMERICS};
 use crate::constants::{P_100_MTORR_PA, TOL_CONS, TOL_SOLVE};
-use crate::context::{IcpModel, ACTIVE_BUS_BOUNDARY, CONTRACT_ID, MODEL_ID, MODEL_VERSION, N2_SET_CONFIG};
+use crate::context::{
+    validity_of_channel, IcpModel, ACTIVE_BUS_BOUNDARY, CONTRACT_ID, MODEL_ID, MODEL_VERSION, N2_SET_CONFIG,
+};
 use crate::coupling::{self, Calibrated, CM_PRED_BLOCKED_BY};
 use crate::evidence::{EvidenceRecord, QuantityType, UncertaintyRepr};
 use crate::geometry::{SurfaceKind, ThermalNode, Transmission};
 use crate::physics;
 use crate::result::*;
-use crate::solver::{self, Equilibrium, PreparedCase, PreparedH, PreparedNeutrals, PreparedSurface, SolveOutcome};
+use crate::solver::{
+    self, DirectRate, Equilibrium, PreparedCase, PreparedH, PreparedNeutrals, PreparedSurface, SolveOutcome,
+};
 use crate::status::{worst_of, IcpStatus, Quantity, Reason};
+use abep_chem::registry::Representation;
 use abep_provenance::sha256_hex;
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -366,32 +371,83 @@ impl Evaluator<'_> {
             }
             Some(_) => {}
         }
-        // Chemistry by mode (IN-16; G-A930-AIR; CHG-04 / CHG-05; NP-ICP-CHEM-AIR SP-01, SP-05, SP-07).
+        // Chemistry by mode, from the IF-CHEM-REG-v1 registry (IN-16; G-A930-AIR; CHG-04 / CHG-05; NP-ICP-CHEM-AIR
+        // SP-01, SP-04, SP-05, SP-07). No status is upgraded here (SP-08).
+        let mut x_comp: BTreeMap<String, Option<f64>> = BTreeMap::new();
+        if let Some(NeutralSource::RegisteredPressure { mole_fractions, .. }) = &c.neutral_source {
+            for (k, x) in &mole_fractions.value {
+                x_comp.insert(k.clone(), Some(*x));
+            }
+        }
+        if let Some(f) = &c.feed {
+            // A feed gives mass flows, not mole fractions: a species present cannot be shown to lie below the screen.
+            for (k, v) in &f.value.mdot_kg_s {
+                if *v > 0.0 {
+                    x_comp.entry(k.clone()).or_insert(None);
+                }
+            }
+        }
         let air_gate = |g: &mut Gate| {
-            let today = m.chem_air_today.get("AIR_PRIMARY").cloned().unwrap_or_default();
-            g.plasma.push(r("NP_ICP_CHEM_AIR_NOT_ADMITTED", S_IE, format!("G-A930-AIR (A9.30 sec. 4); {today}")));
-            for p in m.chem_air_tier1_gaps("AIR") {
+            let air = &m.chem_registry.air;
+            if !air.is_admitted() {
                 g.plasma.push(r(
-                    &format!("NP-ICP-CHEM-AIR:{}", p.id),
+                    &air.admission_reason_code,
                     S_IE,
-                    format!("tier {} {}: {}", p.tier, p.status, p.reaction),
+                    format!(
+                        "G-A930-AIR (A9.30 sec. 4); registry {} {}; {}",
+                        air.label, air.admission_status, air.admission_today
+                    ),
                 ));
             }
-            g.plasma.push(r(
-                "DOM-12_NO_NEGATIVE_ION_BALANCE",
-                S_IE,
-                "O2-bearing composition: v1 has no negative-ion balance (CHG-03; NEG-CRIT unevaluated, SP-05)",
-            ));
-        };
-        let xe_gate = |g: &mut Gate| {
-            let today = m.chem_air_today.get("XE_CONTINGENCY").cloned().unwrap_or_default();
-            g.plasma.push(r("CHG-04_NO_XE_RATE_SET", S_IE, "no registered Xe electron-impact or Xe+/Xe set"));
-            g.plasma.push(r("NP_ICP_CHEM_AIR_XE_NOT_ADMITTED", S_IE, today));
-            for p in m.chem_air_tier1_gaps("XE") {
+            for p in air.tier1_gaps() {
                 g.plasma.push(r(
                     &format!("NP-ICP-CHEM-AIR:{}", p.id),
                     S_IE,
-                    format!("tier {} {}: {}", p.tier, p.status, p.reaction),
+                    format!("tier {} {}: {}", p.tier, p.status.as_str(), p.reaction),
+                ));
+            }
+            for b in air.species_bounds.iter().filter(|b| b.status == "UNRESOLVED") {
+                let x = x_comp.get(&b.species);
+                let applies = match b.scope.as_str() {
+                    "EVERY_AIR_COMPOSITION" => true,
+                    _ => x.is_some_and(|x| x.is_none_or(|x| x > b.x_screen)),
+                };
+                if applies {
+                    g.plasma.push(r(
+                        &format!("SP-04_SPECIES_BOUND_UNRESOLVED:{}", b.id),
+                        S_IE,
+                        format!("{} {} (x_screen {}): {}", b.species, b.status, b.x_screen, b.scope),
+                    ));
+                }
+            }
+            if air.neg_crit_status.as_deref() != Some("PASSED") {
+                g.plasma.push(r(
+                    "DOM-12_NO_NEGATIVE_ION_BALANCE",
+                    S_IE,
+                    format!(
+                        "O2-bearing composition: v1 has no negative-ion balance (CHG-03; NEG-CRIT {}, SP-05)",
+                        air.neg_crit_status.as_deref().unwrap_or("absent")
+                    ),
+                ));
+            }
+        };
+        let xe_gate = |g: &mut Gate| {
+            let xe = &m.chem_registry.xe;
+            if xe.channels.is_empty() {
+                g.plasma.push(r("CHG-04_NO_XE_RATE_SET", S_IE, "no registered Xe electron-impact or Xe+/Xe set"));
+            }
+            if !xe.is_admitted() {
+                g.plasma.push(r(
+                    &xe.admission_reason_code,
+                    S_IE,
+                    format!("registry {} {}; {}", xe.label, xe.admission_status, xe.admission_today),
+                ));
+            }
+            for p in xe.tier1_gaps() {
+                g.plasma.push(r(
+                    &format!("NP-ICP-CHEM-AIR:{}", p.id),
+                    S_IE,
+                    format!("tier {} {}: {}", p.tier, p.status.as_str(), p.reaction),
                 ));
             }
         };
@@ -420,16 +476,12 @@ impl Evaluator<'_> {
                     ));
                     None
                 } else {
-                    g.plasma.push(r(
-                        "OQ-NPICP-04_ICP_COMPLETENESS_AUDIT_OPEN",
-                        S_IE,
-                        "COMPLETE_FOR_P5_N2_VALIDATION was decided for Hall conditions; no ICP-domain audit (NE-06)",
-                    ));
-                    if !m.icp_registry_present {
+                    let ca = &m.chem_registry.air.completeness_audit_status;
+                    if ca != "FINAL" {
                         g.plasma.push(r(
-                            "IF-CHEM-REG-v1_ICP_REGISTRY_NOT_BUILT",
-                            S_NE,
-                            "data/chemistry/icp/ registry (NP-ICP-CHEM-AIR build plan BP-S1) does not exist",
+                            "OQ-NPICP-04_ICP_COMPLETENESS_AUDIT_OPEN",
+                            S_IE,
+                            format!("CA-ICP-v1 {ca}: COMPLETE_FOR_P5_N2_VALIDATION was decided for Hall conditions and does not transfer (RU-03, NE-06)"),
                         ));
                     }
                     Some(m.n2_set.clone())
@@ -487,8 +539,36 @@ impl Evaluator<'_> {
                 }
                 Validity::Verified { .. } => {}
             }
-            if matches!(rx.rate, RateSource::RegisteredTable { .. }) {
+            if let RateSource::RegisteredTable { file } = &rx.rate {
                 registered_table = true;
+                match self.m.chem_channel_for_table(file) {
+                    None => g.plasma.push(r(
+                        &format!("IF-CHEM-REG-v1_UNREGISTERED_FILE:{}", rx.id),
+                        S_ME,
+                        format!("{file} has no channel in the ICP registry"),
+                    )),
+                    Some(ch) => {
+                        let products: Vec<(String, u32)> = ch.products.iter().map(|(k, n)| (k.clone(), *n)).collect();
+                        if ch.target != rx.target
+                            || products != rx.products
+                            || ch.threshold_ev.to_bits() != rx.threshold_ev.to_bits()
+                            || validity_of_channel(&ch.validity) != rx.validity
+                        {
+                            g.plasma.push(r(
+                                &format!("IF-CHEM-REG-v1_REACTION_DIFFERS_FROM_REGISTRY:{}", rx.id),
+                                S_ME,
+                                format!("target, products, E_r or validity differ from channel {}", ch.id),
+                            ));
+                        }
+                        if let Representation::NotRegistered { kind, gap } = &ch.representation {
+                            g.plasma.push(r(
+                                &format!("EQ-06_REPRESENTATION_NOT_REGISTERED:{}", ch.id),
+                                S_IE,
+                                format!("{kind}: {gap}"),
+                            ));
+                        }
+                    }
+                }
             }
             match rx.kind {
                 ReactionKind::ElasticMomentumTransfer => {
@@ -504,11 +584,14 @@ impl Evaluator<'_> {
                 _ => {}
             }
         }
-        if registered_table {
+        if registered_table && !self.m.abep_chem_admitted {
             g.plasma.push(r(
                 "EQ-06_ABEP_CHEM_INTEGRATOR_NOT_ADMITTED",
                 S_NE,
-                "rates come only from the admitted abep-chem port of rate_tables.maxwellian_rate (EX-01, EQ-06, IF-CHEM-REG-v1); the .dat interpolation is a cross-check only (NV-06)",
+                format!(
+                    "rates come only from the admitted abep-chem port of rate_tables.maxwellian_rate (EX-01, EQ-06, IF-CHEM-REG-v1); {}",
+                    self.m.abep_chem_admission
+                ),
             ));
         }
         for k in self.case.dispositions.keys() {
@@ -901,6 +984,22 @@ impl Evaluator<'_> {
                 (PreparedNeutrals::Flow { inflow_per_s: inflow }, t_g_k.value)
             }
         };
+        let mut direct = Vec::with_capacity(set.reactions.len());
+        for rx in &set.reactions {
+            direct.push(match &rx.rate {
+                RateSource::Synthetic { .. } => None,
+                RateSource::RegisteredTable { file } => {
+                    match self.m.chem_channel_for_table(file).map(|c| (c, &c.representation)) {
+                        Some((ch, Representation::CrossSection { xs, .. })) => {
+                            Some(DirectRate { channel: ch.id.clone(), xs: xs.clone(), validity: ch.validity.clone() })
+                        }
+                        _ => {
+                            return Err(vec![r("INTERNAL_EQ06_GATE", S_ME, format!("{} passed the EQ-06 gate", rx.id))])
+                        }
+                    }
+                }
+            });
+        }
         let mut cal = None;
         let p_abs = match (&c.coupling_mode, c.rf_input.as_ref().expect("gated")) {
             (CouplingMode::Absorbed, RfInput::AbsorbedPower { p_abs_w }) => p_abs_w.value,
@@ -936,6 +1035,7 @@ impl Evaluator<'_> {
                 neutrals,
                 t_g_k: t_g,
                 p_abs_w: p_abs,
+                direct,
             },
             cal,
         ))
@@ -953,6 +1053,18 @@ impl Evaluator<'_> {
             let t = p.set.species_index(&rx.target).expect("checked");
             let lim = match rx.validity {
                 Validity::Verified { max_mean_energy_ev } => Some(max_mean_energy_ev),
+                _ => None,
+            };
+            // UQ-06 / NV-06 at the solution: the .dat interpolation against the direct rate (cross-check only).
+            let (direct_k, dat_k) = match (t_e, &k, &rx.rate) {
+                (Some(te), Some(k), RateSource::RegisteredTable { file }) => {
+                    (Some(k[ri]), self.m.n2_tables.get(file).and_then(|d| d.rate_at_te(te)))
+                }
+                _ => (None, None),
+            };
+            let dat_rel = match (direct_k, dat_k) {
+                (Some(a), Some(b)) if a > 0.0 => Some((b - a) / a),
+                (Some(a), Some(b)) if a == 0.0 && b == 0.0 => Some(0.0),
                 _ => None,
             };
             let (eps, share, st) = match (t_e, &k) {
@@ -975,6 +1087,9 @@ impl Evaluator<'_> {
                 mean_energy_ev: eps,
                 activity_share_beyond_limit: share,
                 status: st,
+                direct_rate_m3_s: direct_k,
+                dat_rate_m3_s: dat_k,
+                dat_minus_direct_relative: dat_rel,
             });
             if st == S_OOD {
                 checks.push(CheckRecord {
@@ -985,6 +1100,15 @@ impl Evaluator<'_> {
                     detail: "3/2 T_e above the table's max_mean_energy_eV with nonzero activity".into(),
                 });
             }
+        }
+        if p.direct.iter().any(Option::is_some) {
+            checks.push(CheckRecord {
+                id: "IN-24_T_E_SCAN_END".into(),
+                status: S_CONV,
+                value: Some(p.t_e_scan_max_ev(self.num)),
+                tolerance: None,
+                detail: "T_e scan end [eV]: the highest T_e at which every registered table is admissible (EQ-06, IX-05: no rate beyond a verified limit); a root beyond it would be OUT_OF_DOMAIN (DOM-01) and is not searched".into(),
+            });
         }
         if let Some(te) = t_e {
             let [lo, hi] = p.set.t_e_domain_ev;
@@ -2305,6 +2429,7 @@ impl Evaluator<'_> {
             prereg_sha256: self.m.prereg_sha256.clone(),
             addendum_01_sha256: self.m.addendum_sha256.clone(),
             chem_air_lock_sha256: self.m.chem_air_lock_sha256.clone(),
+            chem_registry: self.m.chem_registry_provenance(),
             input_sha256: input,
             data_files_sha256: self.m.files_read.iter().map(|f| (f.path.clone(), f.sha256.clone())).collect(),
             rust_commit: self.m.rust_commit.clone(),

@@ -415,6 +415,10 @@ fn fc_chem_04_a_changed_pinned_byte_is_model_error() {
         ("rv", "hallthruster_bridge/propellants/rate_validity.toml"),
         ("pre", "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/prereg_v1.json"),
         ("ens", "hallthruster_bridge/ensemble/transport_ensemble_v0.json"),
+        ("reg", "data/chemistry/icp/ICP_CHEM_PINNED.toml"),
+        ("air", "data/chemistry/icp/registry_air.toml"),
+        ("xs", "data/chemistry/icp/xs/ionization_N2_song2023.json"),
+        ("chem", "docs/rust_migration/contracts/C-ABEP_SIM_RATE_TABLES_PY/parity_report_v1.json"),
     ] {
         let root = copy_root(tag, Some((file, &|t: String| format!("{t} "))));
         let e = abep_icp::IcpModel::load(&root).expect_err(file);
@@ -587,13 +591,22 @@ fn n2_demonstration_case_is_not_evaluated_with_every_missing_input_listed() {
         "IN-12_NEUTRAL_SOURCE_NOT_REGISTERED",
         "IN-17_NO_EDGE_FACTOR_SOURCE",
         "DOM-06_B_ICP_NOT_REGISTERED",
-        "EQ-06_ABEP_CHEM_INTEGRATOR_NOT_ADMITTED",
-        "IF-CHEM-REG-v1_ICP_REGISTRY_NOT_BUILT",
         "OQ-NPICP-04_ICP_COMPLETENESS_AUDIT_OPEN",
         "PROCESS_CLASS_GATE_UNADDRESSED",
+        // EQ-06 through IF-CHEM-REG-v1: no registered direct-rate representation for these registered tables.
+        "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-ION-04/ionization_N",
     ] {
         assert!(has(&r, code), "{code}");
     }
+    for vf in 1..=10 {
+        assert!(has(&r, &format!("EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_{vf}")));
+    }
+    // The integrator is admitted and the registry is built: those v1 reasons are gone, nothing else is relaxed.
+    assert!(model().abep_chem_admitted, "{}", model().abep_chem_admission);
+    assert!(!has(&r, "EQ-06_ABEP_CHEM_INTEGRATOR_NOT_ADMITTED"));
+    assert!(!has(&r, "IF-CHEM-REG-v1_ICP_REGISTRY_NOT_BUILT"));
+    let eq06: Vec<String> = r.reason_codes().into_iter().filter(|c| c.starts_with("EQ-06")).collect();
+    assert_eq!(eq06.len(), 11, "{eq06:?}");
     assert!(r.reasons.iter().all(|x| x.status != IcpStatus::ModelError), "{:#?}", r.reasons);
     assert!(r.scalar("I_e_cap_A").value.is_none());
 }
