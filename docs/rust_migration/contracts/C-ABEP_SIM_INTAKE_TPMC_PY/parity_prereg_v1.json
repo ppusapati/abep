@@ -1,0 +1,439 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-ABEP_SIM_INTAKE_TPMC_PY-V1",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "component": {
+  "inventory_id": "C-ABEP_SIM_INTAKE_TPMC_PY",
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "migration_wave": "W1 (remainder; the trace kernels are Kernel 1, W0, ADMITTED by parity_report_v2)",
+  "scope": "named function subset (kernel granularity, RM-R17): the intake response layer and the frozen intake surface reader / interpolant of abep_sim/intake_tpmc.py",
+  "functions_or_entry_points": [
+   "abep_sim/intake_tpmc.py::intake_response",
+   "abep_sim/intake_tpmc.py::response_surface",
+   "abep_sim/intake_tpmc.py::clausing_transmission",
+   "abep_sim/intake_tpmc.py::IntakeSurface (__init__ on a species-resolved frozen v1 table, __call__, domain, in_bounds, _row, bounds, species, max_unresolved)",
+   "abep_sim/intake_tpmc.py::IntakeGeometry (defaults)",
+   "abep_sim/intake_tpmc.py::_check_scattering / _check_accommodation / _check_unit_interval (as used by the entry points above)",
+   "abep_sim/intake_tpmc.py::SCATTERING_MODELS, K_BACK_SCATTERING, FROZEN_SURFACE, frozen_surface_path",
+   "abep_sim/intake_surface_v2_spec.py::build_intake_surface_v2 / v2_build_status (only the fail-closed gate 'intake surface v2 axes unregistered -> NOT_EVALUATED', SC-WP-02 determining_evidence_gates_fail_closed; the spec module itself is C-ABEP_SIM_INTAKE_SURFACE_V2_SPEC_PY and gets its own contract)"
+  ],
+  "out_of_scope": [
+   "abep_sim/intake_tpmc.py::trace_channel, _drifting_maxwellian, _flux_weighted_entry, _diffuse, _cll: Kernel 1, ADMITTED (docs/performance/abep_core/parity_report_v2.json, STATISTICAL, xoshiro256++); consumed by the Rust intake through abep_core under ADDENDUM-ABEP-CORE-BUILD-EQUIVALENCE-V1 (EQUIVALENT, result_v1.json); not re-scored here (A9.29 sec. 7)",
+   "abep_sim/intake_tpmc.py::build_frozen_surface and the `build` CLI: frozen-data rebuild (CLAUDE.md rule 1); never run and not ported by this contract",
+   "abep_sim/intake_tpmc.py::frozen_surface_build_atmosphere: an atmosphere read (lane B1 / abep-atmos); the Rust IntakeSurface takes m_mean_build_kg as an explicit constructor input exactly as the Python constructor does, and the harness supplies the Python value",
+   "abep_sim/intake_tpmc.py::IntakeSurface.call_legacy_mass_weighted: HISTORICAL EVIDENCE ONLY (A9.9 S2.1), never used by the production chain; not ported",
+   "abep_sim/intake_tpmc.py::IntakeSurface over any table other than the frozen v1 point set (a species-less 'mean' table, response_surface output): no active caller; the Rust surface accepts only the frozen v1 tables (DIV-04)",
+   "abep_sim/intake_tpmc.py::_check_hit_budget (trace only; Kernel 1)"
+  ],
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+  "extract_kernel_id": "NOT_APPLICABLE",
+  "active_toolchain_requirement": "NOT_APPLICABLE",
+  "excluded_legacy_paths": [
+   "IntakeSurface.call_legacy_mass_weighted (historical pre-A9.9-S2.1 recombination)",
+   "the inventory row lists no not_ported_parts; no LaB6 / hollow-cathode / C1 / multi-family path is reachable from this module"
+  ],
+  "owner_disposition_a9_28": "NOT_APPLICABLE (the inventory row carries no owner_disposition_a9_28)",
+  "simulation_completion_wp": "SC-WP-02 (element 'intake TPMC (Kernel 1 trace kernels ADMITTED; response layer, F1 intake synthesis)'), ES-3",
+  "owner_disposition_a9_29": "NOT_APPLICABLE as a row field; the row notes record A9.29 secs. 5 and 7 verbatim in substance: 'the Rust intake calls the admitted abep_core TPMC library directly; TPMC particle tracing keeps the admitted Kernel-1 STATISTICAL contract (EXACT_STREAM does not apply to it)'. abep_sim/design/tpmc_backend.py DEFAULT_BACKEND stays 'python'; no flip step (RM-OQ-01)"
+ },
+ "date": "2026-10-05",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of this component was executed. At registration the Rust intake response layer and IntakeSurface are not implemented, no vector of this contract has been evaluated by either implementation, and no development comparison has run. Analyses of the Python reference alone were made before registration and are recorded here (the Qhull triangulation of the frozen grid, its conditioning, and the pandas float-parser deviation, DIV-05). Every tolerance, observable, vector rule, seed, n and decision rule below is fixed; a change is a new contract version with fresh scoring seeds.",
+ "supersedes": {
+  "path": null,
+  "sha256": null,
+  "reason": null
+ },
+ "reference_implementation": {
+  "python_commit": "96db5524ec917e99e507def24f3ee0b263c78ebc (integration/simulation-complete HEAD the lane branched from; the reference files below are byte-identical at the branch commits)",
+  "files": [
+   {
+    "path": "abep_sim/intake_tpmc.py",
+    "sha256_at_registration": "dcddf947c273d71d2f030895cd8ea9916919f816401c20e30b7ca4d177172433"
+   },
+   {
+    "path": "abep_sim/constants.py",
+    "sha256_at_registration": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7"
+   },
+   {
+    "path": "abep_sim/atmosphere.py",
+    "sha256_at_registration": "690d6931bb595c14736db9d9c284fb4e2f98727a8749262edebe3d8621e87e8b"
+   },
+   {
+    "path": "abep_sim/intake_surface_v2_spec.py",
+    "sha256_at_registration": "a34568abe619bb1c2113bbae83aea8305847d638865dd0a78fbd9a5a8d8392bc"
+   }
+  ],
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration; a changed reference requires a new contract version",
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4",
+   "scipy": "1.17.1 (bundled Qhull: qhull_r 8.0.2 (2020.2.r 2020/08/31))",
+   "pandas": "3.0.2",
+   "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+   "blas": "scipy-openblas 0.3.31.188.0 (numpy build configuration)",
+   "thread_env": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1"
+   }
+  }
+ },
+ "rust_implementation": {
+  "crate": "abep-intake",
+  "functions_or_entry_points": [
+   "abep_intake::tpmc_response::intake_response",
+   "abep_intake::tpmc_response::response_surface",
+   "abep_intake::tpmc_response::clausing_transmission",
+   "abep_intake::surface::IntakeSurface::load_frozen_v1 / eval / domain / in_bounds / max_unresolved",
+   "abep_intake::surface::surface_v2_gate",
+   "harness CLI: crates/abep-intake/examples/intake_parity.rs (JSON request -> JSON response), driven by scripts/rust_migration/parity_intake.py"
+  ],
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (e408947bf 2026-03-25), rust-toolchain.toml",
+  "tpmc_library": "abep_core (Kernel 1, ADMITTED, parity_report_v2) as a path dependency without features; build equivalence: docs/rust_migration/contracts/C-ABEP_CORE_BUILD_EQUIVALENCE/result_v1.json (sha256 0ad402fc19a30f135e0f8e27170bed206112aef2ead458c0fc0cbac15ba5ccf4, verdict EQUIVALENT)",
+  "interpolant_reproduction": {
+   "statement": "IntakeSurface interpolates with scipy LinearNDInterpolator(rescale=True): points rescaled to (p - mean) / ptp, Delaunay triangulation by Qhull ('Qbb Qc Qz Q12' + 'Qt'), linear (barycentric) interpolation in the containing simplex. The v1 grid is a full tensor product (4 x 2 x 5 x 3), so the Delaunay problem is degenerate: every grid cell has 16 cospherical corners and the interpolant depends on the simplices Qhull returns (830 simplices, 259 of them degenerate and never selected, 571 non-degenerate, each inside one grid cell; any other triangulation, or multilinear interpolation, differs by up to about 10 % in CR_passive). The Rust surface therefore does not re-triangulate: it reads the reference's own triangulation, captured from the reference environment by scripts/rust_migration/capture_intake_surface_triangulation.py into crates/abep-intake/data/intake_surface_v1_delaunay_v1.json (sha256 247601cf51cff450759a2148179242e8085eb8fb0b878d87e44ea86e644faf7b; 30 interpolators (2 scattering x 3 species x 5 columns) checked identical at capture), hash-pinned in the crate.",
+   "rust_load_checks": "on load the Rust surface (a) verifies the capture sha256 and the frozen CSV / JSON sha256, (b) checks that every (scattering, species) table lists the captured 120 points in the captured order, (c) recomputes offset (sequential row sum / 120) and scale (max - min) and requires them bitwise equal to the captured values, (d) checks that every non-degenerate simplex lies in one grid cell and that the non-degenerate simplices of each cell have integer index-space volumes |det| summing to 4! (exact tiling), and that every degenerate simplex has index-space volume 0. Any failure is MODEL_ERROR (fail closed).",
+   "rust_evaluation": "query rescaled as (x - offset) / scale; the first non-degenerate simplex (in captured order) whose barycentric coordinates all lie in [-eps, 1 + eps], eps = 100 DBL_EPSILON (scipy's eps), is used; barycentric coordinates c_i = sum_j Tinv[i][j] (x_j - r_j), c_4 = 1 - sum c_i, with r = vertex 4 and Tinv from Gaussian elimination with partial pivoting of T[i][j] = p[s_j][i] - r[i] (scipy uses LAPACK; differences are rounding only); value = sum_k c_k v[s_k] in vertex order starting from 0. Scipy selects among simplices containing a boundary point by its own walk; values on shared faces agree up to rounding. No containing simplex -> OUT_OF_DOMAIN (Python: NaN -> _row refuses).",
+   "why_this_is_not_a_synthetic_reference": "the capture is the reference implementation's own internal structure over the frozen data, not a reference output; reference values are never captured into the Rust implementation"
+  },
+  "provenance_sources": [
+   "Cargo.toml",
+   "Cargo.lock",
+   "rust-toolchain.toml",
+   "crates/abep-intake/Cargo.toml",
+   "crates/abep-intake/src/**",
+   "crates/abep-intake/data/intake_surface_v1_delaunay_v1.json",
+   "crates/abep-intake/examples/intake_parity.rs",
+   "abep_core/Cargo.toml, Cargo.lock, src/*.rs (parity_report_v2 build_provenance)"
+  ],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it (A9.14 S10.4 RUSTCI-1, generalised)"
+ },
+ "governing_hashes": {
+  "config_manifest": {
+   "path": "config/MANIFEST.json",
+   "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+  },
+  "architecture_hash": "NOT_APPLICABLE (the intake response and surface take no architecture configuration; their inputs are listed explicitly in inputs)",
+  "model_set_hash": "NOT_APPLICABLE",
+  "design_state_set_hash": "NOT_APPLICABLE (free-stream states are the nine frozen NRLMSIS states named in inputs, read from atmosphere_msis21_v1 by the Python reference and passed to Rust as explicit numbers)",
+  "rule": "both implementations must report these exact values for every run; a mismatch voids the run (status INPUT_MISMATCH, not a verdict)"
+ },
+ "pinned_inputs_sha256": {
+  "abep_sim/data/intake_surface_v1.csv": "62b804924d801f913420a05142d4fe62137a7619eca17ae7786da5bef005c09a",
+  "abep_sim/data/intake_surface_v1.json": "5b26b7fd60272537dd0e719a122cb874233c6dd777202ab164b159cc7215d425",
+  "abep_sim/data/atmosphere_msis21_v1.csv": "5e108c6e5cb7c03ed9b741233fafbc71c7813987e1ff3d0596b04c99c4a9bff7",
+  "abep_sim/data/atmosphere_msis21_v1.json": "38a6f662521a8795b28186ccab5fbb007da59a861f59fde50400e7092e181160",
+  "docs/performance/abep_core/parity_report_v2.json": "ed3867776bb8c21a108e6de94cf86ade7adce0ea5695bc6bb4da023b9a52ae45",
+  "docs/rust_migration/contracts/C-ABEP_CORE_BUILD_EQUIVALENCE/result_v1.json": "0ad402fc19a30f135e0f8e27170bed206112aef2ead458c0fc0cbac15ba5ccf4",
+  "crates/abep-intake/data/intake_surface_v1_delaunay_v1.json": "247601cf51cff450759a2148179242e8085eb8fb0b878d87e44ea86e644faf7b"
+ },
+ "frozen_data_read_only": [
+  "abep_sim/data/intake_surface_v1.csv",
+  "abep_sim/data/intake_surface_v1.json",
+  "abep_sim/data/atmosphere_msis21_v1.csv (read by the Python reference only, to produce the explicit free-stream inputs)",
+  "never regenerated (CLAUDE.md rule 1; RM-R16); the Rust reader verifies sha256 on every load"
+ ],
+ "inputs": {
+  "free_stream_states": "the nine frozen states abep_sim.atmosphere.atmosphere(alt, solar, use_msis=False), alt in (180, 200, 230) km, solar in (low, mean, high); the Rust side receives n, rho, V, T, m_mean, fO, fN2, fO2, flux_kg_m2_s as explicit JSON numbers (shortest round-trip repr, read bit-exactly with serde_json float_roundtrip); 'atm 200 mean' below means alt 200, solar mean",
+  "m_mean_build_kg": "abep_sim.intake_tpmc.frozen_surface_build_atmosphere()['m_mean'] (the value intake._tpmc_surface passes), given to both constructors",
+  "golden_vectors": {
+   "source": "registered grid below (frozen-surface build conditions: IntakeGeometry defaults, atm 200 mean, T_w 350 K, d 10 mm, area 0.5 m2)",
+   "count": "E1 30, E2 9, E3 2 calls (34 rows), E4 296",
+   "list_or_generator": {
+    "E1_intake_response": "golden_grid (24): for L_over_d in (3, 5, 10, 20), alpha in (0.0, 0.5, 1.0), scattering in ('maxwell', 'cll'): IntakeGeometry(area_m2=0.5, L_over_d, phi=0.85), atm 200 mean, theta_deg 0.0, species_mass M_SPECIES['N2'], n 4000. golden_species (6): for species in ('O', 'O2', 'mean'), theta_deg in (2.0, 5.0): IntakeGeometry(area_m2=0.5, L_over_d=10, phi=0.8), alpha 0.8, 'maxwell', species_mass M_SPECIES[species] ('mean': None), n 4000",
+    "E2_clausing_transmission": "for L_over_d in (3, 10, 20), alpha in (0.0, 0.5, 1.0): R 0.005 m, L = L_over_d x 0.01 m, T_w 350 K, m = M_SPECIES['N2'], n 20000",
+    "E3_response_surface": "RS-1: response_surface(atm 200 mean, L_over_d=(3, 20), phis=(0.8, 0.9), alphas=(0.0, 1.0), thetas=(0.0, 5.0), n=1000, area_m2=0.5, species=('O', 'N2'), scattering='cll') -> 32 rows; RS-2: response_surface(atm 200 mean, L_over_d=(5,), phis=(0.85,), alphas=(0.5,), thetas=(0.0, 2.0), n=1000, area_m2=0.5, species=None, scattering='maxwell') -> 2 rows",
+    "E4_IntakeSurface": "golden_nodes (240): for scattering in ('maxwell', 'cll'), for each of the 120 captured points in order: fractions {O: fO, N2: fN2, O2: fO2} of atm 200 mean. golden_points (56): for point in ((10, 0.85, 0.5, 0.0), (5, 0.85, 0.8, 0.0)), scattering in ('maxwell', 'cll'), fractions in [the 9 frozen states {O: fO, N2: fN2, O2: fO2} in order (180, 200, 230) x (low, mean, high); {O: 1.0}; {N2: 1.0}; {O2: 1.0}; {N2: 1.0, O: 1.0}; {O2: 0.3, O: 0.7, Xe: 0.0}]"
+   }
+  },
+  "edge_cases": [
+   {"id": "E1-E01", "entry": "E1", "inputs": {"filter": true, "L_over_d": 5, "phi": 0.85, "alpha": 0.5, "scattering": "maxwell", "theta_deg": 0.0, "species": "N2"}, "note": "filter branch of eta_c / K_back / mass"},
+   {"id": "E1-E02", "entry": "E1", "inputs": {"L_over_d": 5, "phi": 0.85, "alpha": 0.8, "scattering": "maxwell", "theta_deg": 30.0, "species": "N2"}, "note": "large incidence"},
+   {"id": "E1-E03", "entry": "E1", "inputs": {"L_over_d": 0.5, "phi": 0.85, "alpha": 1.0, "scattering": "cll", "theta_deg": 0.0, "species": "N2"}, "note": "short channel, CLL diffuse limit"},
+   {"id": "E1-E04", "entry": "E1", "inputs": {"T_wall_K": 100.0, "L_over_d": 5, "phi": 0.85, "alpha": 0.5, "scattering": "maxwell", "theta_deg": 0.0, "species": "N2"}, "note": "cold wall"},
+   {"id": "E1-E05", "entry": "E1", "inputs": {"atm": "180 low", "species": "mean", "L_over_d": 10, "phi": 0.85, "alpha": 0.5, "scattering": "maxwell", "theta_deg": 0.0}, "note": "off-build free stream, mixture mass"},
+   {"id": "E1-E06", "entry": "E1", "inputs": {"atm": "230 high", "species": "mean", "L_over_d": 10, "phi": 0.85, "alpha": 0.5, "scattering": "cll", "theta_deg": 0.0}, "note": "off-build free stream, CLL"},
+   {"id": "E1-E07", "entry": "E1", "inputs": {"area_m2": 1.0, "d_mm": 5.0, "phi": 0.5, "L_over_d": 8, "alpha": 0.3, "scattering": "maxwell", "theta_deg": 1.0, "species": "N2"}, "note": "geometry variation (R, L, mass)"},
+   {"id": "E2-E01", "entry": "E2", "inputs": {"L_over_d": 5, "alpha": 0.8, "species": "O", "T_w_K": 100.0, "n": 20000}, "note": "cold wall, light species"},
+   {"id": "E2-E02", "entry": "E2", "inputs": {"L_over_d": 0.5, "alpha": 0.2, "species": "O2", "T_w_K": 350.0, "n": 20000}, "note": "short channel"}
+  ],
+  "edge_case_defaults": "unspecified fields as golden: IntakeGeometry defaults with area_m2 0.5 (E1-E07 sets area / d), atm 200 mean, n 4000 (E1), species N2",
+  "randomized_domain": {
+   "count": "E1 16, E4 200 (+ E4 faces 32)",
+   "draw": "E1: numpy.random.default_rng(numpy.random.SeedSequence([master, 1, 0, 3])); per vector in this field order: L_over_d = exp(U[ln 1, ln 30]); phi U[0.5, 0.95]; alpha U[0, 1]; theta_deg U[0, 10]; scattering 'maxwell' if U < 0.5 else 'cll'; species ('O', 'N2', 'O2', 'mean')[integers(0, 4)]; alt (180, 200, 230)[integers(0, 3)]; solar ('low', 'mean', 'high')[integers(0, 3)]; T_wall_K U[250, 450]; filter U < 0.25; other geometry defaults, area 0.5, n 4000. E4 randomized: default_rng(SeedSequence([master, 4, 0, 3])); per point: L_over_d U[3, 20]; phi U[0.8, 0.9]; alpha U[0, 1]; theta_deg U[0, 5]; scattering 'maxwell' if U < 0.5 else 'cll'; raw weights w_O, w_N2, w_O2 each U[0, 1]; then three U, each < 0.1 zeroes the corresponding weight; if all three are zero, w_N2 = 1.0; fractions {O: w_O, N2: w_N2, O2: w_O2} unnormalised. E4 faces: default_rng(SeedSequence([master, 4, 0, 4])); per point: a uniform point as above (4 draws), then per axis in order (L_over_d, phi, alpha, theta_deg) U < 0.5 snaps that axis to grid value integers(0, len(axis)) of the v1 grid; scattering 'maxwell' if U < 0.5 else 'cll'; fractions of atm 200 mean",
+   "domain_note": "numerical parity domain only; not a physics, design or evidence claim"
+  },
+  "in_bounds_cases": [
+   [3.0, 0.8, 0.0, 0.0], [20.0, 0.9, 1.0, 5.0], [10.0, 0.85, 0.5, 0.0], [2.9999999999999996, 0.85, 0.5, 0.0],
+   [20.000000000000004, 0.85, 0.5, 0.0], [10.0, 0.7999999999999999, 0.5, 0.0], [10.0, 0.85, -0.0, 0.0],
+   [10.0, 0.85, 1e-300, 0.0], [10.0, 0.85, 0.5, 5.000000000000001], ["NaN", 0.85, 0.5, 0.0], ["Infinity", 0.85, 0.5, 0.0],
+   [10.0, 0.85, 0.5, "default"]
+  ],
+  "vector_totals": {
+   "E1_intake_response": "53 vectors x 16 replicates per implementation",
+   "E2_clausing_transmission": "11 vectors x 1 run per implementation",
+   "E3_response_surface": "2 calls (34 rows) per implementation",
+   "E4_IntakeSurface": "528 evaluations (240 nodes + 56 points + 32 faces + 200 randomized) + 12 in_bounds cases x 2 scattering + domain() and max_unresolved x 2 scattering",
+   "domain_and_error": "the cases in domain_and_error_parity"
+  }
+ },
+ "campaign_seeds": {
+  "applicable": true,
+  "scoring_master_seed": 2026100521,
+  "development_master_seed": 7,
+  "derivation": "entry index j (E1 = 1 .. E4 = 4), vector index k (0-based in the registered order: golden, then edge, then randomized). E1 replicate r (0..15): Python seed = int(numpy.random.SeedSequence([master, 1, k, 10 + 2 r]).generate_state(1, numpy.uint64)[0]) passed to intake_response(seed=...); Rust seed = the same with 11 + 2 r, passed to abep_core Rng::new. E2: Python generator numpy.random.default_rng(SeedSequence([master, 2, k, 0])); Rust seed = int(SeedSequence([master, 2, k, 1]).generate_state(1, numpy.uint64)[0]). E3: no campaign seed (the reference uses seed 0 for every point; Rust uses Rng::new(0) for every point). Randomized-domain draws: s = 3 (and s = 4 for E4 faces) as in inputs.randomized_domain.",
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the existing admitted stochastic / statistical parity contract; the roles are registered separately and never merged",
+   "design_uq_sampling_stream": "NOT_APPLICABLE: this component draws no design / UQ samples (the randomized-domain draws above only choose parity vectors)",
+   "tpmc_particle_tracing_stream": "the admitted Kernel-1 contract (docs/performance/abep_core/parity_prereg_v2.json / parity_report_v2.json: STATISTICAL, Rust xoshiro256++); intake_response, clausing_transmission and response_surface consume one abep_core Rng per call in the reference's call order (entry, trace, Clausing back-trace); never re-registered on the design / UQ stream",
+   "other_streams": "NOT_APPLICABLE",
+   "migration_parity_dataset": "seeds, stream semantics and captured reference samples of the migration parity campaign stay exactly reproducible (immutable)",
+   "after_rust_authority": "new UQ campaigns may use the registered Rust RNG policy; this never changes the migration parity dataset"
+  },
+  "rng_streams_v3": "different streams (STATISTICAL) for every TPMC-driven observable",
+  "development_rule": "development comparisons use development_master_seed only and are never scored or reported as a verdict; they evaluate only the randomized-domain draws (E1, E4 randomized and faces) made from the development seed and E1 replicates seeded from it; golden vectors, edge cases, E3 calls, in_bounds cases and domain / error cases are evaluated by the Python-vs-Rust comparison only in the scoring execution. Every execution with scoring_master_seed is appended to campaign_history and the report is committed whatever its verdict"
+ },
+ "observables": {
+  "E1_intake_response": {
+   "list": [
+    {"name": "eta_c", "units": "-", "tolerance_class": "STATISTICAL", "tolerance": "z 5.0 per test; aggregate 4.0", "definition": "returned eta_c (collected / incident free-stream flux on the aperture)"},
+    {"name": "C_D", "units": "-", "tolerance_class": "STATISTICAL", "tolerance": "z 5.0; aggregate 4.0", "definition": "returned C_D"},
+    {"name": "K_back", "units": "-", "tolerance_class": "STATISTICAL", "tolerance": "z 5.0; aggregate 4.0", "definition": "returned K_back (Clausing back transmission, n 20000 inside the call)"},
+    {"name": "CR_passive", "units": "-", "tolerance_class": "STATISTICAL", "tolerance": "z 5.0; aggregate 4.0", "definition": "returned CR_passive"},
+    {"name": "eta_open", "units": "-", "tolerance_class": "STATISTICAL", "tolerance": "z 5.0; aggregate 4.0", "definition": "returned eta_open"},
+    {"name": "unresolved_fraction", "units": "-", "tolerance_class": "STATISTICAL", "tolerance": "z 5.0; aggregate 4.0; zero-se rule", "definition": "returned unresolved_fraction"},
+    {"name": "mean_wall_hits", "units": "-", "tolerance_class": "STATISTICAL", "tolerance": "z 5.0; aggregate 4.0", "definition": "returned mean_wall_hits"},
+    {"name": "converged", "units": "-", "tolerance_class": "STATISTICAL", "tolerance": "z 5.0; aggregate 4.0; zero-se rule", "definition": "replicate mean of the returned converged flag as 0 / 1"},
+    {"name": "mass_kg", "units": "kg", "tolerance_class": "ULP_BOUNDED", "tolerance": "k_ulp 4 or r_rel 1e-12 (closed form, no RNG); compared on every replicate", "definition": "returned mass_kg"},
+    {"name": "echo fields alpha, theta_deg, L_over_d, phi, d_mm", "units": "as input", "tolerance_class": "EXACT_VALUE", "tolerance": "equal", "definition": "returned values"},
+    {"name": "labels scattering, K_back_scattering", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "equal", "definition": "returned strings ('maxwell' / 'cll'; 'maxwell')"},
+    {"name": "output key set", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "equal", "definition": "keys of the returned dict = fields of the Rust record: eta_c, C_D, K_back, CR_passive, eta_open, unresolved_fraction, converged, scattering, K_back_scattering, mean_wall_hits, mass_kg, alpha, theta_deg, L_over_d, phi, d_mm (Rust adds status, see INV-09, not compared)"}
+   ],
+   "replicates_per_implementation": 16,
+   "se_method": "replicate: each implementation's value is the mean over its 16 replicates; se = sample sd (ddof 1) of the replicate values / sqrt(16). Replicates are independent calls with independent seeds; CR_passive and C_D are nonlinear / normalised outputs for which no particle-level se is returned"
+  },
+  "E2_clausing_transmission": {
+   "list": [
+    {"name": "K_back", "units": "-", "tolerance_class": "STATISTICAL", "tolerance": "z 5.0 per test; aggregate 4.0; zero-se rule", "definition": "returned transmitted fraction"}
+   ],
+   "replicates_per_implementation": 1,
+   "se_method": "binomial: se = sqrt(p (1 - p) / n) per implementation (as Kernel-1 K5)"
+  },
+  "E3_response_surface": {
+   "list": [
+    {"name": "row count and row order", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "equal", "definition": "rows in itertools.product order (species, L_over_d, phi, alpha, theta_deg); the key tuple of every row equal"},
+    {"name": "column order", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "equal", "definition": "eta_c, C_D, K_back, CR_passive, eta_open, unresolved_fraction, converged, scattering, K_back_scattering, mean_wall_hits, mass_kg, alpha, theta_deg, L_over_d, phi, d_mm, species"},
+    {"name": "deterministic columns species, alpha, theta_deg, L_over_d, phi, d_mm, scattering, K_back_scattering", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "equal", "definition": "row values"},
+    {"name": "mass_kg", "units": "kg", "tolerance_class": "ULP_BOUNDED", "tolerance": "k_ulp 4 or r_rel 1e-12", "definition": "row values"}
+   ],
+   "statistical_columns": "eta_c, C_D, K_back, CR_passive, eta_open, unresolved_fraction, converged, mean_wall_hits are not scored again here: every row is exactly one intake_response call (INV-03), whose statistical parity E1 scores",
+   "replicates_per_implementation": "NOT_APPLICABLE",
+   "se_method": "NOT_APPLICABLE"
+  },
+  "E4_IntakeSurface": {
+   "list": [
+    {"name": "eta_c, C_D, K_back, CR_passive, mass_kg", "units": "-, -, -, -, kg", "tolerance_class": "ULP_BOUNDED", "tolerance": "|rust - py| <= 4 ulp(py) OR <= 1e-11 * max(1, |py|)", "definition": "mixture outputs of __call__"},
+    {"name": "species.<s>.eta_c, C_D_row, C_D_species, CR_passive, K_back, mass_fraction, mole_fraction, collected_mass_fraction, collected_mole_fraction", "units": "-", "tolerance_class": "ULP_BOUNDED", "tolerance": "as above; NaN in both = agreement, NaN in one = failure", "definition": "per-species outputs of __call__"},
+    {"name": "species key set, recombination label", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "equal", "definition": "keys of out['species'] (species with nonzero fraction, sorted table order); 'species_consistent_v2_A9.9_S2.1'"},
+    {"name": "in_bounds", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "equal", "definition": "in_bounds on inputs.in_bounds_cases, both scattering tables ('default' = theta argument omitted)"},
+    {"name": "domain()", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "equal (floats bitwise, strings and lists equal)", "definition": "domain() per scattering table"},
+    {"name": "max_unresolved", "units": "-", "tolerance_class": "ULP_BOUNDED", "tolerance": "k_ulp 4 or r_rel 1e-12", "definition": "IntakeSurface.max_unresolved per scattering table"}
+   ],
+   "tolerance_basis": "r_rel 1e-11 (not the template's 1e-12) because the barycentric coordinates are computed from a different LU of the same simplex matrix: over the 571 non-degenerate reference simplices the 2-norm condition number is at most 42.8 (median 12.2), so coordinate errors are <= ~2e-14 and value errors <= ~5e-13 relative before the species recombination (ratios of positive terms); 1e-11 keeps a 20x margin. A wrong simplex, a different triangulation or a wrong recombination gives relative differences of 1e-4 .. 1e-1, so the bound loses no detection power. The pandas parse deviation (DIV-05) is 1 ulp of a node value",
+   "replicates_per_implementation": "NOT_APPLICABLE (deterministic)",
+   "se_method": "NOT_APPLICABLE"
+  },
+  "E5_surface_v2_gate": {
+   "list": [
+    {"name": "v2 status label and primary blocker", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "equal", "definition": "Python v2_build_status()['status'] / ['primary_blocker'] and build_intake_surface_v2() raising IntakeSurfaceV2Blocked; Rust surface_v2_gate(): EvalStatus NOT_EVALUATED with the same status label and primary blocker"}
+   ],
+   "replicates_per_implementation": "NOT_APPLICABLE",
+   "se_method": "NOT_APPLICABLE"
+  }
+ },
+ "tolerance_classes": {
+  "EXACT_BYTES": "NOT_USED by this contract",
+  "EXACT_VALUE": "integers, strings, enums, booleans, statuses, error codes, schema shape: equal",
+  "ULP_BOUNDED": "|rust - py| <= k_ulp ulp(py) OR <= r_rel * max(1, |py|); k_ulp and r_rel per observable above",
+  "SOLVER_TOLERANCE": "NOT_USED by this contract",
+  "STATISTICAL": "per test |mean_rust - mean_py| <= z * sqrt(se_py^2 + se_rust^2), z = 5.0 (Kernel-1 value); zero-se rule |diff| <= 1e-12 * max(1, |mean_py|) when se_py = se_rust = 0; aggregate |sum z_i| / sqrt(N) <= 4.0 per entry point and observable over the vectors with nonzero combined se (Kernel-1 value)",
+  "EXACT_STREAM": "NOT_APPLICABLE (A9.29 sec. 7: never applied to the TPMC kernel)"
+ },
+ "statistical_basis": "E1: 53 vectors x 8 statistical observables = 424 tests; with 16 replicates per side the z statistic has about 30 degrees of freedom and P(|t_30| > 5) is about 2e-5, so the expected number of false rejections is about 0.01. E2: 11 binomial tests, normal tail at 5 is 5.7e-7. Aggregate |sum z| / sqrt(N) <= 4: about 6e-5 per observable under the null",
+ "exact_invariants": [
+  {"id": "INV-01", "statement": "determinism: intake_response on the first golden vector with its replicate-0 seed, run twice, gives identical outputs (all keys, bitwise) in each implementation; the same for clausing_transmission on the first E2 vector and for IntakeSurface on the first 20 E4 evaluations", "required_in_both": true},
+  {"id": "INV-02", "statement": "mass_kg of an E1 vector is identical (bitwise) across its 16 replicates in each implementation", "required_in_both": true},
+  {"id": "INV-03", "statement": "every response_surface row equals intake_response(IntakeGeometry(area_m2, L_over_d, phi), atm, alpha, theta_deg, n, seed 0, scattering, species_mass) plus species = s or 'mean', bitwise, in each implementation (Rust: Rng::new(0) per point)", "required_in_both": true},
+  {"id": "INV-04", "statement": "the triangulation recomputed in the Python reference environment at scoring (as the capture script does: 30 interpolators) equals crates/abep-intake/data/intake_surface_v1_delaunay_v1.json bitwise (points, offset, scale, simplices, degenerate flags)", "required_in_both": false, "note": "a check of the capture against the reference; the Rust side checks the capture against the frozen CSV on every load (rust_load_checks)"},
+  {"id": "INV-05", "statement": "frozen data unchanged: the sha256 of abep_sim/data/intake_surface_v1.{csv,json} before and after the campaign equal pinned_inputs_sha256 (never regenerated)", "required_in_both": true},
+  {"id": "INV-06", "statement": "E1 bookkeeping: 0 <= eta_open <= 1, 0 <= unresolved_fraction <= 1, eta_open + unresolved_fraction <= 1 + 1e-15, and eta_c = phi * eta_open * cos(theta) (times filter_open_frac * sqrt(filter_transmission) when filter) within 1e-12 relative, for every replicate", "required_in_both": true},
+  {"id": "INV-07", "statement": "converged == (unresolved_fraction <= 1e-3) for every replicate", "required_in_both": true},
+  {"id": "INV-08", "statement": "constants: K_B = 1.380649e-23 and AMU = 1.6605390666e-27 and M_SPECIES {O 16, N2 28, O2 32, Xe 131.3} x AMU bitwise equal between abep_sim.constants and the Rust constants (and K_B equal to abep_core::tpmc::K_B)", "required_in_both": true},
+  {"id": "INV-09", "statement": "Rust only (not compared): the Rust intake_response record carries status MODEL_ERROR iff converged is false, EVALUATED otherwise (SC-WP-02 gate 'TPMC / gas-path solver not converged -> MODEL_ERROR'); the raw values are still returned as the reference returns them", "required_in_both": false}
+ ],
+ "conservation_checks": {
+  "applicable": true,
+  "checks": [
+   {"id": "CONS-01", "statement": "IntakeSurface species bookkeeping closes: sum_s mass_fraction = 1, sum_s mole_fraction = 1, and, when eta_c > 0, sum_s collected_mass_fraction = 1 and sum_s collected_mole_fraction = 1", "evaluated_on": "Rust outputs (and Python outputs, recorded) for every E4 evaluation", "tolerance": "absolute 1e-12"},
+   {"id": "CONS-02", "statement": "source power balance", "evaluated_on": "NOT_APPLICABLE: the intake response layer and surface carry no power terms", "tolerance": "NOT_APPLICABLE"},
+   {"id": "CONS-03", "statement": "architecture energy ledger residual < 2 %", "evaluated_on": "NOT_APPLICABLE: no architecture ledger in this component", "tolerance": "0.02"},
+   {"id": "CONS-04", "statement": "the collected-mass balance of the intake (sum_s mdot_collected_species = mdot_collected) belongs to intake.collection and is registered in PARITY-C-ABEP_SIM_INTAKE_PY-V1", "evaluated_on": "see that contract", "tolerance": "see that contract"}
+  ]
+ },
+ "domain_and_error_parity": {
+  "cases": [
+   {"id": "DE-01", "entry": "E4", "inputs": {"point": [2.999, 0.85, 0.5, 0.0], "fractions": "atm 200 mean"}, "expected_python": "ValueError (intake ROM extrapolation)", "expected_rust": "OutOfDomain", "message_key": "OUT_OF_BOUNDS"},
+   {"id": "DE-02", "entry": "E4", "inputs": {"point": [10.0, 0.95, 0.5, 0.0], "fractions": "atm 200 mean"}, "expected_python": "ValueError", "expected_rust": "OutOfDomain", "message_key": "OUT_OF_BOUNDS"},
+   {"id": "DE-03", "entry": "E4", "inputs": {"point": [10.0, 0.85, -0.01, 0.0], "fractions": "atm 200 mean"}, "expected_python": "ValueError", "expected_rust": "OutOfDomain", "message_key": "OUT_OF_BOUNDS"},
+   {"id": "DE-04", "entry": "E4", "inputs": {"point": [10.0, 0.85, 1.0000001, 0.0], "fractions": "atm 200 mean"}, "expected_python": "ValueError", "expected_rust": "OutOfDomain", "message_key": "OUT_OF_BOUNDS"},
+   {"id": "DE-05", "entry": "E4", "inputs": {"point": [10.0, 0.85, 0.5, 5.5], "fractions": "atm 200 mean"}, "expected_python": "ValueError (the pre-FE-01 silent clamp to 5 deg is gone)", "expected_rust": "OutOfDomain", "message_key": "OUT_OF_BOUNDS"},
+   {"id": "DE-06", "entry": "E4", "inputs": {"point": [10.0, 0.85, 0.5, "NaN"], "fractions": "atm 200 mean"}, "expected_python": "ValueError", "expected_rust": "OutOfDomain", "message_key": "OUT_OF_BOUNDS"},
+   {"id": "DE-07", "entry": "E4", "inputs": {"point": [10.0, 0.85, 0.5, 0.0], "fractions": null}, "expected_python": "ValueError", "expected_rust": "OutOfDomain", "message_key": "FRACTIONS_REQUIRED"},
+   {"id": "DE-08", "entry": "E4", "inputs": {"point": [10.0, 0.85, 0.5, 0.0], "fractions": {}}, "expected_python": "ValueError", "expected_rust": "OutOfDomain", "message_key": "FRACTIONS_REQUIRED"},
+   {"id": "DE-09", "entry": "E4", "inputs": {"point": [10.0, 0.85, 0.5, 0.0], "fractions": {"O": -0.1, "N2": 1.0}}, "expected_python": "ValueError", "expected_rust": "OutOfDomain", "message_key": "FRACTION_INVALID"},
+   {"id": "DE-10", "entry": "E4", "inputs": {"point": [10.0, 0.85, 0.5, 0.0], "fractions": {"O": "NaN", "N2": 1.0}}, "expected_python": "ValueError", "expected_rust": "OutOfDomain", "message_key": "FRACTION_INVALID"},
+   {"id": "DE-11", "entry": "E4", "inputs": {"point": [10.0, 0.85, 0.5, 0.0], "fractions": {"O": "Infinity", "N2": 1.0}}, "expected_python": "ValueError", "expected_rust": "OutOfDomain", "message_key": "FRACTION_INVALID"},
+   {"id": "DE-12", "entry": "E4", "inputs": {"point": [10.0, 0.85, 0.5, 0.0], "fractions": {"N2": 0.5, "Ar": 0.5}}, "expected_python": "ValueError", "expected_rust": "OutOfDomain", "message_key": "FOREIGN_SPECIES"},
+   {"id": "DE-13", "entry": "E4", "inputs": {"point": [10.0, 0.85, 0.5, 0.0], "fractions": {"O": 0.0, "N2": 0.0, "O2": 0.0}}, "expected_python": "ValueError", "expected_rust": "OutOfDomain", "message_key": "ALL_ZERO"},
+   {"id": "DE-14", "entry": "E4 constructor", "inputs": {"m_mean_build_kg": [0.0, -1.0, "NaN", "Infinity"]}, "expected_python": "ValueError (one per value)", "expected_rust": "OutOfDomain (one per value)", "message_key": "M_MEAN_BUILD_REQUIRED"},
+   {"id": "DE-15", "entry": "E5", "inputs": {}, "expected_python": "IntakeSurfaceV2Blocked from build_intake_surface_v2(); v2_build_status() status BLOCKED_PENDING_AOCS_POINTING_ENVELOPE", "expected_rust": "surface_v2_gate(): EvalStatus NOT_EVALUATED (not an error and never a value), same status label and primary blocker", "message_key": "V2_BLOCKED"},
+   {"id": "DE-20", "entry": "E1", "inputs": {"scattering": "specular"}, "expected_python": "ValueError", "expected_rust": "OutOfDomain", "message_key": "UNKNOWN_SCATTERING"},
+   {"id": "DE-21", "entry": "E1", "inputs": {"scattering": "Maxwell"}, "expected_python": "ValueError (case-sensitive)", "expected_rust": "OutOfDomain", "message_key": "UNKNOWN_SCATTERING"},
+   {"id": "DE-22", "entry": "E1", "inputs": {"scattering": "maxwell", "alpha": 1.5}, "expected_python": "ValueError", "expected_rust": "OutOfDomain", "message_key": "ACCOMMODATION_INVALID"},
+   {"id": "DE-23", "entry": "E1", "inputs": {"scattering": "cll", "alpha": -0.1}, "expected_python": "ValueError", "expected_rust": "OutOfDomain", "message_key": "ACCOMMODATION_INVALID"},
+   {"id": "DE-24", "entry": "E1", "inputs": {"scattering": "maxwell", "alpha": "NaN"}, "expected_python": "ValueError", "expected_rust": "OutOfDomain", "message_key": "ACCOMMODATION_INVALID"},
+   {"id": "DE-25", "entry": "E3", "inputs": {"scattering": "diffuse"}, "expected_python": "ValueError before any point", "expected_rust": "OutOfDomain before any point", "message_key": "UNKNOWN_SCATTERING"},
+   {"id": "DE-26", "entry": "E3", "inputs": {"species": ["Ar"]}, "expected_python": "KeyError (M_SPECIES lookup)", "expected_rust": "OutOfDomain", "message_key": "UNKNOWN_SPECIES"},
+   {"id": "DE-27", "entry": "E2", "inputs": {"alpha": 2.0}, "expected_python": "ValueError", "expected_rust": "OutOfDomain", "message_key": "ACCOMMODATION_INVALID"}
+  ],
+  "defaults": "unspecified E1 / E2 / E3 inputs as the first golden vector of that entry point (E3: RS-2 with the field changed)",
+  "message_key_rule": "Python messages are classified by registered substrings: 'unknown wall-scattering model' -> UNKNOWN_SCATTERING; 'must be finite and inside [0, 1]' or 'must be a finite real number in [0, 1]' -> ACCOMMODATION_INVALID; 'intake ROM extrapolation' -> OUT_OF_BOUNDS; 'needs explicit free-stream mass fractions' -> FRACTIONS_REQUIRED; 'mass fractions must be finite and >= 0' -> FRACTION_INVALID; 'are not in the frozen table' -> FOREIGN_SPECIES; 'all mass fractions are zero' -> ALL_ZERO; 'non-finite' -> NON_FINITE_ROW; 'needs m_mean_build_kg' -> M_MEAN_BUILD_REQUIRED; KeyError -> UNKNOWN_SPECIES; IntakeSurfaceV2Blocked -> V2_BLOCKED. Rust messages start with the key followed by ': '",
+  "mapping_rule": "every Python exception class / status used by the component maps to exactly one Rust error variant / status: ValueError and KeyError -> AbepError::OutOfDomain (status OUT_OF_DOMAIN) with the registered message key; IntakeSurfaceV2Blocked -> EvalStatus::NotEvaluated; non-convergence (converged False, returned not raised) -> returned record with converged false (Rust status MODEL_ERROR, INV-09). No Rust path returns a value where Python fails or fails where Python returns, except the documented divergences (CLAUDE.md rule 3: no silent fallbacks)",
+  "documented_divergence": [
+   {"id": "DIV-01", "statement": "intake_response / response_surface with n < 1: the reference produces empty-array statistics (NaN, numpy warnings) or fails inside numpy; Rust refuses (OutOfDomain N_INVALID)", "disposition": "outside the comparison set; Rust fails closed"},
+   {"id": "DIV-02", "statement": "intake_response species_mass that is zero, negative or non-finite: the reference silently uses atm['m_mean'] for 0.0 (truthiness of `species_mass or atm['m_mean']`), raises math domain ValueError for negative values and propagates NaN / inf; Rust takes Option<f64>, None = atm m_mean, and refuses Some(x) unless x is finite and > 0 (OutOfDomain SPECIES_MASS_INVALID)", "disposition": "outside the comparison set; no silent substitution in Rust"},
+   {"id": "DIV-03", "statement": "clausing_transmission with n < 1: the reference returns NaN; Rust refuses (OutOfDomain N_INVALID)", "disposition": "outside the comparison set"},
+   {"id": "DIV-04", "statement": "IntakeSurface over a table other than the frozen v1 point set: the reference triangulates any table with Qhull; Rust offers only load_frozen_v1 (the captured triangulation), so no other table can be constructed", "disposition": "scope restriction; no active caller uses another table (intake._tpmc_surface, convergence.py, uq6.py all use the frozen v1)"},
+   {"id": "DIV-05", "statement": "the reference reads the frozen CSV with pandas' default C-engine float converter, which is not correctly rounded: 17 of the 720 x 16 cells (5 C_D and 12 CR_passive values) parse 1 ulp away from the correctly rounded value; Rust parses correctly rounded", "disposition": "inside the comparison set; a 1-ulp node difference is far below the E4 ULP_BOUNDED tolerance and is not a defect of either side"},
+   {"id": "DIV-06", "statement": "the reference refuses bool for alpha / fractions (isinstance checks); Rust inputs are typed f64 and cannot carry a bool", "disposition": "not applicable to Rust"},
+   {"id": "DIV-07", "statement": "an unknown scattering name for the frozen table: the reference IntakeSurface would be built on an empty table (NaN bounds) and refuse at call; Rust load_frozen_v1 refuses at construction (OutOfDomain UNKNOWN_SCATTERING)", "disposition": "same failure class (OUT_OF_DOMAIN); scored through intake.collection in PARITY-C-ABEP_SIM_INTAKE_PY-V1"}
+  ]
+ },
+ "schema_parity": {
+  "schemas": [
+   "NOT_APPLICABLE: no committed JSON schema covers these outputs; the dict / record field names and order above are the schema"
+  ],
+  "rules": [
+   "field names, units, types identical (E1 key set, E3 column order, E4 key sets)",
+   "ordering identical where it carries meaning (E3 rows and columns; E4 species keys in table order)",
+   "Rust record types tested against the same field lists",
+   "evidence_status / raw-vs-assessment labels (A9.22) identical: none are emitted; no PASS / FAIL or threshold appears in either output"
+  ]
+ },
+ "golden_and_reference_cases": {
+  "references": [
+   "the Python reference outputs of the registered vectors, computed by the harness at scoring"
+  ],
+  "rule": "references are read as committed; they are never regenerated to make Rust pass (RM-R11); a disagreement is investigated and classified (RUST_DEFECT | PYTHON_REFERENCE_DEFECT (own governance, new contract version) | CONTRACT_DEFECT (new contract version))",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_TPMC_PY/reference_outputs/",
+   "captured_at_python_commit": "recorded in the report (the scoring commit)",
+   "sha256_manifest": "recorded in the report",
+   "purpose": "lets CI check Rust against the Python reference after Python is retired from active execution: the deterministic E4 / E3 / domain-error outputs replayed by a cargo test with the tolerances above"
+  },
+  "historical_golden_rule": "RM-R28: golden_v1 / golden_v2 cases are historical and are not used here"
+ },
+ "julia_bridge": {
+  "applicable": false
+ },
+ "performance_measurement": {
+  "status": "reported, not a decision criterion (A9.24 items 1 and 6; RM-R09)",
+  "workloads": [
+   {"id": "intake_response_surface_reduced", "description": "PRE_RUST_REFERENCE_BASELINE (docs/performance/pre_rust_reference_baseline_5eee4b8/baseline.json, rank 2, PORT_CANDIDATE) exactly as scripts/perf/profile_baseline.py w_response_surface with rs_full: response_surface(atmosphere(200.0, 'mean'), L_over_d=(3, 5, 10, 20), phis=(0.8,), alphas=(0.0, 0.5, 1.0), thetas=(0.0,), n=20000, species=('N2',)) = 12 points; Rust: abep_intake::tpmc_response::response_surface with the same arguments (atmosphere values passed explicitly), release build"}
+  ],
+  "repeats": 3,
+  "statistic": "median wall-clock and median process CPU per implementation in one session on one machine, one untimed warm-up call each; speed-up = median_python / median_rust; the baseline's recorded median (5.023 s wall on 5eee4b8) is quoted for reference, not reused",
+  "machine_manifest": "recorded before and after (CPU, RAM, OS, toolchains, thread env OMP / OPENBLAS / MKL / NUMEXPR = 1 for Python as in the baseline, Rust single-threaded)"
+ },
+ "decision_rules": {
+  "per_test": "every scored observable meets its tolerance class",
+  "aggregate": "STATISTICAL entry points E1 and E2: |sum_i z_i| / sqrt(N) <= 4.0 per observable over the vectors with nonzero combined se",
+  "exact_invariants_required": true,
+  "conservation_required": "true (CONS-01)",
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "entry_point_result": "PARITY_PASS or PARITY_FAIL per entry point E1..E5: PARITY_PASS iff all its per-test, aggregate, invariant, conservation, domain / error and schema checks pass",
+  "verdict": "ADMITTED iff every entry point is PARITY_PASS, every required invariant holds, and every reference file and pinned input matches its registered sha256; otherwise NOT_ADMITTED (or REFUSED_REFERENCE_CHANGED / INPUT_MISMATCH / NOT_RUN_RUST_UNAVAILABLE)",
+  "verdict_vocabulary": [
+   "ADMITTED",
+   "NOT_ADMITTED",
+   "REFUSED_REFERENCE_CHANGED",
+   "INPUT_MISMATCH",
+   "NOT_RUN_RUST_UNAVAILABLE",
+   "REFUSED_CLASSIFICATION"
+  ],
+  "meaning_of_ADMITTED": "A9.24 item 1: Rust becomes authoritative for intake_response, response_surface, clausing_transmission and the frozen v1 IntakeSurface (within the registered domain); new production results for them come from Rust and carry implementation = rust, rust_commit and this contract id; the Python functions may then be retired from active execution. It is NOT physics validation, and it does not rebuild or replace intake_surface_v1",
+  "no_retuning": "tolerances, observables, inputs, n, seeds and rules are fixed; after NOT_ADMITTED only a code fix plus a new contract version with a fresh scoring_master_seed may follow; the failed report stays; no execution is discarded",
+  "disagreement_rule": "never rewrite a Python result, golden, fixture or frozen dataset to make Rust pass (RM-R11)",
+  "observable_scope": "observables are restricted to retained selected-architecture physics; an observable that depends on an excluded legacy path is not registered (RM-R20)"
+ },
+ "bid_boundary": {
+  "statement": "this contract and its Rust implementation are post-bid-freeze work; no output of it may be cited by the bid package unless the owner re-freezes (PROGRAMME.md section 4; bid_source_guard)",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b (technical source) / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (package / freeze record, A9.28; lineage b5849affae22a6709ad217a184f6fe896d15410a -> 2de86ab); A9.29 sec. 3: 2de86ab is the terminal owner-authorized package state",
+  "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+ },
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, threshold or requirement (intake_surface_v1 is read, never regenerated)",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27)",
+  "not a gate PASS: absent determining evidence stays NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN / MODEL_ERROR (RM-R31); the intake surface v2 stays NOT_EVALUATED until its axes are registered",
+  "not a re-scoring of Kernel 1 and not a change of the Python wrapper default (RM-OQ-01)"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_TPMC_PY/parity_report_v1.json (+ .md generated from it)",
+  "runner": "scripts/rust_migration/parity_intake.py --contract intake_tpmc --mode score (a Python harness that calls the Rust CLI example intake_parity, while the reference is active); records campaign_history",
+  "report_fields": [
+   "contract_sha256",
+   "python_commit",
+   "reference_sha256",
+   "rust_commit",
+   "build_provenance (rustc, Cargo.lock sha256, source sha256)",
+   "environment",
+   "per-test results",
+   "aggregates",
+   "invariants",
+   "conservation",
+   "domain/error",
+   "schema",
+   "performance",
+   "verdicts",
+   "campaign_history",
+   "ledger_update_requested"
+  ]
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator (A9.25 message 3)",
+  "checks": [
+   "component.migration_class is ACTIVE_SELECTED_ARCHITECTURE_PHYSICS: holds",
+   "no observable, input or code path of the contract belongs to excluded_legacy_paths: holds (call_legacy_mass_weighted excluded)",
+   "no legacy harness path: the reference functions are called directly",
+   "the Rust implementation contains none of the forbidden identifiers (CI_PLAN.md sec. 1 principle 6)",
+   "not a GROUND_TEST_PROGRAMME_ONLY contract"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict): the contract cannot be registered"
+ },
+ "value_status_preservation": {
+  "rule": "RM-R27: no provisional / analog / allocation input is promoted by migration to CBE, measured or frozen truth",
+  "inputs": [],
+  "check": "NOT_APPLICABLE: the component reads frozen model-derived data (intake_surface_v1, atmosphere_msis21_v1) and explicit numerical inputs only; no provisional / analog / allocation value enters it"
+ },
+ "new_physics_verification": "NOT_APPLICABLE (contract_kind EXISTING_PHYSICS_PARITY)"
+}

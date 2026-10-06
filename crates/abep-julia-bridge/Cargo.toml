@@ -1,0 +1,16 @@
+[package]
+name = "abep-julia-bridge"
+description = "Process-boundary orchestration of the pinned HallThruster.jl bridge: launch manifests, job specifications, pin check, run sidecars (no Hall physics; Julia stays authoritative)."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+license.workspace = true
+
+[dependencies]
+abep-types.workspace = true
+abep-provenance.workspace = true
+abep-hall.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+toml.workspace = true

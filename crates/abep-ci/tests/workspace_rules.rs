@@ -17,7 +17,7 @@ fn no_ignored_test_outside_the_platform_test_register() {
     let r = test_register::check(&workspace_repo_root().unwrap()).expect("register loads");
     assert!(r.violations.is_empty(), "{:#?}", r.violations);
     assert!(r.files_scanned > 0);
-    assert_eq!((r.registered, r.ignore_attrs), (0, 0), "the register is empty and no test is ignored");
+    assert_eq!(r.registered, r.ignore_attrs, "every ignored test is exactly one registered platform test");
 }
 
 #[test]

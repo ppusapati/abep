@@ -633,7 +633,10 @@ def test_only_the_builder_writes_the_engineering_constraints():
                 if any(w in src for w in writes):
                     writers.add(rel)
     assert {"scripts/config/build_config.py", "abep_sim/configuration.py"} <= named
-    assert writers <= {"scripts/config/build_config.py", "scripts/config/build_result_schemas.py"}, writers
+    # the C-ABEP_SIM_CONFIGURATION_PY v1 parity harness writes mutated copies of config/ into temporary case trees
+    # only (refusal cases); it never writes the repository and derives no constraint (A9.29 lane A2)
+    assert writers <= {"scripts/config/build_config.py", "scripts/config/build_result_schemas.py",
+                       "scripts/rust_migration/parity_config_v1.py"}, writers
 
 
 def test_physics_seams_read_values_only_from_constraints_and_scenario(cfg_copy):

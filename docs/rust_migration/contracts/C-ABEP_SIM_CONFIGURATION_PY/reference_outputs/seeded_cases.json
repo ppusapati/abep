@@ -1,0 +1,3049 @@
+[
+ {
+  "id": "L-S000",
+  "file": "hardware/hardware_bounds_v1.json",
+  "path": [
+   "entries",
+   2,
+   "sha256"
+  ],
+  "op": "set",
+  "value": "{'value': 1.0}",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S001",
+  "file": "mission/mission_scenario_v2.json",
+  "path": [
+   "inputs",
+   "commanded_thrust_cap_mN"
+  ],
+  "op": "set",
+  "value": "-0.0",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S002",
+  "file": "mission/mission_scenario_v2.json",
+  "path": [
+   "title"
+  ],
+  "op": "set",
+  "value": "-1",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S003",
+  "file": "requirements/rfp_constraints_v1.json",
+  "path": [
+   "rfp_constraints_compat",
+   "ignition_hours",
+   "rfp_clauses"
+  ],
+  "op": "set",
+  "value": "10**25",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S004",
+  "file": "assessment/gate_thresholds_v1.json",
+  "path": [
+   "gates",
+   "HC-07",
+   "comparator"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S005",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "loader"
+  ],
+  "op": "set",
+  "value": "'THRESHOLD'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S006",
+  "file": "requirements/rfp_constraints_v1.json",
+  "path": [
+   "rvm_limits",
+   15,
+   "requirement_frozen"
+  ],
+  "op": "set",
+  "value": "10**25",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S007",
+  "file": "mission/mission_scenario_v2.json",
+  "path": [
+   "inputs"
+  ],
+  "op": "set",
+  "value": "{'value': 1.0}",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S008",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "modules",
+   22,
+   "path"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S009",
+  "file": "requirements/rfp_constraints_v1.json",
+  "path": [
+   "rvm_limits",
+   7,
+   "rfp_clauses",
+   1
+  ],
+  "op": "set",
+  "value": "'X'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S010",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "modules",
+   7
+  ],
+  "op": "set",
+  "value": "-1",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S011",
+  "file": "requirements/rfp_constraints_v1.json",
+  "path": [
+   "rfp_constraints_compat",
+   "thrust_min_mN",
+   "rvm_key"
+  ],
+  "op": "set",
+  "value": "False",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S012",
+  "file": "constraints/engineering_constraints_v1.json",
+  "path": [
+   "constraints",
+   "ic_total_min",
+   "provenance",
+   "rfp_clauses"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S013",
+  "file": "requirements/rfp_constraints_v1.json",
+  "path": [
+   "rvm_limits",
+   20,
+   "title"
+  ],
+  "op": "set",
+  "value": "'TBD_PENDING_MEASURED_H1'",
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S014",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "sha256"
+  ],
+  "op": "set",
+  "value": "'CONSTRAINT_REFERENCE'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S015",
+  "file": "mission/mission_scenario_v2.json",
+  "path": [
+   "revision"
+  ],
+  "op": "set",
+  "value": "False",
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S016",
+  "file": "architecture/hall_icp_neutralizer_v1.json",
+  "path": [
+   "constants",
+   "supply_mode_gases",
+   "XE_CONTINGENCY",
+   1
+  ],
+  "op": "set",
+  "value": "'THRESHOLD'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S017",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "version_labels_flat",
+   "hard_gates.RESULT_SCHEMA"
+  ],
+  "op": "set",
+  "value": "[180, 230]",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S018",
+  "file": "requirements/rfp_constraints_v1.json",
+  "path": [
+   "mission_duration",
+   "rfp_clauses",
+   0
+  ],
+  "op": "set",
+  "value": "False",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S019",
+  "file": "assessment/gate_thresholds_v1.json",
+  "path": [
+   "gates",
+   "HC-11",
+   "provenance",
+   1
+  ],
+  "op": "set",
+  "value": "{}",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S020",
+  "file": "requirements/rfp_constraints_v1.json",
+  "path": [
+   "rvm_limits",
+   12,
+   "requirement_frozen"
+  ],
+  "op": "set",
+  "value": "-1",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S021",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "id"
+  ],
+  "op": "set",
+  "value": "'THRESHOLD'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S022",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "numerical_methods_flat",
+   "hallthruster.commit"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S023",
+  "file": "SOURCES_OF_TRUTH.json",
+  "path": [
+   "sources",
+   "frozen_design_state_set",
+   "layer"
+  ],
+  "op": "set",
+  "value": "2.5",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S024",
+  "file": "assessment/gate_thresholds_v1.json",
+  "path": [
+   "layer"
+  ],
+  "op": "set",
+  "value": "[1, 2]",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S025",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "modules",
+   36,
+   "path"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S026",
+  "file": "hardware/hardware_bounds_v1.json",
+  "path": [
+   "entries",
+   6,
+   "id"
+  ],
+  "op": "set",
+  "value": "'PROVISIONAL'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S027",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "version"
+  ],
+  "op": "set",
+  "value": "[1, 2]",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S028",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "modules",
+   22
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S029",
+  "file": "mission/mission_scenario_v2.json",
+  "path": [
+   "inputs",
+   "commanded_thrust_cap_mN",
+   "initial_basis"
+  ],
+  "op": "set",
+  "value": "[1, 2]",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S030",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "modules",
+   25,
+   "version_labels"
+  ],
+  "op": "set",
+  "value": "''",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S031",
+  "file": "SOURCES_OF_TRUTH.json",
+  "path": [
+   "supporting_inputs",
+   "hardware_bounds_index",
+   "artefact"
+  ],
+  "op": "set",
+  "value": "''",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S032",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "modules",
+   25,
+   "version_labels"
+  ],
+  "op": "set",
+  "value": "0",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S033",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "layer"
+  ],
+  "op": "set",
+  "value": "'FROZEN'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S034",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "modules",
+   26,
+   "version_labels"
+  ],
+  "op": "set",
+  "value": "10**25",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S035",
+  "file": "requirements/rfp_constraints_v1.json",
+  "path": [
+   "rvm_limits",
+   4,
+   "title"
+  ],
+  "op": "set",
+  "value": "''",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S036",
+  "file": "constraints/engineering_constraints_v1.json",
+  "path": [
+   "constraints",
+   "thrust_sustained_min_mN",
+   "units"
+  ],
+  "op": "set",
+  "value": "True",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S037",
+  "file": "constraints/engineering_constraints_v1.json",
+  "path": [
+   "constraints",
+   "ic_total_min",
+   "kind"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S038",
+  "file": "SOURCES_OF_TRUTH.json",
+  "path": [
+   "dependency_rule"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S039",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "version_labels_flat",
+   "arch_compare.HARNESS_VERSION"
+  ],
+  "op": "set",
+  "value": "'X'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S040",
+  "file": "SOURCES_OF_TRUTH.json",
+  "path": [
+   "supporting_inputs",
+   "operating_scenario",
+   "pinned_by"
+  ],
+  "op": "set",
+  "value": "'SUBSYSTEM_FIRING_LIFE_ASSUMPTION'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S041",
+  "file": "mission/mission_scenario_v2.json",
+  "path": [
+   "inputs",
+   "firing_hours",
+   "units"
+  ],
+  "op": "set",
+  "value": "{}",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S042",
+  "file": "mission/mission_scenario_v2.json",
+  "path": [
+   "scenario_version"
+  ],
+  "op": "set",
+  "value": "'APPLIED'",
+  "remanifest": true,
+  "pin_override": true
+ },
+ {
+  "id": "L-S043",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "modules",
+   36,
+   "path"
+  ],
+  "op": "set",
+  "value": "'FROZEN'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S044",
+  "file": "requirements/rfp_constraints_v1.json",
+  "path": [
+   "rvm_limits",
+   1,
+   "rfp_clauses"
+  ],
+  "op": "set",
+  "value": "10**25",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S045",
+  "file": "architecture/hall_icp_neutralizer_v1.json",
+  "path": [
+   "decision_records",
+   "A9.15"
+  ],
+  "op": "set",
+  "value": "[1, 2]",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S046",
+  "file": "mission/mission_scenario_v2.json",
+  "path": [
+   "inputs",
+   "mission_hours",
+   "g1_status"
+  ],
+  "op": "set",
+  "value": "{}",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S047",
+  "file": "architecture/hall_icp_neutralizer_v1.json",
+  "path": [
+   "constants",
+   "supply_mode_gases",
+   "XE_CONTINGENCY",
+   0
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S048",
+  "file": "constraints/engineering_constraints_v1.json",
+  "path": [
+   "provenance",
+   "requirements_snapshot",
+   "snapshot_status"
+  ],
+  "op": "set",
+  "value": "float('inf')",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S049",
+  "file": "hardware/hardware_bounds_v1.json",
+  "path": [
+   "entries",
+   5,
+   "role"
+  ],
+  "op": "set",
+  "value": "'APPLIED'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S050",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "modules",
+   21,
+   "version_labels"
+  ],
+  "op": "set",
+  "value": "2.5",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S051",
+  "file": "constraints/engineering_constraints_v1.json",
+  "path": [
+   "governing_directive_a9_23",
+   "json_sha256"
+  ],
+  "op": "set",
+  "value": "'THRESHOLD'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S052",
+  "file": "assessment/gate_thresholds_v1.json",
+  "path": [
+   "gates",
+   "HC-06",
+   "comparator"
+  ],
+  "op": "set",
+  "value": "'SUBSYSTEM_FIRING_LIFE_ASSUMPTION'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S053",
+  "file": "assessment/gate_thresholds_v1.json",
+  "path": [
+   "engineering_constraints",
+   "path"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S054",
+  "file": "architecture/hall_icp_neutralizer_v1.json",
+  "path": [
+   "constants",
+   "supply_mode_gases",
+   "XE_CONTINGENCY",
+   0
+  ],
+  "op": "set",
+  "value": "[]",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S055",
+  "file": "mission/mission_scenario_v2.json",
+  "path": [
+   "inputs",
+   "firing_hours",
+   "kind"
+  ],
+  "op": "set",
+  "value": "'PROVISIONAL'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S056",
+  "file": "architecture/hall_icp_neutralizer_v1.json",
+  "path": [
+   "decision_records",
+   "A9.19"
+  ],
+  "op": "set",
+  "value": "'TBD_PENDING_MEASURED_H1'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S057",
+  "file": "MANIFEST.json",
+  "path": [
+   "files",
+   "requirements/rfp_constraints_v1.json",
+   "sha256"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S058",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "data",
+   9,
+   "path"
+  ],
+  "op": "set",
+  "value": "[1, 2]",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S059",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "dataset_id"
+  ],
+  "op": "set",
+  "value": "10**25",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S060",
+  "file": "constraints/engineering_constraints_v1.json",
+  "path": [
+   "constraints",
+   "intake_drag_generation_limit_mN",
+   "provenance",
+   "rvm_row"
+  ],
+  "op": "set",
+  "value": "True",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S061",
+  "file": "constraints/engineering_constraints_v1.json",
+  "path": [
+   "constraints",
+   "intake_drag_generation_limit_mN",
+   "provenance"
+  ],
+  "op": "set",
+  "value": "'TBD_PENDING_MEASURED_H1'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S062",
+  "file": "assessment/gate_thresholds_v1.json",
+  "path": [
+   "gates",
+   "HC-10",
+   "criterion"
+  ],
+  "op": "set",
+  "value": "'CONSTRAINT_REFERENCE'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S063",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "schema"
+  ],
+  "op": "set",
+  "value": "-1",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S064",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "path"
+  ],
+  "op": "set",
+  "value": "'PROVISIONAL'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S065",
+  "file": "architecture/hall_icp_neutralizer_v1.json",
+  "path": [
+   "constants",
+   "supply_modes"
+  ],
+  "op": "set",
+  "value": "2.5",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S066",
+  "file": "mission/mission_scenario_v2.json",
+  "path": [
+   "governing_decision_a9_24",
+   "items",
+   0
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S067",
+  "file": "SOURCES_OF_TRUTH.json",
+  "path": [
+   "supporting_inputs",
+   "operating_scenario",
+   "role"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S068",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "dataset_sha256"
+  ],
+  "op": "set",
+  "value": "'THRESHOLD'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S069",
+  "file": "assessment/gate_thresholds_v1.json",
+  "path": [
+   "gates",
+   "HC-07"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S070",
+  "file": "mission/mission_scenario_v2.json",
+  "path": [
+   "inputs",
+   "mission_hours",
+   "g1_migrated_consumers",
+   1
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": true
+ },
+ {
+  "id": "L-S071",
+  "file": "mission/mission_scenario_v2.json",
+  "path": [
+   "inputs",
+   "commanded_thrust_cap_mN",
+   "kind"
+  ],
+  "op": "set",
+  "value": "'PROVISIONAL'",
+  "remanifest": true,
+  "pin_override": true
+ },
+ {
+  "id": "L-S072",
+  "file": "constraints/engineering_constraints_v1.json",
+  "path": [
+   "constraints",
+   "p_bus_max_W",
+   "provenance",
+   "rvm_row"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S073",
+  "file": "architecture/hall_icp_neutralizer_v1.json",
+  "path": [
+   "status_rule"
+  ],
+  "op": "set",
+  "value": "True",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S074",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "path"
+  ],
+  "op": "set",
+  "value": "-0.0",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S075",
+  "file": "SOURCES_OF_TRUTH.json",
+  "path": [
+   "sources",
+   "assessment_result",
+   "role"
+  ],
+  "op": "set",
+  "value": "'TBD_PENDING_MEASURED_H1'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S076",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "modules",
+   13,
+   "path"
+  ],
+  "op": "set",
+  "value": "'CONSTRAINT_REFERENCE'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S077",
+  "file": "hardware/hardware_bounds_v1.json",
+  "path": [
+   "entries",
+   0,
+   "kind"
+  ],
+  "op": "set",
+  "value": "None",
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S078",
+  "file": "requirements/rfp_constraints_v1.json",
+  "path": [
+   "rvm_limits",
+   5,
+   "rvm_key"
+  ],
+  "op": "set",
+  "value": "2.5",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S079",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "producer"
+  ],
+  "op": "set",
+  "value": "[1, 2]",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S080",
+  "file": "mission/mission_scenario_v2.json",
+  "path": [
+   "inputs",
+   "mission_hours",
+   "historical_note"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": true
+ },
+ {
+  "id": "L-S081",
+  "file": "assessment/gate_thresholds_v1.json",
+  "path": [
+   "layer"
+  ],
+  "op": "set",
+  "value": "'PROVISIONAL'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S082",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "version_labels_flat",
+   "atmosphere_orbit.DATASET_ID"
+  ],
+  "op": "set",
+  "value": "'SUBSYSTEM_FIRING_LIFE_ASSUMPTION'",
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S083",
+  "file": "MANIFEST.json",
+  "path": [
+   "files",
+   "mission/mission_scenario_v1.json",
+   "sha256"
+  ],
+  "op": "set",
+  "value": "2.5",
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S084",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "manifest",
+   "path"
+  ],
+  "op": "set",
+  "value": "'TBD_PENDING_MEASURED_H1'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S085",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "modules",
+   4,
+   "version_labels",
+   "HARNESS_VERSION"
+  ],
+  "op": "set",
+  "value": "1",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S086",
+  "file": "requirements/rfp_constraints_v1.json",
+  "path": [
+   "rvm_limits",
+   1,
+   "rvm_row"
+  ],
+  "op": "set",
+  "value": "[]",
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S087",
+  "file": "constraints/engineering_constraints_v1.json",
+  "path": [
+   "constraints",
+   "ic_subsystem_min",
+   "provenance",
+   "rfp_clauses"
+  ],
+  "op": "set",
+  "value": "2.5",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S088",
+  "file": "hardware/hardware_bounds_v1.json",
+  "path": [
+   "entries",
+   3,
+   "sha256"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S089",
+  "file": "architecture/hall_icp_neutralizer_v1.json",
+  "path": [
+   "constants",
+   "flight_architecture",
+   "electron_source_neutralizer",
+   "serves_supply_modes",
+   1
+  ],
+  "op": "set",
+  "value": "False",
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S090",
+  "file": "architecture/hall_icp_neutralizer_v1.json",
+  "path": [
+   "constants",
+   "flight_architecture",
+   "supply_modes",
+   1,
+   "path",
+   0
+  ],
+  "op": "set",
+  "value": "-0.0",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S091",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "dataset_sha256"
+  ],
+  "op": "set",
+  "value": "{}",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S092",
+  "file": "mission/mission_scenario_v2.json",
+  "path": [
+   "governing_decision_a9_24",
+   "md_sha256"
+  ],
+  "op": "set",
+  "value": "'X'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S093",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "altitude_domain_source"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S094",
+  "file": "architecture/hall_icp_neutralizer_v1.json",
+  "path": [
+   "constants",
+   "flight_architecture",
+   "supply_modes",
+   0,
+   "path",
+   2
+  ],
+  "op": "set",
+  "value": "'X'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S095",
+  "file": "MANIFEST.json",
+  "path": [
+   "regenerate"
+  ],
+  "op": "set",
+  "value": "True",
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S096",
+  "file": "SOURCES_OF_TRUTH.json",
+  "path": [
+   "sources",
+   "requirements_provenance",
+   "pinned_by"
+  ],
+  "op": "set",
+  "value": "2.5",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S097",
+  "file": "MANIFEST.json",
+  "path": [
+   "files",
+   "SOURCES_OF_TRUTH.json",
+   "bytes"
+  ],
+  "op": "set",
+  "value": "10**25",
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S098",
+  "file": "assessment/gate_thresholds_v1.json",
+  "path": [
+   "gates",
+   "HC-05",
+   "provenance",
+   0
+  ],
+  "op": "set",
+  "value": "'SUBSYSTEM_FIRING_LIFE_ASSUMPTION'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S099",
+  "file": "MANIFEST.json",
+  "path": [
+   "files",
+   "environment/design_state_set_ref_v1.json",
+   "sha256"
+  ],
+  "op": "set",
+  "value": "'THRESHOLD'",
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S100",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "altitude_domain_source"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S101",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "modules",
+   7
+  ],
+  "op": "set",
+  "value": "'THRESHOLD'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S102",
+  "file": "SOURCES_OF_TRUTH.json",
+  "path": [
+   "sources",
+   "assessment_result",
+   "pinned_by"
+  ],
+  "op": "set",
+  "value": "[1, 2]",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S103",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "altitude_domain_source"
+  ],
+  "op": "set",
+  "value": "False",
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S104",
+  "file": "SOURCES_OF_TRUTH.json",
+  "path": [
+   "sources",
+   "raw_simulation_result",
+   "id"
+  ],
+  "op": "set",
+  "value": "''",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S105",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "producer"
+  ],
+  "op": "set",
+  "value": "{}",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S106",
+  "file": "assessment/gate_thresholds_v1.json",
+  "path": [
+   "gates",
+   "HC-12",
+   "provenance"
+  ],
+  "op": "set",
+  "value": "'CONSTRAINT_REFERENCE'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S107",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "layer"
+  ],
+  "op": "set",
+  "value": "'APPLIED'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S108",
+  "file": "MANIFEST.json",
+  "path": [
+   "files",
+   "assessment/gate_thresholds_v1.json",
+   "bytes"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S109",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "modules",
+   31,
+   "version_labels"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S110",
+  "file": "constraints/engineering_constraints_v1.json",
+  "path": [
+   "constraints",
+   "ic_total_min",
+   "value"
+  ],
+  "op": "set",
+  "value": "{}",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S111",
+  "file": "requirements/rfp_constraints_v1.json",
+  "path": [
+   "rvm_limits",
+   20,
+   "limit",
+   "value",
+   0
+  ],
+  "op": "set",
+  "value": "float('inf')",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S112",
+  "file": "assessment/gate_thresholds_v1.json",
+  "path": [
+   "gates",
+   "HC-10",
+   "layer"
+  ],
+  "op": "set",
+  "value": "{'value': 1.0}",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S113",
+  "file": "mission/mission_scenario_v2.json",
+  "path": [
+   "engineering_constraints",
+   "id"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S114",
+  "file": "MANIFEST.json",
+  "path": [
+   "id"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S115",
+  "file": "MANIFEST.json",
+  "path": [
+   "files",
+   "mission/mission_scenario_v1.json"
+  ],
+  "op": "set",
+  "value": "2.5",
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S116",
+  "file": "assessment/gate_thresholds_v1.json",
+  "path": [
+   "gates",
+   "HC-09",
+   "comparator"
+  ],
+  "op": "set",
+  "value": "{'value': 1.0}",
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S117",
+  "file": "requirements/rfp_constraints_v1.json",
+  "path": [
+   "rvm_limits",
+   20,
+   "limit",
+   "quantity"
+  ],
+  "op": "set",
+  "value": "1",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S118",
+  "file": "hardware/hardware_bounds_v1.json",
+  "path": [
+   "entries",
+   0,
+   "path"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S119",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "data",
+   13
+  ],
+  "op": "set",
+  "value": "'CONSTRAINT_REFERENCE'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S120",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "modules",
+   12,
+   "version_labels",
+   "CATHODE_INTEGRATION_VERSION"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S121",
+  "file": "architecture/hall_icp_neutralizer_v1.json",
+  "path": [
+   "decision_records",
+   "A9.20"
+  ],
+  "op": "set",
+  "value": "''",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S122",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "generated_by"
+  ],
+  "op": "set",
+  "value": "2.5",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S123",
+  "file": "architecture/hall_icp_neutralizer_v1.json",
+  "path": [
+   "constants",
+   "flight_architecture",
+   "c1",
+   "uses",
+   0
+  ],
+  "op": "set",
+  "value": "'FROZEN'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S124",
+  "file": "SOURCES_OF_TRUTH.json",
+  "path": [
+   "sources",
+   "assessment_result",
+   "layer"
+  ],
+  "op": "set",
+  "value": "'CONSTRAINT_REFERENCE'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S125",
+  "file": "constraints/engineering_constraints_v1.json",
+  "path": [
+   "constraints",
+   "propellant_capability",
+   "provenance",
+   1
+  ],
+  "op": "set",
+  "value": "'PROVISIONAL'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S126",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "modules",
+   58,
+   "path"
+  ],
+  "op": "set",
+  "value": "''",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S127",
+  "file": "requirements/rfp_constraints_v1.json",
+  "path": [
+   "rvm_limits",
+   7,
+   "status"
+  ],
+  "op": "set",
+  "value": "1e300",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S128",
+  "file": "SOURCES_OF_TRUTH.json",
+  "path": [
+   "sources",
+   "raw_simulation_result",
+   "layer"
+  ],
+  "op": "set",
+  "value": "10**25",
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S129",
+  "file": "architecture/hall_icp_neutralizer_v1.json",
+  "path": [
+   "constants",
+   "supply_mode_xe"
+  ],
+  "op": "set",
+  "value": "-1",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S130",
+  "file": "requirements/rfp_constraints_v1.json",
+  "path": [
+   "rvm_limits",
+   20,
+   "rvm_row"
+  ],
+  "op": "set",
+  "value": "[]",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S131",
+  "file": "hardware/hardware_bounds_v1.json",
+  "path": [
+   "entries",
+   1,
+   "kind"
+  ],
+  "op": "set",
+  "value": "'TBD_PENDING_MEASURED_H1'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S132",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "id"
+  ],
+  "op": "set",
+  "value": "''",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S133",
+  "file": "mission/mission_scenario_v2.json",
+  "path": [
+   "inputs",
+   "p_bus_throttling_cap_W",
+   "initial_basis",
+   "constraint_id"
+  ],
+  "op": "set",
+  "value": "None",
+  "remanifest": true,
+  "pin_override": true
+ },
+ {
+  "id": "L-S134",
+  "file": "mission/mission_scenario_v2.json",
+  "path": [
+   "inputs",
+   "p_bus_throttling_cap_W",
+   "initial_basis",
+   "constraints_artefact"
+  ],
+  "op": "set",
+  "value": "1e300",
+  "remanifest": true,
+  "pin_override": true
+ },
+ {
+  "id": "L-S135",
+  "file": "assessment/gate_thresholds_v1.json",
+  "path": [
+   "gates",
+   "HC-11",
+   "layer"
+  ],
+  "op": "set",
+  "value": "float('inf')",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S136",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "dataset_sha256"
+  ],
+  "op": "set",
+  "value": "{}",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S137",
+  "file": "requirements/rfp_constraints_v1.json",
+  "path": [
+   "rfp_constraints_compat",
+   "power_max_W"
+  ],
+  "op": "set",
+  "value": "'CONSTRAINT_REFERENCE'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S138",
+  "file": "constraints/engineering_constraints_v1.json",
+  "path": [
+   "constraints",
+   "thrust_sustained_min_mN",
+   "provenance",
+   "rvm_key"
+  ],
+  "op": "set",
+  "value": "False",
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S139",
+  "file": "hardware/hardware_bounds_v1.json",
+  "path": [
+   "entries",
+   0,
+   "id"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S140",
+  "file": "SOURCES_OF_TRUTH.json",
+  "path": [
+   "sources",
+   "frozen_architecture",
+   "pinned_by",
+   0
+  ],
+  "op": "set",
+  "value": "[1, 2]",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S141",
+  "file": "hardware/hardware_bounds_v1.json",
+  "path": [
+   "entries",
+   3,
+   "role"
+  ],
+  "op": "set",
+  "value": "1",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S142",
+  "file": "SOURCES_OF_TRUTH.json",
+  "path": [
+   "supporting_inputs",
+   "assessment_gate_thresholds"
+  ],
+  "op": "set",
+  "value": "'FROZEN'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S143",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "modules",
+   46,
+   "path"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S144",
+  "file": "MANIFEST.json",
+  "path": [
+   "files",
+   "README.md"
+  ],
+  "op": "set",
+  "value": "-1",
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S145",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "data",
+   10
+  ],
+  "op": "set",
+  "value": "[180, 230]",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S146",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "loader"
+  ],
+  "op": "set",
+  "value": "{'value': 1.0}",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S147",
+  "file": "hardware/hardware_bounds_v1.json",
+  "path": [
+   "entries",
+   3,
+   "id"
+  ],
+  "op": "set",
+  "value": "'X'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S148",
+  "file": "MANIFEST.json",
+  "path": [
+   "files",
+   "environment/design_state_set_ref_v1.json",
+   "bytes"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S149",
+  "file": "constraints/engineering_constraints_v1.json",
+  "path": [
+   "constraints",
+   "thrust_sustained_min_mN",
+   "provenance",
+   "rfp_clauses",
+   0
+  ],
+  "op": "set",
+  "value": "'CONSTRAINT_REFERENCE'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S150",
+  "file": "assessment/gate_thresholds_v1.json",
+  "path": [
+   "gates",
+   "HC-06",
+   "provenance"
+  ],
+  "op": "set",
+  "value": "''",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S151",
+  "file": "SOURCES_OF_TRUTH.json",
+  "path": [
+   "sources",
+   "frozen_design_state_set",
+   "layer"
+  ],
+  "op": "set",
+  "value": "'CONSTRAINT_REFERENCE'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S152",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "path"
+  ],
+  "op": "set",
+  "value": "0",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S153",
+  "file": "hardware/hardware_bounds_v1.json",
+  "path": [
+   "entries",
+   5,
+   "id"
+  ],
+  "op": "set",
+  "value": "float('inf')",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S154",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "generated_by"
+  ],
+  "op": "set",
+  "value": "10**25",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S155",
+  "file": "assessment/gate_thresholds_v1.json",
+  "path": [
+   "gates",
+   "HC-12",
+   "units"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S156",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "data",
+   16,
+   "sha256"
+  ],
+  "op": "set",
+  "value": "2.5",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S157",
+  "file": "hardware/hardware_bounds_v1.json",
+  "path": [
+   "entries",
+   1,
+   "id"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S158",
+  "file": "mission/mission_scenario_v2.json",
+  "path": [
+   "inputs",
+   "firing_hours"
+  ],
+  "op": "set",
+  "value": "{'value': 1.0}",
+  "remanifest": true,
+  "pin_override": true
+ },
+ {
+  "id": "L-S159",
+  "file": "assessment/gate_thresholds_v1.json",
+  "path": [
+   "gates",
+   "HC-06",
+   "provenance",
+   1
+  ],
+  "op": "set",
+  "value": "'PROVISIONAL'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S160",
+  "file": "MANIFEST.json",
+  "path": [
+   "files",
+   "model_set/physics_model_set_v1.json",
+   "sha256"
+  ],
+  "op": "set",
+  "value": "[1, 2]",
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S161",
+  "file": "SOURCES_OF_TRUTH.json",
+  "path": [
+   "supporting_inputs",
+   "hardware_bounds_index",
+   "sha256"
+  ],
+  "op": "set",
+  "value": "''",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S162",
+  "file": "mission/mission_scenario_v2.json",
+  "path": [
+   "engineering_constraints",
+   "binding"
+  ],
+  "op": "set",
+  "value": "'THRESHOLD'",
+  "remanifest": true,
+  "pin_override": true
+ },
+ {
+  "id": "L-S163",
+  "file": "hardware/hardware_bounds_v1.json",
+  "path": [
+   "entries",
+   2,
+   "path"
+  ],
+  "op": "set",
+  "value": "True",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S164",
+  "file": "requirements/rfp_constraints_v1.json",
+  "path": [
+   "rfp_constraints_compat",
+   "mass_max_kg",
+   "rvm_key"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S165",
+  "file": "requirements/rfp_constraints_v1.json",
+  "path": [
+   "rfp_constraints_compat",
+   "alt_min_km",
+   "rfp_clauses",
+   1
+  ],
+  "op": "set",
+  "value": "'APPLIED'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S166",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "modules",
+   22
+  ],
+  "op": "set",
+  "value": "[]",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S167",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "dataset_sha256"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S168",
+  "file": "assessment/gate_thresholds_v1.json",
+  "path": [
+   "governing_decision_a9_24"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S169",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "modules",
+   21,
+   "path"
+  ],
+  "op": "set",
+  "value": "{}",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S170",
+  "file": "constraints/engineering_constraints_v1.json",
+  "path": [
+   "constraints",
+   "thrust_sustained_min_mN",
+   "comparator"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S171",
+  "file": "constraints/engineering_constraints_v1.json",
+  "path": [
+   "constraints",
+   "ic_subsystem_min",
+   "consumed_by",
+   0
+  ],
+  "op": "set",
+  "value": "'TBD_PENDING_MEASURED_H1'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S172",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "dataset_sha256"
+  ],
+  "op": "set",
+  "value": "''",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S173",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "modules",
+   3,
+   "sha256"
+  ],
+  "op": "set",
+  "value": "None",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S174",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "n_states"
+  ],
+  "op": "set",
+  "value": "-1",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S175",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "modules",
+   61,
+   "sha256"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S176",
+  "file": "architecture/hall_icp_neutralizer_v1.json",
+  "path": [
+   "constants",
+   "c1_role",
+   "never",
+   4
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S177",
+  "file": "hardware/hardware_bounds_v1.json",
+  "path": [
+   "entries",
+   4,
+   "id"
+  ],
+  "op": "set",
+  "value": "float('inf')",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S178",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "data",
+   3,
+   "sha256"
+  ],
+  "op": "set",
+  "value": "'APPLIED'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S179",
+  "file": "hardware/hardware_bounds_v1.json",
+  "path": [
+   "entries",
+   0,
+   "sha256"
+  ],
+  "op": "set",
+  "value": "''",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S180",
+  "file": "assessment/gate_thresholds_v1.json",
+  "path": [
+   "gates",
+   "HC-08",
+   "provenance"
+  ],
+  "op": "set",
+  "value": "{}",
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S181",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "version_labels_flat",
+   "icp_bench_lib.MAP_SCHEMA_ID"
+  ],
+  "op": "set",
+  "value": "'TBD_PENDING_MEASURED_H1'",
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S182",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "modules",
+   3
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S183",
+  "file": "mission/mission_scenario_v2.json",
+  "path": [
+   "inputs",
+   "mission_hours",
+   "initial_basis",
+   "value_at_freeze"
+  ],
+  "op": "set",
+  "value": "'SUBSYSTEM_FIRING_LIFE_ASSUMPTION'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S184",
+  "file": "requirements/rfp_constraints_v1.json",
+  "path": [
+   "rvm_limits",
+   7,
+   "rvm_key"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S185",
+  "file": "requirements/rfp_constraints_v1.json",
+  "path": [
+   "rfp_constraints_compat",
+   "mission_hours",
+   "rfp_clauses",
+   0
+  ],
+  "op": "set",
+  "value": "True",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S186",
+  "file": "requirements/rfp_constraints_v1.json",
+  "path": [
+   "mission_domain",
+   "rfp_clauses",
+   1
+  ],
+  "op": "set",
+  "value": "'SUBSYSTEM_FIRING_LIFE_ASSUMPTION'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S187",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "producer"
+  ],
+  "op": "set",
+  "value": "1",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S188",
+  "file": "constraints/engineering_constraints_v1.json",
+  "path": [
+   "constraints",
+   "altitude_band_km",
+   "provenance",
+   "rfp_clauses",
+   0
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S189",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "manifest",
+   "path"
+  ],
+  "op": "set",
+  "value": "[180, 230]",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S190",
+  "file": "constraints/engineering_constraints_v1.json",
+  "path": [
+   "constraints",
+   "propellant_capability",
+   "provenance",
+   1,
+   "requirement_frozen"
+  ],
+  "op": "set",
+  "value": "0",
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S191",
+  "file": "SOURCES_OF_TRUTH.json",
+  "path": [
+   "sources",
+   "assessment_result",
+   "role"
+  ],
+  "op": "set",
+  "value": "'X'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S192",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "modules",
+   23,
+   "version_labels"
+  ],
+  "op": "set",
+  "value": "'PROVISIONAL'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S193",
+  "file": "hardware/hardware_bounds_v1.json",
+  "path": [
+   "entries",
+   5,
+   "sha256"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S194",
+  "file": "hardware/hardware_bounds_v1.json",
+  "path": [
+   "entries",
+   4
+  ],
+  "op": "set",
+  "value": "-1",
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S195",
+  "file": "SOURCES_OF_TRUTH.json",
+  "path": [
+   "sources",
+   "frozen_design_state_set",
+   "pinned_by"
+  ],
+  "op": "set",
+  "value": "float('inf')",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S196",
+  "file": "hardware/hardware_bounds_v1.json",
+  "path": [
+   "entries",
+   0,
+   "kind"
+  ],
+  "op": "set",
+  "value": "'APPLIED'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S197",
+  "file": "hardware/hardware_bounds_v1.json",
+  "path": [
+   "entries",
+   2,
+   "role"
+  ],
+  "op": "set",
+  "value": "'SUBSYSTEM_FIRING_LIFE_ASSUMPTION'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S198",
+  "file": "requirements/rfp_constraints_v1.json",
+  "path": [
+   "rvm_limits",
+   14,
+   "rfp_clauses",
+   0
+  ],
+  "op": "set",
+  "value": "10**25",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S199",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "data",
+   9,
+   "path"
+  ],
+  "op": "set",
+  "value": "0",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S200",
+  "file": "constraints/engineering_constraints_v1.json",
+  "path": [
+   "constraints",
+   "firing_life_h",
+   "comparator"
+  ],
+  "op": "set",
+  "value": "[180, 230]",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S201",
+  "file": "requirements/rfp_constraints_v1.json",
+  "path": [
+   "rvm_limits",
+   0,
+   "requirement_frozen"
+  ],
+  "op": "set",
+  "value": "'TBD_PENDING_MEASURED_H1'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S202",
+  "file": "architecture/hall_icp_neutralizer_v1.json",
+  "path": [
+   "governing_directive_a9_22",
+   "md"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S203",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "producer"
+  ],
+  "op": "set",
+  "value": "False",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S204",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "data",
+   17
+  ],
+  "op": "set",
+  "value": "'X'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S205",
+  "file": "architecture/hall_icp_neutralizer_v1.json",
+  "path": [
+   "constants",
+   "supply_mode_gases",
+   "XE_CONTINGENCY"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S206",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "dataset_sha256"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S207",
+  "file": "SOURCES_OF_TRUTH.json",
+  "path": [
+   "sources",
+   "physics_model_set",
+   "loader"
+  ],
+  "op": "set",
+  "value": "{}",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S208",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "modules",
+   23,
+   "version_labels",
+   "SCHEMA_NAME"
+  ],
+  "op": "set",
+  "value": "-0.0",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S209",
+  "file": "requirements/rfp_constraints_v1.json",
+  "path": [
+   "rvm_limits",
+   16,
+   "requirement_origin"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S210",
+  "file": "SOURCES_OF_TRUTH.json",
+  "path": [
+   "sources",
+   "physics_model_set"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S211",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "modules",
+   24,
+   "version_labels",
+   "RECORD_SCHEMA"
+  ],
+  "op": "set",
+  "value": "'PROVISIONAL'",
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S212",
+  "file": "SOURCES_OF_TRUTH.json",
+  "path": [
+   "sources",
+   "assessment_result",
+   "pinned_by",
+   0
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S213",
+  "file": "constraints/engineering_constraints_v1.json",
+  "path": [
+   "constraints",
+   "hall_preferred",
+   "provenance",
+   "rfp_clauses",
+   0
+  ],
+  "op": "set",
+  "value": "0",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S214",
+  "file": "assessment/gate_thresholds_v1.json",
+  "path": [
+   "gates",
+   "HC-09",
+   "provenance",
+   0
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S215",
+  "file": "mission/mission_scenario_v2.json",
+  "path": [
+   "id"
+  ],
+  "op": "set",
+  "value": "False",
+  "remanifest": true,
+  "pin_override": true
+ },
+ {
+  "id": "L-S216",
+  "file": "hardware/hardware_bounds_v1.json",
+  "path": [
+   "entries",
+   1,
+   "kind"
+  ],
+  "op": "set",
+  "value": "'SUBSYSTEM_FIRING_LIFE_ASSUMPTION'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S217",
+  "file": "model_set/physics_model_set_v1.json",
+  "path": [
+   "modules",
+   1,
+   "sha256"
+  ],
+  "op": "set",
+  "value": "'APPLIED'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S218",
+  "file": "hardware/hardware_bounds_v1.json",
+  "path": [
+   "entries",
+   1,
+   "locator"
+  ],
+  "op": "set",
+  "value": "'APPLIED'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S219",
+  "file": "constraints/engineering_constraints_v1.json",
+  "path": [
+   "constraints",
+   "wet_mass_max_kg",
+   "provenance",
+   "rfp_clauses",
+   0
+  ],
+  "op": "set",
+  "value": "{}",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S220",
+  "file": "constraints/engineering_constraints_v1.json",
+  "path": [
+   "constraints",
+   "propellant_capability",
+   "provenance",
+   1,
+   "rfp_clauses",
+   2
+  ],
+  "op": "set",
+  "value": "float('inf')",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S221",
+  "file": "hardware/hardware_bounds_v1.json",
+  "path": [
+   "entries",
+   5
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S222",
+  "file": "hardware/hardware_bounds_v1.json",
+  "path": [
+   "entries",
+   1,
+   "locator"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S223",
+  "file": "assessment/gate_thresholds_v1.json",
+  "path": [
+   "gates",
+   "HC-10"
+  ],
+  "op": "set",
+  "value": "'FROZEN'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S224",
+  "file": "assessment/gate_thresholds_v1.json",
+  "path": [
+   "gates",
+   "HC-09",
+   "status"
+  ],
+  "op": "set",
+  "value": "0",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S225",
+  "file": "mission/mission_scenario_v2.json",
+  "path": [
+   "engineering_constraints",
+   "id"
+  ],
+  "op": "set",
+  "value": "False",
+  "remanifest": true,
+  "pin_override": true
+ },
+ {
+  "id": "L-S226",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "n_states"
+  ],
+  "op": "set",
+  "value": "10**25",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S227",
+  "file": "requirements/rfp_constraints_v1.json",
+  "path": [
+   "rvm_limits",
+   8,
+   "limit",
+   "units"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S228",
+  "file": "hardware/hardware_bounds_v1.json",
+  "path": [
+   "generated_by"
+  ],
+  "op": "set",
+  "value": "'APPLIED'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S229",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "dataset_id"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S230",
+  "file": "SOURCES_OF_TRUTH.json",
+  "path": [
+   "supporting_inputs",
+   "operating_scenario",
+   "pinned_by"
+  ],
+  "op": "set",
+  "value": "1",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S231",
+  "file": "SOURCES_OF_TRUTH.json",
+  "path": [
+   "supporting_inputs",
+   "assessment_gate_thresholds",
+   "role"
+  ],
+  "op": "set",
+  "value": "-1",
+  "remanifest": false,
+  "pin_override": false
+ },
+ {
+  "id": "L-S232",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "manifest"
+  ],
+  "op": "set",
+  "value": "-0.0",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S233",
+  "file": "SOURCES_OF_TRUTH.json",
+  "path": [
+   "sources",
+   "raw_simulation_result",
+   "schema"
+  ],
+  "op": "set",
+  "value": "float('inf')",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S234",
+  "file": "hardware/hardware_bounds_v1.json",
+  "path": [
+   "entries",
+   5,
+   "role"
+  ],
+  "op": "set",
+  "value": "{}",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S235",
+  "file": "assessment/gate_thresholds_v1.json",
+  "path": [
+   "gates",
+   "HC-12",
+   "provenance",
+   1
+  ],
+  "op": "set",
+  "value": "1",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S236",
+  "file": "mission/mission_scenario_v2.json",
+  "path": [
+   "inputs",
+   "p_bus_throttling_cap_W",
+   "initial_basis",
+   "role"
+  ],
+  "op": "delete",
+  "value": null,
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S237",
+  "file": "constraints/engineering_constraints_v1.json",
+  "path": [
+   "constraints",
+   "thrust_capability_mN"
+  ],
+  "op": "set",
+  "value": "[1, 2]",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S238",
+  "file": "assessment/gate_thresholds_v1.json",
+  "path": [
+   "gates",
+   "HC-06",
+   "value"
+  ],
+  "op": "set",
+  "value": "'PROVISIONAL'",
+  "remanifest": true,
+  "pin_override": false
+ },
+ {
+  "id": "L-S239",
+  "file": "environment/design_state_set_ref_v1.json",
+  "path": [
+   "generated_by"
+  ],
+  "op": "set",
+  "value": "'X'",
+  "remanifest": true,
+  "pin_override": false
+ }
+]

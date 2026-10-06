@@ -14,12 +14,32 @@ dependencies = [
 ]
 
 [[package]]
+name = "abep-chem"
+version = "0.1.0"
+dependencies = [
+ "abep-provenance",
+ "abep-types",
+ "flate2",
+ "serde_json",
+ "toml",
+]
+
+[[package]]
 name = "abep-ci"
 version = "0.1.0"
 dependencies = [
  "abep-provenance",
  "abep-types",
  "serde_json",
+]
+
+[[package]]
+name = "abep-config"
+version = "0.1.0"
+dependencies = [
+ "abep-provenance",
+ "abep-types",
+ "toml",
 ]
 
 [[package]]
@@ -44,6 +64,62 @@ dependencies = [
 ]
 
 [[package]]
+name = "abep-hall"
+version = "0.1.0"
+dependencies = [
+ "abep-provenance",
+ "abep-types",
+ "flate2",
+ "serde_json",
+ "sha2",
+]
+
+[[package]]
+name = "abep-icp"
+version = "0.1.0"
+dependencies = [
+ "abep-provenance",
+ "abep-types",
+ "serde",
+ "serde_json",
+ "toml",
+]
+
+[[package]]
+name = "abep-intake"
+version = "0.1.0"
+dependencies = [
+ "abep-provenance",
+ "abep-types",
+ "abep_core",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "abep-julia-bridge"
+version = "0.1.0"
+dependencies = [
+ "abep-hall",
+ "abep-provenance",
+ "abep-types",
+ "serde",
+ "serde_json",
+ "toml",
+]
+
+[[package]]
+name = "abep-mission"
+version = "0.1.0"
+dependencies = [
+ "abep-atmos",
+ "abep-data",
+ "abep-provenance",
+ "abep-types",
+ "serde_json",
+]
+
+[[package]]
 name = "abep-provenance"
 version = "0.1.0"
 dependencies = [
@@ -55,12 +131,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "abep-subsystems"
+version = "0.1.0"
+dependencies = [
+ "abep-provenance",
+ "abep-types",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "abep-types"
 version = "0.1.0"
 dependencies = [
  "serde",
  "serde_json",
+ "sha2",
 ]
+
+[[package]]
+name = "abep_core"
+version = "0.1.0"
 
 [[package]]
 name = "adler2"

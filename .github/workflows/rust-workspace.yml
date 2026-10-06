@@ -59,6 +59,11 @@ jobs:
             grep -q "  $f\$" "$rec" || { echo "::error::UNRECORDED_SOURCE_CHANGE: $f is not bound by parity_report_v2"; exit 1; }
           done
 
+      - name: Fetch every locked package (cargo fetch --locked)
+        # The ground-test isolation check runs `cargo metadata --locked --offline`, which needs every package in
+        # Cargo.lock, including other-target dependencies that `cargo build` / `cargo test` never download.
+        run: cargo fetch --locked
+
       - name: Format (cargo fmt -- --check)
         # Members only: --all would also format the abep_core path dependency, which is not rustfmt-clean under the root
         # rustfmt.toml and whose bytes are sha256-bound by parity_report_v2.

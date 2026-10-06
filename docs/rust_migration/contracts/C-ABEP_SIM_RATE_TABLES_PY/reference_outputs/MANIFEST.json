@@ -1,0 +1,21 @@
+{
+ "contract": "PARITY-C-ABEP_SIM_RATE_TABLES_PY-V1",
+ "captured_at_python_commit": "6358af8b830e9e6b70b4e4eba85d80682ea3ffb8",
+ "repository_head_at_capture": "75f86a322a7583f003851c77e8e8b398299a449c",
+ "python_reference": "abep_sim/rate_tables.py sha256 ea9880b0d5a474e93083346f29694f2fa820ffce01aca001ea4610893ac04909",
+ "files": {
+  "inputs.json.gz": {
+   "sha256": "a2c811bf556eb9d152ae8b1868ca355ce0cc2acb6eb790b5fccdacca25991431",
+   "bytes": 626882
+  },
+  "python_outputs.json.gz": {
+   "sha256": "482c3d32eeff7481b9679d4a3515289ee45b44cd31bf4c9046e5d5d47b6a6cea",
+   "bytes": 257726
+  },
+  "rust_outputs_at_scoring.json.gz": {
+   "sha256": "b6ebf518f6ec48528b5a98b4317c7d8baa332ff78da666c12aa561bdc3790ab9",
+   "bytes": 328839
+  }
+ },
+ "note": "inputs: registered representations and the full request (non-finite numbers as strings); python_outputs: outcome per call id; rust_outputs_at_scoring: the CLI stdout of the scoring run"
+}

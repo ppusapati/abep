@@ -2,7 +2,7 @@
  "schema": "abep_platform_test_register_v1",
  "id": "PLATFORM-TEST-REGISTER-V1",
  "date": "2026-10-05",
- "status": "ACTIVE_EMPTY",
+ "status": "ACTIVE",
  "governing_records": [
   "docs/decisions/OD_2026_10_05_A9_29_RUST_PLAN_V3_1_RULINGS_AND_START_AUTHORIZATION.md sec. 9 (RM-OQ-05)",
   "docs/rust_migration/CI_PLAN.md § 7",
@@ -22,5 +22,26 @@
  },
  "check": "crates/abep-ci/src/test_register.rs (cargo test -p abep-ci; CI: abep-ci test-register): every ignore attribute carries a registered marker on the registered path and function, and every entry matches exactly one marked test",
  "name_note": "CI_PLAN.md § 7 proposed the name platform_hardware_tests_v1.json; ES-1 fixes it as platform_tests_v1.json",
- "tests": []
+ "tests": [
+  {
+   "id": "PT-01",
+   "crate": "abep-julia-bridge",
+   "path": "crates/abep-julia-bridge/tests/platform.rs",
+   "function": "smoke_job_runs_with_the_pinned_toolchain_and_writes_its_sidecar",
+   "reason": "needs the pinned Julia 1.11.7 with HallThruster.jl v0.23.1 (commit bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5) installed from hallthruster_bridge/Manifest.toml; normal CI and the agent containers have no Julia (julialang-s3 is not reachable from them)",
+   "owner_or_evidence_basis": "simulation_completion_programme_v1_1.json hall_physics_boundary (process boundary, determinism, provenance_sidecar_per_run) and the SC-WP-03 admission criterion 'EXACT_BYTES run records against the Python-launched job'; contract docs/rust_migration/contracts/C-JULIA-BRIDGE-LAUNCH/parity_prereg_v1.json julia_bridge.platform_tests; CI_PLAN.md section 4 (abep hall smoke); A9.29 sec. 9 (registered platform test class)",
+   "execution_environment": ".github/workflows/julia-smoke.yml (manual workflow_dispatch: ubuntu-latest, julia-actions/setup-julia with the Manifest julia_version, Pkg.instantiate of the committed Manifest.toml) or a workstation with the pinned toolchain; command: cargo test -p abep-julia-bridge --test platform -- --ignored; outputs go to the system temp directory, never into the checkout",
+   "required_trigger": "workflow_dispatch of julia-smoke.yml once its Rust step is wired (W8 admission of abep-julia-bridge); before any score-bearing campaign launched through abep-julia-bridge; any change of crates/abep-julia-bridge/src/launch.rs or jobs.rs"
+  },
+  {
+   "id": "PT-02",
+   "crate": "abep-julia-bridge",
+   "path": "crates/abep-julia-bridge/tests/platform.rs",
+   "function": "rust_and_reference_launch_lines_give_byte_identical_smoke_records",
+   "reason": "needs the pinned Julia 1.11.7 with HallThruster.jl v0.23.1 (commit bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5) installed from hallthruster_bridge/Manifest.toml; normal CI and the agent containers have no Julia (julialang-s3 is not reachable from them)",
+   "owner_or_evidence_basis": "simulation_completion_programme_v1_1.json hall_physics_boundary (process boundary, determinism, provenance_sidecar_per_run) and the SC-WP-03 admission criterion 'EXACT_BYTES run records against the Python-launched job'; contract docs/rust_migration/contracts/C-JULIA-BRIDGE-LAUNCH/parity_prereg_v1.json julia_bridge.platform_tests; CI_PLAN.md section 4 (abep hall smoke); A9.29 sec. 9 (registered platform test class)",
+   "execution_environment": ".github/workflows/julia-smoke.yml (manual workflow_dispatch: ubuntu-latest, julia-actions/setup-julia with the Manifest julia_version, Pkg.instantiate of the committed Manifest.toml) or a workstation with the pinned toolchain; command: cargo test -p abep-julia-bridge --test platform -- --ignored; outputs go to the system temp directory, never into the checkout",
+   "required_trigger": "workflow_dispatch of julia-smoke.yml once its Rust step is wired (W8 admission of abep-julia-bridge); before any score-bearing campaign launched through abep-julia-bridge; any change of crates/abep-julia-bridge/src/launch.rs or jobs.rs"
+  }
+ ]
 }
