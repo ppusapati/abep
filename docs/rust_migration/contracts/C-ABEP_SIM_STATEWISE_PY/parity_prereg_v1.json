@@ -1,0 +1,407 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-ABEP_SIM_STATEWISE_PY-V1",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "component": {
+  "inventory_id": "C-ABEP_SIM_STATEWISE_PY",
+  "inventory_path": "docs/rust_migration/component_inventory_v3_1.json",
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "migration_wave": "W1",
+  "scope": "whole module abep_sim/statewise.py: statewise_quantifier, A9_14_JSON, A9_14_SHA256",
+  "functions_or_entry_points": [
+   "abep_sim/statewise.py::statewise_quantifier"
+  ],
+  "out_of_scope": [
+   "abep_sim/atmosphere_orbit.py re-export of the same function object (no separate behaviour)",
+   "abep_sim/design/upstream_a9_13.py::statewise_envelope (maps the quantifier verdict onto the design-layer constraint vocabulary; C-ABEP_SIM_DESIGN_UPSTREAM_A9_13_PY, stays PYTHON_REFERENCE)",
+   "abep_sim/assessment/design_gates.py::statewise_drag_compensation (HC-08 / AG-13 assessment; SC-WP-11)"
+  ],
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+  "extract_kernel_id": "NOT_APPLICABLE",
+  "active_toolchain_requirement": "NOT_APPLICABLE",
+  "excluded_legacy_paths": [],
+  "owner_disposition_a9_28": "NOT_APPLICABLE",
+  "simulation_completion_wp": "SC-WP-04 (element 'statewise T - D (raw quantities; HC-08 criterion stays in assessment)')",
+  "owner_disposition_a9_29": "NOT_APPLICABLE"
+ },
+ "date": "2026-10-06",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of this component was executed (lane SC-WP-04, branch lane-wp04-drag). No Rust implementation of the component exists at registration. The registration commit is recorded in the report, not here.",
+ "supersedes": {
+  "path": null,
+  "sha256": null,
+  "reason": null
+ },
+ "lane": {
+  "id": "SC-WP-04",
+  "work_package": "SC-WP-04",
+  "branch": "lane-wp04-drag (from origin/integration/simulation-complete fa4fcb3bd21fec8c07a26fe264e1045d5a6bec73)",
+  "authority": "A9.29 secs. 13-15; simulation_completion_programme_v1_1.json SC-WP-04 (sha256 5e672943892b0035f05562e68dae1ca279acd4a4bd625641a559e53711f4643a)"
+ },
+ "reference_implementation": {
+  "python_commit": "fa4fcb3bd21fec8c07a26fe264e1045d5a6bec73",
+  "python_commit_note": "origin/integration/simulation-complete at lane start; never the bid record",
+  "files": [
+   {
+    "path": "abep_sim/statewise.py",
+    "sha256_at_registration": "ec90f2282467e4877c4d10c32f12368f400102bd5889da49902077cdfb55e63e"
+   },
+   {
+    "path": "abep_sim/design/intake_synthesis.py",
+    "sha256_at_registration": "104ac561c05d8516c0571bc88339d69c4ab6abc78f8bfeeacea8696e557f2191",
+    "role": "harness input generator only (required_states); not a reference of this contract"
+   }
+  ],
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration; a changed reference requires a new contract version",
+  "environment": {
+   "python": "3.11.15 (built-in sum() of floats is the plain left-to-right addition; Python >= 3.12 compensates and would be INPUT_MISMATCH)",
+   "numpy": "2.4.4",
+   "scipy": "1.17.1",
+   "pandas": "3.0.2",
+   "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+   "blas": "not used by the component",
+   "thread_env": {
+    "OMP_NUM_THREADS": "1 (set by the harness)",
+    "OPENBLAS_NUM_THREADS": "1 (set by the harness)"
+   },
+   "recorded_again_at_scoring": "python / numpy versions, CPU model and thread env are written into the report; a version change is INPUT_MISMATCH (not a verdict)"
+  }
+ },
+ "rust_implementation": {
+  "crate": "abep-mission (module statewise)",
+  "placement": "programme_v3_1 dependency rule: the quantifier is shared by the environment accessor, the design layer (statewise_envelope) and the assessment layer (HC-08), so it sits below abep-design / abep-assess in the physics crate the plan names for SC-WP-04. It is a quantifier over caller-supplied margins: it holds no requirement value and reads no requirement record; any criterion is the caller's margin function. No raw-physics output of abep-mission calls it (the statewise T - D record is raw quantities only)",
+  "functions_or_entry_points": [
+   "abep_mission::statewise::{A9_14_JSON, A9_14_SHA256}",
+   "abep_mission::statewise::statewise_quantifier(states: &[pyjson::Value], margin_fn: &mut dyn FnMut(&pyjson::Value) -> Result<pyjson::Value, String>, requirement_id: &pyjson::Value) -> AbepResult<pyjson::Value> (margin_fn returns the margin value, or Err('<ExceptionClass>: <message>') for a raising margin function)",
+   "CLI: abep-mission-parity entry 'statewise_quantifier' (margins supplied as registered per-state outcomes)"
+  ],
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (rust-toolchain.toml channel 1.94.1)",
+  "provenance_sources": [
+   "Cargo.toml",
+   "Cargo.lock",
+   "rust-toolchain.toml",
+   "crates/abep-types/src/**",
+   "crates/abep-mission/Cargo.toml",
+   "crates/abep-mission/src/**"
+  ],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it"
+ },
+ "governing_hashes": {
+  "config_manifest": {
+   "path": "config/MANIFEST.json",
+   "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+  },
+  "architecture_hash": "NOT_APPLICABLE: a pure function over caller-supplied states",
+  "model_set_hash": "NOT_APPLICABLE: no data file is read",
+  "design_state_set_hash": "atmosphere_msis21_orbit_v1_design_states_v2 sha256 60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049 (harness input generator only)",
+  "rule": "the harness records these values for the run; a mismatch with the registered values voids the run (INPUT_MISMATCH, not a verdict)"
+ },
+ "pinned_inputs_sha256": {
+  "abep_sim/statewise.py": "ec90f2282467e4877c4d10c32f12368f400102bd5889da49902077cdfb55e63e",
+  "abep_sim/design/intake_synthesis.py": "104ac561c05d8516c0571bc88339d69c4ab6abc78f8bfeeacea8696e557f2191"
+ },
+ "frozen_data_read_only": [
+  "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json (via intake_synthesis.required_states, harness input generation only)"
+ ],
+ "inputs": {
+  "harness": "scripts/rust_migration/parity_sc_wp04.py (committed after this contract and before the scoring run)",
+  "vector_shape": "one vector = requirement_id, a list of state dicts (state_id and, where registered, weight) and one registered margin outcome per state: a float, an int, a bool, a non-finite float, a string / null (DE only) or a raise [class, message]. Python: margin_fn(state) returns the outcome or raises <class>(message) (classes RuntimeError, ValueError, ZeroDivisionError); Rust CLI: the closure returns the outcome or Err('<class>: <message>'). The outcome of state j is looked up by position j",
+  "transport": "JSON; non-finite floats as the strings 'NaN', '+inf', '-inf' (these three strings always denote floats)",
+  "design_states": "S_i, i = 0..195: intake_synthesis.required_states() in file order (state_id, rho_kg_m3, T_K, alt_km)",
+  "golden_vectors": {
+   "source": "registered list over the 196 required design states",
+   "count": 7,
+   "list_or_generator": {
+    "QS-G1": "margins rho_i - min(rho), no weights, requirement_id 'PARITY-RHO-MIN'",
+    "QS-G2": "margins rho_i - statistics.median(rho), no weights, 'PARITY-RHO-MED'",
+    "QS-G3": "margins rho_i - max(rho), no weights, 'PARITY-RHO-MAX'",
+    "QS-G4": "bool margins T_K_i < 1700.0, no weights, 'PARITY-T-1700'",
+    "QS-G5": "bool margins T_K_i < 1000.0, no weights, 'PARITY-T-1000'",
+    "QS-G6": "margins as QS-G2, every weight 1.0, 'PARITY-RHO-MED-W1'",
+    "QS-G7": "margins as QS-G2, weight_i = alt_km_i, 'PARITY-RHO-MED-WALT'"
+   }
+  },
+  "edge_cases": [
+   {"id": "E-B-01", "inputs": {"margins": [0.0]}, "note": "a zero margin passes (>= 0)"},
+   {"id": "E-B-02", "inputs": {"margins": ["-0.0 (float)"]}, "note": "negative zero passes; worst margin copied (-0.0)"},
+   {"id": "E-B-03", "inputs": {"margins": [0.5, -0.2, -0.2, 0.1]}, "note": "ties: the first minimum is the worst state"},
+   {"id": "E-B-04", "inputs": {"margins": [false, false]}, "note": "bool margins map to -1.0; FAIL"},
+   {"id": "E-B-05", "inputs": {"margins": [1.0, -1.0, 0.5], "weights": [1, 2, 3]}, "note": "int weights; average >= 0 while FAIL: average_hides_violation true"},
+   {"id": "E-B-06", "inputs": {"margins": [1.0, 2.0], "weights": [null, 0.0]}, "note": "partially weighted: no sum check, no average"},
+   {"id": "E-B-07", "inputs": {"state_ids": [7, "s1"], "margins": [1.0, 2.0]}, "note": "a non-string state_id is echoed as given"},
+   {"id": "E-B-08", "inputs": {"margins": [0]}, "note": "int margin 0 -> 0.0, PASS"},
+   {"id": "E-B-09", "inputs": {"margins": [-1.0, {"raise": ["RuntimeError", "boom"]}, 2.0]}, "note": "an error and a failure: verdict MODEL_ERROR, n_fail 1"},
+   {"id": "E-B-10", "inputs": {"margins": [{"raise": ["ValueError", "bad"]}, "NaN"]}, "note": "no finite margin: worst_state null"},
+   {"id": "E-B-11", "inputs": {"margins": [1.0, "+inf"], "weights": [1.0, 1.0]}, "note": "fully weighted with an error: no average"},
+   {"id": "E-B-12", "inputs": {"margins": [true, 3, -2.5], "weights": [0.0, 0.0, 5.0]}, "note": "zero weights allowed when the sum is positive"}
+  ],
+  "edge_case_defaults": "state_ids 's0', 's1', ... unless set; no weight key unless weights are set (null = key present with null value); requirement_id 'PARITY-EDGE'",
+  "randomized_domain": {
+   "entries": [
+    {
+     "entry_index": 0,
+     "entry": "statewise_quantifier (QS-R)",
+     "count": 400,
+     "draw": "per vector in order: n = rng_0.integers(1, 41); weight_mode = rng_0.integers(0, 4); then per state j = 0..n-1 in order: weight (mode 0: none; mode 1: rng_0.uniform(0.0, 10.0); mode 2: present iff rng_0.uniform() < 0.5, then rng_0.uniform(0.0, 10.0), else no weight key; mode 3: 0.0 if rng_0.uniform() < 0.3 else rng_0.uniform(0.0, 10.0)); kind = rng_0.integers(0, 20): 0-14 float rng_0.uniform(-1.0, 1.0), 15-16 bool rng_0.integers(0, 2) == 1, 17 int rng_0.integers(-3, 4), 18 non-finite [NaN, +inf, -inf][rng_0.integers(0, 3)], 19 raise [('RuntimeError', 'boom <j>'), ('ValueError', 'bad <j>'), ('ZeroDivisionError', 'float division by zero')][rng_0.integers(0, 3)]; state_id 's<j>'; requirement_id 'REQ-R<k>' (k vector index). A vector whose weight mode is 3 and whose weights are all 0.0 is scored as RAISED (ValueError) like DE-B-08"
+    }
+   ],
+   "domain_note": "numerical parity domain only; not a physics, design or evidence claim"
+  },
+  "vector_totals": {
+   "statewise_quantifier": "7 golden + 12 edge + 400 randomized + 13 domain-error = 432"
+  }
+ },
+ "campaign_seeds": {
+  "applicable": true,
+  "scoring_master_seed": 2026100642,
+  "development_master_seed": 2026100602,
+  "derivation": "rng_e = numpy.random.default_rng(numpy.random.SeedSequence([master_seed, e])), e the entry index of inputs.randomized_domain; draws in the registered order; the draws define input values only (both implementations are deterministic)",
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the existing admitted stochastic / statistical parity contract; the roles are registered separately and never merged",
+   "design_uq_sampling_stream": "NOT_APPLICABLE: no design / UQ sampling in the component",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE: no TPMC call",
+   "other_streams": "NOT_APPLICABLE: neither implementation draws random numbers; the harness draws input vectors once and passes identical values to both",
+   "migration_parity_dataset": "seeds, draw order and captured reference outputs stay exactly reproducible (immutable)",
+   "after_rust_authority": "not applicable (no RNG in the component)"
+  },
+  "rng_streams_v3": "not applicable (no RNG inside either implementation)",
+  "development_rule": "development comparisons use development_master_seed only and are never scored or reported as a verdict; every execution with scoring_master_seed is appended to campaign_history and the report is committed whatever its verdict"
+ },
+ "observables": {
+  "statewise_quantifier": {
+   "list": [
+    {
+     "name": "outcome, error class and message",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "RETURNED or RAISED; Rust OUT_OF_DOMAIN with message '<Python exception class>: <str(exception)>' (ValueError / TypeError as the reference raises them)"
+    },
+    {
+     "name": "result keys and order",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "requirement_id, verdict, n_states, n_fail, n_model_error, worst_state, orbit_average_margin, orbit_average_note, average_hides_violation, per_state, errors, authority"
+    },
+    {
+     "name": "verdict, n_states, n_fail, n_model_error, orbit_average_note, average_hides_violation, authority",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "as the reference: verdict MODEL_ERROR if any error else PASS iff no FAIL; average_hides_violation = average reported and >= 0 and verdict != PASS"
+    },
+    {
+     "name": "per_state (state_id, margin, pass, status) and worst_state",
+     "units": "margin as supplied",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal (margins are copied: float(m), or 0.0 / -1.0 for bools; null for errors)",
+     "definition": "status PASS / FAIL / MODEL_ERROR per state; worst = the first state of minimum margin among non-null margins"
+    },
+    {
+     "name": "errors",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "[{state_id, error}] with error '<class>: <message>' for a raising margin function or 'non-finite margin'"
+    },
+    {
+     "name": "orbit_average_margin",
+     "units": "margin units",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4
+     },
+     "definition": "sum(float(w) * margin) / sum(float(w)), both sums left to right from 0; null unless every state is weighted and no error occurred"
+    }
+   ]
+  }
+ },
+ "tolerance_classes": {
+  "EXACT_BYTES": "not used",
+  "EXACT_VALUE": "integers, strings, booleans, null, statuses, error classes / messages, key sets and order, and floats that are copied (not computed): equal (floats by bit pattern)",
+  "ULP_BOUNDED": "|rust - py| <= k_ulp * ulp(py); ulp(py) = 2^(floor(log2|py|) - 52) for normal py, the smallest subnormal for py = 0 or subnormal py; no relative or absolute clause",
+  "SOLVER_TOLERANCE": "not used",
+  "STATISTICAL": "not used",
+  "EXACT_STREAM": "not used"
+ },
+ "tolerance_basis": {
+  "independence": "fixed before any comparison",
+  "registered": "k_ulp = 4 (template proposal); the average is IEEE basic operations in the reference order (plain left-to-right sums under Python 3.11), bit identity expected"
+ },
+ "exact_invariants": [
+  {
+   "id": "INV-B-01",
+   "statement": "n_states == len(per_state); n_fail == count(status FAIL); n_model_error == len(errors) == count(status MODEL_ERROR); verdict PASS iff n_fail == 0 and n_model_error == 0",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-B-02",
+   "statement": "the orbit average never enters the verdict: verdict equals the verdict of the same vector with every weight removed",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-B-03",
+   "statement": "double-run determinism: two Rust processes give byte-identical stdout; two Python evaluations give equal results",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-B-04",
+   "statement": "fail closed: a raising or non-finite margin is MODEL_ERROR for its state (never skipped, never PASS)",
+   "required_in_both": true
+  }
+ ],
+ "conservation_checks": {
+  "applicable": false,
+  "reason": "a quantifier over caller-supplied margins; no balance",
+  "checks": []
+ },
+ "domain_and_error_parity": {
+  "mapping": {
+   "ValueError": "OUT_OF_DOMAIN, message 'ValueError: <text>'",
+   "TypeError": "OUT_OF_DOMAIN, message 'TypeError: <text>'"
+  },
+  "cases": [
+   {"id": "DE-B-01", "inputs": {"states": []}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "no states supplied"},
+   {"id": "DE-B-02", "inputs": {"requirement_id": ""}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "requirement_id is required"},
+   {"id": "DE-B-03", "inputs": {"requirement_id": null}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "requirement_id is required"},
+   {"id": "DE-B-04", "inputs": {"weights": [1.0, true]}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "weight must be a finite number >= 0"},
+   {"id": "DE-B-05", "inputs": {"weights": [-1.0, 1.0]}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "weight must be a finite number >= 0"},
+   {"id": "DE-B-06", "inputs": {"weights": ["NaN", 1.0]}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "weight must be a finite number >= 0"},
+   {"id": "DE-B-07", "inputs": {"weights": ["1", 1.0]}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "weight must be a finite number >= 0"},
+   {"id": "DE-B-08", "inputs": {"weights": [0.0, 0.0]}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "state weights sum to 0"},
+   {"id": "DE-B-09", "inputs": {"states": "second state has no state_id key"}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "every state needs a state_id"},
+   {"id": "DE-B-10", "inputs": {"state_ids": ["s0", null]}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "every state needs a state_id"},
+   {"id": "DE-B-11", "inputs": {"weights": [1.0, "+inf"]}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "weight must be a finite number >= 0"},
+   {"id": "DE-B-12", "inputs": {"margins": [1.0, "the string 'x'"]}, "expected_python": "ValueError (float('x') outside the guarded call)", "expected_rust": "OUT_OF_DOMAIN", "message_key": "could not convert string to float"},
+   {"id": "DE-B-13", "inputs": {"margins": [1.0, null]}, "expected_python": "TypeError (float(None))", "expected_rust": "OUT_OF_DOMAIN", "message_key": "float() argument must be a string or a real number"}
+  ],
+  "case_defaults": "two states 's0', 's1', margins [1.0, 2.0], no weights, requirement_id 'PARITY-DE', unless set",
+  "mapping_rule": "every Python exception class maps to exactly one Rust status (OUT_OF_DOMAIN) with the class name as message key; no Rust path returns a value where Python fails, or fails where Python returns",
+  "documented_divergence": [
+   {
+    "id": "DIV-B-01",
+    "statement": "numpy scalar margins / weights (np.bool_, np.floating, np.integer) accepted by the reference have no JSON form; the Rust interface takes JSON-shaped values (bool / int / float)",
+    "disposition": "no registered vector carries a numpy scalar; Rust callers pass f64 / bool"
+   },
+   {
+    "id": "DIV-B-02",
+    "statement": "a margin function returning a numeric string (float('1.5')) is evaluated by the reference; Rust parses a string margin with the Python float() grammar for decimal / inf / nan literals and refuses anything else with the reference's ValueError text",
+    "disposition": "only the non-numeric string of DE-B-12 is registered; numeric-string margins are not scored"
+   }
+  ]
+ },
+ "schema_parity": {
+  "schemas": [
+   "NOT_APPLICABLE (the result shape is the reference dict)"
+  ],
+  "rules": [
+   "result keys, nesting and order identical",
+   "per-state status vocabulary PASS / FAIL / MODEL_ERROR identical; it is the quantifier's internal vocabulary, mapped onto constraint statuses only by the design / assessment callers"
+  ]
+ },
+ "golden_and_reference_cases": {
+  "references": [
+   "captured Python outputs at python_commit"
+  ],
+  "rule": "references are read as committed; never regenerated (RM-R11)",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_STATEWISE_PY/reference_outputs/",
+   "captured_at_python_commit": "fa4fcb3bd21fec8c07a26fe264e1045d5a6bec73",
+   "sha256_manifest": "reference_outputs/MANIFEST.json, written by the scoring run",
+   "purpose": "lets CI check Rust against the Python reference after Python is retired (a cargo test replays them)"
+  },
+  "historical_golden_rule": "RM-R28: not used"
+ },
+ "julia_bridge": {
+  "applicable": false,
+  "reason": "no HallThruster.jl path",
+  "hallthruster_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5 (recorded for completeness; not used)"
+ },
+ "performance_measurement": {
+  "status": "NOT_APPLICABLE: microsecond quantifier; no PRE_RUST workload is dominated by it",
+  "workloads": [],
+  "repeats": 0
+ },
+ "decision_rules": {
+  "per_test": "every scored observable of every vector meets its tolerance class; every outcome / error class / message equals the reference outcome",
+  "aggregate": "NOT_APPLICABLE (no STATISTICAL entry point)",
+  "exact_invariants_required": true,
+  "conservation_required": false,
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "verdict": "ADMITTED iff every per-test, invariant, domain/error and schema check passes and every reference file matches sha256_at_registration; PARITY_PASS <=> ADMITTED, PARITY_FAIL <=> NOT_ADMITTED",
+  "verdict_vocabulary": [
+   "ADMITTED",
+   "NOT_ADMITTED",
+   "REFUSED_REFERENCE_CHANGED",
+   "INPUT_MISMATCH",
+   "NOT_RUN_RUST_UNAVAILABLE",
+   "REFUSED_CLASSIFICATION"
+  ],
+  "parity_vocabulary": [
+   "PARITY_PASS",
+   "PARITY_FAIL"
+  ],
+  "meaning_of_ADMITTED": "A9.24 item 1: Rust becomes authoritative for this component (within the registered domain); the Python component may then be retired from active execution. It is NOT physics validation and closes no requirement: HC-08 stays an assessment (SC-WP-11) and is NOT_EVALUATED while thrust or spacecraft drag are not evaluated.",
+  "no_retuning": "tolerances, observables, inputs, n, seeds and rules are fixed; after NOT_ADMITTED only a code fix plus a new contract version with a fresh scoring_master_seed may follow; the failed report stays; no execution is discarded",
+  "disagreement_rule": "never rewrite a Python result, golden, fixture or frozen dataset to make Rust pass (RM-R11)",
+  "observable_scope": "observables are restricted to retained selected-architecture code; no excluded legacy path (RM-R20)",
+  "scoring_once": "the scoring comparison runs once (scoring_master_seed); the harness refuses a second scoring run when parity_report_v1.json exists"
+ },
+ "bid_boundary": {
+  "statement": "this contract and its Rust implementation are post-bid-freeze work; no output of it may be cited by the bid package unless the owner re-freezes (PROGRAMME.md section 4; bid_source_guard)",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b (technical source) / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (package / freeze record, A9.28; lineage b5849affae22a6709ad217a184f6fe896d15410a -> 2de86ab); A9.29 sec. 3: 2de86ab is the terminal owner-authorized package state",
+  "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+ },
+ "what_this_is_not": [
+  "not physics evidence or validation",
+  "not a requirement verdict: the quantifier's PASS / FAIL is over caller-supplied margins; HC-08 / AG-13 is assessed in SC-WP-11 and stays NOT_EVALUATED without determining evidence",
+  "not a change of any frozen dataset, golden, threshold or requirement",
+  "not authority before admission",
+  "not a gate PASS (RM-R31)"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-ABEP_SIM_STATEWISE_PY/parity_report_v1.json (+ .md generated from it)",
+  "runner": "scripts/rust_migration/parity_sc_wp04.py score b",
+  "report_fields": [
+   "contract_sha256",
+   "python_commit",
+   "reference_sha256",
+   "rust_commit",
+   "build_provenance (rustc, Cargo.lock sha256, source sha256)",
+   "environment",
+   "per-test results",
+   "invariants",
+   "domain/error",
+   "schema",
+   "verdicts",
+   "campaign_history",
+   "ledger_update_requested"
+  ]
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator (A9.25 message 3)",
+  "checks": [
+   "component.migration_class is ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+   "no excluded legacy path",
+   "no forbidden identifier (CI_PLAN.md sec. 1 principle 6)",
+   "abep-mission depends on no abep-groundtest / abep-assess crate"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict)"
+ },
+ "value_status_preservation": {
+  "rule": "RM-R27",
+  "inputs": [],
+  "check": "NOT_APPLICABLE: the quantifier carries no provisional input value"
+ },
+ "new_physics_verification": {
+  "applies_when": "contract_kind = NEW_PHYSICS",
+  "status": "NOT_APPLICABLE"
+ }
+}

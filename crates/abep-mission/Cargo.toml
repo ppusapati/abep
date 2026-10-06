@@ -1,0 +1,23 @@
+[package]
+name = "abep-mission"
+description = "Spacecraft interaction of the ABEP Rust simulator (SC-WP-04): reference spacecraft drag interface, F1 intake-face drag per state, statewise T - D raw records and the statewise quantifier."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "abep-mission-parity"
+path = "src/bin/abep_mission_parity.rs"
+
+[[bin]]
+name = "abep-reference-drag-record"
+path = "src/bin/abep_reference_drag_record.rs"
+
+[dependencies]
+abep-types.workspace = true
+abep-provenance.workspace = true
+abep-data.workspace = true
+abep-atmos.workspace = true
+serde_json.workspace = true

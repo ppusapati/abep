@@ -14,6 +14,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "abep-chem"
+version = "0.1.0"
+dependencies = [
+ "abep-provenance",
+ "abep-types",
+ "flate2",
+ "serde_json",
+ "toml",
+]
+
+[[package]]
 name = "abep-ci"
 version = "0.1.0"
 dependencies = [
@@ -85,6 +96,17 @@ dependencies = [
  "serde",
  "serde_json",
  "toml",
+]
+
+[[package]]
+name = "abep-mission"
+version = "0.1.0"
+dependencies = [
+ "abep-atmos",
+ "abep-data",
+ "abep-provenance",
+ "abep-types",
+ "serde_json",
 ]
 
 [[package]]
