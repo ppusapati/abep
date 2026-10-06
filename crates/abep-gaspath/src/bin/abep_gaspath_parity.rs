@@ -9,6 +9,7 @@ use abep_gaspath::error::{value_error, GasPathError, PyClass, PyResult};
 use abep_gaspath::filter::{self as fs, Ev, FilterStage, InletState, LevelInput, SensitivityCase};
 use abep_gaspath::materials::MaterialsView;
 use abep_gaspath::plenum_feed::{self as pf, Chain, CompressorPlant, FilterCase, IntakeState, Plenum, Sp3};
+use abep_gaspath::pyops::{np_amax, np_amin};
 use abep_gaspath::rec::{as_f64, fmap, fnum, onum, slist, Obj};
 use abep_gaspath::reservoir::{self, Reservoir};
 use abep_gaspath::rotor_strength::{self as rs, Arg, Field, Registry, RotorStrengthBasis};
@@ -993,17 +994,13 @@ fn dispatch(env: &Env, entry: &str, a: &Value) -> PyResult<Value> {
             let fc = filter_case(&a["filter"])?;
             let p = plant(ctx, &a["plant"])?;
             let pl = plenum(&a["plenum"])?;
-            tr::orbit_simulated(
-                &fc,
-                &p,
-                &pl,
-                controller(&a["controller"])?,
-                mats,
-                &intake_state(&a["design"])?,
-                &intake_state(&a["state"])?,
-                f(a, "r0")?,
-                f(a, "amplitude")?,
-            )?
+            let c = controller(&a["controller"])?;
+            let (design, state) = (intake_state(&a["design"])?, intake_state(&a["state"])?);
+            let (r0, amp) = (f(a, "r0")?, f(a, "amplitude")?);
+            match a.get("rtol").and_then(as_f64) {
+                None => tr::orbit_simulated(&fc, &p, &pl, c, mats, &design, &state, r0, amp)?,
+                Some(rtol) => orbit_sim_at_rtol(&fc, &p, &pl, c, mats, &design, &state, r0, amp, rtol)?,
+            }
         }
         "plenum.strict_blockers" => pf::strict_blockers(),
         "plenum.pareto_ids" => {
@@ -1239,6 +1236,56 @@ fn compressor_constants() -> Value {
         .s("GAEDE_IN_DOMAIN", abep_gaspath::compressor::GAEDE_IN_DOMAIN)
         .s("GAEDE_OUT_OF_DOMAIN", abep_gaspath::compressor::GAEDE_OUT_OF_DOMAIN)
         .build()
+}
+
+/// orbit_simulated with an explicit rtol (contract v3 refinement grid, tightened runs): the library body with
+/// TransientRun::new(rtol), library calls only. Check COMP-P-01 compares it with tr::orbit_simulated at the nominal
+/// rtol (the NaN semantics of `!(u > 1)` are the library's).
+#[allow(clippy::too_many_arguments, clippy::neg_cmp_op_on_partial_ord)]
+fn orbit_sim_at_rtol(
+    fc: &FilterCase,
+    p: &CompressorPlant,
+    pl: &Plenum,
+    c: Controller,
+    mats: &MaterialsView,
+    design: &IntakeState,
+    state: &IntakeState,
+    r0: f64,
+    amp: f64,
+    rtol: f64,
+) -> PyResult<Value> {
+    let run = tr::TransientRun::new(fc, p, pl, c, mats, design, r0, rtol, None)?;
+    let start = run.steady_start(state, r0, 1.0)?;
+    let Some((y0, _)) = start.filter(|(_, u)| !(*u > 1.0)) else {
+        return Ok(Obj::new().b("ok", false).s("reason", "NO_STEADY_START").build());
+    };
+    let t_orb = pf::orbital_period_s(state.alt_km)?;
+    let ev = tr::Event {
+        name: format!("O_{}", state.state),
+        kind: "orbit".into(),
+        duration_s: t_orb,
+        setpoint_pa: r0,
+        feed_factor: 1.0,
+        intake: state.clone(),
+        orbit_amplitude: amp,
+        orbit_period_s: t_orb,
+        density: 1.0,
+    };
+    let out = run.run(&[ev], 150, Some(y0))?;
+    if !out.ok {
+        return Ok(Obj::new().b("ok", false).s("reason", pf::R_INTEGRATOR).build());
+    }
+    let sg = &out.segments[0];
+    let dev = np_amax(&sg.p.iter().map(|x| (x / r0 - 1.0).abs()).collect::<Vec<f64>>());
+    Ok(Obj::new()
+        .b("ok", true)
+        .s("state", &state.state)
+        .f("P_dev_max_frac", dev)
+        .f("mdot_min_kgps", np_amin(&sg.mdot))
+        .f("mdot_max_kgps", np_amax(&sg.mdot))
+        .f("mass_residual_rel", out.mass_residual_rel)
+        .set("nfev", out.nfev)
+        .build())
 }
 
 fn plenum_constants() -> Value {
