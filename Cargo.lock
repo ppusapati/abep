@@ -14,6 +14,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "abep-chem"
+version = "0.1.0"
+dependencies = [
+ "abep-provenance",
+ "abep-types",
+ "flate2",
+ "serde_json",
+ "toml",
+]
+
+[[package]]
 name = "abep-ci"
 version = "0.1.0"
 dependencies = [
