@@ -1,0 +1,12 @@
+{
+ "schema": "abep_rust_parity_reference_outputs_v1",
+ "contract_id": "PARITY-C-ABEP_SIM_DESIGN_FILTER_STAGE_PY-V1",
+ "captured_at_python_commit": "e3b7e6712d106b36dedec1115d9570e2be28f458",
+ "captured_at_head": "82448cb2cce5a61b183b5515bedf033658e188f6",
+ "files": {
+  "inputs.json.gz": "603e7762557712a442dc7b15191e27b3cdac0d3278c4eae5c6808021178c8909",
+  "python_outputs.json.gz": "d23b2404b358b686b33b266a4e731d2bdee36c3f4a43c6494df6f5c2729d3da3",
+  "rust_outputs_at_scoring.json.gz": "3f9c316a6827a01416094a97a1c243bf7b0d273eb9f8eacd647e1d9514fd4574"
+ },
+ "format": "deterministic gzip (mtime 0) of compact JSON; python_outputs: id -> [outcome, value | exception class, message]; non-finite floats as the strings 'NaN', '+inf', '-inf'"
+}
