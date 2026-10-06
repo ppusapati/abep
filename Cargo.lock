@@ -23,6 +23,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "abep-julia-bridge"
+version = "0.1.0"
+dependencies = [
+ "abep-hall",
+ "abep-provenance",
+ "abep-types",
+ "serde",
+ "serde_json",
+ "toml",
+]
+
+[[package]]
 name = "abep-provenance"
 version = "0.1.0"
 dependencies = [
