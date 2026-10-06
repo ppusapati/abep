@@ -4569,3 +4569,15 @@ row stays PYTHON_REFERENCE (kind python for the remainder).
   PARAMETRIC_SENSITIVITY_ONLY T - D (F-D-01). It also carries a stale 'max over the five orbit states' basis text
   (F-D-02). `mission_env.spacecraft_drag` is not contracted: its only callers are class H and its defaults are unsourced
   (SRD-01).
+
+## 2026-10-06 — Rust workspace CI fix: fetch every locked package before the offline ground-test isolation check
+
+- **Symptom.** GitHub "Rust workspace" was red on every integration push since it was added (runs 1-11, `8ddd7b1`..`def19d6`).
+  Local checks were green throughout.
+- **Cause.** `abep-ci`'s ground-test isolation test runs `cargo metadata --locked --offline`. That command needs every package
+  in Cargo.lock, including other-target dependencies (`libc`, `adler2`, ...). A runner that has only built and tested the
+  workspace has not downloaded those.
+- **Reproduced locally.** With a fresh CARGO_HOME, `cargo test -p abep-ci --test workspace_rules` fails with "failed to
+  download ... --offline was specified". After `cargo fetch --locked` it passes 4/4.
+- **Fix.** A `cargo fetch --locked` step goes before fmt / clippy / test in `.github/workflows/rust-workspace.yml`. The check
+  itself is unchanged: still offline and locked, with no network in the test.
