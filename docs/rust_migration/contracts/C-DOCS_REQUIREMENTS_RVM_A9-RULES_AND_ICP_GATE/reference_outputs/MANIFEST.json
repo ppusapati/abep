@@ -1,0 +1,10 @@
+{
+ "captured_at_python_commit": "b1884ea5417aee8a3d5693d5d08ef5b17cda978b",
+ "files": {
+  "requests.json.gz": "1a94c11e056f1ab1feea56b7ee91f7829060178fa8ca3028e70e4dd94ceae33d",
+  "expected_rust_outputs.json.gz": "c49f90a171cbef8f28110a31451b5e475a1e7a93a5fc65804991c13669f585b0",
+  "python_outputs.json.gz": "c49f90a171cbef8f28110a31451b5e475a1e7a93a5fc65804991c13669f585b0",
+  "rust_outputs_at_scoring.json.gz": "c49f90a171cbef8f28110a31451b5e475a1e7a93a5fc65804991c13669f585b0"
+ },
+ "note": "expected_rust_outputs = python_outputs after the registered DIV transformations"
+}
