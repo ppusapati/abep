@@ -90,10 +90,10 @@
    "HISTORICAL_LEGACY_REGRESSION": 82
   },
   "by_status": {
-   "ADMITTED": 6,
+   "ADMITTED": 4,
    "GROUND_REFERENCE_ON_DEMAND": 7,
    "NOT_PORTED_RETIREMENT_PENDING": 82,
-   "PYTHON_REFERENCE": 131,
+   "PYTHON_REFERENCE": 133,
    "RUST_BINDING_TO_RETIRE": 1
   },
   "by_port_disposition": {
@@ -127,12 +127,12 @@
    "none": 89
   },
   "by_authoritative_kind": {
-   "python": 220,
-   "rust": 7
+   "python": 222,
+   "rust": 5
   },
-  "rows_admitted": 6,
-  "partial_admissions_admitted": 7,
-  "rows_with_contract": 6,
+  "rows_admitted": 4,
+  "partial_admissions_admitted": 9,
+  "rows_with_contract": 4,
   "new_items_by_status": {
    "ADMITTED": 1,
    "NOT_STARTED": 8,
@@ -602,7 +602,7 @@
      "crates/abep-data/src/msis21_v1.rs"
     ],
     "admitted_scope": "frozen-scenario reader: atmosphere (frozen branch), _interp_frozen, _frozen, orbital_velocity",
-    "not_ported": "live NRLMSIS branch, ABEP_ALLOW_TABLE_ATMOSPHERE table branch, `build` (RM-OQ-02, A9.29 sec. 6): proposed FORMALLY_RETIRED_NOT_PORTED with the module",
+    "not_ported": "live NRLMSIS branch, ABEP_ALLOW_TABLE_ATMOSPHERE table branch and `build`: formally retired, never to be migrated (RM-OQ-02, OWNER_DECIDED_A9_29 sec. 6: no live regeneration on the critical path; regeneration is a separately governed native tool, not a port of this module)",
     "python_reference": [
      "abep_sim/atmosphere.py"
     ],
@@ -659,7 +659,7 @@
       "docs/HISTORY.md",
       ".github/workflows/rust-workspace.yml"
      ],
-     "history_entry": "Ledger flip on the committed admission evidence (the parity report), HISTORY entry 2026-10-06, crate tests in rust-workspace.yml. Admitted scope: frozen-scenario reader: atmosphere (frozen branch), _interp_frozen, _frozen, orbital_velocity. Not ported / out of scope: live NRLMSIS branch, ABEP_ALLOW_TABLE_ATMOSPHERE table branch, `build` (RM-OQ-02, A9.29 sec. 6): proposed FORMALLY_RETIRED_NOT_PORTED with the module."
+     "history_entry": "Ledger flip on the committed admission evidence (the parity report), HISTORY entry 2026-10-06, crate tests in rust-workspace.yml. Admitted scope: frozen-scenario reader: atmosphere (frozen branch), _interp_frozen, _frozen, orbital_velocity. Not ported / out of scope: live NRLMSIS branch, ABEP_ALLOW_TABLE_ATMOSPHERE table branch and `build`: formally retired, never to be migrated (RM-OQ-02, OWNER_DECIDED_A9_29 sec. 6: no live regeneration on the critical path; regeneration is a separately governed native tool, not a port of this module)."
     }
    ],
    "ci": [
@@ -684,7 +684,7 @@
      "crates/abep-data/src/design_states.rs"
     ],
     "admitted_scope": "load, state, node_state, orbit_states, design_states_v2, load_design_states, Domain, check (frozen-data part)",
-    "not_ported": "build / msis_points / correct-metadata / write_design_states_v2 / producer re-run (rule-1 regeneration, live NRLMSIS: RM-OQ-02), v1 design_states() selection rule (immutable traceability set), orbit_coverage / mission_env_orbit_assumption (metadata helpers)",
+    "not_ported": "(1) regeneration, retired, never to be migrated (RM-OQ-02, CLAUDE.md rule 1): build, msis_points, correct_metadata, write_design_states_v2, _metadata and the other producer / writer helpers, and the producer re-run part of check(); (2) frozen-history selection rule, retired (the immutable v1 set is traceability-only; its file stays hash-verified by load_design_states(\"v1\") and check()): design_states(), _select_design_states, reachable_lat_max_deg, v1 _lat_refinement_sensitivity; (3) metadata helpers with no active consumer (grep of the repository, 2026-10-06): orbit_coverage() is called only by the producers correct_metadata() and _metadata() (item 1; the v2 module carries its own literal orbit_coverage block and does not call it), mission_env_orbit_assumption() has no caller outside tests/test_atmosphere_orbit.py (the Python migration-reference suite), and statewise_quantifier is a re-export of abep_sim/statewise.py (own row C-ABEP_SIM_STATEWISE_PY; its callers import it from abep_sim.statewise); atmosphere_orbit_v2 relative_flow / flow_state / orbit_states are not part of this row (they are pending on the partial admission of C-ABEP_SIM_ATMOSPHERE_ORBIT_V2_PY)",
     "python_reference": [
      "abep_sim/atmosphere_orbit.py"
     ],
@@ -744,7 +744,7 @@
       "docs/HISTORY.md",
       ".github/workflows/rust-workspace.yml"
      ],
-     "history_entry": "Ledger flip on the committed admission evidence (the parity report), HISTORY entry 2026-10-06, crate tests in rust-workspace.yml. Admitted scope: load, state, node_state, orbit_states, design_states_v2, load_design_states, Domain, check (frozen-data part). Not ported / out of scope: build / msis_points / correct-metadata / write_design_states_v2 / producer re-run (rule-1 regeneration, live NRLMSIS: RM-OQ-02), v1 design_states() selection rule (immutable traceability set), orbit_coverage / mission_env_orbit_assumption (metadata helpers)."
+     "history_entry": "Ledger flip on the committed admission evidence (the parity report), HISTORY entry 2026-10-06, crate tests in rust-workspace.yml. Admitted scope: load, state, node_state, orbit_states, design_states_v2, load_design_states, Domain, check (frozen-data part). Not ported / out of scope: (1) regeneration, retired, never to be migrated (RM-OQ-02, CLAUDE.md rule 1): build, msis_points, correct_metadata, write_design_states_v2, _metadata and the other producer / writer helpers, and the producer re-run part of check(); (2) frozen-history selection rule, retired (the immutable v1 set is traceability-only; its file stays hash-verified by load_design_states(\"v1\") and check()): design_states(), _select_design_states, reachable_lat_max_deg, v1 _lat_refinement_sensitivity; (3) metadata helpers with no active consumer (grep of the repository, 2026-10-06): orbit_coverage() is called only by the producers correct_metadata() and _metadata() (item 1; the v2 module carries its own literal orbit_coverage block and does not call it), mission_env_orbit_assumption() has no caller outside tests/test_atmosphere_orbit.py (the Python migration-reference suite), and statewise_quantifier is a re-export of abep_sim/statewise.py (own row C-ABEP_SIM_STATEWISE_PY; its callers import it from abep_sim.statewise); atmosphere_orbit_v2 relative_flow / flow_state / orbit_states are not part of this row (they are pending on the partial admission of C-ABEP_SIM_ATMOSPHERE_ORBIT_V2_PY)."
     }
    ],
    "ci": [
@@ -922,32 +922,16 @@
    "classification_confidence": "PROPOSED",
    "classification_confidence_v3_1": "PLAN_APPROVED_A9_29",
    "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
-   "status": "ADMITTED",
+   "status": "PYTHON_REFERENCE",
    "authoritative_implementation": {
-    "kind": "rust",
-    "crate": "abep-config (abep_config::loaders, abep_config::assessment)",
+    "kind": "python",
     "paths": [
-     "crates/abep-config/src/loaders.rs",
-     "crates/abep-config/src/assessment.rs"
-    ],
-    "admitted_scope": "the configuration loaders of abep_sim/configuration.py (coupled group with C-SCRIPTS_CONFIG_BUILD_CONFIG_PY)",
-    "not_ported": "abep_sim/configuration.py::load_rfp_constraints_compat (the abep_sim.constants.RFP compatibility record, assessment data; goes with C-ABEP_SIM_CONSTANTS_PY) stays PYTHON_REFERENCE; PYTHON_RETIRED_FROM_ACTIVE not requested (the module stays the migration reference until its consumers are re-pointed)",
-    "python_reference": [
      "abep_sim/configuration.py"
     ],
-    "python_note": "the Python file stays at its path as the migration reference; PYTHON_RETIRED_FROM_ACTIVE is not requested"
+    "admitted_subset": "the configuration loaders (coupled group with scripts/config/build_config.py) -> abep-config abep_config::{loaders, assessment} (partial_admissions); load_rfp_constraints_compat stays PYTHON_REFERENCE"
    },
-   "contract": {
-    "path": "docs/rust_migration/contracts/C-ABEP_SIM_CONFIGURATION_PY/parity_prereg_v1.json",
-    "id": "PARITY-C-ABEP_SIM_CONFIGURATION_PY-V1",
-    "sha256": "69cf94488ada482c50eb31e7f205a89be073e585eacd7859be76c28da594b236"
-   },
-   "admission_evidence": {
-    "path": "docs/rust_migration/contracts/C-ABEP_SIM_CONFIGURATION_PY/parity_report_v1.json",
-    "sha256": "5f7592f66dd74f58e19b772f729b0e8bec4d0e3693d50a8a58ca72737ffed5d9",
-    "verdict": "ADMITTED",
-    "parity_verdict": "PARITY_PASS"
-   },
+   "contract": null,
+   "admission_evidence": null,
    "simulation_completion_wp": "SC-WP-12",
    "status_history": [
     {
@@ -989,10 +973,48 @@
       ".github/workflows/rust-workspace.yml"
      ],
      "history_entry": "Ledger flip on the committed admission evidence (the parity report), HISTORY entry 2026-10-06, crate tests in rust-workspace.yml. Admitted scope: the configuration loaders of abep_sim/configuration.py (coupled group with C-SCRIPTS_CONFIG_BUILD_CONFIG_PY). Not ported / out of scope: abep_sim/configuration.py::load_rfp_constraints_compat (the abep_sim.constants.RFP compatibility record, assessment data; goes with C-ABEP_SIM_CONSTANTS_PY) stays PYTHON_REFERENCE; PYTHON_RETIRED_FROM_ACTIVE not requested (the module stays the migration reference until its consumers are re-pointed)."
+    },
+    {
+     "from": "ADMITTED",
+     "to": "PYTHON_REFERENCE",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_CONFIGURATION_PY/parity_report_v1.json",
+      "docs/rust_migration/contracts/C-ABEP_SIM_CONFIGURATION_PY/parity_prereg_v1.json"
+     ],
+     "history_entry": "Correction before merge: a row is fully ADMITTED only if everything not ported from it is formally retired (never to be migrated); if any part is still to be migrated later, the admission is recorded as a partial admission and the row stays PYTHON_REFERENCE. abep_sim/configuration.py::load_rfp_constraints_compat stays PYTHON_REFERENCE: out of scope and still to migrate with the assessment layer (the RFP compatibility record goes with C-ABEP_SIM_CONSTANTS_PY). The admission recorded by the preceding transition is recorded instead as a partial admission (scope verbatim from the report) and the row returns to PYTHON_REFERENCE; the Rust implementation stays authoritative for the admitted scope only. Contract and report unchanged."
     }
    ],
-   "ci": [
-    ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+   "status_note": "status stays PYTHON_REFERENCE for the remainder plus the ADMITTED partial admission; the module retires only when everything not ported is migrated or formally retired (RM-R17): abep_sim/configuration.py::load_rfp_constraints_compat stays PYTHON_REFERENCE: out of scope and still to migrate with the assessment layer (the RFP compatibility record goes with C-ABEP_SIM_CONSTANTS_PY).",
+   "partial_admissions": [
+    {
+     "scope": "the configuration loaders of `abep_sim/configuration.py` and the `config/**` builder `scripts/config/build_config.py` (coupled group), ported to `crates/abep-config`",
+     "status": "ADMITTED",
+     "rust_implementation": {
+      "crate": "abep-config (abep_config::loaders, abep_config::assessment)",
+      "paths": [
+       "crates/abep-config/src/loaders.rs",
+       "crates/abep-config/src/assessment.rs"
+      ]
+     },
+     "contract": {
+      "path": "docs/rust_migration/contracts/C-ABEP_SIM_CONFIGURATION_PY/parity_prereg_v1.json",
+      "id": "PARITY-C-ABEP_SIM_CONFIGURATION_PY-V1",
+      "sha256": "69cf94488ada482c50eb31e7f205a89be073e585eacd7859be76c28da594b236"
+     },
+     "admission_evidence": {
+      "path": "docs/rust_migration/contracts/C-ABEP_SIM_CONFIGURATION_PY/parity_report_v1.json",
+      "sha256": "5f7592f66dd74f58e19b772f729b0e8bec4d0e3693d50a8a58ca72737ffed5d9",
+      "verdict": "ADMITTED",
+      "parity_verdict": "PARITY_PASS"
+     },
+     "not_in_scope": "abep_sim/configuration.py::load_rfp_constraints_compat (the abep_sim.constants.RFP compatibility record, assessment data; goes with C-ABEP_SIM_CONSTANTS_PY) - stays PYTHON_REFERENCE",
+     "pending": "abep_sim/configuration.py::load_rfp_constraints_compat stays PYTHON_REFERENCE: out of scope and still to migrate with the assessment layer (the RFP compatibility record goes with C-ABEP_SIM_CONSTANTS_PY).",
+     "recorded": "2026-10-06",
+     "ci": ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)",
+     "report_python_note": "stays at abep_sim/configuration.py as migration reference until its consumers are re-pointed; PYTHON_RETIRED_FROM_ACTIVE not requested; load_rfp_constraints_compat stays PYTHON_REFERENCE (out of scope)",
+     "contract_note": "coupled-group contract shared with C-SCRIPTS_CONFIG_BUILD_CONFIG_PY, which stays ADMITTED as its own row on the same contract and report"
+    }
    ]
   },
   {
@@ -1002,31 +1024,16 @@
    "classification_confidence": "PROPOSED",
    "classification_confidence_v3_1": "PLAN_APPROVED_A9_29",
    "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
-   "status": "ADMITTED",
+   "status": "PYTHON_REFERENCE",
    "authoritative_implementation": {
-    "kind": "rust",
-    "crate": "abep-types (abep_types::constants)",
+    "kind": "python",
     "paths": [
-     "crates/abep-types/src/constants.rs"
-    ],
-    "admitted_scope": "G0, E_CHARGE, AMU, K_B, MU_EARTH, R_EARTH, M_SPECIES",
-    "not_ported": "RFPConstraints / RFP: requirement data, assessment layer (RM-R14); stays with its assessment-layer successor",
-    "python_reference": [
      "abep_sim/constants.py"
     ],
-    "python_note": "the Python file stays at its path as the migration reference; PYTHON_RETIRED_FROM_ACTIVE is not requested"
+    "admitted_subset": "G0, E_CHARGE, AMU, K_B, MU_EARTH, R_EARTH, M_SPECIES -> abep-types abep_types::constants (partial_admissions); RFPConstraints / RFP stays PYTHON_REFERENCE"
    },
-   "contract": {
-    "path": "docs/rust_migration/contracts/C-ABEP_SIM_CONSTANTS_PY/parity_prereg_v1.json",
-    "id": "PARITY-C-ABEP_SIM_CONSTANTS_PY-V1",
-    "sha256": "1f7bef49973b985fad3fd9dcb86e63e272e3c438765f89c7e137bbfe479492c0"
-   },
-   "admission_evidence": {
-    "path": "docs/rust_migration/contracts/C-ABEP_SIM_CONSTANTS_PY/parity_report_v1.json",
-    "sha256": "aecd5828750aa2c766cb68ec55c0a47f98245121cea9c441cf687e4fec5166bb",
-    "verdict": "ADMITTED",
-    "parity_verdict": "PARITY_PASS"
-   },
+   "contract": null,
+   "admission_evidence": null,
    "simulation_completion_wp": "SC-WP-12",
    "status_history": [
     {
@@ -1067,10 +1074,45 @@
       ".github/workflows/rust-workspace.yml"
      ],
      "history_entry": "Ledger flip on the committed admission evidence (the parity report), HISTORY entry 2026-10-06, crate tests in rust-workspace.yml. Admitted scope: G0, E_CHARGE, AMU, K_B, MU_EARTH, R_EARTH, M_SPECIES. Not ported / out of scope: RFPConstraints / RFP: requirement data, assessment layer (RM-R14); stays with its assessment-layer successor."
+    },
+    {
+     "from": "ADMITTED",
+     "to": "PYTHON_REFERENCE",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_CONSTANTS_PY/parity_report_v1.json",
+      "docs/rust_migration/contracts/C-ABEP_SIM_CONSTANTS_PY/parity_prereg_v1.json"
+     ],
+     "history_entry": "Correction before merge: a row is fully ADMITTED only if everything not ported from it is formally retired (never to be migrated); if any part is still to be migrated later, the admission is recorded as a partial admission and the row stays PYTHON_REFERENCE. RFPConstraints / RFP (requirement data, assessment layer, RM-R14) moves to its assessment-layer successor and is therefore still to migrate. The admission recorded by the preceding transition is recorded instead as a partial admission (scope verbatim from the report) and the row returns to PYTHON_REFERENCE; the Rust implementation stays authoritative for the admitted scope only. Contract and report unchanged."
     }
    ],
-   "ci": [
-    ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+   "status_note": "status stays PYTHON_REFERENCE for the remainder plus the ADMITTED partial admission; the module retires only when everything not ported is migrated or formally retired (RM-R17): RFPConstraints / RFP (requirement data, assessment layer, RM-R14) moves to its assessment-layer successor and is therefore still to migrate.",
+   "partial_admissions": [
+    {
+     "scope": "G0, E_CHARGE, AMU, K_B, MU_EARTH, R_EARTH, M_SPECIES",
+     "status": "ADMITTED",
+     "rust_implementation": {
+      "crate": "abep-types (abep_types::constants)",
+      "paths": [
+       "crates/abep-types/src/constants.rs"
+      ]
+     },
+     "contract": {
+      "path": "docs/rust_migration/contracts/C-ABEP_SIM_CONSTANTS_PY/parity_prereg_v1.json",
+      "id": "PARITY-C-ABEP_SIM_CONSTANTS_PY-V1",
+      "sha256": "1f7bef49973b985fad3fd9dcb86e63e272e3c438765f89c7e137bbfe479492c0"
+     },
+     "admission_evidence": {
+      "path": "docs/rust_migration/contracts/C-ABEP_SIM_CONSTANTS_PY/parity_report_v1.json",
+      "sha256": "aecd5828750aa2c766cb68ec55c0a47f98245121cea9c441cf687e4fec5166bb",
+      "verdict": "ADMITTED",
+      "parity_verdict": "PARITY_PASS"
+     },
+     "not_in_scope": "RFPConstraints / RFP: requirement data, assessment layer (RM-R14); stays with its assessment-layer successor",
+     "pending": "RFPConstraints / RFP (requirement data, assessment layer, RM-R14) moves to its assessment-layer successor and is therefore still to migrate.",
+     "recorded": "2026-10-06",
+     "ci": ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+    }
    ]
   },
   {

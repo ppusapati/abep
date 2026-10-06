@@ -4412,23 +4412,40 @@ existing evidence file. Contracts are unchanged since their registration commits
 equal the pins recorded in the contracts, and each recorded Rust commit is an ancestor of the integration head. The only
 code touched is the fixtures of `crates/abep-ci/tests/ledger.rs`: the negative cases moved from rows that are now
 admitted (C-ABEP_SIM_CONSTANTS_PY, NP-THERMAL-CATHODELESS) to rows that stay un-admitted (C-ABEP_SIM_COMPRESSOR_PY,
-NP-MISSION-INTEGRATION), and the expected counts are (6 admitted rows, 7 admitted partial admissions, 1 admitted new
+NP-MISSION-INTEGRATION), and the expected counts are (4 admitted rows, 9 admitted partial admissions, 1 admitted new
 item).
 
+**Rule applied.** A row is fully ADMITTED only if everything not ported from it is formally retired (never to be
+migrated). If any part of the row is still to be migrated later, the admission is recorded as a partial admission and the
+row stays PYTHON_REFERENCE (kind python for the remainder).
+
 - **Row transitions** (full admissions; each PYTHON_REFERENCE -> PREREG_PARITY -> RUST_IMPL -> PARITY_PASS -> ADMITTED,
-  recorded in the row `status_history`, evidence = the parity report):
-  - `C-ABEP_SIM_ATMOSPHERE_PY` (PARITY-C-ABEP_SIM_ATMOSPHERE_PY-V1): frozen-scenario reader; the live NRLMSIS / table /
-    build branches are not ported (RM-OQ-02).
-  - `C-ABEP_SIM_CONSTANTS_PY`: G0, E_CHARGE, AMU, K_B, MU_EARTH, R_EARTH, M_SPECIES; RFPConstraints / RFP stays with its
-    assessment-layer successor (RM-R14).
+  recorded in the row `status_history`, evidence = the parity report). Every part not ported is retired, never to be
+  migrated:
+  - `C-ABEP_SIM_ATMOSPHERE_PY` (PARITY-C-ABEP_SIM_ATMOSPHERE_PY-V1): frozen-scenario reader; the live NRLMSIS, table and
+    `build` branches are retired by RM-OQ-02 (OWNER_DECIDED_A9_29 sec. 6).
   - `C-ABEP_SIM_ATMOSPHERE_ORBIT_PY`: load, state, node_state, orbit_states, design_states_v2, load_design_states, Domain,
-    check (frozen-data part); producers, the v1 selection rule and the metadata helpers are not ported.
-  - `C-ABEP_SIM_CONFIGURATION_PY` and `C-SCRIPTS_CONFIG_BUILD_CONFIG_PY` (one coupled contract
-    PARITY-C-ABEP_SIM_CONFIGURATION_PY-V1): the loaders and `abep-config build [--check]`; `load_rfp_constraints_compat`
-    stays PYTHON_REFERENCE.
+    check (frozen-data part). The not-ported list was checked item by item: regeneration and producers (RM-OQ-02, rule
+    1); the immutable v1 selection rule (`design_states`, `_select_design_states`, `reachable_lat_max_deg`; frozen
+    history, traceability only); and the metadata helpers, which have no active consumer. `orbit_coverage()` is called
+    only by the producers `correct_metadata()` and `_metadata()`; `mission_env_orbit_assumption()` has no caller outside
+    the Python migration-reference test `tests/test_atmosphere_orbit.py`; `statewise_quantifier` is only a re-export of
+    `abep_sim/statewise.py` (own row C-ABEP_SIM_STATEWISE_PY). The row stays ADMITTED.
+  - `C-SCRIPTS_CONFIG_BUILD_CONFIG_PY` (coupled with the configuration loaders on PARITY-C-ABEP_SIM_CONFIGURATION_PY-V1):
+    `abep-config build [--check]`. The only out-of-scope item in the report is the Python write mode, whose Rust
+    counterpart (`Builder::write`, the same bytes as the scored in-memory build) exists; no active function is left
+    unmigrated.
   - `C-ABEP_SIM_INTAKE_PY` (PARITY-C-ABEP_SIM_INTAKE_PY-V1): whole module. The harness flagged git_dirty=true (every Rust
     source sha256 is recorded in the report).
   - Python stays at its paths as the migration reference; PYTHON_RETIRED_FROM_ACTIVE is not requested for any row.
+- **Corrected to partial admissions before merge** (each carries the same four transitions plus a recorded
+  `ADMITTED -> PYTHON_REFERENCE` correction in its `status_history`; row status PYTHON_REFERENCE, kind python; the
+  admission evidence moved into the `partial_admissions` entry, scope verbatim from the report):
+  - `C-ABEP_SIM_CONFIGURATION_PY`: `abep_sim/configuration.py::load_rfp_constraints_compat` (the `abep_sim.constants.RFP`
+    compatibility record, assessment data) stays PYTHON_REFERENCE: out of scope and still to migrate with the assessment
+    layer.
+  - `C-ABEP_SIM_CONSTANTS_PY`: G0, E_CHARGE, AMU, K_B, MU_EARTH, R_EARTH, M_SPECIES. RFPConstraints / RFP moves to its
+    assessment-layer successor (RM-R14), so it is still to migrate.
 - **Partial admissions** (Kernel-1 pattern: row status stays PYTHON_REFERENCE, one ADMITTED `partial_admissions` entry
   each, no row transition):
   - `C-ABEP_SIM_INTAKE_TPMC_PY`: second entry, the intake response layer and the frozen intake surface reader /
