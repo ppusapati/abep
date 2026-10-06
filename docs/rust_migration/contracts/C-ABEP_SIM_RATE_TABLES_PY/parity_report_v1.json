@@ -1,0 +1,853 @@
+{
+ "schema": {
+  "render_exact_bytes": {
+   "n": 46,
+   "passed": 46
+  },
+  "table_text": {
+   "identical": 46,
+   "boundary_rounding_lines": 0
+  }
+ },
+ "contract": {
+  "id": "PARITY-C-ABEP_SIM_RATE_TABLES_PY-V1",
+  "path": "docs/rust_migration/contracts/C-ABEP_SIM_RATE_TABLES_PY/parity_prereg_v1.json",
+  "sha256": "504be4d2386d27efa35d88d11b44e9b483cd2b39fa65d544d75da4dadada3372",
+  "registration_commit": "cdd24a208251fdd8e5e2c6888ad582549a92463f"
+ },
+ "date_utc": "2026-10-06T09:13:48Z",
+ "mode": "scoring",
+ "contract_sha256": "504be4d2386d27efa35d88d11b44e9b483cd2b39fa65d544d75da4dadada3372",
+ "python_commit": "6358af8b830e9e6b70b4e4eba85d80682ea3ffb8",
+ "python_commit_note": "registered reference commit; the reference file is unchanged at the repository head of the run (reference_sha256 equals sha256_at_registration, checked before any call)",
+ "repository_head_at_run": "75f86a322a7583f003851c77e8e8b398299a449c",
+ "reference_sha256": {
+  "abep_sim/rate_tables.py": "ea9880b0d5a474e93083346f29694f2fa820ffce01aca001ea4610893ac04909"
+ },
+ "rust_commit": "75f86a322a7583f003851c77e8e8b398299a449c",
+ "rust_sources_last_changed_in": "93528fe39d4af60f205995e84d5b050033fbf919",
+ "build_provenance": {
+  "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+  "cargo": "cargo 1.94.1 (29ea6fb6a 2026-03-24)",
+  "cargo_lock_sha256": "88d2bdc5be6a25124372ac74095dc3707c51a35bc1f3a642709c67e05c14eca3",
+  "source_sha256": {
+   "Cargo.lock": "88d2bdc5be6a25124372ac74095dc3707c51a35bc1f3a642709c67e05c14eca3",
+   "Cargo.toml": "336294f8d4f7774540d4c49d681d997d5cd0fd6fa67b99aea9c2cc3b5c6f5ff3",
+   "crates/abep-chem/Cargo.toml": "f22d7b6a2c69c05582a0eb0f9885959238eb3c18cd874db8a31c0c909ee9f994",
+   "crates/abep-chem/src/bin/abep_chem_parity.rs": "89b04e04a6160fc6cfd063c8821931292944f3383d4fe0138130f23b1edf44a0",
+   "crates/abep-chem/src/checked.rs": "4466a90340250c433e11ec5d89286f91c7bb52649f04a786fcb6fd229bbd0a95",
+   "crates/abep-chem/src/dat.rs": "27f1cb9bc2d9015616eb91a8bcf17b0b34d32549f6468a415c4fc09c27d1b1a5",
+   "crates/abep-chem/src/lib.rs": "5818ec941feb4957231aee43ba2c884186428b6c6e36c842bb8983399b86ec5a",
+   "crates/abep-chem/src/numpy.rs": "f87af7fdcb861bc94e5258e56831787aeee2023e14f4619ace0210cf02f516b2",
+   "crates/abep-chem/src/reference.rs": "357773e216cb442dfb7500e69070458bb38a893a4788a6bc705cacb753d799dc",
+   "crates/abep-chem/src/validity.rs": "2cb089aa05cf5f2a20eba626ccc5d66cbc737d6d5f22603ca764fef098e39bc7",
+   "crates/abep-chem/tests/registered_files.rs": "d15d97a22bd4f5fccf5addf94c638bded55d7e833d1a0ea981f8a617ea5f39e7",
+   "crates/abep-types/src/constants.rs": "c97e39931d145db143398e3d5de9eb4f9ba86943a75b3c1302df82c01b4efd1d",
+   "crates/abep-types/src/lib.rs": "0a067299e38d3dac702c3eb23ee3e34a55f844b389ec54b7463962c65d6a4b0e",
+   "crates/abep-types/src/pyjson.rs": "5ce15fdb06043a01ce8bd441a8e8f1906e74a0c4dd9fea2b9e4505f182a8d88e",
+   "crates/abep-types/src/pyjson_unicode.rs": "c6f59e0936c35051ef1f7d45a6611d3a7269a8d972c900805463f5f0bf6b2a75",
+   "rust-toolchain.toml": "7e44dbedb86596d94974ef8cb279f0e81496ea92b519c14940259661496f8499",
+   "scripts/rust_migration/abep_chem_parity.py": "944407b39ffba751ceb1819736c4103588d7751b31373c4a63f17c3a6474b939"
+  }
+ },
+ "environment": {
+  "python": "3.11.15",
+  "numpy": "2.4.4",
+  "numpy_simd_baseline": [
+   "X86_V2"
+  ],
+  "numpy_simd_dispatch": [
+   "X86_V3",
+   "X86_V4",
+   "AVX512_ICL",
+   "AVX512_SPR"
+  ],
+  "numpy_avx512_skx_available": true,
+  "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+  "platform": "Linux-6.18.44-fc-v70-x86_64-with-glibc2.39",
+  "glibc": "glibc-2.39",
+  "thread_env": {
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1"
+  },
+  "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312"
+ },
+ "scoring_master_seed": 1810061023,
+ "n_vectors": {
+  "scored": 3291,
+  "invariant_calls": 2010,
+  "de": 42,
+  "render": 46
+ },
+ "pins": {
+  "problems": [],
+  "representation_set_sha256": "bb4bce04c46fae853fdac4170b507e27375d9b289deec0cbab2646e7f61c6330"
+ },
+ "per_test": {
+  "maxwellian_rate": {
+   "n": 2948,
+   "passed": 2948
+  },
+  "tail_sensitivity": {
+   "n": 38,
+   "passed": 38
+  },
+  "step": {
+   "n": 259,
+   "passed": 259
+  },
+  "write_table": {
+   "n": 46,
+   "passed": 46
+  },
+  "render": {
+   "n": 46,
+   "passed": 46
+  }
+ },
+ "statistics": {
+  "rate_max_rel": 5.708935139937667e-16,
+  "rate_max_abs_where_py_zero": 0.0,
+  "rate_bit_identical": 13792,
+  "rate_n": 14267,
+  "step_bit_identical": 259,
+  "step_n": 259,
+  "share_max_abs": 1.8041124150158794e-16,
+  "boundary_rounding_lines": 0,
+  "text_identical": 46
+ },
+ "aggregates": "NOT_APPLICABLE (no STATISTICAL entry point)",
+ "domain_error": [
+  {
+   "id": "DE-01",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "python_exception",
+    "class": "ValueError",
+    "message": "tail must be 'hold' or 'zero', got 'Hold'"
+   },
+   "rust": {
+    "class": "ValueError",
+    "message": "tail must be 'hold' or 'zero', got 'Hold'",
+    "outcome": "python_exception"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-02",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "python_exception",
+    "class": "ValueError",
+    "message": "tail must be 'hold' or 'zero', got None"
+   },
+   "rust": {
+    "class": "ValueError",
+    "message": "tail must be 'hold' or 'zero', got None",
+    "outcome": "python_exception"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-03",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "python_exception",
+    "class": "ValueError",
+    "message": "tail must be 'hold' or 'zero', got 'x'"
+   },
+   "rust": {
+    "class": "ValueError",
+    "message": "tail must be 'hold' or 'zero', got 'x'",
+    "outcome": "python_exception"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-04",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "value",
+    "value": "0.0"
+   },
+   "rust": {
+    "outcome": "value",
+    "value": "0.0"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-05",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "value",
+    "value": "0.0"
+   },
+   "rust": {
+    "outcome": "value",
+    "value": "0.0"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-06",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "value",
+    "value": "0.0"
+   },
+   "rust": {
+    "outcome": "value",
+    "value": "0.0"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-07",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "value",
+    "value": "nan"
+   },
+   "rust": {
+    "outcome": "value",
+    "value": "nan"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-08",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "value",
+    "value": "nan"
+   },
+   "rust": {
+    "outcome": "value",
+    "value": "nan"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-09",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "value",
+    "value": "nan"
+   },
+   "rust": {
+    "outcome": "value",
+    "value": "nan"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-10",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "python_exception",
+    "class": "ZeroDivisionError",
+    "message": "0.0 cannot be raised to a negative power"
+   },
+   "rust": {
+    "class": "ZeroDivisionError",
+    "message": "0.0 cannot be raised to a negative power",
+    "outcome": "python_exception"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-11",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "python_exception",
+    "class": "OverflowError",
+    "message": "(34, 'Numerical result out of range')"
+   },
+   "rust": {
+    "class": "OverflowError",
+    "message": "(34, 'Numerical result out of range')",
+    "outcome": "python_exception"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-12",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "value",
+    "value": "nan"
+   },
+   "rust": {
+    "outcome": "value",
+    "value": "nan"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-13",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "value",
+    "value": "0.0"
+   },
+   "rust": {
+    "outcome": "value",
+    "value": "0.0"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-14",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "value",
+    "value": "inf"
+   },
+   "rust": {
+    "outcome": "value",
+    "value": "inf"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-15",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "value",
+    "value": "inf"
+   },
+   "rust": {
+    "outcome": "value",
+    "value": "inf"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-16",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "value",
+    "value": "nan"
+   },
+   "rust": {
+    "outcome": "value",
+    "value": "nan"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-17",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "python_exception",
+    "class": "ValueError",
+    "message": "zero-size array to reduction operation maximum which has no identity"
+   },
+   "rust": {
+    "class": "ValueError",
+    "message": "zero-size array to reduction operation maximum which has no identity",
+    "outcome": "python_exception"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-18",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "value",
+    "value": "0.0"
+   },
+   "rust": {
+    "outcome": "value",
+    "value": "0.0"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-19",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "python_exception",
+    "class": "IndexError",
+    "message": "index -1 is out of bounds for axis 0 with size 0"
+   },
+   "rust": {
+    "class": "IndexError",
+    "message": "index -1 is out of bounds for axis 0 with size 0",
+    "outcome": "python_exception"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-20",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "python_exception",
+    "class": "ValueError",
+    "message": "fp and xp are not of the same length."
+   },
+   "rust": {
+    "class": "ValueError",
+    "message": "fp and xp are not of the same length.",
+    "outcome": "python_exception"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-21",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "python_exception",
+    "class": "IndexError",
+    "message": "index -1 is out of bounds for axis 0 with size 0"
+   },
+   "rust": {
+    "class": "IndexError",
+    "message": "index -1 is out of bounds for axis 0 with size 0",
+    "outcome": "python_exception"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-22",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "python_exception",
+    "class": "ValueError",
+    "message": "fp and xp are not of the same length."
+   },
+   "rust": {
+    "class": "ValueError",
+    "message": "fp and xp are not of the same length.",
+    "outcome": "python_exception"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-23",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "python_exception",
+    "class": "ValueError",
+    "message": "fp and xp are not of the same length."
+   },
+   "rust": {
+    "class": "ValueError",
+    "message": "fp and xp are not of the same length.",
+    "outcome": "python_exception"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-24",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "value",
+    "value": "0.0"
+   },
+   "rust": {
+    "outcome": "value",
+    "value": "0.0"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-25",
+   "documented_divergence": true,
+   "python": {
+    "outcome": "value",
+    "value": "nan"
+   },
+   "rust": {
+    "message": "OUT_OF_DOMAIN: cross-section table holds a non-finite value (nan); refused (DIV-01: Python propagates it silently)",
+    "outcome": "refused",
+    "status": "OUT_OF_DOMAIN"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-26",
+   "documented_divergence": true,
+   "python": {
+    "outcome": "value",
+    "value": "inf"
+   },
+   "rust": {
+    "message": "OUT_OF_DOMAIN: cross-section table holds a non-finite value (inf); refused (DIV-01: Python propagates it silently)",
+    "outcome": "refused",
+    "status": "OUT_OF_DOMAIN"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-S1",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "python_exception",
+    "class": "ZeroDivisionError",
+    "message": "float division by zero"
+   },
+   "rust": {
+    "class": "ZeroDivisionError",
+    "message": "float division by zero",
+    "outcome": "python_exception"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-S2",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "python_exception",
+    "class": "ZeroDivisionError",
+    "message": "float division by zero"
+   },
+   "rust": {
+    "class": "ZeroDivisionError",
+    "message": "float division by zero",
+    "outcome": "python_exception"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-S3",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "python_exception",
+    "class": "ValueError",
+    "message": "math domain error"
+   },
+   "rust": {
+    "class": "ValueError",
+    "message": "math domain error",
+    "outcome": "python_exception"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-S4",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "value",
+    "value": "nan"
+   },
+   "rust": {
+    "outcome": "value",
+    "value": "nan"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-S5",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "value",
+    "value": "inf"
+   },
+   "rust": {
+    "outcome": "value",
+    "value": "inf"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-S6",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "value",
+    "value": "0.0"
+   },
+   "rust": {
+    "outcome": "value",
+    "value": "0.0"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-S7",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "value",
+    "value": "inf"
+   },
+   "rust": {
+    "outcome": "value",
+    "value": "inf"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-S8",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "python_exception",
+    "class": "OverflowError",
+    "message": "math range error"
+   },
+   "rust": {
+    "class": "OverflowError",
+    "message": "math range error",
+    "outcome": "python_exception"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-T1",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "python_exception",
+    "class": "ValueError",
+    "message": "zero-size array to reduction operation maximum which has no identity"
+   },
+   "rust": {
+    "class": "ValueError",
+    "message": "zero-size array to reduction operation maximum which has no identity",
+    "outcome": "python_exception"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-W1",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "python_exception",
+    "class": "ValueError",
+    "message": "arange: cannot compute length"
+   },
+   "rust": {
+    "class": "ValueError",
+    "message": "arange: cannot compute length",
+    "outcome": "python_exception"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-W2",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "python_exception",
+    "class": "ValueError",
+    "message": "Maximum allowed size exceeded"
+   },
+   "rust": {
+    "class": "ValueError",
+    "message": "Maximum allowed size exceeded",
+    "outcome": "python_exception"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-W3",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "python_exception",
+    "class": "ValueError",
+    "message": "Maximum allowed size exceeded"
+   },
+   "rust": {
+    "class": "ValueError",
+    "message": "Maximum allowed size exceeded",
+    "outcome": "python_exception"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-W4",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "python_exception",
+    "class": "ValueError",
+    "message": "Maximum allowed size exceeded"
+   },
+   "rust": {
+    "class": "ValueError",
+    "message": "Maximum allowed size exceeded",
+    "outcome": "python_exception"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-W5",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "python_exception",
+    "class": "ValueError",
+    "message": "Maximum allowed size exceeded"
+   },
+   "rust": {
+    "class": "ValueError",
+    "message": "Maximum allowed size exceeded",
+    "outcome": "python_exception"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-W6",
+   "documented_divergence": false,
+   "python": {
+    "outcome": "python_exception",
+    "class": "ValueError",
+    "message": "tail must be 'hold' or 'zero', got 'bogus'"
+   },
+   "rust": {
+    "class": "ValueError",
+    "message": "tail must be 'hold' or 'zero', got 'bogus'",
+    "outcome": "python_exception"
+   },
+   "pass": true
+  },
+  {
+   "id": "DE-W7",
+   "documented_divergence": true,
+   "python": {
+    "outcome": "python_exception",
+    "class": "MemoryError",
+    "message": "Unable to allocate 7.11 PiB for an array with shape (1000000000000001,) and data type float64"
+   },
+   "rust": {
+    "message": "OUT_OF_DOMAIN: eps_max 1000000000000000.0 gives 1000000000000001 rows, beyond the registered writer domain (1000001 rows, eps_max <= 1e6 eV; DIV-02)",
+    "outcome": "refused",
+    "status": "OUT_OF_DOMAIN"
+   },
+   "pass": true
+  }
+ ],
+ "invariants": {
+  "INV-01": {
+   "pass": true,
+   "statement": "two Rust CLI runs byte-identical",
+   "stdout_sha256": "e3f51db6620f3bd8812bf22d1bdddddb1e7162d618608007e60c04f39dbea90e"
+  },
+  "INV-02": {
+   "pass": true,
+   "n": 37,
+   "reproduced": 37,
+   "statement": "Python reproduces every frozen table byte for byte (input precondition)"
+  },
+  "INV-03": {
+   "pass": true,
+   "rows": [
+    {
+     "te": 3.0,
+     "side": "python",
+     "ratio_minus_1": 0.0014043196021944482,
+     "pass": true
+    },
+    {
+     "te": 3.0,
+     "side": "rust",
+     "ratio_minus_1": 0.0014043196021944482,
+     "pass": true
+    },
+    {
+     "te": 10.0,
+     "side": "python",
+     "ratio_minus_1": 0.0003004167401012836,
+     "pass": true
+    },
+    {
+     "te": 10.0,
+     "side": "rust",
+     "ratio_minus_1": 0.0003004167401012836,
+     "pass": true
+    },
+    {
+     "te": 30.0,
+     "side": "python",
+     "ratio_minus_1": 5.530620927185481e-05,
+     "pass": true
+    },
+    {
+     "te": 30.0,
+     "side": "rust",
+     "ratio_minus_1": 5.530620927185481e-05,
+     "pass": true
+    }
+   ]
+  },
+  "INV-04": {
+   "pass": true,
+   "pairs_checked": 3422
+  },
+  "INV-05": {
+   "pass": true,
+   "values_checked": 28534
+  },
+  "INV-06": {
+   "pass": true,
+   "checks": 210,
+   "failures": []
+  }
+ },
+ "conservation": "NOT_APPLICABLE (contract conservation_checks.applicable = false)",
+ "performance": {
+  "workload": "PERF-WT",
+  "repeats": 3,
+  "python_s": [
+   4.831288065000081,
+   5.117588970000725,
+   4.977218742999867
+  ],
+  "rust_s": [
+   6.480392366999695,
+   6.803029546999824,
+   6.53675272000055
+  ],
+  "median_python_s": 4.977218742999867,
+  "median_rust_s": 6.53675272000055,
+  "speed_up": 0.761420686416825,
+  "status": "reported, not a decision criterion"
+ },
+ "timing_full_campaign": {
+  "python_reference_all_calls_s": 8.292965063000338,
+  "rust_cli_all_calls_s": 9.654061274000014
+ },
+ "failures": [],
+ "verdict": "ADMITTED",
+ "parity_verdict": "PARITY_PASS",
+ "campaign_history": [
+  {
+   "date_utc": "2026-10-06T09:13:48Z",
+   "mode": "scoring",
+   "seed": 1810061023,
+   "verdict": "PARITY_PASS",
+   "executions": 1
+  }
+ ],
+ "reference_outputs": {
+  "path": "docs/rust_migration/contracts/C-ABEP_SIM_RATE_TABLES_PY/reference_outputs",
+  "manifest": {
+   "inputs.json.gz": {
+    "sha256": "a2c811bf556eb9d152ae8b1868ca355ce0cc2acb6eb790b5fccdacca25991431",
+    "bytes": 626882
+   },
+   "python_outputs.json.gz": {
+    "sha256": "482c3d32eeff7481b9679d4a3515289ee45b44cd31bf4c9046e5d5d47b6a6cea",
+    "bytes": 257726
+   },
+   "rust_outputs_at_scoring.json.gz": {
+    "sha256": "b6ebf518f6ec48528b5a98b4317c7d8baa332ff78da666c12aa561bdc3790ab9",
+    "bytes": 328839
+   }
+  }
+ },
+ "ledger_update_requested": [
+  {
+   "component": "C-ABEP_SIM_RATE_TABLES_PY",
+   "requested_status": "ADMITTED",
+   "scope": "maxwellian_rate (tails hold / zero), tail_sensitivity, step_cross_section_rate, write_hallthruster_table (rows, table text, sidecar text; file I/O excluded)",
+   "authoritative_implementation": "rust: abep_chem::reference (parity behaviour, table rebuilds) and abep_chem::checked (fail-closed production API, IF-CHEM-REG-v1)",
+   "contract": "PARITY-C-ABEP_SIM_RATE_TABLES_PY-V1",
+   "downstream": "NP-ICP-NEUTRALIZER prereg_v1 software_admission item (3) 'the abep-chem rate evaluator it uses is admitted' is satisfied by this admission (verification_report_v1 admission item 3 / NV-06 direct side can be evaluated once abep-icp is wired to abep_chem::checked by its own lane); no table, registry or validity entry is admitted by it"
+  }
+ ],
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, threshold or requirement; no table is rebuilt",
+  "not an admission of any cross-section table, chemistry registry, validity entry or completeness claim (those belong to NP-ICP-CHEM-AIR and the rate_validity.toml governance)",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27)",
+  "not a gate PASS: absent determining evidence stays NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN / MODEL_ERROR (RM-R31)"
+ ]
+}
