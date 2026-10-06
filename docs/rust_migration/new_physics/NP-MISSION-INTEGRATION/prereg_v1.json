@@ -1,0 +1,1070 @@
+{
+ "schema": "abep_new_physics_prereg_v1",
+ "id": "NP-MISSION-INTEGRATION",
+ "prereg_version": 1,
+ "model_version": "1.0.0",
+ "title": "Mission integration of the selected architecture hall_icp_neutralizer over mission_scenario_v2 and the frozen 196-state environment (AIR_PRIMARY and XE_CONTINGENCY)",
+ "status": "PREREGISTERED_NOT_IMPLEMENTED",
+ "method": "NEW_PHYSICS",
+ "contract_kind": "NEW_PHYSICS",
+ "lifecycle_state": "PREREG_MODEL",
+ "validation_status": "NOT_VALIDATED",
+ "date": "2026-10-06",
+ "work_package": "SC-WP-09",
+ "lane": "WP09-MISSION (A9.31 sec. 12, priority 1 of sec. 22)",
+ "target_crate": "abep-mission::integration",
+ "target_crate_note": "crate abep-mission (SC-WP-09 target_crates), new module integration (additive). This record creates no crate, module or code.",
+ "base": {
+  "branch": "lane-wp09-mission",
+  "from": "origin/integration/simulation-complete 0d8922cfe39b5bb7f90ddf290702342182eb5d7c",
+  "commit_before_this_record": "1a8101e"
+ },
+ "files": {
+  "machine_readable": "docs/rust_migration/new_physics/NP-MISSION-INTEGRATION/prereg_v1.json",
+  "human_readable": "docs/rust_migration/new_physics/NP-MISSION-INTEGRATION/PREREG.md",
+  "lock": "docs/rust_migration/new_physics/NP-MISSION-INTEGRATION/prereg_lock_v1.json"
+ },
+ "authority_rule": "This JSON is authoritative. PREREG.md restates it for people. Where they differ, the JSON governs and the difference is a defect to fix by a new version.",
+ "numbers_policy": "This record contains no physical property, rate, load, mass, geometry or limit value. The numbers that appear are: (a) the unit conversion 3600 s / h; (b) preregistered numerical rules (exact accumulation, comparison tolerances of the independent cross-check); (c) verification vectors labelled SYNTHETIC_TEST_DATA_NOT_EVIDENCE; (d) the scenario horizons 26,280 h / 15,000 h and the planning Xe cases 2 / 5 / 10 kg quoted from their registered records (GR-09, GR-15) for traceability; the implementation reads them from those records at run time and never hard-codes them; (e) the set size 196 and record identifiers / sha256.",
+ "governing_records": [
+  {
+   "id": "GR-01",
+   "path": "docs/decisions/OD_2026_10_06_A9_31_NEXT_BATCH_OWNER_RULINGS_AND_ARCHITECTURE_PROOF.md",
+   "sha256": "ae2b97e426fe648c3e1829fefcc19095af0d0cdf9b5b58b384c837146ae9bedc",
+   "used": "sec. 12 (LANE MISSION SC-WP-09: integrate 26,280 h, 15,000 h independently, AIR_PRIMARY, XE_CONTINGENCY, mode / state schedule, atmosphere / design states, intake / feed, propulsion statuses, mass / propellant, electrical / thermal where available; no NOT_EVALUATED -> numeric; fail-closed propagation; no blind Xe x mission duration), sec. 14 (stop rule), sec. 16 (decisive 196-state run fields; physical bound / parametric result AND separate evidence-qualified status), sec. 18 Q3 (I_d, I_e,cap raw), sec. 21, sec. 22 (priority 1), OQ-CHEM-10 (separate modes, no mixed composition)"
+  },
+  {
+   "id": "GR-02",
+   "path": "docs/decisions/OD_2026_10_06_A9_31_next_batch_owner_rulings_and_architecture_proof.json",
+   "sha256": "6f7c82eac2ac6c07e09324934d94bce8ca7613c2dd80cb496222264b7afe5f86",
+   "used": "companion of GR-01"
+  },
+  {
+   "id": "GR-03",
+   "path": "docs/decisions/OD_2026_10_05_A9_29_RUST_PLAN_V3_1_RULINGS_AND_START_AUTHORIZATION.md",
+   "sha256": "5c223f6df59f579deb1ef4788fecf5857c6fa3ff4f365f23738b2c1b7f251989",
+   "used": "sec. 4 (RF/ICP gas consumption enters the mission integration with the Hall feed), sec. 9 (Rust-era test rule), sec. 13 (no implementation before preregistration), sec. 14, sec. 15 (the chain; no flight hollow cathode)"
+  },
+  {
+   "id": "GR-04",
+   "path": "docs/decisions/OD_2026_10_05_A9_29_rust_plan_v3_1_rulings_and_start_authorization.json",
+   "sha256": "51645f0ea6d0a2b02e029694ca6714854011be45cbe3d6adca53ce975453fc8d",
+   "used": "companion of GR-03"
+  },
+  {
+   "id": "GR-05",
+   "path": "docs/decisions/OD_2026_10_05_A9_30_PUSH_AUTHORIZATION_O_O2_CHEMISTRY_AND_BUS_BOUNDARY_RULINGS.md",
+   "sha256": "17401e982c1acc2b58847d919a75a473e981d2233d952153d8234e410578a42f",
+   "used": "bus_power_boundary_a9_v2 is the active bus boundary; flight C1 loads NONE; the 1.5 kW limit is assessment-only"
+  },
+  {
+   "id": "GR-06",
+   "path": "docs/rust_migration/simulation_completion_programme_v1_1.json",
+   "sha256": "5e672943892b0035f05562e68dae1ca279acd4a4bd625641a559e53711f4643a",
+   "used": "SC-WP-09 (elements, determining_evidence_gates_fail_closed, admission_criteria, excluded_legacy_not_ported, a9_29_np_icp_coupling)"
+  },
+  {
+   "id": "GR-07",
+   "path": "docs/rust_migration/component_inventory_v3_1.json",
+   "sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+   "used": "new_items_no_python_reference NP-MISSION-INTEGRATION (NEW_PHYSICS, W3); rows C-ABEP_SIM_MISSION_ENV_PY, C-ABEP_SIM_MISSION5_PY (class H), C-ABEP_SIM_MISSION_UQ_PY (class H)"
+  },
+  {
+   "id": "GR-08",
+   "path": "docs/rust_migration/programme_v3_1.json",
+   "sha256": "b595c4fc740223cb8da10886c358410ffab2cfd38befbe97543237d1b4dee70f",
+   "used": "RM-R* rules; cargo_workspace_proposal"
+  },
+  {
+   "id": "GR-09",
+   "path": "config/mission/mission_scenario_v2.json",
+   "sha256": "885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49",
+   "used": "mission_hours 26,280 h (MISSION_DURATION_BASIS) and firing_hours 15,000 h (SUBSYSTEM_FIRING_LIFE_ASSUMPTION), both OPERATING_SCENARIO_CHOICE; read through abep_config::OperatingInputs (admitted loader, manifest + code pin)"
+  },
+  {
+   "id": "GR-10",
+   "path": "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json",
+   "sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+   "used": "the frozen 196-state design-state set v2 (A9.14 S9.8; A9.17 ORBIT), executed by abep_atmos::execution (admitted, SC-WP-01)"
+  },
+  {
+   "id": "GR-11",
+   "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "used": "S9.7 OD2 (statewise envelope; every required state fail-closed; worst state and orbit average additionally; the states carry no time weights), S9.9 OD5 (atmospheric start sequence, max 3 attempts), S9.10 OD6 (dual propellant: separate modes, not premixed)"
+  },
+  {
+   "id": "GR-12",
+   "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "used": "one Hall + one RF/ICP neutralizer for air and Xe; Xe = CONTINGENCY_AND_EMERGENCY supply mode; conventional hollow cathode NONE"
+  },
+  {
+   "id": "GR-13",
+   "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+   "sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+   "used": "C1 GROUND_REFERENCE_ONLY: never a flight load, propellant line or mission term"
+  },
+  {
+   "id": "GR-14",
+   "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+   "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+   "used": "HIQ-06: primary ICP gas mode G-REUSE (Hall exhaust / residual); dedicated ICP port installed and capped; G-ATM / G-XE declared contingency variants; no dedicated Xe to make the ICP work"
+  },
+  {
+   "id": "GR-15",
+   "path": "docs/decisions/OD_2026_10_04_A9_25_pre_bid_owner_decisions.json",
+   "sha256": "c05fcc45de0194e60ef30b93aa91294c54a7762d129dac69e933e9a679679385",
+   "used": "msg 8 sec. 7: the flight Xe load is NOT YET FROZEN; 2 / 5 / 10 kg LOADED cases are SENSITIVITY / PLANNING CASES, none is the selected load"
+  },
+  {
+   "id": "GR-16",
+   "path": "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json",
+   "sha256": "fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c",
+   "used": "item 3 / 5 (requirement comparisons are assessment only), item 4 (operating scenario choices; a changed scenario is a new version)"
+  },
+  {
+   "id": "GR-17",
+   "path": "config/architecture/hall_icp_neutralizer_v1.json",
+   "sha256": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3",
+   "used": "active architecture id hall_icp_neutralizer"
+  },
+  {
+   "id": "GR-18",
+   "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/prereg_v1.json",
+   "sha256": "5d496ea6538ef65999c3cb8b1f4274622dc060889b1cf14f46a0a02a855a91a8",
+   "used": "raw I_e,cap; M_n = I_e,cap / I_d - 1 lives in assessment (EX-05); CFG-FLIGHT-HALL-ON NOT_EVALUATED; status NOT_ADMITTED"
+  },
+  {
+   "id": "GR-19",
+   "path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/prereg_v1.json",
+   "sha256": "e3e6859cf61703c27254e9c231ff4637f7d20ea743c8d881b9e55c8ba9d27c5c",
+   "used": "thermal raw outputs; NE-01 / NE-02 (Hall and ICP heat loads NOT_EVALUATED today); FT-01"
+  },
+  {
+   "id": "GR-20",
+   "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+   "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+   "used": "mass_power_a9_v5 record (admitted SC-WP-07): wet-mass objective NOT_EVALUATED without CBE; official flight ledger PARTIAL_BOUNDARY (admitted SC-WP-05)"
+  },
+  {
+   "id": "GR-21",
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_MISSION_ENV_PY-PROPAGATION/parity_prereg_v1.json",
+   "sha256": "89db4ba5bca298ff6c54f93ba165184dbda825dd5c4c1602dc9c8898d4b2a09a",
+   "used": "existing-physics element of SC-WP-09 (state propagation); not called by this model in v1 (MS-05)"
+  }
+ ],
+ "what_this_is": "A deterministic bookkeeping and integration model. It assembles, for every state of the frozen 196-state environment and for each supply mode, the per-state record of the selected architecture from the admitted layers (environment, intake / feed, Hall, RF/ICP, power, thermal, drag, mass), propagates their fail-closed statuses, and integrates the per-state rates over a registered mission mode / state schedule into mission totals (time, propellant, atmospheric gas, electrical energy, impulse, AO fluence) with exact time and propellant accounting. It contains no new device physics: every rate comes from a subsystem layer or is NOT_EVALUATED.",
+ "what_this_is_not": [
+  "not an implementation (status PREREGISTERED_NOT_IMPLEMENTED)",
+  "not a requirement assessment: no RFP threshold, margin, PASS / FAIL, COMPLY or HC verdict; HC-05 / HC-07 / HC-08 / HC-11 and the 1.5 kW / 40 kg / 12 mN / 25 mN comparisons belong to SC-WP-11 (A9.24 items 3, 5; A9.30)",
+  "not a Hall model: Hall quantities come only from an ADMITTED transport member with a design-specific Hall map, or a measured H-1 record; the credible set is EMPTY",
+  "not an RF/ICP model: I_e,cap and ICP loads come from NP-ICP-NEUTRALIZER once admitted; M_n is not formed here (GR-18 EX-05)",
+  "not an orbit propagation: altitude is a state coordinate of the frozen environment; mission_env.propagate (SC-WP-09 existing-physics element) is not called in v1 (MS-05)",
+  "not a mission prediction while no mission schedule is registered: every schedule-integrated total is NOT_EVALUATED today",
+  "not a choice of Xe load: the 2 / 5 / 10 kg planning cases are carried together as PARAMETRIC_PLANNING_CASE, none selected (GR-15)",
+  "not a port of abep_sim/mission5.py, mission_uq.py, transient.py or radiation.py (class H; GR-06 excluded_legacy_not_ported); nothing is taken from them"
+ ],
+ "implementation_gate": [
+  {
+   "id": "IG-01",
+   "rule": "No NP-MISSION-INTEGRATION Rust code before this preregistration (prereg_v1.json, PREREG.md, prereg_lock_v1.json) is committed in its own commit (A9.29 sec. 13; GR-01 sec. 12 'Preregister before implementation')."
+  },
+  {
+   "id": "IG-02",
+   "rule": "The verification cases, conservation criteria and fail-closed tests below are fixed now; they are run once for the verification report after implementation and never relaxed after results are seen (CC-03)."
+  }
+ ],
+ "architecture_scope": [
+  {
+   "id": "AS-01",
+   "text": "Configuration hall_icp_neutralizer only (GR-17). Any other configuration id is refused (MODEL_ERROR)."
+  },
+  {
+   "id": "AS-02",
+   "text": "Supply modes AIR_PRIMARY and XE_CONTINGENCY, both represented (GR-06 a9_29_chain propellant_modes_rule). They are separate modes, never premixed (GR-11 S9.10 OD6; GR-01 OQ-CHEM-10): a schedule segment has exactly one mode; a mixed or unknown mode is refused (OUT_OF_DOMAIN). A third segment mode NON_FIRING represents propulsion-off time (coast / standby); it is not a supply mode."
+  },
+  {
+   "id": "AS-03",
+   "text": "Flight conventional hollow cathode: NONE (GR-12, GR-13). No cathode field, load, propellant line or event exists in the model; C1 Xe lines are GROUND_REFERENCE_ONLY and never enter a flight ledger. Cathode vocabulary in an input record is refused (MODEL_ERROR)."
+  },
+  {
+   "id": "AS-04",
+   "text": "ICP gas routing is a registered input icp_gas_mode in {G-REUSE, G-ATM, G-XE} (GR-14). G-REUSE (registered primary) feeds the ICP from Hall exhaust / residual gas: it adds no draw on any reservoir. G-ATM draws the ICP dedicated flow from the delivered atmospheric gas; G-XE draws it from the Xe tank. G-ATM in XE_CONTINGENCY has no registered routing: INCOMPLETE_EVIDENCE."
+  }
+ ],
+ "inputs": {
+  "IN-SCN": {
+   "what": "mission scenario horizons",
+   "source": "abep_config::OperatingInputs::load (mission_scenario_v2 through the admitted loader: config/MANIFEST.json sha256 AND the code pin)",
+   "fields": {
+    "H_M": "mission_hours [h], label MISSION_DURATION_BASIS",
+    "H_F": "firing_hours [h], label SUBSYSTEM_FIRING_LIFE_ASSUMPTION"
+   },
+   "rule": "H_M and H_F are independent OPERATING_SCENARIO_CHOICE inputs; neither is derived from the other. No other scenario or constraint value is read. config/requirements/*, config/constraints/* and config/assessment/* are never read by this model (FT-10)."
+  },
+  "IN-ENV": {
+   "what": "frozen environment",
+   "source": "abep_atmos::execution::run over the design-state set v2 (196 states, sha256 60073e21...)",
+   "per_state": [
+    "status",
+    "alt_km",
+    "rho [kg m-3]",
+    "fO, fN2, fO2 (mass fractions renormalised over O / N2 / O2, DesignState.atm)",
+    "n_O [m-3]",
+    "T [K]",
+    "V [m s-1] (circular inertial orbital speed, V_REL_BASIS)",
+    "labels",
+    "nominal_mission_scenario"
+   ],
+   "rule": "a state whose execution status is not EVALUATED makes every field derived from it carry that status (SP-04)"
+  },
+  "IN-STATE": {
+   "what": "per (state, mode) subsystem inputs, one StateModeInputs record per state and per mode in {AIR_PRIMARY, XE_CONTINGENCY, NON_FIRING}",
+   "fields": "see state_fields SF-05..SF-17 marked INPUT",
+   "rule": "every input field is a Quantity (quantity_representation) or NOT_APPLICABLE by registered applicability (applicability table); a missing field is MODEL_ERROR, never a default"
+  },
+  "IN-MASS": {
+   "what": "mission-level mass inputs",
+   "fields": {
+    "m_dry_kg": "Quantity (flight dry mass)",
+    "m_xe_loaded_kg": "Quantity (flight Xe load; NOT_EVALUATED while not frozen, GR-15)",
+    "xe_planning_cases_kg": "list of PARAMETRIC_PLANNING_CASE values from the registered record (GR-15 / GR-20), carried together",
+    "xe_reserve_kg": "Quantity",
+    "xe_residual_kg": "Quantity (unusable residual)"
+   }
+  },
+  "IN-ROUTE": {
+   "what": "icp_gas_mode",
+   "values": [
+    "G-REUSE",
+    "G-ATM",
+    "G-XE"
+   ],
+   "registered_today": "G-REUSE (GR-14 HIQ-06)"
+  },
+  "IN-SCHED": {
+   "what": "mission mode / state schedule (optional)",
+   "schema": "schedule.segments, schedule.events",
+   "registered_today": "NONE (OQ-MI-01): no mission schedule, state occupancy or Xe-contingency duration is registered; the 196 states carry no time weights (GR-11 S9.7)"
+  }
+ },
+ "quantity_representation": {
+  "Quantity": {
+   "units": "registered unit string",
+   "status": "EVALUATED | NOT_EVALUATED | INCOMPLETE_EVIDENCE | OUT_OF_DOMAIN | MODEL_ERROR (evidence-qualified status)",
+   "value": "f64, present iff status = EVALUATED (Q-1)",
+   "parametric": "optional {value, label, basis}: a physical bound / parametric / planning result, label in {PARAMETRIC_SENSITIVITY_ONLY, PARAMETRIC_BOUND, PARAMETRIC_PLANNING_CASE, PARAMETRIC}; never copied into value (Q-2)",
+   "evidence_class": "measured | digitized | inferred | reconstructed | model-derived | assumed | owner-allocation | structural | SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+   "uncertainty": "registered bounds [lo, hi] or NOT_QUANTIFIED",
+   "source": "record path / layer id",
+   "reasons": "list of {code, status, detail}"
+  },
+  "invariants": [
+   {
+    "id": "Q-1",
+    "rule": "value is present iff status = EVALUATED; a Quantity built otherwise is MODEL_ERROR"
+   },
+   {
+    "id": "Q-2",
+    "rule": "a parametric value never enters value, an evidence-qualified integral, an envelope or a status; it lives in its own layer"
+   },
+   {
+    "id": "Q-3",
+    "rule": "a non-finite value is MODEL_ERROR (no NaN / inf in any record)"
+   },
+   {
+    "id": "Q-4",
+    "rule": "structural zero: value 0 with status EVALUATED and evidence_class structural is created ONLY by the registered routing / applicability rules (applicability), never for a missing input"
+   }
+  ]
+ },
+ "state_fields": {
+  "rule": "The mission record carries, for each of the 196 states and each mode, the fields below (GR-01 sec. 16 list). INPUT = supplied by the owning layer through IN-STATE; ENV = from IN-ENV; DERIVED = computed here by the derivation rules. Unavailable quantities stay explicitly NOT_EVALUATED / INCOMPLETE_EVIDENCE.",
+  "items": [
+   {
+    "id": "SF-01",
+    "key": "rho_kg_m3, fO, fN2, fO2, n_O_m3, T_K",
+    "units": "kg m-3, 1, 1, 1, m-3, K",
+    "kind": "ENV",
+    "layer": "SC-WP-01"
+   },
+   {
+    "id": "SF-02",
+    "key": "v_orbital_m_s",
+    "units": "m s-1",
+    "kind": "ENV",
+    "layer": "SC-WP-01"
+   },
+   {
+    "id": "SF-03",
+    "key": "freestream_mass_flux_kg_m2_s",
+    "units": "kg m-2 s-1",
+    "kind": "DERIVED",
+    "form": "rho * V"
+   },
+   {
+    "id": "SF-04",
+    "key": "ao_flux_m2_s",
+    "units": "m-2 s-1",
+    "kind": "DERIVED",
+    "form": "n_O * V (ram atomic-oxygen flux, model-derived)"
+   },
+   {
+    "id": "SF-05",
+    "key": "intake_capture_kg_s",
+    "units": "kg s-1",
+    "kind": "INPUT",
+    "layer": "SC-WP-02 intake (design point)"
+   },
+   {
+    "id": "SF-06",
+    "key": "drag_intake_N",
+    "units": "N",
+    "kind": "INPUT",
+    "layer": "SC-WP-04 F1 intake-face drag (PARAMETRIC_SENSITIVITY_ONLY while the surface scenario is TBD)"
+   },
+   {
+    "id": "SF-07",
+    "key": "p_feed_Pa, T_feed_K",
+    "units": "Pa, K",
+    "kind": "INPUT",
+    "layer": "SC-WP-02 compressor / plenum / feed state"
+   },
+   {
+    "id": "SF-08",
+    "key": "mdot_atm_delivered_kg_s",
+    "units": "kg s-1",
+    "kind": "INPUT",
+    "layer": "SC-WP-02 delivered atmospheric mass flow at the H-1 inlet"
+   },
+   {
+    "id": "SF-09",
+    "key": "mdot_hall_anode_kg_s",
+    "units": "kg s-1",
+    "kind": "INPUT",
+    "layer": "SC-WP-03 Hall operating point (admitted member / map, or measured H-1)"
+   },
+   {
+    "id": "SF-10",
+    "key": "mdot_icp_dedicated_kg_s",
+    "units": "kg s-1",
+    "kind": "INPUT",
+    "layer": "SC-WP-03 NP-ICP-NEUTRALIZER (dedicated ICP feed; only under G-ATM / G-XE)"
+   },
+   {
+    "id": "SF-11",
+    "key": "hall_state",
+    "units": "label",
+    "kind": "INPUT",
+    "layer": "SC-WP-03 (admitted member id + operating point id, or the gate status)"
+   },
+   {
+    "id": "SF-12",
+    "key": "I_d_A",
+    "units": "A",
+    "kind": "INPUT",
+    "layer": "SC-WP-03 Hall"
+   },
+   {
+    "id": "SF-13",
+    "key": "I_ecap_A",
+    "units": "A",
+    "kind": "INPUT",
+    "layer": "SC-WP-03 NP-ICP-NEUTRALIZER (raw I_e,cap); M_n is not formed here"
+   },
+   {
+    "id": "SF-14",
+    "key": "P_bus_W",
+    "units": "W",
+    "kind": "INPUT",
+    "layer": "SC-WP-05 bus_power_boundary_a9_v2 (all electrical power crossing the spacecraft-side DC boundary; no flight cathode load)"
+   },
+   {
+    "id": "SF-15",
+    "key": "thrust_N",
+    "units": "N",
+    "kind": "INPUT",
+    "layer": "SC-WP-03 coupled thrust"
+   },
+   {
+    "id": "SF-16",
+    "key": "drag_body_N",
+    "units": "N",
+    "kind": "INPUT",
+    "layer": "SC-WP-04 host-spacecraft drag (NOT_EVALUATED without the host ICD)"
+   },
+   {
+    "id": "SF-17",
+    "key": "thermal_t_max_K",
+    "units": "K",
+    "kind": "INPUT",
+    "layer": "SC-WP-06 NP-THERMAL-CATHODELESS (maximum solved node temperature, raw)"
+   },
+   {
+    "id": "SF-18",
+    "key": "drag_total_N",
+    "units": "N",
+    "kind": "DERIVED",
+    "form": "drag_intake_N + drag_body_N"
+   },
+   {
+    "id": "SF-19",
+    "key": "t_minus_d_N",
+    "units": "N",
+    "kind": "DERIVED",
+    "form": "thrust_N - drag_total_N (raw difference; no comparison with zero, HC-08 is assessment)"
+   },
+   {
+    "id": "SF-20",
+    "key": "mdot_xe_tank_kg_s",
+    "units": "kg s-1",
+    "kind": "DERIVED",
+    "form": "routing table R-XE"
+   },
+   {
+    "id": "SF-21",
+    "key": "mdot_atm_consumed_kg_s",
+    "units": "kg s-1",
+    "kind": "DERIVED",
+    "form": "routing table R-ATM"
+   },
+   {
+    "id": "SF-22",
+    "key": "feed_balance_kg_s",
+    "units": "kg s-1",
+    "kind": "DERIVED",
+    "form": "mdot_atm_delivered_kg_s - mdot_atm_consumed_kg_s (AIR_PRIMARY; raw, no comparison with zero: HC-11 is assessment)"
+   },
+   {
+    "id": "SF-23",
+    "key": "state_status / domain_status / evidence_status",
+    "units": "status",
+    "kind": "DERIVED",
+    "form": "state_status = worst over the state's fields (SP-01); domain_status = environment execution status plus every OUT_OF_DOMAIN reason; evidence_status = worst over fields excluding OUT_OF_DOMAIN / MODEL_ERROR"
+   }
+  ]
+ },
+ "applicability": {
+  "rule": "A field is NOT_APPLICABLE only by this table; NOT_APPLICABLE fields carry no value and contribute nothing to integrals. Every other absence is a status.",
+  "table": [
+   {
+    "mode": "AIR_PRIMARY",
+    "not_applicable": []
+   },
+   {
+    "mode": "XE_CONTINGENCY",
+    "not_applicable": [
+     "mdot_atm_delivered_kg_s",
+     "feed_balance_kg_s"
+    ],
+    "note": "no atmospheric delivery in the Xe mode (separate modes); p_feed_Pa / T_feed_K are the Xe feed state; intake capture and intake drag still apply (the intake flies)"
+   },
+   {
+    "mode": "NON_FIRING",
+    "not_applicable": [
+     "mdot_atm_delivered_kg_s",
+     "feed_balance_kg_s",
+     "p_feed_Pa",
+     "T_feed_K",
+     "hall_state",
+     "I_d_A",
+     "I_ecap_A",
+     "mdot_hall_anode_kg_s",
+     "mdot_icp_dedicated_kg_s"
+    ],
+    "structural": {
+     "thrust_N": "STRUCTURAL_ZERO_NON_FIRING",
+     "mdot_xe_tank_kg_s": "STRUCTURAL_ZERO_NON_FIRING",
+     "mdot_atm_consumed_kg_s": "STRUCTURAL_ZERO_NON_FIRING"
+    },
+    "note": "P_bus_W (standby load) and thermal stay INPUT"
+   }
+  ],
+  "routing": {
+   "R-XE": [
+    {
+     "mode": "XE_CONTINGENCY",
+     "G-REUSE": "mdot_hall_anode_kg_s",
+     "G-ATM": "INCOMPLETE_EVIDENCE (routing not registered)",
+     "G-XE": "mdot_hall_anode_kg_s + mdot_icp_dedicated_kg_s"
+    },
+    {
+     "mode": "AIR_PRIMARY",
+     "G-REUSE": "STRUCTURAL_ZERO_BY_ROUTING",
+     "G-ATM": "STRUCTURAL_ZERO_BY_ROUTING",
+     "G-XE": "mdot_icp_dedicated_kg_s"
+    },
+    {
+     "mode": "NON_FIRING",
+     "any": "STRUCTURAL_ZERO_NON_FIRING"
+    }
+   ],
+   "R-ATM": [
+    {
+     "mode": "AIR_PRIMARY",
+     "G-REUSE": "mdot_hall_anode_kg_s",
+     "G-ATM": "mdot_hall_anode_kg_s + mdot_icp_dedicated_kg_s",
+     "G-XE": "mdot_hall_anode_kg_s"
+    },
+    {
+     "mode": "XE_CONTINGENCY",
+     "any": "STRUCTURAL_ZERO_BY_ROUTING (separate modes, no premix, GR-11 OD6)",
+     "G-ATM": "INCOMPLETE_EVIDENCE (routing not registered)"
+    },
+    {
+     "mode": "NON_FIRING",
+     "any": "STRUCTURAL_ZERO_NON_FIRING"
+    }
+   ],
+   "basis": "GR-14 HIQ-06 (G-REUSE uses Hall exhaust / residual gas: no dedicated draw), GR-11 OD6 / GR-01 OQ-CHEM-10 (separate modes)"
+  }
+ },
+ "derivation_rules": [
+  {
+   "id": "DR-01",
+   "rule": "A DERIVED sum or difference: status = worst of the operands (SP-01); value = the f64 operation in the registered order, only if every operand is EVALUATED; reasons = union of the operand reasons."
+  },
+  {
+   "id": "DR-02",
+   "rule": "Parametric layer of a DERIVED quantity: formed only when every operand has an EVALUATED value or a parametric value and at least one operand is parametric; value = the same operation on (value or parametric value); label PARAMETRIC (or the single contributing label when all parametric operands share one); basis lists the contributing labels. Never formed when any operand has neither."
+  },
+  {
+   "id": "DR-03",
+   "rule": "SF-03 and SF-04 are products of EVALUATED environment values (rho * V, n_O * V), evidence_class model-derived, source the design-state set sha256 and state id."
+  },
+  {
+   "id": "DR-04",
+   "rule": "No derived quantity is compared with zero, a requirement or a threshold."
+  }
+ ],
+ "schedule_semantics": [
+  {
+   "id": "SCH-01",
+   "rule": "A schedule is an ordered list of segments {segment_id (unique, non-empty), mode in {AIR_PRIMARY, XE_CONTINGENCY, NON_FIRING}, state_id (a member of the frozen set), duration_h (finite, > 0)}. During a segment the per-state rates of (state_id, mode) apply unchanged (piecewise-constant integration)."
+  },
+  {
+   "id": "SCH-02",
+   "rule": "Events are {event_id (unique), segment_id (existing), kind in {START_ATTEMPT}, count (integer >= 0), xe_kg_per_event (Quantity), atm_kg_per_event (Quantity)}; they book discrete propellant use (e.g. the S9.9 OD5 start sequence). No default count or mass exists."
+  },
+  {
+   "id": "SCH-03",
+   "rule": "Time accounting (exact): sum of duration_h over all segments == H_M exactly; sum over firing segments (mode != NON_FIRING) == H_F exactly; H_AIR + H_XE == H_F exactly. Sums use exact accumulation (EX-ACC). A violation means the schedule does not realise mission_scenario_v2: the whole integration is OUT_OF_DOMAIN (GR-06 gate 'scenario outside mission_scenario_v2'). Durations must therefore be exactly representable binary64 values."
+  },
+  {
+   "id": "SCH-04",
+   "rule": "A segment with an unknown or mixed mode, a non-member state, a duplicate id, a non-finite or non-positive duration, or an event naming an unknown segment is refused: OUT_OF_DOMAIN for mode / state / duration, MODEL_ERROR for identity defects."
+  },
+  {
+   "id": "SCH-05",
+   "rule": "No schedule registered: every schedule-integrated total is NOT_EVALUATED with reason MISSION_SCHEDULE_NOT_REGISTERED and carries no value; statewise records and envelopes are still produced."
+  },
+  {
+   "id": "SCH-06",
+   "rule": "The schedule is the only source of time weights. The model never weights states by itself (GR-11 S9.7: the states carry no time weights) and never multiplies a rate by H_M or H_F except inside the registered parametric bound PB-AO."
+  }
+ ],
+ "equations": {
+  "notation": "k: schedule segment; s_k, m_k, dt_k [h]: its state, mode and duration; S = 3600 s / h; q(s, m): a per-state rate quantity",
+  "items": [
+   {
+    "id": "EQ-01",
+    "name": "segment contribution",
+    "form": "c_k = q(s_k, m_k) * (dt_k * S)",
+    "note": "operation order fixed: seconds first, then the product (one rounding each)"
+   },
+   {
+    "id": "EQ-02",
+    "name": "schedule integral",
+    "form": "Q = sum_k c_k, accumulated exactly (EX-ACC); reported value = faithful rounding of the exact sum",
+    "status": "SP-03"
+   },
+   {
+    "id": "EQ-03",
+    "name": "time totals",
+    "form": "H_sched = sum dt_k; H_fire = sum_{m_k != NON_FIRING} dt_k; H_AIR = sum_{m_k = AIR_PRIMARY} dt_k; H_XE = sum_{m_k = XE_CONTINGENCY} dt_k; H_coast = H_sched - H_fire (exact)"
+   },
+   {
+    "id": "EQ-04",
+    "name": "Xe consumption",
+    "form": "M_xe,cont = integral of mdot_xe_tank_kg_s (EQ-02, all segments); M_xe,ev = sum_events count * xe_kg_per_event (each product one rounding, exact accumulation); M_xe = M_xe,cont + M_xe,ev"
+   },
+   {
+    "id": "EQ-05",
+    "name": "Xe tank ledger",
+    "form": "m_xe,end = m_xe,0 - M_xe (exact accumulation; reported faithfully rounded); m_xe,usable,end = m_xe,end - m_xe,reserve - m_xe,residual (raw; may be negative; no comparison)"
+   },
+   {
+    "id": "EQ-06",
+    "name": "Xe planning-case ledgers",
+    "form": "EQ-05 evaluated for every registered planning case m_xe,0 in xe_planning_cases_kg, labelled PARAMETRIC_PLANNING_CASE, all cases reported, none selected; formed only when M_xe has an EVALUATED or parametric value"
+   },
+   {
+    "id": "EQ-07",
+    "name": "wet mass",
+    "form": "m_wet,0 = m_dry + m_xe,0; m_wet,end = m_dry + m_xe,end"
+   },
+   {
+    "id": "EQ-08",
+    "name": "atmospheric gas throughput (not stored; no tank, NIR-07)",
+    "form": "M_atm,del = integral of mdot_atm_delivered_kg_s over AIR_PRIMARY segments; M_atm,cons = integral of mdot_atm_consumed_kg_s; M_atm,ev = sum_events count * atm_kg_per_event; M_atm,bal = M_atm,del - M_atm,cons - M_atm,ev (exact accumulation)"
+   },
+   {
+    "id": "EQ-09",
+    "name": "electrical energy",
+    "form": "E_bus = integral of P_bus_W over all segments [J]"
+   },
+   {
+    "id": "EQ-10",
+    "name": "impulse",
+    "form": "J_T = integral of thrust_N; J_D = integral of drag_total_N; J_net = integral of t_minus_d_N, all segments [N s]"
+   },
+   {
+    "id": "EQ-11",
+    "name": "AO fluence",
+    "form": "Phi_AO = integral of ao_flux_m2_s over all segments [m-2]"
+   },
+   {
+    "id": "EQ-12",
+    "name": "statewise envelopes (no schedule)",
+    "form": "for every field and mode: n_states, status counts, worst status; min / max and their state ids over the 196 states only when every state has an EVALUATED value (ties: first in file order); a parametric envelope separately when every state has a value or a parametric value"
+   },
+   {
+    "id": "EQ-13",
+    "name": "parametric bound PB-AO",
+    "form": "[min_s ao_flux, max_s ao_flux] * (H_M * S), label PARAMETRIC_BOUND, basis 'bounds Phi_AO for every schedule whose segments use states of the frozen set; the states carry no time weights (GR-11 S9.7)'; evidence status of Phi_AO stays NOT_EVALUATED (MISSION_SCHEDULE_NOT_REGISTERED) while no schedule is registered. Formed only when every state's ao_flux is EVALUATED."
+   }
+  ],
+  "EX-ACC": "exact accumulation: Shewchuk error-free two-sum expansions (J. R. Shewchuk, Adaptive precision floating-point arithmetic and fast robust geometric predicates, Discrete Comput. Geom. 18, 1997; verify); the sum of the non-overlapping components from the smallest to the largest magnitude is the reported (faithfully rounded) value; equality tests (SCH-03, CONS) compare exact expansions"
+ },
+ "status_propagation": [
+  {
+   "id": "SP-01",
+   "rule": "Severity order MODEL_ERROR > OUT_OF_DOMAIN > NOT_EVALUATED > INCOMPLETE_EVIDENCE > EVALUATED. A combined status is the most severe contributor; every contributor reason is kept (field, state, mode, segment tags); nothing is dropped."
+  },
+  {
+   "id": "SP-02",
+   "rule": "NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN / MODEL_ERROR inputs are never turned into numbers: no zero fill, no default, no interpolation across states, no carry-forward of a neighbouring state's value (GR-01 sec. 12)."
+  },
+  {
+   "id": "SP-03",
+   "rule": "A schedule integral takes the worst status over its contributing segments (NOT_APPLICABLE fields contribute nothing); its value exists only if every contribution is EVALUATED; its parametric layer follows DR-02 over the contributions."
+  },
+  {
+   "id": "SP-04",
+   "rule": "An environment state whose execution is not EVALUATED gives every ENV / DERIVED field of that state its status and reason."
+  },
+  {
+   "id": "SP-05",
+   "rule": "Determining-evidence gates (GR-06): credible Hall set EMPTY -> Hall-dependent INPUT fields NOT_EVALUATED (reason CREDIBLE_HALL_TRANSPORT_SET_EMPTY); NP-ICP-NEUTRALIZER not admitted -> I_ecap_A and ICP flows NOT_EVALUATED (reason NP_ICP_NOT_ADMITTED) whatever the crate status; Xe load not frozen -> m_xe_loaded NOT_EVALUATED (reason XE_LOAD_NOT_FROZEN); host drag ICD absent -> drag_body NOT_EVALUATED; schedule outside mission_scenario_v2 -> OUT_OF_DOMAIN."
+  },
+  {
+   "id": "SP-06",
+   "rule": "The integration-level status is the worst of: the time-accounting result, the schedule validity, and (for each total) its own status; the record also reports per-total statuses separately so that one NOT_EVALUATED total does not hide an EVALUATED one."
+  }
+ ],
+ "conservation": [
+  {
+   "id": "CONS-T1",
+   "criterion": "time accounting closes exactly: exact(sum dt_k) - H_M == 0, exact(sum firing dt_k) - H_F == 0, exact(H_AIR + H_XE - H_fire) == 0, exact(H_coast + H_fire - H_sched) == 0"
+  },
+  {
+   "id": "CONS-M1",
+   "criterion": "Xe ledger closes exactly: exact(m_xe,0 - M_xe,cont - M_xe,ev - m_xe,end) == 0 (expansion arithmetic); and the reported values satisfy |m_xe,0 - M_xe - m_xe,end| <= 1 ulp(max(|m_xe,0|, |M_xe|, |m_xe,end|)) evaluated exactly"
+  },
+  {
+   "id": "CONS-M2",
+   "criterion": "wet mass: exact(m_wet,0 - m_wet,end - M_xe) == 0 when all terms are EVALUATED (same rule for every planning case)"
+  },
+  {
+   "id": "CONS-F1",
+   "criterion": "atmospheric gas: exact(M_atm,del - M_atm,cons - M_atm,events - M_atm,bal) == 0"
+  },
+  {
+   "id": "CONS-S1",
+   "criterion": "status / record conservation: the record holds every state of the frozen set exactly once per mode (196 x 3), in file order; every input reason appears in the record"
+  },
+  {
+   "id": "CONS-I1",
+   "criterion": "integral linearity: for a rate constant over all segments, Q == q * (H * S) exactly when q * (H * S) is exactly representable"
+  }
+ ],
+ "interfaces": {
+  "IF-MIS-v1": {
+   "producer": "abep_mission::integration::integrate(inputs) -> MissionRecord (JSON via serde, keys sorted as declared)",
+   "record": [
+    "model_id, model_version, prereg_sha256, implementation = rust, rust_commit, validation_status = NOT_VALIDATED",
+    "inputs: design_state_set sha256, mission_scenario sha256 (via config manifest), config manifest sha256, architecture id, icp_gas_mode, horizons H_M / H_F with labels",
+    "states[196]: state_id, required, labels, environment block, modes {AIR_PRIMARY, XE_CONTINGENCY, NON_FIRING}: fields SF-01..SF-22 as Quantities or NOT_APPLICABLE, state_status, domain_status, evidence_status",
+    "envelopes (EQ-12) and parametric bounds (EQ-13)",
+    "schedule block: status, time totals (EQ-03), totals EQ-04..EQ-11 as Quantities, conservation results",
+    "mass block: m_dry, m_xe,0, planning-case ledgers",
+    "status_summary: counts per field / mode / status, worst status, reasons index"
+   ],
+   "rule": "raw physics only: no key named or starting with pass, fail, comply, margin, limit, threshold, feasible, chk_, rfp_, ic_ (FT-09)"
+  },
+  "IF-MIS-WP10": "SC-WP-10 (F7 / F8, robust / UQ) calls integrate once per design candidate, per admitted Hall member and per registered uncertainty sample, supplying design-specific IN-STATE records; envelopes across calls are formed in SC-WP-10. An empty robust set is a valid output there.",
+  "IF-MIS-WP11": "SC-WP-11 (assessment) reads the record and never modifies it: HC-08 on t_minus_d_N per state, HC-11 on feed_balance_kg_s, HC-05 from I_d_A / I_ecap_A (M_n formed in assessment), HC-07 against H_F, the 1.5 kW bus limit on P_bus_W, the 40 kg limit on the mass block, the 12 / 25 mN requirements on thrust_N.",
+  "IF-MIS-DECISIVE": "A9.31 sec. 16: abep_mission::integration::today::run_admitted(repo_root, options) assembles IN-STATE for all 196 states and both supply modes from today's admitted layers (environment; HallGate; NP-ICP crate status with NOT_ADMITTED governance; official flight bus ledger; wet-mass objective; optional SC-WP-04 intake-face drag at a caller-supplied F1 design point as PARAMETRIC_SENSITIVITY_ONLY) and calls integrate. It is the hook of the decisive architecture run; it fills nothing that the layers do not supply."
+ },
+ "assumptions": [
+  {
+   "id": "A-01",
+   "text": "Piecewise-constant integration: the per-state rates hold over a schedule segment (SCH-01). Transients inside a segment are represented only through registered events."
+  },
+  {
+   "id": "A-02",
+   "text": "The frozen 196-state set is the registered mission environment; altitude is a state coordinate. No orbit decay or altitude evolution is integrated (MS-05)."
+  },
+  {
+   "id": "A-03",
+   "text": "Atmospheric gas is not stored (NIR-07: ambient-air storage is not in this RFQ revision); only its throughput is integrated."
+  }
+ ],
+ "model_scope_notes": [
+  {
+   "id": "MS-01",
+   "text": "A9.31 sec. 18 Q3 asks for I_d, I_e,cap and M_n. The record carries raw I_d_A and I_ecap_A; M_n is formed by assessment (GR-18 EX-05), never here."
+  },
+  {
+   "id": "MS-02",
+   "text": "Xe consumption arises only from Xe-mode (or G-XE) segment durations of a registered schedule plus registered events. There is no code path forming Xe flow x H_M or Xe flow x H_F (GR-01 sec. 12)."
+  },
+  {
+   "id": "MS-03",
+   "text": "PB-AO is the only schedule-free bound: AO exposure acts over all mission time, which is registered (H_M). No firing-time bound is formed because H_AIR and H_XE are not registered."
+  },
+  {
+   "id": "MS-04",
+   "text": "Uncertainty: the model is deterministic. Each Quantity carries its registered uncertainty; propagation across samples / members is SC-WP-10 (U-02 analogue of NP-THERMAL)."
+  },
+  {
+   "id": "MS-05",
+   "text": "mission_env.propagate (PARITY-C-ABEP_SIM_MISSION_ENV_PY-PROPAGATION-V1) needs thrust and host drag, both NOT_EVALUATED; coupling it is a v2 question (OQ-MI-04)."
+  }
+ ],
+ "domains": [
+  {
+   "id": "D-01",
+   "rule": "states: members of the frozen set v2 only; other ids OUT_OF_DOMAIN"
+  },
+  {
+   "id": "D-02",
+   "rule": "modes: AIR_PRIMARY, XE_CONTINGENCY, NON_FIRING only; mixed / other OUT_OF_DOMAIN"
+  },
+  {
+   "id": "D-03",
+   "rule": "schedule: SCH-03 / SCH-04"
+  },
+  {
+   "id": "D-04",
+   "rule": "an INPUT Quantity carrying OUT_OF_DOMAIN keeps it (the owning layer's domain verdict is never overridden)"
+  }
+ ],
+ "analytic_limiting_cases": {
+  "rule": "Software verification criteria (CI_PLAN principle 9). Every vector is SYNTHETIC_TEST_DATA_NOT_EVIDENCE. Synthetic states are ids of the frozen set with synthetic rates unless stated.",
+  "cases": [
+   {
+    "id": "AL-01",
+    "case": "constant rate over a schedule",
+    "setup": "every (state, mode) rate q = 1e-6 kg/s; schedule: AIR 15,000 h on one state, NON_FIRING 11,280 h",
+    "closed_form": "M_atm,del = q * (15000 * 3600) in exact rational arithmetic of the binary64 operands (about 54 kg); H_sched = 26,280 h; H_fire = 15,000 h exactly",
+    "tolerance": "exact (bit pattern) where the closed form is exactly representable, else <= 1 ulp of the correctly rounded rational value"
+   },
+   {
+    "id": "AL-02",
+    "case": "piecewise-constant multi-segment integral",
+    "setup": "50 segments over 10 states with registered synthetic rates and dyadic durations summing to H_M / H_F",
+    "closed_form": "sum_k q_k dt_k S computed in exact rational arithmetic (IV-01)",
+    "tolerance": "<= 1 ulp of the correctly rounded rational value"
+   },
+   {
+    "id": "AL-03",
+    "case": "Xe ledger",
+    "setup": "m_xe,0 = 5 kg; XE segment 100 h at 1e-6 kg/s; 3 START_ATTEMPT events at 1e-4 kg; reserve 0.5 kg; residual 0.25 kg",
+    "closed_form": "exact rational arithmetic of the binary64 operands: M_xe about 0.3603 kg, m_xe,end about 4.6397 kg, usable about 3.8897 kg",
+    "tolerance": "<= 1 ulp of the rational value; CONS-M1 exact"
+   },
+   {
+    "id": "AL-04",
+    "case": "time accounting",
+    "setup": "(a) a schedule realising H_M / H_F exactly; (b) H_M + 2^-30 h; (c) firing hours 1 h short; (d) a mixed-mode segment; (e) a duplicate segment id; (f) a non-member state",
+    "closed_form": "(a) accepted; (b), (c), (d), (f) OUT_OF_DOMAIN; (e) MODEL_ERROR",
+    "tolerance": "exact status"
+   },
+   {
+    "id": "AL-05",
+    "case": "status propagation",
+    "setup": "one segment NOT_EVALUATED among EVALUATED; then that segment parametric",
+    "closed_form": "integral NOT_EVALUATED, no value; then parametric layer present (label PARAMETRIC) and evidence value still absent",
+    "tolerance": "exact"
+   },
+   {
+    "id": "AL-06",
+    "case": "severity table",
+    "setup": "all ordered pairs of the five statuses",
+    "closed_form": "SP-01 order",
+    "tolerance": "exact"
+   },
+   {
+    "id": "AL-07",
+    "case": "routing",
+    "setup": "every (mode, icp_gas_mode) cell of R-XE and R-ATM with EVALUATED, NOT_EVALUATED and parametric operands",
+    "closed_form": "the routing table; structural zeros only where registered",
+    "tolerance": "exact"
+   },
+   {
+    "id": "AL-08",
+    "case": "AO fluence and PB-AO",
+    "setup": "synthetic ao_flux on the 196 states; 200 random synthetic schedules over these states",
+    "closed_form": "Phi_AO = sum flux_k dt_k S; min_flux * H_M * S <= Phi_AO <= max_flux * H_M * S for every schedule",
+    "tolerance": "<= 1 ulp (integral); bound holds exactly"
+   },
+   {
+    "id": "AL-09",
+    "case": "cancellation",
+    "setup": "rates +1e20, -1e20 and 1.0 kg/s on three 1 h segments",
+    "closed_form": "integral = 3600.0 exactly (a naive sum returns 0.0)",
+    "tolerance": "exact"
+   },
+   {
+    "id": "AL-10",
+    "case": "derived quantities",
+    "setup": "thrust 0.012 N, drag_intake 0.004 N, drag_body 0.003 N; with drag_body NOT_EVALUATED; with drag_intake parametric",
+    "closed_form": "drag_total 0.007, t_minus_d 0.012 - 0.007 (f64 order); NOT_EVALUATED without value; parametric layer only",
+    "tolerance": "exact"
+   },
+   {
+    "id": "AL-11",
+    "case": "planning cases",
+    "setup": "planning cases 2 / 5 / 10 kg with M_xe EVALUATED; then NOT_EVALUATED",
+    "closed_form": "three PARAMETRIC_PLANNING_CASE ledgers, none selected; then none formed",
+    "tolerance": "<= 1 ulp; exact status"
+   }
+  ]
+ },
+ "fail_closed_tests": [
+  {
+   "id": "FT-01",
+   "case": "today's run: credible Hall set EMPTY",
+   "expected": "hall_state, I_d_A, thrust_N, mdot_hall_anode_kg_s NOT_EVALUATED (CREDIBLE_HALL_TRANSPORT_SET_EMPTY) for every state and firing mode; t_minus_d_N NOT_EVALUATED; asserted explicitly (A9.29 sec. 9), not skipped"
+  },
+  {
+   "id": "FT-02",
+   "case": "today's run: NP-ICP not admitted",
+   "expected": "I_ecap_A NOT_EVALUATED (NP_ICP_NOT_ADMITTED plus the crate status reason) even if the crate returned CONVERGED"
+  },
+  {
+   "id": "FT-03",
+   "case": "no schedule",
+   "expected": "every schedule total NOT_EVALUATED (MISSION_SCHEDULE_NOT_REGISTERED), no value, no parametric layer except PB-AO"
+  },
+  {
+   "id": "FT-04",
+   "case": "Xe load not frozen",
+   "expected": "m_xe_loaded NOT_EVALUATED (XE_LOAD_NOT_FROZEN); planning cases carried together, none selected; no key 'selected'"
+  },
+  {
+   "id": "FT-05",
+   "case": "no zero fill",
+   "expected": "every Quantity in today's record satisfies Q-1; a NOT_EVALUATED input never yields value 0; structural zeros only at registered routing cells"
+  },
+  {
+   "id": "FT-06",
+   "case": "configuration other than hall_icp_neutralizer",
+   "expected": "MODEL_ERROR"
+  },
+  {
+   "id": "FT-07",
+   "case": "mixed / unknown mode",
+   "expected": "OUT_OF_DOMAIN"
+  },
+  {
+   "id": "FT-08",
+   "case": "state not in the frozen set",
+   "expected": "OUT_OF_DOMAIN"
+  },
+  {
+   "id": "FT-09",
+   "case": "forbidden vocabulary",
+   "expected": "no cathode identifier in source or output; no output key named / starting with pass, fail, comply, margin, limit, threshold, feasible, chk_, rfp_, ic_"
+  },
+  {
+   "id": "FT-10",
+   "case": "no RFP threshold",
+   "expected": "the integration reads no file under config/requirements, config/constraints or config/assessment (the hook's file list is asserted)"
+  },
+  {
+   "id": "FT-11",
+   "case": "no blind Xe x duration",
+   "expected": "an XE rate with a schedule holding zero XE hours gives M_xe,cont = 0 from exact zero contributions; without a schedule M_xe is NOT_EVALUATED, never rate x H_M or rate x H_F"
+  },
+  {
+   "id": "FT-12",
+   "case": "parametric separation",
+   "expected": "no parametric value appears in any value field, envelope or status of the record"
+  },
+  {
+   "id": "FT-13",
+   "case": "time accounting mismatch",
+   "expected": "OUT_OF_DOMAIN for the whole integration, with the exact residual reported"
+  },
+  {
+   "id": "FT-14",
+   "case": "malformed Quantity",
+   "expected": "EVALUATED without value, value with a non-EVALUATED status, or a non-finite value: MODEL_ERROR"
+  },
+  {
+   "id": "FT-15",
+   "case": "cathode vocabulary in an input record",
+   "expected": "MODEL_ERROR"
+  }
+ ],
+ "determinism": [
+  {
+   "id": "DET-01",
+   "rule": "byte-identical record JSON on two runs of the same inputs"
+  },
+  {
+   "id": "DET-02",
+   "rule": "every record carries implementation = rust, rust_commit, the prereg sha256 and the input hashes"
+  }
+ ],
+ "independent_verification": [
+  {
+   "id": "IV-01",
+   "source": "Python scratch cross-check (scratchpad, not committed as a dependency): exact rational (fractions.Fraction) evaluation of AL-01, AL-02, AL-03, AL-08, AL-09 and AL-11 from the same synthetic vectors, exported by the Rust test kit as JSON",
+   "authoritative": false,
+   "tolerance": "Rust value within 1 ulp of the correctly rounded rational value; statuses equal",
+   "rule": "never a CI dependency, never a reference (RM-R26); a disagreement blocks VERIFIED until resolved"
+  }
+ ],
+ "evidence_validation_plan": "Mission integration is bookkeeping; it has no measurable output of its own. Its outputs become evidence-qualified only as their inputs do: an admitted Hall member and map (or measured H-1), admitted NP-ICP, a host-spacecraft drag ICD, a frozen Xe load and CBE masses, and a registered mission schedule (mission ICD / owner record). Until then validation_status = NOT_VALIDATED and every dependent total stays NOT_EVALUATED.",
+ "admission_rule": [
+  {
+   "id": "ADM-01",
+   "rule": "PREREG_MODEL: this record committed alone and sha256-locked."
+  },
+  {
+   "id": "ADM-02",
+   "rule": "RUST_IMPL: abep-mission::integration; cargo fmt / clippy / test --workspace --locked green, zero ignored tests."
+  },
+  {
+   "id": "ADM-03",
+   "rule": "VERIFIED iff AL-01..AL-11, every CONS criterion, FT-01..FT-15, DET-01..DET-02 and IV-01 meet their criteria, run once and reported in verification_report_v1.json / .md whatever the outcome. VERIFIED is software verification only: not validation, not a gate PASS, not a mission prediction."
+  }
+ ],
+ "not_evaluated_today": [
+  {
+   "id": "NE-01",
+   "item": "Hall state, I_d, thrust, Hall anode flow, Xe consumption in XE_CONTINGENCY",
+   "status": "NOT_EVALUATED",
+   "reason": "credible Hall transport set EMPTY"
+  },
+  {
+   "id": "NE-02",
+   "item": "I_e,cap and ICP dedicated flow",
+   "status": "NOT_EVALUATED",
+   "reason": "NP-ICP-NEUTRALIZER not admitted; real-gas modes fail closed in the crate (INCOMPLETE_EVIDENCE)"
+  },
+  {
+   "id": "NE-03",
+   "item": "intake capture, feed state, delivered atmospheric mass flow",
+   "status": "NOT_EVALUATED",
+   "reason": "no frozen design point (F7 / F8, SC-WP-10); intake surface scenario TBD"
+  },
+  {
+   "id": "NE-04",
+   "item": "host-spacecraft drag, total drag, T - D",
+   "status": "NOT_EVALUATED",
+   "reason": "host drag ICD absent; thrust NOT_EVALUATED"
+  },
+  {
+   "id": "NE-05",
+   "item": "P_bus",
+   "status": "NOT_EVALUATED",
+   "reason": "official flight ledger PARTIAL_BOUNDARY (every term TBD) and the Hall discharge load needs an admitted member"
+  },
+  {
+   "id": "NE-06",
+   "item": "thermal",
+   "status": "NOT_EVALUATED",
+   "reason": "NP-THERMAL-CATHODELESS NE-01 / NE-02: Hall and ICP heat loads NOT_EVALUATED"
+  },
+  {
+   "id": "NE-07",
+   "item": "dry / wet mass, Xe load",
+   "status": "NOT_EVALUATED / INCOMPLETE_EVIDENCE",
+   "reason": "no CBE; Xe load not frozen (GR-15)"
+  },
+  {
+   "id": "NE-08",
+   "item": "every schedule total",
+   "status": "NOT_EVALUATED",
+   "reason": "MISSION_SCHEDULE_NOT_REGISTERED"
+  }
+ ],
+ "evaluable_today": [
+  "environment fields SF-01..SF-04 for every state (model-derived from the frozen set)",
+  "statewise envelopes of the environment fields",
+  "PB-AO parametric bound",
+  "the structural routing zeros of the registered G-REUSE mode",
+  "the Xe planning cases as parametric labels (ledgers not formed: consumption NOT_EVALUATED)",
+  "optionally the F1 intake-face drag at a caller-supplied design point (PARAMETRIC_SENSITIVITY_ONLY)"
+ ],
+ "open_owner_questions": [
+  {
+   "id": "OQ-MI-01",
+   "question": "Mission mode / state schedule: which record will register the time occupancy of the design states (orbit / season / solar-cycle mapping onto the 196 states), the XE_CONTINGENCY duration and the start-event counts? Until one exists every mission total is NOT_EVALUATED (SCH-05). Source candidates: mission ICD, owner record."
+  },
+  {
+   "id": "OQ-MI-02",
+   "question": "Confirm that the flight ICP gas mode for mission integration is G-REUSE (A9.1 HIQ-06 primary) with no dedicated reservoir draw, and that G-ATM in XE_CONTINGENCY stays unregistered."
+  },
+  {
+   "id": "OQ-MI-03",
+   "question": "Accept pointing_factors as AUDITED_NOT_PORTED (sole caller spacecraft_drag, which stays out per the lane brief)?"
+  },
+  {
+   "id": "OQ-MI-04",
+   "question": "v2: couple altitude evolution (mission_env.propagate) to the mission integration once thrust and host drag are evaluable, or keep the frozen 196-state environment as the sole mission basis?"
+  },
+  {
+   "id": "OQ-MI-05",
+   "question": "NON_FIRING standby bus load and thermal state: which layer registers them (SC-WP-05 / SC-WP-06 case)?"
+  }
+ ],
+ "change_control": [
+  {
+   "id": "CC-01",
+   "rule": "Any change after the lock is a new version (prereg_v2.json + PREREG.md revision + new lock) or a dated addendum. This file is never edited."
+  },
+  {
+   "id": "CC-02",
+   "rule": "A change of IF-MIS-v1 keys or semantics is IF-MIS-v2, recorded with SC-WP-10 / SC-WP-11."
+  },
+  {
+   "id": "CC-03",
+   "rule": "Verification criteria are never relaxed after results are seen."
+  }
+ ],
+ "new_physics_verification": {
+  "applies_when": "contract_kind = NEW_PHYSICS",
+  "model_id": "NP-MISSION-INTEGRATION",
+  "preregistration": {
+   "nodes": "NOT_APPLICABLE (no network); the record units are (state, mode) cells and schedule segments (state_fields, schedule_semantics)",
+   "equations": "equations EQ-01..EQ-13; derivation_rules DR-01..DR-04; applicability / routing tables",
+   "heat_or_mass_or_energy_sources": "mass: Xe tank ledger EQ-04..EQ-07, atmospheric throughput EQ-08; energy: E_bus EQ-09; impulse EQ-10; AO EQ-11",
+   "boundaries": "the selected-architecture boundary of the owning layers (bus_power_boundary_a9_v2 for P_bus; IF-ICP / IF-HALL through the layers); no new boundary",
+   "assumptions": "assumptions A-01..A-03; model_scope_notes MS-01..MS-05",
+   "domains": "domains D-01..D-04",
+   "conservation_checks": "conservation CONS-T1, CONS-M1, CONS-M2, CONS-F1, CONS-S1, CONS-I1 (exact)",
+   "analytic_limiting_cases": "analytic_limiting_cases AL-01..AL-11",
+   "independent_verification": "IV-01",
+   "evidence_validation_plan": "evidence_validation_plan"
+  },
+  "python_scratch_rule": "IV-01 only, authoritative = false; never an active dependency (RM-R26)",
+  "verdict": "VERIFIED iff ADM-03; admission is software verification, not physical validation and not a gate PASS",
+  "gate_a9_29": "no implementation before this preregistration is committed (IG-01)"
+ }
+}

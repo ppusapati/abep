@@ -1,0 +1,12 @@
+{
+ "id": "np_mission_integration_prereg_lock_v1",
+ "model_id": "NP-MISSION-INTEGRATION",
+ "locked": "2026-10-06",
+ "note": "sha256 of the NP-MISSION-INTEGRATION v1 preregistration (SC-WP-09, status PREREGISTERED_NOT_IMPLEMENTED), committed alone before any implementation; any change after this lock is a new, dated version or addendum, never an edit",
+ "base_commit": "1a8101e",
+ "files_relative_to": "docs/rust_migration/new_physics/NP-MISSION-INTEGRATION/",
+ "files": {
+  "prereg_v1.json": "9d3a72022ecb236f71a30ead5c31023d166a31e05f6a4f4579c589f62a5d4f79",
+  "PREREG.md": "c1fbc1b963aa393aef6f7e0f2d8d061682e7091aec2bcb59e8f38d8ffcbf66cc"
+ }
+}
