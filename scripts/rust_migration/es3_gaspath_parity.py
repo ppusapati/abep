@@ -2924,9 +2924,8 @@ NOTES = {"plenum": [
     "rule 11: a contract defect needs a new contract version and is never resolved by changing a tolerance; the "
     "re-specification of these transient observables is an owner / coordinator decision (reported as a blocker)"],
          "filter": [],
-         "compressor": ["contract erratum (recorded, not a change of any scored rule): spec_formats.coeffs says 'all "
-                        "30 dataclass fields'; DragCompressor has 27 dataclass fields (the vectors carry all 27 plus "
-                        "rotor_strength_basis_id and rotor_stock_thickness_m)",
+         "compressor": ["spec_formats.coeffs: DragCompressor has 27 dataclass fields (v1 said 30; corrected in v2); "
+                        "the vectors carry all 27 plus rotor_strength_basis_id and rotor_stock_thickness_m",
                         "vector counts: C01 carries the golden defaults vector plus the three registered edges "
                         "(E-C-01..03) next to the 300 random vectors; C06 carries all 11 listed E-C-04 edges (the "
                         "count '+ 10' of the contract under-counts the listed items); every listed vector is scored",
@@ -3151,7 +3150,15 @@ def perf(key, vectors):
     return res
 
 
-VERSION_NOTES: dict = {}
+VERSION_NOTES = {
+    ("filter", 2): ["v2 re-binds the build provenance after the shared abep-gaspath source change c3a41fb (compressor "
+                    "RUST_DEFECT fix, CLI panic isolation; filter.rs unchanged); v1 (PARITY_PASS) stays; generators, "
+                    "tolerances and decision rules are those of v1, with fresh seeds"],
+    ("compressor", 2): ["v2 follows the NOT_ADMITTED v1 execution (RUST_DEFECT: the Rust CLI panicked in "
+                        "rotor_strength::basis_problems on a NaN allowable temperature; fix c3a41fb); generators, "
+                        "tolerances and decision rules are those of v1, with fresh seeds. The CLI now records a panic "
+                        "as the request's outcome (error_class RUST_PANIC, never equal to a Python class)"],
+}
 HARNESS_NOTE = ("harness: the contract says the harness is committed 'after this contract and before the scoring run'. "
                 "It was developed with development-seed comparisons (never scored, no report) and committed before "
                 "the single scoring run; every scored generator, tolerance and decision rule is the registered one. "
