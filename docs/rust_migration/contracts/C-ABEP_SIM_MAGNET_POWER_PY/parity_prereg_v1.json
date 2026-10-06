@@ -1,0 +1,1947 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-ABEP_SIM_MAGNET_POWER_PY-V1",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "component": {
+  "inventory_id": "C-ABEP_SIM_MAGNET_POWER_PY",
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "migration_wave": "W9",
+  "scope": "named function subset (kernel granularity, RM-R17): every function and constant of abep_sim/magnet_power.py except ecr_resonance_field_T (the H-1 electromagnet / permanent-magnet load model of SC-WP-05 element 'PPU / load model', 'H-1 magnet power')",
+  "functions_or_entry_points": [
+   "M0 constants MU0_N_PER_A2, MAGNET_POWER_VERSION, ANNEALED_COPPER_IACS",
+   "M1 ConductorMaterial (construction and __post_init__ validation)",
+   "M2 resistance_factor",
+   "M3 wire_resistance_ohm",
+   "M4 awg_diameter_m",
+   "M5 CoreSegment (construction and __post_init__ validation)",
+   "M6 ampere_turns (with _circuit, _segments)",
+   "M7 coil_power_continuous_W",
+   "M8 coil_design",
+   "M9 electromagnet",
+   "M10 remanence_at_T",
+   "M11 permanent_magnet"
+  ],
+  "out_of_scope": [
+   "ecr_resonance_field_T: inventory not_ported_parts (historical ECR family); stays in the Python module, never ported"
+  ],
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+  "extract_kernel_id": "NOT_APPLICABLE",
+  "active_toolchain_requirement": "NOT_APPLICABLE",
+  "excluded_legacy_paths": [
+   "ecr_resonance_field_T and the ecr_magnet component role (historical ECR family; inventory not_ported_parts)"
+  ],
+  "owner_disposition_a9_28": "NOT_APPLICABLE",
+  "simulation_completion_wp": "SC-WP-05",
+  "owner_disposition_a9_29": "NOT_APPLICABLE"
+ },
+ "date": "2026-10-06",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of this component was executed. No Rust code for the component exists at registration. The commit is recorded in the report, not here.",
+ "supersedes": {
+  "path": null,
+  "sha256": null,
+  "reason": null
+ },
+ "reference_implementation": {
+  "python_commit": "fa4fcb3bd21fec8c07a26fe264e1045d5a6bec73",
+  "files": [
+   {
+    "path": "abep_sim/magnet_power.py",
+    "sha256_at_registration": "adf2905d90b7dd17b59071759d0a62b245fa065b0c3375c74df4e3476b7bb523"
+   }
+  ],
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration; a changed reference requires a new contract version",
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4 (not used)",
+   "scipy": "1.17.1 (not used)",
+   "pandas": "3.0.2 (not used)",
+   "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+   "blas": "NOT_APPLICABLE",
+   "thread_env": {
+    "OMP_NUM_THREADS": "NOT_APPLICABLE",
+    "OPENBLAS_NUM_THREADS": "NOT_APPLICABLE"
+   },
+   "stdlib": "math.pi, math.floor, float ** (C pow: awg_diameter_m), format specs '.4g' / '.3g' in refusal messages, repr() of floats / strings, dataclasses"
+  }
+ },
+ "rust_implementation": {
+  "crate": "abep-subsystems",
+  "functions_or_entry_points": [
+   "abep_subsystems::power::magnet::{MU0_N_PER_A2, MAGNET_POWER_VERSION, annealed_copper_iacs, ConductorMaterial, CoreSegment, resistance_factor, wire_resistance_ohm, awg_diameter_m, ampere_turns, coil_power_continuous_w, coil_design, electromagnet, remanence_at_t, permanent_magnet}",
+   "abep_subsystems::power::magnet record layer (Python-shaped JSON values -> typed inputs with the reference validation order and refusal texts)",
+   "`power_eval` example (harness interface, shared with the bus-boundary contract)"
+  ],
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (rust-toolchain.toml)",
+  "provenance_sources": [
+   "Cargo.toml",
+   "Cargo.lock",
+   "rust-toolchain.toml",
+   "crates/abep-types/**",
+   "crates/abep-provenance/**",
+   "crates/abep-subsystems/**"
+  ],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it",
+  "numerics": "every arithmetic step in the reference order; float ** float is the libm pow call of the reference (the Rust call keeps the operands opaque to the optimiser so that no pow(x, c) rewrite replaces the libm call); math.floor exact; '.4g' / '.3g' formatting reproduces Python's 'g' presentation (correctly rounded significant digits, trailing zeros removed, exponent form outside -4 <= exp < precision)"
+ },
+ "governing_hashes": {
+  "config_manifest": {
+   "path": "config/MANIFEST.json",
+   "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+  },
+  "architecture_hash": "NOT_APPLICABLE",
+  "model_set_hash": "NOT_APPLICABLE",
+  "design_state_set_hash": "NOT_APPLICABLE",
+  "rule": "no governed file is read by the component"
+ },
+ "pinned_inputs_sha256": {
+  "abep_sim/magnet_power.py": "adf2905d90b7dd17b59071759d0a62b245fa065b0c3375c74df4e3476b7bb523"
+ },
+ "frozen_data_read_only": [
+  "none (the cited constants are in the module)"
+ ],
+ "inputs": {
+  "golden_vectors": {
+   "source": "registered_cases below plus the randomized domain; Python outputs captured at scoring",
+   "count": "see vector_totals",
+   "list_or_generator": "registered_cases"
+  },
+  "encoding": {
+   "material": "{'ref': 'ANNEALED_COPPER_IACS'} = the module object; {'fields': {...}} = ConductorMaterial(**fields) built by the harness (a construction refusal is the call's outcome); {'raw': v} = v passed unchanged",
+   "core_segments": "a list whose elements are {'segment': {...}} = CoreSegment(**fields) or {'raw': v}; or {'raw': v} for the whole argument; construction order: core segments in list order, then the material",
+   "floats": "{'$float': 'nan' | 'inf' | '-inf'} decoded by the harness; {'expr': text} = the float value of that Python expression (math in scope), evaluated once by the harness; every other number is passed as written (all non-gauge numeric inputs are JSON floats)",
+   "material fields of a 'fields' material": {
+    "name": "test conductor",
+    "rho_ref_ohm_m": 2e-08,
+    "T_ref_C": 20.0,
+    "alpha_ref_per_K": 0.004,
+    "T_min_C": -50.0,
+    "T_max_C": 250.0,
+    "density_kg_m3": 8900.0,
+    "source": "synthetic material record"
+   },
+   "segments used": {
+    "SEG": {
+     "name": "back iron",
+     "length_m": 0.08,
+     "area_m2": 0.0004,
+     "mu_r": 2000.0,
+     "B_max_T": 1.5
+    },
+    "SEG2": {
+     "name": "inner pole",
+     "length_m": 0.03,
+     "area_m2": 0.00015,
+     "mu_r": 800.0,
+     "B_max_T": 1.2
+    }
+   }
+  },
+  "registered_cases": [
+   {
+    "id": "CONST-01",
+    "fn": "constants",
+    "args": {},
+    "note": "MU0_N_PER_A2, MAGNET_POWER_VERSION and the ANNEALED_COPPER_IACS fields"
+   },
+   {
+    "id": "ME-01",
+    "fn": "material",
+    "args": {
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "ME-02",
+    "fn": "material",
+    "args": {
+     "material": {
+      "fields": {
+       "name": "",
+       "rho_ref_ohm_m": 2e-08,
+       "T_ref_C": 20.0,
+       "alpha_ref_per_K": 0.004,
+       "T_min_C": -50.0,
+       "T_max_C": 250.0,
+       "density_kg_m3": 8900.0,
+       "source": "synthetic material record"
+      }
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "ME-03",
+    "fn": "material",
+    "args": {
+     "material": {
+      "fields": {
+       "name": 5,
+       "rho_ref_ohm_m": 2e-08,
+       "T_ref_C": 20.0,
+       "alpha_ref_per_K": 0.004,
+       "T_min_C": -50.0,
+       "T_max_C": 250.0,
+       "density_kg_m3": 8900.0,
+       "source": "synthetic material record"
+      }
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "ME-04",
+    "fn": "material",
+    "args": {
+     "material": {
+      "fields": {
+       "name": "test conductor",
+       "rho_ref_ohm_m": -1.0,
+       "T_ref_C": 20.0,
+       "alpha_ref_per_K": 0.004,
+       "T_min_C": -50.0,
+       "T_max_C": 250.0,
+       "density_kg_m3": 8900.0,
+       "source": "synthetic material record"
+      }
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "ME-05",
+    "fn": "material",
+    "args": {
+     "material": {
+      "fields": {
+       "name": "test conductor",
+       "rho_ref_ohm_m": "x",
+       "T_ref_C": 20.0,
+       "alpha_ref_per_K": 0.004,
+       "T_min_C": -50.0,
+       "T_max_C": 250.0,
+       "density_kg_m3": 8900.0,
+       "source": "synthetic material record"
+      }
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "ME-06",
+    "fn": "material",
+    "args": {
+     "material": {
+      "fields": {
+       "name": "test conductor",
+       "rho_ref_ohm_m": 2e-08,
+       "T_ref_C": {
+        "$float": "nan"
+       },
+       "alpha_ref_per_K": 0.004,
+       "T_min_C": -50.0,
+       "T_max_C": 250.0,
+       "density_kg_m3": 8900.0,
+       "source": "synthetic material record"
+      }
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "ME-07",
+    "fn": "material",
+    "args": {
+     "material": {
+      "fields": {
+       "name": "test conductor",
+       "rho_ref_ohm_m": 2e-08,
+       "T_ref_C": 20.0,
+       "alpha_ref_per_K": 0.0,
+       "T_min_C": -50.0,
+       "T_max_C": 250.0,
+       "density_kg_m3": 8900.0,
+       "source": "synthetic material record"
+      }
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "ME-08",
+    "fn": "material",
+    "args": {
+     "material": {
+      "fields": {
+       "name": "test conductor",
+       "rho_ref_ohm_m": 2e-08,
+       "T_ref_C": 20.0,
+       "alpha_ref_per_K": 0.004,
+       "T_min_C": 200.0,
+       "T_max_C": 0.0,
+       "density_kg_m3": 8900.0,
+       "source": "synthetic material record"
+      }
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "ME-09",
+    "fn": "material",
+    "args": {
+     "material": {
+      "fields": {
+       "name": "test conductor",
+       "rho_ref_ohm_m": 2e-08,
+       "T_ref_C": 300.0,
+       "alpha_ref_per_K": 0.004,
+       "T_min_C": -50.0,
+       "T_max_C": 250.0,
+       "density_kg_m3": 8900.0,
+       "source": "synthetic material record"
+      }
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "ME-10",
+    "fn": "material",
+    "args": {
+     "material": {
+      "fields": {
+       "name": "test conductor",
+       "rho_ref_ohm_m": 2e-08,
+       "T_ref_C": 20.0,
+       "alpha_ref_per_K": 0.004,
+       "T_min_C": -50.0,
+       "T_max_C": 250.0,
+       "density_kg_m3": {
+        "$float": "inf"
+       },
+       "source": "synthetic material record"
+      }
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "ME-11",
+    "fn": "material",
+    "args": {
+     "material": {
+      "fields": {
+       "name": "test conductor",
+       "rho_ref_ohm_m": 2e-08,
+       "T_ref_C": 20.0,
+       "alpha_ref_per_K": 0.004,
+       "T_min_C": -50.0,
+       "T_max_C": 250.0,
+       "density_kg_m3": 8900.0,
+       "source": "  "
+      }
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "ME-12",
+    "fn": "material",
+    "args": {
+     "material": {
+      "fields": {
+       "name": "test conductor",
+       "rho_ref_ohm_m": 2e-08,
+       "T_ref_C": 20.0,
+       "alpha_ref_per_K": 0.004,
+       "T_min_C": -50.0,
+       "T_max_C": 250.0,
+       "density_kg_m3": 8900.0,
+       "source": null
+      }
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "ME-13",
+    "fn": "material",
+    "args": {
+     "material": {
+      "fields": {
+       "name": "test conductor",
+       "rho_ref_ohm_m": 2e-08,
+       "T_ref_C": 20.0,
+       "alpha_ref_per_K": 0.004,
+       "T_min_C": true,
+       "T_max_C": 250.0,
+       "density_kg_m3": 8900.0,
+       "source": "synthetic material record"
+      }
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "ME-14",
+    "fn": "material",
+    "args": {
+     "material": {
+      "fields": {
+       "name": "test conductor",
+       "rho_ref_ohm_m": 2e-08,
+       "T_ref_C": 20.0,
+       "alpha_ref_per_K": 0.004,
+       "T_min_C": -50.0,
+       "T_max_C": 250.0,
+       "density_kg_m3": 8900.0,
+       "source": "synthetic material record"
+      }
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "GE-01",
+    "fn": "segment",
+    "args": {
+     "segment": {
+      "segment": {
+       "name": "back iron",
+       "length_m": 0.08,
+       "area_m2": 0.0004,
+       "mu_r": 2000.0,
+       "B_max_T": 1.5
+      }
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "GE-02",
+    "fn": "segment",
+    "args": {
+     "segment": {
+      "segment": {
+       "name": "",
+       "length_m": 0.08,
+       "area_m2": 0.0004,
+       "mu_r": 2000.0,
+       "B_max_T": 1.5
+      }
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "GE-03",
+    "fn": "segment",
+    "args": {
+     "segment": {
+      "segment": {
+       "name": "back iron",
+       "length_m": 0.0,
+       "area_m2": 0.0004,
+       "mu_r": 2000.0,
+       "B_max_T": 1.5
+      }
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "GE-04",
+    "fn": "segment",
+    "args": {
+     "segment": {
+      "segment": {
+       "name": "back iron",
+       "length_m": 0.08,
+       "area_m2": -1.0,
+       "mu_r": 2000.0,
+       "B_max_T": 1.5
+      }
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "GE-05",
+    "fn": "segment",
+    "args": {
+     "segment": {
+      "segment": {
+       "name": "back iron",
+       "length_m": 0.08,
+       "area_m2": 0.0004,
+       "mu_r": 0.5,
+       "B_max_T": 1.5
+      }
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "GE-06",
+    "fn": "segment",
+    "args": {
+     "segment": {
+      "segment": {
+       "name": "back iron",
+       "length_m": 0.08,
+       "area_m2": 0.0004,
+       "mu_r": "x",
+       "B_max_T": 1.5
+      }
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "GE-07",
+    "fn": "segment",
+    "args": {
+     "segment": {
+      "segment": {
+       "name": "back iron",
+       "length_m": 0.08,
+       "area_m2": 0.0004,
+       "mu_r": 2000.0,
+       "B_max_T": 0.0
+      }
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "TE-01",
+    "fn": "resistance_factor",
+    "args": {
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": 20.0
+    },
+    "note": ""
+   },
+   {
+    "id": "TE-02",
+    "fn": "resistance_factor",
+    "args": {
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": 200.0
+    },
+    "note": ""
+   },
+   {
+    "id": "TE-03",
+    "fn": "resistance_factor",
+    "args": {
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": 200.0000001
+    },
+    "note": ""
+   },
+   {
+    "id": "TE-04",
+    "fn": "resistance_factor",
+    "args": {
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": -1.0
+    },
+    "note": ""
+   },
+   {
+    "id": "TE-05",
+    "fn": "resistance_factor",
+    "args": {
+     "material": {
+      "raw": {
+       "name": "copper"
+      }
+     },
+     "T_C": 20.0
+    },
+    "note": ""
+   },
+   {
+    "id": "TE-06",
+    "fn": "resistance_factor",
+    "args": {
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": "hot"
+    },
+    "note": ""
+   },
+   {
+    "id": "TE-07",
+    "fn": "resistance_factor",
+    "args": {
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": {
+      "$float": "nan"
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "TE-08",
+    "fn": "resistance_factor",
+    "args": {
+     "material": {
+      "fields": {
+       "name": "test conductor",
+       "rho_ref_ohm_m": 2e-08,
+       "T_ref_C": 20.0,
+       "alpha_ref_per_K": 0.004,
+       "T_min_C": -50.0,
+       "T_max_C": 250.0,
+       "density_kg_m3": 8900.0,
+       "source": "synthetic material record"
+      }
+     },
+     "T_C": -40.0
+    },
+    "note": ""
+   },
+   {
+    "id": "WE-01",
+    "fn": "wire_resistance_ohm",
+    "args": {
+     "length_m": 1.0,
+     "area_m2": 1e-06,
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": 20.0
+    },
+    "note": ""
+   },
+   {
+    "id": "WE-02",
+    "fn": "wire_resistance_ohm",
+    "args": {
+     "length_m": 0.0,
+     "area_m2": 1e-06,
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": 20.0
+    },
+    "note": ""
+   },
+   {
+    "id": "WE-03",
+    "fn": "wire_resistance_ohm",
+    "args": {
+     "length_m": 1.0,
+     "area_m2": -1e-06,
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": 20.0
+    },
+    "note": ""
+   },
+   {
+    "id": "WE-04",
+    "fn": "wire_resistance_ohm",
+    "args": {
+     "length_m": 1.0,
+     "area_m2": 1e-06,
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": 250.0
+    },
+    "note": ""
+   },
+   {
+    "id": "WE-05",
+    "fn": "wire_resistance_ohm",
+    "args": {
+     "length_m": 1.0,
+     "area_m2": 1e-06,
+     "material": {
+      "raw": "copper"
+     },
+     "T_C": 20.0
+    },
+    "note": "AttributeError in the reference (material.rho_ref_ohm_m is read before resistance_factor)"
+   },
+   {
+    "id": "WE-06",
+    "fn": "wire_resistance_ohm",
+    "args": {
+     "length_m": 1234.5,
+     "area_m2": 3.3e-08,
+     "material": {
+      "fields": {
+       "name": "test conductor",
+       "rho_ref_ohm_m": 2e-08,
+       "T_ref_C": 20.0,
+       "alpha_ref_per_K": 0.004,
+       "T_min_C": -50.0,
+       "T_max_C": 250.0,
+       "density_kg_m3": 8900.0,
+       "source": "synthetic material record"
+      }
+     },
+     "T_C": 180.0
+    },
+    "note": ""
+   },
+   {
+    "id": "GA-01",
+    "fn": "awg_diameter_m",
+    "args": {
+     "gauge": -3
+    },
+    "note": ""
+   },
+   {
+    "id": "GA-02",
+    "fn": "awg_diameter_m",
+    "args": {
+     "gauge": 36
+    },
+    "note": ""
+   },
+   {
+    "id": "GA-03",
+    "fn": "awg_diameter_m",
+    "args": {
+     "gauge": 56
+    },
+    "note": ""
+   },
+   {
+    "id": "GA-04",
+    "fn": "awg_diameter_m",
+    "args": {
+     "gauge": -4
+    },
+    "note": ""
+   },
+   {
+    "id": "GA-05",
+    "fn": "awg_diameter_m",
+    "args": {
+     "gauge": 57
+    },
+    "note": ""
+   },
+   {
+    "id": "GA-06",
+    "fn": "awg_diameter_m",
+    "args": {
+     "gauge": 10.0
+    },
+    "note": ""
+   },
+   {
+    "id": "GA-07",
+    "fn": "awg_diameter_m",
+    "args": {
+     "gauge": true
+    },
+    "note": ""
+   },
+   {
+    "id": "GA-08",
+    "fn": "awg_diameter_m",
+    "args": {
+     "gauge": "10"
+    },
+    "note": ""
+   },
+   {
+    "id": "GA-09",
+    "fn": "awg_diameter_m",
+    "args": {
+     "gauge": 0
+    },
+    "note": ""
+   },
+   {
+    "id": "GA-10",
+    "fn": "awg_diameter_m",
+    "args": {
+     "gauge": 20
+    },
+    "note": ""
+   },
+   {
+    "id": "GA-11",
+    "fn": "awg_diameter_m",
+    "args": {
+     "gauge": null
+    },
+    "note": ""
+   },
+   {
+    "id": "GA-12",
+    "fn": "awg_diameter_m",
+    "args": {
+     "gauge": -1
+    },
+    "note": ""
+   },
+   {
+    "id": "AT-01",
+    "fn": "ampere_turns",
+    "args": {
+     "B_gap_T": 0.02,
+     "gap_length_m": 0.01,
+     "gap_area_m2": 0.001,
+     "core_segments": [],
+     "leakage_factor": 1.0
+    },
+    "note": ""
+   },
+   {
+    "id": "AT-02",
+    "fn": "ampere_turns",
+    "args": {
+     "B_gap_T": 0.03,
+     "gap_length_m": 0.012,
+     "gap_area_m2": 0.002,
+     "core_segments": [
+      {
+       "segment": {
+        "name": "back iron",
+        "length_m": 0.08,
+        "area_m2": 0.0004,
+        "mu_r": 2000.0,
+        "B_max_T": 1.5
+       }
+      },
+      {
+       "segment": {
+        "name": "inner pole",
+        "length_m": 0.03,
+        "area_m2": 0.00015,
+        "mu_r": 800.0,
+        "B_max_T": 1.2
+       }
+      }
+     ],
+     "leakage_factor": 1.3
+    },
+    "note": ""
+   },
+   {
+    "id": "AT-03",
+    "fn": "ampere_turns",
+    "args": {
+     "B_gap_T": 0.3,
+     "gap_length_m": 0.01,
+     "gap_area_m2": 0.003,
+     "core_segments": [
+      {
+       "segment": {
+        "name": "back iron",
+        "length_m": 0.08,
+        "area_m2": 0.0004,
+        "mu_r": 2000.0,
+        "B_max_T": 1.5
+       }
+      }
+     ],
+     "leakage_factor": 1.2
+    },
+    "note": "saturation refusal (.4g message)"
+   },
+   {
+    "id": "AT-04",
+    "fn": "ampere_turns",
+    "args": {
+     "B_gap_T": 0.0,
+     "gap_length_m": 0.01,
+     "gap_area_m2": 0.001,
+     "core_segments": [],
+     "leakage_factor": 1.0
+    },
+    "note": ""
+   },
+   {
+    "id": "AT-05",
+    "fn": "ampere_turns",
+    "args": {
+     "B_gap_T": 0.02,
+     "gap_length_m": -1.0,
+     "gap_area_m2": 0.001,
+     "core_segments": [],
+     "leakage_factor": 1.0
+    },
+    "note": ""
+   },
+   {
+    "id": "AT-06",
+    "fn": "ampere_turns",
+    "args": {
+     "B_gap_T": 0.02,
+     "gap_length_m": 0.01,
+     "gap_area_m2": {
+      "$float": "nan"
+     },
+     "core_segments": [],
+     "leakage_factor": 1.0
+    },
+    "note": ""
+   },
+   {
+    "id": "AT-07",
+    "fn": "ampere_turns",
+    "args": {
+     "B_gap_T": 0.02,
+     "gap_length_m": 0.01,
+     "gap_area_m2": 0.001,
+     "core_segments": [],
+     "leakage_factor": 0.9
+    },
+    "note": ""
+   },
+   {
+    "id": "AT-08",
+    "fn": "ampere_turns",
+    "args": {
+     "B_gap_T": 0.02,
+     "gap_length_m": 0.01,
+     "gap_area_m2": 0.001,
+     "core_segments": [],
+     "leakage_factor": "x"
+    },
+    "note": ""
+   },
+   {
+    "id": "AT-09",
+    "fn": "ampere_turns",
+    "args": {
+     "B_gap_T": 0.02,
+     "gap_length_m": 0.01,
+     "gap_area_m2": 0.001,
+     "core_segments": {
+      "raw": "abc"
+     },
+     "leakage_factor": 1.0
+    },
+    "note": ""
+   },
+   {
+    "id": "AT-10",
+    "fn": "ampere_turns",
+    "args": {
+     "B_gap_T": 0.02,
+     "gap_length_m": 0.01,
+     "gap_area_m2": 0.001,
+     "core_segments": {
+      "raw": {
+       "a": 1
+      }
+     },
+     "leakage_factor": 1.0
+    },
+    "note": ""
+   },
+   {
+    "id": "AT-11",
+    "fn": "ampere_turns",
+    "args": {
+     "B_gap_T": 0.02,
+     "gap_length_m": 0.01,
+     "gap_area_m2": 0.001,
+     "core_segments": [
+      {
+       "segment": {
+        "name": "back iron",
+        "length_m": 0.08,
+        "area_m2": 0.0004,
+        "mu_r": 2000.0,
+        "B_max_T": 1.5
+       }
+      },
+      {
+       "raw": 5
+      }
+     ],
+     "leakage_factor": 1.0
+    },
+    "note": ""
+   },
+   {
+    "id": "AT-12",
+    "fn": "ampere_turns",
+    "args": {
+     "B_gap_T": 0.02,
+     "gap_length_m": 0.01,
+     "gap_area_m2": 0.001,
+     "core_segments": {
+      "raw": null
+     },
+     "leakage_factor": 1.0
+    },
+    "note": ""
+   },
+   {
+    "id": "CP-01",
+    "fn": "coil_power_continuous_W",
+    "args": {
+     "NI_A": 1500.0,
+     "window_area_m2": 0.0002,
+     "fill_factor": 0.6,
+     "mean_turn_length_m": 0.25,
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": 100.0
+    },
+    "note": ""
+   },
+   {
+    "id": "CP-02",
+    "fn": "coil_power_continuous_W",
+    "args": {
+     "NI_A": 0.0,
+     "window_area_m2": 0.0002,
+     "fill_factor": 0.6,
+     "mean_turn_length_m": 0.25,
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": 100.0
+    },
+    "note": ""
+   },
+   {
+    "id": "CP-03",
+    "fn": "coil_power_continuous_W",
+    "args": {
+     "NI_A": 1500.0,
+     "window_area_m2": -1.0,
+     "fill_factor": 0.6,
+     "mean_turn_length_m": 0.25,
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": 100.0
+    },
+    "note": ""
+   },
+   {
+    "id": "CP-04",
+    "fn": "coil_power_continuous_W",
+    "args": {
+     "NI_A": 1500.0,
+     "window_area_m2": 0.0002,
+     "fill_factor": 1.0,
+     "mean_turn_length_m": 0.25,
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": 100.0
+    },
+    "note": ""
+   },
+   {
+    "id": "CP-05",
+    "fn": "coil_power_continuous_W",
+    "args": {
+     "NI_A": 1500.0,
+     "window_area_m2": 0.0002,
+     "fill_factor": 0.0,
+     "mean_turn_length_m": 0.25,
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": 100.0
+    },
+    "note": ""
+   },
+   {
+    "id": "CP-06",
+    "fn": "coil_power_continuous_W",
+    "args": {
+     "NI_A": 1500.0,
+     "window_area_m2": 0.0002,
+     "fill_factor": "x",
+     "mean_turn_length_m": 0.25,
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": 100.0
+    },
+    "note": ""
+   },
+   {
+    "id": "CP-07",
+    "fn": "coil_power_continuous_W",
+    "args": {
+     "NI_A": 1500.0,
+     "window_area_m2": 0.0002,
+     "fill_factor": 0.6,
+     "mean_turn_length_m": 0.0,
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": 100.0
+    },
+    "note": ""
+   },
+   {
+    "id": "CP-08",
+    "fn": "coil_power_continuous_W",
+    "args": {
+     "NI_A": 1500.0,
+     "window_area_m2": 0.0002,
+     "fill_factor": 0.6,
+     "mean_turn_length_m": 0.25,
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": 250.0
+    },
+    "note": ""
+   },
+   {
+    "id": "CP-09",
+    "fn": "coil_power_continuous_W",
+    "args": {
+     "NI_A": 1500.0,
+     "window_area_m2": 0.0002,
+     "fill_factor": 0.6,
+     "mean_turn_length_m": 0.25,
+     "material": {
+      "raw": [
+       1
+      ]
+     },
+     "T_C": 100.0
+    },
+    "note": ""
+   },
+   {
+    "id": "CD-01",
+    "fn": "coil_design",
+    "args": {
+     "NI_A": 2000.0,
+     "window_area_m2": 0.0001,
+     "fill_factor": 0.6,
+     "mean_turn_length_m": 0.3,
+     "wire_diameter_m": 0.0005,
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": 100.0
+    },
+    "note": ""
+   },
+   {
+    "id": "CD-02",
+    "fn": "coil_design",
+    "args": {
+     "NI_A": 2000.0,
+     "window_area_m2": 1e-06,
+     "fill_factor": 0.5,
+     "mean_turn_length_m": 0.3,
+     "wire_diameter_m": 0.002,
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": 100.0
+    },
+    "note": "wire does not fit (.4g / .3g message)"
+   },
+   {
+    "id": "CD-03",
+    "fn": "coil_design",
+    "args": {
+     "NI_A": 2000.0,
+     "window_area_m2": 0.0001,
+     "fill_factor": 0.6,
+     "mean_turn_length_m": 0.3,
+     "wire_diameter_m": 0.0,
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": 100.0
+    },
+    "note": ""
+   },
+   {
+    "id": "CD-04",
+    "fn": "coil_design",
+    "args": {
+     "NI_A": 2000.0,
+     "window_area_m2": 0.0001,
+     "fill_factor": 0.6,
+     "mean_turn_length_m": 0.3,
+     "wire_diameter_m": 0.0005,
+     "material": {
+      "raw": "copper"
+     },
+     "T_C": 100.0
+    },
+    "note": ""
+   },
+   {
+    "id": "CD-05",
+    "fn": "coil_design",
+    "args": {
+     "NI_A": 2000.0,
+     "window_area_m2": 0.0001,
+     "fill_factor": 1.2,
+     "mean_turn_length_m": 0.3,
+     "wire_diameter_m": 0.0005,
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": 100.0
+    },
+    "note": ""
+   },
+   {
+    "id": "CD-06",
+    "fn": "coil_design",
+    "args": {
+     "NI_A": 2000.0,
+     "window_area_m2": 0.0001,
+     "fill_factor": 0.6,
+     "mean_turn_length_m": 0.3,
+     "wire_diameter_m": 0.0005,
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": 300.0
+    },
+    "note": ""
+   },
+   {
+    "id": "CD-07",
+    "fn": "coil_design",
+    "args": {
+     "NI_A": 750.0,
+     "window_area_m2": {
+      "expr": "3.0 * (math.pi * 1e-3 * 1e-3 / 4.0) / 0.5"
+     },
+     "fill_factor": 0.5,
+     "mean_turn_length_m": 0.2,
+     "wire_diameter_m": 0.001,
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": 20.0
+    },
+    "note": "k A_w / A_cu at an integer (floor with the 1 + 1e-12 guard)"
+   },
+   {
+    "id": "CD-08",
+    "fn": "coil_design",
+    "args": {
+     "NI_A": 1e-09,
+     "window_area_m2": 0.0001,
+     "fill_factor": 0.6,
+     "mean_turn_length_m": 0.3,
+     "wire_diameter_m": 0.0005,
+     "material": {
+      "fields": {
+       "name": "test conductor",
+       "rho_ref_ohm_m": 2e-08,
+       "T_ref_C": 20.0,
+       "alpha_ref_per_K": 0.004,
+       "T_min_C": -50.0,
+       "T_max_C": 250.0,
+       "density_kg_m3": 8900.0,
+       "source": "synthetic material record"
+      }
+     },
+     "T_C": -50.0
+    },
+    "note": ""
+   },
+   {
+    "id": "CD-09",
+    "fn": "coil_design",
+    "args": {
+     "NI_A": 2000.0,
+     "window_area_m2": 0.0001,
+     "fill_factor": 0.6,
+     "mean_turn_length_m": 0.3,
+     "wire_diameter_m": 0.0005,
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": "x"
+    },
+    "note": ""
+   },
+   {
+    "id": "EM-01",
+    "fn": "electromagnet",
+    "args": {
+     "B_gap_T": 0.03,
+     "gap_length_m": 0.012,
+     "gap_area_m2": 0.002,
+     "core_segments": [
+      {
+       "segment": {
+        "name": "back iron",
+        "length_m": 0.08,
+        "area_m2": 0.0004,
+        "mu_r": 2000.0,
+        "B_max_T": 1.5
+       }
+      },
+      {
+       "segment": {
+        "name": "inner pole",
+        "length_m": 0.03,
+        "area_m2": 0.00015,
+        "mu_r": 800.0,
+        "B_max_T": 1.2
+       }
+      }
+     ],
+     "leakage_factor": 1.3,
+     "window_area_m2": 0.00015,
+     "fill_factor": 0.55,
+     "mean_turn_length_m": 0.28,
+     "wire_diameter_m": 0.0006,
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": 120.0
+    },
+    "note": ""
+   },
+   {
+    "id": "EM-02",
+    "fn": "electromagnet",
+    "args": {
+     "B_gap_T": 0.3,
+     "gap_length_m": 0.01,
+     "gap_area_m2": 0.003,
+     "core_segments": [
+      {
+       "segment": {
+        "name": "back iron",
+        "length_m": 0.08,
+        "area_m2": 0.0004,
+        "mu_r": 2000.0,
+        "B_max_T": 1.5
+       }
+      }
+     ],
+     "leakage_factor": 1.2,
+     "window_area_m2": 0.00015,
+     "fill_factor": 0.55,
+     "mean_turn_length_m": 0.28,
+     "wire_diameter_m": 0.0006,
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": 120.0
+    },
+    "note": ""
+   },
+   {
+    "id": "EM-03",
+    "fn": "electromagnet",
+    "args": {
+     "B_gap_T": 0.03,
+     "gap_length_m": 0.012,
+     "gap_area_m2": 0.002,
+     "core_segments": [],
+     "leakage_factor": 1.0,
+     "window_area_m2": 1e-07,
+     "fill_factor": 0.55,
+     "mean_turn_length_m": 0.28,
+     "wire_diameter_m": 0.0006,
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": 120.0
+    },
+    "note": ""
+   },
+   {
+    "id": "EM-04",
+    "fn": "electromagnet",
+    "args": {
+     "B_gap_T": 0.03,
+     "gap_length_m": 0.012,
+     "gap_area_m2": 0.002,
+     "core_segments": [],
+     "leakage_factor": 1.0,
+     "window_area_m2": 0.00015,
+     "fill_factor": 0.55,
+     "mean_turn_length_m": 0.28,
+     "wire_diameter_m": 0.0006,
+     "material": {
+      "raw": {}
+     },
+     "T_C": 120.0
+    },
+    "note": ""
+   },
+   {
+    "id": "EM-05",
+    "fn": "electromagnet",
+    "args": {
+     "B_gap_T": 0.03,
+     "gap_length_m": 0.012,
+     "gap_area_m2": 0.002,
+     "core_segments": [],
+     "leakage_factor": 1.0,
+     "window_area_m2": 0.00015,
+     "fill_factor": 0.55,
+     "mean_turn_length_m": 0.28,
+     "wire_diameter_m": 0.0006,
+     "material": {
+      "ref": "ANNEALED_COPPER_IACS"
+     },
+     "T_C": 210.0
+    },
+    "note": ""
+   },
+   {
+    "id": "RM-01",
+    "fn": "remanence_at_T",
+    "args": {
+     "B_r_ref_T": 1.2,
+     "alpha_Br_per_K": -0.0012,
+     "T_ref_C": 20.0,
+     "T_C": 150.0
+    },
+    "note": ""
+   },
+   {
+    "id": "RM-02",
+    "fn": "remanence_at_T",
+    "args": {
+     "B_r_ref_T": 0.0,
+     "alpha_Br_per_K": -0.0012,
+     "T_ref_C": 20.0,
+     "T_C": 150.0
+    },
+    "note": ""
+   },
+   {
+    "id": "RM-03",
+    "fn": "remanence_at_T",
+    "args": {
+     "B_r_ref_T": 1.2,
+     "alpha_Br_per_K": "x",
+     "T_ref_C": 20.0,
+     "T_C": 150.0
+    },
+    "note": ""
+   },
+   {
+    "id": "RM-04",
+    "fn": "remanence_at_T",
+    "args": {
+     "B_r_ref_T": 1.2,
+     "alpha_Br_per_K": -0.0012,
+     "T_ref_C": 20.0,
+     "T_C": {
+      "$float": "nan"
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "RM-05",
+    "fn": "remanence_at_T",
+    "args": {
+     "B_r_ref_T": 1.2,
+     "alpha_Br_per_K": -0.0012,
+     "T_ref_C": null,
+     "T_C": 150.0
+    },
+    "note": ""
+   },
+   {
+    "id": "RM-06",
+    "fn": "remanence_at_T",
+    "args": {
+     "B_r_ref_T": 1.0,
+     "alpha_Br_per_K": -0.01,
+     "T_ref_C": 20.0,
+     "T_C": 150.0
+    },
+    "note": ""
+   },
+   {
+    "id": "RM-07",
+    "fn": "remanence_at_T",
+    "args": {
+     "B_r_ref_T": 1.05,
+     "alpha_Br_per_K": 0.0,
+     "T_ref_C": 25.0,
+     "T_C": -60.0
+    },
+    "note": ""
+   },
+   {
+    "id": "PM-01",
+    "fn": "permanent_magnet",
+    "args": {
+     "B_gap_T": 0.03,
+     "gap_length_m": 0.012,
+     "gap_area_m2": 0.002,
+     "core_segments": [
+      {
+       "segment": {
+        "name": "back iron",
+        "length_m": 0.08,
+        "area_m2": 0.0004,
+        "mu_r": 2000.0,
+        "B_max_T": 1.5
+       }
+      }
+     ],
+     "leakage_factor": 1.3,
+     "magnet_area_m2": 0.001,
+     "B_r_T": 1.1,
+     "mu_rec": 1.05,
+     "H_knee_A_per_m": 800000.0,
+     "magnet_density_kg_m3": 8300.0
+    },
+    "note": ""
+   },
+   {
+    "id": "PM-02",
+    "fn": "permanent_magnet",
+    "args": {
+     "B_gap_T": 0.3,
+     "gap_length_m": 0.012,
+     "gap_area_m2": 0.002,
+     "core_segments": [],
+     "leakage_factor": 1.3,
+     "magnet_area_m2": 0.0001,
+     "B_r_T": 1.1,
+     "mu_rec": 1.05,
+     "H_knee_A_per_m": 800000.0,
+     "magnet_density_kg_m3": 8300.0
+    },
+    "note": "B_m >= B_r refusal"
+   },
+   {
+    "id": "PM-03",
+    "fn": "permanent_magnet",
+    "args": {
+     "B_gap_T": 0.3,
+     "gap_length_m": 0.012,
+     "gap_area_m2": 0.002,
+     "core_segments": [],
+     "leakage_factor": 1.3,
+     "magnet_area_m2": 0.0007,
+     "B_r_T": 1.1,
+     "mu_rec": 1.05,
+     "H_knee_A_per_m": 100000.0,
+     "magnet_density_kg_m3": 8300.0
+    },
+    "note": "beyond the knee refusal"
+   },
+   {
+    "id": "PM-04",
+    "fn": "permanent_magnet",
+    "args": {
+     "B_gap_T": 0.03,
+     "gap_length_m": 0.012,
+     "gap_area_m2": 0.002,
+     "core_segments": [],
+     "leakage_factor": 1.3,
+     "magnet_area_m2": 0.0,
+     "B_r_T": 1.1,
+     "mu_rec": 1.05,
+     "H_knee_A_per_m": 800000.0,
+     "magnet_density_kg_m3": 8300.0
+    },
+    "note": ""
+   },
+   {
+    "id": "PM-05",
+    "fn": "permanent_magnet",
+    "args": {
+     "B_gap_T": 0.03,
+     "gap_length_m": 0.012,
+     "gap_area_m2": 0.002,
+     "core_segments": [],
+     "leakage_factor": 1.3,
+     "magnet_area_m2": 0.001,
+     "B_r_T": 1.1,
+     "mu_rec": 0.9,
+     "H_knee_A_per_m": 800000.0,
+     "magnet_density_kg_m3": 8300.0
+    },
+    "note": ""
+   },
+   {
+    "id": "PM-06",
+    "fn": "permanent_magnet",
+    "args": {
+     "B_gap_T": 0.03,
+     "gap_length_m": 0.012,
+     "gap_area_m2": 0.002,
+     "core_segments": [],
+     "leakage_factor": 1.3,
+     "magnet_area_m2": 0.001,
+     "B_r_T": 1.1,
+     "mu_rec": 1.05,
+     "H_knee_A_per_m": -1.0,
+     "magnet_density_kg_m3": 8300.0
+    },
+    "note": ""
+   },
+   {
+    "id": "PM-07",
+    "fn": "permanent_magnet",
+    "args": {
+     "B_gap_T": 0.03,
+     "gap_length_m": 0.012,
+     "gap_area_m2": 0.002,
+     "core_segments": [],
+     "leakage_factor": 1.3,
+     "magnet_area_m2": 0.001,
+     "B_r_T": 1.1,
+     "mu_rec": 1.05,
+     "H_knee_A_per_m": 800000.0,
+     "magnet_density_kg_m3": 0.0
+    },
+    "note": ""
+   },
+   {
+    "id": "PM-08",
+    "fn": "permanent_magnet",
+    "args": {
+     "B_gap_T": 0.03,
+     "gap_length_m": 0.012,
+     "gap_area_m2": 0.002,
+     "core_segments": [],
+     "leakage_factor": 1.3,
+     "magnet_area_m2": 0.001,
+     "B_r_T": "x",
+     "mu_rec": 1.05,
+     "H_knee_A_per_m": 800000.0,
+     "magnet_density_kg_m3": 8300.0
+    },
+    "note": ""
+   },
+   {
+    "id": "PM-09",
+    "fn": "permanent_magnet",
+    "args": {
+     "B_gap_T": 0.3,
+     "gap_length_m": 0.01,
+     "gap_area_m2": 0.003,
+     "core_segments": [
+      {
+       "segment": {
+        "name": "back iron",
+        "length_m": 0.08,
+        "area_m2": 0.0004,
+        "mu_r": 2000.0,
+        "B_max_T": 1.5
+       }
+      }
+     ],
+     "leakage_factor": 1.2,
+     "magnet_area_m2": 0.01,
+     "B_r_T": 1.1,
+     "mu_rec": 1.05,
+     "H_knee_A_per_m": 800000.0,
+     "magnet_density_kg_m3": 8300.0
+    },
+    "note": "circuit saturation before the magnet checks"
+   }
+  ],
+  "edge_cases": "registered_cases (every raise branch of M1-M11)",
+  "randomized_domain": {
+   "count": {
+    "M2": 120,
+    "M3": 120,
+    "M4": 80,
+    "M6": 200,
+    "M7": 150,
+    "M8": 200,
+    "M9": 200,
+    "M10": 100,
+    "M11": 200
+   },
+   "draw": {
+    "rng": "Python random.Random(master_seed * 1000 + k) with k = the entry-point number (2, 3, 4, 6, 7, 8, 9, 10, 11); log-uniform draws as 10 ** uniform(log10 lo, log10 hi)",
+    "material": "ANNEALED_COPPER_IACS with probability 0.6, else {'fields'} with rho log-uniform(1e-8, 1e-7), T_ref 20.0, alpha uniform(0.003, 0.0045), T_min -50.0, T_max 250.0, density uniform(2700, 9000), name 'rand conductor', source 'synthetic'",
+    "segment": "length log-uniform(1e-3, 0.2), area log-uniform(1e-5, 1e-2), mu_r = 1.0 with probability 0.2 else uniform(1, 5000), B_max uniform(0.3, 2.0), name 'seg<j>'",
+    "M2": "T_C uniform(-60, 260)",
+    "M3": "length log-uniform(1e-3, 1e3), area log-uniform(1e-9, 1e-4), T_C uniform(-10, 210)",
+    "M4": "gauge randint(-5, 60)",
+    "M6": "B uniform(0.005, 0.5), g log-uniform(1e-3, 3e-2), A_g log-uniform(1e-5, 1e-2), 0..3 segments, leakage uniform(1.0, 2.0)",
+    "M7": "NI log-uniform(10, 1e4), A_w log-uniform(1e-6, 1e-3), fill uniform(0.05, 0.95), l_mt log-uniform(0.01, 1.0), material, T_C uniform(-10, 210)",
+    "M8": "M7 draws plus wire diameter log-uniform(5e-5, 5e-3)",
+    "M9": "M6 draws then M8 coil draws (without NI)",
+    "M10": "B_r uniform(0.2, 1.4), alpha uniform(-0.0015, 0.0), T_ref choice(20.0, 25.0), T_C uniform(-60, 360)",
+    "M11": "M6 circuit draws, magnet area log-uniform(1e-5, 1e-2), B_r uniform(0.8, 1.4), mu_rec uniform(1.0, 1.2), H_knee uniform(2e5, 2e6), density uniform(7000, 8500)"
+   },
+   "domain_note": "numerical parity domain only (refusals included); not a design or evidence claim"
+  },
+  "vector_totals": {
+   "registered": "99 calls",
+   "randomized": "1570 calls"
+  }
+ },
+ "campaign_seeds": {
+  "applicable": "true (input generation only; the component is deterministic)",
+  "scoring_master_seed": 2805729329,
+  "development_master_seed": 5052,
+  "derivation": "random.Random(master_seed * 1000 + k) as in inputs.randomized_domain.draw",
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the existing admitted stochastic / statistical parity contract; the roles are registered separately and never merged",
+   "design_uq_sampling_stream": "NOT_APPLICABLE",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE",
+   "other_streams": "NOT_APPLICABLE: the harness's random.Random only generates input cases",
+   "migration_parity_dataset": "seeds and the generated case file stay exactly reproducible (immutable)",
+   "after_rust_authority": "NOT_APPLICABLE"
+  },
+  "rng_streams_v3": "NOT_APPLICABLE (deterministic component)",
+  "development_rule": "development comparisons use development_master_seed (and the registered deterministic cases) only and are never scored or reported as a verdict; every execution with scoring_master_seed is appended to campaign_history and the report is committed whatever its verdict"
+ },
+ "observables": {
+  "every call": {
+   "list": [
+    {
+     "name": "outcome",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "RETURNED or RAISED"
+    },
+    {
+     "name": "value_structure",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "returned value as JSON (a dataclass as its asdict() in field order): keys and order, lengths, strings, booleans, nulls, integers (N_turns) and the int / float type of every number equal"
+    },
+    {
+     "name": "value_floats",
+     "units": "SI as the field",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": "|rust - py| <= 4 ulp(py) OR <= 1e-12 * max(1, |py|)",
+     "definition": "every float leaf"
+    },
+    {
+     "name": "error_class",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "Python exception class name (ValueError; AttributeError for WE-05-type inputs)"
+    },
+    {
+     "name": "error_message",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "str(exception) character for character for ValueError (including the '.4g' / '.3g' fields); class only for AttributeError"
+    }
+   ],
+   "replicates_per_implementation": "NOT_APPLICABLE",
+   "se_method": "NOT_APPLICABLE"
+  }
+ },
+ "tolerance_classes": {
+  "EXACT_VALUE": "integers, strings, booleans, statuses, error classes / messages, schema shape: equal",
+  "ULP_BOUNDED": "k_ulp = 4, r_rel = 1e-12 (template proposal)"
+ },
+ "exact_invariants": [
+  {
+   "id": "INV-B01",
+   "statement": "determinism: every Rust call evaluated in two separate processes gives byte-identical output",
+   "required_in_both": false
+  },
+  {
+   "id": "INV-B02",
+   "statement": "every returned electromagnet / permanent_magnet record carries evidence_class 'model-derived' and version 'magnet_power_v1' in both",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-B03",
+   "statement": "permanent_magnet P_load_W is exactly 0.0 in both",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-B04",
+   "statement": "ANNEALED_COPPER_IACS fields equal the module object (NBS Handbook 100 values and source text) in both",
+   "required_in_both": true
+  }
+ ],
+ "conservation_checks": {
+  "applicable": "true (electrical and magnetic-circuit identities)",
+  "checks": [
+   {
+    "id": "CONS-B1",
+    "statement": "coil energy identity P_W = I_A * V_V (P = I^2 R, V = I R)",
+    "evaluated_on": "Rust outputs (and Python outputs, recorded)",
+    "tolerance": "<= 1e-12 * P_W"
+   },
+   {
+    "id": "CONS-B2",
+    "statement": "Ampere: N_turns * I_A = NI_A of the circuit (electromagnet)",
+    "evaluated_on": "Rust outputs (and Python outputs, recorded)",
+    "tolerance": "<= 1e-12 * NI_A"
+   },
+   {
+    "id": "CONS-B3",
+    "statement": "magnetic circuit: NI_A = mmf_gap_A + mmf_core_A and mmf_core_A = sum of segment mmf_A; phi_core_Wb = leakage_factor * phi_gap_Wb",
+    "evaluated_on": "Rust outputs (and Python outputs, recorded)",
+    "tolerance": "<= 1e-12 relative"
+   }
+  ]
+ },
+ "domain_and_error_parity": {
+  "cases": "all registered and randomized calls",
+  "mapping": {
+   "ValueError": "abep_subsystems::power::PowerError class 'ValueError' (OUT_OF_DOMAIN for validity-domain / saturation / knee refusals, MODEL_ERROR otherwise; the parity observable is the class name and message)",
+   "AttributeError": "PowerError class 'AttributeError' (MODEL_ERROR)"
+  },
+  "mapping_rule": "every Python exception class maps to exactly one Rust class name; no Rust path may return a value where Python fails, or fail where Python returns",
+  "documented_divergence": [
+   {
+    "id": "DIV-B01",
+    "statement": "none expected",
+    "disposition": "NOT_APPLICABLE"
+   }
+  ]
+ },
+ "schema_parity": {
+  "schemas": [
+   "NOT_APPLICABLE (no schema file; record shapes are the reference dicts)"
+  ],
+  "rules": [
+   "record field names, order and types identical (EXACT_VALUE structure)"
+  ]
+ },
+ "golden_and_reference_cases": {
+  "references": [
+   "tests/test_electrical_closure.py and tests/test_h2_1_hall_chamber_magnet.py patterns re-expressed as registered cases"
+  ],
+  "rule": "references are read as committed; they are never regenerated to make Rust pass (RM-R11)",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_MAGNET_POWER_PY/reference_outputs/",
+   "captured_at_python_commit": "fa4fcb3bd21fec8c07a26fe264e1045d5a6bec73",
+   "sha256_manifest": "FILL at scoring",
+   "purpose": "lets CI check Rust against the Python reference after Python is retired from active execution"
+  },
+  "historical_golden_rule": "RM-R28: not applicable"
+ },
+ "julia_bridge": {
+  "applicable": "false",
+  "hallthruster_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+  "julia_version": "NOT_APPLICABLE",
+  "launch_equivalence": "NOT_APPLICABLE",
+  "record_comparison": "NOT_APPLICABLE",
+  "execution_provenance": "NOT_APPLICABLE"
+ },
+ "performance_measurement": {
+  "status": "reported, not a decision criterion (A9.24 items 1 and 6)",
+  "workloads": [
+   {
+    "id": "PERF-B01",
+    "description": "EM-01 electromagnet, 10000 repeats"
+   }
+  ],
+  "repeats": 3,
+  "statistic": "median wall-clock per implementation in one session on one machine",
+  "machine_manifest": "recorded in the report"
+ },
+ "decision_rules": {
+  "per_test": "every scored observable of every call meets its tolerance class",
+  "aggregate": "NOT_APPLICABLE",
+  "exact_invariants_required": true,
+  "conservation_required": "true: CONS-B1..B3 on every Rust record",
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "verdict": "ADMITTED (= PARITY_PASS) iff every call, INV-B01..B04 and CONS-B1..B3 pass and every reference file matches sha256_at_registration; otherwise NOT_ADMITTED (PARITY_FAIL)",
+  "verdict_vocabulary": [
+   "ADMITTED",
+   "NOT_ADMITTED",
+   "REFUSED_REFERENCE_CHANGED",
+   "INPUT_MISMATCH",
+   "NOT_RUN_RUST_UNAVAILABLE",
+   "REFUSED_CLASSIFICATION"
+  ],
+  "meaning_of_ADMITTED": "A9.24 item 1: Rust becomes authoritative for the magnet load model (coil I^2 R at the coil terminals, permanent-magnet sizing) within the registered domain; it is NOT physics validation and fixes no H-1 coil (the frozen coil MC-1 is still TBD)",
+  "no_retuning": "tolerances, observables, inputs, n, seeds and rules are fixed; after NOT_ADMITTED only a code fix plus a new contract version with a fresh scoring_master_seed may follow",
+  "disagreement_rule": "never rewrite a Python result to make Rust pass (RM-R11)",
+  "observable_scope": "restricted to the retained magnet load model (RM-R20)"
+ },
+ "bid_boundary": {
+  "statement": "post-bid-freeze work; no output may be cited by the bid package unless the owner re-freezes",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (terminal package state, A9.29 sec. 3)",
+  "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+ },
+ "what_this_is_not": [
+  "not physics validation: parity shows the Rust code reproduces the Python reference",
+  "not an H-1 coil design: every geometry, fill factor and temperature is a caller input",
+  "not a promotion of any provisional input (RM-R27)",
+  "not a gate PASS (RM-R31)"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-ABEP_SIM_MAGNET_POWER_PY/parity_report_v1.json (+ .md)",
+  "runner": "scripts/rust_migration/parity_magnet_power_v1.py (committed with the implementation; sha256 in the report)",
+  "report_fields": [
+   "contract_sha256",
+   "python_commit",
+   "reference_sha256",
+   "rust_commit",
+   "build_provenance",
+   "environment",
+   "per-test results",
+   "invariants",
+   "conservation",
+   "domain/error",
+   "performance",
+   "verdicts",
+   "campaign_history",
+   "ledger_update_requested"
+  ]
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator",
+  "checks": [
+   "migration_class ACTIVE_SELECTED_ARCHITECTURE_PHYSICS: PASS",
+   "no excluded path: ecr_resonance_field_T is not ported",
+   "forbidden identifiers: none (abep-subsystems scan)",
+   "not a GROUND_TEST_PROGRAMME_ONLY contract"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict)"
+ },
+ "value_status_preservation": {
+  "rule": "RM-R27",
+  "inputs": [],
+  "check": "NOT_APPLICABLE: no provisional value is carried; every result is labelled model-derived as in the reference"
+ },
+ "new_physics_verification": {
+  "applies_when": "NOT_APPLICABLE (contract_kind EXISTING_PHYSICS_PARITY)"
+ }
+}
