@@ -118,6 +118,21 @@ fn speed_constant() -> f64 {
     (8.0 / (PI * ME)).sqrt()
 }
 
+/// `sg * grid * np.exp(-grid / Te)` at one grid point, with glibc `exp`. Two shortcuts skip the `exp` call and give
+/// the same bits: glibc returns +0.0 for every x <= -1024 (its `__math_uflow` branch), and a zero `sg * grid` with
+/// x <= 0 (exp finite in [0, 1]) is unchanged by the product, sign included.
+fn integrand_point(s: f64, g: f64, te_ev: f64) -> f64 {
+    let p = s * g;
+    let x = (-g) / te_ev;
+    if p == 0.0 && x <= 0.0 {
+        p
+    } else if x <= -1024.0 {
+        p * 0.0
+    } else {
+        p * x.exp()
+    }
+}
+
 fn refuse_non_finite(e_ev: &[f64], sigma_m2: &[f64]) -> RefResult<()> {
     if let Some(v) = e_ev.iter().chain(sigma_m2).find(|v| !v.is_finite()) {
         return Err(RefError::Refused(AbepError::OutOfDomain {
@@ -172,7 +187,7 @@ pub fn maxwellian_rate(e_ev: &[f64], sigma_m2: &[f64], te_ev: f64, tail: Tail) -
     let grid = numpy::unique(pts);
     let right = *sx.last().ok_or_else(|| py("IndexError", "index -1 is out of bounds for axis 0 with size 0"))?;
     let sg = numpy::interp(&grid, &x, &sx, 0.0, right)?;
-    let integrand: Vec<f64> = grid.iter().zip(&sg).map(|(&g, &s)| s * g * ((-g) / te_ev).exp()).collect();
+    let integrand: Vec<f64> = grid.iter().zip(&sg).map(|(&g, &s)| integrand_point(s, g, te_ev)).collect();
     let integral = numpy::trapezoid(&integrand, &grid) * QE2;
     let p = prefactor_pow(te_ev)?;
     Ok(speed_constant() * p * integral)
@@ -321,6 +336,26 @@ mod tests {
             let c = step_cross_section_rate(1e-20, 15.0, te).unwrap();
             assert!((k / c - 1.0).abs() < 0.01, "T_e {te}: {k} vs {c}");
         }
+    }
+
+    #[test]
+    fn integrand_shortcuts_give_the_plain_bits() {
+        let plain = |s: f64, g: f64, te: f64| s * g * ((-g) / te).exp();
+        let mut n = 0;
+        for &s in &[0.0, -0.0, 1e-20, 3.7e-21, 1e-300] {
+            for &g in &[0.0, 1e-3, 0.5, 15.0, 1023.9, 1024.0, 1024.1, 3e4, 1e6, f64::INFINITY] {
+                for &te in &[1e-3, 0.01, 1.0, 1.0001, 30.0, 1e300, f64::INFINITY, f64::NAN] {
+                    let (a, b) = (integrand_point(s, g, te), plain(s, g, te));
+                    assert!(
+                        a.to_bits() == b.to_bits() || (a.is_nan() && b.is_nan()),
+                        "s {s} g {g} te {te}: {a} vs {b}"
+                    );
+                    n += 1;
+                }
+            }
+        }
+        assert_eq!(n, 400);
+        assert_eq!((-1024.0f64).exp().to_bits(), 0.0f64.to_bits());
     }
 
     #[test]

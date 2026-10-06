@@ -13,19 +13,11 @@ pub fn linspace_from_zero(stop: f64, num: usize) -> Vec<f64> {
     let div = (num - 1) as f64;
     let delta = stop - 0.0;
     let step = delta / div;
-    let mut y: Vec<f64> = (0..num).map(|i| i as f64).collect();
-    if step == 0.0 {
-        for v in &mut y {
-            *v = *v / div * delta;
-        }
+    let mut y: Vec<f64> = if step == 0.0 {
+        (0..num).map(|i| i as f64 / div * delta + 0.0).collect()
     } else {
-        for v in &mut y {
-            *v *= step;
-        }
-    }
-    for v in &mut y {
-        *v += 0.0;
-    }
+        (0..num).map(|i| i as f64 * step + 0.0).collect()
+    };
     y[num - 1] = stop;
     y
 }
@@ -141,6 +133,9 @@ pub fn interp(x: &[f64], xp: &[f64], fp: &[f64], left: f64, right: f64) -> PyRes
             .collect());
     }
     let len = lenxp as isize;
+    // numpy precomputes the slopes when len(xp) <= len(x) and otherwise evaluates the same expression per key: the
+    // same bits either way.
+    let slopes: Vec<f64> = (0..lenxp - 1).map(|i| (fp[i + 1] - fp[i]) / (xp[i + 1] - xp[i])).collect();
     let mut out = Vec::with_capacity(x.len());
     let mut j: isize = 0;
     for &xv in x {
@@ -160,7 +155,7 @@ pub fn interp(x: &[f64], xp: &[f64], fp: &[f64], left: f64, right: f64) -> PyRes
             if xp[ju] == xv {
                 fp[ju]
             } else {
-                let slope = (fp[ju + 1] - fp[ju]) / (xp[ju + 1] - xp[ju]);
+                let slope = slopes[ju];
                 let mut r = slope * (xv - xp[ju]) + fp[ju];
                 if r.is_nan() {
                     r = slope * (xv - xp[ju + 1]) + fp[ju + 1];
