@@ -1,0 +1,541 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-ABEP_SIM_RATE_TABLES_PY-V1",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "component": {
+  "inventory_id": "C-ABEP_SIM_RATE_TABLES_PY",
+  "inventory_path": "docs/rust_migration/component_inventory_v3_1.json",
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "migration_wave": "W7",
+  "scope": "whole module (55 LOC): every public function of abep_sim/rate_tables.py",
+  "functions_or_entry_points": [
+   "abep_sim/rate_tables.py::maxwellian_rate (tail 'hold' and 'zero')",
+   "abep_sim/rate_tables.py::tail_sensitivity",
+   "abep_sim/rate_tables.py::step_cross_section_rate",
+   "abep_sim/rate_tables.py::write_hallthruster_table (returned rows, table text and .source sidecar text)"
+  ],
+  "out_of_scope": [
+   "the file-system side of write_hallthruster_table (opening / writing `path` and `path + '.source'`): the Rust API returns the row list, the table text and the sidecar text; the parity harness compares the bytes Python wrote with the text Rust returns. No Rust code writes into hallthruster_bridge/ (frozen data, CLAUDE.md rule 1)",
+   "the build scripts that construct each table's cross-section representation (scripts/build_*.py): they are input providers here, pinned by sha256 and confirmed by INV-02; they stay PYTHON_REFERENCE until their own disposition (NP-ICP-CHEM-AIR OQ-CHEM-05 / BP-S1 decides where table builders live)",
+   "the HallThruster-format .dat reader and the rate_validity.toml reader added to abep-chem: they have no Python counterpart in this module (HallThruster.jl / bridge_lib.jl read those files); they are Rust-only support code, verified by Rust tests, not by this parity contract",
+   "the fail-closed checked API of abep-chem (abep_chem::checked): no Python counterpart; its refusal semantics are registered as the Rust-only invariant INV-06 and the documented divergence DIV-03"
+  ],
+  "write_hallthruster_table_scope_decision": {
+   "decision": "IN_SCOPE (rows, table text, sidecar text; file I/O excluded)",
+   "evidence": [
+    "docs/rust_migration/simulation_completion_programme_v1_1.json SC-WP-03, element 'HallThruster.jl bridge (process boundary, pin, HallMap / ensemble gate / registry, chemistry support)', method EXISTING_PHYSICS_PARITY, lists abep_sim/rate_tables.py::write_hallthruster_table",
+    "it is the only producer of the frozen HallThruster-format rate tables the bridge reads (hallthruster_bridge/propellants/*.dat, audit/bound_tables/*.dat); grep at the reference commit: called only by scripts/build_*.py and tests/test_sim.py, never at simulation run time (HallThruster.jl reads the frozen files)",
+    "CLAUDE.md rule 1: frozen tables are rebuilt only on an intentional model change; after the Python archive (CA-03) that rebuild path needs an admitted Rust producer, and NP-ICP-CHEM-AIR drafts Rust table builders in abep-chem (OQ-CHEM-05, open) with the .dat format as the parent UQ-06 cross-check",
+    "NP-ICP-NEUTRALIZER EQ-06 requires 'the same data and transformation chain as the registered .dat table': reproducing the table text from the registered representation is the end-to-end check of that chain"
+   ],
+   "consequence": "it is a builder of frozen data, not an active run-time path: admission makes the Rust producer authoritative for rebuilds; it never authorizes regenerating a frozen table (rule 1)"
+  },
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+  "extract_kernel_id": "NOT_APPLICABLE",
+  "active_toolchain_requirement": "NOT_APPLICABLE",
+  "excluded_legacy_paths": [],
+  "owner_disposition_a9_28": "NOT_APPLICABLE",
+  "simulation_completion_wp": "SC-WP-03 (inventory row; programme v1.1 SC-WP-03 elements 'RF/ICP kernel audit of plasma_chem.py' (rate_tables.maxwellian_rate as the candidate Maxwellian-rate kernel) and 'HallThruster.jl bridge ... chemistry support' (write_hallthruster_table))",
+  "owner_disposition_a9_29": "NOT_APPLICABLE",
+  "consumer": "NP-ICP-NEUTRALIZER prereg_v1 EQ-06 / EX-01 and verification_report_v1 admission item 3 / NV-06; NP-ICP-CHEM-AIR prereg_v1 interface IF-CHEM-REG-v1 (provider abep-chem: registry loader + validity table + integrator) and IX-01..IX-06"
+ },
+ "date": "2026-10-06",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Rust code of abep-chem existed and before any Python-vs-Rust comparison of this component was executed (abep-chem lane, SC-WP-03). The only executions before registration were of the Python reference alone: reading its numpy dependencies' algorithms, reproducing the frozen .dat tables from their representations (INV-02 precondition, all 37 byte-identical) and probing its exception classes / messages for the DE cases. The registration commit is recorded in the report, not here.",
+ "supersedes": {
+  "path": null,
+  "sha256": null,
+  "reason": null
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "lane": {
+  "id": "abep-chem",
+  "work_package": "SC-WP-03",
+  "branch": "lane-abep-chem",
+  "base": "origin/integration/simulation-complete at 6358af8b830e9e6b70b4e4eba85d80682ea3ffb8",
+  "authority": "A9.29 secs. 4, 13, 14; simulation_completion_programme_v1_1.json SC-WP-03; NP-ICP-NEUTRALIZER prereg_v1 software_admission item (3)"
+ },
+ "reference_implementation": {
+  "python_commit": "6358af8b830e9e6b70b4e4eba85d80682ea3ffb8",
+  "python_commit_note": "integration/simulation-complete head at lane start (the bid record 5eee4b8 / 2de86ab is never a reference commit for new work)",
+  "files": [
+   {
+    "path": "abep_sim/rate_tables.py",
+    "sha256_at_registration": "ea9880b0d5a474e93083346f29694f2fa820ffce01aca001ea4610893ac04909"
+   }
+  ],
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration; a changed reference requires a new contract version",
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4",
+   "scipy": "1.17.1 (not used by the module)",
+   "pandas": "3.0.2 (not used by the module)",
+   "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+   "blas": "scipy-openblas 0.3.31.188.0 bundled with numpy (not used by the module: no linear algebra)",
+   "numpy_simd": "baseline X86_V2; dispatch X86_V3 / X86_V4 / AVX512_ICL / AVX512_SPR enabled on the registration host (Intel Xeon @ 2.10GHz, AVX512F / AVX512_SKX): numpy float64 np.exp on arrays dispatches to Intel SVML __svml_exp8_ha (numpy 2.4.4 loops_exponent_log.dispatch.c.src, NPY_HAVE_AVX512_SKX && NPY_CAN_LINK_SVML), not glibc libm",
+   "thread_env": {
+    "OMP_NUM_THREADS": "1 (set by the harness for every reference run)",
+    "OPENBLAS_NUM_THREADS": "1 (set by the harness for every reference run)"
+   },
+   "recorded_again_at_scoring": "python / numpy versions, numpy SIMD baseline / dispatch / AVX512_SKX availability, CPU model, glibc version and thread env are re-read and written into the report; a python or numpy version change, or AVX512_SKX unavailable, is INPUT_MISMATCH (not a verdict)"
+  },
+  "reference_algorithm_read": {
+   "statement": "the numpy 2.4.4 algorithms the module calls were read from the numpy 2.4.4 sdist (PyPI sha256 2d390634c5182175533585cc89f3608a4682ccb173cc9bb940b2881c8d6f8fa0) and from the installed pure-Python numpy, and three of them were confirmed bit-for-bit against pure-Python emulations on the registration host (Python only, no Rust): np.add.reduce of a contiguous float64 array = 0.0 + pairwise_sum(all n) (367 / 367 sizes 1..40000, including > 8192: no buffer chunking); np.interp = binary_search_with_guess + slope*(x - xp[j]) + fp[j] with the NaN fallback (300 / 300 cases incl. non-monotonic and duplicate xp); np.linspace(0, Emax, 20000) = i * (Emax / 19999) with y[-1] = Emax (2000 / 2000)",
+   "operations": {
+    "np.linspace": "numpy/_core/function_base.py: step = delta / div; y = arange(num) * step (if step == 0: y = arange(num) / div * delta); y += start; y[-1] = stop",
+    "np.unique": "numpy/lib/_arraysetops_impl.py _unique1d: _unique_hash returns NotImplemented for float64, so ar.sort() then mask[1:] = aux[1:] != aux[:-1]; trailing NaNs collapsed to one (equal_nan=True)",
+    "np.interp": "numpy/_core/src/multiarray/compiled_base.c arr_interp + binary_search_with_guess (LIKELY_IN_CACHE_SIZE 8; linear search for len <= 4); lenxp == 1 branch; slope = (fp[j+1]-fp[j])/(xp[j+1]-xp[j]); result slope*(x-xp[j])+fp[j], NaN fallback slope*(x-xp[j+1])+fp[j+1], then fp[j] if fp[j] == fp[j+1]; compiled for the X86_V2 baseline (no FMA contraction possible)",
+    "np.trapezoid": "numpy/lib/_function_base_impl.py: d = diff(x); (d * (y[1:] + y[:-1]) / 2.0).sum()",
+    "np.add.reduce": "numpy/_core/src/umath/loops_utils.h.src DOUBLE_pairwise_sum (n < 8: serial from -0.0; n <= 128: 8 accumulators, ((r0+r1)+(r2+r3))+((r4+r5)+(r6+r7)), serial tail; else split at n2 = n/2 - (n/2) % 8) added to the identity 0.0",
+    "np.arange (write_hallthruster_table)": "numpy/_core/src/multiarray/ctors.c: length = ceil((stop - start) / step); NaN -> ValueError 'arange: cannot compute length'; outside [NPY_MIN_INTP, NPY_MAX_INTP] -> OverflowError re-raised as ValueError 'Maximum allowed size exceeded'; length <= 0 -> empty; values start + i * delta",
+    "scalar pow": "(QE * Te) ** -1.5: CPython float_pow (glibc pow; base 0 -> ZeroDivisionError '0.0 cannot be raised to a negative power'; infinite result -> errno ERANGE -> OverflowError \"(34, 'Numerical result out of range')\"; zero / subnormal results raise nothing) when Te is a Python float; numpy scalarmath double_ctype_power = npy_pow (glibc pow) when Te is np.float64 (write_hallthruster_table rows, Te >= 2/3 eV: no error branch reachable)",
+    "math.sqrt / math.exp (step_cross_section_rate)": "CPython math_1: NaN result from a non-NaN argument -> ValueError 'math domain error'; infinite result from a finite argument -> OverflowError 'math range error' (exp) ; float division by zero -> ZeroDivisionError 'float division by zero'"
+   }
+  }
+ },
+ "rust_implementation": {
+  "crate": "abep-chem (new; flight-runtime crate name listed in programme_v3_1 groundtest_isolation_check)",
+  "functions_or_entry_points": [
+   "abep_chem::reference::maxwellian_rate (strict-parity reference behaviour, Python exceptions mirrored as abep_types::pyjson::PyException)",
+   "abep_chem::reference::tail_sensitivity",
+   "abep_chem::reference::step_cross_section_rate",
+   "abep_chem::reference::hallthruster_table (rows, text, sidecar text) and abep_chem::reference::render_hallthruster_table",
+   "abep_chem::checked (fail-closed API for production consumers: IF-CHEM-REG-v1 integrator; Rust-only, INV-06)",
+   "CLI: cargo build --release --locked -p abep-chem --bin abep-chem-parity (JSON request on stdin, JSON results on stdout)"
+  ],
+  "replication_design": "every numpy / CPython operation listed under reference_algorithm_read is reproduced operation by operation in the same order (linspace, NaN-aware sorted unique, binary_search_with_guess interpolation, trapezoid terms, pairwise sum with the identity 0.0, QE**2 as QE*QE (equal bits, checked on the host), sqrt(8/(pi*ME)), (QE*Te)**-1.5 with CPython float_pow error semantics, the final products in Python's left-to-right order). The only operation not reproduced bit for bit is the float64 exp of the integrand: Rust uses std f64::exp (glibc exp, < 1 ulp), numpy uses SVML __svml_exp8_ha; pow, sqrt and the scalar math.exp of step_cross_section_rate are glibc in all implementations",
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (rust-toolchain.toml channel 1.94.1)",
+  "provenance_sources": [
+   "Cargo.toml",
+   "Cargo.lock",
+   "rust-toolchain.toml",
+   "crates/abep-chem/Cargo.toml",
+   "crates/abep-chem/src/**",
+   "crates/abep-types/src/**"
+  ],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it (A9.14 S10.4 RUSTCI-1, generalised)"
+ },
+ "governing_hashes": {
+  "config_manifest": {
+   "path": "config/MANIFEST.json",
+   "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+  },
+  "architecture_hash": "NOT_APPLICABLE: architecture-independent chemistry kernel (consumer: hall_icp_neutralizer NP-ICP-NEUTRALIZER EQ-06 and the HallThruster.jl bridge tables)",
+  "model_set_hash": "NOT_APPLICABLE: the module reads no frozen data; the registered tables are inputs pinned below",
+  "design_state_set_hash": "NOT_APPLICABLE",
+  "representation_set_sha256": "bb4bce04c46fae853fdac4170b507e27375d9b289deec0cbab2646e7f61c6330",
+  "representation_set_rule": "sha256 of json.dumps(registered_tables, separators=(',', ':'), ensure_ascii=True, allow_nan=False) where registered_tables is the list TAB-01..TAB-37 of {id, file, tail, threshold_eV, header_label, eps_max, E_eV, sigma_m2} (floats as Python floats) built as in inputs.registered_tables; the harness recomputes it before any call and refuses to score on a mismatch (INPUT_MISMATCH)",
+  "rule": "both implementations receive the identical request bytes; a pin mismatch voids the run (status INPUT_MISMATCH, not a verdict)"
+ },
+ "pinned_inputs_sha256": {
+  "abep_sim/rate_tables.py": "ea9880b0d5a474e93083346f29694f2fa820ffce01aca001ea4610893ac04909",
+  "scripts/build_n2_dissociation_table.py": "83b818f0dacd17c42ca17646be9e4703ebfe3a2567b21bda496e1d4baef17b8d",
+  "scripts/build_n2_ionization_song2023_table.py": "bea8127731b0ef44caa8f90a609ee818bd9b6dd1565c714d26e77ffd4172a7e9",
+  "scripts/build_n2_elastic_song2023_table.py": "35236d44abef6c280c0da5352593876003dfe5c216a75df6f923df9d52729b2e",
+  "scripts/build_n2_dissociative_ionization_table.py": "07f4b3ae1b91100aa71e44441c48ff1f87309589e026182f6b8a50945f084354",
+  "scripts/build_n2_to_n_z2plus_table.py": "f3f001907ace6e0bfe8638dfa7b0f8f2a02d16418449961ee6ecb834967c1c7f",
+  "scripts/build_n_z1plus_to_z2plus_table.py": "d287af2ed97a11ddb6bea6d3bc6db3e115ab34aae5fa15854fcf55d8b2840a12",
+  "scripts/build_n_elastic_tables.py": "e2bc315858c1be79f317a9de6f06d3330448f53c205bca9ee66e81d5ce2cc19d",
+  "scripts/build_n2_electronic_excitation_tables.py": "ef75f202450bf6dea27ae3454793ff7df33acde20ff3f3e51a517e50f95877a0",
+  "scripts/build_n2_rotational_tables.py": "9e1a031d8df3b866b4f9894576e594e4289900a9c614d9ec8a2fd859c989dfcb",
+  "scripts/build_multiply_charged_tables.py": "a53218cd9f1a789daecaa5aa4469575ea9ec06f447b860f6c986904835aff88f",
+  "scripts/audit_n2_dissociative_ionization.py": "d15f7fb404e9dc3ea6ce2fcca9e1712892388d3e27a71f36033ed0d2bae7ce3c",
+  "scripts/audit_n2_completeness_final.py": "a8be1c55a917c25b223e97f128e2530c37bc2ce5f04b6bfb99d19b0bd70c2adf",
+  "hallthruster_bridge/propellants/sources/ragimkhanov2026_fig1b_mtcs.csv": "8f4323b48a106a3b9fa969c1dcea86465e5705c43ebeced55d07f76f675d6116",
+  "hallthruster_bridge/propellants/sources/johnson2005_table2_ics.tsv": "4926085426f5a4637f044d9a88ea58650e0b7825010e61436b95c9aedf6748e5",
+  "hallthruster_bridge/propellants/sources/su2021/A3-Sigma_u.txt": "889673e5eaccb483aee8aa582f784b400fa9c822caa13c85970e505053011f21",
+  "hallthruster_bridge/propellants/sources/su2021/B'3-Sigma_u.txt": "d5682a193529e46aec857ad413b21c6249a79f255b88dc49ad772f2d3df838b6",
+  "hallthruster_bridge/propellants/sources/su2021/B3-Pi_g.txt": "9fe92ffab1b259761eed84aabdc4f763137d480f3169a9f68707f3875489100b",
+  "hallthruster_bridge/propellants/sources/su2021/C3-Pi_u.txt": "0382b016306b21c9be5c31f7dab87248ad485f902de9ee4fbf4c51104cf49c14",
+  "hallthruster_bridge/propellants/sources/su2021/W3-Delta_u.txt": "32645a625c94924e65408c7424c30122f9e3bbf7ef226afaa2b946dcddff198d",
+  "hallthruster_bridge/propellants/sources/su2021/a'1-Sigma_u.txt": "6f3db9f62af9a185ef18049a88028213f8b2486efa9706a7a6ac367c8a11505b",
+  "hallthruster_bridge/propellants/sources/su2021/a1-Pi_g.txt": "583938096609defccc3c89bf913014eb6d5806b6154dd2a57adf114cbf18529f",
+  "hallthruster_bridge/propellants/sources/su2021/w1-Delta_u.txt": "d9342bbbe994cf862a32f7a52f83188029802516e57ffd85c4d9e28256dc4fbb",
+  "hallthruster_bridge/propellants/rate_validity.toml": "64b51be96ef30d6024a99ad9bc0b47384ba3c2434a4c096403cc2b1aa0290e3a",
+  "requirements-lock.txt": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+  "frozen_tables": "the 37 .dat files of inputs.registered_tables, each with its sha256 listed there",
+  "cross_reference": "the 32 propellant tables' sha256 equal NP-ICP-CHEM-AIR prereg_v1 reuse_pins.hall_propellant_tables (prereg sha256 24b74bc6e485e9156059b132c8f5ccb4b854b971a58b879eb34a960b76f70e9a); rate_validity.toml equals the NP-ICP-NEUTRALIZER prereg_v1 pin (prereg sha256 5d496ea6538ef65999c3cb8b1f4274622dc060889b1cf14f46a0a02a855a91a8); the 5 audit/bound_tables files are pinned by this contract",
+  "rule": "the harness verifies every pin before the first call; a mismatch is INPUT_MISMATCH (not a verdict)"
+ },
+ "frozen_data_read_only": [
+  "hallthruster_bridge/propellants/*.dat of TAB-01..TAB-27, TAB-30..TAB-32, TAB-34, TAB-37 and hallthruster_bridge/audit/bound_tables/*.dat of TAB-28, TAB-29, TAB-33, TAB-35, TAB-36: read for INV-02 only; never regenerated (CLAUDE.md rule 1); the harness writes Python's table text into a temporary directory, never into the repository",
+  "hallthruster_bridge/propellants/rate_validity.toml: read by the Rust-only INV-06"
+ ],
+ "inputs": {
+  "harness": "scripts/rust_migration/abep_chem_parity.py",
+  "registered_tables": {
+   "what": "the cross-section representation (E_eV, sigma_m2), registered tail, header threshold and header label of every frozen HallThruster-format table that abep_sim/rate_tables.py produced from a committed representation, constructed by the harness exactly as each build script's main() / tables() passes it to write_hallthruster_table (eps_max = 300.0, the default). INV-02 confirms the identity: the Python reference reproduces each frozen file byte for byte from it (checked before registration: 37 / 37)",
+   "not_included": [
+    "ionization_N.dat: its NIST SRD 107 representation is fetched at build time and not committed (scripts/build_n_ionization_table.py)",
+    "excitation_N2_vib_0_to_{1..10}.dat: Laporta et al. 2014 rate fits evaluated directly, not Maxwellian integrals of a cross section (scripts/build_n2_vibrational_tables.py)",
+    "ionization_N2_N2+.dat, elastic_N2.dat: HallThruster.jl-shipped tables without committed cross sections (rate_validity.toml: unresolved)"
+   ],
+   "tables": [
+    {"id": "TAB-01", "file": "hallthruster_bridge/propellants/dissociation_N2.dat", "sha256": "fb78ba1d30ec0d88a13e992df7749591f65af5770e973e3696a7a932705eb7fc", "construction": "build_n2_dissociation_table: E = TABLE9 energies, sigma = TABLE9 values * 1e-20", "n_points": 16, "tail": "hold", "threshold_eV": 12.14, "header_label": "Dissociation energy loss"},
+    {"id": "TAB-02", "file": "hallthruster_bridge/propellants/ionization_N2_song2023.dat", "sha256": "ef922b52eaa0a27efb330b8f7140f534d923c3b759d4df29ffd13ebb832067a8", "construction": "build_n2_ionization_song2023_table: E = TABLE10[:, 0], sigma = TABLE10[:, 1] * 1e-20", "n_points": 57, "tail": "hold", "threshold_eV": 15.58, "header_label": "Ionization energy"},
+    {"id": "TAB-03", "file": "hallthruster_bridge/propellants/elastic_N2_song2023.dat", "sha256": "d70d9252e961ec6bfe16a0a480020dfdcf3a3aa1032cf2d23b7b3a51a455c47d", "construction": "build_n2_elastic_song2023_table: E = TABLE5[:, 0], sigma = TABLE5[:, 1] * 1e-20", "n_points": 40, "tail": "hold", "threshold_eV": 0.0, "header_label": "Momentum transfer, no inelastic energy loss"},
+    {"id": "TAB-04", "file": "hallthruster_bridge/propellants/dissociative_ionization_N2_upper.dat", "sha256": "473a1ed2fbdb8d74da3a21bd013c033de4f618dcb7a0830086343efef13f2e6c", "construction": "build_n2_dissociative_ionization_table.cross_section('upper')", "n_points": 39, "tail": "hold", "threshold_eV": 24.284, "header_label": "Ionization energy"},
+    {"id": "TAB-05", "file": "hallthruster_bridge/propellants/dissociative_ionization_N2_lower.dat", "sha256": "8c0a7e5e2139dfddd69c9783d7c2016d070b65a2117645fb3995efce046d7ed2", "construction": "build_n2_dissociative_ionization_table.cross_section('lower')", "n_points": 39, "tail": "hold", "threshold_eV": 24.284, "header_label": "Ionization energy"},
+    {"id": "TAB-06", "file": "hallthruster_bridge/propellants/dissociative_ionization_N2_to_N_Z2plus.dat", "sha256": "ce68675e69dd3d2e572a0e4c525d712b66ac2329a678d5580a92eaf884b3d94e", "construction": "build_n2_to_n_z2plus_table.cross_section()", "n_points": 31, "tail": "hold", "threshold_eV": 53.885, "header_label": "Ionization energy"},
+    {"id": "TAB-07", "file": "hallthruster_bridge/propellants/ionization_N_Z1plus_to_N_Z2plus.dat", "sha256": "12e9c03ac8f5e37b39bcba8e81e1c8d65e57dcb8672dcab04d35e028c8c32523", "construction": "build_n_z1plus_to_z2plus_table: E = grid(), sigma = bell_sigma_m2(E)", "n_points": 601, "tail": "hold", "threshold_eV": 29.60125, "header_label": "Ionization energy"},
+    {"id": "TAB-08", "file": "hallthruster_bridge/propellants/elastic_N_ragimkhanov2026.dat", "sha256": "421945464418c0b4929e948abfa917de25df8edc919c3c1fee37fbd63cf4cf80", "construction": "build_n_elastic_tables.cross_section('opm')", "n_points": 1178, "tail": "hold", "threshold_eV": 0.0, "header_label": "Momentum transfer, no inelastic energy loss"},
+    {"id": "TAB-09", "file": "hallthruster_bridge/propellants/elastic_N_wang2014_bsr.dat", "sha256": "f4edd85b629eebbe0aa030d225159f6edda2ef90796be85798758b27dd1cf112", "construction": "build_n_elastic_tables.cross_section('wang')", "n_points": 988, "tail": "hold", "threshold_eV": 0.0, "header_label": "Momentum transfer, no inelastic energy loss"},
+    {"id": "TAB-10", "file": "hallthruster_bridge/propellants/excitation_N2_A3Sigma_u.dat", "sha256": "1de3f096d8d649fcb9fc77a5046625135ee646984b3ad5841d0f6229a750e169", "construction": "build_n2_electronic_excitation_tables.cross_section('A')", "n_points": 2201, "tail": "zero", "threshold_eV": 7.75, "header_label": "Excitation energy"},
+    {"id": "TAB-11", "file": "hallthruster_bridge/propellants/excitation_N2_A3Sigma_u_johnsonlow.dat", "sha256": "89f10b6aa1b12d41b3dcf63d9377b43850a0acd58889d8bdc339e36e4e13a36f", "construction": "build_n2_electronic_excitation_tables.cross_section('A', variant='johnsonlow')", "n_points": 208, "tail": "zero", "threshold_eV": 7.75, "header_label": "Excitation energy"},
+    {"id": "TAB-12", "file": "hallthruster_bridge/propellants/excitation_N2_B3Pi_g.dat", "sha256": "bb354c8b80562a1896cde8d408706865a61a8fc4d8a0a08c9a9cec23c50fcbb1", "construction": "build_n2_electronic_excitation_tables.cross_section('B')", "n_points": 2201, "tail": "zero", "threshold_eV": 8.04, "header_label": "Excitation energy"},
+    {"id": "TAB-13", "file": "hallthruster_bridge/propellants/excitation_N2_B3Pi_g_johnsonlow.dat", "sha256": "31bc9edb4d64d8dc66fd06b7c58e96d6df639dc659862f7af60d8980f06f7233", "construction": "build_n2_electronic_excitation_tables.cross_section('B', variant='johnsonlow')", "n_points": 208, "tail": "zero", "threshold_eV": 8.04, "header_label": "Excitation energy"},
+    {"id": "TAB-14", "file": "hallthruster_bridge/propellants/excitation_N2_W3Delta_u.dat", "sha256": "7608747ff9606f2da2add27b1be3e83fa68547cf128319a266013d997ff89f9e", "construction": "build_n2_electronic_excitation_tables.cross_section('W')", "n_points": 2201, "tail": "zero", "threshold_eV": 8.88, "header_label": "Excitation energy"},
+    {"id": "TAB-15", "file": "hallthruster_bridge/propellants/excitation_N2_W3Delta_u_johnsonlow.dat", "sha256": "1f0817ed306a2ab5f8c2e4e6241bac5c5e1a5c3adfb265ea5c104e3abf3fe0cc", "construction": "build_n2_electronic_excitation_tables.cross_section('W', variant='johnsonlow')", "n_points": 208, "tail": "zero", "threshold_eV": 8.88, "header_label": "Excitation energy"},
+    {"id": "TAB-16", "file": "hallthruster_bridge/propellants/excitation_N2_Bprime3Sigma_u.dat", "sha256": "0cfb818937e548921784fa5952185020a5b1ad09d046edc47f5e557ba349fe22", "construction": "build_n2_electronic_excitation_tables.cross_section('Bp')", "n_points": 2201, "tail": "zero", "threshold_eV": 9.67, "header_label": "Excitation energy"},
+    {"id": "TAB-17", "file": "hallthruster_bridge/propellants/excitation_N2_Bprime3Sigma_u_johnsonlow.dat", "sha256": "968c00f2f06a472bdf05fbe5add9bf313dd35f8a734b29255c217e6a91ed32b5", "construction": "build_n2_electronic_excitation_tables.cross_section('Bp', variant='johnsonlow')", "n_points": 207, "tail": "zero", "threshold_eV": 9.67, "header_label": "Excitation energy"},
+    {"id": "TAB-18", "file": "hallthruster_bridge/propellants/excitation_N2_a1Pi_g.dat", "sha256": "218ca2f91f7cf60526a28a940885421f30a2d9559094f3ccee06256ed0d29903", "construction": "build_n2_electronic_excitation_tables.cross_section('a')", "n_points": 2202, "tail": "zero", "threshold_eV": 9.31, "header_label": "Excitation energy"},
+    {"id": "TAB-19", "file": "hallthruster_bridge/propellants/excitation_N2_a1Pi_g_johnsonlow.dat", "sha256": "edb85fa292dbacd6d06a5a80b3b247a4cd56805d1bcf26b70d89263c607c9ef2", "construction": "build_n2_electronic_excitation_tables.cross_section('a', variant='johnsonlow')", "n_points": 208, "tail": "zero", "threshold_eV": 9.31, "header_label": "Excitation energy"},
+    {"id": "TAB-20", "file": "hallthruster_bridge/propellants/excitation_N2_aprime1Sigma_u.dat", "sha256": "8a3bbaa8d6904ffc4060a8cc8f9d92b125298bdb3d1dc5f250146d2fb1d01361", "construction": "build_n2_electronic_excitation_tables.cross_section('ap')", "n_points": 2201, "tail": "zero", "threshold_eV": 9.92, "header_label": "Excitation energy"},
+    {"id": "TAB-21", "file": "hallthruster_bridge/propellants/excitation_N2_aprime1Sigma_u_johnsonlow.dat", "sha256": "5c4c081e0c0302614ef24ecf6c5b7e5587054797a2a38508cc5c0d09f6f53c12", "construction": "build_n2_electronic_excitation_tables.cross_section('ap', variant='johnsonlow')", "n_points": 207, "tail": "zero", "threshold_eV": 9.92, "header_label": "Excitation energy"},
+    {"id": "TAB-22", "file": "hallthruster_bridge/propellants/excitation_N2_w1Delta_u.dat", "sha256": "ed070fa87591b84b51d6d7d14b3ce63afc59386a8d87a743dd5e6ed97f7fa9bf", "construction": "build_n2_electronic_excitation_tables.cross_section('w')", "n_points": 2201, "tail": "zero", "threshold_eV": 10.27, "header_label": "Excitation energy"},
+    {"id": "TAB-23", "file": "hallthruster_bridge/propellants/excitation_N2_w1Delta_u_johnsonlow.dat", "sha256": "fc0d99f8980627f636b3c080c732e25430ed89dff9e5c7a17d7b1ef726b1363c", "construction": "build_n2_electronic_excitation_tables.cross_section('w', variant='johnsonlow')", "n_points": 207, "tail": "zero", "threshold_eV": 10.27, "header_label": "Excitation energy"},
+    {"id": "TAB-24", "file": "hallthruster_bridge/propellants/excitation_N2_C3Pi_u.dat", "sha256": "85545796dd44642dad62479b343c514ae3efc1e7a2f6c7bc9fc994ea9458dcb3", "construction": "build_n2_electronic_excitation_tables.cross_section('C')", "n_points": 2201, "tail": "zero", "threshold_eV": 11.19, "header_label": "Excitation energy"},
+    {"id": "TAB-25", "file": "hallthruster_bridge/propellants/excitation_N2_C3Pi_u_johnsonlow.dat", "sha256": "7d3db15c03ea4893c5e8ba7b42741d1a907477c7d4c0b1263d50b64ab307e6ab", "construction": "build_n2_electronic_excitation_tables.cross_section('C', variant='johnsonlow')", "n_points": 207, "tail": "zero", "threshold_eV": 11.19, "header_label": "Excitation energy"},
+    {"id": "TAB-26", "file": "hallthruster_bridge/propellants/excitation_N2_rot_j0_to_j2.dat", "sha256": "a697d52ca71da5deb9f953a1190b4e582afc8dc03c1109c612b86c01d5b1ba05", "construction": "build_n2_rotational_tables.cross_section(1); threshold round(aud.ROT_DE_SPECTRO_EV[1], 7)", "n_points": 48, "tail": "hold", "threshold_eV": 0.0014801, "header_label": "Excitation energy"},
+    {"id": "TAB-27", "file": "hallthruster_bridge/propellants/excitation_N2_rot_j0_to_j4.dat", "sha256": "d6341cbea08a2c7e8ca0fe9f54b2a2ead06db942875043231c27845e1e3296dc", "construction": "build_n2_rotational_tables.cross_section(2); threshold round(aud.ROT_DE_SPECTRO_EV[2], 7)", "n_points": 48, "tail": "hold", "threshold_eV": 0.0049335, "header_label": "Excitation energy"},
+    {"id": "TAB-28", "file": "hallthruster_bridge/audit/bound_tables/ionization_N_Z2plus_to_N_Z3plus_bell1983.dat", "sha256": "c71fac943a1000996b2e1cd4a82925257d5aeb10b510ebb55fe8f5a330d48125", "construction": "build_multiply_charged_tables.tables()[0]", "n_points": 601, "tail": "hold", "threshold_eV": 47.4453, "header_label": "Ionization energy"},
+    {"id": "TAB-29", "file": "hallthruster_bridge/audit/bound_tables/ionization_N_to_N_Z2plus_hms2017.dat", "sha256": "a7a6f8fd84f2a3b316002e2aba22d605f152166a5364358b5317d163054133c1", "construction": "build_multiply_charged_tables.tables()[1]", "n_points": 801, "tail": "hold", "threshold_eV": 44.1354, "header_label": "Ionization energy"},
+    {"id": "TAB-30", "file": "hallthruster_bridge/propellants/ionization_N_to_N_Z2plus_hms2017.dat", "sha256": "a7a6f8fd84f2a3b316002e2aba22d605f152166a5364358b5317d163054133c1", "construction": "build_multiply_charged_tables.tables()[2]", "n_points": 801, "tail": "hold", "threshold_eV": 44.1354, "header_label": "Ionization energy"},
+    {"id": "TAB-31", "file": "hallthruster_bridge/propellants/ionization_N_to_N_Z2plus_hms2017_x0p5.dat", "sha256": "4aba747e5d4108f32339f30441c0f4357e0505ca9e48dd7d4605fc4430eb56d0", "construction": "build_multiply_charged_tables.tables()[3]", "n_points": 801, "tail": "hold", "threshold_eV": 44.1354, "header_label": "Ionization energy"},
+    {"id": "TAB-32", "file": "hallthruster_bridge/propellants/ionization_N_to_N_Z2plus_hms2017_x1p3.dat", "sha256": "6418f0966288a031f80dd0fe01cac2ee4b6a1bc2aa960570554282a65d4aa84c", "construction": "build_multiply_charged_tables.tables()[4]", "n_points": 801, "tail": "hold", "threshold_eV": 44.1354, "header_label": "Ionization energy"},
+    {"id": "TAB-33", "file": "hallthruster_bridge/audit/bound_tables/ionization_N2_Z1plus_to_N2_Z2plus_tabata2006.dat", "sha256": "13c23172a23e83dd6025b7da05cddea623d7bd6ad505019836cad893e4de2258", "construction": "build_multiply_charged_tables.tables()[5]", "n_points": 801, "tail": "hold", "threshold_eV": 27.9, "header_label": "Ionization energy"},
+    {"id": "TAB-34", "file": "hallthruster_bridge/propellants/ionization_N2_Z1plus_to_N2_Z2plus_tabata2006.dat", "sha256": "116a0829dc4f0c74510176d85eb3373a10a94d806e705b55ea73cfe614b6ddbd", "construction": "build_multiply_charged_tables.tables()[6]", "n_points": 801, "tail": "hold", "threshold_eV": 27.32, "header_label": "Ionization energy"},
+    {"id": "TAB-35", "file": "hallthruster_bridge/audit/bound_tables/ionization_N2_to_N2_Z2plus_nominal.dat", "sha256": "78f4bd159d339c8cfe91dba9cf594920ff0a0ba8143b1939a7ce6feadeec00fd", "construction": "build_multiply_charged_tables.tables()[7]", "n_points": 36, "tail": "hold", "threshold_eV": 42.9, "header_label": "Ionization energy"},
+    {"id": "TAB-36", "file": "hallthruster_bridge/audit/bound_tables/ionization_N2_to_N2_Z2plus_upper.dat", "sha256": "048b979c879d3f08ef6f323e40a4da8d7df75e8bfee600bbf3f2fff498ff94fe", "construction": "build_multiply_charged_tables.tables()[8] (E = [th, nextafter(th, inf), 1e4]: a step representation)", "n_points": 3, "tail": "hold", "threshold_eV": 42.9, "header_label": "Ionization energy"},
+    {"id": "TAB-37", "file": "hallthruster_bridge/propellants/ionization_N2_to_N2_Z2plus_upper.dat", "sha256": "048b979c879d3f08ef6f323e40a4da8d7df75e8bfee600bbf3f2fff498ff94fe", "construction": "build_multiply_charged_tables.tables()[9]", "n_points": 3, "tail": "hold", "threshold_eV": 42.9, "header_label": "Ionization energy"}
+   ],
+   "domain_of_the_set": "finite E_eV >= 0 non-decreasing (all strictly increasing), finite sigma_m2 >= 0; E_eV up to 1000180 eV; 3..2202 points"
+  },
+  "golden_vectors": {
+   "source": "registered grid: write_hallthruster_table rows of every registered table (mean energy 0, 1, ..., 300 eV, T_e = eps / 1.5)",
+   "count": "37 tables x 301 rows = 11137 rate evaluations (plus 37 table texts)",
+   "list_or_generator": "inputs.registered_tables with their registered tail, threshold, label and eps_max 300.0"
+  },
+  "edge_cases": [
+   {"id": "E-01", "inputs": {"E_eV": [0.0, 14.99, 15.0, 1000.0], "sigma_m2": [0.0, 0.0, 1e-20, 1e-20]}, "note": "step at 15 eV (tests/test_sim.py test_v17 representation); E[0] = 0 duplicates the linspace start"},
+   {"id": "E-02", "inputs": {"E_eV": [15.0], "sigma_m2": [1e-20]}, "note": "single-point table: np.interp lenxp == 1 branch when 60 T_e <= 15, two / three points after the tail extension otherwise"},
+   {"id": "E-03", "inputs": {"E_eV": [15.0, 100.0], "sigma_m2": [1e-20, 2e-20]}, "note": "two points, abrupt threshold (sigma(E[0]) > 0, zero below)"},
+   {"id": "E-04", "inputs": {"E_eV": [10.0, 30.0, 20.0, 40.0, 35.0, 50.0, 45.0, 60.0], "sigma_m2": [1e-20, 2e-20, 3e-20, 4e-20, 5e-20, 6e-20, 7e-20, 8e-20]}, "note": "non-monotonic, len > 4: numpy's guess / bisection path decides the segment; still a bracketing segment (see tolerance_basis)"},
+   {"id": "E-05", "inputs": {"E_eV": [10.0, 30.0, 20.0, 40.0], "sigma_m2": [1e-20, 3e-20, 2e-20, 4e-20]}, "note": "non-monotonic, len <= 4 before the tail extension: linear search"},
+   {"id": "E-06", "inputs": {"E_eV": [10.0, 10.0, 20.0, 20.0, 30.0], "sigma_m2": [0.0, 1e-20, 1e-20, 2e-20, 2e-20]}, "note": "duplicate energies (vertical steps)"},
+   {"id": "E-07", "inputs": {"E_eV": [0.0, 10.0, 100.0], "sigma_m2": [0.0, 0.0, 0.0]}, "note": "zero cross section everywhere: exactly 0.0"},
+   {"id": "E-08", "inputs": {"E_eV": [5.0, 50.0, 20.0], "sigma_m2": [1e-20, 3e-20, 2e-20]}, "note": "last point is not the maximum: max(E) decides the extension, E[-1] / sigma[-1] the appended points"},
+   {"id": "E-09", "inputs": {"E_eV": [100.0, 50.0, 20.0, 10.0, 5.0], "sigma_m2": [1e-20, 2e-20, 3e-20, 4e-20, 5e-20]}, "note": "fully decreasing table"},
+   {"id": "E-10", "inputs": {"E_eV": [1.0, 1000000.0], "sigma_m2": [1e-19, 1e-21]}, "note": "very wide table: linspace spacing 50 eV"},
+   {"id": "E-11", "inputs": {"E_eV": [53.885, 70.0, 1000.0], "sigma_m2": [0.0, 1e-21, 1e-20]}, "note": "high threshold at small T_e: the integral passes through the subnormal range (exercises the a_abs clause); its own T_e list"},
+   {"id": "E-12", "inputs": {"E_eV": [60.0, 100.0], "sigma_m2": [1e-20, 1e-20]}, "note": "max(E) = 60 = 60 T_e exactly at T_e = 1.0: no extension, hold and zero identical"}
+  ],
+  "edge_case_te_eV": {
+   "E-01..E-10, E-12": [0.01, 0.05, 0.2, 1.0, 3.0, 10.0, 30.0, 100.0, 1000.0],
+   "E-11": [0.075, 0.08, 0.085, 0.09, 0.1, 0.2],
+   "tails": "every edge case with tail 'hold' and with tail 'zero'"
+  },
+  "randomized_domain": {
+   "count": "37 x 2 x 32 = 2368 maxwellian_rate vectors (TE-RAND), 37 x 5 tail_sensitivity eps (TS-RAND), 256 step_cross_section_rate vectors (ST-RAND)",
+   "draw": "harness function draws(master): TE-RAND: for table index t = 0..36 (TAB-01..TAB-37) and tail index k = 0 ('hold'), 1 ('zero'): rng = numpy.random.default_rng(numpy.random.SeedSequence([master, 1, t, k])); T_e = exp(rng.uniform(ln 0.01, ln 1e4, 32)) eV. TS-RAND: rng = default_rng(SeedSequence([master, 2, t, 0])); eps = exp(rng.uniform(ln 3, ln 3000, 5)) eV. ST-RAND: rng = default_rng(SeedSequence([master, 3, 0, 0])); per vector in this order: sigma0 = exp(rng.uniform(ln 1e-22, ln 1e-18)); E_th = rng.uniform(0, 60); T_e = exp(rng.uniform(ln 0.05, ln 1e3)). Every drawn value is converted to a Python float and passed as the identical binary64 value to both implementations (JSON shortest round-trip repr)",
+   "domain_note": "numerical parity domain only; not a physics, design or evidence claim. T_e spans 0.01-10000 eV, i.e. inside and far beyond every rate_validity.toml limit (45 / 255 eV mean energy) and the N2/N completeness domain (2-30 eV)"
+  },
+  "fixed_vectors": {
+   "TE-ANCHOR": "every registered table, both tails, T_e = 0.2, 2.0, 30.0, 170.0, 1000.0 eV (DOM-02 bounds 0.2 / 2 / 30 eV, the 45 and 255 eV mean-energy limits at 30 / 170 eV, and beyond)",
+   "TS-FIXED": "every registered table, tail_sensitivity eps = 3.0, 15.0, 45.0, 90.0, 150.0, 255.0, 300.0 eV followed by its 5 TS-RAND eps (one call per table)",
+   "TS-EDGE": "E-01 with eps = [0.0, -3.0, nan, 45.0] (one call)",
+   "ST-FIXED": "(sigma0, E_th, T_e) = (1e-20, 15.0, 3.0), (1e-20, 15.0, 10.0), (1e-20, 15.0, 30.0)",
+   "WT-REG": "write_hallthruster_table of every registered table: registered tail, threshold_eV, header_label, eps_max 300.0, source ''",
+   "WT-EDGE": [
+    {"id": "WT-E01", "table": "E-01", "tail": "hold", "threshold_eV": 15.0, "header_label": "Ionization energy", "eps_max": 10.5, "source": ""},
+    {"id": "WT-E02", "table": "E-01", "tail": "zero", "threshold_eV": 0.0, "header_label": "Momentum transfer, no inelastic energy loss", "eps_max": 0.0, "source": "s"},
+    {"id": "WT-E03", "table": "E-01", "tail": "hold", "threshold_eV": 1e-05, "header_label": "Excitation energy", "eps_max": 0.4, "source": ""},
+    {"id": "WT-E04", "table": "E-01", "tail": "hold", "threshold_eV": 1e+16, "header_label": "Ionization energy", "eps_max": -1.0, "source": "x y"},
+    {"id": "WT-E05", "table": "E-01", "tail": "zero", "threshold_eV": -0.0, "header_label": "Dissociation energy loss", "eps_max": -5.0, "source": ""},
+    {"id": "WT-E06", "table": "E-01", "tail": "hold", "threshold_eV": 1.2345678901234568e+17, "header_label": "L", "eps_max": 3.0, "source": "line one\nline two"},
+    {"id": "WT-E07", "table": "E-11", "tail": "hold", "threshold_eV": 53.885, "header_label": "Ionization energy", "eps_max": 40.0, "source": ""},
+    {"id": "WT-E08", "table": "E-04", "tail": "zero", "threshold_eV": 10.0, "header_label": "Excitation energy", "eps_max": 120.0, "source": ""},
+    {"id": "WT-E09", "table": "E-01", "tail": "bogus", "threshold_eV": 15.0, "header_label": "Ionization energy", "eps_max": 0.0, "source": "", "note": "invalid tail never reaches maxwellian_rate when every row has T_e = 0: rows [(0.0, 0.0)], no exception"}
+   ],
+   "RD": "render-only: for every successful Python write_hallthruster_table call (WT-REG, WT-EDGE), Rust renders Python's own returned rows with the same threshold and label (isolates the text formatter)"
+  },
+  "domain_error_vectors": "domain_and_error_parity.cases (DE-*), executed through the same harness and CLI",
+  "vector_totals": {
+   "maxwellian_rate": "2368 TE-RAND + 370 TE-ANCHOR + 2 x 11 x 9 + 2 x 6 edge = 2948, plus 26 DE cases",
+   "tail_sensitivity": "37 TS calls (12 eps each) + 1 TS-EDGE call + 1 DE call",
+   "step_cross_section_rate": "256 ST-RAND + 3 ST-FIXED + 8 DE cases",
+   "write_hallthruster_table": "37 WT-REG + 9 WT-EDGE + 7 DE cases",
+   "render": "one per successful write_hallthruster_table call (37 + 9)"
+  }
+ },
+ "campaign_seeds": {
+  "applicable": true,
+  "scoring_master_seed": 1810061023,
+  "development_master_seed": 7,
+  "derivation": "numpy.random.default_rng(numpy.random.SeedSequence([master, entry_index, table_index, tail_index])) with entry_index 1 = TE-RAND, 2 = TS-RAND, 3 = ST-RAND (inputs.randomized_domain.draw)",
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the existing admitted stochastic / statistical parity contract; the roles are registered separately and never merged",
+   "design_uq_sampling_stream": "NOT_APPLICABLE: no design / UQ sampling in the component",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE: no TPMC call",
+   "other_streams": "NOT_APPLICABLE: neither implementation draws random numbers; the harness draws the input vectors once (numpy default_rng) and passes identical binary64 values to both implementations",
+   "migration_parity_dataset": "seeds, draw order and captured reference outputs stay exactly reproducible (immutable)",
+   "after_rust_authority": "not applicable (no RNG in the component)"
+  },
+  "development_rule": "development comparisons use development_master_seed only and are never scored or reported as a verdict; every execution with scoring_master_seed is appended to campaign_history and the report is committed whatever its verdict"
+ },
+ "observables": {
+  "maxwellian_rate": {
+   "list": [
+    {"name": "outcome", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "same kind: value, or Python exception with identical class and message", "definition": "result of maxwellian_rate(E, sigma, T_e, tail) (Rust: Ok(f64) or Err(PyException{class, message}))"},
+    {"name": "k", "units": "m^3 s^-1", "tolerance_class": "ULP_BOUNDED", "tolerance": "finite: |k_rust - k_py| <= 1e-13 * |k_py| OR |k_rust - k_py| <= 1e-250 m^3/s; non-finite: EXACT_VALUE (same infinity, or both NaN)", "definition": "Maxwellian rate coefficient"}
+   ]
+  },
+  "tail_sensitivity": {
+   "list": [
+    {"name": "outcome", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "same kind; same exception class and message", "definition": "result of tail_sensitivity(E, sigma, eps_values)"},
+    {"name": "length", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "equal", "definition": "number of (eps, share) pairs"},
+    {"name": "eps", "units": "eV", "tolerance_class": "EXACT_VALUE", "tolerance": "bit-identical (NaN: both NaN)", "definition": "float(eps) echo"},
+    {"name": "share", "units": "-", "tolerance_class": "ULP_BOUNDED", "tolerance": "finite: |share_rust - share_py| <= 4e-13 (absolute; the share is a difference quotient, see tolerance_basis); non-finite: EXACT_VALUE", "definition": "(k_hold - k_zero) / k_hold if k_hold > 0 else 0.0"}
+   ]
+  },
+  "step_cross_section_rate": {
+   "list": [
+    {"name": "outcome", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "same kind; same exception class and message", "definition": "result of step_cross_section_rate(sigma0, E_th, T_e)"},
+    {"name": "k", "units": "m^3 s^-1", "tolerance_class": "ULP_BOUNDED", "tolerance": "finite: |k_rust - k_py| <= 1 ulp(k_py) (k_ulp = 1); non-finite: EXACT_VALUE", "definition": "closed form sigma0 sqrt(8 e T_e / (pi m_e)) (1 + E_th / T_e) exp(-E_th / T_e)"}
+   ]
+  },
+  "write_hallthruster_table": {
+   "list": [
+    {"name": "outcome", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "same kind; same exception class and message", "definition": "result of write_hallthruster_table(path, E, sigma, threshold_eV, eps_max, source, tail, header_label)"},
+    {"name": "n_rows", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "equal", "definition": "len(rows)"},
+    {"name": "row eps", "units": "eV", "tolerance_class": "EXACT_VALUE", "tolerance": "bit-identical", "definition": "mean energy column (np.arange(0.0, eps_max + 1.0, 1.0))"},
+    {"name": "row k", "units": "m^3 s^-1", "tolerance_class": "ULP_BOUNDED", "tolerance": "as maxwellian_rate.k", "definition": "rate column (0.0 where T_e = eps / 1.5 is not > 0)"},
+    {"name": "table text", "units": "bytes", "tolerance_class": "EXACT_BYTES", "tolerance": "byte-identical, except a rate line may differ when (i) the Python value k_py lies within tol = max(1e-13 |k_py|, 1e-250) of a %.6e rounding boundary (format(Decimal(k_py) - tol, '.6e') != format(Decimal(k_py) + tol, '.6e'), exact decimal arithmetic), (ii) k_rust meets the row-k tolerance and (iii) the Rust line equals Python's formatting of k_rust; such lines are reported as BOUNDARY_ROUNDING (allowed, counted). Header and column-header lines and the eps field: strictly byte-identical", "definition": "the bytes Python wrote to path; Rust: the returned text"},
+    {"name": "sidecar text", "units": "bytes", "tolerance_class": "EXACT_BYTES", "tolerance": "byte-identical; absent in both when source == ''", "definition": "the bytes Python wrote to path + '.source'"}
+   ]
+  },
+  "render": {
+   "list": [
+    {"name": "table text from Python's rows", "units": "bytes", "tolerance_class": "EXACT_BYTES", "tolerance": "byte-identical, no exception", "definition": "Rust render_hallthruster_table(threshold, label, rows_py) vs the bytes Python wrote"}
+   ]
+  }
+ },
+ "tolerance_classes": {
+  "EXACT_BYTES": "byte-identical (sha256 equal)",
+  "EXACT_VALUE": "integers, strings, enums, statuses, exception classes and messages, and floats that are copied (not computed): equal; floats compared bitwise except NaN == NaN",
+  "ULP_BOUNDED": "per observable above. ulp(x) = 2^(floor(log2 |x|) - 52) for normal x (subnormal / zero: 2^-1074). A relative clause is scaled by |py| (not max(1, |py|): rates are ~1e-13..1e-40 m^3/s, an absolute floor of r_rel would accept nonsense)",
+  "SOLVER_TOLERANCE": "not used (no iterative solver)",
+  "STATISTICAL": "not used (deterministic component)",
+  "EXACT_STREAM": "not used (no RNG in either implementation)"
+ },
+ "tolerance_basis": {
+  "independence": "fixed from an a priori floating-point analysis of the two registered algorithms before any Rust code or Python-vs-Rust comparison existed; the only measurements used are properties of the inputs (table sizes, ranges, signs) and of the reference environment (numpy algorithms and dispatch read from source; three numpy routines confirmed bitwise against pure-Python emulations)",
+  "which_operations_differ": "identical in both (expected bit-identical): grid construction (linspace, sorted unique), np.interp (X86_V2 baseline, no FMA), -grid / T_e, sg * grid, the trapezoid terms, the pairwise sum and its order, QE**2, sqrt(8 / (pi m_e)), (QE T_e)**-1.5 (glibc pow in CPython float_pow, numpy npy_pow and Rust powf), the final products, every scalar operation of step_cross_section_rate (glibc sqrt / exp in CPython math and Rust std) and of tail_sensitivity. Different: the float64 exp of the integrand array: numpy SVML __svml_exp8_ha against glibc exp; bound registered as <= 4 ulp for numpy (the SIMD transcendental bound used by the earlier ES-2 contracts; SVML 'ha' is documented < 1 ulp) and < 1 ulp for glibc, i.e. <= 5 ulp between them",
+  "maxwellian_rate_bound": "u = 2^-53. Inputs E >= 0, sigma >= 0 finite. Interpolation: numpy's search returns j with xp[j] <= x < xp[j+1] for every key (also for non-monotonic xp: every return path tests both inequalities), so sg is a convex combination of non-negative sigma values (negative only by O(u) rounding when one end is 0) and every integrand y_i >= 0 up to O(u). Per element: |y_r - y_p| <= (10u + 2u) y = 12u y (exp difference + the two product roundings). Trapezoid term t_i = (d_i (y_{i+1} + y_i)) / 2: +2u for the sum, +2u for the product, /2 exact: 16u. Pairwise sum of n <= 22203 terms (grid <= 20000 + 2202 + 2 points): rounding depth D <= 33 (<= 8 recursion levels for n < 32768, <= 15 accumulator additions + 3 combination levels + 7 tail additions in a 128-block); two identical summation trees with perturbed non-negative inputs differ by <= (16u + 2 gamma_33) S = (16 + 66) u S. Times QE^2 and times the identical prefactor: +2u each. Total: |k_r - k_p| <= 86 u |k_p| = 9.5e-15 |k_p|. Registered r_rel = 1e-13 (about 10x the worst case; the expected difference is a few ulp)",
+  "subnormal_clause": "the relative bound assumes normal intermediates. Terms with a subnormal exp have y_i = p_i e_i < 2.2e-322 (p_i = sigma E <= 1e-14) and carry absolute errors of a few 2^-1074; the integral (trapezoid * QE^2 = 2.57e-38 * S) can be subnormal when S < 8.6e-271, where rounding to the subnormal grid changes it by one quantum 2^-1074. Mapped through the prefactor sqrt(8/(pi m_e)) (e T_e)^-1.5 <= 2.6e46 for T_e >= 0.01 eV, that quantum is <= 1.3e-277 m^3/s; registered a_abs = 1e-250 m^3/s covers it with margin for every registered T_e >= 0.01 eV and lies > 200 orders of magnitude below any physical rate coefficient",
+  "tail_sensitivity_bound": "share = (a - b) / a with a = k_hold, b = k_zero, each within rho = 9.5e-15 relative (above), 0 <= b <= 2a on the registered inputs: |delta share| <= rho (a + b) / a + rho |share| + 2u <= 3 rho + 2u; registered 4e-13 = 3 r_rel + margin. The registered eps >= 3 eV (T_e >= 2 eV) keeps every k_hold of the registered tables far above the subnormal range (smallest: TAB-06 at T_e = 2 eV, ~1e-33 m^3/s)",
+  "step_bound": "every operation is the same correctly rounded IEEE operation or the same glibc call in the same order: expected bit-identical; k_ulp = 1",
+  "table_text_bound": "the formatter is checked separately (render, strictly EXACT_BYTES); a table line can then differ only through the row-k difference crossing a 7-significant-digit rounding boundary, which the BOUNDARY_ROUNDING rule detects exactly"
+ },
+ "exact_invariants": [
+  {"id": "INV-01", "statement": "determinism: two runs of the Rust CLI on the identical scoring request produce byte-identical stdout", "required_in_both": false, "note": "Rust; Python determinism is not in question for this check"},
+  {"id": "INV-02", "statement": "representation identity (input precondition): for every TAB-xx, the Python reference write_hallthruster_table of the registered representation writes bytes whose sha256 equals the frozen file's sha256 listed in inputs.registered_tables. Failure is INPUT_MISMATCH for the campaign (the representation is not the registered one), not a verdict", "required_in_both": false},
+  {"id": "INV-03", "statement": "closed-form check (tests/test_sim.py test_v17 criterion): |maxwellian_rate(E-01, T_e, 'hold') / step_cross_section_rate(1e-20, 15.0, T_e) - 1| < 0.01 at T_e = 3, 10, 30 eV, evaluated in both implementations", "required_in_both": true},
+  {"id": "INV-04", "statement": "tails coincide without extension: for every TE-RAND / TE-ANCHOR vector of a registered table with 60 T_e <= max(E), k_hold == k_zero bitwise, in both implementations", "required_in_both": true},
+  {"id": "INV-05", "statement": "non-negativity: every finite maxwellian_rate and row k of a registered or edge representation (sigma >= 0) is >= 0, in both implementations", "required_in_both": true},
+  {"id": "INV-06", "statement": "checked API (Rust only; abep_chem::checked, IF-CHEM-REG-v1 semantics): for every registered table with an entry in rate_validity.toml (pinned) and every T_e of TE-ANCHOR plus T_e = limit / 1.5 and T_e = nextafter(limit / 1.5, inf): 1.5 T_e <= max_mean_energy_eV -> Ok with k bit-identical to the reference API; beyond -> OUT_OF_DOMAIN. A table without an entry (TAB-28, TAB-29, TAB-33, TAB-35, TAB-36) -> MODEL_ERROR; an 'unresolved' entry -> INCOMPLETE_EVIDENCE; T_e <= 0, NaN or +-inf -> OUT_OF_DOMAIN; an invalid representation (empty, length mismatch, non-finite, negative E or sigma, decreasing E) -> MODEL_ERROR", "required_in_both": false, "note": "no Python counterpart (DIV-03); required for the verdict"}
+ ],
+ "conservation_checks": {
+  "applicable": false,
+  "reason": "a rate-coefficient integral and a table formatter: no mass, charge or energy balance is computed by the component (the consumers' balances are their own contracts)",
+  "checks": []
+ },
+ "domain_and_error_parity": {
+  "cases": [
+   {"id": "DE-01", "inputs": {"fn": "maxwellian_rate", "table": "E-01", "te": 3.0, "tail": "Hold"}, "expected_python": "ValueError: tail must be 'hold' or 'zero', got 'Hold'", "expected_rust": "same class and message (status OUT_OF_DOMAIN)", "message_key": "invalid tail"},
+   {"id": "DE-02", "inputs": {"fn": "maxwellian_rate", "table": "E-01", "te": 3.0, "tail": null}, "expected_python": "ValueError: tail must be 'hold' or 'zero', got None", "expected_rust": "same", "message_key": "invalid tail"},
+   {"id": "DE-03", "inputs": {"fn": "maxwellian_rate", "table": "E-01", "te": 0.0, "tail": "x"}, "expected_python": "ValueError: tail must be 'hold' or 'zero', got 'x' (tail is checked before T_e)", "expected_rust": "same", "message_key": "invalid tail"},
+   {"id": "DE-04", "inputs": {"fn": "maxwellian_rate", "table": "E-01", "te": 0.0, "tail": "hold"}, "expected_python": "0.0", "expected_rust": "0.0", "message_key": "T_e <= 0 returns 0.0 (reference behaviour; the checked API refuses)"},
+   {"id": "DE-05", "inputs": {"fn": "maxwellian_rate", "table": "E-01", "te": -1.0, "tail": "hold"}, "expected_python": "0.0", "expected_rust": "0.0", "message_key": "T_e <= 0"},
+   {"id": "DE-06", "inputs": {"fn": "maxwellian_rate", "table": "E-01", "te": "-inf", "tail": "hold"}, "expected_python": "0.0", "expected_rust": "0.0", "message_key": "T_e <= 0"},
+   {"id": "DE-07", "inputs": {"fn": "maxwellian_rate", "table": "E-01", "te": "nan", "tail": "hold"}, "expected_python": "nan", "expected_rust": "nan", "message_key": "NaN propagates"},
+   {"id": "DE-08", "inputs": {"fn": "maxwellian_rate", "table": "E-01", "te": "inf", "tail": "hold"}, "expected_python": "nan", "expected_rust": "nan", "message_key": "linspace(0, inf) produces NaN"},
+   {"id": "DE-09", "inputs": {"fn": "maxwellian_rate", "table": "E-01", "te": "inf", "tail": "zero"}, "expected_python": "nan", "expected_rust": "nan", "message_key": "linspace(0, inf) produces NaN"},
+   {"id": "DE-10", "inputs": {"fn": "maxwellian_rate", "table": "E-01", "te": 1e-310, "tail": "hold"}, "expected_python": "ZeroDivisionError: 0.0 cannot be raised to a negative power", "expected_rust": "same", "message_key": "QE * T_e underflows to 0"},
+   {"id": "DE-11", "inputs": {"fn": "maxwellian_rate", "table": "E-01", "te": 1e-200, "tail": "hold"}, "expected_python": "OverflowError: (34, 'Numerical result out of range')", "expected_rust": "same", "message_key": "(QE * T_e)^-1.5 overflows"},
+   {"id": "DE-12", "inputs": {"fn": "maxwellian_rate", "table": "E-01", "te": 1e-186, "tail": "hold"}, "expected_python": "nan", "expected_rust": "nan", "message_key": "prefactor overflows to inf, times an integral of 0"},
+   {"id": "DE-13", "inputs": {"fn": "maxwellian_rate", "table": "E-01", "te": 1e-40, "tail": "hold"}, "expected_python": "0.0", "expected_rust": "0.0", "message_key": "integrand underflows"},
+   {"id": "DE-14", "inputs": {"fn": "maxwellian_rate", "table": "E-01", "te": 1e200, "tail": "hold"}, "expected_python": "inf", "expected_rust": "inf", "message_key": "trapezoid overflows"},
+   {"id": "DE-15", "inputs": {"fn": "maxwellian_rate", "table": "E-01", "te": 1e225, "tail": "hold"}, "expected_python": "inf", "expected_rust": "inf", "message_key": "subnormal pow result raises nothing"},
+   {"id": "DE-16", "inputs": {"fn": "maxwellian_rate", "table": "E-01", "te": 1e300, "tail": "hold"}, "expected_python": "nan", "expected_rust": "nan", "message_key": "pow underflows to 0, times inf"},
+   {"id": "DE-17", "inputs": {"fn": "maxwellian_rate", "E_eV": [], "sigma_m2": [], "te": 3.0, "tail": "hold"}, "expected_python": "ValueError: zero-size array to reduction operation maximum which has no identity", "expected_rust": "same", "message_key": "empty table"},
+   {"id": "DE-18", "inputs": {"fn": "maxwellian_rate", "E_eV": [], "sigma_m2": [], "te": 0.0, "tail": "hold"}, "expected_python": "0.0", "expected_rust": "0.0", "message_key": "T_e checked before the table"},
+   {"id": "DE-19", "inputs": {"fn": "maxwellian_rate", "E_eV": [1.0], "sigma_m2": [], "te": 3.0, "tail": "hold"}, "expected_python": "IndexError: index -1 is out of bounds for axis 0 with size 0", "expected_rust": "same", "message_key": "empty sigma, hold extension"},
+   {"id": "DE-20", "inputs": {"fn": "maxwellian_rate", "E_eV": [1.0], "sigma_m2": [], "te": 3.0, "tail": "zero"}, "expected_python": "ValueError: fp and xp are not of the same length.", "expected_rust": "same", "message_key": "empty sigma, zero extension"},
+   {"id": "DE-21", "inputs": {"fn": "maxwellian_rate", "E_eV": [1000.0], "sigma_m2": [], "te": 3.0, "tail": "hold"}, "expected_python": "IndexError: index -1 is out of bounds for axis 0 with size 0", "expected_rust": "same", "message_key": "empty sigma, no extension (right = sx[-1])"},
+   {"id": "DE-22", "inputs": {"fn": "maxwellian_rate", "E_eV": [1.0, 2.0, 1000.0], "sigma_m2": [1e-20, 1e-20], "te": 3.0, "tail": "hold"}, "expected_python": "ValueError: fp and xp are not of the same length.", "expected_rust": "same", "message_key": "length mismatch"},
+   {"id": "DE-23", "inputs": {"fn": "maxwellian_rate", "E_eV": [1.0, 2.0], "sigma_m2": [1e-20, 1e-20, 1e-20], "te": 3.0, "tail": "hold"}, "expected_python": "ValueError: fp and xp are not of the same length.", "expected_rust": "same", "message_key": "length mismatch after extension"},
+   {"id": "DE-24", "inputs": {"fn": "maxwellian_rate", "E_eV": [1.0, 2.0, 1000.0], "sigma_m2": [1e-20, 1e-20], "te": 0.0, "tail": "hold"}, "expected_python": "0.0", "expected_rust": "0.0", "message_key": "T_e checked before the length"},
+   {"id": "DE-25", "inputs": {"fn": "maxwellian_rate", "E_eV": [0.0, "nan", 15.0, 1000.0], "sigma_m2": [0.0, 0.0, 1e-20, 1e-20], "te": 3.0, "tail": "hold"}, "expected_python": "recorded (a non-finite value propagates)", "expected_rust": "refused: OUT_OF_DOMAIN (DIV-01)", "message_key": "non-finite table entry"},
+   {"id": "DE-26", "inputs": {"fn": "maxwellian_rate", "E_eV": [0.0, 14.99, 15.0, 1000.0], "sigma_m2": [0.0, 0.0, "inf", 1e-20], "te": 3.0, "tail": "hold"}, "expected_python": "recorded (a non-finite value propagates)", "expected_rust": "refused: OUT_OF_DOMAIN (DIV-01)", "message_key": "non-finite table entry"},
+   {"id": "DE-S1", "inputs": {"fn": "step_cross_section_rate", "sigma0": 1e-20, "E_th": 15.0, "te": 0.0}, "expected_python": "ZeroDivisionError: float division by zero", "expected_rust": "same", "message_key": "T_e = 0"},
+   {"id": "DE-S2", "inputs": {"fn": "step_cross_section_rate", "sigma0": 1e-20, "E_th": 15.0, "te": -0.0}, "expected_python": "ZeroDivisionError: float division by zero", "expected_rust": "same", "message_key": "T_e = -0"},
+   {"id": "DE-S3", "inputs": {"fn": "step_cross_section_rate", "sigma0": 1e-20, "E_th": 15.0, "te": -1.0}, "expected_python": "ValueError: math domain error", "expected_rust": "same", "message_key": "sqrt of a negative argument"},
+   {"id": "DE-S4", "inputs": {"fn": "step_cross_section_rate", "sigma0": 1e-20, "E_th": 15.0, "te": "nan"}, "expected_python": "nan", "expected_rust": "nan", "message_key": "NaN propagates"},
+   {"id": "DE-S5", "inputs": {"fn": "step_cross_section_rate", "sigma0": 1e-20, "E_th": 15.0, "te": "inf"}, "expected_python": "inf", "expected_rust": "inf", "message_key": "sqrt(inf)"},
+   {"id": "DE-S6", "inputs": {"fn": "step_cross_section_rate", "sigma0": 1e-20, "E_th": 15.0, "te": 1e-300}, "expected_python": "0.0", "expected_rust": "0.0", "message_key": "exp underflow"},
+   {"id": "DE-S7", "inputs": {"fn": "step_cross_section_rate", "sigma0": 1e-20, "E_th": 15.0, "te": 1e300}, "expected_python": "inf", "expected_rust": "inf", "message_key": "sqrt argument overflows"},
+   {"id": "DE-S8", "inputs": {"fn": "step_cross_section_rate", "sigma0": 1e-20, "E_th": -50.0, "te": 0.05}, "expected_python": "OverflowError: math range error", "expected_rust": "same", "message_key": "exp overflow"},
+   {"id": "DE-T1", "inputs": {"fn": "tail_sensitivity", "E_eV": [], "sigma_m2": [], "eps": [45.0]}, "expected_python": "ValueError: zero-size array to reduction operation maximum which has no identity", "expected_rust": "same", "message_key": "empty table"},
+   {"id": "DE-W1", "inputs": {"fn": "write_hallthruster_table", "table": "E-01", "eps_max": "nan"}, "expected_python": "ValueError: arange: cannot compute length", "expected_rust": "same", "message_key": "NaN eps_max"},
+   {"id": "DE-W2", "inputs": {"fn": "write_hallthruster_table", "table": "E-01", "eps_max": "inf"}, "expected_python": "ValueError: Maximum allowed size exceeded", "expected_rust": "same", "message_key": "infinite eps_max"},
+   {"id": "DE-W3", "inputs": {"fn": "write_hallthruster_table", "table": "E-01", "eps_max": "-inf"}, "expected_python": "ValueError: Maximum allowed size exceeded", "expected_rust": "same", "message_key": "-inf eps_max"},
+   {"id": "DE-W4", "inputs": {"fn": "write_hallthruster_table", "table": "E-01", "eps_max": -1e300}, "expected_python": "ValueError: Maximum allowed size exceeded", "expected_rust": "same", "message_key": "length below NPY_MIN_INTP"},
+   {"id": "DE-W5", "inputs": {"fn": "write_hallthruster_table", "table": "E-01", "eps_max": 1e19}, "expected_python": "ValueError: Maximum allowed size exceeded", "expected_rust": "same", "message_key": "length above NPY_MAX_INTP"},
+   {"id": "DE-W6", "inputs": {"fn": "write_hallthruster_table", "table": "E-01", "eps_max": 300.0, "tail": "bogus"}, "expected_python": "ValueError: tail must be 'hold' or 'zero', got 'bogus' (raised at the first row with T_e > 0, before the file is opened)", "expected_rust": "same", "message_key": "invalid tail"},
+   {"id": "DE-W7", "inputs": {"fn": "write_hallthruster_table", "table": "E-01", "eps_max": 1e15}, "expected_python": "recorded (MemoryError on the registration host: 7.11 PiB allocation)", "expected_rust": "refused: OUT_OF_DOMAIN (DIV-02)", "message_key": "eps_max beyond the registered writer domain"}
+  ],
+  "mapping": {
+   "ValueError": "OUT_OF_DOMAIN",
+   "IndexError": "OUT_OF_DOMAIN",
+   "ZeroDivisionError": "OUT_OF_DOMAIN",
+   "OverflowError": "OUT_OF_DOMAIN",
+   "rule": "the reference API returns abep_types::pyjson::PyException {class, message} with Python's class and message; converted to abep_types::AbepError it is AbepError::OutOfDomain (status OUT_OF_DOMAIN) for every class: each mirrors an argument outside the function's domain"
+  },
+  "mapping_rule": "every Python exception class used by the component maps to exactly one Rust error variant / status; no Rust path returns a value where Python raises, or raises where Python returns, except the documented divergences below (CLAUDE.md rule 3: no silent fallbacks)",
+  "documented_divergence": [
+   {"id": "DIV-01", "statement": "non-finite table entries (NaN / +-inf in E_eV or sigma_m2): Python propagates them through numpy (NaN or garbage results with RuntimeWarnings); the Rust reference API refuses with OUT_OF_DOMAIN before computing", "disposition": "fail closed (rule 3); outside the registered parity domain; DE-25 / DE-26 pass when Rust refuses (Python's outcome is recorded, not compared)"},
+   {"id": "DIV-02", "statement": "write_hallthruster_table with a finite eps_max > 1e6 eV: Python allocates and integrates O(eps_max) rows, or raises MemoryError depending on host memory; Rust refuses with OUT_OF_DOMAIN (writer domain: eps_max <= 1e6 eV, NaN / +-inf / lengths outside intp mirrored as Python's ValueError)", "disposition": "fail closed; DE-W7 passes when Rust refuses"},
+   {"id": "DIV-03", "statement": "the checked API (abep_chem::checked) has no Python counterpart: where the reference silently holds the last cross section beyond the table (tail 'hold'), returns 0.0 for T_e <= 0, NaN for non-finite T_e, or accepts a representation that is empty, mismatched, non-finite, negative or decreasing, the checked API refuses: rate_validity semantics (CLAUDE.md next-work 5, NP-ICP-CHEM-AIR IX-04..IX-06) -> OUT_OF_DOMAIN beyond max_mean_energy_eV, INCOMPLETE_EVIDENCE for 'unresolved', MODEL_ERROR for a missing entry or an invalid representation; OUT_OF_DOMAIN for T_e not finite and > 0 or an unrepresentable prefactor", "disposition": "production consumers (abep-icp, IF-CHEM-REG-v1) call the checked API; the reference API exists for parity and for byte-identical table rebuilds; INV-06 verifies the checked semantics"},
+   {"id": "DIV-04", "statement": "argument typing: Python accepts any array-like / int arguments (an int threshold is printed as an int, e.g. '15'); the Rust API takes f64 slices and f64 scalars. All registered thresholds and every harness argument are Python floats", "disposition": "not exercised; recorded"},
+   {"id": "DIV-05", "statement": "numpy RuntimeWarnings (overflow / invalid value) are not reproduced: they are warnings, not results", "disposition": "recorded"},
+   {"id": "DIV-06", "statement": "finite negative E_eV or sigma_m2 values are computed by the reference API with the same operation sequence as Python but lie outside the registered parity domain (no vector draws them; the error analysis assumes E, sigma >= 0); no admission claim covers them", "disposition": "the checked API refuses them (MODEL_ERROR)"}
+  ]
+ },
+ "schema_parity": {
+  "schemas": [
+   "HallThruster.jl v0.23.1 rate-table text format as written by write_hallthruster_table: line 1 f\"{header_label} (eV): {threshold_eV}\" (Python float repr), line 2 'Energy (eV)\\tRate coefficient (m^3/s)', then one line f\"{eps:.1f}\\t{k:.6e}\" per row, '\\n' line ends; sidecar f\"{source}\\n\" when source != ''"
+  ],
+  "rules": [
+   "byte-identical rendering (render observable, EXACT_BYTES)",
+   "field order and separators identical",
+   "Python float repr for the header threshold (abep_types::pyjson::float_repr) and Python '%.6e' / '%.1f' formatting (sign, at least two exponent digits)"
+  ]
+ },
+ "golden_and_reference_cases": {
+  "references": [
+   "abep_sim/rate_tables.py at python_commit",
+   "the frozen tables of inputs.registered_tables (INV-02 only; never regenerated)",
+   "tests/test_sim.py test_v17_maxwellian_integrator_matches_closed_form (INV-03 criterion)"
+  ],
+  "rule": "references are read as committed; they are never regenerated to make Rust pass (RM-R11); a disagreement is investigated and classified (RUST_DEFECT | PYTHON_REFERENCE_DEFECT (own governance, new contract version) | CONTRACT_DEFECT (new contract version))",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_RATE_TABLES_PY/reference_outputs/",
+   "captured_at_python_commit": "6358af8b830e9e6b70b4e4eba85d80682ea3ffb8",
+   "sha256_manifest": "reference_outputs/MANIFEST.json, written by the scoring run (inputs.json.gz: request and registered representations; python_outputs.json.gz; rust_outputs_at_scoring.json.gz)",
+   "purpose": "lets CI check Rust against the Python reference after Python is retired from active execution (a Rust replay test reads these files and applies the registered tolerances)"
+  },
+  "historical_golden_rule": "RM-R28: golden_v1 / golden_v2 are not used"
+ },
+ "julia_bridge": {
+  "applicable": false,
+  "reason": "no Julia process is driven; the rendered text is the format HallThruster.jl reads, compared byte for byte",
+  "hallthruster_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5 (recorded for completeness; not used)"
+ },
+ "performance_measurement": {
+  "status": "reported, not a decision criterion (A9.24 items 1 and 6)",
+  "workloads": [
+   {"id": "PERF-WT", "description": "write_hallthruster_table rows of the 37 registered tables (11137 rate evaluations): Python reference loop vs one Rust CLI batch (including process start and JSON I/O)"}
+  ],
+  "repeats": 3,
+  "statistic": "median wall-clock per implementation in one session on one machine; speed-up = median_python / median_rust",
+  "machine_manifest": "recorded in the report environment block"
+ },
+ "decision_rules": {
+  "per_test": "every scored observable of every vector meets its tolerance class; every outcome (value / exception class and message) is EXACT_VALUE-equal, except DIV-01 / DIV-02 cases, which pass only when Rust refuses with OUT_OF_DOMAIN",
+  "aggregate": "NOT_APPLICABLE (no STATISTICAL entry point)",
+  "exact_invariants_required": true,
+  "conservation_required": false,
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "verdict": "ADMITTED iff every per-test, invariant (INV-01, INV-03..INV-06; INV-02 is an input precondition), domain/error and schema check passes and every reference file matches sha256_at_registration; PARITY_PASS <=> ADMITTED, PARITY_FAIL <=> NOT_ADMITTED",
+  "verdict_vocabulary": [
+   "ADMITTED",
+   "NOT_ADMITTED",
+   "REFUSED_REFERENCE_CHANGED",
+   "INPUT_MISMATCH",
+   "NOT_RUN_RUST_UNAVAILABLE",
+   "REFUSED_CLASSIFICATION"
+  ],
+  "parity_vocabulary": [
+   "PARITY_PASS",
+   "PARITY_FAIL"
+  ],
+  "meaning_of_ADMITTED": "A9.24 item 1: Rust becomes authoritative for this component (within the registered domain); new production results for it come from Rust and carry implementation = rust, rust_commit and this contract id; the Python component may then be retired from active execution. It is NOT physics validation. For NP-ICP-NEUTRALIZER it satisfies software_admission item (3) ('the abep-chem rate evaluator it uses is admitted'); it does not admit any table, registry or validity entry (NP-ICP-CHEM-AIR)",
+  "no_retuning": "tolerances, observables, inputs, n, seeds and rules are fixed; after NOT_ADMITTED only a code fix plus a new contract version with a fresh scoring_master_seed may follow; the failed report stays; no execution is discarded",
+  "disagreement_rule": "never rewrite a Python result, golden, fixture or frozen dataset to make Rust pass (RM-R11)",
+  "observable_scope": "observables are restricted to retained selected-architecture physics; an observable that depends on an excluded legacy path is not registered (RM-R20)",
+  "scoring_once": "the scoring comparison runs once (scoring_master_seed); the harness refuses a second scoring run when parity_report_v1.json exists, a reference or input pin differs, or a Rust / harness provenance source is uncommitted; development runs (development_master_seed) never write a report into the contract directory"
+ },
+ "bid_boundary": {
+  "statement": "this contract and its Rust implementation are post-bid-freeze work; no output of it may be cited by the bid package unless the owner re-freezes (PROGRAMME.md section 4; bid_source_guard)",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b (technical source) / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (package / freeze record, A9.28; lineage b5849affae22a6709ad217a184f6fe896d15410a -> 2de86ab); A9.29 sec. 3: 2de86ab is the terminal owner-authorized package state",
+  "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+ },
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, threshold or requirement; no table is rebuilt",
+  "not an admission of any cross-section table, chemistry registry, validity entry or completeness claim (those belong to NP-ICP-CHEM-AIR and the rate_validity.toml governance)",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27)",
+  "not a gate PASS: absent determining evidence stays NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN / MODEL_ERROR (RM-R31)"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-ABEP_SIM_RATE_TABLES_PY/parity_report_v1.json (+ .md generated from it)",
+  "runner": "scripts/rust_migration/abep_chem_parity.py (Python harness calling the Rust CLI abep-chem-parity)",
+  "report_fields": [
+   "contract_sha256",
+   "python_commit",
+   "reference_sha256",
+   "rust_commit",
+   "build_provenance (rustc, Cargo.lock sha256, source sha256)",
+   "environment",
+   "per-test results",
+   "aggregates",
+   "invariants",
+   "conservation",
+   "domain/error",
+   "schema",
+   "performance",
+   "verdicts",
+   "campaign_history",
+   "ledger_update_requested"
+  ]
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator (A9.25 message 3)",
+  "checks": [
+   "component.migration_class is ACTIVE_SELECTED_ARCHITECTURE_PHYSICS (inventory v3.1 row, classification_confidence_v3_1 PLAN_APPROVED_A9_29)",
+   "no observable, input or code path of the contract belongs to the excluded legacy vocabulary (LaB6Cathode, lab6_xe, Xe hollow-cathode heater / keeper, C1 flight fallback, hollow-cathode Hall cards, multi-family selection); the component has no not_ported_parts in the inventory",
+   "nothing is taken from abep_sim/plasma_chem.py (NP-ICP-NEUTRALIZER EX-01, CONF-06): no Arrhenius RATES, EPS_C, E_DISS or Chamber constant enters abep-chem",
+   "the Python harness traverses no legacy path to reach the scored functions",
+   "the Rust implementation contains none of the forbidden identifiers (CI_PLAN.md sec. 1 principle 6)",
+   "not a GROUND_TEST_PROGRAMME_ONLY contract (abep-chem is a flight-runtime crate; no abep-groundtest dependency)"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict): the contract cannot be registered"
+ },
+ "value_status_preservation": {
+  "rule": "RM-R27",
+  "inputs": [],
+  "status": "NOT_APPLICABLE: the integrator carries no input values of its own; the evidence status of each table's cross section (e.g. 'assumed (envelope)' for TAB-37, 'semi-empirical' for TAB-30..32) belongs to PROVENANCE.md / NP-ICP-CHEM-AIR and is neither read nor changed here"
+ },
+ "new_physics_verification": {
+  "applies_when": "contract_kind = NEW_PHYSICS (otherwise NOT_APPLICABLE)",
+  "status": "NOT_APPLICABLE",
+  "reason": "EXISTING_PHYSICS_PARITY contract"
+ }
+}
