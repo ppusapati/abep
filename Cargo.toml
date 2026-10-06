@@ -21,8 +21,11 @@ serde_json = { version = "1", features = ["float_roundtrip"] }
 sha2 = "0.10"
 # TOML 1.0.0 reader (toml_edit 0.22), the spec level of Python's tomllib; 0.9+ implement TOML 1.1 (provenance verifier).
 toml = { version = "=0.8.23", default-features = false, features = ["parse"] }
+# gzip reader for the frozen .jsonl.gz raw-record datasets bound by the Hall-map registry (pure-Rust backend).
+flate2 = { version = "1", default-features = false, features = ["rust_backend"] }
 abep-types = { path = "crates/abep-types" }
 abep-provenance = { path = "crates/abep-provenance" }
+abep-hall = { path = "crates/abep-hall" }
 
 [profile.release]
 opt-level = 3
