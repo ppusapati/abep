@@ -1,0 +1,1325 @@
+{
+ "schema": "abep_rust_parity_report_v3_1",
+ "id": "PARITY-REPORT-K-MASS-RULES-V1",
+ "lane": "SC-WP-07 mass (A9.29)",
+ "contract": {
+  "path": "docs/rust_migration/contracts/K-MASS-RULES/parity_prereg_v1.json",
+  "id": "PARITY-K-MASS-RULES-V1",
+  "sha256": "0e962c03bc01abb9afde184c48c83427c295710310112bb3d23a5e37ac0f302c"
+ },
+ "verdict": "ADMITTED",
+ "parity": "PARITY_PASS",
+ "verdict_rule": "ADMITTED (= PARITY_PASS) iff every call of every vector, every invariant (INV-K01..K04, VS-K01), every conservation check, and DIV-K01 / DIV-K02's registered Rust outcomes pass and every reference file matches sha256_at_registration; otherwise NOT_ADMITTED (PARITY_FAIL)",
+ "python_commit": "1e2f66d72c01d3d0d413ff85c62de17f528d8f31",
+ "reference_sha256": {
+  "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py": {
+   "registered": "b1df7537456d5334e8b051bb6ed9bca9626933497b3b52e916c9997338e6a572",
+   "now": "b1df7537456d5334e8b051bb6ed9bca9626933497b3b52e916c9997338e6a572"
+  },
+  "docs/budgets/mass_power_a9_v5/build_mass_power_a9_v5.py": {
+   "registered": "669e5e5706d4b27c60214ad103b3276bfb1d983010eb482dbffaf9858ab013ee",
+   "now": "669e5e5706d4b27c60214ad103b3276bfb1d983010eb482dbffaf9858ab013ee"
+  }
+ },
+ "reference_unchanged_at_scoring": true,
+ "pinned_inputs_verified": true,
+ "rust_commit": "53768f924f03340ac6e6ac99765eb590ddca66e6",
+ "rust_tree_clean_at_scoring": true,
+ "build_provenance": {
+  "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+  "cargo": "cargo 1.94.1 (29ea6fb6a 2026-03-24)",
+  "profile": "release (cargo build --release --locked -p abep-subsystems --bin abep-mass)",
+  "cargo_lock_sha256": "c5f63f31f0a27610c0326d45d5188cfbd0dd214f8a6c293dc57063053b8868c8",
+  "source_sha256": {
+   "Cargo.toml": "35d63d9a1b6bda67d978b0eb2a3c10f48b4b3247f2789b0701bdd6e09f6ca98f",
+   "Cargo.lock": "c5f63f31f0a27610c0326d45d5188cfbd0dd214f8a6c293dc57063053b8868c8",
+   "rust-toolchain.toml": "7e44dbedb86596d94974ef8cb279f0e81496ea92b519c14940259661496f8499",
+   "crates/abep-types/Cargo.toml": "a210ee487a186c6edc28a87868e1b2c84094e890586ad159b8d77e16e7e7511f",
+   "crates/abep-types/src/constants.rs": "c97e39931d145db143398e3d5de9eb4f9ba86943a75b3c1302df82c01b4efd1d",
+   "crates/abep-types/src/lib.rs": "0a067299e38d3dac702c3eb23ee3e34a55f844b389ec54b7463962c65d6a4b0e",
+   "crates/abep-types/src/pyjson.rs": "5ce15fdb06043a01ce8bd441a8e8f1906e74a0c4dd9fea2b9e4505f182a8d88e",
+   "crates/abep-types/src/pyjson_unicode.rs": "c6f59e0936c35051ef1f7d45a6611d3a7269a8d972c900805463f5f0bf6b2a75",
+   "crates/abep-types/tests/data/pyjson_vectors_v1.json": "8d7f76445f758714dd436cb208b243883b38bd95afd8e0e94156ecebed9d12ef",
+   "crates/abep-types/tests/pyjson_vectors.rs": "111021b67c74a663ec4b86baa768de21e19681b8774062d5ac90860a65951c24",
+   "crates/abep-provenance/Cargo.toml": "7e13a3433579dc2f097d16e614a7b941a91d0c4889cc34d2e8beabdda35a8bbf",
+   "crates/abep-provenance/build.rs": "7ab9c6440456ad997ce15816576814bc7c26c857af07045aaceca06921940e27",
+   "crates/abep-provenance/src/bid_guard/acceptance.rs": "187739f27b297b6183928a3f951dc68127708072cb915173539b4582118a6693",
+   "crates/abep-provenance/src/bid_guard.rs": "6f13a31a479deea38caafd78491be295c12f40a41dc39139a4af4e86a3553c7d",
+   "crates/abep-provenance/src/bin/abep-provenance-verify.rs": "99350805d9b01876b29b3e8cdcefe3c9f893c5bc0fd16d8f43b6327549d4cfbe",
+   "crates/abep-provenance/src/git.rs": "68fdacdf9514432ec890fcb153c6ba5d02fbb2e44e6accb0ff5e3d2b918ef69e",
+   "crates/abep-provenance/src/lib.rs": "0beec4429b0d6cc891389d6bc83584b693c7f1698700b03ffac4defe43919761",
+   "crates/abep-provenance/src/run_record.rs": "c36e400a38d411c6fdfad5cf26e962c4dbb074631b4d6e81d1688b3fec9a6a53",
+   "crates/abep-provenance/src/verifier/checks.rs": "8462b1704b9ca0091ade566217db5c77b34c3f074721e0d95c8b9b4e6ccfac1d",
+   "crates/abep-provenance/src/verifier/live_sources.rs": "bab4b17e1900dede61c23ce8bc0407ed021b2ab79458af2c3b6dd0747083d1b1",
+   "crates/abep-provenance/src/verifier/load.rs": "0b9ba7424fc2fe586218fffb66d3073a4ad26717e133364409fee2fcd10edab8",
+   "crates/abep-provenance/src/verifier/mod.rs": "7b7328197f8608d921aead7a0960611553a8b73e3d03bade01012c5cffdf0e25",
+   "crates/abep-provenance/src/verifier/pyliteral.rs": "6a5d3582cdbb41d96fea1cf0d87d8a8f6b1f45250a55892b784bc5c5a31a4537",
+   "crates/abep-provenance/src/verifier/pyvalue.rs": "acbd670dff4e9ea3b6cd5f893c9d001adc14d2883acfba7a66509fef878fc337",
+   "crates/abep-provenance/src/verifier/sha_map.rs": "d0589e3cc5269297407dc4f2f37930b362abe21a75481fb3430be9cc35812191",
+   "crates/abep-provenance/tests/bid_source_guard.rs": "e19ce7a19a6c49b6431a3f3d60260f1c435c4935d9c89c74b3403f94410328be",
+   "crates/abep-provenance/tests/config_manifest.rs": "2674591e5610b528764ec8094b8b1b8e5a94d6999889fd48394e1aaceedd4a34",
+   "crates/abep-provenance/tests/provenance_verifier.rs": "350e26de86bf844c8b4c78b7c6aaa2089613d09b989fdf2e463fe633df4b34f0",
+   "crates/abep-provenance/tests/run_record.rs": "2cd59402c0f52c0f6b8c47f23b991d70750b64f8c968f21fa4834010fd7c456e",
+   "crates/abep-subsystems/Cargo.toml": "803e38117df9dfa173a53028459fa3d8e665a354ed390e96bf46942227813582",
+   "crates/abep-subsystems/src/lib.rs": "17c67683558be66c115acbd6585cb93d66410153efb227a095d0041fb92a4754",
+   "crates/abep-subsystems/src/mass/eval.rs": "0d0334cb93dd44c0c2cdb1946908931435e5d6c7c353f96a8c8f45efeeb9a24e",
+   "crates/abep-subsystems/src/mass/mod.rs": "91ed1a46c9094ef6aab7368d01388d9439f299ad1f8942429212c87a94e00bd4",
+   "crates/abep-subsystems/src/mass/py.rs": "6632750f2c07294b9cfbabdb5124506f0c9a44a45f5233fc284246792ab79b57",
+   "crates/abep-subsystems/src/mass/pyfmt.rs": "3975403f94f2a362cde76ba7e52a285612536e49d055baf11b5675497bd0fd30",
+   "crates/abep-subsystems/src/mass/rules.rs": "201e5f6d6b5d64e2287b4d88e6b7114c94363cb99b912107ab6ed87d97ca9109",
+   "crates/abep-subsystems/src/mass/v5.rs": "6da56f8c0344c7f9ddf8e3c92787245296f077e28eef2ffdc3e0a14133be9d55",
+   "crates/abep-subsystems/src/mass/wet_mass.rs": "7e627e6f5a3b4c37f6bb20f2f4866b011418e2ff763aec4c0429142a015a2de4",
+   "crates/abep-subsystems/src/mass/xe.rs": "a0a46d509b653cdbfa6a5665aa4ef2aaf636d165279ea02166ddd625bbd28ca4",
+   "crates/abep-subsystems/src/bin/abep-mass.rs": "7f49cd96a0f11c6e04027d2454b423fc476e4e900ffb194d855a2491d06896d0"
+  }
+ },
+ "environment": {
+  "python": "3.11.15",
+  "numpy": "2.4.4",
+  "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+  "cargo": "cargo 1.94.1 (29ea6fb6a 2026-03-24)",
+  "platform": "Linux 6.18.44-fc-v70 x86_64",
+  "thread_env": {
+   "OMP_NUM_THREADS": null,
+   "OPENBLAS_NUM_THREADS": null
+  }
+ },
+ "harness_sha256": {
+  "scripts/rust_migration/parity_mass_v1.py": "d6084fa4bba9e3f5786331df490979bd6528224a87abf583a1a18ff656efc5e3",
+  "scripts/rust_migration/parity_common.py": "337b1c74847d21f92c17b5f59b34540d30b2aecefa2f20853e9bca1c4ee17e8c"
+ },
+ "scoring_execution": {
+  "scoring_master_seed": 3918911878,
+  "utc": "2026-10-06T13:09:06+00:00",
+  "calls": 8749,
+  "case_file_sha256": "793111dc0d47abd37d999e4ddd6206f5a95b2653fa140120ea70ca3bc253cf79",
+  "wall_s": 1.172
+ },
+ "per_test": {
+  "by_entry_point": {
+   "_unresolved": {
+    "n": 633,
+    "pass": 633,
+    "fail": 0
+   },
+   "line_mev_value": {
+    "n": 1276,
+    "pass": 1276,
+    "fail": 0
+   },
+   "rollup": {
+    "n": 1021,
+    "pass": 1021,
+    "fail": 0
+   },
+   "system_margin": {
+    "n": 634,
+    "pass": 634,
+    "fail": 0
+   },
+   "harness_row60": {
+    "n": 624,
+    "pass": 624,
+    "fail": 0
+   },
+   "closure_state": {
+    "n": 852,
+    "pass": 852,
+    "fail": 0
+   },
+   "system_margin_bid": {
+    "n": 633,
+    "pass": 633,
+    "fail": 0
+   },
+   "assert_bid_margin_reading": {
+    "n": 531,
+    "pass": 531,
+    "fail": 0
+   },
+   "rk": {
+    "n": 2015,
+    "pass": 2015,
+    "fail": 0
+   },
+   "assert_no_margin_relaxation": {
+    "n": 530,
+    "pass": 530,
+    "fail": 0
+   }
+  },
+  "failures": [],
+  "passed": 8749,
+  "failed": 0
+ },
+ "aggregates": "NOT_APPLICABLE (no STATISTICAL entry point)",
+ "invariants": {
+  "determinism": {
+   "python_twice_identical": true,
+   "rust_twice_identical": true,
+   "note": "abep-mass eval evaluates the call list twice and exits 3 on a difference"
+  },
+  "no_pass_rust": true,
+  "no_pass_python": true,
+  "INV-K02_rollup_identity_rust_failures": [],
+  "INV-K02_rollup_identity_python_failures": [],
+  "VS-K01": {
+   "part": [
+    {
+     "line": "AL-07",
+     "used": "MEV_PLANNING_FLOOR",
+     "kg": 6.0
+    }
+   ],
+   "tbd": [
+    "AL-07: MEV planning floor from an analog / preliminary-design floor, not a CBE"
+   ],
+   "pass": true
+  },
+  "INV-K04": {
+   "cases": 52,
+   "pass_rust": true,
+   "pass_python": true,
+   "pass": true
+  }
+ },
+ "conservation": {
+  "rollups_checked_rust": 919,
+  "violations_rust": [],
+  "rollups_checked_python": 923,
+  "violations_python": [],
+  "pass": true
+ },
+ "record_bytes_E1": "NOT_APPLICABLE",
+ "domain_and_error": {
+  "raised_python": 1361,
+  "raised_rust": 1365,
+  "classes_python": [
+   "KeyError",
+   "MassError",
+   "MassPolicyError",
+   "StopIteration",
+   "TypeError",
+   "ValueError"
+  ],
+  "classes_rust": [
+   "KeyError",
+   "MassError",
+   "MassPolicyError",
+   "StopIteration",
+   "TypeError",
+   "ValueError"
+  ]
+ },
+ "documented_divergence_observed": [
+  {
+   "div": "DIV-K01",
+   "tag": "E-K06 cfg C1",
+   "python": {
+    "outcome": "RETURNED",
+    "value": {
+     "configuration": "hall_c1_reference",
+     "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)",
+     "parts": [
+      {
+       "line": "AL-01",
+       "used": "ALLOCATION_MEV",
+       "kg": 3.5
+      },
+      {
+       "line": "AL-02",
+       "used": "ALLOCATION_MEV",
+       "kg": 5.5
+      },
+      {
+       "line": "AL-03",
+       "used": "ALLOCATION_MEV",
+       "kg": 1.0
+      },
+      {
+       "line": "AL-04",
+       "used": "MEV_PLANNING_FLOOR",
+       "kg": 4.2048
+      },
+      {
+       "line": "AL-05",
+       "used": "ALLOCATION_MEV",
+       "kg": 2.0
+      },
+      {
+       "line": "AL-06",
+       "used": "ALLOCATION_MEV",
+       "kg": 1.5
+      },
+      {
+       "line": "AL-07",
+       "used": "MEV_PLANNING_FLOOR",
+       "kg": 6.0
+      },
+      {
+       "line": "AL-08",
+       "used": "MEV_PLANNING_FLOOR",
+       "kg": 5.9148
+      },
+      {
+       "line": "AL-09",
+       "used": "ALLOCATION_MEV",
+       "kg": 1.0
+      },
+      {
+       "line": "AL-10",
+       "used": "ALLOCATION_MEV",
+       "kg": 2.5
+      },
+      {
+       "line": "AL-HAR",
+       "used": "HARNESS_POLICY_ROW60",
+       "kg": 1.743136842,
+       "partial": false,
+       "note": null
+      }
+     ],
+     "nonharness_known_kg": 33.1196,
+     "harness_kg": 1.743136842,
+     "nominal_dry_known_kg": 34.86273684,
+     "system_margin_kg": 6.972547368,
+     "reserve_kg": 0.0,
+     "dry_known_kg": 41.83528421,
+     "lines_without_value": [],
+     "tbd": [
+      "AL-01: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-02: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-03: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-04: MEV planning floor from an analog / preliminary-design floor, not a CBE",
+      "AL-04: floor INCOMPLETE - channel ceramics, anode/distributor, body, fasteners",
+      "AL-05: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-06: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-07: MEV planning floor from an analog / preliminary-design floor, not a CBE",
+      "AL-08: MEV planning floor from an analog / preliminary-design floor, not a CBE",
+      "AL-08: floor INCOMPLETE - plumbing, mounting/thermal",
+      "AL-09: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-10: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-HAR: harness by the row-60 rule until a routed harness exists (not a CBE)"
+     ],
+     "all_terms_resolved": false,
+     "wet": [
+      {
+       "xe_case_kg": 2.0,
+       "xe_loaded_kg": 2.0,
+       "residual_inside_case_kg": 0.0392157,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 43.83528421,
+       "reference": "HARD_40_WET",
+       "reference_kg": 40.0,
+       "comparator": "<",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 3.83528421,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 3.036266667,
+        "nonharness_nominal_max_kg": 30.08333333,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 2.0,
+       "xe_loaded_kg": 2.0,
+       "residual_inside_case_kg": 0.0392157,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 43.83528421,
+       "reference": "INTERNAL_34",
+       "reference_kg": 34.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 9.83528421,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 7.786266667,
+        "nonharness_nominal_max_kg": 25.33333333,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 2.0,
+       "xe_loaded_kg": 2.0,
+       "residual_inside_case_kg": 0.0392157,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 43.83528421,
+       "reference": "INTERNAL_36",
+       "reference_kg": 36.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 7.83528421,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 6.202933333,
+        "nonharness_nominal_max_kg": 26.91666667,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 5.0,
+       "xe_loaded_kg": 5.0,
+       "residual_inside_case_kg": 0.0980392,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 46.83528421,
+       "reference": "HARD_40_WET",
+       "reference_kg": 40.0,
+       "comparator": "<",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 6.83528421,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 5.411266667,
+        "nonharness_nominal_max_kg": 27.70833333,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 5.0,
+       "xe_loaded_kg": 5.0,
+       "residual_inside_case_kg": 0.0980392,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 46.83528421,
+       "reference": "INTERNAL_34",
+       "reference_kg": 34.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 12.83528421,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 10.16126667,
+        "nonharness_nominal_max_kg": 22.95833333,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 5.0,
+       "xe_loaded_kg": 5.0,
+       "residual_inside_case_kg": 0.0980392,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 46.83528421,
+       "reference": "INTERNAL_36",
+       "reference_kg": 36.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 10.83528421,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 8.577933333,
+        "nonharness_nominal_max_kg": 24.54166667,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 10.0,
+       "xe_loaded_kg": 10.0,
+       "residual_inside_case_kg": 0.196078,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 51.83528421,
+       "reference": "HARD_40_WET",
+       "reference_kg": 40.0,
+       "comparator": "<",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 11.83528421,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 9.3696,
+        "nonharness_nominal_max_kg": 23.75,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 10.0,
+       "xe_loaded_kg": 10.0,
+       "residual_inside_case_kg": 0.196078,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 51.83528421,
+       "reference": "INTERNAL_34",
+       "reference_kg": 34.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 17.83528421,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 14.1196,
+        "nonharness_nominal_max_kg": 19.0,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 10.0,
+       "xe_loaded_kg": 10.0,
+       "residual_inside_case_kg": 0.196078,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 51.83528421,
+       "reference": "INTERNAL_36",
+       "reference_kg": 36.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 15.83528421,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 12.53626667,
+        "nonharness_nominal_max_kg": 20.58333333,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      }
+     ]
+    }
+   },
+   "rust": {
+    "outcome": "RAISED",
+    "class": "MassError",
+    "message": "rollup configuration 'hall_c1_reference' refused: the only flight configuration is 'hall_icp_neutralizer' (A9.19 / A9.20: C1 is GROUND_REFERENCE_ONLY and never enters a flight mass roll-up)"
+   },
+   "rust_matches_registered": true
+  },
+  {
+   "div": "DIV-K01",
+   "tag": "E-K06 cfg X",
+   "python": {
+    "outcome": "RETURNED",
+    "value": {
+     "configuration": "X",
+     "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)",
+     "parts": [
+      {
+       "line": "AL-01",
+       "used": "ALLOCATION_MEV",
+       "kg": 3.5
+      },
+      {
+       "line": "AL-02",
+       "used": "ALLOCATION_MEV",
+       "kg": 5.5
+      },
+      {
+       "line": "AL-03",
+       "used": "ALLOCATION_MEV",
+       "kg": 1.0
+      },
+      {
+       "line": "AL-04",
+       "used": "MEV_PLANNING_FLOOR",
+       "kg": 4.2048
+      },
+      {
+       "line": "AL-05",
+       "used": "ALLOCATION_MEV",
+       "kg": 2.0
+      },
+      {
+       "line": "AL-06",
+       "used": "ALLOCATION_MEV",
+       "kg": 1.5
+      },
+      {
+       "line": "AL-07",
+       "used": "MEV_PLANNING_FLOOR",
+       "kg": 6.0
+      },
+      {
+       "line": "AL-08",
+       "used": "MEV_PLANNING_FLOOR",
+       "kg": 5.9148
+      },
+      {
+       "line": "AL-09",
+       "used": "ALLOCATION_MEV",
+       "kg": 1.0
+      },
+      {
+       "line": "AL-10",
+       "used": "ALLOCATION_MEV",
+       "kg": 2.5
+      },
+      {
+       "line": "AL-HAR",
+       "used": "HARNESS_POLICY_ROW60",
+       "kg": 1.743136842,
+       "partial": false,
+       "note": null
+      }
+     ],
+     "nonharness_known_kg": 33.1196,
+     "harness_kg": 1.743136842,
+     "nominal_dry_known_kg": 34.86273684,
+     "system_margin_kg": 6.972547368,
+     "reserve_kg": 0.0,
+     "dry_known_kg": 41.83528421,
+     "lines_without_value": [],
+     "tbd": [
+      "AL-01: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-02: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-03: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-04: MEV planning floor from an analog / preliminary-design floor, not a CBE",
+      "AL-04: floor INCOMPLETE - channel ceramics, anode/distributor, body, fasteners",
+      "AL-05: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-06: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-07: MEV planning floor from an analog / preliminary-design floor, not a CBE",
+      "AL-08: MEV planning floor from an analog / preliminary-design floor, not a CBE",
+      "AL-08: floor INCOMPLETE - plumbing, mounting/thermal",
+      "AL-09: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-10: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-HAR: harness by the row-60 rule until a routed harness exists (not a CBE)"
+     ],
+     "all_terms_resolved": false,
+     "wet": [
+      {
+       "xe_case_kg": 2.0,
+       "xe_loaded_kg": 2.0,
+       "residual_inside_case_kg": 0.0392157,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 43.83528421,
+       "reference": "HARD_40_WET",
+       "reference_kg": 40.0,
+       "comparator": "<",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 3.83528421,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 3.036266667,
+        "nonharness_nominal_max_kg": 30.08333333,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 2.0,
+       "xe_loaded_kg": 2.0,
+       "residual_inside_case_kg": 0.0392157,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 43.83528421,
+       "reference": "INTERNAL_34",
+       "reference_kg": 34.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 9.83528421,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 7.786266667,
+        "nonharness_nominal_max_kg": 25.33333333,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 2.0,
+       "xe_loaded_kg": 2.0,
+       "residual_inside_case_kg": 0.0392157,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 43.83528421,
+       "reference": "INTERNAL_36",
+       "reference_kg": 36.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 7.83528421,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 6.202933333,
+        "nonharness_nominal_max_kg": 26.91666667,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 5.0,
+       "xe_loaded_kg": 5.0,
+       "residual_inside_case_kg": 0.0980392,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 46.83528421,
+       "reference": "HARD_40_WET",
+       "reference_kg": 40.0,
+       "comparator": "<",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 6.83528421,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 5.411266667,
+        "nonharness_nominal_max_kg": 27.70833333,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 5.0,
+       "xe_loaded_kg": 5.0,
+       "residual_inside_case_kg": 0.0980392,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 46.83528421,
+       "reference": "INTERNAL_34",
+       "reference_kg": 34.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 12.83528421,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 10.16126667,
+        "nonharness_nominal_max_kg": 22.95833333,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 5.0,
+       "xe_loaded_kg": 5.0,
+       "residual_inside_case_kg": 0.0980392,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 46.83528421,
+       "reference": "INTERNAL_36",
+       "reference_kg": 36.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 10.83528421,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 8.577933333,
+        "nonharness_nominal_max_kg": 24.54166667,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 10.0,
+       "xe_loaded_kg": 10.0,
+       "residual_inside_case_kg": 0.196078,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 51.83528421,
+       "reference": "HARD_40_WET",
+       "reference_kg": 40.0,
+       "comparator": "<",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 11.83528421,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 9.3696,
+        "nonharness_nominal_max_kg": 23.75,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 10.0,
+       "xe_loaded_kg": 10.0,
+       "residual_inside_case_kg": 0.196078,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 51.83528421,
+       "reference": "INTERNAL_34",
+       "reference_kg": 34.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 17.83528421,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 14.1196,
+        "nonharness_nominal_max_kg": 19.0,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 10.0,
+       "xe_loaded_kg": 10.0,
+       "residual_inside_case_kg": 0.196078,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 51.83528421,
+       "reference": "INTERNAL_36",
+       "reference_kg": 36.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 15.83528421,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 12.53626667,
+        "nonharness_nominal_max_kg": 20.58333333,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      }
+     ]
+    }
+   },
+   "rust": {
+    "outcome": "RAISED",
+    "class": "MassError",
+    "message": "rollup configuration 'X' refused: the only flight configuration is 'hall_icp_neutralizer' (A9.19 / A9.20: C1 is GROUND_REFERENCE_ONLY and never enters a flight mass roll-up)"
+   },
+   "rust_matches_registered": true
+  },
+  {
+   "div": "DIV-K02",
+   "tag": "E-K06 AL-C1 None",
+   "python": {
+    "outcome": "RETURNED",
+    "value": {
+     "configuration": "hall_icp_neutralizer",
+     "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)",
+     "parts": [
+      {
+       "line": "AL-01",
+       "used": "ALLOCATION_MEV",
+       "kg": 3.5
+      },
+      {
+       "line": "AL-02",
+       "used": "ALLOCATION_MEV",
+       "kg": 5.5
+      },
+      {
+       "line": "AL-03",
+       "used": "ALLOCATION_MEV",
+       "kg": 1.0
+      },
+      {
+       "line": "AL-04",
+       "used": "MEV_PLANNING_FLOOR",
+       "kg": 4.2048
+      },
+      {
+       "line": "AL-05",
+       "used": "ALLOCATION_MEV",
+       "kg": 2.0
+      },
+      {
+       "line": "AL-06",
+       "used": "ALLOCATION_MEV",
+       "kg": 1.5
+      },
+      {
+       "line": "AL-07",
+       "used": "MEV_PLANNING_FLOOR",
+       "kg": 6.0
+      },
+      {
+       "line": "AL-08",
+       "used": "MEV_PLANNING_FLOOR",
+       "kg": 5.9148
+      },
+      {
+       "line": "AL-09",
+       "used": "ALLOCATION_MEV",
+       "kg": 1.0
+      },
+      {
+       "line": "AL-10",
+       "used": "ALLOCATION_MEV",
+       "kg": 2.5
+      },
+      {
+       "line": "AL-C1",
+       "used": null,
+       "kg": null
+      },
+      {
+       "line": "AL-HAR",
+       "used": "HARNESS_POLICY_ROW60",
+       "kg": 1.743136842,
+       "partial": true,
+       "note": "computed on the known non-harness part only"
+      }
+     ],
+     "nonharness_known_kg": 33.1196,
+     "harness_kg": 1.743136842,
+     "nominal_dry_known_kg": 34.86273684,
+     "system_margin_kg": 6.972547368,
+     "reserve_kg": 0.0,
+     "dry_known_kg": 41.83528421,
+     "lines_without_value": [
+      "AL-C1"
+     ],
+     "tbd": [
+      "AL-01: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-02: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-03: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-04: MEV planning floor from an analog / preliminary-design floor, not a CBE",
+      "AL-04: floor INCOMPLETE - channel ceramics, anode/distributor, body, fasteners",
+      "AL-05: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-06: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-07: MEV planning floor from an analog / preliminary-design floor, not a CBE",
+      "AL-08: MEV planning floor from an analog / preliminary-design floor, not a CBE",
+      "AL-08: floor INCOMPLETE - plumbing, mounting/thermal",
+      "AL-09: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-10: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-C1: NO VALUE - no value (excluded from the known part)",
+      "AL-HAR: harness by the row-60 rule until a routed harness exists (not a CBE)"
+     ],
+     "all_terms_resolved": false,
+     "wet": [
+      {
+       "xe_case_kg": 2.0,
+       "xe_loaded_kg": 2.0,
+       "residual_inside_case_kg": 0.0392157,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 43.83528421,
+       "reference": "HARD_40_WET",
+       "reference_kg": 40.0,
+       "comparator": "<",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 3.83528421,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 3.036266667,
+        "nonharness_nominal_max_kg": 30.08333333,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 2.0,
+       "xe_loaded_kg": 2.0,
+       "residual_inside_case_kg": 0.0392157,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 43.83528421,
+       "reference": "INTERNAL_34",
+       "reference_kg": 34.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 9.83528421,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 7.786266667,
+        "nonharness_nominal_max_kg": 25.33333333,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 2.0,
+       "xe_loaded_kg": 2.0,
+       "residual_inside_case_kg": 0.0392157,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 43.83528421,
+       "reference": "INTERNAL_36",
+       "reference_kg": 36.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 7.83528421,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 6.202933333,
+        "nonharness_nominal_max_kg": 26.91666667,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 5.0,
+       "xe_loaded_kg": 5.0,
+       "residual_inside_case_kg": 0.0980392,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 46.83528421,
+       "reference": "HARD_40_WET",
+       "reference_kg": 40.0,
+       "comparator": "<",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 6.83528421,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 5.411266667,
+        "nonharness_nominal_max_kg": 27.70833333,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 5.0,
+       "xe_loaded_kg": 5.0,
+       "residual_inside_case_kg": 0.0980392,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 46.83528421,
+       "reference": "INTERNAL_34",
+       "reference_kg": 34.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 12.83528421,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 10.16126667,
+        "nonharness_nominal_max_kg": 22.95833333,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 5.0,
+       "xe_loaded_kg": 5.0,
+       "residual_inside_case_kg": 0.0980392,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 46.83528421,
+       "reference": "INTERNAL_36",
+       "reference_kg": 36.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 10.83528421,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 8.577933333,
+        "nonharness_nominal_max_kg": 24.54166667,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 10.0,
+       "xe_loaded_kg": 10.0,
+       "residual_inside_case_kg": 0.196078,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 51.83528421,
+       "reference": "HARD_40_WET",
+       "reference_kg": 40.0,
+       "comparator": "<",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 11.83528421,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 9.3696,
+        "nonharness_nominal_max_kg": 23.75,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 10.0,
+       "xe_loaded_kg": 10.0,
+       "residual_inside_case_kg": 0.196078,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 51.83528421,
+       "reference": "INTERNAL_34",
+       "reference_kg": 34.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 17.83528421,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 14.1196,
+        "nonharness_nominal_max_kg": 19.0,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 10.0,
+       "xe_loaded_kg": 10.0,
+       "residual_inside_case_kg": 0.196078,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 51.83528421,
+       "reference": "INTERNAL_36",
+       "reference_kg": 36.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 15.83528421,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 12.53626667,
+        "nonharness_nominal_max_kg": 20.58333333,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      }
+     ]
+    }
+   },
+   "rust": {
+    "outcome": "RAISED",
+    "class": "MassError",
+    "message": "AL-C1: C1 is GROUND_REFERENCE_ONLY (A9.19 / A9.20); no C1 line enters a flight mass roll-up"
+   },
+   "rust_matches_registered": true
+  },
+  {
+   "div": "DIV-K02",
+   "tag": "E-K06 AL-C1 0.5",
+   "python": {
+    "outcome": "RETURNED",
+    "value": {
+     "configuration": "hall_icp_neutralizer",
+     "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading)",
+     "parts": [
+      {
+       "line": "AL-01",
+       "used": "ALLOCATION_MEV",
+       "kg": 3.5
+      },
+      {
+       "line": "AL-02",
+       "used": "ALLOCATION_MEV",
+       "kg": 5.5
+      },
+      {
+       "line": "AL-03",
+       "used": "ALLOCATION_MEV",
+       "kg": 1.0
+      },
+      {
+       "line": "AL-04",
+       "used": "MEV_PLANNING_FLOOR",
+       "kg": 4.2048
+      },
+      {
+       "line": "AL-05",
+       "used": "ALLOCATION_MEV",
+       "kg": 2.0
+      },
+      {
+       "line": "AL-06",
+       "used": "ALLOCATION_MEV",
+       "kg": 1.5
+      },
+      {
+       "line": "AL-07",
+       "used": "MEV_PLANNING_FLOOR",
+       "kg": 6.0
+      },
+      {
+       "line": "AL-08",
+       "used": "MEV_PLANNING_FLOOR",
+       "kg": 5.9148
+      },
+      {
+       "line": "AL-09",
+       "used": "ALLOCATION_MEV",
+       "kg": 1.0
+      },
+      {
+       "line": "AL-10",
+       "used": "ALLOCATION_MEV",
+       "kg": 2.5
+      },
+      {
+       "line": "AL-C1",
+       "used": "ALLOCATION_MEV",
+       "kg": 0.5
+      },
+      {
+       "line": "AL-HAR",
+       "used": "HARNESS_POLICY_ROW60",
+       "kg": 1.769452632,
+       "partial": false,
+       "note": null
+      }
+     ],
+     "nonharness_known_kg": 33.6196,
+     "harness_kg": 1.769452632,
+     "nominal_dry_known_kg": 35.38905263,
+     "system_margin_kg": 7.077810526,
+     "reserve_kg": 0.0,
+     "dry_known_kg": 42.46686316,
+     "lines_without_value": [],
+     "tbd": [
+      "AL-01: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-02: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-03: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-04: MEV planning floor from an analog / preliminary-design floor, not a CBE",
+      "AL-04: floor INCOMPLETE - channel ceramics, anode/distributor, body, fasteners",
+      "AL-05: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-06: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-07: MEV planning floor from an analog / preliminary-design floor, not a CBE",
+      "AL-08: MEV planning floor from an analog / preliminary-design floor, not a CBE",
+      "AL-08: floor INCOMPLETE - plumbing, mounting/thermal",
+      "AL-09: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-10: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-C1: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-HAR: harness by the row-60 rule until a routed harness exists (not a CBE)"
+     ],
+     "all_terms_resolved": false,
+     "wet": [
+      {
+       "xe_case_kg": 2.0,
+       "xe_loaded_kg": 2.0,
+       "residual_inside_case_kg": 0.0392157,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 44.46686316,
+       "reference": "HARD_40_WET",
+       "reference_kg": 40.0,
+       "comparator": "<",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 4.46686316,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 3.536266667,
+        "nonharness_nominal_max_kg": 30.08333333,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 2.0,
+       "xe_loaded_kg": 2.0,
+       "residual_inside_case_kg": 0.0392157,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 44.46686316,
+       "reference": "INTERNAL_34",
+       "reference_kg": 34.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 10.46686316,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 8.286266667,
+        "nonharness_nominal_max_kg": 25.33333333,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 2.0,
+       "xe_loaded_kg": 2.0,
+       "residual_inside_case_kg": 0.0392157,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 44.46686316,
+       "reference": "INTERNAL_36",
+       "reference_kg": 36.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 8.46686316,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 6.702933333,
+        "nonharness_nominal_max_kg": 26.91666667,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 5.0,
+       "xe_loaded_kg": 5.0,
+       "residual_inside_case_kg": 0.0980392,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 47.46686316,
+       "reference": "HARD_40_WET",
+       "reference_kg": 40.0,
+       "comparator": "<",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 7.46686316,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 5.911266667,
+        "nonharness_nominal_max_kg": 27.70833333,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 5.0,
+       "xe_loaded_kg": 5.0,
+       "residual_inside_case_kg": 0.0980392,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 47.46686316,
+       "reference": "INTERNAL_34",
+       "reference_kg": 34.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 13.46686316,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 10.66126667,
+        "nonharness_nominal_max_kg": 22.95833333,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 5.0,
+       "xe_loaded_kg": 5.0,
+       "residual_inside_case_kg": 0.0980392,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 47.46686316,
+       "reference": "INTERNAL_36",
+       "reference_kg": 36.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 11.46686316,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 9.077933333,
+        "nonharness_nominal_max_kg": 24.54166667,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 10.0,
+       "xe_loaded_kg": 10.0,
+       "residual_inside_case_kg": 0.196078,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 52.46686316,
+       "reference": "HARD_40_WET",
+       "reference_kg": 40.0,
+       "comparator": "<",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 12.46686316,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 9.8696,
+        "nonharness_nominal_max_kg": 23.75,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 10.0,
+       "xe_loaded_kg": 10.0,
+       "residual_inside_case_kg": 0.196078,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 52.46686316,
+       "reference": "INTERNAL_34",
+       "reference_kg": 34.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 18.46686316,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 14.6196,
+        "nonharness_nominal_max_kg": 19.0,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      },
+      {
+       "xe_case_kg": 10.0,
+       "xe_loaded_kg": 10.0,
+       "residual_inside_case_kg": 0.196078,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 52.46686316,
+       "reference": "INTERNAL_36",
+       "reference_kg": 36.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 16.46686316,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 13.03626667,
+        "nonharness_nominal_max_kg": 20.58333333,
+        "rule": "MQ-10: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the margin reading is not relaxed; the lines without a value add to this need when known"
+       }
+      }
+     ]
+    }
+   },
+   "rust": {
+    "outcome": "RAISED",
+    "class": "MassError",
+    "message": "AL-C1: C1 is GROUND_REFERENCE_ONLY (A9.19 / A9.20); no C1 line enters a flight mass roll-up"
+   },
+   "rust_matches_registered": true
+  }
+ ],
+ "performance": {
+  "status": "reported, not a decision criterion (A9.24 items 1 and 6)",
+  "PERF-K01": {
+   "python_s": 0.535587119000013,
+   "rust_process_s": 2.115908031999993,
+   "note": "Rust: one `abep-mass eval` process evaluating the 2000-call list twice (determinism) incl. JSON I/O; Python: 2000 in-process calls",
+   "speed_up_median_python_over_median_rust": 0.253
+  },
+  "machine": {
+   "python": "3.11.15",
+   "numpy": "2.4.4",
+   "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+   "cargo": "cargo 1.94.1 (29ea6fb6a 2026-03-24)",
+   "platform": "Linux 6.18.44-fc-v70 x86_64",
+   "thread_env": {
+    "OMP_NUM_THREADS": null,
+    "OPENBLAS_NUM_THREADS": null
+   }
+  }
+ },
+ "captured_reference_outputs": {
+  "path": "docs/rust_migration/contracts/K-MASS-RULES/reference_outputs/",
+  "files": {
+   "python_outcomes_v1.json.gz": "65a23f2db43dcea9f36893b100b8232716999346e5bd80bd56eda5909456db15"
+  },
+  "uncompressed_sha256": "46a827765bd132f67dc5027f68b1c6e26c87e657b4794f96a25231d466984f4e",
+  "entries": 8749,
+  "captured_at_python_commit": "1e2f66d72c01d3d0d413ff85c62de17f528d8f31",
+  "replay": "crates/abep-subsystems/tests/mass_captured_replay.rs (added after scoring; not a provenance source of the scored build)"
+ },
+ "campaign_history": [
+  {
+   "execution": "scoring",
+   "seed": 3918911878,
+   "verdict": "ADMITTED",
+   "rust_commit": "53768f924f03340ac6e6ac99765eb590ddca66e6",
+   "utc": "2026-10-06T13:09:06+00:00"
+  }
+ ],
+ "development_runs": "development comparisons used development_master_seed 7101 and the registered deterministic vectors only; never scored",
+ "ledger_update_requested": [
+  {
+   "row": "C-DOCS_BUDGETS_MASS_POWER_A9_V3",
+   "kernel": "K-MASS-RULES",
+   "partial_admission": {
+    "scope": "extract_and_parity_kernel K-MASS-RULES: rk, _kg, line_mev_value, system_margin, harness_row60, closure_state, _unresolved, assert_no_margin_relaxation, rollup (v3 builder) + system_margin_bid, assert_bid_margin_reading (v5 builder)",
+    "status": "ADMITTED",
+    "parity": "PARITY_PASS",
+    "rust_implementation": {
+     "crate": "abep-subsystems (abep_subsystems::mass::rules)",
+     "paths": [
+      "crates/abep-subsystems/src/mass/rules.rs"
+     ]
+    },
+    "contract": {
+     "path": "docs/rust_migration/contracts/K-MASS-RULES/parity_prereg_v1.json",
+     "id": "PARITY-K-MASS-RULES-V1",
+     "sha256": "0e962c03bc01abb9afde184c48c83427c295710310112bb3d23a5e37ac0f302c"
+    },
+    "admission_evidence": "docs/rust_migration/contracts/K-MASS-RULES/parity_report_v1.json",
+    "report_disclosures": "registered divergences DIV-K01 / DIV-K02 (Rust refuses a C1 / non-flight roll-up)"
+   },
+   "row_status": "unchanged (class H host; the v3 record stays history)",
+   "active_consumer": "C-DOCS_BUDGETS_MASS_POWER_A9_V5"
+  }
+ ],
+ "notes": [
+  "CPython 3.11 builtin sum() over floats is sequential double addition (3.12+ uses compensated summation); the Rust kernel reproduces the 3.11 reference environment.",
+  "DIV-K01 / DIV-K02: the Rust roll-up refuses a non-flight configuration and any AL-C1 line (C1 GROUND_REFERENCE_ONLY never enters a flight mass roll-up); scored against the registered Rust outcome.",
+  "TypeError messages of malformed inputs differ in wording (class scored only, as registered)."
+ ],
+ "meaning_of_ADMITTED": "A9.24 item 1: Rust (abep_subsystems::mass::rules) becomes authoritative for the K-MASS-RULES roll-up / margin / harness / closure rules within the registered domain; it is NOT physics validation, not a mass-compliance verdict and not a gate PASS",
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, budget record, threshold or requirement",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27): AL-07 6.0 kg stays PROVISIONAL_LEGACY_DERIVED_ANALOG_INPUT / AFI-02-RA1_OPEN; no line becomes a CBE, measured mass or frozen flight truth",
+  "not a gate PASS: mass compliance stays INCOMPLETE_EVIDENCE / NOT_YET_CLOSED (DOES_NOT_CLOSE visible); absent determining evidence stays NOT_EVALUATED / INCOMPLETE_EVIDENCE (RM-R31)"
+ ]
+}
