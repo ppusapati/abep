@@ -1,0 +1,336 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY-V1",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "component": {
+  "inventory_id": "C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY",
+  "inventory_ids_in_group": [
+   "C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY",
+   "C-ABEP_SIM_PROGRAMME_DESIGN_SYNTHESIS_PY (design part)",
+   "C-ABEP_SIM_DESIGN_UPSTREAM_A9_13_PY (require_all_admitted_scenarios, robust_over_scenarios: the SC-WP-10 elements of that module)",
+   "C-ABEP_SIM_DESIGN_A9_19_ARCHITECTURE_PY (is_conditional_c1_text: its a9_19 contract left it for 'a later contract with its design-layer consumers')"
+  ],
+  "inventory_path": "docs/rust_migration/component_inventory_v3_1.json",
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "migration_wave": "W4 (architecture_optimizer) / W12 (programme design_synthesis)",
+  "scope": "coupled group (RM-R17): the F7 design synthesis functions of SC-WP-10 element 'F7/F8 design synthesis' that are not admitted elsewhere, in the design layer only",
+  "functions_or_entry_points": [
+   "abep_sim/design/architecture_optimizer.py::load_upstream_inputs (UpstreamInputs: candidates, geometry, scenarios, records, plants, designs, filters, drag_per_area; with plenum_feed.load_f1_records / f1_state_infeasibility and intake_synthesis.load_f1_view, states, stable F1 view decoding, which it calls)",
+   "abep_sim/design/architecture_optimizer.py::upstream_context (with wall_gamma, plenum, ripple_transfer_arrays, context_role, design_id, context_id, UPSTREAM_TARGETS_PA, VOLUMES_M3, WALL_CASES, UPSTREAM_OBJECTIVES, OBJ_KEYS, OBJ_SENSE, SYSTEM_NOT_EVALUATED_CODES)",
+   "abep_sim/design/architecture_optimizer.py::pareto_mask",
+   "abep_sim/design/architecture_optimizer.py::nondominated_layers",
+   "abep_sim/design/architecture_optimizer.py::higher_pressure_branch",
+   "abep_sim/design/architecture_optimizer.py::design_vector_blocks",
+   "abep_sim/design/architecture_optimizer.py::flight_configuration_elements (with _line_hc_elements, _floor_c1_resolution, ground_reference_lines, _EMBEDDED_C1_RE and a9_19_architecture.is_conditional_c1_text)",
+   "abep_sim/design/architecture_optimizer.py::architecture_questions",
+   "abep_sim/design/architecture_optimizer.py::heat_rejection (supplied=None)",
+   "abep_sim/design/architecture_optimizer.py::electron_margin (supplied=None)",
+   "abep_sim/design/architecture_optimizer.py::hall_gated_thrust",
+   "abep_sim/design/architecture_optimizer.py::tpmc_backend_policy",
+   "abep_sim/programme/design_synthesis.py::context_pareto (design part: every member field except ripple_feed_quality, which is the HC-12 assessment of the carried ripple_transfer_shaft)",
+   "abep_sim/programme/design_synthesis.py::rank_full_system (the design-layer refusal stages REFUSED_NO_FEASIBLE on an empty list, REFUSED_INCOMPLETE and REFUSED_PARAMETRIC_UPSTREAM; a record set that passes them is reported as PROCEED_TO_ASSESSMENT)",
+   "abep_sim/design/upstream_a9_13.py::require_all_admitted_scenarios",
+   "abep_sim/design/upstream_a9_13.py::robust_over_scenarios"
+  ],
+  "out_of_scope": [
+   "already ADMITTED and reused, never duplicated: drag_table, hall_response_status, supplied_objective, _obj, thrust_minus_drag (abep-mission, PARITY-C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY-DRAG_KERNEL-V1); wet_mass (abep-subsystems mass, PARITY-C-DOCS_BUDGETS_MASS_POWER_A9_V5-V1 E7); official_ledger and bus_power without its gate verdict (abep-subsystems power, PARITY-C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY-V1 E8 / E9); life_material_indicators for a design without u_tip (abep-subsystems life, LIFE_MATERIAL_KERNEL); refuse_hollow_cathode_elements / hollow_cathode_elements / is_c1_absence_text / is_c1_absent_branch_state (abep-config, PARITY-C-ABEP_SIM_DESIGN_A9_19_ARCHITECTURE_PY-V1); the F2 filter cases, the F3 compressor plant and the F4 steady sweep (abep-gaspath; see dependency_note)",
+   "assessment functions (A9.22 layer separation; dependency rule design <- assess, SC-WP-11): context_pareto's ripple_feed_quality column, bus_power's supplied-ledger gate verdict, evaluate_system (it applies design_gates.evaluate_constraints / propellant_paths_check and the HC table), rank_full_system after its refusal stages (constraint_met_value_kinds, hard_constraint_partition, REFUSED_MIXED decision and layer computation on admissible records), statewise_T_minus_D, feed_quality",
+   "_life_material / life_material_indicators with a design carrying u_tip_turbo_mps (rotor qualification branch: owned by the abep-subsystems life kernel; a later contract)",
+   "hall_admissibility (h1_geometry, SC-WP-03 row), intake_mass_code_default / intake_mass_budget_record (intake_synthesis geometric mass model, SC-WP-02 row)",
+   "read_json / read_f1 caches (replaced by sha256-pinned readers)",
+   "the deprecated module __getattr__ shims"
+  ],
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+  "extract_kernel_id": "NOT_APPLICABLE",
+  "active_toolchain_requirement": "NOT_APPLICABLE",
+  "excluded_legacy_paths": [
+   "uq6 / uq_modular / mission_uq / uncertainty / archengine / arch_compare / breakeven / explorer / sizing / thresholds / convergence (SC-WP-10 excluded_legacy_not_ported)",
+   "hall_c1_reference as a flight configuration (A9.19 / A9.20: refused; it appears only as the ground-reference label whose own text is read for the embedded-C1 refusal check)"
+  ],
+  "owner_disposition_a9_28": "NOT_APPLICABLE",
+  "simulation_completion_wp": "SC-WP-10 (element 'F7/F8 design synthesis')",
+  "owner_disposition_a9_29": "NOT_APPLICABLE",
+  "dependency_note": "the steady gas path (intake_side, steady_sweep, Plenum, CompressorPlant, filter_cases, steady_operating_point) is consumed from abep-gaspath: F2 filter and F3 compressor are ADMITTED; the plenum / feed group is NOT_ADMITTED only for its transient entries (v1 / v2 failures all in transient_run / transient_case / orbit_simulated; its steady, sweep and quasi-static entries passed both scorings). This contract scores the F7 outputs end to end, which exercises that steady path again; it does not admit abep-gaspath functions."
+ },
+ "date": "2026-10-06",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of these functions was executed (lane SC-WP-10, branch lane-wp10-uq). A Rust draft of the functions exists at registration; no comparison of it with the Python reference has been run. The registration commit is recorded in the report.",
+ "supersedes": {
+  "path": null,
+  "sha256": null,
+  "reason": "first version"
+ },
+ "reference_implementation": {
+  "python_commit": "0d8922cfe39b5bb7f90ddf290702342182eb5d7c",
+  "files": [
+   {"path": "abep_sim/design/architecture_optimizer.py", "sha256_at_registration": "fff94c1e09052b1a4064e72ea817a5e1c7a2f9245c68d33fd7c18ac2b99030af"},
+   {"path": "abep_sim/programme/design_synthesis.py", "sha256_at_registration": "a9ee90672ad99c352e4ce77f74a5078ec742119dfd347ebbd485f22894838455"},
+   {"path": "abep_sim/design/upstream_a9_13.py", "sha256_at_registration": "384b24086c1cc779707d7cb958b9ccd8cb58edf337d629727d923ab659a30af5"},
+   {"path": "abep_sim/design/plenum_feed.py", "sha256_at_registration": "dbc28212e4c3d79a60c0cae7f875c62291ea3e90dbdc491b2bcfaa5f967d616b"},
+   {"path": "abep_sim/design/intake_synthesis.py", "sha256_at_registration": "104ac561c05d8516c0571bc88339d69c4ab6abc78f8bfeeacea8696e557f2191"},
+   {"path": "abep_sim/design/compressor_synthesis.py", "sha256_at_registration": "b7b9ffd9f62e0343c7d4a7297c5106a5dcb70d7d9cbaef3ce96a4ce8f7894b7e"},
+   {"path": "abep_sim/design/a9_19_architecture.py", "sha256_at_registration": "8a4ccfb00fc2bb5a9f00b8a405e9c816e2d025d6d91c8bbef25f50300d4d226b"},
+   {"path": "abep_sim/compressor.py", "sha256_at_registration": "7a8dfe5b64d269474863410f6e42a886c6d3f57015c05491880d65251dfafc75"},
+   {"path": "abep_sim/design/filter_stage.py", "sha256_at_registration": "69991f070ac5c0c8ea4b053359e116b34ff74cdc8349c87d61b24e42d8ba82b7"},
+   {"path": "abep_sim/reservoir.py", "sha256_at_registration": "9a7894a47169f1d77e8c66a196002c5456e955b9eb72d81bb9e1440c90ae29af"},
+   {"path": "abep_sim/bus_boundary_a9_v2.py", "sha256_at_registration": "8964520ffb55d97eeb93c4b8cc45250026e0c6a0b3082ea58fcfd834ba661e26"}
+  ],
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration; a changed reference requires a new contract version",
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4",
+   "scipy": "1.17.1",
+   "pandas": "3.0.2",
+   "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+   "blas": "scipy-openblas bundled with numpy 2.4.4 (no BLAS call on a scored path: elementwise numpy only)",
+   "thread_env": {"OMP_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1"}
+  }
+ },
+ "rust_implementation": {
+  "crate": "abep-design (+ the abep-uq harness binary)",
+  "functions_or_entry_points": [
+   "abep_design::inputs::{load_upstream_inputs, UpstreamInputs, materials_view, read_pinned}",
+   "abep_design::f1view::{F1View, load_f1_records, f1_state_infeasibility, state_ids_in_reason}",
+   "abep_design::optimizer::{upstream_context, Context, wall_gamma, plenum, ripple_transfer, design_id, context_id, context_role, higher_pressure_branch, pareto_mask, nondominated_layers}",
+   "abep_design::synthesis::{context_pareto, ParetoBlock, rank_precheck, RankPrecheck}",
+   "abep_design::records::{design_vector_blocks, flight_configuration_elements, is_conditional_c1_text, architecture_questions, heat_rejection, electron_margin, hall_gated_thrust, tpmc_backend_policy}",
+   "abep_uq::robust::{require_all_admitted_scenarios, robust_over_scenarios}",
+   "`abep-design-uq eval <calls.json>` and `abep-design-uq study <spec.json> <out_dir>` (harness interface; crates/abep-uq/src/bin/abep_design_uq.rs)"
+  ],
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (rust-toolchain.toml)",
+  "provenance_sources": ["Cargo.toml", "Cargo.lock", "crates/abep-design/**", "crates/abep-uq/**", "crates/abep-rng/**", "crates/abep-gaspath/**", "crates/abep-mission/**", "crates/abep-subsystems/**", "crates/abep-config/**"],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it (A9.14 S10.4 RUSTCI-1, generalised)"
+ },
+ "governing_hashes": {
+  "config_manifest": {"path": "config/MANIFEST.json", "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"},
+  "architecture_hash": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3 (config/architecture/hall_icp_neutralizer_v1.json, abep-config pin)",
+  "model_set_hash": "NOT_APPLICABLE",
+  "design_state_set_hash": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049 (abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json)",
+  "rule": "both implementations must report these exact values for every run; a mismatch voids the run (status INPUT_MISMATCH, not a verdict)"
+ },
+ "pinned_inputs_sha256": {
+  "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854",
+  "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json": "6871975696f7b40dac897c52b529266eb053ecbf4ea7ab17cb3e3fbdac73a27b",
+  "docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json": "74a52aa749e1d071f76957e4f9ef4929c9d8ab302b183da3c5a5d9ba8d6d6923",
+  "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json": "fffb223023f944f166112acf017af277a50ede84695cb78f933dd5ca918fd3a9",
+  "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8",
+  "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450",
+  "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json": "1db2b13e82389fc824acc24f6b6b9aafb11b950b9c5546347cc8037b2bdb132a",
+  "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json": "f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b",
+  "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+  "docs/performance/abep_core/parity_report_v1.json": "09cf58a9dac3aea1aed2e3a343310d189c980a78ec699a75f7bc494c161418f8",
+  "hallthruster_bridge/ensemble/transport_ensemble_v0.json": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b",
+  "hallthruster_bridge/validation/VALIDATION_RELEASE_v1.json": "0a57a397883141be20196853b7d722404dc3cb20c72fba666121fd43507dc97c",
+  "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049"
+ },
+ "frozen_data_read_only": [
+  "abep_sim/data/atmosphere_msis21_v1.* and the design-state set v2 (through the admitted abep-atmos / abep-data readers)",
+  "the committed lane deliverables above (read, never regenerated; the Rust readers refuse a changed sha256 with MODEL_ERROR)"
+ ],
+ "inputs": {
+  "golden_vectors": {
+   "source": "the registered F7 study grid of build_f7_f8_optimizer.py: every (wall in WALL_CASES) x (filter in filter_cases()) x (surface scenario of the F1 envelope) context = 2 x 5 x 10 = 100 contexts over the 48 d-collapsed intake candidates x 55 F4 compressor designs x VOLUMES_M3 x UPSTREAM_TARGETS_PA, evaluated at all 197 F1 states (design-case reference + the 196 required design states)",
+   "count": "100 contexts (scoring only; development runs use the development sub-grid below and never the full grid)",
+   "list_or_generator": "stage_f7 of docs/design_synthesis/f7_f8_optimizer/build_f7_f8_optimizer.py (Python) and `abep-design-uq study` with the full-grid spec (Rust)"
+  },
+  "development_vectors": "development_master_seed draws a sub-grid (12 of 48 candidates, 8 of 55 compressors, every volume, target, filter, wall and scenario) and the randomized vectors below; the full grid is never compared before scoring",
+  "edge_cases": [
+   {"id": "E-01", "inputs": {"entry": "upstream_context", "scenario": "not_a_scenario"}, "note": "OptimizerError unknown scenario"},
+   {"id": "E-02", "inputs": {"entry": "upstream_context", "wall": "WALL-X"}, "note": "OptimizerError unknown wall case"},
+   {"id": "E-03", "inputs": {"entry": "upstream_context", "filter": "F4-FIL-X"}, "note": "KeyError unknown filter"},
+   {"id": "E-04", "inputs": {"entry": "upstream_context", "targets": [0.12, 0.5]}, "note": "targets above the 0.1 Pa domain: every vector R_TARGET_ABOVE_DOMAIN (NOT_EVALUATED_OUT_OF_DOMAIN), nothing feasible"},
+   {"id": "E-05", "inputs": {"entry": "pareto_mask", "F": "rows with NaN / +inf / -inf"}, "note": "non-finite rows never non-dominated"},
+   {"id": "E-06", "inputs": {"entry": "pareto_mask", "F": "shape mismatch"}, "note": "OptimizerError objective matrix shape"},
+   {"id": "E-07", "inputs": {"entry": "nondominated_layers", "F": "all rows non-finite"}, "note": "OptimizerError non-finite objective in a ranked record"},
+   {"id": "E-08", "inputs": {"entry": "higher_pressure_branch", "targets": [0.0]}, "note": "A913RuleError target pressure must be finite and > 0"},
+   {"id": "E-09", "inputs": {"entry": "flight_configuration_elements", "config": "hall_c1_reference"}, "note": "ArchitectureRuleError REFUSED (A9.19 / A9.20)"},
+   {"id": "E-10", "inputs": {"entry": "flight_configuration_elements", "config": "nope"}, "note": "ArchitectureRuleError unknown configuration"},
+   {"id": "E-11", "inputs": {"entry": "require_all_admitted_scenarios", "used": "subset", "narrowing_record": null}, "note": "A913RuleError omits admitted scenarios"},
+   {"id": "E-12", "inputs": {"entry": "require_all_admitted_scenarios", "used": "with an extra id"}, "note": "A913RuleError not admitted"},
+   {"id": "E-13", "inputs": {"entry": "require_all_admitted_scenarios", "admitted": []}, "note": "A913RuleError no admitted surface scenarios"},
+   {"id": "E-14", "inputs": {"entry": "require_all_admitted_scenarios", "narrowing_record": "each of the four required keys blank, evidence_status not EVIDENCE, and a complete record"}, "note": "A913RuleError per missing key / evidence; NARROWED_BY_PREREGISTERED_DI_1_3 for the complete record"},
+   {"id": "E-15", "inputs": {"entry": "rank_full_system", "evaluations": []}, "note": "REFUSED_NO_FEASIBLE_CANDIDATE"},
+   {"id": "E-16", "inputs": {"entry": "hall_gated_thrust", "rec": "EVALUATED / PARAMETRIC / SYNTHETIC / None"}, "note": "non-synthetic records refused while the credible set is EMPTY"}
+  ],
+  "randomized_domain": {
+   "count": "per master seed: 40 upstream_context sub-grids (random wall / filter / scenario, 1-6 candidates, 1-6 compressors, 1-3 volumes from {1e-4, 1e-3, 3e-3, 1e-2, 3e-2, 1e-1, 1}, 1-4 targets log-uniform in [1e-3, 0.15] Pa); 300 pareto_mask matrices (n 1-300, k 1-8, entries from a small integer lattice so that ties occur, 10 % of matrices with injected NaN / +-inf, random senses); 100 nondominated_layers matrices (finite, n 1-120, k 1-6); 120 require_all_admitted_scenarios / robust_over_scenarios cases; 60 rank_full_system record sets (synthetic records with statuses drawn from the objective vocabulary, values finite or None, upstream objectives as records or bare numbers with / without upstream_status); 60 is_conditional_c1_text strings (fragments 'if', 'C1', 'c-1', 'is', 'selected' with random whitespace / case and the mass / power v5 line names); 20 heat_rejection compressor_P_W values (None, 0, random positive); 2000 F1 records (random (candidate, scenario, state) keys)",
+   "draw": "one numpy Generator per entry point: numpy.random.default_rng(numpy.random.SeedSequence([master_seed, entry_index])); the drawn vectors are written to the scratch work directory and fed to both implementations",
+   "domain_note": "numerical parity domain only; not a physics, design or evidence claim"
+  },
+  "vector_totals": {
+   "study (scoring)": "100 contexts (bits, feasible, 16 column arrays, design_direction, context_role) + 100 x 6 context_pareto blocks",
+   "fixed-input record entries": "design_vector_blocks 1, architecture_questions 1, flight_configuration_elements 3 (incl. E-09 / E-10), electron_margin 2 (flight, unknown), tpmc_backend_policy 1, higher_pressure_branch 2, inputs summary 1 (candidates, geometry, scenarios, states, compressor ids, filter ids)",
+   "randomized": "as randomized_domain"
+  },
+  "fixed_input_entries_rule": "entries without a seed (the fixed-input records and the inputs summary) are the same vector in development and scoring; a development execution of them is recorded as development in campaign_history and never reported as a verdict"
+ },
+ "campaign_seeds": {
+  "applicable": true,
+  "scoring_master_seed": 1006202610,
+  "development_master_seed": 1006202611,
+  "derivation": "numpy.random.SeedSequence([master_seed, entry_index]) per randomized entry (entry_index = position in the harness entry list); the development sub-grid from SeedSequence([development_master_seed, 999])",
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the existing admitted stochastic / statistical parity contract; the roles are registered separately and never merged",
+   "design_uq_sampling_stream": "NOT_APPLICABLE: the F7 functions of this contract draw no random number (the F8 stream is registered in PARITY-C-ABEP_SIM_DESIGN_ROBUST_OPTIMIZER_PY-V1)",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE: F7 runs no TPMC (it consumes the committed F1 records)",
+   "other_streams": "the harness vector generator only (numpy default_rng from the registered master seeds; it produces inputs, never a scored quantity)",
+   "migration_parity_dataset": "seeds, stream semantics and captured reference samples of the migration parity campaign stay exactly reproducible (immutable)",
+   "after_rust_authority": "new UQ campaigns may use the registered Rust RNG policy; this never changes the migration parity dataset"
+  },
+  "rng_streams_v3": "NOT_APPLICABLE (deterministic functions; see rng_stream_roles)",
+  "development_rule": "development comparisons use development_master_seed and the development sub-grid only and are never scored or reported as a verdict; every execution with scoring_master_seed is appended to campaign_history and the report is committed whatever its verdict"
+ },
+ "observables": {
+  "load_upstream_inputs": {
+   "list": [
+    {"name": "candidates (order), geometry, scenarios (order), states (order), compressor ids (order), filter ids (order)", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "equal", "definition": "UpstreamInputs fields"},
+    {"name": "records[(candidate, scenario, state)]: area_m2, T_K, mdot_fwd_kgps[s], p_passive_Pa[s], K_back[s], f1_status", "units": "SI", "tolerance_class": "EXACT_VALUE", "tolerance": "bit-identical floats (parsed decimals times the area), equal strings", "definition": "load_f1_records IntakeState fields"},
+    {"name": "drag_per_area[(scenario, L/d, phi, state)]", "units": "N m^-2", "tolerance_class": "EXACT_VALUE", "tolerance": "bit-identical (admitted kernel, reused)", "definition": "drag_table"}
+   ]
+  },
+  "upstream_context": {
+   "list": [
+    {"name": "bits (union of the F4 reason bits over the states) and feasible", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "equal, under the threshold_proximity_rule", "definition": "per (candidate, compressor, volume, target)"},
+    {"name": "16 column arrays (mdot_delivered_min_kgps, P_compressor_el_max_W, m_compressor_max_kg, ripple_transfer_shaft, xO_flow_min, xO_flow_max, a_eq_design_m2, deadhead_margin_min, kn_upper_min, T_comp_max_K, mdot_delivered_design_kgps, drag_intake_max_N, drag_intake_max_se_N, mdot_captured_min_kgps, intake_wall_area_m2, plenum_V_m3)", "units": "SI", "tolerance_class": "ULP_BOUNDED", "tolerance": {"k_ulp": 4, "r_rel": 1e-9, "nan_pattern": "EXACT_VALUE (NaN exactly where the reference is NaN)"}, "definition": "the reference's reductions over the 197 states (r_rel 1e-9 is the abep-gaspath steady tolerance: the a_eq bisection result and everything derived from it)"},
+    {"name": "design_direction per target, context_role, candidates / compressors / volumes / targets echo", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "equal", "definition": "context metadata"}
+   ]
+  },
+  "context_pareto": {
+   "list": [
+    {"name": "per set pressure: context_id, n_evaluated, n_feasible, status_counts, reason_counts, n_pareto and the member design_id set", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "equal, under the threshold_proximity_rule and the dominance_proximity_rule", "definition": "Pareto set and counts"},
+    {"name": "member float fields (objectives, the nine extra columns, ripple_transfer_shaft, V_m3, P_set_Pa)", "units": "SI", "tolerance_class": "ULP_BOUNDED", "tolerance": {"k_ulp": 4, "r_rel": 1e-9}, "definition": "member rows"},
+    {"name": "member string fields (candidate, compressor, characterization_coverage, context_role, system_not_evaluated)", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "equal (characterization_coverage under the threshold_proximity_rule at the 0.38 / 3.2 mg/s coverage ends)", "definition": "member rows; ripple_feed_quality is not registered (assessment)"}
+   ]
+  },
+  "pareto_mask / nondominated_layers": {
+   "list": [
+    {"name": "keep mask / layer indices, error class and message", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "equal", "definition": "same input matrix in both implementations"}
+   ]
+  },
+  "records": {
+   "list": [
+    {"name": "design_vector_blocks, architecture_questions, flight_configuration_elements, heat_rejection, electron_margin, hall_gated_thrust, tpmc_backend_policy, higher_pressure_branch, require_all_admitted_scenarios, robust_over_scenarios, is_conditional_c1_text, rank_full_system refusal records", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "the canonical JSON text of the parsed values is equal (dict key order not significant, list order significant; floats compared as values); refusals: equal exception class and message", "definition": "reference return value or exception"},
+    {"name": "rank_full_system on a record set that passes the refusal stages", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "Rust PROCEED_TO_ASSESSMENT iff the reference status is none of REFUSED_NO_FEASIBLE_CANDIDATE (empty list), REFUSED_INCOMPLETE, REFUSED_PARAMETRIC_UPSTREAM", "definition": "the design stages only"}
+   ]
+  }
+ },
+ "threshold_proximity_rule": {
+  "statement": "a discrete outcome (a reason bit, feasible, a status, characterization_coverage, None-ness) derived from a toleranced continuous quantity x by a threshold test x vs theta may differ between the implementations only where the Python value lies within x's registered tolerance of theta (|x_py - theta| <= max(4 ulp(x_py), 1e-9 |x_py|), combined with the threshold's own relative slack). Such a difference is recorded NOT_SCORED_AT_THRESHOLD with the quantity, theta and both values, and the dependent outcomes of that vector are not scored and are listed; any other difference fails",
+  "quantities": "the abep-gaspath steady-sweep gates as registered in PARITY-C-ABEP_SIM_DESIGN_PLENUM_FEED_PY-V2 (R_CHARACTERISTIC, R_STAGE_DOMAIN, R_KN_FEED, R_THERMAL, R_DEADHEAD, R_BISECTION) evaluated per state; characterization_coverage vs 0.38 and 3.2 mg/s",
+  "registered_before_comparison": true
+ },
+ "dominance_proximity_rule": {
+  "statement": "a Pareto membership difference is NOT_SCORED_AT_THRESHOLD only if (a) the Rust keep mask recomputed by the Rust pareto_mask on the Python objective matrix of that block equals the Python keep mask, and (b) every objective value of the block differs from the reference by no more than its ULP_BOUNDED tolerance (the difference is a near-tie decided by tolerated floating noise, not by a different dominance rule). Otherwise the difference fails",
+  "registered_before_comparison": true
+ },
+ "tolerance_classes": {
+  "EXACT_BYTES": "files / serialized outputs byte-identical (sha256 equal)",
+  "EXACT_VALUE": "integers, strings, enums, booleans, statuses, error codes, schema shape: equal",
+  "ULP_BOUNDED": "|rust - py| <= k_ulp ulp(py) OR <= r_rel * max(1, |py|) with k_ulp 4 and r_rel 1e-9 (the abep-gaspath steady-path tolerance the F7 values inherit); NaN only where the reference is NaN",
+  "SOLVER_TOLERANCE": "NOT_APPLICABLE",
+  "STATISTICAL": "NOT_APPLICABLE",
+  "EXACT_STREAM": "NOT_APPLICABLE (no RNG in the F7 functions)"
+ },
+ "exact_invariants": [
+  {"id": "INV-F7-01", "statement": "every Pareto member is feasible (bits 0 at every state) and carries the six NOT_EVALUATED system-objective codes; no infeasible / out-of-domain vector enters a Pareto set", "required_in_both": true},
+  {"id": "INV-F7-02", "statement": "no status or label of any F7 output contains PASS / SELECTED / WINNER / QUALIFIED / OPTIMUM; every upstream number is PARAMETRIC_SENSITIVITY", "required_in_both": true},
+  {"id": "INV-F7-03", "statement": "WALL-G0 contexts are volume-independent except for plenum_V_m3 and ripple_transfer_shaft (the steady sweep is reused across volumes, as in the reference)", "required_in_both": true},
+  {"id": "INV-F7-04", "statement": "determinism: two Rust executions of the study give bit-identical outputs", "required_in_both": false},
+  {"id": "INV-F7-05", "statement": "flight_configuration_elements lists no hollow-cathode element for hall_icp_neutralizer, and the refusal of hall_c1_reference is reproduced", "required_in_both": true},
+  {"id": "INV-F7-06", "statement": "rank_full_system on the system evaluations of the study refuses REFUSED_INCOMPLETE (every system objective NOT_EVALUATED): no ranking, no winner", "required_in_both": true}
+ ],
+ "conservation_checks": {
+  "applicable": false,
+  "reason": "F7 reduces and compares steady gas-path operating points; the source mass balance of that path is registered and checked in the abep-gaspath contracts (CONS-P-01..04) and in its cargo test",
+  "checks": []
+ },
+ "domain_and_error_parity": {
+  "cases": "edge cases E-01 .. E-16 above plus every refusal met by a randomized vector",
+  "mapping_rule": "every Python exception class maps to exactly one Rust DesignError class with the same name and message (OptimizerError, ValueError, KeyError, IntakeInputError -> OUT_OF_DOMAIN; A913RuleError, RepresentativeSelectionRefused -> NOT_EVALUATED; ArchitectureRuleError -> NOT_EVALUATED; RuntimeError and arithmetic -> MODEL_ERROR); no Rust path may return a value where Python fails, or fail where Python returns",
+  "message_rule": "messages compared for OptimizerError, A913RuleError, ArchitectureRuleError; KeyError compared by class",
+  "documented_divergence": [
+   {"id": "DIV-F7-01", "statement": "the Rust readers pin every lane deliverable by sha256 (the reference reads them through an mtime cache); a changed deliverable is MODEL_ERROR in Rust where the reference would read the new bytes", "disposition": "fail-closed hardening; not exercised by any registered vector (all inputs at their registered hashes)"},
+   {"id": "DIV-F7-02", "statement": "context_pareto members carry no ripple_feed_quality field in Rust (assessment layer, SC-WP-11); the raw ripple_transfer_shaft is carried", "disposition": "scope (layer rule); the field is not registered"}
+  ]
+ },
+ "schema_parity": {
+  "schemas": ["NOT_APPLICABLE (no JSON schema file; record shapes are compared field by field)"],
+  "rules": ["field names, units, types identical", "list order identical", "evidence_status / raw-vs-assessment labels identical"]
+ },
+ "golden_and_reference_cases": {
+  "references": ["docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json and f7_upstream_pareto_v1.json (committed F7 deliverables: read for orientation only, not scored; the scored reference is the live Python execution at the reference commit)"],
+  "rule": "references are read as committed; they are never regenerated to make Rust pass (RM-R11); a disagreement is investigated and classified (RUST_DEFECT | PYTHON_REFERENCE_DEFECT | CONTRACT_DEFECT)",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY/reference_outputs/",
+   "captured_at_python_commit": "the scoring execution's Python commit",
+   "sha256_manifest": "reference_outputs/MANIFEST.json (written by the scoring execution: the per-context Pareto blocks, the bits digest and the record entries, gzip-compressed JSON)",
+   "purpose": "lets CI check Rust against the Python reference after Python is retired from active execution (a cargo test replays the captured Pareto blocks of a registered context subset)"
+  },
+  "historical_golden_rule": "RM-R28: golden_v1 / golden_v2 cases are not used"
+ },
+ "julia_bridge": {"applicable": false, "reason": "no Hall solver call (no admitted Hall member)"},
+ "performance_measurement": {
+  "status": "reported, not a decision criterion (A9.24 items 1 and 6)",
+  "workloads": [{"id": "F7-STUDY", "description": "the full 100-context F7 study (stage_f7) in each implementation, one process, single thread"}],
+  "repeats": 1,
+  "statistic": "wall-clock and process CPU of the scoring execution",
+  "machine_manifest": "recorded in the report"
+ },
+ "decision_rules": {
+  "per_test": "every scored observable meets its tolerance class (threshold- and dominance-proximity differences recorded as NOT_SCORED_AT_THRESHOLD)",
+  "aggregate": "NOT_APPLICABLE",
+  "proximity_limit": "if more than 1 % of the scored discrete outcomes of an entry are NOT_SCORED_AT_THRESHOLD the entry fails",
+  "exact_invariants_required": true,
+  "conservation_required": false,
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "scoring_once": "the scoring comparison runs once (scoring_master_seed); the harness refuses a second scoring run when parity_report_v1.json exists; development runs never write a report into the contract directory",
+  "verdict": "ADMITTED iff every per-test, invariant, domain/error and schema check passes and every reference file matches sha256_at_registration; PARITY_PASS <=> ADMITTED, PARITY_FAIL <=> NOT_ADMITTED",
+  "verdict_vocabulary": ["ADMITTED", "NOT_ADMITTED", "REFUSED_REFERENCE_CHANGED", "INPUT_MISMATCH", "NOT_RUN_RUST_UNAVAILABLE", "REFUSED_CLASSIFICATION"],
+  "meaning_of_ADMITTED": "A9.24 item 1: Rust becomes authoritative for the registered functions (within the registered domain); new production results for them come from Rust and carry implementation = rust, rust_commit and this contract id. It is NOT physics validation.",
+  "no_retuning": "tolerances, observables, inputs, n, seeds and rules are fixed; after NOT_ADMITTED only a code fix plus a new contract version with a fresh scoring_master_seed may follow; the failed report stays; no execution is discarded",
+  "disagreement_rule": "never rewrite a Python result, golden, fixture or frozen dataset to make Rust pass (RM-R11)",
+  "observable_scope": "observables are restricted to retained selected-architecture design synthesis; no observable depends on an excluded legacy path (RM-R20)"
+ },
+ "bid_boundary": {
+  "statement": "this contract and its Rust implementation are post-bid-freeze work; no output of it may be cited by the bid package unless the owner re-freezes",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b (technical source) / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (package / freeze record)",
+  "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+ },
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, threshold or requirement",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27): every upstream number stays PARAMETRIC_SENSITIVITY",
+  "not a gate PASS: the system objectives stay NOT_EVALUATED, the full-system ranking stays REFUSED_INCOMPLETE"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY/parity_report_v1.json (+ .md generated from it)",
+  "runner": "scripts/rust_migration/parity_sc_wp10.py score f7 (Python harness calling the Rust CLI; records campaign_history)",
+  "report_fields": ["contract_sha256", "python_commit", "reference_sha256", "rust_commit", "build_provenance (rustc, Cargo.lock sha256, source sha256)", "environment", "per-test results", "invariants", "domain/error", "schema", "threshold-proximity record", "performance", "verdicts", "campaign_history", "ledger_update_requested"]
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator (A9.25 message 3)",
+  "checks": [
+   "every inventory id of the group is ACTIVE_SELECTED_ARCHITECTURE_PHYSICS (inventory v3.1, PLAN_APPROVED_A9_29)",
+   "no observable, input or code path of the contract belongs to excluded_legacy_paths; hall_c1_reference appears only in the refusal and in the read-only embedded-C1 check of the ground-reference text",
+   "the Rust implementation contains no forbidden identifier outside the refusal-guard vocabulary (abep-config patterns are reused)",
+   "abep-design depends on no assessment / evidence / groundtest crate (cargo metadata)"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict): the contract cannot be registered"
+ },
+ "value_status_preservation": {
+  "rule": "RM-R27: no provisional / analog / allocation input is promoted by migration to CBE, measured or frozen truth",
+  "inputs": [
+   {"id": "F3 FIXED_CODE_DEFAULT coefficients", "value": "as committed", "value_status": "FIXED_CODE_DEFAULT_UNCITED", "open_action": "compressor_downselect T-1..T-9", "committed_labels": ["PARAMETRIC_SENSITIVITY"]},
+   {"id": "mass/power v5 wet roll-up", "value": "as committed", "value_status": "NOT_EVALUATED (no CBE)", "open_action": "CBE / measured masses", "committed_labels": ["allocation / evidence floor / design-parametric / CBE never merged"]}
+  ],
+  "check": "VS-F7-01: the Rust records carry the committed labels exactly; no CBE / measured / frozen label appears"
+ },
+ "new_physics_verification": {"applies_when": "contract_kind = NEW_PHYSICS (otherwise NOT_APPLICABLE)", "status": "NOT_APPLICABLE"}
+}
