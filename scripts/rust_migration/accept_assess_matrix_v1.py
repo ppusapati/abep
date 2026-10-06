@@ -46,8 +46,9 @@ def main() -> int:
     if manifest != want:
         print("NOT_RUN_INPUT_MISMATCH")
         return 3
-    t = subprocess.run(["cargo", "test", "--locked", "-p", "abep-assess", "--test", "matrix_acceptance", "--test",
-                        "crate_graph", "--", "--test-threads=1"], cwd=ROOT, env=env, capture_output=True, text=True)
+    t = subprocess.run(["cargo", "test", "--release", "--locked", "-p", "abep-assess", "--test", "matrix_acceptance",
+                        "--test", "crate_graph", "--", "--test-threads=1"], cwd=ROOT, env=env, capture_output=True,
+                       text=True)
     results = dict(re.findall(r"^test (\w+) \.\.\. (ok|FAILED)$", t.stdout, flags=re.M))
     cases = {k: {"test": v, "result": results.get(v, "NOT_RUN")} for k, v in CASES.items()}
     subprocess.run(["cargo", "build", "--release", "--locked", "-p", "abep-assess", "--bin", "abep-assess-matrix"],
