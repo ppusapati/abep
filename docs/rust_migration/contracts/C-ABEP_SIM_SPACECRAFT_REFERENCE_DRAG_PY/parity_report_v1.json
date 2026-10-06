@@ -1,0 +1,530 @@
+{
+ "schema": "abep_rust_parity_report_v1",
+ "contract": {
+  "id": "PARITY-C-ABEP_SIM_SPACECRAFT_REFERENCE_DRAG_PY-V1",
+  "path": "docs/rust_migration/contracts/C-ABEP_SIM_SPACECRAFT_REFERENCE_DRAG_PY/parity_prereg_v1.json",
+  "sha256": "22c0aca107f44f24fae48671addf1823a0f361dcc47302f782fc23c9209a64c7",
+  "registered_in_commit": "7a86e3144dd7936799e4c29dd6bf9bb106aa34f2"
+ },
+ "parity": "PARITY_PASS",
+ "verdict": "ADMITTED",
+ "python_commit": "fa4fcb3bd21fec8c07a26fe264e1045d5a6bec73",
+ "python_commit_at_scoring_head": "57914de17b77e89892e4eb50497e9757e55aa2b0",
+ "reference_sha256": {
+  "abep_sim/spacecraft_reference_drag.py": "28bcc6bda5e45947ed3bc72e9561a8efbde59f8e9707c7fb864d8d88fa2eaa8d",
+  "abep_sim/design/intake_synthesis.py": "104ac561c05d8516c0571bc88339d69c4ab6abc78f8bfeeacea8696e557f2191"
+ },
+ "rust_commit": "57914de17b77e89892e4eb50497e9757e55aa2b0",
+ "git_dirty": [],
+ "build_provenance": {
+  "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+  "cargo_lock_sha256": "b6a941286331c3493698511aa71eb5f92e00761e2b652972427c85e218ab4d6a",
+  "source_sha256": {
+   "Cargo.toml": "336294f8d4f7774540d4c49d681d997d5cd0fd6fa67b99aea9c2cc3b5c6f5ff3",
+   "Cargo.lock": "b6a941286331c3493698511aa71eb5f92e00761e2b652972427c85e218ab4d6a",
+   "rust-toolchain.toml": "7e44dbedb86596d94974ef8cb279f0e81496ea92b519c14940259661496f8499",
+   "crates/abep-types/src/constants.rs": "c97e39931d145db143398e3d5de9eb4f9ba86943a75b3c1302df82c01b4efd1d",
+   "crates/abep-types/src/lib.rs": "0a067299e38d3dac702c3eb23ee3e34a55f844b389ec54b7463962c65d6a4b0e",
+   "crates/abep-types/src/pyjson.rs": "5ce15fdb06043a01ce8bd441a8e8f1906e74a0c4dd9fea2b9e4505f182a8d88e",
+   "crates/abep-types/src/pyjson_unicode.rs": "c6f59e0936c35051ef1f7d45a6611d3a7269a8d972c900805463f5f0bf6b2a75",
+   "crates/abep-provenance/src/lib.rs": "0beec4429b0d6cc891389d6bc83584b693c7f1698700b03ffac4defe43919761",
+   "crates/abep-data/src/design_states.rs": "39e9002f1be06d06a463be18a2cd2428e1b2ab0fb7881313c74dc2d02db15e3a",
+   "crates/abep-data/src/gz.rs": "d4dc152741e78c773e264ab566f11dff2f2d1c831b5b843db151a382358be737",
+   "crates/abep-data/src/hwm14_v2.rs": "bb54b2d9a9fade6bfd6069978299f65fb26fe47a85757aabe796f5f4387a3152",
+   "crates/abep-data/src/json.rs": "2340fba6918d49d4bb8d757252b351cc8b95d3c6fa7186bbef6eef19579802be",
+   "crates/abep-data/src/lib.rs": "bab94b4c413569bcfde91567922400f97f6a1857220f7e5032562f52ebcc9e2d",
+   "crates/abep-data/src/msis21_v1.rs": "2a00f6308244dce6d7d651c9afb7af6dcb20847d01e217c6ec896a4e70b8e0b7",
+   "crates/abep-data/src/orbit_v1.rs": "a7efc0a42e1911e43390555857bb5a14615768b1f3212a46a40381ca1cb726a6",
+   "crates/abep-data/src/pins.rs": "6884c5b99de401b939e3de3a495f55e874315218a76d3eaa6e960b9af31b2bc5",
+   "crates/abep-data/src/table.rs": "daa2dedf8169e3d5863fe30d5e2d26419515a0a21133ce2f29f3e2de183e98fb",
+   "crates/abep-atmos/src/bin/abep_env_parity.rs": "c5098a3e86d80c6ac53b05561dc2ef3ae2705dfb1134039b3e51fa81312a3ee6",
+   "crates/abep-atmos/src/design_state_set.rs": "cdd96dde80512300fb18453f849f1018553fbf8aac72cfd88e01e52e03871716",
+   "crates/abep-atmos/src/design_states.rs": "c55dc45bd840c71a4e7c157bc04167a80b7c5e6563b935e0c3fb798328e98b14",
+   "crates/abep-atmos/src/execution.rs": "0ae9998367cf716971fb92e9666d6bdd84ce49dc271efad6a67dd1bec3b56f9a",
+   "crates/abep-atmos/src/lib.rs": "25b2b7a04cb9652443289fee7664c498bc0983a6491dc5b366e30ba00763b8a1",
+   "crates/abep-atmos/src/mission_env_kernel.rs": "c48e3c0952a2c09a3095b3904a5622b4f85c7d2d33c8a8f7d843e491dff6de73",
+   "crates/abep-atmos/src/msis21.rs": "50d778f9e06b4f44e63d1164504a63d0182d7df20e144fb526ba1bbff5e08aa8",
+   "crates/abep-atmos/src/orbit.rs": "c4366b7c983bee6986812d6a8e0a2d576150be6eb3aec80b0f7bc4e9d92a3f54",
+   "crates/abep-atmos/src/pyfloat.rs": "3591be912ce26f94fdba00dde6d19375514532370b748f84af05cd7b77af4457",
+   "crates/abep-atmos/src/weights.rs": "40451ae741a4504afef0b56edf6e32028c38bbd605d03787e804f525e1249737",
+   "crates/abep-atmos/src/wind.rs": "08a9ca22502e155a194e54d8025c4b290c531121790693edea16f7ecc653e034",
+   "crates/abep-mission/Cargo.toml": "a47e3488a70eec57734df6e3f384351b83dd5bfc4cec6130e29e20cd2d9a8a34",
+   "crates/abep-mission/src/bin/abep_mission_parity.rs": "4ad49c53d932d528f66d9fdfc6595b04b55435c8f8ac4421ec0142854c614dea",
+   "crates/abep-mission/src/bin/abep_reference_drag_record.rs": "5394baecddcab2f096371cd9c277575d74b3ab7960c91327a0d0150c2c2d0862",
+   "crates/abep-mission/src/intake_drag.rs": "12812f9326027ba86a41f4972c6be51be4524f0dc42515a0d4787352147527c2",
+   "crates/abep-mission/src/lib.rs": "d92a2247b271bfb34d506f85a272f0d6998c277705443f945001494ebef73f8e",
+   "crates/abep-mission/src/objective.rs": "a5ad767609d2262bdc8180484a33f62fc4f1f92cc06886ccf492192886a73c32",
+   "crates/abep-mission/src/parity.rs": "a2406352f4762086762a5a67401421f3ea05bfe1b5139d197bb0b8930f905fbb",
+   "crates/abep-mission/src/pyval.rs": "2138f192bbd9611e3497c83f77ae9dfd2f71133ec092a0b3fc8e9fc7617b4b94",
+   "crates/abep-mission/src/reference_drag.rs": "69c5890d45416fa1762931d98f88657df6779df815c9b69d55883a2e2090a769",
+   "crates/abep-mission/src/statewise.rs": "72acc9e536ed41c368936a9ab88aade19f940c9e27f04c4376083e94b76fb597",
+   "crates/abep-mission/src/statewise_td.rs": "4e540c2ce941e80fd83c89655d4d9de878d5bd16b06d0217186536e30d54179b",
+   "crates/abep-mission/data/spacecraft_reference_register_v1.json": "4952eb745b201a57406dc6fe0513f6217f654ddb6d2ad7300c5334112a42ffa3"
+  }
+ },
+ "environment": {
+  "python": "3.11.15",
+  "numpy": "2.4.4",
+  "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+  "cargo": "cargo 1.94.1 (29ea6fb6a 2026-03-24)",
+  "platform": "Linux 6.18.44-fc-v70 x86_64",
+  "thread_env": {
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1"
+  },
+  "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+  "blas": "scipy-openblas 0.3.31.188.0 (numpy bundle; not used by the scored code)"
+ },
+ "seed": 2026100641,
+ "date_utc": "2026-10-06T09:24:50+00:00",
+ "n_vectors": 4492,
+ "n_failures": 0,
+ "checks": {
+  "per_test": true,
+  "domain_error": true,
+  "invariants": true,
+  "governing": true,
+  "all": true
+ },
+ "invariants": {
+  "INV-A-01": true,
+  "INV-A-02": true,
+  "INV-A-03": true,
+  "INV-A-05": true,
+  "INV-A-04": true
+ },
+ "observables": [
+  {
+   "entry": "reference_drag",
+   "observable": "outcome",
+   "n": 3770,
+   "fail": 0,
+   "bit_identical": 3770,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "reference_drag",
+   "observable": "error class / message / status",
+   "n": 493,
+   "fail": 0,
+   "bit_identical": 493,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "reference_drag",
+   "observable": "copied floats (EXACT_VALUE)",
+   "n": 26217,
+   "fail": 0,
+   "bit_identical": 26217,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "reference_drag",
+   "observable": "q_Pa (ULP_BOUNDED)",
+   "n": 3277,
+   "fail": 0,
+   "bit_identical": 3277,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "reference_drag",
+   "observable": "reference_term/D_N (ULP_BOUNDED)",
+   "n": 3277,
+   "fail": 0,
+   "bit_identical": 3277,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "reference_drag",
+   "observable": "intake_term/D_N (ULP_BOUNDED)",
+   "n": 3277,
+   "fail": 0,
+   "bit_identical": 3277,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "reference_drag",
+   "observable": "D_total_N (ULP_BOUNDED)",
+   "n": 3277,
+   "fail": 0,
+   "bit_identical": 3277,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "reference_drag",
+   "observable": "D_total_mN (ULP_BOUNDED)",
+   "n": 3277,
+   "fail": 0,
+   "bit_identical": 3277,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "reference_drag",
+   "observable": "registered divergence outcome",
+   "n": 3,
+   "fail": 0,
+   "bit_identical": 3,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "statewise_margin",
+   "observable": "outcome",
+   "n": 706,
+   "fail": 0,
+   "bit_identical": 706,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "statewise_margin",
+   "observable": "copied floats (EXACT_VALUE)",
+   "n": 1390,
+   "fail": 0,
+   "bit_identical": 1390,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "statewise_margin",
+   "observable": "margin_N (ULP_BOUNDED)",
+   "n": 695,
+   "fail": 0,
+   "bit_identical": 695,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "statewise_margin",
+   "observable": "error class / message / status",
+   "n": 11,
+   "fail": 0,
+   "bit_identical": 11,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "density_free_table",
+   "observable": "outcome",
+   "n": 1,
+   "fail": 0,
+   "bit_identical": 1,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "density_free_table",
+   "observable": "copied floats (EXACT_VALUE)",
+   "n": 40,
+   "fail": 0,
+   "bit_identical": 40,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "build_document",
+   "observable": "outcome",
+   "n": 1,
+   "fail": 0,
+   "bit_identical": 1,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "case",
+   "observable": "outcome",
+   "n": 11,
+   "fail": 0,
+   "bit_identical": 11,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "case",
+   "observable": "copied floats (EXACT_VALUE)",
+   "n": 16,
+   "fail": 0,
+   "bit_identical": 16,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  }
+ ],
+ "domain_error": [
+  {
+   "id": "DE-A-01",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-02",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-03",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-04",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-05",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-06",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-07",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-08",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-09",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-10",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-11",
+   "pass": true,
+   "summary": "Python RAISED TypeError; Rust RAISED TypeError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-12",
+   "pass": true,
+   "summary": "Python RAISED TypeError; Rust RAISED TypeError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-13",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-14",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-15",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-16",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-17",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-18",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-19",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-20",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-21",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-22",
+   "pass": true,
+   "summary": "Python RAISED KeyError; Rust RAISED KeyError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-23",
+   "pass": true,
+   "summary": "Python RAISED KeyError; Rust RAISED KeyError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-24",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-25",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-26",
+   "pass": true,
+   "summary": "Python RETURNED ; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-27",
+   "pass": true,
+   "summary": "Python RETURNED ; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-28",
+   "pass": true,
+   "summary": "Python RETURNED ; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-29",
+   "pass": true,
+   "summary": "Python RAISED KeyError; Rust RAISED KeyError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-A-30",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-M-01",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-M-02",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-M-03",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-M-04",
+   "pass": true,
+   "summary": "Python RAISED TypeError; Rust RAISED TypeError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-M-05",
+   "pass": true,
+   "summary": "Python RETURNED ; Rust RETURNED"
+  },
+  {
+   "id": "DE-M-06",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-M-07",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-M-08",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-M-09",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-M-10",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-M-11",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-M-12",
+   "pass": true,
+   "summary": "Python RETURNED ; Rust RETURNED"
+  },
+  {
+   "id": "DE-M-13",
+   "pass": true,
+   "summary": "Python RAISED ValueError; Rust RAISED ValueError OUT_OF_DOMAIN"
+  },
+  {
+   "id": "DE-M-14",
+   "pass": true,
+   "summary": "Python RETURNED ; Rust RETURNED"
+  }
+ ],
+ "failures": [],
+ "performance": {
+  "RD-G python median s": 0.13196850399981486,
+  "RD-G rust median s (one process)": 0.08603128800041304,
+  "speed-up": 1.5339594125242118
+ },
+ "notes": [],
+ "campaign_history": [
+  {
+   "execution": "scoring",
+   "seed": 2026100641,
+   "date_utc": "2026-10-06T09:24:50+00:00",
+   "parity": "PARITY_PASS",
+   "development_runs": "development-seed runs only, never reported (contract development_rule)"
+  }
+ ],
+ "ledger_update_requested": [
+  {
+   "component": "C-ABEP_SIM_SPACECRAFT_REFERENCE_DRAG_PY",
+   "request": "status ADMITTED (whole module) on PARITY_PASS; authoritative_implementation rust: crates/abep-mission (abep_mission::reference_drag, abep_mission::statewise::statewise_margin, register data crates/abep-mission/data/spacecraft_reference_register_v1.json); contract PARITY-C-ABEP_SIM_SPACECRAFT_REFERENCE_DRAG_PY-V1; disclosures DIV-A-01 (non-finite results refused)"
+  }
+ ],
+ "captured_reference_outputs": {
+  "captured_at_python_commit": "57914de17b77e89892e4eb50497e9757e55aa2b0",
+  "files": {
+   "requests.json.gz": "9f74bf9d4fbb2065658f6ac7af5a8f6cb780b6b5dedf56f860c83bc944ab300b",
+   "python_outputs.json.gz": "d64d25cff77c9ca1816be21cd0eb323188a83c8e7f7271c407fd4942f49cd364",
+   "rust_outputs_at_scoring.json.gz": "69a99cb140d6c5ef8c75894d4ed41034dfe575874d51e235c539671435688f75"
+  }
+ }
+}

@@ -1,0 +1,634 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-ABEP_SIM_SPACECRAFT_REFERENCE_DRAG_PY-V1",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "component": {
+  "inventory_id": "C-ABEP_SIM_SPACECRAFT_REFERENCE_DRAG_PY",
+  "inventory_path": "docs/rust_migration/component_inventory_v3_1.json",
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "migration_wave": "W1",
+  "scope": "whole module abep_sim/spacecraft_reference_drag.py: the reference register (DECISIONS, RFP_THRUST_BAND, SOURCES, NOT_ACCESSED, RECORDS, CASES / CASE_BY_ID, FINDINGS, OPEN_ITEMS, INTAKE_ACCOUNTING), ReferenceCase, _integrity, reference_drag, statewise_margin, density_free_table, build_document, case",
+  "functions_or_entry_points": [
+   "abep_sim/spacecraft_reference_drag.py::reference_drag",
+   "abep_sim/spacecraft_reference_drag.py::statewise_margin",
+   "abep_sim/spacecraft_reference_drag.py::density_free_table",
+   "abep_sim/spacecraft_reference_drag.py::build_document",
+   "abep_sim/spacecraft_reference_drag.py::case",
+   "abep_sim/spacecraft_reference_drag.py::ReferenceCase / CASES / CASE_BY_ID / _integrity (module data and its import-time check)"
+  ],
+  "out_of_scope": [
+   "docs/design_synthesis/spacecraft_reference_drag/build_spacecraft_reference_drag.py (its own contract PARITY-C-DOCS_DESIGN_SYNTHESIS_SPACECRAFT_REFERENCE_DRAG-V1)",
+   "abep_sim/design/upstream_a9_13.py::reference_drag_fn (a wrapper of reference_drag in the C-ABEP_SIM_DESIGN_UPSTREAM_A9_13_PY component, SC-WP-02 inventory row; stays PYTHON_REFERENCE)",
+   "abep_sim/mission_env.py::spacecraft_drag (listed by the SC-WP-04 element 'reference spacecraft drag interface'; not contracted here: its only callers are the class-H modules abep_sim/archengine.py and abep_sim/mission5.py, its Spacecraft defaults are unsourced per finding SRD-01 of this module, and it draws numpy PCG64 pointing samples; it stays PYTHON_REFERENCE under the SC-WP-09 mission_env row, disposition for the coordinator)"
+  ],
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+  "extract_kernel_id": "NOT_APPLICABLE",
+  "active_toolchain_requirement": "NOT_APPLICABLE",
+  "excluded_legacy_paths": [],
+  "owner_disposition_a9_28": "NOT_APPLICABLE",
+  "simulation_completion_wp": "SC-WP-04 (element 'reference spacecraft drag interface'; inventory row W1)",
+  "owner_disposition_a9_29": "NOT_APPLICABLE"
+ },
+ "date": "2026-10-06",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of this component was executed (lane SC-WP-04, branch lane-wp04-drag). No Rust implementation of the component exists at registration. The registration commit is recorded in the report, not here.",
+ "supersedes": {
+  "path": null,
+  "sha256": null,
+  "reason": null
+ },
+ "lane": {
+  "id": "SC-WP-04",
+  "work_package": "SC-WP-04 (spacecraft interaction: intake drag, reference spacecraft drag interface, statewise T - D)",
+  "branch": "lane-wp04-drag (from origin/integration/simulation-complete fa4fcb3bd21fec8c07a26fe264e1045d5a6bec73)",
+  "authority": "A9.29 secs. 13-15; simulation_completion_programme_v1_1.json SC-WP-04 (sha256 5e672943892b0035f05562e68dae1ca279acd4a4bd625641a559e53711f4643a)"
+ },
+ "reference_implementation": {
+  "python_commit": "fa4fcb3bd21fec8c07a26fe264e1045d5a6bec73",
+  "python_commit_note": "fa4fcb3 = origin/integration/simulation-complete at lane start (migration ledger update 1 merged). The bid record 5eee4b8 / 2de86ab is never a reference commit for new work",
+  "files": [
+   {
+    "path": "abep_sim/spacecraft_reference_drag.py",
+    "sha256_at_registration": "28bcc6bda5e45947ed3bc72e9561a8efbde59f8e9707c7fb864d8d88fa2eaa8d"
+   },
+   {
+    "path": "abep_sim/design/intake_synthesis.py",
+    "sha256_at_registration": "104ac561c05d8516c0571bc88339d69c4ab6abc78f8bfeeacea8696e557f2191",
+    "role": "harness input generator only (required_states, DesignState.atm()['V']); not a reference of this contract"
+   }
+  ],
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration; a changed reference requires a new contract version",
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4",
+   "scipy": "1.17.1",
+   "pandas": "3.0.2",
+   "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+   "blas": "scipy-openblas 0.3.31.188.0 bundled with numpy (DYNAMIC_ARCH, USE64BITINT); not used by the component (pure-Python float arithmetic)",
+   "thread_env": {
+    "OMP_NUM_THREADS": "1 (set by the harness)",
+    "OPENBLAS_NUM_THREADS": "1 (set by the harness)"
+   },
+   "recorded_again_at_scoring": "python / numpy versions, CPU model and thread env are re-read and written into the report; a version change is INPUT_MISMATCH (not a verdict)"
+  }
+ },
+ "rust_implementation": {
+  "crate": "abep-mission (new crate; programme_v3_1 cargo_workspace_proposal; SC-WP-04 target crates abep-intake / abep-mission: everything of this lane sits in abep-mission so no admitted crate's registered provenance sources change)",
+  "functions_or_entry_points": [
+   "abep_mission::reference_drag::{SCHEMA, STATUS, FREEZE_STATUS, LABEL, RETRIEVAL_DATE, DECISIONS, RFP_THRUST_BAND, SOURCES, NOT_ACCESSED, RECORDS, CASES, FINDINGS, OPEN_ITEMS, INTAKE_ACCOUNTING} (register data)",
+   "abep_mission::reference_drag::reference_drag(case_id, &DragArgs) -> AbepResult<ReferenceDrag> (ReferenceDrag::to_value() = the reference dict)",
+   "abep_mission::reference_drag::density_free_table() -> AbepResult<Vec<DensityFreeRow>>",
+   "abep_mission::reference_drag::build_document() -> AbepResult<pyjson::Value>",
+   "abep_mission::reference_drag::case(case_id) -> Option<&'static ReferenceCase>",
+   "abep_mission::reference_drag::integrity() -> AbepResult<()>",
+   "abep_mission::statewise::statewise_margin(thrust_available_N, drag_result, thrust_state, thrust_source) -> AbepResult<pyjson::Value> (placement: see layer_placement)",
+   "CLI: cargo run --release --locked -p abep-mission --bin abep-mission-parity (JSON request on stdin, JSON results on stdout), entries 'reference_drag', 'statewise_margin', 'density_free_table', 'build_document', 'case'"
+  ],
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (rust-toolchain.toml channel 1.94.1)",
+  "provenance_sources": [
+   "Cargo.toml",
+   "Cargo.lock",
+   "rust-toolchain.toml",
+   "crates/abep-types/src/**",
+   "crates/abep-mission/Cargo.toml",
+   "crates/abep-mission/src/**"
+  ],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it"
+ },
+ "layer_placement": {
+  "rule": "A9.22 layer separation; lane rule 'no requirement thresholds in raw physics: a T >= D or >= 12 mN check is assessment'; SC-WP-04 admission criterion 'no requirement value parsed inside the statewise physics'",
+  "raw_drag_module": "abep_mission::reference_drag holds the register and the drag evaluator D = 0.5 rho v_rel^2 C_D A_ref (+ caller-supplied intake term); it compares no thrust with a drag and parses no requirement record",
+  "thrust_band": "RFP_THRUST_BAND (12 / 25 mN) is carried as register data with requirement_status FROZEN_REQUIREMENTS_SNAPSHOT, exactly as the reference carries it (echoed in every reference_drag result as rfp_thrust_band_mN, used by density_free_table for the orientation q* = T_band / (C_D A_ref)); no Rust code compares any value against it",
+  "margin_indication": "statewise_margin (the reference's S6.15 margin T_available - D against a REFERENCE drag, never a gate verdict) is placed in abep_mission::statewise next to the statewise quantifier, so its sign indication 'nonnegative_against_reference' (m >= 0.0) is not computed inside the raw drag module; its output is the reference dict unchanged",
+  "not_a_value_divergence": "placement changes no observable"
+ },
+ "governing_hashes": {
+  "config_manifest": {
+   "path": "config/MANIFEST.json",
+   "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+  },
+  "architecture_hash": "NOT_APPLICABLE: an architecture-independent reference interface (no configuration file is read)",
+  "model_set_hash": "NOT_APPLICABLE: no frozen data file is read by the component",
+  "design_state_set_hash": "atmosphere_msis21_orbit_v1_design_states_v2 sha256 60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049 (harness input generator only: the golden vectors use the stored rho_kg_m3 and the circular speed of its 196 required states)",
+  "rule": "the harness records these values for the run; a mismatch with the registered values voids the run (INPUT_MISMATCH, not a verdict)"
+ },
+ "pinned_inputs_sha256": {
+  "abep_sim/spacecraft_reference_drag.py": "28bcc6bda5e45947ed3bc72e9561a8efbde59f8e9707c7fb864d8d88fa2eaa8d",
+  "abep_sim/design/intake_synthesis.py": "104ac561c05d8516c0571bc88339d69c4ab6abc78f8bfeeacea8696e557f2191"
+ },
+ "frozen_data_read_only": [
+  "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json (via intake_synthesis.required_states, harness input generation only; never regenerated)"
+ ],
+ "inputs": {
+  "harness": "scripts/rust_migration/parity_sc_wp04.py (committed after this contract and before the scoring run)",
+  "transport": "every float crosses the process boundary as JSON shortest round-trip repr; non-finite values as the strings 'NaN', '+inf', '-inf'; Python receives the same decoded values as Rust",
+  "design_states": "S_i, i = 0..195: abep_sim.design.intake_synthesis.required_states() in file order; rho_i = S_i.rho_kg_m3 (stored), v_i = S_i.atm()['V'] (circular inertial orbital speed, V_REL_BASIS), state_i = {'source': 'atmosphere_msis21_orbit_v1_design_states_v2', 'state_id': S_i.state_id}",
+  "intake_terms": "INTAKE_TERMS = [(0.5, 2.0), (0.25, 2.05), (0.0, 0.0)]; vector i uses INTAKE_TERMS[i % 3] as (intake_projected_area_m2, intake_cd); intake_source = 'parity vector (numerical domain only; not an F1 record)'. Numerical parity domain only: not an F1 intake record, not a design or physics claim",
+  "golden_vectors": {
+   "source": "registered grid over the 196 required design states",
+   "count": 3136,
+   "list_or_generator": "RD-G: for i in 0..195, for case in CASES (declared order), for accounting in ('separate_term', 'contained_in_reference'): reference_drag(case, rho_i, v_i, INTAKE_TERMS[i % 3], intake_source, state_i, accounting). The 392 vectors that pair an includes_intake case (RC-ROMANO2018, RC-VAIDYA-GOCELIKE) with separate_term are scored as RAISED (ValueError, double count)"
+  },
+  "statewise_margin_vectors": {
+   "SM-G1": "196 vectors: drag = the RD-G result (RC-DIAMANT, separate_term) of state i; thrust_available_N = [0.0, 0.006, 0.012, 0.018, 0.024][i % 5]; thrust_state = state_i (a fresh equal dict); thrust_source = 'parity vector'",
+   "SM-G2": "196 vectors: drag = the RD-G result (RC-ROMANO2018, contained_in_reference) of state i; thrust_available_N = that result's D_total_N (margin exactly 0.0)",
+   "SM-R": "300 vectors: for the first 300 RD-R vectors that return, in RD-R order: thrust_available_N = rng_1.uniform(0.0, 0.05), thrust_state = that vector's atmosphere_state, thrust_source = 'parity vector'"
+  },
+  "edge_cases": [
+   {
+    "id": "E-A-01",
+    "inputs": {
+     "case": "RC-DIAMANT",
+     "intake_projected_area_m2": 0.0,
+     "intake_cd": 0.0,
+     "accounting": "separate_term"
+    },
+    "note": "zero intake term is allowed (allow_zero)"
+   },
+   {
+    "id": "E-A-02",
+    "inputs": {
+     "case": "RC-SCHONHERR",
+     "rho_kg_m3": 5e-324,
+     "v_rel_m_s": 1.0
+    },
+    "note": "subnormal density"
+   },
+   {
+    "id": "E-A-03",
+    "inputs": {
+     "case": "RC-NISHIYAMA",
+     "rho_kg_m3": 1e-300,
+     "v_rel_m_s": 1e-10
+    },
+    "note": "q underflows to 0.0; returns zero drag"
+   },
+   {
+    "id": "E-A-04",
+    "inputs": {
+     "case": "RC-DICARA-ESA",
+     "atmosphere_state": {
+      "source": "x",
+      "state_id": "s0",
+      "alt_km": 200.0,
+      "scenario": "ECSS_LT_MODERATE"
+     }
+    },
+    "note": "extra state keys are echoed in insertion order"
+   },
+   {
+    "id": "E-A-05",
+    "inputs": {
+     "case": "RC-TISAEV-LOW",
+     "rho_kg_m3": 1,
+     "v_rel_m_s": 7800,
+     "intake_projected_area_m2": 1,
+     "intake_cd": 2
+    },
+    "note": "JSON integers are accepted (float(int))"
+   },
+   {
+    "id": "E-A-06",
+    "inputs": {
+     "case": "RC-TISAEV-HIGH",
+     "intake_source": "  F1 record  "
+    },
+    "note": "a padded source is accepted and echoed unstripped"
+   },
+   {
+    "id": "E-A-07",
+    "inputs": {
+     "case": "RC-VAIDYA-GOCELIKE",
+     "accounting": "contained_in_reference"
+    },
+    "note": "intake term reported, not added"
+   }
+  ],
+  "edge_case_defaults": "unless set: rho_kg_m3 2.5e-10, v_rel_m_s 7800.0, intake_projected_area_m2 0.1, intake_cd 2.0, intake_source 'F1 test stub', atmosphere_state {'source': 'test-orbit-resolved-stub', 'state_id': 's0'}, accounting 'separate_term' (the reference's own test stub, tests/test_spacecraft_reference_drag.py)",
+  "randomized_domain": {
+   "entries": [
+    {
+     "entry_index": 0,
+     "entry": "reference_drag (RD-R)",
+     "count": 600,
+     "draw": "per vector, in this order: case = CASES[rng_0.integers(0, 8)]; accounting = INTAKE_ACCOUNTING[rng_0.integers(0, 2)]; rho_kg_m3 = 10.0 ** rng_0.uniform(-13.0, -8.0); v_rel_m_s = rng_0.uniform(6000.0, 8500.0); intake_projected_area_m2 = rng_0.uniform(0.0, 2.0); intake_cd = rng_0.uniform(0.0, 5.0); atmosphere_state = {'source': 'parity-random', 'state_id': 'r<k>'} (k = vector index); intake_source as golden"
+    },
+    {
+     "entry_index": 1,
+     "entry": "statewise_margin (SM-R)",
+     "count": 300,
+     "draw": "thrust_available_N = rng_1.uniform(0.0, 0.05), one draw per SM-R vector in order"
+    }
+   ],
+   "domain_note": "numerical parity domain only; not a physics, design or evidence claim"
+  },
+  "single_calls": {
+   "density_free_table": "one call (8 rows)",
+   "build_document": "one call",
+   "case": "case_id in the 8 declared ids + ['RC-FLIGHT', '', 'rc-diamant']"
+  },
+  "vector_totals": {
+   "reference_drag": "3136 golden + 7 edge + 600 randomized + 30 domain-error = 3773",
+   "statewise_margin": "392 golden + 300 randomized + 14 domain-error = 706",
+   "density_free_table": 1,
+   "build_document": 1,
+   "case": 11
+  }
+ },
+ "campaign_seeds": {
+  "applicable": true,
+  "scoring_master_seed": 2026100641,
+  "development_master_seed": 2026100601,
+  "derivation": "rng_e = numpy.random.default_rng(numpy.random.SeedSequence([master_seed, e])), e the entry index of inputs.randomized_domain; draws in the registered order; the draws define input values only (both implementations are deterministic)",
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the existing admitted stochastic / statistical parity contract; the roles are registered separately and never merged",
+   "design_uq_sampling_stream": "NOT_APPLICABLE: no design / UQ sampling in the component",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE: no TPMC call",
+   "other_streams": "NOT_APPLICABLE: neither implementation draws random numbers; the harness draws input vectors once (numpy default_rng) and passes identical values to both",
+   "migration_parity_dataset": "seeds, draw order and captured reference outputs stay exactly reproducible (immutable)",
+   "after_rust_authority": "not applicable (no RNG in the component)"
+  },
+  "rng_streams_v3": "not applicable (no RNG inside either implementation)",
+  "development_rule": "development comparisons use development_master_seed only and are never scored or reported as a verdict; every execution with scoring_master_seed is appended to campaign_history and the report is committed whatever its verdict"
+ },
+ "observables": {
+  "reference_drag": {
+   "list": [
+    {
+     "name": "outcome",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "RETURNED or RAISED (Rust: Ok / Err)"
+    },
+    {
+     "name": "error class and message (RAISED)",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "Rust error status OUT_OF_DOMAIN with message '<Python exception class>: <str(exception)>'; the class is ValueError, TypeError or KeyError as the reference raises it, and the text is the reference text (floats in it as float repr)"
+    },
+    {
+     "name": "result keys and their order",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "schema, status, freeze_status, label, case_id, record_id, atmosphere_state, inputs, q_Pa, reference_term, intake_term, D_total_N, D_total_mN, flags, rfp_thrust_band_mN (nested dicts in the reference order)"
+    },
+    {
+     "name": "every non-computed field",
+     "units": "as the reference",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal (floats bit pattern equal)",
+     "definition": "labels, case / record ids, atmosphere_state echo, inputs echo (float(x) of each numeric input, intake_source, intake_accounting), reference_term cd / a_ref_m2 / a_ref_scope / source / evidence_level / quantity_type / array_treatment, intake_term added_to_total / owner, flags (list and order), rfp_thrust_band_mN"
+    },
+    {
+     "name": "q_Pa, reference_term.D_N, intake_term.D_N, D_total_N, D_total_mN",
+     "units": "Pa, N, N, N, mN",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4
+     },
+     "definition": "q = 0.5 * rho * v * v; D_ref = q * C_D * A_ref; D_int = q * intake_cd * intake_area; D_total = D_ref + (D_int if separate_term else 0.0); D_total_mN = D_total * 1e3"
+    }
+   ]
+  },
+  "statewise_margin": {
+   "list": [
+    {
+     "name": "outcome, error class and message",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "as reference_drag"
+    },
+    {
+     "name": "result keys, order and every non-computed field",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "schema, status, freeze_status, label, case_id, state (dict(thrust_state) in its own key order), thrust_source, T_available_N (float(thrust)), D_N (the drag result's D_total_N as given), note"
+    },
+    {
+     "name": "margin_N",
+     "units": "N",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4
+     },
+     "definition": "T_available_N - D_total_N"
+    },
+    {
+     "name": "nonnegative_against_reference",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "margin_N >= 0.0 (a reference indication, freeze_status NOT_EVALUATED; never a gate verdict)"
+    }
+   ]
+  },
+  "density_free_table": {
+   "list": [
+    {
+     "name": "rows (8), keys, order and values",
+     "units": "-, m^2, Pa",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal (floats bit pattern equal)",
+     "definition": "cd_a_m2 = round(cd * a_ref_m2, 6); q_at_12mN_Pa = round(12.0 * 1e-3 / cd_a, 9); q_at_25mN_Pa = round(25.0 * 1e-3 / cd_a, 9), cd_a unrounded; Python round(x, n) is the correctly rounded decimal, reproduced exactly (correctly rounded decimal formatting with round-half-even, then correctly rounded parsing)"
+    }
+   ]
+  },
+  "build_document": {
+   "list": [
+    {
+     "name": "document text",
+     "units": "-",
+     "tolerance_class": "EXACT_BYTES",
+     "tolerance": "json.dumps(build_document(), indent=1, ensure_ascii=False) text equal (sha256 equal)",
+     "definition": "the complete register: decisions, scope, rfp_thrust_band, sources, not_accessed, records (every value with unit, source, evidence level, quantity type and note), cases, density_free_table, findings, open_items"
+    }
+   ]
+  },
+  "case": {
+   "list": [
+    {
+     "name": "ReferenceCase fields or None",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "dataclass __dict__ (field order case_id, record_id, a_ref_m2, cd, a_ref_scope, source, evidence_level, quantity_type, array_treatment, note) or null"
+    }
+   ]
+  }
+ },
+ "tolerance_classes": {
+  "EXACT_BYTES": "serialized text byte-identical (sha256 equal)",
+  "EXACT_VALUE": "integers, strings, enums, booleans, null, statuses, error classes / messages, key sets and order, and floats that are copied (not computed): equal (floats by bit pattern)",
+  "ULP_BOUNDED": "|rust - py| <= k_ulp * ulp(py); ulp(py) = 2^(floor(log2|py|) - 52) for normal py, the smallest subnormal for py = 0 or subnormal py; no relative or absolute clause",
+  "SOLVER_TOLERANCE": "not used (no iterative solver)",
+  "STATISTICAL": "not used (deterministic component)",
+  "EXACT_STREAM": "not used (no RNG in either implementation)"
+ },
+ "tolerance_basis": {
+  "independence": "fixed before any comparison from the operation list",
+  "registered": "k_ulp = 4 (template proposal). Every computed value is a chain of IEEE-754 basic operations (*, +, -) evaluated in the reference order by both implementations; Rust performs no floating-point contraction, so bit identity is expected and the report states the bit-identical count"
+ },
+ "exact_invariants": [
+  {
+   "id": "INV-A-01",
+   "statement": "D_total_N == reference_term.D_N + (intake_term.D_N if intake_term.added_to_total else 0.0), bit-exact, on every returned reference_drag result",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-A-02",
+   "statement": "every reference_drag and statewise_margin result carries status REFERENCE_PARAMETRIC_NOT_FLIGHT, freeze_status NOT_EVALUATED and label REFERENCE/PARAMETRIC (value-status preservation, RM-R27)",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-A-03",
+   "statement": "the module integrity rule (_integrity): every declared case maps to a record that states the same (A_ref, C_D) pair; a_ref_scope in (includes_intake, body_excluding_intake, unstated)",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-A-04",
+   "statement": "double-run determinism: two Rust processes give byte-identical stdout for the full request; two Python evaluations give equal results",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-A-05",
+   "statement": "the Rust module abep_mission::reference_drag contains no comparison of a thrust with a drag and reads no file (statewise_margin lives in abep_mission::statewise; layer_placement)",
+   "required_in_both": false
+  }
+ ],
+ "conservation_checks": {
+  "applicable": false,
+  "reason": "a closed-form drag evaluator over caller-supplied inputs; no mass / power / energy balance (the additive drag identity is INV-A-01)",
+  "checks": []
+ },
+ "domain_and_error_parity": {
+  "mapping": {
+   "ValueError": "OUT_OF_DOMAIN, message 'ValueError: <text>'",
+   "TypeError": "OUT_OF_DOMAIN, message 'TypeError: <text>'",
+   "KeyError": "OUT_OF_DOMAIN, message 'KeyError: <str(KeyError)>' (the repr-quoted text)"
+  },
+  "case_defaults": "the E-A defaults (edge_case_defaults) unless set",
+  "cases": [
+   {"id": "DE-A-01", "entry": "reference_drag", "inputs": {"rho_kg_m3": null}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "rho_kg_m3 is required (no default)"},
+   {"id": "DE-A-02", "entry": "reference_drag", "inputs": {"rho_kg_m3": 0.0}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "rho_kg_m3 must be finite and > 0"},
+   {"id": "DE-A-03", "entry": "reference_drag", "inputs": {"rho_kg_m3": -1.0}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "rho_kg_m3 must be finite and > 0"},
+   {"id": "DE-A-04", "entry": "reference_drag", "inputs": {"rho_kg_m3": "NaN"}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "rho_kg_m3 must be finite and > 0"},
+   {"id": "DE-A-05", "entry": "reference_drag", "inputs": {"rho_kg_m3": "+inf"}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "rho_kg_m3 must be finite and > 0"},
+   {"id": "DE-A-06", "entry": "reference_drag", "inputs": {"v_rel_m_s": null}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "v_rel_m_s is required (no default)"},
+   {"id": "DE-A-07", "entry": "reference_drag", "inputs": {"v_rel_m_s": 0.0}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "v_rel_m_s must be finite and > 0"},
+   {"id": "DE-A-08", "entry": "reference_drag", "inputs": {"intake_projected_area_m2": null}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "intake_projected_area_m2 is required (no default)"},
+   {"id": "DE-A-09", "entry": "reference_drag", "inputs": {"intake_projected_area_m2": -0.5}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "intake_projected_area_m2 must be finite and >= 0"},
+   {"id": "DE-A-10", "entry": "reference_drag", "inputs": {"intake_cd": null}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "intake_cd is required (no default)"},
+   {"id": "DE-A-11", "entry": "reference_drag", "inputs": {"intake_cd": true}, "expected_python": "TypeError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "intake_cd must be a number"},
+   {"id": "DE-A-12", "entry": "reference_drag", "inputs": {"rho_kg_m3": "1e-10"}, "expected_python": "TypeError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "rho_kg_m3 must be a number"},
+   {"id": "DE-A-13", "entry": "reference_drag", "inputs": {"intake_source": ""}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "intake_source is required"},
+   {"id": "DE-A-14", "entry": "reference_drag", "inputs": {"intake_source": "   "}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "intake_source is required"},
+   {"id": "DE-A-15", "entry": "reference_drag", "inputs": {"intake_source": null}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "intake_source is required"},
+   {"id": "DE-A-16", "entry": "reference_drag", "inputs": {"atmosphere_state": {}}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "atmosphere_state must be a dict"},
+   {"id": "DE-A-17", "entry": "reference_drag", "inputs": {"atmosphere_state": {"source": "x"}}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "atmosphere_state must be a dict"},
+   {"id": "DE-A-18", "entry": "reference_drag", "inputs": {"atmosphere_state": {"source": "x", "state_id": ""}}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "atmosphere_state must be a dict"},
+   {"id": "DE-A-19", "entry": "reference_drag", "inputs": {"atmosphere_state": "s0"}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "atmosphere_state must be a dict"},
+   {"id": "DE-A-20", "entry": "reference_drag", "inputs": {"accounting": null}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "intake_accounting must be one of"},
+   {"id": "DE-A-21", "entry": "reference_drag", "inputs": {"accounting": "maybe"}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "intake_accounting must be one of"},
+   {"id": "DE-A-22", "entry": "reference_drag", "inputs": {"case": "RC-FLIGHT"}, "expected_python": "KeyError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "unknown reference case"},
+   {"id": "DE-A-23", "entry": "reference_drag", "inputs": {"case": null}, "expected_python": "KeyError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "unknown reference case"},
+   {"id": "DE-A-24", "entry": "reference_drag", "inputs": {"case": "RC-ROMANO2018", "accounting": "separate_term"}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "double-counts"},
+   {"id": "DE-A-25", "entry": "reference_drag", "inputs": {"case": "RC-VAIDYA-GOCELIKE", "accounting": "separate_term"}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "double-counts"},
+   {"id": "DE-A-26", "entry": "reference_drag", "inputs": {"case": "RC-DIAMANT", "rho_kg_m3": 1e300, "v_rel_m_s": 1e200, "intake_projected_area_m2": 0.0, "intake_cd": 0.0}, "expected_python": "returns D_total_N nan (q = inf, inf * 0)", "expected_rust": "OUT_OF_DOMAIN", "message_key": "DIV-A-01"},
+   {"id": "DE-A-27", "entry": "reference_drag", "inputs": {"case": "RC-DIAMANT", "rho_kg_m3": 1e300, "v_rel_m_s": 1e10}, "expected_python": "returns q_Pa / D inf", "expected_rust": "OUT_OF_DOMAIN", "message_key": "DIV-A-01"},
+   {"id": "DE-A-28", "entry": "reference_drag", "inputs": {"case": "RC-DIAMANT", "intake_projected_area_m2": 10.0, "intake_cd": 1e308, "rho_kg_m3": 1e-8, "v_rel_m_s": 8000.0}, "expected_python": "returns intake_term.D_N / D_total_N inf", "expected_rust": "OUT_OF_DOMAIN", "message_key": "DIV-A-01"},
+   {"id": "DE-A-29", "entry": "reference_drag", "inputs": {"case": "RC-X", "rho_kg_m3": null}, "expected_python": "KeyError (the case is checked first)", "expected_rust": "OUT_OF_DOMAIN", "message_key": "unknown reference case"},
+   {"id": "DE-A-30", "entry": "reference_drag", "inputs": {"rho_kg_m3": null, "v_rel_m_s": null, "intake_source": ""}, "expected_python": "ValueError on rho_kg_m3 (check order)", "expected_rust": "OUT_OF_DOMAIN", "message_key": "rho_kg_m3 is required (no default)"},
+   {"id": "DE-M-01", "entry": "statewise_margin", "inputs": {"thrust_available_N": null}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "thrust_available_N is required (no default)"},
+   {"id": "DE-M-02", "entry": "statewise_margin", "inputs": {"thrust_available_N": -0.001}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "thrust_available_N must be finite and >= 0"},
+   {"id": "DE-M-03", "entry": "statewise_margin", "inputs": {"thrust_available_N": "NaN"}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "thrust_available_N must be finite and >= 0"},
+   {"id": "DE-M-04", "entry": "statewise_margin", "inputs": {"thrust_available_N": true}, "expected_python": "TypeError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "thrust_available_N must be a number"},
+   {"id": "DE-M-05", "entry": "statewise_margin", "inputs": {"thrust_available_N": 0.0}, "expected_python": "returns (margin = -D)", "expected_rust": "returns", "message_key": "none"},
+   {"id": "DE-M-06", "entry": "statewise_margin", "inputs": {"thrust_source": ""}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "thrust_source is required"},
+   {"id": "DE-M-07", "entry": "statewise_margin", "inputs": {"thrust_source": null}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "thrust_source is required"},
+   {"id": "DE-M-08", "entry": "statewise_margin", "inputs": {"drag_result": {"status": "FLIGHT"}}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "drag_result must come from reference_drag()"},
+   {"id": "DE-M-09", "entry": "statewise_margin", "inputs": {"drag_result": "x"}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "drag_result must come from reference_drag()"},
+   {"id": "DE-M-10", "entry": "statewise_margin", "inputs": {"thrust_state": {"source": "x", "state_id": "s1"}}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "same atmospheric/orbit state"},
+   {"id": "DE-M-11", "entry": "statewise_margin", "inputs": {"thrust_state": "the drag state plus key 'extra': 1"}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "same atmospheric/orbit state"},
+   {"id": "DE-M-12", "entry": "statewise_margin", "inputs": {"thrust_state": "the drag state with its keys in reverse order"}, "expected_python": "returns (dict equality ignores order; state echoed in thrust_state order)", "expected_rust": "returns", "message_key": "none"},
+   {"id": "DE-M-13", "entry": "statewise_margin", "inputs": {"thrust_state": "s0"}, "expected_python": "ValueError", "expected_rust": "OUT_OF_DOMAIN", "message_key": "same atmospheric/orbit state"},
+   {"id": "DE-M-14", "entry": "statewise_margin", "inputs": {"thrust_available_N": 1}, "expected_python": "returns (T_available_N 1.0)", "expected_rust": "returns", "message_key": "none"}
+  ],
+  "statewise_margin_case_defaults": "drag_result = reference_drag of the E-A defaults (RC-DIAMANT); thrust_available_N 0.012; thrust_state = an equal copy of the drag result's atmosphere_state; thrust_source 'test'",
+  "mapping_rule": "every Python exception class maps to exactly one Rust status (OUT_OF_DOMAIN) with the class name as message key; no Rust path returns a value where Python fails, or fails where Python returns, except DIV-A-01",
+  "documented_divergence": [
+   {
+    "id": "DIV-A-01",
+    "statement": "a non-finite computed value (q_Pa, a drag term or D_total_N: overflow to inf, inf * 0 = nan) is refused by Rust (OUT_OF_DOMAIN, message 'ValueError: non-finite drag result ...') where the reference returns the inf / nan result",
+    "disposition": "fail closed (CLAUDE.md rule 3: no silent non-finite result); scored by DE-A-26..28 with the registered divergent outcome; finite inputs inside the reference domain never reach it"
+   },
+   {
+    "id": "DIV-A-02",
+    "statement": "the reference raises the import-time integrity error from _integrity; the Rust register is compile-time data and integrity() runs at the start of every public entry point (an integrity failure is MODEL_ERROR)",
+    "disposition": "no observable difference with the registered data (INV-A-03)"
+   },
+   {
+    "id": "DIV-A-03",
+    "statement": "the 'contained_in_reference' refusal for a body_excluding_intake case is unreachable with the declared cases (no case has that scope)",
+    "disposition": "implemented in Rust on the case record and exercised by a Rust unit test on a test-only case; not scored"
+   }
+  ]
+ },
+ "schema_parity": {
+  "schemas": [
+   "NOT_APPLICABLE (no schemas/** file; the record shape is the reference dict)"
+  ],
+  "rules": [
+   "reference_drag / statewise_margin result keys, nesting and order identical (observables)",
+   "evidence labels identical: status REFERENCE_PARAMETRIC_NOT_FLIGHT, freeze_status NOT_EVALUATED, label REFERENCE/PARAMETRIC, quantity types, evidence levels, flags"
+  ]
+ },
+ "golden_and_reference_cases": {
+  "references": [
+   "captured Python outputs at python_commit"
+  ],
+  "rule": "references are read as committed; they are never regenerated to make Rust pass (RM-R11)",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_SPACECRAFT_REFERENCE_DRAG_PY/reference_outputs/",
+   "captured_at_python_commit": "fa4fcb3bd21fec8c07a26fe264e1045d5a6bec73",
+   "sha256_manifest": "reference_outputs/MANIFEST.json, written by the scoring run",
+   "purpose": "lets CI check Rust against the Python reference after Python is retired (a cargo test replays them)"
+  },
+  "historical_golden_rule": "RM-R28: not used"
+ },
+ "julia_bridge": {
+  "applicable": false,
+  "reason": "no HallThruster.jl path",
+  "hallthruster_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5 (recorded for completeness; not used)"
+ },
+ "performance_measurement": {
+  "status": "reported, not a decision criterion (A9.24 items 1 and 6)",
+  "workloads": [
+   {
+    "id": "RD-G",
+    "description": "the 3136 golden reference_drag vectors, one process each side (no PRE_RUST_REFERENCE_BASELINE workload exists for this module)"
+   }
+  ],
+  "repeats": 3,
+  "statistic": "median wall-clock per implementation in one session on one machine; speed-up = median_python / median_rust",
+  "machine_manifest": "recorded in the report"
+ },
+ "decision_rules": {
+  "per_test": "every scored observable of every vector meets its tolerance class; every outcome / error class / message equals the reference outcome (or the registered DIV-A-01 outcome)",
+  "aggregate": "NOT_APPLICABLE (no STATISTICAL entry point)",
+  "exact_invariants_required": true,
+  "conservation_required": false,
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "verdict": "ADMITTED iff every per-test, invariant, domain/error and schema check passes and every reference file matches sha256_at_registration; PARITY_PASS <=> ADMITTED, PARITY_FAIL <=> NOT_ADMITTED",
+  "verdict_vocabulary": [
+   "ADMITTED",
+   "NOT_ADMITTED",
+   "REFUSED_REFERENCE_CHANGED",
+   "INPUT_MISMATCH",
+   "NOT_RUN_RUST_UNAVAILABLE",
+   "REFUSED_CLASSIFICATION"
+  ],
+  "parity_vocabulary": [
+   "PARITY_PASS",
+   "PARITY_FAIL"
+  ],
+  "meaning_of_ADMITTED": "A9.24 item 1: Rust becomes authoritative for this component (within the registered domain); new production results for it come from Rust and carry implementation = rust, rust_commit and this contract id; the Python component may then be retired from active execution. It is NOT physics validation, and the reference drag stays REFERENCE/PARAMETRIC with freeze_status NOT_EVALUATED (S6.18: AG-13 closure needs the host-spacecraft ICD).",
+  "no_retuning": "tolerances, observables, inputs, n, seeds and rules are fixed; after NOT_ADMITTED only a code fix plus a new contract version with a fresh scoring_master_seed may follow; the failed report stays; no execution is discarded",
+  "disagreement_rule": "never rewrite a Python result, golden, fixture or frozen dataset to make Rust pass (RM-R11)",
+  "observable_scope": "observables are restricted to retained selected-architecture physics; no observable depends on an excluded legacy path (RM-R20)",
+  "scoring_once": "the scoring comparison runs once (scoring_master_seed); the harness refuses a second scoring run when parity_report_v1.json exists; development runs never write a report"
+ },
+ "bid_boundary": {
+  "statement": "this contract and its Rust implementation are post-bid-freeze work; no output of it may be cited by the bid package unless the owner re-freezes (PROGRAMME.md section 4; bid_source_guard)",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b (technical source) / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (package / freeze record, A9.28; lineage b5849affae22a6709ad217a184f6fe896d15410a -> 2de86ab); A9.29 sec. 3: 2de86ab is the terminal owner-authorized package state",
+  "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+ },
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a host-spacecraft drag, not an ICD and not an AG-13 / HC-08 closure: every result stays REFERENCE_PARAMETRIC_NOT_FLIGHT, freeze_status NOT_EVALUATED (S6.18)",
+  "not a change of any frozen dataset, golden, threshold or requirement",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27): as-reported (secondary) / assumed C_D values and the TBD fields keep their labels",
+  "not a gate PASS: absent determining evidence stays NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN / MODEL_ERROR (RM-R31)"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-ABEP_SIM_SPACECRAFT_REFERENCE_DRAG_PY/parity_report_v1.json (+ .md generated from it)",
+  "runner": "scripts/rust_migration/parity_sc_wp04.py score a (Python harness calling the Rust CLI abep-mission-parity); records campaign_history",
+  "report_fields": [
+   "contract_sha256",
+   "python_commit",
+   "reference_sha256",
+   "rust_commit",
+   "build_provenance (rustc, Cargo.lock sha256, source sha256)",
+   "environment",
+   "per-test results",
+   "invariants",
+   "domain/error",
+   "schema",
+   "performance",
+   "verdicts",
+   "campaign_history",
+   "ledger_update_requested"
+  ]
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator (A9.25 message 3)",
+  "checks": [
+   "component.migration_class is ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+   "no observable, input or code path belongs to an excluded legacy path (the component has none; mission_env.spacecraft_drag and the class-H mission5 / archengine drag are not ported)",
+   "the Rust implementation contains none of the forbidden identifiers (CI_PLAN.md sec. 1 principle 6)",
+   "abep-mission is a flight-runtime physics crate and depends on no abep-groundtest / abep-assess crate"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict): the contract cannot be registered"
+ },
+ "value_status_preservation": {
+  "rule": "RM-R27: no provisional / analog / allocation input is promoted by migration to CBE, measured or frozen truth",
+  "inputs": [
+   {
+    "id": "CASES",
+    "value": "the 8 declared (A_ref, C_D) pairs as committed",
+    "value_status": "quantity_type 'assumed' (RC-ROMANO2018) or 'as-reported (secondary)' (the 7 others); evidence levels 5 / 6",
+    "open_action": "S6.18: REFERENCE/PARAMETRIC until the host-spacecraft ICD exists (AG-13)",
+    "committed_labels": [
+     "REFERENCE/PARAMETRIC",
+     "REFERENCE_PARAMETRIC_NOT_FLIGHT",
+     "freeze_status NOT_EVALUATED",
+     "flags CD_SECONDARY / CD_ASSUMED / INTAKE_OVERLAP_UNRESOLVED"
+    ]
+   },
+   {
+    "id": "RFP_THRUST_BAND",
+    "value": "12.0 / 25.0 mN",
+    "value_status": "FROZEN_REQUIREMENTS_SNAPSHOT (orientation only; not a drag result)",
+    "open_action": "none (requirement assessment is SC-WP-11)",
+    "committed_labels": [
+     "requirement_status FROZEN_REQUIREMENTS_SNAPSHOT"
+    ]
+   },
+   {
+    "id": "RECORDS",
+    "value": "every record value as committed (TBD = null with quantity_type TBD)",
+    "value_status": "per value: evidence level 1-7 and quantity type as committed",
+    "open_action": "OPEN_ITEMS as committed",
+    "committed_labels": [
+     "as committed"
+    ]
+   }
+  ],
+  "check": "VS-A-01: the Rust register and every Rust result carry each value and label exactly (build_document EXACT_BYTES; reference_drag EXACT_VALUE fields); any CBE / measured / frozen-truth relabel fails"
+ },
+ "new_physics_verification": {
+  "applies_when": "contract_kind = NEW_PHYSICS",
+  "status": "NOT_APPLICABLE (existing physics with a Python reference)"
+ }
+}
