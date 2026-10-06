@@ -10,11 +10,11 @@ use abep_atmos::mission_env_kernel::Spacecraft;
 use abep_atmos::pyfloat::py_pow;
 use abep_mission::propagation::{
     array_area_for, beta_angle, eclipse_fraction, propagate, worst_eclipse_fraction, DragSample, ThrustSample,
-    SOLAR_CONST,
+    PROPAGATION_COLUMNS, PROPAGATION_SUMMARY_KEYS, SOLAR_CONST,
 };
 use abep_types::constants::{MU_EARTH, R_EARTH};
 use abep_types::{AbepError, AbepResult};
-use serde_json::{json, Map, Value};
+use serde_json::{json, Value};
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 
@@ -140,31 +140,12 @@ fn call(repo: &Path, c: &Value) -> AbepResult<Value> {
                 opt(&a, "raan0"),
                 num(&a, "epoch_day"),
             )?;
-            let rows: Vec<Value> = p
-                .rows
-                .iter()
-                .map(|r| {
-                    let mut m = Map::new();
-                    for (k, v) in [
-                        ("t_h", r.t_h),
-                        ("alt_km", r.alt_km),
-                        ("raan_deg", r.raan_deg),
-                        ("beta_deg", r.beta_deg),
-                        ("eclipse_frac", r.eclipse_frac),
-                        ("D_mN", r.D_mN),
-                        ("T_mN", r.T_mN),
-                        ("P_bus_W", r.P_bus_W),
-                        ("P_need_W", r.P_need_W),
-                        ("P_avail_W", r.P_avail_W),
-                        ("power_margin_W", r.power_margin_W),
-                        ("rho", r.rho),
-                    ] {
-                        m.insert(k.into(), jf(v));
-                    }
-                    Value::Object(m)
-                })
-                .collect();
+            // JSON objects of serde_json sort their keys: the column / key order travels as explicit lists.
+            let rows: Vec<Value> =
+                p.rows.iter().map(|r| Value::Array(r.values().iter().map(|v| jf(*v)).collect())).collect();
             Ok(json!({
+                "columns": PROPAGATION_COLUMNS,
+                "summary_keys": PROPAGATION_SUMMARY_KEYS,
                 "rows": rows,
                 "reentered": p.reentered,
                 "min_alt_km": jf(p.min_alt_km),

@@ -271,6 +271,46 @@ pub struct PropagationRow {
     pub rho: f64,
 }
 
+/// The reference DataFrame columns, in order.
+pub const PROPAGATION_COLUMNS: [&str; 12] = [
+    "t_h",
+    "alt_km",
+    "raan_deg",
+    "beta_deg",
+    "eclipse_frac",
+    "D_mN",
+    "T_mN",
+    "P_bus_W",
+    "P_need_W",
+    "P_avail_W",
+    "power_margin_W",
+    "rho",
+];
+
+/// The reference summary keys, in order.
+pub const PROPAGATION_SUMMARY_KEYS: [&str; 6] =
+    ["reentered", "min_alt_km", "mean_eclipse", "min_power_margin_W", "hours_power_short", "raan_drift_deg_per_day"];
+
+impl PropagationRow {
+    /// The row values in [`PROPAGATION_COLUMNS`] order.
+    pub fn values(&self) -> [f64; 12] {
+        [
+            self.t_h,
+            self.alt_km,
+            self.raan_deg,
+            self.beta_deg,
+            self.eclipse_frac,
+            self.D_mN,
+            self.T_mN,
+            self.P_bus_W,
+            self.P_need_W,
+            self.P_avail_W,
+            self.power_margin_W,
+            self.rho,
+        ]
+    }
+}
+
 /// The propagation result (rows plus the reference summary).
 #[derive(Debug, Clone, PartialEq, Serialize)]
 #[allow(non_snake_case)]
