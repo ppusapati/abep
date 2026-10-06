@@ -1,0 +1,19 @@
+{
+ "schema": "abep_new_physics_prereg_addendum_v1",
+ "id": "NP-MISSION-INTEGRATION-ADDENDUM-01",
+ "model_id": "NP-MISSION-INTEGRATION",
+ "amends": {
+  "path": "docs/rust_migration/new_physics/NP-MISSION-INTEGRATION/prereg_v1.json",
+  "sha256": "9d3a72022ecb236f71a30ead5c31023d166a31e05f6a4f4579c589f62a5d4f79",
+  "lock": "docs/rust_migration/new_physics/NP-MISSION-INTEGRATION/prereg_lock_v1.json (sha256 7c206ee3f72ad8922cea23edeca24740c8574595d094eb7b6f3ae1ddc82572ac)"
+ },
+ "date": "2026-10-06",
+ "timing": "Written after the lock and BEFORE any implementation code or verification run of NP-MISSION-INTEGRATION (no result has been seen). The prereg files are not edited (CC-01).",
+ "item": {
+  "id": "AD-01",
+  "subject": "FT-10 scope (no RFP threshold)",
+  "finding": "FT-10 says the integration reads no file under config/requirements, config/constraints or config/assessment, asserted on the hook's file list. The admitted environment loader the hook must call (abep_data::pins::FrozenPins, SC-WP-01, used by abep_atmos::execution) reads config/constraints/engineering_constraints_v1.json for one value only: constraints.altitude_band_km, the mission-domain altitude band that validates the frozen design-state set (A9.22 G5; mission_scenario_v2 revision note: 'the altitude band is a frozen domain constraint validating the frozen 196-state design-state set'). It is a domain-validity check inside the admitted environment layer, not a requirement threshold applied to raw mission physics, and no value of it reaches the mission record.",
+  "clarification": "FT-10 is evaluated as three assertions, all required: (a) abep_mission::integration::integrate reads no file at all (pure function of its typed inputs); (b) the hook's declared file list contains no file under config/requirements or config/assessment; (c) the only config/constraints file on the hook's list is config/constraints/engineering_constraints_v1.json, attributed to the environment layer's altitude-band domain pin, and no mission-record value is derived from it.",
+  "effect": "No criterion is relaxed for the mission model itself; (a) is stricter than the original wording. The environment layer's admitted behaviour is not changed (one authoritative implementation)."
+ }
+}
