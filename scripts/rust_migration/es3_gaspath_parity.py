@@ -3,16 +3,19 @@
 
 Implements the vector generators, reference calls, tolerance classes and decision rules registered in
 
-* docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_FILTER_STAGE_PY/parity_prereg_v1.json   (contract key 'filter')
-* docs/rust_migration/contracts/C-ABEP_SIM_COMPRESSOR_PY/parity_prereg_v1.json            (contract key 'compressor')
-* docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/parity_prereg_v1.json    (contract key 'plenum')
+* docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_FILTER_STAGE_PY/parity_prereg_v{1,2}.json  (contract key 'filter')
+* docs/rust_migration/contracts/C-ABEP_SIM_COMPRESSOR_PY/parity_prereg_v{1,2}.json           (contract key 'compressor')
+* docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/parity_prereg_v1.json      (contract key 'plenum')
+
+The active version of each key is CONTRACT_VERSION; a superseded version keeps its report (immutable). Version 2 of
+the filter and compressor contracts repeats version 1 with fresh seeds (see their 'supersedes' records).
 
 The Python reference is called read-only; the Rust side is the `abep-gaspath-parity` binary of crates/abep-gaspath.
 
     python3 scripts/rust_migration/es3_gaspath_parity.py dev   filter|compressor|plenum   # development seed; no verdict
     python3 scripts/rust_migration/es3_gaspath_parity.py score filter|compressor|plenum   # scoring seed, ONCE
 
-A scoring run refuses to start when parity_report_v1.json exists, when a reference file differs from its registered
+A scoring run refuses to start when parity_report_v<n>.json exists, when a reference file differs from its registered
 sha256 (REFUSED_REFERENCE_CHANGED) or when a Rust / harness source has uncommitted changes.
 
 Harness-level definitions the contracts leave to the harness (fixed here, before any scoring run):
@@ -103,8 +106,19 @@ def sha_file(p: str) -> str:
         return hashlib.sha256(f.read()).hexdigest()
 
 
-def load_contract(key: str) -> tuple[dict, str, str]:
-    p = os.path.join(CDIR, CONTRACT_DIRS[key], "parity_prereg_v1.json")
+CONTRACT_VERSION = {"filter": 2, "compressor": 2, "plenum": 1}
+
+
+def version_of(key: str, version=None) -> int:
+    return version or CONTRACT_VERSION[key]
+
+
+def ref_dir_name(n: int) -> str:
+    return "reference_outputs" if n == 1 else f"reference_outputs_v{n}"
+
+
+def load_contract(key: str, version=None) -> tuple[dict, str, str]:
+    p = os.path.join(CDIR, CONTRACT_DIRS[key], f"parity_prereg_v{version_of(key, version)}.json")
     return json.load(open(p)), sha_file(p), p
 
 
@@ -2977,7 +2991,7 @@ def equal_values(a, b) -> bool:
 def run_campaign(key: str, mode: str, capture: bool = False, only=None) -> dict:
     contract, contract_sha, cpath = load_contract(key)
     cdir = os.path.dirname(cpath)
-    report_path = os.path.join(cdir, "parity_report_v1.json")
+    report_path = os.path.join(cdir, f"parity_report_v{version_of(key)}.json")
     if mode == "score" and os.path.exists(report_path):
         sys.exit(f"REFUSED: {report_path} exists; the scoring comparison runs once per contract version")
     changed = [f["path"] for f in contract["reference_implementation"]["files"]
@@ -3008,8 +3022,18 @@ def run_campaign(key: str, mode: str, capture: bool = False, only=None) -> dict:
     py_out2 = {v["id"]: pyf(v) for v in vectors}
     py_det = all(py_out[k][0] == py_out2[k][0] and equal_values(py_out[k][1], py_out2[k][1]) for k in py_out)
     reqs = [{"id": v["id"], "entry": v["entry"], "args": v["args"]} for v in vectors]
-    rust, raw1, timing, wall = run_rust(reqs)
-    _, raw2, _, _ = run_rust(reqs)
+    try:
+        rust, raw1, timing, wall = run_rust(reqs)
+        _, raw2, _, _ = run_rust(reqs)
+    except subprocess.CalledProcessError as exc:
+        if mode != "score":
+            raise
+        diag = {"rust_exit_status": exc.returncode,
+                "rust_stderr_tail": [ln for ln in exc.stderr.decode(errors="replace").splitlines()
+                                     if not ln.startswith("{")][:12]}
+        rep = write_failed_execution(key, version_of(key), master, len(vectors), git("rev-parse", "HEAD"), diag,
+                                     ["the Rust CLI exited before writing any result; no comparison was made"])
+        sys.exit(f"{rep['parity_verdict']}: Rust CLI exited with status {exc.returncode} (report written)")
     rres = {r["id"]: r for r in rust["results"]}
 
     t = Tally()
@@ -3127,6 +3151,7 @@ def perf(key, vectors):
     return res
 
 
+VERSION_NOTES: dict = {}
 HARNESS_NOTE = ("harness: the contract says the harness is committed 'after this contract and before the scoring run'. "
                 "It was developed with development-seed comparisons (never scored, no report) and committed before "
                 "the single scoring run; every scored generator, tolerance and decision rule is the registered one. "
@@ -3140,7 +3165,8 @@ def write_report(key, res, perf_rows, out_dir=None):
     cdir = out_dir or os.path.dirname(cpath)
     cap = res.pop("_capture")
     timing_detail = res.pop("_timing_detail")
-    rdir = os.path.join(cdir, "reference_outputs")
+    n = version_of(key)
+    rdir = os.path.join(cdir, ref_dir_name(n))
     os.makedirs(rdir, exist_ok=True)
     man = {"schema": "abep_rust_parity_reference_outputs_v1", "contract_id": contract["id"],
            "captured_at_python_commit": contract["reference_implementation"]["python_commit"],
@@ -3192,21 +3218,102 @@ def write_report(key, res, perf_rows, out_dir=None):
                               "verdict": "PARITY_PASS" if passed else "PARITY_FAIL", "executions": 1}],
         "reference_outputs": {"path": os.path.relpath(rdir, ROOT), "manifest_sha256": sha_file(
             os.path.join(rdir, "MANIFEST.json"))},
+        "supersedes": contract.get("supersedes"),
         "ledger_update_requested": LEDGER[key] if passed else LEDGER_FAIL[key],
-        "notes": [HARNESS_NOTE] + NOTES[key],
+        "notes": [HARNESS_NOTE] + NOTES[key] + VERSION_NOTES.get((key, n), []),
         "what_this_is_not": contract["what_this_is_not"],
     }
-    with open(os.path.join(cdir, "parity_report_v1.json"), "w") as f:
+    with open(os.path.join(cdir, f"parity_report_v{n}.json"), "w") as f:
         json.dump(report, f, indent=1, allow_nan=False)
         f.write("\n")
-    with open(os.path.join(cdir, "parity_report_v1.md"), "w") as f:
+    with open(os.path.join(cdir, f"parity_report_v{n}.md"), "w") as f:
         f.write(render_md(report))
+    return report
+
+
+def provenance_at(contract, commit):
+    """Build provenance of an execution recorded after the fact: the sources as committed at `commit`."""
+    files = []
+    for pat in contract["rust_implementation"]["provenance_sources"]:
+        base = pat.replace("/**", "")
+        out = git("ls-tree", "-r", "--name-only", commit, "--", base)
+        files += [f for f in out.splitlines() if f]
+
+    def sha_at(path):
+        blob = subprocess.run(["git", "show", f"{commit}:{path}"], cwd=ROOT, capture_output=True, check=True).stdout
+        return hashlib.sha256(blob).hexdigest()
+    prov = provenance(contract)
+    prov.update({"source_sha256": {f: sha_at(f) for f in sorted(set(files))},
+                 "cargo_lock_sha256": sha_at("Cargo.lock"),
+                 "harness": {"path": "scripts/rust_migration/es3_gaspath_parity.py",
+                             "sha256": sha_at("scripts/rust_migration/es3_gaspath_parity.py"),
+                             "recorded_at_commit": commit},
+                 "recorded_from_commit": commit})
+    return prov
+
+
+def write_failed_execution(key, n, master, n_vectors, commit, diagnosis, notes):
+    """Report of a scoring execution that produced no comparison (the Rust CLI exited): NOT_ADMITTED / PARITY_FAIL,
+    committed like any other report (no execution is discarded)."""
+    contract, contract_sha, cpath = load_contract(key, n)
+    cdir = os.path.dirname(cpath)
+    path = os.path.join(cdir, f"parity_report_v{n}.json")
+    if os.path.exists(path):
+        sys.exit(f"REFUSED: {path} exists")
+    now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    report = {
+        "schema": "abep_rust_parity_report_v1",
+        "contract": {"id": contract["id"], "path": os.path.relpath(cpath, ROOT), "sha256": contract_sha,
+                     "registration_commit": git("log", "-n1", "--format=%H", "--", os.path.relpath(cpath, ROOT))},
+        "date_utc": now,
+        "python_commit": contract["reference_implementation"]["python_commit"],
+        "reference_sha256": {f["path"]: {"registered": f["sha256_at_registration"],
+                                         "at_scoring": sha_file(os.path.join(ROOT, f["path"]))}
+                             for f in contract["reference_implementation"]["files"]},
+        "rust_commit": commit,
+        "build_provenance": provenance_at(contract, commit),
+        "environment": environment(),
+        "mode": "scoring",
+        "scoring_master_seed": master,
+        "n_vectors": n_vectors,
+        "execution": {"status": "RUST_CLI_EXITED_NO_RESULTS", **diagnosis},
+        "per_test": "NOT_EVALUATED (no Rust result was produced; every registered vector counts as failed)",
+        "checks": {"per_test": False, "determinism": False, "invariants_and_conservation": False, "all": False},
+        "verdict": "NOT_ADMITTED",
+        "parity_verdict": "PARITY_FAIL",
+        "campaign_history": [{"date_utc": now, "mode": "scoring", "seed": master, "verdict": "PARITY_FAIL",
+                              "executions": 1, "outcome": "Rust CLI exited before writing results"}],
+        "reference_outputs": "NOT_CAPTURED (the execution produced no comparison)",
+        "supersedes": contract.get("supersedes"),
+        "ledger_update_requested": LEDGER_FAIL[key],
+        "notes": notes,
+        "what_this_is_not": contract["what_this_is_not"],
+    }
+    with open(path, "w") as f:
+        json.dump(report, f, indent=1, allow_nan=False)
+        f.write("\n")
+    md = [f"# Parity report v{n} - {contract['id']}", "",
+          "Verdict: **PARITY_FAIL** (NOT_ADMITTED). Generated from `" + os.path.basename(path) + "`.", "",
+          f"* Contract: `{report['contract']['path']}` sha256 `{contract_sha}`, registered in "
+          f"`{report['contract']['registration_commit'][:12]}`.",
+          f"* Python reference commit `{report['python_commit'][:12]}`; Rust commit `{commit[:12]}`.",
+          f"* Master seed {master} (scoring); {n_vectors} vectors generated; the Rust CLI exited with status "
+          f"{diagnosis.get('rust_exit_status')} before writing any result, so no comparison was made.", "",
+          "## Diagnosis", ""] + [f"* `{json.dumps(x)[:400]}`" for x in diagnosis.get("rust_stderr_tail", [])] + \
+         [f"* {k}: `{json.dumps(v)[:600]}`" for k, v in diagnosis.items()
+          if k not in ("rust_stderr_tail", "rust_exit_status")] + \
+         ["", "## Notes", ""] + [f"* {x}" for x in notes] + \
+         ["", "## Ledger update requested", ""] + [f"* {x['component']}: {x['requested_status']}"
+                                                   for x in LEDGER_FAIL[key]] + \
+         ["", "Parity is not physics validation, not a gate PASS and not a change of any frozen dataset.", ""]
+    with open(os.path.join(cdir, f"parity_report_v{n}.md"), "w") as f:
+        f.write("\n".join(md))
     return report
 
 
 def render_md(r):
     L = [f"# Parity report v1 - {r['contract']['id']}", "",
-         f"Verdict: **{r['parity_verdict']}** ({r['verdict']}). Generated from `parity_report_v1.json`.", "",
+         f"Verdict: **{r['parity_verdict']}** ({r['verdict']}). Generated from the JSON report next to this file.", "",
          f"* Contract: `{r['contract']['path']}` sha256 `{r['contract']['sha256']}`, registered in "
          f"`{r['contract']['registration_commit'][:12]}`.",
          f"* Python reference commit `{r['python_commit'][:12]}`; Rust commit `{r['rust_commit'][:12]}`; "
@@ -3278,6 +3385,15 @@ def render_md(r):
 
 
 def main():
+    if len(sys.argv) >= 2 and sys.argv[1] == "record-failed-score":
+        # record-failed-score <key> <version> <commit> <diagnosis.json>: an execution that crashed before this guard
+        key, n, commit, dpath = sys.argv[2], int(sys.argv[3]), sys.argv[4], sys.argv[5]
+        contract = load_contract(key, n)[0]
+        d = json.load(open(dpath))
+        rep = write_failed_execution(key, n, contract["campaign_seeds"]["scoring_master_seed"], d.pop("n_vectors"),
+                                     commit, d.pop("diagnosis"), d.pop("notes"))
+        print(rep["parity_verdict"], rep["contract"]["id"], "(failed execution recorded)")
+        return
     if len(sys.argv) < 3 or sys.argv[1] not in ("dev", "dev-report", "score") or sys.argv[2] not in SPEC:
         sys.exit(__doc__)
     mode, key = sys.argv[1], sys.argv[2]
