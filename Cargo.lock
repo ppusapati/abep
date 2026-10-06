@@ -154,6 +154,8 @@ dependencies = [
 name = "abep-subsystems"
 version = "0.1.0"
 dependencies = [
+ "abep-data",
+ "abep-hall",
  "abep-provenance",
  "abep-types",
  "flate2",

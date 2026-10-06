@@ -1,0 +1,375 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-DOCS_EXPERIMENTS_LIFETIME_AO-AO_REGISTER_KERNELS-V1",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "component": {
+  "inventory_id": "C-DOCS_EXPERIMENTS_LIFETIME_AO",
+  "migration_wave": "W15b",
+  "scope": "named function subset (kernel granularity, RM-R17): the two computed blocks of the H-1 lifetime / AO register builder (SC-WP-08 elements 'AO exposure' and 'erosion')",
+  "functions_or_entry_points": [
+   "L1 compute_ao_environment() (with _sha256_file, _g) over the module constants ATMOSPHERE_CSV_REL, ATMOSPHERE_CSV_SHA256, ALTITUDES_KM, MISSE2_YIELDS, MISSE2_FLUENCE_ATOMS_CM2, RFP_MISSION_H",
+   "L2 compute_wall_sputter_index() over WALL_LIFE_DB_REL, WALL_LIFE_DB_SHA256"
+  ],
+  "out_of_scope": [
+   "the hand-written register content, build_register / _v2 .. _v5, the git-history readers, render_md / render_json / main: stay Python reference (W15 builder byte identity is a later contract)"
+  ],
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+  "extract_kernel_id": "NOT_APPLICABLE",
+  "active_toolchain_requirement": "NOT_APPLICABLE",
+  "excluded_legacy_paths": [],
+  "owner_disposition_a9_28": "NOT_APPLICABLE",
+  "owner_disposition_a9_29": "NOT_APPLICABLE",
+  "horizon_note": "RFP_MISSION_H = 26000.0 is the register's own labelled exposure horizon (key 'fluence_rfp_mission_26000h_atoms_cm2'); it is reproduced as data; no comparison against it is made (the mission / firing limits are assessment, SC-WP-11)",
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "simulation_completion_wp": "SC-WP-08"
+ },
+ "date": "2026-10-06",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of this component was executed. No Rust code for the component exists at registration. The commit is recorded in the report, not here.",
+ "supersedes": {
+  "path": null,
+  "sha256": null,
+  "reason": null
+ },
+ "reference_implementation": {
+  "python_commit": "e462e35ed0ce6092f47e1d1b05119501cf4d7eb6",
+  "files": [
+   {
+    "path": "docs/experiments/lifetime_ao/build_ao_lifetime_register.py",
+    "sha256_at_registration": "8d02c1dd7d81dedc420a9883a97eae8c28a5207e352c94306e00500bed13c1d7"
+   }
+  ],
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration; a changed reference requires a new contract version",
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4 (not used by the component)",
+   "scipy": "1.17.1 (not used)",
+   "pandas": "3.0.2 (not used by the scored functions)",
+   "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+   "blas": "NOT_APPLICABLE",
+   "thread_env": {
+    "OMP_NUM_THREADS": "NOT_APPLICABLE",
+    "OPENBLAS_NUM_THREADS": "NOT_APPLICABLE"
+   },
+   "stdlib": "math (glibc libm: exp, log, sqrt, pow through float ** float), json, hashlib; CPython 3.11 float repr and format(x, '.Ng') correctly rounded"
+  }
+ },
+ "rust_implementation": {
+  "crate": "abep-subsystems",
+  "functions_or_entry_points": [
+   "abep_subsystems::life::ao_register::{compute_ao_environment, compute_wall_sputter_index}",
+   "`life_eval <calls.json>` (harness interface; crates/abep-subsystems/examples/life_eval.rs)"
+  ],
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (rust-toolchain.toml)",
+  "provenance_sources": [
+   "Cargo.toml",
+   "Cargo.lock",
+   "rust-toolchain.toml",
+   "crates/abep-types/**",
+   "crates/abep-provenance/**",
+   "crates/abep-data/**",
+   "crates/abep-hall/**",
+   "crates/abep-subsystems/**"
+  ],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it"
+ },
+ "governing_hashes": {
+  "config_manifest": {
+   "path": "config/MANIFEST.json",
+   "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+  },
+  "architecture_hash": "NOT_APPLICABLE (no configuration file is read; the single flight configuration is hall_icp_neutralizer, A9.19)",
+  "model_set_hash": "NOT_APPLICABLE",
+  "design_state_set_hash": "NOT_APPLICABLE",
+  "rule": "both implementations read the same pinned inputs (pinned_inputs_sha256); a mismatch voids the run (INPUT_MISMATCH, not a verdict)"
+ },
+ "pinned_inputs_sha256": {
+  "abep_sim/data/atmosphere_msis21_v1.csv": "5e108c6e5cb7c03ed9b741233fafbc71c7813987e1ff3d0596b04c99c4a9bff7",
+  "docs/evidence/wall_life/sputter_yield_db_v1.json": "315fbd44da2ee16246edb95830be09e0f05b9237cd5ca0a4c86a02a7e25bfffa",
+  "docs/experiments/lifetime_ao/ao_lifetime_register_v5.json": "fea8aa05bd561d5ea559b934803d472f1fb1ed1013bfa925a5afb6c68a33e637"
+ },
+ "frozen_data_read_only": [
+  "abep_sim/data/atmosphere_msis21_v1.csv (frozen NRLMSIS 2.1; sha256-pinned by the builder itself)"
+ ],
+ "inputs": {
+  "argument_encoding": "environment: {altitudes: [int], csv_sha256: str}; Python sets the module constants ALTITUDES_KM (tuple) and ATMOSPHERE_CSV_SHA256 for the call and restores them. index: {db_rel: str, db_sha256: str, db_text: str | null}; Python sets WALL_LIFE_DB_REL / WALL_LIFE_DB_SHA256 (a mutated database is written by the harness to an absolute scratch path, which os.path.join keeps), Rust reads db_text when given, else the repository file",
+  "golden_vectors": {
+   "source": "the frozen inputs at the reference commit",
+   "count": "see vector_totals",
+   "list_or_generator": {
+    "R-L01": "environment with the committed constants: altitudes [180, 200, 230]",
+    "R-L02": "environment with altitudes [150, 300], [200], every even altitude 150..300",
+    "R-L03": "index of the committed lane-32 database"
+   }
+  },
+  "edge_cases": [
+   {
+    "id": "E-L01",
+    "inputs": "environment with csv_sha256 '0' * 64",
+    "note": "RuntimeError (pin), message scored"
+   },
+   {
+    "id": "E-L02",
+    "inputs": "environment with altitudes [181] and [180, 181]",
+    "note": "RuntimeError (no grid row), message scored"
+   },
+   {
+    "id": "E-L03",
+    "inputs": "environment with altitudes []",
+    "note": "ValueError from min() of an empty sequence (class)"
+   },
+   {
+    "id": "E-L04",
+    "inputs": "index with db_sha256 '0' * 64",
+    "note": "RuntimeError (pin), message scored"
+   }
+  ],
+  "randomized_domain": {
+   "count": 400,
+   "generators": {
+    "0 environment": 100,
+    "1 index": 300
+   },
+   "draw": "environment: a random non-empty subset (1..6) of the even altitudes 150..300 in random order, with an odd altitude added with probability 0.05. index: the committed database with 1..4 random mutations: drop an entry's 'data' / energy_range 'max' / 'tbd', replace data with a non-dict or rows with a non-list, drop a required entry key (KeyError), add a projectile to coverage_matrix, drop the legend (KeyError), reorder entries",
+   "domain_note": "numerical / structural parity domain only"
+  },
+  "vector_totals": {
+   "R-L01..R-L03": "fixed",
+   "edge cases": "E-L01..E-L04",
+   "randomized": 400
+  }
+ },
+ "campaign_seeds": {
+  "applicable": "true (input generation only; the component is deterministic)",
+  "scoring_master_seed": 1412763212,
+  "development_master_seed": 8103,
+  "derivation": "random.Random(master_seed * 1000 + k) per generator k (inputs.randomized_domain.generators)",
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the admitted statistical contract; the roles are never merged",
+   "design_uq_sampling_stream": "NOT_APPLICABLE",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE",
+   "other_streams": "NOT_APPLICABLE: the harness's random.Random only generates input cases (the component is deterministic and draws no random numbers)",
+   "migration_parity_dataset": "seeds and the generated call file stay exactly reproducible (immutable)",
+   "after_rust_authority": "NOT_APPLICABLE"
+  },
+  "rng_streams_v3": "NOT_APPLICABLE (deterministic component)",
+  "development_rule": "development comparisons use development_master_seed (and the registered deterministic vectors) only and are never scored or reported as a verdict; every execution with scoring_master_seed is appended to campaign_history and the report is committed whatever its verdict"
+ },
+ "observables": {
+  "every call": {
+   "list": [
+    {
+     "name": "outcome",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "RETURNED or RAISED"
+    },
+    {
+     "name": "value",
+     "units": "as the Python returns",
+     "tolerance_class": "EXACT_VALUE + ULP_BOUNDED (floats)",
+     "tolerance": "see tolerance_classes",
+     "definition": "the returned value (dicts in insertion order, tuples as lists)"
+    },
+    {
+     "name": "error_class",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "Python exception class name; Rust reports the mapped class name"
+    },
+    {
+     "name": "error_message",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "str(exception) character for character for the message classes listed; class only otherwise"
+    }
+   ],
+   "message_classes": [
+    "RuntimeError"
+   ],
+   "replicates_per_implementation": "NOT_APPLICABLE",
+   "se_method": "NOT_APPLICABLE"
+  }
+ },
+ "tolerance_classes": {
+  "EXACT_BYTES": "NOT_APPLICABLE",
+  "EXACT_VALUE": "strings, ints, booleans, None, statuses, dict key order, list lengths and the int-vs-float type of every value equal; error class equal; messages equal for the registered message classes",
+  "ULP_BOUNDED": "every float: |rust - py| <= 4 ulp(py) or <= 1e-12 * max(1, |py|); NaN matches NaN, +-inf exact",
+  "SOLVER_TOLERANCE": "NOT_APPLICABLE",
+  "STATISTICAL": "NOT_APPLICABLE",
+  "EXACT_STREAM": "NOT_APPLICABLE"
+ },
+ "exact_invariants": [
+  {
+   "id": "INV-DET",
+   "statement": "determinism: the Rust call list evaluated in two separate processes gives byte-identical output",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-L01",
+   "statement": "the R-L01 environment block equals the 'derived.ao_environment' block committed in docs/experiments/lifetime_ao/ao_lifetime_register_v5.json (EXACT_VALUE, floats ULP_BOUNDED) - both",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-L02",
+   "statement": "the R-L03 index equals the committed register v5 'derived.wall_sputter_index' block (both)",
+   "required_in_both": true
+  }
+ ],
+ "conservation_checks": {
+  "applicable": "false (flux / fluence products; no balance)",
+  "checks": []
+ },
+ "domain_and_error_parity": {
+  "cases": "E-L01..E-L04 and the randomized odd altitudes / database mutations",
+  "mapping": {
+   "RuntimeError": "RuntimeError (frozen-input pin / grid refusal, MODEL_ERROR); message scored",
+   "KeyError": "KeyError (malformed database); class scored",
+   "ValueError": "ValueError (empty altitude set); class scored",
+   "TypeError": "TypeError (malformed database value); class scored"
+  },
+  "documented_divergence": [
+   {
+    "id": "DIV-L00",
+    "statement": "none",
+    "disposition": "NOT_APPLICABLE"
+   }
+  ],
+  "mapping_rule": "every Python exception class maps to exactly one Rust class name; no Rust path may return a value where Python fails, or fail where Python returns, except the registered divergences (CLAUDE.md rule 3)"
+ },
+ "schema_parity": {
+  "schemas": [
+   "docs/experiments/lifetime_ao/ao_lifetime_register_v1.schema.json (the register shape; the two blocks are compared field by field)"
+  ],
+  "rules": [
+   "block field names, order and types identical",
+   "status / flag strings identical"
+  ]
+ },
+ "golden_and_reference_cases": {
+  "references": [
+   "committed register v5 blocks (INV-L01 / INV-L02)"
+  ],
+  "rule": "references are read as committed; they are never regenerated to make Rust pass (RM-R11)",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-DOCS_EXPERIMENTS_LIFETIME_AO-AO_REGISTER_KERNELS/reference_outputs/",
+   "captured_at_python_commit": "e462e35ed0ce6092f47e1d1b05119501cf4d7eb6",
+   "sha256_manifest": "FILL at scoring",
+   "purpose": "lets CI check Rust against the Python reference after Python is retired from active execution"
+  },
+  "historical_golden_rule": "RM-R28: no golden_v1 / golden_v2 case is used"
+ },
+ "julia_bridge": {
+  "applicable": "false",
+  "hallthruster_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+  "julia_version": "NOT_APPLICABLE",
+  "launch_equivalence": "NOT_APPLICABLE",
+  "record_comparison": "NOT_APPLICABLE",
+  "execution_provenance": "NOT_APPLICABLE"
+ },
+ "performance_measurement": {
+  "status": "reported, not a decision criterion (A9.24 items 1 and 6)",
+  "workloads": [
+   {
+    "id": "PERF-L01",
+    "description": "compute_ao_environment() with the committed constants, 20 repeats"
+   }
+  ],
+  "repeats": 3,
+  "statistic": "median wall-clock per implementation in one session on one machine; speed-up = median_python / median_rust (Rust timed inside life_eval)",
+  "machine_manifest": "recorded in the report"
+ },
+ "decision_rules": {
+  "per_test": "every scored observable of every call meets its tolerance class",
+  "aggregate": "NOT_APPLICABLE",
+  "exact_invariants_required": true,
+  "conservation_required": "true if conservation_checks.applicable",
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "verdict": "ADMITTED (= PARITY_PASS) iff every call of every vector, every invariant, every conservation check and every registered divergence outcome passes and every reference file matches sha256_at_registration; otherwise NOT_ADMITTED (PARITY_FAIL)",
+  "verdict_vocabulary": [
+   "ADMITTED",
+   "NOT_ADMITTED",
+   "REFUSED_REFERENCE_CHANGED",
+   "INPUT_MISMATCH",
+   "NOT_RUN_RUST_UNAVAILABLE",
+   "REFUSED_CLASSIFICATION"
+  ],
+  "no_retuning": "tolerances, observables, inputs, n, seeds and rules are fixed; after NOT_ADMITTED only a code fix plus a new contract version with a fresh scoring_master_seed may follow; the failed report stays",
+  "disagreement_rule": "never rewrite a Python result, golden, evidence record or frozen dataset to make Rust pass (RM-R11)",
+  "observable_scope": "restricted to the retained selected-architecture functions listed (RM-R20)",
+  "meaning_of_ADMITTED": "A9.24 item 1: Rust (abep_subsystems::life::ao_register) becomes authoritative for the model-derived external ram AO environment block and the lane-32 sputter-yield index; the block stays ILLUSTRATIVE / model-derived (evidence level 6), not a design value"
+ },
+ "bid_boundary": {
+  "statement": "post-bid-freeze work; no output of this contract may be cited by the bid package unless the owner re-freezes",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b (technical source) / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (terminal package state, A9.29 sec. 3)",
+  "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+ },
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, evidence record, threshold or requirement",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27): literature-class priors stay priors",
+  "not a gate PASS and not a life verdict: absent determining evidence stays NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN / MODEL_ERROR (RM-R31); no 15,000 h / 26,280 h comparison is made in raw physics (SC-WP-11)"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-DOCS_EXPERIMENTS_LIFETIME_AO-AO_REGISTER_KERNELS/parity_report_v1.json (+ .md)",
+  "runner": "scripts/rust_migration/parity_life_v1.py (Python harness calling `life_eval`)",
+  "report_fields": [
+   "contract_sha256",
+   "python_commit",
+   "reference_sha256",
+   "rust_commit",
+   "build_provenance",
+   "environment",
+   "per-test results",
+   "invariants",
+   "conservation",
+   "domain/error",
+   "schema",
+   "performance",
+   "verdicts",
+   "campaign_history",
+   "captured reference outputs",
+   "ledger_update_requested"
+  ],
+  "ledger_scope_requested_on_admission": "partial admission (named kernels L1 / L2) of C-DOCS_EXPERIMENTS_LIFETIME_AO; the register builder stays Python reference"
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator (A9.25 message 3)",
+  "checks": [
+   "component class ACTIVE_SELECTED_ARCHITECTURE_PHYSICS in component_inventory_v3_1.json: PASS",
+   "the register's C1 / cathode mentions are hand-written content outside the two kernels",
+   "the Rust implementation contains none of the principle-6 forbidden identifiers (crates/abep-subsystems/tests/prereg_binding.rs scan)",
+   "not a GROUND_TEST_PROGRAMME_ONLY contract"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict)"
+ },
+ "value_status_preservation": {
+  "rule": "RM-R27: no provisional / analog / allocation input is promoted by migration to CBE, measured or frozen truth",
+  "inputs": [
+   {
+    "id": "AO-ENV",
+    "value": "environment block",
+    "value_status": "model-derived; ILLUSTRATIVE",
+    "open_action": "none",
+    "committed_labels": [
+     "evidence_class model-derived",
+     "evidence_level 6"
+    ]
+   }
+  ],
+  "check": "NOT_APPLICABLE beyond the labels carried in the outputs"
+ },
+ "new_physics_verification": {
+  "applies_when": "NOT_APPLICABLE (contract_kind EXISTING_PHYSICS_PARITY)"
+ }
+}

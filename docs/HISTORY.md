@@ -4828,3 +4828,37 @@ partial admission and the row stays PYTHON_REFERENCE. A partial admission change
   (members) and clippy are clean. `ci_checks`: 12/12. pytest: 4232 passed, 5 skipped, 1 xfailed. The ledger is not
   edited; `ledger_update_requested`
   (NI-ABEP-CLI -> ACCEPTED) is in the report.
+
+## 2026-10-06 — SC-WP-08 materials / life: seven contracts ADMITTED in Rust; K-GAS-LIFE and reliability not extracted; NP-RELIABILITY preregistered (no Python or frozen data changed)
+
+- **Audits first** (`8d4e801`, `docs/rust_migration/audits/SC-WP-08/`).
+  - K-GAS-LIFE (life.intake_life / blade_life + archengine wrapper): every consumer is class H. The active
+    life_material_indicators reports intake AO and bearing life NOT_EVALUATED. The constants are unsourced, so the
+    kernel is NOT_EXTRACTED.
+  - life.reliability / magnet_life / compressor_life: no active consumer, unsourced rates and thresholds, and the
+    R_26000h key. NOT_EXTRACTED.
+- **NP-RELIABILITY** preregistered, docs only (`7f07f47`, lock `ef43badf…`, prereg `d8650f5f…`). It is an
+  evidence-parameterised reliability block model with no default parameter, no threshold, no C1 item and no R_26000h.
+  Hall-erosion eta is NOT_EVALUATED while the credible set is EMPTY. Implementation belongs to a later lane.
+- **Contracts**, each committed alone before any comparison: aochem `b8e47642…`, materials `dd2e51d0…` (inventory WP
+  SC-WP-12, cross-WP note), sputter-yield kernels `c10e00bb…`, AO register kernels `bf4c3aa9…`, P4 screening kernels
+  `d0560bcd…`, life_material_indicators `792cfb40…`, hallmap_wall_inputs `7a2ec2f4…`.
+- **Rust:** `abep-subsystems::materials` (db, aochem, sputter, pymath) and `::life` (ao_register, p4, indicators,
+  hall_wall, eval). It reuses abep-data (frozen NRLMSIS) and abep-hall (ensemble gate, pin).
+- **Scored once: all seven PARITY_PASS / ADMITTED.** Max float distance 0 ulp. Calls per contract: 5547 / 2859 / 4583 /
+  410 / 5492 / 316 / 2363.
+  - The AO environment and lane-32 index equal the committed register v5 blocks.
+  - All 352 committed P4 cells are INCOMPLETE_EVIDENCE. The anode material stays OPEN and 316L stays
+    REJECTED_AS_CURRENT_BASELINE.
+  - The life_material_indicators rotor branch is NOT_EVALUATED in Rust (DIV-I01: rotor_strength was not admitted at
+    the base).
+  - With the real ensemble, every hallmap_wall_inputs call refuses, so Hall-erosion life is NOT_EVALUATED. A Rust test
+    asserts this.
+  - The hall-wall campaign's first scoring execution aborted in the call generator before any comparison (harness
+    double deletion). The fix consumes no random draw, and the abort is recorded in the report's campaign_history.
+- **Tests:** `tests/life_fail_closed.rs` and the CI replay `tests/life_captured_replay.rs` were added. `tests/power.rs`
+  INV-A05 direct-dependency list now names abep-data / abep-hall; the forbidden-crate check is unchanged.
+- **Results:** `cargo test --workspace --locked` 405 passed, 0 failed, 2 ignored (registered platform tests PT-01 /
+  PT-02). fmt and clippy are clean. `ci_checks` 12/12. pytest: 4232 passed, 5 skipped, 1 xfailed.
+- **Ledger request** (in each report; the ledger was not edited): seven admissions (partial where scoped).
+  K-GAS-LIFE NOT_EXTRACTED_NO_ACTIVE_CONSUMER. NP-RELIABILITY PREREG_MODEL.

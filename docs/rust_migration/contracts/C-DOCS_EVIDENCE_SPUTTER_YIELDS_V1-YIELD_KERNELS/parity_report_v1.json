@@ -1,0 +1,269 @@
+{
+ "report_schema": "abep_rust_parity_report_v3_1",
+ "id": "PARITY-REPORT-C-DOCS_EVIDENCE_SPUTTER_YIELDS_V1-YIELD_KERNELS-V1",
+ "lane": "SC-WP-08",
+ "contract": {
+  "path": "docs/rust_migration/contracts/C-DOCS_EVIDENCE_SPUTTER_YIELDS_V1-YIELD_KERNELS/parity_prereg_v1.json",
+  "sha256": "c10e00bb56fc2e7fd5caf42b4a0bd74b4deb090543ad9aeda04e4a1faee94b51",
+  "id": "PARITY-C-DOCS_EVIDENCE_SPUTTER_YIELDS_V1-YIELD_KERNELS-V1"
+ },
+ "verdict": "ADMITTED",
+ "parity": "PARITY_PASS",
+ "verdict_rule": "ADMITTED (= PARITY_PASS) iff every call of every vector, every invariant, every conservation check and every registered divergence outcome passes and every reference file matches sha256_at_registration; otherwise NOT_ADMITTED (PARITY_FAIL)",
+ "python_commit": "e462e35ed0ce6092f47e1d1b05119501cf4d7eb6",
+ "reference_sha256": {
+  "docs/evidence/sputter_yields_v1/build_sputter_yields_v1.py": "c7e75fa8b4a36d2bbb59aaf9629673a5a2f70fc76d1b44f06de09733104d5fe4"
+ },
+ "reference_unchanged_at_scoring": true,
+ "pinned_inputs_verified": true,
+ "rust_commit": "be028abd0e1b205501e4d77f6de10cac9a1ced53",
+ "build_provenance": {
+  "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+  "cargo": "cargo 1.94.1 (29ea6fb6a 2026-03-24)",
+  "profile": "release (cargo build --release --locked -p abep-subsystems --example life_eval)",
+  "cargo_lock_sha256": "9bdec9dfa7b0da434f91fc1d67f3f1e2706e201c3939ce24bba6442e8ce74f87",
+  "source_sha256": {
+   "Cargo.toml": "35d63d9a1b6bda67d978b0eb2a3c10f48b4b3247f2789b0701bdd6e09f6ca98f",
+   "Cargo.lock": "9bdec9dfa7b0da434f91fc1d67f3f1e2706e201c3939ce24bba6442e8ce74f87",
+   "rust-toolchain.toml": "7e44dbedb86596d94974ef8cb279f0e81496ea92b519c14940259661496f8499",
+   "crates/abep-types/Cargo.toml": "a210ee487a186c6edc28a87868e1b2c84094e890586ad159b8d77e16e7e7511f",
+   "crates/abep-types/src/constants.rs": "c97e39931d145db143398e3d5de9eb4f9ba86943a75b3c1302df82c01b4efd1d",
+   "crates/abep-types/src/lib.rs": "0a067299e38d3dac702c3eb23ee3e34a55f844b389ec54b7463962c65d6a4b0e",
+   "crates/abep-types/src/pyjson.rs": "5ce15fdb06043a01ce8bd441a8e8f1906e74a0c4dd9fea2b9e4505f182a8d88e",
+   "crates/abep-types/src/pyjson_unicode.rs": "c6f59e0936c35051ef1f7d45a6611d3a7269a8d972c900805463f5f0bf6b2a75",
+   "crates/abep-types/tests/data/pyjson_vectors_v1.json": "8d7f76445f758714dd436cb208b243883b38bd95afd8e0e94156ecebed9d12ef",
+   "crates/abep-types/tests/pyjson_vectors.rs": "111021b67c74a663ec4b86baa768de21e19681b8774062d5ac90860a65951c24",
+   "crates/abep-provenance/Cargo.toml": "7e13a3433579dc2f097d16e614a7b941a91d0c4889cc34d2e8beabdda35a8bbf",
+   "crates/abep-provenance/build.rs": "7ab9c6440456ad997ce15816576814bc7c26c857af07045aaceca06921940e27",
+   "crates/abep-provenance/src/bid_guard/acceptance.rs": "187739f27b297b6183928a3f951dc68127708072cb915173539b4582118a6693",
+   "crates/abep-provenance/src/bid_guard.rs": "6f13a31a479deea38caafd78491be295c12f40a41dc39139a4af4e86a3553c7d",
+   "crates/abep-provenance/src/bin/abep-provenance-verify.rs": "99350805d9b01876b29b3e8cdcefe3c9f893c5bc0fd16d8f43b6327549d4cfbe",
+   "crates/abep-provenance/src/git.rs": "68fdacdf9514432ec890fcb153c6ba5d02fbb2e44e6accb0ff5e3d2b918ef69e",
+   "crates/abep-provenance/src/lib.rs": "0beec4429b0d6cc891389d6bc83584b693c7f1698700b03ffac4defe43919761",
+   "crates/abep-provenance/src/run_record.rs": "c36e400a38d411c6fdfad5cf26e962c4dbb074631b4d6e81d1688b3fec9a6a53",
+   "crates/abep-provenance/src/verifier/checks.rs": "8462b1704b9ca0091ade566217db5c77b34c3f074721e0d95c8b9b4e6ccfac1d",
+   "crates/abep-provenance/src/verifier/live_sources.rs": "bab4b17e1900dede61c23ce8bc0407ed021b2ab79458af2c3b6dd0747083d1b1",
+   "crates/abep-provenance/src/verifier/load.rs": "0b9ba7424fc2fe586218fffb66d3073a4ad26717e133364409fee2fcd10edab8",
+   "crates/abep-provenance/src/verifier/mod.rs": "7b7328197f8608d921aead7a0960611553a8b73e3d03bade01012c5cffdf0e25",
+   "crates/abep-provenance/src/verifier/pyliteral.rs": "6a5d3582cdbb41d96fea1cf0d87d8a8f6b1f45250a55892b784bc5c5a31a4537",
+   "crates/abep-provenance/src/verifier/pyvalue.rs": "acbd670dff4e9ea3b6cd5f893c9d001adc14d2883acfba7a66509fef878fc337",
+   "crates/abep-provenance/src/verifier/sha_map.rs": "d0589e3cc5269297407dc4f2f37930b362abe21a75481fb3430be9cc35812191",
+   "crates/abep-provenance/tests/bid_source_guard.rs": "e19ce7a19a6c49b6431a3f3d60260f1c435c4935d9c89c74b3403f94410328be",
+   "crates/abep-provenance/tests/config_manifest.rs": "2674591e5610b528764ec8094b8b1b8e5a94d6999889fd48394e1aaceedd4a34",
+   "crates/abep-provenance/tests/provenance_verifier.rs": "350e26de86bf844c8b4c78b7c6aaa2089613d09b989fdf2e463fe633df4b34f0",
+   "crates/abep-provenance/tests/run_record.rs": "2cd59402c0f52c0f6b8c47f23b991d70750b64f8c968f21fa4834010fd7c456e",
+   "crates/abep-data/Cargo.toml": "1519c4e61ad42c96c2ef138aba39475e367a0ad0c7d182ec129ade2283ded111",
+   "crates/abep-data/src/design_states.rs": "39e9002f1be06d06a463be18a2cd2428e1b2ab0fb7881313c74dc2d02db15e3a",
+   "crates/abep-data/src/gz.rs": "d4dc152741e78c773e264ab566f11dff2f2d1c831b5b843db151a382358be737",
+   "crates/abep-data/src/hwm14_v2.rs": "bb54b2d9a9fade6bfd6069978299f65fb26fe47a85757aabe796f5f4387a3152",
+   "crates/abep-data/src/json.rs": "2340fba6918d49d4bb8d757252b351cc8b95d3c6fa7186bbef6eef19579802be",
+   "crates/abep-data/src/lib.rs": "bab94b4c413569bcfde91567922400f97f6a1857220f7e5032562f52ebcc9e2d",
+   "crates/abep-data/src/msis21_v1.rs": "2a00f6308244dce6d7d651c9afb7af6dcb20847d01e217c6ec896a4e70b8e0b7",
+   "crates/abep-data/src/orbit_v1.rs": "a7efc0a42e1911e43390555857bb5a14615768b1f3212a46a40381ca1cb726a6",
+   "crates/abep-data/src/pins.rs": "6884c5b99de401b939e3de3a495f55e874315218a76d3eaa6e960b9af31b2bc5",
+   "crates/abep-data/src/table.rs": "daa2dedf8169e3d5863fe30d5e2d26419515a0a21133ce2f29f3e2de183e98fb",
+   "crates/abep-data/tests/frozen_pins.rs": "0a1e4d540035bc8d0046f08886ebf00d74300519bdbb4f218c892bdbfbf0cd94",
+   "crates/abep-hall/Cargo.toml": "1b8a0417c9a89fd1157115f066c7d6d45a094fbe8ac066fca94e66c41b04cb64",
+   "crates/abep-hall/src/bin/abep-hall-cases.rs": "ec0a8ba7230236772f762a176c2c52438b5ddaf1d2d57356619b4077dcb100a2",
+   "crates/abep-hall/src/ensemble.rs": "9ce4a8578dac89923bbe31998bac934001fe1ff1fcd33e77c57d475550be6d21",
+   "crates/abep-hall/src/error.rs": "65a07132e3fc714ca359e9fc9b76290ea21f99ffd49aa46d448ab070d2aaf6c2",
+   "crates/abep-hall/src/hall_map.rs": "3a90ae2fc035ecf1161514f517528f7476693c188bd993965afa76a8ddabfcaf",
+   "crates/abep-hall/src/lib.rs": "d3fe559ccc5de9527c2eb698ad052c998d82df3c15ada2c549a137c7350890ad",
+   "crates/abep-hall/src/py.rs": "d4cee3615c951dc5b84ba3dfd6820bbb7bb96cc129f71d244a05deb415aac6dc",
+   "crates/abep-hall/src/registry.rs": "975d5fa18343cb46853168784ae4a10b1e1b5f436d8b5281f78aafd4ebea83aa",
+   "crates/abep-hall/src/schema.rs": "dcf335784957c4fab52e7c53399931f0512ca86e21e1a4c56f50f6a6c92e16b5",
+   "crates/abep-hall/src/status.rs": "db8eaf4e59dbe876861d4ec8b67892e8b1b983fc1a7a11ec9f7e53451461a2ef",
+   "crates/abep-hall/tests/governed_state.rs": "59841f1adaf967d5434076a70969e43523201ec81a41788491852c89ebc0defb",
+   "crates/abep-subsystems/Cargo.toml": "f5fc137febbc18f8759d2d43caead61f64e495c9ce3517009ce16cf24bf6f7fc",
+   "crates/abep-subsystems/examples/life_eval.rs": "906ca9d260adf49d2fa2d1d2352ab162597b3d7dd7742602f5a0d1862b5a2cf1",
+   "crates/abep-subsystems/examples/np_thermal.rs": "01e347981fcfe58eb173b5c55a86e21c518b87b9176e99a97f165afaca60e8ce",
+   "crates/abep-subsystems/examples/power_cons_l1.rs": "e1b9383982b8a7b4432ad22f14af8228e8172f97008f2301f5ca4ce811051884",
+   "crates/abep-subsystems/examples/power_eval.rs": "9128ddfd667c89a493965346e7d3e9bcc5d991065a70bd0dcc5b7e645e9b6d9f",
+   "crates/abep-subsystems/src/bin/abep-mass.rs": "7f49cd96a0f11c6e04027d2454b423fc476e4e900ffb194d855a2491d06896d0",
+   "crates/abep-subsystems/src/lib.rs": "970cbdb136781fe72f3b5f1b151b096f096b43fad966e84205325933644d3568",
+   "crates/abep-subsystems/src/life/ao_register.rs": "b4bd4b529613d405fcf607588a59ec81df97822f6f8950c988d919275bc13e8d",
+   "crates/abep-subsystems/src/life/eval.rs": "525ab6585b373ee6c15df8e8e41bfef46a4961c795d8b923c05f77e880fb466c",
+   "crates/abep-subsystems/src/life/hall_wall.rs": "e1beae846a3dd7a25c407d9e2ff6fe22a6666cbec39ceb792e5113d00f48e165",
+   "crates/abep-subsystems/src/life/indicators.rs": "de11b15071ed5b566da319ab88ff07f083fd5abe257a4f54fab72587191e4b92",
+   "crates/abep-subsystems/src/life/mod.rs": "40fabfa0c309d511595cdec24f986a0c996b35a2e596f3420b1e338900d89593",
+   "crates/abep-subsystems/src/life/p4.rs": "4b6e9325bf88a85b6961feafcc08e7b3874477136927d2df1f505f5083191b7c",
+   "crates/abep-subsystems/src/mass/eval.rs": "0d0334cb93dd44c0c2cdb1946908931435e5d6c7c353f96a8c8f45efeeb9a24e",
+   "crates/abep-subsystems/src/mass/mod.rs": "91ed1a46c9094ef6aab7368d01388d9439f299ad1f8942429212c87a94e00bd4",
+   "crates/abep-subsystems/src/mass/py.rs": "6632750f2c07294b9cfbabdb5124506f0c9a44a45f5233fc284246792ab79b57",
+   "crates/abep-subsystems/src/mass/pyfmt.rs": "3975403f94f2a362cde76ba7e52a285612536e49d055baf11b5675497bd0fd30",
+   "crates/abep-subsystems/src/mass/rules.rs": "201e5f6d6b5d64e2287b4d88e6b7114c94363cb99b912107ab6ed87d97ca9109",
+   "crates/abep-subsystems/src/mass/v5.rs": "6da56f8c0344c7f9ddf8e3c92787245296f077e28eef2ffdc3e0a14133be9d55",
+   "crates/abep-subsystems/src/mass/wet_mass.rs": "7e627e6f5a3b4c37f6bb20f2f4866b011418e2ff763aec4c0429142a015a2de4",
+   "crates/abep-subsystems/src/mass/xe.rs": "a0a46d509b653cdbfa6a5665aa4ef2aaf636d165279ea02166ddd625bbd28ca4",
+   "crates/abep-subsystems/src/materials/aochem.rs": "b57d2e5102f87a50fa5c4cd2611c74588b2c6849ee6ebf76ead136850501c814",
+   "crates/abep-subsystems/src/materials/db.rs": "e929aa818d725e7382592b251068c8325a8f1b31b94c95191d96d1191ee7a877",
+   "crates/abep-subsystems/src/materials/mod.rs": "d8b51b93ad0e26ae3ddac5db4b95081941493d1482d8d7005c230fb691ac6ece",
+   "crates/abep-subsystems/src/materials/pymath.rs": "890711a125b467097b6872c7e5c48309130c1de1c091b3a17253d73d33e70462",
+   "crates/abep-subsystems/src/materials/sputter.rs": "3f01e780fcb5f85dcd4bd5bba0e85df01805a1dc5f4fab020479bd0728fd0187",
+   "crates/abep-subsystems/src/power/allocation.rs": "fe610237d8ee5279f740fe12f5fd324f5df64478cadd728b91632ef78535e35b",
+   "crates/abep-subsystems/src/power/cplx.rs": "71cdeabfcfa40472fe4fcbe3b340628f97f980a640a227482bd2ca247bdc7003",
+   "crates/abep-subsystems/src/power/demand.rs": "c6f5a7df80ba94c7e00578e0233f1fe8b1ca4198f3817da38259951f147731ad",
+   "crates/abep-subsystems/src/power/eval.rs": "610f6dc48894c6f7b4c4d5dfbcefce45c42cb88bc6c429ec219ce5ed0fd0b212",
+   "crates/abep-subsystems/src/power/icp_bus.rs": "5492b0f207b06cdf6d8de8c717db740946177225f2f45ba3ee88e35172853218",
+   "crates/abep-subsystems/src/power/ledger.rs": "633021ff4884fdd8e82db540c6b238e6eb1d5687e102321121ed4fef4f1fb2c2",
+   "crates/abep-subsystems/src/power/magnet.rs": "a1328fccb4d1e2870e7fde23350c499ca4713de137fcc17d4cc46a92fabd81c3",
+   "crates/abep-subsystems/src/power/mod.rs": "57c31bea7b9197f84448e2f933e9bc1009849c9b7147e5cc9961b4aa6ab70021",
+   "crates/abep-subsystems/src/power/objective.rs": "2ff7d3d6cfa408159e4e56a04ce54d2b8a5d29e0f143392f64aa2bca0ae975df",
+   "crates/abep-subsystems/src/power/official.rs": "551efd843e471700221e2b2ec852e74f88c3cb30c6f5ea3c337ef6ad875f33e9",
+   "crates/abep-subsystems/src/power/pyfmt.rs": "f5e81e75f2c11409c55946db3f2d34528a8f068e1a789ed491a5227a657e946f",
+   "crates/abep-subsystems/src/power/rf_match.rs": "487efe6b620753fe73ea0d568dfea95c7451bdba11c85183eb7ae9fb3d436bd0",
+   "crates/abep-subsystems/src/power/rf_planes.rs": "d10a1be7cddb12120399b6fa4f7eff1798593f30f6ac08edd8b82aa5a5113857",
+   "crates/abep-subsystems/src/power/sampling.rs": "bacac10ae0f34946de2ae73923d8a390fd546180b47cdc9c48794223cfbdcbbf",
+   "crates/abep-subsystems/src/power/sequence.rs": "593e42e1083a7a66707029c23340922c5bcc707e896bce4df05347756dcc048d",
+   "crates/abep-subsystems/src/power/slots.rs": "98e281b4bd1ee525f762d3d000957f8ea97adbcce1ff9aa9862d3a83a05814e3",
+   "crates/abep-subsystems/src/power/system_ledger.rs": "993adfc4fe3d78b33f1d2ec404b85defcdcfb08e470adc8c6f3513f79acc6bc4",
+   "crates/abep-subsystems/src/thermal/assemble.rs": "c2f99aad18eb03e08806a71b38ee6279702ab11a84eedf225e73174edb5df927",
+   "crates/abep-subsystems/src/thermal/case.rs": "d2961d4ca0b5196d782737c3a9c29cd40a6559bec70b024efaae82514ab71548",
+   "crates/abep-subsystems/src/thermal/governance.rs": "13d55531d4a3be3bc85c118be339f997b95ca375362e8758f0d9ce108af5cfd0",
+   "crates/abep-subsystems/src/thermal/linalg.rs": "ffe669457fbd4610a5fe49ec69f1b7f180952f26c49f9d52824dfdb7060582e3",
+   "crates/abep-subsystems/src/thermal/mod.rs": "4d45dc2fd7c20bd79397708618a3c4c09756a1e5d9dcb98be818f7aa8691deb7",
+   "crates/abep-subsystems/src/thermal/network.rs": "f7793b05fe8d3eaf70ff4009469c1b5eb5a21573a8ea996454488071ab222282",
+   "crates/abep-subsystems/src/thermal/output.rs": "965482f35f877ac84972f99abb13d4c755594881241aee1b660a8cd7958bfa09",
+   "crates/abep-subsystems/src/thermal/props.rs": "0b3802e441e289c2d4fec68b665493d5c9380723e622bbadc79438922c301555",
+   "crates/abep-subsystems/src/thermal/series.rs": "9d083d50f2304b0c708e92280a315066e5ef49d299ffcb34ad98529aa27c1a92",
+   "crates/abep-subsystems/src/thermal/solver.rs": "8cde5a675a4d02d31193eb7bfe5d089c83538c71af338acef9ad9a450c6118b0",
+   "crates/abep-subsystems/src/thermal/tests.rs": "4830bfcfccb6537eca44280063d95a68962358ebbdc4735fb91b1314a3cbe872",
+   "crates/abep-subsystems/src/thermal/vocab.rs": "47ecae98c3c7e68f68f795dcbefa3b3a64425273f1ec23ed6c13f16f879502fa",
+   "crates/abep-subsystems/tests/analytic_cases.rs": "110c74cb4459f08039c5bf380446872bddc89693d52822fd2b9b052dc50c696c",
+   "crates/abep-subsystems/tests/fail_closed.rs": "c3239c029e0f9e351bf837610c5fb514914fb401dbc2839f86cd9fdfc94b729f",
+   "crates/abep-subsystems/tests/life_fail_closed.rs": "9f2e80f8bb576b9c585922419e3a98cc0e9c3b8e739ebaacad1cd23f8415d832",
+   "crates/abep-subsystems/tests/mass_captured_replay.rs": "7f9a0919dd9cd268b8168a22d407791375b424d0cf954c0696a3ccc65ecd803e",
+   "crates/abep-subsystems/tests/mass_record.rs": "432dda69fb3d5f484cbef8a80023bd27a47163d47c5b5cf68c2d01261fe60596",
+   "crates/abep-subsystems/tests/power.rs": "0af7adc58907e403189dad58815ce2c406749f41cf7b5a04bd2863e55d4a2d5b",
+   "crates/abep-subsystems/tests/power_sys/mod.rs": "09f232ec1c609a11ea4afad6ecc2673979d6c37c2b0b3708fc00d4cf5d528aa1",
+   "crates/abep-subsystems/tests/power_system_ledger.rs": "123423c878bc675282622b8524185a8df1b33fd6791f26d1d05ee215c5a82bb1",
+   "crates/abep-subsystems/tests/prereg_binding.rs": "402772dfa3938ef3ff119641208252bb3bda957efcd7eb60682732ca199d2f2e",
+   "crates/abep-subsystems/tests/support/mod.rs": "43ff73ccd550a7970ba42874bf3a33be4eec1157cf595fdbc745d985056ea01a",
+   "crates/abep-subsystems/tests/support/verify.rs": "6c69654567334aecf5c8ed2a8cf920eec4842c754c48dd997e86676d449ce18a",
+   "crates/abep-subsystems/tests/support/vs_net.rs": "707fe9d1ba126adccaee21881d12d0bb4225d99ba80568ba5aa5284694549bc6",
+   "crates/abep-subsystems/tests/vs_net.rs": "5fa00ce29e34153672034df3c5e6ad9b2bbf5ecae3b1363a07d5a08ae5a0b09b"
+  },
+  "source_sha256_digest": "d493820bb1bb6cdfa3c42e6ad5312284ce7276cb57cee0b405b9e351fd4fc6c1"
+ },
+ "environment": {
+  "python": "3.11.15",
+  "numpy": "2.4.4",
+  "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+  "cargo": "cargo 1.94.1 (29ea6fb6a 2026-03-24)",
+  "platform": "Linux 6.18.44-fc-v70 x86_64",
+  "thread_env": {
+   "OMP_NUM_THREADS": null,
+   "OPENBLAS_NUM_THREADS": null
+  },
+  "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312"
+ },
+ "harness": {
+  "path": "scripts/rust_migration/parity_life_v1.py",
+  "sha256": "74924f5cb13550ae3beead868a029fc19841739626036a73b7178dc89cc32375",
+  "common": {
+   "scripts/rust_migration/parity_common.py": "337b1c74847d21f92c17b5f59b34540d30b2aecefa2f20853e9bca1c4ee17e8c"
+  },
+  "transport_note": "mutated committed records travel as {$committed, $patch}; both sides apply the same patch list (module docstring)"
+ },
+ "scoring_execution": {
+  "utc": "2026-10-06T14:16:07Z",
+  "git_dirty": false,
+  "master_seed": 2743347364,
+  "rust_calls_sha256": "4550121334d251f77c7b3472a108f177b7ec6617633eb87134a0fcb7cd3b88c3"
+ },
+ "per_test": {
+  "counts": {
+   "calls_total": 4583,
+   "registered_calls": 583,
+   "randomized_calls": 4000,
+   "python_RETURNED": 4217,
+   "python_RAISED": 366,
+   "calls sputter.apid_fit": 1100,
+   "calls sputter.yamamura_tawara": 3483
+  },
+  "mismatches": 0,
+  "failures": [],
+  "max_ulp_distance": 0.0,
+  "floats_compared": 7446,
+  "tolerance": "EXACT_VALUE structure / strings / ints / statuses; ULP_BOUNDED floats (4 ulp or 1e-12 relative); messages for ValueError"
+ },
+ "aggregates": "NOT_APPLICABLE",
+ "invariants": {
+  "INV-DET": {
+   "pass": true,
+   "detail": "Rust outputs of two separate processes byte-identical"
+  },
+  "INV-S01": {
+   "pass": true,
+   "detail": "keys Y, Eth_eV, below_threshold; Y == 0.0 exactly when below_threshold; violations []"
+  }
+ },
+ "conservation": {},
+ "domain_and_error": {
+  "python_raised_by_class": {
+   "ValueError": 363,
+   "ZeroDivisionError": 3
+  },
+  "divergences_observed": {},
+  "message_classes_scored": [
+   "ValueError"
+  ]
+ },
+ "schema": {
+  "pass": true,
+  "detail": "field names, order and types compared on every returned value"
+ },
+ "performance": {
+  "PERF-S01": {
+   "python_s": 0.28179094799997984,
+   "rust_s": 0.016000712,
+   "speedup": 17.611150553799096,
+   "note": "20000 evaluations; Rust timed inside life_eval (no process start)"
+  }
+ },
+ "captured_reference_outputs": {
+  "path": "docs/rust_migration/contracts/C-DOCS_EVIDENCE_SPUTTER_YIELDS_V1-YIELD_KERNELS/reference_outputs",
+  "manifest_sha256": "584789ef60c5ca4f566f666b557c722cfe4277d3577f2e746fe2e1e77e6d5204",
+  "files": {
+   "calls_v1.json.gz": {
+    "sha256": "a06637cd5aca923f81ae40e1269e5175f3d18dae39acfda3a429a79f46f8dd0d",
+    "uncompressed_sha256": "17333a4fdad39a427dc2e7bc1a86b2592a3cf7a5d1cb64b2da4cda98f042c459"
+   },
+   "python_results_v1.json.gz": {
+    "sha256": "0a9bd307aaedf0a44123ceff729c44c738e3555ffeb4c36b480d4431b02617f5",
+    "uncompressed_sha256": "d3fba863651b01c6c774407f22afd7c49ceaa7d667689276f17b3b885a2037e5"
+   }
+  }
+ },
+ "campaign_history": [
+  {
+   "utc": "2026-10-06T14:16:07Z",
+   "git_head": "be028abd0e1b205501e4d77f6de10cac9a1ced53",
+   "git_dirty": false,
+   "master_seed": 2743347364,
+   "contract_sha256": "c10e00bb56fc2e7fd5caf42b4a0bd74b4deb090543ad9aeda04e4a1faee94b51",
+   "source_sha256_digest": "d493820bb1bb6cdfa3c42e6ad5312284ce7276cb57cee0b405b9e351fd4fc6c1",
+   "verdict": "ADMITTED",
+   "wall_s": 1.2
+  }
+ ],
+ "development_runs": "development seed 8102 runs were not scored or reported (contract development_rule)",
+ "findings": [],
+ "ledger_update_requested": [
+  {
+   "component": "C-DOCS_EVIDENCE_SPUTTER_YIELDS_V1",
+   "status": "ADMITTED",
+   "parity": "PARITY_PASS",
+   "scope": "partial admission: kernels yamamura_tawara and apid_fit (S1 / S2); the register builder stays Python reference",
+   "authoritative_implementation": "rust: crates/abep-subsystems (abep_subsystems::materials::sputter)"
+  }
+ ],
+ "meaning_of_ADMITTED": "A9.24 item 1: Rust (abep_subsystems::materials::sputter) becomes authoritative for the two cited yield formulas within the registered domain; the register's evidence statuses are unchanged",
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, evidence record, threshold or requirement",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27): literature-class priors stay priors",
+  "not a gate PASS and not a life verdict: absent determining evidence stays NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN / MODEL_ERROR (RM-R31); no 15,000 h / 26,280 h comparison is made in raw physics (SC-WP-11)"
+ ]
+}

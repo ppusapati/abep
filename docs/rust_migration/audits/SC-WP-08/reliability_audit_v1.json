@@ -1,0 +1,94 @@
+{
+ "schema": "abep_rust_extract_audit_v1",
+ "id": "AUDIT-SC-WP-08-RELIABILITY-V1",
+ "date": "2026-10-06",
+ "lane": "SC-WP-08 materials / life",
+ "method": "AUDIT_THEN_EXTRACT_ONLY_IF_NEEDED",
+ "element": "applicable reliability quantities (simulation_completion_programme_v1_1.json SC-WP-08)",
+ "candidates": [
+  "abep_sim/life.py::reliability",
+  "abep_sim/life.py::magnet_life",
+  "abep_sim/life.py::compressor_life"
+ ],
+ "inventory": "C-ABEP_SIM_LIFE_PY candidate_kernels_no_active_consumer: 'magnet_life, compressor_life, reliability (generic series / Weibull; without the R_26000h legacy key)'; not_ported_parts include LEGACY_RELIABILITY_HORIZON_H",
+ "base_commit": "e462e35ed0ce6092f47e1d1b05119501cf4d7eb6",
+ "read_at_base_sha256": {
+  "docs/rust_migration/simulation_completion_programme_v1_1.json": "5e672943892b0035f05562e68dae1ca279acd4a4bd625641a559e53711f4643a",
+  "docs/rust_migration/component_inventory_v3_1.json": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "docs/rust_migration/migration_state_v1.json": "eb169a51ed1819a82efea556adcd51d39ebf202e12eb1641e8447fa73dde31ef",
+  "abep_sim/life.py": "e8119a9c09e997553076bf879147b87f99b182a78bf7d6f1f305d6d2d25a71fe",
+  "abep_sim/archengine.py": "12f5ff2c4ca773b0856b93468afc078172f5de52350fa433b418c86aac60f97d",
+  "abep_sim/golden.py": "c455203bc6616ddc6d171ed10472f3d4635cf7655f75b00ecb704674865c5c07",
+  "abep_sim/system.py": "3a2f4e230dcd2f879510c6cff12ee8d801dbddc27786d6bfec51290cdc362f84",
+  "abep_sim/mission5.py": "a793451896bd3e99a0be20add777a952c0824b4f0b8f7630f7e32a2dab35b245",
+  "abep_sim/uq_modular.py": "55d4f0b3e9b3c4691579f13ae2c07a59a4f6bad2c484b2c1ca4d29f503933c2e",
+  "abep_sim/design/architecture_optimizer.py": "fff94c1e09052b1a4064e72ea817a5e1c7a2f9245c68d33fd7c18ac2b99030af"
+ },
+ "consumers_found": [
+  {
+   "where": "abep_sim/system.py:338-421 (eng_R_15000h, eng_R_26000h, eng_R_mission, eng_marginal_items, eng_magnet_ok)",
+   "class": "HISTORICAL_LEGACY_REGRESSION",
+   "active": false
+  },
+  {
+   "where": "abep_sim/mission5.py:97 reliability(li, {hall_channel, blade_coating})",
+   "class": "HISTORICAL_LEGACY_REGRESSION",
+   "active": false
+  },
+  {
+   "where": "docs/traceability/build_rtm.py:213 (text)",
+   "class": "documentation string",
+   "active": false
+  }
+ ],
+ "active_consumer": "none: no selected-architecture module computes a reliability quantity (plan note 'no active selected-architecture reliability implementation exists'); life_material_indicators reports every life item NOT_EVALUATED",
+ "content_findings": [
+  {
+   "function": "reliability",
+   "findings": [
+    "electronics failure rate default 2.0e-6 /h: no source",
+    "redundant-pair electronics 2R - R^2: an architecture assumption, not a registered reliability block diagram",
+    "Weibull beta = 3.0 for every wear-out item: no source",
+    "Weibull eta = 'predicted life' taken from the class-H wear-out lives (hall_channel_life parametric 300 um/kh and the LaB6 evaporation life: both excluded legacy paths)",
+    "R_26000h = LEGACY_RELIABILITY_HORIZON_H compatibility key (excluded by the plan)",
+    "single_point_or_marginal: life < 1.5 x mission_h, a threshold inside raw physics"
+   ]
+  },
+  {
+   "function": "magnet_life",
+   "findings": [
+    "0.0003 /K SmCo remanence loss: no source",
+    "ok = T < T_max and loss < 5 %: thresholds inside raw physics",
+    "materials.DB SmCo_bare T_max_K 620 K is a literature-class prior"
+   ]
+  },
+  {
+   "function": "compressor_life",
+   "findings": [
+    "magnetic bearing life 1e6 h 'electronics-limited; no wear-out': placeholder",
+    "ball bearing L10 20000 h: no source",
+    "ok = L10 >= mission_h: threshold inside raw physics"
+   ]
+  }
+ ],
+ "generic_structure": "The series product, exponential and Weibull forms are standard closed forms; the class-H functions bind them to unsourced parameters and thresholds. Extracting them would carry those parameters into the active simulator.",
+ "decision": "NOT_EXTRACTED: none of reliability / magnet_life / compressor_life is ported. The applicable reliability quantities become the NEW_PHYSICS item NP-RELIABILITY, preregistered in this lane (docs only, docs/rust_migration/new_physics/NP-RELIABILITY/) with every parameter an evidence-sourced input and no default; its implementation is outside this lane and starts only after the preregistration commit.",
+ "status_today": "every reliability quantity NOT_EVALUATED (no life-test / reliability evidence; plan gate 'reliability without life-test / reliability evidence')",
+ "ledger_update_requested": [
+  {
+   "item": "NP-RELIABILITY",
+   "status": "PREREG_MODEL (after its preregistration commit)",
+   "evidence": "docs/rust_migration/new_physics/NP-RELIABILITY/prereg_lock_v1.json"
+  },
+  {
+   "item": "C-ABEP_SIM_LIFE_PY candidate kernels magnet_life / compressor_life / reliability",
+   "disposition": "NOT_EXTRACTED (audit)",
+   "evidence": "docs/rust_migration/audits/SC-WP-08/reliability_audit_v1.json"
+  }
+ ],
+ "what_this_is_not": [
+  "not a reliability result",
+  "not a failure-rate source",
+  "not an owner decision"
+ ]
+}
