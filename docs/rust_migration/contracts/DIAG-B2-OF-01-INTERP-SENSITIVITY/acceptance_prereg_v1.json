@@ -1,0 +1,102 @@
+{
+ "schema": "abep_new_diagnostic_acceptance_v1",
+ "id": "ACCEPT-DIAG-B2-OF-01-INTERP-SENSITIVITY-V1",
+ "item": "DIAG-B2-OF-01 NUMERICAL_INTERPOLATION_SENSITIVITY diagnostic (SC-WP-10 F7 / F8 / UQ)",
+ "method": "NEW_DIAGNOSTIC_ACCEPTANCE (new behaviour with no Python reference; analytic and registered-evidence test cases; no synthetic Python reference is created, RM-R26)",
+ "simulation_completion_wp": "SC-WP-10",
+ "date": "2026-10-06",
+ "status": "PREREGISTERED",
+ "base_commit": "0d8922cfe39b5bb7f90ddf290702342182eb5d7c",
+ "registration_statement": "Committed alone, before any code of the diagnostic (its Rust module and the additive abep-intake accessors it needs) exists. Never edited after commit: a changed definition, case, expectation or decision rule is acceptance_prereg_v2, and no case is removed or weakened after a failure.",
+ "governing_records": [
+  {
+   "path": "docs/decisions/OD_2026_10_06_A9_31_NEXT_BATCH_OWNER_RULINGS_AND_ARCHITECTURE_PROOF.md",
+   "sha256": "ae2b97e426fe648c3e1829fefcc19095af0d0cdf9b5b58b384c837146ae9bedc",
+   "sections": "sec. 6 (INTAKE INTERPOLANT - B2-OF-01, binding word for word), sec. 12 (LANE DESIGN/UQ - SC-WP-10), sec. 21 (empty robust set)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_06_A9_31_next_batch_owner_rulings_and_architecture_proof.json",
+   "sha256": "6f7c82eac2ac6c07e09324934d94bce8ca7613c2dd80cb496222264b7afe5f86"
+  },
+  {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_TPMC_PY/finding_B2-OF-01_face_survey_v1.json",
+   "sha256": "4b30eaca5bbd2560426917c3c9ed11c447ef0ec4ce963e372dba4af98673e03f",
+   "role": "the B2 lane's survey of the known degenerate internal faces (affected_faces, recorded maximum spreads and their points, default points) and its rounding threshold RTOL = 1e-12"
+  },
+  {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_TPMC_PY/parity_report_v1.json",
+   "sha256": "18c13688f1b9029297df9a6dc4ad705d282096bcb4070d15e6ad24cde490f484",
+   "role": "finding B2-OF-01 (a property of the frozen Python reference; the admitted Rust port replicates scipy's simplex walk)"
+  }
+ ],
+ "owner_ruling_a9_31_sec_6_verbatim": [
+  "Do NOT regenerate or smooth intake_surface_v1.",
+  "Do NOT change the admitted Rust interpolation merely to make the surface appear nicer.",
+  "For SC-WP-10 F7/F8 / UQ: add a separate numerical-sensitivity diagnostic for a candidate lying exactly on one of the known degenerate internal faces.",
+  "Do not use an arbitrary epsilon.",
+  "Determine an exact-face condition from the canonical frozen grid coordinates.",
+  "For an exact-face candidate: retain the authoritative frozen result; additionally compute/report the adjacent-simplex ambiguity envelope where feasible; classify that envelope as NUMERICAL_INTERPOLATION_SENSITIVITY.",
+  "Never retune the optimizer to hide it.",
+  "Do not mark a candidate robust merely because one triangulation branch is favourable.",
+  "No effect on the already-admitted default points, whose recorded spreads are at floating-noise level."
+ ],
+ "pinned_inputs_sha256": {
+  "abep_sim/data/intake_surface_v1.csv": "62b804924d801f913420a05142d4fe62137a7619eca17ae7786da5bef005c09a",
+  "abep_sim/data/intake_surface_v1.json": "5b26b7fd60272537dd0e719a122cb874233c6dd777202ab164b159cc7215d425",
+  "crates/abep-intake/data/intake_surface_v1_delaunay_v1.json": "247601cf51cff450759a2148179242e8085eb8fb0b878d87e44ea86e644faf7b",
+  "crates/abep-intake/data/intake_surface_v1_delaunay_v1_search.json": "e6f254b3f089123b2c8eadaac7adf66b6d64f823540a4ed8cb4d86cba301b3fd",
+  "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_TPMC_PY/finding_B2-OF-01_face_survey_v1.json": "4b30eaca5bbd2560426917c3c9ed11c447ef0ec4ce963e372dba4af98673e03f"
+ },
+ "unchanged": "the frozen intake_surface_v1 data, the captured reference triangulation / search structures and the admitted abep-intake interpolation (authoritative value = the simplex the replicated scipy walk selects) are not modified; the diagnostic only reads them. The admitted IntakeSurface evaluation, every admitted parity case and the default points stay bit-identical.",
+ "definitions": {
+  "canonical_grid": "per scattering table s in {maxwell, cll} and axis a in (L_over_d, phi, alpha, theta_deg): G_s,a = the sorted distinct values of that column over the frozen CSV rows of table s (read through the sha256-verified abep-intake reader). Cross-check (fail closed, MODEL_ERROR): G_s,a equals intake_surface_v1.json grid[a] numerically for both tables. Today: L_over_d {3, 5, 10, 20}, phi {0.8, 0.9}, alpha {0, 0.2, 0.5, 0.8, 1}, theta_deg {0, 2, 5}.",
+  "interior_grid_values": "I_s,a = G_s,a without its minimum and maximum. Today: L_over_d {5, 10}, alpha {0.2, 0.5, 0.8}, theta_deg {2}; phi has none.",
+  "known_degenerate_faces": "K = the survey's affected_faces ('L_over_d = 10', 'L_over_d = 5', 'alpha = 0.2', 'alpha = 0.5', 'alpha = 0.8', 'theta_deg = 2'), parsed as (axis, value). Cross-check (fail closed, MODEL_ERROR): K equals the set {(a, v): v in I_s,a} for both tables (the survey drew its faces from the same grid).",
+  "exact_face_condition": "a candidate surface point p = (L_over_d, phi, alpha, theta_deg) lies EXACTLY on a known degenerate face iff every coordinate is finite and inside the closed table range and there is an axis a with p_a == v for some (a, v) in K, where == is IEEE-754 equality of the f64 values (no tolerance of any kind; the candidate coordinates and the canonical grid values are both parsed from their decimal text with correct rounding). A point 1 ulp away from a face is NOT on it.",
+  "face_geometry": "n_on_grid = number of axes a with p_a in G_s,a (exact equality); free_dims = 4 - n_on_grid. Classes: OUT_OF_DOMAIN (non-finite or outside the closed range); NOT_ON_KNOWN_FACE (the exact-face condition is false); GRID_NODE (on a known face, free_dims = 0); GRID_EDGE (on a known face, free_dims = 1); FACE_INTERIOR (on a known face, free_dims >= 2).",
+  "analytic_basis": "Qhull triangulates every degenerate tensor-grid cell using only its corner points, so each simplex lies in one cell and, inside one cell, the piecewise-linear interpolant is single-valued. On a face shared by two (or more) cells the value can depend on which cell's simplex is used. On a grid node every containing simplex returns the node value; on a grid edge every cell triangulation restricted to the edge is the edge itself, so every containing simplex returns the same linear interpolant of the two end nodes. Hence GRID_NODE and GRID_EDGE points are single-valued up to floating rounding, and only FACE_INTERIOR points can carry a non-conforming ambiguity (the survey's non-conforming points are all FACE_INTERIOR; its default points are GRID_EDGE or FACE_INTERIOR and at rounding level).",
+  "authoritative_value": "the species-row values (eta_c, C_D, CR_passive, K_back, mass_kg per species) interpolated in the simplex the admitted abep-intake replication of scipy's walk selects; unchanged and always reported first.",
+  "ambiguity_envelope": "over every non-degenerate simplex of the captured reference triangulation of table s whose five barycentric coordinates of the rescaled point (scipy _barycentric_coordinates) all lie in [-eps, 1 + eps], with eps = 100 * DBL_EPSILON = the reference's own find-simplex tolerance (scipy FIND_SIMPLEX_EPS, already registered in abep-intake and used by the B2 survey; not a parameter of this diagnostic): per species and field, the interpolated value in each such simplex, their minimum, maximum and the relative spread (max - min) / |mean| (the survey's definition). Feasible = the point is in domain and at least one containing simplex exists; otherwise the envelope is NOT_EVALUATED with the reason (OUT_OF_DOMAIN or MODEL_ERROR).",
+  "sensitivity_class": "ROUNDING_LEVEL when every relative spread is <= 1e-12 (the survey's registered rounding threshold RTOL of finding B2-OF-01, reused, not new); NON_CONFORMING otherwise. Reported as status NUMERICAL_INTERPOLATION_SENSITIVITY with the class, the envelope, the authoritative value, the faces hit and free_dims.",
+  "f7_f8_application": "for every F8 survivor and every F7 upstream Pareto member of the nominal context, the surface points it would touch are (L_over_d, phi, alpha of the scenario, theta_deg = 0) per surface scenario and (..., theta_deg = 5) for the pointing node, in the scenario's scattering table. Each is classified; the record also states interpolant_used_by_chain, which is false for the active F7 / F8 chain: it consumes the committed F1 IF-A1 records and species table (intake_synthesis uses the frozen surface only at exact grid nodes of its build state and direct TPMC elsewhere) and never calls the interpolant."
+ },
+ "rules": {
+  "R-01": "the authoritative frozen result is retained and is never replaced by an envelope value, a mean or a favourable branch",
+  "R-02": "the diagnostic is a separate record; F7 / F8 outputs (contexts, Pareto sets, survivors, scenario robustness, Monte Carlo records, robust Pareto set) are bit-identical with and without it",
+  "R-03": "a candidate is never marked robust, feasible or preferred because one triangulation branch is favourable; the diagnostic carries no robustness, feasibility, PASS or selection field",
+  "R-04": "no epsilon is introduced for the exact-face condition; the only tolerances used are the reference's own find-simplex eps (containment) and the survey's registered rounding threshold (classification of a measured spread)",
+  "R-05": "the frozen surface, the captured triangulation and the admitted interpolation are read-only; the only abep-intake change is an additive public accessor (authoritative species rows and the per-simplex rows of the containing simplices), justified by this record"
+ },
+ "acceptance_cases": [
+  {"id": "AT-01", "kind": "analytic (grid node)", "point": [5.0, 0.8, 0.5, 2.0], "tables": ["maxwell", "cll"], "expected": "face_geometry GRID_NODE, faces_hit [L_over_d = 5, alpha = 0.5, theta_deg = 2], free_dims 0, sensitivity_class ROUNDING_LEVEL (every spread <= 1e-12), and every envelope value and the authoritative value equal the CSV node row of that point within 1e-12 relative"},
+  {"id": "AT-02", "kind": "registered evidence (survey default points)", "points": [[10.0, 0.85, 0.5, 0.0], [5.0, 0.85, 0.8, 0.0], [10.0, 0.85, 0.95, 0.0], [3.0, 0.85, 0.5, 0.0], [5.0, 0.85, 0.8, 2.0]], "tables": ["maxwell", "cll"], "expected": "face_geometry GRID_EDGE for the four points with one off-grid coordinate and FACE_INTERIOR for (10, 0.85, 0.95, 0); every envelope spread <= 1e-12 (ROUNDING_LEVEL), consistent with the survey's recorded floating-noise spreads (owner: no effect on the default points)"},
+  {"id": "AT-03", "kind": "registered evidence (survey maxima)", "cases": [
+    {"field": "eta_c", "table": "maxwell", "species": "N2", "point": [8.227784022690075, 0.8374126887937825, 0.6952669150405878, 2.0], "survey_spread": 0.03768632268222069},
+    {"field": "C_D", "table": "cll", "species": "O", "point": [8.227784022690075, 0.8374126887937825, 0.6952669150405878, 2.0], "survey_spread": 0.002217463318732964},
+    {"field": "CR_passive", "table": "cll", "species": "N2", "point": [14.915437578732714, 0.8108001576950183, 0.048672246638759575, 2.0], "survey_spread": 0.1733934754224049},
+    {"field": "K_back", "table": "cll", "species": "O2", "point": [13.642166426737925, 0.8551641047390511, 0.38885151921681604, 2.0], "survey_spread": 0.061172634747115436},
+    {"field": "mass_kg", "table": "maxwell", "species": "N2", "point": [15.193095968023385, 0.8484514633109874, 0.2, 3.880158262223903], "survey_spread": 0.03729597039010955}
+   ], "expected": "face_geometry FACE_INTERIOR, sensitivity_class NON_CONFORMING, |spread_rust - survey_spread| <= 1e-12 for the named field / species (the survey evaluated the same captured simplices with numpy dot products, so only rounding may differ), and the authoritative value lies inside [min, max] of the envelope"},
+  {"id": "AT-04", "kind": "analytic (exactness of the face condition)", "point": "the AT-03 CR_passive point with theta_deg = the next f64 above 2.0", "tables": ["cll"], "expected": "face_geometry NOT_ON_KNOWN_FACE and diagnostic NOT_APPLICABLE (no epsilon), the authoritative value is still returned"},
+  {"id": "AT-05", "kind": "analytic (cell interior and outer face)", "points": [[4.0, 0.85, 0.35, 1.0], [4.0, 0.8, 0.35, 1.0], [20.0, 0.9, 1.0, 5.0]], "tables": ["maxwell", "cll"], "expected": "NOT_ON_KNOWN_FACE (the third is a domain corner: every coordinate on an outer grid value, none interior), diagnostic NOT_APPLICABLE; the containing-simplex values there are single-valued (spread <= 1e-12), confirming that only interior faces carry the ambiguity"},
+  {"id": "AT-06", "kind": "analytic (domain)", "points": [[2.0, 0.85, 0.5, 0.0], [20.0000001, 0.85, 0.5, 0.0], ["NaN", 0.85, 0.5, 0.0]], "tables": ["maxwell"], "expected": "face_geometry OUT_OF_DOMAIN, envelope NOT_EVALUATED (status OUT_OF_DOMAIN), no value"},
+  {"id": "AT-07", "kind": "grid / face cross-checks", "expected": "canonical grid equals intake_surface_v1.json grid for both tables; K equals the interior grid values; a tampered survey face list or grid is refused (MODEL_ERROR)"},
+  {"id": "AT-08", "kind": "F7 / F8 application (registered prediction)", "expected": "every surface point of the active F7 / F8 candidates (L_over_d in {3, 5, 10, 20}, phi in {0.8, 0.9}, alpha of the 10 scenarios, theta_deg in {0, 5}) is a GRID_NODE or NOT_ON_KNOWN_FACE point, none is FACE_INTERIOR, every envelope is ROUNDING_LEVEL, and interpolant_used_by_chain is false. If this prediction fails it is reported, never hidden"},
+  {"id": "AT-09", "kind": "invariance (R-02)", "expected": "the F8 robust pipeline outputs (survivors, scenario robustness, Monte Carlo records, robust Pareto set) of one registered sub-grid are identical with the diagnostic computed and not computed"},
+  {"id": "AT-10", "kind": "determinism", "expected": "two evaluations of every case give bit-identical records"}
+ ],
+ "decision_rules": {
+  "verdict": "ACCEPTED iff every acceptance case passes in the Rust test suite (cargo test --workspace --locked, no ignored test) and in the one scored execution recorded in acceptance_report_v1.json; otherwise NOT_ACCEPTED (the report is committed either way; a fix is acceptance_prereg_v2)",
+  "meaning": "software verification of a numerical diagnostic, not physics validation, not a change of the frozen surface and not a gate PASS"
+ },
+ "outputs": {
+  "rust": "abep_uq::interp_sensitivity (classification, envelope, F7 / F8 application) and the additive abep_intake::surface accessors; tests in crates/abep-uq",
+  "report": "docs/rust_migration/contracts/DIAG-B2-OF-01-INTERP-SENSITIVITY/acceptance_report_v1.json (+ .md)"
+ },
+ "what_this_is_not": [
+  "not a regeneration, smoothing or replacement of intake_surface_v1 (owner A9.31 sec. 6)",
+  "not a change of the admitted abep-intake interpolation or of any admitted parity result",
+  "not an input to robustness, feasibility or ranking: the authoritative value governs, the envelope is reported beside it",
+  "not physics evidence about the intake"
+ ]
+}
