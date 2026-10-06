@@ -1,0 +1,409 @@
+{
+ "schema": "abep_new_physics_prereg_v1",
+ "id": "NP-RELIABILITY",
+ "prereg_version": 1,
+ "model_version": "1.0.0",
+ "title": "Applicable reliability quantities of the hall_icp_neutralizer flight configuration (evidence-parameterised reliability block model)",
+ "status": "PREREGISTERED_NOT_IMPLEMENTED",
+ "method": "NEW_PHYSICS",
+ "contract_kind": "NEW_PHYSICS",
+ "lifecycle_state": "PREREG_MODEL",
+ "validation_status": "NOT_VALIDATED",
+ "date": "2026-10-06",
+ "work_package": "SC-WP-08",
+ "wave": "W10",
+ "lane": "SC-WP-08 materials / life (preregistration only; the lane instruction allows no implementation here)",
+ "target_crate": "abep-subsystems::life (module reliability), in a later lane",
+ "base": {
+  "branch": "integration/simulation-complete",
+  "commit": "e462e35ed0ce6092f47e1d1b05119501cf4d7eb6"
+ },
+ "files": {
+  "machine_readable": "docs/rust_migration/new_physics/NP-RELIABILITY/prereg_v1.json",
+  "human_readable": "docs/rust_migration/new_physics/NP-RELIABILITY/PREREG.md",
+  "lock": "docs/rust_migration/new_physics/NP-RELIABILITY/prereg_lock_v1.json"
+ },
+ "authority_rule": "This JSON is authoritative. PREREG.md restates it for people; a difference is a defect fixed by a new version.",
+ "numbers_policy": "This record contains no failure rate, life, shape parameter, duty factor, horizon or threshold value. Every number below is a software-verification tolerance or a closed-form constant of an analytic limiting case (e, 1, 0). Parameters enter only as evidence records (EI-01).",
+ "governing_records": [
+  {
+   "id": "GR-01",
+   "path": "docs/decisions/OD_2026_10_05_A9_29_RUST_PLAN_V3_1_RULINGS_AND_START_AUTHORIZATION.md",
+   "sha256": "5c223f6df59f579deb1ef4788fecf5857c6fa3ff4f365f23738b2c1b7f251989",
+   "used_for": "A9.29: new physics is preregistered before implementation (sec. 13); simulation-complete chain incl. materials / life (sec. 15)"
+  },
+  {
+   "id": "GR-02",
+   "path": "docs/rust_migration/simulation_completion_programme_v1_1.json",
+   "sha256": "5e672943892b0035f05562e68dae1ca279acd4a4bd625641a559e53711f4643a",
+   "used_for": "SC-WP-08 element 'applicable reliability quantities' (AUDIT_THEN_EXTRACT_ONLY_IF_NEEDED, otherwise a preregistered NEW_PHYSICS element); fail-closed gate 'reliability without life-test / reliability evidence' NOT_EVALUATED; admission criterion 'never the LEGACY_RELIABILITY_HORIZON_H key'"
+  },
+  {
+   "id": "GR-03",
+   "path": "docs/rust_migration/component_inventory_v3_1.json",
+   "sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+   "used_for": "new_items NP-RELIABILITY (NEW_PHYSICS, SC-WP-08, W10): 'applicable reliability quantities - only if not covered by audited candidate kernels'"
+  },
+  {
+   "id": "GR-04",
+   "path": "docs/rust_migration/audits/SC-WP-08/reliability_audit_v1.json",
+   "sha256": "76ed638a26ad40e2c9513f536a5f2f82b209a8a3dd592459173170d6df01b596",
+   "used_for": "audit: life.reliability / magnet_life / compressor_life NOT_EXTRACTED; NP-RELIABILITY preregistered instead"
+  },
+  {
+   "id": "GR-05",
+   "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+   "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171",
+   "used_for": "new_physics_verification section and the A9.29 sec. 13 gate"
+  },
+  {
+   "id": "GR-06",
+   "path": "docs/EVIDENCE.md",
+   "sha256": "a2950352141890c12ad33e66766cd003215c807cb29203d21df090349ab90b61",
+   "used_for": "evidence classes, uncertainty, applicability domain (CLAUDE.md rule 10)"
+  },
+  {
+   "id": "GR-07",
+   "path": "docs/decisions/OD_2026_10_05_A9_28_RUST_PLAN_RULINGS_AND_SIMULATION_COMPLETION_DIRECTIVE.md",
+   "sha256": "7877bdc923fb07876b211924965767800f4f3a8efc46095f4dc3d471733fb54c",
+   "used_for": "A9.28: historical code rules; new physics has no synthetic Python reference"
+  }
+ ],
+ "why_new_physics": "The audit GR-04 found no active consumer and no sourced parameter in the class-H candidates (electronics rate 2.0e-6 /h, Weibull beta 3, eta = class-H predicted lives, 1.5 x mission SPF rule, R_26000h legacy key). Per the plan (GR-02) the applicable reliability quantities are therefore a preregistered NEW_PHYSICS element. No synthetic Python reference is created (A9.28; template RM-R26).",
+ "what_this_is_not": [
+  "not an implementation: no Rust, Python or Julia code is written; status PREREGISTERED_NOT_IMPLEMENTED",
+  "not a reliability result, not a failure-rate source and not a reliability allocation",
+  "not an assessment: no requirement threshold, no PASS / FAIL, no HC / RVM verdict, no 15,000 h or 26,280 h constant (those belong to SC-WP-11)",
+  "not a port of abep_sim/life.py (class H, NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH)"
+ ],
+ "implementation_gate": [
+  {
+   "id": "IG-01",
+   "rule": "No NP-RELIABILITY Rust code before this preregistration is committed (A9.29 sec. 13)."
+  },
+  {
+   "id": "IG-02",
+   "rule": "The SC-WP-08 lane only preregisters; implementation is a later lane that cites this record's lock sha256."
+  },
+  {
+   "id": "IG-03",
+   "rule": "The implementation never imports or transcribes abep_sim/life.py constants (GR-04)."
+  }
+ ],
+ "architecture_scope": [
+  {
+   "id": "AS-01",
+   "text": "Configuration hall_icp_neutralizer only, supply modes AIR_PRIMARY and XE_CONTINGENCY. Any other configuration (hall_c1_reference included) is refused: MODEL_ERROR."
+  },
+  {
+   "id": "AS-02",
+   "text": "C1 / hollow cathode: GROUND_REFERENCE_ONLY. No C1 item, heating or start-cycle item enters a flight reliability block diagram; an RBD that names one is refused (MODEL_ERROR, FT-03)."
+  },
+  {
+   "id": "AS-03",
+   "text": "Item vocabulary (registered RBD item classes; an item instance is registered per RBD): INTAKE, FILTER, COMPRESSOR_ROTOR, COMPRESSOR_BEARING_MOTOR, PLENUM_FEED_VALVE, XE_FEED, HALL_ANODE, HALL_CHANNEL_WALL, HALL_MAGNET_CIRCUIT, ICP_SOURCE, ICP_COLLECTOR, RF_GENERATOR, RF_MATCHING, PPU_CONVERTER, HARNESS_CONNECTOR, THERMAL_CONTROL. A new class is a new version."
+  }
+ ],
+ "quantities": [
+  {
+   "id": "Q-01",
+   "key": "R_item(t)",
+   "units": "-",
+   "definition": "probability that a registered item has not failed by its operating time t (h) under its registered failure-mode model"
+  },
+  {
+   "id": "Q-02",
+   "key": "F_item(t)",
+   "units": "-",
+   "definition": "1 - R_item(t)"
+  },
+  {
+   "id": "Q-03",
+   "key": "R_rbd(t)",
+   "units": "-",
+   "definition": "system reliability of a registered reliability block diagram at mission time t, items evaluated at their operating times (E-05)"
+  },
+  {
+   "id": "Q-04",
+   "key": "R_bounds",
+   "units": "-",
+   "definition": "lower / upper R over the registered parameter box (E-06), reported with the nominal"
+  },
+  {
+   "id": "Q-05",
+   "key": "status",
+   "units": "-",
+   "definition": "EVALUATED | NOT_EVALUATED | INCOMPLETE_EVIDENCE | OUT_OF_DOMAIN | MODEL_ERROR per item and per RBD (precedence ST-01)"
+  },
+  {
+   "id": "Q-06",
+   "key": "limiting_items",
+   "units": "-",
+   "definition": "the items ordered by ascending R at t (an ordering only; no SPF or marginal label, no threshold)"
+  }
+ ],
+ "equations": [
+  {
+   "id": "E-01",
+   "name": "constant hazard (random failures)",
+   "form": "R(t) = exp(-lambda t), lambda >= 0 [1/h]"
+  },
+  {
+   "id": "E-02",
+   "name": "Weibull wear-out",
+   "form": "R(t) = exp(-(t / eta)^beta), eta > 0 [h], beta > 0"
+  },
+  {
+   "id": "E-03",
+   "name": "independent competing modes of one item",
+   "form": "R_item(t) = prod_m R_m(t)"
+  },
+  {
+   "id": "E-04",
+   "name": "RBD composition",
+   "form": "SERIES: R = prod_i R_i; ACTIVE_PARALLEL: R = 1 - prod_i (1 - R_i); K_OF_N (identical R): R = sum_{j=k..n} C(n, j) R^j (1 - R)^(n - j); nested blocks registered as a tree"
+  },
+  {
+   "id": "E-05",
+   "name": "operating time",
+   "form": "t_i = registered operating-time record of item i at mission time t (from the SC-WP-09 mission profile: firing hours, cycles); no default duty factor; a missing record is INCOMPLETE_EVIDENCE"
+  },
+  {
+   "id": "E-06",
+   "name": "parameter-box bounds",
+   "form": "R is monotone in each parameter for fixed t: decreasing in lambda, increasing in eta; in beta decreasing if t / eta > 1, increasing if t / eta < 1, constant at t = eta. R_bounds are evaluated at the registered box corners of (lambda) or (eta, beta), which is exact under this monotonicity; RBD bounds follow because E-04 is monotone increasing in each R_i"
+  }
+ ],
+ "evidence_inputs": [
+  {
+   "id": "EI-01",
+   "rule": "Every lambda, eta, beta and operating-time record is an input record {value, bounds, units, source (path + sha256 or citation + locator), evidence_class, evidence_level, uncertainty, applicability_domain (stress, temperature, environment, duration range), validation_status}. A record missing a field is MODEL_ERROR."
+  },
+  {
+   "id": "EI-02",
+   "rule": "No default and no invented value (CLAUDE.md rules 3 and 6). An item without a sourced parameter record is INCOMPLETE_EVIDENCE; it is never filled from a handbook value that is not transcribed with source and locator."
+  },
+  {
+   "id": "EI-03",
+   "rule": "Wear-out eta derived from a life model is admissible only from an ADMITTED model under its own contract: Hall channel-wall erosion life needs an admitted Hall map with wall_life_trustworthy (CLAUDE.md next-work 5); with the credible Hall set EMPTY every Hall-erosion-derived eta is NOT_EVALUATED. Anode / collector material is OPEN (P4: 352 gate cells INCOMPLETE_EVIDENCE; 316L REJECTED_AS_CURRENT_BASELINE): material-dependent anode / collector items are INCOMPLETE_EVIDENCE."
+  },
+  {
+   "id": "EI-04",
+   "rule": "AO-driven items (intake, filter, compressor exterior surfaces) need AO coupon / AO-beam evidence (owner row 132, UNLOCK['life']); without it INCOMPLETE_EVIDENCE."
+  },
+  {
+   "id": "EI-05",
+   "rule": "Candidate evidence source types (none transcribed here; each 'verify'): P4 stage-3 qualification / life evidence, H-1 endurance tests, ICP endurance tests, compressor bearing / motor life tests, parts-stress failure-rate handbooks (e.g. MIL-HDBK-217F, FIDES) applied with their own applicability domains."
+  }
+ ],
+ "domains": [
+  {
+   "id": "D-01",
+   "rule": "lambda finite >= 0; eta finite > 0; beta finite > 0; t finite >= 0; otherwise OUT_OF_DOMAIN."
+  },
+  {
+   "id": "D-02",
+   "rule": "t outside the applicability_domain duration range of an item's evidence record is OUT_OF_DOMAIN unless the record itself states the extrapolation domain; no extrapolation factor is invented."
+  },
+  {
+   "id": "D-03",
+   "rule": "An item's stress / temperature / environment outside its record's domain is OUT_OF_DOMAIN."
+  }
+ ],
+ "status_vocabulary": {
+  "values": [
+   "EVALUATED",
+   "NOT_EVALUATED",
+   "INCOMPLETE_EVIDENCE",
+   "OUT_OF_DOMAIN",
+   "MODEL_ERROR"
+  ],
+  "precedence": [
+   {
+    "id": "ST-01",
+    "rule": "MODEL_ERROR (malformed record / RBD, refused configuration or C1 item) > NOT_EVALUATED (a required admitted upstream model is absent, e.g. EI-03) > INCOMPLETE_EVIDENCE (parameter evidence absent) > OUT_OF_DOMAIN > EVALUATED; an RBD takes the highest-precedence item status; no partial R_rbd is emitted unless every item is EVALUATED"
+   }
+  ]
+ },
+ "outputs": {
+  "rule": "Raw quantities only (Q-01..Q-06) with status, inputs' source ids, uncertainty bounds and validation_status NOT_VALIDATED. No threshold, margin, PASS / FAIL, SPF / marginal label or requirement constant. Horizons are caller inputs; the legacy key R_26000h (LEGACY_RELIABILITY_HORIZON_H) is never emitted.",
+  "on_refusal": "No R value is emitted for an item or RBD whose status is not EVALUATED."
+ },
+ "assumptions": [
+  {
+   "id": "A-01",
+   "text": "Failure modes within an item are independent (E-03); common-cause coupling is not modelled in v1 and is listed as a limitation of every R_rbd."
+  },
+  {
+   "id": "A-02",
+   "text": "Redundancy is only what the registered RBD states; no redundancy is assumed (the class-H redundant electronics pair is not carried)."
+  },
+  {
+   "id": "A-03",
+   "text": "Constant hazard only where the evidence record states random-failure behaviour; wear-out modes use E-02."
+  }
+ ],
+ "conservation": [
+  {
+   "id": "CONS-R1",
+   "criterion": "0 <= R <= 1 and |R + F - 1| <= 1e-15 for every item and RBD"
+  },
+  {
+   "id": "CONS-R2",
+   "criterion": "SERIES R_rbd <= min_i R_i; ACTIVE_PARALLEL R_rbd >= max_i R_i (exact inequalities on the computed values)"
+  },
+  {
+   "id": "CONS-R3",
+   "criterion": "R_bounds lower <= nominal <= upper"
+  }
+ ],
+ "analytic_limiting_cases": [
+  {
+   "id": "AL-01",
+   "case": "exponential",
+   "closed_form": "R(0) = 1; R(1 / lambda) = exp(-1)",
+   "tolerance": "|diff| <= 1e-15"
+  },
+  {
+   "id": "AL-02",
+   "case": "Weibull at t = eta",
+   "closed_form": "R = exp(-1) for every beta > 0",
+   "tolerance": "|diff| <= 1e-15"
+  },
+  {
+   "id": "AL-03",
+   "case": "Weibull beta = 1",
+   "closed_form": "equals E-01 with lambda = 1 / eta",
+   "tolerance": "4 ulp"
+  },
+  {
+   "id": "AL-04",
+   "case": "series of n identical exponential items",
+   "closed_form": "exp(-n lambda t)",
+   "tolerance": "1e-14 relative"
+  },
+  {
+   "id": "AL-05",
+   "case": "active parallel of two identical items",
+   "closed_form": "2 R - R^2",
+   "tolerance": "1e-15 absolute"
+  },
+  {
+   "id": "AL-06",
+   "case": "K_OF_N limits",
+   "closed_form": "k = n equals SERIES; k = 1 equals ACTIVE_PARALLEL",
+   "tolerance": "1e-14 absolute"
+  },
+  {
+   "id": "AL-07",
+   "case": "monotonicity (E-06)",
+   "closed_form": "dR/dlambda <= 0, dR/deta >= 0, beta rule by sign of ln(t / eta) on a registered grid",
+   "tolerance": "exact sign"
+  }
+ ],
+ "fail_closed_tests": [
+  {
+   "id": "FT-01",
+   "case": "HALL_CHANNEL_WALL item whose eta comes from Hall-map wall erosion with the real (EMPTY) credible set",
+   "expected": "NOT_EVALUATED"
+  },
+  {
+   "id": "FT-02",
+   "case": "any item without a sourced parameter record",
+   "expected": "INCOMPLETE_EVIDENCE, no R emitted"
+  },
+  {
+   "id": "FT-03",
+   "case": "an RBD naming a C1 / hollow-cathode item or configuration hall_c1_reference",
+   "expected": "MODEL_ERROR refusal"
+  },
+  {
+   "id": "FT-04",
+   "case": "output key scan",
+   "expected": "no R_26000h key, no threshold / PASS / FAIL / SPF label"
+  },
+  {
+   "id": "FT-05",
+   "case": "HALL_ANODE / ICP_COLLECTOR material-dependent item while the anode / collector material is OPEN",
+   "expected": "INCOMPLETE_EVIDENCE"
+  },
+  {
+   "id": "FT-06",
+   "case": "D-01 / D-02 violations",
+   "expected": "OUT_OF_DOMAIN"
+  }
+ ],
+ "determinism": [
+  {
+   "id": "DET-01",
+   "rule": "Byte-identical outputs for identical inputs (no RNG; sums in registered item order)."
+  }
+ ],
+ "independent_verification": [
+  {
+   "id": "IV-01",
+   "source": "closed forms AL-01..AL-06 evaluated independently (non-authoritative scratch cross-check, never an active or CI dependency)",
+   "authoritative": false,
+   "tolerance": "as AL-xx"
+  }
+ ],
+ "validation_plan": {
+  "rule": "Verification (AL, CONS, FT, DET) is software admission only. validation_status stays NOT_VALIDATED until measured life / reliability evidence for the registered items exists; dependent gates stay NOT_EVALUATED.",
+  "evidence_candidates": "EI-05"
+ },
+ "admission_rule": [
+  {
+   "id": "ADM-01",
+   "rule": "PREREG_MODEL when this record is committed and sha256-locked (prereg_lock_v1.json)."
+  },
+  {
+   "id": "ADM-02",
+   "rule": "Implementation in abep-subsystems::life::reliability in a later lane, citing the lock."
+  },
+  {
+   "id": "ADM-03",
+   "rule": "ADMITTED iff every AL-01..AL-07, CONS-R1..R3, FT-01..FT-06 and DET-01 passes; admission is software verification, not physical validation and not a gate PASS."
+  }
+ ],
+ "not_evaluated_today": [
+  {
+   "item": "every R_item / R_rbd of the flight configuration",
+   "status": "NOT_EVALUATED / INCOMPLETE_EVIDENCE",
+   "reason": "no life-test or reliability evidence; credible Hall set EMPTY; anode / collector material OPEN; AO coupon evidence absent"
+  }
+ ],
+ "open_owner_questions": [
+  {
+   "id": "OQ-NPR-01",
+   "question": "The flight reliability block diagram (items, redundancy) of hall_icp_neutralizer is not registered anywhere; the owner or system lane must supply it before any R_rbd can be EVALUATED."
+  },
+  {
+   "id": "OQ-NPR-02",
+   "question": "Which failure-rate handbook basis (if any) is admissible for electronics items (PPU, RF generator, matching), and at which evidence level?"
+  }
+ ],
+ "new_physics_verification": {
+  "applies_when": "contract_kind = NEW_PHYSICS",
+  "model_id": "NP-RELIABILITY",
+  "preregistration": {
+   "nodes": "RBD items (architecture_scope AS-03) and blocks (E-04)",
+   "equations": "E-01..E-06",
+   "heat_or_mass_or_energy_sources": "NOT_APPLICABLE (probability model)",
+   "boundaries": "architecture_scope AS-01..AS-02 (hall_icp_neutralizer only, no C1)",
+   "assumptions": "A-01..A-03",
+   "domains": "D-01..D-03",
+   "conservation_checks": "CONS-R1..CONS-R3",
+   "analytic_limiting_cases": "AL-01..AL-07",
+   "independent_verification": "IV-01 (authoritative false)",
+   "evidence_validation_plan": "validation_plan; NOT_VALIDATED until measured evidence"
+  },
+  "gate_a9_29": "no implementation before the preregistration is committed (IG-01)",
+  "verdict": "ADMITTED iff ADM-03"
+ },
+ "change_control": [
+  {
+   "id": "CC-01",
+   "rule": "Any change after the lock is a new version (prereg_v2.json + PREREG.md revision + new lock) or a dated addendum; this file is never edited."
+  }
+ ]
+}
