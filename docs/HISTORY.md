@@ -4255,3 +4255,151 @@ main, and the bid record `5eee4b8` / `b5849af` / `2de86ab`. `git diff 2de86ab..H
   / `.md`). `cargo test --workspace --locked`: 32 passed, 0 ignored.
 - The Python checks stay in active CI. Retiring `h2_6_live_sources` (and the other three) is requested as a separate later
   step after CI is re-pointed. `scripts/ci_checks.py` unaffected (11/11).
+
+## 2026-10-05 — ES-2 environment in Rust: frozen atmosphere, orbit / design states and the 196-state execution (lane B1, SC-WP-01; A9.29 sec. 6; no number changed)
+
+- Four parity contracts, each committed alone before any comparison (template v3.1; Python reference `96db552`):
+  - `C-ABEP_SIM_ATMOSPHERE_PY` (`481570d`, sha256 `37bcef92…`): the frozen-scenario reader of `atmosphere.py`.
+  - `C-ABEP_SIM_CONSTANTS_PY` (`12df461`, `1f7bef49…`): the physical constants. `RFPConstraints` stays out of physics.
+  - `C-ABEP_SIM_MISSION_ENV_PY-CONSTANTS_KERNEL` (`a838533`, `83cc3513…`): J2, OMEGA_E, `Spacecraft`,
+    `sso_inclination_deg`. The inventory has no K-id for this pulled-forward kernel, so it is a function-subset contract.
+  - `C-ABEP_SIM_ATMOSPHERE_ORBIT_PY` (`a5a84e6`, `fd7b9f75…`): a coupled group with the `atmosphere_orbit_v2` frozen wind
+    paths and the `intake_synthesis` design-state loader / view, plus the 196-state execution.
+  - Tolerances come from an a priori floating-point bound: r_rel 1e-12 (atmosphere.py), 1e-10 (orbit log interpolation),
+    1e-9 m/s (winds), k_ulp 4 (geometry), and the reference's own DESIGN_V2_REL_TOL 1e-12 for the frozen-file re-derivation.
+- Rust (`433c402`): `abep-types::constants`; new `abep-data` (hash-pinned readers: `config/MANIFEST.json` → model set,
+  design-state set reference, sidecar container / CSV sha256; missing or altered data is MODEL_ERROR); new `abep-atmos`
+  (msis21, mission_env kernel, orbit accessor / sampler, HWM14 v2 winds, design_states_v2 selection rule, frozen-data
+  check, design-state view, 196-state execution, `abep-env-parity` CLI). No live NRLMSIS / HWM14, no Fortran FFI. New
+  workspace dependency `flate2`. Harness `scripts/rust_migration/es2_env_parity.py` (`7caaca2`).
+- One scoring run per contract, all **PARITY_PASS**; reports and captured reference outputs committed in `7f43b4f`,
+  `80ac7c7`, `ace0a7a` and `69481e5`:
+  - atmosphere.py: 1754 vectors, every field bit-identical.
+  - constants: all ten bit-identical.
+  - mission_env kernel: everything bit-identical, refusals matched.
+  - orbit group: 3749 vectors, 158085 observations, max relative difference 4.6e-14 (log-interpolated), 1.1e-13 m/s
+    (winds), 64 domain-error vectors and 10 refusal trees as registered.
+- 196-state execution: 196 / 196 EVALUATED, ids in file order, every state reproduced from the frozen dataset (max
+  1.42e-14 ≤ 1e-12), set `60073e21…`, dataset `c0ce282e…`; two runs byte-identical.
+- Open: `atmosphere_orbit_v2` relative_flow / flow_state / orbit_states stay PYTHON_REFERENCE (not needed by the
+  execution; own contract or owner retirement before SC-WP-01 completes). Python-reference observations: the
+  `atmosphere()` memo keyed on round(alt, 3) is not a pure function of its key (rule 5); `_frozen()` keeps a half-filled
+  cache after a failed JSON read. The harness was developed with development-seed comparisons before its commit
+  (disclosed in the reports).
+- `cargo test --workspace --locked`: 29 passed, 0 ignored; clippy -D warnings and rustfmt (members) clean;
+  `scripts/ci_checks.py` 11/11; pytest 4226 passed, 5 skipped, 1 xfailed.
+
+## 2026-10-05 — Configuration layer and active-architecture invariant in Rust (A9.29 lane A2, ES-1 / SC-WP-12; no number changed)
+
+- `abep_types::pyjson`: a Python-compatible JSON writer and parser. It covers CPython `float.__repr__` (including its
+  ties-to-even digit choice, where Rust's own shortest formatting rounds up), the `json.dumps` layouts, `json.loads`,
+  `repr` and the str character classes. It was verified against CPython 3.11.15 on the preregistered seed 202610052:
+  16,258 explicit floats, 1.5 M streamed floats, 1,500 strings, 60 documents and every code point.
+- Two contracts, each committed alone before any comparison:
+  - `C-ABEP_SIM_CONFIGURATION_PY` v1 (sha256 `69cf9448…`): the loaders and the `config/**` builder, coupled with
+    `C-SCRIPTS_CONFIG_BUILD_CONFIG_PY`;
+  - `C-ABEP_SIM_DESIGN_A9_19_ARCHITECTURE_PY` v1 (sha256 `ddec7a18…`): the active-architecture invariant (flight hollow
+    cathode NONE, C1 ground test / reference only), with a Rust sha256 pin of
+    `config/architecture/hall_icp_neutralizer_v1.json`.
+- `crates/abep-config` provides:
+  - the sha256-verified loaders, with the Python refusal semantics. The physics seam reads only the operating
+    scenario, and requirement thresholds are assessment data;
+  - `abep-config build --check`, which reproduces `config/**` and `MANIFEST.json` byte for byte;
+  - `abep_config::architecture`.
+- Each contract was scored once, and both are ADMITTED (PARITY_PASS):
+  - configuration: 8,874 loader calls on 306 case trees plus 23 build cases, 0 mismatches; `abep-config build --check`
+    on the repository gives `OK: 12 config files current`;
+  - architecture: 1,712 calls, 0 mismatches, with DIV-A01 (the hash pin) observed as registered.
+  The ledger updates are requested in the reports (lane A1 owns the ledger). Operating inputs, design engineering
+  constraints and constants keep their own contracts.
+- Tests: `cargo test --workspace --locked` 35 passed, 0 ignored; `scripts/ci_checks.py` 11/11; pytest 4226 passed / 5
+  skipped / 1 xfailed. The A9.23 test "only the builder writes the engineering constraints" now allow-lists the
+  parity harness by name, because the harness writes only temporary case trees.
+
+## 2026-10-05 — Lane B2: ES-3 intake part of SC-WP-02 (abep_core build equivalence, TPMC intake response, frozen intake surface, intake.py; Rust admitted, no Python or frozen data changed)
+
+- **abep_core build-equivalence addendum v1** (`docs/rust_migration/contracts/C-ABEP_CORE_BUILD_EQUIVALENCE/`), preregistered
+  in `3ca48e8` before any workspace build: **EQUIVALENT**. The six abep_core sources match the parity_report_v2 sha256
+  values; the build uses rustc / cargo 1.94.1 with no `python` / `extension-module` feature and no pyo3 / numpy in the graph.
+  On 493 Kernel-1 cases (golden + edge vectors, development seed 1) the workspace builds (debug, release, and release with
+  lto fat / codegen-units 1) are bit-identical to the recorded extension (`eb586f03…`). abep_core is unmodified. A cargo test
+  replays all cases and pins the abep_core sources (A9.30 sec. 6). Workspace formatting is `cargo fmt -- --check`
+  (members only; never `cargo fmt --all`).
+- **`crates/abep-intake`.** It calls abep_core directly (RM-OQ-01: no DEFAULT_BACKEND flip). It provides:
+  - intake_response / response_surface / clausing_transmission; non-converged traces carry status MODEL_ERROR;
+  - the hash-verified frozen intake surface v1 reader (read, never regenerated);
+  - collection / compress / passive_compression;
+  - the intake surface v2 gate (NOT_EVALUATED).
+- **Parity**, each contract committed alone before any comparison, each scored once:
+  - `C-ABEP_SIM_INTAKE_TPMC_PY` v1 (`1e6a80fb…`): **ADMITTED**. E1 424 statistical tests within z 5 (aggregate max 2.22);
+    E2 / E3 / E5 pass; E4 17143 surface checks within 4 ulp or 1e-11; 25 domain / error cases pass.
+  - `C-ABEP_SIM_INTAKE_PY` v1 (`6d67d5e4…`): **ADMITTED**. 1883 checks; the mass balances CONS-01 / CONS-02 close.
+- **Finding B2-OF-01** (a property of the frozen Python reference, not of the Rust port).
+  - IntakeSurface's scipy / Qhull triangulation of the degenerate v1 tensor grid is non-conforming across interior grid
+    faces: L/d 5 and 10, alpha 0.2 / 0.5 / 0.8, theta 2 deg.
+  - The value at a face point depends on scipy's simplex walk. Maximum jumps: CR_passive 17 %, K_back 6 %, eta_c 3.8 %,
+    mass_kg 3.7 %, C_D 0.2 %. Survey: `finding_B2-OF-01_face_survey_v1.json`.
+  - Found in development and handled before scoring. Rust replicates scipy's walk over the reference's captured
+    triangulation and search structures, which are versioned, sha256-pinned derived data with provenance
+    (`crates/abep-intake/data/PROVENANCE.json`); any mismatch is MODEL_ERROR. Both reports record the deviation from the
+    registered evaluation text; observables, tolerances and seeds are unchanged.
+  - Coordinator disposition: keep faithful parity; owner question open.
+- **PRE_RUST workload `intake_response_surface_reduced`** (reported, never a criterion): Python 4.98 s, Rust 0.79 s
+  median wall (6.3x), same machine and session. Python OMP / OPENBLAS / MKL / NUMEXPR threads = 1; Rust single-threaded.
+
+## 2026-10-05 — NP-ICP-NEUTRALIZER v1 implemented in Rust, verification report v1 (A9.29 lane C, SC-WP-03, ES-NP-ICP; new physics, no Python reference, no frozen data changed)
+
+- `crates/abep-icp` (Rust commit `f4b615f`) implements the frozen preregistration (lock `e98747e0`, verified on load) with
+  addendum 01 (A9.30):
+  - steady 0-D inductive discharge: species balances, Bohm losses with registered h and the electrode current balance;
+  - signed I_e,cap with its three bounds;
+  - CM-ABS, and CM-CAL at a registered P2 point; CM-PRED is a status gate only (VER-03..05, VER-13);
+  - CFG-FLIGHT-HALL-ON is a NOT_EVALUATED contract;
+  - the IF-ICP-HALL / BUS (`bus_power_boundary_a9_v2`) / THERMAL / FEED records;
+  - every unregistered input fails closed with a named reason.
+- AIR_PRIMARY is INCOMPLETE_EVIDENCE (`NP_ICP_CHEM_AIR_NOT_ADMITTED`). It names the tier-1 gaps read from the lock-verified
+  NP-ICP-CHEM-AIR registry, and an N2-only surrogate for air is refused. XE and Ar fail closed on their own evidence.
+- N2/N tables are sha256-verified against the NP-ICP-CHEM-AIR reuse pins. Their rates are NOT_EVALUATED until the abep-chem
+  integrator is admitted (EQ-06).
+- Verification (`verification_report_v1.json` / `.md`): LC-01..LC-10, CC-01..CC-07, NV-01..NV-05 and FC-01..FC-16 meet
+  their preregistered criteria on SYNTHETIC_TEST_ONLY cases.
+  - Residuals are ≤ 2.5e-15.
+  - LC-11 is not exercisable (CM-PRED gate). NV-06 is partial: the direct-integral side is NOT_EVALUATED.
+  - `cargo test --workspace --locked`: 116 passed, 0 ignored.
+- Status: IMPLEMENTED_UNVERIFIED, NOT_VALIDATED. Admission items 3, 4 and 5 are open: abep-chem, the verify addenda and the
+  admission record.
+- The N2 CFG-CAP-OFF CM-ABS demonstration is NOT_EVALUATED. Geometry, electrodes, P_abs, neutral source, σ_i / h, B_ICP,
+  the integrator, the ICP registry and the ICP completeness audit are all unregistered.
+- Reported to the owner, with the prereg unedited and the affected paths withheld:
+  - PF-01 and PF-02 (EQ-02 recombination factor; background inflow without τ);
+  - GAP-01..05, including the EQ-16 neutral-energy split that withholds the partition for every real gas;
+  - OBS-01 (route-dependent N²⁺ formation energy in the N2/N headers).
+- `scripts/ci_checks.py` 12/12.
+
+## 2026-10-05 — NP-THERMAL-CATHODELESS v1 implemented in Rust and VERIFIED (lane D, ES-4 / SC-WP-06; new physics, synthetic verification only)
+
+- **Prereg.** `prereg_v1.json` `e3e6859c…` and `PREREG.md` `e3337c8f…` were verified against `prereg_lock_v1.json` before any
+  code. The prereg is unchanged.
+- **VS-NET v1** (`verification/vs_net_v1.json`, sha256 `64c4bf33…`). It is the synthetic full-topology network and was
+  registered alone (`c3086e4`) before the implementation and the scored run.
+  - Before registration it was redesigned so that τ_max bounds its slowest mode, which is the AL-06 premise (finding F-04).
+- **Implementation.** `crates/abep-subsystems`, module `thermal`, commit `fedc15a`. No dependency was added to the workspace.
+  - Records and topology, with no default value.
+  - E-01..E-14, IF-HALL-THERMAL-v1 / IF-ICP-THERMAL-v1 and the governance gates, read sha256-verified:
+    - the credible Hall set is EMPTY, so map-derived Hall heat is NOT_EVALUATED;
+    - the HallThruster.jl pin is enforced.
+  - Fail-closed precedence; raw outputs only, every one carrying `validation_status = NOT_VALIDATED`.
+- **Verification** (`verification_report_v1.{json,md}`; scored run at `fedc15a` on a clean tree): **VERIFIED** (ADM-03).
+  - AL-01..AL-11, the in-model CONS criteria, FT-01..FT-18, DET-01..DET-03 and IV-02 (Howell C-40 / C-41 hand solution,
+    4e-15) are all met.
+  - IV-01 (Python scratch, non-authoritative) is within tolerance:
+    - steady VS-NET by Gauss–Seidel, 6.8e-11 K;
+    - transient against BDF2, 2.3e-3 K;
+    - energy totals, at most 3.2e-13 relative.
+  - CONS-L1 is deferred to the SC-WP-05 system ledger (Q-02). IV-03 was not performed.
+- **Not admitted yet.** ADM-04 still needs the ledger flip (lane A1) and a named CI step bound to the prereg sha256.
+  Validation stays NOT_VALIDATED, and anode and coupled H-1/ICP thermal closure stay UNRESOLVED.
+- **Finding F-01.** The NP-ICP v1 `IF-ICP-THERMAL-v1` carries eight more keys than this consumer's IK-01..IK-07. They are
+  refused as MODEL_ERROR. Integration needs IF-ICP-THERMAL-v2 on both sides.
+- **Results.** cargo test --workspace --locked: 78 passed, 0 ignored (abep-subsystems: 45). fmt and clippy are clean.
+  `ci_checks`: 12/12. No Python changed, so the full pytest suite was not rerun.

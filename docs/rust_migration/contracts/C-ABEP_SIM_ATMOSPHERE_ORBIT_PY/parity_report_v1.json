@@ -1,0 +1,5689 @@
+{
+ "schema": [
+  {
+   "entry": "orbit_state",
+   "observable": "key order",
+   "tolerance_class": "EXACT_VALUE",
+   "n": 1808,
+   "n_fail": 0,
+   "n_bit_identical": 1808,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "orbit_node_state",
+   "observable": "key order",
+   "tolerance_class": "EXACT_VALUE",
+   "n": 208,
+   "n_fail": 0,
+   "n_bit_identical": 208,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "orbit_states",
+   "observable": "key order",
+   "tolerance_class": "EXACT_VALUE",
+   "n": 951,
+   "n_fail": 0,
+   "n_bit_identical": 951,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "wind",
+   "observable": "key order",
+   "tolerance_class": "EXACT_VALUE",
+   "n": 1208,
+   "n_fail": 0,
+   "n_bit_identical": 1208,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "state_v2",
+   "observable": "key order",
+   "tolerance_class": "EXACT_VALUE",
+   "n": 408,
+   "n_fail": 0,
+   "n_bit_identical": 408,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "design_state_set.state",
+   "observable": "key order",
+   "tolerance_class": "EXACT_VALUE",
+   "n": 196,
+   "n_fail": 0,
+   "n_bit_identical": 196,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "design_state_set.atm",
+   "observable": "key order",
+   "tolerance_class": "EXACT_VALUE",
+   "n": 196,
+   "n_fail": 0,
+   "n_bit_identical": 196,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "design_states_v2",
+   "observable": "key order",
+   "tolerance_class": "EXACT_VALUE",
+   "n": 205,
+   "n_fail": 0,
+   "n_bit_identical": 205,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "design_states_v2",
+   "observable": "list length",
+   "tolerance_class": "EXACT_VALUE",
+   "n": 198,
+   "n_fail": 0,
+   "n_bit_identical": 198,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "execution.environment",
+   "observable": "key order",
+   "tolerance_class": "EXACT_VALUE",
+   "n": 196,
+   "n_fail": 0,
+   "n_bit_identical": 196,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "execution.wind",
+   "observable": "key order",
+   "tolerance_class": "EXACT_VALUE",
+   "n": 196,
+   "n_fail": 0,
+   "n_bit_identical": 196,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  }
+ ],
+ "contract": {
+  "id": "PARITY-C-ABEP_SIM_ATMOSPHERE_ORBIT_PY-V1",
+  "path": "docs/rust_migration/contracts/C-ABEP_SIM_ATMOSPHERE_ORBIT_PY/parity_prereg_v1.json",
+  "sha256": "fd7b9f750228939d4c768402abd13d1979b5b0b7f68df6ab27e12e4e40d40c46",
+  "registration_commit": "a5a84e6fbba038eb21026d40d0afac0d06612b02"
+ },
+ "date_utc": "2026-10-05T13:41:03Z",
+ "python_commit": "96db5524ec917e99e507def24f3ee0b263c78ebc",
+ "reference_sha256": {
+  "abep_sim/atmosphere_orbit.py": {
+   "registered": "eeaeba27d4174be412b774d8fe580712205ee401210f962fb23c14069ce78b0c",
+   "at_scoring": "eeaeba27d4174be412b774d8fe580712205ee401210f962fb23c14069ce78b0c"
+  },
+  "abep_sim/atmosphere_orbit_v2.py": {
+   "registered": "87a3de0f811453557842913542e1027d75337aadfc2ae2bd1dd027ae18e995bd",
+   "at_scoring": "87a3de0f811453557842913542e1027d75337aadfc2ae2bd1dd027ae18e995bd"
+  },
+  "abep_sim/design/intake_synthesis.py": {
+   "registered": "104ac561c05d8516c0571bc88339d69c4ab6abc78f8bfeeacea8696e557f2191",
+   "at_scoring": "104ac561c05d8516c0571bc88339d69c4ab6abc78f8bfeeacea8696e557f2191"
+  },
+  "abep_sim/design/engineering_constraints.py": {
+   "registered": "c4f70d306ec4b2e8e5bfff8d8aac347df4961fd573e5a87ccd2dd4fc599bf5fd",
+   "at_scoring": "c4f70d306ec4b2e8e5bfff8d8aac347df4961fd573e5a87ccd2dd4fc599bf5fd"
+  },
+  "abep_sim/configuration.py": {
+   "registered": "45900b79e3639ab382ec740bbd6b453d03e58ab7bd6368f93abdc17cabdacacc",
+   "at_scoring": "45900b79e3639ab382ec740bbd6b453d03e58ab7bd6368f93abdc17cabdacacc"
+  },
+  "abep_sim/atmosphere.py": {
+   "registered": "690d6931bb595c14736db9d9c284fb4e2f98727a8749262edebe3d8621e87e8b",
+   "at_scoring": "690d6931bb595c14736db9d9c284fb4e2f98727a8749262edebe3d8621e87e8b"
+  },
+  "abep_sim/constants.py": {
+   "registered": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7",
+   "at_scoring": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7"
+  },
+  "abep_sim/mission_env.py": {
+   "registered": "f568fba29678852565b03821e85dd7cce1fb18ec623ab2ca282e521a97f164af",
+   "at_scoring": "f568fba29678852565b03821e85dd7cce1fb18ec623ab2ca282e521a97f164af"
+  }
+ },
+ "rust_commit": "ace0a7aac3cfe1aefe54d8cdff52f736ae0e9c3d",
+ "build_provenance": {
+  "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+  "cargo": "cargo 1.94.1 (29ea6fb6a 2026-03-24)",
+  "cargo_lock_sha256": "25ffa86730d04f18769444e4fc7262305e640d2887d2c7b0eb91df4f0eafc805",
+  "source_sha256": {
+   "Cargo.lock": "25ffa86730d04f18769444e4fc7262305e640d2887d2c7b0eb91df4f0eafc805",
+   "Cargo.toml": "2ba9b186b90dc2fdced410198d52703ecd061b38cad83f7186d0aaa4c7bfcf5e",
+   "crates/abep-atmos/src/bin/abep_env_parity.rs": "c5098a3e86d80c6ac53b05561dc2ef3ae2705dfb1134039b3e51fa81312a3ee6",
+   "crates/abep-atmos/src/design_state_set.rs": "cdd96dde80512300fb18453f849f1018553fbf8aac72cfd88e01e52e03871716",
+   "crates/abep-atmos/src/design_states.rs": "c55dc45bd840c71a4e7c157bc04167a80b7c5e6563b935e0c3fb798328e98b14",
+   "crates/abep-atmos/src/execution.rs": "0ae9998367cf716971fb92e9666d6bdd84ce49dc271efad6a67dd1bec3b56f9a",
+   "crates/abep-atmos/src/lib.rs": "25b2b7a04cb9652443289fee7664c498bc0983a6491dc5b366e30ba00763b8a1",
+   "crates/abep-atmos/src/mission_env_kernel.rs": "c48e3c0952a2c09a3095b3904a5622b4f85c7d2d33c8a8f7d843e491dff6de73",
+   "crates/abep-atmos/src/msis21.rs": "50d778f9e06b4f44e63d1164504a63d0182d7df20e144fb526ba1bbff5e08aa8",
+   "crates/abep-atmos/src/orbit.rs": "c4366b7c983bee6986812d6a8e0a2d576150be6eb3aec80b0f7bc4e9d92a3f54",
+   "crates/abep-atmos/src/pyfloat.rs": "3591be912ce26f94fdba00dde6d19375514532370b748f84af05cd7b77af4457",
+   "crates/abep-atmos/src/weights.rs": "40451ae741a4504afef0b56edf6e32028c38bbd605d03787e804f525e1249737",
+   "crates/abep-atmos/src/wind.rs": "08a9ca22502e155a194e54d8025c4b290c531121790693edea16f7ecc653e034",
+   "crates/abep-data/src/design_states.rs": "39e9002f1be06d06a463be18a2cd2428e1b2ab0fb7881313c74dc2d02db15e3a",
+   "crates/abep-data/src/gz.rs": "d4dc152741e78c773e264ab566f11dff2f2d1c831b5b843db151a382358be737",
+   "crates/abep-data/src/hwm14_v2.rs": "bb54b2d9a9fade6bfd6069978299f65fb26fe47a85757aabe796f5f4387a3152",
+   "crates/abep-data/src/json.rs": "2340fba6918d49d4bb8d757252b351cc8b95d3c6fa7186bbef6eef19579802be",
+   "crates/abep-data/src/lib.rs": "bab94b4c413569bcfde91567922400f97f6a1857220f7e5032562f52ebcc9e2d",
+   "crates/abep-data/src/msis21_v1.rs": "2a00f6308244dce6d7d651c9afb7af6dcb20847d01e217c6ec896a4e70b8e0b7",
+   "crates/abep-data/src/orbit_v1.rs": "a7efc0a42e1911e43390555857bb5a14615768b1f3212a46a40381ca1cb726a6",
+   "crates/abep-data/src/pins.rs": "6884c5b99de401b939e3de3a495f55e874315218a76d3eaa6e960b9af31b2bc5",
+   "crates/abep-data/src/table.rs": "daa2dedf8169e3d5863fe30d5e2d26419515a0a21133ce2f29f3e2de183e98fb",
+   "crates/abep-provenance/src/lib.rs": "10c62a00d37441a1de34c7a1fe96483158294d4999d5c5ec3e2da7aac9a9c72a",
+   "crates/abep-types/src/constants.rs": "c97e39931d145db143398e3d5de9eb4f9ba86943a75b3c1302df82c01b4efd1d",
+   "crates/abep-types/src/lib.rs": "1ba60bca0d0c78a64c121111233f48b60a21caa132d2d8292c81d0f898ccf2af",
+   "rust-toolchain.toml": "7e44dbedb86596d94974ef8cb279f0e81496ea92b519c14940259661496f8499"
+  },
+  "harness": {
+   "path": "scripts/rust_migration/es2_env_parity.py",
+   "sha256": "9def17b8a6d22acb4538a9bfcb8f17cfc9ec4b40dbf5dc3e39a276eed25e5fbb"
+  },
+  "binary": "target/release/abep-env-parity (cargo build --release --locked)"
+ },
+ "environment": {
+  "python": "3.11.15",
+  "numpy": "2.4.4",
+  "scipy": "1.17.1",
+  "pandas": "3.0.2",
+  "numpy_simd_baseline": [
+   "X86_V2"
+  ],
+  "numpy_simd_dispatch": [
+   "X86_V3",
+   "X86_V4",
+   "AVX512_ICL",
+   "AVX512_SPR"
+  ],
+  "numpy_simd_avx512f_enabled": true,
+  "blas": "scipy-openblas 0.3.31.188.0",
+  "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+  "platform": "Linux-6.18.44-fc-v70-x86_64-with-glibc2.39",
+  "thread_env": {
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1"
+  },
+  "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312"
+ },
+ "mode": "scoring",
+ "scoring_master_seed": 731905204,
+ "n_vectors": 3749,
+ "per_test": {
+  "observables": [
+   {
+    "entry": "orbit_state",
+    "observable": "status",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1822,
+    "n_fail": 0,
+    "n_bit_identical": 1822,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "key order",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 1808,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "alt_km",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 1808,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "lat_deg",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 1808,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "doy",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 1808,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "scenario",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 1808,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "f107",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 1808,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "f107a",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 1808,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "ap",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 1808,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "source",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 1808,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "evaluation",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 1808,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "interp_max_rel_err_rho",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 1808,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "lst_h",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 1808,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "lon_deg",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 1808,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "rho_kg_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 635,
+    "max_abs_diff": 9.202384314652433e-24,
+    "max_rel_diff": 1.7659611393356275e-14,
+    "max_ulp": 124.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "n_N2_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 677,
+    "max_abs_diff": 262.0,
+    "max_rel_diff": 3.556804996132224e-14,
+    "max_ulp": 317.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "n_O2_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 658,
+    "max_abs_diff": 13.0625,
+    "max_rel_diff": 3.552697783953622e-14,
+    "max_ulp": 217.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "n_O_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 677,
+    "max_abs_diff": 278.0,
+    "max_rel_diff": 3.550880525521102e-14,
+    "max_ulp": 236.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "n_He_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 546,
+    "max_abs_diff": 0.6953125,
+    "max_rel_diff": 2.490979028047233e-14,
+    "max_ulp": 168.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "n_Ar_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 574,
+    "max_abs_diff": 4.65625,
+    "max_rel_diff": 2.8419995610249384e-14,
+    "max_ulp": 180.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "n_N_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 583,
+    "max_abs_diff": 15.875,
+    "max_rel_diff": 3.542439270628739e-14,
+    "max_ulp": 226.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "n_total_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 249,
+    "max_abs_diff": 452.0,
+    "max_rel_diff": 2.47317451753428e-14,
+    "max_ulp": 221.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "T_K",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 556,
+    "max_abs_diff": 8.640199666842818e-12,
+    "max_rel_diff": 6.134383958836908e-15,
+    "max_ulp": 38.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "x_O",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 273,
+    "max_abs_diff": 1.0325074129013956e-14,
+    "max_rel_diff": 3.166290832824584e-14,
+    "max_ulp": 240.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "x_N2",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 278,
+    "max_abs_diff": 1.0325074129013956e-14,
+    "max_rel_diff": 3.005814386164012e-14,
+    "max_ulp": 266.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "x_O2",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 239,
+    "max_abs_diff": 2.3037127760972e-15,
+    "max_rel_diff": 4.55661154595516e-14,
+    "max_ulp": 332.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "x_N",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 191,
+    "max_abs_diff": 8.743006318923108e-16,
+    "max_rel_diff": 3.7919582124093706e-14,
+    "max_ulp": 228.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "x_He",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 179,
+    "max_abs_diff": 6.071532165918825e-16,
+    "max_rel_diff": 3.0155384358605974e-14,
+    "max_ulp": 252.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "x_Ar",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 180,
+    "max_abs_diff": 4.683753385137379e-16,
+    "max_rel_diff": 3.5093279523324596e-14,
+    "max_ulp": 261.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "CONS-D-01 |sum x - 1| (Rust)",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 840,
+    "max_abs_diff": 4.440892098500626e-16,
+    "max_rel_diff": 4.440892098500626e-16,
+    "max_ulp": 2.0,
+    "tolerance": {
+     "a_abs": 1e-14
+    }
+   },
+   {
+    "entry": "orbit_state",
+    "observable": "CONS-D-02 n_total bits (Rust)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1808,
+    "n_fail": 0,
+    "n_bit_identical": 1808,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "status",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 211,
+    "n_fail": 0,
+    "n_bit_identical": 211,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "key order",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "alt_km",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "lat_deg",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "doy",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "scenario",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "f107",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "f107a",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "ap",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "source",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "evaluation",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "interp_max_rel_err_rho",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "lst_h",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "lon_deg",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "rho_kg_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "n_N2_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "n_O2_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "n_O_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "n_He_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "n_Ar_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "n_N_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "n_total_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "T_K",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "x_O",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "x_N2",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "x_O2",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "x_N",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "x_He",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "x_Ar",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "CONS-D-01 |sum x - 1| (Rust)",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 151,
+    "max_abs_diff": 2.220446049250313e-16,
+    "max_rel_diff": 2.220446049250313e-16,
+    "max_ulp": 1.0,
+    "tolerance": {
+     "a_abs": 1e-14
+    }
+   },
+   {
+    "entry": "orbit_node_state",
+    "observable": "CONS-D-02 n_total bits (Rust)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 208,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "status",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 63,
+    "n_fail": 0,
+    "n_bit_identical": 63,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "number of states",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 46,
+    "n_fail": 0,
+    "n_bit_identical": 46,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "key order",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 951,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "alt_km",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 951,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "lat_deg",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 951,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "doy",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 951,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "scenario",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 951,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "f107",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 951,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "f107a",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 951,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "ap",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 951,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "source",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 951,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "evaluation",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 951,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "interp_max_rel_err_rho",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 951,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "lst_h",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 951,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "lon_deg",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 951,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "rho_kg_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 265,
+    "max_abs_diff": 8.271806125530277e-24,
+    "max_rel_diff": 1.7702781384103983e-14,
+    "max_ulp": 119.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "n_N2_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 298,
+    "max_abs_diff": 290.0,
+    "max_rel_diff": 3.5569006946855276e-14,
+    "max_ulp": 303.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "n_O2_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 278,
+    "max_abs_diff": 9.375,
+    "max_rel_diff": 2.845639725449527e-14,
+    "max_ulp": 256.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "n_O_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 289,
+    "max_abs_diff": 202.0,
+    "max_rel_diff": 2.8522171658354075e-14,
+    "max_ulp": 243.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "n_He_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 208,
+    "max_abs_diff": 0.421875,
+    "max_rel_diff": 2.1381729910652478e-14,
+    "max_ulp": 176.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "n_Ar_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 261,
+    "max_abs_diff": 5.0,
+    "max_rel_diff": 2.4937883050655862e-14,
+    "max_ulp": 160.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "n_N_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 235,
+    "max_abs_diff": 7.0625,
+    "max_rel_diff": 2.8456463338960775e-14,
+    "max_ulp": 226.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "n_total_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 39,
+    "max_abs_diff": 296.0,
+    "max_rel_diff": 2.2759731658432647e-14,
+    "max_ulp": 177.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "T_K",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 236,
+    "max_abs_diff": 5.4569682106375694e-12,
+    "max_rel_diff": 4.5499845646780065e-15,
+    "max_ulp": 32.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "x_O",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 67,
+    "max_abs_diff": 1.2156942119645464e-14,
+    "max_rel_diff": 2.9071930296658334e-14,
+    "max_ulp": 219.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "x_N2",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 66,
+    "max_abs_diff": 1.199040866595169e-14,
+    "max_rel_diff": 3.0310208857675936e-14,
+    "max_ulp": 164.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "x_O2",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 31,
+    "max_abs_diff": 9.159339953157541e-16,
+    "max_rel_diff": 3.1507953385877754e-14,
+    "max_ulp": 243.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "x_N",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 16,
+    "max_abs_diff": 1.1587952819525071e-15,
+    "max_rel_diff": 3.5541549870282696e-14,
+    "max_ulp": 245.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "x_He",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 17,
+    "max_abs_diff": 3.400058012914542e-16,
+    "max_rel_diff": 3.194360704834085e-14,
+    "max_ulp": 223.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "x_Ar",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 24,
+    "max_abs_diff": 5.273559366969494e-16,
+    "max_rel_diff": 3.361303930303829e-14,
+    "max_ulp": 240.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "inclination_deg",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 951,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "ltan_h",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 951,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "orbit_inputs_status",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 951,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "wind_included",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 951,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "wind_open_item",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 951,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "state_id",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 951,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "geometry",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 951,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "t_s",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 951,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "u_deg",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 951,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "ut_h",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 951,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "v_orb_m_s",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 951,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "v_rel_corot_m_s",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 871,
+    "max_abs_diff": 1.8189894035458565e-12,
+    "max_rel_diff": 2.2177817192772977e-16,
+    "max_ulp": 1.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "weight",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 951,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "orbit_states",
+    "observable": "flux_corot_kg_m2_s",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 951,
+    "n_fail": 0,
+    "n_bit_identical": 249,
+    "max_abs_diff": 6.776263578034403e-20,
+    "max_rel_diff": 1.7704311552007163e-14,
+    "max_ulp": 151.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "wind",
+    "observable": "status",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1222,
+    "n_fail": 0,
+    "n_bit_identical": 1222,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "wind",
+    "observable": "key order",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1208,
+    "n_fail": 0,
+    "n_bit_identical": 1208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "wind",
+    "observable": "u_mer_quiet_m_s",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1208,
+    "n_fail": 0,
+    "n_bit_identical": 323,
+    "max_abs_diff": 1.1368683772161603e-13,
+    "max_rel_diff": 1.3392799995074789e-14,
+    "max_ulp": 88.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "a_abs": 1e-09
+    }
+   },
+   {
+    "entry": "wind",
+    "observable": "u_zon_quiet_m_s",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1208,
+    "n_fail": 0,
+    "n_bit_identical": 328,
+    "max_abs_diff": 8.526512829121202e-14,
+    "max_rel_diff": 4.966160882824197e-14,
+    "max_ulp": 224.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "a_abs": 1e-09
+    }
+   },
+   {
+    "entry": "wind",
+    "observable": "u_mer_dist_m_s",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1208,
+    "n_fail": 0,
+    "n_bit_identical": 453,
+    "max_abs_diff": 5.684341886080802e-14,
+    "max_rel_diff": 1.8260666756983638e-14,
+    "max_ulp": 96.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "a_abs": 1e-09
+    }
+   },
+   {
+    "entry": "wind",
+    "observable": "u_zon_dist_m_s",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1208,
+    "n_fail": 0,
+    "n_bit_identical": 435,
+    "max_abs_diff": 1.1368683772161603e-13,
+    "max_rel_diff": 2.625366550189439e-14,
+    "max_ulp": 192.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "a_abs": 1e-09
+    }
+   },
+   {
+    "entry": "wind",
+    "observable": "u_mer_m_s",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1208,
+    "n_fail": 0,
+    "n_bit_identical": 361,
+    "max_abs_diff": 1.1368683772161603e-13,
+    "max_rel_diff": 3.000685999771682e-14,
+    "max_ulp": 256.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "a_abs": 1e-09
+    }
+   },
+   {
+    "entry": "wind",
+    "observable": "u_zon_m_s",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1208,
+    "n_fail": 0,
+    "n_bit_identical": 339,
+    "max_abs_diff": 1.1368683772161603e-13,
+    "max_rel_diff": 1.2858966529799918e-13,
+    "max_ulp": 1024.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "a_abs": 1e-09
+    }
+   },
+   {
+    "entry": "wind",
+    "observable": "ap_hwm",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1208,
+    "n_fail": 0,
+    "n_bit_identical": 1208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "wind",
+    "observable": "wind_model",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1208,
+    "n_fail": 0,
+    "n_bit_identical": 1208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "wind",
+    "observable": "wind_source",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1208,
+    "n_fail": 0,
+    "n_bit_identical": 1208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "wind",
+    "observable": "wind_interp_max_abs_err_m_s",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1208,
+    "n_fail": 0,
+    "n_bit_identical": 1208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "wind",
+    "observable": "CONS-D-04 u_mer = quiet + dist bits (Rust)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1208,
+    "n_fail": 0,
+    "n_bit_identical": 1208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "wind",
+    "observable": "CONS-D-04 u_zon = quiet + dist bits (Rust)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1208,
+    "n_fail": 0,
+    "n_bit_identical": 1208,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "state_v2",
+    "observable": "status",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 422,
+    "n_fail": 0,
+    "n_bit_identical": 422,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "state_v2",
+    "observable": "key order",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 408,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "state_v2",
+    "observable": "alt_km",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 408,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "state_v2",
+    "observable": "lat_deg",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 408,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "state_v2",
+    "observable": "doy",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 408,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "state_v2",
+    "observable": "scenario",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 408,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "state_v2",
+    "observable": "f107",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 408,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "state_v2",
+    "observable": "f107a",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 408,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "state_v2",
+    "observable": "ap",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 408,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "state_v2",
+    "observable": "source",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 408,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "state_v2",
+    "observable": "evaluation",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 408,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "state_v2",
+    "observable": "interp_max_rel_err_rho",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 408,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "state_v2",
+    "observable": "lst_h",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 408,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "state_v2",
+    "observable": "lon_deg",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 408,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "state_v2",
+    "observable": "rho_kg_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 135,
+    "max_abs_diff": 6.514047323855093e-24,
+    "max_rel_diff": 2.1175222559226787e-14,
+    "max_ulp": 120.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "state_v2",
+    "observable": "n_N2_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 123,
+    "max_abs_diff": 320.0,
+    "max_rel_diff": 2.8523788334296186e-14,
+    "max_ulp": 202.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "state_v2",
+    "observable": "n_O2_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 117,
+    "max_abs_diff": 12.625,
+    "max_rel_diff": 2.8455380345329785e-14,
+    "max_ulp": 200.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "state_v2",
+    "observable": "n_O_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 122,
+    "max_abs_diff": 176.0,
+    "max_rel_diff": 2.8531249461797024e-14,
+    "max_ulp": 187.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "state_v2",
+    "observable": "n_He_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 96,
+    "max_abs_diff": 0.53125,
+    "max_rel_diff": 2.1272076693975863e-14,
+    "max_ulp": 131.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "state_v2",
+    "observable": "n_Ar_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 103,
+    "max_abs_diff": 1.578125,
+    "max_rel_diff": 2.1275718476183976e-14,
+    "max_ulp": 122.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "state_v2",
+    "observable": "n_N_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 105,
+    "max_abs_diff": 7.5625,
+    "max_rel_diff": 2.8374075781753462e-14,
+    "max_ulp": 213.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "state_v2",
+    "observable": "n_total_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 18,
+    "max_abs_diff": 288.0,
+    "max_rel_diff": 1.8529929961407935e-14,
+    "max_ulp": 157.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "state_v2",
+    "observable": "T_K",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 102,
+    "max_abs_diff": 5.002220859751105e-12,
+    "max_rel_diff": 3.6418367555060304e-15,
+    "max_ulp": 30.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "state_v2",
+    "observable": "x_O",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 32,
+    "max_abs_diff": 8.770761894538737e-15,
+    "max_rel_diff": 2.940420981625536e-14,
+    "max_ulp": 189.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "state_v2",
+    "observable": "x_N2",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 29,
+    "max_abs_diff": 8.659739592076221e-15,
+    "max_rel_diff": 2.77905448319757e-14,
+    "max_ulp": 202.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "state_v2",
+    "observable": "x_O2",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 15,
+    "max_abs_diff": 1.5959455978986625e-15,
+    "max_rel_diff": 3.288827937689965e-14,
+    "max_ulp": 241.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "state_v2",
+    "observable": "x_N",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 10,
+    "max_abs_diff": 6.036837696399289e-16,
+    "max_rel_diff": 3.1847971333446996e-14,
+    "max_ulp": 271.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "state_v2",
+    "observable": "x_He",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 10,
+    "max_abs_diff": 3.4867941867133823e-16,
+    "max_rel_diff": 2.9700290123007896e-14,
+    "max_ulp": 260.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "state_v2",
+    "observable": "x_Ar",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 11,
+    "max_abs_diff": 1.700029006457271e-16,
+    "max_rel_diff": 2.8300697490481763e-14,
+    "max_ulp": 196.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "state_v2",
+    "observable": "u_mer_quiet_m_s",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 108,
+    "max_abs_diff": 8.526512829121202e-14,
+    "max_rel_diff": 1.3392799995074789e-14,
+    "max_ulp": 88.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "a_abs": 1e-09
+    }
+   },
+   {
+    "entry": "state_v2",
+    "observable": "u_zon_quiet_m_s",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 107,
+    "max_abs_diff": 8.526512829121202e-14,
+    "max_rel_diff": 2.1507213843480945e-14,
+    "max_ulp": 160.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "a_abs": 1e-09
+    }
+   },
+   {
+    "entry": "state_v2",
+    "observable": "u_mer_dist_m_s",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 152,
+    "max_abs_diff": 5.684341886080802e-14,
+    "max_rel_diff": 1.8260666756983638e-14,
+    "max_ulp": 96.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "a_abs": 1e-09
+    }
+   },
+   {
+    "entry": "state_v2",
+    "observable": "u_zon_dist_m_s",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 148,
+    "max_abs_diff": 5.684341886080802e-14,
+    "max_rel_diff": 2.625366550189439e-14,
+    "max_ulp": 192.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "a_abs": 1e-09
+    }
+   },
+   {
+    "entry": "state_v2",
+    "observable": "u_mer_m_s",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 119,
+    "max_abs_diff": 8.526512829121202e-14,
+    "max_rel_diff": 1.6347393679540706e-14,
+    "max_ulp": 128.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "a_abs": 1e-09
+    }
+   },
+   {
+    "entry": "state_v2",
+    "observable": "u_zon_m_s",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 128,
+    "max_abs_diff": 1.1368683772161603e-13,
+    "max_rel_diff": 3.967308149953766e-14,
+    "max_ulp": 320.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "a_abs": 1e-09
+    }
+   },
+   {
+    "entry": "state_v2",
+    "observable": "ap_hwm",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 408,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "state_v2",
+    "observable": "wind_model",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 408,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "state_v2",
+    "observable": "wind_source",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 408,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "state_v2",
+    "observable": "wind_interp_max_abs_err_m_s",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 408,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "state_v2",
+    "observable": "dataset_id",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 408,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "state_v2",
+    "observable": "dataset_status",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 408,
+    "n_fail": 0,
+    "n_bit_identical": 408,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "load_design_states",
+    "observable": "status",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 4,
+    "n_fail": 0,
+    "n_bit_identical": 4,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "load_design_states",
+    "observable": "document (every leaf, key order)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 2,
+    "n_fail": 0,
+    "n_bit_identical": 2,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set",
+    "observable": "status",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set",
+    "observable": "n_states",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set",
+    "observable": "required state ids in file order",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set",
+    "observable": "selection lookup",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.state",
+    "observable": "key order",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.state",
+    "observable": "state_id",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.state",
+    "observable": "alt_km",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.state",
+    "observable": "scenario",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.state",
+    "observable": "f107",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.state",
+    "observable": "f107a",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.state",
+    "observable": "ap",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.state",
+    "observable": "lat_deg",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.state",
+    "observable": "lst_h",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.state",
+    "observable": "lon_deg",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.state",
+    "observable": "doy",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.state",
+    "observable": "rho_kg_m3",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.state",
+    "observable": "n_O_m3",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.state",
+    "observable": "n_N2_m3",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.state",
+    "observable": "n_O2_m3",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.state",
+    "observable": "T_K",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.state",
+    "observable": "labels",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.state",
+    "observable": "evaluation",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.state",
+    "observable": "interp_max_rel_err_rho",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.state",
+    "observable": "nominal_mission_scenario",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.state",
+    "observable": "required",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.atm",
+    "observable": "key order",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.atm",
+    "observable": "fO",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "design_state_set.atm",
+    "observable": "fN2",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "design_state_set.atm",
+    "observable": "fO2",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "design_state_set.atm",
+    "observable": "m_mean",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "design_state_set.atm",
+    "observable": "n",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "design_state_set.atm",
+    "observable": "V",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "design_state_set.atm",
+    "observable": "flux_kg_m2_s",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "design_state_set.atm",
+    "observable": "p_ambient_Pa",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "design_state_set.atm",
+    "observable": "n_O",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "design_state_set.atm",
+    "observable": "alt_km",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.atm",
+    "observable": "f107",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.atm",
+    "observable": "f107a",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.atm",
+    "observable": "ap",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.atm",
+    "observable": "rho",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.atm",
+    "observable": "T",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.atm",
+    "observable": "state_id",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.atm",
+    "observable": "source",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.atm",
+    "observable": "V_basis",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.atm",
+    "observable": "orbit_basis",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set.record",
+    "observable": "record()",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_state_set",
+    "observable": "CONS-D-03 |fO + fN2 + fO2 - 1| (Rust)",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 118,
+    "max_abs_diff": 2.220446049250313e-16,
+    "max_rel_diff": 2.220446049250313e-16,
+    "max_ulp": 1.0,
+    "tolerance": {
+     "a_abs": 1e-14
+    }
+   },
+   {
+    "entry": "design_state_set",
+    "observable": "CONS-D-03 |n m_mean / rho - 1| (Rust)",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 175,
+    "max_abs_diff": 2.220446049250313e-16,
+    "max_rel_diff": 2.220446049250313e-16,
+    "max_ulp": 1.0,
+    "tolerance": {
+     "a_abs": 1e-14
+    }
+   },
+   {
+    "entry": "orbit_load",
+    "observable": "status",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_load",
+    "observable": "dataset_sha256",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_load",
+    "observable": "row_count",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_load",
+    "observable": "shape",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_load",
+    "observable": "scenario_order",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbit_load",
+    "observable": "grid",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "status",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "key order",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 205,
+    "n_fail": 0,
+    "n_bit_identical": 205,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "design_state_set_id",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "version",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "dataset_id",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "dataset_sha256",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "list length",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 198,
+    "n_fail": 0,
+    "n_bit_identical": 198,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "latitude_band_deg",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 2,
+    "n_fail": 0,
+    "n_bit_identical": 2,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "latitude_pool_step_deg",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "lat_refinement_sensitivity.fine_step_deg",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "lat_refinement_sensitivity.rho_kg_m3",
+    "tolerance_class": "ULP_BOUNDED (display unit)",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "lat_refinement_sensitivity.x_O",
+    "tolerance_class": "ULP_BOUNDED (display unit)",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "lat_refinement_sensitivity.x_N2",
+    "tolerance_class": "ULP_BOUNDED (display unit)",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "lat_refinement_sensitivity.x_O2",
+    "tolerance_class": "ULP_BOUNDED (display unit)",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "lat_refinement_sensitivity.T_K",
+    "tolerance_class": "ULP_BOUNDED (display unit)",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "nominal_scenario",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "orbit_basis.status",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "orbit_basis.requirement_input",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "orbit_basis.inclination_deg",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "orbit_basis.local_time",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "orbit_basis.code_default_orbit",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "orbit_basis.real_orbit",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "supersedes.file",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "supersedes.sha256",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "supersedes.relation",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "authority.A9.14 S9.8 OD3.path",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "authority.A9.14 S9.8 OD3.sha256",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "authority.A9.17 ORBIT.path",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "authority.A9.17 ORBIT.sha256",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "authority.A9.17 ORBIT.decision_key",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "authority.A9.17 ORBIT.answer",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "authority.A9.17 ORBIT.verbatim.path",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "authority.A9.17 ORBIT.verbatim.sha256",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "authority.A9.17 ORBIT.verbatim.quote",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "producer",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "rule",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "n_states",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].alt_km",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].lat_deg",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].lst_h",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].lon_deg",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].doy",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].scenario",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].f107",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].f107a",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].ap",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].rho_kg_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 133,
+    "max_abs_diff": 2.9985297205047253e-24,
+    "max_rel_diff": 7.162608107931563e-15,
+    "max_ulp": 59.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].n_N2_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 137,
+    "max_abs_diff": 88.0,
+    "max_rel_diff": 1.4236761834976768e-14,
+    "max_ulp": 77.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].n_O2_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 139,
+    "max_abs_diff": 5.125,
+    "max_rel_diff": 7.31017201235126e-15,
+    "max_ulp": 62.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].n_O_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 153,
+    "max_abs_diff": 118.0,
+    "max_rel_diff": 7.213727644957563e-15,
+    "max_ulp": 61.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].n_He_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 122,
+    "max_abs_diff": 0.34375,
+    "max_rel_diff": 1.0758873087236537e-14,
+    "max_ulp": 87.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].n_Ar_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 114,
+    "max_abs_diff": 1.25,
+    "max_rel_diff": 1.0716794040198061e-14,
+    "max_ulp": 59.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].n_N_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 123,
+    "max_abs_diff": 5.625,
+    "max_rel_diff": 1.0622276163632241e-14,
+    "max_ulp": 63.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].n_total_m3",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 99,
+    "max_abs_diff": 144.0,
+    "max_rel_diff": 7.210496869127489e-15,
+    "max_ulp": 58.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].T_K",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 104,
+    "max_abs_diff": 3.183231456205249e-12,
+    "max_rel_diff": 1.9431609836090986e-15,
+    "max_ulp": 15.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].x_O",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 103,
+    "max_abs_diff": 3.4416913763379853e-15,
+    "max_rel_diff": 1.2204350595056226e-14,
+    "max_ulp": 71.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].x_N2",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 97,
+    "max_abs_diff": 3.552713678800501e-15,
+    "max_rel_diff": 1.0925700246926295e-14,
+    "max_ulp": 90.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].x_O2",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 90,
+    "max_abs_diff": 7.008282842946301e-16,
+    "max_rel_diff": 1.3401785649297422e-14,
+    "max_ulp": 113.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].x_N",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 75,
+    "max_abs_diff": 4.579669976578771e-16,
+    "max_rel_diff": 1.3538689301740816e-14,
+    "max_ulp": 92.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].x_He",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 80,
+    "max_abs_diff": 3.885780586188048e-16,
+    "max_rel_diff": 1.298614135043393e-14,
+    "max_ulp": 107.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].x_Ar",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 72,
+    "max_abs_diff": 9.367506770274758e-17,
+    "max_rel_diff": 1.1407052798833392e-14,
+    "max_ulp": 90.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-10
+    }
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].source",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].evaluation",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].interp_max_rel_err_rho",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].labels",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 218,
+    "n_fail": 0,
+    "n_bit_identical": 218,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].state_id",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].required",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "states[*].nominal_mission_scenario",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "INV-D-01 Rust vs frozen file within DESIGN_V2_REL_TOL",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "INV-D-01 Python re-derivation byte-identical to the frozen file",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "design_states_v2",
+    "observable": "INV-D-01 frozen ids == Rust ids",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "execution",
+    "observable": "status",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "execution",
+    "observable": "n_states",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "execution",
+    "observable": "INV-D-02 n_states == 196 == records",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "execution",
+    "observable": "INV-D-02 hashes",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "execution",
+    "observable": "per-state state_id (file order)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "execution",
+    "observable": "per-state status",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "execution",
+    "observable": "INV-D-02 every state EVALUATED",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "execution.environment",
+    "observable": "key order",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "execution.environment",
+    "observable": "fO",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "execution.environment",
+    "observable": "fN2",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "execution.environment",
+    "observable": "fO2",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "execution.environment",
+    "observable": "m_mean",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "execution.environment",
+    "observable": "n",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "execution.environment",
+    "observable": "V",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "execution.environment",
+    "observable": "flux_kg_m2_s",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "execution.environment",
+    "observable": "p_ambient_Pa",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "execution.environment",
+    "observable": "n_O",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "execution.environment",
+    "observable": "alt_km",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "execution.environment",
+    "observable": "f107",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "execution.environment",
+    "observable": "f107a",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "execution.environment",
+    "observable": "ap",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "execution.environment",
+    "observable": "rho",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "execution.environment",
+    "observable": "T",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "execution.environment",
+    "observable": "state_id",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "execution.environment",
+    "observable": "source",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "execution.environment",
+    "observable": "V_basis",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "execution.environment",
+    "observable": "orbit_basis",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "execution",
+    "observable": "reproduction.evaluation",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "execution",
+    "observable": "reproduction.reproduced",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "execution.wind",
+    "observable": "key order",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "execution.wind",
+    "observable": "u_mer_quiet_m_s",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 105,
+    "max_abs_diff": 2.842170943040401e-14,
+    "max_rel_diff": 5.532153278783234e-16,
+    "max_ulp": 4.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "a_abs": 1e-09
+    }
+   },
+   {
+    "entry": "execution.wind",
+    "observable": "u_zon_quiet_m_s",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 102,
+    "max_abs_diff": 2.842170943040401e-14,
+    "max_rel_diff": 5.795548162424474e-16,
+    "max_ulp": 4.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "a_abs": 1e-09
+    }
+   },
+   {
+    "entry": "execution.wind",
+    "observable": "u_mer_dist_m_s",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 150,
+    "max_abs_diff": 2.842170943040401e-14,
+    "max_rel_diff": 1.1576399572751427e-15,
+    "max_ulp": 8.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "a_abs": 1e-09
+    }
+   },
+   {
+    "entry": "execution.wind",
+    "observable": "u_zon_dist_m_s",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 139,
+    "max_abs_diff": 5.684341886080802e-14,
+    "max_rel_diff": 3.501846418027659e-16,
+    "max_ulp": 2.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "a_abs": 1e-09
+    }
+   },
+   {
+    "entry": "execution.wind",
+    "observable": "u_mer_m_s",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 118,
+    "max_abs_diff": 5.684341886080802e-14,
+    "max_rel_diff": 1.6347393679540706e-14,
+    "max_ulp": 128.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "a_abs": 1e-09
+    }
+   },
+   {
+    "entry": "execution.wind",
+    "observable": "u_zon_m_s",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 109,
+    "max_abs_diff": 5.684341886080802e-14,
+    "max_rel_diff": 2.426160832803955e-15,
+    "max_ulp": 16.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "a_abs": 1e-09
+    }
+   },
+   {
+    "entry": "execution.wind",
+    "observable": "ap_hwm",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "execution.wind",
+    "observable": "wind_model",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "execution.wind",
+    "observable": "wind_source",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "execution.wind",
+    "observable": "wind_interp_max_abs_err_m_s",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "execution",
+    "observable": "VS-D-04 wind labels (Rust)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 196,
+    "n_fail": 0,
+    "n_bit_identical": 196,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "check",
+    "observable": "status",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "check",
+    "observable": "ok",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   }
+  ],
+  "n_failures": 0,
+  "failures_first_50": []
+ },
+ "aggregates": "NOT_APPLICABLE (no STATISTICAL entry point)",
+ "domain_error": {
+  "vectors": [
+   {
+    "vector": "DE-D-01-orbit_state",
+    "entry": "orbit_state",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-01-wind",
+    "entry": "wind",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-01-state_v2",
+    "entry": "state_v2",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-02-orbit_state",
+    "entry": "orbit_state",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-02-wind",
+    "entry": "wind",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-02-state_v2",
+    "entry": "state_v2",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-03-orbit_state",
+    "entry": "orbit_state",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-03-wind",
+    "entry": "wind",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-03-state_v2",
+    "entry": "state_v2",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-04-orbit_state",
+    "entry": "orbit_state",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-04-wind",
+    "entry": "wind",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-04-state_v2",
+    "entry": "state_v2",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-05-orbit_state",
+    "entry": "orbit_state",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-05-wind",
+    "entry": "wind",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-05-state_v2",
+    "entry": "state_v2",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-06-orbit_state",
+    "entry": "orbit_state",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-06-wind",
+    "entry": "wind",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-06-state_v2",
+    "entry": "state_v2",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-07-orbit_state",
+    "entry": "orbit_state",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-07-wind",
+    "entry": "wind",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-07-state_v2",
+    "entry": "state_v2",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-08-orbit_state",
+    "entry": "orbit_state",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-08-wind",
+    "entry": "wind",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-08-state_v2",
+    "entry": "state_v2",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-09-orbit_state",
+    "entry": "orbit_state",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-09-wind",
+    "entry": "wind",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-09-state_v2",
+    "entry": "state_v2",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-10-orbit_state",
+    "entry": "orbit_state",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-10-wind",
+    "entry": "wind",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-10-state_v2",
+    "entry": "state_v2",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-11-orbit_state",
+    "entry": "orbit_state",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-11-wind",
+    "entry": "wind",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-11-state_v2",
+    "entry": "state_v2",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-12-orbit_state",
+    "entry": "orbit_state",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-12-wind",
+    "entry": "wind",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-12-state_v2",
+    "entry": "state_v2",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-13-orbit_state",
+    "entry": "orbit_state",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-13-wind",
+    "entry": "wind",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-13-state_v2",
+    "entry": "state_v2",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-14-orbit_state",
+    "entry": "orbit_state",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-14-wind",
+    "entry": "wind",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-14-state_v2",
+    "entry": "state_v2",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-15",
+    "entry": "orbit_node_state",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "IndexError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-16",
+    "entry": "orbit_node_state",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "IndexError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-17",
+    "entry": "orbit_node_state",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "KeyError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-18",
+    "entry": "orbit_states",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-19",
+    "entry": "orbit_states",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-20",
+    "entry": "orbit_states",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-21",
+    "entry": "orbit_states",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-22",
+    "entry": "orbit_states",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-23",
+    "entry": "orbit_states",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-24",
+    "entry": "orbit_states",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-25",
+    "entry": "orbit_states",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-26",
+    "entry": "orbit_states",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-27",
+    "entry": "orbit_states",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-28",
+    "entry": "orbit_states",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-29",
+    "entry": "orbit_states",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-30",
+    "entry": "orbit_states",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-31",
+    "entry": "orbit_states",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-32",
+    "entry": "orbit_states",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-33",
+    "entry": "orbit_states",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "OverflowError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-34",
+    "entry": "orbit_states",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "OverflowError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-35",
+    "entry": "load_design_states",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-D-36",
+    "entry": "load_design_states",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   }
+  ],
+  "refusal_trees": [
+   {
+    "tree": "RF-D-01",
+    "entry": "orbit_load",
+    "python": "FileNotFoundError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "FileNotFoundError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-01",
+    "entry": "wind_load",
+    "python": "FileNotFoundError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "FileNotFoundError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-01",
+    "entry": "load_design_states(v2)",
+    "python": "FileNotFoundError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "FileNotFoundError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-01",
+    "entry": "design_state_set",
+    "python": "returns",
+    "rust": "EVALUATED",
+    "expected_python": "returns",
+    "expected_rust": "EVALUATED",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-01",
+    "entry": "execution",
+    "python": "FileNotFoundError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "FileNotFoundError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-01",
+    "entry": "check",
+    "python": "FileNotFoundError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "FileNotFoundError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-02",
+    "entry": "orbit_load",
+    "python": "RuntimeError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "RuntimeError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-02",
+    "entry": "wind_load",
+    "python": "RuntimeError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "RuntimeError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-02",
+    "entry": "load_design_states(v2)",
+    "python": "RuntimeError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "RuntimeError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-02",
+    "entry": "design_state_set",
+    "python": "returns",
+    "rust": "EVALUATED",
+    "expected_python": "returns",
+    "expected_rust": "EVALUATED",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-02",
+    "entry": "execution",
+    "python": "RuntimeError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "RuntimeError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-02",
+    "entry": "check",
+    "python": "ok=False",
+    "rust": "ok=False",
+    "expected_python": "returns ok=False",
+    "expected_rust": "ok=False",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-03",
+    "entry": "orbit_load",
+    "python": "FileNotFoundError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "FileNotFoundError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-03",
+    "entry": "wind_load",
+    "python": "FileNotFoundError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "FileNotFoundError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-03",
+    "entry": "load_design_states(v2)",
+    "python": "FileNotFoundError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "FileNotFoundError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-03",
+    "entry": "design_state_set",
+    "python": "DesignStateSetError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "DesignStateSetError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-03",
+    "entry": "execution",
+    "python": "DesignStateSetError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "DesignStateSetError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-03",
+    "entry": "check",
+    "python": "FileNotFoundError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "FileNotFoundError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-04",
+    "entry": "orbit_load",
+    "python": "returns",
+    "rust": "EVALUATED",
+    "expected_python": "returns",
+    "expected_rust": "EVALUATED",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-04",
+    "entry": "wind_load",
+    "python": "returns",
+    "rust": "EVALUATED",
+    "expected_python": "returns",
+    "expected_rust": "EVALUATED",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-04",
+    "entry": "load_design_states(v2)",
+    "python": "RuntimeError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "RuntimeError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-04",
+    "entry": "design_state_set",
+    "python": "DesignStateSetError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "DesignStateSetError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-04",
+    "entry": "execution",
+    "python": "DesignStateSetError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "DesignStateSetError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-04",
+    "entry": "check",
+    "python": "ok=False",
+    "rust": "ok=False",
+    "expected_python": "returns ok=False",
+    "expected_rust": "ok=False",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-05",
+    "entry": "orbit_load",
+    "python": "returns",
+    "rust": "EVALUATED",
+    "expected_python": "returns",
+    "expected_rust": "EVALUATED",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-05",
+    "entry": "wind_load",
+    "python": "returns",
+    "rust": "EVALUATED",
+    "expected_python": "returns",
+    "expected_rust": "EVALUATED",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-05",
+    "entry": "load_design_states(v2)",
+    "python": "FileNotFoundError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "FileNotFoundError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-05",
+    "entry": "design_state_set",
+    "python": "DesignStateSetError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "DesignStateSetError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-05",
+    "entry": "execution",
+    "python": "DesignStateSetError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "DesignStateSetError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-05",
+    "entry": "check",
+    "python": "ok=False",
+    "rust": "ok=False",
+    "expected_python": "returns ok=False",
+    "expected_rust": "ok=False",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-06",
+    "entry": "orbit_load",
+    "python": "returns",
+    "rust": "EVALUATED",
+    "expected_python": "returns",
+    "expected_rust": "EVALUATED",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-06",
+    "entry": "wind_load",
+    "python": "FileNotFoundError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "FileNotFoundError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-06",
+    "entry": "load_design_states(v2)",
+    "python": "returns",
+    "rust": "EVALUATED",
+    "expected_python": "returns",
+    "expected_rust": "EVALUATED",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-06",
+    "entry": "design_state_set",
+    "python": "returns",
+    "rust": "EVALUATED",
+    "expected_python": "returns",
+    "expected_rust": "EVALUATED",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-06",
+    "entry": "execution",
+    "python": "FileNotFoundError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "FileNotFoundError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-06",
+    "entry": "check",
+    "python": "ok=True",
+    "rust": "ok=True",
+    "expected_python": "returns ok=True",
+    "expected_rust": "ok=True",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-07",
+    "entry": "orbit_load",
+    "python": "returns",
+    "rust": "EVALUATED",
+    "expected_python": "returns",
+    "expected_rust": "EVALUATED",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-07",
+    "entry": "wind_load",
+    "python": "RuntimeError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "RuntimeError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-07",
+    "entry": "load_design_states(v2)",
+    "python": "returns",
+    "rust": "EVALUATED",
+    "expected_python": "returns",
+    "expected_rust": "EVALUATED",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-07",
+    "entry": "design_state_set",
+    "python": "returns",
+    "rust": "EVALUATED",
+    "expected_python": "returns",
+    "expected_rust": "EVALUATED",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-07",
+    "entry": "execution",
+    "python": "RuntimeError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "RuntimeError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-07",
+    "entry": "check",
+    "python": "ok=True",
+    "rust": "ok=True",
+    "expected_python": "returns ok=True",
+    "expected_rust": "ok=True",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-08",
+    "entry": "orbit_load",
+    "python": "returns",
+    "rust": "EVALUATED",
+    "expected_python": "returns",
+    "expected_rust": "EVALUATED",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-08",
+    "entry": "wind_load",
+    "python": "FileNotFoundError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "FileNotFoundError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-08",
+    "entry": "load_design_states(v2)",
+    "python": "returns",
+    "rust": "EVALUATED",
+    "expected_python": "returns",
+    "expected_rust": "EVALUATED",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-08",
+    "entry": "design_state_set",
+    "python": "returns",
+    "rust": "EVALUATED",
+    "expected_python": "returns",
+    "expected_rust": "EVALUATED",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-08",
+    "entry": "execution",
+    "python": "FileNotFoundError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "FileNotFoundError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-08",
+    "entry": "check",
+    "python": "ok=True",
+    "rust": "ok=True",
+    "expected_python": "returns ok=True",
+    "expected_rust": "ok=True",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-09",
+    "entry": "orbit_load",
+    "python": "returns",
+    "rust": "MODEL_ERROR",
+    "expected_python": "returns (sidecar not hash-checked)",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-09",
+    "entry": "wind_load",
+    "python": "returns",
+    "rust": "MODEL_ERROR",
+    "expected_python": "returns",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-09",
+    "entry": "load_design_states(v2)",
+    "python": "returns",
+    "rust": "MODEL_ERROR",
+    "expected_python": "returns (record matches)",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-09",
+    "entry": "design_state_set",
+    "python": "DesignStateSetError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "DesignStateSetError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-09",
+    "entry": "execution",
+    "python": "DesignStateSetError",
+    "rust": "MODEL_ERROR",
+    "expected_python": "DesignStateSetError",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-09",
+    "entry": "check",
+    "python": "ok=False",
+    "rust": "MODEL_ERROR",
+    "expected_python": "returns ok=False",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-10",
+    "entry": "orbit_load",
+    "python": "returns",
+    "rust": "MODEL_ERROR",
+    "expected_python": "returns (the reference reads no model set)",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-10",
+    "entry": "wind_load",
+    "python": "returns",
+    "rust": "MODEL_ERROR",
+    "expected_python": "returns",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-10",
+    "entry": "load_design_states(v2)",
+    "python": "returns",
+    "rust": "MODEL_ERROR",
+    "expected_python": "returns",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-10",
+    "entry": "design_state_set",
+    "python": "returns",
+    "rust": "MODEL_ERROR",
+    "expected_python": "returns",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-10",
+    "entry": "execution",
+    "python": "returns",
+    "rust": "MODEL_ERROR",
+    "expected_python": "returns",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-D-10",
+    "entry": "check",
+    "python": "ok=True",
+    "rust": "MODEL_ERROR",
+    "expected_python": "returns ok=True",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   }
+  ]
+ },
+ "invariants": {
+  "determinism": {
+   "rust_two_processes_byte_identical": true,
+   "rust_stdout_sha256": "3e4c757a4da6dc3443d5f79446bf81fa73f4156d266fc53c2a3ae6925ef7bd6a",
+   "python_two_evaluations_equal": true
+  },
+  "governing_hashes": {
+   "python": {
+    "config_manifest_sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883",
+    "model_set_sha256": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1",
+    "design_state_set_ref_sha256": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484",
+    "design_state_set_sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049"
+   },
+   "rust": {
+    "config_manifest_sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883",
+    "design_state_set_ref_sha256": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484",
+    "design_state_set_sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+    "model_set_sha256": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1"
+   },
+   "equal_and_registered": true
+  }
+ },
+ "conservation": [
+  {
+   "entry": "orbit_state",
+   "observable": "CONS-D-01 |sum x - 1| (Rust)",
+   "tolerance_class": "ULP_BOUNDED",
+   "n": 1808,
+   "n_fail": 0,
+   "n_bit_identical": 840,
+   "max_abs_diff": 4.440892098500626e-16,
+   "max_rel_diff": 4.440892098500626e-16,
+   "max_ulp": 2.0,
+   "tolerance": {
+    "a_abs": 1e-14
+   }
+  },
+  {
+   "entry": "orbit_state",
+   "observable": "CONS-D-02 n_total bits (Rust)",
+   "tolerance_class": "EXACT_VALUE",
+   "n": 1808,
+   "n_fail": 0,
+   "n_bit_identical": 1808,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "orbit_node_state",
+   "observable": "CONS-D-01 |sum x - 1| (Rust)",
+   "tolerance_class": "ULP_BOUNDED",
+   "n": 208,
+   "n_fail": 0,
+   "n_bit_identical": 151,
+   "max_abs_diff": 2.220446049250313e-16,
+   "max_rel_diff": 2.220446049250313e-16,
+   "max_ulp": 1.0,
+   "tolerance": {
+    "a_abs": 1e-14
+   }
+  },
+  {
+   "entry": "orbit_node_state",
+   "observable": "CONS-D-02 n_total bits (Rust)",
+   "tolerance_class": "EXACT_VALUE",
+   "n": 208,
+   "n_fail": 0,
+   "n_bit_identical": 208,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "wind",
+   "observable": "CONS-D-04 u_mer = quiet + dist bits (Rust)",
+   "tolerance_class": "EXACT_VALUE",
+   "n": 1208,
+   "n_fail": 0,
+   "n_bit_identical": 1208,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "wind",
+   "observable": "CONS-D-04 u_zon = quiet + dist bits (Rust)",
+   "tolerance_class": "EXACT_VALUE",
+   "n": 1208,
+   "n_fail": 0,
+   "n_bit_identical": 1208,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  },
+  {
+   "entry": "design_state_set",
+   "observable": "CONS-D-03 |fO + fN2 + fO2 - 1| (Rust)",
+   "tolerance_class": "ULP_BOUNDED",
+   "n": 196,
+   "n_fail": 0,
+   "n_bit_identical": 118,
+   "max_abs_diff": 2.220446049250313e-16,
+   "max_rel_diff": 2.220446049250313e-16,
+   "max_ulp": 1.0,
+   "tolerance": {
+    "a_abs": 1e-14
+   }
+  },
+  {
+   "entry": "design_state_set",
+   "observable": "CONS-D-03 |n m_mean / rho - 1| (Rust)",
+   "tolerance_class": "ULP_BOUNDED",
+   "n": 196,
+   "n_fail": 0,
+   "n_bit_identical": 175,
+   "max_abs_diff": 2.220446049250313e-16,
+   "max_rel_diff": 2.220446049250313e-16,
+   "max_ulp": 1.0,
+   "tolerance": {
+    "a_abs": 1e-14
+   }
+  }
+ ],
+ "performance": {
+  "status": "reported, never a decision criterion",
+  "workloads": [
+   {
+    "id": "PERF-D-01",
+    "python_median_s": 1.4234495249997963,
+    "rust_median_s": 0.8705881160003628,
+    "python_s": [
+     1.363944149999952,
+     1.4234495249997963,
+     1.5069565370004057
+    ],
+    "rust_s": [
+     0.8705881160003628,
+     0.9448521119998077,
+     0.8552235659999496
+    ],
+    "speedup": 1.6350435973550586,
+    "note": "Python: dataset loaded; Rust: CLI process including the verified load"
+   },
+   {
+    "id": "PERF-D-02",
+    "python_median_s": 2.0811575719999382,
+    "rust_median_s": 1.0862118879999798,
+    "python_s": [
+     2.335045049999735,
+     2.0150792399999773,
+     2.0811575719999382
+    ],
+    "rust_s": [
+     1.0862118879999798,
+     1.1032225489998382,
+     1.06579661700016
+    ],
+    "speedup": 1.9159775316323706,
+    "note": "both include the verified loads"
+   },
+   {
+    "id": "PERF-D-03",
+    "python_median_s": 0.4515262120003172,
+    "rust_median_s": 0.470065448999776,
+    "python_s": [
+     0.44563827000001766,
+     0.45778688399968814,
+     0.4515262120003172
+    ],
+    "rust_s": [
+     0.470065448999776,
+     0.45640125299996726,
+     0.4743032330002279
+    ],
+    "speedup": 0.9605603069978716,
+    "note": "Python: dataset loaded; Rust: CLI process including the verified load"
+   }
+  ],
+  "campaign_timing": {
+   "python_reference_s": 16.48537793300011,
+   "rust_cli_wall_s": 4.334500795000167,
+   "rust_per_request_s_sum": 4.2431042950000055
+  },
+  "rust_per_request_timing_top10": [
+   {
+    "id": "G-D-EXEC",
+    "elapsed_s": 1.013443849
+   },
+   {
+    "id": "G-D-CHECK",
+    "elapsed_s": 0.920615574
+   },
+   {
+    "id": "R-D-4-ECSS_LT_LOW-000",
+    "elapsed_s": 0.767965961
+   },
+   {
+    "id": "G-D-DSV2",
+    "elapsed_s": 0.655746363
+   },
+   {
+    "id": "R-D-0-ECSS_LT_LOW-000",
+    "elapsed_s": 0.204230355
+   },
+   {
+    "id": "R-D-3-31",
+    "elapsed_s": 0.005566872
+   },
+   {
+    "id": "R-D-3-19",
+    "elapsed_s": 0.005545295
+   },
+   {
+    "id": "R-D-3-39",
+    "elapsed_s": 0.00542937
+   },
+   {
+    "id": "R-D-3-38",
+    "elapsed_s": 0.004593095
+   },
+   {
+    "id": "R-D-3-00",
+    "elapsed_s": 0.004591065
+   }
+  ]
+ },
+ "checks": {
+  "per_test": true,
+  "refusal_trees": true,
+  "determinism": true,
+  "governing": true,
+  "all": true
+ },
+ "verdict": "ADMITTED",
+ "parity_verdict": "PARITY_PASS",
+ "campaign_history": [
+  {
+   "date_utc": "2026-10-05T13:41:04Z",
+   "mode": "scoring",
+   "seed": 731905204,
+   "verdict": "PARITY_PASS",
+   "executions": 1
+  }
+ ],
+ "reference_outputs": {
+  "path": "docs/rust_migration/contracts/C-ABEP_SIM_ATMOSPHERE_ORBIT_PY/reference_outputs",
+  "manifest_sha256": "d4fb91817f55998bc312f5fefaa979919e0b8cc1422e731fd15641dde83fcb9f"
+ },
+ "ledger_update_requested": [
+  {
+   "component": "C-ABEP_SIM_ATMOSPHERE_ORBIT_PY",
+   "requested_status": "ADMITTED",
+   "scope": "load, state, node_state, orbit_states, design_states_v2, load_design_states, Domain, check (frozen-data part)",
+   "not_ported": "build / msis_points / correct-metadata / write_design_states_v2 / producer re-run (rule-1 regeneration, live NRLMSIS: RM-OQ-02), v1 design_states() selection rule (immutable traceability set), orbit_coverage / mission_env_orbit_assumption (metadata helpers)",
+   "authoritative_implementation": "rust: abep_atmos::{orbit, design_states} + abep_data::{orbit_v1, design_states}"
+  },
+  {
+   "component": "C-ABEP_SIM_ATMOSPHERE_ORBIT_V2_PY",
+   "requested_status": "PARTIAL (load, wind, state admitted)",
+   "pending": "relative_flow, flow_state, orbit_states (v2): own contract or owner retirement before SC-WP-01 completion",
+   "not_ported": "HWM14Runner / build / fetch / check re-run (RM-OQ-02)",
+   "authoritative_implementation": "rust: abep_atmos::wind + abep_data::hwm14_v2"
+  },
+  {
+   "component": "C-ABEP_SIM_DESIGN_INTAKE_SYNTHESIS_PY",
+   "requested_status": "KERNEL_ADMITTED (RM-R17) for load_design_state_set, DesignState.atm / record, required_states; module stays PYTHON_REFERENCE (SC-WP-02)",
+   "authoritative_implementation": "rust: abep_data::design_states + abep_atmos::{design_state_set, execution}"
+  }
+ ],
+ "notes": [
+  "harness: the contracts say the harness is committed 'after this contract and before any comparison'. It was developed with development-seed comparisons (never scored, no report) and committed before the single scoring run; every scored generator, tolerance and decision rule is the registered one. Recorded as a disclosure, not a change of the contract",
+  "out of scope and still PYTHON_REFERENCE: atmosphere_orbit_v2 relative_flow / flow_state / orbit_states (not needed by the 196-state execution); SC-WP-01 admission needs their own contract or an owner retirement"
+ ],
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, threshold or requirement",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27)",
+  "not a gate PASS: absent determining evidence stays NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN / MODEL_ERROR (RM-R31)"
+ ]
+}

@@ -1,0 +1,19 @@
+[package]
+name = "abep-atmos"
+description = "Environment physics of the ABEP Rust simulator: frozen NRLMSIS 2.1 atmosphere, orbit / design states, HWM14 orbit winds and the 196-state execution."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+license.workspace = true
+
+[dependencies]
+abep-types.workspace = true
+abep-provenance.workspace = true
+abep-data.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+
+[[bin]]
+name = "abep-env-parity"
+path = "src/bin/abep_env_parity.rs"

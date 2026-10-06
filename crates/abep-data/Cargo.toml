@@ -1,0 +1,15 @@
+[package]
+name = "abep-data"
+description = "Frozen, hash-pinned dataset readers of the ABEP Rust simulator (atmosphere, orbit atmosphere, HWM14 orbit winds, design-state set)."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+license.workspace = true
+
+[dependencies]
+abep-types.workspace = true
+abep-provenance.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+flate2.workspace = true

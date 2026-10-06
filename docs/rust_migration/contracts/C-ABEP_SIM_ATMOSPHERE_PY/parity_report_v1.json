@@ -1,0 +1,813 @@
+{
+ "schema": [
+  {
+   "entry": "atmosphere",
+   "observable": "key order",
+   "tolerance_class": "EXACT_VALUE",
+   "n": 1393,
+   "n_fail": 0,
+   "n_bit_identical": 1393,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0
+  }
+ ],
+ "contract": {
+  "id": "PARITY-C-ABEP_SIM_ATMOSPHERE_PY-V1",
+  "path": "docs/rust_migration/contracts/C-ABEP_SIM_ATMOSPHERE_PY/parity_prereg_v1.json",
+  "sha256": "37bcef92084273c587f8cdf852f031e4bca952cc1289b685cf405c85dc14eead",
+  "registration_commit": "481570d5401531a2377c625c528ded9084db3524"
+ },
+ "date_utc": "2026-10-05T13:37:32Z",
+ "python_commit": "96db5524ec917e99e507def24f3ee0b263c78ebc",
+ "reference_sha256": {
+  "abep_sim/atmosphere.py": {
+   "registered": "690d6931bb595c14736db9d9c284fb4e2f98727a8749262edebe3d8621e87e8b",
+   "at_scoring": "690d6931bb595c14736db9d9c284fb4e2f98727a8749262edebe3d8621e87e8b"
+  },
+  "abep_sim/constants.py": {
+   "registered": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7",
+   "at_scoring": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7"
+  }
+ },
+ "rust_commit": "7caaca245775030ea113624cb168f164f982d39c",
+ "build_provenance": {
+  "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+  "cargo": "cargo 1.94.1 (29ea6fb6a 2026-03-24)",
+  "cargo_lock_sha256": "25ffa86730d04f18769444e4fc7262305e640d2887d2c7b0eb91df4f0eafc805",
+  "source_sha256": {
+   "Cargo.lock": "25ffa86730d04f18769444e4fc7262305e640d2887d2c7b0eb91df4f0eafc805",
+   "Cargo.toml": "2ba9b186b90dc2fdced410198d52703ecd061b38cad83f7186d0aaa4c7bfcf5e",
+   "crates/abep-atmos/src/bin/abep_env_parity.rs": "c5098a3e86d80c6ac53b05561dc2ef3ae2705dfb1134039b3e51fa81312a3ee6",
+   "crates/abep-atmos/src/design_state_set.rs": "cdd96dde80512300fb18453f849f1018553fbf8aac72cfd88e01e52e03871716",
+   "crates/abep-atmos/src/design_states.rs": "c55dc45bd840c71a4e7c157bc04167a80b7c5e6563b935e0c3fb798328e98b14",
+   "crates/abep-atmos/src/execution.rs": "0ae9998367cf716971fb92e9666d6bdd84ce49dc271efad6a67dd1bec3b56f9a",
+   "crates/abep-atmos/src/lib.rs": "25b2b7a04cb9652443289fee7664c498bc0983a6491dc5b366e30ba00763b8a1",
+   "crates/abep-atmos/src/mission_env_kernel.rs": "c48e3c0952a2c09a3095b3904a5622b4f85c7d2d33c8a8f7d843e491dff6de73",
+   "crates/abep-atmos/src/msis21.rs": "50d778f9e06b4f44e63d1164504a63d0182d7df20e144fb526ba1bbff5e08aa8",
+   "crates/abep-atmos/src/orbit.rs": "c4366b7c983bee6986812d6a8e0a2d576150be6eb3aec80b0f7bc4e9d92a3f54",
+   "crates/abep-atmos/src/pyfloat.rs": "3591be912ce26f94fdba00dde6d19375514532370b748f84af05cd7b77af4457",
+   "crates/abep-atmos/src/weights.rs": "40451ae741a4504afef0b56edf6e32028c38bbd605d03787e804f525e1249737",
+   "crates/abep-atmos/src/wind.rs": "08a9ca22502e155a194e54d8025c4b290c531121790693edea16f7ecc653e034",
+   "crates/abep-data/src/design_states.rs": "39e9002f1be06d06a463be18a2cd2428e1b2ab0fb7881313c74dc2d02db15e3a",
+   "crates/abep-data/src/gz.rs": "d4dc152741e78c773e264ab566f11dff2f2d1c831b5b843db151a382358be737",
+   "crates/abep-data/src/hwm14_v2.rs": "bb54b2d9a9fade6bfd6069978299f65fb26fe47a85757aabe796f5f4387a3152",
+   "crates/abep-data/src/json.rs": "2340fba6918d49d4bb8d757252b351cc8b95d3c6fa7186bbef6eef19579802be",
+   "crates/abep-data/src/lib.rs": "bab94b4c413569bcfde91567922400f97f6a1857220f7e5032562f52ebcc9e2d",
+   "crates/abep-data/src/msis21_v1.rs": "2a00f6308244dce6d7d651c9afb7af6dcb20847d01e217c6ec896a4e70b8e0b7",
+   "crates/abep-data/src/orbit_v1.rs": "a7efc0a42e1911e43390555857bb5a14615768b1f3212a46a40381ca1cb726a6",
+   "crates/abep-data/src/pins.rs": "6884c5b99de401b939e3de3a495f55e874315218a76d3eaa6e960b9af31b2bc5",
+   "crates/abep-data/src/table.rs": "daa2dedf8169e3d5863fe30d5e2d26419515a0a21133ce2f29f3e2de183e98fb",
+   "crates/abep-provenance/src/lib.rs": "10c62a00d37441a1de34c7a1fe96483158294d4999d5c5ec3e2da7aac9a9c72a",
+   "crates/abep-types/src/constants.rs": "c97e39931d145db143398e3d5de9eb4f9ba86943a75b3c1302df82c01b4efd1d",
+   "crates/abep-types/src/lib.rs": "1ba60bca0d0c78a64c121111233f48b60a21caa132d2d8292c81d0f898ccf2af",
+   "rust-toolchain.toml": "7e44dbedb86596d94974ef8cb279f0e81496ea92b519c14940259661496f8499"
+  },
+  "harness": {
+   "path": "scripts/rust_migration/es2_env_parity.py",
+   "sha256": "9def17b8a6d22acb4538a9bfcb8f17cfc9ec4b40dbf5dc3e39a276eed25e5fbb"
+  },
+  "binary": "target/release/abep-env-parity (cargo build --release --locked)"
+ },
+ "environment": {
+  "python": "3.11.15",
+  "numpy": "2.4.4",
+  "scipy": "1.17.1",
+  "pandas": "3.0.2",
+  "numpy_simd_baseline": [
+   "X86_V2"
+  ],
+  "numpy_simd_dispatch": [
+   "X86_V3",
+   "X86_V4",
+   "AVX512_ICL",
+   "AVX512_SPR"
+  ],
+  "numpy_simd_avx512f_enabled": true,
+  "blas": "scipy-openblas 0.3.31.188.0",
+  "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+  "platform": "Linux-6.18.44-fc-v70-x86_64-with-glibc2.39",
+  "thread_env": {
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1"
+  },
+  "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312"
+ },
+ "mode": "scoring",
+ "scoring_master_seed": 731905201,
+ "n_vectors": 1754,
+ "per_test": {
+  "observables": [
+   {
+    "entry": "atmosphere",
+    "observable": "status",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1403,
+    "n_fail": 0,
+    "n_bit_identical": 1403,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "atmosphere",
+    "observable": "key order",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1393,
+    "n_fail": 0,
+    "n_bit_identical": 1393,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "atmosphere",
+    "observable": "rho",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1393,
+    "n_fail": 0,
+    "n_bit_identical": 1393,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-12
+    }
+   },
+   {
+    "entry": "atmosphere",
+    "observable": "fO",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1393,
+    "n_fail": 0,
+    "n_bit_identical": 1393,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-12
+    }
+   },
+   {
+    "entry": "atmosphere",
+    "observable": "fN2",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1393,
+    "n_fail": 0,
+    "n_bit_identical": 1393,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-12
+    }
+   },
+   {
+    "entry": "atmosphere",
+    "observable": "fO2",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1393,
+    "n_fail": 0,
+    "n_bit_identical": 1393,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-12
+    }
+   },
+   {
+    "entry": "atmosphere",
+    "observable": "T",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1393,
+    "n_fail": 0,
+    "n_bit_identical": 1393,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-12
+    }
+   },
+   {
+    "entry": "atmosphere",
+    "observable": "m_mean",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1393,
+    "n_fail": 0,
+    "n_bit_identical": 1393,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-12
+    }
+   },
+   {
+    "entry": "atmosphere",
+    "observable": "n",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1393,
+    "n_fail": 0,
+    "n_bit_identical": 1393,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-12
+    }
+   },
+   {
+    "entry": "atmosphere",
+    "observable": "flux_kg_m2_s",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1393,
+    "n_fail": 0,
+    "n_bit_identical": 1393,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-12
+    }
+   },
+   {
+    "entry": "atmosphere",
+    "observable": "p_ambient_Pa",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1393,
+    "n_fail": 0,
+    "n_bit_identical": 1393,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-12
+    }
+   },
+   {
+    "entry": "atmosphere",
+    "observable": "n_O",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1393,
+    "n_fail": 0,
+    "n_bit_identical": 1393,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4,
+     "r_rel": 1e-12
+    }
+   },
+   {
+    "entry": "atmosphere",
+    "observable": "V",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1393,
+    "n_fail": 0,
+    "n_bit_identical": 1393,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "atmosphere",
+    "observable": "alt_km",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1393,
+    "n_fail": 0,
+    "n_bit_identical": 1393,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "atmosphere",
+    "observable": "solar",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1393,
+    "n_fail": 0,
+    "n_bit_identical": 1393,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "atmosphere",
+    "observable": "f107",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1393,
+    "n_fail": 0,
+    "n_bit_identical": 1393,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "atmosphere",
+    "observable": "f107a",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1393,
+    "n_fail": 0,
+    "n_bit_identical": 1393,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "atmosphere",
+    "observable": "ap",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1393,
+    "n_fail": 0,
+    "n_bit_identical": 1393,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "atmosphere",
+    "observable": "epoch",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1393,
+    "n_fail": 0,
+    "n_bit_identical": 1393,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "atmosphere",
+    "observable": "source",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1393,
+    "n_fail": 0,
+    "n_bit_identical": 1393,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "atmosphere",
+    "observable": "CONS-A-01 |n m_mean / rho - 1| (Rust)",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1393,
+    "n_fail": 0,
+    "n_bit_identical": 1205,
+    "max_abs_diff": 2.220446049250313e-16,
+    "max_rel_diff": 2.220446049250313e-16,
+    "max_ulp": 1.0,
+    "tolerance": {
+     "a_abs": 1e-14
+    }
+   },
+   {
+    "entry": "atmosphere",
+    "observable": "CONS-A-02 |p / (n K_B T) - 1| (Rust)",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 1393,
+    "n_fail": 0,
+    "n_bit_identical": 1393,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "a_abs": 1e-14
+    }
+   },
+   {
+    "entry": "orbital_velocity",
+    "observable": "status",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 350,
+    "n_fail": 0,
+    "n_bit_identical": 350,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "orbital_velocity",
+    "observable": "V",
+    "tolerance_class": "ULP_BOUNDED",
+    "n": 345,
+    "n_fail": 0,
+    "n_bit_identical": 345,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0,
+    "tolerance": {
+     "k_ulp": 4
+    }
+   },
+   {
+    "entry": "msis21_load",
+    "observable": "status",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "msis21_load",
+    "observable": "sha256_16",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "msis21_load",
+    "observable": "alt_km",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "msis21_load",
+    "observable": "f107",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   }
+  ],
+  "n_failures": 0,
+  "failures_first_50": []
+ },
+ "aggregates": "NOT_APPLICABLE (no STATISTICAL entry point)",
+ "domain_error": {
+  "vectors": [
+   {
+    "vector": "DE-A-01",
+    "entry": "atmosphere",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-A-02",
+    "entry": "atmosphere",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-A-03",
+    "entry": "atmosphere",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-A-04",
+    "entry": "atmosphere",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-A-05",
+    "entry": "atmosphere",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-A-06",
+    "entry": "atmosphere",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-A-07",
+    "entry": "atmosphere",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-A-08",
+    "entry": "atmosphere",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-A-09",
+    "entry": "atmosphere",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "KeyError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-A-10",
+    "entry": "atmosphere",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "KeyError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-A-11",
+    "entry": "orbital_velocity",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ZeroDivisionError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-A-12",
+    "entry": "orbital_velocity",
+    "python": "OUT_OF_DOMAIN",
+    "python_exception": "ValueError",
+    "rust": "OUT_OF_DOMAIN",
+    "ok": true
+   },
+   {
+    "vector": "DE-A-13",
+    "entry": "orbital_velocity",
+    "python": "EVALUATED",
+    "python_exception": null,
+    "rust": "OUT_OF_DOMAIN",
+    "documented_divergence": "DIV-A-04",
+    "ok": true
+   },
+   {
+    "vector": "DE-A-14",
+    "entry": "orbital_velocity",
+    "python": "EVALUATED",
+    "python_exception": null,
+    "rust": "OUT_OF_DOMAIN",
+    "documented_divergence": "DIV-A-04",
+    "ok": true
+   },
+   {
+    "vector": "DE-A-15",
+    "entry": "orbital_velocity",
+    "python": "EVALUATED",
+    "python_exception": null,
+    "rust": "OUT_OF_DOMAIN",
+    "documented_divergence": "DIV-A-04",
+    "ok": true
+   }
+  ],
+  "refusal_trees": [
+   {
+    "tree": "RF-A-01",
+    "entry": "msis21_load",
+    "python": "MODEL_ERROR",
+    "rust": "MODEL_ERROR",
+    "expected_python": "MODEL_ERROR",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-A-01",
+    "entry": "atmosphere",
+    "python": "MODEL_ERROR",
+    "rust": "MODEL_ERROR",
+    "expected_python": "MODEL_ERROR",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-A-02",
+    "entry": "msis21_load",
+    "python": "MODEL_ERROR",
+    "rust": "MODEL_ERROR",
+    "expected_python": "MODEL_ERROR",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-A-02",
+    "entry": "atmosphere",
+    "python": "MODEL_ERROR",
+    "rust": "MODEL_ERROR",
+    "expected_python": "MODEL_ERROR",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-A-03",
+    "entry": "msis21_load",
+    "python": "EVALUATED",
+    "rust": "MODEL_ERROR",
+    "expected_python": "EVALUATED",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   },
+   {
+    "tree": "RF-A-03",
+    "entry": "atmosphere",
+    "python": "EVALUATED",
+    "rust": "MODEL_ERROR",
+    "expected_python": "EVALUATED",
+    "expected_rust": "MODEL_ERROR",
+    "ok": true
+   }
+  ]
+ },
+ "invariants": {
+  "determinism": {
+   "rust_two_processes_byte_identical": true,
+   "rust_stdout_sha256": "ba6888f29f3f720ea1c0b7b0da73b20a416017401622c4592c38035b4413f8d2",
+   "python_two_evaluations_equal": true
+  },
+  "governing_hashes": {
+   "python": {
+    "config_manifest_sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883",
+    "model_set_sha256": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1",
+    "design_state_set_ref_sha256": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484",
+    "design_state_set_sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049"
+   },
+   "rust": {
+    "config_manifest_sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883",
+    "design_state_set_ref_sha256": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484",
+    "design_state_set_sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+    "model_set_sha256": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1"
+   },
+   "equal_and_registered": true
+  }
+ },
+ "conservation": [
+  {
+   "entry": "atmosphere",
+   "observable": "CONS-A-01 |n m_mean / rho - 1| (Rust)",
+   "tolerance_class": "ULP_BOUNDED",
+   "n": 1393,
+   "n_fail": 0,
+   "n_bit_identical": 1205,
+   "max_abs_diff": 2.220446049250313e-16,
+   "max_rel_diff": 2.220446049250313e-16,
+   "max_ulp": 1.0,
+   "tolerance": {
+    "a_abs": 1e-14
+   }
+  },
+  {
+   "entry": "atmosphere",
+   "observable": "CONS-A-02 |p / (n K_B T) - 1| (Rust)",
+   "tolerance_class": "ULP_BOUNDED",
+   "n": 1393,
+   "n_fail": 0,
+   "n_bit_identical": 1393,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "max_ulp": 0.0,
+   "tolerance": {
+    "a_abs": 1e-14
+   }
+  }
+ ],
+ "performance": {
+  "status": "reported, never a decision criterion",
+  "workloads": [
+   {
+    "id": "PERF-A-01",
+    "python_median_s": 1.5815535960000489,
+    "rust_median_s": 0.029191198999797052,
+    "python_s": [
+     1.5895544230002088,
+     1.5579840820000754,
+     1.5815535960000489
+    ],
+    "rust_s": [
+     0.0456696420001208,
+     0.028575657999681425,
+     0.029191198999797052
+    ],
+    "speedup": 54.17912419462607,
+    "note": "Rust = one CLI process including the verified load"
+   }
+  ],
+  "campaign_timing": {
+   "python_reference_s": 2.278984586000206,
+   "rust_cli_wall_s": 0.03628994500013505,
+   "rust_per_request_s_sum": 0.007154634999999992
+  },
+  "rust_per_request_timing_top10": [
+   {
+    "id": "G-A-000",
+    "elapsed_s": 0.000668782
+   },
+   {
+    "id": "R-A-0-117",
+    "elapsed_s": 2.3683e-05
+   },
+   {
+    "id": "G-A-055",
+    "elapsed_s": 2.288e-05
+   },
+   {
+    "id": "G-A-319",
+    "elapsed_s": 2.1691e-05
+   },
+   {
+    "id": "R-A-1-153",
+    "elapsed_s": 2.1598e-05
+   },
+   {
+    "id": "G-A-212",
+    "elapsed_s": 2.1597e-05
+   },
+   {
+    "id": "R-A-0-022",
+    "elapsed_s": 2.1108e-05
+   },
+   {
+    "id": "R-A-0-475",
+    "elapsed_s": 2.0949e-05
+   },
+   {
+    "id": "R-A-0-704",
+    "elapsed_s": 2.0839e-05
+   },
+   {
+    "id": "L-A-01",
+    "elapsed_s": 1.6631e-05
+   }
+  ]
+ },
+ "checks": {
+  "per_test": true,
+  "refusal_trees": true,
+  "determinism": true,
+  "governing": true,
+  "all": true
+ },
+ "verdict": "ADMITTED",
+ "parity_verdict": "PARITY_PASS",
+ "campaign_history": [
+  {
+   "date_utc": "2026-10-05T13:37:32Z",
+   "mode": "scoring",
+   "seed": 731905201,
+   "verdict": "PARITY_PASS",
+   "executions": 1
+  }
+ ],
+ "reference_outputs": {
+  "path": "docs/rust_migration/contracts/C-ABEP_SIM_ATMOSPHERE_PY/reference_outputs",
+  "manifest_sha256": "b5de1ed731eff3b6f9b4ecfb52c8a8dd4521f57c8d89c60721ae12bb02421322"
+ },
+ "ledger_update_requested": [
+  {
+   "component": "C-ABEP_SIM_ATMOSPHERE_PY",
+   "requested_status": "ADMITTED",
+   "scope": "frozen-scenario reader: atmosphere (frozen branch), _interp_frozen, _frozen, orbital_velocity",
+   "not_ported": "live NRLMSIS branch, ABEP_ALLOW_TABLE_ATMOSPHERE table branch, `build` (RM-OQ-02, A9.29 sec. 6): proposed FORMALLY_RETIRED_NOT_PORTED with the module",
+   "authoritative_implementation": "rust: abep_atmos::msis21 + abep_data::msis21_v1"
+  }
+ ],
+ "notes": [
+  "harness: the contracts say the harness is committed 'after this contract and before any comparison'. It was developed with development-seed comparisons (never scored, no report) and committed before the single scoring run; every scored generator, tolerance and decision rule is the registered one. Recorded as a disclosure, not a change of the contract",
+  "PYTHON_REFERENCE observation (DIV-A-03, CLAUDE.md rule 5): atmosphere() memoizes on round(alt_km, 3) but evaluates at the unrounded altitude, so a later call within 1e-3 km returns the earlier result; the harness clears _MSIS_CACHE before every reference call. For the reference's own governance; not changed here",
+  "PYTHON_REFERENCE observation: when atmosphere_msis21_v1.json is missing, _frozen() stores the CSV before the JSON read fails, so a second call in the same process sees a half-filled cache and raises KeyError instead of FileNotFoundError (both fail closed); the harness evaluates every refusal-tree entry from a fresh reference state, as registered. For the reference's own governance; not changed here"
+ ],
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, threshold or requirement",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27)",
+  "not a gate PASS: absent determining evidence stays NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN / MODEL_ERROR (RM-R31)"
+ ]
+}

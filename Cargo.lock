@@ -3,11 +3,42 @@
 version = 4
 
 [[package]]
+name = "abep-atmos"
+version = "0.1.0"
+dependencies = [
+ "abep-data",
+ "abep-provenance",
+ "abep-types",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "abep-ci"
 version = "0.1.0"
 dependencies = [
  "abep-provenance",
  "abep-types",
+ "serde_json",
+]
+
+[[package]]
+name = "abep-config"
+version = "0.1.0"
+dependencies = [
+ "abep-provenance",
+ "abep-types",
+ "toml",
+]
+
+[[package]]
+name = "abep-data"
+version = "0.1.0"
+dependencies = [
+ "abep-provenance",
+ "abep-types",
+ "flate2",
+ "serde",
  "serde_json",
 ]
 
@@ -20,6 +51,28 @@ dependencies = [
  "flate2",
  "serde_json",
  "sha2",
+]
+
+[[package]]
+name = "abep-icp"
+version = "0.1.0"
+dependencies = [
+ "abep-provenance",
+ "abep-types",
+ "serde",
+ "serde_json",
+ "toml",
+]
+
+[[package]]
+name = "abep-intake"
+version = "0.1.0"
+dependencies = [
+ "abep-provenance",
+ "abep-types",
+ "abep_core",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
@@ -46,12 +99,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "abep-subsystems"
+version = "0.1.0"
+dependencies = [
+ "abep-provenance",
+ "abep-types",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "abep-types"
 version = "0.1.0"
 dependencies = [
  "serde",
  "serde_json",
+ "sha2",
 ]
+
+[[package]]
+name = "abep_core"
+version = "0.1.0"
 
 [[package]]
 name = "adler2"
@@ -126,6 +194,7 @@ checksum = "6e634e2e0ebac1ee034020da1ca582e17ffe4e0f5e985823721e168928136dcb"
 dependencies = [
  "crc32fast",
  "miniz_oxide",
+ "zlib-rs",
 ]
 
 [[package]]
@@ -340,6 +409,12 @@ checksum = "df79d97927682d2fd8adb29682d1140b343be4ac0f08fd68b7765d9c059d3945"
 dependencies = [
  "memchr",
 ]
+
+[[package]]
+name = "zlib-rs"
+version = "0.6.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b268e58e7c693d7c271f93ffc4ba3b380412554231c85bf61ca7af91042a4112"
 
 [[package]]
 name = "zmij"
