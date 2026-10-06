@@ -1,6 +1,6 @@
 [package]
 name = "abep-subsystems"
-description = "ABEP subsystem physics. Module thermal = NP-THERMAL-CATHODELESS v1 (new physics: Hall + downstream RF/ICP cathodeless lumped thermal network, preregistered)."
+description = "ABEP subsystem physics. Module thermal = NP-THERMAL-CATHODELESS v1 (new physics: Hall + downstream RF/ICP cathodeless lumped thermal network, preregistered); module mass = SC-WP-07 selected-flight mass accounting (K-MASS-RULES, mass_power_a9_v5, wet mass, Xe sensitivity; parity contracts)."
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -12,3 +12,8 @@ abep-types.workspace = true
 abep-provenance.workspace = true
 serde.workspace = true
 serde_json.workspace = true
+
+[dev-dependencies]
+# CI replay of the gzip-captured Python reference outputs of the mass contracts (same crate the workspace uses for the
+# frozen .csv.gz datasets).
+flate2.workspace = true
