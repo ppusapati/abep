@@ -1,0 +1,579 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-ABEP_SIM_DESIGN_FILTER_STAGE_PY-V1",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "component": {
+  "inventory_id": "C-ABEP_SIM_DESIGN_FILTER_STAGE_PY",
+  "inventory_path": "docs/rust_migration/component_inventory_v3_1.json",
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "migration_wave": "W2",
+  "scope": "named function subset (RM-R17) of abep_sim/design/filter_stage.py: the F2 filter-stage physics, its fail-closed evidence gate and every record the active chain consumes (FilterResult.to_dict and its F3 / F1 interface records, the F4 backflow coupling)",
+  "functions_or_entry_points": [
+   "abep_sim/design/filter_stage.py::EV (validation, usable_as_evidence, to_dict), TBD, DEFINITION",
+   "abep_sim/design/filter_stage.py::cole_transmission_probability",
+   "abep_sim/design/filter_stage.py::perforated_plate_alpha",
+   "abep_sim/design/filter_stage.py::mean_speed_m_s",
+   "abep_sim/design/filter_stage.py::ProtectionFunction, MaterialApplicability (validation, to_dict)",
+   "abep_sim/design/filter_stage.py::SpeciesTransport.records, tbd_species_transport",
+   "abep_sim/design/filter_stage.py::InletState, SensitivityCase (validation)",
+   "abep_sim/design/filter_stage.py::FilterResult (numeric, to_dict, species_transmission, to_f3_record, to_f1_record)",
+   "abep_sim/design/filter_stage.py::FilterStage (validation, none, tbd, catalytic_research_variant, parameters, parameter_ids, apply, backflow_coupling, to_dict)",
+   "abep_sim/design/filter_stage.py::repository_placeholder_values, placeholder_sensitivity_case",
+   "abep_sim/design/filter_stage.py::retained_inventory_kg",
+   "abep_sim/design/filter_stage.py module vocabulary (QUANTITY_TYPES, EV_STATUSES, USABLE_STATUSES, AO_GATE_OUTCOMES, SURROGATE_LABELS, INCIDENCES, REGIMES, KN_MOLECULAR_MIN, KN_SOURCE, PROTECTION_TARGETS, INLET_LABELS, LABEL_*, RESULT_STATUSES, CONVERSION_PRODUCTS, CONSERVATION_TOL, ROLE_*, INTERFACE_POSITION, CATALYTIC_VARIANT_EVIDENCE, BASELINE_PROTECTION_TARGETS, NOT_CREDITED_TARGETS, ACCEPTANCE_ITEMS, COLE_SOURCE, COLE_TABLE_2_5)"
+  ],
+  "out_of_scope": [
+   "FilterStage.to_dict() 'interfaces' / 'protection' / 'materials' fields are scored through FilterResult; nothing of the module is left unported except the F2 study builder docs/design_synthesis/f2_filter/build_f2_filter.py (a historical study builder, not part of the inventory row; RM-R41: no historical builder migration merely for completeness)",
+   "FORBIDDEN_STATUS_WORDS is a test vocabulary of the Python test suite; the Rust crate asserts the same property in its own tests (no status string contains PASS / SELECTED / WINNER / QUALIFIED)"
+  ],
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+  "extract_kernel_id": "NOT_APPLICABLE",
+  "active_toolchain_requirement": "NOT_APPLICABLE",
+  "excluded_legacy_paths": [
+   "F2 FC-07 Xe cathode-line getter: GROUND_REFERENCE_ONLY (SC-WP-02 element 'filter' notes); it is not a function of filter_stage.py and nothing of it is ported into abep-gaspath"
+  ],
+  "owner_disposition_a9_28": "NOT_APPLICABLE",
+  "simulation_completion_wp": "SC-WP-02 (element 'filter')",
+  "owner_disposition_a9_29": "NOT_APPLICABLE"
+ },
+ "date": "2026-10-06",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of this component was executed (lane B3, ES-3, SC-WP-02). The registration commit is recorded in the report, not here.",
+ "supersedes": {
+  "path": null,
+  "sha256": null,
+  "reason": null
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "lane": {
+  "id": "B3",
+  "execution_step": "ES-3",
+  "work_package": "SC-WP-02",
+  "branch": "lane-es3-gaspath",
+  "base_commit": "e3b7e6712d106b36dedec1115d9570e2be28f458",
+  "authority": "A9.29 secs. 13-15 (Lane B: ES-2 then ES-3); simulation_completion_programme_v1_1.json SC-WP-02 and first_execution_sequence ES-3"
+ },
+ "reference_implementation": {
+  "python_commit": "e3b7e6712d106b36dedec1115d9570e2be28f458",
+  "python_commit_note": "the pushed integration/simulation-complete head at lane start (lane B1 merge); the bid record 5eee4b8 / 2de86ab is never a reference commit for new work",
+  "files": [
+   {
+    "path": "abep_sim/design/filter_stage.py",
+    "sha256_at_registration": "69991f070ac5c0c8ea4b053359e116b34ff74cdc8349c87d61b24e42d8ba82b7"
+   },
+   {
+    "path": "abep_sim/constants.py",
+    "sha256_at_registration": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7"
+   },
+   {
+    "path": "abep_sim/intake_tpmc.py",
+    "sha256_at_registration": "dcddf947c273d71d2f030895cd8ea9916919f816401c20e30b7ca4d177172433"
+   }
+  ],
+  "files_note": "intake_tpmc.py is read only for the IntakeGeometry dataclass defaults recorded by repository_placeholder_values (PLACEHOLDER_NOT_A_FLIGHT_DESIGN); no TPMC function is called",
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration; a changed reference requires a new contract version",
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4",
+   "scipy": "1.17.1",
+   "pandas": "3.0.2",
+   "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+   "blas": "scipy-openblas bundled with numpy (DYNAMIC_ARCH, USE64BITINT)",
+   "numpy_simd": "baseline X86_V2; AVX512 dispatch enabled on the registration host (Intel Xeon @ 2.10GHz): numpy float64 exp / log / sin / power on arrays may run SIMD loops, not glibc libm (ulp-level differences from the Rust libm calls are possible on the numpy paths only)",
+   "thread_env": {
+    "OMP_NUM_THREADS": "1 (set by the harness for every reference run)",
+    "OPENBLAS_NUM_THREADS": "1 (set by the harness for every reference run)"
+   },
+   "recorded_again_at_scoring": "python / numpy / scipy / pandas versions, numpy SIMD dispatch, CPU model and thread env are re-read and written into the report; a version change is INPUT_MISMATCH (not a verdict)"
+  }
+ },
+ "rust_implementation": {
+  "crate": "abep-gaspath (flight-runtime physics crate; depends on abep-types and abep-provenance only)",
+  "functions_or_entry_points": [
+   "abep_gaspath::filter::{Ev, cole_transmission_probability, perforated_plate_alpha, mean_speed_m_s, ProtectionFunction, MaterialApplicability, SpeciesTransport, tbd_species_transport, InletState, SensitivityCase, FilterResult, FilterStage, repository_placeholder_values, placeholder_sensitivity_case, retained_inventory_kg}",
+   "abep_gaspath::filter::FilterResultStatus::eval_status (repository status -> abep_types::EvalStatus)",
+   "CLI: cargo run --release --locked -p abep-gaspath --bin abep-gaspath-parity (JSON request on stdin, JSON results on stdout), entries filter.*"
+  ],
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (rust-toolchain.toml channel 1.94.1)",
+  "provenance_sources": [
+   "Cargo.toml",
+   "Cargo.lock",
+   "rust-toolchain.toml",
+   "crates/abep-types/src/**",
+   "crates/abep-provenance/src/**",
+   "crates/abep-gaspath/Cargo.toml",
+   "crates/abep-gaspath/src/**"
+  ],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it (A9.14 S10.4 RUSTCI-1, generalised)"
+ },
+ "governing_hashes": {
+  "config_manifest": {
+   "path": "config/MANIFEST.json",
+   "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+  },
+  "architecture_hash": "NOT_APPLICABLE: architecture-independent gas-path physics of the selected hall_icp_neutralizer AIR_PRIMARY upstream chain (no architecture record is read)",
+  "model_set_hash": "NOT_APPLICABLE: no model-set entry is read by the scored functions",
+  "design_state_set_hash": "NOT_APPLICABLE unless stated in pinned_inputs_sha256",
+  "rule": "both implementations must report these exact values for every run; a mismatch voids the run (status INPUT_MISMATCH, not a verdict)"
+ },
+ "pinned_inputs_sha256": {
+  "abep_sim/design/filter_stage.py": "69991f070ac5c0c8ea4b053359e116b34ff74cdc8349c87d61b24e42d8ba82b7",
+  "abep_sim/constants.py": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7",
+  "abep_sim/intake_tpmc.py": "dcddf947c273d71d2f030895cd8ea9916919f816401c20e30b7ca4d177172433"
+ },
+ "frozen_data_read_only": [],
+ "inputs": {
+  "harness": "scripts/rust_migration/es3_gaspath_parity.py (contract key 'filter'); committed after this contract and before the scoring run",
+  "transport": "every vector is one JSON request {id, entry, args}; the harness builds the Python objects from the same args (stage / inlet / case / EV specs below) and sends the identical JSON to Rust",
+  "spec_formats": {
+   "ev": "{value | null, units, status, evidence_class, source, uncertainty, basis, evidence_level, domain, requires} = the EV dataclass fields",
+   "stage": "{factory: 'none' | 'tbd' | 'catalytic' | 'custom', species, stage_id, concept_id, forward_incidence, role, kind (custom only), description, records (custom: parameter id -> ev replacing the tbd record), element_records ({element_temperature_K | energy_accommodation | contaminant_capacity_kg | face_area_m2 | areal_mass_kg_m2: ev}), protection (list of {target, mechanism, capture_efficiency: ev, evidence_note}), materials (list of {material, ao_compatibility, surrogate_label, evidence_refs, note}), research_variant_evidence ([[item, reference]])}",
+   "inlet": "the InletState fields (mdot_forward_kgps, mdot_back_incident_kgps, back_incident_basis, T_gas_K, incidence, knudsen_number, label, provenance, incident_power_W, incident_power_source)",
+   "case": "null or the SensitivityCase fields (case_id, label, overrides, rationale, regime_assumption, temperature_override_K)"
+  },
+  "golden_vectors": {
+   "source": "the module's own tables and factories",
+   "count": "29 + 5 + 3 + 4",
+   "list_or_generator": "F01: every tabulated l/d of COLE_TABLE_2_5 (29); F05: parameter ids and to_dict of FilterStage.none() (default species and ('O','N2')), FilterStage.tbd() (default species and ('N2','O2','Xe')) and catalytic_research_variant() (default species) (5); F08: placeholder values and placeholder_sensitivity_case of FilterStage.tbd() (default species and ('O','N2','O2','Xe')) and FilterStage.none() (3); F04: tbd_species_transport for O, N2, O2, Xe (4)"
+  },
+  "edge_cases": [
+   {
+    "id": "E-F-01",
+    "inputs": {
+     "F01 l_over_d": [
+      0.0499999,
+      500.0000001,
+      0.0,
+      -1.0,
+      "NaN",
+      "+inf",
+      "-inf"
+     ]
+    },
+    "note": "outside the tabulated domain / non-finite: FilterStageError (no extrapolation)"
+   },
+   {
+    "id": "E-F-02",
+    "inputs": {
+     "F02 open_fraction": [
+      1.0,
+      0.0,
+      1.0000001,
+      "NaN"
+     ],
+     "F02 l_over_d": [
+      600.0
+     ]
+    },
+    "note": "open fraction domain (0, 1]; l/d domain inherited"
+   },
+   {
+    "id": "E-F-03",
+    "inputs": {
+     "F03": [
+      {
+       "species": "He",
+       "T_K": 300.0
+      },
+      {
+       "species": "O",
+       "T_K": -1.0
+      },
+      {
+       "species": "N2",
+       "T_K": 0.0
+      }
+     ]
+    },
+    "note": "unknown species KeyError; negative T: math.sqrt ValueError; T = 0 gives 0.0"
+   },
+   {
+    "id": "E-F-04",
+    "inputs": "F06 fixed edge list (26 vectors, generated with fixed values in the harness): none identity; all-TBD tbd stage (REFUSED_TBD, full missing list); all-TBD catalytic stage; incidence mismatch (OUT_OF_DOMAIN); Kn = 0.5 exactly (OUT_OF_DOMAIN: not > 0.5); Kn None without a case (missing knudsen_number); case with regime assumption and no Kn; zero alpha (UNBOUNDED_ZERO_CONDUCTANCE); back-incident flow above the forward flow (net reverse, NET_REVERSE_OR_ZERO note); O conversion with O2 not carried (REFUSED_TBD product); non-zero N2 conversion override (FilterStageError 'conversion without a product channel'); tau 1.2 and tau -0.1 (NONPHYSICAL_INPUT); tau + capture + conversion > 1 (NONPHYSICAL_INPUT); routing 1.5 with non-zero conversion (NONPHYSICAL_INPUT); all-zero flows; placeholder case on a tbd stage; override of an unknown parameter (FilterStageError); inlet species differ from stage species (FilterStageError); hyperthermal stage and inlet with full evidence records; loss-free diffuse element with tau_f != tau_b (reciprocity note); energy accommodation evidenced with incident power (UPPER_BOUND_GAS_TRANSFER); converted O with incident power (thermal load NOT_EVALUATED); catalytic variant with all four research-evidence items; retained_inventory_kg with duration -1 and NaN (FilterStageError)",
+    "note": "every fixed edge is listed by id in the report"
+   },
+   {
+    "id": "E-F-05",
+    "inputs": "F09 construction outcomes (fixed list in the harness, 50 vectors = 44 refusals + 6 valid controls): EV (status not in EV_STATUSES; empty units; TBD with value; TBD without requires; non-finite value; evidence_class not in QUANTITY_TYPES; empty source; evidence_level 0, 8 and True); ProtectionFunction (unknown target; blank mechanism); MaterialApplicability (unknown ao outcome; unknown surrogate; GATE_SATISFIED with NO_ATOMIC_O; outcome other than INCOMPLETE_EVIDENCE without evidence_refs); InletState (label; incident power species / negative / source; incidence; blank provenance; species sets differ; species not in M_SPECIES; negative / NaN flow; T 0; Kn 0); SensitivityCase (label without PARAMETRIC_SENSITIVITY; blank id; non-finite override; regime 'transitional'; temperature 0); FilterStage (kind; role; none without reference role; element with reference role; research evidence on a baseline role; malformed research evidence item; forward incidence; regime; species not in M_SPECIES; O without routing records; N2 non-zero evidenced conversion); and valid controls for each record type",
+    "note": "outcome = 'CONSTRUCTED' or the exception class"
+   }
+  ],
+  "randomized_domain": {
+   "count": "F01 400; F02 200; F03 200; F06 600; F07 200",
+   "draw": "one numpy Generator per entry, default_rng(SeedSequence([master, entry_index])) with entry_index F01=1, F02=2, F03=3, F06=6, F07=7; draws in vector order. F01: l/d = 10**U(log10 0.05, log10 500). F02: l/d as F01, open_fraction = 1 - U(0, 1). F03: species uniform over (O, N2, O2, Xe), T = 10**U(1, 4) K. F06 stage: species set ('O','N2','O2') p 0.7, ('N2','O2') 0.1, ('O','N2') 0.1, ('O','N2','O2','Xe') 0.1; factory none 0.1, tbd 0.6, catalytic 0.15, custom (tbd records, each replaced w.p. 0.5 by an ev of status EVIDENCED / MODEL_DERIVED / OWNER_GIVEN (usable, p 0.7), class 'assumed' (p 0.15) or PLACEHOLDER_NOT_A_FLIGHT_DESIGN (p 0.15), value from the override ranges below, non-O conversion records 0.0) 0.15; forward incidence diffuse_thermal p 0.7 else hyperthermal_directed; element records each TBD p 0.5 else a usable ev (energy_accommodation U(0,1), contaminant_capacity_kg U(0,1), element_temperature_K U(200,600)); one material record p 0.3 (ao_compatibility uniform over AO_GATE_OUTCOMES with evidence_refs ['SYN-REF'] unless INCOMPLETE_EVIDENCE, surrogate uniform over SURROGATE_LABELS, NO_ATOMIC_O replaced by NONE when the outcome is GATE_SATISFIED_WITHIN_EVIDENCE_DOMAIN); one protection record p 0.3 (particulates_debris, TBD capture); catalytic research evidence = each CATALYTIC_VARIANT_EVIDENCE item w.p. 0.5. Inlet: per-species forward flow 10**U(-9,-5) kg/s; back-incident 10**U(-10,-6) w.p. 0.7 else 0.0; T_gas_K U(150,1500) w.p. 0.8 else null; Kn 10**U(-1.5,1.5) w.p. 0.6 else null; label EVIDENCE 0.5 / PARAMETRIC_SENSITIVITY 0.3 / NORMALIZED_UNIT_INPUT 0.2; incidence = the stage's w.p. 0.85 else the other; incident_power_W per species U(0,1e-3) W w.p. 0.4 else null. Case: null w.p. 0.3, else every parameter id overridden w.p. 0.85 with tau U(0,1), capture U(0,0.2) w.p. 0.5 else 0, O conversion U(0,0.3) w.p. 0.5 else 0, other conversion 0 (w.p. 0.03 U(0,0.1)), routing U(0,1), alpha U(0,1) (w.p. 0.05 exactly 0), face_area 10**U(-3,0) m^2, areal_mass U(0.1,5) kg/m^2; w.p. 0.05 one fraction override replaced by U(1,1.5) or -U(0,0.5); regime_assumption free_molecular w.p. 0.6; temperature_override_K U(150,1500) w.p. 0.3. duration_s U(0, 1e8). F07: stage and case as F06, T_gas_K U(150,1500) w.p. 0.85 else null",
+   "domain_note": "numerical parity domain only; not a physics, design or evidence claim; every synthetic record carries source 'SYNTHETIC_PARITY_VECTOR_NOT_EVIDENCE'"
+  },
+  "vector_totals": {
+   "F01 cole": "29 + 400 + 7",
+   "F02 plate": "200 + 5",
+   "F03 mean_speed": "200 + 3",
+   "F04 tbd_transport": 4,
+   "F05 stage_parameters": 5,
+   "F06 apply": "600 + 26",
+   "F07 backflow": 200,
+   "F08 placeholder": 3,
+   "F09 construct": 50
+  }
+ },
+ "campaign_seeds": {
+  "applicable": true,
+  "scoring_master_seed": 731905301,
+  "development_master_seed": 731905391,
+  "derivation": "numpy.random.default_rng(numpy.random.SeedSequence([master, entry_index]))",
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the existing admitted stochastic / statistical parity contract; the roles are registered separately and never merged",
+   "design_uq_sampling_stream": "NOT_APPLICABLE: no design / UQ sampling in the scored functions",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE: no TPMC call (intake outputs enter as explicit plain-data inputs)",
+   "other_streams": "NOT_APPLICABLE: neither implementation draws random numbers; the harness draws the input vectors once (numpy default_rng) and passes identical float values (JSON shortest round-trip repr) to both implementations",
+   "migration_parity_dataset": "seeds, draw order and captured reference outputs stay exactly reproducible (immutable)",
+   "after_rust_authority": "not applicable (no RNG in the component)"
+  },
+  "development_rule": "development comparisons use development_master_seed only and are never scored or reported as a verdict; the single execution with scoring_master_seed is recorded in campaign_history and the report is committed whatever its verdict"
+ },
+ "observables": {
+  "rule": "every entry compares the full JSON record of the Python result (lists / dicts recursively); each leaf is scored by its type: floats computed by the component ULP_BOUNDED (group 'computed'), every other leaf EXACT_VALUE; a refused call compares the exception class (EXACT_VALUE) and reports the message (not scored)",
+  "F01 cole / F02 plate": {
+   "list": [
+    {
+     "name": "ev.value",
+     "units": "-",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-12
+     },
+     "definition": "Cole transmission probability (tabulated value exactly; log-log interpolation between points); plate: open_fraction * alpha"
+    },
+    {
+     "name": "ev.{units, status, evidence_class, evidence_level, source, uncertainty, basis, domain, requires}",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "basis carries the Python repr of the input floats"
+    }
+   ]
+  },
+  "F03 mean_speed": {
+   "list": [
+    {
+     "name": "cbar",
+     "units": "m s-1",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-12
+     },
+     "definition": "sqrt(8 k_B T / (pi m))"
+    }
+   ]
+  },
+  "F04 tbd_transport / F05 stage_parameters / F08 placeholder": {
+   "list": [
+    {
+     "name": "records / parameter ids (ordered) / to_dict / placeholder values and case",
+     "units": "mixed",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal (placeholder values are copied dataclass defaults; tau_f = open_frac * transmission ** 0.5 is ULP_BOUNDED 'computed')",
+     "definition": "parameter id order is the FilterStage.parameters() order (face_area_m2, areal_mass_kg_m2, then per species in transport order: tau_f, capture_f, conversion_f, tau_b, capture_b, conversion_b, alpha_conductance, [product_to_outlet_f, product_to_outlet_b])"
+    }
+   ]
+  },
+  "F06 apply": {
+   "list": [
+    {
+     "name": "result.to_dict()",
+     "units": "mixed",
+     "tolerance_class": "EXACT_VALUE / ULP_BOUNDED",
+     "tolerance": {
+      "computed floats": {
+       "k_ulp": 4,
+       "r_rel": 1e-12
+      },
+      "difference-type floats (net_downstream_kgps, species_balance_residual_kgps, mass_balance_residual_kgps, converted_minus_produced_kgps, delta_p_Pa)": "additionally |rust - py| <= 1e-12 * S, S = the vector's Python totals.incident_kgps (kg/s fields) or S * delta_p_per_net_kgps_Pa of the species (delta_p_Pa)"
+     },
+     "definition": "status, label, ids, missing, overrides_used, assumptions, species (balances, fractions, conductance, pressure difference), totals, composition_net_downstream, mass_kg, regime, protection, materials, notes, role, admissible_as_baseline, interfaces, retained_inventory, thermal_load, material_state, validity_flags"
+    },
+    {
+     "name": "species_transmission(), to_f3_record(), to_f1_record()",
+     "units": "mixed",
+     "tolerance_class": "EXACT_VALUE / ULP_BOUNDED",
+     "tolerance": "as result.to_dict()",
+     "definition": "the S6.19 transmission record and the IF-A2 / IF-A1 interface records"
+    },
+    {
+     "name": "retained_inventory_kg(result, duration_s)",
+     "units": "kg",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-12
+     },
+     "definition": "capture rate x duration against the capacity record"
+    }
+   ]
+  },
+  "F07 backflow": {
+   "list": [
+    {
+     "name": "backflow_coupling(T, case)",
+     "units": "mixed",
+     "tolerance_class": "EXACT_VALUE / ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-12
+     },
+     "definition": "per-species to_upstream / reflected_to_plenum / captured / converted fractions and conductance, status, label, missing, overrides_used"
+    }
+   ]
+  },
+  "F09 construct": {
+   "list": [
+    {
+     "name": "outcome",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "'CONSTRUCTED' or the exception class name"
+    }
+   ]
+  }
+ },
+ "tolerance_classes": {
+  "EXACT_BYTES": "not used",
+  "EXACT_VALUE": "integers, strings, enums, booleans, statuses, reasons, ids, error classes, None / null, list lengths and orders, dict key SETS (Python dict insertion order carries no meaning in these records and is not compared), and floats that are copied (not computed): equal (floats by value, -0.0 == 0.0; non-finite floats are transported as the strings 'NaN', '+inf', '-inf' and compared as strings)",
+  "ULP_BOUNDED": "|rust - py| <= k_ulp * ulp(py) OR |rust - py| <= r_rel * |py| OR |rust - py| <= a_abs, k_ulp / r_rel / a_abs fixed per observable group below (an absent clause is not applied); relative clause scaled by |py| (not max(1, |py|)): the observables span 1e-30 .. 1e9. ulp(py) = math.ulp(py)",
+  "SOLVER_TOLERANCE": "convergence / solver status EXACT_VALUE; solution |rust - py| <= abs_tol + rel_tol * |py| with abs_tol / rel_tol fixed per entry below and tied to the solver's own tolerance; iteration and function-evaluation counts reported, not scored",
+  "STATISTICAL": "not used (deterministic components)",
+  "EXACT_STREAM": "not used (no RNG in either implementation)"
+ },
+ "tolerance_basis": {
+  "independence": "fixed before any comparison",
+  "registered": "the filter arithmetic is a fixed sequence of IEEE products / sums / divisions that the Rust port repeats in the reference order (bit-identical expected); the only library calls are sqrt (correctly rounded) and log / exp in the Cole interpolation (glibc libm in both). k_ulp 4 / r_rel 1e-12 bounds a few-ulp libm difference through at most three log / one exp evaluation. Difference-type outputs can cancel to a small value whose ulp is meaningless; their floor 1e-12 x the vector's incident flow is far below any physical resolution"
+ },
+ "exact_invariants": [
+  {
+   "id": "INV-F-01",
+   "statement": "determinism: the Rust CLI run twice on the full vector set gives byte-identical stdout; the Python reference evaluated twice gives equal records",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-F-02",
+   "statement": "every Rust FilterResult status maps to exactly one abep_types::EvalStatus: NUMERIC and NO_FILTER_IDENTITY -> EVALUATED, REFUSED_TBD -> INCOMPLETE_EVIDENCE (the SC-WP-02 gate 'filter species transport TBD'), OUT_OF_DOMAIN and NONPHYSICAL_INPUT -> OUT_OF_DOMAIN; asserted by Rust unit tests (the reference has no EvalStatus)",
+   "required_in_both": false
+  },
+  {
+   "id": "INV-F-03",
+   "statement": "an all-TBD stage (FilterStage.tbd / catalytic_research_variant) never yields numbers without a sensitivity case: status REFUSED_TBD, every missing parameter listed, label never upgraded",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-F-04",
+   "statement": "no Rust status / label string contains PASS, SELECTED, WINNER or QUALIFIED; admissible_as_baseline is always false",
+   "required_in_both": true
+  }
+ ],
+ "conservation_checks": {
+  "applicable": true,
+  "checks": [
+   {
+    "id": "CONS-F-01",
+    "statement": "source mass balance of the filter element closes per species and in total (incident = gross downstream + gross upstream + captured + converted - produced; converted = produced) (CLAUDE.md rule 4)",
+    "evaluated_on": "Rust outputs of every NUMERIC / NO_FILTER_IDENTITY F06 vector (Python outputs recorded)",
+    "tolerance": "|species_balance_residual_kgps| and |mass_balance_residual_kgps| and |converted_minus_produced_kgps| <= 1e-12 * totals.incident_kgps"
+   },
+   {
+    "id": "CONS-F-02",
+    "statement": "source power balance",
+    "evaluated_on": "NOT_APPLICABLE",
+    "tolerance": "NOT_APPLICABLE: the filter carries no electrical power; its thermal load is an upper bound record, not a balance"
+   },
+   {
+    "id": "CONS-F-03",
+    "statement": "architecture energy ledger residual < 2 %",
+    "evaluated_on": "NOT_APPLICABLE",
+    "tolerance": "NOT_APPLICABLE: no ledger at element level"
+   }
+  ]
+ },
+ "domain_and_error_parity": {
+  "cases": [
+   {
+    "id": "DE-F-01",
+    "inputs": "E-F-01 / E-F-02 / E-F-04 / E-F-05 refusals",
+    "expected_python": "FilterStageError",
+    "expected_rust": "GasPathError class FilterStageError",
+    "message_key": "reported, not scored"
+   },
+   {
+    "id": "DE-F-02",
+    "inputs": "F03 species 'He'",
+    "expected_python": "KeyError",
+    "expected_rust": "GasPathError class KeyError",
+    "message_key": "unknown species"
+   },
+   {
+    "id": "DE-F-03",
+    "inputs": "F03 T_K -1",
+    "expected_python": "ValueError (math domain error)",
+    "expected_rust": "GasPathError class ValueError",
+    "message_key": "math domain error"
+   },
+   {
+    "id": "DE-F-04",
+    "inputs": "F06 / F07 results with status REFUSED_TBD / OUT_OF_DOMAIN / NONPHYSICAL_INPUT",
+    "expected_python": "the status string",
+    "expected_rust": "the identical status string (EXACT_VALUE) and the INV-F-02 EvalStatus",
+    "message_key": "missing[].parameter / status / requires (EXACT_VALUE)"
+   }
+  ],
+  "mapping": {
+   "FilterStageError": "OUT_OF_DOMAIN (input record or request outside the accepted domain; refused, never repaired)",
+   "KeyError": "OUT_OF_DOMAIN",
+   "ValueError": "OUT_OF_DOMAIN"
+  },
+  "mapping_rule": "every Python exception class maps to exactly one Rust error class (GasPathError.class carries the Python class name) and one EvalStatus; no Rust path may return a value where Python fails, or fail where Python returns (CLAUDE.md rule 3)",
+  "documented_divergence": [
+   {
+    "id": "DIV-F-01",
+    "statement": "none",
+    "disposition": "none"
+   }
+  ]
+ },
+ "schema_parity": {
+  "schemas": [
+   "NOT_APPLICABLE: the records have no JSON schema file; the Python to_dict() layout is the schema"
+  ],
+  "rules": [
+   "field names identical, dict key sets identical, list order identical",
+   "units in field names identical",
+   "evidence labels (EVIDENCE_BASED / PARAMETRIC_SENSITIVITY_NOT_EVIDENCE / NORMALIZED_UNIT_INPUT_NOT_A_PHYSICAL_STATE / PLACEHOLDER_NOT_A_FLIGHT_DESIGN) identical"
+  ]
+ },
+ "golden_and_reference_cases": {
+  "references": [
+   "abep_sim/design/filter_stage.py at python_commit (COLE_TABLE_2_5, factories)"
+  ],
+  "rule": "references are read as committed; they are never regenerated to make Rust pass (RM-R11); a disagreement is investigated and classified (RUST_DEFECT | PYTHON_REFERENCE_DEFECT (own governance, new contract version) | CONTRACT_DEFECT (new contract version))",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_FILTER_STAGE_PY/reference_outputs/",
+   "captured_at_python_commit": "e3b7e6712d106b36dedec1115d9570e2be28f458",
+   "sha256_manifest": "reference_outputs/MANIFEST.json, written by the scoring run",
+   "purpose": "lets CI check Rust against the Python reference after Python is retired from active execution"
+  },
+  "historical_golden_rule": "RM-R28: no golden_v1 / golden_v2 case is used"
+ },
+ "julia_bridge": {
+  "applicable": false,
+  "reason": "no HallThruster.jl path",
+  "hallthruster_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5 (recorded; not used)"
+ },
+ "performance_measurement": {
+  "status": "reported, not a decision criterion (A9.24 items 1 and 6)",
+  "workloads": [
+   {
+    "id": "PERF-F-01",
+    "description": "the F06 apply vectors (600 random) end to end"
+   }
+  ],
+  "repeats": 3,
+  "statistic": "median wall-clock per implementation of 3 repeats in one session on one machine; speed-up = median_python / median_rust; the Rust figure is one CLI process including JSON parsing",
+  "machine_manifest": "recorded in the report (CPU, OS, toolchains, thread env)"
+ },
+ "decision_rules": {
+  "aggregate": "NOT_APPLICABLE (no STATISTICAL entry point)",
+  "exact_invariants_required": true,
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "verdict_vocabulary": [
+   "ADMITTED",
+   "NOT_ADMITTED",
+   "REFUSED_REFERENCE_CHANGED",
+   "INPUT_MISMATCH",
+   "NOT_RUN_RUST_UNAVAILABLE",
+   "REFUSED_CLASSIFICATION"
+  ],
+  "parity_vocabulary": [
+   "PARITY_PASS",
+   "PARITY_FAIL"
+  ],
+  "meaning_of_ADMITTED": "A9.24 item 1: Rust becomes authoritative for the registered functions (within the registered domain); new production results for them come from Rust and carry implementation = rust, rust_commit and this contract id; the Python functions may then be retired from active execution. It is NOT physics validation.",
+  "no_retuning": "tolerances, observables, inputs, n, seeds and rules are fixed; after NOT_ADMITTED only a code fix plus a new contract version with a fresh scoring_master_seed may follow; the failed report stays; no execution is discarded",
+  "disagreement_rule": "never rewrite a Python result, golden, fixture or frozen dataset to make Rust pass (RM-R11)",
+  "observable_scope": "observables are restricted to retained selected-architecture physics; an observable that depends on an excluded legacy path is not registered (RM-R20)",
+  "scoring_once": "the scoring comparison runs once (scoring_master_seed); the harness refuses a second scoring run when parity_report_v1.json exists; development runs (development_master_seed) never write a report into the contract directory",
+  "per_test": "every scored leaf of every vector meets its tolerance class; every refusal has the same exception class in both implementations",
+  "conservation_required": true,
+  "verdict": "ADMITTED iff every per-test, invariant (INV-F-01, -03, -04 compared; INV-F-02 by Rust tests), conservation, domain/error and schema check passes and every reference file matches sha256_at_registration; PARITY_PASS <=> ADMITTED, PARITY_FAIL <=> NOT_ADMITTED"
+ },
+ "bid_boundary": {
+  "statement": "this contract and its Rust implementation are post-bid-freeze work; no output of it may be cited by the bid package unless the owner re-freezes (PROGRAMME.md section 4; bid_source_guard)",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b (technical source) / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (package / freeze record, A9.28; lineage b5849affae22a6709ad217a184f6fe896d15410a -> 2de86ab); A9.29 sec. 3: 2de86ab is the terminal owner-authorized package state",
+  "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+ },
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, threshold or requirement",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27): every PARAMETRIC_SENSITIVITY / PLACEHOLDER / TBD label of the reference is reproduced, never upgraded",
+  "not a gate PASS: absent determining evidence stays NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN / MODEL_ERROR (RM-R31)"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_FILTER_STAGE_PY/parity_report_v1.json (+ .md)",
+  "runner": "scripts/rust_migration/es3_gaspath_parity.py score filter",
+  "report_fields": [
+   "contract_sha256",
+   "python_commit",
+   "reference_sha256",
+   "rust_commit",
+   "build_provenance (rustc, Cargo.lock sha256, source sha256)",
+   "environment",
+   "per-test results",
+   "aggregates",
+   "invariants",
+   "conservation",
+   "domain/error",
+   "schema",
+   "performance",
+   "verdicts",
+   "campaign_history",
+   "ledger_update_requested"
+  ]
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator (A9.25 message 3)",
+  "checks": [
+   "component.migration_class is ACTIVE_SELECTED_ARCHITECTURE_PHYSICS for every inventory id of the group (inventory v3.1 rows, classification_confidence_v3_1 PLAN_APPROVED_A9_29)",
+   "no observable, input or code path of the contract belongs to the excluded legacy vocabulary (LaB6Cathode, lab6_xe, Xe hollow-cathode heater / keeper, C1 flight fallback, hollow-cathode Hall cards, multi-family selection); the components have no not_ported_parts in the inventory",
+   "the Python harness traverses no legacy path to reach the scored functions (no abep_sim.system / archengine / Config card import)",
+   "the Rust implementation contains none of the forbidden identifiers (CI_PLAN.md sec. 1 principle 6)",
+   "not a GROUND_TEST_PROGRAMME_ONLY contract: abep-gaspath is a flight-runtime crate and does not depend on abep-groundtest (cargo metadata check of abep-ci)"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict): the contract cannot be registered"
+ },
+ "value_status_preservation": {
+  "rule": "RM-R27: no provisional / analog / allocation input is promoted by migration to CBE, measured or frozen truth",
+  "inputs": [
+   {
+    "id": "F2-PLACEHOLDER",
+    "value": "IntakeGeometry filter_* defaults (filter_open_frac, filter_transmission, filter_mass_per_m2, area_m2, T_wall_K)",
+    "value_status": "PLACEHOLDER_NOT_A_FLIGHT_DESIGN",
+    "open_action": "F2 filter evidence (A9.13 S6.3 / S6.19)",
+    "committed_labels": [
+     "PARAMETRIC_SENSITIVITY / PLACEHOLDER_NOT_A_FLIGHT_DESIGN (repository filter defaults)",
+     "PARAMETRIC_SENSITIVITY_NOT_EVIDENCE"
+    ]
+   }
+  ],
+  "check": "VS-F-01: F08 / F06 placeholder vectors carry the case label and the PARAMETRIC_SENSITIVITY_NOT_EVIDENCE result label exactly (EXACT_VALUE); no EVIDENCE_BASED label on a placeholder or override result"
+ },
+ "new_physics_verification": {
+  "applies_when": "contract_kind = NEW_PHYSICS (otherwise NOT_APPLICABLE)",
+  "status": "NOT_APPLICABLE",
+  "reason": "EXISTING_PHYSICS_PARITY contract"
+ }
+}

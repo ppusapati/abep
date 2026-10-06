@@ -29,6 +29,8 @@ abep-data = { path = "crates/abep-data" }
 abep-atmos = { path = "crates/abep-atmos" }
 abep-config = { path = "crates/abep-config" }
 abep-hall = { path = "crates/abep-hall" }
+# IF-CHEM-REG-v1 provider (admitted rate integrator C-ABEP_SIM_RATE_TABLES_PY, ICP chemistry registry).
+abep-chem = { path = "crates/abep-chem" }
 # Admitted Kernel-1 TPMC library (parity_report_v2), consumed as a plain rlib: no `python` / `extension-module` feature
 # (A9.29 secs. 5, 11; build equivalence: docs/rust_migration/contracts/C-ABEP_CORE_BUILD_EQUIVALENCE/).
 abep_core = { path = "abep_core", default-features = false }

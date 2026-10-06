@@ -4643,3 +4643,156 @@ row stays PYTHON_REFERENCE (kind python for the remainder).
 - **Results.** cargo test --workspace --locked: 255 passed, 0 ignored. fmt (abep-subsystems) and clippy are clean.
   `ci_checks`: 12/12. pytest: 4232 passed, 5 skipped, 1 xfailed. The ledger is not edited;
   `ledger_update_requested` is in each report.
+
+## 2026-10-06 — ES-3 gas path (SC-WP-02, lane B3): abep-gaspath; filter and compressor ADMITTED, plenum / feed v1 PARITY_FAIL (transients)
+
+- **K-GASPATH: NOT_EXTRACTED_NO_ACTIVE_CONSUMER** (`docs/rust_migration/contracts/K-GASPATH/extraction_decision_v1.json`).
+  Every consumer of the `system.py` gas-path closure is historical / legacy regression; the active upstream gas path is
+  `plenum_feed.Chain`. Not ported: the hall_1stage card, the Xe cathode, the p_min_Pa default, the compressor down-select
+  (HISTORICAL), the feed-state closure (GROUND_TEST_PROGRAMME_ONLY) and the FC-07 Xe cathode getter.
+- **`crates/abep-gaspath`** (new; no new dependency): F2 filter stage, DragCompressor + F3 synthesis + rotor strength
+  (explicit Registry), reservoir, F4 plenum / feed (steady network, orifice bisection, vectorized sweep, Radau IIA
+  transients (DIV-P-01), orbit checks, control modes) and the A9.13 setpoint / domain / flow-gap / robust-set rules.
+  Intake outputs, materials.DB values and rotor bases enter as plain data. A cargo test closes the intake -> compressor
+  -> plenum source mass balance to <= 1e-12 of the forward source (rule 4) and asserts the EvalStatus mappings.
+- **Parity** (contracts committed alone before any comparison; harness `scripts/rust_migration/es3_gaspath_parity.py`):
+  - `C-ABEP_SIM_DESIGN_FILTER_STAGE_PY` v1 (`a529c7eb…`): **ADMITTED**, 1732 vectors, every float bit-identical. v2
+    (`7f5f81ca…`) re-binds the build provenance after the shared-source fix below: **ADMITTED**, bit-identical.
+  - `C-ABEP_SIM_COMPRESSOR_PY` group (compressor + compressor_synthesis + rotor_strength + the ICD-row-22 ledger slot)
+    v1 (`454bc47c…`): **NOT_ADMITTED**. The single scoring execution aborted: the Rust CLI panicked in
+    `basis_problems` on a registered NaN allowable temperature (RUST_DEFECT, ordering test before the finiteness check).
+    Fix `c3a41fb` (plus per-request panic isolation in the CLI) and v2 (`01b1c133…`, fresh seeds, nothing scored changed):
+    **ADMITTED**, 2368 vectors, 239189 float leaves bit-identical.
+  - `C-ABEP_SIM_DESIGN_PLENUM_FEED_PY` group (plenum_feed + reservoir + upstream_a9_13) v1 (`ab93bbde…`):
+    **NOT_ADMITTED**. Steady, sweep (INV-P-02), orbit-quasi-static, reservoir, A9.13 rules and closed forms all pass;
+    CONS-P-01..04 hold. All 247 failures are in P42 / P43 transients and were classified CONTRACT_DEFECT (disclosed
+    before scoring from development comparisons, confirmed after scoring against a tight BDF solution of the reference
+    model): mdot samples carry a relative tolerance while u carries an absolute one (the LSODA reference itself is
+    2.2e-3 off in mdot where Rust is 5.8e-4 off); xO None-ness at a closed valve is noise sign; transient cascade
+    diagnostics evaluate K0 - (K0 - 1) x with condition number ~K0 / K (up to 1e20); final_setpoint_error_frac / u_min
+    floors sit below the rtol-1e-5 integrator error (one case: Rust Radau 4.5e-4 vs LSODA 1.3e-4 off).
+    The report writer stopped on an infinite max_ulp; the report was rebuilt from the execution's captured outputs.
+- **Open (owner / coordinator):** plenum v2 needs a re-specification of the transient observables. PROGRAMME rule 11 says
+  a contract defect is never resolved by changing a tolerance. A tighter internal Rust integration tolerance is a
+  candidate code fix. No ledger file was edited; every report carries `ledger_update_requested`.
+
+## 2026-10-06 — Migration ledger update 2: Hall bridge, abep-chem, SC-WP-04 drag, SC-WP-07 mass, SC-WP-05 power admissions
+
+Bookkeeping only (`docs/rust_migration/migration_state_v1.json`, owner lane A1). No Python, physics, contract, report or
+Rust source changed. Every sha256 is computed from the committed file. Checked: each contract file has exactly one commit
+(its registration commit), every recorded Python reference file equals the pin in its contract, each recorded Rust commit is
+an ancestor of the integration head. The only code touched is the expected counts in `crates/abep-ci/tests/ledger.rs`:
+(13 admitted rows, 21 admitted partial admissions, 1 admitted new item) from (4, 9, 1). Rule as in ledger update 1: a row is
+fully ADMITTED only if everything not ported from it is formally retired (never to be migrated); otherwise the admission is a
+partial admission and the row stays PYTHON_REFERENCE. A partial admission changes no row status, so it has no
+`status_history` entry.
+
+- **Full admissions** (nine rows, each PYTHON_REFERENCE -> PREREG_PARITY -> RUST_IMPL -> PARITY_PASS -> ADMITTED, evidence =
+  the parity report; Python stays at its paths, PYTHON_RETIRED_FROM_ACTIVE is not requested):
+  - Hall bridge, contract C-HALL-MAP-ENSEMBLE-REGISTRY (crate abep-hall): `C-ABEP_SIM_HALL_MAP_PY`,
+    `C-ABEP_SIM_HALL_ENSEMBLE_PY`, `C-ABEP_SIM_HALLMAP_REGISTRY_PY` (whole modules; the contract lists no unported part).
+  - `C-SCRIPTS_MAKE_P5_N2_LAUNCH_MANIFESTS_PY`, contract C-JULIA-BRIDGE-LAUNCH (crate abep-julia-bridge). Platform tests PT-01
+    / PT-02 are registered and NOT_RUN (no pinned Julia in normal CI); PT-02 (run-record EXACT_BYTES) is pending. It is a
+    separate registered test class, not an unported part, so the row is fully admitted.
+  - SC-WP-04, crate abep-mission: `C-ABEP_SIM_SPACECRAFT_REFERENCE_DRAG_PY`, `C-ABEP_SIM_STATEWISE_PY`,
+    `C-DOCS_DESIGN_SYNTHESIS_SPACECRAFT_REFERENCE_DRAG` (whole module / builder each; the contracts' out_of_scope items
+    belong to other rows).
+  - SC-WP-07: `C-DOCS_BUDGETS_MASS_POWER_A9_V5` (crate abep-subsystems; main() replaced by `abep-mass build-v5 / check-v5`).
+    The AL-07 value status (6.0 kg PROVISIONAL_LEGACY_DERIVED_ANALOG_INPUT, AFI-02-RA1_OPEN) is kept as recorded.
+  - SC-WP-05: `C-ABEP_SIM_MAGNET_POWER_PY`. The one unported item, `ecr_resonance_field_T` (historical ECR family), is read
+    as formally retired: it is the inventory `not_ported_parts` (plan-approved), the ECR line is historical (A9), and its
+    only callers are class-H rows (electrical_closure tools, aux_bus; NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH) and a Python
+    reference test. No owner record names it: this is a ledger-owner reading flagged for the owner to confirm or reverse
+    (reversal = a partial admission).
+- **Partial admissions** (row status unchanged, one ADMITTED entry each, 12 new entries):
+  - `C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY` (four entries): `hall_response_status` (Hall-bridge contract, abep-hall);
+    drag_table / hall_response_status / supplied_objective / _obj / thrust_minus_drag (drag-kernel contract, abep-mission);
+    `wet_mass` (mass v5 contract, abep-subsystems); `official_ledger` (bus boundary v2 contract, abep-subsystems).
+    `hall_response_status` is admitted twice, with two independent evidences, in two crates. **abep-hall's `status` module is
+    the authoritative implementation**; the abep-mission copy (`objective.rs`) is a duplicate to be consolidated onto it later.
+  - `C-ABEP_SIM_RATE_TABLES_PY` (abep-chem): the report requests ADMITTED, but the file I/O of `write_hallthruster_table` is
+    neither ported nor retired by an owner record (frozen data, rule 1; table-builder placement is NP-ICP-CHEM-AIR
+    OQ-CHEM-05), so it is partial. NP-ICP-NEUTRALIZER software_admission item (3) is noted as satisfied by this evidence in
+    the entry; the NP item status is unchanged.
+  - `C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY`: whole module for the flight configuration except `rfp_power_gate` (stays
+    PYTHON_REFERENCE until abep-assess admits it, SC-WP-11) and the ground-reference metadata; still to migrate, so partial.
+    Also `C-ABEP_SIM_BUS_BOUNDARY_A9_PY` (the v1 functions rebound by v2), `C-ABEP_SIM_PROGRAMME_DESIGN_SYNTHESIS_PY`
+    (`bus_power` without `gate_verdict`).
+  - `C-DOCS_EXPERIMENTS_HALL_ICP_P2_IMPEDANCE_MAP` (RF-network kernels; `verify_line_match_loss` deferred) and
+    `C-DOCS_EXPERIMENTS_HALL_ICP_P1_ICP_BENCH` (`p_bus_from_generator_input` only).
+  - `C-DOCS_BUDGETS_XE_ACCOUNTING_A9_V3`: X1-X6; the record and `design_cases` are BLOCKED_GOVERNANCE_CONFLICT.
+  - `C-DOCS_BUDGETS_MASS_POWER_A9_V3`: kernel K-MASS-RULES (class-H host stays NOT_PORTED_RETIREMENT_PENDING).
+- **Not applied.**
+  - `C-SCRIPTS_IDENTIFY_P5_TRANSPORT_PY` -> FORMALLY_RETIRED_NOT_PORTED: the Julia-bridge report only proposes it
+    ("proposed"). A retirement needs an owner record; the row stays PYTHON_REFERENCE. Owner decision pending.
+  - `C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY` and `C-ABEP_SIM_RATE_TABLES_PY` as full ADMITTED, and the Xe, P2 and P1 rows as
+    anything but partial: see above (a part is still to migrate).
+- **Results.** cargo test --workspace --locked: all test binaries pass (0 failed; the 2 ignored are the registered platform
+  tests PT-01 / PT-02); the ledger checker accepted every applied change (nothing forced). `cargo fmt -- --check` is clean.
+  `ci_checks`: 12/12. No Python changed, so pytest was not rerun.
+
+## 2026-10-06 — NP-ICP integration: NP-ICP-CHEM-AIR BP-S1 registry skeleton, EQ-06 wired to abep-chem, verification report v2 (new physics; no table built, no prereg, Hall or frozen file changed)
+
+- **BP-S1** (`f430d7b`, branch `lane-np-icp-wiring` from `def19d6`): `data/chemistry/icp/` as the NP-ICP-CHEM-AIR build
+  plan defines it. Labels `abep-icp-air-0.0` / `abep-icp-xe-0.0` (NOT_ADMITTED) sit in `ICP_CHEM_PINNED.toml` (`074daff9…`).
+  - `registry_air.toml` / `registry_xe.toml` hold every contract process with its recorded status (AIR 15 / 16 / 23,
+    XE 1 / 5 / 4). They also hold 43 channels for the reused abep-n2n-0.11 tables, with stoichiometry, header energies,
+    variant groups and the scenario EM-N2-NOMINAL (= `n2_n.toml`).
+  - `reuse_pins.json` holds the contract's reuse pins plus the FC-CHEM-10 Hall-isolation pins.
+  - `rate_validity_icp.toml` holds mirrored validity entries.
+  - `xs/` holds the cross-section points of 32 reused tables, extracted unchanged from the C-ABEP_SIM_RATE_TABLES_PY v1
+    capture (`examples/build_icp_xs.rs`).
+  - `ionization_N` (NIST table not committed) and the 10 vibrational rate fits have no registered representation.
+  - `abep_chem::registry` loads everything through sha256 pins. It refuses (MODEL_ERROR) the conditions of
+    FC-CHEM-01, -03, -04 and -05, and any status or pin that differs from the contract.
+- **EQ-06 wiring** (`e404c15`): abep-icp evaluates a registered table only as `abep_chem::checked::maxwellian_rate` on
+  its registry representation, in the solve and in NV-06.
+  - EM-N2 is built from the registry.
+  - G-A930-AIR, the tier-1 gaps, SP-04 (SB-NO; SB-He / SB-Ar above 1 %), SP-05 and XE isolation all read the registry.
+  - The gate for admission-rule item 3 reads the pinned abep-chem parity report.
+  - With registered tables, the T_e scan ends at the highest admissible T_e: 30 eV for the 45 eV tables (INT-16).
+  - Withheld as INCOMPLETE_EVIDENCE: the 11 channels without a representation (`EQ-06_REPRESENTATION_NOT_REGISTERED`).
+  - AIR_PRIMARY, XE_CONTINGENCY and EM-N2 stay INCOMPLETE_EVIDENCE. No gate was relaxed.
+- **Verification report v2** (`919ef60`; v1 immutable): status IMPLEMENTED_UNVERIFIED, NOT_VALIDATED.
+  - Item 3 is met on committed evidence. Items 4 (VER-01/02/06/07/08/11/12) and 5 (admission record) are open.
+  - NV-06 covers 32 of 43 channels. On table rows the difference is ≤ 4.4e-7. Between rows, the 1 eV `.dat`
+    interpolation overestimates threshold rates by up to +238 % at T_e = 3 eV and +31 % at 5 eV.
+  - A SYNTHETIC_TEST_ONLY solve on registered N2 rates converges at T_e 4.982 eV, with rates bit-identical to the
+    registry.
+  - The NP-ICP-CHEM-AIR build plan and the NP-ICP-NEUTRALIZER prereg do not disagree on the registry interface.
+  - Still open for the owner: PF-01 / PF-02, GAP-01..05, and INT-16 / INT-17.
+- **Results.**
+  - `cargo test --workspace --locked`: 326 passed, 0 failed, 2 ignored (registered platform tests PT-01 / PT-02).
+    abep-icp 63, abep-chem 40.
+  - fmt and clippy are clean. `ci_checks` 12/12.
+  - pytest: 4232 passed, 5 skipped, 1 xfailed.
+- **Ledger request** (in the report; the ledger was not edited): NP-ICP-NEUTRALIZER stays RUST_IMPL with evidence v2.
+  First, C-ABEP_SIM_RATE_TABLES_PY should apply its own ADMITTED request.
+
+## 2026-10-06 — Plenum / feed parity v2 (SC-WP-02): scope reduction v1 minus P42 / P43; PARITY_FAIL in P45 (one leaf)
+
+- **Contract** `C-ABEP_SIM_DESIGN_PLENUM_FEED_PY` v2 (`8ee5a18c…`, committed alone in `92aec72`): v1 minus the two
+  transient entries `transient_run` (P42) and `transient_case` (P43), 34 vectors including E-P-05. It is a scope
+  reduction only. Every other observable, tolerance, generator, invariant, conservation check and decision rule is v1's
+  verbatim, and nothing is relaxed. Fresh seeds: scoring 731905313, development 731905413. Reason: the v1 report (all 247
+  failures in P42 / P43, CONTRACT_DEFECT). The re-specification of the transient observables is a pending owner
+  decision, and v2 does not make it. `transient_run` / `transient_case` stay PYTHON_REFERENCE until an owner-ruled
+  transient contract exists.
+- **Harness** (`d55e7e0`): a contract-version switch only. The entries in `scope_reduction_v2.excluded_harness_entries`
+  are dropped before any call. The report carries a v2 ledger request (partial admission, transients excluded). No Rust
+  source changed.
+- **Scored once: PARITY_FAIL / NOT_ADMITTED** (`092c8a8`): 3781 vectors, 1 per-test failure.
+  - The failure is P45-0 `orbit_simulated` `P_dev_max_frac`: Rust 0.2242461 vs Python 0.2236362 (rel 2.7e-3, registered
+    1e-3).
+  - Everything else passes: steady, sweep / INV-P-02, quasi-static orbit, reservoir, A9.13 rules, closed forms,
+    determinism and CONS-P-01..04.
+- **Post-scoring classification** (Python reference only, no re-score): CONTRACT_DEFECT, the same family as v1 (iv).
+  - Re-integrating P45-0 with the reference model at Radau 1e-10 / BDF 1e-11 converges to 0.2243043.
+  - The LSODA rtol-1e-5 reference is therefore 3.0e-3 off, and Rust is 2.6e-4 off.
+  - P_dev = |p / r0 - 1| amplifies the relative p error about 5.5x, so the registered 1e-3 sits below the reference's
+    own error.
+  - The same vector shows that the registered abs_tol 1e-6 makes the kg/s summary leaves (`mdot_min/max_kgps`, about
+    1e-10 to 1e-7) effectively unscored. LSODA is 1.7–2.1 % off there; Rust is 8e-5 / 5.4e-3 off.
+- **Open (owner / coordinator):** a transient-tolerance ruling now covers P45 as well as P42 / P43. It must be made
+  before any v3. Changing a tolerance after seeing the failure is not done here (PROGRAMME rule 11). No ledger file was
+  edited; the report requests PARITY_FAILED for the three rows.

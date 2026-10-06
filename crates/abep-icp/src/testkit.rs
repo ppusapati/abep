@@ -360,3 +360,32 @@ pub fn registered_today_case(mode: SupplyMode, chemistry: ChemistryRegistration)
         hall_demand: None,
     }
 }
+
+/// A SYNTHETIC_TEST_ONLY set whose reactions are registered channels of the EM-N2 set (rates through the IF-CHEM-REG-v1
+/// representation and abep_chem::checked, EQ-06); the species selection and the process-class exclusions are synthetic.
+/// It exercises the direct-rate path inside a solve; its outputs carry the SYNTHETIC_TEST_ONLY label like every other
+/// testkit case (FC-15), so no number from it is evidence.
+pub fn n2_registered_rate_set(m: &crate::IcpModel, channels: &[&str], species: &[&str]) -> ChemistrySet {
+    let n2 = &m.n2_set;
+    let reactions: Vec<ReactionDef> = channels
+        .iter()
+        .map(|id| n2.reactions.iter().find(|r| r.id == *id).unwrap_or_else(|| panic!("{id} not in EM-N2")).clone())
+        .collect();
+    let species: Vec<SpeciesDef> = species
+        .iter()
+        .map(|s| n2.species.iter().find(|x| x.name == *s).unwrap_or_else(|| panic!("{s} not in EM-N2")).clone())
+        .map(|mut s| {
+            s.recombines_to = None;
+            s
+        })
+        .collect();
+    let names: Vec<&str> = species.iter().map(|s| s.name.as_str()).collect();
+    ChemistrySet {
+        set_id: "SYNTHETIC_SET_OF_REGISTERED_N2_CHANNELS".into(),
+        process_classes: excluded_all(&names),
+        species,
+        reactions,
+        t_e_domain_ev: n2.t_e_domain_ev,
+        vibrot_t_e_min_ev: n2.vibrot_t_e_min_ev,
+    }
+}

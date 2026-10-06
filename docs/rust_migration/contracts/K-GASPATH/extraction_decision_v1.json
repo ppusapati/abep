@@ -1,0 +1,65 @@
+{
+ "schema": "abep_rust_kernel_extraction_decision_v1",
+ "id": "K-GASPATH-EXTRACTION-DECISION-V1",
+ "kernel_id": "K-GASPATH",
+ "date": "2026-10-06",
+ "lane": {
+  "id": "B3",
+  "execution_step": "ES-3",
+  "work_package": "SC-WP-02",
+  "branch": "lane-es3-gaspath",
+  "base_commit": "e3b7e6712d106b36dedec1115d9570e2be28f458"
+ },
+ "rule": {
+  "text": "K-GASPATH = the gas-path subset of system.physics_closure only, extracted only if an active consumer is confirmed (v3 finding: its golden_v2 consumers are historical)",
+  "source": "docs/rust_migration/simulation_completion_programme_v1_1.json work_packages SC-WP-02 element 'compressor' notes; docs/rust_migration/component_inventory_v3_1.json extract_and_parity_kernels K-GASPATH v3_status EXTRACT_ONLY_IF_AN_ACTIVE_CONSUMER_IS_CONFIRMED",
+  "method": "AUDIT_THEN_EXTRACT_ONLY_IF_NEEDED (simulation_completion_programme_v1_1.json method_vocabulary)"
+ },
+ "decision": "NOT_EXTRACTED_NO_ACTIVE_CONSUMER",
+ "decision_statement": "No active consumer of the gas-path subset of abep_sim/system.py::physics_closure exists in the selected hall_icp_neutralizer chain. K-GASPATH is therefore not extracted, no parity contract is registered for it and abep-gaspath carries no part of system.py. The active upstream gas path (intake IF-A1 record -> F2 filter -> F3 DragCompressor physics -> F4 plenum / feed) is abep_sim/design/plenum_feed.py::Chain and its steady / transient solvers, which this lane ports under PARITY-C-ABEP_SIM_DESIGN_PLENUM_FEED_PY-V1 (DragCompressor and the reservoir physics under their own contracts). The hall_1stage card, its Xe cathode and the p_min_Pa default are not ported (they are reached only through the class-H closure).",
+ "evidence": {
+  "search": "grep for physics_closure / gas_path_state / gaspath_physics over every *.py of the tree at the base commit (abep_core excluded), each hit classified against component_inventory_v3_1.json",
+  "consumers_found": [
+   {"path": "abep_sim/system.py", "inventory": "C-ABEP_SIM_SYSTEM_PY", "class": "HISTORICAL_LEGACY_REGRESSION", "role": "the producer itself"},
+   {"path": "abep_sim/archengine.py", "inventory": "C-ABEP_SIM_ARCHENGINE_PY", "class": "HISTORICAL_LEGACY_REGRESSION", "role": "gas_path_state (class H)"},
+   {"path": "abep_sim/golden.py", "inventory": "C-ABEP_SIM_GOLDEN_PY", "class": "HISTORICAL_LEGACY_REGRESSION", "role": "golden_v2 gas_path / hall_icp_neutralizer_reference cases: historical (RM-OQ-06, RM-R28); hall_icp_neutralizer_reference is AFI-04 HISTORICAL_REGRESSION_COMPATIBILITY and excluded from SC-WP-15"},
+   {"path": "abep_sim/mission5.py", "inventory": "C-ABEP_SIM_MISSION5_PY", "class": "HISTORICAL_LEGACY_REGRESSION", "role": "legacy mission closure"},
+   {"path": "abep_sim/arch_compare.py", "inventory": "C-ABEP_SIM_ARCH_COMPARE_PY", "class": "HISTORICAL_LEGACY_REGRESSION", "role": "legacy architecture comparison"},
+   {"path": "abep_sim/programme/closure.py", "inventory": "C-ABEP_SIM_PROGRAMME_CLOSURE_PY", "class": "HISTORICAL_LEGACY_REGRESSION", "role": "legacy programme closure"},
+   {"path": "abep_sim/programme/sweep.py", "inventory": "C-ABEP_SIM_PROGRAMME_SWEEP_PY", "class": "HISTORICAL_LEGACY_REGRESSION", "role": "legacy sweep"},
+   {"path": "abep_sim/uq6.py", "inventory": "C-ABEP_SIM_UQ6_PY", "class": "HISTORICAL_LEGACY_REGRESSION", "role": "legacy UQ"},
+   {"path": "abep_sim/assessment/closure_checks.py", "inventory": "C-ABEP_SIM_ASSESSMENT_CLOSURE_CHECKS_PY", "class": "HISTORICAL_LEGACY_REGRESSION", "role": "assessment of the legacy closure"},
+   {"path": "scripts/architecture/build_feed_envelope.py", "inventory": "C-SCRIPTS_ARCHITECTURE_BUILD_FEED_ENVELOPE_PY", "class": "HISTORICAL_LEGACY_REGRESSION", "role": "historical feed envelope builder"},
+   {"path": "scripts/config/build_result_schemas.py", "inventory": "C-SCRIPTS_CONFIG_BUILD_RESULT_SCHEMAS_PY", "class": "HISTORICAL_LEGACY_REGRESSION", "role": "raw_closure_v2 schema builder"}
+  ],
+  "class_a_references_that_are_not_consumers": [
+   {"path": "scripts/config/build_config.py", "inventory": "C-SCRIPTS_CONFIG_BUILD_CONFIG_PY", "class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS", "what": "names abep_sim.system.physics_closure as the producer of schema raw_closure_v2 in config/SOURCES_OF_TRUTH.json (a pointer string; no gas-path value is read)", "follow_up": "SC-WP-12 config lane: re-point the raw-result producer when the class-H closure leaves the active graph (not done here: config/** is outside this lane)"},
+   {"path": "docs/decisions/application/build_a9_16_application_matrix.py", "inventory": "C-DOCS_DECISIONS_APPLICATION", "class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS", "what": "source-text check that system.py carries 'def physics_closure' (A9.22 application evidence of a historical commit); no gas-path value is read"},
+   {"path": "scripts/perf/profile_baseline.py", "inventory": "C-SCRIPTS_PERF_PROFILE_BASELINE_PY", "class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS", "what": "PRE_RUST profiling workload system_evaluate_gas_path (rank 4, 'NOT_A_BOTTLENECK'); performance is reported, never a criterion (A9.24 items 1, 6), and a slow legacy workload is retired, never ported because it is slow (RM-R25)"}
+  ],
+  "active_design_modules_checked": [
+   "abep_sim/design/intake_synthesis.py",
+   "abep_sim/design/filter_stage.py",
+   "abep_sim/design/compressor_synthesis.py",
+   "abep_sim/design/plenum_feed.py",
+   "abep_sim/design/upstream_a9_13.py",
+   "abep_sim/design/architecture_optimizer.py",
+   "abep_sim/design/robust_optimizer.py"
+  ],
+  "active_design_modules_result": "none imports abep_sim.system or calls physics_closure; F7 / F8 consume plenum_feed (filter_cases, CompressorPlant, Plenum, intake_side, steady_sweep, steady_operating_point, Chain)",
+  "active_golden": "SC-WP-15: the new active hall_icp_neutralizer golden is generated only from the admitted active Rust chain; golden_v2 gas_path and the hall_1stage-computed hall_icp_neutralizer_reference are excluded (excluded_legacy_not_ported)"
+ },
+ "consequences": [
+  "SC-WP-02 admission criterion 'K-GASPATH harness-independence check: the Python path through Config(hall_1stage) reads no card field (RM-R20)' is NOT_APPLICABLE: no K-GASPATH contract exists, no Python harness traverses the card",
+  "aochem.inlet_composition is not pulled forward by this lane (it would have been pulled only by an extraction)",
+  "C-ABEP_SIM_SYSTEM_PY stays HISTORICAL_LEGACY_REGRESSION / NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH with no extracted kernel; its golden_v2 cases stay reproducible from the historical Python environment (RM-R28)"
+ ],
+ "reopen_trigger": "a class-A consumer that reads gas-path values from physics_closure is identified (e.g. by the SC-WP-15 active golden design): then a K-GASPATH contract is registered under its own commit before any comparison",
+ "ledger_update_requested": [
+  {"kernel": "K-GASPATH", "requested_status": "NOT_EXTRACTED_NO_ACTIVE_CONSUMER", "record": "docs/rust_migration/contracts/K-GASPATH/extraction_decision_v1.json"}
+ ],
+ "what_this_is_not": [
+  "not a change of system.py, golden_v1 / golden_v2 or any frozen dataset",
+  "not a physics finding: it records only that no active consumer exists"
+ ]
+}

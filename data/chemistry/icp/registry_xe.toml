@@ -1,0 +1,151 @@
+# IF-CHEM-REG-v1 species and process registry, mode XE (NP-ICP-CHEM-AIR v1, build plan BP-S1; label abep-icp-xe-0.0).
+# Every contract process of this mode appears once, with the status, tier, class and reaction text the contract
+# records (prereg_v1.json processes[]); abep_chem::registry refuses any difference (MODEL_ERROR). A channel is one
+# registered representation of a process (one table or one variant member); a process without a channel has no
+# usable data. Schema: registry_schema_v1.json. Maintained by hand, one table per commit (build plan per_table_commit).
+schema = "IF-CHEM-REG-v1"
+mode = "XE"
+label = "abep-icp-xe-0.0"
+contract = "NP-ICP-CHEM-AIR"
+contract_lock = "docs/rust_migration/new_physics/NP-ICP-CHEM-AIR/prereg_lock_v1.json"
+contract_lock_sha256 = "f42c22699a31acd4e29854823150d7b7c75b35eb8718fb90ade83bdd3d7e46ef"
+evidence_modes = ["XE_CONTINGENCY", "EM-XE"]
+
+[domain]  # D-CHEM (contract domain); table validity is the separate rate_validity_icp.toml check
+id = "D-CHEM"
+t_e_eV = [2.0, 30.0]
+mean_energy_eV = [3.0, 45.0]
+low_threshold_window_t_e_eV = [0.2, 30.0]
+low_threshold_kinds = ["EXCITATION_VIBRATIONAL", "EXCITATION_ROTATIONAL"]
+p_icp_max_Pa = 13.3322
+eedf = "MAXWELLIAN"
+
+[admission]
+status = "NOT_ADMITTED"
+gate = "AD-XE-01..06 (NP-ICP-CHEM-AIR admission_criteria.XE_CONTINGENCY)"
+reason_code = "NP_ICP_CHEM_AIR_XE_NOT_ADMITTED"
+today = "NOT ADMITTED: no Xe table registered (XE-ION-01, XE-EXC-01, XE-EL-01 to acquire)"
+
+[completeness_audit]
+id = "CA-ICP-v1 (CA-12, Xe)"
+status = "NOT_RUN"
+note = "Xe runs its own CA on CG-XE, independent of every AIR item (AD-XE-05)"
+
+[[species]]
+id = "Xe"
+charge = 0
+elements = { "Xe" = 1 }
+role = "feed"
+status = "RETAINED"
+retention = "MR-7 (XE_CONTINGENCY supply mode)"
+mass_source = "NOT_REGISTERED: no channel of this species at BP-S1; registered with its first table"
+
+[[species]]
+id = "Xe^+"
+charge = 1
+elements = { "Xe" = 1 }
+role = "ion"
+status = "RETAINED"
+retention = "MR-3 (ion of the retained ionization channel)"
+mass_source = "NOT_REGISTERED: no channel of this species at BP-S1; registered with its first table"
+
+[[species]]
+id = "Xe^2+"
+charge = 2
+elements = { "Xe" = 1 }
+role = "ion"
+status = "CONDITIONAL_ON_CA"
+retention = "XE-ION-02"
+mass_source = "NOT_REGISTERED: no channel of this species at BP-S1; registered with its first table"
+
+[[species]]
+id = "Xe2^+"
+charge = 1
+elements = { "Xe" = 2 }
+role = "ion"
+status = "CONDITIONAL_ON_CA"
+retention = "XE-REC-01 (dimer ion)"
+mass_source = "NOT_REGISTERED: no channel of this species at BP-S1; registered with its first table"
+
+[[process]]
+id = "XE-ION-01"
+class = "electron-impact ionization"
+reaction = "e + Xe -> Xe+ + 2e"
+target = "Xe"
+tier = "1"
+status = "SOURCE_IDENTIFIED_TO_ACQUIRE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "XE-ION-02"
+class = "multiple ionization"
+reaction = "e + Xe -> Xe^2+ + 3e; e + Xe+ -> Xe^2+ + 2e"
+tier = "3"
+status = "SOURCE_IDENTIFIED_TO_ACQUIRE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "XE-EXC-01"
+class = "electronic excitation"
+reaction = "e + Xe -> e + Xe* (state-resolved or lumped with a sourced representative energy; includes the 6s metastables)"
+target = "Xe"
+tier = "1"
+status = "SOURCE_IDENTIFIED_TO_ACQUIRE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "XE-EL-01"
+class = "elastic momentum transfer"
+reaction = "e + Xe -> e + Xe"
+target = "Xe"
+tier = "1"
+status = "SOURCE_IDENTIFIED_TO_ACQUIRE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "XE-ION-03"
+class = "stepwise ionization from metastables"
+reaction = "e + Xe* -> Xe+ + 2e"
+tier = "2"
+status = "INCOMPLETE_EVIDENCE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "XE-REC-01"
+class = "volume recombination and dimer-ion formation"
+reaction = "e + Xe+ -> Xe + h nu; Xe+ + 2 Xe -> Xe2+ + Xe; e + Xe2+ -> Xe* + Xe"
+tier = "3"
+status = "INCOMPLETE_EVIDENCE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "XE-EXC-02"
+class = "excited-state energy disposition and metastable wall quenching"
+reaction = "Xe* -> Xe + h nu | Xe* + wall -> Xe"
+tier = "2"
+status = "INCOMPLETE_EVIDENCE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "XE-WALL-01"
+class = "ion wall neutralization"
+reaction = "Xe+ / Xe^2+ + wall -> Xe"
+tier = "1 (structural)"
+status = "SOURCE_IDENTIFIED_TO_ACQUIRE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "XE-NL-01"
+class = "neutral loss / residence"
+reaction = "Xe(volume) -> Xe(out)"
+tier = "1 (structural)"
+status = "IN_REPO_VERIFIED"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "XE-IM-01"
+class = "resonant charge exchange"
+reaction = "Xe+ + Xe -> Xe + Xe+"
+tier = "n/a"
+status = "INCOMPLETE_EVIDENCE"
+ca_verdict = "NOT_EVALUATED"
