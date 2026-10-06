@@ -4315,3 +4315,34 @@ main, and the bid record `5eee4b8` / `b5849af` / `2de86ab`. `git diff 2de86ab..H
 - Tests: `cargo test --workspace --locked` 35 passed, 0 ignored; `scripts/ci_checks.py` 11/11; pytest 4226 passed / 5
   skipped / 1 xfailed. The A9.23 test "only the builder writes the engineering constraints" now allow-lists the
   parity harness by name, because the harness writes only temporary case trees.
+
+## 2026-10-05 — Lane B2: ES-3 intake part of SC-WP-02 (abep_core build equivalence, TPMC intake response, frozen intake surface, intake.py; Rust admitted, no Python or frozen data changed)
+
+- **abep_core build-equivalence addendum v1** (`docs/rust_migration/contracts/C-ABEP_CORE_BUILD_EQUIVALENCE/`), preregistered
+  in `3ca48e8` before any workspace build: **EQUIVALENT**. The six abep_core sources match the parity_report_v2 sha256
+  values; the build uses rustc / cargo 1.94.1 with no `python` / `extension-module` feature and no pyo3 / numpy in the graph.
+  On 493 Kernel-1 cases (golden + edge vectors, development seed 1) the workspace builds (debug, release, and release with
+  lto fat / codegen-units 1) are bit-identical to the recorded extension (`eb586f03…`). abep_core is unmodified. A cargo test
+  replays all cases and pins the abep_core sources (A9.30 sec. 6). Workspace formatting is `cargo fmt -- --check`
+  (members only; never `cargo fmt --all`).
+- **`crates/abep-intake`.** It calls abep_core directly (RM-OQ-01: no DEFAULT_BACKEND flip). It provides:
+  - intake_response / response_surface / clausing_transmission; non-converged traces carry status MODEL_ERROR;
+  - the hash-verified frozen intake surface v1 reader (read, never regenerated);
+  - collection / compress / passive_compression;
+  - the intake surface v2 gate (NOT_EVALUATED).
+- **Parity**, each contract committed alone before any comparison, each scored once:
+  - `C-ABEP_SIM_INTAKE_TPMC_PY` v1 (`1e6a80fb…`): **ADMITTED**. E1 424 statistical tests within z 5 (aggregate max 2.22);
+    E2 / E3 / E5 pass; E4 17143 surface checks within 4 ulp or 1e-11; 25 domain / error cases pass.
+  - `C-ABEP_SIM_INTAKE_PY` v1 (`6d67d5e4…`): **ADMITTED**. 1883 checks; the mass balances CONS-01 / CONS-02 close.
+- **Finding B2-OF-01** (a property of the frozen Python reference, not of the Rust port).
+  - IntakeSurface's scipy / Qhull triangulation of the degenerate v1 tensor grid is non-conforming across interior grid
+    faces: L/d 5 and 10, alpha 0.2 / 0.5 / 0.8, theta 2 deg.
+  - The value at a face point depends on scipy's simplex walk. Maximum jumps: CR_passive 17 %, K_back 6 %, eta_c 3.8 %,
+    mass_kg 3.7 %, C_D 0.2 %. Survey: `finding_B2-OF-01_face_survey_v1.json`.
+  - Found in development and handled before scoring. Rust replicates scipy's walk over the reference's captured
+    triangulation and search structures, which are versioned, sha256-pinned derived data with provenance
+    (`crates/abep-intake/data/PROVENANCE.json`); any mismatch is MODEL_ERROR. Both reports record the deviation from the
+    registered evaluation text; observables, tolerances and seeds are unchanged.
+  - Coordinator disposition: keep faithful parity; owner question open.
+- **PRE_RUST workload `intake_response_surface_reduced`** (reported, never a criterion): Python 4.98 s, Rust 0.79 s
+  median wall (6.3x), same machine and session. Python OMP / OPENBLAS / MKL / NUMEXPR threads = 1; Rust single-threaded.

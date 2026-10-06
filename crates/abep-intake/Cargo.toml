@@ -1,0 +1,15 @@
+[package]
+name = "abep-intake"
+description = "ABEP intake: admitted Kernel-1 TPMC (abep_core) called directly, intake response layer, frozen intake surface v1 (SC-WP-02, ES-3)."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+license.workspace = true
+
+[dependencies]
+abep_core.workspace = true
+abep-types.workspace = true
+abep-provenance.workspace = true
+serde.workspace = true
+serde_json.workspace = true
