@@ -4481,3 +4481,31 @@ row stays PYTHON_REFERENCE (kind python for the remainder).
   admitted, the Rust workflow jobs become required status checks and `docs/ci/BRANCH_PROTECTION.md` is updated. The
   A9_19 report also asks that the principle-6 forbidden-identifier scan allow-list
   `crates/abep-config/src/architecture.rs`.
+
+## 2026-10-06 — SC-WP-04 spacecraft interaction in Rust: reference spacecraft drag, statewise quantifier, F1 intake drag, statewise T - D (four contracts admitted; no Python, frozen data or number changed)
+
+- **Contracts**, each committed alone before any comparison and scored once (branch `lane-wp04-drag` from `fa4fcb3`):
+  - `C-ABEP_SIM_SPACECRAFT_REFERENCE_DRAG_PY` v1 (`22c0aca1…`): **ADMITTED**. 4492 vectors, including reference_drag on
+    the 196 required design states x 8 declared cases x 2 intake accountings. Every computed value is bit-identical.
+    DIV-A-01: Rust refuses a non-finite q / drag (OUT_OF_DOMAIN) where the reference returns inf / nan.
+  - `C-ABEP_SIM_STATEWISE_PY` v1 (`5a76ef3c…`): **ADMITTED**. 432 vectors.
+  - `C-DOCS_DESIGN_SYNTHESIS_SPACECRAFT_REFERENCE_DRAG` v1 (`2df6586c…`): **ADMITTED**. The Rust builder
+    `abep-reference-drag-record --check` reproduces the committed v1 JSON / MD byte for byte. Decision-record refusals
+    match on case trees. DIV-C-01 / -02 cover the pinned module sha256 of the v1 provenance block.
+  - `C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY-DRAG_KERNEL` v1 (`8f20c196…`), a function-subset kernel (RM-R17):
+    **ADMITTED**. It covers drag_table, hall_response_status, supplied_objective and thrust_minus_drag, plus the Rust
+    statewise T - D record on the 196 required states (5880 per-state objectives). Everything is bit-identical.
+    DIV-D-01: the F1 core view, transport ensemble and validation release are sha256-pinned in Rust.
+- **`crates/abep-mission`** (new; no new external dependency):
+  - the register is captured verbatim from the reference module into `data/spacecraft_reference_register_v1.json`
+    (sha256-pinned, `scripts/rust_migration/capture_reference_drag_register.py`);
+  - the statewise T - D record carries raw quantities only. It constructs no thrust, so every state is NOT_EVALUATED with
+    reason keys CREDIBLE_HALL_TRANSPORT_SET_EMPTY and HOST_SPACECRAFT_DRAG_ICD_ABSENT. The F1 intake drag is
+    PARAMETRIC_SENSITIVITY_ONLY (EvalStatus INCOMPLETE_EVIDENCE). Cargo tests assert all of this; none is skipped;
+  - the S6.15 reference margin indication sits with the quantifier in `statewise`, outside the raw drag module;
+  - a cargo test replays the captured Python outputs.
+- **Findings for the owner / coordinator** (reproduced, not changed): the reference thrust_minus_drag refuses a measured
+  thrust record while the credible set is EMPTY, and accepts an assumed / parametric thrust as a
+  PARAMETRIC_SENSITIVITY_ONLY T - D (F-D-01). It also carries a stale 'max over the five orbit states' basis text
+  (F-D-02). `mission_env.spacecraft_drag` is not contracted: its only callers are class H and its defaults are unsourced
+  (SRD-01).
