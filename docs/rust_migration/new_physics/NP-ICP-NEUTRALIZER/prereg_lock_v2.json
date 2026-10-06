@@ -1,0 +1,18 @@
+{
+ "id": "np_icp_neutralizer_prereg_lock_v2",
+ "model_id": "NP-ICP-NEUTRALIZER",
+ "prereg_version": "v2",
+ "model_version": "2",
+ "locked": "2026-10-06",
+ "note": "sha256 of the NP-ICP-NEUTRALIZER v2 preregistration (A9.31 secs. 7-10: PF-01, PF-02, GAP-01..05 resolved; INT-16/17/18 approved; IF-ICP-THERMAL-v2, IF-ICP-BUS-v2, CPL-HALL-ON-v1; docs only, status PREREGISTERED_NOT_IMPLEMENTED); any change after this lock is a new, dated addendum or version, never an edit. prereg_lock_v1.json and every v1 record stay immutable history.",
+ "base_commit": "0d8922cfe39b5bb7f90ddf290702342182eb5d7c",
+ "files_relative_to": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/",
+ "files": {
+  "prereg_v2.json": "3f0df5b85286bfc82ce99ec9bfafb81ec785021b1668d5bc95fe0d29679631e9",
+  "PREREG_v2.md": "2a4ff4261120befa38714d99db4cc94eec3542f604d72b98739bea0efdba0247"
+ },
+ "predecessor_lock": {
+  "path": "prereg_lock_v1.json",
+  "sha256": "e98747e04694bf849164350be3ef4c7b458fccc918777c224066eebf55fa82af"
+ }
+}
