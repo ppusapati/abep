@@ -34,6 +34,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "abep-cli"
+version = "0.1.0"
+dependencies = [
+ "abep-atmos",
+ "abep-config",
+ "abep-data",
+ "abep-hall",
+ "abep-icp",
+ "abep-intake",
+ "abep-julia-bridge",
+ "abep-mission",
+ "abep-provenance",
+ "abep-subsystems",
+ "abep-types",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "abep-config"
 version = "0.1.0"
 dependencies = [

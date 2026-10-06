@@ -4796,3 +4796,35 @@ partial admission and the row stays PYTHON_REFERENCE. A partial admission change
 - **Open (owner / coordinator):** a transient-tolerance ruling now covers P45 as well as P42 / P43. It must be made
   before any v3. Changing a tolerance after seeing the failure is not done here (PROGRAMME rule 11). No ledger file was
   edited; the report requests PARITY_FAILED for the three rows.
+
+## 2026-10-06 — SC-WP-13: the deterministic `abep` CLI (NI-ABEP-CLI) ACCEPTED (NEW_INFRASTRUCTURE_ACCEPTANCE; no Python, config or frozen data changed)
+
+- **Preregistration** (committed alone before any code): `acceptance_v1.json` `d55fac5e…` (`669b21b`). It was superseded
+  before any scoring run by `acceptance_v2.json` `9d0c778d…` (`0c87a68`, also committed alone).
+  - Reason: v1's PROV check demanded the five registered governing hashes on every record, but its own case REF-02
+    rewrites `config/MANIFEST.json`. A truthful record could only fail that check.
+  - v2 compares the hashes with the files of the evaluated tree. Every command, case, expectation and exit code is
+    unchanged. v1 stays immutable and was never scored.
+- **Implementation** (`58477ab`): new crate `crates/abep-cli` (binary `abep`). It is a thin orchestration over the
+  admitted crates, with no physics and no PASS / FAIL.
+  - Commands: `config check`, `provenance verify`, `env run-design-states`, `intake surface-v1`, `drag statewise`,
+    `mass rollup`, `power ledger`, `hall status`, `hall pin-check`, `icp status`.
+  - Every run writes a result record and a run-record sidecar. The record carries implementation rust, rust_commit,
+    contract_id, the four governing hashes, the components and the verbatim payload.
+  - Exit codes: fail-closed statuses map to 10-13 and refusals to 2-6. Admission evidence is verified at run time
+    (sha256 + verdict).
+  - NP-ICP-NEUTRALIZER is NOT_ADMITTED; `icp status` reports the crate's INCOMPLETE_EVIDENCE verbatim.
+  - Workspace crates only; no new external dependency.
+- **Acceptance** (`b5bbd2f`, scored once at `58477ab` on a clean tree): **ACCEPTED**. 26 cases and 59 process runs.
+  - DET-RUN and DET-THREADS hold for all 11 command cases (`--threads 1` vs default vs 4).
+  - DET-ENV-CRATE holds: the threaded 196-state payload equals the crate's bytes.
+  - STATIC-DEP and STATIC-NOPY hold.
+  - Current statuses: config / provenance / env / intake v1 / pin-check EVALUATED; drag statewise and hall status
+    NOT_EVALUATED (credible set EMPTY); mass, power and icp INCOMPLETE_EVIDENCE.
+- **Not in v1/v2** (components not admitted, or Julia needed): sweep, robust, assess, golden check, build --check,
+  hall smoke / schema-check, parity, ci, perf, thermal, chemistry. The Julia-side `check_pin()` stays the registered
+  platform test.
+- **Results.** cargo test --workspace --locked: 352 passed, 0 failed, 2 ignored (registered PT-01 / PT-02). fmt
+  (members) and clippy are clean. `ci_checks`: 12/12. pytest: 4232 passed, 5 skipped, 1 xfailed. The ledger is not
+  edited; `ledger_update_requested`
+  (NI-ABEP-CLI -> ACCEPTED) is in the report.
