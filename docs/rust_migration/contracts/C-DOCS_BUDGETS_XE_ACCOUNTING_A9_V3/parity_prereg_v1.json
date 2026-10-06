@@ -1,0 +1,513 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-DOCS_BUDGETS_XE_ACCOUNTING_A9_V3-V1",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "component": {
+  "inventory_id": "C-DOCS_BUDGETS_XE_ACCOUNTING_A9_V3",
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "migration_wave": "W11",
+  "scope": "named function subset (kernel granularity, RM-R17): the Xe sensitivity / booking kernels of the Xe accounting v3 builder - the LOADED-case split of the 2 / 5 / 10 kg planning cases, the ignition booking, the reserve / residual booking, the ground-test supply and the ledger evaluation (SC-WP-07 element 'Xe sensitivity (2 / 5 / 10 kg planning cases; Xe accounting v3)')",
+  "functions_or_entry_points": [
+   "X1 docs/budgets/xe_accounting_a9_v3/build_xe_accounting_a9_v3.py::case_split_loaded (with _num)",
+   "X2 docs/budgets/xe_accounting_a9_v3/build_xe_accounting_a9_v3.py::ignition_booking_s",
+   "X3 docs/budgets/xe_accounting_a9_v3/build_xe_accounting_a9_v3.py::book_reserve_and_residual (with rk)",
+   "X4 docs/budgets/xe_accounting_a9_v3/build_xe_accounting_a9_v3.py::ground_supply",
+   "X5 docs/budgets/xe_accounting_a9_v3/build_xe_accounting_a9_v3.py::eval_line",
+   "X6 docs/budgets/xe_accounting_a9_v3/build_xe_accounting_a9_v3.py::evaluate (calls eval_line, book_reserve_and_residual, ground_supply)"
+  ],
+  "out_of_scope": [
+   "docs/budgets/xe_accounting_a9_v3/build_xe_accounting_a9_v3.py::build_doc / render / render_md / main and docs/budgets/xe_accounting_a9_v3/build_xe_accounting_a9_v3.py::design_cases: BLOCKED_GOVERNANCE_CONFLICT (stop-and-report, not improvised): the record (build_doc / render_md) and design_cases emit verbatim C1 provenance and labelled-history strings - the A9.14 MPQ-01 owner quote, the A9.19 amendment key of the C1 control-fallback ruling, the retired C1 flight ledger ids and the c1_conditional_sensitivity field names - whose tokens the crate-wide CI_PLAN principle-6 scan of crates/abep-subsystems (tests/prereg_binding.rs::forbidden_identifier_scan_of_this_crate, a source bound by the NP-THERMAL-CATHODELESS verification report) refuses in any .rs / .toml line; CI_PLAN principle 6 allow-lists 'quoted provenance strings in labelled history fields' but that scan has no such allow-list. Placing them in the plan's target crate abep-subsystems::mass needs an integrator / owner decision (extend the scan's allow-list with a re-recorded NP-THERMAL provenance, or another host crate); a v2 contract then covers the record EXACT_BYTES regeneration and design_cases",
+   "docs/budgets/xe_accounting_a9_v3/build_xe_accounting_a9_v3.py::S / OD / build_items / build_lines / build_scenarios / split_applicability / split_retired / rfp_clauses / rfp_propellant_clauses / xe_system_capability / c1_flight_xe_booking / meop_basis / icp_xe_getter / _validate_line / read_isotherm / sig6: stay PYTHON_REFERENCE with the record (v2 contract); the harness uses build_items / build_lines / build_scenarios only to produce the registered evaluate input R-X01"
+  ],
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+  "extract_kernel_id": "NOT_APPLICABLE",
+  "active_toolchain_requirement": "NOT_APPLICABLE",
+  "excluded_legacy_paths": [
+   "inventory ground_reference_parts: the C1-GT-* ground-test Xe lines (GROUND_REFERENCE_ONLY) and the P-FL-C1 configuration-scope zero are ledger DATA evaluated by the generic line rules; the retired hall_c1_reference flight lines enter X5 / X6 only as data of R-X01 (evaluate runs before split_retired, as in build_doc); no Rust code names or books a C1 Xe quantity, and the pending-state rule refuses a C1 flight pending term outside the retired column (eval_line)"
+  ],
+  "owner_disposition_a9_28": "NOT_APPLICABLE",
+  "simulation_completion_wp": "SC-WP-07",
+  "owner_disposition_a9_29": "NOT_APPLICABLE (the inventory row carries no owner_disposition_a9_29)"
+ },
+ "date": "2026-10-06",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of this component was executed. No Rust code for the component exists at registration. The commit is recorded in the report, not here.",
+ "supersedes": {
+  "path": null,
+  "sha256": null,
+  "reason": null
+ },
+ "reference_implementation": {
+  "python_commit": "1e2f66d72c01d3d0d413ff85c62de17f528d8f31",
+  "files": [
+   {
+    "path": "docs/budgets/xe_accounting_a9_v3/build_xe_accounting_a9_v3.py",
+    "sha256_at_registration": "2dad9dd167c798f212efe72455e9ccffe2c6590f8389a28b74bcb3c9b7854509"
+   }
+  ],
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration; a changed reference requires a new contract version",
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4 (not used by the component)",
+   "scipy": "1.17.1 (not used)",
+   "pandas": "3.0.2 (not used)",
+   "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+   "blas": "NOT_APPLICABLE",
+   "thread_env": {
+    "OMP_NUM_THREADS": "NOT_APPLICABLE",
+    "OPENBLAS_NUM_THREADS": "NOT_APPLICABLE"
+   },
+   "stdlib": "json, hashlib, copy, math; builtin sum() over floats is sequential double addition in CPython 3.11 (3.12+ switched to compensated summation: a different interpreter is a different reference environment); format(x, '.10g') / '.6g' / 'g' / '.2f' / '.4f' are correctly rounded, ties to even"
+  },
+  "how_called": "the builder loaded by importlib from the reference checkout; functions called directly"
+ },
+ "rust_implementation": {
+  "crate": "abep-subsystems",
+  "functions_or_entry_points": [
+   "abep_subsystems::mass::xe::{case_split_loaded, ignition_booking_s, book_reserve_and_residual, ground_supply, eval_line, evaluate}",
+   "`abep-mass eval <calls.json>` (harness interface)"
+  ],
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (rust-toolchain.toml)",
+  "provenance_sources": [
+   "Cargo.toml",
+   "Cargo.lock",
+   "rust-toolchain.toml",
+   "crates/abep-types/**",
+   "crates/abep-provenance/**",
+   "crates/abep-subsystems/Cargo.toml",
+   "crates/abep-subsystems/src/lib.rs",
+   "crates/abep-subsystems/src/mass/**",
+   "crates/abep-subsystems/src/bin/abep-mass.rs"
+  ],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it",
+  "typed_inputs": "the mission Xe load is NOT an input of these kernels: the 2 / 5 / 10 kg cases are owner planning / sensitivity cases (A9.25 msg 8 sec. 7; the Xe load is not frozen); every flight and ground total with a TBD line stays REFUSED_TBD_INPUTS, exactly as the Python"
+ },
+ "governing_hashes": {
+  "config_manifest": {
+   "path": "config/MANIFEST.json",
+   "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+  },
+  "architecture_hash": "NOT_APPLICABLE (the component reads no configuration file; its single flight configuration label is hall_icp_neutralizer, config/architecture/hall_icp_neutralizer_v1.json sha256 7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3, A9.19)",
+  "model_set_hash": "NOT_APPLICABLE",
+  "design_state_set_hash": "NOT_APPLICABLE",
+  "rule": "both implementations read the same pinned inputs (pinned_inputs_sha256); a mismatch on the reference tree voids the run (INPUT_MISMATCH, not a verdict)"
+ },
+ "pinned_inputs_sha256": {
+  "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json": "ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a",
+  "docs/budgets/xe_accounting_a9_v2/XE_ACCOUNTING_A9_V2.md": "f2cca970bf7fc9870c001af75f5e855b8183cd8e1fbdccb0af78a4596162ff69",
+  "docs/budgets/xe_accounting_a9_v2/build_xe_accounting_a9_v2.py": "2c279af73e9d322a501d8577f9dd916f0fc057459b9ec49618e8c11734ba235a",
+  "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+  "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+  "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
+  "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903",
+  "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+  "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+  "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+  "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+  "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+  "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440",
+  "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json": "8240f49dbdfe9eef3dc2a1ab854a276e27a8eb435ddb2f6c62e48be5e511e0fe",
+  "docs/budgets/xe_accounting_a9_v3/XE_ACCOUNTING_A9_V3.md": "fef8cdfda0ee83d9254835921cd6b708e76804978778bf2f4ce9dd6f9c53f089",
+  "tests/test_xe_accounting_a9_v3.py": "4e4e45dc97ce3d9591a7f0a8bf12d83c6e222fdb155808f0b76a2b6a9f547c44"
+ },
+ "frozen_data_read_only": [
+  "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json / docs/budgets/xe_accounting_a9_v3/XE_ACCOUNTING_A9_V3.md (frozen bid record; read for cross-checks only)",
+  "the pinned v2 record and the A9.14 / A9.15 / A9.19 / A9.20 / A9.21 decision records (read by the Python harness through build_items / build_lines to build R-X01)"
+ ],
+ "inputs": {
+  "notation": "in edge_cases the strings 'nan', 'inf', '-inf' denote the IEEE float values; every other string is a str argument",
+  "golden_vectors": {
+   "source": "the reference checkout and the registered tests",
+   "count": "see vector_totals",
+   "list_or_generator": {
+    "R-X01": "items = build_items(v2, S()), lines = build_lines(v2, S()), scen = build_scenarios(v2) at the reference commit (v2 = the pinned v2 record); evaluate(lines, {id: item}, scen) - the exact call of build_doc, before split_retired; eval_line(ln, items, done) for every line of every scenario in evaluate's order with that scenario's done-map so far; book_reserve_and_residual(evals, {id: line}, XV2-23, XV2-24) for every FLIGHT scenario; ground_supply(calc, procs) for every GROUND_TEST scenario",
+    "R-X02": "case_split_loaded(c, XV2-23, XV2-24) for c in XV2-30 (2.0, 5.0, 10.0) - the Xe sensitivity planning cases; and every case of tests/test_xe_accounting_a9_v3.py: (2.0, 0.2, 0.02, reading='USABLE_RESIDUAL_ON_TOP'), (nan, 0.2, 0.02)",
+    "R-X03": "ignition_booking_s(), (4), (0), (2.5), (True), (3, 121.0), (3, 100.0), (3, 100.0, evidence='measured H-1 start log')",
+    "R-X04": "book_reserve_and_residual with the test line maps {A: {phase: xe_mode, reserve_base: True}, B: {phase: transition, reserve_base: True}}: [A 1.0, B 0.5]; [A 1.0, A 1.0]; [RESIDUAL 1.0] with RESIDUAL {phase: residual, reserve_base: True}; [A None]; and {A: {phase: xe_mode, reserve_base: 'RA-FLOWUNC'}}: [A 1.0]; fractions 0.2 / 0.02",
+    "R-X05": "ground_supply({ref: 1.5}, procs), ({ref: 1.0}, procs, margin=0.1), ({ref: 1.0}, {purge: 0.1}), ({ref: 1.0}, procs with line_fill None) with procs = {purge: 0.1, conditioning: 0.2, line_fill: 0.05, vendor_procedures: 0.15}"
+   }
+  },
+  "edge_cases": [
+   {
+    "id": "E-X01",
+    "inputs": {
+     "fn": "case_split_loaded",
+     "case_or_fraction_values": [
+      0.0,
+      -0.0,
+      -1.0,
+      "nan",
+      "inf",
+      true,
+      "2",
+      null,
+      0,
+      1e-300,
+      1e+300
+     ],
+     "readings": [
+      "LOADED",
+      "USABLE_RESIDUAL_ON_TOP",
+      "loaded",
+      1,
+      null
+     ]
+    },
+    "note": "_num refusals with the value repr; retired / unknown readings refused"
+   },
+   {
+    "id": "E-X02",
+    "inputs": {
+     "fn": "ignition_booking_s",
+     "attempts": [
+      1,
+      2,
+      3,
+      0,
+      4,
+      -1,
+      3.0,
+      true,
+      false,
+      "3",
+      null
+     ],
+     "dwell_s": [
+      120.0,
+      120,
+      60.0,
+      0.0,
+      -1.0,
+      120.0000001,
+      1e-300,
+      "nan",
+      "inf",
+      true,
+      null
+     ],
+     "evidence": [
+      null,
+      "",
+      "   ",
+      "\t\n",
+      "log",
+      5
+     ]
+    },
+    "note": "1..3 attempts (int, not bool), dwell in (0, 120] s, a shorter dwell only with a non-blank evidence string"
+   },
+   {
+    "id": "E-X03",
+    "inputs": {
+     "fn": "book_reserve_and_residual",
+     "variants": [
+      "f_reserve None",
+      "f_residual None",
+      "every kg 0.0 (COMPUTED_EXACT_ZERO)",
+      "kg 0 (int)",
+      "mixed None / numbers",
+      "phase reserve",
+      "line RESERVE",
+      "reserve_base 1 / None / False",
+      "a line missing from the map (KeyError)",
+      "f_reserve int 0",
+      "an empty evaluation list"
+     ]
+    },
+    "note": "reserve / residual booked exactly once; TBD totals REFUSED with closed-term floors"
+   },
+   {
+    "id": "E-X04",
+    "inputs": {
+     "fn": "ground_supply",
+     "variants": [
+      "margin 0.2 / 0.20000000000000001 / 0.1 / 0 / None",
+      "procedure keys missing / extra / in another order",
+      "a calculated value None",
+      "a procedure value 0.0 with others",
+      "a negative or nan value (BookingError)",
+      "empty calculated map",
+      "a calculated key equal to a procedure key"
+     ]
+    },
+    "note": "procedures booked explicitly before the 0.20 margin; TBD -> REFUSED_TBD_INPUTS"
+   },
+   {
+    "id": "E-X05",
+    "inputs": {
+     "fn": "eval_line",
+     "variants": [
+      "each presence of PRESENCE_STATES and ABSENT_UNDER_READING",
+      "a pending state outside hall_c1_reference (BookingError)",
+      "kind product / mass / fraction_of_lines / unknown",
+      "an item value None / str / negative",
+      "an unknown unit (KeyError)",
+      "an unknown item id (KeyError)",
+      "fraction_of_lines with a TBD part"
+     ]
+    },
+    "note": "absence propagates (kg None with the missing fields); zero states give 0.0 exactly"
+   }
+  ],
+  "randomized_domain": {
+   "count": 3300,
+   "draw": "one random.Random(master_seed * 100 + k) per entry point (k = 1 case_split_loaded, 2 ignition_booking_s, 3 book_reserve_and_residual, 4 ground_supply, 6 evaluate): case_split_loaded: case 70 % log-uniform 1e-3..1e3 kg, 30 % uniform 0..20 rounded to 0..6 decimals, fractions uniform 0..1 (10 % exactly 0, 5 % up to 1e3), an invalid argument with probability 0.03; ignition_booking_s: attempts from E-X02 (probability 0.8 a valid int), dwell uniform 0..150 s (20 % exactly 120.0), evidence from E-X02; book_reserve_and_residual: 0..8 evaluations over a random line map (phase xe_mode / transition / start / reserve / residual, reserve_base True with probability 0.9), kg None / 0.0 / a mass, fractions 0.2 / 0.02 (80 %) or random 0..1; ground_supply: 0..5 calculated lines, the four procedure keys (90 %), values None / 0.0 / a mass, margin 0.2 (90 %); evaluate: R-X01 with A (60 %) every item value kept / None / a random positive number (probabilities 0.5 / 0.25 / 0.25), B (30 %) A plus each line's presence replaced with probability 0.1 by a zero or non-zero presence state, C (10 %) A plus one random line given CONDITIONAL_ON_C1_FLIGHT_SELECTION or ABSENT_UNDER_READING",
+   "domain_note": "numerical parity domain only; not a physics, design or evidence claim; ints beyond 2**53 excluded"
+  },
+  "vector_totals": {
+   "R-X01..R-X05": "fixed (counted in the report)",
+   "randomized": {
+    "case_split_loaded": 1000,
+    "ignition_booking_s": 600,
+    "book_reserve_and_residual": 600,
+    "ground_supply": 600,
+    "evaluate": 500
+   }
+  }
+ },
+ "campaign_seeds": {
+  "applicable": "true (input generation only; the component is deterministic)",
+  "scoring_master_seed": 255310965,
+  "development_master_seed": 7109,
+  "derivation": "random.Random(master_seed * 100 + k) per entry point (inputs.randomized_domain.draw)",
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the existing admitted stochastic / statistical parity contract; the roles are registered separately and never merged",
+   "design_uq_sampling_stream": "NOT_APPLICABLE",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE",
+   "other_streams": "NOT_APPLICABLE: the harness's random.Random only generates input cases (the component is deterministic and draws no random numbers)",
+   "migration_parity_dataset": "seeds and the generated case file stay exactly reproducible (immutable)",
+   "after_rust_authority": "NOT_APPLICABLE"
+  },
+  "rng_streams_v3": "NOT_APPLICABLE (deterministic component)",
+  "development_rule": "development comparisons use development_master_seed (and the registered deterministic vectors) only and are never scored or reported as a verdict; every execution with scoring_master_seed is appended to campaign_history and the report is committed whatever its verdict"
+ },
+ "observables": {
+  "every call": {
+   "list": [
+    {
+     "name": "outcome",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "RETURNED or RAISED"
+    },
+    {
+     "name": "value",
+     "units": "kg / - (as the Python returns)",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "the returned value (dicts in insertion order, lists, floats, ints, strings, None)"
+    },
+    {
+     "name": "error_class",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "Python exception class name; Rust reports the mapped class name"
+    },
+    {
+     "name": "error_message",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "str(exception) character for character for the component's own exception classes (listed per contract); class only for Python built-in exceptions (KeyError, TypeError, StopIteration, FileNotFoundError)"
+    }
+   ],
+   "message_classes": [
+    "BookingError"
+   ],
+   "replicates_per_implementation": "NOT_APPLICABLE",
+   "se_method": "NOT_APPLICABLE"
+  }
+ },
+ "tolerance_classes": {
+  "EXACT_BYTES": "files / serialized outputs byte-identical (sha256 equal)",
+  "EXACT_VALUE": "json.dumps(value, ensure_ascii=False) of the Python result equal to json.dumps(json.loads(rust output), ensure_ascii=False): key order, int vs float type, every float bitwise (shortest repr, sign of zero included), strings, booleans, None; error classes and registered messages equal",
+  "ULP_BOUNDED": "NOT_APPLICABLE",
+  "SOLVER_TOLERANCE": "NOT_APPLICABLE",
+  "STATISTICAL": "NOT_APPLICABLE",
+  "EXACT_STREAM": "NOT_APPLICABLE"
+ },
+ "exact_invariants": [
+  {
+   "id": "INV-X01",
+   "statement": "determinism: every call list evaluated twice gives identical output (both)",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-X02",
+   "statement": "Xe sensitivity cross-check: for c in (2.0, 5.0, 10.0), sig6 of the X1 residual / reserve / mission-usable outputs equals the committed record's design_cases.loaded_split rows (both)",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-X03",
+   "statement": "R-X01 evaluate output equals the committed record's evaluations plus retired_flight_configuration_history.evaluations, scenario by scenario (both): every flight and ground total with a TBD line REFUSED_TBD_INPUTS, no total invented",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-X04",
+   "statement": "no PASS: statuses only COMPUTED / COMPUTED_EXACT_ZERO / REFUSED_TBD_INPUTS (both)",
+   "required_in_both": true
+  }
+ ],
+ "conservation_checks": {
+  "applicable": "true (Xe mass accounting identities; CLAUDE.md rule 4)",
+  "checks": [
+   {
+    "id": "CONS-X01",
+    "statement": "LOADED split closes: |mission_usable_kg + reserve_kg + residual_kg - case_kg| <= 1e-12 x max(1, case_kg) on every returned X1 split (the residual is a sub-line inside the case, never added again)",
+    "evaluated_on": "Rust outputs (and Python outputs, recorded)",
+    "tolerance": "1e-12 relative"
+   },
+   {
+    "id": "CONS-X02",
+    "statement": "reserve / residual booked once: every COMPUTED booking has loaded_kg == rk(usable + residual) with usable = base + reserve; floors equal totals",
+    "evaluated_on": "Rust outputs (and Python outputs, recorded)",
+    "tolerance": "exact (as computed)"
+   },
+   {
+    "id": "CONS-X03",
+    "statement": "ground supply: supply_kg == rk(base x 1.2), margin_kg == rk(0.2 x base) with base the sum of the calculated and procedure lines",
+    "evaluated_on": "Rust outputs (and Python outputs, recorded)",
+    "tolerance": "exact (as computed)"
+   }
+  ]
+ },
+ "domain_and_error_parity": {
+  "cases": "R-X02..R-X05 refusals, E-X01..E-X05 and the randomized invalid draws",
+  "mapping": {
+   "BookingError": "class 'BookingError' (MODEL_ERROR); message scored",
+   "KeyError / TypeError": "the same class name (malformed input); class scored"
+  },
+  "mapping_rule": "every Python exception class maps to exactly one Rust class name; no Rust path may return a value where Python fails, or fail where Python returns",
+  "documented_divergence": [
+   {
+    "id": "DIV-X01",
+    "statement": "none",
+    "disposition": "none"
+   }
+  ]
+ },
+ "schema_parity": {
+  "schemas": [
+   "NOT_APPLICABLE (no JSON schema file; the committed record's evaluation shape is the reference)"
+  ],
+  "rules": [
+   "returned dicts: field names, order and value types identical (EXACT_VALUE)",
+   "status labels identical: COMPUTED, COMPUTED_EXACT_ZERO, REFUSED_TBD_INPUTS; never PASS"
+  ]
+ },
+ "golden_and_reference_cases": {
+  "references": [
+   "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json evaluations / design_cases.loaded_split (cross-checks INV-X02 / INV-X03)"
+  ],
+  "rule": "references are read as committed; they are never regenerated to make Rust pass (RM-R11)",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-DOCS_BUDGETS_XE_ACCOUNTING_A9_V3/reference_outputs/",
+   "captured_at_python_commit": "1e2f66d72c01d3d0d413ff85c62de17f528d8f31",
+   "sha256_manifest": "FILL at scoring",
+   "purpose": "lets CI check Rust against the Python reference after Python is retired from active execution"
+  },
+  "historical_golden_rule": "RM-R28: not applicable (no golden case involved)"
+ },
+ "julia_bridge": {
+  "applicable": "false",
+  "hallthruster_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+  "julia_version": "NOT_APPLICABLE",
+  "launch_equivalence": "NOT_APPLICABLE",
+  "record_comparison": "NOT_APPLICABLE",
+  "execution_provenance": "NOT_APPLICABLE"
+ },
+ "performance_measurement": {
+  "status": "reported, not a decision criterion (A9.24 items 1 and 6)",
+  "workloads": [
+   {
+    "id": "PERF-X01",
+    "description": "evaluate on R-X01, 500 repeats in one process"
+   }
+  ],
+  "repeats": 3,
+  "statistic": "median wall-clock per implementation in one session on one machine; speed-up = median_python / median_rust",
+  "machine_manifest": "recorded in the report"
+ },
+ "decision_rules": {
+  "per_test": "every scored observable of every call meets EXACT_VALUE",
+  "aggregate": "NOT_APPLICABLE",
+  "exact_invariants_required": true,
+  "conservation_required": true,
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "verdict": "ADMITTED (= PARITY_PASS) iff every call, every invariant (INV-X01..X04) and every conservation check passes and every reference file matches sha256_at_registration; otherwise NOT_ADMITTED (PARITY_FAIL). ADMITTED covers the X1-X6 function subset only (partial admission); the record regeneration stays PYTHON_REFERENCE (BLOCKED_GOVERNANCE_CONFLICT, component.out_of_scope)",
+  "verdict_vocabulary": [
+   "ADMITTED",
+   "NOT_ADMITTED",
+   "REFUSED_REFERENCE_CHANGED",
+   "INPUT_MISMATCH",
+   "NOT_RUN_RUST_UNAVAILABLE",
+   "REFUSED_CLASSIFICATION"
+  ],
+  "meaning_of_ADMITTED": "A9.24 item 1: Rust (abep_subsystems::mass::xe) becomes authoritative for the Xe LOADED-case split, ignition / reserve / residual / ground-supply booking and ledger evaluation within the registered domain; NOT physics validation, not a Xe-load selection (no mission Xe load is frozen) and not a gate PASS",
+  "no_retuning": "tolerances, observables, inputs, n, seeds and rules are fixed; after NOT_ADMITTED only a code fix plus a new contract version with a fresh scoring_master_seed may follow; the failed report stays; no execution is discarded",
+  "disagreement_rule": "never rewrite a Python result, budget record, test or decision record to make Rust pass (RM-R11)",
+  "observable_scope": "restricted to the retained Xe accounting kernels (RM-R20)"
+ },
+ "bid_boundary": {
+  "statement": "post-bid-freeze work; no output of this contract may be cited by the bid package unless the owner re-freezes; the mass / power v5 and Xe accounting v3 records are part of the frozen bid technical source and are only READ here (never rewritten)",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b (technical source) / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (terminal package state, A9.29 sec. 3; lineage b5849affae22a6709ad217a184f6fe896d15410a -> 2de86ab)",
+  "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+ },
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, budget record, threshold or requirement",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27): AL-07 6.0 kg stays PROVISIONAL_LEGACY_DERIVED_ANALOG_INPUT / AFI-02-RA1_OPEN; no line becomes a CBE, measured mass or frozen flight truth",
+  "not a gate PASS: mass compliance stays INCOMPLETE_EVIDENCE / NOT_YET_CLOSED (DOES_NOT_CLOSE visible); absent determining evidence stays NOT_EVALUATED / INCOMPLETE_EVIDENCE (RM-R31)",
+  "not a selection of the Xe load: 2 kg is a planning / reference case, 5 / 10 kg sensitivity cases (A9.26 sec. 5; A9.25 msg 8 sec. 7)"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-DOCS_BUDGETS_XE_ACCOUNTING_A9_V3/parity_report_v1.json (+ .md)",
+  "runner": "scripts/rust_migration/parity_mass_v1.py xe-accounting-v3 (Python harness calling `abep-mass eval`)",
+  "report_fields": [
+   "contract_sha256",
+   "python_commit",
+   "reference_sha256",
+   "rust_commit",
+   "build_provenance",
+   "environment",
+   "per-test results",
+   "invariants",
+   "conservation",
+   "domain/error",
+   "schema",
+   "performance",
+   "verdicts",
+   "campaign_history",
+   "case file sha256",
+   "ledger_update_requested"
+  ]
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator (A9.25 message 3)",
+  "checks": [
+   "component.migration_class ACTIVE_SELECTED_ARCHITECTURE_PHYSICS (PLAN_APPROVED_A9_29): PASS",
+   "no observable, input or code path belongs to an excluded legacy path: PASS (C1 ledger lines are input data of the generic rules; no C1 rule is ported)",
+   "the harness traverses the builder's item / line / scenario construction only to produce R-X01 (it reads the C1 history lines as data; they cannot influence the kernels except as data)",
+   "the Rust implementation contains none of the principle-6 forbidden identifiers",
+   "not a GROUND_TEST_PROGRAMME_ONLY contract"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict)"
+ },
+ "value_status_preservation": {
+  "rule": "RM-R27",
+  "inputs": [],
+  "check": "NOT_APPLICABLE: the kernels carry no provisional mass allocation; the 2 / 5 / 10 kg cases stay owner planning / sensitivity cases (no Xe load is selected or frozen)"
+ },
+ "new_physics_verification": {
+  "applies_when": "NOT_APPLICABLE (contract_kind EXISTING_PHYSICS_PARITY)"
+ }
+}
