@@ -13,6 +13,9 @@
 //!   the verified limit or a non-positive / non-finite T_e OUT_OF_DOMAIN, an invalid representation MODEL_ERROR.
 //! * [`validity`]: the `rate_validity.toml` reader; [`dat`]: the HallThruster.jl rate-table reader. Both verify sha256
 //!   pins on load.
+//! * [`registry`]: the IF-CHEM-REG-v1 registry of the active RF/ICP neutralizer chemistry (`data/chemistry/icp/`,
+//!   NP-ICP-CHEM-AIR v1 build plan BP-S1): species, processes with their contract statuses, channels with their
+//!   registered representations and validity entries; rates through [`checked`] only.
 //!
 //! Nothing here comes from `abep_sim/plasma_chem.py` (NP-ICP-NEUTRALIZER EX-01).
 
@@ -20,6 +23,7 @@ pub mod checked;
 pub mod dat;
 pub mod numpy;
 pub mod reference;
+pub mod registry;
 pub mod validity;
 
 /// Electron mass [kg] of the reference (`rate_tables.ME`). Not the CODATA 2018 value 9.1093837015e-31: the frozen
