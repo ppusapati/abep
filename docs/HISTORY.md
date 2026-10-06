@@ -4862,3 +4862,12 @@ partial admission and the row stays PYTHON_REFERENCE. A partial admission change
   PT-02). fmt and clippy are clean. `ci_checks` 12/12. pytest: 4232 passed, 5 skipped, 1 xfailed.
 - **Ledger request** (in each report; the ledger was not edited): seven admissions (partial where scoped).
   K-GAS-LIFE NOT_EXTRACTED_NO_ACTIVE_CONSUMER. NP-RELIABILITY PREREG_MODEL.
+
+## 2026-10-06 — A9.31 owner rulings: next batch and architecture proof (no physics change)
+
+- Verbatim record `docs/decisions/OD_2026_10_06_A9_31_NEXT_BATCH_OWNER_RULINGS_AND_ARCHITECTURE_PROOF.md` / `.json`
+  (owner-verified checkpoint d5ace89). Rules on the CLI acceptance v2, materials DB location, K-GAS-LIFE, NP-RELIABILITY,
+  plenum/feed v3 (convergence-derived tolerance procedure), B2-OF-01, matched ICP thermal / bus interfaces v2, NP-ICP prereg
+  v2 (PF-01/PF-02/GAP-01..05; INT-16/17/18 approved), OQ-NPICP and OQ-CHEM questions; authorizes SC-WP-09/10/11/14 in
+  parallel and sets the primary objective: the hall_icp_neutralizer architecture proof (decisive 196-state run, RFP
+  constraint matrix, controlled comparison, one of conclusions A-D).
