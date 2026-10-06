@@ -4569,3 +4569,41 @@ row stays PYTHON_REFERENCE (kind python for the remainder).
   PARAMETRIC_SENSITIVITY_ONLY T - D (F-D-01). It also carries a stale 'max over the five orbit states' basis text
   (F-D-02). `mission_env.spacecraft_drag` is not contracted: its only callers are class H and its defaults are unsourced
   (SRD-01).
+
+## 2026-10-06 — NP-ICP integration: NP-ICP-CHEM-AIR BP-S1 registry skeleton, EQ-06 wired to abep-chem, verification report v2 (new physics; no table built, no prereg, Hall or frozen file changed)
+
+- **BP-S1** (`f430d7b`, branch `lane-np-icp-wiring` from `def19d6`): `data/chemistry/icp/` as the NP-ICP-CHEM-AIR build
+  plan defines it. Labels `abep-icp-air-0.0` / `abep-icp-xe-0.0` (NOT_ADMITTED) sit in `ICP_CHEM_PINNED.toml` (`074daff9…`).
+  - `registry_air.toml` / `registry_xe.toml` hold every contract process with its recorded status (AIR 15 / 16 / 23,
+    XE 1 / 5 / 4). They also hold 43 channels for the reused abep-n2n-0.11 tables, with stoichiometry, header energies,
+    variant groups and the scenario EM-N2-NOMINAL (= `n2_n.toml`).
+  - `reuse_pins.json` holds the contract's reuse pins plus the FC-CHEM-10 Hall-isolation pins.
+  - `rate_validity_icp.toml` holds mirrored validity entries.
+  - `xs/` holds the cross-section points of 32 reused tables, extracted unchanged from the C-ABEP_SIM_RATE_TABLES_PY v1
+    capture (`examples/build_icp_xs.rs`).
+  - `ionization_N` (NIST table not committed) and the 10 vibrational rate fits have no registered representation.
+  - `abep_chem::registry` loads everything through sha256 pins. It refuses (MODEL_ERROR) the conditions of
+    FC-CHEM-01, -03, -04 and -05, and any status or pin that differs from the contract.
+- **EQ-06 wiring** (`e404c15`): abep-icp evaluates a registered table only as `abep_chem::checked::maxwellian_rate` on
+  its registry representation, in the solve and in NV-06.
+  - EM-N2 is built from the registry.
+  - G-A930-AIR, the tier-1 gaps, SP-04 (SB-NO; SB-He / SB-Ar above 1 %), SP-05 and XE isolation all read the registry.
+  - The gate for admission-rule item 3 reads the pinned abep-chem parity report.
+  - With registered tables, the T_e scan ends at the highest admissible T_e: 30 eV for the 45 eV tables (INT-16).
+  - Withheld as INCOMPLETE_EVIDENCE: the 11 channels without a representation (`EQ-06_REPRESENTATION_NOT_REGISTERED`).
+  - AIR_PRIMARY, XE_CONTINGENCY and EM-N2 stay INCOMPLETE_EVIDENCE. No gate was relaxed.
+- **Verification report v2** (`919ef60`; v1 immutable): status IMPLEMENTED_UNVERIFIED, NOT_VALIDATED.
+  - Item 3 is met on committed evidence. Items 4 (VER-01/02/06/07/08/11/12) and 5 (admission record) are open.
+  - NV-06 covers 32 of 43 channels. On table rows the difference is ≤ 4.4e-7. Between rows, the 1 eV `.dat`
+    interpolation overestimates threshold rates by up to +238 % at T_e = 3 eV and +31 % at 5 eV.
+  - A SYNTHETIC_TEST_ONLY solve on registered N2 rates converges at T_e 4.982 eV, with rates bit-identical to the
+    registry.
+  - The NP-ICP-CHEM-AIR build plan and the NP-ICP-NEUTRALIZER prereg do not disagree on the registry interface.
+  - Still open for the owner: PF-01 / PF-02, GAP-01..05, and INT-16 / INT-17.
+- **Results.**
+  - `cargo test --workspace --locked`: 326 passed, 0 failed, 2 ignored (registered platform tests PT-01 / PT-02).
+    abep-icp 63, abep-chem 40.
+  - fmt and clippy are clean. `ci_checks` 12/12.
+  - pytest: 4232 passed, 5 skipped, 1 xfailed.
+- **Ledger request** (in the report; the ledger was not edited): NP-ICP-NEUTRALIZER stays RUST_IMPL with evidence v2.
+  First, C-ABEP_SIM_RATE_TABLES_PY should apply its own ADMITTED request.
