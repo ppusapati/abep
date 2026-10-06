@@ -4643,3 +4643,35 @@ row stays PYTHON_REFERENCE (kind python for the remainder).
 - **Results.** cargo test --workspace --locked: 255 passed, 0 ignored. fmt (abep-subsystems) and clippy are clean.
   `ci_checks`: 12/12. pytest: 4232 passed, 5 skipped, 1 xfailed. The ledger is not edited;
   `ledger_update_requested` is in each report.
+
+## 2026-10-06 — ES-3 gas path (SC-WP-02, lane B3): abep-gaspath; filter and compressor ADMITTED, plenum / feed v1 PARITY_FAIL (transients)
+
+- **K-GASPATH: NOT_EXTRACTED_NO_ACTIVE_CONSUMER** (`docs/rust_migration/contracts/K-GASPATH/extraction_decision_v1.json`).
+  Every consumer of the `system.py` gas-path closure is historical / legacy regression; the active upstream gas path is
+  `plenum_feed.Chain`. Not ported: the hall_1stage card, the Xe cathode, the p_min_Pa default, the compressor down-select
+  (HISTORICAL), the feed-state closure (GROUND_TEST_PROGRAMME_ONLY) and the FC-07 Xe cathode getter.
+- **`crates/abep-gaspath`** (new; no new dependency): F2 filter stage, DragCompressor + F3 synthesis + rotor strength
+  (explicit Registry), reservoir, F4 plenum / feed (steady network, orifice bisection, vectorized sweep, Radau IIA
+  transients (DIV-P-01), orbit checks, control modes) and the A9.13 setpoint / domain / flow-gap / robust-set rules.
+  Intake outputs, materials.DB values and rotor bases enter as plain data. A cargo test closes the intake -> compressor
+  -> plenum source mass balance to <= 1e-12 of the forward source (rule 4) and asserts the EvalStatus mappings.
+- **Parity** (contracts committed alone before any comparison; harness `scripts/rust_migration/es3_gaspath_parity.py`):
+  - `C-ABEP_SIM_DESIGN_FILTER_STAGE_PY` v1 (`a529c7eb…`): **ADMITTED**, 1732 vectors, every float bit-identical. v2
+    (`7f5f81ca…`) re-binds the build provenance after the shared-source fix below: **ADMITTED**, bit-identical.
+  - `C-ABEP_SIM_COMPRESSOR_PY` group (compressor + compressor_synthesis + rotor_strength + the ICD-row-22 ledger slot)
+    v1 (`454bc47c…`): **NOT_ADMITTED**. The single scoring execution aborted: the Rust CLI panicked in
+    `basis_problems` on a registered NaN allowable temperature (RUST_DEFECT, ordering test before the finiteness check).
+    Fix `c3a41fb` (plus per-request panic isolation in the CLI) and v2 (`01b1c133…`, fresh seeds, nothing scored changed):
+    **ADMITTED**, 2368 vectors, 239189 float leaves bit-identical.
+  - `C-ABEP_SIM_DESIGN_PLENUM_FEED_PY` group (plenum_feed + reservoir + upstream_a9_13) v1 (`ab93bbde…`):
+    **NOT_ADMITTED**. Steady, sweep (INV-P-02), orbit-quasi-static, reservoir, A9.13 rules and closed forms all pass;
+    CONS-P-01..04 hold. All 247 failures are in P42 / P43 transients and were classified CONTRACT_DEFECT (disclosed
+    before scoring from development comparisons, confirmed after scoring against a tight BDF solution of the reference
+    model): mdot samples carry a relative tolerance while u carries an absolute one (the LSODA reference itself is
+    2.2e-3 off in mdot where Rust is 5.8e-4 off); xO None-ness at a closed valve is noise sign; transient cascade
+    diagnostics evaluate K0 - (K0 - 1) x with condition number ~K0 / K (up to 1e20); final_setpoint_error_frac / u_min
+    floors sit below the rtol-1e-5 integrator error (one case: Rust Radau 4.5e-4 vs LSODA 1.3e-4 off).
+    The report writer stopped on an infinite max_ulp; the report was rebuilt from the execution's captured outputs.
+- **Open (owner / coordinator):** plenum v2 needs a re-specification of the transient observables. PROGRAMME rule 11 says
+  a contract defect is never resolved by changing a tolerance. A tighter internal Rust integration tolerance is a
+  candidate code fix. No ledger file was edited; every report carries `ledger_update_requested`.

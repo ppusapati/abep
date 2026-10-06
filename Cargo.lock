@@ -54,6 +54,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "abep-gaspath"
+version = "0.1.0"
+dependencies = [
+ "abep-provenance",
+ "abep-types",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "abep-hall"
 version = "0.1.0"
 dependencies = [
